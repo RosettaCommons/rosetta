@@ -47,8 +47,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -119,7 +117,7 @@ ProteinRMSDFeatures::write_protein_rmsd_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column reference_tag("reference_tag", new DbText(255));
 	Column protein_CA("protein_CA", new DbReal());
 	Column protein_CA_or_CB("protein_CA_or_CB", new DbReal());
@@ -197,7 +195,7 @@ Size
 ProteinRMSDFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 	using namespace core::scoring;

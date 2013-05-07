@@ -40,7 +40,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid_io.hpp>
 
 //Auto Headers
 namespace protocols{
@@ -85,7 +84,7 @@ AtomInResidueAtomInResiduePairFeatures::write_atom_in_residue_pairs_table_schema
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column residue_type1("residue_type1", new DbText());
 	Column atom_type1("atom_type1", new DbText());
 	Column residue_type2("residue_type2", new DbText());
@@ -130,7 +129,7 @@ Size
 AtomInResidueAtomInResiduePairFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	report_atom_pairs(pose, relevant_residues, struct_id, db_session);
@@ -157,7 +156,7 @@ void
 AtomInResidueAtomInResiduePairFeatures::report_atom_pairs(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-    boost::uuids::uuid const struct_id,
+    StructureID const struct_id,
 	sessionOP db_session
 ){
 

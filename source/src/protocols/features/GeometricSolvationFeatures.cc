@@ -15,8 +15,6 @@
 #include <protocols/features/GeometricSolvationFeatures.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 // Platform Headers
 #include <core/pose/Pose.hh>
@@ -90,7 +88,7 @@ GeometricSolvationFeatures::write_geometric_solvation_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column hbond_site_id("hbond_site_id", new DbInteger());
 	Column geometric_solvation_exact("geometric_solvation_exact", new DbReal());
 
@@ -125,7 +123,7 @@ Size
 GeometricSolvationFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const &,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 

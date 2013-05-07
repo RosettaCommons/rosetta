@@ -24,8 +24,10 @@
 //Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <protocols/features/FeaturesReporter.fwd.hh>
+
 //Boost
-#include <boost/uuid/uuid.hpp>
+
 
 //C++ headers
 #include <map>
@@ -42,7 +44,7 @@ public:
 	Node();
 	
 	Node(
-		 boost::uuids::uuid struct_id,
+		 protocols::features::StructureID struct_id,
 		 core::Size bundle_id,
 		 core::Size pair_id,
 		 core::Size helix_1_id,
@@ -53,7 +55,7 @@ public:
 		 core::Size helix_2_end
 	);
 	
-	boost::uuids::uuid struct_id() const;
+	protocols::features::StructureID struct_id() const;
 	core::Size bundle_id() const;
 	core::Size pair_id() const;
 	core::Size helix_1_id() const;
@@ -72,7 +74,7 @@ public:
 	
 private:
 	
-	boost::uuids::uuid struct_id_;
+	protocols::features::StructureID struct_id_;
 	core::Size bundle_id_;
 	core::Size pair_id_;
 	

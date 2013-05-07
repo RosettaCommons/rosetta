@@ -773,8 +773,13 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-separate_db_per_mpi_process</b> \<Boolean\><dt>
-<dd>In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank></dd><br>
+<dd>In MPI mode, open a separate sqlite3 database for each process with extension _<mpi_rank> and write partitioned schema to that database.</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-database_partition</b> \<Integer\><dt>
+<dd>Open a sepearte sqlite3 database with the extension _<partition> and write a partitioned schema to that database.</dd><br>
+<dd>Default: -1</dd><br>
 </dl>
 <dl>
 <dt><b>-use_compact_residue_schema</b> \<Boolean\><dt>

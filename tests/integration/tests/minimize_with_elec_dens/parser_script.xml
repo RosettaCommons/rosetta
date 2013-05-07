@@ -17,7 +17,7 @@
 	        <SymMinMover name=min_dens scorefxn=scfxn_dens_min type=lbfgs_armijo_nonmonotone tolerance=0.1 bb=1 chi=1 jump=ALL bondlength=0 bondangle=0 bb_task_operations=task chi_task_operations=task/>
 		  For a production run use tolerance .00001
 		  and minimize bondlengths and bondangles
-		<ReportToDB name=report_scores database_name="scores.db3" sample_source="repack_with_elec_dens" task_operations=task>
+		<ReportToDB name=report_scores database_name="scores.db3" batch_description="repack_with_elec_dens" task_operations=task>
 			<feature name=ScoreTypeFeatures/>
 			<feature name=StructureScoresFeatures scorefxn=scfxn_dens_score/>
 		</ReportToDB>

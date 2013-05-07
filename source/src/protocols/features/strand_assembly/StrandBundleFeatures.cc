@@ -19,7 +19,7 @@
 #include <core/conformation/Atom.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
+
 
 //Devel
 #include <protocols/features/strand_assembly/StrandBundleFeatures.hh>
@@ -362,7 +362,7 @@ StrandBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 }
 
 //Select all strand segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
-utility::vector1<StrandFragment> StrandBundleFeatures::get_full_strands(boost::uuids::uuid struct_id, sessionOP db_session)
+utility::vector1<StrandFragment> StrandBundleFeatures::get_full_strands(StructureID struct_id, sessionOP db_session)
 {
 	std::string select_string =
 	"SELECT\n"
@@ -390,7 +390,7 @@ utility::vector1<StrandFragment> StrandBundleFeatures::get_full_strands(boost::u
 }
 
 //Select all strand segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
-utility::vector1<StrandFragment> StrandBundleFeatures::get_selected_strands(boost::uuids::uuid struct_id, sessionOP db_session)
+utility::vector1<StrandFragment> StrandBundleFeatures::get_selected_strands(StructureID struct_id, sessionOP db_session)
 {
 	std::string select_string =
 	"SELECT\n"
@@ -418,7 +418,7 @@ utility::vector1<StrandFragment> StrandBundleFeatures::get_selected_strands(boos
 }
 
 //Select all strand_pairs reported by the StrandBundleFeatures::get_strand_pairs and save them in a vector
-utility::vector1<StrandFragment> StrandBundleFeatures::get_strand_pairs(boost::uuids::uuid struct_id, sessionOP db_session)
+utility::vector1<StrandFragment> StrandBundleFeatures::get_strand_pairs(StructureID struct_id, sessionOP db_session)
 {
 	std::string select_string =
 	"SELECT\n"
@@ -445,7 +445,7 @@ utility::vector1<StrandFragment> StrandBundleFeatures::get_strand_pairs(boost::u
 }
 	
 
-utility::vector1<StrandFragment> StrandBundleFeatures::get_strand_from_bss_id(boost::uuids::uuid struct_id, sessionOP db_session, core::Size beta_selected_segments_id){
+utility::vector1<StrandFragment> StrandBundleFeatures::get_strand_from_bss_id(StructureID struct_id, sessionOP db_session, core::Size beta_selected_segments_id){
 	std::string select_string =
 	"SELECT\n"
 	"	beta_selected_segments_id,\n"
@@ -1125,7 +1125,7 @@ core::Size
 StrandBundleFeatures::report_features(
 	core::pose::Pose const & pose,
 	utility::vector1<bool> const &,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session)
 {
 	//TR.Info << "======================= <begin> report_features =========================" << endl;

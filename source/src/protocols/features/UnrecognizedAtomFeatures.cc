@@ -15,8 +15,6 @@
 #include <protocols/features/UnrecognizedAtomFeatures.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 // Project Headers
 #include <basic/options/option.hh>
@@ -81,7 +79,6 @@ using utility::tag::TagPtr;
 using utility::vector1;
 using utility::tools::make_vector;
 using utility::sql_database::sessionOP;
-using boost::uuids::uuid;
 using cppdb::statement;
 using basic::database::insert_statement_generator::InsertGenerator;
 using basic::database::insert_statement_generator::RowDataBaseOP;
@@ -130,7 +127,7 @@ UnrecognizedAtomFeatures::write_unrecognized_residues_table_schema(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column residue_number("residue_number", new DbInteger());
 	Column name3("name3", new DbText());
 	Column max_temperature("max_temperature", new DbReal());
@@ -160,7 +157,7 @@ UnrecognizedAtomFeatures::write_unrecognized_atoms_table_schema(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column residue_number("residue_number", new DbInteger());
 	Column atom_name("atom_name", new DbText());
 	Column coord_x("coord_x", new DbReal());
@@ -195,7 +192,7 @@ UnrecognizedAtomFeatures::write_unrecognized_neighbors_table_schema(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column residue_number("residue_number", new DbInteger(), false);
 	Column unrecognized_residue_number("unrecognized_residue_number", new DbReal(), false);
 	Column closest_contact("closest_contact", new DbReal(), false);
@@ -246,7 +243,7 @@ Size
 UnrecognizedAtomFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	insert_unrecognized_residues_rows(pose, struct_id, db_session);
@@ -259,7 +256,7 @@ UnrecognizedAtomFeatures::report_features(
 void
 UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 	Pose const & pose,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	PDBInfoCOP pdb_info(pose.pdb_info());
@@ -272,7 +269,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 	insert_generator.add_column("name3");
 	insert_generator.add_column("max_temperature");
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id", struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id", struct_id);
 
 	map< Size, UnrecognizedAtomRecord const * > ur_found;
 
@@ -314,7 +311,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_residues_rows(
 void
 UnrecognizedAtomFeatures::insert_unrecognized_atoms_rows(
 	Pose const & pose,
-	uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	PDBInfoCOP pdb_info(pose.pdb_info());
@@ -330,7 +327,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_atoms_rows(
 	insert_generator.add_column("coord_z");
 	insert_generator.add_column("temperature");
 
-	RowDataBaseOP struct_id_data = new RowData<uuid>("struct_id", struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id", struct_id);
 
 	foreach( UnrecognizedAtomRecord ua, pdb_info->get_unrecognized_atoms()){
 
@@ -353,7 +350,7 @@ void
 UnrecognizedAtomFeatures::insert_unrecognized_neighbors_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	PDBInfoCOP pdb_info(pose.pdb_info());
@@ -366,7 +363,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_neighbors_rows(
 	insert_generator.add_column("unrecognized_residue_number");
 	insert_generator.add_column("closest_contact");
 
-	RowDataBaseOP struct_id_data = new RowData<uuid>("struct_id", struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id", struct_id);
 
 	map< Size, pair< Size, Real > > closest_contact;
 
@@ -404,7 +401,7 @@ UnrecognizedAtomFeatures::insert_unrecognized_neighbors_rows(
 
 void
 UnrecognizedAtomFeatures::delete_record(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session) {
 
 	delete_records_from_table("unrecognized_atoms", struct_id, db_session);

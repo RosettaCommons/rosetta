@@ -70,6 +70,7 @@ using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
+using protocols::features::StructureID;
 
 static Tracer TR("protocols.rotamer_recovery.RRReporterSQLite");
 
@@ -264,7 +265,7 @@ RRReporterSQLite::write_rotamer_recovery_features_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum("resNum", new DbInteger());
 	Column divergence("divergence", new DbReal());
 	Column recovered("recovered", new DbInteger());
@@ -305,12 +306,12 @@ RRReporterSQLite::get_output_level(
 
 void
 RRReporterSQLite::set_struct_id1(
-	boost::uuids::uuid const struct_id1
+	StructureID const struct_id1
 ){
 	struct_id1_ = struct_id1;
 }
 
-boost::uuids::uuid
+StructureID
 RRReporterSQLite::get_struct_id1(
 ) const {
 	return struct_id1_;
@@ -318,12 +319,12 @@ RRReporterSQLite::get_struct_id1(
 
 void
 RRReporterSQLite::set_struct_id2(
-	boost::uuids::uuid const struct_id2
+	StructureID const struct_id2
 ){
 	struct_id1_ = struct_id2;
 }
 
-boost::uuids::uuid
+StructureID
 RRReporterSQLite::get_struct_id2(
 ) const {
 	return struct_id2_;
@@ -447,7 +448,7 @@ RRReporterSQLite::report_rotamer_recovery_full(
 
 void
 RRReporterSQLite::report_rotamer_recovery_features(
-	boost::uuids::uuid const struct_id1,
+	StructureID const struct_id1,
 	Residue const & res1,
 	Real const score,
 	bool const recovered

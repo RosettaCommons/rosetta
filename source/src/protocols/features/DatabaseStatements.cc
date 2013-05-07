@@ -20,13 +20,10 @@
 #include <cppdb/frontend.h>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
-
 
 #include <utility/vector1.hh>
 
-
+#include <sstream>
 
 namespace protocols {
 namespace features {
@@ -352,7 +349,7 @@ core::Size get_current_structure_count(
 	return get_something_from_database(statement, core::Size());
 }
 
-boost::uuids::uuid
+StructureID
 get_struct_id_with_nth_lowest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
@@ -363,16 +360,19 @@ get_struct_id_with_nth_lowest_score_from_job_data(
 	cppdb::statement statement = get_nth_lowest_score_from_job_data_statement(db_session, score_term, cutoff_index, input_tag,protocol_id);
 
 	try{
-		return get_something_from_database(statement, boost::uuids::uuid());
+		return get_something_from_database(statement, StructureID());
 	}catch(utility::excn::EXCN_Msg_Exception){
-		utility_exit_with_message("No nth lowest "+score_term+" with input_tag "+input_tag+ ", where n="+utility::to_string(cutoff_index));
+		std::stringstream message;
+		message << "No nth lowest " << score_term << " with input_tag " << input_tag << ", where n=" <<utility::to_string(cutoff_index);
+
+		utility_exit_with_message(message.str());
 	}
 
 	// shouldn't get here
-	return boost::uuids::uuid();
+	return StructureID();
 }
 
-boost::uuids::uuid
+StructureID
 get_struct_id_with_nth_lowest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
@@ -383,16 +383,16 @@ get_struct_id_with_nth_lowest_score_from_score_data(
 	cppdb::statement statement = get_nth_lowest_score_from_score_data_statement(db_session, score_type_id, cutoff_index, input_tag,protocol_id);
 
 	try{
-		return get_something_from_database(statement, boost::uuids::uuid());
+		return get_something_from_database(statement, StructureID());
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No nth lowest score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag+ ", where n="+utility::to_string(cutoff_index));
 	}
 
 	// shouldn't get here
-	return boost::uuids::uuid();
+	return StructureID();
 }
 
-boost::uuids::uuid get_struct_id_with_lowest_score_from_job_data(
+StructureID get_struct_id_with_lowest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
 	core::Size const & protocol_id,
@@ -401,7 +401,7 @@ boost::uuids::uuid get_struct_id_with_lowest_score_from_job_data(
 	return get_struct_id_with_nth_lowest_score_from_job_data(db_session, score_term, 1, protocol_id, input_tag);
 }
 
-boost::uuids::uuid get_struct_id_with_lowest_score_from_score_data(
+StructureID get_struct_id_with_lowest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
 	core::Size const & protocol_id,
@@ -410,7 +410,7 @@ boost::uuids::uuid get_struct_id_with_lowest_score_from_score_data(
 	return get_struct_id_with_nth_lowest_score_from_score_data(db_session, score_type_id, 1, protocol_id, input_tag);
 }
 
-boost::uuids::uuid get_struct_id_with_highest_score_from_job_data(
+StructureID get_struct_id_with_highest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
 	core::Size const & protocol_id,
@@ -419,16 +419,16 @@ boost::uuids::uuid get_struct_id_with_highest_score_from_job_data(
 	cppdb::statement statement = get_highest_score_from_job_data_statement(db_session, score_term, input_tag, protocol_id);
 
 	try{
-		return get_something_from_database(statement, boost::uuids::uuid());
+		return get_something_from_database(statement, StructureID());
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No "+score_term+" with input_tag "+input_tag);
 	}
 
 	// shouldn't get here
-	return boost::uuids::uuid();
+	return StructureID();
 }
 
-boost::uuids::uuid get_struct_id_with_highest_score_from_score_data(
+StructureID get_struct_id_with_highest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
 	core::Size const & protocol_id,
@@ -437,19 +437,19 @@ boost::uuids::uuid get_struct_id_with_highest_score_from_score_data(
 	cppdb::statement statement = get_highest_score_from_score_data_statement(db_session, score_type_id, input_tag,protocol_id);
 
 	try{
-		return get_something_from_database(statement, boost::uuids::uuid());
+		return get_something_from_database(statement, StructureID());
 	}catch(utility::excn::EXCN_Msg_Exception){
 		utility_exit_with_message("No score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag);
 	}
 
 	// shouldn't get here
-	return boost::uuids::uuid();
+	return StructureID();
 }
 
 core::Real
 get_score_for_struct_id_and_score_term_from_job_data(
 	utility::sql_database::sessionOP db_session,
-	boost::uuids::uuid const & struct_id,
+	StructureID const & struct_id,
 	std::string const & score_term
 ){
 
@@ -469,7 +469,10 @@ get_score_for_struct_id_and_score_term_from_job_data(
 	try{
 		return get_something_from_database(statement, core::Real());
 	}catch(utility::excn::EXCN_Msg_Exception){
-		utility_exit_with_message("No "+score_term+" with struct_id "+to_string(struct_id));
+		std::stringstream message;
+		message << "No " << score_term << " with struct_id " << struct_id;
+		
+		utility_exit_with_message(message.str());
 	}
 
 	// shouldn't get here
@@ -479,7 +482,7 @@ get_score_for_struct_id_and_score_term_from_job_data(
 core::Real
 get_score_for_struct_id_and_score_term_from_score_data(
 	utility::sql_database::sessionOP db_session,
-	boost::uuids::uuid const & struct_id,
+	StructureID const & struct_id,
 	core::Size const & score_type_id)
 {
 
@@ -499,7 +502,9 @@ get_score_for_struct_id_and_score_term_from_score_data(
 	try{
 		return get_something_from_database(statement, core::Real());
 	}catch(utility::excn::EXCN_Msg_Exception){
-		utility_exit_with_message("No score_type_id:"+utility::to_string(score_type_id)+", with struct_id "+to_string(struct_id));
+		std::stringstream message;
+		message << "No score_type_id:" << score_type_id << ", with struct_id " << struct_id;
+		utility_exit_with_message(message.str());
 	}
 
 	// shouldn't get here

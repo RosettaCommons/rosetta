@@ -42,7 +42,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid_io.hpp>
 
 #include <utility/exit.hh>
 
@@ -99,7 +98,7 @@ OrbitalsFeatures::write_HPOL_orbital_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum1("resNum1", new DbInteger());
 	Column resName1("resName1", new DbText());
 	Column orbNum1("orbNum1", new DbInteger());
@@ -170,7 +169,7 @@ OrbitalsFeatures::write_HARO_orbital_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum1("resNum1", new DbInteger());
 	Column resName1("resName1", new DbText());
 	Column orbNum1("orbNum1", new DbInteger());
@@ -241,7 +240,7 @@ OrbitalsFeatures::write_orbital_orbital_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum1("resNum1", new DbInteger());
 	Column resName1("resName1", new DbText());
 	Column orbNum1("orbNum1", new DbInteger());
@@ -321,7 +320,7 @@ Size
 OrbitalsFeatures::report_features(
 		Pose const & pose,
 		vector1< bool > const & relevant_residues,
-		boost::uuids::uuid const struct_id,
+		StructureID const struct_id,
 		sessionOP db_session
 ){
 	report_hpol_orbital_interactions( pose, relevant_residues, struct_id, db_session );
@@ -335,7 +334,7 @@ void
 OrbitalsFeatures::report_hpol_orbital_interactions(
 		Pose const & pose,
 		vector1< bool > const &,
-		boost::uuids::uuid const struct_id,
+		StructureID const struct_id,
 		sessionOP db_session
 ){
 	std::string orbita_H_string = "INSERT INTO HPOL_orbital (struct_id, resNum1, orbName1, resNum2, hpolNum2, resName1, orbNum1, resName2, htype2, OrbHdist, cosAOH, cosDHO, chiBAOH, chiBDHO, AOH_angle, DHO_angle, chiBAHD, cosAHD) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
@@ -537,7 +536,7 @@ void
 OrbitalsFeatures::report_haro_orbital_interactions(
 		Pose const & /* pose */,
 		vector1< bool > const &,
-		boost::uuids::uuid const /* struct_id */,
+		StructureID const /* struct_id */,
 		sessionOP /* db_session */
 ){
 /*	std::string orbita_H_string = "INSERT INTO HARO_orbital (struct_id, resNum1, orbName1, resNum2, haroNum2, resName1, orbNum1, resName2, htype2, orbHdist, cosAOH, cosDHO, chiBAOH, chiBDHO, AOH_angle, DHO_angle, chiBAHD, cosAHD) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";

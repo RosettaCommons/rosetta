@@ -34,7 +34,7 @@
 #include <protocols/features/ProteinBondGeometryFeaturesCreator.hh>
 #include <protocols/features/ProteinResidueConformationFeaturesCreator.hh>
 #include <protocols/features/ProteinRMSDFeaturesCreator.hh>
-#include <protocols/features/ProtocolFeaturesCreator.hh>
+//#include <protocols/features/ProtocolFeaturesCreator.hh>
 #include <protocols/features/RadiusOfGyrationFeaturesCreator.hh>
 #include <protocols/features/ResidueBurialFeaturesCreator.hh>
 #include <protocols/features/ResidueConformationFeaturesCreator.hh>
@@ -55,7 +55,7 @@
 #include <protocols/features/ScreeningFeaturesCreator.hh>
 #include <protocols/features/ScoreFunctionFeaturesCreator.hh>
 #include <protocols/features/UnrecognizedAtomFeaturesCreator.hh>
-#include <protocols/features/BatchFeaturesCreator.hh>
+//#include <protocols/features/BatchFeaturesCreator.hh>
 #include <protocols/features/helixAssembly/HelixBundleFeaturesCreator.hh>
 #include <protocols/features/helixAssembly/ConcurrencyTestCreator.hh>
 #include <protocols/features/strand_assembly/SandwichFeaturesCreator.hh>

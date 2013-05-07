@@ -37,7 +37,7 @@ static FeaturesReporterRegistrator< ProteinBackboneTorsionAngleFeaturesCreator >
 static FeaturesReporterRegistrator< ProteinBondGeometryFeaturesCreator > ProteinBondGeometryFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ProteinResidueConformationFeaturesCreator > ProteinResidueConformationFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ProteinRMSDFeaturesCreator > ProteinRMSDFeaturesCreator_registrator;
-static FeaturesReporterRegistrator< ProtocolFeaturesCreator > ProtocolFeaturesCreator_registrator;
+//static FeaturesReporterRegistrator< ProtocolFeaturesCreator > ProtocolFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< RadiusOfGyrationFeaturesCreator > RadiusOfGyrationFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ResidueBurialFeaturesCreator > ResidueBurialFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ResidueConformationFeaturesCreator > ResidueConformationFeaturesCreator_registrator;
@@ -63,7 +63,7 @@ static FeaturesReporterRegistrator< helixAssembly::ConcurrencyTestCreator > Conc
 	//static FeaturesReporterRegistrator< strand_assembly::ReportAADistributionFromDBCreator > ReportAADistributionFromDBCreator_registrator;
 static FeaturesReporterRegistrator< strand_assembly::SandwichFeaturesCreator > SandwichFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< strand_assembly::StrandBundleFeaturesCreator > StrandBundleFeaturesCreator_registrator;
-static FeaturesReporterRegistrator< BatchFeaturesCreator > BatchFeaturesCreator_registrator;
+//static FeaturesReporterRegistrator< BatchFeaturesCreator > BatchFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< ResidueGridScoresFeaturesCreator >  ResidueGridScoresFeaturesCreator_registrator;
 
 } //namespace protocols

@@ -16,7 +16,6 @@
 #include <protocols/features/util.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -142,7 +141,7 @@ Size
 ScoreTypeFeatures::report_features(
 	Pose const &,
 	vector1< bool > const &,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	Size const batch_id(get_batch_id(struct_id, db_session));
@@ -165,7 +164,7 @@ ScoreTypeFeatures::report_features(
 
 
 void ScoreTypeFeatures::delete_record(
-	boost::uuids::uuid,
+	StructureID,
 	utility::sql_database::sessionOP ){}
 
 void

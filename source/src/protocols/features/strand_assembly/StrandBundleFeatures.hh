@@ -19,7 +19,7 @@
 #include <protocols/features/strand_assembly/StrandBundleFeatures.fwd.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
+
 
 //Protocols
 #include <protocols/features/FeaturesReporter.hh>
@@ -66,15 +66,15 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1<bool> const & relevant_residues,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
-	utility::vector1<StrandFragment> get_full_strands(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session);
-	utility::vector1<StrandFragment> get_selected_strands(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session);
+	utility::vector1<StrandFragment> get_full_strands(StructureID struct_id, utility::sql_database::sessionOP db_session);
+	utility::vector1<StrandFragment> get_selected_strands(StructureID struct_id, utility::sql_database::sessionOP db_session);
 	
-	utility::vector1<StrandFragment> get_strand_pairs(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session);
+	utility::vector1<StrandFragment> get_strand_pairs(StructureID struct_id, utility::sql_database::sessionOP db_session);
 
-	utility::vector1<StrandFragment> get_strand_from_bss_id(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, core::Size bss_id);
+	utility::vector1<StrandFragment> get_strand_from_bss_id(StructureID struct_id, utility::sql_database::sessionOP db_session, core::Size bss_id);
 	
 	bool find_antiparallel	(core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);
 	bool find_parallel	(core::pose::Pose const & pose, StrandFragment strand_i, StrandFragment strand_j);

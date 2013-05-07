@@ -15,8 +15,8 @@
 #define INCLUDED_protocols_features_ChargeChargeFeatures_hh
 
 // Unit Headers
-#include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/ChargeChargeFeatures.fwd.hh>
+#include <protocols/features/FeaturesReporter.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -66,7 +66,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const &,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 private:

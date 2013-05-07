@@ -27,34 +27,24 @@ namespace message_listening {
 static basic::Tracer TR("basic.message_listening.DbMoverMessageListener");
 
 DbMoverMessageListener::DbMoverMessageListener():
-	max_batch_id_(0),
-	initialized_(false),
 	protocol_id_(0)
-{
-	if( basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user() ){
-		protocol_id_ = basic::options::option[basic::options::OptionKeys::out::database_protocol_id];
-	}
-}
+{}
 
 bool
 DbMoverMessageListener::request(
 	std::string const & identifier,
-	std::string & return_data) {
+	std::string & return_data
+){
 
 	bool need_slave_data=false;
 
-	if(protocol_id_==0){need_slave_data=true;}
-
-	if(!batch_ids_.count( identifier )){
-		Size max_batch_id = max_batch_id_;
-		for(
-			std::map< std::string, numeric::Size >::const_iterator
-				i = batch_ids_.begin(), ie = batch_ids_.end();
-			i != ie; ++i){
-			max_batch_id = std::max(max_batch_id, i->second);
-		}
-		batch_ids_[identifier] = max_batch_id + 1;
-		max_batch_id_ = max_batch_id;
+	//Has a protocol id been set yet? If not, return 0 and request a protocol id from the slave
+	if(protocol_id_==0){
+		need_slave_data=true;
+	}
+	if(!batch_ids_.count(identifier)){
+		batch_ids_[identifier]=0;
+		need_slave_data=true;
 	}
 	return_data = utility::to_string(protocol_id_) + " " + utility::to_string(batch_ids_[identifier]);
 	return need_slave_data;
@@ -74,7 +64,11 @@ DbMoverMessageListener::deserialize_data(
 	if(tokens.size() != 3){
 		utility_exit_with_message("failed to deserialize the database message from slave node.");
 	}
+	//Received a protocol id from the slave node, and thus it has been written to the database
 	protocol_id_=utility::string2int(tokens[1]);
+
+	TR << "Setting batch id identifier to: '" << tokens[2] << "'" << std::endl;
+	batch_ids_[tokens[2]]=utility::string2int(tokens[3]);
 }
 
 

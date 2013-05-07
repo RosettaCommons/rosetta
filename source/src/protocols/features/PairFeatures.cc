@@ -37,7 +37,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid_io.hpp>
 
 namespace protocols{
 namespace features{
@@ -79,7 +78,7 @@ PairFeatures::write_residue_pairs_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum1("resNum1", new DbInteger());
 	Column resNum2("resNum2", new DbInteger());
 	Column res1_10A_neighbors("res1_10A_neighbors", new DbInteger());
@@ -143,7 +142,7 @@ Size
 PairFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	report_residue_pairs(pose, relevant_residues, struct_id, db_session);
@@ -154,7 +153,7 @@ void
 PairFeatures::report_residue_pairs(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 

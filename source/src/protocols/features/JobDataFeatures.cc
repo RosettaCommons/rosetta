@@ -32,8 +32,6 @@
 
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 //external headers
 #include <cppdb/frontend.h>
@@ -68,7 +66,7 @@ void
 JobDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 
 	using namespace basic::database::schema_generator;
-	Column struct_id("struct_id", new DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+	Column struct_id("struct_id", new DbBigInt(), false /*not null*/, false /*don't autoincrement*/);
 	Column data_key("data_key", new DbText(255));
 
 	utility::vector1<Column> primary_columns;
@@ -107,7 +105,7 @@ core::Size
 JobDataFeatures::report_features(
 		core::pose::Pose const & /*pose */,
 		utility::vector1<bool> const & /*relevant_residues*/,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
 )
 {
@@ -121,7 +119,7 @@ JobDataFeatures::report_features(
 void
 JobDataFeatures::load_into_pose(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		core::pose::Pose & pose
 ){
 	load_string_data(db_session, struct_id, pose);
@@ -130,7 +128,7 @@ JobDataFeatures::load_into_pose(
 }
 
 void JobDataFeatures::delete_record(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session
 	)
 {
@@ -152,7 +150,7 @@ void JobDataFeatures::delete_record(
 
 }
 
-void JobDataFeatures::insert_string_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
+void JobDataFeatures::insert_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 
 	InsertGenerator string_insert("job_string_data");
@@ -161,7 +159,7 @@ void JobDataFeatures::insert_string_rows(boost::uuids::uuid struct_id, utility::
 
 	protocols::jd2::Job::Strings::const_iterator it(job->output_strings_begin());
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 	for(; it != job->output_strings_end(); ++it)
 	{
 
@@ -177,7 +175,7 @@ void JobDataFeatures::insert_string_rows(boost::uuids::uuid struct_id, utility::
 void
 JobDataFeatures::load_string_data(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		core::pose::Pose &
 ){
 	if(!table_exists(db_session, "job_string_data")) return;
@@ -201,7 +199,7 @@ JobDataFeatures::load_string_data(
 	}
 }
 
-void JobDataFeatures::insert_string_string_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
+void JobDataFeatures::insert_string_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 
 	InsertGenerator string_string_insert("job_string_string_data");
@@ -211,7 +209,7 @@ void JobDataFeatures::insert_string_string_rows(boost::uuids::uuid struct_id, ut
 
 	protocols::jd2::Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin());
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 
 	for(; it != job->output_string_string_pairs_end();++it)
 	{
@@ -229,7 +227,7 @@ void JobDataFeatures::insert_string_string_rows(boost::uuids::uuid struct_id, ut
 void
 JobDataFeatures::load_string_string_data(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		core::pose::Pose &
 ){
 	if(!table_exists(db_session, "job_string_string_data")) return;
@@ -253,7 +251,7 @@ JobDataFeatures::load_string_string_data(
 	}
 }
 
-void JobDataFeatures::insert_string_real_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
+void JobDataFeatures::insert_string_real_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 
 	InsertGenerator string_real_insert("job_string_real_data");
@@ -261,7 +259,7 @@ void JobDataFeatures::insert_string_real_rows(boost::uuids::uuid struct_id, util
 	string_real_insert.add_column("data_key");
 	string_real_insert.add_column("data_value");
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 
 	protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
 
@@ -280,7 +278,7 @@ void JobDataFeatures::insert_string_real_rows(boost::uuids::uuid struct_id, util
 void
 JobDataFeatures::load_string_real_data(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		core::pose::Pose &
 ){
 	if(!table_exists(db_session, "job_string_real_data")) return;

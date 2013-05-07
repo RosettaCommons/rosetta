@@ -17,8 +17,6 @@
 
 //External
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -131,7 +129,7 @@ StructureScoresFeatures::write_schema_to_db(
 
 	//******structure_scores******//
 	Column batch_id("batch_id", new DbInteger(), false);
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column score_type_id("score_type_id", new DbInteger(), false);
 	Column score_value("score_value", new DbInteger(), false);
 
@@ -199,7 +197,7 @@ Size
 StructureScoresFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 	insert_structure_score_rows(pose, relevant_residues, struct_id, db_session);
@@ -207,7 +205,7 @@ StructureScoresFeatures::report_features(
 }
 
 void StructureScoresFeatures::delete_record(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session
 ){
 
@@ -261,7 +259,7 @@ void
 StructureScoresFeatures::insert_structure_score_rows(
 	Pose const & pose_in,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ) const {
 
@@ -276,7 +274,7 @@ StructureScoresFeatures::insert_structure_score_rows(
 
 	core::Real total_score= 0.0;
 	Size const batch_id(get_batch_id(struct_id, db_session));
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 	RowDataBaseOP batch_id_data = new RowData<Size>("batch_id",batch_id);
 
 	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){

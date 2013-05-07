@@ -12,6 +12,10 @@
 /// @author Sam DeLuca
 /// @author Matthew O'Meara
 
+#ifdef USEMPI
+#include <mpi.h>
+#endif
+
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
@@ -289,7 +293,7 @@ get_db_session(
 			transaction_mode,
 			chunk_size,
 			option[inout::dbms::readonly],
-			option[inout::dbms::separate_db_per_mpi_process]);
+			db_partition_from_options(db_mode));
 
 	case DatabaseMode::mysql:
 
@@ -300,15 +304,9 @@ get_db_session(
 				"So requesting a readonly connection cannot fullfilled.");
 		}
 
-		if(option[inout::dbms::separate_db_per_mpi_process]){
-			utility_exit_with_message(
-				"The -inout:dbms:separate_db_per_mpi_process flag "
-				"only applies to sqlite3 databases.");
-		}
-
 		if(pq_schema.compare("")){
 			TR.Warning
-				<< "You have specified a postgres schema but using a sqlite3 database. "
+				<< "You have specified a postgres schema but using a mysql database. "
 				<< "To use postgres, please specify -inout:dbms:mode postgres"
 				<< std::endl;
 		}
@@ -323,6 +321,9 @@ get_db_session(
 				"-inout:dbms:host -inout:dbms:user -inout:dbms:password and "
 				"-inout:dbms:port");
 		}
+
+		// Call to get partition performs option validation.
+		db_partition_from_options(db_mode);
 
 		return DatabaseSessionManager::get_instance()->get_session_mysql(
 			db_name,
@@ -343,11 +344,6 @@ get_db_session(
 				"cannot fullfilled.");
 		}
 
-		if(option[inout::dbms::separate_db_per_mpi_process]){
-			utility_exit_with_message(
-				"The -inout:dbms:separate_db_per_mpi_process flag only applies to "
-				"sqlite3 databases.");
-		}
 
 		if( !(
 			option[inout::dbms::host].user() &&
@@ -359,6 +355,9 @@ get_db_session(
 				"-inout:dbms:host -inout:dbms:user -inout:dbms:password "
 				"and -inout:dbms:port");
 		}
+
+		// Call to get partition performs option validation.
+		db_partition_from_options(db_mode);
 
 		return DatabaseSessionManager::get_instance()->get_session_postgres(
 			db_name,
@@ -376,6 +375,79 @@ get_db_session(
 	return 0;
 }
 
+///@
+platform::SSize db_partition_from_options( DatabaseMode::e db_mode )
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	if(option[inout::dbms::separate_db_per_mpi_process] && option[inout::dbms::database_partition].user() )
+	{
+		utility_exit_with_message(
+				"The -inout:dbms:separate_db_per_mpi_process and -inout::dbms::database_partition options are mutually exclusive.");
+	}
+	else if(option[inout::dbms::database_partition].user())
+	{
+		if (option[inout::dbms::database_partition] < 0)
+		{
+			stringstream error;
+			error << "Invalid -inout::dbms::database_partition specified, must be positive integer value: " << option[inout::dbms::database_partition] << std::endl;
+			utility_exit_with_message(error.str());
+		}
+	}
+
+	switch(db_mode)
+	{
+		case DatabaseMode::sqlite3:
+			if (!option[inout::dbms::database_partition].user()) 
+			{
+				return resolve_db_partition(
+						option[inout::dbms::separate_db_per_mpi_process]);
+			}
+			else
+			{
+				return resolve_db_partition(
+					option[inout::dbms::separate_db_per_mpi_process],
+					option[inout::dbms::database_partition]);
+			}
+
+			break;
+
+		case DatabaseMode::mysql:
+		case DatabaseMode::postgres:
+			if(option[inout::dbms::separate_db_per_mpi_process] || option[inout::dbms::database_partition].user() )
+			{
+				utility_exit_with_message(
+					"The -inout:dbms:separate_db_per_mpi_process and -inout::dbms::database_partition flags only apply to "
+					"sqlite3 databases.");
+			}
+
+			break;
+	}
+
+	return -1;
+}
+
+platform::SSize resolve_db_partition(
+		bool partition_by_mpi_process,
+		platform::SSize manual_partition)
+{
+	if(partition_by_mpi_process)
+	{
+#ifdef USEMPI
+		int mpi_rank(0);
+		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+		return mpi_rank;
+#endif
+	}
+
+	if(manual_partition >= 0)
+	{
+		return manual_partition;
+	}
+	
+	return -1;
+}
 
 statement safely_prepare_statement(
 	string const & statement_string,
@@ -547,24 +619,6 @@ safely_read_from_database(
 	}
 }
 
-vector1<boost::uuids::uuid>
-struct_ids_from_tag(
-	sessionOP db_session,
-	string const & tag
-) {
-	string statement_string = "SELECT struct_id FROM structures WHERE tag=?;";
-	statement stmt = safely_prepare_statement(statement_string,db_session);
-	stmt.bind(1,tag);
-	result res = stmt.query();
-
-	vector1<boost::uuids::uuid> uuids;
-	while(res.next()){
-		boost::uuids::uuid uuid;
-		res >> uuid;
-		uuids.push_back(uuid);
-	}
-	return uuids;
-}
 
 bool
 table_exists(
@@ -845,13 +899,8 @@ parse_database_connection(
 		return db_session;
 	}
 
-	utility::sql_database::TransactionMode::e transaction_mode;
-	if(tag->hasOption("transaction_mode")){
-		transaction_mode = utility::sql_database::transaction_mode_from_name(
-			tag->getOption<string>("transaction_mode"));
-	} else {
-		transaction_mode = utility::sql_database::TransactionMode::standard;
-	}
+	utility::sql_database::TransactionMode::e transaction_mode = utility::sql_database::transaction_mode_from_name(
+			tag->getOption<string>("transaction_mode", "standard"));
 
 	Size chunk_size;
 	switch(transaction_mode){
@@ -884,6 +933,7 @@ parse_database_connection(
 	}
 
 	utility::sql_database::DatabaseMode::e database_mode;
+	
 	if(tag->hasOption("database_mode")){
 		database_mode = utility::sql_database::database_mode_from_name(
 			tag->getOption<string>("database_mode"));
@@ -899,6 +949,14 @@ parse_database_connection(
 		database_name = option[dbms::database_name];
 	}
 
+
+	// Parse pq_schema 
+	if(tag->hasOption("database_pq_schema") && (database_mode != utility::sql_database::DatabaseMode::postgres))
+	{
+		TR << "WARNING: You must specify 'database_mode=postgres' ";
+		TR << "to use the 'database_pq_schema' tag." << endl;
+	}
+
 	std::string database_pq_schema;
 	if(tag->hasOption("database_pq_schema")){
 		database_pq_schema = tag->getOption<string>("database_pq_schema");
@@ -906,50 +964,55 @@ parse_database_connection(
 		database_pq_schema = option[dbms::pq_schema];
 	}
 
-	switch(database_mode){
+	
+	// Check for invalid tags
+	if(database_mode != utility::sql_database::DatabaseMode::sqlite3)
+	{
+		if(tag->hasOption("database_separate_db_per_mpi_process"))
+		{
+			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
+			TR << "to use the 'database_separate_db_per_mpi_process' tag." << endl;
+		}
+		
+		if(tag->hasOption("database_partition"))
+		{
+			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
+			TR << "to use the 'database_partition' tag." << endl;
+		}
+		
+		if(tag->hasOption("database_read_only"))
+		{
+			TR << "WARNING: You must specify 'database_mode=sqlite3' ";
+			TR << "to use the 'database_read_only tag." << endl;
+		}
+	}
+	
+	if(database_mode == utility::sql_database::DatabaseMode::sqlite3)
+	{
+		if(tag->hasOption("database_separate_db_per_mpi_process") && tag->hasOption("database_partition"))
+		{
+			TR << "WARNING: 'database_separate_db_per_mpi_process' and 'database_partition' tags are mutually exclusive, using 'database_separate_db_per_mpi_process'." << endl;
+		}
 
-		case utility::sql_database::DatabaseMode::mysql:
-			if(tag->hasOption("database_pq_schema")){
-				TR << "WARNING: You must specify 'database_mode=postgres' ";
-				TR << "to use the 'database_pq_schema' tag." << endl;
-			}
-			break;
-		case utility::sql_database::DatabaseMode::postgres:
-			if(tag->hasOption("database_separate_db_per_mpi_process")){
-				TR << "WARNING: You must specify 'database_mode=sqlite3' ";
-				TR << "to use the 'database_separate_db_per_mpi_process' tag." << endl;
-			}
-			if(tag->hasOption("database_read_only")){
-				TR << "WARNING: You must specify 'database_mode=sqlite3' ";
-				TR << "to use the 'database_read_only' tag." << endl;
-			}
-			break;
+		if(tag->hasOption("database_host")){
+			TR << "WARNING: You must specify either 'database_mode=mysql' ";
+			TR << "or database_mode=postgres' to use the 'database_host' tag." << endl;
+		}
 
-		case utility::sql_database::DatabaseMode::sqlite3:
-			if(tag->hasOption("database_host")){
-				TR << "WARNING: You must specify either 'database_mode=mysql' ";
-				TR << "or database_mode=postgres' to use the 'database_host' tag." << endl;
-			}
+		if(tag->hasOption("database_user")){
+			TR << "WARNING: You must specify either 'database_mode=mysql' ";
+			TR << "or database_mode=postgres' to use the 'database_user' tag." << endl;
+		}
 
-			if(tag->hasOption("database_user")){
-				TR << "WARNING: You must specify either 'database_mode=mysql' ";
-				TR << "or database_mode=postgres' to use the 'database_user' tag." << endl;
-			}
+		if(tag->hasOption("database_password")){
+			TR << "WARNING: You must specify either 'database_mode=mysql' ";
+			TR << "or database_mode=postgres' to use the 'database_password' tag." << endl;
+		}
 
-			if(tag->hasOption("database_password")){
-				TR << "WARNING: You must specify either 'database_mode=mysql' ";
-				TR << "or database_mode=postgres' to use the 'database_password' tag." << endl;
-			}
-
-			if(tag->hasOption("database_port")){
-				TR << "WARNING: You must specify either 'database_mode=mysql' ";
-				TR << "or database_mode=postgres' to use the 'database_port' tag." << endl;
-			}
-			break;
-		default:
-			utility_exit_with_message(
-				"Unrecognized database mode: '" +
-				name_from_database_mode(database_mode) + "'");
+		if(tag->hasOption("database_port")){
+			TR << "WARNING: You must specify either 'database_mode=mysql' ";
+			TR << "or database_mode=postgres' to use the 'database_port' tag." << endl;
+		}
 	}
 
 	switch(database_mode){
@@ -958,7 +1021,9 @@ parse_database_connection(
 				database_mode, transaction_mode, chunk_size,
 				database_name, "", "", "", "", 0,
 				tag->getOption("database_read_only", false),
-				tag->getOption("database_separate_db_per_mpi_process", false));
+				resolve_db_partition(
+					tag->getOption("database_separate_db_per_mpi_process", false),
+					tag->getOption("database_partition", -1)));
 
 		case utility::sql_database::DatabaseMode::mysql:
 		case utility::sql_database::DatabaseMode::postgres:{

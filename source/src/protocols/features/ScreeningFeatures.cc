@@ -67,7 +67,7 @@ std::string ScreeningFeatures::type_name() const
 void ScreeningFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {
 	using namespace basic::database::schema_generator;
-	Column struct_id("struct_id",new DbUUID(),false);
+	Column struct_id("struct_id",new DbBigInt(),false);
 	Column chain_name("chain_id",new DbText,false);
 	Column residue_number("residue_number",new DbInteger(),false);
 	Column name3("name3",new DbText(),false);
@@ -110,7 +110,7 @@ core::Size
 ScreeningFeatures::report_features(
 	core::pose::Pose const & pose,
 	utility::vector1< bool > const & /*relevant_residues*/,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session)
 {
 	InsertGenerator screening_insert("screening_features");
@@ -121,7 +121,7 @@ ScreeningFeatures::report_features(
 	screening_insert.add_column("group_name");
 	screening_insert.add_column("descriptor_data");
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 	RowDataBaseOP chain_id_data = new RowData<std::string>("chain_id",chain_);
 	
 	std::vector<utility::json_spirit::Pair>  descriptor_json_data(get_desriptor_data());

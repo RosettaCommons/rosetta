@@ -15,9 +15,6 @@
 #include <mpi.h> //keep this first
 #endif
 
-//External
-#include <boost/uuid/uuid.hpp>
-
 //basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -360,8 +357,8 @@ void clean_up_database(utility::sql_database::sessionOP & db_session)
 
 	while(res.next())
 	{
-		boost::uuids::uuid struct_id;
-		res >>struct_id;
+		protocols::features::StructureID struct_id;
+		res >> struct_id;
 
 		reporter.delete_pose(db_session,struct_id);
 

@@ -73,13 +73,9 @@ request_data_from_head_node(
 
 void
 send_data_to_head_node(
-  basic::message_listening::listener_tags MPI_ONLY( listener_tag ),
   std::string const & MPI_ONLY( data )
 ){
 #ifdef USEMPI
-  //send a message to the head node that tells jd2 to create a message listener
-  MPI_Send( &listener_tag, 1, MPI_INT, 0/*head node*/, 50 /*RECEIVE_MESSAGE_TAG*/, MPI_COMM_WORLD );
-
   //send a string to be processed by the listener
   utility::send_string_to_node(0/*head node*/, data);
 #endif

@@ -19,7 +19,6 @@
 #include <protocols/features/BetaTurnDetectionFeatures.fwd.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 // Project Headers
 #include <core/types.hh>
@@ -80,7 +79,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & /*relevant_residues*/,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 private:
 	static std::map< std::string, std::string > const & get_conformation_to_turn_type_map();

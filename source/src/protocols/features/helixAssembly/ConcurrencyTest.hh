@@ -26,9 +26,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 
-//External
-#include <boost/uuid/uuid.hpp>
-
 //Devel
 #include <protocols/features/helixAssembly/HelixBundleFeatures.hh>
 #include <protocols/features/helixAssembly/HelicalFragment.hh>
@@ -76,7 +73,7 @@ public:
 	report_features(
 					core::pose::Pose const & pose,
 					utility::vector1<bool> const & relevant_residues,
-					boost::uuids::uuid struct_id,
+					StructureID struct_id,
 					utility::sql_database::sessionOP db_session
 					);
 };

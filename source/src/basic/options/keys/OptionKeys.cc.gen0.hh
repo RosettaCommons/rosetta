@@ -166,6 +166,7 @@ namespace inout { namespace dbms { StringOptionKey const password( "inout:dbms:p
 namespace inout { namespace dbms { IntegerOptionKey const port( "inout:dbms:port" );  } }
 namespace inout { namespace dbms { BooleanOptionKey const readonly( "inout:dbms:readonly" );  } }
 namespace inout { namespace dbms { BooleanOptionKey const separate_db_per_mpi_process( "inout:dbms:separate_db_per_mpi_process" );  } }
+namespace inout { namespace dbms { IntegerOptionKey const database_partition( "inout:dbms:database_partition" );  } }
 namespace inout { namespace dbms { BooleanOptionKey const use_compact_residue_schema( "inout:dbms:use_compact_residue_schema" );  } }
 namespace out { BooleanOptionKey const out( "out" );  }
 namespace out { BooleanOptionKey const overwrite( "out:overwrite" );  }

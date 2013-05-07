@@ -30,7 +30,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid_io.hpp>
 
 namespace protocols{
 namespace features{
@@ -69,7 +68,7 @@ ProteinBackboneTorsionAngleFeatures::write_protein_backbone_torsion_angles_table
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum("resNum", new DbInteger());
 	Column phi("phi", new DbReal());
 	Column psi("psi", new DbReal());
@@ -109,7 +108,7 @@ Size
 ProteinBackboneTorsionAngleFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	std::string statement_string ="INSERT INTO protein_backbone_torsion_angles (struct_id, resNum, phi, psi, omega) VALUES (?,?,?,?,?)";

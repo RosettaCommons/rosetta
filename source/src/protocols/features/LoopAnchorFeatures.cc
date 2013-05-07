@@ -20,8 +20,6 @@
 #include <core/conformation/Conformation.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 // Utility Headers
 #include <numeric/HomogeneousTransform.hh>
@@ -100,7 +98,7 @@ LoopAnchorFeatures::write_loop_anchors_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column residue_begin("residue_begin", new DbInteger());
 	Column residue_end("residue_end", new DbInteger());
 
@@ -139,7 +137,7 @@ LoopAnchorFeatures::write_loop_anchor_transforms_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column residue_begin("residue_begin", new DbInteger());
 	Column residue_end("residue_end", new DbInteger());
 	Column x("x", new DbReal());
@@ -187,7 +185,7 @@ LoopAnchorFeatures::write_loop_anchor_transforms_three_res_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column residue_begin("residue_begin", new DbInteger());
 	Column residue_end("residue_end", new DbInteger());
 	Column x("x", new DbReal());
@@ -265,7 +263,7 @@ Size
 LoopAnchorFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 	string loop_anchors_stmt_string = "INSERT INTO loop_anchors (struct_id, residue_begin, residue_end) VALUES (?,?,?);";
@@ -439,7 +437,7 @@ LoopAnchorFeatures::compute_anchor_transform(
 
 void
 LoopAnchorFeatures::compute_transform_and_write_to_db(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Size begin,
 	Size end,
 	Pose const & pose,

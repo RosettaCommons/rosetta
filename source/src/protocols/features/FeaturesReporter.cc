@@ -14,10 +14,6 @@
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
 
-//External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
-
 // Project Headers
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
@@ -106,10 +102,10 @@ FeaturesReporter::write_schema_to_db(
 Size
 FeaturesReporter::report_features(
 	Pose const & pose,
-	boost::uuids::uuid parent_id,
+	StructureID parent_id,
 	sessionOP db_session
 ){
-	vector1<bool> relevant_residues(true, pose.total_residue());
+	vector1<bool> relevant_residues(pose.total_residue(), true);
 	return report_features(pose, relevant_residues, parent_id, db_session);
 }
 
@@ -122,7 +118,7 @@ Size
 FeaturesReporter::report_features(
 	Pose const & /*pose*/,
 	vector1< bool > const & /*relevant_residues*/,
-	boost::uuids::uuid /*parent uuid*/,
+	StructureID /*parent id*/,
 	sessionOP /*db_session*/
 ){
 	Size dummy_parent_id(0);
@@ -165,7 +161,7 @@ FeaturesReporter::find_tag(
 void
 FeaturesReporter::delete_records_from_table(
 	string const & table_name,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session){
 	stringstream sql;
 	sql << "DELETE FROM " << table_name << " WHERE struct_id = ?;";

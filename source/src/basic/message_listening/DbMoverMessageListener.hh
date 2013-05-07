@@ -31,25 +31,6 @@ class DbMoverMessageListener : public MessageListener{
 public:
 	DbMoverMessageListener();
 
-	///@brief max_batch_id_ should only be set once.  Check ahead of time to avoid
-	/// unnecessary SELECT statements.
-	bool max_batch_id_set()
-	{
-		return initialized_;
-	}
-
-	///@brief set that max batch id.  This is only set if batch_ids_ is empty.
-	///max_batch_id_ is used to ensure that a unique batch_id is chosen when
-	///writing to a database that already has batch(es) stored in it.
-	void set_max_batch_id(numeric::Size max_batch_id)
-	{
-		if(!initialized_)
-		{
-			max_batch_id_ = max_batch_id;
-			initialized_ = true;
-		}
-	}
-
 	///@brief receive the protocol id and batch id from the slave
 	virtual
 	void
@@ -71,8 +52,6 @@ public:
 
 private:
 
-	numeric::Size max_batch_id_;
-	bool initialized_;
 	numeric::Size protocol_id_;
 	std::map<std::string, numeric::Size> batch_ids_;
 

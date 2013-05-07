@@ -16,8 +16,6 @@
 
 //External
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 // Platform Headers
 #include <core/pose/Pose.hh>
@@ -115,7 +113,7 @@ SaltBridgeFeatures::write_salt_bridges_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column don_resNum("don_resNum", new DbInteger());
 	Column acc_id("acc_id", new DbInteger());
 	Column psi("psi", new DbReal());
@@ -173,7 +171,7 @@ Size
 SaltBridgeFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const &,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 

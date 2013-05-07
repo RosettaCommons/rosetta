@@ -8,7 +8,7 @@
         <MOVERS>
 		<SavePoseMover name=save_primary reference_name=primary_structure/>
 		<MinPackMover name=min_pack scorefxn=s task_operations=relevant_chain/>
-                <ReportToDB name=report_features database_name="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" sample_source="MinPack with the score12prime score function" task_operations=relevant_chain>
+                <ReportToDB name=report_features database_name="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" batch_description="MinPack with the score12prime score function" task_operations=relevant_chain>
 
 			<feature name=ScoreTypeFeatures/>
 			<feature name=StructureScoresFeatures scorefxn=s/>

@@ -20,8 +20,6 @@
 #include <core/pose/util.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 // Platform Headers
 #include <core/conformation/Conformation.hh>
@@ -116,7 +114,7 @@ BetaTurnDetectionFeatures::write_beta_turns_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column residue_begin("residue_begin", new DbInteger());
 	Column turn_type("turn_type", new DbText());
 
@@ -154,7 +152,7 @@ Size
 BetaTurnDetectionFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 	string beta_turns_stmt_string = "INSERT INTO beta_turns (struct_id, residue_begin, turn_type) VALUES (?,?,?);";

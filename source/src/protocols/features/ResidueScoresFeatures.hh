@@ -19,7 +19,6 @@
 #include <protocols/features/ResidueScoresFeatures.fwd.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 // Project Headers
 #include <core/types.hh>
@@ -96,7 +95,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 private:
@@ -105,7 +104,7 @@ private:
 	insert_residue_scores_rows(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		boost::uuids::uuid const struct_id,
+		StructureID const struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
@@ -113,7 +112,7 @@ private:
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
 		Size const batch_id,
-		boost::uuids::uuid const struct_id,
+		StructureID const struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
@@ -121,7 +120,7 @@ private:
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
 		Size const batch_id,
-		boost::uuids::uuid const struct_id,
+		StructureID const struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
@@ -129,9 +128,8 @@ private:
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
 		Size const batch_id,
-		boost::uuids::uuid const struct_id,
+		StructureID const struct_id,
 		utility::sql_database::sessionOP db_session);
-
 
 private:
 

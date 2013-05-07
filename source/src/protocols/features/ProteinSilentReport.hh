@@ -19,9 +19,9 @@
 #include <protocols/features/ProteinSilentReport.fwd.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 // Project Headers
+#include <protocols/features/FeaturesReporter.fwd.hh>
 #include <protocols/features/ProtocolFeatures.fwd.hh>
 #include <protocols/features/BatchFeatures.fwd.hh>
 #include <protocols/features/PdbDataFeatures.fwd.hh>
@@ -35,6 +35,7 @@
 #include <protocols/features/ResidueConformationFeatures.fwd.hh>
 #include <protocols/features/JobDataFeatures.fwd.hh>
 #include <protocols/features/DatabaseFilters.fwd.hh>
+#include <protocols/features/FeaturesReporterFactory.fwd.hh>
 
 // Platform Headers
 #include <core/types.hh>
@@ -84,13 +85,13 @@ public:
 	void
 	load_pose(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		core::pose::Pose & pose);
 		
 	void
 	load_pose(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		std::set<core::Size> residue_numbers,
 		core::pose::Pose & pose);
 
@@ -104,11 +105,11 @@ public:
 
 	void delete_pose(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid const & struct_id);
+		StructureID const & struct_id);
 
 	core::Size get_protocol_id() const;
-    
-    core::Size get_batch_id() const;
+
+	core::Size get_batch_id() const;
 
 
 private:
@@ -131,11 +132,11 @@ private:
 	DatabaseFilterOP database_filter_;
 
 	core::Size protocol_id_;
-    core::Size batch_id_;
+	core::Size batch_id_;
 	StructureMap structure_map_;
 
 	protocols::features::ProtocolFeaturesOP protocol_features_;
-    protocols::features::BatchFeaturesOP batch_features_;
+	protocols::features::BatchFeaturesOP batch_features_;
 	protocols::features::PdbDataFeaturesOP pdb_data_features_;
 	protocols::features::StructureFeaturesOP structure_features_;
 	protocols::features::StructureScoresFeaturesOP structure_scores_features_;
@@ -146,7 +147,8 @@ private:
 	protocols::features::ResidueFeaturesOP residue_features_;
 	protocols::features::ResidueConformationFeaturesOP residue_conformation_features_;
 	protocols::features::JobDataFeaturesOP job_data_features_;
-
+	protocols::features::FeaturesReporterFactory * features_reporter_factory_;
+	utility::vector1< protocols::features::FeaturesReporterOP > features_reporters_;
 };
 
 } //namespace

@@ -37,32 +37,22 @@ public:
 	void add_column(std::string const & column_name);
 	void add_row(std::vector<RowDataBaseOP> const & row);
 
-	void write_to_database(utility::sql_database::sessionOP db_session);
+  void write_to_database(utility::sql_database::sessionOP db_session);
+  void write_to_database(utility::sql_database::sessionOP db_session, long long & last_sequence_id, std::string const & sequence_name);
 
 private:
-	void write_to_database_sqlite(utility::sql_database::sessionOP db_session);
+	void write_to_database_sequential(utility::sql_database::sessionOP db_session);
+	void write_to_database_chunked(utility::sql_database::sessionOP db_session, platform::Size chunksize);
 
-	void
-	write_to_database_mysql(
-		utility::sql_database::sessionOP db_session,
-		platform::Size chunk_size = 5000
-	);
-
-	void
-	write_to_database_postgres(
-		utility::sql_database::sessionOP db_session,
-		platform::Size chunk_size = 300
-	);
-
-	std::string make_column_list() const;
+  void bind_row_data(cppdb::statement & statement, platform::Size row_start_index, platform::Size row_end_index);
 
 private:
 	std::string table_name_;
+
 	std::vector<std::vector<RowDataBaseOP> > row_list_;
+  std::vector<std::string> column_list_;
+
 	std::map<std::string,platform::Size> column_index_map_;
-	std::map<platform::Size,std::string> index_column_map_;
-
-
 };
 
 }

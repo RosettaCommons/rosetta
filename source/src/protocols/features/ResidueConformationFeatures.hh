@@ -20,7 +20,6 @@
 #include <protocols/features/ResidueConformationFeatures.fwd.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 // Project Headers
 #include <core/types.hh>
@@ -65,38 +64,38 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
 	delete_record(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP);
 
 	void
 	load_into_pose(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		core::pose::Pose & pose);
 
 	void
 	load_conformation(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		core::pose::Pose & pose);
 
 private:
 	void
 	set_coords_for_residue(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		core::Size seqpos,
 		core::pose::Pose & pose);
 
 	void
 	set_coords_for_residue_from_compact_schema(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		core::Size seqpos,
 		core::pose::Pose & pose);
 

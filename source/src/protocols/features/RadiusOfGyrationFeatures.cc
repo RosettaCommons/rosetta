@@ -30,8 +30,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 namespace protocols{
 namespace features{
@@ -68,7 +66,7 @@ RadiusOfGyrationFeatures::write_radius_of_gyration_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column radius_of_gyration("radius_of_gyration", new DbReal());
 
 	Columns primary_key_columns;
@@ -99,7 +97,7 @@ Size
 RadiusOfGyrationFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 	RG_Energy_Fast rg;

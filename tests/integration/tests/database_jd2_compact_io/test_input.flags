@@ -5,7 +5,7 @@
  -file
   -extra_res_fa ZN1.params 7cpa.params
  -dbms 
-  -struct_ids 7CFEFABFD0714D5193405FB66DA681C7
+  -struct_ids 1
 -inout
  -dbms:database_name structures.db3
  -dbms:use_compact_residue_schema

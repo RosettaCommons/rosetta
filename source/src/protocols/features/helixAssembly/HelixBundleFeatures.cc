@@ -19,9 +19,6 @@
 #include <core/scoring/sasa.hh>
 #include <core/pose/util.hh>
 
-//External
-#include <boost/uuid/uuid.hpp>
-
 //Devel
 #include <protocols/features/helixAssembly/HelixBundleFeatures.hh>
 #include <protocols/features/helixAssembly/HelicalFragment.hh>
@@ -100,8 +97,8 @@ HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_sess
 {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID(), false /*not null*/, false /*don't autoincrement*/);
-	
+	Column struct_id("struct_id", new DbBigInt(), false /*not null*/, false /*don't autoincrement*/);
+
 	/******helix_bundles******/
 	Column bundle_id("bundle_id", new DbInteger(), false /*not null*/, false /*autoincrement*/);
 //	Column bundle_id("bundle_id", new DbInteger(), false /*not null*/, true /*autoincrement*/);
@@ -207,7 +204,7 @@ HelixBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_sess
 }
 
 //Select all helical segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
-utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helix_fragments(boost::uuids::uuid struct_id, sessionOP db_session)
+utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helix_fragments(StructureID struct_id, sessionOP db_session)
 {
 	std::string select_string =
 		"SELECT\n"
@@ -275,14 +272,14 @@ utility::vector1<HelicalFragmentOP> HelixBundleFeatures::get_helix_fragments(boo
 	return all_helix_fragments;
 }
 
-utility::vector1<FragmentPair>
+PairMap
 HelixBundleFeatures::get_helix_pairs(
 	core::pose::Pose const & pose,
 	utility::vector1<HelicalFragmentOP> helix_fragments
 ){
 	core::Real dist_sq_cutoff = pow(helix_cap_dist_cutoff_, 2);
 	
-	utility::vector1<FragmentPair> helix_pairs;
+	PairMap pair_map;
 	for(core::Size i=1; i<=helix_fragments.size(); ++i)
 	{
 		for(core::Size j=i+1; j<=helix_fragments.size(); ++j)
@@ -321,12 +318,12 @@ HelixBundleFeatures::get_helix_pairs(
 			helix_pair.end_1_distance = std::sqrt(end_1_dist_sq);
 			helix_pair.end_2_distance = std::sqrt(end_2_dist_sq);
 			
-			TR << "end 1 distance (" << helix_pair.fragment_1->start() << "," << helix_pair.fragment_2->start()
-				<< "): " << helix_pair.end_1_distance << std::endl;
-				
-			TR << "end 2 distance (" << helix_pair.fragment_1->end() << "," << helix_pair.fragment_2->end()
-				<< "): " << helix_pair.end_2_distance << std::endl;
-			
+//			TR << "end 1 distance (" << helix_pair.fragment_1->start() << "," << helix_pair.fragment_2->start()
+//				<< "): " << helix_pair.end_1_distance << std::endl;
+//				
+//			TR << "end 2 distance (" << helix_pair.fragment_1->end() << "," << helix_pair.fragment_2->end()
+//				<< "): " << helix_pair.end_2_distance << std::endl;
+
 			//check to see per-residue fa_attr and percentage of interacting residues are within cutoff
 			calc_fa_energy(pose, helix_pair);
 			if( helix_pair.fa_attr > -(min_per_residue_fa_attr_) ||
@@ -343,10 +340,11 @@ HelixBundleFeatures::get_helix_pairs(
 //				continue;
 //			}
 			
-			helix_pairs.push_back(helix_pair);
+			std::pair<core::Size, core::Size> pair_index = std::make_pair(i, j);
+			pair_map.insert(std::make_pair(pair_index, helix_pair));
 		}
 	}
-	return helix_pairs;
+	return pair_map;
 }
 
 ///@brief calculate the shared fa_attr for each pair of helices
@@ -449,26 +447,26 @@ HelixBundleFeatures::calc_crossing_angles(
 		closest_point_on_line(frag_1->com(), frag_1->principal_component(),
 		pose.residue(frag_1->start()).atom("N").xyz());
 		
-	TR << "P0: " << p0.x() << "," << p0.y() << "," << p0.z() << endl;
+//	TR << "P0: " << p0.x() << "," << p0.y() << "," << p0.z() << endl;
 
 	numeric::xyzVector<core::Real> p1 =
 		closest_point_on_line(frag_1->com(), frag_1->principal_component(),
 		pose.residue(frag_1->end()).atom("CA").xyz());
 		
-	TR << "P1: " << p1.x() << "," << p1.y() << "," << p1.z() << endl;
-	
+//	TR << "P1: " << p1.x() << "," << p1.y() << "," << p1.z() << endl;
+
 	numeric::xyzVector<core::Real> p2 =
 		closest_point_on_line(frag_2->com(), frag_2->principal_component(),
 		pose.residue(frag_2->end()).atom("CA").xyz());
 		
-	TR << "P2: " << p2.x() << "," << p2.y() << "," << p2.z() << endl;
-	
+//	TR << "P2: " << p2.x() << "," << p2.y() << "," << p2.z() << endl;
+
 	numeric::xyzVector<core::Real> p3 =
 		closest_point_on_line(frag_2->com(), frag_2->principal_component(),
 		pose.residue(frag_2->start()).atom("N").xyz());
 		
-	TR << "P3: " << p3.x() << "," << p3.y() << "," << p3.z() << endl;
-	
+//	TR << "P3: " << p3.x() << "," << p3.y() << "," << p3.z() << endl;
+
 	helix_pair.crossing_angle =
 		numeric::dihedral_degrees(p0,p1,p2,p3);
 
@@ -551,78 +549,6 @@ HelixBundleFeatures::record_helix_sasas(
 //	}
 }
 
-///@brief ensure that the set of fragments does not contain
-///overlapping residues.
-bool
-HelixBundleFeatures::valid_frag_set(
-	std::set<HelicalFragmentOP> const & frag_set
-){
-//	if(frag_set[1]->reversed())
-//	{
-//		return false;
-//	}
-
-	for(std::set<HelicalFragmentOP>::const_iterator it_i=frag_set.begin();
-		it_i != frag_set.end(); ++it_i)
-	{
-		for(std::set<HelicalFragmentOP>::const_iterator it_j=it_i;
-			++it_j != frag_set.end(); /**/)
-		{
-			if(((*it_i)->seq_start() >= (*it_j)->seq_start() &&
-				(*it_i)->seq_start() <= (*it_j)->seq_end()) ||
-				
-			   ((*it_i)->seq_end() >= (*it_j)->seq_start() &&
-				(*it_i)->seq_end() <= (*it_j)->seq_end()))
-			{
-				return false;
-			}
-		}
-	}
-	return true;
-}
-
-
-bool
-HelixBundleFeatures::check_cap_distances(
-	core::pose::Pose const & pose,
-	utility::vector1<HelicalFragmentOP> const & frag_set
-){
-	core::Real dist_sq_cutoff = pow(helix_cap_dist_cutoff_, 2);
-	for(core::Size i=1; i<=frag_set.size(); ++i){
-			
-		for(core::Size j=i+1; j<=frag_set.size(); ++j){
-			
-			core::Real helix_start_dist_sq = pose.residue(frag_set[i]->start()).atom("CA").xyz().distance_squared(
-				pose.residue(frag_set[j]->start()).atom("CA").xyz());
-			
-			core::Real helix_end_dist_sq = pose.residue(frag_set[i]->end()).atom("CA").xyz().distance_squared(
-				pose.residue(frag_set[j]->end()).atom("CA").xyz());
-				
-			if(helix_start_dist_sq > dist_sq_cutoff || helix_end_dist_sq > dist_sq_cutoff){
-				return false;
-			}
-		}
-	}
-
-	for(core::Size i=1; i<=frag_set.size(); ++i){
-			
-		for(core::Size j=i+1; j<=frag_set.size(); ++j){
-			
-			core::Real helix_start_dist_sq = pose.residue(frag_set[i]->start()).atom("CA").xyz().distance_squared(
-				pose.residue(frag_set[j]->start()).atom("CA").xyz());
-			
-			core::Real helix_end_dist_sq = pose.residue(frag_set[i]->end()).atom("CA").xyz().distance_squared(
-				pose.residue(frag_set[j]->end()).atom("CA").xyz());
-				
-			if(helix_start_dist_sq > dist_sq_cutoff || helix_end_dist_sq > dist_sq_cutoff){
-				return false;
-			}
-		}
-	}
-	
-	return true;
-}
-
 void
 HelixBundleFeatures::calc_pc_and_com(
 	core::pose::Pose const & pose,
@@ -666,24 +592,19 @@ core::Size
 HelixBundleFeatures::report_features(
 	core::pose::Pose const & pose,
 	utility::vector1<bool> const &,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session
 ){
 	utility::vector1<HelicalFragmentOP> all_helix_fragments = get_helix_fragments(struct_id, db_session);
-	if(all_helix_fragments.size()<bundle_size_)
-		return 0;
+	if(all_helix_fragments.size()<bundle_size_){ return 0; }
 	TR << "Total helical fragments of size " << helix_size_ << ": " << all_helix_fragments.size() << std::endl;
 	
 	//Non-const pose to score
 	core::pose::Pose pose_copy(pose);
 	scorefxn_->score(pose_copy);
-	
-	utility::vector1<FragmentPair> helix_pairs = get_helix_pairs(pose_copy, all_helix_fragments);
-	if(helix_pairs.size()==0)
-		return 0;
-		
-	TR << "Total valid fragment pairs: " << helix_pairs.size() << std::endl;
-
+	PairMap pair_map = get_helix_pairs(pose_copy, all_helix_fragments);
+	if(pair_map.size()==0){ return 0; };
+	TR << "Total valid fragment pairs: " << pair_map.size() << std::endl;
 	
 	//Insert statements
 	string bundle_insert =
@@ -703,126 +624,156 @@ HelixBundleFeatures::report_features(
 		"VALUES (?,?,?,?,?,?,?,?,?,?)";
 	statement pair_insert_stmt(basic::database::safely_prepare_statement(pair_insert, db_session));
 	
-	//number of pairs we need is bundle size choose 2
-	core::Size num_factorial=1;
-	core::Size denom_factorial=1;
-	for(core::Size temp=bundle_size_; temp > 1; temp--)
-	{
-		num_factorial=num_factorial*temp;
-		if(temp <= bundle_size_-2)
-		{
-			denom_factorial=denom_factorial*temp;
-		}
-	}
-	core::Size n_dims = num_factorial/(2*denom_factorial);
-	
-	utility::vector1<core::Size> dim_sizes(n_dims, helix_pairs.size());
+	utility::vector1<core::Size> dim_sizes(bundle_size_, all_helix_fragments.size());
+	bool done=false;
 	core::Size bundle_counter=0;
 	core::Size helix_counter=0;
 	core::Size pair_counter=0;
+	core::Size tracker=1;
 	for ( utility::LexicographicalIterator lex( dim_sizes ); ! lex.at_end(); ++lex )
 	{
-		//Only evaluate when lex[i] < lex[i+1] to avoid double counting
-		for(core::Size i=2; i<=n_dims; ++i)
-		{
-			while(lex[i-1] >= lex[i])
-			{
-				if(lex.at_end())
-				{
-					return 0; //we are done
+		if(lex[1] != tracker){
+			TR << "first lexico iterator is at: " << lex[1] << " of " << all_helix_fragments.size() << std::endl;
+			tracker=lex[1];
+		}
+		//Only evaluate sets of fragments that are non-overlapping. and non duplicates (anytime lex[i] > lex[j] it's a duplicate)
+		for(core::Size i=1; i<=bundle_size_; ++i){
+			for(core::Size j=i+1; j<=bundle_size_; ++j){
+				while( lex[i] > lex[j] || overlapping(all_helix_fragments[lex[i]], all_helix_fragments[lex[j]]) ){
+					if(lex.at_end()){
+						done=true;
+						break;
+					}
+					lex.continue_at_dimension(j);
+					i=1;
+					j=i+1;
 				}
-				lex.continue_at_dimension(i);
 			}
 		}
-			
-		utility::vector1<FragmentPair> cur_frag_pairs;
-		std::set<HelicalFragmentOP> cur_frag_set;
-		for(core::Size i=1; i<=bundle_size_; ++i)
-		{
-			FragmentPair cur_frag_pair = helix_pairs [ lex[i] ];
-			cur_frag_pairs.push_back(cur_frag_pair);
-			cur_frag_set.insert(cur_frag_pair.fragment_1);
-			cur_frag_set.insert(cur_frag_pair.fragment_2);
-		}
-		
-		if(valid_frag_set(cur_frag_set))
-		{
-			++bundle_counter;
-			//record the dSasa for each helix
-//			record_helix_sasas(pose, cur_frag_set);
-			
-			bundle_insert_stmt.bind(1,bundle_counter);
-			bundle_insert_stmt.bind(2,struct_id);
-			bundle_insert_stmt.bind(3,bundle_size_);
-			bundle_insert_stmt.bind(4,helix_size_);
-
-//			bundle_insert_stmt.bind(1,struct_id);
-//			bundle_insert_stmt.bind(2,bundle_size_);
-//			bundle_insert_stmt.bind(3,helix_size_);
-			basic::database::safely_write_to_database(bundle_insert_stmt);
-			
-			//core::Size bundle_id(bundle_insert_stmt.sequence_last("helix_bundles_bundle_id_seq"));
-			
-			std::map<HelicalFragmentOP, core::Size> helix_ids;
-			for(std::set<HelicalFragmentOP>::const_iterator it=cur_frag_set.begin(); it != cur_frag_set.end();
-				++it)
-			{
-				++helix_counter;
-				helix_insert_stmt.bind(1,helix_counter);
-				helix_insert_stmt.bind(2,bundle_counter);
-				helix_insert_stmt.bind(3,struct_id);
-				helix_insert_stmt.bind(4,(*it)->seq_start());
-				helix_insert_stmt.bind(5,(*it)->seq_end());
-				helix_insert_stmt.bind(6,(*it)->reversed());
-				helix_insert_stmt.bind(7,(*it)->sasa());
-
-//				helix_insert_stmt.bind(1,bundle_id);
-//				helix_insert_stmt.bind(2,struct_id);
-//				helix_insert_stmt.bind(3,(*it)->seq_start());
-//				helix_insert_stmt.bind(4,(*it)->seq_end());
-//				helix_insert_stmt.bind(5,(*it)->reversed());
-//				helix_insert_stmt.bind(6,(*it)->sasa());
-				basic::database::safely_write_to_database(helix_insert_stmt);
-				
-				core::Size helix_id(bundle_insert_stmt.sequence_last("bundle_helices_helix_id_seq"));
-				helix_ids.insert(std::make_pair(*it, helix_id));
+		if (!done) {
+			//check to see if each helix is involved in at least two pairs
+			utility::vector1<core::Size> num_partners(bundle_size_,0);
+			utility::vector1<FragmentPair> fragment_pairs;
+			for(core::Size i=1; i<=bundle_size_; ++i){
+				for(core::Size j=i+1; j<=bundle_size_; ++j){
+					PairMap::const_iterator frag_pair_it = pair_map.find(std::make_pair(lex[i], lex[j]));
+					if(frag_pair_it != pair_map.end()){
+//						++bundle_counter;
+						num_partners[i]++;
+						num_partners[j]++;
+						fragment_pairs.push_back(frag_pair_it->second);
+					}
+				}
 			}
-			
-			for(utility::vector1<FragmentPair>::const_iterator it=cur_frag_pairs.begin(); it!=cur_frag_pairs.end(); ++it)
-			{
-				++pair_counter;
-			
-				core::Size frag_1_id = helix_ids[it->fragment_1];
-				core::Size frag_2_id = helix_ids[it->fragment_2];
+			bool valid = true;
+			for(core::Size i=1; i<=bundle_size_; ++i){
+				if(num_partners[i] < 2){
+					valid = false;
+				}
+			}
+			if(valid){
+				//********************//
+				//****Write Bundle****//
+				//********************//
+				++bundle_counter;
+				//record the dSasa for each helix
+//				record_helix_sasas(pose, cur_frag_set);
 				
-				pair_insert_stmt.bind(1,pair_counter);
-				pair_insert_stmt.bind(2,struct_id);
-				pair_insert_stmt.bind(3,bundle_counter);
-				pair_insert_stmt.bind(4,frag_1_id);
-				pair_insert_stmt.bind(5,frag_2_id);
-				pair_insert_stmt.bind(6,it->fa_attr);
-				pair_insert_stmt.bind(7,it->fa_fraction);
-				pair_insert_stmt.bind(8,it->crossing_angle);
-				pair_insert_stmt.bind(9,it->end_1_distance);
-				pair_insert_stmt.bind(10,it->end_2_distance);
+				bundle_insert_stmt.bind(1,bundle_counter);
+				bundle_insert_stmt.bind(2,struct_id);
+				bundle_insert_stmt.bind(3,bundle_size_);
+				bundle_insert_stmt.bind(4,helix_size_);
+
+//				bundle_insert_stmt.bind(1,struct_id);
+//				bundle_insert_stmt.bind(2,bundle_size_);
+//				bundle_insert_stmt.bind(3,helix_size_);
+				basic::database::safely_write_to_database(bundle_insert_stmt);
+//				//core::Size bundle_id(bundle_insert_stmt.sequence_last("helix_bundles_bundle_id_seq"));
 				
-//				pair_insert_stmt.bind(1,struct_id);
-//				pair_insert_stmt.bind(2,bundle_id);
-//				pair_insert_stmt.bind(3,frag_1_id);
-//				pair_insert_stmt.bind(4,frag_2_id);
-//				pair_insert_stmt.bind(5,it->fa_attr);
-//				pair_insert_stmt.bind(6,it->fa_fraction);
-//				pair_insert_stmt.bind(7,it->crossing_angle);
-//				pair_insert_stmt.bind(8,it->end_1_distance);
-//				pair_insert_stmt.bind(9,it->end_2_distance);
-				basic::database::safely_write_to_database(pair_insert_stmt);
+				//*********************//
+				//****Write Helices****//
+				//*********************//
+				std::map<HelicalFragmentOP, core::Size> helix_ids;
+				for(core::Size i=1; i<=bundle_size_; ++i)
+				{
+					HelicalFragmentOP cur_fragment = all_helix_fragments[lex[i]];
+					++helix_counter;
+					helix_insert_stmt.bind(1,helix_counter);
+					helix_insert_stmt.bind(2,bundle_counter);
+					helix_insert_stmt.bind(3,struct_id);
+					helix_insert_stmt.bind(4,cur_fragment->seq_start());
+					helix_insert_stmt.bind(5,cur_fragment->seq_end());
+					helix_insert_stmt.bind(6,cur_fragment->reversed());
+					helix_insert_stmt.bind(7,cur_fragment->sasa());
+
+//					helix_insert_stmt.bind(1,bundle_id);
+//					helix_insert_stmt.bind(2,struct_id);
+//					helix_insert_stmt.bind(3,cur_fragment->seq_start());
+//					helix_insert_stmt.bind(4,cur_fragment->seq_end());
+//					helix_insert_stmt.bind(5,cur_fragment->reversed());
+//					helix_insert_stmt.bind(6,cur_fragment->sasa());
+					basic::database::safely_write_to_database(helix_insert_stmt);
+					
+//					core::Size helix_id(bundle_insert_stmt.sequence_last("bundle_helices_helix_id_seq"));
+					helix_ids.insert(std::make_pair(cur_fragment, helix_counter));
+				}
+				
+				//********************//
+				//****Write Pairs****//
+				//********************//
+				for(core::Size i=1; i<=fragment_pairs.size(); ++i){
+					++pair_counter;
+					
+					FragmentPair const & cur_pair = fragment_pairs[i];
+					
+					core::Size frag_1_id = helix_ids[cur_pair.fragment_1];
+					core::Size frag_2_id = helix_ids[cur_pair.fragment_2];
+					
+					pair_insert_stmt.bind(1,pair_counter);
+					pair_insert_stmt.bind(2,struct_id);
+					pair_insert_stmt.bind(3,bundle_counter);
+					pair_insert_stmt.bind(4,frag_1_id);
+					pair_insert_stmt.bind(5,frag_2_id);
+					pair_insert_stmt.bind(6,cur_pair.fa_attr);
+					pair_insert_stmt.bind(7,cur_pair.fa_fraction);
+					pair_insert_stmt.bind(8,cur_pair.crossing_angle);
+					pair_insert_stmt.bind(9,cur_pair.end_1_distance);
+					pair_insert_stmt.bind(10,cur_pair.end_2_distance);
+					
+	//				pair_insert_stmt.bind(1,struct_id);
+	//				pair_insert_stmt.bind(2,bundle_id);
+	//				pair_insert_stmt.bind(3,frag_1_id);
+	//				pair_insert_stmt.bind(4,frag_2_id);
+	//				pair_insert_stmt.bind(5,cur_pair.fa_attr);
+	//				pair_insert_stmt.bind(6,cur_pair.fa_fraction);
+	//				pair_insert_stmt.bind(7,cur_pair.crossing_angle);
+	//				pair_insert_stmt.bind(8,cur_pair.end_1_distance);
+	//				pair_insert_stmt.bind(9,cur_pair.end_2_distance);
+					basic::database::safely_write_to_database(pair_insert_stmt);
+				}
 			}
 		}
 	}
-	TR << "Found " << bundle_counter << "total bundles";
+	TR << "Found " << bundle_counter << " total bundles" << std::endl;
 	return 0;
 }
 
+bool
+HelixBundleFeatures::overlapping(
+	HelicalFragmentOP const & fragment_1,
+	HelicalFragmentOP const & fragment_2
+){
+	if((fragment_1->seq_start() >= fragment_2->seq_start() &&
+		fragment_1->seq_start() <= fragment_2->seq_end()) ||
+		
+	   (fragment_1->seq_end() >= fragment_2->seq_start() &&
+		fragment_1->seq_end() <= fragment_2->seq_end()))
+	{
+		return true;
+	}
+	return false;
+}
+	
 } //namespace helixAssembly
 } //namespace features
 } //namespace protocols

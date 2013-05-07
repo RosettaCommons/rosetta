@@ -31,7 +31,6 @@ request_data_from_head_node(
 
 void
 send_data_to_head_node(
-	listener_tags listener_tag,
 	std::string const & data);
 
 std::string

@@ -23,9 +23,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 
-//External
-#include <boost/uuid/uuid.hpp>
-
 //Devel
 #include <protocols/features/helixAssembly/HelixBundleFeatures.hh>
 #include <protocols/features/helixAssembly/HelicalFragment.hh>
@@ -59,8 +56,8 @@ namespace helixAssembly {
 	ConcurrencyTest::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 
 		using namespace basic::database::schema_generator;
-
-		PrimaryKey id(Column("id", new DbUUID(), false));
+		
+		PrimaryKey id(Column("id", new DbBigInt(), false));
 		Column random_number(Column("description", new DbInteger()));
 
 		Schema concurrency_test("concurrency_test", id);
@@ -75,7 +72,7 @@ namespace helixAssembly {
 	ConcurrencyTest::report_features(
 		core::pose::Pose const &,
 		utility::vector1<bool> const &,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
 	){
 

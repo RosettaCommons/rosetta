@@ -170,7 +170,8 @@ option.add( basic::options::OptionKeys::inout::dbms::user, "default username for
 option.add( basic::options::OptionKeys::inout::dbms::password, "default password for database server access" );
 option.add( basic::options::OptionKeys::inout::dbms::port, "default port for database server access" );
 option.add( basic::options::OptionKeys::inout::dbms::readonly, "open sqlite3 database in read-only mode by default" ).def(false);
-option.add( basic::options::OptionKeys::inout::dbms::separate_db_per_mpi_process, "In MPI mode,, open a separate sqlite3 database for each process with extension _<mpi_rank>" ).def(false);
+option.add( basic::options::OptionKeys::inout::dbms::separate_db_per_mpi_process, "In MPI mode, open a separate sqlite3 database for each process with extension _<mpi_rank> and write partitioned schema to that database." ).def(false);
+option.add( basic::options::OptionKeys::inout::dbms::database_partition, "Open a sepearte sqlite3 database with the extension _<partition> and write a partitioned schema to that database." ).def(-1);
 option.add( basic::options::OptionKeys::inout::dbms::use_compact_residue_schema, "Store all the atoms for a residue in a binary silent file style blob.  Sacrifices analyzability for scalability. If you don't know if you want this you probably don't" ).def(false);
 option.add( basic::options::OptionKeys::out::out, "Ouput option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::out::overwrite, "Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)" );

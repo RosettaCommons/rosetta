@@ -15,8 +15,6 @@
 #include <protocols/features/ResidueSecondaryStructureFeatures.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 #include <boost/assign/list_of.hpp>
 
 // Project Headers
@@ -93,7 +91,7 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 	insert_or_ignore("dssp_codes", dssp_cols, list_of("' '")("'Irregular'"), db_session);
 
 	/******residue_secondary_structure******/
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column resNum("resNum", new DbInteger(), false);
 	Column dssp("dssp", new DbText(1));
 
@@ -134,7 +132,7 @@ Size
 ResidueSecondaryStructureFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 	// compute dssp

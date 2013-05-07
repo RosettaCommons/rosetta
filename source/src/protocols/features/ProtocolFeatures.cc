@@ -26,6 +26,8 @@
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
 #include <basic/database/schema_generator/Schema.hh>
+#include <basic/database/insert_statement_generator/InsertGenerator.hh>
+#include <basic/database/insert_statement_generator/RowData.hh>
 
 // Utility Headers
 #include <utility/io/izstream.hh>
@@ -60,12 +62,13 @@ using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
+using basic::database::insert_statement_generator::InsertGenerator;
+using basic::database::insert_statement_generator::RowData;
+using basic::database::insert_statement_generator::RowDataBaseOP;
 
 ProtocolFeatures::ProtocolFeatures(){}
 
-ProtocolFeatures::ProtocolFeatures( ProtocolFeatures const & ) :
-	FeaturesReporter()
-{}
+ProtocolFeatures::ProtocolFeatures( ProtocolFeatures const & ){}
 
 ProtocolFeatures::~ProtocolFeatures(){}
 
@@ -73,13 +76,11 @@ string
 ProtocolFeatures::type_name() const { return "ProtocolFeatures"; }
 
 void
-ProtocolFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+ProtocolFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session, core::Size protocol_id) const{
 	using namespace basic::database::schema_generator;
 
-	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::dbms::mode]);
-	bool protocol_id_mode = basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user();
-
-	if(protocol_id_mode){
+	//if protocol id is set, don't autoincrement
+	if(protocol_id){
 
 		Column protocol_id("protocol_id", new DbInteger());
 		Schema protocols("protocols", PrimaryKey(protocol_id));
@@ -92,6 +93,7 @@ ProtocolFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 		protocols.write(db_session);
 	}
 
+	//if protocol id is not set, don't autoincrement
 	else{
 
 		Column protocol_id("protocol_id", new DbInteger(), false /*not null*/, true /*autoincrement*/);
@@ -143,29 +145,30 @@ ProtocolFeatures::report_features(
 		script = script_buf.str();
 	}
 
-	//if -out:database_protocol_id is specified we need to make sure the protocol hasn't already been specified
-	std::string statement_string =
-		"SELECT\n"
-		"	count(*)\n"
-		"FROM\n"
-		"	protocols\n"
-		"WHERE\n"
-		"	protocols.protocol_id = ?;";
-	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	stmt.bind(1,protocol_id);
-
-	TR << "Checking for existing protocol entry with given id" << std::endl;
-	cppdb::result res(basic::database::safely_read_from_database(stmt));
-	if(res.next()) {
-		core::Size selected = 0;
-		res >> selected;
-		if(selected != 0) {
-			return protocol_id;
-		}
-	}
-
 	cppdb::statement insert_statement;
 	if(protocol_id) {
+		//Check to make sure a protocol with the same id doesn't already exist (This should only happen if you are manually setting the protocol_id
+		//through the options system or the ReportToDB tag in RosettaScripts
+		std::string statement_string =
+			"SELECT\n"
+			"	count(*)\n"
+			"FROM\n"
+			"	protocols\n"
+			"WHERE\n"
+			"	protocols.protocol_id = ?;";
+		cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+		stmt.bind(1,protocol_id);
+
+		TR << "Checking for existing protocol entry with given id" << std::endl;
+		cppdb::result res(basic::database::safely_read_from_database(stmt));
+		if(res.next()) {
+			core::Size selected = 0;
+			res >> selected;
+			if(selected != 0) {
+				return protocol_id;
+			}
+		}
+
 		TR << "Writing to protocols table with given protocol id: " << protocol_id << std::endl;
 		std::string insert_string("INSERT INTO protocols (protocol_id, specified_options, command_line, svn_url, svn_version, script) VALUES (?,?,?,?,?,?);");
 		insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
@@ -187,12 +190,14 @@ ProtocolFeatures::report_features(
 		insert_statement.bind(5,script);
 	}
 
-	basic::database::safely_write_to_database(insert_statement);
+	//Protocol features doesn't use safely_write_to_database due to special handling of thrown cppdb exceptions
+	//basic::database::safely_write_to_database(insert_statement);
+	insert_statement.exec();
 	if(protocol_id) {
 		return protocol_id;
 	} else {
-		core::Size protocol_id = insert_statement.sequence_last("protocols_protocol_id_seq");
-		return protocol_id;
+		core::Size new_protocol_id = insert_statement.sequence_last("protocols_protocol_id_seq");
+		return new_protocol_id;
 	}
 }
 

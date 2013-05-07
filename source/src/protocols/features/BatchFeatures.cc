@@ -14,6 +14,7 @@
 
 // Unit Headers
 #include <protocols/features/BatchFeatures.hh>
+#include <protocols/features/FeaturesReporter.fwd.hh>
 
 // Project Headers
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
@@ -61,9 +62,7 @@ using cppdb::result;
 
 BatchFeatures::BatchFeatures(){}
 
-BatchFeatures::BatchFeatures( BatchFeatures const & ) :
-FeaturesReporter()
-{}
+BatchFeatures::BatchFeatures( BatchFeatures const & ){}
 
 BatchFeatures::~BatchFeatures(){}
 
@@ -71,28 +70,50 @@ string
 BatchFeatures::type_name() const { return "BatchFeatures"; }
 
 void
-BatchFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
+BatchFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session, core::Size batch_id) const{
 
 	using namespace basic::database::schema_generator;
 
-	PrimaryKey batch_id(
-		Column("batch_id", new DbInteger(), false /*not null*/, false /*autoincrement*/));
+	if(batch_id){
+		PrimaryKey batch_id(Column("batch_id", new DbInteger()));
 
-	ForeignKey protocol_id(
-		Column("protocol_id", new DbInteger()),
-		"protocols",
-		"protocol_id",
-		true /*defer*/);
+		ForeignKey protocol_id(
+			Column("protocol_id", new DbInteger()),
+			"protocols",
+			"protocol_id",
+			true /*defer*/);
 
-	Column name(Column("name", new DbText()));
-	Column description(Column("description", new DbText()));
+		Column name(Column("name", new DbText()));
+		Column description(Column("description", new DbText()));
 
-	Schema batches("batches", batch_id);
-	batches.add_foreign_key(protocol_id);
-	batches.add_column(name);
-	batches.add_column(description);
+		Schema batches("batches", batch_id);
+		batches.add_foreign_key(protocol_id);
+		batches.add_column(name);
+		batches.add_column(description);
 
-	batches.write(db_session);
+		batches.write(db_session);
+
+	}
+	else{
+		PrimaryKey batch_id(
+			Column("batch_id", new DbInteger(), false /*not null*/, true /*autoincrement*/));
+
+		ForeignKey protocol_id(
+			Column("protocol_id", new DbInteger()),
+			"protocols",
+			"protocol_id",
+			true /*defer*/);
+
+		Column name(Column("name", new DbText()));
+		Column description(Column("description", new DbText()));
+
+		Schema batches("batches", batch_id);
+		batches.add_foreign_key(protocol_id);
+		batches.add_column(name);
+		batches.add_column(description);
+
+		batches.write(db_session);
+	}
 }
 
 utility::vector1<std::string>
@@ -116,26 +137,63 @@ BatchFeatures::report_features(
 	std::string description,
 	sessionOP db_session
 ){
-	TR.Debug
-		<< "Writing to batches table with:" << std::endl
-		<< "\tbatch_id '" << batch_id << "'" << std::endl
-		<< "\tprotocol_id '" << protocol_id << "'" << std::endl
-		<< "\tname '" << name << "'" << std::endl
-		<< "\tdescription '" << description << "'" << std::endl;
+	cppdb::statement insert_statement;
+	if(batch_id){
 
+		//Check to make sure an existing batch with the same id doesn't exist
+		std::string statement_string =
+			"SELECT\n"
+			"	count(*)\n"
+			"FROM\n"
+			"	batches\n"
+			"WHERE\n"
+			"	batch_id = ?;";
+		cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+		stmt.bind(1,protocol_id);
 
-	using namespace boost::assign;
-	std::vector<string> column_names = list_of("batch_id")("protocol_id")("name")("description");
+		TR << "Checking for existing batches entry with given id" << std::endl;
+		cppdb::result res(basic::database::safely_read_from_database(stmt));
+		if(res.next()) {
+			core::Size selected = 0;
+			res >> selected;
+			if(selected != 0) {
+				return protocol_id;
+			}
+		}
 
-	stringstream batch_id_str;
-	batch_id_str << batch_id;
+		TR << "Writing to batches table with given batch id: " << batch_id << std::endl;
+		std::string insert_string("INSERT INTO batches (batch_id, protocol_id, name, description) VALUES (?,?,?,?);");
+		insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
+		insert_statement.bind(1,batch_id);
+		insert_statement.bind(2,protocol_id);
+		insert_statement.bind(3,name);
+		insert_statement.bind(4,description);
 
-	stringstream protocol_id_str;
-	protocol_id_str << protocol_id;
+	} else {
+		TR << "No batch ID, generating one automagically" << std::endl;
+		std::string insert_string("INSERT INTO batches (protocol_id, name, description) VALUES (?,?,?);");
+		insert_statement = basic::database::safely_prepare_statement(insert_string,db_session);
+		insert_statement.bind(1,protocol_id);
+		insert_statement.bind(2,name);
+		insert_statement.bind(3,description);
+	}
 
-	std::vector<string> values =
-		list_of(batch_id_str.str())(protocol_id_str.str())("'"+name+"'")("'"+description+"'");
-	basic::database::insert_or_ignore("batches", column_names, values, db_session);
+	//Batch features doesn't use safely_write_to_database due to special handling of thrown cppdb exceptions
+	//basic::database::safely_write_to_database(insert_statement);
+	insert_statement.exec();
+	if(batch_id) {
+		return batch_id;
+	} else {
+		core::Size new_batch_id = insert_statement.sequence_last("batches_batch_id_seq");
+		return new_batch_id;
+	}
+
+//	TR.Debug
+//		<< "Writing to batches table with:" << std::endl
+//		<< "\tbatch_id '" << batch_id << "'" << std::endl
+//		<< "\tprotocol_id '" << protocol_id << "'" << std::endl
+//		<< "\tname '" << name << "'" << std::endl
+//		<< "\tdescription '" << description << "'" << std::endl;
 
 	return 0;
 }

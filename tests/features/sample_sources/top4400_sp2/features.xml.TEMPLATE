@@ -7,7 +7,7 @@
  	</TASKOPERATIONS>		
         <MOVERS>
 		<SavePoseMover name=init_struct reference_name=init_struct/>
-		<ReportToDB name=features_reporter database_name="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" sample_source="%(sample_source_description)s">
+		<ReportToDB name=features_reporter database_name="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" batch_description="%(sample_source_description)s">
 			<feature name=ScoreTypeFeatures/>
 			<feature name=StructureScoresFeatures scorefxn=s/>
 			<feature name=PoseCommentsFeatures/>

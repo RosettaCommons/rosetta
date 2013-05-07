@@ -15,8 +15,6 @@
 #include <protocols/features/PoseConformationFeatures.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 // Project Headers
 #include <core/chemical/AA.hh>
@@ -111,7 +109,7 @@ PoseConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP db
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+	Column struct_id("struct_id", new DbBigInt(), false /*not null*/, false /*don't autoincrement*/);
 
 	/******pose_conformations******/
 	Schema pose_conformations("pose_conformations");
@@ -174,7 +172,7 @@ Size
 PoseConformationFeatures::report_features(
 	Pose const & pose_orig,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 	vector1< Size > residue_indices;
@@ -194,12 +192,11 @@ PoseConformationFeatures::report_features(
 Size
 PoseConformationFeatures::report_features_implementation(
 	Pose const & pose,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 	FoldTree const & fold_tree(pose.conformation().fold_tree());
 	//assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
-	//cppdb::transaction transact_guard(*db_session);
 
 	InsertGenerator fold_tree_insert("fold_trees");
 	fold_tree_insert.add_column("struct_id");
@@ -210,7 +207,7 @@ PoseConformationFeatures::report_features_implementation(
 	fold_tree_insert.add_column("label");
 	fold_tree_insert.add_column("keep_stub_in_residue");
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 
 	for (FoldTree::const_iterator
 			it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it) {
@@ -310,7 +307,7 @@ PoseConformationFeatures::report_features_implementation(
 }
 
 void PoseConformationFeatures::delete_record(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 
@@ -334,7 +331,7 @@ void PoseConformationFeatures::delete_record(
 void
 PoseConformationFeatures::load_into_pose(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose
 ){
 	load_sequence(db_session, struct_id, pose);
@@ -346,7 +343,7 @@ PoseConformationFeatures::load_into_pose(
 void
 PoseConformationFeatures::load_sequence(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose
 ){
 
@@ -370,7 +367,7 @@ PoseConformationFeatures::load_sequence(
 
 	if(!res.next()){
 		stringstream error_message;
-		error_message << "Unable to locate structure with struct_id '" << to_string(struct_id) << "'";
+		error_message << "Unable to locate structure with struct_id '" << struct_id << "'";
 		utility_exit_with_message(error_message.str());
 	}
 	string annotated_sequence;
@@ -388,7 +385,7 @@ PoseConformationFeatures::load_sequence(
 void
 PoseConformationFeatures::load_fold_tree(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose
 ){
 
@@ -434,7 +431,7 @@ PoseConformationFeatures::load_fold_tree(
 void
 PoseConformationFeatures::load_jumps(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose
 ){
 	if(!basic::database::table_exists(db_session, "jumps")){
@@ -484,7 +481,7 @@ PoseConformationFeatures::load_jumps(
 void
 PoseConformationFeatures::load_chain_endings(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose
 ){
 

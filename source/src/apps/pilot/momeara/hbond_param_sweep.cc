@@ -584,11 +584,11 @@ public:
 
 
 #ifdef DB_SQLITE3
-		ReportToDB report_to_db_mover
-			("ReportToDB",
-			 database_fname,
-			 sample_source,
-			 scfxn);
+		ReportToDB report_to_db_mover(
+			database_fname,
+			"hbond_parameter_sweep",
+			sample_source,
+			scfxn);
 #endif // DB_SQLITE3
 
 
@@ -812,9 +812,9 @@ public:
 		string const & database_fname) const
 	{
 		ScoreFunctionOP scfxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
-		ReportToDB report_to_db_mover
-			("ReportToDB",
+		ReportToDB report_to_db_mover(
 			 database_fname,
+			 "hbond_parameter_sweep",
 			 sample_source,
 			 scfxn);
 

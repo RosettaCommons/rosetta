@@ -46,7 +46,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid_io.hpp>
 
 // C++ Headers
 #include <cmath>
@@ -88,7 +87,6 @@ using utility::vector1;
 using utility::sql_database::sessionOP;
 using utility::tools::make_vector;
 using cppdb::statement;
-using boost::uuids::uuid;
 
 ResidueScoresFeatures::ResidueScoresFeatures() :
 	scfxn_(getScoreFunction())
@@ -126,7 +124,7 @@ ResidueScoresFeatures::write_residue_scores_1b_table_schema(
 	using namespace basic::database::schema_generator;
 
 	Column batch_id("batch_id", new DbInteger());
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum("resNum", new DbInteger());
 	Column score_type_id("score_type_id", new DbInteger());
 	Column score_value("score_value", new DbReal());
@@ -172,7 +170,7 @@ ResidueScoresFeatures::write_residue_scores_2b_table_schema(
 	using namespace basic::database::schema_generator;
 
 	Column batch_id("batch_id", new DbInteger());
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum1("resNum1", new DbInteger());
 	Column resNum2("resNum2", new DbInteger());
 	Column score_type_id("score_type_id", new DbInteger());
@@ -229,7 +227,7 @@ ResidueScoresFeatures::write_residue_scores_lr_2b_table_schema(
 	using namespace basic::database::schema_generator;
 
 	Column batch_id("batch_id", new DbInteger());
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum1("resNum1", new DbInteger());
 	Column resNum2("resNum2", new DbInteger());
 	Column score_type_id("score_type_id", new DbInteger());
@@ -313,7 +311,7 @@ Size
 ResidueScoresFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	Pose pose_copy(pose);
@@ -354,7 +352,7 @@ void
 ResidueScoresFeatures::insert_residue_scores_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 
@@ -396,7 +394,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
 	Size const batch_id,
-	uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ) {
 
@@ -412,7 +410,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 	insert_onebody.add_column("context_dependent");
 
 	RowDataBaseOP batch_id_data(new RowData<Size>("batch_id", batch_id));
-	RowDataBaseOP struct_id_data(new RowData<uuid>("struct_id", struct_id));
+	RowDataBaseOP struct_id_data(new RowData<StructureID>("struct_id", struct_id));
 
 	EnergyMap emap;
 
@@ -476,7 +474,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
 	Size batch_id,
-	uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ) {
 
@@ -500,7 +498,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 	insert_twobody.add_column("context_dependent");
 
 	RowDataBaseOP batch_id_data(new RowData<Size>("batch_id", batch_id));
-	RowDataBaseOP struct_id_data(new RowData<uuid>("struct_id", struct_id));
+	RowDataBaseOP struct_id_data(new RowData<StructureID>("struct_id", struct_id));
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
@@ -585,7 +583,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
 	Size batch_id,
-	uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ) {
 
@@ -603,7 +601,7 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 	insert_twobody_longrange.add_column("context_dependent");
 
 	RowDataBaseOP batch_id_data(new RowData<Size>("batch_id", batch_id));
-	RowDataBaseOP struct_id_data(new RowData<uuid>("struct_id", struct_id));
+	RowDataBaseOP struct_id_data(new RowData<StructureID>("struct_id", struct_id));
 
 	EnergyMap emap;
 

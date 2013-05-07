@@ -35,7 +35,6 @@
 #include <utility/vector1.hh>
 
 // Boost Headers
-#include <boost/uuid/uuid.hpp>
 
 // C++ Headers
 #include <string>
@@ -52,9 +51,9 @@ public:
 	ReportToDB(std::string const & name);
 
 	ReportToDB(
-		std::string const & name,
 		utility::sql_database::sessionOP db_session,
-		std::string const & sample_source,
+		std::string const & batch_name,
+		std::string const & batch_description,
 		bool use_transactions=true,
 		core::Size cache_size=2000);
 
@@ -73,7 +72,26 @@ public:
 	virtual std::string get_name() const { return "ReportToDB"; }
 
 	void
-	parse_sample_source_tag_item(
+	set_batch_name(
+		std::string const & batch_name);
+
+	std::string
+	get_batch_name() const;
+
+	void
+	set_batch_description(
+		std::string const & batch_description);
+
+	std::string
+	get_batch_description() const;
+
+
+	void
+	parse_batch_description_tag_item(
+		utility::tag::TagPtr const tag);
+
+	void
+	parse_batch_id_tag_item(
 		utility::tag::TagPtr const tag);
 
 	void
@@ -100,10 +118,10 @@ public:
 
 	void
 	parse_remove_xray_virt_tag_item(
-		utility::tag::TagPtr const tag);	
-	
+		utility::tag::TagPtr const tag);
+
 	void
-	parse_name_tag_item(
+	parse_batch_name_tag_item(
 		utility::tag::TagPtr const tag);
 
 	void
@@ -131,44 +149,29 @@ public:
 		Pose & pose
 	) const;
 
-	///@brief Add the defined features reporters to the
-	///'features_reporters' table in the database
-	void
-	write_features_reporters_table() const;
-
-	///@brief Link the defined features reporters to the batch of
-	///structures extracted with this invocation of the ReportToDB mover
-	void
-	write_batch_reports_table() const;
-
-	///@brief write tables linking the batches table with the features
-	///datababase
-	void
-	write_linking_tables() const;
-
 	void
 	apply(
 		Pose& pose);
 
-	boost::uuids::uuid
+	StructureID
 	report_structure_features(
 		utility::vector1<bool> const & relevant_residues) const;
 
 	void
 	report_features(
 		core::pose::Pose const & pose,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::vector1<bool> const & relevant_residues) const;
 
 private:
 	utility::sql_database::sessionOP db_session_;
-	std::string sample_source_;
-	std::string name_;
+	std::string batch_name_;
+	std::string batch_description_;
 
 	bool use_transactions_;
 
 	core::Size cache_size_;
-	
+
 	bool remove_xray_virt_;
 
 	core::Size protocol_id_;

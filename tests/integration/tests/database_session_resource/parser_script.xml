@@ -3,7 +3,7 @@
 	        <s weights=score12prime/>
 	</SCOREFXNS>
 	<MOVERS>
-		<ReportToDB name=report_scores resource_description=database_session>
+		<ReportToDB name=report_scores resource_description=database_session batch_description="Test using database_session resource">
 			<feature name=ScoreTypeFeatures/>
 			<feature name=StructureScoresFeatures scorefxn=score12/>
 		</ReportToDB>

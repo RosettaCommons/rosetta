@@ -40,12 +40,11 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 #define foreach BOOST_FOREACH
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/uuid/string_generator.hpp>
 
 
 // C++ headers
@@ -73,7 +72,6 @@ using utility::file::FileName;
 using utility::vector1;
 using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::sessionOP;
-using boost::uuids::uuid;
 using cppdb::result;
 
 
@@ -189,16 +187,15 @@ DatabaseJobInputter::set_struct_ids_from_strings(
 utility::vector1<string> const & struct_id_strings){
 
 	for(core::Size i=1; i<=struct_id_strings.size(); ++i){
-		boost::uuids::string_generator gen;
 		try{
-			boost::uuids::uuid struct_id = gen(struct_id_strings[i]);
+			StructureID struct_id = boost::lexical_cast<StructureID>(struct_id_strings[i]);
 			tag_structures_[struct_id_strings[i]] = struct_id;
 		}
 		catch(...){
 			stringstream err_msg;
 			err_msg
 				<< "Unable to convert the struct_id '" << struct_id_strings[i]
-				<< "' to a valid uuid, it should be of the form XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX or XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX where each 'X' is in [0..9a..f]" << endl;
+				<< "' to a valid structure id. It should a valid integer value." << endl;
 			utility_exit_with_message(err_msg.str());
 		}
 	}
@@ -207,8 +204,8 @@ utility::vector1<string> const & struct_id_strings){
 /// @details The specified struct_ids indicate which structures should be
 /// used.  If no ids are specified, then all will be used.  Unless a tag column
 /// is specified in the SQL statement, the job name (and
-/// consequently, the file output name) will be an ASCII hexadecimal representation
-/// of the struct_id (a boost UUID). If a tag column is given, then the file name will
+/// consequently, the file output name) will be an integer representation
+/// of the struct_id. If a tag column is given, then the file name will
 /// be the tag associated with the given row.
 void
 DatabaseJobInputter::set_struct_ids_from_sql(
@@ -244,7 +241,7 @@ DatabaseJobInputter::set_struct_ids_from_sql(
 
 	if(res.find_column("struct_id") != -1){
 		while(res.next()){
-			boost::uuids::uuid struct_id;
+			StructureID struct_id;
 			res.fetch("struct_id", struct_id);
 
 			std::string tag;
@@ -255,7 +252,7 @@ DatabaseJobInputter::set_struct_ids_from_sql(
 				}
 			}
 			else{
-				tag = to_string(struct_id);
+				tag = boost::lexical_cast<std::string>(struct_id);
 			}
 			tag_structures_[tag] = struct_id;
 
@@ -294,7 +291,7 @@ DatabaseJobInputter::pose_from_job(
 		sessionOP db_session(
 			basic::database::get_db_session(database_name_, database_pq_schema_));
 
-		boost::uuids::uuid struct_id = tag_structures_[tag];
+		StructureID struct_id = tag_structures_[tag];
 
 		if(!tag_residues_.size()){
 			protein_silent_report_->load_pose(db_session, struct_id, pose);
@@ -347,9 +344,9 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 			}
 		}
 		while(res.next()){
-			boost::uuids::uuid struct_id;
+			StructureID struct_id;
 			res >> struct_id;
-			tag_structures_[to_string(struct_id)]=struct_id;
+			tag_structures_[boost::lexical_cast<std::string>(struct_id)]=struct_id;
 		}
 		tr << tag_structures_.size() << " struct_ids found." << endl;
 	}
@@ -370,7 +367,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::Jobs &
 		<< "fill list with " << tag_structures_.size()
 		<< " InnerJob Objects" << endl;
 
-	for(std::map<std::string, boost::uuids::uuid>::const_iterator iter=tag_structures_.begin(); iter!=tag_structures_.end(); ++iter){
+	for(std::map<std::string, StructureID>::const_iterator iter=tag_structures_.begin(); iter!=tag_structures_.end(); ++iter){
 		inner_jobs.push_back(new protocols::jd2::InnerJob(iter->first, nstruct));
 	}
 

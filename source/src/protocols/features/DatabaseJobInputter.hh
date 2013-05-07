@@ -26,6 +26,7 @@
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/features/ProteinSilentReport.fwd.hh>
+#include <protocols/features/FeaturesReporter.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -36,7 +37,6 @@
 #include <set>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 namespace protocols {
 namespace features {
@@ -81,7 +81,7 @@ public:
 	void
 	set_scorefunction(core::scoring::ScoreFunctionOP scorefunction );
 
-	/// @brief set struct_ids from a list of strings of hex-uuid representations
+	/// @brief set struct_ids from a list of strings of integer representations
 	void
 	set_struct_ids_from_strings(
 	utility::vector1<std::string> const & struct_id_strings);
@@ -117,7 +117,7 @@ private:
 	std::string database_name_;
 	std::string database_pq_schema_;
 	core::Size input_protocol_id_;
-	std::map< std::string, boost::uuids::uuid > tag_structures_;
+	std::map< std::string, StructureID > tag_structures_;
 	std::map< std::string, std::set< core::Size > > tag_residues_;
 }; // DatabaseJobInputter
 

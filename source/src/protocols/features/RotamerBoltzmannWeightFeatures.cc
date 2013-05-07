@@ -34,7 +34,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid_io.hpp>
 
 // C++ Headers
 #include <sstream>
@@ -99,7 +98,7 @@ RotamerBoltzmannWeightFeatures::write_rotamer_boltzmann_weight_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum("resNum", new DbInteger());
 	Column boltzmann_weight("boltzmann_weight", new DbReal());
 
@@ -157,7 +156,7 @@ Size
 RotamerBoltzmannWeightFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 

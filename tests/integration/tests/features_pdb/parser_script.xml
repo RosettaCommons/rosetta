@@ -1,6 +1,6 @@
 <ROSETTASCRIPTS>
 	<MOVERS>
-		<ReportToDB name=features_reporter database_name="features_IntegrationTest.db3" sample_source="Test the extracting PDB specific information.">
+		<ReportToDB name=features_reporter database_name="features_IntegrationTest.db3" batch_description="Test the extracting PDB specific information.">
 			<feature name=ResidueFeatures/>
 			<feature name=PdbDataFeatures/>
 			<feature name=UnrecognizedAtomFeatures/>

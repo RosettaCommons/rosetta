@@ -36,7 +36,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid_io.hpp>
 
 namespace protocols{
 namespace features{
@@ -79,7 +78,7 @@ ProteinBackboneAtomAtomPairFeatures::write_protein_backbone_atom_atom_pairs_tabl
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum1("resNum1", new DbInteger());
 	Column resNum2("resNum2", new DbInteger());
 	Column N_N_dist("N_N_dist", new DbReal());
@@ -181,7 +180,7 @@ Size
 ProteinBackboneAtomAtomPairFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	TenANeighborGraph const & tenA(pose.energies().tenA_neighbor_graph());

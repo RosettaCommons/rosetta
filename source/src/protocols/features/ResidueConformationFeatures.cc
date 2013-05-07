@@ -16,7 +16,6 @@
 #include <protocols/features/ResidueConformationFeatures.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 // Project Headers
 #include <core/chemical/AA.hh>
@@ -49,7 +48,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid_io.hpp>
 
 // C++ Headers
 #include <cmath>
@@ -94,7 +92,7 @@ ResidueConformationFeatures::write_schema_to_db(utility::sql_database::sessionOP
 	using namespace basic::database::schema_generator;
 
 	//******nonprotein_residue_conformation******//
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column seqpos("seqpos", new DbInteger(), false);
 	Column phi("phi", new DbDouble(), false);
 	Column psi("psi", new DbDouble(), false);
@@ -196,7 +194,7 @@ Size
 ResidueConformationFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 	//check to see if this structure is ideal
@@ -248,7 +246,7 @@ ResidueConformationFeatures::report_features(
 	compact_residue_insert.add_column("atom_count");
 	compact_residue_insert.add_column("coord_data");
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		if(!relevant_residues[i]) continue;
 
@@ -326,7 +324,7 @@ ResidueConformationFeatures::report_features(
 
 void
 ResidueConformationFeatures::delete_record(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 
@@ -347,7 +345,7 @@ ResidueConformationFeatures::delete_record(
 void
 ResidueConformationFeatures::load_into_pose(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose
 ){
 	load_conformation(db_session, struct_id, pose);
@@ -356,7 +354,7 @@ ResidueConformationFeatures::load_into_pose(
 void
 ResidueConformationFeatures::load_conformation(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose
 ){
 	if(!table_exists(db_session, "nonprotein_residue_conformation")) return;
@@ -465,7 +463,7 @@ ResidueConformationFeatures::load_conformation(
 //This should be factored out into a non-member function.
 void ResidueConformationFeatures::set_coords_for_residue(
 		sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		Size seqpos,
 		Pose & pose
 ){
@@ -502,7 +500,7 @@ void ResidueConformationFeatures::set_coords_for_residue(
 void
 ResidueConformationFeatures::set_coords_for_residue_from_compact_schema(
 	utility::sql_database::sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	core::Size seqpos,
 	core::pose::Pose & pose
 ) {

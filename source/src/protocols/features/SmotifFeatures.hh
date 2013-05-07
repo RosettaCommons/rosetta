@@ -19,9 +19,6 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/SmotifFeatures.fwd.hh>
 
-//External
-#include <boost/uuid/uuid.hpp>
-
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
@@ -82,7 +79,7 @@ public:
 
 	utility::vector1<SecondaryStructureSegment>
 	get_ss_segments(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	/* Undefined, commenting out to fix PyRosetta build  numeric::xyzVector<core::Real>
@@ -93,7 +90,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
 		);
 };

@@ -41,7 +41,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid_io.hpp>
 
 // C++ Headers
 #include <cmath>
@@ -110,7 +109,7 @@ ResidueTotalScoresFeatures::write_residue_total_scores_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum("resNum", new DbInteger());
 	Column score_value("score_value", new DbReal());
 
@@ -167,7 +166,7 @@ Size
 ResidueTotalScoresFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	insert_residue_total_scores_rows(pose, relevant_residues, struct_id, db_session );
@@ -180,7 +179,7 @@ void
 ResidueTotalScoresFeatures::insert_residue_total_scores_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ) const {
 	if(!scfxn_->energy_method_options().hbond_options().decompose_bb_hb_into_pair_energies()){

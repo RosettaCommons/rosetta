@@ -4,7 +4,7 @@
 	</SCOREFXNS>		
 	<MOVERS>
 		<SavePoseMover name=init_struct reference_name=init_struct/>
-		<ReportToDB name=features_reporter database_name="features_SAMPLE_SOURCE_ID.db3" sample_source="SAMPLE_SOURCE_DESCRIPTION">
+		<ReportToDB name=features_reporter database_name="features_SAMPLE_SOURCE_ID.db3" batch_description="SAMPLE_SOURCE_DESCRIPTION">
 			<feature name=ScoreTypeFeatures/>
 			<feature name=StructureScoresFeatures scorefxn=s/>
 			<feature name=PoseCommentsFeatures/>

@@ -19,7 +19,6 @@
 #include <protocols/features/LoopAnchorFeatures.fwd.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 #include <cppdb/frontend.h>
 
 // Utility Headers
@@ -80,7 +79,7 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & /*relevant_residues*/,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
     void
@@ -108,7 +107,7 @@ private:
 	
 	void
 	compute_transform_and_write_to_db(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		core::Size begin,
 		core::Size end,
 		core::pose::Pose const & pose,

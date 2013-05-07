@@ -19,21 +19,19 @@
 
 #include <fstream>
 
+#include <numeric/random/random.hh>
+
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/sql_database/types.hh>
 
 #include <protocols/features/helixAssembly/ConcurrencyTest.hh>
 
-// Boost Headers
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
-
 class DatabaseIOBenchmark : public PerformanceBenchmark
 {
 public:
 	utility::sql_database::sessionOP db_session_;
+	protocols::features::StructureFeatures structure_feature_;
 	protocols::features::helixAssembly::ConcurrencyTest test_feature_;
 
 	DatabaseIOBenchmark(std::string name) : PerformanceBenchmark(name) {};
@@ -50,9 +48,7 @@ public:
 
 		core::pose::Pose pose;
 
-		boost::uuids::basic_random_generator<numeric::random::RandomGenerator>
-		uuids_rng(numeric::random::RG);
-		boost::uuids::uuid struct_id = uuids_rng();
+		StructureID struct_id = numeric::random::random_range(0, INT_MAX);
 
 		test_feature_.report_features(pose, struct_id, db_session_);
 	};

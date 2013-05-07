@@ -28,10 +28,6 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/model_quality/rms.hh>
 
-//External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/string_generator.hpp>
-
 //C++
 #include <string>
 #include <map>
@@ -64,9 +60,9 @@ BundlePairRmsdWorkUnit::run(){
 		TR << it->first << ", " << it->second << endl;
 	}
 
-	boost::uuids::string_generator gen;
-	boost::uuids::uuid struct_id_1 = gen(row_map_["struct_id_1"]);
-	boost::uuids::uuid struct_id_2 = gen(row_map_["struct_id_2"]);
+	
+  core::Size struct_id_1 = string2int(row_map_["struct_id_1"]);
+	core::Size struct_id_2 = string2int(row_map_["struct_id_2"]);
 
 	core::Size pair_id_1 = string2int(row_map_["pair_id_1"]);
 

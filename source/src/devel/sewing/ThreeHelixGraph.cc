@@ -27,8 +27,8 @@
 #include <basic/database/sql_utils.hh>
 
 //Boost
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
+
+
 
 namespace devel {
 namespace sewing {
@@ -69,7 +69,7 @@ ThreeHelixGraph::populate_graph(
 	core::Size prev_bundle_id=0;
 	while(nodes_res.next())
 	{
-		boost::uuids::uuid struct_id;
+		protocols::features::StructureID struct_id;
 		core::Size bundle_id, node_id;
 		core::Size helix_1_id, helix_1_begin, helix_1_end;
 		core::Size helix_2_id, helix_2_begin, helix_2_end;

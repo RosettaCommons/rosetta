@@ -18,7 +18,6 @@
 #include <protocols/features/JobDataFeatures.fwd.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 //platform headers
 #include <protocols/jd2/Job.fwd.hh>
@@ -53,33 +52,33 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1<bool> const & relevant_residues,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 
 	void
 	load_into_pose(
 		utility::sql_database::sessionOP db_session,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		core::pose::Pose & pose
 	);
 
 	void delete_record(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 private:
-	void insert_string_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
+	void insert_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
 
-	void insert_string_string_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
+	void insert_string_string_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
 
-	void insert_string_real_rows(boost::uuids::uuid struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
+	void insert_string_real_rows(StructureID struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
 
-	void load_string_data(utility::sql_database::sessionOP  db_session, boost::uuids::uuid struct_id, core::pose::Pose & pose);
+	void load_string_data(utility::sql_database::sessionOP  db_session, StructureID struct_id, core::pose::Pose & pose);
 
-	void load_string_string_data(utility::sql_database::sessionOP  db_session, boost::uuids::uuid struct_id, core::pose::Pose & pose);
+	void load_string_string_data(utility::sql_database::sessionOP  db_session, StructureID struct_id, core::pose::Pose & pose);
 
-	void load_string_real_data(utility::sql_database::sessionOP  db_session, boost::uuids::uuid struct_id, core::pose::Pose & pose);
+	void load_string_real_data(utility::sql_database::sessionOP  db_session, StructureID struct_id, core::pose::Pose & pose);
 };
 
 }

@@ -4,7 +4,7 @@
 	</SCOREFXNS>
 	<MOVERS>
 	        <SetupForSymmetry name="setup_symm" resource_description=symmdef/>
-		<ReportToDB name="report_scores" resource_description=scores_db sample_source="Demo DatabaseResourceLocator by reporting symmetric scores">
+		<ReportToDB name="report_scores" resource_description=scores_db batch_description="Demo DatabaseResourceLocator by reporting symmetric scores">
 			<feature name=ScoreTypeFeatures/>
 			<feature name=StructureScoresFeatures scorefxn=s/>
 		</ReportToDB>

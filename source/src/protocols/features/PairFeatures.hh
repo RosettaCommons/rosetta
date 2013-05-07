@@ -19,7 +19,6 @@
 #include <protocols/features/PairFeatures.fwd.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -69,14 +68,14 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	void
 	report_residue_pairs(
 		core::pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues,
-		boost::uuids::uuid const struct_id,
+		StructureID const struct_id,
 		utility::sql_database::sessionOP db_session);
 
 };

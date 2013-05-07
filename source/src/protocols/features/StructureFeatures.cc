@@ -41,10 +41,7 @@
 #include <cppdb/frontend.h>
 
 // Boost Headers
-#include <boost/uuid/uuid.hpp>
 #ifndef __native_client__
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
 #include <boost/lexical_cast.hpp>
 #endif
 
@@ -52,6 +49,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <limits>
 
 //Basic Headers
 #include <basic/Tracer.hh>
@@ -98,8 +96,26 @@ StructureFeatures::write_schema_to_db(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	//Don't autoincrement the struct_id because it is a UUID generated here
-	Column struct_id("struct_id", new DbUUID(), false /*not null*/, false /*don't autoincrement*/);
+	TR.Debug << "Writing StructureFeatures schema." << std::endl;
+
+	Column struct_id("struct_id", new DbBigInt(), false /*not null*/, true);
+
+	if (db_session->is_db_partitioned())
+	{
+		// If database is partitioned struct_id prefix (32 high bits in structure id) should be
+		// set to the database partition identifier.
+		//
+		// Set autoincrement base value to bit shifted partition id.
+		runtime_assert(db_session->get_db_partition() >= 0 && db_session->get_db_partition() < std::numeric_limits<uint32_t>::max());
+
+		StructureID structure_prefix = db_session->get_db_partition();
+		structure_prefix = structure_prefix << 32;
+
+		TR.Debug << "Setting struct_id autoincrement prefix for partitioned DB. Partition: " << db_session->get_db_partition() << " Prefix: " << structure_prefix << std::endl;
+
+		struct_id = Column("struct_id", new DbBigInt(), false /*not null*/, true, structure_prefix + 1);
+	}
+
 	Column batch_id("batch_id", new DbInteger());
 	Column tag("tag", new DbText(255));
 	Column input_tag("input_tag", new DbText());
@@ -137,7 +153,7 @@ StructureFeatures::features_reporter_dependencies() const {
 
 
 //@details missing struct_id and input/output tags
-boost::uuids::uuid
+StructureID
 StructureFeatures::report_features(
 	vector1< bool > const & relevant_residues,
 	Size batch_id,
@@ -145,14 +161,14 @@ StructureFeatures::report_features(
 ){
 	string const output_tag(protocols::jd2::JobDistributor::get_instance()->current_output_name());
 	string const input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
-	boost::uuids::uuid struct_id(
+	StructureID struct_id(
 		report_features(relevant_residues, batch_id,
 			db_session, output_tag, input_tag));
 	return struct_id;
 }
 
 //@details missing struct_id and input/output tags
-boost::uuids::uuid
+StructureID
 StructureFeatures::report_features(
 	vector1< bool > const &,
 	Size batch_id,
@@ -160,27 +176,27 @@ StructureFeatures::report_features(
 	string const & tag,
 	string const & input_tag
 ){
-	boost::uuids::uuid struct_id;
+
 #ifndef __native_client__
-	boost::uuids::basic_random_generator<numeric::random::RandomGenerator>
-		uuids_rng(numeric::random::RG);
-	struct_id = uuids_rng();
 
 	InsertGenerator structures_insert("structures");
-	structures_insert.add_column("struct_id");
 	structures_insert.add_column("batch_id");
 	structures_insert.add_column("tag");
 	structures_insert.add_column("input_tag");
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
 	RowDataBaseOP batch_id_data = new RowData<Size>("batch_id",batch_id);
 	RowDataBaseOP tag_data = new RowData<string>("tag",tag);
 	RowDataBaseOP input_tag_data = new RowData<string>("input_tag",input_tag);
 
-	structures_insert.add_row(utility::tools::make_vector(struct_id_data,batch_id_data,tag_data,input_tag_data));
-	structures_insert.write_to_database(db_session);
+	structures_insert.add_row(utility::tools::make_vector(batch_id_data,tag_data,input_tag_data));
+
+	long long int structure_sequence_id;
+	structures_insert.write_to_database(db_session, structure_sequence_id, "structures_struct_id_seq");
+
+	StructureID inserted_struct_id(structure_sequence_id);
+
 #endif
-	return struct_id;
+	return inserted_struct_id;
 }
 
 void StructureFeatures::mark_structure_as_sampled(
@@ -204,7 +220,7 @@ void StructureFeatures::mark_structure_as_sampled(
 }
 
 void StructureFeatures::delete_record(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session
 ){
 
@@ -218,7 +234,7 @@ void StructureFeatures::delete_record(
 void
 StructureFeatures::load_into_pose(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose
 ){
 	load_tag(db_session, struct_id, pose);
@@ -227,7 +243,7 @@ StructureFeatures::load_into_pose(
 void
 StructureFeatures::load_tag(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose) {
 
 #ifndef __native_client__
@@ -257,7 +273,7 @@ StructureFeatures::load_tag(
 
 }
 
-boost::uuids::uuid
+StructureID
 StructureFeatures::get_struct_id(
 	sessionOP db_session,
 	string const & tag,
@@ -286,7 +302,7 @@ StructureFeatures::get_struct_id(
 		error_message << "Unable to locate structure with tag '"<<tag<<"'."<<endl;
 		utility_exit_with_message(error_message.str());
 	}
-	boost::uuids::uuid struct_id;
+	StructureID struct_id;
 	res >> struct_id;
 	return struct_id;
 }

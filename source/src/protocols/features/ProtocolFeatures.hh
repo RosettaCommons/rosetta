@@ -15,8 +15,10 @@
 #define INCLUDED_protocols_features_ProtocolFeatures_hh
 
 // Unit Headers
+#include <utility/pointer/ReferenceCount.hh>
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/ProtocolFeatures.fwd.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -32,7 +34,7 @@
 namespace protocols{
 namespace features{
 
-class ProtocolFeatures : public protocols::features::FeaturesReporter {
+class ProtocolFeatures : public utility::pointer::ReferenceCount{
 public:
 	ProtocolFeatures();
 
@@ -46,7 +48,7 @@ public:
 
 	///@brief generate the table schemas and write them to the database
 	virtual void
-	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	write_schema_to_db(utility::sql_database::sessionOP db_session, core::Size protocol_id) const;
 
 
 	///@brief return the set of features reporters that are required to
@@ -71,7 +73,7 @@ public:
 	report_features(
 		core::pose::Pose const &,
 		utility::vector1< bool > const &,
-		boost::uuids::uuid,
+		StructureID,
 		utility::sql_database::sessionOP
 	) {
 		utility_exit_with_message(

@@ -33,21 +33,24 @@ Column::Column(std::string name, DbDataTypeOP type) :
 	name_(name),
 	type_(type),
 	allow_null_(true),
-	auto_increment_(false)
+	auto_increment_(false),
+  auto_increment_base_(0)
 {}
 
 Column::Column(std::string name, DbDataTypeOP type, bool allow_null) :
 	name_(name),
 	type_(type),
 	allow_null_(allow_null),
-	auto_increment_(false)
+	auto_increment_(false),
+  auto_increment_base_(0)
 {}
 
-Column::Column(std::string name, DbDataTypeOP type, bool allow_null, bool auto_increment) :
+Column::Column(std::string name, DbDataTypeOP type, bool allow_null, bool auto_increment, platform::Size auto_increment_base) :
 	name_(name),
 	type_(type),
 	allow_null_(allow_null),
-	auto_increment_(auto_increment)
+	auto_increment_(auto_increment),
+  auto_increment_base_(auto_increment_base)
 {}
 
 Column::Column(Column const & src) :
@@ -55,7 +58,8 @@ Column::Column(Column const & src) :
 	name_(src.name_),
 	type_(src.type_),
 	allow_null_(src.allow_null_),
-	auto_increment_(src.auto_increment_)
+	auto_increment_(src.auto_increment_),
+  auto_increment_base_(src.auto_increment_base_)
 {}
 
 Column::~Column() {}
@@ -66,6 +70,10 @@ std::string Column::name() const{
 
 bool Column::auto_increment() const{
 	return this->auto_increment_;
+}
+
+platform::Size Column::auto_increment_base() const{
+	return this->auto_increment_base_;
 }
 
 std::string Column::print(utility::sql_database::sessionOP db_session) const{

@@ -37,9 +37,30 @@
 namespace utility {
 namespace sql_database {
 
+//TODO alexford
+// Need to refactor this class to move data members into correct members of 
+// cppdb::session. Specifically, should generate a connection specific information
+// class to store connection metadata.
+
+
+//@brief cppdb::session subclass containing connection data, only pass via reference.
 class session : public cppdb::session, public utility::pointer::ReferenceCount {
 
 public:
+	session() :
+		cppdb::session(),
+		db_mode_(DatabaseMode::sqlite3),
+		db_name_(""),
+		pq_schema_(""),
+		db_partition_(-1),
+		cur_transaction_(0),
+		chunk_size_(0),
+		transaction_counter_(0)
+	{
+	}
+
+	~session();
+
 	void
 	set_db_mode(
 		DatabaseMode::e const db_mode) { db_mode_ = db_mode; }
@@ -75,22 +96,47 @@ public:
 	std::string const &
 	get_pq_schema() const { return pq_schema_; }
 
-	void
-	begin();
+	platform::SSize get_db_partition() { return db_partition_; }
+	void set_db_partition(platform::SSize db_partition) { db_partition_ = db_partition; }
+	bool is_db_partitioned() { return db_partition_ > 0; }
+
+	///@brief indicate that a transaction block has begun.
+	void begin_transaction();
 
 	///@brief indicate that a transaction block has completed. NOTE:
 	///When in chunk transaction mode, this may not actually write to
 	///the database.
 	void
-	commit();
+	commit_transaction();
+
+	///@brief force a transaction to be committed. This should only
+	///be used when writing data that is required by other processes,
+	///such as protocol and batch ids.
+	void
+	force_commit_transaction();
 
 private:
 	DatabaseMode::e db_mode_;
 	std::string db_name_;
 	std::string pq_schema_;
+
+	platform::SSize db_partition_;
+
+	transactionOP cur_transaction_;
 	TransactionMode::e transaction_mode_;
 	platform::Size chunk_size_;
 	platform::Size transaction_counter_;
+
+};
+
+//@brief cppdb::transaction subclass for smart pointers.
+class transaction : public cppdb::transaction, public utility::pointer::ReferenceCount {
+
+public:
+
+	transaction(sessionOP session) :
+		cppdb::transaction(*session)
+	{}
 
 };
 
@@ -125,7 +171,7 @@ public:
 		std::string const & password,
 		platform::Size port,
 		bool readonly = false,
-		bool separate_db_per_mpi_process = false);
+		platform::SSize db_partition = -1);
 
 
 	///@brief Acquire a sqlite3 database session
@@ -135,7 +181,7 @@ public:
 		TransactionMode::e transaction_mode=TransactionMode::standard,
 		platform::Size chunk_size=0,
 		bool const readonly=false,
-		bool const separate_db_per_mpi_process=false);
+		platform::SSize db_partition=-1);
 
 	///@brief Acquire a mysql database session
 	sessionOP

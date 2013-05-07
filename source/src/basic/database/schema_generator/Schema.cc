@@ -41,6 +41,9 @@
 #include <algorithm>
 #include <cctype>
 
+// External
+#include <cppdb/frontend.h>
+
 namespace basic{
 namespace database{
 namespace schema_generator{
@@ -138,9 +141,13 @@ Schema::add_index(
 	indices_.push_back(index);
 }
 
-std::string Schema::print(
-	sessionOP db_session
-) const{
+std::string Schema::print( sessionOP db_session ) const 
+{
+  return table_schema_statements(db_session) + table_init_statements(db_session);
+}
+
+std::string Schema::table_schema_statements( sessionOP db_session ) const
+{
 	stringstream schema_string;
 	schema_string << "CREATE TABLE IF NOT EXISTS " << table_name_ << "(\n\t";
 
@@ -190,54 +197,103 @@ std::string Schema::print(
 	return schema_string.str();
 }
 
-#ifdef USEMPI
-//@details To prevent a race condition, only try to create the
-//database when the head node says it hasn't been created yet.
-void
-Schema::write(
-	sessionOP db_session
-) {
-	try{
-		statement stmt = (*db_session) << print(db_session);
-		safely_write_to_database(stmt);
-		TR.Debug << "Writing table " << table_name_ << ": " << print(db_session) << std::endl;
-		TR.Debug.flush();
-	} catch (cppdb::cppdb_error e) {
-		TR.Error
-			<< "ERROR reading schema \n"
-			<< print(db_session) << std::endl;
-		TR.Error << e.what() << std::endl;
-		TR.flush();
-		utility_exit();
+std::string Schema::table_init_statements( sessionOP db_session ) const
+{
+  stringstream init_string;
+	for (Columns::const_iterator it=columns_.begin(); it!=columns_.end(); it++){
+		if(it->auto_increment() && it->auto_increment_base() != 0){
+      switch(db_session->get_db_mode()){
+      case utility::sql_database::DatabaseMode::postgres:
+        // Postgresql creates an implicit sequence of the form <table_name>_<column_name>_seq to handle auto_increment values.
+        //
+        // http://www.postgresql.org/docs/9.2/static/datatype-numeric.html
+        // see 8.1.4 Serial Types
+        init_string << "ALTER SEQUENCE " << table_name_ << "_" << it->name() << "_seq" << " MINVALUE " << it->auto_increment_base() << ";\n";
+        break;
+      case utility::sql_database::DatabaseMode::mysql:
+        // http://dev.mysql.com/doc/refman/5.6/en/example-auto-increment.html
+        init_string << "ALTER TABLE " << table_name_ << " AUTO_INCREMENT = " << it->auto_increment_base() << ";\n";
+        break;
+      case utility::sql_database::DatabaseMode::sqlite3:
+        // Sqlite3 autoincrement is managed by the db table, sqlite_sequence. ROWID (and autoincrement value) are monotonically
+        // increased from from current value in sqlite_sequence. In the trivial case, the next value is sqlite_sequence + 1.
+        //
+        // http://www.sqlite.org/autoinc.html
+        init_string << "INSERT INTO sqlite_sequence SELECT \"" << table_name_ << "\", " << it->auto_increment_base() - 1 << "  WHERE NOT EXISTS (SELECT 1 FROM sqlite_sequence WHERE NAME = \"" << table_name_ << "\");\n";
+        break;
+      default:
+        utility_exit_with_message(
+          "Unrecognized database mode: '" + name_from_database_mode(db_session->get_db_mode()) + "'");
+      }
+		}
 	}
-}
-#endif
 
-#ifndef USEMPI
+  return init_string.str();
+}
+
 //Write this schema to the database
-void
-Schema::write(
-	sessionOP db_session
-){
+void Schema::write(sessionOP db_session)
+{
+  std::string schema_statement = table_schema_statements(db_session);
+  std::string init_statements = table_init_statements(db_session);
 
-	// Older versions of postgres don't have "create table if not exists"
-	if(db_session->get_db_mode() == utility::sql_database::DatabaseMode::postgres &&
-		table_exists(db_session, table_name_)){
-		return;
-	}
-
-	try{
-		statement stmt = (*db_session) << print(db_session);
-		safely_write_to_database(stmt);
-	} catch (cppdb::cppdb_error e) {
+  try
+  {
+    try
+    {
+      /*
+       * TODO alexford This abort logic still allows race conditions if writes are executed from multiple frontends 
+       * This should be resolved by adding a meta-table to track schema initialization protected by transactions, or
+       * by running all table declations 
+      */
+      check_table_and_perform_write(db_session, schema_statement, init_statements);
+    } 
+    catch(cppdb::cppdb_error & except)
+    {
+      TR.Debug << "Error writing schema, retrying:\n" << except.what() << std::endl;
+      check_table_and_perform_write(db_session, schema_statement, init_statements);
+    }
+  }
+  catch(cppdb::cppdb_error & except)
+  {
 		TR.Error
-		<< "ERROR reading schema \n"
+		<< "ERROR writing schema after retry.\n"
 		<< print(db_session) << std::endl;
-		TR.Error << e.what() << std::endl;
+		TR.Error << except.what() << std::endl;
 		utility_exit();
-	}
+  }
 }
-#endif
+
+void Schema::check_table_and_perform_write(
+    utility::sql_database::sessionOP db_session,
+    std::string schema_statement,
+    std::string init_statements) const
+{
+  cppdb::transaction guard(*db_session);
+
+  if (init_statements != "" && table_exists(db_session, table_name_))
+  {
+    TR.Debug << "Table with init statement exists, skipping declaration: " << table_name_ << std::endl;
+    return;
+  }
+  
+  TR.Debug << "Writing schema for table: " << table_name_ << std::endl;
+  TR.Trace << schema_statement << std::endl;
+
+  statement stmt = (*db_session) << schema_statement;
+  stmt.exec();
+
+  if (init_statements != "")
+  {
+    TR.Debug << "Writing init for table: " << table_name_ << std::endl;
+    TR.Trace << init_statements << std::endl;
+
+    stmt = (*db_session) << init_statements;
+    stmt.exec();
+  }
+
+  guard.commit();
+}
 
 } // schema_generator
 } // namespace database

@@ -29,7 +29,7 @@
 #include <core/pose/Pose.hh> // for dssp application
 
 //External
-#include <boost/uuid/uuid.hpp>
+
 
 //Devel
 #include <protocols/features/strand_assembly/SandwichFeatures.hh>
@@ -472,7 +472,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 //Select all strand segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
 utility::vector1<SandwichFragment>
 SandwichFeatures::get_full_strands(
-   boost::uuids::uuid struct_id,
+   StructureID struct_id,
    sessionOP db_session)
 {
 	string select_string =
@@ -504,7 +504,7 @@ SandwichFeatures::get_full_strands(
 //Select all strand segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
 utility::vector1<SandwichFragment>
 SandwichFeatures::get_full_strands_from_sheet(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size sheet_id)
 {
@@ -542,7 +542,7 @@ SandwichFeatures::get_full_strands_from_sheet(
 //Select all strand segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
 bool
 SandwichFeatures::check_whether_strand_i_is_in_sheet(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size segment_id)
 {
@@ -573,7 +573,7 @@ SandwichFeatures::check_whether_strand_i_is_in_sheet(
 //Select all strand segments reported by the ResidueSecondaryStructureFeatures and save them in a vector
 utility::vector1<SandwichFragment>
 SandwichFeatures::get_current_strands_in_sheet(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session)
 {
 	string select_string =
@@ -608,7 +608,7 @@ SandwichFeatures::get_current_strands_in_sheet(
 
 utility::vector1<Size>	
 SandwichFeatures::get_distinct_sheet_id(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session)
 {
 	string select_string =
@@ -637,7 +637,7 @@ SandwichFeatures::get_distinct_sheet_id(
 //get_max_sheet_id
 Size
 SandwichFeatures::get_max_sheet_id(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session)
 {
 	string select_string =
@@ -665,7 +665,7 @@ SandwichFeatures::get_max_sheet_id(
 //update_sheet_id
 Size
 SandwichFeatures::update_sheet_id(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size new_sheet_id,
 	Size old_sheet_id)
@@ -688,7 +688,7 @@ SandwichFeatures::update_sheet_id(
 //update_sheet_antiparallel
 void	
 SandwichFeatures::update_sheet_antiparallel(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size sheet_id,
 	string antiparallel)
@@ -712,7 +712,7 @@ SandwichFeatures::update_sheet_antiparallel(
 //get_chain_B_resNum
 utility::vector1<SandwichFragment>
 SandwichFeatures::get_chain_B_resNum(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session)
 {
 	string select_string =
@@ -748,7 +748,7 @@ SandwichFeatures::get_chain_B_resNum(
 //get_tag
 string
 SandwichFeatures::get_tag(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session)
 {
 	string select_string =
@@ -774,7 +774,7 @@ SandwichFeatures::get_tag(
 //get_num_strands_in_this_sheet
 Size
 SandwichFeatures::get_num_strands_in_this_sheet(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size sheet_id)
 {
@@ -803,7 +803,7 @@ SandwichFeatures::get_num_strands_in_this_sheet(
 //prepare_to_fill_sw_by_components
 utility::vector1<SandwichFragment>
 SandwichFeatures::prepare_to_fill_sw_by_components(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session)
 {
 	string select_string =
@@ -1225,7 +1225,7 @@ SandwichFeatures::cal_dis_angle_to_find_sheet(
 
 bool
 SandwichFeatures::see_whether_sheets_can_be_combined(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
 	Size i_sheet,
@@ -1273,7 +1273,7 @@ SandwichFeatures::see_whether_sheets_can_be_combined(
 
 bool
 SandwichFeatures::change_sheet_id_if_possible( // combine_sheets_if_possible
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose)
 {
@@ -1318,7 +1318,7 @@ SandwichFeatures::change_sheet_id_if_possible( // combine_sheets_if_possible
 // In order to be antiparallel sheet, all strands in the sheet should be anti-parallel to each other
 string	
 SandwichFeatures::see_whether_sheet_is_antiparallel(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
 	Size i_sheet)
@@ -1685,7 +1685,7 @@ SandwichFeatures::can_this_strand_represent_a_terminal(
 //check whether this sheet is constituted with 2 (or less) residues long only
 bool
 SandwichFeatures::check_whether_this_sheet_is_too_short(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sheet_i)
 {
@@ -1704,7 +1704,7 @@ SandwichFeatures::check_whether_this_sheet_is_too_short(
 //return_two_central_residues
 std::pair<Size, Size>
 SandwichFeatures::get_two_central_residues(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
 	Size sheet_i)
@@ -1804,7 +1804,7 @@ SandwichFeatures::get_shortest_among_4(
 
 bool
 SandwichFeatures::judge_facing(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
 	Size sheet_i,
@@ -1973,7 +1973,7 @@ SandwichFeatures::judge_facing(
 
 Size
 SandwichFeatures::write_to_sheet (
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sheet_PK_id_counter,
 	Size sheet_id,
@@ -1994,7 +1994,7 @@ SandwichFeatures::write_to_sheet (
 
 Size
 SandwichFeatures::write_to_sw_can_by_sh	(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_PK_id_counter,
 	string tag,
@@ -2022,7 +2022,7 @@ SandwichFeatures::write_to_sw_can_by_sh	(
 string	
 SandwichFeatures::see_whether_strand_is_at_edge	(
 	Pose const & pose,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sheet_id,
 	string sheet_antiparallel,
@@ -2140,7 +2140,7 @@ SandwichFeatures::see_whether_strand_is_at_edge	(
 //get_cen_res_in_other_sheet
 vector<Size>
 SandwichFeatures::get_cen_res_in_other_sheet(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size sw_can_by_sh_id,
 	Size sheet_id)
@@ -2248,7 +2248,7 @@ SandwichFeatures::get_cen_res_in_other_sheet(
 //get_cen_res_in_this_sheet
 vector<Size>
 SandwichFeatures::get_cen_res_in_this_sheet(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size sheet_id)
 {
@@ -2356,7 +2356,7 @@ SandwichFeatures::count_AA(
 //count_AA_w_direction
 vector<Size>
 SandwichFeatures::count_AA_w_direction(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
 	Size sw_can_by_sh_id,
@@ -2521,7 +2521,7 @@ SandwichFeatures::count_AA_w_direction(
 
 Size
 SandwichFeatures::fill_sw_by_components	(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
 	Size sw_by_components_PK_id_counter,
@@ -2582,7 +2582,7 @@ SandwichFeatures::fill_sw_by_components	(
 
 Size
 SandwichFeatures::update_sw_by_components_by_AA_w_direction	(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
 	Size sw_can_by_sh_id,
@@ -2694,7 +2694,7 @@ SandwichFeatures::update_sw_by_components_by_AA_w_direction	(
 
 std::pair<Size, Size>
 SandwichFeatures::get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Pose const & pose,
 	Size sw_can_by_sh_id,
@@ -2805,7 +2805,7 @@ SandwichFeatures::get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 
 Size
 SandwichFeatures::report_number_of_inward_pointing_AAs_in_a_pair_of_edge_strands	(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	Size sw_can_by_sh_id,
 	Size current_bs_id,
@@ -2863,7 +2863,7 @@ SandwichFeatures::report_number_of_inward_pointing_AAs_in_a_pair_of_edge_strands
 //get_distinct(sw_can_by_sh_id) as a vector
 utility::vector1<Size>
 SandwichFeatures::get_vec_sw_can_by_sh_id(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session)
 {
 	string select_string =
@@ -2893,7 +2893,7 @@ SandwichFeatures::get_vec_sw_can_by_sh_id(
 //get_size_sw_by_components_PK_id
 Size
 SandwichFeatures::get_size_sw_by_components_PK_id(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size sw_can_by_sh_id)
 {
@@ -2924,7 +2924,7 @@ SandwichFeatures::get_size_sw_by_components_PK_id(
 //get_sheet_antiparallel_info
 string
 SandwichFeatures::get_sheet_antiparallel_info(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size sheet_id)
 {
@@ -2954,7 +2954,7 @@ SandwichFeatures::get_sheet_antiparallel_info(
 //get_starting_res_for_connecting_strands
 std::pair<Size, Size>
 SandwichFeatures::get_starting_res_for_connecting_strands(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size sw_can_by_sh_id,
 	Size former_res_end)
@@ -3017,7 +3017,7 @@ SandwichFeatures::get_starting_res_for_connecting_strands(
 //get_next_starting_res_for_connecting_strands
 std::pair<Size, Size> //Size
 SandwichFeatures::get_next_starting_res_for_connecting_strands(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size sw_can_by_sh_id,
 	Size former_ending_res)
@@ -3070,7 +3070,7 @@ SandwichFeatures::get_next_starting_res_for_connecting_strands(
 //update intra/inter_sheet_connection part
 Size
 SandwichFeatures::update_sheet_con(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
 	Size sw_by_components_PK_id_counter,
@@ -3164,7 +3164,7 @@ SandwichFeatures::update_sheet_con(
 //delete_this_sw_can_by_sh_id
 Size
 SandwichFeatures::delete_this_sw_can_by_sh_id(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size sw_can_by_sh_id)
 {
@@ -3186,7 +3186,7 @@ SandwichFeatures::delete_this_sw_can_by_sh_id(
 //get_segment_id
 Size
 SandwichFeatures::get_segment_id(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Size all_strands_index)
 {
@@ -3214,7 +3214,7 @@ SandwichFeatures::get_segment_id(
 	
 Size
 SandwichFeatures::get_num_of_distinct_sheet_id(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session)
 {
 	string select_string =
@@ -3535,7 +3535,7 @@ SandwichFeatures::check_canonicalness_of_parallel_EE(
 //check_whether_sheets_are_connected_by_same_direction_strand
 bool
 SandwichFeatures::check_whether_sheets_are_connected_by_same_direction_strand(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
 	Size start_res,
@@ -3671,7 +3671,7 @@ SandwichFeatures::check_whether_sheets_are_connected_by_same_direction_strand(
 
 void
 SandwichFeatures::add_AA_to_terminal_loops (
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
 	Size	sw_by_components_PK_id_counter,
@@ -3736,7 +3736,7 @@ SandwichFeatures::add_AA_to_terminal_loops (
 
 Size
 SandwichFeatures::add_starting_loop (
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
 	Size	sw_by_components_PK_id_counter,
@@ -3801,7 +3801,7 @@ SandwichFeatures::add_starting_loop (
 
 Size
 SandwichFeatures::add_ending_loop (
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
 	Size	sw_by_components_PK_id_counter,
@@ -3886,7 +3886,7 @@ SandwichFeatures::check_whether_this_pdb_should_be_excluded (
 
 Real
 SandwichFeatures::cal_min_dis_between_sheets (
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
 	Size sheet_id_1,
@@ -3926,7 +3926,7 @@ SandwichFeatures::cal_min_dis_between_sheets (
 
 bool
 SandwichFeatures::check_whether_this_sheet_is_surrounded_by_more_than_1_other_sheet (
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session,
 	Pose & dssp_pose,
 	utility::vector1<Size>	all_distinct_sheet_ids,
@@ -4067,7 +4067,7 @@ core::Size
 SandwichFeatures::report_features(
 	core::pose::Pose const & pose,
 	utility::vector1<bool> const &,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session)
 {
 		TR.Info << "======================= <begin> report_features =========================" << endl;

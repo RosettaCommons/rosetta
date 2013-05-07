@@ -70,7 +70,7 @@ SecondaryStructureSegmentFeatures::write_schema_to_db(
 	using namespace basic::database::schema_generator;
 	
 	//******secondary structure segments******//
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column segment_id("segment_id", new DbInteger(), false);
 	Column residue_begin("residue_begin", new DbInteger(), false);
 	Column residue_end("residue_end", new DbInteger(), false);
@@ -162,7 +162,7 @@ core::Size
 SecondaryStructureSegmentFeatures::report_features(
 	core::pose::Pose const & pose,
 	utility::vector1< bool > const & /*relevant_residues*/,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session)
 {
 	using namespace basic::database;

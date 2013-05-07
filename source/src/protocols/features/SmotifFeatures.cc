@@ -81,7 +81,7 @@ SmotifFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) 
 	using namespace utility;
 
 	//******smotifs******//
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column smotif_id("smotif_id", new DbInteger(), false);
 	Column ss1("secondary_struct_segment_id_1", new DbInteger(), false);
 	Column ss2("secondary_struct_segment_id_2", new DbInteger(), false);
@@ -171,7 +171,7 @@ core::Size
 SmotifFeatures::report_features(
 	core::pose::Pose const & pose,
 	utility::vector1< bool > const & /*relevant_residues*/,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session)
 {
 	using core::Size;
@@ -274,7 +274,7 @@ SmotifFeatures::report_features(
 
 utility::vector1<SecondaryStructureSegment>
 SmotifFeatures::get_ss_segments(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session)
 {
 

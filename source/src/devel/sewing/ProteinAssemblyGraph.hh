@@ -19,6 +19,9 @@
 #include <devel/sewing/ProteinAssemblyGraph.fwd.hh>
 #include <devel/sewing/Node.hh>
 
+//Protocols
+#include <protocols/features/FeaturesReporter.fwd.hh>
+
 //Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>

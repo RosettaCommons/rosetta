@@ -16,8 +16,10 @@
 #define INCLUDED_protocols_features_BatchFeatures_HH
 
 // Unit Headers
+#include <utility/pointer/ReferenceCount.hh>
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/BatchFeatures.fwd.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -32,7 +34,7 @@
 namespace protocols{
 namespace features{
 
-class BatchFeatures : public protocols::features::FeaturesReporter {
+class BatchFeatures : public utility::pointer::ReferenceCount {
 public:
 	BatchFeatures();
 
@@ -46,7 +48,7 @@ public:
 
 	///@brief generate the table schemas and write them to the database
 	virtual void
-	write_schema_to_db(utility::sql_database::sessionOP db_session) const;
+	write_schema_to_db(utility::sql_database::sessionOP db_session, core::Size batch_id) const;
 
 	///@brief return the set of features reporters that are required to
 	///also already be extracted by the time this one is used.
@@ -72,7 +74,7 @@ public:
 	report_features(
 		core::pose::Pose const &,
 		utility::vector1< bool > const &,
-		boost::uuids::uuid,
+		StructureID,
 		utility::sql_database::sessionOP){
 		utility_exit_with_message(
 			"The batch features reporter is a special feature reporter that "

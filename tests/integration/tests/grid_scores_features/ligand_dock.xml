@@ -9,7 +9,7 @@
 			<Coordinates x="-1.731" y="32.589" z="-5.039"/>
 		</StartFrom>
 		<SlideTogether name="slide_together" chains="X"/>
-		<ReportToDB name="features_reporter" database_name="residue_grids.db3" sample_source="Test the Residue Grid Reporter">
+		<ReportToDB name="features_reporter" database_name="residue_grids.db3" batch_description="Test the Residue Grid Reporter">
 			<feature name="ResidueFeatures"/>
 			<feature name="ResidueConformationFeatures"/>
 			<feature name="ResidueGridScoresFeatures" chain = "X"/>

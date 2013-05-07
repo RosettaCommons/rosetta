@@ -135,7 +135,7 @@ Size
 HBondParameterFeatures::report_features(
 	Pose const &,
 	vector1< bool > const &,
-    boost::uuids::uuid const,
+    StructureID const,
 	sessionOP db_session
 ){
 

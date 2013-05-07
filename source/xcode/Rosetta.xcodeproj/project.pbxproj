@@ -1234,6 +1234,17 @@
 		6ADD472C0C8CC647351AC2B9 /* WrapFilterAsEvaluatorCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5FE1805D03C05DF111522320 /* WrapFilterAsEvaluatorCreator.cc */; };
 		B96FF513BB60BBC887C11A2F /* RDC_energies.cc in Sources */ = {isa = PBXBuildFile; fileRef = 88FA8AFE95EACEC165CBD806 /* RDC_energies.cc */; };
 		240C6D36BAC1DA35E645CFCA /* RDC_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = BAA53971578BABB9BC6A7C7B /* RDC_main.cc */; };
+		3C1D08D8005B98B283073623 /* DeleteAllRotamerSetOperation.cc in Sources */ = {isa = PBXBuildFile; fileRef = D0701F567B7FCA7620D61B7F /* DeleteAllRotamerSetOperation.cc */; };
+		4146B8C9FF2A9DA6074D1F37 /* FourHelixGraph.cc in Sources */ = {isa = PBXBuildFile; fileRef = B03C8B340B5286688444E5A1 /* FourHelixGraph.cc */; };
+		C3AC18C69637660673C16965 /* FourHelixRepeatGraph.cc in Sources */ = {isa = PBXBuildFile; fileRef = 885F983F671E8AD39152AF58 /* FourHelixRepeatGraph.cc */; };
+		5D4E51F96B2CEEB22F8390C9 /* NativeResidueReader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 995CF6CDF82AFDC2F1BCE550 /* NativeResidueReader.cc */; };
+		02B64AA618C9C904763C5F94 /* NativeRotamerFileLoader.cc in Sources */ = {isa = PBXBuildFile; fileRef = A09FD741573D8ED4043D40F0 /* NativeRotamerFileLoader.cc */; };
+		7BDF357AF54822CAD7FAC6CF /* Node.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1DAA6526D4BED69F794C4F29 /* Node.cc */; };
+		7E28C0B4B1E9E257010B890A /* ProteinAssemblyGraph.cc in Sources */ = {isa = PBXBuildFile; fileRef = 309EED5989D4CEA38A87D2D5 /* ProteinAssemblyGraph.cc */; };
+		919606BA024F6F8468C94F96 /* SewingDesigner.cc in Sources */ = {isa = PBXBuildFile; fileRef = 65DC7CE48DBF91AAB7882097 /* SewingDesigner.cc */; };
+		4CB8A670539C5E8096C471AE /* ThreeHelixGraph.cc in Sources */ = {isa = PBXBuildFile; fileRef = DA8DF861FA1199BE85B88895 /* ThreeHelixGraph.cc */; };
+		25F2A398B33347123C9EFD28 /* ThreeHelixRepeatGraph.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6D45DC788AA76F3365D7F204 /* ThreeHelixRepeatGraph.cc */; };
+		D572460B350498E3AB70EAFB /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = EF40C6C9C5D15F2771854412 /* util.cc */; };
 		CC3338EB08FAF2AB730B7523 /* option.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5644EFAF178979BB3D83AD33 /* option.cc */; };
 		202F26D4EC0FA6808C2DAC96 /* RestrictToAlignedSegments.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7D533E9CDA6E7441A81D4294 /* RestrictToAlignedSegments.cc */; };
 		BC95E3CFC4D43560A7E67A3D /* Splice.cc in Sources */ = {isa = PBXBuildFile; fileRef = A80A70CF4DEB2A32AF55EBD7 /* Splice.cc */; };
@@ -2027,7 +2038,6 @@
 		E6A4FF1AEF957A4F3FCE5C51 /* AtomTypesFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = A782B63B78206395D49FFF0D /* AtomTypesFeatures.cc */; };
 		265C2CCA715257BCFB4CF304 /* AtomTypesFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = B0B5020D1DA3BD9C26781C20 /* AtomTypesFeaturesCreator.cc */; };
 		1D8A71AAA07747A1104A91FD /* BatchFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 933129EFEEA4C4B39FB34FA7 /* BatchFeatures.cc */; };
-		F430CBB2D44D99539D076922 /* BatchFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6B9E53A83506C6299E9E6880 /* BatchFeaturesCreator.cc */; };
 		9C2B003200B21C776E6DB04D /* BetaTurnDetectionFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 45931262D18D975F1D66CEA5 /* BetaTurnDetectionFeatures.cc */; };
 		C732DB9F7919948AFCECCB63 /* BetaTurnDetectionFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 34C42FAF22BC79D1F67B75EE /* BetaTurnDetectionFeaturesCreator.cc */; };
 		46BA36BD82729B4944ACE128 /* ChargeChargeFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 932A33BEC5032AFD55769731 /* ChargeChargeFeatures.cc */; };
@@ -2070,7 +2080,6 @@
 		8AF3A657CAA7E62782BDCEEF /* ProteinResidueConformationFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 69D414D90511904BFEEE438C /* ProteinResidueConformationFeaturesCreator.cc */; };
 		3E5272A5D99EB4B1A5F146C6 /* ProteinSilentReport.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1BBF49E0DA4EDA1F9C88B371 /* ProteinSilentReport.cc */; };
 		8CBB5FAC8B61136588CA9521 /* ProtocolFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = F9E5B73722A897809354DF01 /* ProtocolFeatures.cc */; };
-		DEAD5F952D7EBC2C1B495696 /* ProtocolFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = B1328749DB2527FC3FEB8932 /* ProtocolFeaturesCreator.cc */; };
 		4AD357CDAC42EFC22E30C269 /* RadiusOfGyrationFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = FB95402CE7481946E2220176 /* RadiusOfGyrationFeatures.cc */; };
 		DD907DF6B5F9BE0B5A7CA2AA /* RadiusOfGyrationFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 36ECC73394A057818D783503 /* RadiusOfGyrationFeaturesCreator.cc */; };
 		43A6ADA9DCC1B462F96B5B10 /* Report.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AF053DC1CB38F889A59E8 /* Report.cc */; };
@@ -11012,6 +11021,40 @@
 		DB975B1627E4B9E98D9AFB0F /* RDC_energies.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RDC_energies.hh; path = ../src/devel/residual_dipolar_coupling/RDC_energies.hh; sourceTree = SOURCE_ROOT; };
 		BAA53971578BABB9BC6A7C7B /* RDC_main.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RDC_main.cc; path = ../src/devel/residual_dipolar_coupling/RDC_main.cc; sourceTree = SOURCE_ROOT; };
 		D570C991A688C4DD34D80257 /* RDC_main.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RDC_main.hh; path = ../src/devel/residual_dipolar_coupling/RDC_main.hh; sourceTree = SOURCE_ROOT; };
+		309E65C5B7828A7652A10A98 /* BridgeFragmentMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BridgeFragmentMover.fwd.hh; path = ../src/devel/sewing/BridgeFragmentMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		D015DCE72C1DAF8DF02279D3 /* BridgeFragmentMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BridgeFragmentMover.hh; path = ../src/devel/sewing/BridgeFragmentMover.hh; sourceTree = SOURCE_ROOT; };
+		F8B5A9A49C66E338AE698990 /* BundlePairRmsdWorkUnit.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BundlePairRmsdWorkUnit.hh; path = ../src/devel/sewing/BundlePairRmsdWorkUnit.hh; sourceTree = SOURCE_ROOT; };
+		D0701F567B7FCA7620D61B7F /* DeleteAllRotamerSetOperation.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DeleteAllRotamerSetOperation.cc; path = ../src/devel/sewing/DeleteAllRotamerSetOperation.cc; sourceTree = SOURCE_ROOT; };
+		38BE0E7D81A91AD8D2D61429 /* DeleteAllRotamerSetOperation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DeleteAllRotamerSetOperation.hh; path = ../src/devel/sewing/DeleteAllRotamerSetOperation.hh; sourceTree = SOURCE_ROOT; };
+		B03C8B340B5286688444E5A1 /* FourHelixGraph.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FourHelixGraph.cc; path = ../src/devel/sewing/FourHelixGraph.cc; sourceTree = SOURCE_ROOT; };
+		8E4DEDC82F236B07FEAE338F /* FourHelixGraph.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FourHelixGraph.fwd.hh; path = ../src/devel/sewing/FourHelixGraph.fwd.hh; sourceTree = SOURCE_ROOT; };
+		E5B11AB34EF31345C41E0677 /* FourHelixGraph.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FourHelixGraph.hh; path = ../src/devel/sewing/FourHelixGraph.hh; sourceTree = SOURCE_ROOT; };
+		885F983F671E8AD39152AF58 /* FourHelixRepeatGraph.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FourHelixRepeatGraph.cc; path = ../src/devel/sewing/FourHelixRepeatGraph.cc; sourceTree = SOURCE_ROOT; };
+		FE8D7B4D7CBBEBBEC7086831 /* FourHelixRepeatGraph.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FourHelixRepeatGraph.hh; path = ../src/devel/sewing/FourHelixRepeatGraph.hh; sourceTree = SOURCE_ROOT; };
+		995CF6CDF82AFDC2F1BCE550 /* NativeResidueReader.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NativeResidueReader.cc; path = ../src/devel/sewing/NativeResidueReader.cc; sourceTree = SOURCE_ROOT; };
+		C181AFA7F2796AACB2C3F162 /* NativeResidueReader.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NativeResidueReader.hh; path = ../src/devel/sewing/NativeResidueReader.hh; sourceTree = SOURCE_ROOT; };
+		A09FD741573D8ED4043D40F0 /* NativeRotamerFileLoader.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NativeRotamerFileLoader.cc; path = ../src/devel/sewing/NativeRotamerFileLoader.cc; sourceTree = SOURCE_ROOT; };
+		C33697F720B1AD90D05847F0 /* NativeRotamerFileLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = NativeRotamerFileLoader.h; path = ../src/devel/sewing/NativeRotamerFileLoader.h; sourceTree = SOURCE_ROOT; };
+		8094AD60FB3C85F5C6C1865E /* NativeRotamerFileLoader.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NativeRotamerFileLoader.hh; path = ../src/devel/sewing/NativeRotamerFileLoader.hh; sourceTree = SOURCE_ROOT; };
+		1DAA6526D4BED69F794C4F29 /* Node.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Node.cc; path = ../src/devel/sewing/Node.cc; sourceTree = SOURCE_ROOT; };
+		2650EC3FD7880ECA16B56660 /* Node.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Node.fwd.hh; path = ../src/devel/sewing/Node.fwd.hh; sourceTree = SOURCE_ROOT; };
+		ED06C2D424D19BFDEB588DA9 /* Node.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Node.hh; path = ../src/devel/sewing/Node.hh; sourceTree = SOURCE_ROOT; };
+		309EED5989D4CEA38A87D2D5 /* ProteinAssemblyGraph.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ProteinAssemblyGraph.cc; path = ../src/devel/sewing/ProteinAssemblyGraph.cc; sourceTree = SOURCE_ROOT; };
+		EA639FC74E692FB9B18A477E /* ProteinAssemblyGraph.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ProteinAssemblyGraph.fwd.hh; path = ../src/devel/sewing/ProteinAssemblyGraph.fwd.hh; sourceTree = SOURCE_ROOT; };
+		BEAC7AA60A0C96D6A641CB46 /* ProteinAssemblyGraph.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ProteinAssemblyGraph.hh; path = ../src/devel/sewing/ProteinAssemblyGraph.hh; sourceTree = SOURCE_ROOT; };
+		65DC7CE48DBF91AAB7882097 /* SewingDesigner.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SewingDesigner.cc; path = ../src/devel/sewing/SewingDesigner.cc; sourceTree = SOURCE_ROOT; };
+		1BA69547DBA0A8DFC1C4A0F9 /* SewingDesigner.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SewingDesigner.fwd.hh; path = ../src/devel/sewing/SewingDesigner.fwd.hh; sourceTree = SOURCE_ROOT; };
+		2708436FEE5352729DFC7192 /* SewingDesigner.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SewingDesigner.hh; path = ../src/devel/sewing/SewingDesigner.hh; sourceTree = SOURCE_ROOT; };
+		1970246834D705CCEE5ABFB1 /* SewingDesignerCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SewingDesignerCreator.hh; path = ../src/devel/sewing/SewingDesignerCreator.hh; sourceTree = SOURCE_ROOT; };
+		2FC8F12CD82CFF61BA5D42A2 /* SmotifGraph.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SmotifGraph.fwd.hh; path = ../src/devel/sewing/SmotifGraph.fwd.hh; sourceTree = SOURCE_ROOT; };
+		4D10D2B9FC48AD7CFE68FEBA /* SmotifGraph.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SmotifGraph.hh; path = ../src/devel/sewing/SmotifGraph.hh; sourceTree = SOURCE_ROOT; };
+		DA8DF861FA1199BE85B88895 /* ThreeHelixGraph.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ThreeHelixGraph.cc; path = ../src/devel/sewing/ThreeHelixGraph.cc; sourceTree = SOURCE_ROOT; };
+		013A1C8BE29C87E4DD739E35 /* ThreeHelixGraph.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ThreeHelixGraph.fwd.hh; path = ../src/devel/sewing/ThreeHelixGraph.fwd.hh; sourceTree = SOURCE_ROOT; };
+		1EB7A3D12FEB64FDEE5EFA69 /* ThreeHelixGraph.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ThreeHelixGraph.hh; path = ../src/devel/sewing/ThreeHelixGraph.hh; sourceTree = SOURCE_ROOT; };
+		6D45DC788AA76F3365D7F204 /* ThreeHelixRepeatGraph.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ThreeHelixRepeatGraph.cc; path = ../src/devel/sewing/ThreeHelixRepeatGraph.cc; sourceTree = SOURCE_ROOT; };
+		220C1C6DB47FCA0B01BD3A91 /* ThreeHelixRepeatGraph.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ThreeHelixRepeatGraph.hh; path = ../src/devel/sewing/ThreeHelixRepeatGraph.hh; sourceTree = SOURCE_ROOT; };
+		EF40C6C9C5D15F2771854412 /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/devel/sewing/util.cc; sourceTree = SOURCE_ROOT; };
+		5ABBDFD95D5BAFF2417706C1 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/devel/sewing/util.hh; sourceTree = SOURCE_ROOT; };
 		5644EFAF178979BB3D83AD33 /* option.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = option.cc; path = ../src/devel/simple_options/option.cc; sourceTree = SOURCE_ROOT; };
 		621C04EC030C006E244BBDA7 /* option.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = option.hh; path = ../src/devel/simple_options/option.hh; sourceTree = SOURCE_ROOT; };
 		70251E29987E9F158AA67EA6 /* test.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = test.h; path = ../src/devel/simple_options/test.h; sourceTree = SOURCE_ROOT; };
@@ -13479,7 +13522,6 @@
 		933129EFEEA4C4B39FB34FA7 /* BatchFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BatchFeatures.cc; path = ../src/protocols/features/BatchFeatures.cc; sourceTree = SOURCE_ROOT; };
 		6A36840FD1CA2E694B084142 /* BatchFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BatchFeatures.fwd.hh; path = ../src/protocols/features/BatchFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
 		7CAFEFCA4E3A6D829E201664 /* BatchFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BatchFeatures.hh; path = ../src/protocols/features/BatchFeatures.hh; sourceTree = SOURCE_ROOT; };
-		6B9E53A83506C6299E9E6880 /* BatchFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BatchFeaturesCreator.cc; path = ../src/protocols/features/BatchFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
 		AFE13EE922FE24F1DC5B59FC /* BatchFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BatchFeaturesCreator.hh; path = ../src/protocols/features/BatchFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
 		45931262D18D975F1D66CEA5 /* BetaTurnDetectionFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BetaTurnDetectionFeatures.cc; path = ../src/protocols/features/BetaTurnDetectionFeatures.cc; sourceTree = SOURCE_ROOT; };
 		B480A76465F1B74BF84E9359 /* BetaTurnDetectionFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BetaTurnDetectionFeatures.fwd.hh; path = ../src/protocols/features/BetaTurnDetectionFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -13593,7 +13635,6 @@
 		F9E5B73722A897809354DF01 /* ProtocolFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ProtocolFeatures.cc; path = ../src/protocols/features/ProtocolFeatures.cc; sourceTree = SOURCE_ROOT; };
 		6B9A364B0365387271F43A59 /* ProtocolFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ProtocolFeatures.fwd.hh; path = ../src/protocols/features/ProtocolFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
 		2C4020C4F6889C9D10FFD7FB /* ProtocolFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ProtocolFeatures.hh; path = ../src/protocols/features/ProtocolFeatures.hh; sourceTree = SOURCE_ROOT; };
-		B1328749DB2527FC3FEB8932 /* ProtocolFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ProtocolFeaturesCreator.cc; path = ../src/protocols/features/ProtocolFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
 		6D3BE7786A271825D905854A /* ProtocolFeaturesCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ProtocolFeaturesCreator.hh; path = ../src/protocols/features/ProtocolFeaturesCreator.hh; sourceTree = SOURCE_ROOT; };
 		FB95402CE7481946E2220176 /* RadiusOfGyrationFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RadiusOfGyrationFeatures.cc; path = ../src/protocols/features/RadiusOfGyrationFeatures.cc; sourceTree = SOURCE_ROOT; };
 		1F66BF94EAF04B0D26E0327C /* RadiusOfGyrationFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RadiusOfGyrationFeatures.fwd.hh; path = ../src/protocols/features/RadiusOfGyrationFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -20673,6 +20714,7 @@
 				8758A7FF4CF5C0998FE3571F /* optest */,
 				1A4C6DE8664A9F7F891E8B49 /* replica_docking */,
 				50D8EDB9B57076F54DB6B605 /* residual_dipolar_coupling */,
+				54F0BCDA48EA9E98F7507195 /* sewing */,
 				6E5D405D27C502C3A12D3566 /* simple_options */,
 				9934B0339E8EC25C298A1D8C /* splice */,
 				E731A0664E8597340D3CB9B8 /* vardist_solaccess */,
@@ -21203,6 +21245,48 @@
 			);
 			name = residual_dipolar_coupling;
 			path = ../src/devel/residual_dipolar_coupling/;
+			sourceTree = SOURCE_ROOT;
+		};
+		54F0BCDA48EA9E98F7507195 /* sewing */ = {
+			isa = PBXGroup;
+			children = (
+				309E65C5B7828A7652A10A98 /* BridgeFragmentMover.fwd.hh */,
+				D015DCE72C1DAF8DF02279D3 /* BridgeFragmentMover.hh */,
+				F8B5A9A49C66E338AE698990 /* BundlePairRmsdWorkUnit.hh */,
+				D0701F567B7FCA7620D61B7F /* DeleteAllRotamerSetOperation.cc */,
+				38BE0E7D81A91AD8D2D61429 /* DeleteAllRotamerSetOperation.hh */,
+				B03C8B340B5286688444E5A1 /* FourHelixGraph.cc */,
+				8E4DEDC82F236B07FEAE338F /* FourHelixGraph.fwd.hh */,
+				E5B11AB34EF31345C41E0677 /* FourHelixGraph.hh */,
+				885F983F671E8AD39152AF58 /* FourHelixRepeatGraph.cc */,
+				FE8D7B4D7CBBEBBEC7086831 /* FourHelixRepeatGraph.hh */,
+				995CF6CDF82AFDC2F1BCE550 /* NativeResidueReader.cc */,
+				C181AFA7F2796AACB2C3F162 /* NativeResidueReader.hh */,
+				A09FD741573D8ED4043D40F0 /* NativeRotamerFileLoader.cc */,
+				C33697F720B1AD90D05847F0 /* NativeRotamerFileLoader.h */,
+				8094AD60FB3C85F5C6C1865E /* NativeRotamerFileLoader.hh */,
+				1DAA6526D4BED69F794C4F29 /* Node.cc */,
+				2650EC3FD7880ECA16B56660 /* Node.fwd.hh */,
+				ED06C2D424D19BFDEB588DA9 /* Node.hh */,
+				309EED5989D4CEA38A87D2D5 /* ProteinAssemblyGraph.cc */,
+				EA639FC74E692FB9B18A477E /* ProteinAssemblyGraph.fwd.hh */,
+				BEAC7AA60A0C96D6A641CB46 /* ProteinAssemblyGraph.hh */,
+				65DC7CE48DBF91AAB7882097 /* SewingDesigner.cc */,
+				1BA69547DBA0A8DFC1C4A0F9 /* SewingDesigner.fwd.hh */,
+				2708436FEE5352729DFC7192 /* SewingDesigner.hh */,
+				1970246834D705CCEE5ABFB1 /* SewingDesignerCreator.hh */,
+				2FC8F12CD82CFF61BA5D42A2 /* SmotifGraph.fwd.hh */,
+				4D10D2B9FC48AD7CFE68FEBA /* SmotifGraph.hh */,
+				DA8DF861FA1199BE85B88895 /* ThreeHelixGraph.cc */,
+				013A1C8BE29C87E4DD739E35 /* ThreeHelixGraph.fwd.hh */,
+				1EB7A3D12FEB64FDEE5EFA69 /* ThreeHelixGraph.hh */,
+				6D45DC788AA76F3365D7F204 /* ThreeHelixRepeatGraph.cc */,
+				220C1C6DB47FCA0B01BD3A91 /* ThreeHelixRepeatGraph.hh */,
+				EF40C6C9C5D15F2771854412 /* util.cc */,
+				5ABBDFD95D5BAFF2417706C1 /* util.hh */,
+			);
+			name = sewing;
+			path = ../src/devel/sewing/;
 			sourceTree = SOURCE_ROOT;
 		};
 		6E5D405D27C502C3A12D3566 /* simple_options */ = {
@@ -24577,7 +24661,6 @@
 				933129EFEEA4C4B39FB34FA7 /* BatchFeatures.cc */,
 				6A36840FD1CA2E694B084142 /* BatchFeatures.fwd.hh */,
 				7CAFEFCA4E3A6D829E201664 /* BatchFeatures.hh */,
-				6B9E53A83506C6299E9E6880 /* BatchFeaturesCreator.cc */,
 				AFE13EE922FE24F1DC5B59FC /* BatchFeaturesCreator.hh */,
 				45931262D18D975F1D66CEA5 /* BetaTurnDetectionFeatures.cc */,
 				B480A76465F1B74BF84E9359 /* BetaTurnDetectionFeatures.fwd.hh */,
@@ -24691,7 +24774,6 @@
 				F9E5B73722A897809354DF01 /* ProtocolFeatures.cc */,
 				6B9A364B0365387271F43A59 /* ProtocolFeatures.fwd.hh */,
 				2C4020C4F6889C9D10FFD7FB /* ProtocolFeatures.hh */,
-				B1328749DB2527FC3FEB8932 /* ProtocolFeaturesCreator.cc */,
 				6D3BE7786A271825D905854A /* ProtocolFeaturesCreator.hh */,
 				FB95402CE7481946E2220176 /* RadiusOfGyrationFeatures.cc */,
 				1F66BF94EAF04B0D26E0327C /* RadiusOfGyrationFeatures.fwd.hh */,
@@ -29844,7 +29926,6 @@
 				E6A4FF1AEF957A4F3FCE5C51 /* AtomTypesFeatures.cc in Sources */,
 				265C2CCA715257BCFB4CF304 /* AtomTypesFeaturesCreator.cc in Sources */,
 				1D8A71AAA07747A1104A91FD /* BatchFeatures.cc in Sources */,
-				F430CBB2D44D99539D076922 /* BatchFeaturesCreator.cc in Sources */,
 				9C2B003200B21C776E6DB04D /* BetaTurnDetectionFeatures.cc in Sources */,
 				C732DB9F7919948AFCECCB63 /* BetaTurnDetectionFeaturesCreator.cc in Sources */,
 				46BA36BD82729B4944ACE128 /* ChargeChargeFeatures.cc in Sources */,
@@ -29887,7 +29968,6 @@
 				8AF3A657CAA7E62782BDCEEF /* ProteinResidueConformationFeaturesCreator.cc in Sources */,
 				3E5272A5D99EB4B1A5F146C6 /* ProteinSilentReport.cc in Sources */,
 				8CBB5FAC8B61136588CA9521 /* ProtocolFeatures.cc in Sources */,
-				DEAD5F952D7EBC2C1B495696 /* ProtocolFeaturesCreator.cc in Sources */,
 				4AD357CDAC42EFC22E30C269 /* RadiusOfGyrationFeatures.cc in Sources */,
 				DD907DF6B5F9BE0B5A7CA2AA /* RadiusOfGyrationFeaturesCreator.cc in Sources */,
 				43A6ADA9DCC1B462F96B5B10 /* Report.cc in Sources */,
@@ -30803,6 +30883,17 @@
 				6ADD472C0C8CC647351AC2B9 /* WrapFilterAsEvaluatorCreator.cc in Sources */,
 				B96FF513BB60BBC887C11A2F /* RDC_energies.cc in Sources */,
 				240C6D36BAC1DA35E645CFCA /* RDC_main.cc in Sources */,
+				3C1D08D8005B98B283073623 /* DeleteAllRotamerSetOperation.cc in Sources */,
+				4146B8C9FF2A9DA6074D1F37 /* FourHelixGraph.cc in Sources */,
+				C3AC18C69637660673C16965 /* FourHelixRepeatGraph.cc in Sources */,
+				5D4E51F96B2CEEB22F8390C9 /* NativeResidueReader.cc in Sources */,
+				02B64AA618C9C904763C5F94 /* NativeRotamerFileLoader.cc in Sources */,
+				7BDF357AF54822CAD7FAC6CF /* Node.cc in Sources */,
+				7E28C0B4B1E9E257010B890A /* ProteinAssemblyGraph.cc in Sources */,
+				919606BA024F6F8468C94F96 /* SewingDesigner.cc in Sources */,
+				4CB8A670539C5E8096C471AE /* ThreeHelixGraph.cc in Sources */,
+				25F2A398B33347123C9EFD28 /* ThreeHelixRepeatGraph.cc in Sources */,
+				D572460B350498E3AB70EAFB /* util.cc in Sources */,
 				CC3338EB08FAF2AB730B7523 /* option.cc in Sources */,
 				202F26D4EC0FA6808C2DAC96 /* RestrictToAlignedSegments.cc in Sources */,
 				BC95E3CFC4D43560A7E67A3D /* Splice.cc in Sources */,

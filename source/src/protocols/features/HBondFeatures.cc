@@ -15,8 +15,6 @@
 #include <protocols/features/HBondFeatures.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 // Package Headers
 #include <core/scoring/hbonds/HBondSet.hh>
@@ -241,7 +239,7 @@ HBondFeatures::write_hbond_sites_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column site_id("site_id", new DbInteger());
 	Column resNum("resNum", new DbInteger());
 	Column atmNum("atmNum", new DbInteger());
@@ -291,7 +289,7 @@ HBondFeatures::write_hbond_sites_pdb_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column site_id("site_id", new DbInteger());
 	Column chain("chain", new DbText(1));
 	Column resNum("resNum", new DbInteger());
@@ -330,7 +328,7 @@ HBondFeatures::write_hbond_site_environment_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column site_id("site_id", new DbInteger());
 	Column sasa_r100("sasa_r100", new DbReal());
 	Column sasa_r140("sasa_r140", new DbReal());
@@ -368,7 +366,7 @@ HBondFeatures::write_hbond_site_atoms_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column site_id("site_id", new DbInteger());
 	Column atm_x("atm_x", new DbReal());
 	Column atm_y("atm_y", new DbReal());
@@ -420,7 +418,7 @@ HBondFeatures::write_hbonds_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column hbond_id("hbond_id", new DbInteger());
 	Column don_id("don_id", new DbInteger());
 	Column acc_id("acc_id", new DbInteger());
@@ -473,7 +471,7 @@ HBondFeatures::write_hbond_lennard_jones_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column hbond_id("hbond_id", new DbInteger());
 	Column don_acc_atrE("don_acc_atrE", new DbReal());
 	Column don_acc_repE("don_acc_repE", new DbReal());
@@ -525,7 +523,7 @@ HBondFeatures::write_hbond_geom_coords_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column hbond_id("hbond_id", new DbInteger());
 	Column AHdist("AHdist", new DbReal());
 	Column cosBAH("cosBAH", new DbReal());
@@ -561,7 +559,7 @@ HBondFeatures::write_hbond_dehydrons_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column hbond_id("hbond_id", new DbInteger());
 	Column wrapping_count("wrapping_count", new DbInteger());
 
@@ -637,7 +635,7 @@ Size
 HBondFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 	HBondSet hbond_set;
@@ -745,7 +743,7 @@ HBondFeatures::report_features(
 void
 HBondFeatures::insert_site_row(
 	Pose const & pose,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Size site_id,
 	Size resNum,
 	Size atmNum,
@@ -794,7 +792,7 @@ HBondFeatures::insert_site_pdb_row(
 	Size resNum,
 	Size,
   Size heavy_atmNum,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Size site_id,
 	sessionOP db_session
 ){
@@ -826,7 +824,7 @@ HBondFeatures::insert_site_environment_row(
 	Pose const & pose,
 	Size resNum,
 	Size atmNum,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Size site_id,
 	AtomID_Map< Real > const & atom_sasa_s,
 	AtomID_Map< Real > const & atom_sasa_m,
@@ -866,7 +864,7 @@ HBondFeatures::insert_site_atoms_row(
 	Pose const & pose,
 	Size resNum,
 	Size atmNum,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Size site_id,
 	sessionOP db_session
 ){
@@ -913,7 +911,7 @@ HBondFeatures::insert_site_atoms_row(
 void
 HBondFeatures::insert_hbond_row(
 	HBond const & hbond,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Size hbond_id,
 	AtomID_Map< Size > const & site_ids,        // This is for ranking hbonds
 	AtomID_Map< vector1<HBondCOP> > const & site_partners,
@@ -985,7 +983,7 @@ HBondFeatures::insert_hbond_geom_coords(
 	Pose const & pose,
 	HBondOptions const & hbond_options,
 	HBond const & hbond,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Size hbond_id,
 	sessionOP db_session
 ){
@@ -1037,7 +1035,7 @@ void
 HBondFeatures::insert_hbond_lennard_jones_row(
 	Pose const & pose,
 	HBond const & hbond,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Size hbond_id,
 	sessionOP db_session
 ){
@@ -1129,7 +1127,7 @@ void
 HBondFeatures::insert_hbond_dehydron_row(
 	Pose const & pose,
 	HBond const & hbond,
-    boost::uuids::uuid struct_id,
+    StructureID struct_id,
 	Size hbond_id,
 	sessionOP db_session
 ){

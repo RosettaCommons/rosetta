@@ -18,10 +18,6 @@
 #include <numeric/roc_curve.hh>
 #include <utility/exit.hh>
 
-//External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
-
 //Auto Headers
 #include <utility/vector1.hh>
 
@@ -64,7 +60,7 @@ void qsarOptFunc::setup_data_map()
 	cppdb::result struct_id_result(basic::database::safely_read_from_database(struct_id_selection_));
 	while(struct_id_result.next())
 	{
-		boost::uuids::uuid struct_id;
+		core::Size struct_id;
 		struct_id_result >> struct_id;
 		data_map_.push_back(get_struct_data(struct_id));
 	}
@@ -116,7 +112,7 @@ void qsarOptFunc::dump( core::optimization::Multivec const &, core::optimization
 	utility_exit_with_message("haven't implemented dump sorry bye");
 }
 
-qsarOptData qsarOptFunc::get_struct_data(boost::uuids::uuid const & struct_id )
+qsarOptData qsarOptFunc::get_struct_data(core::Size const & struct_id )
 {
 
 	tag_activity_selection_.bind(1,struct_id);

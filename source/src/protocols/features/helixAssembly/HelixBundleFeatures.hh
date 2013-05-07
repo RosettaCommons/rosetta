@@ -18,9 +18,6 @@
 //Unit
 #include <protocols/features/helixAssembly/HelixBundleFeatures.fwd.hh>
 
-//External
-#include <boost/uuid/uuid.hpp>
-
 //Protocols
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
@@ -51,6 +48,8 @@ struct FragmentPair
 	core::Real fa_fraction;
 	core::Real crossing_angle;
 };
+
+typedef std::map< std::pair<core::Size, core::Size>, FragmentPair> PairMap;
 	
 class HelixBundleFeatures : public protocols::features::FeaturesReporter
 {
@@ -88,14 +87,9 @@ public:
 	features_reporter_dependencies() const;
 	
 	bool
-	valid_frag_set(
-		std::set<HelicalFragmentOP> const & frag_set
-	);
-
-	bool
-	check_cap_distances(
-		core::pose::Pose const & pose,
-		utility::vector1<HelicalFragmentOP> const & frag_set
+	overlapping(
+		HelicalFragmentOP const & fragment_1,
+		HelicalFragmentOP const & fragment_2
 	);
 
 	///@brief collect all the feature data for the pose
@@ -104,13 +98,13 @@ public:
 	report_features(
 		core::pose::Pose const & pose,
 		utility::vector1<bool> const & relevant_residues,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 
 	utility::vector1<HelicalFragmentOP>
 	get_helix_fragments(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 	
@@ -129,7 +123,7 @@ public:
 		std::set<HelicalFragmentOP> const & frag_set
 	);
 	
-	utility::vector1<FragmentPair>
+	PairMap
 	get_helix_pairs(
 		core::pose::Pose const & pose,
 		utility::vector1<HelicalFragmentOP> helix_fragments

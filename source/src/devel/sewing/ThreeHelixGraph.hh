@@ -30,7 +30,7 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 //Boost
-#include <boost/uuid/uuid.hpp>
+
 
 //C++ headers
 #include <map>

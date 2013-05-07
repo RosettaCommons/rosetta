@@ -26,44 +26,44 @@
 # All command files should start with this line:
 #
 
-#cd %(workdir)s
-#
-#[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
-#
-#%(bin)s/rosetta_scripts.%(binext)s @flags_01 -database %(database)s  2>&1 \
-#	| egrep -vf ../../ignore_list \
-#	> log_db_output_01
-#
-#test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
-#
-#%(bin)s/rosetta_scripts.%(binext)s @flags_02 -database %(database)s  2>&1 \
-#	| egrep -vf ../../ignore_list \
-#	> log_db_output_02
-#
-#test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
-#
-#full_db="features_IntegrationTest.db3"
-#part_dbs=${full_db}_*
-#
-## this test requires 'bash' not just 'sh':
-#if type -P sqlite3 &>/dev/null; then
-#
-#   python merge_databases.py $full_db $part_dbs
-#
-#   # strip out information that will cause needless integrationt test failures
-#   sqlite3 $full_db 'UPDATE protocols SET svn_url = "";'
-#   sqlite3 $full_db 'UPDATE protocols SET svn_version = "";'
-#   
-#   # just consider dumped contents for easier integrationt test comparison
-#   sqlite3 $full_db '.dump' > $full_db.dump 
-#   for part_db in $part_dbs
-#   do
-#      sqlite3 $part_db '.dump' > $part_db.dump
-#   done
-#else
-#   echo "Please install the sqlite3 command line application to correctly run this test." > log_db_output
-#fi
-#
-#
-#rm -rf $full_db $part_dbs
+cd %(workdir)s
+
+[ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
+
+%(bin)s/rosetta_scripts.%(binext)s @flags_01 -database %(database)s  2>&1 \
+	| egrep -vf ../../ignore_list \
+	> log_db_output_01
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+
+%(bin)s/rosetta_scripts.%(binext)s @flags_02 -database %(database)s  2>&1 \
+	| egrep -vf ../../ignore_list \
+	> log_db_output_02
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+
+full_db="features_IntegrationTest.db3"
+part_dbs=${full_db}_*
+
+# this test requires 'bash' not just 'sh':
+if type -P sqlite3 &>/dev/null; then
+
+   bash merge.sh $full_db $part_dbs &> log_database_merge
+
+   # strip out information that will cause needless integrationt test failures
+   sqlite3 $full_db 'UPDATE protocols SET svn_url = "";'
+   sqlite3 $full_db 'UPDATE protocols SET svn_version = "";'
+   
+   # just consider dumped contents for easier integrationt test comparison
+   sqlite3 $full_db '.dump' > $full_db.dump 
+   for part_db in $part_dbs
+   do
+      sqlite3 $part_db '.dump' > $part_db.dump
+   done
+else
+   echo "Please install the sqlite3 command line application to correctly run this test." > log_db_output
+fi
+
+
+rm -rf $full_db $part_dbs
 

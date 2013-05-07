@@ -91,7 +91,7 @@ Size
 ResidueTypesFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const,
+	StructureID const,
 	sessionOP db_session
 ){
 

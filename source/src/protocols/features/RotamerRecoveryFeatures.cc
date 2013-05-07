@@ -243,7 +243,7 @@ Size
 RotamerRecoveryFeatures::report_features(
 	Pose const & pose_in,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	RRReporterSQLiteOP reporter(

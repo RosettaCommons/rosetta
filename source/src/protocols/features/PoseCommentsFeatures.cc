@@ -18,8 +18,6 @@
 #include <core/pose/util.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 // Platform Headers
 #include <core/chemical/AA.hh>
@@ -88,7 +86,7 @@ PoseCommentsFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 	using namespace basic::database::schema_generator;
 
 	//******pose_comments******//
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column comment_key("comment_key", new DbTextKey(), false);
 	Column value("value", new DbText(), false);
 
@@ -118,7 +116,7 @@ Size
 PoseCommentsFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & /*relevant_residues*/,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 
@@ -130,7 +128,7 @@ PoseCommentsFeatures::report_features(
 
 	typedef map< string, string >::value_type kv_pair;
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 
 	foreach(kv_pair const & kv, get_all_comments(pose)){
 
@@ -146,7 +144,7 @@ PoseCommentsFeatures::report_features(
 }
 
 void PoseCommentsFeatures::delete_record(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session
 ) {
 
@@ -160,7 +158,7 @@ void PoseCommentsFeatures::delete_record(
 void
 PoseCommentsFeatures::load_into_pose(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose){
 
 	if(!table_exists(db_session, "pose_comments")) return;

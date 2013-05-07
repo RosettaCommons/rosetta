@@ -78,7 +78,7 @@ std::string ResidueGridScoresFeatures::type_name() const
 void ResidueGridScoresFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const
 {
 	using namespace basic::database::schema_generator;
-	Column struct_id("struct_id",new DbUUID());
+	Column struct_id("struct_id",new DbBigInt());
 	Column grid_name("grid_name",new DbTextKey());
 	Column seqpos("seqpos",new DbInteger());
 	Column atomno("atomno",new DbInteger());
@@ -121,7 +121,7 @@ utility::vector1<std::string> ResidueGridScoresFeatures::features_reporter_depen
 core::Size ResidueGridScoresFeatures::report_features(
 	core::pose::Pose const & pose,
 	utility::vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	utility::sql_database::sessionOP db_session)
 {
 	using basic::database::insert_statement_generator::InsertGenerator;
@@ -149,7 +149,7 @@ core::Size ResidueGridScoresFeatures::report_features(
 	grid_insert.add_column("atomno");
 	grid_insert.add_column("score");
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 	for (Size i = pose.conformation().chain_begin(chain_id); i <= pose.conformation().chain_end(chain_id); ++i) {
 
 		if(!relevant_residues[i]) continue;

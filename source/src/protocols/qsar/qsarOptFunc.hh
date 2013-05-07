@@ -27,10 +27,6 @@
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
-#ifdef WIN32
-#include <boost/uuid/uuid.hpp>
-#endif
-
 namespace protocols {
 namespace qsar {
 
@@ -76,7 +72,7 @@ public:
 
 private:
 
-	qsarOptData get_struct_data(boost::uuids::uuid const & struct_id);
+	qsarOptData get_struct_data(core::Size const & struct_id);
 
 	std::list<qsarOptData> data_map_;
 	core::optimization::Multivec initial_values_;

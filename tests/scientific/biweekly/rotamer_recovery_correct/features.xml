@@ -6,7 +6,7 @@
                 <ExtraRotamersGeneric name=extra_chi ex1=1 ex2=1 extrachi_cutoff=0/>
         </TASKOPERATIONS>
         <MOVERS>
-		<ReportToDB name=features_reporter db="outputs/features_correct.db3" sample_source="Rotamer Recovery for Score12prime">
+		<ReportToDB name=features_reporter db="outputs/features_correct.db3" batch_description="Rotamer Recovery for Score12prime">
 			<feature name=ResidueFeatures/>
 			
 			# B-Factors for filtering  and PDB identification for looking at the structures

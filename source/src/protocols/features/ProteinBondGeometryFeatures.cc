@@ -41,9 +41,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 namespace protocols{
 namespace features{
@@ -95,7 +93,7 @@ ProteinBondGeometryFeatures::write_bond_intrares_angles_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column resNum("resNum", new DbInteger(), false);
 	Column cenAtmNum("cenAtmNum", new DbInteger(), false);
 	Column outAtm1Num("outAtm1Num", new DbInteger(), false);
@@ -143,7 +141,7 @@ ProteinBondGeometryFeatures::write_bond_interres_angles_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column cenResNum("cenresNum", new DbInteger(), false);
 	Column connResNum("connResNum", new DbInteger(), false);
 	Column cenAtmNum("cenAtmNum", new DbInteger(), false);
@@ -193,7 +191,7 @@ ProteinBondGeometryFeatures::write_bond_intrares_lengths_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column resNum("resNum", new DbInteger(), false);
 	Column atm1Num("atm1Num", new DbInteger(), false);
 	Column atm2Num("atm2Num", new DbInteger(), false);
@@ -237,7 +235,7 @@ ProteinBondGeometryFeatures::write_bond_interres_lengths_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column res1Num("res1Num", new DbInteger(), false);
 	Column res2Num("res2Num", new DbInteger(), false);
 	Column atm1Num("atm1Num", new DbInteger(), false);
@@ -292,7 +290,7 @@ ProteinBondGeometryFeatures::write_bond_intrares_torsions_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column resNum("resNum", new DbInteger(), false);
 	Column atm1Num("atm1Num", new DbInteger(), false);
 	Column atm2Num("atm2Num", new DbInteger(), false);
@@ -349,7 +347,7 @@ Size
 ProteinBondGeometryFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	report_intrares_angles( pose, relevant_residues, struct_id, db_session );
@@ -364,7 +362,7 @@ void
 ProteinBondGeometryFeatures::report_intrares_angles(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	std::string statement_string ="INSERT INTO bond_intrares_angles (struct_id, resNum, cenAtmNum, outAtm1Num, outAtm2Num, cenAtmName, outAtm1Name, outAtm2Name, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -445,7 +443,7 @@ void
 ProteinBondGeometryFeatures::report_interres_angles(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	std::string statement_string ="INSERT INTO bond_interres_angles (struct_id, cenresNum, connResNum, cenAtmNum, outAtmCenNum, outAtmConnNum, cenAtmName, outAtmCenName, outAtmConnName, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -579,7 +577,7 @@ void
 ProteinBondGeometryFeatures::report_intrares_lengths(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	std::string statement_string ="INSERT INTO bond_intrares_lengths (struct_id, resNum, atm1Num, atm2Num, atm1Name, atm2Name, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?)";
@@ -644,7 +642,7 @@ void
 ProteinBondGeometryFeatures::report_interres_lengths(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	std::string statement_string ="INSERT INTO bond_interres_lengths (struct_id, res1Num, res2Num, atm1Num, atm2Num, atm1Name, atm2Name, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
@@ -719,7 +717,7 @@ void
 ProteinBondGeometryFeatures::report_intrares_torsions(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	std::string statement_string ="INSERT INTO bond_intrares_torsions (struct_id, resNum, atm1Num, atm2Num, atm3Num, atm4Num, atm1Name, atm2Name, atm3Name, atm4Name, ideal, observed, difference, energy) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";

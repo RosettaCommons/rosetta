@@ -63,12 +63,12 @@ SmotifGraph::populate_graph(
 	cppdb::result res1 = basic::database::safely_read_from_database(inter_structure_select_stmt);
 	
 	while(res1.next()){
-		boost::uuids::uuid struct_id_1;
+		protocols::features::StructureID struct_id_1;
 		core::Size bundle_id_1, node_id_1;
 		core::Size pair_1_helix_1_id, pair_1_helix_1_begin, pair_1_helix_1_end;
 		core::Size pair_1_helix_2_id, pair_1_helix_2_begin, pair_1_helix_2_end;
 		
-		boost::uuids::uuid struct_id_2;
+		protocols::features::StructureID struct_id_2;
 		core::Size bundle_id_2, node_id_2;
 		core::Size pair_2_helix_1_id, pair_2_helix_1_begin, pair_2_helix_1_end;
 		core::Size pair_2_helix_2_id, pair_2_helix_2_begin, pair_2_helix_2_end;
@@ -135,12 +135,12 @@ SmotifGraph::populate_graph(
 	cppdb::result res2 = basic::database::safely_read_from_database(intra_bundle_select_stmt);
 	
 	while(res2.next()){
-		boost::uuids::uuid struct_id_1;
+		protocols::features::StructureID struct_id_1;
 		core::Size bundle_id_1, node_id_1;
 		core::Size pair_1_helix_1_id, pair_1_helix_1_begin, pair_1_helix_1_end;
 		core::Size pair_1_helix_2_id, pair_1_helix_2_begin, pair_1_helix_2_end;
 		
-		boost::uuids::uuid struct_id_2;
+		protocols::features::StructureID struct_id_2;
 		core::Size bundle_id_2, node_id_2;
 		core::Size pair_2_helix_1_id, pair_2_helix_1_begin, pair_2_helix_1_end;
 		core::Size pair_2_helix_2_id, pair_2_helix_2_begin, pair_2_helix_2_end;

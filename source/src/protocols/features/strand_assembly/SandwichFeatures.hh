@@ -19,7 +19,7 @@
 #include <protocols/features/strand_assembly/SandwichFeatures.fwd.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
+
 
 //Protocols
 #include <protocols/features/FeaturesReporter.hh>
@@ -86,55 +86,55 @@ public:
 	report_features(
 		core::pose::Pose const & pose, //core::pose::Pose & pose, // dropped 'const' for dssp info addition
 		utility::vector1<bool> const & relevant_residues,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	utility::vector1<SandwichFragment>
 	get_full_strands(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	bool
 	check_whether_strand_i_is_in_sheet(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size segment_id);
 
 	utility::vector1<SandwichFragment>
 	get_current_strands_in_sheet(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	core::Size
 	get_max_sheet_id(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	utility::vector1<SandwichFragment>
 	get_chain_B_resNum(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	std::string
 	get_tag(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	core::Size
 	get_num_strands_in_this_sheet(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id);
 
 	utility::vector1<SandwichFragment>
 	get_full_strands_from_sheet(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id);
 
 	utility::vector1<core::Size>
 	get_distinct_sheet_id(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	core::Size
@@ -157,7 +157,7 @@ public:
 
 	bool
 	see_whether_sheets_can_be_combined(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose,
 		core::Size i_sheet,
@@ -165,27 +165,27 @@ public:
 
 	core::Size
 	update_sheet_id(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size new_sheet_id,
 		core::Size old_sheet_id);
 
 	void	
 	update_sheet_antiparallel(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id,
 		std::string antiparallel);
 
 	std::string
 	get_sheet_antiparallel_info(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id);
 
 	bool
 	change_sheet_id_if_possible(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose);
 
@@ -198,7 +198,7 @@ public:
 
 	std::string
 	see_whether_sheet_is_antiparallel(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose,
 		core::Size i_sheet);
@@ -238,13 +238,13 @@ public:
 
 	bool
 	check_whether_this_sheet_is_too_short(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_i);
 
 	std::pair<core::Size, core::Size>
 	get_two_central_residues(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose,
 		core::Size sheet_i);
@@ -255,7 +255,7 @@ public:
 
 	bool
 	judge_facing(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose,
 		core::Size sheet_i,
@@ -263,7 +263,7 @@ public:
 
 	core::Size
 	write_to_sheet (
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_PK_id_counter,
 		core::Size sheet_id,
@@ -271,7 +271,7 @@ public:
 
 	core::Size
 	write_to_sw_can_by_sh	(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_PK_id_counter,
 		std::string tag,
@@ -281,13 +281,13 @@ public:
 
 	utility::vector1<SandwichFragment>
 	prepare_to_fill_sw_by_components(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	std::string
 	see_whether_strand_is_at_edge	(
 		core::pose::Pose const & pose,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sheet_id,
 		std::string sheet_antiparallel,
@@ -296,14 +296,14 @@ public:
 
 	std::vector<Size>
 	get_cen_res_in_other_sheet(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size sw_can_by_sh_id,
 		core::Size sheet_id);
 
 	std::vector<Size>
 	get_cen_res_in_this_sheet(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size sheet_id);
 
@@ -315,7 +315,7 @@ public:
 
 	std::vector<core::Size>
 	count_AA_w_direction(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose const & pose,
 		core::Size sw_can_by_sh_id,
@@ -325,7 +325,7 @@ public:
 
 	core::Size
 	fill_sw_by_components(
-		boost::uuids::uuid	struct_id,
+		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose const & pose,
 		core::Size	sw_by_components_PK_id_counter,
@@ -341,7 +341,7 @@ public:
 
 	core::Size
 	update_sw_by_components_by_AA_w_direction(
-		boost::uuids::uuid	struct_id,
+		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose const & pose,
 		core::Size	sw_can_by_sh_id,
@@ -351,32 +351,32 @@ public:
 	
 	utility::vector1<Size>
 	get_vec_sw_can_by_sh_id(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	core::Size
 	get_size_sw_by_components_PK_id(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id);
 
 	std::pair<core::Size, core::Size>
 	get_starting_res_for_connecting_strands(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id,
 		core::Size former_res_end);
 
 	std::pair<core::Size, core::Size>
 	get_next_starting_res_for_connecting_strands(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id,
 		core::Size former_ending_res);
 
 	core::Size
 	update_sheet_con(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose,
 		core::Size sw_by_components_PK_id_counter,
@@ -399,19 +399,19 @@ public:
 
 	core::Size
 	delete_this_sw_can_by_sh_id(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id);
 		
 	core::Size
 	get_segment_id(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size all_strands_index);
 	
 	core::Size
 	get_num_of_distinct_sheet_id(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	core::Real
@@ -462,7 +462,7 @@ public:
 
 	bool
 	check_whether_sheets_are_connected_by_same_direction_strand(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose,
 		core::Size start_res,
@@ -470,7 +470,7 @@ public:
 
 	void
 	add_AA_to_terminal_loops (
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose & dssp_pose,
 		core::Size	sw_by_components_PK_id_counter,
@@ -482,7 +482,7 @@ public:
 
 	core::Size
 	add_starting_loop(
-		boost::uuids::uuid	struct_id,
+		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose & dssp_pose,
 		core::Size	sw_by_components_PK_id_counter,
@@ -491,7 +491,7 @@ public:
 
 	core::Size
 	add_ending_loop(
-		boost::uuids::uuid	struct_id,
+		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose & dssp_pose,
 		core::Size	sw_by_components_PK_id_counter,
@@ -504,7 +504,7 @@ public:
 
 	bool
 	check_whether_this_sheet_is_surrounded_by_more_than_1_other_sheet (
-		boost::uuids::uuid	struct_id,
+		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose & dssp_pose,
 		utility::vector1<core::Size>	all_distinct_sheet_ids,
@@ -512,7 +512,7 @@ public:
 
 	core::Real
 	cal_min_dis_between_sheets (
-		boost::uuids::uuid	struct_id,
+		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose & dssp_pose,
 		core::Size sheet_id_1,
@@ -520,7 +520,7 @@ public:
 
 	std::pair<core::Size, core::Size>	
 	get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose,
 		core::Size sw_can_by_sh_id,
@@ -530,7 +530,7 @@ public:
 
 	core::Size
 	report_number_of_inward_pointing_AAs_in_a_pair_of_edge_strands (
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id,
 		core::Size current_bs_id,

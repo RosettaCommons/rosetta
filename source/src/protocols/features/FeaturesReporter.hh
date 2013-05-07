@@ -18,9 +18,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/features/FeaturesReporter.fwd.hh>
 
-//External
-#include <boost/uuid/uuid.hpp>
-
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -33,6 +30,8 @@
 // C++ Headers
 #include <string>
 #include <set>
+
+#include <platform/types.hh>
 
 #include <utility/vector1.hh>
 
@@ -86,7 +85,7 @@ public:
 	core::Size
 	report_features(
 		core::pose::Pose const & /*pose*/,
-		boost::uuids::uuid /*parent uuid*/,
+		StructureID /*parent id*/,
 		utility::sql_database::sessionOP /*db_session*/
 	);
 
@@ -96,7 +95,7 @@ public:
 	report_features(
 		core::pose::Pose const & /*pose*/,
 		utility::vector1< bool > const & /*relevant_residues*/,
-		boost::uuids::uuid /*parent uuid*/,
+		StructureID /*parent id*/,
 		utility::sql_database::sessionOP /*db_session*/
 	) = 0;
 
@@ -113,13 +112,13 @@ public:
 	void
 	load_into_pose(
 		utility::sql_database::sessionOP,
-		boost::uuids::uuid,
+		StructureID,
 		core::pose::Pose & ) {}
 
 	virtual
 	void
 	delete_record(
-		boost::uuids::uuid,
+		StructureID,
 		utility::sql_database::sessionOP ) {}
 
 protected:
@@ -134,7 +133,7 @@ protected:
 	void
 	delete_records_from_table(
 		std::string const & table_name,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 };

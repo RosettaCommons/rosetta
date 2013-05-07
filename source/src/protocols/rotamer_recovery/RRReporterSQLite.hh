@@ -17,12 +17,10 @@
 #include <protocols/rotamer_recovery/RRReporter.hh>
 #include <protocols/rotamer_recovery/RRReporterSQLite.fwd.hh>
 
-//External
-#include <boost/uuid/uuid.hpp>
-
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <protocols/features/FeaturesReporter.fwd.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -113,16 +111,16 @@ public:
 
 	void
 	set_struct_id1(
-		boost::uuids::uuid const struct_id1);
+		protocols::features::StructureID const struct_id1);
 
-	boost::uuids::uuid
+	protocols::features::StructureID
 	get_struct_id1() const;
 
 	void
 	set_struct_id2(
-		boost::uuids::uuid const struct_id1);
+		protocols::features::StructureID const struct_id1);
 
-	boost::uuids::uuid
+	protocols::features::StructureID
 	get_struct_id2() const;
 
 	virtual
@@ -155,7 +153,7 @@ public:
 	virtual
 	void
 	report_rotamer_recovery_features(
-		boost::uuids::uuid struct_id1,
+		protocols::features::StructureID struct_id1,
 		core::conformation::Residue const & res1,
 		core::Real score,
 		bool recovered
@@ -177,8 +175,8 @@ private: // data members
 
 	OutputLevel::e output_level_;
 
-	boost::uuids::uuid struct_id1_;
-	boost::uuids::uuid struct_id2_;
+	protocols::features::StructureID struct_id1_;
+	protocols::features::StructureID struct_id2_;
 
 	std::string protocol_name_;
 	std::string protocol_params_;

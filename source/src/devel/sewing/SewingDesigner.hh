@@ -24,6 +24,7 @@
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <devel/loop_creation/LoopCreationMover.fwd.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/features/FeaturesReporter.fwd.hh>
 
 //Utility
 #include <utility/vector1.hh>

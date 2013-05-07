@@ -445,8 +445,19 @@ Conformation::append_residue_by_bond(
 	// debug
 	if ( polymer_connection ) {
 		// otherwise confirm that we are making a valid polymer bond
-		runtime_assert( ( anchor_rsd.is_polymer() && !anchor_rsd.is_upper_terminus() ) &&
-										(    new_rsd.is_polymer() &&    !new_rsd.is_lower_terminus() ) ); //Chokes for misplaced "TER" cards
+		//Don't use "is_upper_terminus" here as it fails to catch non-"terminus" residue types that have no upper connect id (e.g. methylamidated reisdues)
+		if(!anchor_rsd.is_polymer() || !anchor_rsd.type().upper_connect_id()){
+			std::stringstream err;
+			err << "Can't create a polymer bond after residue " << anchor_pos
+				<< " due to incompatible type: " << anchor_rsd.type().name();
+			utility_exit_with_message(err.str());
+		}
+		else if(!new_rsd.is_polymer() || !new_rsd.type().lower_connect_id()){
+			std::stringstream err;
+			err << "Can't create a polymer bond to new residue " << seqpos
+				<< " due to incompatible type: " << new_rsd.type().name();
+			utility_exit_with_message(err.str());
+		}
 	} else {
 		// if using a non-polymer connection, confirm that anchor_pos & anchor_residue_connection_index are set
 		assert( anchor_pos && anchor_residue_connection_index );

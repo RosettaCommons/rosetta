@@ -16,7 +16,7 @@
 	<MOVERS>
 	        <SetupForSymmetry name=setup_symm definition="%%symmdef%%"/>
 	        <SymPackRotamersMover name=repack_dens scorefxn=scfxn_dens_repack task_operations=restrict,keep_curr/>
-		<ReportToDB name=report_scores database_name="scores.db3" sample_source="repack_with_elec_dens">
+		<ReportToDB name=report_scores database_name="scores.db3" batch_description="repack_with_elec_dens">
 			<feature name=ScoreTypeFeatures/>
 			<feature name=StructureScoresFeatures scorefxn=scfxn_dens_score/>
 		</ReportToDB>

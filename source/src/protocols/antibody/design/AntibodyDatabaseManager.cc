@@ -309,7 +309,7 @@ AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoOP & ab_info, GraftI
 			while(uuid_result.next()){
 				if (uuid_result.empty()){break;}
 				TR.Debug << "Loading structure: " << tags[k] <<std::endl;
-				boost::uuids::uuid struct_id;
+				StructureID struct_id;
 				uuid_result >> struct_id;
 				core::pose::PoseOP pose = new core::pose::Pose();
 				reporter.load_pose(db_session_, struct_id, *pose);

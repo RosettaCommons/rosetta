@@ -9,7 +9,7 @@
         <MOVERS>
 		<SavePoseMover name=save_primary reference_name=primary_structure/>
 		<RotamerTrialsMinMover name=rt_min scorefxn=s task_operations=relevant_chain/>
-                <ReportToDB name=report_features database_name="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" sample_source="RTMin with the sp2 corrected score function" task_operations=relevant_chain>
+                <ReportToDB name=report_features database_name="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" batch_description="RTMin with the sp2 corrected score function" task_operations=relevant_chain>
 
 			<feature name=ScoreTypeFeatures/>
 			<feature name=StructureScoresFeatures scorefxn=s/>

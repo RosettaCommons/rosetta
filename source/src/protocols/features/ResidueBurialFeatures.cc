@@ -38,7 +38,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/uuid/uuid_io.hpp>
 
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
@@ -91,7 +90,7 @@ ResidueBurialFeatures::write_residue_burial_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID());
+	Column struct_id("struct_id", new DbBigInt());
 	Column resNum("resNum", new DbInteger());
 	Column ten_a_neighbors("ten_a_neighbors", new DbInteger());
 	Column twelve_a_neighbors("twelve_a_neighbors", new DbInteger());
@@ -136,7 +135,7 @@ Size
 ResidueBurialFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 

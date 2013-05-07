@@ -42,9 +42,6 @@
 // External Headers
 #include <cppdb/frontend.h>
 
-// Boost Headers
-#include <boost/uuid/uuid_io.hpp>
-
 // C++ Headers
 #include <string>
 #include <sstream>
@@ -80,7 +77,6 @@ using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
-using boost::uuids::uuid;
 
 ChargeChargeFeatures::ChargeChargeFeatures() :
 	FeaturesReporter(),
@@ -109,7 +105,7 @@ ChargeChargeFeatures::write_schema_to_db(
 
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column q1_site_id("q1_site_id", new DbInteger(), false);
 	Column q2_site_id("q2_site_id", new DbInteger(), false);
 	Column q1_charge("q1_charge", new DbInteger(), false);
@@ -173,7 +169,7 @@ Size
 ChargeChargeFeatures::report_features(
 	Pose const &,
 	vector1< bool > const &,
-	uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ){
 

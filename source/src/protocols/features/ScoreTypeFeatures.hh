@@ -19,7 +19,6 @@
 #include <protocols/features/ScoreTypeFeatures.fwd.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -63,7 +62,7 @@ public:
 	report_features(
 		core::pose::Pose const &,
 		utility::vector1< bool > const &,
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
 	core::Size
@@ -72,7 +71,7 @@ public:
 		utility::sql_database::sessionOP db_session);
 
 	void delete_record(
-		boost::uuids::uuid struct_id,
+		StructureID struct_id,
 		utility::sql_database::sessionOP db_session
 	);
 

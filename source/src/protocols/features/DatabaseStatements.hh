@@ -15,10 +15,10 @@
 
 #include <core/types.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+#include <protocols/features/FeaturesReporter.fwd.hh>
 #include <string>
 
 //External
-#include <boost/uuid/uuid.hpp>
 
 namespace protocols {
 namespace features {
@@ -35,39 +35,39 @@ core::Size get_score_type_id_from_score_term(
 	core::Size const & protocol_id,
 	std::string const & score_term
 );
-boost::uuids::uuid get_struct_id_with_lowest_score_from_job_data(
+StructureID get_struct_id_with_lowest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
 	core::Size const & protocol_id,
 	std::string const & input_tag="");
 
-boost::uuids::uuid get_struct_id_with_lowest_score_from_score_data(
+StructureID get_struct_id_with_lowest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
 	core::Size const & protocol_id,
 	std::string const & input_tag="" );
 
 
-boost::uuids::uuid get_struct_id_with_highest_score_from_job_data(
+StructureID get_struct_id_with_highest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
 	core::Size const & protocol_id,
 	std::string const & input_tag="" );
 
-boost::uuids::uuid get_struct_id_with_highest_score_from_score_data(
+StructureID get_struct_id_with_highest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
 	core::Size const & protocol_id,
 	std::string const & input_tag="");
 
-boost::uuids::uuid get_struct_id_with_nth_lowest_score_from_job_data(
+StructureID get_struct_id_with_nth_lowest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
 	core::Size const & cutoff_index,
 	core::Size const & protocol_id,
 	std::string const & input_tag);
 
-boost::uuids::uuid get_struct_id_with_nth_lowest_score_from_score_data(
+StructureID get_struct_id_with_nth_lowest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
 	core::Size const & cutoff_index,
@@ -76,22 +76,13 @@ boost::uuids::uuid get_struct_id_with_nth_lowest_score_from_score_data(
 
 core::Real get_score_for_struct_id_and_score_term_from_job_data(
 	utility::sql_database::sessionOP db_session,
-	boost::uuids::uuid const & struct_id,
+	StructureID const & struct_id,
 	std::string const & score_term);
 
 core::Real get_score_for_struct_id_and_score_term_from_score_data(
 	utility::sql_database::sessionOP db_session,
-	boost::uuids::uuid const & struct_id,
+	StructureID const & struct_id,
 	core::Size const & score_type_id);
-
-
-
-
-
-
-
-
-
 
 }
 }

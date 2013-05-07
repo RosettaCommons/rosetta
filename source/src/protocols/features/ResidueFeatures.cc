@@ -15,8 +15,6 @@
 #include <protocols/features/ResidueFeatures.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 // Project Headers
 #include <basic/options/option.hh>
@@ -83,7 +81,7 @@ void
 ResidueFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column resNum("resNum", new DbInteger(), false);
 	Column name3("name3", new DbText(), false);
 	Column res_type("res_type", new DbText(), false);
@@ -116,7 +114,7 @@ Size
 ResidueFeatures::report_features(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 	insert_residue_rows(pose, relevant_residues, struct_id, db_session);
@@ -128,7 +126,7 @@ void
 ResidueFeatures::insert_residue_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid const struct_id,
+	StructureID const struct_id,
 	sessionOP db_session
 ){
 
@@ -139,7 +137,7 @@ ResidueFeatures::insert_residue_rows(
 	residues_insert.add_column("name3");
 	residues_insert.add_column("res_type");
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
@@ -161,7 +159,7 @@ ResidueFeatures::insert_residue_rows(
 
 void
 ResidueFeatures::delete_record(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session) {
 
 	delete_records_from_table("residues", struct_id, db_session);

@@ -39,7 +39,7 @@ public:
 
 	Column(std::string name, DbDataTypeOP type, bool allow_null);
 
-	Column(std::string name, DbDataTypeOP type, bool allow_null, bool auto_increment);
+	Column(std::string name, DbDataTypeOP type, bool allow_null, bool auto_increment, platform::Size auto_increment_base = 0);
 
 	Column(Column const & src);
 
@@ -48,6 +48,7 @@ public:
 	std::string name() const;
 
 	bool auto_increment() const;
+	Size auto_increment_base() const;
 
 	std::string print(utility::sql_database::sessionOP db_session) const;
 
@@ -59,6 +60,7 @@ private:
 	DbDataTypeOP type_;
 	bool allow_null_;
 	bool auto_increment_;
+  platform::Size auto_increment_base_;
 };
 
 } // schema_generator

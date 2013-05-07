@@ -21,6 +21,7 @@
 #include <core/types.hh>
 
 #include <protocols/features/util.hh>
+#include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/BatchFeatures.hh>
 #include <protocols/jd2/util.hh>
@@ -28,6 +29,7 @@
 #include <basic/message_listening/MessageListener.hh>
 #include <basic/message_listening/DbMoverMessageListener.hh>
 #include <basic/message_listening/util.hh>
+#include <basic/database/schema_generator/Schema.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
@@ -43,8 +45,6 @@
 #include <cppdb/frontend.h>
 #include <cppdb/errors.h>
 
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 #include <core/conformation/Residue.hh>
 
@@ -53,6 +53,8 @@
 #include <utility>
 #include <iostream>
 
+// Boost Headers
+#include <boost/foreach.hpp>
 
 namespace protocols{
 namespace features{
@@ -72,6 +74,10 @@ using basic::message_listening::DATABASE_PROTOCOL_AND_BATCH_ID_TAG;
 using cppdb::statement;
 using cppdb::result;
 
+/// Macros are not properly caught and passed along by my #inclusion
+/// cleanup script
+#define foreach BOOST_FOREACH
+
 
 // Static data for the serial case
 Size static_protocol_id_ = 0;
@@ -81,6 +87,32 @@ map<string, Size> static_batch_id_map_;
 static Tracer TR("protocols.features.util");
 // End static data
 
+///@brief write the given protocol and batch ids to the database. The protocol and batches
+///features reporters will check for an existing entry with the same key, and write if one
+///does not exist. Not recommended for parallel use as it is subject to race conditions (due
+///to the nature of 'insert or ignore' type database writing)
+void
+set_protocol_and_batch_id(
+	core::Size protocol_id,
+	core::Size batch_id,
+	string const & batch_name,
+	string const & batch_description,
+	utility::vector1<FeaturesReporterOP> features_reporters,
+	sessionOP db_session
+){
+	ProtocolFeaturesOP protocol_features = new ProtocolFeatures();
+	BatchFeaturesOP batch_features = new BatchFeatures();
+
+	db_session->begin_transaction();
+	protocol_id = protocol_features->report_features(protocol_id, db_session);
+	db_session->force_commit_transaction();
+	write_features_reporters_table(features_reporters, db_session);
+
+	db_session->begin_transaction();
+	batch_id = batch_features->report_features(batch_id, protocol_id, batch_name, batch_description, db_session);
+	db_session->force_commit_transaction();
+	write_batch_reports_table(features_reporters, batch_id, db_session);
+}
 
 ///@brief Get the protocol and batch ids or create them if they don't
 ///yet exist. For MPI protocols, only allow the head node to create
@@ -88,7 +120,9 @@ static Tracer TR("protocols.features.util");
 ///for the info.
 pair<Size, Size>
 get_protocol_and_batch_id(
-	string identifier,
+	string const & batch_name,
+	string const & batch_description,
+	utility::vector1<FeaturesReporterOP> features_reporters,
 	sessionOP db_session
 ) {
 	using namespace basic::message_listening;
@@ -98,54 +132,29 @@ get_protocol_and_batch_id(
 	ProtocolFeaturesOP protocol_features = new ProtocolFeatures();
 	BatchFeaturesOP batch_features = new BatchFeatures();
 
-#ifdef USEMPI
-
 	int rank = 0;
-	MPI_Comm_rank( MPI_COMM_WORLD, (int*)(&rank) );
 
-	//Send an identifier to the head node, along with a
+#ifdef USEMPI
+	MPI_Comm_rank( MPI_COMM_WORLD, (int*)(&rank) );
+#endif
+
+	//Send an batch_name to the head node, along with a
 	//message_listening tag so that the messageListenerFactory of the
 	//job distributor knows who to give the data to.
 
+	string listener_data="";
+	TR << "Requesting data on '" << batch_name << "' "
+		<< "from the DATABASE_PROTOCOL_AND_BATCH_ID_TAG message listener on head node." << std::endl;
+
 	//Some implementations of mpi don't allow self messaging. So, if we
 	//are the head node, don't try to message yourself, just access the listener directly
-
-	string listener_data="";
-	//Set the max_batch_id if necessary.
-	if(rank == 0)
-	{
-		DbMoverMessageListenerOP listener(utility::pointer::dynamic_pointer_cast<DbMoverMessageListener,MessageListener>(MessageListenerFactory::get_instance()->get_listener(DATABASE_PROTOCOL_AND_BATCH_ID_TAG)));
-		if(!listener->max_batch_id_set())
-		{
-			std::string select_max = "SELECT MAX(batch_id) FROM batches;";
-			cppdb::statement stmt(basic::database::safely_prepare_statement(select_max,db_session));
-			cppdb::result res(basic::database::safely_read_from_database(stmt));
-
-			Size max_batch_id(0);
-			while(res.next())
-			{
-				res >> max_batch_id;
-			}
-			listener->set_max_batch_id(max_batch_id);
-
-		}
-	}
-
 	if(rank != 0) {
-		listener_data = request_data_from_head_node(DATABASE_PROTOCOL_AND_BATCH_ID_TAG, identifier);
-		TR
-			<< "Requesting data on '" << identifier << "' "
-			<< "from the DATABASE_PROTOCOL_AND_BATCH_ID_TAG message listener on head node." << std::endl;
-
+		listener_data = request_data_from_head_node(DATABASE_PROTOCOL_AND_BATCH_ID_TAG, batch_name);
 	} else {
 		MessageListenerOP listener(
 			MessageListenerFactory::get_instance()->get_listener(
 				DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
-		listener->request(identifier,listener_data);
-
-		TR
-			<< "Requesting data on '" << identifier << "' "
-			<< "from the DATABASE_PROTOCOL_AND_BATCH_ID_TAG message listener." << std::endl;
+		listener->request(batch_name,listener_data);
 	}
 
 	//deserialize data into protocol_id and batch_id
@@ -154,109 +163,161 @@ get_protocol_and_batch_id(
 	batch_id = ids.second;
 	TR << "Received protocol_id='" << protocol_id << "' and batch_id='" << batch_id << "'" << std::endl;
 
-	//no protocol id set yet - create protocol and first batch
+	//only send ids if we recieve a protocol or batch id equal to 0.
+	bool send_new_ids_to_head_node=false;
+
+	//no protocol id set yet - have protocol features reporter generate one
 	if(protocol_id==0){
 		try {
+			db_session->begin_transaction();
 			protocol_id = protocol_features->report_features(protocol_id, db_session);
+			db_session->force_commit_transaction();
+			write_features_reporters_table(features_reporters, db_session);
+
+			send_new_ids_to_head_node=true;
+			runtime_assert(protocol_id!=0);
 		} catch (cppdb_error error){
 			stringstream err_msg;
 			err_msg
 				<< "Failed to set the protocol id for batch "
-				<< "'" << identifier << "'" << endl
+				<< "'" << batch_name << "'" << endl
 				<< "Error Message:" << endl << error.what() << endl;
 			utility_exit_with_message(err_msg.str());
 		}
-
-		TR
-			<< "Initialize the protocol_id='" << protocol_id << "' "
-			<< "and tell it to the head node." << std::endl;
-
-		if(rank != 0) {
-			TR << "Send the protocol_id '" << protocol_id << "' to the head node." << std::endl;
-			utility::send_string_to_node(0/*HEAD*/, serialize_ids(protocol_id, identifier, batch_id));
-		} else {
-			MessageListenerOP listener(
-				MessageListenerFactory::get_instance()->get_listener(
-					DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
-			listener->receive(serialize_ids(protocol_id, identifier, batch_id));
-		}
-
-	}
-	TR << "done with protocol" <<std::endl;
-	// setup the batch_id
-
-	try {
-		batch_features->report_features(batch_id, protocol_id, identifier, "", db_session);
-	} catch (cppdb_error error){
-		stringstream err_msg;
-		err_msg
-			<< "Failed to set the batch id for batch '" << identifier << "' "
-			<< "with protocol_id '" << protocol_id << "'" << endl
-			<< "Error Message:" << endl << error.what() << endl;
-		utility_exit_with_message(err_msg.str());
 	}
 
-#endif
-#ifndef USEMPI
-	//serial case
-	if(!protocol_table_initialized_){
-		TR << "Initializing protocol table" << endl;
-		try{
-			static_protocol_id_ = protocol_features->report_features(0, db_session);
-		} catch (cppdb_error error){
-			stringstream err_msg;
-			err_msg
-				<< "Failed to set the protocol id for batch "
-				<< "'" << identifier << "'" << endl
-				<< "Error Message:" << endl << error.what() << endl;
-			utility_exit_with_message(err_msg.str());
-		}
-		protocol_table_initialized_ = true;
-	}
-	protocol_id = static_protocol_id_;
-
-	if(!static_batch_id_map_.count(identifier)){
-		TR << "Initializing batch table" << endl;
-
-
-		std::string select_max = "SELECT MAX(batch_id) FROM batches;";
-		cppdb::statement stmt(basic::database::safely_prepare_statement(select_max,db_session));
-		cppdb::result res(basic::database::safely_read_from_database(stmt));
-
-		Size max_batch_id(0);
-		while(res.next())
-		{
-			res >> max_batch_id;
-		}
-
-
-		for(
-			std::map< std::string, Size >::const_iterator
-				i = static_batch_id_map_.begin(), ie = static_batch_id_map_.end();
-			i != ie; ++i){
-			max_batch_id = std::max(max_batch_id, i->second);
-		}
-		batch_id = max_batch_id + 1;
-		static_batch_id_map_[identifier] = batch_id;
-
+	//no batch id set yet - have the batch features reporter generate one
+	if(batch_id==0){
 		try {
-			batch_features->report_features(
-				batch_id, protocol_id, identifier, "", db_session);
+			db_session->begin_transaction();
+			batch_id = batch_features->report_features(batch_id, protocol_id, batch_name, batch_description, db_session);
+			db_session->force_commit_transaction();
+			write_batch_reports_table(features_reporters, batch_id, db_session);
+
+			send_new_ids_to_head_node=true;
+			runtime_assert(batch_id!=0)
 		} catch (cppdb_error error){
 			stringstream err_msg;
 			err_msg
-				<< "Failed to set the batch id for batch '" << identifier << "' "
+				<< "Failed to set the batch id for batch '" << batch_name << "' "
 				<< "with protocol_id '" << protocol_id << "'" << endl
 				<< "Error Message:" << endl << error.what() << endl;
 			utility_exit_with_message(err_msg.str());
 		}
 	}
-	else{
-		batch_id=static_batch_id_map_[identifier];
+
+	//If we generate any new ids, then send them to the head node.
+	if(send_new_ids_to_head_node){
+		TR
+			<< "protocol_id '" << protocol_id << "' "
+			<< "and batch_id '" << batch_id << "', for batch '" << batch_name
+			<< "' have been written to the database. Now sending info back to head node." <<std::endl;
+
+		if(rank != 0) {
+			send_data_to_head_node(serialize_ids(protocol_id, batch_name, batch_id));
+		} else {
+			MessageListenerOP listener(
+				MessageListenerFactory::get_instance()->get_listener(
+					DATABASE_PROTOCOL_AND_BATCH_ID_TAG));
+			listener->receive(serialize_ids(protocol_id, batch_name, batch_id));
+		}
 	}
-#endif
+	TR << "Done with protocol and batch id generation." <<std::endl;
 
 	return pair<Size, Size>(protocol_id, batch_id);
+}
+
+/// @detail The 'features_reporters' table lists the type_names of the
+/// all defined features reporters. The 'batch_reports' table link the
+/// features reporters with each batch defined in the 'batches' table.
+void
+write_features_reporters_table(
+	utility::vector1<FeaturesReporterOP> features_reporters,
+	utility::sql_database::sessionOP db_session
+){
+	using namespace basic::database;
+	using namespace basic::database::schema_generator;
+
+	Schema features_reporters_schema(
+		"features_reporters",
+		PrimaryKey( Column("report_name", new DbTextKey())));
+
+	features_reporters_schema.write(db_session);
+
+	//Only report features that aren't already in the database
+	string select_string =
+		"SELECT *\n"
+		"FROM\n"
+		"	features_reporters\n"
+		"WHERE\n"
+		"	report_name = ?;";
+	statement select_stmt(safely_prepare_statement(select_string, db_session));
+
+	string insert_string = "INSERT INTO features_reporters (report_name) VALUES (?);";
+	statement insert_stmt(safely_prepare_statement(insert_string, db_session));
+
+	foreach(FeaturesReporterOP const & reporter, features_reporters){
+		string const report_name(reporter->type_name());
+		select_stmt.bind(1,report_name);
+
+		result res(safely_read_from_database(select_stmt));
+		if(!res.next()) {
+			insert_stmt.bind(1, report_name);
+			safely_write_to_database(insert_stmt);
+		}
+	}
+}
+
+void
+write_batch_reports_table(
+	utility::vector1<FeaturesReporterOP> features_reporters,
+	core::Size batch_id,
+	utility::sql_database::sessionOP db_session
+){
+	using namespace basic::database;
+	using namespace basic::database::schema_generator;
+
+	Schema batch_reports("batch_reports");
+	Column report_name("report_name", new DbTextKey());
+	Column batch_id_col("batch_id", new DbInteger());
+
+	batch_reports.add_foreign_key(
+		ForeignKey(batch_id_col, "batches", "batch_id", true /*defer*/));
+	batch_reports.add_foreign_key(
+		ForeignKey(report_name, "features_reporters", "report_name", true /*defer*/));
+
+	utility::vector1<Column> batch_reports_unique;
+	batch_reports_unique.push_back(batch_id_col);
+	batch_reports_unique.push_back(report_name);
+	batch_reports.add_constraint( new UniqueConstraint(batch_reports_unique) );
+
+	batch_reports.write(db_session);
+
+	//Only report features/batch_id pairs that aren't already in the database
+	string select_string =
+		"SELECT *\n"
+		"FROM\n"
+		"	batch_reports\n"
+		"WHERE\n"
+		"	batch_id = ? AND\n"
+		" report_name = ?;";
+	statement select_stmt(safely_prepare_statement(select_string, db_session));
+
+	string insert_string = "INSERT INTO batch_reports (batch_id, report_name) VALUES (?,?);";
+	statement insert_stmt(safely_prepare_statement(insert_string, db_session));
+
+	foreach(FeaturesReporterOP const & reporter, features_reporters){
+		string const report_name(reporter->type_name());
+		select_stmt.bind(1,batch_id);
+		select_stmt.bind(2,report_name);
+
+		result res(safely_read_from_database(select_stmt));
+		if(!res.next()) {
+			insert_stmt.bind(1, batch_id);
+			insert_stmt.bind(2, report_name);
+			safely_write_to_database(insert_stmt);
+		}
+	}
 }
 
 pair<Size, Size>
@@ -275,12 +336,12 @@ deserialize_db_listener_data(
 string
 serialize_ids(
 	int protocol_id,
-	string identifier,
+	string batch_name,
 	Size batch_id
 ){
 	return
 		utility::to_string(protocol_id) + " " +
-		identifier + " " +
+		batch_name + " " +
 		utility::to_string(batch_id);
 }
 
@@ -289,7 +350,7 @@ serialize_ids(
 ///average features reporter's report_features function.
 Size
 get_batch_id(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ) {
 
@@ -303,12 +364,33 @@ get_batch_id(
 		stringstream err_msg;
 		err_msg
 			<< "No batch_id found for struct_id '"
-			<< to_string(struct_id) << "'";
+			<< struct_id << "'";
 		utility_exit_with_message(err_msg.str());
 	}
 	Size batch_id;
 	res >> batch_id;
 	return batch_id;
+}
+
+utility::vector1<StructureID>
+struct_ids_from_tag(
+	sessionOP db_session,
+	string const & tag
+){
+  std::string statement_string = "SELECT struct_id FROM structures WHERE tag=?;";
+	statement stmt = basic::database::safely_prepare_statement(statement_string,db_session);
+	stmt.bind(1,tag);
+	result res = stmt.query();
+
+  utility::vector1<StructureID> struct_ids;
+
+	while(res.next()){
+		StructureID id;
+		res >> id;
+		struct_ids.push_back(id);
+	}
+
+	return struct_ids;
 }
 
 std::string serialize_residue_xyz_coords(core::conformation::Residue const & residue)

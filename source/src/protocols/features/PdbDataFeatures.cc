@@ -18,8 +18,6 @@
 #include <core/conformation/Residue.hh>
 
 //External
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 //Basic Headers
 #include <basic/database/sql_utils.hh>
@@ -97,7 +95,7 @@ void
 PdbDataFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 
-	Column struct_id("struct_id", new DbUUID(), false);
+	Column struct_id("struct_id", new DbBigInt(), false);
 	Column residue_number("residue_number", new DbInteger(), false);
 
 	utility::vector1<Column> pkey_cols;
@@ -164,7 +162,7 @@ PdbDataFeatures::features_reporter_dependencies() const {
 Size PdbDataFeatures::report_features(
 	Pose const & pose,
 	vector1<bool> const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session )
 {
 	insert_residue_pdb_identification_rows(
@@ -175,7 +173,7 @@ Size PdbDataFeatures::report_features(
 }
 
 void PdbDataFeatures::delete_record(
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session)
 {
 	string id_statement_string = "DELETE FROM residue_pdb_identification WHERE struct_id = ?;\n";
@@ -192,7 +190,7 @@ void PdbDataFeatures::delete_record(
 
 void PdbDataFeatures::load_into_pose(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose)
 {
 	load_residue_pdb_identification(db_session, struct_id, pose);
@@ -202,7 +200,7 @@ void PdbDataFeatures::load_into_pose(
 
 void PdbDataFeatures::load_residue_pdb_identification(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose)
 {
 	if(!table_exists(db_session, "residue_pdb_identification")) return;
@@ -227,7 +225,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	result res(safely_read_from_database(stmt));
 
 	while(res.next()) {
-				boost::uuids::uuid temp;
+				StructureID temp;
 		Size residue_number;
 		//cppdb doesn't do char's
 		string chain_id;
@@ -254,7 +252,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 void PdbDataFeatures::insert_residue_pdb_identification_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ) {
 
@@ -265,7 +263,7 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 	pdb_ident_insert.add_column("insertion_code");
 	pdb_ident_insert.add_column("pdb_residue_number");
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 
 	Size res_num(pose.n_residue());
 	for(Size index = 1; index <= res_num; ++index) {
@@ -290,7 +288,7 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 
 void PdbDataFeatures::load_residue_pdb_confidence(
 	sessionOP db_session,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	Pose & pose)
 {
 	if(!table_exists(db_session, "residue_pdb_confidence")) return;
@@ -359,7 +357,7 @@ void PdbDataFeatures::load_residue_pdb_confidence(
 void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
-	boost::uuids::uuid struct_id,
+	StructureID struct_id,
 	sessionOP db_session
 ) {
 	PDBInfoCOP pdb_info(pose.pdb_info());
@@ -377,7 +375,7 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	confidence_insert.add_column("min_sc_occupancy");
 
 
-	RowDataBaseOP struct_id_data = new RowData<boost::uuids::uuid>("struct_id",struct_id);
+	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 
 	for(Size ri=1; ri <= pose.n_residue(); ++ri) {
 		if(!relevant_residues[ri]) continue;

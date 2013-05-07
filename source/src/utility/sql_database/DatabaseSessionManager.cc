@@ -11,10 +11,6 @@
 /// @author Sam Deluca
 /// @author Chris Miles
 
-#ifdef USEMPI
-#include <mpi.h>
-#endif
-
 // Unit Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/sql_database/util.hh>
@@ -46,6 +42,7 @@ using std::endl;
 using std::stringstream;
 using cppdb::cppdb_error;
 using platform::Size;
+using platform::SSize;
 using cppdb::statement;
 
 #ifdef MULTITHREADED
@@ -54,50 +51,83 @@ boost::thread_specific_pointer< DatabaseSessionManager > DatabaseSessionManager:
 boost::scoped_ptr< DatabaseSessionManager > DatabaseSessionManager::instance_;
 #endif
 
+session::~session(){
+	force_commit_transaction();
+}
+
 void
-session::begin(){
-	switch(transaction_mode_){
-		case(TransactionMode::none):
-			//do nothing
-			break;
-		case(TransactionMode::standard):
-			cppdb::session::begin();
-			break;
-		case(TransactionMode::chunk):
-			cppdb::session::begin();
-			break;
-		default:
-			utility_exit_with_message(
-				"Unrecognized transaction mode: '" +
-				name_from_transaction_mode(transaction_mode_) + "'");
+session::begin_transaction(){
+	if(!cur_transaction_){
+		switch(transaction_mode_){
+			case(TransactionMode::none):
+				//do nothing
+				break;
+			case(TransactionMode::standard):
+				cur_transaction_ = new transaction(this);
+				break;
+			case(TransactionMode::chunk):
+				cur_transaction_ = new transaction(this);
+				break;
+			default:
+				utility_exit_with_message(
+					"Unrecognized transaction mode: '" +
+					name_from_transaction_mode(transaction_mode_) + "'");
+		}
 	}
 }
 
 void
-session::commit(){
-	switch(transaction_mode_){
-		case(TransactionMode::none):
-			//do nothing
-			break;
-		case(TransactionMode::standard):
-			cppdb::session::commit();
-			break;
-		case(TransactionMode::chunk):
-			if(transaction_counter_==chunk_size_){
-				cppdb::session::commit();
-				transaction_counter_=0;
-			}
-			else{
-				++transaction_counter_;
-			}
-			break;
-		default:
-			utility_exit_with_message(
-				"Unrecognized transaction mode: '" +
-				name_from_transaction_mode(transaction_mode_) + "'");
+session::commit_transaction(){
+	if(cur_transaction_){
+		switch(transaction_mode_){
+			case(TransactionMode::none):
+				utility_exit_with_message("You have specified a transaction mode of none, but have an open transaction. Please file a bug");
+				break;
+			case(TransactionMode::standard):
+				cur_transaction_->commit();
+				cur_transaction_=0;
+				break;
+			case(TransactionMode::chunk):
+				if(transaction_counter_==chunk_size_){
+					cur_transaction_->commit();
+					transaction_counter_=0;
+					cur_transaction_=0;
+				}
+				else{
+					++transaction_counter_;
+				}
+				break;
+			default:
+				utility_exit_with_message(
+					"Unrecognized transaction mode: '" +
+					name_from_transaction_mode(transaction_mode_) + "'");
+		}
 	}
 }
-	
+
+void
+session::force_commit_transaction(){
+	if(cur_transaction_){
+		switch(transaction_mode_){
+			case(TransactionMode::none):
+				utility_exit_with_message("You have specified a transaction mode of none, but have an open transaction. Please file a bug");
+				break;
+			case(TransactionMode::standard):
+				cur_transaction_->commit();
+				cur_transaction_=0;
+				break;
+			case(TransactionMode::chunk):
+				cur_transaction_->commit();
+				cur_transaction_=0;
+				break;
+			default:
+				utility_exit_with_message(
+					"Unrecognized transaction mode: '" +
+					name_from_transaction_mode(transaction_mode_) + "'");
+		}
+	}
+}
+
 DatabaseSessionManager *
 DatabaseSessionManager::get_instance(){
 	if( instance_.get() == 0 ){
@@ -127,20 +157,36 @@ DatabaseSessionManager::get_db_session(
 	string const & password,
 	Size port,
 	bool readonly,
-	bool separate_db_per_mpi_process
-){
+	SSize db_partition)
+{
 
 	switch(db_mode){
 	case DatabaseMode::sqlite3:
-		return get_session_sqlite3(db_name, transaction_mode,
-			chunk_size, readonly, separate_db_per_mpi_process);
+		return get_session_sqlite3(
+							db_name,
+							transaction_mode,
+							chunk_size,
+							readonly,
+							db_partition);
 	case DatabaseMode::mysql:
-		return get_session_mysql(db_name, transaction_mode,
-			chunk_size, host, user, password, port);
+		return get_session_mysql(
+							db_name,
+							transaction_mode,
+							chunk_size,
+							host,
+							user,
+							password,
+							port);
 	case DatabaseMode::postgres:
 		return get_session_postgres(
-			db_name, transaction_mode,
-				chunk_size, pq_schema, host, user, password, port);
+							db_name,
+							transaction_mode,
+							chunk_size,
+							pq_schema,
+							host,
+							user,
+							password,
+							port);
 	default:
 		utility_exit_with_message(
 			"Unrecognized database mode: '" + name_from_database_mode(db_mode) + "'");
@@ -149,7 +195,7 @@ DatabaseSessionManager::get_db_session(
 }
 
 
-///details@ For SQLite3 database, the separate_db_per_mpi_process
+///details@ For SQLite3 database, the db_partition is app
 /// appends "_<mpi_rank>" to the end of the database filename This is
 /// useful when writing to an sqlite database not through the job
 /// distributor where locking causes problems
@@ -159,40 +205,38 @@ DatabaseSessionManager::get_session_sqlite3(
 	TransactionMode::e transaction_mode,
 	Size chunk_size,
 	bool const readonly /* = false */,
-	bool const MPI_ONLY( separate_db_per_mpi_process ) /* = false */
+	SSize const db_partition
 ){
 	sessionOP s(new session());
 	s->set_db_mode(DatabaseMode::sqlite3);
 	s->set_transaction_mode(transaction_mode);
 	s->set_chunk_size(chunk_size);
 	s->set_db_name(database);
+	s->set_db_partition(db_partition);
 
-#ifdef USEMPI
-	string use_database;
-	if(separate_db_per_mpi_process){
-		int mpi_rank(0);
-		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
-		stringstream buf; buf << FileName(database).name() << "_" << mpi_rank;
-		use_database = buf.str();
-	} else {
-		use_database = FileName(database).name();
+	stringstream connection_string;
+
+	connection_string << "sqlite3:";
+
+	if(readonly)
+	{
+		connection_string << "mode=readonly;";
 	}
-#else
-	string const use_database(FileName(database).name());
-#endif
 
+	connection_string << "db=" << FileName(database).name();
+
+	if(s->is_db_partitioned())
+	{
+		connection_string << "_" << s->get_db_partition();
+	}
 
 	try {
-		if(readonly){
-			s->open("sqlite3:mode=readonly;db="+use_database);
-		} else {
-			s->open("sqlite3:db="+use_database);
-		}
+		s->open(connection_string.str());
 	} catch (cppdb_error & e){
 		std::stringstream error_msg;
 		error_msg
-			<< "Failed to open sqlite3 database file '" << database << "'"
-			<< (readonly ? " in readonly mode:" : ":") << std::endl
+			<< "Failed to open sqlite3 database name '" << database << "'"
+			<< " with connection string: " << connection_string.str() << std::endl
 			<< "\t" << e.what();
 		utility_exit_with_message(error_msg.str());
 	}

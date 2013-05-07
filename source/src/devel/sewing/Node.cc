@@ -22,7 +22,7 @@
 #include <utility/string_util.hh>
 
 //Boost
-#include <boost/uuid/uuid.hpp>
+
 
 //C++ headers
 #include <map>
@@ -37,7 +37,7 @@ addition_direction_(0)
 {}
 
 Node::Node(
-	boost::uuids::uuid struct_id,
+	protocols::features::StructureID struct_id,
 	core::Size bundle_id,
 	core::Size pair_id,
 	core::Size helix_1_id,
@@ -60,7 +60,7 @@ addition_direction_(0)
 {}
 
 core::Size Node::addition_direction() const { return addition_direction_; }
-boost::uuids::uuid Node::struct_id() const{ return struct_id_; }
+protocols::features::StructureID Node::struct_id() const{ return struct_id_; }
 core::Size Node::bundle_id() const{ return bundle_id_; }
 core::Size Node::pair_id() const{ return pair_id_; }
 
