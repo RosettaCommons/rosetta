@@ -19,9 +19,8 @@ def svn_version():
     # These commands work correctly because our current working directory is the Rosetta/main root.
     ver = os.popen("svnversion .").read().strip() or "unknown"
     url = "unknown"
-
     #if we aren't in an svn repository, try git
-    if ver == "unknown" or ver == "exported":
+    if ver == "unknown" or ver == "exported" or ver == "Unversioned directory":
         ver = os.popen("git log -1 --format='%H'").read().strip() or "unknown"
         if ver != "unknown":
             url = os.popen("git remote -v |grep fetch |awk '{print $2}'|head -n1").read().strip()
