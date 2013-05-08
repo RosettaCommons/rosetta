@@ -20,7 +20,7 @@ The central code for the <em>swa_protein_main</em> application is in <code>src/a
 
 For a 'minimal' demo, see:
 
-<code>rosetta_demos/public/swa_protein_main/</code>
+<code>demos/public/swa_protein_main/</code>
 
 @section refs References
 
