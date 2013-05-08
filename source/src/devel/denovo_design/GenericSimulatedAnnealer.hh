@@ -71,8 +71,16 @@ public:
 	virtual void reset( Pose & pose );
 
 public: // accessor
+	/// @brief Saves the current state of the mover into checkpoint files
+	void save_checkpoint_file() const;
+	/// @brief Deletes the checkpoint files
+	void remove_checkpoint_file() const;
+	/// @brief tests to see if the checkpoint files exist and have been generated
+	bool checkpoint_exists() const;
 
 public: // mutators
+	/// @brief loads checkpoint data and attempts to resume a run with pose as the pose
+	void load_checkpoint_file( core::pose::Pose & pose );
 
 private: // private functions
 	/// @brief calls a round of monte carlo -- basically copied from GenericMonteCarloMover
@@ -90,6 +98,12 @@ private: // private functions
 	void
 	scale_temperatures( core::Real const temp_factor );
 
+	/// @brief calculates multiplier for temperatures based on which anneal step we are no
+	core::Real calc_temp_factor() const;
+
+	/// @brief if boltz_rank is used, this will calculate the ranking score from a list of filter scores
+	core::Real calc_boltz_score( utility::vector1< core::Real > const & scores ) const;
+
 private:
 	/// @brief counter for how many accepts it takes to reach equilibrium at a given temperature
 	core::Size history_;
@@ -97,13 +111,20 @@ private:
 	protocols::moves::MoverOP periodic_mover_;
 	/// @brief how many steps in between running the periodic mover?
 	core::Size eval_period_;
+	/// @brief what name should be used to store checkpoint information so that the run can be resumed?
+	std::string checkpoint_file_;
+	/// @brief if true, the checkpoint files will not be cleaned up after the apply() terminates. Useful for debugging/gathering statistics
+	bool keep_checkpoint_file_;
 	/// @brief a history of accepted scores, used for adapting temperature
 	utility::vector1< utility::vector1< core::Real > > accepted_scores_;
 	/// @brief the initial temperatures, used for adapting temperature
 	utility::vector1< core::Real > start_temperatures_;
 	/// @brief counter that tells which annealing step we are on
 	core::Size anneal_step_;
+	/// @brief which step in this temperature are we on
 	core::Size temp_step_;
+	/// @brief what is the current trial number
+	core::Size current_trial_;
 };
 
 } // namespace denovo_design

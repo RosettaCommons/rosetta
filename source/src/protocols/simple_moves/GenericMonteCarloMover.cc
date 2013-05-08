@@ -205,6 +205,7 @@ void
 GenericMonteCarloMover::initialize()
 {
   last_accepted_scores_.clear();
+	lowest_scores_.clear();
   if( sample_type_ == "high" ){
     flip_sign_ = -1;
   }else if( sample_type_ == "low" ){
@@ -427,10 +428,13 @@ GenericMonteCarloMover::reset( Pose & pose )
 	} else {
 		core::Real ranking_score( 0.0 );
     last_accepted_scores_.clear();
+		lowest_scores_.clear();
     for( Size index = 1; index <= filters_.size(); ++index ){
       protocols::filters::FilterCOP filter( filters_[ index ] );
       Real const flip( sample_types_[ index ] == "high" ? -1 : 1 );
-      last_accepted_scores_.push_back( flip * filter->report_sm( pose ) );
+			Real const score( flip * filter->report_sm( pose ) );
+      last_accepted_scores_.push_back( score );
+			lowest_scores_.push_back( score );
 			if ( index == rank_by_filter_ ) {
 				ranking_score = last_accepted_scores_[ rank_by_filter_ ];
 			}
@@ -490,7 +494,10 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
   ++trial_counter_;
   TR.Debug <<"filters.size() "<<filters_.size()<<std::endl;
   if( filters_.size() ){
-    runtime_assert( filters_.size() == adaptive_.size() && filters_.size() == temperatures_.size() && filters_.size() == sample_types_.size() &&  filters_.size() == num_rejections_.size());
+    runtime_assert( filters_.size() == adaptive_.size() );
+		runtime_assert( filters_.size() == temperatures_.size() );
+		runtime_assert( filters_.size() == sample_types_.size() );
+		runtime_assert( filters_.size() == num_rejections_.size() );
     bool accept( false );
     utility::vector1< Real > provisional_scores;
     provisional_scores.clear();
@@ -543,6 +550,7 @@ GenericMonteCarloMover::boltzmann( Pose & pose )
       if( ranking_score <= lowest_score() ){
         *lowest_score_pose_ = pose;
         lowest_score_ = ranking_score;
+				copy( provisional_scores.begin(), provisional_scores.end(), lowest_scores_.begin() );
         mc_accepted_ = MCA_accepted_score_beat_low; //3;
 				if( saved_accept_file_name_ != "" ){
 					if( mover_tag_() != NULL ){

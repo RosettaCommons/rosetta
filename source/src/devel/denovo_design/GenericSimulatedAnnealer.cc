@@ -27,9 +27,11 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 // C/C++ headers
+#include <fstream>
 #include <boost/foreach.hpp>
 
 static basic::Tracer TR("devel.denovo_design.GenericSimulatedAnnealer");
@@ -60,8 +62,11 @@ GenericSimulatedAnnealer::GenericSimulatedAnnealer():
 	history_( 5 ),
 	periodic_mover_( NULL ),
 	eval_period_( 0 ),
+	checkpoint_file_( "" ),
+	keep_checkpoint_file_( false ),
 	anneal_step_( 1 ),
-	temp_step_( 1 )
+	temp_step_( 1 ),
+	current_trial_( 1 )
 {
 	accepted_scores_.clear();
 	start_temperatures_.clear();
@@ -84,6 +89,19 @@ GenericSimulatedAnnealer::fresh_instance() const
   return new GenericSimulatedAnnealer();
 }
 
+core::Real
+GenericSimulatedAnnealer::calc_boltz_score( utility::vector1< core::Real > const & scores ) const
+{
+	runtime_assert( scores.size() == filters().size() );
+	runtime_assert( scores.size() == temperatures().size() );
+	utility::vector1< core::Real > const & temps( temperatures() );
+	core::Real ranking_score( 0.0 );
+	for ( core::Size index=1; index<=filters().size(); ++index ) {
+		ranking_score += scores[ index ] / temps[ index ];
+	}
+	return ranking_score;
+}
+
 void
 GenericSimulatedAnnealer::scale_temperatures( core::Real const temp_factor )
 {
@@ -98,16 +116,8 @@ GenericSimulatedAnnealer::scale_temperatures( core::Real const temp_factor )
 
 	// recalculate current_score and lowest_score, which may be different due to different temperatures if boltz_rank option is used
 	if ( boltz_rank() ) {
-		core::Real last_ranking_score( 0.0 );
-		core::Real best_ranking_score( 0.0 );
-		utility::vector1< core::Real > const & last_accepted( last_accepted_scores() );
-		utility::vector1< core::Real > const & best_accepted( lowest_scores() );
-		for ( core::Size index=1; index<=filters().size(); ++index ) {
-			last_ranking_score += last_accepted[ index ] / newtemps[ index ];
-			best_ranking_score += best_accepted[ index ] / newtemps[ index ];
-		}
-		last_accepted_score( last_ranking_score );
-		lowest_score( best_ranking_score );
+		last_accepted_score( calc_boltz_score( last_accepted_scores() ) );
+		lowest_score( calc_boltz_score( lowest_scores() ) );
 	}
 
 }
@@ -225,11 +235,17 @@ linear_regression( utility::vector1< core::Real > const & x,
 	return retval;
 }
 
-void
-GenericSimulatedAnnealer::calculate_temps()
+core::Real
+GenericSimulatedAnnealer::calc_temp_factor() const
 {
 	core::Real const low_temp( 0.01 );
 	core::Real const high_temp( 1.0 );
+	return (high_temp - low_temp)*std::exp(-(core::Real)(anneal_step_)/filters().size()) + low_temp;
+}
+
+void
+GenericSimulatedAnnealer::calculate_temps()
+{
 	// this uses the same temperature scheduler as the packer
 	TR << "accepted_scores_=";
 	for ( core::Size j=1; j<=accepted_scores_.size(); ++j ) {
@@ -265,7 +281,7 @@ GenericSimulatedAnnealer::calculate_temps()
 			}
 		}
 		if ( cool ) {
-			temp_factor = (high_temp - low_temp)*std::exp(-(core::Real)(anneal_step_)/filters().size()) + low_temp;
+			temp_factor = calc_temp_factor();
 			TR << "Cool, factor=" << temp_factor << std::endl;
 			temp_step_ = 1;
 			++anneal_step_;
@@ -279,15 +295,170 @@ GenericSimulatedAnnealer::calculate_temps()
 }
 
 void
+GenericSimulatedAnnealer::load_checkpoint_file( core::pose::Pose & pose )
+{
+	runtime_assert( checkpoint_file_ != "" );
+	// load best pose
+	core::pose::PoseOP best_pose( new core::pose::Pose() );
+	core::import_pose::pose_from_pdb( *best_pose, checkpoint_file_ + "_best.pdb" );
+	lowest_score_pose( best_pose );
+	TR << "Loaded lowest score pose from " << checkpoint_file_ << "_best.pdb" << std::endl;
+	// load last accepted pose
+	core::pose::PoseOP last_pose( new core::pose::Pose() );
+	core::import_pose::pose_from_pdb( *last_pose, checkpoint_file_ + "_last.pdb" );
+	last_accepted_pose( last_pose );
+	TR << "Loaded last accepted pose from " << checkpoint_file_ << "_last.pdb" << std::endl;
+	// read the file with stats
+	std::ifstream saved_file( checkpoint_file_.c_str() );
+	if ( !saved_file.is_open() ) {
+		utility_exit_with_message( "Error: The GenericSimulatedAnnealerMover could not open " + checkpoint_file_ + " for reading." );
+	}
+	// load trial number
+	core::Size num_accepts( 0 );
+	saved_file >> current_trial_ >> anneal_step_ >> temp_step_ >> num_accepts;
+	TR << "current trial=" << current_trial_ << "; anneal_step=" << anneal_step_ << "; temp_step=" << temp_step_ << "; num_accepts=" << num_accepts << std::endl;
+	// safety: clear accepted_scores_
+	accepted_scores_.clear();
+	for ( core::Size i=1; i<=num_accepts; ++i ) {
+		utility::vector1< core::Real > filt_scores;
+		for ( core::Size j=1; j<=filters().size(); ++j ) {
+			core::Real score( 0.0 );
+			saved_file >> score;
+			filt_scores.push_back( score );
+			TR << "score=" << score << " ";
+		}
+		TR << std::endl;
+		accepted_scores_.push_back( filt_scores );
+	}
+	// load best scores
+	utility::vector1< core::Real > best;
+	for ( core::Size i=1; i<= filters().size(); ++i ) {
+		core::Real score( 0.0 );
+		saved_file >> score;
+		best.push_back( score );
+		TR << "best score : " << score << " ";
+	}
+	TR << std::endl;
+	lowest_scores( best );
+	// load last scores
+	utility::vector1< core::Real > last;
+	for ( core::Size i=1; i<= filters().size(); ++i ) {
+		core::Real score( 0.0 );
+		saved_file >> score;
+		last.push_back( score );
+		TR << "last score : " << score << " ";
+	}
+	TR << std::endl;
+	last_accepted_scores( last );
+
+	// calculate temperature factor and scale temperature
+	core::Real const temp_factor( calc_temp_factor() );
+	TR << "NEW temp factor is " << temp_factor << std::endl;
+	// this will take care of changing up the last/best scores
+	scale_temperatures( temp_factor );
+	if ( saved_file.bad() ) {
+		utility_exit_with_message( "The GenericSimulatedAnnealerMover encountered an error writing to " + checkpoint_file_ );
+	}
+	saved_file.close();
+	pose = *last_pose;
+}
+
+void
+GenericSimulatedAnnealer::save_checkpoint_file() const
+{
+	runtime_assert( checkpoint_file_ != "" );
+	// save best pose
+	if ( lowest_score_pose() ) {
+		lowest_score_pose()->dump_pdb( checkpoint_file_ + "_best.pdb" );
+	}
+	// save last accepted pose
+	if ( last_accepted_pose() ) {
+		last_accepted_pose()->dump_pdb( checkpoint_file_ + "_last.pdb" );
+	}
+	// Write out a file with stats
+	std::ofstream saved_file( checkpoint_file_.c_str() );
+	if ( !saved_file.is_open() ) {
+		utility_exit_with_message( "Error: The GenericSimulatedAnnealerMover could not open " + checkpoint_file_ + " for writing." );
+	}
+	// save trial number
+	saved_file << boost::lexical_cast< std::string >( current_trial_ );
+	// save annealing step
+	saved_file << " " << boost::lexical_cast< std::string >( anneal_step_ );
+	// save # acceptances at this annealing step
+	saved_file << " " << boost::lexical_cast< std::string >( temp_step_ );
+	// save total # of accepted scores
+	saved_file << " " << boost::lexical_cast< std::string >( accepted_scores_.size() ) << std::endl;
+	// save accepted score list
+	for ( core::Size i=1; i<=accepted_scores_.size(); ++i ) {
+		for ( core::Size j=1; j<=filters().size(); ++j ) {
+			saved_file << accepted_scores_[i][j] << " ";
+		}
+		saved_file << std::endl;
+	}
+	// save best scores
+	for ( core::Size i=1; i<=lowest_scores().size(); ++i ) {
+		saved_file << boost::lexical_cast< std::string >( lowest_scores()[i] ) << " ";
+	}
+	saved_file << std::endl;
+	// save last accepted scores
+	for ( core::Size i=1; i<=last_accepted_scores().size(); ++i ) {
+		saved_file << boost::lexical_cast< std::string >( last_accepted_scores()[i] ) << " ";
+	}
+	saved_file << std::endl;
+
+	// save last accepted scores
+	if ( saved_file.bad() ) {
+		utility_exit_with_message( "The GenericSimulatedAnnealerMover encountered an error writing to " + checkpoint_file_ );
+	}
+	saved_file.close();
+}
+
+void
+GenericSimulatedAnnealer::remove_checkpoint_file() const
+{
+	runtime_assert( checkpoint_file_ != "" );
+	utility::vector1< std::string > files;
+	files.push_back( checkpoint_file_ + "_best.pdb" );
+	files.push_back( checkpoint_file_ + "_last.pdb" );
+	files.push_back( checkpoint_file_ );
+	for ( core::Size i=1; i<=files.size(); ++i ) {
+		if ( remove( files[i].c_str() ) != 0 ) {
+			TR.Error << "Error deleting " << files[i] << "!!" << std::endl;
+		} else {
+			TR.Info << "Deleted checkpoint file " << files[i] << std::endl;
+		}
+	}
+}
+
+bool
+GenericSimulatedAnnealer::checkpoint_exists() const
+{
+	runtime_assert( checkpoint_file_ != "" );
+	utility::vector1< std::string > files;
+	files.push_back( checkpoint_file_ + "_best.pdb" );
+	files.push_back( checkpoint_file_ + "_last.pdb" );
+	files.push_back( checkpoint_file_ );
+	for ( core::Size i=1; i<=files.size(); ++i ) {
+		std::ifstream f( files[i].c_str() );
+		if ( f.good() ) {
+			f.close();
+		} else {
+			f.close();
+			return false;
+		}
+	}
+	return true;
+}
+
+void
 GenericSimulatedAnnealer::reset( Pose & pose )
 {
 	GenericMonteCarloMover::reset( pose );
 	accepted_scores_.clear();
-	start_temperatures_.clear();
-	anneal_step_ = 1;
+	anneal_step_ = 0;
+	temp_step_ = 1;
+	current_trial_ = 0;
 	accepted_scores_.push_back( last_accepted_scores() );
-	// save initial temperatures
-	start_temperatures_ = temperatures();
 }
 
 
@@ -324,22 +495,29 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 		task_factory( NULL );
 	}
 
-	if( saved_accept_file_name() != "" ){
-		TR<<"Saving initial pose entering the MC trajectory, for use in checkpoint recovery. Checkpointing filename: "<<saved_accept_file_name()<<std::endl;
-		pose.dump_pdb( saved_accept_file_name() );
+	if ( checkpoint_file_ != "" && checkpoint_exists() ) {
+		// if the checkpoint information exists, load it up to resume the run,
+		TR.Info << "Resuming from checkpoint!" << std::endl;
+		load_checkpoint_file( pose );
+	} else {
+		// otherwise, reset to the beginning
+		reset( pose ); //(re)initialize MC statistics
+		TR.Info << "Checkpoint does not exist! Starting from the beginning" << std::endl;
+		if( checkpoint_file_ != "" ){
+			TR<<"Saving initial state entering the MC trajectory, for use in checkpoint recovery. Checkpointing filename: "<<checkpoint_file_<<std::endl;
+			save_checkpoint_file();
+		}
 	}
 
-  PoseOP initial_pose = new Pose( pose );
-	reset( pose ); //(re)initialize MC statistics
 	core::Size accept( 0 );
 	core::Size reject( 0 );
-
-	for ( core::Size i=1; i<=trials; ++i ) {
-		TR << "Starting trial " << i << std::endl;
+	++current_trial_;
+	for ( ; current_trial_<=trials; ++current_trial_ ) {
+		TR << "Starting trial " << current_trial_ << std::endl;
 		// apply the mover and test the pose
 		TrialResult res( apply_mover( pose ) );
 		if ( res == FINISHED ) {
-			TR<<"MC stopping condition met at trial "<<i<<std::endl;
+			TR<<"MC stopping condition met at trial "<<current_trial_<<std::endl;
 			break;
 		} else if ( res == REJECTED ) {
 			++reject;
@@ -349,8 +527,13 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 		} else if ( res == FAILED ) {
 			break;
 		}
+
+		if ( checkpoint_file_ != "" ) {
+			save_checkpoint_file();
+		}
+
 		// if we are ready for the periodic mover, run it
-		if ( periodic_mover_ && eval_period_ && ( i % eval_period_ == 0 ) ) {
+		if ( periodic_mover_ && eval_period_ && ( current_trial_ % eval_period_ == 0 ) ) {
 			TR << "Running periodic mover..." << std::endl;
 			periodic_mover_->apply( pose );
 		}
@@ -373,6 +556,11 @@ GenericSimulatedAnnealer::apply( Pose & pose )
 	// reset the genericmontecarlo to use the task factory again next time
 	if ( tf ) {
 		task_factory( tf );
+	}
+
+	// clear out the checkpoint files
+	if ( !keep_checkpoint_file_ && checkpoint_file_ != "" ) {
+		remove_checkpoint_file();
 	}
 
 }// apply
@@ -425,6 +613,8 @@ GenericSimulatedAnnealer::parse_my_tag( TagPtr const tag,
 	history_ = tag->getOption< core::Size >( "history", history_ );
 	eval_period_ = tag->getOption< core::Size >( "eval_period", eval_period_ );
 	std::string const mover_name( tag->getOption< std::string >( "periodic_mover", "" ) );
+	checkpoint_file_ = tag->getOption< std::string >( "checkpoint_file", checkpoint_file_ );
+	keep_checkpoint_file_ = tag->getOption< bool >( "keep_checkpoint_file", keep_checkpoint_file_ );
 	if ( mover_name != "" ) {
 		Movers_map::const_iterator find_mover( movers.find( mover_name ) );
 		if ( find_mover == movers.end() ) {
@@ -433,6 +623,7 @@ GenericSimulatedAnnealer::parse_my_tag( TagPtr const tag,
 		runtime_assert( find_mover != movers.end() );
 		periodic_mover_ = find_mover->second;
 	}
+	start_temperatures_ = temperatures();
 }
 
 

@@ -301,10 +301,14 @@ public:
 	bool boltz_rank() const { return boltz_rank_; }
 	utility::vector1< String > const & sample_types() const { return sample_types_; }
 	utility::vector1< core::Real > const & last_accepted_scores() const { return last_accepted_scores_; }
+	void last_accepted_scores( utility::vector1< core::Real > const & scores ) { last_accepted_scores_ = scores; }
 	utility::vector1< core::Real > const & last_tested_scores() const { return last_tested_scores_; }
 	utility::vector1< core::Real > const & lowest_scores() const { return lowest_scores_; }
+	void lowest_scores( utility::vector1< core::Real > const & scores ) { lowest_scores_ = scores; }
 	void lowest_score( core::Real const score ) { lowest_score_ = score; }
 	void last_accepted_score( core::Real const score ) { last_accepted_score_ = score; }
+	void lowest_score_pose( core::pose::PoseOP pose ) { lowest_score_pose_ = pose; }
+	void last_accepted_pose( core::pose::PoseOP pose ) { last_accepted_pose_ = pose; }
 protected:
 
 	/// @brief Executes all triggers. The order of trigger execution is undefined.
