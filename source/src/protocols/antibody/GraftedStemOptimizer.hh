@@ -65,9 +65,7 @@ public:
 		
 	///@brief users can pass their own scorefunction, foldtree, movemap, and taskfactory
 	void
-	set_scorefxn(core::scoring::ScoreFunctionOP setting){
-		scorefxn_ = setting;
-	}
+	set_scorefxn(core::scoring::ScoreFunctionOP setting);
 	
     ///@brief deep optimization will do small_share_ccd
     void set_deep_optimization(bool const & setting){

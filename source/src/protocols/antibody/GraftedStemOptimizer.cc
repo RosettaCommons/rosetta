@@ -233,6 +233,11 @@ GraftedStemOptimizer::apply( pose::Pose & pose ){
 ///
 ///
 	    
+void
+GraftedStemOptimizer::set_scorefxn(core::scoring::ScoreFunctionOP setting){
+	scorefxn_ = setting;
+}
+
 kinematics::FoldTreeOP 
 GraftedStemOptimizer::get_N_C_stems_foldtree( pose::Pose const & pose ) const  {
     using namespace core::kinematics;
