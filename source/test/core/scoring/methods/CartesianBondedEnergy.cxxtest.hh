@@ -137,12 +137,12 @@ class CartesianBondedEnergyTests : public CxxTest::TestSuite {
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 11 ), trpcage.residue( 12 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.03789363301815417, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.890381532828944, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 12 ), trpcage.residue( 13 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.5728464336782477, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 1.401087197773561, 1e-12 );
 		}
 		{
 			EnergyMap emap;
@@ -162,22 +162,22 @@ class CartesianBondedEnergyTests : public CxxTest::TestSuite {
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 16 ), trpcage.residue( 17 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 2.478101046509009, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 4.739068231556932, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 17 ), trpcage.residue( 18 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.5684130621506832, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 4.097428263355103, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 18 ), trpcage.residue( 19 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 0.5659574651952443, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.833527890424036, 1e-12 );
 		}
 		{
 			EnergyMap emap;
 			cartbond_energy.residue_pair_energy( trpcage.residue( 19 ), trpcage.residue( 20 ), trpcage, sfxn, emap );
-			TS_ASSERT_DELTA( emap[ cart_bonded ], 3.474060470482249, 1e-12 );
+			TS_ASSERT_DELTA( emap[ cart_bonded ], 4.565908866415951, 1e-12 );
 		}
 	}
 
@@ -191,7 +191,7 @@ class CartesianBondedEnergyTests : public CxxTest::TestSuite {
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( 20.26177569390764, true );
+		adv.validate_start_func_matches_start_score( 26.67684062956812, true );
 
 	}
 
