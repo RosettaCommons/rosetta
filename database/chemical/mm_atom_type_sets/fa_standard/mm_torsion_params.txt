@@ -929,3 +929,10 @@ CT2	CT2	CE1	CE1	1.3000	3	180.00	#from:	CE2	CE1	CT2	CT3
 HE1	CE1	CT2	CT2	0.1200	3	0.00 # HE1 CE1 CT2 CT3
 CE1	CE1	CT2	NH1	0.5000	1	180.00	#from:	CE2	CE1	CT2	CT3
 HE1	CE1	CT2	NH1	0.1200	3	0.00	#from:	HE1	CE1	CT2	CT3
+
+# added for phosphoserine, taken from Feng, M.-H., Philippopoulos, M., MacKerell, Jr., A.D. and Lim, C. Structural Characterization of the Phosphotyrosine Binding Region of a High-Affinity aSH2 Domain-Phosphopeptide Complex by Molecular Dynamics Simulation and Chemical Shift Calculations. Journal of the American Chemical Society, 1996, 118: 11265-11277.
+CT1  CT2  ON2  P     0.60    1   180.0 # phosphoserine, from dianionic ethylphosphate
+CT1  CT2  ON2  P     0.65    2     0.0 #
+CT1  CT2  ON2  P     0.05    3     0.0 #
+CT2  ON2  P    ON3   0.10    3     0.0 # from ON3  P    ON2  CN8B
+HA   CT2  ON2  P     0.00    3     0.0 !from P    ON2  CN8B HN8
