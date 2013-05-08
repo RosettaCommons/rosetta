@@ -22,24 +22,24 @@
 
 // Package Headers
 #include <protocols/topology_broker/FragmentClaimer.hh>
-#include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/DofClaim.fwd.hh>
 #include <protocols/topology_broker/claims/JumpClaim.fwd.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/jumping/DisulfPairingsList.hh>
+#include <protocols/jumping/DisulfPairingsList.fwd.hh>
 #include <protocols/jumping/DisulfPairingLibrary.hh>
 
 #include <core/fragment/FrameList.hh>
-#include <core/fragment/Frame.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/fragment/Frame.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/vector1.fwd.hh>
 
 //C++ Headers
 #include <string>
@@ -55,21 +55,11 @@ class DisulfJumpClaimer : public FragmentClaimer {
 	typedef FragmentClaimer Parent;
 public:
 	DisulfJumpClaimer(); //for factory
+	~DisulfJumpClaimer();
 
-	//DisulfJumpClaimer( std::string const& mover_tag = "JumpMove",  weights::AbinitioMoverWeightOP weight = NULL );
+	virtual TopologyClaimerOP clone() const;
 
-	virtual TopologyClaimerOP clone() const {
-		return new DisulfJumpClaimer( *this );
-	}
-
-void generate_jump_frags(
-	protocols::jumping::DisulfPairingLibrary const& lib,
-	//core::kinematics::MoveMap const& mm,
-	core::fragment::FrameList& all_frames) const;
-
-	//void generate_jump_frames(
-	//	 core::fragment::FrameList& all_frames,
-	// core::kinematics::MoveMap const& mm) const;
+	void generate_jump_frags( protocols::jumping::DisulfPairingLibrary const& lib, core::fragment::FrameList& all_frames) const;
 
 	virtual void generate_claims( claims::DofClaims& );
 
@@ -89,26 +79,7 @@ void generate_jump_frags(
 
 	virtual bool read_tag( std::string tag, std::istream& is );
 
-protected:
-// 	void set_jump_def( jumping::BaseJumpSetupOP jump_def ) {
-// 		jump_def_ = jump_def;
-// 	}
-
-// 	jumping::BaseJumpSetupOP jump_def() {
-// 		return jump_def_;
-// 	}
-
 private:
-	//jumping::BaseJumpSetupOP jump_def_;
-	//jumping::JumpSample current_jumps_;
-
-	//std::string secstruct_;
-	//size nr_jumps_;
-	//ObjexxFCL::FArray2D< std::string > use_jump_atoms_;
-	//ObjexxFCL::FArray2D_int use_jumps_;
-	//ObjexxFCL::FArray1D_int use_cuts_;
-	//core::kinematics::FoldTreeOP use_fold_tree_;
-
 	utility::vector1< claims::JumpClaimOP > local_disulf_data_;
 	utility::vector1< protocols::jumping::DisulfPairing > all_jump_pairings_;
 	core::fragment::FrameList all_frames_;

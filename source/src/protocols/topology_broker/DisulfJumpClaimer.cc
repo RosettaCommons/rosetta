@@ -24,39 +24,17 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.hh>
-// AUTO-REMOVED #include <core/fragment/FragID.hh>
 #include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/FrameList.hh>
-// AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
-// AUTO-REMOVED #include <protocols/jumping/JumpSetup.hh>
 #include <core/fragment/JumpingFrame.hh>
-// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
-// AUTO-REMOVED #include <core/fragment/JumpSRFD.hh>
-
 #include <core/fragment/FragData.fwd.hh>
 
-
-
-// ObjexxFCL Headers
-
 // Utility headers
-//#include <utility/io/izstream.hh>
-//#include <utility/io/ozstream.hh>
-//#include <utility/io/util.hh>
 #include <basic/Tracer.hh>
-
 #include <utility/vector1.hh>
 
-
-//#include <basic/options/option.hh>
-
-//// C++ headers
-
-// option key includes
-
 static basic::Tracer tr("protocols.topo_broker",basic::t_info);
-//static numeric::random::RandomGenerator RG(18828234);
 
 namespace protocols {
 namespace topology_broker {
@@ -71,19 +49,13 @@ DisulfJumpClaimer::DisulfJumpClaimer() :
 	set_bInitDofs( true ); //we want to initialize jumps
 }
 
-// DisulfJumpClaimer::DisulfJumpClaimer( std::string const& tag, weights::AbinitioMoverWeightOP weight ) :
-// 	FragmentClaimer( NULL, tag, weight ),
-// 	//	jump_def_ ( jump_def ),
-// 	//	init_mover_( NULL ),
-// 	bKeepJumpsFromInputPose_( true )
-// {
-// 	set_bInitDofs( true ); //we want to initialize jumps
-// }
+DisulfJumpClaimer::~DisulfJumpClaimer() {}
+
+TopologyClaimerOP DisulfJumpClaimer::clone() const {
+	return new DisulfJumpClaimer( *this );
+}
 
 void DisulfJumpClaimer::new_decoy() {
-	//if ( !jump_def_ ) return;
-  //runtime_assert( jump_def_ );
-
 	generate_jump_frags( *jumping::StandardDisulfPairingLibrary::get_instance(), all_frames_ );
 
  	core::fragment::FragSetOP jump_frags = new core::fragment::OrderedFragSet;
