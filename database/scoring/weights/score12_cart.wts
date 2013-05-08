@@ -16,7 +16,7 @@ dslf_ss_dst 0.5
 dslf_cs_ang 2
 dslf_ss_dih 5
 dslf_ca_dih 5
-pro_close 1.0
+pro_close 0.0
 rama  0.2
 omega  0.5
-cart_bonded 0.5
+cart_bonded 1.0

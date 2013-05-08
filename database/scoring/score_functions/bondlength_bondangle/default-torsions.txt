@@ -3,6 +3,7 @@
 ##    spring constants are basically guesses
 * CA C N H 0 40 2
 * CA N C O 0 40 2
+* CD C N CA 0 40 2
 ASN CB CG OD1 ND2 0 40 2
 ASP CB CG OD1 OD2 0 40 2
 GLN CG CD OE1 NE2 0 40 2
