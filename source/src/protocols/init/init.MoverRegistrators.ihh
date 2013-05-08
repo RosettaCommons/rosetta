@@ -143,6 +143,8 @@ static MoverRegistrator< md::CartesianMDCreator > reg_CartesianMDCreator;
 
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;
 
+static MoverRegistrator< motif_grafting::movers::MotifGraftCreator> reg_MotifGraftCreator;
+
 static MoverRegistrator< moves::DsspMoverCreator > reg_DsspMoverCreator;
 static MoverRegistrator< simple_moves::GenericMonteCarloMoverCreator > reg_GenericMonteCarloMoverCreator;
 static MoverRegistrator< moves::IfMoverCreator > reg_IfMoverCreator;

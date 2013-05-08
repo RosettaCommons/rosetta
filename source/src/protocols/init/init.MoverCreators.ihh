@@ -130,6 +130,8 @@
 
 #include <protocols/motifs/MotifDnaPackerCreator.hh>
 
+#include <protocols/motif_grafting/movers/MotifGraftCreator.hh>
+
 #include <protocols/moves/DsspMoverCreator.hh>
 #include <protocols/simple_moves/GenericMonteCarloMoverCreator.hh>
 #include <protocols/moves/IfMoverCreator.hh>

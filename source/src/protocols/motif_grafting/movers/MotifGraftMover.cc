@@ -1075,9 +1075,9 @@ namespace protocols
 						TR.Info << "Parsed combinatory size delta for fragment #"<< i << " = " << tmpPairParser.first <<"," << tmpPairParser.second << std::endl;
 						gp_vp_combinatory_fragment_size_delta_.push_back(tmpPairParser);
 						if (tmpPairParser.first < 0){
-							throw utility::excn::EXCN_RosettaScriptsOption("The left term [ x: ]of the replacement size delta for fragment cannot be < 0");
-						}else if (tmpPairParser.first < 0){
-							throw utility::excn::EXCN_RosettaScriptsOption("The right term [ :x ] of the replacement size delta for fragment cannot be < 0");
+							throw utility::excn::EXCN_RosettaScriptsOption(" The left term [ x: ] of the combinatory fragment size delta for fragment cannot be < 0");
+						}else if (tmpPairParser.second < 0){
+							throw utility::excn::EXCN_RosettaScriptsOption(" The right term [ :x ] of the combinatory fragment size delta for fragment cannot be < 0");
 						}
 					}
 					//Die if the number of delta deffinitions is different to the number of motif fragments
@@ -1111,8 +1111,8 @@ namespace protocols
 						tmpPairParser.second=(long int) std::atoi(tmpSplitParser2[2].c_str());
 						TR.Info << "Parsed replacement size delta for fragment #"<< i << " = " << tmpPairParser.first <<"," << tmpPairParser.second << std::endl;
 						if (tmpPairParser.first > 0){
-							throw utility::excn::EXCN_RosettaScriptsOption("The left term [ x: ]of the replacement size delta for fragment cannot be > 0");
-						}else if (tmpPairParser.first < 0){
+							throw utility::excn::EXCN_RosettaScriptsOption("The left term [ x: ] of the replacement size delta for fragment cannot be > 0");
+						}else if (tmpPairParser.second < 0){
 							throw utility::excn::EXCN_RosettaScriptsOption("The right term [ :x ] of the replacement size delta for fragment cannot be < 0");
 						}
 						gp_vp_max_fragment_replacement_size_delta_.push_back(tmpPairParser);
@@ -1128,9 +1128,11 @@ a fragment of any size in the scaffold " << std::endl;
 					for ( core::Size i = 1; i <= gp_p_motif_->conformation().num_chains() ; ++i){
 						std::pair< long int, long int > tmpPairParser;
 						//The minimum number of residues that can be replaced by the code is 2
-						tmpPairParser.first=( gp_p_motif_->conformation().chain_begin(i) )-( gp_p_motif_->conformation().chain_end(i) )+1;
+						  //tmpPairParser.first=( gp_p_motif_->conformation().chain_begin(i) )-( gp_p_motif_->conformation().chain_end(i) )+1;
+						tmpPairParser.first=0;
 						//The maximum number of residues that can be replaced set to the maximum possible of that the program can manage
-						tmpPairParser.second=LONG_MAX;
+						  //tmpPairParser.second=LONG_MAX;
+						tmpPairParser.first=0;
 						TR.Info << "Replacement size delta for fragment #"<< i << " set by default to: " << tmpPairParser.first <<", " << tmpPairParser.second << std::endl;
 						gp_vp_max_fragment_replacement_size_delta_.push_back(tmpPairParser);
 					}
