@@ -1,1 +1,0 @@
-/Users/lah435/projects/Rosetta/main/source/remove_build.sh

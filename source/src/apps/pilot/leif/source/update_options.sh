@@ -1,1 +1,0 @@
-/Users/lah435/projects/Rosetta/main/source/update_options.sh
