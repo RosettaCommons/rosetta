@@ -2247,8 +2247,9 @@ Options = Option_Group( '',
 		Option( 'coord_constrain_sidechains', 'Boolean', desc = "For relax and fastrelax, also tether sidechain heavy atom coordinates (requires either -constrain_relax_to_native_coords or -constrain_relax_to_start_coords)", default="false" ),
 		Option( 'sc_cst_maxdist', 'Real', default='0.0', desc='Use distance constraints between pairs of input side-chains atoms which are closer than the given upper distance cutoff (0 => no sc-sc restraints)' ),
 		Option( 'limit_aroma_chi2', 'Boolean', desc = "limit chi2 rotamer of PHE,TYR, and HIS around 90 ", default="false" ),
-
-		## Options to manipulate the movemap
+                Option( 'respect_resfile', 'Boolean', desc = "Tell FastRelax to respect the input resfile.  Used mainly for doing design within FastRelax.", default="false"),
+		
+                ## Options to manipulate the movemap
 		Option( 'bb_move', 'Boolean', default='true', desc='allow backbone to move during relax'),
 		Option( 'chi_move', 'Boolean', default='true', desc='allow sidechain to move during relax'),
 		Option( 'jump_move', 'Boolean', default='false', desc='allow jump to move during relax'),

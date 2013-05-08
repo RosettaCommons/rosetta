@@ -21,6 +21,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
@@ -52,6 +53,7 @@
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
+#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <protocols/simple_moves/GunnCost.hh>
@@ -61,6 +63,7 @@
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/datacache/DiagnosticData.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <protocols/simple_moves/WobbleMover.hh>
@@ -421,32 +424,55 @@ void ClassicRelax::set_mc ( moves::MonteCarloOP new_mc_ ){
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::kinematics::MoveMap & movemap ){
+	
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::pack::task::operation;
+	
 	if( use_default_pack_full_repack_ ){
-		core::pack::task::PackerTaskOP task_;
-		task_ = pack::task::TaskFactory::create_packer_task( pose ); //!!!!!!!!!!!
-
-		utility::vector1<bool> allow_repack(pose.total_residue(), false);
-
-		for ( Size i = 1; i<= pose.total_residue() ; ++i ) {
-
-			allow_repack[i] = movemap.get_chi(i);
+		
+		// Add TF behavior Jadolfbr 5/2/2013 
+		
+		core::pack::task::TaskFactoryOP local_tf = new core::pack::task::TaskFactory();
+	
+		//If a user gives a TaskFactory, completely respect it.
+		if (get_task_factory()){
+			local_tf = get_task_factory()->clone();
 		}
-
-
-		if (basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ){
-			bool const repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
-			allow_repack.assign( pose.total_residue(), repack);
+		else{
+			local_tf->push_back(new InitializeFromCommandline());
+			if (option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
+				local_tf->push_back(new ReadResfile());
+				TR << "Using Resfile for packing step. " <<std::endl;
+			}
+			else {
+				//Keep the same behavior as before if no resfile given for design.  
+				//Though, as mentioned in the doc, movemap now overrides chi_move as it should.
+				
+				local_tf->push_back(new RestrictToRepacking());
+				PreventRepackingOP turn_off_packing = new PreventRepacking();
+				for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
+					if (! movemap.get_chi(pos) ){
+						turn_off_packing->include_residue(pos);
+					}
+				}
+				local_tf->push_back(turn_off_packing);
+			}
 		}
-
-		task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
-		task_->or_include_current( true );
-		if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-			pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( get_scorefxn(), task_ );
+		//Include current rotamer by default - as before.
+		local_tf->push_back(new IncludeCurrent());
+	
+		if( limit_aroma_chi2() ) {
+			local_tf->push_back(new protocols::toolbox::task_operations::LimitAromaChi2Operation());
+		}
+	
+		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+			pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( get_scorefxn());
 		} else {
-			pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( get_scorefxn(), task_ );
+			pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( get_scorefxn());
 		}
-		/* TODO set packer_task_factory */
-
+		pack_full_repack_->task_factory(local_tf);
+		
 		(*get_scorefxn())( pose );
 	}
 
@@ -459,36 +485,53 @@ void ClassicRelax::set_full_repack( protocols::simple_moves::PackRotamersMoverOP
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinematics::MoveMap & movemap ) {
-
+	
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::pack::task::operation;
+	
 	if ( use_default_pack_full_repack_ ) {
-		core::pack::task::PackerTaskOP task_;
-		task_ = pack::task::TaskFactory::create_packer_task( pose ); //!!!!!!!!!!!
-
-
-		utility::vector1<bool> allow_repack( pose.total_residue(), false);
-
-		for ( Size i = 1; i<= pose.total_residue() ; ++i ) {
-
-
-				allow_repack[i] = movemap.get_chi(i);
-
+		
+		// Add TF behavior Jadolfbr 5/2/2013 
+		
+		core::pack::task::TaskFactoryOP local_tf = new core::pack::task::TaskFactory();
+	
+		//If a user gives a TaskFactory, completely respect it.
+		if (get_task_factory()){
+			local_tf = get_task_factory()->clone();
 		}
-
-
-		if (basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ){
-				bool const repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
-				allow_repack.assign( pose.total_residue(), repack);
+		else{
+			local_tf->push_back(new InitializeFromCommandline());
+			if (option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
+				local_tf->push_back(new ReadResfile());
+				TR << "Using Resfile for packing step. " <<std::endl;
+			}
+			else {
+				//Keep the same behavior as before if no resfile given for design.  
+				//Though, as mentioned in the doc, movemap now overrides chi_move as it should.
+				
+				local_tf->push_back(new RestrictToRepacking());
+				PreventRepackingOP turn_off_packing = new PreventRepacking();
+				for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
+					if (! movemap.get_chi(pos) ){
+						turn_off_packing->include_residue(pos);
+					}
+				}
+				local_tf->push_back(turn_off_packing);
+			}
 		}
-
-
-		task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
-		task_->or_include_current( true );
+		//Include current rotamer by default - as before.
+		local_tf->push_back(new IncludeCurrent());
+	
+		if( limit_aroma_chi2() ) {
+			local_tf->push_back(new protocols::toolbox::task_operations::LimitAromaChi2Operation());
+		}
 		(*get_scorefxn())( pose );
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies( pose ); // fix this
-		if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-			pack_rottrial_ = new simple_moves::symmetry::SymEnergyCutRotamerTrialsMover( get_scorefxn(), *task_, mc_, energycut );
+		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+			pack_rottrial_ = new simple_moves::symmetry::SymEnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut );
 		 } else {
-			pack_rottrial_ = new protocols::simple_moves::EnergyCutRotamerTrialsMover( get_scorefxn(), *task_, mc_, energycut );
+			pack_rottrial_ = new protocols::simple_moves::EnergyCutRotamerTrialsMover( get_scorefxn(), local_tf, mc_, energycut );
 		}
 	}
 

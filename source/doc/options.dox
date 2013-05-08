@@ -5440,6 +5440,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-respect_resfile</b> \<Boolean\><dt>
+<dd>Tell FastRelax to respect the input resfile.  Used mainly for doing design within FastRelax.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-bb_move</b> \<Boolean\><dt>
 <dd>allow backbone to move during relax</dd><br>
 <dd>Default: true</dd><br>

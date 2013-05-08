@@ -30,6 +30,7 @@
 #include <core/pose/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -55,11 +56,13 @@
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
+#include <protocols/toolbox/task_operations/RestrictToMoveMapChiOperation.hh>
 #include <utility/vector0.hh>
 
 static basic::Tracer TR("protocols.flxbb.FlxbbDesign");
 
 using namespace core;
+using namespace core::pack::task::operation;
 using namespace protocols::flxbb;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -389,7 +392,7 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 	using protocols::flxbb::FilterStructs_TotalCharge;
 	using protocols::flxbb::FilterStructs_TotalChargeOP;
 	using protocols::toolbox::task_operations::LimitAromaChi2Operation;
-
+	using protocols::toolbox::task_operations::RestrictToMoveMapChiOperation;
 	DesignTaskSet dts;
 
 	// create relax mover
@@ -403,7 +406,12 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 	if( relax_constraint_to_design_ ) rlx_mover->constrain_relax_to_start_coords( true );
 	if( limit_aroma_chi2_ ) { // default true
 		TaskFactoryOP tf = new TaskFactory;
+		//jadolfbr - FastRelax and ClassicRelax now completely respects the tf you give it.
+		//Nobu - Note that ClassicRelax ignored the set task factory before.
+		tf->push_back(new InitializeFromCommandline);
+		tf->push_back(new RestrictToRepacking );
 		tf->push_back( new LimitAromaChi2Operation );
+		tf->push_back( new RestrictToMoveMapChiOperation(movemap_) );
 		rlx_mover->set_task_factory( tf );
 	}
 

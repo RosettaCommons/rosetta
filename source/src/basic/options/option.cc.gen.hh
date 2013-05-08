@@ -705,10 +705,10 @@ option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).leg
 option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
+option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
-option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
@@ -1133,6 +1133,7 @@ option.add( basic::options::OptionKeys::relax::constrain_relax_to_start_coords, 
 option.add( basic::options::OptionKeys::relax::coord_constrain_sidechains, "For relax and fastrelax, also tether sidechain heavy atom coordinates (requires either -constrain_relax_to_native_coords or -constrain_relax_to_start_coords)" ).def(false);
 option.add( basic::options::OptionKeys::relax::sc_cst_maxdist, "Use distance constraints between pairs of input side-chains atoms which are closer than the given upper distance cutoff (0 => no sc-sc restraints)" ).def(0.0);
 option.add( basic::options::OptionKeys::relax::limit_aroma_chi2, "limit chi2 rotamer of PHE,TYR, and HIS around 90 " ).def(false);
+option.add( basic::options::OptionKeys::relax::respect_resfile, "Tell FastRelax to respect the input resfile.  Used mainly for doing design within FastRelax." ).def(false);
 option.add( basic::options::OptionKeys::relax::bb_move, "allow backbone to move during relax" ).def(true);
 option.add( basic::options::OptionKeys::relax::chi_move, "allow sidechain to move during relax" ).def(true);
 option.add( basic::options::OptionKeys::relax::jump_move, "allow jump to move during relax" ).def(false);

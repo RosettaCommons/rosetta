@@ -41,6 +41,7 @@ namespace relax { extern BooleanOptionKey const constrain_relax_to_start_coords;
 namespace relax { extern BooleanOptionKey const coord_constrain_sidechains; }
 namespace relax { extern RealOptionKey const sc_cst_maxdist; }
 namespace relax { extern BooleanOptionKey const limit_aroma_chi2; }
+namespace relax { extern BooleanOptionKey const respect_resfile; }
 namespace relax { extern BooleanOptionKey const bb_move; }
 namespace relax { extern BooleanOptionKey const chi_move; }
 namespace relax { extern BooleanOptionKey const jump_move; }

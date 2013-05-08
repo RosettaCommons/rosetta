@@ -12,7 +12,7 @@
 /// @detailed
 /// @author Mike Tyka
 /// @author Roland A. Pache
-
+/// @author Jared Adolf-Bryfogle (design)
 /*
 Format for relax script file
 
@@ -153,6 +153,7 @@ endrepeat
 #include <core/kinematics/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
@@ -179,6 +180,7 @@ endrepeat
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
@@ -352,8 +354,13 @@ FastRelax::parse_my_tag(
 	mm->set_bb( true );
 	mm->set_jump( true );
 
-	set_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-
+	
+	//Make sure we have a taskfactory before we overwrite our null in the base class.
+	core::pack::task::TaskFactoryOP tf = protocols::rosetta_scripts::parse_task_operations( tag, data );
+	if ( tf->size() > 0){
+		set_task_factory( tf );
+	}
+	
 	// initially, all backbone torsions are movable
 	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false);
 	set_movemap(mm);
@@ -429,7 +436,7 @@ void FastRelax::set_to_default( )
 
 	dna_move_ = option[ basic::options::OptionKeys::relax::dna_move]();
 
-  //fpd additional ramady options
+	//fpd additional ramady options
 	ramady_num_rebuild_ = basic::options::option[ OptionKeys::relax::ramady_max_rebuild ]();
 	ramady_cutoff_ = basic::options::option[ OptionKeys::relax::ramady_cutoff ]();
 	ramady_force_ = basic::options::option[ OptionKeys::relax::ramady_force ]();
@@ -446,35 +453,35 @@ void FastRelax::set_to_default( )
 
 // grab the score and remember the pose if the score is better then ever before.
 void FastRelax::cmd_accept_to_best(
-  const core::scoring::ScoreFunctionOP local_scorefxn,
-  core::pose::Pose &pose,
-  core::pose::Pose &best_pose,
-  const core::pose::Pose &start_pose,
-  core::Real       &best_score,
-  core::Size       &accept_count
+	const core::scoring::ScoreFunctionOP local_scorefxn,
+	core::pose::Pose &pose,
+	core::pose::Pose &best_pose,
+	const core::pose::Pose &start_pose,
+	core::Real       &best_score,
+	core::Size       &accept_count
 )
 {
 	using namespace core::scoring;
 	using namespace core::conformation;
-  core::Real score = (*local_scorefxn)( pose );
-  if( ( score < best_score) || (accept_count == 0) ){
-    best_score = score;
-    best_pose = pose;
-  }
-  #ifdef BOINC_GRAPHICS
-    boinc::Boinc::update_graphics_low_energy( best_pose, best_score  );
-    boinc::Boinc::update_graphics_last_accepted( pose, score );
-    //boinc::Boinc::update_mc_trial_info( total_count , "FastRelax" );  // total_count not defined
-  #endif
-  core::Real rms = 0, irms = 0;
-  if ( core::pose::symmetry::is_symmetric( pose ) && symmetric_rmsd_ ) {
-    rms = CA_rmsd_symmetric( *get_native_pose() , best_pose );
-    irms = CA_rmsd_symmetric( start_pose , best_pose );
-  } else {
-    rms = native_CA_rmsd( *get_native_pose() , best_pose );
-    irms = native_CA_rmsd( start_pose , best_pose );
-  }
-  TR << "MRP: " << accept_count << "  " << score << "  " << best_score << "  " << rms << "  " << irms << "  " << std::endl;
+	core::Real score = (*local_scorefxn)( pose );
+	if( ( score < best_score) || (accept_count == 0) ){
+		best_score = score;
+		best_pose = pose;
+	}
+	#ifdef BOINC_GRAPHICS
+	boinc::Boinc::update_graphics_low_energy( best_pose, best_score  );
+	boinc::Boinc::update_graphics_last_accepted( pose, score );
+	//boinc::Boinc::update_mc_trial_info( total_count , "FastRelax" );  // total_count not defined
+	#endif
+	core::Real rms = 0, irms = 0;
+	if ( core::pose::symmetry::is_symmetric( pose ) && symmetric_rmsd_ ) {
+		rms = CA_rmsd_symmetric( *get_native_pose() , best_pose );
+		irms = CA_rmsd_symmetric( start_pose , best_pose );
+	} else {
+		rms = native_CA_rmsd( *get_native_pose() , best_pose );
+		irms = native_CA_rmsd( start_pose , best_pose );
+	}
+	TR << "MRP: " << accept_count << "  " << score << "  " << best_score << "  " << rms << "  " << irms << "  " << std::endl;
 }
 
 
@@ -505,8 +512,10 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	using namespace core::conformation;
 	using namespace core::pack;
 	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
 	using namespace core::kinematics;
 	using namespace protocols;
+	using namespace basic::options;
 
 	TR.Debug   << "================== FastRelax: " << script_.size() << " ===============================" << std::endl;
  	if( pose.total_residue() == 0 ) {
@@ -514,7 +523,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		return;
 	}
 
-	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() );
+	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() ); //Didn't we already set this in parse_my_tag?
 
 #if defined GL_GRAPHICS
     protocols::viewer::add_conformation_viewer( pose.conformation(), "TESTING");
@@ -563,40 +572,54 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 	// Make sure we only allow symmetrical degrees of freedom to move and convert the local_movemap
 	// to a local movemap
-  if ( core::pose::symmetry::is_symmetric( pose )  )  {
-    core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
-  }
-
-
-
-	// Set up the packer task for packing.
-	PackerTaskOP task_;
-	if ( get_task_factory() != 0 ) {
-		task_ = get_task_factory()->create_task_and_apply_taskoperations( pose );
-	} else {
-		task_ = TaskFactory::create_packer_task( pose ); //!!!!!!!!!!! << who tf put this comment here and why ?
+	if ( core::pose::symmetry::is_symmetric( pose )  )  {
+		core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
 	}
+	
+	//Change behavior of Task to be initialized in PackRotamersMover to allow design directly within FastRelax
+	// Jadolfbr 5/2/2013 
+	TaskFactoryOP local_tf = new TaskFactory();
+	
+	//If a user gives a TaskFactory, completely respect it.
 
-	utility::vector1<bool> allow_repack( pose.total_residue(), repack_);
-	if ( !basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
-		for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
-			allow_repack[ pos ] = local_movemap->get_chi( pos );
+	if ( get_task_factory() ){
+		local_tf = get_task_factory()->clone();
+	}
+	else{
+		local_tf->push_back(new InitializeFromCommandline());
+		if (option[ OptionKeys::relax::respect_resfile]() && option[ OptionKeys::packing::resfile].user() ) {
+			local_tf->push_back(new ReadResfile());
+			TR << "Using Resfile for packing step. " <<std::endl;
+		}
+		else {
+			//Keep the same behavior as before if no resfile given for design.  
+			//Though, as mentioned in the doc, movemap now overrides chi_move as it was supposed to.
+			
+			local_tf->push_back(new RestrictToRepacking());
+			PreventRepackingOP turn_off_packing = new PreventRepacking();
+			for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
+				if (! local_movemap->get_chi(pos) ){
+					turn_off_packing->include_residue(pos);
+				}
+			}
+			local_tf->push_back(turn_off_packing);
 		}
 	}
-	task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
-	task_->or_include_current( true );
-
+	//Include current rotamer by default - as before.
+	local_tf->push_back(new IncludeCurrent());
+	
 	if( limit_aroma_chi2() ) {
-			protocols::toolbox::task_operations::LimitAromaChi2Operation lp_op;
-			lp_op.apply( pose, *task_ );
+		local_tf->push_back(new toolbox::task_operations::LimitAromaChi2Operation());
 	}
-
-  protocols::simple_moves::PackRotamersMoverOP pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn, task_ );
-
-	// If symmmetric pose then create a symmeteric rotamers mover
+	
+	protocols::simple_moves::PackRotamersMoverOP pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn );
+	
+	// If symmetric pose then create a symmetric rotamers mover
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-    pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task_ );
+		pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn);
 	}
+	pack_full_repack_->task_factory(local_tf);
+	
 	(*local_scorefxn)( pose );
 
 
@@ -1035,14 +1058,15 @@ void FastRelax::batch_apply(
 	using namespace core::conformation;
 	using namespace core::pack;
 	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
+	using namespace core::pack::task;
 	using namespace core::kinematics;
 	using namespace protocols;
 
 
 
-
 	PackerTaskOP task_;
-  protocols::simple_moves::PackRotamersMoverOP pack_full_repack_;
+	protocols::simple_moves::PackRotamersMoverOP pack_full_repack_;
 	core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
 	core::pose::Pose pose;
 
@@ -1069,6 +1093,7 @@ void FastRelax::batch_apply(
 	// create a local array of relax_decoys
 	std::vector < SRelaxPose > relax_decoys;
 	core::Size total_mem = 0;
+	
 	for( core::Size i = 0; i < input_structs.size(); ++i ){
 		TR.Debug << "iClock" << clock() << std::endl;
 
@@ -1120,7 +1145,7 @@ void FastRelax::batch_apply(
 		relax_decoys.push_back( new_relax_decoy );
 		// 453 mb
 		if( i == 0 ){
-			if ( get_task_factory() != 0 ) {
+			if ( get_task_factory() ) {
 				pack_full_repack_ = new protocols::simple_moves::PackRotamersMover();
 				if ( core::pose::symmetry::is_symmetric( pose ) )  {
 					pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover();
@@ -1132,13 +1157,12 @@ void FastRelax::batch_apply(
 
 				bool const repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
 				utility::vector1<bool> allow_repack( pose.total_residue(), repack);
-
+				
 				if ( !basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
 					for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
 						allow_repack[ pos ] = local_movemap->get_chi( pos );
 					}
 				}
-
 				task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
 				task_->or_include_current( true );
 				pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn, task_ );
@@ -1146,7 +1170,6 @@ void FastRelax::batch_apply(
 					pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task_ );
 				}
 			}
-			(*local_scorefxn)( pose );
 
 			// Make sure we only allow symmetrical degrees of freedom to move
 			if ( core::pose::symmetry::is_symmetric( pose )  )  {

@@ -1,4 +1,3 @@
-namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
 namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
 namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
 namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
@@ -424,6 +423,7 @@ namespace relax { BooleanOptionKey const constrain_relax_to_start_coords( "relax
 namespace relax { BooleanOptionKey const coord_constrain_sidechains( "relax:coord_constrain_sidechains" );  }
 namespace relax { RealOptionKey const sc_cst_maxdist( "relax:sc_cst_maxdist" );  }
 namespace relax { BooleanOptionKey const limit_aroma_chi2( "relax:limit_aroma_chi2" );  }
+namespace relax { BooleanOptionKey const respect_resfile( "relax:respect_resfile" );  }
 namespace relax { BooleanOptionKey const bb_move( "relax:bb_move" );  }
 namespace relax { BooleanOptionKey const chi_move( "relax:chi_move" );  }
 namespace relax { BooleanOptionKey const jump_move( "relax:jump_move" );  }

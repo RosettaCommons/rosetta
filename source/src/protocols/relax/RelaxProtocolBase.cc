@@ -94,7 +94,8 @@ namespace relax {
 RelaxProtocolBase::RelaxProtocolBase( core::scoring::ScoreFunctionOP score_in ) :
 	parent( "RelaxProtocol" ),
 	min_type_("dfpmin_armijo_nonmonotone"),
-	scorefxn_( score_in )
+	scorefxn_( score_in ),
+	task_factory_(NULL)
 {
 	set_defaults();
 }
@@ -102,7 +103,8 @@ RelaxProtocolBase::RelaxProtocolBase( core::scoring::ScoreFunctionOP score_in ) 
 RelaxProtocolBase::RelaxProtocolBase( std::string const & movername ) :
 	parent( movername ),
 	min_type_("dfpmin_armijo_nonmonotone"),
-	scorefxn_( 0 )
+	scorefxn_( 0 ),
+	task_factory_(NULL)
 {
 	set_defaults();
 }
@@ -110,7 +112,8 @@ RelaxProtocolBase::RelaxProtocolBase( std::string const & movername ) :
 RelaxProtocolBase::RelaxProtocolBase( std::string const & movername, core::scoring::ScoreFunctionOP score_in ) :
 	parent( movername ),
 	min_type_("dfpmin_armijo_nonmonotone"),
-	scorefxn_(score_in )
+	scorefxn_(score_in ),
+	task_factory_(NULL)
 {
 	set_defaults();
 }
@@ -237,7 +240,6 @@ void RelaxProtocolBase::set_defaults(){
 	set_default_minimization_settings();
 	set_default_coordinate_settings();
 	set_default_movemap();
-	task_factory_ = 0;
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -284,12 +286,28 @@ void RelaxProtocolBase::set_default_movemap(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	movemap_ = new core::kinematics::MoveMap();
-	movemap_->set_jump( option[ OptionKeys::relax::jump_move ]() );
-	movemap_->set_bb( option[ OptionKeys::relax::bb_move ]() );
-	movemap_->set_chi( option[ OptionKeys::relax::chi_move ]() );
-    if (option[ OptionKeys::in::file::movemap ].user()) {
-        movemap_->init_from_file(option[ OptionKeys::in::file::movemap ]() );
-    }
+
+	if (option[ OptionKeys::in::file::movemap ].user()) {
+		
+		//Allow user settings to be applied before movemap is read in. But, by default, use the movemap file.
+		if ( option[ OptionKeys::relax::jump_move ].user() ){
+			movemap_->set_jump( option[ OptionKeys::relax::jump_move ]() );
+		}
+		if ( option[ OptionKeys::relax::bb_move ].user() ){
+			movemap_->set_bb( option[ OptionKeys::relax::bb_move ]() );
+		}
+		if ( option[ OptionKeys::relax::chi_move ].user() ){
+			movemap_->set_chi( option[ OptionKeys::relax::chi_move ]() );	
+		}
+		
+		movemap_->init_from_file(option[ OptionKeys::in::file::movemap ]() );
+		
+	}
+	else{
+		movemap_->set_jump( option[ OptionKeys::relax::jump_move ]() );
+		movemap_->set_bb( option[ OptionKeys::relax::bb_move ]() );
+		movemap_->set_chi( option[ OptionKeys::relax::chi_move ]() );	
+	}
 }
 
 void RelaxProtocolBase::set_movemap( core::kinematics::MoveMapOP movemap ) {
