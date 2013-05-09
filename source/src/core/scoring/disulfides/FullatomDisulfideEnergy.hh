@@ -60,7 +60,7 @@ public:
 	/// @brief Make sure that the FullatomDisulfideEnergyContainer is ready for packing.
 	virtual
 	void
-	setup_for_packing( 
+	setup_for_packing(
 		pose::Pose & pose,
 		utility::vector1< bool > const & residues_repacking,
 		utility::vector1< bool > const & residues_designing
@@ -114,22 +114,6 @@ public:
 
 	/// @brief Retrieve the atom-index information for this residue pair from the minpair_data object
 	/// and evaluate the derivatives for a particular atom.
-	/*virtual
-	void
-	eval_atom_derivative_for_residue_pair(
-		Size const atom_index,
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const & minsingle_data1,
-		ResSingleMinimizationData const & minsingle_data2,
-		ResPairMinimizationData const & minpair_data,
-		pose::Pose const & pose, // provides context
-		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
-	) const;*/
 	virtual
 	void
 	eval_residue_pair_derivatives(

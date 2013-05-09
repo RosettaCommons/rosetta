@@ -460,6 +460,7 @@ FullatomDisulfideEnergyContainer::save_energy( Size disulfide_index, EnergyMap c
 	disulfide_info_[ disulfide_index ].first.dslf_ss_dih() = emap[ dslf_ss_dih ];
 	disulfide_info_[ disulfide_index ].first.dslf_ca_dih() = emap[ dslf_ca_dih ];
 	disulfide_info_[ disulfide_index ].first.dslf_cbs_ds() = emap[ dslf_cbs_ds ];
+	disulfide_info_[ disulfide_index ].first.dslf_fa13()   = emap[ dslf_fa13 ];
 }
 
 	void
@@ -527,6 +528,7 @@ void FullatomDisulfideEnergyContainer::accumulate_energy( Size disulfide_index, 
 	emap[ dslf_ss_dih ] += disulfide_info_[ disulfide_index ].first.dslf_ss_dih();
 	emap[ dslf_ca_dih ] += disulfide_info_[ disulfide_index ].first.dslf_ca_dih();
 	emap[ dslf_cbs_ds ] += disulfide_info_[ disulfide_index ].first.dslf_cbs_ds();
+	emap[ dslf_fa13   ] += disulfide_info_[ disulfide_index ].first.dslf_fa13();
 }
 
 void FullatomDisulfideEnergyContainer::retrieve_energy( Size disulfide_index, EnergyMap & emap ) const
@@ -536,6 +538,7 @@ void FullatomDisulfideEnergyContainer::retrieve_energy( Size disulfide_index, En
 	emap[ dslf_ss_dih ] = disulfide_info_[ disulfide_index ].first.dslf_ss_dih();
 	emap[ dslf_ca_dih ] = disulfide_info_[ disulfide_index ].first.dslf_ca_dih();
 	emap[ dslf_cbs_ds ] = disulfide_info_[ disulfide_index ].first.dslf_cbs_ds();
+	emap[ dslf_fa13   ] = disulfide_info_[ disulfide_index ].first.dslf_fa13();
 }
 
 bool FullatomDisulfideEnergyContainer::energy_computed( Size disulfide_index ) const

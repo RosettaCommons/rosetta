@@ -112,15 +112,15 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "hybrid_vdw" ] = hybrid_vdw;
 	name2score_type_[ "fa_cust_pair_dist" ] = fa_cust_pair_dist;
 	name2score_type_[ "gauss" ] = gauss;
-   
+
 
 	// PyRosetta score types
-	#ifdef PYROSETTA 
+	#ifdef PYROSETTA
 		fill_score_range(name2score_type_, "PyRosettaTwoBodyContextIndepenedentEnergy", PyRosettaTwoBodyContextIndepenedentEnergy_first, PyRosettaTwoBodyContextIndepenedentEnergy_last);
 		fill_score_range(name2score_type_, "PyRosettaTwoBodyContextDependentEnergy", PyRosettaTwoBodyContextDependentEnergy_first, PyRosettaTwoBodyContextDependentEnergy_last);
 		fill_score_range(name2score_type_, "PyRosettaEnergy", PyRosettaEnergy_first, PyRosettaEnergy_last);
 	#endif
-		
+
 	name2score_type_[ "python" ] = python;
 
 	name2score_type_[ "fastsaxs" ] = fastsaxs;
@@ -177,6 +177,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "dslf_ss_dih" ] = dslf_ss_dih;
 	name2score_type_[ "dslf_ca_dih" ] = dslf_ca_dih;
 	name2score_type_[ "dslf_cbs_ds" ] = dslf_cbs_ds;
+	name2score_type_[ "dslf_fa13" ] = dslf_fa13;
 	name2score_type_[ "dslfc_cen_dst" ] = dslfc_cen_dst;
 	name2score_type_[ "dslfc_cb_dst"  ] = dslfc_cb_dst;
 	name2score_type_[ "dslfc_ang"     ] = dslfc_ang;

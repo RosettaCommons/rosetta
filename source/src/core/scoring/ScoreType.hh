@@ -255,6 +255,8 @@ enum ScoreType {
 	dslf_ss_dih,
 	dslf_ca_dih,
 	dslf_cbs_ds,
+	// supercedes the above
+	dslf_fa13,
 	//Centroid disulfide terms
 	dslfc_cen_dst,
 	dslfc_cb_dst,
@@ -435,14 +437,14 @@ enum ScoreType {
 		PyRosettaEnergy_first,
 		PyRosettaEnergy_last = PyRosettaEnergy_first + 10,
 	#endif
-	
+
 	// etc etc
 	// Why is there a total score?
 	total_score,
 
 	// Dummy score type to insure that PyRosetta can correctly identify when total_score is used, see bug [bug #0000091] for details
-	dummy_score_type, 
-	
+	dummy_score_type,
+
 	/// This element marks the end of the active score types.  Elements in the enumeration
 	/// up to this point will have space allocated for them in the EnergyMap object.  Elements
 	/// past this point are considered inactive and will not have space allocated for them.

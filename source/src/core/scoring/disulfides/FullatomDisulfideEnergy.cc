@@ -27,7 +27,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/methods/Methods.hh>
@@ -108,6 +108,7 @@ FullatomDisulfideEnergyCreator::score_types_for_method() const {
 	sts.push_back( dslf_ss_dih );
 	sts.push_back( dslf_ca_dih );
 	sts.push_back( dslf_cbs_ds );
+	sts.push_back( dslf_fa13 );
 	return sts;
 }
 
@@ -201,7 +202,7 @@ FullatomDisulfideEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd2,
 	ResPairMinimizationData const & min_data,
 	pose::Pose const &,
-	ScoreFunction const &,
+	ScoreFunction const &sfxn,
 	EnergyMap & emap
 ) const
 {
@@ -216,28 +217,41 @@ FullatomDisulfideEnergy::residue_pair_energy_ext(
 	assert( dynamic_cast< DisulfMinData const * > ( min_data.get_data( fa_dslf_respair_data )() ) );
 	DisulfMinData const & disulf_inds = static_cast< DisulfMinData const & > ( *min_data.get_data( fa_dslf_respair_data ) );
 
-	Energy distance_score_this_disulfide;
-	Energy csangles_score_this_disulfide;
-	Energy dihedral_score_this_disulfide;
-	Energy ca_dihedral_sc_this_disulf;
-	bool truefalse_fa_disulf;
 
-	potential_.score_this_disulfide(
-		rsdl, rsdu,
-		disulf_inds.res_inds( 1 ),
-		disulf_inds.res_inds( 2 ),
-		distance_score_this_disulfide,
-		csangles_score_this_disulfide,
-		dihedral_score_this_disulfide,
-		ca_dihedral_sc_this_disulf,
-		truefalse_fa_disulf
-	);
+	//fpd old version
+	if (sfxn.has_nonzero_weight(dslf_ss_dst) || sfxn.has_nonzero_weight(dslf_cs_ang) || sfxn.has_nonzero_weight(dslf_ss_dih) || sfxn.has_nonzero_weight(dslf_ca_dih) ) {
+		Energy distance_score_this_disulfide;
+		Energy csangles_score_this_disulfide;
+		Energy dihedral_score_this_disulfide;
+		Energy ca_dihedral_sc_this_disulf;
+		bool truefalse_fa_disulf;
 
-	emap[ dslf_ss_dst ] += distance_score_this_disulfide;
-	emap[ dslf_cs_ang ] += csangles_score_this_disulfide;
-	emap[ dslf_ss_dih ] += dihedral_score_this_disulfide;
-	emap[ dslf_ca_dih ] += ca_dihedral_sc_this_disulf;
+		potential_.score_this_disulfide_old(
+			rsdl, rsdu,
+			disulf_inds.res_inds( 1 ),
+			disulf_inds.res_inds( 2 ),
+			distance_score_this_disulfide,
+			csangles_score_this_disulfide,
+			dihedral_score_this_disulfide,
+			ca_dihedral_sc_this_disulf,
+			truefalse_fa_disulf
+		);
 
+		emap[ dslf_ss_dst ] += distance_score_this_disulfide;
+		emap[ dslf_cs_ang ] += csangles_score_this_disulfide;
+		emap[ dslf_ss_dih ] += dihedral_score_this_disulfide;
+		emap[ dslf_ca_dih ] += ca_dihedral_sc_this_disulf;
+	}
+
+	//fpd new version
+	if(sfxn.has_nonzero_weight(dslf_fa13)) {
+		Energy score_i;
+		potential_.score_this_disulfide(
+			rsdl, rsdu,
+			disulf_inds.res_inds( 1 ), disulf_inds.res_inds( 2 ),
+			score_i );
+		emap[ dslf_fa13 ] += score_i;
+	}
 }
 
 void
@@ -288,90 +302,68 @@ FullatomDisulfideEnergy::eval_residue_pair_derivatives(
 
 	/// this could be substantially more efficient, but there are only ever a handful of disulfides in proteins,
 	/// so there's basically no point in spending time making this code faster
-	potential_.get_disulfide_derivatives(
-		rsd1, rsd2, disulf_inds.res_inds( 1 ), disulf_inds.res_inds( 2 ),
-		disulf_inds.res_inds(1).c_alpha_index(), weights,
-		r1_atom_derivs[ disulf_inds.res_inds(1).c_alpha_index() ].f1(),
-		r1_atom_derivs[ disulf_inds.res_inds(1).c_alpha_index() ].f2() );
 
-	potential_.get_disulfide_derivatives(
-		rsd1, rsd2, disulf_inds.res_inds( 1 ), disulf_inds.res_inds( 2 ),
-		disulf_inds.res_inds(1).c_beta_index(), weights,
-		r1_atom_derivs[ disulf_inds.res_inds(1).c_beta_index() ].f1(),
-		r1_atom_derivs[ disulf_inds.res_inds(1).c_beta_index() ].f2() );
+	//fpd old version
+	if (weights[dslf_ss_dst] != 0 || weights[dslf_cs_ang] != 0 || weights[dslf_ss_dih] != 0 || weights[dslf_ca_dih] != 0 ) {
+		potential_.get_disulfide_derivatives_old(
+			rsd1, rsd2, disulf_inds.res_inds( 1 ), disulf_inds.res_inds( 2 ),
+			disulf_inds.res_inds(1).c_alpha_index(), weights,
+			r1_atom_derivs[ disulf_inds.res_inds(1).c_alpha_index() ].f1(),
+			r1_atom_derivs[ disulf_inds.res_inds(1).c_alpha_index() ].f2() );
 
-	potential_.get_disulfide_derivatives(
-		rsd1, rsd2, disulf_inds.res_inds( 1 ), disulf_inds.res_inds( 2 ),
-		disulf_inds.res_inds(1).disulf_atom_index(), weights,
-		r1_atom_derivs[ disulf_inds.res_inds(1).disulf_atom_index() ].f1(),
-		r1_atom_derivs[ disulf_inds.res_inds(1).disulf_atom_index() ].f2() );
+		potential_.get_disulfide_derivatives_old(
+			rsd1, rsd2, disulf_inds.res_inds( 1 ), disulf_inds.res_inds( 2 ),
+			disulf_inds.res_inds(1).c_beta_index(), weights,
+			r1_atom_derivs[ disulf_inds.res_inds(1).c_beta_index() ].f1(),
+			r1_atom_derivs[ disulf_inds.res_inds(1).c_beta_index() ].f2() );
 
-	potential_.get_disulfide_derivatives(
-		rsd2, rsd1, disulf_inds.res_inds( 2 ), disulf_inds.res_inds( 1 ),
-		disulf_inds.res_inds(2).c_alpha_index(), weights,
-		r2_atom_derivs[ disulf_inds.res_inds(2).c_alpha_index() ].f1(),
-		r2_atom_derivs[ disulf_inds.res_inds(2).c_alpha_index() ].f2() );
+		potential_.get_disulfide_derivatives_old(
+			rsd1, rsd2, disulf_inds.res_inds( 1 ), disulf_inds.res_inds( 2 ),
+			disulf_inds.res_inds(1).disulf_atom_index(), weights,
+			r1_atom_derivs[ disulf_inds.res_inds(1).disulf_atom_index() ].f1(),
+			r1_atom_derivs[ disulf_inds.res_inds(1).disulf_atom_index() ].f2() );
 
-	potential_.get_disulfide_derivatives(
-		rsd2, rsd1, disulf_inds.res_inds( 2 ), disulf_inds.res_inds( 1 ),
-		disulf_inds.res_inds(2).c_beta_index(), weights,
-		r2_atom_derivs[ disulf_inds.res_inds(2).c_beta_index() ].f1(),
-		r2_atom_derivs[ disulf_inds.res_inds(2).c_beta_index() ].f2() );
+		potential_.get_disulfide_derivatives_old(
+			rsd2, rsd1, disulf_inds.res_inds( 2 ), disulf_inds.res_inds( 1 ),
+			disulf_inds.res_inds(2).c_alpha_index(), weights,
+			r2_atom_derivs[ disulf_inds.res_inds(2).c_alpha_index() ].f1(),
+			r2_atom_derivs[ disulf_inds.res_inds(2).c_alpha_index() ].f2() );
 
-	potential_.get_disulfide_derivatives(
-		rsd2, rsd1, disulf_inds.res_inds( 2 ), disulf_inds.res_inds( 1 ),
-		disulf_inds.res_inds(2).disulf_atom_index(), weights,
-		r2_atom_derivs[ disulf_inds.res_inds(2).disulf_atom_index() ].f1(),
-		r2_atom_derivs[ disulf_inds.res_inds(2).disulf_atom_index() ].f2() );
+		potential_.get_disulfide_derivatives_old(
+			rsd2, rsd1, disulf_inds.res_inds( 2 ), disulf_inds.res_inds( 1 ),
+			disulf_inds.res_inds(2).c_beta_index(), weights,
+			r2_atom_derivs[ disulf_inds.res_inds(2).c_beta_index() ].f1(),
+			r2_atom_derivs[ disulf_inds.res_inds(2).c_beta_index() ].f2() );
 
+		potential_.get_disulfide_derivatives_old(
+			rsd2, rsd1, disulf_inds.res_inds( 2 ), disulf_inds.res_inds( 1 ),
+			disulf_inds.res_inds(2).disulf_atom_index(), weights,
+			r2_atom_derivs[ disulf_inds.res_inds(2).disulf_atom_index() ].f1(),
+			r2_atom_derivs[ disulf_inds.res_inds(2).disulf_atom_index() ].f2() );
+	}
+
+	//fpd new version
+	if(weights[dslf_fa13] != 0) {
+		potential_.get_disulfide_derivatives(
+			rsd1, rsd2, disulf_inds.res_inds( 1 ), disulf_inds.res_inds( 2 ),
+			weights, r1_atom_derivs, r2_atom_derivs );
+	}
 }
-
-/*void
-FullatomDisulfideEnergy::eval_atom_derivative_for_residue_pair(
-	Size const atom_index,
-	conformation::Residue const & rsd1,
-	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & minpair_data,
-	pose::Pose const &, // provides context
-	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
-	Vector & F1,
-	Vector & F2
-) const
-{
-	Size my_ind( rsd1.seqpos() < rsd2.seqpos()    ? 1 : 2 );
-	Size other_ind( rsd1.seqpos() < rsd2.seqpos() ? 2 : 1 );
-
-	assert( dynamic_cast< DisulfMinData const * > ( minpair_data.get_data( fa_dslf_respair_data )() ) );
-	DisulfMinData const & disulf_inds = static_cast< DisulfMinData const & > ( *minpair_data.get_data( fa_dslf_respair_data ) );
-
-	Vector f1( 0.0 ), f2( 0.0 );
-	potential_.get_disulfide_derivatives(
-		rsd1, rsd2,
-		disulf_inds.res_inds( my_ind ),
-		disulf_inds.res_inds( other_ind ),
-		atom_index,
-		weights,
-		f1, f2 );
-
-	F1 += f1;
-	F2 += f2;
-}*/
 
 void
 FullatomDisulfideEnergy::old_eval_atom_derivative(
 	id::AtomID const & atomid,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
+	ScoreFunction const &sfxn,
 	EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
 {
+	//fpd Im not even sure if this function is used?  Anyway, it doesn't work with the new dslf_fa13 potential
+	assert( !sfxn.has_nonzero_weight(dslf_fa13) );
+
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( pose.residue( atomid.rsd() ).has_variant_type( core::chemical::REPLONLY )){
 		return;
@@ -384,11 +376,8 @@ FullatomDisulfideEnergy::old_eval_atom_derivative(
 
 	if ( dec->disulfide_atom_indices( atomid.rsd() ).atom_gets_derivatives( atomid.atomno() ) ) {
 		conformation::Residue const & res( pose.residue( atomid.rsd() ));
-	//if ( res.atom_name( atomid.atomno() ) == " CA " ||
-	//		res.atom_name( atomid.atomno() ) == " CB "  ||
-	//		res.atom_name( atomid.atomno() ) == " SG " ) {
 		Vector f1( 0.0 ), f2( 0.0 );
-		potential_.get_disulfide_derivatives(
+		potential_.get_disulfide_derivatives_old(
 			res,
 			pose.residue( dec->other_neighbor_id( atomid.rsd()) ),
 			dec->disulfide_atom_indices( atomid.rsd() ),
@@ -399,7 +388,6 @@ FullatomDisulfideEnergy::old_eval_atom_derivative(
 		F1 += f1;
 		F2 += f2;
 	}
-
 }
 
 
@@ -428,7 +416,7 @@ FullatomDisulfideEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
+	ScoreFunction const &sfxn,
 	EnergyMap & emap
 ) const
 {
@@ -438,51 +426,49 @@ FullatomDisulfideEnergy::residue_pair_energy(
 	}
 
 	if ( rsd1.aa() != chemical::aa_cys || rsd2.aa() != chemical::aa_cys ) return;
-
-	Energy distance_score_this_disulfide;
-	Energy csangles_score_this_disulfide;
-	Energy dihedral_score_this_disulfide;
-	Energy ca_dihedral_sc_this_disulf;
-	bool truefalse_fa_disulf;
-
 	FullatomDisulfideEnergyContainerCOP dec = FullatomDisulfideEnergyContainerCOP (
 		static_cast< FullatomDisulfideEnergyContainer const * > (
 		pose.energies().long_range_container( methods::fa_disulfide_energy ).get() ));
-
 	if ( ! dec->residue_forms_disulfide( rsd1.seqpos() ) ||
 			dec->other_neighbor_id( rsd1.seqpos() ) != (Size) rsd2.seqpos() ){
 		return;
 	}
 
-	potential_.score_this_disulfide(
-		rsd1, rsd2,
-		dec->disulfide_atom_indices( rsd1.seqpos() ),
-		dec->other_neighbor_atom_indices( rsd1.seqpos() ), //The function change from the above line changes which index we get; if we also change which rsd we use then it turns everything upside down twice and the disulfide_atom_indices inappropriately match
-		distance_score_this_disulfide,
-		csangles_score_this_disulfide,
-		dihedral_score_this_disulfide,
-		ca_dihedral_sc_this_disulf,
-		truefalse_fa_disulf
-	);
+	//fpd old version
+	if (sfxn.has_nonzero_weight(dslf_ss_dst) || sfxn.has_nonzero_weight(dslf_cs_ang) || sfxn.has_nonzero_weight(dslf_ss_dih) || sfxn.has_nonzero_weight(dslf_ca_dih) ) {
+		Energy distance_score_this_disulfide;
+		Energy csangles_score_this_disulfide;
+		Energy dihedral_score_this_disulfide;
+		Energy ca_dihedral_sc_this_disulf;
+		bool truefalse_fa_disulf;
 
-	/*
-	Energy cbs_sc_this_disulf( 0.0 );
-
-	if ( ! sfxn.has_zero_weight( dslf_cbs_ds ) ) {
-		potential_.get_cbs_sc_this_disulf(
-			rsd1, rsd2, cbs_sc_this_disulf
+		potential_.score_this_disulfide_old(
+			rsd1, rsd2,
+			dec->disulfide_atom_indices( rsd1.seqpos() ),
+			dec->other_neighbor_atom_indices( rsd1.seqpos() ), //The function change from the above line changes which index we get;
+																												 // if we also change which rsd we use then it turns everything upside down twice and the disulfide_atom_indices inappropriately match
+			distance_score_this_disulfide,
+			csangles_score_this_disulfide,
+			dihedral_score_this_disulfide,
+			ca_dihedral_sc_this_disulf,
+			truefalse_fa_disulf
 		);
+
+		emap[ dslf_ss_dst ] += distance_score_this_disulfide;
+		emap[ dslf_cs_ang ] += csangles_score_this_disulfide;
+		emap[ dslf_ss_dih ] += dihedral_score_this_disulfide;
+		emap[ dslf_ca_dih ] += ca_dihedral_sc_this_disulf;
 	}
-	*/
 
-	//if ( truefalse_fa_disulf ) { // this just allows the packer to unwittingly break a disulfide bond, what is its point?
-	emap[ dslf_ss_dst ] += distance_score_this_disulfide;
-	emap[ dslf_cs_ang ] += csangles_score_this_disulfide;
-	emap[ dslf_ss_dih ] += dihedral_score_this_disulfide;
-	emap[ dslf_ca_dih ] += ca_dihedral_sc_this_disulf;
-
-	//emap[ dslf_cbs_ds ] = cbs_sc_this_disulf;
-	//}
+	//fpd new version
+	if(sfxn.has_nonzero_weight(dslf_fa13)) {
+		Energy score_i;
+		potential_.score_this_disulfide(
+			rsd1, rsd2,
+			dec->disulfide_atom_indices( rsd1.seqpos() ), dec->other_neighbor_atom_indices( rsd1.seqpos() ),
+			score_i );
+		emap[ dslf_fa13 ] += score_i;
+	}
 }
 
 
@@ -510,7 +496,6 @@ FullatomDisulfideEnergy::long_range_type() const
 	return methods::fa_disulfide_energy;
 }
 
-
 bool
 FullatomDisulfideEnergy::defines_residue_pair_energy(
 	pose::Pose const & pose,
@@ -526,7 +511,9 @@ FullatomDisulfideEnergy::defines_residue_pair_energy(
 		static_cast< FullatomDisulfideEnergyContainer const * > (
 		pose.energies().long_range_container( fa_disulfide_energy ).get() ));
 	return dec->disulfide_bonded( res1, res2 );
-} core::Size
+}
+
+core::Size
 FullatomDisulfideEnergy::version() const
 {
 	return 1; // Initial versioning

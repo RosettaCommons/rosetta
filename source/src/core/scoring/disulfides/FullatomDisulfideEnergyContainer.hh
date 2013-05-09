@@ -123,7 +123,8 @@ public:
 		dslf_cs_ang_( 0.0 ),
 		dslf_ss_dih_( 0.0 ),
 		dslf_ca_dih_( 0.0 ),
-		dslf_cbs_ds_( 0.0 )
+		dslf_cbs_ds_( 0.0 ),
+		dslf_fa13_( 0.0 )
 	{}
 
 	Energy dslf_ss_dst() const { return dslf_ss_dst_;}
@@ -131,12 +132,14 @@ public:
 	Energy dslf_ss_dih() const { return dslf_ss_dih_;}
 	Energy dslf_ca_dih() const { return dslf_ca_dih_;}
 	Energy dslf_cbs_ds() const { return dslf_cbs_ds_;}
+	Energy dslf_fa13() const { return dslf_fa13_;}
 
 	Energy & dslf_ss_dst() { return dslf_ss_dst_;}
 	Energy & dslf_cs_ang() { return dslf_cs_ang_;}
 	Energy & dslf_ss_dih() { return dslf_ss_dih_;}
 	Energy & dslf_ca_dih() { return dslf_ca_dih_;}
 	Energy & dslf_cbs_ds() { return dslf_cbs_ds_;}
+	Energy & dslf_fa13() { return dslf_fa13_;}
 
 private:
 
@@ -145,6 +148,7 @@ private:
 	Energy dslf_ss_dih_;
 	Energy dslf_ca_dih_;
 	Energy dslf_cbs_ds_;
+	Energy dslf_fa13_;
 };
 
 class FullatomDisulfideEnergyContainer : public LREnergyContainer {

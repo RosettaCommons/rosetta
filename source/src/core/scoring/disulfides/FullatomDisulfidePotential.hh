@@ -21,16 +21,12 @@
 #include <core/scoring/disulfides/DisulfideAtomIndices.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/constraints/Func.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CircularHarmonicFunc.hh>
 #include <core/scoring/constraints/CircularSigmoidalFunc.hh>
+#include <core/scoring/DerivVectorPair.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-
-// ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -42,6 +38,33 @@
 namespace core {
 namespace scoring {
 namespace disulfides {
+
+//fpd  parameters for refitting
+//fpd  perhaps should be read from the DB?
+struct FullatomDisulfideParams13 {
+	FullatomDisulfideParams13() {
+		d_location=2.02; d_scale=0.04; d_shape=2.57;
+
+		a_logA=-419.8120; a_kappa=419.7; a_mu=104.22;
+
+		dss_logA1=-32.9599; dss_kappa1=30.9053; dss_mu1=-86.0964;
+		dss_logA2=-23.3471; dss_kappa2=20.9805; dss_mu2=92.3915;
+
+		dcs_logA1=-15.8644; dcs_mu1=-72.2016;  dcs_kappa1=13.3778;
+		dcs_logA2=-16.9017; dcs_mu2=78.0303;   dcs_kappa2=13.6370;
+		dcs_logA3=-7.0219 ; dcs_mu3=-172.5505; dcs_kappa3=2.9327;
+	}
+
+	// distance
+	Real d_location, d_scale, d_shape;
+	// angle
+	Real a_logA, a_kappa, a_mu;
+	// SS dih
+	Real dss_logA1, dss_kappa1, dss_mu1, dss_logA2, dss_kappa2, dss_mu2;
+	// CS dih
+	Real dcs_logA1, dcs_mu1, dcs_kappa1, dcs_logA2, dcs_mu2, dcs_kappa2, dcs_logA3, dcs_mu3, dcs_kappa3;
+};
+
 
 class FullatomDisulfidePotential : public utility::pointer::ReferenceCount
 {
@@ -55,8 +78,9 @@ public:
 	void
 	print_score_functions() const;
 
+	//fpd old version
 	void
-	score_this_disulfide(
+	score_this_disulfide_old(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
 		DisulfideAtomIndices const & res1_atom_indices,
@@ -69,7 +93,7 @@ public:
 	) const;
 
 	void
-	get_disulfide_derivatives(
+	get_disulfide_derivatives_old(
 		conformation::Residue const & res1,
 		conformation::Residue const & res2,
 		DisulfideAtomIndices const & res1_atom_indices,
@@ -79,6 +103,29 @@ public:
 		Vector & F1,
 		Vector & F2
 	) const;
+
+	//fpd new version
+	void
+	score_this_disulfide(
+		conformation::Residue const & res1,
+		conformation::Residue const & res2,
+		DisulfideAtomIndices const & res1_atom_indices,
+		DisulfideAtomIndices const & res2_atom_indices,
+		Energy & score
+	) const;
+
+	void
+	get_disulfide_derivatives(
+		conformation::Residue const & res1,
+		conformation::Residue const & res2,
+		DisulfideAtomIndices const & res1_atom_indices,
+		DisulfideAtomIndices const & res2_atom_indices,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	) const;
+
+
 
 private:
 
@@ -106,7 +153,13 @@ private:
 	CB_Angle_FuncOP cb_angle_func_;
 	SG_Dist_FuncOP sg_dist_func_;
 
+	//fpd relative weighings and background probability on the new distribution
+	Real wt_dihSS_, wt_dihCS_, wt_ang_, wt_len_;
+	Real shift_;  // shift disulf down
+	Real mest_;   // flatten
+	FullatomDisulfideParams13 params_; // new parameters
 };
+
 
 class CBSG_Dihedral_Func : public constraints::Func
 {
@@ -125,15 +178,9 @@ public:
 	Real
 	dfunc( Real const ) const;
 private:
-	//Real const cbsg_pos_peak_;
-	//Real const cbsg_pos_sd_;
-	//Real const cbsg_neg_peak_;
-	//Real const cbsg_neg_sd_;
-
 	core::scoring::constraints::CircularSigmoidalFunc csf_cbang1_;
 	core::scoring::constraints::CircularSigmoidalFunc csf_cbang2_;
 	core::scoring::constraints::CircularSigmoidalFunc csf_cbang3_;
-
 };
 
 class SGSG_Dihedral_Func : public constraints::Func
@@ -155,10 +202,6 @@ public:
 	dfunc( Real const ) const;
 private:
 	/// Access the histogram for this Func
-	//static
-	//numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type
-	//fa_sgsg_dihedral_scores();
-
 	core::scoring::constraints::CircularSigmoidalFunc csf_cbang1a_;
 	core::scoring::constraints::CircularSigmoidalFunc csf_cbang2a_;
 	core::scoring::constraints::CircularSigmoidalFunc csf_cbang1b_;
@@ -184,19 +227,9 @@ public:
 	Real
 	dfunc( Real const ) const;
 private:
-	/// Access the histogram for this Func
-	//static
-	//numeric::interpolation::HistogramCOP<core::Real,core::Real>::Type
-	//fa_csang_scores();
-
-	//core::scoring::constraints::CircularHarmonicFunc  chf_cbang_;
-	//core::scoring::constraints::CircularSigmoidalFunc csf_cbang_;
-
 	core::scoring::constraints::CircularSigmoidalFunc csf_cbang1_;
 	core::scoring::constraints::CircularSigmoidalFunc csf_cbang2_;
 
-	//core::scoring::constraints::CircularSigmoidalFunc csf_cbang2_;
-	//core::scoring::constraints::CircularSigmoidalFunc csf_cbang3_;
 };
 
 class SG_Dist_Func : public constraints::Func

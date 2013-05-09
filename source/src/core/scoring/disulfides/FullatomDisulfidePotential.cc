@@ -18,17 +18,13 @@
 
 // Package Headers
 #include <core/scoring/disulfides/DisulfideAtomIndices.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
+#include <core/scoring/EnergyMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/CircularHarmonicFunc.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
 #include <basic/database/open.hh>
-
-// Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility Headers
 #include <numeric/xyz.functions.hh>
@@ -37,6 +33,11 @@
 // Numeric headers
 #include <numeric/constants.hh>
 #include <numeric/interpolation/Histogram.hh>
+#include <numeric/statistics.functions.hh>
+
+#include <numeric/deriv/angle_deriv.hh>
+#include <numeric/deriv/distance_deriv.hh>
+#include <numeric/deriv/dihedral_deriv.hh>
 
 #include <basic/Tracer.hh>
 
@@ -148,8 +149,15 @@ FullatomDisulfidePotential::FullatomDisulfidePotential() :
 	cbsg_dihedral_func_( new CBSG_Dihedral_Func ),
 	sgsg_dihedral_func_( new SGSG_Dihedral_Func ),
 	cb_angle_func_( new CB_Angle_Func ),
-	sg_dist_func_( new SG_Dist_Func )
-{}
+	sg_dist_func_( new SG_Dist_Func ),
+	wt_dihSS_(0.1),
+	wt_dihCS_(0.1),
+	wt_ang_(0.1),
+	wt_len_(0.1),
+	shift_(2.0)
+{
+	mest_ = exp(-20.0);
+}
 
 FullatomDisulfidePotential::~FullatomDisulfidePotential() {}
 
@@ -188,7 +196,7 @@ FullatomDisulfidePotential::print_score_functions() const
  *  functions at either side so that the score increases to infinity
  */
 void
-FullatomDisulfidePotential::score_this_disulfide(
+FullatomDisulfidePotential::score_this_disulfide_old(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
 	DisulfideAtomIndices const & res1_atom_indices,
@@ -268,7 +276,7 @@ FullatomDisulfidePotential::score_this_disulfide(
 
 
 void
-FullatomDisulfidePotential::get_disulfide_derivatives(
+FullatomDisulfidePotential::get_disulfide_derivatives_old(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
 	DisulfideAtomIndices const & res1_atom_indices,
@@ -393,6 +401,238 @@ FullatomDisulfidePotential::get_disulfide_derivatives(
 
 	}
 }
+
+
+//fpd  May 6 2013 refitting
+//fpd  Use the following formulations:
+//fpd  For CBSG_Dihedral:
+//   mixture of von mises with three components
+//      score = sum( -A - kappa*cos(m-x) )
+//      logAs = -15.8644 mean =  -72.2016 kappa = 13.3778
+//      logAs = -16.9017 mean =   78.0303 kappa = 13.6370
+//      logAs =  -7.0219 mean = -172.5505 kappa =  2.9327
+//fpd  For SGSG_Dihedral:
+//  mixture of von mises with two components
+//     score = sum( -A - kappa*cos(m-x) )
+//     logAs = -32.9599 mean = -86.0964 kappa = 30.9053
+//     logAs = -23.3471 mean =  92.3915 kappa = 20.9805
+//fpd  For CB angle:
+//  single von mises
+//     score = -A - kappa*cos(m-x)  [A handles normzalization of the distribution]
+//     logAs = -419.8120 mean = 104.22 kappa = 419.7
+//fpd  For SG-SG length:
+// skewed normal distribution with:
+//   location = 2.02
+//      scale = 0.04
+//      shape = 2.57 (transformed 'skewness')
+// these should probably live in the datbase
+void
+FullatomDisulfidePotential::score_this_disulfide(
+	conformation::Residue const & res1,
+	conformation::Residue const & res2,
+	DisulfideAtomIndices const & res1_atom_indices,
+	DisulfideAtomIndices const & res2_atom_indices,
+	Energy & score
+) const {
+	using numeric::constants::f::pi;
+	using namespace numeric::statistics;
+	using namespace core::chemical;
+
+	Real ssdist, csang_1, csang_2, dihed, disulf_ca_dihedral_angle_1, disulf_ca_dihedral_angle_2;
+	get_disulfide_params(res1,res2,res1_atom_indices,res2_atom_indices,
+		ssdist,csang_1,csang_2,dihed,disulf_ca_dihedral_angle_1,disulf_ca_dihedral_angle_2);
+
+	score = -shift_;
+
+	{ // distance
+		// z <- (x-location)/scale;
+	  // score <- x^2/2 - Log[Erfc[-((s x)/Sqrt[2])]] + (1/2) (Log[2] + Log[\[Pi]]) + Log[s]
+		core::Real z = (ssdist-params_.d_location)/params_.d_scale;
+		core::Real score_d = z*z/2 - log( errfc( -params_.d_shape*z / sqrt(2) ) + mest_ );
+		score += wt_len_*score_d;
+	}
+
+	{ // angles
+		Real ang_d = csang_1;
+		Real score_a = -params_.a_logA - params_.a_kappa*cos( pi/180 * (ang_d-params_.a_mu) );
+		score += wt_ang_*score_a;
+
+		ang_d = csang_2;
+		score_a = -params_.a_logA - params_.a_kappa*cos( pi/180 * (ang_d-params_.a_mu) );
+		score += wt_ang_*score_a;
+	}
+
+	{ // SS dih
+		Real ang_ss = dihed;
+		Real exp_score1 = exp(params_.dss_logA1)*exp(params_.dss_kappa1*cos(  pi/180 * (ang_ss-params_.dss_mu1) ));
+		Real exp_score2 = exp(params_.dss_logA2)*exp(params_.dss_kappa2*cos(  pi/180 * (ang_ss-params_.dss_mu2) ));
+		Real score_ss = -log (exp_score1 + exp_score2 + mest_);
+		score += wt_dihSS_*score_ss;
+	}
+
+	{ // CB-S dihedrals
+		Real ang_cs = disulf_ca_dihedral_angle_1;
+		Real exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (ang_cs-params_.dcs_mu1) ));
+		Real exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (ang_cs-params_.dcs_mu2) ));
+		Real exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (ang_cs-params_.dcs_mu3) ));
+		Real score_cs = -log (exp_score1 + exp_score2 + exp_score3 + mest_);
+		score += wt_dihCS_*score_cs;
+
+		ang_cs = disulf_ca_dihedral_angle_2;
+		exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (ang_cs-params_.dcs_mu1) ));
+		exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (ang_cs-params_.dcs_mu2) ));
+		exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (ang_cs-params_.dcs_mu3) ));
+		score_cs = -log (exp_score1 + exp_score2 + exp_score3 + mest_);
+		score += wt_dihCS_*score_cs;
+	}
+}
+
+
+void
+FullatomDisulfidePotential::get_disulfide_derivatives(
+	conformation::Residue const & res1,
+	conformation::Residue const & res2,
+	DisulfideAtomIndices const & res1_atom_indices,
+	DisulfideAtomIndices const & res2_atom_indices,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
+) const {
+	using numeric::constants::f::pi;
+	using namespace numeric::statistics;
+	using namespace core::chemical;
+
+	Real ssdist, csang_1, csang_2, dihed, disulf_ca_dihedral_angle_1, disulf_ca_dihedral_angle_2;
+	get_disulfide_params(res1,res2,res1_atom_indices,res2_atom_indices,
+		ssdist,csang_1,csang_2,dihed,disulf_ca_dihedral_angle_1,disulf_ca_dihedral_angle_2);
+
+	// atom indices
+	Size i_ca1=res1_atom_indices.c_alpha_index(), i_cb1=res1_atom_indices.c_beta_index(), i_sg1=res1_atom_indices.disulf_atom_index();
+	Size i_ca2=res2_atom_indices.c_alpha_index(), i_cb2=res2_atom_indices.c_beta_index(), i_sg2=res2_atom_indices.disulf_atom_index();
+
+	// storage
+	Vector f1,f2;
+	Real d, theta, phi;
+
+ 	{ // distance
+		// z <- (x-location)/scale;
+	  // score <- x^2/2 - Log[Erfc[-((s x)/Sqrt[2])]] + (1/2) (Log[2] + Log[\[Pi]]) + Log[s]
+		core::Real z = (ssdist-params_.d_location)/params_.d_scale;
+		core::Real dscore_d = z/params_.d_scale -
+			( exp( -0.5*z*z*params_.d_shape*params_.d_shape ) * sqrt(2/pi) * params_.d_shape ) / (params_.d_scale * errfc(-params_.d_shape*z / sqrt(2) ) + 1e-12 );
+		dscore_d = weights[ dslf_fa13 ]*wt_len_*dscore_d;
+
+		numeric::deriv::distance_f1_f2_deriv( res1.xyz( i_sg1 ), res2.xyz( i_sg2 ), d, f1, f2 );
+		r1_atom_derivs[ i_sg1 ].f1() += dscore_d * f1;
+		r1_atom_derivs[ i_sg1 ].f2() += dscore_d * f2;
+		r2_atom_derivs[ i_sg2 ].f1() -= dscore_d * f1;
+		r2_atom_derivs[ i_sg2 ].f2() -= dscore_d * f2;
+	}
+
+	{ // angles
+		Real ang_d = csang_1;
+		Real dscore_a = params_.a_kappa * sin( pi/180 * (ang_d-params_.a_mu) );
+		dscore_a = weights[ dslf_fa13 ]*wt_ang_*dscore_a;
+		numeric::deriv::angle_p1_deriv( res1.xyz( i_cb1 ), res1.xyz( i_sg1 ), res2.xyz( i_sg2 ), theta, f1, f2 );
+		r1_atom_derivs[ i_cb1 ].f1() += dscore_a * f1;
+		r1_atom_derivs[ i_cb1 ].f2() += dscore_a * f2;
+		numeric::deriv::angle_p2_deriv( res1.xyz( i_cb1 ), res1.xyz( i_sg1 ), res2.xyz( i_sg2 ), theta, f1, f2 );
+		r1_atom_derivs[ i_sg1 ].f1() += dscore_a * f1;
+		r1_atom_derivs[ i_sg1 ].f2() += dscore_a * f2;
+		numeric::deriv::angle_p1_deriv( res2.xyz( i_sg2 ), res1.xyz( i_sg1 ), res1.xyz( i_cb1 ), theta, f1, f2 );
+		r2_atom_derivs[ i_sg2 ].f1() += dscore_a * f1;
+		r2_atom_derivs[ i_sg2 ].f2() += dscore_a * f2;
+
+		ang_d = csang_2;
+		dscore_a = params_.a_kappa * sin( pi/180 * (ang_d-params_.a_mu) );
+		dscore_a = weights[ dslf_fa13 ]*wt_ang_*dscore_a;
+		numeric::deriv::angle_p1_deriv( res2.xyz( i_cb2 ), res2.xyz( i_sg2 ), res1.xyz( i_sg1 ), theta, f1, f2 );
+		r2_atom_derivs[ i_cb2 ].f1() += dscore_a * f1;
+		r2_atom_derivs[ i_cb2 ].f2() += dscore_a * f2;
+		numeric::deriv::angle_p2_deriv( res2.xyz( i_cb2 ), res2.xyz( i_sg2 ), res1.xyz( i_sg1 ), theta, f1, f2 );
+		r2_atom_derivs[ i_sg2 ].f1() += dscore_a * f1;
+		r2_atom_derivs[ i_sg2 ].f2() += dscore_a * f2;
+		numeric::deriv::angle_p1_deriv( res1.xyz( i_sg1 ), res2.xyz( i_sg2 ), res2.xyz( i_cb2 ), theta, f1, f2 );
+		r1_atom_derivs[ i_sg1 ].f1() += dscore_a * f1;
+		r1_atom_derivs[ i_sg1 ].f2() += dscore_a * f2;
+	}
+
+	{ // SS dih
+		Real ang_ss = dihed;
+		Real exp_score1 = exp(params_.dss_logA1)*exp(params_.dss_kappa1*cos(  pi/180 * (ang_ss-params_.dss_mu1) ));
+		Real exp_score2 = exp(params_.dss_logA2)*exp(params_.dss_kappa2*cos(  pi/180 * (ang_ss-params_.dss_mu2) ));
+		Real dscore_ss = 0.0;
+		dscore_ss += exp_score1 * params_.dss_kappa1 * sin( pi/180 * (ang_ss-params_.dss_mu1) );
+		dscore_ss += exp_score2 * params_.dss_kappa2 * sin( pi/180 * (ang_ss-params_.dss_mu2) );
+		dscore_ss /= ( exp_score1 + exp_score2 + mest_);
+		dscore_ss = weights[ dslf_fa13 ]*wt_dihSS_*dscore_ss;
+
+		numeric::deriv::dihedral_p1_cosine_deriv( res1.xyz( i_cb1 ), res1.xyz( i_sg1 ), res2.xyz( i_sg2 ), res2.xyz( i_cb2 ), phi, f1, f2 );
+		r1_atom_derivs[ i_cb1 ].f1() += dscore_ss * f1;
+		r1_atom_derivs[ i_cb1 ].f2() += dscore_ss * f2;
+		numeric::deriv::dihedral_p2_cosine_deriv( res1.xyz( i_cb1 ), res1.xyz( i_sg1 ), res2.xyz( i_sg2 ), res2.xyz( i_cb2 ), phi, f1, f2 );
+		r1_atom_derivs[ i_sg1 ].f1() += dscore_ss * f1;
+		r1_atom_derivs[ i_sg1 ].f2() += dscore_ss * f2;
+		numeric::deriv::dihedral_p2_cosine_deriv( res2.xyz( i_cb2 ), res2.xyz( i_sg2 ), res1.xyz( i_sg1 ), res1.xyz( i_cb1 ), phi, f1, f2 );
+		r2_atom_derivs[ i_sg2 ].f1() += dscore_ss * f1;
+		r2_atom_derivs[ i_sg2 ].f2() += dscore_ss * f2;
+		numeric::deriv::dihedral_p1_cosine_deriv( res2.xyz( i_cb2 ), res2.xyz( i_sg2 ), res1.xyz( i_sg1 ), res1.xyz( i_cb1 ), phi, f1, f2 );
+		r2_atom_derivs[ i_cb2 ].f1() += dscore_ss * f1;
+		r2_atom_derivs[ i_cb2 ].f2() += dscore_ss * f2;
+	}
+
+	{ // CB-S dihedrals
+		Real ang_cs = disulf_ca_dihedral_angle_1;
+		Real exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (ang_cs-params_.dcs_mu1) ));
+		Real exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (ang_cs-params_.dcs_mu2) ));
+		Real exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (ang_cs-params_.dcs_mu3) ));
+		Real dscore_cs = 0.0;
+		dscore_cs += exp_score1 * params_.dcs_kappa1 * sin( pi/180 * (ang_cs-params_.dcs_mu1) );
+		dscore_cs += exp_score2 * params_.dcs_kappa2 * sin( pi/180 * (ang_cs-params_.dcs_mu2) );
+		dscore_cs += exp_score3 * params_.dcs_kappa3 * sin( pi/180 * (ang_cs-params_.dcs_mu3) );
+		dscore_cs /= ( exp_score1 + exp_score2 + exp_score3 + mest_);
+		dscore_cs = weights[ dslf_fa13 ]*wt_dihCS_*dscore_cs;
+
+		numeric::deriv::dihedral_p1_cosine_deriv( res1.xyz( i_ca1 ), res1.xyz( i_cb1 ), res1.xyz( i_sg1 ), res2.xyz( i_sg2 ), phi, f1, f2 );
+		r1_atom_derivs[ i_ca1 ].f1() += dscore_cs * f1;
+		r1_atom_derivs[ i_ca1 ].f2() += dscore_cs * f2;
+		numeric::deriv::dihedral_p2_cosine_deriv( res1.xyz( i_ca1 ), res1.xyz( i_cb1 ), res1.xyz( i_sg1 ), res2.xyz( i_sg2 ), phi, f1, f2 );
+		r1_atom_derivs[ i_cb1 ].f1() += dscore_cs * f1;
+		r1_atom_derivs[ i_cb1 ].f2() += dscore_cs * f2;
+		numeric::deriv::dihedral_p2_cosine_deriv( res2.xyz( i_sg2 ), res1.xyz( i_sg1 ), res1.xyz( i_cb1 ), res1.xyz( i_ca1 ), phi, f1, f2 );
+		r1_atom_derivs[ i_sg1 ].f1() += dscore_cs * f1;
+		r1_atom_derivs[ i_sg1 ].f2() += dscore_cs * f2;
+		numeric::deriv::dihedral_p1_cosine_deriv( res2.xyz( i_sg2 ), res1.xyz( i_sg1 ), res1.xyz( i_cb1 ), res1.xyz( i_ca1 ), phi, f1, f2 );
+		r2_atom_derivs[ i_sg2 ].f1() += dscore_cs * f1;
+		r2_atom_derivs[ i_sg2 ].f2() += dscore_cs * f2;
+
+
+		ang_cs = disulf_ca_dihedral_angle_2;
+		exp_score1 = exp(params_.dcs_logA1)*exp(params_.dcs_kappa1*cos(  pi/180 * (ang_cs-params_.dcs_mu1) ));
+		exp_score2 = exp(params_.dcs_logA2)*exp(params_.dcs_kappa2*cos(  pi/180 * (ang_cs-params_.dcs_mu2) ));
+		exp_score3 = exp(params_.dcs_logA3)*exp(params_.dcs_kappa3*cos(  pi/180 * (ang_cs-params_.dcs_mu3) ));
+		dscore_cs = 0.0;
+		dscore_cs += exp_score1 * params_.dcs_kappa1 * sin( pi/180 * (ang_cs-params_.dcs_mu1) );
+		dscore_cs += exp_score2 * params_.dcs_kappa2 * sin( pi/180 * (ang_cs-params_.dcs_mu2) );
+		dscore_cs += exp_score3 * params_.dcs_kappa3 * sin( pi/180 * (ang_cs-params_.dcs_mu3) );
+		dscore_cs /= ( exp_score1 + exp_score2 + exp_score3 + mest_);
+		dscore_cs = weights[ dslf_fa13 ]*wt_dihCS_*dscore_cs;
+
+		numeric::deriv::dihedral_p1_cosine_deriv( res2.xyz( i_ca2 ), res2.xyz( i_cb2 ), res2.xyz( i_sg2 ), res1.xyz( i_sg1 ), phi, f1, f2 );
+		r2_atom_derivs[ i_ca2 ].f1() += dscore_cs * f1;
+		r2_atom_derivs[ i_ca2 ].f2() += dscore_cs * f2;
+		numeric::deriv::dihedral_p2_cosine_deriv( res2.xyz( i_ca2 ), res2.xyz( i_cb2 ), res2.xyz( i_sg2 ), res1.xyz( i_sg1 ), phi, f1, f2 );
+		r2_atom_derivs[ i_cb2 ].f1() += dscore_cs * f1;
+		r2_atom_derivs[ i_cb2 ].f2() += dscore_cs * f2;
+		numeric::deriv::dihedral_p2_cosine_deriv( res1.xyz( i_sg1 ), res2.xyz( i_sg2 ), res2.xyz( i_cb2 ), res2.xyz( i_ca2 ), phi, f1, f2 );
+		r2_atom_derivs[ i_sg2 ].f1() += dscore_cs * f1;
+		r2_atom_derivs[ i_sg2 ].f2() += dscore_cs * f2;
+		numeric::deriv::dihedral_p1_cosine_deriv( res1.xyz( i_sg1 ), res2.xyz( i_sg2 ), res2.xyz( i_cb2 ), res2.xyz( i_ca2 ), phi, f1, f2 );
+		r1_atom_derivs[ i_sg1 ].f1() += dscore_cs * f1;
+		r1_atom_derivs[ i_sg1 ].f2() += dscore_cs * f2;
+	}
+}
+
 
 ///////////////////////////////////////////
 /// Private: Methods, Data Initializers ///
