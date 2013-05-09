@@ -56,13 +56,13 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     # )
     parser.add_option("-d", "--database",
       default="", # processed below
-      help="Path to Rosetta database. (default: $ROSETTA3_DB, ../..//rosetta_database)",
+      help="Path to Rosetta database. (default: $ROSETTA3_DB, ../../database)",
     )
 
     parser.add_option("-m", "--mini_home",
       #default=path.join( path.expanduser("~"), "mini"),
-      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_source'),
-      help="Directory where Rosetta is found (default: ../../rosetta_source/)",
+      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'source'),
+      help="Directory where Rosetta is found (default: ../../source/)",
     )
     parser.add_option("-j", "--num_procs",
       default=1,
@@ -134,7 +134,7 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
         if os.environ.get('ROSETTA3_DB') is not None and \
                 path.isdir(os.environ.get('ROSETTA3_DB')):
             options.database = os.environ.get('ROSETTA3_DB')
-        else:  options.database = path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_database')
+        else:  options.database = path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'database')
 
         if not path.isdir( options.database ):
             options.database = path.join( path.expanduser("~"), "rosetta_database")
@@ -149,7 +149,7 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     # Using argv[] here causes problems when people try to run the script as "python scientific.py ..."
     #os.chdir( path.dirname(sys.argv[0]) ) # argv[0] is the script name
     if not path.isdir("biweekly"):
-        print "You must run this script from rosetta_tests/scientific/"
+        print "You must run this script from main/tests/scientific/"
         return 2
 
     #If the output directory directory doesn't exist, create one;
