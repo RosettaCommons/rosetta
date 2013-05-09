@@ -1,0 +1,8 @@
+{
+	"result_value_SCFXN" : RESULT_VALUE,
+	"result_plot" : {
+		"vega_plot_specification" : "result_plot_specification.json",
+		"data" : "result_plot_data.json"
+	}
+ 	"_isTestPassed" : IS_TEST_PASSED
+}

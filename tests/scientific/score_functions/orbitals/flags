@@ -1,0 +1,6 @@
+-add_orbitals
+-use_bicubic_interpolation
+-dun10
+
+#output orbitals to pdb
+#-output_orbitals

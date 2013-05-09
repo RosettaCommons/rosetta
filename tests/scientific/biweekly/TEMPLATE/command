@@ -2,7 +2,7 @@
 # This is a command file.
 #
 # To make a new test, all you have to do is:
-#   1.  Make a new directory under tests/
+#   1.  Make a new directory under biweekly/
 #   2.  Put a file like this (named "command") into that directory.
 #
 # The contents of this file will be passed to the shell (Bash or SSH),
@@ -20,6 +20,9 @@
 #   database    where the Mini database lives
 #   bin         where the Mini binaries live
 #   binext      the extension on binary files, like ".linuxgccrelease"
+#   scfxn       a directory containing score function parameter files:
+#                  flags         # a flags file
+#                  weights.wts   # a weights file
 #
 # The most important thing is that the test execute in the right directory.
 # This is especially true when we're using SSH to execute on other hosts.
@@ -28,11 +31,29 @@
 
 cd %(workdir)s
 
-nice %(bin)s/design_contrast_and_statistic.%(binext)s \
-    @flags_sqc \
-    @%(scfxn)s/flags \
-    -score:weights %(scfxn)s/weights.wts \
-    -database %(database)s >&1\
-    | egrep -v 'TIMING' \
-    | egrep -v 'Finished.+in [0-9]+ seconds.' \
-    >log_sqc 
+#
+# After that, do whatever you want.
+# Here's a typical test for a Mini binary, assuming there's a "flags" file
+# in this directory too:
+#
+# nice %(bin)s/MY_MINI_PROGRAM.%(binext)s \
+#     @flags \
+#     @%(scfxn)s/flags \
+#     -score:weights %(scfxn)s/weights.wts \
+#     -database %(database)s >&1 \
+#     > files/log
+#
+#
+# Finally create a .results.yaml file which contains results that are
+# shown on the RosettaTests testing server.
+#
+#result_value=999
+#test_passed=True
+#
+#sed \
+#    -e "s/SCFXN/%(scfxn)s/g" \
+#    -e "s/RESULT_VALUE/${result_value}/g" \
+#    -e "s/IS_TEST_PASSED/${test_passed}/g" \
+#    .results.yaml.TEMPLATE \
+#    .results.yaml
+#

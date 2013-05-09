@@ -1,0 +1,19 @@
+<ROSETTASCRIPTS>
+        <TASKOPERATIONS>
+                <ExtraRotamersGeneric name=extra_chi ex1=1 ex2=1 extrachi_cutoff=0/>
+        </TASKOPERATIONS>
+        <MOVERS>
+		<ReportToDB name=features_reporter database_mode="sqlite3" database_name="outputs/features.db3" batch_description="Rotamer Recovery for %%scfxn%%">
+			<feature name=ResidueFeatures/>
+			
+			# B-Factors for filtering  and PDB identification for looking at the structures
+			<feature name=PdbDataFeatures/>
+
+			# The RTMin protocol repacks one sidechain at a time (in its native environment)
+			<feature name=RotamerRecoveryFeatures scorefxn=commandline protocol=RRProtocolRTMin comparer=RRComparerChiDiff task_operations=extra_chi/>
+                </ReportToDB>
+        </MOVERS>
+        <PROTOCOLS>
+		<Add mover_name=features_reporter/>
+        </PROTOCOLS>
+</ROSETTASCRIPTS>

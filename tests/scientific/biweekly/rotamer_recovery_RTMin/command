@@ -1,0 +1,73 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+minidir=%(minidir)s
+
+if [ ! -s inputs/list.txt ]
+then
+        echo No structures found in \'inputs\' directory
+        echo To retrieve the structure execute the following:
+        echo
+        echo "    " cd ${minidir%%source}tests/scientific/biweekly/rotamer_recovery
+        echo "    " svn checkout https://svn.rosettacommons.org/source/trunk/rosetta.data/tests/scientific/tests/rotamer_recovery/inputs inputs
+        echo
+        echo Then run the test again.
+        exit 1      
+fi
+
+nice %(bin)s/rosetta_scripts.%(binext)s \
+     @flags \
+     @%(scfxn)s/flags \
+     -score:weights %(scfxn)s/weights.wts \
+     -parser:script_vars scfxn=%(scfxn)s \
+     -database %(database)s >&1 \
+	| egrep -v 'TIMING' \
+	| egrep -v 'Finished.+in [0-9]+ seconds.' \
+	> files/features_generation.log
+
+sqlite3 outputs/features.db3 \
+	< average_rotamer_recovery_by_amino_acid.sql \
+	> files/rotamer_recovery_by_amino_acid.csv
+
+sqlite3 outputs/features.db3 \
+	< average_rotamer_recovery.sql \
+	| sed "s/^/\{ 'RTMin_rotamer_recovery_rate_%(scfxn)s' : /" \
+	| sed "s/$/, '_isTestPassed' : True \}/" \
+	> .results.yaml
+
+
+minidir=%(minidir)s
+features_base_dir=${minidir%%source}tests/features
+nice $features_base_dir/compare_sample_sources.R \
+	--fail_on_missing_packages \
+	--script $features_base_dir/scripts/analysis/statistics/rotamer_recovery/rotamer_recovery_summary.R \
+	--output_dir %(workdir)s/files \
+	%(workdir)s/outputs/features.db3 \
+	&> %(workdir)s/files/rotamer_recovery_summary.log

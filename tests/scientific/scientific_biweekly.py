@@ -40,9 +40,9 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
 
 ./scientific_biweekly.py    # test reference results against new results
 
-./scientific_biweekly.py -d ~/minidb -j2    # again, but using 2 processors and custom database location
+./scientific_biweekly.py -j2    # again, but using 2 processors and custom database location
 
-./scientific_biweekly.py  monomer_ddg   # only run the "sequence_recovery" test
+./scientific_biweekly.py  monomer_ddg   # only run the "monomer_ddg" test
     '''
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]", formatter=ParagraphHelpFormatter())
     parser.set_description(main.__doc__)
@@ -99,6 +99,11 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
       dest="extras",
       help="in selecting binaries, which options were specified? (default: default)",
     )
+    parser.add_option("--score-function",
+      default="score12prime",
+      dest="scfxn",
+      help="Apply a score function parametrization in score_functions/ to the benchmark (default: score12prime)",
+    )
     parser.add_option("--daemon", action="store_true", dest="daemon", default=False,
       help="generate daemon friendly output (off by default)"
     )
@@ -111,11 +116,11 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
       #dest="outdir",
       help="Where the output results should be written. (default: biweekly_statistics)"
     )
-    parser.add_option("--dont-clean-output-dir",
-      default=True,
-      action="store_false",
+    parser.add_option("--clean-output-dir",
+      default=False,
+      action="store_true",
       dest="clean_outdir",
-      help="If the output directory exists should it be cleaned before running the test? (default: True)"
+      help="If the output directory exists should it be cleaned before running the test? (default: False)"
     )
 
     (options, args) = parser.parse_args(args=argv)
@@ -170,10 +175,39 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
 
     # start to run the tests
     queue = Queue()
+
+    for test in tests:
+        if not path.isdir( path.join("biweekly", test)):
+            print "ERROR: The specified scientific benchmark '%s' must correspond to the directory:" % (test)
+            print "ERROR:    biweekly/%s" % (test)
+            print "ERROR: Available scientific bencharks are:"
+            for test_dir in sorted(os.listdir( "biweekly" )):
+                print "ERROR:    %s" % test_dir
+            return 1
+    
+
     for test in tests:
         queue.put(test)
         if path.isdir(path.join(outdir, test)): shutil.rmtree(path.join(outdir, test))
         copytree( path.join("biweekly", test), path.join(outdir, test),
+                  accept=lambda src, dst: path.basename(src) != '.svn' )
+    
+    if not path.isdir(path.join("score_functions", options.scfxn)) or \
+            not path.isfile(path.join("score_functions", options.scfxn, "flags")) or \
+            not path.isfile(path.join("score_functions", options.scfxn, "weights.wts")):
+        print "ERROR: The specified score function '%s' must correspond to the directory:" % (options.scfxn)
+        print "ERROR:   'score_functions/%s'" % (options.scfxn)
+        print "ERROR: containing the following files:"
+        print "ERROR:   'flags' : a flags file specifying command line parameters"
+        print "ERROR:   'weights.wts' : a score function weights file"
+        print "ERROR: Available score functions are:"
+        for scfxn_dir in sorted(os.listdir("score_functions")):
+            print "ERROR:   %s" % scfxn_dir
+        return 1
+    else:
+        if path.isdir( path.join(outdir, test, options.scfxn) ):
+            shutil.rmtree( path.join(outdir, test, options.scfxn) )
+        copytree( path.join("score_functions", options.scfxn), path.join(outdir, test, options.scfxn),
                   accept=lambda src, dst: path.basename(src) != '.svn' )
 
     # Start worker thread(s)
@@ -193,7 +227,7 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     # Read and Analyze results
     '''
         if outdir == "biweekly_statistics":
-            print "Just generated 'statistic' results."
+            print "Just generated 'biweekly_statistic' results."
             if options.daemon:
                 print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests), 0)
 
@@ -263,6 +297,7 @@ class Worker:
                         mode = self.opts.mode
                         extras = self.opts.extras
                         binext = extras+"."+platform+compiler+mode
+                        scfxn = self.opts.scfxn
                         # Read the command from the file "command"
                         cmd = file(path.join(workdir, "command")).read().strip()
                         cmd = cmd % vars() # variable substitution using Python printf style

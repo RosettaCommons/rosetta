@@ -34,8 +34,8 @@
 cd %(workdir)s
 
 # Removing old files from previous run
-rm -R output
-rm .results.log  .results.yaml
+rm -Rf output
+rm -rf .results.log  .results.yaml
 mkdir output
 
 python submit.py

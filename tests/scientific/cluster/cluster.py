@@ -13,7 +13,8 @@
 
 import sys, commands, subprocess, re
 
-from os import path, environ
+import shutil
+from os import path, environ, listdir, makedirs, symlink, readlink
 from optparse import OptionParser, IndentedHelpFormatter
 
 
@@ -36,13 +37,13 @@ Please note that this script is for debuging/testing purposes only, it is not us
     parser.set_description(main.__doc__)
     parser.add_option("-d", "--database",
       default="", # processed below
-      help="Path to Rosetta database. (default: $ROSETTA3_DB, ~/rosetta_database)",
+      help="Path to Rosetta database. (default: $ROSETTA3_DB, ../../../database)",
     )
 
     parser.add_option("-m", "--mini_home",
       #default=path.join( path.expanduser("~"), "mini"),
-      default = path.dirname( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ) ) + "/rosetta_source",
-      help="Directory where Mini is found (default: ../../../rosetta_source)",
+      default = path.dirname( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ) ) + "/source",
+      help="Directory where Rosetta is found (default: ../../../source)",
     )
 
     parser.add_option("--mode",
@@ -59,6 +60,15 @@ Please note that this script is for debuging/testing purposes only, it is not us
       default="default",
       dest="extras",
       help="in selecting binaries, which options were specified? (default: default)",
+    )
+
+    parser.add_option("--score-function",
+      default="score12prime",
+      dest="scfxn",
+      help="Apply a score function parametrization in score_functions/ to the benchmark (default: score12prime)",
+    )
+    parser.add_option("--daemon", action="store_true", dest="daemon", default=False,
+      help="generate daemon friendly output (off by default)"
     )
 
     parser.add_option("--lsf_queue_name",
@@ -89,8 +99,8 @@ Please note that this script is for debuging/testing purposes only, it is not us
             options.database = environ.get('ROSETTA3_DB')
         elif path.isdir( path.join( path.expanduser("~"), "rosetta_database") ):
             options.database = path.join( path.expanduser("~"), "rosetta_database")
-    	elif path.isdir("../../../rosetta_database"):
-            options.database = "../../../rosetta_database"
+    	elif path.isdir("../../../database"):
+            options.database = "../../../database"
         else:
             print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
             return 1
@@ -116,8 +126,24 @@ Please note that this script is for debuging/testing purposes only, it is not us
     workdir = path.abspath( test )
     minidir = options.mini_home
 
-    #print 'minidir:', minidir
-    #return
+    if not path.isdir(path.join("../score_functions", options.scfxn)) or \
+            not path.isfile(path.join("../score_functions", options.scfxn, "flags")) or \
+            not path.isfile(path.join("../score_functions", options.scfxn, "weights.wts")):
+        print "ERROR: The specified score function '%s' must correspond to the directory:" % (options.scfxn)
+        print "ERROR:   'tests/scientific/score_functions/%s'" % (options.scfxn)
+        print "ERROR: containing the following files:"
+        print "ERROR:   'flags' : a flags file specifying command line parameters"
+        print "ERROR:   'weights.wts' : a score function weights file"
+        print "ERROR: Available score functions are:"
+        for scfxn_dir in sorted(listdir("../score_functions")):
+            print "ERROR:   %s" % scfxn_dir
+        return 1
+    else:
+        if path.isdir( path.join(workdir, test, options.scfxn) ):
+            shutil.rmtree( path.join(workdir, test, options.scfxn) )
+        copytree( path.join("../score_functions", options.scfxn), path.join(workdir, test, options.scfxn),
+                  accept=lambda src, dst: path.basename(src) != '.svn' )
+
 
     database = options.database
     print 'Database:', database
@@ -134,27 +160,12 @@ Please note that this script is for debuging/testing purposes only, it is not us
     num_cores = options.num_cores
     output_dir = options.output_dir
     run_type = options.run_type
+    scfxn = options.scfxn
     # Read the command from the file "command"
-
-    try:
-        ''' p = subprocess.Popen(
-            ['svn', 'info'],
-            stdout=subprocess.PIPE,
-            cwd=path.join("..","..",".."))
-        p.wait()
-        svn_info = p.communicate()[0]'''
-
-        svn_info = commands.getoutput('svn info ../../../')
-        svn_url = re.search("URL: (\S*)", svn_info).group(1)
-        svn_revision = int(re.search("Revision: (\d*)", svn_info).group(1))
-    except:
-        print "WARNING: Unable to get svn info"
-        svn_url="UNKNOWN"
-        svn_revision=0
 
     cmd = file(path.join(workdir, action)).read().strip()
     # cmd = cmd % vars() # variable substitution using Python printf style
-    mvars = dict(minidir=minidir, database=database, workdir=workdir, platform=platform, bin=bin, compiler=compiler, mode=mode, binext=binext, svn_url=svn_url, svn_revision=svn_revision, lsf_queue_name=lsf_queue_name, num_cores=num_cores, output_dir=output_dir, run_type=run_type)
+    mvars = dict(minidir=minidir, database=database, workdir=workdir, platform=platform, bin=bin, compiler=compiler, mode=mode, binext=binext, lsf_queue_name=lsf_queue_name, num_cores=num_cores, output_dir=output_dir, run_type=run_type, scfxn=scfxn)
     cmd = cmd % mvars
 
     # Writing result to .sh file for future reference.
@@ -167,6 +178,45 @@ Please note that this script is for debuging/testing purposes only, it is not us
     print commands.getoutput('cd %s && sh %s.sh' % (test, action) )
 
 
+def copytree(src, dst, symlinks=False, accept=lambda srcname, dstname: True):
+    """Recursively copy a directory tree using copy2(), with filtering.
+    Copied from shutil so I could filter out .svn entries.
+    """
+    names = listdir(src)
+    makedirs(dst)
+    errors = []
+    for name in names:
+        srcname = path.join(src, name)
+        dstname = path.join(dst, name)
+        if not accept(srcname, dstname): continue
+        try:
+            if symlinks and path.islink(srcname):
+                linkto = readlink(srcname)
+                symlink(linkto, dstname)
+            elif path.isdir(srcname):
+                copytree(srcname, dstname, symlinks, accept)
+            else:
+                shutil.copy2(srcname, dstname)
+            # XXX What about devices, sockets etc.?
+        except (IOError, os.error), why:
+            errors.append((srcname, dstname, str(why)))
+        # catch the Error from the recursive copytree so that we can
+        # continue with other files
+        except shutil.Error, err:
+            errors.extend(err.args[0])
+    try:
+        shutil.copystat(src, dst)
+    except WindowsError:
+        # can't copy file access times on Windows
+        pass
+    except OSError, why:
+        errors.extend((src, dst, str(why)))
+    if errors:
+        raise shutil.Error, errors
+
+
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
+
+

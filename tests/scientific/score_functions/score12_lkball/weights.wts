@@ -1,0 +1,26 @@
+# For use with
+#   -use_bicubic_interpolation
+#
+# See Leaver-Fay et al. Methods in Enzymology 2013 for details
+#
+METHOD_WEIGHTS ref 0.102507 -0.0316374 -0.504387 -0.629043 1.47152 -0.406181 1.01085 0.401181 -0.473385 0.187405 -0.203416 -0.776415 -1.00694 -0.795115 -0.772679 -0.336971 -0.244449 0.311957 1.571 1.1242
+fa_atr 0.8
+fa_rep 0.44
+fa_sol 0.65
+lk_ball 0.4
+lk_ball_iso -0.2
+pro_close 1
+fa_pair 0.49
+hbond_sr_bb 0.575
+hbond_lr_bb 1.17
+hbond_bb_sc 1.17
+hbond_sc 1.1
+dslf_ss_dst 1
+dslf_cs_ang 1
+dslf_ss_dih 1
+dslf_ca_dih 1
+rama 0.2
+omega 0.5
+fa_dun 0.56
+p_aa_pp 0.32
+ref 1

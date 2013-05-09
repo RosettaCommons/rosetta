@@ -1,0 +1,20 @@
+<ROSETTASCRIPTS>
+        <MOVERS>
+		<SavePoseMover name=save_primary reference_name=primary_structure/>
+		<MinPackMover name=min_pack scorefxn=commandline/>
+		<ReportToDB name=features_reporter database_mode="sqlite3" database_name="outputs/features.db3" batch_description="Rotamer Recovery for %%scfxn%%">
+			<feature name=ResidueFeatures/>
+			
+			# B-Factors for filtering  and PDB identification for looking at the structures
+			<feature name=PdbDataFeatures/>
+			<feature name=ResidueBurialFeatures/>
+			
+			<feature name=RotamerRecoveryFeatures reference_name=primary_structure comparer=RRComparerChiDiff/>
+                </ReportToDB>
+        </MOVERS>
+        <PROTOCOLS>
+		<Add mover_name=save_primary/>
+		<Add mover_name=min_pack/>
+		<Add mover_name=features_reporter/>
+        </PROTOCOLS>
+</ROSETTASCRIPTS>
