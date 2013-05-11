@@ -20,7 +20,7 @@
 
 namespace basic {
 
-static std::string const pymol_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<>?]{}|-_\\~=%zyxwvutsrqponmlkjihgfedcba");
+static std::string const pymol_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz!@#$&.<>?]{}|-_\\~=%");
 
 static
 char

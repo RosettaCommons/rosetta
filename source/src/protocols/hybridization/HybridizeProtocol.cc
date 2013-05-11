@@ -930,11 +930,11 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 						mm->set_jump( rb_move_jump, true );
 						protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true );
 						min_mover->apply(pose);
-					}
 
-					//TR << "Realigning template domains to docking/minimize pose." << std::endl;
-					core::pose::PoseOP stage1pose = new core::pose::Pose( pose );
-					align_by_domain(templates_, domains_, stage1pose);
+						//TR << "Realigning template domains to docking/minimize pose." << std::endl;
+						core::pose::PoseOP stage1pose = new core::pose::Pose( pose );
+						align_by_domain(templates_, domains_, stage1pose);
+					}
 				}
 			} //end of repeatstage1
 		} else {

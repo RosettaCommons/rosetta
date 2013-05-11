@@ -403,29 +403,6 @@ FullatomDisulfidePotential::get_disulfide_derivatives_old(
 }
 
 
-//fpd  May 6 2013 refitting
-//fpd  Use the following formulations:
-//fpd  For CBSG_Dihedral:
-//   mixture of von mises with three components
-//      score = sum( -A - kappa*cos(m-x) )
-//      logAs = -15.8644 mean =  -72.2016 kappa = 13.3778
-//      logAs = -16.9017 mean =   78.0303 kappa = 13.6370
-//      logAs =  -7.0219 mean = -172.5505 kappa =  2.9327
-//fpd  For SGSG_Dihedral:
-//  mixture of von mises with two components
-//     score = sum( -A - kappa*cos(m-x) )
-//     logAs = -32.9599 mean = -86.0964 kappa = 30.9053
-//     logAs = -23.3471 mean =  92.3915 kappa = 20.9805
-//fpd  For CB angle:
-//  single von mises
-//     score = -A - kappa*cos(m-x)  [A handles normzalization of the distribution]
-//     logAs = -419.8120 mean = 104.22 kappa = 419.7
-//fpd  For SG-SG length:
-// skewed normal distribution with:
-//   location = 2.02
-//      scale = 0.04
-//      shape = 2.57 (transformed 'skewness')
-// these should probably live in the datbase
 void
 FullatomDisulfidePotential::score_this_disulfide(
 	conformation::Residue const & res1,
