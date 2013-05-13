@@ -19,8 +19,8 @@ if GetOption("help"):
 elif GetOption("nover"):
     print "Skipping versioning script. (Hopefully src/core/svn_version.cc is already up-to-date.)"
 else:
-    import svn_version
-    svn_version.main()
+    import version
+    version.main()
 
 
 for kind in build.options.cat:

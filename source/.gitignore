@@ -39,3 +39,4 @@ GSYMS
 GRTAGS
 
 BuildPyRosetta.sh
+get_commit_id.sh

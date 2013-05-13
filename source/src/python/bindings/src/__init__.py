@@ -110,13 +110,13 @@ from toolbox import *
 # PyMOLMover and associated methods.
 from PyMolLink import *
 
-
+import version
 
 
 ###############################################################################
 # Constants and globals
 
-__version__ = rosetta.core.minirosetta_svn_version()
+__version__ =  version.commit_id + ':' + version.commit  # rosetta.core.minirosetta_svn_version()
 
 # Create global '_PLATFORM' that will hold info of current system.
 if sys.platform.startswith("linux"):
@@ -260,7 +260,7 @@ def MPIJobDistributor(nstruct, fun):
 
 
 def version():
-    return "PyRosetta 3.4.0 [Rosetta-3.4.r" + __version__ + \
+    return "PyRosetta 3.4.0 [Rosetta-3.4 " + __version__ + \
            "] retrieved from: %s" % rosetta.core.minirosetta_svn_url() + \
            "\n(C) Copyright Rosetta Commons Member Institutions." + \
            "\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n"

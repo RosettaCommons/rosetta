@@ -1,10 +1,20 @@
-# This function expects that the current working directory is the Mini root directory.
+# This function expects that the current working directory is the Rosetta root directory.
 # If that's ever not true, we need to modify this to take an optional dir name on the cmd line.
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+# /// @file   version.py
+# ///
+# /// @brief
+# /// @author Ian W. Davis
+# /// @author Andrew Leaver-Fay
+# /// @author Sergey Lyskov
+
+import sys, time, os, re, os.path, commands
+
 
 def svn_version():
     '''
@@ -14,7 +24,6 @@ def svn_version():
     Although this is being placed in core/, it doesn't really belong to any subproject.
     There's no good way to know when the version summary will change, either, so we just generate the file every time.
     '''
-    import os, re
     # If svnversion is not found, returns "" -> "unknown"
     # These commands work correctly because our current working directory is the Rosetta/main root.
     ver = os.popen("svnversion .").read().strip() or "unknown"
@@ -32,8 +41,36 @@ def svn_version():
         if match: url = match.group(1)
         else: url = "unknown"
     # normpath() converts foward slashes to backslashes on Windows
-    f = open( os.path.normpath("src/devel/svn_version.cc"), "w" )
-    f.write('''// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+
+    commit_id = 'unknown'
+    if os.path.isfile('get_commit_id.sh'):
+        (res, output) = commands.getstatusoutput('./get_commit_id.sh %s' % ver)
+        print 'Asked Testing server for commit id, got reply:', repr(output)
+        commit_id = 'failed_to_get_id' if (res or not output) else output
+
+
+    file( os.path.normpath("src/devel/svn_version.cc"), "w" )          .write( version_cc_template % vars())
+    file( os.path.normpath("src/python/bindings/src/version.py"), "w" ).write( version_py_template % vars())
+
+
+def main():
+    # Run with timing
+    starttime = time.time()
+    sys.stdout.write("Running versioning script ... ")
+    sys.stdout.flush() # Make sure it gets dumped before running the function.
+    svn_version()
+    sys.stdout.write("Done. (%.1f seconds)\n" % (time.time() - starttime) )
+
+if __name__ == "__main__" or __name__ == "__builtin__": main()
+
+
+version_py_template = '''\
+commit_id = '%(commit_id)s'
+commit    = '%(ver)s'
+url       = '%(url)s'
+'''
+
+version_cc_template = '''// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -81,15 +118,4 @@ register_version_with_core() {
 }
 
 } // namespace devel
-''' % vars())
-    f.close()
-def main():
-    # Run with timing
-    import sys, time
-    starttime = time.time()
-    sys.stdout.write("Running versioning script ... ")
-    sys.stdout.flush() # Make sure it gets dumped before running the function.
-    svn_version()
-    sys.stdout.write("Done. (%.1f seconds)\n" % (time.time() - starttime) )
-
-if __name__ == "__main__" or __name__ == "__builtin__": main()
+'''

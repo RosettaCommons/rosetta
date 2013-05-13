@@ -197,7 +197,6 @@ ScreeningFeatures::parse_my_tag(
 std::vector<utility::json_spirit::Pair>  ScreeningFeatures::get_desriptor_data() const
 {
 	using jd2::Job;
-	using jd2::Job;
 	
 	jd2::JobDistributor* job_distributor = jd2::JobDistributor::get_instance();
 	jd2::JobCOP current_job = job_distributor->current_job();

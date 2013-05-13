@@ -9,7 +9,7 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ## @file   BuildBuindings.py
-## @brief  Build Python buidings for mini
+## @brief  Build Python buidings for Rosetta
 ## @author Sergey Lyskov
 
 import os, re, sys, time, commands, shutil, platform, os.path, itertools, gc, json, types
@@ -62,7 +62,7 @@ Jobs = []  # Global list of NameTuples  (pid, tag)
 
 
 def main(args):
-    ''' Script to build mini Python buidings.
+    ''' Script to build Rosetta Python buidings.
     '''
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]")
     parser.set_description(main.__doc__)
@@ -651,7 +651,7 @@ def buildModules(paths, dest, include_paths, libpaths, runtime_libpaths, gccxml_
 def prepareMiniLibs(mini_path, bindings_path):
     mode = 'pyrosetta_debug' if Options.debug else 'pyrosetta'
 
-    if Platform == "macos" and PlatformBits=='32': execute("Building mini libraries...", "cd %s && ./scons.py mode=%s arch=x86 arch_size=32 -j%s" % (mini_path, mode, Options.jobs) )
+    if Platform == "macos" and PlatformBits=='32': execute("Building Rosetta libraries...", "cd %s && ./scons.py mode=%s arch=x86 arch_size=32 -j%s" % (mini_path, mode, Options.jobs) )
     elif Platform == "macos" and PlatformBits=='64': execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
     elif Platform == "cygwin": execute("Building mini libraries...", "cd %s && ./scons.py mode=%s bin -j%s" % (mini_path, mode, Options.jobs) )
     else: execute("Building mini libraries...", "cd %s && ./scons.py mode=%s -j%s" % (mini_path, mode, Options.jobs) )
