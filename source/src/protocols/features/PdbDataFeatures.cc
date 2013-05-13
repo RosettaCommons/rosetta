@@ -391,8 +391,8 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 			min_bb_occupancy = min(min_bb_occupancy, pdb_info->occupancy(ri, ai));
 		}
 		for(Size ai=1; ai <= n_sc; ++ai){
-			max_sc_temperature = max(max_sc_temperature, pdb_info->temperature(ri, ai));
-			min_sc_occupancy = min(min_sc_occupancy, pdb_info->occupancy(ri, ai));
+			max_sc_temperature = max(max_sc_temperature, pdb_info->temperature(ri, n_bb+ai));
+			min_sc_occupancy = min(min_sc_occupancy, pdb_info->occupancy(ri, n_bb+ai));
 		}
 		Real const max_temperature = max(max_bb_temperature, max_sc_temperature);
 		Real const min_occupancy = min(min_bb_occupancy, min_sc_occupancy);

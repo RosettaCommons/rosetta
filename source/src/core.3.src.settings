@@ -274,8 +274,8 @@ sources = {
 		"EtableEnergy",
 		"EtableOptions",
 	],
-	"core/scoring/etable/coloumb": [
-		"Coloumb",
+	"core/scoring/etable/coulomb": [
+		"Coulomb",
 	],
 	"core/scoring/etable/count_pair": [
 		"CountPairAll",

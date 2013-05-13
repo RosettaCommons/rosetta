@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/etable/coloumb/Coloumb.fwd.hh
-/// @brief  forward header for Coloumb class
+/// @file   core/scoring/etable/coulomb/Coulomb.fwd.hh
+/// @brief  forward header for Coulomb class
 /// @author Matthew O'Meara
 
 
-#ifndef INCLUDED_core_scoring_etable_coloumb_Coloumb_fwd_hh
-#define INCLUDED_core_scoring_etable_coloumb_Coloumb_fwd_hh
+#ifndef INCLUDED_core_scoring_etable_coulomb_Coulomb_fwd_hh
+#define INCLUDED_core_scoring_etable_coulomb_Coulomb_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
 namespace etable {
-namespace coloumb {
+namespace coulomb {
 
-class Coloumb;
-typedef utility::pointer::owning_ptr< Coloumb > ColoumbOP;
-typedef utility::pointer::owning_ptr< Coloumb const > ColoumbCOP;
+class Coulomb;
+typedef utility::pointer::owning_ptr< Coulomb > CoulombOP;
+typedef utility::pointer::owning_ptr< Coulomb const > CoulombCOP;
 
-} // coloumb
+} // coulomb
 } // etable
 } // scoring
 } // core

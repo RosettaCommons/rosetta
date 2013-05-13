@@ -28,7 +28,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
-#include <core/scoring/etable/coloumb/Coloumb.hh>
+#include <core/scoring/etable/coulomb/Coulomb.hh>
 #include <core/scoring/trie/TrieCountPairBase.fwd.hh>
 
 // Utility headers
@@ -305,7 +305,7 @@ public:
 	Real
 	hydrogen_interaction_cutoff() const
 	{
-		return ( coloumb().max_dis() + 2*core::chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH );
+		return ( coulomb().max_dis() + 2*core::chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH );
 	}
 
 	inline
@@ -316,7 +316,7 @@ public:
 		Size & /*path_dist*/
 	) const
 	{
-		return hackelec_weight(at1.isbb(),at2.isbb()) * coloumb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
+		return hackelec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
 	}
 
 	inline
@@ -326,7 +326,7 @@ public:
 		Size & /*path_dist*/
 	) const
 	{
-		return hackelec_weight(at1.isbb(),at2.isbb()) * coloumb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
+		return hackelec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
 	}
 
 	inline
@@ -336,7 +336,7 @@ public:
 		Size & /*path_dist*/
 	) const
 	{
-		return hackelec_weight(at1.isbb(),at2.isbb()) * coloumb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
+		return hackelec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
 	}
 
 	inline
@@ -346,7 +346,7 @@ public:
 		Size & /*path_dist*/
 	) const
 	{
-		return hackelec_weight(at1.isbb(),at2.isbb()) * coloumb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
+		return hackelec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
 	}
 
 	/// @brief This has to go
@@ -431,12 +431,12 @@ private:
 protected:
 
 	inline
-	etable::coloumb::Coloumb const &
-	coloumb() const {return coloumb_; }
+	etable::coulomb::Coulomb const &
+	coulomb() const {return coulomb_; }
 
 private:
 
-	etable::coloumb::Coloumb coloumb_;
+	etable::coulomb::Coulomb coulomb_;
 
 	bool exclude_protein_protein_;
 	bool exclude_monomer_;

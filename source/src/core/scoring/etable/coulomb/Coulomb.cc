@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/etable/coloumb/Coloumb.hh
-/// @brief  Evaluate Coloumbic potential
+/// @file   core/scoring/etable/coulomb/Coulomb.hh
+/// @brief  Evaluate Coulombic potential
 /// @author Phil Bradley, modifed by James Gleixner
 /// @author Matthew O'Meara
 
 // unit headers
-#include <core/scoring/etable/coloumb/Coloumb.hh>
+#include <core/scoring/etable/coulomb/Coulomb.hh>
 
 // project headers
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -25,11 +25,11 @@
 namespace core {
 namespace scoring {
 namespace etable {
-namespace coloumb {
+namespace coulomb {
 
 
 ////////////////////////////////////////////////////////////////////////////
-Coloumb::Coloumb( methods::EnergyMethodOptions const & options ):
+Coulomb::Coulomb( methods::EnergyMethodOptions const & options ):
 	max_dis_( options.hackelec_max_dis() ),
 	min_dis_( options.hackelec_min_dis() ),
 	smooth_hack_elec_( options.smooth_hack_elec() ),
@@ -41,7 +41,7 @@ Coloumb::Coloumb( methods::EnergyMethodOptions const & options ):
 
 
 ////////////////////////////////////////////////////////////////////////////
-Coloumb::Coloumb( Coloumb const & src ): ReferenceCount(),
+Coulomb::Coulomb( Coulomb const & src ): ReferenceCount(),
 	max_dis_( src.max_dis_ ),
 	min_dis_( src.min_dis_ ),
 	smooth_hack_elec_( src.smooth_hack_elec_ ),
@@ -52,7 +52,7 @@ Coloumb::Coloumb( Coloumb const & src ): ReferenceCount(),
 }
 
 void
-Coloumb::initialize() {
+Coulomb::initialize() {
 	// Must have already initialized max_dis_, min_dis_, die_, and no_dis_dep_die_
 
 	//max_dis_ = 5.5;

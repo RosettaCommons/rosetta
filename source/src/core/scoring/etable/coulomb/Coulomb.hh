@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/etable/coloumb/Coloumb.hh
-/// @brief  evaluate Coloumbic potential
+/// @file   core/scoring/etable/coulomb/Coulomb.hh
+/// @brief  evaluate Coulombic potential
 /// @author Phil Bradley, modifed by James Gleixner
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_core_scoring_coloumb_Coloumb_hh
-#define INCLUDED_core_scoring_coloumb_Coloumb_hh
+#ifndef INCLUDED_core_scoring_coulomb_Coulomb_hh
+#define INCLUDED_core_scoring_coulomb_Coulomb_hh
 
 // Project headers
-#include <core/scoring/etable/coloumb/Coloumb.fwd.hh>
+#include <core/scoring/etable/coulomb/Coulomb.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/etable/Etable.hh>
 
@@ -29,18 +29,18 @@
 namespace core {
 namespace scoring {
 namespace etable {
-namespace coloumb {
+namespace coulomb {
 
 
-class Coloumb : public utility::pointer::ReferenceCount
+class Coulomb : public utility::pointer::ReferenceCount
 {
 
 public:
-	~Coloumb() {}
+	~Coulomb() {}
 
-	Coloumb( methods::EnergyMethodOptions const & options );
+	Coulomb( methods::EnergyMethodOptions const & options );
 
-	Coloumb( Coloumb const & src );
+	Coulomb( Coulomb const & src );
 
   /// @brief Initilize constants.
 	void
@@ -129,7 +129,7 @@ private:
 
 inline
 Real
-Coloumb::eval_atom_atom_hack_elecE(
+Coulomb::eval_atom_atom_hack_elecE(
 	Vector const & i_xyz,
 	Real const i_charge,
 	Vector const & j_xyz,
@@ -145,7 +145,7 @@ Coloumb::eval_atom_atom_hack_elecE(
 /// in which the score is held constant.
 inline
 Real
-Coloumb::eval_atom_atom_hack_elecE(
+Coulomb::eval_atom_atom_hack_elecE(
 	Vector const & i_xyz,
 	Real const i_charge,
 	Vector const & j_xyz,
@@ -178,7 +178,7 @@ Coloumb::eval_atom_atom_hack_elecE(
 
 inline
 Real
-Coloumb::eval_dhack_elecE_dr_over_r(
+Coulomb::eval_dhack_elecE_dr_over_r(
 	Real const dis2,
 	Real const q1,
 	Real const q2

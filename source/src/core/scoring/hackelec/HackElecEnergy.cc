@@ -122,30 +122,30 @@ HackElecEnergyCreator::score_types_for_method() const {
 ////////////////////////////////////////////////////////////////////////////
 HackElecEnergy::HackElecEnergy( methods::EnergyMethodOptions const & options ):
 	parent( new HackElecEnergyCreator ),
-	coloumb_( options ),
+	coulomb_( options ),
 	exclude_protein_protein_( options.exclude_protein_protein_hack_elec() ),
 	exclude_monomer_( options.exclude_monomer_hack_elec() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {
-	coloumb_.initialize();
+	coulomb_.initialize();
 }
 
 
 ////////////////////////////////////////////////////////////////////////////
 HackElecEnergy::HackElecEnergy( HackElecEnergy const & src ):
 	parent( src ),
-	coloumb_( src.coloumb() ),
+	coulomb_( src.coulomb() ),
 	exclude_protein_protein_( src.exclude_protein_protein_ ),
 	exclude_monomer_( src.exclude_monomer_ ),
 	exclude_DNA_DNA_( src.exclude_DNA_DNA_ )
 {
-	coloumb_.initialize();
+	coulomb_.initialize();
 }
 
 
 void
 HackElecEnergy::initialize() {
-	coloumb_.initialize();
+	coulomb_.initialize();
 }
 
 
@@ -175,7 +175,7 @@ HackElecEnergy::setup_for_minimizing(
 		// setup the atom-atom nblist
 		NeighborListOP nblist;
 		Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
-		Real const XX = coloumb().max_dis() + 2 * tolerated_motion;
+		Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
 		nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
 		if ( pose.energies().use_nblist_auto_update() ) {
 			nblist->set_auto_update( tolerated_motion );
@@ -310,7 +310,7 @@ HackElecEnergy::residue_pair_energy(
 				Real weight(1.0);
 				if ( cpfxn->count( i, j, weight ) ) {
 					Real energy = weight *
-					coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+					coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 					score += energy;
 
 					if (rsd1.atom_is_backbone(i) && rsd2.atom_is_backbone(j)){
@@ -371,7 +371,7 @@ HackElecEnergy::residue_pair_energy(
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
 
-				float energy = coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+				float energy = coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				score += energy;
 				if (rsd1.atom_is_backbone(i) && rsd2.atom_is_backbone(j)){
 					emap[hack_elec_bb_bb]+=energy;
@@ -381,7 +381,7 @@ HackElecEnergy::residue_pair_energy(
 					emap[hack_elec_bb_sc]+=energy;
 				}
 
-				//	score += coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				//	score += coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}*/
 		Real d2;
@@ -495,7 +495,7 @@ HackElecEnergy::setup_for_minimizing_for_residue_pair(
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
-	Real const XX2 = std::pow( coloumb().max_dis() + 2*tolerated_narrow_nblist_motion, 2 );
+	Real const XX2 = std::pow( coulomb().max_dis() + 2*tolerated_narrow_nblist_motion, 2 );
 
 	nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
 
@@ -533,7 +533,7 @@ HackElecEnergy::eval_residue_pair_derivatives(
 
 		Vector f2 = ( atom1xyz - atom2xyz );
 		Real const dis2( f2.length_squared() );
-		Real const dE_dr_over_r = neighbs[ ii ].weight() * coloumb().eval_dhack_elecE_dr_over_r( dis2, at1_charge, at2_charge );
+		Real const dE_dr_over_r = neighbs[ ii ].weight() * coulomb().eval_dhack_elecE_dr_over_r( dis2, at1_charge, at2_charge );
 		if ( dE_dr_over_r != 0.0 ) {
 			Real sfxn_weight = hackelec_weight(
 				rsd1.atom_is_backbone( neighbs[ ii ].atomno1() ),
@@ -590,7 +590,7 @@ HackElecEnergy::backbone_backbone_energy(
 				Size path_dist( 0 );
 				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
-						coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+						coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
 			}
 		}
@@ -608,7 +608,7 @@ HackElecEnergy::backbone_backbone_energy(
 				Size const j = rsd2_bb_atoms[ jj ];
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
-				score += coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				score += coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}
 	}
@@ -655,7 +655,7 @@ HackElecEnergy::backbone_sidechain_energy(
 				Size path_dist( 0 );
 				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
-						coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+						coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
 			}
 		}
@@ -673,7 +673,7 @@ HackElecEnergy::backbone_sidechain_energy(
 				Size const j = rsd2_sc_atoms[ jj ];
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
-				score += coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				score += coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}
 	}
@@ -722,7 +722,7 @@ HackElecEnergy::sidechain_sidechain_energy(
 				Size path_dist( 0 );
 				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
-						coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+						coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
 			}
 		}
@@ -740,7 +740,7 @@ HackElecEnergy::sidechain_sidechain_energy(
 				Size const j = rsd2_sc_atoms[ jj ];
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
-				score += coloumb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				score += coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}
 	}
@@ -793,7 +793,7 @@ HackElecEnergy::finalize_total_energy(
 				assert( ii_isbb + jj_isbb >= 0 && ii_isbb + jj_isbb < 3 );
 
 				Real score = nbr.weight() *
-					coloumb().eval_atom_atom_hack_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) );
+					coulomb().eval_atom_atom_hack_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) );
 
 				bb_sc_scores[ ii_isbb + jj_isbb ] += score;
 				total_score += score;
@@ -1164,7 +1164,7 @@ HackElecEnergy::score_atom_pair(
 	Real & d2
 ) const
 {
-	Real energy = cpweight * coloumb().eval_atom_atom_hack_elecE(
+	Real energy = cpweight * coulomb().eval_atom_atom_hack_elecE(
 		rsd1.xyz(at1), rsd1.atomic_charge(at1),
 		rsd2.xyz(at2), rsd2.atomic_charge(at2), d2);
 

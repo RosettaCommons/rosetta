@@ -236,6 +236,20 @@ GenericMonteCarloMover::last_accepted_score() const
   return last_accepted_score_;
 }
 
+/// @brief Set the lowest scoring pose
+void
+GenericMonteCarloMover::lowest_score_pose( core::pose::PoseOP pose )
+{
+	lowest_score_pose_ = pose;
+}
+
+/// @brief Set the last pose that was accepted
+void
+GenericMonteCarloMover::last_accepted_pose( core::pose::PoseOP pose )
+{
+	last_accepted_pose_ = pose;
+}
+
 /// @brief return the lowest score pose
 GenericMonteCarloMover::PoseOP
 GenericMonteCarloMover::lowest_score_pose() const

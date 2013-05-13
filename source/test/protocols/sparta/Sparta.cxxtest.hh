@@ -54,17 +54,6 @@ public:
 		return sparta_score;
 	}
 
-	void test_sparta_foldit2() {
-		using core::Real;
-		using std::string;
-		string const pdb_fn( "protocols/sparta/SAM-T08-server_TS3.pdb" );
-		string const cs_fn ( "protocols/sparta/17280_trim.tab" );
-
-		calc_sparta_score(pdb_fn,cs_fn);
-
-		//Real const sparta_score( calc_sparta_score(pdb_fn,cs_fn) );
-		//std::cout << sparta_score << std::endl;
-	}
 
 	void test_sparta_2kywA() {
 		using core::Size;

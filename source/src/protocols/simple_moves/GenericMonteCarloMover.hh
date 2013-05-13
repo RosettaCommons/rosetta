@@ -307,8 +307,8 @@ public:
 	void lowest_scores( utility::vector1< core::Real > const & scores ) { lowest_scores_ = scores; }
 	void lowest_score( core::Real const score ) { lowest_score_ = score; }
 	void last_accepted_score( core::Real const score ) { last_accepted_score_ = score; }
-	void lowest_score_pose( core::pose::PoseOP pose ) { lowest_score_pose_ = pose; }
-	void last_accepted_pose( core::pose::PoseOP pose ) { last_accepted_pose_ = pose; }
+	void lowest_score_pose( core::pose::PoseOP pose );
+	void last_accepted_pose( core::pose::PoseOP pose );
 protected:
 
 	/// @brief Executes all triggers. The order of trigger execution is undefined.
