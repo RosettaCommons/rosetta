@@ -38,12 +38,15 @@ namespace pocket_grid { extern BooleanOptionKey const pocket_side; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_dump_pdbs; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_dump_rama; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_restrict_size; }
+namespace pocket_grid { extern BooleanOptionKey const pocket_ignore_buried; }
+namespace pocket_grid { extern BooleanOptionKey const pocket_only_buried; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_psp; }
 namespace pocket_grid { extern BooleanOptionKey const pocket_sps; }
 namespace pocket_grid { extern RealOptionKey const pocket_surface_score; }
 namespace pocket_grid { extern RealOptionKey const pocket_surface_dist; }
 namespace pocket_grid { extern RealOptionKey const pocket_buried_score; }
 namespace pocket_grid { extern RealOptionKey const pocket_buried_dist; }
+namespace pocket_grid { extern BooleanOptionKey const pocket_debug_output; }
 namespace pocket_grid { extern BooleanOptionKey const print_grid; }
 namespace pocket_grid { extern BooleanOptionKey const extend_eggshell; }
 namespace pocket_grid { extern RealOptionKey const extend_eggshell_dist; }

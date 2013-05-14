@@ -37,6 +37,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
 
 #include <core/scoring/rms_util.hh>
 
@@ -44,6 +45,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/conversions.hh>
+#include <numeric/random/random.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

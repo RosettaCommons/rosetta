@@ -85,7 +85,9 @@ PCluster::PCluster(core::Size x, core::Size y, core::Size z, core::Real step_){
   minZ=z;
   maxZ=z;
   points_.push_back(point);
-  target=false;
+  target_=false;
+  subtarget_=false;
+  solventExposed_=false;
   count_=1;
   step=step_;
 }
@@ -102,7 +104,9 @@ void PCluster::add(core::Size x, core::Size y, core::Size z){
 PCluster::PCluster(const PCluster& old){
   count_ = old.count_;
   points_ = old.points_;
-  target = old.target;
+  target_ = old.target_;
+  subtarget_ = old.subtarget_;
+  solventExposed_ = old.solventExposed_;
   maxX = old.maxX; maxY = old.maxY; maxZ = old.maxZ;
   minX = old.minX; minY = old.minY; minZ = old.minZ;
   step = old.step;
@@ -219,10 +223,12 @@ void PClusterSet::findClusters(){
   }
 }
 
-core::Real PClusterSet::getLargestClusterSize( core::Real const & stepSize, core::Real const & minClusterSize ){
+core::Real PClusterSet::getLargestClusterSize( core::Real const & stepSize, core::Real const & minClusterSize, core::Size const & numTargets, bool ignoreBuried, bool ignoreSurface){
   core::Real largest_size=0.;
   for (std::list<PCluster>::iterator i = clusters_.begin(); i!=clusters_.end(); ++i){
-    if (!i->isTarget()) continue;
+    if (!i->isTarget(numTargets)) continue;
+    if (ignoreBuried && !i->isSolventExposed()) continue;
+    if (ignoreSurface && i->isSolventExposed()) continue;
     if (i->size()>largest_size){
       largest_size=i->size();
     }
@@ -233,10 +239,12 @@ core::Real PClusterSet::getLargestClusterSize( core::Real const & stepSize, core
   return 0;
 }
 
-core::Real PClusterSet::getNetClusterSize( core::Real const & stepSize, core::Real const & minClusterSize ){
+core::Real PClusterSet::getNetClusterSize( core::Real const & stepSize, core::Real const & minClusterSize, core::Size const & numTargets, bool ignoreBuried, bool ignoreSurface ){
   core::Real total_size=0.;
   for (std::list<PCluster>::iterator i = clusters_.begin(); i!=clusters_.end(); ++i){
-    if (!i->isTarget()) continue;
+    if (!i->isTarget(numTargets)) continue;
+    if (ignoreBuried && !i->isSolventExposed()) continue;
+    if (ignoreSurface && i->isSolventExposed()) continue;
     if (i->size()*pow(stepSize, 3) >minClusterSize){
       total_size+=i->size()*pow(stepSize, 3)-minClusterSize;
     }
@@ -287,6 +295,9 @@ void PocketGrid::setup_default_options(){
   limit_z_ = size_z_*2;
   probe_rad_=option[ OptionKeys::pocket_grid::pocket_probe_radius ]();
   side_chains_only_=option[ OptionKeys::pocket_grid::pocket_side ]();
+  ignoreBuriedPockets_=option[ OptionKeys::pocket_grid::pocket_ignore_buried ]();
+  ignoreExposedPockets_=option[ OptionKeys::pocket_grid::pocket_only_buried ]();
+  if (ignoreExposedPockets_) ignoreBuriedPockets_=false;
   markpsp_=option[ OptionKeys::pocket_grid::pocket_psp ]();
   marksps_=option[ OptionKeys::pocket_grid::pocket_sps ]();
   surf_score_=option[ OptionKeys::pocket_grid::pocket_surface_score ]();
@@ -403,6 +414,11 @@ numeric::xyzVector<core::Real> PocketGrid::rotatePoint(core::Real x, core::Real 
   return coord;
 }
 
+
+bool PocketGrid::isSurfacePoint(core::Size x, core::Size y, core::Size z) const{
+  return (grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE || grid_[x][y][z]==T_SURFACE || grid_[x][y][z]==ST_SURFACE);
+}
+
 void PocketGrid::initialize( core::Real const & xc, core::Real const & yc, core::Real const & zc, core::Real x, core::Real y, core::Real z, core::Real const & stepSize, bool psp, bool sps){
   markpsp_=psp;
   marksps_=sps;
@@ -410,6 +426,7 @@ void PocketGrid::initialize( core::Real const & xc, core::Real const & yc, core:
   xdim_=2*(core::Size)ceil(x/stepSize_)+1;
   ydim_=2*(core::Size)ceil(y/stepSize_)+1;
   zdim_=2*(core::Size)ceil(z/stepSize_)+1;
+  numTargets_=1;
   init();
   recenter(xc,yc,zc);
   pdbno_=0;
@@ -443,6 +460,7 @@ void PocketGrid::initialize (core::Real const & xc, core::Real const & yc, core:
   xdim_=2*(core::Size)ceil(x/stepSize_)+1;
   ydim_=2*(core::Size)ceil(x/stepSize_)+1;
   zdim_=2*(core::Size)ceil(x/stepSize_)+1;
+  numTargets_=1;
   init();
   recenter(xc,yc,zc);
   pdbno_=0;
@@ -465,6 +483,7 @@ void PocketGrid::initialize (core::Vector const & center, core::Real x, core::Re
   xdim_=2*(core::Size)ceil(x/stepSize_)+1;
   ydim_=2*(core::Size)ceil(x/stepSize_)+1;
   zdim_=2*(core::Size)ceil(x/stepSize_)+1;
+  numTargets_=1;
   init();
   recenter(xc,yc,zc);
   pdbno_=0;
@@ -484,6 +503,7 @@ void PocketGrid::initialize (core::Vector const & center, core::Real const & x, 
   xdim_=2*(core::Size)ceil(x/stepSize_)+1;
   ydim_=2*(core::Size)ceil(y/stepSize_)+1;
   zdim_=2*(core::Size)ceil(z/stepSize_)+1;
+  numTargets_=1;
   init();
   recenter(center);
   pdbno_=0;
@@ -496,6 +516,7 @@ void PocketGrid::initialize (core::conformation::Residue const & central_rsd, co
   xdim_=2*(core::Size)ceil(x/stepSize_)+1;
   ydim_=2*(core::Size)ceil(y/stepSize_)+1;
   zdim_=2*(core::Size)ceil(z/stepSize_)+1;
+  numTargets_=1;
   init();
   recenter(central_rsd);
   pdbno_=0;
@@ -508,6 +529,7 @@ void PocketGrid::initialize (std::vector< core::conformation::ResidueOP > const 
   xdim_=2*(core::Size)ceil(x/stepSize_)+1;
   ydim_=2*(core::Size)ceil(y/stepSize_)+1;
   zdim_=2*(core::Size)ceil(z/stepSize_)+1;
+  numTargets_=central_rsds.size();
   init();
   recenter(central_rsds);
   pdbno_=0;
@@ -562,6 +584,8 @@ void PocketGrid::recenter( std::vector< core::conformation::ResidueOP > const & 
   core::Size count=0;
   int sz = central_rsds.size();
   assert (sz>0);
+  //this should restrict the recentering to those atoms that define the grid.
+  if (sz > (int)MAX_TARGETS) sz = (int)MAX_TARGETS;
   for (int rnum = 0; rnum < sz; ++rnum){
     core::conformation::ResidueOP central_rsd = central_rsds[rnum];
 
@@ -613,7 +637,6 @@ std::vector< core::conformation::ResidueOP > PocketGrid::getRelaxResidues( core:
     } else {
       central_relax_pdb_number = ObjexxFCL::int_of( resid );
     }
-
     for ( int j = 1, resnum = input_pose.total_residue(); j <= resnum; ++j ) {
       if ( input_pose.pdb_info()->number(j) == central_relax_pdb_number ) {
         if (chain != ' '){
@@ -627,6 +650,9 @@ std::vector< core::conformation::ResidueOP > PocketGrid::getRelaxResidues( core:
         }
       }
     }
+  }
+  if (residues.size() > MAX_TARGETS){
+    std::cerr<<"PocketGrid warning: "<<residues.size()<<" target residues specified, but only a maximum of "<<MAX_TARGETS<<" are supported. Ignoring "<<residues.size()-MAX_TARGETS<<" residue(s)."<<std::endl;
   }
   return residues;
 }
@@ -705,34 +731,22 @@ bool PocketGrid::touchesSS(core::Size x, core::Size y,core::Size z) const {
 
 bool PocketGrid::touchesPS(core::Size x, core::Size y,core::Size z) const {
   if (x!=0) {
-    if (grid_[x-1][y][z]==HSURFACE) return true;
-    if (grid_[x-1][y][z]==PSURFACE) return true;
-    if (grid_[x-1][y][z]==T_SURFACE) return true;
+    if (isSurfacePoint(x-1,y,z)) return true;
   }
   if (y!=0) {
-    if (grid_[x][y-1][z]==HSURFACE) return true;
-    if (grid_[x][y-1][z]==PSURFACE) return true;
-    if (grid_[x][y-1][z]==T_SURFACE) return true;
+    if (isSurfacePoint(x,y-1,z)) return true;
   }
   if (z!=0) {
-    if (grid_[x][y][z-1]==HSURFACE) return true;
-    if (grid_[x][y][z-1]==PSURFACE) return true;
-    if (grid_[x][y][z-1]==T_SURFACE) return true;
+    if (isSurfacePoint(x,y,z-1)) return true;
   }
   if ((x!=xdim_-1)) {
-    if (grid_[x+1][y][z]==HSURFACE) return true;
-    if (grid_[x+1][y][z]==PSURFACE) return true;
-    if (grid_[x+1][y][z]==T_SURFACE) return true;
+    if (isSurfacePoint(x+1,y,z)) return true;
   }
   if ((y!=ydim_-1)) {
-    if (grid_[x][y+1][z]==HSURFACE) return true;
-    if (grid_[x][y+1][z]==PSURFACE) return true;
-    if (grid_[x][y+1][z]==T_SURFACE) return true;
+    if (isSurfacePoint(x,y+1,z)) return true;
   }
   if ((z!=zdim_-1)) {
-    if (grid_[x][y][z+1]==HSURFACE) return true;
-    if (grid_[x][y][z+1]==PSURFACE) return true;
-    if (grid_[x][y][z+1]==T_SURFACE) return true;
+    if (isSurfacePoint(x,y,z+1)) return true;
   }
   return false;
 }
@@ -821,8 +835,8 @@ void PocketGrid::newSearch(core::Size thr1, core::Size thr2, core::Size max1, co
         bool tar_surf=false;
 
         //if a point is a surface, or pocket and doind psp searching, or solvent and doing a sps search, search in all directions from that point.
-        if ((!sps&&(grid_[cx][cy][cz]==HSURFACE || grid_[cx][cy][cz]==PSURFACE || grid_[cx][cy][cz]==T_SURFACE||(grid_[cx][cy][cz]==POCKET&&psp)||(grid_[cx][cy][cz]==TP_POCKET&&psp)||(grid_[cx][cy][cz]==POCKET&&sps)))||(grid_[cx][cy][cz]==EMPTY&&sps)){
-          if (grid_[cx][cy][cz]==T_SURFACE||(grid_[cx][cy][cz]==TP_POCKET&&psp)) tar_surf=true;
+        if ((!sps&&(isSurfacePoint(cx, cy, cz)||(grid_[cx][cy][cz]==POCKET&&psp)||(grid_[cx][cy][cz]==TP_POCKET&&psp)||(grid_[cx][cy][cz]==POCKET&&sps)))||(grid_[cx][cy][cz]==EMPTY&&sps)){
+          if (grid_[cx][cy][cz]==T_SURFACE||grid_[cx][cy][cz]==ST_SURFACE||(grid_[cx][cy][cz]==TP_POCKET&&psp)) tar_surf=true;
           //iterate over the searching directions, get the index associated with x
           for (int i=0;i<dirs*3;i+=3){
             if (i<=6) {
@@ -860,17 +874,17 @@ void PocketGrid::newSearch(core::Size thr1, core::Size thr2, core::Size max1, co
               }
 
               //if it's a surface, we want to go back to the starting point and fill the solvents in as pockets
-              else if (sps&&(grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE || grid_[x][y][z]==T_SURFACE)) break;
-              else if ((!sps&&(grid_[x][y][z]==HSURFACE || grid_[x][y][z]==PSURFACE || grid_[x][y][z]==T_SURFACE || (grid_[x][y][z]==POCKET&&psp) || (grid_[x][y][z]==TP_POCKET&&psp))) || (grid_[x][y][z]==EMPTY&&sps)){
+              else if (sps && isSurfacePoint(x,y,z)) break;
+              else if ((!sps && isSurfacePoint(x,y,z) || (grid_[x][y][z]==POCKET&&psp) || (grid_[x][y][z]==TP_POCKET&&psp) || (grid_[x][y][z]==EMPTY&&sps))){
 
                 //if there is no EMPTY, then everything has been marked already.  No need to go further.
                 if (marked) break;
 
 
-                if (grid_[x][y][z]==T_SURFACE||(grid_[x][y][z]==TP_POCKET&&psp)) t_surf=true;
+                if (grid_[x][y][z]==T_SURFACE||grid_[x][y][z]==ST_SURFACE||(grid_[x][y][z]==TP_POCKET&&psp)) t_surf=true;
                 if ((count>(int)thr && !psp)||psp||sps){
                   for (int c=count;c>0;c--){
-                    if (grid_[x-c*deltas[i]][y-c*deltas[i+1]][z-c*deltas[i+2]]==HSURFACE || grid_[x-c*deltas[i]][y-c*deltas[i+1]][z-c*deltas[i+2]] == PSURFACE || grid_[x-c*deltas[i]][y-c*deltas[i+1]][z-c*deltas[i+2]]==T_SURFACE) std::cout<<"MAJOR ERROR, overwriting surface with pocket\n";
+                    if (isSurfacePoint(x-c*deltas[i],y-c*deltas[i+1],z-c*deltas[i+2])) std::cout<<"MAJOR ERROR, overwriting surface with pocket\n";
                     if (sps){
                       grid_[x-c*deltas[i]][y-c*deltas[i+1]][z-c*deltas[i+2]]=EMPTY;
                     }
@@ -898,10 +912,22 @@ void PocketGrid::newSearch(core::Size thr1, core::Size thr2, core::Size max1, co
 
 
 void PocketGrid::mark(core::Vector const & center, core::Real const & vdWd, core::Real const & buffer, bool polar, bool targetResi){
+  int target=0;
+  if (targetResi) target=1;
+  mark(center(1),center(2),center(3), vdWd, buffer, polar, target);
+}
+
+void PocketGrid::mark(core::Vector const & center, core::Real const & vdWd, core::Real const & buffer, bool polar, int targetResi){
   mark(center(1),center(2),center(3), vdWd, buffer, polar, targetResi);
 }
 
 void PocketGrid::mark(core::Real x, core::Real y, core::Real z, core::Real const & vdWd, core::Real const & buffer, bool polar, bool targetResi){
+  int target=0;
+  if (targetResi) target=1;
+  mark(x,y,z,vdWd, buffer, polar, target);
+}
+
+void PocketGrid::mark(core::Real x, core::Real y, core::Real z, core::Real const & vdWd, core::Real const & buffer, bool polar, int targetResi){
   x-=xcorn_;
   y-=ycorn_;
   z-=zcorn_;
@@ -927,18 +953,24 @@ void PocketGrid::mark(core::Real x, core::Real y, core::Real z, core::Real const
       for (int zIter=centerZ;zIter <= maxZ; ++zIter){
         if (pow((xIter-xcen),2)+pow((yIter-ycen),2)+pow((zIter-zcen),2)>pow(radius, 2)) continue;
         if (pow((xIter-xcen),2)+pow((yIter-ycen),2)+pow((zIter-zcen),2)>pow(vdW, 2)){
-          if (grid_[xIter][yIter][zIter]!=PROTEIN &&grid_[xIter][yIter][zIter]!=TARGET) {
-            if (targetResi){
+          if (grid_[xIter][yIter][zIter]!=PROTEIN && grid_[xIter][yIter][zIter]!=TARGET && grid_[xIter][yIter][zIter]!=SUBTARGET) {
+            if (targetResi==1){
               grid_[xIter][yIter][zIter]=T_SURFACE;
+            }else if (targetResi==2){
+              grid_[xIter][yIter][zIter]=ST_SURFACE;
             }else if (polar) { if (grid_[xIter][yIter][zIter]!=HSURFACE) grid_[xIter][yIter][zIter]=PSURFACE;
             }else{grid_[xIter][yIter][zIter]=HSURFACE;
             }
-          }else if (targetResi) grid_[xIter][yIter][zIter]=TARGET;
-        }else{
-          if (targetResi) {
+          }else if (targetResi==1) {
             grid_[xIter][yIter][zIter]=TARGET;
+          }else if (targetResi==2) grid_[xIter][yIter][zIter]=SUBTARGET;
+        }else{
+          if (targetResi == 1) {
+            grid_[xIter][yIter][zIter]=TARGET;
+          }else if (targetResi==2){
+            grid_[xIter][yIter][zIter]=SUBTARGET;
           }else{
-            if (grid_[xIter][yIter][zIter]!=TARGET) grid_[xIter][yIter][zIter]=PROTEIN;
+            if (grid_[xIter][yIter][zIter]!=TARGET && grid_[xIter][yIter][zIter]!=SUBTARGET) grid_[xIter][yIter][zIter]=PROTEIN;
           }
         }
       }
@@ -947,17 +979,22 @@ void PocketGrid::mark(core::Real x, core::Real y, core::Real z, core::Real const
       for (int zIter=centerZ;zIter >= minZ; --zIter){
         if (pow(xIter-xcen,2)+pow(yIter-ycen,2)+pow(zIter-zcen,2)>pow(radius, 2)) continue;
         if (pow(xIter-xcen,2)+pow(yIter-ycen,2)+pow(zIter-zcen,2)>pow(vdW, 2)){
-          if (grid_[xIter][yIter][zIter]!=PROTEIN &&grid_[xIter][yIter][zIter]!=TARGET) {
-            if (targetResi){
+          if (grid_[xIter][yIter][zIter]!=PROTEIN && grid_[xIter][yIter][zIter]!=TARGET && grid_[xIter][yIter][zIter]!=SUBTARGET) {
+            if (targetResi == 1){
               grid_[xIter][yIter][zIter]=T_SURFACE;
+            }else if (targetResi==2){
+              grid_[xIter][yIter][zIter]=ST_SURFACE;
             }else if (polar) { if (grid_[xIter][yIter][zIter]!=HSURFACE) grid_[xIter][yIter][zIter]=PSURFACE;
             }else{grid_[xIter][yIter][zIter]=HSURFACE;
             }
-          }else if (targetResi) grid_[xIter][yIter][zIter]=TARGET;
-
-        }else{
-          if (targetResi) {
+          }else if (targetResi==1) {
             grid_[xIter][yIter][zIter]=TARGET;
+          }else if (targetResi==2) grid_[xIter][yIter][zIter]=SUBTARGET;
+        }else{
+          if (targetResi == 1) {
+            grid_[xIter][yIter][zIter]=TARGET;
+          }else if (targetResi==2){
+            grid_[xIter][yIter][zIter]=SUBTARGET;
           }else{
             grid_[xIter][yIter][zIter]=PROTEIN;
           }
@@ -973,7 +1010,7 @@ void PocketGrid::clearSmallPockets(core::Size minsize){
   tmp++;
 }
 
-void PocketGrid::print(){
+void PocketGrid::print() const{
   for (core::Size z=0; z<zdim_;z++){
     for (core::Size x=0;x<xdim_;x++){
       for (core::Size y=0;y<ydim_;y++){
@@ -985,7 +1022,7 @@ void PocketGrid::print(){
   }
 }
 
-void PocketGrid::dumpGridToFile(){
+void PocketGrid::dumpGridToFile() {
   std::stringstream filename;
   filename<<tag_<<"pocket"<<pdbno_<<".pdb";
   pdbno_++;
@@ -993,7 +1030,7 @@ void PocketGrid::dumpGridToFile(){
 }
 
 
-void PocketGrid::dumpGridToFile( std::string const & output_filename ){
+void PocketGrid::dumpGridToFile( std::string const & output_filename ) {
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_filename, std::ios::out);
@@ -1049,7 +1086,13 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ){
         if (grid_[x][y][z]==T_SURFACE)  {
           concatenated_pdb_info += "TS  TS ";
         }
+        if (grid_[x][y][z]==ST_SURFACE)  {
+          concatenated_pdb_info += "STS STS";
+        }
         if (grid_[x][y][z]==TARGET)  {
+          continue;
+        }
+        if (grid_[x][y][z]==SUBTARGET)  {
           continue;
         }
         if (grid_[x][y][z]==PROTEIN) {
@@ -1115,6 +1158,85 @@ void PocketGrid::dumpGridToFile( std::string const & output_filename ){
   }
 	outPDB_stream.close();
 	outPDB_stream.clear();
+
+}
+
+
+void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename ){
+
+	utility::io::ozstream outPDB_stream;
+	outPDB_stream.open(output_filename, std::ios::out);
+  int counter=1;
+  int counter2=1;
+
+  int clustNo=1;
+  bool smallPocket;
+  for (std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit){
+    if (cit->points_.size()*pow(stepSize_,3)<minPockSize_) continue;
+     if (!cit->isTarget()) continue;
+    for (std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
+      std::string concatenated_pdb_info;
+      concatenated_pdb_info += "ATOM  ";
+      std::stringstream  tmp;
+      tmp<<counter2;
+      if (counter2<10) concatenated_pdb_info += "    ";
+      else if (counter2<100) concatenated_pdb_info += "   ";
+      else if (counter2<1000) concatenated_pdb_info += "  ";
+      else if (counter2<10000) concatenated_pdb_info += " ";
+      else concatenated_pdb_info += "";
+      concatenated_pdb_info += tmp.str()+"  ";
+      if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) concatenated_pdb_info += "TP  TP   ";
+      if (grid_[pit->x][pit->y][pit->z]==TP_SURF) concatenated_pdb_info += "TPS TPS  ";
+      if (grid_[pit->x][pit->y][pit->z]==TP_BURIED) concatenated_pdb_info += "TPB TPB  ";
+      if (grid_[pit->x][pit->y][pit->z]==TP_EDGE) concatenated_pdb_info += "TPE TPE  ";
+
+      tmp.str(std::string());
+      tmp<<clustNo;
+      if (clustNo<10) concatenated_pdb_info += "   ";
+      else if (clustNo<100) concatenated_pdb_info += "  ";
+      else if (clustNo<1000) concatenated_pdb_info += " ";
+      concatenated_pdb_info += tmp.str()+"  ";
+      tmp.str(std::string());
+      tmp<<"  "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<pit->x*stepSize_+xcorn_<<std::setw(8)<<pit->y*stepSize_+ycorn_<<std::setw(8)<<pit->z*stepSize_+zcorn_<<std::endl;
+      concatenated_pdb_info += tmp.str();
+      counter2++;
+      outPDB_stream<<concatenated_pdb_info;
+
+    }
+    clustNo++;
+  }
+  outPDB_stream.close();
+  outPDB_stream.clear();
+
+}
+
+void PocketGrid::dumpTargetPocketsToFile( std::string const & output_filename ){
+
+
+	// NOTE: THIS FUNCTION DOESN'T WRITE THE WHOLE GRID_
+	//         HERE WE ONLY PROVIDE MINIMAL FUNCTIONALITY TO DO POCKET VS POCKET COMPARISONS....
+
+	utility::io::ozstream outstream;
+	outstream.open(output_filename, std::ios::out);
+
+	// Print stepSize_ xdim_ ydim_ zdim_ xcorn_ ycorn_ zcorn_
+	outstream << stepSize_ << " " << xdim_ << " " << ydim_ << " " << zdim_ << " " << xcorn_ << " " << ycorn_ << " " << zcorn_ << std::endl;
+
+	// Need to print each grid point if it's of type EGGSHELL along with the corresponding cartesian coors ( for eggshell_coord_list_ )
+	for (core::Size x=0;x<xdim_; x++) {
+    for (core::Size y=0;y<ydim_; y++) {
+      for (core::Size z=0;z<zdim_; z++) {
+				if ( ( grid_[x][y][z]==TP_POCKET ) )
+					outstream << x << " " << y << " " << z << " TP_POCKET" << std::endl;
+				if ( ( grid_[x][y][z]==TP_BURIED ) )
+					outstream << x << " " << y << " " << z << " TP_BURIED" << std::endl;
+
+			}
+		}
+	}
+
+	outstream.close();
+	outstream.clear();
 
 }
 
@@ -1206,7 +1328,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
   for (std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit){
     for (std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
       if (grid_[pit->x][pit->y][pit->z]==TP_EDGE || grid_[pit->x][pit->y][pit->z]==PO_EDGE) {
-        bool surf=markOneEdgeDepth(pit->x,pit->y,pit->z, surf_d, bur_d, cit->isTarget());
+        bool surf=markOneEdgeDepth(pit->x,pit->y,pit->z, surf_d, bur_d, cit->isTarget(numTargets_));
         if (surf){
           std::list<PCluster::Cxyz>::iterator tmp = pit;
           pit--;
@@ -1306,7 +1428,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
       if (x+ssteps>=xdim_) en=xdim_;
       else en=x+ssteps+1;
       for (core::Size i=st;i<en;i++){
-        if (grid_[i][y][z]==HSURFACE || grid_[i][y][z]==PSURFACE || grid_[i][y][z]==PSURFACE || grid_[i][y][z]==T_SURFACE) {
+        if (isSurfacePoint(i,y,z)) {
           if (grid_[x][y][z]==POCKET){
             grid_[x][y][z]=PO_BURIED;
           }else grid_[x][y][z]=TP_BURIED;
@@ -1319,7 +1441,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
       if (y+ssteps>=ydim_) en=ydim_;
       else en=y+ssteps+1;
       for (core::Size i=st;i<en;i++){
-        if (grid_[x][i][z]==HSURFACE || grid_[x][i][z]==PSURFACE || grid_[x][i][z]==T_SURFACE) {
+        if (isSurfacePoint(x,i,z)) {
           if (grid_[x][y][z]==POCKET){
             grid_[x][y][z]=PO_BURIED;
           }else grid_[x][y][z]=TP_BURIED;
@@ -1332,7 +1454,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
       if (z+ssteps>=zdim_) en=zdim_;
       else en=z+ssteps+1;
       for (core::Size i=st;i<en;i++){
-        if (grid_[x][y][i]==HSURFACE || grid_[x][y][i]==PSURFACE || grid_[x][y][i]==T_SURFACE) {
+        if (isSurfacePoint(x,y,i)) {
           if (grid_[x][y][z]==POCKET){
             grid_[x][y][z]=PO_BURIED;
           }else grid_[x][y][z]=TP_BURIED;
@@ -1562,7 +1684,14 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
                 if (y==1) if (pit->y == ydim_-1) continue;
                 if (z==1) if (pit->z == zdim_-1) continue;
                 if (grid_[pit->x+x][pit->y+y][pit->z+z]==T_SURFACE) {
-                  cit->target=true;
+                  cit->target_=true;
+                }else if (grid_[pit->x+x][pit->y+y][pit->z+z]==ST_SURFACE) {
+                  cit->subtarget_=true;
+                }
+                if (grid_[pit->x+x][pit->y+y][pit->z+z]==EMPTY || grid_[pit->x+x][pit->y+y][pit->z+z]==PO_SURF || grid_[pit->x+x][pit->y+y][pit->z+z]==TP_SURF) {
+                  cit->solventExposed_=true;
+                }
+                if (cit->target_ && (cit->subtarget_ || numTargets_ == 1) && cit->solventExposed_){
                   x=2;y=2;z=2;
                   pit=cit->points_.end();
                   --pit;
@@ -1573,7 +1702,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 
       //Change target clusters to target types on grid
       for (std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit){
-        if (!cit->isTarget() ) {
+        if (!cit->isTarget(numTargets_) ) {
           for (std::list<PCluster::Cxyz>::iterator pit=cit->points_.begin(); pit != cit->points_.end(); ++pit){
             if (grid_[pit->x][pit->y][pit->z]==TP_POCKET) grid_[pit->x][pit->y][pit->z]=POCKET;
             if (grid_[pit->x][pit->y][pit->z]==TP_SURF) grid_[pit->x][pit->y][pit->z]=PO_SURF;
@@ -1593,13 +1722,13 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
     }
 
     core::Real PocketGrid::largestTargetPocketVolume() {
-      return clusters_.getLargestClusterSize( stepSize_, minPockSize_);
+      return clusters_.getLargestClusterSize( stepSize_, minPockSize_, numTargets_, ignoreBuriedPockets_, ignoreExposedPockets_);
     }
 
     core::Real PocketGrid::netTargetPocketVolume() {
       if (maxPockSize_){
-        return std::min(maxPockSize_, clusters_.getNetClusterSize( stepSize_ , minPockSize_));
-      }else return clusters_.getNetClusterSize( stepSize_ , minPockSize_);
+        return std::min(maxPockSize_, clusters_.getNetClusterSize( stepSize_ , minPockSize_, numTargets_, ignoreBuriedPockets_, ignoreExposedPockets_));
+      }else return clusters_.getNetClusterSize( stepSize_ , minPockSize_, numTargets_, ignoreBuriedPockets_, ignoreExposedPockets_);
     }
 
 
@@ -1684,28 +1813,37 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 
     bool PocketGrid::autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::pose::Pose const & inPose ) {
       core::scoring::constraints::ConformationXYZ const xyz_func( inPose.conformation() );
-      return autoexpanding_pocket_eval(central_rsd, xyz_func, inPose.total_residue());
-    }
-
-    bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::scoring::constraints::XYZ_Func const & xyz_func, Size const total_residues ) {
-      return autoexpanding_pocket_eval(*central_rsds[0], xyz_func, total_residues);
-}
-
-    bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::pose::Pose const & inPose ) {
-      core::scoring::constraints::ConformationXYZ const xyz_func( inPose.conformation() );
-      return autoexpanding_pocket_eval(*central_rsds[0], xyz_func, inPose.total_residue());
+      std::vector< core::conformation::ResidueOP > residues;
+      residues.push_back(central_rsd.clone());
+      return autoexpanding_pocket_eval(residues, xyz_func, inPose.total_residue());
     }
 
     bool PocketGrid::autoexpanding_pocket_eval( core::conformation::Residue const & central_rsd, core::scoring::constraints::XYZ_Func const & xyz_func, Size const total_residues ) {
+      std::vector< core::conformation::ResidueOP > residues;
+      residues.push_back(central_rsd.clone());
+      return autoexpanding_pocket_eval(residues, xyz_func, total_residues);
+    }
+
+    bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::pose::Pose const & inPose ) {
+      core::scoring::constraints::ConformationXYZ const xyz_func( inPose.conformation() );
+      return autoexpanding_pocket_eval(central_rsds, xyz_func, inPose.total_residue());
+    }
+
+    bool PocketGrid::autoexpanding_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::scoring::constraints::XYZ_Func const & xyz_func, Size const total_residues ) {
 
       bool too_small=true;
       while (too_small){
-        recenter( central_rsd );
+        recenter( central_rsds );
 
         for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
           core::conformation::Residue const & rsd( xyz_func.residue(j) );
-          bool target=false;
-          if ( j == central_rsd.seqpos() ) target=true;
+          int target=0;
+          int sz = central_rsds.size();
+          //this should restrict the recentering to those atoms that define the grid.
+          if (sz > (int)MAX_TARGETS) sz = (int)MAX_TARGETS;
+          for (int rnum = 0; rnum < sz; ++rnum){
+            if (j == central_rsds[rnum]->seqpos() ) target=rnum+1;
+          }
 					core::Size total_atoms(0);
 					using namespace basic::options;
 					if (option[ OptionKeys::fingerprint::include_hydrogens ]()){
@@ -1714,10 +1852,10 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 						total_atoms = rsd.nheavyatoms();
 					}
           for(Size i = 1, i_end = total_atoms; i <= i_end; ++i) {
-            bool target_res=target;
-            if (side_chains_only_){
-              if ((central_rsd.atom(i).type()>=18)&&(central_rsd.atom(i).type()<=21)){
-                target_res=false;
+            int target_res=target;
+            if (target_res>0 && side_chains_only_){
+              if ((rsd.atom(i).type()>=18)&&(rsd.atom(i).type()<=21)){
+                target_res=0;
               }
             }
 						numeric::xyzVector<core::Real> rpoint = rotatePoint(rsd.atom(i).xyz().x(),rsd.atom(i).xyz().y(),rsd.atom(i).xyz().z());
@@ -1746,7 +1884,7 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
           size_x_ = size_x_ + dims(1);
           size_y_ = size_y_ + dims(2);
           size_z_ = size_z_ + dims(3);
-          initialize(central_rsd, size_x_, size_y_, size_z_, spacing_, markpsp_, marksps_);
+          initialize(central_rsds, size_x_, size_y_, size_z_, spacing_, markpsp_, marksps_);
         }else{
           too_small=false;
         }
@@ -1816,6 +1954,13 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 
 	bool PocketGrid::DARC_pocket_eval( core::conformation::Residue const & central_rsd, core::pose::Pose const & inPose, numeric::xyzVector<core::Real> grid_center ) {
 		core::scoring::constraints::ConformationXYZ const xyz_func( inPose.conformation() );
+    std::vector< core::conformation::ResidueOP > residues;
+    residues.push_back(central_rsd.clone());
+		return DARC_pocket_eval(residues, xyz_func, inPose.total_residue(), grid_center);
+	}
+
+	bool PocketGrid::DARC_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsd, core::pose::Pose const & inPose, numeric::xyzVector<core::Real> grid_center ) {
+		core::scoring::constraints::ConformationXYZ const xyz_func( inPose.conformation() );
 		return DARC_pocket_eval(central_rsd, xyz_func, inPose.total_residue(), grid_center);
 	}
 
@@ -1823,15 +1968,26 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 			core::conformation::Residue const & central_rsd,
 			core::scoring::constraints::XYZ_Func const & xyz_func,
 			Size const total_residues,
-			numeric::xyzVector<core::Real> /*grid_center*/ )
+			numeric::xyzVector<core::Real> grid_center )
 	{
-		//bool too_small=true;
+    std::vector< core::conformation::ResidueOP > residues;
+    residues.push_back(central_rsd.clone());
+    return DARC_pocket_eval( residues, xyz_func, total_residues, grid_center);
+
+  }
+  bool PocketGrid::DARC_pocket_eval( std::vector< core::conformation::ResidueOP > const & central_rsds, core::scoring::constraints::XYZ_Func const & xyz_func, Size const total_residues, numeric::xyzVector<core::Real> grid_center ) {
+    //bool too_small=true;
 		//while (too_small){
-		//recenter( grid_center.x(), grid_center.y(), grid_center.z() );
+		recenter( grid_center.x(), grid_center.y(), grid_center.z() );
 		for ( Size j = 1, resnum = total_residues; j <= resnum; ++j ) {
           core::conformation::Residue const & rsd( xyz_func.residue(j) );
-          bool target=false;
-          if ( j == central_rsd.seqpos() ) target=true;
+          int target=0;
+          int sz = central_rsds.size();
+          //this should restrict the recentering to those atoms that define the grid.
+          if (sz > (int)MAX_TARGETS) sz = (int)MAX_TARGETS;
+          for (int rnum = 0; rnum < sz; ++rnum){
+            if (j == central_rsds[rnum]->seqpos() ) target=rnum+1;
+          }
 					core::Size total_atoms(0);
 					using namespace basic::options;
 					if (option[ OptionKeys::fingerprint::include_hydrogens ]()){
@@ -1840,10 +1996,10 @@ void PocketGrid::markEdgeDepth(core::Real const & surf_d, core::Real const & bur
 						total_atoms = rsd.nheavyatoms();
 					}
           for(Size i = 1, i_end = total_atoms; i <= i_end; ++i) {
-            bool target_res=target;
+            int target_res=target;
             if (side_chains_only_){
-              if ((central_rsd.atom(i).type()>=18)&&(central_rsd.atom(i).type()<=21)){
-                target_res=false;
+              if ((rsd.atom(i).type()>=18)&&(rsd.atom(i).type()<=21)){
+                target_res=0;
               }
             }
 						numeric::xyzVector<core::Real> rpoint = rotatePoint(rsd.atom(i).xyz().x(),rsd.atom(i).xyz().y(),rsd.atom(i).xyz().z());
@@ -2046,7 +2202,7 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 	core::Real const partial_match_weight = 0.25;
 	core::Real const mismatch_weight = 0.;
 	core::Real match_score = 0.;
-	core::Size output_res_num = 1.;
+	core::Size output_res_num = 1;
 
 	// Loop over all points in the template pocket
 	core::Size template_num_points = 0;
@@ -2062,9 +2218,9 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 				core::Real const template_y = pit->y*template_pocket.stepSize_+template_pocket.ycorn_;
 				core::Real const template_z = pit->z*template_pocket.stepSize_+template_pocket.zcorn_;
 
-				core::Size const self_x_index = Size(floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 ));
-				core::Size const self_y_index = Size(floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 ));
-				core::Size const self_z_index = Size(floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 ));
+				core::Size const self_x_index = (core::Size) floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 );
+				core::Size const self_y_index = (core::Size) floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 );
+				core::Size const self_z_index = (core::Size) floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 );
 
 				//Check to see if template point is within comparison's grid range
 				if ( ( self_x_index < xdim_ ) && ( self_y_index < ydim_ ) && ( self_z_index < zdim_ ) ) {
@@ -2129,6 +2285,65 @@ core::Real PocketGrid::get_pocket_distance( PocketGrid const & template_pocket, 
 	return 1. - sqrt( match_score );
 }
 
+
+TargetPocketGrid::TargetPocketGrid( const PocketGrid& ext_grd): PocketGrid(ext_grd)
+{
+  init();
+	for (core::Size x=0;x<(ext_grd.xdim_); x++){
+		for (core::Size y=0;y<(ext_grd.ydim_); y++){
+			for (core::Size z=0;z<(ext_grd.zdim_); z++){
+				if ( (ext_grd.grid_[x][y][z] == ext_grd.TP_POCKET) || (ext_grd.grid_[x][y][z] == ext_grd.TP_BURIED) || (ext_grd.grid_[x][y][z] == ext_grd.TP_EDGE) ){
+          grid_[x][y][z] = ext_grd.grid_[x][y][z];
+        }
+      }
+    }
+  }
+  findClusters();
+}
+
+TargetPocketGrid::TargetPocketGrid( std::string const & fname ) {
+  // NOTE: THIS FUNCTION DOESN'T FULLY SETUP THE GRID
+	// HERE WE ONLY PROVIDE MINIMAL FUNCTIONALITY TO DO POCKET VS POCKET COMPARISONS....
+
+	utility::io::izstream instream;
+	instream.open(fname, std::ios::in);
+
+	// Read stepSize_ xdim_ ydim_ zdim_ xcorn_ ycorn_ zcorn_
+	instream >> stepSize_ >> xdim_ >> ydim_ >> zdim_ >> xcorn_ >> ycorn_ >> zcorn_;
+
+	// Reset the grid for the new dimensions
+	init();
+
+	// Read the grid points which should be marked EGGSHELL, use these to push onto eggshell_coord_list_
+	// Format is x y z
+	core::Size x, y, z;
+  std::string type;
+	while ( ! instream.eof() ) {
+		instream >> x >> y >> z >> type;
+    if (type.compare("TP_POCKET") == 0){
+		  grid_[x][y][z] = TP_POCKET;
+    }
+    if (type.compare("TP_BURIED") == 0)
+		  grid_[x][y][z] = TP_BURIED;
+	}
+
+	instream.close();
+	instream.clear();
+  findClusters();
+}
+
+void TargetPocketGrid::findClusters(){
+//      clusters_.findClusters();
+  clusterPockets();
+  //mark target clusters
+  for (std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit){
+    cit->target_=true;
+    cit->subtarget_=true;
+    cit->solventExposed_=true;
+  }
+
+}
+
 EggshellGrid::EggshellGrid( const PocketGrid& ext_grd, std::list< numeric::xyzVector<core::Real> > const & eggshell_coord_list):
 	PocketGrid( ext_grd)
 {
@@ -2141,7 +2356,7 @@ EggshellGrid::EggshellGrid( const PocketGrid& ext_grd, std::list< numeric::xyzVe
 	for (core::Size x=0;x<(ext_grd.xdim_); x++){
 		for (core::Size y=0;y<(ext_grd.ydim_); y++){
 			for (core::Size z=0;z<(ext_grd.zdim_); z++){
-				if ( (ext_grd.grid_[x][y][z] == ext_grd.HSURFACE) || (ext_grd.grid_[x][y][z] == ext_grd.PSURFACE) || (ext_grd.grid_[x][y][z] == ext_grd.T_SURFACE) ){
+				if ( (ext_grd.grid_[x][y][z] == ext_grd.HSURFACE) || (ext_grd.grid_[x][y][z] == ext_grd.PSURFACE) || (ext_grd.grid_[x][y][z] == ext_grd.T_SURFACE) || (ext_grd.grid_[x][y][z] == ext_grd.ST_SURFACE) ){
 					if (x != 0) {
 						searchxmin=x-1;
 					}else{
@@ -2229,7 +2444,7 @@ EggshellGrid::EggshellGrid( const PocketGrid& gr ) :
 	for (core::Size x=0;x<(gr.xdim_); x++){
 		for (core::Size y=0;y<(gr.ydim_); y++){
 			for (core::Size z=0;z<(gr.zdim_); z++){
-				if ( (gr.grid_[x][y][z] == gr.HSURFACE) || (gr.grid_[x][y][z] == gr.PSURFACE) || (gr.grid_[x][y][z] == gr.T_SURFACE) /*||(gr.grid_[x][y][z]==gr.TP_SURF)*/ ) {
+				if ( (gr.grid_[x][y][z] == gr.HSURFACE) || (gr.grid_[x][y][z] == gr.PSURFACE) || (gr.grid_[x][y][z] == gr.T_SURFACE)| (gr.grid_[x][y][z] == gr.ST_SURFACE) /*||(gr.grid_[x][y][z]==gr.TP_SURF)*/ ) {
 					if (x != 0) {
 						searchxmin=x-1;
 					}else{
@@ -2428,9 +2643,9 @@ core::Real EggshellGrid::get_eggshell_distance( EggshellGrid const & template_eg
 		core::Real const template_x = pd->x();
 		core::Real const template_y = pd->y();
 		core::Real const template_z = pd->z();
-		core::Size const self_x_index = Size(floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 ));
-		core::Size const self_y_index = Size(floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 ));
-		core::Size const self_z_index = Size(floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 ));
+		core::Size const self_x_index = (core::Size) floor( ( ( template_x - xcorn_ ) / stepSize_ ) + 0.5 );
+		core::Size const self_y_index = (core::Size) floor( ( ( template_y - ycorn_ ) / stepSize_ ) + 0.5 );
+		core::Size const self_z_index = (core::Size) floor( ( ( template_z - zcorn_ ) / stepSize_ ) + 0.5 );
 
 		//Check to see if template point is within comparison's grid range
 		if ( ( self_x_index < xdim_ ) && ( self_y_index < ydim_ ) && ( self_z_index < zdim_ ) ) {

@@ -114,7 +114,7 @@ main( int argc, char * argv [] )
 	std::cout << "Constraint score (unweighted) at start without constraint is: " << starting_pocket_score << std::endl;
 
 	// apply pocket constraint
-	protocols::constraints_additional::PocketConstraintOP pcons( new protocols::constraints_additional::PocketConstraint(input_pose) );
+	protocols::pockets::PocketConstraintOP pcons( new protocols::pockets::PocketConstraint(input_pose) );
 	//input_pose.add_constraint( pcons );
 
 	// rescore, report new score

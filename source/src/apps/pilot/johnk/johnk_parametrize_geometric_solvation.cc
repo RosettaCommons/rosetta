@@ -465,8 +465,7 @@ main( int argc, char * argv [] )
 
 				// Get the Hbond energy
 				core::Real curr_water_hbond;
-				core::Real dummy_chi(0.0);
-				core::scoring::hbonds::hbond_compute_energy(hb_database, hbond_eval_type, AHdis, xD, xH, dummy_chi, curr_water_hbond);
+				core::scoring::hbonds::hbond_compute_energy(hb_database, hbond_eval_type, AHdis, xD, xH, curr_water_hbond);
 
 				// Save the Hbond energy
 				curr_water_hbond *= entropy_scaling;

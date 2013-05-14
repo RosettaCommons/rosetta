@@ -1208,6 +1208,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-pocket_ignore_buried</b> \<Boolean\><dt>
+<dd>Ignore pockets that are not solvent exposed</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-pocket_only_buried</b> \<Boolean\><dt>
+<dd>Identify only pockets buried in the protein core (automatically sets -pocket_ignored_buried false)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-pocket_psp</b> \<Boolean\><dt>
 <dd>Mark Pocket-Solvent-Pocket events as well</dd><br>
 <dd>Default: true</dd><br>
@@ -1236,6 +1246,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-pocket_buried_dist</b> \<Real\><dt>
 <dd>Distance to consider pocket buried</dd><br>
 <dd>Default: 2.0</dd><br>
+</dl>
+<dl>
+<dt><b>-pocket_debug_output</b> \<Boolean\><dt>
+<dd>Print any and all debuggind output related to pockets</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-print_grid</b> \<Boolean\><dt>

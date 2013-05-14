@@ -35,6 +35,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
 
 #include <core/scoring/rms_util.hh>
 

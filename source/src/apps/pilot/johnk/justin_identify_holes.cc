@@ -75,11 +75,11 @@ main( int argc, char * argv [] )
 	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
 
 	// Open output file, generate the header line (save it for printing in the log later), print to file
-	std::string outfname = "list_of_holes.out";
-  utility::io::ozstream outstream;
-	outstream.open(outfname, std::ios::out);
+	//	std::string outfname = "list_of_holes.out";
+	//  utility::io::ozstream outstream;
+	//	outstream.open(outfname, std::ios::out);
 
-	outstream << "fname max_void_volume" << std::endl;
+	//	outstream << "fname max_void_volume" << std::endl;
 
 	for (core::Size f=1; f <= basic::options::start_files().size(); f++) {
 
@@ -101,16 +101,16 @@ main( int argc, char * argv [] )
 		curr_pose.dump_pdb(out_cavpdb_stream);
 		core::scoring::packstat::output_packstat_pdb( curr_pose, out_cavpdb_stream );
 
-		//		core::Real max_cluster_volume = core::scoring::packstat::output_packstat_pdb( curr_pose, out_cavpdb_stream );
 		//		outstream << curr_decoy_fname << ' ' << max_cluster_volume << std::endl;
-		//		TR << "Found max void volume " << max_cluster_volume << std::endl;
+		core::Real max_cluster_volume = 0.;
+		TR << "Found max void volume " << max_cluster_volume << std::endl;
 
 	}
 
 	TR << "Done identifying holes" << std::endl;
 
-	outstream.close();
-	outstream.clear();
+	//	outstream.close();
+	//	outstream.clear();
 
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;

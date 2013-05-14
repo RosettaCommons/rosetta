@@ -254,12 +254,15 @@ namespace pocket_grid { BooleanOptionKey const pocket_side( "pocket_grid:pocket_
 namespace pocket_grid { BooleanOptionKey const pocket_dump_pdbs( "pocket_grid:pocket_dump_pdbs" );  }
 namespace pocket_grid { BooleanOptionKey const pocket_dump_rama( "pocket_grid:pocket_dump_rama" );  }
 namespace pocket_grid { BooleanOptionKey const pocket_restrict_size( "pocket_grid:pocket_restrict_size" );  }
+namespace pocket_grid { BooleanOptionKey const pocket_ignore_buried( "pocket_grid:pocket_ignore_buried" );  }
+namespace pocket_grid { BooleanOptionKey const pocket_only_buried( "pocket_grid:pocket_only_buried" );  }
 namespace pocket_grid { BooleanOptionKey const pocket_psp( "pocket_grid:pocket_psp" );  }
 namespace pocket_grid { BooleanOptionKey const pocket_sps( "pocket_grid:pocket_sps" );  }
 namespace pocket_grid { RealOptionKey const pocket_surface_score( "pocket_grid:pocket_surface_score" );  }
 namespace pocket_grid { RealOptionKey const pocket_surface_dist( "pocket_grid:pocket_surface_dist" );  }
 namespace pocket_grid { RealOptionKey const pocket_buried_score( "pocket_grid:pocket_buried_score" );  }
 namespace pocket_grid { RealOptionKey const pocket_buried_dist( "pocket_grid:pocket_buried_dist" );  }
+namespace pocket_grid { BooleanOptionKey const pocket_debug_output( "pocket_grid:pocket_debug_output" );  }
 namespace pocket_grid { BooleanOptionKey const print_grid( "pocket_grid:print_grid" );  }
 namespace pocket_grid { BooleanOptionKey const extend_eggshell( "pocket_grid:extend_eggshell" );  }
 namespace pocket_grid { RealOptionKey const extend_eggshell_dist( "pocket_grid:extend_eggshell_dist" );  }
@@ -697,7 +700,3 @@ namespace loopfcst { BooleanOptionKey const use_general_protocol( "loopfcst:use_
 namespace loopfcst { FileOptionKey const coord_cst_weight_array( "loopfcst:coord_cst_weight_array" );  }
 namespace loopfcst { FileOptionKey const dump_coord_cst_weight_array( "loopfcst:dump_coord_cst_weight_array" );  }
 namespace jumps { BooleanOptionKey const jumps( "jumps" );  }
-namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
-namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
-namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
-namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }

@@ -76,7 +76,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh> 
+#include <core/scoring/rms_util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 
@@ -259,16 +259,15 @@ int main( int argc, char * argv [] ){
         NEW_OPT( print_init, "print the initial complex for debugging", true );
         NEW_OPT( print_unbound, "print the mimized protein for debugging", true );
         NEW_OPT( print_complex, "print the minimized complex", true );
-        NEW_OPT( iface_rmsd, "calculate the interface rmsd", true );
+        NEW_OPT( iface_rmsd, "calculate the interface rmsd", false );
 	NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
-	
+
 
 	devel::init(argc, argv);
 
 	//setup scorefxn
 	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
 	scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
-	repack_scorefxn->set_weight( core::scoring::fa_dun, 0.1 ); // this works for BAFF (1oqe)
 
         std::string const ref_decoy_fname = option[ ref_decoy ];
 // create pose from pdb
@@ -381,7 +380,7 @@ int main( int argc, char * argv [] ){
 	pack::task::PackerTaskOP base_packer_task( pack::task::TaskFactory::create_packer_task( bound_pose ));
   base_packer_task->set_bump_check( false );
   base_packer_task->initialize_from_command_line();
-  base_packer_task->or_include_current( true ); // jk absolutely critical for BAFF case, Tyr65 is unusual
+  base_packer_task->or_include_current( true );
 
   for ( Size ii = 1; ii <= bound_pose.total_residue(); ++ii ) {
     base_packer_task->nonconst_residue_task(ii).restrict_to_repacking();
@@ -422,7 +421,8 @@ int main( int argc, char * argv [] ){
 	//setup the unbound pose
 	core::pose::Pose unbound_pose = bound_pose;
 	core::Real const unbound_dist = 80.;
-  Size const rb_jump = 1; // use the first jump as the one between partners
+  //Size const rb_jump = 1; // use the first jump as the one between partners
+	Size const rb_jump = bound_pose.num_jump(); // use the LAST jump as the one between partners
 	protocols::rigid::RigidBodyTransMover trans_mover( unbound_pose, rb_jump );
   trans_mover.trans_axis( trans_mover.trans_axis() );
   trans_mover.step_size(unbound_dist);
@@ -481,7 +481,7 @@ int main( int argc, char * argv [] ){
 	Interface_unsat = bound_unsat - unbound_unsat;
 
 	std::cout << "Interface_Scores:" <<"	"<< input_pdb_name <<"	" << bound_energy <<"	" << Interface_Energy <<"	"<< Total_BSA <<"	"<< Interface_HB <<"	"<< Total_packstats <<"	"<< Interface_unsat << std::endl;
-  
+
 
         if (option[ iface_rmsd ]){
 		core::Real CA_rms = calpha_pdb_superimpose_pose( unbound_pose, ref_pose);
@@ -495,7 +495,7 @@ int main( int argc, char * argv [] ){
 
 
      }//end for loop of all decoys
- 
+
 	outstream.close();
         outstream.clear();
 	} catch ( utility::excn::EXCN_Base const & e ) {

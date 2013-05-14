@@ -238,6 +238,8 @@ void PocketConstraint::set_target_res_pdb( core::pose::Pose const & pose, std::s
 void
 PocketConstraint::score( core::scoring::constraints::XYZ_Func const & xyz_func, core::scoring::EnergyMap const & weights, core::scoring::EnergyMap & emap ) const
 {
+  using namespace basic::options;
+  bool debug = option[ OptionKeys::pocket_grid::pocket_dump_pdbs ]();
 	//std::cout<< "hi\n";
 	//TR<<"hi\n";
 	if ( weights[ this->score_type() ] == 0 ) return;
@@ -250,6 +252,8 @@ PocketConstraint::score( core::scoring::constraints::XYZ_Func const & xyz_func, 
 	core::Real cst_avg = 0;
 	core::Real largestPocketVol;
 
+  if (debug)  TR<<"Pocket Volumes: ";
+
 	for (core::Size angleCount=0; angleCount < (angles_ - 1); ++angleCount){
 		pocketgrid_ -> randomAngle();
 		if (seqpos_ != 0){
@@ -260,6 +264,7 @@ PocketConstraint::score( core::scoring::constraints::XYZ_Func const & xyz_func, 
 		}
 		core::Real largestPocketVol=pocketgrid_->netTargetPocketVolume();
 		cst_avg += largestPocketVol;
+    if (debug) TR<<largestPocketVol<<" ";
 	}
 
 	pocketgrid_ -> zeroAngle();
@@ -287,7 +292,9 @@ PocketConstraint::score( core::scoring::constraints::XYZ_Func const & xyz_func, 
 	//core::Real largestPocketVol=0;
 
 	cst_avg += largestPocketVol;
-	cst_avg /= angles_;
+	if (debug) TR<<largestPocketVol<<" ";
+  cst_avg /= angles_;
+  if (debug) TR<<"Average: "<<cst_avg<<std::endl;
 	cst_val *= (cst_avg);
 	//cst_val *= (vol);
 	//cst_val *= (vol*vol/sa);

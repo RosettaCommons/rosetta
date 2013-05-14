@@ -143,13 +143,12 @@ int main( int argc, char * argv [] ) {
 			for (int i=0; i<angles; ++i){
 				core::pose::Pose temp_pose;
 				temp_pose = protein_pose;
-				core::Real x,y,z;
-				x = (int) (numeric::random::uniform() *89 +1);
-				y = (int) (numeric::random::uniform() *89 +1);
-				z = (int) (numeric::random::uniform() *89 +1);
-				numeric::xyzMatrix<core::Real> x_rot_mat( numeric::x_rotation_matrix_degrees(x) );
-				numeric::xyzMatrix<core::Real> y_rot_mat( numeric::y_rotation_matrix_degrees(y) );
-				numeric::xyzMatrix<core::Real> z_rot_mat( numeric::z_rotation_matrix_degrees(z) );
+				core::Real x = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
+				core::Real y = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
+				core::Real z = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
+				numeric::xyzMatrix<core::Real> x_rot_mat( numeric::x_rotation_matrix_radians(x) );
+				numeric::xyzMatrix<core::Real> y_rot_mat( numeric::y_rotation_matrix_radians(y) );
+				numeric::xyzMatrix<core::Real> z_rot_mat( numeric::z_rotation_matrix_radians(z) );
 				numeric::xyzMatrix<core::Real> tot_rot_mat = z_rot_mat * y_rot_mat * x_rot_mat;
 				core::Vector v(0,0,0);
 				temp_pose.apply_transform_Rx_plus_v(tot_rot_mat, v);
@@ -165,9 +164,9 @@ int main( int argc, char * argv [] ) {
 				}
 			}
 
-			numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_degrees( original_pocket_angle_transform[1] ) );
-			numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_degrees( original_pocket_angle_transform[2] ) );
-			numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_degrees( original_pocket_angle_transform[3] ) );
+			numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_radians( original_pocket_angle_transform[1] ) );
+			numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_radians( original_pocket_angle_transform[2] ) );
+			numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_radians( original_pocket_angle_transform[3] ) );
 			numeric::xyzMatrix<core::Real> bestxyz_rot_mat = bestz_rot_mat * besty_rot_mat * bestx_rot_mat;
 			core::Vector v(0,0,0);
 			protein_pose.apply_transform_Rx_plus_v(bestxyz_rot_mat, v);
@@ -203,9 +202,9 @@ int main( int argc, char * argv [] ) {
 	pose::Pose small_mol_pose;
 	core::import_pose::pose_from_pdb( small_mol_pose, input_ligand );
 	core::pose::Pose original_pose = small_mol_pose;
-	numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_degrees(original_pocket_angle_transform[1] ) );
-	numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_degrees(original_pocket_angle_transform[2] ) );
-	numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_degrees(original_pocket_angle_transform[3] ) );
+	numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_radians(original_pocket_angle_transform[1] ) );
+	numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_radians(original_pocket_angle_transform[2] ) );
+	numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_radians(original_pocket_angle_transform[3] ) );
 	numeric::xyzMatrix<core::Real> bestxyz_rot_mat = bestz_rot_mat * besty_rot_mat * bestx_rot_mat;
 	core::Vector v(0,0,0);
 	small_mol_pose.apply_transform_Rx_plus_v(bestxyz_rot_mat, v);
@@ -274,15 +273,6 @@ int main( int argc, char * argv [] ) {
 	//fp_name = "opt_fp_" + tag + ".pdb";
 	//pf.dump_oriented_pose_and_fp_to_pdb(pose_name, fp_name, npf, optimal_angle1, optimal_angle2, optimal_angle3, original_pocket_angle_transform);
 
-	//	numeric::xyzVector<core::Real> init_origin = pocket_CoM;
-	//	utility::vector1<core::Real> vars(6);
-	//vars[1] = 0.; // init_origin.x();
-	//vars[2] = 0.; // init_origin.y();
-	//vars[3] = 0.; // init_origin.z();
-	//vars[4]=  optimal_angle1; // * numeric::constants::f::pi_over_180;
-	//vars[5] = optimal_angle2; // * numeric::constants::f::pi_over_180;
-	//vars[6] = optimal_angle3; // * numeric::constants::f::pi_over_180;
-
 	utility::vector1<core::Real> p_min(6);
 	p_min[1] = origin_space * -1; // init_origin.x() - 4.;
 	p_min[2] = origin_space * -1; // init_origin.x() - 4.;
@@ -295,13 +285,14 @@ int main( int argc, char * argv [] ) {
 	p_max[1] = origin_space; // init_origin.x() + 4.;
 	p_max[2] = origin_space; // init_origin.y() + 4.;
 	p_max[3] = origin_space; // init_origin.z() + 4.;
-	p_max[4] = 360.; // * numeric::constants::f::pi_over_180;
-	p_max[5] = 360.; // * numeric::constants::f::pi_over_180;
-	p_max[6] = 360.; // * numeric::constants::f::pi_over_180;
-
+	p_max[4] = numeric::constants::r::pi_2;
+	p_max[5] = numeric::constants::r::pi_2;
+	p_max[6] = numeric::constants::r::pi_2;
 
 	ParticleOPs particles;
-	protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt);
+	std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
+	exit(1);
+	protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, 1);
 	core::optimization::ParticleSwarmMinimizer pso(p_min, p_max);
 	particles = pso.run(run_size, fpm, particle_size);
 	//fpm.dump(vars);

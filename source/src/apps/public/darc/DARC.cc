@@ -204,7 +204,7 @@ int main( int argc, char * argv [] ) {
 			rot_poses[ii] = new core::pose::Pose(small_mol_pose, ii, ii);
 			protocols::pockets::PlaidFingerprint conf_pf( *rot_poses[ii], npf );
 			protocols::pockets::FingerprintMultifunc fpm(npf, conf_pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);
-			protocols::pockets::DarcParticleSwarmMinimizer pso( npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, p_min, p_max);
+			protocols::pockets::DarcParticleSwarmMinimizer pso( npf, conf_pf, missing_pt_wt, steric_wt, extra_pt_wt, p_min, p_max);
 			//core::optimization::ParticleSwarmMinimizer pso(p_min, p_max);
 			particles = pso.run(run_size, fpm, particle_size);
 			ParticleOP p = particles[1];
@@ -347,11 +347,10 @@ int main( int argc, char * argv [] ) {
 
 		// calculate and store total metrics for bound and unbound poses
 		core::Real bound_energy = 0.0, unbound_energy = 0.0, Interface_Energy = 0.0;
-		// variables below unused ~Labonte
-		//core::Real bound_sasa = 0.0, unbound_sasa = 0.0, Total_BSA = 0.0;
-		//core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
-		//core::Real bound_packstat = 0.0, unbound_packstat = 0.0, Total_packstats = 0.0;
-		//core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
+		core::Real bound_sasa = 0.0, unbound_sasa = 0.0, Total_BSA = 0.0;
+		core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
+		core::Real bound_packstat = 0.0, unbound_packstat = 0.0, Total_packstats = 0.0;
+		core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
 
 		//calculate interface Energy
 		bound_energy = bound_pose.energies().total_energy();
@@ -360,34 +359,42 @@ int main( int argc, char * argv [] ) {
 
 		//delta sasa calculation
 		bound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
-		//bound_sasa = tot_sasa_mval.value();  // unused ~Labonte
+		bound_sasa = tot_sasa_mval.value();
 		unbound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
-		//unbound_sasa = tot_sasa_mval.value();  // unused ~Labonte
-		//Total_BSA = unbound_sasa - bound_sasa;  // unused ~Labonte
+		unbound_sasa = tot_sasa_mval.value();
+		Total_BSA = unbound_sasa - bound_sasa;
 
 		//interface hb calculation
 		bound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
-		//bound_hb = tot_hb_mval.value();  // unused ~Labonte
+		bound_hb = tot_hb_mval.value();
 		unbound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
-		//unbound_hb = tot_hb_mval.value();  // unused ~Labonte
-		//Interface_HB = bound_hb - unbound_hb;  // unused ~Labonte
+		unbound_hb = tot_hb_mval.value();
+		Interface_HB = bound_hb - unbound_hb;
 
 		//packstat calculation
 		bound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
-		//bound_packstat = tot_packstat_mval.value();  // unused ~Labonte
+		bound_packstat = tot_packstat_mval.value();
 		unbound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
-		//unbound_packstat = tot_packstat_mval.value();  // unused ~Labonte
-		//Total_packstats = bound_packstat - unbound_packstat;  // unused ~Labonte
+		unbound_packstat = tot_packstat_mval.value();
+		Total_packstats = bound_packstat - unbound_packstat;
 
 		//unsat polar calculation
 		bound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
-		//bound_unsat = tot_unsat_mval.value();  // unused ~Labonte
+		bound_unsat = tot_unsat_mval.value();
 		unbound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
-		//unbound_unsat = tot_unsat_mval.value();  // unused ~Labonte
-		//Interface_unsat = bound_unsat - unbound_unsat;  // unused ~Labonte
+		unbound_unsat = tot_unsat_mval.value();
+		Interface_unsat = bound_unsat - unbound_unsat;
 
-		std::cout << "SCORES : " << tag <<"\n"<< "DARC Score : " << best_DARC_score <<"\n"<< "Total Energy : ";
-		std::cout << bound_energy <<"\n"<< "Interface Energy : "<< Interface_Energy << std::endl;
+		std::cout << "SCORES : " << tag << "\n";
+		std::cout << "DARC Score : " << best_DARC_score << "\n";
+		std::cout << "Total Energy : " << bound_energy << "\n";
+		std::cout << "Interface Energy : " << Interface_Energy << "\n";
+		std::cout << "Total packstats : " << Total_packstats << "\n";
+		std::cout << "Total BSA : " << Total_BSA << "\n";
+		std::cout << "Interface HB : " << Interface_HB << std::endl;
+		std::cout << "Interface Unsat : " << Interface_unsat << std::endl;
+
+
 	}
 
 	} catch ( utility::excn::EXCN_Base const & e ) {

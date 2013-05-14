@@ -166,20 +166,21 @@ DarcParticleSwarmMinimizer::DarcPSO_fp_compare_(
 			while ( curr_phi < atom_maxmin_phipsi[curr_array_inx].z ) {
 				curr_phi += numeric::constants::r::pi_2;
 			}
-			while ( curr_phi > atom_maxmin_phipsi[curr_array_inx].x ) {
-				curr_phi -= numeric::constants::r::pi_2;
-			}
-			if ( curr_phi < atom_maxmin_phipsi[curr_array_inx].z ) continue;
-			if ( curr_phi > atom_maxmin_phipsi[curr_array_inx].x ) continue;
 
-			while ( curr_psi < atom_maxmin_phipsi[curr_array_inx].w ) {
-				curr_psi += numeric::constants::r::pi_2;
-			}
-			while ( curr_psi > atom_maxmin_phipsi[curr_array_inx].y ) {
-				curr_psi -= numeric::constants::r::pi_2;
-			}
-			if ( curr_psi < atom_maxmin_phipsi[curr_array_inx].w ) continue;
-			if ( curr_psi > atom_maxmin_phipsi[curr_array_inx].y ) continue;
+      while ( curr_phi > atom_maxmin_phipsi[curr_array_inx].x ) {
+        curr_phi -= numeric::constants::r::pi_2;
+      }
+      if ( curr_phi < atom_maxmin_phipsi[curr_array_inx].z ) continue;
+      if ( curr_phi > atom_maxmin_phipsi[curr_array_inx].x ) continue;
+
+      while ( curr_psi < atom_maxmin_phipsi[curr_array_inx].w ) {
+        curr_psi += numeric::constants::r::pi_2;
+      }
+      while ( curr_psi > atom_maxmin_phipsi[curr_array_inx].y ) {
+        curr_psi -= numeric::constants::r::pi_2;
+      }
+      if ( curr_psi < atom_maxmin_phipsi[curr_array_inx].w ) continue;
+      if ( curr_psi > atom_maxmin_phipsi[curr_array_inx].y ) continue;
 
 			core::Real const min_intersect_SQ = Find_Closest_Intersect_SQ(curr_phi, curr_psi,
 					atoms[curr_array_inx].x, atoms[curr_array_inx].y, atoms[curr_array_inx].z, atoms[curr_array_inx].w);

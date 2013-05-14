@@ -44,7 +44,7 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <numeric/random/random.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculator.hh>
-
+#include <core/scoring/dssp/Dssp.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -84,6 +84,19 @@ void register_metrics() {
   core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 
 }
+
+void
+setup_secstruct_dssp( pose::Pose & pose )
+{
+  core::scoring::dssp::Dssp dssp( pose );
+  FArray1D_char dssp_secstruct( pose.total_residue() );
+  dssp.dssp_reduced( dssp_secstruct );
+  for (Size i = 1; i <= pose.total_residue(); i++ ) {
+    pose.set_secstruct(i,  dssp_secstruct(i) );
+  }
+
+}
+
 
 /// General testing code
 int
@@ -126,15 +139,38 @@ std::set <std::string> interface;
   core::Size max_resi = option [ max_residues ];
   basic::MetricValue< utility::vector1< Real > > resisasa;
   pose.metric( "sasa", "residue_sasa", resisasa );
+  setup_secstruct_dssp(pose);
 
   for( Size i = 1; i <= pose.total_residue(); ++i){
-    if (resisasa.value()[i]>= sasa_threshold){
+    int close = 0;
+    for( Size j = 1; j <= pose.total_residue(); ++j){
+      if (i == j) continue;
+      //make sure it's not within 12A of the interface
       std::ostringstream residuestream;
-      residuestream << pose.pdb_info()->chain(i) << pose.pdb_info()->number(i);
+      residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);
       std::string res_id = residuestream.str();
-      if (interface.find(res_id) == interface.end()){
-        //std::cout<<res_id<<std::endl;
-        surface.push_back(res_id);
+      if (interface.find(res_id) != interface.end()){
+        if ( pose.residue(i).xyz( pose.residue(i).nbr_atom() ).distance( pose.residue(j).xyz( pose.residue(j).nbr_atom() ) ) <= 12 ){
+          close = 1;
+          break;
+        }
+      }
+      //make sure it's not within 12A of a *meric interface
+      if ( pose.pdb_info()->chain(i) == pose.pdb_info()->chain(j) ) continue;
+      if ( pose.residue(i).xyz( pose.residue(i).nbr_atom() ).distance( pose.residue(j).xyz( pose.residue(j).nbr_atom() ) ) <= 12 ){
+        close = 1;
+      }
+
+    }
+    if (!close){
+      if (resisasa.value()[i]>= sasa_threshold && pose.secstruct(i) != 'L'){
+        std::ostringstream residuestream;
+        residuestream << pose.pdb_info()->chain(i) << pose.pdb_info()->number(i);
+        std::string res_id = residuestream.str();
+        if (interface.find(res_id) == interface.end()){
+          //std::cout<<res_id<<std::endl;
+          surface.push_back(res_id);
+        }
       }
     }
   }
@@ -147,32 +183,50 @@ std::set <std::string> interface;
 
 
   if ( max_resi < surface.size()){
-    std::set<int> indeces;
+    std::set<std::string> indeces;
     for (core::Size i = 0; i < max_resi; i++){
       int r=(int) (numeric::random::uniform() * surface.size());
-      if (indeces.find(r) == indeces.end()){
-        indeces.insert(r);
-        /*if (indeces.size() == 0) indeces.insert(i);
-        else{
-          for (std::set<int>::iterator it=indeces.begin(); true; it++){
-            if (it == indeces.end()) {
-              indeces.insert(i);
-              break;
-            }
-            if (r < *it){
-              indeces.insert(it, r);
+      std::string rname(surface[r]);
+      if (indeces.find(surface[r]) == indeces.end()){
+        indeces.insert(surface[r]);
+
+        //remove nearest neighbors
+        core::Size pos = 0;
+        for( Size j = 1; j <= pose.total_residue(); ++j){
+          std::ostringstream residuestream;
+          residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);
+          std::string res_id = residuestream.str();
+          if (!res_id.compare(surface[r])){
+            pos = j;
+            break;
+          }
+        }
+        for (std::vector<std::string>::iterator it2=surface.begin(); it2 != surface.end(); it2++){
+          core::Size(pos2) = 0;
+          for( Size j = 1; j <= pose.total_residue(); ++j){
+            std::ostringstream residuestream;
+            residuestream << pose.pdb_info()->chain(j) << pose.pdb_info()->number(j);
+            std::string res_id = residuestream.str();
+            if (!res_id.compare(*it2)){
+              pos2 = j;
               break;
             }
           }
+          if (pos == pos2) continue;
+          if ( pose.residue(pos).xyz( pose.residue(pos).nbr_atom() ).distance( pose.residue(pos2).xyz( pose.residue(pos2).nbr_atom() ) ) <= 12 ){
+            if (it2 != surface.begin()) --it2;
+            surface.erase(it2);
+            if (max_resi == surface.size()) max_resi--;
+          }
+
         }
-      */
       }else{
         i--;
       }
     }
     //sort (indeces.begin(), indeces.end());
-    for (std::set<int>::iterator it=indeces.begin(); it != indeces.end(); it++){
-      os<<surface[*it]<<std::endl;
+    for (std::set<std::string>::iterator it=indeces.begin(); it != indeces.end(); it++){
+      os<<*it<<std::endl;
     }
   }else{
     for (std::vector<std::string>::iterator it=surface.begin(); it != surface.end(); it++){

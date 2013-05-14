@@ -137,7 +137,7 @@ std::set <std::string> interface;
         std::cout<<seq[j-1]<<"\n";
         core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( seq[j-1] ).exclude_variants().select( rsd_set )[1] );
         core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
-        pose.append_polymer_residue_after_seqpos(*new_rsd, i, true );
+        pose.append_polymer_residue_after_seqpos(*new_rsd, i, false );
         pose.pdb_info()->number(i+2, pose.pdb_info()->number(i)-1);
         pose.pdb_info()->chain(i+2, pose.pdb_info()->chain(i));
       }
@@ -147,7 +147,7 @@ std::set <std::string> interface;
         std::cout<<seq[j-1]<<"\n";
         core::chemical::ResidueTypeCOP new_rsd_type( core::chemical::ResidueSelector().set_name1( seq[j-1] ).exclude_variants().select( rsd_set )[1] );
         core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( *new_rsd_type ) );
-        pose.append_polymer_residue_after_seqpos(*new_rsd, i-1, true );
+        pose.append_polymer_residue_after_seqpos(*new_rsd, i-1, false );
         pose.pdb_info()->number(i, pose.pdb_info()->number(i-1)+1);
         pose.pdb_info()->chain(i, pose.pdb_info()->chain(i-1));
         i++;

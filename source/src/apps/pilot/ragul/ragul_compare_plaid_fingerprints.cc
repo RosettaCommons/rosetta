@@ -63,8 +63,8 @@ int main( int argc, char * argv [] ) {
 
 	NEW_OPT( input_ligand_file1, "ligand1 file name", "ligand1.pdb" );
 	NEW_OPT( input_ligand_file2, "ligand2 file name", "ligand2.pdb" );
-	NEW_OPT( phi_increment, "phi increment", 2.0 );
-	NEW_OPT( psi_increment, "psi increment", 2.0 );
+	NEW_OPT( phi_increment, "phi increment", 0.035 ); // about 2 degrees
+	NEW_OPT( psi_increment, "psi increment", 0.035 ); // about 2 degrees
 
   devel::init(argc, argv);
 

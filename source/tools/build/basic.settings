@@ -711,6 +711,11 @@ settings = {
 
     "gcc, macos, opencl" : {
         "appends" : {
+            "include_path"  : [ "/Developer/GPU\ Computing/OpenCL/common/inc", "/Developer/GPU\ Computing/OpenCL/common/inc/CL", "/Developer/GPU\ Computing/shared/inc", "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc", "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL", "/Developer-3.2.6/GPU\ Computing/shared/inc" ],
+#            "include_path"  : [ "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc", "/Developer-3.2.6/GPU\ Computing/OpenCL/common/inc/CL", "/Developer-3.2.6/GPU\ Computing/shared/inc" ],
+#            "include_path"  : [ "/Developer/GPU\ Computing/OpenCL/common/inc", "/Developer/GPU\ Computing/OpenCL/common/inc/CL", "/Developer/GPU\ Computing/shared/inc" ],
+#            "libraries"     : [ "OpenCL" ],
+#            "library_path"  : [ "/Developer/CUDA/lib" ],
             "defines"       : [ "USEOPENCL", "MACOPENCL" ],
             "flags" : {
                 "link":       [ "framework OpenCL" ],
@@ -876,11 +881,6 @@ settings = {
         "override" : {
            "version" : [ "12","0" ],
         },
-    },
-    "icc, 13.1, linux" : {
-	"override" : {
-	   "version" : [ "13","1" ],
-	},
     },
     "icc, linux, debug" : {
         "appends" : {

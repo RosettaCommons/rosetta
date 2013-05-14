@@ -152,37 +152,11 @@ int main( int argc, char * argv [] )
 	f1_info += f1_tmp.str();
         f1_tmp.str(std::string());
 
-  //2d vector array
-/*
-   for (core::Real i = 1.0; i > -1.05; i+= -0.05){
-   phiAngle.push_back(i);
-   }
-
-   for (core::Real j = -180; j <= 180; j+=5){
-   psiAngle.push_back(j);
-   }
-
-   for( vector::iterator ith = phiAngle.begin(); ith != phiAngle.end(); ith++ ){
-   for( vector::iterator its = psiAngle.begin(); its != psiAngle.end(); its++ ){
-   MaxDist[phiAngle][psiAngle] = 0;
-   }
-*/
 
 
-
-
-	for (core::Real Cphi = 1.0; Cphi > -1.05; Cphi+= -0.05){
-	for (core::Real psiAngle = -180; psiAngle <= 180; psiAngle+=5){
-        MaxDist[phiAngle][psiAngle] = 0;
-        std::cout<<MaxDist[phiAngle][psiAngle]<<"..hi.."<<std::endl;
-   }
-}
-
-
-
-	for (core::Real Cphi = 1.0; Cphi > -1.05; Cphi+= -0.05){
-	for (core::SSize psiAngle = -180; psiAngle <= 180; psiAngle+=5){
-	phiAngle = acos(Cphi) * DEGS_PER_PI;
+	for (core::Real Cphi = numeric::constants::r::pi_over_180; Cphi > -numeric::constants::r::pi_over_180; Cphi+= -0.0009){
+		for (core::Real psiAngle = -numeric::constants::r::pi; psiAngle <= numeric::constants::r::pi; psiAngle+=0.09){ // ~5 degrees
+	phiAngle = acos(Cphi);
 	Find_Intersect(phiAngle,psiAngle,atomX,atomY,atomZ,atom_radius);
 
 	      }
@@ -201,9 +175,9 @@ int main( int argc, char * argv [] )
        	std::string f2_info;
        	std::stringstream  f2_tmp;
 
-	for (core::Real Cphi = 1.0; Cphi > -1.05; Cphi+= -0.05){
-        for (core::SSize psiAngle = -180; psiAngle <= 180; psiAngle+=5){
-	phiAngle = acos(Cphi) * DEGS_PER_RAD;
+	for (core::Real Cphi = numeric::constants::r::pi_over_180; Cphi > -numeric::constants::r::pi_over_180; Cphi+= -0.0009){
+		for (core::Real psiAngle = -numeric::constants::r::pi; psiAngle <= numeric::constants::r::pi; psiAngle+=0.09){ // ~5 degrees
+	phiAngle = acos(Cphi);
 	if (MaxDist[phiAngle][psiAngle] != 0)
 	{
 	f1_tmp<<"ATOM      1  I   SUR     1    "<<std::setw(8)<<std::fixed<<std::setprecision(3)<<Xpoint[phiAngle][psiAngle]+comx<<std::setw(8)<<std::fixed<<std::setprecision(3)<<Ypoint[phiAngle][psiAngle]+comy<<std::setw(8)<<std::fixed<<std::setprecision(3)<<Zpoint[phiAngle][psiAngle]+comz<<std::endl;
@@ -273,17 +247,14 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 core::Real Find_Intersect(core::SSize const & phiAngle , core::SSize const & psiAngle, core::Real const & atomX, core::Real const & atomY, core::Real const & atomZ, core::Real const & atom_radius){
 
-        const core::Real PI = numeric::NumericTraits<Real>::pi();
-        const core::Real RADS_PER_DEG = PI / 180.;
-        const core::Real DEGS_PER_RAD = 180. / PI;
 	core::Real const CoMX = 0.0;	core::Real const CoMY = 0.0;	core::Real const CoMZ = 0.0;
 	core::Real RandomDist,dirX,dirY,dirZ,dot_direction;
 
 	// compute this from phi/psi, relative to CoM
-	RandomDist = rand() % (80-30-1) + 30 + 1;
-	dirX = RandomDist*sin(phiAngle*(RADS_PER_DEG))*cos(psiAngle*(RADS_PER_DEG));
-	dirY = RandomDist*sin(phiAngle*(RADS_PER_DEG))*sin(psiAngle*(RADS_PER_DEG));
-	dirZ = RandomDist*cos(phiAngle*(RADS_PER_DEG));
+	RandomDist = numeric::constants::r::pi_over_180 * ( rand() % (80-30-1) + 30 + 1 );
+	dirX = RandomDist*sin(phiAngle)*cos(psiAngle);
+	dirY = RandomDist*sin(phiAngle)*sin(psiAngle);
+	dirZ = RandomDist*cos(phiAngle);
 //	std::cout<<RandomDist<<std::endl;
 //	std::cout<<phiAngle<<" " <<psiAngle<<std::endl;
 
@@ -363,8 +334,8 @@ core::Real Find_Intersect(core::SSize const & phiAngle , core::SSize const & psi
 //	std::cout << MaxDist[phiAngle][psiAngle] << " " << Xpoint[phiAngle][psiAngle] <<" "<< Ypoint[phiAngle][psiAngle] << " " << Zpoint[phiAngle][psiAngle]<<std::endl;
 	}
 } catch ( utility::excn::EXCN_Base const & e ) {
-	std::cout << "caught exception " << e.msg() << std::endl; 
-} 
+	std::cout << "caught exception " << e.msg() << std::endl;
+}
 	return 0;
 }
 

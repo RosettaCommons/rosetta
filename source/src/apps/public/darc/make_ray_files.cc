@@ -9,15 +9,52 @@
 
 /// @author Ragul Gowthaman
 
+//GPU enabling is not default
+//To test how many threads are fastest for your computer,
+//use -gpu:threads 1024 (or other number) on the command line
+
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <ostream>
+#include <string>
+#include <sstream>
+#include <cmath>
+#include <map>
+
 // Protocol Headers
 #include <devel/init.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/pockets/PocketGrid.hh>
 #include <protocols/pockets/Fingerprint.hh>
-#include <protocols/pockets/FingerprintMultifunc.hh>
-#include <core/optimization/ParticleSwarmMinimizer.hh>
+//#include <protocols/pockets/FingerprintMultifunc.hh>
+//#include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/excn/Exceptions.hh>
+
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <core/pose/PDBInfo.hh>
+#include <basic/Tracer.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <core/conformation/Conformation.hh>
+#include <basic/options/util.hh>
+#include <basic/options/after_opts.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
+#include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <numeric/random/random.hh>
+#include <numeric/conversions.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyzMatrix.hh>
+#include <utility/vector1.hh>
+#include <utility/io/ozstream.hh>
+#include <core/import_pose/import_pose.hh>
+#include <protocols/simple_moves/SuperimposeMover.hh>
+#include <utility/options/StringOption.hh>
 
 //reqd minimization headers
 #include <protocols/simple_moves/ScoreMover.hh>
@@ -41,354 +78,259 @@
 
 using namespace std;
 using namespace core;
-using namespace basic::options;
 using namespace core::optimization;
-using namespace basic::options::OptionKeys;
-
-//reqd minimization namespace
 using namespace core::pose::datacache;
-using namespace core::optimization;
 using namespace core::pose::metrics;
 using namespace core::scoring;
 using namespace core::scoring::constraints;
 using namespace core::id;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 using namespace conformation;
 using namespace protocols::simple_moves;
 using namespace protocols::rigid;
 
 OPT_KEY( String, protein )
-OPT_KEY( String, ligand )
-OPT_KEY( String, ray_file )
-OPT_KEY( Integer, num_runs )
-OPT_KEY( Integer, num_particles )
-OPT_KEY( Real, steric_weight )
-OPT_KEY( Real, missing_point_weight )
-OPT_KEY( Real, extra_point_weight )
-OPT_KEY( Real, origin_cutoff )
+OPT_KEY( Integer, num_angles )
+OPT_KEY( Boolean, cheat )
+OPT_KEY( Boolean, trim_pocket )
+OPT_KEY( Boolean, adt_grid )
+OPT_KEY( Boolean, lig_grid )
+OPT_KEY( Boolean, lig_based_pocket )
+OPT_KEY( Boolean, res_grid )
 OPT_KEY( Boolean, print_output_complex )
-OPT_KEY( Boolean, search_conformers )
-
-//reqd minimization options
-OPT_KEY( Boolean, minimize_output_complex )
-OPT_KEY( Real, cst_force_constant )
-
-static basic::Tracer TR( "apps.pilot.ragul_run_darc_with_input_eggshell.main" );
+OPT_KEY( Real, gc_x )
+OPT_KEY( Real, gc_y )
+OPT_KEY( Real, gc_z )
+OPT_KEY( Real, gd_x )
+OPT_KEY( Real, gd_y )
+OPT_KEY( Real, gd_z )
+OPT_KEY( Real, gs )
+OPT_KEY( String, bound_ligand )
+OPT_KEY( Integer, add_grid_size )
+OPT_KEY( Integer, add_ext_grid_size )
+OPT_KEY( Real, trim_distance )
 
 int main( int argc, char * argv [] ) {
 	try {
 
   NEW_OPT( protein, "protein file name", "protein.pdb" );
-  NEW_OPT( ligand, "ligand file name", "ligand.pdb" );
-  NEW_OPT( ray_file, "input eggshell(ray) triplet file name", "" );
-  NEW_OPT( num_runs, "no. of runs for PSO", 100 );
-  NEW_OPT( num_particles, "no. of particles for PSO", 100 );
-  NEW_OPT( origin_cutoff, "value for setting minimum and maximum origin cut off", 7.0 );
-  NEW_OPT( missing_point_weight, "missing point weight", 21.6 );
-  NEW_OPT( extra_point_weight, "extra point weight", 9.5 );
-  NEW_OPT( steric_weight, "steric weight for PSO", 1.4 );
-  NEW_OPT( print_output_complex, "print DARC output ligand model with protein as PDB file", true );
-  NEW_OPT( minimize_output_complex, "minimize the best scoring DARC output model", false );
-  NEW_OPT( cst_force_constant, "coordinate constraint force constant", 0.5 );
-  NEW_OPT( search_conformers, "optimize conformer during docking", true );
+  NEW_OPT( num_angles, "no. of angles for rotating the grid", 1 );
+  NEW_OPT( cheat, "move pocket CoM over Ligand CoM", false );
+  NEW_OPT( trim_pocket, "trim the non-plaid pocket using a known ligand", false );
+  NEW_OPT( adt_grid, "resize grid based on user entered AUTODOCK grid values", false );
+  NEW_OPT( lig_grid, "resize grid based on bound ligand", false );
+  NEW_OPT( res_grid, "resize grid based on a target residue", true );
+  NEW_OPT( lig_based_pocket, "include eggshellpoints that are within a distance from bound ligand", false );
+  NEW_OPT( gc_x, "gid center : X ", 1.0 );
+  NEW_OPT( gc_y, "gid center : Y ", 1.0 );
+  NEW_OPT( gc_z, "gid center : Z ", 1.0 );
+  NEW_OPT( gd_x, "gid dimension : X ", 20.0 );
+  NEW_OPT( gd_y, "gid dimension : Y ", 20.0 );
+  NEW_OPT( gd_z, "gid dimension : Z ", 20.0 );
+  NEW_OPT( bound_ligand, "use bound ligand to set the grid for generating eggshell", "" );
+  NEW_OPT( add_grid_size, "add grid dimension along x,y,z axis", 2 );
+  NEW_OPT( add_ext_grid_size, "add extra grid dimension along x,y,z axis", 2 );
+  NEW_OPT( trim_distance, "include eggshellpoints that are within this distance from bound ligand", 2 );
 
   devel::init(argc, argv);
 
+  std::string const resid(option[ OptionKeys::pocket_grid::central_relax_pdb_num ]);
   std::string const input_protein = option[ protein ];
-  std::string const input_ligand = option[ ligand ];
-  std::string const input_eggshell_triplet = option[ ray_file ];
-  int particle_size = option[ num_particles ];
-  int run_size = option[ num_runs ];
-  core::Real const steric_wt = option[ steric_weight ];
-  core::Real const missing_pt_wt = option[ missing_point_weight ];
-  core::Real const extra_pt_wt = option[ extra_point_weight ];
-  core::Real const origin_space = option[ origin_cutoff ];
+  int angles = option[ num_angles ];
+  core::Real const grid_cen_x = option[ gc_x ];
+  core::Real const grid_cen_y = option[ gc_y ];
+  core::Real const grid_cen_z = option[ gc_z ];
+  core::Real grid_dim_x = option[ gd_x ];
+  core::Real grid_dim_y = option[ gd_y ];
+  core::Real grid_dim_z = option[ gd_z ];
+  std::string const bound_ligand_file = option[ bound_ligand ];
+  int add_grid_dim = option[ add_grid_size ];
+  int add_ext_grid_dim = option[ add_ext_grid_size ];
+	core::Real trim_dist = option[ trim_distance ];
+
+  using namespace basic::options;
+  core::Real const spacing = option[ OptionKeys::pocket_grid::pocket_grid_spacing ]();
 
   protocols::pockets::NonPlaidFingerprint npf;
   pose::Pose protein_pose;
   core::import_pose::pose_from_pdb( protein_pose, input_protein );
-  pose::Pose bound_pose = protein_pose;
+  utility::vector1<core::Real> original_pocket_angle_transform(3, 0.);
 
-  //use input eggshell triplet file to setup nonplaid fingerprint (pocket)
-  if (!input_eggshell_triplet.empty()){
-		std::cout<<"Reading eggshell"<<std::endl;
-    npf.setup_from_eggshell_triplet_file( input_eggshell_triplet );
-  }
-  else if(input_eggshell_triplet.empty()){
-    std::cout<<"ERROR! : no input eggshell file to setup pocket"<<std::endl;
+  //find sequence position for the target residue
+  std::vector< conformation::ResidueOP > residues = protocols::pockets::PocketGrid::getRelaxResidues(protein_pose, resid);
+
+  if ( residues.size() == 0 ) {
+    std::cout << "ERROR!! Invalid residue to backrub around" << std::endl;
     exit(1);
   }
 
-  //ligand pose can be a single pdb file or multi-conformer pdb file
-  pose::Pose small_mol_pose;
-	std::cout<<"Reading pdb"<<std::endl;
-  core::import_pose::pose_from_pdb( small_mol_pose, input_ligand );
-	Size const nconformers = small_mol_pose.total_residue();
+  //use autodock grid values for grid size and setup PocketGrid
+  if (option[ adt_grid ]()){
+    grid_dim_x = (grid_dim_x/2) * spacing;
+    grid_dim_y = (grid_dim_y/2) * spacing;
+    grid_dim_z = (grid_dim_z/2) * spacing;
+    protocols::pockets::PocketGrid	pg( grid_cen_x, grid_cen_y, grid_cen_z, grid_dim_x, grid_dim_y, grid_dim_z );
+    numeric::xyzVector<core::Real> grid_center (0.);
+    grid_center.x() = grid_cen_x;
+    grid_center.y() = grid_cen_y;
+    grid_center.z() = grid_cen_z;
+    pg.DARC_pocket_eval( residues, protein_pose, grid_center ) ;
+    npf.setup_from_PocketGrid( protein_pose, pg );
+  }
 
-	//create 'tag' for output filenames
-	int dot_index1 = input_protein.rfind(".", input_protein.size());
-	assert(dot_index1 != -1 && "No dot found in filename");
-	std::string protein_name = input_protein.substr(0,dot_index1);
-	int dot_index2 = input_ligand.rfind(".", input_ligand.size());
-	assert(dot_index2 != -1 && "No dot found in filename");
-	std::string ligand_name = input_ligand.substr(0,dot_index2);
-	std::string tag = ligand_name + "_" + protein_name;
-	std::string pso_pose_name = "LIGAND_" + tag + ".pdb";
-	std::string darc_complex_filename = "DARC_" + tag + ".pdb";
-	std::string mini_complex_filename = "mini_" + tag + ".pdb";
+  //use bound ligand to get grid size and setup PocketGrid
+  else if (option[ lig_grid ]()){
+    if (bound_ligand_file.empty()){
+      std::cout<<"Error, no ligand available for setting the grid" << std::endl;
+      exit(1);
+    }
+    pose::Pose bound_ligand_pose;
+    core::import_pose::pose_from_pdb( bound_ligand_pose, bound_ligand_file );
+    core::Size lig_res_num = 0;
+    for ( int j = 1, resnum = bound_ligand_pose.total_residue(); j <= resnum; ++j ) {
+      if (!bound_ligand_pose.residue(j).is_protein()){
+       	lig_res_num = j;
+	break;
+      }
+    }
+    if (lig_res_num == 0){
+      std::cout<<"Error, no ligand for PlaidFingerprint" << std::endl;
+      exit(1);
+    }
+    numeric::xyzVector<core::Real> input_ligand_CoM(0.);
+    conformation::Residue const & curr_rsd = bound_ligand_pose.conformation().residue(lig_res_num);
+    core::Real minx(999.), miny(999.), minz(999.), maxx(-999.), maxy(-999.), maxz(-999.);
+    for(Size i = 1, i_end = curr_rsd.natoms(); i <= i_end; ++i) {
+      if (curr_rsd.atom(i).xyz()(1) > maxx){maxx = curr_rsd.atom(i).xyz()(1);}
+      if (curr_rsd.atom(i).xyz()(1) < minx){minx = curr_rsd.atom(i).xyz()(1);}
+      if (curr_rsd.atom(i).xyz()(2) > maxy){maxy = curr_rsd.atom(i).xyz()(2);}
+      if (curr_rsd.atom(i).xyz()(2) < miny){miny = curr_rsd.atom(i).xyz()(2);}
+      if (curr_rsd.atom(i).xyz()(3) > maxz){maxz = curr_rsd.atom(i).xyz()(3);}
+      if (curr_rsd.atom(i).xyz()(3) < minz){minz = curr_rsd.atom(i).xyz()(3);}
+    }
+    core::Real x_from_grd_cen, y_from_grd_cen, z_from_grd_cen, x_halfwidth, y_halfwidth, z_halfwidth;
+    core::Real const cen_x = (maxx + minx)/2;
+    core::Real const cen_y = (maxy + miny)/2;
+    core::Real const cen_z = (maxz + minz)/2;
+    x_halfwidth = std::abs(maxx - minx)/2;
+    y_halfwidth = std::abs(maxy - miny)/2;
+    z_halfwidth = std::abs(maxz - minz)/2;
+    numeric::xyzVector<core::Real> const grid_center(cen_x,cen_y,cen_z);
+    x_from_grd_cen = x_halfwidth + add_grid_dim;
+    y_from_grd_cen = y_halfwidth + add_grid_dim;
+    z_from_grd_cen = z_halfwidth + add_grid_dim;
 
-	//set max and min ligand translation & rotation space
-	utility::vector1<core::Real> p_min(7);
-	p_min[1] = origin_space * -1;
-	p_min[2] = origin_space * -1;
-	p_min[3] = origin_space * -1;
-	p_min[4] = 0.;
-	p_min[5] = 0.;
-	p_min[6] = 0.;
-	p_min[7] = 0.;
-	utility::vector1<core::Real> p_max(7);
-	p_max[1] = origin_space;
-	p_max[2] = origin_space;
-	p_max[3] = origin_space;
-	p_max[4] = numeric::constants::r::pi_2;
-	p_max[5] = numeric::constants::r::pi_2;
-	p_max[6] = numeric::constants::r::pi_2;
-	p_max[7] = nconformers - 0.00001;
-	// note: conformer is indexed starting at 0
+    protocols::pockets::PocketGrid	pg( cen_x, cen_y, cen_z, x_from_grd_cen, y_from_grd_cen, z_from_grd_cen );
+    pg.DARC_pocket_eval( residues, protein_pose, grid_center ) ;
+    x_from_grd_cen = x_halfwidth + add_grid_dim + add_ext_grid_dim;
+    y_from_grd_cen = y_halfwidth + add_grid_dim + add_ext_grid_dim;
+    z_from_grd_cen = z_halfwidth + add_grid_dim + add_ext_grid_dim;
+    protocols::pockets::PocketGrid	ext_grd( cen_x, cen_y, cen_z, x_from_grd_cen, y_from_grd_cen, z_from_grd_cen );
+    ext_grd.DARC_pocket_eval( residues, protein_pose, grid_center ) ;
+		if(option[lig_based_pocket ]()){
+			npf.setup_from_PocketGrid_and_known_ligand( protein_pose, pg, ext_grd, bound_ligand_pose, trim_dist );
+		}
+		else{
+			npf.setup_from_PocketGrid( protein_pose, pg, ext_grd );
+		}
+  }
 
-	//initialize particles, best DARC score, best optimized values
-	ParticleOPs particles;
-	core::Real best_DARC_score = 9999.;
-	utility::vector1<core::Real> best_vars(7);
-
-  //Find the residue number for the ligand
-  core::Size lig_res_num = 0;
-  for ( int j = 1, resnum = small_mol_pose.total_residue(); j <= resnum; ++j ) {
-    if (!small_mol_pose.residue(j).is_protein()){
-      lig_res_num = j;
-      break;
+  //use default grid size centered around target residue to setup pocketgrid
+  else if (option[ res_grid ]()){
+    if (angles <1){
+      //num grid rotation cant be < 1
+      fprintf (stderr, "Error: invalid number of angles.  Must be greather than 0\n");
+      exit(1);
+    }
+    //rotate grid to choose best pocket volume to choose largest pocket
+    else if (angles > 1){
+      core::Real best_vol(0), curr_vol(1);
+      for (int i=0; i<angles; ++i){
+       	core::pose::Pose temp_pose;
+	temp_pose = protein_pose;
+       	core::Real x = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
+       	core::Real y = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
+       	core::Real z = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
+       	numeric::xyzMatrix<core::Real> x_rot_mat( numeric::x_rotation_matrix_radians(x) );
+       	numeric::xyzMatrix<core::Real> y_rot_mat( numeric::y_rotation_matrix_radians(y) );
+       	numeric::xyzMatrix<core::Real> z_rot_mat( numeric::z_rotation_matrix_radians(z) );
+       	numeric::xyzMatrix<core::Real> tot_rot_mat = z_rot_mat * y_rot_mat * x_rot_mat;
+       	core::Vector v(0,0,0);
+       	temp_pose.apply_transform_Rx_plus_v(tot_rot_mat, v);
+       	protocols::pockets::PocketGrid	pg( residues );
+       	pg.autoexpanding_pocket_eval( residues, temp_pose ) ;
+       	curr_vol = pg.netTargetPocketVolume();
+       	std::cout<<"curr_volume "<<curr_vol<<std::endl;
+       	if(curr_vol > best_vol){
+       	  best_vol = curr_vol;
+	  original_pocket_angle_transform[1] = x;
+          original_pocket_angle_transform[2] = y;
+	  original_pocket_angle_transform[3] = z;
+	}
+      }
+      numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_radians( original_pocket_angle_transform[1] ) );
+      numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_radians( original_pocket_angle_transform[2] ) );
+      numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_radians( original_pocket_angle_transform[3] ) );
+      numeric::xyzMatrix<core::Real> bestxyz_rot_mat = bestz_rot_mat * besty_rot_mat * bestx_rot_mat;
+      core::Vector v(0,0,0);
+      protein_pose.apply_transform_Rx_plus_v(bestxyz_rot_mat, v);
+      core::pose::Pose best_pose;
+      best_pose = protein_pose;
+      protocols::pockets::PocketGrid	pg( residues );
+      pg.autoexpanding_pocket_eval( residues, best_pose ) ;
+      std::cout<<"best_volume: "<<pg.netTargetPocketVolume()<<std::endl;
+      npf.setup_from_PocketGrid( best_pose, pg );
+    }
+    //no grid rotation
+    else if (angles == 1){
+      protocols::pockets::PocketGrid	pg( residues );
+      pg.autoexpanding_pocket_eval( residues, protein_pose ) ;
+      npf.setup_from_PocketGrid( protein_pose, pg );
     }
   }
-  if (lig_res_num == 0){
-    std::cout<<"Error, no ligand for PlaidFingerprint" << std::endl;
-    exit(1);
+
+  //trim pocket based on bound ligand
+  if (option[ trim_pocket ]()){
+    //calc lig_COM and move pock_COM to lig_com of bound ligand
+    pose::Pose bound_ligand_pose;
+    core::import_pose::pose_from_pdb( bound_ligand_pose, bound_ligand_file );
+    core::Size lig_res_num = 0;
+    for ( int j = 1, resnum = bound_ligand_pose.total_residue(); j <= resnum; ++j ) {
+      if (!bound_ligand_pose.residue(j).is_protein()){
+        lig_res_num = j;
+       	break;
+      }
+    }
+    if (lig_res_num == 0){
+      std::cout<<"Error, no ligand for PlaidFingerprint" << std::endl;
+      exit(1);
+    }
+    numeric::xyzVector<core::Real> bound_ligand_CoM(0.);
+    conformation::Residue const & curr_rsd = bound_ligand_pose.conformation().residue(lig_res_num);
+    for(Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i) {
+      bound_ligand_CoM.x() += curr_rsd.atom(i).xyz()(1);
+      bound_ligand_CoM.y() += curr_rsd.atom(i).xyz()(2);
+      bound_ligand_CoM.z() += curr_rsd.atom(i).xyz()(3);
+    }
+    bound_ligand_CoM /= curr_rsd.nheavyatoms();
+    npf.CHEAT_CoM( bound_ligand_CoM );
+    npf.trim_based_on_known_ligand(bound_ligand_pose);
   }
 
-	protocols::pockets::PlaidFingerprint pf(small_mol_pose, npf);
-	core::pose::Pose oriented_pose;
-	core::Size best_conformer = 0; // note: indexed from zero
-	std::cout<<"Starting PSO"<<std::endl;
+  //create 'tag' for eggshell output filename
+	int pfounddir = input_protein.find_last_of("/\\");
+	int pfounddot = input_protein.find_last_of(".");
+	std::string protein_name = input_protein.substr((pfounddir+1),(pfounddot-(pfounddir+1)));
+  std::string eggshell_pdb_tag = "eggshell_" + protein_name + "_" + resid + ".pdb";
+  std::string eggshell_triplet_tag = "eggshell_" + protein_name + "_" + resid + ".txt";
 
-  //setup GPU
-#ifdef USEOPENCL
-  npf.gpu_setup( missing_pt_wt, steric_wt, extra_pt_wt, particle_size, pf );
-#endif
-
-  if (option[ search_conformers ]()){
-		// search conformers during the PSO
-		protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, nconformers);
-		protocols::pockets::DarcParticleSwarmMinimizer pso( npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, p_min, p_max);
-		particles = pso.run(run_size, fpm, particle_size);
-		ParticleOP p = particles[1];
-		core::optimization::Particle parti(*p);
-		best_DARC_score = -(parti.fitness_pbest());
-		best_vars = parti.pbest();
-		// note: conformer is indexed starting at 0
-		best_conformer=((core::Size)(floor(best_vars[7])) % nconformers);
-		numeric::xyzVector<core::Real> optimized_origin(best_vars[1], best_vars[2], best_vars[3]);
-		oriented_pose = pf.get_oriented_pose(npf, best_vars[4], best_vars[5], best_vars[6], optimized_origin, best_conformer );
-	} else {
-		// run DARC for each conformer separately, then take the best score at the end
-		p_max[7] = 0.00001;
-		utility::vector1< core::pose::PoseOP > rot_poses(small_mol_pose.total_residue());
-		for (Size ii = 1; ii <= small_mol_pose.total_residue(); ++ii){
-			rot_poses[ii] = new core::pose::Pose(small_mol_pose, ii, ii);
-			protocols::pockets::PlaidFingerprint conf_pf( *rot_poses[ii], npf );
-			protocols::pockets::FingerprintMultifunc fpm(npf, conf_pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);
-			protocols::pockets::DarcParticleSwarmMinimizer pso( npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, p_min, p_max);
-			//core::optimization::ParticleSwarmMinimizer pso(p_min, p_max);
-			particles = pso.run(run_size, fpm, particle_size);
-			ParticleOP p = particles[1];
-			core::optimization::Particle parti(*p);
-			core::Real fit_best = -(parti.fitness_pbest());
-			if(fit_best < best_DARC_score){
-				best_DARC_score = fit_best;
-				best_vars = parti.pbest();
-				pf = conf_pf;
-				numeric::xyzVector<core::Real> optimized_origin(best_vars[1], best_vars[2], best_vars[3]);
-				oriented_pose = pf.get_oriented_pose(npf, best_vars[4], best_vars[5], best_vars[6], optimized_origin, 0 );
-				best_conformer=ii-1; // note: index starts at 0
-			}
-		}
-	}
-
-	//Append the best ligand conformer pose to protein pose and print(optional) the complex PDB file
-	bound_pose.append_residue_by_jump(oriented_pose.residue( 1 ), protein_pose.total_residue(),"", "",  true);
-	if (option[ print_output_complex ]()){
-		bound_pose.dump_pdb(darc_complex_filename);
-	}
-
-	//print the best DARC score (without minimization)
-	if (!option[ minimize_output_complex ]()){
-		// note: conformer is indexed starting at 0
-		std::cout<< "SCORES : " << tag <<"\n"<< "Conformer " << best_conformer << " has DARC Score : " << best_DARC_score <<std::endl;
-	}
-
-	//minimize the protein-ligand complex
-	else if (option[ minimize_output_complex ]()){
-
-		//setup scorefxn
-		scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
-		scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
-
-		//Register calculators
-		std::string sasa_calc_name = "sasa";
-		std::string hbond_calc_name = "hbond";
-		std::string packstat_calc_name = "packstat";
-		std::string burunsat_calc_name = "burunsat";
-		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( sasa_calc_name, sasa_calculator );
-		core::pose::metrics::PoseMetricCalculatorOP hb_calc = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( hbond_calc_name, hb_calc );
-		core::pose::metrics::PoseMetricCalculatorOP packstat_calc =	new protocols::toolbox::pose_metric_calculators::PackstatCalculator();
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( packstat_calc_name, packstat_calc );
-		core::pose::metrics::PoseMetricCalculatorOP burunsat_calc = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, hbond_calc_name);
-		core::pose::metrics::CalculatorFactory::Instance().register_calculator( burunsat_calc_name, burunsat_calc );
-
-		// add constraint
-		Size nres = bound_pose.total_residue();
-		Real const coord_sdev( option[ OptionKeys::cst_force_constant ] );
-		// default is 0.5 (from idealize) -- maybe too small
-		for ( Size i = 1; i< nres; ++i ) {
-			if ( (Size)i==(Size)bound_pose.fold_tree().root() ) continue;
-			Residue const & nat_i_rsd( bound_pose.residue(i) );
-			for ( Size ii = 1; ii<= nat_i_rsd.nheavyatoms(); ++ii ) {
-				bound_pose.add_constraint( new CoordinateConstraint(
-																														AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-																														new HarmonicFunc( 0.0, coord_sdev ) ) );
-			}
-		}
-
-		// score Initial bound pose
-		scorefxn->set_weight( coordinate_constraint, 0.5 );
-		(*scorefxn)(bound_pose);
-		TR << "Initial score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl;
-
-		// setting degrees of freedom which can move during minimization - everything
-		kinematics::MoveMap mm_all;
-		mm_all.set_chi( true );
-		mm_all.set_bb( true );
-		mm_all.set_jump( true );
-
-		// start minimizing protein
-		TR << "Starting minimization...." << std::endl;
-		AtomTreeMinimizer minimizer;
-		MinimizerOptions min_options( "dfpmin", 0.00001, true, false );
-		minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-		minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-		(*scorefxn)(bound_pose);
-		TR << "Post minimization 1 constrained score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl;
-		bound_pose.remove_constraints();
-		(*scorefxn)(bound_pose);
-		TR << "Post minimization 1 UNconstrained score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl;
-
-		// Setup packer task for repacking
-		pack::task::PackerTaskOP base_packer_task( pack::task::TaskFactory::create_packer_task( bound_pose ));
-		base_packer_task->set_bump_check( false );
-		base_packer_task->initialize_from_command_line();
-		base_packer_task->or_include_current( true );
-		for ( Size ii = 1; ii <= bound_pose.total_residue(); ++ii ) {
-			base_packer_task->nonconst_residue_task(ii).restrict_to_repacking();
-		}
-
-		// First repack and report score
-		pack::pack_rotamers( bound_pose, *repack_scorefxn, base_packer_task );
-		(*scorefxn)(bound_pose);
-		TR << "Score after repacking once: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
-
-		// iterate over minimizing and repacking
-		for ( Size iter = 1; iter <= 5; ++iter ) {
-			minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-			minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-			minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-			(*scorefxn)(bound_pose);
-			//    TR << "Current score after minimizing: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
-			pack::pack_rotamers( bound_pose, *repack_scorefxn, base_packer_task );
-			(*scorefxn)(bound_pose);
-			//    TR << "Current score after repacking: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
-		}
-
-		// final minimization
-		minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-		minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-		minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-		minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-		(*scorefxn)(bound_pose);
-		if (option[ print_output_complex ]){
-			bound_pose.dump_scored_pdb( mini_complex_filename, *scorefxn );
-		}
-		//  TR << "Final score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
-		//  TR << "Successfully finished minimizing input." << std::endl;
-
-		//setup the unbound pose
-		core::pose::Pose unbound_pose = bound_pose;
-		core::Real const unbound_dist = 80.;
-		Size const rb_jump = 1; // use the first jump as the one between partners
-		protocols::rigid::RigidBodyTransMover trans_mover( unbound_pose, rb_jump );
-		trans_mover.trans_axis( trans_mover.trans_axis() );
-		trans_mover.step_size(unbound_dist);
-		trans_mover.apply( unbound_pose );
-		(*scorefxn)(unbound_pose);
-
-		// define containers for metrics for total complex
-		basic::MetricValue<Real> tot_sasa_mval;
-		basic::MetricValue<Size> tot_hb_mval;
-		basic::MetricValue<Real> tot_packstat_mval;
-		basic::MetricValue<Size> tot_unsat_mval;
-
-		// calculate and store total metrics for bound and unbound poses
-		core::Real bound_energy = 0.0, unbound_energy = 0.0, Interface_Energy = 0.0;
-		// variables below unused ~Labonte
-		//core::Real bound_sasa = 0.0, unbound_sasa = 0.0, Total_BSA = 0.0;
-		//core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
-		//core::Real bound_packstat = 0.0, unbound_packstat = 0.0, Total_packstats = 0.0;
-		//core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
-
-		//calculate interface Energy
-		bound_energy = bound_pose.energies().total_energy();
-		unbound_energy = unbound_pose.energies().total_energy();
-		Interface_Energy = bound_energy - unbound_energy;
-
-		//delta sasa calculation
-		bound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
-		//bound_sasa = tot_sasa_mval.value();  // unused ~Labonte
-		unbound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
-		//unbound_sasa = tot_sasa_mval.value();  // unused ~Labonte
-		//Total_BSA = unbound_sasa - bound_sasa;  // unused ~Labonte
-
-		//interface hb calculation
-		bound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
-		//bound_hb = tot_hb_mval.value();  // unused ~Labonte
-		unbound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
-		//unbound_hb = tot_hb_mval.value();  // unused ~Labonte
-		//Interface_HB = bound_hb - unbound_hb;  // unused ~Labonte
-
-		//packstat calculation
-		bound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
-		//bound_packstat = tot_packstat_mval.value();  // unused ~Labonte
-		unbound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
-		//unbound_packstat = tot_packstat_mval.value();  // unused ~Labonte
-		//Total_packstats = bound_packstat - unbound_packstat;  // unused ~Labonte
-
-		//unsat polar calculation
-		bound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
-		//bound_unsat = tot_unsat_mval.value();  // unused ~Labonte
-		unbound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
-		//unbound_unsat = tot_unsat_mval.value();  // unused ~Labonte
-		//Interface_unsat = bound_unsat - unbound_unsat;  // unused ~Labonte
-
-		std::cout << "SCORES : " << tag <<"\n"<< "DARC Score : " << best_DARC_score <<"\n"<< "Total Energy : ";
-		std::cout << bound_energy <<"\n"<< "Interface Energy : "<< Interface_Energy << std::endl;
-	}
+  //print the eggshell (ray) files
+  npf.write_eggshell_to_pdb_file(eggshell_pdb_tag);
+  npf.print_to_file(eggshell_triplet_tag);
+  std::cout<< "Written eggshell to pdb file : "<< eggshell_pdb_tag << std::endl;
+  std::cout<< "Written eggshell to triplet file: "<< eggshell_triplet_tag << std::endl;
+  std::cout<< "DONE!"<< std::endl;
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

@@ -63,7 +63,6 @@ FingerprintBase::FingerprintBase () :
   CoM_.zero();
 }
 
-/// @details Auto-generated virtual destructor
 FingerprintBase::~FingerprintBase() {}
 
 void FingerprintBase::print_to_file(std::string const & output_filename) const {
@@ -1071,8 +1070,8 @@ void PlaidFingerprint::update_rhos_(FingerprintBase & fp, core::conformation::Re
       //++orig_cpu_num_evaluations;
 
       if ( min_intersect_SQ < best_rho_sq ) {
-	best_rho_sq = min_intersect_SQ;
-	//best_intersecting_atom = i;  // unused ~Labonte
+				best_rho_sq = min_intersect_SQ;
+				//best_intersecting_atom = i;  // unused ~Labonte
       }
     }
 

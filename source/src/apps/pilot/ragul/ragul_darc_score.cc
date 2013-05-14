@@ -9,6 +9,10 @@
 
 /// @author Ragul Gowthaman
 
+//GPU enabling is not default
+//To test how many threads are fastest for your computer,
+//use -gpu:threads 1024 (or other number) on the command line
+
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -23,20 +27,26 @@
 #include <protocols/pockets/Fingerprint.hh>
 #include <protocols/pockets/PocketGrid.hh>
 #include <core/optimization/ParticleSwarmMinimizer.hh>
+#include <protocols/pockets/DarcParticleSwarmMinimizer.hh>
+#include <core/optimization/Minimizer.hh>
 #include <basic/options/option_macros.hh>
 #include <utility/excn/Exceptions.hh>
-// AUTO-REMOVED #include <protocols/pockets/FingerprintMultifunc.hh>
+#include <protocols/pockets/FingerprintMultifunc.hh>
 
 // Utility Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+#include <core/io/pdb/pose_io.hh>
 #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
+#include <basic/options/util.hh>
 #include <basic/options/after_opts.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <numeric/random/random.hh>
 #include <numeric/conversions.hh>
@@ -44,10 +54,10 @@
 #include <numeric/xyzMatrix.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
+#include <utility/io/ozstream.hh>
 
 #include <core/import_pose/import_pose.hh>
-
+#include <protocols/simple_moves/SuperimposeMover.hh>
 
 
 using namespace core;
@@ -57,9 +67,10 @@ using namespace core::scoring;
 using namespace core::optimization;
 using namespace basic::options::OptionKeys;
 
-
+OPT_KEY( String, optimization_method )
 OPT_KEY( String, central_relax_pdb_num )
 OPT_KEY( String, input_protein_file )
+OPT_KEY( String, template_protein )
 OPT_KEY( String, input_ligand_file )
 OPT_KEY( String, known_ligand_file )
 OPT_KEY( Integer, num_poses )
@@ -68,44 +79,74 @@ OPT_KEY( Integer, num_runs )
 OPT_KEY( Integer, num_particles )
 OPT_KEY( Boolean, cheat )
 OPT_KEY( Boolean, trim_pocket )
+OPT_KEY( Boolean, resize_adt_grid )
+OPT_KEY( Boolean, print_pocket )
+OPT_KEY( Boolean, print_fingerprints )
+OPT_KEY( Boolean, print_output_complex )
 OPT_KEY( Real, steric_weight )
 OPT_KEY( Real, missing_point_weight )
 OPT_KEY( Real, extra_point_weight )
 OPT_KEY( Real, origin_cutoff )
+OPT_KEY( Real, gc_x )
+OPT_KEY( Real, gc_y )
+OPT_KEY( Real, gc_z )
+OPT_KEY( Real, gd_x )
+OPT_KEY( Real, gd_y )
+OPT_KEY( Real, gd_z )
+OPT_KEY( Real, gs )
 
 int main( int argc, char * argv [] ) {
 	try{
+	NEW_OPT( optimization_method, "optimization_method", "PSO" );
   NEW_OPT( central_relax_pdb_num, "target residue", "-1" );
   NEW_OPT( input_protein_file, "protein file name", "protein.pdb" );
+	NEW_OPT( template_protein, "template protein file name", "template.pdb" );
   NEW_OPT( input_ligand_file, "ligand file name", "ligand.pdb" );
   NEW_OPT( known_ligand_file, "known ligand file name", "known_ligand.pdb" );
-	NEW_OPT( num_poses, "No. of poses to search for initail stochastic search", 1000 );
+	NEW_OPT( num_poses, "No. of poses to search for initail stochastic search", 100 );
 	NEW_OPT( num_angles, "Number of different pose angles to measure score at", 1);
-	NEW_OPT( num_runs, "no. of runs for PSO", 100 );
-  NEW_OPT( num_particles, "no. of particles for PSO", 100 );
+	NEW_OPT( num_runs, "no. of runs for PSO", 200 );
+  NEW_OPT( num_particles, "no. of particles for PSO", 200 );
 	NEW_OPT( cheat, "move pocket CoM over Ligand MCoM", false );
 	NEW_OPT( trim_pocket, "trim the non-plaid pocket using a known ligand", false );
+	NEW_OPT( resize_adt_grid, "resize grid based on user entered AUTODOCK grid values", false );
+	NEW_OPT( print_pocket, "call 'dumpgridtofile()' to print pocket", false );
+	NEW_OPT( print_fingerprints, "print fingerprint points into pdb files", true );
+	NEW_OPT( print_output_complex, "print DARC output model protein-ligand complex as PDB file", true );
   NEW_OPT( steric_weight, "steric weight for PSO", 5.0 );
   NEW_OPT( missing_point_weight, "missing point weight", 20.0 );
   NEW_OPT( extra_point_weight, "extra point weight", 20.0 );
-  NEW_OPT( origin_cutoff, "value for setting minimum and maximum origin cut off", 7.0 );
+  NEW_OPT( origin_cutoff, "value for setting minimum and maximum origin cut off", 5.0 );
 	//NEW_OPT( angle_increment, "angle increment", 20 );
+  NEW_OPT( gc_x, "gid center : X ", 1.0 );
+  NEW_OPT( gc_y, "gid center : Y ", 1.0 );
+  NEW_OPT( gc_z, "gid center : Z ", 1.0 );
+  NEW_OPT( gd_x, "gid dimension : X ", 20.0 );
+  NEW_OPT( gd_y, "gid dimension : Y ", 20.0 );
+  NEW_OPT( gd_z, "gid dimension : Z ", 20.0 );
 
 	devel::init(argc, argv);
-
+	std::string const optimization_type = option[ optimization_method ];
 	std::string const input_protein = option[ input_protein_file ];
+	std::string const template_pdb = option[ template_protein ];
 	std::string const input_ligand = option[ input_ligand_file ];
 	std::string const known_ligand = option[ known_ligand_file ];
-	//	int num_pose_search  = option[ num_poses ];
+	int num_pose_search  = option[ num_poses ];
 	std::string const resid = option[ central_relax_pdb_num ];
   int angles = option[ num_angles ];
-  //int particle_size = option[ num_particles ];
-  //int run_size = option[ num_runs ];
+  int particle_size = option[ num_particles ];
+  int run_size = option[ num_runs ];
 	core::Real const steric_wt = option[ steric_weight ];
 	core::Real const missing_pt_wt = option[ missing_point_weight ];
 	core::Real const extra_pt_wt = option[ extra_point_weight ];
-	//core::Real const origin_space = option[ origin_cutoff ];
+	core::Real const origin_space = option[ origin_cutoff ];
 	//int const ang_inc  = option[ angle_increment ];
+	core::Real const grid_cen_x = option[ gc_x ];
+	core::Real const grid_cen_y = option[ gc_y ];
+	core::Real const grid_cen_z = option[ gc_z ];
+	core::Real grid_dim_x = option[ gd_x ];
+	core::Real grid_dim_y = option[ gd_y ];
+	core::Real grid_dim_z = option[ gd_z ];
 
 	protocols::pockets::NonPlaidFingerprint npf;
 
@@ -142,59 +183,82 @@ int main( int argc, char * argv [] ) {
   }
 
   utility::vector1<core::Real> original_pocket_angle_transform(3, 0.);
-	if(angles <1){
-		fprintf (stderr, "Error: invalid number of angles.  Must be greather than 0\n");
-    return -1;
-  }else if (angles > 1)
-		{
-			core::Real best_vol(0), curr_vol(1);
-			for (int i=0; i<angles; ++i){
-				core::pose::Pose temp_pose;
-				temp_pose = protein_pose;
-				core::Real x,y,z;
-				x = (int) (numeric::random::uniform() *89 +1);
-				y = (int) (numeric::random::uniform() *89 +1);
-				z = (int) (numeric::random::uniform() *89 +1);
-				numeric::xyzMatrix<core::Real> x_rot_mat( numeric::x_rotation_matrix_degrees(x) );
-				numeric::xyzMatrix<core::Real> y_rot_mat( numeric::y_rotation_matrix_degrees(y) );
-				numeric::xyzMatrix<core::Real> z_rot_mat( numeric::z_rotation_matrix_degrees(z) );
-				numeric::xyzMatrix<core::Real> tot_rot_mat = z_rot_mat * y_rot_mat * x_rot_mat;
-				core::Vector v(0,0,0);
-				temp_pose.apply_transform_Rx_plus_v(tot_rot_mat, v);
-				protocols::pockets::PocketGrid	pg( temp_pose.conformation().residue(seqpos) );
-				pg.autoexpanding_pocket_eval( temp_pose.conformation().residue(seqpos), temp_pose ) ;
-				curr_vol = pg.netTargetPocketVolume();
-				std::cout<<"curr_volume "<<curr_vol<<std::endl;
-				if(curr_vol > best_vol){
-					best_vol = curr_vol;
-					original_pocket_angle_transform[1] = x;
-					original_pocket_angle_transform[2] = y;
-					original_pocket_angle_transform[3] = z;
+
+	if (option[ resize_adt_grid ]()){
+		using namespace basic::options;
+		core::Real const spacing = option[ OptionKeys::pocket_grid::pocket_grid_spacing ]();
+		//Modify adt grid point values to use in DAVID's PocketGrid code
+		grid_dim_x = (grid_dim_x/2) * spacing;
+		grid_dim_y = (grid_dim_y/2) * spacing;
+		grid_dim_z = (grid_dim_z/2) * spacing;
+		protocols::pockets::PocketGrid	pg( grid_cen_x, grid_cen_y, grid_cen_z, grid_dim_x, grid_dim_y, grid_dim_z );
+		numeric::xyzVector<core::Real> grid_center (0.);
+		grid_center.x() = grid_cen_x;
+		grid_center.y() = grid_cen_y;
+		grid_center.z() = grid_cen_z;
+		pg.DARC_pocket_eval( protein_pose.conformation().residue(seqpos), protein_pose, grid_center ) ;
+		npf.setup_from_PocketGrid( protein_pose, pg );
+		//print the pocket pdb file
+		if (option[ print_pocket ]()){
+			pg.dumpGridToFile();
+		}//END printing pocket
+	}	else {
+		if(angles <1){
+			fprintf (stderr, "Error: invalid number of angles.  Must be greather than 0\n");
+			return -1;
+		}else if (angles > 1)
+			{
+				core::Real best_vol(0), curr_vol(1);
+				for (int i=0; i<angles; ++i){
+					core::pose::Pose temp_pose;
+					temp_pose = protein_pose;
+					core::Real x = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
+					core::Real y = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
+					core::Real z = ( numeric::random::uniform() * numeric::constants::r::pi_2 ) + 0.0001;
+					numeric::xyzMatrix<core::Real> x_rot_mat( numeric::x_rotation_matrix_radians(x) );
+					numeric::xyzMatrix<core::Real> y_rot_mat( numeric::y_rotation_matrix_radians(y) );
+					numeric::xyzMatrix<core::Real> z_rot_mat( numeric::z_rotation_matrix_radians(z) );
+					numeric::xyzMatrix<core::Real> tot_rot_mat = z_rot_mat * y_rot_mat * x_rot_mat;
+					core::Vector v(0,0,0);
+					temp_pose.apply_transform_Rx_plus_v(tot_rot_mat, v);
+					protocols::pockets::PocketGrid	pg( temp_pose.conformation().residue(seqpos) );
+					pg.autoexpanding_pocket_eval( temp_pose.conformation().residue(seqpos), temp_pose ) ;
+					curr_vol = pg.netTargetPocketVolume();
+					std::cout<<"curr_volume "<<curr_vol<<std::endl;
+					if(curr_vol > best_vol){
+						best_vol = curr_vol;
+						original_pocket_angle_transform[1] = x;
+						original_pocket_angle_transform[2] = y;
+						original_pocket_angle_transform[3] = z;
+					}
 				}
+				numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_radians( original_pocket_angle_transform[1] ) );
+				numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_radians( original_pocket_angle_transform[2] ) );
+				numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_radians( original_pocket_angle_transform[3] ) );
+				numeric::xyzMatrix<core::Real> bestxyz_rot_mat = bestz_rot_mat * besty_rot_mat * bestx_rot_mat;
+				core::Vector v(0,0,0);
+				protein_pose.apply_transform_Rx_plus_v(bestxyz_rot_mat, v);
+				core::pose::Pose best_pose;
+				best_pose = protein_pose;
+				protocols::pockets::PocketGrid	pg( best_pose.conformation().residue(seqpos) );
+				pg.autoexpanding_pocket_eval( best_pose.conformation().residue(seqpos), best_pose ) ;
+				std::cout<<"best_volume: "<<pg.netTargetPocketVolume()<<std::endl;
+				npf.setup_from_PocketGrid( best_pose, pg );
+				//print the pocket pdb file
+				if (option[ print_pocket ]()){
+					pg.dumpGridToFile();
+				}//END printing pocket
 			}
 
-			numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_degrees( original_pocket_angle_transform[1] ) );
-			numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_degrees( original_pocket_angle_transform[2] ) );
-			numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_degrees( original_pocket_angle_transform[3] ) );
-			numeric::xyzMatrix<core::Real> bestxyz_rot_mat = bestz_rot_mat * besty_rot_mat * bestx_rot_mat;
-			core::Vector v(0,0,0);
-			protein_pose.apply_transform_Rx_plus_v(bestxyz_rot_mat, v);
-
-			core::pose::Pose best_pose;
-			best_pose = protein_pose;
-
-			protocols::pockets::PocketGrid	pg( best_pose.conformation().residue(seqpos) );
-
-			pg.autoexpanding_pocket_eval( best_pose.conformation().residue(seqpos), best_pose ) ;
-			std::cout<<"best_volume: "<<pg.netTargetPocketVolume()<<std::endl;
-			//pg.dumpGridToFile();
-			npf.setup_from_PocketGrid( best_pose, pg );
-
-		}else if (angles == 1){
-		protocols::pockets::PocketGrid	pg( protein_pose.conformation().residue(seqpos) );
-		pg.autoexpanding_pocket_eval( protein_pose.conformation().residue(seqpos), protein_pose ) ;
-		//pg.dumpGridToFile();
-		npf.setup_from_PocketGrid( protein_pose, pg );
+		else if (angles == 1){
+			protocols::pockets::PocketGrid	pg( protein_pose.conformation().residue(seqpos) );
+			pg.autoexpanding_pocket_eval( protein_pose.conformation().residue(seqpos), protein_pose ) ;
+			npf.setup_from_PocketGrid( protein_pose, pg );
+			//print the pocket pdb file
+			if (option[ print_pocket ]()){
+				pg.dumpGridToFile();
+			}//END printing pocket
+		}
 	}
 
 	if (option[ trim_pocket ]()){
@@ -224,7 +288,47 @@ int main( int argc, char * argv [] ) {
 		npf.trim_based_on_known_ligand(known_ligand_pose);
 	}
 
-  int dot_index1 = input_protein.rfind(".", input_protein.size());
+	pose::Pose small_mol_pose;
+	core::import_pose::pose_from_pdb( small_mol_pose, input_ligand );
+	core::pose::Pose original_pose = small_mol_pose;
+	numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_radians(original_pocket_angle_transform[1] ) );
+	numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_radians(original_pocket_angle_transform[2] ) );
+	numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_radians(original_pocket_angle_transform[3] ) );
+	numeric::xyzMatrix<core::Real> bestxyz_rot_mat = bestz_rot_mat * besty_rot_mat * bestx_rot_mat;
+	core::Vector v(0,0,0);
+	small_mol_pose.apply_transform_Rx_plus_v(bestxyz_rot_mat, v);
+
+	//CHEAT! Calculate CoM of Ligand, move Pocket COM to COM of input_ligand
+	if (option[ cheat ]()){
+		core::Size lig_res_num = 0;
+		for ( int j = 1, resnum = small_mol_pose.total_residue(); j <= resnum; ++j ) {
+			if (!small_mol_pose.residue(j).is_protein()){
+				lig_res_num = j;
+				break;
+			}
+		}
+		if (lig_res_num == 0){
+			std::cout<<"Error, no ligand for PlaidFingerprint" << std::endl;
+			exit(1);
+		}
+		numeric::xyzVector<core::Real> input_ligand_CoM(0.);
+		conformation::Residue const & curr_rsd = small_mol_pose.conformation().residue(lig_res_num);
+		for(Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i) {
+			input_ligand_CoM.x() += curr_rsd.atom(i).xyz()(1);
+			input_ligand_CoM.y() += curr_rsd.atom(i).xyz()(2);
+    input_ligand_CoM.z() += curr_rsd.atom(i).xyz()(3);
+		}
+		input_ligand_CoM /= curr_rsd.nheavyatoms();
+		npf.CHEAT_CoM( input_ligand_CoM );
+	}//END CHEAT!
+
+	protocols::pockets::PlaidFingerprint pf( small_mol_pose, npf );
+
+	numeric::xyzVector<core::Real> pocket_CoM = npf.CoM();
+	numeric::xyzVector<core::Real> smallmol_CoM = pf.CoM();
+
+	//create 'tag' for output filenames
+	int dot_index1 = input_protein.rfind(".", input_protein.size());
   assert(dot_index1 != -1 && "No dot found in filename");
 	std::string protein_name = input_protein.substr(0,dot_index1);
   int dot_index2 = input_ligand.rfind(".", input_ligand.size());
@@ -232,63 +336,165 @@ int main( int argc, char * argv [] ) {
 	std::string ligand_name = input_ligand.substr(0,dot_index2);
 	std::string tag = ligand_name + "_" + protein_name + "_" + resid;
 
-	pose::Pose small_mol_pose;
-	core::import_pose::pose_from_pdb( small_mol_pose, input_ligand );
-	core::pose::Pose original_pose = small_mol_pose;
-	numeric::xyzMatrix<core::Real> bestx_rot_mat( numeric::x_rotation_matrix_degrees(original_pocket_angle_transform[1] ) );
-	numeric::xyzMatrix<core::Real> besty_rot_mat( numeric::y_rotation_matrix_degrees(original_pocket_angle_transform[2] ) );
-	numeric::xyzMatrix<core::Real> bestz_rot_mat( numeric::z_rotation_matrix_degrees(original_pocket_angle_transform[3] ) );
-	numeric::xyzMatrix<core::Real> bestxyz_rot_mat = bestz_rot_mat * besty_rot_mat * bestx_rot_mat;
-	core::Vector v(0,0,0);
-	small_mol_pose.apply_transform_Rx_plus_v(bestxyz_rot_mat, v);
+	//print unaligned fingerprint files
+	if (option[ print_fingerprints ]()){
+		std::string np_output_filename = "npf_" + tag + ".txt";
+		std::string np_output_pdbname = "npf_" + tag + ".pdb";
+		npf.print_to_file(np_output_filename);
+		npf.print_to_pdb(np_output_pdbname);
+		std::string p_output_filename = "pf_" + tag + ".txt";
+		std::string p_output_pdbname = "pf_" + tag + ".pdb";
+		pf.print_to_file(p_output_filename);
+		pf.print_to_pdb(p_output_pdbname);
+		std::cout << "SCORE : unaligned  : " <<  pf.fp_compare( npf, missing_pt_wt, steric_wt, extra_pt_wt ) <<std::endl;
+		std::string pose_name = "unal_pose_" + tag + ".pdb";
+		std::string fp_name = "unal_fp_" + tag + ".pdb";
+		pf.dump_oriented_pose_and_fp_to_pdb(pose_name, fp_name, npf, 0., 0., 0., original_pocket_angle_transform );
+	}//END printing unaligned fingerprints
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+	if (optimization_type == "DFP"){
 
-	if (option[ cheat ]()){
-		//Calculate CoM of Ligand, move Pocket COM to COM of input_ligand
-		core::Size lig_res_num = 0;
-  for ( int j = 1, resnum = small_mol_pose.total_residue(); j <= resnum; ++j ) {
-    if (!small_mol_pose.residue(j).is_protein()){
-      lig_res_num = j;
-      break;
-    }
-  }
-  if (lig_res_num == 0){
-		std::cout<<"Error, no ligand for PlaidFingerprint" << std::endl;
-    exit(1);
-  }
-	numeric::xyzVector<core::Real> input_ligand_CoM(0.);
-	conformation::Residue const & curr_rsd = small_mol_pose.conformation().residue(lig_res_num);
-  for(Size i = 1, i_end = curr_rsd.nheavyatoms(); i <= i_end; ++i) {
-    input_ligand_CoM.x() += curr_rsd.atom(i).xyz()(1);
-    input_ligand_CoM.y() += curr_rsd.atom(i).xyz()(2);
-    input_ligand_CoM.z() += curr_rsd.atom(i).xyz()(3);
-  }
-  input_ligand_CoM /= curr_rsd.nheavyatoms();
-	npf.CHEAT_CoM( input_ligand_CoM );
+		core::Real best_score = std::numeric_limits<core::Real>::max();
+		//core::Real dfp_score;
+		utility::vector1<core::Real> out_vars(6);
+		std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
+		exit(1);
+		protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);
+		//		core::optimization::MinimizerOptions options("dfpmin", 0.0000001, false, false, false);
+		//		core::optimization::MinimizerOptions options("dfpmin_armijo", 0.000001, false, false, false);
+		core::optimization::MinimizerOptions options("dfpmin_armijo_nonmonotone", 0.000001, false, false, false);
+		core::optimization::Minimizer dfp(fpm, options);
+		//generate multiple stating vars
+		for (int j = 0; j < num_pose_search; ++j ){
+			utility::vector1<core::Real> p_opt(6, 0.);
+
+			core::Real curr_CoM_offset_x = (int) (numeric::random::uniform() * origin_space);
+			core::Real curr_CoM_offset_y = (int) (numeric::random::uniform() * origin_space);
+			core::Real curr_CoM_offset_z = (int) (numeric::random::uniform() * origin_space);
+			core::Real curr_angle1 = ( (int) (numeric::random::uniform() * 359.999) ) * numeric::constants::r::pi_over_180;
+			core::Real curr_angle2 = ( (int) (numeric::random::uniform() * 359.999) ) * numeric::constants::r::pi_over_180;
+			core::Real curr_angle3 = ( (int) (numeric::random::uniform() * 359.999) ) * numeric::constants::r::pi_over_180;
+
+			//p_opt[1] = curr_CoM_offset_x;
+			//p_opt[2] = curr_CoM_offset_y;
+			//p_opt[3] = curr_CoM_offset_z;
+			p_opt[4] = curr_angle1;
+			p_opt[5] = curr_angle2;
+			p_opt[6] = curr_angle3;
+
+			core::Real curr_score = dfp.run(p_opt);
+      std::cout<<"curr_score "<< curr_score <<std::endl;
+			if ( curr_score < best_score ) {
+				best_score = curr_score;
+				std::cout<<"best_score "<< curr_score <<std::endl;
+			}
+		}
+		std::cout<<"DARC_DFP_score : " << best_score <<std::endl;
+		//dfp_score = dfp.run(p_opt);
+		//fpm.dump(out_vars);
 	}
 
+	else if (optimization_type == "PSO"){
 
-	//std::string np_output_filename = "npf_" + tag + ".txt";
-	//std::string np_output_pdbname = "npf_" + tag + ".pdb";
-  //npf.print_to_file(np_output_filename);
-  //npf.print_to_pdb(np_output_pdbname);
+		utility::vector1<core::Real> p_min(6);
+		p_min[1] = origin_space * -1;
+		p_min[2] = origin_space * -1;
+		p_min[3] = origin_space * -1;
+		p_min[4] = 0.;
+		p_min[5] = 0.;
+		p_min[6] = 0.;
 
-	protocols::pockets::PlaidFingerprint pf( small_mol_pose, npf );
+		utility::vector1<core::Real> p_max(6);
+		p_max[1] = origin_space;
+		p_max[2] = origin_space;
+		p_max[3] = origin_space;
+		p_max[4] = numeric::constants::r::pi_2;
+		p_max[5] = numeric::constants::r::pi_2;
+		p_max[6] = numeric::constants::r::pi_2;
 
-	numeric::xyzVector<core::Real> pocket_CoM = npf.CoM();
-	numeric::xyzVector<core::Real> smallmol_CoM = pf.CoM();
+		ParticleOPs particles;
+		std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
+		exit(1);
+		protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);
+		//protocols::pockets::DarcParticleSwarmMinimizer pso(p_min, p_max);
+		core::optimization::ParticleSwarmMinimizer pso(p_min, p_max);
+		particles = pso.run(run_size, fpm, particle_size);
 
-	//std::string p_output_filename = "pf_" + tag + ".txt";
-	//std::string p_output_pdbname = "pf_" + tag + ".pdb";
-  //pf.print_to_file(p_output_filename);
-  //pf.print_to_pdb(p_output_pdbname);
+		ParticleOP p = particles[1];
+		core::optimization::Particle parti(*p);
+		core::Real fit_best = -(parti.fitness_pbest());
+		utility::vector1<core::Real> best_vars(6);
+		best_vars = parti.pbest();
+		std::string complex_filename = "DARC_" + tag + ".pdb";
+		std::cout<<"BEST FITNESS:"<<"	"<<complex_filename<<"	"<<fit_best<<std::endl;
 
-	std::cout << "DARC SCORE : " <<  pf.fp_compare( npf, missing_pt_wt, steric_wt, extra_pt_wt ) <<std::endl;
-	//std::string pose_name = "unal_pose_" + tag + ".pdb";
-	//std::string fp_name = "unal_fp_" + tag + ".pdb";
-	//pf.dump_oriented_pose_and_fp_to_pdb(pose_name, fp_name, npf, 0., 0., 0., original_pocket_angle_transform );
-	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		//fpm.dump(vars);
+		//std::string header = "pso-optimization";
+		//pso.print_particles(particles, header);
+		//std::cout<<"BEST dofs ["<<tag<<"]:  [  "<<best_vars[1]<<",   "<<best_vars[2]<<",   "<<best_vars[3]<<",   "<<best_vars[4]<<",   "<<best_vars[5]<<",   "<<best_vars[6]<<"   ]"<<std::endl;
+
+		numeric::xyzVector<core::Real> optimized_origin(0.);
+		optimized_origin.x() = best_vars[1];
+		optimized_origin.y() = best_vars[2];
+		optimized_origin.z() = best_vars[3];
+
+		//print PSO optimized fingerprints
+		if (option[ print_fingerprints ]()){
+			std::string pose_name = "pso_pose_" + tag + ".pdb";
+			std::string fp_name = "pso_fp_" + tag + ".pdb";
+			pf.dump_oriented_pose_and_fp_to_pdb(pose_name, fp_name, npf, best_vars[4], best_vars[5], best_vars[6], original_pocket_angle_transform, optimized_origin );
+		}//END printing PSO fingerprints
+
+		//Calculate RMSD
+		core::pose::Pose oriented_pose = pf.get_oriented_pose(npf, best_vars[4], best_vars[5], best_vars[6], original_pocket_angle_transform, optimized_origin );
+		std::string pso_pose_name = "LIGAND_" + tag + ".pdb";
+		oriented_pose.dump_pdb(pso_pose_name);
+		core::Real rmsd_value = pf.rmsd(original_pose, oriented_pose);
+		std::cout<<"RMSD ["<<tag<<"]:"<<rmsd_value<<std::endl;
+		std::string rmsd_file = "rmsd.out";
+    ofstream RMSDfile(rmsd_file.c_str(), ofstream::app);
+    RMSDfile <<rmsd_value<<"\n";
+    RMSDfile.close();
+
+		//print protein-ligand complex into a pdb file
+		if (option[ print_output_complex ]()){
+			std::string Plineread;
+			std::string Llineread;
+			ofstream PLfile(complex_filename.c_str());
+			//ifstream Pfile(complex_filename.c_str());
+			ifstream Pfile(input_protein.c_str());
+			if (!Pfile) {
+				std::cout<< "Can't open Protein-pose file " << input_protein << std::endl;
+				exit(1);
+			}
+			while (std::getline(Pfile, Plineread)) {
+				if (Plineread[0] == 'E' && Plineread[1] == 'N' && Plineread[2] == 'D') continue;
+				if (Plineread[0] == 'T' && Plineread[1] == 'E' && Plineread[2] == 'R') continue;
+				PLfile << Plineread<<"\n";
+			}
+			PLfile <<"TER\n";
+			ifstream Lfile(pso_pose_name.c_str());
+			if (!Lfile) {
+				std::cout<< "Can't open Ligand-pose file " << pso_pose_name << std::endl;
+				exit(1);
+			}
+			while (std::getline(Lfile, Llineread)) {
+				if (Llineread[0] == 'E' && Llineread[1] == 'N' && Llineread[2] == 'D') continue;
+				if (Llineread[0] == 'T' && Llineread[1] == 'E' && Llineread[2] == 'R') continue;
+				PLfile << Llineread<<"\n";
+			}
+			PLfile <<"END\n";
+			Pfile.close();
+			Lfile.close();
+			PLfile.close();
+		}	//END printing DARC_complex
+		//delete the optimized ligand pose pdb file
+		if(	remove(pso_pose_name.c_str()) != 0) perror( "Error deleting Ligand_PSO_pose_pdb file" );
+	}else {
+		std::cout<<"ERROR! : Wrong optimization_method "<<std::endl;
+	}
+
 	return 0;
-
 }

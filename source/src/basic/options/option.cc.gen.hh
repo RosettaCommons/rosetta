@@ -259,12 +259,15 @@ option.add( basic::options::OptionKeys::pocket_grid::pocket_side, "Include only 
 option.add( basic::options::OptionKeys::pocket_grid::pocket_dump_pdbs, "Generate PDB files" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_dump_rama, "Generate Ramachandran maps for each pocket cluster" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_restrict_size, "Pockets that are too large return score of 0" ).def(false);
+option.add( basic::options::OptionKeys::pocket_grid::pocket_ignore_buried, "Ignore pockets that are not solvent exposed" ).def(true);
+option.add( basic::options::OptionKeys::pocket_grid::pocket_only_buried, "Identify only pockets buried in the protein core (automatically sets -pocket_ignored_buried false)" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_psp, "Mark Pocket-Solvent-Pocket events as well" ).def(true);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_sps, "Unmark Solvent-Pocket-Solvent events" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_surface_score, "Score given to pocket surface" ).def(0);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_surface_dist, "Distance to consider pocket surface" ).def(2.5);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_buried_score, "Score given to deeply buried pocket points" ).def(5.0);
 option.add( basic::options::OptionKeys::pocket_grid::pocket_buried_dist, "Distance to consider pocket buried" ).def(2.0);
+option.add( basic::options::OptionKeys::pocket_grid::pocket_debug_output, "Print any and all debuggind output related to pockets" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::print_grid, "print the grid points into a PDB file" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::extend_eggshell, "Extend the eggshell points" ).def(false);
 option.add( basic::options::OptionKeys::pocket_grid::extend_eggshell_dist, "Distance to extend eggshell" ).def(1);
@@ -702,13 +705,13 @@ option.add( basic::options::OptionKeys::loopfcst::use_general_protocol, "use the
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight_array, "use these weights (per seqpos) for coord cst in rigid regions" ).def("");
 option.add( basic::options::OptionKeys::loopfcst::dump_coord_cst_weight_array, "dump these weights (per seqpos) for coord cst in rigid regions" ).def("");
 option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
+option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
@@ -1406,12 +1409,12 @@ option.add( basic::options::OptionKeys::robert::pcs_cluster_lowscoring, "cluster
 option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
-option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
-option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
+option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
+option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
 option.add( basic::options::OptionKeys::james::dist_thresholds, "No description" ).def(utility::vector1<float>(1, 1.0));
@@ -2110,11 +2113,11 @@ option.add( basic::options::OptionKeys::optE::free, "IterativeOptEDriver flag: s
 option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
 option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
 option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
-option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
-option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
+option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
+option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
 option.add( basic::options::OptionKeys::optE::optE_no_protein_hack_elec, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" ).def(false);
 option.add( basic::options::OptionKeys::optE::design_first, "Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights." );
 option.add( basic::options::OptionKeys::optE::n_design_cycles, "The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred" ).def(10);
