@@ -46,8 +46,10 @@ def svn_version():
     if os.path.isfile('get_commit_id.sh'):
         (res, output) = commands.getstatusoutput('./get_commit_id.sh %s' % ver)
         print 'Asked Testing server for commit id, got reply:', repr(output)
-        commit_id = 'failed_to_get_id' if (res or not output) else output
+        commit_id = 'failed_to_get_id' if (res  or  not output  or not output.isdigit() ) else str(int(output))  # simple validation
+	
 
+    if commit_id != 'unknown': ver = commit_id + ':' + ver
 
     file( os.path.normpath("src/devel/svn_version.cc"), "w" )          .write( version_cc_template % vars())
     file( os.path.normpath("src/python/bindings/src/version.py"), "w" ).write( version_py_template % vars())
