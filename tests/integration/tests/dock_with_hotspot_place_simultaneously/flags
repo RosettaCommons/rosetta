@@ -1,0 +1,10 @@
+-s input/start.pdb
+-mute core.util.prof ## dont show timing info
+-out:file:fullatom
+-mute core.io.database
+-jd2:ntrials 10
+-run:protocol jd2_scripting
+-parser:protocol dockingmover_hotspot.xml
+-overwrite
+-use_input_sc
+-docking:no_filters
