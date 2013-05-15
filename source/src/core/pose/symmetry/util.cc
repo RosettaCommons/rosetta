@@ -391,6 +391,10 @@ make_symmetric_pdb_info(
 		int res_id = pdb_info_src->number( res );
 		pdb_info_target->number( res, res_id );
 
+		// insertion codes
+		char icode = pdb_info_src->icode( res );
+		pdb_info_target->icode( res, icode );
+
 		// chnids in scoring subunit
 		char chn_id = pdb_info_src->chain( res );
 		Size chn_idx = basic::get_pymol_chain_index_1(chn_id);
@@ -410,6 +414,7 @@ make_symmetric_pdb_info(
 				clone != clone_end; ++clone ) {
 			int clone_res( *clone );
 			pdb_info_target->number( clone_res, res_id );
+			pdb_info_target->icode( clone_res, icode );
 
 			int newchn_idx = chn_idx + (clonecounter++)*(lastchnid);
 			pdb_info_target->chain( clone_res, basic::get_pymol_chain(newchn_idx) );
@@ -457,6 +462,10 @@ extract_asymmetric_unit_pdb_info(
 		int res_id = pdb_info_src->number( res );
 		pdb_info_target->number( res, res_id );
 
+		// insertion codes
+		char icode = pdb_info_src->icode( res );
+		pdb_info_target->icode( res, icode );
+
 		char chn_id = pdb_info_src->chain( res );
 		pdb_info_target->chain( res, chn_id );
 
@@ -474,12 +483,9 @@ extract_asymmetric_unit_pdb_info(
 		}
 	}
 	// vrt
-	if (pose.residue(nres+1).aa() == core::chemical::aa_vrt){
-	pdb_info_target->number( nres+1, 1 );
-	if(pdb_info_target->nres() > nres){
+	if (pose.residue(nres+1).aa() == core::chemical::aa_vrt && pdb_info_target->nres() > nres){
 		pdb_info_target->number( nres+1, 1 );
 		pdb_info_target->chain( nres+1, 'z' );  //fpd  is this a problem???? should this be an "illegal" chainID instead?
-	}
 	}
 
 	// rebuild pdb2pose

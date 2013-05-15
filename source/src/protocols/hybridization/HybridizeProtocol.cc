@@ -225,6 +225,8 @@ HybridizeProtocol::init() {
 	hetatm_self_cst_weight_ = 10.;
 	hetatm_prot_cst_weight_ = 0.;
 	cartfrag_overlap_ = 2;
+	jump_move_ = false;
+	jump_move_repeat_ = 1;
 
 	if (option[cm::hybridize::starting_template].user()) {
 		starting_templates_ = option[cm::hybridize::starting_template]();
@@ -864,7 +866,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// fold tree hybridize
 		if (RG.uniform() < stage1_probability_) {
-			for ( core::Size repeatstage1=0; repeatstage1 < jump_move_repeat_; ++repeatstage1 ) {
+			for ( core::Size repeatstage1=0; repeatstage1 < jump_move_repeat_ && jump_move_; ++repeatstage1 ) {
 				std::string cst_fn = template_cst_fn_[initial_template_index];
 
 				FoldTreeHybridizeOP ft_hybridize(

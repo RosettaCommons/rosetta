@@ -563,8 +563,9 @@ void PhenixInterface::stealBfactorsFromFile(
 
 		core::Size resid = (core::Size) atoi( atmLine.substr(22,4).c_str() );
 		std::string chainid = atmLine.substr(21,1);
-		core::Size resid_ros = pose_asu.pdb_info()->pdb2pose( chainid[0], resid );
-		core::Size residALT_ros = pose.pdb_info()->pdb2pose( chainid[0], resid );
+		std::string icode = atmLine.substr(26,1);
+		core::Size resid_ros = pose_asu.pdb_info()->pdb2pose( chainid[0], resid, icode[0] );
+		core::Size residALT_ros = pose.pdb_info()->pdb2pose( chainid[0], resid, icode[0] );
 
 		//TR  << "from pdb:" << atmLine.substr(22,4).c_str() << " ---> " << resid_ros << " or " << residALT_ros << std::endl;
 
