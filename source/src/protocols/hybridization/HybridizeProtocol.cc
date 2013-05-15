@@ -866,7 +866,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 		// fold tree hybridize
 		if (RG.uniform() < stage1_probability_) {
-			for ( core::Size repeatstage1=0; repeatstage1 < jump_move_repeat_ && jump_move_; ++repeatstage1 ) {
+			for ( core::Size repeatstage1=0; repeatstage1 < jump_move_repeat_; ++repeatstage1 ) {
 				std::string cst_fn = template_cst_fn_[initial_template_index];
 
 				FoldTreeHybridizeOP ft_hybridize(
