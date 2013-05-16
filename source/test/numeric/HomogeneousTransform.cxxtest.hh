@@ -18,7 +18,7 @@
 
 // Unit headers
 #include <numeric/HomogeneousTransform.hh>
-
+#include <numeric/xyzVector.io.hh>
 
 typedef numeric::HomogeneousTransform< double > HTD;
 
@@ -466,6 +466,15 @@ class HomogenousTransformTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( identity3.py(), 0.0, 1e-14 );
 		TS_ASSERT_DELTA( identity3.pz(), 0.0, 1e-14 );
 
+	}
+
+	void test_z_rotation_bug(){
+		HTD ht1,ht2;
+		ht1.set_zaxis_rotation_deg( 89.0);
+		ht2.set_zaxis_rotation_deg(271.0);
+		xyzVector< double > euler1 = ht1.euler_angles_deg();
+		xyzVector< double > euler2 = ht2.euler_angles_deg();
+		TS_ASSERT( euler1.distance(euler2) > 1e-6 );
 	}
 
 	/*void sini_match_frame() {

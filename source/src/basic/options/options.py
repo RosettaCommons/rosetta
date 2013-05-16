@@ -32,9 +32,12 @@ class KeepSameFile(object):
         self.body += s
     def close(self):
         ischanged = False
-        with open(self.fname) as existing_file:
-            if existing_file.read() != self.body:
-                ischanged = True
+        try :
+            with open(self.fname) as existing_file:
+                if existing_file.read() != self.body:
+                    ischanged = True
+        except IOError :
+            ischanged = True
         if ischanged:
             print "file",self.fname,"being updated"
             with open(self.fname,self.opts) as out:
