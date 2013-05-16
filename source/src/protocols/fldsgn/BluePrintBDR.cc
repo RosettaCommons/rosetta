@@ -722,7 +722,7 @@ BluePrintBDR::parse_my_tag(
 
 	// Use specified constraint generator movers
 	// these are called from VLB after the residues are added, but before the actual fragment insertions take place
-	utility::vector1< std::string > const mover_names( utility::string_split( tag->getOption< std::string >( "constraint_generators" ), ',' ) );
+	utility::vector1< std::string > const mover_names( utility::string_split( tag->getOption< std::string >( "constraint_generators", "" ), ',' ) );
  	for ( core::Size i=1; i<=mover_names.size(); ++i ) {
  		if ( mover_names[i] == "" ) continue;
  		protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover( mover_names[i], movers );
