@@ -235,6 +235,11 @@ enum ScoreType {
 	//Low resolution
 	rna_rg,           // Radius of gyration for RNA
 
+	//  FACTS solvation model
+	facts_elec,
+	facts_solv,
+	facts_sasa,
+
 	// centroid interchain 1b (docking) scores
 	interchain_pair,
 	interchain_vdw,
@@ -245,9 +250,6 @@ enum ScoreType {
 	// 30 as of 1/7/2007 -- don't ever code using the literal "30", this is just a helpful count
 
 	gb_elec,
-	facts_elec,
-	facts_solv,
-	facts_sasa,
 
 	//Full atom disulfide terms
 	dslf_ss_dst,
