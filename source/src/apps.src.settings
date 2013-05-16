@@ -60,9 +60,9 @@ sources = {
                 "fast_clustering",
 	],
 	"public/antibody": [
-		"antibody_mode",
-                "antibody_assemble_CDRs",
-                "antibody_model_CDR_H3",
+		"antibody_legacy",
+        "antibody_graft",
+        "antibody_H3",
 	],
 	"public/boinc": [
 		"minirosetta",
