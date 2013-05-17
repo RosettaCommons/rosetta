@@ -5,13 +5,13 @@ import hashlib, os, string, sys
 import build_util, xcode_util
 
 sys.path.append( '..' )
-import svn_version
+import version
 
 # generate new svn_version file
 #os.popen( 'cd ..; python svn_version.py' )
 starting_directory = os.path.basename( os.getcwd() )
 os.chdir( '..' )
-svn_version.svn_version()
+version.svn_version()
 os.chdir( starting_directory )
 
 def project_callback(project, project_path, project_files):
