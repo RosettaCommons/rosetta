@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/apps/pilot/jianqing/antibody_assemble_CDRs.cc
-/// @brief
-/// @author Jianqing Xu (xubest@gmail.com)
-/// 09/09/2011
+/// @file src/apps/pilot/jianqing/antibody_H3.cc
+/// @brief Code to model and antibody CDR H3 loop, simultaneously optimizing surrounding CDR loops and VH/VL orientation
+/// @author Jianqing Xu (xubest@gmail.com), Daisuke Kuroda, Brian Weitzer, Jeff Gray
+/// 09/09/2011 - 2013
 
 
 
-#include <protocols/antibody/GraftCDRLoopsProtocol.hh>
+#include <protocols/antibody/AntibodyModelerProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 
@@ -44,17 +44,17 @@ main( int argc, char * argv [] )
 	using namespace protocols::antibody;
 	using namespace protocols::jd2;
 
-	GraftCDRLoopsProtocol::register_options();
+	AntibodyModelerProtocol::register_options();
 	protocols::jd2::register_options();
 	// initialize core
 	devel::init(argc, argv);
 
 
-	GraftCDRLoopsProtocolOP abm = new GraftCDRLoopsProtocol();
-    TR<<*abm<<std::endl;
+	AntibodyModelerProtocolOP ab_m_h3 = new AntibodyModelerProtocol();
+	TR<<*ab_m_h3<<std::endl;
 //    exit(-1);
 
-	JobDistributor::get_instance()->go(abm);
+	JobDistributor::get_instance()->go(ab_m_h3);
 
 	 } catch ( utility::excn::EXCN_Base const & e ) { 
 		 std::cout << "caught exception " << e.msg() << std::endl;

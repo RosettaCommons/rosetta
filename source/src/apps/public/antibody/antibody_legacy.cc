@@ -10,7 +10,7 @@
 // (c) email: license@u.washington.edu.
 //
 /// @file Aroop Sircar ( aroopsircar@yahoo.com )
-/// @brief
+/// @brief Legacy RosettaAntibody application as written by Arvind Sivasubramanian and Aroop Sircar, and ported to Rosetta3
 
 // AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 // AUTO-REMOVED #include <protocols/jd2/Job.hh>
