@@ -116,6 +116,20 @@ private:
 	std::string property_;
 };
 
+class ResiduePDBInfoHasLabel : public ResFilter {
+public:
+  typedef ResFilter parent;
+public:
+  ResiduePDBInfoHasLabel();
+  ResiduePDBInfoHasLabel( std::string const & );
+  virtual bool operator() ( Pose const &, Size ) const;
+  virtual ResFilterOP clone() const;
+  virtual void parse_tag( TagPtr );
+  virtual std::string const & property() const { return property_; }
+private:
+  std::string property_;
+};
+
 class ResidueLacksProperty : public ResidueHasProperty {
 public:
 	typedef ResidueHasProperty parent;

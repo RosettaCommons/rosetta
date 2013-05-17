@@ -82,7 +82,9 @@ namespace {
 				"0:0", //Combinatory delta
 				"0:0", //Max Fragment relpacement delta
 				"GLY", //Clash score test residue
-				true		//full_bb_alignment  
+				"", //hotspots
+				true,		//full_bb_alignment  
+				true		//optimum_alignment_per_fragment
 				);
 			
 			//Import the test scaffold
@@ -149,7 +151,9 @@ namespace {
 				"0:0,0:0", //Combinatory delta
 				"0:0,0:0", //Max Fragment relpacement delta
 				"GLY", //Clash score test residue
-				true		//full_bb_alignment  
+				"", //hotspots
+				true,		//full_bb_alignment  
+				true		//optimum_alignment_per_fragment
 				);
 			
 			//Import the test scaffold
@@ -216,7 +220,9 @@ namespace {
 				"0:0", //Combinatory delta
 				"0:0", //Max Fragment relpacement delta
 				"GLY", //Clash score test residue
-				false		//full_bb_alignment  
+				"", //hotspots
+				false,		//full_bb_alignment  
+				true		//optimum_alignment_per_fragment
 				);
 			
 			//Import the test scaffold
@@ -283,7 +289,9 @@ namespace {
 				"0:0,0:0", //Combinatory delta
 				"0:0,0:0", //Max Fragment relpacement delta
 				"GLY", //Clash score test residue
-				false		//full_bb_alignment  
+				"", //hotspots
+				false,		//full_bb_alignment  
+				true		//optimum_alignment_per_fragment
 				);
 			
 			//Import the test scaffold
@@ -350,7 +358,9 @@ namespace {
 				"0:0", //Combinatory delta
 				"", //Max Fragment relpacement delta
 				"GLY", //Clash score test residue
-				false		//full_bb_alignment  
+				"", //hotspots
+				false,		//full_bb_alignment  
+				true		//optimum_alignment_per_fragment
 				);
 			
 			//Import the test scaffold
@@ -417,7 +427,9 @@ namespace {
 				"0:0,0:0", //Combinatory delta
 				"", //Max Fragment relpacement delta
 				"GLY", //Clash score test residue
-				false		//full_bb_alignment  
+				"", //hotspots
+				false,		//full_bb_alignment  
+				true		//optimum_alignment_per_fragment
 				);
 			
 			//Import the test scaffold
@@ -484,7 +496,9 @@ namespace {
 				"3:3,3:3", //Combinatory delta
 				"", //Max Fragment relpacement delta
 				"GLY", //Clash score test residue
-				false		//full_bb_alignment  
+				"", //hotspots
+				false,		//full_bb_alignment  
+				true		//optimum_alignment_per_fragment
 				);
 			
 			//Import the test scaffold
@@ -552,7 +566,9 @@ namespace {
 				"1:1,1:1,0:0", //Combinatory delta
 				"", //Max Fragment relpacement delta
 				"GLY", //Clash score test residue
-				false		//full_bb_alignment  
+				"", //hotspots
+				false,		//full_bb_alignment  
+				true		//optimum_alignment_per_fragment
 				);
 			
 			//Import the test scaffold

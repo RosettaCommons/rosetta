@@ -505,6 +505,14 @@ public:
 		bool const build_ideal_geometry
 	);
 
+	/// @brief Appends source pose conformation to pose by a new jump
+	void
+	append_pose_by_jump(
+		Pose const & src,
+		Size const jump_anchor_residue,
+		std::string const& jump_anchor_atom = "",
+		std::string const& jump_root_atom = "");
+
 	void
 	delete_polymer_residue( Size const seqpos );
 

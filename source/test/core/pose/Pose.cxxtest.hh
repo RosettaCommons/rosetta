@@ -22,6 +22,8 @@
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/signals/ConformationEvent.hh>
 #include <core/pose/signals/DestructionEvent.hh>
 #include <core/pose/signals/EnergyEvent.hh>
@@ -31,6 +33,7 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
 
 
@@ -122,4 +125,47 @@ public: // tests
 		obs.count = 0;
 	}
 
+	void test_append_pose_by_jump() 
+	{
+		using namespace core::pose;
+
+		Pose pose;
+		make_pose_from_sequence(pose, "TE", "fa_standard");
+		pose.pdb_info(PDBInfoOP(new PDBInfo(pose)));
+
+		Pose pose2;
+		make_pose_from_sequence(pose2, "ST", "fa_standard");
+		pose2.pdb_info(PDBInfoOP(new PDBInfo(pose2)));
+
+		char pose2_chain = 'B';
+		pose2.pdb_info()->set_chains(pose2_chain);
+
+		Pose work_pose(pose);
+		work_pose.append_pose_by_jump(pose2, 1);
+
+		TS_ASSERT_EQUALS(work_pose.n_residue(), pose.n_residue() + pose2.n_residue());
+		TS_ASSERT_EQUALS(work_pose.sequence(), pose.sequence() + pose2.sequence());
+
+		for (core::Size i = 1; i <= pose.n_residue(); i++)
+		{
+			TS_ASSERT_DELTA(
+					work_pose.residue(i).xyz(1),
+					pose.residue(i).xyz(1),
+					1e-6);
+			TS_ASSERT_EQUALS(
+					work_pose.pdb_info()->chain(i),
+					pose.pdb_info()->chain(i));
+		}
+
+		for (core::Size i = 1; i <= pose2.n_residue(); i++)
+		{
+			TS_ASSERT_DELTA(
+					work_pose.residue(i + pose.n_residue()).xyz(1),
+					pose2.residue(i).xyz(1),
+					1e-6);
+			TS_ASSERT_EQUALS(
+					work_pose.pdb_info()->chain(i + pose.n_residue()),
+					pose2.pdb_info()->chain(i));
+		}
+	}
 };

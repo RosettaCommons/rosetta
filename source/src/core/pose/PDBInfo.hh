@@ -186,6 +186,10 @@ private: // structs
 		/// @brief vector of AtomRecord
 		/// @details sized the same as number of atoms for a given instance of core::conformation::Residue
 		AtomRecords atomRec;
+		/// @brief Added in 2013 by dadriano. A vector of labels in the AtomRecord that can be used to store 
+		/// residue-based information that you want/can-use to communicate movers with moverts or afthermath for task-opperations
+		utility::vector1< std::string >  label;
+		
 #ifdef USEBOOSTSERIALIZE
 		friend class boost::serialization::access;
 
@@ -196,6 +200,7 @@ private: // structs
 				ar & resSeq;
 				ar & iCode;
 				ar & atomRec;
+				ar & label;
 		}
 #endif
 	};
@@ -670,6 +675,11 @@ public: // single residue accessors
 	String
 	pose2pdb( Size const res ) const;
 
+	/// @brief returns the pose(number) label associated to the residue
+	/// @note the retrun string is a concatenation of all the strings inside of the vector label<>
+	/// @param[in] res  residue in pose numbering
+	String
+	get_reslabels( Size const res ) const;
 
 public: // single residue mutators
 
@@ -750,6 +760,34 @@ public: // single residue mutators
 		int const pdb_res,
 		char const ins_code = ' '
 	);
+
+	/// @brief adds a label associated to a pose resid.
+	/// @param[in] res  residue in pose numbering
+	/// @param[in] label  string that is the "label"
+	void
+	add_reslabel(
+		Size const res,
+		std::string const label
+	);
+
+	/// @brief clean all the label(s) associated to a pose resid.
+	/// @param[in] res  residue in pose numbering
+	void
+	clear_reslabel( 
+		Size const res
+	);
+
+	/// @brief uses std iterators to check if a residue has a label associated to it
+	/// @param[in] res  residue in pose numbering
+	/// @param[in] target_label string to look for inside the labes associated to the residue
+	bool
+	res_haslabel( 
+		Size const res,
+		std::string const target_label 
+	) const
+	{
+		return ( std::find( residue_rec_[res].label.begin(), residue_rec_[res].label.end(), target_label ) != residue_rec_[res].label.end() );
+	}
 
 
 public: // atom accessors

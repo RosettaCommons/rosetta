@@ -57,6 +57,12 @@ public:
 	virtual std::string keyname() const { return "ResidueHasProperty"; }
 };
 
+class ResiduePDBInfoHasLabelCreator : public ResFilterCreator {
+public:
+  virtual ResFilterOP create_res_filter() const;
+  virtual std::string keyname() const { return "ResiduePDBInfoHasLabel"; }
+};
+
 class ResidueLacksPropertyCreator : public ResFilterCreator {
 public:
 	virtual ResFilterOP create_res_filter() const;

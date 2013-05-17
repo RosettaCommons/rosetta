@@ -16,6 +16,9 @@
 #endif
 
 #include <protocols/toolbox/superimpose.hh>
+#include <core/kinematics/Stub.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/types.hh>
@@ -57,6 +60,130 @@ using namespace numeric::model_quality; //for rms functions
 typedef core::Real matrix[3][3];
 typedef core::Real rvec[3];
 
+template <typename T>
+void 
+vector_vector_to_FArray2(
+      utility::vector1< numeric::xyzVector< T > > & from,
+			ObjexxFCL::FArray2D< T > & to)
+{
+	core::Size count = from.size();
+
+  /*
+  runtime_assert(to.I1() == 3);
+  runtime_assert(to.I2() == count);
+  */
+
+  for (core::Size i = 1; i <= count; i++)
+  {
+    for (core::Size j = 1; j <= 3; j++)
+    {
+      to(j,i) = from[i](j);
+    }
+  }
+}
+
+void
+superposition_transform(
+      utility::vector1< numeric::xyzVector< core::Real > > & init_coords,
+      utility::vector1< numeric::xyzVector< core::Real > > & ref_coords,
+			numeric::xyzMatrix< core::Real > & rotation,
+			numeric::xyzVector< core::Real > & to_init_center,
+			numeric::xyzVector< core::Real > & to_fit_center)
+{
+	utility::vector1< core::Real > dummy_weights(0);
+
+	superposition_transform(
+      init_coords,
+      ref_coords,
+			dummy_weights,
+			rotation,
+			to_init_center,
+			to_fit_center);
+}
+
+void
+superposition_transform(
+      utility::vector1< numeric::xyzVector< core::Real > > & init_coords,
+      utility::vector1< numeric::xyzVector< core::Real > > & ref_coords,
+      utility::vector1< core::Real > & coord_weights,
+			numeric::xyzMatrix< core::Real > & rotation,
+			numeric::xyzVector< core::Real > & to_init_center,
+			numeric::xyzVector< core::Real > & to_fit_center)
+{
+  int count = init_coords.size();
+  runtime_assert(count == ref_coords.size());
+
+  ObjexxFCL::FArray2D< numeric::Real > init_fa( 3, init_coords.size());
+  ObjexxFCL::FArray2D< numeric::Real > ref_fa( 3, ref_coords.size());
+
+  vector_vector_to_FArray2(init_coords, init_fa);
+  vector_vector_to_FArray2(ref_coords, ref_fa);
+
+	ObjexxFCL::FArray1D< numeric::Real > weights_fa(count, 1);
+	if (coord_weights.size() != 0)
+	{
+		runtime_assert(count = coord_weights.size());
+		for (core::Size i = 1; i <= count; i++)
+		{
+			weights_fa[i] =  coord_weights[i];
+		}
+	}
+
+	protocols::toolbox::superposition_transform(
+			count,
+			weights_fa,
+			ref_fa,
+			init_fa,
+			rotation,
+			to_init_center,
+			to_fit_center);
+}
+
+void apply_superposition_transform_to_jump(
+      core::pose::Pose & pose,
+			core::Size jump_id,
+			Matrix rotation,
+			Vector to_init_center,
+			Vector to_fit_center)
+{
+	using namespace core::kinematics;
+
+	Stub upstream_stub = pose.conformation().upstream_jump_stub(jump_id);
+	Jump target_jump = pose.jump(jump_id);
+
+  target_jump.translation_along_axis(
+          upstream_stub,
+          to_init_center.normalized(),
+          to_init_center.length());
+
+  target_jump.rotation_by_matrix(
+          upstream_stub,
+          Vector(0, 0, 0),
+          rotation);
+
+  target_jump.translation_along_axis(
+          upstream_stub,
+          -to_fit_center.normalized(),
+          to_fit_center.length());
+
+	pose.set_jump(jump_id, target_jump);
+}
+
+void apply_superposition_transform(
+      core::pose::Pose & pose,
+			Matrix rotation,
+			Vector to_init_center,
+			Vector to_fit_center)
+{
+	for ( Size r = 1; r <= pose.total_residue(); r++ ) 
+	{
+		for ( Size a = 1; a <= pose.residue_type(r).natoms(); a++ )
+		{
+			core::id::AtomID id(a, r);
+			pose.set_xyz( id, ( rotation * ( pose.xyz(id) + to_init_center) ) - to_fit_center );
+		}
+	}
+}
 
 void fill_CA_coords( core::pose::Pose const& pose, FArray2_double& coords ) {  // fill coords
 	fill_CA_coords( pose, pose.total_residue(), coords );
@@ -126,6 +253,44 @@ void CA_superimpose( FArray1_double const& weights, core::pose::Pose const&  ref
 		}
 	}
 }
+
+/* @brief Calculates superposition transform from coords to ref_coords.
+ *
+ * Modifies ref_coords and coords, moving coords into superposition.
+ */
+void superposition_transform(
+     core::Size natoms,
+     ObjexxFCL::FArray1_double const& weights,
+     ObjexxFCL::FArray2_double& ref_coords,
+     ObjexxFCL::FArray2_double& coords,
+     Matrix &R,
+		 Vector &toCenter,
+		 Vector &toFitCenter)
+{
+	// Move ref and coords to place center of mass at origin.
+	// Save resulting transforms.
+  FArray1D_double ref_transvec( 3 );
+  reset_x( natoms, ref_coords, weights, ref_transvec );
+  toFitCenter = Vector( ref_transvec( 1 ), ref_transvec( 2 ), ref_transvec( 3 ));
+
+  FArray1D_double transvec( 3 );
+  reset_x( natoms, coords, weights, transvec );
+  toCenter = Vector( transvec( 1 ), transvec( 2 ), transvec( 3 ));
+
+	// Fit centered coords, updates cords array with fit location
+  fit_centered_coords( natoms, weights, ref_coords, coords, R );
+
+	// Move superimposed coords into reference location
+  for ( core::Size i = 1; i <= natoms; i++ )
+	{
+    for ( core::Size d = 1; d<=3; ++d )
+		{
+      ref_coords( d, i ) = ref_coords( d, i ) - ref_transvec(d);
+			coords( d, i ) = coords( d, i ) - ref_transvec(d);
+		}
+  }
+}
+
 
 /// @brief compute projections for given pose
 void superimpose( Size natoms, FArray1_double const& weights, FArray2_double& ref_coords, FArray2_double& coords ) {

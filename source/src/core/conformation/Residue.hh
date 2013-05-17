@@ -1914,7 +1914,6 @@ private:
 
 
 
-
 	/////////////////////////////////
 	/// Inter-residue connection data
 

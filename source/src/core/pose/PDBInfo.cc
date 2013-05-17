@@ -414,9 +414,22 @@ PDBInfo::pose2pdb( Size const res ) const
 	std::stringstream pdb_num, pdb_chain;
 	pdb_num << residue_rec_[res].chainID;
 	pdb_chain << residue_rec_[res].resSeq;
-	return pdb_chain.str() + " " + pdb_num.str();
+	return pdb_chain.str() + " " + pdb_num.str() + " ";
 }
 
+/// @brief returns for pose( resnumber) the label assiciated to the residue
+/// @note the retrun string is a concatenation of all the strings inside of the vector label<>
+/// @param[in] res  residue in pose numbering
+PDBInfo::String
+PDBInfo::get_reslabels( Size const res ) const
+{
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::get_label( Size const res ): res is not in this PDBInfo!" );
+	std::stringstream pdb_label;
+	for (core::Size i=1; i<= residue_rec_[res].label.size(); ++i ){
+		pdb_label << residue_rec_[res].label[i] << " ";
+	}
+	return pdb_label.str();
+}
 
 /// @brief set chain id for residue
 /// @remarks chain id should not be the empty record character, currently '^'
@@ -538,8 +551,35 @@ PDBInfo::set_resinfo(
 	rr.chainID = chain_id;
 	rr.resSeq = pdb_res;
 	rr.iCode = ins_code;
+	rr.label.clear();
 }
 
+
+/// @brief adds a label associated to a pose resid.
+/// @param[in] res  residue in pose numbering
+/// @param[in] label  string that is the "label"
+void
+PDBInfo::add_reslabel( 
+	Size const res,
+	std::string const label 
+)
+{
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
+	ResidueRecord & rr = residue_rec_[ res ];
+	rr.label.push_back(label);
+}
+
+/// @brief clean all the label(s) associated to a pose resid.
+/// @param[in] res  residue in pose numbering
+void
+PDBInfo::clear_reslabel( 
+	Size const res
+)
+{
+	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
+	ResidueRecord & rr = residue_rec_[ res ];
+	rr.label.clear();
+}
 
 /// @brief set all residue chain IDs to a single character
 void

@@ -202,7 +202,7 @@ sources = {
 		"TrisBpyScore",
 	],
 	"protocols/motif_grafting/movers": [
-		"MotifGraftMover"
+		"MotifGraftMover",
 	],
 	"protocols/motif_hash" : [
 		"motif_hash_stuff",

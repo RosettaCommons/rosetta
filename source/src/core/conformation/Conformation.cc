@@ -1042,6 +1042,11 @@ Conformation::insert_conformation_by_jump(
 	/// not sure if this is necessary, perhaps around the insertion? can't hurt though...
 	residue_torsions_need_updating_ = true;
 
+	/// Notify length observers
+	for (core::Size i = insert_seqpos; i < insert_size + insert_seqpos; i++)
+	{
+		notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_APPEND, i - 1, 1, &residue(i)), false );
+	}
 }
 
 

@@ -503,6 +503,34 @@ Pose::prepend_polymer_residue_before_seqpos(
 }
 
 void
+Pose::append_pose_by_jump(
+	Pose const & src,
+	Size const jump_anchor_residue,
+	std::string const & jump_anchor_atom,
+	std::string const & jump_root_atom)
+{
+	core::Size old_n_residue = n_residue();
+
+	conformation().insert_conformation_by_jump(
+			src.conformation(),
+			n_residue() + 1,
+			num_jump() + 1,
+			jump_anchor_residue,
+			0, // Set default anchor jump number
+			jump_anchor_atom,
+			jump_root_atom);
+
+	if(pdb_info() != NULL)
+	{
+		pdb_info()->copy(
+				*src.pdb_info(),
+				1,
+				src.pdb_info()->nres(),
+				old_n_residue + 1);
+	}
+}
+
+void
 Pose::delete_polymer_residue( Size const seqpos )
 {
 	PyAssert( (seqpos<=total_residue()), "Pose::delete_polymer_residue( Size const seqpos ): variable seqpos is out of range!" );

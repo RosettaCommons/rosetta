@@ -228,6 +228,35 @@ void ResidueHasProperty::parse_tag( TagPtr tag )
 	if ( tag->hasOption("property") ) property_ = tag->getOption<std::string>("property");
 }
 
+//begin ResiduePDBInfoHasLabel
+ResiduePDBInfoHasLabel::ResiduePDBInfoHasLabel()
+  : parent()
+{}
+
+ResiduePDBInfoHasLabel::ResiduePDBInfoHasLabel( std::string const & str )
+  : parent(),
+    property_( str )
+{}
+
+bool ResiduePDBInfoHasLabel::operator() ( Pose const & pose, Size index ) const
+{
+  runtime_assert( index > 0 && index <= pose.total_residue() );
+  return pose.pdb_info()->res_haslabel( index, property_ );
+}
+
+ResFilterOP
+ResiduePDBInfoHasLabelCreator::create_res_filter() const {
+  return new ResiduePDBInfoHasLabel;
+}
+
+ResFilterOP ResiduePDBInfoHasLabel::clone() const { return new ResiduePDBInfoHasLabel( *this ); }
+
+void ResiduePDBInfoHasLabel::parse_tag( TagPtr tag )
+{
+  if ( tag->hasOption("property") ) property_ = tag->getOption<std::string>("property");
+}
+
+
 // begin ResidueLacksProperty
 ResidueLacksProperty::ResidueLacksProperty()
 	: parent()
