@@ -179,10 +179,12 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     )
 
 
-    (options, args) = parser.parse_args(args=argv)
+    (options, remaining_args) = parser.parse_args(args=argv)
     global Options;  Options = options
     Options.num_procs = Options.jobs
 
+    # Strip off whitespace and blank remaining arguments
+    args = [a.strip() for a in remaining_args if a.strip()]
 
     options.mini_home = path.abspath( options.mini_home )
     print 'Using Rosetta source dir at:', options.mini_home

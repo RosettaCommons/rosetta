@@ -424,10 +424,9 @@ def main(args):
 
     (options, args) = parser.parse_args(args=args[1:])
 
-    if len(args) > 0:
-        print 'Uknow options:', args
-        sys.exit(1)
-
+    unknown_args = [a.strip() for a in args if a.strip()]
+    if unknown_args:
+        raise ValueError("Unknown options: %s", unknown_args)
 
     if options.database == parser.get_default_values().database:
         if os.environ.get('ROSETTA3_DB') is not None and \
@@ -438,8 +437,7 @@ def main(args):
         elif path.isdir( path.join( path.expanduser("~"), "rosetta_database") ):
             options.database = path.join( path.expanduser("~"), "rosetta_database")
         else:
-            print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
-            return 1
+            raise ValueError("Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database)
 
     else: options.database = path.abspath( options.database )
 
