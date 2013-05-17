@@ -95,9 +95,17 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 	core::Size const nstruct( get_nstruct() );
 
 	utility::json_spirit::mValue job_json_data;
-	utility::json_spirit::read(data,job_json_data);
-	utility::json_spirit::mArray job_group_data(job_json_data.get_array());
-
+	utility::json_spirit::mArray job_group_data;
+	try
+	{
+		utility::json_spirit::read(data,job_json_data);
+		job_group_data = job_json_data.get_array();
+	}catch(std::runtime_error &)
+	{
+		throw utility::excn::EXCN_BadInput(
+			"screening file " + file_name + "is incorrectly formatted. "
+			"it must be a list of dicts. each dict should contain keys 'group_name', 'proteins' and 'ligands'");
+	}
 	for(core::Size i = 0; i < job_group_data.size();++i)
 	{
 		utility::json_spirit::mObject group_map(job_group_data[i].get_obj());

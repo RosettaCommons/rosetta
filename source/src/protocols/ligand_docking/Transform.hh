@@ -19,7 +19,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/UltraLightResidue.fwd.hh>
 #include <core/kinematics/Jump.fwd.hh>
-
+#include <utility/io/ozstream.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -41,8 +41,6 @@ public:
 	core::Size repeats;
 	Transform_info(): chain(""), move_distance(0),box_size(0), angle(0), cycles(0),repeats(1){};
 };
-
-
 
 class Transform: public protocols::moves::Mover
 {
@@ -72,15 +70,17 @@ public:
 	virtual void apply(core::pose::Pose & pose);
 
 private:
-	void transform_ligand(utility::vector1<core::conformation::UltraLightResidue> & conformer_ensemble);
-
-	utility::vector1<core::conformation::UltraLightResidue> create_aligned_conformer_ensemble(core::conformation::UltraLightResidue & residue);
+	void transform_ligand(core::conformation::UltraLightResidue & residue);
+	void change_conformer(core::conformation::UltraLightResidue & residue);
+	void dump_conformer(core::conformation::UltraLightResidue & residue, utility::io::ozstream & output);
 
 private:
+	//qsar::scoring_grid::GridManagerOP grid_manager_;
 	Transform_info transform_info_;
 	utility::vector1< core::conformation::ResidueOP >  ligand_conformers_;
 	bool optimize_until_score_is_negative_;
-
+	bool output_sampled_space_;
+	std::string sampled_space_file_;
 
 };
 

@@ -38,7 +38,8 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
-
+#include <ObjexxFCL/format.hh>
+#include <utility/io/ozstream.hh>
 
 namespace protocols {
 namespace ligand_docking {
@@ -46,47 +47,6 @@ namespace ligand_docking {
 static numeric::random::RandomGenerator RG(23459);
 
 static basic::Tracer transform_tracer("protocols.ligand_docking.ligand_options.transform", basic::t_debug);
-
-//Little helper functions go here.  defined in cc file as theres no reason for anything outside to use them
-bool is_ensemble_in_grid(utility::vector1<core::conformation::UltraLightResidue> const & conformer_ensemble)
-{
-	qsar::scoring_grid::GridManager* grid_manager(qsar::scoring_grid::GridManager::get_instance());
-	for(core::Size conformer_index = 1; conformer_index <= conformer_ensemble.size();++conformer_index)
-	{
-		if(!grid_manager->is_in_grid(conformer_ensemble[conformer_index]))
-		{
-			return false;
-		}
-	}
-	return true;
-}
-
-std::pair<core::Real,core::Size> best_score_and_conformer(utility::vector1<core::conformation::UltraLightResidue> const & conformer_ensemble,core::Real temperature)
-{
-	qsar::scoring_grid::GridManager* grid_manager(qsar::scoring_grid::GridManager::get_instance());
-	core::Real best_score = grid_manager->total_score(conformer_ensemble[1]);
-	core::Size best_conformer = 1;
-	//Boltzmann acceptance criteria because it might be good to work with a slightly worse conformer sometimes
-	for(core::Size conformer_index = 2; conformer_index <= conformer_ensemble.size();++conformer_index)
-	{
-		core::Real current_score = grid_manager->total_score(conformer_ensemble[conformer_index]);
-		core::Real const boltz_factor((best_score-current_score)/temperature);
-		core::Real const probability = std::exp( boltz_factor ) ;
-		if(probability < 1 && RG.uniform() >= probability)  //reject the new pose
-		{
-			continue;
-		}else if(probability < 1)
-		{
-			best_score = current_score;
-			best_conformer = conformer_index;
-		}else
-		{
-			best_score = current_score;
-			best_conformer = conformer_index;
-		}
-	}
-	return std::make_pair(best_score,best_conformer);
-}
 
 std::string TransformCreator::keyname() const
 {
@@ -103,7 +63,7 @@ std::string TransformCreator::mover_name()
 	return "Transform";
 }
 
-Transform::Transform(): Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(0.0)
+Transform::Transform(): Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(false), output_sampled_space_(false)
 {
 
 }
@@ -115,7 +75,7 @@ Transform::Transform(
 	core::Real const & angle,
 	core::Size const & cycles,
 	core::Real const & temp
-) : Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(0.0)
+) : Mover("Transform"), transform_info_(),optimize_until_score_is_negative_(false), output_sampled_space_(false)
 {
 	transform_info_.chain = chain;
 	transform_info_.box_size = box_size;
@@ -165,7 +125,6 @@ void Transform::parse_my_tag
 	if ( ! tag->hasOption("cycles") ) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires cycles tag");
 	if (!tag->hasOption("temperature")) throw utility::excn::EXCN_RosettaScriptsOption("'Transform' mover requires temperature tag");
 
-
 	transform_info_.chain = tag->getOption<std::string>("chain");
 	transform_info_.move_distance = tag->getOption<core::Real>("move_distance");
 	transform_info_.box_size = tag->getOption<core::Real>("box_size");
@@ -175,6 +134,11 @@ void Transform::parse_my_tag
 	transform_info_.repeats = tag->getOption<core::Size>("repeats",1);
 	optimize_until_score_is_negative_ = tag->getOption<bool>("optimize_until_score_is_negative",false);
 
+	if(tag->hasOption("sampled_space_file"))
+	{
+		output_sampled_space_ = true;
+		sampled_space_file_ = tag->getOption<std::string>("sampled_space_file");
+	}
 
 }
 
@@ -196,15 +160,11 @@ void Transform::apply(core::pose::Pose & pose)
 	grid_manager->update_grids(pose,center);
 
 	core::Real last_score(10000.0);
-	core::Size last_conformer(0);
 
     core::Real best_score(last_score);
-    core::Size best_conformer(last_conformer);
-    utility::vector1<core::conformation::UltraLightResidue> best_ensemble;
-
     core::pose::Pose best_pose(pose);
     core::pose::Pose starting_pose(pose);
-    //core::conformation::UltraLightResidue best_ligand(&pose.residue(begin));
+    core::conformation::UltraLightResidue best_ligand(&pose.residue(begin));
 
 	core::Real temperature = transform_info_.temperature;
 	core::Vector original_center(original_residue.xyz(original_residue.nbr_atom()));
@@ -215,19 +175,22 @@ void Transform::apply(core::pose::Pose & pose)
 	core::Size accepted_moves = 0;
 	core::Size rejected_moves = 0;
 
+
+	utility::io::ozstream sampled_space;
+	if(output_sampled_space_)
+	{
+		sampled_space.open(sampled_space_file_);
+	}
+
+
 	for(core::Size repeat = 1; repeat <= transform_info_.repeats; ++repeat)
 	{
 		pose = starting_pose;
 		core::Size cycle = 1;
 		bool not_converged = true;
 		core::conformation::UltraLightResidue ligand_residue(&pose.residue(begin));
-		//core::conformation::UltraLightResidue last_accepted_ligand_residue(ligand_residue);
-		utility::vector1<core::conformation::UltraLightResidue> conformer_ensemble = create_aligned_conformer_ensemble(ligand_residue);
-		utility::vector1<core::conformation::UltraLightResidue> last_accepted_conformer_ensemble = conformer_ensemble;
-		std::pair<core::Real,core::Size> conformer_score_pair(best_score_and_conformer(conformer_ensemble,temperature));
-		last_score = conformer_score_pair.first;
-		last_conformer = conformer_score_pair.second;
-
+		last_score = grid_manager->total_score(ligand_residue);
+		core::conformation::UltraLightResidue last_accepted_ligand_residue(ligand_residue);
 		while(not_converged)
 		{
 
@@ -248,83 +211,88 @@ void Transform::apply(core::pose::Pose & pose)
 
 			cycle++;
 
-			transform_ligand(conformer_ensemble);
-
-			if(!is_ensemble_in_grid(conformer_ensemble))
+			//during each move either move the ligand or try a new conformer (if there is more than one conformer)
+			if(ligand_conformers_.size() > 1)
 			{
-				conformer_ensemble = last_accepted_conformer_ensemble;
+				if(RG.uniform() >= 0.5)
+				{
+					transform_ligand(ligand_residue);
+				}else
+				{
+					change_conformer(ligand_residue);
+				}
+			}else
+			{
+				transform_ligand(ligand_residue);
+			}
+			//The score is meaningless if any atoms are outside of the grid
+			if(!grid_manager->is_in_grid(ligand_residue)) //Reject the pose
+			{
+				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
+				//transform_tracer.Trace << "probability: " << probability << " rejected (out of grid)"<<std::endl;
 				continue;
 			}
 
+			if(output_sampled_space_)
+			{
+				dump_conformer(ligand_residue,sampled_space);
+			}
 
-			std::pair<core::Real,core::Size> conformer_score_pair(best_score_and_conformer(conformer_ensemble,temperature));
-			core::Real current_score = conformer_score_pair.first;
-			core::Size current_conformer = conformer_score_pair.second;
-
-			transform_tracer << "current conformer: " <<current_conformer <<std::endl;
+			core::Real current_score = grid_manager->total_score(ligand_residue);
 			core::Real const boltz_factor((last_score-current_score)/temperature);
 			core::Real const probability = std::exp( boltz_factor ) ;
 			core::Vector new_center(ligand_residue.center());
 
 			if(new_center.distance(original_center) > transform_info_.box_size) //Reject the new pose
 			{
-				conformer_ensemble = last_accepted_conformer_ensemble;
+				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 
 			}else if(probability < 1 && RG.uniform() >= probability)  //reject the new pose
 			{
-				conformer_ensemble = last_accepted_conformer_ensemble;
+				ligand_residue = last_accepted_ligand_residue;
 				rejected_moves++;
 
 			}else if(probability < 1)  // Accept the new pose
 			{
 				last_score = current_score;
-				last_conformer = current_conformer;
-				last_accepted_conformer_ensemble = conformer_ensemble;
+				last_accepted_ligand_residue = ligand_residue;
 				accepted_moves++;
 
 			}else  //Accept the new pose
 			{
 				last_score = current_score;
-				last_conformer=current_conformer;
-				last_accepted_conformer_ensemble = conformer_ensemble;
+				last_accepted_ligand_residue = ligand_residue;
 				accepted_moves++;
 
 			}
-			if(transform_tracer.visible())
-			{
-				transform_tracer << last_score << " " <<current_score <<std::endl;
-			}
+			transform_tracer << last_score << " " <<current_score <<std::endl;
 			if(last_score < best_score)
 			{
 				best_score = last_score;
-				best_conformer = last_conformer;
-				best_ensemble = last_accepted_conformer_ensemble;
-				if(transform_tracer.visible())
-				{
-					transform_tracer << "accepting new pose" << std::endl;
-				}
+				best_ligand = last_accepted_ligand_residue;
+				transform_tracer << "accepting new pose" << std::endl;
 			}else
 			{
-				if(transform_tracer.visible())
-				{
-					transform_tracer << "not accepting new pose" << std::endl;
-				}
+				transform_tracer << "not accepting new pose" << std::endl;
 			}
 			
 		}
-		if(transform_tracer.visible())
-		{
-			transform_tracer <<"percent acceptance: "<< accepted_moves << " " << (core::Real)accepted_moves/(core::Real)rejected_moves <<" " << rejected_moves <<std::endl;
-		}
-		best_ensemble[best_conformer].update_conformation(best_pose.conformation());
+
+		transform_tracer <<"percent acceptance: "<< accepted_moves << " " << (core::Real)accepted_moves/(core::Real)rejected_moves <<" " << rejected_moves <<std::endl;
+		best_ligand.update_conformation(best_pose.conformation());
+	}
+
+	if(output_sampled_space_)
+	{
+		sampled_space.close();
 	}
 	pose = best_pose;
 
 }
 
-void Transform::transform_ligand(utility::vector1<core::conformation::UltraLightResidue> & conformer_ensemble)
+void Transform::transform_ligand(core::conformation::UltraLightResidue & residue)
 {
 	if(transform_info_.angle ==0 && transform_info_.move_distance == 0)
 	{
@@ -342,27 +310,32 @@ void Transform::transform_ligand(utility::vector1<core::conformation::UltraLight
 			numeric::y_rotation_matrix_degrees( transform_info_.angle*RG.gaussian() ) *
 			numeric::x_rotation_matrix_degrees( transform_info_.angle*RG.gaussian() ) ));
 
-	for(core::Size conformer_index = 1; conformer_index <= conformer_ensemble.size();++conformer_index)
-	{
-		conformer_ensemble[conformer_index].transform(rotation,translation);
-	}
+	residue.transform(rotation,translation);
 }
 
-
-utility::vector1<core::conformation::UltraLightResidue> Transform::create_aligned_conformer_ensemble(core::conformation::UltraLightResidue & residue)
+void Transform::change_conformer(core::conformation::UltraLightResidue & residue)
 {
-	utility::vector1<core::conformation::UltraLightResidue> conformer_ensemble;
-	conformer_ensemble.push_back(residue);
+	assert(ligand_conformers_.size());
+	core::Size index_to_select = RG.random_range(1,ligand_conformers_.size());
+	core::conformation::UltraLightResidue new_residue(ligand_conformers_[index_to_select]);
+	new_residue.align_to_residue(residue);
+	residue = new_residue;
 
-	for(core::Size conformer_index = 1; conformer_index <= ligand_conformers_.size();++conformer_index)
-	{
-		core::conformation::UltraLightResidue new_residue(ligand_conformers_[conformer_index]);
-		new_residue.align_to_residue(residue);
-		conformer_ensemble.push_back(new_residue);
-	}
-
-	return conformer_ensemble;
 }
 
+void Transform::dump_conformer(core::conformation::UltraLightResidue & residue, utility::io::ozstream & output)
+{
+	using namespace ObjexxFCL::fmt;
+	for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
+	{
+		core::PointPosition coords = residue[atom_index];
+		std::string outline( "HETATM" + I( 5,  1 ) + "  V   AAA A"
+		+ I( 4, 1 ) + "    "
+		+ F( 8, 3, coords.x() ) + F( 8, 3, coords.y() ) + F( 8, 3, coords.z() )
+		+ F( 6, 2, 1.0 ) + ' ' + F( 5, 2, 1.0 ));
+		output <<outline <<std::endl;
+	}
+}
+	
 }
 }

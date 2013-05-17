@@ -48,9 +48,8 @@ ScreeningFeatures::ScreeningFeatures()
 
 }
 
-ScreeningFeatures::ScreeningFeatures(ScreeningFeatures const & src)
+ScreeningFeatures::ScreeningFeatures(ScreeningFeatures const & src) : chain_(src.chain_),descriptors_(src.descriptors_)
 {
-
 }
 
 
@@ -68,7 +67,7 @@ void ScreeningFeatures::write_schema_to_db(utility::sql_database::sessionOP db_s
 {
 	using namespace basic::database::schema_generator;
 	Column struct_id("struct_id",new DbBigInt(),false);
-	Column chain_name("chain_id",new DbText,false);
+	Column chain_name("chain_id",new DbText(1),false);
 	Column residue_number("residue_number",new DbInteger(),false);
 	Column name3("name3",new DbText(),false);
 	Column experiment_group("group_name",new DbText(),false);
@@ -87,9 +86,6 @@ void ScreeningFeatures::write_schema_to_db(utility::sql_database::sessionOP db_s
 	screening_features.add_column(descriptor_data);
 	screening_features.add_foreign_key(
 		ForeignKey(struct_id,"residue_pdb_identification","struct_id")
-	);
-	screening_features.add_foreign_key(
-		ForeignKey(chain_name,"residue_pdb_identification","chain_id")
 	);
 	screening_features.add_foreign_key(
 		ForeignKey(residue_number,"residue_pdb_identification","resNum")
