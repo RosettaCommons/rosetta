@@ -589,7 +589,7 @@ sources = {
 		#"ragul_score_protein_ligand_complex",
 		#"ragul_darc_run_with_delphi",
 		#"ragul_small_mol_map",
-		#"ragul_darc_score",
+		"ragul_darc_score",
 		"ragul_test_darc_run",
 		"ragul_test_darc_score",
 		#"ragul_fingerprint_optimize",

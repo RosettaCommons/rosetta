@@ -1,5 +1,0 @@
-
-To do intel compile on reco, put the site.settings file into tools/build/ then run the command in compile.source from the frontend.
-
-To do a gcc compile on reco, submit the compile.pbs script using qsub (updating the path first!)
-

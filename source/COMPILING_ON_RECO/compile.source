@@ -1,2 +1,0 @@
-scons -j3 mode=release cxx=icc bin
-
