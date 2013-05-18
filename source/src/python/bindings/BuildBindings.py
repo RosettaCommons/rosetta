@@ -148,13 +148,13 @@ def main(args):
       help="Use Py++/PyGccXML parser and Python buildes to build PyRosetta [depricated]."
     )
 
-    parser.add_option("--boost_lib",
+    parser.add_option("--boost-lib",
       default='boost_python-xgcc40-mt-1_38',
       action="store",
       help="Name of boost dynamic library.",
       )
 
-    parser.add_option("--python_lib",
+    parser.add_option("--python-lib",
       default='python2.5',
       action="store",
       help="Name of python dynamic library.",
@@ -231,7 +231,7 @@ def main(args):
     print "--gccxml", options.gccxml
     print "--all", options.build_all
     print "--one-lib-file", options.one_lib_file
-    print "--boost_lib", options.boost_lib
+    print "--boost-lib", options.boost_lib
     print '--update', options.update
     print '--debug', options.debug
     #print '--cross-compile', options.cross_compile
