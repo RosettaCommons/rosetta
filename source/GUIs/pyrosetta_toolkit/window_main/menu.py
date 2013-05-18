@@ -131,35 +131,37 @@ class Menus():
 	#self.export_menu.add_command(label="Save loops as new PDBs")
 
     #### File Menu ####
-	self.file_menu=Menu(self.main_menu, tearoff=0)
-	
-	self.file_menu.add_command(label="Load PDB", command=lambda: self.toolkit.input_class.select_pose_then_launch_fixpdb())
-	self.file_menu.add_command(label="Fetch PDB", command = lambda: self.toolkit.input_class.fetch_pdb())
-	self.file_menu.add_separator()
-	self.file_menu.add_cascade(label="Import", menu=self.import_menu)
-	self.file_menu.add_cascade(label="Export", menu=self.export_menu)
-	self.file_menu.add_separator()
-	self.file_menu.add_command(label ="Setup PDB for Rosetta", command=lambda: self.show_fxpdb_window())
-	
-	## Note:  There is no disable for menu items.  Which is why we either show the item or not, instead of disabling it.
-	if flag_file_builder_import:
-	    self.file_menu.add_command(label= "Rosetta Flag File Builder", command = lambda: self.show_RosettaProtocolBuilder())
-	
-	self.main_menu.add_cascade(label="File", menu=self.file_menu)
+        self.file_menu=Menu(self.main_menu, tearoff=0)
+        
+        self.file_menu.add_command(label="Load PDB", command=lambda: self.toolkit.input_class.select_pose_then_launch_fixpdb())
+        self.file_menu.add_command(label="Fetch PDB", command = lambda: self.toolkit.input_class.fetch_pdb())
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Reload PDB", command = lambda: self.toolkit.input_class.load_pose(self.toolkit.input_class.pdb_path.get()))
+        self.file_menu.add_separator()
+        self.file_menu.add_cascade(label="Import", menu=self.import_menu)
+        self.file_menu.add_cascade(label="Export", menu=self.export_menu)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label ="Setup PDB for Rosetta", command=lambda: self.show_fxpdb_window())
+        
+        ## Note:  There is no disable for menu items.  Which is why we either show the item or not, instead of disabling it.
+        if flag_file_builder_import:
+            self.file_menu.add_command(label= "Rosetta Flag File Builder", command = lambda: self.show_RosettaProtocolBuilder())
+        
+        self.main_menu.add_cascade(label="File", menu=self.file_menu)
     def _set_options_menu(self):
-	self.options_menu = Menu(self.main_menu, tearoff=0)
-	
-	self.rounds_options_menu=Menu(self.main_menu, tearoff=0)
-	
-	#Could be it's own window in the future.
-	self.rounds_options_menu.add_command(label = "Set processors to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt= "Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
-	self.rounds_options_menu.add_checkbutton(label = "Use Boltzmann criterion each round", variable=self.toolkit.output_class.use_boltzmann)
-	self.rounds_options_menu.add_command(label = "Set Temperature", command = lambda: self.toolkit.output_class.set_temperature())
-	self.rounds_options_menu.add_checkbutton(label = "Recover lowest energy from all rounds", variable = self.toolkit.output_class.recover_low)
-	self.options_menu.add_command(label="Configure Option System",command = lambda: self.show_OptionsSystemManager())
-	self.options_menu.add_command(label="Configure Score Function", command =lambda: self.toolkit.score_class.makeWindow(Toplevel(self.main), self.toolkit.pose))
-	self.options_menu.add_cascade(label="Set General Protocol Options", menu = self.rounds_options_menu)
-	self.options_menu.add_separator()
+        self.options_menu = Menu(self.main_menu, tearoff=0)
+        
+        self.rounds_options_menu=Menu(self.main_menu, tearoff=0)
+        
+        #Could be it's own window in the future.
+        self.rounds_options_menu.add_command(label = "Set processors to use", command = lambda: self.toolkit.output_class.processors.set(tkSimpleDialog.askinteger(title="Processesors", prompt= "Please set the number of processess you wish to create for protocol runs.", initialvalue=self.toolkit.output_class.processors.get())))
+        self.rounds_options_menu.add_checkbutton(label = "Use Boltzmann criterion each round", variable=self.toolkit.output_class.use_boltzmann)
+        self.rounds_options_menu.add_command(label = "Set Temperature", command = lambda: self.toolkit.output_class.set_temperature())
+        self.rounds_options_menu.add_checkbutton(label = "Recover lowest energy from all rounds", variable = self.toolkit.output_class.recover_low)
+        self.options_menu.add_command(label="Configure Option System",command = lambda: self.show_OptionsSystemManager())
+        self.options_menu.add_command(label="Configure Score Function", command =lambda: self.toolkit.score_class.makeWindow(Toplevel(self.main), self.toolkit.pose))
+        self.options_menu.add_cascade(label="Set General Protocol Options", menu = self.rounds_options_menu)
+        self.options_menu.add_separator()
 
 	self.options_menu.add_checkbutton(label="Set output to terminal", variable = self.toolkit.output_class.terminal_output)
 

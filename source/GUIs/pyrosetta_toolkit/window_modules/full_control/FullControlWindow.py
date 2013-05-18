@@ -337,7 +337,7 @@ class FullControlWindow():
 	Relaxes the given residue
 	"""
 
-	self.loop_protocols.relax(1, [self.resnum.get()+":"+self.resnum.get()+":"+self.chain.get()], 1)
+	self.loop_protocols.relax_residue_and_neighbors(1, (self.resnum.get()), self.chain.get(), 0)
 	self.shoInfo(self.resnum.get(), self.chain.get())
 
     def relax_residue_neighbors(self, bbonly=False):

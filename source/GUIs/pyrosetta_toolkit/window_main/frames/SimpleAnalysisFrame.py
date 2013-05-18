@@ -13,6 +13,8 @@
 #Rosetta Imports
 from rosetta import *
 from rosetta.core.scoring import ScoreType
+from rosetta.core.scoring.hbonds import *
+
 #Python Imports
 import os
 
@@ -41,7 +43,8 @@ class SimpleAnalysisFrame(TkFrame):
             #"Score Loop Residues"
             "Print Pose info":lambda:self.print_pose(),
             "Print Option info":lambda:self.print_option_info(),
-            "Total Hydrogen Bonds":lambda: self.print_hbonds()
+            "Print Hbond info":lambda:self.print_all_hbonds(),
+            "Total Hydrogen Bonds":lambda: self.print_hbonds(),
 
         }
         
@@ -161,5 +164,10 @@ class SimpleAnalysisFrame(TkFrame):
         n = self.toolkit.input_class.regional_score_class.ret_n_hbonds()
         print "Detected Hydrogen bonds: "+repr(n)
 
-            
+    def print_all_hbonds(self):
+        if self.toolkit.pose.total_residue()==0:return
+        set = HBondSet();
+        self.toolkit.pose.update_residue_neighbors()
+        fill_hbond_set(self.toolkit.pose, True, set);
+        set.show(self.toolkit.pose)
 

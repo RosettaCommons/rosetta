@@ -28,7 +28,6 @@ class SQLPDB:
         """
         First, we read the PDB. This can then be acessed, etc.
         Later, we will also turn it into a structure.
-        Functions include parsing specific information, getting data from uniprot and other sources, saving as a database file once read in.
         modelID does not need to be a number...
         Path specifies the db to load.
         """
@@ -162,7 +161,12 @@ class PDB_database:
         if not os.path.exists(self.outDIR):
             os.mkdir(self.outDIR)
     
-    
+    def set_output_occupancy_1(self, bool):
+        """
+        Output structures with 1.0 as occupancy.  Mainly for Rosetta use.
+        """
+        self.occupancy_1 = bool
+        
 #################Query on the Current Cursor of the PDB Database#############################################################
     
     def query_all(self, table):
@@ -288,13 +292,17 @@ class PDB_database:
         (6,5,4,3,1,4,8,8,8,4,5);
         atomNum INT, atomName TEXT, altLoc TEXT, residue TEXT, chain TEXT, resNum INT, icode TEXT, x REAL, y REAL, z REAL, occupancy REAL, bfactor REAL")
         """
-
+        occupancy = 0
+        if self.occupancy_1:
+            occupancy = 1.0
+        else:
+            occupancy = row['occupancy']
         #Create the PDB line.
         line = str(row['type']).ljust(6)+     str(row['atomNum']).rjust(5)+" "+str(row['atomName'])+ \
                str(row['altLoc'])+            (str(row['residue']).rjust(3)).ljust(4)+ str(row['chain'])+             \
                str(row['resNum']).rjust(4)+   str(row['icode']) +                                              \
                ("%.3f"%row['x']).rjust(11)+   ("%.3f"%row['y']).rjust(8)+       ("%.3f"%row['z']).rjust(8) +   \
-               str(row['occupancy']).rjust(6)+str(row['bfactor']).rjust(6)
+               str(occupancy).rjust(6)+str(row['bfactor']).rjust(6)
 
         
         return line

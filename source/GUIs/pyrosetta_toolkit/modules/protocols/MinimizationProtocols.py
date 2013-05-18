@@ -98,7 +98,7 @@ class MinimizationProtocols(ProtocolBaseClass):
     
     def relax_residue_and_neighbors(self, rounds, residue, chain, num_neighbors=1, bbonly=False):
         """
-        Relaxes a residue and the residues on either side by Rosetta numbering!.
+        Relaxes a residue and the residues on either side by Rosetta numbering.
         Does not care if there is a jump between them.
         Used in FullControlWindow
         """
@@ -111,7 +111,6 @@ class MinimizationProtocols(ProtocolBaseClass):
         movemap = MoveMap()
         if not bbonly:
             for i in range(res-num_neighbors, res+num_neighbors+1):
-                print i
                 movemap.set_chi(i, True)
                 movemap.set_bb(i, True)
         else:

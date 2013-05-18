@@ -12,6 +12,7 @@
 
 #Rosetta Imports
 from rosetta import *
+from rosetta.protocols.toolbox.task_operations import *
 
 #Tkinter Imports
 from Tkinter import *
@@ -32,33 +33,103 @@ class DockingProtocols(ProtocolBaseClass):
     def low_res_dock(self):
         """
         Low res docking protocol
+        This will have its own UI shortly.
         """
-        result = tkMessageBox.askokcancel(title="Continue?", message="Docking requires 10^5-10^6 decoys and the appropriate scorefunction (interchain_cen).  Continue?")
-        if not result: return
+        print "This protocol is not set to run global docking.  Please see the rosettacommons documentation for global docking runs."
+        
+        if self.score_class.ScoreType.get()!= "interchain_cen":
+            result = tkMessageBox.askyesnocancel(title="Set Docking scorefunction?", message="Docking requires the appropriate scorefunction (interchain_cen).  Temporarily set docking scorefunction?")
+            if result:
+                start_scorefxn = ScoreFunction()
+                start_scorefxn.assign(self.score_class.score)
+                low_res_scorefxn = create_score_function("interchain_cen")
+            elif result==None:
+                return
+            else:
+                low_res_scorefxn = start_scorefxn
+            
+        
         to_dock = tkSimpleDialog.askstring(title = "Input", prompt="Please supply two partners (ex - A_B or A_BC ).  The first will be held rigid.")
         if not to_dock: return
         to_dock = to_dock.upper()
-        setup_foldtree(self.pose, to_dock, Vector1([1]))
-        switch = SwitchResidueTypeSetMover("centroid")
-        recover = ReturnSidechainMover(self.pose)
-        switch.apply(self.pose)
-        low_res_mover = DockingLowRes(self.score_class.score, 1)
-        self.run_protocol(low_res_mover)
+        
+        repack_interface = tkMessageBox.askyesno(message="Repack interface post-dock (score12prime)?")
+        low_res_mover = DockingLowRes(low_res_scorefxn, 1)
+        low_res_wrapper = LowResWrapper(to_dock, repack_interface, low_res_mover, low_res_scorefxn)
+        
+        self.run_protocol(low_res_wrapper)
+        
+        if result:
+            self.score_class.score.assign(start_scorefxn)
     
+        
     def high_res_dock(self):
         """
         Uses DockMCMProtocol for high-res docking.  Checks scorefunction for docking patch.
         """
-        
+        if self.score_class.ScoreType.get()!="docking":
+            result = tkMessageBox.askyesnocancel(title="Set docking scorefunction?", message="Standard docking scorefunction not set. Temporarily set scorefunction?")
+            if result:
+                start_scorefxn = ScoreFunction()
+                start_scorefxn.assign(self.score_class.score)
+                self.score_class.score.assign(create_score_function("docking"))
+            elif result == None:return
+            
         to_dock = tkSimpleDialog.askstring(title = "Input", prompt="Please supply two partners (ex - A_B or A_BC ).  The first will be held rigid.")
         to_dock = to_dock.upper()
         if not to_dock: return
-        if self.score_class.ScoreType.get()!="docking":
-            result = tkMessageBox.askokcancel(title="Continue?", message="Docking scorefunction not set.  Continue?")
-            if not result:return
-        dock_mover = DockMCMProtocol()
-        dock_mover.set_scorefxn(self.score_class.score)
-        dock_mover.set_partners(to_dock)
-        self.run_protocol(dock_mover)
+        
+        dock_mover = DockMCMProtocol(Vector1([1]), self.score_class.score)
 
+        original_ft = self.pose.fold_tree()
+        setup_foldtree(self.pose, to_dock, Vector1([1]))
+        self.run_protocol(dock_mover)
+        if result:
+            self.score_class.score.assign(start_scorefxn)
+        self.pose.fold_tree(original_ft)
+            
+class LowResWrapper:
+    """
+    Wrapper to return sc + repack interface rotamers after dock.
+    """
+    
+    def __init__(self, to_dock_string, repack_interface, low_res_mover, low_res_scorefxn):
+        
+        self.to_dock_string = to_dock_string
+        self.repack_interface = repack_interface
+        self.low_res_scorefxn = low_res_scorefxn
+        
+        self.low_res_mover = low_res_mover
+        self.switch = SwitchResidueTypeSetMover("centroid")
+        
+        self.tf = TaskFactory()
+        self.initialize_taskfactory()
+    
+    def initialize_taskfactory(self):
+        self.tf.push_back(InitializeFromCommandline())
+        self.tf.push_back(RestrictToRepacking())
+        self.tf.push_back(RestrictToInterface(1, 8.0))
+        print "Task factory initialized"
+    
+    def apply(self, pose):
+        original_ft = pose.fold_tree()
+        setup_foldtree(pose, self.to_dock_string, Vector1([1]))
+        
+        
+        recover = ReturnSidechainMover(pose)
+        self.switch.apply(pose)
+        original_score = self.low_res_scorefxn(pose)
+        self.low_res_mover.apply(pose)
+        print "LowResScore Start: "+ repr(original_score)
+        print "LowResScore End: "+ repr(self.low_res_scorefxn(pose))
+        recover.apply(pose)
+        
+        if self.repack_interface:
+            pack_mover=PackRotamersMover(create_score_function("score12prime"))
+            pack_mover.task_factory(self.tf)
+            pack_mover.apply(pose)
+        
+        pose.fold_tree(original_ft)
+        
+        
         

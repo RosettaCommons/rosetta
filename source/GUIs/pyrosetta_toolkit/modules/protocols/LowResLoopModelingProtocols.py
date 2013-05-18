@@ -36,8 +36,14 @@ class LowResLoopModelingProtocols(ProtocolBaseClass):
           print "Please cite: Wang C, Bradley P, Baker D (2007). Protein-protein docking with backbone flexibility. J. Mol. Biol. 373, 503."
           print "As well as: Canutescu A, Dunbrack R., Jr (2003) Cyclic coordinate descent: A robotics algorithm for protein loop closure. Protein Sci. 12, 963."
           print "Additional options can be set using the options system.  Symmetry is not supported at this time."
-          result = tkMessageBox.askyesno(title="Continue?", message="Centroid scorefunction should be set before proceeding (cen_std/score4L recommended).  Proceed?")
-          if not result: return
+          
+          if self.score_class.ScoreType.get()!="cen_std" != self.score_class.ScorePatch.get() != "score4L":
+               result = tkMessageBox.askyesnocancel(title="Set loop modeling scorefunction?", message="Standard loop modeling scorefunction not set (cen_std/score4L patch). Temporarily set scorefunction?")
+               if result:
+                    start_scorefxn = ScoreFunction()
+                    start_scorefxn.assign(self.score_class.score)
+                    self.score_class.score.assign(create_score_function_ws_patch("cen_std", "score4L"))
+               elif result == None:return
           
           if not fragset:
                fragset = tkFileDialog.askopenfilename(initialdir = global_variables.current_directory, title="Fragset File")
@@ -70,6 +76,8 @@ class LowResLoopModelingProtocols(ProtocolBaseClass):
           self.run_protocol(x)
           recover.apply(self.pose)
           ft.assign(ft_o)
+          if result:
+               self.score_class.score.assign(start_scorefxn)
           self.pose.fold_tree(ft)
 
                  
@@ -79,9 +87,15 @@ class LowResLoopModelingProtocols(ProtocolBaseClass):
           """
           print "Please cite: Mandell DJ, Coutsias EA, Kortemme T. (2009). Sub-angstrom accuracy in protein loop reconstruction by robotics-inspired conformational sampling. Nature Methods 6(8):551-2."
           print "Additional options can be set using the options system.  Symmetry is not supported at this time."
-          result = tkMessageBox.askyesno(title="Continue?", message="Centroid scorefunction should be set before proceeding (cen_std/score4L recommended).  Proceed?")
-          if not result: return
           
+          if self.score_class.ScoreType.get()!="cen_std" != self.score_class.ScorePatch.get() != "score4L":
+               result = tkMessageBox.askyesnocancel(title="Set loop modeling scorefunction?", message="Standard loop modeling scorefunction not set (cen_std/score4L patch). Temporarily set scorefunction?")
+               if result:
+                    start_scorefxn = ScoreFunction()
+                    start_scorefxn.assign(self.score_class.score)
+                    self.score_class.score.assign(create_score_function_ws_patch("cen_std", "score4L"))
+               elif result == None:return
+               
           extend = tkMessageBox.askyesno(title="Extended", message="Start with idealized bond lenghths, angles, and discard original phi/psi?")
           movemap=MoveMap()
           ft = self.pose.fold_tree(); ft_o = FoldTree()
@@ -106,3 +120,6 @@ class LowResLoopModelingProtocols(ProtocolBaseClass):
           recover.apply(self.pose)
           ft.assign(ft_o)
           self.pose.fold_tree(ft)
+          
+          if result:
+               self.score_class.score.assign(start_scorefxn)

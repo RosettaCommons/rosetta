@@ -143,13 +143,9 @@ class Region:
     def get_sequence(self, pose):
         if self.get_region_type()=='chain':
             c = rosetta.core.pose.get_chain_id_from_chain(self.chain, pose)
-            print "Chain detected"
             return pose.chain_sequence(c)
         else:
             sequence = pose.sequence()
-            print self.get_rosetta_start(pose)
-            print self.get_rosetta_end(pose)
-            print sequence
             return sequence[self.get_rosetta_start(pose)-1:self.get_rosetta_end(pose)]
             
 class Regions:

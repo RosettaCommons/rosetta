@@ -78,6 +78,8 @@ class DoxygenParser:
             dir_path = self.doxygen_directory+"/"+type
             files = glob.glob(dir_path+"/*.dox")
             for path in sorted(files):
+                if re.search("pyrosetta_toolkit", path) or re.search("RosettaFlagFileBuilder", path):
+                    continue
                 d = Data(path)
                 self.all_app_data.append(d)
                 self.name_map[d.app_name]=d

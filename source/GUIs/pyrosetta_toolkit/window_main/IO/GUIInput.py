@@ -135,6 +135,10 @@ class GUIInput:
         Load a pose into the toolkit.pose variable.  Setup nessessary variables/etc for objects and window objects of the toolkit.  Can have NCAA that have been enabled.
         Please use this when loading the main pose into the toolkit.
         """
+        if not os.path.exists(path):
+            print "PDB path does not exist.  Cannot load pose."
+            return
+        
         self.pdb_path.set(path)
         print self.pdb_path.get()
         
