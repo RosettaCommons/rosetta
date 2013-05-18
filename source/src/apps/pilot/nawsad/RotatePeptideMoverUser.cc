@@ -13,7 +13,7 @@
 
 /// @file   RotatePeptideMoverUser.cpp
 /// @brief  This is a pilot app for testing RotatePeptideMover.cc
-/// @author orlypolo
+/// @author Nawsad Alam
 
 #include <devel/rotate_peptide/RotatePeptideMover.hh>
 #include <core/init.hh>
