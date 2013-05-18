@@ -349,18 +349,16 @@ int main( int argc, char * argv [] ) {
 		std::cout << "SCORE : unaligned  : " <<  pf.fp_compare( npf, missing_pt_wt, steric_wt, extra_pt_wt ) <<std::endl;
 		std::string pose_name = "unal_pose_" + tag + ".pdb";
 		std::string fp_name = "unal_fp_" + tag + ".pdb";
-		pf.dump_oriented_pose_and_fp_to_pdb(pose_name, fp_name, npf, 0., 0., 0., original_pocket_angle_transform );
+		std::cout<< "JK WARNING!!! This code is not yet conformer-enabled, so an arbitrary conformer (the first one) will be printed..." << std::endl;
+		pf.dump_oriented_pose_and_fp_to_pdb(pose_name, fp_name, npf, 0., 0., 0., original_pocket_angle_transform, 0 );
 	}//END printing unaligned fingerprints
-	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl;
-	}
+
 	if (optimization_type == "DFP"){
 
 		core::Real best_score = std::numeric_limits<core::Real>::max();
 		//core::Real dfp_score;
 		utility::vector1<core::Real> out_vars(6);
-		std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
-		exit(1);
+		std::cout<< "JK WARNING!!! This code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
 		protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);
 		//		core::optimization::MinimizerOptions options("dfpmin", 0.0000001, false, false, false);
 		//		core::optimization::MinimizerOptions options("dfpmin_armijo", 0.000001, false, false, false);
@@ -415,8 +413,7 @@ int main( int argc, char * argv [] ) {
 		p_max[6] = numeric::constants::r::pi_2;
 
 		ParticleOPs particles;
-		std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
-		exit(1);
+		std::cout<< "JK WARNING!!! This code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
 		protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);
 		//protocols::pockets::DarcParticleSwarmMinimizer pso(p_min, p_max);
 		core::optimization::ParticleSwarmMinimizer pso(p_min, p_max);
@@ -444,11 +441,13 @@ int main( int argc, char * argv [] ) {
 		if (option[ print_fingerprints ]()){
 			std::string pose_name = "pso_pose_" + tag + ".pdb";
 			std::string fp_name = "pso_fp_" + tag + ".pdb";
-			pf.dump_oriented_pose_and_fp_to_pdb(pose_name, fp_name, npf, best_vars[4], best_vars[5], best_vars[6], original_pocket_angle_transform, optimized_origin );
+			std::cout<< "JK WARNING!!! This code is not yet conformer-enabled, so an arbitrary conformer (the first one) will be printed..." << std::endl;
+			pf.dump_oriented_pose_and_fp_to_pdb(pose_name, fp_name, npf, best_vars[4], best_vars[5], best_vars[6], original_pocket_angle_transform, optimized_origin, 0 );
 		}//END printing PSO fingerprints
 
 		//Calculate RMSD
-		core::pose::Pose oriented_pose = pf.get_oriented_pose(npf, best_vars[4], best_vars[5], best_vars[6], original_pocket_angle_transform, optimized_origin );
+		std::cout<< "JK WARNING!!! This code is not yet conformer-enabled, as written it will just use the first conformer.... fix it in the app by removing the 0 in get_oriented_pose below..." << std::endl;
+		core::pose::Pose oriented_pose = pf.get_oriented_pose(npf, best_vars[4], best_vars[5], best_vars[6], original_pocket_angle_transform, optimized_origin, 0 );
 		std::string pso_pose_name = "LIGAND_" + tag + ".pdb";
 		oriented_pose.dump_pdb(pso_pose_name);
 		core::Real rmsd_value = pf.rmsd(original_pose, oriented_pose);
@@ -494,6 +493,10 @@ int main( int argc, char * argv [] ) {
 		if(	remove(pso_pose_name.c_str()) != 0) perror( "Error deleting Ligand_PSO_pose_pdb file" );
 	}else {
 		std::cout<<"ERROR! : Wrong optimization_method "<<std::endl;
+	}
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 
 	return 0;

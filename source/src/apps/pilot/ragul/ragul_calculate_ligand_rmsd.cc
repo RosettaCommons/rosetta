@@ -121,11 +121,15 @@ int main( int argc, char * argv [] ) {
   }
 	else{
 		core::Real rmsd, dist_sum(0.);
-		for(Size i = 1, j = 1; i <= pose1_rsd.nheavyatoms(), j <= pose2_rsd.nheavyatoms(); ++i,++j) {
-			core::Real x_dist =  ( (pose1_rsd.atom(i).xyz()(1) - pose2_rsd.atom(j).xyz()(1)) * (pose1_rsd.atom(i).xyz()(1) - pose2_rsd.atom(j).xyz()(1)) );
-			core::Real y_dist =  ( (pose1_rsd.atom(i).xyz()(2) - pose2_rsd.atom(j).xyz()(2)) * (pose1_rsd.atom(i).xyz()(2) - pose2_rsd.atom(j).xyz()(2)) );
-			core::Real z_dist =  ( (pose1_rsd.atom(i).xyz()(3) - pose2_rsd.atom(j).xyz()(3)) * (pose1_rsd.atom(i).xyz()(3) - pose2_rsd.atom(j).xyz()(3)) );
-			dist_sum += x_dist + y_dist + z_dist;
+		Size j = 1;
+		for(Size i = 1; i <= pose1_rsd.nheavyatoms(); ++i ) {
+			if ( j <= pose2_rsd.nheavyatoms() ) {
+				core::Real x_dist =  ( (pose1_rsd.atom(i).xyz()(1) - pose2_rsd.atom(j).xyz()(1)) * (pose1_rsd.atom(i).xyz()(1) - pose2_rsd.atom(j).xyz()(1)) );
+				core::Real y_dist =  ( (pose1_rsd.atom(i).xyz()(2) - pose2_rsd.atom(j).xyz()(2)) * (pose1_rsd.atom(i).xyz()(2) - pose2_rsd.atom(j).xyz()(2)) );
+				core::Real z_dist =  ( (pose1_rsd.atom(i).xyz()(3) - pose2_rsd.atom(j).xyz()(3)) * (pose1_rsd.atom(i).xyz()(3) - pose2_rsd.atom(j).xyz()(3)) );
+				dist_sum += x_dist + y_dist + z_dist;
+			}
+			++j;
 		}
 		rmsd = sqrt(dist_sum/pose1_rsd.nheavyatoms());
 		std::cout<<"RMSD:"<<"	"<<inp_ligand<<"	"<<ref_ligand<<"	"<<rmsd<<std::endl;

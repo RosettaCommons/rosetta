@@ -875,13 +875,13 @@ void PocketGrid::newSearch(core::Size thr1, core::Size thr2, core::Size max1, co
 
               //if it's a surface, we want to go back to the starting point and fill the solvents in as pockets
               else if (sps && isSurfacePoint(x,y,z)) break;
-              else if ((!sps && isSurfacePoint(x,y,z) || (grid_[x][y][z]==POCKET&&psp) || (grid_[x][y][z]==TP_POCKET&&psp) || (grid_[x][y][z]==EMPTY&&sps))){
+              else if (((!sps && isSurfacePoint(x,y,z)) || ((grid_[x][y][z]==POCKET)&&psp) || ((grid_[x][y][z]==TP_POCKET)&&psp) || ((grid_[x][y][z]==EMPTY)&&sps))){
 
                 //if there is no EMPTY, then everything has been marked already.  No need to go further.
                 if (marked) break;
 
 
-                if (grid_[x][y][z]==T_SURFACE||grid_[x][y][z]==ST_SURFACE||(grid_[x][y][z]==TP_POCKET&&psp)) t_surf=true;
+                if ((grid_[x][y][z]==T_SURFACE)||(grid_[x][y][z]==ST_SURFACE)||((grid_[x][y][z]==TP_POCKET)&&psp)) t_surf=true;
                 if ((count>(int)thr && !psp)||psp||sps){
                   for (int c=count;c>0;c--){
                     if (isSurfacePoint(x-c*deltas[i],y-c*deltas[i+1],z-c*deltas[i+2])) std::cout<<"MAJOR ERROR, overwriting surface with pocket\n";
@@ -1166,11 +1166,11 @@ void PocketGrid::dumpTargetPocketsToPDB( std::string const & output_filename ){
 
 	utility::io::ozstream outPDB_stream;
 	outPDB_stream.open(output_filename, std::ios::out);
-  int counter=1;
+	//  int counter=1;  // unused
   int counter2=1;
 
   int clustNo=1;
-  bool smallPocket;
+	//  bool smallPocket;  // unused
   for (std::list<PCluster>::iterator cit=clusters_.clusters_.begin(); cit != clusters_.clusters_.end(); ++cit){
     if (cit->points_.size()*pow(stepSize_,3)<minPockSize_) continue;
      if (!cit->isTarget()) continue;

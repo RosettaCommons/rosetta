@@ -373,8 +373,7 @@ int main( int argc, char * argv [] ) {
 
 
 	ParticleOPs particles;
-	std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
-	exit(1);
+	std::cout<< "JK WARNING this code is not yet conformer-enabled, it will arbitrarily use the first conformer. Fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
 	protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);
 	core::optimization::ParticleSwarmMinimizer pso(p_min, p_max);
 	particles = pso.run(run_size, fpm, particle_size);

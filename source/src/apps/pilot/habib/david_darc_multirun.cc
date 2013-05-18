@@ -401,7 +401,9 @@ int main( int argc, char * argv [] ) {
 
 
 	ParticleOPs particles;
-	protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt);
+	std::cout<< "JK WARNING!!! This code is not yet conformer-enabled, fix it in the app by removing the 1 in the FingerprintMultifunc constructor call below..." << std::endl;
+	exit(1);
+	protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);
 	core::optimization::ParticleSwarmMinimizer pso(p_min, p_max);
 	particles = pso.run(run_size, fpm, particle_size);
 
@@ -431,7 +433,7 @@ int main( int argc, char * argv [] ) {
 		pf.dump_oriented_pose_and_fp_to_pdb(pose_name, fp_name, npf, best_vars[4], best_vars[5], best_vars[6], original_pocket_angle_transform, optimized_origin );
 	}//END printing PSO fingerprints
 
-	std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the zero in the call to get_oriented_pose below..." << std::endl;
+	std::cout<< "JK WARNING!!! This code is not yet conformer-enabled, fix it in the app by removing the zero in the call to get_oriented_pose below..." << std::endl;
 	exit(1);
 	core::pose::Pose oriented_pose = pf.get_oriented_pose(npf, best_vars[4], best_vars[5], best_vars[6], original_pocket_angle_transform, optimized_origin, 0 );
 	std::string pso_pose_name = "LIGAND_" + tag + ".pdb";

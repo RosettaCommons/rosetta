@@ -308,7 +308,7 @@ int main( int argc, char * argv [] ) {
 	p_max[6] = numeric::constants::r::pi_2;
 
 	ParticleOPs particles;
-	std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
+	std::cout<< "JK ERROR this code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
 	exit(1);
 	protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);
 	core::optimization::ParticleSwarmMinimizer pso(p_min, p_max);
@@ -373,8 +373,8 @@ int main( int argc, char * argv [] ) {
 	Lfile.close();
 	PLfile.close();
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 
 }

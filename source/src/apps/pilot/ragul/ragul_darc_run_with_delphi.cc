@@ -339,16 +339,16 @@ int main( int argc, char * argv [] ) {
 	p_max[6] = numeric::constants::r::pi_2;
 
   if (optimization_type == "DFP"){
-		std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
-		exit(1);
-		protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, ese);
+		std::cout<< "JK WARNING!!!  This code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
+		protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, ese, 1);
 		core::optimization::MinimizerOptions options("dfpmin_armijo_nonmonotone", 0.0000001, true, false, false);
 		core::optimization::Minimizer dfp(fpm, options);
     dfp.run(p_min);
   }
 	else if (optimization_type == "PSO"){
+		std::cout<< "JK WARNING!!!  This code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
 	ParticleOPs particles;
-	protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, ese);
+	protocols::pockets::FingerprintMultifunc fpm(npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, ese, 1);
 	core::optimization::ParticleSwarmMinimizer pso(p_min, p_max);
 	particles = pso.run(run_size, fpm, particle_size);
 

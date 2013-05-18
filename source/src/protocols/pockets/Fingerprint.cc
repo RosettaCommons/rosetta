@@ -233,6 +233,7 @@ core::Real NonPlaidFingerprint::get_Rvalue(
 		convert_cartesian_to_spherical_coor_triplet( eggshell_point1, triplet1 );
 		core::Real min_angle(999.);
 		spherical_coor_triplet triplet2;
+		triplet2.rho = 0.;  // should not be used, but this prevents a compiler warning
 		for (std::list< numeric::xyzVector<core::Real> >::const_iterator pt2 = egg_and_extra_shell.begin();
 				pt2 != egg_and_extra_shell.end(); ++pt2) {
 			if ( pt1 == pt2 ) continue;
@@ -1300,14 +1301,14 @@ PlaidFingerprint::fp_compare_deriv(
 	return;
 }
 
-core::Real PlaidFingerprint::search_random_poses( FingerprintBase & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) {
+core::Real PlaidFingerprint::search_random_poses( FingerprintBase & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, core::Size const conformer ) {
 
   numeric::xyzVector<core::Real> no_CoM_offset(0.);
-  return search_random_poses( fp, num_pose_search, optimal_angle1, optimal_angle2, optimal_angle3, missing_point_weight, steric_weight, extra_point_weight, no_CoM_offset);
+  return search_random_poses( fp, num_pose_search, optimal_angle1, optimal_angle2, optimal_angle3, missing_point_weight, steric_weight, extra_point_weight, no_CoM_offset, conformer );
 }
 
 
-core::Real PlaidFingerprint::search_random_poses( FingerprintBase & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & CoM_offset ) {
+core::Real PlaidFingerprint::search_random_poses( FingerprintBase & fp, core::Size const & num_pose_search, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & CoM_offset, core::Size const conformer ) {
 
   core::Real best_score = std::numeric_limits<core::Real>::max();
 
@@ -1315,10 +1316,7 @@ core::Real PlaidFingerprint::search_random_poses( FingerprintBase & fp, core::Si
     core::Real curr_angle1 = (int) (numeric::random::uniform() *359.999);
     core::Real curr_angle2 = (int) (numeric::random::uniform() *359.999);
     core::Real curr_angle3 = (int) (numeric::random::uniform() *359.999);
-
-		std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the zero in the call to move_ligand_and_update_rhos_ below..." << std::endl;
-		exit(1);
-    move_ligand_and_update_rhos_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3, 0 );
+    move_ligand_and_update_rhos_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3, conformer );
     core::Real curr_score = fp_compare( fp, missing_point_weight, steric_weight, extra_point_weight );
     //std::cout<<"curr_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
     if ( curr_score < best_score ) {
@@ -1332,12 +1330,13 @@ core::Real PlaidFingerprint::search_random_poses( FingerprintBase & fp, core::Si
   return best_score;
 }
 
-core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight ) {
+core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, core::Size const conformer
+ ) {
   numeric::xyzVector<core::Real> no_CoM_offset(0.);
-  return find_optimal_rotation( fp, angle_increment, optimal_angle1, optimal_angle2, optimal_angle3, missing_point_weight, steric_weight, extra_point_weight, no_CoM_offset);
+  return find_optimal_rotation( fp, angle_increment, optimal_angle1, optimal_angle2, optimal_angle3, missing_point_weight, steric_weight, extra_point_weight, no_CoM_offset, conformer );
 }
 
-core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & CoM_offset ) {
+core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase & fp, core::Real const & angle_increment, core::Real & optimal_angle1, core::Real & optimal_angle2, core::Real & optimal_angle3, core::Real const & missing_point_weight, core::Real const & steric_weight, core::Real const & extra_point_weight, numeric::xyzVector<core::Real> const & CoM_offset, core::Size const conformer ) {
 
   core::Real best_score = std::numeric_limits<core::Real>::max();
   core::Size num_steps = core::Size ( 360. / angle_increment );
@@ -1349,9 +1348,7 @@ core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase & fp, core::
       core::Real curr_angle3=0.;
 
       for (core::Size k = 0; k < num_steps; ++k ){
-				std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the zero in the call to move_ligand_and_update_rhos_ below..." << std::endl;
-				exit(1);
-				move_ligand_and_update_rhos_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3, 0 );
+				move_ligand_and_update_rhos_( fp, CoM_offset, curr_angle1, curr_angle2, curr_angle3, conformer );
 	core::Real curr_score = fp_compare( fp, missing_point_weight, steric_weight, extra_point_weight );
 	//			std::cout<<"curr_score "<<curr_score<< " " << curr_phi << " " <<curr_psi << std::endl;
 	if ( curr_score < best_score ) {
@@ -1371,34 +1368,32 @@ core::Real PlaidFingerprint::find_optimal_rotation( FingerprintBase & fp, core::
   return best_score;
 }
 
-void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset ) {
+void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, core::Size const conformer ) {
 
   utility::vector1<core::Real> original_pocket_angle_transform(3, 0.);
   numeric::xyzVector<core::Real> no_CoM_offset(0.);
-  dump_oriented_pose_and_fp_to_pdb(pose_filename, fp_filename, fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, no_CoM_offset );
+  dump_oriented_pose_and_fp_to_pdb(pose_filename, fp_filename, fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, no_CoM_offset, conformer );
 
 }
 
-void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, numeric::xyzVector<core::Real> const & CoM_offset ) {
+void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, numeric::xyzVector<core::Real> const & CoM_offset, core::Size const conformer ) {
 
   utility::vector1<core::Real> original_pocket_angle_transform(3, 0.);
-  dump_oriented_pose_and_fp_to_pdb(pose_filename, fp_filename, fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, CoM_offset );
+  dump_oriented_pose_and_fp_to_pdb(pose_filename, fp_filename, fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, CoM_offset, conformer );
 
 }
 
-void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform ) {
+void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, core::Size const conformer ) {
 
   numeric::xyzVector<core::Real> no_CoM_offset(0.);
-  dump_oriented_pose_and_fp_to_pdb(pose_filename, fp_filename, fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, no_CoM_offset );
+  dump_oriented_pose_and_fp_to_pdb(pose_filename, fp_filename, fp, angle1_offset, angle2_offset, angle3_offset, original_pocket_angle_transform, no_CoM_offset, conformer );
 
 }
 
 
-void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset  ) {
+void PlaidFingerprint::dump_oriented_pose_and_fp_to_pdb( std::string const & pose_filename, std::string const & fp_filename, FingerprintBase & fp, core::Real const & angle1_offset, core::Real const & angle2_offset, core::Real const & angle3_offset, utility::vector1<core::Real> const & original_pocket_angle_transform, numeric::xyzVector<core::Real> const & CoM_offset, core::Size const conformer ) {
 
-	std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the zero in the call to move_ligand_and_update_rhos_ below..." << std::endl;
-	exit(1);
-  move_ligand_and_update_rhos_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset, 0 );
+  move_ligand_and_update_rhos_( fp, CoM_offset, angle1_offset, angle2_offset, angle3_offset, conformer );
 
   core::pose::Pose tmp_pose = pose_;
   apply_rotation_offset_to_pose_( tmp_pose, angle1_offset, angle2_offset, angle3_offset );

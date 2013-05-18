@@ -175,7 +175,7 @@ int main( int argc, char * argv [] ) {
 	for (Size ii = 1; ii <= small_mol_pose.total_residue(); ++ii){
 		rot_poses[ii] = new core::pose::Pose(small_mol_pose, ii, ii);
 		protocols::pockets::PlaidFingerprint conf_pf( *rot_poses[ii], npf );
-		std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
+		std::cout<< "JK ERROR - this code is not yet conformer-enabled, fix it in the app by removing the 1 in FingerprintMultifunc constructor below..." << std::endl;
 		exit(1);
 		protocols::pockets::FingerprintMultifunc fpm(npf, conf_pf, missing_pt_wt, steric_wt, extra_pt_wt, 1);
 		protocols::pockets::DarcParticleSwarmMinimizer pso( npf, pf, missing_pt_wt, steric_wt, extra_pt_wt, p_min, p_max);
@@ -193,7 +193,7 @@ int main( int argc, char * argv [] ) {
 
 	//Append the best ligand conformer pose to protein pose and print(optional) the complex PDB file
 	numeric::xyzVector<core::Real> optimized_origin(best_vars[1], best_vars[2], best_vars[3]);
-	std::cout<< "JK this code is not yet conformer-enabled, fix it in the app by removing the zero in the call to get_oriented_pose below..." << std::endl;
+	std::cout<< "JK ERROR - this code is not yet conformer-enabled, fix it in the app by removing the zero in the call to get_oriented_pose below..." << std::endl;
 	exit(1);
 	core::pose::Pose oriented_pose = pf.get_oriented_pose(npf, best_vars[4], best_vars[5], best_vars[6], optimized_origin, 0 );
 	bound_pose.append_residue_by_jump(oriented_pose.residue( 1 ), protein_pose.total_residue(),"", "",  true);
