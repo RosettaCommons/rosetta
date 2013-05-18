@@ -368,9 +368,9 @@ int main( int argc, char * argv [] ) {
 		for (int j = 0; j < num_pose_search; ++j ){
 			utility::vector1<core::Real> p_opt(6, 0.);
 
-			core::Real curr_CoM_offset_x = (int) (numeric::random::uniform() * origin_space);
-			core::Real curr_CoM_offset_y = (int) (numeric::random::uniform() * origin_space);
-			core::Real curr_CoM_offset_z = (int) (numeric::random::uniform() * origin_space);
+			//			core::Real curr_CoM_offset_x = (int) (numeric::random::uniform() * origin_space);
+			//			core::Real curr_CoM_offset_y = (int) (numeric::random::uniform() * origin_space);
+			//			core::Real curr_CoM_offset_z = (int) (numeric::random::uniform() * origin_space);
 			core::Real curr_angle1 = ( (int) (numeric::random::uniform() * 359.999) ) * numeric::constants::r::pi_over_180;
 			core::Real curr_angle2 = ( (int) (numeric::random::uniform() * 359.999) ) * numeric::constants::r::pi_over_180;
 			core::Real curr_angle3 = ( (int) (numeric::random::uniform() * 359.999) ) * numeric::constants::r::pi_over_180;

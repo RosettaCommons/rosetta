@@ -67,10 +67,7 @@ OPT_KEY( String, input_protein_file )
 OPT_KEY( String, template_protein )
 OPT_KEY( String, input_ligand_file )
 OPT_KEY( String, known_ligand_file )
-OPT_KEY( Integer, num_poses )
 OPT_KEY( Integer, num_angles )
-OPT_KEY( Integer, num_runs )
-OPT_KEY( Integer, num_particles )
 OPT_KEY( Boolean, cheat )
 OPT_KEY( Boolean, trim_pocket )
 OPT_KEY( Boolean, resize_adt_grid )
@@ -93,10 +90,7 @@ int main( int argc, char * argv [] ) {
 	NEW_OPT( template_protein, "template protein file name", "template.pdb" );
   NEW_OPT( input_ligand_file, "ligand file name", "ligand.pdb" );
   NEW_OPT( known_ligand_file, "known ligand file name", "known_ligand.pdb" );
-	NEW_OPT( num_poses, "No. of poses to search for initail stochastic search", 100 );
 	NEW_OPT( num_angles, "Number of different pose angles to measure score at", 1);
-	NEW_OPT( num_runs, "no. of runs for PSO", 200 );
-  NEW_OPT( num_particles, "no. of particles for PSO", 200 );
 	NEW_OPT( cheat, "move pocket CoM over Ligand MCoM", false );
 	NEW_OPT( trim_pocket, "trim the non-plaid pocket using a known ligand", false );
 	NEW_OPT( resize_adt_grid, "resize grid based on user entered AUTODOCK grid values", false );
@@ -115,11 +109,8 @@ int main( int argc, char * argv [] ) {
 	std::string const template_pdb = option[ template_protein ];
 	std::string const input_ligand = option[ input_ligand_file ];
 	std::string const known_ligand = option[ known_ligand_file ];
-	int num_pose_search  = option[ num_poses ];
 	std::string const resid = option[ central_relax_pdb_num ];
   int angles = option[ num_angles ];
-  int particle_size = option[ num_particles ];
-  int run_size = option[ num_runs ];
 	//int const ang_inc  = option[ angle_increment ];
 	core::Real const grid_cen_x = option[ gc_x ];
 	core::Real const grid_cen_y = option[ gc_y ];

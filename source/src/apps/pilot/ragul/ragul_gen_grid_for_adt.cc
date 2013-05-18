@@ -63,44 +63,44 @@ using namespace basic::options::OptionKeys;
 OPT_KEY( String, protein )
 OPT_KEY( Boolean, adt_grid )
 OPT_KEY( Boolean, lig_grid )
-OPT_KEY( Real, gc_x )
-OPT_KEY( Real, gc_y )
-OPT_KEY( Real, gc_z )
-OPT_KEY( Real, gd_x )
-OPT_KEY( Real, gd_y )
-OPT_KEY( Real, gd_z )
+//OPT_KEY( Real, gc_x )
+//OPT_KEY( Real, gc_y )
+//OPT_KEY( Real, gc_z )
+//OPT_KEY( Real, gd_x )
+//OPT_KEY( Real, gd_y )
+//OPT_KEY( Real, gd_z )
 OPT_KEY( Real, gs )
 OPT_KEY( String, bound_ligand )
 OPT_KEY( Integer, add_grid_size )
-OPT_KEY( Integer, add_ext_grid_size )
+//OPT_KEY( Integer, add_ext_grid_size )
 
 int main( int argc, char * argv [] ) {
 
   NEW_OPT( protein, "protein file name", "protein.pdb" );
 	NEW_OPT( adt_grid, "resize grid based on user entered AUTODOCK grid values", false );
 	NEW_OPT( lig_grid, "resize grid based on bound ligand", false );
-  NEW_OPT( gc_x, "gid center : X ", 1.0 );
-  NEW_OPT( gc_y, "gid center : Y ", 1.0 );
-  NEW_OPT( gc_z, "gid center : Z ", 1.0 );
-  NEW_OPT( gd_x, "gid dimension : X ", 20.0 );
-  NEW_OPT( gd_y, "gid dimension : Y ", 20.0 );
-  NEW_OPT( gd_z, "gid dimension : Z ", 20.0 );
+	//  NEW_OPT( gc_x, "gid center : X ", 1.0 );
+	//  NEW_OPT( gc_y, "gid center : Y ", 1.0 );
+	//  NEW_OPT( gc_z, "gid center : Z ", 1.0 );
+	//  NEW_OPT( gd_x, "gid dimension : X ", 20.0 );
+	//  NEW_OPT( gd_y, "gid dimension : Y ", 20.0 );
+	//  NEW_OPT( gd_z, "gid dimension : Z ", 20.0 );
   NEW_OPT( bound_ligand, "use bound ligand to set the grid for generating eggshell", "bound_ligand.pdb" );
 	NEW_OPT( add_grid_size, "add grid dimension along x,y,z axis", 2 );
-	NEW_OPT( add_ext_grid_size, "add extra grid dimension along x,y,z axis", 2 );
+	//	NEW_OPT( add_ext_grid_size, "add extra grid dimension along x,y,z axis", 2 );
 
 	devel::init(argc, argv);
 
 	std::string const input_protein = option[ protein ];
-	core::Real const grid_cen_x = option[ gc_x ];
-	core::Real const grid_cen_y = option[ gc_y ];
-	core::Real const grid_cen_z = option[ gc_z ];
-	core::Real grid_dim_x = option[ gd_x ];
-	core::Real grid_dim_y = option[ gd_y ];
-	core::Real grid_dim_z = option[ gd_z ];
+	//	core::Real const grid_cen_x = option[ gc_x ];
+	//	core::Real const grid_cen_y = option[ gc_y ];
+	//	core::Real const grid_cen_z = option[ gc_z ];
+	//	core::Real grid_dim_x = option[ gd_x ];
+	//	core::Real grid_dim_y = option[ gd_y ];
+	//	core::Real grid_dim_z = option[ gd_z ];
 	std::string const bound_ligand_file = option[ bound_ligand ];
 	int add_grid_dim  = option[ add_grid_size ];
-	int add_ext_grid_dim  = option[ add_ext_grid_size ];
+	//	int add_ext_grid_dim  = option[ add_ext_grid_size ];
 
 	using namespace basic::options;
 	core::Real const spacing = option[ OptionKeys::pocket_grid::pocket_grid_spacing ]();
