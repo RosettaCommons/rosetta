@@ -1,22 +1,42 @@
+# job inputs
 -s ./inputs/FR02.pdb
 -in:file:native ./inputs/LH_renumbered.pdb
 -out:file:scorefile 3QOS.fasc
--ex1
--ex2
--overwrite
+
+#how to run antibody mode -- these are the current best-practices
+-antibody::remodel              perturb_kic
+-antibody::snugfit              true
+-antibody::refine               refine_kic
+-antibody::cter_insert          false
+-antibody::flank_residue_min    true
+-antibody::bad_nter             false
+-antibody::h3_filter            false
+-antibody::h3_filter_tolerance  5
+-antibody:constrain_cter
+-antibody:constrain_vlvh_qq
 -constraints:cst_file ./inputs/cter_constraint
+
+#more standard settings, for packages used by antibody_H3
+-ex1 
+-ex2 
+-extrachi_cutoff 0
+-corrections:score:use_bicubic_interpolation false  ## should be true for smooth derivatives??
+
+#these are standard settings for kic/ngk
+-loops:legacy_kic false
+-loops:kic_min_after_repack true
+-loops:kic_omega_sampling
+-loops:allow_omega_move true    ### remove 'true' and loop::?
+-kic_bump_overlap_factor 0.36 
+-loops:ramp_fa_rep
+-loops:ramp_rama
+-loops:outer_cycles 5
+
+#special flags for benchmarking -- keep the run short and failproof
+-overwrite
 -loops:fast
 -loops:max_kic_build_attempts 20
 -loops:outer_cycles 3
 -loops:max_inner_cycles 3
--antibody:remodel              perturb_kic
--antibody:snugfit              true
--antibody:refine               refine_kic
--antibody:cter_insert          true
--antibody:flank_residue_min    true
--antibody:bad_nter             true
--antibody:h3_filter            true
--antibody:h3_filter_tolerance  20
 -docking:dock_mcm_first_cycles 1
 -docking:dock_mcm_second_cycles 8
-

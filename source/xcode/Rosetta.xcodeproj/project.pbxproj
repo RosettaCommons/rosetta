@@ -285,6 +285,7 @@
 		1EFD62ADC7D41F6E493E19FD /* Mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = E44FD7991363AE3558CDF4F7 /* Mover.cc */; };
 		1F12616737AD5160C2F4900D /* CustomScoreSelector.cc in Sources */ = {isa = PBXBuildFile; fileRef = F764B2105872FA7CFC29175D /* CustomScoreSelector.cc */; };
 		1F67FEB77DA63B14EB4DB095 /* FragmentRmsd.cc in Sources */ = {isa = PBXBuildFile; fileRef = B5CDD6914463C1BA91F84442 /* FragmentRmsd.cc */; };
+		1F6B67071746E544009D933A /* antibody_H3.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1F6B67061746E544009D933A /* antibody_H3.cc */; };
 		1F726B56D770EB7ED3F77707 /* WorkUnit_LoopHash.cc in Sources */ = {isa = PBXBuildFile; fileRef = F41C134437F53F462EAA3890 /* WorkUnit_LoopHash.cc */; };
 		1F96B118EE9CB9C1D71249A2 /* SidechainMCMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = B7484293F3CE3BC9E99AC156 /* SidechainMCMover.cc */; };
 		1FA2CDE117455DCF00A5B666 /* libprotocols_b.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */; };
@@ -8878,6 +8879,7 @@
 		1F465BFCAA14BABD66B20C08 /* RotamerBoltzmannWeightFeaturesCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RotamerBoltzmannWeightFeaturesCreator.cc; path = ../src/protocols/features/RotamerBoltzmannWeightFeaturesCreator.cc; sourceTree = SOURCE_ROOT; };
 		1F4BEA7C24E27E809556EE0C /* FragmentLibraryManager.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FragmentLibraryManager.fwd.hh; path = ../src/core/fragment/picking_old/FragmentLibraryManager.fwd.hh; sourceTree = SOURCE_ROOT; };
 		1F66BF94EAF04B0D26E0327C /* RadiusOfGyrationFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RadiusOfGyrationFeatures.fwd.hh; path = ../src/protocols/features/RadiusOfGyrationFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
+		1F6B67061746E544009D933A /* antibody_H3.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = antibody_H3.cc; path = ../src/apps/public/antibody/antibody_H3.cc; sourceTree = "<group>"; };
 		1F72D9431B70DCB82619BD67 /* MMEnergyTableAtom.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MMEnergyTableAtom.cc; path = ../src/core/scoring/mm/mmtrie/MMEnergyTableAtom.cc; sourceTree = SOURCE_ROOT; };
 		1F7FBE4752B58061DE971060 /* TopOutFunc.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TopOutFunc.fwd.hh; path = ../src/core/scoring/constraints/TopOutFunc.fwd.hh; sourceTree = SOURCE_ROOT; };
 		1F91626C3ED51DC081982A01 /* LoopRefineInnerCycleContainerCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopRefineInnerCycleContainerCreator.hh; path = ../src/protocols/loops/loop_mover/refine/LoopRefineInnerCycleContainerCreator.hh; sourceTree = SOURCE_ROOT; };
@@ -19335,6 +19337,8 @@
 				3D7D9A4215D9A5B600564DDB /* snugdock.cc */,
 				3DE2B08113EE15BC00772777 /* docking_protocol.cc */,
 				3BCE7D8C14862E7600FCBFAF /* rosetta_scripts.cc */,
+				1FA2CE77174588B900A5B666 /* antibody_graft.cc */,
+				1F6B67061746E544009D933A /* antibody_H3.cc */,
 				1FA2CE79174588D400A5B666 /* antibody_graft.cc */,
 			);
 			name = Apps;
@@ -25085,7 +25089,6 @@
 		BE8A16EB0CA833BF00D67A6F = {
 			isa = PBXGroup;
 			children = (
-				1FA2CE77174588B900A5B666 /* antibody_graft.cc */,
 				BE723A510CA87429000CC218 /* Data */,
 				BE7237CF0CA873E0000CC218 /* Frameworks */,
 				BE8A16FF0CA8352500D67A6F /* Products */,
@@ -32806,6 +32809,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1F6B67071746E544009D933A /* antibody_H3.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
