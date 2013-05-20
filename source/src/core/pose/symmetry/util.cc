@@ -483,7 +483,7 @@ extract_asymmetric_unit_pdb_info(
 		}
 	}
 	// vrt
-	if (pose.residue(nres+1).aa() == core::chemical::aa_vrt && pdb_info_target->nres() > nres){
+	if (pdb_info_target->nres() > nres){
 		pdb_info_target->number( nres+1, 1 );
 		pdb_info_target->chain( nres+1, 'z' );  //fpd  is this a problem???? should this be an "illegal" chainID instead?
 	}

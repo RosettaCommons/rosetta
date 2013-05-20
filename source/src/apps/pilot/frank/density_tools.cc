@@ -57,6 +57,7 @@ OPT_1GRP_KEY(File, edensity, alt_mapfile)
 OPT_1GRP_KEY(Integer, denstools, nresbins)
 OPT_1GRP_KEY(Real, denstools, lowres)
 OPT_1GRP_KEY(Real, denstools, hires)
+OPT_1GRP_KEY(Real, denstools, rescale_map)
 
 
 // fpd
@@ -174,6 +175,7 @@ densityTools()
 	// outputs
 	Size nresobins = option[ denstools::nresbins ]();
 	utility::vector1< core::Real > resobins, mapI, mapIprime, modelI, solvI, modelSum, modelmapFSC;
+	Real rscc, fsc=0;
 
 	// resolution limits for analysis
 	core::Real hires = option[ denstools::hires ]();
@@ -198,17 +200,22 @@ densityTools()
 	// [3] model-map stats (intensity + model v map FSC + RSCC + per-res corrleations)
 	bool userpose = false;
 	lightPose pose;
+	std::string pdbfile;
 	if (option[ in::file::l ].user() || option[ in::file::s ].user()) {
 		userpose = true;
-		std::string pdbfile = basic::options::start_file();
+		pdbfile = basic::options::start_file();
 		readPDBcoords( pdbfile, pose );
 
 		core::scoring::electron_density::getDensityMap().getIntensities( pose, nresobins, lowres, hires, modelI, solvI );
 		modelmapFSC = core::scoring::electron_density::getDensityMap().getFSC( pose, nresobins, lowres, hires );
+		rscc = core::scoring::electron_density::getDensityMap().getRSCC( pose );
+		for (Size i=1; i<=resobins.size(); ++i)
+			fsc+=modelmapFSC[i];
+		fsc /= resobins.size();
 	}
 
 	// [4] rescale maps to target intensity
-	if (userpose) {
+	if (userpose && option[ denstools::rescale_map ]()) {
 		utility::vector1< core::Real > rescale_factor(nresobins,0.0);
 		for (Size i=1; i<=nresobins; ++i)
 			rescale_factor[i] = sqrt(modelI[i] / mapI[i]);
@@ -222,12 +229,17 @@ densityTools()
 		core::scoring::electron_density::getDensityMap().writeMRC( "scale_modelI_FSCwt.mrc" );
 	}
 
-	for (Size i=1; i<=resobins.size(); ++i) {
-		std::cerr << resobins[i] << " " << mapI[i];
-		if (userpose) std::cerr << " " << modelI[i] << " " << solvI[i] << " " << modelmapFSC[i];
-		std::cerr << std::endl;
-	}
+	// verbose ...
+	//for (Size i=1; i<=resobins.size(); ++i) {
+	//	std::cerr << resobins[i] << " " << mapI[i];
+	//	if (userpose) std::cerr << " " << modelI[i] << " " << solvI[i] << " " << modelmapFSC[i];
+	//	std::cerr << std::endl;
+	//}
 
+	// compact
+	if (userpose) {
+		std::cerr << pdbfile << " " << fsc << " " << rscc << std::endl;
+	}
 }
 
 
@@ -242,7 +254,8 @@ main( int argc, char * argv [] )
 	NEW_OPT(denstools::lowres, "lowres", 1000.0);
 	NEW_OPT(denstools::hires, "hires", 0.0);
 	NEW_OPT(edensity::alt_mapfile, "alt mapfile", "");
-	NEW_OPT(denstools::nresbins, "#reolution bins for statistics", 50);
+	NEW_OPT(denstools::nresbins, "#reolution bins for statistics", 20);
+	NEW_OPT(denstools::rescale_map, "scale map I == model I?", false);
 	devel::init( argc, argv );
 	densityTools();
 	} catch ( utility::excn::EXCN_Base const & e ) {

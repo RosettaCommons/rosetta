@@ -88,6 +88,20 @@ NormalModeRelaxMover::set_mode( utility::vector1< Size > const mode_using,
 }
 
 void 
+NormalModeRelaxMover::set_movemap( core::pose::Pose const & pose, 
+																	 core::kinematics::MoveMapCOP movemap )
+{
+	mm_ = movemap->clone(); 
+
+	// For Torsional NormalMode
+	NM_.clear_torsions_using();
+	for( Size ires = 1; ires <= pose.total_residue(); ++ires ){
+		if( mm_->get_bb( ires ) )
+			NM_.set_torsions_using( ires );
+	}
+}
+
+void 
 NormalModeRelaxMover::set_mode( Size const i_mode )
 {
   mode_using_.resize( 0 );
@@ -139,10 +153,12 @@ NormalModeRelaxMover::set_harmonic_constants( Real const k_connected,
 //Cartesian
 ///////////
 CartesianNormalModeMover::CartesianNormalModeMover( 
-    core::scoring::ScoreFunctionCOP sfxn, 
-		std::string const mode,
-		Real const distcut,
-		std::string const relaxmode )
+     core::pose::Pose const & pose,
+		 core::scoring::ScoreFunctionCOP sfxn, 
+		 core::kinematics::MoveMapCOP mm,
+		 std::string const mode,
+		 Real const distcut,
+		 std::string const relaxmode )
 {
   NM_ = NormalMode( mode, distcut );
   moving_distance_ = 1.0; // Move by 1.0 Angstrom
@@ -150,6 +166,10 @@ CartesianNormalModeMover::CartesianNormalModeMover(
 	direction_ = 1.0;
 	cst_sdev_= 1.0;
 	relaxmode_ = relaxmode;
+	cartesian_minimize_ = true;
+
+	set_movemap( pose, mm );
+	set_default_minoption( );
 
 	// Scorefunction
   sfxn_ = sfxn->clone();
@@ -162,6 +182,12 @@ CartesianNormalModeMover::CartesianNormalModeMover(
   utility::vector1< Size > mode1( 1, 1 );
   utility::vector1< Real > scale1( 1, 1.0 );
   set_mode( mode1, scale1 ); 
+}
+
+void
+CartesianNormalModeMover::set_default_minoption(){
+	minoption_ =
+		new optimization::MinimizerOptions( "lbfgs_armijo_nonmonotone", 0.02, true, false, false );
 }
 
 CartesianNormalModeMover::~CartesianNormalModeMover(){}
@@ -185,27 +211,37 @@ CartesianNormalModeMover::apply( pose::Pose &pose )
 
 	// Relax setup
 	if( relaxmode_.compare("relax") == 0 ){
+		// This cannot run in centroid level
+		runtime_assert( !pose.is_centroid() );
+
 		protocols::relax::FastRelax relax_prot( sfxn_, 1 );
+		relax_prot.set_movemap( mm_ );
 		relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
+
 		relax_prot.cartesian( true ); // force to use cartesian
+
 		relax_prot.apply( pose );
 
 	} else if ( relaxmode_.compare("min") == 0 ){
-		//kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-		kinematics::MoveMap movemap;
-
-		// Cartesian Min
-    optimization::MinimizerOptions minoptions( "lbfgs_armijo_nonmonotone", 0.02, true, false, false );
-		minoptions.max_iter( 30 );
 		optimization::CartesianMinimizer minimizer;
 
+		core::scoring::ScoreFunction sfxn_loc;
+		// Pick proper scorefunction
 		if( pose.is_centroid() ){
-			movemap.set_bb(true);
-			minimizer.run( pose, movemap, *sfxn_cen_, minoptions );
+			sfxn_loc = *sfxn_cen_;
+		} else {
+			sfxn_loc = *sfxn_;
+		}
+
+		// Minimize
+		if( cartesian_minimize_ ){
+			optimization::CartesianMinimizer minimizer;
+			minimizer.run( pose, *mm_, sfxn_loc, *minoption_ );
 
 		} else {
-			movemap.set_bb(true);
-			minimizer.run( pose, movemap, *sfxn_, minoptions );
+			optimization::AtomTreeMinimizer minimizer;
+			minimizer.run( pose, *mm_, sfxn_loc, *minoption_ );
+
 		}
 	}
 
@@ -300,10 +336,13 @@ CartesianNormalModeMover::get_RMSD( utility::vector1< Vector > const excrd,
 //Torsion
 ///////////
 TorsionNormalModeMover::TorsionNormalModeMover( 
-    core::scoring::ScoreFunctionCOP sfxn, 
-		std::string const mode,
-		Real const distcut,
-		std::string const relaxmode )
+     core::pose::Pose const & pose,
+		 core::scoring::ScoreFunctionCOP sfxn, 
+		 core::kinematics::MoveMapCOP mm,
+		 std::string const mode,
+		 Real const distcut,
+		 std::string const relaxmode )
+
 {
   NM_ = NormalMode( mode, distcut );
 	NM_.torsion( true );
@@ -313,6 +352,10 @@ TorsionNormalModeMover::TorsionNormalModeMover(
 	direction_ = 1.0;
 	cst_sdev_ = 1.0; // in Angstrom
 	relaxmode_ = relaxmode;
+	cartesian_minimize_ = false;
+
+	set_movemap( pose, mm );
+	set_default_minoption( );
 
 	// Scorefunction
   sfxn_ = sfxn->clone();
@@ -328,6 +371,14 @@ TorsionNormalModeMover::TorsionNormalModeMover(
 }
 
 TorsionNormalModeMover::~TorsionNormalModeMover(){}
+
+void
+TorsionNormalModeMover::set_default_minoption(){
+	//optimization::MinimizerOptionsCOP minoption =
+	//	new ( "dfpmin", 0.02, true, false, false );
+	//set_minoption( minoption );
+	minoption_ = new optimization::MinimizerOptions( "dfpmin", 0.02, true, false, false );
+}
 
 void
 TorsionNormalModeMover::apply( pose::Pose &pose )
@@ -355,31 +406,38 @@ TorsionNormalModeMover::apply( pose::Pose &pose )
 
 	// Relax setup
 	if( relaxmode_.compare("relax") == 0 ){
+		// This cannot run in centroid level
+		runtime_assert( !pose.is_centroid() );
+
 		protocols::relax::FastRelax relax_prot( sfxn_, 1 );
-		relax_prot.set_min_type("dpfmin");
+		relax_prot.set_movemap( mm_ );
+		relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
 
 		gen_coord_constraint( pose, expose, dummy );
 
 		relax_prot.apply( pose );
 
 	} else if ( relaxmode_.compare("min") == 0 ){
-		kinematics::MoveMap movemap;
 		pose = expose; // Start from perturbed
 		gen_coord_constraint( pose, expose, dummy );
 
-		// Torsion Min
-    optimization::MinimizerOptions minoptions( "dfpmin", 0.02, true, false, false );
-		minoptions.max_iter( 20 );
-		optimization::AtomTreeMinimizer minimizer;
+		core::scoring::ScoreFunction sfxn_loc;
+		// Pick proper scorefunction
 		if( pose.is_centroid() ){
-			//Real rmsd0 = core::scoring::CA_rmsd( pose, expose );
-			
-			movemap.set_bb(true);
-			minimizer.run( pose, movemap, *sfxn_cen_, minoptions );
-			//Real rmsd1 = core::scoring::CA_rmsd( pose, expose );
+			sfxn_loc = *sfxn_cen_;
 		} else {
-			movemap.set_bb(true);
-			minimizer.run( pose, movemap, *sfxn_, minoptions );
+			sfxn_loc = *sfxn_;
+		}
+
+		// Minimize
+		if( cartesian_minimize_ ){
+			optimization::CartesianMinimizer minimizer;
+			minimizer.run( pose, *mm_, sfxn_loc, *minoption_ );
+
+		} else {
+			optimization::AtomTreeMinimizer minimizer;
+			minimizer.run( pose, *mm_, sfxn_loc, *minoption_ );
+
 		}
 
 	} else if ( relaxmode_.compare("extrapolate") == 0 ){
@@ -427,7 +485,7 @@ TorsionNormalModeMover::extrapolate_mode( pose::Pose const &pose )
 	dtor_.resize( NM().ntor() );
 	for( Size i_tor = 1; i_tor <= NM().ntor(); ++i_tor ) dtor_[i_tor] = 0.0;
 
-	utility::vector1< id::TorsionID > torIDs = NM().get_torID();
+	utility::vector1< id::TorsionID > const torIDs = NM().get_torID();
 
 	// Get torsion perturbation from given mode setup
 	for( Size i_mode = 1; i_mode <= mode_using_.size(); ++i_mode ){
@@ -451,13 +509,15 @@ TorsionNormalModeMover::extrapolate_mode( pose::Pose const &pose )
 	pose::Pose pose_trial( pose );
 	for( Size i_tor = 1; i_tor <= NM().ntor(); ++i_tor ){
 		Real tor = pose.torsion( torIDs[i_tor] ) + trial_scale*dtor_[i_tor];
+		TR.Debug << "itor/rsd/dtor " << i_tor << " " << torIDs[i_tor].rsd();
+		TR.Debug << " " << trial_scale*dtor_[i_tor] << std::endl;
 		pose_trial.set_torsion( torIDs[i_tor], tor );
 	}
 	Real rmsd_trial = core::scoring::CA_rmsd( pose, pose_trial );
 
 	// Adjust the scale of angles so as to bring RMSD to desired moving_distance_
 	scale_dynamic_ = 5.0 * moving_distance_/rmsd_trial;
-	Real const max_scale( 15.0 );
+	Real const max_scale( 99.0 );
 	if( scale_dynamic_ > max_scale ) scale_dynamic_ = max_scale;
 	if( scale_dynamic_ < -max_scale ) scale_dynamic_ = -max_scale;
 

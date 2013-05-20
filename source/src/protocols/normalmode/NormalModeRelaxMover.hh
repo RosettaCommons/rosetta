@@ -21,6 +21,7 @@
 // Package headers
 #include <protocols/moves/Mover.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/optimization/MinimizerOptions.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -47,17 +48,19 @@ public:
 	/// Virtual functions from Mover
 	virtual	protocols::moves::MoverOP	fresh_instance() const { return clone(); };
 
-	// This mover have nothing to do with movemap
   virtual
   void set_movemap(
      core::pose::Pose const & pose,
-     core::kinematics::MoveMap const & movemap ){}
+     core::kinematics::MoveMapCOP movemap );
 
 	/// Pure virtual functions inside NMmover
 	virtual
 	void gen_coord_constraint( pose::Pose &pose,
 														 pose::Pose const &expose,
 														 utility::vector1< Vector > const &excrd ) = 0;
+
+	virtual 
+	void set_default_minoption() = 0;
 
 	/// Common options
   void set_harmonic_constants( Real const k_uniform );
@@ -78,9 +81,14 @@ public:
 	
 	void set_mode( Size const i_mode );
 
+	// Use this to modify minimizer; for example to run AtomTreeMin in CartRelaxMover, set as false
+	void set_cartesian_minimize( bool const value ){ cartesian_minimize_ = value;	}
+
 	void set_random_mode( Size const nmode,
 												std::string const select_option = "probabilistic",
 												Real const importance_portion = 1.0 );
+
+	void set_minoption( optimization::MinimizerOptionsCOP minoption ){ minoption_ = minoption->clone(); }
 
 	void refresh_normalmode() { refresh_normalmode_ = true; }
 
@@ -89,12 +97,15 @@ public:
 	Real cst_sdev(){ return cst_sdev_; }
 	Real get_dynamic_scale(){ return scale_dynamic_; }
 
-public:
+protected:
 	Real direction_;
 	Real moving_distance_;
 	Real cst_sdev_;
 	bool refresh_normalmode_;
+	bool cartesian_minimize_;
 	//bool mode_changed_;
+
+	optimization::MinimizerOptionsCOP minoption_;
 
 	Real scale_dynamic_;
 
@@ -102,6 +113,7 @@ public:
 	utility::vector1< Size > mode_using_;
 	utility::vector1< Real > mode_scale_;
 
+	core::kinematics::MoveMapOP mm_;
 	core::scoring::ScoreFunctionOP sfxn_;
 	core::scoring::ScoreFunctionOP sfxn_cen_;
 	protocols::normalmode::NormalMode NM_;
@@ -113,7 +125,9 @@ class CartesianNormalModeMover : public protocols::normalmode::NormalModeRelaxMo
 {
 public:
 
-	CartesianNormalModeMover( core::scoring::ScoreFunctionCOP sfxn,
+	CartesianNormalModeMover( core::pose::Pose const & pose,
+														core::scoring::ScoreFunctionCOP sfxn,
+														core::kinematics::MoveMapCOP mm,
 														std::string const mode = "CA",	
 														Real const distcut = 10.0,
 														std::string const relaxmode = "min" );
@@ -134,6 +148,9 @@ public:
 														 pose::Pose const &,
 														 utility::vector1< Vector > const &excrd );
 
+	virtual 
+	void set_default_minoption();
+
 private:
 	utility::vector1< Vector >
 	extrapolate_mode( pose::Pose const &pose );
@@ -148,7 +165,9 @@ class TorsionNormalModeMover : public protocols::normalmode::NormalModeRelaxMove
 {
 public:
 
-	TorsionNormalModeMover( core::scoring::ScoreFunctionCOP sfxn,
+	TorsionNormalModeMover( core::pose::Pose const & pose,
+													core::scoring::ScoreFunctionCOP sfxn, 
+													core::kinematics::MoveMapCOP mm,
 													std::string const mode = "CA",	
 													Real const distcut = 10.0,
 													std::string const relaxmode = "min" );
@@ -169,6 +188,9 @@ public:
 	void gen_coord_constraint( pose::Pose &pose,
 														 pose::Pose const &expose,
 														 utility::vector1< Vector > const & );
+
+	virtual 
+	void set_default_minoption();
 
 private:
 

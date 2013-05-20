@@ -65,7 +65,17 @@ public:
   void set_harmonic_constants( Real const &k_short,
 			       Real const &k_SS,
 			       Real const &k_long );
-	
+
+	void set_torsions_using( Size const seqpos ){ 
+		torsions_using_assigned_ = true;
+		torsions_using_.push_back( seqpos ); 
+	}
+
+	void clear_torsions_using(){ 
+		torsions_using_assigned_ = false;
+		torsions_using_.resize( 0 );
+	}
+
 	void torsion( bool const bool_in,
 								bool const use_phi = true,
 								bool const use_psi = true,
@@ -76,11 +86,11 @@ public:
   void solve( core::pose::Pose const & pose );
 
   // Accessors
-	bool torsion(){ return torsion_; }
-	Size natm(){ return xyz_.size(); }
-	Size ntor(){ return e_.size(); }
+	bool torsion() const { return torsion_; }
+	Size natm() const { return xyz_.size(); }
+	Size ntor() const { return e_.size(); }
 
-	Size nmode(){
+	Size nmode() const {
 		if( torsion() ){
 			return ntor();
 		} else {
@@ -88,23 +98,23 @@ public:
 		}
 	}
 
-	std::string mode(){ return mode_; }
-	Real dist2_cut(){ return dist2_cut_; }
+	std::string mode() const { return mode_; }
+	Real dist2_cut() const { return dist2_cut_; }
 
 	// Index
-	utility::vector1< id::AtomID > get_atomID( ){ return atomID_; }
-	utility::vector1< id::TorsionID > get_torID( ){ return torID_; }
+	utility::vector1< id::AtomID > get_atomID( ) const { return atomID_; }
+	utility::vector1< id::TorsionID > get_torID( ) const { return torID_; }
 
 	// Cartesian eigenvector
-	utility::vector1< utility::vector1< Vector > > get_eigvec_cart(){ return eigvec_cart_; }
-	utility::vector1< Vector > get_eigvec_cart( Size const imode ){ return eigvec_cart_[imode+6]; }
+	utility::vector1< utility::vector1< Vector > > get_eigvec_cart() const { return eigvec_cart_; }
+	utility::vector1< Vector > get_eigvec_cart( Size const imode ) const { return eigvec_cart_[imode+6]; }
 
 	// Torsion eigenvector
-	utility::vector1< utility::vector1< Real > > get_eigvec_tor(){ return eigvec_tor_; }
-	utility::vector1< Real > get_eigvec_tor( Size const imode ){ return eigvec_tor_[imode]; }
+	utility::vector1< utility::vector1< Real > > get_eigvec_tor() const { return eigvec_tor_; }
+	utility::vector1< Real > get_eigvec_tor( Size const imode ) const { return eigvec_tor_[imode]; }
 
-	utility::vector1< Real > get_eigval() { return eigval_; }
-	Real get_eigval( Size const imode ) { 
+	utility::vector1< Real > get_eigval() const { return eigval_; }
+	Real get_eigval( Size const imode ) const { 
 		if( torsion() ){
 			return eigval_[imode];
 		} else {
@@ -112,15 +122,15 @@ public:
 		}
 	}
 
-	utility::vector1< Real > get_importance(){ return importance_; }
-	Real get_importance( Size const imode ){ return importance_[imode]; }
+	utility::vector1< Real > get_importance() const { return importance_; }
+	Real get_importance( Size const imode ) const { return importance_[imode]; }
 
-	Real get_k( Size const i, Size const j ) { return k_[i][j]; }
+	Real get_k( Size const i, Size const j ) const { return k_[i][j]; }
 
-	Vector xyz( Size const i ){ return xyz_[i]; }
+	Vector xyz( Size const i ) const { return xyz_[i]; }
 
-	Size a_to_i( Size const a ){ return a_to_i_[a]; }
-	Size i_to_a( Size const i ){ return i_to_a_[i]; }
+	Size a_to_i( Size const a ) const { return a_to_i_[a]; }
+	Size i_to_a( Size const i ) const { return i_to_a_[i]; }
 
 private:
 
@@ -192,6 +202,8 @@ private:
 	// TNM
 	bool use_phi_, use_psi_;
 	bool eckart_correction_;
+	utility::vector1< Size > torsions_using_;
+	bool torsions_using_assigned_;
 
 	utility::vector1< utility::vector1< Real > > k_; // harmonic constant
 

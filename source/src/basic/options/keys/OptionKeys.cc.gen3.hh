@@ -1,6 +1,3 @@
-namespace optE { BooleanOptionKey const optE_soft_rep( "optE:optE_soft_rep" );  }
-namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }
-namespace optE { BooleanOptionKey const no_hb_env_dependence_DNA( "optE:no_hb_env_dependence_DNA" );  }
 namespace optE { BooleanOptionKey const optE_no_protein_hack_elec( "optE:optE_no_protein_hack_elec" );  }
 namespace optE { BooleanOptionKey const design_first( "optE:design_first" );  }
 namespace optE { IntegerOptionKey const n_design_cycles( "optE:n_design_cycles" );  }
@@ -442,6 +439,7 @@ namespace archive { IntegerOptionKey const completion_notify_frequency( "archive
 namespace optimization { BooleanOptionKey const optimization( "optimization" );  }
 namespace optimization { IntegerOptionKey const default_max_cycles( "optimization:default_max_cycles" );  }
 namespace optimization { RealOptionKey const armijo_min_stepsize( "optimization:armijo_min_stepsize" );  }
+namespace optimization { RealOptionKey const scale_normalmode_dampen( "optimization:scale_normalmode_dampen" );  }
 namespace optimization { IntegerOptionKey const lbfgs_M( "optimization:lbfgs_M" );  }
 namespace optimization { RealOptionKey const scale_d( "optimization:scale_d" );  }
 namespace optimization { RealOptionKey const scale_theta( "optimization:scale_theta" );  }

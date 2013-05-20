@@ -135,30 +135,30 @@ SmoothEnvEnergy::eval_residue_derivatives(
 ) const {
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
-	
 
-	Real weight_env = weights[ cen_pair_smooth ];
-	Real weight_cbeta = weights[ cenpack_smooth ];
+
+	Real weight_env = weights[ cen_env_smooth ];
+	Real weight_cbeta = weights[ cbeta_smooth ];
 
 	numeric::xyzVector<Real> d_env_score, d_cb_score6, d_cb_score12, d_cb_score;
 	potential_.evaluate_env_and_cbeta_deriv( pose, rsd, d_env_score, d_cb_score6, d_cb_score12);
 
 	// again, multiply by magic constants
-	d_env_score *= weight_env * 2.019;
-	d_cb_score = weight_cbeta * 2.667 * ( d_cb_score6 + d_cb_score12 ) * 0.3;
+	d_env_score *= 2.019;
+	d_cb_score = 2.667 * ( d_cb_score6 + d_cb_score12 ) * 0.3;
 
-	numeric::xyzVector<core::Real> atom_x = rsd.atom( rsd.nbr_atom() ).xyz();
+	Vector atom_x = rsd.atom( rsd.nbr_atom() ).xyz();
 
-	numeric::xyzVector<core::Real> const f2_env( d_env_score );
-	numeric::xyzVector<core::Real> atom_y = -f2_env + atom_x;
+	Vector const f2_env( d_env_score );
+	Vector atom_y = -f2_env + atom_x;
 	Vector const f1_env( atom_x.cross( atom_y ) );
 
-	numeric::xyzVector<core::Real> const f2_cbeta( d_cb_score );
+	Vector const f2_cbeta( d_cb_score );
 	atom_y = -f2_cbeta + atom_x;
 	Vector const f1_cbeta( atom_x.cross( atom_y ) );
 
-	atom_derivs[ rsd.nbr_atom() ].f1() += f1_env + f1_cbeta;
-	atom_derivs[ rsd.nbr_atom() ].f2() += f2_env + f2_cbeta;
+	atom_derivs[ rsd.nbr_atom() ].f1() += weight_env * f1_env + weight_cbeta * f1_cbeta;
+	atom_derivs[ rsd.nbr_atom() ].f2() += weight_env * f2_env + weight_cbeta * f2_cbeta;
 }
 
 

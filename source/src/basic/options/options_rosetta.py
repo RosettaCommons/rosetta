@@ -2250,7 +2250,7 @@ Options = Option_Group( '',
 		Option( 'sc_cst_maxdist', 'Real', default='0.0', desc='Use distance constraints between pairs of input side-chains atoms which are closer than the given upper distance cutoff (0 => no sc-sc restraints)' ),
 		Option( 'limit_aroma_chi2', 'Boolean', desc = "limit chi2 rotamer of PHE,TYR, and HIS around 90 ", default="false" ),
                 Option( 'respect_resfile', 'Boolean', desc = "Tell FastRelax to respect the input resfile.  Used mainly for doing design within FastRelax.", default="false"),
-		
+
                 ## Options to manipulate the movemap
 		Option( 'bb_move', 'Boolean', default='true', desc='allow backbone to move during relax'),
 		Option( 'chi_move', 'Boolean', default='true', desc='allow sidechain to move during relax'),
@@ -4998,6 +4998,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	Option_Group( 'optimization',
 		Option( 'default_max_cycles','Integer', desc='max cycles for MinimizerOptions', default='2000'),
 		Option( 'armijo_min_stepsize','Real', desc='min stepsize in armijo minimizer', default='1e-8'),
+		Option( 'scale_normalmode_dampen','Real', desc='dampening scale over normal mode index, used for NormalModeMinimizer', default='0.05'),
 		Option( 'lbfgs_M','Integer', desc='number of corrections to approximate the inverse hessian matrix.', default='64'),
 		Option( 'scale_d','Real', desc='max cycles for MinimizerOptions', default='1'),
 		Option( 'scale_theta','Real', desc='max cycles for MinimizerOptions', default='1'),

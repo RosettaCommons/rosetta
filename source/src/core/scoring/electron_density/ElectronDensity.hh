@@ -153,6 +153,10 @@ public:
 	utility::vector1< core::Real >
 	getFSC( lightPose const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso );
 
+	/// @brief Compute RSCCs
+	core::Real
+	getRSCC( lightPose const &pose );
+
 	/// @brief Compute intensities, update density
 	void
 	scaleIntensities( utility::vector1< core::Real > I_tgt, core::Real maxreso, core::Real minreso );
@@ -485,7 +489,8 @@ private:
 	/// TONS OF CACHED STUFF <<< this should live in its own class!
 	///////////////////
 	// previously scored computed density map, fft(rho_calc), and patterson map
-	ObjexxFCL::FArray3D< double > rho_calc, rho_solv;
+	ObjexxFCL::FArray3D< double > rho_calc, rho_solv, inv_rho_mask;
+
 	core::Real rho_calc_sum;
 	ObjexxFCL::FArray3D< std::complex<double> > Frho_calc, Frho_solv;
 	utility::vector1<core::Size> bucket_counts;

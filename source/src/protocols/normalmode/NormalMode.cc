@@ -51,6 +51,7 @@ NormalMode::NormalMode()
 	use_phi_ = false;
 	use_psi_ = false;
 	eckart_correction_ = false;
+	torsions_using_assigned_ = false;
 }
 
 NormalMode::NormalMode( std::string const mode,
@@ -64,6 +65,7 @@ NormalMode::NormalMode( std::string const mode,
 	use_phi_ = false;
 	use_psi_ = false;
 	eckart_correction_ = false;
+	torsions_using_assigned_ = false;
 }
 
 NormalMode::~NormalMode(){}
@@ -186,11 +188,21 @@ NormalMode::prepare_coord( pose::Pose const & pose ){
 	tau_.resize( 0 );
 	a_to_i_.resize( 0 );
 	i_to_a_.resize( 0 );
+
+	// Default - assign full residue list when the list is not specified
+	if( !torsions_using_assigned_ ){
+		for( Size ires = 1; ires <= pose.total_residue(); ++ires )
+			torsions_using_.push_back( ires );
+	}
 	
-	Vector xyzCA, xyzN, xyzC, xyzC_prv;
+	Vector xyzCA, xyzN, xyzC;
 	Size n( 0 );
 
-	for( Size ires = 1; ires <= pose.total_residue(); ++ires ){
+	//std::cout << "prepare_coord, nmode " << torsions_using_.size() << std::endl;
+
+	for( Size i = 1; i <= torsions_using_.size(); ++i ){
+		Size const ires = torsions_using_[i];
+		//std::cout << "i/ires " << i << " " << ires << std::endl;
 		conformation::Residue const &rsd( pose.residue( ires ) );
 
 		for( Size iatm = 1; iatm <= rsd.natoms(); ++iatm ){
@@ -271,8 +283,6 @@ NormalMode::prepare_coord( pose::Pose const & pose ){
 			TR.Debug << std::endl;
 		}
 
-		// update previous xyz
-		xyzC_prv = xyzC;
 	}
 
 	// Correction for a_to_i: include C-term atom
@@ -324,7 +334,7 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 			for( Size jres = 1; jres <= pose_tmp.total_residue(); ++jres ){
 				char const &SS_j = pose_tmp.secstruct( jres );
 
-				if( abs((int)(ires - jres)) < 3 || SS_j == 'L' ) continue;
+				if( abs(ires - jres) < 3 || SS_j == 'L' ) continue;
 
 				Vector const &Ocrd = pose_tmp.residue( jres ).xyz( " O  " );
 				Vector const vNO = Ncrd - Ocrd;
@@ -351,7 +361,7 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 				k_[jatm][iatm] = k_uniform_;
 
 			} else {
-				if( abs((int)(ires - jres)) <= 1 ){
+				if( abs(ires - jres) <= 1 ){
 					k_[iatm][jatm] = k_short_;
 					k_[jatm][iatm] = k_short_;
 
@@ -394,8 +404,6 @@ NormalMode::make_Hessian_ANM( ){
 			Real dist2( dxyz.dot( dxyz ) );
 
 			if( dist2 < dist2_cut() ){
-
-				//std::cout << i << " " << j << " " << get_k( i, j) << std::endl;
 
 				Real k =  get_k( i, j )/dist2;
 				Real const dxy( dxyz[0]*dxyz[1] );
@@ -535,8 +543,6 @@ NormalMode::make_Hessian_TNM( ){
 		}
 
 		Real const h = co.k/co.d2;
-		//std::cout << "i_co/h/d" << i_co << " " << h << " " << std::sqrt(co.d2);
-		//std::cout << " " << co.tor1 << " " << co.tor2 << std::endl;
 
 		// Iter over k,l torsions
 		for( Size k = 1; k <= ntor(); ++k ){
@@ -767,8 +773,6 @@ NormalMode::calculate_Jacobi_correction( Size const a,
 	Aa[1] = i_Isum[1][0]*IAa[0] + i_Isum[1][1]*IAa[1] + i_Isum[1][2]*IAa[2];
 	Aa[2] = i_Isum[2][0]*IAa[0] + i_Isum[2][1]*IAa[1] + i_Isum[2][2]*IAa[2];
 
-	//printf("X: %8.3f %8.3f %8.3f\n", Aa[0], Aa[1], Aa[2]);
-
 	// Translation correction
 	//ta = -Aa.cross( Rcom ) - (Ma/Msum)*e_cross_Ra_sa - note that Rcom = O;
 	ta = -(Ma/Msum)*e_cross_Rca_sa;
@@ -804,7 +808,7 @@ NormalMode::calc_inertia_tensor( numeric::MathMatrix<Real> const Icorr,
 	return Ia;
 }
 
-/* compute (a2 + b2)^1/2 without destructive underflow or overflow */
+// compute (a2 + b2)^1/2 without destructive underflow or overflow
 Real 
 NormalMode::pythag(Real a, Real b)
 {
@@ -889,7 +893,7 @@ the transpose VT) is output as v[1..n][1..n].
 				for (k=l;k<=n;k++) a[i][k] *= scale;
       }
     }
-    //anorm = DMAX(anorm,(std::fabs(w[i])+std::fabs(rv1[i])));
+
     anorm = std::max(anorm,(std::fabs(w[i])+std::fabs(rv1[i])));
   }
 
@@ -969,7 +973,6 @@ the transpose VT) is output as v[1..n][1..n].
 				break;
       }
 			
-      //if (its == 30) printf("no convergence in 30 svdcmp iterations");
       x=w[l]; /* Shift from bottom 2-by-2 minor. */
       nm=k-1;
       y=w[nm];

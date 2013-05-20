@@ -705,10 +705,10 @@ option.add( basic::options::OptionKeys::loopfcst::use_general_protocol, "use the
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight_array, "use these weights (per seqpos) for coord cst in rigid regions" ).def("");
 option.add( basic::options::OptionKeys::loopfcst::dump_coord_cst_weight_array, "dump these weights (per seqpos) for coord cst in rigid regions" ).def("");
 option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
-option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
 option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
@@ -1409,11 +1409,11 @@ option.add( basic::options::OptionKeys::robert::pcs_cluster_lowscoring, "cluster
 option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
+option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
-option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
@@ -2113,12 +2113,12 @@ option.add( basic::options::OptionKeys::optE::free, "IterativeOptEDriver flag: s
 option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
 option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
 option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
+option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
-option.add( basic::options::OptionKeys::optE::optE_no_protein_hack_elec, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" ).def(false);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optE_no_protein_hack_elec, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" ).def(false);
 option.add( basic::options::OptionKeys::optE::design_first, "Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights." );
 option.add( basic::options::OptionKeys::optE::n_design_cycles, "The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred" ).def(10);
 option.add( basic::options::OptionKeys::optE::recover_nat_rot, "With the iterative optE driver, repack to recover the native rotamers" );
@@ -2559,6 +2559,7 @@ option.add( basic::options::OptionKeys::archive::completion_notify_frequency, "t
 option.add( basic::options::OptionKeys::optimization::optimization, "optimization option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::optimization::default_max_cycles, "max cycles for MinimizerOptions" ).def(2000);
 option.add( basic::options::OptionKeys::optimization::armijo_min_stepsize, "min stepsize in armijo minimizer" ).def(1e-8);
+option.add( basic::options::OptionKeys::optimization::scale_normalmode_dampen, "dampening scale over normal mode index, used for NormalModeMinimizer" ).def(0.05);
 option.add( basic::options::OptionKeys::optimization::lbfgs_M, "number of corrections to approximate the inverse hessian matrix." ).def(64);
 option.add( basic::options::OptionKeys::optimization::scale_d, "max cycles for MinimizerOptions" ).def(1);
 option.add( basic::options::OptionKeys::optimization::scale_theta, "max cycles for MinimizerOptions" ).def(1);

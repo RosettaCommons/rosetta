@@ -12432,6 +12432,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1e-8</dd><br>
 </dl>
 <dl>
+<dt><b>-scale_normalmode_dampen</b> \<Real\><dt>
+<dd>dampening scale over normal mode index, used for NormalModeMinimizer</dd><br>
+<dd>Default: 0.05</dd><br>
+</dl>
+<dl>
 <dt><b>-lbfgs_M</b> \<Integer\><dt>
 <dd>number of corrections to approximate the inverse hessian matrix.</dd><br>
 <dd>Default: 64</dd><br>

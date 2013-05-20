@@ -155,6 +155,8 @@ static MoverRegistrator< simple_moves::MonteCarloTestCreator > reg_MonteCarloTes
 static MoverRegistrator< moves::RampingMoverCreator > reg_RampingMoverCreator;
 static MoverRegistrator< nonlocal::SingleFragmentMoverCreator > reg_SingleFragmentMoverCreator;
 
+static MoverRegistrator< normalmode::NormalModeMinimizerCreator > reg_NormalModeMinimizerCreator;
+
 static MoverRegistrator< pb_potential::SetupPoissonBoltzmannPotentialCreator > reg_SetupPoissonBoltzmannPotentialCreator;
 
 static MoverRegistrator< protein_interface_design::movers::AddChainBreakCreator > reg_AddChainBreakCreator;

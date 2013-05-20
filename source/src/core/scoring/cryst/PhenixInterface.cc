@@ -555,7 +555,7 @@ void PhenixInterface::stealBfactorsFromFile(
 	while(!PDBIN.eof()) {
 		std::getline(PDBIN,atmLine);
 		if (atmLine.substr(0,6) != "ATOM  " && atmLine.substr(0,6) != "HETATM") continue;
-	  if (atmLine.size() < 60) {
+	  if (atmLine.size() < 78) {
 			TR  << "format error:" << std::endl;
 			TR  << atmLine << std::endl;
 			continue;
@@ -567,7 +567,11 @@ void PhenixInterface::stealBfactorsFromFile(
 		core::Size resid_ros = pose_asu.pdb_info()->pdb2pose( chainid[0], resid, icode[0] );
 		core::Size residALT_ros = pose.pdb_info()->pdb2pose( chainid[0], resid, icode[0] );
 
-		//TR  << "from pdb:" << atmLine.substr(22,4).c_str() << " ---> " << resid_ros << " or " << residALT_ros << std::endl;
+		if (resid_ros != residALT_ros) {
+			TR << "FATAL ERROR!" << resid_ros << " != " << residALT_ros << std::endl;
+			TR << "reading line: " << atmLine << std::endl;
+			utility_exit_with_message( "aborting!" );
+		}
 
 		if (resid_ros == 0) {
 			TR << "error finding res! " << resid << chainid << " first res = " << pose.pdb_info()->pose2pdb(1) << std::endl;

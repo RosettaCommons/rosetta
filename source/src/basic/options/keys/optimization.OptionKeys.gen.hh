@@ -24,6 +24,7 @@ namespace OptionKeys {
 namespace optimization { extern BooleanOptionKey const optimization; }
 namespace optimization { extern IntegerOptionKey const default_max_cycles; }
 namespace optimization { extern RealOptionKey const armijo_min_stepsize; }
+namespace optimization { extern RealOptionKey const scale_normalmode_dampen; }
 namespace optimization { extern IntegerOptionKey const lbfgs_M; }
 namespace optimization { extern RealOptionKey const scale_d; }
 namespace optimization { extern RealOptionKey const scale_theta; }

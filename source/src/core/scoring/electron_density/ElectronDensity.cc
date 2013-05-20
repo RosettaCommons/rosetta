@@ -149,7 +149,7 @@ ElectronDensity& getDensityMap(std::string filename, bool force_reload) {
 		return getDensityMap_legacy();
 	}
 	 */
-	
+
 	if(basic::resource_manager::ResourceManager::get_instance()->
 		has_resource_with_description("electron_density")){
 
@@ -705,7 +705,7 @@ core::Real ElectronDensity::matchCentroidPose(
 	if (!DensScoreInMinimizer) cacheCCs = false;
 
 	//ObjexxFCL::FArray3D< double >  rho_calc, inv_rho_mask;
-	ObjexxFCL::FArray3D< double >  inv_rho_mask;
+	//ObjexxFCL::FArray3D< double >  inv_rho_mask;
 	rho_calc.dimension(density.u1() , density.u2() , density.u3());
 	inv_rho_mask.dimension(density.u1() , density.u2() , density.u3());
 	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) {
@@ -938,7 +938,7 @@ core::Real ElectronDensity::matchPose(
 
 	if (!DensScoreInMinimizer) cacheCCs = false;
 
-	ObjexxFCL::FArray3D< double >  inv_rho_mask;
+	//ObjexxFCL::FArray3D< double >  inv_rho_mask;
 	rho_calc.dimension(density.u1() , density.u2() , density.u3());
 	inv_rho_mask.dimension(density.u1() , density.u2() , density.u3());
 	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) {
@@ -1333,6 +1333,36 @@ ElectronDensity::getFSC(
 	return num;
 }
 
+/// @brief Compute the FSC in the specified resolution range
+core::Real
+ElectronDensity::getRSCC( lightPose const &pose ) {
+	// rhoc & FrhoC
+	calcRhoC( pose );
+
+	core::Real sumC_i=0, sumO_i=0, sumCO_i=0, vol_i=0, CC_i=0;
+ 	core::Real sumO2_i=0.0, sumC2_i=0.0, varC_i=0, varO_i=0;
+	core::Real clc_x, obs_x, eps_x;
+	for (int x=0; x<density.u1()*density.u2()*density.u3(); ++x) {
+		clc_x = rho_calc[x];
+		obs_x = density[x];
+		eps_x = 1-inv_rho_mask[x];
+
+		sumCO_i += eps_x*clc_x*obs_x;
+		sumO_i  += eps_x*obs_x;
+		sumO2_i += eps_x*obs_x*obs_x;
+		sumC_i  += eps_x*clc_x;
+		sumC2_i += eps_x*clc_x*clc_x;
+		vol_i   += eps_x;
+	}
+	varC_i = (sumC2_i - sumC_i*sumC_i / vol_i );
+	varO_i = (sumO2_i - sumO_i*sumO_i / vol_i ) ;
+	if (varC_i == 0 || varO_i == 0)
+		CC_i = 0;
+	else
+		CC_i = (sumCO_i - sumC_i*sumO_i/ vol_i) / sqrt( varC_i * varO_i );
+
+	return CC_i;
+}
 
 core::Real
 ElectronDensity::maxNominalRes() {
@@ -1347,7 +1377,11 @@ ElectronDensity::calcRhoC( lightPose const &pose ) {
 	// get rho_c
 	const core::Real ATOM_MASK_PADDING = 1.5;
 	rho_calc.dimension(density.u1() , density.u2() , density.u3());
-	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) rho_calc[i]=0.0;
+	inv_rho_mask.dimension(density.u1() , density.u2() , density.u3());
+	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) {
+		rho_calc[i]=0.0;
+		inv_rho_mask[i] = 1.0;
+	}
 
 	for (int i=1 ; i<=(int)pose.size(); ++i) {
 		std::string elt_i = pose[i].second;
@@ -1383,6 +1417,9 @@ ElectronDensity::calcRhoC( lightPose const &pose ) {
 
 					if (d2 <= (ATOM_MASK+ATOM_MASK_PADDING)*(ATOM_MASK+ATOM_MASK_PADDING)) {
 						core::Real atm = C*exp(-k*d2);
+						core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
+						core::Real inv_msk = 1/(1+sigmoid_msk);
+						inv_rho_mask(x,y,z) *= (1 - inv_msk);
 						rho_calc(x,y,z) += atm;
 					}
 				}
@@ -2813,7 +2850,7 @@ void ElectronDensity::compute_rho(core::pose::Pose const & pose,
 	for (core::Size i_id=1; i_id<=atom_ids.size(); ++i_id) {
 		core::Size ires = atom_ids[i_id].rsd();
 		core::Size iatom = atom_ids[i_id].atomno();
-		
+
 		conformation::Atom const & atm_i( pose.residue(ires).atom(iatom) );
 		chemical::AtomTypeSet const & atom_type_set( pose.residue(ires).atom_type_set() );
 		std::string elt_i = atom_type_set[ pose.residue(ires).atom_type_index( iatom ) ].element();
@@ -2827,7 +2864,7 @@ void ElectronDensity::compute_rho(core::pose::Pose const & pose,
 		}
 		if ( is_missing_density( atm_i.xyz() ) ) continue;
 		if ( C < 1e-6 ) continue;
-		
+
 		numeric::xyzVector< core::Real > cartX, fracX;
 		numeric::xyzVector< core::Real > atm_j, del_ij, atm_idx_ij;
 
@@ -2846,25 +2883,25 @@ void ElectronDensity::compute_rho(core::pose::Pose const & pose,
 			del_ij[2] = (atm_idx_ij[2] - atm_j[2]) / grid[2];
 			if (del_ij[2] > 0.5) del_ij[2]-=1.0;
 			if (del_ij[2] < -0.5) del_ij[2]+=1.0;
-			
+
 			del_ij[0] = del_ij[1] = 0.0;
 			if ((f2c*del_ij).length_squared() > ATOM_MASK_SQ) continue;  // early exit
-			
+
 			for (int y=1; y<=calculated_density.u2(); ++y) {
 				atm_j[1] = y;
-				
+
 				del_ij[1] = (atm_idx_ij[1] - atm_j[1]) / grid[1] ;
 				if (del_ij[1] > 0.5) del_ij[1]-=1.0;
 				if (del_ij[1] < -0.5) del_ij[1]+=1.0;
 				del_ij[0] = 0.0;
 				if ((f2c*del_ij).length_squared() > ATOM_MASK_SQ) continue;  // early exit
-				
+
 				for (int x=1; x<=calculated_density.u1(); ++x) {
 					atm_j[0] = x;
 					del_ij[0] = (atm_idx_ij[0] - atm_j[0]) / grid[0];
 					if (del_ij[0] > 0.5) del_ij[0]-=1.0;
 					if (del_ij[0] < -0.5) del_ij[0]+=1.0;
-					
+
 					numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
 					core::Real d2 = (cart_del_ij).length_squared();
 					if (d2 <= ATOM_MASK_SQ) {
@@ -2887,7 +2924,7 @@ void conj_map_times(ObjexxFCL::FArray3D< std::complex<double> > & map_product, O
 	assert(mapA.u1() == mapB.u1());
 	assert(mapA.u2() == mapB.u2());
 	assert(mapA.u3() == mapB.u3());
-	
+
 	map_product.dimension(mapA.u1(), mapA.u2(), mapA.u3());
 	for (Size i=0; i < mapA.size(); i++) {
 		map_product[i] = std::conj(mapA[i]) * mapB[i];
@@ -2899,13 +2936,13 @@ ObjexxFCL::FArray3D< double > convolute_maps( ObjexxFCL::FArray3D< double > cons
 
 	ObjexxFCL::FArray3D< std::complex<double> > FmapA;
 	numeric::fourier::fft3(mapA, FmapA);
-	
+
 	ObjexxFCL::FArray3D< std::complex<double> > FmapB;
 	numeric::fourier::fft3(mapB, FmapB);
-	
+
 	ObjexxFCL::FArray3D< std::complex<double> > Fconv_map;
 	conj_map_times(Fconv_map, FmapB, FmapA );
-	
+
 	ObjexxFCL::FArray3D< double > conv_map;
 	numeric::fourier::ifft3(Fconv_map , conv_map);
 
@@ -2937,7 +2974,7 @@ Note: conjugation is flipped in this implementation because we use the correlati
  \\ &= 2 \cdot \sigma^2_{\rho _f} \sigma^2_\rho(x) \cdot \sum_y \epsilon_f(y)
  \\ & \indent - 2 \cdot \sigma_{\rho _f} \sigma_\rho(x) \cdot \{ \sum_y \epsilon_f(y) \rho_f(y) \rho(y-x) - \overline{\rho _f} \cdot \bar{\rho}(x) \cdot \sum_y \epsilon_f(y) \}
  */
-	
+
 numeric::xyzVector< double > ElectronDensity::match_fragment(
 							  ObjexxFCL::FArray3D< double > const & rho_calc,
 							  ObjexxFCL::FArray3D< double > const & mask,
@@ -2951,7 +2988,7 @@ numeric::xyzVector< double > ElectronDensity::match_fragment(
 	if (radius > 1e-3) {
 		for (Size i=0;i<3;++i) box_grid[i] = (int) ceil(box_fracX[i]*grid[i]);
 	}
-	
+
 	core::Real sum_mask = 0.;//·[epsilon_f]
 	for (Size x=0; x < mask.size(); ++x) {
 		sum_mask += mask[x];  // mask sum
@@ -2970,7 +3007,7 @@ numeric::xyzVector< double > ElectronDensity::match_fragment(
 	for (Size x=0; x < rho_obs.size(); ++x) {
 		sum_mask_rhoc_sq += mask[x]*rho_calc[x]*rho_calc[x];
 	}
-	
+
 	ObjexxFCL::FArray3D< double > rhoo_squared(rho_obs.u1(),rho_obs.u2(),rho_obs.u3());
 	for (Size x=0; x < rho_obs.size(); ++x) {
 		rhoo_squared[x] = rho_obs[x]*rho_obs[x];
@@ -3004,7 +3041,7 @@ numeric::xyzVector< double > ElectronDensity::match_fragment(
 		mean_conv_rhoo[x] = conv_mask__rhoo[x] / sum_mask;
 		//TR << "mean_conv_rhoo " << I(10,x) << F(8,3,mean_conv_rhoo[x]) << std::endl;
 	}
-	
+
 	// convolution: conjugate map squared times mask
 	ObjexxFCL::FArray3D< std::complex<double> > Fconv_mask__rhoo_sq;
 	conj_map_times(Fconv_mask__rhoo_sq, Fmask, Frhoo_squared);
@@ -3031,20 +3068,20 @@ numeric::xyzVector< double > ElectronDensity::match_fragment(
 	double max_score(0.);
 	double min_score(0.);
 	ObjexxFCL::FArray3D< double > match_score_density(rho_obs.u1(),rho_obs.u2(),rho_obs.u3());
-	
+
 	for (grid_idx[2] = 1; grid_idx[2] <= density.u3(); grid_idx[2]++) {
 		if (box_grid[2] != 0) { if (grid_idx[2] - 1 > box_grid[2] && (density.u3()-grid_idx[2]) > box_grid[2]) continue; }
 		for (grid_idx[1] = 1; grid_idx[1] <= density.u2(); grid_idx[1]++) {
 			if (box_grid[1] != 0) { if (grid_idx[1] - 1 > box_grid[1] && (density.u2()-grid_idx[1]) > box_grid[1]) continue; }
 			for (grid_idx[0] = 1; grid_idx[0] <= density.u1(); grid_idx[0]++) {
 				if (box_grid[0] != 0) { if (grid_idx[0] - 1 > box_grid[0] && (density.u1()-grid_idx[0]) > box_grid[0]) continue; }
-				
+
 				core::Real sigma_sq = sigma_rho_frag_sq * sigma_rhoo_sq(grid_idx[0],grid_idx[1],grid_idx[2]);
 				if ( sigma_sq < 1e-30) continue;
                 core::Real sigma = sqrt(sigma_sq);
                 core::Real term1 =  sigma * mean_rhoc * mean_conv_rhoo(grid_idx[0],grid_idx[1],grid_idx[2]);
                 core::Real term2 = -sigma * conv_mask_rhoc__rhoo(grid_idx[0],grid_idx[1],grid_idx[2]) / sum_mask;
-				
+
 				core::Real match_score = -2. * (sigma_sq + term1 + term2) / sigma_rhoo_sq(grid_idx[0],grid_idx[1],grid_idx[2]) ;
 				match_score_density(grid_idx[0],grid_idx[1],grid_idx[2]) = match_score;
 
@@ -3095,7 +3132,7 @@ numeric::xyzVector< double > ElectronDensity::match_fragment(
 	//TR << "Match idx " << I(8,max_score_idx[0]) << I(8,max_score_idx[1]) << I(8,max_score_idx[2]) << F(10,3,max_score) << std::endl;
 	//TR << "Match frac" << F(8,3,fracX[0]) << F(8,3,fracX[1]) << F(8,3,fracX[2]) << F(10,3,max_score) << std::endl;
 	//TR << "Match cart" << F(8,3,cartX[0]) << F(8,3,cartX[1]) << F(8,3,cartX[2]) << F(10,3,max_score) << std::endl;
-	
+
 	return cartX;
 }
 

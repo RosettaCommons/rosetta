@@ -242,7 +242,8 @@ private:
 	//void truncate_cenlist_values( SigmoidWeightedCenList & cenlist ) const;
 
 private: // data
-	//fpd --- just store the coefficients and compute as needed
+	Real SIGMOID_SLOPE;
+
 	SmoothScoreTermCoeffs cbeta6_;
 	SmoothScoreTermCoeffs cbeta12_;
 	SmoothScoreTermCoeffs cenpack_;

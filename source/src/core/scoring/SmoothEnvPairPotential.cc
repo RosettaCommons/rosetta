@@ -68,6 +68,7 @@ Real SmoothScoreTermCoeffs::dfunc( Real x ) const {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 SmoothEnvPairPotential::SmoothEnvPairPotential() {
+	SIGMOID_SLOPE = 12.0;
 	cen_dist_cutoff_12_pad = 13.5*13.5;
 
 	// load the data
@@ -192,10 +193,6 @@ SmoothEnvPairPotential::fill_smooth_cenlist(
 	Size const res2,
 	Real const cendist
 ) const {
-	//fpd  At slope = 6, weight = 1.2339e-04 at 1.5A past inflection point
-	Real const SIGMOID_SLOPE = 6.0;
-
-	//
 	Real interp6 = 1 / (1+exp(SIGMOID_SLOPE*(cendist-6)));
 	cenlist.fcen6(res1) += interp6;
 	cenlist.fcen6(res2) += interp6;
@@ -217,23 +214,21 @@ SmoothEnvPairPotential::fill_smooth_dcenlist(
 	Size const res2,
 	numeric::xyzVector<Real> const cenvec  // vector between centroids
 ) const {
-	Real const SIGMOID_SLOPE = 6.0;   // must match slope in fill_smooth_cenlist
-
 	Real x = cenvec.length();
 	numeric::xyzVector<Real> gradx = cenvec/x;
 
 	Real e6 = exp(SIGMOID_SLOPE*(x-6));
-	Real d6 = e6 / ((1-e6)*(1-e6));
+	Real d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
 	dcenlist.fcen6(res1) += d6*gradx;
 	dcenlist.fcen6(res2) -= d6*gradx;
 
 	Real e10 = exp(SIGMOID_SLOPE*(x-10));
-	Real d10 = e10 / ((1-e10)*(1-e10));
+	Real d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
 	dcenlist.fcen10(res1) += d10*gradx;
 	dcenlist.fcen10(res2) -= d10*gradx;
 
 	Real e12 = exp(SIGMOID_SLOPE*(x-12));
-	Real d12 = e12 / ((1-e12)*(1-e12));
+	Real d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
 	dcenlist.fcen12(res1) += (d12-d6)*gradx;
 	dcenlist.fcen12(res2) -= (d12-d6)*gradx;
 }
@@ -254,7 +249,7 @@ SmoothEnvPairPotential::compute_centroid_environment(
 	if ( !cenlist.calculated() ) {
 		cenlist.initialize( pose.total_residue(), 1 );  // every res has 1 neighbor (itself)
 
-		for ( Size i = 1; i < nres; ++i ) {
+		for ( Size i = 1; i <= nres; ++i ) {
 			conformation::Residue const & rsd1 ( pose.residue(i) );
 			if ( !rsd1.is_protein() ) continue;
 			for ( graph::Graph::EdgeListConstIter
@@ -266,7 +261,11 @@ SmoothEnvPairPotential::compute_centroid_environment(
 				conformation::Residue const & rsd2 ( pose.residue(j) );
 				if ( !rsd2.is_protein() ) continue;
 
-				Real const cendist = edge->square_distance();
+				//Real const cendist = edge->square_distance();
+				numeric::xyzVector<Real> cenvec =
+					rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom( rsd1.nbr_atom() ).xyz();
+				Real const cendist = cenvec.length_squared();
+
 				if ( cendist <= cen_dist_cutoff_12_pad ) {
 					fill_smooth_cenlist( cenlist, i, j, sqrt(cendist) );
 				}
@@ -283,6 +282,7 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 ) const {
 	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
+	SigmoidWeightedCenList<Real> & cenlist( nonconst_cenlist_from_pose( pose ));
 	SigmoidWeightedCenList< numeric::xyzVector< Real > > & dcenlist( nonconst_dcenlist_from_pose( pose ));
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
@@ -291,7 +291,7 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 	if ( !dcenlist.calculated()) {
 		dcenlist.initialize( pose.total_residue(), numeric::xyzVector< Real >(0,0,0) );
 
-		for ( Size i = 1; i < nres; ++i ) {
+		for ( Size i = 1; i <= nres; ++i ) {
 			conformation::Residue const & rsd1 ( pose.residue(i) );
 			if ( !rsd1.is_protein() ) continue;
 			for ( graph::Graph::EdgeListConstIter
@@ -304,8 +304,9 @@ SmoothEnvPairPotential::compute_dcentroid_environment(
 				if ( !rsd2.is_protein() ) continue;
 
 				numeric::xyzVector<Real> cenvec =
-					rsd1.atom( rsd1.nbr_atom() ).xyz() - rsd2.atom( rsd2.nbr_atom() ).xyz();
-				Real const cendist = edge->square_distance();
+					rsd2.atom( rsd2.nbr_atom() ).xyz() - rsd1.atom( rsd1.nbr_atom() ).xyz();
+				Real const cendist = cenvec.length_squared();
+
 				if ( cendist <= cen_dist_cutoff_12_pad ) {
 					fill_smooth_dcenlist( dcenlist, i, j, cenvec );
 				}
@@ -335,22 +336,89 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_scores(
 ) const {
 	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
-	SigmoidWeightedCenList< Real > const & cenlist( cenlist_from_pose( pose ));
+	env_score = 0.0;
+	cb_score6  = 0.0;
+	cb_score12 = 0.0;
 
+	if ( !rsd.is_protein() ) return;
+
+	SigmoidWeightedCenList<Real> const & cenlist( cenlist_from_pose( pose ));
 	int const position ( rsd.seqpos() );
 
-	Real const fcen6  ( cenlist.fcen6( position) );
+	// derivative of score w.r.t centroid count
+	Real const fcen6  ( cenlist.fcen6(position) );
 	Real const fcen10 ( cenlist.fcen10(position) );
 	Real const fcen12 ( cenlist.fcen12(position) );
 
-	if ( rsd.is_protein() ) {
-		env_score = env_[ rsd.aa() ].func( fcen10 );
-		cb_score6  = cbeta6_.func( fcen6 );
-		cb_score12 = cbeta12_.func( fcen12 );
-	} else {
-		env_score = 0.0;
-		cb_score6  = 0.0;
-		cb_score12 = 0.0;
+	env_score = env_[ rsd.aa() ].func( fcen10 );
+	cb_score6  = cbeta6_.func( fcen6 );
+	cb_score12 = cbeta12_.func( fcen12 );
+}
+
+void
+SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
+		pose::Pose const & pose,
+		conformation::Residue const & rsd,
+		numeric::xyzVector<Real> & d_env_score,
+		numeric::xyzVector<Real> & d_cb_score6,
+		numeric::xyzVector<Real> & d_cb_score12
+	) const {
+	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
+
+	d_env_score = numeric::xyzVector<Real>(0.0,0.0,0.0);
+	d_cb_score6  = numeric::xyzVector<Real>(0.0,0.0,0.0);
+	d_cb_score12 = numeric::xyzVector<Real>(0.0,0.0,0.0);
+
+	if ( !rsd.is_protein() ) return;
+
+	SigmoidWeightedCenList<Real> const & cenlist( cenlist_from_pose( pose ));
+	SigmoidWeightedCenList< numeric::xyzVector< Real > > const & dcenlist( dcenlist_from_pose( pose ));
+
+	int const position ( rsd.seqpos() );
+
+	// derivative of centroid count wrt x
+	numeric::xyzVector< Real > const dcentroids6_dx  ( dcenlist.fcen6(position) );
+	numeric::xyzVector< Real > const dcentroids10_dx ( dcenlist.fcen10(position) );
+	numeric::xyzVector< Real > const dcentroids12_dx ( dcenlist.fcen12(position) );
+
+	// derivative of score w.r.t centroid count
+	Real const fcen6  ( cenlist.fcen6(position) );
+	Real const fcen10 ( cenlist.fcen10(position) );
+	Real const fcen12 ( cenlist.fcen12(position) );
+
+	d_env_score = env_[ rsd.aa() ].dfunc( fcen10 ) * dcentroids10_dx;
+	d_cb_score6  = cbeta6_.dfunc( fcen6 ) * dcentroids6_dx;
+	d_cb_score12 = cbeta12_.dfunc( fcen12 ) * dcentroids12_dx;
+
+	// change in others' context:
+	Vector atom_x = rsd.atom( rsd.nbr_atom() ).xyz();
+	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+	for ( graph::Graph::EdgeListConstIter
+			iru  = energy_graph.get_node(position)->const_edge_list_begin(),
+			irue = energy_graph.get_node(position)->const_edge_list_end();
+			iru != irue; ++iru ) {
+		EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+		Size const j( edge->get_other_ind(position) );
+		conformation::Residue const & rsd2 ( pose.residue(j) );
+		if ( !rsd2.is_protein() ) continue;
+		numeric::xyzVector<Real> cenvec = rsd2.atom( rsd2.nbr_atom() ).xyz() - atom_x;
+		Real const cendist = cenvec.length_squared();
+
+		if ( cendist <= cen_dist_cutoff_12_pad ) {
+			Real x = sqrt(cendist);
+			numeric::xyzVector<Real> gradx = cenvec/x;
+
+			Real e6 = exp(SIGMOID_SLOPE*(x-6));
+			Real d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
+			Real e10 = exp(SIGMOID_SLOPE*(x-10));
+			Real d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
+			Real e12 = exp(SIGMOID_SLOPE*(x-12));
+			Real d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
+
+			d_env_score  += env_[ rsd2.aa() ].dfunc( cenlist.fcen10(j) ) * (d10*gradx);
+			d_cb_score6  += cbeta6_.dfunc( cenlist.fcen6(j) ) * (d6*gradx);
+			d_cb_score12 += cbeta12_.dfunc( cenlist.fcen12(j) ) * (d12*gradx);
+		}
 	}
 }
 
@@ -386,46 +454,9 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_score(
 	pair_contribution = currPair.func( cendist );
 
 	// smooth pair by an additional sigmoid so pair_score->0 as dist->inf
-	Real const SIGMOID_SLOPE = 6.0;
 	pair_contribution *= 1 / (1+exp(SIGMOID_SLOPE*(cendist-10.5)));
 
 	cenpack_contribution = cenpack_.func( cendist * 10 + 0.5 );
-}
-
-
-void
-SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
-		pose::Pose const & pose,
-		conformation::Residue const & rsd,
-		numeric::xyzVector<Real> & d_env_score,
-		numeric::xyzVector<Real> & d_cb_score6,
-		numeric::xyzVector<Real> & d_cb_score12
-	) const {
-	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
-
-	d_env_score = 0.0;
-	d_cb_score6  = 0.0;
-	d_cb_score12 = 0.0;
-
-	if ( !rsd.is_protein() ) return;
-
-	SigmoidWeightedCenList<Real> const & cenlist( cenlist_from_pose( pose ));
-	SigmoidWeightedCenList< numeric::xyzVector< Real > > const & dcenlist( dcenlist_from_pose( pose ));
-
-	int const position ( rsd.seqpos() );
-
-	// derivative of centroid count wrt x
-	numeric::xyzVector< Real > const dcentroids6_dx  ( dcenlist.fcen6(position) );
-	numeric::xyzVector< Real > const dcentroids10_dx ( dcenlist.fcen10(position) );
-	numeric::xyzVector< Real > const dcentroids12_dx ( dcenlist.fcen12(position) );
-
-	// derivative of score w.r.t centroid count
-	Real const fcen6  ( cenlist.fcen6( position) );
-	Real const fcen10 ( cenlist.fcen10(position) );
-	Real const fcen12 ( cenlist.fcen12(position) );
-	d_env_score = env_[ rsd.aa() ].dfunc( fcen10 ) * dcentroids6_dx;
-	d_cb_score6  = cbeta6_.dfunc( fcen6 ) * dcentroids10_dx;
-	d_cb_score12 = cbeta12_.dfunc( fcen12 ) * dcentroids12_dx;
 }
 
 
@@ -456,7 +487,6 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_deriv(
 	Real cendist = sqrt(cendist2);
 	SmoothScoreTermCoeffs const & currPair = pair_[std::min(aa1,aa2)][std::max(aa1,aa2)];
 	Real pair = currPair.func( cendist );
-	Real const SIGMOID_SLOPE = 6.0;   // must match slope in evaluate_pair_and_cenpack_score
 	Real e = exp(SIGMOID_SLOPE*(cendist-10.5));
 	Real d = (1 + e);
 	Real sigmoid = 1/d;
@@ -474,8 +504,7 @@ SigmoidWeightedCenList< Real > const &
 SmoothEnvPairPotential::cenlist_from_pose( pose::Pose const & pose ) const {
 	using namespace core::pose::datacache;
 	return *( static_cast< SigmoidWeightedCenList< Real > const * >( pose.data().get_const_ptr( CacheableDataType::SIGMOID_WEIGHTED_CEN_LIST )() ));
-
-}
+ }
 
 /// @details Either returns a non-const reference to the cenlist object already stored
 /// in the pose, or creates a new cenist object, places it in the pose, and returns
