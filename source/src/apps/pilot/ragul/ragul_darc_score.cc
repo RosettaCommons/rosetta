@@ -30,6 +30,7 @@
 #include <protocols/pockets/DarcParticleSwarmMinimizer.hh>
 #include <core/optimization/Minimizer.hh>
 #include <basic/options/option_macros.hh>
+#include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <protocols/pockets/FingerprintMultifunc.hh>
 
@@ -330,10 +331,10 @@ int main( int argc, char * argv [] ) {
 	//create 'tag' for output filenames
 	int dot_index1 = input_protein.rfind(".", input_protein.size());
   assert(dot_index1 != -1 && "No dot found in filename");
-	std::string protein_name = input_protein.substr(0,dot_index1);
+	std::string protein_name = utility::filename(input_protein.substr(0,dot_index1));
   int dot_index2 = input_ligand.rfind(".", input_ligand.size());
   assert(dot_index2 != -1 && "No dot found in filename");
-	std::string ligand_name = input_ligand.substr(0,dot_index2);
+	std::string ligand_name = utility::filename(input_ligand.substr(0,dot_index2));
 	std::string tag = ligand_name + "_" + protein_name + "_" + resid;
 
 	//print unaligned fingerprint files
