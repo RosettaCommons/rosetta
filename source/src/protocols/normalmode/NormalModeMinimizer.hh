@@ -19,13 +19,13 @@
 #include <protocols/normalmode/NormalModeMultiFunc.hh>
 
 // Package headers
-#include <core/optimization/MinimizerOptions.fwd.hh>
-#include <core/optimization/NumericalDerivCheckResult.fwd.hh>
+#include <core/optimization/MinimizerOptions.hh>
+#include <core/optimization/NumericalDerivCheckResult.hh>
 
 // Project headers
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/Mover.hh>
 
 // Utility headers
