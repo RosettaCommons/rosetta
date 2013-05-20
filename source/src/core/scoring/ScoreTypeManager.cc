@@ -63,6 +63,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_sol" ] = fa_sol;
 	name2score_type_[ "lk_hack" ] = lk_hack;
 	name2score_type_[ "lk_ball" ] = lk_ball;
+	name2score_type_[ "lk_ball_wtd" ] = lk_ball_wtd;
 	name2score_type_[ "lk_ball_iso" ] = lk_ball_iso;
 	name2score_type_[ "lk_costheta" ] = lk_costheta;
 	name2score_type_[ "lk_polar" ] = lk_polar;

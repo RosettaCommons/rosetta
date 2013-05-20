@@ -25,6 +25,7 @@
 
 #include <core/scoring/methods/GenBornEnergy.hh>
 #include <core/scoring/GenBornPotential.hh>
+#include <core/scoring/etable/count_pair/types.hh>
 
 // Package headers
 #include <core/conformation/Atom.fwd.hh>
@@ -33,6 +34,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/MinimizationData.hh>
 #include <core/scoring/hbonds/types.hh>
 
 // Project headers
@@ -126,6 +128,18 @@ public:
 																	Real & lk_ball_desolvation_of_atom1_by_atom2 // includes lk-fraction
 																	) const;
 
+	void
+	calculate_lk_ball_atom_energies_cp(
+																		 Size const atom1,
+																		 conformation::Residue const & rsd1,
+																		 Vectors const & atom1_waters,
+																		 Size const atom2,
+																		 conformation::Residue const & rsd2,
+																		 etable::count_pair::CPCrossoverBehavior const & cp_crossover,
+																		 Real & lk_desolvation_of_atom1_by_atom2,
+																		 Real & lk_ball_desolvation_of_atom1_by_atom2 // includes lk-fraction
+																		 ) const;
+
 	// helper
 	Real
 	get_lk_fractional_contribution_for_single_water(
@@ -204,6 +218,7 @@ public:
 																			 Size const atom1,
 																			 Size const atom1_type_index,
 																			 Vectors const & atom1_waters,
+																			 utility::vector1< Real > const & atom1_wts,
 																			 conformation::Residue const & rsd1,
 																			 Size const atom2_type_index,
 																			 Vector const & atom2_xyz,
@@ -223,6 +238,66 @@ public:
 																			 Real & oriented_weight
 																			 ) const;
 																			 */
+
+	void
+	setup_for_minimizing_for_residue(
+																	 conformation::Residue const & rsd,
+																	 pose::Pose const & pose,
+																	 ScoreFunction const & scorefxn,
+																	 kinematics::MinimizerMapBase const & min_map,
+																	 ResSingleMinimizationData & resdata
+																	 ) const;
+
+	void
+	setup_for_minimizing_for_residue_pair(
+																				conformation::Residue const & rsd1,
+																				conformation::Residue const & rsd2,
+																				pose::Pose const &,
+																				ScoreFunction const & scorefxn,
+																				kinematics::MinimizerMapBase const & min_map,
+																				ResSingleMinimizationData const & res1data,
+																				ResSingleMinimizationData const & res2data,
+																				ResPairMinimizationData & pairdata
+																				) const;
+
+	bool
+	use_extended_residue_pair_energy_interface() const;
+
+	void
+	residue_pair_energy_ext(
+													conformation::Residue const & rsd1,
+													conformation::Residue const & rsd2,
+													ResPairMinimizationData const & pairdata,
+													pose::Pose const &,// pose,
+													ScoreFunction const &,
+													EnergyMap & emap
+													) const;
+
+	bool
+	minimize_in_whole_structure_context( pose::Pose const & ) const;
+
+	bool
+	requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & ) const;
+
+	void
+	setup_for_scoring_for_residue(
+																conformation::Residue const & rsd,
+																pose::Pose const &,// pose,
+																ScoreFunction const & sfxn,
+																ResSingleMinimizationData & resdata
+																) const;
+
+	bool
+	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const &  ) const;
+
+	void
+	setup_for_derivatives_for_residue(
+																		conformation::Residue const & rsd,
+																		pose::Pose const & pose,
+																		ScoreFunction const & sfxn,
+																		ResSingleMinimizationData & min_data
+																		) const;
+
 
 	virtual
 	bool
@@ -322,33 +397,34 @@ public:
 
 
 	void
-	sum_contributions_for_atom_pair_one_way(
-																					Size const atom1,
-																					conformation::Residue const & rsd1,
-																					Vectors const & atom1_waters,
-																					Size const atom2,
-																					conformation::Residue const & rsd2,
-																					scoring::EnergyMap const & weights,
-																					Real const weight_factor,
-																					Real const d2,
-																					Vector & F1,
-																					Vector & F2
-																					) const;
+	sum_deriv_contributions_for_atom_pair_one_way(
+																								Size const atom1,
+																								conformation::Residue const & rsd1,
+																								Vectors const & atom1_waters,
+																								utility::vector1< Real > const & atom1_wts,
+																								Size const atom2,
+																								conformation::Residue const & rsd2,
+																								scoring::EnergyMap const & weights,
+																								Real const weight_factor,
+																								Real const d2,
+																								Vector & F1,
+																								Vector & F2
+																								) const;
 
 	void
-	sum_contributions_for_atom_pair(
-																	Size const atom1,
-																	conformation::Residue const & rsd1,
-																	LKB_ResidueInfo const & rsd1_info,
-																	Size const atom2,
-																	conformation::Residue const & rsd2,
-																	LKB_ResidueInfo const & rsd2_info,
-																	pose::Pose const & pose,
-																	scoring::EnergyMap const & weights,
-																	Real const cp_weight,
-																	Vector & F1,
-																	Vector & F2
-																	) const;
+	sum_deriv_contributions_for_atom_pair(
+																				Size const atom1,
+																				conformation::Residue const & rsd1,
+																				LKB_ResidueInfo const & rsd1_info,
+																				Size const atom2,
+																				conformation::Residue const & rsd2,
+																				LKB_ResidueInfo const & rsd2_info,
+																				pose::Pose const & pose,
+																				scoring::EnergyMap const & weights,
+																				Real const cp_weight,
+																				Vector & F1,
+																				Vector & F2
+																				) const;
 
 
 	void

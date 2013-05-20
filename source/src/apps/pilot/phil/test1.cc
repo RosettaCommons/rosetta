@@ -62,6 +62,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
+#include <core/pack/rtmin.hh>
+#include <core/pack/min_pack.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -2854,6 +2856,83 @@ set_stub_transform_test()
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+lk_ball_wtd_deriv_test()
+{
+	using namespace optimization;
+	using std::cout;
+	using std::endl;
+
+	Pose pose;
+	string const filename( start_file() );
+	pose_from_pdb( pose, filename );
+
+
+	kinematics::MoveMap mm;
+	mm.set_bb( false );
+	mm.set_chi( true );
+	mm.set_jump( false );
+
+	/// scorefxn
+	ScoreFunctionOP scorefxn( new ScoreFunction() );
+ 	scorefxn->set_weight( fa_atr, 0.01 );
+ 	scorefxn->set_weight( fa_rep, 0.01 );
+	scorefxn->set_weight( lk_ball_wtd, 0.8 );
+
+	Real const scorebefore( (*scorefxn)( pose ) );
+	cout << "beforescore: " << F(9,3,scorebefore) << ' ' <<
+		pose.energies().total_energies().weighted_string_of( scorefxn->weights() ) << endl;
+
+	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		Residue const & irsd( pose.residue(i) );
+		//scoring::methods::EnvElecResidueInfo const & irsd_info( retrieve_residue_info( pose, i ) );
+
+		cout << "RSDE " << I(4,i) << ' ' << irsd.name1() <<
+			" tot: " << F(9,3,pose.energies().residue_total_energies(i).dot( scorefxn->weights() ) ) <<
+			' ' << pose.energies().residue_total_energies(i).weighted_string_of( scorefxn->weights() ) <<
+			' ' << irsd.name() << ' ' << filename << endl;
+	}
+
+
+	pose.dump_pdb( "before.pdb" );
+
+
+	{ // hacking
+		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ) );
+		task->initialize_from_command_line();
+		task->or_include_current( true );
+		task->restrict_to_repacking();
+		utility::vector1< bool > subset( pose.total_residue(), false );
+		subset[10] = subset[11] = subset[12] = subset[13] = subset[14] = true;
+		task->restrict_to_residues( subset );
+		pack::RTMin rtmin;
+		rtmin.rtmin( pose, *scorefxn, task );
+		Real scoreafter( (*scorefxn)( pose ) );
+		cout << "afterscore1: " << F(9,3,scoreafter) << ' ' <<
+			pose.energies().total_energies().weighted_string_of( scorefxn->weights() ) << endl;
+		pack::min_pack( pose, *scorefxn, task );
+		scoreafter = (*scorefxn)( pose );
+		cout << "afterscore2: " << F(9,3,scoreafter) << ' ' <<
+			pose.energies().total_energies().weighted_string_of( scorefxn->weights() ) << endl;
+
+		//exit(0);
+	}
+
+
+	MinimizerOptions options( "dfpmin", 0.1, true /*use_nblist*/,
+														true /*deriv_check*/, false /*no verbose-deriv-check, is default*/ );
+	AtomTreeMinimizer minimizer;
+
+	minimizer.run( pose, mm, *scorefxn, options );
+
+	pose.dump_pdb( "after.pdb" );
+
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2882,6 +2961,9 @@ main( int argc, char * argv [] )
 		exit(0);
 	}
 	/////////////////////////////////////
+
+	lk_ball_wtd_deriv_test();
+	exit(0);
 
 	dna_deriv_test();
 	exit(0);
@@ -2961,7 +3043,7 @@ main( int argc, char * argv [] )
 	simple_loop_modeling_test();
 	exit(0);
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 
 }

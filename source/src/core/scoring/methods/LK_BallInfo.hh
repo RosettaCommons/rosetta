@@ -85,7 +85,7 @@ typedef utility::vector1< WaterBuilder > WaterBuilders;
 class LKB_ResidueInfo; // fwd
 typedef utility::pointer::owning_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
 
-class LKB_ResidueInfo : public utility::pointer::ReferenceCount {
+	class LKB_ResidueInfo : public basic::datacache::CacheableData {
 public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~LKB_ResidueInfo();
@@ -97,7 +97,13 @@ public:
 
 	LKB_ResidueInfo( LKB_ResidueInfo const & src );
 
-	LKB_ResidueInfoOP
+	LKB_ResidueInfo();
+
+	void
+	initialize( chemical::ResidueType const & rsd );
+
+	basic::datacache::CacheableDataOP
+	//LKB_ResidueInfoOP
 	clone() const;
 
 	void
@@ -109,6 +115,11 @@ public:
 	bool
 	has_waters() const { return has_waters_; }
 
+	utility::vector1< utility::vector1< Real > > const &
+	atom_weights() const { return atom_weights_; }
+
+
+
 
 /////////////////////////////////////////////////////////////////////////////
 // STATIC data
@@ -118,16 +129,28 @@ private:
 	typedef std::map< chemical::ResidueTypeCOP, utility::vector1< WaterBuilders > > WaterBuilderMap;
 	static WaterBuilderMap water_builder_map_;
 
+	typedef std::map< chemical::ResidueTypeCOP, utility::vector1< utility::vector1< Real > > > AtomWeightsMap;
+	static AtomWeightsMap atom_weights_map_;
+
 	void
 	initialize_residue_type( chemical::ResidueType const & rsd_type ) const;
 
+	void
+	setup_atom_weights(
+										 chemical::ResidueType const & rsd_type,
+										 utility::vector1< WaterBuilders > const & rsd_water_builders, // for sanity
+										 utility::vector1< utility::vector1< Real > > & atom_wts
+										 ) const;
+
 private:
 	utility::vector1< Vectors > waters_;
+	utility::vector1< utility::vector1< Real > > atom_weights_;
 	bool has_waters_;
 
 };
 
 typedef utility::pointer::owning_ptr< LKB_ResidueInfo > LKB_ResidueInfoOP;
+typedef utility::pointer::owning_ptr< const LKB_ResidueInfo > LKB_ResidueInfoCOP;
 
 class LKB_ResiduesInfo : public basic::datacache::CacheableData {
 public:

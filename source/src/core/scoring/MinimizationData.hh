@@ -34,6 +34,7 @@ namespace scoring {
 enum min_single_data{
 	etab_single_nblist = 1,
 	cst_res_data,
+	lkb_res_data,
 	hbond_res_data,
 	n_min_single_data = hbond_res_data // keep this guy last
 };
@@ -44,6 +45,7 @@ enum min_pair_data {
 	hackelec_pair_nblist,
 	fa_dslf_respair_data,
 	fa_custom_pair_dist_data,
+	lkb_respair_data,
 	hbond_respair_data,
 	n_min_pair_data = hbond_respair_data // keep this guy last
 };

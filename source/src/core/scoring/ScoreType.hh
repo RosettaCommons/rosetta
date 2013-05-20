@@ -48,6 +48,7 @@ enum ScoreType {
 	fa_intra_RNA_base_phos_sol, //RNA specific score term
 	lk_hack,
 	lk_ball,
+	lk_ball_wtd,
 	lk_ball_iso,
 	coarse_fa_atr,
 	coarse_fa_rep,
