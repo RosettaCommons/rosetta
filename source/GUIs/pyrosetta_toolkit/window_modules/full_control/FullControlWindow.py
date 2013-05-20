@@ -95,6 +95,10 @@ class FullControlWindow():
 	#Numbering Check
 	try:
 	    res = self.pose.pdb_info().pdb2pose(chain, int(res))
+            
+            if res==0:
+                print "Residue does not exist in PDB"
+                return
 	    self.restype_var.set(self.pose.residue(res).name()); #Exception comes from this! Segfualts on .psi etc.  This needs to be first.
 	    self.input_class.residue_rosetta_resnum.set(repr(res))
 	except PyRosettaException:

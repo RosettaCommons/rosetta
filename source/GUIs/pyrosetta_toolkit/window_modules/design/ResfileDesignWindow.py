@@ -121,6 +121,9 @@ class ResfileDesignWindow:
         What happens when you click check residue.  Should be a callback, but need both res and chain specified before update.
         """
         
+        if not self.check_for_residue_existance():
+            return
+        
         self.listbox_current_designs.delete(0, END)
         self.current_residueFull = self.current_residue.get().split(":")
         
@@ -365,23 +368,21 @@ class ResfileDesignWindow:
             print "No pose Loaded."
             return False
         
-        if not self.current_chain.get() or self.current_residue.get():
+        if not self.current_chain.get() or not self.current_residue.get():
+            print "Chain or residue not set"
             return False
         
         current_region = self.current_residue.get().split(":")
         if len(current_region)>1:
             ResStart = int(current_region[0]); ResEnd = int(self.current_region[1])
         
-            try:
-                self.pose.pdb_info().pdb2pose(self.current_chain.get(), ResStart)
-                self.pose.pdb_info().pdb2pose(self.current_chain.get(), ResEnd)
-            except PyRosettaException:
+        
+            if self.pose.pdb_info().pdb2pose(self.current_chain.get(), ResStart)==0 or self.pose.pdb_info().pdb2pose(self.current_chain.get(), ResEnd)==0:
                 print "Region not found in pose"
                 return False
         else:
-            try:
-                self.pose.pdb_info().pdb2pose(self.current_chain.get(), int(self.current_residue.get()))
-            except PyRosettaException:
+            if self.pose.pdb_info().pdb2pose(self.current_chain.get(), int(self.current_residue.get())) ==0:
+                
                 print "Residue not found in pose"
                 return False
         

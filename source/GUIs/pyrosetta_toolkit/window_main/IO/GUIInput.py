@@ -32,6 +32,7 @@ from modules.RegionalScoring import RegionalScoring
 from modules.Region import Region
 from modules.Region import Regions
 from modules.tools import input as input_tools
+
 from window_modules.clean_pdb.FixPDBWindow import FixPDBWindow
 from window_modules.options_system.OptionSystemManager import OptionSystemManager
 #from pyrosetta_toolkit import main_window

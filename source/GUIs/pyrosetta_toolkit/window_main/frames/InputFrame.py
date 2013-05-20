@@ -26,6 +26,8 @@ import tkSimpleDialog
 from modules.Region import Region
 from modules.tools import sequence as sequence_tools
 from modules.tools import input as input_tools
+from modules.tools import general_tools as gen_tools
+
 #from pyrosetta_toolkit import main_window
 from window_main.IO.GUIInput import GUIInput
 
@@ -209,24 +211,9 @@ class InputFrame(Frame):
         """
         if not self.input_class.region_chain.get():return
         looFull = self.input_class.region_start.get()+ ":"+ self.input_class.region_end.get()+":"+self.input_class.region_chain.get().upper()
-        start = looFull.split(":")[0]; end = looFull.split(":")[1]
-        
-         #Chain
-        chain = self.input_class.region_chain.get().upper()
-        if (start == "" and end==""):
-            region = Region(chain, None, None)
-        #Nter
-        elif start=="":
-            region = Region(chain, None, int(end))
-        #Cter
-        elif end=="":
-            region = Region(chain, int(start), None)
-        #Loop
-        else: 
-            region = Region(chain, int(start), int(end))
         
         
-        return region
+        return gen_tools.loop_string_to_region(looFull)
     
     def insert_region_into_entry_from_listbox(self):
         try:

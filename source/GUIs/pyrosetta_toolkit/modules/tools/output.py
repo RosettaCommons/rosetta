@@ -600,7 +600,7 @@ def save_FASTA(pose, base_name, outfilename = False, regions = False ):
             if not region.region_exists(pose):continue
             else:
                 seq = region.get_sequence(pose)
-            header = ">"+base_name+" "+region.get_region_string()
+            header = ">"+base_name+" "+region.get_region_string_with_all_residues(pose)
             OUTFILE.write(header+"\n")
             OUTFILE.write(seq+"\n")
     else:
@@ -642,7 +642,7 @@ def save_FASTA_PDBLIST(pdblist_path, outfilename=False, regions=False):
                 seq = region.get_sequence(pose)
                 
                 
-                header = ">"+pdbID+" "+region.get_region_string()+" "+pdbpath
+                header = ">"+pdbID+" "+region.get_region_string_with_all_residues(pose)+" "+pdbpath
                 print header
                 print seq
                 OUTFILE.write(header+"\n")

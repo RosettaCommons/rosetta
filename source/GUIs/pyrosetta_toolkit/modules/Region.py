@@ -86,6 +86,13 @@ class Region:
     def get_region_string(self):
         return self.region
     
+    def get_region_string_with_all_residues(self, pose):
+        """
+        Returns the loops string with full residue numbers instead of blank ::
+        """
+        s = repr(self.get_pdb_start(pose))+":"+repr(self.get_pdb_end(pose))+":"+self.get_chain()
+        return s
+    
     def get_region_type(self):
         if not self.start and not self.end:
             return "chain"
@@ -98,14 +105,14 @@ class Region:
         else:
             return 'loop'
         
-    #Main Getters
+    #Main Getters - These will be blank depending on region type.
     def get_start(self):
         return self.start
     def get_end(self):
         return self.end
     def get_chain(self):
         return self.chain
-    
+
     #Rosetta Getters
     def get_rosetta_start(self, pose):
         
@@ -119,7 +126,8 @@ class Region:
                     continue
         else:
             return pose.pdb_info().pdb2pose(self.chain, self.start)
-        
+    
+
     def get_rosetta_end(self, pose):
 
         if (self.get_region_type()=='cter') or (self.get_region_type()=='chain'):
@@ -135,7 +143,15 @@ class Region:
                     continue
         else:
             return pose.pdb_info().pdb2pose(self.chain, self.end)
+            
+    def get_pdb_start(self, pose):
         
+        return pose.pdb_info().number(self.get_rosetta_start(pose))
+        
+    def get_pdb_end(self, pose):
+        
+        return pose.pdb_info().number(self.get_rosetta_end(pose))
+         
     #Useful functions
     def get_length(self, pose):
         return self.get_rosetta_end(pose)-self.get_rosetta_start(pose)+1

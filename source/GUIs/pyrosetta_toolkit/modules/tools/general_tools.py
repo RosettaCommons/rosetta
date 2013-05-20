@@ -27,6 +27,10 @@ import tkMessageBox
 import tkSimpleDialog
 from Tkinter import Listbox
 
+#Toolkit Imports
+from modules.Region import Region
+from modules.Region import Regions
+
 pwd = os.getcwd()
 
 
@@ -97,3 +101,36 @@ def getOS():
     else:
         print "Platform Not Found"
         return "error"
+    
+def loop_string_to_region(loop_string):
+    """
+    Loop string (start:end:chain) conversion to newer Region class.
+    """
+         
+    start = loop_string.split(":")[0]; end = loop_string.split(":")[1]; chain = loop_string.split(":")[2]
+    #Chain
+         
+    if (start == "" and end==""):
+        region = Region(chain.upper(), None, None)
+    #Nter
+    elif start=="":
+        region = Region(chain.upper(), None, int(end))
+    #Cter
+    elif end=="":
+        region = Region(chain.upper(), int(start), None)
+    #Loop
+    else: 
+        region = Region(chain.upper(), int(start), int(end))
+    
+    return region
+
+def loops_as_strings_to_regions(loops_as_strings):
+    """
+    Loops as strings representation of regions to newer Regions class.
+    """
+    reg = Regions()
+    for loop_string in loops_as_strings:
+        reg.add_region(loop_string_to_region(loop_string))
+    
+    return reg
+    

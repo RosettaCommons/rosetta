@@ -126,7 +126,7 @@ class Menus():
 	self.export_menu.add_command(label="Param PathList File", command = lambda: output_tools.save_param_path_list(self.toolkit.input_class.param_paths))
 	self.export_menu.add_separator()
 	self.export_menu.add_command(label = "FASTA (Pose)", command=lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.output_class.outname.get(), False ))
-	self.export_menu.add_command(label = "FASTA (Loops)", command = lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.output_class.outname.get(), False, self.toolkit.input_class.regions))
+	self.export_menu.add_command(label = "FASTA (Regions)", command = lambda: output_tools.save_FASTA(self.toolkit.pose, self.toolkit.output_class.outname.get(), False, self.toolkit.input_class.regions))
 	#self.export_menu.add_command(label="Save Database")
 	#self.export_menu.add_command(label="Save loops as new PDBs")
 
