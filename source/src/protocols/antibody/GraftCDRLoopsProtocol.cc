@@ -98,12 +98,12 @@ void GraftCDRLoopsProtocol::init() {
 void GraftCDRLoopsProtocol::set_default()
 {
 	TR <<  "Setting up default settings to all FALSE" << std::endl;
-	graft_l1_  = false;
-	graft_l2_  = false;
-	graft_l3_  = false;
-	graft_h1_  = false;
-	graft_h2_  = false;
-	graft_h3_  = false;
+	graft_l1_  = true;
+	graft_l2_  = true;
+	graft_l3_  = true;
+	graft_h1_  = true;
+	graft_h2_  = true;
+	graft_h3_  = true;
 	h3_no_stem_graft_=false;
 	packonly_after_graft_=false;
 	benchmark_ = false;
@@ -312,6 +312,7 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
     for(CDRNameEnum it = start_cdr_loop; it <= ab_info_->get_total_num_CDRs(); it=CDRNameEnum(it+1) ){
 	    if (  !(it == h3 && h3_no_stem_graft_)   ){
 	            GraftedStemOptimizerOP optimize_oneCDR_stems = new GraftedStemOptimizer(it, ab_info_);
+		    optimize_oneCDR_stems->enable_benchmark_mode( benchmark_ );
 	            optimize_sequence_->add_mover(optimize_oneCDR_stems);
 	    }
     }

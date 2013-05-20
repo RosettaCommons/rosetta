@@ -57,6 +57,7 @@ GraftedStemOptimizer::init() {
 	scorefxn_       = NULL;
     mc_             = NULL;
     optimize_stems_ = NULL;
+    benchmark_ = false;
     
 	stem_size_        = 4;
     deep_optimization_ = true;
@@ -182,6 +183,10 @@ GraftedStemOptimizer::apply( pose::Pose & pose ){
     
     Size inner_cycles( stem_size_ * 3 );
 	Size outer_cycles( 5 );
+	if(benchmark_) {
+	    inner_cycles=1;
+	    outer_cycles=1;
+	}
     Real const init_temp( 2.0 );
 	Real const last_temp( 0.5 );
 	Real const gamma = std::pow( (last_temp/init_temp), (1.0/inner_cycles));
