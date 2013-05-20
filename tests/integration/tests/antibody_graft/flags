@@ -1,15 +1,21 @@
+#inputs
 -s FR02_filled_new.pdb
+
+#standard flags (to remove and become default)
 -antibody::graft_l1
 -antibody::graft_l2
 -antibody::graft_l3
 -antibody::graft_h1
 -antibody::graft_h2
 -antibody::graft_h3
+
+#for benchmark, extra output
 -run:debug
 -mute core.util.prof ## dont show timing info
 -out:overwrite
 -out:file:scorefile score.fasc
 -out:file:fullatom #output in fullatom scorefile
 -mute core.io.database
+
+#this is legacy input files.  needs updating
 -antibody::preprocessing_script_version R2_Perl
--antibody::stem_optimize true
