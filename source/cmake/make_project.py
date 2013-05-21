@@ -9,8 +9,8 @@ import build_util
 PATH_TO_ROOT = '../../'
 MINI_DIR = (os.path.abspath(sys.argv[0])).split("/")[-3]
 
-def update_svn_version():
-	cmd = 'cd ..; python svn_version.py'
+def update_version():
+	cmd = 'cd ..; python version.py'
 	os.system(cmd)
 
 def project_callback(project, project_path, project_files):
@@ -96,7 +96,7 @@ def project_test_callback(test, project_path, test_path, test_files, test_inputs
 	open(test_path + "test_" + test + '.cmake', 'w').write(output)
 	print 'done.'
 
-update_svn_version()
+update_version()
 
 build_util.project_main(PATH_TO_ROOT + MINI_DIR + "/", sys.argv, project_callback)
 

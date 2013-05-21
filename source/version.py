@@ -47,7 +47,6 @@ def svn_version():
         (res, output) = commands.getstatusoutput('./get_commit_id.sh %s' % ver)
         print 'Asked Testing server for commit id, got reply:', repr(output)
         commit_id = 'failed_to_get_id' if (res  or  not output  or not output.isdigit() ) else str(int(output))  # simple validation
-	
 
     if commit_id != 'unknown': ver = commit_id + ':' + ver
 
@@ -62,9 +61,6 @@ def main():
     sys.stdout.flush() # Make sure it gets dumped before running the function.
     svn_version()
     sys.stdout.write("Done. (%.1f seconds)\n" % (time.time() - starttime) )
-
-if __name__ == "__main__" or __name__ == "__builtin__": main()
-
 
 version_py_template = '''\
 commit_id = '%(commit_id)s'
@@ -121,3 +117,5 @@ register_version_with_core() {
 
 } // namespace devel
 '''
+
+if __name__ == "__main__" or __name__ == "__builtin__": main()
