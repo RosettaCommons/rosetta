@@ -44,7 +44,7 @@ Real
 SigmoidFunc::dfunc( Real const x ) const
 {
 	Real fval = 1/(1+exp(-slope_*( x-x0_ )));
-	return fval*fval*exp(-slope_*(x-x0_));
+	return slope_*fval*fval*exp(-slope_*(x-x0_));
 }
 
 void
