@@ -97,7 +97,7 @@ void GraftCDRLoopsProtocol::init() {
     
 void GraftCDRLoopsProtocol::set_default()
 {
-	TR <<  "Setting up default settings to all FALSE" << std::endl;
+	TR <<  "Setting default settings" << std::endl;
 	graft_l1_  = true;
 	graft_l2_  = true;
 	graft_l3_  = true;
@@ -300,8 +300,8 @@ void GraftCDRLoopsProtocol::finalize_setup( pose::Pose & frame_pose ) {
         cdrs_min_pack_min_ -> set_task_factory(tf_);
         // the tf_ include all the residues, the movemap is to use the deafult one in CDRsMinPackMin, which is the CDRs
         cdrs_min_pack_min_->set_sc_min(sc_min_);
-        cdrs_min_pack_min_->set_sc_min(rt_min_);
-		cdrs_min_pack_min_ -> set_turnoff_minimization(packonly_after_graft_);
+        cdrs_min_pack_min_->set_rt_min(rt_min_);
+		cdrs_min_pack_min_->set_turnoff_minimization(packonly_after_graft_);
     
 
 
