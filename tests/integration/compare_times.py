@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 
 def load_files():
 	import json
