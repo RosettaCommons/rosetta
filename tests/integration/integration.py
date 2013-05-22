@@ -430,7 +430,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                 print "ok   %s" % test
                 full_log += "ok   %s\n" % test
             else:
-                runtimes[test] = float('nan')
+                #runtimes[test] = float('nan')
                 print msg
                 full_log += full_log_msg
 
@@ -536,15 +536,6 @@ def execute(message, command_line, return_=False, untilSuccesses=False, print_ou
         while po.returncode is None: po.wait()
         res = po.returncode
         #print '_____________________', res
-
-
-        '''
-        po = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderror = po.communicate()
-        output = stdout + stderror
-        res = po.returncode
-        '''
-        #print output
 
         if res and untilSuccesses: pass  # Thats right - redability COUNT!
         else: break
