@@ -1,0 +1,7 @@
+-facts_default # includes -correct
+-score:weights scorefacts.wts
+-in:file:silent ./../../data/five_structures.out
+-in:file:silent_struct_type binary
+-in:file:fullatom
+-out:nooutput
+

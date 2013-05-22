@@ -1,0 +1,6 @@
+-corrections::hbond_sp2_corrections
+-score::weights sp2_corrections.wts
+-in:file:silent ./../../data/five_structures.out
+-in:file:silent_struct_type binary
+-in:file:fullatom
+-out:nooutput
