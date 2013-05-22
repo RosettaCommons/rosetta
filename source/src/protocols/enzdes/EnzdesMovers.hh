@@ -232,6 +232,10 @@ public:
 	set_calculate_silent_Es(
 		bool calculate );
 
+    void
+    set_separate_prt_ligand( bool separate_prt_ligand );
+    
+    
 	utility::vector1< core::io::silent::SilentEnergy > const &
 	silent_Es(){
 		return silent_Es_; }
@@ -249,6 +253,8 @@ private:
 	bool calculate_silent_Es_;
 	core::pack::task::PackerTaskOP ptask_;
 	utility::vector1< core::io::silent::SilentEnergy > silent_Es_;
+    // PG 21-05-2013
+    bool separate_prt_ligand_;
 };
 
 

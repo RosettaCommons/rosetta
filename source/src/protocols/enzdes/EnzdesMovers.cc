@@ -417,6 +417,13 @@ RepackLigandSiteWithoutLigandMover::set_calculate_silent_Es(
 	calculate_silent_Es_ = calculate;
 }
 
+    
+void
+RepackLigandSiteWithoutLigandMover::set_separate_prt_ligand( bool separate_prt_ligand )
+{
+    separate_prt_ligand_ = separate_prt_ligand;
+}
+    
 void
 RepackLigandSiteWithoutLigandMover::apply(
 	core::pose::Pose & pose )
@@ -504,9 +511,16 @@ RepackLigandSiteWithoutLigandMover::apply(
 			toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( NULL );
 		}
 	}
+    // PG 21-05-2013
+    // EnzFilters relies on this code but continues with the
+    // pose without ligand - this is probably??? fine but
+    // to run in debug the rms_util.tmpl.hh asserts the two
+    // poses to be of equil size
+    if( separate_prt_ligand_ ){
 	pose.conformation().delete_residue_slow( lig_seqpos_ );
 	(*sfxn_)( pose ); //make sure energies are up to date
 	//pose.dump_pdb( "rlswlm_after_repackdel.pdb");
+    }
 }
 
 std::string

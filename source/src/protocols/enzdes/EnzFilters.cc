@@ -11,7 +11,7 @@
 /// @brief
 /// @author Sagar Khare (khares@uw.edu)
 /// @author Roland A Pache
-
+/// @minor-corrections Per Greisen (pgreisen@gmail.com) PG
 
 // unit headers
 #include <protocols/enzdes/EnzFilters.hh>
@@ -79,6 +79,8 @@
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
+// 21-05-2013 PG
+#include <utility/excn/Exceptions.hh>
 
 
 using namespace core;
@@ -640,13 +642,18 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 	enzutil::disable_constraint_scoreterms(scorefxn_);
 	(*scorefxn_)(rnl_pose) ;
 	core::Real wl_score = rnl_pose.energies().total_energies()[total_score];
-
+    
 	enzutil::remove_all_enzdes_constraints( rnl_pose );
+    
 	protocols::enzdes::RepackLigandSiteWithoutLigandMover rnl( scorefxn_, false );
-	rnl.apply( rnl_pose );
-	(*scorefxn_)(rnl_pose);
+	// same length
+    rnl.set_separate_prt_ligand( false );
+    
+    rnl.apply( rnl_pose );
+	
+    (*scorefxn_)(rnl_pose);
 	core::Real nl_score = rnl_pose.energies().total_energies()[total_score];
-
+    
 	if (calc_dE_) {
 		TR<<"Total energy with ligand is: "<<wl_score<<" and total energy without ligand is "<<nl_score<<std::endl;
 		return (wl_score - nl_score);
@@ -654,20 +661,24 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 	else if (calc_rms_){
 		ObjexxFCL::FArray1D_bool rms_seqpos( pose.total_residue(), false );
 		utility::vector1< core::Size > trg_res;
+        TR << " Length of initial pose " << rnl_pose.total_residue() << std::endl;
 		if (rms_all_rpked_) {
 		TR<<"Getting identities of all pack residues... "<< std::endl;
 			core::pack::task::PackerTaskCOP rnl_ptask = rnl.get_ptask();
 			for( core::Size i = 1; i <= rnl_ptask->total_residue(); ++i ){
-      	if( rnl_ptask->residue_task( i ).being_packed() && pose.residue( i ).is_protein() ) {
+      	
+        if( rnl_ptask->residue_task( i ).being_packed() && pose.residue( i ).is_protein() ) {
 					trg_res.push_back( i );
 				}
     	}
 		}
-		else if( use_cstids_ ) {
+		
+        else if( use_cstids_ ) {
 			enzutil::get_resnum_from_cstid_list(cstid_list_, pose, trg_res);
 		}
-		trg_res.insert( trg_res.begin(), target_res_.begin(), target_res_.end() );
-  	std::unique( trg_res.begin(), trg_res.end() );
+		
+        trg_res.insert( trg_res.begin(), target_res_.begin(), target_res_.end() );
+        std::unique( trg_res.begin(), trg_res.end() );
 
 		TR<<"Calculating RMS for residues ";
 		for (core::Size i=1; i<=pose.total_residue(); ++i){
@@ -679,8 +690,17 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 				}
 			}
 		}
-	  TR<< std::endl;
+        
+        TR<< std::endl;
+        
 		core::Real rmsd( core::scoring::rmsd_no_super_subset( pose, rnl_pose, rms_seqpos, core::scoring::is_protein_sidechain_heavyatom ) );
+        // PG 21-05-2013
+        if( std::isnan(rmsd) ){
+            runtime_assert(!std::isnan(rmsd));
+            utility_exit_with_message( "RMSD is NaN - there is something is wrong with how the interface is defined");
+
+        }
+        
 		TR<<"Total rms of requested region is: "<< rmsd <<std::endl;
 		return rmsd;
 	}
@@ -712,6 +732,10 @@ RepackWithoutLigandFilter::parse_my_tag( TagPtr const tag, DataMap &data, Filter
 	else if (tag->hasOption("energy_threshold")) {
 		energy_threshold_  =  tag->getOption<core::Real>("energy_threshold", 0.0 );
 		calc_dE_ = true;
+	}
+    // 21-05-2013 PG
+    if( !calc_dE_ && target_res_.empty() && cstid_list_.empty() && !rms_all_rpked_  ){
+        throw utility::excn::EXCN_RosettaScriptsOption(" NO RESIDUES HAVE BEEN SPECIFIED FOR THE RMSD CALCULATION");
 	}
 	TR<<" Defined RepackWithoutLigandFilter "<< std::endl;
 }
