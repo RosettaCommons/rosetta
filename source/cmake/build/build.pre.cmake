@@ -3,6 +3,10 @@ PROJECT(minirosetta)
 # if you don't want the full compiler output, remove the following line
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
 
+# explicitly set this policy to suppress
+# warning in cmake versions>=2.8.10.1
+CMAKE_POLICY( SET CMP0011 NEW )
+
 # this seems to fix some linking errors
 SET(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> cq <TARGET> <LINK_FLAGS> <OBJECTS>")
 SET(CMAKE_CXX_ARCHIVE_APPEND "<CMAKE_AR> q  <TARGET> <LINK_FLAGS> <OBJECTS>")
