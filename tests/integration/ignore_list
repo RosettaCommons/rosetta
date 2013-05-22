@@ -22,5 +22,3 @@ core.pack.dunbrack: ... with [0-9]+ bytes
 core.pack.dunbrack: Total memory on Dunbrack Libraries: [0-9]+ bytes.
 current_directory=
 reating tricubic splines
-rosetta_source
-rosetta_database

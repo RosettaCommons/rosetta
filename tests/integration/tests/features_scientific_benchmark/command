@@ -30,7 +30,7 @@ cd %(workdir)s
 
 
 minidir=%(minidir)s
-features_base=${minidir%%%%rosetta_source}rosetta_tests/features
+features_base=${minidir%%%%rosetta_source}/tests/features
 
 
 if [ ! -x $features_base ]; then

@@ -13,6 +13,7 @@ if not hasattr(sys, "version_info") or sys.version_info < (2,4):
     raise ValueError("Script requires Python 2.4 or higher!")
 
 import os, shutil, threading, subprocess, signal, time, re, random, datetime
+import json
 from os import path
 from optparse import OptionParser, IndentedHelpFormatter
 
@@ -29,7 +30,6 @@ Jobs = []  # Global list of NameTuples  (pid, tag, start_time, out_dir,...)
 
 def write_runtimes(runtimes, dir):
     try:
-      import json
       time_file = open(dir+'/runtimes.yaml', 'w')
       json.dump(runtimes, time_file, sort_keys=True, indent=2)
       time_file.close()
@@ -260,6 +260,11 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     if not options.compareonly:
         queue = Queue()
         queue.TotalNumberOfTasks = len(tests)
+
+        # Write substitution parameters to result directory
+        with open(path.join( outdir, "test_parameters.json"), "w") as parameters_file:
+            json.dump(generateIntegrationTestGlobalSubstitutionParameters(), parameters_file, sort_keys=True, indent=2)
+
         for test in tests:
             queue.put(test)
             #shutil.copytree( path.join("tests", test), path.join(outdir, test) )
@@ -453,7 +458,6 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
         if options.yaml:
             try:
-              import json
               data = dict(total=len(tests), failed=diffs, details=results, brief=makeBriefResults(full_log).decode('utf8', 'replace'))
               f = file(options.yaml, 'w')
               json.dump(data, f, sort_keys=True, indent=2)
@@ -647,20 +651,24 @@ def mWait(tag=None, all_=False, timeout=0):
         if not Jobs: return
 
 
-def generateIntegrationTestCommandline(test, outdir, host=None):
-    ''' Generate and write command.sh and return command line that will run given integration test
-    '''
+def generateIntegrationTestGlobalSubstitutionParameters(host=None):
     # Variables that may be referrenced in the cmd string:
     python = sys.executable
-    workdir = path.abspath( path.join(outdir, test) )
     minidir = Options.mini_home
     database = Options.database
+
     bin = path.join(minidir, "bin")
     pyapps = path.join(minidir, "src", "python", "apps")
-    if sys.platform.startswith("linux"): platform = "linux" # can be linux1, linux2, etc
-    elif sys.platform == "darwin": platform = "macos"
-    elif sys.platform == "cygwin": platform = "cygwin"
-    else: platform = "_unknown_"
+
+    if sys.platform.startswith("linux"):
+        platform = "linux" # can be linux1, linux2, etc
+    elif sys.platform == "darwin":
+        platform = "macos"
+    elif sys.platform == "cygwin":
+        platform = "cygwin"
+    else:
+        platform = "_unknown_"
+
     compiler = Options.compiler
     mode = Options.mode
     extras = Options.extras
@@ -671,7 +679,26 @@ def generateIntegrationTestCommandline(test, outdir, host=None):
     dbms_host = Options.dbms_host
     dbms_user = Options.dbms_user
     dbms_port = Options.dbms_port
+
+    return dict(locals())
+
+def generateIntegrationTestSubstitutionParameters(test, outdir, host=None):
+    """ Generate substitution parameters for integration command generation."""
+
+    params = generateIntegrationTestGlobalSubstitutionParameters(host)
+    params["dbms_database_name"] = Options.dbms_database_name % { 'test': test }
+    params["dbms_pq_schema"] = Options.dbms_pq_schema % { 'test': test }
+    params["workdir"] = path.abspath( path.join(outdir, test) )
+
+    return params
+
+def generateIntegrationTestCommandline(test, outdir, host=None):
+    ''' Generate and write command.sh and return command line that will run given integration test
+    '''
     # Read the command from the file "command"
+    params = generateIntegrationTestSubstitutionParameters(test, outdir, host)
+    workdir = params["workdir"]
+
     cmd=''
     # A horrible hack b/c SSH doesn't honor login scripts like .bash_profile
     # when executing specific remote commands.
@@ -681,14 +708,14 @@ def generateIntegrationTestCommandline(test, outdir, host=None):
       cmd = 'PATH="%s"\n%s' % (os.environ["PATH"], cmd)
     cmd += '\n'
     cmd += file(path.join(workdir, "command")).read().strip()
-    cmd = cmd % vars() # variable substitution using Python printf style
+    cmd = cmd % params # variable substitution using Python printf style
+
     cmd_line_sh = path.join(workdir, "command.sh")
     f = file(cmd_line_sh, 'w');  f.write(cmd);  f.close() # writing back so test can be easily re-run by user lately...
     #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
     #print cmd; print
 
     return cmd_line_sh, workdir
-
 
 class Worker:
     def __init__(self, queue, outdir, opts, times, host=None, timeout_minutes=0):
