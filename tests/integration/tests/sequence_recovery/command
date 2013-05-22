@@ -30,7 +30,7 @@ cd %(workdir)s
 
 [ -x %(bin)s/sequence_recovery.%(binext)s ] || exit 1
 
-%(bin)s/sequence_recovery.%(binext)s -database %(database)s -native_pdb_list whole_redesign_natives.list -redesign_pdb_list whole_redesign_designs.list -ignore_unrecognized_res -mute core -run:constant_seed -nodelay 2>&1 \
+%(bin)s/sequence_recovery.%(binext)s %(additional_flags)s -database %(database)s -native_pdb_list whole_redesign_natives.list -redesign_pdb_list whole_redesign_designs.list -ignore_unrecognized_res -mute core -run:constant_seed -nodelay 2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 
@@ -39,7 +39,7 @@ mv submatrix.txt whole_redesigns_submatrix.txt
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-%(bin)s/sequence_recovery.%(binext)s -database %(database)s -native_pdb_list surface_redesign_natives.list -redesign_pdb_list surface_redesign_designs.list -parse_taskops_file taskoperations.tagfile -ignore_unrecognized_res -mute core -run:constant_seed -nodelay 2>&1 \
+%(bin)s/sequence_recovery.%(binext)s %(additional_flags)s -database %(database)s -native_pdb_list surface_redesign_natives.list -redesign_pdb_list surface_redesign_designs.list -parse_taskops_file taskoperations.tagfile -ignore_unrecognized_res -mute core -run:constant_seed -nodelay 2>&1 \
     | egrep -vf ../../ignore_list \
     > log2
 

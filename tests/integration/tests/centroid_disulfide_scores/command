@@ -29,7 +29,7 @@ cd %(workdir)s
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 #
-## %(bin)s/MY_MINI_PROGRAM.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
 ##	 | egrep -v 'Finished.+in [0-9]+ seconds.' \
 ##	 | egrep -v 'Dunbrack library took .+ seconds to load' \
 ##	 | egrep -v 'core.init: command' \
@@ -37,14 +37,14 @@ cd %(workdir)s
 #
 # Or if you don't care whether the logging output changes:
 #
-## %(bin)s/MY_MINI_PROGRAM.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
 ##	 > /dev/null
 #
 
 test -x %(bin)s/score.%(binext)s || exit 1
 
 #Test centroid disulfide scores
-%(bin)s/score.%(binext)s -database %(database)s \
+%(bin)s/score.%(binext)s %(additional_flags)s -database %(database)s \
 	-score:weights centroid.wts \
 	-in:file:centroid_input \
 	-rescore:verbose \
@@ -59,7 +59,7 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 
 
 #Test full atom too, since they're interrelated
-%(bin)s/score.%(binext)s -database %(database)s \
+%(bin)s/score.%(binext)s %(additional_flags)s -database %(database)s \
 	-score:weights fa.wts \
 	-rescore:verbose \
 	-detect_disulf false \

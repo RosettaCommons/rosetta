@@ -28,7 +28,7 @@
 
 cd %(workdir)s
 
-%(bin)s/score_jd2.%(binext)s @flags -database %(database)s -constant_seed 2>&1 \
+%(bin)s/score_jd2.%(binext)s %(additional_flags)s @flags -database %(database)s -constant_seed 2>&1 \
 	| egrep -vf ../../ignore_list \
 	>> log
 

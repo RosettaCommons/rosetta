@@ -30,7 +30,7 @@ cd %(workdir)s
 
 [ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
 
-%(bin)s/rosetta_scripts.%(binext)s \
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s \
 	@flags \
 	-parser:protocol filter_n_terminus.xml \
 	-out:prefix nterm_ \
@@ -38,7 +38,7 @@ cd %(workdir)s
 	| egrep -vf ../../ignore_list \
 	> nterm.log
 
-%(bin)s/rosetta_scripts.%(binext)s \
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s \
 	@flags \
 	-parser:protocol filter_c_terminus.xml \
 	-out:prefix cterm_ \

@@ -1,12 +1,12 @@
 cd %(workdir)s
 
 [ -x %(bin)s/generate_ligand_start_position_file.%(binext)s ] || exit 1
-%(bin)s/generate_ligand_start_position_file.%(binext)s @startfrom_flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/generate_ligand_start_position_file.%(binext)s %(additional_flags)s @startfrom_flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > startfrom_file_log
 
 [ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
-%(bin)s/rosetta_scripts.%(binext)s @mover_flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @mover_flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > startfrom_mover_log
 

@@ -33,28 +33,28 @@ cd %(workdir)s
 
 
 
-%(bin)s/ComputeSAXSSpectrum.%(binext)s @flags-compute -database %(database)s -nodelay  2>&1 \
+%(bin)s/ComputeSAXSSpectrum.%(binext)s %(additional_flags)s @flags-compute -database %(database)s -nodelay  2>&1 \
     | awk '{if(NF==3) print $2,$3}' \
     > 1a62A.saxs
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 
-%(bin)s/RescoreSAXS.%(binext)s @flags-rescore -database %(database)s -nodelay  2>&1 \
+%(bin)s/RescoreSAXS.%(binext)s %(additional_flags)s @flags-rescore -database %(database)s -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_SAXS
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 
-%(bin)s/ComputeSAXSSpectrum.%(binext)s @flags-compute-fa -database %(database)s -nodelay  2>&1 \
+%(bin)s/ComputeSAXSSpectrum.%(binext)s %(additional_flags)s @flags-compute-fa -database %(database)s -nodelay  2>&1 \
     | awk '{if(NF==3) print $2,$3}' \
     > 1a62A-fa.saxs
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 
-%(bin)s/RescoreSAXS.%(binext)s @flags-rescore-fa -database %(database)s -nodelay  2>&1 \
+%(bin)s/RescoreSAXS.%(binext)s %(additional_flags)s @flags-rescore-fa -database %(database)s -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_SAXS_fa
 

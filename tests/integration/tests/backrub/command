@@ -45,14 +45,14 @@ cd %(workdir)s
 # in this directory too:
 #
 
-%(bin)s/backrub.%(binext)s @flags_basic -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/backrub.%(binext)s %(additional_flags)s @flags_basic -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_basic
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 
-%(bin)s/backrub.%(binext)s @flags_advanced -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/backrub.%(binext)s %(additional_flags)s @flags_advanced -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_advanced
 
@@ -62,6 +62,6 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 #
 # Or if you don't care whether the logging output changes:
 #
-## %(bin)s/MY_MINI_PROGRAM.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
 ##     > /dev/null
 #

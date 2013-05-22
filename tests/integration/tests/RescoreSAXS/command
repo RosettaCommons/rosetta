@@ -29,7 +29,7 @@
 cd %(workdir)s
 
 #[ -x %(bin)s/RescoreSAXS.%(binext)s ] || exit 1
-#%(bin)s/RescoreSAXS.%(binext)s @flags -database %(database)s -nodelay  2>&1 \
+#%(bin)s/RescoreSAXS.%(binext)s %(additional_flags)s @flags -database %(database)s -nodelay  2>&1 \
 #    | egrep -vf ../../ignore_list \
 #    > log_SAXS
 #

@@ -147,6 +147,13 @@ rm -r ref/; ./integration.py    # create reference results using only default se
       help="Save results to specified file in YAML format. (default: None)",
     )
 
+    parser.add_option("--additional_flags",
+      default="",
+      help="Add additional flags to integration tests. (default: None)",
+    )
+
+	
+
     parser.add_option("--dbms_database_name",
       default="rosetta_tests",
       help="For testing relational databases: the name of the database. " +
@@ -658,6 +665,7 @@ def generateIntegrationTestCommandline(test, outdir, host=None):
     mode = Options.mode
     extras = Options.extras
     binext = Options.extras+"."+platform+compiler+mode
+    additional_flags = Options.additional_flags
     dbms_database_name = Options.dbms_database_name % { 'test': test }
     dbms_pq_schema = Options.dbms_pq_schema % { 'test': test }
     dbms_host = Options.dbms_host

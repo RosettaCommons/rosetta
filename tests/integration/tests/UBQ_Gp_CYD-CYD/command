@@ -31,7 +31,7 @@ cd %(workdir)s
 [ -x %(bin)s/UBQ_Gp_CYD-CYD.%(binext)s ] || exit 1
 
 #note the options file (and its contents) are dependent on a different UBQ_Gp_ integration test (to reduce copies of identical files)
-%(bin)s/UBQ_Gp_CYD-CYD.%(binext)s @../UBQ_Gp_CYD-CYD/options -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/UBQ_Gp_CYD-CYD.%(binext)s %(additional_flags)s @../UBQ_Gp_CYD-CYD/options -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > log_CYD
 
@@ -50,7 +50,7 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 # Here's a typical test for a Mini binary, assuming there's a "flags" file
 # in this directory too:
 #
-## %(bin)s/MY_MINI_PROGRAM.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
 ##     | egrep -v 'Finished.+in [0-9]+ seconds.' \
 ##     | egrep -v 'Dunbrack library took .+ seconds to load' \
 ##     | egrep -v 'core.init: command' \
@@ -58,6 +58,6 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 #
 # Or if you don't care whether the logging output changes:
 #
-## %(bin)s/MY_MINI_PROGRAM.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+## %(bin)s/MY_MINI_PROGRAM.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
 ##     > /dev/null
 #

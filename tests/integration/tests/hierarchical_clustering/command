@@ -31,7 +31,7 @@ cd %(workdir)s
 [ -x %(bin)s/hierarchical_clustering.%(binext)s ] || exit 1
 
 #./letters_clustering_data.py > dm
-%(bin)s/hierarchical_clustering.%(binext)s @flags -database %(database)s -nodelay  -clustering:n 3 2>&1 \
+%(bin)s/hierarchical_clustering.%(binext)s %(additional_flags)s @flags -database %(database)s -nodelay  -clustering:n 3 2>&1 \
     | egrep -vf ../../ignore_list \
     | egrep -A 5 members | grep -v "#" > raw_clusters
 
@@ -41,7 +41,7 @@ echo "Letters: ABCFGHJKXYZ divided into 3 clusters:" > final_clusters
 awk 'BEGIN{split("A B C F G H J K X Y Z",ch)} {for(i=5;i<=NF;i++) print ch[$i]; print ""}' < raw_clusters >> final_clusters
 
 echo "Letters: ABCFGHJKXYZ divided into 4 clusters:" >> final_clusters
-%(bin)s/hierarchical_clustering.%(binext)s @flags -database %(database)s -nodelay  -clustering:n 4 2>&1 \
+%(bin)s/hierarchical_clustering.%(binext)s %(additional_flags)s @flags -database %(database)s -nodelay  -clustering:n 4 2>&1 \
     | egrep -vf ../../ignore_list \
     | egrep -A 5 members | grep -v "#" > raw_clusters
     

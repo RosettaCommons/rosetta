@@ -36,7 +36,7 @@ echo "Generating crystallographic symmetry file for 'inputs/1xu1FH_D.pdb':" > lo
 perl ${make_symmdef_file} -m cryst -p inputs/1xu1FH_D.pdb > 1xu1FH_D.symm 2>> log
 
 echo "Making symmetric pose and extracting the asymmetric unit:" >> log
-%(bin)s/rosetta_scripts.%(binext)s @flags -database %(database)s -constant_seed 2>&1 \
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s -constant_seed 2>&1 \
 	| egrep -vf ../../ignore_list \
 	>> log
 

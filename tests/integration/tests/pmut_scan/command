@@ -30,13 +30,13 @@ cd %(workdir)s
 
 [ -x %(bin)s/pmut_scan_parallel.%(binext)s ] || exit 1
 
-%(bin)s/pmut_scan_parallel.%(binext)s -database %(database)s -s shortloop.02.pdb.gz -ex1 -extrachi_cutoff 1 -use_input_sc -ignore_unrecognized_res -no_his_his_pairE -multi_cool_annealer 10 -mute basic core -run:constant_seed -nodelay 2>&1 \
+%(bin)s/pmut_scan_parallel.%(binext)s %(additional_flags)s -database %(database)s -s shortloop.02.pdb.gz -ex1 -extrachi_cutoff 1 -use_input_sc -ignore_unrecognized_res -no_his_his_pairE -multi_cool_annealer 10 -mute basic core -run:constant_seed -nodelay 2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-%(bin)s/pmut_scan_parallel.%(binext)s -database %(database)s -s 1l2y_renameH.pdb.gz -mutants_list mutants.txt -ex1 -ex2 -ex3 -extrachi_cutoff 1 -use_input_sc -ignore_unrecognized_res -no_his_his_pairE -mute basic core -run:constant_seed -nodelay 2>&1 \
+%(bin)s/pmut_scan_parallel.%(binext)s %(additional_flags)s -database %(database)s -s 1l2y_renameH.pdb.gz -mutants_list mutants.txt -ex1 -ex2 -ex3 -extrachi_cutoff 1 -use_input_sc -ignore_unrecognized_res -no_his_his_pairE -mute basic core -run:constant_seed -nodelay 2>&1 \
     | egrep -vf ../../ignore_list \
     > log2
 

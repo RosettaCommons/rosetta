@@ -30,7 +30,7 @@ cd %(workdir)s
 
 [ -x %(bin)s/fixbb.%(binext)s ] || exit 1
 
-%(bin)s/rotamer_recovery.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+%(bin)s/rotamer_recovery.%(binext)s %(additional_flags)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

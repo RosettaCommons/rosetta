@@ -2,12 +2,12 @@ cd %(workdir)s
 
 [ -x %(bin)s/sym_multicomp_test.%(binext)s ] || exit 1
 
-%(bin)s/sym_multicomp_test.%(binext)s -database %(database)s -symmetry_definition input/test1.sym       -s input/test1.pdb     2>&1 | egrep -vf ../../ignore_list > log1 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
-%(bin)s/sym_multicomp_test.%(binext)s -database %(database)s -symmetry_definition input/test1.sym       -s input/test1_ij1.pdb 2>&1 | egrep -vf ../../ignore_list > log2 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
-%(bin)s/sym_multicomp_test.%(binext)s -database %(database)s -symmetry_definition input/test1.sym       -s input/test1_ij2.pdb 2>&1 | egrep -vf ../../ignore_list > log3 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
-%(bin)s/sym_multicomp_test.%(binext)s -database %(database)s -symmetry_definition input/test1.sym       -s input/test1_ij8.pdb 2>&1 | egrep -vf ../../ignore_list > log4 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
-%(bin)s/sym_multicomp_test.%(binext)s -database %(database)s -symmetry_definition input/test2.sym       -s input/test2.pdb     2>&1 | egrep -vf ../../ignore_list > log5 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
-%(bin)s/sym_multicomp_test.%(binext)s -database %(database)s -symmetry_definition input/test2_badAC.sym -s input/test2.pdb     2>&1 | egrep -vf ../../ignore_list > log6 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
-%(bin)s/sym_multicomp_test.%(binext)s -database %(database)s -symmetry_definition input/test2.sym       -s input/test2_ij1.pdb 2>&1 | egrep -vf ../../ignore_list > log7 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
-%(bin)s/sym_multicomp_test.%(binext)s -database %(database)s -symmetry_definition input/test3.sym       -s input/test3.pdb     2>&1 | egrep -vf ../../ignore_list > log8 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
-%(bin)s/sym_multicomp_test.%(binext)s -database %(database)s -symmetry_definition input/test7.sym       -s input/test7.pdb     2>&1 | egrep -vf ../../ignore_list > log9 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+%(bin)s/sym_multicomp_test.%(binext)s %(additional_flags)s -database %(database)s -symmetry_definition input/test1.sym       -s input/test1.pdb     2>&1 | egrep -vf ../../ignore_list > log1 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+%(bin)s/sym_multicomp_test.%(binext)s %(additional_flags)s -database %(database)s -symmetry_definition input/test1.sym       -s input/test1_ij1.pdb 2>&1 | egrep -vf ../../ignore_list > log2 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+%(bin)s/sym_multicomp_test.%(binext)s %(additional_flags)s -database %(database)s -symmetry_definition input/test1.sym       -s input/test1_ij2.pdb 2>&1 | egrep -vf ../../ignore_list > log3 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+%(bin)s/sym_multicomp_test.%(binext)s %(additional_flags)s -database %(database)s -symmetry_definition input/test1.sym       -s input/test1_ij8.pdb 2>&1 | egrep -vf ../../ignore_list > log4 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+%(bin)s/sym_multicomp_test.%(binext)s %(additional_flags)s -database %(database)s -symmetry_definition input/test2.sym       -s input/test2.pdb     2>&1 | egrep -vf ../../ignore_list > log5 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+%(bin)s/sym_multicomp_test.%(binext)s %(additional_flags)s -database %(database)s -symmetry_definition input/test2_badAC.sym -s input/test2.pdb     2>&1 | egrep -vf ../../ignore_list > log6 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+%(bin)s/sym_multicomp_test.%(binext)s %(additional_flags)s -database %(database)s -symmetry_definition input/test2.sym       -s input/test2_ij1.pdb 2>&1 | egrep -vf ../../ignore_list > log7 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+%(bin)s/sym_multicomp_test.%(binext)s %(additional_flags)s -database %(database)s -symmetry_definition input/test3.sym       -s input/test3.pdb     2>&1 | egrep -vf ../../ignore_list > log8 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+%(bin)s/sym_multicomp_test.%(binext)s %(additional_flags)s -database %(database)s -symmetry_definition input/test7.sym       -s input/test7.pdb     2>&1 | egrep -vf ../../ignore_list > log9 ; test "${PIPESTATUS[0]}" != '0' && exit 1 || true

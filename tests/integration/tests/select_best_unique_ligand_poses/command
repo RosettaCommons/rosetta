@@ -1,6 +1,6 @@
 cd %(workdir)s
 [ -x %(bin)s/select_best_unique_ligand_poses.%(binext)s ] || exit 1
-%(bin)s/select_best_unique_ligand_poses.%(binext)s @flags -database %(database)s -nodelay  2>&1 \
+%(bin)s/select_best_unique_ligand_poses.%(binext)s %(additional_flags)s @flags -database %(database)s -nodelay  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

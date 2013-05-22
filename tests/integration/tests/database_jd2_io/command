@@ -30,13 +30,13 @@ cd %(workdir)s
 
 [ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
 
-%(bin)s/format_converter.%(binext)s @test_output.flags -database %(database)s -constant_seed 2>&1 \
+%(bin)s/format_converter.%(binext)s %(additional_flags)s @test_output.flags -database %(database)s -constant_seed 2>&1 \
     | egrep -vf ../../ignore_list \
     > test_output.log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
-%(bin)s/format_converter.%(binext)s @test_input.flags -database %(database)s -constant_seed 2>&1 \
+%(bin)s/format_converter.%(binext)s %(additional_flags)s @test_input.flags -database %(database)s -constant_seed 2>&1 \
     | egrep -vf ../../ignore_list \
     > test_input.log
 

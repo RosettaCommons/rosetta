@@ -30,14 +30,14 @@ cd %(workdir)s
 
 [ -x %(bin)s/remodel.%(binext)s ] || exit 1
 
-#%(bin)s/remodel.%(binext)s -database %(database)s -s 2ci2.renumbered.pdb -remodel:blueprint blueprint.2ci2.disulfides -remodel:build_disulf -remodel:match_rt_limit 6.0 -remodel:disulf_landing_range 1 65 -remodel:bypass_fragments -remodel:use_clusters false -no_optH false -remodel:num_trajectory 1 -remodel:save_top 1 -remodel:use_pose_relax true -correct -overwrite -mute core.pack -run:constant_seed -nodelay 2>&1 \
+#%(bin)s/remodel.%(binext)s %(additional_flags)s -database %(database)s -s 2ci2.renumbered.pdb -remodel:blueprint blueprint.2ci2.disulfides -remodel:build_disulf -remodel:match_rt_limit 6.0 -remodel:disulf_landing_range 1 65 -remodel:bypass_fragments -remodel:use_clusters false -no_optH false -remodel:num_trajectory 1 -remodel:save_top 1 -remodel:use_pose_relax true -correct -overwrite -mute core.pack -run:constant_seed -nodelay 2>&1 \
 #    | egrep -vf ../../ignore_list \
 #    > log1
 
 #test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 
-%(bin)s/remodel.%(binext)s -database %(database)s -s 2ci2.renumbered.pdb -remodel:blueprint blueprint.2ci2.disulfides -remodel:build_disulf -remodel:match_rt_limit 1.5 -remodel:use_clusters false -no_optH false -remodel:num_trajectory 1 -remodel:save_top 1 -remodel:use_pose_relax true -correct -overwrite -mute core.pack -run:constant_seed -nodelay 2>&1 \
+%(bin)s/remodel.%(binext)s %(additional_flags)s -database %(database)s -s 2ci2.renumbered.pdb -remodel:blueprint blueprint.2ci2.disulfides -remodel:build_disulf -remodel:match_rt_limit 1.5 -remodel:use_clusters false -no_optH false -remodel:num_trajectory 1 -remodel:save_top 1 -remodel:use_pose_relax true -correct -overwrite -mute core.pack -run:constant_seed -nodelay 2>&1 \
     | egrep -vf ../../ignore_list \
     > log2
 
