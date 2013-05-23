@@ -20,7 +20,7 @@
 #include <core/fragment/FrameList.fwd.hh>
 
 // Package Headers
-#include <core/fragment/Frame.hh>
+#include <core/fragment/Frame.fwd.hh>
 // AUTO-REMOVED #include <core/fragment/FragID.hh>
 
 // Utility headers
@@ -44,7 +44,7 @@ public:
 	FragID fragID ( Size flat_nr );
 	Size flat_size() const;
 
-	utility::vector1<FrameOP> frame_vector() { return utility::vector1<FrameOP>(*this); }
+	utility::vector1<FrameOP> frame_vector();
 };
 
 extern std::ostream& operator<< ( std::ostream& out, FrameList const& );

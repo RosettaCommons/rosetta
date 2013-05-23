@@ -28,7 +28,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-#include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 
 #include <core/fragment/FragID.hh>
@@ -68,6 +67,11 @@ Size FrameList::flat_size() const {
     frags += (*it)->nr_frags();
   }
   return frags;
+}
+
+utility::vector1<FrameOP> FrameList::frame_vector() 
+{
+	return utility::vector1<FrameOP>(*this);
 }
 
 std::ostream& operator<< ( std::ostream& out, FrameList const& frags) {
