@@ -32,8 +32,8 @@
 #include <numeric/trig.functions.hh>
 #include <platform/types.hh>
 
-
 // C++ headers
+#include <stdexcept>
 #include <cassert>
 #include <cmath>
 #ifdef GL_GRAPHICS
@@ -1616,6 +1616,31 @@ public: // Properties: value assignment
 
 public: // Indexers
 
+	/// @brief xyzVector.at: 0-based index with bounds checking
+	inline
+	Value const &
+	at(int const i) const
+	{
+		if(!((i >= 0) && (i < 3)))
+		{
+			throw std::out_of_range ("numeric::xyzVector::at");
+		}
+
+		return ( i == 0 ? x_ : ( i == 1 ? y_ : z_ ) );
+	}
+
+	/// @brief xyzVector.at: 0-based index with bounds checking
+	inline
+	Value &
+	at(int const i)
+	{
+		if(!((i >= 0) && (i < 3)))
+		{
+			throw std::out_of_range ("numeric::xyzVector::at");
+		}
+
+		return ( i == 0 ? x_ : ( i == 1 ? y_ : z_ ) );
+	}
 
 	/// @brief xyzVector[ i ] const: 0-based index
 	inline

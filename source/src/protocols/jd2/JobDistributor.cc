@@ -139,7 +139,7 @@ JobDistributor::JobDistributor() :
 		// JobDistributor safe even when not inside go() (of course you will get a
 		// stupid object, but at least it won't segfault).  This object deliberately
 		// goes away once it's not used.
-		current_job_(JD2_BOGUS_JOB), current_job_id_(0), last_completed_job_(0), current_batch_id_(
+		current_job_(JD2_BOGUS_JOB->copy_without_output()), current_job_id_(0), last_completed_job_(0), current_batch_id_(
 				0)
 {
 	init_jd();
@@ -151,7 +151,7 @@ JobDistributor::JobDistributor(bool empty) :
 		// JobDistributor safe even when not inside go() (of course you will get a
 		// stupid object, but at least it won't segfault).  This object deliberately
 		// goes away once it's not used.
-		current_job_(JD2_BOGUS_JOB), current_job_id_(0), last_completed_job_(0), current_batch_id_(
+		current_job_(JD2_BOGUS_JOB->copy_without_output()), current_job_id_(0), last_completed_job_(0), current_batch_id_(
 				0)
 {
 	if (!empty)
@@ -231,7 +231,7 @@ void JobDistributor::restart()
 	jobs_.clear();
 	current_job_id_ = 0;
 	last_completed_job_ = 0;
-	current_job_ = JD2_BOGUS_JOB;
+	current_job_ = JD2_BOGUS_JOB->copy_without_output();
 	current_batch_id_ = 0;
 	init_jd();
 }
@@ -810,7 +810,7 @@ void JobDistributor::load_new_batch()
 
 	jobs_.clear();
 	current_job_id_ = 0;
-	current_job_ = JD2_BOGUS_JOB;
+	current_job_ = JD2_BOGUS_JOB->copy_without_output();
 
 	//remaking job_inputter has the advantage, that we will also get one, if
 	//this is the first batch!

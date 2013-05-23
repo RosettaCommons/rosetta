@@ -85,19 +85,50 @@ class HomogenousTransformTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( zrotation.zz(), 1.0, 1e-14 );
 
 
-		HTD ht( zrotation, point );
-		TS_ASSERT_DELTA( ht.xx(), cos30, 1e-14 );
-		TS_ASSERT_DELTA( ht.xy(), -sin30, 1e-14 );
-		TS_ASSERT_DELTA( ht.xz(), 0.0, 1e-14 );
-		TS_ASSERT_DELTA( ht.yx(), sin30, 1e-14 );
-		TS_ASSERT_DELTA( ht.yy(), cos30, 1e-14 );
-		TS_ASSERT_DELTA( ht.yz(), 0.0, 1e-14 );
-		TS_ASSERT_DELTA( ht.zx(), 0.0, 1e-14 );
-		TS_ASSERT_DELTA( ht.zy(), 0.0, 1e-14 );
-		TS_ASSERT_DELTA( ht.zz(), 1.0, 1e-14 );
-		TS_ASSERT_DELTA( ht.px(), 1.5, 1e-14 );
-		TS_ASSERT_DELTA( ht.py(), 2.25, 1e-14 );
-		TS_ASSERT_DELTA( ht.pz(), -3.125, 1e-14 );
+		HTD z_ht( zrotation, point );
+		TS_ASSERT_DELTA( z_ht.xx(), cos30, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.xy(), -sin30, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.xz(), 0.0, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.yx(), sin30, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.yy(), cos30, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.yz(), 0.0, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.zx(), 0.0, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.zy(), 0.0, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.zz(), 1.0, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.px(), 1.5, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.py(), 2.25, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.pz(), -3.125, 1e-14 );
+
+		// Check that rotation_matrix accessor generates correct matrix
+		TS_ASSERT_DELTA( z_ht.rotation_matrix().xx(), cos30, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.rotation_matrix().yx(), -sin30, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.rotation_matrix().zx(), 0.0, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.rotation_matrix().xy(), sin30, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.rotation_matrix().yy(), cos30, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.rotation_matrix().zy(), 0.0, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.rotation_matrix().xz(), 0.0, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.rotation_matrix().yz(), 0.0, 1e-14 );
+		TS_ASSERT_DELTA( z_ht.rotation_matrix().zz(), 1.0, 1e-14 );
+
+		xyzMatrix< double > full_rotation = (
+				z_rotation_matrix_degrees( 30 ) *
+				y_rotation_matrix_degrees( 20 ) *
+				x_rotation_matrix_degrees( 10 ));
+
+		HTD full_ht( zrotation, point );
+
+		// Check that rotation_matrix accessor generates correct matrix
+		TS_ASSERT_DELTA( full_ht.rotation_matrix().xx(), full_rotation.xx(), 1e-14 );
+		TS_ASSERT_DELTA( full_ht.rotation_matrix().xy(), full_rotation.xy(), 1e-14 );
+		TS_ASSERT_DELTA( full_ht.rotation_matrix().xz(), full_rotation.xz(), 1e-14 );
+
+		TS_ASSERT_DELTA( full_ht.rotation_matrix().yx(), full_rotation.yx(), 1e-14 );
+		TS_ASSERT_DELTA( full_ht.rotation_matrix().yy(), full_rotation.yy(), 1e-14 );
+		TS_ASSERT_DELTA( full_ht.rotation_matrix().yz(), full_rotation.yz(), 1e-14 );
+		
+		TS_ASSERT_DELTA( full_ht.rotation_matrix().zx(), full_rotation.zx(), 1e-14 );
+		TS_ASSERT_DELTA( full_ht.rotation_matrix().zy(), full_rotation.zy(), 1e-14 );
+		TS_ASSERT_DELTA( full_ht.rotation_matrix().zz(), full_rotation.zz(), 1e-14 );
 	}
 
 	void test_HomogenousTransform_multiplication() {

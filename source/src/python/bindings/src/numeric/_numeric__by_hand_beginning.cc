@@ -8,14 +8,11 @@
 #include "numeric/xyzVector.hh"
 #include "numeric/xyzTriple.hh"
 #include "numeric/xyzMatrix.hh"
+#include "numeric/types.hh"
 #include "numeric/Quaternion.hh"
+#include "numeric/EulerAngles.hh"
 #include "numeric/BodyPosition.hh"
 #include <numeric/io.hh>
-
-//#include "numeric/Octree.hh"
-//#include "basic/AtomOctree.hh"
-
-#include "core/conformation/Atom.hh"
 
 #include <vector>
 
@@ -23,17 +20,14 @@ namespace bp = boost::python;
 using namespace numeric;
 using std::size_t;
 using std::vector;
-// using basic::AtomOctree;
-// using basic::AtomOctreeBase;
 
 typedef bp::return_value_policy< bp::reference_existing_object > CP_REF;
 typedef bp::return_value_policy< bp::copy_const_reference >      CP_CCR;
 typedef bp::return_value_policy< bp::copy_non_const_reference >  CP_CNCR;
 
 template<class T>
-void instantiate_numeric_funs(std::string type_name)
+void instantiate_numeric_functions(std::string type_name)
 {
-
   { xyzVector<T>   (*t)( xyzMatrix<T> const &, xyzVector<T> const &) = &(operator *); }
   { xyzVector<T>   (*t)( xyzMatrix<T> const &, xyzVector<T> const &) = &product; }
   { xyzVector<T> & (*t)( xyzMatrix<T> const &, xyzVector<T>       &) = &inplace_product; }
@@ -41,9 +35,124 @@ void instantiate_numeric_funs(std::string type_name)
   { xyzVector<T> & (*t)( xyzMatrix<T> const &, xyzVector<T>       &) = &inplace_transpose_product; }
   { xyzMatrix<T>   (*t)( xyzVector<T> const &, xyzVector<T> const &) = &outer_product; }
   { xyzMatrix<T>   (*t)( xyzVector<T> const & ) = &projection_matrix; }
-  { xyzMatrix<T>   (*t)( xyzVector<T> const &, T const & ) = &rotation_matrix; }
-  { xyzMatrix<T>   (*t)( xyzVector<T> const &, T const & ) = &rotation_matrix_radians; }
-  { xyzMatrix<T>   (*t)( xyzVector<T> const &, T const & ) = &rotation_matrix_degrees; }
+
+  { // numeric::rotation_matrix
+    typedef xyzMatrix<T>   (*function_type)( xyzVector<T> const &, T const & );
+    char * docstring = "Rotation matrix for rotation about an axis by an angle in radians.";
+
+    bp::def(
+        ("rotation_matrix_" + type_name).c_str()
+        , function_type(&rotation_matrix)
+        , ( bp::arg("axis"), bp::arg("theta") )
+        , bp::return_value_policy< bp::return_by_value >()
+        , docstring);
+
+    bp::def(
+        "rotation_matrix"
+        , function_type(&rotation_matrix)
+        , ( bp::arg("axis"), bp::arg("theta") )
+        , bp::return_value_policy< bp::return_by_value >() 
+        , docstring);
+  }
+
+  { // numeric::rotation_matrix_degrees
+    typedef xyzMatrix<T>   (*function_type)( xyzVector<T> const &, T const & );
+    char * docstring = "Rotation matrix for rotation about an axis by an angle in degrees.";
+
+    bp::def(
+        ("rotation_matrix_degrees_" + type_name).c_str()
+        , function_type( &rotation_matrix_degrees )
+        , ( bp::arg("axis"), bp::arg("theta") )
+        , bp::return_value_policy< bp::return_by_value >() 
+        , docstring);
+
+    bp::def(
+        "rotation_matrix_degrees"
+        , function_type( &rotation_matrix_degrees )
+        , ( bp::arg("axis"), bp::arg("theta") )
+        , bp::return_value_policy< bp::return_by_value >() 
+        , docstring);
+  }
+
+  { // numeric::rotation_matrix_radians
+    typedef xyzMatrix<T>   (*function_type)( xyzVector<T> const &, T const & );
+    char * docstring = "Rotation matrix for rotation about an axis by an angle in radians.";
+
+    bp::def(
+        ("rotation_matrix_radians_" + type_name).c_str()
+        , function_type( &rotation_matrix_radians )
+        , ( bp::arg("axis"), bp::arg("theta") )
+        , bp::return_value_policy< bp::return_by_value >()
+        , docstring);
+
+    bp::def(
+        "rotation_matrix_radians"
+        , function_type( &rotation_matrix_radians )
+        , ( bp::arg("axis"), bp::arg("theta") )
+        , bp::return_value_policy< bp::return_by_value >()
+        , docstring);
+  }
+
+
+  { //numeric::rotation_angle
+    typedef T (*function_type)( xyzMatrix<T> const &);
+    char * docstring = \
+         "Transformation from rotation matrix to magnitude of helical rotation, input matrix must be orthogonal.\nOrientation of axis chosen so that the angle of rotation is non-negative [0,pi].\nnumeric::rotation_axis returns both axis and angle of rotation.";
+
+    bp::def(
+        ("rotation_angle_" + type_name).c_str()
+        , function_type( &rotation_angle )
+        , ( bp::arg("rotation_matrix"))
+        , bp::return_value_policy< bp::return_by_value >()
+        , docstring);
+
+    bp::def(
+        "rotation_angle"
+        , function_type( &rotation_angle )
+        , ( bp::arg("rotation_matrix"))
+        , bp::return_value_policy< bp::return_by_value >()
+        , docstring);
+  }
+  { //numeric::rotation_axis_angle
+    typedef xyzVector<T>   (*function_type)( xyzMatrix<T> const &);
+    char * docstring = \
+          "Transformation from rotation matrix to compact axis-angle representation\nInput matrix must be orthogonal\nOrientation of axis chosen so that the angle of rotation is non-negative [0,pi]\nResulting vector will be oriented in axis of rotation with magnitude equal to magnitude of rotation.";
+
+    bp::def(
+        ("rotation_axis_angle_" + type_name).c_str()
+        , function_type( &rotation_axis_angle )
+        , ( bp::arg("rotation_matrix"))
+        , bp::return_value_policy< bp::return_by_value >()
+        , docstring);
+
+    bp::def(
+        "rotation_axis_angle"
+        , function_type( &rotation_axis_angle )
+        , ( bp::arg("rotation_matrix"))
+        , bp::return_value_policy< bp::return_by_value >()
+        , docstring);
+  }
+
+  { // numeric::rotation_matrix
+    typedef xyzMatrix<T>   (*function_type)( xyzVector<T> const &);
+
+    char * docstring = "Rotation matrix for rotation from axis-angle representation.\nMagnitude of rotation (in radians) is taken as axis_angle.magnitude().";
+
+    bp::def(
+        ("rotation_matrix_" + type_name).c_str()
+        , function_type( &rotation_matrix )
+        , ( bp::arg("axis_angle") )
+        , bp::return_value_policy< bp::return_by_value >()
+        , docstring );
+
+    bp::def(
+        "rotation_matrix"
+        , function_type( &rotation_matrix )
+        , ( bp::arg("axis_angle") )
+        , bp::return_value_policy< bp::return_by_value >()
+        , docstring );
+  }
+
   { xyzMatrix<T>   (*t)( T const & ) = &x_rotation_matrix; }
   { xyzMatrix<T>   (*t)( T const & ) = &x_rotation_matrix_radians; }
   { xyzMatrix<T>   (*t)( T const & ) = &x_rotation_matrix_degrees; }
@@ -53,11 +162,12 @@ void instantiate_numeric_funs(std::string type_name)
   { xyzMatrix<T>   (*t)( T const & ) = &z_rotation_matrix; }
   { xyzMatrix<T>   (*t)( T const & ) = &z_rotation_matrix_radians; }
   { xyzMatrix<T>   (*t)( T const & ) = &z_rotation_matrix_degrees; }
+
   { xyzVector<T>   (*t)( xyzMatrix<T> const &, T &) = &rotation_axis; }
+
   { xyzVector<T>   (*t)( xyzMatrix<T> const &, T const & ) = &eigenvalue_jacobi; }
   { xyzVector<T>   (*t)( xyzMatrix<T> const &, T const &, xyzMatrix<T> & ) = &eigenvector_jacobi; }
   { void (*t)( xyzMatrix< T > const &, int const, int const, xyzMatrix<T> & ) = &jacobi_rotation; }
-
 
   { //::numeric::Quaternion< T >
       typedef bp::class_< numeric::Quaternion< T > > Quaternion_typename_exposer_t;
@@ -543,9 +653,271 @@ void instantiate_numeric_funs(std::string type_name)
 
   }
 
+  { // ::numeric::EulerAngles<T> 
+    utility::wrap_access_pointer< ::numeric::EulerAngles<T> >(("EulerAngles_" + type_name).c_str());
+    typedef boost::python::class_< ::numeric::EulerAngles<T>, boost::python::bases< ::numeric::xyzVector<T> > > EulerAngles_typename_exposer_type;
+    EulerAngles_typename_exposer_type EulerAngles_typename_exposer(("EulerAngles_" + type_name).c_str(), "Euler angles 3-D orientation representation\n@remarks\nThe three euler angles (in radians) that describing a rotation operation\nof a Z axis rotation by the angle phi (position 1), followed by\nan X axis rotation by the angle theta (position 3), followed by another\nZ axis rotation by the angle psi (position 2).\nthis->code is a modified version of Alex Z's code from r++.\n@details\nThe range of phi is [ -pi, pi ];\nThe range of psi is [ -pi, pi ];\nThe range of theta is [ 0, pi ];\n", boost::python::init <  >() );
+    EulerAngles_typename_exposer.def( boost::python::init< ::numeric::EulerAngles<T> const & > ( (boost::python::arg("")) , "Euler angles 3-D orientation representation\n@remarks\nThe three euler angles (in radians) that describing a rotation operation\nof a Z axis rotation by the angle phi (position 1), followed by\nan X axis rotation by the angle theta (position 3), followed by another\nZ axis rotation by the angle psi (position 2).\nthis->code is a modified version of Alex Z's code from r++.\n@details\nThe range of phi is [ -pi, pi ];\nThe range of psi is [ -pi, pi ];\nThe range of theta is [ 0, pi ];\n" ) );
+    EulerAngles_typename_exposer.def( boost::python::init< ::numeric::xyzVector<T> const & > ( (boost::python::arg("v")) , "Copy constructor\n" ) );
+    EulerAngles_typename_exposer.def( boost::python::init< T const &, T const &, T const & > ( (boost::python::arg("phi"), boost::python::arg("psi"), boost::python::arg("theta")) , "Triple value constructor\n" ) );
+    EulerAngles_typename_exposer.def( boost::python::init< ::numeric::xyzMatrix<T> > ( (boost::python::arg("rotation_matrix")) , "Construct from rotation matrix.\n" ) );
+  
+    { // ::numeric::EulerAngles<T>::from_rotation_matrix
+      typedef void ( ::numeric::EulerAngles<T>:: * from_rotation_matrix_function_type)(::numeric::xyzMatrix<T> __a0) ;
+    
+      EulerAngles_typename_exposer.def("from_rotation_matrix"
+        , from_rotation_matrix_function_type( &::numeric::EulerAngles<T>::from_rotation_matrix )
+        , ( boost::python::arg("matrix") )
+        , "The equivalent rotation matrix representation of the euler angles would be:\nFIGURE 1:\nR = [\n      cos(psi)cos(phi)-cos(theta)sin(phi)sin(psi)        cos(psi)sin(phi)+cos(theta)cos(phi)sin(psi)      sin(psi)sin(theta)\n     -sin(psi)cos(phi)-cos(theta)sin(phi)cos(psi)       -sin(psi)sin(phi)+cos(theta)cos(phi)cos(psi)      cos(psi)sin(theta)\n                  sin(theta)sin(phi)                                 -sin(theta)cos(phi)                        cos(theta)\n]\nThe zz_ coordinate gives away theta.\nTheta may be computed as acos( zz_ ), or, as Alex does it, asin( sqrt( 1 - zz^2))\nSince there is redundancy in theta, this->function chooses a theta with a positive\nsin(theta): i.e. quadrants I and II.  Assuming we have a positive sin theta\npushes phi and psi into conforming angles.\nNOTE on theta: asin returns a value in the range [ -pi/2, pi/2 ], and we have artificially\ncreated a positive sin(theta), so we will get a asin( pos_sin_theta ), we have a value\nin the range [ 0, pi/2 ].  To convert this->into the actual angle theta, we examine the zz sign.\nIf zz is negative, we chose the quadrant II theta.\nThat is, asin( pos_sin_theta) returned an angle, call it theta'.  Now, if cos( theta ) is negative,\nthen we want to choose the positive x-axis rotation that's equivalent to -theta'.  To do so,\nwe reflect q through the y axis (See figure 2 below) to get p and then measure theta as pi - theta'.\nFIGURE 2:\n II        |         I\n           |\n   p.      |      .q (cos(-theta'), abs(sin(theta')))\n      .    |    .\ntheta'( .  |  .  )  theta' = asin( abs(sin(theta))\n-----------------------\n           |\n           |\n           |\n III       |        IV\n           |\n The angle between the positive x axis and p is pi - theta'.\nSince zx and zy contain only phi terms and a constant sin( theta ) term,\nphi is given by atan2( sin_phi, cos_phi ) = atan2( c*sin_phi, c*cos_phi ) = atan2( zx, -zy )\nfor c positive and non-zero.  If sin_theta is zero, or very close to zero, we're at gimbal lock.\nMoreover, since xz and yz contain only psi terms, psi may also be deduced using atan2.\nThere are 2 degenerate cases (gimbal lock)\n1. theta close to 0  (North Pole singularity), or\n2. theta close to pi (South Pole singularity)\nFor these, we take: phi=acos(xx), theta = 0 (resp. Pi/2), psi = 0\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::to_rotation_matrix
+      typedef ::numeric::xyzMatrix<T> ( ::numeric::EulerAngles<T>:: * to_rotation_matrix_function_type)() ;
+    
+      EulerAngles_typename_exposer.def("to_rotation_matrix"
+        , to_rotation_matrix_function_type( &::numeric::EulerAngles<T>::to_rotation_matrix )
+        , "Construct rotation matrix from three euler angles that describe the frame.\nSee the description for from_rotation_matrix to understand\nthe Z-X-Z transformation convention.\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::phi
+      typedef T & ( ::numeric::EulerAngles<T>:: * phi_function_type)() ;
+    
+      EulerAngles_typename_exposer.def("phi"
+        , phi_function_type( &::numeric::EulerAngles<T>::phi )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "Value phi in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::phi
+      typedef void ( ::numeric::EulerAngles<T>:: * phi_function_type)(T const & __a0) ;
+    
+      EulerAngles_typename_exposer.def("phi"
+        , phi_function_type( &::numeric::EulerAngles<T>::phi )
+        , ( boost::python::arg("value") )
+        , "Set value phi in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::phi_radians
+      typedef T & ( ::numeric::EulerAngles<T>:: * phi_radians_function_type)() ;
+    
+      EulerAngles_typename_exposer.def("phi_radians"
+        , phi_radians_function_type( &::numeric::EulerAngles<T>::phi_radians )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "Value phi in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::phi_radians
+      typedef void ( ::numeric::EulerAngles<T>:: * phi_radians_function_type)(T const & __a0) ;
+    
+      EulerAngles_typename_exposer.def("phi_radians"
+        , phi_radians_function_type( &::numeric::EulerAngles<T>::phi_radians )
+        , ( boost::python::arg("value") )
+        , "Set value phi in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::phi_degrees
+      typedef T ( ::numeric::EulerAngles<T>:: * phi_degrees_function_type)() ;
+    
+      EulerAngles_typename_exposer.def("phi_degrees"
+        , phi_degrees_function_type( &::numeric::EulerAngles<T>::phi_degrees )
+        , "Value phi in degrees\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::phi_degrees
+      typedef void ( ::numeric::EulerAngles<T>:: * phi_degrees_function_type)(T const & __a0) ;
+    
+      EulerAngles_typename_exposer.def("phi_degrees"
+        , phi_degrees_function_type( &::numeric::EulerAngles<T>::phi_degrees )
+        , ( boost::python::arg("value") )
+        , "Set value phi in degrees\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::psi
+      typedef T & ( ::numeric::EulerAngles<T>:: * psi_function_type)() ;
+    
+      EulerAngles_typename_exposer.def("psi"
+        , psi_function_type( &::numeric::EulerAngles<T>::psi )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "Value psi in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::psi
+      typedef void ( ::numeric::EulerAngles<T>:: * psi_function_type)(T const & __a0) ;
+    
+      EulerAngles_typename_exposer.def("psi"
+        , psi_function_type( &::numeric::EulerAngles<T>::psi )
+        , ( boost::python::arg("value") )
+        , "Set value psi in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::psi_radians
+      typedef T & ( ::numeric::EulerAngles<T>:: * psi_radians_function_type)() ;
+    
+      EulerAngles_typename_exposer.def("psi_radians"
+        , psi_radians_function_type( &::numeric::EulerAngles<T>::psi_radians )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "Value psi in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::psi_radians
+      typedef void ( ::numeric::EulerAngles<T>:: * psi_radians_function_type)(T const & __a0) ;
+    
+      EulerAngles_typename_exposer.def("psi_radians"
+        , psi_radians_function_type( &::numeric::EulerAngles<T>::psi_radians )
+        , ( boost::python::arg("value") )
+        , "Set value psi in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::psi_degrees
+      typedef T ( ::numeric::EulerAngles<T>:: * psi_degrees_function_type)() ;
+    
+      EulerAngles_typename_exposer.def("psi_degrees"
+        , psi_degrees_function_type( &::numeric::EulerAngles<T>::psi_degrees )
+        , "Value psi in degrees\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::psi_degrees
+      typedef void ( ::numeric::EulerAngles<T>:: * psi_degrees_function_type)(T const & __a0) ;
+    
+      EulerAngles_typename_exposer.def("psi_degrees"
+        , psi_degrees_function_type( &::numeric::EulerAngles<T>::psi_degrees )
+        , ( boost::python::arg("value") )
+        , "Set value psi in degrees\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::theta
+      typedef T & ( ::numeric::EulerAngles<T>:: * theta_function_type)() ;
+    
+      EulerAngles_typename_exposer.def("theta"
+        , theta_function_type( &::numeric::EulerAngles<T>::theta )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "Value theta in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::theta
+      typedef void ( ::numeric::EulerAngles<T>:: * theta_function_type)(T const & __a0) ;
+    
+      EulerAngles_typename_exposer.def("theta"
+        , theta_function_type( &::numeric::EulerAngles<T>::theta )
+        , ( boost::python::arg("value") )
+        , "Set value theta in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::theta_radians
+      typedef T & ( ::numeric::EulerAngles<T>:: * theta_radians_function_type)() ;
+    
+      EulerAngles_typename_exposer.def("theta_radians"
+        , theta_radians_function_type( &::numeric::EulerAngles<T>::theta_radians )
+        , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
+        , "Value theta in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::theta_radians
+      typedef void ( ::numeric::EulerAngles<T>:: * theta_radians_function_type)(T const & __a0) ;
+    
+      EulerAngles_typename_exposer.def("theta_radians"
+        , theta_radians_function_type( &::numeric::EulerAngles<T>::theta_radians )
+        , ( boost::python::arg("value") )
+        , "Set value theta in radians\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::theta_degrees
+      typedef T ( ::numeric::EulerAngles<T>:: * theta_degrees_function_type)() ;
+    
+      EulerAngles_typename_exposer.def("theta_degrees"
+        , theta_degrees_function_type( &::numeric::EulerAngles<T>::theta_degrees )
+        , "Value theta in degrees\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::theta_degrees
+      typedef void ( ::numeric::EulerAngles<T>:: * theta_degrees_function_type)(T const & __a0) ;
+    
+      EulerAngles_typename_exposer.def("theta_degrees"
+        , theta_degrees_function_type( &::numeric::EulerAngles<T>::theta_degrees )
+        , ( boost::python::arg("value") )
+        , "Set value theta in degrees\n" );
+    }
+    
+  
+    { // ::numeric::EulerAngles<T>::from_degrees
+      typedef ::numeric::EulerAngles<T> ( * from_degrees_function_type)(T __phi, T __psi, T __theta);
+    
+      EulerAngles_typename_exposer.def("from_degrees"
+        , from_degrees_function_type( &::numeric::EulerAngles<T>::from_degrees )
+        , ( boost::python::arg("phi"), boost::python::arg("psi"), boost::python::arg("theta") )
+        , "Static constructor from degrees" );
+    }
+
+    { // ::numeric::EulerAngles<T>::from_degrees
+      typedef ::numeric::EulerAngles<T> ( * from_degrees_function_type)(xyzVector<T> __vector);
+    
+      EulerAngles_typename_exposer.def("from_degrees"
+        , from_degrees_function_type( &::numeric::EulerAngles<T>::from_degrees )
+        , boost::python::arg("vector")
+        , "Static constructor from degrees" );
+    }
+
+		EulerAngles_typename_exposer.staticmethod("from_degrees");
+
+    { // ::numeric::EulerAngles<T>::from_radians
+      typedef ::numeric::EulerAngles<T> ( * from_radians_function_type)(T __phi, T __psi, T __theta);
+    
+      EulerAngles_typename_exposer.def("from_radians"
+        , from_radians_function_type( &::numeric::EulerAngles<T>::from_radians )
+        , ( boost::python::arg("phi"), boost::python::arg("psi"), boost::python::arg("theta") )
+        , "Static constructor from radians" );
+    }
+
+    { // ::numeric::EulerAngles<T>::from_radians
+      typedef ::numeric::EulerAngles<T> ( * from_radians_function_type)(xyzVector<T> __vector);
+    
+      EulerAngles_typename_exposer.def("from_radians"
+        , from_radians_function_type( &::numeric::EulerAngles<T>::from_radians )
+        , boost::python::arg("vector")
+        , "Static constructor from radians" );
+    }
+
+		EulerAngles_typename_exposer.staticmethod("from_radians");
+
+    { // ::numeric::EulerAngles<T>::angular_distance_between
+      typedef T ( * angular_distance_between_function_type)(::numeric::EulerAngles<T> __a0, ::numeric::EulerAngles<T> __a1);
+    
+      EulerAngles_typename_exposer.def("angular_distance_between"
+        , angular_distance_between_function_type( &::numeric::EulerAngles<T>::angular_distance_between )
+        , ( boost::python::arg("a1"), boost::python::arg("a2") )
+        , "Get angular distance between two sets of Euler Angles." );
+    }
+
+		EulerAngles_typename_exposer.staticmethod("angular_distance_between");
+
+  }
+}
+
+template<class T>
+void instantiate_numeric_containers(std::string type_name)
+{
   { //::numeric::xyzMatrix< T >
       typedef bp::class_< numeric::xyzMatrix< T > > xyzMatrix_typename_exposer_t;
-      xyzMatrix_typename_exposer_t xyzMatrix_typename_exposer = xyzMatrix_typename_exposer_t( std::string("xyzMatrix" + type_name).c_str()  ); // "numeric___xyzMatrix_ T "
+      xyzMatrix_typename_exposer_t xyzMatrix_typename_exposer = xyzMatrix_typename_exposer_t( std::string("xyzMatrix_" + type_name).c_str()  ); // "numeric___xyzMatrix_ T "
       bp::scope xyzMatrix_typename_scope( xyzMatrix_typename_exposer );
       xyzMatrix_typename_exposer.def( bp::init< >() );
       xyzMatrix_typename_exposer.def( bp::init<  T  const & >(( bp::arg("t") )) );
@@ -1240,8 +1612,7 @@ void instantiate_numeric_funs(std::string type_name)
       xyzMatrix_typename_exposer.def( bp::other<  T  >() >= bp::self );
       xyzMatrix_typename_exposer.def( bp::self >= bp::other<  T  >() );
       xyzMatrix_typename_exposer.def( bp::self >= bp::self );
-
-	  xyzMatrix_typename_exposer.def( bp::self_ns::str( bp::self ) );
+	    xyzMatrix_typename_exposer.def( bp::self_ns::str( bp::self ) );
   }
 
   bp::implicitly_convertible<  T  const &, numeric::xyzMatrix< T > >();
@@ -1734,7 +2105,7 @@ void instantiate_numeric_funs(std::string type_name)
 
           xyzTriple_typename_exposer.def(
               "__getitem__"
-              , __getitem___function_type( &::numeric::xyzTriple< T >::operator[] )
+              , __getitem___function_type( &::numeric::xyzTriple< T >::at )
               , ( bp::arg("i") )
               , bp::return_value_policy< bp::copy_const_reference >() );
 
@@ -1746,7 +2117,7 @@ void instantiate_numeric_funs(std::string type_name)
 
           xyzTriple_typename_exposer.def(
               "__getitem__"
-              , __getitem___function_type( &::numeric::xyzTriple< T >::operator[] )
+              , __getitem___function_type( &::numeric::xyzTriple< T >::at )
               , ( bp::arg("i") )
               , bp::return_value_policy< bp::copy_non_const_reference >() );
 
@@ -2554,7 +2925,7 @@ void instantiate_numeric_funs(std::string type_name)
 
           xyzVector_typename_exposer.def(
               "__getitem__"
-              , __getitem___function_type( &::numeric::xyzVector< T >::operator[] )
+              , __getitem___function_type( &::numeric::xyzVector< T >::at )
               , ( bp::arg("i") )
               , bp::return_value_policy< bp::copy_const_reference >() );
 
@@ -2566,7 +2937,7 @@ void instantiate_numeric_funs(std::string type_name)
 
           xyzVector_typename_exposer.def(
               "__getitem__"
-              , __getitem___function_type( &::numeric::xyzVector< T >::operator[] )
+              , __getitem___function_type( &::numeric::xyzVector< T >::at )
               , ( bp::arg("i") )
               , bp::return_value_policy< bp::copy_non_const_reference >() );
 
@@ -2887,1282 +3258,15 @@ void instantiate_numeric_funs(std::string type_name)
   bp::implicitly_convertible<  T  const &, numeric::xyzVector< T > >();
 }
 
-typedef numeric::xyzVector<double> XYZ;
-
-// template< class T, class ToXYZ >
-// void wrap_octree(char * name) {
-//   typedef bp::class_< Octree<T,ToXYZ> > OctreeExposer;
-//   OctreeExposer exposer(name);
-//   exposer.def( bp::init< XYZ, XYZ, double >() );
-//   exposer.def( bp::init< vector<T> &, double >() );
-//   exposer.def( "insert"   , &Octree<T,ToXYZ>::insert );
-//   exposer.def( "closest"  , &Octree<T,ToXYZ>::closest, CP_REF() );
-//   exposer.def( "neighbors", &Octree<T,ToXYZ>::neighbors );
-//   exposer.def( "__len__"  , &Octree<T,ToXYZ>::size );
-//
-// }
-
-struct AtomXYZ {
-  XYZ const & operator()(core::conformation::Atom * a) { return a->xyz(); }
-};
-
 void __numeric_by_hand_beginning__() {
 
-
-  instantiate_numeric_funs<double>("double");
-  instantiate_numeric_funs<float>("float");
-
-  // wrap_octree<XYZ,numeric::internal::Ident<XYZ> >("numeric___Octree");
-  // wrap_octree<core::conformation::Atom*,AtomXYZ >("numeric___AtomOctree");
-
-
-/*
-  { //::numeric::add
-
-      typedef void ( *add_function_type )( double const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "add" //"numeric___add"
-          , add_function_type( &::numeric::add )
-          , ( bp::arg("t"), bp::arg("v"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::add
-
-      typedef void ( *add_function_type )( ::numeric::xyzTriple<double> const &,double const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "add"
-          , add_function_type( &::numeric::add )
-          , ( bp::arg("v"), bp::arg("t"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::add
-
-      typedef void ( *add_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "add" //"numeric___add"
-          , add_function_type( &::numeric::add )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::add
-
-      typedef void ( *add_function_type )( double const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "add" //"numeric___add"
-          , add_function_type( &::numeric::add )
-          , ( bp::arg("t"), bp::arg("v"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::add
-
-      typedef void ( *add_function_type )( ::numeric::xyzVector<double> const &,double const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "add" //"numeric___add"
-          , add_function_type( &::numeric::add )
-          , ( bp::arg("v"), bp::arg("t"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::add
-
-      typedef void ( *add_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "add" //"numeric___add"
-          , add_function_type( &::numeric::add )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::angle_of
-
-      typedef double ( *angle_of_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "angle_of" //"numeric___angle_of"
-          , angle_of_function_type( &::numeric::angle_of )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::angle_of
-
-      typedef double ( *angle_of_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "angle_of" //"numeric___angle_of"
-          , angle_of_function_type( &::numeric::angle_of )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::angle_of
-
-      typedef double ( *angle_of_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "angle_of" //"numeric___angle_of"
-          , angle_of_function_type( &::numeric::angle_of )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::angle_of
-
-      typedef double ( *angle_of_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "angle_of" // "numeric___angle_of"
-          , angle_of_function_type( &::numeric::angle_of )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef void ( *center_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "center" //"numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c"), bp::arg("d"), bp::arg("m") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef ::numeric::xyzTriple<double> ( *center_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "center" // "numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c"), bp::arg("d") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef void ( *center_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "center" //"numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c"), bp::arg("m") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef ::numeric::xyzTriple<double> ( *center_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "center" //"numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef void ( *center_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "center" //"numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("m") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef ::numeric::xyzTriple<double> ( *center_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "center" //"numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef void ( *center_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "center" //"numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c"), bp::arg("d"), bp::arg("m") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef ::numeric::xyzVector<double> ( *center_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "center" //"numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c"), bp::arg("d") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef void ( *center_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "center" //"numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c"), bp::arg("m") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef ::numeric::xyzVector<double> ( *center_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "center" //"numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef void ( *center_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "center" //"numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("m") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::center
-
-      typedef ::numeric::xyzVector<double> ( *center_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "center" //"numeric___center"
-          , center_function_type( &::numeric::center )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cos_of
-
-      typedef double ( *cos_of_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "cos_of" //"numeric___cos_of"
-          , cos_of_function_type( &::numeric::cos_of )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cos_of
-
-      typedef double ( *cos_of_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "cos_of" //"numeric___cos_of"
-          , cos_of_function_type( &::numeric::cos_of )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cos_of
-
-      typedef double ( *cos_of_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "cos_of"
-          , cos_of_function_type( &::numeric::cos_of )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cos_of
-
-      typedef double ( *cos_of_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "cos_of"
-          , cos_of_function_type( &::numeric::cos_of )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cross
-
-      typedef void ( *cross_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "cross"
-          , cross_function_type( &::numeric::cross )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cross
-
-      typedef ::numeric::xyzTriple<double> ( *cross_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "cross"
-          , cross_function_type( &::numeric::cross )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cross
-
-      typedef void ( *cross_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "cross"
-          , cross_function_type( &::numeric::cross )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cross
-
-      typedef ::numeric::xyzVector<double> ( *cross_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "cross"
-          , cross_function_type( &::numeric::cross )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cross_product
-
-      typedef void ( *cross_product_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "cross_product"
-          , cross_product_function_type( &::numeric::cross_product )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cross_product
-
-      typedef ::numeric::xyzTriple<double> ( *cross_product_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "cross_product"
-          , cross_product_function_type( &::numeric::cross_product )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cross_product
-
-      typedef void ( *cross_product_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "cross_product"
-          , cross_product_function_type( &::numeric::cross_product )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::cross_product
-
-      typedef ::numeric::xyzVector<double> ( *cross_product_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "cross_product"
-          , cross_product_function_type( &::numeric::cross_product )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::distance
-
-      typedef double ( *distance_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "distance"
-          , distance_function_type( &::numeric::distance )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::distance
-
-      typedef double ( *distance_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "distance"
-          , distance_function_type( &::numeric::distance )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::distance_squared
-
-      typedef double ( *distance_squared_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "distance_squared"
-          , distance_squared_function_type( &::numeric::distance_squared )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::distance_squared
-
-      typedef double ( *distance_squared_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "distance_squared"
-          , distance_squared_function_type( &::numeric::distance_squared )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::divide
-
-      typedef void ( *divide_function_type )( ::numeric::xyzTriple<double> const &,double const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "divide"
-          , divide_function_type( &::numeric::divide )
-          , ( bp::arg("v"), bp::arg("t"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::divide
-
-      typedef void ( *divide_function_type )( ::numeric::xyzVector<double> const &,double const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "divide"
-          , divide_function_type( &::numeric::divide )
-          , ( bp::arg("v"), bp::arg("t"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::dot
-
-      typedef double ( *dot_function_type )( ::numeric::Quaternion<double> const &,::numeric::Quaternion<double> const & );
-
-      bp::def(
-          "dot"
-          , dot_function_type( &::numeric::dot )
-          , ( bp::arg("q1"), bp::arg("q2") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::dot
-
-      typedef double ( *dot_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "dot"
-          , dot_function_type( &::numeric::dot )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::dot
-
-      typedef double ( *dot_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "dot"
-          , dot_function_type( &::numeric::dot )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::dot_product
-
-      typedef double ( *dot_product_function_type )( ::numeric::Quaternion<double> const &,::numeric::Quaternion<double> const & );
-
-      bp::def(
-          "dot_product"
-          , dot_product_function_type( &::numeric::dot_product )
-          , ( bp::arg("q1"), bp::arg("q2") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::dot_product
-
-      typedef double ( *dot_product_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "dot_product"
-          , dot_product_function_type( &::numeric::dot_product )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::dot_product
-
-      typedef double ( *dot_product_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "dot_product"
-          , dot_product_function_type( &::numeric::dot_product )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::eigenvalue_jacobi
-
-      typedef ::numeric::xyzVector<double> ( *eigenvalue_jacobi_function_type )( ::numeric::xyzMatrix<double> const &,double const & );
-
-      bp::def(
-          "eigenvalue_jacobi"
-          , eigenvalue_jacobi_function_type( &::numeric::eigenvalue_jacobi )
-          , ( bp::arg("a"), bp::arg("tol") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::eigenvector_jacobi
-
-      typedef ::numeric::xyzVector<double> ( *eigenvector_jacobi_function_type )( ::numeric::xyzMatrix<double> const &,double const &,::numeric::xyzMatrix<double> & );
-
-      bp::def(
-          "eigenvector_jacobi"
-          , eigenvector_jacobi_function_type( &::numeric::eigenvector_jacobi )
-          , ( bp::arg("a"), bp::arg("tol"), bp::arg("J") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::equal_length
-
-      typedef bool ( *equal_length_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "equal_length"
-          , equal_length_function_type( &::numeric::equal_length )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::equal_length
-
-      typedef bool ( *equal_length_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "equal_length"
-          , equal_length_function_type( &::numeric::equal_length )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::inner_product
-
-      typedef double ( *inner_product_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "inner_product"
-          , inner_product_function_type( &::numeric::inner_product )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::inner_product
-
-      typedef double ( *inner_product_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "inner_product"
-          , inner_product_function_type( &::numeric::inner_product )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::inplace_product
-
-      typedef ::numeric::xyzVector<double> & ( *inplace_product_function_type )( ::numeric::xyzMatrix<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "inplace_product"
-          , inplace_product_function_type( &::numeric::inplace_product )
-          , ( bp::arg("m"), bp::arg("v") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::inplace_transpose_product
-
-      typedef ::numeric::xyzVector<double> & ( *inplace_transpose_product_function_type )( ::numeric::xyzMatrix<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "inplace_transpose_product"
-          , inplace_transpose_product_function_type( &::numeric::inplace_transpose_product )
-          , ( bp::arg("m"), bp::arg("v") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::jacobi_rotation
-
-      typedef void ( *jacobi_rotation_function_type )( ::numeric::xyzMatrix<double> const &,int const,int const,::numeric::xyzMatrix<double> & );
-
-      bp::def(
-          "jacobi_rotation"
-          , jacobi_rotation_function_type( &::numeric::jacobi_rotation )
-          , ( bp::arg("m"), bp::arg("i"), bp::arg("j"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::max
-
-      typedef long double ( *max_function_type )( long double const,long double const );
-
-      bp::def(
-          "max"
-          , max_function_type( &::numeric::max )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::max
-
-      typedef double ( *max_function_type )( double const,double const );
-
-      bp::def(
-          "max"
-          , max_function_type( &::numeric::max )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::max
-
-      typedef float ( *max_function_type )( float const,float const );
-
-      bp::def(
-          "max"
-          , max_function_type( &::numeric::max )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::max
-
-      typedef long unsigned int ( *max_function_type )( long unsigned int const,long unsigned int const );
-
-      bp::def(
-          "max"
-          , max_function_type( &::numeric::max )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::max
-
-      typedef unsigned int ( *max_function_type )( unsigned int const,unsigned int const );
-
-      bp::def(
-          "max"
-          , max_function_type( &::numeric::max )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::max
-
-      typedef short unsigned int ( *max_function_type )( short unsigned int const,short unsigned int const );
-
-      bp::def(
-          "max"
-          , max_function_type( &::numeric::max )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::max
-
-      typedef long int ( *max_function_type )( long int const,long int const );
-
-      bp::def(
-          "max"
-          , max_function_type( &::numeric::max )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::max
-
-      typedef int ( *max_function_type )( int const,int const );
-
-      bp::def(
-          "max"
-          , max_function_type( &::numeric::max )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::max
-
-      typedef short int ( *max_function_type )( short int const,short int const );
-
-      bp::def(
-          "max"
-          , max_function_type( &::numeric::max )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::max
-
-      typedef ::numeric::xyzTriple<double> ( *max_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "max"
-          , max_function_type( &::numeric::max )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::max
-
-      typedef ::numeric::xyzVector<double> ( *max_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "max"
-          , max_function_type( &::numeric::max )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::midpoint
-
-      typedef void ( *midpoint_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "midpoint"
-          , midpoint_function_type( &::numeric::midpoint )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("m") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::midpoint
-
-      typedef ::numeric::xyzTriple<double> ( *midpoint_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "midpoint"
-          , midpoint_function_type( &::numeric::midpoint )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::midpoint
-
-      typedef void ( *midpoint_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "midpoint"
-          , midpoint_function_type( &::numeric::midpoint )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("m") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::midpoint
-
-      typedef ::numeric::xyzVector<double> ( *midpoint_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "midpoint"
-          , midpoint_function_type( &::numeric::midpoint )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::min
-
-      typedef long double ( *min_function_type )( long double const,long double const );
-
-      bp::def(
-          "min"
-          , min_function_type( &::numeric::min )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::min
-
-      typedef double ( *min_function_type )( double const,double const );
-
-      bp::def(
-          "min"
-          , min_function_type( &::numeric::min )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::min
-
-      typedef float ( *min_function_type )( float const,float const );
-
-      bp::def(
-          "min"
-          , min_function_type( &::numeric::min )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::min
-
-      typedef long unsigned int ( *min_function_type )( long unsigned int const,long unsigned int const );
-
-      bp::def(
-          "min"
-          , min_function_type( &::numeric::min )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::min
-
-      typedef unsigned int ( *min_function_type )( unsigned int const,unsigned int const );
-
-      bp::def(
-          "min"
-          , min_function_type( &::numeric::min )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::min
-
-      typedef short unsigned int ( *min_function_type )( short unsigned int const,short unsigned int const );
-
-      bp::def(
-          "min"
-          , min_function_type( &::numeric::min )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::min
-
-      typedef long int ( *min_function_type )( long int const,long int const );
-
-      bp::def(
-          "min"
-          , min_function_type( &::numeric::min )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::min
-
-      typedef int ( *min_function_type )( int const,int const );
-
-      bp::def(
-          "min"
-          , min_function_type( &::numeric::min )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::min
-
-      typedef short int ( *min_function_type )( short int const,short int const );
-
-      bp::def(
-          "min"
-          , min_function_type( &::numeric::min )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::min
-
-      typedef ::numeric::xyzTriple<double> ( *min_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "min"
-          , min_function_type( &::numeric::min )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::min
-
-      typedef ::numeric::xyzVector<double> ( *min_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "min"
-          , min_function_type( &::numeric::min )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::multiply
-
-      typedef void ( *multiply_function_type )( double const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "multiply"
-          , multiply_function_type( &::numeric::multiply )
-          , ( bp::arg("t"), bp::arg("v"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::multiply
-
-      typedef void ( *multiply_function_type )( ::numeric::xyzTriple<double> const &,double const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "multiply"
-          , multiply_function_type( &::numeric::multiply )
-          , ( bp::arg("v"), bp::arg("t"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::multiply
-
-      typedef void ( *multiply_function_type )( double const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "multiply"
-          , multiply_function_type( &::numeric::multiply )
-          , ( bp::arg("t"), bp::arg("v"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::multiply
-
-      typedef void ( *multiply_function_type )( ::numeric::xyzVector<double> const &,double const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "multiply"
-          , multiply_function_type( &::numeric::multiply )
-          , ( bp::arg("v"), bp::arg("t"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::not_equal_length
-
-      typedef bool ( *not_equal_length_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "not_equal_length"
-          , not_equal_length_function_type( &::numeric::not_equal_length )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::not_equal_length
-
-      typedef bool ( *not_equal_length_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "not_equal_length"
-          , not_equal_length_function_type( &::numeric::not_equal_length )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::outer_product
-
-      typedef ::numeric::xyzMatrix<double> ( *outer_product_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "outer_product"
-          , outer_product_function_type( &::numeric::outer_product )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  // { //::numeric::product
-  //
-  //     typedef ::numeric::Quaternion<double> ( *product_function_type )( ::numeric::Quaternion<double> const &,::numeric::Quaternion<double> const &,bool const );
-  //
-  //     bp::def(
-  //         "numeric___product"
-  //         , product_function_type( &::numeric::product )
-  //         , ( bp::arg("q2"), bp::arg("q1"), bp::arg("precise")=(bool const)(true) )
-  //         , bp::return_value_policy< bp::return_by_value >() );
-  //
-  // }
-
-  { //::numeric::product
-
-      typedef ::numeric::xyzVector<double> ( *product_function_type )( ::numeric::xyzMatrix<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "product"
-          , product_function_type( &::numeric::product )
-          , ( bp::arg("m"), bp::arg("v") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::projection_matrix
-
-      typedef ::numeric::xyzMatrix<double> ( *projection_matrix_function_type )( ::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "projection_matrix"
-          , projection_matrix_function_type( &::numeric::projection_matrix )
-          , ( bp::arg("v") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::rotation_axis
-
-      typedef ::numeric::xyzVector<double> ( *rotation_axis_function_type )( ::numeric::xyzMatrix<double> const &,double & );
-
-      bp::def(
-          "rotation_axis"
-          , rotation_axis_function_type( &::numeric::rotation_axis )
-          , ( bp::arg("R"), bp::arg("theta") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::rotation_matrix
-
-      typedef ::numeric::xyzMatrix<double> ( *rotation_matrix_function_type )( ::numeric::xyzVector<double> const &,double const & );
-
-      bp::def(
-          "rotation_matrix"
-          , rotation_matrix_function_type( &::numeric::rotation_matrix )
-          , ( bp::arg("axis"), bp::arg("theta") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::sin_of
-
-      typedef double ( *sin_of_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "sin_of"
-          , sin_of_function_type( &::numeric::sin_of )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::sin_of
-
-      typedef double ( *sin_of_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const & );
-
-      bp::def(
-          "sin_of"
-          , sin_of_function_type( &::numeric::sin_of )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::sin_of
-
-      typedef double ( *sin_of_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "sin_of"
-          , sin_of_function_type( &::numeric::sin_of )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("c") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::sin_of
-
-      typedef double ( *sin_of_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "sin_of"
-          , sin_of_function_type( &::numeric::sin_of )
-          , ( bp::arg("a"), bp::arg("b") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::subtract
-
-      typedef void ( *subtract_function_type )( double const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "subtract"
-          , subtract_function_type( &::numeric::subtract )
-          , ( bp::arg("t"), bp::arg("v"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::subtract
-
-      typedef void ( *subtract_function_type )( ::numeric::xyzTriple<double> const &,double const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "subtract"
-          , subtract_function_type( &::numeric::subtract )
-          , ( bp::arg("v"), bp::arg("t"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::subtract
-
-      typedef void ( *subtract_function_type )( ::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> const &,::numeric::xyzTriple<double> & );
-
-      bp::def(
-          "subtract"
-          , subtract_function_type( &::numeric::subtract )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::subtract
-
-      typedef void ( *subtract_function_type )( double const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "subtract"
-          , subtract_function_type( &::numeric::subtract )
-          , ( bp::arg("t"), bp::arg("v"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::subtract
-
-      typedef void ( *subtract_function_type )( ::numeric::xyzVector<double> const &,double const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "subtract"
-          , subtract_function_type( &::numeric::subtract )
-          , ( bp::arg("v"), bp::arg("t"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::subtract
-
-      typedef void ( *subtract_function_type )( ::numeric::xyzVector<double> const &,::numeric::xyzVector<double> const &,::numeric::xyzVector<double> & );
-
-      bp::def(
-          "subtract"
-          , subtract_function_type( &::numeric::subtract )
-          , ( bp::arg("a"), bp::arg("b"), bp::arg("r") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-
-  { //::numeric::transpose_product
-
-      typedef ::numeric::xyzVector<double> ( *transpose_product_function_type )( ::numeric::xyzMatrix<double> const &,::numeric::xyzVector<double> const & );
-
-      bp::def(
-          "transpose_product"
-          , transpose_product_function_type( &::numeric::transpose_product )
-          , ( bp::arg("m"), bp::arg("v") )
-          , bp::return_value_policy< bp::return_by_value >() );
-
-  }
-*/
+  instantiate_numeric_containers<double>("double");
+  instantiate_numeric_containers<float>("float");
+  instantiate_numeric_containers<numeric::Real>("Real");
+  instantiate_numeric_containers<numeric::Size>("Size");
+  instantiate_numeric_containers<numeric::SSize>("SSize");
+
+  instantiate_numeric_functions<double>("double");
+  instantiate_numeric_functions<float>("float");
+  instantiate_numeric_functions<numeric::Real>("Real");
 }

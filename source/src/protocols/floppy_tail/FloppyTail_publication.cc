@@ -46,8 +46,8 @@ void create_extra_output( core::pose::Pose & pose, core::scoring::ScoreFunctionC
   core::Real const E3_RING_score((*score_fxn)(E3_RING));
 
   //create and score E2 portion
-  core::pose::Pose E2 = pose.split_by_chain(E2_chain);
-  core::Real const E2_score((*score_fxn)(E2));
+  core::pose::PoseOP E2 = pose.split_by_chain(E2_chain);
+  core::Real const E2_score((*score_fxn)(*E2));
 
   //print Job
   using protocols::jd2::JobDistributor;

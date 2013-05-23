@@ -368,6 +368,11 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 	int r_end   = static_cast< int > ( std::ceil ( 2*last_peptide_res/3 ) );
 #endif
 
+	// If less than three total residues, reset starting residue
+	if (r_start == 0) {
+		r_start = 1;
+	}
+
 	core::Real d_min = 99999, this_d;
 	for ( int i=r_start; i<=r_end; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );

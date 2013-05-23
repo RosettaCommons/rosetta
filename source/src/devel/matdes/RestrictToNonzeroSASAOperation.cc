@@ -68,12 +68,12 @@ RestrictToNonzeroSASAOperation::apply( core::pose::Pose const & pose, core::pack
 
 	for (core::Size i = 1; i <= ncomp_; i++) {
 		std::string select_buried_pos("select buried_pos, resi ");
-		core::pose::Pose mono = pose.split_by_chain(i); // Extract monomer from each component
-  	utility::vector1<Real> sc_sasa = devel::matdes::sidechain_sasa(mono, probe_radius_);
+		core::pose::PoseOP mono = pose.split_by_chain(i); // Extract monomer from each component
+  	utility::vector1<Real> sc_sasa = devel::matdes::sidechain_sasa(*mono, probe_radius_);
 		//mono.dump_pdb("mono.pdb");
 		// If the residue is totally buried, prevent_repacking
-		for (core::Size ir = 1; ir <= mono.n_residue(); ir++) {
-			if( !mono.residue( ir ).is_protein() ) continue;
+		for (core::Size ir = 1; ir <= mono->n_residue(); ir++) {
+			if( !mono->residue( ir ).is_protein() ) continue;
 			res_count++;
 			if (sc_sasa[ir] <= 0.0) {
 				select_buried_pos.append(ObjexxFCL::string_of(res_count) + "+");   

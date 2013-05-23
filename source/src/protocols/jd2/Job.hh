@@ -48,7 +48,7 @@ public:
 
 	/// TODO these should be maps rather than lists.
 	typedef std::list< std::string > Strings;
-	typedef std::list< std::pair< std::string, std::string > > StringStringPairs;
+	typedef std::map< std::string, std::string > StringStringPairs;
 	typedef std::map< std::string, core::Real > StringRealPairs;
 
 	Job( InnerJobOP inner_job, core::Size nstruct_index );
@@ -144,6 +144,12 @@ public:
 
 	//there are no functions for deleting output info.  This is on purpose - use copy_without_output instead
 
+	Strings get_strings() { return long_strings_; }
+
+	StringStringPairs get_string_string_pairs() { return string_string_pairs_; };
+
+	StringRealPairs get_string_real_pairs() { return string_real_pairs_; };
+
 	void set_status_prefix( std::string prefix ) {
 		status_prefix_ = prefix;
 	}
@@ -196,7 +202,7 @@ private:
 
 }; // Job
 
-extern JobOP const JD2_BOGUS_JOB;
+extern JobCOP const JD2_BOGUS_JOB;
 
 } // namespace jd2
 } // namespace protocols

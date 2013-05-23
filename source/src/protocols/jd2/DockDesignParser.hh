@@ -31,6 +31,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/options/StringVectorOption.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <iostream>
 
 
@@ -53,6 +54,14 @@ public:
 	virtual
 	bool
 	generate_mover_from_pose( protocols::jd2::JobCOP job, core::pose::Pose & pose, protocols::moves::MoverOP & mover, bool new_input, std::string const xml_fname );
+
+	MoverOP generate_mover_for_protocol(Pose & pose, bool & modified_pose, utility::tag::TagPtr protocol_tag);
+
+	//@brief Temporary hook into parsing machinery with pose reference
+	MoverOP parse_protocol_tag(Pose & pose, utility::tag::TagPtr protocol_tag);
+
+	//@brief Temporary hook into parsing machinery w/o pose reference.
+	MoverOP parse_protocol_tag(utility::tag::TagPtr protocol_tag);
 
 	void register_factory_prototypes();
 

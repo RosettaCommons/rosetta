@@ -87,8 +87,8 @@ PackStatFilter::compute( Pose const & pose ) const
 			if( chain_ < 1 )
 				packscore = core::scoring::packstat::compute_packing_score( pose );
 			else{
-				core::pose::Pose single_chain( pose.split_by_chain( chain_ ) );
-				packscore = core::scoring::packstat::compute_packing_score( single_chain );		
+				core::pose::PoseOP single_chain( pose.split_by_chain( chain_ ) );
+				packscore = core::scoring::packstat::compute_packing_score( *single_chain );		
 			}
 		packscore_average += packscore;
 		tr << "repeat " << i << ": packscore: " << packscore << std::endl;

@@ -153,68 +153,62 @@ class PythonPyExitCallback(utility.PyExitCallback):
 
 
 ###############################################################################
+#
+def rosetta_database_from_env():
+    """Reads rosetta database directory from environment."""
+    database = None
+
+    # Figure out database dir....
+    if os.path.isdir('rosetta_database'):
+        database = os.path.abspath('rosetta_database')
+        print 'Found rosetta_database at %s; using it....' % database
+    elif 'PYROSETTA_DATABASE' in os.environ:
+        database = os.path.abspath(os.environ['PYROSETTA_DATABASE'])
+        print 'PYROSETTA_DATABASE environment variable was set to:',
+        print '%s; using it....' % database
+    elif os.path.isdir(os.environ['HOME'] + '/rosetta_database'):
+        database = os.path.abspath(os.environ['HOME'] + '/rosetta_database')
+        print 'Found rosetta_database at home folder, ie.:',
+        print '%s; using it....' % database
+    elif sys.platform == "cygwin" and os.path.isdir('/rosetta_database'):
+        database = os.path.abspath('/rosetta_database')
+        print 'Found rosetta_database at root folder, ie.:',
+        print '%s; using it....' % database
+    elif os.path.isdir('rosetta/rosetta_database'):  # Mac /usr/lib install
+        database = os.path.abspath('rosetta/rosetta_database')
+        print 'Found rosetta_database at %s; using it....' % database
+
+    return database
+
 # rosetta.init()
 def init(*args, **kargs):
     global _python_py_exit_callback
 
     _python_py_exit_callback = PythonPyExitCallback()
     utility.PyExitCallback.set_PyExitCallBack(_python_py_exit_callback)
-
-    # Make sure that all rosetta sys exits just generate exceptions.
-    #utility.set_pyexit_callback()
-
-    #if not args:
-    #    args = ["app", "-database", os.path.join( os.path.expanduser("~"),
-    #            "rosetta_database")]
-    #    args = ["app", "-database", "rosetta_database", "-ex1", "-ex2aro"]
-
-    # Figure out database dir....
-    if os.path.isdir('rosetta_database'):
-        database = os.path.abspath('rosetta_database')
-        print 'Found rosetta_database at %s; using it....' % database
-
-    elif 'PYROSETTA_DATABASE' in os.environ:
-        database = os.path.abspath(os.environ['PYROSETTA_DATABASE'])
-        print 'PYROSETTA_DATABASE environment variable was set to:',
-        print '%s; using it....' % database
-
-    elif os.path.isdir(os.environ['HOME'] + '/rosetta_database'):
-        database = os.path.abspath(os.environ['HOME'] + '/rosetta_database')
-        print 'Found rosetta_database at home folder, ie.:',
-        print '%s; using it....' % database
-
-    elif sys.platform == "cygwin" and os.path.isdir('/rosetta_database'):
-        database = os.path.abspath('/rosetta_database')
-        print 'Found rosetta_database at root folder, ie.:',
-        print '%s; using it....' % database
-
-    elif os.path.isdir('rosetta/rosetta_database'):  # Mac /usr/lib install
-        database = os.path.abspath('rosetta/rosetta_database')
-        print 'Found rosetta_database at %s; using it....' % database
-
-    else:
-        print 'Could not find rosetta_database!',
-        print 'Check your paths or set PyRosetta environment vars. Exiting...'
-        sys.exit(1)
-
+    
     if not args:
-        args = ["app", "-database", database, "-ex1", "-ex2aro"]
-        #args = ["app", "-database", database,]
+        args = ["app", "-ex1", "-ex2aro"]
     else:
-        args = list(args)
+        if len(args) == 1 and isinstance(args[0], str):
+            args = args[0].split()
+        else:
+            args = list(args)
+
+    # Attempt to database location from environment if not present, else fallback
+    # to rosetta's standard resolution
+    if not "-database" in args:
+        database = rosetta_database_from_env()
+        if not database is None:
+            args.extend(["-database", database])
 
     args.extend(kargs.get('extra_options', '').split(' '))
 
     v = utility.vector1_string()
-    #v = utility.vector1_string('--database %s' % database)
-    #v = Vector1('--database %s' % database)
     v.extend(args)
-    #v.append('--database')
-    #v.append(database)
 
     print version()
     protocols.init.init(v)
-
 
 # MPI version of init function, use it instead of init(...)
 def mpi_init(*args, **kargs):

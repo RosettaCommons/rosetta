@@ -24,6 +24,7 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
+#include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
 #include <basic/message_listening/MessageListenerFactory.hh>
 
@@ -114,7 +115,7 @@ std::string current_batch() {
 bool jd2_used() {
 	JobDistributor* jd
   	= JobDistributor::get_instance();
-	return ( jd && jd->job_outputter() && jd->current_job() != JD2_BOGUS_JOB );
+	return ( jd && jd->job_outputter() && jd->current_job()->inner_job() != JD2_BOGUS_JOB->inner_job());
 }
 
 std::string current_output_filename() {

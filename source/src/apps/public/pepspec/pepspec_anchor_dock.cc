@@ -577,7 +577,11 @@ run_pep_prep()
 			break;
 		}
 	}
-	if( option[ pepspec::remove_input_bb ] ) pose = pose.split_by_chain( prot_chain );
+
+	if( option[ pepspec::remove_input_bb ]){
+		pose = *(pose.split_by_chain( prot_chain ));
+	}
+
 	Size prot_begin( pose.conformation().chain_begin( prot_chain ) ); 
 	Size prot_end( pose.conformation().chain_end( prot_chain ) ); 
 	Size prot_anchor( prot_begin + 1 );

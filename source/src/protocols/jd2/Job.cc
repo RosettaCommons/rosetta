@@ -86,7 +86,7 @@ void Job::add_strings( Strings const & strings )
 
 ///@brief add a string/string pair
 void Job::add_string_string_pair( std::string const & string1, std::string const & string2 ){
-	string_string_pairs_.push_back(std::make_pair(string1, string2));
+	string_string_pairs_[ string1 ] = string2;
 }
 
 ///@brief add a string/real pair
@@ -164,7 +164,7 @@ void Job::set_bad(bool value)  {
 }
 
 
-JobOP const JD2_BOGUS_JOB( new Job( (new InnerJob("EMPTY_JOB_use_jd2", 0)), 0) );
+JobCOP const JD2_BOGUS_JOB( new Job( (new InnerJob("EMPTY_JOB_use_jd2", 0)), 0) );
 
 bool
 operator==(

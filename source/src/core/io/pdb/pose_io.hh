@@ -43,7 +43,7 @@ namespace pdb {
 /// @brief special Tracer instance acting as special param for all traced_dump_pdb functions
 extern basic::Tracer TR_dump_pdb_dummy;
 
-/// @brief Writes pdb data
+/// @brief Writes pdb data for the given residue, incrementing atom_number counter
 void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
@@ -51,6 +51,14 @@ dump_pdb_residue(
 	std::ostream & out
 );
 
+/// @brief Writes pdb data for the given residue, beginning from the given atom number
+/// 
+/// @note Python compatible wrapper avoiding reference parameter
+void
+dump_pdb_residue(
+	conformation::Residue const & rsd,
+	std::ostream & out,
+	Size start_atom_number = 1);
 
 /// @brief Writes  <pose>  bfactor data
 void

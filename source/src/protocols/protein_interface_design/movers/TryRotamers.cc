@@ -80,13 +80,15 @@ TryRotamers::TryRotamers( Size resnum,
 	protocols::filters::Filter const & final_filter,
 	Size explosion, // rotamer explosion
 	Size jump_num,
-	bool clash_check
+	bool clash_check,
+	bool include_current
 ) :
 	protocols::moves::Mover( TryRotamersCreator::mover_name() ),
 	scorefxn_(new ScoreFunction(scorefxn)),
 	resnum_(resnum),
 	jump_num_(jump_num),
 	clash_check_(clash_check),
+	include_current_(include_current),
 	explosion_(explosion),
 	final_filter_(final_filter.clone())
 {}
@@ -96,13 +98,15 @@ TryRotamers::TryRotamers( core::Size resnum,
 	core::scoring::ScoreFunction const& scorefxn,
 	Size explosion, // rotamer explosion
 	Size jump_num,
-	bool clash_check
+	bool clash_check,
+	bool include_current
 	) :
 	protocols::moves::Mover(),
 	scorefxn_(new ScoreFunction(scorefxn)),
 	resnum_(resnum),
 	jump_num_(jump_num),
 	clash_check_(clash_check),
+	include_current_(include_current),
 	explosion_(explosion),
 	final_filter_(new protocols::filters::TrueFilter)
 {}
@@ -110,19 +114,48 @@ TryRotamers::TryRotamers( core::Size resnum,
 TryRotamers::~TryRotamers() {}
 
 void
-TryRotamers::apply ( pose::Pose & pose )
+TryRotamers::setup_rotamer_set( pose::Pose & pose )
 {
-	//using namespace rotamer_set;
-	using namespace core::scoring;
 	using namespace core::pack::task;
 	using namespace core::pack::rotamer_set;
-
-	core::kinematics::FoldTree const saved_ft( pose.fold_tree() );
 
 	//SEGFAULT REMOVED: OL 3/6/12:
 	//using here a const reference causes segfaults, probably due to subsequent fold-tree manipulation which
 	//would invalidate residue objects.
 	Residue res_ = pose.residue( resnum_ );
+
+	PackerTaskOP ptask( TaskFactory::create_packer_task( pose ) );
+	ptask->set_bump_check( clash_check_ );
+
+	ResidueLevelTask & restask( ptask->nonconst_residue_task( resnum_ ) );
+	graph::GraphOP packer_graph = new graph::Graph( pose.total_residue() );
+	restask.or_ex1( true );
+	restask.or_ex2( true );
+	restask.or_ex3( true );
+	restask.or_ex4( true );
+	if( explosion_ > 0 ) restask.or_ex1_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if( explosion_ > 1	) restask.or_ex2_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if( explosion_ > 2	) restask.or_ex3_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	if( explosion_ > 3	) restask.or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	restask.or_include_current( include_current_ );
+
+	restask.restrict_to_repacking();
+	RotamerSetFactory rsf;
+	rotset_ = rsf.create_rotamer_set( res_ );
+
+	rotset_->set_resid( resnum_ );
+	rotset_->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
+	rotamer_it_ = rotset_->begin();
+	TR<<"building rotamer set of " <<rotset_->num_rotamers()<< " different rotamers ...\n";
+}
+
+void
+TryRotamers::apply ( pose::Pose & pose )
+{
+	//using namespace rotamer_set;
+	using namespace core::scoring;
+
+	core::kinematics::FoldTree const saved_ft( pose.fold_tree() );
 
 	TR << "current fold-tree:\n" << pose.fold_tree() << std::endl;
 	if( automatic_connection_ ){
@@ -137,30 +170,7 @@ TryRotamers::apply ( pose::Pose & pose )
 	pose.update_residue_neighbors();
 
  if ( !rotset_ || rotset_->num_rotamers() == 0 ) {
-	 PackerTaskOP ptask( TaskFactory::create_packer_task( pose ) );
-	 ptask->set_bump_check( clash_check_ );
-
-	 ResidueLevelTask & restask( ptask->nonconst_residue_task( resnum_ ) );
-	 graph::GraphOP packer_graph = new graph::Graph( pose.total_residue() );
-	 restask.or_ex1( true );
-	 restask.or_ex2( true );
-	 restask.or_ex3( true );
-	 restask.or_ex4( true );
-	 if( explosion_ > 0 ) restask.or_ex1_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	 if( explosion_ > 1	) restask.or_ex2_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	 if( explosion_ > 2	) restask.or_ex3_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	 if( explosion_ > 3	) restask.or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-	 restask.or_include_current( true );
-
-	 restask.restrict_to_repacking();
-	 RotamerSetFactory rsf;
-	 rotset_ = rsf.create_rotamer_set( res_ );
-
-	 rotset_->set_resid( resnum_ );
-	 rotset_->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
-	 rotamer_it_ = rotset_->begin();
-	 TR<<"building rotamer set of " <<rotset_->num_rotamers()<< " different rotamers ...\n";
-
+	 setup_rotamer_set(pose);
 	}//end building rotamer set
 
 	// job distributor iterates ...
@@ -216,7 +226,10 @@ TryRotamers::parse_my_tag( TagPtr const tag,
 	jump_num_ = tag->getOption<core::Size>( "jump_num", 1);
 	std::string const final_filter_name( tag->getOption<std::string>( "final_filter", "true_filter" ) );
 	protocols::filters::Filters_map::const_iterator find_filter( filters.find( final_filter_name ));
+
 	clash_check_ = tag->getOption<bool>("clash_check", 0 );
+	include_current_ = tag->getOption<bool>("include_current", 1 );
+
 	explosion_ = tag->getOption<core::Size>( "explosion", 0);
 	bool const filter_found( find_filter != filters.end() );
 	if( filter_found )
@@ -240,7 +253,7 @@ TryRotamers::parse_my_tag( TagPtr const tag,
 		}
 	}
 
-	TR<<"TryRotamers was instantiated using scorefxn="<<scorefxn_name<<", jump_number="<<jump_num_<< ", clash_check=" << clash_check_ << ", and explosion=" << explosion_ << std::endl;
+	TR<<"TryRotamers was instantiated using scorefxn="<<scorefxn_name<<", jump_number="<<jump_num_<< ", clash_check=" << clash_check_ <<", include_current=" << include_current_ <<  ", and explosion=" << explosion_ << std::endl;
 
 }
 

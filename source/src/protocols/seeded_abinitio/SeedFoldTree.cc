@@ -222,7 +222,7 @@ get_closest_residue_pair(
 	std::pair<Size,Size> closest_pair;
 	if( target_seed_pose->conformation().num_chains() != 2 )
 		utility_exit_with_message("only two chains as input supported" );
-	Size target_length = target_seed_pose->split_by_chain( 1 ).total_residue();
+	Size target_length = target_seed_pose->split_by_chain( 1 )->total_residue();
 	
 	TR<<"iterating through each seed residue to find the closest target residue" <<std::endl;
 	
@@ -262,7 +262,7 @@ find_nearest_residue( Size anchor , pose::PoseOP & target_seed_pose ){
   std::pair<Size,Size> closest_pair;
   if( target_seed_pose->conformation().num_chains() != 2 )
     utility_exit_with_message("only two chains as input are currently supported" );
-  Size target_length = target_seed_pose->split_by_chain( 1 ).total_residue();
+  Size target_length = target_seed_pose->split_by_chain( 1 )->total_residue();
 	
 	std::string anchor_atom = "CB";
 	Residue res_anchor( target_seed_pose->residue( anchor ));
@@ -346,9 +346,9 @@ SeedFoldTree::set_foldtree(
 
 		TR<<"two chains were were submitted for the seed pdb, reading target info"<< std::endl;
 		
-		target_chain_ = new pose::Pose( target_seed_pose->split_by_chain( 1 ) );
+		target_chain_ = target_seed_pose->split_by_chain( 1 );
 		TR<<"input pdb: "<< secstr.length() <<" target chain: " <<target_chain_->total_residue() << std::endl;
-		seeds_only_ = new pose::Pose( target_seed_pose->split_by_chain( 2 ) );
+		seeds_only_ = target_seed_pose->split_by_chain( 2 );
 	
 		Size rb_jump =1;
 		Size target_length = target_chain_->total_residue();
@@ -682,7 +682,7 @@ SeedFoldTree::apply( core::pose::Pose & pose )
 	Size chain_num = pose.conformation().num_chains();
 
 	//if last chain and template pose have the same length, then the protein is at its full length
-	if( pose.split_by_chain( chain_num ).total_residue() ==  template_pdb_->total_residue() ){
+	if( pose.split_by_chain( chain_num )->total_residue() ==  template_pdb_->total_residue() ){
 		protein_not_folded = false;
 		TR<<"assuming pose has full size" << std::endl;
 	}

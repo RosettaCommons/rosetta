@@ -450,8 +450,16 @@ dihedral(
 }
 
 
-// Rotation
-
+// @brief Rotation matrix for rotation from axis-angle representation
+// @note Magnitude of rotation (in radians) is taken as axis_angle.magnitude
+template< typename T >
+inline
+xyzMatrix< T >
+rotation_matrix(xyzVector< T > const & axis_angle)
+{
+	// rotation_matrix performs axis vector normalization
+	return rotation_matrix(axis_angle, axis_angle.magnitude());
+}
 
 /// @brief Rotation matrix for rotation about an axis by an angle in radians
 template< typename T >
@@ -692,6 +700,39 @@ alignVectorSets(
 	return R;
 }
 
+/// @brief Transformation from rotation matrix to magnitude of helical rotation
+/// @note  Input matrix must be orthogonal
+/// @note  Orientation of axis chosen so that the angle of rotation is non-negative [0,pi]
+//  @note  numeric::rotation_axis returns both axis and angle of rotation
+template< typename T >
+inline
+T
+rotation_angle( xyzMatrix< T > const & R)
+{
+	using std::abs;
+	using std::acos;
+	using std::sqrt;
+
+	// This would be good here but slow and unclear what tolerance to use
+	// assert( rm.orthogonal() );
+
+	static T const ZERO( 0 );
+	static T const ONE( 1 );
+	static T const TWO( 2 );
+
+	T const cos_theta = sin_cos_range( ( R.trace() - ONE ) / TWO );
+
+	T const tolerance = NumericTraits< T >::sin_cos_tolerance();
+	if ( cos_theta > -ONE + tolerance && cos_theta < ONE - tolerance ) {
+		return acos( cos_theta );
+	} else if ( cos_theta >= ONE - tolerance ) {
+		// R is the identity matrix, return an arbitrary axis of rotation
+		return ZERO;
+	} else { // cos_theta <= -ONE + tolerance
+		return NumericTraits< T >::pi(); // theta == pi
+	}
+}
+
 /// @brief Transformation from rotation matrix to helical axis of rotation
 /// @note  Input matrix must be orthogonal
 /// @note  Angle of rotation is also returned
@@ -733,6 +774,7 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 
 		theta = acos( cos_theta );
 		assert( abs( x*x + y*y + z*z - 1 ) <= T( 0.01 ) );
+
 		return xyzVector< T >( x, y, z );
 	} else if ( cos_theta >= ONE - tolerance ) {
 		// R is the identity matrix, return an arbitrary axis of rotation
@@ -770,6 +812,20 @@ rotation_axis( xyzMatrix< T > const & R, T & theta )
 	}
 }
 
+/// @brief Transformation from rotation matrix to compact axis-angle representation
+/// @note  Input matrix must be orthogonal
+/// @note  Orientation of axis chosen so that the angle of rotation is non-negative [0,pi]
+//  @note  Resulting vector will be oriented in axis of rotation with magnitude equal to magnitude of rotation.
+template< typename T>
+inline
+xyzVector< T >
+rotation_axis_angle(xyzMatrix< T > const & R)
+{
+	T theta;
+	xyzVector< T > vec = rotation_axis(R, theta);
+
+	return vec * theta;
+}
 
 // Eigenvalues/vectors
 

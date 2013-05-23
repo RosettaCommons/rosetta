@@ -227,7 +227,7 @@ DefineMovableLoops::apply( core::pose::Pose & pose ){
 	Size residues = 0;
 	//ensure that the residues specified are covered by the secondary structure input
 	for( Size it = 1; it <= chains_.size(); ++it ){
-		residues += pose.split_by_chain( chains_[it] ).total_residue();
+		residues += pose.split_by_chain( chains_[it] )->total_residue();
 		TR.Debug <<"residues to compare: "<<residues <<std::endl;
 	}
 	TR << pose.fold_tree() <<std::endl;

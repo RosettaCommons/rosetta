@@ -250,11 +250,11 @@ CAcstGenerator::apply( pose::Pose & pose ){
 	
 	if( from_chain_ != 0 ){
 		if( template_presence_ ){
-			donor_poseOP = new pose::Pose( template_pdb_->split_by_chain( from_chain_ ) );
+			donor_poseOP = template_pdb_->split_by_chain( from_chain_ );
 			TR<<"derriving CA distance constraints from the template pdb"<<std::endl;
 		}
 		else{
-			donor_poseOP = new pose::Pose( pose.split_by_chain( from_chain_ ) );
+			donor_poseOP = pose.split_by_chain( from_chain_ );
 		}
 	}
 	

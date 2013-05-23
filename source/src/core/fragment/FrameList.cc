@@ -42,20 +42,24 @@ namespace fragment {
 static basic::Tracer tr("core.fragment");
 
 FragID FrameList::fragID ( Size flat_nr ) {
-  Size frags( 0 );
+  Size passed_frags( 0 );
   iterator it = begin(), eit=end();
-  for ( ; it!=eit && frags<flat_nr ; ++it) {
-    frags += (*it)->nr_frags();
+
+	while (it!=eit && (passed_frags + (*it)->nr_frags()) < flat_nr)
+	{
+    passed_frags += (*it)->nr_frags();
+		++it;
+	}
+
+  if ( it!=eit )
+	{
+    return FragID( *it, flat_nr - passed_frags );
   }
-  if ( it!=eit ) {
-    if ( frags >= flat_nr ) {
-      frags -= (*it)->nr_frags();
-      it--;
-    }
-    return FragID( *it, flat_nr-frags );
-  }
-	runtime_assert( 0 ); //out of bounds
-	return FragID();
+	else
+	{
+		runtime_assert( 0 ); //out of bounds
+		return FragID();
+	}
 }
 
 Size FrameList::flat_size() const {

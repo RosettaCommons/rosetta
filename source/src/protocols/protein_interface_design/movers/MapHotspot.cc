@@ -262,7 +262,7 @@ MapHotspot::GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose &
 
 void
 MapHotspot::apply( core::pose::Pose & pose ){
-	core::pose::Pose chainA = pose.split_by_chain( 1 );
+	core::pose::Pose chainA = *pose.split_by_chain( 1 );
 	core::pose::Pose const start_pose( pose );
 	pose = chainA; // this will make the viewer shows the working pose
 	GenerateMap( start_pose, pose, 1 );

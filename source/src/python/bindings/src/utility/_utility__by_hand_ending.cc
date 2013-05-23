@@ -6,65 +6,68 @@ void __utility_by_hand_ending__()
     typedef bp::return_value_policy< bp::copy_const_reference >      CP_CCR;
     typedef bp::return_value_policy< bp::copy_non_const_reference >  CP_CNCR;
 
-    wrap_vector1< vector1< std::size_t >,CP_REF,CP_REF>("vec1_vec1_Size");
+    expose_basic_type<string>("string");
 
-    wrap_vector1<string,       CP_CNCR, CP_CCR>("vector1_string");
-    wrap_vector1<int,          CP_CNCR, CP_CCR>("vector1_int");
-    wrap_vector1<long,         CP_CNCR, CP_CCR>("vector1_long");
-    wrap_vector1<unsigned long,CP_CNCR, CP_CCR>("vector1_ulong");
-    wrap_vector1<unsigned int, CP_CNCR, CP_CCR>("vector1_uint");
-    wrap_vector1<char,         CP_CNCR, CP_CCR>("vector1_char");
-    wrap_vector1<float,        CP_CNCR, CP_CCR>("vector1_float");
-    wrap_vector1<double,       CP_CNCR, CP_CCR>("vector1_double");
-    wrap_vector1<unsigned,     CP_CNCR, CP_CCR>("vector1_unsigned");
+    expose_basic_type<int>("int");
+    expose_basic_type<long>("long");
+    expose_basic_type<unsigned long>("ulong");
+    expose_basic_type<unsigned int>("uint");
+    expose_basic_type<char>("char");
+    expose_basic_type<float>("float");
+    expose_basic_type<double>("double");
+    expose_basic_type<unsigned>("unsigned");
 
-    wrap_vector1<core::Size,   CP_CNCR, CP_CCR>("vector1_Size");
-    wrap_vector1<core::SSize,  CP_CNCR, CP_CCR>("vector1_SSize");
-
-    wrap_vector1<numeric::xyzVector_int,    CP_CNCR, CP_CCR>("vector1_xyzVector_int");
-    wrap_vector1<numeric::xyzVector_uint,   CP_CNCR, CP_CCR>("vector1_xyzVector_uint");
-    wrap_vector1<numeric::xyzVector_long,   CP_CNCR, CP_CCR>("vector1_xyzVector_long");
-    wrap_vector1<numeric::xyzVector_ulong,  CP_CNCR, CP_CCR>("vector1_xyzVector_ulong");
-    wrap_vector1<numeric::xyzVector_double, CP_CNCR, CP_CCR>("vector1_xyzVector_float");
-    wrap_vector1<numeric::xyzVector_double, CP_CNCR, CP_CCR>("vector1_xyzVector_double");
-    wrap_vector1<numeric::xyzVector_char,   CP_CNCR, CP_CCR>("vector1_xyzVector_char");
-    wrap_vector1<numeric::xyzVector_uchar,  CP_CNCR, CP_CCR>("vector1_xyzVector_uchar");
-
-    wrap_vector1<core::scoring::ScoreType,  CP_CNCR, CP_CCR>("vector1_ScoreType");
-
-    wrap_vector1<core::id::AtomID, CP_REF,CP_REF>("vector1_AtomID");
-
-    wrap_vector1<numeric::xyzVector_bool, CP_CNCR, CP_CCR>("vector1_xyzVector_bool");
-
-    wrap_vector1<core::pose::PoseOP,  CP_CNCR, CP_CCR>("vector1_PoseOP");
-
-
-    //if( true ) { // This code never executed, but we need it so compilere create operator ostream << vector1[core::conformation::Atom]
-    //	cout << vector1< core::conformation::Atom > () ;
-    //}
-    //wrap_vector1_part<core::conformation::Atom, CP_REF, CP_REF>("vector1_core_conformation_Atom");
-    wrap_vector1_part<core::conformation::Atom, CP_CNCR, CP_CCR>("vector1_core_conformation_Atom");
-
-    // wrap_vector1<bool,         CP_CNCR,CP_CCR>("utility___vector1_bool");
+    //Need overload of bool_get so no:
+    // expose_basic_type<bool>("bool");
     bp::class_< vector1<bool> >("vector1_bool")
     .def("__len__",&vector1_len<bool> )
     .def("append", &vector1_bool_push )
     .def("__getitem__", &vector1_bool_get )
     .def("__iter__",bp::range(&vector1_begin<bool>,&vector1_end<bool>))
     ;
+    wrap_vector1< vector1<bool>, CP_REF, CP_REF >("vec1_vec1_bool");
 
-    wrap_std_map< std::map<int, int> >("map_int_int");
-    wrap_std_map< std::map<std::string, core::Real> >("map_string_Real");
-    wrap_std_map< std::map<std::string, int> >("map_string_int");
+    expose_basic_type<core::Size>("Size");
+    expose_basic_type<core::SSize>("SSize");
+    expose_basic_type<core::Real>("Real");
 
-    //std::set<int> s_int;  set_repr(s_int);
-    wrap_std_set< int,           CP_CNCR, CP_CCR >("set_int");
-    wrap_std_set< unsigned int,  CP_CNCR, CP_CCR >("set_uint");
-    wrap_std_set< unsigned long, CP_CNCR, CP_CCR >("set_ulong");
-    wrap_std_set< double,        CP_CNCR, CP_CCR >("set_double");
-    wrap_std_set< core::Real,    CP_CNCR, CP_CCR >("set_Real");
-    wrap_std_set< char,          CP_CNCR, CP_CCR >("set_char");
-    wrap_std_set< std::string,   CP_CNCR, CP_CCR >("set_string");
-    wrap_std_set< core::Size,    CP_CNCR, CP_CCR >("set_Size");
-    wrap_std_set< core::SSize,   CP_CNCR, CP_CCR >("set_SSize");
+    expose_number_type<int>("int");
+    expose_number_type<long>("long");
+    expose_number_type<unsigned long>("ulong");
+    expose_number_type<unsigned int>("uint");
+    expose_number_type<char>("char");
+    expose_number_type<float>("float");
+    expose_number_type<double>("double");
+    expose_number_type<unsigned>("unsigned");
+    expose_number_type<bool>("bool");
+
+    expose_number_type<core::Size>("Size");
+    expose_number_type<core::SSize>("SSize");
+    expose_number_type<core::Real>("Real");
+
+    expose_pair_types<std::string, std::string>("string", "string");
+
+    expose_pair_types<int, std::string>("int", "string");
+    expose_pair_types<std::string, int>("string", "int");
+
+    expose_pair_types<core::Size, std::string>("Size", "string");
+    expose_pair_types<std::string, core::Size>("string", "Size");
+
+    expose_pair_types<core::SSize, std::string>("SSize", "string");
+    expose_pair_types<std::string, core::SSize>("string", "SSize");
+
+    expose_pair_types<core::Real, std::string>("Real", "string");
+    expose_pair_types<std::string, core::Real>("string", "Real");
+
+    wrap_vector1<core::scoring::ScoreType,  CP_CNCR, CP_CCR>("vector1_ScoreType");
+    wrap_vector1<core::id::AtomID, CP_REF,CP_REF>("vector1_AtomID");
+
+    wrap_vector1<core::pose::PoseOP,  CP_CNCR, CP_CCR>("vector1_PoseOP");
+    wrap_vector1<core::pose::Pose,  CP_REF, CP_REF>("vector1_Pose");
+
+    //if( true ) { // This code never executed, but we need it so compilere create operator ostream << vector1[core::conformation::Atom]
+    //	cout << vector1< core::conformation::Atom > () ;
+    //}
+    //wrap_vector1_part<core::conformation::Atom, CP_REF, CP_REF>("vector1_core_conformation_Atom");
+    wrap_vector1_part<core::conformation::Atom, CP_CNCR, CP_CCR>("vector1_core_conformation_Atom");
 }

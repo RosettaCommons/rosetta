@@ -45,7 +45,8 @@ public:
 		protocols::filters::Filter const& final_filter,
 		core::Size explosion = 0, // rotamer explosion
 		core::Size jump_num = 1,
-		bool clash_check = false
+		bool clash_check = false,
+		bool include_current = true
 	);
 
 	/// @param jump_num The jump number of the interface. 0 for no interface
@@ -54,7 +55,8 @@ public:
 		core::scoring::ScoreFunction const& scorefxn,
 		core::Size explosion = 0, // rotamer explosion
 		core::Size jump_num = 1,
-		bool clash_check = false
+		bool clash_check = false,
+		bool include_current = true
 	);
 
 
@@ -73,6 +75,7 @@ public:
 	/// EVIL
 	void set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){ scorefxn_ = scorefxn; }
 
+	void setup_rotamer_set(core::pose::Pose & pose);
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 	void parse_my_tag( utility::tag::TagPtr const tag,
@@ -93,6 +96,7 @@ private:
 	core::Size resnum_;
 	core::Size jump_num_;
 	bool clash_check_;
+	bool include_current_;
 	bool automatic_connection_; // should TryRotamers decide on the foldtree on its own? default true
 	core::Size explosion_; // rotamer explosion
 	protocols::filters::FilterOP final_filter_; // filter. Defaults to TrueFilter

@@ -12,7 +12,7 @@
 ## @brief  Build Python buidings for Rosetta
 ## @author Sergey Lyskov
 
-import os, re, sys, time, commands, shutil, platform, os.path, itertools, gc, json, types
+import os, re, sys, time, commands, shutil, platform, os.path, gc, json, types
 import subprocess #, errno
 
 # Create global 'Platform' that will hold info of current system
@@ -37,7 +37,7 @@ import tools.CppParser
 
 
 
-from optparse import OptionParser, IndentedHelpFormatter
+from optparse import OptionParser
 
 
 class NT:  # named tuple
@@ -88,8 +88,14 @@ def main(args):
       default=True,
       )
 
-    parser.add_option("--update",
+    parser.add_option("-d",
+      action="store_false", dest="BuildMiniLibs",
+      help="Disable building of mini libs.",
+    )
+
+    parser.add_option("-u", "--update",
       default=False,
+      action="store_true",
       help="Debug only. Try to check time stamp of files before building them.",
       )
 
@@ -98,16 +104,15 @@ def main(args):
       help="Perform a Debug build when possible.",
       )
 
-    parser.add_option("-u",
-      action="store_true", dest="update",
-      help="Debug only. Try to check time stamp of files before building them.",
+    parser.add_option("--debug_bindings",
+      action="store_true", default=False,
+      help="Build bindings with -DDEBUG.",
       )
 
-
-    parser.add_option("-d",
-      action="store_false", dest="BuildMiniLibs",
-      help="Disable building of mini libs.",
-    )
+    parser.add_option("--numpy_support",
+      action="store_true", default=False,
+      help="Build bindings numpy type conversion support.",
+      )
 
     parser.add_option("--continue",
       default=False,
@@ -234,6 +239,9 @@ def main(args):
     print "--boost-lib", options.boost_lib
     print '--update', options.update
     print '--debug', options.debug
+    print '--debug_bindings', options.debug_bindings
+    print '--numpy_support', options.numpy_support
+
     #print '--cross-compile', options.cross_compile
 
     if (Options.jobs > 1) and Options.sort_IncludeDict:
@@ -506,14 +514,24 @@ def getCompilerOptions():
     #if Platform == 'linux':
     if Platform != 'macos':
         add_option = '-ffloat-store -ffor-scope'
-        if  PlatformBits == '32': add_option += ' -malign-double'
-        else: add_option += ' -fPIC'
+        if  PlatformBits == '32':
+            add_option += ' -malign-double'
+        else:
+            add_option += ' -fPIC'
+    elif Options.compiler == 'clang':
+        add_option = '-pipe -O3 -ffast-math -funroll-loops -finline-functions -fPIC'
     else:
-        if Options.compiler == 'clang': add_option = '-pipe -O3 -ffast-math -funroll-loops -finline-functions -fPIC'
-        else: add_option = '-pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
+        add_option = '-pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
     #if Platform == 'cygwin' : add_option =''
-    add_option += ' -DBOOST_PYTHON_MAX_ARITY=25 -DNDEBUG -DPYROSETTA'
-    if Options.compiler == 'clang': add_option += ' -w'
+    add_option += ' -DBOOST_PYTHON_MAX_ARITY=25 -DPYROSETTA'
+    add_option += (' -DDEBUG' if Options.debug_bindings else ' -DNDEBUG')
+
+    if not Options.numpy_support:
+        add_option += ' -DPYROSETTA_NO_NUMPY'
+
+    if Options.compiler == 'clang':
+        add_option += ' -w'
+
     return add_option
 
 

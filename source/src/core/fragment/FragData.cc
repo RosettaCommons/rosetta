@@ -79,6 +79,17 @@ FragDataOP FragData::clone() const {
 	return fd;
 }
 
+void FragData::copy(FragData const& frag_data)
+{
+	data_ = SRFD_List(frag_data.data_.size());
+	for ( Size pos = 1; pos<=frag_data.data_.size(); pos++ ) {
+		data_[pos] = frag_data.data_[pos]->clone();
+	};
+
+	valid_ = frag_data.valid_;
+	score_ = frag_data.score_;
+}
+
 Size FragData::apply( MoveMap const& mm, pose::Pose& pose, Size start, Size end ) const {
 	if ( !is_valid() ) return 0;
 	Size pos = start;
@@ -258,6 +269,26 @@ void FragData::show_classic( std::ostream &os ) const {
 
 FragDataOP AnnotatedFragData::clone() const {
 	return new AnnotatedFragData( pdbid_, startpos_, *Parent::clone() );
+}
+
+void AnnotatedFragData::copy(FragData const& frag_data)
+{
+	FragData::copy(frag_data);
+	pdbid_ = frag_data.pdbid();
+	chain_ = frag_data.chain();
+	startpos_ = frag_data.pdbpos();
+}
+
+FragDataOP AnnotatedFragData::generate_sub_fragment( Size start, Size stop ) {
+	runtime_assert( stop >= start );
+	runtime_assert( stop <= size() );
+	FragDataOP new_frag = new AnnotatedFragData(pdbid_, startpos_ + start - 1, chain_);
+
+	for ( Size pos = start; pos<=stop; pos++ ) {
+		new_frag->add_residue( data_[ pos] ); //reuse of data
+	}
+	new_frag->set_valid();
+	return new_frag;
 }
 
 

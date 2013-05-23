@@ -164,8 +164,8 @@ void
 SwapSegment::apply( core::pose::Pose & pose )
 {
 
-	core::pose::PoseOP segment = new core::pose::Pose( seeds_pdb_->split_by_chain( from_chain_ ) );
-	core::pose::PoseOP target_c = new core::pose::Pose( seeds_pdb_->split_by_chain( swap_chain_ ) );
+	core::pose::PoseOP segment = seeds_pdb_->split_by_chain( from_chain_ );
+	core::pose::PoseOP target_c = seeds_pdb_->split_by_chain( swap_chain_ );
 	//assert sizes of target chain and input pose chain
 
 	TR.Debug<<"chains: "<< pose.conformation().num_chains() <<" total residues: " <<pose.total_residue() <<std::endl;

@@ -20,7 +20,7 @@
 #include <core/fragment/FrameList.fwd.hh>
 
 // Package Headers
-#include <core/fragment/Frame.fwd.hh>
+#include <core/fragment/Frame.hh>
 // AUTO-REMOVED #include <core/fragment/FragID.hh>
 
 // Utility headers
@@ -43,6 +43,8 @@ public:
 	// this allows uniform sampling over all fragments in the FrameList.
 	FragID fragID ( Size flat_nr );
 	Size flat_size() const;
+
+	utility::vector1<FrameOP> frame_vector() { return utility::vector1<FrameOP>(*this); }
 };
 
 extern std::ostream& operator<< ( std::ostream& out, FrameList const& );

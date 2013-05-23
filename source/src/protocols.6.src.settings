@@ -175,38 +175,39 @@ sources = {
 		"VLB",
                 "DockWithHotspotMover",
 	],
-	"protocols/seeded_abinitio": [
-		"CAcstGenerator",
-		"CloseFold",
-		"CoordinateCst",
-		"DefineMovableLoops",
-		"GrowPeptides",
-		"SeededAbinitio_util",
-		"SeedFoldTree",
-		"SeedSetupMover",
-		"SwapSegment",
-		"SegmentHybridizer"
-	],
-	"protocols/sic_dock" : [ # sheffler
-		"Rose",
-		"SICFast",
-		"RigidScore",
-		"util",
-		"loophash_util",
-		"designability_score",
-		"read_biounit",
-		"xyzStripeHashPose",
-	],
-	"protocols/sic_dock/scores" : [
-		"MotifHashRigidScore",
-		"TrisBpyScore",
-	],
+  "protocols/seeded_abinitio": [
+    "CAcstGenerator",
+    "CloseFold",
+    "CoordinateCst",
+    "DefineMovableLoops",
+    "GrowPeptides",
+    "SeededAbinitio_util",
+    "SeedFoldTree",
+    "SeedSetupMover",
+    "SwapSegment",
+    "SegmentHybridizer",
+    "util"
+  ],
+  "protocols/sic_dock" : [ # sheffler
+    "Rose",
+    "SICFast",
+    "RigidScore",
+    "util",
+    "loophash_util",
+    "designability_score",
+    "read_biounit",
+    "xyzStripeHashPose",
+  ],
+  "protocols/sic_dock/scores" : [
+    "MotifHashRigidScore",
+    "TrisBpyScore",
+  ],
 	"protocols/motif_grafting/movers": [
 		"MotifGraftMover",
 	],
-	"protocols/motif_hash" : [
-		"motif_hash_stuff",
-	],
+  "protocols/motif_hash" : [
+    "motif_hash_stuff",
+  ],
 }
 include_path = [
 ]

@@ -134,6 +134,9 @@ public:
 	static
 	TagPtr create(std::istream& in); // creates a new tag and reads into it
 
+	static
+	TagPtr create(std::string instring); // creates a new tag and reads into it
+
 	TagPtr clone() const;
 
 private:

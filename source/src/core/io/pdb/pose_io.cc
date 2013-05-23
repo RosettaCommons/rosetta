@@ -229,7 +229,14 @@ dump_pdb_residue(
 	}
 }
 
-
+void
+dump_pdb_residue(
+	conformation::Residue const & rsd,
+	std::ostream & out,
+	Size start_atom_number)
+{
+	dump_pdb_residue(rsd, start_atom_number, out);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 void

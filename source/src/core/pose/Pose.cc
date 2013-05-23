@@ -286,66 +286,67 @@ Pose::split_by_chain() const
 {
 	utility::vector1<PoseOP> singlechain_poses;
 
-	if ( conformation_->num_chains() == 1 ) {
-		singlechain_poses.push_back( new Pose(*this) );
-		return singlechain_poses;
+	for (core::Size i = 1; i <= conformation_->num_chains(); i++)
+	{
+		singlechain_poses.push_back( split_by_chain(i) );
 	}
 
-	for ( Size i = 1; i <= conformation_->num_chains(); ++i ) {
-		core::pose::PoseOP chain_pose;
-		Size chain_begin, chain_end, delete_begin, delete_end;
-
-		chain_pose = new Pose(*this);
-		chain_begin = chain_pose->conformation().chain_begin( i );
-		chain_end = chain_pose->conformation().chain_end( i );
-
-		// if this is the first chain, delete chain_end to the end of the pose
-		if (chain_begin == 1) {
-			delete_begin = chain_end + 1;
-			delete_end = chain_pose->total_residue();
-			chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
-		}
-		// if this is the last chain, delete the start of the pose to chain_begin
-		else if ( chain_end == chain_pose->total_residue() ) {
-			delete_begin = 1;
-			delete_end = chain_begin - 1;
-			chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
-		}
-		// otherwise, make two deletes around the chain of interest
-		else {
-			delete_begin = 1;
-			delete_end = chain_begin - 1;
-			chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
-			// just deleted residues --> renumbering pose, so need to reset deletion mask
-			delete_begin = chain_end - chain_begin + 2;
-			delete_end = chain_pose->total_residue();
-			chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
-		}
-
-		// disulfides
-		using basic::options::option;
-		using namespace basic::options::OptionKeys;
-		if ( option[ in::detect_disulf ].user() ?
-				option[ in::detect_disulf ]() : // detect_disulf true
-				chain_pose->is_fullatom() ) // detect_disulf default but fa pose
-		{
-			chain_pose->conformation().detect_disulfides();
-		}
-
-		// restore broken pdb_info to new pose ~ Labonte
-		chain_pose->pdb_info()->obsolete(false);
-
-		singlechain_poses.push_back( chain_pose );
-	}
 	return singlechain_poses;
 }
 
-/// @details.  new pose from a set of residues
-Pose
-Pose::split_by_chain(Size const chain_id) const{
-	core::Size const begin = conformation().chain_begin(chain_id);
-	core::Size const end = conformation().chain_end(chain_id);
-	return Pose(*this, begin, end);
+/// @details. Returns a pose containing only the given chain. 
+PoseOP
+Pose::split_by_chain(Size const chain_id) const
+{
+
+	core::pose::PoseOP chain_pose = new Pose(*this);
+	Size chain_begin, chain_end, delete_begin, delete_end;
+
+	chain_begin = chain_pose->conformation().chain_begin( chain_id );
+	chain_end = chain_pose->conformation().chain_end( chain_id );
+
+	// if there is only one chain in the pose do nothing and return a copy of the pose
+	if ((conformation_->num_chains() == 1) && (chain_id == 1))
+	{
+
+	}
+	// if this is the first chain, delete chain_end to the end of the pose
+	else if (chain_begin == 1) {
+		delete_begin = chain_end + 1;
+		delete_end = chain_pose->total_residue();
+		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
+	}
+	// if this is the last chain, delete the start of the pose to chain_begin
+	else if ( chain_end == chain_pose->total_residue() ) {
+		delete_begin = 1;
+		delete_end = chain_begin - 1;
+		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
+	}
+	// otherwise, make two deletes around the chain of interest
+	else {
+		delete_begin = 1;
+		delete_end = chain_begin - 1;
+		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
+		// just deleted residues --> renumbering pose, so need to reset deletion mask
+		delete_begin = chain_end - chain_begin + 2;
+		delete_end = chain_pose->total_residue();
+		chain_pose->conformation().delete_residue_range_slow( delete_begin, delete_end );
+	}
+
+	// disulfides
+	using basic::options::option;
+	using namespace basic::options::OptionKeys;
+	if ( option[ in::detect_disulf ].user() ?
+			option[ in::detect_disulf ]() : // detect_disulf true
+			chain_pose->is_fullatom() ) // detect_disulf default but fa pose
+	{
+		chain_pose->conformation().detect_disulfides();
+	}
+
+	// restore broken pdb_info to new pose ~ Labonte
+	chain_pose->pdb_info()->obsolete(false);
+
+	return chain_pose;
 }
 
 
@@ -1504,6 +1505,8 @@ Pose::pdb_info( PDBInfoOP new_info )
 	} else {
 		pdb_info_.reset_to_null();
 	}
+
+	PyAssert( pdb_info_ ? pdb_info_->nres() == total_residue() : true, "Invalid PDBInfo, pdb_info_->nres() != total_residue()" );
 
 	assert( pdb_info_ ? pdb_info_->nres() == total_residue() : true );
 

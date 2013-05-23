@@ -150,7 +150,7 @@ LigandBurial::calculate_ligand_sasa() {
 
 	//assume the ligand is the second of 2 chains.
 	//possible to append 1 residue to new pose?
-	Pose chain_ligand_only( pose_.split_by_chain(2) );
+	PoseOP chain_ligand_only = pose_.split_by_chain(2);
 
 	using core::id::AtomID;
 	utility::vector1<Real> rsd_sasa(pose_.n_residue(),0.0);

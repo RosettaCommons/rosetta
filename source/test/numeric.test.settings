@@ -17,6 +17,7 @@ sources = {
 		"ClusteringTreeNode",
 		"color_util",
 		"conversions",
+		"EulerAngles",
 		"HomogeneousTransform",
 		"interpolate",
 		"MultiDimensionalHistogram",

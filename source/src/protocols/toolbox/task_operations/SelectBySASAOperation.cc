@@ -121,7 +121,7 @@ SelectBySASAOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 		utility::vector1<bool> indy_resi;
 	
 		if( state_ == "monomer" ) {
-			sasa_pose = mono.split_by_chain(i);
+			sasa_pose = *mono.split_by_chain(i);
 		}	else {
 			sasa_pose = pose; 
 			if (core::pose::symmetry::is_symmetric(sasa_pose)) {

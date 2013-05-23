@@ -315,7 +315,7 @@ public:
 	split_by_chain() const;
 
 	/// @brief
-	Pose
+	PoseOP
 	split_by_chain(Size chain_id) const;
 
 	// TODO: Move to util.hh.

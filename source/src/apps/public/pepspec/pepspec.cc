@@ -909,7 +909,8 @@ initialize_peptide(
 				AtomID( rsd2.atom_index( "C" ), pep_anchor ) ) ;
 		RT const rt( pose.conformation().get_stub_transform( upstubid, downstubid ) );
 
-		pose = pose.split_by_chain( prot_chain );
+		pose = *pose.split_by_chain( prot_chain );
+
 		ResidueOP pep_anchor_res_ptr( ResidueFactory::create_residue( pose.residue( 1 ).residue_type_set().name_map( pep_anchor_type ) ) );
 		pose.append_residue_by_jump( *pep_anchor_res_ptr, prot_anchor, "", "", true );
 		pose.conformation().set_stub_transform( upstubid, downstubid, rt );
@@ -1443,7 +1444,7 @@ get_binding_score(
 {
 	( *full_scorefxn )( pose );
 	Real total_score( pose.energies().total_energies().dot( full_scorefxn->weights() ) );
-	Pose pep_pose( pose.split_by_chain( pep_chain ) );
+	Pose pep_pose( *pose.split_by_chain( pep_chain ) );
 	packmin_unbound_pep( pep_pose, full_scorefxn );
 	( *full_scorefxn )( pep_pose );
 	Real pep_score = pep_pose.energies().total_energies().dot( full_scorefxn->weights() );
@@ -1732,7 +1733,7 @@ RunPepSpec()
 		pose.fold_tree( f );
 
 		pose::Pose start_pose( pose );
-		Pose prot_pose = pose.split_by_chain( prot_chain );
+		Pose prot_pose = *pose.split_by_chain( prot_chain );
 		( *full_scorefxn )( prot_pose );
 		packmin_unbound_pep( prot_pose, full_scorefxn );
 		Real prot_score( prot_pose.energies().total_energies().dot( full_scorefxn->weights() ) );

@@ -202,6 +202,18 @@ public:
 		return xyzVector< T >( px_, py_, pz_ );
 	}
 
+	xyzMatrix< T >
+	rotation_matrix() const {
+
+		// Entry naming is reversed from that of xyzMatrix,
+		// see (xyzVector, xyzMatrix) constructor for specifc details.
+		
+		return xyzMatrix< T >::rows_constructor(
+			xyzVector< T >( xx_, yx_, zx_ ),
+			xyzVector< T >( xy_, yy_, zy_ ),
+			xyzVector< T >( xz_, yz_, zz_ ));
+	}
+
 
 public:
 	/// Mutators

@@ -134,8 +134,6 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 
 	if( !new_input ) return modified_pose;
 
-	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
-
 	std::string const dock_design_filename( xml_fname == "" ? option[ OptionKeys::parser::protocol ] : xml_fname );
 	TR << "dock_design_filename=" << dock_design_filename << std::endl;
 	utility::io::izstream fin;
@@ -143,6 +141,7 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 	if( !fin.good() ){
 		utility_exit_with_message("Unable to open Rosetta Scripts XML file: '" + dock_design_filename + "'.");
 	}
+
 	TagPtr tag;
 	if( option[ OptionKeys::parser::script_vars ].user() ) {
 		std::stringstream fin_sub;
@@ -152,11 +151,50 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 	else {
 		tag = utility::tag::Tag::create(fin);
 	}
+
 	fin.close();
 	TR << "Parsed script:" << "\n";
 	TR << tag;
 	TR.flush();
 	runtime_assert( tag->getName() == "dock_design" || tag->getName() == "ROSETTASCRIPTS" );
+
+	in_mover = generate_mover_for_protocol(pose, modified_pose, tag);
+
+	return modified_pose;
+}
+
+MoverOP DockDesignParser::parse_protocol_tag(Pose & pose, utility::tag::TagPtr protocol_tag)
+{
+	bool modified_pose = false;
+
+	MoverOP mover =  generate_mover_for_protocol(pose, modified_pose, protocol_tag);
+
+	if (modified_pose)
+	{
+		utility_exit_with_message("parse_protocol_tag resulted in modified_pose");
+	}
+
+	return mover;
+}
+
+MoverOP DockDesignParser::parse_protocol_tag(TagPtr protocol_tag)
+{
+	Pose temp_pose;
+	bool modified_pose = false;
+
+	MoverOP mover =  generate_mover_for_protocol(temp_pose, modified_pose, protocol_tag);
+
+	if (modified_pose)
+	{
+		utility_exit_with_message("parse_protocol_tag resulted in modified_pose");
+	}
+
+	return mover;
+}
+
+MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modified_pose, TagPtr tag)
+{
+	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
 
 	Movers_map movers;
 	protocols::filters::Filters_map filters;
@@ -302,8 +340,8 @@ DockDesignParser::generate_mover_from_pose( JobCOP, Pose & pose, MoverOP & in_mo
 	}
 
 	tag->die_for_unaccessed_options_recursively();
-	in_mover = protocol;
-	return modified_pose;
+
+	return protocol;
 }
 
 ///@brief Create a variable substituted version of the input stream, given a StringVectorOption formated list of variables

@@ -209,7 +209,7 @@ PlaceStubMover::place_stub( core::pose::Pose & pose, core::conformation::Residue
 	// on the target-scaffold complex
 		runtime_assert( host_chain_==2 );// other options not supported yet
 
-		core::pose::Pose partner_chain( pose.split_by_chain( 1 ) );
+		core::pose::Pose partner_chain( *pose.split_by_chain( 1 ) );
 		TR_debug<<"foldtree before append: "<<partner_chain.fold_tree()<<std::endl;
 		partner_chain.append_residue_by_jump( res_stub, 1 );
 		TR_debug<<"foldtree after append: "<<partner_chain.fold_tree()<<std::endl;

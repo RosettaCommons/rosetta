@@ -40,6 +40,7 @@ typedef  double  Real;
 #endif
 
 typedef platform::Size Size;
+typedef platform::SSize SSize;
 
 } // namespace numeric
 

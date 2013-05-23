@@ -247,7 +247,7 @@ JointSequenceOperation::add_pdb( std::string filename )
 	core::import_pose::pose_from_pdb( new_pose, filename );
 	if( chain_ > 0 ){
 		TR << "taking only chain " << chain_ << std::endl;
-		pose = new_pose.split_by_chain( chain_ ) ;
+		pose = *new_pose.split_by_chain( chain_ ) ;
 	}
 	else
 		pose = new_pose;

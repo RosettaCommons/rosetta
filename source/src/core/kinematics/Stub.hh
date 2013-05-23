@@ -173,9 +173,15 @@ public: // Methods
 public: // Fields
 	///@brief coord frame by 3x3 matrix, each column is a unit vector
 	Matrix M;
+
+	///@brief Coordinate frame rotation matrix.
+	Matrix rotation() const { return M; }
+
 	///@brief center point by a vector
 	Vector v;
 
+	///@brief Coordinate frame center.
+	Vector center() const { return v; }
 }; // Stub
 
 /// @brief root sqared deviation between two stubs

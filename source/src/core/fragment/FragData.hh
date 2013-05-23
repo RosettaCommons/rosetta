@@ -79,6 +79,9 @@ public:
 	// set FragData from the given pose ( inverse of apply )
 	virtual bool steal( pose::Pose const&, Size start, Size end ); // continous application to length residues
 	virtual bool steal( pose::Pose const&, Frame const& ); //application to any set of residues specified by the Frame
+	
+	// copy FragData from the given FragData
+	virtual void copy(FragData const& frag_data);
 
 	// check if both frag_data contain the same number and types of SRFD
 	bool is_compatible( FragData const& frag_data ) const;
@@ -134,8 +137,8 @@ public:
 		return data_[ pos ];
 	}
 
-	//returns new FragData object with residues start...stop
-	FragDataOP generate_sub_fragment( Size start, Size stop ) const;
+	//@brief Generates a fragment referencing the residues start..stop, does not copy SRFD.
+	virtual FragDataOP generate_sub_fragment( Size start, Size stop ) const;
 
 	virtual void show( std::ostream &out ) const;
 	virtual void show( std::ostream &out, Frame const& ) const;
@@ -174,9 +177,9 @@ public:
 
 protected: // make private
 	FragData( Size nr_res ) : data_( nr_res ) {};
+	SRFD_List data_;
 
 private:
-	SRFD_List data_;
 
 	// this will be true if dofs are set ( via steal, or IO )
 	bool valid_;
@@ -203,6 +206,11 @@ public:
 
 	virtual FragDataOP clone() const;
 
+	virtual void copy(FragData const& frag_data);
+
+	//@brief Generates a fragment referencing a subset of the given fragment, does not copy SRFD.
+	virtual FragDataOP generate_sub_fragment( Size start, Size stop );
+
 	virtual std::string pdbid() const  {
 		return pdbid_;
 	}
@@ -214,6 +222,7 @@ public:
   virtual char chain() const {
     return chain_;
   }
+
 
 private:
   /// @brief common initialization routine

@@ -1874,7 +1874,7 @@ private:
 	Residue const &
 	operator = ( Residue const & rhs );
 
-	/// @brief Orient coords onto those of  <src>, using the specified atoms
+	/// @brief Orient coords onto those of <src>, using the specified atoms
 	void orient_onto_residue(
 			Residue const & src,
 			Size center, Size nbr1, Size nbr2,
@@ -1911,6 +1911,7 @@ private:
 	/// @brief the action coordinate, an interaction centroid for knowledge-based terms like fa-pair
 	/// in fact, only for fa-pair
 	Vector actcoord_;
+
 
 
 

@@ -83,6 +83,10 @@
 #include <boost/spirit/include/classic_functor_parser.hpp>
 #include <platform/types.hh>
 
+#include <string>
+#include <iostream>
+#include <sstream>
+
 namespace boost {
 	void throw_exception(std::exception const&) {
 		std::cerr << "some kind of exception was thrown" << std::endl;
@@ -90,7 +94,6 @@ namespace boost {
 }
 
 namespace utility {
-
 namespace tag {
 
 /// @details Auto-generated virtual destructor
@@ -497,6 +500,13 @@ Tag::create(std::istream& in) {
 	TagPtr tag( new Tag() );
 	tag->read(in);
 	return tag;
+} // creates a new tag and reads into it
+
+TagPtr
+Tag::create(std::string instring) {
+	std::stringstream in(instring);
+
+	return create(in);
 } // creates a new tag and reads into it
 
 TagPtr
