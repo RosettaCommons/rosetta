@@ -37,8 +37,10 @@ cd %(workdir)s
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 
 if type -P sqlite3 &>/dev/null; then
-   sqlite3 features_IntegrationTest.db3 < dump.sql | egrep -vf ../../ignore_list > features_IntegrationTest.db3.dump 
+   sqlite3 features_hb_implicit.db3 < dump.sql | egrep -vf ../../ignore_list > features_implicit.db3.dump
+   sqlite3 features_hb_explicit.db3 < dump.sql | egrep -vf ../../ignore_list > features_explicit.db3.dump
 else
    echo "Please install the sqlite3 command line application to correctly run this test." > log_db_output
 fi
-rm -rf features_IntegrationTest.db3
+rm -rf features_hb_implicit.db3
+rm -rf features_hb_explicit.db3

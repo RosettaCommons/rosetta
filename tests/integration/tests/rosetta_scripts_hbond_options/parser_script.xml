@@ -1,69 +1,57 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
-		<s weights=score12_w_corrections>
-			<Set decompose_bb_hb_into_pair_energies=1/>
-		</s>	
+		<s_implicit weights=score12prime/>
+
+		<s_explicit weights=score12prime>
+		        Parameters options
+			<Set hbonds:params_database_tag=sp2_hackelec_params/>
+
+			Functional form options
+			<Set hbonds:exclude_self_hbonds=true/>
+			<Set hbonds:smooth_hb_env_dep=true/>
+			<Set hbonds:bb_donor_acceptor_check=true/>
+			<Set hbonds:use_incorrect_deriv=false/>
+
+			Scoring options
+			<Set hbonds:decompose_bb_hb_into_pair_energies=false/>
+
+		        nucleic acid options
+			<Set hbonds:exclude_DNA_DNA_hbond=true/>
+			<Set hbonds:use_hb_env_dep_DNA=true/>
+			<Set hbonds:include_intra_res_RNA=false/>
+
+			Membrane options
+			<Set hbonds:Mbhbond=false/>
+
+			Sp2 options
+			<Set hbonds:use_sp2_chi_penalty=true/>
+			<Set hbonds:sp2_BAH180_rise=.75/>
+			<Set hbonds:sp2_outer_width=0.357/>
+			<Set hbonds:measure_sp3acc_BAH_from_hvy=true/>
+			<Set hbonds:fade_energy=true/>
+		</s_explicit>	
 	</SCOREFXNS>
-	<TASKOPERATIONS>
-		<ReadResfileFromDB name=all database_name=resfiles.db3 database_mode=sqlite3 database_table=resfiles/>
-	</TASKOPERATIONS>
 	<MOVERS>
-		<SavePoseMover name=init_struct reference_name=init_struct/>
-		<ReportToDB name=features_reporter database_name="features_IntegrationTest.db3" batch_description="Test the whole feature generation code stack." task_operations=all>
-			Meta
-			<feature name=PoseCommentsFeatures/>
-
-			Chemical
-			<feature name=AtomTypesFeatures/>
-
-			One-Body
+		<ReportToDB
+			name=hb_implicit
+			database_name="features_IntegrationTest.db3"
+			batch_description="Test implicit specification of hbond parameters.">
 			<feature name=ResidueFeatures/>
-			<feature name=BetaTurnDetectionFeatures/>
-			<feature name=ProteinBackboneTorsionAngleFeatures/>
-			<feature name=ProteinResidueConformationFeatures/>
-			<feature name=ResidueBurialFeatures/>
-			<feature name=ResidueSecondaryStructureFeatures/>
-			<feature name=SecondaryStructureSegmentFeatures/>
-			<feature name=SmotifFeatures/>
+			<feature name=HBondFeatures scorefxn=s_implicit/>
+		</ReportToDB>
 
-			Two-Body
-			<feature name=AtomAtomPairFeatures min_dist=0 max_dist=3 nbins=2/>
-			<feature name=HBondFeatures scorefxn=s definition_type=AHdist definition_threshold=1.8/>
-			<feature name=ChargeChargeFeatures/>
-			<feature name=LoopAnchorFeatures min_loop_length=5 max_loop_length=7/>
-			<feature name=OrbitalsFeatures/>
-			<feature name=ProteinBackboneAtomAtomPairFeatures/>
-			<feature name=SaltBridgeFeatures/>
+		<ReportToDB
+			name=hb_explicit
+			database_name="features_hb_explicit.db3"
+			batch_description="Test explicit specification of default hbond parameters">
+			<feature name=ResidueFeatures/>
+			<feature name=HBondFeatures scorefxn=s_explicit/>
+		</ReportToDB>
 
-			Multi-Body
-			<feature name=GeometricSolvationFeatures/>
-			<feature name=HelixBundleFeatures/>
-			<feature name=SandwichFeatures/>
-			<feature name=StrandBundleFeatures/>
-			<feature name=PairFeatures/>
-			<feature name=PoseConformationFeatures/>
-			<feature name=RadiusOfGyrationFeatures/>
 
-			Multi-Structure
-			<feature name=ProteinRMSDFeatures reference_name=init_struct/>
-			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolRTMin comparer=RRComparerAutomorphicRMSD/>
-
-			Energy-Function
-			<feature name=HBondParameterFeatures scorefxn=s/>
-			<feature name=ScoreTypeFeatures/>
-			<feature name=ResidueScoresFeatures scorefxn=s/>
-			<feature name=ResidueTotalScoresFeatures scorefxn=s/>
-			<feature name=StructureScoresFeatures scorefxn=s/>
-			<feature name=ScoreFunctionFeatures scorefxn=s/>
-
-			Experimental
-			<feature name=PdbDataFeatures/>
-
-    </ReportToDB>
 	</MOVERS>
 	<PROTOCOLS>
-		<Add mover_name=init_struct/>
-		<Add mover_name=features_reporter/>
+		<Add mover_name=hb_implicit/>
+		<Add mover_name=hb_explicit/>
 	</PROTOCOLS>
 </ROSETTASCRIPTS>
-
