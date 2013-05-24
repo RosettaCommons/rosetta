@@ -27,6 +27,7 @@ namespace relax { extern BooleanOptionKey const thorough; }
 namespace relax { extern BooleanOptionKey const membrane; }
 namespace relax { extern BooleanOptionKey const centroid_mode; }
 namespace relax { extern IntegerOptionKey const default_repeats; }
+namespace relax { extern BooleanOptionKey const dualspace; }
 namespace relax { extern BooleanOptionKey const ramady; }
 namespace relax { extern RealOptionKey const ramady_rms_limit; }
 namespace relax { extern RealOptionKey const ramady_cutoff; }

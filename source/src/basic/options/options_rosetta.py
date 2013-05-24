@@ -2232,6 +2232,7 @@ Options = Option_Group( '',
 		Option( 'membrane',                  'Boolean', desc='Do membrane relax', default='false' ),
 		Option( 'centroid_mode',             'Boolean', desc="Use centroid relax protocol", default='false'),
 		Option( 'default_repeats',            'Integer', desc='Default number of repeats done by FastRelax. Has no effect if a custom script is used!', default='5' ),
+		Option( 'dualspace',                 'Boolean', desc='Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cat_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended' ),
 
 		## Options for Sequence Relax
 		Option( 'ramady',                    'Boolean', desc='Run ramady code which aleviates stuck bad ramachandran energies', default='false' ),

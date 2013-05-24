@@ -1122,6 +1122,7 @@ option.add( basic::options::OptionKeys::relax::thorough, "Do a preset, large cyc
 option.add( basic::options::OptionKeys::relax::membrane, "Do membrane relax" ).def(false);
 option.add( basic::options::OptionKeys::relax::centroid_mode, "Use centroid relax protocol" ).def(false);
 option.add( basic::options::OptionKeys::relax::default_repeats, "Default number of repeats done by FastRelax. Has no effect if a custom script is used!" ).def(5);
+option.add( basic::options::OptionKeys::relax::dualspace, "Do 3 FastRelax cycles of internal coordinate relax followed by two cycles of Cartesian relax - cat_bonded energy term is required, pro_close energy term should be turned off, and use of -relax::minimize_bond_angles is recommended" );
 option.add( basic::options::OptionKeys::relax::ramady, "Run ramady code which aleviates stuck bad ramachandran energies" ).def(false);
 option.add( basic::options::OptionKeys::relax::ramady_rms_limit, "(ramady-only) Reject rama changes which perturb structure by more than this" ).def(0.5);
 option.add( basic::options::OptionKeys::relax::ramady_cutoff, "(ramady-only) Cutoff at which a rama is considered bad" ).def(2.0);
@@ -1410,10 +1411,10 @@ option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).
 option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
 option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
+option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
@@ -2115,10 +2116,10 @@ option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility:
 option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
 option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
-option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optE_no_protein_hack_elec, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
+option.add( basic::options::OptionKeys::optE::optE_no_protein_hack_elec, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" ).def(false);
 option.add( basic::options::OptionKeys::optE::design_first, "Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights." );
 option.add( basic::options::OptionKeys::optE::n_design_cycles, "The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred" ).def(10);
 option.add( basic::options::OptionKeys::optE::recover_nat_rot, "With the iterative optE driver, repack to recover the native rotamers" );

@@ -1,3 +1,4 @@
+namespace optE { BooleanOptionKey const no_hb_env_dependence_DNA( "optE:no_hb_env_dependence_DNA" );  }
 namespace optE { BooleanOptionKey const optE_no_protein_hack_elec( "optE:optE_no_protein_hack_elec" );  }
 namespace optE { BooleanOptionKey const design_first( "optE:design_first" );  }
 namespace optE { IntegerOptionKey const n_design_cycles( "optE:n_design_cycles" );  }

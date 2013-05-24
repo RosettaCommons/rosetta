@@ -745,7 +745,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		if( cmd.command.substr(0,6) == "switch" ){
 				// no input validation as of now, relax will just die
 				if( cmd.command.substr(7) == "torsion" ) {
-					TR << "Using AtomTreeMinimizer with dfp"  << std::endl;
+					TR << "Using AtomTreeMinimizer"  << std::endl;
 					cartesian( false );
 				} else if( cmd.command.substr(7) == "cartesian" ) {
 					TR << "Using CartesianMinizer with lbfgs"  << std::endl;
@@ -961,7 +961,26 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 	std::string line;
 
 	runtime_assert( standard_repeats > 0 );
-	if( script_file == "" ){
+	if( script_file == "" && basic::options::option[ basic::options::OptionKeys::relax::dualspace ]() ){
+    TR << "================== Using dualspace script ==================" << std::endl;
+    filelines.push_back( "switch:torsion"  								 );
+    filelines.push_back( "repeat 3"  															 );
+    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
+    filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
+    filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
+    filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
+    filelines.push_back( "accept_to_best"                  );
+    filelines.push_back( "endrepeat "                      );
+
+    filelines.push_back( "switch:cartesian"  								 );
+    filelines.push_back( "repeat 2"  															 );
+    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
+    filelines.push_back( "ramp_repack_min 0.250 0.01     0.5"      );
+    filelines.push_back( "ramp_repack_min 0.550 0.01     0.0"      );
+    filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
+    filelines.push_back( "accept_to_best"                  );
+    filelines.push_back( "endrepeat "                      );
+	}else if( script_file == "" ){
 		TR << "================== Using default script ==================" << std::endl;
 		filelines.push_back( "repeat " + string_of( standard_repeats )  );
 		filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
@@ -970,6 +989,25 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
 		filelines.push_back( "ramp_repack_min 1     0.00001  0.0"      );
 		filelines.push_back( "accept_to_best"                  );
 		filelines.push_back( "endrepeat "                      );
+	}else if (script_file == "NO CST RAMPING" && basic::options::option[ basic::options::OptionKeys::relax::dualspace ]() ){
+    TR << "================== Using dualspace script ==================" << std::endl;
+    filelines.push_back( "switch:torsion"                  );
+    filelines.push_back( "repeat 3"                                );
+    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
+    filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
+    filelines.push_back( "ramp_repack_min 0.550 0.01     1.0"      );
+    filelines.push_back( "ramp_repack_min 1     0.00001  1.0"      );
+    filelines.push_back( "accept_to_best"                  );
+    filelines.push_back( "endrepeat "                      );
+
+    filelines.push_back( "switch:cartesian"                  );
+    filelines.push_back( "repeat 2"                                );
+    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0"      );
+    filelines.push_back( "ramp_repack_min 0.250 0.01     1.0"      );
+    filelines.push_back( "ramp_repack_min 0.550 0.01     1.0"      );
+    filelines.push_back( "ramp_repack_min 1     0.00001  1.0"      );
+    filelines.push_back( "accept_to_best"                  );
+    filelines.push_back( "endrepeat "                      );
 	}else if (script_file == "NO CST RAMPING"){
 		TR << "================== Using default script ==================" << std::endl;
 		filelines.push_back( "repeat " + string_of( standard_repeats )  );

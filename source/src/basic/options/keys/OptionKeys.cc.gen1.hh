@@ -412,6 +412,7 @@ namespace relax { BooleanOptionKey const thorough( "relax:thorough" );  }
 namespace relax { BooleanOptionKey const membrane( "relax:membrane" );  }
 namespace relax { BooleanOptionKey const centroid_mode( "relax:centroid_mode" );  }
 namespace relax { IntegerOptionKey const default_repeats( "relax:default_repeats" );  }
+namespace relax { BooleanOptionKey const dualspace( "relax:dualspace" );  }
 namespace relax { BooleanOptionKey const ramady( "relax:ramady" );  }
 namespace relax { RealOptionKey const ramady_rms_limit( "relax:ramady_rms_limit" );  }
 namespace relax { RealOptionKey const ramady_cutoff( "relax:ramady_cutoff" );  }
@@ -700,4 +701,3 @@ namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
 namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
 namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
 namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
-namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
