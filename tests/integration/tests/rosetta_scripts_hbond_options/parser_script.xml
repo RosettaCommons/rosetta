@@ -34,7 +34,7 @@
 	<MOVERS>
 		<ReportToDB
 			name=hb_implicit
-			database_name="features_IntegrationTest.db3"
+			database_name="features_hb_implicit.db3"
 			batch_description="Test implicit specification of hbond parameters.">
 			<feature name=ResidueFeatures/>
 			<feature name=HBondFeatures scorefxn=s_implicit/>

@@ -105,6 +105,7 @@ using core::scoring::ScoreFunction;
 using core::scoring::ScoringManager;
 using core::scoring::ScoreTypes;
 using core::scoring::TenANeighborGraph;
+using core::scoring::etable::AnalyticEtableEnergy;
 using core::scoring::etable::TableLookupEtableEnergy;
 using core::scoring::hbonds::HBDonChemType;
 using core::scoring::hbonds::HBAccChemType;
@@ -1047,49 +1048,85 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 	Size const don_datmNum(don_res.atom_base(don_hatmNum));
 	Size const acc_batmNum(acc_res.atom_base(acc_atmNum));
 
-	TableLookupEtableEnergy const etable_energy(
-		*ScoringManager::get_instance()->etable(
-			scfxn_->energy_method_options().etable_type() ),
-		scfxn_->energy_method_options() );
 
 	Real bb_dummy, dsq_dummy;
-
 	Real don_acc_atrE, don_acc_repE, don_acc_solv;
-	etable_energy.atom_pair_energy(
-		don_res.atom(don_datmNum), acc_res.atom(acc_atmNum),
-		/*weight*/ 1,
-		don_acc_atrE, don_acc_repE, don_acc_solv,
-		bb_dummy, dsq_dummy );
+	Real don_acc_base_atrE, don_acc_base_repE, don_acc_base_solv;
+	Real h_acc_atrE, h_acc_repE, h_acc_solv;
+	Real h_acc_base_atrE, h_acc_base_repE, h_acc_base_solv;
+
+	if ( scfxn_->energy_method_options().analytic_etable_evaluation() ) {
+		TableLookupEtableEnergy const etable_energy(
+			*ScoringManager::get_instance()->etable(
+				scfxn_->energy_method_options().etable_type() ),
+			scfxn_->energy_method_options() );
+
+		etable_energy.atom_pair_energy(
+			don_res.atom(don_datmNum), acc_res.atom(acc_atmNum),
+			/*weight*/ 1,
+			don_acc_atrE, don_acc_repE, don_acc_solv,
+			bb_dummy, dsq_dummy );
+
+		etable_energy.atom_pair_energy(
+			don_res.atom(don_datmNum), acc_res.atom(acc_batmNum),
+			/*weight*/ 1,
+			don_acc_base_atrE, don_acc_base_repE, don_acc_base_solv,
+			bb_dummy, dsq_dummy );
+
+		etable_energy.atom_pair_energy(
+			don_res.atom(don_hatmNum), acc_res.atom(acc_atmNum),
+			/*weight*/ 1,
+			h_acc_atrE, h_acc_repE, h_acc_solv,
+			bb_dummy, dsq_dummy );
+
+		etable_energy.atom_pair_energy(
+			don_res.atom(don_hatmNum), acc_res.atom(acc_batmNum),
+			/*weight*/ 1,
+			h_acc_base_atrE, h_acc_base_repE, h_acc_base_solv,
+			bb_dummy, dsq_dummy );
+	} else {
+		AnalyticEtableEnergy const etable_energy(
+			*ScoringManager::get_instance()->etable(
+				scfxn_->energy_method_options().etable_type() ),
+			scfxn_->energy_method_options() );
+
+		etable_energy.atom_pair_energy(
+			don_res.atom(don_datmNum), acc_res.atom(acc_atmNum),
+			/*weight*/ 1,
+			don_acc_atrE, don_acc_repE, don_acc_solv,
+			bb_dummy, dsq_dummy );
+
+		etable_energy.atom_pair_energy(
+			don_res.atom(don_datmNum), acc_res.atom(acc_batmNum),
+			/*weight*/ 1,
+			don_acc_base_atrE, don_acc_base_repE, don_acc_base_solv,
+			bb_dummy, dsq_dummy );
+
+		etable_energy.atom_pair_energy(
+			don_res.atom(don_hatmNum), acc_res.atom(acc_atmNum),
+			/*weight*/ 1,
+			h_acc_atrE, h_acc_repE, h_acc_solv,
+			bb_dummy, dsq_dummy );
+
+		etable_energy.atom_pair_energy(
+			don_res.atom(don_hatmNum), acc_res.atom(acc_batmNum),
+			/*weight*/ 1,
+			h_acc_base_atrE, h_acc_base_repE, h_acc_base_solv,
+			bb_dummy, dsq_dummy );
+	}
+
 	don_acc_atrE *= (*scfxn_)[ fa_atr ];
 	don_acc_repE *= (*scfxn_)[ fa_rep ];
 	don_acc_solv *= (*scfxn_)[ fa_sol ];
 
-	Real don_acc_base_atrE, don_acc_base_repE, don_acc_base_solv;
-	etable_energy.atom_pair_energy(
-		don_res.atom(don_datmNum), acc_res.atom(acc_batmNum),
-		/*weight*/ 1,
-		don_acc_base_atrE, don_acc_base_repE, don_acc_base_solv,
-		bb_dummy, dsq_dummy );
 	don_acc_base_atrE *= (*scfxn_)[ fa_atr ];
 	don_acc_base_repE *= (*scfxn_)[ fa_rep ];
 	don_acc_base_solv *= (*scfxn_)[ fa_sol ];
 
-	Real h_acc_atrE, h_acc_repE, h_acc_solv;
-	etable_energy.atom_pair_energy(
-		don_res.atom(don_hatmNum), acc_res.atom(acc_atmNum),
-		/*weight*/ 1,
-		h_acc_atrE, h_acc_repE, h_acc_solv,
-		bb_dummy, dsq_dummy );
 	h_acc_atrE *= (*scfxn_)[ fa_atr ];
 	h_acc_repE *= (*scfxn_)[ fa_rep ];
 	h_acc_solv *= (*scfxn_)[ fa_sol ];
 
-	Real h_acc_base_atrE, h_acc_base_repE, h_acc_base_solv;
-	etable_energy.atom_pair_energy(
-		don_res.atom(don_hatmNum), acc_res.atom(acc_batmNum),
-		/*weight*/ 1,
-		h_acc_base_atrE, h_acc_base_repE, h_acc_base_solv,
-		bb_dummy, dsq_dummy );
 	h_acc_base_atrE *= (*scfxn_)[ fa_atr ];
 	h_acc_base_repE *= (*scfxn_)[ fa_rep ];
 	h_acc_base_solv *= (*scfxn_)[ fa_sol ];
