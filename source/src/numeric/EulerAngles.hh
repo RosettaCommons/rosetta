@@ -218,7 +218,7 @@ class EulerAngles : public xyzVector<T>
 	Value &
 	phi()
 	{
-		return this->x();
+		return Vector::x();
 	}
 
 	/// @brief Set value phi in radians
@@ -226,7 +226,7 @@ class EulerAngles : public xyzVector<T>
 	void
 	phi(Value const & value )
 	{
-		x(value);
+		Vector::x(value);
 	}
 
 	/// @brief Value phi in radians
@@ -234,7 +234,7 @@ class EulerAngles : public xyzVector<T>
 	Value &
 	phi_radians()
 	{
-		return this->x();
+		return Vector::x();
 	}
 
 	/// @brief Set value phi in radians
@@ -242,7 +242,7 @@ class EulerAngles : public xyzVector<T>
 	void
 	phi_radians(Value const & value )
 	{
-		x(value);
+		Vector::x(value);
 	}
 
 	/// @brief Value phi in degrees
@@ -250,7 +250,7 @@ class EulerAngles : public xyzVector<T>
 	Value
 	phi_degrees()
 	{
-		return numeric::constants::d::radians_to_degrees * this->x();
+		return numeric::constants::d::radians_to_degrees * Vector::x();
 	}
 
 	/// @brief Set value phi in degrees
@@ -258,7 +258,7 @@ class EulerAngles : public xyzVector<T>
 	void
 	phi_degrees(Value const & value )
 	{
-		x(value * numeric::constants::d::degrees_to_radians);
+		Vector::x(value * numeric::constants::d::degrees_to_radians);
 	}
 
 	/// @brief Value psi in radians
@@ -266,7 +266,7 @@ class EulerAngles : public xyzVector<T>
 	Value &
 	psi()
 	{
-		return this->y();
+		return Vector::y();
 	}
 
 	/// @brief Set value psi in radians
@@ -274,7 +274,7 @@ class EulerAngles : public xyzVector<T>
 	void
 	psi(Value const & value )
 	{
-		y(value);
+		Vector::y(value);
 	}
 
 	/// @brief Value psi in radians
@@ -282,7 +282,7 @@ class EulerAngles : public xyzVector<T>
 	Value &
 	psi_radians()
 	{
-		return this->y();
+		return Vector::y();
 	}
 
 	/// @brief Set value psi in radians
@@ -290,7 +290,7 @@ class EulerAngles : public xyzVector<T>
 	void
 	psi_radians(Value const & value )
 	{
-		y(value);
+		Vector::y(value);
 	}
 
 	/// @brief Value psi in degrees
@@ -298,7 +298,7 @@ class EulerAngles : public xyzVector<T>
 	Value
 	psi_degrees()
 	{
-		return numeric::constants::d::radians_to_degrees * this->y();
+		return numeric::constants::d::radians_to_degrees * Vector::y();
 	}
 
 	/// @brief Set value psi in degrees
@@ -306,7 +306,7 @@ class EulerAngles : public xyzVector<T>
 	void
 	psi_degrees(Value const & value )
 	{
-		y(value * numeric::constants::d::degrees_to_radians);
+		Vector::y(value * numeric::constants::d::degrees_to_radians);
 	}
 
 	/// @brief Value theta in radians
@@ -314,7 +314,7 @@ class EulerAngles : public xyzVector<T>
 	Value &
 	theta()
 	{
-		return this->z();
+		return Vector::z();
 	}
 
 	/// @brief Set value theta in radians
@@ -322,7 +322,7 @@ class EulerAngles : public xyzVector<T>
 	void
 	theta(Value const & value )
 	{
-		z(value);
+		Vector::z(value);
 	}
 
 	/// @brief Value theta in radians
@@ -330,7 +330,7 @@ class EulerAngles : public xyzVector<T>
 	Value &
 	theta_radians()
 	{
-		return this->z();
+		return Vector::z();
 	}
 
 	/// @brief Set value theta in radians
@@ -338,7 +338,7 @@ class EulerAngles : public xyzVector<T>
 	void
 	theta_radians(Value const & value )
 	{
-		z(value);
+		Vector::z(value);
 	}
 
 	/// @brief Value theta in degrees
@@ -346,7 +346,7 @@ class EulerAngles : public xyzVector<T>
 	Value
 	theta_degrees()
 	{
-		return numeric::constants::d::radians_to_degrees * this->z();
+		return numeric::constants::d::radians_to_degrees * Vector::z();
 	}
 
 	/// @brief Set value theta in degrees
@@ -354,7 +354,7 @@ class EulerAngles : public xyzVector<T>
 	void
 	theta_degrees(Value const & value )
 	{
-		z(value * numeric::constants::d::degrees_to_radians);
+		Vector::z(value * numeric::constants::d::degrees_to_radians);
 	}
 
 	/// @brief Get angular distance between two sets of Euler Angles.

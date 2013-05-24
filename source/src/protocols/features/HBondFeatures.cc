@@ -1055,7 +1055,7 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 	Real h_acc_atrE, h_acc_repE, h_acc_solv;
 	Real h_acc_base_atrE, h_acc_base_repE, h_acc_base_solv;
 
-	if ( scfxn_->energy_method_options().analytic_etable_evaluation() ) {
+	if ( !(scfxn_->energy_method_options().analytic_etable_evaluation()) ) {
 		TableLookupEtableEnergy const etable_energy(
 			*ScoringManager::get_instance()->etable(
 				scfxn_->energy_method_options().etable_type() ),
