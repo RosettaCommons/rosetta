@@ -267,7 +267,7 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 
 	Size res_num(pose.n_residue());
 	for(Size index = 1; index <= res_num; ++index) {
-		if(!relevant_residues[index]) continue;
+		if(!check_relevant_residues( relevant_residues, index )) continue;
 
 		string chain_id(& pose.pdb_info()->chain(index),1);
 		string insertion_code(&pose.pdb_info()->icode(index),1);
@@ -378,7 +378,7 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 
 	for(Size ri=1; ri <= pose.n_residue(); ++ri) {
-		if(!relevant_residues[ri]) continue;
+		if(!check_relevant_residues(relevant_residues, ri)) continue;
 
 		Residue const & r(pose.residue(ri));
 		Real max_bb_temperature(-1), max_sc_temperature(-1);

@@ -415,7 +415,7 @@ ResidueScoresFeatures::insert_one_body_residue_score_rows(
 	EnergyMap emap;
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
-		if(!relevant_residues[resNum]) continue;
+		if(!check_relevant_residues( relevant_residues, resNum )) continue;
 		Residue const & rsd( pose.residue(resNum) );
 
 		RowDataBaseOP resNum_data(
@@ -501,7 +501,6 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 	RowDataBaseOP struct_id_data(new RowData<StructureID>("struct_id", struct_id));
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
-		if(!relevant_residues[resNum]) continue;
 		Residue const & rsd( pose.residue(resNum) );
 
 		// Two Body Energies
@@ -512,7 +511,7 @@ ResidueScoresFeatures::insert_two_body_residue_score_rows(
 			EnergyEdge const & edge( static_cast< EnergyEdge const &> (**iru) );
 			Size const otherResNum( edge.get_second_node_ind() );
 
-			if(!relevant_residues[otherResNum]) continue;
+			if(!check_relevant_residues( relevant_residues, resNum, otherResNum )) continue;
 
 			Size resNum1, resNum2;
 			if( resNum < otherResNum ){
@@ -619,14 +618,13 @@ ResidueScoresFeatures::insert_two_body_long_range_residue_score_rows(
 
 			// Potentially O(N^2) operation...
 			for( Size resNum = 1; resNum <= pose.total_residue(); ++resNum ) {
-				if(!relevant_residues[resNum]) continue;
 
 				for( ResidueNeighborConstIteratorOP
 							 rni = lrec->const_upper_neighbor_iterator_begin( resNum ),
 							 rniend = lrec->const_upper_neighbor_iterator_end( resNum );
 						 (*rni) != (*rniend); ++(*rni) ) {
 					Size const otherResNum(rni->upper_neighbor_id());
-					if(!relevant_residues[otherResNum]) continue;
+					if(!check_relevant_residues( relevant_residues, resNum, otherResNum )) continue;
 
 					Size resNum1, resNum2;
 					if( resNum < otherResNum ){

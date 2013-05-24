@@ -675,8 +675,7 @@ HBondFeatures::report_features(
 
 	for (Size i = 1; i<= hbond_set.nhbonds(); i++) {
 		HBondCOP hbond(hbond_set.hbond(i));
-		if(!relevant_residues[hbond->don_res()] ||
-			!relevant_residues[hbond->acc_res()]) continue;
+		if(!check_relevant_residues( relevant_residues, hbond->don_res(), hbond->acc_res() )) continue;
 
 		site_partners(hbond->don_res(),hbond->don_hatm()).push_back(hbond);
 		site_hbond_energies(hbond->don_res(),hbond->don_hatm()) += hbond->energy()/2;
@@ -690,7 +689,7 @@ HBondFeatures::report_features(
 	AtomID_Map< Size > site_ids;
 	core::pose::initialize_atomid_map(site_ids, pose);
 	for( Size resNum =1; resNum <= pose.n_residue(); ++resNum ){
-		if(!relevant_residues[resNum]) continue;
+		if(!check_relevant_residues( relevant_residues, resNum )) continue;
 
 		Residue const & res(pose.residue(resNum));
 		// donor sites
@@ -730,8 +729,7 @@ HBondFeatures::report_features(
 
 	for (Size hbond_id = 1; hbond_id <= hbond_set.nhbonds(); hbond_id++) {
 		HBond const & hbond = hbond_set.hbond( hbond_id );
-		if(!relevant_residues[hbond.don_res()] ||
-		  !relevant_residues[hbond.acc_res()]) continue;
+		if(!check_relevant_residues( relevant_residues, hbond.don_res(), hbond.acc_res() )) continue;
 
 		insert_hbond_row(hbond, struct_id, hbond_id, site_ids, site_partners, db_session);
 		insert_hbond_geom_coords(pose, hbond_set.hbond_options(), hbond, struct_id, hbond_id, db_session);

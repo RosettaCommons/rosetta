@@ -174,7 +174,7 @@ public:
 		using protocols::features::StructureID;
 
 		tr << "Creating structure entry." << std::endl;
-		StructureID parent_id = structure_reporter_->report_features(relevant_residues_, batch_id_, db_session_);
+		StructureID parent_id = structure_reporter_->report_features(batch_id_, db_session_);
 		tr << "Created structure id:" << parent_id << std::endl;
 
 		foreach( FeaturesReporterOP const & reporter, features_reporters_ ){
@@ -190,10 +190,10 @@ public:
 
 		tr << "Creating structure entry." << std::endl;
 
-		StructureID struct_id_one = structure_reporter_->report_features(relevant_residues_, batch_id_, db_session_);
+		StructureID struct_id_one = structure_reporter_->report_features(batch_id_, db_session_);
 		tr << "Created structure id:" << struct_id_one << std::endl;
 
-		StructureID struct_id_two = structure_reporter_->report_features(relevant_residues_, batch_id_, db_session_);
+		StructureID struct_id_two = structure_reporter_->report_features(batch_id_, db_session_);
 		tr << "Created structure id:" << struct_id_two << std::endl;
 
 		TS_ASSERT(struct_id_one == 1);
@@ -216,10 +216,10 @@ public:
 
 		tr << "Creating partitioned structure entry in database partition 1, structure prefix: " << structure_prefix << std::endl;
 
-		StructureID struct_id_one_partition1 = structure_reporter_->report_features(relevant_residues_, batch_id_, db_session_p1);
+		StructureID struct_id_one_partition1 = structure_reporter_->report_features(batch_id_, db_session_p1);
 		tr << "Created structure id:" << struct_id_one_partition1 << std::endl;
 
-		StructureID struct_id_two_partition1 = structure_reporter_->report_features(relevant_residues_, batch_id_, db_session_p1);
+		StructureID struct_id_two_partition1 = structure_reporter_->report_features(batch_id_, db_session_p1);
 		tr << "Created structure id:" << struct_id_two_partition1 << std::endl;
 
 

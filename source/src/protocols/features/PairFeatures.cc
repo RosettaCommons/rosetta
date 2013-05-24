@@ -172,7 +172,6 @@ PairFeatures::report_residue_pairs(
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){
-		if(!relevant_residues[resNum1]) continue;
 		Residue const & res1( pose.residue(resNum1) );
 
 		Size res1_10A_neighbors(
@@ -180,7 +179,7 @@ PairFeatures::report_residue_pairs(
 
 		// TODO: just iterate over the neighbors of res1
 		for(Size resNum2=resNum1+1; resNum2 <= pose.total_residue(); ++resNum2){
-			if(!relevant_residues[resNum2]) continue;
+			if(!check_relevant_residues( relevant_residues, resNum1, resNum2 )) continue;
 			Residue const & res2( pose.residue(resNum2) );
 
 			Distance const actcoord_dist( res1.actcoord().distance( res2.actcoord() ) );

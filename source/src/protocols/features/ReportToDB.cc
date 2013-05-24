@@ -54,6 +54,7 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>
@@ -69,9 +70,9 @@
 
 
 // C++ Headers
-#include <utility/excn/Exceptions.hh>
 #include <sstream>
-
+#include <algorithm>
+#include <cctype>
 
 namespace protocols{
 namespace features{
@@ -159,6 +160,7 @@ ReportToDB::ReportToDB():
 	protocol_id_(0),
 	batch_id_(0),
 	task_factory_(new TaskFactory()),
+	relevant_residues_mode_(RelevantResiduesMode::Explicit),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
 	initialized( false )
@@ -177,6 +179,7 @@ ReportToDB::ReportToDB(string const & type):
 	protocol_id_(0),
 	batch_id_(0),
 	task_factory_(new TaskFactory()),
+	relevant_residues_mode_(RelevantResiduesMode::Explicit),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
 	initialized( false )
@@ -200,6 +203,7 @@ ReportToDB::ReportToDB(
 	protocol_id_(0),
 	batch_id_(0),
 	task_factory_(new TaskFactory()),
+	relevant_residues_mode_(RelevantResiduesMode::Explicit),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
 	initialized( false )
@@ -218,6 +222,7 @@ ReportToDB::ReportToDB( ReportToDB const & src):
 	protocol_id_(src.protocol_id_),
 	batch_id_(src.batch_id_),
 	task_factory_(src.task_factory_),
+	relevant_residues_mode_(src.relevant_residues_mode_),
 	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	protocol_features_(src.protocol_features_),
 	batch_features_(src.batch_features_),
@@ -270,6 +275,18 @@ ReportToDB::set_batch_description(
 std::string
 ReportToDB::get_batch_description() const {
 	return batch_description_;
+}
+
+void
+ReportToDB::set_relevant_residues_mode(
+	RelevantResiduesMode::T setting
+) {
+	relevant_residues_mode_ = setting;
+}
+
+RelevantResiduesMode::T
+ReportToDB::get_relevant_residues_mode() const {
+	return relevant_residues_mode_;
 }
 
 void
@@ -349,9 +366,28 @@ ReportToDB::parse_cache_size_tag_item(
 
 void
 ReportToDB::parse_remove_xray_virt_tag_item(
-										TagPtr const tag) {
+	TagPtr const tag) {
 	if(tag->hasOption("remove_xray_virt")){
 		remove_xray_virt_ = tag->getOption<bool>("remove_xray_virt");
+	}
+}
+
+void
+ReportToDB::parse_relevant_residues_mode_tag_item(
+	TagPtr const tag) {
+	string rel_res_mode = tag->getOption<string>(
+			"relevant_residues_mode", "explicit");
+	std::transform(
+		rel_res_mode.begin(), rel_res_mode.end(), rel_res_mode.begin(),
+		::toupper);
+
+	if(rel_res_mode == "EXPLICIT"){
+		relevant_residues_mode_ = RelevantResiduesMode::Explicit;
+	} else if(rel_res_mode == "IMPLICIT") {
+		relevant_residues_mode_ = RelevantResiduesMode::Implicit;
+	} else {
+		throw utility::excn::EXCN_RosettaScriptsOption
+			( "Bad value for relevant_residues_mode: '" + rel_res_mode + "'. It must be either 'EXPLICIT' or 'IMPLICIT' (case insensitive). This indicates which features should be reported given the relevant residue specification (determined by the packable residues in the given task operation:\n\tEXCLUSIVE: All residues in a feature must be specified as 'relevant'. (DEFAULT)\n\tINCLUSIVE: At least one residue in the the feature must be specified as 'relevant' to be reported.");
 	}
 }
 
@@ -434,6 +470,14 @@ ReportToDB::parse_my_tag(
 	// DEFAULT: FALSE
 	parse_remove_xray_virt_tag_item(tag);
 
+	// Determine what features are reported given the relevant residues
+	// EXAMPLE: relevant_residues_mode=implicit
+	// DEFAULT: explicit
+	parse_relevant_residues_mode_tag_item(tag);
+
+	//This is probably not necessary, but do it for completeness.
+	structure_features_->set_relevant_residues_mode(relevant_residues_mode_);
+
 	task_factory_ = parse_task_operations(tag, data);
 
 	vector0< TagPtr >::const_iterator begin=tag->getTags().begin();
@@ -458,10 +502,10 @@ ReportToDB::parse_my_tag(
 		// TODO IMPLMENT THIS:
 		//check_multiple_features_reporter_definitions(features_reporter);
 
+		features_reporter->set_relevant_residues_mode(relevant_residues_mode_);
+
 		features_reporters_.push_back(features_reporter);
-
 	}
-
 }
 
 
@@ -596,25 +640,23 @@ ReportToDB::apply( Pose& pose ){
 	//Write linking tables after we have a valid batch_id
 //	write_linking_tables();
 
-	StructureID struct_id = report_structure_features(relevant_residues);
+	StructureID struct_id = report_structure_features();
 	report_features(pose, struct_id, relevant_residues);
 }
 
 StructureID
-ReportToDB::report_structure_features(
-	vector1<bool> const & relevant_residues
-) const {
+ReportToDB::report_structure_features() const {
 	StructureID struct_id;
 	try {
 		if(use_transactions_){
 			db_session_->begin_transaction();
 			struct_id = structure_features_->report_features(
-				relevant_residues, batch_id_, db_session_);
+				batch_id_, db_session_);
 			db_session_->commit_transaction();
 		}
 		else{
 			struct_id = structure_features_->report_features(
-				relevant_residues, batch_id_, db_session_);
+				batch_id_, db_session_);
 		}
 	} catch (cppdb_error error){
 		stringstream err_msg;

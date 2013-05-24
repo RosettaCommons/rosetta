@@ -162,7 +162,7 @@ BetaTurnDetectionFeatures::report_features(
 	for(SSize begin=1; begin <= SSize( pose.total_residue() - beta_turn_length ); ++begin){
 		Size end = begin + beta_turn_length;
 
-		if ( !residue_range_is_relevant( relevant_residues, begin, end ) || !residue_range_is_protein( pose, begin, end ) || !all_turn_residues_are_on_the_same_chain( pose, begin ) || !beta_turn_present( pose, begin ) )
+		if ( !check_relevant_residues_range( relevant_residues, begin, end ) || !residue_range_is_protein( pose, begin, end ) || !all_turn_residues_are_on_the_same_chain( pose, begin ) || !beta_turn_present( pose, begin ) )
 		{
 				continue;
 		}
@@ -254,17 +254,6 @@ bool BetaTurnDetectionFeatures::all_turn_residues_are_on_the_same_chain( Pose co
 	return true;
 }
 
-bool BetaTurnDetectionFeatures::residue_range_is_relevant( vector1< bool > const & relevant_residues, Size range_begin, Size range_end ) const
-{
-	for ( Size current_residue = range_begin; current_residue <= range_end; ++current_residue )
-	{
-		if ( current_residue > relevant_residues.size() || !relevant_residues[ current_residue ] )
-		{
-			return false;
-		}
-	}
-	return true;
-}
 
 bool BetaTurnDetectionFeatures::residue_range_is_protein( Pose const & pose, Size range_begin, Size range_end ) const
 {

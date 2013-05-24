@@ -40,12 +40,12 @@
 
 namespace protocols{
 namespace features{
-	
+
 SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures()
 {}
 
 SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(core::scoring::ScoreFunctionOP /*scfxn*/)
-{	
+{
 }
 
 SecondaryStructureSegmentFeatures::SecondaryStructureSegmentFeatures(
@@ -68,24 +68,24 @@ SecondaryStructureSegmentFeatures::write_schema_to_db(
 	utility::sql_database::sessionOP db_session) const
 {
 	using namespace basic::database::schema_generator;
-	
+
 	//******secondary structure segments******//
 	Column struct_id("struct_id", new DbBigInt(), false);
 	Column segment_id("segment_id", new DbInteger(), false);
 	Column residue_begin("residue_begin", new DbInteger(), false);
 	Column residue_end("residue_end", new DbInteger(), false);
 	Column dssp("dssp", new DbText(1), false);
-	
+
 	utility::vector1<Column> pkey_cols;
 	pkey_cols.push_back(struct_id);
 	pkey_cols.push_back(segment_id);
-	
+
 	Columns foreign_key_columns1;
 	foreign_key_columns1.push_back(struct_id);
 	utility::vector1< std::string > reference_columns1;
 	reference_columns1.push_back("struct_id");
 	ForeignKey foreign_key1(foreign_key_columns1, "structures", reference_columns1, true);
-	
+
 	Columns foreign_key_columns2;
 	foreign_key_columns2.push_back(struct_id);
 	foreign_key_columns2.push_back(residue_begin);
@@ -93,7 +93,7 @@ SecondaryStructureSegmentFeatures::write_schema_to_db(
 	reference_columns2.push_back("struct_id");
 	reference_columns2.push_back("resNum");
 	ForeignKey foreign_key2(foreign_key_columns2, "residues", reference_columns2, true);
-	
+
 	Columns foreign_key_columns3;
 	foreign_key_columns3.push_back(struct_id);
 	foreign_key_columns3.push_back(residue_end);
@@ -101,20 +101,20 @@ SecondaryStructureSegmentFeatures::write_schema_to_db(
 	reference_columns3.push_back("struct_id");
 	reference_columns3.push_back("resNum");
 	ForeignKey foreign_key3(foreign_key_columns3, "residues", reference_columns3, true);
-	
+
 //	Columns foreign_key_columns4;
 //	foreign_key_columns4.push_back(dssp);
 //	utility::vector1< std::string > reference_columns4;
 //	reference_columns4.push_back("code");
 //	ForeignKey foreign_key4(foreign_key_columns4, "dssp_codes", reference_columns4, true);
-	
-	Schema secondary_structure_segments("secondary_structure_segments", PrimaryKey(pkey_cols));	
+
+	Schema secondary_structure_segments("secondary_structure_segments", PrimaryKey(pkey_cols));
 	secondary_structure_segments.add_foreign_key(foreign_key1);
 	secondary_structure_segments.add_foreign_key(foreign_key2);
 	secondary_structure_segments.add_foreign_key(foreign_key3);
 	secondary_structure_segments.add_column(dssp);
 //	secondary_structure_segments.add_foreign_key(foreign_key4);
-	
+
 	secondary_structure_segments.write(db_session);
 }
 
@@ -156,41 +156,45 @@ SecondaryStructureSegmentFeatures::is_helix(std::string dssp_code){
 		dssp_code == "H" ||
 		dssp_code == "G";
 }
-	
+
 ///@brief collect all the feature data for the pose
 core::Size
 SecondaryStructureSegmentFeatures::report_features(
 	core::pose::Pose const & pose,
-	utility::vector1< bool > const & /*relevant_residues*/,
+	utility::vector1< bool > const & relevant_residues,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session)
 {
 	using namespace basic::database;
-	
+
 	std::string select_secondary_struct_string=
 		"SELECT resNum, dssp\n"
 		"FROM residue_secondary_structure\n"
 		"WHERE struct_id=?\n"
 		"ORDER BY resNum";
-		
+
 	cppdb::statement select_stmt(safely_prepare_statement(select_secondary_struct_string,db_session));
 	select_stmt.bind(1,struct_id);
 	cppdb::result res=safely_read_from_database(select_stmt);
-	
+
 	std::string sec_structure_statement_string=
 	"INSERT INTO secondary_structure_segments (struct_id, segment_id, residue_begin, residue_end,dssp)\n"
 	"VALUES (?,?,?,?,?)";
-	
+
 	core::Size segment_counter=0;
 	std::string segment_secondary="";
 	core::Size segment_begin=1;
 	core::Size segment_end;
+
+	// used to determine if segement should be reported based on relevant_residues
+	utility::vector1<Size> current_residues;
+
 	while(res.next()){
 		core::Size resNum;
 		std::string residue_secondary;
-		
+
 		res >> resNum >> residue_secondary;
-		
+
 		//Use non-standard 'L' for all loop-like dssp codes
 		if(is_loop(residue_secondary))
 		{
@@ -201,13 +205,13 @@ SecondaryStructureSegmentFeatures::report_features(
 		{
 			residue_secondary="H";
 		}
-		
+
 		if(residue_secondary != segment_secondary)
 		{
-			if(resNum > 1)
+			if(resNum > 1 && check_relevant_residues(relevant_residues, current_residues))
 			{
 				segment_end=resNum-1;
-				
+
 				//write segment to DB
 				cppdb::statement stmt(basic::database::safely_prepare_statement(sec_structure_statement_string,db_session));
 				stmt.bind(1,struct_id);
@@ -216,15 +220,18 @@ SecondaryStructureSegmentFeatures::report_features(
 				stmt.bind(4,segment_end);
 				stmt.bind(5,segment_secondary);
 				basic::database::safely_write_to_database(stmt);
-				
+
 				//increment segment secondary structure id
 				++segment_counter;
+				current_residues.clear();
 			}
 			segment_secondary = residue_secondary;
 			segment_begin=resNum;
 		}
+		current_residues.push_back(resNum);
+
 	}
-		
+
 	//write final segment to DB
 	cppdb::statement stmt(basic::database::safely_prepare_statement(sec_structure_statement_string,db_session));
 	stmt.bind(1,struct_id);
@@ -233,9 +240,9 @@ SecondaryStructureSegmentFeatures::report_features(
 	stmt.bind(4,pose.total_residue());
 	stmt.bind(5,segment_secondary);
 	basic::database::safely_write_to_database(stmt);
-	
+
 	return 0;
 }
-	
+
 } // namespace
 } // namespace

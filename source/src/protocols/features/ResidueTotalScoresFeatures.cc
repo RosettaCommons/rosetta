@@ -201,7 +201,7 @@ ResidueTotalScoresFeatures::insert_residue_total_scores_rows(
 		basic::database::safely_prepare_statement(stmt_string, db_session));
 
 	for(Size resNum=1; resNum <= temp_pose.total_residue(); ++resNum){
-		if(!relevant_residues[resNum]) continue;
+		if(!check_relevant_residues( relevant_residues, resNum )) continue;
 
 		Real const score_value(temp_pose.energies().residue_total_energy(resNum));
 

@@ -70,19 +70,6 @@ public:
 		std::string description,
 		utility::sql_database::sessionOP db_session);
 
-	core::Size
-	report_features(
-		core::pose::Pose const &,
-		utility::vector1< bool > const &,
-		StructureID,
-		utility::sql_database::sessionOP){
-		utility_exit_with_message(
-			"The batch features reporter is a special feature reporter that "
-			"represents a set of features extracted at once. Please use the other "
-			"interface for report_features");
-		return 0;
-	}
-
 };
 
 } // features namespace

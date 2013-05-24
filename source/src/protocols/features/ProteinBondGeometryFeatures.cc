@@ -371,7 +371,7 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 	Real energy_angle = 0;
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!relevant_residues[i]) continue;
+		if(!check_relevant_residues(relevant_residues, i)) continue;
 
 		Residue const & rsd = pose.residue(i);
 		if(!rsd.is_protein()) continue;
@@ -450,12 +450,11 @@ ProteinBondGeometryFeatures::report_interres_angles(
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!relevant_residues[i]) continue;
 		Residue const & rsd1 = pose.residue(i);
 		if(!rsd1.is_protein()) continue;
 
 		for (Size j = i+1; j <= pose.total_residue(); ++j) {
-			if(!relevant_residues[j]) continue;
+			if(!check_relevant_residues(relevant_residues, i, j)) continue;
 			Residue const & rsd2 = pose.residue(j);
 			if(!rsd2.is_protein()) continue;
 
@@ -584,7 +583,7 @@ ProteinBondGeometryFeatures::report_intrares_lengths(
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!relevant_residues[i]) continue;
+		if(!check_relevant_residues(relevant_residues, i)) continue;
 
 		Residue const & rsd = pose.residue(i);
 		if(!rsd.is_protein()) continue;
@@ -650,12 +649,11 @@ ProteinBondGeometryFeatures::report_interres_lengths(
 
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!relevant_residues[i]) continue;
 		Residue const & rsd1 = pose.residue(i);
 		if(!rsd1.is_protein()) continue;
 
 		for (Size j = i+1; j <= pose.total_residue(); ++j) {
-			if(!relevant_residues[j]) continue;
+			if(!check_relevant_residues(relevant_residues, i, j)) continue;
 			Residue const & rsd2 = pose.residue(j);
 			if(!rsd2.is_protein()) continue;
 
@@ -724,7 +722,7 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!relevant_residues[i]) continue;
+		if(!check_relevant_residues(relevant_residues, i)) continue;
 
 		Residue const & rsd = pose.residue(i);
 		if(!rsd.is_protein()) continue;

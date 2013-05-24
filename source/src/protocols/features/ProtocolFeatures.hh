@@ -68,22 +68,6 @@ public:
 		utility::sql_database::sessionOP db_session
 	);
 
-	///@brief collect all the feature data for the pose
-	core::Size
-	report_features(
-		core::pose::Pose const &,
-		utility::vector1< bool > const &,
-		StructureID,
-		utility::sql_database::sessionOP
-	) {
-		utility_exit_with_message(
-			"The protocol features reporter is a special feature reporter that "
-			"describes everthing about the execution of a Rosetta. Please use the other "
-			"interface for report_features");
-		return 0;
-	}
-
-
 };
 
 } // features namespace

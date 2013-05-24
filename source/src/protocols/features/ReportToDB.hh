@@ -22,7 +22,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <protocols/features/FeaturesReporter.fwd.hh>
+#include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/FeaturesReporterFactory.fwd.hh>
 #include <protocols/features/ProtocolFeatures.fwd.hh>
 #include <protocols/features/BatchFeatures.fwd.hh>
@@ -85,6 +85,12 @@ public:
 	std::string
 	get_batch_description() const;
 
+	void
+	set_relevant_residues_mode(
+		protocols::features::RelevantResiduesMode::T setting);
+
+	protocols::features::RelevantResiduesMode::T
+	get_relevant_residues_mode() const;
 
 	void
 	parse_batch_description_tag_item(
@@ -121,6 +127,10 @@ public:
 		utility::tag::TagPtr const tag);
 
 	void
+	parse_relevant_residues_mode_tag_item(
+		utility::tag::TagPtr const tag);
+
+	void
 	parse_batch_name_tag_item(
 		utility::tag::TagPtr const tag);
 
@@ -154,8 +164,7 @@ public:
 		Pose& pose);
 
 	StructureID
-	report_structure_features(
-		utility::vector1<bool> const & relevant_residues) const;
+	report_structure_features() const;
 
 	void
 	report_features(
@@ -179,6 +188,18 @@ private:
 
 	// initialized in parse_my_tag
 	core::pack::task::TaskFactoryOP task_factory_;
+
+	///@brief This indicates which features should be reported given the
+	///relevant residue specification:
+	///
+	///   Exclusive: All residues in a feature must be specified as
+	///   'relevant' through the given task operations to be
+	///   reported. (DEFAULT)
+	///
+	///   Inclusive: At least one residue in the the feature must be
+	///   specified as 'relavent' through the given task operations to
+	///   be reported.
+	protocols::features::RelevantResiduesMode::T relevant_residues_mode_;
 
 	protocols::features::FeaturesReporterFactory * features_reporter_factory_;
 	protocols::features::ProtocolFeaturesOP protocol_features_;

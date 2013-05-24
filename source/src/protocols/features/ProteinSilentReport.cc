@@ -271,7 +271,7 @@ ProteinSilentReport::write_full_report(
 	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
 
 	StructureID struct_id = structure_features_->report_features(
-	relevant_residues, batch_id_, db_session, tag, input_tag);
+		batch_id_, db_session, tag, input_tag);
 
 	TR.Info << "Beginning report, struct_id: " << struct_id << std::endl;
 

@@ -204,7 +204,7 @@ ResidueConformationFeatures::report_features(
 	{
 		core::conformation::Conformation const & conformation(pose.conformation());
 		for(core::Size resn=1; resn <= pose.n_residue();++resn){
-			if(!relevant_residues[resn]) continue;
+			if(!check_relevant_residues(relevant_residues, resn)) continue;
 			bool residue_status(core::conformation::is_ideal_position(resn,conformation));
 			if(!residue_status){
 				ideal = false;
@@ -248,7 +248,7 @@ ResidueConformationFeatures::report_features(
 
 	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		if(!relevant_residues[i]) continue;
+		if(!check_relevant_residues(relevant_residues, i)) continue;
 
 		Residue const & resi = pose.residue(i);
 		if(resi.aa() <= num_canonical_aas){

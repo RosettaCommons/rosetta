@@ -58,7 +58,6 @@ public:
 	///@brief collect all the feature data for the pose use
 	StructureID
 	report_features(
-		utility::vector1< bool > const & relevant_residues,
 		core::Size batch_id,
 		utility::sql_database::sessionOP db_session
 	);
@@ -82,7 +81,6 @@ public:
 	///This version allows the tag and the input tag to be specificed
 	StructureID
 	report_features(
-		utility::vector1< bool > const & relevant_residues,
 		core::Size batch_id,
 		utility::sql_database::sessionOP db_session,
 		std::string const & tag,

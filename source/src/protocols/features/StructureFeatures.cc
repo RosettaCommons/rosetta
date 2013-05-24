@@ -155,22 +155,20 @@ StructureFeatures::features_reporter_dependencies() const {
 //@details missing struct_id and input/output tags
 StructureID
 StructureFeatures::report_features(
-	vector1< bool > const & relevant_residues,
 	Size batch_id,
 	sessionOP db_session
 ){
 	string const output_tag(protocols::jd2::JobDistributor::get_instance()->current_output_name());
 	string const input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
 	StructureID struct_id(
-		report_features(relevant_residues, batch_id,
-			db_session, output_tag, input_tag));
+		report_features(
+			batch_id, db_session, output_tag, input_tag));
 	return struct_id;
 }
 
 //@details missing struct_id and input/output tags
 StructureID
 StructureFeatures::report_features(
-	vector1< bool > const &,
 	Size batch_id,
 	sessionOP db_session,
 	string const & tag,

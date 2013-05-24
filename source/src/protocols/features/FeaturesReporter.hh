@@ -42,11 +42,24 @@
 #endif
 
 
+
+
 namespace protocols {
 namespace features {
 
+namespace RelevantResiduesMode {
+enum T {
+	Implicit=1,
+	Explicit
+};
+}
+
 class FeaturesReporter : public utility::pointer::ReferenceCount {
 public:
+	FeaturesReporter() :
+		relevant_residues_mode_(RelevantResiduesMode::Explicit)
+	{}
+
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~FeaturesReporter();
 
@@ -121,6 +134,40 @@ public:
 		StructureID,
 		utility::sql_database::sessionOP ) {}
 
+	void
+	set_relevant_residues_mode(
+		RelevantResiduesMode::T setting);
+
+	RelevantResiduesMode::T
+	get_relevant_residues_mode() const;
+
+
+	bool
+	check_relevant_residues(
+		utility::vector1< bool > const & relevant_residues,
+		core::Size res1
+	) const;
+
+	bool
+	check_relevant_residues(
+		utility::vector1< bool > const & relevant_residues,
+		core::Size res1,
+		core::Size res2
+	) const;
+
+	bool
+	check_relevant_residues_range(
+		utility::vector1< bool > const & relevant_residues,
+		core::Size res1,
+		core::Size res2
+	) const;
+
+	bool
+	check_relevant_residues(
+		utility::vector1< bool > const & relevant_residues,
+		utility::vector1< core::Size > const & residues
+	) const;
+
 protected:
 
 	std::string
@@ -136,6 +183,8 @@ protected:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
+
+	RelevantResiduesMode::T relevant_residues_mode_;
 };
 
 } // namespace

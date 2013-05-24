@@ -161,7 +161,7 @@ ResidueBurialFeatures::report_features(
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
-		if(!relevant_residues[resNum]) continue;
+		if(!check_relevant_residues( relevant_residues, resNum )) continue;
 		Residue const & res = pose.residue(resNum);
 
 		Size const ten_a_neighbors(tenA.get_node(resNum)->num_neighbors_counting_self_static());

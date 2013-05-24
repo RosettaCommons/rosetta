@@ -152,7 +152,7 @@ core::Size ResidueGridScoresFeatures::report_features(
 	RowDataBaseOP struct_id_data = new RowData<StructureID>("struct_id",struct_id);
 	for (Size i = pose.conformation().chain_begin(chain_id); i <= pose.conformation().chain_end(chain_id); ++i) {
 
-		if(!relevant_residues[i]) continue;
+		if(!check_relevant_residues(relevant_residues, i)) continue;
 
 		RowDataBaseOP seqpos_data = new RowData<core::Size>("seqpos",i);
 

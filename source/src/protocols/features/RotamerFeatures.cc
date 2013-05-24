@@ -236,7 +236,7 @@ RotamerFeatures::report_features(
 		++residue_number){
 
 		// only report features for the specified subset of residues
-		if(!relevant_residues[residue_number]) continue;
+		if(!check_relevant_residues(relevant_residues, residue_number)) continue;
 
 		Residue const & residue(pose.residue(residue_number));
 		if( residue.type().residue_type_set().name() != FA_STANDARD){

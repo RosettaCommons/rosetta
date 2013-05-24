@@ -263,7 +263,6 @@ AtomAtomPairFeatures::report_atom_pairs(
 	counts.dimension(dim1, dim2, dim3, initial_value);
 
 	for(Size res_num1=1; res_num1 <= pose.total_residue(); ++res_num1){
-		if(!relevant_residues[res_num1]) continue;
 		Residue res1(pose.residue(res_num1));
 
 		for(Size atom_num1=1; atom_num1 <= res1.natoms(); ++atom_num1){
@@ -277,7 +276,8 @@ AtomAtomPairFeatures::report_atom_pairs(
 			}
 
 			for(Size res_num2=1; res_num2 <= pose.total_residue(); ++res_num2){
-				if(!relevant_residues[res_num2]) continue;
+				if(!check_relevant_residues(
+						relevant_residues, res_num1, res_num2)) continue;
 				Residue res2( pose.residue(res_num2) );
 
 				for(Size atom_num2=1; atom_num2 <= res2.natoms(); ++atom_num2){

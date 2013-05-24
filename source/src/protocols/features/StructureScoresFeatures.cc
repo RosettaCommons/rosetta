@@ -19,6 +19,7 @@
 #include <cppdb/frontend.h>
 
 //Basic Headers
+#include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
@@ -59,6 +60,8 @@
 
 namespace protocols{
 namespace features{
+
+static basic::Tracer TR( "protocols.features.StructureScoresFeatures" );
 
 using std::string;
 using std::stringstream;
@@ -235,6 +238,10 @@ StructureScoresFeatures::compute_energies(
 	// the whole structure scores, otherwise just the one-body and
 	// two-body scores.
 	bool all_residues(true);
+
+	if(relevant_residues_mode_ == RelevantResiduesMode::Implicit){
+		TR.Warning << "StructureScoresFeatures is currently not compatible with inclusive RelevantResiduesMode::Inclusive, treating as Explicit." << std::endl;
+	}
 
 	// Since some scores terms, such as elec_dens_fast and constraints,
 	// use virtual residues to be compatible with the two-body scoring

@@ -143,7 +143,7 @@ ResidueSecondaryStructureFeatures::report_features(
 	
 	core::Size adjusted_resnum=0;
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
-		if(!relevant_residues[resNum]) continue;
+		if(!check_relevant_residues( relevant_residues, resNum )) continue;
 
 
 		//If this is not a protein residue then skip it. Keep a counter

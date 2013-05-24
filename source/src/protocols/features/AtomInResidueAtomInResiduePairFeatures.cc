@@ -176,14 +176,13 @@ AtomInResidueAtomInResiduePairFeatures::report_atom_pairs(
 
 	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){
 		Residue res1( pose.residue(resNum1) );
-		if(!relevant_residues[resNum1]) continue;
 
 		for ( Graph::EdgeListConstIter
 			ir  = tenA.get_node( resNum1 )->const_edge_list_begin(),
 			ire = tenA.get_node( resNum1 )->const_edge_list_end();
 			ir != ire; ++ir ) {
 			Size resNum2( (*ir)->get_other_ind(resNum1) );
-			if(!relevant_residues[resNum2]) continue;
+			if(!check_relevant_residues( relevant_residues, resNum1, resNum2 )) continue;
 
 			Residue res2( pose.residue(resNum2) );
 
