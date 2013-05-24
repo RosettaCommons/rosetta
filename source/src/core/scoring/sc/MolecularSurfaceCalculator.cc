@@ -81,7 +81,7 @@ MolecularSurfaceCalculator::MolecularSurfaceCalculator()
 	settings.binwidth_dist = 0.02;
 	settings.binwidth_norm = 0.02;
 
-	run_.results.valid = 0;
+	Reset();
 }
 
 /// @begin MolecularSurfaceCalculator::Init()
@@ -91,10 +91,8 @@ MolecularSurfaceCalculator::MolecularSurfaceCalculator()
 
 int MolecularSurfaceCalculator::Init()
 {
-	if(radii_.empty()) {
-		Reset();
+	if(radii_.empty())
 		ReadScRadii();
-	}
 	if(radii_.empty())
 		return 0;
 
@@ -138,10 +136,10 @@ void MolecularSurfaceCalculator::Reset()
 /// @brief Generate molecular surfaces for the given pose.
 ///// @detailed
 /// This function initializes the calculator, adds all residues in the given pose, and generates molecular surfaces.
-/// 
+///
 /// The pose is partitioned into separate molecules across the given jump. If the given jump is 0, the entire pose is
 /// loaded as molecule 1.
-/// To control what residues make up either surface, use the AddResidue() or even add_atom() function instead.
+/// To control what residues make up either surface, use the AddResidue() or even AddAtom() function instead.
 /// Returns true on success. Results are retrieved with GetResults().
 ///
 /// Example:
@@ -171,7 +169,8 @@ int MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size j
 		core::conformation::Residue const & residue = pose.residue(i);
 		if(residue.type().name() == "VRT")
 			continue;
-		AddResidue(is_upstream(i) ? 0 : 1, residue);
+		if(!AddResidue(is_upstream(i) ? 0 : 1, residue))
+			return 0;
 	}
 
 	return Calc();
@@ -180,7 +179,7 @@ int MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size j
 /// @begin MolecularSurfaceCalculator::Calc()
 /// @brief Generate molecular surfaces for loaded atoms.
 ///// @detailed
-/// This function generates molecular surfaces for atoms added via add_atom and AddResidue.
+/// This function generates molecular surfaces for atoms added via AddAtom and AddResidue.
 ///
 /// Init() must be called before this function.
 /// Returns true on success.
@@ -228,10 +227,10 @@ void MolecularSurfaceCalculator::GenerateMolecularSurfaces()
 
 	if(TR.Debug.visible())
   {
-		TR.Debug << "      Buried atoms (1): " << run_.results.surface[0].nBuriedAtoms << std::endl; 
-		TR.Debug << "      Buried atoms (2): " << run_.results.surface[1].nBuriedAtoms << std::endl; 
-		TR.Debug << "     Blocked atoms (1): " << run_.results.surface[0].nBuriedAtoms << std::endl; 
-		TR.Debug << "     Blocked atoms (2): " << run_.results.surface[1].nBuriedAtoms << std::endl; 
+		TR.Debug << "      Buried atoms (1): " << run_.results.surface[0].nBuriedAtoms << std::endl;
+		TR.Debug << "      Buried atoms (2): " << run_.results.surface[1].nBuriedAtoms << std::endl;
+		TR.Debug << "     Blocked atoms (1): " << run_.results.surface[0].nBuriedAtoms << std::endl;
+		TR.Debug << "     Blocked atoms (2): " << run_.results.surface[1].nBuriedAtoms << std::endl;
 		TR.Debug << "           Convex dots: " << run_.results.dots.convex << std::endl;
 		TR.Debug << "         Toroidal dots: " << run_.results.dots.toroidal << std::endl;
 		TR.Debug << "          Concave dots: " << run_.results.dots.concave << std::endl;
@@ -264,9 +263,10 @@ int MolecularSurfaceCalculator::ReadScRadii()
 	while( in.good() ) {
 		memset(&radius, 0, sizeof(radius));
 		in >> radius.residue >> radius.atom >> radius.radius;
-		TR.Trace << "Atom Radius: " << radius.residue << ", " << radius.atom << ", " << radius.radius << std::endl;
-		if(*radius.residue && *radius.atom && radius.radius > 0)
+		if(*radius.residue && *radius.atom && radius.radius > 0) {
+			TR.Trace << "Atom Radius: " << radius.residue << ":" << radius.atom << " = " << radius.radius << std::endl;
 			radii_.push_back(radius);
+		}
 	}
 
 	TR.Trace << "Atom radii read: " << radii_.size() << std::endl;
@@ -297,32 +297,46 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 	int molecule,
 	core::conformation::Residue const & residue)
 {
-	Atom scatom;
-	int n =0;
+	std::vector<Atom> scatoms;
 
 	if(!Init())
 		return 0;
 
+	// Pass 1: Assign atom radii and check if we can add all atoms for this residue
 	// Only use heavy atoms for SC calculation
 	for(Size i = 1; i <= residue.nheavyatoms(); ++i) {
 		// Skip virtual atoms
 		if(residue.is_virtual(i))
 			continue;
+
+		Atom scatom;
 		numeric::xyzVector<Real> xyz = residue.xyz(i);
 		scatom.x(xyz.x());
 		scatom.y(xyz.y());
 		scatom.z(xyz.z());
 		scatom.nresidue = residue.seqpos();
+		scatom.radius = 0;
 		strncpy(scatom.residue, residue.name3().c_str(), sizeof(scatom.residue)-1);
 		strncpy(scatom.atom, residue.atom_name(i).c_str()+1, sizeof(scatom.atom)-1);
-		if(add_atom(molecule, scatom))
+
+		if(!AssignAtomRadius(scatom)) {
+			TR.Error << "Failed to add residue " << residue.name3() << " to surface." << std::endl;
+			return 0;
+		}
+		scatoms.push_back(scatom);
+	}
+
+	// Pass 2: Add all atoms for the residue
+	int n =0;
+	for(std::vector<Atom>::iterator it = scatoms.begin(); it != scatoms.end(); ++it) {
+		if(AddAtom(molecule, *it))
 			++n;
 	}
 
 	return n;
 }
 
-/// @begin MolecularSurfaceCalculator::add_atom()
+/// @begin MolecularSurfaceCalculator::AddAtom()
 /// @brief Add an atom to a molecule for computation.
 /// @detailed
 /// Add an core::scoring::sc::Atom to the molecule.
@@ -331,27 +345,26 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 /// This function also looks-up the atom radius and density.
 /// Returns true on success.
 
-int MolecularSurfaceCalculator::add_atom(
+int MolecularSurfaceCalculator::AddAtom(
 		int molecule,
 		Atom &atom)
 {
-	if(AssignAtomRadius(atom)) {
+	if(atom.radius <= 0)
+		AssignAtomRadius(atom);
+
+	if(atom.radius > 0) {
 		molecule = (molecule == 1);
 		atom.density = settings.density;
 		atom.molecule = molecule;
 		atom.natom = ++run_.results.nAtoms;
 		atom.access = 0;
+
 		run_.atoms.push_back(atom);
 		++run_.results.surface[molecule].nAtoms;
-		/*
-		printf("add_atom[%d] %d: %s:%s (%10.4f, %10.4f, %10.4f) = %.4f\n", molecule, run_.results.surface[molecule].nAtoms, atom.residue, atom.atom, atom.x(), atom.y(), atom.z(), atom.radius);
-		*/
 		return 1;
-
 	} else {
-		TR.Warning << "Failed to assign atom radius for residue "
-			<< atom.residue << ":" << atom.atom
-			<< ". Skipping atom!" << std::endl;
+		TR.Error << "Failed to assign atom radius for residue "
+			<< atom.residue << ":" << atom.atom << "!" << std::endl;
 	}
 	return 0;
 }
@@ -370,6 +383,19 @@ int MolecularSurfaceCalculator::AssignAtomRadius(Atom &atom)
 		if(WildcardMatch(atom.residue, radius->residue, sizeof(atom.residue)) &&
 			WildcardMatch(atom.atom, radius->atom, sizeof(atom.atom))) {
 				atom.radius = radius->radius;
+				if(TR.Trace.visible()) {
+					char buf[256];
+					snprintf(buf, sizeof(buf),
+						"Assigned atom radius to %s:%s at (%8.4f, %8.4f, %8.4f) = %.3f",
+						atom.residue,
+						atom.atom,
+						atom.x(),
+						atom.y(),
+						atom.z(),
+						atom.radius
+					);
+					TR.Trace << buf << std::endl;
+				}
 				return 1;
 		}
 	}
@@ -379,15 +405,26 @@ int MolecularSurfaceCalculator::AssignAtomRadius(Atom &atom)
 
 // Inline residue and atom name matching function
 int MolecularSurfaceCalculator::WildcardMatch(
-		char const *r,
+		char const *query,
 		char const *pattern,
 		int l)
 {
 	while(--l > 0) {
-		if((*pattern != '*') && (*r != *pattern) && !(*r == ' ' && !*pattern))
+		bool match =
+			(*query == *pattern) ||
+			(*query && *pattern == '*') ||
+			(*query == ' ' && !*pattern);
+		if(!match)
 			return 0;
-		++r;
-		++pattern;
+
+		// Allow anything following a * in pattern
+		if(*pattern == '*' && !pattern[1])
+			return 1;
+
+		if(*query)
+			++query;
+		if(*pattern)
+			++pattern;
 	}
 	return 1;
 }

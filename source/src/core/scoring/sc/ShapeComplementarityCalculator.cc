@@ -166,9 +166,7 @@ int ShapeComplementarityCalculator::Calc()
 	GenerateMolecularSurfaces();
 
 	if(!run_.dots[0].size() || !run_.dots[1].size())
-  {
-    throw ShapeComplementarityCalculatorException("No molecular dots generated!");
-  }
+		throw ShapeComplementarityCalculatorException("No molecular dots generated!");
 
 	// Cut away the periphery of each surface
 	TR.Debug << "Trimming peripheral band, " << settings.band << "A range" << std::endl;
@@ -207,6 +205,13 @@ int ShapeComplementarityCalculator::Calc()
 	run_.results.area = run_.results.surface[2].trimmedArea;
 	run_.results.valid = 1;
 
+	TR.Debug << 
+		"Done. Atoms: " << run_.results.surface[0].nAtoms << " + " << run_.results.surface[1].nAtoms <<
+		"; sc = " << run_.results.sc << 
+		", area = " << run_.results.area << 
+		", distance " << run_.results.distance << 
+		std::endl;
+
 	return 1;
 
 	} catch(ShapeComplementarityCalculatorException e) {
@@ -239,7 +244,7 @@ int ShapeComplementarityCalculator::AssignAttentionNumbers(std::vector<Atom> & )
 		// check if within separator distance
 		if(dist_min >= settings.sep)
 		{
-			TR.Debug << "Atom ATTEN_BLOCKER: " << pAtom1->natom << std::endl;
+			// TR.Debug << "Atom ATTEN_BLOCKER: " << pAtom1->natom << std::endl;
 			// too _far_ away from other molecule, blocker atom only
 			pAtom1->atten = ATTEN_BLOCKER;
 			++run_.results.surface[pAtom1->molecule].nBlockedAtoms;

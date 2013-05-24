@@ -206,7 +206,7 @@ public:
 	virtual int Init();
 	virtual void Reset();
 
-	int add_atom(int molecule, Atom &atom);
+	int AddAtom(int molecule, Atom &atom);
 	core::Size AddResidue(int molecule, core::conformation::Residue const &residue);
 
   /// @begin MolecularSurfaceCalculator::Calc(core::pose::Pose const & pose, core::Size jump_id = 0)
@@ -221,7 +221,7 @@ public:
   /// @begin MolecularSurfaceCalculator::Calc()
   /// @brief Generate molecular surfaces for loaded atoms.
   ///// @detailed
-	// This function generates molecular surfaces for atoms added via add_atom and AddResidue.
+	// This function generates molecular surfaces for atoms added via AddAtom and AddResidue.
 	//
 	// Init() must be called before this function.
 	virtual int Calc();
@@ -243,7 +243,7 @@ protected:
 	static std::vector<ATOM_RADIUS> radii_;
 
 	int AssignAtomRadius(Atom &atom);
-	int WildcardMatch(char const *r, char const *pattern, int const l);
+	int WildcardMatch(char const *query, char const *pattern, int const l);
 	int ReadScRadii();
 	void AddDot(int const molecule, int const type, Vec3 const coor, ScValue const area, Vec3 const pcen, Atom const &atom);
 
