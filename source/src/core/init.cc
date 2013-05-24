@@ -59,6 +59,8 @@
 #include <core/scoring/methods/RG_Energy_FastCreator.hh>
 #include <core/scoring/methods/RG_LocalEnergyCreator.hh>
 #include <core/scoring/methods/SA_EnergyCreator.hh>
+#include <core/scoring/methods/D2H_SA_EnergyCreator.hh>
+#include <core/scoring/methods/ProQ_EnergyCreator.hh>
 #include <core/scoring/methods/RMS_EnergyCreator.hh>
 #include <core/scoring/methods/Rama2BOffsetEnergyCreator.hh>
 #include <core/scoring/methods/RamachandranEnergy2BCreator.hh>
@@ -308,6 +310,8 @@ static EnergyMethodRegistrator< scoring::methods::BurialEnergyCreator > BurialCr
 static EnergyMethodRegistrator< scoring::methods::RG_Energy_FastCreator > RG_Energy_FastCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RG_LocalEnergyCreator > RG_LocalEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SA_EnergyCreator > SA_EnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::D2H_SA_EnergyCreator > D2H_SA_EnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::ProQ_EnergyCreator > ProQ_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RMS_EnergyCreator > RMS_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::Rama2BOffsetEnergyCreator > Ramac2BOffsetEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RamachandranEnergy2BCreator > RamachandranEnergy2BCreator_registrator;

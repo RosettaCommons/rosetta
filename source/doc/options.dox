@@ -610,6 +610,15 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Membrane exposure file</dd><br>
 </dl>
 <dl>
+<dt><b>-HDX</b> \<String\><dt>
+<dd>HDX (Hydrogen exchange data file</dd><br>
+</dl>
+<dl>
+<dt><b>-d2h_sa_reweight</b> \<Real\><dt>
+<dd>d2h_sa reweight</dd><br>
+<dd>Default: 1.00</dd><br>
+</dl>
+<dl>
 <dt><b>-sucker_params</b> \<File\><dt>
 <dd>Parameter file containing SplineEnergy parameters</dd><br>
 <dd>Default: "scoring/spline_energy_functions/sucker.params"</dd><br>
@@ -4246,6 +4255,57 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-nmer_ref_seq_length</b> \<Integer\><dt>
 <dd>length of nmers in nmer_ref score</dd><br>
 <dd>Default: 9</dd><br>
+</dl>
+ </li>
+<li><h2>ProQ</h2>
+<dl>
+<dt><b>-ProQ</b> \<Boolean\><dt>
+<dd>ProQ option group</dd><br>
+</dl>
+<dl>
+<dt><b>-svmmodel</b> \<Integer\><dt>
+<dd>SVM model to use (in cross-validation, default is to use all [1-5])</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-basename</b> \<String\><dt>
+<dd>basename location for sequence specific inputfile)</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-membrane</b> \<Boolean\><dt>
+<dd>use membrane version (ProQM)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-prof_bug</b> \<Boolean\><dt>
+<dd>reproduce the profile bug in ProQres</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-output_feature_vector</b> \<Boolean\><dt>
+<dd>outputs the feature vector</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-output_local_prediction</b> \<Boolean\><dt>
+<dd>outputs the local predicted values</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-prefix</b> \<String\><dt>
+<dd>prefix for outputfiles)</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-use_gzip</b> \<Boolean\><dt>
+<dd>gzip output files</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-normalize</b> \<Real\><dt>
+<dd>Normalizing factor (usually target sequence length)</dd><br>
+<dd>Default: 1.0</dd><br>
 </dl>
  </li>
 <li><h2>corrections</h2>

@@ -25,6 +25,7 @@
 #include <core/scoring/sasa.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/ubyte.hh>
@@ -143,6 +144,9 @@ void input_sasa_dats() {
 		angles_stream >> skip;
 	}
 	angles_stream.close();
+
+
+
 
 }
 
@@ -479,6 +483,123 @@ calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa,
 	return calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, use_big_polar_H, atom_subset );
 }
 
+Real
+calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_sasa,bool normalize) {
+	id::AtomID_Map< bool > atom_subset; 
+	id::AtomID_Map< Real > atom_sasa;
+	static Real const  probe_radius=1.4;
+	static bool const use_big_polar_H=false;
+	atom_subset.clear();
+	core::pose::initialize_atomid_map( atom_subset, pose, true);
+	Real total_sasa=calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, use_big_polar_H, atom_subset,true /*use_naccess_sasa_radii*/ );	
+
+	for(Size i=1;i<=atom_sasa.n_residue();++i) {
+		rsd_sasa[i]=0;
+		conformation::Residue const & rsd( pose.residue(i) );
+		for(Size ii=1;ii<=atom_sasa.n_atom(i);++ii) {
+			if(!rsd.atom_is_backbone(ii)) { // || (rsd.name1()=='G' && rsd.atom_name(ii).compare(1,2,"CA")==0) ){
+				id::AtomID const id(ii,i);
+				rsd_sasa[i]+=atom_sasa[ id ];
+			} else { 
+				if(rsd.name1()=='G' && rsd.atom_name(ii).compare(1,2,"CA")==0) {
+						id::AtomID const id(ii,i);
+						rsd_sasa[i]+=atom_sasa[ id ]*1.67234+0.235839; //Somehow Gly area is too small with *1.67234+0.235839;
+					}
+			//			std::cout << "ATOM_SASA: " << rsd.name3() << " " << rsd.atom_name(j) << " " << id << " " << atom_sasa[ id ] << std::endl;
+			}
+		}
+		if(normalize) {
+			rsd_sasa[i]/=normalizing_area(rsd.name1());
+			rsd_sasa[i]*=100;
+		}
+	}
+
+
+	return total_sasa;
+}
+//ATOM S   2  ALA  107.95   0.0  69.41   0.0   0.00   0.0  69.41   0.0  38.54   0.0  71.38   0.0  36.58   0.0
+//ATOM S   2  CYS  134.28   0.0  96.75   0.0   0.00   0.0  96.75   0.0  37.53   0.0  97.93   0.0  36.35   0.0
+//ATOM S   2  ASP  140.39   0.0  48.00   0.0  54.69   0.0 102.69   0.0  37.70   0.0  49.24   0.0  91.15   0.0
+//ATOM S   2  GLU  172.25   0.0  59.10   0.0  75.64   0.0 134.74   0.0  37.51   0.0  60.29   0.0 111.96   0.0
+//ATOM S   2  PHE  199.48   0.0 164.11   0.0   0.00   0.0 164.11   0.0  35.37   0.0 165.25   0.0  34.23   0.0
+//ATOM S   2  GLY   80.10   0.0  32.33   0.0   0.00   0.0  32.33   0.0  47.77   0.0  37.55   0.0  42.55   0.0
+//ATOM S   2  HIS  182.88   0.0  96.01   0.0  51.07   0.0 147.08   0.0  35.80   0.0  97.15   0.0  85.73   0.0
+//ATOM S   2  ILE  175.12   0.0 137.96   0.0   0.00   0.0 137.96   0.0  37.16   0.0 139.14   0.0  35.98   0.0
+//ATOM S   2  LYS  200.81   0.0 115.38   0.0  47.92   0.0 163.30   0.0  37.51   0.0 116.57   0.0  84.24   0.0
+//ATOM S   2  LEU  178.63   0.0 141.12   0.0   0.00   0.0 141.12   0.0  37.51   0.0 142.31   0.0  36.32   0.0
+//ATOM S   2  MET  194.15   0.0 156.64   0.0   0.00   0.0 156.64   0.0  37.51   0.0 157.84   0.0  36.32   0.0
+//ATOM S   2  ASN  143.94   0.0  44.98   0.0  61.26   0.0 106.24   0.0  37.70   0.0  46.23   0.0  97.72   0.0
+//ATOM S   2  PRO  136.13   0.0 119.90   0.0   0.00   0.0 119.90   0.0  16.23   0.0 120.95   0.0  15.19   0.0
+//ATOM S   2  GLN  178.50   0.0  51.03   0.0  89.96   0.0 140.99   0.0  37.51   0.0  52.22   0.0 126.28   0.0
+//ATOM S   2  ARG  238.76   0.0  76.60   0.0 124.65   0.0 201.25   0.0  37.51   0.0  77.80   0.0 160.97   0.0
+//ATOM S   2  SER  116.50   0.0  46.89   0.0  31.22   0.0  78.11   0.0  38.40   0.0  48.55   0.0  67.95   0.0
+//ATOM S   2  THR  139.27   0.0  74.54   0.0  27.17   0.0 101.70   0.0  37.57   0.0  75.72   0.0  63.55   0.0
+//ATOM S   2  VAL  151.44   0.0 114.28   0.0   0.00   0.0 114.28   0.0  37.16   0.0 115.47   0.0  35.97   0.0
+//ATOM S   2  TRP  249.36   0.0 187.67   0.0  23.60   0.0 211.26   0.0  38.10   0.0 189.67   0.0  59.69   0.0
+//ATOM S   2  TYR  212.76   0.0 135.35   0.0  42.03   0.0 177.38   0.0  35.38   0.0 136.50   0.0  76.26   0.0
+
+static utility::vector1<Real> init_normalizing_area_sc() {
+	static utility::vector1<Real> area_sc(255,0);
+	area_sc[65]= 69.41;   // 69.41;     //A 
+	area_sc[67]= 96.75;   // 96.75;		 //C 
+	area_sc[68]=102.69;   // 48.00;		 //D 
+	area_sc[69]=134.74;   // 59.10;		 //E 
+	area_sc[70]=164.11;   //164.11;		 //F 
+	area_sc[71]= 32.33;   // 32.33;		 //G 
+	area_sc[72]=147.08;   // 96.01;		 //H 
+	area_sc[73]=137.96;   //137.96;		 //I 
+	area_sc[75]=163.30;   //115.38;		 //K 
+	area_sc[76]=141.12;   //141.12;		 //L 
+	area_sc[77]=156.64;   //156.64;		 //M 
+	area_sc[78]=106.24;   // 44.98;		 //N 
+	area_sc[80]=119.90;   //119.90;		 //P 
+	area_sc[81]=140.99;   // 51.03;		 //Q 
+	area_sc[82]=201.25;   // 76.60;		 //R 
+	area_sc[83]= 78.11;   // 46.89;		 //S 
+	area_sc[84]=101.70;   // 74.54;		 //T 
+	area_sc[86]=114.28;   //114.28;		 //V 
+	area_sc[87]=211.26;   //187.67;		 //W 
+	area_sc[89]=177.38;   //135.35;		 //Y 
+	//	std::cout << "INIT!!!!!!HELLO" << std::endl;
+	return area_sc;
+}
+
+static utility::vector1<Real> init_normalizing_area_total() {
+	static utility::vector1<Real> area_total(255,0);
+	area_total[65]=107.95;     //A 
+	area_total[67]=134.28;		 //C
+	area_total[68]=140.39;		 //D
+	area_total[69]=172.25;		 //E
+	area_total[70]=199.48;		 //F
+	area_total[71]= 80.10;		 //G
+	area_total[72]=182.88;		 //H
+	area_total[73]=175.12;		 //I
+	area_total[75]=200.81;		 //K
+	area_total[76]=178.63;		 //L
+	area_total[77]=194.15;		 //M
+	area_total[78]=143.94;		 //N
+	area_total[80]=136.13;		 //P
+	area_total[81]=178.50;		 //Q
+	area_total[82]=238.76;		 //R
+	area_total[83]=116.50;		 //S
+	area_total[84]=139.27;		 //T
+	area_total[86]=151.44;		 //V
+	area_total[87]=249.36;		 //W
+	area_total[89]=212.76;		 //Y
+	return area_total;
+}
+Real normalizing_area(char const res) {
+
+	int index=static_cast<unsigned int>(static_cast<unsigned char>(res));
+	static utility::vector1<Real> const area_sc=init_normalizing_area_sc();
+	static utility::vector1<Real> const area_total=init_normalizing_area_total();
+
+
+	//std::cout << "INDEX: " << res << " " << index << " " << area_sc[index] << " " << area_total[index] << std::endl;;
+	return area_sc[index];
+
+
+}
 
 Real
 calc_per_atom_sasa(
@@ -518,7 +639,7 @@ calc_per_atom_sasa(
 	} else {
 		SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "SASA_RADIUS" );
 	}
-
+	
 	utility::vector1< Real > radii( atom_type_set.n_atomtypes() );
 
 	for ( core::Size ii=1; ii <= radii.size(); ++ii ) {
@@ -575,7 +696,7 @@ calc_per_atom_sasa(
 	//j now do calculations: get the atom_masks by looping over all_atoms x all_atoms
 	for ( Size ii=1; ii <= pose.total_residue(); ++ii ) {
 		Residue const & irsd( pose.residue( ii ) );
-
+		
 		//ronj for the other 'j' residue, only iterate over residues which have indexes > residue 'i'
 		for ( Size jj=ii; jj <= pose.total_residue(); ++jj ) {
 			Residue const & jrsd( pose.residue( jj ) );
@@ -641,7 +762,8 @@ calc_per_atom_sasa(
 #endif
 			atom_sasa[ id ] = area_exposed;
 			// jk Water SASA doesn't count toward the residue's SASA
-			if ( ! rsd.atom_type(iia).is_h2o() ) {
+			if ( ! rsd.atom_type(iia).is_h2o() && 
+				 ! rsd.atom_type(iia).is_virtual()) {
 				rsd_sasa[ ii ] += area_exposed;
 				total_sasa += area_exposed;
 			}
@@ -912,7 +1034,7 @@ calc_per_res_hydrophobic_sasa( pose::Pose const & pose,
 	core::Real total_sasa = 0.0;
 	total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */, atom_subset, use_naccess_sasa_radii );
 	//#ifdef FILE_DEBUG
-		TR.Debug << "total_sasa: " << total_sasa << std::endl;
+	TR.Debug << "total_sasa: " << total_sasa << std::endl;
 	//#endif
 
 	// now we have to figure out how much hydrophobic sasa each atom/residue has
@@ -986,7 +1108,5 @@ void print_dot_bit_string( utility::vector1< ObjexxFCL::ubyte > & values ) {
 //#endif
 }
 #endif
-
-
 } // namespace scoring
 } // namespace core

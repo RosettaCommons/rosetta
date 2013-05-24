@@ -131,6 +131,8 @@ namespace in { namespace file { FileVectorOptionKey const vall( "in:file:vall" )
 namespace in { namespace file { BooleanOptionKey const rescore( "in:file:rescore" );  } }
 namespace in { namespace file { StringOptionKey const spanfile( "in:file:spanfile" );  } }
 namespace in { namespace file { StringOptionKey const lipofile( "in:file:lipofile" );  } }
+namespace in { namespace file { StringOptionKey const HDX( "in:file:HDX" );  } }
+namespace in { namespace file { RealOptionKey const d2h_sa_reweight( "in:file:d2h_sa_reweight" );  } }
 namespace in { namespace file { FileOptionKey const sucker_params( "in:file:sucker_params" );  } }
 namespace in { namespace file { FileOptionKey const fold_tree( "in:file:fold_tree" );  } }
 namespace in { namespace file { BooleanOptionKey const obey_ENDMDL( "in:file:obey_ENDMDL" );  } }
@@ -701,3 +703,4 @@ namespace loopfcst { FileOptionKey const coord_cst_weight_array( "loopfcst:coord
 namespace loopfcst { FileOptionKey const dump_coord_cst_weight_array( "loopfcst:dump_coord_cst_weight_array" );  }
 namespace jumps { BooleanOptionKey const jumps( "jumps" );  }
 namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
+namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }

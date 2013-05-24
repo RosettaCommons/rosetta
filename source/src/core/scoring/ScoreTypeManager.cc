@@ -278,6 +278,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "dab_sasa" ] = dab_sasa;
 	name2score_type_[ "dab_sev" ] = dab_sev;
 	name2score_type_[ "sa" ] = sa;
+	name2score_type_[ "d2h_sa" ] = d2h_sa;
+	name2score_type_[ "ProQM" ] = ProQM;
+	name2score_type_[ "ProQ" ] = ProQ;
 
 	name2score_type_[ "interchain_env"] = interchain_env;
 	name2score_type_[ "interchain_contact"] = interchain_contact;

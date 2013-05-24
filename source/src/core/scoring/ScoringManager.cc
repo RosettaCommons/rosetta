@@ -25,6 +25,7 @@
 #include <core/scoring/CenHBPotential.hh>
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/Membrane_FAPotential.hh> //pba
+#include <core/scoring/ProQPotential.hh>
 #include <core/scoring/SecondaryStructurePotential.hh>
 //#include <core/pack/dunbrack/RotamerLibrary.hh>
 //#include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
@@ -245,6 +246,21 @@ ScoringManager::get_Membrane_FAPotential() const //pba
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+ProQPotential const &
+ScoringManager::get_ProQPotential() const
+{
+	if (ProQ_potential_ == 0 )
+	{
+		ProQ_potential_ = new ProQPotential();
+	}
+	return *ProQ_potential_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+
 SecondaryStructurePotential const &
 ScoringManager::get_SecondaryStructurePotential() const
 {

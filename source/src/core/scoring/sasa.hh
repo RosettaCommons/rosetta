@@ -43,6 +43,10 @@ void get_2way_orientation( Vector const & a_xyz, Vector const & b_xyz,
 Real calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa, utility::vector1< Real > & rsd_sasa,
 	Real const probe_radius, bool const use_big_polar_H = false );
 
+//only for side-chains
+Real calc_per_atom_sasa_sc( pose::Pose const & pose, utility::vector1< Real > & rsd_sasa, bool normalize);
+	Real normalizing_area(char const res);
+
 /// returns total sasa
 //Real
 //calc_per_atom_sasa( pose::Pose const & pose, id::AtomID_Map< Real > & atom_sasa, utility::vector1< Real > & rsd_sasa,

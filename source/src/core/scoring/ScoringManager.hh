@@ -34,6 +34,7 @@
 #include <core/scoring/MembranePotential.fwd.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
 //#include <core/scoring/InterchainPotential.fwd.hh>
+#include <core/scoring/ProQPotential.fwd.hh>
 #include <core/scoring/SecondaryStructurePotential.fwd.hh>
 #include <core/scoring/GenBornPotential.fwd.hh>
 #include <core/scoring/facts/FACTSPotential.fwd.hh>
@@ -182,6 +183,8 @@ public:
 
 	Membrane_FAPotential const & get_Membrane_FAPotential() const; //pba
 
+  ProQPotential const & get_ProQPotential() const;
+
 	PoissonBoltzmannPotential const & get_PoissonBoltzmannPotential() const;
 
 	disulfides::FullatomDisulfidePotential &
@@ -281,6 +284,7 @@ private:
 	mutable disulfides::DisulfideMatchingPotentialOP disulfide_matching_potential_;
 	mutable MembranePotentialOP membrane_potential_;
 	mutable Membrane_FAPotentialOP membrane_fapotential_; //pba
+	mutable ProQPotential * ProQ_potential_;
 	mutable PoissonBoltzmannPotentialOP PB_potential_;
 	//ReferenceEnergyPotential referenceEnergyPotential_;
 	mutable UnfoldedStatePotentialOP unf_state_;

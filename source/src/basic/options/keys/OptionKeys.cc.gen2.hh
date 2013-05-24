@@ -1,3 +1,9 @@
+namespace robert { RealOptionKey const pcs_cluster_coverage( "robert:pcs_cluster_coverage" );  }
+namespace robert { BooleanOptionKey const pcs_cluster_lowscoring( "robert:pcs_cluster_lowscoring" );  }
+namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
+namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
+namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
+namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
 namespace james { BooleanOptionKey const james( "james" );  }
@@ -698,6 +704,3 @@ namespace optE { StringVectorOptionKey const fix( "optE:fix" );  }
 namespace optE { FileOptionKey const free( "optE:free" );  }
 namespace optE { FileOptionKey const fixed( "optE:fixed" );  }
 namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }
-namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant_logic_taskops_file" );  }
-namespace optE { BooleanOptionKey const optE_soft_rep( "optE:optE_soft_rep" );  }
-namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }

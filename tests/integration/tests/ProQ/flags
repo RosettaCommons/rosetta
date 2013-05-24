@@ -1,0 +1,6 @@
+-in:file:s inputs/1e12A_0001.pdb
+-ProQ:basename inputs/1e12A_0001.pdb
+-score:weights inputs/ProQ2_and_ProQM.wts
+-out:file:scorefile 1e12A_0001.scorefile
+-run:no_prof_info_in_silentout
+-mute core.io.database

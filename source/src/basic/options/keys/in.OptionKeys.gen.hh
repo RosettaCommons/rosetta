@@ -136,6 +136,8 @@ namespace in { namespace file { extern FileVectorOptionKey const vall; } }
 namespace in { namespace file { extern BooleanOptionKey const rescore; } }
 namespace in { namespace file { extern StringOptionKey const spanfile; } }
 namespace in { namespace file { extern StringOptionKey const lipofile; } }
+namespace in { namespace file { extern StringOptionKey const HDX; } }
+namespace in { namespace file { extern RealOptionKey const d2h_sa_reweight; } }
 namespace in { namespace file { extern FileOptionKey const sucker_params; } }
 namespace in { namespace file { extern FileOptionKey const fold_tree; } }
 namespace in { namespace file { extern BooleanOptionKey const obey_ENDMDL; } }

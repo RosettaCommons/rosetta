@@ -136,6 +136,8 @@ option.add( basic::options::OptionKeys::in::file::vall, "Fragment database file,
 option.add( basic::options::OptionKeys::in::file::rescore, "Governs whether input poses are rescored or not in not_universal_main, defaults to false." ).def(false);
 option.add( basic::options::OptionKeys::in::file::spanfile, "Membrane spanning file" );
 option.add( basic::options::OptionKeys::in::file::lipofile, "Membrane exposure file" );
+option.add( basic::options::OptionKeys::in::file::HDX, "HDX (Hydrogen exchange data file" );
+option.add( basic::options::OptionKeys::in::file::d2h_sa_reweight, "d2h_sa reweight" ).def(1.00);
 option.add( basic::options::OptionKeys::in::file::sucker_params, "Parameter file containing SplineEnergy parameters" ).def("scoring/spline_energy_functions/sucker.params");
 option.add( basic::options::OptionKeys::in::file::fold_tree, "User defined fold tree to be imposed on the pose after reading from disk" );
 option.add( basic::options::OptionKeys::in::file::obey_ENDMDL, "Stop reading a PDB after ENDMDL card; effectively read only first model in multimodel NMR PDBs" ).def(false);
@@ -706,10 +708,10 @@ option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight_array, "use t
 option.add( basic::options::OptionKeys::loopfcst::dump_coord_cst_weight_array, "dump these weights (per seqpos) for coord cst in rigid regions" ).def("");
 option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
+option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
-option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
 option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
@@ -888,6 +890,16 @@ option.add( basic::options::OptionKeys::score::nmer_svm_aa_matrix, "nmer svm seq
 option.add( basic::options::OptionKeys::score::nmer_svm_term_length, "how many up/dnstream res to avg and incl in svm sequence encoding" ).def(3);
 option.add( basic::options::OptionKeys::score::nmer_svm_pssm_feat, "add pssm features to svm encoding?" ).def(true);
 option.add( basic::options::OptionKeys::score::nmer_ref_seq_length, "length of nmers in nmer_ref score" ).def(9);
+option.add( basic::options::OptionKeys::ProQ::ProQ, "ProQ option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::ProQ::svmmodel, "SVM model to use (in cross-validation, default is to use all [1-5])" ).def(1);
+option.add( basic::options::OptionKeys::ProQ::basename, "basename location for sequence specific inputfile)" ).def("");
+option.add( basic::options::OptionKeys::ProQ::membrane, "use membrane version (ProQM)" ).def(false);
+option.add( basic::options::OptionKeys::ProQ::prof_bug, "reproduce the profile bug in ProQres" ).def(false);
+option.add( basic::options::OptionKeys::ProQ::output_feature_vector, "outputs the feature vector" ).def(false);
+option.add( basic::options::OptionKeys::ProQ::output_local_prediction, "outputs the local predicted values" ).def(false);
+option.add( basic::options::OptionKeys::ProQ::prefix, "prefix for outputfiles)" ).def("");
+option.add( basic::options::OptionKeys::ProQ::use_gzip, "gzip output files" ).def(false);
+option.add( basic::options::OptionKeys::ProQ::normalize, "Normalizing factor (usually target sequence length)" ).def(1.0);
 option.add( basic::options::OptionKeys::corrections::corrections, "corrections option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::correct, "turn on default corrections:-corrections::chemical:icoor_05_2009-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009-corrections::score:p_aa_pp_nogridshift-corrections::score:p_aa_pp_nogridshift-corrections::score:rama_not_squared-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat-scoring::hbond_params helix_hb_06_2009-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat" ).def(false);
 option.add( basic::options::OptionKeys::corrections::hbond_sp2_correction, "turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_hackelec_params -expand_st_chi2sampling -smooth_hack_elec -hackelec_min_dis 1.6 -hackelec_r_option false" );
@@ -1405,15 +1417,15 @@ option.add( basic::options::OptionKeys::robert::pairdata_input_pdb_list, "Takes 
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_filter, "minimum normalized maxsub for PCS clustering protocol" ).def(0.9);
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_rmsd, "maxsub calculation's rmsd threshold" ).def(4.0);
 option.add( basic::options::OptionKeys::robert::pcs_dump_cluster, "No description" ).def(false);
-option.add( basic::options::OptionKeys::robert::pcs_cluster_coverage, "cluster coverage required" ).def(0.3);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::robert::pcs_cluster_coverage, "cluster coverage required" ).def(0.3);
 option.add( basic::options::OptionKeys::robert::pcs_cluster_lowscoring, "cluster lowest 20% against lowest 50%" ).def(true);
 option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
 option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
+option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
@@ -2113,12 +2125,12 @@ option.add( basic::options::OptionKeys::optE::fix, "weights to be fixed (must al
 option.add( basic::options::OptionKeys::optE::free, "IterativeOptEDriver flag: specify a file to read score types that are free -- optionally include a starting weight for each score type" );
 option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
 option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
-option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
-option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
-option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
+option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
+option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
+option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
 option.add( basic::options::OptionKeys::optE::optE_no_protein_hack_elec, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" ).def(false);
 option.add( basic::options::OptionKeys::optE::design_first, "Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights." );
 option.add( basic::options::OptionKeys::optE::n_design_cycles, "The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred" ).def(10);

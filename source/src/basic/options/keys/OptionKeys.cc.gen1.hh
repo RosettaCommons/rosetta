@@ -1,4 +1,3 @@
-namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
 namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
 namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
 namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
@@ -178,6 +177,16 @@ namespace score { StringOptionKey const nmer_svm_aa_matrix( "score:nmer_svm_aa_m
 namespace score { IntegerOptionKey const nmer_svm_term_length( "score:nmer_svm_term_length" );  }
 namespace score { BooleanOptionKey const nmer_svm_pssm_feat( "score:nmer_svm_pssm_feat" );  }
 namespace score { IntegerOptionKey const nmer_ref_seq_length( "score:nmer_ref_seq_length" );  }
+namespace ProQ { BooleanOptionKey const ProQ( "ProQ" );  }
+namespace ProQ { IntegerOptionKey const svmmodel( "ProQ:svmmodel" );  }
+namespace ProQ { StringOptionKey const basename( "ProQ:basename" );  }
+namespace ProQ { BooleanOptionKey const membrane( "ProQ:membrane" );  }
+namespace ProQ { BooleanOptionKey const prof_bug( "ProQ:prof_bug" );  }
+namespace ProQ { BooleanOptionKey const output_feature_vector( "ProQ:output_feature_vector" );  }
+namespace ProQ { BooleanOptionKey const output_local_prediction( "ProQ:output_local_prediction" );  }
+namespace ProQ { StringOptionKey const prefix( "ProQ:prefix" );  }
+namespace ProQ { BooleanOptionKey const use_gzip( "ProQ:use_gzip" );  }
+namespace ProQ { RealOptionKey const normalize( "ProQ:normalize" );  }
 namespace corrections { BooleanOptionKey const corrections( "corrections" );  }
 namespace corrections { BooleanOptionKey const correct( "corrections:correct" );  }
 namespace corrections { BooleanOptionKey const hbond_sp2_correction( "corrections:hbond_sp2_correction" );  }
@@ -695,9 +704,3 @@ namespace robert { StringOptionKey const pairdata_input_pdb_list( "robert:pairda
 namespace robert { RealOptionKey const pcs_maxsub_filter( "robert:pcs_maxsub_filter" );  }
 namespace robert { RealOptionKey const pcs_maxsub_rmsd( "robert:pcs_maxsub_rmsd" );  }
 namespace robert { BooleanOptionKey const pcs_dump_cluster( "robert:pcs_dump_cluster" );  }
-namespace robert { RealOptionKey const pcs_cluster_coverage( "robert:pcs_cluster_coverage" );  }
-namespace robert { BooleanOptionKey const pcs_cluster_lowscoring( "robert:pcs_cluster_lowscoring" );  }
-namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
-namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
-namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
-namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }

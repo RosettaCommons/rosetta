@@ -360,6 +360,9 @@ enum ScoreType {
 	dab_sasa, // classic 1.4A probe solvant accessible surface area
 	dab_sev,  // solvent excluded volume -- volume of atoms inflated by 1.4A
 	sa, // nonpolar contribution in GBSA
+	d2h_sa, // correlation between sasa and hydrogen exchange data.
+	ProQM, //membrane MQAP.
+	ProQ, // MQAP.
 
 	// centroid interhcain 1b (docking) scores -- Demonstrate that these improve performance or remove them
 	interchain_env,
