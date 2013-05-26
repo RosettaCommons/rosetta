@@ -3469,16 +3469,6 @@ core::Real ElectronDensity::matchRes(
 
 			numeric::xyzVector< core::Real > dVdx_ij(0,0,0), dOdx_ij(0,0,0), dO2dx_ij(0,0,0), dCOdx_ij(0,0,0), dC2dx_ij(0,0,0), dCdx_ij(0,0,0);
 
-			//core::Real k;
-			/*if ( j <= nResAtms) {
-				std::string elt_i = atom_type_set[ rsd.atom_type_index( j ) ].element();
-				OneGaussianScattering sig_j = get_A( elt_i );
-				//k = sig_j.k( PattersonB, max_del_grid );  // set but never used ~Labonte
-			} else {
-				OneGaussianScattering const & sig_j = contextAtomAs[j-nResAtms];
-				//k = sig_j.k( PattersonB, max_del_grid );  // set but never used ~Labonte
-			}*/
-
 			int npoints = rho_dx_pt_ij.size();
 			for (int n=1; n<=npoints; ++n) {
 				const int x(rho_dx_pt_ij[n]);
@@ -3936,9 +3926,6 @@ ElectronDensity::readMRCandResize(
 	core::Real reso,
 	core::Real gridSpacing
 ) {
-
-	// set map resolution
-	this->reso = reso;
 	char mapString[4], symData[81];
 
 	int  crs2xyz[3], extent[3], mode, symBytes, grid[3], origin[3];
@@ -4188,13 +4175,14 @@ ElectronDensity::readMRCandResize(
 	// resample the map
 	if (gridSpacing > 0) this->resize( gridSpacing );
 
-	// grid spacing in each dim
+	// max_del_grid is used to blur f_calc (simulating low-res scattering)
+	//    if the target resolution is greater than that allowed by max_del_grid, adjust max_del_grid
 	max_del_grid = std::max( cellDimensions[0]/((double)this->grid[0]) , cellDimensions[1]/((double)this->grid[1]) );
 	max_del_grid = std::max( max_del_grid , cellDimensions[2]/((double)this->grid[2]) );
+	if (reso/2 > max_del_grid) max_del_grid = reso/2;
 
-	// density scoring low res limit
-	if (reso/2 > max_del_grid)
-		max_del_grid = reso/2;
+	// if "auto" input resolution is given, assume that the map is oversampled
+	if (reso == 0) max_del_grid *= 1.5;
 
 	// potentially adjust mask
 	{
@@ -4219,6 +4207,9 @@ ElectronDensity::readMRCandResize(
 	// post-processing
 	this->computeStats();
 	this->computeGradients();
+
+	// set map resolution
+	this->reso = reso;
 
 	// we're done!
 	isLoaded = true;

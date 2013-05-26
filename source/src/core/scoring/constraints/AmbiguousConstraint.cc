@@ -176,9 +176,20 @@ AmbiguousConstraint::fill_f1_f2(
 	EnergyMap const & weights
 ) const
 {
-	assert( active_constraint_ );
+	//assert( active_constraint_ );
 	//std::cerr << "Error: attempted minimization of an ambiguous constraint before the lowest scoring member constraint has been determined. Was the pose not scored?" << std::endl;
 	//utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+
+	// fpd
+	if (member_constraints_.size() == 0)
+		return;
+
+	// fpd
+	if ( !active_constraint_ ) {
+		EnergyMap dummy;
+		score( xyz, weights, dummy);
+	}
+
 	active_constraint_->fill_f1_f2( atom, xyz, F1, F2, weights );
 }
 

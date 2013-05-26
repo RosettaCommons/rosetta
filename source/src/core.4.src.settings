@@ -23,6 +23,7 @@ sources = {
 		"Minimizer",
 		"MinimizerMap",
 		"MinimizerOptions",
+		"NelderMeadSimplex",
 		"NumericalDerivCheckResult",
 		"ParticleSwarmMinimizer",
 		"SingleResidueMultifunc",
