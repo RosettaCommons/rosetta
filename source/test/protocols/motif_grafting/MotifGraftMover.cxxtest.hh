@@ -84,7 +84,8 @@ namespace {
 				"GLY", //Clash score test residue
 				"", //hotspots
 				true,		//full_bb_alignment  
-				true		//optimum_alignment_per_fragment
+				true,		//optimum_alignment_per_fragment
+				false		//Allow repeat same graft 
 				);
 			
 			//Import the test scaffold
@@ -153,7 +154,8 @@ namespace {
 				"GLY", //Clash score test residue
 				"", //hotspots
 				true,		//full_bb_alignment  
-				true		//optimum_alignment_per_fragment
+				true,		//optimum_alignment_per_fragment
+				false		//Allow repeat same graft 
 				);
 			
 			//Import the test scaffold
@@ -222,7 +224,8 @@ namespace {
 				"GLY", //Clash score test residue
 				"", //hotspots
 				false,		//full_bb_alignment  
-				true		//optimum_alignment_per_fragment
+				true,		//optimum_alignment_per_fragment
+				false		//Allow repeat same graft 
 				);
 			
 			//Import the test scaffold
@@ -291,7 +294,8 @@ namespace {
 				"GLY", //Clash score test residue
 				"", //hotspots
 				false,		//full_bb_alignment  
-				true		//optimum_alignment_per_fragment
+				true,		//optimum_alignment_per_fragment
+				false		//Allow repeat same graft 
 				);
 			
 			//Import the test scaffold
@@ -360,7 +364,8 @@ namespace {
 				"GLY", //Clash score test residue
 				"", //hotspots
 				false,		//full_bb_alignment  
-				true		//optimum_alignment_per_fragment
+				true,		//optimum_alignment_per_fragment
+				false		//Allow repeat same graft 
 				);
 			
 			//Import the test scaffold
@@ -429,7 +434,8 @@ namespace {
 				"GLY", //Clash score test residue
 				"", //hotspots
 				false,		//full_bb_alignment  
-				true		//optimum_alignment_per_fragment
+				true,		//optimum_alignment_per_fragment
+				false		//Allow repeat same graft 
 				);
 			
 			//Import the test scaffold
@@ -498,7 +504,8 @@ namespace {
 				"GLY", //Clash score test residue
 				"", //hotspots
 				false,		//full_bb_alignment  
-				true		//optimum_alignment_per_fragment
+				true,		//optimum_alignment_per_fragment
+				false		//Allow repeat same graft 
 				);
 			
 			//Import the test scaffold
@@ -568,7 +575,8 @@ namespace {
 				"GLY", //Clash score test residue
 				"", //hotspots
 				false,		//full_bb_alignment  
-				true		//optimum_alignment_per_fragment
+				true,		//optimum_alignment_per_fragment
+				false		//Allow repeat same graft 
 				);
 			
 			//Import the test scaffold

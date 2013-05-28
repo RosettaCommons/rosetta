@@ -175,7 +175,8 @@ namespace protocols
 						std::string const & s_clash_test_residue,
 						std::string const & s_hotspots,
 						bool        const & b_full_motif_bb_alignment,
-						bool        const & b_optimum_alignment_per_fragment);
+						bool        const & b_optimum_alignment_per_fragment,
+						bool        const & b_allow_repeat_same_graft_output);
 					
 					/**@brief MotifGraftMover Destructor**/
 					~MotifGraftMover();
@@ -359,7 +360,8 @@ namespace protocols
 						std::string const & s_clash_test_residue,
 						std::string const & s_hotspots,
 						bool        const & b_full_motif_bb_alignment,
-						bool        const & b_optimum_alignment_per_fragment);
+						bool        const & b_optimum_alignment_per_fragment,
+						bool        const & b_allow_repeat_same_graft_output);
 					
 				protected:
 					core::pose::PoseOP gp_p_contextStructure_;
@@ -372,6 +374,8 @@ namespace protocols
 					utility::vector1 < utility::vector1< core::Size > > gp_vvr_hotspots_;
 					bool               gp_b_full_motif_bb_alignment_;
 					bool               gp_b_optimum_alignment_per_fragment_;
+					bool               gp_b_allow_repeat_same_graft_output_;
+					bool               gp_b_is_first_run_;
 					
 					core::pose::PoseOP gp_p_target_pose_; //Swap space for our input pose
 					std::priority_queue<MotifMatch> motif_match_results_;

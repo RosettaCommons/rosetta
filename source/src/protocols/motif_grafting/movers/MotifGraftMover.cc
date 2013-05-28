@@ -93,6 +93,7 @@ namespace protocols
 			
 			MotifGraftMover::MotifGraftMover()
 			{
+				gp_b_is_first_run_ = true;
 			}
 			
 			/**@brief MotifGraftMover parameters and options initializer**/
@@ -106,7 +107,8 @@ namespace protocols
 			std::string const & s_clash_test_residue,
 			std::string const & s_hotspots,
 			bool        const & b_full_motif_bb_alignment,
-			bool        const & b_optimum_alignment_per_fragment)
+			bool        const & b_optimum_alignment_per_fragment,
+			bool        const & b_allow_repeat_same_graft_output)
 			{
 				//Parse the arguments in the global space variables
 				MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVariables(
@@ -119,7 +121,8 @@ namespace protocols
 					s_clash_test_residue,
 					s_hotspots,
 					b_full_motif_bb_alignment,
-					b_optimum_alignment_per_fragment);
+					b_optimum_alignment_per_fragment,
+					b_allow_repeat_same_graft_output);
 			}
 			
 			/**@brief MotifGraftMover Destructor**/
@@ -131,6 +134,18 @@ namespace protocols
 			void MotifGraftMover::apply(core::pose::Pose & pose)
 			{
 				TR.Info << "Executing Motif Graft Mover " << std::endl;
+				TR.Info << "GDASM_TEST, runstatus: gp_b_is_first_run_: " << gp_b_is_first_run_ << std::endl;
+				//IF we dont want to duplicate the already grafted fragments return fail_do_not_retry after round 1
+				if( !gp_b_is_first_run_ ){
+					if ( !gp_b_allow_repeat_same_graft_output_ )
+					{
+						set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+						return;
+					}
+				}
+				//set the flag of the first run boolean to false;
+				gp_b_is_first_run_=false;
+				
 				if (!motif_match_results_.empty() )
 				{
 					// Error
@@ -144,6 +159,8 @@ namespace protocols
 					TR.Info << "Generated no results." << std::endl;
 					// Matching failed, set fail_do_not_retry return code.
 					set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
+					//Do not allow the apply to re-run
+					gp_b_allow_repeat_same_graft_output_=false;
 					return;
 				}
 				else if (motif_match_results_.size() > 1)
@@ -167,6 +184,7 @@ namespace protocols
 				if (motif_match_results_.size() == 0) 
 				{
 					TR.Debug << "No additional output." << std::endl;
+					set_last_move_status(protocols::moves::MS_SUCCESS);
 					return NULL;
 				}
 				else if (motif_match_results_.size() == 1)
@@ -355,7 +373,7 @@ namespace protocols
 						{
 							//The motif fragment cannot be samaler than two aminoacids
 							//ToDo: Fix this Bug, core::Size - core::Size is always positive!
-							if ( (k-j) < 1 ){
+							if ( (k-j) < 0 ){
 								continue;
 							}
 							//Store the beggining and the end in motif_extremes vector1
@@ -451,8 +469,8 @@ namespace protocols
 											p_result.total_residue() + 1, 
 											p_result.fold_tree().num_jump()+1,
 											p_result.total_residue());
-
-				//Copy the PDBinfo ()
+				
+				//Copy the PDBinfo for p_A
 				//ToDo: I shuld change the previous conformation().insert_conformation_by_jump for append_pose_by_jump
 				//ToDo add a iterator for the res_labels in order to copy all the labels at once
 				/*
@@ -470,6 +488,7 @@ namespace protocols
 						p_result.pdb_info()->add_reslabel(i,"CONTEXT");
 					}
 				}*/
+				
 				core::Size index_offset=p_A.total_residue();
 				for ( core::Size i = 1; i <= p_B.total_residue(); ++i ) {
 					if(p_B.pdb_info()->res_haslabel(i,"HOTSPOT")){
@@ -529,9 +548,6 @@ namespace protocols
 				//Will keep track of the append index ( initialize with 0 (which does not exists) )
 				core::Size currScaffoldIndex=0;
 				
-				//If fragments are aligned independently in the stitching we will keep track of the motif_fragments_RMSD
-				core::Real motif_fragments_RMSD=0.0;
-				
 				//Will store the stitched pose
 				core::pose::Pose p_result;
 				//Create PDB info for the p_result pose
@@ -576,7 +592,8 @@ namespace protocols
 								p_motif_copy.set_xyz(id_new, p_motif.residue(1).xyz( "1H" ));
 							}
 						}
-					}else if(p_motif_copy.residue(i).has_variant_type( core::chemical::UPPER_TERMINUS )){
+					}//else if
+					if(p_motif_copy.residue(i).has_variant_type( core::chemical::UPPER_TERMINUS )){
 						//Remove upper terminus type of the residues in the motif_copy (Needed/obligated to stitch the pieces)
 						TR.Debug << "DASM says: Removing UPPER terminus from residue: "<< i << std::endl;
 						core::pose::remove_variant_type_from_pose_residue(p_motif_copy, core::chemical::UPPER_TERMINUS, i);
@@ -627,11 +644,12 @@ namespace protocols
 							positions_to_alignB.push_back(m2s_dat.v_indexes[i].motifLow);
 							positions_to_alignB.push_back(m2s_dat.v_indexes[i].motifHigh);
 						}
-						core::Real RMSD = get_bb_alignment_and_transformation( p_scaffold_rotated, positions_to_alignA, p_motif_copy, positions_to_alignB, RotM, TvecA, TvecB);
+						//core::Real RMSD = get_bb_alignment_and_transformation( p_scaffold_rotated, positions_to_alignA, p_motif_copy, positions_to_alignB, RotM, TvecA, TvecB);
+						get_bb_alignment_and_transformation( p_scaffold_rotated, positions_to_alignA, p_motif_copy, positions_to_alignB, RotM, TvecA, TvecB);
 						//TR.Debug << "Independent Fragment[1] alignment RMSD: " << RMSD << std::endl;
 						p_motif_copy=get_rotated_and_translated_pose(p_motif_copy, RotM, TvecA, TvecB);
 						
-						motif_fragments_RMSD =get_bb_distance( p_motif, positions_to_alignB, p_motif_copy, positions_to_alignB);
+						core::Real motif_fragments_RMSD = get_bb_distance( p_motif, positions_to_alignB, p_motif_copy, positions_to_alignB);
 						//TR.Debug << "Independent Fragment distance from original: " << motif_fragments_RMSD << std::endl;
 						
 						//Calculate the overal motif_fragments_RMSD
@@ -918,8 +936,8 @@ namespace protocols
 					//The minimum size of the scaffold fragment that we will consider (can be negative so use int)
 					int tmpMinDesiredSize=(v_motif_fragments_indexes[motifNum].second-v_motif_fragments_indexes[motifNum].first)+max_fragment_replacement_size_delta[motifNum].first;
 					//We cannot replace a fragment smaller than two amino acids, this scenario may happen due to the variation of the lenght in the fragments by the delta-combinations
-					if(tmpMinDesiredSize<1){
-						tmpMinDesiredSize=1;
+					if(tmpMinDesiredSize<0){
+						tmpMinDesiredSize=0;
 					}
 					TR.Debug << "For fragment # "<< motifNum << " the minimum size of a fragment in the scaffold to consider will be: " << tmpMinDesiredSize+1 << " residues" << std::endl;
 					//The maximum size of the scaffold fragment that we will consider
@@ -1164,7 +1182,8 @@ namespace protocols
 						std::string const & s_clash_test_residue,
 						std::string const & s_hotspots,
 						bool        const & b_full_motif_bb_alignment,
-						bool        const & b_optimum_alignment_per_fragment)
+						bool        const & b_optimum_alignment_per_fragment,
+						bool        const & b_allow_repeat_same_graft_output)
 			{
 				//REQUIRED: context structure
 				gp_p_contextStructure_ = core::import_pose::pose_from_pdb( s_contextStructure, false );
@@ -1314,7 +1333,7 @@ used a max_fragment_replacement_size_delta DIFFERENT to 0:0 I just will overwrit
 					gp_vp_max_fragment_replacement_size_delta_.clear();
 					for ( core::Size i = 1; i <= gp_p_motif_->conformation().num_chains() ; ++i){
 						std::pair< long int, long int > tmpPairParser;
-						//The minimum number of residues that can be replaced by the code is 2
+						//The minimum number of residues that can be replaced by the code is 1
 						tmpPairParser.first=0;
 						//The maximum number of residues that can be replaced set to the maximum possible of that the program can manage
 						tmpPairParser.second=0;
@@ -1330,6 +1349,11 @@ used a max_fragment_replacement_size_delta DIFFERENT to 0:0 I just will overwrit
 					TR.Warning << "Will use independent/optimum alignment per fragment, which may lead to structures that are far from the original \
 ragment positions if the RMSD_tolerance is to high make the choice of your parameters wisely. This option operates after the global RMSD assesment \
 so don't be afraid, but consider that the final position of the fragments might be not what you expect." << std::endl;
+				}
+				//OPTIONAL: allow multiple outputs of the same graft?
+				gp_b_allow_repeat_same_graft_output_ = b_allow_repeat_same_graft_output;
+				if ( !gp_b_allow_repeat_same_graft_output_ ){
+					TR.Warning << "When there are not more matches the mover will not generate new outputs, independently of the nstruct option" << std::endl;
 				}
 				
 				TR.Info << "DONE parsing global arguments" << std::endl;
@@ -1354,6 +1378,7 @@ so don't be afraid, but consider that the final position of the fragments might 
 				std::string s_hotspots;
 				bool        b_full_motif_bb_alignment;
 				bool        b_optimum_alignment_per_fragment;
+				bool        b_allow_repeat_same_graft_output;
 				
 				//Read XML Options
 				TR.Info << "Reading XML parameters" << std::endl;
@@ -1435,10 +1460,18 @@ so don't be afraid, but consider that the final position of the fragments might 
 					b_optimum_alignment_per_fragment = tag->getOption< bool >("optimum_alignment_per_fragment");
 				}else
 				{
-					TR.Warning << "No optimum_alignment_per_fragment defined, the default \"false\" (only global alignment of all the fragments together will be used" << std::endl;
+					TR.Warning << "No optimum_alignment_per_fragment defined, the default \"false\" (only global alignment of all the fragments together) will be used" << std::endl;
 					b_optimum_alignment_per_fragment = false;
 				}
 				
+				//OPTIONAL
+				if( tag->hasOption("allow_repeat_same_graft_output") ){
+					b_allow_repeat_same_graft_output = tag->getOption< bool >("allow_repeat_same_graft_output");
+				}else
+				{
+					TR.Warning << "No allow_repeat_same_graft_output defined, the default \"false\" will be used" << std::endl;
+					b_allow_repeat_same_graft_output=false;
+				}
 				TR.Info << "DONE reading XML parmeters" << std::endl;
 				//END XML Read
 				
@@ -1453,7 +1486,8 @@ so don't be afraid, but consider that the final position of the fragments might 
 					s_clash_test_residue,
 					s_hotspots,
 					b_full_motif_bb_alignment,
-					b_optimum_alignment_per_fragment);
+					b_optimum_alignment_per_fragment,
+					b_allow_repeat_same_graft_output);
 			}
 			
 			/**@brief Function used by roseta to create clones of movers**/
@@ -1479,6 +1513,8 @@ so don't be afraid, but consider that the final position of the fragments might 
 			{
 				return "MotifGraftMover";
 			}
+			
+			
 			
 		}//END namespace movers
 		
