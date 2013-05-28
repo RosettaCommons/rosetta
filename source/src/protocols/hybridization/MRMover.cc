@@ -46,6 +46,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/util.hh>
 #include <core/pose/util.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
@@ -254,6 +255,12 @@ void MRMover::apply( Pose &pose ) {
 		new_pdb_info->set_chains( pdb_chains );
 		template_pose->pdb_info( new_pdb_info );
 		template_pose->pdb_info()->obsolete( false );
+
+		// pose must be ideal going into hybrid
+		//  only the foldtree+sequence is used from input pose
+		for (Size i=1; i<=pose.total_residue(); ++i) {
+			core::conformation::idealize_position(i, pose.conformation());
+		}
 
 		protocols::hybridization::HybridizeProtocol rebuild;
 		rebuild.add_template( template_pose, "AUTO", symm_def_file_);
