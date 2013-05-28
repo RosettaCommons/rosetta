@@ -136,6 +136,7 @@ public:
 	/// @details  For linear monosaccharides, this number corresponds to the carbon that is oxidized to the aldehyde
 	/// or ketone.
 	/// See also:\n
+	///  CarbohydrateInfo.anomeric_carbon_name()
 	///  CarbohydrateInfo.is_aldose()
 	///  CarbohydrateInfo.is_ketose()
 	///  CarbohydrateInfo.is_ulose()
@@ -143,6 +144,41 @@ public:
 	anomeric_carbon() const
 	{
 		return anomeric_carbon_;
+	}
+
+	/// @brief    Return the atom name of the anomeric carbon.
+	/// @details  See also:\n
+	///  CarbohydrateInfo.anomeric_carbon()
+	///  CarbohydrateInfo.is_aldose()
+	///  CarbohydrateInfo.is_ketose()
+	///  CarbohydrateInfo.is_ulose()
+	std::string
+	anomeric_carbon_name() const
+	{
+		return anomeric_carbon_name_;
+	}
+
+
+	/// @brief    Return the cyclic oxygen number or 0, if linear.
+	/// @details  This atom is used as a reference atom for certain torsion angles.\n
+	/// See also:\n
+	///  CarbohydrateInfo.anomeric_carbon()
+	///  CarbohydrateInfo.cyclic_oxygen_name()
+	core::uint
+	cyclic_oxygen() const
+	{
+		return cyclic_oxygen_;
+	}
+
+	/// @brief    Return the atom name of the cyclic oxygen.
+	/// @details  This atom is used as a reference atom for certain torsion angles.\n
+	/// See also:\n
+	///  CarbohydrateInfo.cyclic_oxygen()
+	///  CarbohydrateInfo.anomeric_carbon_name()
+	std::string
+	cyclic_oxygen_name() const
+	{
+		return cyclic_oxygen_name_;
 	}
 
 
@@ -414,6 +450,9 @@ private:
 	std::string full_name_;
 	std::string short_name_;
 	core::uint anomeric_carbon_;  // also indicative of location of aldehyde/ketone oxidation
+	std::string anomeric_carbon_name_;  // string for quick reference
+	core::uint cyclic_oxygen_;  // 0 if linear
+	std::string cyclic_oxygen_name_;  // string for quick reference
 	core::Size n_carbons_;
 	char stereochem_;  // L or D
 	core::Size ring_size_;  // 0 indicates linear

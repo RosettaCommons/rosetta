@@ -1646,6 +1646,13 @@ public:
 		return rsd_type_.is_lower_terminus();
 	}
 
+	/// @brief Return true if the residue is a branch lower terminus variant.
+	bool
+	is_branch_lower_terminus() const
+	{
+		return rsd_type_.is_branch_lower_terminus();
+	}
+
 	/// @brief Returns true if the chi angles of another residue all fall within 5 deg
 	bool
 	is_similar_rotamer( Residue const & other ) const;

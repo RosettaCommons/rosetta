@@ -43,18 +43,24 @@ public:
 
 		core_init();
 		option[OptionKeys::in::include_sugars](true);
+		option[OptionKeys::in::file::read_pdb_link_records](true);
+		option[OptionKeys::in::enable_branching](true);
 
 		// Test that oligosaccharides are loaded correctly.
 		pose_from_pdb(maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb");
-		pose_from_pdb(isomaltose_,  "core/chemical/carbohydrates/isomaltose.pdb");
+		pose_from_pdb(isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb");
+
+		// Test branched oligosaccharide.
+		pose_from_pdb(branched_fragment_, "core/chemical/carbohydrates/amylopectin_fragment.pdb");
+
+		// Test N-linked glycosylation.
+		pose_from_pdb(N_linked_, "core/chemical/carbohydrates/glycosylated_peptide.pdb");
 
 		// Test modified sugar patch system.
 		pose_from_pdb(glucosamine_, "core/chemical/carbohydrates/GlcN.pdb");
 
 		// Test that oligosaccharides can be created from a given sequence.
 		make_pose_from_saccharide_sequence(lactose_, "beta-D-Galp-(1->4)-Glcp");
-
-		// TODO: Test several other cases.
 	}
 
 	// Destruction
@@ -151,16 +157,26 @@ public:
 	void test_Pose_phi_psi_omega_w_polysaccharide()
 	{
 		TS_TRACE("Testing phi(), psi(), and omega() methods of Pose with polysaccharide chains.");
+		TS_ASSERT_DELTA(maltotriose_.phi(1), 0.000, 0.001);
+
 		TS_ASSERT_DELTA(isomaltose_.phi(2), 44.3268, 0.001);
 		TS_ASSERT_DELTA(isomaltose_.psi(2), -170.869, 0.001);
 		TS_ASSERT_DELTA(isomaltose_.omega(2), 49.383, 0.001);
+
+		TS_ASSERT_DELTA(branched_fragment_.phi(5), 111.187, 0.001);
+
+		TS_ASSERT_DELTA(N_linked_.phi(6), -103.691, 0.001);
 	}
 
 	// Confirm that branches are handled properly.
 	void test_CarbohydrateInfo_branch_point()
 	{
-		// TODO
+		using namespace core;
+		using namespace conformation;
+
 		TS_TRACE("Testing branch_point() method of CarbohydrateInfo.");
+		Residue res2 = branched_fragment_.residue(2);
+		TS_ASSERT_EQUALS(res2.carbohydrate_info()->branch_point(1), 6);
 	}
 
 	// Confirm that nu angles are mapped to the correct CHI identifiers.
@@ -183,6 +199,8 @@ private:
 	// Private data ////////////////////////////////////////////////////////////
 	core::pose::Pose maltotriose_;  // a (1alpha->4) trisaccharide of D-glucose
 	core::pose::Pose isomaltose_;  // a (1alpha->6) disaccharide of D-glucose
+	core::pose::Pose branched_fragment_;  // a branched fragment of amylopectin
+	core::pose::Pose N_linked_;  // a 5-mer peptide with an N-linked glycan
 	core::pose::Pose lactose_;  // a (1beta->4) disaccharide of D-glucose and D-galactose
 	core::pose::Pose glucosamine_;  // 2-amino-2-deoxy-D-glucopyranose
 

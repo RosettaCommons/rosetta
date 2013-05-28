@@ -15,69 +15,50 @@
 // Unit headers
 #include <core/pose/Pose.hh>
 
-// package headers
+// Package headers
+#include <core/pose/util.hh>
+#include <core/pose/signals/ConformationEvent.hh>
+#include <core/pose/signals/DestructionEvent.hh>
+#include <core/pose/signals/EnergyEvent.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
+#include <core/pose/metrics/PoseMetricContainer.hh>
 
 // Project headers
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/prof.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-
-#include <core/id/TorsionID.hh>
-#include <core/id/types.hh>
-#include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <basic/MetricValue.hh>
-#include <basic/prof.hh>
-#include <core/pose/metrics/PoseMetricContainer.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-
-#include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-
-#include <utility/vector1.hh>
-
-#include <algorithm>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-//#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
-//#include <core/optimization/MinimizerMap.fwd.hh>
-#include <basic/options/keys/OptionKeys.hh>
-
-//Auto Headers
-//#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-//#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pose/util.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-//#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-
-#include <utility/vector0.hh>
-#include <numeric/xyz.functions.hh>
-
-#include <core/id/NamedAtomID.hh>
-
-//Auto Headers
 #include <core/conformation/signals/XYZEvent.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/Atom.hh>
+#include <core/id/TorsionID.hh>
+#include <core/id/types.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/io/pdb/file_data.hh>
 
+// Utility headers
+#include <numeric/xyz.functions.hh>
+#include <utility/vector1.hh>
+#include <utility/vector0.hh>
 
+// C++ headers
+#include <algorithm>
+#include <iostream>
+#include <sstream>
+#include <fstream>
 
 
 namespace core {
@@ -113,17 +94,6 @@ Pose::Pose() :
 {
 	init();
 }
-
-
-/// @details construc pose using info from PDB file
-//Pose::Pose( std::string const & pdb_file ) :
-//	pdb_info_( NULL ),
-//	constraint_set_( 0 )
-//{
-//	init();
-//	core::import_pose::pose_from_pdb(*this, pdb_file);
-//}
-
 
 /// @details destructor -- > kill data on the heap
 Pose::~Pose()
@@ -354,7 +324,7 @@ Pose::split_by_chain(Size const chain_id) const
 /// @details  This method updates the pose chain IDs to match the chain IDs
 /// found in pdb_info().  In some applications, it is more intuitive to change
 /// pdb chain ID letters than it is to change pose chain IDs.  This method
-/// adds chain endings between pdb chains and redrives the pose chain IDs.
+/// adds chain endings between pdb chains and re-derives the pose chain IDs.
 /// Currently, disconnected segments with the same pdb chain ID character are
 /// treated as separate pose chains, e.g., it is possible for pose chains 1,
 /// 3, and 5 to all be chain X.  In the future, I will add a flag to force a
@@ -396,10 +366,6 @@ Pose::update_pose_chains_from_pdb_chains()
 	}
 }
 
-
-/// APL Illegal.
-///conformation::ResidueOPs::iterator Pose::res_begin() { return conformation_->res_begin(); }
-///conformation::ResidueOPs::iterator Pose::res_end  () { return conformation_->res_end  (); }
 
 void
 Pose::metric( std::string const & calculator_name, std::string const & key, basic::MetricValueBase & val ) const
@@ -465,7 +431,6 @@ Pose::replace_residue(
 	conformation_->replace_residue( seqpos, new_rsd_in, orient_backbone );
 }
 
-
 void
 Pose::replace_residue(
 	int const seqpos,
@@ -489,7 +454,6 @@ Pose::append_polymer_residue_after_seqpos(
 	energies_->clear(); // TEMPORARY
 	conformation_->append_polymer_residue_after_seqpos( new_rsd, seqpos, build_ideal_geometry );
 }
-
 
 void
 Pose::prepend_polymer_residue_before_seqpos(

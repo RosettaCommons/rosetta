@@ -19,16 +19,20 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 
 namespace core {
 namespace pose {
 namespace carbohydrates {
 
-/// @brief Calculate and return the phi angle between a saccharide residue of the given pose and the previous residue.
+/// @brief  Scan through a saccharide residue's connections to find the residue from which it follows or branches.
+core::uint find_seqpos_of_parent_residue(conformation::Residue const & residue);
+
+/// @brief  Calculate and return the phi angle between a saccharide residue of the given pose and the previous residue.
 core::Angle calculate_carbohydrate_phi(Pose const & pose, uint const sequence_position);
 
-/// @brief Return the number of degrees by which the phi angle between a saccharide residue of the given pose and the
+/// @brief  Return the number of degrees by which the phi angle between a saccharide residue of the given pose and the
 /// previous residue differs from the BB torsion used by Rosetta.
 core::Angle carbohydrate_phi_offset_from_BB(Pose const & pose, uint const sequence_position);
 

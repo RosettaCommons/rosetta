@@ -9,7 +9,7 @@
 
 /// @file    core/pose/carbohydrates/util.cc
 /// @brief   Utility function definitions for carbohydrate-containing poses.
-/// @author  labonte
+/// @author  Labonte
 
 // Unit headers
 #include <core/pose/carbohydrates/util.hh>
@@ -24,6 +24,7 @@
 
 // Utility headers
 //#include <utility/excn/Exceptions.hh>
+#include <utility/vector1.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -43,6 +44,24 @@ namespace carbohydrates {
 using namespace std;
 using namespace core;
 
+// Scan through a saccharide residue's connections to find the residue from which it follows or branches.
+/// @return  The sequence position of the residue before this one (n-1) or the residue in the parent chain from which
+/// the branch occurs or zero if N/A, i.e., if this is the lower terminus.
+core::uint
+find_seqpos_of_parent_residue(conformation::Residue const & residue) {
+	uint seqpos = residue.seqpos();
+	Size n_connections = residue.n_residue_connections();
+
+	// Search backwards for speed, since "non-polymeric" connections come after polymeric ones.
+	for (uint i = n_connections; i >= 1; --i) {
+		uint connection_partner_position = residue.residue_connection_partner(i);
+		if (connection_partner_position < seqpos) {  // assumes PDB places branches after main chains
+			return connection_partner_position;
+		}
+	}
+	TR.Warning << "This residue is a lower terminus! Returning 0." << endl;
+	return 0;
+}
 
 // Calculate and return the phi angle between a saccharide residue of the given pose and the previous residue.
 /// @details This special-case function for carbohydrate phis is necessary, because of the following:\n
@@ -62,45 +81,59 @@ using namespace core;
 core::Angle
 calculate_carbohydrate_phi(Pose const & pose, uint const sequence_position) {
 	using namespace numeric;
+	using namespace utility;
 	using namespace conformation;
 
-	if (sequence_position == 1) {  // TODO: It's not sequence position 1 that is the problem....
-		bool is_1st_residue_of_branch = false;  // TEMP
-		if (is_1st_residue_of_branch) {
-			// TODO: When branching is implemented, this must return the 1st torsion angle back to the main chain.
-			return 180.0;  // TEMP
-		} else {
-			TR.Warning << "Phi is undefined for polysaccharide residue 1 unless part of a branch; "
-					"returning 0.0." << endl;
-			return 0.0;
+	// Get the 1st residue of interest.
+	ResidueCAP res_n = & pose.residue(sequence_position);
+
+	if (res_n->is_lower_terminus()) {
+		TR.Warning << "Phi is undefined for the first polysaccharide residue of a chain unless part of a branch; "
+				"returning 0.0." << endl;
+		return 0.0;
+	}
+
+	// Get the 2nd residue of interest.
+	// (res_n_minus_1 is a misnomer for the lower termini of branches.)
+	ResidueCAP res_n_minus_1 = & pose.residue(find_seqpos_of_parent_residue(*res_n));
+
+
+	// Set the atom names of the four reference atoms.
+	string ref1;  // O(cyclic) for cyclic saccharides; C? for linear saccharides
+	if (res_n->carbohydrate_info()->is_cyclic()) {
+		ref1 = res_n->carbohydrate_info()->cyclic_oxygen_name();
+	} else /* is linear */ {
+		ref1 = "C?";  // TODO: Figure out how linear polysaccharides are handled by IUPAC.
+	}
+
+	string ref2 = res_n->carbohydrate_info()->anomeric_carbon_name();  // always the anomeric carbon
+
+	string ref3 = res_n_minus_1->atom_name(res_n_minus_1->connect_atom(*res_n));  // OX(n-1) for polysaccharides
+
+	string ref4;  // CX(n-1) for polysaccharides; an AA carbon for the 1st saccharide residue of a glycopeptide
+	if (res_n_minus_1->is_carbohydrate()) {
+		uint x = atoi(&ref3[2]);  // 3rd column (index 2) is the atom number
+		ref4 = "C" + string(1, x + '0');  // "CX"
+	} else /* is amino acid residue */ {
+		// Get list of indices of all atoms connected to reference atom 3.
+		vector1<uint> atom_indices = res_n_minus_1->bonded_neighbor(res_n_minus_1->atom_index(ref3));
+
+		// Search for heavy atoms.  Since a residue connection is not an atom, it must be the next reference atom.
+		Size n_indices = atom_indices.size();
+		for (uint i = 1; i < n_indices; ++i) {
+			if (!res_n_minus_1->atom_is_hydrogen(atom_indices[i])) {
+				ref4 = res_n_minus_1->atom_name(atom_indices[i]);
+				break;
+			}
 		}
 	}
 
-	// Get two residues of interest.
-	ResidueCAP res_n = & pose.residue(sequence_position);
-	ResidueCAP res_n_minus_1 = & pose.residue(sequence_position - 1);
-
-	// Get reference atom numbers.
-	uint cyclic_O_num;
-	if (res_n->carbohydrate_info()->is_aldose()) {
-		cyclic_O_num = res_n->carbohydrate_info()->ring_size() - 1;
-	} else /*is ketose*/ {
-		cyclic_O_num = res_n->carbohydrate_info()->ring_size();
-	}
-	uint anomeric_C_num = res_n->carbohydrate_info()->anomeric_carbon();
-	uint x = res_n_minus_1->carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
-
-	// Set the atom names of the four reference atoms.
-	string O_cyclic = "O" + string(1, cyclic_O_num + '0');
-	string C_anomeric = "C" + string(1, anomeric_C_num + '0');
-	string OX = "O" + string(1, x + '0');
-	string CX = "C" + string(1, x + '0');
 
 	// Obtain the position vectors (a, b, c, d) of the four reference atoms.
-	Vector a = res_n->xyz(O_cyclic);
-	Vector b = res_n->xyz(C_anomeric);
-	Vector c = res_n_minus_1->xyz(OX);
-	Vector d = res_n_minus_1->xyz(CX);
+	Vector a = res_n->xyz(ref1);
+	Vector b = res_n->xyz(ref2);
+	Vector c = res_n_minus_1->xyz(ref3);
+	Vector d = res_n_minus_1->xyz(ref4);
 
 	return dihedral_degrees(a, b, c, d);
 }
@@ -115,6 +148,8 @@ carbohydrate_phi_offset_from_BB(Pose const & pose, uint const sequence_position)
 
 	// Get the actual value of phi.
 	Angle actual_phi = calculate_carbohydrate_phi(pose, sequence_position);
+
+	// TODO: Refactor completely
 
 	// Get the appropriate BB torsion (found on the previous residue).
 	uint x = pose.residue_type(sequence_position - 1).carbohydrate_info()->mainchain_glycosidic_bond_acceptor();

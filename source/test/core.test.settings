@@ -275,6 +275,8 @@ testinputfiles = [
 	"chemical/atom_properties.txt",
 	"chemical/carbohydrates/maltotriose.pdb",
 	"chemical/carbohydrates/isomaltose.pdb",
+	"chemical/carbohydrates/amylopectin_fragment.pdb",
+	"chemical/carbohydrates/glycosylated_peptide.pdb",
 	"chemical/carbohydrates/lactose.pdb",
 	"chemical/carbohydrates/GlcN.pdb",
 	"chemical/carbohydrates/sugar_properties.list",

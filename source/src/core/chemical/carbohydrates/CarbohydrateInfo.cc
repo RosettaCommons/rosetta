@@ -313,7 +313,7 @@ CarbohydrateInfo::nu_id(core::uint subscript) const
 /// @param    <torsion_index>: an integer corresponding to phi (1), psi (2), or omega (3)
 /// @return	  a pair of values corresponding to the atom tree torsion definitions, in which the first element is
 /// either the TorsionID BB or CHI and the second element is an integer
-/// @details  It is crucial to note that this data structure stores information to identify:\n
+/// @details  It is crucial to note that this function returns information to identify:\n
 ///  phi(n)\n
 ///  psi(n+1), NOT psi(n)\n
 ///  omega(n+1), NOT omega(n)\n
@@ -356,6 +356,9 @@ CarbohydrateInfo::init(core::chemical::ResidueTypeCAP residue_type)
 	// Set default values.
 	residue_type_ = residue_type;
 	anomeric_carbon_ = 1;  // assumes that most sugars will be aldoses if not specified by .params file
+	anomeric_carbon_name_ = "C1";
+	cyclic_oxygen_ = 0;  // assumes linear
+	cyclic_oxygen_name_ = "";
 	n_carbons_ = get_n_carbons();
 	stereochem_ = 'D';  // assumes that most sugars will have D stereochemistry
 	ring_size_ = 0;  // assumes linear
@@ -385,6 +388,9 @@ CarbohydrateInfo::copy_data(
 	object_to_copy_to.full_name_ = object_to_copy_from.full_name_;
 	object_to_copy_to.short_name_ = object_to_copy_from.short_name_;
 	object_to_copy_to.anomeric_carbon_ = object_to_copy_from.anomeric_carbon_;
+	object_to_copy_to.anomeric_carbon_name_ = object_to_copy_from.anomeric_carbon_;
+	object_to_copy_to.cyclic_oxygen_ = object_to_copy_from.cyclic_oxygen_;
+	object_to_copy_to.cyclic_oxygen_name_ = object_to_copy_from.cyclic_oxygen_name_;
 	object_to_copy_to.n_carbons_ = object_to_copy_from.n_carbons_;
 	object_to_copy_to.stereochem_ = object_to_copy_from.stereochem_;
 	object_to_copy_to.ring_size_ = object_to_copy_from.ring_size_;
@@ -448,6 +454,7 @@ CarbohydrateInfo::read_and_set_properties()
 							"A sugar cannot be both an aldose and a ketose; check the .params file.");
 				} else {
 					anomeric_carbon_ = 1;
+					anomeric_carbon_name_ = "C1";
 					aldose_or_ketose_is_set = true;
 				}
 			} else if (property == "KETOSE") {
@@ -456,6 +463,7 @@ CarbohydrateInfo::read_and_set_properties()
 							"A sugar cannot be both an aldose and a ketose; check the .params file.");
 				} else {
 					anomeric_carbon_ = 2;  // TODO: Provide method for dealing with non-ulose ketoses.
+					anomeric_carbon_name_ = "C2";
 					aldose_or_ketose_is_set = true;
 				}
 			} else if (property == "L_SUGAR") {
@@ -529,6 +537,14 @@ CarbohydrateInfo::read_and_set_properties()
 	}
 	if ((ring_size_ == 0) && (anomer_ != "")) {
 		utility_exit_with_message("An acyclic sugar cannot be alpha or beta; check the .params file.");
+	}
+
+	// Determine cyclic oxygen from "cut bond" neighbor to the anomeric carbon, if applicable.
+	if (ring_size_ != 0) {
+		uint anomeric_C_index = residue_type_->atom_index(anomeric_carbon_name_);
+		uint cyclic_O_index = residue_type_->cut_bond_neighbor(anomeric_C_index)[1];
+		cyclic_oxygen_name_ = residue_type_->atom_name(cyclic_O_index);
+		cyclic_oxygen_ = atoi(&cyclic_oxygen_name_[2]);  // 3rd column (index 2) is the atom number
 	}
 }
 

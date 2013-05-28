@@ -1191,6 +1191,13 @@ public:
 		return is_upper_terminus_;
 	}
 
+	/// @brief is lower terminus of a branch?
+	bool
+	is_branch_lower_terminus() const
+	{
+		return is_branch_lower_terminus_;
+	}
+
 	/// @brief is acetylated n terminus
 	bool
 	is_acetylated_nterminus() const
@@ -1889,7 +1896,7 @@ private:
 	// if you add new things -- do they need to be initialized in the c-tor?
 	// gcc debug does not seem to initialize bools to false!
 
-	/// residue properties as defined in the residue param files
+	// residue properties as defined in the residue param files
 	utility::vector1< std::string > properties_;
 	bool is_polymer_;
 	bool is_protein_;
@@ -1907,6 +1914,7 @@ private:
 	bool is_terminus_; // last or first residue in a chain; set to TRUE during terminus patching
 	bool is_lower_terminus_; // first residue in a chain; set to TRUE during terminus patching
 	bool is_upper_terminus_; // last residue in a chain; set to TRUE during terminus patching
+	bool is_branch_lower_terminus_;
 	bool is_phosphonate_; // amino phosphonic acid instead of amino carboxylic acid
 	bool is_phosphonate_upper_;
 	bool is_acetylated_nterminus_;

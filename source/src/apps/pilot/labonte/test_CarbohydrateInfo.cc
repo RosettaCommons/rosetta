@@ -127,7 +127,7 @@ main(int argc, char *argv[])
 		cout << "------------------------------------------------------------" << endl;
 		cout << "Importing N-glycosylated sample:" << endl;
 
-		pose_from_pdb(glycoprotein, PATH + "glycosylated_test2.pdb");
+		pose_from_pdb(glycoprotein, PATH + "glycosylated_peptide.pdb");
 
 		//test_sugar(glycoprotein);
 		cout << endl << glycoprotein << endl;

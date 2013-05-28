@@ -149,6 +149,7 @@ ResidueType::ResidueType(
 	is_terminus_( false ),
 	is_lower_terminus_( false ),
 	is_upper_terminus_( false ),
+	is_branch_lower_terminus_( false ),
 	is_acetylated_nterminus_( false ),
 	is_methylated_cterminus_( false ),
 	is_coarse_( false ), //currently for coarse_RNA only
@@ -260,6 +261,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	is_terminus_( residue_type.is_terminus_ ),
 	is_lower_terminus_( residue_type.is_lower_terminus_ ),
 	is_upper_terminus_( residue_type.is_upper_terminus_ ),
+	is_branch_lower_terminus_( residue_type.is_branch_lower_terminus_ ),
 	is_acetylated_nterminus_( residue_type.is_acetylated_nterminus_ ),
 	is_methylated_cterminus_( residue_type.is_methylated_cterminus_ ),
 	is_coarse_( residue_type.is_coarse_ ), //currently for coarse_RNA only
@@ -1130,6 +1132,8 @@ ResidueType::add_property( std::string const & property )
 	} else if ( property == "UPPER_TERMINUS" ) {
 		is_terminus_ = true;
 		is_upper_terminus_ = true;
+	} else if ( property == "BRANCH_LOWER_TERMINUS" ) {
+		is_branch_lower_terminus_ = true;
 	} else if ( property == "LOWERTERM_TRUNC" ) {
 		is_terminus_ = true;
 		is_lower_terminus_ = true;
@@ -1212,6 +1216,8 @@ ResidueType::delete_property( std::string const & property )
 		is_lower_terminus_ = false;
 	} else if ( property == "UPPER_TERMINUS" ) {
 		is_upper_terminus_ = false;
+	} else if ( property == "BRANCH_LOWER_TERMINUS" ) {
+		is_branch_lower_terminus_ = false;
 	} else if ( property == "TERMINUS" ) {
 		is_terminus_ = false;
 	} else if ( property == "PHOSPHONATE" ) {
