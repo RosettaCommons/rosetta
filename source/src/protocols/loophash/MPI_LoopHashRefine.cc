@@ -390,7 +390,7 @@ MPI_LoopHashRefine::add_structure_to_library_single_replace( core::io::silent::S
 		if( mpi_metropolis_temp_ > 0.0 ) energy_diff_T = old_energy - new_energy;
 
 		if( ( energy_diff_T >= 0.0 ) ) metropolis_replace = true; // energy of new is simply lower
-		else if ( energy_diff_T > (-10.0) ){
+		else if ( energy_diff_T/mpi_metropolis_temp_ > (-10.0) ){	// exp(-10) ~ 0, so check this before trying to evaluate exp(-100) and getting NaN
 			core::Real random_float = RG.uniform();
 			if ( random_float < exp( energy_diff_T/mpi_metropolis_temp_ ) )  metropolis_replace = true;
 		}
