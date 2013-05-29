@@ -481,6 +481,40 @@ Options = Option_Group( '',
                 Option( 'square_score', 'Boolean', desc="square the terms in DARC scoring function",default='false' ),
                 Option( 'set_origin',     'Integer',default='0',desc='option to set orgin: 0 to choose origin based on R(rugedness) value, 1 for protein_center, 2 for eggshell_bottom, 3 for vector form eggshell_plane closest to protein_center, 4 for vector form eggshell_plane distant to protein_center'),
 	),
+
+	##############################################################################
+	# ContactMap options
+	Option_Group( 'contactMap',
+		Option( 'contactMap', 'Boolean', 
+			desc="contactMap option group", 
+			legal='true', default='true' 
+		),
+		Option( 'prefix', 'String', 
+			default = 'contact_map_', 
+			desc = "Prefix of contactMap filename"
+		),
+		Option( 'distance_cutoff', 'Real', 
+			default = '10.0', 
+			desc = "Cutoff Backbone distance for two atoms to be considered interacting"
+		),
+		Option( 'energy_cutoff', 'Real',
+			default = '1.0',
+			lower = '0.0', upper = '1.0', 
+			desc= "Energy_Cutoff (percentage value - only affecting silent file input)"
+		),
+		Option( 'region_def', 'String', 
+			default = '',
+			desc = "Region definition for comparison eg: 1-10:20-30,40-50,A:ligand=X" 
+		 ),
+		Option( 'row_format', 'Boolean', 
+			default = 'false',
+			desc = "Flag whether to output in row instead of matrix format"
+		),
+		Option( 'distance_matrix', 'Boolean', 
+			default = 'false',
+			desc = "Output a distance matrix instead of a contact map"
+		),
+	),
 	##############################################################################
 	# Docking options ---------------------------------------------------------
 	Option_Group('docking',

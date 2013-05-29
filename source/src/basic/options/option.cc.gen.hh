@@ -285,6 +285,13 @@ option.add( basic::options::OptionKeys::fingerprint::include_hydrogens, "include
 option.add( basic::options::OptionKeys::fingerprint::use_DARC_gpu, "use GPU when computing DARC score" ).def(false);
 option.add( basic::options::OptionKeys::fingerprint::square_score, "square the terms in DARC scoring function" ).def(false);
 option.add( basic::options::OptionKeys::fingerprint::set_origin, "option to set orgin: 0 to choose origin based on R(rugedness) value, 1 for protein_center, 2 for eggshell_bottom, 3 for vector form eggshell_plane closest to protein_center, 4 for vector form eggshell_plane distant to protein_center" ).def(0);
+option.add( basic::options::OptionKeys::contactMap::contactMap, "contactMap option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::contactMap::prefix, "Prefix of contactMap filename" ).def("contact_map_");
+option.add( basic::options::OptionKeys::contactMap::distance_cutoff, "Cutoff Backbone distance for two atoms to be considered interacting" ).def(10.0);
+option.add( basic::options::OptionKeys::contactMap::energy_cutoff, "Energy_Cutoff (percentage value - only affecting silent file input)" ).lower(0.0).upper(1.0).def(1.0);
+option.add( basic::options::OptionKeys::contactMap::region_def, "Region definition for comparison eg: 1-10:20-30,40-50,A:ligand=X" ).def("");
+option.add( basic::options::OptionKeys::contactMap::row_format, "Flag whether to output in row instead of matrix format" ).def(false);
+option.add( basic::options::OptionKeys::contactMap::distance_matrix, "Output a distance matrix instead of a contact map" ).def(false);
 option.add( basic::options::OptionKeys::docking::kick_relax, "Add relax step at the end of symmetric docking" ).def(false);
 option.add( basic::options::OptionKeys::docking::docking, "Docking option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::docking::view, "Decide whether to use the viewer (graphical) or not" ).def(false);

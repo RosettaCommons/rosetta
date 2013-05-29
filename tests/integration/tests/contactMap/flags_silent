@@ -1,0 +1,10 @@
+-in
+ -file
+  -silent_struct_type binary
+  -silent input/t288_.cen.out
+  -residue_type_set centroid 
+
+-contactMap
+ -prefix map_silent_
+ -row_format
+ -distance_cutoff 8.0

@@ -280,6 +280,13 @@ namespace fingerprint { BooleanOptionKey const include_hydrogens( "fingerprint:i
 namespace fingerprint { BooleanOptionKey const use_DARC_gpu( "fingerprint:use_DARC_gpu" );  }
 namespace fingerprint { BooleanOptionKey const square_score( "fingerprint:square_score" );  }
 namespace fingerprint { IntegerOptionKey const set_origin( "fingerprint:set_origin" );  }
+namespace contactMap { BooleanOptionKey const contactMap( "contactMap" );  }
+namespace contactMap { StringOptionKey const prefix( "contactMap:prefix" );  }
+namespace contactMap { RealOptionKey const distance_cutoff( "contactMap:distance_cutoff" );  }
+namespace contactMap { RealOptionKey const energy_cutoff( "contactMap:energy_cutoff" );  }
+namespace contactMap { StringOptionKey const region_def( "contactMap:region_def" );  }
+namespace contactMap { BooleanOptionKey const row_format( "contactMap:row_format" );  }
+namespace contactMap { BooleanOptionKey const distance_matrix( "contactMap:distance_matrix" );  }
 namespace docking { BooleanOptionKey const kick_relax( "docking:kick_relax" );  }
 namespace docking { BooleanOptionKey const docking( "docking" );  }
 namespace docking { BooleanOptionKey const view( "docking:view" );  }

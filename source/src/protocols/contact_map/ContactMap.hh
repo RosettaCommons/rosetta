@@ -103,6 +103,7 @@ private:
 	/// @brief	bool value indicating whether the reset function will be called after file output
 	bool reset_count_;
 	bool row_format_;
+	bool distance_matrix_;
 
 	/// @brief	Initializes ContactMap within a single region
 	void fill_contacts(
@@ -161,10 +162,13 @@ class Contact{
 public:
 	/// @brief Default constructor
 	Contact(ContactPartner p1 = ContactPartner(), ContactPartner p2 = ContactPartner()) :
-		count_(0),
-		partner1_(p1),
-		partner2_(p2)
-	{}
+        partner1_(p1),
+        partner2_(p2),
+        count_(0),
+        distance_(0.0){}
+
+	/// @brief	Adds distance to the contact
+	void add_distance();
 
 	/// @brief	Adds distance to the contact
 	void add_distance( core::Real distance );
@@ -186,9 +190,12 @@ public:
 	ContactPartnerAP partner2() {return utility::pointer::access_ptr<ContactPartner>(partner2_);}
 
 private:
-	core::Size count_;
 	ContactPartner partner1_;
 	ContactPartner partner2_;
+	core::Size count_;
+	core::Real distance_;
+
+
 }; // class Contact
 
 

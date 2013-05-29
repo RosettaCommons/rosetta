@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file create_contactmap.cc
+/// @file contactMap.cc
 /// @brief simple application for creating a contact map from multiple models of the same protein.
 /// @author Joerg Schaarschmidt
 
@@ -40,10 +40,12 @@
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
+#include <core/import_pose/pose_stream/util.cc>
 
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/contactMap.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
 typedef protocols::contact_map::ContactMap ContactMap;
@@ -52,15 +54,7 @@ typedef protocols::contact_map::ContactMap ContactMap;
 
 
 // declare variables that need to be accessed outside the main routine
-basic::Tracer tr("create_contactmap");
-core::Real DISTANCE_CUTOFF=10.0;
-
-// declare protocol specific options
-OPT_1GRP_KEY(File, contactmap, prefix)
-OPT_1GRP_KEY(Real, contactmap, distance_cutoff)
-OPT_1GRP_KEY(Real, contactmap, energy_cutoff)
-OPT_1GRP_KEY(String, contactmap, region_def)
-OPT_1GRP_KEY(Boolean, contactmap, row_format)
+basic::Tracer tr("contactMap");
 
 // Method to process region definition string into a vector of initialized ContactMap movers
 utility::vector1<ContactMap> processRegions(std::string region_def, core::pose::Pose const & pose) {
@@ -110,12 +104,13 @@ utility::vector1<ContactMap> processRegions(std::string region_def, core::pose::
 		}
 		// instantiate ContactMap and call parse_my_tag routine
 		protocols::contact_map::ContactMap cm= protocols::contact_map::ContactMap();
-		tag->setOption("distance_cutoff", DISTANCE_CUTOFF);
+		tag->setOption("distance_cutoff", option[contactMap::distance_cutoff]());
 		tag->setOption("models_per_file", 0);
-		if(option[contactmap::row_format]())tag->setOption("row_format", "true");
+		if(option[contactMap::row_format]()) tag->setOption("row_format", "true");
+		if(option[contactMap::distance_matrix]()) tag->setOption("distance_matrix", "true");
 		cm.parse_my_tag( tag, data,	filters , movers, pose);
 		// set output prefix for region
-		std::string output_prefix(option[contactmap::prefix]());
+		std::string output_prefix(option[contactMap::prefix]());
 		output_prefix +=current_region;
 		cm.set_output_prefix(output_prefix);
 		// add ContactMap to maps vector
@@ -135,27 +130,25 @@ int main(int argc, char* argv[]) {
 	using namespace basic::options::OptionKeys;
 	using namespace core;
 
-	// add and process protocol specific options
-
-
-	NEW_OPT(contactmap::prefix, "Prefix of contactmap filename","contact_map_");
-	NEW_OPT(contactmap::distance_cutoff,
-							"Cutoff Backbone distance for two atoms to be considered interacting", DISTANCE_CUTOFF);
-	NEW_OPT(contactmap::energy_cutoff,
-							"Energy_Cutoff (percentage value - only affecting silent file input)", 1.0);
-	option[contactmap::energy_cutoff].lower(0.0).upper(1.0);
-	NEW_OPT(contactmap::region_def,
-			"Region definition for comparison eg: 1-10:20-30,40-50,A:ligand=X", "");
-	NEW_OPT(contactmap::row_format,
-				"Flag whether to output in row instead of matrix format", false);
+	// define protocol specific options
+	OPT(contactMap::prefix);
+	OPT(contactMap::distance_cutoff);
+	OPT(contactMap::energy_cutoff);
+	OPT(contactMap::region_def);
+	OPT(contactMap::row_format);
+	OPT(contactMap::distance_matrix);
 
 	// define relevant standard options
 	OPT(in::path::database);
 	OPT(in::file::s);
+	OPT(in::file::l);
 	OPT(in::file::silent);
 	OPT(in::file::tags);
 	OPT(in::file::silent_struct_type);
 	OPT(in::file::residue_type_set);
+	OPT(in::file::extra_res);
+	OPT(in::file::extra_res_fa);
+	OPT(in::file::extra_res_cen);
 
 	// options, random initialization
 	devel::init(argc, argv);
@@ -163,19 +156,16 @@ int main(int argc, char* argv[]) {
 	// usage declaration
 	std::string usage("");
 	usage
-			+= "\n\nusage:  create_heatmap [options] -in::file::silent <silent_files>\n";
+			+= "\n\nusage:  create_heatmap [options]\n";
 	usage += "\tTo see a list of other valid options, use the option -help.\n";
 
 	// check if files to process have been specified
-	if (!option[in::file::silent].user() && !option[in::file::s].user()) {
+	if (!option[in::file::silent].user() && !option[in::file::s].user() && !option[in::file::l].user()) {
 		std::cerr << usage << std::endl;
 		std::exit(1);
 	}
 
 	// initialize variables
-	utility::vector1<ContactMap> maps;
-	DISTANCE_CUTOFF = option[contactmap::distance_cutoff]();
-
 	core::chemical::ResidueTypeSetCAP rsd_set =
 			ChemicalManager::get_instance()->residue_type_set(
 					option[in::file::residue_type_set]());
@@ -187,20 +177,23 @@ int main(int argc, char* argv[]) {
 	if (option[in::file::silent].user()) {
 		if (option[in::file::tags].user()) {
 			input = new SilentFilePoseInputStream(option[in::file::silent](),
-					option[in::file::tags](), option[contactmap::energy_cutoff]());
+					option[in::file::tags](), option[contactMap::energy_cutoff]());
 		} else {
 			input = new SilentFilePoseInputStream(option[in::file::silent](),
-					option[contactmap::energy_cutoff]());
+					option[contactMap::energy_cutoff]());
 		}
 	} else if (option[in::file::s].user()) {
 		input = new PDBPoseInputStream(option[in::file::s]());
+	}else if ( option[ in::file::l ].user() ) {
+		input = new PDBPoseInputStream( core::import_pose::pose_stream::filenames_from_list_file( option[ in::file::l ]() ) );
 	}
 
 	// use first pose initialize ContactMaps
 	input->fill_pose(pose, *rsd_set);
 
 	// process region_def option and initialize ContactMaps
-	maps = processRegions(option[contactmap::region_def](), pose);
+	utility::vector1<ContactMap> maps;
+	maps = processRegions(option[contactMap::region_def](), pose);
 
 	// reset PoseInputStream
 	input->reset();

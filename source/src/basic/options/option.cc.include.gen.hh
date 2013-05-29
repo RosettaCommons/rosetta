@@ -79,6 +79,7 @@
 #include <basic/options/keys/strand_assembly.OptionKeys.gen.hh>
 #include <basic/options/keys/RBSegmentRelax.OptionKeys.gen.hh>
 #include <basic/options/keys/krassk.OptionKeys.gen.hh>
+#include <basic/options/keys/contactMap.OptionKeys.gen.hh>
 #include <basic/options/keys/threadsc.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/options/keys/blivens.OptionKeys.gen.hh>

@@ -85,23 +85,25 @@ ContactMap::ContactMap() :
 	distance_cutoff_(10.0),
 	models_per_file_(1),
 	reset_count_(true),
-	row_format_(false)
+	row_format_(false),
+	distance_matrix_(false)
 {
 }
 
 /// @brief	Copy constructor
 ContactMap::ContactMap(ContactMap const & contact_map) :
-		Mover(contact_map),
-		contacts_(contact_map.contacts_),
-		output_matrix_(contact_map.output_matrix_),
-		column_names_(contact_map.column_names_),
-		row_names_(contact_map.row_names_),
-		output_prefix_(contact_map.output_prefix_),
-		n_poses_(contact_map.n_poses_),
-		distance_cutoff_(contact_map.distance_cutoff_),
-		models_per_file_(contact_map.models_per_file_),
-		reset_count_(contact_map.reset_count_),
-		row_format_(contact_map.row_format_)
+    Mover(contact_map),
+    contacts_(contact_map.contacts_),
+    output_matrix_(contact_map.output_matrix_),
+    column_names_(contact_map.column_names_),
+    row_names_(contact_map.row_names_),
+    output_prefix_(contact_map.output_prefix_),
+    n_poses_(contact_map.n_poses_),
+    distance_cutoff_(contact_map.distance_cutoff_),
+    models_per_file_(contact_map.models_per_file_),
+    reset_count_(contact_map.reset_count_),
+    row_format_(contact_map.row_format_),
+	distance_matrix_(contact_map.distance_matrix_)
 {
 }
 
@@ -152,6 +154,16 @@ void ContactMap::parse_my_tag(TagPtr const tag, moves::DataMap &,
 	else {
 		if (row_format_tag != "false") throw utility::excn::EXCN_RosettaScriptsOption("'row_format' option must be true or false");
 		row_format_ =false;
+	}
+
+	// 'distance_matrix_' flag
+	std::string distance_matrix_tag = tag->getOption<std::string>("distance_matrix", "false");
+	if(distance_matrix_tag == "true") {
+		distance_matrix_ = true;
+	}
+	else {
+		if (distance_matrix_tag != "false") throw utility::excn::EXCN_RosettaScriptsOption("'distance_matrix' option must be true or false");
+		distance_matrix_ =false;
 	}
 
 	// 'region1', 'region2' and 'ligand' options
@@ -368,8 +380,12 @@ void ContactMap::apply(Pose & pose) {
 		numeric::xyzVector<core::Real> v2 = pose.residue(p2->seqpos()).atom(p2->atomname()).xyz();
 		core::Real distance = v1.distance(v2);
 		// Add distance to contact if it's below the cutoff value
-		if (distance <= distance_cutoff_)
+		if(distance_matrix_){
 			it->add_distance(distance);
+			continue;
+		}
+		if (distance <= distance_cutoff_)
+			it->add_distance();
 	}
 
 	// Output ContactMap to file if the number of processed poses since last output equals models_per_file_ variable
@@ -416,9 +432,8 @@ void ContactMap::write_to_file(std::string filename) {
 	// Initialize output stream and write Header
 	utility::io::ozstream output_stream;
 	output_stream.open(filename, std::ios_base::out);
-	output_stream << "# Number of Models: " << n_poses_ << std::endl
+	output_stream << "# Number of Models:	" << n_poses_ <<"	Distance Cutoff:	"<< distance_cutoff_<< std::endl
 			<< std::endl;
-
 	if (row_format_) {
 		for (utility::vector1<Contact>::iterator it = contacts_.begin(); it != contacts_.end(); it++){
 			output_stream << it->long_string_rep() << std::endl;
@@ -465,8 +480,13 @@ std::string ContactPartner::string_rep(){
 ///////////////////////////////  Contact  ///////////////////////////////
 
 /// @brief	Adds distance to the contact
-void Contact::add_distance(core::Real ){
+void Contact::add_distance(){
 	++count_;
+}
+
+/// @brief	Adds distance to the contact
+void Contact::add_distance(core::Real dist){
+	distance_ = dist;
 }
 
 /// @brief	Resets count to 0
@@ -478,7 +498,12 @@ void Contact::reset_count(){
 std::string Contact::string_rep(){
 	std::ostringstream oss;
 //	oss << partner1_.string_rep() <<"|"<<partner2_.string_rep();
-	oss << count_;
+	if (distance_ == 0.0) {oss << count_;}
+	else {
+		oss.precision(3);
+		oss.setf( std::ios::fixed , std::ios::floatfield);
+		oss << distance_;
+	}
 	return oss.str();
 }
 
@@ -486,7 +511,8 @@ std::string Contact::string_rep(){
 std::string Contact::string_rep(core::Size n_poses){
 	std::ostringstream oss;
 	core::Real percentage = core::Real(count_) / core::Real(n_poses);
-	oss << percentage;
+	if (distance_ == 0.0) oss << percentage;
+	else oss << distance_;
 	return oss.str();
 }
 

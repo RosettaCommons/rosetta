@@ -1338,6 +1338,43 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 0</dd><br>
 </dl>
  </li>
+<li><h2>contactMap</h2>
+<dl>
+<dt><b>-contactMap</b> \<Boolean\><dt>
+<dd>contactMap option group</dd><br>
+</dl>
+<dl>
+<dt><b>-prefix</b> \<String\><dt>
+<dd>Prefix of contactMap filename</dd><br>
+<dd>Default: "contact_map_"</dd><br>
+</dl>
+<dl>
+<dt><b>-distance_cutoff</b> \<Real\><dt>
+<dd>Cutoff Backbone distance for two atoms to be considered interacting</dd><br>
+<dd>Default: 10.0</dd><br>
+</dl>
+<dl>
+<dt><b>-energy_cutoff</b> \<Real\><dt>
+<dd>Energy_Cutoff (percentage value - only affecting silent file input)</dd><br>
+<dd>Range: 0.0-1.0</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-region_def</b> \<String\><dt>
+<dd>Region definition for comparison eg: 1-10:20-30,40-50,A:ligand=X</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-row_format</b> \<Boolean\><dt>
+<dd>Flag whether to output in row instead of matrix format</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-distance_matrix</b> \<Boolean\><dt>
+<dd>Output a distance matrix instead of a contact map</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
 <li><h2>docking</h2>
 <dl>
 <dt><b>-kick_relax</b> \<Boolean\><dt>

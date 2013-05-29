@@ -1,0 +1,14 @@
+-in
+ -file
+  -s input/7cpa_input.pdb
+  -extra_res_fa input/7cpa.params
+  -fullatom
+
+-contactMap
+ -prefix map_lig_
+ -distance_matrix
+# -distance_cutoff 10
+# -energy_cutoff
+ -region_def 1-10:20-30,A:ligand=X
+# -row_format
+# -distance_matrix
