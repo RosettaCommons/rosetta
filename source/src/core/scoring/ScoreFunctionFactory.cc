@@ -286,6 +286,7 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 				weight_set = "score12_w_corrections";
 				patch_tags.clear();
 			} else if ( basic::options::option[ basic::options::OptionKeys::corrections::hbond_sp2_correction ] ){
+				patch_tags.clear();
 				if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun10 ] ){
 					weight_set = "sp2_correction";
 				} else {
