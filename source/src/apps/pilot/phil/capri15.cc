@@ -1170,7 +1170,7 @@ juke_sam_pos(
 	optimization::AtomTreeMinimizer().run( pose, mm, *scorefxn, optimization::MinimizerOptions("dfpmin",0.001,true));
 
 	/// now try again with hard rep scorefxn ////////////////////////////////////////////////////
-	scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS );
+	scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 	scorefxn->set_weight( atom_pair_constraint, 1.0 );
 
 	/// repack
@@ -1189,7 +1189,7 @@ get_relax_scorefxn()
 {
 
 
-	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+	ScoreFunctionOP scorefxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	// protein-NA mods
 	scorefxn->set_weight( fa_pair, 0.0 );
@@ -1745,7 +1745,7 @@ diversify_sam_loop_test()
 		else filename += "_folded"+ lead_zero_string_of( n, 4 ) + ".pdb";
 
 
-		ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+		ScoreFunctionOP scorefxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 		scorefxn->set_weight( atom_pair_constraint, 1.0 );
 
 		Real const final_score( (*scorefxn)(pose) );
@@ -1873,7 +1873,7 @@ capri_t033_trim_dock_test()
 		pose.dump_scored_pdb("aftermin2.pdb", *scorefxn );
 
 		/// now try again with hard rep scorefxn ////////////////////////////////////////////////////
-		scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS );
+		scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 		scorefxn->set_weight( atom_pair_constraint, 1.0 );
 
 		/// repack
@@ -2093,8 +2093,7 @@ capri_t033_loop_test()
 			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 
 			// create a fullatom scorefxn
-			ScoreFunctionOP scorefxn
-				( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+			ScoreFunctionOP scorefxn( getScoreFunction() );
 			scorefxn->set_weight( chainbreak, 1.0 ); // unnecessary
 
 			Size sam_anchor_pos( loops.begin()->stop() + 1 );

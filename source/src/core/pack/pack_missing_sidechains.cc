@@ -64,7 +64,7 @@ pack_missing_sidechains(
 	//task is set up
 	task->restrict_to_residues(repackable);
 
-	core::scoring::ScoreFunctionOP sfxn = scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" );
+	core::scoring::ScoreFunctionOP sfxn = scoring::getScoreFunction();
 	(*sfxn)(pose); // structure must be scored before rotamer_trials can be called (?)
 	//chu change from rotamer_trials to pack_rotamers
 	core::pack::pack_rotamers( pose, *sfxn, task );

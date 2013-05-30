@@ -104,8 +104,7 @@ using protocols::jd2::JobDistributor;
 //constructor
 SurfaceDockingProtocol::SurfaceDockingProtocol() : Mover(){
 	Mover::type( "SurfaceDockingProtocol");
-	score_sidechain_pack_ = scoring::ScoreFunctionFactory::create_score_function
-	                                                    ( "standard","score12" );
+	score_sidechain_pack_ = scoring::getScoreFunction();
 	// setting weighs for score12
 	TR << "Setting Weights for score12" << std::endl;
 	score_sidechain_pack_->set_weight( core::scoring::hack_elec, 1.0 );

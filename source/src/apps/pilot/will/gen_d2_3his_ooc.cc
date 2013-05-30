@@ -908,7 +908,7 @@ void run(std::string fname) {
   }
 
 		TR << "making rotamers" << std::endl;
-  core::scoring::ScoreFunctionOP sf = core::scoring::ScoreFunctionFactory::create_score_function("standard",true);
+  core::scoring::ScoreFunctionOP sf = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 		vector1<core::pack::rotamer_set::RotamerSetOP> rots1(natp.n_residue(),NULL);
 		vector1<core::pack::rotamer_set::RotamerSetOP> rots2(natp.n_residue(),NULL);
 		vector1<vector1<bool> > rotc1(natp.n_residue()),rotc2(natp.n_residue());

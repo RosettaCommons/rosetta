@@ -353,7 +353,7 @@
 #include "../src/core/id/TorsionID_Range.fwd.hh"
 #include "../src/core/id/TorsionID_Range.hh"
 #include "../src/core/id/types.hh"
-#include "../src/core/init.hh"
+#include "../src/core/init/init.hh"
 #include "../src/core/io/atom_tree_diffs/atom_tree_diff.hh"
 #include "../src/core/io/database/open.hh"
 #include "../src/core/io/pdb/file_data.fwd.hh"

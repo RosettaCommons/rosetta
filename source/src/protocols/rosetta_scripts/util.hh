@@ -56,9 +56,37 @@ parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap
 core::pack::task::TaskFactoryOP
 parse_task_operations( std::string const task_list, protocols::moves::DataMap const & data );
 
+///@brief Look up the score function defined in the <SCOREFXNS/>
+///through the given option. Default to 'score12' by default.
 core::scoring::ScoreFunctionOP
-parse_score_function( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data, std::string const dflt_key="score12" );
+parse_score_function(
+	utility::tag::TagPtr const tag,
+	std::string const & option_name,
+	protocols::moves::DataMap const & data,
+	std::string const dflt_key="score12" );
 
+///@brief Look up the score function defined in the <SCOREFXNS/>
+///through the option 'scorefxn='. Default to 'score12' by default.
+core::scoring::ScoreFunctionOP
+parse_score_function(
+	utility::tag::TagPtr const tag,
+	protocols::moves::DataMap const & data,
+	std::string const dflt_key="score12" );
+
+///@brief Look up the name of assigned score function to the given
+///option. Use this to prevent hard coding default score functions into
+///protocols.
+std::string
+get_score_function_name(
+	utility::tag::TagPtr const tag,
+	std::string const & option_name);
+
+///@brief Look up the name of assigned score function to the 'scorefxn='
+///option. Use this to prevent hard coding default score functions into
+///protocols.
+std::string
+get_score_function_name(
+	utility::tag::TagPtr const tag);
 
 /// @brief convenience function to access pointers to poses that will be stored
 /// in the data map at an arbitrary point during an RS protocol

@@ -344,10 +344,7 @@ FastRelax::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & pose
 ) {
-	std::string const scorefxn( tag->getOption<std::string>( "scorefxn", "score12" ));
-	//set_scorefxn( new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn) ) );
-	//fpd ^^^ please use clone()
-	set_scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn)->clone() );
+	set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data )->clone() );
 
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
 	mm->set_chi( true );

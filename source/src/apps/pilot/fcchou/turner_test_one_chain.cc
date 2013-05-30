@@ -63,7 +63,7 @@
 #include <protocols/rna/RNA_SuiteAssign.hh>
 #include <protocols/swa/StepWiseClusterer.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -1649,7 +1649,7 @@ main( int argc, char * argv [] ) {
 	//////////////////////////////
 	// setup
 	//////////////////////////////
-	core::init(argc, argv);
+	core::init::init(argc, argv);
 
 	//////////////////////////////
 	// end of setup

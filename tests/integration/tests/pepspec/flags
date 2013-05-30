@@ -1,6 +1,7 @@
 -ignore_unrecognized_res
 
--score::weights standard.wts
+-restore_pre_talaris_2013_behavior
+-score::weights pre_talaris_2013_standard.wts
 -pepspec::soft_wts soft_rep.wts
 
 -pepspec::interface_cutoff 5

@@ -98,7 +98,7 @@ devel::init(argc, argv);
 
 using namespace core::scoring::packstat;
 // set up scorefxn
-core::scoring::ScoreFunctionOP scorefxn( ( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS ) ));
+core::scoring::ScoreFunctionOP scorefxn( ( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ));
 
 // set up calculators
 

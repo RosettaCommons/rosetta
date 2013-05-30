@@ -15,15 +15,15 @@ print 'Scoring ----------------------------------------------'
 pose = pose_from_pdb("test/data/test_fragments.pdb")
 
 print 'Creating standard fullatom score function and scoring'
-scorefxn = create_score_function('standard')
+scorefxn = create_score_function('talaris2013')
 scorefxn(pose)
 
 print 'Creating standard centroid score function and scoring'
 scorefxn = create_score_function('score3')
 scorefxn(pose)
 
-print 'Creating standard score function with patch and scoring'
-scorefxn = create_score_function_ws_patch("standard", "score12")
+print 'Creating standard score function and scoring, again'
+scorefxn = create_score_function_ws_patch('talaris2013')
 scorefxn(pose)
 print 'Creating standard score from scratch'
 scorefxn = ScoreFunction()

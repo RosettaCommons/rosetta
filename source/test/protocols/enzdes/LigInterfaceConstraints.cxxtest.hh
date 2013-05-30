@@ -290,9 +290,13 @@ public:
 
 	  //and now let's hope that all the constraints have been minimized to equal values that are identical to the precalculated ones
 
-	  TS_ASSERT_DELTA(11.397, test_pose.energies().total_energies()[ scoring::atom_pair_constraint ], 1e-3 );
-	  TS_ASSERT_DELTA(0.168, test_pose.energies().total_energies()[ scoring::angle_constraint ], 1e-3 );
-	  TS_ASSERT_DELTA(0.001, test_pose.energies().total_energies()[ scoring::dihedral_constraint ], 1e-3 );
+	  TS_ASSERT_DELTA(12.3785, test_pose.energies().total_energies()[ scoring::atom_pair_constraint ], 1e-3 );
+	  TS_ASSERT_DELTA(0.3640, test_pose.energies().total_energies()[ scoring::angle_constraint ], 1e-3 );
+	  TS_ASSERT_DELTA(0.0051, test_pose.energies().total_energies()[ scoring::dihedral_constraint ], 1e-3 );
+
+		// TS_ASSERT_DELTA(11.397, test_pose.energies().total_energies()[ scoring::atom_pair_constraint ], 1e-3 );
+	  // TS_ASSERT_DELTA(0.168, test_pose.energies().total_energies()[ scoring::angle_constraint ], 1e-3 );
+	  // TS_ASSERT_DELTA(0.001, test_pose.energies().total_energies()[ scoring::dihedral_constraint ], 1e-3 );
 
 	  TS_ASSERT_DELTA( compare_pose.energies().total_energies()[ scoring::atom_pair_constraint ] , test_pose.energies().total_energies()[ scoring::atom_pair_constraint ], 1e-5 );
 

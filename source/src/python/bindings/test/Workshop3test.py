@@ -9,7 +9,7 @@ init()
 # Scoring Poses
 ras = pose_from_pdb("test/data/workshops/6Q21.clean.pdb")
 
-scorefxn = create_score_function("standard")
+scorefxn = create_score_function("talaris2013")
 
 print scorefxn
 

@@ -41,7 +41,7 @@
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <basic/basic.hh>
 // AUTO-REMOVED #include <basic/database/open.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
@@ -236,7 +236,7 @@ rna_design_test()
 
 	}
 
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( option[ score::weights ]()  );
+	ScoreFunctionOP scorefxn = getScoreFunction();
 
 	//	scorefxn->energy_method_options().exclude_DNA_DNA( exclude_DNA_DNA );
 	methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
@@ -340,7 +340,7 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////
-	core::init(argc, argv);
+	core::init::init(argc, argv);
 
 
 	////////////////////////////////////////////////////////////////////////////

@@ -138,8 +138,8 @@ public:
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
-		fullatom_scorefunction_ = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
-		TR << "Using fullatom scorefunction (STANDARD_WTS, SCORE12_PATCH), pair may be modified\n"
+		fullatom_scorefunction_ = getScoreFunction();
+		TR << "Using fullatom scorefunction (TALARIS_2013), pair may be modified\n"
 			 << *fullatom_scorefunction_;
 
 		using namespace core::pose::metrics;

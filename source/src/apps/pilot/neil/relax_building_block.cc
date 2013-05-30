@@ -165,9 +165,9 @@ void
 				std::string fn = string_of(fn_vector[0])+"_"+string_of(fn_vector[1])+"_"+string_of(fn_vector[2])+"_"+string_of(input_trans+trans.x())+"_"+string_of(input_angle+delta_ang)+"_"+tag+"_final.pdb.gz";
 */
 			
-				// Rescore with score12
-				//ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");	
-				//score12->score(pose_for_design);
+				// Rescore with scorefxn
+				//ScoreFunctionOP scorefxn = getScoreFunction();	
+				//scorefxn->score(pose_for_design);
 
 				// Write the pdb file of the design
 				utility::io::ozstream out( option[out::file::o]() + "/" + fn );

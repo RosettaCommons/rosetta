@@ -83,7 +83,7 @@ SymmDataTest()
 	Pose pose = pdb_pose;
 	make_symmetric_pose( pose );
 
-	ScoreFunctionOP scorefxn_sym( ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::DOCK_PATCH ) );
+	ScoreFunctionOP scorefxn_sym( ScoreFunctionFactory::create_score_function( core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::DOCK_PATCH ) );
 	scorefxn_sym->show( std::cout, pose );
 	pose.dump_pdb("tmp.pdb");
 	Pose pose_asym;
@@ -99,7 +99,7 @@ SymmDataTest()
 
 	protocols::viewer::add_conformation_viewer( *symm_conf, "symm_conf" );
 
-	ScoreFunctionOP scorefxn_sym( ScoreFunctionFactory::create_score_function( "score13" ) );
+	ScoreFunctionOP scorefxn_sym( getScoreFunctionLegacy( "score13" ) );
 
 	pack::task::PackerTaskOP packer_task( pack::task::TaskFactory::create_packer_task( pose ));
   	utility::vector1<bool> allow_repacked( pose.total_residue(), false );
@@ -121,7 +121,7 @@ SymmDataTest()
 Pose min_pose;
 pose.dump_pdb("after_dofmover.pdb");
 pose_from_pdb( min_pose, "after_dofmover.pdb" );
-//core::scoring::ScoreFunctionOP scorefxn_asym ( ScoreFunctionFactory::create_score_function( "score13" ) );
+//core::scoring::ScoreFunctionOP scorefxn_asym ( getScoreFunctionLegacy( "score13" ) );
 std::cout << "score asym, sym " << std::endl;
 //scorefxn_asym->show( std::cout, min_pose );
  scorefxn_sym->show( std::cout, pose );

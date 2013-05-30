@@ -14,7 +14,7 @@
 #ifndef INCLUDED_core_init_util_HH
 #define INCLUDED_core_init_util_HH
 
-#include <core/init.hh>
+#include <core/init/init.hh>
 
 #include <string>
 #include <fstream>
@@ -98,7 +98,7 @@ inline void core_init_from_string( std::string const & commandline )
 	int pseudo_argc;
 	char** pseudo_argv = create_pseudo_commandline( std::string(command_line_argv[0]) + " "
 													 + commandline, pseudo_argc );
-	core::init( pseudo_argc, pseudo_argv );
+	core::init::init( pseudo_argc, pseudo_argv );
 	destroy_pseudo_commandline( pseudo_argc, pseudo_argv );
 }
 
@@ -148,12 +148,12 @@ inline void core_init()
 {
 	extern int command_line_argc; extern char ** command_line_argv;
 
-	if( command_line_argc > 1 ) core::init(command_line_argc, command_line_argv);
+	if( command_line_argc > 1 ) core::init::init(command_line_argc, command_line_argv);
 	else {
 		std::string commandline = "core.test -mute all";
 		initialize_from_commandline_w_db( commandline );
 	}
-	core::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+	core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
 }
 
 #endif

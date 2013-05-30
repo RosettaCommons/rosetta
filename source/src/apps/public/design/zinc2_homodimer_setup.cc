@@ -257,7 +257,7 @@ public:
   virtual void
   setup_filter_clashes() {
     using namespace core::scoring;
-    scorefunction_ = core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+    scorefunction_ = core::scoring::getScoreFunction();
     interface_analyzer_ = new protocols::analysis::InterfaceAnalyzerMover( 3, false, scorefunction_ ); // zinc1 and zinc2 get jumps 1 and 2, chain B gets jump 3
   }
 

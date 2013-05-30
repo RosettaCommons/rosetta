@@ -77,7 +77,7 @@ public:
 	/// @brief test score 12
 	void test_Score12() {
 		//std::cout << "Start All Scoring tests" << "\n";
-		core_init_with_additional_options( "-score:patch score12 -out:output" );
+		core_init_with_additional_options( "-score:patch score12 -out:output -restore_pre_talaris_2013_behavior" );
 		one_mover_test(__FILE__, __LINE__, new protocols::simple_moves::ScoreMover,
 						 "protocols/moves/test_in.pdb", "protocols/moves/score12.pdb",
 						 0, "protocols/moves/score12.u", "protocols");

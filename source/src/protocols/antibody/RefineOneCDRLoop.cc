@@ -128,7 +128,7 @@ void RefineOneCDRLoop::set_default()
     if(!user_defined_){
 		refine_mode_    = "legacy_refine_ccd";
 		cdr_loop_name_  = h3;
-		scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
+		scorefxn_ = scoring::getScoreFunction();
 		scorefxn_->set_weight( scoring::chainbreak, 1.0 );
 		scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
 		scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );

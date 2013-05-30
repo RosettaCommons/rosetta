@@ -410,8 +410,7 @@ GrowPeptides::parse_my_tag(
 	//default
 	template_presence = false;
 	//need scorefxn to score extended/changed pose
-	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name) ));
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	TR<<"scoring with following scorefunction: " << *scorefxn_ <<std::endl;
 	
 	fetch_foldtree = tag->getOption< bool >( "SeedFoldTree", 0 );

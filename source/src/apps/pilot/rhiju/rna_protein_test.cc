@@ -177,7 +177,7 @@ rna_protein_repack_test()
 		task->nonconst_residue_task( i ).restrict_to_repacking();
 	}
 
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS );
+	ScoreFunctionOP scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 	scorefxn->set_weight( fa_pair, 0.0 );
 	scorefxn->set_weight( hack_elec, 0.5 );
 	//	scorefxn->energy_method_options().exclude_DNA_DNA( false );
@@ -213,7 +213,7 @@ rna_protein_prepack_test()
 	dump_pdb( pose, "start.pdb");
 
 	//OK, phil.
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS );
+	ScoreFunctionOP scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 	scorefxn->set_weight( fa_pair, 0.0 );
 	scorefxn->set_weight( hack_elec, 0.5 );
 	//	scorefxn->energy_method_options().exclude_DNA_DNA( false );
@@ -432,7 +432,7 @@ rna_protein_rb_test(){
 
 	/////////////////////////////////////////////////////
 	//Phil's suggestion for a fast score function
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS );
+	ScoreFunctionOP scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 
 	if (option[soft_rep]) {
 		scorefxn = ScoreFunctionFactory::create_score_function( SOFT_REP_WTS );
@@ -866,7 +866,7 @@ juke_sam_test(){
 		pose.constraint_set( cst_set );
 
 		// Turn off rep and minimize.
-		ScoreFunctionOP scorefxn_hard = ScoreFunctionFactory::create_score_function( STANDARD_WTS );
+		ScoreFunctionOP scorefxn_hard = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 		scorefxn_hard->set_weight( fa_pair, 0.0 );
 		scorefxn_hard->set_weight( hack_elec, 0.5 );
 		scorefxn_hard->set_weight( atom_pair_constraint, 1.0 );

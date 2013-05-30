@@ -380,23 +380,23 @@ main( int argc, char * argv [] ) {
 	}
 
 
-	// create a custom score function; basically we want score12 without the reference energies
+	// create a custom score function; basically we want the given score function without the reference energies
 	// setting a ScoreType's (or is it an EnergyMethod) weight to 0 calls remove_method in the ScoreFunction, so it does remove
 	// that term from the score function.
 	// Don't include the solubility term or the pAA term that we are considering using here.
 	TR << "Creating score function." << std::endl;
-	scoring::ScoreFunctionOP score12_scorefxn = scoring::getScoreFunction();
+	scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
 
-	scoring::methods::EnergyMethodOptions energymethodoptions( score12_scorefxn->energy_method_options() );
+	scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 	energymethodoptions.hbond_options()->decompose_bb_hb_into_pair_energies( true );
-	score12_scorefxn->set_energy_method_options( energymethodoptions );
+	scorefxn->set_energy_method_options( energymethodoptions );
 
-	score12_scorefxn->set_weight( core::scoring::ref, 0.0 );
+	scorefxn->set_weight( core::scoring::ref, 0.0 );
 
-	score12_scorefxn->set_weight( core::scoring::dslf_ss_dst, 0.0 );
-	score12_scorefxn->set_weight( core::scoring::dslf_cs_ang, 0.0 );
-	score12_scorefxn->set_weight( core::scoring::dslf_ss_dih, 0.0 );
-	score12_scorefxn->set_weight( core::scoring::dslf_ca_dih, 0.0 );
+	scorefxn->set_weight( core::scoring::dslf_ss_dst, 0.0 );
+	scorefxn->set_weight( core::scoring::dslf_cs_ang, 0.0 );
+	scorefxn->set_weight( core::scoring::dslf_ss_dih, 0.0 );
+	scorefxn->set_weight( core::scoring::dslf_ca_dih, 0.0 );
 
 	// I want sequence information and energy breakdowns for each fragment.
 	// The sequence information will be easy to get from the Pose object and the energies should just be kept in an EnergyMap.
@@ -416,10 +416,10 @@ main( int argc, char * argv [] ) {
 			continue;
 		}
 		//TR << "Fragmenting and scoring pdb '" << pdb->name() << "'" << std::endl;
-		//create_and_score_fragments( pdb->name(), score12_scorefxn, map_aa_to_vector_pair_sequence_energymap );
+		//create_and_score_fragments( pdb->name(), scorefxn, map_aa_to_vector_pair_sequence_energymap );
 
 		TR << "Scoring residues within pdb '" << pdb->name() << "'" << std::endl;
-		score_folded_residues( pdb->name(), score12_scorefxn, map_aa_to_vector_pair_sequence_energymap );
+		score_folded_residues( pdb->name(), scorefxn, map_aa_to_vector_pair_sequence_energymap );
 	}
 
 

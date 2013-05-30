@@ -65,7 +65,7 @@ public:
 		std::string pymol_bunsat_selection = "bunsat_" + pdbname_base;
 
 		using namespace core::scoring;
-		core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+		core::scoring::ScoreFunctionOP scorefxn = getScoreFunction();
 		scorefxn->score( pose );
 
 

@@ -212,8 +212,7 @@ void zero_occ_for_deleted_atoms(Pose & pose, core::Size seqpos,
 /// @remarks For speed, a scorefxn containing only fa_atr is used.
 ///
 NeighTeller::NeighTeller(Pose& ref_pose) :
-  scorefxn(core::scoring::ScoreFunctionFactory::create_score_function(
-		core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH)),
+  scorefxn(core::scoring::getScoreFunction()),
   fa_atr_weight(0.8), interaction_score_threshold(-0.3) {
 
 	(*scorefxn)(ref_pose);

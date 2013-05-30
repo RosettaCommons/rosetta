@@ -1,0 +1,136 @@
+## fullatom protein N(6)-dimethylation patch for lysine
+## By Andy M. Chen, June 2009, achen39@jhu.edu
+
+NAME dimethylated
+TYPES DIMETHYLATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA LYS
+NOT VARIANT_TYPE ACETYLATION
+NOT VARIANT_TYPE METHYLATION
+NOT VARIANT_TYPE DIMETHYLATION
+NOT VARIANT_TYPE TRIMETHYLATION
+NOT VARIANT_TYPE PROTONATED
+NOT VARIANT_TYPE DEPROTONATED
+END_SELECTOR
+ 
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING MLY K
+## these are the operations involved
+DELETE_ATOM 2HZ ## This amine hydrogen is now a carbon atom
+DELETE_ATOM 3HZ ## This amine hydrogen is now also a carbon atom
+
+ADD_ATOM  CH1 CH3  CT3   0.12
+## Note: the first "CH1" refers to the fact that the added carbon is
+##   "eta carbon #1." The CH3 is the atom type (methyl).
+## The 0.12 charge was estimated by comparing the difference between 
+##   "C bonded to 3 H's" and "C bonded to C and 2 H's" in existing params files 
+##   (-0.27 vs. -0.18) and then applying the 0.09 correction onto the charge 
+##   given for the epsilon C of lysine, which is 0.21 (bonded to C, N, and 2 H's)
+
+ADD_ATOM HH11 Hapo HA  0.09
+## Copied from the 1HD1 atom of Ile (hydrogen on primary carbon)
+ADD_ATOM HH12 Hapo HA  0.09
+ADD_ATOM HH13 Hapo HA  0.09
+
+## Repeat for the second methyl group
+ADD_ATOM  CH2 CH3  CT3   0.12
+ADD_ATOM HH21 Hapo HA  0.09
+ADD_ATOM HH22 Hapo HA  0.09
+ADD_ATOM HH23 Hapo HA  0.09
+
+ADD_BOND  NZ  CH1
+ADD_BOND  CH1 HH11
+ADD_BOND  CH1 HH12
+ADD_BOND  CH1 HH13
+
+ADD_BOND  NZ  CH2
+ADD_BOND  CH2 HH21
+ADD_BOND  CH2 HH22
+ADD_BOND  CH2 HH23
+
+
+## Note on atom naming by Andy M. Chen:
+##
+## Technically, the six methyl hydrogens in NMR structures containing dimethyl-lysine ("MLY")
+##   are called HH11 through HH23, with the first number indicating which methyl group it's on 
+##   and the second indicating which hydrogen of the methyl group it is.
+##
+##   However, earlier testing shows that using these names may result in oddies if this residue 
+##   is further processed by certain molecular visualization applications such as PyMol
+##   due to the second letter not being "H" (for hydrogen). [This occurs because dumped pdb structures 
+##   from Rosetta may exclude the element symbol in Column 78-- and as a result, PyMol would treat HM11, etc.
+##   as an atom of the non-existent element "HM," which could cause problems in future processing. 
+##   This is confirmed by exporting the file.]
+##
+##  Hence, HH11 through HH23 are renamed to 1HH through 6HH here. Note that this does have a known negative 
+##    side-effect: automatic re-packing of the residue. However, since hydrogens are normally absent in 
+##    X-ray crystal structures anyway, this is a minor issue; it would only affect NMR structures, 
+##    whose atom positions are calculated rather than determined experimentally anyway.
+##    Therefore, I see the atom renaming as the least of two evils.
+
+
+## The methyl groups add an extra chi angle
+ADD_CHI 5  CD   CE   NZ   CH1
+
+
+## The information for the following was calculated by taking the arithmetic mean 
+##   of 584 data points taken from RCSB's PDB files:
+##   NZ-CH1/CH2 bond length, CE-NZ-CH1/CH2 bond angle
+##
+##
+## The dihedral angle for placing CH1 was taken from the mean value of the rotamer bin 
+##   with the highest probability.
+##
+## The following were based on information in LYS.params:
+##   Dihedral angle, bond angle, and bond length for the remaining hydrogen
+##   Dihedral angle for placing CH2 (120 degrees was meant to maintain the sp3 configuration around NZ)
+##
+SET_ICOOR CH1  178.56  67.58  1.474  NZ   CE   CD 
+SET_ICOOR CH2  120.00  67.58  1.474  NZ   CE   CH1
+SET_ICOOR 1HZ  120.00  70.54  1.010  NZ   CE   CH2
+
+
+SET_ICOOR HH11 -179.974518 70.500000 1.090290  CH1   NZ   CE
+SET_ICOOR HH12  119.989571 70.500000 1.090575  CH1   NZ  HH11
+SET_ICOOR HH13  120.044632 70.500000 1.089057  CH1   NZ  HH12
+## The information for the added hydrogens was copied from the 3 hydrogens 
+##   bonded to the delta carbon of Ile
+
+
+SET_ICOOR HH21 -179.974518 70.500000 1.090290  CH2   NZ   CE
+SET_ICOOR HH22  119.989571 70.500000 1.090575  CH2   NZ  HH21
+SET_ICOOR HH23  120.044632 70.500000 1.089057  CH2   NZ  HH22
+## Same here
+
+
+## Change the atom type since the nitrogen is now bonded to three carbons.
+##  (The Ntrp choice was the best guess from the small molecule docking script molfile_to_params.py)
+SET_ATOM_TYPE NZ Ntrp
+SET_MM_ATOM_TYPE NZ NY
+
+
+## Manually define rotamer bins for chi 5 using data from the 584 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency, 
+##   and 1-sample bins are given an arbitrary standard deviation of 15.
+##   The percentages may not add up to 100% due to rounding and exclusion of outliers.
+
+ADD_CHI_ROTAMER 5  178.56 16.39  #26.2%, +/- 180 bin
+ADD_CHI_ROTAMER 5   68.21 16.81  #26.2%, gauche +
+ADD_CHI_ROTAMER 5  -67.57 16.48  #17.0%, gauche +
+ADD_CHI_ROTAMER 5 -128.29 11.46  # 9.6%, upper tail of the 178.56 bin
+ADD_CHI_ROTAMER 5  135.26  7.76  # 5.1%, lower tail of the 178.56 bin
+
+
+
+END_CASE
+
+
+

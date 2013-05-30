@@ -574,10 +574,10 @@ void protocols::anchored_design::AnchorMoversData::set_unset_scorefunctions()
 	centroid_scorefunction_->set_weight( cenpack,     0. ); //no derivative
 
 
-	fullatom_scorefunction_ = getScoreFunction(); //this call is compatible with -correct; defaults to score12
+	fullatom_scorefunction_ = getScoreFunction();
 	fullatom_scorefunction_->set_weight( chainbreak, chainbreak_weight_ );
 	core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *fullatom_scorefunction_ ); //protected if(option) internally
-	TR << "Using default fullatom scorefunction (STANDARD_WTS, SCORE12_PATCH plus chainbreak @ a lot)\n"
+	TR << "Using default fullatom scorefunction (TALARIS_2013 plus chainbreak @ a lot)\n"
 			 << *fullatom_scorefunction_ << std::flush;
 
 	return;

@@ -242,9 +242,7 @@ main( int argc, char * argv [] )
 	}else if(basic::options::option[OptionKeys::ddg::minimization_scorefunction].user()){
 		minimize_sfxn=ScoreFunctionFactory::create_score_function(basic::options::option[OptionKeys::ddg::minimization_scorefunction]());
 	}else{
-		minimize_sfxn=ScoreFunctionFactory::create_score_function(
-			basic::database::full_name("scoring/weights/standard.wts"),
-			basic::database::full_name("scoring/weights/score12.wts_patch"));
+		minimize_sfxn=getScoreFunction();
 	}
 
 	int num_iterations = option[ OptionKeys::ddg::iterations ]();

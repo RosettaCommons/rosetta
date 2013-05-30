@@ -11,7 +11,7 @@
 /// @brief
 
 // libRosetta headers
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
@@ -317,7 +317,7 @@ main( int argc, char * argv [] )
 	/////////////////////////////
 	// setup
 	//////////////////////////////
-	core::init ( argc, argv );
+	core::init::init ( argc, argv );
 	//////////////////////////////
 	// end of setup
 	//////////////////////////////

@@ -39,7 +39,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
 //////////////////////////////////////////////////
@@ -470,7 +470,7 @@ create_scorefxn() {
 		utility_exit_with_message("num_score_weight_file>1");
 	}
 
-	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( score_weight_file );
+	core::scoring::ScoreFunctionOP scorefxn = getScoreFunction();
 
 
 	if(option[minimize_and_score_sugar]()==false){
@@ -836,7 +836,7 @@ try {
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////
-	core::init ( argc, argv );
+	core::init::init ( argc, argv );
 	////////////////////////////////////////////////////////////////////////////
 	// end of setup
 	////////////////////////////////////////////////////////////////////////////

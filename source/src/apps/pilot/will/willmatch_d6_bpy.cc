@@ -275,7 +275,7 @@ void run() {
     ImplicitFastClashCheck clashcheck(fa_pose,basic::options::option[basic::options::OptionKeys::willmatch::clash_dis]());
 
     ScoreFunctionOP sf     = core::scoring::getScoreFunction();
-    ScoreFunctionOP sfhard = core::scoring::ScoreFunctionFactory::create_score_function("standard");
+    ScoreFunctionOP sfhard = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
     //sf->set_weight(core::scoring::fa_dun,1.0);
     sf->set_weight(core::scoring::fa_sol,0.0);
     sf->set_weight(core::scoring::hbond_sr_bb,2.0);

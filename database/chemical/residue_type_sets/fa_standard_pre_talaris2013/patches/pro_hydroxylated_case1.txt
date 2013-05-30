@@ -1,0 +1,85 @@
+## fullatom protein C(4)-hydroxylation patch for proline
+## By Andy M. Chen, June 2009, achen39@jhu.edu
+
+NAME pro_hydroxylated_case1
+## "Case 1" = placing the hydroxyl group on the opposite side of the ring as the carbonyl O of the backbone (~95% of all cases)
+TYPES HYDROXYLATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA PRO
+NOT VARIANT_TYPE HYDROXYLATION
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING HYP P
+## these are the operations involved
+DELETE_ATOM 2HG ## The H bonded to the gamma oxygen is now an oxygen atom
+
+ADD_ATOM  OD1 OH   OH1  -0.66  #The -0.66 charge was taken from SER/THR/TYR
+ADD_ATOM  HD1 Hpol HA   0.43   #Same here
+ADD_BOND  CG   OD1 
+ADD_BOND  OD1  HD1
+
+
+## The hydroxyl group adds an extra proton chi. Because the hydroxyl group could 
+##   replace either of the two hydrogens bonded to CG, TWO chi angles are used here:
+##   the first one (#4) to place the oxygen, and the second (#5) to place the hydrogen.
+##
+## [Note that numbering starts at 4 instead of 3 because PRO.params defines three chi angles, 
+##   with the last one involving a virtual atom.]
+##
+ADD_CHI 4  CA   CB   CG   OD1
+ADD_CHI 5  CB   CG   OD1  HD1
+
+
+## The information for the following was calculated by taking the arithmetic mean 
+##   of data taken from actual samples from RCSB (2324 for OD1, 1481 for HD1):
+##   CG-OD1 bond length, OD-HD1 bond length, CB-CG-OD1 bond angle, CG-OD1-HD1 bond angle
+##
+## The dihedral angle for placing OD1 was taken from the observed sample with the lowest stdev7
+##   (standard deviation of the 7 samples including itself and the 3 above and below it).
+##
+## The rationale behind using stdev7 is that the global minimum in stdev7, which implies 
+##   a narrow distribution, should theoretically correspond to the energetically 
+##   most favorable microstate (assuming zero extra information about neighboring atoms).
+##
+## For HD1, the minimum stdev7 was observed at -179.98 degrees, which was simply rounded to 
+##   the ideal angle for the anti conformation (+/- 180 degrees).
+##
+## 1HG, which is bonded to the gamma C, has to be re-packed using information from PRO.params
+##   to ensure that it doesn't clash with the added oxygen.
+##
+SET_ICOOR  OD1  -127.11  71.16  1.424  CG    CB   CA
+SET_ICOOR  HD1   180.00  72.27  0.970  OD1   CG   CB
+SET_ICOOR 1HG    120.43  68.80  1.100  CG    CB   CD 
+
+
+## Manually define rotamer bins for chi 4 using data from the 2324 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency.
+##   The percentages do not add up to 100% due to rounding and exclusion of "Case 2" samples (~5%).
+##
+ADD_CHI_ROTAMER 4  -82.02  6.63  #49.0%
+ADD_CHI_ROTAMER 4 -152.42  5.24  #24.2%
+ADD_CHI_ROTAMER 4 -118.52 10.44  #21.5%
+
+
+## Manually define rotamer bins for chi 5 using data from the 1481 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency.
+##   The percentages may not add up to 100% due to rounding and exclusion of outliers.
+##
+ADD_CHI_ROTAMER 5   59.81 14.12  #32.1%, gauche +
+ADD_CHI_ROTAMER 5  178.85  7.91  #23.2%, +/- 180 bin
+ADD_CHI_ROTAMER 5  -63.56 12.81  #22.3%, gauche -
+ADD_CHI_ROTAMER 5 -134.10 11.69  # 8.1%
+ADD_CHI_ROTAMER 5  144.06  3.76  # 6.6%
+ADD_CHI_ROTAMER 5 -104.88  6.51  # 4.0%
+
+
+END_CASE

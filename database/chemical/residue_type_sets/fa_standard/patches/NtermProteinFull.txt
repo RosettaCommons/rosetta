@@ -47,8 +47,8 @@ ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
 ## totally making these up:
-SET_ICOOR 1H 120 60 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H 120 60 1 N CA 1H
+SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -79,8 +79,8 @@ ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
 ## totally making these up:
-SET_ICOOR 1H -120 60 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H -120 60 1 N CA 1H
+SET_ICOOR 1H -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H -120 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -111,8 +111,8 @@ ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
 ## totally making these up:
-SET_ICOOR 1H 120 60 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H 120 60 1 N CA 1H
+SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -143,8 +143,8 @@ ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
 ## totally making these up:
-SET_ICOOR 1H -120 60 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H -120 60 1 N CA 1H
+SET_ICOOR 1H -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H -120 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -178,10 +178,10 @@ ADD_BOND N 2H
 ADD_BOND N 3H
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H 120 60 1 N CA C
-SET_ICOOR 2H 120 60 1 N CA 1H
-SET_ICOOR 3H 120 60 1 N CA 2H
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA C
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -212,10 +212,10 @@ ADD_BOND N 2H
 ADD_BOND N 3H
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H 120 60 1 N CA C
-SET_ICOOR 2H 120 60 1 N CA 1H
-SET_ICOOR 3H 120 60 1 N CA 2H
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA C
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -243,8 +243,8 @@ ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
 ## totally making these up:
-SET_ICOOR 1H 120 60 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H 120 60 1 N CA 1H
+SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -274,8 +274,8 @@ ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
 ## totally making these up:
-SET_ICOOR 1H -120 60 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H -120 60 1 N CA 1H
+SET_ICOOR 1H -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H -120 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -306,8 +306,8 @@ SET_POLYMER_CONNECT LOWER NONE
 
 ## N should become tetrahedral and hydrogens should be like in other positions in
 ## cyclohexo ring
-SET_ICOOR 1H 180 60 1.09 N CA C
-SET_ICOOR 2H  60 60 1 N CA 1H
+SET_ICOOR 1H 180 70.5 1.09 N CA C
+SET_ICOOR 2H  60 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -333,8 +333,8 @@ SET_POLYMER_CONNECT LOWER NONE
 
 ## N should become tetrahedral and hydrogens should be like in other positions in
 ## cyclohexo ring
-SET_ICOOR 1H 180 60 1.09 N CA C
-SET_ICOOR 2H -60 60 1 N CA 1H
+SET_ICOOR 1H 180 70.5 1.09 N CA C
+SET_ICOOR 2H -60 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -360,8 +360,8 @@ SET_POLYMER_CONNECT LOWER NONE
 
 ## N should become tetrahedral and hydrogens should be like in other positions in
 ## cyclohexo ring
-SET_ICOOR 1H 180 60 1.09 N CA C
-SET_ICOOR 2H  60 60 1 N CA 1H
+SET_ICOOR 1H 180 70.5 1.09 N CA C
+SET_ICOOR 2H  60 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -387,8 +387,8 @@ SET_POLYMER_CONNECT LOWER NONE
 
 ## N should become tetrahedral and hydrogens should be like in other positions in
 ## cyclohexo ring
-SET_ICOOR 1H 180 60 1.09 N CA C
-SET_ICOOR 2H -60 60 1 N CA 1H
+SET_ICOOR 1H 180 70.5 1.09 N CA C
+SET_ICOOR 2H -60 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -445,8 +445,8 @@ ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
 ## totally making these up:
-SET_ICOOR 1H -120 60 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H -120 60 1 N CA 1H
+SET_ICOOR 1H -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H -120 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -476,8 +476,8 @@ ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
 ## totally making these up:
-SET_ICOOR 1H 120 60 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H 120 60 1 N CA 1H
+SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -508,8 +508,8 @@ ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
 ## totally making these up:
-SET_ICOOR 1H -120 60 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H -120 60 1 N CA 1H
+SET_ICOOR 1H -120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H -120 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -549,8 +549,8 @@ ADD_BOND N 2H
 SET_POLYMER_CONNECT LOWER NONE
 
 ## totally making these up:
-SET_ICOOR 1H 120 60 1 N CA C ## like to use CD but CD's parent is CG
-SET_ICOOR 2H 120 60 1 N CA 1H
+SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -584,10 +584,10 @@ ADD_BOND N 2H
 ADD_BOND N 3H
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H 120 60 1 N CA C
-SET_ICOOR 2H 120 60 1 N CA 1H
-SET_ICOOR 3H 120 60 1 N CA 2H
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA C
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -617,10 +617,10 @@ ADD_BOND N 2H
 ADD_BOND N 3H
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H 120 60 1 N CA Pbb
-SET_ICOOR 2H 120 60 1 N CA 1H
-SET_ICOOR 3H 120 60 1 N CA 2H
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA Pbb
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys
@@ -645,10 +645,10 @@ ADD_BOND N 2H
 ADD_BOND N 3H
 SET_POLYMER_CONNECT LOWER NONE
 
-## totally making these up:
-SET_ICOOR 1H 120 60 1 N CA C
-SET_ICOOR 2H 120 60 1 N CA 1H
-SET_ICOOR 3H 120 60 1 N CA 2H
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H 180 70.5 1 N CA C
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
 
 ## modify properties of existing atoms
 SET_ATOM_TYPE N Nlys

@@ -44,7 +44,7 @@
 
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/moves/DataMap.hh>
-
+#include <protocols/rosetta_scripts/util.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
@@ -247,8 +247,7 @@ FusePosesNtoCMover::parse_my_tag(
 		debugmode_ = tag->getOption<bool>( "debugmode");
 	}
 
-	std::string const scorefxn( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	sfxn_ = new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn ));
+	sfxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 
 	{
 		using namespace core::scoring;

@@ -1,0 +1,39 @@
+## fullatom protein n-terminus patch
+## I would like to redo this in YAML! no begin_ end_ blocks!
+
+NAME NtermTruncation
+TYPES LOWERTERM_TRUNC
+
+## general requirements for this patch
+## require protein, ignore anything that's already nterm patched:
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE LOWER_TERMINUS
+NOT VARIANT_TYPE LOWERTERM_TRUNC
+END_SELECTOR
+
+BEGIN_CASE ### PROLINE
+
+BEGIN_SELECTOR
+AA PRO
+END_SELECTOR
+
+SET_POLYMER_CONNECT LOWER NONE
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+
+BEGIN_CASE ### THE GENERAL CASE
+
+SET_POLYMER_CONNECT LOWER NONE
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+## totally making this up:
+SET_ICOOR H 120 60 1 N CA C
+
+END_CASE
+

@@ -77,7 +77,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/AA.hh>
 #include <basic/Tracer.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
@@ -135,7 +135,7 @@ int main( int argc, char * argv [] )
 	NEW_OPT( amphetamine, "Filter by amphetamine", false );
 	NEW_OPT( histamine, "Filter by histamine", false);
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	TR << "Remember to set the out::file::suppress_zero_occ_pdb_output flag !!!" << std::endl;
 	TR << "You may also want to set -ignore_zero_occupancy false" << std::endl;

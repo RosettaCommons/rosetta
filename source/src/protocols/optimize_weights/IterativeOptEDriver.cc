@@ -1244,7 +1244,7 @@ IterativeOptEDriver::collect_decoy_discrimination_data()
 		if ( option[ optE::normalize_decoy_score_spread ].user() ) {
 			/// special case if you say "SCORE12" as the weights file, then create the score function as the standard.wts + score12.wts_patch
 			if ( option[ optE::normalize_decoy_score_spread ]() == "SCORE12" ) {
-				decoy_spread_reference_sfxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+				decoy_spread_reference_sfxn = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH );
 			} else {
 				decoy_spread_reference_sfxn = ScoreFunctionFactory::create_score_function( option[ optE::normalize_decoy_score_spread ] );
 			}

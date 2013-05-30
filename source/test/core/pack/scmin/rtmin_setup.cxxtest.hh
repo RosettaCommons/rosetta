@@ -135,7 +135,7 @@ public:
 		using namespace graph;
 
 
-		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction(); // score12
+		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 		//scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction();
 
 		/// 1. test etable energies -- bad?

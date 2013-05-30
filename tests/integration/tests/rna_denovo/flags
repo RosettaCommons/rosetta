@@ -10,3 +10,5 @@
 -dump
 -mute core.io.database
 -vary_geometry
+
+-analytic_etable_evaluation 0

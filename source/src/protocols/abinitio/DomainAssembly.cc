@@ -133,7 +133,7 @@ DomainAssembly::apply( core::pose::Pose & pose )
 		movemap->set_bb(ir, true);
 	}
 */
-	core::scoring::ScoreFunctionCOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	core::scoring::ScoreFunctionCOP scorefxn( getScoreFunction() );
 	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom( core::chemical::FA_STANDARD );
 	to_centroid.apply( pose );

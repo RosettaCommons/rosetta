@@ -220,8 +220,6 @@ void SetSecStructEnergies::apply( Pose & pose )
 	using namespace basic::options::OptionKeys;
 
 	using core::scoring::dssp::Dssp;
-	using core::scoring::STANDARD_WTS;
-	using core::scoring::SCORE12_PATCH;
 	using core::scoring::ScoreFunctionOP;
 	using core::scoring::ScoreFunctionFactory;
 

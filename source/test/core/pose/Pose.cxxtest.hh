@@ -92,7 +92,7 @@ public: // tests
 
 		using namespace test_pose;
 
-		ScoreFunction scorefxn = *ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+		ScoreFunction scorefxn = *getScoreFunction();
 
 		Pose * pose = new Pose;
 		core::import_pose::pose_from_pdb( *pose, "core/pose/pdbinfo_test_in.pdb" );

@@ -41,7 +41,7 @@ main( int argc, char * argv [] )
 
   // initialize core
   devel::init(argc, argv);
-  //	core::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
+  //	core::init::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery
 
 	JobDistributor::get_instance()->go( new TemperedDocking() );
 	} catch ( utility::excn::EXCN_Base const & e ) {

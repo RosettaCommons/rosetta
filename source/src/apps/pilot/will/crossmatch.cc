@@ -184,7 +184,7 @@ inline Vec randvec() {
 // 		}
 // 	}
 // }
-// 
+//
 // inline void rot_pose( core::pose::Pose & pose, Mat const & rot ) {
 // 	for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
 // 		for(Size ia = 1; ia <= pose.residue_type(ir).natoms(); ++ia) {
@@ -193,17 +193,17 @@ inline Vec randvec() {
 // 		}
 // 	}
 // }
-// 
+//
 // inline void rot_pose( core::pose::Pose & pose, Mat const & rot, Vec const & cen ) {
 // 	trans_pose(pose,-cen);
 // 	rot_pose(pose,rot);
 // 	trans_pose(pose,cen);
 // }
-// 
+//
 // inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & ang ) {
 // 	rot_pose(pose,rotation_matrix_degrees(axis,ang));
 // }
-// 
+//
 // inline void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & ang, Vec const & cen ) {
 // 	rot_pose(pose,rotation_matrix_degrees(axis,ang),cen);
 // }
@@ -217,7 +217,7 @@ void minimize(Pose & pose, ScoreFunctionOP sf, vector1<Size> matchres) {
 	for(Size i = 1; i <= matchres.size(); ++i) {
 		movemap->set_chi(matchres[i],false);
 	}
-	
+
 	if(core::pose::symmetry::is_symmetric(pose)) {
 		core::pose::symmetry::make_symmetric_movemap(pose,*movemap);
 		for(Size i = 1; i <= pose.fold_tree().num_jump(); ++i) {
@@ -230,15 +230,15 @@ void minimize(Pose & pose, ScoreFunctionOP sf, vector1<Size> matchres) {
 		m.apply(pose);
 	} else {
 		protocols::simple_moves::MinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
-		m.apply(pose);		
+		m.apply(pose);
 	}
-		
+
 }
 
 void myoptH(Pose & pose, ScoreFunctionOP sf) {
 	add_lower_terminus_type_to_pose_residue(pose,1);
 	add_upper_terminus_type_to_pose_residue(pose,2);
-	core::pack::optimizeH(pose,*sf);	
+	core::pack::optimizeH(pose,*sf);
 	remove_lower_terminus_type_from_pose_residue(pose,1);
 	remove_upper_terminus_type_from_pose_residue(pose,2);
 }
@@ -251,16 +251,16 @@ void design(Pose & pose, ScoreFunctionOP sf, Size end_of_prot_1, vector1<Size> c
 		atom_map.set(AtomID(2,ir) , true );
 		atom_map.set(AtomID(3,ir) , true );
 		atom_map.set(AtomID(5,ir) , true );
-	}			
+	}
 	core::id::AtomID_Map<Real> atom_sasa; utility::vector1<Real> sasa;
 	core::scoring::calc_per_atom_sasa( pose, atom_sasa, sasa, 2.3, false, atom_map );
 	for(Size i = 1; i <= sasa.size(); ++i) if( atom_sasa.n_atom(i) > 4 ) sasa[i] = atom_sasa[AtomID(5,i)];
-	
-	
+
+
 	Real worig = sf->get_weight(core::scoring::res_type_constraint);
-	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);	
+	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
 	utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
-	
+
 	Size nres = pose.n_residue();
 	PackerTaskOP task = TaskFactory::create_packer_task(pose);
 	// task->initialize_extra_rotamer_flags_from_command_line();
@@ -276,11 +276,11 @@ void design(Pose & pose, ScoreFunctionOP sf, Size end_of_prot_1, vector1<Size> c
 			aas[core::chemical::aa_ser] = false;
 			aas[core::chemical::aa_thr] = false;
 			aas[core::chemical::aa_asp] = false;
-			aas[core::chemical::aa_glu] = false;		
-			aas[core::chemical::aa_lys] = false;		
-			aas[core::chemical::aa_arg] = false;		
-			aas[core::chemical::aa_asn] = false;		
-			aas[core::chemical::aa_gln] = false;		
+			aas[core::chemical::aa_glu] = false;
+			aas[core::chemical::aa_lys] = false;
+			aas[core::chemical::aa_arg] = false;
+			aas[core::chemical::aa_asn] = false;
+			aas[core::chemical::aa_gln] = false;
 		}
 	}
 
@@ -291,7 +291,7 @@ void design(Pose & pose, ScoreFunctionOP sf, Size end_of_prot_1, vector1<Size> c
 		while(in>>tmp) fixed.push_back(tmp);
 		in.close();
 	}
-	
+
 	vector1<Size> interface;
 	if( option[basic::options::OptionKeys::willmatch::design_interface]()) {
 		for(Size i = 1; i <= end_of_prot_2; ++i) {
@@ -301,22 +301,22 @@ void design(Pose & pose, ScoreFunctionOP sf, Size end_of_prot_1, vector1<Size> c
 			for(Size j = 1; j <= nres; ++j) {
 				if( nres > end_of_prot_2 && sasa[i] > option[basic::options::OptionKeys::willmatch::cb_sasa_thresh]()/2.0 ) continue;
 				if( i <= end_of_prot_1 && j <= end_of_prot_1 ) continue;
-				if( end_of_prot_1 < i && i <= end_of_prot_2 && end_of_prot_1 < j && j <= end_of_prot_2 ) continue;				
+				if( end_of_prot_1 < i && i <= end_of_prot_2 && end_of_prot_1 < j && j <= end_of_prot_2 ) continue;
 				AtomID aid2(5,j);
 				if(pose.residue(j).nheavyatoms() < 5) continue; // don't design GLY or VIRT
 				if(pose.xyz(aid).distance_squared(pose.xyz(aid2)) < 64) {
 					interface.push_back(i);
 				}
-			}		
+			}
 		}
 	}
 	// TR << "INTERFACE ";
 	for(Size i = 1; i <= nres; ++i) {
 		if(std::find(matchres.begin(),matchres.end(),i)!=matchres.end()) {
 			task->nonconst_residue_task(i).prevent_repacking();
-		} else if(std::find(fixed.begin(),fixed.end(),i)!=fixed.end()){			
+		} else if(std::find(fixed.begin(),fixed.end(),i)!=fixed.end()){
 			task->nonconst_residue_task(i).restrict_to_repacking();
-		} else if(std::find(interface.begin(),interface.end(),i)!=interface.end()){						
+		} else if(std::find(interface.begin(),interface.end(),i)!=interface.end()){
 			bool tmp = aas[pose.residue(i).aa()];
 			aas[pose.residue(i).aa()] = true;
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
@@ -332,17 +332,17 @@ void design(Pose & pose, ScoreFunctionOP sf, Size end_of_prot_1, vector1<Size> c
 	// pose.dump_pdb("test.pdb");
 	// if(uniform() > 0.2) std::exit(-1);
 	if(core::pose::symmetry::is_symmetric(pose)) {
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );		
-		repack.apply(pose);		
+		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		repack.apply(pose);
 	} else {
-		protocols::simple_moves::PackRotamersMover repack( sf, task );		
+		protocols::simple_moves::PackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	}
-	
+
 	// cleanup 2
 	pose.remove_constraints( res_cst );
 	sf->set_weight(core::scoring::res_type_constraint,worig);
-	
+
 }
 void repack(Pose & pose, ScoreFunctionOP sf, Size /*end_of_prot_1*/, vector1<Size> const & matchres, Size end_of_prot_2=0 ){
 	using namespace core::pack::task;
@@ -357,21 +357,21 @@ void repack(Pose & pose, ScoreFunctionOP sf, Size /*end_of_prot_1*/, vector1<Siz
 		}
 	}
 	if(core::pose::symmetry::is_symmetric(pose)) {
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );		
-		repack.apply(pose);		
+		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		repack.apply(pose);
 	} else {
-		protocols::simple_moves::PackRotamersMover repack( sf, task );		
+		protocols::simple_moves::PackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	}
 }
 
 void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & matchres, bool designall = false ){
-	using namespace core::pack::task;	
-	
+	using namespace core::pack::task;
+
 	Real worig = sf->get_weight(core::scoring::res_type_constraint);
-	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);	
+	if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
 	utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
-	
+
 	Size nres = pose.n_residue();
 	PackerTaskOP task = TaskFactory::create_packer_task(pose);
 	// task->initialize_extra_rotamer_flags_from_command_line();
@@ -387,11 +387,11 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
 			aas[core::chemical::aa_ser] = false;
 			aas[core::chemical::aa_thr] = false;
 			aas[core::chemical::aa_asp] = false;
-			aas[core::chemical::aa_glu] = false;		
-			aas[core::chemical::aa_lys] = false;		
-			aas[core::chemical::aa_arg] = false;		
-			aas[core::chemical::aa_asn] = false;		
-			aas[core::chemical::aa_gln] = false;		
+			aas[core::chemical::aa_glu] = false;
+			aas[core::chemical::aa_lys] = false;
+			aas[core::chemical::aa_arg] = false;
+			aas[core::chemical::aa_asn] = false;
+			aas[core::chemical::aa_gln] = false;
 		}
 	}
 
@@ -402,7 +402,7 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
 		while(in>>tmp) fixed.push_back(tmp);
 		in.close();
 	}
-	
+
 	core::conformation::symmetry::SymmetryInfoCOP symminfo = core::pose::symmetry::symmetry_info(pose);
 	Size end_of_prot_1 = symminfo->get_nres_subunit();
 	Size end_of_prot_2 = 2*end_of_prot_1;
@@ -414,22 +414,22 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
 		for(Size j = 1; j <= nres; ++j) {
 			// if( nres > end_of_prot_2 && sasa[i] > option[basic::options::OptionKeys::willmatch::cb_sasa_thresh]()/2.0 ) continue;
 			if( i <= end_of_prot_1 && j <= end_of_prot_1 ) continue;
-			if( end_of_prot_1 < i && i <= end_of_prot_2 && end_of_prot_1 < j && j <= end_of_prot_2 ) continue;				
+			if( end_of_prot_1 < i && i <= end_of_prot_2 && end_of_prot_1 < j && j <= end_of_prot_2 ) continue;
 			AtomID aid2(5,j);
 			if(pose.residue(j).nheavyatoms() < 5) continue; // don't design GLY or VIRT
 			if(pose.xyz(aid).distance_squared(pose.xyz(aid2)) < 100.0) {
 				interface.push_back(i);
 			}
-		}		
+		}
 	}
 
 	// TR << "INTERFACE ";
 	for(Size i = 1; i <= nres; ++i) {
 		if(std::find(matchres.begin(),matchres.end(),i)!=matchres.end()) {
 			task->nonconst_residue_task(i).prevent_repacking();
-		} else if(std::find(fixed.begin(),fixed.end(),i)!=fixed.end()){			
+		} else if(std::find(fixed.begin(),fixed.end(),i)!=fixed.end()){
 			task->nonconst_residue_task(i).restrict_to_repacking();
-		} else if(std::find(interface.begin(),interface.end(),i)!=interface.end()){						
+		} else if(std::find(interface.begin(),interface.end(),i)!=interface.end()){
 			bool tmp = aas[pose.residue(i).aa()];
 			aas[pose.residue(i).aa()] = true;
 			task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
@@ -445,17 +445,17 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
 	// pose.dump_pdb("test.pdb");
 	// if(uniform() > 0.2) std::exit(-1);
 	if(core::pose::symmetry::is_symmetric(pose)) {
-		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );		
-		repack.apply(pose);		
+		protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+		repack.apply(pose);
 	} else {
-		protocols::simple_moves::PackRotamersMover repack( sf, task );		
+		protocols::simple_moves::PackRotamersMover repack( sf, task );
 		repack.apply(pose);
 	}
-	
+
 	// cleanup 2
 	pose.remove_constraints( res_cst );
 	sf->set_weight(core::scoring::res_type_constraint,worig);
-	
+
 }
 
 
@@ -469,7 +469,7 @@ struct Tags {
 struct Filter {
 	virtual bool filter(string tag1, string tag2) const = 0;
 	virtual bool filter(string tag1, string tag2, Size rot) const = 0;
-	
+
 };
 struct NullFilter : Filter {
 	bool filter(string /*tag1*/, string /*tag2*/) const { return true; }
@@ -478,7 +478,7 @@ struct NullFilter : Filter {
 struct ListFilter : Filter {
 	vector1<Tags> tagslist;
 	std::set<string> tags1;
-	std::set<string> tags2;	
+	std::set<string> tags2;
 	ListFilter(vector1<Tags> tagslist_in) : tagslist(tagslist_in) {
 		for(Size i = 1; i<tagslist.size();++i) {
 			tags1.insert(tagslist[i].tag1);
@@ -516,13 +516,13 @@ struct MatchAlignInfo {
 		Real const TOL = basic::options::option[basic::options::OptionKeys::willmatch::identical_match_dis]();
 		if( fabs(a.cen.x()  -b.cen.x()  ) > TOL ) return false;
 		if( fabs(a.cen.y()  -b.cen.y()  ) > TOL ) return false;
-		if( fabs(a.cen.z()  -b.cen.z()  ) > TOL ) return false;				
+		if( fabs(a.cen.z()  -b.cen.z()  ) > TOL ) return false;
 		if( fabs(a.axis.x() -b.axis.x() ) > TOL ) return false;
 		if( fabs(a.axis.y() -b.axis.y() ) > TOL ) return false;
-		if( fabs(a.axis.z() -b.axis.z() ) > TOL ) return false;				
+		if( fabs(a.axis.z() -b.axis.z() ) > TOL ) return false;
 		if( fabs(a.ortho.x()-b.ortho.x()) > TOL ) return false;
 		if( fabs(a.ortho.y()-b.ortho.y()) > TOL ) return false;
-		if( fabs(a.ortho.z()-b.ortho.z()) > TOL ) return false;				
+		if( fabs(a.ortho.z()-b.ortho.z()) > TOL ) return false;
 		return true;
 	}
 	void dump_pdb(std::ostream & out) {
@@ -541,7 +541,7 @@ struct MatchAlignInfo {
 std::ostream & operator<< (std::ostream & out, MatchAlignInfo & ai) {
 	out << ai.cen << " " << ai.axis << " " << ai.ortho << std::endl;
 	return out;
-	
+
 }
 
 // struct ltmai
@@ -594,7 +594,7 @@ struct Tet4HMatchAligner : public MatchAligner {
 		mai.r1d = in1;
 		mai.r2d = in2;
 		Vec  n1 = lig.residue(1).xyz(in1);
-		Vec  n2 = lig.residue(2).xyz(in2);		
+		Vec  n2 = lig.residue(2).xyz(in2);
 		// Vec  h1,h2;
 		// if( in1 == lig.residue(1).atom_index("NE2") ) h1 = lig.residue(1).xyz("HE2");
 		// else                                          h1 = lig.residue(1).xyz("HD1");
@@ -624,7 +624,7 @@ struct Tet4HMatchAligner : public MatchAligner {
 		// if( false )
 		{
 			mai.cen = 0;
-			mai.axis = 0;						
+			mai.axis = 0;
 			mai.ortho = 0;
 			// TR << "align_info FAILED FOR MATCH!!!!" << std::endl;
 		}
@@ -636,7 +636,7 @@ struct Tet4HMatchAligner : public MatchAligner {
 		if(mi1.sqp != mi2.sqp) return rots;
 		Vec axis = mi2.axis.cross(mi1.axis);
 		while( axis.length() < 0.001 ) {
-			// axis = mi2.axis.cross(Vec(uniform(),uniform(),uniform()));			
+			// axis = mi2.axis.cross(Vec(uniform(),uniform(),uniform()));
 			axis = mi2.axis.cross(Vec(1,1,1).normalized());
 		}
 		axis = axis.normalized();
@@ -656,13 +656,13 @@ struct Tet4HMatchAligner : public MatchAligner {
 		} else {
 			// TR << "HHGEOM TET" << std::endl;
 			rot1 = rotation_matrix_degrees(axis2,ang2+ 90.0) * rotation_matrix_degrees(axis,ang1);
-			rot2 = rotation_matrix_degrees(axis2,ang2- 90.0) * rotation_matrix_degrees(axis,ang1);Vec trans1 = mi2.cen - rot1*mi1.cen;			
+			rot2 = rotation_matrix_degrees(axis2,ang2- 90.0) * rotation_matrix_degrees(axis,ang1);Vec trans1 = mi2.cen - rot1*mi1.cen;
 		}
-		Vec trans1 = mi2.cen - rot1*mi1.cen;		
-		Vec trans2 = mi2.cen - rot2*mi1.cen;		
+		Vec trans1 = mi2.cen - rot1*mi1.cen;
+		Vec trans2 = mi2.cen - rot2*mi1.cen;
 		rots.push_back( Stub(rot1,trans1) );
-		rots.push_back( Stub(rot2,trans2) );		
-		
+		rots.push_back( Stub(rot2,trans2) );
+
 		return rots;
 	}
 	bool checkalign( Pose const & a, Pose const & b, numeric::xyzVector<Real> & c ) {
@@ -701,7 +701,7 @@ struct Tet4HMatchAligner : public MatchAligner {
 		if( zndis1 < 1.8 || zndis1 < 1.8 || zndis1 < 1.8 || zndis1 < 1.8 ) return false;
 		Real MXA = 120.0 , MNA= 97.0;
 		if( znang12 > MXA || znang13 > MXA || znang14 > MXA || znang23 > MXA || znang24 > MXA || znang34 > MXA ) return false;
-		if( znang12 < MNA || znang13 < MNA || znang14 < MNA || znang23 < MNA || znang24 < MNA || znang34 < MNA ) return false;		
+		if( znang12 < MNA || znang13 < MNA || znang14 < MNA || znang23 < MNA || znang24 < MNA || znang34 < MNA ) return false;
 		Real d = dihedral_degrees(a.xyz(AtomID(na1,1)),a.xyz(AtomID(na2,2)),b.xyz(AtomID(na3,1)),b.xyz(AtomID(na4,2)));
 		return true;
 		// TR << "D " << d << std::endl;
@@ -709,22 +709,22 @@ struct Tet4HMatchAligner : public MatchAligner {
 			if( fabs(d) < 5.0 ) return true;
 			if( fabs(fabs(d)-180.0) < 10.0 ) return true;
 		// } else {
-			if( fabs(fabs(d)- 75.0) < 10.0 ) return true;			
-			// if( fabs(fabs(d)-270.0) < 5.0 ) return true;			
+			if( fabs(fabs(d)- 75.0) < 10.0 ) return true;
+			// if( fabs(fabs(d)-270.0) < 5.0 ) return true;
 		// }
 		return false;
 	}
-	
+
 };
 
 struct MatchBase : public utility::pointer::ReferenceCount {
 	Pose pose;
 	// utility::vector1< core::id::AtomID > bb_bur_uns;
 	MatchBase() {}
-	void init(Pose & ipose) { 
+	void init(Pose & ipose) {
 		// bb_bur_uns = count_bb_bur_uns(ipose);
 		Pose tpose = ipose;
-		core::chemical::ResidueTypeSetCAP cen_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );		
+		core::chemical::ResidueTypeSetCAP cen_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
 		core::chemical::ResidueType const & ala( cen_residue_set->name_map("ALA") );
 		vector1<Size> positions;
 		Size start = 1,i;
@@ -738,8 +738,8 @@ struct MatchBase : public utility::pointer::ReferenceCount {
 		core::pose::create_subpose(tpose,positions,f,pose);
 		core::pose::add_lower_terminus_type_to_pose_residue(pose,1);
 		core::pose::add_upper_terminus_type_to_pose_residue(pose,pose.n_residue());
-		
-	}	
+
+	}
 };
 typedef utility::pointer::owning_ptr<MatchBase> MatchBaseOP;
 typedef utility::pointer::owning_ptr<const MatchBase> MatchBaseCOP;
@@ -751,14 +751,14 @@ struct MatchLig : public utility::pointer::ReferenceCount {
 	MatchAlignInfo align_info;
 	MatchLig(Pose & ipose, Size irsd1, Size irsd2, string iaa1, string iaa2, string itag, MatchAlignerOP mop)
 	 : rsd1(irsd1), rsd2(irsd2), aa1(iaa1), aa2(iaa2), tag(itag)
-	{		
+	{
 		if(ipose.n_residue()>3) {
 			assert(aa1[0]==ipose.residue(rsd1).name1());
 			assert(aa2[0]==ipose.residue(rsd2).name1());
 			core::conformation::Residue r1 = ipose.residue(rsd1);
 			core::conformation::Residue r2 = ipose.residue(rsd2);
 			pose.append_residue_by_jump(r1,1,"","",true);
-			pose.append_residue_by_jump(r2,1,"","",true);			
+			pose.append_residue_by_jump(r2,1,"","",true);
 
 			Size i = 1;
 			while(i <= ipose.n_residue() && ipose.residue(i).is_protein()) ++i;
@@ -774,7 +774,7 @@ struct MatchLig : public utility::pointer::ReferenceCount {
 			if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
 		}
 		align_info = mop->align_info(pose);
-		
+
 	}
 	bool isbad() { return align_info.axis.length() < 0.01; }
 };
@@ -797,13 +797,13 @@ struct MatchSet {
 	}
 	void init(vector1<Pose> & poses, MatchAlignerOP imop, Pose & native_in, utility::vector1<Size> allowed_res) {
 		native = native_in;
-		mop = imop;		
+		mop = imop;
 		base.init(poses[1]);
 		// for(Size i = 1; i <= base.pose.n_residue(); ++i) {
 		// 	if(base.pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(base.pose,i);
 		// 	if(base.pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(base.pose,i);
 		// }
-		ScoreFunctionOP sflig = core::scoring::ScoreFunctionFactory::create_score_function( "STANDARD" );
+		ScoreFunctionOP sflig = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 		sflig->set_weight(core::scoring::fa_dun,0.01);
 		sflig->set_weight(core::scoring::fa_intra_rep,0.44);
 		sflig->set_weight(core::scoring::ref,0.0);
@@ -813,7 +813,7 @@ struct MatchSet {
 			{
 				Pose tmp;
 				tmp.append_residue_by_jump(poses[idx].residue(1),1);
-				tmp.append_residue_by_jump(poses[idx].residue(2),1);				
+				tmp.append_residue_by_jump(poses[idx].residue(2),1);
 				myoptH(tmp,sflig);
 				if(tmp.energies().total_energy() > basic::options::option[basic::options::OptionKeys::crossmatch::his_score_cut]() ) {
 					// tmp.energies().show();
@@ -825,7 +825,7 @@ struct MatchSet {
 			// sflig->show(tmp);
 			// TR << "CROSSMATCHLIG lig" << idx << ".pdb " << tmp.energies().total_energy() << std::endl;
 			// tmp.dump_pdb("lig"+string_of(idx)+".pdb");
-			
+
 			std::string s = poses[idx].pdb_info()->modeltag();
 			// TR << "'" << s << "'" << std::endl;
 			s = utility::file_basename(s);
@@ -840,8 +840,8 @@ struct MatchSet {
 				string tmp;
 				iss >> tmp >> tmp >> tmp >> geom >> ri1 >> tmp >> tmp >> ri2;
 				// TR << "S " << ri1 << " " << ri2 << std::endl;
-				if( poses[idx].residue(1).name3()!="HIS" || 
-				    poses[idx].residue(2).name3()!="HIS" || 
+				if( poses[idx].residue(1).name3()!="HIS" ||
+				    poses[idx].residue(2).name3()!="HIS" ||
 				    poses[idx].residue(3).name3()!=" ZN" ) {
 					TR << "LIG out of order! " << s << std::endl;
 					TR << "'" << poses[idx].residue(1).name() << "'" << std::endl;
@@ -863,12 +863,12 @@ struct MatchSet {
 			Size rsd1,rsd2;
 			rsd1 = atoi(ri1.c_str());
 			rsd2 = atoi(ri2.c_str());
-			
+
 			if( allowed_res.size() > 0 ) { // skip if not in allowed res
-				if( std::find(allowed_res.begin(),allowed_res.end(),rsd1) == allowed_res.end() || 
+				if( std::find(allowed_res.begin(),allowed_res.end(),rsd1) == allowed_res.end() ||
 					std::find(allowed_res.begin(),allowed_res.end(),rsd2) == allowed_res.end() ) {
 					num_disallowed++;
-					continue; 
+					continue;
 				}
 			}
 			// why skip ends?
@@ -919,7 +919,7 @@ struct MatchSet {
 			if(!tmp.residue(1).is_lower_terminus()) core::pose::add_lower_terminus_type_to_pose_residue(tmp,1);
 			if(!tmp.residue(1).is_upper_terminus()) core::pose::add_upper_terminus_type_to_pose_residue(tmp,1);
 			if(!tmp.residue(1).is_lower_terminus()) core::pose::add_lower_terminus_type_to_pose_residue(tmp,2);
-			if(!tmp.residue(1).is_upper_terminus()) core::pose::add_upper_terminus_type_to_pose_residue(tmp,2);			
+			if(!tmp.residue(1).is_upper_terminus()) core::pose::add_upper_terminus_type_to_pose_residue(tmp,2);
 			core::io::pdb::dump_pdb(tmp,out);
 			out << "ENDMDL" << endl;
 		}
@@ -938,11 +938,11 @@ struct MatchSet {
 		for(Size i = 0; i < base.pose.n_residue(); ++i) {
 			for(Size j = 1; j <= 5; ++j) points_[5*i+j] = base.pose.xyz(AtomID(j,i+1));
 		}
-		
+
 		Vec bbu( points_[ 1 ] ); // Lower and upper corners of bounding box
 		bbl_ = bbu;
 		for ( Size ii = 2; ii <= points_.size(); ++ii ) { bbl_.min( points_[ ii ] ); bbu.max( points_[ ii ] ); }
-		bbl_ -= 10 * std::numeric_limits< Real >::epsilon(); 
+		bbl_ -= 10 * std::numeric_limits< Real >::epsilon();
 		bbu += 10 * std::numeric_limits< Real >::epsilon();
 		Real const side( neighbor_cutoff );
 		assert( side > platform::Real( 0 ) );
@@ -954,7 +954,7 @@ struct MatchSet {
 		);
 
 		cubes_.dimension( cube_dim_.x(), cube_dim_.y(), cube_dim_.z() );
-		
+
 		for ( Size i = 1; i <= points_.size(); ++i ) {
 			Vec const pp( points_[ i ]);
 			CubeKey const cube_key(
@@ -1092,14 +1092,14 @@ struct MatchSet {
 		// 	TR << "linker pass " << thresh << std::endl;
 		// }
 		return numeric::min( ct1.distance_squared(nt2), ct2.distance_squared(nt1) );
-		
+
 	}
 	inline Vec com(Pose const & pose) const {
 		Vec com(0,0,0);
 		for(Size i = 1; i <= pose.n_residue(); ++i) com += pose.xyz(AtomID(2,i));
 		return com / pose.n_residue();
 	}
-	inline bool get_contacting_stub(Pose const & outpose, Vec & trans, Stub & s, Stub const & hdstub, 
+	inline bool get_contacting_stub(Pose const & outpose, Vec & trans, Stub & s, Stub const & hdstub,
 	                                MatchSet const & b,vector1<Vec> const & his_atoms, Real const & LINK_CST,
 	                                Real step = 16.0) {
 		Vec com1 = com(outpose);
@@ -1108,7 +1108,7 @@ struct MatchSet {
 		while(fabs(step) > 0.2) {
 			s.v += trans*step;
 			Size count = 0;
-			while( step * (2.0*c2_clash_check(hdstub,b,outpose,s,his_atoms)-1.0) < 0 ) {							
+			while( step * (2.0*c2_clash_check(hdstub,b,outpose,s,his_atoms)-1.0) < 0 ) {
 				s.v += trans*step;
 				if(++count > 10) utility_exit_with_message("C2 contact search fail");
 			}
@@ -1130,17 +1130,17 @@ struct MatchSet {
 		// trans_pose(outpose,rots[itrans].v);
 		// Pose move     = b.ligs[idx2].pose;
 		// rot_pose  (move,rots[itrans].M);
-		// trans_pose(move,rots[itrans].v);		
+		// trans_pose(move,rots[itrans].v);
 		// // if(!clash_check(move)) return;
-		// 
+		//
 		// vector1<Size> include_res = b.iface_candidates;
 		// for(vector1<Size>::const_iterator i=iface_candidates.begin(),ie=iface_candidates.end(); i != ie; ++i) {
 		// 	include_res.push_back(*i+b.base.pose.n_residue());
-		// }		
+		// }
 		// Real iface = iface_check(outpose,b.iface_candidates);
 		// if(iface < (Real)basic::options::option[basic::options::OptionKeys::willmatch::interface_size]()) return;
-		
-		
+
+
 	}
 	void cross_homodimer(Size idx1,Size itrans) {
 		// TODO how do I build a new residue on a terminal spot? get upper/lower connect error
@@ -1160,18 +1160,18 @@ struct MatchSet {
 
 		vector1<Stub> rots = mop->align_rot(ligs[idx1].align_info,ligs[idx1].align_info);
 		if(rots.size() < itrans) return;
-		
-		// main clash check		
+
+		// main clash check
 		if(!clash_check(base.pose,rots[itrans])) return;
-		
+
 		Pose fixd = ligs[idx1].pose;
 		Pose move = ligs[idx1].pose;
 		rot_pose  (move,rots[itrans].M);
-		trans_pose(move,rots[itrans].v);		
+		trans_pose(move,rots[itrans].v);
 
 		// clash check base (self) vs move (other HISs)
 		for(Size ia = 1; ia <= move.residue(1).nheavyatoms(); ++ia) {
-			if( !this->clash_check(move.residue(1).xyz(ia)) || 
+			if( !this->clash_check(move.residue(1).xyz(ia)) ||
 			    !this->clash_check(move.residue(2).xyz(ia)) ) {
 				// TR << "clash_check on move HIS HIS fails!" << std::endl;
 				// base.pose.dump_pdb("base.pdb");
@@ -1195,7 +1195,7 @@ struct MatchSet {
 							// ligs[idx1].pose.dump_pdb("fixd.pdb");
 							// base.pose.dump_pdb("base.pdb");
 							// move.dump_pdb("move.pdb");
-							// utility_exit_with_message("lasdfgj");							
+							// utility_exit_with_message("lasdfgj");
 							return;
 						}
 					}
@@ -1207,7 +1207,7 @@ struct MatchSet {
 
 		Size end1 = base.pose.n_residue();
 		Size end2 = 2*end1; // homodimer case
-		
+
 		vector1<Size> matchres;
 		matchres.push_back(ligs[idx1].rsd1);
 		matchres.push_back(ligs[idx1].rsd2);
@@ -1222,9 +1222,9 @@ struct MatchSet {
 		}
 		// fixd.dump_pdb("fixd.pdb");
 		// move.dump_pdb("move.pdb");
- 
+
 		ScoreFunctionOP sf = new core::scoring::symmetry::SymmetricScoreFunction(core::scoring::getScoreFunction());
-		
+
 		// fix crappy H placement ( needed for alignment)
 		// fixd.dump_pdb("0_lig_fixd.pdb");
 		// move.dump_pdb("0_lig_move.pdb");
@@ -1236,41 +1236,41 @@ struct MatchSet {
 
 		Pose tmppose = base.pose;
 		rot_pose  (tmppose,rots[itrans].M);
-		trans_pose(tmppose,rots[itrans].v);		
+		trans_pose(tmppose,rots[itrans].v);
 		tmppose.append_residue_by_jump(base.pose.residue(1),1,"","",true);
 		for(Size l = 2; l <= base.pose.n_residue(); ++l) tmppose.append_residue_by_bond(base.pose.residue(l));
 
 		core::conformation::symmetry::SymmDataOP sd = core::pose::symmetry::symm_data_from_asym_pose(tmppose,end1);
 		Pose sympose = base.pose;
 		core::pose::symmetry::make_symmetric_pose(sympose,*sd);
-		
+
 		if(false) {
 			sympose.replace_residue(ligs[idx1].rsd1,fixd.residue(1),true);
-			sympose.replace_residue(ligs[idx1].rsd2,fixd.residue(2),true);			
+			sympose.replace_residue(ligs[idx1].rsd2,fixd.residue(2),true);
 			utility::io::ozstream out("sympose.pdb");
 			sympose.dump_pdb(out);
 			out << "HETATM" << I(5,9999) << "  ZN   ZN Z" << I(4,994) << "    " << F(8,3,  zncen.x()) << F(8,3,  zncen.y()) << F(8,3,  zncen.z()) << F(6,2,1.0) << F(6,2,1.0) << std::endl;
 			out.close();
 			utility_exit_with_message("testing....");
 		}
-		
+
 		for(Size j = 1; j <= native.n_residue(); ++j) sympose.replace_residue(j,native.residue(j),true);
 		sympose.replace_residue(ligs[idx1].rsd1,fixd.residue(1),true);
-		sympose.replace_residue(ligs[idx1].rsd2,fixd.residue(2),true);			
+		sympose.replace_residue(ligs[idx1].rsd2,fixd.residue(2),true);
 		// sympose.dump_pdb("symtest.pdb");
 		// utility_exit_with_message("testing...");
-		
+
 		// core::conformation::symmetry::SymmetryInfoCOP symminfo = core::pose::symmetry::symmetry_info(sympose);
 		// Size end1 = symminfo->get_nres_subunit();
 		// Size end2 = 2*end1;
 		Pose outpose = sympose;
 
 		Pose native = outpose;
-		
+
 		// // buried uns stuff
 		// utility::vector1<std::pair<Size,Size> > sections;
 		// sections.push_back( std::pair<Size,Size>(     1,end1) );
-		// sections.push_back( std::pair<Size,Size>(end1+1,end2) );		
+		// sections.push_back( std::pair<Size,Size>(end1+1,end2) );
 		// utility::vector1< core::id::AtomID > bb_bur_uns_iface = get_bb_bur_uns_iface(outpose,sections,2.2);
 		// if( bb_bur_uns_iface.size() > (Size)option[basic::options::OptionKeys::crossmatch::max_bur_uns]() ) {
 		// 	// std::string fn = "bur_uns_fail_"+ObjexxFCL::string_of(idx1)+"_"+ObjexxFCL::string_of(idx2)+"_"+ObjexxFCL::string_of(itrans)+"_"+".pdb";
@@ -1280,7 +1280,7 @@ struct MatchSet {
 		// 	// }
 		// 	// TR << std::endl;
 		// 	// outpose.dump_pdb(fn);
-		// 	TR << "buried uns fail " << bb_bur_uns_iface.size() << std::endl;		
+		// 	TR << "buried uns fail " << bb_bur_uns_iface.size() << std::endl;
 		// 	return;
 		// }
 
@@ -1303,21 +1303,21 @@ struct MatchSet {
 			// 			Real d = 4.0;
 			// 			if( ligs[idx1].align_info.sqp == false ) d = 3.266566;
 			// 			outpose.add_constraint( new AtomPairConstraint( AtomID(ha[i],hr[i]), AtomID(ha[j],hr[j]), new HarmonicFunc(d,0.01) ) );
-			// 		
+			//
 			// 			Real ang1 = angle_radians(      outpose.xyz( AtomID(ce1,hr[i])),outpose.xyz(AtomID(ha[i],hr[i])), outpose.xyz(AtomID(ha[j],hr[j])) );
 			// 			outpose.add_constraint( new AngleConstraint( AtomID(ce1,hr[i]),             AtomID(ha[i],hr[i]),              AtomID(ha[j],hr[j]), new HarmonicFunc(ang1,0.1) ) );
-			// 		
+			//
 			// 			Real ang2 = angle_radians(      outpose.xyz( AtomID(ha[i],hr[i])), outpose.xyz(AtomID(ha[j],hr[j])), outpose.xyz(AtomID(ce1,hr[j])) );
 			// 			outpose.add_constraint( new AngleConstraint( AtomID(ha[i],hr[i]),              AtomID(ha[j],hr[j])   ,           AtomID(ce1,hr[j]), new HarmonicFunc(ang2,0.1) ) );
-			// 		
+			//
 			// 			Real dih = dihedral_radians(        outpose.xyz(AtomID(ce1,hr[i])), outpose.xyz(AtomID(ha[i],hr[i])), outpose.xyz(AtomID(ha[j],hr[j])), outpose.xyz(AtomID(ce1,hr[j])) );
 			// 			outpose.add_constraint( new DihedralConstraint( AtomID(ce1,hr[i]) ,             AtomID(ha[i],hr[i]),              AtomID(ha[j],hr[j]),              AtomID(ce1,hr[j]), new CircularHarmonicFunc(dih,0.1) ) );
 			// 		}
 			// 	}
 			// }
-		
+
 			// outpose.dump_pdb("3_premin.pdb");
-		
+
 			Real orig_rep = sf->get_weight(core::scoring::fa_rep);
 			Size MIN_STEPS = 1;
 			TR << "design/min " << MIN_STEPS << " rounds" << std::endl;
@@ -1336,24 +1336,24 @@ struct MatchSet {
 			// }
 			// design(outpose,sf,end1,matchres,end2,false);
 			// outpose.dump_pdb("5_postmin.pdb");
-		
-		
+
+
 			Size nmut  = 0; for(Size i = 1; i <= end2; ++i) if(outpose.residue(i).name3()!=native.residue(i).name3()) nmut++;
 			Size nhmut = 0; for(Size i = 1; i <= end2; ++i) {
 				if(outpose.residue(i).name3()==native.residue(i).name3()) continue;
-				if(outpose.residue(i).name3()=="PHE" || outpose.residue(i).name3()=="ILE" || outpose.residue(i).name3()=="VAL" || 
+				if(outpose.residue(i).name3()=="PHE" || outpose.residue(i).name3()=="ILE" || outpose.residue(i).name3()=="VAL" ||
 				   outpose.residue(i).name3()=="TRP" || outpose.residue(i).name3()=="MET" || outpose.residue(i).name3()=="TYR" ||
 				   outpose.residue(i).name3()=="LEU"  )
 				nhmut++;
 			}
-		
 
-		
+
+
 		sf->set_weight(core::scoring::atom_pair_constraint, 0.0 );
 		sf->set_weight(core::scoring::    angle_constraint, 0.0 );
 		sf->set_weight(core::scoring:: dihedral_constraint, 0.0 );
 		sf->score(outpose);
-		
+
 		// Real rholes = core::scoring::packstat::compute_packing_score( outpose , 0 );
 		string fname = "ALIGN_"+ligs[idx1].tag+"___"+string_of(itrans)+".pdb";
 		for(Size i = 0; i <= fname.size(); ++i) if(fname[i]==' ') fname[i] = '_';
@@ -1365,10 +1365,10 @@ struct MatchSet {
 		out << "HETATM" << I(5,9999) << "  ZN   ZN Z" << I(4,994) << "    " << F(8,3,  cen.x()) << F(8,3,  cen.y()) << F(8,3,  cen.z()) << F(6,2,1.0) << F(6,2,1.0) << std::endl;
 		if(basic::options::option[basic::options::OptionKeys::smhybrid::add_cavities]()) {
 			core::scoring::packstat::output_packstat_pdb(outpose,out);
-		}					
+		}
 		out.close();
 
-		
+
 
 		core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 		ss_out->fill_struct(outpose,fname);
@@ -1387,31 +1387,31 @@ struct MatchSet {
 		// outpose.dump_pdb(out);
 		// {
 		// Vec cen   = b.ligs[idx1].align_info.cen;
-		// Vec axis  = cen + b.ligs[idx1].align_info.axis;					
-		// Vec ortho = cen + b.ligs[idx1].align_info.ortho;					
+		// Vec axis  = cen + b.ligs[idx1].align_info.axis;
+		// Vec ortho = cen + b.ligs[idx1].align_info.ortho;
 		// out << "HETATM" << I(5,9994) << ' ' << "XXXX" << ' ' <<	"XXX" << ' ' << "A" << I(4,994) << "    " << F(8,3,  cen.x()) << F(8,3,  cen.y()) << F(8,3,  cen.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// out << "HETATM" << I(5,9995) << ' ' << "XXXX" << ' ' <<	"XXX" << ' ' << "A" << I(4,995) << "    " << F(8,3, axis.x()) << F(8,3, axis.y()) << F(8,3, axis.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// out << "HETATM" << I(5,9996) << ' ' << "XXXX" << ' ' << "XXX" << ' ' << "A" << I(4,996) << "    " << F(8,3,ortho.x()) << F(8,3,ortho.y()) << F(8,3,ortho.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// }
 		// {
 		// Vec cen   = rots[itrans].M * b.ligs[idx2].align_info.cen + rots[itrans].v;
-		// Vec axis  = cen + rots[itrans].M * b.ligs[idx2].align_info.axis;					
-		// Vec ortho = cen + rots[itrans].M * b.ligs[idx2].align_info.ortho;					
+		// Vec axis  = cen + rots[itrans].M * b.ligs[idx2].align_info.axis;
+		// Vec ortho = cen + rots[itrans].M * b.ligs[idx2].align_info.ortho;
 		// out << "HETATM" << I(5,9997) << ' ' << "XXXX" << ' ' <<	"XXX" << ' ' << "A" << I(4,997) << "    " << F(8,3,  cen.x()) << F(8,3,  cen.y()) << F(8,3,  cen.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// out << "HETATM" << I(5,9998) << ' ' << "XXXX" << ' ' <<	"XXX" << ' ' << "A" << I(4,998) << "    " << F(8,3, axis.x()) << F(8,3, axis.y()) << F(8,3, axis.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// out << "HETATM" << I(5,9999) << ' ' << "XXXX" << ' ' << "XXX" << ' ' << "A" << I(4,999) << "    " << F(8,3,ortho.x()) << F(8,3,ortho.y()) << F(8,3,ortho.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// 	    }
 		// out.close();
-		
-		
+
+
 	}
 	void cross(MatchSet & b, Size idx1, Size idx2, Size itrans, Filter & filter) {
 		if(!filter.filter(ligs[idx1].tag,b.ligs[idx2].tag,itrans)) {
 			TR << "skipping " << ligs[idx1].tag << " " << b.ligs[idx2].tag << " " << itrans << std::endl;
 			return;
 		} else {
-			// TR << "checking " << ligs[idx1].tag << " " << b.ligs[idx2].tag << " " << itrans << std::endl;			
-		}		
+			// TR << "checking " << ligs[idx1].tag << " " << b.ligs[idx2].tag << " " << itrans << std::endl;
+		}
 
 		// TODO how do I build a new residue on a terminal spot? get upper/lower connect error
 		// need lower/upper patch on types?
@@ -1438,15 +1438,15 @@ struct MatchSet {
 			if( b.base.pose.chain(r1)!=b.base.pose.chain(r1+1) ) return;
 			if( b.base.pose.chain(r2)!=b.base.pose.chain(r2-1) ) return;
 			if( b.base.pose.chain(r2)!=b.base.pose.chain(r2+1) ) return;
-		}				
+		}
 		// if(  base.pose.residue(  ligs[idx1].rsd1).is_lower_terminus() ||   base.pose.residue(  ligs[idx1].rsd1).is_upper_terminus()) return;
 		// if(  base.pose.residue(  ligs[idx1].rsd2).is_lower_terminus() ||   base.pose.residue(  ligs[idx1].rsd2).is_upper_terminus()) return;
 		// if(b.base.pose.residue(b.ligs[idx2].rsd1).is_lower_terminus() || b.base.pose.residue(b.ligs[idx2].rsd1).is_upper_terminus()) return;
-		// if(b.base.pose.residue(b.ligs[idx2].rsd2).is_lower_terminus() || b.base.pose.residue(b.ligs[idx2].rsd2).is_upper_terminus()) return;						
+		// if(b.base.pose.residue(b.ligs[idx2].rsd2).is_lower_terminus() || b.base.pose.residue(b.ligs[idx2].rsd2).is_upper_terminus()) return;
 
 		vector1<Stub> rots = mop->align_rot(b.ligs[idx2].align_info,ligs[idx1].align_info);
 		if(rots.size() < itrans) return;
-		
+
 		// if( b.base.pose.n_residue()!=407 || base.pose.n_residue()!=1956 ) {
 		// 	TR << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NOT checking problem-specific props! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
 		// } else {
@@ -1465,19 +1465,19 @@ struct MatchSet {
 			// } else {
 			// 	TR << "found match wiht SF4 within 30A " << " " << hydsf4.distance(psIsf4) << std::endl;
 			// }
-		// }		
-		
+		// }
+
 		if(!clash_check(b.base.pose,rots[itrans])) return;
 		Pose outpose = b.base.pose;
 		rot_pose  (outpose,rots[itrans].M);
 		trans_pose(outpose,rots[itrans].v);
 		Pose move     = b.ligs[idx2].pose;
 		rot_pose  (move,rots[itrans].M);
-		trans_pose(move,rots[itrans].v);		
+		trans_pose(move,rots[itrans].v);
 
 		// clash check base (self) vs move (other HISs)
 		for(Size ia = 1; ia <= move.residue(1).nheavyatoms(); ++ia) {
-			if( !this->clash_check(move.residue(1).xyz(ia)) || 
+			if( !this->clash_check(move.residue(1).xyz(ia)) ||
 			    !this->clash_check(move.residue(2).xyz(ia)) ) {
 				// TR << "clash_check on move HIS HIS fails!" << std::endl;
 				// base.pose.dump_pdb("base.pdb");
@@ -1515,7 +1515,7 @@ struct MatchSet {
 							// ligs[idx1].pose.dump_pdb("fixd.pdb");
 							// base.pose.dump_pdb("base.pdb");
 							// move.dump_pdb("move.pdb");
-							// utility_exit_with_message("lasdfgj");							
+							// utility_exit_with_message("lasdfgj");
 							return;
 						}
 					}
@@ -1527,7 +1527,7 @@ struct MatchSet {
 		vector1<Size> include_res = b.iface_candidates;
 		for(vector1<Size>::const_iterator i=iface_candidates.begin(),ie=iface_candidates.end(); i != ie; ++i) {
 			include_res.push_back(*i+b.base.pose.n_residue());
-		}		
+		}
 		Real iface = iface_check(outpose,b.iface_candidates);
 		if(iface < (Real)basic::options::option[basic::options::OptionKeys::willmatch::interface_size]()) return;
 
@@ -1542,9 +1542,9 @@ struct MatchSet {
 		Size end1 = b.base.pose.n_residue();
 		vector1<Size> matchres;
 		matchres.push_back(b.ligs[idx2].rsd1);
-		matchres.push_back(b.ligs[idx2].rsd2);		
+		matchres.push_back(b.ligs[idx2].rsd2);
 		matchres.push_back(ligs[idx1].rsd1+end1);
-		matchres.push_back(ligs[idx1].rsd2+end1);		
+		matchres.push_back(ligs[idx1].rsd2+end1);
 		numeric::xyzVector<Real> zncen;
 		if(!mop->checkalign(fixd,move,zncen)) {
 			TR << "BAD ALIGNMENT, DUMPING " << "align_"+b.ligs[idx1].tag+"___"+b.ligs[idx2].tag+"_"+string_of(itrans)+".pdb" << std::endl;
@@ -1559,14 +1559,14 @@ struct MatchSet {
 
 		if(option[basic::options::OptionKeys::willmatch::symmetry_c2_dock]()) {
 			utility_exit_with_message("symmetry_c2_dock may not work!!!! check code!!!");
-			vector1<Vec> sdots = core::scoring::packstat::get_sasa_dot_locations();			
+			vector1<Vec> sdots = core::scoring::packstat::get_sasa_dot_locations();
 			Real best_iface = 0;
 			Stub best_stub;
 			bool found = false;
 			vector1<Vec> his_atoms;
 			for(Size i = 6; i <= fixd.residue(1).nheavyatoms(); ++i) {
 				his_atoms.push_back(fixd.xyz(AtomID(i,1)));
-				his_atoms.push_back(fixd.xyz(AtomID(i,2)));				
+				his_atoms.push_back(fixd.xyz(AtomID(i,2)));
 				his_atoms.push_back(rots[itrans].M*move.xyz(AtomID(i,1))+rots[itrans].v);
 				his_atoms.push_back(rots[itrans].M*move.xyz(AtomID(i,2))+rots[itrans].v);
 			}
@@ -1584,14 +1584,14 @@ struct MatchSet {
 						found = true;
 					}
 					// TR << "IFACE " << iface << std::endl;
-				}				
+				}
 			}
 			if(!found) {
 				TR << "COULDNT FIND C2 MATCH" << std::endl;
 				return;
 			}
 			TR << "best_iface BEFORE perterb " << best_iface << std::endl;
-			Vec com1 = com(outpose);			
+			Vec com1 = com(outpose);
 			for(Size i = 1; i <= 1000; ++i) {
 				Real scale = (Real)i/100. - 5.0;
 				Stub s = best_stub;
@@ -1601,7 +1601,7 @@ struct MatchSet {
 				Vec trans = (s.v-(com1-s.M*com1)).normalized();
 				// TR << "axis " << axis << " trans " << trans << " " << axis.dot(trans) << std::endl;
 				axis = rotation_matrix_degrees(axis.cross(randvec()).normalized(),uniform()*scale) * axis;
-				s.M = rotation_matrix_degrees(axis,180.0);				
+				s.M = rotation_matrix_degrees(axis,180.0);
 				trans = rotation_matrix_degrees(trans.cross(randvec()).normalized(),uniform()*scale/2.0) * trans;
 				trans = (trans-axis.dot(trans)*axis).normalized();
 				// TR << "axis " << axis << " trans " << trans << std::endl;
@@ -1622,17 +1622,17 @@ struct MatchSet {
 			// primary.append_residue_by_jump(partner.residue(1),1,"","",true);
 			// for(Size l = 2; l <= b.base.pose.n_residue(); ++l) {
 			// 	primary.append_residue_by_bond(partner.residue(l));
-			// }					
+			// }
 			// primary.append_residue_by_jump(partner.residue(b.base.pose.n_residue()+1),1,"","",true);
 			// for(Size l = b.base.pose.n_residue()+2; l <= partner.n_residue(); ++l) {
 			// 	primary.append_residue_by_bond(partner.residue(l));
-			// }					
+			// }
 			// ozstream out("test.pdb");
 			// primary.dump_pdb(out);
 			// out.close();
 
-			Real ang;			
-			Vec symaxis = rotation_axis(best_stub.M,ang);			
+			Real ang;
+			Vec symaxis = rotation_axis(best_stub.M,ang);
 			assert(fabs(ang-radians(180.0))<0.0001);
 			trans_pose(outpose,-best_stub.v/2.0);
 			if(symaxis != Vec(1,0,0)) {
@@ -1643,12 +1643,12 @@ struct MatchSet {
 			// // trans_pose(outpose, best_stub.v/2.0);
 			// outpose.dump_pdb("symm.pdb");
 			// std::exit(-1);
-		} 
+		}
 
 		ScoreFunctionOP sf = core::scoring::getScoreFunction();
 
 		Size end2 = base.pose.n_residue()+b.base.pose.n_residue();
-		
+
 		// fix crappy H placement ( needed for alignment)
 		// fixd.dump_pdb("0_lig_fixd.pdb");
 		// move.dump_pdb("0_lig_move.pdb");
@@ -1668,7 +1668,7 @@ struct MatchSet {
 		// buried uns stuff
 		utility::vector1<std::pair<Size,Size> > sections;
 		sections.push_back( std::pair<Size,Size>(     1,end1) );
-		sections.push_back( std::pair<Size,Size>(end1+1,end2) );		
+		sections.push_back( std::pair<Size,Size>(end1+1,end2) );
 		utility::vector1< core::id::AtomID > bb_bur_uns_iface = get_bb_bur_uns_iface(outpose,sections,2.2);
 		if( bb_bur_uns_iface.size() > (Size)option[basic::options::OptionKeys::crossmatch::max_bur_uns]() ) {
 			// std::string fn = "bur_uns_fail_"+ObjexxFCL::string_of(idx1)+"_"+ObjexxFCL::string_of(idx2)+"_"+ObjexxFCL::string_of(itrans)+"_"+".pdb";
@@ -1678,10 +1678,10 @@ struct MatchSet {
 			// }
 			// TR << std::endl;
 			// outpose.dump_pdb(fn);
-			TR << "buried uns fail " << bb_bur_uns_iface.size() << std::endl;		
+			TR << "buried uns fail " << bb_bur_uns_iface.size() << std::endl;
 			return;
 		}
-		// outpose.dump_pdb("bur_uns_pass_"+ObjexxFCL::string_of(idx1)+"_"+ObjexxFCL::string_of(idx2)+"_"+ObjexxFCL::string_of(itrans)+"_"+".pdb");			
+		// outpose.dump_pdb("bur_uns_pass_"+ObjexxFCL::string_of(idx1)+"_"+ObjexxFCL::string_of(idx2)+"_"+ObjexxFCL::string_of(itrans)+"_"+".pdb");
 		// return;
 
 		TR << "placing HIS and optH" << std::endl;
@@ -1715,21 +1715,21 @@ struct MatchSet {
 			// 			Real d = 4.0;
 			// 			if( ligs[idx1].align_info.sqp == false ) d = 3.266566;
 			// 			outpose.add_constraint( new AtomPairConstraint( AtomID(ha[i],hr[i]), AtomID(ha[j],hr[j]), new HarmonicFunc(d,0.01) ) );
-			// 		
+			//
 			// 			Real ang1 = angle_radians(      outpose.xyz( AtomID(ce1,hr[i])),outpose.xyz(AtomID(ha[i],hr[i])), outpose.xyz(AtomID(ha[j],hr[j])) );
 			// 			outpose.add_constraint( new AngleConstraint( AtomID(ce1,hr[i]),             AtomID(ha[i],hr[i]),              AtomID(ha[j],hr[j]), new HarmonicFunc(ang1,0.1) ) );
-			// 		
+			//
 			// 			Real ang2 = angle_radians(      outpose.xyz( AtomID(ha[i],hr[i])), outpose.xyz(AtomID(ha[j],hr[j])), outpose.xyz(AtomID(ce1,hr[j])) );
 			// 			outpose.add_constraint( new AngleConstraint( AtomID(ha[i],hr[i]),              AtomID(ha[j],hr[j])   ,           AtomID(ce1,hr[j]), new HarmonicFunc(ang2,0.1) ) );
-			// 		
+			//
 			// 			Real dih = dihedral_radians(        outpose.xyz(AtomID(ce1,hr[i])), outpose.xyz(AtomID(ha[i],hr[i])), outpose.xyz(AtomID(ha[j],hr[j])), outpose.xyz(AtomID(ce1,hr[j])) );
 			// 			outpose.add_constraint( new DihedralConstraint( AtomID(ce1,hr[i]) ,             AtomID(ha[i],hr[i]),              AtomID(ha[j],hr[j]),              AtomID(ce1,hr[j]), new CircularHarmonicFunc(dih,0.1) ) );
 			// 		}
 			// 	}
 			// }
-		
+
 			// outpose.dump_pdb("3_premin.pdb");
-		
+
 			Real orig_rep = sf->get_weight(core::scoring::fa_rep);
 			Size MIN_STEPS = 1;
 			TR << "design/min " << MIN_STEPS << " rounds" << std::endl;
@@ -1748,17 +1748,17 @@ struct MatchSet {
 			// }
 			// design(outpose,sf,end1,matchres,end2,false);
 			// outpose.dump_pdb("5_postmin.pdb");
-		
-		
+
+
 			Size nmut  = 0; for(Size i = 1; i <= end2; ++i) if(outpose.residue(i).name3()!=native.residue(i).name3()) nmut++;
 			Size nhmut = 0; for(Size i = 1; i <= end2; ++i) {
 				if(outpose.residue(i).name3()==native.residue(i).name3()) continue;
-				if(outpose.residue(i).name3()=="PHE" || outpose.residue(i).name3()=="ILE" || outpose.residue(i).name3()=="VAL" || 
+				if(outpose.residue(i).name3()=="PHE" || outpose.residue(i).name3()=="ILE" || outpose.residue(i).name3()=="VAL" ||
 				   outpose.residue(i).name3()=="TRP" || outpose.residue(i).name3()=="MET" || outpose.residue(i).name3()=="TYR" ||
 				   outpose.residue(i).name3()=="LEU"  )
 				nhmut++;
 			}
-		
+
 			bool reset_surface_mutations = false;
 			Size revert_iter = 0;
 			while(reset_surface_mutations) {
@@ -1780,9 +1780,9 @@ struct MatchSet {
 					if(outpose.residue(i).name3()=="TYR" && sasa[i] > 20.0 ) { /*TR << "SASA TYR " << sasa[i] << std::endl;*/ reset_res.push_back(i); }
 					if(outpose.residue(i).name3()=="ILE" && sasa[i] > 15.0 ) { /*TR << "SASA ILE " << sasa[i] << std::endl;*/ reset_res.push_back(i); }
 					if(outpose.residue(i).name3()=="LEU" && sasa[i] > 15.0 ) { /*TR << "SASA LEU " << sasa[i] << std::endl;*/ reset_res.push_back(i); }
-					if(outpose.residue(i).name3()=="VAL" && sasa[i] > 15.0 ) { /*TR << "SASA VAL " << sasa[i] << std::endl;*/ reset_res.push_back(i); }			
-					if(outpose.residue(i).name3()=="MET" && sasa[i] > 15.0 ) { /*TR << "SASA MET " << sasa[i] << std::endl;*/ reset_res.push_back(i); }			
-					if(outpose.residue(i).name3()=="ALA" && sasa[i] >  5.0 ) { /*TR << "SASA ALA " << sasa[i] << std::endl;*/ reset_res.push_back(i); }			
+					if(outpose.residue(i).name3()=="VAL" && sasa[i] > 15.0 ) { /*TR << "SASA VAL " << sasa[i] << std::endl;*/ reset_res.push_back(i); }
+					if(outpose.residue(i).name3()=="MET" && sasa[i] > 15.0 ) { /*TR << "SASA MET " << sasa[i] << std::endl;*/ reset_res.push_back(i); }
+					if(outpose.residue(i).name3()=="ALA" && sasa[i] >  5.0 ) { /*TR << "SASA ALA " << sasa[i] << std::endl;*/ reset_res.push_back(i); }
 				}
 				Size reset = 0;
 				for(Size i = 1; i <= reset_res.size(); ++i) {
@@ -1793,14 +1793,14 @@ struct MatchSet {
 				}
 				if(reset==0) break;
 				repack(outpose,sf,end1,matchres,end2);
-				minimize(outpose,sf,matchres);			
+				minimize(outpose,sf,matchres);
 				revert_iter++;
 				// outpose.dump_pdb("7_revert_"+string_of(revert_iter)+".pdb");
 			}
 			nmut  = 0; for(Size i = 1; i <= end2; ++i) if(outpose.residue(i).name3()!=native.residue(i).name3()) nmut++;
 			nhmut = 0; for(Size i = 1; i <= end2; ++i) {
 				if(outpose.residue(i).name3()==native.residue(i).name3()) continue;
-				if(outpose.residue(i).name3()=="PHE" || outpose.residue(i).name3()=="ILE" || outpose.residue(i).name3()=="VAL" || 
+				if(outpose.residue(i).name3()=="PHE" || outpose.residue(i).name3()=="ILE" || outpose.residue(i).name3()=="VAL" ||
 				   outpose.residue(i).name3()=="TRP" || outpose.residue(i).name3()=="MET" || outpose.residue(i).name3()=="TYR" ||
 				   outpose.residue(i).name3()=="LEU"  )
 				nhmut++;
@@ -1812,12 +1812,12 @@ struct MatchSet {
 		// TR << "not enough useful mutations" << std::endl;
 		// 	return;
 		// }
-		
+
 		sf->set_weight(core::scoring::atom_pair_constraint, 0.0 );
 		sf->set_weight(core::scoring::    angle_constraint, 0.0 );
 		sf->set_weight(core::scoring:: dihedral_constraint, 0.0 );
 		sf->score(outpose);
-		
+
 		// Real rholes = core::scoring::packstat::compute_packing_score( outpose , 0 );
 		string fname = "ALIGN_"+ligs[idx1].tag+"___"+b.ligs[idx2].tag+"___"+string_of(itrans)+".pdb";
 		for(Size i = 0; i <= fname.size(); ++i) if(fname[i]==' ') fname[i] = '_';
@@ -1829,7 +1829,7 @@ struct MatchSet {
 		out << "HETATM" << I(5,9999) << "  ZN   ZN Z" << I(4,994) << "    " << F(8,3,  cen.x()) << F(8,3,  cen.y()) << F(8,3,  cen.z()) << F(6,2,1.0) << F(6,2,1.0) << std::endl;
 		if(basic::options::option[basic::options::OptionKeys::smhybrid::add_cavities]()) {
 			core::scoring::packstat::output_packstat_pdb(outpose,out);
-		}					
+		}
 		out.close();
 
 		core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
@@ -1847,22 +1847,22 @@ struct MatchSet {
 		// outpose.dump_pdb(out);
 		// {
 		// Vec cen   = b.ligs[idx1].align_info.cen;
-		// Vec axis  = cen + b.ligs[idx1].align_info.axis;					
-		// Vec ortho = cen + b.ligs[idx1].align_info.ortho;					
+		// Vec axis  = cen + b.ligs[idx1].align_info.axis;
+		// Vec ortho = cen + b.ligs[idx1].align_info.ortho;
 		// out << "HETATM" << I(5,9994) << ' ' << "XXXX" << ' ' <<	"XXX" << ' ' << "A" << I(4,994) << "    " << F(8,3,  cen.x()) << F(8,3,  cen.y()) << F(8,3,  cen.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// out << "HETATM" << I(5,9995) << ' ' << "XXXX" << ' ' <<	"XXX" << ' ' << "A" << I(4,995) << "    " << F(8,3, axis.x()) << F(8,3, axis.y()) << F(8,3, axis.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// out << "HETATM" << I(5,9996) << ' ' << "XXXX" << ' ' << "XXX" << ' ' << "A" << I(4,996) << "    " << F(8,3,ortho.x()) << F(8,3,ortho.y()) << F(8,3,ortho.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// }
 		// {
 		// Vec cen   = rots[itrans].M * b.ligs[idx2].align_info.cen + rots[itrans].v;
-		// Vec axis  = cen + rots[itrans].M * b.ligs[idx2].align_info.axis;					
-		// Vec ortho = cen + rots[itrans].M * b.ligs[idx2].align_info.ortho;					
+		// Vec axis  = cen + rots[itrans].M * b.ligs[idx2].align_info.axis;
+		// Vec ortho = cen + rots[itrans].M * b.ligs[idx2].align_info.ortho;
 		// out << "HETATM" << I(5,9997) << ' ' << "XXXX" << ' ' <<	"XXX" << ' ' << "A" << I(4,997) << "    " << F(8,3,  cen.x()) << F(8,3,  cen.y()) << F(8,3,  cen.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// out << "HETATM" << I(5,9998) << ' ' << "XXXX" << ' ' <<	"XXX" << ' ' << "A" << I(4,998) << "    " << F(8,3, axis.x()) << F(8,3, axis.y()) << F(8,3, axis.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// out << "HETATM" << I(5,9999) << ' ' << "XXXX" << ' ' << "XXX" << ' ' << "A" << I(4,999) << "    " << F(8,3,ortho.x()) << F(8,3,ortho.y()) << F(8,3,ortho.z()) << F(6,2,1.0) << F(6,2,1.0) << '\n';
 		// 	    }
 		// out.close();
-		
+
 	}
 };
 
@@ -1907,25 +1907,25 @@ int main (int argc, char *argv[])
 	try {
 
 	using namespace basic::options::OptionKeys;
-	
+
 	devel::init(argc,argv);
-	
+
 		MatchAlignerOP mop = new Tet4HMatchAligner;
 	// MatchSet ms2(option[in::file::s],mop);
-	
+
 	if(basic::options::option[basic::options::OptionKeys::willmatch::write_reduced_matchset].user()) {
-		// 
+		//
 		vector1<string> v = basic::options::option[basic::options::OptionKeys::willmatch::write_reduced_matchset]();
 		string fname = v[1];
 		vector1<Pose> poses;
 		poses.resize(v.size()-1);
-		for(Size i = 2; i <= v.size(); ++i){ 
+		for(Size i = 2; i <= v.size(); ++i){
 			TR << "reading pose " << v[i] << std::endl;
-			core::import_pose::pose_from_pdb(poses[i-1],v[i]);		
+			core::import_pose::pose_from_pdb(poses[i-1],v[i]);
 		}
 		MatchSet ms1(poses,mop,poses[1]);
 		ms1.write_to_file(fname);
-	} else 
+	} else
 	if(basic::options::option[basic::options::OptionKeys::willmatch::symmetry_d2]()) {
 		core::chemical::ResidueTypeSetCAP  fa_residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 		vector1< Pose > poses;
@@ -1941,9 +1941,9 @@ int main (int argc, char *argv[])
 		core::pose::make_pose_from_sequence(his[1],"H[HIS_D]",*fa_residue_set,false);
 		core::pose::make_pose_from_sequence(his[2],"H[HIS]"  ,*fa_residue_set,false);
 		core::pose::remove_lower_terminus_type_from_pose_residue(his[1],1);
-		core::pose::remove_lower_terminus_type_from_pose_residue(his[2],1);		
+		core::pose::remove_lower_terminus_type_from_pose_residue(his[2],1);
 		core::pose::remove_upper_terminus_type_from_pose_residue(his[1],1);
-		core::pose::remove_upper_terminus_type_from_pose_residue(his[2],1);		
+		core::pose::remove_upper_terminus_type_from_pose_residue(his[2],1);
 		his[1].set_dof(core::id::DOF_ID(AtomID(his[1].residue(1).atom_index("HD1"),1),core::id::D),2.1);
 		his[2].set_dof(core::id::DOF_ID(AtomID(his[2].residue(1).atom_index("HE2"),1),core::id::D),2.1);
 		core::conformation::Residue vrt(fa_residue_set->name_map("VRT"),true);
@@ -1952,11 +1952,11 @@ int main (int argc, char *argv[])
 		FoldTree ft = his[1].fold_tree();	ft.reorder(2); his[1].fold_tree(ft);
 		         ft = his[2].fold_tree();	ft.reorder(2); his[2].fold_tree(ft);
 		Real chi1incr = option[willmatch::chi1_increment]();
-		Real chi2incr = option[willmatch::chi2_increment]();	
+		Real chi2incr = option[willmatch::chi2_increment]();
 		vector1<Real> CHI1,CHI2;
-		for(Real i = 0; i < 360; i+= chi1incr) CHI1.push_back(i); 
-		for(Real i = 0; i < 360; i+= chi2incr) CHI2.push_back(i); 	
-		Real const HIS_CLASH_DIS2 = 10.0;	
+		for(Real i = 0; i < 360; i+= chi1incr) CHI1.push_back(i);
+		for(Real i = 0; i < 360; i+= chi2incr) CHI2.push_back(i);
+		Real const HIS_CLASH_DIS2 = 10.0;
 		// ObjexxFCL::FArray3D<Vec>   chi2axis(2,CHI1.size(),CHI2.size());
 		// ObjexxFCL::FArray3D<Vec>  chi2trans(2,CHI1.size(),CHI2.size());
 		// ObjexxFCL::FArray3D<Real> chi2angle(2,CHI1.size(),CHI2.size());
@@ -1978,7 +1978,7 @@ int main (int argc, char *argv[])
 		// 		chi2trans(1,i,j) = stubd.global2local( stub.v );
 		// 		chi2trans(2,i,j) = stube.global2local( stub.v );
 		// 	}
-		// }				
+		// }
 		for(Size iligidx = 1; iligidx <= ILIG1.size(); ++iligidx) {
 			Size ilig = ILIG1[iligidx];
 			TR << "symm d2 with match " << ilig << std::endl;
@@ -1991,8 +1991,8 @@ int main (int argc, char *argv[])
 			Size rsd1 = ms.ligs[ilig].rsd1, rsd2 = ms.ligs[ilig].rsd2;
 			tmppose.replace_residue(rsd1,ms.ligs[ilig].pose.residue(1),true);
 			tmppose.replace_residue(rsd2,ms.ligs[ilig].pose.residue(2),true);
-			core::pose::remove_lower_terminus_type_from_pose_residue(tmppose,1);		
-			core::pose::remove_upper_terminus_type_from_pose_residue(tmppose,tmppose.n_residue());			
+			core::pose::remove_lower_terminus_type_from_pose_residue(tmppose,1);
+			core::pose::remove_upper_terminus_type_from_pose_residue(tmppose,tmppose.n_residue());
 			// tmppose.set_xyz(AtomID(tmppose.residue(rsd1).atom_index("HE2"),rsd1),mai.cen);
 			// tmppose.set_xyz(AtomID(tmppose.residue(rsd2).atom_index("HE2"),rsd2),mai.cen);
 			Pose const pose(tmppose);
@@ -2003,7 +2003,7 @@ int main (int argc, char *argv[])
 				// h.set_chi(1,1,10);
 				// h.dump_pdb("test1.pdb");
 				// h.set_chi(1,1,20);
-				// h.dump_pdb("test2.pdb");		
+				// h.dump_pdb("test2.pdb");
 				// utility_exit_with_message("HTEST");
 				Size hatm,natm;
 				if( ihis == 1 ) {
@@ -2011,7 +2011,7 @@ int main (int argc, char *argv[])
 					natm = h.residue(1).atom_index("ND1");
 				} else {
 					hatm = h.residue(1).atom_index("HE2");
-					natm = h.residue(1).atom_index("NE2");					
+					natm = h.residue(1).atom_index("NE2");
 				}
 				if(mai.sqp) {
 					// TR << "SQP" << std::endl;
@@ -2046,10 +2046,10 @@ int main (int argc, char *argv[])
 						if( fabs(CHI1[ich1]-188.3) > 3.0 ) continue;
 						if( fabs(CHI2[ich2]-274.7) > 3.0 ) continue;
 						h.set_chi(1,1,CHI1[ich1]);	h.set_chi(2,1,CHI2[ich2]);
-						TR << "checking " << CHI1[ich1] << " " << CHI2[ich2] << std::endl;						
+						TR << "checking " << CHI1[ich1] << " " << CHI2[ich2] << std::endl;
 						Vec const mov10 = (h.residue(1).xyz("CB")-h.residue(1).xyz("CA")).normalized();
 						Vec const tmp  = (h.residue(1).xyz( "N")-h.residue(1).xyz("CA")).normalized();
-						Vec const mov20 = (tmp-mov10.dot(tmp)*mov10).normalized();						
+						Vec const mov20 = (tmp-mov10.dot(tmp)*mov10).normalized();
 						for(Size irsd = 1; irsd <= pose.n_residue(); ++irsd) {
 							if(irsd==rsd1 || irsd==rsd2) continue;
 							if(irsd != 59) continue;
@@ -2061,12 +2061,12 @@ int main (int argc, char *argv[])
 								// fxd2 = (fxd2-fxd1.dot(fxd2)*fxd1).normalized();
 								Vec mov1 = (h.residue(1).xyz("CB")-h.residue(1).xyz("CA")).normalized();
 								Vec mov2 = (h.residue(1).xyz( "N")-h.residue(1).xyz("CA")).normalized();
-								mov2 = (mov2-mov1.dot(mov2)*mov1).normalized();							
+								mov2 = (mov2-mov1.dot(mov2)*mov1).normalized();
 								Vec fxd1 = FXD1[irsd];
 								Vec fxd2 = FXD2[irsd];
 								// Vec mov1 = mov10;
 								// Vec mov2 = mov20;
-								
+
 								// Vec m1=mov1, m2=mov2, f1=fxd1, f2=fxd2;
 								Mat fxd2mov = rotation_matrix(mov1.cross(        fxd1),-acos(mov1.dot(        fxd1)));
 								fxd2mov     = rotation_matrix(mov2.cross(fxd2mov*fxd2),-acos(mov2.dot(fxd2mov*fxd2))) * fxd2mov;
@@ -2081,8 +2081,8 @@ int main (int argc, char *argv[])
 								Vec tgt0 = (mov2-mov2.dot(rot_axis)*rot_axis).normalized();
 								Real ang = acos(tgt.dot(tgt0));
 								if( tgt0.cross(tgt).dot(rot_axis) < 0 ) ang = 2.0*pi-ang;
-							
-								rot_pose(h,rotation_matrix(rot_axis,ang),rot_cen);	
+
+								rot_pose(h,rotation_matrix(rot_axis,ang),rot_cen);
 								symm_cen1 = (h.residue(1).xyz("CA")+CA[irsd])/2.0;
 								symm_stub1.M = rotation_matrix(rot_axis,ang)*fxd2mov;
 								symm_stub1.v = h.residue(1).xyz("CA") - symm_stub1.M*CA[irsd];
@@ -2092,12 +2092,12 @@ int main (int argc, char *argv[])
 								}
 								symm_stub1.v = symm_stub1.v - symm_stub1.v.dot(symm_axis1)*symm_axis1;
 							}
-							
+
 							bool clash = false;
 							for(Size i = 1; i <= h.residue(1).nheavyatoms(); ++i) {
 								for(Size j = 1; j <= 5; ++j) {
 									if( pose.xyz(AtomID(i,rsd1)).distance_squared(h.xyz(AtomID(j,1))) < HIS_CLASH_DIS2 ) clash = true;
-									if( pose.xyz(AtomID(i,rsd2)).distance_squared(h.xyz(AtomID(j,1))) < HIS_CLASH_DIS2 ) clash = true;								
+									if( pose.xyz(AtomID(i,rsd2)).distance_squared(h.xyz(AtomID(j,1))) < HIS_CLASH_DIS2 ) clash = true;
 									if(clash) break;
 								}
 								if(i > 5) if( !ms.clash_check(pose.xyz(AtomID(i,rsd1)),symm_stub1) ) clash = true;
@@ -2135,10 +2135,10 @@ int main (int argc, char *argv[])
 
 							Pose self = pose;
 							replace_pose_residue_copying_existing_coordinates(self,irsd,h.residue_type(1));
-							self.set_chi(1,irsd,CHI1[ich1]); self.set_chi(2,irsd,CHI2[ich2]);							
+							self.set_chi(1,irsd,CHI1[ich1]); self.set_chi(2,irsd,CHI2[ich2]);
 							// Pose other = self;
 							// replace_pose_residue_copying_existing_coordinates(other,irsd,h.residue_type(1));
-							// other.set_chi(1,irsd,CHI1[ich1]); other.set_chi(2,irsd,CHI2[ich2]);							
+							// other.set_chi(1,irsd,CHI1[ich1]); other.set_chi(2,irsd,CHI2[ich2]);
 							// xform_pose(other,symm_stub1);
 							// self.dump_pdb("self.pdb");
 							// other.dump_pdb("other.pdb");
@@ -2166,11 +2166,11 @@ int main (int argc, char *argv[])
 							}
 							Vec rot_cen  = mai.cen;
 							Vec rot_axis = (h.xyz(AtomID(natm,1))-mai.cen).normalized();
-							
+
 							TR << "MATCH partner 1" << std::endl;
 							// rot_pose(self,rotation_matrix(symm_axis1.cross(Vec(1,0,0)),-acos(symm_axis1.dot(Vec(1,0,0)))));
 							// rot_pose(other,rotation_matrix(symm_axis1.cross(Vec(1,0,0)),-acos(symm_axis1.dot(Vec(1,0,0)))));
-							// rot_pose(h,rotation_matrix(symm_axis1.cross(Vec(1,0,0)),-acos(symm_axis1.dot(Vec(1,0,0)))));							
+							// rot_pose(h,rotation_matrix(symm_axis1.cross(Vec(1,0,0)),-acos(symm_axis1.dot(Vec(1,0,0)))));
 
 							// Real ymin=9e9,ymax=-9e9,zmin=9e9,zmax=-9e9,rmin=9e9,rmax=-9e9;
 							clash = false;
@@ -2179,7 +2179,7 @@ int main (int argc, char *argv[])
 								rot_pose( h, rotation_matrix_degrees(rot_axis,5.0), rot_cen );
 								for(Size jch1 = 1; jch1 <= CHI1.size(); ++jch1) {
 									for(Size jch2 = 1; jch2 <= CHI2.size(); ++jch2) {
-										h.set_chi(1,1,CHI1[jch1]);	h.set_chi(2,1,CHI2[jch2]);						
+										h.set_chi(1,1,CHI1[jch1]);	h.set_chi(2,1,CHI2[jch2]);
 										for(Size i = 1; i <= 7; ++i) {
 											for(Size j = 7; j <= h.residue(1).nheavyatoms(); ++j) {
 												if( self.xyz(AtomID(j,rsd1)).distance_squared( h.xyz(AtomID(i,1)) ) < HIS_CLASH_DIS2 ) clash = true;
@@ -2192,12 +2192,12 @@ int main (int argc, char *argv[])
 											if(clash) break;
 										}
 										if(clash) continue;
-							
+
 										Mat rot = rotation_matrix(symm_axis1.cross(Vec(1,0,0)),acos(symm_axis1.dot(Vec(1,0,0))));
 										Stub align( rot, -(rot*symm_cen1) );
 										xform_pose(h,align);
 										xform_pose(self,align);
-										
+
 										Vec const ca = h.residue(1).xyz(2);
 										Real const r2 = ca.y()*ca.y()+ca.z()*ca.z();
 										Vec hcacb = (h.xyz(AtomID(2,1))-h.xyz(AtomID(5,1))).normalized(); // 6 = CB?? removed termini... 5 should be ok
@@ -2207,14 +2207,14 @@ int main (int argc, char *argv[])
 											Real const r2j = ca2.y()*ca2.y()+ca2.z()*ca2.z();
 											if( fabs(r2j-r2) > 20.0 ) continue;
 											if( (sqrt(r2)-sqrt(r2j)) > 0.9 ) continue;
-											
+
 											Mat h4rot = rotation_matrix_degrees(Vec(0,1,0),180.0);
 
 											Vec hca =          h.residue(   1).xyz("CA"); hca.x() = 0.0;
 											Vec jca = h4rot*self.residue(jrsd).xyz("CA"); jca.x() = 0.0;
 											Real hjang = acos(hca.normalized().dot(jca.normalized()));
 											Mat hjrot = rotation_matrix(hca.cross(jca),-hjang);
-											
+
 											Vec jcacb = (self.xyz(AtomID(2,jrsd))-self.xyz(AtomID(5,jrsd))).normalized();
 											if( (hjrot*h4rot*jcacb).dot(hcacb) < 0.90 ) continue;
 											// TR << "checking jrsd " << jrsd << std::endl;
@@ -2222,10 +2222,10 @@ int main (int argc, char *argv[])
 											Stub symm_stub2( hjrot*h4rot, Vec(dca.x(),0,0) );
 											if( !ms.clash_check(symm_stub2) ) continue;
 
-											
+
 											Pose self2 = self;
 											replace_pose_residue_copying_existing_coordinates(self2,irsd,h.residue_type(1));
-											self2.set_chi(1,irsd,CHI1[ich1]); self2.set_chi(2,irsd,CHI2[ich2]);							
+											self2.set_chi(1,irsd,CHI1[ich1]); self2.set_chi(2,irsd,CHI2[ich2]);
 											replace_pose_residue_copying_existing_coordinates(self2,jrsd,h.residue_type(1));
 											Real best = 9e9, bestch1=0, bestch2=0;
 											for(Real kch1 = 0.0; kch1 < 360.0; kch1 += 2.0 ) {
@@ -2246,15 +2246,15 @@ int main (int argc, char *argv[])
 											xform_pose_rev(other,align);
 											xform_pose(other,symm_stub1);
 											xform_pose(other,align);
-											
+
 											Pose other2 = self2;
-											// xform_pose(other2,align); // = self, already aligned to x axis			
+											// xform_pose(other2,align); // = self, already aligned to x axis
 											xform_pose(other2,symm_stub2);
-											
+
 											Pose other3 = other2;
 											rot_pose(other3,x_rotation_matrix_degrees(180.0));
 
-											
+
 											TR << jrsd << " " << hjang*180.0/pi << " " << jca << " " << hca << std::endl;
 											string tag = string_of(uniform());
 											self.dump_pdb(tag+"self.pdb");
@@ -2275,9 +2275,9 @@ int main (int argc, char *argv[])
 									}
 								}
 							}
-							
-							
-							
+
+
+
 							// Mat rot = rotation_matrix( rot_axis, ang );
 							// m1 = rot*m1;
 							// m2 = rot*m2;
@@ -2295,8 +2295,8 @@ int main (int argc, char *argv[])
 					}
 				}
 			}
-		}		
-	} 
+		}
+	}
 	if(!basic::options::option[basic::options::OptionKeys::willmatch::symmetry_d2]()) {
 		vector1< Pose > poses1,poses2;
 		Pose native1,native2;
@@ -2305,7 +2305,7 @@ int main (int argc, char *argv[])
 		vector1<Size> allowed_res1,allowed_res2;
 		if( option[crossmatch::allowed_res1].user() ) allowed_res1 = option[crossmatch::allowed_res1]();
 		if( option[crossmatch::allowed_res2].user() ) allowed_res2 = option[crossmatch::allowed_res2]();
-		
+
 		vector1<Size> iface_candidates1,iface_candidates2;
 		vector1<Size> tmp = read_res_list(basic::options::option[basic::options::OptionKeys::willmatch::exclude_res1]());
 		for(Size i = 1; i <= native1.n_residue(); ++i) if(std::find(tmp.begin(),tmp.end(),i)==tmp.end()) iface_candidates1.push_back(i);

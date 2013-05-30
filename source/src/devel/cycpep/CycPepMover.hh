@@ -36,7 +36,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/util.hh>//option.hh>

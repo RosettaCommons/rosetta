@@ -19,6 +19,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/scoring/Interface.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
@@ -140,8 +141,7 @@ void
 ResidueIEFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
 	using namespace core::scoring;
-	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn_name )->clone();
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) );
 	threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
 	whole_pose_ = tag->getOption<bool>( "whole_pose" , 0 );

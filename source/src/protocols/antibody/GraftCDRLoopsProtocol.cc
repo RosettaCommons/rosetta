@@ -217,7 +217,7 @@ void GraftCDRLoopsProtocol::setup_objects() {
 	
 	tf_ = NULL;
     
-    scorefxn_pack_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard","score12");
+    scorefxn_pack_ = core::scoring::getScoreFunction();
     
     scorefxn_pack_->set_weight( core::scoring::chainbreak, 1.0 );
     scorefxn_pack_->set_weight( core::scoring::overlap_chainbreak, 10./3. );

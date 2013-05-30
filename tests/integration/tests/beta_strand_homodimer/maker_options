@@ -6,3 +6,5 @@
 -ignore_unrecognized_res 
 -mute core protocols.moves.RigidBodyMover basic.io.database
 #-struct_file s_file
+
+-analytic_etable_evaluation 0

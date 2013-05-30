@@ -24,7 +24,7 @@
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
@@ -129,7 +129,7 @@ public:
 		//the_pose = create_test_in_pdb_poseop(); slightly different chain IDs
 		core::import_pose::pose_from_pdb( *the_pose, "protocols/moves/test_in.pdb" );
 
-		//core::init_random_generators(1000, numeric::random::_RND_TestRun_, "ran3");
+		//core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "ran3");
 	}
 
 	void tearDown() {

@@ -43,6 +43,7 @@
 #include <protocols/ligand_docking/InterfaceScoreCalculator.hh>
 #include <protocols/features/ProteinSilentReport.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 //protocol headers
 #include <protocols/ligand_docking/StartFrom.hh>
@@ -204,8 +205,7 @@ protocols::moves::MoverOP setup_score_mover()
 	std::vector<std::string> chains;
 	chains.push_back("X");
 
-	core::scoring::ScoreFunctionOP score_fxn(new core::scoring::ScoreFunction());
-	score_fxn->initialize_from_file(basic::database::full_name("scoring/weights/score12prime.wts"));
+	core::scoring::ScoreFunctionOP score_fxn(core::scoring::getScoreFunctionLegacy( "score12prime.wts" ));
 
 	protocols::ligand_docking::InterfaceScoreCalculatorOP score_mover(new protocols::ligand_docking::InterfaceScoreCalculator());
 

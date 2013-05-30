@@ -360,8 +360,8 @@ void MinMover::parse_opts(
 	protocols::moves::Movers_map const &,
 	Pose const & )
 {
-	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ) );
-	score_function( data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) );
+	score_function( protocols::rosetta_scripts::parse_score_function( tag, data ) );
+
 	if ( tag->hasOption("jump") ) {
 		if ( ! movemap_ ) movemap_ = new MoveMap;
 		utility::vector1<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );

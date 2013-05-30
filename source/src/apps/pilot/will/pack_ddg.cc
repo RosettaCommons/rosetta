@@ -118,7 +118,7 @@ void
 refine_pose( Pose & pose, int seqpos = 0 ){
 	using namespace core::scoring;
 
-  ScoreFunctionOP sfstd( ScoreFunctionFactory::create_score_function(STANDARD_WTS) );
+  ScoreFunctionOP sfstd( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	kinematics::MoveMapOP mm = new kinematics::MoveMap;
 	mm->set_bb ( false ); mm->set_chi( true );	mm->set_jump( false );

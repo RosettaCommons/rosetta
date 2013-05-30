@@ -96,8 +96,7 @@ main( int argc, char * argv [] )
 		//setup random numbers and options
 		devel::init(argc, argv);
 		//setup scorefxn
-		core::scoring::ScoreFunctionOP scorefxn(
-				  ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ));
+		core::scoring::ScoreFunctionOP scorefxn(getScoreFunction());
 		//create a pose
 		pose::Pose pose;
 		io::pdb::pose_from_pdb(pose, options::start_file());

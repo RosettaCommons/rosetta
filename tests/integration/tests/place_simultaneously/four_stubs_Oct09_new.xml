@@ -6,8 +6,8 @@ This protocol first places one hot-spot residue by the place-scaffold approach a
 	</TASKOPERATIONS>
 	<SCOREFXNS>
 		<stub_docking_low weights=interchain_cen hs_hash=10.0/>
-		<ddg_scorefxn weights=standard patch=score12 hs_hash=0.0/>
-		<score12_coord_cst weights=standard patch=score12 hs_hash=0.0>
+		<ddg_scorefxn weights=pre_talaris_2013_standard patch=score12 hs_hash=0.0/>
+		<score12_coord_cst weights=pre_talaris_2013_standard patch=score12 hs_hash=0.0>
 			<Reweight scoretype="coordinate_constraint" weight=1.0/>
 		</score12_coord_cst>
   </SCOREFXNS>

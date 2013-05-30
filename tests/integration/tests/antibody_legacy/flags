@@ -26,3 +26,4 @@
 -mute protocols.abinitio.FragmentMover
 -snugfit
 -constraints:cst_weight 0.00
+-restore_pre_talaris_2013_behavior # in the absence of this flag, this integration test takes > 15 minutes

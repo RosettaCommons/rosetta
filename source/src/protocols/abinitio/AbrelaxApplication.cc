@@ -13,7 +13,7 @@
 /// use AbrelaxApplication in the following way:
 ///
 /// AbrelaxApplication::register_options();
-/// core::init
+/// core::init::init
 /// AbrelaxAppliaction my_app;
 /// my_app.add_evaluation( new MySpecialEvaluator );
 /// ...
@@ -974,7 +974,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 
 		add_constraints( pose ); // needs to come before scorefxn setup to know if constraints are present
 		core::scoring::ScoreFunctionOP centroid_scorefxn( generate_scorefxn( false /*fullatom*/ ) );
-		core::scoring::ScoreFunctionOP fullatom_scorefxn( generate_scorefxn( true /*fullatom*/ ) ); // this is the score12 standard score function ?! )
+		core::scoring::ScoreFunctionOP fullatom_scorefxn( generate_scorefxn( true /*fullatom*/ ) );
 
 		centroid_scorefxn->set_weight( core::scoring::linear_chainbreak, 1.0 );
 		centroid_scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );
@@ -1781,7 +1781,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 	// setup scorefunctions
 	// this is called in setup_fold: add_constraints( extended_pose ); //such that scorefxn setup knows about constraints...
 	core::scoring::ScoreFunctionOP centroid_scorefxn( generate_scorefxn( false /*fullatom*/ ) );
-	core::scoring::ScoreFunctionOP fullatom_scorefxn( generate_scorefxn( true /*fullatom*/ ) ); // this is the score12 standard score function ?! );
+	core::scoring::ScoreFunctionOP fullatom_scorefxn( generate_scorefxn( true /*fullatom*/ ) );
 	abinitio_protocol.set_fullatom_scorefxn( fullatom_scorefxn );
 	abinitio_protocol.set_centroid_scorefxn( centroid_scorefxn );
 

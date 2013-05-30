@@ -87,7 +87,7 @@ main (int argc, char *argv[]){
 	core::Real dE_dr;
 	core::Real dE_dxD;
 	core::Real dE_dxH;
-	HBondDatabaseCOP hb_database( HBondDatabase::get_database( "standard" ) );
+	HBondDatabaseCOP hb_database( HBondDatabase::get_database( "score12_params" ) );
 	HBondOptions hboptions;
 
 	if ( option[ plot_hb::plot_dist ]() ) {

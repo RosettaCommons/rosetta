@@ -136,13 +136,13 @@ public:
 
 	void setUp() {
 		extern int command_line_argc; extern char ** command_line_argv;
-		if( command_line_argc > 1 ) core::init(command_line_argc, command_line_argv);
+		if( command_line_argc > 1 ) core::init::init(command_line_argc, command_line_argv);
 		else {
 			std::string commandline = "core.test -mute all";
  				initialize_from_commandline_w_db( commandline );
 		}
 
-		core::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+		core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
 	}
 
 	void tearDown() {

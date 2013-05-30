@@ -260,7 +260,7 @@ AntibodyModelerProtocol::setup_objects() {
     }
 
     // setup all the scoring functions
-    pack_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("standard" );
+    pack_scorefxn_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
     dock_scorefxn_highres_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
         dock_scorefxn_highres_->set_weight( core::scoring::chainbreak, 1.0 );
         dock_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
@@ -270,7 +270,7 @@ AntibodyModelerProtocol::setup_objects() {
     loop_scorefxn_centroid_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
         loop_scorefxn_centroid_->set_weight( scoring::chainbreak, 10./3. );
         //loop_scorefxn_centroid_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
-    loop_scorefxn_highres_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
+    loop_scorefxn_highres_ = scoring::getScoreFunction();
         loop_scorefxn_highres_->set_weight( scoring::chainbreak, 1.0 );
         loop_scorefxn_highres_->set_weight( scoring::overlap_chainbreak, 10./3. );
 		if(constrain_cter_){

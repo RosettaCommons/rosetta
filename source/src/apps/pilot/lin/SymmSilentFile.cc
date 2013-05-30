@@ -125,7 +125,7 @@ SymmSilentFileTest()
   make_symmetric_pose( start_pose );
 
   ScoreFunctionOP scorefxn3_sym( ScoreFunctionFactory::create_score_function( "score3" ) );
-  ScoreFunctionOP scorefxn13_sym( ScoreFunctionFactory::create_score_function( "score13" ) );
+  ScoreFunctionOP scorefxn13_sym( getScoreFunctionLegacy( "score13" ) );
   scorefxn3_sym = new core::scoring::symmetry::SymmetricScoreFunction(*scorefxn3_sym);
   scorefxn13_sym = new core::scoring::symmetry::SymmetricScoreFunction(*scorefxn13_sym);
   TR << "start_pose Secondary Structure Set " << start_pose.secstruct() << std::endl;

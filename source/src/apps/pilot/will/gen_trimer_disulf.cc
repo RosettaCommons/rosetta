@@ -383,16 +383,16 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icy
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	core::pose::Pose pose(in_pose);
-	core::scoring::ScoreFunctionOP score12 = core::scoring::ScoreFunctionFactory::create_score_function("standard");
-	score12->set_weight(core::scoring::dslf_ss_dst,10.0); // S-S
-	score12->set_weight(core::scoring::dslf_cs_ang,10.0); // CB-S-S
-	score12->set_weight(core::scoring::dslf_ss_dih,10.0); //
-	score12->set_weight(core::scoring::dslf_ca_dih, 1.0);
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
+	scorefxn->set_weight(core::scoring::dslf_ss_dst,10.0); // S-S
+	scorefxn->set_weight(core::scoring::dslf_cs_ang,10.0); // CB-S-S
+	scorefxn->set_weight(core::scoring::dslf_ss_dih,10.0); //
+	scorefxn->set_weight(core::scoring::dslf_ca_dih, 1.0);
 	core::scoring::ScoreFunction sf;
 
 	core::pose::Pose tmp(pose);
 	tmp.dump_pdb("test.pdb");
-	Real score_ref = repackmin(tmp,*score12,icys,N);
+	Real score_ref = repackmin(tmp,*scorefxn,icys,N);
 	tmp.dump_pdb("testmin.pdb");
 	
 
@@ -496,7 +496,7 @@ void generate_disulfide_conformations(core::pose::Pose const & in_pose, Size icy
 				// pose.dump_pdb("same_"+string_of(chi1i)+"_"+string_of(chi2i)+"_"+string_of(chiss)+"_"+string_of(chi2j)+"_"+string_of(chi1j)+".pdb");
 				continue;
 			}
-			Real ddg = repackmin(pose,*score12,icys,N) - score_ref;
+			Real ddg = repackmin(pose,*scorefxn,icys,N) - score_ref;
 			// if(ddg > 100.0) continue;
 			bool seenit = false;
 			for(Size ip = 1; ip <= alts.size(); ++ip) {

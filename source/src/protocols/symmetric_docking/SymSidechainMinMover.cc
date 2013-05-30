@@ -105,7 +105,7 @@ void SymSidechainMinMover::set_default_options()
 		movemap_ = new core::kinematics::MoveMap();
 		movemap_->set_chi( true );
 		}
-	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("standard");
+	scorefxn_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	minmover_ = new simple_moves::symmetry::SymMinMover(movemap_, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  );
 }
 

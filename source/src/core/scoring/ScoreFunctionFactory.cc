@@ -34,6 +34,7 @@
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
@@ -84,7 +85,7 @@ ScoreFunctionFactory::create_score_function( std::string weights_tag, utility::v
 	/// 1) standard weights,
 	/// 2) the score12 patch, and
 	/// 3) the flag "score12prime"
-	if ( weights_tag == STANDARD_WTS &&
+	if ( weights_tag == PRE_TALARIS_2013_STANDARD_WTS &&
 			basic::options::option[ basic::options::OptionKeys::corrections::score::score12prime ] ) {
 		bool sc12patch = false;
 		for ( Size ii = 1; ii <= patch_tags.size(); ++ii ) {
@@ -237,7 +238,8 @@ void ScoreFunctionFactory::load_weights_file( std::string weights_tag, ScoreFunc
 	scorefxn->initialize_from_file(weights_tag);
 }
 
-std::string const STANDARD_WTS( "standard" );
+std::string const TALARIS_2013( "talaris_2013" );
+std::string const PRE_TALARIS_2013_STANDARD_WTS( "pre_talaris_2013_standard" );
 std::string const CENTROID_WTS( "cen_std" );
 std::string const SOFT_REP_WTS( "soft_rep" );
 std::string const SOFT_REP_DESIGN_WTS( "soft_rep_design" );
@@ -268,7 +270,6 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 	std::string weight_set = option[ score::weights ];
 	utility::vector1< std::string > patch_tags = option[ score::patch ]();
 
-
 	if ( !option[ score::weights ].user() && !is_fullatom ){
 
 		// Defalt score of centroid is cen_wts when is_fullatom is false and user has not specified a score weights
@@ -279,10 +280,17 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 		/// Default score is score12 if the user has not specified a score weights file or a patch file
 		/// on the command line.  If the user has specified that they would like the standard weight set,
 		/// and has not also asked for the score12 patch, then do not apply the score12 patch to it.
-		if ( ( weight_set == "standard" && !option[ score::weights ].user() ) &&
+
+		//tr << "getScoreFunction1: weight set " << weight_set << " same ? " << ( weight_set == "pre_talaris_2013_standard.wts") << std::endl;
+		//tr << "option[ score::weights ].user() ? " << option[ score::weights ].user() << std::endl;
+		//tr << "option[ score::patch ].user() ? " << option[ score::patch ].user() << std::endl;
+
+		if ( ( weight_set == "pre_talaris_2013_standard.wts" && !option[ score::weights ].user() ) &&
 				 ( !option[ score::patch ].user() ) ) {
 			patch_tags.push_back( "score12" );
+			//tr << "pushing back score12 patch" << std::endl;
 			if( basic::options::option[basic::options::OptionKeys::corrections::correct]) {
+				//tr << "setting weight set to score12_w_corrections" << std::endl;
 				weight_set = "score12_w_corrections";
 				patch_tags.clear();
 			} else if ( basic::options::option[ basic::options::OptionKeys::corrections::hbond_sp2_correction ] ){
@@ -297,6 +305,7 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 				patch_tags.clear();
 			}
 		}
+		//tr << "getScoreFunction2: weight set " << weight_set << std::endl;
 
 	}
 
@@ -304,9 +313,11 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 	if ( patch_tags.size() == 0 ) {
 		scorefxn = scoring::ScoreFunctionFactory::create_score_function( weight_set );
 	} else {
-		if ( patch_tags.size() > 1 && patch_tags[1]=="" && patch_tags[2]!="" ) {
-			T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION PATCH: " << patch_tags[2] << std::endl;
-		}	else if ( patch_tags[1]!="" ) T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION PATCH: " << patch_tags[1] << std::endl;
+		for ( Size ii = 1; ii <= patch_tags.size(); ++ii ) {
+			if ( patch_tags[ii]!="" ) {
+				T("core.scoring.ScoreFunctionFactory") << "SCOREFUNCTION PATCH: " << patch_tags[ii] << std::endl;
+			}
+		}
 		scorefxn = scoring::ScoreFunctionFactory::create_score_function( weight_set, patch_tags );
 	}
 
@@ -326,6 +337,17 @@ core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom /* defau
 	//	}
 
 	return scorefxn;
+}
+
+core::scoring::ScoreFunctionOP getScoreFunctionLegacy(
+	std::string pre_talaris_2013_weight_set,
+	std::string pre_talaris_2013_patch_file
+)
+{
+	if ( basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ] ) {
+		return ScoreFunctionFactory::create_score_function( pre_talaris_2013_weight_set, pre_talaris_2013_patch_file );
+	}
+	return getScoreFunction();
 }
 
 std::string
@@ -351,7 +373,7 @@ getScoreFunctionName(
 		/// Default score is score12 if the user has not specified a score weights file or a patch file
 		/// on the command line.  If the user has specified that they would like the standard weight set,
 		/// and has not also asked for the score12 patch, then do not apply the score12 patch to it.
-		if ( ( weight_set == "standard" && !option[ score::weights ].user() ) &&
+		if ( ( weight_set == "pre_talaris_2013_standard" && !option[ score::weights ].user() ) &&
 				 ( !option[ score::patch ].user() ) ) {
 			patch_tags.push_back( "score12" );
 			if( option[ corrections::correct ]) {
@@ -365,7 +387,7 @@ getScoreFunctionName(
 	}
 
 	if ( patch_tags.size() != 0 &&
-		weight_set == STANDARD_WTS &&
+		weight_set == PRE_TALARIS_2013_STANDARD_WTS &&
 		option[ corrections::score::score12prime ] ) {
 
 		bool sc12patch = false;

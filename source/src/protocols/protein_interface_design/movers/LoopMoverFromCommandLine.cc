@@ -285,10 +285,9 @@ LoopMoverFromCommandLine::parse_my_tag( TagPtr const tag, protocols::moves::Data
 	intermedrelax( tag->getOption< std::string >( "intermedrelax", "no" ) );
 	remodel( tag->getOption< std::string >( "remodel", "no" ) );
 	relax( tag->getOption< std::string > ("relax", "no" ) );
-	std::string const hires_score( tag->getOption<std::string>( "refine_score", "score12" ) );
-	std::string const lores_score( tag->getOption<std::string>( "perturb_score", "score4L" ) );
-	hires_score_ = new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", hires_score ));
-	lores_score_ = new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", lores_score ));
+
+	hires_score_ = protocols::rosetta_scripts::parse_score_function( tag, "refine_score", data )->clone();
+	lores_score_ = protocols::rosetta_scripts::parse_score_function( tag, "perturb_score", data, "score4L" )->clone();
 
 	loop_file_name_ = tag->getOption<std::string>("loop_file", "loops.loops");
 //	task_factory(protocols::rosetta_scripts::parse_task_operations( tag, data ));

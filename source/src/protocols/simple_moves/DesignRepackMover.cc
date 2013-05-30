@@ -284,8 +284,9 @@ void
 DesignRepackMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
-	std::string const scorefxn_repack( tag->getOption<std::string>( "scorefxn_repack", "score12" ) );
-	std::string const scorefxn_minimize( tag->getOption<std::string>( "scorefxn_minimize", "score12" ) );
+	std::string const scorefxn_repack( protocols::rosetta_scripts::get_score_function_name(tag, "scorefxn_repack" ) );
+	std::string const scorefxn_minimize( protocols::rosetta_scripts::get_score_function_name(tag, "scorefxn_minimize" ) );
+
 	if( !tag->hasOption( "repack_partner1" ) && !tag->hasOption( "repack_partner2" ) && tag->hasOption( "repack" ) ){
 		bool const repack( tag->getOption< bool >( "repack" ) );
 		repack_partner1_ = repack_partner2_ = repack;
@@ -352,12 +353,12 @@ DesignRepackMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::move
 
 	if (symmetry_) {
 		using namespace core::scoring::symmetry;
-		scorefxn_repack_ = new SymmetricScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn_repack ) );
-		scorefxn_minimize_ = new SymmetricScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn_minimize ) );
+		scorefxn_repack_ = new SymmetricScoreFunction( * protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data ) );
+		scorefxn_minimize_ = new SymmetricScoreFunction( * protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data ) );
 	} else {
 		using namespace core::scoring;
-		scorefxn_repack_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn_repack ) );
-		scorefxn_minimize_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn_minimize ) );
+		scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();
+		scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
 	}
 	automatic_repacking_definition_ = tag->getOption<bool>( "automatic_repacking_definition", 1 );
 	TR<<"repack scorefxn "<<scorefxn_repack<<" and minimize scorefxn "<<scorefxn_minimize<<" automatic_repacking_definition set to "<<automatic_repacking_definition_<<" optimize fold tree="<<optimize_foldtree_<<" targeting residues ";

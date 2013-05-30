@@ -519,19 +519,6 @@ main(int argc, char* argv []){
 
 	utility::vector1<utility::file::FileName> in = basic::options::option[in::file::s]();
 
-	std::string weights;
-	std::string patch;
-	if(basic::options::option[score::weights].user()){
-		weights = basic::options::option[score::weights]();
-	}else{
-		weights = "standard.wts";
-		patch = "score12.wts_patch";
-	}
-
-	if(basic::options::option[score::patch].user()){
-		patch = basic::options::option[score::patch]();
-	}
-
 	bool mean, min;
 
 	if(basic::options::option[OptionKeys::ddg::mean].user()){
@@ -546,13 +533,7 @@ main(int argc, char* argv []){
 	}
 
 
-	ScoreFunctionOP sfxn;
-	if(patch.compare("") != 0){
-		sfxn=(ScoreFunctionFactory::create_score_function(basic::database::full_name("scoring/weights/"+weights),
-																											basic::database::full_name("scoring/weights/"+patch)));
-	}else{
-		sfxn=(ScoreFunctionFactory::create_score_function(basic::database::full_name("scoring/weights/"+weights)));
-	}
+	ScoreFunctionOP sfxn(getScoreFunction());
 
 	protocols::ddG::ddGData dat(in[1].name());
 	bool header_printed = false;

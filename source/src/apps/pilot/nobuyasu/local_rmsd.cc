@@ -85,7 +85,7 @@ public:
 		}
 
 		// read scorefxn
-		//scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "strandard" );
+		//scorefxn_ = core::scoring::getScoreFunction();
 		//		TR << "score will be calculated by remodel_cen.wts" << std::endl;
 		scorefxn_ = core::scoring::getScoreFunction();
 

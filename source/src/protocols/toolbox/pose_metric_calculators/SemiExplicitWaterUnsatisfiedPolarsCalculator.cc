@@ -102,7 +102,8 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolars
   std::string hbond_calc,
 	scoring::ScoreFunctionOP scorefxn,
 	core::Real semiexpl_water_cutoff
-) : hb_database_( core::scoring::hbonds::HBondDatabase::get_database( "standard_params" ) ),
+) :
+	hb_database_( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) ),
 	all_unsat_polars_( 0 ),
 	special_region_unsat_polars_(0),
 	semiexpl_water_cutoff_( semiexpl_water_cutoff ),
@@ -123,7 +124,8 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolars
 	scoring::ScoreFunctionOP scorefxn,
   std::set< core::Size > const & special_region,
 	core::Real semiexpl_water_cutoff
-) : hb_database_( core::scoring::hbonds::HBondDatabase::get_database( "standard_params" ) ),
+) :
+	hb_database_( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) ),
 	all_unsat_polars_(0),
 	special_region_unsat_polars_(0),
 	semiexpl_water_cutoff_( semiexpl_water_cutoff ),

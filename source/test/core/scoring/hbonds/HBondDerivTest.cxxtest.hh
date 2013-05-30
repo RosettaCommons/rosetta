@@ -558,7 +558,7 @@ public:
 	void do_not_test_f1f2_deriv(){
 		HBondDatabaseCOP database(HBondDatabase::get_database());
 		Pose pose = create_trpcage_ideal_pose();
-		ScoreFunctionOP score_function( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+		ScoreFunctionOP score_function( getScoreFunction() );
 		score_function->score( pose );
 
 		HBondSet hbond_set( pose.n_residue() );

@@ -95,7 +95,7 @@ inline void prime_Movers( Movers_map & movers ) {
 
 inline void prime_Data( DataMap & data ) {
 	core::scoring::ScoreFunctionOP commandline_sfxn = core::scoring::getScoreFunction();
-	core::scoring::ScoreFunctionOP score12 = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );
+	core::scoring::ScoreFunctionOP score12 = core::scoring::getScoreFunction();
 
 	data.add( "scorefxns", "commandline", commandline_sfxn );
 	data.add( "scorefxns", "score12", score12 );

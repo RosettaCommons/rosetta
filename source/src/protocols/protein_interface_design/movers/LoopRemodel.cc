@@ -443,10 +443,9 @@ LoopRemodel::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters:
 	protocol_ = tag->getOption<std::string>( "protocol", "ccd" );
 	perturb_ = tag->getOption<bool>( "perturb", 0 );
 	refine_ = tag->getOption<bool>( "refine", 1 );
-	std::string const hires_score( tag->getOption<std::string>( "refine_score", "score12" ) );
-	std::string const lores_score( tag->getOption<std::string>( "perturb_score", "score4L" ) );
-	hires_score_ = new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", hires_score ));
-	lores_score_ = new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", lores_score ));
+
+	hires_score_ = protocols::rosetta_scripts::parse_score_function( tag, "refine_score", data )->clone();
+	lores_score_ = protocols::rosetta_scripts::parse_score_function( tag, "perturb_score", data, "score4L" )->clone();
 
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
@@ -487,7 +486,7 @@ LoopRemodel::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters:
 		runtime_assert( loop_end_ < pose.total_residue() );
 	}
 	TR << "LoopRemodel mover: auto_loops="<<auto_loops_<<" loop_start="<<loop_start_<<" loop_end="<<loop_end_<<" design="<<design()<<
-		" perturb="<<perturb_<<" refine="<<refine_<<" hurry=" <<hurry_<< " cycles=" << cycles_ <<" hires_score="<<hires_score << std::endl;
+		" perturb="<<perturb_<<" refine="<<refine_<<" hurry=" <<hurry_<< " cycles=" << cycles_ <<" hires_score="<< rosetta_scripts::get_score_function_name(tag, "refine_score") << std::endl;
 }
 
 } //movers

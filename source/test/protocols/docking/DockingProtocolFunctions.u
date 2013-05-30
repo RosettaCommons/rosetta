@@ -12,22 +12,22 @@ Testing docking high-res scoring function...
 ------------------------------------------------------------
  Scores                       Weight   Raw Score Wghtd.Score
 ------------------------------------------------------------
- fa_atr                       0.338   -1404.492    -474.718
- fa_rep                       0.044    1643.965      72.334
- fa_sol                       0.242     879.488     212.836
- hack_elec                    0.026     -66.597      -1.732
+ fa_atr                       0.338   -1395.655    -471.731
+ fa_rep                       0.044    1542.121      67.853
+ fa_sol                       0.242     839.536     203.168
+ hack_elec                    0.026     -68.237      -1.774
  fa_pair                      0.164     -40.686      -6.673
- hbond_sr_bb                  0.245     -37.346      -9.150
- hbond_lr_bb                  0.245     -68.252     -16.722
- hbond_bb_sc                  0.245     -19.044      -4.666
- hbond_sc                     0.245      -5.364      -1.314
+ hbond_sr_bb                  0.245     -19.660      -4.817
+ hbond_lr_bb                  0.245     -52.471     -12.855
+ hbond_bb_sc                  0.245     -15.384      -3.769
+ hbond_sc                     0.245      -1.470      -0.360
  dslf_ss_dst                  0.500      -0.412      -0.206
  dslf_cs_ang                  2.000       9.959      19.918
  dslf_ss_dih                  5.000       5.528      27.640
  dslf_ca_dih                  5.000       0.458       2.292
- fa_dun                       0.036    1432.978      51.587
+ fa_dun                       0.036    1831.586      65.937
 ---------------------------------------------------
- Total weighted score:                     -128.572
+ Total weighted score:                     -115.377
 Testing DockingProtocol.setup_foldtree()...
 FOLD_TREE  EDGE 1 197 -1  EDGE 197 245 -1  EDGE 197 282 1  EDGE 282 301 -1  EDGE 282 246 -1 
 
@@ -45,7 +45,7 @@ Testing interface-dependant scoring for multichain docking...
 ---------------------------------------------------
  Total weighted score:                      -64.672
 Testing DockingProtocol.calc_interaction_energy()...
--14.234
+-13.843
 Testing DockingProtocol.recover_sidechains()...
 Testing DockingProtocol.calc_Lrmsd()...
 13.6911

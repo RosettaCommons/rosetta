@@ -139,7 +139,7 @@ HbondsToResidueFilter::compute( Pose const & pose ) const {
 	typedef core::Real Real;
 
 	core::pose::Pose temp_pose( pose );
-	core::scoring::ScoreFunctionOP scorefxn(ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	core::scoring::ScoreFunctionOP scorefxn(getScoreFunction() );
 	(*scorefxn)(temp_pose);
 	/// Now handled automatically.  scorefxn->accumulate_residue_total_energies( temp_pose );
 

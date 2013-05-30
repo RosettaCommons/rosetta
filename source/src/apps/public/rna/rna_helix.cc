@@ -35,7 +35,7 @@
 #include <protocols/rna/RNA_HelixAssembler.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <utility/vector1.hh>
@@ -121,8 +121,7 @@ rna_build_helix_test(){
 	rna_helix_assembler.set_minimize_all( option[ minimize_all ]() );
 	rna_helix_assembler.use_phenix_geo( is_use_phenix_geo );
 	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
-		std::string score_weight_file= option[ basic::options::OptionKeys::score::weights ]();
-		core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( score_weight_file );
+		core::scoring::ScoreFunctionOP scorefxn = getScoreFunction();
 		rna_helix_assembler.set_scorefxn ( scorefxn );
 	}
 	rna_helix_assembler.set_model_and_remove_capping_residues( true );
@@ -179,7 +178,7 @@ try {
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////
-	core::init(argc, argv);
+	core::init::init(argc, argv);
 
 
 	////////////////////////////////////////////////////////////////////////////

@@ -21,7 +21,7 @@
 // Core Headers
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
@@ -162,7 +162,7 @@ public:
 		the_pose = new Pose;
 		core::import_pose::pose_from_pdb( *the_pose, "protocols/moves/test_in.pdb" );
 
-		core::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+		core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
 	}
 
 	void tearDown() {

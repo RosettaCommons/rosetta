@@ -197,16 +197,16 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 			}//foreach stubset_pos_pair
 			using namespace core::scoring;
 			ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
-			ScoreFunctionOP score12_mod( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ));
-			score12_mod->set_weight( backbone_stub_constraint, 10.0 ); //This will not have any effect if the bbcsts are off
-			score12_mod->set_weight( coordinate_constraint, 1.0 );//similarly
+			ScoreFunctionOP scorefxn_mod( getScoreFunction());
+			scorefxn_mod->set_weight( backbone_stub_constraint, 10.0 ); //This will not have any effect if the bbcsts are off
+			scorefxn_mod->set_weight( coordinate_constraint, 1.0 );//similarly
 			MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, sc_min, min_rb()/*rb*/, optimize_foldtree(), targets, true/*simultaneous optimization*/ );
 			utility::vector1< bool > min_host( pose.total_residue(), false );
 			core::Size const host_chain_begin( pose.conformation().chain_begin( host_chain_ ) );
 			core::Size const host_chain_end  ( pose.conformation().chain_end( host_chain_ ) );
 			for( core::Size i( host_chain_begin ); i<=host_chain_end; ++i ) min_host[ i ] = true;
 			utility::vector1< bool > const no_min_rb( pose.num_jump(), false );
-			MinimizeInterface( pose, score12_mod, min_host/*bb*/, sc_min, no_min_rb/*rb*/, optimize_foldtree(), targets, true/*simultaneous optimization*/ );
+			MinimizeInterface( pose, scorefxn_mod, min_host/*bb*/, sc_min, no_min_rb/*rb*/, optimize_foldtree(), targets, true/*simultaneous optimization*/ );
 			TR<<"Doing rb minimization towards the stub and sc minimization of placed stubs" <<std::endl;
 			MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, sc_min, min_rb()/*rb*/, optimize_foldtree(), targets, true/*simultaneous optimization*/ );
 		}//foreach minimization mover
@@ -353,7 +353,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 	std::unique( prev_pack.begin(), prev_pack.end() );
 	prevent_repacking( prev_pack );
 	//end add to prevent repacking
-	ScoreFunctionCOP score12 = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+	ScoreFunctionCOP scorefxn = getScoreFunction();
 
  if ( auction_->get_stub_scorefxn() == "backbone_stub_constraint" ) {
 	using namespace core::pack;
@@ -366,7 +366,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 			task->nonconst_residue_task(i).prevent_repacking();
 	}//for residue i in pose
 	using namespace core::scoring;
-	pack_rotamers( pose, *score12, task );
+	pack_rotamers( pose, *scorefxn, task );
 	using namespace core::scoring;
 	ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
 	MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, sc_min, min_rb()/*rb*/, optimize_foldtree()/*optimize foldtree*/, targets, true/*simultaneous optimization*/ );
@@ -426,11 +426,11 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
         
           using namespace core::scoring;
           add_coordinatecst_for_hotspot_packing(saved_pose);
-          pack_rotamers( saved_pose, *score12, task );
+          pack_rotamers( saved_pose, *scorefxn, task );
         
-          ScoreFunctionOP score12c = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
-          score12c->set_weight( coordinate_constraint, 1.0 );
-          (*score12c)(saved_pose);
+          ScoreFunctionOP scorefxnc = getScoreFunction();
+          scorefxnc->set_weight( coordinate_constraint, 1.0 );
+          (*scorefxnc)(saved_pose);
           Real cst_score = saved_pose.energies().total_energies()[core::scoring::coordinate_constraint ];
           //TR << "residue: " << residue << " coordinate constraint energy: " << cst_score << std::endl;
           TR << std::endl;
@@ -515,7 +515,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 
       using namespace core::scoring;
       TR << "Add hotspot" << std::endl;
-      pack_rotamers( pose, *score12, task );
+      pack_rotamers( pose, *scorefxn, task );
 
   } // end of backbone_stub_linear_constraint
 
@@ -526,7 +526,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 		HotspotStubSetOP stubset( stubset_pos_pair.first );
 		HotspotStubCOP stub( stubset_pos_pair.second.first );
 		using namespace protocols::filters;
-		simple_filters::EnergyPerResidueFilter total_energy_filter( pos, score12, total_score, stub_energy_threshold_ );
+		simple_filters::EnergyPerResidueFilter total_energy_filter( pos, scorefxn, total_score, stub_energy_threshold_ );
 		bool const pass_tot_energy( total_energy_filter.apply( pose ) );
 		protocols::filters::FilterOP modified_filter( stub_set_filters_[ stubset ]->clone() );
 		protocols::moves::modify_ResId_based_object( modified_filter, pos );
@@ -864,7 +864,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 				if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() )
 					core::pack::task::parse_resfile(pose, *task);
 
-				core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+				core::scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 				pack::pack_rotamers( *ala_pose, *scorefxn, task);
 				(*scorefxn)( *ala_pose );
 				stubset->pair_with_scaffold( *ala_pose, host_chain_, new protocols::filters::TrueFilter );

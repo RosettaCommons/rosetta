@@ -95,7 +95,7 @@ main( int argc, char * argv [] )
 	}
 
 	// create score function
-	ScoreFunctionOP scfxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+	ScoreFunctionOP scfxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ));
 
 	// run simple relax for each name in list
 	for(std::vector< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i) {

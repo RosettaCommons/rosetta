@@ -738,11 +738,11 @@ void
 						design(pose_for_design, sf, design_pos, true);
 			      minimize(pose_for_design, sf, design_pos, false, true, min_rb);
 
-						// Repack and minimize using score12
-						ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
-						//repack(pose_for_design, score12, design_pos);
-						//minimize(pose_for_design, score12, design_pos, false, true, false);
-						score12->score(pose_for_design);
+						// Repack and minimize using scorefxn
+						ScoreFunctionOP scorefxn = getScoreFunction();
+						//repack(pose_for_design, scorefxn, design_pos);
+						//minimize(pose_for_design, scorefxn, design_pos, false, true, false);
+						scorefxn->score(pose_for_design);
 
 						// Build a filename for the output PDB
 						std::string tag = string_of(numeric::random::uniform()).substr(2,4);
@@ -786,12 +786,13 @@ void
 		        Real packing = get_atom_packing_score(pose_for_design, intra_subs, 9.0);
 
 						// Calculate the ddG of the monomer in the assembled and unassembled states
-						core::scoring::ScoreFunctionOP score12_no_dsf = score12->clone();
-						score12_no_dsf->set_weight(core::scoring::dslf_ss_dst,0.0);
-						score12_no_dsf->set_weight(core::scoring::dslf_cs_ang,0.0);
-						score12_no_dsf->set_weight(core::scoring::dslf_ss_dih,0.0);
-						score12_no_dsf->set_weight(core::scoring::dslf_ca_dih,0.0);
-				    protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12_no_dsf, 1, true);
+						core::scoring::ScoreFunctionOP scorefxn_no_dsf = scorefxn->clone();
+						scorefxn_no_dsf->set_weight(core::scoring::dslf_ss_dst,0.0);
+						scorefxn_no_dsf->set_weight(core::scoring::dslf_cs_ang,0.0);
+						scorefxn_no_dsf->set_weight(core::scoring::dslf_ss_dih,0.0);
+						scorefxn_no_dsf->set_weight(core::scoring::dslf_ca_dih,0.0);
+						scorefxn_no_dsf->set_weight(core::scoring::dslf_fa13,  0.0);
+				    protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(scorefxn_no_dsf, 1, true);
 				    ddG_mover.calculate(pose_for_design);
 				    Real ddG = ddG_mover.sum_ddG();
 				    TR << files[ifile] << " ddG = " << ddG << std::endl;

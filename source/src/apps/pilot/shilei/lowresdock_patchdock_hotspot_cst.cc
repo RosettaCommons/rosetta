@@ -154,7 +154,7 @@ public:
 	core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function("interchain_cen") );
 	core::scoring::ScoreFunctionOP scorefxn_emp( ScoreFunctionFactory::create_score_function("empty") );
 	core::scoring::ScoreFunctionOP scorefxn_cen( ScoreFunctionFactory::create_score_function("interchain_cen") );
-	//core::scoring::ScoreFunctionOP scorefxn12( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	//core::scoring::ScoreFunctionOP scorefxn12( getScoreFunction() );
 
 	//(*scorefxn)(pose);
 	//TR << "Patchdock Rosetta score is: " << pose.energies().total_energy() << std::endl;

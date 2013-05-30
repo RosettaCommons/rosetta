@@ -184,7 +184,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 		task->restrict_to_repacking();
 		task->restrict_to_residues(residues_to_repack);
 		ScoreFunctionOP scorefxn(
-			ScoreFunctionFactory::create_score_function( "standard", "score12" )
+			getScoreFunction()
 		);
 		pack_rotamers( pose, *scorefxn, task );
 	} // recover_side_chains

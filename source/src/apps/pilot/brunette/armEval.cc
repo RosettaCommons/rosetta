@@ -248,7 +248,7 @@ int main( int argc, char * argv [] ) {
     Real distance1_2 = get_distance(*input_poseOP,helices[1],helices[2]);
     Real distance2_3 = get_distance(*input_poseOP,helices[2],helices[3]);
 		Real holesScore = get_holes_score(*input_poseOP);
-		core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+		core::scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 		Real fa_score = scorefxn->score(*input_poseOP);
 		Real resTypeScore = res_type_score(*input_poseOP);
 		Real hb_srbb_score = get_hb_srbb_score(*input_poseOP);

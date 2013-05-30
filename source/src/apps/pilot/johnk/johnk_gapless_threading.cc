@@ -67,7 +67,7 @@ main( int argc, char * argv [] )
 	std::string const sequence_to_build = option[ desired_sequence ];
 
 	// scoring function
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 
 	// create pose from pdb
 	pose::Pose pose;

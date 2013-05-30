@@ -492,7 +492,7 @@ void
     }
 
 		// Make a scorefunction
-		ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
+		ScoreFunctionOP scorefxn = getScoreFunction();
 
     // Move the pose to the correct docked configuration before designing
     utility::vector1<Real> radial_disps = option[matdes::radial_disp]();
@@ -507,17 +507,17 @@ void
 			// Design and get mutalyze_pos and ids
 			utility::vector1<Size> mutalyze_pos;
 			utility::vector1<utility::file::FileName> resfile = option[basic::options::OptionKeys::packing::resfile]();
-			design_using_resfile(pose, score12, resfile[1], mutalyze_pos);
+			design_using_resfile(pose, scorefxn, resfile[1], mutalyze_pos);
 			utility::vector1<std::string> mutalyze_ids;
 		  for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
 				mutalyze_ids.push_back(pose.residue(mutalyze_pos[ipos]).name3());
 		  }	
 	
-			// Repack and minimize using score12
-			repack(pose, score12, mutalyze_pos);
+			// Repack and minimize using scorefxn
+			repack(pose, scorefxn, mutalyze_pos);
 			bool min_rb = option[matdes::mutalyze::min_rb]();
-			minimize(pose, score12, mutalyze_pos, false, true, min_rb);
-			score12->score(pose);
+			minimize(pose, scorefxn, mutalyze_pos, false, true, min_rb);
+			scorefxn->score(pose);
 	
 			// Write the pdb file of the design
       std::ostringstream r_string;
@@ -548,7 +548,7 @@ void
 			if (option[matdes::mutalyze::calc_rot_boltz]() == 1) {
 		    for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
 					protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
-					rbc.scorefxn(score12);
+					rbc.scorefxn(scorefxn);
 			    Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, mutalyze_pos[ipos]);
 		      std::cout << fn << " " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;
 		    }
@@ -571,10 +571,10 @@ void
 	    }
 			avg_interface_energy = interface_energy / mutalyze_pos.size();
 			// Multiply those energies by the weights
-			em *= score12->weights();
+			em *= scorefxn->weights();
 	
 			// Calculate the ddG of the monomer in the assembled and unassembled states
-	   	protocols::protein_interface_design::movers::ddG ddG_mover2 = protocols::protein_interface_design::movers::ddG(score12, 1, true);
+	   	protocols::protein_interface_design::movers::ddG ddG_mover2 = protocols::protein_interface_design::movers::ddG(scorefxn, 1, true);
 	    ddG_mover2.calculate(pose);
 	    Real ddG2 = ddG_mover2.sum_ddG();
 	    TR << files[ifile] << " mutalyzed ddG = " << ddG2 << std::endl;
@@ -615,10 +615,10 @@ void
 				}
 
 				// Design
-		    design(pose_for_ala_scan, score12, pos, id);
+		    design(pose_for_ala_scan, scorefxn, pos, id);
 	
 		    // Calculate the ddG of the monomer in the assembled and unassembled states
-		    protocols::protein_interface_design::movers::ddG ddG_mover3 = protocols::protein_interface_design::movers::ddG(score12, 1, true);
+		    protocols::protein_interface_design::movers::ddG ddG_mover3 = protocols::protein_interface_design::movers::ddG(scorefxn, 1, true);
 		    ddG_mover3.calculate(pose_for_ala_scan);
 		    Real ddG3 = ddG_mover3.sum_ddG();
 		    TR << files[ifile] << " ddG for mutation " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << original_pose.residue(mutalyze_pos[ipos]).name3() << " = " << ddG3 << std::endl;

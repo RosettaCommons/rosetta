@@ -447,8 +447,9 @@ void * graphics_main( void * ) {
 
 	String centroid_sfx = option[ ufv::centroid_sfx ].user() ? option[ ufv::centroid_sfx ].value() : "remodel_cen";
 	String centroid_sfx_patch = option[ ufv::centroid_sfx_patch ].user() ? option[ ufv::centroid_sfx_patch ].value() : String();
-	String fullatom_sfx = option[ ufv::fullatom_sfx ].user() ? option[ ufv::fullatom_sfx ].value() : core::scoring::STANDARD_WTS;
-	String fullatom_sfx_patch = option[ ufv::fullatom_sfx_patch ].user() ? option[ ufv::fullatom_sfx_patch ].value() : core::scoring::SCORE12_PATCH;
+	// APL new default -- Talaris2013
+	String fullatom_sfx = option[ ufv::fullatom_sfx ].user() ? option[ ufv::fullatom_sfx ].value() : TALARIS_2013;
+	String fullatom_sfx_patch = option[ ufv::fullatom_sfx_patch ].user() ? option[ ufv::fullatom_sfx_patch ].value() : String();
 
 	bdr->centroid_scorefunction( core::scoring::ScoreFunctionFactory::create_score_function( centroid_sfx, centroid_sfx_patch ) );
 	bdr->fullatom_scorefunction( core::scoring::ScoreFunctionFactory::create_score_function( fullatom_sfx, fullatom_sfx_patch ) );

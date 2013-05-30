@@ -68,7 +68,7 @@ inline void protocols_init()
 		std::string db_cmdline = append_db_to_commandline( commandline );
 		protocols_init_from_string( db_cmdline );
 	}
-	core::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+	core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
 }
 
 #endif

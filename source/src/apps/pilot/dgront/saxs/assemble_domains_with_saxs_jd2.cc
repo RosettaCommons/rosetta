@@ -94,7 +94,7 @@ main( int argc, char * argv [] ) {
 	CompositionMoverOP container( new CompositionMover );
 
 	core::scoring::ScoreFunctionOP score3 = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
-	core::scoring::ScoreFunctionOP score12( core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
 	score3->set_weight( core::scoring::saxs_score, 1.0 );
 
 	// docking
@@ -102,7 +102,7 @@ main( int argc, char * argv [] ) {
 	DockingProtocolOP docking = new SaneDockingProtocol;
 //	DockingLowResOP docking = new DockingLowRes( score3 );
 	docking->set_lowres_scorefxn( score3 );
-	docking->set_highres_scorefxn( score12 );
+	docking->set_highres_scorefxn( scorefxn );
 //	docking->set_fullatom( false );
 	container->add_mover( docking );
 

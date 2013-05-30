@@ -27,6 +27,10 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 
+// Basic headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
+
 // Boost Headers
 #include <boost/foreach.hpp>
 
@@ -63,7 +67,10 @@ void ScoreFunctionLoader::load_data(
 
 		ScoreFunctionOP in_scorefxn;
 		std::string const scorefxn_name( scorefxn_tag->getName() );
-		std::string const scorefxn_weights( scorefxn_tag->getOption<std::string>( "weights", "standard" ) );
+		std::string const default_sfxn_weights(
+			basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ] ?
+			"pre_talaris_2013_standard.wts" : "talaris2013" );
+		std::string const scorefxn_weights( scorefxn_tag->getOption<std::string>( "weights", default_sfxn_weights ) );
 		if(  scorefxn_tag->hasOption( "weights" ) && scorefxn_tag->hasOption( "patch" ) ) {
 			std::string const scorefxn_patch( scorefxn_tag->getOption<std::string>( "patch" ) );
 			in_scorefxn = ScoreFunctionFactory::create_score_function( scorefxn_weights, scorefxn_patch);

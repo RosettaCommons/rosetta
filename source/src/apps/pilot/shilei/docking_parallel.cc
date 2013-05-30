@@ -139,7 +139,7 @@ int dump_pose_diff(core::pose::Pose const & pose,core::pose::Pose const & ref_po
 		//rotaiton
 		for ( int i = 1; i <= 3; ++i ) {
 		      for ( int j = 1; j <= 3; ++j ) {
-			 message[ii]=pose.jump(jump).get_rotation()(i,j);	
+			 message[ii]=pose.jump(jump).get_rotation()(i,j);
 			 ++ii;
 			}
 		}
@@ -170,11 +170,11 @@ int dump_pose_diff(core::pose::Pose const & pose,core::pose::Pose const & ref_po
 		        Real after_phi = pose.dof(dof_phi);
         		bool const changed_phi = (std::abs(numeric::nearest_angle_radians(after_phi, before_phi) - before_phi) > tol);
         		if( changed_phi ) {
-				message[ii]=rsd;	
+				message[ii]=rsd;
 				++ii;
-				message[ii]=atom;	
+				message[ii]=atom;
 				++ii;
-				message[ii]=after_phi;	
+				message[ii]=after_phi;
 				++ii;
           			//std::cout.precision( precision );
           			//std::cout  << "Changes: " << rsd << " " << atom << " " << before_phi << " " << after_phi << " " << after_phi-before_phi;
@@ -258,7 +258,7 @@ void run_parallel_docking() {
 
 	//initialize docking
 	utility::vector1< core::Size > movable_jumps_ = utility::tools::make_vector1<core::Size>(1);
-	core::scoring::ScoreFunctionOP docking_scorefxn_high_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard");
+	core::scoring::ScoreFunctionOP docking_scorefxn_high_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 
 	//add cst to the scoring
 	if (basic::options::option[basic::options::OptionKeys::constraints::cst_file].user()) {
@@ -273,7 +273,7 @@ void run_parallel_docking() {
 	//need to hook up the flags for rtmin, unboundrot, ex1, ex2
 	Size nstruct=basic::options::option[basic::options::OptionKeys::docking_parallel::nstruct];
 	Size curr_struct=1;
-	
+
 	float initial_trans_magnitude=basic::options::option[basic::options::OptionKeys::docking_parallel::trans_pert];
 	float initial_rot_magnitude=basic::options::option[basic::options::OptionKeys::docking_parallel::rot_pert];
 	float min_trans_magnitude=basic::options::option[basic::options::OptionKeys::docking_parallel::min_trans_pert];
@@ -287,7 +287,7 @@ void run_parallel_docking() {
 	float swap_factor=basic::options::option[basic::options::OptionKeys::docking_parallel::swap_factor];
 	Size swap_freq= std::max(int(coor_freq*swap_factor),5);
 
-	//previous_pose;	
+	//previous_pose;
 	previous_pose=pose;
 	float current_trans_magnitude=initial_trans_magnitude;
 	float current_rot_magnitude=initial_rot_magnitude;
@@ -349,7 +349,7 @@ void run_parallel_docking() {
 
         //for (int ii=1; ii<=jump_transformation.size(); ++ii)
           //      std::cout <<"Rank "<< my_rank << " jump_transformation[" << ii << "]= " << jump_transformation[ii] << std::endl;
-	
+
 	//save pdbs
 	//pose.dump_pdb( "dock_from_rank_" + string_of( my_rank ) + ".pdb" );
 
@@ -382,7 +382,7 @@ void run_parallel_docking() {
 	             num_comm=0;
 		}
 	//send/receive all Isc to rank 0
-	if ( my_rank == 0 ) {	
+	if ( my_rank == 0 ) {
 
 		utility::vector0< core::Real > Isc_all_process(nprocs);
 		Isc_all_process[my_rank]=best_Isc;
@@ -394,12 +394,12 @@ void run_parallel_docking() {
 		//Time to find out the index of the max and mini value
 		Real min_value=999,max_value=-999;
 		for ( int ii = 0; ii < Isc_all_process.size(); ++ii ) {
-			if ( Isc_all_process[ii] > max_value && communicate_all_process_flags[ii]!=true ){	
+			if ( Isc_all_process[ii] > max_value && communicate_all_process_flags[ii]!=true ){
 				max_value=Isc_all_process[ii];
 				max_indx=ii;
 			}
 
-			if ( Isc_all_process[ii] < min_value && communicate_all_process_flags[ii]!=true ){	
+			if ( Isc_all_process[ii] < min_value && communicate_all_process_flags[ii]!=true ){
 				min_value=Isc_all_process[ii];
 				min_indx=ii;
 			}
@@ -408,15 +408,15 @@ void run_parallel_docking() {
 
 		//for (int ii=0; ii<=nprocs-1; ++ii)
 			//std::cout <<" "<<ii<<" " << Isc_all_process[ii] << std::endl;
-		
+
 		//std::cout <<" min_indx "<< min_indx <<" min_value " << min_value << std::endl;
 		//std::cout <<" max_indx "<< max_indx <<" max_value " << max_value << std::endl;
-		
+
 		//Isc_all_process
 
 	} else {
 	//	std::cout << "Node " << my_rank << " send double: " << Isc << std::endl ;
-		utility::send_double_to_node( 0, best_Isc);	
+		utility::send_double_to_node( 0, best_Isc);
 	}
 
 	//MPI_Bcast
@@ -426,17 +426,17 @@ void run_parallel_docking() {
 	MPI_Barrier(MPI_COMM_WORLD);
 
 	//Label the process has been used
-	communicate_all_process_flags[min_indx]=true;	
-	communicate_all_process_flags[max_indx]=true;	
+	communicate_all_process_flags[min_indx]=true;
+	communicate_all_process_flags[max_indx]=true;
 	num_comm=num_comm+2;
 
-	if ( my_rank == min_indx ) {	
+	if ( my_rank == min_indx ) {
 		//Generate the difference in Pose
 		utility::vector1< core::Real > tmp_jump_transformation=jump_transformation;
 		//utility::vector1< core::Real > tmp_jump_transformation(12+total_atoms*3);
 		//int non_zero_size=dump_pose_diff(pose, original_pose,jump_transformation);
 		tmp_jump_transformation.resize(non_zero_size);
-		utility::send_integer_to_node( max_indx, non_zero_size);	
+		utility::send_integer_to_node( max_indx, non_zero_size);
 		//std::cout << "Node min " << my_rank << " Size:" << non_zero_size << std::endl ;
 		utility::send_doubles_to_node(max_indx,tmp_jump_transformation);
 		//pose.dump_pdb( "dock_from_original_" + string_of( my_rank ) + ".pdb" );
@@ -445,10 +445,10 @@ void run_parallel_docking() {
           	  //    std::cout <<"Rank "<< my_rank << " jump_transformation[" << ii << "]= " << jump_transformation[ii] << std::endl;
 		//This should send the data to max_indx
 
-	} 
+	}
 
-	if ( my_rank == max_indx ) {	
-		non_zero_size= utility::receive_integer_from_node( min_indx);	
+	if ( my_rank == max_indx ) {
+		non_zero_size= utility::receive_integer_from_node( min_indx);
 		//std::cout << "Node max " << my_rank << " Size:" << non_zero_size << std::endl ;
 		utility::vector1< core::Real > tmp_jump_transformation=utility::receive_doubles_from_node(min_indx);
         	//for (int ii=1; ii<=jump_transformation.size(); ++ii)
@@ -458,14 +458,14 @@ void run_parallel_docking() {
 		//pose.dump_pdb( "dock_from_original_" + string_of( my_rank ) + ".pdb" );
 		change_docking_pose(pose,tmp_jump_transformation,non_zero_size);
 		//pose.dump_pdb( "dock_from_update_" + string_of( my_rank ) + ".pdb" );
-		
+
 		//save the pose in the previous_pose for restart
 		previous_pose=pose;
 
-	} 
+	}
 
 	//Everyone should work on the bestPose
-	if ( my_rank != max_indx ) {	
+	if ( my_rank != max_indx ) {
 		previous_pose=best_pose;
 	}
 

@@ -15,7 +15,7 @@
 #include <numeric/constants.hh>
 #include <protocols/pockets/DarcElectrostatics.hh>
 #include <protocols/pockets/PocketGrid.hh>
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 
 // Core Headers
 #include <basic/options/option.hh>

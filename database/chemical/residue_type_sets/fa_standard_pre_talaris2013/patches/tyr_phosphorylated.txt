@@ -1,0 +1,73 @@
+## fullatom protein phosphorylation patch for tyrosine
+## By Andy M. Chen, June 2009, achen39@jhu.edu
+
+NAME phosphorylated
+TYPES PHOSPHORYLATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA TYR
+NOT VARIANT_TYPE PHOSPHORYLATION
+NOT VARIANT_TYPE SULFATION ## Just in case
+NOT VARIANT_TYPE PROTONATED
+NOT VARIANT_TYPE DEPROTONATED
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING PTR Y
+## these are the operations involved
+ADD_ATOM  P   Phos X    1.50  ## Best guess from the small molecule ligand params file generator molfile_to_params.py
+ADD_ATOM  O1P OOC  OC   -0.78 ## The charge is taken from the free oxygen atoms of the phosphate backbone in DNA residues
+ADD_ATOM  O2P OOC  OC   -0.78
+ADD_ATOM  O3P OOC  OC   -0.78
+ADD_BOND  OH  P
+ADD_BOND  P   O1P
+ADD_BOND  P   O2P
+ADD_BOND  P   O3P
+
+
+## The information for the following was calculated by taking the arithmetic mean 
+##   of data taken from 128 samples of RCSB's PDB files (with NMR structures and homologues with >70% similarity excluded):
+##   OH-P bond length, P-O1P/O2P/O3P bond length, CZ-OH-P bond angle, OH-P-O1P/O2P/O3P bond angle
+##   For dihedral angles, O1P is given the anti conformation (180 degrees), 
+##     while O2P and O3P are placed in their ideal positions for a tetrahedral configuration.
+##
+## The dihedral angle for placing P was taken from the mean value of the rotamer bin 
+##   with the highest probability.
+##
+SET_ICOOR P   -83.79 54.13 1.608  OH  CZ  CE2
+SET_ICOOR O1P  180.0 72.56 1.503  P   OH  CZ
+SET_ICOOR O2P -120.0 72.56 1.503  P   OH  O1P
+SET_ICOOR O3P -120.0 72.56 1.503  P   OH  O2P
+
+ADD_PROPERTY CHARGED ## For the phosphate group
+
+
+## Chi 3 was a proton chi in TYR.params. Since the hydrogen atom isn't there anymore, 
+##   redefine chi3 so that its fourth atom is the added P. Then, remove the hydrogen.
+REDEFINE_CHI 3  CE2  CZ   OH   P 
+DELETE_ATOM HH
+
+
+## Manually define rotamer bins for chi 3 using data from the 128 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency.
+##   The percentages may not add up to 100% due to rounding.
+
+ADD_CHI_ROTAMER 3   -83.79  17.19  #24.2%
+ADD_CHI_ROTAMER 3  -176.68  12.24  #18.8%
+ADD_CHI_ROTAMER 3    -0.47  20.06  #16.4% (note: this *is* a wide distribution spanning from -35 to 35 degrees)
+ADD_CHI_ROTAMER 3  -131.33   9.85  #16.4%
+ADD_CHI_ROTAMER 3    61.23  12.12  #14.1%
+ADD_CHI_ROTAMER 3   100.14  13.39  #10.2%
+
+
+
+END_CASE
+
+

@@ -157,7 +157,7 @@ bool LoopMover_Refine_KIC::get_task_factory(){ return task_factory; }
 
 /// detailed
 /// Refines the polypeptide segments in the LoopMover_Refine_KIC::loops_ class variable from their current conformations.
-/// Uses Rosetta's all-atom respresentation and high-resolution scoring function (score12 with an upweighted chain
+/// Uses Rosetta's all-atom respresentation and high-resolution scoring function (with an upweighted chain
 /// break term). At the beginning of this stage, unless the flag -loops:fix_natsc has been set, all residues within
 /// the neighbor distance of a loop (defined by -loops:neighbor_dist) are repacked and then subject to rotamer trials.
 /// The backbones of all loop residues, and the side-chains of all loop residues and neighbors are then subject to
@@ -258,7 +258,7 @@ void LoopMover_Refine_KIC::apply(
 		min_scorefxn->set_weight( core::scoring::occ_sol_exact, 0.0 );
 	}
 
-	//scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	//scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 	//scorefxn->set_weight( chainbreak, 1.0 ); // confirm that chainbreak weight is set
 
 	//	scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set

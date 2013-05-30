@@ -98,7 +98,7 @@ main( int argc, char * argv [] )
 	boinc_wu.initialize_worker();
 #endif
 
-	// has to be called before core::init. Which is really stupid.
+	// has to be called before core::init::init. Which is really stupid.
 #ifdef BOINC // BOINC STUFF
 	std::cerr << "Registering options.. " << std::endl;std::cerr.flush();
 #endif

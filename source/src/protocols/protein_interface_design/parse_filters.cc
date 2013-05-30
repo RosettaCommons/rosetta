@@ -65,8 +65,7 @@ ScoreTypeFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map con
 {
 	using namespace core::scoring;
 
-	std::string const scorefxn_name( tag->getOption<string>( "scorefxn", "score12" ) );
-	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<string>( "score_type", "total_score" ) );
 	if( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for ScoreTypeFilter.");
 	score_type_threshold_ = tag->getOption<core::Real>( "threshold" );
@@ -101,19 +100,18 @@ AlaScan::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const &, Mo
 	chain2_ = tag->getOption< bool >( "partner2", 1 );
 	jump_ = tag->getOption< Size >( "jump", 1 );
 	runtime_assert( chain1_ || chain2_ );
-	std::string const scorefxn_name( tag->getOption< string >( "scorefxn", "score12" ));
 	repeats_ = tag->getOption< core::Size >( "repeats", 1 );
 	symmetry_ = tag->getOption< bool >( "symmetry", 0 );
 	repack( tag->getOption< bool >( "repack", 1 ) );
 
 	if ( symmetry_ ) {
 		using namespace core::scoring::symmetry;
-		scorefxn_ = new SymmetricScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) );
+		scorefxn_ = new SymmetricScoreFunction( * protocols::rosetta_scripts::parse_score_function( tag, data ) );
 		TR<<"Symmetric AlaScan with distance threshold of "<<distance_threshold_<<" Ang "<<". jump="<<jump_<<" partner1="<<chain1_<<", partner2="<<chain2_<<" using "<<repeats_<<" repeats."<<std::endl;
 		return;
 	}
 	using namespace core::scoring;
-	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+	scorefxn_ = new ScoreFunction( * protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	TR<<"AlaScan with distance threshold of "<<distance_threshold_<<" Ang "<<". jump="<<jump_<<" partner1="<<chain1_<<", partner2="<<chain2_<<" using "<<repeats_<<" repeats repack "<<repack()<<std::endl;
 }
 
@@ -160,8 +158,7 @@ DdgFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map const & ,
 {
 	using namespace core::scoring;
 
-	std::string const scorefxn_name( tag->getOption<string>( "scorefxn", "score12" ) );
-	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	ddg_threshold_ = tag->getOption<core::Real>( "threshold", -15 );
 	rb_jump_ = tag->getOption< core::Size >( "jump", 1 );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
@@ -213,8 +210,7 @@ EnergyPerResidueFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 {
 	using namespace core::scoring;
 
-	std::string const scorefxn_name( tag->getOption<string>( "scorefxn", "score12" ) );
-	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) ));
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<string>( "score_type", "total_score" ) );
 	threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
 	whole_interface_ = tag->getOption<bool>( "whole_interface" , 0 );

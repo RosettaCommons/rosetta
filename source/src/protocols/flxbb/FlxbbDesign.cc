@@ -132,8 +132,8 @@ FlxbbDesignPack::get_name() const {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FlxbbDesign::FlxbbDesign() :
 	Mover( "FlxbbDesign" ),
-	scorefxn_design_( scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH ) ),
-	scorefxn_relax_ ( scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH ) ),
+	scorefxn_design_( scoring::getScoreFunction() ),
+	scorefxn_relax_ ( scoring::getScoreFunction() ),
 	nflxbb_cycles_( 3 ),
 	layer_mode_( "" ),
 	use_origseq_for_not_dsgned_layer_( true ),
@@ -622,10 +622,8 @@ FlxbbDesign::parse_my_tag(
 	Movers_map const &,
 	Pose const & pose )
 {
-	String const sfxn_design ( tag->getOption<String>( "sfxn_design", "score12" ));
-	String const sfxn_relax  ( tag->getOption<String>( "sfxn_relax", "score12" ) );
-	scorefxn_design_ = data.get< ScoreFunction * >( "scorefxns", sfxn_design );
-	scorefxn_relax_  = data.get< ScoreFunction * >( "scorefxns", sfxn_relax  );
+	scorefxn_design_ = protocols::rosetta_scripts::parse_score_function( tag, "sfxn_design", data );
+	scorefxn_relax_ = protocols::rosetta_scripts::parse_score_function( tag, "sfxn_relax", data );
 
  	std::string const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
 	if( blueprint != "" ){

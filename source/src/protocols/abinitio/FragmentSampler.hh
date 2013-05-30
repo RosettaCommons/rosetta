@@ -79,7 +79,7 @@ while(nstruct) {
 	 abinitio.apply( pose );
 }
 
-call FragmentSampler::register_options() before core::init to add relevant options to the applications help
+call FragmentSampler::register_options() before core::init::init to add relevant options to the applications help
 
 , with the following
 stages, all of which uses a different ScoreFunction based on the cen_std.wts in minirosetta_database:
@@ -128,7 +128,7 @@ class FragmentSampler :  public moves::Mover {    //when changing to new jobdist
 
 public:
 	virtual ~FragmentSampler();
-	//@brief register cmd-line options in option system ( call before core::init )
+	//@brief register cmd-line options in option system ( call before core::init::init )
 	static void register_options();
 
 	///@brief This constructor does not work -- Fix it before using it.

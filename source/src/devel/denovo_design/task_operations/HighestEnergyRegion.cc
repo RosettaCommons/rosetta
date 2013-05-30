@@ -126,7 +126,9 @@ HighestEnergyRegionOperation::parse_tag( utility::tag::TagPtr tag )
 	region_shell_ = tag->getOption< core::Real >( "region_shell", region_shell_ );
 	regions_to_design_ = tag->getOption< core::Size >( "regions_to_design", regions_to_design_ );
 	repack_non_selected_ = tag->getOption< core::Size >( "repack_non_selected", repack_non_selected_ );
-	/*std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ) );
+	/*
+	std::string const scorefxn_name(
+		protocols::rosetta_scripts::get_score_function_name(tag))
 	scorefxn_ = new core::scoring::ScoreFunction();
 	scorefxn_->initialize_from_file("sp2_correction.wts");
 	scorefxn_->set_weight( core::scoring::hack_elec, 0.5 );

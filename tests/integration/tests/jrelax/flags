@@ -1,6 +1,7 @@
 -in:file:s input/short.pdb
 
--score:weights standard
+-restore_pre_talaris_2013_behavior
+-score:weights pre_talaris_2013_standard.wts
 -score:patch score12
 -relax:quick
 -relax:default_repeats 2

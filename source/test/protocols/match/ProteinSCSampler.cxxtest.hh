@@ -27,6 +27,8 @@
 
 /// Project headers
 #include <core/types.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/conformation/Residue.hh>
 
 // C++ headers
 #include <string>
@@ -98,7 +100,7 @@ class ProteinSCSamplerTests : public CxxTest::TestSuite {
 			dunsampler.samples( *res2bp, trpcage.residue_type( 3 ) ));
 
 		//std::cout << "Sample 2: " << trpcage.residue_type( 3 ).name() << " " << samps2.size() << std::endl;
-		TS_ASSERT( samps2.size() == 6 );
+		TS_ASSERT( samps2.size() == 18 );
 
 		/*prob_cummulative = 0.0;
 		for ( Size ii = 1; ii <= samps2.size(); ++ii ) {

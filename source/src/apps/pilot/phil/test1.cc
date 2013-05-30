@@ -110,7 +110,7 @@
 
 // AUTO-REMOVED #include <basic/database/open.hh>
 
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <devel/init.hh>
 
 #include <core/io/pdb/pose_io.hh>
@@ -451,7 +451,7 @@ test_scorefxn_io()
 	core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
 
 	// standard packer wts
-	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+	ScoreFunctionOP scorefxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 	scorefxn->set_weight( fa_rep, 0.0 );
 	(*scorefxn)(pose);
 
@@ -463,8 +463,8 @@ test_scorefxn_io()
 
 	std::cout << *scorefxn2;
 
-	/// score12 w/ std packer wts
-	ScoreFunctionOP score12( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	/// scorefxn w/ std packer wts
+	ScoreFunctionOP score12( getScoreFunction() );
 	(*score12)(pose);
 
 	std::cout << *score12;
@@ -601,7 +601,7 @@ delete_test()
 	Pose pose( start_pose );
 
 	// standard packer wts
-	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+	ScoreFunctionOP scorefxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	// from beginning
 	for ( Size i=1; i< nres; ++i ) {
@@ -2247,7 +2247,7 @@ void
 simple_benchmark()
 {
 	// this should improve stability of the tests
-	core::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+	core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
 
 	//ccd_test(  );
 	//exit(0);
@@ -2303,8 +2303,8 @@ mm_pack_test()
 	using namespace pose;
 
 	// scrfxns
-	ScoreFunctionOP score_12( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
-	ScoreFunctionOP score_mod( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	ScoreFunctionOP score_12( getScoreFunction() );
+	ScoreFunctionOP score_mod( getScoreFunction() );
 	score_mod->set_weight( fa_dun, 0.00 );
 	ScoreFunctionOP score_mm_only( new ScoreFunction );	score_mm_only->set_weight( mm_twist,   1.00 );
 
@@ -2318,7 +2318,7 @@ mm_pack_test()
 
 	float mm_weight = (ener_12 - ener_mod)/ener_mm;
 
-	ScoreFunctionOP score_mm( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	ScoreFunctionOP score_mm( getScoreFunction() );
 	score_mm->set_weight( fa_dun, 0.00 );	score_mm->set_weight( mm_twist, mm_weight );
 
 	// pack
@@ -2766,7 +2766,7 @@ proclose_test()
 	using namespace optimization;
 
 	// standard packer wts
-	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+	ScoreFunctionOP scorefxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	Pose pose;
 	core::import_pose::pose_from_pdb( pose, start_file() );

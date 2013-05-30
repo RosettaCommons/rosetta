@@ -107,7 +107,7 @@ TerminusDistanceFilter::compute( core::pose::Pose const & pose ) const {
 	runtime_assert( copy_pose.num_jump() >= jump_num_ );
 
 	// scoring is necessary for Interface to work reliably
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" ) );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
 	(*scorefxn)(copy_pose);
 
 	protocols::scoring::Interface iface( jump_num_ );

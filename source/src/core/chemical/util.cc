@@ -87,9 +87,9 @@ add_atom_type_set_parameters_from_command_line(
 /// @brief Modify atom_type properties from the command line. Called by ChemicalManager at time of AtomTypeSet creation.
 void
 modify_atom_properties_from_command_line(
-																				 std::string const & atom_type_set_tag,
-																				 AtomTypeSet & atom_type_set
-																				 )
+	std::string const & atom_type_set_tag,
+	AtomTypeSet & atom_type_set
+)
 {
 
 
@@ -120,8 +120,8 @@ modify_atom_properties_from_command_line(
 			std::string const param( mod.substr(pos1+1+pos2+1,pos3) );
 
 			std::string const stringsetting( mod.substr(pos1+1+pos2+1+pos3+1) );
-			if ( !ObjexxFCL::is_float( stringsetting ) ) utility_exit_with_message(errmsg);
-			Real const setting( ObjexxFCL::float_of( stringsetting ) );
+			if ( !ObjexxFCL::is_double( stringsetting ) ) utility_exit_with_message(errmsg);
+			Real const setting( ObjexxFCL::double_of( stringsetting ) );
 
 			TR.Trace << "modify_atom_properties_from_command_line: setting " << atomset_tag << ' ' << atom_name << ' ' <<
 				param << ' ' << setting << std::endl;

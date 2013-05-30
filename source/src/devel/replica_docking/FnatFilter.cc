@@ -141,7 +141,8 @@ FnatFilter::parse_my_tag(
 	core::pose::Pose const &
 	) {
 
- 	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
+ 	std::string const scorefxn_name(
+		protocols::rosetta_scripts::get_score_function_name(tag) );
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( scorefxn_name );
 // // 	scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name )) );
 

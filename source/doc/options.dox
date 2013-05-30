@@ -690,7 +690,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-weights</b> \<String\><dt>
 <dd>select qsar weight set to use</dd><br>
-<dd>Default: "standard"</dd><br>
+<dd>Default: "talaris2013"</dd><br>
 </dl>
 <dl>
 <dt><b>-grid_dir</b> \<String\><dt>
@@ -3796,7 +3796,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-weights</b> \<String\><dt>
 <dd>Name of weights file (without extension .wts)</dd><br>
-<dd>Default: "standard"</dd><br>
+<dd>Default: "talaris2013"</dd><br>
 </dl>
 <dl>
 <dt><b>-set_weights</b> \<StringVector\><dt>
@@ -3805,7 +3805,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-pack_weights</b> \<String\><dt>
 <dd>Name of packing weights file (without extension .wts)</dd><br>
-<dd>Default: "standard"</dd><br>
+<dd>Default: "talaris2013"</dd><br>
 </dl>
 <dl>
 <dt><b>-soft_wts</b> \<String\><dt>
@@ -3868,6 +3868,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-analytic_etable_evaluation</b> \<Boolean\><dt>
 <dd>Instead of interpolating between bins, use an analytic evaluation of the lennard-jones and solvation energis</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-rms_target</b> \<Real\><dt>
@@ -3890,7 +3891,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-hbond_params</b> \<String\><dt>
 <dd>Directory name in the database for which hydrogen bond parameters to use.</dd><br>
-<dd>Default: "standard_params"</dd><br>
+<dd>Default: "sp2_hackelec_params"</dd><br>
 </dl>
 <dl>
 <dt><b>-hbond_disable_bbsc_exclusion_rule</b> \<Boolean\><dt>
@@ -4158,7 +4159,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-hackelec_min_dis</b> \<Real\><dt>
 <dd>changes the minimum distance cut-off for hack-elec energy</dd><br>
-<dd>Default: 1.5</dd><br>
+<dd>Default: 1.6</dd><br>
 </dl>
 <dl>
 <dt><b>-hackelec_max_dis</b> \<Real\><dt>
@@ -4178,7 +4179,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-smooth_hack_elec</b> \<Boolean\><dt>
 <dd>Smooth the discontinuities in the hackelec energy function using a sigmoidal term</dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_GBpair_cut</b> \<Real\><dt>
@@ -4357,7 +4358,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-hbond_sp2_correction</b> \<Boolean\><dt>
-<dd>turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_hackelec_params -expand_st_chi2sampling -smooth_hack_elec -hackelec_min_dis 1.6 -hackelec_r_option false</dd><br>
+<dd>turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_hackelec_params -expand_st_chi2sampling -smooth_hack_elec -hackelec_min_dis 1.6 -hackelec_r_option false -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-5.85 fa_standard:NH2O:LK_DGFREE:-7.8 fa_standard:Narg:LK_DGFREE:-10.0 fa_standard:OH:LK_DGFREE:-6.70</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_default</b> \<Boolean\><dt>
@@ -4414,7 +4415,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-rama_not_squared</b> \<Boolean\><dt>
-<dd>Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (rama+entropy) > 1.0</dd><br>
+<dd>Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (ram a+entropy) > 1.0</dd><br>
 </dl>
 <dl>
 <dt><b>-rama_map</b> \<File\><dt>
@@ -4424,6 +4425,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-dun10</b> \<Boolean\><dt>
 <dd>Use the 2010 Dunbrack library instead of either the the 2002 library.</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-dun10_dir</b> \<String\><dt>
@@ -4448,16 +4450,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-lj_hbond_hdis</b> \<Real\><dt>
 <dd>Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)</dd><br>
-<dd>Default: 1.95</dd><br>
+<dd>Default: 1.75</dd><br>
 </dl>
 <dl>
 <dt><b>-lj_hbond_OH_donor_dis</b> \<Real\><dt>
 <dd>Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)</dd><br>
-<dd>Default: 3.0</dd><br>
+<dd>Default: 2.6</dd><br>
 </dl>
 <dl>
 <dt><b>-score12prime</b> \<Boolean\><dt>
-<dd>Whenever getScoreFunction() would have returned the ScoreFunction from standard.wts + score12.wts_patch, instead return a revised score12 (score12prime) with reference energies optimized with optE for sequence profile recovery</dd><br>
+<dd>Restore to score funciton parameters to score12 parameters and have getScoreFuntion return with score12prime.wts. The score12prime.wts differs from standard.wts + score12.wts_patch, in that the reference energies have been optimized with optE for sequence profile recovery</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -4473,22 +4475,22 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-hb_sp2_chipen</b> \<Boolean\><dt>
 <dd>Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%</dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-hbond_measure_sp3acc_BAH_from_hvy</b> \<Boolean\><dt>
 <dd>If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen</dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-hb_fade_energy</b> \<Boolean\><dt>
 <dd>Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function.</dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-use_bicubic_interpolation</b> \<Boolean\><dt>
 <dd>Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer</dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-dun_normsd</b> \<Boolean\><dt>
@@ -4511,7 +4513,30 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-expand_st_chi2sampling</b> \<Boolean\><dt>
-<dd>Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves.</dd><br>
+<dd>Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves.  This flag can be used with any residue type set (including the pre-talaris fa_standard version, and with the fa_standard_05.2009_icoor version) but is unncessary for the talaris2013 version (currently named fa_standard) as the expanded SER and THR sampling is already encoded in .params files for these two residues</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
+<li><h2>mistakes</h2>
+<dl>
+<dt><b>-mistakes</b> \<Boolean\><dt>
+<dd>mistakes option group</dd><br>
+</dl>
+<dl>
+<dt><b>-restore_pre_talaris_2013_behavior</b> \<Boolean\><dt>
+<dd>Restore the set of defaults that were in place before the Talaris2013 parameters were made default.  This is an umbrella flag and sets the following flags if they are not set on the command line to some other value -mistakes::chemical::pre_talaris2013_geometries true -corrections::score::dun10 false -corrections::score::use_bicubic_interpolation false -corrections::score:hb_sp2_chipen false -corrections::score::hb_fade_energy false -corrections::score::hbond_measure_sp3acc_BAH_from_hvy false -corrections::score::lj_hbond_hdis 1.95 -corrections::score::lj_hbond_OH_donor_dis 3.0 -corrections::chemical::expand_st_chi2sampling false -score::weights pre_talaris_2013_standard.wts -score::patch score12.wts_patch -score::analytic_etable_evaluation false -score::hbond_params score12_params -score::smooth_hack_elec false -score::hackelec_min_dis 1.5 -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-10.0 fa_standard:NH2O:LK_DGFREE:-10.0 fa_standard:Narg:LK_DGFREE:-11.0 fa_standard:OH:LK_DGFREE:-6.77</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
+<li><h2>mistakes:chemical</h2>
+<dl>
+<dt><b>-chemical</b> \<Boolean\><dt>
+<dd>chemical option group</dd><br>
+</dl>
+<dl>
+<dt><b>-pre_talaris2013_geometries</b> \<Boolean\><dt>
+<dd>Use the version of the fa_standard geometries that were active before the Talaris2013 parameters were taken as default</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>willmatch</h2>
@@ -7374,7 +7399,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-min_cst_weights</b> \<String\><dt>
 <dd>No description</dd><br>
-<dd>Default: "standard"</dd><br>
+<dd>Default: "talaris2013"</dd><br>
 </dl>
 <dl>
 <dt><b>-opt_radius</b> \<Real\><dt>

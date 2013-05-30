@@ -1,0 +1,71 @@
+## fullatom protein phosphorylation patch for threonine
+## By Andy M. Chen, June 2009, achen39@jhu.edu
+
+NAME phosphorylated
+TYPES PHOSPHORYLATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA THR
+NOT VARIANT_TYPE PHOSPHORYLATION
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING TPO T
+## these are the operations involved
+ADD_ATOM  P   Phos X    1.50  ## Best guess from the small molecule ligand params file generator molfile_to_params.py
+ADD_ATOM  O1P OOC  OC   -0.78 ## The charge is taken from the free oxygen atoms of the phosphate backbone in DNA residues
+ADD_ATOM  O2P OOC  OC   -0.78
+ADD_ATOM  O3P OOC  OC   -0.78
+ADD_BOND  OG1 P
+ADD_BOND  P   O1P
+ADD_BOND  P   O2P
+ADD_BOND  P   O3P
+
+
+## The information for the following was calculated by taking the arithmetic mean 
+##   of data taken from 97 samples of RCSB's PDB files (with NMR structures and homologues with >70% similarity excluded):
+##   OG1-P bond length, P-O1P/O2P/O3P bond length, CB-OG1-P bond angle, OG1-P-O1P/O2P/O3P bond angle
+##   For dihedral angles, O1P is given the anti conformation (180 degrees), 
+##     while O2P and O3P are placed in their ideal positions for a tetrahedral configuration.
+##
+## The dihedral angle for placing S was taken from the mean value of the rotamer bin 
+##   with the highest probability.
+##
+SET_ICOOR P    116.72  59.44  1.613  OG1  CB   CA 
+SET_ICOOR O1P  180.00  72.72  1.551  P    OG1  CB 
+SET_ICOOR O2P -120.00  72.72  1.551  P    OG1  O1P
+SET_ICOOR O3P -120.00  72.72  1.551  P    OG1  O2P
+
+
+ADD_PROPERTY CHARGED ## For the phosphate group
+
+
+## Chi 2 was a proton chi in THR.params. Since the hydrogen atom isn't there anymore, 
+##   redefine the fourth atom of chi2 to the added P and then remove the hydrogen.
+REDEFINE_CHI 2  CA   CB   OG1  P 
+DELETE_ATOM HG1
+
+
+## Manually define rotamer bins for chi 2 using data from the 97 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency.
+##   The percentages may not add up to 100% due to rounding.
+
+ADD_CHI_ROTAMER 2  116.72   9.41  #48.5%
+ADD_CHI_ROTAMER 2  158.71   7.84  #34.0%, upper tail of the 116.72 bin
+ADD_CHI_ROTAMER 2 -102.82  27.09  #10.3%
+##The high std. deviation here is intentional, as this is indeed a wide and uncommon distribution
+##  (the bin encompasses all phospho-threonine samples with a negative chi2)
+
+ADD_CHI_ROTAMER 2   79.70   7.27  # 7.2%, lower tail of the 116.72 bin
+
+
+
+END_CASE
+

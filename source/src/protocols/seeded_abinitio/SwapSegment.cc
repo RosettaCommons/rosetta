@@ -229,8 +229,7 @@ SwapSegment::parse_my_tag(
 	all_seeds_.clear();//just in case
 	
 	//need scorefxn to score after swapping
-	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name) ));
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	TR<<"scoring with following scorefunction: " << *scorefxn_ <<std::endl;
 	
 	TR<<"SwapSegment mover has been instantiated" <<std::endl;

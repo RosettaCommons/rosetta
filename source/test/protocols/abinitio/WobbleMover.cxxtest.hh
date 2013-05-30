@@ -110,7 +110,7 @@ void WobbleMoverTest::test_wobble() {
 	hardly_moves->set_bb( pose_.total_residue(), true );
 	protocols::simple_moves::MinMover minimize(
 			 hardly_moves,
-				ScoreFunctionFactory::create_score_function( STANDARD_WTS, "score12" ),
+				getScoreFunction(),
 				"dfpmin",
 				0.01, /* tolerance */
 				true /* use nb_list */

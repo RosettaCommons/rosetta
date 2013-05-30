@@ -803,7 +803,7 @@ struct MatchSet {
     //  if(base.pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(base.pose,i);
     //  if(base.pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(base.pose,i);
     // }
-    ScoreFunctionOP sflig = core::scoring::ScoreFunctionFactory::create_score_function( "STANDARD" );
+    ScoreFunctionOP sflig = core::scoring::getScoreFunction();
     sflig->set_weight(core::scoring::fa_dun,0.01);
     sflig->set_weight(core::scoring::fa_intra_rep,0.44);
     sflig->set_weight(core::scoring::ref,0.0);

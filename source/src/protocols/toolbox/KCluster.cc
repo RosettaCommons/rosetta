@@ -16,7 +16,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/io/silent/SilentFileData.hh>
 //#include <core/io/silent/SilentStructFactory.hh>
 

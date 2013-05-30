@@ -112,8 +112,8 @@ namespace symmetric_docking {
 // default constructor
 SymDockingHiRes::SymDockingHiRes() : Mover()
 {
-	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" ) ;
-	scorefxn_pack_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard" ) ;
+	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
+	scorefxn_pack_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	moves::Mover::type( "SymDockingHiRes" );
 	init_task_factory_=NULL;
 	design_ = false;

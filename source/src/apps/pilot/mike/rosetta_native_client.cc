@@ -8,7 +8,7 @@
 
 // libRosetta headers
 #include <basic/options/option.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 // C++ headers
 #include <iostream>
 #include <string>

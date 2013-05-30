@@ -63,7 +63,7 @@ public:
 		using namespace protocols::sparta;
 		string const cs_file ( "protocols/sparta/data_16988.tab" );
 		string const pdb_file( "protocols/sparta/2kywA.pdb" );
-		float const TOLERATED_ERROR( 5e-3 );
+		core::Real const TOLERATED_ERROR( 5e-3 );
 
 		Sparta sparta(cs_file);
 
@@ -74,7 +74,7 @@ public:
 		vector1< float > scores( sparta.score_pose_per_residue(pose) );
 		float sum_scores( std::accumulate( scores.begin(), scores.end(), 0.0 ) );
 
-		TS_ASSERT_DELTA( sparta_score, 180.359, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( sparta_score, 180.3510, TOLERATED_ERROR );
 
 		TS_ASSERT( scores.size() == 87 );
 		TS_ASSERT_DELTA( sparta_score, sum_scores/4, TOLERATED_ERROR );
@@ -131,8 +131,8 @@ public:
 		TS_ASSERT_DELTA( scores[51], 96.665, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( scores[52], 21.381, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( scores[53], 12.988, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( scores[54],  2.452, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( scores[55],  3.242, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( scores[54],  2.462, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( scores[55],  3.254, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( scores[56],  3.108, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( scores[57],  4.817, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( scores[58],  7.066, TOLERATED_ERROR );
@@ -148,8 +148,8 @@ public:
 		TS_ASSERT_DELTA( scores[68], 14.271, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( scores[69],  5.251, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( scores[70], 11.269, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( scores[71],  8.653, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( scores[72], 23.695, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( scores[71],  8.302, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( scores[72], 23.998, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( scores[73],  7.950, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( scores[74],  6.610, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( scores[75],  7.699, TOLERATED_ERROR );

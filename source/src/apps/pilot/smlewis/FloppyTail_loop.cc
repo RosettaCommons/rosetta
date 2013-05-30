@@ -190,10 +190,10 @@ public:
 		TR << "Using centroid scorefunction\n" << *centroid_scorefunction_;
 
 		//set up fullatom scorefunction
-		fullatom_scorefunction_ = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+		fullatom_scorefunction_ = getScoreFunction();
 		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fullatom_scorefunction_ ); //protected if(option) internally
 		if( pair_off ) fullatom_scorefunction_->set_weight( fa_pair, 0.0 ); //not for general use
-		TR << "Using fullatom scorefunction (STANDARD_WTS, SCORE12_PATCH), pair may be modified\n"
+		TR << "Using fullatom scorefunction (TALARIS_2013), pair may be modified\n"
 			 << *fullatom_scorefunction_;
 
 	}

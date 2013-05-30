@@ -103,7 +103,7 @@ main( int argc, char * argv [] )
 	std::string const input_pdb_name ( basic::options::start_file() );
 	core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
 
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 	//scorefxn->set_weight( core::scoring::pocket_constraint, option[ pocket_constraint_weight ] );
 
 	// report starting score

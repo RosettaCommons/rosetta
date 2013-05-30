@@ -17,7 +17,7 @@
 
 #include <protocols/jobdist/standard_mains.hh>
 
-//#include <core/init.hh>
+//#include <core/init/init.hh>
 #include <core/types.hh>
 
 // AUTO-REMOVED #include <core/sequence/util.hh>
@@ -413,16 +413,6 @@ int universal_main(
 					std::cout << "switching to centroid" << std::endl;
 					core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID );
 				}
-
-				// are we a centroid scoring function but the input is fullatom ? )
-//				if (( (option[ OptionKeys::score::weights ]() == "score12") ||
-//							(option[ OptionKeys::score::weights ]() == "standard") )
-//			        && ( !input_pose.is_fullatom() ) ) {
-//					std::cout << "switching to fullatom" << std::endl;
-//					core::util::switch_to_residue_type_set( input_pose, core::chemical::STAMDARD );
-//				}
-
-
 
 				// Work out the tag. If we are processing more than one silent file, add the file name too!
 				std::string tag = iter->decoy_tag();

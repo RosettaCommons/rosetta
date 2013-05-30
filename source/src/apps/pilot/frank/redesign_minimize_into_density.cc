@@ -60,7 +60,7 @@ main( int argc, char * argv [] )
 		main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
 	}
 
-	//create a ScoreFunction from commandline options (default is score12)
+	//create a ScoreFunction from commandline options
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
 
 	// now add density scores from cmd line

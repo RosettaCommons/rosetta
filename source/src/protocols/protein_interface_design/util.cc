@@ -212,7 +212,7 @@ void
 find_lowest_constraint_energy_residue( core::pose::Pose const & pose, core::Size const chain, core::Size & resi, core::Real & lowest_energy )
 {
 	using namespace core::scoring;
-	core::scoring::ScoreFunctionCOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	core::scoring::ScoreFunctionCOP scorefxn( getScoreFunction() );
 
 	resi = 0;
 	lowest_energy = 100000.0;

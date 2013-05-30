@@ -51,7 +51,7 @@
 #include <core/pack/pack_rotamers.hh>
 // Utility Headers
 #include <core/conformation/Residue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/PDBInfo.hh>
@@ -447,8 +447,8 @@ int main( int argc, char * argv [] ) {
 	std::string mini_complex_pdb = "mini_" + tag + ".pdb";
 
 	//setup scorefxn
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
-	scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn(getScoreFunction());
+	scoring::ScoreFunctionOP repack_scorefxn(getScoreFunction());
 
 	//setup the bound pose
 	pose::Pose bound_pose;

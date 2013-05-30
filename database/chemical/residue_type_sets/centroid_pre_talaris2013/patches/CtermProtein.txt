@@ -1,0 +1,25 @@
+## fullatom protein n-terminus patch
+## I would like to redo this in YAML! no begin_ end_ blocks!
+
+NAME CtermProteinFull
+TYPES UPPER_TERMINUS
+
+## general requirements for this patch
+## require protein, ignore anything that's already nterm patched:
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE UPPER_TERMINUS
+END_SELECTOR
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_POLYMER_CONNECT UPPER NONE
+
+ADD_PROPERTY UPPER_TERMINUS ## implies terminus
+
+## totally making this up:
+SET_ICOOR O 120 60 1.0 C CA N
+
+END_CASE
+

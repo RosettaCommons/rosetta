@@ -94,7 +94,7 @@ HBondOptions::HBondOptions():
 	smooth_hb_env_dep_( true ),
 	bb_donor_acceptor_check_( true ),
 	decompose_bb_hb_into_pair_energies_( false ),
-	params_database_tag_("standard_params"),
+	params_database_tag_("sp2_hackelec_params"),
 	use_incorrect_deriv_( false ),
 	use_sp2_chi_penalty_( false ),
 	sp2_BAH180_rise_( 0.75 ),
@@ -105,7 +105,7 @@ HBondOptions::HBondOptions():
 {
 	using namespace basic::options;
 	if (option.has(OptionKeys::score::hbond_params) &&
-		option[OptionKeys::score::hbond_params].user()){
+			option[OptionKeys::score::hbond_params]() != params_database_tag_ ){
 		params_database_tag_ = option[OptionKeys::score::hbond_params];
 	}
 	if (option.has(OptionKeys::membrane::Mhbond_depth) &&

@@ -99,11 +99,10 @@ FullatomRelaxMover::~FullatomRelaxMover() {}
 void FullatomRelaxMover::setup_defaults(){
 	TR << "Setting Defaults" << std::endl;
 	// setting MoveMaps
-	//Setting up default scorefunction --> rosetta++ modified score12
-	score_high_res_ = scoring::ScoreFunctionFactory::create_score_function
-                                                    ( "standard","score12" );
-	// setting weighs for score12
-	TR << "Setting Weighs for score12" << std::endl;
+	//Setting up default scorefunction
+	score_high_res_ = scoring::getScoreFunction();
+	// setting weighs
+	TR << "Setting Weighs" << std::endl;
 	score_high_res_->set_weight( core::scoring::hack_elec, 0.25 );
 	//score_high_res_->set_weight(core::scoring::fa_atr,0.95);
 	//score_high_res_->set_weight(core::scoring::fa_sol,0.90);

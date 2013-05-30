@@ -589,18 +589,18 @@ public:
 			minimize(pose_for_design, fa_scorefxn_, design_pos, false, true, true);
 			design(pose_for_design, fa_scorefxn_, design_pos, smallres_only_);
 
-			// Repack and minimize using score12
-			ScoreFunctionOP score12 = core::scoring::ScoreFunctionFactory::create_score_function("standard", "score12");
-			repack(pose_for_design, score12, design_pos);
-			minimize(pose_for_design, score12, design_pos, false, true, false);
-			score12->score(pose_for_design);
+			// Repack and minimize using scorefxn
+			ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+			repack(pose_for_design, scorefxn, design_pos);
+			minimize(pose_for_design, scorefxn, design_pos, false, true, false);
+			scorefxn->score(pose_for_design);
 
 			// Calculate the surface area and surface complementarity for the interface
 			Real sa1=0,sc1=0,sa2=0,sc2=0,sa3=0,sc3=0;
 			new_sc(pose_for_design, sa1,sc1,sa2,sc2,sa3,sc3);
 
 			// Calculate the ddG of the monomer in the assembled and unassembled states
-			protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
+			protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(scorefxn, 1, true);
 			ddG_mover.calculate(pose_for_design);
 			Real ddG = ddG_mover.sum_ddG();
 

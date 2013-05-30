@@ -64,6 +64,7 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 
 #include <core/chemical/ResidueType.hh>
@@ -373,9 +374,15 @@ ChemicalManager::residue_type_set( std::string tag )
 		TR.Debug << "CHEMICAL_MANAGER: read residue types: " << tag << std::endl;
 		// redirecting to new icoor folder
 		std::string temp_str( basic::database::full_name( "chemical/residue_type_sets/"+tag ) );
-		if(tag == FA_STANDARD) {
-			if (basic::options::option[basic::options::OptionKeys::corrections::chemical::icoor_05_2009]) {
+		if ( tag == FA_STANDARD ) {
+			if ( basic::options::option[basic::options::OptionKeys::corrections::chemical::icoor_05_2009]) {
 				temp_str += "_05.2009_icoor";
+			} else if ( basic::options::option[basic::options::OptionKeys::mistakes::chemical::pre_talaris2013_geometries ]) {
+				temp_str += "_pre_talaris2013";
+			}
+		} else if ( tag == CENTROID ) {
+			if ( basic::options::option[basic::options::OptionKeys::mistakes::chemical::pre_talaris2013_geometries ]) {
+				temp_str += "_pre_talaris2013";
 			}
 		}
 		temp_str += "/";

@@ -143,8 +143,7 @@ void
 Etable::dimension_etable_arrays()
 {
 	// size the arrays
-	if ( ! basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] )
-	{
+	if ( ! basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ) {
 		ljatr_.dimension(  etable_disbins, n_atomtypes_, n_atomtypes_ );
 		ljrep_.dimension(  etable_disbins, n_atomtypes_, n_atomtypes_ );
 		solv1_.dimension(  etable_disbins, n_atomtypes_, n_atomtypes_ );

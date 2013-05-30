@@ -119,13 +119,10 @@ FNatFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::Data
 	//TODO: convert jump_num to movable_jumps_ (vector0?)
 	movable_jumps_.push_back(jump_num);
 
-	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	core::scoring::ScoreFunction* data_scorefxn =
-		data_map.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name );
-	scorefxn_ = new core::scoring::ScoreFunction( *( data_scorefxn ));
+	scorefxn_ = rosetta_scripts::parse_score_function( tag, data_map )->clone();
 
 	TR<<"Built FNatFilter with threshold " << threshold_ << ", scorefxn " <<
-		scorefxn_name <<", jump "<< jump_num << std::endl;
+		rosetta_scripts::get_score_function_name(tag) <<", jump "<< jump_num << std::endl;
 
 }
 

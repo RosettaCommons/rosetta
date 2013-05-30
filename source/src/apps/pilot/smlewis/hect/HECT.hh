@@ -195,8 +195,8 @@ public:
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
-		fullatom_scorefunction_ = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
-		TR << "Using fullatom scorefunction (STANDARD_WTS, SCORE12_PATCH), \n" << *fullatom_scorefunction_ << std::flush;
+		fullatom_scorefunction_ = getScoreFunction();
+		TR << "Using fullatom scorefunction (TALARIS_2013), \n" << *fullatom_scorefunction_ << std::flush;
 
 		//read native structure for CA RMSD
 		core::pose::Pose xtal_pose;

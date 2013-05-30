@@ -407,12 +407,8 @@ SeedSetupMover::parse_my_tag( TagPtr const tag,
 	allow_all_aas_ = tag->getOption< bool >("allow_all_aas", 0 );
 
 	/// this mover can perform repacking and design mover -- which is not recommaned
-  std::string scorefxn_repack =  tag->getOption<std::string>( "scorefxn_repack", "score12" );
-  std::string scorefxn_minimize = tag->getOption<std::string>( "scorefxn_minimize", "score12" );
-	using namespace core::scoring;
-
-	scorefxn_repack_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn_repack ) );
-	scorefxn_minimize_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn_minimize ) );
+	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();
+	scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
 	design_ = tag->getOption< bool >( "design" , 0 );
 
 	/// read input seeds

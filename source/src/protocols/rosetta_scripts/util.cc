@@ -165,18 +165,50 @@ get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap c
 }
 
 
-
-/// @details Utility function to find a scorefunction from parser-provided data. This is essentially a shameless
-/// copy of Justin's PackRotamersMover::parse_score_function.
+/// @details Utility function to find a scorefunction from
+/// parser-provided data. This is essentially a shameless copy of
+/// Justin's PackRotamersMover::parse_score_function.
 core::scoring::ScoreFunctionOP
-parse_score_function( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data, std::string const dflt_key/*="score12"*/ )
+parse_score_function(
+	utility::tag::TagPtr const tag,
+	std::string const & option_name,
+	protocols::moves::DataMap const & data,
+	std::string const dflt_key/*="score12"*/ )
 {
-	std::string const scorefxn_key( tag->getOption<std::string>("scorefxn", dflt_key ) );
+	std::string const scorefxn_key( tag->getOption<std::string>(option_name, dflt_key) );
 	if ( ! data.has( "scorefxns", scorefxn_key ) ) {
-		throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in DataMap.");
+		throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in DataMap. To add a score function to the data map, define a score function in the <SCOREFXNS/>.'");
 	}
 	return data.get< ScoreFunction* >( "scorefxns", scorefxn_key );
 }
+
+
+/// @details Utility function to find a scorefunction from
+/// parser-provided data for the option 'scorefxn'.
+core::scoring::ScoreFunctionOP
+parse_score_function(
+	utility::tag::TagPtr const tag,
+	protocols::moves::DataMap const & data,
+	std::string const dflt_key/*="score12"*/ )
+{
+	return parse_score_function(tag, "scorefxn", data, dflt_key);
+}
+
+std::string
+get_score_function_name(
+	utility::tag::TagPtr const tag,
+	std::string const & option_name
+) {
+	return tag->getOption<std::string>(option_name, "score12");
+}
+
+std::string
+get_score_function_name(
+	utility::tag::TagPtr const tag
+) {
+	return get_score_function_name(tag, "scorefxn");
+}
+
 
 core::pose::PoseOP
 saved_reference_pose( utility::tag::TagPtr const in_tag, protocols::moves::DataMap & data_map ){

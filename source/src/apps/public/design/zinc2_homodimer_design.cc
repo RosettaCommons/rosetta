@@ -223,7 +223,7 @@ public:
 			pose.add_constraint( new ResidueTypeConstraint( pose, i, basic::options::option[fav_nat_bonus].value()) );
 		}
 		//SCOREFUNCTION --> add constraints
-		fa_metal_scorefxn_ = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+		fa_metal_scorefxn_ = getScoreFunction();
 		fa_metal_scorefxn_->set_weight( res_type_constraint, 1.0 );
 		fa_metal_scorefxn_->set_weight( atom_pair_constraint, 1.0 );
 		fa_metal_scorefxn_->set_weight( dihedral_constraint, 1.0 );

@@ -252,18 +252,20 @@ EnzRepackMinimize::parse_my_tag( utility::tag::TagPtr const tag, protocols::move
 	if( tag->hasOption( "minimize_prot_jumps" ) )
 		 minimize_prot_jumps_ = tag->getOption<bool>( "minimize_prot_jumps", 0 );
 
-	std::string const scorefxn_repack( tag->getOption<std::string>( "scorefxn_repack", "score12" ) );
-	std::string const scorefxn_minimize( tag->getOption<std::string>( "scorefxn_minimize", "score12" ) );
-	using namespace core::scoring;
-	scorefxn_repack_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn_repack ) );
-	scorefxn_minimize_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn_minimize ) );
+	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();
+	scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
+
 
 	if (design_ && repack_) utility_exit_with_message("Can't both Design and Repack_Only. Check xml file");
 	if (minimize_in_stages_ && (!min_bb_) )utility_exit_with_message( "EnzRepackMinimize cant minimize in stages without minimize_bb set to 1. Check xml file." );
 
 	//task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 
-	TR<<"design="<<design_<< ", with repack scorefxn "<<scorefxn_repack<<" and minimize scorefxn "<<scorefxn_minimize<<std::endl;
+	TR
+		<< "design="<<design_<< ","
+		<< " with repack scorefxn " << protocols::rosetta_scripts::get_score_function_name(tag, "scorefxn_repack" )
+		<< " and minimize scorefxn " << protocols::rosetta_scripts::get_score_function_name(tag, "scorefxn_minimize" )
+		<< std::endl;
 
 }
 

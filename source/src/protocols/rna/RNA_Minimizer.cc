@@ -113,7 +113,7 @@ RNA_Minimizer::RNA_Minimizer():
 {
     Mover::type("RNA_Minimizer");
     if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
-        scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( basic::options::option[ basic::options::OptionKeys::score::weights ]() );
+        scorefxn_ = core::scoring::getScoreFunction();
     } else {
         scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
     }

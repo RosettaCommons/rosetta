@@ -105,7 +105,7 @@ public:
 
 		// init/reset seeds in all RG objects we have to do this inside the test it self function since
 		// user could request to run just one single test.
-		core::init_random_generators(1101, numeric::random::_RND_TestRun_, "mt19937");
+		core::init::init_random_generators(1101, numeric::random::_RND_TestRun_, "mt19937");
 
 		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 
@@ -171,11 +171,11 @@ public:
 
 		rotsets->build_rotamers( pose, *scorefxn, packer_neighbor_graph );
 
-	//	rotsets->dump_pdb( pose, "test_rotamer_sets.pdb");
+		//rotsets->dump_pdb( pose, "test_rotamer_sets.pdb");
 
 		TR << "rotamer set has " << rotsets->nrotamers() << " rotamers, should have 1283." << std::endl;
 
-		TS_ASSERT_EQUALS( rotsets->nrotamers(), 1283 );
+		TS_ASSERT_EQUALS( rotsets->nrotamers(), 2344 );
 
 		//now we'll load the template rotamer set and make sure that all rotamers are equal.
 		//we rely on the multimodel pdb reader for file processing

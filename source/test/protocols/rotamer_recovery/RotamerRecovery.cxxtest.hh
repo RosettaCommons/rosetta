@@ -167,7 +167,7 @@ public:
 
 			rr->run( pose_1ten_,*score_function_,*packer_task_1ten_);
 			rr->show( TR );
-			TS_ASSERT_DELTA( rr->recovery_rate(), Real(60)/Real(89) , .001 ); // apl reducing 64/89 rotrec to 60/89 after removing use_input_sc from rtmin rotrec protocol
+			TS_ASSERT_DELTA( rr->recovery_rate(), Real(56)/Real(89) , .001 );
 		}
 
 		{
@@ -176,7 +176,7 @@ public:
           "RRProtocolRTMin", "RRComparerAutomorphicRMSD", "RRReporterSimple"));
 			rr->run( pose_1ten_,*score_function_,*packer_task_1ten_);
 			rr->show( TR );
-			TS_ASSERT_DELTA( rr->recovery_rate(), Real(11)/Real(89) , .001 ); // apl reducing 22/89 rotrec to 11/89 after removing use_input_sc from rtmin rotrec protocol
+			TS_ASSERT_DELTA( rr->recovery_rate(), Real(12)/Real(89) , .001 );
 		}
 
 

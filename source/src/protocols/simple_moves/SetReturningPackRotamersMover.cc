@@ -82,7 +82,7 @@ SetReturningPackRotamersMover::apply( pose::Pose & pose ) {
 	// guarantee of valid ScoreFunction and PackerTask postponed until now
 	if ( this->score_function() == 0 ) {
 		TR << "undefined ScoreFunction -- creating a default one" << std::endl;
-		this->score_function( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+		this->score_function( getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 	}
 
 	// if present, task_factory_ always overrides/regenerates task_

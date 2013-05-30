@@ -1,0 +1,90 @@
+
+patches/CtermProteinFull.txt
+patches/Cterm_amidation.txt
+patches/NtermProteinFull.txt
+patches/LowerDNA.txt
+patches/UpperDNA.txt
+patches/SpecialRotamer.txt
+patches/protein_cutpoint_upper.txt
+patches/protein_cutpoint_lower.txt
+patches/dna_cutpoint_upper.txt
+patches/dna_cutpoint_lower.txt
+patches/VirtualBB.txt
+patches/ShoveBB.txt
+patches/VirtualDNAPhosphate.txt
+patches/VirtualNterm.txt
+patches/RepulsiveOnly_fa.txt
+patches/VirtualProteinResidue.txt
+
+## uncomment this Brian
+patches/CtermConnect.txt
+
+##fpd
+#patches/CtermTruncation.txt
+#patches/NtermTruncation.txt
+
+##added by steven combs November 11 2010
+#patches/sc_orbitals.txt
+
+# Added by David P. Nannemann 29 Nov 2012
+patches/PtermProteinFull.txt
+
+## The following were added by Andy M. Chen in June 2009
+##   for post-translational modifications
+patches/pro_hydroxylated_case1.txt
+patches/pro_hydroxylated_case2.txt
+patches/ser_phosphorylated.txt
+patches/thr_phosphorylated.txt
+patches/tyr_phosphorylated.txt
+patches/tyr_sulfated.txt
+patches/lys_monomethylated.txt
+patches/lys_dimethylated.txt
+patches/lys_trimethylated.txt
+patches/lys_acetylated.txt
+patches/glu_carboxylated.txt
+
+## The following were added by Andy M. Chen in July 2009
+##   for post-translational modifications
+##
+##Note: The histidine methylated patch is commented out for now, as it was discovered that
+##  Rosetta would try to patch HIS_D as well-- which obviously doesn't work
+##  since the hydrogen to be removed isn't there. And since there is no variant code
+##  added to HIS_D, I have no way of applying a patch to HIS without affecting HIS_D.
+##  The added methyl group otherwise works fine.
+##
+patches/cys_acetylated.txt
+patches/tyr_diiodinated.txt
+
+#patches/his_methylated.txt
+
+patches/N_acetylated.txt
+patches/C_methylamidated.txt
+
+## patches for the MakeRotLib protocol
+patches/MethylatedProteinCterm.txt
+patches/AcetylatedProteinNterm.txt
+
+
+## carbohydrate patches
+## termini
+patches/carbohydrates/lower_terminus.txt
+patches/carbohydrates/upper_terminus.txt
+## glycosylation/branching
+patches/carbohydrates/N-linked_glycosylation.txt
+patches/carbohydrates/branch_lower_term.txt
+patches/carbohydrates/2-branch.txt
+patches/carbohydrates/6-branch.txt
+## modifications
+patches/carbohydrates/2-amination.txt
+#patches/carbohydrates/N-acetyl-2-amination.txt
+
+
+## alternative backbones
+#patches/hbs_pre.txt
+#patches/hbs_post.txt
+
+#patches/oop_pre.txt
+#patches/oop_post.txt
+
+## replusive backbone
+#patches/ReplsBB.txt

@@ -17,7 +17,7 @@
 
 
 // Package Headers
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 // AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // Project Headers

@@ -72,6 +72,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Job distributor
 #include <protocols/jd2/JobDistributor.hh>
@@ -220,6 +221,10 @@ HDmakerMover::bb_score(pose::Pose & pose, core::Size aligned_chain_num, core::sc
   // get instance of etable energy method
   core::scoring::methods::EnergyMethodOptions const & emo(scorefxn->energy_method_options());
   core::scoring::etable::Etable const & et(*(core::scoring::ScoringManager::get_instance()->etable(emo.etable_type())));
+
+	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] || emo.analytic_etable_evaluation() ) {
+		utility_exit_with_message("homodimer_maker is incompatible with analytic_etable_evaluation. Please either fix the code or add '-analytic_etable_evalution 0' to the command line.");
+	}
   core::scoring::etable::TableLookupEtableEnergy ete( et, emo );
 
   // iterate over both sets of atom and add into one emapvector

@@ -180,7 +180,7 @@ TaskAwareMinMover::parse_my_tag(
 	// call to MinMover::parse_my_tag avoided here to prevent collision of chi and bb tag options
 	minmover_->parse_opts( tag, datamap, filters, movers, pose );
 	parse_task_operations( tag, datamap, filters, movers, pose );
-	minmover_->score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap, "score12" ) );
+	minmover_->score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap) );
 }
 
 void TaskAwareMinMover::parse_def( utility::lua::LuaObject const & def,

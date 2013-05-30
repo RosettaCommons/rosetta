@@ -38,7 +38,7 @@
 // AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
@@ -402,7 +402,7 @@ ShakeStructureMover::setup_for_run(core::pose::Pose & p){
 	setup_ca_constraints(p,(*scorefxn),9.0,harmonic_ca_cst_std_dev);
 
 	if(min_cst || sc_min_only){
-		min_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard");
+		min_scorefxn = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 
 	if(mc_temp <= 0 && ensemble_ca_rmsd > 0){

@@ -92,7 +92,7 @@ sources = {
 	"pack" : [
 		"annealer/FASTERAnnealer",
 		"dunbrack/DunbrackEnergy",
-		"dunbrack/RotamerConstraint",
+		"dunbrack/RotamerConstraintDun2002",
 		"interaction_graph/InteractionGraphFactory",
 		"interaction_graph/FASTERInteractionGraph",
 		"interaction_graph/HPatchInteractionGraph",
@@ -161,7 +161,7 @@ sources = {
 		"FullatomDisulfideEnergy",
 	],
 	"scoring/dunbrack" : [
-		"Dunbrack",
+		"Dunbrack2002",
 	],
 	"scoring/electron_density" : [
 		"ElectronDensityLoader",

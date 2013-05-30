@@ -127,7 +127,7 @@ CoreDunbrackFilter::compute( Pose const & pose ) const
 
 	// store working pose
 	Pose copy_pose( pose );
-	ScoreFunctionOP sfxn = 	core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );
+	ScoreFunctionOP sfxn = 	core::scoring::getScoreFunction();
 	(*sfxn)( copy_pose );
 
 	Real asa_core( 40.0 );

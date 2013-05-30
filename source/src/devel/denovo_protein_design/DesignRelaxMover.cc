@@ -17,7 +17,7 @@
 #include <devel/denovo_protein_design/DesignRelaxMover.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
@@ -265,7 +265,7 @@ DesignRelaxMover::DesignRelaxMover() : Mover()
 	core::scoring::ScoreFunctionOP softfxn(
 		core::scoring::ScoreFunctionFactory::create_score_function(SOFT_REP_DESIGN_WTS, SCORE12_PATCH));
 	core::scoring::ScoreFunctionOP fullfxn(
-		core::scoring::ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+		core::scoring::getScoreFunction() );
 	designtaskfactory_ = designtaskfactory;
 	designfxn_ = softfxn;
 	relaxfxn_ = fullfxn;
@@ -279,7 +279,7 @@ DesignRelaxMover::DesignRelaxMover( core::pack::task::TaskFactoryOP designtaskfa
 	core::scoring::ScoreFunctionOP softfxn(
 		core::scoring::ScoreFunctionFactory::create_score_function(SOFT_REP_DESIGN_WTS, SCORE12_PATCH));
 	core::scoring::ScoreFunctionOP fullfxn(
-		core::scoring::ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH));
+		core::scoring::getScoreFunction());
 	designfxn_ = softfxn;
 	relaxfxn_ = fullfxn;
 }

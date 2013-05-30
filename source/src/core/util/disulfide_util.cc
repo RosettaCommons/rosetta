@@ -96,8 +96,8 @@ rebuild_disulfide( Pose & pose, Size lower_res, Size upper_res,
 /// @param upper_res[in] The second residue of the disulfide
 /// @param packer_task[in] A task to control repacking. Defaults to repacking
 ///  lower_res \& upper_res if ommitted or NULL.
-/// @param packer_score[in] A scoring function to use while repacking. Defaults
-///  to score12 if ommitted or NULL.
+/// @param packer_score[in] A scoring function to use while repacking. Use default
+///  score function if ommitted or NULL.
 /// @param mm[in] A MoveMap to control minimization. Defaults to full degrees
 ///  of freedom if ommitted or NULL.
 /// @param minimizer_score[in] The score to use for minimization. Defaults to

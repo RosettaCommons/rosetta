@@ -52,7 +52,7 @@ TaskOperationFactory * TaskOperationFactory::get_instance()
 
 TaskOperationFactory::~TaskOperationFactory(){}
 
-///@brief the default TaskOperations are now initialized in core/init.cc via the registrator/creator scheme
+///@brief the default TaskOperations are now initialized in core/init/init.cc via the registrator/creator scheme
 TaskOperationFactory::TaskOperationFactory() {}
 
 void

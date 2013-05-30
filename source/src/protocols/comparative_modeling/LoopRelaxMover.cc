@@ -1299,7 +1299,7 @@ LoopRelaxMover::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filter
 		loops::read_loop_fragments( frag_libs_ );
 
 	//read tag "scorefxn"
-	fa_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score12" ) );
+	fa_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	cen_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score4L" ) );
 	//cen_scorefxn_->set_weight( core::scoring::chainbreak, 10.0 / 3.0 );
 	loops::loop_mover::loops_set_chainbreak_weight(  cen_scorefxn_, 1 );

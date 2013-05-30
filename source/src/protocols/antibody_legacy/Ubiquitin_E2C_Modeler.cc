@@ -215,8 +215,7 @@ namespace ub_e2c {
 			lowres_cst_scorefxn_->set_weight( core::scoring::vdw, cen_vdw_ );
 			lowres_cst_scorefxn_->set_weight( core::scoring::cbeta, cen_vdw_ );
 
-			pack_scorefxn_ = core::scoring::ScoreFunctionFactory::
-				create_score_function("standard");
+			pack_scorefxn_ = core::scoring::getScoreFunctionLegacy("pre_talaris_2013_standard.wts");
 
 			dockfa_scorefxn_ = core::scoring::ScoreFunctionFactory::
 				create_score_function( "docking" );
@@ -242,8 +241,7 @@ namespace ub_e2c {
 			dockfa_cst_min_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
 																						full_constraint_ );
 
-			pack_cst_scorefxn_ = core::scoring::ScoreFunctionFactory::
-				create_score_function("standard");
+			pack_cst_scorefxn_ = core::scoring::getScoreFunction("pre_talaris_2013_standard.wts");
 			// adding constraints
 			pack_cst_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
 																			full_constraint_ );
@@ -2175,8 +2173,7 @@ namespace ub_e2c {
 				create_score_function( "cen_std" );
 			dockfa_score = core::scoring::ScoreFunctionFactory::
 				create_score_function( "docking"  );
-			pack_score = core::scoring::ScoreFunctionFactory::
-				create_score_function("standard");
+			pack_score = core::scoring::getScoreFunction("pre_talaris_2013_standard.wts");
 
 			setup_key_residues( pose_in );
 			setup_complex_fold_tree( pose_in );

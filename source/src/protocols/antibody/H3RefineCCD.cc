@@ -181,7 +181,7 @@ void H3RefineCCD::set_default()
 
     
     if(!user_defined_){
-        highres_scorefxn_ = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
+        highres_scorefxn_ = scoring::getScoreFunction();
             highres_scorefxn_->set_weight( scoring::chainbreak, 1.0 );
             highres_scorefxn_->set_weight( scoring::overlap_chainbreak, 10./3. );
             highres_scorefxn_->set_weight( scoring::atom_pair_constraint, high_cst_ );

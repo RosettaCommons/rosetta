@@ -1,0 +1,89 @@
+## fullatom protein N(6)-methylation patch for lysine
+## By Andy M. Chen, June 2009, achen39@jhu.edu
+
+NAME monomethylated
+TYPES METHYLATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA LYS
+NOT VARIANT_TYPE ACETYLATION
+NOT VARIANT_TYPE METHYLATION
+NOT VARIANT_TYPE DIMETHYLATION
+NOT VARIANT_TYPE TRIMETHYLATION
+NOT VARIANT_TYPE PROTONATED
+NOT VARIANT_TYPE DEPROTONATED
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING MLZ K
+## these are the operations involved
+DELETE_ATOM 3HZ ## One of the amine hydrogens is now a carbon atom
+
+ADD_ATOM  CM  CH3  CT3   0.12
+## Although this is technically an eta carbon, the added carbon is called CM 
+##   in some PDB files (for "m"ethylation), 
+##
+## The 0.12 charge was estimated by comparing the difference between 
+##   "C bonded to C and 3 H's" and "C bonded to 2 C's and 2 H's" in existing params files 
+##   (-0.27 vs. -0.18) and then applying the 0.09 correction onto the charge 
+##   given for the epsilon C of lysine, which is 0.21 (bonded to C, N, and 2 H's)
+
+ADD_ATOM HCM1 Hapo HA  0.09
+## Copied from the 1HD1 atom of Ile (hydrogen on primary carbon)
+ADD_ATOM HCM2 Hapo HA  0.09
+ADD_ATOM HCM3 Hapo HA  0.09
+ADD_BOND  NZ   CM 
+ADD_BOND  CM  HCM1
+ADD_BOND  CM  HCM2
+ADD_BOND  CM  HCM3
+
+## The methyl group adds an extra chi angle
+ADD_CHI 5  CD   CE   NZ   CM
+
+## The information for the following was calculated by taking the arithmetic mean 
+##   of data taken from 37 actual samples from RCSB (unfortunately there aren't many of them
+##   when NMR structures and homologues with >70% similarity are excluded):
+##   NZ-CM bond length, CE-NZ-CM bond angle
+##
+## The dihedral angle for placing CM was taken from the mean value of the rotamer bin 
+##   with the highest probability.
+##
+##   The information for placing the hydrogens was based on LYS.params.
+##
+SET_ICOOR CM   179.62  64.77  1.463  NZ   CE    CD 
+SET_ICOOR 1HZ  120.00  70.50  1.010  NZ   CE    CM 
+SET_ICOOR 2HZ  120.00  70.54  1.010  NZ   CE   1HZ 
+
+
+## The information for the added hydrogens was copied from the 3 hydrogens 
+##   bonded to the delta carbon of Ile
+SET_ICOOR HCM1 -179.974518 70.500000 1.090290  CM   NZ   CE
+SET_ICOOR HCM2  119.989571 70.500000 1.090575  CM   NZ  HCM1
+SET_ICOOR HCM3  120.044632 70.500000 1.089057  CM   NZ  HCM2
+
+## Change the atom type since the nitrogen is now bonded to two carbons.
+SET_ATOM_TYPE NZ Narg
+SET_MM_ATOM_TYPE NZ NC2
+
+
+
+## Manually define rotamer bins for chi 5 using data from the 37 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency.
+##   The percentages may not add up to 100% due to rounding.
+##
+ADD_CHI_ROTAMER 5  179.62  9.78  #67.6% (+/- 180 bin)
+ADD_CHI_ROTAMER 5  -99.00 18.38  # 9.8%, upper tail of the 179.62 bin
+ADD_CHI_ROTAMER 5  100.56 19.53  # 7.3%, lower tail of the 179.62 bin
+
+
+END_CASE
+
+
+

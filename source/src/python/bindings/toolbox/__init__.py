@@ -101,7 +101,7 @@ def mutate_residue(pose, resid, new_res):
 	if not pose.is_fullatom():
 		IOError("mutate_residue only works with full-atom poses.")
 
-	scorefxn = rosetta.create_score_function("standard")
+	scorefxn = rosetta.create_score_function("talaris2013")
 	pack_task = rosetta.TaskFactory.create_packer_task(pose)
 	pack_task.initialize_from_command_line()
 

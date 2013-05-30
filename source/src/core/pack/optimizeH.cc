@@ -65,14 +65,14 @@ optimize_H_and_notify(
 
 	ScoreFunctionOP sfxn;
 	if ( !option[ score::optH_weights ].user() &&  !option[ score::optH_patch ].user() ) {
-		sfxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+		sfxn = getScoreFunction();
 	} else if ( option[ score::optH_weights ].user() && option[ score::optH_patch ].user() ) {
 		sfxn = ScoreFunctionFactory::create_score_function( option[ score::optH_weights ](), option[ score::optH_patch ]() );
 	} else if ( option[ score::optH_weights ].user() ) {
 		sfxn = ScoreFunctionFactory::create_score_function( option[ score::optH_weights ]() );
 	} else {
-		// patch.user() and ! weights.user()
-		sfxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, option[ score::optH_patch ]() );
+		// patch.user() and ! weights.user()  -- this is an odd request.
+		sfxn = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, option[ score::optH_patch ]() );
 	}
 
 

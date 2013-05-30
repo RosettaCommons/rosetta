@@ -730,8 +730,7 @@ SeedFoldTree::parse_my_tag( TagPtr const tag,
 	TR<<"SeedFoldTree has been invoked"<<std::endl;
 
 	ddg_based_ = tag->getOption< bool >( "ddG_based", 0 );
-	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ) );
-	scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ) );	
+	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 
 	//parsing branch tags
 	utility::vector0< TagPtr > const branch_tags( tag->getTags() );

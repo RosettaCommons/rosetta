@@ -1,0 +1,43 @@
+# This weight set was generated with all of the talaris2013 improvements
+# except for the 2010 rotamer library.  The reference energies here
+# were fit with the 2002 rotamer library.  That is, the score function
+# improvements (over score12) that it contains are:
+#
+# the sp2 hydrogen bond potential, an explicit electrostatics term with a
+# distance dependent dielectric (and a removal of the previous knowledge-
+# based electrostatic potential, fa_pair), an adjustment to the LK_DGFREE
+# parameters for four atom types, the 05.2009 ideal coordinates for
+# the amino acids, an expansion of hydroxyl sampling for serine and
+# threonine, the use of bicubic-spline interpolation in our knowledge-
+# based potentials, an improved disulfide potential, and an analytic
+# evaluation of our Lennard-Jones and EEF1 potentials.
+#
+# If you need to use this weight set, then use these flags on your command line:
+# -dun10 false
+# -score:weights talaris2013_dun02.wts
+#
+# Where the second flag (-score:weights) may not be neccessary if you're using
+# RosettaScripts and have specified your score function from an XML file.
+#
+# Reference energies were fit with optE on Jane Richardson's HiQ54 benchmark
+# set in triplicate, and tested on the Ding & Dokholyan 38 set.  The
+# set of reference energies with the highest sequence recovery (39.6%) was
+# chosen.
+#
+METHOD_WEIGHTS ref 0.219742 -0.066207 -0.62002 -0.71094 1.13737 -0.264674 0.776298 0.498603 -0.644574 0.245128 -0.190523 -0.57918 -0.688485 -0.60717 -0.49036 -0.204617 -0.19266 0.363644 1.18013 0.838496 
+fa_atr 0.8
+fa_rep 0.44
+fa_sol 0.75
+fa_intra_rep 0.004
+hack_elec 0.7
+pro_close 1
+hbond_sr_bb 1.17
+hbond_lr_bb 1.17
+hbond_bb_sc 1.17
+hbond_sc 1.1
+dslf_fa13 1.0
+rama 0.2
+omega 0.5
+fa_dun 0.56
+p_aa_pp 0.32
+ref 1

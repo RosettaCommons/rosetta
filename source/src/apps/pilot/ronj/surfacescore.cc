@@ -349,7 +349,7 @@ main( int argc, char* argv[] ) {
 	if ( option[ surface_app::use_reweighted_score12_with_surfaceE_scorefunction ] ) {
 
 		TR << "Using reweighted score12 with surfaceE scorefunction (optE 458)." << std::endl;
-		scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
+		scorefxn = scoring::getScoreFunction();
 
 		utility::vector1< Real > refEs_;
 		refEs_.resize( chemical::num_canonical_aas, 0.0 );
@@ -386,7 +386,7 @@ main( int argc, char* argv[] ) {
 	} else if ( option[ surface_app::use_reweighted_score12_score_function ] ) {
 
 		TR << "Using reweighted score12 scorefunction." << std::endl;
-		scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
+		scorefxn = scoring::getScoreFunction();
 
 		utility::vector1< Real > refEs_;
 		refEs_.resize( chemical::num_canonical_aas, 0.0 );
@@ -420,7 +420,7 @@ main( int argc, char* argv[] ) {
 	} else {
 
 		TR << "Using standard score12 scorefunction." << std::endl;
-		scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
+		scorefxn = scoring::getScoreFunction();
 
 	}
 
@@ -476,7 +476,7 @@ main( int argc, char* argv[] ) {
 
 			Energy wt_score = (*scorefxn)( pose );
 
-			// print out the score12 information...
+			// print out the scorefxn information...
 			std::cout << "wt score:" << std::endl;
 			scorefxn->show( std::cout, pose );
 			std::cout << std::endl;
@@ -503,7 +503,7 @@ main( int argc, char* argv[] ) {
 
 			Energy design_score = (*scorefxn)( pose );
 
-			// print out the score12 information...
+			// print out the scorefxn information...
 			std::cout << "redesign score:" << std::endl;
 			scorefxn->show( std::cout, pose );
 			std::cout << std::endl;
@@ -563,7 +563,7 @@ main( int argc, char* argv[] ) {
 
 			// now we are ready to go into the scan loop.  the optE protocol does this
 			std::cout << A( "mutation ddG's:" ) << std::endl;
-			std::cout << A( "score12 energy" ) << X(3) << A( "score12 ddG" ) << X(3) << A( "surface ddG" ) << X(3) << A( "mutation" ) << std::endl;
+			std::cout << A( "scorefxn energy" ) << X(3) << A( "scorefxn ddG" ) << X(3) << A( "surface ddG" ) << X(3) << A( "mutation" ) << std::endl;
 
 
 			for ( Size resid = 1; resid <= pose.n_residue(); ++resid ) {
@@ -663,7 +663,7 @@ main( int argc, char* argv[] ) {
 			Energy score = (*scorefxn)( pose );
 			fill_num_neighbors( pose, num_neighbors_ );
 
-			// print out the score12 information...
+			// print out the scorefxn information...
 			scorefxn->show( std::cout, pose );
 			std::cout << std::endl;
 			if ( option[ surface_app::output_by_res_surface_score ] ) {

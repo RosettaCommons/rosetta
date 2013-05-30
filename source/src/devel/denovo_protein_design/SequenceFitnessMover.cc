@@ -25,7 +25,7 @@
 // AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/pose/Pose.hh>
 
 
@@ -77,7 +77,7 @@ namespace denovo_protein_design {
 ///@details
 void SequenceFitnessMover::apply( core::pose::Pose & pose ){
 	using namespace core::scoring::packstat;
-	core::scoring::ScoreFunctionOP fullfxn( ( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS ) ));
+	core::scoring::ScoreFunctionOP fullfxn( ( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) ));
 
 	core::pose::Pose testpose;
 	core::import_pose::pose_from_pdb( testpose, basic::options::option[ basic::options::OptionKeys::in::file::native ]().name() );

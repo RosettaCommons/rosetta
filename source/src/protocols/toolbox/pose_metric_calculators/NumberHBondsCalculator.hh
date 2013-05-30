@@ -24,31 +24,29 @@
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-#include <set>
-
+// utility headers
 #include <utility/vector1.hh>
+
+// C++ headers
+#include <set>
 
 
 namespace protocols{
 namespace toolbox {
 namespace pose_metric_calculators {
 
-class NumberHBondsCalculator : public core::pose::metrics::EnergyDependentCalculator {
+/// @brief use the "score12_params" set if the -restore_pre_talaris_2013_behavior flag is on the command line
+/// and otherwise use the new and improved sp2_hackelec_params parameter set
+std::string
+choose_hbond_parameter_set();
 
+class NumberHBondsCalculator : public core::pose::metrics::EnergyDependentCalculator {
 public:
 
+  NumberHBondsCalculator();
+  NumberHBondsCalculator( std::set< core::Size > special_region );
 
-  NumberHBondsCalculator() :
-    hb_database( core::scoring::hbonds::HBondDatabase::get_database( "standard_params" ) )
-  {};
-
-  NumberHBondsCalculator( std::set< core::Size > special_region ) :
-    hb_database( core::scoring::hbonds::HBondDatabase::get_database( "standard_params" ) ),
-    special_region_(special_region)
-  {};
-
-
-  core::pose::metrics::PoseMetricCalculatorOP clone() const { return new NumberHBondsCalculator(); };
+  core::pose::metrics::PoseMetricCalculatorOP clone() const;
 
   static core::Real
   sum_Hbond_terms( core::scoring::EnergyMap const & emap );

@@ -65,7 +65,7 @@ private:
 	std::set< core::Size > residues_; // the list of residues to make disjointed
 	core::Size chain_; //deflt 2; what is the host chain
 	core::Real interface_radius_; //dflt 8 ; value used to look for hotspot residues
-	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL score12(in rosettascripts)
+	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL
 };
 
 

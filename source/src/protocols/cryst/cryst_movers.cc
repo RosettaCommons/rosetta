@@ -527,7 +527,7 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 	//fpd if the pose is symmetric use a symmetric scorefunction
 	if (core::pose::symmetry::is_symmetric(pose))
 		scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( scorefxn ) );
-	core::Real score12 = (*scorefxn)(pose);
+	core::Real score = (*scorefxn)(pose);
 	core::pose::RemarkInfo remark;
 
 	std::ostringstream oss;
@@ -535,8 +535,8 @@ void TagPoseWithRefinementStatsMover::apply( core::pose::Pose & pose ) {
 	oss << "[ " << tag_ << " ] R=" << core::scoring::cryst::getPhenixInterface().getInfoLine();
 
 	//oss.str("");
-	//oss << "[ " << tag_ << " ] xray_tgt = " << xraytgt << "   score12 = " << score12;
-	oss << " sc=" << score12;
+	//oss << "[ " << tag_ << " ] xray_tgt = " << xraytgt << "   score = " << score;
+	oss << " sc=" << score;
 
 	core::pose::Pose pose_asu;
 	if (basic::options::option[ basic::options::OptionKeys::in::file::native ].user() || dump_pose_) {

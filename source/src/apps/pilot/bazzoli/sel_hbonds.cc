@@ -79,7 +79,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/types.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <numeric/xyzVector.hh>
 #include <sstream>
 #include <iomanip>
@@ -269,7 +269,7 @@ int main( int argc, char * argv [] )
 	NEW_OPT( atom_fil, "selected hbonded atoms", "" );
 	NEW_OPT( bond_fil, "selected hydrogen bonds", "" );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	// create pose from PDB file
 	Pose ps;
@@ -278,8 +278,7 @@ int main( int argc, char * argv [] )
 
 	// score pose
 	core::scoring::ScoreFunctionOP scorefxn(
-		core::scoring::ScoreFunctionFactory::create_score_function(
-			core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH));
+		core::scoring::getScoreFunction());
 	(*scorefxn)(ps);
 
 	// open input hbond file

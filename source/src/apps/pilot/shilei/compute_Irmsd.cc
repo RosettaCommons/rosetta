@@ -148,7 +148,7 @@ public:
 	std::map<core::Size, core::Size> correspondence_interface;
 
 	//Figure out the interface at the native structure
-        core::scoring::ScoreFunctionCOP scorefxn (core::scoring::ScoreFunctionFactory::create_score_function( "score12_full"));
+        core::scoring::ScoreFunctionCOP scorefxn (core::scoring::getScoreFunction());
 	(*scorefxn)(*native_pose);
 	//Assume binary complex with jump at 1
 	protocols::scoring::Interface interface( 1 );

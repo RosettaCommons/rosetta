@@ -1,0 +1,21 @@
+NAME pro_hydroxylated_case2
+TYPES HYDROXYLATION
+
+#This patch doesn't have to do anything - it's just to make centroid conversions work
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA PRO
+NOT VARIANT_TYPE HYDROXYLATION
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING HYP P
+
+END_CASE

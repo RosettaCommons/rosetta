@@ -26,6 +26,7 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/protein_interface_design/util.hh>
 #include <utility/string_util.hh>
 
@@ -221,8 +222,7 @@ TryRotamers::parse_my_tag( TagPtr const tag,
 {
 	resnum_ = core::pose::get_resnum( tag, pose );
 	automatic_connection_ = tag->getOption< bool >( "automatic_connection", 1 );
-	string const scorefxn_name( tag->getOption<string>( "scorefxn", "score12" ) );
-	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name) ));
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	jump_num_ = tag->getOption<core::Size>( "jump_num", 1);
 	std::string const final_filter_name( tag->getOption<std::string>( "final_filter", "true_filter" ) );
 	protocols::filters::Filters_map::const_iterator find_filter( filters.find( final_filter_name ));
@@ -253,8 +253,13 @@ TryRotamers::parse_my_tag( TagPtr const tag,
 		}
 	}
 
-	TR<<"TryRotamers was instantiated using scorefxn="<<scorefxn_name<<", jump_number="<<jump_num_<< ", clash_check=" << clash_check_ <<", include_current=" << include_current_ <<  ", and explosion=" << explosion_ << std::endl;
 
+	TR
+		<< "TryRotamers was instantiated using scorefxn=" << rosetta_scripts::get_score_function_name(tag)
+		<< ", jump_number=" << jump_num_
+		<< ", clash_check=" << clash_check_
+		<< ", include_current=" << include_current_
+		<< ", and explosion=" << explosion_ << std::endl;
 }
 
 } //movers

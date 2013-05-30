@@ -47,11 +47,11 @@ SymDockBaseProtocol::SymDockBaseProtocol() :
 	std::string symm_definition_file_ = "symm_def5.dat";
   // Set up scoring functions
 //	symmetry::SymmetricScoreFunction scorefxn_sym_lowres ( ScoreFunctionFactory::create_score_function( "interchain_cen" ) );
-//	symmetry::SymmetricScoreFunction scorefxn_sym_highres ( core::scoring::STANDARD_WTS, core::scoring::DOCK_PATCH );
+//	symmetry::SymmetricScoreFunction scorefxn_sym_highres ( core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::DOCK_PATCH );
 //	scorefxn_lowres_ = new symmetry::SymmetricScoreFunction( scorefxn_sym_lowres );
 //	scorefxn_hires_ = new symmetry::SymmetricScoreFunction( scorefxn_sym_highres );
 		scorefxn_lowres_ = ScoreFunctionFactory::create_score_function( "interchain_cen" );
-		scorefxn_hires_ =  ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::DOCK_PATCH );
+		scorefxn_hires_ =  ScoreFunctionFactory::create_score_function( core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::DOCK_PATCH );
 
 }
 

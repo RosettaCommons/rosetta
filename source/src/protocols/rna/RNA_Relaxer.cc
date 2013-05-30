@@ -126,7 +126,7 @@ void RNA_Relaxer::apply( core::pose::Pose & pose	)
 	ScoreFunctionOP scorefxn;
 
 	if ( option[ score::weights ].user() ) {
-		scorefxn = ScoreFunctionFactory::create_score_function( option[ score::weights ]() );
+		scorefxn = getScoreFunction();
 	} else {
 		scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 	}

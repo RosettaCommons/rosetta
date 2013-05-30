@@ -38,7 +38,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -110,7 +110,7 @@ int main( int argc, char * argv [] )
 {
 	NEW_OPT( nrg_resfile, "set of residues whose energy is to be computed", "nrg_resfile.txt" );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	// load pose from pdb file
 	core::pose::Pose ps;
@@ -136,8 +136,7 @@ int main( int argc, char * argv [] )
 
 	// score pose
 	core::scoring::ScoreFunctionOP scorefxn(
-		core::scoring::ScoreFunctionFactory::create_score_function(
-			core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH));
+		core::scoring::getScoreFunction());
 
 	(*scorefxn)(ps);
 

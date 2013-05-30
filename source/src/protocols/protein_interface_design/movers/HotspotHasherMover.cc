@@ -207,8 +207,7 @@ void
 HotspotHasherMover::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const & filters, Movers_map const &, core::pose::Pose const & pose )
 {
 
-	std::string const scorefxn( tag->getOption<string>( "scorefxn", "score12" ));
-	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn)) );
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 
 	n_stubs_ = tag->getOption<core::Size>( "nstubs", 1000 );
 

@@ -12,7 +12,7 @@
 /// @author James Thompson
 
 #include <core/types.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/util.hh>
 
@@ -99,7 +99,7 @@ main( int argc, char* argv [] ) {
 	basic::Tracer tr( "full_length_model" );
 
 	// options, random initialization
-	core::init( argc, argv );
+	core::init::init( argc, argv );
 
 	protocols::loophash::FastGapMover fast_gap;
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();

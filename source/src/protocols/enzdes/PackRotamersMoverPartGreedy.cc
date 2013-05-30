@@ -112,13 +112,9 @@ PackRotamersMoverPartGreedy::parse_my_tag(
 	if( tag->hasOption("task_operations") ) task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
   	else task_factory_ = NULL;
 	//Scorefunctions
-	std::string const scorefxn_repack( tag->getOption<std::string>( "scorefxn_repack", "score12" ) );
-	std::string const scorefxn_repack_greedy( tag->getOption<std::string>( "scorefxn_repack_greedy", "score12" ) );
-  	std::string const scorefxn_minimize( tag->getOption<std::string>( "scorefxn_minimize", "score12" ) );
-  	using namespace core::scoring;
-  	scorefxn_repack_ = new ScoreFunction( *datamap.get< ScoreFunction * >( "scorefxns", scorefxn_repack ) );
-  	scorefxn_repack_greedy_ = new ScoreFunction( *datamap.get< ScoreFunction * >( "scorefxns", scorefxn_repack_greedy ) );
-  	scorefxn_minimize_ = new ScoreFunction( *datamap.get< ScoreFunction * >( "scorefxns", scorefxn_minimize ) );
+	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", datamap )->clone();
+	scorefxn_repack_greedy_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack_greedy", datamap )->clone();
+	scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", datamap )->clone();
 	//target residues for greedy opt around
 	 if( tag->hasOption("target_residues") ) {
       		target_residues_ = core::pose::get_resnum_list(tag, "target_residues",pose);

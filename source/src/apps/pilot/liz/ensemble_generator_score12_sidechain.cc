@@ -484,10 +484,7 @@ main( int argc, char* argv [] )
 	//gone?
 	pose::Pose pose;
 
-	//ScoreFunctionOP s = ScoreFunctionFactory::create_score_function( option[score::weights]);
-	ScoreFunctionOP scorefxn( new ScoreFunction());
-	scorefxn->add_weights_from_file(basic::database::full_name( "scoring/weights/standard.wts"));
-	scorefxn->apply_patch_from_file(basic::database::full_name("scoring/weights/score12.wts_patch"));
+	ScoreFunctionOP s = getScoreFunction();
 
 	/**
 	scorefxn->set_weight(core::scoring::score_type_from_name("rama"), 4.0);

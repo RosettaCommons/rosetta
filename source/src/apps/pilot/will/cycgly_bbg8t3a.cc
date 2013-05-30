@@ -126,7 +126,7 @@ struct AbsFunc : public core::scoring::constraints::Func {
 	}
 	void read_data( std::istream & in ){ in >> x0_ >> sd_;  }
 	void show_definition( std::ostream &out ) const { out << "ABS " << x0_ << " " << sd_ << std::endl; }
-	Real x0() const { return x0_; }  
+	Real x0() const { return x0_; }
 	Real sd() const { return sd_; }
 	void x0( Real x ) { x0_ = x; }
 	void sd( Real sd ) { sd_ = sd; }
@@ -138,7 +138,7 @@ private:
 
 Real mod360(Real x) {
 	while(x >  180.0) x -= 360.0;
-	while(x < -180.0) x += 360.0;	
+	while(x < -180.0) x += 360.0;
 	return x;
 }
 
@@ -320,9 +320,9 @@ BINTYPE cyclic_unique_bin(BINTYPE bin, Size nres) {
 	// for debuggung....
 	// TR << "testmask " << printbits( makemask(8) ) << std::endl;
 	// TR << "testmask " << printbits( makemask(13) ) << std::endl;
-	// TR << "testmask " << printbits( MASK ) << std::endl;	
+	// TR << "testmask " << printbits( MASK ) << std::endl;
 	// bin = 1UL<<0*9 | 1UL<<1*9 | 1UL<<2*9 | 1UL<<3*9 | 1UL<<4*9 | 1UL<<5*9;// | 1UL<<6*9 ;
-	// TR << "bin " << printbits(bin) << std::endl;	
+	// TR << "bin " << printbits(bin) << std::endl;
 	BINTYPE MASK = makemask(2*BINBITS*nres);
 	BINTYPE mn = bin;
 	for(Size m = 0; m <= 1; ++m) { // true false
@@ -342,7 +342,7 @@ BINTYPE cyclic_unique_bin(BINTYPE bin, Size nres) {
 BINTYPE pose2bin(core::pose::Pose const & pose) {
 	using namespace ObjexxFCL::fmt;
 	BINTYPE bin = 0;
-	for(int i = 0; i < (int)pose.n_residue(); ++i) {		
+	for(int i = 0; i < (int)pose.n_residue(); ++i) {
 		// Real phid = pose.phi(i+1);
 		// Real psid = pose.psi(i+1);
 		numeric::xyzVector<Real> c0 = pose.residue((i-1+pose.n_residue())%pose.n_residue()+1).xyz("C" );
@@ -389,14 +389,14 @@ void fixH(core::pose::Pose & pose) {
 		numeric::xyzVector<Real> c  = pose.residue(in).xyz("C");
 		numeric::xyzVector<Real> h  = n + (n-(ca+c)/2.0).normalized()*1.01;
 		pose.set_xyz(AtomID(pose.residue(i).atom_index("H"),i), h );
-	}	
+	}
 }
 
 void cyclize_pose(core::pose::Pose & pose) {
 	Size N = pose.n_residue();
 	for(Size i = 1; i <= N; ++i) {
 		if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
-		if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);	
+		if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
 		if(pose.residue(i).has_variant_type("CUTPOINT_UPPER")) core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_UPPER",i);
 		if(pose.residue(i).has_variant_type("CUTPOINT_LOWER")) core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",i);
 	}
@@ -411,7 +411,7 @@ void cyclize_pose(core::pose::Pose & pose) {
 	pose.remove_constraints();
 	pose.add_constraint(new AtomPairConstraint(a1,a2,new HarmonicFunc(0.0,0.1)));
 	pose.add_constraint(new AtomPairConstraint(b1,b2,new HarmonicFunc(0.0,0.1)));
-	pose.add_constraint(new AtomPairConstraint(c1,c2,new HarmonicFunc(0.0,0.1)));	
+	pose.add_constraint(new AtomPairConstraint(c1,c2,new HarmonicFunc(0.0,0.1)));
 }
 
 
@@ -442,7 +442,7 @@ int main( int argc, char * argv [] ) {
 	protocols::simple_moves::BBG8T3AMover::register_options();
 	devel::init(argc,argv);
 	Size N = option[cyclic::nres]();
-	
+
 	// score functions
 	ScoreFunctionOP sf = core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
 	                sf->set_weight(core::scoring::rama,1.0);
@@ -451,14 +451,14 @@ int main( int argc, char * argv [] ) {
 	                sfc->set_weight(core::scoring::rama,1.0);
 	                sfc->set_weight(core::scoring::atom_pair_constraint,10.0);
 	                sfc->set_weight(core::scoring::omega,1.0);
-	ScoreFunctionOP sffa = core::scoring::ScoreFunctionFactory::create_score_function("standard");
+	ScoreFunctionOP sffa = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	                sffa->set_weight(core::scoring::atom_pair_constraint,10.0);
 	                sffa->set_weight(core::scoring::omega,1.0);
 	                sffa->set_weight(core::scoring::hbond_sr_bb,2.0); // up from 1.17
-	ScoreFunctionOP sffastd = core::scoring::ScoreFunctionFactory::create_score_function("standard");
+	ScoreFunctionOP sffastd = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	                sffastd->set_weight(core::scoring::omega,1.0);
 	                sffastd->set_weight(core::scoring::hbond_sr_bb,2.0); // up from 1.17
-	
+
 
 	utility::vector1<Pose> targets_in;
 	std::set<BINTYPE> targetbins;
@@ -477,19 +477,19 @@ int main( int argc, char * argv [] ) {
 			// TR << "target: " << option[in::file::s]()[1] << " " << bin << " " << bin2string(bin,targets[bin].n_residue()) << std::endl;
 			std::string fn = basic::options::option[basic::options::OptionKeys::out::file::o]() + "/target_"+ObjexxFCL::lead_zero_string_of(bin,10)+".pdb";
 			targets[bin].dump_pdb(fn);
-			
+
 			// TR << "BIN orig " << printbits(bin) << std::endl;
 			// bin = mirror_bin( bin, N );
 			// TR << "BIN mirr " << printbits(bin) << std::endl;
-			// bin = mirror_bin( bin, N );			
-			// TR << "BIN orig " << printbits(bin) << std::endl;			
-			// 
+			// bin = mirror_bin( bin, N );
+			// TR << "BIN orig " << printbits(bin) << std::endl;
+			//
 			// TR << "ORIG:   " << std::endl;
 			// BINTYPE test1 = pose2bin(targets_in[i]);
-			// TR << "BIN test1 " << printbits(test1) << std::endl;			
+			// TR << "BIN test1 " << printbits(test1) << std::endl;
 			// Pose mirror = cyclic_perm( targets_in[i], 1, true );
 			// mirror.dump_pdb(fn+"_mirror1.pdb");
-			// 
+			//
 			// TR << "MIRROR: " << std::endl;
 			// BINTYPE test2 = pose2bin(mirror);
 			// TR << "BIN test2 " << printbits(test2) << std::endl;
@@ -507,7 +507,7 @@ int main( int argc, char * argv [] ) {
 
 	std::string seq = "G"; while((Size)seq.size() < N) seq += "G";
 
-	core::io::silent::SilentFileData sfd;	
+	core::io::silent::SilentFileData sfd;
 	Pose ref;
 
 	TR << "setup pose & constraints" << std::endl;
@@ -515,7 +515,7 @@ int main( int argc, char * argv [] ) {
 	core::pose::make_pose_from_sequence(pose,seq,"centroid",false);
 	core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_UPPER",       1        );
 	core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());
-	pose.conformation().declare_chemical_bond( 1, "N", pose.n_residue(), "C" );	
+	pose.conformation().declare_chemical_bond( 1, "N", pose.n_residue(), "C" );
 	// Size const nbb( lower_rsd.mainchain_atoms().size() );
 	// total_dev +=
 	// 	( upper_rsd.atom( upper_rsd.mainchain_atoms()[  1] ).xyz().distance_squared( lower_rsd.atom( "OVL1" ).xyz() ) +
@@ -535,7 +535,7 @@ int main( int argc, char * argv [] ) {
 		if(numeric::random::uniform() < 0.0) pose.set_omega(i,  0.0);
 		else                                 pose.set_omega(i,180.0);
 	}
-	
+
 	TR << "bb sample for reasonable closed starting point" << std::endl;
 	bb_sample(pose,sf ,100);
 	bb_sample(pose,sfc,1000);
@@ -543,7 +543,7 @@ int main( int argc, char * argv [] ) {
 
 	TR << "switch to fa" << std::endl;
 	core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_UPPER",1);
-	core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());			
+	core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());
 	protocols::toolbox::switch_to_residue_type_set(pose,"fa_standard");
 	cyclize_pose(pose);
 	TR << "minimize" << std::endl;
@@ -592,7 +592,7 @@ int main( int argc, char * argv [] ) {
 
 	protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *sffa, temp );
 	utility::vector1<Real> temps; temps.push_back(1.0); temps.push_back(4.0); temps.push_back(16.0); temps.push_back(32.0); temps.push_back(64.0);
-	// protocols::moves::MonteCarloOP mc = new protocols::moves::ReplicaExchangeMC( pose, *sffa, temps, 100 );	
+	// protocols::moves::MonteCarloOP mc = new protocols::moves::ReplicaExchangeMC( pose, *sffa, temps, 100 );
 	protocols::moves::TrialMoverOP trial = new protocols::moves::TrialMover(bbmove,mc);
 	std::map<BINTYPE,core::pose::PoseOP> posebins;
 	std::map<BINTYPE,uint> bincount;
@@ -616,7 +616,7 @@ int main( int argc, char * argv [] ) {
 			if(itemp==0) itemp = temps.size();
 			mc->set_temperature(temps[itemp]);
 		}
-		
+
 		if(ITER%10000 == 0) {
 			Size news = (Size)std::ceil(numeric::random::uniform()*N);
 			pose = cyclic_perm( pose, news, numeric::random::uniform() < 0.5 );
@@ -636,27 +636,27 @@ int main( int argc, char * argv [] ) {
 					}
 				}
 			}
-			
+
 			// if( option[cyclic::single_bin]() ) {
 			// 	if( bin == lastbin ) {
 			// 		last_in_bin = pose;
 			// 		pose.dump_pdb("SINGLE_BIN_"+ObjexxFCL::lead_zero_string_of(bin,10)+"_"+ObjexxFCL::lead_zero_string_of(ITER,10)+".pdb");
 			// 	} else {
 			// 	              	pose = last_in_bin;
-			// 	}   
-			// }			
+			// 	}
+			// }
 			// if( option[cyclic::output_all_bin].user() ) {
 			// 	if( bin == BINTYPE(option[cyclic::output_all_bin]()) ) {
-			// 		pose.dump_pdb(basic::options::option[basic::options::OptionKeys::out::file::o]() + "/ALL_IN_BIN_"+ObjexxFCL::lead_zero_string_of(bin,10)+"_"+ObjexxFCL::lead_zero_string_of(ITER,10)+".pdb");					
+			// 		pose.dump_pdb(basic::options::option[basic::options::OptionKeys::out::file::o]() + "/ALL_IN_BIN_"+ObjexxFCL::lead_zero_string_of(bin,10)+"_"+ObjexxFCL::lead_zero_string_of(ITER,10)+".pdb");
 			// 	}
-			// }						
+			// }
 			// if(false) {
 			// 	// write silent struct
 			// 	core::io::silent::SilentStructOP ss_out_all( new core::io::silent::ScoreFileSilentStruct );
 			// 	ss_out_all->fill_struct(pose,ObjexxFCL::string_of(ITER));
 			// 	sfd.write_silent_struct( *ss_out_all, option[ out::file::silent ]() );
 			// }
-			
+
 			nrecorded++;
 			if(bin != lastbin) {
 				ntransitions++;
@@ -681,14 +681,14 @@ int main( int argc, char * argv [] ) {
 			}
 		}
 		if( ITER % option[cyclic::log_interval]() == 0) {
-			TR << ObjexxFCL::fmt::I(10, ITER                ) << " ITERs " 
-			   << ObjexxFCL::fmt::I(10, trial->num_accepts()) << " accpets " 
-			   << ObjexxFCL::fmt::I(10, ntransitions        ) << " transitions " 
-			   << ObjexxFCL::fmt::I(10, bincount.size()     ) << " bins sampled " 
-			   << ObjexxFCL::fmt::I(10, posebins.size()     ) << " bins filled " 
-			   << ObjexxFCL::fmt::F(7,3, cyclic_all_atom_rmsd(pose,start_pose) ) << " cyc_rms " 
-			   << ObjexxFCL::fmt::F(7,3, core::scoring::all_atom_rmsd(pose,start_pose) ) << " rms " 
-			   << ObjexxFCL::fmt::F(7,3,   sqrt(pose.energies().total_energies()[core::scoring::atom_pair_constraint]/3.0)/5.0) << " mean apc violation " 
+			TR << ObjexxFCL::fmt::I(10, ITER                ) << " ITERs "
+			   << ObjexxFCL::fmt::I(10, trial->num_accepts()) << " accpets "
+			   << ObjexxFCL::fmt::I(10, ntransitions        ) << " transitions "
+			   << ObjexxFCL::fmt::I(10, bincount.size()     ) << " bins sampled "
+			   << ObjexxFCL::fmt::I(10, posebins.size()     ) << " bins filled "
+			   << ObjexxFCL::fmt::F(7,3, cyclic_all_atom_rmsd(pose,start_pose) ) << " cyc_rms "
+			   << ObjexxFCL::fmt::F(7,3, core::scoring::all_atom_rmsd(pose,start_pose) ) << " rms "
+			   << ObjexxFCL::fmt::F(7,3,   sqrt(pose.energies().total_energies()[core::scoring::atom_pair_constraint]/3.0)/5.0) << " mean apc violation "
 				<< Real(clock()-prevt) / 100.0 << " time "
 			   << std::endl;
 			prevt = clock();
@@ -713,23 +713,23 @@ int main( int argc, char * argv [] ) {
 					tmp.dump_pdb( option[basic::options::OptionKeys::out::file::o]() + "/" + tag +".pdb");
 					core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 					ss_out->fill_struct( *(i->second) ,tag);
-					sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() + "_ITER_"+ObjexxFCL::string_of(ITER)+".sc" );		
+					sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() + "_ITER_"+ObjexxFCL::string_of(ITER)+".sc" );
 				}
 				for(std::map<BINTYPE,core::pose::Pose>::const_iterator i = closest.begin(); i != closest.end(); ++i) {
 					std::string tag = ObjexxFCL::string_of(pose.n_residue()) +"-"+ ObjexxFCL::lead_zero_string_of(i->first,10);
 					Pose tmp = i->second;
 					cyclic_superimpose(tmp,targets[i->first]);
 					cyclize_pose(tmp);
-					tmp.dump_pdb( basic::options::option[basic::options::OptionKeys::out::file::o]() + "/closest_" + tag +".pdb");			
+					tmp.dump_pdb( basic::options::option[basic::options::OptionKeys::out::file::o]() + "/closest_" + tag +".pdb");
 				}
 				for(std::map<BINTYPE,core::pose::Pose>::const_iterator i = furthest.begin(); i != furthest.end(); ++i) {
 					std::string tag = ObjexxFCL::string_of(pose.n_residue()) +"-"+ ObjexxFCL::lead_zero_string_of(i->first,10);
 					Pose tmp = i->second;
 					cyclic_superimpose(tmp,targets[i->first]);
 					cyclize_pose(tmp);
-					tmp.dump_pdb( basic::options::option[basic::options::OptionKeys::out::file::o]() + "/furthest_" + tag +".pdb");			
+					tmp.dump_pdb( basic::options::option[basic::options::OptionKeys::out::file::o]() + "/furthest_" + tag +".pdb");
 				}
-				
+
 			}
 		}
 	}

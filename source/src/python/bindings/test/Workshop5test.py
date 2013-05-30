@@ -54,7 +54,7 @@ min_mover = MinMover()
 mm4060 = MoveMap()
 mm4060.set_bb_true_range(40, 60)
 
-scorefxn = create_score_function("standard")
+scorefxn = create_score_function("talaris2013")
 
 min_mover.movemap(mm4060)
 min_mover.score_function(scorefxn)

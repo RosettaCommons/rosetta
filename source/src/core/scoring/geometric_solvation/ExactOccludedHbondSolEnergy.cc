@@ -13,7 +13,7 @@
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergyCreator.hh>
 
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/id/AtomID.hh>

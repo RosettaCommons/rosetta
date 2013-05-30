@@ -432,8 +432,8 @@ LigInterfaceEnergyFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filter
 {
   using namespace core::scoring;
 
-  std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-  scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) ));
+  scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
+
   threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
   include_cstE_ = tag->getOption<bool>( "include_cstE" , 0 );
   rb_jump_ = tag->getOption<core::Size>( "jump_number", 0 );
@@ -570,8 +570,7 @@ EnzScoreFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map cons
 	else if (tag->hasOption( "res_num" )) resnum_ =  tag->getOption<core::Size>( "res_num", 0 );
 	cstid_ = tag->getOption<std::string>( "cstid", "" );
 
-	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-  scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) ));
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function(tag, data)->clone();
 	std::string sco_name = tag->getOption<std::string>( "score_type", "total_score" );
 	if (sco_name == "cstE") {
 		is_cstE_ = true;
@@ -589,7 +588,7 @@ EnzScoreFilter::parse_my_tag( TagPtr const tag, DataMap & data, Filters_map cons
 
 	if (whole_pose_==1 ) {
     TR<<"energies for whole pose will be calculated "
-    << "\n and scorefxn " <<scorefxn_name <<" will be used" <<std::endl;
+    << "\n and scorefxn " << protocols::rosetta_scripts::get_score_function_name(tag) <<" will be used" <<std::endl;
   }
   else {
     TR<<"EnzScoreFilter for residue or cstid with cutoff "<<threshold_<<std::endl;
@@ -711,9 +710,7 @@ void
 RepackWithoutLigandFilter::parse_my_tag( TagPtr const tag, DataMap &data, Filters_map const &, Movers_map const &, core::pose::Pose const &pose )
 {
 	TR<<" Defining RepackWithoutLigandFilter "<< std::endl;
-	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) ));
-
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	calc_rms_ = false; calc_dE_ = false; rms_all_rpked_ = false; use_cstids_ = false;
 	runtime_assert( tag->hasOption("energy_threshold") ||  tag->hasOption("rms_threshold") );
 	if (tag->hasOption("rms_threshold")) {

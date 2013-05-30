@@ -81,7 +81,8 @@ private:
 
 };
 
-extern std::string const STANDARD_WTS;
+extern std::string const TALARIS_2013;
+extern std::string const PRE_TALARIS_2013_STANDARD_WTS;
 extern std::string const SCORE13;
 extern std::string const CENTROID_WTS;
 extern std::string const SOFT_REP_WTS;
@@ -105,6 +106,16 @@ extern std::string const DOCK_LOW_PATCH;
 /// By default it returns weights=standard and patch=score12 for fullatom,
 /// and weights=cen_std and patch="" for centroid
 core::scoring::ScoreFunctionOP getScoreFunction( bool const is_fullatom = true );
+
+/// @brief A helper function that either returns a ScoreFunctionOP created by getScoreFunction() or
+/// the one specified by the protocol which is activated by the -restore_pre_talaris_2013_behavior
+/// flag.  The purpose of this function is to preserve legacy behavior for the sake of reproducibility
+/// and so that a record of the old behavior is still preserved in the code to ease the process of
+/// reverting the change to getScoreFunction if that were the wrong behavior.
+core::scoring::ScoreFunctionOP getScoreFunctionLegacy(
+	std::string pre_talaris_2013_weight_set,
+	std::string pre_talaris_2013_patch_file = ""
+);
 
 /// @brief use the logic of getScoreFunction to get the name.
 /// The 	name format is <weights_tag>[_<patch_tag> ... ]

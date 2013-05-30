@@ -186,7 +186,7 @@ main( int argc, char * argv [] )
 		pose::Pose pose;
 		core::import_pose::pose_from_pdb( pose, *it );
 		core::scoring::ScoreFunctionOP scorefxn =
-					core::scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" );
+					core::scoring::getScoreFunction();
 		(*scorefxn)(pose);
 		pose.update_residue_neighbors();	// make sure graph_state == GOOD
 

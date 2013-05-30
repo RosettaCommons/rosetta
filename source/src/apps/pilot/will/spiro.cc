@@ -9,7 +9,7 @@
 /// @file /src/apps/pilat/will/spiro.cc
 /// @brief design around the proposed spiro photocatalyst for h2 production
 
-//moved to top to circumvent compiler errors on some version of GCC - these need to be after core/init.hh if using namespace core is in scope.
+//moved to top to circumvent compiler errors on some version of GCC - these need to be after core/init/init.hh if using namespace core is in scope.
 #include <utility/io/izstream.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 

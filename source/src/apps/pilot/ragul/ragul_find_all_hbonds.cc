@@ -31,7 +31,7 @@
 #include <core/graph/Graph.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -73,7 +73,7 @@ static basic::Tracer TR( "apps.pilot.hbonds.main" );
 
 int main( int argc, char * argv [] )
 {
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	// create native pose from pdb
 	pose::Pose pose_init;
@@ -82,7 +82,7 @@ int main( int argc, char * argv [] )
 
 	// fill hbond set
 	core::scoring::hbonds::HBondSet hbs1;
-	scoring::ScoreFunctionOP scorefxn(ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH));
+	scoring::ScoreFunctionOP scorefxn(getScoreFunction());
 	(*scorefxn)(pose_init);
 	core::scoring::hbonds::fill_hbond_set(pose_init, false, hbs1);
 

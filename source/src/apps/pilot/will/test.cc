@@ -15,7 +15,7 @@
 //#include <basic/options/option.hh>
 
 // Utility headers
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/rms_util.hh>
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 
 	try {
 
-	core::init(argc,argv);
+	core::init::init(argc,argv);
 	core::pose::Pose p,q;
 	core::import_pose::pose_from_pdb(p,basic::options::option[basic::options::OptionKeys::in::file::s]()[1]);
 	core::import_pose::pose_from_pdb(q,basic::options::option[basic::options::OptionKeys::in::file::s]()[2]);

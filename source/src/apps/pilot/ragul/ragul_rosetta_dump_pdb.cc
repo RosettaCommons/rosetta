@@ -31,7 +31,7 @@
 #include <core/graph/Graph.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -73,7 +73,7 @@ static basic::Tracer TR( "apps.pilot.dump_pdb.main" );
 
 int main( int argc, char * argv [] )
 {
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	// create native pose from pdb
 	pose::Pose pose_init;

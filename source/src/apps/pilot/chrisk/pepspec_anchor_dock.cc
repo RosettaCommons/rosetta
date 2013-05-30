@@ -385,7 +385,7 @@ pep_rmsd_analysis(
 			id::AtomID const id2( ref_pose.residue( i + static_cast< int >( ref_prot_begin ) - static_cast< int >( prot_begin ) ).atom_index( "CA" ), i + static_cast< int >( ref_prot_begin ) - static_cast< int >( prot_begin ) );
 			atom_map[ id1 ] = id2;
 		}
-		core::scoring::ScoreFunctionOP full_scorefxn(  core::scoring::ScoreFunctionFactory::create_score_function( option[ score::weights ] ) );			
+		core::scoring::ScoreFunctionOP full_scorefxn(  core::scoring::getScoreFunction() );			
 		core::scoring::superimpose_pose( pose, ref_pose, atom_map );
 
 	}
@@ -581,7 +581,7 @@ run_pep_prep()
 	if( prot_begin != 1 ) f.new_jump( prot_anchor, 1, 1 );
 	if( prot_end != pose.total_residue() ) f.new_jump( prot_anchor, prot_end + 1, prot_end );
 
-	core::scoring::ScoreFunctionOP scorefxn(  ScoreFunctionFactory::create_score_function( option[ score::weights ] ) );
+	core::scoring::ScoreFunctionOP scorefxn(  getScoreFunction() );
 	core::scoring::ScoreFunctionOP soft_scorefxn(  ScoreFunctionFactory::create_score_function( option[ pepspec::soft_wts ] ) );
 
 	//for each desired anchor-docked protein

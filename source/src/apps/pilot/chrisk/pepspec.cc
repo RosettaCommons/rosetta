@@ -688,7 +688,7 @@ pep_rmsd_analysis(
 			id::AtomID const id2( ref_pose.residue( i + static_cast< int >( ref_prot_begin ) - static_cast< int >( prot_begin ) ).atom_index( "CA" ), i + static_cast< int >( ref_prot_begin ) - static_cast< int >( prot_begin ) );
 			atom_map[ id1 ] = id2;
 		}
-		core::scoring::ScoreFunctionOP full_scorefxn(  ScoreFunctionFactory::create_score_function( option[ score::weights ] ) );			
+		core::scoring::ScoreFunctionOP full_scorefxn(  getScoreFunction() );			
 		core::scoring::superimpose_pose( pose, ref_pose, atom_map );
 
 	}
@@ -1574,7 +1574,7 @@ RunPepSpec()
 
 
 	//define scoring functions//
-	core::scoring::ScoreFunctionOP full_scorefxn( ScoreFunctionFactory::create_score_function( option[ score::weights ] ) );
+	core::scoring::ScoreFunctionOP full_scorefxn( getScoreFunction() );
 	core::scoring::ScoreFunctionOP soft_scorefxn( ScoreFunctionFactory::create_score_function( option[ pepspec::soft_wts ] ) );
 	core::scoring::ScoreFunctionOP cen_scorefxn;
 	if(  option[ pepspec::cen_wts ].user() ){

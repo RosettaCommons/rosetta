@@ -378,10 +378,10 @@ void
     }
 
 		// Make a scorefunction
-		ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
+		ScoreFunctionOP scorefxn = getScoreFunction();
 
     // Calculate the ddG of the input structure in the assembled and unassembled states
-    protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG(score12, 1, true);
+    protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG(scorefxn, 1, true);
     ddG_mover.calculate(pose);
     Real ddG = ddG_mover.sum_ddG();
     TR << files[ifile] << "designed ddG = " << ddG << std::endl;
@@ -392,12 +392,12 @@ void
 		utility::vector1<std::string> revert_ids = option[matdes::design::revert_ids]();
 
 		// Design
-		design(pose, score12, revert_pos, revert_ids);
+		design(pose, scorefxn, revert_pos, revert_ids);
 
-		// Repack and minimize using score12
-		repack(pose, score12, revert_pos);
-		minimize(pose, score12, revert_pos, false, true, false);
-		score12->score(pose);
+		// Repack and minimize using scorefxn
+		repack(pose, scorefxn, revert_pos);
+		minimize(pose, scorefxn, revert_pos, false, true, false);
+		scorefxn->score(pose);
 
 		// Write the pdb file of the design
     std::vector<std::string> path_fn_vector = string_split(string_of(file), '/');
@@ -419,7 +419,7 @@ void
     // Calculate the Boltzmann probability for the rotamer at each designed position
     for(Size ipos = 1; ipos <= revert_pos.size(); ++ipos) {
 			protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
-			rbc.scorefxn(score12);
+			rbc.scorefxn(scorefxn);
 	    Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, revert_pos[ipos]);
       std::cout << path_fn_vector[(path_fn_vector.size()-1)] << " " << revert_ids[ipos] << revert_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;
     }
@@ -441,10 +441,10 @@ void
     }
 		avg_interface_energy = interface_energy / revert_pos.size();
 		// Multiply those energies by the weights
-		em *= score12->weights();
+		em *= scorefxn->weights();
 
 		// Calculate the ddG of the monomer in the assembled and unassembled states
-    protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG(score12, 1, true);
+    protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG(scorefxn, 1, true);
     ddG_mover.calculate(pose);
     Real ddG = ddG_mover.sum_ddG();
     TR << files[ifile] << "reverted ddG = " << ddG << std::endl;
@@ -481,10 +481,10 @@ void
 				continue;
 			}
 			// Design
-	    design(pose_for_ala_scan, score12, pos, id);
+	    design(pose_for_ala_scan, scorefxn, pos, id);
 
 	    // Calculate the ddG of the monomer in the assembled and unassembled states
-	    protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG(score12, 1, true);
+	    protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG(scorefxn, 1, true);
 	    ddG_mover.calculate(pose_for_ala_scan);
 	    Real ddG = ddG_mover.sum_ddG();
 	    TR << files[ifile] << " ddG for mutation " << revert_ids[ipos] << revert_pos[ipos] << "ALA = " << ddG << std::endl;

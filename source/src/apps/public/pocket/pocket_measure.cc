@@ -94,7 +94,7 @@ main( int argc, char * argv [] )
 	core::import_pose::pose_from_pdb( input_pose, input_pdb_name );
 
 
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 
 	(*scorefxn)(input_pose);
   core::Real const starting_total_score = input_pose.energies().total_energies()[ total_score ];

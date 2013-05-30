@@ -52,5 +52,26 @@ public:
 		//  ggtitle("Raw vs Faded Energy as computed by unit test.")
 		//ggsave("raw_faded_energy.pdf")
 	}
-	
+	void test_fade_energy_derivs() {
+		using namespace core;
+		using namespace scoring;
+    using namespace hbonds;
+
+		Real dE_dr(1.0), dE_dxD(1.0), dE_dxH(1.0), dE_dBAH(1.0), dE_dchi(1.0);
+		Real delta( 1e-5 );
+		for ( Real raw_energy = -.20004; raw_energy < .2; raw_energy +=.05 ) {
+			Real energy(raw_energy);
+			dE_dr = dE_dxD = dE_dxH = dE_dBAH = dE_dchi = 1.0;
+			fade_energy(energy, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
+			Real elow  = raw_energy - delta; fade_energy( elow );
+			Real ehigh = raw_energy + delta; fade_energy( ehigh );
+			Real numeric_deriv = (ehigh-elow)/(2*delta);
+			//std::cout << "fade energy: " << raw_energy << " -> " << energy << "; deriv: " << numeric_deriv << " " << dE_dr << std::endl;
+			TS_ASSERT_DELTA( numeric_deriv, dE_dr,   1e-6 );
+			TS_ASSERT_DELTA( numeric_deriv, dE_dxD,  1e-6 );
+			TS_ASSERT_DELTA( numeric_deriv, dE_dxH,  1e-6 );
+			TS_ASSERT_DELTA( numeric_deriv, dE_dBAH, 1e-6 );
+			TS_ASSERT_DELTA( numeric_deriv, dE_dchi, 1e-6 );
+		}
+	}
 };

@@ -1760,7 +1760,7 @@ byres_analysis(
 	pose_from_pdb( pose, pdbname );
 	*/
 
-	//create a ScoreFunction from commandline options (default is score12)
+	//create a ScoreFunction from commandline options
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 	//and add decompose bb_hbond energies option
 	core::scoring::methods::EnergyMethodOptionsOP emopts(

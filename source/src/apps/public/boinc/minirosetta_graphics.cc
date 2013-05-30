@@ -28,7 +28,7 @@
 
 
 #include <core/types.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 
 // avoid having to create the static protocol movers
 //#include <protocols/init/init.hh>
@@ -1321,7 +1321,7 @@ int main(int argc, char** argv) {
 	// create boinc object
 	protocols::boinc::Boinc boinc_wu = protocols::boinc::Boinc::instance();
 
-  core::init( argc, argv );
+  core::init::init( argc, argv );
 
 	// avoid having to create the static protocol movers
 	//protocols::init::init( argc, argv );

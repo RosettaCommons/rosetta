@@ -106,7 +106,7 @@ main( int argc, char* argv [] )
 	}
 
 	// configure score function
-  core::scoring::ScoreFunctionOP energy12scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" ) );
+  core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
 	core::scoring::ScoreFunctionOP constraintscorefxn( new core::scoring::ScoreFunction );
 	constraintscorefxn->set_weight( atom_pair_constraint, 1.0 );
 
@@ -149,16 +149,16 @@ main( int argc, char* argv [] )
 		}
 
 		core::Real constraint_score = (*constraintscorefxn)(pose);
-		core::Real score12_score = (*energy12scorefxn)(pose);
+		core::Real score = (*scorefxn)(pose);
 		core::Real gdtmm_score = CA_gdtmm(pose, native_pose);
-		std::cout << pdbname << '\t' << gdtmm_score << '\t' << constraint_score << '\t' << score12_score << '\n';
+		std::cout << pdbname << '\t' << gdtmm_score << '\t' << constraint_score << '\t' << score << '\n';
 	}
 
 	// and finally, score the native
 	core::Real constraint_score = (*constraintscorefxn)(native_pose);
-	core::Real score12_score = (*energy12scorefxn)(native_pose);
+	core::Real score = (*scorefxn)(native_pose);
 	core::Real gdtmm_score = CA_gdtmm(native_pose, native_pose);
-	std::cout << "NATIVE" << '\t' << gdtmm_score << '\t' << constraint_score << '\t' << score12_score << '\n';
+	std::cout << "NATIVE" << '\t' << gdtmm_score << '\t' << constraint_score << '\t' << score << '\n';
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;

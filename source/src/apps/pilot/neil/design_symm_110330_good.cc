@@ -659,10 +659,10 @@ void
 					}
 					TR << std::endl;
 
-				// Repack using score12
-				ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
-				repack(pose_for_design, score12, design_pos);
-				//score12->score(pose_for_design);
+				// Repack using scorefxn
+				ScoreFunctionOP scorefxn = getScoreFunction();
+				repack(pose_for_design, scorefxn, design_pos);
+				//scorefxn->score(pose_for_design);
 
 				// Calculate per-residue energies for interface residues
 				Real interface_energy = 0;

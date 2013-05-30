@@ -24,7 +24,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>

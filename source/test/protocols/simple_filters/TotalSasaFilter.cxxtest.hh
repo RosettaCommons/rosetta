@@ -92,7 +92,8 @@ class TotalSasaFilterTests : public CxxTest::TestSuite {
 
 		protocols::simple_filters::TotalSasaFilter test;
 
-		TS_ASSERT_DELTA( test.report_sm(pose), 5226.2011, TOLERATED_ERROR );
+		//TS_ASSERT_DELTA( test.report_sm(pose), 5236.9648, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( test.report_sm(pose), 5240.4203, TOLERATED_ERROR );
 
 		core::pack::task::TaskFactoryOP factory( new core::pack::task::TaskFactory );
 		core::pack::task::operation::PreventRepackingOP prt( new core::pack::task::operation::PreventRepacking );
@@ -104,10 +105,11 @@ class TotalSasaFilterTests : public CxxTest::TestSuite {
 		factory->push_back(prt);
 		test.task_factory(factory);
 
-		TS_ASSERT_DELTA( test.report_sm(pose), 63.4461 + 117.8897 + 0.0, TOLERATED_ERROR );
-//		TS_ASSERT_DELTA( rsd_sasa[1], 63.4461, TOLERATED_ERROR );
-//		TS_ASSERT_DELTA( rsd_sasa[11], 117.8897, TOLERATED_ERROR );
-//		TS_ASSERT_DELTA( rsd_sasa[33], 0.0, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( test.report_sm(pose), 184.1200, TOLERATED_ERROR );
+		//TS_ASSERT_DELTA( test.report_sm(pose), 180.6644, TOLERATED_ERROR );
+		//TS_ASSERT_DELTA( rsd_sasa[1], 63.4461, TOLERATED_ERROR );
+		//TS_ASSERT_DELTA( rsd_sasa[11], 117.8897, TOLERATED_ERROR );
+		//TS_ASSERT_DELTA( rsd_sasa[33], 0.0, TOLERATED_ERROR );
 
 	}
 
@@ -118,7 +120,8 @@ class TotalSasaFilterTests : public CxxTest::TestSuite {
 		protocols::simple_filters::TotalSasaFilter test(0, /*hydrophobic=*/ true, /*polar=*/ false );
 
 		//Note 3302.5455 is different from what Ron got in his tests (3212.4579) - assuming small differences are due to slighlty different settings, etc.
-		TS_ASSERT_DELTA( test.report_sm(pose), 3302.5455, TOLERATED_ERROR );
+		//TS_ASSERT_DELTA( test.report_sm(pose), 3311.7659, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( test.report_sm(pose), 3310.8001, TOLERATED_ERROR );
 
 		core::pack::task::TaskFactoryOP factory( new core::pack::task::TaskFactory );
 		core::pack::task::operation::PreventRepackingOP prt( new core::pack::task::operation::PreventRepacking );
@@ -131,7 +134,8 @@ class TotalSasaFilterTests : public CxxTest::TestSuite {
 		test.task_factory(factory);
 
 		// Note: 95.2054 is different from what Ron got in his tests (90.1560) - assuming difference is due to differences in settings.
-		TS_ASSERT_DELTA( test.report_sm(pose), 95.2054, TOLERATED_ERROR );
+		//TS_ASSERT_DELTA( test.report_sm(pose), 95.7852, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( test.report_sm(pose), 94.8195, TOLERATED_ERROR );
 	}
 
 };

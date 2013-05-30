@@ -102,10 +102,10 @@ void RemodelAccumulator::apply( Pose & pose ){
 //make the object's own collection of poses
 	core::pose::PoseOP pose_pt = new core::pose::Pose( pose );
 
-	ScoreFunctionOP score12( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH));
-	sfxn_ = score12;
+	ScoreFunctionOP scorefxn( getScoreFunction());
+	sfxn_ = scorefxn;
 
-	ScoreTypeFilter const  pose_total_score( score12, total_score, 100 );
+	ScoreTypeFilter const  pose_total_score( scorefxn, total_score, 100 );
 	core::Real score(pose_total_score.compute( *pose_pt ));
 	pose_store_.insert(std::pair<core::Real, core::pose::PoseOP>(score, pose_pt));
 	keep_top_pose(option[OptionKeys::remodel::save_top] );
@@ -248,10 +248,10 @@ core::Size RemodelAccumulator::recover_checkpoint()
 
 				this->apply(dummyPose);
 
-					ScoreFunctionOP score12( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH));
-					sfxn_ = score12;
+					ScoreFunctionOP scorefxn( getScoreFunction());
+					sfxn_ = scorefxn;
 
-					ScoreTypeFilter const  pose_total_score( score12, total_score, 100 );
+					ScoreTypeFilter const  pose_total_score( scorefxn, total_score, 100 );
 					core::Real score(pose_total_score.compute( dummyPose ));
 
 

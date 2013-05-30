@@ -37,6 +37,7 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 
 #include <protocols/protein_interface_design/util.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/chemical/ResidueType.hh>
@@ -174,7 +175,7 @@ MapHotspot::create_rotamer_set( core::pose::Pose const & pose, core::Size const 
 	using namespace core::pack::task::operation;
 	using namespace core::scoring;
 	TaskFactory tf;
-	ScoreFunctionCOP score12( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	ScoreFunctionCOP scorefxn( getScoreFunction() );
 	RotamerExplosionOP rotamer_exp_operation = new RotamerExplosion( hotspot_resnum, EX_THREE_THIRD_STEP_STDDEVS, explosion );
 	InitializeFromCommandlineOP init_from_commandline = new InitializeFromCommandline;
 	RestrictResidueToRepackingOP restrict_to_rep_operation = new RestrictResidueToRepacking;
@@ -187,14 +188,14 @@ MapHotspot::create_rotamer_set( core::pose::Pose const & pose, core::Size const 
 	RotamerSetOP rotset = rsf.create_rotamer_set( pose.residue( hotspot_resnum ) );
 	rotset->set_resid( hotspot_resnum );
 	graph::GraphOP packer_graph = new graph::Graph( pose.total_residue() );
-	rotset->build_rotamers( pose, *score12, *ptask, packer_graph, false );
+	rotset->build_rotamers( pose, *scorefxn, *ptask, packer_graph, false );
 	TR<<"Created rotamer set for residue "<<hotspot_resnum<<"with explosion="<<explosion<<std::endl;
 	return( rotset );
 }
 
 /// @details A function that recursively goes over all jumps. Within each function, the residue-identities
 /// related to that jump are cycled, and for each of those, it iterates over the rotamer set.
-/// for each residue type, the best-energy (score12) rotamer, that fulfills all of the user-defined filters
+/// for each residue type, the best-energy (scorefxn) rotamer, that fulfills all of the user-defined filters
 /// is chosen and then we move deeper into the recursion with the next jump. Stopping condition is the
 /// final iteration over the final jump at which point a decoy is output, or if no rotamer for the
 /// particular residue identity meets all filters (exit with no decoy generation).
@@ -222,8 +223,8 @@ MapHotspot::GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose &
 		core::Size curr_rotamer_num( 1 );
 		core::pose::Pose best_pose;
 		core::Real lowest_energy( 100000 );
-		ScoreFunctionCOP score12( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
-		simple_filters::ScoreTypeFilter const pose_total_score( score12, total_score, 100/*threshold*/ );
+		ScoreFunctionCOP scorefxn( getScoreFunction() );
+		simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100/*threshold*/ );
 		for( Rotamers::const_iterator rot_it = rotset->begin(); rot_it!=rotset->end(); ++rot_it ){
 			TR<<"Current rotamer: "<<curr_rotamer_num++<<'\n';
 			core::conformation::ResidueCOP rot( *rot_it );
@@ -312,13 +313,13 @@ MapHotspot::parse_my_tag( utility::tag::TagPtr const tag,
 				jump_movers_[ jump ] = find_mover->second;
 				std::string const allowed_aas( j_tag->getOption< std::string >( "allowed_aas", "ADEFIKLMNQRSTVWY" ) );
 				allowed_aas_per_jump_[ jump ] = allowed_aas;
-				std::string const scorefxn_name( j_tag->getOption< std::string >( "scorefxn_minimize", "score12" ) );
+				std::string const scorefxn_name( rosetta_scripts::get_score_function_name(j_tag, "scorefxn_minimize") );
 				if( !data.has( "scorefxns", scorefxn_name ) ){
 					TR<<"Scorefxn "<<scorefxn_name<<" not found. Will not minimize sidechain.";
 					minimization_scorefxns_[ jump ] = 0;
 				}
 				else
-					minimization_scorefxns_[ jump ] = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ) ) );
+					minimization_scorefxns_[ jump ] = rosetta_scripts::parse_score_function(j_tag, "scorefxn_minimize", data);
 			}//foreach j_tag
 		}//fi btag_name=="Jumps"
 		else

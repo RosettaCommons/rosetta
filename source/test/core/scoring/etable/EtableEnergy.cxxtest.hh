@@ -22,29 +22,19 @@
 
 // Unit headers
 #include <core/scoring/etable/EtableEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/MinimizationData.hh>
-// AUTO-REMOVED #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
-// AUTO-REMOVED #include <core/optimization/NumericalDerivCheckResult.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
-#include <test/UTracer.hh>
+// Basic headers
+#include <basic/Tracer.hh>
 
-//Auto Headers
+// Utility headers
 #include <utility/vector1.hh>
 
 
@@ -68,12 +58,21 @@ class EtableEnergyTests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
-		core_init();
+		/// The analytic version operates just fine in the presence of the table-based etable, but
+		/// the table-based version won't work unless the analytic_etable_evaluation flag is false
+		/// at the time the FA_STANDARD Etable is constructed.
+		core_init_with_additional_options( "-analytic_etable_evaluation false" );
 	}
 
 	void tearDown() {}
 
-	void test_eval_residue_pair_energy()
+	void test_default_enmethopts_signal_analytic_etable() {
+		core_init(); // reinitialize options system without the "-analytic_etable_evaluation false" override in setUp above
+		core::scoring::methods::EnergyMethodOptions opts;
+		TS_ASSERT( opts.analytic_etable_evaluation() );
+	}
+
+	void test_eval_residue_pair_energy_table_version()
 	{
 		using namespace core::pose;
 		using namespace core::scoring;
@@ -81,7 +80,8 @@ public:
 		using namespace core::scoring::methods;
 
 		Pose pose = create_trpcage_ideal_pose();
-		EnergyMethodOptions options; // default is fine
+		EnergyMethodOptions options;
+		options.analytic_etable_evaluation( false );
 
 		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
 
@@ -97,7 +97,35 @@ public:
 		//core.scoring.etable.EtableEnergy.cxxtest: etable energy, trpcage 4 and 5: -0.6079854186280232 0.0778507865338765 0.4275630856840362
 		TS_ASSERT_DELTA( emap[ fa_atr ], -0.6079854186280232, 1e-12 );
 		TS_ASSERT_DELTA( emap[ fa_rep ],  0.0778507865338765, 1e-12 );
-		TS_ASSERT_DELTA( emap[ fa_sol ],  0.4275630856840362, 1e-12 );
+		TS_ASSERT_DELTA( emap[ fa_sol ],  0.4041439359347673, 1e-12 );
+	}
+
+	void test_eval_residue_pair_energy_analytic_version()
+	{
+		using namespace core::pose;
+		using namespace core::scoring;
+		using namespace core::scoring::etable;
+		using namespace core::scoring::methods;
+
+		Pose pose = create_trpcage_ideal_pose();
+		EnergyMethodOptions options;
+		options.analytic_etable_evaluation( true );
+
+		AnalyticEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+
+		EnergyMap emap;
+		ScoreFunction sfxn;
+		etab_energy.residue_pair_energy( pose.residue( 4 ), pose.residue( 5 ), pose, sfxn, emap );
+
+		//int const old_precision( TR.precision() );
+		//TR.precision( 16 );
+		//TR << "etable energy, trpcage 4 and 5: " << emap[ fa_atr ] << " " << emap[ fa_rep ] << " " << emap[ fa_sol ] << std::endl;
+		//TR.precision( old_precision );
+
+		//core.scoring.etable.EtableEnergy.cxxtest: etable energy, trpcage 4 and 5: -0.6079854186280232 0.0778507865338765 0.4275630856840362
+		TS_ASSERT_DELTA( emap[ fa_atr ], -0.6079829868018019, 1e-12 );
+		TS_ASSERT_DELTA( emap[ fa_rep ],  0.0778336035719058, 1e-12 );
+		TS_ASSERT_DELTA( emap[ fa_sol ],  0.403334621266247, 1e-12 );
 	}
 
 	void test_eval_residue_pair_energy_w_minimization_data()
@@ -130,7 +158,7 @@ public:
 		TS_ASSERT_DELTA( emap[ fa_sol ], emap2[ fa_sol ], 1e-12 );
 	}
 
-	void test_eval_intra_residue_energy_w_minimization_data()
+	void test_eval_intra_residue_energy_w_minimization_data_table_version()
 	{
 		using namespace core::pose;
 		using namespace core::scoring;
@@ -159,7 +187,7 @@ public:
 
 	}
 
-	void test_eval_intra_residue_energy_w_minimization_data_analytic()
+	void test_eval_intra_residue_energy_w_minimization_data_analytic_version()
 	{
 		using namespace core::pose;
 		using namespace core::scoring;
@@ -281,11 +309,15 @@ public:
 		TS_ASSERT_DELTA( goldF2.z(), decompF2.z(), 1e-12 );
 	}*/
 
-	void test_start_func_matches_start_score_w_full_bbflex()
+	void test_start_func_matches_start_score_w_full_bbflex_table_version()
 	{
 
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+		options.analytic_etable_evaluation( false );
+		sfxn.set_energy_method_options( options );
+
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -294,12 +326,35 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -25.94299600233435 );
+		adv.validate_start_func_matches_start_score( -26.03949788109572 );
 	}
-	void test_etab_numeric_deriv_check()
+
+	void test_start_func_matches_start_score_w_full_bbflex_analytic_version()
 	{
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+		options.analytic_etable_evaluation( false );
+		sfxn.set_energy_method_options( options );
+
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
+		AtomDerivValidator adv;
+		adv.set_pose( pose );
+		adv.set_score_function( sfxn );
+		adv.set_movemap( movemap );
+		adv.validate_start_func_matches_start_score( -26.03949788109572 );
+	}
+
+	void test_etab_numeric_deriv_check_table_version()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+		options.analytic_etable_evaluation( false );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -309,63 +364,33 @@ public:
 		adv.simple_deriv_check( true, 5e-3 );
 	}
 
-	/// @brief Numeric deriv check
-	void dont_test_atom_tree_minimize_with_etable_energy()
+	void test_etab_numeric_deriv_check_analytic_version()
 	{
-		using namespace core;
-		using namespace core::graph;
-		using namespace core::pose;
-		using namespace core::scoring;
-		using namespace core::scoring::etable;
-		using namespace core::scoring::methods;
-		using namespace core::optimization;
-
-		Pose pose = create_trpcage_ideal_pose();
-		ScoreFunction sfxn;
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+		options.analytic_etable_evaluation( true );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
+		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
+		AtomDerivValidator adv( pose, sfxn, movemap );
 
-		AtomTreeMinimizer minimizer;
-		//std::cout.precision( 16 );
-		//std::cout << "start score: " << sfxn(pose) << std::endl;
-		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -25.94299600233435, start_score, 1e-12 );
-
-
-		kinematics::MoveMap movemap;
-		movemap.set_bb( true );
-		movemap.set_chi( true );
-
-		MinimizerOptions min_options( "dfpmin_armijo", 0.01, true, true, false );
-		min_options.deriv_check_to_stdout( false );
-
-		minimizer.run( pose, movemap, sfxn, min_options );
-
-		NumericalDerivCheckResultOP deriv_check_result = minimizer.deriv_check_result();
-		for ( Size ii = 1, iiend = deriv_check_result->n_deriv_check_results(); ii <= iiend; ++ii ) {
-			NumDerivCheckData const & iidata( deriv_check_result->deriv_check_result( ii ) );
-			TS_ASSERT( iidata.nsteps() >= 1 );
-			for ( Size jj = 1; jj <= iidata.nangles(); ++jj ) {
-				/// 1e-1.  That's not very good.  That's the problem with interpolating derivatives instead of using the real
-				/// derivatives.
-				TS_ASSERT_DELTA( iidata.dof_step_data( jj, 1 ).num_deriv(), iidata.dof_step_data( jj, 1 ).ana_deriv(), 1e-1 );
-			}
-		}
-
-		//Real end_score = sfxn(pose);
-		//std::cout << "end score: " << sfxn(pose) << std::endl;
-		//TS_ASSERT_DELTA( -26.48575563731416, end_score, 1e-12 );
+		adv.simple_deriv_check( true, 1e-6 );
 	}
 
 	/// @brief Create a move map that has the central residue changing, while everything
 	/// else is held fixed; then the domain map will have color 1 for residues 1-9, and
 	/// color 2 for residues 11-20.
-	void test_start_func_matches_start_score_w_partial_bbflex()
+	void test_start_func_matches_start_score_w_partial_bbflex_table_version()
 	{
 
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+		options.analytic_etable_evaluation( false );
+		sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -374,7 +399,30 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -25.94299600233435 );
+		adv.validate_start_func_matches_start_score( -26.03949788109572 );
+	}
+
+
+	/// @brief Create a move map that has the central residue changing, while everything
+	/// else is held fixed; then the domain map will have color 1 for residues 1-9, and
+	/// color 2 for residues 11-20.
+	void test_start_func_matches_start_score_w_partial_bbflex_analytic_version()
+	{
+
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+		options.analytic_etable_evaluation( true );
+		sfxn.set_energy_method_options( options );
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		kinematics::MoveMap movemap( create_trpcage_movemap_to_allow_bb10_freedom() );
+		AtomDerivValidator adv;
+		adv.set_pose( pose );
+		adv.set_score_function( sfxn );
+		adv.set_movemap( movemap );
+		adv.validate_start_func_matches_start_score( -26.05366706694121 );
 	}
 
 
@@ -491,11 +539,14 @@ public:
 	/// @brief Create a move map that has the central residue changing, while everything
 	/// else is held fixed; then the domain map will have color 1 for residues 1-9, and
 	/// color 2 for residues 11-20.
-	void test_start_func_matches_start_score_w_full_bbflex_and_intraresidue()
+	void test_start_func_matches_start_score_w_full_bbflex_and_intraresidue_table_version()
 	{
 
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( false );
+    sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -507,16 +558,44 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -22.28334391305056 );
+		adv.validate_start_func_matches_start_score( -22.39185655926555 );
+	}
+
+	/// @brief Create a move map that has the central residue changing, while everything
+	/// else is held fixed; then the domain map will have color 1 for residues 1-9, and
+	/// color 2 for residues 11-20.
+	void test_start_func_matches_start_score_w_full_bbflex_and_intraresidue_analytic_version()
+	{
+
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( true );
+    sfxn.set_energy_method_options( options );
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		sfxn.set_weight( fa_intra_atr, 0.5 );
+		sfxn.set_weight( fa_intra_rep, 0.25 );
+		sfxn.set_weight( fa_intra_sol, 0.125 );
+		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
+		AtomDerivValidator adv;
+		adv.set_pose( pose );
+		adv.set_score_function( sfxn );
+		adv.set_movemap( movemap );
+		adv.validate_start_func_matches_start_score( -22.41356255204407 );
 	}
 
 	/// @brief Make sure that the domain map logic inside the ScoreFunction
 	/// operates correctly for the intraresidue portions of two-body energies.
-	void test_start_func_matches_start_score_w_partial_bbflex_and_intraresidue()
+	void test_start_func_matches_start_score_w_partial_bbflex_and_intraresidue_table_version()
 	{
 
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( false );
+    sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -528,15 +607,41 @@ public:
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( -22.28334391305056 );
+		adv.validate_start_func_matches_start_score( -22.39185655926555 );
 	}
 
-
-	void test_setup_for_minimizing_with_autoupdate_w_full_bb_flexibility()
+	/// @brief Make sure that the domain map logic inside the ScoreFunction
+	/// operates correctly for the intraresidue portions of two-body energies.
+	void test_start_func_matches_start_score_w_partial_bbflex_and_intraresidue_analytic_version()
 	{
 
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( true );
+    sfxn.set_energy_method_options( options );
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		sfxn.set_weight( fa_intra_atr, 0.5 );
+		sfxn.set_weight( fa_intra_rep, 0.25 );
+		sfxn.set_weight( fa_intra_sol, 0.125 );
+		kinematics::MoveMap movemap( create_trpcage_movemap_to_allow_bb10_freedom() );
+		AtomDerivValidator adv;
+		adv.set_pose( pose );
+		adv.set_score_function( sfxn );
+		adv.set_movemap( movemap );
+		adv.validate_start_func_matches_start_score( -22.41356255204407 );
+	}
+
+
+	void test_setup_for_minimizing_with_autoupdate_w_full_bb_flexibility_table_version()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( false );
+    sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -549,14 +654,38 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -22.28334391305056 );
+		adv.validate_start_func_matches_start_score( -22.39185655926555 );
 	}
 
-	void test_setup_for_minimizing_with_autoupdate_w_partial_bb_flexibility()
+	void test_setup_for_minimizing_with_autoupdate_w_full_bb_flexibility_analytic_version()
 	{
-
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( true );
+    sfxn.set_energy_method_options( options );
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		sfxn.set_weight( fa_intra_atr, 0.5 );
+		sfxn.set_weight( fa_intra_rep, 0.25 );
+		sfxn.set_weight( fa_intra_sol, 0.125 );
+		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
+		AtomDerivValidator adv;
+		adv.set_pose( pose );
+		adv.set_score_function( sfxn );
+		adv.set_movemap( movemap );
+		adv.set_nblist_auto_update( true );
+		adv.validate_start_func_matches_start_score( -22.41356255204407 );
+	}
+
+	void test_setup_for_minimizing_with_autoupdate_w_partial_bb_flexibility_table_version()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( false );
+    sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -569,7 +698,7 @@ public:
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
 		adv.set_nblist_auto_update( true );
-		adv.validate_start_func_matches_start_score( -22.28334391305056 );
+		adv.validate_start_func_matches_start_score( -22.39185655926555 );
 
 		/*using namespace core;
 		using namespace core::graph;
@@ -615,10 +744,35 @@ public:
 		TS_ASSERT_DELTA( -22.28334391305056, start_func, 1e-12 );*/
 	}
 
-	void test_etable_derivatives_w_autoupdate_intraresidue_terms_and_full_bb_flex()
+	void test_setup_for_minimizing_with_autoupdate_w_partial_bb_flexibility_analytic_version()
 	{
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( true );
+    sfxn.set_energy_method_options( options );
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		sfxn.set_weight( fa_intra_atr, 0.5 );
+		sfxn.set_weight( fa_intra_rep, 0.25 );
+		sfxn.set_weight( fa_intra_sol, 0.125 );
+		kinematics::MoveMap movemap( create_trpcage_movemap_to_allow_bb10_freedom() );
+		AtomDerivValidator adv;
+		adv.set_pose( pose );
+		adv.set_score_function( sfxn );
+		adv.set_movemap( movemap );
+		adv.set_nblist_auto_update( true );
+		adv.validate_start_func_matches_start_score( -22.41356255204407 );
+	}
+
+	void test_etable_derivatives_w_autoupdate_intraresidue_terms_and_full_bb_flex_table_version()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( false );
+    sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -640,10 +794,41 @@ public:
 
 	}
 
-	void test_etable_derivatives_w_autoupdate_intraresidue_terms_and_partial_bb_flex()
+	void test_etable_derivatives_w_autoupdate_intraresidue_terms_and_full_bb_flex_analytic_version()
 	{
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( true );
+    sfxn.set_energy_method_options( options );
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		sfxn.set_weight( fa_intra_atr, 0.5 );
+		sfxn.set_weight( fa_intra_rep, 0.25 );
+		sfxn.set_weight( fa_intra_sol, 0.125 );
+		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
+		AtomDerivValidator adv;
+		adv.set_pose( pose );
+		adv.set_score_function( sfxn );
+		adv.set_movemap( movemap );
+		adv.set_nblist_auto_update( true );
+
+		adv.add_res_for_deriv( 9 );
+		adv.add_res_for_deriv( 10 );
+		adv.add_res_for_deriv( 11 );
+
+		adv.simple_deriv_check( true, 1e-6 );
+
+	}
+
+	void test_etable_derivatives_w_autoupdate_intraresidue_terms_and_partial_bb_flex_table_version()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( false );
+    sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -658,6 +843,30 @@ public:
 		adv.set_nblist_auto_update( true );
 
 		adv.simple_deriv_check( true, 5e-3 );
+	}
+
+
+	void test_etable_derivatives_w_autoupdate_intraresidue_terms_and_partial_bb_flex_analytic_version()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( true );
+    sfxn.set_energy_method_options( options );
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		sfxn.set_weight( fa_intra_atr, 0.5 );
+		sfxn.set_weight( fa_intra_rep, 0.25 );
+		sfxn.set_weight( fa_intra_sol, 0.125 );
+		kinematics::MoveMap movemap( create_trpcage_movemap_to_allow_bb10_freedom() );
+		AtomDerivValidator adv;
+		adv.set_pose( pose );
+		adv.set_score_function( sfxn );
+		adv.set_movemap( movemap );
+		adv.set_nblist_auto_update( true );
+
+		adv.simple_deriv_check( true, 1e-6 );
 	}
 
 	void dont_test_atom_tree_minimize_with_autoupdate()
@@ -700,7 +909,7 @@ public:
 		TS_ASSERT_DELTA( -22.82696911663496, end_score, 1e-12 );
 	}
 
-	void test_setup_for_minimizing_with_autoupdate2()
+	void test_setup_for_minimizing_with_autoupdate2_table_version()
 	{
 		using namespace core;
 		using namespace core::graph;
@@ -712,6 +921,9 @@ public:
 
 		Pose pose = create_trpcage_ideal_pose();
 		ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( false );
+    sfxn.set_energy_method_options( options );
 		sfxn.set_weight( fa_atr, 0.5 );
 		sfxn.set_weight( fa_rep, 0.25 );
 		sfxn.set_weight( fa_sol, 0.125 );
@@ -723,7 +935,7 @@ public:
 		//std::cout.precision( 16 );
 		//std::cout << "start score: " << sfxn(pose) << std::endl;
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -22.28334391305056, start_score, 1e-12 );
+		TS_ASSERT_DELTA( -22.39185655926555, start_score, 1e-12 );
 
 
 		kinematics::MoveMap movemap;
@@ -742,7 +954,55 @@ public:
 
 		Real start_func = sfxn(pose);
 		//std::cout << "start_func: " << start_func << std::endl;
-		TS_ASSERT_DELTA( -22.28334391305056, start_func, 1e-12 );
+		TS_ASSERT_DELTA( -22.39185655926555, start_func, 1e-12 );
+	}
+
+	void test_setup_for_minimizing_with_autoupdate2_analytic_version()
+	{
+		using namespace core;
+		using namespace core::graph;
+		using namespace core::pose;
+		using namespace core::scoring;
+		using namespace core::scoring::etable;
+		using namespace core::scoring::methods;
+		using namespace core::optimization;
+
+		Pose pose = create_trpcage_ideal_pose();
+		ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+    options.analytic_etable_evaluation( true );
+    sfxn.set_energy_method_options( options );
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		sfxn.set_weight( fa_intra_atr, 0.5 );
+		sfxn.set_weight( fa_intra_rep, 0.25 );
+		sfxn.set_weight( fa_intra_sol, 0.125 );
+
+		AtomTreeMinimizer minimizer;
+		//std::cout.precision( 16 );
+		//std::cout << "start score: " << sfxn(pose) << std::endl;
+		Real start_score = sfxn(pose);
+		TS_ASSERT_DELTA( -22.41356255204407, start_score, 1e-12 );
+
+
+		kinematics::MoveMap movemap;
+		movemap.set_bb( 10, true );
+
+		MinimizerOptions min_options( "dfpmin_armijo", 0.01, true, false, false );
+		min_options.nblist_auto_update( true );
+
+		/// BEGIN AtomTreeMinimizer setup block
+		MinimizerMap min_map;
+		min_map.setup( pose, movemap );
+
+		pose.energies().set_use_nblist( pose, min_map.domain_map(), min_options.nblist_auto_update() );
+		sfxn.setup_for_minimizing( pose, min_map );
+		/// END AtomTreeMinimizer setup block
+
+		Real start_func = sfxn(pose);
+		//std::cout << "start_func: " << start_func << std::endl;
+		TS_ASSERT_DELTA( -22.41356255204407, start_func, 1e-12 );
 	}
 
 	void dont_test_atom_tree_minimize_with_autoupdate2()

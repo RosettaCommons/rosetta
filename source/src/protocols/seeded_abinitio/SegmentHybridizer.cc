@@ -566,8 +566,7 @@ SegmentHybridizer::parse_my_tag( TagPtr const tag,
 	TR << "initialized SegmentHybridizer mover " << std::endl;
 
 	//jump_num_ = tag->getOption<core::Size>("jump_number", 1 );
-  std::string const fa_scorefxn_name( tag->getOption<std::string>( "fa_scorefxn", "score12" ) );
-  highres_scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", fa_scorefxn_name) ));
+	highres_scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "fa_scorefxn", data )->clone();
 
 	TR << "initialized SegmentHybridizer mover " << std::endl;
 

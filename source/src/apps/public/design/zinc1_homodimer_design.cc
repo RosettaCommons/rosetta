@@ -256,14 +256,14 @@ public:
     softrep_sym_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( *softrep_scorefxn );
     TR << "Softrep Scorefunction: " << *softrep_sym_scorefxn_ << std::endl;
 
-    ScoreFunctionOP score12_scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ); // SCORE12, will become SymmetricScoreFunction when symmetry definition file is included as an option
-		//score12_scorefxn->set_weight( atom_pair_constraint, 4.0 ); // 4 distances
-    //score12_scorefxn->set_weight( angle_constraint, 2.0 );     // 10 angles (6 tetr + 4)
-    //score12_scorefxn->set_weight( dihedral_constraint, 8.0 );  // 1 dihedral per His
-    score12_scorefxn->set_weight( res_type_constraint, basic::options::option[fav_nat_bonus].value() );
-    score12_sym_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( *score12_scorefxn );
-    TR << "Score12 Scorefunction: " << *score12_sym_scorefxn_ << std::endl;
-    no_constraints_scorefxn_for_ddG_calc_ = new core::scoring::symmetry::SymmetricScoreFunction( *score12_scorefxn );
+    ScoreFunctionOP scorefxn = getScoreFunction(); // SCORE12, will become SymmetricScoreFunction when symmetry definition file is included as an option
+		//scorefxn->set_weight( atom_pair_constraint, 4.0 ); // 4 distances
+    //scorefxn->set_weight( angle_constraint, 2.0 );     // 10 angles (6 tetr + 4)
+    //scorefxn->set_weight( dihedral_constraint, 8.0 );  // 1 dihedral per His
+    scorefxn->set_weight( res_type_constraint, basic::options::option[fav_nat_bonus].value() );
+    sym_scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn );
+    TR << "Score12 Scorefunction: " << *sym_scorefxn_ << std::endl;
+    no_constraints_scorefxn_for_ddG_calc_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn );
 
     metal_scorefxn_ = new ScoreFunction;
     metal_scorefxn_->set_weight( atom_pair_constraint, 4.0 ); // 4 distances
@@ -329,12 +329,12 @@ public:
     TR << "Generating sym pack mover..." << std::endl;
     sym_pack_mover_ = new SymPackRotamersMover;
     sym_pack_mover_->task_factory( taskfactory_ );
-    sym_pack_mover_->score_function( score12_sym_scorefxn_ );
+    sym_pack_mover_->score_function( sym_scorefxn_ );
 
     TR << "Generating softrep and score12 minmovers..." << std::endl;
     softrep_min_mover_ = new SymMinMover( sc_move_map_, softrep_sym_scorefxn_ /*softrep + constraints*/, "dfpmin_armijo", 0.01, true );
-    score12_sc_min_mover_ = new SymMinMover( sc_move_map_, score12_sym_scorefxn_ /*score12 + constraints*/, "dfpmin_armijo", 0.01, true );
-    score12_sc_bb_min_mover_ = new SymMinMover( sc_bb_move_map_, score12_sym_scorefxn_ /*score12 + constraints*/, "dfpmin_armijo", 0.01, true );
+    sc_min_mover_ = new SymMinMover( sc_move_map_, sym_scorefxn_ /*score12 + constraints*/, "dfpmin_armijo", 0.01, true );
+    sc_bb_min_mover_ = new SymMinMover( sc_bb_move_map_, sym_scorefxn_ /*score12 + constraints*/, "dfpmin_armijo", 0.01, true );
 
     interface_analyzer_ = new protocols::anchored_design::InterfaceAnalyzerMover( 2, false, centroid_scorefxn_for_ddG_calc_ );
 
@@ -431,7 +431,7 @@ public:
   virtual void
   design_symmetric_homodimer_interface( Pose & pose ) {
 
-    protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose , *score12_sym_scorefxn_ , 0.6 );
+    protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose , *sym_scorefxn_ , 0.6 );
 
     for( Size i(1); i <= lowres_symmetric_design_cycles_; ++i ) {
       TR << "Lowres design cycle " << i << " out of " << lowres_symmetric_design_cycles_ << std::endl;
@@ -445,22 +445,22 @@ public:
       TR << "Highres design cycle " << i << " out of " << highres_symmetric_design_cycles_ << std::endl;
 
       sym_pack_mover_->apply( pose );
-      TR << "Score after packing " << score12_sym_scorefxn_->score( pose ) << std::endl;
-      score12_sc_min_mover_->apply( pose );
-      TR << "Score after packing and minimization" << score12_sym_scorefxn_->score( pose ) << std::endl;
+      TR << "Score after packing " << sym_scorefxn_->score( pose ) << std::endl;
+      sc_min_mover_->apply( pose );
+      TR << "Score after packing and minimization" << sym_scorefxn_->score( pose ) << std::endl;
       mc->boltzmann( pose );
     }
 
     mc->recover_low( pose );
 
     //     TR << "Minimizing sc bb" << std::endl;
-    //     TR << "Score before minimization " << score12_sym_scorefxn_->score( pose ) << std::endl;
-    //     score12_sc_bb_min_mover_->apply( pose );
-    //     TR << "Score after minimization 1 " << score12_sym_scorefxn_->score( pose ) << std::endl;
-    //     score12_sc_bb_min_mover_->apply( pose );
-    //     TR << "Score after minimization 2 " << score12_sym_scorefxn_->score( pose ) << std::endl;
-    //     score12_sc_bb_min_mover_->apply( pose );
-    //     TR << "Score after minimization 3"  << score12_sym_scorefxn_->score( pose ) << std::endl;
+    //     TR << "Score before minimization " << sym_scorefxn_->score( pose ) << std::endl;
+    //     sc_bb_min_mover_->apply( pose );
+    //     TR << "Score after minimization 1 " << sym_scorefxn_->score( pose ) << std::endl;
+    //     sc_bb_min_mover_->apply( pose );
+    //     TR << "Score after minimization 2 " << sym_scorefxn_->score( pose ) << std::endl;
+    //     sc_bb_min_mover_->apply( pose );
+    //     TR << "Score after minimization 3"  << sym_scorefxn_->score( pose ) << std::endl;
 
 
     return;
@@ -495,7 +495,7 @@ private:
   utility::vector1< protocols::metal_interface::MetalSiteResidueOP > msr_;
   core::pack::task::TaskFactoryCOP taskfactory_;
   core::scoring::symmetry::SymmetricScoreFunctionOP softrep_sym_scorefxn_;
-  core::scoring::symmetry::SymmetricScoreFunctionOP score12_sym_scorefxn_;
+  core::scoring::symmetry::SymmetricScoreFunctionOP sym_scorefxn_;
   core::scoring::symmetry::SymmetricScoreFunctionOP no_constraints_scorefxn_for_ddG_calc_;
   core::scoring::symmetry::SymmetricScoreFunctionOP centroid_scorefxn_for_ddG_calc_;
 
@@ -511,8 +511,8 @@ private:
   protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
   protocols::simple_moves::symmetry::SymRotamerTrialsMoverOP sym_rottrials_mover_;
   protocols::simple_moves::symmetry::SymMinMoverOP softrep_min_mover_;
-  protocols::simple_moves::symmetry::SymMinMoverOP score12_sc_min_mover_;
-  protocols::simple_moves::symmetry::SymMinMoverOP score12_sc_bb_min_mover_;
+  protocols::simple_moves::symmetry::SymMinMoverOP sc_min_mover_;
+  protocols::simple_moves::symmetry::SymMinMoverOP sc_bb_min_mover_;
   protocols::moves::MonteCarloOP mc_;
   protocols::anchored_design::InterfaceAnalyzerMoverOP interface_analyzer_;
 

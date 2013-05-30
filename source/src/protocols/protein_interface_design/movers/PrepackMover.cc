@@ -35,6 +35,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/simple_moves/MinMover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <basic/options/option.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
@@ -206,9 +207,8 @@ PrepackMover::get_name() const {
 void
 PrepackMover::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
-	std::string const scorefxn( tag->getOption<string>( "scorefxn", "score12" ));
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	jump_num_ = tag->getOption<core::Size>("jump_number", 1 );
-	scorefxn_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn) );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	min_bb( tag->getOption< bool >( "min_bb", 0 ));
 	if( min_bb() ) {
@@ -216,7 +216,7 @@ PrepackMover::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters
 		mm()->clear();
 		protocols::rosetta_scripts::parse_movemap( tag, pose, mm_, data );
 	}
-	TR << "Prepack mover with scorefxn " << scorefxn << " over jump number " << jump_num_ << "with min_bb "<<min_bb()<<std::endl;
+	TR << "Prepack mover with scorefxn " << rosetta_scripts::get_score_function_name(tag) << " over jump number " << jump_num_ << "with min_bb "<<min_bb()<<std::endl;
 }
 
 void

@@ -106,7 +106,7 @@ pick_design_position(core::pose::Pose const & pose, Size nsub_bblock, Real conta
 	std::set<Size> design_pos;
 	Real bblock_dist_sq = bblock_dist * bblock_dist;
 	// score the pose so the we check for clashes
-	ScoreFunctionOP sf = new  core::scoring::symmetry::SymmetricScoreFunction( ScoreFunctionFactory::create_score_function("standard", "score12") );
+	ScoreFunctionOP sf = new  core::scoring::symmetry::SymmetricScoreFunction( getScoreFunction() );
 	core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
 	eo.exclude_monomer_hack_elec(true);
 	sf->set_energy_method_options(eo);

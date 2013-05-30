@@ -1026,7 +1026,7 @@ void JumpSpecificAbrelax::do_distributed_rerun() {
 
 		add_constraints( pose ); // needs to come before scorefxn setup to know if constraints are present
 		scoring::ScoreFunctionOP centroid_scorefxn( generate_scorefxn( false /*fullatom*/ ) );
-		scoring::ScoreFunctionOP fullatom_scorefxn( generate_scorefxn( true /*fullatom*/ ) ); // this is the score12 standard score function ?! )
+		scoring::ScoreFunctionOP fullatom_scorefxn( generate_scorefxn( true /*fullatom*/ ) );
 
 		centroid_scorefxn->set_weight( scoring::linear_chainbreak, 1.0 );
 		centroid_scorefxn->set_weight( scoring::overlap_chainbreak, 1.0 );
@@ -1743,7 +1743,7 @@ void JumpSpecificAbrelax::fold() {
 	// setup scorefunctions
 	// this is called in setup_fold: add_constraints( extended_pose ); //such that scorefxn setup knows about constraints...
 	scoring::ScoreFunctionOP centroid_scorefxn( generate_scorefxn( false /*fullatom*/ ) );
-	scoring::ScoreFunctionOP fullatom_scorefxn( generate_scorefxn( true /*fullatom*/ ) ); // this is the score12 standard score function ?! );
+	scoring::ScoreFunctionOP fullatom_scorefxn( generate_scorefxn( true /*fullatom*/ ) );
 	abinitio_protocol.set_fullatom_scorefxn( fullatom_scorefxn );
 	abinitio_protocol.set_centroid_scorefxn( centroid_scorefxn );
 

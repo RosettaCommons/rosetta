@@ -326,10 +326,10 @@ class SasaTests : public CxxTest::TestSuite {
 		core::pose::initialize_atomid_map( atom_subset, pose, true );
 
 		total_sasa = core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false /* no big polar H */, atom_subset );
-		TS_ASSERT_DELTA( total_sasa, 5226.2011, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( total_sasa, 5240.4203, TOLERATED_ERROR );
 
-		TS_ASSERT_DELTA( rsd_sasa[1], 63.4461, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( rsd_sasa[11], 117.8897, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( rsd_sasa[1], 66.9017, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( rsd_sasa[11], 117.2182, TOLERATED_ERROR );
 		TS_ASSERT_DELTA( rsd_sasa[33], 0.0, TOLERATED_ERROR );
 
 	}

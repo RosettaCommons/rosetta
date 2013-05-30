@@ -49,8 +49,7 @@ class FASTERAnnealerTests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
-		core_init();
-		//core_init_with_additional_options( "-constant_seed" );
+		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior" );
 	}
 
 	void test_instantiate_FASTER_annealer() {
@@ -82,7 +81,7 @@ public:
 			}
 		}
 
-		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "standard" );
+		ScoreFunctionOP sfxn = getScoreFunction();
 		(*sfxn)( *trpcage ); // score the pose first;
 		sfxn->setup_for_packing( *trpcage, task->repacking_residues(), task->designing_residues() );
 		GraphOP packer_neighbor_graph = create_packer_graph( *trpcage, *sfxn, task );

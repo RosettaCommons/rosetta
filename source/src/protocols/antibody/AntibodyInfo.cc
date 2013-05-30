@@ -1873,7 +1873,7 @@ vector1<char> AntibodyInfo::get_CDR_sequence_with_stem(CDRNameEnum const & cdr_n
 scoring::ScoreFunctionCOP get_Pack_ScoreFxn(void){
 	static scoring::ScoreFunctionOP pack_scorefxn = 0;
 	if(pack_scorefxn == 0){
-		pack_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("standard" );
+		pack_scorefxn = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 	return pack_scorefxn;
 }
@@ -1897,7 +1897,7 @@ scoring::ScoreFunctionCOP get_LoopCentral_ScoreFxn(void){
 scoring::ScoreFunctionCOP get_LoopHighRes_ScoreFxn(void){
 	static scoring::ScoreFunctionOP loophighres_scorefxn = 0;
 	if(loophighres_scorefxn == 0){
-		loophighres_scorefxn = scoring::ScoreFunctionFactory::create_score_function("standard", "score12" );
+		loophighres_scorefxn = scoring::getScoreFunction();
         loophighres_scorefxn->set_weight( scoring::chainbreak, 1.0 );
         loophighres_scorefxn->set_weight( scoring::overlap_chainbreak, 10./3. );
         loophighres_scorefxn->set_weight(scoring::dihedral_constraint, 1.0);

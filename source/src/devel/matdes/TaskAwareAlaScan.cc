@@ -168,11 +168,10 @@ TaskAwareAlaScan::parse_my_tag(
 	jump( tag->getOption< Size >( "jump", 1 ) );
 	sym_dof_name( tag->getOption< std::string >( "sym_dof_name", "" ) );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
-	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ));
 	repack( tag->getOption< bool >( "repack", 1 ) );
 	report_diffs( tag->getOption< bool >("report_diffs", 1) );
 	write2pdb( tag->getOption< bool >("write2pdb", 0) );
-	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data, scorefxn_name );
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	// Handle exempt identities
   std::string unparsed_exempt_identities = tag->getOption< std::string >( "exempt_identities", "" );
   if( unparsed_exempt_identities != "" ) {

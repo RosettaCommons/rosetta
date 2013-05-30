@@ -127,8 +127,7 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag,
 {
 	using namespace core::scoring;
 
-	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	ddg_threshold_ = tag->getOption<core::Real>( "threshold", -15 );
 	rb_jump_ = tag->getOption< core::Size >( "jump", 1 );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
@@ -155,7 +154,12 @@ DdgFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	if( repeats() > 1 && !repack() )
 		throw utility::excn::EXCN_RosettaScriptsOption( "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
 
-	TR<<"ddg filter with threshold "<< ddg_threshold_<<" repeats="<<repeats()<<" and scorefxn "<<scorefxn_name<<" over jump "<<rb_jump_<<" and repack "<<repack()<<std::endl;
+	TR
+		<< "ddg filter with threshold " << ddg_threshold_
+		<< " repeats=" << repeats()
+		<< " and scorefxn " << rosetta_scripts::get_score_function_name(tag)
+		<< " over jump " << rb_jump_
+		<< " and repack " << repack() << std::endl;
 
 	// Determine if this PB enabled.
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {

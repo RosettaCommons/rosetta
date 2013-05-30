@@ -216,7 +216,7 @@ public:
 		else {
 			//score pose for hbond detection
 			using namespace core::scoring;
-			ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+			ScoreFunctionOP scorefxn = getScoreFunction();
 			scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 			energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 			scorefxn->set_energy_method_options( energymethodoptions );
@@ -442,7 +442,7 @@ public:
 		task_factory->push_back( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Asc" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
 
 		using namespace core::scoring;
-		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+		ScoreFunctionOP scorefxn = getScoreFunction();
 		scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 		energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn->set_energy_method_options( energymethodoptions );
@@ -501,7 +501,7 @@ public:
     task_factory->push_back(new operation::InitializeFromCommandline()); //use_input_sc
 
 		using namespace core::scoring;
-		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+		ScoreFunctionOP scorefxn = getScoreFunction();
 		scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 		energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn->set_energy_method_options( energymethodoptions );
@@ -806,12 +806,12 @@ public:
 		task_factory->push_back( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Rsc" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
 
 		using namespace core::scoring;
-		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+		ScoreFunctionOP scorefxn = getScoreFunction();
 		scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 		energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn->set_energy_method_options( energymethodoptions );
 
-		ScoreFunctionOP customref_scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+		ScoreFunctionOP customref_scorefxn = getScoreFunction();
 		scoring::methods::EnergyMethodOptions energymethodoptions_customref( customref_scorefxn->energy_method_options() );
 		energymethodoptions_customref.hbond_options().decompose_bb_hb_into_pair_energies(true);
 		customref_scorefxn->set_energy_method_options( energymethodoptions_customref );

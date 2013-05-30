@@ -385,7 +385,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 			pose::Pose lowest_score_pose = mc->lowest_score_pose();
 
 			if(basic::options::option[OptionKeys::ddg::min_with_cst]()){
-				ScoreFunctionOP s = ScoreFunctionFactory::create_score_function(basic::database::full_name( "scoring/weights/standard.wts"), basic::database::full_name( "scoring/weights/score12.wts_patch"));
+				ScoreFunctionOP s = getScoreFunction();
 
 				lowest_score_pose.remove_constraints((lowest_score_pose.constraint_set())->get_all_constraints());
 				setup_ca_constraints(lowest_score_pose, (*s), 9.0, 0.5);
@@ -442,9 +442,7 @@ main( int argc, char* argv [] )
 	Real cst_tol = basic::options::option[ OptionKeys::ddg::harmonic_ca_tether ]();
 	pose::Pose pose;
 
-	ScoreFunctionOP scorefxn( new ScoreFunction());
-	scorefxn->add_weights_from_file(basic::database::full_name( "scoring/weights/standard.wts"));
-	scorefxn->apply_patch_from_file(basic::database::full_name("scoring/weights/score12.wts_patch"));
+	ScoreFunctionOP scorefxn( getScoreFunction());
 
 	vector1<file::FileName> files;
 	if(basic::options::option[in::file::s].user()){

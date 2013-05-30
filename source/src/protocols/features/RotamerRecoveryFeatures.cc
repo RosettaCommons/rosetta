@@ -80,6 +80,7 @@ using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_mover;
 using protocols::rosetta_scripts::saved_reference_pose;
 using protocols::rosetta_scripts::parse_task_operations;
+using protocols::rosetta_scripts::parse_score_function;
 using protocols::rotamer_recovery::RotamerRecovery;
 using protocols::rotamer_recovery::RotamerRecoveryFactory;
 using protocols::rotamer_recovery::RRProtocolMover;
@@ -153,8 +154,8 @@ RotamerRecoveryFeatures::parse_my_tag(
 	Movers_map const & movers,
 	Pose const & /*pose*/
 ) {
-	string scorefxn_name = tag->getOption<string>("scorefxn", "score12");
-	scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
+
+	scfxn_ = parse_score_function( tag, data );
 
 	RotamerRecoveryFactory * factory(RotamerRecoveryFactory::get_instance());
 

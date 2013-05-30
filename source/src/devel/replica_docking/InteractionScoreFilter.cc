@@ -87,7 +87,8 @@ InteractionScoreFilter::fresh_instance() const{
 void
 InteractionScoreFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose )
 {
- 	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
+ 	std::string const scorefxn_name(
+		protocols::rosetta_scripts::get_score_function_name(tag) );
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( scorefxn_name );
 // 	scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name )) );
 

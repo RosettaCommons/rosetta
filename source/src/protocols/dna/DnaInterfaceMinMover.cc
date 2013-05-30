@@ -149,8 +149,7 @@ DnaInterfaceMinMover::apply( pose::Pose & pose )
 	}
 	if ( ! movemap() ) reset_from_interface(); // just in case
 	if ( ! score_function() ) {
-		std::string const weights( option[ OptionKeys::score::weights ]() );
-		score_function( ScoreFunctionFactory::create_score_function( weights ) );
+		score_function( getScoreFunction() );
 	}
 
 	AtomTreeMinimizer minimizer;

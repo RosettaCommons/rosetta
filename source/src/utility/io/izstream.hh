@@ -723,7 +723,7 @@ private: // Fields
 	/// This initialized by the option system -in:path:path Notice that
 	/// izstream cannot access the option system (because the utility
 	/// library comes before the basic library), so setting the
-	/// alternate search paths is it the responsibility of core::init()
+	/// alternate search paths is it the responsibility of core::init::init()
 	static vector1< std::string > alternative_search_paths_;
 #if defined( USE_FILE_PROVIDER ) 
 	std::istream *file_provider_stream;

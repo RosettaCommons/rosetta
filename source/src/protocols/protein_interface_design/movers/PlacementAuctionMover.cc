@@ -173,7 +173,6 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 		utility_exit_with_message( "ERROR: unrecognized stub_energy_fxn_. Only support backbone_stub_constraint or backbone_stub_linear_constraint");
 	} 
 
-	ScoreFunctionCOP score12( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ));
 	core::Size fixed_res(1);
 	if( host_chain_ == 1 ) fixed_res = pose.total_residue();
 	core::id::AtomID const fixed_atom_id = core::id::AtomID( pose.residue(fixed_res).atom_index("CA"), fixed_res );

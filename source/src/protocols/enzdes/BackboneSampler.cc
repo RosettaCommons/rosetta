@@ -28,6 +28,7 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Project Headers
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
@@ -205,8 +206,7 @@ void BackboneSampler::parse_my_tag(
 	Pose const & )
 {
 	bb_moves_ = tag->getOption<core::Size>( "moves", 1000 );
-	std::string const scorefxn( tag->getOption<string>( "scorefxn", "score12" ));
-	scorefxn_repack_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn) );
+	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function(tag, data)->clone();
 }
 
 

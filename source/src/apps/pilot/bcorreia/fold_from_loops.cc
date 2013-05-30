@@ -1136,7 +1136,7 @@ main( int argc, char* argv [] )
 		core::util::switch_to_residue_type_set( fold_pose, chemical::FA_STANDARD ); //switching the pose for full atom
 
 
-		core::scoring::ScoreFunctionOP scorefxn_fa( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+		core::scoring::ScoreFunctionOP scorefxn_fa( getScoreFunction() );
 		scorefxn_fa->set_weight( scoring::chainbreak, 1 ); // in order to pipe this scoring function  maybe I have to refresh the cutpoints
 		scorefxn_fa->set_weight(scoring::overlap_chainbreak, 1 );
 

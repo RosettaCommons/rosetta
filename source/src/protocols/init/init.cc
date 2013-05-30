@@ -14,7 +14,7 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 #include <protocols/init/init.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 
 //Note protocols/init/init has been split into included-headers for organizational purposes.
 
@@ -81,12 +81,12 @@ namespace protocols {
 namespace init {
 void init( int argc, char * argv [] )
 {
-	core::init( argc, argv );
+	core::init::init( argc, argv );
 }
 
 void init( utility::vector1< std::string > const & args )
 {
-	core::init( args );
+	core::init::init( args );
 }
 
 } //namespace init

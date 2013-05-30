@@ -189,8 +189,7 @@ HotspotDisjointedFoldTreeMover::parse_my_tag( TagPtr const tag, DataMap & data, 
 	ddG_threshold( tag->getOption< core::Real >( "ddG_threshold", 1.0 ) );
 	if( ddG_threshold() >= 100.0 )
 		TR<<"Ala scan calculation will not be carried out. Only residues specifically chosen in the script will be selected"<<std::endl;
-	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ) );
-	scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ) );
+	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	chain( tag->getOption< core::Size >( "chain", 2 ) );
 	interface_radius( tag->getOption< core::Real >( "radius", 8.0 ) );
 	utility::vector1< core::Size > v1 = core::pose::get_resnum_list( tag, "resnums", pose );

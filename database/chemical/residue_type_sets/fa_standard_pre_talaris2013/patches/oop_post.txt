@@ -1,0 +1,65 @@
+## fullatom protein oop_post patch, used for oligooxopiperazine (OOPs) 
+## By Kevin Drew, May 2011, kdrew@nyu.edu
+
+NAME oop_post
+TYPES OOP_POST
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE HBS_PRE
+NOT VARIANT_TYPE HBS_POST
+NOT VARIANT_TYPE OOP_PRE
+NOT VARIANT_TYPE OOP_POST
+NOT VARIANT_TYPE LOWER_TERMINUS
+NOT VARIANT_TYPE CUTPOINT_UPPER # problems with deleting H because CUTPOINT_UPPER uses H as stub
+NOT VARIANT_TYPE N_ACETYLATION # would not have two N mods
+NOT VARIANT_TYPE ACETYLATED_NTERMINUS # 
+NOT AA PRO # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
+NOT NAME3 DPR # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
+NOT NAME3 HPR # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
+NOT NAME3 B19 # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
+NOT NAME3 C89 # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
+NOT NAME3 B59 # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
+NOT PROPERTY PHOSPHONATE
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+## these are the operations involved
+## Change this to guassian calculated charges
+ADD_ATOM  CZP  CH2    CT2    -0.18 ## CZP is for carbon oop, CH2,CT2 and charge are from C beta in TYR
+ADD_ATOM VYP  VIRT 	 VIRT  	0.00 ## VYP is a virtual atom that substitutes for CYP in oop pre
+#ADD_ATOM VYP  CH2	CT2		0.00 ## VYP is a virtual atom that substitutes for CYP in oop pre
+ADD_ATOM 1HZP  Hapo   HA     0.09 ## 1HZP is for hydrogen off CZP, Hapo, HA and charge are from 1HB in TYR
+ADD_ATOM 2HZP  Hapo   HA     0.09 ## 2HZP is for hydrogen off CZP, Hapo, HA and charge are from 1HB in TYR
+ADD_BOND  N   CZP    
+ADD_BOND  CZP  VYP
+ADD_BOND  CZP  1HZP 
+ADD_BOND  CZP  2HZP 
+
+SET_BACKBONE_HEAVYATOM CZP
+SET_BACKBONE_HEAVYATOM VYP
+
+## The information for the following was taken from OOP_MONOMER_PUCKUP_CHI1300_OPT
+##
+#kdrew: puckUP conformation
+#SET_ICOOR CZP   178.2517   62.95   1.467  N  CA  LOWER  
+SET_ICOOR CZP   178.2517   65.00   1.467  N  CA  LOWER  
+SET_ICOOR 1HZP	38.5309	70.42   0.98  CZP   N  CA 
+##kdrew: set 2nd H relative to 1st H
+SET_ICOOR 2HZP  -117.853  70.493   0.9863  CZP   N  1HZP 
+SET_ICOOR VYP   121.46708	69.0358	1.50	CZP	N	1HZP
+#kdrew: setup connection to oop_pre, icoors are bogus (following example from CtermConnect which has C relative to itself?)
+ADD_CONNECT CZP ICOOR  180.0  60.0   1.467  CZP	N  CA  
+
+#kdrew: raises assertion on line 1135 of ResidueType.cc, unless NOT VARIANT_TYPE CUTPOINT_UPPER
+DELETE_ATOM H
+
+
+END_CASE
+

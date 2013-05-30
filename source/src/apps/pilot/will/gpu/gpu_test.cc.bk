@@ -11,7 +11,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -245,7 +245,7 @@ void test_MAT_VEC() {
 
 int main (int argc, char *argv[]) {
   using namespace basic::options::OptionKeys;
-  core::init(argc,argv);
+  devel::init(argc,argv);
 
   test_MAT_VEC();
   //  exit(0);

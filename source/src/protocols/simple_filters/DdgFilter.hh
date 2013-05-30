@@ -81,7 +81,7 @@ private:
 	void initPB();
 
 	core::Real ddg_threshold_; //dflt -15
-	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL/score12 in cstrctr/rosettascripts
+	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL
 	core::Size rb_jump_; // dflt 1
 	core::pack::task::TaskFactoryOP task_factory_;
 	bool use_custom_task_;

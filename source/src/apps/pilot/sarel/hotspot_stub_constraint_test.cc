@@ -62,7 +62,7 @@ void run_test() {
 	pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose, "1a22_prot.pdb" );
 
-	core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	core::scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 	scorefxn->reset();
 	(*scorefxn)(pose);
 	TR << "Pre-stub score is: " << pose.energies().total_energy() << std::endl;

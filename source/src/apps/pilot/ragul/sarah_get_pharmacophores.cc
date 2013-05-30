@@ -233,7 +233,7 @@ int main( int argc, char * argv [] ){
 
 	//find Hbond interactions and include it to the pharmacophore list
 	core::scoring::hbonds::HBondSet rna_hb_set;
-	scoring::ScoreFunctionOP scorefxn(ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH));
+	scoring::ScoreFunctionOP scorefxn(getScoreFunction());
 	(*scorefxn)(complex_pose);
 	//print pdb pose
 	complex_pose.dump_pdb("rosetta_out.pdb");

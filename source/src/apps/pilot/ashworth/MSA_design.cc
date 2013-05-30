@@ -87,13 +87,12 @@ MSA_design(
 	//	new core::scoring::constraints::SequenceProfileConstraint( Size(), utility::vector1< id::AtomID >(), NULL ) );
 
 	// set up scoring
-	std::string const weights( option[ OptionKeys::score::weights ]() );
 	// this sets BasePartner in pose cacheable data
 	// DnaChains is redundant with BasePartner for the time being
 	// (BasePartner is simpler, and is used for DNA scoring methods in core)
 	scoring::dna::set_base_partner( *pose );
 
-	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( weights ) );
+	ScoreFunctionOP scorefxn( getScoreFunction() );
 
 	if ( ! option[ OptionKeys::constraints::cst_file ].user() ) {
 		if ( ! option[ OptionKeys::in::file::pssm ].user() ) {

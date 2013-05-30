@@ -47,6 +47,7 @@ RotamerRecoveryMoverCreator::mover_name()
 // Unit Headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
 
 // Project Headers
@@ -129,6 +130,7 @@ using protocols::rotamer_recovery::RotamerRecovery;
 using protocols::rotamer_recovery::RotamerRecoveryOP;
 using protocols::rotamer_recovery::RotamerRecoveryFactory;
 using protocols::rosetta_scripts::parse_mover;
+using protocols::rosetta_scripts::parse_score_function;
 
 namespace protocols {
 namespace rotamer_recovery {
@@ -229,8 +231,7 @@ RotamerRecoveryMover::parse_my_tag(
 	moves::Movers_map const & movers,
 	Pose const & /*pose*/ )
 {
-	string const & scorefxn_key( tag->getOption<std::string>("scorefxn", "score12" ));
-	score_function( datamap.get< ScoreFunction * >("scorefxns", scorefxn_key) );
+	score_function( parse_score_function( tag, datamap ) );
 
 	if( rotamer_recovery_ ){
 		TR << "WARNING: Attempting to redefine rotamer_recovery_ object from Parser Script" << endl;

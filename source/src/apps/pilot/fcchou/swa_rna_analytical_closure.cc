@@ -38,14 +38,14 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
 //////////////////////////////////////////////////
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh> 
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
@@ -63,7 +63,7 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergyMap.fwd.hh> 
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -97,7 +97,7 @@
 #include <protocols/swa/StepWiseClusterer.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh> 
+#include <protocols/rna/RNA_ProtocolUtil.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -411,7 +411,7 @@ get_silent_file_tags() {
 core::scoring::ScoreFunctionOP
 create_scorefxn() {
 	using namespace core::scoring;
-	
+
 	std::string score_weight_file;
 
 	Size num_score_weight_file=0;
@@ -420,7 +420,7 @@ create_scorefxn() {
 		score_weight_file= option[ basic::options::OptionKeys::score::weights ]();
 		std::cout << "User passed in score:weight option: " << score_weight_file << std::endl;
 		num_score_weight_file++;
-	}	
+	}
 
 
 	if(num_score_weight_file==0){
@@ -435,21 +435,21 @@ create_scorefxn() {
 		std::cout << "num_score_weight_file (inputted by user)=" << num_score_weight_file << std::endl;
 		utility_exit_with_message("num_score_weight_file>1");
 	}
-	
+
 	core::scoring::ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( score_weight_file );
 
 
 	if(option[minimize_and_score_sugar]()==false){
 		std::cout << "WARNING minimize_and_score_sugar is false, SET rna_sugar_close weight to 0.0 " << std::endl;
-    scorefxn->set_weight( rna_sugar_close, 0.000000000000 ); 
- 	} 	
+    scorefxn->set_weight( rna_sugar_close, 0.000000000000 );
+ 	}
 
 	std::cout << "---------score function weights----------" << std::endl;
 	scorefxn->show(std::cout);
 	std::cout << "-----------------------------------------" << std::endl;
 
 
-	return scorefxn; 
+	return scorefxn;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -576,7 +576,7 @@ setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_pa
 		native_pose = PoseOP( new Pose );
 		import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
 		std::cout << "native_pose->fold_tree(): " << native_pose->fold_tree();
-		std::cout << "native_pose->annotated_sequence(true): " << native_pose->annotated_sequence( true ) << std::endl; 
+		std::cout << "native_pose->annotated_sequence(true): " << native_pose->annotated_sequence( true ) << std::endl;
 		protocols::rna::make_phosphate_nomenclature_matches_mini( *native_pose);
 	}
 
@@ -628,7 +628,7 @@ rna_resample_test() {
 	if ( option[ VDW_rep_screen_info].user() ) {
 		user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF ( option[ VDW_rep_alignment_RMSD_CUTOFF]() );
 		user_input_VDW_bin_screener->setup_using_user_input_VDW_pose ( option[ VDW_rep_screen_info](), pose, job_parameters_COP );
-		user_input_VDW_bin_screener->set_output_pdb( option[ output_pdb ]() );	
+		user_input_VDW_bin_screener->set_output_pdb( option[ output_pdb ]() );
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -793,7 +793,7 @@ main ( int argc, char * argv [] ) {
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////
-	core::init ( argc, argv );
+	core::init::init ( argc, argv );
 	////////////////////////////////////////////////////////////////////////////
 	// end of setup
 	////////////////////////////////////////////////////////////////////////////

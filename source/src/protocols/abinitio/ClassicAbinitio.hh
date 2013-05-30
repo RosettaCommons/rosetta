@@ -73,7 +73,7 @@ while(nstruct) {
 	 abinitio.apply( pose );
 }
 
-call ClassicAbinitio::register_options() before core::init to add relevant options to the applications help
+call ClassicAbinitio::register_options() before core::init::init to add relevant options to the applications help
 
 , with the following
 stages, all of which uses a different ScoreFunction based on the cen_std.wts in minirosetta_database:
@@ -225,7 +225,7 @@ protected:
 	//@brief read out cmd-line options
 	virtual void set_default_options();
 
-	//@brief register cmd-line options in option system ( call before core::init )
+	//@brief register cmd-line options in option system ( call before core::init::init )
 public:
 	static void register_options();
 protected:

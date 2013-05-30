@@ -120,8 +120,8 @@ int main( int argc, char * argv [] ){
 	std::string const input_ligand = option[ input_ligand_pdb ];
 
 	//setup scorefxn
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
-	scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn(getScoreFunction());
+	scoring::ScoreFunctionOP repack_scorefxn(getScoreFunction());
 
   //Register calculators
 	std::string sasa_calc_name = "sasa";

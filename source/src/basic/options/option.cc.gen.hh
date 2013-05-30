@@ -152,7 +152,7 @@ option.add( basic::options::OptionKeys::in::rdf::sep_bb_ss, "separate RDFs by SS
 option.add( basic::options::OptionKeys::MM::MM, "MM option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::MM::ignore_missing_bondangle_params, "ignore failed lookups for missing bond angle parameters" ).def(false);
 option.add( basic::options::OptionKeys::qsar::qsar, "qsar option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::qsar::weights, "select qsar weight set to use" ).def("standard");
+option.add( basic::options::OptionKeys::qsar::weights, "select qsar weight set to use" ).def("talaris2013");
 option.add( basic::options::OptionKeys::qsar::grid_dir, "Directory to store grids in" );
 option.add( basic::options::OptionKeys::qsar::max_grid_cache_size, "delete old grids if grid cache exceeds specified size" );
 option.add( basic::options::OptionKeys::residues::residues, "residues option group" ).legal(true).def(true);
@@ -712,13 +712,13 @@ option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight, "use coord c
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_all_atom, "use coord constraints on all atoms and not just CA" ).def(false);
 option.add( basic::options::OptionKeys::loopfcst::use_general_protocol, "use the new machinery around classes KinematicXXX" ).def(false);
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight_array, "use these weights (per seqpos) for coord cst in rigid regions" ).def("");
-option.add( basic::options::OptionKeys::loopfcst::dump_coord_cst_weight_array, "dump these weights (per seqpos) for coord cst in rigid regions" ).def("");
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::loopfcst::dump_coord_cst_weight_array, "dump these weights (per seqpos) for coord cst in rigid regions" ).def("");
 option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
+option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
 option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
@@ -792,9 +792,9 @@ option.add( basic::options::OptionKeys::chemical::add_atom_type_set_parameters, 
 option.add( basic::options::OptionKeys::chemical::set_atom_properties, "Modify atom properties (the ones in <atom-set>/atom_properties.txt) from the command line. Happens at time of AtomTypeSet creation inside ChemicalManager.cc. Format is: -chemical:set_atom_properties <atom-set1>:<atom_name1>:<param1>:<setting1> <atom-set2>:<atom2>:<param2>:<setting2> ... For example: '-chemical:set_atom_properties fa_standard:OOC:LK_DGFREE:-5 fa_standard:ONH2:LJ_RADIUS:0.5' " );
 option.add( basic::options::OptionKeys::score::score_pose_cutpoint_variants, "Include cutpoint variants in the pose during linear chainbreak" ).def(false);
 option.add( basic::options::OptionKeys::score::score, "scorefunction option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::score::weights, "Name of weights file (without extension .wts)" ).def("standard");
+option.add( basic::options::OptionKeys::score::weights, "Name of weights file (without extension .wts)" ).def("talaris2013");
 option.add( basic::options::OptionKeys::score::set_weights, "Modification to weights via the command line. Applied in ScoreFunctionFactory::create_score_function inside the function apply_user_defined_reweighting_. Format is a list of paired strings: -score::set_weights <score_type1> <setting1> <score_type2> <setting2> ..." );
-option.add( basic::options::OptionKeys::score::pack_weights, "Name of packing weights file (without extension .wts)" ).def("standard");
+option.add( basic::options::OptionKeys::score::pack_weights, "Name of packing weights file (without extension .wts)" ).def("talaris2013");
 option.add( basic::options::OptionKeys::score::soft_wts, "Name of the 'soft' weights file, for protocols which use it." ).def("soft_rep");
 option.add( basic::options::OptionKeys::score::docking_interface_score, "the score is computed as difference between bound and unbound pose" ).def(false);
 option.add( basic::options::OptionKeys::score::min_score_score, "do not consider scores lower than min-score in monte-carlo criterion" ).def(0.0);
@@ -808,12 +808,12 @@ option.add( basic::options::OptionKeys::score::etable_lr, "lowers energy well at
 option.add( basic::options::OptionKeys::score::no_lk_polar_desolvation, "Disable the polar-desolvation component of the LK solvation model; effectively set dGfree for polar atoms to 0" );
 option.add( basic::options::OptionKeys::score::input_etables, "Read etables from files with given prefix" );
 option.add( basic::options::OptionKeys::score::output_etables, "Write out etables to files with given prefix" );
-option.add( basic::options::OptionKeys::score::analytic_etable_evaluation, "Instead of interpolating between bins, use an analytic evaluation of the lennard-jones and solvation energis" );
+option.add( basic::options::OptionKeys::score::analytic_etable_evaluation, "Instead of interpolating between bins, use an analytic evaluation of the lennard-jones and solvation energis" ).def(true);
 option.add( basic::options::OptionKeys::score::rms_target, "Target of RMS optimization for RMS_Energy EnergyMethod" ).def(0.0);
 option.add( basic::options::OptionKeys::score::ramaneighbors, "Uses neighbor-dependent ramachandran maps" ).def(false);
 option.add( basic::options::OptionKeys::score::optH_weights, "Name of weights file (without extension .wts) to use during optH" );
 option.add( basic::options::OptionKeys::score::optH_patch, "Name of weights file (without extension .wts) to use during optH" );
-option.add( basic::options::OptionKeys::score::hbond_params, "Directory name in the database for which hydrogen bond parameters to use." ).def("standard_params");
+option.add( basic::options::OptionKeys::score::hbond_params, "Directory name in the database for which hydrogen bond parameters to use." ).def("sp2_hackelec_params");
 option.add( basic::options::OptionKeys::score::hbond_disable_bbsc_exclusion_rule, "Disable the rule that protein bb/sc hbonds are excluded if the backbone group is already forming a hydrogen bond to a backbone group; with this flag, no hbonds are excluded" ).def(false);
 option.add( basic::options::OptionKeys::score::symE_units, "Number of symmetric Units in design for use with symE scoring" ).def(-1);
 option.add( basic::options::OptionKeys::score::symE_bonus, "Energy bonus per match for use with symE scoring" ).def(0.0);
@@ -868,11 +868,11 @@ option.add( basic::options::OptionKeys::score::saxs::q_step, "step of q used in 
 option.add( basic::options::OptionKeys::score::saxs::fit_pddf_area, "PDDF curve for a scored pose will be normalized to match the area under the reference PDDF curve" ).def(false);
 option.add( basic::options::OptionKeys::score::sidechain_buried, "count buried residues (rvernon pilot app)" ).def(-1);
 option.add( basic::options::OptionKeys::score::sidechain_exposed, "count exposed residues (rvernon pilot app)" ).def(-1);
-option.add( basic::options::OptionKeys::score::hackelec_min_dis, "changes the minimum distance cut-off for hack-elec energy" ).def(1.5);
+option.add( basic::options::OptionKeys::score::hackelec_min_dis, "changes the minimum distance cut-off for hack-elec energy" ).def(1.6);
 option.add( basic::options::OptionKeys::score::hackelec_max_dis, "changes the maximum distance cut-off for hack-elec energy" ).def(5.5);
 option.add( basic::options::OptionKeys::score::hackelec_die, "changes the dielectric constant for hack-elec energy" ).def(10.0);
 option.add( basic::options::OptionKeys::score::hackelec_r_option, "changes the dielectric from distance dependent to distance independent" ).def(false);
-option.add( basic::options::OptionKeys::score::smooth_hack_elec, "Smooth the discontinuities in the hackelec energy function using a sigmoidal term" ).def(false);
+option.add( basic::options::OptionKeys::score::smooth_hack_elec, "Smooth the discontinuities in the hackelec energy function using a sigmoidal term" ).def(true);
 option.add( basic::options::OptionKeys::score::facts_GBpair_cut, "GBpair interaction distance cutoff (same as hackelec_max_dis)" ).def(10.0);
 option.add( basic::options::OptionKeys::score::facts_min_dis, "GBpair interaction minimum distance (same as hackelec_min_dis)" ).def(1.5);
 option.add( basic::options::OptionKeys::score::facts_kappa, "GBpair interaction screening factor" ).def(12.0);
@@ -909,7 +909,7 @@ option.add( basic::options::OptionKeys::ProQ::use_gzip, "gzip output files" ).de
 option.add( basic::options::OptionKeys::ProQ::normalize, "Normalizing factor (usually target sequence length)" ).def(1.0);
 option.add( basic::options::OptionKeys::corrections::corrections, "corrections option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::correct, "turn on default corrections:-corrections::chemical:icoor_05_2009-corrections::score:p_aa_pp scoring/score_functions/P_AA_pp/P_AA_pp_08.2009-corrections::score:p_aa_pp_nogridshift-corrections::score:p_aa_pp_nogridshift-corrections::score:rama_not_squared-corrections::score:rama_map scoring/score_functions/rama/Rama.10.2009.yfsong.dat-scoring::hbond_params helix_hb_06_2009-corrections::score:hbond_fade 1.9 2.3 2.3 2.6 0.3 0.7 0.0 0.05-corrections::score:ch_o_bond_potential scoring/score_functions/carbon_hbond/ch_o_bond_potential_near_min_yf.dat" ).def(false);
-option.add( basic::options::OptionKeys::corrections::hbond_sp2_correction, "turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_hackelec_params -expand_st_chi2sampling -smooth_hack_elec -hackelec_min_dis 1.6 -hackelec_r_option false" );
+option.add( basic::options::OptionKeys::corrections::hbond_sp2_correction, "turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_hackelec_params -expand_st_chi2sampling -smooth_hack_elec -hackelec_min_dis 1.6 -hackelec_r_option false -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-5.85 fa_standard:NH2O:LK_DGFREE:-7.8 fa_standard:Narg:LK_DGFREE:-10.0 fa_standard:OH:LK_DGFREE:-6.70" );
 option.add( basic::options::OptionKeys::corrections::facts_default, "turn on default options for FACTS use with scorefacts.wts. Incompatible with hbond_sp2_correction option. -correct -lj_hbond_hdis 2.3 -lj_hbond_OH_donor_dis 3.4 -use_bicubic_interpolation  -hbond_params sp2_hackelec_params -hb_sp2_chipen  -hbond_measure_sp3acc_BAH_from_hby -facts_GBpair_cut 10.0 -facts_min_dis 1.5 -facts_dshift 1.4 -facts_die 1.0 -facts_kappa 12.0 -facts_asp_patch 3 -facts_intrares_scale 0.4 -facts_elec_sh_exponent 1.8" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::score, "score option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::score::bbdep_omega, "Enable phi-psi dependent omega" );
@@ -922,27 +922,31 @@ option.add( basic::options::OptionKeys::corrections::score::helix_hb_06_2009, "H
 option.add( basic::options::OptionKeys::corrections::score::use_incorrect_hbond_deriv, "Use deprecated hbond derivative calculation." ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::p_aa_pp, "Name of scoring/score_functions/P_AA_pp/P_AA_PP potential file (search in the local directory first, then look in the database)" ).def("scoring/score_functions/P_AA_pp/P_AA_pp");
 option.add( basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift, "the format of p_aa_pp changed from using i*10+5 (5, 15, etc) to i*10 (0,10,etc.) as grid points" );
-option.add( basic::options::OptionKeys::corrections::score::rama_not_squared, "Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (rama+entropy) > 1.0" );
+option.add( basic::options::OptionKeys::corrections::score::rama_not_squared, "Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (ram a+entropy) > 1.0" );
 option.add( basic::options::OptionKeys::corrections::score::rama_map, "Ramachandran file used by rama" ).def("scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4");
-option.add( basic::options::OptionKeys::corrections::score::dun10, "Use the 2010 Dunbrack library instead of either the the 2002 library." );
+option.add( basic::options::OptionKeys::corrections::score::dun10, "Use the 2010 Dunbrack library instead of either the the 2002 library." ).def(true);
 option.add( basic::options::OptionKeys::corrections::score::dun10_dir, "Name of dun10 dir" ).def("rotamer/ExtendedOpt1-5");
 option.add( basic::options::OptionKeys::corrections::score::dun02_file, "Name of dun02 input file" ).def("rotamer/bbdep02.May.sortlib");
 option.add( basic::options::OptionKeys::corrections::score::ch_o_bond_potential, "Name of ch_o_bond potential file (search in the local directory first, then look in the database)" ).def("scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat");
 option.add( basic::options::OptionKeys::corrections::score::hack_elec_co_only, "Using only CO-CO interactions in hack_elec_bb_bb" ).def(false);
-option.add( basic::options::OptionKeys::corrections::score::lj_hbond_hdis, "Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)" ).def(1.95);
-option.add( basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis, "Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)" ).def(3.0);
-option.add( basic::options::OptionKeys::corrections::score::score12prime, "Whenever getScoreFunction() would have returned the ScoreFunction from standard.wts + score12.wts_patch, instead return a revised score12 (score12prime) with reference energies optimized with optE for sequence profile recovery" ).def(false);
+option.add( basic::options::OptionKeys::corrections::score::lj_hbond_hdis, "Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)" ).def(1.75);
+option.add( basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis, "Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)" ).def(2.6);
+option.add( basic::options::OptionKeys::corrections::score::score12prime, "Restore to score funciton parameters to score12 parameters and have getScoreFuntion return with score12prime.wts. The score12prime.wts differs from standard.wts + score12.wts_patch, in that the reference energies have been optimized with optE for sequence profile recovery" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_BAH180_rise, "The rise from -0.5 for the BAH=180 value for the additive chi/BAH sp2 potential" ).def(0.75);
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_outer_width, "The width between the peak when CHI=0 and BAH=120 to when the BAH is at a maximum (Units: pi * radians. E.g. 1/3 means the turn off hbonding when BAH < 60, larger values mean a wider potential). Use 0.357 in conjunction with the hb_energy_fade flag." ).def(0.33333);
-option.add( basic::options::OptionKeys::corrections::score::hb_sp2_chipen, "Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%" ).def(false);
-option.add( basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy, "If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen" ).def(false);
-option.add( basic::options::OptionKeys::corrections::score::hb_fade_energy, "Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function." ).def(false);
-option.add( basic::options::OptionKeys::corrections::score::use_bicubic_interpolation, "Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer" ).def(false);
+option.add( basic::options::OptionKeys::corrections::score::hb_sp2_chipen, "Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%" ).def(true);
+option.add( basic::options::OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy, "If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen" ).def(true);
+option.add( basic::options::OptionKeys::corrections::score::hb_fade_energy, "Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function." ).def(true);
+option.add( basic::options::OptionKeys::corrections::score::use_bicubic_interpolation, "Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer" ).def(true);
 option.add( basic::options::OptionKeys::corrections::score::dun_normsd, "Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians" ).def(false);
 option.add( basic::options::OptionKeys::corrections::chemical::chemical, "chemical option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::chemical::icoor_05_2009, "New set of idealized coordinates for full atom, 05-2009" );
 option.add( basic::options::OptionKeys::corrections::chemical::parse_charge, "Use PARSE charge set." );
-option.add( basic::options::OptionKeys::corrections::chemical::expand_st_chi2sampling, "Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves." );
+option.add( basic::options::OptionKeys::corrections::chemical::expand_st_chi2sampling, "Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves.  This flag can be used with any residue type set (including the pre-talaris fa_standard version, and with the fa_standard_05.2009_icoor version) but is unncessary for the talaris2013 version (currently named fa_standard) as the expanded SER and THR sampling is already encoded in .params files for these two residues" ).def(false);
+option.add( basic::options::OptionKeys::mistakes::mistakes, "mistakes option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior, "Restore the set of defaults that were in place before the Talaris2013 parameters were made default.  This is an umbrella flag and sets the following flags if they are not set on the command line to some other value -mistakes::chemical::pre_talaris2013_geometries true -corrections::score::dun10 false -corrections::score::use_bicubic_interpolation false -corrections::score:hb_sp2_chipen false -corrections::score::hb_fade_energy false -corrections::score::hbond_measure_sp3acc_BAH_from_hvy false -corrections::score::lj_hbond_hdis 1.95 -corrections::score::lj_hbond_OH_donor_dis 3.0 -corrections::chemical::expand_st_chi2sampling false -score::weights pre_talaris_2013_standard.wts -score::patch score12.wts_patch -score::analytic_etable_evaluation false -score::hbond_params score12_params -score::smooth_hack_elec false -score::hackelec_min_dis 1.5 -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-10.0 fa_standard:NH2O:LK_DGFREE:-10.0 fa_standard:Narg:LK_DGFREE:-11.0 fa_standard:OH:LK_DGFREE:-6.77" ).def(false);
+option.add( basic::options::OptionKeys::mistakes::chemical::chemical, "chemical option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::mistakes::chemical::pre_talaris2013_geometries, "Use the version of the fa_standard geometries that were active before the Talaris2013 parameters were taken as default" ).def(false);
 option.add( basic::options::OptionKeys::willmatch::willmatch, "willmatch option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::willmatch::arg_dun_th, "fa_dun thresh for ARG" ).def(16.0);
 option.add( basic::options::OptionKeys::willmatch::asp_dun_th, "fa_dun thresh for ASP" ).def(8.0);
@@ -1419,14 +1423,14 @@ option.add( basic::options::OptionKeys::rotamerdump::xyz, "when using the Rotame
 option.add( basic::options::OptionKeys::rotamerdump::one_body, "when using the RotamerDump application, output the one_body energies of every rotamer" ).def(false);
 option.add( basic::options::OptionKeys::rotamerdump::two_body, "when using the RotamerDump application, output the two_body energies of every rotamer" ).def(false);
 option.add( basic::options::OptionKeys::rotamerdump::annealer, "Run the annealer and output the rotamers it chose" ).def(false);
-option.add( basic::options::OptionKeys::robert::robert, "robert option group" ).legal(true).def(true);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::robert::robert, "robert option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::robert::pairdata_input_pdb_list, "Takes in a file containing a list of pdb locations paired with protocol specific data (eg: one disulfide pair)" ).def("");
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_filter, "minimum normalized maxsub for PCS clustering protocol" ).def(0.9);
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_rmsd, "maxsub calculation's rmsd threshold" ).def(4.0);
 option.add( basic::options::OptionKeys::robert::pcs_dump_cluster, "No description" ).def(false);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::robert::pcs_cluster_coverage, "cluster coverage required" ).def(0.3);
+option.add( basic::options::OptionKeys::robert::pcs_cluster_coverage, "cluster coverage required" ).def(0.3);
 option.add( basic::options::OptionKeys::robert::pcs_cluster_lowscoring, "cluster lowest 20% against lowest 50%" ).def(true);
 option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
@@ -1526,7 +1530,7 @@ option.add( basic::options::OptionKeys::ddg::rb_file, "No description" );
 option.add( basic::options::OptionKeys::ddg::interface_ddg, "Calculate ddGs across an interface? Uses jump # specified for determining interface." ).def(0);
 option.add( basic::options::OptionKeys::ddg::ens_variation, "No description" ).def(0.5);
 option.add( basic::options::OptionKeys::ddg::sc_min_only, "No description" ).def(true);
-option.add( basic::options::OptionKeys::ddg::min_cst_weights, "No description" ).def("standard");
+option.add( basic::options::OptionKeys::ddg::min_cst_weights, "No description" ).def("talaris2013");
 option.add( basic::options::OptionKeys::ddg::opt_radius, "No description" ).def(8.0);
 option.add( basic::options::OptionKeys::ddg::output_dir, "No description" ).def("./");
 option.add( basic::options::OptionKeys::ddg::last_accepted_pose_dir, "No description" ).def("./");
@@ -2130,11 +2134,11 @@ option.add( basic::options::OptionKeys::optE::data_out, "file to which to write 
 option.add( basic::options::OptionKeys::optE::weights, "a conventional weightfile that optE will use to determine which weights will be counted.  All non-zero weights in the file will contribute to rotamer energies and be fit; use the -optE::fix option to fix any of these weights.  Weight values will also be used as starting values for optimization." );
 option.add( basic::options::OptionKeys::optE::fix, "weights to be fixed (must also appear in the weightfile given by the -optE::weights option)" );
 option.add( basic::options::OptionKeys::optE::free, "IterativeOptEDriver flag: specify a file to read score types that are free -- optionally include a starting weight for each score type" );
-option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
-option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
+option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
+option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
 option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );

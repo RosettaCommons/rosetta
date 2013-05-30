@@ -71,7 +71,7 @@ main( int argc, char * argv [] )
 
 	// scoring function
 	scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
-	//	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	//	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 
 	// create pose from pdb
 	pose::Pose ref_pose;

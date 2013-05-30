@@ -532,12 +532,12 @@ hbonded(
 {
 
 	using namespace core::scoring::hbonds;
-	
+
 	std::list< core::Size > hbonded_list;
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
 	Pose pose( in_pose );
 	(*scorefxn)(pose);
-	
+
 	HBondSet background_hbond_set;
 	background_hbond_set.setup_for_residue_pair_energies( pose, false/*calculate_derivative*/, true/*backbone_only*/ );
 	HBondDatabaseCOP hb_database( HBondDatabase::get_database( background_hbond_set.hbond_options().params_database_tag()));
@@ -548,16 +548,16 @@ hbonded(
       energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
       scorefxn->set_energy_method_options(*energy_options);
   }
-	
+
 	EnergyMap hbond_emap;
 	core::conformation::Residue const resi( pose.residue( target_residue ));
 	core::Real const distance_cutoff( 20.0 );
 	for ( std::set< core::Size >::const_iterator binder_it=binders.begin(); binder_it!=binders.end(); ++binder_it ) {
 		core::conformation::Residue const resj( pose.residue(*binder_it) );
-		
+
 		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
 		if ( distance > distance_cutoff ) continue;
-		
+
 		HBondSet pair_hbond_set(2);
 		identify_hbonds_1way(
 			*hb_database,
@@ -569,7 +569,7 @@ hbonded(
 			resj, resi, background_hbond_set.nbrs(resj.seqpos()), background_hbond_set.nbrs(resi.seqpos()),
 			false /*calculate_derivative*/,
 			!bb, !sc, !sc, !sc, pair_hbond_set);
-		
+
 		hbond_emap.zero();
  		get_hbond_energies( pair_hbond_set, hbond_emap );
 		// The hbond_energies should be controlled by dotting hbond_emap
@@ -579,13 +579,13 @@ hbonded(
 		// is hard coded, use this instead:
 //		hbond_emap[ hbond_sr_bb_sc ] = 0;
 //		hbond_emap[ hbond_lr_bb_sc ] = 0;
-		
+
 		core::Real total_hbond_energy( hbond_emap.sum() );
-		
-		
+
+
 		// all of the bb / sc energies are lumped together
 		// but it can be controlled whether bb - bb are included or not
-		
+
 		// counting the number of hbonds between the two residues
 		if( total_hbond_energy <= energy_thres ) {
 			using namespace core::conformation;
@@ -595,7 +595,7 @@ hbonded(
 
 				if( !bb && ( hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) ) continue;
 				if( !sc && ( !hb.don_hatm_is_protein_backbone() || !hb.acc_atm_is_protein_backbone() ) ) continue;
-				
+
 				core::Size const don_res_i( hb.don_res() ), acc_res_i( hb.acc_res() );
 				Residue const & don_rsd( pose.residue( don_res_i ) ),
 				acc_rsd( pose.residue( acc_res_i ) );
@@ -627,12 +627,12 @@ hbonded_atom (
 {
 
 	using namespace core::scoring::hbonds;
-	
+
 	std::list< core::Size > hbonded_list;
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
 	Pose pose( in_pose );
 	(*scorefxn)(pose);
-	
+
 	HBondSet background_hbond_set;
 	background_hbond_set.setup_for_residue_pair_energies( pose, false/*calculate_derivative*/, true/*backbone_only*/ );
 	HBondDatabaseCOP hb_database( HBondDatabase::get_database( background_hbond_set.hbond_options().params_database_tag()));
@@ -643,16 +643,16 @@ hbonded_atom (
       energy_options->hbond_options().decompose_bb_hb_into_pair_energies(true);
       scorefxn->set_energy_method_options(*energy_options);
   }
-	
+
 	EnergyMap hbond_emap;
 	core::conformation::Residue const resi( pose.residue( target_residue ));
 	core::Real const distance_cutoff( 20.0 );
 	for ( std::set< core::Size >::const_iterator binder_it=binders.begin(); binder_it!=binders.end(); ++binder_it ) {
 		core::conformation::Residue const resj( pose.residue(*binder_it) );
-		
+
 		core::Real const distance( resi.xyz( resi.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
 		if ( distance > distance_cutoff ) continue;
-		
+
 		HBondSet pair_hbond_set(2);
 		identify_hbonds_1way(
 			*hb_database,
@@ -664,7 +664,7 @@ hbonded_atom (
 			resj, resi, background_hbond_set.nbrs(resj.seqpos()), background_hbond_set.nbrs(resi.seqpos()),
 			false /*calculate_derivative*/,
 			!bb, !sc, !sc, !sc, pair_hbond_set);
-		
+
 		hbond_emap.zero();
  		get_hbond_energies( pair_hbond_set, hbond_emap );
 		// The hbond_energies should be controlled by dotting hbond_emap
@@ -674,13 +674,13 @@ hbonded_atom (
 		// is hard coded, use this instead:
 //		hbond_emap[ hbond_sr_bb_sc ] = 0;
 //		hbond_emap[ hbond_lr_bb_sc ] = 0;
-		
+
 		core::Real total_hbond_energy( hbond_emap.sum() );
-		
-		
+
+
 		// all of the bb / sc energies are lumped together
 		// but it can be controlled whether bb - bb are included or not
-		
+
 		// counting the number of hbonds between the two residues
 		if( total_hbond_energy <= energy_thres ) {
 			using namespace core::conformation;
@@ -690,7 +690,7 @@ hbonded_atom (
 
 				if( !bb && ( hb.don_hatm_is_protein_backbone() && hb.acc_atm_is_protein_backbone() ) ) continue;
 				if( !sc && ( !hb.don_hatm_is_protein_backbone() || !hb.acc_atm_is_protein_backbone() ) ) continue;
-				
+
 				core::Size const don_res_i( hb.don_res() ), acc_res_i( hb.acc_res() );
 				Residue const & don_rsd( pose.residue( don_res_i ) ),
 				acc_rsd( pose.residue( acc_res_i ) );

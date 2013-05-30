@@ -101,7 +101,7 @@ int main( int argc, char * argv [] )
 	pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose, infile );
 
-	scoring::ScoreFunctionOP fa_sfxn = scoring::ScoreFunctionFactory::create_score_function(scoring::STANDARD_WTS);
+	scoring::ScoreFunctionOP fa_sfxn = scoring::getScoreFunctionLegacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	scoring::ScoreFunctionOP cen_sfxn =scoring::ScoreFunctionFactory::create_score_function(scoring::CENTROID_WTS);
 
 	//initialize vectors of all disulf bonds

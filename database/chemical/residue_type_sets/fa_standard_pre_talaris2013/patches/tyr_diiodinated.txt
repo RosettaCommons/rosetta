@@ -1,0 +1,58 @@
+## fullatom protein 3,5-diiodination patch for tyrosine
+## By Andy M. Chen, June 2009, achen39@jhu.edu
+
+NAME diiodinated
+TYPES DIIODINATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA TYR
+NOT VARIANT_TYPE PHOSPHORYLATION ## Just in case
+NOT VARIANT_TYPE SULFATION ## Just in case
+NOT VARIANT_TYPE DIIODINATION
+NOT VARIANT_TYPE PROTONATED
+NOT VARIANT_TYPE DEPROTONATED
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING TYI Y
+## these are the operations involved
+ADD_ATOM  I1  I    X    -0.090  #Best guess according to the small-molecule params file generator molfile_to_params.py
+ADD_ATOM  I2  I    X    -0.090
+ADD_BOND  CE1  I1 
+ADD_BOND  CE2  I2 
+
+DELETE_ATOM  HE1
+DELETE_ATOM  HE2
+
+## The information for the following was calculated by taking the arithmetic mean 
+##   of data taken from 9 structures from RCSB's (for a total of 37 data points-- 
+##   there aren't many of them to begin with):
+##   CE1-I1 / CE2-I2 bond length, CD1-CE1-I1 / CD2-CE2-I2 bond angle
+##   For dihedral angles, 180 degrees is used to place the atoms on the same plane as the benzene ring.
+##
+
+SET_ICOOR  I1  180.00  60.21  2.080   CE1   CD1   CG 
+SET_ICOOR  I2  180.00  60.21  2.080   CE2   CD2   CZ 
+
+
+
+
+
+
+
+
+END_CASE
+
+
+
+
+
+
+

@@ -21,7 +21,7 @@
 //#include <core/pose/Pose.fwd.hh>
 //
 //#include <core/scoring/ScoreFunctionFactory.hh>
-//#include <core/init.hh>
+//#include <core/init/init.hh>
 //#include <devel/init.hh>
 //#include <protocols/relax/RelaxProtocolBase.hh>
 //#include <protocols/relax/ClassicRelax.hh>
@@ -36,7 +36,7 @@
 ////silly using/typedef
 //
 //#include <protocols/jd2/JobDistributor.hh>
-//#include <core/init.hh>
+//#include <core/init/init.hh>
 //
 //#include <protocols/moves/PackRotamersMover.hh>
 //#include <protocols/moves/MoverContainer.hh>
@@ -62,7 +62,7 @@
 
 // Core headers
 #include <core/pose/Pose.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 
 // Prococol headers
 
@@ -118,7 +118,7 @@ main (int argc, char * argv[])
 //
 //// Core headers
 //#include <core/pose/Pose.hh>
-//#include <core/init.hh>
+//#include <core/init/init.hh>
 //
 //// Prococol headers
 //
@@ -143,7 +143,7 @@ main (int argc, char * argv[])
 //main (int argc, char * argv[])
 //{
 //	// initialize the options system
-//	core::init(argc, argv);
+//	core::init::init(argc, argv);
 //
 //	TR << "This is fucking tracer output!!!" << std::endl;
 //	

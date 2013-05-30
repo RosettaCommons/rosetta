@@ -95,7 +95,7 @@ void define_interface( core::pose::Pose & input_pose ) {
 
 	//TR <<"sele ";
 
-        scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+        scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
         (*scorefxn)(input_pose);
 
 	EnergyGraph & energy_graph(input_pose.energies().energy_graph());

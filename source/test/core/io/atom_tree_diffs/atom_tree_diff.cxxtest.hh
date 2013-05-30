@@ -62,7 +62,7 @@ void test_save_and_restore()
 	//test::UTracer UT("core/io/atom_tree_diffs/atom_tree_diff_test.u", &TR);
 
 	/// Init random generators system to insure that random number sequence is the same for each run.
-	core::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+	core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
 
 
 	pose::Pose start_pose( create_test_in_pdb_pose()), modified_pose, restored_pose;
@@ -106,7 +106,7 @@ void test_save_and_restore()
 	// Serialize the modified structure as a atom_tree_diff file
 	std::ostringstream outss;
 	std::map< std::string, core::Real > my_scores; // empty
-	scoring::ScoreFunctionOP sfxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS );
+	scoring::ScoreFunctionOP sfxn = scoring::getScoreFunction();
 	core::import_pose::atom_tree_diffs::map_of_weighted_scores(modified_pose, *sfxn, my_scores);
 	core::import_pose::atom_tree_diffs::dump_atom_tree_diff(outss, "tag", my_scores, start_pose, modified_pose);
 

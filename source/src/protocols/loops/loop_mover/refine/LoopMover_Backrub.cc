@@ -159,7 +159,7 @@ void LoopMover_Refine_Backrub::apply(
 	scoring::ScoreFunctionOP scorefxn;
 	if ( scorefxn() != 0 ) scorefxn = scorefxn()->clone();
 	else {
-		scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+		scorefxn = getScoreFunction();
 	}
 	(*scorefxn)(pose);
 

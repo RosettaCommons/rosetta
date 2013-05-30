@@ -31,3 +31,5 @@
 -native native_struct.pdb 
 -fasta fasta  
 -out:file:silent blah.out  
+
+-analytic_etable_evaluation 0

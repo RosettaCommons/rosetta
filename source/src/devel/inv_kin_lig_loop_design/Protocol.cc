@@ -475,7 +475,7 @@ namespace devel {
       //score_fxn_lores = core::scoring::ScoreFunctionFactory::create_score_function( "murphp_lores" );
       //score_fxn_lores = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::SOFT_REP_WTS );
 
-      score_fxn_hires = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS );
+      score_fxn_hires = core::scoring::getScoreFunction();
       score_fxn_hires->set_weight( core::scoring::chainbreak, CHAINBREAK_WEIGHT );
       score_fxn_hires->set_weight( core::scoring::rama,       RAMA_WEIGHT       );
 

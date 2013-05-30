@@ -77,7 +77,7 @@ BDR::BDR() :
 	redesign_loop_neighborhood_( true ),
 	dr_cycles_( 3 ),
 	centroid_sfx_( core::scoring::ScoreFunctionFactory::create_score_function( "remodel_cen" ) ),
-	fullatom_sfx_( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH ) )
+	fullatom_sfx_( core::scoring::getScoreFunction() )
 {}
 
 
@@ -125,7 +125,7 @@ BDR::ScoreFunction const & BDR::centroid_scorefunction() const {
 }
 
 
-/// @brief the full-atom level score function, default score12
+/// @brief the full-atom level score function
 BDR::ScoreFunction const & BDR::fullatom_scorefunction() const {
 	return *fullatom_sfx_;
 }
@@ -266,8 +266,6 @@ BDR::get_name() const {
 bool BDR::centroid_build(
 	Pose & pose
 ) {
-	using core::scoring::STANDARD_WTS;
-	using core::scoring::SCORE12_PATCH;
 	using core::scoring::ScoreFunctionOP;
 	using core::scoring::ScoreFunctionFactory;
 	using protocols::moves::MS_SUCCESS;
@@ -364,8 +362,6 @@ bool BDR::design_refine(
 	using core::pack::task::operation::RestrictResidueToRepacking;
 	using core::pack::task::operation::RestrictResidueToRepackingOP;
 	using core::pack::task::operation::RestrictToRepacking;
-	using core::scoring::STANDARD_WTS;
-	using core::scoring::SCORE12_PATCH;
 	using core::scoring::ScoreFunctionOP;
 	using core::scoring::ScoreFunctionFactory;
 	using protocols::forge::build::SegmentInsert;

@@ -1027,7 +1027,7 @@ cluster_outfile_test_OLD(){
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	/////////////////////////////
-	//static ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "standard.wts" );
+	//static ScoreFunctionOP scorefxn = getScoreFunction();
 	static ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 	ClusterPhilStyleOP clustering( new ClusterPhilStyle );
 	PoseInputStreamOP input  = new SilentFilePoseInputStream( option[ in::file::silent ]() );
@@ -1345,7 +1345,7 @@ score12_plot_test()
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
 	/////////////////////////////
-	//ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( "standard.wts" );
+	//ScoreFunctionOP scorefxn = getScoreFunction();
 	static ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 
 	///////////////////////////////////////

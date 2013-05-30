@@ -324,11 +324,8 @@ void DisulfideMover::parse_my_tag( utility::tag::TagPtr const tag,
 	}
 
 	using namespace core::scoring;
-	std::string const scorefxn_repack( tag->getOption<string>( "scorefxn_repack", "score12" ) );
-	std::string const scorefxn_minimize( tag->getOption<string>( "scorefxn_minimize", "score12" ) );
-	scorefxn_repack_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn_repack ) );
-	scorefxn_minimize_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn_minimize ) );
-
+	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();
+	scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
 
 	TR<<"DisulfideMover targeting residues ";
 	for(vector1<Size>::const_iterator target = target_residues_.begin();

@@ -108,7 +108,7 @@ main( int argc, char * argv [] )
 	fb.open (filename.str().c_str(),std::ios::out);
 	std::ostream os(&fb);
 
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
   	(*scorefxn)(input_pose);
 
 	EnergyGraph & energy_graph(input_pose.energies().energy_graph());

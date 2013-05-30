@@ -1,0 +1,33 @@
+## patch for the residue on the lower side of a cutpoint, for loop modeling
+
+NAME dna_cutpoint_lower
+TYPES CUTPOINT_LOWER
+
+BEGIN_SELECTOR
+PROPERTY DNA
+NOT VARIANT_TYPE UPPER_TERMINUS
+NOT VARIANT_TYPE CUTPOINT_LOWER
+END_SELECTOR
+
+BEGIN_CASE ## general
+
+ADD_ATOM OVL1 VIRT VIRT 0.0     ##     pseudo-P   (i+1)
+ADD_ATOM OVL2 VIRT VIRT 0.0     ##     pseudo-O5* (i+1)
+
+## ensure that these guys are considered backbone atoms
+
+SET_BACKBONE_HEAVYATOM OVL1
+SET_BACKBONE_HEAVYATOM OVL2
+
+ADD_BOND O3* OVL1
+ADD_BOND OVL1 OVL2
+
+## this could also be done using "UPPER" as the 3rd stub atom, with phi=0.0... would that be better??
+##
+## these bond lengths and angles should be common to all DNA parameter files
+##
+SET_ICOOR OVL1 180.0 60.2 1.608   O3*   C3*   C4*   ##   sets epsilon = 180.0
+SET_ICOOR OVL2 180.0 76.3 1.593   OVL1  O3*   C3*   ##   sets zeta    = 180.0
+
+END_CASE
+

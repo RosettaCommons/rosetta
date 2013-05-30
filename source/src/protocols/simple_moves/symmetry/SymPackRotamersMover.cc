@@ -135,7 +135,7 @@ void SymPackRotamersMover::setup( pose::Pose & pose )
   // guarantee of valid ScoreFunction and PackerTask postponed until now
   if ( score_function() == 0 ) {
     Warning() << "undefined ScoreFunction -- creating a default one" << std::endl;
-    ScoreFunctionCOP scfx ( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+    ScoreFunctionCOP scfx ( getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 		score_function( scfx );
   }
 

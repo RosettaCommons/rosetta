@@ -65,7 +65,7 @@ main( int argc, char * argv [] )
 
 	// Score for the wildtype
 	// Setup for scoring/repacking
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 	scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 
 	(*scorefxn)(wt_NGFbound);

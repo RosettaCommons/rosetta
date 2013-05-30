@@ -42,7 +42,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <core/pose/util.hh>
@@ -3579,7 +3579,7 @@ main( int argc, char * argv [] )
   ////////////////////////////////////////////////////////////////////////////
   // setup
   ////////////////////////////////////////////////////////////////////////////
-  core::init(argc, argv);
+  core::init::init(argc, argv);
 
 
   ////////////////////////////////////////////////////////////////////////////

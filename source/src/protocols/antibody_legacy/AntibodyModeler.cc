@@ -339,8 +339,7 @@ void AntibodyModeler::apply( pose::Pose & pose_in ){
 
 	// score functions
 	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = core::scoring::ScoreFunctionFactory::
-		create_score_function( "standard", "score12" );
+	scorefxn = core::scoring::getScoreFunction();
 	scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
 	scorefxn->set_weight( core::scoring::overlap_chainbreak, 10./3. );
 	scorefxn->set_weight( core::scoring::atom_pair_constraint, 1.00 );
@@ -465,12 +464,13 @@ AntibodyModeler::setup_simple_fold_tree(
 ///
 /// @brief relaxes all cdrs simultaneously
 ///
-/// @detailed based on the all_cdrs loop definiton, minimizes only those
-///           regions. A standard dfpmin is utilized with score12 and chain
-///           -break and chain-overlap set. The allow_bb/chi arrays are
-///           changed accordingly but then are reset to their initial
-///           states before exiting the routine. Similarly the fold tree
-///           and jump movements are restored to their initial states
+/// @detailed based on the all_cdrs loop definiton, minimizes only
+///           those regions. A standard dfpmin is utilized with the
+///           given score function and chain -break and chain-overlap
+///           set. The allow_bb/chi arrays are changed accordingly but
+///           then are reset to their initial states before exiting
+///           the routine. Similarly the fold tree and jump movements
+///           are restored to their initial states
 ///
 /// @param[out]
 ///
@@ -526,8 +526,7 @@ AntibodyModeler::relax_cdrs()
 
 	// score functions
 	core::scoring::ScoreFunctionOP scorefxn;
-	scorefxn = core::scoring::ScoreFunctionFactory::
-		create_score_function( "standard", "score12" );
+	scorefxn = core::scoring::getScoreFunction();
 	scorefxn->set_weight( core::scoring::chainbreak, 10. / 3. );
 	scorefxn->set_weight( core::scoring::overlap_chainbreak, 10. / 3. );
 
@@ -722,8 +721,7 @@ AntibodyModeler::repulsive_ramp(
 
 	// score functions
 	core::scoring::ScoreFunctionOP pack_scorefxn;
-	pack_scorefxn = core::scoring::ScoreFunctionFactory::
-		create_score_function( "standard" );
+	pack_scorefxn = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 
 	// remove cutpoints variants for all cdrs
 	// "true" forces removal of variants even from non-cutpoints
@@ -844,8 +842,7 @@ AntibodyModeler::snugfit_mcm_protocol(
 
 	// score functions
 	core::scoring::ScoreFunctionOP pack_scorefxn;
-	pack_scorefxn = core::scoring::ScoreFunctionFactory::
-		create_score_function( "standard" );
+	pack_scorefxn = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 
 	// remove cutpoints variants for all cdrs
 	// "true" forces removal of variants even from non-cutpoints

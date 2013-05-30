@@ -313,7 +313,7 @@ int main (int argc, char** argv) {
 
 			option[ out::file::fullatom ].value(true);
 			core::scoring::ScoreFunctionOP scorefxn(
-							core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH ));
+							core::scoring::getScoreFunction());
 			utility::vector1 < std::pair< Size, Size > > dss;
 
 			utility::vector1_int ssAtoms;

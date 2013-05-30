@@ -12,7 +12,7 @@
 
 
 #include <core/id/AtomID_Map.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>

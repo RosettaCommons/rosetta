@@ -47,7 +47,7 @@ int main(int argc, char * argv[]) {
   register_options();
   devel::init(argc, argv);
 
-  core::scoring::ScoreFunctionOP sfstd(core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::STANDARD_WTS));
+  core::scoring::ScoreFunctionOP sfstd(core::scoring::getScoreFunctionLegacy(core::scoring::PRE_TALARIS_2013_STANDARD_WTS));
 
   pose::Pose init_pose;
   if (option[in::file::native].user()) {

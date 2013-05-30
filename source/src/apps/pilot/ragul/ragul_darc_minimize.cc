@@ -255,252 +255,252 @@ interface_rmsd(
 
 int main( int argc, char * argv [] ){
 	try{
-	NEW_OPT( cst_force_constant, "coordinate constraint force constant", 0.5 );
-        NEW_OPT( print_init, "print the initial complex for debugging", true );
-        NEW_OPT( print_unbound, "print the mimized protein for debugging", true );
-        NEW_OPT( print_complex, "print the minimized complex", true );
-        NEW_OPT( iface_rmsd, "calculate the interface rmsd", false );
-	NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
+		NEW_OPT( cst_force_constant, "coordinate constraint force constant", 0.5 );
+		NEW_OPT( print_init, "print the initial complex for debugging", true );
+		NEW_OPT( print_unbound, "print the mimized protein for debugging", true );
+		NEW_OPT( print_complex, "print the minimized complex", true );
+		NEW_OPT( iface_rmsd, "calculate the interface rmsd", false );
+		NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
 
 
-	devel::init(argc, argv);
+		devel::init(argc, argv);
 
-	//setup scorefxn
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
-	scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+		//setup scorefxn
+		scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
+		scoring::ScoreFunctionOP repack_scorefxn( getScoreFunction() );
 
-        std::string const ref_decoy_fname = option[ ref_decoy ];
-// create pose from pdb
-        pose::Pose ref_pose;
-        std::string outfname;
-        utility::io::ozstream outstream;
-	if (option[ iface_rmsd ]){
-          core::import_pose::pose_from_pdb( ref_pose, ref_decoy_fname );
-	  define_interface( ref_pose );
+		std::string const ref_decoy_fname = option[ ref_decoy ];
+		// create pose from pdb
+		pose::Pose ref_pose;
+		std::string outfname;
+		utility::io::ozstream outstream;
+		if (option[ iface_rmsd ]){
+			core::import_pose::pose_from_pdb( ref_pose, ref_decoy_fname );
+			define_interface( ref_pose );
 
-          TR << "Defined interface" << std::endl;
-          if (!option[ OptionKeys::out::output_tag ]().empty()){
-            outfname = "minrmsd." + option[ OptionKeys::out::output_tag ]() + ".out";
-          }else{
-            outfname = "minrmsd.out";
-          }
-          //std::cout<<outfname<<" output_tag: "<<option[ OptionKeys::out::output_tag ]()<<std::endl;
-          outstream.open(outfname, std::ios::out);
+			TR << "Defined interface" << std::endl;
+			if (!option[ OptionKeys::out::output_tag ]().empty()){
+				outfname = "minrmsd." + option[ OptionKeys::out::output_tag ]() + ".out";
+			}else{
+				outfname = "minrmsd.out";
+			}
+			//std::cout<<outfname<<" output_tag: "<<option[ OptionKeys::out::output_tag ]()<<std::endl;
+			outstream.open(outfname, std::ios::out);
 
-	}
+		}
 
-  //Register calculators
-	std::string sasa_calc_name = "sasa";
-	std::string hbond_calc_name = "hbond";
-	std::string packstat_calc_name = "packstat";
-	std::string burunsat_calc_name = "burunsat";
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( sasa_calc_name, sasa_calculator );
+		//Register calculators
+		std::string sasa_calc_name = "sasa";
+		std::string hbond_calc_name = "hbond";
+		std::string packstat_calc_name = "packstat";
+		std::string burunsat_calc_name = "burunsat";
+		core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( sasa_calc_name, sasa_calculator );
 
-	core::pose::metrics::PoseMetricCalculatorOP hb_calc = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( hbond_calc_name, hb_calc );
+		core::pose::metrics::PoseMetricCalculatorOP hb_calc = new protocols::toolbox::pose_metric_calculators::NumberHBondsCalculator();
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( hbond_calc_name, hb_calc );
 
-	core::pose::metrics::PoseMetricCalculatorOP packstat_calc =	new protocols::toolbox::pose_metric_calculators::PackstatCalculator();
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( packstat_calc_name, packstat_calc );
+		core::pose::metrics::PoseMetricCalculatorOP packstat_calc =	new protocols::toolbox::pose_metric_calculators::PackstatCalculator();
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( packstat_calc_name, packstat_calc );
 
-	core::pose::metrics::PoseMetricCalculatorOP burunsat_calc = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, hbond_calc_name);
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( burunsat_calc_name, burunsat_calc );
-
-
-      for (core::Size f=1; f <= basic::options::start_files().size(); f++) {
-
-	//setup the bound pose
-	pose::Pose bound_pose;
-	std::string const input_pdb_name = basic::options::start_files().at(f);
-	core::import_pose::pose_from_pdb( bound_pose, input_pdb_name );
+		core::pose::metrics::PoseMetricCalculatorOP burunsat_calc = new protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator(sasa_calc_name, hbond_calc_name);
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( burunsat_calc_name, burunsat_calc );
 
 
-  //create tag for output filename
-  int dot_index1 = input_pdb_name.rfind(".", input_pdb_name.size());
-  assert(dot_index1 != -1 && "No dot found in filename");
-	std::string tag = input_pdb_name.substr(0,dot_index1);
-	std::string init_pdb = "init_" + tag + ".pdb";
-	std::string mini_pdb = "mini_" + tag + ".pdb";
-	std::string unbo_pdb = "unbo_" + tag + ".pdb";
+		for (core::Size f=1; f <= basic::options::start_files().size(); f++) {
+
+			//setup the bound pose
+			pose::Pose bound_pose;
+			std::string const input_pdb_name = basic::options::start_files().at(f);
+			core::import_pose::pose_from_pdb( bound_pose, input_pdb_name );
 
 
-	//Apply constraint
-/* This might have been incorrectly copied
-   if ( bound_pose.residue( bound_pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
-		bound_pose.append_residue_by_jump
-      ( *ResidueFactory::create_residue( bound_pose.residue(1).residue_type_set().name_map( "VRT" ) ),
-        bound_pose.total_residue()/2 );
-  }
-*/
-
-  Size nres = bound_pose.total_residue();
-  Real const coord_sdev( option[ OptionKeys::cst_force_constant ] );
-  // default is 0.5 (from idealize) -- maybe too small
-  for ( Size i = 1; i< nres; ++i ) {
-    if ( (Size)i==(Size)bound_pose.fold_tree().root() ) continue;
-    Residue const & nat_i_rsd( bound_pose.residue(i) );
-    for ( Size ii = 1; ii<= nat_i_rsd.nheavyatoms(); ++ii ) {
-      bound_pose.add_constraint( new CoordinateConstraint(
-																													 AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-																													 new HarmonicFunc( 0.0, coord_sdev ) ) );
-    }
-  }
-
-  scorefxn->set_weight( coordinate_constraint, 0.5 );
-
-  (*scorefxn)(bound_pose);
-  if (option [ print_init ]){
-    bound_pose.dump_scored_pdb( init_pdb, *scorefxn );
-  }
-  TR << "Initial score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl;
-
-  // setting degrees of freedom which can move during minimization - everything
-	kinematics::MoveMap mm_all;
-  mm_all.set_chi( true );
-  mm_all.set_bb( true );
-  mm_all.set_jump( true );
-
-	// minimize protein
-  TR << "Starting minimization...." << std::endl;
-  AtomTreeMinimizer minimizer;
-  MinimizerOptions min_options( "dfpmin", 0.00001, true, false );
-
-  minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-  minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-  (*scorefxn)(bound_pose);
-
-  TR << "Post minimization 1 constrained score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl;
-
-  bound_pose.remove_constraints();
-  (*scorefxn)(bound_pose);
-
-  TR << "Post minimization 1 UNconstrained score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl;
-
-  // Setup packer task for repacking
-	pack::task::PackerTaskOP base_packer_task( pack::task::TaskFactory::create_packer_task( bound_pose ));
-  base_packer_task->set_bump_check( false );
-  base_packer_task->initialize_from_command_line();
-  base_packer_task->or_include_current( true );
-
-  for ( Size ii = 1; ii <= bound_pose.total_residue(); ++ii ) {
-    base_packer_task->nonconst_residue_task(ii).restrict_to_repacking();
-  }
-
-	// First repack
-	pack::pack_rotamers( bound_pose, *repack_scorefxn, base_packer_task );
-
-  // Report Scores
-  (*scorefxn)(bound_pose);
-    bound_pose.dump_scored_pdb( "repacked_once.pdb", *scorefxn );
-  TR << "Score after repacking once: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
-
-  // iterate over minimizing and repacking
-  for ( Size iter = 1; iter <= 5; ++iter ) {
-    minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-    minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-    minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-    (*scorefxn)(bound_pose);
-    TR << "Current score after minimizing: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
-		pack::pack_rotamers( bound_pose, *repack_scorefxn, base_packer_task );
-    (*scorefxn)(bound_pose);
-    TR << "Current score after repacking: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
-  }
-	// final minimization
-	minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-	minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-	minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-	minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
-  (*scorefxn)(bound_pose);
-  if (option[ print_complex ]){
-    bound_pose.dump_scored_pdb( mini_pdb, *scorefxn );
-  }
-  TR << "Final score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
-
-  TR << "Successfully finished minimizing input." << std::endl;
-
-	//setup the unbound pose
-	core::pose::Pose unbound_pose = bound_pose;
-	core::Real const unbound_dist = 80.;
-  //Size const rb_jump = 1; // use the first jump as the one between partners
-	Size const rb_jump = bound_pose.num_jump(); // use the LAST jump as the one between partners
-	protocols::rigid::RigidBodyTransMover trans_mover( unbound_pose, rb_jump );
-  trans_mover.trans_axis( trans_mover.trans_axis() );
-  trans_mover.step_size(unbound_dist);
-  trans_mover.apply( unbound_pose );
-	(*scorefxn)(unbound_pose);
-  if (option[ print_unbound ]){
-    unbound_pose.dump_pdb( unbo_pdb );
-  }
+			//create tag for output filename
+			int dot_index1 = input_pdb_name.rfind(".", input_pdb_name.size());
+			assert(dot_index1 != -1 && "No dot found in filename");
+			std::string tag = input_pdb_name.substr(0,dot_index1);
+			std::string init_pdb = "init_" + tag + ".pdb";
+			std::string mini_pdb = "mini_" + tag + ".pdb";
+			std::string unbo_pdb = "unbo_" + tag + ".pdb";
 
 
+			//Apply constraint
+			/* This might have been incorrectly copied
+				 if ( bound_pose.residue( bound_pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
+				 bound_pose.append_residue_by_jump
+				 ( *ResidueFactory::create_residue( bound_pose.residue(1).residue_type_set().name_map( "VRT" ) ),
+				 bound_pose.total_residue()/2 );
+				 }
+			*/
 
-	// define containers for metrics for total complex
-	basic::MetricValue<Real> tot_sasa_mval;
-	basic::MetricValue<Size> tot_hb_mval;
-	basic::MetricValue<Real> tot_packstat_mval;
-	basic::MetricValue<Size> tot_unsat_mval;
+			Size nres = bound_pose.total_residue();
+			Real const coord_sdev( option[ OptionKeys::cst_force_constant ] );
+			// default is 0.5 (from idealize) -- maybe too small
+			for ( Size i = 1; i< nres; ++i ) {
+				if ( (Size)i==(Size)bound_pose.fold_tree().root() ) continue;
+				Residue const & nat_i_rsd( bound_pose.residue(i) );
+				for ( Size ii = 1; ii<= nat_i_rsd.nheavyatoms(); ++ii ) {
+					bound_pose.add_constraint( new CoordinateConstraint(
+						AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
+						new HarmonicFunc( 0.0, coord_sdev ) ) );
+				}
+			}
 
-	// calculate and store total metrics for bound and unbound poses
-	core::Real bound_energy = 0.0, unbound_energy = 0.0, Interface_Energy = 0.0;
-	core::Real bound_sasa = 0.0, unbound_sasa = 0.0, Total_BSA = 0.0;
-	core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
-	core::Real bound_packstat = 0.0, unbound_packstat = 0.0, Total_packstats = 0.0;
-	core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
+			scorefxn->set_weight( coordinate_constraint, 0.5 );
 
-	//calculate interface Energy
-	bound_energy = bound_pose.energies().total_energy();
-	unbound_energy = unbound_pose.energies().total_energy();
-	Interface_Energy = bound_energy - unbound_energy;
+			(*scorefxn)(bound_pose);
+			if (option [ print_init ]){
+				bound_pose.dump_scored_pdb( init_pdb, *scorefxn );
+			}
+			TR << "Initial score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl;
 
-	//delta sasa calculation
-	bound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
-	bound_sasa = tot_sasa_mval.value();
-	unbound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
-	unbound_sasa = tot_sasa_mval.value();
-	Total_BSA = unbound_sasa - bound_sasa;
+			// setting degrees of freedom which can move during minimization - everything
+			kinematics::MoveMap mm_all;
+			mm_all.set_chi( true );
+			mm_all.set_bb( true );
+			mm_all.set_jump( true );
 
-	//interface hb calculation
-	bound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
-	bound_hb = tot_hb_mval.value();
-	unbound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
-	unbound_hb = tot_hb_mval.value();
-	Interface_HB = bound_hb - unbound_hb;
+			// minimize protein
+			TR << "Starting minimization...." << std::endl;
+			AtomTreeMinimizer minimizer;
+			MinimizerOptions min_options( "dfpmin", 0.00001, true, false );
 
-	//packstat calculation
-	bound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
-	bound_packstat = tot_packstat_mval.value();
-	unbound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
-	unbound_packstat = tot_packstat_mval.value();
-	Total_packstats = bound_packstat - unbound_packstat;
+			minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
+			minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
+			(*scorefxn)(bound_pose);
 
-	//unsat polar calculation
-	bound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
-	bound_unsat = tot_unsat_mval.value();
-	unbound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
-	unbound_unsat = tot_unsat_mval.value();
-	Interface_unsat = bound_unsat - unbound_unsat;
+			TR << "Post minimization 1 constrained score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl;
 
-	std::cout << "Interface_Scores:" <<"	"<< input_pdb_name <<"	" << bound_energy <<"	" << Interface_Energy <<"	"<< Total_BSA <<"	"<< Interface_HB <<"	"<< Total_packstats <<"	"<< Interface_unsat << std::endl;
+			bound_pose.remove_constraints();
+			(*scorefxn)(bound_pose);
+
+			TR << "Post minimization 1 UNconstrained score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl;
+
+			// Setup packer task for repacking
+			pack::task::PackerTaskOP base_packer_task( pack::task::TaskFactory::create_packer_task( bound_pose ));
+			base_packer_task->set_bump_check( false );
+			base_packer_task->initialize_from_command_line();
+			base_packer_task->or_include_current( true );
+
+			for ( Size ii = 1; ii <= bound_pose.total_residue(); ++ii ) {
+				base_packer_task->nonconst_residue_task(ii).restrict_to_repacking();
+			}
+
+			// First repack
+			pack::pack_rotamers( bound_pose, *repack_scorefxn, base_packer_task );
+
+			// Report Scores
+			(*scorefxn)(bound_pose);
+			bound_pose.dump_scored_pdb( "repacked_once.pdb", *scorefxn );
+			TR << "Score after repacking once: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
+
+			// iterate over minimizing and repacking
+			for ( Size iter = 1; iter <= 5; ++iter ) {
+				minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
+				minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
+				minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
+				(*scorefxn)(bound_pose);
+				TR << "Current score after minimizing: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
+				pack::pack_rotamers( bound_pose, *repack_scorefxn, base_packer_task );
+				(*scorefxn)(bound_pose);
+				TR << "Current score after repacking: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
+			}
+			// final minimization
+			minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
+			minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
+			minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
+			minimizer.run( bound_pose, mm_all, *scorefxn, min_options );
+			(*scorefxn)(bound_pose);
+			if (option[ print_complex ]){
+				bound_pose.dump_scored_pdb( mini_pdb, *scorefxn );
+			}
+			TR << "Final score: " << bound_pose.energies().total_energies()[ total_score ] << std::endl << std::endl;
+
+			TR << "Successfully finished minimizing input." << std::endl;
+
+			//setup the unbound pose
+			core::pose::Pose unbound_pose = bound_pose;
+			core::Real const unbound_dist = 80.;
+			//Size const rb_jump = 1; // use the first jump as the one between partners
+			Size const rb_jump = bound_pose.num_jump(); // use the LAST jump as the one between partners
+			protocols::rigid::RigidBodyTransMover trans_mover( unbound_pose, rb_jump );
+			trans_mover.trans_axis( trans_mover.trans_axis() );
+			trans_mover.step_size(unbound_dist);
+			trans_mover.apply( unbound_pose );
+			(*scorefxn)(unbound_pose);
+			if (option[ print_unbound ]){
+				unbound_pose.dump_pdb( unbo_pdb );
+			}
 
 
-        if (option[ iface_rmsd ]){
-		core::Real CA_rms = calpha_pdb_superimpose_pose( unbound_pose, ref_pose);
-                CA_rms = core::scoring::CA_rmsd( unbound_pose, ref_pose );
-                std::cout << "superimpose to native. Rms to native: " << CA_rms << std::endl;
-                core::Real heavyatom_rms = interface_rmsd( ref_pose, unbound_pose );
-                std::cout << "Interface rmsd: " << heavyatom_rms << std::endl;
-                outstream << mini_pdb << ' ' << CA_rms << ' ' << heavyatom_rms <<std::endl;
 
-	}
+			// define containers for metrics for total complex
+			basic::MetricValue<Real> tot_sasa_mval;
+			basic::MetricValue<Size> tot_hb_mval;
+			basic::MetricValue<Real> tot_packstat_mval;
+			basic::MetricValue<Size> tot_unsat_mval;
+
+			// calculate and store total metrics for bound and unbound poses
+			core::Real bound_energy = 0.0, unbound_energy = 0.0, Interface_Energy = 0.0;
+			core::Real bound_sasa = 0.0, unbound_sasa = 0.0, Total_BSA = 0.0;
+			core::Size  bound_hb = 0,   unbound_hb = 0, Interface_HB = 0;
+			core::Real bound_packstat = 0.0, unbound_packstat = 0.0, Total_packstats = 0.0;
+			core::Size  bound_unsat = 0, unbound_unsat = 0, Interface_unsat = 0;
+
+			//calculate interface Energy
+			bound_energy = bound_pose.energies().total_energy();
+			unbound_energy = unbound_pose.energies().total_energy();
+			Interface_Energy = bound_energy - unbound_energy;
+
+			//delta sasa calculation
+			bound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
+			bound_sasa = tot_sasa_mval.value();
+			unbound_pose.metric(sasa_calc_name,"total_sasa",tot_sasa_mval);
+			unbound_sasa = tot_sasa_mval.value();
+			Total_BSA = unbound_sasa - bound_sasa;
+
+			//interface hb calculation
+			bound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
+			bound_hb = tot_hb_mval.value();
+			unbound_pose.metric(hbond_calc_name,"all_Hbonds", tot_hb_mval);
+			unbound_hb = tot_hb_mval.value();
+			Interface_HB = bound_hb - unbound_hb;
+
+			//packstat calculation
+			bound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
+			bound_packstat = tot_packstat_mval.value();
+			unbound_pose.metric(packstat_calc_name,"total_packstat", tot_packstat_mval);
+			unbound_packstat = tot_packstat_mval.value();
+			Total_packstats = bound_packstat - unbound_packstat;
+
+			//unsat polar calculation
+			bound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
+			bound_unsat = tot_unsat_mval.value();
+			unbound_pose.metric(burunsat_calc_name,"all_bur_unsat_polars", tot_unsat_mval);
+			unbound_unsat = tot_unsat_mval.value();
+			Interface_unsat = bound_unsat - unbound_unsat;
+
+			std::cout << "Interface_Scores:" <<"	"<< input_pdb_name <<"	" << bound_energy <<"	" << Interface_Energy <<"	"<< Total_BSA <<"	"<< Interface_HB <<"	"<< Total_packstats <<"	"<< Interface_unsat << std::endl;
 
 
-     }//end for loop of all decoys
+			if (option[ iface_rmsd ]){
+				core::Real CA_rms = calpha_pdb_superimpose_pose( unbound_pose, ref_pose);
+				CA_rms = core::scoring::CA_rmsd( unbound_pose, ref_pose );
+				std::cout << "superimpose to native. Rms to native: " << CA_rms << std::endl;
+				core::Real heavyatom_rms = interface_rmsd( ref_pose, unbound_pose );
+				std::cout << "Interface rmsd: " << heavyatom_rms << std::endl;
+				outstream << mini_pdb << ' ' << CA_rms << ' ' << heavyatom_rms <<std::endl;
 
-	outstream.close();
-        outstream.clear();
+			}
+
+
+		}//end for loop of all decoys
+
+		outstream.close();
+		outstream.clear();
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 	return 0;
 
 

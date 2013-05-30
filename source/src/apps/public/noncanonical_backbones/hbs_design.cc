@@ -184,7 +184,7 @@ HbsDesignMover::apply(
 )
 {
 	// create score function
-	scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH ) );
+	scoring::ScoreFunctionOP score_fxn( getScoreFunction() );
 	//scoring::ScoreFunctionOP score_fxn = getScoreFunction();
 	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 

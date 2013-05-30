@@ -10,9 +10,6 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"core": [
-		"init",
-	],
 	"core/fragment": [
 		"BBTorsionAndAnglesSRFD",
 		"BBTorsionSRFD",
@@ -75,6 +72,11 @@ sources = {
 		"SilentFilePoseInputStream",
 		"util",
 	],
+	"core/init": [
+		"init",
+		"score_function_corrections",
+	],
+
 }
 include_path = [
 ]

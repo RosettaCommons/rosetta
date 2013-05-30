@@ -121,12 +121,12 @@ void
 		// Handle all of the symmetry stuff
 		core::pose::symmetry::make_symmetric_pose(pose);
 
-		// Get score12
-		ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");	
-		score12->score(pose);
+		// Get scorefxn
+		ScoreFunctionOP scorefxn = getScoreFunction();	
+		scorefxn->score(pose);
 
 		// Calculate binding energy
-		protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG::ddG(score12, 1, true);
+		protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG::ddG(scorefxn, 1, true);
 		ddG_mover.calculate(pose);
 		Real ddG = ddG_mover.sum_ddG();
 		TR << files[ifile] << " ddG = " << ddG << std::endl;

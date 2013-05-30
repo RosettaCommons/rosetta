@@ -12,7 +12,7 @@
 // Project Headers
 // AUTO-REMOVED #include <core/scoring/geometric_solvation/non_scorefxn_exact_model.hh>
 #include <core/scoring/geometric_solvation/ExactOccludedHbondSolEnergy.hh>
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/id/AtomID.hh>

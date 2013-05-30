@@ -109,7 +109,6 @@ LigandBaseProtocol::LigandBaseProtocol():
 
 	// Set up scoring function
 	// Meiler & Baker 06 uses the soft-repulsive weights, but David wants me to use the hard ones...
-	// TODO:  look into using standard weights (score12) as the base, with hack_elec added in and hbonds set to 1.3 (Lin's recommendation)
 
 	if ( option[ OptionKeys::docking::ligand::tweak_sxfn ] ) {
 		TR.Debug << "Using regular tweaked scorefunctions" << std::endl;
@@ -203,8 +202,8 @@ LigandBaseProtocol::make_tweaked_scorefxn(
 	if( sfxn->has_zero_weight( angle_constraint ) )      sfxn->set_weight( angle_constraint, 1.0 );
 	if( sfxn->has_zero_weight( dihedral_constraint ) )   sfxn->set_weight( dihedral_constraint, 1.0 );
 	if( sfxn->has_zero_weight( chainbreak ) )            sfxn->set_weight( chainbreak, 1.0 );
-	if( sfxn->has_zero_weight( omega ) )                 sfxn->set_weight( omega, 0.5 ); // from score12.wts_patch
-	if( sfxn->has_zero_weight( rama ) )                  sfxn->set_weight( rama, 0.2 ); // from score12.wts_patch
+	if( sfxn->has_zero_weight( omega ) )                 sfxn->set_weight( omega, 0.5 );
+	if( sfxn->has_zero_weight( rama ) )                  sfxn->set_weight( rama, 0.2 );
 
 	return sfxn;
 }

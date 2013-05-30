@@ -132,7 +132,7 @@ void dump_hbonds( std::string pdb_filename )
 	HBondOptions hboptions;
 	HBondSet set1;
 
-	ScoreFunctionOP scfxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+	ScoreFunctionOP scfxn( getScoreFunction() );
 	(*scfxn)(pose);
 
 

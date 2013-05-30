@@ -105,14 +105,14 @@ bool tryParseLSMSpec(std::string lsmstring, core::Size & id, VectorPair & lsmspe
 
 	lsmspec = VectorPair(
 			Vector(
-				lexical_cast<core::Real>(position[0]), 
-				lexical_cast<core::Real>(position[1]), 
+				lexical_cast<core::Real>(position[0]),
+				lexical_cast<core::Real>(position[1]),
 				lexical_cast<core::Real>(position[2])),
 			Vector(
-				lexical_cast<core::Real>(direction[0]), 
-				lexical_cast<core::Real>(direction[1]), 
+				lexical_cast<core::Real>(direction[0]),
+				lexical_cast<core::Real>(direction[1]),
 				lexical_cast<core::Real>(direction[2])));
-	
+
 	return true;
 }
 
@@ -222,14 +222,14 @@ int main( int argc, char * argv [] )
 		scorefxn = core::scoring::getScoreFunction();
 	}
 	else {
-		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score13" );
+		scorefxn = core::scoring::getScoreFunctionLegacy( "score13" );
 		scorefxn->set_weight( core::scoring::envsmooth, 0 );
 	}
 
 	core::scoring::methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
 	options.hbond_options().use_hb_env_dep( option[ hotspot::envhb]() );
 	scorefxn->set_energy_method_options( options );
-	
+
 	LSMSearchPattern lsm(
 			lsmspec,
 			option[ angle_sampling ],
@@ -238,7 +238,7 @@ int main( int argc, char * argv [] )
 			option[ distance_sampling ],
 			option[ max_distance]
 			);
-	
+
 	SearchPattern& pattern = lsm;
 
 	MinimizingPatternSearch search(output_basename.name(), targetPose, residue, pattern, scorefxn, option[ constrain_grid ] );

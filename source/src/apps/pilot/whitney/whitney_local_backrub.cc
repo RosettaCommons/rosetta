@@ -114,7 +114,7 @@ main( int argc, char * argv [] )
 		exit(1);
 	}
 
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 	scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 	(*scorefxn)(input_pose);
 

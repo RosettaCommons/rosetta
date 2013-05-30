@@ -154,7 +154,7 @@ Real region_constraint_score(Pose & pose, Size start_res, Size end_res,Constrain
 Real region_score(Pose & pose, Size start_res, Size end_res){
 	using namespace core::scoring::constraints;
 	using namespace core::scoring;
-	core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	core::scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 	Real all_res_score = scorefxn->score(pose);
 	utility::vector1< bool > mask( pose.total_residue(), true );
 	for(Size ii= start_res; ii<=end_res; ++ii)
@@ -255,7 +255,7 @@ void score_loop(Pose & pose, Pose const & native_pose, SequenceAlignment native_
 	Real score12 = region_score(pose,start_res,end_res);
 	Real native_constraint_score = region_constraint_score(native_relaxed_pose,start_res,end_res,cstSet_);
 	Real native_score12 = region_score(native_relaxed_pose,start_res,end_res);
-	core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	core::scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 	Real all_res_score = scorefxn->score(pose);
 	Real density_score = region_density_score(pose,templatePose, template_aln, start_res,end_res);
 	Real lookBack_constraint_score = region_constraint_score(pose,start_res,end_res,lookBackCstSet_);

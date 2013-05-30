@@ -57,7 +57,7 @@ BuriedUnsatHbondFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::Dat
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
 
-	std::string const scorefxn_key( tag->getOption<std::string>("scorefxn", "score12" ) );
+	std::string const scorefxn_key( protocols::rosetta_scripts::get_score_function_name(tag) );
 	if ( datamap.has( "scorefxns", scorefxn_key ) ) {
 		sfxn_ = datamap.get< core::scoring::ScoreFunction* >( "scorefxns", scorefxn_key );
 	} else {

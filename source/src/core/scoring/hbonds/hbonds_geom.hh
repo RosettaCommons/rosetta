@@ -126,7 +126,8 @@ fade_energy(
 	Real & dE_dBAH = DUMMY_DERIV,
 	Real & dE_dchi = DUMMY_DERIV
 ) {
-	if(energy > 0.1L){
+	Real const input_energy( energy );
+	if(input_energy > 0.1L){
 		energy = 0;
 		if(&dE_dxH != &DUMMY_DERIV){
 			dE_dr  = 0;
@@ -135,14 +136,14 @@ fade_energy(
 			dE_dBAH = 0;
 			dE_dchi = 0;
 		}
-	} else if (energy > -0.1L){
+	} else if (input_energy > -0.1L){
 		energy = -0.025 + 0.5*energy - 2.5*energy*energy;
 		if(&dE_dxH != &DUMMY_DERIV){
-			dE_dr  *= 5*(0.1-energy);
-			dE_dxD *= 5*(0.1-energy);
-			dE_dxH *= 5*(0.1-energy);
-			dE_dBAH *= 5*(0.1-energy);
-			dE_dchi *= 5*(0.1-energy);
+			dE_dr  *= 5*(0.1-input_energy);
+			dE_dxD *= 5*(0.1-input_energy);
+			dE_dxH *= 5*(0.1-input_energy);
+			dE_dBAH *= 5*(0.1-input_energy);
+			dE_dchi *= 5*(0.1-input_energy);
 		}
 	}
 }

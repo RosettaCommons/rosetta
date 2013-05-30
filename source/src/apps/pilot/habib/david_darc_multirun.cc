@@ -28,7 +28,7 @@
 
 // Utility Headers
 #include <core/conformation/Residue.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/io/pdb/pose_io.hh>

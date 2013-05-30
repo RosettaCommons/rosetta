@@ -40,7 +40,7 @@
 // Numeric Headers
 
 // Utility Headers
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 // AUTO-REMOVED #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
@@ -61,7 +61,7 @@ public:
 	// --------------- Fixtures --------------- //
 
 	void setUp() {
-		core_init();
+		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior" );
 	}
 
 	void tearDown() {

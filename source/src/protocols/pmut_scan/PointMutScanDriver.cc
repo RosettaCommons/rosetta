@@ -21,7 +21,7 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/graph/Graph.hh>

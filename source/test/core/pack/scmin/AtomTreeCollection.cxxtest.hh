@@ -76,6 +76,7 @@ public:
 	// Shared initialization goes here.
 	void setUp() {
 		core_init();
+		//core_init_with_additional_options();
 	}
 
 	// Shared finalization goes here.
@@ -94,7 +95,7 @@ public:
 		typedef utility::vector1< core::conformation::ResidueCOP > ResidueCOPs;
 
 
-		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction(); // score12
+		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 
 		// read in pose
 		Pose pose = create_trpcage_ideal_pose();
@@ -117,7 +118,7 @@ public:
 		RotamerSetCOP r7rotset = rotsets->rotamer_set_for_residue( 7 );
 		TS_ASSERT( r7rotset->get_n_residue_types() == 21 ); // 20 + 1 extra his restype.
 		//std::cout << "N tyr rots; " << r7rotset->get_n_rotamers_for_residue_type( 20 ) << std::endl;
-		TS_ASSERT( r7rotset->get_n_rotamers_for_residue_type( 20 ) == 4 ); // this test will crash below if nrots < 4
+		TS_ASSERT( r7rotset->get_n_rotamers_for_residue_type( 20 ) == 11 ); // this test will crash below if nrots < 4
 		ResidueAtomTreeCollection ratc( task->residue_task( 7 ), pose.conformation(), pose.residue( 7 ) );
 		ratc.set_active_restype_index( 20 );
 		{ // scope
@@ -168,7 +169,7 @@ public:
 		using namespace pack::scmin;
 		using namespace pose;
 
-		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction(); // score12
+		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 
 		// read in pose
 		Pose pose = create_trpcage_ideal_pose();
@@ -201,7 +202,7 @@ public:
 		using namespace pack::scmin;
 		using namespace pose;
 
-		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction(); // score12
+		scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 
 		// read in pose
 		Pose pose = create_trpcage_ideal_pose();

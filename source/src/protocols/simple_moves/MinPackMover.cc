@@ -148,7 +148,7 @@ MinPackMover::apply( Pose & pose )
 {
 	if ( scorefxn_ == 0 ) {
 		Warning() << "undefined ScoreFunction -- creating a default one" << std::endl;
-		scorefxn_ = ScoreFunctionFactory::create_score_function( STANDARD_WTS );
+		scorefxn_ = getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 
 	core::pack::task::PackerTaskCOP task;

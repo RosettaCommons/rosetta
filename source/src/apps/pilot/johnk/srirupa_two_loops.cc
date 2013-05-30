@@ -149,7 +149,7 @@ main( int argc, char * argv [] )
 		exit(1);
 	}
 
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 	(*scorefxn)(input_pose);
 	TR << "Starting score is: " << input_pose.energies().total_energies()[ total_score ] << std::endl;
 

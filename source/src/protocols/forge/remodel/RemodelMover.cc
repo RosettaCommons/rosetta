@@ -319,7 +319,7 @@ ScoreFunction const & RemodelMover::centroid_scorefunction() const {
 }
 
 
-/// @brief the full-atom level score function, default score12
+/// @brief the full-atom level score function
 ScoreFunction const & RemodelMover::fullatom_scorefunction() const {
 	return *fullatom_sfx_;
 }
@@ -433,7 +433,7 @@ void RemodelMover::apply( Pose & pose ) {
 	}
 
 	// create a scorefunction and score the pose first
-	scoring::ScoreFunctionOP sfx = scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+	scoring::ScoreFunctionOP sfx = scoring::getScoreFunction();
 	(*sfx)( pose );
 
 	working_model.workingSetGen( pose, remodel_data );
@@ -1033,7 +1033,7 @@ void RemodelMover::apply( Pose & pose ) {
 			SS << filecount << ".pdb";
 		}
 		// this is to make sure that the final scoring is done with SCORE12
-		scoring::ScoreFunctionOP scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
+		scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
 
 	  if(option[OptionKeys::remodel::repeat_structure].user()) {
 						//Experiment with RemodelGlobalFrame
@@ -1452,8 +1452,8 @@ bool RemodelMover::design_refine_cart_relax(
 	using core::pack::task::operation::RestrictResidueToRepacking;
 	using core::pack::task::operation::RestrictResidueToRepackingOP;
 	using core::pack::task::operation::RestrictToRepacking;
-	using core::scoring::STANDARD_WTS;
-	using core::scoring::SCORE12_PATCH;
+	//using core::scoring::STANDARD_WTS;
+	//using core::scoring::SCORE12_PATCH;
 	using core::scoring::ScoreFunctionOP;
 	using core::scoring::ScoreFunctionFactory;
 	using protocols::forge::build::SegmentInsert;
@@ -1683,7 +1683,7 @@ bool RemodelMover::design_refine( Pose & pose, RemodelDesignMover & designMover 
 	// define the score function
 	//ScoreFunctionOP sfx = fullatom_sfx_->clone();
 	//for refinement always use hard repulsive
-	scoring::ScoreFunctionOP sfx = core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+	scoring::ScoreFunctionOP sfx = core::scoring::getScoreFunction();
 
 //turning on weights, for paranoya
   sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );

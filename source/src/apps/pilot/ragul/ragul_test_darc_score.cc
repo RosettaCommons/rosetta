@@ -28,7 +28,7 @@
 
 // Utility Headers
 #include <core/conformation/Residue.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/PDBInfo.hh>
@@ -44,6 +44,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/conversions.hh>
+#include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>

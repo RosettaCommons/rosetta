@@ -41,6 +41,8 @@
 #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
 namespace core {
@@ -55,6 +57,9 @@ methods::EnergyMethodOP
 LK_CosThetaEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
+	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] || options.analytic_etable_evaluation() ) {
+		utility_exit_with_message("The LK_CosThetaEnergy is currently incompatible with analytic etable evaluation. Please either fix the code or add '-analytic_etable_evaluation 0' to the command line.");
+	}
 	return new LK_CosThetaEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
 }
 

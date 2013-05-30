@@ -1,5 +1,5 @@
 // includes ///////////////////////////////////
-	#include <core/init.hh>
+	#include <core/init/init.hh>
 	#include <numeric/xyzTransform.io.hh>
 	#include <numeric/xyz.functions.hh>
 	#include <numeric/random/random.hh>
@@ -471,7 +471,7 @@ int main(int argv, char **argc){
   try {
 
 	register_options();
-	core::init(argv,argc);
+	core::init::init(argv,argc);
 
 	core::Real temperature = option[flail::temperature]();
 	vector1<core::Size> hist(1000,0);

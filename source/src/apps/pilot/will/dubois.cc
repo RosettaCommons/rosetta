@@ -210,7 +210,7 @@ void test( core::pose::Pose & pose ) {
 	}
 
 	pose.dump_pdb("min0.pdb");
-	ScoreFunctionOP sf = ScoreFunctionFactory::create_score_function( STANDARD_WTS ) ;
+	ScoreFunctionOP sf = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 	sf->set_weight(atom_pair_constraint,1.0);
 
 	sf->show(pose);
@@ -391,10 +391,10 @@ fa_refine_and_design(core::pose::Pose & pose, Size NCYCLE) {
 	using namespace scoring;
 	Size nres_mono = (pose.n_residue()-4)/4;
 	ScoreFunctionOP sf1,sf2,sf3,sf4;
-	sf1 = ScoreFunctionFactory::create_score_function( STANDARD_WTS ) ;
-	sf2 = ScoreFunctionFactory::create_score_function( STANDARD_WTS ) ;
-	sf3 = ScoreFunctionFactory::create_score_function( STANDARD_WTS ) ;
-	sf4 = ScoreFunctionFactory::create_score_function( STANDARD_WTS ) ;
+	sf1 = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
+	sf2 = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
+	sf3 = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
+	sf4 = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 	sf1->set_weight(fa_rep,0.025);
 	sf2->set_weight(fa_rep,0.050);
 	sf3->set_weight(fa_rep,0.100);

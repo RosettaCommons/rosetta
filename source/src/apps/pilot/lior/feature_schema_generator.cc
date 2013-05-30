@@ -1,7 +1,7 @@
 #include <iostream>
 #include <protocols/features/FeaturesReporterFactory.hh>
 #include <protocols/features/FeaturesReporter.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <vector>
 #include <string>
 #include <protocols/init/init.hh>

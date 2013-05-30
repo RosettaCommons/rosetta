@@ -124,7 +124,7 @@ public:
 
 		// if the tests are run manually (or one suite at a time), that doesn't mute all of the tracer output by default.  Place
 		// a mute here because the interaction graphs generate tons of debugging output (in DEBUG mode anyway).
-		core_init_with_additional_options( "-no_optH -mute core.io core.init core.mm" );
+		core_init_with_additional_options( "-no_optH -mute core.io core.init core.mm -restore_pre_talaris_2013_behavior" );
 
 		//
 		// To create a HPatch Interaction Graph object, we need to create a few other objects like a Pose, a ScoreFunction,

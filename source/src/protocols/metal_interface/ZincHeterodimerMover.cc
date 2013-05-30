@@ -284,8 +284,8 @@ void ZincHeterodimerMover::copy_to_centroid(
 
 void ZincHeterodimerMover::generate_scorefunctions(){
 	using namespace core::scoring;
-	fullatom_scorefunction_ = core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
-	TR << "Using default fullatom scorefunction (STANDARD_WTS, SCORE12_PATCH)\n"
+	fullatom_scorefunction_ = core::scoring::getScoreFunction();
+	TR << "Using default fullatom scorefunction (TALARIS_2013)\n"
 		 << *fullatom_scorefunction_ << std::flush;
 
 	centroid_scorefunction_ = new core::scoring::ScoreFunction;

@@ -1,0 +1,29 @@
+## patch for the residue on the lower side of a cutpoint, for loop modeling
+
+NAME protein_cutpoint_lower
+TYPES CUTPOINT_LOWER
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE UPPER_TERMINUS
+NOT VARIANT_TYPE CUTPOINT_LOWER
+NOT PROPERTY PHOSPHONATE
+END_SELECTOR
+
+BEGIN_CASE ## general
+
+ADD_ATOM OVL1 VIRT VIRT 0.0
+ADD_ATOM OVL2 VIRT VIRT 0.0
+
+## ensure that these guys are considered backbone atoms
+SET_BACKBONE_HEAVYATOM OVL1
+SET_BACKBONE_HEAVYATOM OVL2
+
+ADD_BOND C OVL1
+ADD_BOND OVL1 OVL2
+
+SET_ICOOR OVL1 180.0 63.799 1.329   C  CA  O ## guarantees planarity at carbonyl carbon
+SET_ICOOR OVL2 180.0 58.3   1.458 OVL1  C CA ## sets omega = 180.0
+
+END_CASE
+

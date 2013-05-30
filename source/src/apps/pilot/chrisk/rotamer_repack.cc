@@ -938,7 +938,7 @@ RotamerAnalysis()
 	Pose pose;
 	pose_from_pdb( pose, pdbname );
 
-	//create a ScoreFunction from commandline options (default is score12)
+	//create a ScoreFunction from commandline options
 	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 	core::scoring::ScoreFunctionOP scorefxn_edens( ( *scorefxn ).clone() );
 

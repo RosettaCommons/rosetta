@@ -186,8 +186,7 @@ RotamerTrialsMover::parse_my_tag(
 	using core::pack::task::TaskFactoryOP;
 	using core::pack::task::TaskFactory;
 
-	String const scorefxn ( tag->getOption<String>( "scorefxn", "score12" ));
-	scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn );
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	show_packer_task_ = tag->getOption<bool>( "show_packer_task", 0 );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 }

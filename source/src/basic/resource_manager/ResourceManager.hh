@@ -64,7 +64,7 @@ namespace resource_manager {
 ///
 /// NOTE: Because the logic for deciding which of the derived ResourceManager classes
 /// should be instantiated depends on the options system, the ResourceManager should
-/// not be requested until after core::init() has been called (i.e. it should not
+/// not be requested until after core::init::init() has been called (i.e. it should not
 /// be requested at load time.)
 class ResourceManager {
 public:

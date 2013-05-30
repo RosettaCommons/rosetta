@@ -523,8 +523,6 @@ bool BluePrintBDR::centroid_build(
 	Pose & pose
 )
 {
-	using core::scoring::STANDARD_WTS;
-	using core::scoring::SCORE12_PATCH;
 	using core::scoring::ScoreFunctionOP;
 	using core::scoring::ScoreFunctionFactory;
 	using protocols::moves::MS_SUCCESS;

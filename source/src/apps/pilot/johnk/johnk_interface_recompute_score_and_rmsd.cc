@@ -63,7 +63,7 @@ void define_interface( core::pose::Pose const & pose ) {
 	interface.resize( pose.total_residue(), false );
 	core::Real interface_dist = 8.0;
 	core::Size rb_jump = 1;
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 	pack::task::TaskFactory tf;
 	tf.push_back( new protocols::toolbox::task_operations::RestrictToInterface( rb_jump, interface_dist ) );
 	pack::task::PackerTaskOP task = tf.create_task_and_apply_taskoperations( pose );
@@ -113,7 +113,7 @@ main( int argc, char * argv [] )
 	std::string const ref_decoy_fname = option[ ref_decoy ];
 
 	// scoring function
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 
 	// create pose from pdb
 	pose::Pose ref_pose;

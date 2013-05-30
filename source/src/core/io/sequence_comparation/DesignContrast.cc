@@ -29,7 +29,7 @@
 // AUTO-REMOVED #include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <basic/basic.hh>
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 #include <core/types.hh>
 
 // Utility Headers

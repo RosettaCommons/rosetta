@@ -11,7 +11,7 @@
 /// @brief
 
 // libRosetta headers
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -1069,7 +1069,7 @@ main( int argc, char * argv [] )
 	/////////////////////////////
 	// setup
 	//////////////////////////////
-	core::init ( argc, argv );
+	core::init::init ( argc, argv );
 	//////////////////////////////
 	// end of setup
 	//////////////////////////////

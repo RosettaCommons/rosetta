@@ -18,7 +18,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/util.hh>
@@ -32,7 +32,7 @@
 //silly using/typedef
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 
 //#include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
@@ -75,7 +75,7 @@ main( int argc, char * argv [] )
   using namespace basic::options::OptionKeys;
 
   // init option system
-  core::init(argc, argv);
+  core::init::init(argc, argv);
 
   // Make a sequence move to hold our pack rotamers mover and relax mover
   protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
@@ -87,7 +87,7 @@ main( int argc, char * argv [] )
     main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
   }
 
-  //create a ScoreFunction from commandline options (default is score12)
+  //create a ScoreFunction from commandline options
   core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
   
   //create the PackRotamersMover which will do the packing

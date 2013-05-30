@@ -36,7 +36,7 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-
+#include <protocols/rosetta_scripts/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/tag/Tag.hh>
 
@@ -387,12 +387,17 @@ SidechainMCMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves
 	set_prob_random_pert_current( tag->getOption<core::Real>( "prob_random_pert_current", 0.0 ) );
 	core::Real between_rot = 1.0 - prob_uniform() - prob_withinrot () - prob_random_pert_current();
 
-	std::string const scorefxn( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	using namespace core::scoring;
-	ScoreFunctionOP sfxn = new ScoreFunction(*data.get< ScoreFunction * >( "scorefxns", scorefxn ) );
-	setup( sfxn );
+	setup( rosetta_scripts::parse_score_function( tag, data )->clone() );
 
-	TR<<"Initialized SidechainMCMover from .xml file: ntrials="<<ntrials_<< " temperature= "<< temperature_<<" detailed balance="<<(preserve_detailed_balance()?"true":"false")<<" scorefunction="<<scorefxn<<" Probablities uniform/withinrot/random_pert/betweenrot: "<<prob_uniform()<<'/'<<prob_withinrot ()<<'/'<<prob_random_pert_current()<<'/'<<between_rot<<std::endl;
+	TR
+		<< "Initialized SidechainMCMover from .xml file:"
+		<< " ntrials=" << ntrials_
+		<< " temperature= " << temperature_
+		<< " detailed balance= " << (preserve_detailed_balance()?"true":"false")
+		<< " scorefunction=" << rosetta_scripts::get_score_function_name(tag)
+		<< " Probablities uniform/withinrot/random_pert/betweenrot: "
+		<< prob_uniform() << '/' <<prob_withinrot() << '/' << prob_random_pert_current() << '/' << between_rot
+		<< std::endl;
 }
 
 void

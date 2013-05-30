@@ -289,7 +289,7 @@ Options = Option_Group( '',
 		Option( 'ignore_missing_bondangle_params', 'Boolean', default = 'false', desc = 'ignore failed lookups for missing bond angle parameters' ),
 	), # MM
 	Option_Group( 'qsar',
-		Option( 'weights','String',default='standard',desc = 'select qsar weight set to use'),
+		Option( 'weights','String',default='talaris2013',desc = 'select qsar weight set to use'),
 		Option( 'grid_dir','String',desc = 'Directory to store grids in'),
 		Option( 'max_grid_cache_size','Integer',desc= 'delete old grids if grid cache exceeds specified size')
 	),
@@ -1828,9 +1828,9 @@ Options = Option_Group( '',
 	Option_Group( 'score',
     	Option( 'score_pose_cutpoint_variants', 'Boolean', desc='Include cutpoint variants in the pose during linear chainbreak', default='false'),
 		Option( 'score', 'Boolean', desc="scorefunction option group", legal='true', default='true' ),
-		Option( 'weights', 'String', desc="Name of weights file (without extension .wts)" , default="standard" ),
+		Option( 'weights', 'String', desc="Name of weights file (without extension .wts)" , default="talaris2013" ),
 		Option( 'set_weights', 'StringVector', desc="Modification to weights via the command line. Applied in ScoreFunctionFactory::create_score_function inside the function apply_user_defined_reweighting_. Format is a list of paired strings: -score::set_weights <score_type1> <setting1> <score_type2> <setting2> ..." ),
-		Option( 'pack_weights', 'String', desc="Name of packing weights file (without extension .wts)" , default="standard" ),
+		Option( 'pack_weights', 'String', desc="Name of packing weights file (without extension .wts)" , default="talaris2013" ),
 		Option( 'soft_wts', 'String', desc="Name of the 'soft' weights file, for protocols which use it." , default="soft_rep" ),
 		Option( 'docking_interface_score','Boolean',desc="the score is computed as difference between bound and unbound pose", default='false'),
 		Option( 'min_score_score', 'Real', desc='do not consider scores lower than min-score in monte-carlo criterion', default='0.0'),
@@ -1844,12 +1844,12 @@ Options = Option_Group( '',
 		Option( 'no_lk_polar_desolvation', 'Boolean', desc="Disable the polar-desolvation component of the LK solvation model; effectively set dGfree for polar atoms to 0" ),
 		Option( 'input_etables' , 'String', desc="Read etables from files with given prefix" ),
 		Option( 'output_etables', 'String', desc="Write out etables to files with given prefix" ),
-		Option( 'analytic_etable_evaluation', 'Boolean', desc="Instead of interpolating between bins, use an analytic evaluation of the lennard-jones and solvation energis" ),
+		Option( 'analytic_etable_evaluation', 'Boolean', desc="Instead of interpolating between bins, use an analytic evaluation of the lennard-jones and solvation energis", default="true" ),
 		Option( 'rms_target', 'Real', desc='Target of RMS optimization for RMS_Energy EnergyMethod', default='0.0'),
 		Option( 'ramaneighbors', 'Boolean', desc='Uses neighbor-dependent ramachandran maps', default='false'),
 		Option( 'optH_weights', 'String', desc="Name of weights file (without extension .wts) to use during optH"),
 		Option( 'optH_patch', 'String', desc="Name of weights file (without extension .wts) to use during optH"),
-		Option( 'hbond_params', 'String', desc="Directory name in the database for which hydrogen bond parameters to use.", default='standard_params'),
+		Option( 'hbond_params', 'String', desc="Directory name in the database for which hydrogen bond parameters to use.", default='sp2_hackelec_params'),
 		Option( 'hbond_disable_bbsc_exclusion_rule', 'Boolean', desc="Disable the rule that protein bb/sc hbonds are excluded if the backbone group is already forming a hydrogen bond to a backbone group; with this flag, no hbonds are excluded", default='false' ),
 		Option( 'symE_units', 'Integer', desc="Number of symmetric Units in design for use with symE scoring",default='-1'),
 		Option( 'symE_bonus', 'Real', desc="Energy bonus per match for use with symE scoring",default='0.0'),
@@ -1906,11 +1906,11 @@ Options = Option_Group( '',
 		),
   		Option( 'sidechain_buried', 'IntegerVector', desc="count buried residues (rvernon pilot app)", default = '-1' ),
 		Option( 'sidechain_exposed', 'IntegerVector', desc="count exposed residues (rvernon pilot app)", default = '-1' ),
-		Option( 'hackelec_min_dis', 'Real', desc='changes the minimum distance cut-off for hack-elec energy', default='1.5'),
+		Option( 'hackelec_min_dis', 'Real', desc='changes the minimum distance cut-off for hack-elec energy', default='1.6'),
 		Option( 'hackelec_max_dis', 'Real', desc='changes the maximum distance cut-off for hack-elec energy', default='5.5'),
 		Option( 'hackelec_die', 'Real', desc='changes the dielectric constant for hack-elec energy', default='10.0'),
 		Option( 'hackelec_r_option', 'Boolean', desc='changes the dielectric from distance dependent to distance independent', default='false'),
-		Option( 'smooth_hack_elec', 'Boolean', desc='Smooth the discontinuities in the hackelec energy function using a sigmoidal term', default='false' ),
+		Option( 'smooth_hack_elec', 'Boolean', desc='Smooth the discontinuities in the hackelec energy function using a sigmoidal term', default='true' ),
 		Option( 'facts_GBpair_cut','Real', desc='GBpair interaction distance cutoff (same as hackelec_max_dis)', default="10.0" ),
 		Option( 'facts_min_dis','Real', desc='GBpair interaction minimum distance (same as hackelec_min_dis)', default="1.5" ),
 		Option( 'facts_kappa','Real', desc='GBpair interaction screening factor', default="12.0" ),
@@ -1976,7 +1976,8 @@ Options = Option_Group( '',
 			" -expand_st_chi2sampling"
 			" -smooth_hack_elec"
 			" -hackelec_min_dis 1.6"
-			" -hackelec_r_option false"),
+			" -hackelec_r_option false"
+			" -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-5.85 fa_standard:NH2O:LK_DGFREE:-7.8 fa_standard:Narg:LK_DGFREE:-10.0 fa_standard:OH:LK_DGFREE:-6.70"),
 
 		Option( 'facts_default', 'Boolean',
 			desc="turn on default options for FACTS"
@@ -1997,7 +1998,6 @@ Options = Option_Group( '',
 		  " -facts_intrares_scale 0.4"
 		  " -facts_elec_sh_exponent 1.8",
 			default="false"),
-
 		Option_Group( 'score',
 			Option( 'bbdep_omega', 'Boolean', desc="Enable phi-psi dependent omega", ),
 			Option( 'bbdep_bond_params', 'Boolean', desc="Enable phi-psi dependent bondlengths and bondangles", ),
@@ -2009,31 +2009,55 @@ Options = Option_Group( '',
 			Option( 'use_incorrect_hbond_deriv',   'Boolean', desc="Use deprecated hbond derivative calculation.", default="false"),
 			Option( 'p_aa_pp',   'String', desc="Name of scoring/score_functions/P_AA_pp/P_AA_PP potential file (search in the local directory first, then look in the database)" , default="scoring/score_functions/P_AA_pp/P_AA_pp" ),
 			Option( 'p_aa_pp_nogridshift',   'Boolean', desc="the format of p_aa_pp changed from using i*10+5 (5, 15, etc) to i*10 (0,10,etc.) as grid points" ),
-			Option( 'rama_not_squared', 'Boolean', desc="Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (rama+entropy) > 1.0" ),
+			Option( 'rama_not_squared', 'Boolean', desc="Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (ram a+entropy) > 1.0" ),
 			Option( 'rama_map', 'File', default = 'scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4', desc="Ramachandran file used by rama" ),
-			Option( 'dun10',   'Boolean', desc="Use the 2010 Dunbrack library instead of either the the 2002 library."  ),
+			Option( 'dun10',   'Boolean', desc="Use the 2010 Dunbrack library instead of either the the 2002 library.", default="true"  ),
 			Option( 'dun10_dir',   'String', desc="Name of dun10 dir", default="rotamer/ExtendedOpt1-5" ),
 			Option( 'dun02_file',  'String', desc="Name of dun02 input file", default="rotamer/bbdep02.May.sortlib" ),
 			Option( 'ch_o_bond_potential',   'String', desc="Name of ch_o_bond potential file (search in the local directory first, then look in the database)" , default="scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat" ),
 			Option( 'hack_elec_co_only',   'Boolean', desc="Using only CO-CO interactions in hack_elec_bb_bb", default = 'false' ),
-			Option( 'lj_hbond_hdis', 'Real', desc="Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)", default = '1.95' ),
-			Option( 'lj_hbond_OH_donor_dis', 'Real', desc="Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)", default='3.0'),
-			Option( 'score12prime', 'Boolean', desc="Whenever getScoreFunction() would have returned the ScoreFunction from standard.wts + score12.wts_patch, instead return a revised score12 (score12prime) with reference energies optimized with optE for sequence profile recovery", default='false' ),
+			Option( 'lj_hbond_hdis', 'Real', desc="Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)", default = '1.75' ),
+			Option( 'lj_hbond_OH_donor_dis', 'Real', desc="Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)", default='2.6'),
+			Option( 'score12prime', 'Boolean', desc="Restore to score funciton parameters to score12 parameters and have getScoreFuntion return with score12prime.wts. The score12prime.wts differs from standard.wts + score12.wts_patch, in that the reference energies have been optimized with optE for sequence profile recovery", default='false' ),
 			Option( 'hb_sp2_BAH180_rise', 'Real', desc="The rise from -0.5 for the BAH=180 value for the additive chi/BAH sp2 potential", default="0.75"),
 			Option( 'hb_sp2_outer_width', 'Real', desc="The width between the peak when CHI=0 and BAH=120 to when the BAH is at a maximum (Units: pi * radians. E.g. 1/3 means the turn off hbonding when BAH < 60, larger values mean a wider potential). Use 0.357 in conjunction with the hb_energy_fade flag.", default="0.33333"),
-			Option( 'hb_sp2_chipen', 'Boolean', desc="Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%", default="false" ),
-			Option( 'hbond_measure_sp3acc_BAH_from_hvy', 'Boolean', desc="If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen", default="false" ),
-			Option( 'hb_fade_energy', 'Boolean', desc="Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function.", default="false"),
-			Option( 'use_bicubic_interpolation', 'Boolean', desc="Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer", default="false" ),
+			Option( 'hb_sp2_chipen', 'Boolean', desc="Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%", default="true" ),
+			Option( 'hbond_measure_sp3acc_BAH_from_hvy', 'Boolean', desc="If true, then the BAH angle for sp3 (aka hydroxyl) acceptors is measured donor-hydrogen--acceptor-heavyatom--heavyatom-base instead of donor-hydrogen--accptor-heavyatom--hydroxyl-hydrogen", default="true" ),
+			Option( 'hb_fade_energy', 'Boolean', desc="Rather than having a strict cutoff of hbond definition at 0, fade the energy smoothly in the range [-0.1, 0.1]. This is necessary to prevent a discontinuity in the derivative when E=0 that arise because of the additive form of the hbond function.", default="true"),
+			Option( 'use_bicubic_interpolation', 'Boolean', desc="Instead of using bilinear interpolation to evaluate the Ramachandran, P_AA_pp and Dunbrack potentials, use bicubic interpolation.  Avoids pile-ups at the grid boundaries where discontinuities in the derivatives frustrate the minimizer", default="true" ),
 			Option( 'dun_normsd', 'Boolean', desc="Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians", default="false" ),
-            ),
+		),
 		Option_Group( 'chemical',
 			Option( 'icoor_05_2009', 'Boolean', desc="New set of idealized coordinates for full atom, 05-2009" ),
 			Option( 'parse_charge', 'Boolean', desc="Use PARSE charge set." ),
-			Option( 'expand_st_chi2sampling', 'Boolean', desc="Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves."),
+			Option( 'expand_st_chi2sampling', 'Boolean', desc="Ugly temporary hack.  Expand the chi2 sampling for serine and threonine in the fa_standard residue type set so that samples are taken every 20 degrees (instead of every 60 degrees.  This will soon be changed in the SER and THR params files themselves.  This flag can be used with any residue type set (including the pre-talaris fa_standard version, and with the fa_standard_05.2009_icoor version) but is unncessary for the talaris2013 version (currently named fa_standard) as the expanded SER and THR sampling is already encoded in .params files for these two residues", default="false"),
 		),
 	),
 
+	Option_Group( 'mistakes',
+		Option( 'restore_pre_talaris_2013_behavior', 'Boolean',
+			desc="Restore the set of defaults that were in place before the Talaris2013 parameters were made default.  This is an umbrella flag and sets the following flags if they are not set on the command line to some other value"
+			" -mistakes::chemical::pre_talaris2013_geometries true"
+			" -corrections::score::dun10 false"
+			" -corrections::score::use_bicubic_interpolation false"
+			" -corrections::score:hb_sp2_chipen false"
+			" -corrections::score::hb_fade_energy false"
+			" -corrections::score::hbond_measure_sp3acc_BAH_from_hvy false"
+			" -corrections::score::lj_hbond_hdis 1.95"
+			" -corrections::score::lj_hbond_OH_donor_dis 3.0"
+			" -corrections::chemical::expand_st_chi2sampling false"
+			" -score::weights pre_talaris_2013_standard.wts"
+			" -score::patch score12.wts_patch"
+			" -score::analytic_etable_evaluation false"
+			" -score::hbond_params score12_params"
+			" -score::smooth_hack_elec false"
+			" -score::hackelec_min_dis 1.5"
+			" -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-10.0 fa_standard:NH2O:LK_DGFREE:-10.0 fa_standard:Narg:LK_DGFREE:-11.0 fa_standard:OH:LK_DGFREE:-6.77",
+			default="false" ),
+		Option_Group( 'chemical',
+			Option( 'pre_talaris2013_geometries', 'Boolean', desc="Use the version of the fa_standard geometries that were active before the Talaris2013 parameters were taken as default", default="false" ),
+		),
+	),
 
 	Option_Group( 'willmatch',
 		Option( 'arg_dun_th', 'Real', desc='fa_dun thresh for ARG', default='16.0' ),
@@ -3204,7 +3228,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('interface_ddg','Integer',default='0', desc='Calculate ddGs across an interface? Uses jump # specified for determining interface.'),
 		Option('ens_variation', 'Real', default='0.5'),
 		Option('sc_min_only','Boolean',default='true'),
-		Option('min_cst_weights','String',default='standard'),
+		Option('min_cst_weights','String',default='talaris2013'),
 		Option('opt_radius','Real',default='8.0'),
 		Option('output_dir','String',default='./'),
 		##Option('accepted_mc_pose_dir','String',default='./'),

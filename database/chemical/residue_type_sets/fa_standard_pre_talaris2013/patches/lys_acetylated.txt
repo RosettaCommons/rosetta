@@ -1,0 +1,102 @@
+## fullatom protein N(6)-acetylation patch for lysine
+## By Andy M. Chen, June 2009, achen39@jhu.edu
+
+NAME acetylated
+TYPES ACETYLATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA LYS
+NOT VARIANT_TYPE ACETYLATION
+NOT VARIANT_TYPE METHYLATION ##Just in case
+NOT VARIANT_TYPE DIMETHYLATION ##Just in case
+NOT VARIANT_TYPE TRIMETHYLATION ##Just in case
+NOT VARIANT_TYPE PROTONATED
+NOT VARIANT_TYPE DEPROTONATED
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING ALY K
+## these are the operations involved
+DELETE_ATOM 2HZ ## One of the amine hydrogens is now a carbon atom
+DELETE_ATOM 3HZ ## Positive charge removed with deprotonation
+
+## Define the added acetyl group
+ADD_ATOM  CH  CNH2 CC   0.55  ## Copied from the amide C in Gln
+ADD_ATOM  CH3 CH3  CT3  -0.27 ## This is the methyl carbon of the acetyl group...
+ADD_ATOM  OH  ONH2 O    -0.55 ## Copied from the amide O in Gln; this is the carboxyl oxygen of the acetyl group
+ADD_ATOM HH31 Hapo HA   0.09  ## Methyl hydrogen on the acetyl group; same for HH32 and HH33
+ADD_ATOM HH32 Hapo HA   0.09
+ADD_ATOM HH33 Hapo HA   0.09
+ADD_BOND  NZ  CH 
+ADD_BOND  CH  OH 
+ADD_BOND  CH  CH3
+ADD_BOND  CH3 HH31
+ADD_BOND  CH3 HH32
+ADD_BOND  CH3 HH33
+
+
+## The acetyl group adds 2 extra chi angles; note that
+##   CH3 is used in lieu of OH  because -CH3 is larger than =O
+ADD_CHI 5  CD   CE   NZ   CH
+ADD_CHI 6  CE   NZ   CH   CH3
+
+
+## The information for the following was calculated by taking the arithmetic mean 
+##   of data taken from 31 actual samples from RCSB (unfortunately there aren't many of them
+##   when NMR structures and homologues with >70% similarity are excluded):
+##   NZ-CH / CH-OH / CH-CH3 bond lengths, CE-NZ-CH / NZ-CH-OH / NZ-CH-CH3 bond angles
+##
+## The dihedral angle for placing CH and CH3 are set to the mean values of the rotamer bins 
+##   with the highest probabilities.
+##
+## The information for placing 1HZ was based on LYS.params; the 180 degrees used for placing 
+##   the OH atom ensures that it is in the same plane as CH, NZ, and CH3.
+##
+SET_ICOOR  CH   178.15  59.31  1.375  NZ   CE   CD 
+SET_ICOOR 1HZ   120.00  70.50  1.010  NZ   CE   CH 
+SET_ICOOR  CH3  179.44  63.75  1.509  CH   NZ   CE 
+SET_ICOOR  OH   180.00  60.53  1.277  CH   NZ   CH3
+
+
+## The information for the added hydrogens was copied from the 3 hydrogens 
+##   bonded to the delta carbon of Ile
+SET_ICOOR HH31 -179.974518 70.500000 1.090290  CH3  CH   OH 
+SET_ICOOR HH32  119.989571 70.500000 1.090575  CH3  CH  HH31
+SET_ICOOR HH33  120.044632 70.500000 1.089057  CH3  CH  HH32
+
+## Change the affected nitrogen to the amide type
+SET_ATOM_TYPE NZ NH2O
+SET_MM_ATOM_TYPE NZ NH2
+
+DELETE_PROPERTY CHARGED ## Acetylation removes the positive charge
+
+
+## Manually define rotamer bins for chis 5 and 6 using data from the 31 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency.
+##   The percentages may not add up to 100% due to rounding.
+##
+ADD_CHI_ROTAMER 5  178.15  13.98   #45.2%, +/- 180 bin
+ADD_CHI_ROTAMER 5 -139.15   7.16   #12.9%, upper tail of the 178.15 bin
+ADD_CHI_ROTAMER 5   91.71   6.89   #12.9% 
+ADD_CHI_ROTAMER 5  -78.35  12.08   # 6.5% 
+ADD_CHI_ROTAMER 5  140.35   2.75   # 6.5%, lower tail of the 178.15 bin
+
+
+ADD_CHI_ROTAMER 6  179.44   2.56   #77.4%, +/- 180 bin
+ADD_CHI_ROTAMER 6  144.94   9.82   # 9.7%, lower tail of the 179.44 bin
+
+## Strangely, no upper tail was observed. The small sample size might be a factor.
+
+
+
+END_CASE
+
+
+

@@ -420,8 +420,7 @@ void BackrubDDMover::parse_my_tag(
 	small_move_prob_ = tag->getOption< core::Real >( "small_move_probability", 0.0 );
 	bbg_move_prob_ = tag->getOption< core::Real >( "bbg_move_probability", 0.25 );
 	runtime_assert( sidechain_move_prob_ + small_move_prob_ + bbg_move_prob_ <= 1.0 );
-	std::string const scorefxn( tag->getOption<string>( "scorefxn", "score12" ));
-	scorefxn_repack_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn) );
+	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	scorefxn_repack_->set_weight( mm_bend, 1.0 );
 	// pivot atoms default to "CA" so that non-protein atoms are not considered during backrub scoring
 	using namespace basic::options;

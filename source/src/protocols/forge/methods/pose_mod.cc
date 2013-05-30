@@ -145,8 +145,6 @@ restore_residues(
 	using core::pack::task::operation::OptCysHG;
 	using core::scoring::ScoreFunctionOP;
 	using core::scoring::ScoreFunctionFactory;
-	using core::scoring::STANDARD_WTS;
-	using core::scoring::SCORE12_PATCH;
 
 	using core::pack::pack_rotamers;
 
@@ -199,7 +197,7 @@ restore_residues(
 	}
 
 	// fix HG of CYS to relieve clashes of any newly converted CYS
-	ScoreFunctionOP sfx = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+	ScoreFunctionOP sfx = core::scoring::getScoreFunction();
 	TaskFactoryOP tf = new TaskFactory();
 	tf->push_back( new OptCysHG() );
 	pack_rotamers( pose, *sfx, tf->create_task_and_apply_taskoperations( pose ) );

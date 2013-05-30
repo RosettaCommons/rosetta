@@ -56,7 +56,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
@@ -104,7 +104,7 @@ int main( int argc, char * argv [] )
 {
 	NEW_OPT( lig_sasa_resfile, "ligand required SASA", "lig_sasa_resfile.txt" );
 
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	// create pose from pdb
 	core::pose::Pose ps;
@@ -113,8 +113,7 @@ int main( int argc, char * argv [] )
 
 
 	// score pose
-	core::scoring::ScoreFunctionOP scorefxn(core::scoring::ScoreFunctionFactory::create_score_function(
-		core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH));
+	core::scoring::ScoreFunctionOP scorefxn(core::scoring::getScoreFunction());
 	(*scorefxn)(ps);
 
 	// compute SASA for all atoms in the pose

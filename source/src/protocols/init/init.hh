@@ -9,7 +9,7 @@
 
 /// @file   src/protocols/init/init.hh
 /// @brief  Initialization function to ensure all load-time factory registration occurs
-///         for classes that live in the protocols library.  protocols::init::init() calls core::init(),
+///         for classes that live in the protocols library.  protocols::init::init() calls core::init::init(),
 ///         and devel::init() call protocols::init::init().
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 

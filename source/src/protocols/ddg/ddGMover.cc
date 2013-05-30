@@ -67,7 +67,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>

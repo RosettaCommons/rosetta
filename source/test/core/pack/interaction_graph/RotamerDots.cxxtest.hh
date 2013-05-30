@@ -351,7 +351,7 @@ public:
 		//rd1.print( std::cout );
 
 		DotSphere ds1 = rd1.get_atom_counts()[ 1 ];
-		TS_ASSERT_EQUALS( ds1.get_num_covered(), 157 );
+		TS_ASSERT_EQUALS( ds1.get_num_covered(), 149 );
 
 		DotSphere ds16 = rd1.get_atom_counts()[ 16 ];
 		TS_ASSERT_EQUALS( ds16.get_num_uncovered(), 35 );
@@ -602,9 +602,9 @@ public:
 		TS_ASSERT_EQUALS( v_ds[ 16 ].get_num_covered(), 0 );
 
 		utility::vector1< DotSphere > const & v_ds2 = rd2.get_atom_counts();
-		TS_ASSERT_EQUALS( v_ds2[ 1 ].get_num_covered(), 90 );
+		TS_ASSERT_EQUALS( v_ds2[ 1 ].get_num_covered(), 89 );
 		TS_ASSERT_EQUALS( v_ds2[ 10 ].get_num_covered(), 57 );
-		TS_ASSERT_EQUALS( v_ds2[ 19 ].get_num_covered(), 0 );
+		TS_ASSERT_EQUALS( v_ds2[ 19 ].get_num_covered(), 2 );
 
 		//rd1.print( std::cout );
 		//rd2.print( std::cout );

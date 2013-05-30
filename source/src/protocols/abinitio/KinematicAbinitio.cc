@@ -107,7 +107,7 @@ using scoring::constraints::ConstraintSet;
 using scoring::constraints::ConstraintSetOP;
 using kinematics::ShortestPathInFoldTree;
 
-//@detail call this static routine before core::init to register the options
+//@detail call this static routine before core::init::init to register the options
 void protocols::abinitio::KinematicAbinitio::register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

@@ -83,9 +83,7 @@ ResidueSetChainEnergyFilter::parse_my_tag( utility::tag::TagPtr const tag, moves
 {
 	using namespace core::scoring;
 
-	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	// scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
-	scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn_name )->clone();
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) );
 	if( ! tag->hasOption( "threshold" ) ) throw utility::excn::EXCN_RosettaScriptsOption("Must specify 'threshold' for ResidueSetChainEnergyFilter.");

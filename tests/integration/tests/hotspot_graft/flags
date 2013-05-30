@@ -6,3 +6,14 @@
 -parser:protocol two_native_stubs.xml
 -overwrite
 -use_input_sc
+
+# sadly, switching to the improved hbond parameterization causes this
+# integration test to change because what previously qualified as a
+# hydrogen bond no longer seems to; my guess is that previously bad
+# hbond geometry (HA distance too great, most likely) was getting
+# labeled as an hbond.  Currently, the integration test is resulting
+# in this error message and exiting prematurely:
+# protocols.protein_interface_design.filters.HbondsToResidueFilter: found 0 hbond to target residue 198. failing.
+# protocols.filters.Filter: Compound logical statement is 0.
+
+-restore_pre_talaris_2013_behavior

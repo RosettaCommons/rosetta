@@ -50,7 +50,7 @@ RemodelEnzdesCstModule::RemodelEnzdesCstModule(RemodelData external_data)
 	: protocols::toolbox::match_enzdes_util::EnzConstraintIO(core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ))
 {
   read_enzyme_cstfile(option[OptionKeys::enzdes::cstfile]);
-	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH);
+	scorefxn_ = core::scoring::getScoreFunction();
 	remodel_data_ = external_data;
 
 }

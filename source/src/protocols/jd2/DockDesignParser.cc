@@ -217,8 +217,8 @@ MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modifi
 
 // default scorefxns
 	ScoreFunctionOP commandline_sfxn = core::scoring::getScoreFunction();
-	ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
-	ScoreFunctionOP docking_score = ScoreFunctionFactory::create_score_function( STANDARD_WTS, DOCK_PATCH );
+	ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH );
+	ScoreFunctionOP docking_score = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, DOCK_PATCH );
 	ScoreFunctionOP soft_rep = ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS );
 	ScoreFunctionOP docking_score_low = ScoreFunctionFactory::create_score_function( "interchain_cen" );
 	ScoreFunctionOP score4L = ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );

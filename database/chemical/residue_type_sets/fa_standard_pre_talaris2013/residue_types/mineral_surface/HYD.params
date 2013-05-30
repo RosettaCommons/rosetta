@@ -1,0 +1,20 @@
+# created by liza lee (Graylab@JHU)
+# For hydroxyl ion in monoclinic hydroxyapatite surface
+NAME HYD
+IO_STRING HYD Z
+TYPE LIGAND
+AA UNK
+ATOM  O   OHha  X   -1.60
+ATOM  H   Hha   X   0.60
+ATOM  V1  VIRT VIRT 0.00
+ATOM  V2  VIRT VIRT 0.00
+BOND  O    H 
+BOND  O    V1 
+BOND  O    V2 
+BOND  V1   V2 
+NBR_ATOM  O 
+NBR_RADIUS 3.843110
+ICOOR_INTERNAL    O      0.000000    0.000000    0.000000   H     O     V1 
+ICOOR_INTERNAL    H      0.000000    0.000000    0.960000   H     O     V1 
+ICOOR_INTERNAL    V1     0.000000  180.000000    1.493765   O     H     V1 
+ICOOR_INTERNAL    V2     0.000000   62.060678    1.415324   V1    O     H 

@@ -1,0 +1,24 @@
+# I think right now that Mini has to have at least three atoms per residue,
+# hence the virtual atoms.
+NAME CD
+IO_STRING  CD Z
+TYPE LIGAND
+AA UNK
+ATOM CD   CAbb  X    2.00
+ATOM  V1  VIRT  X    0.00
+ATOM  V2  VIRT  X    0.00
+ATOM  V3  VIRT  X    0.00
+ATOM  V4  VIRT  X    0.00
+BOND CD    V1
+BOND CD    V2
+BOND CD    V3
+BOND CD    V4
+NBR_ATOM CD
+NBR_RADIUS 0.01
+# tetrahedral geometry with 2.2 distance from center to vertex
+ICOOR_INTERNAL   CD      0.000000    0.000000    0.000000  CD     V1    V2
+ICOOR_INTERNAL    V1     0.000000    0.000000    2.200000  CD     V1    V2
+ICOOR_INTERNAL    V2     0.000000   70.500000    2.200000  CD     V1    V2
+ICOOR_INTERNAL    V3   120.000000   70.500000    2.200000  CD     V1    V2
+ICOOR_INTERNAL    V4  -120.000000   70.500000    2.200000  CD     V1    V2
+

@@ -82,17 +82,17 @@ main( int argc, char * argv [] )
 	TR << "Starting to compute various solvation energies" << std::endl;
 
 	// scoring functions
-	scoring::ScoreFunctionOP LK_scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP LK_scorefxn( getScoreFunction() );
 
-	scoring::ScoreFunctionOP orig_geosol_scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP orig_geosol_scorefxn( getScoreFunction() );
 	orig_geosol_scorefxn->set_weight( core::scoring::fa_sol, 0. );
 	orig_geosol_scorefxn->set_weight( core::scoring::geom_sol, 0.65 );
 
-	scoring::ScoreFunctionOP occ_pw_scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP occ_pw_scorefxn( getScoreFunction() );
 	occ_pw_scorefxn->set_weight( core::scoring::fa_sol, 0. );
 	occ_pw_scorefxn->set_weight( core::scoring::occ_sol_fitted, 0.65 );
 
-	scoring::ScoreFunctionOP occ_exact_scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP occ_exact_scorefxn( getScoreFunction() );
 	occ_exact_scorefxn->set_weight( core::scoring::fa_sol, 0. );
 	occ_exact_scorefxn->set_weight( core::scoring::occ_sol_exact, 0.65 );
 

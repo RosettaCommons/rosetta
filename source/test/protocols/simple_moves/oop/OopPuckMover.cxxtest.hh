@@ -74,7 +74,7 @@ public:
 		basic::options::option[ basic::options::OptionKeys::chemical::include_patches](utility::tools::make_vector1( std::string("patches/oop_pre.txt"), std::string("patches/oop_post.txt") ) );
 
 		// create score function
-		scoring::ScoreFunctionOP score_fxn( ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH ) );
+		scoring::ScoreFunctionOP score_fxn( getScoreFunction() );
 		//scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
 
 		//kdrew: create new residue type set with oop patches included, cannot use chemical manager residue type set singleton because already initialized without oop patches
@@ -86,7 +86,7 @@ public:
 		core::import_pose::pose_from_pdb( pose, *residue_set, "protocols/simple_moves/oop/oop_test.pdb" );
 		//scoring::constraints::add_fa_constraints_from_cmdline_to_pose(pose);
 
-		core::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+		core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
 	}
 
 	void tearDown() {

@@ -1653,7 +1653,7 @@ easy_target_test(){
 
 	utility::io::ozstream out( "chi_stats.txt" );
 
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( option[ score::weights]  );
+	ScoreFunctionOP scorefxn = getScoreFunction();
 	(*scorefxn)( native_pose ); //for neighbor info. This seems silly.
 
 	//	prepare_start_model( template_pose, pose_with_desired_sequence, *scorefxn, pose, conserved );
@@ -1705,7 +1705,7 @@ easy_target_test(){
 
 // 	if (false)
 // 	{
-// 		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS );
+// 		ScoreFunctionOP scorefxn = getScoreFunction();
 // 		scorefxn->set_weight( fa_rep, 0.1 );
 // 		prepare_start_model( template_pose, pose_with_desired_sequence, *scorefxn, pose, conserved );
 // 		pose.dump_pdb( "start_low_farep.pdb" );
@@ -1858,7 +1858,7 @@ easy_loop_model_test(){
 
 	//////////////////////////////////////////////////////////////
 
-	//	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS );
+	//	ScoreFunctionOP scorefxn = getScoreFunction();
 	//	protocols::LoopRebuild loop_builder( *scorefxn, loops, frag_libs );//Will this work as fullatom?
 	//	loop_rebuilder.apply( pose );
 
@@ -1902,7 +1902,7 @@ chi_stats_test()
 
 	///////////////////////////////////
 	// To setup neighbors, burial info.
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( option( score::weights )  );
+	ScoreFunctionOP scorefxn = getScoreFunction()  );
 	( *scorefxn )( native_pose );
 
 	///////////////////////////////////////////////////
@@ -1953,7 +1953,7 @@ cst_relax_test()
 	}
 
 
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( option( score::weights )  );
+	ScoreFunctionOP scorefxn = getScoreFunction()  );
 
 	// Basic set up
 	bool const score_only = option[ run::score_only ]();

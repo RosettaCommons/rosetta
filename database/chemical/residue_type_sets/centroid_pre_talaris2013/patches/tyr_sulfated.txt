@@ -1,0 +1,25 @@
+## Sulfated Tyrosine patch
+
+## This patch was created to attempt to help an academic user, but I haven't actually tested to see if it works.  Sulfation will have no effect in centroid mode, but you (might) need such a patch to get abinitio to allow patched residues in later stages?  SML 03-12-10
+
+NAME sulfated
+TYPES SULFATION
+
+## general requirements for this patch
+## require protein, ignore anything that's already nterm patched:
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA TYR
+NOT VARIANT_TYPE PHOSPHORYLATION  ## Just in case
+NOT VARIANT_TYPE SULFATION
+NOT VARIANT_TYPE PROTONATED
+NOT VARIANT_TYPE DEPROTONATED
+END_SELECTOR
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+ADD_PROPERTY CHARGED ## For the sulfate group
+
+END_CASE
+

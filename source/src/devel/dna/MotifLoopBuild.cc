@@ -103,8 +103,7 @@ MotifLoopBuild::MotifLoopBuild()
 {
 
     //Load in the score function
-    std::string const weights( basic::options::option[ basic::options::OptionKeys::score::weights ]() );
-    scorefxnOP = ( core::scoring::ScoreFunctionFactory::create_score_function( weights ) );
+    scorefxnOP = ( core::scoring::getScoreFunction() );
 
     //rot_map = build_all_aa_rotamers();
     //Load in the full motif library

@@ -541,12 +541,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 
 	fname_prefix_ = tag->getOption< std::string >( "output_fname_prefix", "" );
 	// calls to PackRotamersMover base class methods
-	std::string const scorefxn_key( tag->getOption<std::string>("scorefxn", "score12" ));
-	if ( datamap.has( "scorefxns", scorefxn_key ) ) {
-		scorefxn_ = datamap.get< ScoreFunction * >( "scorefxns", scorefxn_key );
-	} else {
-		throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in DataMap.");
-	}
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, datamap );
 
 	TaskFactoryCOP tf = protocols::rosetta_scripts::parse_task_operations( tag, datamap );
 	if( tf ) task_factory( tf );

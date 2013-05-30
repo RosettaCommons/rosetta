@@ -1,0 +1,20 @@
+## centroid protein phosphorylation patch for serine
+## By Andy M. Chen, June 2009, achen39@jhu.edu (????)
+
+NAME phosphorylated
+TYPES PHOSPHORYLATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA SER
+NOT VARIANT_TYPE PHOSPHORYLATION ## Don't phosphorylate a residue twice
+END_SELECTOR
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+ADD_PROPERTY CHARGED ## For the phosphate group
+
+END_CASE
+

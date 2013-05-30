@@ -477,7 +477,7 @@ rna_fullatom_score_test()
 
 
 		//Score these suckers.
-		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( option[score::weights] );
+		ScoreFunctionOP scorefxn = getScoreFunction();
 
 		(*scorefxn)(pose);
 		scorefxn->show( std::cout, pose );
@@ -1134,7 +1134,7 @@ rna_o2star_test()
 
 		std::cout << "Check it! SEQUENCE " << pose.sequence() << std::endl;
 
-		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( option[ score::weights ]() );
+		ScoreFunctionOP scorefxn = getScoreFunction();
 
 		scorefxn->show( std::cout, pose );
 
@@ -1359,7 +1359,7 @@ rna_design_gap_test()
 
 	Real const design_temp( option[ temperature ]() );
 
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( option[ score::weights ]() );
+	ScoreFunctionOP scorefxn = getScoreFunction();
 
 	//	scorefxn->energy_method_options().exclude_DNA_DNA( exclude_DNA_DNA );
 	EnergyMethodOptions options( scorefxn->energy_method_options() );
@@ -3267,7 +3267,7 @@ print_hbonds_test()
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( option[ rsd_type_set]() );
 	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 
-	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( option[score::weights] );
+	ScoreFunctionOP scorefxn = getScoreFunction();
 
 	for (Size n = 1; n <= pdb_files.size(); n++) {
 		std::string const pdb_file = pdb_files[n];
@@ -3765,7 +3765,7 @@ build_next_nucleotide_test()
 
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 	if ( option[ score::weights ].user() ) {
-		scorefxn = ScoreFunctionFactory::create_score_function( option[ score::weights] );
+		scorefxn = getScoreFunction();
 	}
 	scorefxn->set_weight( dihedral_constraint, 1.0 );
 	scorefxn->set_weight( atom_pair_constraint, 1.0 );
@@ -4091,7 +4091,7 @@ rotamerize_rna_test()
 	///////////////////////////////////////////////////
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
 	if ( option[ score::weights ].user() ) {
-		scorefxn = ScoreFunctionFactory::create_score_function( option[ score::weights] );
+		scorefxn = getScoreFunction();
 	}
 	scorefxn->set_weight( dihedral_constraint, 1.0 );
 	scorefxn->set_weight( atom_pair_constraint, 1.0 );

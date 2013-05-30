@@ -119,7 +119,6 @@ using core::scoring::ScoreFunctionFactory;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
-using core::scoring::STANDARD_WTS;
 using cppdb::cppdb_error;
 using cppdb::statement;
 using cppdb::result;

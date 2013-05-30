@@ -46,7 +46,7 @@ public:
 		start_pose = new pose::Pose();
 		core::import_pose::pose_from_pdb(*start_pose, "test_in.pdb");
 
-		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
+		scorefxn = core::scoring::getScoreFunction();
 
 				//kinematics::MoveMap mm;
 				for ( int i=30; i<= 35; ++i ) {

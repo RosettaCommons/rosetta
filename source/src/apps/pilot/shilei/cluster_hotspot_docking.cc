@@ -7,7 +7,7 @@
 
 #include <protocols/toolbox/KCluster.hh>
 
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
 	NEW_OPT(cluster_hotspot_docking::ca, "use CA atom for clustering (proteins)",false);
 	NEW_OPT(cluster_hotspot_docking::prefix, "Prefix for output","");
 	NEW_OPT(cluster_hotspot_docking::column, "Score column for clustering","ddg");
-	core::init(argc, argv);
+	core::init::init(argc, argv);
 
 	//read in silent file	
 	std::string silentin = option[ in::file::silent ]()[1];

@@ -1,3 +1,7 @@
+namespace loopfcst { FileOptionKey const dump_coord_cst_weight_array( "loopfcst:dump_coord_cst_weight_array" );  }
+namespace jumps { BooleanOptionKey const jumps( "jumps" );  }
+namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
+namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
 namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
 namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
 namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
@@ -223,6 +227,10 @@ namespace corrections { namespace chemical { BooleanOptionKey const chemical( "c
 namespace corrections { namespace chemical { BooleanOptionKey const icoor_05_2009( "corrections:chemical:icoor_05_2009" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const parse_charge( "corrections:chemical:parse_charge" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const expand_st_chi2sampling( "corrections:chemical:expand_st_chi2sampling" );  } }
+namespace mistakes { BooleanOptionKey const mistakes( "mistakes" );  }
+namespace mistakes { BooleanOptionKey const restore_pre_talaris_2013_behavior( "mistakes:restore_pre_talaris_2013_behavior" );  }
+namespace mistakes { namespace chemical { BooleanOptionKey const chemical( "mistakes:chemical" );  } }
+namespace mistakes { namespace chemical { BooleanOptionKey const pre_talaris2013_geometries( "mistakes:chemical:pre_talaris2013_geometries" );  } }
 namespace willmatch { BooleanOptionKey const willmatch( "willmatch" );  }
 namespace willmatch { RealOptionKey const arg_dun_th( "willmatch:arg_dun_th" );  }
 namespace willmatch { RealOptionKey const asp_dun_th( "willmatch:asp_dun_th" );  }
@@ -699,8 +707,3 @@ namespace rotamerdump { BooleanOptionKey const xyz( "rotamerdump:xyz" );  }
 namespace rotamerdump { BooleanOptionKey const one_body( "rotamerdump:one_body" );  }
 namespace rotamerdump { BooleanOptionKey const two_body( "rotamerdump:two_body" );  }
 namespace rotamerdump { BooleanOptionKey const annealer( "rotamerdump:annealer" );  }
-namespace robert { BooleanOptionKey const robert( "robert" );  }
-namespace robert { StringOptionKey const pairdata_input_pdb_list( "robert:pairdata_input_pdb_list" );  }
-namespace robert { RealOptionKey const pcs_maxsub_filter( "robert:pcs_maxsub_filter" );  }
-namespace robert { RealOptionKey const pcs_maxsub_rmsd( "robert:pcs_maxsub_rmsd" );  }
-namespace robert { BooleanOptionKey const pcs_dump_cluster( "robert:pcs_dump_cluster" );  }

@@ -144,7 +144,7 @@ BuildingBlockInterfaceOperation::apply( core::pose::Pose const & pose, core::pac
 	// Here we filter the residues that we are selecting for design
 	// to get rid of those that make intra-building block interactions
 	Pose scored_pose( pose );
-	ScoreFunctionFactory::create_score_function( "standard", "score12" )->score(scored_pose);
+	getScoreFunction()->score(scored_pose);
 	Real bblock_dist_sq = bblock_dist_ * bblock_dist_;
 	std::string select_filtered_interface_pos("select filtered_interface_pos, resi ");
 	bool contact;

@@ -250,7 +250,7 @@ main( int argc, char * argv [] )
 
 		}
 
-		core::scoring::ScoreFunctionCOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+		core::scoring::ScoreFunctionCOP scorefxn( getScoreFunction() );
 
 
 		//setting a minimizer objet that will be ran after each design step

@@ -71,7 +71,7 @@ struct AbsFunc : public core::scoring::constraints::Func {
 	}
 	void read_data( std::istream & in ){ in >> x0_ >> sd_;  }
 	void show_definition( std::ostream &out ) const { out << "ABS " << x0_ << " " << sd_ << std::endl; }
-	Real x0() const { return x0_; }  
+	Real x0() const { return x0_; }
 	Real sd() const { return sd_; }
 	void x0( Real x ) { x0_ = x; }
 	void sd( Real sd ) { sd_ = sd; }
@@ -83,7 +83,7 @@ private:
 
 Real mod360(Real x) {
 	while(x >  180.0) x -= 360.0;
-	while(x < -180.0) x += 360.0;	
+	while(x < -180.0) x += 360.0;
 	return x;
 }
 
@@ -188,13 +188,13 @@ int main( int argc, char * argv [] ) {
 	                sfc->set_weight(core::scoring::rama,1.0);
 	                sfc->set_weight(core::scoring::atom_pair_constraint,10.0);
 	                sfc->set_weight(core::scoring::omega,1.0);
-	ScoreFunctionOP sffa = core::scoring::ScoreFunctionFactory::create_score_function("standard");
+	ScoreFunctionOP sffa = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	                sffa->set_weight(core::scoring::atom_pair_constraint,10.0);
 	                sffa->set_weight(core::scoring::omega,1.0);
-	ScoreFunctionOP sffastd = core::scoring::ScoreFunctionFactory::create_score_function("standard");
+	ScoreFunctionOP sffastd = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	                sffastd->set_weight(core::scoring::omega,1.0);
 
-	core::io::silent::SilentFileData sfd;	
+	core::io::silent::SilentFileData sfd;
 	Pose ref;
 
 	for(Size ITER = 1; ITER <= (Size)option[out::nstruct](); ++ITER) {
@@ -205,7 +205,7 @@ int main( int argc, char * argv [] ) {
 			core::pose::make_pose_from_sequence(pose,seq,"centroid",false);
 			core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_UPPER",       1        );
 			core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());
-			pose.conformation().declare_chemical_bond( 1, "N", pose.n_residue(), "C" );	
+			pose.conformation().declare_chemical_bond( 1, "N", pose.n_residue(), "C" );
 			// Size const nbb( lower_rsd.mainchain_atoms().size() );
 			// total_dev +=
 			// 	( upper_rsd.atom( upper_rsd.mainchain_atoms()[  1] ).xyz().distance_squared( lower_rsd.atom( "OVL1" ).xyz() ) +
@@ -229,7 +229,7 @@ int main( int argc, char * argv [] ) {
 			bb_sample(pose,sfc,1000);
 
 			core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_UPPER",1);
-			core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());			
+			core::pose::remove_variant_type_from_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());
 			protocols::toolbox::switch_to_residue_type_set(pose,"fa_standard");
 			core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_UPPER",       1        );
 			core::pose::add_variant_type_to_pose_residue(pose,"CUTPOINT_LOWER",pose.n_residue());
@@ -245,7 +245,7 @@ int main( int argc, char * argv [] ) {
 			minimize(pose,sffa);
 
 			// sffa->show(pose);
- 
+
 			//std::cout << "FAREP " << pose.energies().total_energies()[core::scoring::fa_rep] << std::endl;
 
 			// bool omegafail = false;
@@ -277,7 +277,7 @@ int main( int argc, char * argv [] ) {
 
 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 			std::string fn = "cyc_gly_"+ObjexxFCL::string_of(pose.n_residue())+"_"+ObjexxFCL::string_of(ITER)+".pdb";
-			ss_out->fill_struct(pose,fn);		
+			ss_out->fill_struct(pose,fn);
 			sfd.write_silent_struct( *ss_out, option[ out::file::silent ]() );
 
 			std::cout << "finish " << ITER << " " << pose.energies().total_energy() << std::endl;

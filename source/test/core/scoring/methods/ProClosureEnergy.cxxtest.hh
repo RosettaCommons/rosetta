@@ -272,7 +272,7 @@ class ProClosureEnergyTests : public CxxTest::TestSuite {
 		{
 		EnergyMap emap;
 		proclose_energy.eval_intrares_energy( trpcage.residue( 12 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ pro_close ], 0.01292460898481068, 1e-12 );
+		TS_ASSERT_DELTA( emap[ pro_close ], 0.0124967778684113, 1e-12 );
 		}
 		{
 		EnergyMap tbemap;
@@ -347,7 +347,7 @@ class ProClosureEnergyTests : public CxxTest::TestSuite {
 		{
 		EnergyMap emap;
 		proclose_energy.eval_intrares_energy( trpcage.residue( 17 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ pro_close ], 0.2078919252851279, 1e-12 );
+		TS_ASSERT_DELTA( emap[ pro_close ], 0.2063039233793921, 1e-12 );
 		}
 		{
 		EnergyMap tbemap;
@@ -362,7 +362,7 @@ class ProClosureEnergyTests : public CxxTest::TestSuite {
 		{
 		EnergyMap emap;
 		proclose_energy.eval_intrares_energy( trpcage.residue( 18 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ pro_close ], 0.1050023146212085, 1e-12 );
+		TS_ASSERT_DELTA( emap[ pro_close ], 0.1033872216433958, 1e-12 );
 		}
 		{
 		EnergyMap tbemap;
@@ -372,24 +372,35 @@ class ProClosureEnergyTests : public CxxTest::TestSuite {
 		{
 		EnergyMap tbemap;
 		proclose_energy.residue_pair_energy( trpcage.residue( 18 ), trpcage.residue( 19 ), trpcage, sfxn, tbemap );
-		TS_ASSERT_DELTA( tbemap[ pro_close ], 0.07438490402267117, 1e-12 );
+		TS_ASSERT_DELTA( tbemap[ pro_close ], 0.07438490402267119, 1e-12 );
 		}
 		{
 		EnergyMap emap;
 		proclose_energy.eval_intrares_energy( trpcage.residue( 19 ), trpcage, sfxn, emap );
-		TS_ASSERT_DELTA( emap[ pro_close ], 0.2001501300597954, 1e-12 );
+		TS_ASSERT_DELTA( emap[ pro_close ], 0.1980550619309646, 1e-12 );
 		}
 		{
 		EnergyMap tbemap;
 		proclose_energy.residue_pair_energy( trpcage.residue( 19 ), trpcage.residue( 18 ), trpcage, sfxn, tbemap );
-		TS_ASSERT_DELTA( tbemap[ pro_close ], 0.07438490402267117, 1e-12 );
+		TS_ASSERT_DELTA( tbemap[ pro_close ], 0.07438490402267119, 1e-12 );
 		}
 		{
 		EnergyMap tbemap;
 		proclose_energy.residue_pair_energy( trpcage.residue( 19 ), trpcage.residue( 20 ), trpcage, sfxn, tbemap );
 		TS_ASSERT_DELTA( tbemap[ pro_close ], 0, 1e-12 );
 		}
-		std::cout.precision( before_precision );
+		{
+		EnergyMap emap;
+		proclose_energy.eval_intrares_energy( trpcage.residue( 20 ), trpcage, sfxn, emap );
+		TS_ASSERT_DELTA( emap[ pro_close ], 0, 1e-12 );
+		}
+		{
+		EnergyMap tbemap;
+		proclose_energy.residue_pair_energy( trpcage.residue( 20 ), trpcage.residue( 19 ), trpcage, sfxn, tbemap );
+		TS_ASSERT_DELTA( tbemap[ pro_close ], 0, 1e-12 );
+		}
+
+
 
 	}
 
@@ -403,7 +414,7 @@ class ProClosureEnergyTests : public CxxTest::TestSuite {
 		adv.set_pose( pose );
 		adv.set_score_function( sfxn );
 		adv.set_movemap( movemap );
-		adv.validate_start_func_matches_start_score( 0.3067133582164516 );
+		adv.validate_start_func_matches_start_score( 0.303850361152064 );
 
 	}
 

@@ -2320,7 +2320,7 @@ tf_specificity_test(
 		if ( option[ soft_rep ]  ) {
 			wts_tag = SOFT_REP_WTS;
 		} else {
-			wts_tag = STANDARD_WTS;
+			wts_tag = PRE_TALARIS_2013_STANDARD_WTS;
 		}
 	}
 
@@ -2433,7 +2433,7 @@ dna_specificity_test(
 		if ( option[ soft_rep ]  ) {
 			wts_tag = SOFT_REP_WTS;
 		} else {
-			wts_tag = STANDARD_WTS;
+			wts_tag = PRE_TALARIS_2013_STANDARD_WTS;
 		}
 	}
 
@@ -2971,7 +2971,7 @@ luxr_test()
 		scorefxn = new ScoreFunction();
 		scorefxn->initialize_from_file( option[ score_function ] );
 	} else {
-		scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS );
+		scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 		// dna specific mods
 		scorefxn->set_weight( fa_pair, 0.0 );
 		scorefxn->set_weight( hack_elec, option[ Whack_elec ] ); // was 0.5
@@ -3607,7 +3607,7 @@ not1_test()
 		scorefxn = new ScoreFunction();
 		scorefxn->initialize_from_file( option[ score_function ] );
 	} else {
-		scorefxn = ScoreFunctionFactory::create_score_function( STANDARD_WTS );
+		scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 		// dna specific mods
 		scorefxn->set_weight( fa_pair, 0.0 );
 		scorefxn->set_weight( hack_elec, option[ Whack_elec ] ); // was 0.5
@@ -3881,7 +3881,7 @@ compare_energies()
 	core::import_pose::pose_from_pdb( pose, start_file() );
 
 
-	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( "standard.wts" ) );
+	ScoreFunctionOP scorefxn( getScoreFunctionLegacy( "pre_talaris_2013_standard.wts" ) );
 	EnergyMap const & weights( scorefxn->weights() );
 
 	(*scorefxn)(pose); // HACK

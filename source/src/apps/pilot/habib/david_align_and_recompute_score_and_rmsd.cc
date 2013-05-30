@@ -20,7 +20,7 @@
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -92,7 +92,7 @@ void define_interface( core::pose::Pose & ref_pose ) {
 	}
 
 	TR <<"sele ";
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
         (*scorefxn)(ref_pose);
 	EnergyGraph & energy_graph(ref_pose.energies().energy_graph());
 	for ( graph::Graph::EdgeListIter
@@ -253,7 +253,7 @@ main( int argc, char * argv [] )
 
 	NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
   	NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
-	core::init(argc, argv);
+	core::init::init(argc, argv);
 
 	TR << "Starting recomputing scores and rmsds" << std::endl;
 

@@ -55,16 +55,17 @@ public:
 
   void tearDown(){}
 
-	void test_validate_standard_hbond_database(){
+	void test_validate_score12_hbond_database(){
 
 		vector1< string > tags;
-		tags.push_back( "standard_params" );
+		tags.push_back( "score12_params" );
 		tags.push_back( "helix_hb_06_2009" );
 		tags.push_back( "newOH_params" );
 		tags.push_back( "His_Phil_fix" );
 		tags.push_back( "extended_BAH_params" );
 		tags.push_back( "newCHI_params" );
 		tags.push_back( "sp2_params" );
+		tags.push_back( "sp2_hackelec_params" );
 		for( Size i = 1; i <= tags.size(); ++i ){
 			// Validate data integrity
 			HBondOptionsCOP hb_options(new HBondOptions( tags[i] ));

@@ -57,7 +57,7 @@ loops.add_loop(loop2)
 
 # Loop Building
 reference_pose = pose_from_pdb("test/data/test_in.pdb")
-score = create_score_function("standard")
+score = getScoreFunction()
 
 import tempfile
 output = tempfile.mkstemp()[1]

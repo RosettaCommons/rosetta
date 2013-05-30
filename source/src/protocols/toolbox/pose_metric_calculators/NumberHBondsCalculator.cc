@@ -18,16 +18,20 @@
 
 
 // Utility headers
-#include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/stream_util.hh>
 #include <utility/string_util.hh>
-#include <basic/MetricValue.hh>
 
-//#include <core/scoring/EnergyGraph.hh>
+// basic headers
+#include <basic/Tracer.hh>
+#include <basic/MetricValue.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
+
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/TenANeighborGraph.hh>
@@ -39,20 +43,37 @@
 
 #include <utility/vector1.hh>
 
-//Auto Headers
-#include <core/scoring/EnergyGraph.hh>
-
-
 using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
-
-
 
 namespace protocols{
 namespace toolbox {
 namespace pose_metric_calculators {
 
+
+std::string
+choose_hbond_parameter_set() {
+  // use the "score12_params" set if the -restore_pre_talaris_2013_behavior flag is on the command line
+  // and otherwise use the new and improved sp2_hackelec_params parameter set
+  if ( basic::options::option[ basic::options::OptionKeys::mistakes::restore_pre_talaris_2013_behavior ] ) {
+    return "score12_params";
+  } else {
+    return "sp2_hackelec_params";
+  }
+}
+
+NumberHBondsCalculator::NumberHBondsCalculator() :
+  hb_database( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) )
+{}
+
+NumberHBondsCalculator::NumberHBondsCalculator( std::set< core::Size > special_region ) :
+  hb_database( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) ),
+  special_region_(special_region)
+{}
+
+
+core::pose::metrics::PoseMetricCalculatorOP NumberHBondsCalculator::clone() const { return new NumberHBondsCalculator(); }
 
 void
 NumberHBondsCalculator::lookup(

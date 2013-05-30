@@ -20,7 +20,7 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 
 // option key includes
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 // AUTO-REMOVED #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>

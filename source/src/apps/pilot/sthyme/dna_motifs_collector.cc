@@ -235,8 +235,7 @@ process_for_motifs(
 )
 {
 
-	std::string const weights( basic::options::option[ basic::options::OptionKeys::score::weights ]() ); // Default standard.wts in the minirosetta_database
-	core::scoring::ScoreFunctionOP scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( weights ) );
+	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
 
 	core::Size nres( pose.total_residue() );
 

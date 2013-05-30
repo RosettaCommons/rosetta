@@ -164,7 +164,7 @@ public:
 		tim_pose.add_constraint( tim_tree_cst );
 		(*scorefxn)(tim_pose);
 		TR << "After adding invrot constraint, pose has coordinate constraint score " << tim_pose.energies().total_energies()[ core::scoring::coordinate_constraint ] << " and backbone stub constraint score " << tim_pose.energies().total_energies()[ core::scoring::backbone_stub_constraint ] << std::endl;
-		TS_ASSERT_DELTA(1190.31,  tim_pose.energies().total_energies()[ core::scoring::coordinate_constraint ], 1e-2 );
+		TS_ASSERT_DELTA(1193.3896,  tim_pose.energies().total_energies()[ core::scoring::coordinate_constraint ], 1e-2 );
 		TS_ASSERT_DELTA(0.0,  tim_pose.energies().total_energies()[ core::scoring::backbone_stub_constraint ], 1e-2 );
 
 		//now let's set the backbone position in the pose residues to a random

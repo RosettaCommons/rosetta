@@ -63,8 +63,8 @@ public:
 		TS_ASSERT_EQUALS( find_weights_file("core/scoring/test",".wts_patch"), "core/scoring/test.wts_patch" );
 		TS_ASSERT_EQUALS( find_weights_file("core/scoring/test.wts_patch",".wts_patch"), "core/scoring/test.wts_patch" );
 		// Database weights
-		TS_ASSERT_EQUALS( find_weights_file("standard",".wts"), basic::database::full_name( "scoring/weights/standard.wts" ) );
-		TS_ASSERT_EQUALS( find_weights_file("standard.wts",".wts"), basic::database::full_name( "scoring/weights/standard.wts" ) );
+		TS_ASSERT_EQUALS( find_weights_file("pre_talaris_2013_standard",".wts"), basic::database::full_name( "scoring/weights/pre_talaris_2013_standard.wts" ) );
+		TS_ASSERT_EQUALS( find_weights_file("pre_talaris_2013_standard.wts",".wts"), basic::database::full_name( "scoring/weights/pre_talaris_2013_standard.wts" ) );
 		// Database patch
 		TS_ASSERT_EQUALS( find_weights_file("score12",".wts_patch"), basic::database::full_name( "scoring/weights/score12.wts_patch" ) );
 		TS_ASSERT_EQUALS( find_weights_file("score12.wts_patch",".wts_patch"), basic::database::full_name( "scoring/weights/score12.wts_patch" ) );
@@ -97,7 +97,7 @@ public:
 
 		// Test database loading
 		ScoreFunction sfxn2;
-		sfxn2.add_weights_from_file("standard");
+		sfxn2.add_weights_from_file("pre_talaris_2013_standard");
 		TS_ASSERT_DELTA( sfxn2.get_weight(fa_atr) , 0.8, 0.0001 );
 	}
 
@@ -113,7 +113,7 @@ public:
 		// Test database loading
 		ScoreFunction sfxn2;
 
-		sfxn2.add_weights_from_file("standard");
+		sfxn2.add_weights_from_file("pre_talaris_2013_standard");
 		sfxn2.apply_patch_from_file("score12");
 		TS_ASSERT_DELTA( sfxn2.get_weight(fa_atr) , 0.8, 0.0001 );
 		TS_ASSERT_DELTA( sfxn2.get_weight(p_aa_pp) , 0.32, 0.0001 );

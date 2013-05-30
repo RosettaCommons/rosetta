@@ -81,7 +81,7 @@ main( int argc, char * argv [] )
 	trans_mover.apply( unbound_pose );
 
 	// Setup for scoring/repacking
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 
 	(*scorefxn)(bound_pose);
 	(*scorefxn)(unbound_pose);

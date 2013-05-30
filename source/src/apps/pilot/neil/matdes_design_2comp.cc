@@ -834,11 +834,11 @@ void *dostuff(void*) {
 						// 120206: Get min_rb commandline to implement rigid body minimization
       			bool min_rb = option[matdes::mutalyze::min_rb]();
 
-						// Repack and minimize using score12
-						ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
-						repack(pose_for_design, score12, design_pos);
-						minimize(pose_for_design, score12, design_pos, false, true, min_rb);
-						score12->score(pose_for_design);
+						// Repack and minimize using scorefxn
+						ScoreFunctionOP scorefxn = getScoreFunction();
+						repack(pose_for_design, scorefxn, design_pos);
+						minimize(pose_for_design, scorefxn, design_pos, false, true, min_rb);
+						scorefxn->score(pose_for_design);
 
 						// Build a filename for the output PDB
 						std::string tag = string_of(numeric::random::uniform()).substr(2,4);
@@ -888,7 +888,7 @@ void *dostuff(void*) {
 						Real packing = get_atom_packing_score(pose_for_design, intra_subs1, intra_subs2, p1, p2, 9.0);
 
 						// Calculate the ddG of the monomer in the assembled and unassembled states
-						// protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(score12, 1, true);
+						// protocols::simple_moves::ddG ddG_mover = protocols::simple_moves::ddG(scorefxn, 1, true);
 						// ddG_mover.calculate(pose_for_design);
 						Real ddG;// = ddG_mover.sum_ddG();
 						//must do ddG manually, moving each BB separately
@@ -897,10 +897,10 @@ void *dostuff(void*) {
 							Pose unboundpose(pose_for_design);
 							trans_pose(unboundpose,cmp1axs*1000.0,               1,p1.n_residue()               );
 							trans_pose(unboundpose,cmp2axs*1000.0,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
-							repack(unboundpose, score12, design_pos);
-							minimize(unboundpose, score12, design_pos, false, true, false);
-							Real ubounde = score12->score(unboundpose);
-							Real bounde = score12->score(boundpose);
+							repack(unboundpose, scorefxn, design_pos);
+							minimize(unboundpose, scorefxn, design_pos, false, true, false);
+							Real ubounde = scorefxn->score(unboundpose);
+							Real bounde = scorefxn->score(boundpose);
 							ddG = bounde - ubounde;
 						
 						

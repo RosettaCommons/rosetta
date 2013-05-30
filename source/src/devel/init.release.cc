@@ -10,7 +10,7 @@
 /// @file   src/devel/init.release.cc
 /// @brief  Initialization function to ensure all load-time factory registration occurs
 ///         for classes that live in the devel library.  devel::init() calls
-///         protocols::init::init(), which in turn calls core::init().  Devel library does
+///         protocols::init::init(), which in turn calls core::init::init().  Devel library does
 ///         not exist in release; so the release version of this file is nearly empty.
 /// @author Steven Lewis (smlewi@gmail.com)
 

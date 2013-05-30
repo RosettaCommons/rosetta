@@ -158,8 +158,7 @@ void
 RandomMutation::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
 {
   task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-  std::string const scorefxn = tag->getOption< std::string >( "scorefxn", "score12" );
-  scorefxn_ = new core::scoring::ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", scorefxn ) );
+  scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	cache_task_ = tag->getOption< bool >( "cache_task", false );
 }
 

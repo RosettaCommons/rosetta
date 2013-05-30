@@ -629,11 +629,11 @@ void
 					}
 					TR << std::endl;
 
-				// Repack and minimize using score12
-				ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");
-				repack(pose_for_design, score12, design_pos);
-				minimize(pose_for_design, score12, design_pos, false, true, false);
-				score12->score(pose_for_design);
+				// Repack and minimize using scorefxn
+				ScoreFunctionOP scorefxn = getScoreFunction();
+				repack(pose_for_design, scorefxn, design_pos);
+				minimize(pose_for_design, scorefxn, design_pos, false, true, false);
+				scorefxn->score(pose_for_design);
 
 				// Write the pdb file of the design
 				utility::io::ozstream out( option[out::file::o]() + "/" + fn );
@@ -649,7 +649,7 @@ void
         Real packing = get_atom_packing_score(pose_for_design, intra_subs, 9.0);
 
 				// Calculate the ddG of the monomer in the assembled and unassembled states
-		    protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG(score12, 1, true);
+		    protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG(scorefxn, 1, true);
 		    ddG_mover.calculate(pose_for_design);
 		    Real ddG = ddG_mover.sum_ddG();
 		    TR << files[ifile] << " ddG = " << ddG << std::endl;

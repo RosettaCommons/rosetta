@@ -396,7 +396,7 @@ ParsedProtocol::get_additional_output( )
 	report_filters_to_job( *pose );
 	// report filter values to tracer output
 	report_all( *pose );
-	// rescore the pose with either score12 or a user-specified scorefunction. this ensures that all output files end up with scores.
+	// rescore the pose with default or a user-specified scorefunction. this ensures that all output files end up with scores.
 //	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 //	(*scorefxn)(*pose);
 

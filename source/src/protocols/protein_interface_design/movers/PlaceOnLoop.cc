@@ -39,6 +39,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <core/id/AtomID.hh>
 // AUTO-REMOVED #include <basic/options/option.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
@@ -287,10 +288,8 @@ PlaceOnLoop::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filters::
 		stub_set_->read_data( stub_fname );
 	}
 
-	std::string const score_hi_name = tag->getOption< std::string >( "score_high", "score12" );
-	std::string const score_lo_name = tag->getOption< std::string >( "score_low", "score4L" );
-	hires_scorefxn_ = data.get< core::scoring::ScoreFunction * >( "scorefxns", score_hi_name );
-	lores_scorefxn_ = data.get< core::scoring::ScoreFunction * >( "scorefxns", score_lo_name );
+	hires_scorefxn_ = protocols::rosetta_scripts::parse_score_function(tag, "score_high", data);
+	lores_scorefxn_ = protocols::rosetta_scripts::parse_score_function(tag, "score_low", data, "score4L");
 	chain_closing_attempts_ = tag->getOption< core::Size >( "closing_attempts", 100 );
 
   typedef utility::vector1< std::string > StringVec;

@@ -54,7 +54,7 @@ SidechainMinMover::SidechainMinMover() : DockingHighRes()
 {
 	DockingHighRes::type( "SidechainMin" );
 	update_movemap_ = true;
-	core::scoring::ScoreFunctionOP temp_sf = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
+	core::scoring::ScoreFunctionOP temp_sf = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	set_scorefxn( temp_sf );
 	set_default();
 }

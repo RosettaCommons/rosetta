@@ -163,8 +163,10 @@ HBondDatabase::get_database(){
 
 	map< string const, HBondDatabaseCOP >::const_iterator
 		param_db = initialized_databases_.find( hb_options.params_database_tag() );
-	if(param_db == initialized_databases_.end()){
-		return new HBondDatabase( hb_options.params_database_tag() );
+	if ( param_db == initialized_databases_.end() ){
+		HBondDatabaseCOP newdb = new HBondDatabase( hb_options.params_database_tag() );
+		initialized_databases_[ hb_options.params_database_tag() ] = newdb;
+		return newdb;
 	}
 	return param_db->second();
 }
@@ -174,8 +176,10 @@ HBondDatabase::get_database( string const & tag ){
 
 	map< string const, HBondDatabaseCOP >::const_iterator
 		param_db = initialized_databases_.find(tag);
-	if(param_db == initialized_databases_.end()){
-		return new HBondDatabase( tag );
+	if ( param_db == initialized_databases_.end() ){
+		HBondDatabaseCOP newdb = new HBondDatabase( tag );
+		initialized_databases_[ tag ] = newdb;
+		return newdb;
 	}
 	return param_db->second();
 }
@@ -192,7 +196,6 @@ HBondDatabase::initialize()
 	if(initialized_){
 		tr << "Re-intializing HBond Database when it has already been initialized!";
 	}
-	initialized_databases_[ params_database_tag_ ] = this;
 
 	initialize_HBPoly1D();
 	initialize_HBFadeInterval();

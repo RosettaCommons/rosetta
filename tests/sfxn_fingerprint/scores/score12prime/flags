@@ -1,3 +1,4 @@
+-restore_pre_talaris_2013_behavior
 -score12prime
 -in:file:silent ./../../data/five_structures.out
 -in:file:silent_struct_type binary

@@ -59,7 +59,7 @@
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
 #include <protocols/init/init.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
 
@@ -165,7 +165,7 @@ int main( int argc, char * argv [] )
 
 	//devel::init(argc, argv);
 	//protocols::init::init(argc, argv);
-	core::init(argc, argv);
+	core::init::init(argc, argv);
 
 	{
 		core::pose::Pose pose;
@@ -173,7 +173,7 @@ int main( int argc, char * argv [] )
 		//core::import_pose::pose_from_pdb(pose, "test_in.pdb");
 
 		//core::scoring::ScoreFunction scorefxn;
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("standard");
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunctionLegacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
 		T("Score:") << scorefxn->score(pose)  << std::endl;
 
 		//scorefxn(pose);

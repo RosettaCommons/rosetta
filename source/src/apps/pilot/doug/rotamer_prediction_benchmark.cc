@@ -126,7 +126,7 @@ main( int argc, char * argv [] )
 					std::string id = 	weight_ss.str();
 
 					// create score function and modify it
-					ScoreFunctionOP scfxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+					ScoreFunctionOP scfxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 					scfxn->set_weight(fa_dun, 0.00);
 					scfxn->set_weight(mm_twist, weight);
 
@@ -142,7 +142,7 @@ main( int argc, char * argv [] )
 			std::string id = "std_";
 
 			// create score function
-			ScoreFunctionOP scfxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+			ScoreFunctionOP scfxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
 			// run RPB for each name in list
 			for(std::vector< FileName >::iterator i = pdb_file_names.begin(), i_end = pdb_file_names.end(); i != i_end; ++i) {

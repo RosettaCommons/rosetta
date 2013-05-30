@@ -92,7 +92,7 @@ score_pdb( std::string pdb )
 	using namespace scoring;
 	using namespace pose;
 
-	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+	ScoreFunctionOP scorefxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	Pose pose;
 	core::import_pose::pose_from_pdb( pose, pdb );

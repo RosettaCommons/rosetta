@@ -13,7 +13,7 @@
 /// @brief
 /// @author Sergey Lyskov
 
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <devel/init.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -221,8 +221,8 @@ void test_Tracer()
 
 void test_Random(void)
 {
-	//core::init_random_generators(1000, numeric::random::_RND_TestRun_, "ran3");
-	core::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
+	//core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "ran3");
+	core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
 	for(int i=0; i<100; i++) {
 		double r = numeric::random::uniform();
 		TR_.precision(25);
@@ -251,7 +251,7 @@ int main( int argc, char * argv [] )
 			core::pose::Pose pose;
 			core::import_pose::pose_from_pdb(pose, "test_in.pdb");
 
-			core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("standard");
+			core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunctionLegacy( scoring::PRE_TALARIS_2013_STANDARD_WTS );
 			T("Score:") << scorefxn->score(pose)  << std::endl;
 			pose.energies().residue_total_energies(1);
 			T("Scoring done!") << "---------------------" << std::endl;

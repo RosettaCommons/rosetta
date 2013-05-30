@@ -146,8 +146,7 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::Dat
 {
 	using namespace core::scoring;
 
-	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) ));
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) );
 	threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
 	whole_interface_ = tag->getOption<bool>( "whole_interface" , 0 );
@@ -160,7 +159,7 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::Dat
 		energy_per_residue_filter_tracer<<"energies for all interface residues with a distance cutoff of "
 		<< interface_distance_cutoff_ << " A will be calculated \n"
 		<< "jump_number is set to "<< rb_jump_
-		<< "\n and scorefxn " <<scorefxn_name <<" will be used" <<std::endl;
+		<< "\n and scorefxn " << rosetta_scripts::get_score_function_name(tag) <<" will be used" <<std::endl;
 	}
 	else {
 		resnum_ = core::pose::get_resnum( tag, pose );

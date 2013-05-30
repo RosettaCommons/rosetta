@@ -75,7 +75,7 @@
 
 
 #include <devel/cstEnergyBalance/minimalCstRelaxUtil.hh>
-//#include <core/init.hh>
+//#include <core/init/init.hh>
 // option key includes
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
@@ -320,8 +320,8 @@ std::set<Size> get_residuesToConstrain(const Size /*coordCstGapInitial*/, const 
 	//if missing density exists fix gaps.
 	protocols::simple_moves::MissingDensityToJumpMoverOP fixMissingDensityMover (new protocols::simple_moves::MissingDensityToJumpMover());
 	fixMissingDensityMover->apply(pose);
-	core::scoring::ScoreFunctionOP scorefxn_ = ScoreFunctionFactory::create_score_function(core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );
-	core::scoring::ScoreFunctionOP scorefxn_w_csts_ = ScoreFunctionFactory::create_score_function(core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH );
+	core::scoring::ScoreFunctionOP scorefxn_ = getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn_w_csts_ = getScoreFunction();
 	scorefxn_w_csts_->set_weight( coordinate_constraint, COORDINATE_CST_WT );
 	core::pose::PoseOP relaxed_poseOP = new core::pose::Pose(pose);
 	Real dist_deviation_thresh = DIST_DEVIATION_THRESH_START;

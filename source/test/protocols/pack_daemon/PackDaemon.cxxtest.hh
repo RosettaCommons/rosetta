@@ -70,7 +70,7 @@ public:
 
 public:
 	void setUp() {
-		core_init();
+		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior" );
 	}
 
 	void initialize_default_pack_daemon( PackDaemon & daemon ) {
@@ -90,7 +90,7 @@ public:
 		}
 
 		daemon.set_pose_and_task( *trpcage, *task );
-		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "standard" );
+		ScoreFunctionOP sfxn = getScoreFunction();
 		daemon.set_score_function( *sfxn );
 
 		EntityCorrespondenceOP ec = new EntityCorrespondence;
@@ -183,7 +183,7 @@ public:
 	void test_daemon_set_setup() {
 		using namespace protocols::genetic_algorithm;
 		DaemonSet ds;
-		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "standard" );
+		ScoreFunctionOP sfxn = getScoreFunction();
 		ds.set_score_function( *sfxn );
 		std::string corr_resfile_string( "2\nstart\n1 A PIKAA AP\n 2 A PIKAA FW EX ARO 1 LEVEL 4 EX ARO 2 LEVEL 4 EX_CUTOFF 1\n" );
 		std::string entity_corr_string( "1 12 A\n2 6 A\n1 18 A\n" );
@@ -262,7 +262,7 @@ public:
 				task->nonconst_residue_task( ii ).prevent_repacking();
 			}
 		}
-		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "standard" );
+		ScoreFunctionOP sfxn = getScoreFunction();
 
 		RotamerSetsOP rot_sets = new RotamerSets;
 		InteractionGraphBaseOP ig;
@@ -379,7 +379,7 @@ public:
 				task->nonconst_residue_task( ii ).prevent_repacking();
 			}
 		}
-		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "standard" );
+		ScoreFunctionOP sfxn = getScoreFunction();
 
 		RotamerSetsOP rot_sets = new RotamerSets;
 		InteractionGraphBaseOP ig;

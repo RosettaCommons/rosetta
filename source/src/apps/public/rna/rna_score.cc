@@ -25,7 +25,7 @@
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
@@ -103,7 +103,7 @@ rna_score_test()
 	// score function setup
 	core::scoring::ScoreFunctionOP scorefxn;
 	if ( basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
-		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( basic::options::option[ basic::options::OptionKeys::score::weights ]() );
+		scorefxn = core::scoring::getScoreFunction();
 	} else {
 		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS );
 	}
@@ -180,7 +180,7 @@ main( int argc, char * argv [] )
         ////////////////////////////////////////////////////////////////////////////
         // setup
         ////////////////////////////////////////////////////////////////////////////
-        core::init(argc, argv);
+        core::init::init(argc, argv);
         
         ////////////////////////////////////////////////////////////////////////////
         // end of setup

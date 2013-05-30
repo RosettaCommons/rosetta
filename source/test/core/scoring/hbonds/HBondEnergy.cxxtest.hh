@@ -338,17 +338,36 @@ public:
 		core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 		core::pack::task::parse_resfile_string( pose, *task, resfile_mutate_l26s );
 		core::pack::pack_rotamers( pose, sfxn, task );
-		
+
 		TS_ASSERT( pose.residue_type( 8 ).aa() == chemical::aa_ser );
-		
-		// set chi for residue 4 to form hbond
-		pose.set_chi( 1, 8, -65.9 );
-		pose.set_chi( 2, 8, 80.0 );
-		
+
 		core::Size res8_HG_ind = pose.residue_type( 8 ).atom_index( "HG" );
 		core::Size res4_O_ind = pose.residue_type( 4 ).atom_index( "O" );
+
+		//Real closest_chi1( 0 ), closest_chi2( 0 ), mind2( -1 );
+		//for ( core::Real chi1= -80; chi1 < -40; chi1 += 0.5 ) {
+		//	for ( core::Real chi2 = 60; chi2 < 80; chi2 += 0.5 ) {
+		//		pose.set_chi( 1, 8, chi1 );
+		//		pose.set_chi( 2, 8, chi2 );
+		//		core::Real d2 = pose.xyz( AtomID( res8_HG_ind, 8 )).distance_squared( pose.xyz( AtomID( res4_O_ind, 4 )) );
+		//		if ( mind2 < 0 || d2 < mind2 ) {
+		//			closest_chi1 = chi1;
+		//			closest_chi2 = chi2;
+		//			mind2 = d2;
+		//		}
+		//	}
+		//}
+		//std::cout << "closest res8_HG res4_0 distance " << std::sqrt( mind2 ) << " with chi1= " << closest_chi1 << " and chi2= " << closest_chi2 << std::endl;
+
+
+		// set chi for residue 4 to form hbond
+		pose.set_chi( 1, 8, -40.5 );
+		pose.set_chi( 2, 8, 60 );
+
 		// HG on residue 30 should (residue 8) should be ~2.5 A from the backbone O on residue 26 (residue 4 )
 		TS_ASSERT( pose.xyz( AtomID( res8_HG_ind, 8 )).distance( pose.xyz( AtomID( res4_O_ind, 4 )) ) < 2.6 );
+
+		pose.dump_pdb( "excludable_bb_sc_hbond.pdb" );
 	}
 
 	void test_hbonds_w_excluded_bb_sc_interactions() {
@@ -360,34 +379,34 @@ public:
 		ScoreFunction sfxn;
 		initialize_lj_hbond_sfxn( sfxn );
 		sfxn( pose );
-		
+
 		{ // scope
 		core::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
 		TS_ASSERT( e4_8 );
 		if ( ! e4_8 ) return;
-		
+
 		EnergyEdge const * ee4_8 = dynamic_cast< EnergyEdge const * > (e4_8);
 		TS_ASSERT( ee4_8 );
 		if ( ! ee4_8 ) return;
-		
+
 		// there should be no hydrogen bond detected, since residue 4 is already participating in a bb/bb hbond.
 		TS_ASSERT( (*ee4_8)[ hbond_bb_sc ] == 0.0 );
 		}
-		
+
 		ScoreFunction sfxn2;
 		methods::EnergyMethodOptions enmethopts = sfxn2.energy_method_options();
 		enmethopts.hbond_options().bb_donor_acceptor_check( false ); // <-- disable the bb/sc exclusion rule.
 		sfxn2.set_energy_method_options( enmethopts );
 		initialize_lj_hbond_sfxn( sfxn2 );
 		TS_ASSERT( pose.energies().get_scorefxn_info() != (* sfxn2.info()) );
-		
+
 		sfxn2( pose );
-		
+
 		{ // scope
 		core::graph::Edge const * e4_8 = pose.energies().energy_graph().find_edge( 4, 8 );
 		TS_ASSERT( e4_8 );
 		if ( ! e4_8 ) return;
-		
+
 		EnergyEdge const * ee4_8 = dynamic_cast< EnergyEdge const * > (e4_8);
 		TS_ASSERT( ee4_8 );
 		if ( ! ee4_8 ) return;
@@ -398,13 +417,13 @@ public:
 
 		HBondEnergy hbe_w_bbsc_exclusion(   sfxn.energy_method_options().hbond_options() );
 		HBondEnergy hbe_wo_bbsc_exclusion( sfxn2.energy_method_options().hbond_options() );
-		
+
 		// Let's check the backbone_sidechain_energy() function to make sure the exclusion rule is properly applied.
 		EnergyMap emap;
 		sfxn( pose );
 		hbe_w_bbsc_exclusion.backbone_sidechain_energy( pose.residue(4), pose.residue(8), pose, sfxn, emap );
 		TS_ASSERT( emap[ hbond_bb_sc ] == 0.0 );
-		
+
 		emap.zero();
 		sfxn2( pose );
 		hbe_wo_bbsc_exclusion.backbone_sidechain_energy( pose.residue(4), pose.residue(8), pose, sfxn, emap );
@@ -439,10 +458,10 @@ public:
 
 		// create the rotamer sets so that we can then compute the trie-vs-trie energies
 		core::pack::pack_rotamers_setup( pose, sfxn, task, rotsets, ig );
-		
+
 		core::Size res4_nrots = rotsets->rotamer_set_for_residue( 4 )->num_rotamers();
 		core::Size res8_nrots = rotsets->rotamer_set_for_residue( 8 )->num_rotamers();
-		
+
 		ObjexxFCL::FArray2D< core::PackerEnergy > rpe_table( res8_nrots, res4_nrots, core::PackerEnergy( 0.0 ) );
 		HBondEnergy hbe( sfxn.energy_method_options().hbond_options() );
 		hbe.evaluate_rotamer_pair_energies(
@@ -475,7 +494,7 @@ public:
 		sfxn.set_energy_method_options( enmethopts );
 
 		initialize_lj_hbond_sfxn( sfxn );
-		
+
 		verify_hbond_trie_vs_trie_calculation( sfxn );
 	}
 
@@ -490,7 +509,7 @@ public:
 		sfxn.set_energy_method_options( enmethopts );
 
 		initialize_lj_hbond_sfxn( sfxn );
-		
+
 		verify_hbond_trie_vs_trie_calculation( sfxn );
 	}
 
@@ -505,7 +524,7 @@ public:
 		sfxn.set_energy_method_options( enmethopts );
 
 		initialize_lj_hbond_sfxn( sfxn );
-		
+
 		verify_hbond_trie_vs_trie_calculation( sfxn );
 	}
 

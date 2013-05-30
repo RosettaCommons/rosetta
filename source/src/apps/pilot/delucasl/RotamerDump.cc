@@ -68,7 +68,7 @@ main( int argc, char * argv [] )
 		main_task_factory->push_back( new core::pack::task::operation::ReadResfile );
 	}
 
-	//create a ScoreFunction from commandline options (default is score12)
+	//create a ScoreFunction from commandline options
 	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
 
 	protocols::moves::MoverOP rotamer_mover(new protocols::RotamerDump::RotamerDumpMover(main_task_factory,score_fxn));

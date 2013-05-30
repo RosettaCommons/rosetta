@@ -63,6 +63,7 @@ def main():
     svn_version()
     sys.stdout.write("Done. (%.1f seconds)\n" % (time.time() - starttime) )
 
+
 version_py_template = '''\
 commit_id = '%(commit_id)s'
 commit    = '%(ver)s'
@@ -119,4 +120,6 @@ register_version_with_core() {
 } // namespace devel
 '''
 
-if __name__ == "__main__" or __name__ == "__builtin__": main()
+if __name__ == "__main__" or __name__ == "__builtin__":
+    main()
+

@@ -488,8 +488,7 @@ RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagPtr const tag,
 	unbound( tag->getOption< bool >( "unbound", 1 ) );
 	ddG_threshold( tag->getOption< core::Real >( "ddG_threshold", 1.5 ) );
 	temperature( tag->getOption< core::Real >( "temperature", 0.8 ) );
-	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ) );
-	scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ) );
+	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	energy_reduction_factor( tag->getOption< core::Real >( "energy_reduction_factor", 0.5 ) );
 	compute_entropy_reduction( tag->getOption< bool >( "compute_entropy_reduction", 0 ) );
 	repack( tag->getOption< bool >( "repack", 1 ) );

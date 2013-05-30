@@ -58,37 +58,37 @@ main( int argc, char * argv [] )
 {
   try {
 
-  using namespace core;
+    using namespace core;
 
-  devel::init(argc, argv);
+    devel::init(argc, argv);
 
-  pose::Pose pose;
-  core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
-  using namespace core::scoring;
-  // standard packer wts
-  std::cout << "Standard packer weights without fa_rep term:" << std::endl;
-    ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
-   scorefxn->set_weight( fa_rep, 0.0 );
+    pose::Pose pose;
+    core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
+    using namespace core::scoring;
+    // standard packer wts
+    std::cout << "Standard packer weights without fa_rep term:" << std::endl;
+    ScoreFunctionOP scorefxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
+    scorefxn->set_weight( fa_rep, 0.0 );
     (*scorefxn)(pose);
     scorefxn->show(std::cout,pose);
 
-  //  std::cout << *scorefxn;
+    //  std::cout << *scorefxn;
 
-  /// soft rep packer wts
+    /// soft rep packer wts
     std::cout << "Soft repulsive weights" << std::endl;
     ScoreFunctionOP scorefxn2( ScoreFunctionFactory::create_score_function( SOFT_REP_WTS ) );
-  (*scorefxn2)(pose);
+    (*scorefxn2)(pose);
 
-  std::cout << *scorefxn2;
+    std::cout << *scorefxn2;
     scorefxn2->show(std::cout,pose);
 
-  /// score12 w/ std packer wts
-  std::cout << "Score12 with standard packer weights:" << std::endl;
-  ScoreFunctionOP score12( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
-  (*score12)(pose);
+    /// score12 w/ std packer wts
+    std::cout << "Score12 with standard packer weights:" << std::endl;
+    ScoreFunctionOP score12( getScoreFunction() );
+    (*score12)(pose);
 
-  std::cout << *score12;
-  score12->show(std::cout,pose);
+    std::cout << *score12;
+    score12->show(std::cout,pose);
 
 
   } catch ( utility::excn::EXCN_Base const & e ) {

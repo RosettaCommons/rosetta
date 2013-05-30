@@ -85,7 +85,7 @@ low_pose.dump_pdb("poly-A_low.pdb")
 
 # Low-Resolution (Centroid) Scoring
 ras = pose_from_pdb("test/data/workshops/6Q21.clean.pdb")
-score2 = create_score_function("standard")
+score2 = getScoreFunction()
 print score2(ras)
 print ras.residue(5)
 

@@ -200,13 +200,6 @@ public:
 		one_score_type_test(fa_intra_rep, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/fa_intra_rep.data");
 		one_score_type_test(fa_intra_sol, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/fa_intra_sol.data");
 
-		/*
-		one_score_type_test(coarse_fa_atr, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/coarse_fa_atr.u");
-		coarse_fa_rep,
-		coarse_fa_sol,
-		coarse_beadlj,
-		*/
-
 		one_score_type_test(mm_twist, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/mm_twist.data");
 		//one_score_type_test(mm_bend, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/mm_bend.u");
 		//one_score_type_test(mm_stretch, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/mm_stretch.u");
@@ -346,8 +339,14 @@ public:
 		Real score_delta_threshold = 1.2;
 		Pose pose, pose_asym;
 		core::import_pose::pose_from_pdb(pose, "core/scoring/symmetry/test_in.pdb" );
-		core::import_pose::pose_from_pdb(pose_asym, "core/scoring/symmetry/symm_test.pdb" );
 		core::pose::symmetry::make_symmetric_pose( pose );
+
+		// Note: hydrogens have been stripped from both pdbs so they are placed using the same logic
+		core::import_pose::pose_from_pdb(pose_asym, "core/scoring/symmetry/symm_test.pdb" );
+
+		pose.dump_pdb( "test_sym_vs_asym_score_sym_pose.pdb" );
+		pose_asym.dump_pdb( "test_sym_vs_asym_score_asym_pose.pdb" );
+
 
 		core::scoring::ScoreFunctionOP scorefxn =
 		        core::scoring::ScoreFunctionFactory::create_score_function( "score13_env_hb" );

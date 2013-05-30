@@ -83,7 +83,7 @@ int main( int argc, char ** argv )
 	std::string entity_correspondence_file( "entity_map.txt" );
 
 	DaemonSetOP ds = new DaemonSet;
-	core::scoring::ScoreFunctionOP sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
+	core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
 	ds->set_score_function( *sfxn );
 
 	ds->set_entity_resfile( entity_resfile );

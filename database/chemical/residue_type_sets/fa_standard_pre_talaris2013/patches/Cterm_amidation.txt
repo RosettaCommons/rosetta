@@ -1,0 +1,52 @@
+# This is for adding an -NH2 group to C-terminus of protein/peptide (replaces -OH group)
+NAME Cterm_amidation
+TYPES CTERM_AMIDATION
+REPLACE_RES_TYPE
+
+## general requirements for this patch
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+CMDLINE_SELECTOR CTERM_AMIDATION
+END_SELECTOR
+
+# Case selector...if specify CTERM_AMIDATION, apply to upper (C) terminus
+BEGIN_CASE
+BEGIN_SELECTOR
+VARIANT_TYPE UPPER_TERMINUS
+NOT PROPERTY PHOSPHONATE 
+END_SELECTOR
+
+# Delete the OH at C-term and replace with the following stuff
+DELETE_ATOM OXT
+
+# add these atoms and bonds instead
+ADD_ATOM  NT   NH2O  NH2  -0.62
+ADD_ATOM 1HE2   Hpol H    0.3
+ADD_ATOM 2HE2   Hpol H    0.3
+ADD_BOND  C    NT
+ADD_BOND  NT  1HE2
+ADD_BOND  NT  2HE2
+
+SET_BACKBONE_HEAVYATOM NT
+SET_POLYMER_CONNECT UPPER NONE
+
+# set internal coordinates for this functional group
+SET_ICOOR	O	180.00000	60.00000	1.2		C  CA N
+SET_ICOOR	NT	180.000031	63.799957	1.328686	C  CA O  
+SET_ICOOR	1HE2	180.000000	58.299980	1.000000	NT C  CA 
+SET_ICOOR	2HE2	-179.999878	60.850006	1.000000	NT C  1HE2
+
+# change normal atom types appropriately
+SET_ATOM_TYPE O ONH2
+SET_ATOM_TYPE C CNH2
+SET_MM_ATOM_TYPE O O
+SET_MM_ATOM_TYPE C CC
+SET_ATOMIC_CHARGE C 0.55
+SET_ATOMIC_CHARGE O -0.55
+
+END_CASE # Umm I think this ends the case of if you're calling CTERM_AMIDATION on a non-amidated terminus
+
+# Begin case for all other instances?
+BEGIN_CASE
+
+END_CASE

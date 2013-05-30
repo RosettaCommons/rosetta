@@ -18,6 +18,7 @@
 // Project Headers
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -55,9 +56,8 @@ void MonteCarloLoader::load_data(
 	foreach(TagPtr montecarlo_tag, montecarlo_tags){
 		std::string const mc_name( montecarlo_tag->getName() );
 		core::Real const mctemp( montecarlo_tag->getOption< core::Real >( "temperature", 2.0 ));
-		std::string const sfxn_name( montecarlo_tag->getOption< std::string > ( "scorefunction", "score12" ));
-		core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction(
-			*data.get< core::scoring::ScoreFunction * >( "scorefxns", sfxn_name ));
+		core::scoring::ScoreFunctionOP scorefxn =
+			rosetta_scripts::parse_score_function( montecarlo_tag, data )->clone();
 
 		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( *scorefxn, mctemp );
 		// add more options for the MonteCarlo object here, e.g.

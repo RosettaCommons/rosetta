@@ -264,7 +264,7 @@ int main( int argc, char * argv [] ) {
 				 Real phi;
 				 get_angles(*input_poseOP,helices[1],helices[2],theta,sigma,phi);
 				 Real holesScore = get_holes_score(*input_poseOP);
-				 core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+				 core::scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 				 Real fa_score = scorefxn->score(*input_poseOP);
 				 //Real holesScore = 0;
 				 //Real fa_score = 0;

@@ -182,7 +182,7 @@ void LHSnugFitLegacy::apply( pose::Pose & pose ) {
     
     // score functions
     core::scoring::ScoreFunctionOP pack_scorefxn;
-    pack_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
+    pack_scorefxn = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
     
     // remove cutpoints variants for all cdrs
     // "true" forces removal of variants even from non-cutpoints

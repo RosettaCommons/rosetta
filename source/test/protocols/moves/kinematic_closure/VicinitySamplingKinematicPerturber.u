@@ -1,18 +1,18 @@
 set_abs_tolerance(1e-09)
 Raw torsions:
-  copy.phi(7):   289.217
-  copy.psi(7):   319.739
+  copy.phi(7):   289.403
+  copy.psi(7):   318.448
   copy.omega(7): -176.726
-  copy.phi(8):   -63.6625
-  copy.psi(8):   -18.4698
+  copy.phi(8):   -62.577
+  copy.psi(8):   -18.8687
   copy.omega(8): 178.136
-  copy.phi(9):   271.828
-  copy.psi(9):   352.729
+  copy.phi(9):   272.609
+  copy.psi(9):   352.057
   copy.omega(9): 173.156
-  copy.phi(10):   113.081
-  copy.psi(10):   12.5142
+  copy.phi(10):   113.665
+  copy.psi(10):   11.9438
   copy.omega(10): 175.799
-  copy.phi(11):   58.3067
-  copy.psi(11):   234.77
+  copy.phi(11):   58.8474
+  copy.psi(11):   234.701
   copy.omega(11): -178.416
 

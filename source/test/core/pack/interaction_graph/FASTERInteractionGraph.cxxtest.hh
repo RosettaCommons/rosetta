@@ -20,6 +20,7 @@
 #include <core/pack/interaction_graph/FASTERInteractionGraph.hh>
 
 #include <core/chemical/AA.hh>
+#include <core/conformation/Residue.hh>
 
 #include <core/graph/Graph.hh>
 
@@ -29,7 +30,7 @@
 
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -47,7 +48,7 @@ class FASTERInteractionGraphTests : public CxxTest::TestSuite {
 public:
 
 	void setUp() {
-		core_init();
+		core_init_with_additional_options( "-restore_pre_talaris_2013_behavior" );
 	}
 
 	void test_instantiate_FASTER_ig() {
@@ -75,7 +76,7 @@ public:
 			}
 		}
 
-		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "standard" );
+		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "pre_talaris_2013_standard" );
 		(*sfxn)( *trpcage ); // score the pose first;
 		sfxn->setup_for_packing( *trpcage, task->repacking_residues(), task->designing_residues() );
 		GraphOP packer_neighbor_graph = create_packer_graph( *trpcage, *sfxn, task );
@@ -114,6 +115,11 @@ public:
 		TS_ASSERT( netstate( 1 ) ==  1 );
 		TS_ASSERT( netstate( 2 ) ==  6 );
 		TS_ASSERT( netstate( 3 ) ==  4 );
+
+		//for ( core::Size ii = 1; ii <= 3; ++ii ) {
+		//	trpcage->replace_residue( ii + 10, *rotsets->rotamer_set_for_moltenresidue( ii )->rotamer( netstate(ii) ), false );
+		//}
+		//std::cout << "score for bmec" << (*sfxn)( *trpcage );
 
 		TS_ASSERT_DELTA( faster_ig->get_energy_current_state_assignment(), -3.1775541, 1e-5 );
 

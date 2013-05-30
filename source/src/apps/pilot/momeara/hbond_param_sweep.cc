@@ -579,7 +579,7 @@ public:
 #endif // DB_SQLITE3
 ) const {
 
-		ScoreFunctionOP scfxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+		ScoreFunctionOP scfxn( getScoreFunction() );
 		scfxn->set_weight( atom_pair_constraint, 1 );
 
 
@@ -785,7 +785,7 @@ public:
 	score_conformations(
 	  vector1<PoseOP> features){
 
-		ScoreFunctionOP scfxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+		ScoreFunctionOP scfxn( getScoreFunction() );
 
 		stringstream scores;
 		scfxn->show_line_headers(scores);
@@ -811,7 +811,7 @@ public:
 		string const & sample_source,
 		string const & database_fname) const
 	{
-		ScoreFunctionOP scfxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+		ScoreFunctionOP scfxn( getScoreFunction() );
 		ReportToDB report_to_db_mover(
 			 database_fname,
 			 "hbond_parameter_sweep",

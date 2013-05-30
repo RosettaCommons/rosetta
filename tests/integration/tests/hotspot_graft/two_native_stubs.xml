@@ -4,7 +4,7 @@
 		</TASKOPERATIONS>
         <SCOREFXNS>
 		  	  <stub_docking_low weights=interchain_cen hs_hash=10.0/>
-			  <ddg_scorefxn weights=standard patch=score12 hs_hash=0.0/>
+			  <ddg_scorefxn weights=pre_talaris_2013_standard patch=score12 hs_hash=0.0/>
         </SCOREFXNS>
         <FILTERS>
 				<AverageDegree name=degree threshold=8.5 task_operations=pido/>

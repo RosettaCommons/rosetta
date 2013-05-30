@@ -29,7 +29,7 @@
 /// -scorecut <absolute score or percentage cut> (default off)
 /// -score:weights <weights to use for hashing> (default standard, environmental dependence off)
 /// -hotspot:envhb <use environmental dependent hbonds? default off)
-/// -score:patch <score patch to use for hashing> (default score12)
+/// -score:patch <score patch to use for hashing>
 
 
 #include <core/conformation/Conformation.hh>
@@ -253,9 +253,8 @@ main( int argc, char * argv [] )
 		core::scoring::ScoreFunctionOP scorefxn;
 		if( option[ score::weights ].user() ) {
 			scorefxn = core::scoring::getScoreFunction();
-		}
-		else {
-			scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score13" );
+		} else {
+			scorefxn = core::scoring::getScoreFunctionLegacy( "score13" );
 			scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 			scorefxn->set_weight( core::scoring::envsmooth, 0 );
 		}
@@ -302,9 +301,8 @@ main( int argc, char * argv [] )
 	core::scoring::ScoreFunctionOP scorefxn;
 	if( option[ score::weights ].user() ) {
 		scorefxn = core::scoring::getScoreFunction();
-	}
-	else {
-		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score13" );
+	} else {
+		scorefxn = core::scoring::getScoreFunctionLegacy( "score13" );
 		scorefxn->set_weight( core::scoring::fa_dun, 0.1 );
 		scorefxn->set_weight( core::scoring::envsmooth, 0 );
 	}

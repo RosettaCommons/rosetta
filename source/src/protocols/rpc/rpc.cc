@@ -28,7 +28,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/DockDesignParser.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
@@ -97,7 +97,7 @@ bool
 BasicCmdLineInit::do_init(){
  using namespace basic::options;
  using namespace basic::options::OptionKeys;
- core::init(argc_, argv_);
+ core::init::init(argc_, argv_);
  //utility::options::OptionCollection &option_collection  = initialize();
  //option_collection.load( argc_, argv_, false);
  return true;

@@ -254,8 +254,7 @@ void ddG::parse_my_tag(
 	}
 
 	// Construct score function.
-	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn_name )->clone();
+	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 
 	// Determine if this PB enabled.
 	if( scorefxn_->get_weight(core::scoring::PB_elec) != 0.) {

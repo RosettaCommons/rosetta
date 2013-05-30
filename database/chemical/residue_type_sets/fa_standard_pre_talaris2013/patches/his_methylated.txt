@@ -1,0 +1,71 @@
+## fullatom protein N(4)-methylation patch for histidine
+## By Andy M. Chen, July 2009, achen39@jhu.edu
+## Note: This patch does work for regular HIS. However, it will result in a "failed patch" 
+##   error message for HIS_D due to the shifted locations of the hydrogens.
+##   a possible way to fix this issue is to make HIS_D a TAUTOMER variant of HIS
+##   so that two patches could be created, one for HIS and one for HIS_D 
+##   (with the selector using the TAUTOMER variant to control which patch goes where).
+##   But as things now stand, there's no way to patch only HIS without affecting HIS_D. 
+##   Hence, the patch is currently commented out (as of 7/31/2009).
+
+NAME methylated
+TYPES METHYLATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA HIS
+NOT VARIANT_TYPE METHYLATION
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+SET_IO_STRING HIC H
+## these are the operations involved
+DELETE_ATOM  HE2
+ADD_ATOM  CZ  CH3  CT3  0.12
+## This is the added methyl carbon; it replaces HE2. 
+## The 0.12 charge was estimated by comparing the difference between 
+##   "C bonded to C and 3 H's" and "C bonded to 2 C's and 2 H's" in existing params files 
+##   (-0.27 vs. -0.18) and then applying the 0.09 correction onto the charge 
+##   given for the epsilon C of lysine, which is 0.21 (bonded to C, N, and 2 H's)
+ADD_ATOM  HZ1 Hapo HA   0.09 ## Copied from the 1HD1 atom of Ile (hydrogen on primary carbon)
+ADD_ATOM  HZ2 Hapo HA   0.09
+ADD_ATOM  HZ3 Hapo HA   0.09
+ADD_BOND  NE2  CZ
+ADD_BOND  CZ   HZ1
+ADD_BOND  CZ   HZ2
+ADD_BOND  CZ   HZ3
+
+
+## The information for the following was calculated by taking the arithmetic mean 
+##   of data taken from 37 structures from RCSB's (for a total of 43 data points-- 
+##   there aren't many of them to begin with):
+##   NE2-CZ bond length, CE1-NE2-CZ bond angle
+##   For dihedral angles, 180 degrees is used to place the atoms on the same plane as the benzene ring.
+##
+## The information for the added hydrogens was copied from the 3 hydrogens 
+##   bonded to the delta carbon of Ile.
+##
+SET_ICOOR  CZ   180.000000   54.120000    1.466000   NE2  CE1  CD2
+SET_ICOOR  HZ1 -179.974518   70.500000    1.090290   CZ   NE2  CE1
+SET_ICOOR  HZ2  119.989571   70.500000    1.090575   CZ   NE2  HZ1
+SET_ICOOR  HZ3  120.044632   70.500000    1.089057   CZ   NE2  HZ2
+
+
+
+
+
+
+END_CASE
+
+
+
+
+
+
+

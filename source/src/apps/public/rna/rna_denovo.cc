@@ -26,7 +26,7 @@
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-#include <core/init.hh>
+#include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -334,7 +334,7 @@ try {
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////
-	core::init(argc, argv);
+	core::init::init(argc, argv);
 
 
 	////////////////////////////////////////////////////////////////////////////

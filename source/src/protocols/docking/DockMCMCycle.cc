@@ -153,7 +153,7 @@ void DockMCMCycle::set_default()
 	// setup scoring with defaults
 	if ( scorefxn_() == NULL ) {
 		scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-		scorefxn_pack_ = core::scoring::ScoreFunctionFactory::create_score_function( "standard" );
+		scorefxn_pack_ = core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS );
 	}
 
 	// setup the movemap

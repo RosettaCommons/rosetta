@@ -84,7 +84,7 @@ GraftedStemOptimizer::setup_protocol(pose::Pose & pose){
 	
 	/// scoring function
 	if(!scorefxn_){
-		scorefxn_=scoring::ScoreFunctionFactory::create_score_function( "standard","score12");
+		scorefxn_=scoring::getScoreFunction();
 		scorefxn_->set_weight( scoring::chainbreak, 30./3. );
 		scorefxn_->set_weight( scoring::overlap_chainbreak, 30./3. );
 		scorefxn_->set_weight( scoring::dslf_ss_dst, 3.0);

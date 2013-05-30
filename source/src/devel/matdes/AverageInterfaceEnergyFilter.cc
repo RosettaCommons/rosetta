@@ -213,8 +213,7 @@ AverageInterfaceEnergyFilter::parse_my_tag( utility::tag::TagPtr const tag,
 {
 	TR << "AverageInterfaceEnergyFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ) );
-	scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ) );
+	scorefxn(protocols::rosetta_scripts::parse_score_function(tag, data));
 	score_type(core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) ) );
 	score_type_name( tag->getOption<std::string>( "score_type", "total_score" ) );
 	threshold( tag->getOption< core::Real >( "cutoff", 100000 ) );

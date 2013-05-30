@@ -28,7 +28,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 
 // Utility functions
 #include <basic/options/option.hh>

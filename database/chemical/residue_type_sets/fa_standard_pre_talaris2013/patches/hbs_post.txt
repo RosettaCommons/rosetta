@@ -1,0 +1,60 @@
+## fullatom protein patch for hydrogen bond surrogates (HBS)
+## By Kevin Drew, October 2012, kdrew@nyu.edu
+
+NAME hbs_post
+TYPES HBS_POST
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE HBS_POST
+NOT VARIANT_TYPE HBS_PRE
+NOT VARIANT_TYPE OOP_PRE
+NOT VARIANT_TYPE OOP_POST
+NOT VARIANT_TYPE UPPER_TERMINUS
+NOT VARIANT_TYPE CUTPOINT_UPPER # problems with deleting H because CUTPOINT_UPPER uses H as stub
+NOT VARIANT_TYPE N_ACETYLATION # would not have two N mods
+NOT VARIANT_TYPE ACETYLATED_NTERMINUS # 
+NOT VARIANT_TYPE LOWER_TERMINUS
+NOT AA PRO 
+NOT NAME3 DPR 
+NOT NAME3 HPR 
+NOT NAME3 B19 
+NOT NAME3 C89 
+NOT NAME3 B59 
+NOT PROPERTY PHOSPHONATE
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+## these are the operations involved
+## Change this to guassian calculated charges
+ADD_ATOM  CZH  CH2    CT2    -0.18 ## CZH is for carbon ooP, CH2,CT2 and charge are from C beta in TYR
+ADD_ATOM  VYH  VIRT 	 VIRT  	0.00 
+ADD_ATOM 1HZH  Hapo   HA     0.09 ## 1HZH is for hydrogen off CYH, Hapo, HA and charge are from 1HB in TYR
+ADD_ATOM 2HZH  Hapo   HA     0.09 ## 2HZH is for hydrogen off CYH, Hapo, HA and charge are from 1HB in TYR
+ADD_BOND  N   CZH    
+ADD_BOND  CZH  VYH
+ADD_BOND  CZH  1HZH 
+ADD_BOND  CZH  2HZH 
+
+SET_BACKBONE_HEAVYATOM CZH
+SET_BACKBONE_HEAVYATOM VYH
+
+SET_ICOOR CZH   178.0 66.5161   1.4592  N  CA  LOWER  
+SET_ICOOR 1HZH  57.55  69.9817  0.9764  CZH   N  CA
+#kdrew: set 2nd H relative to 1st H
+SET_ICOOR 2HZH  119.1912	70.066 0.9903  CZH   N  1HZH 
+SET_ICOOR VYH  -120.7064	70.5547		1.50	CZH N 1HZH
+ADD_CONNECT CZH ICOOR  180.0  60.0   1.467  CZH	N  CA  
+
+#kdrew: raises assertion on line 1135 of ResidueType.cc, unless NOT VARIANT_TYPE CUTPOINT_UPPER
+DELETE_ATOM H
+
+
+END_CASE
+

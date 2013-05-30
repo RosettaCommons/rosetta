@@ -210,8 +210,7 @@ main( int argc, char* argv [] )
 
 
 
-	ScoreFunctionOP scfxn = ScoreFunctionFactory::create_score_function(basic::database::full_name("scoring/weights/standard.wts"),
-																																			basic::database::full_name("scoring/weights/score12.wts_patch"));
+	ScoreFunctionOP scfxn = getScoreFunction();
 
 	//	set_lk_dgfree_to_1();
 

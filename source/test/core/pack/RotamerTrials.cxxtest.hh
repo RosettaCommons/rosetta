@@ -22,26 +22,17 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/rtmin.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
-
-// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <numeric/angle.functions.hh>
 
 #include <test/UTracer.hh>
@@ -108,7 +99,7 @@ void do_rotamer_trials(bool with_minimization, test::UTracer & UT)
 
 	// init/reset seeds in all RG objects we have to do this inside the test it self function since
 	// user could request to run just one singel test.
-	core::init_random_generators(1101, numeric::random::_RND_TestRun_, "mt19937");
+	core::init::init_random_generators(1101, numeric::random::_RND_TestRun_, "mt19937");
 
 	ScoreFunction scorefxn;
 	scorefxn.set_weight( fa_atr, 0.80 );

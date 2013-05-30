@@ -205,7 +205,7 @@ Real
 hard_pack( pose::Pose & pose )
 {
 	using namespace scoring;
-	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+	ScoreFunctionOP scorefxn( getScoreFunction() );
 	return rhiju_pack( pose, scorefxn );
 }
 
@@ -247,7 +247,7 @@ hard_minimize( pose::Pose & pose ){
 // Minimize backbone angles
 // Minimize rigid body
 
-	ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
+	ScoreFunctionOP scorefxn( getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	Energy score_orig = (*scorefxn)( pose );
 	EnergyMap emap_orig = pose.energies().total_energies();

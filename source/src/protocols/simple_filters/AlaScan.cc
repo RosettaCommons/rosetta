@@ -110,19 +110,18 @@ AlaScan::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, fi
 	chain2_ = tag->getOption< bool >( "partner2", 1 );
 	jump_ = tag->getOption< Size >( "jump", 1 );
 	runtime_assert( chain1_ || chain2_ );
-	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ));
 	repeats_ = tag->getOption< core::Size >( "repeats", 1 );
 	symmetry_ = tag->getOption< bool >( "symmetry", 0 );
 	repack( tag->getOption< bool >( "repack", 1 ) );
 
 	if ( symmetry_ ) {
 		using namespace core::scoring::symmetry;
-		scorefxn_ = new SymmetricScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ) );
+		scorefxn_ = new SymmetricScoreFunction( * protocols::rosetta_scripts::parse_score_function( tag, data ) );
 		TR<<"Symmetric AlaScan with distance threshold of "<<distance_threshold_<<" Ang "<<". jump="<<jump_<<" partner1="<<chain1_<<", partner2="<<chain2_<<" using "<<repeats_<<" repeats."<<std::endl;
 		return;
 	}
 	using namespace core::scoring;
-	scorefxn_ = new ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name )) );
+	scorefxn_ = new ScoreFunction( * protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	TR<<"AlaScan with distance threshold of "<<distance_threshold_<<" Ang "<<". jump="<<jump_<<" partner1="<<chain1_<<", partner2="<<chain2_<<" using "<<repeats_<<" repeats repack "<<repack()<<std::endl;
 }
 

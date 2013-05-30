@@ -129,7 +129,7 @@ main( int argc, char * argv [] )
 			ScoreFunctionOP scorefxn;
 			if( option[ score::weights ].user() ) scorefxn = getScoreFunction();
 			else {
-				ScoreFunctionOP noenvhbond_scorefxn( ScoreFunctionFactory::create_score_function( "score13" ) );
+				ScoreFunctionOP noenvhbond_scorefxn( getScoreFunctionLegacy( "score13" ) );
 				methods::EnergyMethodOptions options( noenvhbond_scorefxn->energy_method_options() );
 				options.hbond_options().use_hb_env_dep( false );
 				noenvhbond_scorefxn->set_energy_method_options( options );

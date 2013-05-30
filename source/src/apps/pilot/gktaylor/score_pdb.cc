@@ -111,7 +111,7 @@ main( int argc, char* argv [] )
 	}
 
 	// configure score functions (energy and constraint score functions)
-  core::scoring::ScoreFunctionOP energy12scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( "standard", "score12" ) );
+  core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
 	core::scoring::ScoreFunctionOP constraintscorefxn( new core::scoring::ScoreFunction );
 	constraintscorefxn->set_weight( atom_pair_constraint, 1.0 );
 	ConstraintSetOP cstset_ = NULL;
@@ -146,8 +146,8 @@ main( int argc, char* argv [] )
 		}
 
 		core::Real constraint_score = (*constraintscorefxn)(target_pose);
-		core::Real score12_score = (*energy12scorefxn)(target_pose);
-		cout << *it << '\t' << constraint_score << '\t' << score12_score << '\n';
+		core::Real score = (*scorefxn)(target_pose);
+		cout << *it << '\t' << constraint_score << '\t' << score << '\n';
 	}
     } catch ( utility::excn::EXCN_Base const & e ) {
                               std::cout << "caught exception " << e.msg() << std::endl;

@@ -273,8 +273,8 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 	core::Size const num_csts_before_min( csts_before_min.size() );
 
 	using namespace core::scoring;
-	ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
-	ScoreFunctionOP stub_scorefxn( new ScoreFunction( *score12 ));
+	ScoreFunctionOP scorefxn = getScoreFunction();
+	ScoreFunctionOP stub_scorefxn( new ScoreFunction( *scorefxn ));
 	if( hurry ) {
 		TR << "Speeding up StubMinimize..." << std::endl;
 		stub_scorefxn->reset();
@@ -441,7 +441,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 			utility::vector1< bool > min_host( pose.total_residue(), false );
 			for( core::Size i=host_chain_begin; i<=host_chain_end; ++i ) min_host[ i ] = true;
 			utility::vector1< bool > const no_min_rb( pose.num_jump(), false );
-			MinimizeInterface( pose, score12, min_host/*bb*/, sc_min, no_min_rb/*rb*/, false /*optimize foldtree*/, no_targets, true/*simultaneous optimization*/ );
+			MinimizeInterface( pose, scorefxn, min_host/*bb*/, sc_min, no_min_rb/*rb*/, false /*optimize foldtree*/, no_targets, true/*simultaneous optimization*/ );
 		}//size()
 		else{
 			TR<<"Doing rb minimization towards the stub and sc minimization of placed stubs" <<std::endl;
@@ -614,7 +614,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 		}
 	}//change to ala pose
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
 	core::scoring::ScoreFunctionCOP soft_rep = core::scoring::ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS );
 
 	core::pose::Pose const saved_pose( pose ); //saved after minimization
@@ -1184,7 +1184,7 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 		if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() )
 			core::pack::task::parse_resfile(pose, *task);
 
-		core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
+		core::scoring::ScoreFunctionOP scorefxn( getScoreFunction() );
 		pack::pack_rotamers( *ala_pose, *scorefxn, task);
 		(*scorefxn)( *ala_pose );
 		stub_set_->pair_with_scaffold( *ala_pose, host_chain_, new protocols::filters::TrueFilter );

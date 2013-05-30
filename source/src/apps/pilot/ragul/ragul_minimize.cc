@@ -96,8 +96,8 @@ int main( int argc, char * argv [] ){
 	devel::init(argc, argv);
 
 	//setup scorefxn
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
-	scoring::ScoreFunctionOP repack_scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn(getScoreFunction());
+	scoring::ScoreFunctionOP repack_scorefxn(getScoreFunction());
 
 	//setup the bound pose
 	pose::Pose bound_pose;

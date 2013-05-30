@@ -271,7 +271,7 @@ public:
 		core::Real trans_mag(8.0);
 
 		core::scoring::ScoreFunctionOP scorefxn;
-		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::DOCK_PATCH ) ;
+		scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::PRE_TALARIS_2013_STANDARD_WTS, core::scoring::DOCK_PATCH ) ;
 		(*scorefxn)(pose);  //sets up EnergyGraph for interface calculation
 
 		RigidBodyPerturbMoverOP RB_mover = new RigidBodyPerturbMover(rb_jump, rot_mag, trans_mag, protocols::rigid::partner_downstream, true);

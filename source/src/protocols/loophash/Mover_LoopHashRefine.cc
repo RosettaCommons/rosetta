@@ -44,7 +44,7 @@
 // AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 // AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
 // AUTO-REMOVED #include <protocols/loops/Loop.hh>
 // AUTO-REMOVED #include <protocols/wum/SilentStructStore.hh>

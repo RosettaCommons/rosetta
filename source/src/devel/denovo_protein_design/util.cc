@@ -14,7 +14,7 @@
 ///
 
 // Package Headers
-#include <core/init.hh>
+#include <core/init/init.hh>
 // AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // AUTO-REMOVED #include <protocols/abinitio/AbrelaxApplication.hh> //keep first

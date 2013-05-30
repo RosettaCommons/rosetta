@@ -82,7 +82,7 @@ main( int argc, char * argv [] )
 
 	core::import_pose::pose_from_pdb( pose, basic::options::start_file() );
 
-	core::scoring::ScoreFunctionOP fullfxn(core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::STANDARD_WTS, core::scoring::SCORE12_PATCH ));
+	core::scoring::ScoreFunctionOP fullfxn(core::scoring::getScoreFunction());
 
 	core::pack::task::TaskFactoryOP designtaskfactory( new core::pack::task::TaskFactory );
 

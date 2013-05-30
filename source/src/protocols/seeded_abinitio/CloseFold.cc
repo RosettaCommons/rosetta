@@ -453,11 +453,9 @@ CloseFold::parse_my_tag(
 	//get secondary structure either from input template, a string in the xml or through the
 	use_cutpoints_ = tag->getOption< bool >( "cutpoint_based" , 1 );
 
-	std::string const fa_scorefxn_name( tag->getOption<std::string>( "fa_scorefxn", "score12" ) );
-	fa_scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", fa_scorefxn_name) ));
+	fa_scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "fa_scorefxn", data )->clone();
 
-	std::string const cen_scorefxn_name( tag->getOption<std::string>( "cen_scorefxn", "score4L" ) );
-	cen_scorefxn_ = new core::scoring::ScoreFunction( *(data.get< core::scoring::ScoreFunction * >( "scorefxns", cen_scorefxn_name) ));
+	cen_scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, "cen_scorefxn", data, "score4L" )->clone();
 
 	//options for fast closure
 	kic_ = tag->getOption< bool > ("use_kic" , 0 );

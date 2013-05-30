@@ -177,7 +177,7 @@ main( int argc, char* argv[] )
 	option.add( tracer_data_print, "print to tracer, not scorefile" ).def(false);
 	option.add( fixedchains, "Which chain(s) is/are moved away from the others, for 3 or more chains" );
 	option.add( pack_input, "pack the input pose").def(false);
-	option.add( add_regular_scores_to_scorefile, "adds normal (score12, etc) scores to scorefile").def(false);
+	option.add( add_regular_scores_to_scorefile, "adds default scores to scorefile").def(false);
 	option.add( pack_separated, "pack the separated chains at the separated dG phase").def(false);
 	option.add( use_jobname, "appended _0001 job name for output instead of input pose name").def(false);
 	option.add( use_resfile, "use a resfile during the packing stages").def(false);

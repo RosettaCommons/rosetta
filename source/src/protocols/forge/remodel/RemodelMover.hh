@@ -201,7 +201,7 @@ public: // accessors
 	ScoreFunction const & centroid_scorefunction() const;
 
 
-	/// @brief the full-atom level score function, default score12
+	/// @brief the full-atom level score function
 	ScoreFunction const & fullatom_scorefunction() const;
 
 
@@ -465,7 +465,7 @@ private: // data
 	ScoreFunctionOP centroid_sfx_;
 
 
-	/// @brief the full-atom scorefunction to use, default score12
+	/// @brief the full-atom scorefunction to use
 	ScoreFunctionOP fullatom_sfx_;
 
 

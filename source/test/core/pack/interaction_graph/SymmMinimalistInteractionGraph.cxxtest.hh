@@ -127,7 +127,7 @@ public:
 
 		make_symmetric_PackerTask_by_truncation( pose, task );
 
-		ScoreFunctionOP sfxn = new core::scoring::symmetry::SymmetricScoreFunction; //ScoreFunctionFactory::create_score_function( "standard" );
+		ScoreFunctionOP sfxn = new core::scoring::symmetry::SymmetricScoreFunction; //getScoreFunction();
 		sfxn->set_weight( fa_atr, 0.8 );
 		sfxn->set_weight( fa_rep, 0.44 );
 		sfxn->set_weight( fa_sol, 0.65 );

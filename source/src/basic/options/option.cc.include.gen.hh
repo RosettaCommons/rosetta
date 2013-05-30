@@ -1,4 +1,5 @@
 #include <basic/options/keys/LoopModel.OptionKeys.gen.hh>
+#include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/filters.OptionKeys.gen.hh>
 #include <basic/options/keys/crossmatch.OptionKeys.gen.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>

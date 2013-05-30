@@ -54,7 +54,7 @@
 #include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/canonical_sampling/SilentTrajectoryRecorder.hh>
-
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 
@@ -399,10 +399,7 @@ CoupledSidechainProtocol::parse_my_tag( utility::tag::TagPtr const tag, protocol
 	set_prob_withinrot( tag->getOption<core::Real>( "prob_withinrot", 0.0 ) );
 	set_prob_random_pert_current( tag->getOption<core::Real>( "prob_random_pert_current", 0.0 ) );
 	core::Real between_rot = 1.0 - prob_uniform() - prob_withinrot () - prob_random_pert_current();
-	std::string const scorefxn( tag->getOption<std::string>( "scorefxn", "score12" ) );
-	using namespace core::scoring;
-	ScoreFunctionOP sfxn = new ScoreFunction(*data.get< ScoreFunction * >( "scorefxns", scorefxn ) );
-	set_scorefunction( sfxn );
+	set_scorefunction(protocols::rosetta_scripts::parse_score_function(tag, data)->clone());
 }
 
 void

@@ -470,7 +470,7 @@ main( int argc, char* argv [] )
 	//gone?
 	pose::Pose pose;
 
-	ScoreFunctionOP s = ScoreFunctionFactory::create_score_function( option[score::weights]);
+	ScoreFunctionOP s = getScoreFunction();
 	ScoreFunctionOP scorefxn( new ScoreFunction());
 
 	scorefxn->set_weight(core::scoring::score_type_from_name("rama"), 4.0);

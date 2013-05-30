@@ -139,7 +139,7 @@ SwitchChainOrderMover::parse_my_tag(
 {
 	chain_order( tag->getOption< std::string >( "chain_order" ) );
 	std::string const residue_numbers_setter( tag->getOption< std::string >( "residue_numbers_setter", "" ) );
-	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score12" ) );
+	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	if( residue_numbers_setter != "" )
 		residue_numbers_ = protocols::moves::get_set_from_datamap< protocols::moves::DataMapObj< utility::vector1< core::Size > > >( "residue_numbers", residue_numbers_setter, data );
 

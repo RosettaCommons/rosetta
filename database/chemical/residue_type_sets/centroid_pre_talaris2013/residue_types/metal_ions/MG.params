@@ -1,0 +1,17 @@
+# I think right now that Mini has to have at least three atoms per residue,
+# hence the virtual atoms.
+NAME MG
+IO_STRING  MG Z
+TYPE LIGAND
+AA UNK
+ATOM MG   Mg2p  X    2.00
+ATOM  V1  VIRT  X    0.00
+ATOM  V2  VIRT  X    0.00
+BOND MG    V1 
+BOND MG    V2 
+BOND  V1   V2 
+NBR_ATOM MG  
+NBR_RADIUS 0.01
+ICOOR_INTERNAL   MG      0.000000    0.000000    0.000000  MG     V1    V2 
+ICOOR_INTERNAL    V1     0.000000  180.000000    1.493765  MG     V1    V2 
+ICOOR_INTERNAL    V2     0.000000   62.060678    1.415324   V1   MG     V2 

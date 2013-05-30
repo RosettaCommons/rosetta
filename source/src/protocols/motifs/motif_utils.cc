@@ -409,8 +409,7 @@ void mutate_loops_for_search(
 )
 {
 	// Get a score function
-	std::string weights( "standard" );
-	core::scoring::ScoreFunctionOP score_fxn( core::scoring::ScoreFunctionFactory::create_score_function( weights ) );
+	core::scoring::ScoreFunctionOP score_fxn( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 
 	// Set up the packer task
 	core::pack::task::PackerTaskOP alanize_task( core::pack::task::TaskFactory::create_packer_task( pose ) );

@@ -107,7 +107,7 @@ main( int argc, char * argv [] )
 	pose::Pose pose = input_pose;
 
 	// Setup for scoring/repacking
-	scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
+	scoring::ScoreFunctionOP scorefxn( scoring::getScoreFunction() );
 	scorefxn->set_weight( core::scoring::fa_dun, 0. );
 	scorefxn->set_weight( core::scoring::fa_intra_rep, 0. );
 	scorefxn->set_weight( core::scoring::coordinate_constraint, 0.5 );

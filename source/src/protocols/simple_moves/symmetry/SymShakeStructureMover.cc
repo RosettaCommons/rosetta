@@ -45,7 +45,7 @@
 // AUTO-REMOVED #include <basic/options/after_opts.hh>
 // AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 
-// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/init/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
@@ -181,7 +181,7 @@ namespace symmetry {
       setup_ca_constraints(p,(*get_scorefunction() ),9.0,get_harmonic_ca_cst_std_dev() );
 
 			if(get_min_cst() || get_sc_min() ){
-				set_min_scorefunction( core::scoring::ScoreFunctionFactory::create_score_function( "standard") );
+				set_min_scorefunction( core::scoring::getScoreFunctionLegacy( core::scoring::PRE_TALARIS_2013_STANDARD_WTS ) );
 			}
 
       if(get_mc_temperature() <= 0 && get_ensemble_ca_rmsd() > 0){
