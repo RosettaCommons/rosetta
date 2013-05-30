@@ -19,6 +19,9 @@ import sys
 import platform
 import os.path
 
+import logging
+logger = logging.getLogger("rosetta")
+
 # Rosetta
 import warnings
 warnings.filterwarnings("ignore", "to-Python converter for .+ already registered; second conversion method ignored.", RuntimeWarning, "^rosetta\\.")
@@ -104,13 +107,12 @@ from rosetta.protocols.relax import *
 #from rosetta.protocols.rigid import *
 from rosetta.protocols.simple_moves import *
 
-# PyRosetta toolbox.
-from toolbox import *
-
 # PyMOLMover and associated methods.
 from PyMolLink import *
 
 import version
+
+import rosetta.logging_support as logging_support
 
 
 ###############################################################################
@@ -156,58 +158,86 @@ class PythonPyExitCallback(utility.PyExitCallback):
 #
 def rosetta_database_from_env():
     """Reads rosetta database directory from environment."""
-    database = None
 
     # Figure out database dir....
-    if os.path.isdir('rosetta_database'):
-        database = os.path.abspath('rosetta_database')
-        print 'Found rosetta_database at %s; using it....' % database
-    elif 'PYROSETTA_DATABASE' in os.environ:
+    if 'PYROSETTA_DATABASE' in os.environ:
         database = os.path.abspath(os.environ['PYROSETTA_DATABASE'])
-        print 'PYROSETTA_DATABASE environment variable was set to:',
-        print '%s; using it....' % database
-    elif os.path.isdir(os.environ['HOME'] + '/rosetta_database'):
-        database = os.path.abspath(os.environ['HOME'] + '/rosetta_database')
-        print 'Found rosetta_database at home folder, ie.:',
-        print '%s; using it....' % database
-    elif sys.platform == "cygwin" and os.path.isdir('/rosetta_database'):
-        database = os.path.abspath('/rosetta_database')
-        print 'Found rosetta_database at root folder, ie.:',
-        print '%s; using it....' % database
-    elif os.path.isdir('rosetta/rosetta_database'):  # Mac /usr/lib install
-        database = os.path.abspath('rosetta/rosetta_database')
-        print 'Found rosetta_database at %s; using it....' % database
+        if os.path.isdir(database):
+            logger.info('PYROSETTA_DATABASE environment variable was set to: %s; using it....', database)
+            return database
+        else:
+            logger.warning('Invalid PYROSETTA_DATABASE environment variable was specified: %s', database)
 
-    return database
+    if os.path.isdir('database'):
+        database = os.path.abspath('database')
+        logger.info('Found database at %s; using it....', database)
+        return database
+
+    parallel_database = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "rosetta_database"))
+    if os.path.isdir(parallel_database):
+        database = parallel_database
+        logger.info('Found rosetta_database at %s; using it....', database)
+        return database
+
+    if os.path.isdir(os.environ['HOME'] + '/rosetta_database'):
+        database = os.path.abspath(os.environ['HOME'] + '/rosetta_database')
+        logger.info('Found rosetta_database at home folder, ie.: %s; using it....', database)
+        return database
+
+    if sys.platform == "cygwin" and os.path.isdir('/rosetta_database'):
+        database = os.path.abspath('/rosetta_database')
+        logger.info('Found rosetta_database at root folder, ie.:%s; using it....', database)
+        return database
+
+    if os.path.isdir('rosetta/rosetta_database'):  # Mac /usr/lib install
+        database = os.path.abspath('rosetta/rosetta_database')
+        logger.info('Found rosetta_database at %s; using it....', database)
+        return database
 
 # rosetta.init()
 def init(*args, **kargs):
-    global _python_py_exit_callback
+    """Initialize Rosetta.
 
+    args  - str or [str] of command line arguments.
+            (default ["app", "-ex1", "-ex2aro"])
+    kargs -
+        extra_options - Extra command line options to pass rosetta init.
+                        (default None)
+        set_logging_handler - Route rosetta tracing through logging logger 'rosetta'.
+                        (default True)
+    """
+
+    logging_support.initialize_logging()
+
+    global _python_py_exit_callback
     _python_py_exit_callback = PythonPyExitCallback()
     utility.PyExitCallback.set_PyExitCallBack(_python_py_exit_callback)
+
+    if kargs.get("set_logging_handler", True):
+        logging_support.set_logging_handler()
     
     if not args:
         args = ["app", "-ex1", "-ex2aro"]
     else:
-        if len(args) == 1 and isinstance(args[0], str):
+        if len(args) == 1 and isinstance(args[0], basestring):
             args = args[0].split()
         else:
             args = list(args)
 
-    # Attempt to database location from environment if not present, else fallback
+    # Attempt to resolve database location from environment if not present, else fallback
     # to rosetta's standard resolution
     if not "-database" in args:
         database = rosetta_database_from_env()
         if not database is None:
             args.extend(["-database", database])
 
-    args.extend(kargs.get('extra_options', '').split(' '))
+    args.extend(kargs.get("extra_options", "").split(' '))
 
     v = utility.vector1_string()
     v.extend(args)
 
-    print version()
+    logger.info(version())
+
     protocols.init.init(v)
 
 # MPI version of init function, use it instead of init(...)

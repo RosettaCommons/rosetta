@@ -30,7 +30,7 @@ def svn_version():
     url = "unknown"
     #if we aren't in an svn repository, try git
     if ver == "unknown" or ver == "exported" or ver == "Unversioned directory":
-        ver = os.popen("git log -1 --format='%H'").read().strip() or "unknown"
+        ver = os.popen("git rev-parse HEAD").read().strip() or "unknown"
         if ver != "unknown":
             url = os.popen("git remote -v |grep fetch |awk '{print $2}'|head -n1").read().strip()
             if url == "":

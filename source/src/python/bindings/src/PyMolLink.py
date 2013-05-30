@@ -212,7 +212,22 @@ X11_COLORS = {
 # Classes
 class PySocketClient:
     def __init__(self, udp_port=65000, udp_ip='127.0.0.1'):
-        self.udp_ip, self.udp_port = udp_ip, udp_port
+        """Create socket client targeting the given endpoint.
+
+            udp_port - Target port.
+            udp_ip - IP address or hostname.
+        """
+        # udp_ip provided as keyword argument is previous version,
+        # maintaining name although a hostname may be provided.
+        
+        (hostname, aliaslist, ipaddrlist) = socket.gethostbyaddr(udp_ip)
+
+        if udp_ip in ipaddrlist:
+            # Explict address specified, use this address.
+            self.udp_ip, self.udp_port = udp_ip, udp_port
+        else:
+            # Hostname specified, use resolved ip.
+            self.udp_ip, self.udp_port = ipaddrlist[0], udp_port
 
         # Of course this will not work..., but it will be readjusted
         # automatically.
@@ -248,13 +263,18 @@ class PySocketClient:
 
 ###############################################################################
 class PyMOLMover(rosetta.protocols.moves.PyMolMover):
-    def __init__(self, keep_history=False, update_energy=False,
-                 energy_type=rosetta.core.scoring.total_score):
+    def __init__(
+            self,
+            keep_history=False,
+            update_energy=False,
+            energy_type=rosetta.core.scoring.total_score,
+            target_host="127.0.0.1",
+            target_port=65000):
         rosetta.protocols.moves.PyMolMover.__init__(self)
         self.keep_history(keep_history)
         self.update_energy(update_energy)
         self.energy_type(energy_type)
-        self.link = PySocketClient()
+        self.link = PySocketClient(target_port, target_host)
 
     # Private methods.
     def _get_pose_name(self, pose):
@@ -414,8 +434,12 @@ class PyMOLMover(rosetta.protocols.moves.PyMolMover):
     def apply(self, input_pose):
         pose = input_pose.get()  # Necessary for use in Mover containers.
 
-        #print 'This PyMOL_Mover applies...', pose
+        self.send_structure(pose)
 
+        if self.update_energy():
+            self.send_energy(pose, self.energy_type())
+
+    def send_structure(self, pose):
         name = self._get_pose_name(pose)
         #print name
 
@@ -429,9 +453,6 @@ class PyMOLMover(rosetta.protocols.moves.PyMolMover):
         message = 'PDB.bz2 ' + chr(self.keep_history()) + chr(len(name)) + \
                                                   name + bz2.compress(os.str())
         self.link.send_message(message)
-
-        if self.update_energy():
-            self.send_energy(pose, self.energy_type())
 
     # Energy output.
     def send_energy(self, input_pose, energy_type=rosetta.total_score,
