@@ -187,6 +187,7 @@ sources = {
 		#"saxs/call_saxs_score",
 	],
 	"pilot/doug" : [
+                "pymolmovertest",
 		#"make_peptoid",
 		#"UnfoldedStateEnergyCalculator",
 		#"rotamer_prediction_benchmark", # /* Doug Renfrew,Documentation Location,Demo Location */

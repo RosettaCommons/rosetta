@@ -1,0 +1,23 @@
+<ROSETTASCRIPTS>
+
+  <SCOREFXNS>
+  </SCOREFXNS>
+
+  <TASKOPERATIONS>
+  </TASKOPERATIONS>
+
+  <FILTERS>
+  </FILTERS>
+
+  <MOVERS>
+    <PyMolMover name=pmm keep_history=1/>
+  </MOVERS>
+
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+
+  <PROTOCOLS>
+    <Add mover_name=pmm/>
+  </PROTOCOLS>
+
+</ROSETTASCRIPTS>

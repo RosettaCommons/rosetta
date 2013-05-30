@@ -14,37 +14,38 @@
 #ifndef INCLUDED_protocols_moves_PyMolMover_CC
 #define INCLUDED_protocols_moves_PyMolMover_CC
 
+// protocol headers
 #include <protocols/moves/PyMolMover.hh>
+#include <protocols/moves/PyMolMoverCreator.hh>
 
+#include <protocols/rosetta_scripts/util.hh>
+
+// core headers
 #include <core/scoring/ScoreTypeManager.hh>
-
-//#ifndef WIN_PYROSETTA  // CL compiler got horribly confused if our numeric header got included after <winsock2.h>
-
-// AUTO-REMOVED #include <numeric/random/random.hh>
+#include <core/scoring/Energies.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-#include <core/scoring/Energies.hh>
-
-// AUTO-REMOVED #include <utility/io/zipstream.hpp>
-
-#include <basic/Tracer.hh>
-
-
-#include <time.h>
-
+// utility headers
 #include <utility/vector1.hh>
 #include <utility/io/zipstream.ipp>
 
 #include <utility/PyAssert.hh>
+#include <utility/tag/Tag.hh>
 
-//Auto Headers
+// numeric headers
 #include <numeric/random/uniform.hh>
+
+// basic headers
+#include <basic/Tracer.hh>
+
+// c++ headers
+#include <time.h>
+
+//#ifndef WIN_PYROSETTA  // CL compiler got horribly confused if our numeric header got included after <winsock2.h>
 //#endif
 
-//#include <cstdlib.h>
 
 /*#if  !defined(WINDOWS) && !defined(WIN32)
 	#include <sys/time.h>
@@ -81,7 +82,7 @@ numeric::random::uniform_RG_OP getRG()
 
 UDPSocketClient::UDPSocketClient() : sentCount_(0)
 {
-#ifndef  __native_client__ 
+#ifndef  __native_client__
     /*
 	#ifdef __APPLE__
 		max_packet_size_ = 8192-512-2;  // ← MacOS X kernel can send only small packets even locally.
@@ -106,11 +107,22 @@ UDPSocketClient::UDPSocketClient() : sentCount_(0)
 #endif
 }
 
+UDPSocketClient::UDPSocketClient( UDPSocketClient const & other ) :
+	max_packet_size_( other.max_packet_size_ ),
+	uuid_( other.uuid_ ),
+	sentCount_( other.sentCount_ ),
+	socket_addr_( other.socket_addr_ ),
+	socket_h_( other.socket_h_ )
+{
+	// reinit connection using coppied info
+	socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
+}
+
 UDPSocketClient::~UDPSocketClient()
 {
 	//#ifndef WIN_PYROSETTA
-	#ifdef WIN32
-		closesocket(socket_h_);
+  #ifdef WIN32
+	  closesocket(socket_h_);
 	#else
 		close(socket_h_);
 	#endif
@@ -141,7 +153,7 @@ void UDPSocketClient::sendMessage(std::string msg)
 
 void UDPSocketClient::sendRAWMessage(int globalPacketID, int packetI, int packetCount, char * msg_begin, char *msg_end)
 {
-	#ifndef  __native_client__ 
+	#ifndef  __native_client__
 		std::string buf(msg_end - msg_begin + sizeof(uuid_.bytes_) + sizeof(short)*3, 0);
 		int i = 0;
 
@@ -156,13 +168,65 @@ void UDPSocketClient::sendRAWMessage(int globalPacketID, int packetI, int packet
 	#endif
 }
 
+void
+UDPSocketClient::show(std::ostream & output) const
+{
+	output << "max packet size: " << max_packet_size_ << std::endl;
+	output << "sent count: " << sentCount_ << std::endl;
+	output << "socket handel: " << socket_h_ << std::endl;
 
+	output << "uuid short: ";
+	for ( unsigned int i(0); i < sizeof(uuid_.shorts_)/sizeof(uuid_.shorts_[0]); i++ ) {
+		output << uuid_.shorts_[i] << " ";
+	}
+	output << std::endl;
+
+	output << "uuid byte: ";
+	for ( char i(0); i < sizeof(uuid_.bytes_)/sizeof(uuid_.bytes_[0]); i++ ) {
+		output << (int)uuid_.bytes_[i] << " ";
+	}
+	output << std::endl;
+
+	output << "socket address family: " << socket_addr_.sin_family << std::endl;
+	output << "socket address port: " << socket_addr_.sin_port << std::endl;
+	output << "socket address address: " << socket_addr_.sin_addr.s_addr << std::endl;
+}
+
+std::ostream &
+operator<<(std::ostream & output, UDPSocketClient const & client)
+{
+	client.show(output);
+	return output;
+}
 
 /* -------------------------------------------------------------------------------------------------
          PyMolMover Class
    ---------------------------------------------------------------------------------------------- */
 
-PyMolMover::~PyMolMover() {}
+/// @brief ctor
+PyMolMover::PyMolMover() :
+	update_energy_(false),
+	energy_type_(core::scoring::total_score),
+	keep_history_(false),
+	update_interval_(0),
+	last_packet_sent_time_(0),
+	name_()
+{}
+
+/// @breif cctor
+PyMolMover::PyMolMover( PyMolMover const & other ) :
+	protocols::moves::Mover( other ),
+	link_( other.link_ ),
+	update_energy_( other.update_energy_ ),
+	energy_type_( other.energy_type_ ),
+	keep_history_( other.keep_history_ ),
+	update_interval_( other.update_interval_ ),
+	last_packet_sent_time_( other.last_packet_sent_time_ ),
+	name_( other.name_ )
+{}
+
+PyMolMover::~PyMolMover()
+{}
 
 std::string PyMolMover::get_name() const
 {
@@ -218,17 +282,17 @@ void PyMolMover::apply( Pose const & pose)
 	zipper << os.str();
 	zipper.zflush_finalize();
 
-    //std::string message = "PDB     X" + name + zmsg.str();
-    std::string message = "PDB.gzipXX" + name + zmsg.str();
-    message[8] = keep_history_;
-    message[9] = name.size();
+	//std::string message = "PDB     X" + name + zmsg.str();
+	std::string message = "PDB.gzipXX" + name + zmsg.str();
+	message[8] = keep_history_;
+	message[9] = name.size();
 
 	//TR << "Sending message: " << message << std::endl << "Size:" << message.size() << std::endl;
-    //TR << "Sending message, Size:" << message.size() << std::endl;
+	//TR << "Sending message, Size:" << message.size() << std::endl;
 
-    link_.sendMessage(message);
+	link_.sendMessage(message);
 
-    if ( update_energy_ ) send_energy(pose, energy_type_);
+	if ( update_energy_ ) send_energy(pose, energy_type_);
 }
 
 void PyMolMover::apply( Pose & pose)
@@ -365,6 +429,7 @@ void PyMolMover::show(std::ostream & output) const
 	output << "Update energy:         " << ( ( update_energy_ ) ? ("True") : ("False") ) << std::endl;
 	output << "Last packet sent time: " << last_packet_sent_time_ << std::endl;
 	output << "Update interval:       " << update_interval_ << std::endl;
+	output << "link: " << link_ << std::endl;
 }
 
 std::ostream &
@@ -395,6 +460,47 @@ PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::R
 	o->pymol().update_interval(update_interval);
 	p.attach_general_obs(&PyMolObserver::generalEvent, o);
 	return o;
+}
+
+/// @brief PyMolMoverCreator interface, name of the mover
+std::string PyMolMoverCreator::mover_name() {
+  return "PyMolMover";
+}
+
+/// @brief PyMolMoverCreator interface, returns a unique key name to be used in xml file
+std::string PyMolMoverCreator::keyname() const {
+  return PyMolMoverCreator::mover_name();
+}
+
+/// @brief PyMolMoverCreator interface, return a new instance
+protocols::moves::MoverOP PyMolMoverCreator::create_mover() const {
+  return new PyMolMover();
+}
+
+/// @brief allows for the setting of certain variabel from the rosetta scripts interface, only keep history
+void
+PyMolMover::parse_my_tag(
+	utility::tag::TagPtr const tag,
+	protocols::moves::DataMap &,
+	protocols::filters::Filters_map const &,
+	protocols::moves::Movers_map const &,
+	core::pose::Pose const &
+) {
+	keep_history(tag->getOption<bool>( "keep_history", keep_history_ ) );
+}
+
+///@brief required in the context of the parser/scripting scheme
+protocols::moves::MoverOP
+PyMolMover::fresh_instance() const
+{
+	return new PyMolMover;
+}
+
+///@brief required in the context of the parser/scripting scheme
+protocols::moves::MoverOP
+PyMolMover::clone() const
+{
+	return new protocols::moves::PyMolMover( *this );
 }
 
 } // moves

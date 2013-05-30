@@ -14,21 +14,23 @@
 #ifndef INCLUDED_protocols_moves_PyMolMover_hh
 #define INCLUDED_protocols_moves_PyMolMover_hh
 
+// unit headers
 #include <protocols/moves/PyMolMover.fwd.hh>
 
-
-// Unit Headers
+// protocol headers
 #include <protocols/moves/Mover.hh>
+
+// core headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/signals/GeneralEvent.hh>
+
 #include <core/scoring/ScoreType.hh>
 
-
-#include <string>
-
+// utility headers
 #include <utility/vector1.hh>
 
-
+// c++ headers
+#include <string>
 
 // REQUIRED FOR WINDOWS
 #ifndef __native_client__
@@ -50,9 +52,6 @@
 //#ifdef WIN_PYROSETTA
 //  typedef int sockaddr_in;
 //#endif
-
-
-
 
 namespace protocols {
 namespace moves {
@@ -238,10 +237,18 @@ enum X11Colors {
 class UDPSocketClient
 {
 public:
+	/// @brief ctor
 	UDPSocketClient();
+
+	/// @brief cctor
+	UDPSocketClient( UDPSocketClient const & other );
+
+	/// @breif dtor
 	~UDPSocketClient();
 
 	void sendMessage(std::string msg);
+
+	void show(std::ostream & output) const;
 
 private:
 
@@ -268,14 +275,20 @@ private:
 	int socket_h_;
 };
 
+std::ostream &operator<< (std::ostream & output, UDPSocketClient const & client);
 
 class PyMolMover : public protocols::moves::Mover
 {
 public:
-	PyMolMover() : update_energy_(false), energy_type_(core::scoring::total_score),
-	               keep_history_(false), update_interval_(0), last_packet_sent_time_(0), name_() {};
+	/// @brief ctor
+	PyMolMover();
 
-    virtual ~PyMolMover();
+	/// @brief cctor
+	PyMolMover( PyMolMover const & other );
+
+	/// @brief dtor
+	virtual ~PyMolMover();
+
 	virtual std::string get_name() const;
 	virtual void apply( Pose & );
 
@@ -294,10 +307,10 @@ public:
 	void send_energy(Pose const &, std::string const & stype);
 
 	/// @brief Send RAW energy array for coloring by PyMOL
-    void send_RAW_Energies(Pose const &, std::string energyType, utility::vector1<int> const & energies);
+	void send_RAW_Energies(Pose const &, std::string energyType, utility::vector1<int> const & energies);
 
 	/// @brief Tell PyMOL to color protein with supplied custom colors
-    virtual void send_colors(Pose const &, std::map<int, int> const & colors, X11Colors default_color=protocols::moves::XC_blue );
+	virtual void send_colors(Pose const &, std::map<int, int> const & colors, X11Colors default_color=protocols::moves::XC_blue );
 
 
 	bool update_energy() { return update_energy_; }
@@ -326,6 +339,15 @@ public:
 	core::Real update_interval() { return update_interval_; };
 
 	void show(std::ostream & output=std::cout) const;
+
+	/// @brief Parses tag for rosetta scripts
+	void parse_my_tag( utility::tag::TagPtr const tag,	protocols::moves::DataMap &, protocols::filters::Filters_map const &,	protocols::moves::Movers_map const &,	core::pose::Pose const & );
+
+	///@brief required in the context of the parser/scripting scheme
+	virtual protocols::moves::MoverOP fresh_instance() const;
+
+	///@brief required in the context of the parser/scripting scheme
+	virtual protocols::moves::MoverOP clone() const;
 
 private:
 	//void send_message(std::string const & message_type, bool keep_history, std::string const & name, std::string const &message);
