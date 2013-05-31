@@ -21,6 +21,8 @@
 #include <iostream>
 #include <vector>
 
+inline void initialize_rng();
+
 // @brief For unit tests only.  Constructs a mock argc and argv given a stl string.
 inline
 char**
@@ -100,6 +102,8 @@ inline void core_init_from_string( std::string const & commandline )
 													 + commandline, pseudo_argc );
 	core::init::init( pseudo_argc, pseudo_argv );
 	destroy_pseudo_commandline( pseudo_argc, pseudo_argv );
+
+	initialize_rng();
 }
 
 /// @brief For unit tests only. Re-init option system.
@@ -116,6 +120,8 @@ inline void core_init_with_additional_options( std::string const & commandline_i
 	//std::cout << "core_init_with_additional_options: " << commandline.c_str() << "\n";
 
 	core_init_from_string( commandline );
+
+	initialize_rng();
 }
 
 inline
@@ -153,6 +159,10 @@ inline void core_init()
 		std::string commandline = "core.test -mute all";
 		initialize_from_commandline_w_db( commandline );
 	}
+	initialize_rng();
+}
+
+inline void initialize_rng() {
 	core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "mt19937");
 }
 

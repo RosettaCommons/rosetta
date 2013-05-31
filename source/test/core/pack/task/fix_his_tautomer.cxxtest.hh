@@ -68,51 +68,59 @@ public:
 	}
 
 	// ------------- Helper Functions ------------- //
-	///@brief check what happens with just repacking
-	void
-	repack( core::pose::Pose & pose, /*std::string const & name,*/ core::scoring::ScoreFunctionOP scorefxn ){
+	///@brief check what happens to a packer task when the only instruction is that it should be repacked
+	core::pack::task::PackerTaskOP
+	task_repack( core::pose::Pose & pose ) {
 		core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
 		task->restrict_to_repacking();
-
-		core::pack::rotamer_trials( pose, *scorefxn, task );
-		//pose.dump_pdb(name+"pose_repacked.pdb");
-		return;
+		return task;
 	}
 
-	///@brief check what happens with fix_his function
-	void
-	repack_with_fixhis( core::pose::Pose & pose, /*std::string const * name,*/ core::scoring::ScoreFunctionOP scorefxn ){
+	///@brief check what happens to a packer task when the fix_his function is called
+	core::pack::task::PackerTaskOP
+	task_repack_with_fixhis( core::pose::Pose & pose ) {
 		core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
 		utility::vector1<int> const positions;
 		task->restrict_to_repacking().or_fix_his_tautomer(positions, true);
-
-		core::pack::rotamer_trials( pose, *scorefxn, task );
-		//pose.dump_pdb(name+"pose_repacked_fixhis.pdb");
-		return;
+		return task;
 	}
 
-	///@brief check what happens with resfile command for fix_his function
-	void
-	repack_with_resfile( core::pose::Pose & pose, /*std::string const * name,*/ core::scoring::ScoreFunctionOP scorefxn ){
+	///@brief check what happens to a packer task when the resfile fix_his command is used
+	core::pack::task::PackerTaskOP
+	task_repack_with_resfile( core::pose::Pose & pose ) {
 		core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
 		task->restrict_to_repacking();
 		core::pack::task::parse_resfile_string( pose, *task, "NATAA FIX_HIS_TAUTOMER \n start");
-		//the "start" just dodges a resfile warning
-
-		core::pack::rotamer_trials( pose, *scorefxn, task );
-		//pose.dump_pdb(name+"pose_repacked_resfile.pdb");
-		return;
+		return task;
 	}
 
-	//loop over 4 residues to check proton presence versus boolean (should it be there or not?)
-	void assert_proton_presence( core::pose::Pose const & pose, std::string const & proton, bool presence){
-		for(core::Size i=2; i<pose.total_residue(); ++i) TS_ASSERT(pose.residue_type(i).has_atom_name(proton) == presence);
+	// loop over 4 residues and check if the allowed residue types in the packer task
+	// contain (or lack) the indicated proton
+	void assert_restype_w_atom_presence( core::pack::task::PackerTaskOP task, std::string const & proton, bool presence )
+	{
+		for(core::Size ii = 2; ii < task->total_residue(); ++ii ) {
+			bool present = false;
+			for ( core::pack::task::ResidueLevelTask::ResidueTypeCOPListConstIter
+					allowed_iter = task->residue_task( ii ).allowed_residue_types_begin(),
+					allowed_end = task->residue_task( ii ).allowed_residue_types_end();
+					allowed_iter != allowed_end; ++allowed_iter ) {
+				if ( (*allowed_iter)->aa() != core::chemical::aa_his ) continue;
+				if ( (*allowed_iter)->has_atom_name(proton) ) {
+					present = true;
+				}
+			}
+			TS_ASSERT_EQUALS( present, presence);
+		}
 	}
 
 	// --------------- Test Cases --------------- //
 
 	void test_fix_his_tautomer() {
-		core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+		//// APL TEMP
+		//for ( core::Size ii = 1; ii <= 100; ++ii ) {
+		//	std::cout << "test_fix_his_taut " << ii << std::endl;
+		//	setUp();
+
 
 		core::pose::Pose pose;
 		core::import_pose::pose_from_pdb( pose, "core/pack/task/short_his.pdb" );
@@ -151,48 +159,28 @@ public:
 		core::pose::Pose HIS_Dpose_rr(HIS_Dpose);
 
 		//allow them to be repacked under appropriate conditions
-		repack(HISpose_r, /*"HIS",*/ scorefxn);
-		repack(HIS_Dpose_r, /*"HIS_D",*/ scorefxn);
-
-		repack_with_fixhis(HISpose_rf, /*"HIS",*/ scorefxn);
-		repack_with_fixhis(HIS_Dpose_rf, /*"HIS_D",*/ scorefxn);
-
-		repack_with_resfile(HISpose_rr, /*"HIS",*/ scorefxn);
-		repack_with_resfile(HIS_Dpose_rr, /*"HIS_D",*/ scorefxn);
+		core::pack::task::PackerTaskOP task_HISpose_r    = task_repack( HISpose_r );
+		core::pack::task::PackerTaskOP task_HIS_Dpose_r  = task_repack( HIS_Dpose_r );
+		core::pack::task::PackerTaskOP task_HISpose_rf   = task_repack_with_fixhis( HISpose_rf );
+		core::pack::task::PackerTaskOP task_HIS_Dpose_rf = task_repack_with_fixhis( HIS_Dpose_rf );
+		core::pack::task::PackerTaskOP task_HISpose_rr   = task_repack_with_resfile( HISpose_rr );
+		core::pack::task::PackerTaskOP task_HIS_Dpose_rr = task_repack_with_resfile( HIS_Dpose_rr );
 
 		//check for proton presence in fixed cases
-		assert_proton_presence(HISpose, " HD1", false);
-		assert_proton_presence(HISpose, " HE2", true);
-		assert_proton_presence(HISpose_rf, " HD1", false);
-		assert_proton_presence(HISpose_rf, " HE2", true);
-		assert_proton_presence(HISpose_rr, " HD1", false);
-		assert_proton_presence(HISpose_rr, " HE2", true);
-
-		assert_proton_presence(HIS_Dpose, " HE2", false);
-		assert_proton_presence(HIS_Dpose, " HD1", true);
-		assert_proton_presence(HIS_Dpose_rf, " HE2", false);
-		assert_proton_presence(HIS_Dpose_rf, " HD1", true);
-		assert_proton_presence(HIS_Dpose_rr, " HE2", false);
-		assert_proton_presence(HIS_Dpose_rr, " HD1", true);
+		assert_restype_w_atom_presence( task_HISpose_rf, " HD1", false);
+		assert_restype_w_atom_presence( task_HISpose_rf, " HE2", true);
+		assert_restype_w_atom_presence( task_HISpose_rr, " HD1", false);
+		assert_restype_w_atom_presence( task_HISpose_rr, " HE2", true);
+		assert_restype_w_atom_presence( task_HIS_Dpose_rf, " HE2", false);
+		assert_restype_w_atom_presence( task_HIS_Dpose_rf, " HD1", true);
+		assert_restype_w_atom_presence( task_HIS_Dpose_rr, " HE2", false);
+		assert_restype_w_atom_presence( task_HIS_Dpose_rr, " HD1", true);
 
 		//check for variable tautomer in nonfixed cases
-		TS_ASSERT(HISpose_r.residue_type(2).has_atom_name(" HE2") == true);
-		TS_ASSERT(HISpose_r.residue_type(2).has_atom_name(" HD1") == false);
-		TS_ASSERT(HISpose_r.residue_type(3).has_atom_name(" HE2") == false);
-		TS_ASSERT(HISpose_r.residue_type(3).has_atom_name(" HD1") == true);
-		TS_ASSERT(HISpose_r.residue_type(4).has_atom_name(" HE2") == false);
-		TS_ASSERT(HISpose_r.residue_type(4).has_atom_name(" HD1") == true);
-		TS_ASSERT(HISpose_r.residue_type(5).has_atom_name(" HE2") == true);
-		TS_ASSERT(HISpose_r.residue_type(5).has_atom_name(" HD1") == false);
-
-		TS_ASSERT(HIS_Dpose_r.residue_type(2).has_atom_name(" HE2") == true);
-		TS_ASSERT(HIS_Dpose_r.residue_type(2).has_atom_name(" HD1") == false);
-		TS_ASSERT(HIS_Dpose_r.residue_type(3).has_atom_name(" HE2") == false);
-		TS_ASSERT(HIS_Dpose_r.residue_type(3).has_atom_name(" HD1") == true);
-		TS_ASSERT(HIS_Dpose_r.residue_type(4).has_atom_name(" HE2") == false);
-		TS_ASSERT(HIS_Dpose_r.residue_type(4).has_atom_name(" HD1") == true);
-		TS_ASSERT(HIS_Dpose_r.residue_type(5).has_atom_name(" HE2") == true);
-		TS_ASSERT(HIS_Dpose_r.residue_type(5).has_atom_name(" HD1") == false);
+		assert_restype_w_atom_presence( task_HISpose_r, " HD1", true);
+		assert_restype_w_atom_presence( task_HISpose_r, " HE2", true);
+		assert_restype_w_atom_presence( task_HIS_Dpose_r, " HD1", true);
+		assert_restype_w_atom_presence( task_HIS_Dpose_r, " HE2", true);
 
 	}
 
