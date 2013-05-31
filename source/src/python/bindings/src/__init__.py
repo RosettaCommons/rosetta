@@ -196,7 +196,7 @@ def rosetta_database_from_env():
 
 # rosetta.init()
 def init(*args, **kargs):
-    """Initialize Rosetta.
+    """Initialize Rosetta.  Includes core data and global options.
 
     args  - str or [str] of command line arguments.
             (default ["app", "-ex1", "-ex2aro"])
@@ -205,6 +205,11 @@ def init(*args, **kargs):
                         (default None)
         set_logging_handler - Route rosetta tracing through logging logger 'rosetta'.
                         (default True)
+
+    Examples:
+        init()                     # uses default flags
+        init(extra_options='-pH')  # adds flags to supplement the default
+        init('-pH -database /home/me/pyrosetta/rosetta_database')  # overrides default flags - be sure to include the dB last
     """
 
     logging_support.initialize_logging()
@@ -215,7 +220,7 @@ def init(*args, **kargs):
 
     if kargs.get("set_logging_handler", True):
         logging_support.set_logging_handler()
-    
+
     if not args:
         args = ["app", "-ex1", "-ex2aro"]
     else:
