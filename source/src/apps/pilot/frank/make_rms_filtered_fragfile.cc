@@ -40,6 +40,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
+#include <basic/database/open.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/after_opts.hh>
@@ -47,7 +48,6 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
 
@@ -71,66 +71,73 @@
 
 OPT_1GRP_KEY(Real, fpd, oversample)
 OPT_1GRP_KEY(Boolean, fpd, skip3)
+OPT_1GRP_KEY(Integer, fpd, nfrags)
+OPT_1GRP_KEY(Integer, fpd, fraglen)
 
 
 int main(int argc, char **argv) {
-    try {
-	using namespace core::fragment;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
+	try {
+		using namespace core::fragment;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using namespace core::chemical;
+		using basic::database::full_name;
 
-	using core::Size;
-	using std::string;
+		using core::Size;
+		using std::string;
 
-	NEW_OPT(fpd::oversample, "oversample rate; default=inf (slow!!!)", -1);
-	NEW_OPT(fpd::skip3, "oversample rate; default=inf (slow!!!)", false);
+		NEW_OPT(fpd::oversample, "oversample rate; '-1=inf (slow!!!)", 10);
+		NEW_OPT(fpd::fraglen, "fragment length", 9);
+		NEW_OPT(fpd::nfrags, "fragments per position to generate", 25);
 
-	std::cout << "USAGE:  \n";
-	std::cout << "USAGE: " << argv[0] << "\n";
-	std::cout << "               -in::file::native <CA-trace>\n";
-	std::cout << "               -loops::vall_file <vall>\n";
-	std::cout << "               -fpd::oversample <vall>\n";
-	std::cout << "             [ -out::file::frag_prefix <prefix> ]\n";
-	std::cout << "USAGE:  \n";
-	devel::init( argc,argv );
+		std::cout << "USAGE:  \n";
+		std::cout << "USAGE: " << argv[0] << "\n";
+		std::cout << "               -in::file::native <CA-trace>\n";
+		std::cout << "               -in::file::vall <vall>\n";
+		std::cout << "               -fpd::oversample <vall>\n";
+		std::cout << "               -fpd::nfrags <vall>\n";
+		std::cout << "             [ -out::file::frag_prefix <prefix> ]\n";
+		std::cout << "USAGE:  \n";
+		devel::init( argc,argv );
 
-	core::pose::Pose native_pose;
-	core::import_pose::centroid_pose_from_pdb( native_pose, option[ in::file::native ]() );
-	core::Size nres=native_pose.total_residue();
-	std::string input_seq = native_pose.sequence();
+		core::pose::Pose native_pose;
+		core::import_pose::centroid_pose_from_pdb( native_pose, option[ in::file::native ]() );
 
-	// load vall
-	protocols::frags::RMSVallData rms_vall( option[ OptionKeys::loops::vall_file ] );
-	ConstantLengthFragSet frags3(3),frags9(9);
+		core::Size nres = native_pose.total_residue();
+		core::Size fraglength = option[ OptionKeys::fpd::fraglen ];
+		int nfrags = option[ OptionKeys::fpd::nfrags ];
+		std::string input_seq = native_pose.sequence();
 
-	if (!option[ OptionKeys::fpd::skip3 ]()) {
-		// for each 3 mer get a frame
-		for (int i =  1; i <= nres - 2; ++i) {
-			FrameOP frame3_i = new core::fragment::Frame( i, 3 );
-			utility::vector1< numeric::xyzVector< core::Real> > cas( 3 );
-			for (int k=0; k<3; ++k)
-				cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
-			std::string frag_seq = input_seq.substr( i-1, 3 );
-			rms_vall.get_frags( 200, cas, frag_seq, '-', frame3_i, 0.0, option[ OptionKeys::fpd::oversample ]() );
-			frags3.add( frame3_i );
+		// load vall
+		protocols::frags::RMSVallData rms_vall( full_name( option[ in::file::vall ][1] ) );
+		ConstantLengthFragSet frags(fraglength);
+
+		// for each 9 mer get a frame
+		for (int i =  1; i <= nres - fraglength + 1; ++i) {
+			FrameOP frame_i = new core::fragment::Frame( i, fraglength );
+			utility::vector1< numeric::xyzVector< core::Real> > cas( fraglength );
+
+			// check for cutpoints
+			bool makefrags = true;
+			for (int k=0; k<fraglength; ++k)
+				if (native_pose.fold_tree().is_cutpoint( i+k ) || native_pose.residue(i+k).atom_index("CA") == 0)
+					makefrags=false;
+
+			if (makefrags) {
+				for (int k=0; k<fraglength; ++k)
+					cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
+				std::string frag_seq = input_seq.substr( i-1, fraglength );
+				rms_vall.get_frags( nfrags, cas, frag_seq, '-', frame_i, 0.0, option[ OptionKeys::fpd::oversample ]() );
+				frags.add( frame_i );
+			}
 		}
-	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"3", frags3 );
-	}
 
-	// for each 9 mer get a frame
-	for (int i =  1; i <= nres - 8; ++i) {
-		FrameOP frame9_i = new core::fragment::Frame( i, 9 );
-		utility::vector1< numeric::xyzVector< core::Real> > cas( 9 );
-		for (int k=0; k<9; ++k)
-			cas[k+1] = native_pose.residue(i+k).atom("CA").xyz();
-		std::string frag_seq = input_seq.substr( i-1, 9 );
-		rms_vall.get_frags( 200, cas, frag_seq, '-', frame9_i, 0.0, option[ OptionKeys::fpd::oversample ]() );
-		frags9.add( frame9_i );
+		std::ostringstream oss;
+		oss << option[ OptionKeys::out::file::frag_prefix ]() << fraglength;
+		FragmentIO().write_data( oss.str() , frags );
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
-	FragmentIO().write_data( option[ OptionKeys::out::file::frag_prefix ]()+"9", frags9 );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
-                                  }
 	return 0;
 }

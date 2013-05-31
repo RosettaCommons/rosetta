@@ -150,11 +150,11 @@ MRMover::init(){
 	core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *cen2_scorefxn_  );
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn_  );
 
-	// use weak centroid constraints by default
-	//if (!option[ OptionKeys::constraints::cst_file ].user() && !option[ OptionKeys::constraints::cst_weight ].user()) {
-	//	cen1_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
-	//	cen2_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
-	//}
+	// use weak centroid constraints by default in centroid
+	if (!option[ OptionKeys::constraints::cst_file ].user() && !option[ OptionKeys::constraints::cst_weight ].user()) {
+		cen1_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
+		cen2_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
+	}
 	//if (!option[ OptionKeys::constraints::cst_fa_file ].user() && !option[ OptionKeys::constraints::cst_fa_weight ].user()) {
 	//	fa_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
 	//}
@@ -221,15 +221,18 @@ void MRMover::apply( Pose &pose ) {
 			if (!threaded || !my_loops->is_loop_residue(i)) {
 				if (add_by_jump) {
 					if (template_pose->total_residue() > 0
+								 && !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
 								 && template_pose->residue(template_pose->total_residue()).is_polymer())
 						core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
 
 					template_pose->append_residue_by_jump( pose.residue(i), template_pose->total_residue(), "", "", true );
 					add_by_jump = (!pose.residue(i).is_polymer() || pose.residue(i).is_upper_terminus());
-					if (template_pose->residue(template_pose->total_residue()).is_polymer())
+					if (template_pose->residue(template_pose->total_residue()).is_polymer()
+								 && !template_pose->residue(template_pose->total_residue()).is_lower_terminus() )
 						core::pose::add_lower_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
 				} else if ( !pose.residue(i).is_polymer() ) {
 					if (template_pose->total_residue() > 0
+								 && !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
 								 && template_pose->residue(template_pose->total_residue()).is_polymer())
 						core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
 					template_pose->append_residue_by_jump( pose.residue(i), template_pose->total_residue(), "", "", true );
@@ -246,6 +249,7 @@ void MRMover::apply( Pose &pose ) {
 			}
 		}
 		if (template_pose->total_residue() > 0
+				 && !template_pose->residue(template_pose->total_residue()).is_upper_terminus()
 				 && template_pose->residue(template_pose->total_residue()).is_polymer())
 		core::pose::add_upper_terminus_type_to_pose_residue( *template_pose, template_pose->total_residue() );
 		core::pose::PDBInfoOP new_pdb_info = new core::pose::PDBInfo( *template_pose );
@@ -262,13 +266,14 @@ void MRMover::apply( Pose &pose ) {
 			core::conformation::idealize_position(i, pose.conformation());
 		}
 
+
 		protocols::hybridization::HybridizeProtocol rebuild;
 		rebuild.add_template( template_pose, "AUTO", symm_def_file_);
-		if (fragments_big_) rebuild.add_big_fragments( fragments_big_ );
-		if (fragments_small_) rebuild.add_small_fragments( fragments_small_ );
+		if (fragments_big_trim_) rebuild.add_big_fragments( fragments_big_trim_ );
+		if (fragments_small_trim_) rebuild.add_small_fragments( fragments_small_trim_ );
 		rebuild.set_stage1_scorefxn( cen1_scorefxn_ );
 		rebuild.set_stage2_scorefxn( cen2_scorefxn_ );
-		rebuild.set_stage1_increase_cycles( threaded ? 0.5 : 0.0 );
+		rebuild.set_stage1_increase_cycles( threaded ? 1.0 : 0.0 );
 		rebuild.set_stage2_increase_cycles( 0.5 );
 		rebuild.set_batch_relax( 0 ); // centroid only
 		rebuild.apply( pose );
@@ -493,8 +498,8 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 
 		// try to avoid putting the vrt too close to termini
 		int i_min = 1;
-		int r_start = (int)std::floor(   nres/3. );
-		int r_end   = (int)std::ceil ( 2.*nres/3. );
+		int r_start = (int)std::floor(   nres/3 );
+		int r_end   = (int)std::ceil ( 2*nres/3 );
 		core::Real d_min = 99999, this_d;
 		for ( int i=r_start; i<=r_end; ++i ) {
 			core::conformation::Residue const & rsd( new_query_pose.residue(i) );
@@ -531,34 +536,49 @@ void MRMover::trim_target_pose( Pose & query_pose, protocols::loops::Loops &loop
 	}
 	loops = new_loops;
 
-	// remap fragments
-	utility::vector1< core::fragment::FragSetOP > new_frag_libs;
-	for (int i=1; i<=2; ++i) {
-		core::fragment::FragSetOP old_frag_set = (i==1 ? fragments_big_ : fragments_small_);
-		core::fragment::FragSetOP new_frag_set( old_frag_set->empty_clone() );
+	// copy pose
+	query_pose = new_query_pose;
+
+	if (fragments_big_) {
+		// remap fragments
+		core::fragment::FragSetOP new_big_frags( fragments_big_->empty_clone() );
 
 		// iterate over frames, clone if mapped
-		for ( core::fragment::ConstFrameIterator f=old_frag_set->begin(); f != old_frag_set->end(); ++f ) {
+		for ( core::fragment::ConstFrameIterator f=fragments_big_->begin(); f != fragments_big_->end(); ++f ) {
 			core::Size start_res = f->start();
 			core::Size end_res = f->end();
 
 			// if any residue is unmapped, remove the frame
 			bool keepthis = true;
-			for (Size j=start_res; j<=end_res; ++j)
-				keepthis &= ( new_invmapping[ j ] != 0 );
+			for (Size j=start_res; j<=end_res; ++j) keepthis &= ( new_invmapping[ j ] != 0 );
 			if ( keepthis ) {
 				core::fragment::FrameOP new_f = f->clone_with_frags();
 				new_f->align(new_invmapping);
-				new_frag_set->add( new_f );
+				new_big_frags->add( new_f );
 			}
 		}
-		if (i==1)
-			fragments_big_ = new_frag_set;
-		else
-			fragments_small_ = new_frag_set;
+		fragments_big_trim_ = new_big_frags;
 	}
 
-	query_pose = new_query_pose;
+	if (fragments_small_) {
+		core::fragment::FragSetOP new_small_frags( fragments_small_->empty_clone() );
+		for ( core::fragment::ConstFrameIterator f=fragments_small_->begin(); f != fragments_small_->end(); ++f ) {
+			core::Size start_res = f->start();
+			core::Size end_res = f->end();
+
+			// if any residue is unmapped, remove the frame
+			bool keepthis = true;
+			for (Size j=start_res; j<=end_res; ++j) keepthis &= ( new_invmapping[ j ] != 0 );
+			if ( keepthis ) {
+				core::fragment::FrameOP new_f = f->clone_with_frags();
+				new_f->align(new_invmapping);
+				new_small_frags->add( new_f );
+			}
+		}
+		// update
+		fragments_small_trim_ = new_small_frags;
+	}
+
 }
 
 }

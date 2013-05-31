@@ -433,6 +433,7 @@ sources = {
 		"FragmentMover",
 		"MonteCarloRecover",
 		"MonteCarloTest",
+		"MonteCarloReset",
 		"GenericMonteCarloMover",
 		"GreenPacker",
 		"GunnCost",

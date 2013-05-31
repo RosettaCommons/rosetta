@@ -436,11 +436,12 @@ if ($ncs_mode == 1) {
 
 		my $del_COM = vsub ($COM_i, $COM_0);
 		push @allCOMs, $del_COM;
-		print STDERR "center ($primary_chain): ".$COM_0->[0]." ".$COM_0->[1]." ".$COM_0->[2]."\n";
-		print STDERR "center ($sec_chain): ".$COM_i->[0]." ".$COM_i->[1]." ".$COM_i->[2]."\n";
-		print STDERR "center->center transformation ".$del_COM->[0]." ".$del_COM->[1]." ".$del_COM->[2]."\n";
+		#print STDERR "center ($primary_chain): ".$COM_0->[0]." ".$COM_0->[1]." ".$COM_0->[2]."\n";
+		#print STDERR "center ($sec_chain): ".$COM_i->[0]." ".$COM_i->[1]." ".$COM_i->[2]."\n";
+		#print STDERR "center->center transformation ".$del_COM->[0]." ".$del_COM->[1]." ".$del_COM->[2]."\n";
 
 		my ($X,$Y,$Z,$W)=R2quat($R);
+
 		my $Worig = $W;
 		my $Wmult = 1;
 		if ($W < 0) { $W = -$W; $Wmult = -1; }
@@ -455,6 +456,8 @@ if ($ncs_mode == 1) {
 
 		push @sym_orders, $sym_order;
 		print STDERR "Found ".$sym_order."-fold (".(PI/$omega).") symmetric complex at chain ".$sec_chain_ids[0]."\n";
+		my $rotaxis = [$X,$Y,$Z]; normalize( $rotaxis );
+		print STDERR "rotation axis    ".$rotaxis->[0]." ".$rotaxis->[1]." ".$rotaxis->[2]."\n";
 
 		# now make perfectly symmetrical version of superposition
 		my $newW = -$Wmult *cos( PI/$sym_order );
@@ -495,13 +498,6 @@ if ($ncs_mode == 1) {
 		}
 	}
 
-	# 2) Icosahedral symmetries
-	#   ??? TO DO
-	#  * 5-fold symm axis must lie in y-z plane
-	#  * two fold axes on y and z
-	#  * 3-fold about line x=y=z (?)
-
-
 	# Now create the symmetry tree
 	foreach my $i (0..$#allQs) {
 		my $newQ = $allQs[ $i ];
@@ -529,14 +525,14 @@ if ($ncs_mode == 1) {
 		}
 
 		# special case for Dn symmetry
-		if ( $i == 1 && $#allQs == 1 ) { 
+		if ( $i == 1 && $#allQs == 1 ) {
 			my $axis_proj_i =  [ $allQs[1-$i]->[0],  $allQs[1-$i]->[1],  $allQs[1-$i]->[2] ];
 			# project $delCOM along this axis
 			normalize( $axis_proj_i );
 			my $del_COM_inplane    = vsub( $newDelCOM , vscale(dot($newDelCOM,$axis_proj_i),$axis_proj_i) );
 			$err_pos = vscale( $sym_orders[ $i ] , $del_COM_inplane );
 		}
-		print STDERR "  translation error = ".vnorm( $err_pos )."\n";
+		print STDERR "[$i] translation error = ".vnorm( $err_pos )."\n";
 
 		# special case for icosehedral symmetry
 		# see above for restrictions
@@ -546,6 +542,8 @@ if ($ncs_mode == 1) {
 
 		expand_symmops_by_split( $NCS_ops, $newR, $adj_newDelCOM, $sym_order);
 	}
+
+	print STDERR "system center  ".$NCS_ops->{T}->[0]." ".$NCS_ops->{T}->[1]." ".$NCS_ops->{T}->[2]."\n";
 
 	my ($nnodes,$nleaves) = tree_size( $NCS_ops );
 	print STDERR "Found a total of $nleaves monomers in the symmetric complex.\n";
@@ -1524,13 +1522,13 @@ if ($helix_mode == 1) {
 					# rotate about helical axis then translate to the new CoM
 					my $R_helix_i = mmult( $R_i, $Rinv_helix );
 					my $T_helix_i = vadd( $Tinv_helix, mapply( $Rinv_helix, $T_i) );
-			
+
 					my $R_global_T = mapply( $Rinv_helix, $global_T );
-			
+
 					$Rs->{ $sec_shift."_".-$subunit."_".$i } = $R_helix_i;
 					$Ts->{ $sec_shift."_".-$subunit."_".$i } =
 						vadd( $T_sec, vadd( $R_global_T, vadd( $COM_0, vadd( $T_helix_i, vscale( -$subunit, $del_COM_alonghelix ) ) ) ) );
-			
+
 					$T_i = vadd( $T_i , mapply( $R_i, $T_ncs ) );
 					$R_i = mmult( $R_ncs , $R_i );
 				}
@@ -1769,10 +1767,10 @@ if ($helix_mode == 1) {
 			if ($fndCompatible == 0) {
 				foreach my $i (0..$sym_order_ncs-1) {
 					my $id = $sec_shift."_".$subunit."_".$i;
-	
+
 					my $xyzline = "xyz VRT_".$id."_base";
 					$xyzline =~ s/_-(\d)/_n\1/g;
-	
+
 					# X --> points towards the subunit
 					my $myX = vsub( $T_about,  $Ts->{ $id } );
 					if ( vnorm($myX) < 1e-6 ) {
@@ -1784,7 +1782,7 @@ if ($helix_mode == 1) {
 						}
 					}
 					normalize( $myX );
-	
+
 					my $string = sprintf("%.6f,%.6f,%.6f", $myX->[0], $myX->[1], $myX->[2]);
 					$xyzline = $xyzline." ".$string;
 					# Y --> Z points along helical axis
@@ -1794,15 +1792,15 @@ if ($helix_mode == 1) {
 					normalize( $myY );
 					$string = sprintf("%.6f,%.6f,%.6f", $myY->[0], $myY->[1], $myY->[2]);
 					$xyzline = $xyzline." ".$string;
-	
-	
+
+
 					# orig
 					#my $origin  = $T_about;
 					my $origin  =  $Ts->{ $id } ;
 					$string = sprintf("%.6f,%.6f,%.6f", $origin->[0], $origin->[1], $origin->[2]);
 					$xyzline = $xyzline." ".$string;
 					print "$xyzline\n";
-	
+
 					my $fakePDBline1 = sprintf "ATOM    %3d  C   ORI Y %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 1,$subunit,
 										 $origin->[0], $origin->[1], $origin->[2];
 					my $fakePDBline2 = sprintf "ATOM    %3d  O   X   Y %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 2,$subunit,
@@ -1879,7 +1877,7 @@ if ($helix_mode == 1) {
 			}
 		}
 	}
-	
+
 	#jump from com to subunit
 	foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
 		foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
@@ -1976,7 +1974,7 @@ if ($helix_mode == 1) {
 				foreach my $i (0..$sym_order_ncs-1) {
 					my $id = $sec_shift."_".$subunit."_".$i; $id =~ s/-(\d)/n\1/g;
 					print " JUMP_".$id."_to_com";
-	
+
 					if ($subunit != 0) {
 						$id = $sec_shift."_".-$subunit."_".$i; $id =~ s/-(\d)/n\1/g;
 						print "  JUMP_".$id."_to_com";

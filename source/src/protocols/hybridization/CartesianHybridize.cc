@@ -198,7 +198,11 @@ CartesianHybridize::init() {
 	increase_cycles_ = option[cm::hybridize::stage2_increase_cycles]();
 	no_global_frame_ = option[cm::hybridize::no_global_frame]();
 	linmin_only_ = option[cm::hybridize::linmin_only]();
+
+	// only adjustable via methods (for now)
 	cartfrag_overlap_ = 2;
+	seqfrags_only_ = false;
+	nofragbias_ = false;
 
 	// default scorefunction
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
@@ -430,8 +434,7 @@ CartesianHybridize::apply( Pose & pose ) {
 	if (increase_cycles_ < 1.) {
 		Size niter = (Size) (200*increase_cycles_);
 		options_lbfgs.max_iter(niter);
-	}
-	else {
+	}	else {
 		options_lbfgs.max_iter(200);
 	}
 	core::optimization::CartesianMinimizer minimizer;
@@ -546,7 +549,9 @@ sampler:
 			} else if (m==4) {
 				action = 3;
 			}
-		  
+
+			if ( seqfrags_only_ ) action = 3;
+
 			std::string action_string;
 			if (action == 1) action_string = "fragNS";
 			if (action == 2) action_string = "frag";
@@ -566,7 +571,7 @@ sampler:
 								(int)n_prot_res) {
 							--nfrags;
 						}
-            
+
 						core::Size frag_id;
 						core::Size max_frag_trial=nfrags*3;
 						for (core::Size ii=1; ii<=max_frag_trial; ++ii) {
@@ -583,7 +588,7 @@ sampler:
 						} //trial different frags in a tempalte
 				    if ( movable_loop==true)
 							break;
-			} //end of trial different templates	
+			} //end of trial different templates
 
 				if (frag->size() > 14)
 					action_string = action_string+"_15+";
@@ -636,13 +641,16 @@ sampler:
 				}
 
 				// 25% chance of random position
-				int random_residue_move=numeric::random::random_range(1,allowed_to_move_.size());				
+				int random_residue_move=numeric::random::random_range(1,allowed_to_move_.size());
 				while (!allowed_to_move_[random_residue_move]) {
 						random_residue_move=numeric::random::random_range(1,allowed_to_move_.size());
 				}
 				max_poses[ 4 ] = random_residue_move;
-				//max_poses[ 4 ] = numeric::random::random_range(1,n_prot_res);
 				int select_position = numeric::random::random_range(1,4);
+
+				//fpd  hack
+				if (nofragbias_) select_position=4;
+
 				if (select_position == 4)
 					action_string = action_string+"_rand";
 				core::Size max_pos = max_poses[ select_position ];

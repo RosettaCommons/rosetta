@@ -152,6 +152,7 @@ static MoverRegistrator< moves::RandomMoverCreator > reg_RandomMoverCreator;
 static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedConvergenceMoverCreator;
 static MoverRegistrator< simple_moves::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
 static MoverRegistrator< simple_moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
+static MoverRegistrator< simple_moves::MonteCarloResetCreator > reg_MonteCarloResetCreator;
 static MoverRegistrator< moves::PyMolMoverCreator > reg_PyMolMoverCreator;
 static MoverRegistrator< moves::RampingMoverCreator > reg_RampingMoverCreator;
 

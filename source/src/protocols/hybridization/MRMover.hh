@@ -55,8 +55,12 @@ public:
 		cen2_scorefxn_->set_weight( core::scoring::elec_dens_fast, newval );
 	}
 
-	void set_fullatom_density_weight( core::Real newval ) {
-		fa_scorefxn_->set_weight( core::scoring::elec_dens_window, newval );
+	void set_fullatom_density_weight( core::Real newval, bool fast ) {
+		if (fast) {
+			fa_scorefxn_->set_weight( core::scoring::elec_dens_fast, 10*newval );
+		} else {
+			fa_scorefxn_->set_weight( core::scoring::elec_dens_window, newval );
+		}
 	}
 
 	// set options
@@ -64,8 +68,8 @@ public:
 	void set_symmdef_file( std::string newval ) { symm_def_file_=newval; }
 	void set_disulf( utility::vector1<std::string> newval ) { disulfs_=newval; };
 
-	void set_big_fragments( core::fragment::FragSetOP newval ) { fragments_big_ = newval; }
-	void set_small_fragments( core::fragment::FragSetOP newval ) { fragments_small_ = newval; }
+	void set_big_fragments( core::fragment::FragSetOP newval ) { fragments_big_trim_ = fragments_big_ = newval; }
+	void set_small_fragments( core::fragment::FragSetOP newval ) { fragments_small_trim_ = fragments_small_ = newval; }
 
 private:
 	// remove long gaps from threaded pose
@@ -80,8 +84,8 @@ private:
 	std::string symm_def_file_;
 
 	// fragments
-	core::fragment::FragSetOP fragments_big_;
-	core::fragment::FragSetOP fragments_small_;
+	core::fragment::FragSetOP fragments_big_, fragments_small_;
+	core::fragment::FragSetOP fragments_big_trim_, fragments_small_trim_;
 
 	// scorefunctions
 	core::scoring::ScoreFunctionOP cen1_scorefxn_;

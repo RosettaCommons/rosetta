@@ -52,7 +52,7 @@ namespace hybridization {
 using namespace core;
 using namespace protocols::moves;
 using namespace protocols::loops;
-	
+
 class CartesianHybridize: public protocols::moves::Mover {
 public:
 	CartesianHybridize();
@@ -60,7 +60,7 @@ public:
 	CartesianHybridize(
 		utility::vector1 < core::pose::PoseOP > const & templates_in,
 		utility::vector1 < core::Real > const & template_wts_in,
-		utility::vector1 < protocols::loops::Loops > const & template_chunks_in, 
+		utility::vector1 < protocols::loops::Loops > const & template_chunks_in,
 		utility::vector1 < protocols::loops::Loops > const & template_contigs_in,
 		core::fragment::FragSetOP fragments9_in );
 
@@ -79,6 +79,8 @@ public:
 	void set_linmin_only(bool linmin_only_in) { linmin_only_=linmin_only_in; }
 	void set_cartfrag_overlap(core::Size cartfrag_overlap_in) { cartfrag_overlap_=cartfrag_overlap_in; }
   void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
+	void set_seqfrags_only(bool seqfrags_only_in) { seqfrags_only_=seqfrags_only_in; }
+	void set_nofragbias(bool nofragbias_in) { nofragbias_=nofragbias_in; }
 
 	//
 	std::string	get_name() const { return "CartesianHybridize"; }
@@ -95,6 +97,7 @@ private:
 	core::Real increase_cycles_;
 	core::Size ncycles_, cartfrag_overlap_;
 	bool no_global_frame_, linmin_only_;
+	bool seqfrags_only_, nofragbias_;
 
 	// fragments
 	utility::vector1 < core::pose::PoseOP > templates_;
@@ -109,9 +112,9 @@ private:
   // allowed to move regions
   utility::vector1<bool> allowed_to_move_;
 }; //class CartesianHybridize
-	
-} // hybridize 
-//} // comparative_modeling 
+
+} // hybridize
+//} // comparative_modeling
 } // protocols
 
 #endif

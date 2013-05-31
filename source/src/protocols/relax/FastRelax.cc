@@ -351,22 +351,29 @@ FastRelax::parse_my_tag(
 	mm->set_bb( true );
 	mm->set_jump( true );
 
-	
+
 	//Make sure we have a taskfactory before we overwrite our null in the base class.
 	core::pack::task::TaskFactoryOP tf = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	if ( tf->size() > 0){
 		set_task_factory( tf );
 	}
-	
+
 	// initially, all backbone torsions are movable
 	protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false);
-	set_movemap(mm);
 
 	default_repeats_ = tag->getOption< int >( "repeats", 8 );
 	std::string script_file = tag->getOption< std::string >("relaxscript", "" );
 
 	bool batch = tag->getOption< bool >( "batch", false );
 	cartesian (tag->getOption< bool >( "cartesian", false ) );
+
+	if ( tag->getOption< bool >( "bondangle", false ) )
+		mm->set( core::id::THETA, true );
+
+	if ( tag->getOption< bool >( "bondlength", false ) )
+		mm->set( core::id::D, true );
+
+	set_movemap(mm);
 
 	if (batch) {
 		set_script_to_batchrelax_default( default_repeats_ );
@@ -572,11 +579,11 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	if ( core::pose::symmetry::is_symmetric( pose )  )  {
 		core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
 	}
-	
+
 	//Change behavior of Task to be initialized in PackRotamersMover to allow design directly within FastRelax
-	// Jadolfbr 5/2/2013 
+	// Jadolfbr 5/2/2013
 	TaskFactoryOP local_tf = new TaskFactory();
-	
+
 	//If a user gives a TaskFactory, completely respect it.
 
 	if ( get_task_factory() ){
@@ -589,9 +596,9 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			TR << "Using Resfile for packing step. " <<std::endl;
 		}
 		else {
-			//Keep the same behavior as before if no resfile given for design.  
+			//Keep the same behavior as before if no resfile given for design.
 			//Though, as mentioned in the doc, movemap now overrides chi_move as it was supposed to.
-			
+
 			local_tf->push_back(new RestrictToRepacking());
 			PreventRepackingOP turn_off_packing = new PreventRepacking();
 			for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
@@ -604,19 +611,19 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	}
 	//Include current rotamer by default - as before.
 	local_tf->push_back(new IncludeCurrent());
-	
+
 	if( limit_aroma_chi2() ) {
 		local_tf->push_back(new toolbox::task_operations::LimitAromaChi2Operation());
 	}
-	
+
 	protocols::simple_moves::PackRotamersMoverOP pack_full_repack_ = new protocols::simple_moves::PackRotamersMover( local_scorefxn );
-	
+
 	// If symmetric pose then create a symmetric rotamers mover
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
 		pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn);
 	}
 	pack_full_repack_->task_factory(local_tf);
-	
+
 	(*local_scorefxn)( pose );
 
 
@@ -1128,7 +1135,7 @@ void FastRelax::batch_apply(
 	// create a local array of relax_decoys
 	std::vector < SRelaxPose > relax_decoys;
 	core::Size total_mem = 0;
-	
+
 	for( core::Size i = 0; i < input_structs.size(); ++i ){
 		TR.Debug << "iClock" << clock() << std::endl;
 
@@ -1192,7 +1199,7 @@ void FastRelax::batch_apply(
 
 				bool const repack = basic::options::option[ basic::options::OptionKeys::relax::chi_move]();
 				utility::vector1<bool> allow_repack( pose.total_residue(), repack);
-				
+
 				if ( !basic::options::option[ basic::options::OptionKeys::relax::chi_move].user() ) {
 					for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
 						allow_repack[ pos ] = local_movemap->get_chi( pos );

@@ -225,6 +225,9 @@ HybridizeProtocol::init() {
 	hetatm_self_cst_weight_ = 10.;
 	hetatm_prot_cst_weight_ = 0.;
 	cartfrag_overlap_ = 2;
+	seqfrags_only_ = false;
+	nofragbias_ = false;
+
 	jump_move_ = false;
 	jump_move_repeat_ = 1;
 
@@ -996,6 +999,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			cart_hybridize->set_increase_cycles( stage2_increase_cycles_ );
 			cart_hybridize->set_no_global_frame( no_global_frame_ );
 			cart_hybridize->set_linmin_only( linmin_only_ );
+			cart_hybridize->set_nofragbias( nofragbias_ );
+			cart_hybridize->set_seqfrags_only( seqfrags_only_ );
 			cart_hybridize->set_cartfrag_overlap( cartfrag_overlap_ );
 			cart_hybridize->set_movable_region( allowed_to_move_ );
 			cart_hybridize->apply(pose);
@@ -1336,16 +1341,24 @@ HybridizeProtocol::parse_my_tag(
 		auto_frag_insertion_weight_ = tag->getOption< bool >( "auto_frag_insertion_weight" );
 	if( tag->hasOption( "max_registry_shift" ) )
 		max_registry_shift_ = tag->getOption< core::Size >( "max_registry_shift" );
+	if( tag->hasOption( "repeats" ) )
+		relax_repeats_ = tag->getOption< core::Size >( "repeats" );
+	if( tag->hasOption( "disulf_file" ) )
+		disulf_file_ = tag->getOption< std::string >( "disulf_file" );
+
+
+	// stage 2-specific options
 	if( tag->hasOption( "no_global_frame" ) )
 		no_global_frame_ = tag->getOption< bool >( "no_global_frame" );
 	if( tag->hasOption( "linmin_only" ) )
 		linmin_only_ = tag->getOption< bool >( "linmin_only" );
-	if( tag->hasOption( "repeats" ) )
-		relax_repeats_ = tag->getOption< core::Size >( "repeats" );
 	if( tag->hasOption( "cartfrag_overlap" ) )
 		cartfrag_overlap_ = tag->getOption< core::Size >( "cartfrag_overlap" );
-	if( tag->hasOption( "disulf_file" ) )
-		disulf_file_ = tag->getOption< std::string >( "disulf_file" );
+	if( tag->hasOption( "seqfrags_only" ) )
+		seqfrags_only_ = tag->getOption< core::Size >( "seqfrags_only" );
+	if( tag->hasOption( "nofragbias" ) )
+		nofragbias_ = tag->getOption< core::Size >( "nofragbias" );
+
 
 	// scorefxns
 	if( tag->hasOption( "stage1_scorefxn" ) ) {

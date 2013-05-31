@@ -140,6 +140,7 @@
 #include <protocols/moves/PyMolMoverCreator.hh>
 #include <protocols/simple_moves/MonteCarloRecoverCreator.hh>
 #include <protocols/simple_moves/MonteCarloTestCreator.hh>
+#include <protocols/simple_moves/MonteCarloResetCreator.hh>
 #include <protocols/moves/RampingMoverCreator.hh>
 #include <protocols/nonlocal/SingleFragmentMoverCreator.hh>
 

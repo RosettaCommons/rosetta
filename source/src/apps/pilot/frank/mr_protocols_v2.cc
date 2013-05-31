@@ -38,6 +38,7 @@
 OPT_1GRP_KEY(Integer, MR, max_gaplength_to_model)
 OPT_1GRP_KEY(Real, MR, cen_dens_wt)
 OPT_1GRP_KEY(Real, MR, fa_dens_wt)
+OPT_1GRP_KEY(Boolean, MR, fast)
 OPT_1GRP_KEY(StringVector, MR, disulf)
 OPT_1GRP_KEY(String, MR, mode)
 
@@ -78,7 +79,7 @@ my_main( void* ) {
 
 	if (option[ OptionKeys::edensity::mapfile ].user()) {
 		do_MR->set_centroid_density_weight( option[ OptionKeys::MR::cen_dens_wt ]() );
-		do_MR->set_fullatom_density_weight( option[ OptionKeys::MR::fa_dens_wt ]() );
+		do_MR->set_fullatom_density_weight( option[ OptionKeys::MR::fa_dens_wt ](), option[ OptionKeys::MR::fast ]() );
 	}
 
 	// run
@@ -95,6 +96,7 @@ main( int argc, char * argv [] ) {
 	NEW_OPT(MR::max_gaplength_to_model, "max gaplength to rebuild", 8);
     NEW_OPT(MR::cen_dens_wt, "centroid density weight", 4.0);
     NEW_OPT(MR::fa_dens_wt, "fullatom density weight", 1.0);
+    NEW_OPT(MR::fast, "fast mode", false);
     NEW_OPT(MR::disulf, "disulf patterning", utility::vector1<std::string>());
     NEW_OPT(MR::mode, "noop", "X");
 
