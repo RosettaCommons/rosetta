@@ -217,6 +217,7 @@ MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modifi
 
 // default scorefxns
 	ScoreFunctionOP commandline_sfxn = core::scoring::getScoreFunction();
+	ScoreFunctionOP talaris2013 = ScoreFunctionFactory::create_score_function(TALARIS_2013);
 	ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH );
 	ScoreFunctionOP docking_score = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, DOCK_PATCH );
 	ScoreFunctionOP soft_rep = ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS );
@@ -224,6 +225,7 @@ MoverOP DockDesignParser::generate_mover_for_protocol(Pose & pose, bool & modifi
 	ScoreFunctionOP score4L = ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 
 	data.add( "scorefxns", "commandline", commandline_sfxn );
+	data.add( "scorefxns", "talaris2013", talaris2013 );
 	data.add( "scorefxns", "score12", score12 );
 	data.add( "scorefxns", "score_docking", docking_score );
 	data.add( "scorefxns", "soft_rep", soft_rep );

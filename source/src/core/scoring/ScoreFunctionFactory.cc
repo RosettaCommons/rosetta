@@ -238,7 +238,7 @@ void ScoreFunctionFactory::load_weights_file( std::string weights_tag, ScoreFunc
 	scorefxn->initialize_from_file(weights_tag);
 }
 
-std::string const TALARIS_2013( "talaris_2013" );
+std::string const TALARIS_2013( "talaris2013" );
 std::string const PRE_TALARIS_2013_STANDARD_WTS( "pre_talaris_2013_standard" );
 std::string const CENTROID_WTS( "cen_std" );
 std::string const SOFT_REP_WTS( "soft_rep" );
