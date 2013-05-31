@@ -3,6 +3,6 @@
 -residue TRP
 -o testTRP.stubs
 -mute core.io.database
--run:n_cycles 10
+-run:n_cycles 5
 -norepack1
 -overwrite

@@ -117,8 +117,8 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     parser.add_option("-t", "--timeout",
       default=0,
       type="int",
-      help="Maximum runtime for each test, in minutes (default: no limit)",
-      metavar="MINUTES",
+      help="Maximum runtime for each test, in seconds (default: no limit)",
+      metavar="SECONDS",
     )
     parser.add_option("-c", "--compiler",
       default="gcc",
@@ -287,7 +287,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
                 def run(times):
                     #execute('Running Test %s' % test, 'bash ' + cmd_line_sh)
-                    extra = 'ulimit -t%s && ' % Options.timeout  if Options.timeout else ''
+                    extra = 'ulimit -t %s && ' % Options.timeout  if Options.timeout else ''
                     res = execute('Running Test %s' % test, '%sbash %s' % (extra, cmd_line_sh), return_=True)
                     if res:
                         error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
@@ -309,14 +309,14 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
 
                 def error_finish(nt, times):
-                    error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
+                    error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (nt.test, datetime.datetime.now())
                     file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
                     print error_string,
                     times[nt.test] = float('nan')
                     normal_finish(nt, times)
 
                 def timeout_finish(nt, times):
-                    error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (test, Options.timeout, datetime.datetime.now())
+                    error_string = "*** Test %s exceeded the timeout=%s  and will be killed! [%s]\n" % (nt.test, Options.timeout, datetime.datetime.now())
                     file(path.join(nt.workdir, ".test_got_timeout_kill.log"), 'w').write(error_string)
                     print error_string,
                     times[nt.test] = float('inf')
@@ -331,7 +331,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                 else:
                     nt = NT(times=runtimes, test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
                     run(runtimes)
-                    if nt.timeout and (time.time() - nt.start_time > nt.timeout): nt.timeout_finish(nt)
+                    if nt.timeout and (time.time() - nt.start_time > nt.timeout): nt.timeout_finish(nt,runtimes)
                     else: normal_finish(nt,runtimes)
 
             mWait(all_=True)  # waiting for all jobs to finish before movinf in to next phase
