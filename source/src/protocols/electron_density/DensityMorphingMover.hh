@@ -55,11 +55,7 @@ public:
 	*/
 	
 private:
-	//typedef core::pack::task::TaskFactoryCOP TaskFactoryCOP;
-
-	// pointers to data that are passed in
-	//TaskFactoryCOP task_factory_;
-
+	core::Size nres_;
 	core::Size frag_size_;
 	core::Real search_radius_;
 	core::Real cst_weight_;

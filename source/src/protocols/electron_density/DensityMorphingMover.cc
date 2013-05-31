@@ -20,6 +20,9 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pose/symmetry/util.hh>
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
@@ -55,12 +58,22 @@ void DensityMorphingMover::init() {
 	coord_dev_factor_ = 1.;
 }
 	
-core::id::AtomID find_best_anchor(core::pose::Pose const & pose) {
+core::id::AtomID find_best_anchor(core::pose::Pose & pose) {
+	core::Size nres = pose.total_residue();
+	//symmetry
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+									dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		
+		symm_info = SymmConf.Symmetry_Info();
+		nres = symm_info->num_independent_residues();
+	}
+
 	// find CoM
 	numeric::xyzVector<core::Real> sum_xyz(0.0);
 	numeric::xyzVector<core::Real> anchor_xyz(0.0);
 	core::Real natom = 0.0;
-	core::Size nres = pose.total_residue();
 	for ( core::Size ires = 1; ires <= nres; ++ires ) {
 		if ( pose.residue_type(ires).has("CA") ) {
 			core::Size iatom = pose.residue_type(ires).atom_index("CA");
@@ -94,7 +107,7 @@ utility::vector1<core::id::AtomID> DensityMorphingMover::collect_fragment_atom_i
 	for (int jres = (int) ires ;
 		 jres <= (int) (ires + extend_residues);
 		 ++jres) {
-		if (jres < 1 || jres > (int) pose.total_residue()) break;
+		if (jres < 1 || jres > (int) nres_) break;
 		
 		if ((Size)jres != ires) {
 			if (! pose.residue(jres).is_polymer_bonded((Size) (jres-1))) break;
@@ -109,7 +122,7 @@ utility::vector1<core::id::AtomID> DensityMorphingMover::collect_fragment_atom_i
 	for (int jres = (int) ires - 1;
 		 jres >= (int) (ires - extend_residues);
 		 --jres) {
-		if (jres < 1 || jres > (int) pose.total_residue()) break;
+		if (jres < 1 || jres > (int) nres_) break;
 		
 		if (! pose.residue(jres).is_polymer_bonded((Size) (jres+1))) break;
 		
@@ -127,9 +140,20 @@ void DensityMorphingMover::apply(core::pose::Pose & pose) {
 	core::scoring::electron_density::ElectronDensity & edensity_map = core::scoring::electron_density::getDensityMap();
 	core::Real reso(edensity_map.getResolution());
 
+	nres_ = pose.total_residue();
+	//symmetry
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+
+		symm_info = SymmConf.Symmetry_Info();
+		nres_ = symm_info->num_independent_residues();
+	}
+	
 	core::id::AtomID best_anchor = find_best_anchor(pose);
 
-	for (core::Size ires = 1; ires<=pose.total_residue(); ++ires) {
+	for (core::Size ires = 1; ires<=nres_; ++ires) {
 		if ( pose.residue(ires).aa() == core::chemical::aa_vrt ) continue;
 		utility::vector1 <core::id::AtomID> atom_ids = collect_fragment_atom_ids(pose, ires, (frag_size_ - 1)/2);
 		
