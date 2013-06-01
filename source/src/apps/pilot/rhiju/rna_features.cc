@@ -29,6 +29,7 @@
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/sasa.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/rna/RNA_BasePairClassifier.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
@@ -37,6 +38,7 @@
 
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -51,6 +53,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBInfo.fwd.hh>
+#include <core/pose/util.hh>
 #include <devel/init.hh>
 #include <core/import_pose/import_pose.hh>
 
@@ -211,6 +214,7 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
+	using namespace core::id;
 	using namespace protocols::rna;
 	using namespace scoring::rna;
 
@@ -231,6 +235,12 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 	hbond_options->use_hb_env_dep( false );
 	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( hbond_options ) );
 	hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
+
+	// sasa calculation
+	AtomID_Map< Real > atom_sasa;
+	utility::vector1< Real > rsd_sasa;
+	Real const probe_radius( 1.4 );
+	scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, true );
 
 	vector1< char  > nt_names = utility::tools::make_vector1( 'a', 'c', 'g', 'u' );
 
@@ -306,6 +316,25 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 		}
 
 
+		//sasa
+		for ( Size m = 1; m <= num_nt; m++ ){
+
+			// need an instance of this nucleotide to play around with.
+			// This better have RNA residue types in it.
+			ResidueTypeSet const & rsd_set = rsd.residue_type_set();
+			ResidueTypeCOPs const & rsd_types = rsd_set.aa_map( chemical::aa_from_oneletter_code( nt_names[m] ) );
+			ResidueType const & rsd_type = *rsd_types[1];
+			for ( Size k = 1; k <= rsd_type.nheavyatoms(); k++ ){
+				std::string atom_name = rsd_type.atom_name( k );
+				Real sasa_value = 0.0;
+				if ( rsd.type().has_atom_name( atom_name ) ){
+					AtomID atom_id = pose::named_atom_id_to_atom_id( NamedAtomID( atom_name, i ), pose );
+					sasa_value = atom_sasa[ atom_id ];
+				}
+				ObjexxFCL::strip_whitespace(atom_name);
+				save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_"+atom_name+"_SASA", sasa_value);
+			}
+		}
 
 		if ( num_features == 0 ) num_features = feature_counter; // initialize num_features.
 		runtime_assert( feature_vals.size() == num_features ); // sanity check.
