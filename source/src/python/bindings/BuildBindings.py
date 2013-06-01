@@ -104,12 +104,7 @@ def main(args):
       help="Perform a Debug build when possible.",
       )
 
-    parser.add_option("--debug_bindings",
-      action="store_true", default=False,
-      help="Build bindings with -DDEBUG.",
-      )
-
-    parser.add_option("--numpy_support",
+    parser.add_option("--numpy-support",
       action="store_true", default=False,
       help="Build bindings numpy type conversion support.",
       )
@@ -239,8 +234,7 @@ def main(args):
     print "--boost-lib", options.boost_lib
     print '--update', options.update
     print '--debug', options.debug
-    print '--debug_bindings', options.debug_bindings
-    print '--numpy_support', options.numpy_support
+    #print '--numpy-support', options.numpy_support
 
     #print '--cross-compile', options.cross_compile
 
@@ -524,7 +518,7 @@ def getCompilerOptions():
         add_option = '-pipe -ffor-scope -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s -fPIC'
     #if Platform == 'cygwin' : add_option =''
     add_option += ' -DBOOST_PYTHON_MAX_ARITY=25 -DPYROSETTA'
-    add_option += (' -DDEBUG' if Options.debug_bindings else ' -DNDEBUG')
+    add_option += (' -DDEBUG' if Options.debug else ' -DNDEBUG')
 
     if not Options.numpy_support:
         add_option += ' -DPYROSETTA_NO_NUMPY'

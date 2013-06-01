@@ -195,11 +195,11 @@ def rosetta_database_from_env():
         return database
 
 # rosetta.init()
-def init(*args, **kargs):
+def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
     """Initialize Rosetta.  Includes core data and global options.
 
-    args  - str or [str] of command line arguments.
-            (default ["app", "-ex1", "-ex2aro"])
+    options string with default Rosetta command-line options args.
+            (default: '-ex1 -ex2aro')
     kargs -
         extra_options - Extra command line options to pass rosetta init.
                         (default None)
@@ -218,32 +218,22 @@ def init(*args, **kargs):
     _python_py_exit_callback = PythonPyExitCallback()
     utility.PyExitCallback.set_PyExitCallBack(_python_py_exit_callback)
 
-    if kargs.get("set_logging_handler", True):
-        logging_support.set_logging_handler()
+    if set_logging_handler: logging_support.set_logging_handler()
 
-    if not args:
-        args = ["app", "-ex1", "-ex2aro"]
-    else:
-        if len(args) == 1 and isinstance(args[0], basestring):
-            args = args[0].split()
-        else:
-            args = list(args)
+    args = ['PyRosetta'] + options.split() + extra_options.split()
 
     # Attempt to resolve database location from environment if not present, else fallback
     # to rosetta's standard resolution
     if not "-database" in args:
         database = rosetta_database_from_env()
-        if not database is None:
-            args.extend(["-database", database])
-
-    args.extend(kargs.get("extra_options", "").split(' '))
+        if database is not None: args.extend(["-database", database])
 
     v = utility.vector1_string()
     v.extend(args)
 
     logger.info(version())
-
     protocols.init.init(v)
+
 
 # MPI version of init function, use it instead of init(...)
 def mpi_init(*args, **kargs):

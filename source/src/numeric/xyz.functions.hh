@@ -358,6 +358,15 @@ dihedral_radians(
 	}
 }
 
+// PyRosetta, creating concreate function for template one
+inline void dihedral_radians_double(
+    xyzVector< double > const & p1,
+	xyzVector< double > const & p2,
+	xyzVector< double > const & p3,
+	xyzVector< double > const & p4,
+	double & angle // Angle (radians)
+		) { dihedral_radians(p1, p2, p3, p4, angle); }
+
 
 /// @brief Dihedral (torsion) angle in radians: angle value returned
 /// @note  Given four positions in a chain ( p1, p2, p3, p4 ), calculates the dihedral
@@ -383,6 +392,14 @@ dihedral_radians(
 	return angle;
 }
 
+// PyRosetta, creating concreate function for template one
+inline double dihedral_radians_double(
+    xyzVector< double > const & p1,
+	xyzVector< double > const & p2,
+	xyzVector< double > const & p3,
+	xyzVector< double > const & p4
+									  ) { return dihedral_radians(p1, p2, p3, p4); }
+
 
 /// @brief Dihedral (torsion) angle in degrees: angle value passed
 template< typename T >
@@ -400,6 +417,15 @@ dihedral_degrees(
 	conversions::to_degrees( angle );
 }
 
+// PyRosetta, creating concreate function for template one
+inline void dihedral_degrees_double(
+    xyzVector< double > const & p1,
+	xyzVector< double > const & p2,
+	xyzVector< double > const & p3,
+	xyzVector< double > const & p4,
+	double & angle // Angle (radians)
+		) { dihedral_degrees(p1, p2, p3, p4, angle); }
+
 
 /// @brief Dihedral (torsion) angle in degrees: angle value returned
 template< typename T >
@@ -414,6 +440,16 @@ dihedral_degrees(
 {
 	return conversions::degrees( dihedral_radians( p1, p2, p3, p4 ) );
 }
+
+
+// PyRosetta, creating concreate function for template one
+inline double dihedral_degrees_double(
+    xyzVector< double > const & p1,
+	xyzVector< double > const & p2,
+	xyzVector< double > const & p3,
+	xyzVector< double > const & p4
+									  ) { return dihedral_degrees(p1, p2, p3, p4); }
+
 
 
 /// @brief Dihedral (torsion) angle in degrees: angle value passed
@@ -433,6 +469,16 @@ dihedral(
 	conversions::to_degrees( angle );
 }
 
+// PyRosetta, creating concreate function for template one
+inline void dihedral_double(
+    xyzVector< double > const & p1,
+	xyzVector< double > const & p2,
+	xyzVector< double > const & p3,
+	xyzVector< double > const & p4,
+	double & angle // Angle (degrees)
+									) { dihedral(p1, p2, p3, p4, angle); }
+
+
 
 /// @brief Dihedral (torsion) angle in degrees: angle value returned
 /// @note  This is a Rosetta++ compatibility version that operates in degrees
@@ -448,6 +494,15 @@ dihedral(
 {
 	return conversions::degrees( dihedral_radians( p1, p2, p3, p4 ) );
 }
+
+
+// PyRosetta, creating concreate function for template one
+inline double dihedral_double(
+    xyzVector< double > const & p1,
+	xyzVector< double > const & p2,
+	xyzVector< double > const & p3,
+	xyzVector< double > const & p4
+									) { return dihedral(p1, p2, p3, p4); }
 
 
 // @brief Rotation matrix for rotation from axis-angle representation
