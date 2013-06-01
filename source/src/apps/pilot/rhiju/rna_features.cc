@@ -31,6 +31,9 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/rna/RNA_BasePairClassifier.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/hbonds.hh>
 
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
@@ -163,7 +166,7 @@ get_rna_base_pairing_status( core::pose::Pose & pose,
 
 	ScoreFunctionOP scorefxn( new ScoreFunction );
 	scorefxn->set_weight( rna_base_pair, 1.0 );
-	//scorefxn->set_weight( hbond_sc, 1.0 );
+	scorefxn->set_weight( hbond_sc, 1.0 ); // used for HBondSet
 	(*scorefxn)( pose );
 	scorefxn->show( std::cout, pose );
 
@@ -177,6 +180,28 @@ get_rna_base_pairing_status( core::pose::Pose & pose,
 
 }
 
+///////////////////////////////////////////////////////////////////////
+bool
+check_hbonded( pose::Pose const & pose,
+							 Size const & i /*residue number*/,
+							 std::string const & atom_name,
+							 scoring::hbonds::HBondSetOP hbond_set,
+							 bool is_acceptor ){
+
+	using namespace core::scoring::hbonds;
+	// need to know what atoms could be in this nt.
+	// go through list of donors and list of acceptors
+
+	// check in HBond List
+	for (Size n = 1; n <= hbond_set->nhbonds(); n++ ) {
+		HBond const & hbond( hbond_set->hbond( n ) );
+		if ( is_acceptor && hbond.acc_res() == i && pose.residue_type(i).atom_name( hbond.acc_atm() ) == atom_name )			return true;
+		if ( !is_acceptor && hbond.don_res() == i && pose.residue_type(i).atom_name( hbond.don_hatm() ) == atom_name )			return true;
+	}
+	return false;
+
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 Size
 rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
@@ -184,6 +209,7 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 
 	using namespace core::conformation;
 	using namespace core::chemical;
+	using namespace core::scoring;
 	using namespace core::kinematics;
 	using namespace protocols::rna;
 	using namespace scoring::rna;
@@ -197,9 +223,19 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 	Size res_count( 0 ), num_features( 0 );
 	Size const nres = pose.total_residue();
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
-
 	vector1<bool> wc_edge_paired, hoog_edge_paired, sugar_edge_paired, is_bulged;
 	get_rna_base_pairing_status( pose, wc_edge_paired, hoog_edge_paired, sugar_edge_paired, is_bulged );
+
+	//	(*scorefxn)(pose); // may need to create a dummy scorefxn with hbond_sc and score the pose...
+	hbonds::HBondOptionsOP hbond_options( new hbonds::HBondOptions() );
+	hbond_options->use_hb_env_dep( false );
+	hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( hbond_options ) );
+	hbonds::fill_hbond_set( pose, false /*calc deriv*/, *hbond_set );
+
+	vector1< char  > nt_names = utility::tools::make_vector1( 'a', 'c', 'g', 'u' );
+
+	Size const num_nt = nt_names.size();
+	runtime_assert( num_nt == 4 );
 
 	for (Size i = 1; i <= nres; i++) {
 
@@ -214,15 +250,14 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 		vector1< Real > feature_vals;
 		Size feature_counter( 0 );
 
-		vector1< bool > is_nt; vector1< std::string > is_nt_tag;
-		is_nt.push_back( rsd.name1() == 'a' ); is_nt_tag.push_back( "is_a" );
-		is_nt.push_back( rsd.name1() == 'c' ); is_nt_tag.push_back( "is_c" );
-		is_nt.push_back( rsd.name1() == 'g' ); is_nt_tag.push_back( "is_g" );
-		is_nt.push_back( rsd.name1() == 'u' ); is_nt_tag.push_back( "is_u" );
-		Size const num_nt = is_nt.size();
-		runtime_assert( num_nt == 4 );
-
-		for ( Size m = 1; m <= num_nt; m++ ) save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m], is_nt[m] );
+		// is_a, is_c, etc.
+		vector1< bool > is_nt;
+		vector1< std::string > is_nt_tag;
+		for ( Size m = 1; m <= num_nt; m++ ){
+			is_nt.push_back( rsd.name1() == nt_names[m] );
+			is_nt_tag.push_back( "is_" + std::string(&nt_names[m],1) /* man, converting char to string is a pain!*/ );
+			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m], is_nt[m] );
+ 		}
 
 		// probably makes sense to explicitly take product with is_a, etc. above -- in case classifier is not
 		// smart about leveraging products of features.
@@ -232,6 +267,45 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_sugar_edge_paired", sugar_edge_paired[i] * is_nt[m]);
 			save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_is_bulged", is_bulged[i] * is_nt[m] );
 		}
+
+
+		// What is hydrogen bonded?
+		for ( Size m = 1; m <= num_nt; m++ ){
+
+			// need an instance of this nucleotide to play around with.
+			// This better have RNA residue types in it.
+			ResidueTypeSet const & rsd_set = rsd.residue_type_set();
+			ResidueTypeCOPs const & rsd_types = rsd_set.aa_map( chemical::aa_from_oneletter_code( nt_names[m] ) );
+			ResidueType const & rsd_type = *rsd_types[1];
+
+			bool ade_n1_hbonded = is_nt[1] && check_hbonded( pose, i, " N1 ", hbond_set, true /*acceptor*/ );
+
+			// what is hydrogen bonded? Acceptors.
+			AtomIndices accpt_pos = rsd_type.accpt_pos();
+			for ( Size k = 1; k <= accpt_pos.size(); k++ ){
+				std::string atom_name = rsd_type.atom_name( accpt_pos[ k ] );
+				bool hbonded = is_nt[m] && check_hbonded( pose, i, atom_name, hbond_set, true /*acceptor*/ );
+				ObjexxFCL::strip_whitespace(atom_name);
+				save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_"+atom_name+"_hbonded", hbonded);
+
+				// special for DMS
+				if (m==1) save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_"+atom_name+"_hbonded"+"_and_N1_hbonded", hbonded && ade_n1_hbonded);
+			}
+
+			// what is hydrogen bonded? Donor hydrogens.
+			AtomIndices Hpos_polar = rsd_type.Hpos_polar();
+			for ( Size k = 1; k <= Hpos_polar.size(); k++ ){
+				std::string atom_name = rsd_type.atom_name( Hpos_polar[ k ] );
+				bool hbonded = is_nt[m] && check_hbonded( pose, i, atom_name, hbond_set, false /*acceptor --> check for polar hydrogen names*/ );
+				ObjexxFCL::strip_whitespace(atom_name);
+				save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_"+atom_name+"_hbonded", hbonded);
+
+				// special for DMS
+				if (m==1) save_feature( feature_names, feature_vals, feature_counter, is_nt_tag[m]+ "_and_"+atom_name+"_hbonded"+"_and_N1_hbonded", hbonded && ade_n1_hbonded);
+			}
+		}
+
+
 
 		if ( num_features == 0 ) num_features = feature_counter; // initialize num_features.
 		runtime_assert( feature_vals.size() == num_features ); // sanity check.
