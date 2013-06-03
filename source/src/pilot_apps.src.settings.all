@@ -722,7 +722,7 @@ sources = {
 	"pilot/will" : [
 		"motif_hash_util",
 		"sicdock",
-		#"tcdock",
+		"tcdock",
 		#"dxdock_movie",
 		#"flail",
 		"test_rose",
