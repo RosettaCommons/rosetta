@@ -429,13 +429,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     
     
     // Step 4: Store the homolgy models
-    
-    // align pose to native pose
-    pose::Pose native_pose = *get_native_pose();
-    antibody::AntibodyInfoOP native_ab_info = new AntibodyInfo(native_pose);
-    align_to_native( pose, native_pose, ab_info_, native_ab_info );
-    
-    
+        
 	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose) ) ;
 
 	// Redefining CDR H3 cutpoint variants
@@ -447,41 +441,56 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		loop_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, cst_weight_ );
 	}
 	( *loop_scorefxn_highres_ )( pose );
+
     
-	
-	
-	// the specific constraint terms for output in the log file
-	Real atom_pair_constraint_score = pose.energies().total_energies()[ core::scoring::atom_pair_constraint ];
-	Real dihedral_constraint_score = pose.energies().total_energies()[ core::scoring::dihedral_constraint ];
-
-	TR<< " 		atom_pair_constraint_score= "<<atom_pair_constraint_score<<std::endl;
-	TR<< "      dihedral_constraint_score= "<<dihedral_constraint_score<<std::endl;
-
-	
-	
-	align_to_native( pose, native_pose, ab_info_, native_ab_info, "H" );
-	
-	job->add_string_real_pair("H3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h3) ));
-	job->add_string_real_pair("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h2) ));
-	job->add_string_real_pair("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h1) ));
-	//pose.dump_pdb("aligned_H.pdb");
-	if( camelid_ == false ) {
-		align_to_native( pose, native_pose, ab_info_, native_ab_info, "L" );
-		job->add_string_real_pair("L3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l3) ));
-		job->add_string_real_pair("L2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l2) ));
-		job->add_string_real_pair("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l1) ));
-		//pose.dump_pdb("aligned_L.pdb");
-	}
-	//job->add_string_real_pair("AP_constraint", atom_pair_constraint_score);
-	job->add_string_real_pair("VL_VH_angle", vl_vh_packing_angle( pose, ab_info_ ));
-
-	set_last_move_status( protocols::moves::MS_SUCCESS );   
-
-	basic::prof_show();
-
-
+    // Finish
+    
+    echo_metrics_to_jd2(pose,job);
+    set_last_move_status( protocols::moves::MS_SUCCESS );
+    basic::prof_show();
     TR<<"Antibody Modeling Protocol Finished!!!!"<<std::endl<<std::endl<<std::endl;
+
 }// end apply
+
+
+	void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, protocols::jd2::JobOP job)
+	{
+    // align pose to native pose
+    pose::Pose native_pose = *get_native_pose();
+    antibody::AntibodyInfoOP native_ab_info = new AntibodyInfo(native_pose);
+    align_to_native( pose, native_pose, ab_info_, native_ab_info );
+
+    // the specific constraint terms for output in the log file
+    Real atom_pair_constraint_score = pose.energies().total_energies()[ core::scoring::atom_pair_constraint ];
+    Real dihedral_constraint_score = pose.energies().total_energies()[ core::scoring::dihedral_constraint ];
+
+    TR<< " 		atom_pair_constraint_score= "<<atom_pair_constraint_score<<std::endl;
+    TR<< "      dihedral_constraint_score= "<<dihedral_constraint_score<<std::endl;
+
+    align_to_native( pose, native_pose, ab_info_, native_ab_info, "H" );
+
+    job->add_string_real_pair("H3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h3) ));
+    job->add_string_real_pair("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h2) ));
+    job->add_string_real_pair("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h1) ));
+    //pose.dump_pdb("aligned_H.pdb");
+    if( camelid_ == false ) {
+			align_to_native( pose, native_pose, ab_info_, native_ab_info, "L" );
+			job->add_string_real_pair("L3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l3) ));
+			job->add_string_real_pair("L2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l2) ));
+			job->add_string_real_pair("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l1) ));
+			//pose.dump_pdb("aligned_L.pdb");
+    }
+    //job->add_string_real_pair("AP_constraint", atom_pair_constraint_score);
+    job->add_string_real_pair("VL_VH_angle", vl_vh_packing_angle( pose, ab_info_ ));
+
+    //kink metrics
+    job->add_string_real_pair( "kink_HB", kink_Hbond( pose, *ab_info_ ));
+    job->add_string_real_pair( "kink_bb_HB", kink_bb_Hbond( pose, *ab_info_ ));
+
+		std::pair<core::Real,core::Real> q = kink_dihedral( pose, *ab_info_);
+		job->add_string_real_pair("kink_q", q.first);
+		job->add_string_real_pair("kink_qbase", q.second);
+	}
 
 
 void AntibodyModelerProtocol::display_constraint_residues( core::pose::Pose & pose )

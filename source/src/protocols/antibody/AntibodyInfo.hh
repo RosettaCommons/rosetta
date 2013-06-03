@@ -96,25 +96,25 @@ public:
 		return total_cdr_loops_;
 	}
 	
-	/// @brief Return first residue of CDR in rosetta numbering
-	/// @details If Pose is given.  Will get numbering info on-the-fly.
+	/// @brief Return PDB residue number of CDR start residue
 	Size
-	get_CDR_start(CDRNameEnum const & cdr_name) const {
-		return cdr_numbering_[cdr_name][start];
+	get_CDR_start_PDB_num(CDRNameEnum const & cdr_name) const {
+		return cdr_numbering_[cdr_name][start]; 
 	}
 	
+	/// @brief Return PDB residue number of CDR end residue 
 	Size
-	get_CDR_start(CDRNameEnum const & cdr_name, pose::Pose const & pose) const;
-	
-	/// @brief Return last residue of CDR in rosetta numbering
-	/// @details If Pose is given.  Will get numbering info on-the-fly.
-	Size
-	get_CDR_end(CDRNameEnum const & cdr_name) const {
-		return cdr_numbering_[cdr_name][stop];
+	get_CDR_end_PDB_num(CDRNameEnum const & cdr_name) const {
+		return cdr_numbering_[cdr_name][stop]; // PDB numbering
 	}
-	
+
+    /// @brief Return pose number of CDR start residue
 	Size
-	get_CDR_end(CDRNameEnum const & cdr_name, pose::Pose const & pose) const;
+	get_CDR_start(CDRNameEnum const & cdr_name, pose::Pose const & pose) const; 
+
+    /// @brief Return pose number of CDR end residue
+	Size
+	get_CDR_end(CDRNameEnum const & cdr_name, pose::Pose const & pose) const; // pose numbering
 	
 	/// @brief return the framework numbering information 
    	vector1< vector1<FrameWork> >
@@ -123,17 +123,54 @@ public:
 	/// @brief get H3 cterminal kink/extended conformation (predicted by constructor)
 	H3BaseTypeEnum
 	get_Predicted_H3BaseType() const ;
-
 	
 	/// @brief get residues used to calculate VL/VH packing angle
 	vector1< Size >
 	get_PackingAngleResidues() const {
 		return packing_angle_residues_;
 	}
-	
+
+    /// @brief return pose residue number of the first residue of the H3 kink
+    Size
+    kink_begin() const {
+        return get_CDR_loop(h3).stop() - 2;
+    }
+
+	/// @brief return pose residue number of the last residue of the H3 kink
+	Size
+	kink_end() const {
+		return get_CDR_loop(h3).stop() + 1;
+	}
+
+	/// @brief return pose residue number of the last residue of the H3 kink
+	Size
+	kink_trp() const {
+		return get_CDR_loop(h3).stop() + 1;
+	}
+
+	  /// @brief return pose residue number of the kink 'anion' (typically Asp/Glu) residue in the kink bulge HBond
+    Size
+    kink_anion_residue() const {
+        return get_CDR_loop(h3).stop() - 1;
+    }
+
+    /// @brief return pose residue number of the kink 'cation' (typically Arg/Lys) residue in the kink bulge HBond
+    Size
+    kink_cation_residue() const {
+        return get_CDR_loop(h3).start() - 1;
+    }
+    
+    /// @brief return side chain anion atoms (typically Asp/Glu oxygens) in the kink bulge HBond
+    std::vector<Vector>
+    kink_anion_atoms(const core::pose::Pose & pose) const;
+    
+    /// @brief return side chain cation atoms (typically Lys/His nitrogens) in the kink bulge HBond
+    std::vector<Vector>
+    kink_cation_atoms(const core::pose::Pose & pose) const;
+    
 
 public:
-    	///////////////////////////////////////////////////
+	//////////////////////////////////////////////////
 	//CDR Clusters
 	//
 	//
@@ -165,7 +202,7 @@ public:
 	get_cluster_length(CDRClusterEnum const cluster);
 	
 public:
-    	///////////////////////////////////////////////////
+    ///////////////////////////////////////////////////
 	//Sequence
 	//
 	//
@@ -183,7 +220,7 @@ public:
 	
 	
 public:
-    	///////////////////////////////////////////////////
+    ///////////////////////////////////////////////////
 	//Loops
 	//
 	//
@@ -353,7 +390,7 @@ private:
 	static core::scoring::ScoreFunctionCOP get_LoopCentral_ScoreFxn(void);
 	static core::scoring::ScoreFunctionCOP get_LoopHighRes_ScoreFxn(void);
 	
-/// private members
+/// private data
 private:
 	
 	/// the information of the antibody pose 

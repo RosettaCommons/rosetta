@@ -17,7 +17,7 @@
 
 
 
-#include <protocols/antibody/LHSnugFitLegacy.hh>
+#include <protocols/antibody_legacy/LHSnugFitLegacy.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

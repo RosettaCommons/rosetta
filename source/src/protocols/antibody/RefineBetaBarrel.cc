@@ -24,7 +24,7 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyUtil.hh>
 #include <protocols/antibody/LHRepulsiveRamp.hh>
-#include <protocols/antibody/LHSnugFitLegacy.hh>
+#include <protocols/antibody_legacy/LHSnugFitLegacy.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/docking/DockingProtocol.hh>

@@ -62,7 +62,7 @@ FlatHarmonicFunc::read_data( std::istream& in ) {
 
 void
 FlatHarmonicFunc::show_definition( std::ostream &out ) const {
-	out << "HARMONIC " << x0_ << " " << sd_ << " " << tol_ << std::endl;
+	out << "FLAT_HARMONIC " << x0_ << " " << sd_ << " " << tol_ << std::endl;
 }
 
 Size
@@ -71,11 +71,11 @@ FlatHarmonicFunc::show_violations( std::ostream& out, Real x, Size verbose_level
 		if( fabs( x - x0_ ) <= tol_ ) out << "HARM " << 0.0 << std::endl;
 		else if( x > x0_ ){
 				Real const z = ( x - x0_ - tol_ ) / sd_;
-				out << "HARM " << z << std::endl;
+				out << "FLHARM " << z << std::endl;
 		}
 		else{
 				Real const z = ( x - x0_ + tol_ ) / sd_;
-				out << "HARM " << z << std::endl;
+				out << "FLHARM " << z << std::endl;
 		}
 	} else if (verbose_level > 70 ) {
 		if ( x < x0_ + tol_  && ( this->func(x) > threshold ) ) out << "-";

@@ -24,7 +24,7 @@
 
 
 
-#include <protocols/antibody/LHRepulsiveRampLegacy.fwd.hh>
+#include <protocols/antibody_legacy/LHRepulsiveRampLegacy.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.hh>

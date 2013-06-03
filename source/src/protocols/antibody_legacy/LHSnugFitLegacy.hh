@@ -32,7 +32,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 
-#include <protocols/antibody/LHSnugFitLegacy.fwd.hh>
+#include <protocols/antibody_legacy/LHSnugFitLegacy.fwd.hh>
 
 
 

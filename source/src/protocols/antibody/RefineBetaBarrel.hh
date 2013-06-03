@@ -25,7 +25,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/antibody/LHRepulsiveRamp.fwd.hh>
-#include <protocols/antibody/LHSnugFitLegacy.fwd.hh>
+#include <protocols/antibody_legacy/LHSnugFitLegacy.fwd.hh>
 #include <protocols/docking/DockMCMProtocol.fwd.hh>
 #include <protocols/docking/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

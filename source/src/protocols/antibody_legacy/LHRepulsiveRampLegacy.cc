@@ -17,7 +17,7 @@
 
 
 
-#include <protocols/antibody/LHRepulsiveRampLegacy.hh>
+#include <protocols/antibody_legacy/LHRepulsiveRampLegacy.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

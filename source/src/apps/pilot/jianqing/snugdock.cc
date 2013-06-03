@@ -14,7 +14,7 @@
 
 
 
-#include <protocols/antibody/SnugDockProtocol.hh>
+#include <protocols/antibody/snugdock/SnugDockProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <utility/excn/Exceptions.hh>

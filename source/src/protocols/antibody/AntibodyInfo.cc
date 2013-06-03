@@ -24,7 +24,7 @@
 // Core Headers
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/ScoreType.hh>
+#include <core/scoring/ScoreType.hh>    // scoring stuff can probably be removed / moved elsewhere
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/pose/PDBInfo.hh>
@@ -34,7 +34,7 @@
 // Protocol Headers
 #include <protocols/antibody/AntibodyUtil.hh>
 #include <protocols/rigid/RB_geometry.hh>
-#include <protocols/loops/loops_main.hh>
+#include <protocols/loops/loops_main.hh>  //really?
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 
@@ -861,6 +861,49 @@ AntibodyInfo::get_CDR_end(CDRNameEnum const & cdr_name, pose::Pose const & pose)
 	return pose.pdb_info()->pdb2pose(Chain_IDs_for_CDRs_[cdr_name], cdr_numbering_[cdr_name][stop]);
 }
 
+
+std::vector<Vector>
+AntibodyInfo::kink_anion_atoms(const core::pose::Pose & pose) const {
+	Size resi = get_CDR_loop(h3).stop() - 1;
+	core::conformation::Residue res = pose.residue(resi);
+	//print "H3_N-1 (%i): %s" % (resi,res.name3())
+	std::vector<Vector> atoms;
+	switch (res.name1())
+	{
+		case 'D' :
+			atoms.push_back(res.xyz("OD1"));
+			atoms.push_back(res.xyz("OD2"));
+			break;
+		case 'E' :
+			atoms.push_back(res.xyz("OD1"));
+			atoms.push_back(res.xyz("OD2"));
+			break;
+	}
+	return atoms;
+}
+
+/// @brief return side chain cation atoms (typically Lys/His nitrogens) in the kink bulge HBond
+std::vector<Vector>
+AntibodyInfo::kink_cation_atoms(const core::pose::Pose & pose) const {
+	Size resi = get_CDR_loop(h3).start() - 1;
+	core::conformation::Residue res = pose.residue(resi);
+	//print "H3_0   (%i): %s" % (resi,res.name3())
+	std::vector<Vector> atoms;
+	switch (res.name1())
+	{
+		case 'R' :
+			atoms.push_back(res.xyz("NH1"));
+			atoms.push_back(res.xyz("NH2"));
+			break;
+		case 'K' :
+			atoms.push_back(res.xyz("NZ"));
+			break;
+	}
+	return atoms;
+}
+
+    
+    
 void
 AntibodyInfo::setup_CDR_clusters(pose::Pose const & pose){
 	

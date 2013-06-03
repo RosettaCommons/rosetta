@@ -8,7 +8,7 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
-/// @file protocols/antibody/SnugDockProtocol.hh
+/// @file protocols/antibody/SnugDock.hh
 /// @brief Dock and antigen to an antibody while optimizing the rigid body orientation of the VH and VL chains and performing CDR loop minimization.
 /// @detailed
 ///
@@ -17,19 +17,24 @@
 /// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
 
 
-#ifndef INCLUDED_protocols_antibody_SnugDockProtocol_HH
-#define INCLUDED_protocols_antibody_SnugDockProtocol_HH
+#ifndef INCLUDED_protocols_antibody_SnugDock_HH
+#define INCLUDED_protocols_antibody_SnugDock_HH
 
 // Unit headers
-#include <protocols/antibody/SnugDockProtocol.fwd.hh>
-#include <protocols/moves/Mover.hh>
+#include <protocols/antibody/snugdock/SnugDock.fwd.hh>
+#include <protocols/docking/DockingHighRes.hh>
 
 // Package headers
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/RefineOneCDRLoop.fwd.hh>
+#include <protocols/antibody/CDRsMinPackMin.fwd.hh>
+
 
 // Project headers
-#include <protocols/docking/DockingProtocol.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
+#include <protocols/moves/MoverContainer.fwd.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
 
 // C++ headers
 #include <iostream>
@@ -38,19 +43,19 @@ using namespace core;
 namespace protocols {
 namespace antibody {
 
-class SnugDockProtocol: public moves::Mover {
+class SnugDock: public docking::DockingHighRes {
 public: // boiler plate / virtuals
 	// default constructor
-	SnugDockProtocol();
+	SnugDock();
 
 	// copy constructor
-	SnugDockProtocol( SnugDockProtocol const & rhs );
+	SnugDock( SnugDock const & rhs );
 
 	// assignment operator
-	SnugDockProtocol & operator=( SnugDockProtocol const & rhs );
+	SnugDock & operator=( SnugDock const & rhs );
 
 	// destructor
-	virtual ~SnugDockProtocol();
+	virtual ~SnugDock();
 	
 	virtual void apply( Pose & );
 	virtual std::string get_name() const;
@@ -61,35 +66,38 @@ public: // boiler plate / virtuals
 	///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
 	virtual bool reinitialize_for_new_input() const;
 
-	/// @brief Associates relevant options with the SnugDockProtocol class
+	/// @brief Associates relevant options with the SnugDock class
 	static void register_options();
 
 public:
+	Size number_of_high_resolution_cycles() const;
+	void number_of_high_resolution_cycles( Size const number_of_high_resolution_cycles );
+	void set_antibody_info( AntibodyInfoOP antibody_info );
+
 	void show( std::ostream & out=std::cout ) const;
-	friend std::ostream & operator<<(std::ostream& out, SnugDockProtocol const & snugdockprotocol );
+	friend std::ostream & operator<<(std::ostream& out, SnugDock const & snugdock );
 
 private: // methods
 	void setup_objects( Pose const & pose );
-	void setup_loop_refinement_movers();
 	void init();
-	void init_for_equal_operator_and_copy_constructor( SnugDockProtocol & lhs, SnugDockProtocol const & rhs);
+	void init_for_equal_operator_and_copy_constructor( SnugDock & lhs, SnugDock const & rhs);
 	void init_options();
-
-	docking::DockingProtocolOP docking() const;
 
 private: // data
 	AntibodyInfoOP antibody_info_;
+	moves::MonteCarloOP mc_;
 
 	// Movers
-	RefineOneCDRLoopOP low_res_refine_cdr_h2_;
-	RefineOneCDRLoopOP low_res_refine_cdr_h3_;
-	mutable docking::DockingProtocolOP docking_;
-	
+	moves::RandomMoverOP high_resolution_step_;
 	std::string loop_refinement_method_;
+	antibody::CDRsMinPackMinOP pre_minimization_;
 
-}; // class SnugDockProtocol
+private:
+	Size number_of_high_resolution_cycles_;
+
+}; // class SnugDock
 
 } // namespace antibody
 } // namespace protocols
 
-#endif // INCLUDED_protocols_antibody_SnugDockProtocol_HH
+#endif // INCLUDED_protocols_antibody_SnugDock_HH

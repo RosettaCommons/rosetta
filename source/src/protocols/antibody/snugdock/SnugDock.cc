@@ -17,7 +17,7 @@
 /// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
 
 // Unit headers
-#include <protocols/antibody/SnugDock.hh>
+#include <protocols/antibody/snugdock/SnugDock.hh>
 
 // Package headers
 #include <protocols/antibody/AntibodyInfo.hh>

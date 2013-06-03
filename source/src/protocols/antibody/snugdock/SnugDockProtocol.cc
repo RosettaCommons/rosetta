@@ -18,12 +18,12 @@
 /// @author Brian D. Weitzner ( brian.weitzner@gmail.com )
 
 // Unit headers
-#include <protocols/antibody/SnugDockProtocol.hh>
+#include <protocols/antibody/snugdock/SnugDockProtocol.hh>
 
 // Package headers
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/RefineOneCDRLoop.hh>
-#include <protocols/antibody/SnugDock.hh>
+#include <protocols/antibody/snugdock/SnugDock.hh>
 
 // Project headers
 #include <protocols/docking/DockingProtocol.hh>

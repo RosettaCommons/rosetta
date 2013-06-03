@@ -48,6 +48,7 @@
 
 // Numeric Headers
 #include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.io.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/PCA.hh>
@@ -606,7 +607,8 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
         return ( rmsG );
     } 
     
-    Real vl_vh_packing_angle ( const pose::Pose & pose_in, AntibodyInfoOP ab_info ) {
+	Real
+	vl_vh_packing_angle ( const pose::Pose & pose_in, AntibodyInfoOP ab_info ) {
 		
 		vector1< Size > vl_vh_residues = ab_info->get_PackingAngleResidues();
 		
@@ -649,7 +651,94 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in )
 		return packing_angle;
 	}
     
-void align_to_native( core::pose::Pose & pose, 
+	std::pair<core::Real,core::Real>
+	kink_dihedral(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info, bool debug){
+		
+		Size kb = ab_info.kink_begin();
+		core::conformation::Residue kr0 = pose.residue(kb);
+    core::conformation::Residue kr1 = pose.residue(kb+1);
+    core::conformation::Residue kr2 = pose.residue(kb+2);
+    core::conformation::Residue kr3 = pose.residue(kb+3);
+		if (debug) {
+			//		std::string kseq = std::string(kr0.name1()) + std::string(kr1.name1()) +
+			//                 std::string(kr2.name1()) +	std::string(kr3.name1());
+			TR << "Kink is defined from pose residues " << kb << "-" << kb+3 << ": " << kr0.name1() << std::endl;
+		}
+		
+    Vector CA0=kr0.xyz("CA");
+    Vector CA1=kr1.xyz("CA");
+		Vector CA2=kr2.xyz("CA");
+    Vector CA3=kr3.xyz("CA");
+		
+    Real q = (CA0 - CA3).magnitude();
+    Real qbase = dihedral(CA0,CA1,CA2,CA3);
+
+		std::pair<core::Real,core::Real> qout(q,qbase);
+
+    return qout;
+	}
+
+core::Real
+kink_bb_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
+    
+	Size Di = ab_info.kink_anion_residue();  // N-1
+    core::conformation::Residue D  = pose.residue(Di);
+    Vector DN = D.xyz("N");
+    
+	Size Ri = ab_info.kink_cation_residue();  // 0
+    core::conformation::Residue R  = pose.residue(Ri);
+    Vector RO = R.xyz("O");
+    
+    TR << "H3_DN   (" << Di << "): " << D.name3() << " - " << DN << std::endl;
+    TR << "H3_RO   (" << Ri << "): " << R.name3() << " - " << RO << std::endl;
+    
+    core::Real bbHBdist = ( DN - RO ).norm();
+    
+    return bbHBdist;
+}
+
+
+
+	core::Real
+	kink_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
+
+    std::vector<Vector> Aatoms = ab_info.kink_anion_atoms(pose); // N-1
+    std::vector<Vector> Catoms = ab_info.kink_cation_atoms(pose); // 0
+
+    Real HBdist = 100.0;
+    for (std::vector<Vector>::iterator Aa = Aatoms.begin(); Aa != Aatoms.end(); ++Aa) {
+			for (std::vector<Vector>::iterator Ca = Catoms.begin(); Ca != Catoms.end(); ++Ca) {
+				HBdist = std::min( HBdist, (*Aa - *Ca).norm());
+			}
+    }
+    if (HBdist == 100.0) { HBdist = 0; }
+    return HBdist;
+	}
+
+
+	core::Real
+	kink_Trp_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
+		
+    Size Wi = ab_info.kink_trp(); // N+1
+    core::conformation::Residue W  = pose.residue(Wi);
+		if (W.name3() != "TRP") return 0.0;
+    Vector W_NE1 = W.xyz("NE1");
+
+    Size kb1 = ab_info.kink_begin(); // N-2
+    core::conformation::Residue kb = pose.residue(kb1);
+    Vector kb1_O = kb.xyz("O");
+
+    TR << "H3_W/KB4 (" << Wi  << "): " << W.name3()  << " - " << W_NE1 << std::endl;
+    TR << "H3_KB1   (" << kb1 << "): " << kb.name3() << " - " << kb1_O << std::endl;
+
+    core::Real WHBdist = ( W_NE1 - kb1_O ).norm();
+
+		return WHBdist;
+	}
+
+
+
+void align_to_native( core::pose::Pose & pose,
 					  core::pose::Pose const & native_pose,
                       AntibodyInfoOP const ab_info,
                       AntibodyInfoOP const native_ab_info,

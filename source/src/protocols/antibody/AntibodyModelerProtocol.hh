@@ -24,6 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/jd2/Job.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyModelerProtocol.fwd.hh>
@@ -184,8 +185,11 @@ private:
 	/// @brief Sets up the instance of AntibodyModeler and initializes all members based on values passed in at construction
 	///		or via the command line.
 	void init();
-
+    
 	void setup_objects();
+    
+    /// @brief Output of various metrics of final model
+    void echo_metrics_to_jd2( core::pose::Pose & pose, protocols::jd2::JobOP job );
 
 }; // class
     

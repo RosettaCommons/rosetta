@@ -405,6 +405,9 @@ sources = {
 		#"optE_parallel", # /* Jim Havernek,Documentation Location,Demo Location */
 		#"use_asn_motifs",
 	],
+	"pilot/jjgray" : [
+		"antibody_metrics", # /* Jeff Gray,Documentation Location,Demo Location */
+	],
 	"pilot/johnk" : [
 		#"chet_trp_to_gly",
 		#"chet_report_rmsd",
@@ -570,6 +573,7 @@ sources = {
 		"r_tempered_sidechains",
 	],
 	"pilot/olungu" : [
+                "sasa_interface",
 		#"multidomain_switch", # /* ????,Documentation Location,Demo Location */
 		#"Superimpose_Pdbs", # /* ????,Documentation Location,Demo Location */
 	],
