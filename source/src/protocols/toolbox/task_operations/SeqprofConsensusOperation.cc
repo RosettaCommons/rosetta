@@ -139,6 +139,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
   }
 	core::Size last_res (asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/ );
 	tr<<"Allowing the following identities:\n";
+	runtime_assert( (seqprof->profile()).size()>=last_res );
 	for( core::Size i = 1; i <= last_res; ++i){
 		tr<<"At position "<<i<<": "<<std::endl;
 

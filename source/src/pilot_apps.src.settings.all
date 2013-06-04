@@ -17,837 +17,777 @@
 
 sources = {
 	# A ######################################################################
-	"pilot/amelie" : [
-		"detect_tight_clusters", # /* Amelie Stein, documentation see comments in file */
-	],
-	"pilot/andre" : [
-		#"SymmDataTest",
-		#"SymDock",	 # /* Ingemar Andre,Documentation Location,Demo Location */
-	],
-	"pilot/andrew" : [
-		#"optest",
-		#"mpi_msd",
-		"version_scorefunction", #Note: used for scorefunction version tests; no itest needed
-		"analyze_rtmin_failures",
-		#"find_buns",
-		"zn_match_symmdock", #Note: used for scorefunction version tests; no itest needed
-		"find_buns",
-		#"test_ik_match",
-	],
-	"pilot/aroop" : [
-		#"antibody_mode", # /* Aroop,Documentation Location,Demo Location */
-		#"model_e2c_ubiquitin", # /* Aroop,Documentation Location,Demo Location */
-	],
-	"pilot/ashworth" : [
-		#"multistate_design_ga", # /* Justin Ashworth, doc/apps/pilot/multistate_design_ga.dox, deprecated */
-		"MSA_design", # /* Justin Ashworth, documentation pending further testing, test/integration/tests/sequence_profile_constraints */
-		#"jd2_parser_DNAInt", # /* Justin Ashworth, doc/apps/pilot/jd2_parser_DNAInt.dox, */
-	],
-
-	# B ######################################################################
-	"pilot/barak" : [
-		#"BuildFloppyTail",
-		#"print_phipsi",
-		#"barak.score",
-		#"test_frags.barak",
-		#"overlay_sidechains",
-		#"overlay_bb_bondangles",
-		#"thread_sidechains",
-		#"thread_bb",
-		#"extend_range",
-		#"avital_stabilize_driver",
-		#"compare_rms_byres"
-	],
-	"pilot/bcorreia" : [
-		#"iterative_design", # /* Correia,Documentation Location,Demo Location */
-		#"fold_from_loops", # /* Correia,Documentation Location,Demo Location */
-		#"fold_from_loops_devel", # /* Correia,Documentation Location,Demo Location */
-	],
-	"pilot/bder" : [
-                #"supercharge",          #integration test: supercharge.  Application moved to public/design
-		#"Zinc2_HomodimerSetup",  #integration test: zinc_homodimer_setup.  Application moved to public/design
-		#"Zinc2_HomodimerDesign", #integration test: zinc_homodimer_design.  Application moved to public/design
-	],
-	"pilot/ben" : [
-		"VIP_app",
-	],
- 	#"pilot/biokhar" : [
-		#"karen_compare_different_proteins",
-		#"karen_pocket_compare",
-		#"karen_pocket_save",
-		#"karen_compare_pocket_rmsd",
- 	#],
-	"pilot/blivens" : [
-		#"convert", # /* Spencer Bliven,Documentation Location,Demo Location */
-		#"disulfide_scorer", # /* Spencer Bliven,Documentation Location,Demo Location */
-	],
-	"pilot/boon" : [
-		"test", # /* a pilot app */
-	],
-	"pilot/brunette" : [
-		"abego_predict",
-		"hle_predict",
-		"minimalCstRelax",
-		"minimalCstHomology",
-		"aln_to_disulf",
-		"evalRepeats",
-        "armEval",
-		#"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
-		#"identify_homolog_inaccuracies",
-		#"contact_map_from_homologs",
-	],
-
-	# C ######################################################################
-	"pilot/chen" : [
-		"simple_dna_regression_test", # /* ???,Documentation Location,Demo Location */
-	],
-	"pilot/chrisk" : [
-		#"rotamer_repack",
-		#"byres_data",
-	],
-	"pilot/chu" : [
-		#"zinc_stat", # /* Chu Wang,Documentation Location,Demo Location */
-	],
-	"pilot/cmiles" : [
-		#"close_loops_cart",
-		#"close_loops_ccd",
-		#"dssp",
-		#"extend",
-		#"fragment_agreement",
-		#"fragment_rmsd",
-		#"gdtha",
-		#"helix_rotate",
-		#"jumping",
-		#"kcluster",
-		#"maxsub",
-		"medal",
-		"medal_exchange",
-		#"rmsd_partial_thread",
-		#"sheet_translate",
-		"star_abinitio",
-		#"windowed_rama",
-		#"windowed_rmsd",
-	],
-	"pilot/colin" : [
-		"backrub_pilot", # /* Colin Smith,doc/apps/public/backrub.dox,Demo Location */
-		#"cterdesign", # /* Colin Smith,Documentation Location,Demo Location */
-		"ig_dump", # /* Colin Smith,src/apps/pilot/colin/ig_dump.cc,Demo Location */
-		"mm_params", # /* Colin Smith,src/apps/pilot/colin/mm_params.cc,src/apps/pilot/colin/mm_params.cc */
-	],
-	"pilot/combss" : [
-		#"sequencerecovery",
-		#"generate_orbital_statistics",
-	],
-
-	# D ######################################################################
-	"pilot/dan" : [
-		#"sidechain_min", # /* Dan Mandell,Documentation Location,Demo Location */
-		#"angle_stats", # /* Dan Mandell,Documentation Location,Demo Location */
-		#"LoopExtend" # /* Dan Mandell,Documentation Location,Demo Location */
-	],
-	"pilot/dekim" : [
-		"score_nonlocal_frags",
-		"convert_to_centroid",
-		"extended_chain",
-		"strand_pairings",
-	],
-	"pilot/delucasl" : [
-		#"roc_test",
-		"roc_optimizer",
-		#"RotamerDump",
-		#"process_mdl",
-		"generate_ligand_start_position_file",
-		"ligands_to_database",
-		#"map_testing"
-	],
-	"pilot/dgront" : [
-		#"SaxsSampler",
-		#"fragmentpicker/picker",
-		#"fragmentpicker/quotapicker_demo",
-		"fragmentpicker/fragmentpicker_integration_demo",
-		#"fragmentpicker/rescore_fragments",
-		#"experiments/CreatePose",# /* Converts all-atom pose into a centroid one; creates a pose for a FASTA file*/
-		# "experiments/welde_chains",
-		#"IndirectSorter",
-		#"DomainAssemblerNDocker",
-		#"experiments/RDCTest",
-		#"experiments/AllCrmsd",
-		#"experiments/TryScoreFilter",
-		#"experiments/print_options",
-		#"experiments/call_rdc",
-		#"saxs/RotateSAXS",
-		"saxs/RescoreSAXS",
-		"saxs/RescorePDDF",
-		"saxs/ComputeSAXSSpectrum",
-		#"saxs/linker_sampler",
-		#"saxs/assemble_domains_with_saxs_jd2",
-		"hierarchical_clustering",
-		#"Features",
-		#"filters_in_abrelax",
-		#"saxs/call_saxs_score",
-	],
-	"pilot/doug" : [
-                "pymolmovertest",
-		#"make_peptoid",
-		#"UnfoldedStateEnergyCalculator",
-		#"rotamer_prediction_benchmark", # /* Doug Renfrew,Documentation Location,Demo Location */
-		#"simple_relax", # /* Doug Renfrew,Documentation Location,Demo Location */
-	],
-	"pilot/dwkulp" : [
-		#"flexibleLoopDesign",
-		#"reportFragments",
-	],
-
-	# E ######################################################################
-
-	# F ######################################################################
-	"pilot/firas" : [
-		#"check_burial", # /* Firas,Documentation Location,Demo Location */
-	],
-	"pilot/flo" : [
-		"EnzdesFixBB", # /* Florian Richter,/doc/apps/public/enzyme_design.dox,/test/integration/tests/enzdes/*/
-		#"SecondaryMatcher", # /* Florian Richter, this application will be removed when the real matcher comes online, probably around july 2009*/
-	],
-	"pilot/frank" : [
-		#"autorb", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"fast_densScore", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"perturb_bbg", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"redesign_minimize_into_density", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"multimodel_gdt", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"pdb_to_map", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"rr_opt", # /* Frank Dimaio,Documentation Location,Demo Location */
-		"mr_protocols_v2", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"cryst_design", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"cen_hybridize", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"cen_hybridize_ft", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"cen_relax", # /* Frank Dimaio,Documentation Location,Demo Location */
-	],
-
-	# G ######################################################################
-	"pilot/grant" : [
-		#"RedesignXtal_Test", # /* Grant,Documentation Location,Demo Location */
-		#"AbInitio_MPI",
-         ],
- 	"pilot/johnk" : [
-                #"chet_trp_to_gly",
-                #"chet_report_rmsd",
-                "constellation_list",
-                "johnk_docking_protocol",
-                #"johnk_recompute_score_and_rmsd",
-                #"johnk_interface_recompute_score_and_rmsd",
-                #"johnk_interface_geosol_minimization",
-                #"johnk_gapless_threading",
-                #"johnk_parametrize_geometric_solvation",
-                #"johnk_exact_geometric_solvation",
-                "justin_identify_holes",
-                #"justin_local_backrub",
-                #"phosphoArg_build_rotamers",
-                #"phosphoArg_minimize",
-		#"srirupa_two_loops",
-		#"ragul_backbone_diversity",
-		#"nadeem_find_destabilizing_mutation",
-		#"nadeem_compensatory_mutation",
-	],
-	"pilot/jstev" : [
-		#"collect_features",
- 	],
- 	"pilot/biokhar" : [
-		"karen_compare_different_proteins",
-		"karen_pocket_compare",
-		"karen_pocket_save",
-                "karen_compare_pocket_rmsd",
- 	],
-        "pilot/bazzoli" : [
-		"constel",
-		"nrg_res_set",
-		"lig_low_sasa",
-		"sel_hbonds",
-	],
- 	"pilot/whitney" : [
-		#"whitney_identify_epitope",
-		#"whitney_prepare_native",
-		#"whitney_local_backrub",
-		#"whitney_specificity_switch",
-		#"whitney_repack_input",
-	],
-
-	# H ######################################################################
-	"pilot/habib" : [
-		"david_find_contacts",
-		"david_find_surface_residues",
-		"david_find_complex_contacts",
-		"david_fill_gaps",
-		"david_find_pocket_stabilizing_mutations",
-		"david_open_pocket",
-		"david_pocket_align_and_save",
-		"david_pocket_compare",
-		"david_recompute_score_and_rmsd",
-		"david_align_and_recompute_score_and_rmsd",
-		"david_align_append_and_recompute_score_and_rmsd",
-		"david_find_best_pocket",
-		"david_find_best_contact_pocket",
-		#"david_darc_multirun",
-	],
-
-	# I ######################################################################
-	"pilot/ian" : [
-		#"ligdock_confidence", # /* Ian Davis,Documentation Location,Demo Location */
-		#"cluster_ligand_poses", # /* Ian Davis,Documentation Location,Demo Location */
-		"select_best_unique_ligand_poses_jd1", # /* Ian Davis,Documentation Location,Demo Location */
-	],
-
-	# J ######################################################################
- 	"pilot/jadolfbr/cluster_utilities" : [
-		"identify_cdr_clusters", # /* Jared Adolf-Bryfogle, In CC file, Demo Location /*
-		"relax_cdrs", # /* Jared Adolf-Bryfogle, In CC file, Demo Location. /*
-	],
-	"pilot/jadolfbr/antibody_design" : [
-		"graft_design_cdrs",
-		#"antibody_designer",
-	],
-	"pilot/jadolfbr/testing" : [
-		#"class_tests",
-		],
-        "pilot/james" : [
-		"analyze_casp9",
-		"per_residue_features",
-		"jdock",
-		"superdev",
-		#"make_artificial_centroids",
-		#"frag_hack",
-		#"zafer_frag_rmsd",
-		#"sparta_superdev",
-		#"cs_segment_rescore",
-		#"cs_align",
-		#"cluster_alns",
-		#"casp9_mqa",
-		#"thread_hack",
-		"assemble_domains_jd2",
-		"angle_recovery_stats",
-		#"fast_cm",
-		"batch_distances",
-		"jscore",
-		"jrelax",
-		#"jseq",
-		#"basic_thread",
-		#"kdtree_disulf",
-		#"sc_interaction",
-		"per_residue_energies",
-		#"casp9_superdev",
-		#"thread_fast",
-		#"burial",
-		#"remap_aln",
-		#"copy_hack",
-		#"mammoth_hack",
-		#"model_quality",
-		#"jidealize",
-		#"boost_hacks",
-		#"exhaustive_align",
-		"template_features",
-		"jcluster",
-		#"ca_build",
-		#"silent_cst_quality",
-		#"prof_search",
-		#"add_ligand",
-		#"prof_align",
-		#"simple_cm",
-		#"make_profile",
-		#"design_profile",
-		#"pick_frags",
-		#"density_grid",
-		#"seqdb_stats",
-		#"filter_sequences",
-		#"min_cst",
-		#"dp_align",
-		"distances",
-		"angles",
-		"cst_quality",
-		#"constraints_matrix",
-		#"score_silent_cst",
-		#"constraints_viewer",
-	],
-	"pilot/javierbq" : [
-		#"fragment_sequence_quality",
-		#"matdes_design",
-		#fragment_based_design"
-		#"make_frags",
-		#"detect_symmetry",
-	],
-	"pilot/jcorn" : [
-		"hotspot_hash", # /* Jacob Corn,doc/apps/pilot/hotspot_hash.dox, test/integration/tests/hotspot_hashing */
-		"hshash_utils" # /* Jacob Corn,doc/apps/pilot/hshash_utils.dox, test/integration/tests/hshash_utils*/
-	],
-	"pilot/jd2" : [
-		"jd2test", # /* Steven Lewis, src/apps/pilot/jd2/jd2test.readme, test/integration/tests/jd2test/ */
-		#"jd2memtest",
-	],
-	"pilot/jianqing" : [
-		#"antibody_assemble_CDRs",
-		#"antibody_model_CDR_H3",
-		"snugdock",
-	],
-	"pilot/jim" : [
-		#"optE_test", # /* Jim Havernek,Documentation Location,Demo Location */
-		#"optE_parallel", # /* Jim Havernek,Documentation Location,Demo Location */
-		#"use_asn_motifs",
-	],
-	"pilot/johnk" : [
-		#"chet_trp_to_gly",
-		#"chet_report_rmsd",
-		#"constellation_list",
-		#"johnk_docking_protocol",
-		#"johnk_recompute_score_and_rmsd",
-		#"johnk_interface_recompute_score_and_rmsd",
-		#"johnk_interface_geosol_minimization",
-		#"johnk_gapless_threading",
-		#"johnk_parametrize_geometric_solvation",
-		#"johnk_exact_geometric_solvation",
-		#"justin_identify_holes",
-		#"justin_local_backrub",
-		#"phosphoArg_build_rotamers",
-		#"phosphoArg_minimize",
-		#"srirupa_two_loops",
-		#"ragul_backbone_diversity",
-		#"nadeem_find_destabilizing_mutation",
-		#"nadeem_compensatory_mutation",
-	],
-	"pilot/josh" : [
-		"motif_loop_build",
-	],
-	"pilot/jstev" : [
-		#"collect_features",
- 	],
-
-	# K ######################################################################
-	"pilot/kdrew" : [
-		"oop_dock_design",
-		"oop_creator",
-		#"oop_puck_energy_calc",
-		#"oop_puck_energy_calc_mc",
-		#"oop_dimer_rama_calc",
-		"ld_converter",
-	],
-	"pilot/kenjung" : [
-		"loophash_createfiltereddb",
-		"FastGap",
-		#"fragpdb",
-		#"symfragrm",
-		#"sixdtreeTEST",
-	],
-	"pilot/krishna" : [
-		"pH_protocol",
-		#"pH_neighbor_pack",
-	],
-	"pilot/kuichan" : [
-		#"design_disulfide",
-	],
-
-	# L ######################################################################
-	"pilot/labonte" : [
-		#"tester",
-		#"debug_branching",
-		"test_RingConformationMover",
-		"test_CarbohydrateInfo"
-	],
-	"pilot/lemmon" : [
-		"undirected_graph"
-	],
-	"pilot/lin" : [
-		#"SymmSilentFile",
-		#"SymmAbrelax",
-	],
-	"pilot/lior" : [
-		"feature_schema_generator"
-	],
-	"pilot/liz" : [
-		#"test_scmcmover",
-		#"create_hierarchy",
-		#"test_canonical_mover",
-		# "fix_bb_monomer_ddg",
-		#"score_ddgs",
-		#"minimize_with_constraints", # /* Liz Kellogg,Documentation Location,Demo Location */
-	],
-	"pilot/luki" : [
-		"sc",
-	],
-
-	# M ######################################################################
-	"pilot/mdsmith" : [
-		#"ligand_motifs",
-		#"motif_ligand_packer_design",
-	],
-	"pilot/mike" : [
-		"crossaln",
-		#"minbench",
-		"batchrelax",
-		"loophash",
-		"loophash_createdb",
-		"silent2frag",
-		#"rama_test",
-		#"md",
-	],
-	"pilot/momeara" : [
-		"hbonds_test", # /* Matt O'Meara,Documentation Location,Demo Location */
-		"format_converter",
-		"features_database_schema",
-		#"hbond_param_sweep",
-	],
-	"pilot/monica" : [
-		#"dock_test", # /* Monica Berondo,Documentation Location,Demo Location */
-		#"monica_relax", # /* Monica Berondo,Documentation Location,Demo Location */
-		#"moves_test", # /* Monica Berondo,Documentation Location,Demo Location */
-	],
-	"pilot/mpacella" : [
-		"surface_docking_jd2",
-	],
-	"pilot/murphp" : [
-		"inv_kin_lig_loop_design", # /* Paul Murphy,Documentation Location,Demo Location */
-	],
-
-	# N ######################################################################
-	"pilot/neil" : [
-		#"enumeration_test",
-		#"design_symm",
-		#"char_native",
-		#"design_symm_no_hack_elec",
-		#"symdock_enum_3_1",
-		#"symdock_enum",
-		#"des_pos_ddG",
-		#"matdes_dock",
-		#"matdes_design",
-		#"coiled_coil_search",
-		#"gen_trimer_disulf",
-		#matdes_mutalyze",
-	],
-	"pilot/nikolas" : [
-		#"r_segment_rdc",
-		#"r_SymDock_viewer",
-	],
-	"pilot/nobuyasu" : [
-		#"flxbb", # /* Nobuyasu,Documentation Location,Demo Location */
-		"foldptn", # /* Nobuyasu,Documentation Location,Demo Location */
-		#"local_rmsd", # /* Nobuyasu,Documentation Location,Demo Location */
-		#"ncontact", # /* Nobuyasu,Documentation Location,Demo Location */
-		"make_blueprint", # /* Nobuyasu,Documentation Location,Demo Location */
-	],
-
-	# O ######################################################################
-	"pilot/olli" : [
-		"r_play_with_etables",
-		#"r_build_hotspot_loops",
-		#"r_abrelax",
-		#"r_fake_noe",
-		"r_pdb2top",
-		"r_rmsf",
-		#"r_assign_clusters",
-		"r_noe_assign",
-		#"r_min_check",
-		#"r_convert_frags",
-		"r_broker", # /* Oliver Lange,Documentation Location,Demo Location */
-		"r_trjconv", # /* Oliver Lange,Documentation Location,Demo Location */
-		"r_frag_quality", #Note: used for measuring fragment quality; no itest needed
-		"r_cst_tool", # /* Oliver Lange,Documentation Location,Demo Location */
-		"r_score_rdc", # /* Oliver Lange,Documentation Location,Demo Location */
-		#"r_score", # /* Oliver Lange,Documentation Location,Demo Location */
-		#"r_count_neighbours", # /* Oliver Lange,Documentation Location,Demo Location */
-		#"r_rmsf", # /* Oliver Lange,Documentation Location,Demo Location */
-		#"test_assert_speed",
-		"r_dock_tempered",
-		"r_tempered_sidechains",
-	],
-	"pilot/olungu" : [
-		#"multidomain_switch", # /* ????,Documentation Location,Demo Location */
-		#"Superimpose_Pdbs", # /* ????,Documentation Location,Demo Location */
-	],
-	"pilot/opt_e" : [
-		#"optE_simple", # /* Andrew Leaver-Fay,Documentation Location,Demo Location */
-	],
-
-	# P ######################################################################
-	"pilot/phil" : [
-		"test1", # /* Phil Bradley,Documentation Location,Demo Location */
-		#"dna_spec_test", # /* Phil Bradley,Documentation Location,Demo Location */
-		#"analyze_dna", # /* Phil Bradley,Documentation Location,Demo Location */
-		#"dimer_relax", # /* Phil Bradley,Documentation Location,Demo Location */
-		#"dna_design_test", # /* Phil Bradley,Documentation Location,Demo Location */
-		#"dna_relax", # /* Phil Bradley,Documentation Location,Demo Location */
-		#"motif_scan", # /* Phil Bradley,Documentation Location,Demo Location */
-		#"zf_relax", # /* Phil Bradley,Documentation Location,Demo Location */
-	],
-	"pilot/possu" : [
-	],
-
-	# Q ######################################################################
-
-	# R ######################################################################
-	"pilot/ragul" : [
-		#"ragul_compare_plaid_fingerprints",
-		"ragul_minimize",
-		"ragul_darc_get_rmsd",
-		"ragul_darc_minimize",
-		"ragul_run_darc_with_input_eggshell",
-		#"ragul_darc_optimize_weights",
-		#"ragul_score_protein_ligand_complex",
-		#"ragul_darc_run_with_delphi",
-		#"ragul_small_mol_map",
-		"ragul_darc_score",
-		"ragul_test_darc_run",
-		"ragul_test_darc_score",
-		#"ragul_fingerprint_optimize",
-		#"ragul_fingerprint_test",
-		"ragul_get_eggshell_file",
-		"ragul_get_ligand_sasa",
-		"ragul_rosetta_dump_pdb",
-		"sarah_get_pharmacophores",
-		"ragul_find_all_hbonds",
-		"ragul_gen_grid_for_adt",
-		"ragul_calculate_ligand_rmsd",
-		"get_rna_pharmacophore",
-		"get_rna_pharmacophore_with_water",
-		"get_rna_ring_sasa",
-	],
-	"pilot/rayyrw" : [
-		"partial_thread", #Note: used for comparative modeling; no itest needed
-		#"replonly",
-		#"replonly_fa",
-		#"fastrelax_replonly",
-		#"minimization_replonly",
-		#"score_jd2_replonly",
-	],
-	"pilot/rhiju" : [
-		#"rna_test",
-		#"rna_assemble_test",
-		"mg_test",
-		"mg_pdbstats",
-                "rna_features",
-		#"rna_protein_test",
-		#"pdbstats_test"
-	],
-	"pilot/rjha" : [
-		#"ZincHeterodimerDesign", # /* moved to apps/public/design/ZincHeterodimerDesign */
-		#"SurfaceGroups",
-	],
-	"pilot/rmoretti" : [
-		"residue_energy_breakdown", # /* Rocco Moretti, doc/apps/pilot/residue_energy_breakdown.dox, test/integration/tests/residue_energy_breakdown/ */
-		"extract_atomtree_diffs_jd1", # /* Old, jd1 version of extract_atomtree_diffs, in case someone really needs it.*/
-		"ligand_rpkmin_jd1", # /* Old, jd1 version of ligand_rpkmin, in case someone really needs it. */
-		"ligand_dock_jd1", # /* Old, jd1 version of ligand_dock, in case someone really needs it. */
-	],
-	"pilot/ronj" : [
-		#"surface_optE_parallel",
-		#"monomer_protocols",
-		#"analyze_ddG",
-		#"analyze_interface",
-		#"hydrophobic_patch_stats_calculator",
-		#"rss_energy_calculator",
-		"report_hbonds_for_plugin",
-		#"hydrophobic_patch_finder",
-		#"report_cavities_for_plugin",
-	],
-	"pilot/rpache" : [
-                #"generate_matcher_constraints",
-		#"calibrate_pdb_via_sidechain_optimization",
-	],
-	"pilot/rvernon" : [
-		#"calc_pair_stats", # /* Rob Vernon,Documentation Location,Demo Location */
-		#"create_disulfide_database",
-		#"create_disulfide_angle_statistics",
-		#"print_disulfide_scorefunctions",
-		#"create_disulfide_fa_angle_statistics",
-		#"create_disulfide_distance_statistics",
-		#"create_disulfide_alldata",
-		#"score_sidechain_sasa",
-		#"compute_disulfide_matching_score",
-		#"pcs_fragments_to_distances",
-		#"pcs_fragments_to_distances2",
-		#"pcs_fragments_to_distances_wRMS",
-		#"pcs_distances_for_fragpicker",
-		#"pcs_score_residues",
-		#"pcs_score_select_helices",
-		#"pcs_score_select",
-		#"pcs_score_individual_residues",
-	],
-
-	# S ######################################################################
-	"pilot/sarel" : [
-		"hotspot_stub_constraint_test", # /* Sarel Fleishman,Documentation Location,Demo Location */
-		#"test_revert", # /* Sarel Fleishman,Documentation Location,Demo Location */
-	],
-	"pilot/shilei" : [
-		"lowresdock_patchdock_hotspot_cst",
-		"cluster_hotspot_docking",
-		"score_hotspot_cst",
-		"compute_Irmsd",
-		#"docking_parallel",
-	],
-	"pilot/smlewis" : [
-		#"Extender",
-		#"LoopAnalyzer",
-		#"ForgetPDBInfo",
-	],
-	"pilot/sthyme" : [
-		"dna_motifs_collector",
-		"motif_dna_packer_design",
-		#"pdb2motiffile",
-	],
-	"pilot/stranges" : [
-		"buried_polar_finder",
-		"min_pack_min",
-	],
-
-	# T ######################################################################
-	"pilot/thermo" : [
-		#"metropolis_hastings"
-	],
-	"pilot/tseng" : [
-		#"tseng_minimize", # /* ????,Documentation Location,Demo Location */
-	],
-
-	# U ######################################################################
-
-	# V ######################################################################
-
-	# W ######################################################################
-	"pilot/wendao" : [
-		"test_bbmc",
-	],
-	"pilot/whitney" : [
-		#"whitney_identify_epitope",
-		#"whitney_prepare_native",
-		#"whitney_local_backrub",
-		#"whitney_specificity_switch",
-		#"whitney_repack_input",
-	],
-	"pilot/will" : [
-		"motif_hash_util",
-		"sicdock",
-		"tcdock",
-		#"dxdock_movie",
-		#"flail",
-		"test_rose",
-		#"gen_trimer_disulf",
-		#"gen_xtal_cys_dimer_from_trimer",
-		"xyzStripeHash_dump",
-		# "xyzStripeHash_test",
-		#"test_loop_hash",
-		#"d3_bpy_linker",
-		"hubdenovo",
-		#"designability_stats",
-		#"CXdock",
-		#"symdock_enum_3_1",
-		"sym_multicomp_test",
-		#"FunGroupTK",
-		#"FunGroupTK_test",
-		#"IKFGDB",
-		#"atom_design",
-		#"atom_type_rdf",
-		#"bpy",
-		#"coiled_coil",
-		#"coiled_coil_zn",
-		#"crossmatch",
-		#"crossmatch_3e",
-		#"crossmatch_d2",
-		#"cycgly_bbg8t3a",
-		#"cycgly_canonical",
-		#"cycgly_superimpose",
-		#"cycgly_target",
-		#"cycsamp",
-		#"design_DL",
-		#"design_frags",
-		#"disulf_stat",
-		#"dubois",
-		#"dubois_graft",
-		#"dump_res",
-		#"find_pocket",
-		#"for_dkim",
-		#"gen3bpy",
-		#"genI213",
-		#"genI213_2comp",
-		#"genI213_2dsf",
-		#"genI213_nocontacts",
-		#"gen_cyc_gly",
-		#"gen_cyc_gly_cst",
-		"gen_d2",
-		#"gen_d2_3his_ooc",
-		"gen_d2_4his",
-		"gen_d2_hhhc",
-		#"gen_disulf_homodimer",
-		#"gen_homo_hc",
-		#"genmatch",
-		#"genmatch_3bpy",
-		#"genmatch_d6_bhhcg",
-		#"genmatch_d6_bpy",
-		#"genmatch_m8",
-		#"gentetra",
-		#"gentetra_bpy_from_znhis",
-		#"gentetra_from_trimer",
-		#"getDistConstraints",
-		#"gpu_bb_scruct",
-		#"gpu_cpu_speedtest",
-		#"gpu_octree_impl_test",
-		#"gpu_score",
-		#"gpu_speedtest",
-		#"gpu_test",
-		"holes",
-		#"holes2_training_data",
-		"holes_daball_input",
-		#"holes_pbpdb",
-		#"holes_training_data",
-		#"isct_test",
-		#"match_disulf",
-		#"minimize_cavities",
-		#"nisod",
-		#"organopv",
-		#"pack_ddg",
-		"pack_stat_energy",
-		#"pdb_to_frags",
-		#"pilot_packstat",
-		#"print_dunscores",
-		#"rblinker",
-		#"rblinker2",
-		#"rblinker2_overlay_bound",
-		#"rblinker2_test",
-		#"sasa_test",
-		#"score_pdbs",
-		#"sf4_hash",
-		#"smhybrid",
-		#"spiro",
-		#"sup_test",
-		#"symdock_enum",
-		#"symdock_enum_3_1",
-		"symdock_hybrid",
-		"symdock_hybrid_cc3",
-		#"test_gradient",
-		"test_ikrs",
-		#"test_ikrs2",
-		#"test_ikrs_flymake",
-		"test_kc",
-		#"test_leerichards",
-		#"test_string",
-		#"test_sucker_energy",
-		"test_surf_vol",
-		#"ward_design",
-		#"willmatch_2d6_bhe",
-		"willmatch_chorismate",
-		"willmatch_d6_bpy",
-		#"yeates_align",
-	],
-
-	# X ######################################################################
-
-	# Y ######################################################################
-	"pilot/yab" : [
-		#"buns_report", # /* Yih-En Andrew Ban, private app, private app */
-		#"ufv", # /* Yih-En Andrew Ban, private app, private app */
-	],
-	"pilot/yfsong" : [
-		#"plot_hb",
-	],
-	# Z ######################################################################
-	"pilot/zhezhang" : [
-		"extract_CA_coords",
-	],
+#"pilot/amelie" : [
+#	"detect_tight_clusters", # /* Amelie Stein, documentation see comments in file */
+#],
+#"pilot/andre" : [
+#	#"SymmDataTest",
+#	#"SymDock",	 # /* Ingemar Andre,Documentation Location,Demo Location */
+#],
+#"pilot/andrew" : [
+#	#"optest",
+#	#"mpi_msd",
+#	"version_scorefunction", #Note: used for scorefunction version tests; no itest needed
+#	"analyze_rtmin_failures",
+#	#"find_buns",
+#	"zn_match_symmdock", #Note: used for scorefunction version tests; no itest needed
+#	"find_buns",
+#	#"test_ik_match",
+#],
+#"pilot/aroop" : [
+#	#"antibody_mode", # /* Aroop,Documentation Location,Demo Location */
+#	#"model_e2c_ubiquitin", # /* Aroop,Documentation Location,Demo Location */
+#],
+#"pilot/ashworth" : [
+#	#"multistate_design_ga", # /* Justin Ashworth, doc/apps/pilot/multistate_design_ga.dox, deprecated */
+#	"MSA_design", # /* Justin Ashworth, documentation pending further testing, test/integration/tests/sequence_profile_constraints */
+#	#"jd2_parser_DNAInt", # /* Justin Ashworth, doc/apps/pilot/jd2_parser_DNAInt.dox, */
+#],
+#
+## B ######################################################################
+#"pilot/barak" : [
+#	#"BuildFloppyTail",
+#	#"print_phipsi",
+#	#"barak.score",
+#	#"test_frags.barak",
+#	#"overlay_sidechains",
+#	#"overlay_bb_bondangles",
+#	#"thread_sidechains",
+#	#"thread_bb",
+#	#"extend_range",
+#	#"avital_stabilize_driver",
+#	#"compare_rms_byres"
+#],
+#"pilot/bcorreia" : [
+#	#"iterative_design", # /* Correia,Documentation Location,Demo Location */
+#	#"fold_from_loops", # /* Correia,Documentation Location,Demo Location */
+#	#"fold_from_loops_devel", # /* Correia,Documentation Location,Demo Location */
+#],
+#"pilot/bder" : [
+#              #"supercharge",          #integration test: supercharge.  Application moved to public/design
+#	#"Zinc2_HomodimerSetup",  #integration test: zinc_homodimer_setup.  Application moved to public/design
+#	#"Zinc2_HomodimerDesign", #integration test: zinc_homodimer_design.  Application moved to public/design
+#],
+#"pilot/ben" : [
+#	"VIP_app",
+#],
+##"pilot/biokhar" : [
+#	#"karen_compare_different_proteins",
+#	#"karen_pocket_compare",
+#	#"karen_pocket_save",
+#	#"karen_compare_pocket_rmsd",
+##],
+#"pilot/blivens" : [
+#	#"convert", # /* Spencer Bliven,Documentation Location,Demo Location */
+#	#"disulfide_scorer", # /* Spencer Bliven,Documentation Location,Demo Location */
+#],
+#"pilot/boon" : [
+#	"test", # /* a pilot app */
+#],
+#"pilot/brunette" : [
+#	"abego_predict",
+#	"hle_predict",
+#	"minimalCstRelax",
+#	"minimalCstHomology",
+#	"aln_to_disulf",
+#	"evalRepeats",
+#      "armEval",
+#	#"cluster_alns", # /#TJ Brunette,Documentation Location,Demo Location */
+#	#"identify_homolog_inaccuracies",
+#	#"contact_map_from_homologs",
+#],
+#
+## C ######################################################################
+#"pilot/chen" : [
+#	"simple_dna_regression_test", # /* ???,Documentation Location,Demo Location */
+#],
+#"pilot/chrisk" : [
+#	#"rotamer_repack",
+#	#"byres_data",
+#],
+#"pilot/chu" : [
+#	#"zinc_stat", # /* Chu Wang,Documentation Location,Demo Location */
+#],
+#"pilot/cmiles" : [
+#	#"close_loops_cart",
+#	#"close_loops_ccd",
+#	#"dssp",
+#	#"extend",
+#	#"fragment_agreement",
+#	#"fragment_rmsd",
+#	#"gdtha",
+#	#"helix_rotate",
+#	#"jumping",
+#	#"kcluster",
+#	#"maxsub",
+#	"medal",
+#	"medal_exchange",
+#	#"rmsd_partial_thread",
+#	#"sheet_translate",
+#	"star_abinitio",
+#	#"windowed_rama",
+#	#"windowed_rmsd",
+#],
+#"pilot/colin" : [
+#	"backrub_pilot", # /* Colin Smith,doc/apps/public/backrub.dox,Demo Location */
+#	#"cterdesign", # /* Colin Smith,Documentation Location,Demo Location */
+#	"ig_dump", # /* Colin Smith,src/apps/pilot/colin/ig_dump.cc,Demo Location */
+#	"mm_params", # /* Colin Smith,src/apps/pilot/colin/mm_params.cc,src/apps/pilot/colin/mm_params.cc */
+#],
+#"pilot/combss" : [
+#	#"sequencerecovery",
+#	#"generate_orbital_statistics",
+#],
+#
+## D ######################################################################
+#"pilot/dan" : [
+#	#"sidechain_min", # /* Dan Mandell,Documentation Location,Demo Location */
+#	#"angle_stats", # /* Dan Mandell,Documentation Location,Demo Location */
+#	#"LoopExtend" # /* Dan Mandell,Documentation Location,Demo Location */
+#],
+#"pilot/dekim" : [
+#	"score_nonlocal_frags",
+#	"convert_to_centroid",
+#	"extended_chain",
+#	"strand_pairings",
+#],
+#"pilot/delucasl" : [
+#	#"roc_test",
+#	"roc_optimizer",
+#	#"RotamerDump",
+#	#"process_mdl",
+#	"generate_ligand_start_position_file",
+#	"ligands_to_database",
+#	#"map_testing"
+#],
+#"pilot/dgront" : [
+#	#"SaxsSampler",
+#	#"fragmentpicker/picker",
+#	#"fragmentpicker/quotapicker_demo",
+#	"fragmentpicker/fragmentpicker_integration_demo",
+#	#"fragmentpicker/rescore_fragments",
+#	#"experiments/CreatePose",# /* Converts all-atom pose into a centroid one; creates a pose for a FASTA file*/
+#	# "experiments/welde_chains",
+#	#"IndirectSorter",
+#	#"DomainAssemblerNDocker",
+#	#"experiments/RDCTest",
+#	#"experiments/AllCrmsd",
+#	#"experiments/TryScoreFilter",
+#	#"experiments/print_options",
+#	#"experiments/call_rdc",
+#	#"saxs/RotateSAXS",
+#	"saxs/RescoreSAXS",
+#	"saxs/RescorePDDF",
+#	"saxs/ComputeSAXSSpectrum",
+#	#"saxs/linker_sampler",
+#	#"saxs/assemble_domains_with_saxs_jd2",
+#	"hierarchical_clustering",
+#	#"Features",
+#	#"filters_in_abrelax",
+#	#"saxs/call_saxs_score",
+#],
+#"pilot/doug" : [
+#	#"make_peptoid",
+#	#"UnfoldedStateEnergyCalculator",
+#	#"rotamer_prediction_benchmark", # /* Doug Renfrew,Documentation Location,Demo Location */
+#	#"simple_relax", # /* Doug Renfrew,Documentation Location,Demo Location */
+#],
+#"pilot/dwkulp" : [
+#	#"flexibleLoopDesign",
+#	#"reportFragments",
+#],
+#
+## E ######################################################################
+#
+## F ######################################################################
+#"pilot/firas" : [
+#	#"check_burial", # /* Firas,Documentation Location,Demo Location */
+#],
+#"pilot/flo" : [
+#	"EnzdesFixBB", # /* Florian Richter,/doc/apps/public/enzyme_design.dox,/test/integration/tests/enzdes/*/
+#	#"SecondaryMatcher", # /* Florian Richter, this application will be removed when the real matcher comes online, probably around july 2009*/
+#],
+#"pilot/frank" : [
+#	#"autorb", # /* Frank Dimaio,Documentation Location,Demo Location */
+#	#"fast_densScore", # /* Frank Dimaio,Documentation Location,Demo Location */
+#	#"perturb_bbg", # /* Frank Dimaio,Documentation Location,Demo Location */
+#	#"redesign_minimize_into_density", # /* Frank Dimaio,Documentation Location,Demo Location */
+#	#"multimodel_gdt", # /* Frank Dimaio,Documentation Location,Demo Location */
+#	"pdb_to_map", # /* Frank Dimaio,Documentation Location,Demo Location */
+#	"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
+#	"mr_protocols_v2", # /* Frank Dimaio,Documentation Location,Demo Location */
+#	#"cryst_design", # /* Frank Dimaio,Documentation Location,Demo Location */
+#	#"cen_hybridize", # /* Frank Dimaio,Documentation Location,Demo Location */
+#	#"cen_hybridize_ft", # /* Frank Dimaio,Documentation Location,Demo Location */
+#	#"cen_relax", # /* Frank Dimaio,Documentation Location,Demo Location */
+#],
+#
+## G ######################################################################
+#"pilot/grant" : [
+#	#"RedesignXtal_Test", # /* Grant,Documentation Location,Demo Location */
+#	#"AbInitio_MPI",
+#],
+#
+## H ######################################################################
+#"pilot/habib" : [
+#	#"david_find_contacts",
+#	#"david_find_surface_residues",
+#	#"david_find_complex_contacts",
+#	#"david_fill_gaps",
+#	#"david_find_pocket_stabilizing_mutations",
+#	#"david_open_pocket",
+#	#"david_check_pocket",
+#	#"david_recompute_score_and_rmsd",
+#	#"david_align_and_recompute_score_and_rmsd",
+#	#"david_align_append_and_recompute_score_and_rmsd",
+#	#"david_find_best_pocket",
+#	#"david_find_best_contact_pocket",
+#	#"david_darc_multirun",
+#],
+#
+## I ######################################################################
+#"pilot/ian" : [
+#	#"ligdock_confidence", # /* Ian Davis,Documentation Location,Demo Location */
+#	#"cluster_ligand_poses", # /* Ian Davis,Documentation Location,Demo Location */
+#	"select_best_unique_ligand_poses_jd1", # /* Ian Davis,Documentation Location,Demo Location */
+#],
+#
+## J ######################################################################
+#"pilot/jadolfbr/cluster_utilities" : [
+#	"identify_cdr_clusters", # /* Jared Adolf-Bryfogle, In CC file, Demo Location /*
+#	"relax_cdrs", # /* Jared Adolf-Bryfogle, In CC file, Demo Location. /*
+#],
+#"pilot/jadolfbr/antibody_design" : [
+#	"graft_design_cdrs",
+#	#"antibody_designer",
+#],
+#"pilot/jadolfbr/testing" : [
+#	#"class_tests",
+#	],
+#      "pilot/james" : [
+#	"analyze_casp9",
+#	"per_residue_features",
+#	"jdock",
+#	"superdev",
+#	#"make_artificial_centroids",
+#	#"frag_hack",
+#	#"zafer_frag_rmsd",
+#	#"sparta_superdev",
+#	#"cs_segment_rescore",
+#	#"cs_align",
+#	#"cluster_alns",
+#	#"casp9_mqa",
+#	#"thread_hack",
+#	"assemble_domains_jd2",
+#	"angle_recovery_stats",
+#	#"fast_cm",
+#	"batch_distances",
+#	"jscore",
+#	"jrelax",
+#	#"jseq",
+#	#"basic_thread",
+#	#"kdtree_disulf",
+#	#"sc_interaction",
+#	"per_residue_energies",
+#	#"casp9_superdev",
+#	#"thread_fast",
+#	#"burial",
+#	#"remap_aln",
+#	#"copy_hack",
+#	#"mammoth_hack",
+#	#"model_quality",
+#	#"jidealize",
+#	#"boost_hacks",
+#	#"exhaustive_align",
+#	"template_features",
+#	"jcluster",
+#	#"ca_build",
+#	#"silent_cst_quality",
+#	#"prof_search",
+#	#"add_ligand",
+#	#"prof_align",
+#	#"simple_cm",
+#	#"make_profile",
+#	#"design_profile",
+#	#"pick_frags",
+#	#"density_grid",
+#	#"seqdb_stats",
+#	#"filter_sequences",
+#	#"min_cst",
+#	#"dp_align",
+#	"distances",
+#	"angles",
+#	"cst_quality",
+#	#"constraints_matrix",
+#	#"score_silent_cst",
+#	#"constraints_viewer",
+#],
+#"pilot/javierbq" : [
+#	#"fragment_sequence_quality",
+#	#"matdes_design",
+#	#fragment_based_design"
+#	#"make_frags",
+#	#"detect_symmetry",
+#],
+#"pilot/jcorn" : [
+#	"hotspot_hash", # /* Jacob Corn,doc/apps/pilot/hotspot_hash.dox, test/integration/tests/hotspot_hashing */
+#	"hshash_utils" # /* Jacob Corn,doc/apps/pilot/hshash_utils.dox, test/integration/tests/hshash_utils*/
+#],
+#"pilot/jd2" : [
+#	"jd2test", # /* Steven Lewis, src/apps/pilot/jd2/jd2test.readme, test/integration/tests/jd2test/ */
+#	#"jd2memtest",
+#],
+#"pilot/jianqing" : [
+#	#"antibody_assemble_CDRs",
+#	#"antibody_model_CDR_H3",
+#	"snugdock",
+#],
+#"pilot/jim" : [
+#	#"optE_test", # /* Jim Havernek,Documentation Location,Demo Location */
+#	#"optE_parallel", # /* Jim Havernek,Documentation Location,Demo Location */
+#	#"use_asn_motifs",
+#],
+#"pilot/johnk" : [
+#	#"chet_trp_to_gly",
+#	#"chet_report_rmsd",
+#	#"constellation_list",
+#	#"johnk_docking_protocol",
+#	#"johnk_recompute_score_and_rmsd",
+#	#"johnk_interface_recompute_score_and_rmsd",
+#	#"johnk_interface_geosol_minimization",
+#	#"johnk_gapless_threading",
+#	#"johnk_parametrize_geometric_solvation",
+#	#"johnk_exact_geometric_solvation",
+#	#"justin_identify_holes",
+#	#"justin_local_backrub",
+#	#"phosphoArg_build_rotamers",
+#	#"phosphoArg_minimize",
+#	#"srirupa_two_loops",
+#	#"ragul_backbone_diversity",
+#	#"nadeem_find_destabilizing_mutation",
+#	#"nadeem_compensatory_mutation",
+#],
+#"pilot/josh" : [
+#	"motif_loop_build",
+#],
+#"pilot/jstev" : [
+#	#"collect_features",
+#],
+#
+## K ######################################################################
+#"pilot/kdrew" : [
+#	"oop_dock_design",
+#	"oop_creator",
+#	#"oop_puck_energy_calc",
+#	#"oop_puck_energy_calc_mc",
+#	#"oop_dimer_rama_calc",
+#	"ld_converter",
+#],
+#"pilot/kenjung" : [
+#	"loophash_createfiltereddb",
+#	"FastGap",
+#	#"fragpdb",
+#	#"symfragrm",
+#	#"sixdtreeTEST",
+#],
+#"pilot/krishna" : [
+#	"pH_protocol",
+#	#"pH_neighbor_pack",
+#],
+#"pilot/kuichan" : [
+#	#"design_disulfide",
+#],
+#
+## L ######################################################################
+#"pilot/labonte" : [
+#	#"tester",
+#	#"debug_branching",
+#	"test_RingConformationMover",
+#	"test_CarbohydrateInfo"
+#],
+#"pilot/lemmon" : [
+#	"undirected_graph"
+#],
+#"pilot/lin" : [
+#	#"SymmSilentFile",
+#	#"SymmAbrelax",
+#],
+#"pilot/lior" : [
+#	"feature_schema_generator"
+#],
+#"pilot/liz" : [
+#	#"test_scmcmover",
+#	#"create_hierarchy",
+#	#"test_canonical_mover",
+#	# "fix_bb_monomer_ddg",
+#	#"score_ddgs",
+#	#"minimize_with_constraints", # /* Liz Kellogg,Documentation Location,Demo Location */
+#],
+#"pilot/luki" : [
+#	"sc",
+#],
+#
+## M ######################################################################
+#"pilot/mdsmith" : [
+#	#"ligand_motifs",
+#	#"motif_ligand_packer_design",
+#],
+#"pilot/mike" : [
+#	"crossaln",
+#	#"minbench",
+#	"batchrelax",
+#	"loophash",
+#	"loophash_createdb",
+#	"silent2frag",
+#	#"rama_test",
+#	#"md",
+#],
+#"pilot/momeara" : [
+#	"hbonds_test", # /* Matt O'Meara,Documentation Location,Demo Location */
+#	"format_converter",
+#	"features_database_schema",
+#	#"hbond_param_sweep",
+#],
+#"pilot/monica" : [
+#	#"dock_test", # /* Monica Berondo,Documentation Location,Demo Location */
+#	#"monica_relax", # /* Monica Berondo,Documentation Location,Demo Location */
+#	#"moves_test", # /* Monica Berondo,Documentation Location,Demo Location */
+#],
+#"pilot/mpacella" : [
+#	"surface_docking_jd2",
+#],
+#"pilot/murphp" : [
+#	"inv_kin_lig_loop_design", # /* Paul Murphy,Documentation Location,Demo Location */
+#],
+#
+## N ######################################################################
+#"pilot/neil" : [
+#	#"enumeration_test",
+#	#"design_symm",
+#	#"char_native",
+#	#"design_symm_no_hack_elec",
+#	#"symdock_enum_3_1",
+#	#"symdock_enum",
+#	#"des_pos_ddG",
+#	#"matdes_dock",
+#	#"matdes_design",
+#	#"coiled_coil_search",
+#	#"gen_trimer_disulf",
+#	#matdes_mutalyze",
+#],
+#"pilot/nikolas" : [
+#	#"r_segment_rdc",
+#	#"r_SymDock_viewer",
+#],
+#"pilot/nobuyasu" : [
+#	#"flxbb", # /* Nobuyasu,Documentation Location,Demo Location */
+#	"foldptn", # /* Nobuyasu,Documentation Location,Demo Location */
+#	#"local_rmsd", # /* Nobuyasu,Documentation Location,Demo Location */
+#	#"ncontact", # /* Nobuyasu,Documentation Location,Demo Location */
+#	"make_blueprint", # /* Nobuyasu,Documentation Location,Demo Location */
+#],
+#
+## O ######################################################################
+#"pilot/olli" : [
+#	"r_play_with_etables",
+#	#"r_build_hotspot_loops",
+#	#"r_abrelax",
+#	#"r_fake_noe",
+#	"r_pdb2top",
+#	"r_rmsf",
+#	#"r_assign_clusters",
+#	"r_noe_assign",
+#	#"r_min_check",
+#	#"r_convert_frags",
+#	"r_broker", # /* Oliver Lange,Documentation Location,Demo Location */
+#	"r_trjconv", # /* Oliver Lange,Documentation Location,Demo Location */
+#	"r_frag_quality", #Note: used for measuring fragment quality; no itest needed
+#	"r_cst_tool", # /* Oliver Lange,Documentation Location,Demo Location */
+#	"r_score_rdc", # /* Oliver Lange,Documentation Location,Demo Location */
+#	#"r_score", # /* Oliver Lange,Documentation Location,Demo Location */
+#	#"r_count_neighbours", # /* Oliver Lange,Documentation Location,Demo Location */
+#	#"r_rmsf", # /* Oliver Lange,Documentation Location,Demo Location */
+#	#"test_assert_speed",
+#	"r_dock_tempered",
+#	"r_tempered_sidechains",
+#],
+#"pilot/olungu" : [
+#	#"multidomain_switch", # /* ????,Documentation Location,Demo Location */
+#	#"Superimpose_Pdbs", # /* ????,Documentation Location,Demo Location */
+#],
+#"pilot/opt_e" : [
+#	#"optE_simple", # /* Andrew Leaver-Fay,Documentation Location,Demo Location */
+#],
+#
+## P ######################################################################
+#"pilot/phil" : [
+#	"test1", # /* Phil Bradley,Documentation Location,Demo Location */
+#	#"dna_spec_test", # /* Phil Bradley,Documentation Location,Demo Location */
+#	#"analyze_dna", # /* Phil Bradley,Documentation Location,Demo Location */
+#	#"dimer_relax", # /* Phil Bradley,Documentation Location,Demo Location */
+#	#"dna_design_test", # /* Phil Bradley,Documentation Location,Demo Location */
+#	#"dna_relax", # /* Phil Bradley,Documentation Location,Demo Location */
+#	#"motif_scan", # /* Phil Bradley,Documentation Location,Demo Location */
+#	#"zf_relax", # /* Phil Bradley,Documentation Location,Demo Location */
+#],
+#"pilot/possu" : [
+#],
+#
+## Q ######################################################################
+#
+## R ######################################################################
+#"pilot/ragul" : [
+#	# "ragul_fingerprint_test",
+#	#"ragul_minimize",
+#	#"ragul_darc_minimize",
+#	#"ragul_darc_run",
+#	"ragul_darc_score",
+#	#"ragul_test_darc_run",
+#	#"ragul_test_darc_score",
+#	#"ragul_run_darc_with_input_eggshell",
+#	#"ragul_darc_get_rmsd",
+#],
+#"pilot/rayyrw" : [
+#	"partial_thread", #Note: used for comparative modeling; no itest needed
+#	#"replonly",
+#	#"replonly_fa",
+#	#"fastrelax_replonly",
+#	#"minimization_replonly",
+#	#"score_jd2_replonly",
+#],
+#"pilot/rhiju" : [
+#	#"rna_test",
+#	#"rna_assemble_test",
+#	"mg_test",
+#	"mg_pdbstats",
+#              "rna_features",
+#	#"rna_protein_test",
+#	#"pdbstats_test"
+#],
+#"pilot/rjha" : [
+#	#"ZincHeterodimerDesign", # /* moved to apps/public/design/ZincHeterodimerDesign */
+#	#"SurfaceGroups",
+#],
+#"pilot/rmoretti" : [
+#	"residue_energy_breakdown", # /* Rocco Moretti, doc/apps/pilot/residue_energy_breakdown.dox, test/integration/tests/residue_energy_breakdown/ */
+#	"extract_atomtree_diffs_jd1", # /* Old, jd1 version of extract_atomtree_diffs, in case someone really needs it.*/
+#	"ligand_rpkmin_jd1", # /* Old, jd1 version of ligand_rpkmin, in case someone really needs it. */
+#	"ligand_dock_jd1", # /* Old, jd1 version of ligand_dock, in case someone really needs it. */
+#],
+#"pilot/ronj" : [
+#	#"surface_optE_parallel",
+#	#"monomer_protocols",
+#	#"analyze_ddG",
+#	#"analyze_interface",
+#	#"hydrophobic_patch_stats_calculator",
+#	#"rss_energy_calculator",
+#	"report_hbonds_for_plugin",
+#	#"hydrophobic_patch_finder",
+#	#"report_cavities_for_plugin",
+#],
+#"pilot/rpache" : [
+#              #"generate_matcher_constraints",
+#	#"calibrate_pdb_via_sidechain_optimization",
+#],
+#"pilot/rvernon" : [
+#	#"calc_pair_stats", # /* Rob Vernon,Documentation Location,Demo Location */
+#	#"create_disulfide_database",
+#	#"create_disulfide_angle_statistics",
+#	#"print_disulfide_scorefunctions",
+#	#"create_disulfide_fa_angle_statistics",
+#	#"create_disulfide_distance_statistics",
+#	#"create_disulfide_alldata",
+#	#"score_sidechain_sasa",
+#	#"compute_disulfide_matching_score",
+#	#"pcs_fragments_to_distances",
+#	#"pcs_fragments_to_distances2",
+#	#"pcs_fragments_to_distances_wRMS",
+#	#"pcs_distances_for_fragpicker",
+#	#"pcs_score_residues",
+#	#"pcs_score_select_helices",
+#	#"pcs_score_select",
+#	#"pcs_score_individual_residues",
+#],
+#
+## S ######################################################################
+#"pilot/sarel" : [
+#	"hotspot_stub_constraint_test", # /* Sarel Fleishman,Documentation Location,Demo Location */
+#	#"test_revert", # /* Sarel Fleishman,Documentation Location,Demo Location */
+#],
+#"pilot/shilei" : [
+#	"lowresdock_patchdock_hotspot_cst",
+#	"cluster_hotspot_docking",
+#	"score_hotspot_cst",
+#	"compute_Irmsd",
+#	#"docking_parallel",
+#],
+#"pilot/smlewis" : [
+#	#"Extender",
+#	#"LoopAnalyzer",
+#	#"ForgetPDBInfo",
+#],
+#"pilot/sthyme" : [
+#	"dna_motifs_collector",
+#	"motif_dna_packer_design",
+#	#"pdb2motiffile",
+#],
+#"pilot/stranges" : [
+#	"buried_polar_finder",
+#	"min_pack_min",
+#],
+#
+## T ######################################################################
+#"pilot/thermo" : [
+#	#"metropolis_hastings"
+#],
+#"pilot/tseng" : [
+#	#"tseng_minimize", # /* ????,Documentation Location,Demo Location */
+#],
+#
+## U ######################################################################
+#
+## V ######################################################################
+#
+## W ######################################################################
+#"pilot/wendao" : [
+#	"test_bbmc",
+#],
+#"pilot/whitney" : [
+#	#"whitney_identify_epitope",
+#	#"whitney_prepare_native",
+#	#"whitney_local_backrub",
+#	#"whitney_specificity_switch",
+#	#"whitney_repack_input",
+#],
+#"pilot/will" : [
+#	"motif_hash_util",
+#	"sicdock",
+#	#"tcdock",
+#	#"dxdock_movie",
+#	#"flail",
+#	"test_rose",
+#	#"gen_trimer_disulf",
+#	#"gen_xtal_cys_dimer_from_trimer",
+#	"xyzStripeHash_dump",
+#	# "xyzStripeHash_test",
+#	#"test_loop_hash",
+#	#"d3_bpy_linker",
+#	"hubdenovo",
+#	#"designability_stats",
+#	#"CXdock",
+#	#"symdock_enum_3_1",
+#	"sym_multicomp_test",
+#	#"FunGroupTK",
+#	#"FunGroupTK_test",
+#	#"IKFGDB",
+#	#"atom_design",
+#	#"atom_type_rdf",
+#	#"bpy",
+#	#"coiled_coil",
+#	#"coiled_coil_zn",
+#	#"crossmatch",
+#	#"crossmatch_3e",
+#	#"crossmatch_d2",
+#	#"cycgly_bbg8t3a",
+#	#"cycgly_canonical",
+#	#"cycgly_superimpose",
+#	#"cycgly_target",
+#	#"cycsamp",
+#	#"design_DL",
+#	#"design_frags",
+#	#"disulf_stat",
+#	#"dubois",
+#	#"dubois_graft",
+#	#"dump_res",
+#	#"find_pocket",
+#	#"for_dkim",
+#	#"gen3bpy",
+#	#"genI213",
+#	#"genI213_2comp",
+#	#"genI213_2dsf",
+#	#"genI213_nocontacts",
+#	#"gen_cyc_gly",
+#	#"gen_cyc_gly_cst",
+#	"gen_d2",
+#	#"gen_d2_3his_ooc",
+#	"gen_d2_4his",
+#	"gen_d2_hhhc",
+#	#"gen_disulf_homodimer",
+#	#"gen_homo_hc",
+#	#"genmatch",
+#	#"genmatch_3bpy",
+#	#"genmatch_d6_bhhcg",
+#	#"genmatch_d6_bpy",
+#	#"genmatch_m8",
+#	#"gentetra",
+#	#"gentetra_bpy_from_znhis",
+#	#"gentetra_from_trimer",
+#	#"getDistConstraints",
+#	#"gpu_bb_scruct",
+#	#"gpu_cpu_speedtest",
+#	#"gpu_octree_impl_test",
+#	#"gpu_score",
+#	#"gpu_speedtest",
+#	#"gpu_test",
+#	"holes",
+#	#"holes2_training_data",
+#	"holes_daball_input",
+#	#"holes_pbpdb",
+#	#"holes_training_data",
+#	#"isct_test",
+#	#"match_disulf",
+#	#"minimize_cavities",
+#	#"nisod",
+#	#"organopv",
+#	#"pack_ddg",
+#	"pack_stat_energy",
+#	#"pdb_to_frags",
+#	#"pilot_packstat",
+#	#"print_dunscores",
+#	#"rblinker",
+#	#"rblinker2",
+#	#"rblinker2_overlay_bound",
+#	#"rblinker2_test",
+#	#"sasa_test",
+#	#"score_pdbs",
+#	#"sf4_hash",
+#	#"smhybrid",
+#	#"spiro",
+#	#"sup_test",
+#	#"symdock_enum",
+#	#"symdock_enum_3_1",
+#	"symdock_hybrid",
+#	"symdock_hybrid_cc3",
+#	#"test_gradient",
+#	"test_ikrs",
+#	#"test_ikrs2",
+#	#"test_ikrs_flymake",
+#	"test_kc",
+#	#"test_leerichards",
+#	#"test_string",
+#	#"test_sucker_energy",
+#	"test_surf_vol",
+#	#"ward_design",
+#	#"willmatch_2d6_bhe",
+#	"willmatch_chorismate",
+#	"willmatch_d6_bpy",
+#	#"yeates_align",
+#],
+#
+## X ######################################################################
+#
+## Y ######################################################################
+#"pilot/yab" : [
+#	#"buns_report", # /* Yih-En Andrew Ban, private app, private app */
+#	#"ufv", # /* Yih-En Andrew Ban, private app, private app */
+#],
+#"pilot/yfsong" : [
+#	#"plot_hb",
+#],
+## Z ######################################################################
+#"pilot/zhezhang" : [
+#	"extract_CA_coords",
+#],
 }
 
 
