@@ -4067,6 +4067,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20</dd><br>
 <dd>Default: 0</dd><br>
 </dl>
+<dl>
+<dt><b>-unmodifypot</b> \<Boolean\><dt>
+<dd>Do not call modify pot to add extra repulsive interactions between Obb/Obb atom types at distances beneath 3.6 Angstroms</dd><br>
+</dl>
  </li>
 <li><h2>score:saxs</h2>
 <dl>

@@ -755,6 +755,7 @@ Etable::modify_pot_one_pair(
 	Real const w = 0.0;// fullatom_setup_ns::mod_hhrep_width;
 	Real const e = 0.0;// fullatom_setup_ns::mod_hhrep_exponent;
 
+	bool const skip_mod_OCbb_OCbb_rep = basic::options::option[ basic::options::OptionKeys::score::unmodifypot ];
 
 	if(mod_hhrep) {
 		TR << "fullatom_setup: modifying h-h repulsion "
@@ -768,7 +769,7 @@ Etable::modify_pot_one_pair(
 	{
 
 		Size const OCbb_idx = atom_set_->atom_type_index("OCbb");
-		if ( atype1 == OCbb_idx && atype2 == OCbb_idx ) {
+		if ( atype1 == OCbb_idx && atype2 == OCbb_idx && ! skip_mod_OCbb_OCbb_rep ) {
 			ExtraQuadraticRepulsion OCbb_OCbb_exrep;
 			OCbb_OCbb_exrep.xlo = 2.1; OCbb_OCbb_exrep.xhi = 3.6; OCbb_OCbb_exrep.slope = 2;
 			//OCbb_OCbb_exrep.extrapolated_slope = 0; OCbb_OCbb_exrep.ylo = 4.5; // 2*(1.5)^2;
@@ -800,7 +801,7 @@ Etable::modify_pot_one_pair(
 				//   electrostatic repulsion needed to counteract the LJatr which pulls the oxyens
 				//   together
 			if ( dis <= 3.6 ) {
-				if ( atype1 == OCbb_idx && atype2 == OCbb_idx ) {
+				if ( atype1 == OCbb_idx && atype2 == OCbb_idx && ! skip_mod_OCbb_OCbb_rep ) {
 					Real const fac = std::max( dis - 3.6, -1.5 );
 					//std::cout << "adding extra repulsion " << dis << " " << 2*fac*fac << " + " << ljrep_(k,OCbb_idx,OCbb_idx) <<  std::endl;
 					//Real const fac = std::max( dis - 3.6f, -1.5f );

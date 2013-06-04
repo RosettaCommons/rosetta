@@ -285,10 +285,10 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
                 cmd_line_sh, workdir = generateIntegrationTestCommandline(test, outdir);
 
-                def run(times):
+                def run(nt, times):
                     #execute('Running Test %s' % test, 'bash ' + cmd_line_sh)
                     extra = 'ulimit -t %s && ' % Options.timeout  if Options.timeout else ''
-                    res = execute('Running Test %s' % test, '%sbash %s' % (extra, cmd_line_sh), return_=True)
+                    res = execute('Running Test %s' % nt.test, '%sbash %s' % (extra, cmd_line_sh), return_=True)
                     if res:
                         error_string = "*** Test %s did not run!  Check your --mode flag and paths. [%s]\n" % (test, datetime.datetime.now())
                         file(path.join(nt.workdir, ".test_did_not_run.log"), 'w').write(error_string)
@@ -326,11 +326,11 @@ rm -r ref/; ./integration.py    # create reference results using only default se
                     pid, nt = mFork(times=runtimes, test=test, workdir=workdir, queue=queue, timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
                     if not pid:  # we are child process
                         signal.signal(signal.SIGINT, signal.SIG_DFL)
-                        run(runtimes)
+                        run(nt,runtimes)
                         sys.exit(0)
                 else:
                     nt = NT(times=runtimes, test=test, workdir=workdir, queue=queue, start_time=time.time(), timeout=Options.timeout, normal_finish=normal_finish, error_finish=error_finish, timeout_finish=timeout_finish)
-                    run(runtimes)
+                    run(nt,runtimes)
                     if nt.timeout and (time.time() - nt.start_time > nt.timeout): nt.timeout_finish(nt,runtimes)
                     else: normal_finish(nt,runtimes)
 

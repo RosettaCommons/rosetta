@@ -134,6 +134,7 @@ namespace score { RealOptionKey const pro_close_planar_constraint( "score:pro_cl
 namespace score { BooleanOptionKey const linear_bonded_potential( "score:linear_bonded_potential" );  }
 namespace score { BooleanOptionKey const geom_sol_correct_acceptor_base( "score:geom_sol_correct_acceptor_base" );  }
 namespace score { IntegerVectorOptionKey const rg_local_span( "score:rg_local_span" );  }
+namespace score { BooleanOptionKey const unmodifypot( "score:unmodifypot" );  }
 namespace score { namespace saxs { BooleanOptionKey const saxs( "score:saxs" );  } }
 namespace score { namespace saxs { RealOptionKey const min_score( "score:saxs:min_score" );  } }
 namespace score { namespace saxs { StringOptionKey const custom_ff( "score:saxs:custom_ff" );  } }
@@ -706,4 +707,3 @@ namespace rotamerdump { BooleanOptionKey const rotamerdump( "rotamerdump" );  }
 namespace rotamerdump { BooleanOptionKey const xyz( "rotamerdump:xyz" );  }
 namespace rotamerdump { BooleanOptionKey const one_body( "rotamerdump:one_body" );  }
 namespace rotamerdump { BooleanOptionKey const two_body( "rotamerdump:two_body" );  }
-namespace rotamerdump { BooleanOptionKey const annealer( "rotamerdump:annealer" );  }

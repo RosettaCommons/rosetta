@@ -1,3 +1,4 @@
+namespace optE { FileOptionKey const free( "optE:free" );  }
 namespace optE { FileOptionKey const fixed( "optE:fixed" );  }
 namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }
 namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant_logic_taskops_file" );  }

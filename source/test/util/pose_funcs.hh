@@ -165,7 +165,7 @@ ubq_twores_string() {
 // after hydrogen addition and flip_HNQ.
 inline
 std::string
-test_in_pdb_string()
+test_in_pdb_string1()
 {
 	return
 		"ATOM   1525  N   ASP    49       0.229  36.012  74.172  1.00 49.53\n"
@@ -1113,7 +1113,14 @@ test_in_pdb_string()
 		"ATOM   2467 2HG  MET   105       4.476  31.779 101.420  1.00 50.09\n"
 		"ATOM   2468 1HE  MET   105       0.595  30.549 103.069  1.00 50.09\n"
 		"ATOM   2469 2HE  MET   105       0.680  31.801 101.805  1.00 50.09\n"
-		"ATOM   2470 3HE  MET   105       1.440  30.213 101.539  1.00 50.09\n"
+		"ATOM   2470 3HE  MET   105       1.440  30.213 101.539  1.00 50.09\n";
+}
+
+inline
+std::string
+test_in_pdb_string2()
+{
+	return
 		"ATOM   2471  N   THR   106       2.580  36.701 100.859  1.00 49.53\n"
 		"ATOM   2472  CA  THR   106       2.738  38.126 101.108  1.00 50.07\n"
 		"ATOM   2473  C   THR   106       1.439  38.743 101.679  1.00 50.51\n"
@@ -1832,7 +1839,14 @@ test_in_pdb_string()
 		"ATOM   3186 1HD  LYS   148      10.252  34.428 117.431  1.00 50.09\n"
 		"ATOM   3187 2HD  LYS   148       8.937  33.233 117.538  1.00 50.09\n"
 		"ATOM   3188 1HE  LYS   148       9.393  32.657 115.135  1.00 50.05\n"
-		"ATOM   3189 2HE  LYS   148      10.835  33.694 115.230  1.00 50.05\n"
+		"ATOM   3189 2HE  LYS   148      10.835  33.694 115.230  1.00 50.05\n";
+}
+
+inline
+std::string
+test_in_pdb_string3()
+{
+	return
 		"ATOM   3190  N   TYR   149       5.829  36.215 113.570  1.00 49.53\n"
 		"ATOM   3191  CA  TYR   149       5.886  37.295 112.581  1.00 50.07\n"
 		"ATOM   3192  C   TYR   149       4.871  38.390 112.914  1.00 50.51\n"
@@ -2106,6 +2120,14 @@ test_in_pdb_string()
 		"TER\n";
 
 }
+
+inline
+std::string
+test_in_pdb_string()
+{
+	return test_in_pdb_string1() + test_in_pdb_string2() + test_in_pdb_string3();
+}
+
 
 inline
 std::string
@@ -2483,7 +2505,7 @@ std::string pdb_string_2res_1ten_2res_trp_cage()
 
 inline
 std::string
-pdb_string_1ten() {
+pdb_string_1ten1() {
 	return
 	"ATOM      1  C   ARG A 802      31.142  34.383  12.972  1.00 35.79           C  \n"
 	"ATOM      2  O   ARG A 802      32.275  34.066  13.343  1.00 36.69           O  \n"
@@ -3132,7 +3154,13 @@ pdb_string_1ten() {
 	"ATOM    645  CD  GLU A 870      23.366  54.153  15.541  1.00 34.04           C  \n"
 	"ATOM    646  OE1 GLU A 870      22.480  53.827  14.749  1.00 36.83           O  \n"
 	"ATOM    647  OE2 GLU A 870      23.294  53.958  16.754  1.00 37.73           O  \n"
-	"ATOM    648  H   GLU A 870      24.943  58.469  13.016  1.00  0.00           H  \n"
+	"ATOM    648  H   GLU A 870      24.943  58.469  13.016  1.00  0.00           H  \n";
+}
+
+inline
+std::string
+pdb_string_1ten2() {
+	return
 	"ATOM    649  N   VAL A 871      27.321  55.373  13.399  1.00 10.56           N  \n"
 	"ATOM    650  CA  VAL A 871      28.029  54.593  12.402  1.00  9.38           C  \n"
 	"ATOM    651  C   VAL A 871      27.868  53.142  12.863  1.00 12.68           C  \n"
@@ -3353,5 +3381,12 @@ pdb_string_1ten() {
 	"TER     866      THR A 891                                                      \n"
 	"END                                                                             \n";
 }
+
+inline
+std::string
+pdb_string_1ten() {
+	return pdb_string_1ten1() + pdb_string_1ten2();
+}
+
 
 #endif

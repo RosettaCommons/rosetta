@@ -850,6 +850,7 @@ option.add( basic::options::OptionKeys::score::pro_close_planar_constraint, "std
 option.add( basic::options::OptionKeys::score::linear_bonded_potential, "use linear (instead of quadratic) bonded potential" ).def(false);
 option.add( basic::options::OptionKeys::score::geom_sol_correct_acceptor_base, "Fixed definition of base atom for acceptors to match hbonds_geom" ).def(false);
 option.add( basic::options::OptionKeys::score::rg_local_span, "First,last res in rg_local. For example to calc rg_local from 1-20 would be 1,20" ).def(0);
+option.add( basic::options::OptionKeys::score::unmodifypot, "Do not call modify pot to add extra repulsive interactions between Obb/Obb atom types at distances beneath 3.6 Angstroms" );
 option.add( basic::options::OptionKeys::score::saxs::saxs, "saxs option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::score::saxs::min_score, "minimum value of saxs score; the parameter is used to flatten the energy funnel around its minimum" ).def(-5);
 option.add( basic::options::OptionKeys::score::saxs::custom_ff, "Name of config file providing extra from factors" ).def("");
@@ -1422,10 +1423,10 @@ option.add( basic::options::OptionKeys::rotamerdump::rotamerdump, "rotamerdump o
 option.add( basic::options::OptionKeys::rotamerdump::xyz, "when using the RotamerDump application, output the xyz coords of every rotamer" ).def(false);
 option.add( basic::options::OptionKeys::rotamerdump::one_body, "when using the RotamerDump application, output the one_body energies of every rotamer" ).def(false);
 option.add( basic::options::OptionKeys::rotamerdump::two_body, "when using the RotamerDump application, output the two_body energies of every rotamer" ).def(false);
-option.add( basic::options::OptionKeys::rotamerdump::annealer, "Run the annealer and output the rotamers it chose" ).def(false);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::robert::robert, "robert option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rotamerdump::annealer, "Run the annealer and output the rotamers it chose" ).def(false);
+option.add( basic::options::OptionKeys::robert::robert, "robert option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::robert::pairdata_input_pdb_list, "Takes in a file containing a list of pdb locations paired with protocol specific data (eg: one disulfide pair)" ).def("");
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_filter, "minimum normalized maxsub for PCS clustering protocol" ).def(0.9);
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_rmsd, "maxsub calculation's rmsd threshold" ).def(4.0);
@@ -2133,10 +2134,10 @@ option.add( basic::options::OptionKeys::optE::data_in, "file from which to read 
 option.add( basic::options::OptionKeys::optE::data_out, "file to which to write optE data" ).def("optE.data.out");
 option.add( basic::options::OptionKeys::optE::weights, "a conventional weightfile that optE will use to determine which weights will be counted.  All non-zero weights in the file will contribute to rotamer energies and be fit; use the -optE::fix option to fix any of these weights.  Weight values will also be used as starting values for optimization." );
 option.add( basic::options::OptionKeys::optE::fix, "weights to be fixed (must also appear in the weightfile given by the -optE::weights option)" );
-option.add( basic::options::OptionKeys::optE::free, "IterativeOptEDriver flag: specify a file to read score types that are free -- optionally include a starting weight for each score type" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::free, "IterativeOptEDriver flag: specify a file to read score types that are free -- optionally include a starting weight for each score type" );
+option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
 option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
 option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
 option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );

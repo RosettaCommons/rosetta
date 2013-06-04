@@ -486,6 +486,13 @@ public:
 		SplineParameters const & sp
 	);
 
+	inline
+	EtableParamsOnePair const &
+	analytic_params_for_pair(
+		Size atype1,
+		Size atype2
+	) const;
+
 private:
 
 	void
@@ -501,13 +508,6 @@ private:
 		const std::string label,
 		std::istream & in
 	);
-
-	inline
-	EtableParamsOnePair const &
-	analytic_params_for_pair(
-		Size atype1,
-		Size atype2
-	) const;
 
 	inline
 	EtableParamsOnePair &

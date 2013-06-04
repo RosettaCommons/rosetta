@@ -168,6 +168,7 @@ sources = {
 	],
 	"scoring/etable" : [
 		"EtableEnergy",
+		"EtableUnModifyPot",
 		"TableVsAnalyticEtable",
 	],
 	"scoring/geometric_solvation" : [
