@@ -125,6 +125,8 @@ namespace protein {
 
 			sample_generator_->get_next_sample( pose );
 
+			//			if ( pose_count_ == 0 ) pose.dump_pdb( "first_sample_ccd.pdb" );
+
 			save_phi_psi_omega_over_loop_residues( pose ); // trying to avoid memory effects, where solutions will depend on order of when processed.
 			CCD_loop_close_sample_omega_recursively( pose, 0 /*offset*/ );
 			restore_phi_psi_omega_over_loop_residues( pose );
@@ -164,7 +166,7 @@ namespace protein {
 		Real forward_deviation, backward_deviation; // actually loop closure msd, both dirs
 		Real torsion_delta, rama_delta; // actually torsion and rama score changes, averaged by loop_size
 
-		protocols::loops::loop_closure::ccd::fast_ccd_loop_closure(
+		Size const n_cycles = protocols::loops::loop_closure::ccd::fast_ccd_loop_closure(
 																						pose, mm_, loop_.start() , loop_.stop(), loop_.cut(), ccd_cycles,
 																						ccd_tol, rama_check, max_rama_score_increase, max_total_delta_helix,
 																						max_total_delta_strand, max_total_delta_loop, forward_deviation,
@@ -174,7 +176,7 @@ namespace protein {
 		pose_count_++;
 
 
-		TR << "CCD forward_dev: " << forward_deviation << "  backward_dev: " << backward_deviation << "  torsion_delta: " << torsion_delta << " rama_delta: " << rama_delta << std::endl;
+		TR << "CCD forward_dev: " << forward_deviation << "  backward_dev: " << backward_deviation << "  torsion_delta: " << torsion_delta << " rama_delta: " << rama_delta << "  number of cycles: " << n_cycles << std::endl;
 		if ( forward_deviation > rmsd_acceptance_cutoff || backward_deviation > rmsd_acceptance_cutoff ) return false;
 
 		grab_main_chain_torsion_set_list( pose );

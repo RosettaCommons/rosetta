@@ -69,6 +69,8 @@ namespace protein {
     void
 		set_move_jumps_between_chains( bool const & setting ){ move_jumps_between_chains_ = setting; }
 
+    void
+		set_cartesian( bool const setting );
 		//		void
 		//		set_constraint_set( core::scoring::constraints::ConstraintSetOP const & cst_set );
 
@@ -97,6 +99,7 @@ namespace protein {
 		bool move_takeoff_torsions_;
 		bool rescore_only_;
 		bool move_jumps_between_chains_;
+		bool cartesian_;
     std::string silent_file_;
 
 		core::scoring::ScoreFunctionOP fa_scorefxn_;

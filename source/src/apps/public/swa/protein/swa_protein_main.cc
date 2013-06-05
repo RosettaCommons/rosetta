@@ -169,6 +169,7 @@ using basic::T;
 #include <basic/options/keys/swa.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 
 using basic::Error;
@@ -213,6 +214,8 @@ OPT_KEY( Boolean, generate_beta_database )
 OPT_KEY( Boolean, combine_loops )
 OPT_KEY( Boolean, skip_minimize )
 OPT_KEY( Boolean, rescore_only )
+OPT_KEY( Boolean, add_virt_res )
+OPT_KEY( Boolean, cart_min )
 OPT_KEY( Real, score_diff_cut )
 OPT_KEY( Real, centroid_score_diff_cut )
 OPT_KEY( Real, rmsd_screen )
@@ -326,8 +329,10 @@ rebuild_test(){
 													 option[ cutpoint_open ](),
 													 option[ cutpoint_closed ]() );
 	stepwise_pose_setup->set_native_pose( native_pose );
+	// it would be better to have reasonable defaults for the following...
 	stepwise_pose_setup->set_fixed_res( option[ fixed_res ]() );
-	stepwise_pose_setup->set_superimpose_res( option[ superimpose_res ]() );
+	if ( option[ superimpose_res ].user() )	stepwise_pose_setup->set_superimpose_res( option[ superimpose_res ]() );
+	else stepwise_pose_setup->set_superimpose_res( option[ fixed_res ]() );
 	stepwise_pose_setup->set_calc_rms_res( option[ calc_rms_res ]() );
 	stepwise_pose_setup->set_jump_res( option[ jump_res ]() );
 	stepwise_pose_setup->set_virtual_res( option[ virtual_res ]() );
@@ -339,6 +344,7 @@ rebuild_test(){
 	stepwise_pose_setup->set_secstruct( option[ secstruct ] );
 	stepwise_pose_setup->set_cst_file( option[ cst_file ]() );
 	stepwise_pose_setup->set_disulfide_file( option[ disulfide_file ]() );
+	stepwise_pose_setup->set_add_virt_res( option[ add_virt_res ]() || option[ edensity::mapfile ].user() );
 
 	stepwise_pose_setup->apply( pose );
 
@@ -363,12 +369,18 @@ rebuild_test(){
 	// Minimize...
 	//	PoseList minimize_pose_list = stepwise_clusterer.clustered_pose_list();
 	StepWiseProteinPoseMinimizer stepwise_pose_minimizer( stepwise_clusterer->silent_file_data(), moving_residues );
-	ScoreFunctionOP minimize_scorefxn( core::scoring::getScoreFunction() );
+
+	ScoreFunctionOP minimize_scorefxn;
+	if ( ! option[ score::weights ].user() ) minimize_scorefxn =ScoreFunctionFactory::create_score_function( "score12_no_hb_env_dep.wts"  );
+	else minimize_scorefxn = core::scoring::getScoreFunction();
 	if (minimize_scorefxn->get_weight( atom_pair_constraint ) == 0.0) minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 ); //go ahead and turn these on
 	if (minimize_scorefxn->get_weight( coordinate_constraint) == 0.0) minimize_scorefxn->set_weight( coordinate_constraint, 1.0 ); // go ahead and turn these on
+	if ( option[edensity::mapfile].user() ) minimize_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
 	check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, minimize_scorefxn );
 	minimize_scorefxn->set_weight( linear_chainbreak, 150.0 );
+	if ( option[cart_min]() ) minimize_scorefxn->set_weight( cart_bonded, 1.0 );
 	stepwise_pose_minimizer.set_scorefxn( minimize_scorefxn );
+
 	if( option[ dump ] ) stepwise_pose_minimizer.set_silent_file( silent_file_minimize );
 	stepwise_pose_minimizer.set_move_jumps_between_chains( option[ move_jumps_between_chains ]() );
 	//stepwise_pose_minimizer.set_constraint_set( cst_set );
@@ -377,6 +389,7 @@ rebuild_test(){
 	stepwise_pose_minimizer.set_fixed_res( job_parameters->working_fixed_res() );
 	stepwise_pose_minimizer.set_move_takeoff_torsions( !option[ disable_sampling_of_loop_takeoff ]() );
 	stepwise_pose_minimizer.set_rescore_only( option[ rescore_only ]() );
+	stepwise_pose_minimizer.set_cartesian( option[ cart_min ]() );
 	if ( option[ min_type ].user() )	stepwise_pose_minimizer.set_min_type( option[ min_type ]() );
 	if ( option[ min_tolerance ].user() ) stepwise_pose_minimizer.set_min_tolerance( option[ min_tolerance ]() );
 
@@ -544,6 +557,8 @@ generate_samples_and_cluster( core::pose::Pose & pose,
 		utility::vector1< id::TorsionID > which_torsions;  // will include entire loop.
 		utility::vector1<  utility::vector1< Real > > main_chain_torsion_set_lists; // torsions that correspond to closed loops.
 
+		if ( option[ dump ] ) pose.dump_pdb("before_loop_close.pdb");
+
 		if ( option[ ccd_close ]() ) {
 
 			// CCD closure -- heuristic closer but will accept fewer than 6 torsions (and does not require
@@ -598,6 +613,7 @@ generate_samples_and_cluster( core::pose::Pose & pose,
 	ScoreFunctionOP pack_scorefxn = ScoreFunctionFactory::create_score_function( option[pack_weights] );
 	check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, pack_scorefxn );
 	pack_scorefxn->set_weight( linear_chainbreak, 0.2 /*arbitrary*/ );
+	if ( option[edensity::mapfile].user() ) pack_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
 	StepWiseProteinPacker stepwise_packer( moving_residues, sample_generator );
 	stepwise_packer.set_native_pose( job_parameters->working_native_pose() );
 	stepwise_packer.set_scorefxn( pack_scorefxn );
@@ -1050,7 +1066,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( c_terminus, "build C terminus", false );
 	NEW_OPT( centroid_screen, "Centroid Screen", false );
 	NEW_OPT( skip_minimize, "Skip minimize, e.g. in prepack step", false );
-	NEW_OPT( pack_weights, "weights for green packing", "standard.wts" );
+	NEW_OPT( pack_weights, "weights for green packing", "pack_no_hb_env_dep.wts" );
 	NEW_OPT( centroid_weights, "weights for centroid filter", "score3.wts" );
 	NEW_OPT( cst_file, "Input file for constraints", "" );
 	NEW_OPT( disulfide_file, "Input file for disulfides", "" );
@@ -1092,6 +1108,8 @@ main( int argc, char * argv [] )
 	NEW_OPT( ccd_close_res, "Position at which to close loops with CCD [optional if there is only one cutpoint_closed]", 0);
 	NEW_OPT( bridge_res, "instead of enumerative sampling of backbone torsions, combine silent files that contains pieces of loops", blank_size_vector );
 	NEW_OPT( rmsd_screen, "keep sampled residues within this rmsd from the native pose", 0.0 );
+	NEW_OPT( add_virt_res, "Add virtual residue as root for edensity", false );
+	NEW_OPT( cart_min, "Use cartesian minimizer", false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

@@ -130,6 +130,9 @@ namespace swa {
 		set_dump( bool const dump );
 
 		void
+		set_add_virt_res( bool const setting );
+
+		void
 		set_secstruct( std::string const secstruct );
 
 
@@ -267,7 +270,9 @@ namespace swa {
 		std::string
 		get_swa_jump_atom( core::conformation::Residue const & rsd );
 
-	private:
+		void
+		add_aa_virt_rsd_as_root( core::pose::Pose & pose);
+private:
 
 		utility::vector1< core::Size > const & moving_res_list_;
 		std::string const desired_sequence_;
@@ -301,6 +306,7 @@ namespace swa {
 		bool remove_nterminus_variant_;
 		bool remove_cterminus_variant_;
 		bool parin_favorite_output_;
+		bool add_virt_res_;
 
 		std::string cst_file_;
 		std::string disulfide_file_;

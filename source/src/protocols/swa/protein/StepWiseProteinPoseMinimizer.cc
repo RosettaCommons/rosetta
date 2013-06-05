@@ -36,6 +36,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <ObjexxFCL/format.hh>
@@ -94,6 +95,7 @@ namespace protein {
 		silent_file_ = "";
     fa_scorefxn_ = core::scoring::getScoreFunction();
 		min_type_ = "dfpmin_armijo_nonmonotone"; // used to be dfpmin
+		cartesian_ = true;
 		min_tolerance_ = 0.000025 ; // used to be 0.00000025
 	}
 
@@ -128,7 +130,15 @@ namespace protein {
 		utility::vector1< std::pair<core::Size,core::Size> > disulfides;
 		core::conformation::disulfide_bonds(pose.conformation(), disulfides);
 
-    AtomTreeMinimizer minimizer;
+		//if ( cartesian_ ){ // this is messy -- move to its own function if it works.
+		//			for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		//				if ( pose.residue_type(i).has_variant_type( "CUTPOINT_UPPER" ) ) remove_variant_type_from_pose_residue( pose, "CUTPOINT_UPPER", i );
+		//				if ( pose.residue_type(i).has_variant_type( "CUTPOINT_LOWER" ) ) remove_variant_type_from_pose_residue( pose, "CUTPOINT_LOWER", i );
+		//			}
+		//		}
+
+		CartesianMinimizer cart_minimizer;
+		AtomTreeMinimizer minimizer;
     bool const use_nblist( true );
     MinimizerOptions options( min_type_, min_tolerance_, use_nblist, false, false );
     options.nblist_auto_update( true );
@@ -186,12 +196,18 @@ namespace protein {
 					if ( linear_chainbreak_weight_original < 20.0 ) std::cout << "WARNING!! Your linear_chainbreak weight is " << F(8,3,linear_chainbreak_weight_original ) << ", which is less than recommended (20.0) " << std::endl;
 
 					fa_scorefxn_->set_weight( linear_chainbreak, linear_chainbreak_weight_original * 0.25 );
-					minimizer.run( pose, mm, *fa_scorefxn_, options );
+					if ( !cartesian_) {
+						minimizer.run( pose, mm, *fa_scorefxn_, options );
+					}
 					fa_scorefxn_->set_weight( linear_chainbreak, linear_chainbreak_weight_original );
 				}
 
 
-				minimizer.run( pose, mm, *fa_scorefxn_, options );
+				if (cartesian_) {
+					cart_minimizer.run( pose, mm, *fa_scorefxn_, options );
+				} else {
+					minimizer.run( pose, mm, *fa_scorefxn_, options );
+				}
 
 			}
 
@@ -296,6 +312,13 @@ namespace protein {
 	void
 	StepWiseProteinPoseMinimizer::set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res ){
 		calc_rms_res_ = calc_rms_res;
+	}
+
+  //////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseProteinPoseMinimizer::set_cartesian( bool const setting ){
+		cartesian_ = setting;
+		if (cartesian_) min_type_ = "lbfgs_armijo_nonmonotone";
 	}
 
   //////////////////////////////////////////////////////////////////////////

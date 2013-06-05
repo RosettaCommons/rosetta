@@ -29,6 +29,7 @@
 #include <core/chemical/VariantType.hh>
 //////////////////////////////////////////////
 #include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/FadeFunc.hh>
@@ -118,6 +119,7 @@ namespace swa {
 		cst_file_( "" ),
 		BRIDGE_RES_( 123 ),
 		ready_to_align_( false ),
+		add_virt_res_(false),
 		dump_( false )
 	{
 		///////////////////////////////////////////////////////
@@ -198,6 +200,8 @@ return "StepWisePoseSetup";
 
 		setup_constraints( pose );
 		setup_disulfides( pose );
+		if (add_virt_res_)
+			add_aa_virt_rsd_as_root(pose);
 
 		//////////////////////////////////////////////////
 		// Final cleanup. This is manual and quite silly, but the pose machinery currently
@@ -1209,6 +1213,8 @@ return "StepWisePoseSetup";
 
 		working_native_pose = new Pose;
 		get_working_pose( *get_native_pose(), *working_native_pose );
+		if (add_virt_res_)
+			add_aa_virt_rsd_as_root(*working_native_pose);
 
 	}
 
@@ -1592,6 +1598,34 @@ return "StepWisePoseSetup";
 
 
 	}
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	//Adding Virtual res as root
+	void
+	StepWisePoseSetup::add_aa_virt_rsd_as_root( core::pose::Pose & pose){  //Fang's electron density code
+
+		Size const nres = pose.total_residue();
+		//if already rooted on virtual residue , return
+		if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
+			TR.Warning << "addVirtualResAsRoot() called but pose is already rooted on a VRT residue ... continuing." << std::endl;
+			return;
+		}
+
+		core::chemical::ResidueTypeSet const & residue_set = pose.residue_type(1).residue_type_set();
+		core::chemical::ResidueTypeCOPs const & rsd_type_list( residue_set.name3_map("VRT") );
+		core::conformation::ResidueOP new_res( core::conformation::ResidueFactory::create_residue( *rsd_type_list[1] ) );
+		pose.append_residue_by_jump( *new_res , 1 );
+
+		// make the virt atom the root
+		kinematics::FoldTree newF( pose.fold_tree() );
+		newF.reorder( nres+1 );
+		pose.fold_tree( newF );
+
+		utility::vector1< core::Size > working_fixed_res = job_parameters_->working_fixed_res();
+		working_fixed_res.push_back( nres+1 );
+		job_parameters_->set_working_fixed_res( working_fixed_res );
+
+	}
+	////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////
 	void
@@ -1690,6 +1724,10 @@ return "StepWisePoseSetup";
 		secstruct_ = secstruct;
 	}
 
+	void
+	StepWisePoseSetup::set_add_virt_res( bool const setting ){
+		add_virt_res_ = setting;
+	}
 
 }
 }
