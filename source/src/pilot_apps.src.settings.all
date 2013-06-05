@@ -225,6 +225,11 @@ sources = {
 	],
 
 	# G ######################################################################
+	"pilot/gideonla" : [
+		"CutOutDomain", # /* Grant,Documentation Location,Demo Location */
+		
+	],
+
 	"pilot/grant" : [
 		#"RedesignXtal_Test", # /* Grant,Documentation Location,Demo Location */
 		#"AbInitio_MPI",
@@ -271,6 +276,7 @@ sources = {
 		#"whitney_specificity_switch",
 		#"whitney_repack_input",
 	],
+
 
 	# H ######################################################################
 	"pilot/habib" : [

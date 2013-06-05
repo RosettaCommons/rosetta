@@ -10,6 +10,8 @@
 /// @file devel/splice/Splice.cc
 /// @brief
 /// @author Sarel Fleishman (sarel@weizmann.ac.il)
+/// @modified by gideonla (glapidoth@gmail.com)
+
 
 // Unit headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -73,7 +75,16 @@
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
+#include <core/scoring/constraints/Constraints.hh>
+#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/constraints/CircularHarmonicFunc.hh>
+#include <numeric/constants.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/sequence/SequenceProfile.hh>
+#include <core/scoring/Energies.hh>
+#include <numeric/xyz.functions.hh>
 //////////////////////////////////////////////////
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -592,8 +603,8 @@ Splice::apply( core::pose::Pose & pose )
 	tf->push_back( new operation::NoRepackDisulfides );
 	tf->push_back( tso );
 	DesignAroundOperationOP dao = new DesignAroundOperation;
-	dao->design_shell( (design_task_factory()() == NULL ? 0.0 : 5.0 ) ); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
-	dao->repack_shell( 6.5 );
+	dao->design_shell( (design_task_factory()() == NULL ? 0.0 : design_shell()) ); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
+	dao->repack_shell( pack_shell() );
 	for( core::Size i = from_res() - 1; i <= from_res() + total_residue_new + 1; ++i ){
 		if( !pose.residue( i ).has_variant_type( DISULFIDE ) )
 			dao->include_residue( i );
@@ -664,16 +675,44 @@ Splice::apply( core::pose::Pose & pose )
 		}
 		core::Size const startn( disulfn > 0 ? disulfn + 1 : from_res() - 3 );
 		core::Size const startc( disulfc > 0 ? disulfc - 6 : from_res() + total_residue_new - ( res_move() - 3 ) );
+		
+	
+		
+		
 		for( core::Size i = startn; i <= startn + res_move() - 1; ++i ){
 			mm->set_chi( i, true );
 			mm->set_bb( i, true );
+			
 		}
+		
 		for( core::Size i = startc; i <= startc + res_move() - 1; ++i ){
-			mm->set_chi( i, true );
-			mm->set_bb( i, true );
+			mm->set_chi( i, true ); //allowing chi angle movement
+			mm->set_bb( i, true ); //allowing bb movement
+			
 		}
+
 		ccd_mover.set_task_factory( tf );
 		ccd_mover.move_map( mm );
+		
+		
+		//pose.dump_pdb("before_ccd.pdb");
+		add_dihedral_constraints(pose, source_pose,nearest_to_from,nearest_to_to,cut_site  );//add dihedral constraints loop
+		add_coordinate_constraints(pose, source_pose,nearest_to_from,nearest_to_to);//add coordiante constraints to loop
+		
+		//as control I want to see which residues are allowed to be design according to design shell.Gideonla may13
+		utility::vector1< core::Size > designable_residues = residue_packer_states (pose,tf, true, false);
+		TR<<"Residues Allowed to Design:"<<std::endl;
+		for (utility::vector1<core::Size>::const_iterator i (designable_residues.begin()); i != designable_residues.end(); ++i) {
+			TR<<pose.residue(*i).name1()<<*i<<",";
+		}
+		TR<<std::endl;
+		
+		utility::vector1< core::Size > packable_residues = residue_packer_states (pose,tf, false, true);
+		TR<<"Residues Allowed to Repack:"<<std::endl;
+		for (utility::vector1<core::Size>::const_iterator i (packable_residues.begin()); i != packable_residues.end(); ++i) {
+			TR<<pose.residue(*i).name1()<<*i<<",";
+		}
+		TR<<std::endl;
 		ccd_mover.apply( pose );
 
 		/// following ccd, compute rmsd to source loop to ensure that you haven't moved too much. This is pretty decent filter
@@ -796,20 +835,20 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 				//TR<<"Now working on segment:"<<segment_name<<"\n";
 				foreach( std::string const s, profile_name_pairs ){
 					StringVec const profile_name_file_name( utility::string_split( s, ':' ) );
-					TR<<"         line 855       "<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
+					TR<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
 
 					splice_segment->read_profile( profile_name_file_name[ 2 ], profile_name_file_name[ 1 ] );
 
 				}
 				splice_segment->read_pdb_profile( pdb_profile_match );
 
-				TR<<"line 886"<<"the segment name is: "<<segment_name<<std::endl;
+				TR<<"the segment name is: "<<segment_name<<std::endl;
 				splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
 				segment_names_ordered_.push_back(segment_name);
 			}//foreach segment_tag
 		}// fi Segments
 	}//foreach sub_tag
-	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
+	 scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	add_sequence_constraints_only( tag->getOption< bool >( "add_sequence_constraints_only", false ) );
 	if( add_sequence_constraints_only() ){
 		TR<<"add_sequence_constraints only set to true. Therefore I'm not parsing any of the other Splice flags. Ask Assaf!"<<std::endl;
@@ -855,6 +894,10 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		source_pdb( tag->getOption< std::string >( "source_pdb" ) );
 
 	ccd( tag->getOption< bool >( "ccd", 1 ) );
+	dihedral_const(tag->getOption< core::Real >( "dihedral_const", 0 ) );//Added by gideonla Apr13, set here any real posiive value to impose dihedral constraints on loop
+	coor_const(tag->getOption< core::Real >( "coor_const", 0 ) );//Added by gideonla May13, set here any real to impose coordinate constraint on loop
+	design_shell(tag->getOption< core::Real >( "design_shell", 6.0 ) );//Added by gideonla May13, 
+	pack_shell(tag->getOption< core::Real >( "pack_shell", 8.0 ) );//Added by gideonla May13, 
 	rms_cutoff( tag->getOption< core::Real >( "rms_cutoff", 999999 ) );
 	runtime_assert( !(tag->hasOption( "torsion_database" ) && tag->hasOption( "rms_cutoff" )) ); // torsion database doesn't specify coordinates so no point in computing rms
 	res_move( tag->getOption< core::Size >( "res_move", 4 ) );
@@ -1162,7 +1205,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 	//	std::string temp_pdb_name = pdb_tag.erase(pdb_tag.size() - 5); //JD adds "_0001" to input name, we need to erase it
 		//pdb_tag = temp_pdb_name +".pdb";
 		TR<<" The scafold file name is :"<<pdb_tag<<std::endl;//file name of -s pdb file
-	//	core::pose::read_comment_pdb(pdb_tag,pose); //read comments from pdb file
+		core::pose::read_comment_pdb(pdb_tag,pose); //read comments from pdb file
 /*		std::string pdb_dump_fname_("test2");
 		std::ofstream out( pdb_dump_fname_.c_str() );
 		pose.dump_pdb(out); //Testing out comment pdb, comment this out after test (GDL) */
@@ -1197,16 +1240,16 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 			tempPDBname.erase(period_idx);
 		}
 		if (!add_sequence_constraints_only_){///If only doing sequence constraints then don't add to pose comments source name
-		TR<<"Current Segment is: "<<segment_type_<<" and the source pdb is "<<tempPDBname<<std::endl;
+		TR<<"The currnet segment is: "<<segment_type_<<" and the source pdb is "<<tempPDBname<<std::endl;
 		core::pose::add_comment(pose,"segment_"+segment_type_,tempPDBname);//change correct association between current loop and pdb file
 		}
 
 		load_pdb_segments_from_pose_comments(pose); // get segment name and pdb accosiation from comments in pdb file
-		TR<<"Number of PDB segments is: "<<pdb_segments_.size()<<std::endl;
+		TR<<"There are "<<pdb_segments_.size()<<" PSSM segments"<<std::endl;
 
 
 		runtime_assert( pdb_segments_.size() ); //This assert is in place to make sure that the pdb file has the correct comments, otherwise this function will fail
-		//pose.dump_pdb("test"); //Testing out comment pdb, comment this out after test (GDL)
+//		pose.dump_pdb("test"); //Testing out comment pdb, comment this out after test (GDL)
 
 		// test that all PDB_segments are present
 		//for( map< string, string >::const_iterator i = pdb_segments_.begin(); i != pdb_segments_.end(); ++i ){
@@ -1220,7 +1263,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 
 		foreach( std::string const segment_type, segment_names_ordered_ ){ //<- Start of PDB segment iterator
 			if (splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==0){
-				utility_exit_with_message(" could not find the pdb file corresponding to segment "+segment_type+" the pdb name entered was: "+ pdb_segments_[segment_type]+ ", please check the pdb_profile_match file \n");
+				utility_exit_with_message(" could not find the source pdb name:: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type_+"\n");
 			}
 			profile_vector.push_back( splice_segments_[ segment_type ]->pdb_profile( pdb_segments_[segment_type] ));
 		} // <- End of PDB segment iterator
@@ -1301,8 +1344,8 @@ find_residues_on_chain1_inside_interface( core::pose::Pose const & pose ){
 }
 
 void
-Splice::add_sequence_constraints( core::pose::Pose & pose ){
-	if(use_sequence_profiles_){
+Splice::add_sequence_constraints( core::pose::Pose & pose){
+	if(use_sequence_profiles_){		
 		using namespace core::scoring::constraints;
 
 		/// first remove existing sequence constraints
@@ -1311,7 +1354,7 @@ Splice::add_sequence_constraints( core::pose::Pose & pose ){
 		TR<<"Total number of constraints at start: "<<constraints.size()<<std::endl;
 		core::Size cst_num( 0 );
 		foreach( ConstraintCOP const c, constraints ){
-			if( c->type() == "SequenceProfile" ){
+			if( c->type() == "SequenceProfile" ){//only remove profile sequence constraints 
 				pose.remove_constraint( c );
 				cst_num++;
 			}
@@ -1354,11 +1397,112 @@ Splice::add_sequence_constraints( core::pose::Pose & pose ){
 			TR<<"Added a total of "<<cst_num<<" sequence constraints."<<std::endl;
 			TR<<"Now the pose has a total of "<<pose.constraint_set()->get_all_constraints().size()<<" constraints"<<std::endl;
 		}
+	
+	
+	
 		/// just checking that the scorefxn has upweighted res_type_constraint
 		core::Real const score_weight( scorefxn()->get_weight( core::scoring::res_type_constraint ) );
 		TR<<"res_type_constraint weight is set to "<<score_weight<<std::endl;
 		if( score_weight <= 0.001 )
 			TR<<"Warning! res_type_constraint weight is low, even though I've just added sequence constraints to the pose! These sequence constraints will have no effect. This could be an ERROR"<<std::endl;
+	}
+}
+
+
+void
+Splice::add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to )
+{
+
+	//pose.dump_pdb("during_coor_constraint.pdb");
+	core::scoring::constraints::ConstraintOPs cst;
+	core::Size from = protocols::rosetta_scripts::find_nearest_res(pose, source_pose,nearest_to_from, 1/*chain*/ ); //The following for loop itterates over the source pose residues
+	core::Size const fixed_res( protocols::rosetta_scripts::find_nearest_res(pose, source_pose,nearest_to_from, 1/*chain*/ )-3); //The fixed res is set to be 3 residues up from start loop (should be in the stem region, gideonla 2may13
+	TR<<"Anchor residue for the coordinate constraint is "<<fixed_res<<std::endl;
+	TR<<"Current pose CA xyz coordinate/source pdb CA xyz coordinate:"<<std::endl;
+	core::id::AtomID const anchor_atom( core::id::AtomID( pose.residue( fixed_res ).atom_index( "CA" ), fixed_res ) );
+	if(!(coor_const_<0.001)){
+		for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
+			core::scoring::constraints::FuncOP coor_cont_fun = new core::scoring::constraints::HarmonicFunc(0.0,coor_const_);
+			cst.push_back( new core::scoring::constraints::CoordinateConstraint( core::id::AtomID(pose.residue(from).atom_index("CA"), from), anchor_atom, source_pose.residue(i).atom("CA").xyz(),coor_cont_fun));
+			//Print xyz coor of current pose CA atoms vs. source pose 
+			TR<<from<<pose.aa(from)<<" "<<pose.residue(from).atom("CA").xyz()[0]<<","<<pose.residue(from).atom("CA").xyz()[1]<<","<<pose.residue(from).atom("CA").xyz()[2]<<" / "<<
+			i<<source_pose.aa(i)<<" "<<source_pose.residue(i).atom("CA").xyz()[0]<<","<<pose.residue(i).atom("CA").xyz()[1]<<","<<pose.residue(i).atom("CA").xyz()[2]<<std::endl;
+			from++;
+			pose.add_constraints(cst);		
+		}
+		scorefxn()->show(pose);
+	}
+}
+
+void
+Splice::add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size cut_site){
+if(!(dihedral_const_<0.001)){//if user sets dihedral constraints to 0 then no dihedral constraints are imposed; gideonla may13
+	core::Size from = protocols::rosetta_scripts::find_nearest_res(pose, source_pose,nearest_to_from, 1/*chain*/ ); //The following for loop itterates over the source pose residues
+	//inorder to compare the angles we keep track of the corresponding residues in the template pose
+	TR<<"Apllying Dihedral constraints to pose, internal weight = "<< dihedral_const_<<", Pose/Source PDB:"<<std::endl;
+	for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
+		core::scoring::constraints::ConstraintOPs csts; //will hold Dihedral constraints
+		//Set up constraints for the phi angle
+		core::id::AtomID phi_resi_n( source_pose.residue_type( i ).atom_index( "N" ), i );
+		numeric::xyzVector< core::Real > xyz_Ni = source_pose.residue(i).atom("N").xyz();
+		
+		core::id::AtomID phi_resj_c( source_pose.residue_type( i-1 ).atom_index( "C" ), i-1 );
+		numeric::xyzVector< core::Real > xyz_Cj = source_pose.residue(i-1).atom( "C" ).xyz();
+		
+		core::id::AtomID phi_resi_co( source_pose.residue_type( i ).atom_index( "C" ), i );
+		numeric::xyzVector< core::Real > xyz_Ci = source_pose.residue(i).atom( "C" ).xyz();
+		
+		core::id::AtomID phi_resi_ca( source_pose.residue_type( i ).atom_index( "CA" ), i );
+		numeric::xyzVector< core::Real > xyz_Cai = source_pose.residue(i).atom( "CA" ).xyz();
+		
+		
+		
+		TR<<"Phi: "<<from<<pose.aa(from)<<":"<<pose.phi(from)<<" / "<<i<<source_pose.aa(i)<<":"<<numeric::dihedral_degrees(xyz_Cj,xyz_Ni,xyz_Cai,xyz_Ci) <<std::endl;
+		core::scoring::constraints::FuncOP di_const_func_phi = new core::scoring::constraints::CircularHarmonicFunc((source_pose.phi(i)*numeric::constants::d::pi_2)/360,dihedral_const_);
+		csts.push_back( new core::scoring::constraints::DihedralConstraint(phi_resj_c,phi_resi_n,phi_resi_ca,phi_resi_co, di_const_func_phi ) );
+		//for debuggin comment this out
+		
+		//Set up constraints for the psi angle
+		core::id::AtomID psi_resi_n( source_pose.residue_type( i ).atom_index( "N" ), i );
+		xyz_Ni = source_pose.residue(i).atom("N").xyz();
+		
+		core::id::AtomID psi_resj_n( source_pose.residue_type( i+1 ).atom_index( "N" ), i+1 );
+		numeric::xyzVector< core::Real > xyz_Nj = source_pose.residue(i+1).atom("N").xyz();
+		
+		core::id::AtomID psi_resi_co( source_pose.residue_type( i ).atom_index( "C" ), i );
+		xyz_Ci = source_pose.residue(i).atom("C").xyz();
+		
+		core::id::AtomID psi_resi_ca( source_pose.residue_type( i ).atom_index( "CA" ), i );
+		xyz_Cai = source_pose.residue(i).atom("CA").xyz();
+		
+		//for each residue the ideal angle is taken from the "donor" pdb
+		core::scoring::constraints::FuncOP di_const_func_psi = new core::scoring::constraints::CircularHarmonicFunc((source_pose.psi(i)*numeric::constants::d::pi_2)/360,1);
+		csts.push_back( new core::scoring::constraints::DihedralConstraint(psi_resi_n,psi_resi_ca,psi_resi_co,psi_resj_n, di_const_func_psi ) );
+		TR<<"Psi: "<<from<<pose.aa(from)<<":"<<pose.psi(from)<<" / "<<i<<source_pose.aa(i)<<":"<<numeric::dihedral_degrees(xyz_Ni,xyz_Cai,xyz_Ci,xyz_Nj) <<std::endl;
+		//Set up constraints for the omega angle
+		core::id::AtomID omega_resj_n( source_pose.residue_type( i+1 ).atom_index( "N" ), i+1);
+		xyz_Ni = source_pose.residue(i+1).atom("N").xyz();
+		
+		core::id::AtomID omega_resi_ca( source_pose.residue_type( i ).atom_index( "CA" ), i );
+		xyz_Cai = source_pose.residue(i).atom("CA").xyz();
+		
+		core::id::AtomID omega_resi_co( source_pose.residue_type( i ).atom_index( "C" ), i );
+		xyz_Ci = source_pose.residue(i).atom("C").xyz();
+		
+		core::id::AtomID omega_resj_ca( source_pose.residue_type( i+1 ).atom_index( "CA" ), i+1);
+		numeric::xyzVector< core::Real > xyz_Caj = source_pose.residue(i+1).atom("CA").xyz();
+		TR<<"omega: "<<from<<pose.aa(from)<<":"<<pose.omega(from)<<" / "<<i<<source_pose.aa(i)<<":"<<numeric::dihedral_degrees(xyz_Cai,xyz_Ci,xyz_Nj,xyz_Caj) <<std::endl;
+		//for each residue the ideal angle is taken from the "donor" pdb
+		core::scoring::constraints::FuncOP di_const_func_omega = new core::scoring::constraints::CircularHarmonicFunc((source_pose.omega(i)*numeric::constants::d::pi_2)/360,1);
+		csts.push_back( new core::scoring::constraints::DihedralConstraint(omega_resi_ca,omega_resi_co, omega_resj_n, omega_resj_ca, di_const_func_omega ) );
+		
+		pose.add_constraints(csts);		
+		from++;//every itteration we must increment "from"
+		}
+		core::Real const score_weight( scorefxn()->get_weight( core::scoring::dihedral_constraint ) );
+		TR<<"dihedral_constraint weight is set to "<<score_weight<<std::endl;
+		scorefxn()->show(pose);
+		//pose.dump_pdb("at_end_of_dihedral_const.pdb");
 	}
 }
 

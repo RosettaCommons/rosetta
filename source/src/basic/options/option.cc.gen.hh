@@ -3,6 +3,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/option.cc.include.gen.hh>
 #include <utility/options/OptionCollection.hh>
+
 inline void add_rosetta_options_0( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rigid::rigid, "rigid option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rigid::chainbreak_bias, "Strength of bias applied to the translation component of rigid body moves to close chainbreak" ).def(0.00);
 option.add( basic::options::OptionKeys::rigid::close_loops, "Perform loop closure at the end of medal" ).def(true);
@@ -1084,6 +1085,8 @@ option.add( basic::options::OptionKeys::evolution::rms_topmargin, "RMS Clusterin
 option.add( basic::options::OptionKeys::evolution::targetdir, "Write target new parent polulation to this directory ! " ).def("./");
 option.add( basic::options::OptionKeys::evolution::padding_score_filter, "RMS Clustering threshold" ).def(5.0);
 option.add( basic::options::OptionKeys::evolution::padding_stage2_filter, "RMS Clustering threshold" ).def(15.0);
+option.add( basic::options::OptionKeys::cutoutdomain::start, "start residue to cut out domain" ).def(1);
+option.add( basic::options::OptionKeys::cutoutdomain::end, "end residue to cut out domain" ).def(2);
 option.add( basic::options::OptionKeys::cluster::cluster, "cluster option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cluster::lite, "uses light-weight method of outputting cluster-centers, useful for when there's a HUGE amount of data!" ).def(false);
 option.add( basic::options::OptionKeys::cluster::input_score_filter, "Only read in structures below a certain energy" ).def(1000000.0);

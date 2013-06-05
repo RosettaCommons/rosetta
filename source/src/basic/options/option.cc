@@ -266,6 +266,7 @@
 #include <basic/options/keys/ufv.OptionKeys.gen.hh>
 #include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
+#include <basic/options/keys/cutoutdomain.OptionKeys.gen.hh>
 
 namespace basic {
 namespace options {

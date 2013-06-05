@@ -34,42 +34,9 @@
 cd %(workdir)s
 
 # Removing old files from previous run
+rm -R output
 rm .results.log  .results.yaml
+mkdir output
 
-work_dir="input"
-compiler=%(bin)s/docking_protocol.%(binext)s
-[ -x $compiler ] || exit 1
-prefix=XT
-Njobs=20
-database="%(database)s"
-
-exec < flags
-protocol=""
-while read line
-do
-	#echo $line
-	protocol=$protocol" "$line
-done
-protocol="'"$protocol"'"
-
-cd $work_dir
-
-rm protocol.config
-#cp ../scripts/protocol.config .
-cp ../scripts/crun_sci_test.bash .
-echo "compiler=$compiler" >> protocol.config
-echo "prefix=$prefix" >> protocol.config
-echo "protocol_flags=$protocol" >> protocol.config
-echo "Njobs=$Njobs" >> protocol.config
-echo "database=$database" >> protocol.config
-
-LIST=$(ls *.pdb | cut -c 1-4)
-for pdb in $LIST
-do
-echo $pdb
-rm -rf $pdb
-./crun_sci_test.bash $pdb protocol
-done
-
-#rm protocol.config
-
+python submit.py
+condor_submit condor

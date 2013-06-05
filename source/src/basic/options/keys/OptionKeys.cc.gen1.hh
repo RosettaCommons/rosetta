@@ -368,6 +368,9 @@ namespace evolution { RealOptionKey const rms_topmargin( "evolution:rms_topmargi
 namespace evolution { StringOptionKey const targetdir( "evolution:targetdir" );  }
 namespace evolution { RealOptionKey const padding_score_filter( "evolution:padding_score_filter" );  }
 namespace evolution { RealOptionKey const padding_stage2_filter( "evolution:padding_stage2_filter" );  }
+namespace cutoutdomain { BooleanOptionKey const cutoutdomain( "cutoutdomain" );  }
+namespace cutoutdomain {IntegerOptionKey const start( "cutoutdomain:start" );  }
+namespace cutoutdomain {IntegerOptionKey const end( "cutoutdomain:end" );  }
 namespace cluster { BooleanOptionKey const cluster( "cluster" );  }
 namespace cluster { BooleanOptionKey const lite( "cluster:lite" );  }
 namespace cluster { RealOptionKey const input_score_filter( "cluster:input_score_filter" );  }

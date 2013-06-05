@@ -134,9 +134,11 @@ Operator::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filter
 		operation( SUBTRACT );
 	if( op=="ABS" )
 		operation( ABS );
+	if( op=="XOR" )
+		operation( XOR );	
 	if( op == "BOOLEAN_OR" )
 		operation( BOOLEAN_OR );
-	if( op != "SUM" && op != "PRODUCT" && op != "NORMALIZED_SUM" && op != "MAX" && op != "MIN" && op != "SUBTRACT" && op != "ABS" && op != "BOOLEAN_OR" )
+	if( op != "SUM" && op != "PRODUCT" && op != "NORMALIZED_SUM" && op != "MAX" && op != "MIN" && op != "SUBTRACT" && op != "ABS" && op != "BOOLEAN_OR" && op != "XOR" )
 		utility_exit_with_message( "Operation " + op + " not recognized" );
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
 	negate( tag->getOption< bool >( "negate", false ) );
@@ -216,6 +218,14 @@ Operator::compute(
 		val = 9999999.999;
 	if( operation() == MAX )
 		val = -99999999.999;
+	if (operation() == XOR) {
+		runtime_assert( filters().size() == 2 );
+		core::Real const val1( filters()[ 1 ]->report_sm( pose ) );
+		core::Real const val2( filters()[ 2 ]->report_sm( pose ) );
+		core::Real const xor_ret(  negate() ? -(val1*(1-val2)+(1-val1)*val2) : val1*(1-val2)+(1-val1)*val2 );
+		return xor_ret;
+	}
+	
 	foreach( protocols::filters::FilterOP f, filters() ){
 		core::Real const filter_val( f()->report_sm( pose ) );
 		TR<<"Filter "<<f()->get_type()<<" return "<<filter_val<<std::endl;

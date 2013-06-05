@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #
 # This is a command file.
 #
@@ -31,30 +33,6 @@
 #           files: results.log and results.yaml. In addition to that all files that was left in
 #           output/ directory will be also saved by root script for future references.
 
+
 cd %(workdir)s
-
-work_dir="input"
-
-cd $work_dir
-
-ls *.pdb | cut -c 1-4 > filelist
-
-if [[ -e "benchmark_output.txt" ]]; then
-mv benchmark_output.txt benchmark_output_old.txt
-fi
-
-#pwd
-
-echo 'source("../scripts/analyze_test.R")' | R --no-save
-rm filelist
-
-if [[ -e "benchmark_output_old.txt" ]]; then
-	echo 'source("../scripts/compare_results.R")' | R --no-save
-fi
-
-cp benchmark_output.txt ./../.results.log
-
-# Generate YAML output
-cd %(workdir)s
-
-python postprocess.py .results.log
+python analyze.py >>.results.log

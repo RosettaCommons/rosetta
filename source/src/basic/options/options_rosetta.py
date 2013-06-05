@@ -5345,7 +5345,11 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'orb_orb_stats', 'Boolean', desc="look at orbital orbital stats", default='false' ),
 		Option('sc_bb', 'Boolean', desc="score the backbone", default='false'),
 	),
-
+# cutoutdomain Options -----------------------------------------------------------
+	Option_Group( 'cutoutdomain',
+		Option( 'start', 'Integer', desc="start residue", default = '1' ),
+		Option( 'end', 'Integer', desc="end residue", default = '2' ),
+	),
 	###########################################################################
 	# Carbohydrate Options
 	Option_Group("carbohydrates",

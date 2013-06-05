@@ -195,6 +195,7 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		return;
 	}
 	if( two_parts_chain1() ){
+		if (pose.conformation().num_chains() >1){
 		using namespace protocols::geometry;
 		protocols::simple_moves::CutChainMover ccm;
 		ccm.bond_length( 15.0 );
@@ -232,7 +233,43 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		pose.fold_tree( new_ft );
 		return;
 	}
-
+	else{
+		using namespace protocols::geometry;
+		protocols::simple_moves::CutChainMover ccm;
+		ccm.bond_length( 10.0 );
+		ccm.chain_id( 1 );
+		core::Size const cut( ccm.chain_cut( pose ) );
+		core::Size const CoM1 = (core::Size ) residue_center_of_mass( pose, 1, cut );
+		core::Size const CoM2 = (core::Size ) residue_center_of_mass( pose, cut + 1, pose.conformation().chain_end( 1 ) );
+		core::Size const CoM1_full_length = (core::Size ) residue_center_of_mass( pose, pose.conformation().chain_begin( 1 ), pose.conformation().chain_end( 1 ) );
+		TR<<"CoM1/CoM2/CoM1_full_length/cut: "<<CoM1<<'/'<<CoM2<<'/'<<'/'<<CoM1_full_length<<'/'<<cut<<std::endl;
+		core::kinematics::FoldTree new_ft;
+		new_ft.clear();
+		using namespace std;
+		if( CoM1_full_length <= cut ){
+			new_ft.add_edge( 1, min( CoM1_full_length, CoM1 ), -1 );
+			new_ft.add_edge( min( CoM1_full_length, CoM1 ), max( CoM1_full_length, CoM1 ), -1 );
+			new_ft.add_edge( max( CoM1_full_length, CoM1 ), cut, -1 );
+			new_ft.add_edge( cut + 1, CoM2, -1 );
+			new_ft.add_edge( CoM2, pose.conformation().chain_end( 1 ), -1 );
+		}
+		else{
+			new_ft.add_edge( 1, CoM1, -1 );
+			new_ft.add_edge( CoM1, cut, -1 );
+			new_ft.add_edge( cut + 1, min( CoM2, CoM1_full_length ), -1 );
+			new_ft.add_edge( min( CoM2, CoM1_full_length ), max( CoM2, CoM1_full_length ), -1 );
+			new_ft.add_edge( max( CoM2, CoM1_full_length ), pose.conformation().chain_end( 1 ), -1 );
+		}
+		new_ft.add_edge( CoM1, CoM2, 1 );
+		new_ft.delete_self_edges();
+		new_ft.reorder( 1 );
+		TR<<new_ft<<std::endl;
+		pose.fold_tree( new_ft );
+		return;
+	}
+	}
+	
+		
 	core::Size const resnum( core::pose::parse_resnum( resnum_, pose ) );
 	core::conformation::Residue const res_central( pose.residue( resnum ) );;
 

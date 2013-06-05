@@ -2,3 +2,5 @@
 -ignore_unrecognized_res
 
 -backrub:ntrials 500
+
+-out:nooutput
