@@ -28,168 +28,169 @@
 sources = {
 	"": [
 	],
-#"benchmark": [
-#	"performance/performance_benchmark",
-#],
-#"benchmark/scientific": [
-#	"ddg_benchmark",
-#	"design_contrast_and_statistic",
-#	"rotamer_recovery",
-#],
-"public": [
-#	"AbinitioRelax",
-#	"backrub",
-	"cluster",
-	"combine_silent",
-"extract_pdbs",
-#	"fragment_picker",
-#	"idealize_jd2",
-#	"minimize",
-#	"packstat",
-#	"relax",
-#	"remodel",
-#	"sequence_tolerance",
-#	"SymDock",
-#	"vip",
-],
-#"public/analysis": [
-#	"InterfaceAnalyzer",
-#	"score",
-#	"score_jd2",
-#              "ensemble_analysis",
-#              "fast_clustering",
-#],
-#"public/antibody": [
-#	"antibody_mode",
-#              "antibody_assemble_CDRs",
-#              "antibody_model_CDR_H3",
-#],
-#"public/boinc": [
-#	"minirosetta",
-#	"minirosetta_graphics",
-#],
-#"public/comparative_modeling": [
-#	"cluster_alns",
-#	#"fast_cm",
-#	"fix_alignment_to_match_pdb",
-#	"full_length_model",
-#	"score_aln",
-#	"score_aln2",
-#	"super_aln",
-#	"validate_silent",
-#],
-#      "public/darc": [
-#              "DARC",
-#              "make_ray_files",
-#      ],
-#"public/ddg": [
-#	"ddg_monomer",
-#	"minimize_with_cst",
-#],
-#"public/design": [
-#	"fixbb",
-#	"mpi_msd",
-#	"pmut_scan_parallel",
-#	"sequence_recovery",
-#	"beta_peptide_modeling",
-#	"supercharge",
-#              "zinc_heterodimer_design",
-#              #"zinc1_homodimer_setup", #protein interface with one zinc
-#              #"zinc1_homodimer_design",
-#              "zinc2_homodimer_setup",  #protein interface with two zincs
-#              "zinc2_homodimer_design",
-#],
-#"public/docking": [
-#	"docking_prepack_protocol",
-#	"docking_protocol",
-#],
-#"public/electron_density": [
-#	"loops_from_density",
-#	"mr_protocols",
-#],
-#"public/enzdes": [
-#	"CstfileToTheozymePDB",
-#	"enzyme_design",
-#],
-#"public/flexpep_docking": [
-#	"BuildPeptide",
-#	"FlexPepDocking", # /* Barak,doc/public/flexpep_docking/barak/FlexPepDocking.dox, test/integration/tests/flexpepdock/ */
-#],
-#"public/interface_design/anchored_design": [
-#	"AnchoredDesign", # /* Steven Lewis, doc/apps/pilot/smlewis/anchored_design.dox, test/integration/tests/anchored_design/ */
-#	"AnchoredPDBCreator", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchoredPDBCreator.dox, test/integration/tests/AnchoredPDBCreator/ */
-#	"AnchorFinder", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchorFinder.dox, test/integration/tests/AnchorFinder/ */
-#],
-#"public/ligand_docking": [
-#	"extract_atomtree_diffs",
-#	"ligand_dock",
-#	"ligand_rpkmin",
-#              "select_best_unique_ligand_poses", # /* Ian Davis/Rocco Moretti, doc/apps/public/ligand_dock.dox, test/integration/tests/select_best_unique_ligand_poses/ */
-#],
-#"public/loop_modeling": [
-#	"loopmodel",
-#],
-#"public/match": [
-#	"gen_apo_grids",
-#	"gen_lig_grids",
-#	"match",
-#],
-#"public/membrane_abinitio": [
-#	"membrane_abinitio2",
-#],
-#"public/ncaa_utilities": [
-#	"make_rot_lib",
-#	"UnfoldedStateEnergyCalculator",
-#],
-#"public/noncanonical_backbones": [
-#	"hbs_design",
-#	"oop_design",
-#],
-#"public/pepspec": [
-#	"pepspec",
-#	"pepspec_anchor_dock",
-#],
-#"public/pocket": [
-#	"pocket_measure",
-#],
-#"public/rna": [
-#	"rna_cluster",
-#	"rna_database",
-#	"rna_denovo",
-#	"rna_design",
-#	"rna_extract",
-#	"rna_helix",
-#	"rna_minimize",
-#	"rna_score",
-#              "rna_thread",
-#],
-#"public/swa/rna": [
-#	"swa_rna_analytical_closure",
-#	"swa_rna_main",
-#	"swa_rna_util",
-#	"erraser_minimizer",
-#],
-#"public/swa/protein": [
-#	"swa_protein_main",
-#      ],
-"public/rosetta_scripts": [
-#	"revert_design_to_native",
-	"rosetta_scripts",
-],
-#"public/rosettaDNA": [
-#	"rosettaDNA",
-#],
-#"public/scenarios": [
-#	"beta_strand_homodimer_design/exposed_strand_finder",
-#	"beta_strand_homodimer_design/homodimer_design",
-#	"beta_strand_homodimer_design/homodimer_maker",
-#	"ca_to_allatom", # /* Frank DiMaio, doc/apps/public/scenarios/ca_to_allatom.dox */
-#	"doug_dock_design_min_mod2_cal_cal",
-#	"FloppyTail", # /* Steven Lewis, doc/apps/public/scenarios/FloppyTail.dox, test/integration/tests/FloppyTail/ */
-#	"chemically_conjugated_docking/UBQ_E2_thioester", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_E2_thioester/ */
-#              "chemically_conjugated_docking/UBQ_Gp_CYD-CYD"  , # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_CYD-CYD/   */
-#              "chemically_conjugated_docking/UBQ_Gp_LYX-Cterm", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_LYX-Cterm/ */
-#              ],
+	"benchmark": [
+		"performance/performance_benchmark",
+	],
+	"benchmark/scientific": [
+		"ddg_benchmark",
+		"design_contrast_and_statistic",
+		"rotamer_recovery",
+	],
+	"public": [
+		"AbinitioRelax",
+		"backrub",
+		"cluster",
+		"combine_silent",
+		"extract_pdbs",
+		"fragment_picker",
+		"idealize_jd2",
+		"minimize",
+		"packstat",
+		"relax",
+		"remodel",
+		"sequence_tolerance",
+		"SymDock",
+		"vip",
+	],
+	"public/analysis": [
+		"contactMap",
+		"InterfaceAnalyzer",
+		"score",
+		"score_jd2",
+                "ensemble_analysis",
+                "fast_clustering",
+	],
+	"public/antibody": [
+		"antibody_legacy",
+        "antibody_graft",
+        "antibody_H3",
+	],
+	"public/boinc": [
+		"minirosetta",
+		"minirosetta_graphics",
+	],
+	"public/comparative_modeling": [
+		"cluster_alns",
+		#"fast_cm",
+		"fix_alignment_to_match_pdb",
+		"full_length_model",
+		"score_aln",
+		"score_aln2",
+		"super_aln",
+		"validate_silent",
+	],
+        "public/darc": [
+                "DARC",
+                "make_ray_files",
+        ],
+	"public/ddg": [
+		"ddg_monomer",
+		"minimize_with_cst",
+	],
+	"public/design": [
+		"fixbb",
+		"mpi_msd",
+		"pmut_scan_parallel",
+		"sequence_recovery",
+		"beta_peptide_modeling",
+		"supercharge",
+                "zinc_heterodimer_design",
+                #"zinc1_homodimer_setup", #protein interface with one zinc
+                #"zinc1_homodimer_design",
+                "zinc2_homodimer_setup",  #protein interface with two zincs
+                "zinc2_homodimer_design",
+	],
+	"public/docking": [
+		"docking_prepack_protocol",
+		"docking_protocol",
+	],
+	"public/electron_density": [
+		"loops_from_density",
+		"mr_protocols",
+	],
+	"public/enzdes": [
+		"CstfileToTheozymePDB",
+		"enzyme_design",
+	],
+	"public/flexpep_docking": [
+		"BuildPeptide",
+		"FlexPepDocking", # /* Barak,doc/public/flexpep_docking/barak/FlexPepDocking.dox, test/integration/tests/flexpepdock/ */
+	],
+	"public/interface_design/anchored_design": [
+		"AnchoredDesign", # /* Steven Lewis, doc/apps/pilot/smlewis/anchored_design.dox, test/integration/tests/anchored_design/ */
+		"AnchoredPDBCreator", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchoredPDBCreator.dox, test/integration/tests/AnchoredPDBCreator/ */
+		"AnchorFinder", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchorFinder.dox, test/integration/tests/AnchorFinder/ */
+	],
+	"public/ligand_docking": [
+		"extract_atomtree_diffs",
+		"ligand_dock",
+		"ligand_rpkmin",
+                "select_best_unique_ligand_poses", # /* Ian Davis/Rocco Moretti, doc/apps/public/ligand_dock.dox, test/integration/tests/select_best_unique_ligand_poses/ */
+	],
+	"public/loop_modeling": [
+		"loopmodel",
+	],
+	"public/match": [
+		"gen_apo_grids",
+		"gen_lig_grids",
+		"match",
+	],
+	"public/membrane_abinitio": [
+		"membrane_abinitio2",
+	],
+	"public/ncaa_utilities": [
+		"make_rot_lib",
+		"UnfoldedStateEnergyCalculator",
+	],
+	"public/noncanonical_backbones": [
+		"hbs_design",
+		"oop_design",
+	],
+	"public/pepspec": [
+		"pepspec",
+		"pepspec_anchor_dock",
+	],
+	"public/pocket": [
+		"pocket_measure",
+	],
+	"public/rna": [
+		"rna_cluster",
+		"rna_database",
+		"rna_denovo",
+		"rna_design",
+		"rna_extract",
+		"rna_helix",
+		"rna_minimize",
+		"rna_score",
+                "rna_thread",
+	],
+	"public/swa/rna": [
+		"swa_rna_analytical_closure",
+		"swa_rna_main",
+		"swa_rna_util",
+		"erraser_minimizer",
+	],
+	"public/swa/protein": [
+		"swa_protein_main",
+        ],
+	"public/rosetta_scripts": [
+		"revert_design_to_native",
+		"rosetta_scripts",
+	],
+	"public/rosettaDNA": [
+		"rosettaDNA",
+	],
+	"public/scenarios": [
+		"beta_strand_homodimer_design/exposed_strand_finder",
+		"beta_strand_homodimer_design/homodimer_design",
+		"beta_strand_homodimer_design/homodimer_maker",
+		"ca_to_allatom", # /* Frank DiMaio, doc/apps/public/scenarios/ca_to_allatom.dox */
+		"doug_dock_design_min_mod2_cal_cal",
+		"FloppyTail", # /* Steven Lewis, doc/apps/public/scenarios/FloppyTail.dox, test/integration/tests/FloppyTail/ */
+		"chemically_conjugated_docking/UBQ_E2_thioester", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_E2_thioester/ */
+                "chemically_conjugated_docking/UBQ_Gp_CYD-CYD"  , # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_CYD-CYD/   */
+                "chemically_conjugated_docking/UBQ_Gp_LYX-Cterm", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_conjugated.dox, test/integration/tests/UBQ_Gp_LYX-Cterm/ */
+                ],
 }
 include_path = [
 ]
