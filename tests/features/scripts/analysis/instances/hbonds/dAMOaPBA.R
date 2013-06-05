@@ -33,8 +33,8 @@ FROM
 	hbonds AS hb,
 	hbond_geom_coords AS geom,
 	hbond_sites AS don, hbond_sites AS acc,
-	hbond_sites_pdb AS don_pdb, hbond_sites_pdb AS acc_pdb,
-	resolutions AS resolution
+	hbond_sites_pdb AS don_pdb, hbond_sites_pdb AS acc_pdb
+	-- resolutions AS resolution
 WHERE
 	hb.struct_id = struct.struct_id AND
 	don.struct_id = struct.struct_id AND don.site_id = hb.don_id AND
@@ -45,8 +45,8 @@ WHERE
 	acc_pdb.heavy_atom_temperature < 30 AND
 	acc.HBChemType == 'hbacc_PBA' AND don.HBChemType == 'hbdon_AMO' AND
 	geom.struct_id = hb.struct_id AND geom.hbond_id = hb.hbond_id AND
-	resolution.struct_id = hb.struct_id AND
-	resolution.resolution < 1.2 AND
+	-- resolution.struct_id = hb.struct_id AND
+  -- resolution.resolution < 1.2 AND
 	ABS(don.resNum - acc.resNum) > 10;"
 
 f <- query_sample_sources(sample_sources, sele)

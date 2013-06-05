@@ -174,6 +174,9 @@ public:
 	void
 	remap_resid( core::id::SequenceMapping const & smap );
 
+	bool
+	compatible_restype( core::chemical::ResidueTypeCOP restype ) const;
+
 	void
 	determine_atom_inds_for_restype( core::chemical::ResidueTypeCOP restype ) const;
 

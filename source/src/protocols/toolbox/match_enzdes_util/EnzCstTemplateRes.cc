@@ -439,9 +439,40 @@ EnzCstTemplateRes::remap_resid( core::id::SequenceMapping const & smap )
 	}
 }
 
+bool
+EnzCstTemplateRes::compatible_restype(
+	core::chemical::ResidueTypeCOP restype
+) const
+{
+	if ( !atom1_.empty() ) {
+		for ( core::Size ii = 1; ii <= atom1_.size(); ++ii ) {
+			if ( ! restype->has( atom1_[ii] ) ) {
+				return false;
+			}
+		}
+	}
+	if ( !atom2_.empty() ) {
+		for ( core::Size ii = 1; ii <= atom2_.size(); ++ii ) {
+			if ( ! restype->has( atom2_[ii] ) ) {
+				return false;
+			}
+		}
+	}
+	if ( !atom3_.empty() ) {
+		for ( core::Size ii = 1; ii <= atom3_.size(); ++ii ) {
+			if ( ! restype->has( atom3_[ii] ) ) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+
 void
 EnzCstTemplateRes::determine_atom_inds_for_restype(
-	core::chemical::ResidueTypeCOP restype ) const
+	core::chemical::ResidueTypeCOP restype
+) const
 {
 
 	Size natoms = restype->natoms();
@@ -515,8 +546,7 @@ EnzCstTemplateRes::determine_atom_inds_for_restype(
 			//respos_it->second->atom2_.push_back( temp_at2id );
 			//respos_it->second->atom3_.push_back( temp_at3id );
 		}
-	}
-	else{
+	} else {
 		std::cerr << "Error: cstfile did not specify any atoms for Residue " << restype->name3() << "." << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 	}

@@ -261,7 +261,7 @@ public: //geometric sample accessors
 
 	/// @brief returns ExternalGeomSampler only if the user has specified all six degrees of freedom,
 	/// otherwise null pointer is returned
-	ExternalGeomSamplerCOP
+	ExternalGeomSamplerOP
 	create_exgs() const;
 
 public: //mutators

@@ -193,7 +193,7 @@ locate_rosetta_application <- function(
 	app_name,
 	rosetta_base_path = NULL,
 	platform=NULL,
-	extras="postgres",
+	extras="default",
 	compiler="clang",
 	mode="release") {
 

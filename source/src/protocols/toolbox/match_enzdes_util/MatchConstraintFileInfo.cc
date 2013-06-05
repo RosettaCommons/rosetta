@@ -450,22 +450,18 @@ MatchConstraintFileInfo::process_data()
 
 		utility::vector1< std::string > const & res_name3s =
 			map_it->second->allowed_res_types();
-
 		std::set< core::chemical::ResidueTypeCOP > restypes_this_res;
-
 		for( core::Size j = 1; j <= res_name3s.size(); ++j ) {
-
 			utility::vector1< core::chemical::ResidueTypeCOP > all_restypes_this_name3 =
 				restype_set_->name3_map( res_name3s[j] );
-
 			add_relevant_restypes_to_subset( restypes_this_res, all_restypes_this_name3, restype_set_ );
-
 		}
 
 		for( std::set< core::chemical::ResidueTypeCOP >::iterator set_it = restypes_this_res.begin();
-				 set_it != restypes_this_res.end(); ++set_it ){
-
-			map_it->second->determine_atom_inds_for_restype( *set_it );
+				set_it != restypes_this_res.end(); ++set_it ){
+			if ( map_it->second->compatible_restype( *set_it ) ) {
+				map_it->second->determine_atom_inds_for_restype( *set_it );
+			}
 		}
 
 	} //loop over all Enz_cst_template-res
@@ -692,7 +688,7 @@ MatchConstraintFileInfo::process_algorithm_info(
 
 
 
-ExternalGeomSamplerCOP
+ExternalGeomSamplerOP
 MatchConstraintFileInfo::create_exgs() const
 {
 

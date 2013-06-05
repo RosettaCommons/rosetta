@@ -31,6 +31,7 @@ sources = {
 		"analyze_rtmin_failures",
 		#"find_buns",
 		"zn_match_symmdock", #Note: used for scorefunction version tests; no itest needed
+		"sweep_respair_energies",
 		"find_buns",
 		#"test_ik_match",
 	],

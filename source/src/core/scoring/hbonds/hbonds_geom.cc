@@ -808,14 +808,18 @@ hb_energy_deriv_u2(
 
 
 	//BW cosines of angle at donor, proton
+	// only on a computer can you normalize two unit vectors, take their dot product, and get a value greater than 1.
+	// By taking the minimum of the dot product and 1, we ensure that hydrogen bonds with AHD angles near 180 are not
+	// discarded.
 	Real const xD =            /* cos(180-theta) = cos(thetaD) */
-		dot( AHunit, HDunit );
+		std::min( Real(1.0), dot( AHunit, HDunit ));
 
 	if ( xD < MIN_xD ) return;
 	if ( xD > MAX_xD ) return;
 
+	// see comment above re: dot products
 	Real const xH =            /* cos(180-psi) = cos(thetaH) */
-		dot( BAunit, AHunit );
+		std::min( Real(1.0), dot( BAunit, AHunit ));
 
 	if ( xH < MIN_xH ) return;
 	if ( xH > MAX_xH ) return;

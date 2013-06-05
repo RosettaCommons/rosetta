@@ -167,6 +167,7 @@ OnTheFlyNode::count_dynamic_memory() const
 	unsigned int total_memory = NodeBase::count_dynamic_memory();
 
 	total_memory += rotamers_.size() * sizeof ( conformation::ResidueCOP );
+	total_memory += sc_bounding_spheres_.size() * sizeof( BoundingSphere );
 	total_memory += num_states_for_aatype_.size() * sizeof( int );
 	total_memory += state_offset_for_aatype_.size() * sizeof( int );
 	total_memory += sparse_mat_info_for_state_.size() * sizeof( SparseMatrixIndex );

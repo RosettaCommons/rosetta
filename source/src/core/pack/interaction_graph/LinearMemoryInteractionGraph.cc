@@ -148,6 +148,8 @@ LinearMemNode::count_dynamic_memory() const
 	total_memory += curr_state_two_body_energies_.size() * sizeof( core::PackerEnergy );
 	total_memory += alternate_state_two_body_energies_.size() * sizeof( core::PackerEnergy );
 
+	total_memory += accepted_rejected_substitution_history_.size() * sizeof( int );
+
 	return total_memory;
 }
 

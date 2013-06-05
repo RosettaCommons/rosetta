@@ -37,7 +37,7 @@ Size const HB_EVAL_TYPE_COUNT = { (hbdon_MAX-1)*(hbacc_MAX-1)*(seq_sep_MAX-1)};
 
 //car cutoffs defining what is a hbond
 static core::Real const MAX_R = { 3.0 };
-static core::Real const MIN_R = { 1.4 }; // AH distance
+static core::Real const MIN_R = { 0.0 }; // AH distance
 static core::Real const MIN_xH = { -1.0 }; // cos( radians( 180.0 - 0.0 ) )  // psi cutoff -- the fade functions enforce that out-of-range interactions are not scored.
 static core::Real const MIN_xD = { 0.0 }; // cos( radians( 180.0 - 90.0 ) )  // theta cutoff
 static core::Real const MAX_xH = { 1.0 }; // cos( radians( 180.0 - 180.0 ) )  // psi cutoff
