@@ -677,7 +677,6 @@ hbonded_atom (
 
 		core::Real total_hbond_energy( hbond_emap.sum() );
 
-
 		// all of the bb / sc energies are lumped together
 		// but it can be controlled whether bb - bb are included or not
 
@@ -692,6 +691,7 @@ hbonded_atom (
 				if( !sc && ( !hb.don_hatm_is_protein_backbone() || !hb.acc_atm_is_protein_backbone() ) ) continue;
 
 				core::Size const don_res_i( hb.don_res() ), acc_res_i( hb.acc_res() );
+				core::Size don_atom_i_base ( pose.residue( don_res_i ).atom_base( hb.don_hatm() ) );
 				Residue const & don_rsd( pose.residue( don_res_i ) ),
 				acc_rsd( pose.residue( acc_res_i ) );
 
@@ -699,9 +699,9 @@ hbonded_atom (
 				core::Size const don_atom_i( hb.don_hatm() ), acc_atom_i( hb.acc_atm() );
 				core::Size target_atom_id=resi.atom_index(target_atom);
 
-				if( ( (don_rsd.seqpos() == *binder_it && acc_rsd.seqpos() == target_residue) && don_atom_i==target_atom_id ) ||
+				if( ( (don_rsd.seqpos() == *binder_it && acc_rsd.seqpos() == target_residue) && ( don_atom_i==target_atom_id || don_atom_i_base==target_atom_id ) ) ||
 				    ( (don_rsd.seqpos() == *binder_it && acc_rsd.seqpos() == target_residue) && acc_atom_i==target_atom_id ) ||
-				    ( (don_rsd.seqpos() == target_residue && acc_rsd.seqpos() == *binder_it) && don_atom_i==target_atom_id ) ||
+				    ( (don_rsd.seqpos() == target_residue && acc_rsd.seqpos() == *binder_it) && ( don_atom_i==target_atom_id || don_atom_i_base==target_atom_id ) ) ||
 					  ( (don_rsd.seqpos() == target_residue && acc_rsd.seqpos() == *binder_it) && acc_atom_i==target_atom_id ) ){
 					hbonded_list.push_back( *binder_it );
 					core::Size const width( 10 );
