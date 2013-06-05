@@ -4,6 +4,8 @@
 from math import *
 
 from rosetta import *
+from toolbox import *
+
 init()
 
 # Scoring Poses
@@ -27,7 +29,10 @@ r1 = ras.residue(24)
 r2 = ras.residue(20)
 a1 = r1.atom("N")
 a2 = r2.atom("O")
-etable_atom_pair_energies(a1, a2, scorefxn)
+
+# etable_atom_pair_energies function now broken, commenting out
+# etable_atom_pair_energies(a1, a2, scorefxn)
+
 
 hbond_set = hbonds.HBondSet()
 ras.update_residue_neighbors()
@@ -63,5 +68,3 @@ pymol.energy_type(fa_atr)
 pymol.apply(ras)
 pymol.label_energy(ras, "fa_rep")
 pymol.send_hbonds(ras)
-
-

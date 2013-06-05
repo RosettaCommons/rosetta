@@ -23,7 +23,7 @@ scorefxn = create_score_function('score3')
 scorefxn(pose)
 
 print 'Creating standard score function and scoring, again'
-scorefxn = create_score_function_ws_patch('talaris2013')
+scorefxn = create_score_function_ws_patch('talaris2013', 'docking')
 scorefxn(pose)
 print 'Creating standard score from scratch'
 scorefxn = ScoreFunction()
@@ -81,7 +81,7 @@ print
 print 'identifying hydrogen bonds in structure'
 
 pose = pose_from_pdb("test/data/test_in.pdb")
-scorefxn = create_score_function('standard')
+scorefxn = get_fa_scorefxn() #  create_score_function('standard')
 scorefxn(pose)
 
 hbond_set = rosetta.core.scoring.hbonds.HBondSet()

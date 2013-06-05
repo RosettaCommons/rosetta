@@ -40,7 +40,7 @@ print loop_p.fold_tree()
 
 #recover_sidechain.apply(loop_p)
 
-scorefxn = create_score_function_ws_patch('standard', 'score12')
+scorefxn = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
 scorefxn(loop_p)
 loop_refine = rosetta.protocols.loops.loop_mover.refine.LoopMover_Refine_CCD( loops, scorefxn )
 loop_refine.max_inner_cycles(10)

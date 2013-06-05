@@ -11,7 +11,7 @@ pymol = rosetta.PyMOL_Mover()
 
 pymol.apply(pose)
 
-scorefxn = rosetta.create_score_function('standard')
+scorefxn = rosetta.get_fa_scorefxn() #  rosetta.create_score_function('standard')
 scorefxn(pose)
 
 pymol.send_energy(pose)
@@ -46,4 +46,3 @@ pose.set_psi(2, 10)
 pose.set_psi(4, 10)
 
 observer.detach(pose)
-

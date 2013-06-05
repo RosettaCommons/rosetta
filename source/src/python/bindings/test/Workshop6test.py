@@ -2,6 +2,8 @@
 # List of commands used in PyRosetts Workshop #6
 
 from rosetta import *
+from toolbox import *
+
 init()
 
 # Side Chain Conformations, the Rotamer Library, and Dunbrack Energies
