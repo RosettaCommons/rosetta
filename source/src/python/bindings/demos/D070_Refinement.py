@@ -18,7 +18,7 @@ Instructions:
 1) ensure that your PDB file is in the current directory
 2) run the script:
     from commandline                        >python D070_Refinement.py
-    
+
     from within python/ipython              [1]: run D070_Refinement.py
 
 Author: Evan H. Baugh
@@ -31,7 +31,7 @@ References:
     P. Bradley, K. Misura, and D. Baker, "Toward high-resolution de novo
         structure prediction for small proteins," Science 309 (5742)
         1868-1871 (2005).
-        
+
 """
 
 ################################################################################
@@ -118,26 +118,26 @@ def sample_refinement(pdb_filename,
     # 1. create a pose from the desired PDB file
     pose = Pose()
     pose_from_pdb(pose, pdb_filename)
-    
+
     # 2. create a reference copy of the pose in fullatom
     starting_pose = Pose()
     starting_pose.assign(pose)
 
     # 3. create a standard ScoreFunction
     #### implement the desired ScoreFunction here
-    scorefxn = create_score_function('standard')
+    scorefxn = get_fa_scorefxn() #  create_score_function('standard')
 
     #### If you wish to use the ClassRelax protocol, uncomment the following
     ####    line and comment-out the protocol setup below
     #refinement = ClassicRelax( scorefxn )
-    
+
     #### Setup custom high-resolution refinement protocol
     #### backbone refinement protocol
-    
+
     # 4. create a MoveMap, all backbone torsions free
     movemap = MoveMap()
     movemap.set_bb(True)
-    
+
     # 5. create a SmallMover
     # a SmallMover perturbs a random (free in the MoveMap) residue's phi or psi
     #    torsion angle for an input number of times and accepts of rejects this
@@ -154,7 +154,7 @@ def sample_refinement(pdb_filename,
     #smallmover.angle_max('H', backbone_angle_max)
     #smallmover.angle_max('E', backbone_angle_max)
     #smallmover.angle_max('L', backbone_angle_max)
-    
+
     # 6. create a ShearMover
     # a ShearMover is identical to a SmallMover except that the angles perturbed
     #    are instead a random (free in the MoveMap) residue's phi and the
@@ -168,14 +168,14 @@ def sample_refinement(pdb_filename,
     #shearmover.angle_max('H', backbone_angle_max)
     #shearmover.angle_max('E', backbone_angle_max)
     #shearmover.angle_max('L', backbone_angle_max)
-    
+
     # 7. create a MinMover, for backbone torsion minimization
     minmover = MinMover()
     minmover.movemap(movemap)
     minmover.score_function(scorefxn)
-    
+
     #### sidechain refinement protocol, simple packing
-    
+
     # 8. setup a PackRotamersMover
     to_pack = standard_packer_task(starting_pose)
     to_pack.restrict_to_repacking()    # prevents design, packing only
@@ -185,8 +185,8 @@ def sample_refinement(pdb_filename,
     #### assess the new structure
     # 9. create a PyMOL_Mover
     pymover = PyMOL_Mover()
-    # uncomment the line below to load structures into successive states 
-    #pymover.keep_history(True)    
+    # uncomment the line below to load structures into successive states
+    #pymover.keep_history(True)
     #### the PyMOL_Mover slows down the protocol SIGNIFICANTLY but provides
     ####    very informative displays
     #### the keep_history flag (when True) tells the PyMOL_Mover to store new
@@ -203,7 +203,7 @@ def sample_refinement(pdb_filename,
     pymover.apply(pose)
     scorefxn(pose)
     pymover.send_energy(pose)
-    
+
     # 11. setup a RepeatMover on a TrialMover of a SequenceMover (wow!)
     # -setup a TrialMover
     #    a. create a SequenceMover of the previous moves
@@ -227,9 +227,9 @@ def sample_refinement(pdb_filename,
     #trial = SequenceMover()
     #trial.add_mover(original_trial)
     #trial.add_mover(pymover)
-    
+
     #### for each trajectory, try cycles number of applications
-    
+
     # -create the RepeatMover
     refinement = RepeatMover(trial, cycles)
     ####
@@ -257,15 +257,15 @@ def sample_refinement(pdb_filename,
         mc.reset(pose)
         #### if you create a custom protocol, you may have additional
         ####    variables to reset, such as kT
-        
+
         #### if you create a custom protocol, this section will most likely
         ####    change, many protocols exist as single Movers or can be
         ####    chained together in a sequence (see above) so you need
         ####    only apply the final Mover
         # b. apply the refinement protocol
         refinement.apply(pose)
-        #### 
-        
+        ####
+
         # c. output the lowest scoring decoy structure for this trajectory
         # -recover and output the decoy structure to a PDB file
         mc.recover_low(pose)
@@ -274,7 +274,7 @@ def sample_refinement(pdb_filename,
         pose.pdb_info().name( job_output + '_' + str(counter) + '_final')
         pymover.apply(pose)
         pymover.send_energy(pose)    # see the total score in color
-        
+
         # -store the final score for this trajectory
         scores[counter] = scorefxn(pose)
 
@@ -343,7 +343,7 @@ the search space.
 parser = optparse.OptionParser()
 parser.add_option('--pdb_filename', dest = 'pdb_filename',
     default = 'test/data/test_in.pdb',    # default example PDB
-    help = 'the PDB file containing the protein to refine')  
+    help = 'the PDB file containing the protein to refine')
 # custom refinement options
 parser.add_option('--kT', dest='kT',
     default = '1.0',
@@ -511,4 +511,3 @@ individual Rosetta protocols. Within the other sample scripts, there will be
 custom high-resolution steps to refine the output.
 
 """
-

@@ -26,7 +26,7 @@ Instructions:
 1) ensure that your PDB file is in the current directory
 2) run the script:
     from commandline                        >python D050_Packer_task.py
-    
+
     from within python/ipython              [1]: run D050_Packer_task.py
 
 Author: Evan H. Baugh
@@ -59,7 +59,7 @@ The method packer_task:
         -display the change in score
         -display the change in sequence
         -write the designed pose to a PDB file (designed.pdb)
-        
+
 """
 
 import optparse    # for option sorting
@@ -74,7 +74,7 @@ def packer_task(pose, PDB_out = False):
 		performs demonstrative sidechain packing and selected design
 		using  <pose>  and writes structures to PDB files if  <PDB_out>
 		is True
-		
+
     """
     # create a copy of the pose
     test_pose = Pose()
@@ -84,7 +84,7 @@ def packer_task(pose, PDB_out = False):
     pymover = PyMOL_Mover()
 
     # create a standard ScoreFunction
-    scorefxn = create_score_function_ws_patch('standard', 'score12')
+    scorefxn = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
 
     ############
     # PackerTask
@@ -128,7 +128,7 @@ def packer_task(pose, PDB_out = False):
     pymover.apply(test_pose)
     if PDB_out:
         test_pose.dump_pdb('packed.pdb')
-    
+
     # since the PackerTask specifies how the sidechains change, it has been
     #    extended to include sidechain constitutional changes allowing
     #    protein design, this method of design is very similar to sidechain
@@ -159,7 +159,7 @@ def packer_task(pose, PDB_out = False):
 
     # setup the design PackerTask, use the generated resfile
     pose_design = standard_packer_task(test_pose)
-    rosetta.core.pack.task.parse_resfile(test_pose, pose_design, 'sample_resfile' ) 
+    rosetta.core.pack.task.parse_resfile(test_pose, pose_design, 'sample_resfile' )
     print pose_design
 
     # prepare a new structure
@@ -211,7 +211,7 @@ def generate_resfile_from_pose(pose, resfilename,
         Pose
         PackRotamersMover
         TaskFactory
-        
+
     """
     # determine the header, default settings
     header = ''
@@ -270,7 +270,7 @@ def generate_resfile_from_pdb(pdbfilename, resfilename,
 	    Pose
 	    PackRotamersMover
 	    TaskFactory
-	    
+
 	"""
 	p = pose_from_pdb(pdbfilename)
 	generate_resfile_from_pose(p, resfilename, pack,design, input_sc, freeze, specific)
@@ -332,5 +332,4 @@ pose_from_pdb(pose, pdb_filename)
 # PDB_out flag
 PDB_out = bool(options.PDB_out)
 
-packer_task(pose, PDB_out)    
-
+packer_task(pose, PDB_out)

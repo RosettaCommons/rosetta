@@ -29,9 +29,9 @@ Instructions:
 1) ensure that your PDB file is in the current directory
 2) run the script:
     from commandline                        >python D090_Ala_scan.py
-    
+
     from within python/ipython              [1]: run D090_Ala_scan.py
-    
+
 Author: Evan H. Baugh
     based on an original script by Sid Chaudhury
     edited by Jianqing Xu
@@ -47,7 +47,7 @@ References:
     Alexandra Shulman Peleg, Maxim Shatsky, Ruth Nussinov and Haim J. Wolfson,
         "Spatial chemical conservation of hot spot interactions in
         protein-protein complexes," BMC Biology 5 5-43 (2007)
-        
+
 """
 
 ################################################################################
@@ -73,7 +73,7 @@ The method sample_refinement:
             interface_ddG which returns the "interaction energy"
         b. writing these results to an output file
         c. printing these results
-        
+
 """
 
 import optparse    # for sorting options
@@ -109,7 +109,7 @@ def scanning(pdb_filename, partners, mutant_aa = 'A',
         <trials>  scans are performed (to average results) with summaries written
         to  <trial_output>_(trial#).txt.
         Structures are exported to a PyMOL instance.
-        
+
     """
     # 1. create a pose from the desired PDB file
     pose = Pose()
@@ -123,7 +123,7 @@ def scanning(pdb_filename, partners, mutant_aa = 'A',
     # 3. create ScoreFuncions for the Interface and "ddG" calculations
     # the pose's Energies objects MUST be updated for the Interface object to
     #    work normally
-    scorefxn = create_score_function('standard')
+    scorefxn = get_fa_scorefxn() #  create_score_function('standard')
     scorefxn(pose)    # needed for proper Interface calculation
 
     # setup a "ddG" ScoreFunction, custom weights
@@ -300,7 +300,7 @@ def mutate_residue(pose, mutant_position, mutant_aa,
 
     # create a standard scorefxn by default
     if not pack_scorefxn:
-        pack_scorefxn = create_score_function('standard')
+        pack_scorefxn = get_fa_scorefxn() #  create_score_function('standard')
 
     task = standard_packer_task(test_pose)
 
@@ -440,7 +440,7 @@ def calc_binding_energy(pose, scorefxn, center, cutoff = 8.0):
 
     # repack the test_pose after separation
     packer.apply(test_pose)
-    
+
     # return the change in score
     return before - scorefxn(test_pose)
 
@@ -454,7 +454,7 @@ def scanning_analysis(trial_output):
     Average the values of all files in this directory with  <trial_output>  in
         their title and return the mutations (rows) that are 1 or more standard
         deviations from the mean score change
-        
+
     """
     # extract all files
     filenames = os.listdir(os.getcwd())
@@ -468,7 +468,7 @@ def scanning_analysis(trial_output):
     data = f.readlines()
     data = [i.strip() for i in data]    # remove "\n"
     f.close()
-    
+
     # list of mutations, should be identical for all output files
     mutants = [i.split('\t')[0] for i in data]
     ddg = [float(i.split('\t')[1]) for i in data]
@@ -479,7 +479,7 @@ def scanning_analysis(trial_output):
         data = f.readlines()
         data = [i.strip() for i in data]
         f.close()
-        
+
         ddg = [float(data[i].split('\t')[1])+ddg[i] for i in range(len(data))]
 
     # average by dividing by the number of files
@@ -731,4 +731,3 @@ understand which scoring terms contribute to performance and to find what
 scoring best suites your problem.
 
 """
-

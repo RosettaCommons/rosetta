@@ -19,7 +19,7 @@ Instructions:
 1) ensure that your PDB file is in the current directory
 2) run the script:
     from commandline                        >python D060_Folding.py
-    
+
     from within python/ipython              [1]: run D060_Folding.py
 
 Author: Evan H. Baugh
@@ -32,7 +32,7 @@ References:
     P. Bradley, K. Misura, and D. Baker, "Toward high-resolution de novo
         structure prediction for small proteins," Science 309 (5742)
         1868-1871 (2005).
-        
+
 """
 
 ################################################################################
@@ -130,7 +130,7 @@ def sample_folding(sequence,
     # 2. linearize the pose by setting backbone torsions to large values
     # the method make_pose_from_sequence does not create the new pose's
     #    PDBInfo object, so its done here, without it an error occurs later
-    pose.pdb_info(rosetta.core.pose.PDBInfo( pose.total_residue() +1))
+    pose.pdb_info(rosetta.core.pose.PDBInfo( pose.total_residue() ))
     for i in range(1, pose.total_residue() + 1):
         pose.set_omega(i, 180)
         pose.set_phi(i, -150)    # reasonably straight
@@ -144,7 +144,7 @@ def sample_folding(sequence,
     test_pose = Pose()
     test_pose.assign( pose )
     test_pose.pdb_info().name('linearized pose')
-    
+
     # 4. create centroid <--> fullatom conversion Movers
     to_centroid = SwitchResidueTypeSetMover('centroid')
     # centroid Residue objects, of amino acids, have all their sidechain atoms
@@ -188,7 +188,7 @@ def sample_folding(sequence,
     insert_short_frag = RepeatMover(short_frag_mover, short_inserts)
 
     # 9. create a PyMOL_Observer for exporting structures to PyMOL (optional)
-    # the PyMOL_Observer object owns a PyMOL_Mover and monitors pose objects for 
+    # the PyMOL_Observer object owns a PyMOL_Mover and monitors pose objects for
     #    structural changes, when changes are detected the new structure is
     #    sent to PyMOL
     # fortunately, this allows investigation of full protocols since
@@ -209,7 +209,7 @@ def sample_folding(sequence,
     scorefxn_low = create_score_function('score3')
     # for high-resolution, fullatom, poses necessary for scoring final output
     #    from the PyJobDistributor (see below)
-    scorefxn_high = create_score_function_ws_patch('standard', 'score12')
+    scorefxn_high = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
 
     # 11. setup a RepeatMover on a TrialMover of a SequenceMover
     # -setup a TrialMover
@@ -225,7 +225,7 @@ def sample_folding(sequence,
     trial = TrialMover(folding_mover, mc)
 
     #### for each trajectory, try cycles number of applications
-    
+
     # -create the RepeatMover
     folding = RepeatMover(trial, cycles)
 
@@ -249,10 +249,10 @@ def sample_folding(sequence,
         test_pose.pdb_info().name(job_output + '_' + str(counter))
         # -reset the MonteCarlo object (sets lowest_score to that of test_pose)
         mc.reset(test_pose)
-        
+
         #### if you create a custom protocol, you may have additional
         ####    variables to reset, such as kT
-        
+
         #### if you create a custom protocol, this section will most likely
         ####    change, many protocols exist as single Movers or can be
         ####    chained together in a sequence (see above) so you need
@@ -260,7 +260,7 @@ def sample_folding(sequence,
         # b. apply the refinement protocol
         folding.apply(test_pose)
 
-        #### 
+        ####
         # c. export the lowest scoring decoy structure for this trajectory
         # -recover the lowest scoring decoy structure
         mc.recover_low(test_pose)
@@ -487,7 +487,7 @@ obtained from the RCSB website. To obtain the protein sequence from a PDB file:
 2) download the PDB file, using a browser this includes:
     a. clicking "Download Files" on the upper right
     b. clicking "FASTA Sequence", the second option
-    
+
 """
 
 #######################################
@@ -629,4 +629,3 @@ understand which scoring terms contribute to performance and to find what
 scoring best suites your problem.
 
 """
-

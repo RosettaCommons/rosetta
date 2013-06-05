@@ -216,7 +216,7 @@ def sample_single_loop_modeling(pdb_filename,
     # this penalizes failures caused by CCD failing to close the loop
     scorefxn_low.set_weight(chainbreak, 1)
     # for fullatom, used for packing and scoring final output
-    scorefxn_high = create_score_function_ws_patch('standard', 'score12')
+    scorefxn_high = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
 
     # 9. setup sidechain packing Mover
     task_pack = TaskFactory.create_packer_task(starting_p)
@@ -687,5 +687,3 @@ for example:
         pose.fold_tree(ft)
 
 """
-
-

@@ -15,7 +15,7 @@ Instructions:
 1) ensure that your PDB file is in the current directory
 2) run the script:
     from commandline                        >python D040_Movemap.py
-    
+
     from within python/ipython              [1]: run D040_Movemap.py
 
 Author: Evan H. Baugh
@@ -26,7 +26,7 @@ Last updated by Boon Uranukul, 6/9/12
 References:
     C. Wang, P. Bradley, and D. Baker, "Protein-protein docking with backbone
         flexibility," Jour. Mol. Bio. 373 (2) 503-519 (2007)
-        
+
 """
 
 # WARNING
@@ -54,7 +54,7 @@ The method movemap:
 2.  perform minimization
         -display the change in score
         -write the minimized pose to a PDB file (minimized.pdb)
-        
+
 """
 
 import optparse    # for option sorting
@@ -67,7 +67,7 @@ def movemap(pose, PDB_out = False):
     Demonstrates the syntax necessary for basic usage of the MoveMap object
         performs these changes with a demonstrative backbone minimization
         using  <pose>  and writes structures to PDB files if  <PDB_out>  is True
-        
+
     """
 
     #########
@@ -98,13 +98,13 @@ def movemap(pose, PDB_out = False):
     # change a single residue's chi torsion angles
     #pose_move_map.set_chi(1, True)    # example syntax
     pose_move_map.show(pose.total_residue())
-    
+
     # perform gradient based minimization on the "median" residues, this
     #    method (MinMover) determines the gradient of an input pose using a
     #    ScoreFunction for evaluation and a MoveMap to define the degrees of
     #    freedom
     # create a standard ScoreFunction
-    scorefxn = create_score_function_ws_patch('standard', 'score12')
+    scorefxn = get_fa_scorefxn() #  create_score_function_ws_patch('standard', 'score12')
     # redefine the MoveMap to include the median half of the residues
     # turn "off" all backbone torsion angles
     pose_move_map.set_bb(False)    # reset to backbone False
@@ -192,5 +192,4 @@ pose_from_pdb(pose, pdb_filename)
 # PDB_out flag
 PDB_out = bool(options.PDB_out)
 
-movemap(pose, PDB_out)    
-
+movemap(pose, PDB_out)

@@ -97,12 +97,15 @@ def pose_scoring(pose, display_residues = []):
     #    stored in the minirosetta_database/scoring/weights (.wts files)
     #    this method sets the weights based on 'standard.wts' and then corrects
     #    them based on 'score12.wts_patch'
-    ws_patch_scorefxn = create_score_function_ws_patch('standard', 'score12')
+
+    ws_patch_scorefxn = create_score_function_ws_patch('talaris2013', 'docking')
+
     # d. this method returns a ScoreFunction with its weights set by loading
     #    weights from 'standard.wts' followed by an adjustment by setting
     #    weights from 'score12.wts_patch'
-    patch_scorefxn = create_score_function('standard')
-    patch_scorefxn.apply_patch_from_file('score12')
+    patch_scorefxn = create_score_function('talaris2013')
+    patch_scorefxn.apply_patch_from_file('docking')
+
     # e. here an empty ScoreFunction is created and the weights are set manually
     scorefxn = ScoreFunction()
     scorefxn.set_weight(fa_atr, 0.800)    # fullatom attractive score
@@ -304,4 +307,3 @@ Methods for downloading and generically "cleaning" PDB files should accompany
 future PyRosetta releases.
 
 """
-
