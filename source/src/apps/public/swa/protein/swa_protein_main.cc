@@ -375,10 +375,10 @@ rebuild_test(){
 	else minimize_scorefxn = core::scoring::getScoreFunction();
 	if (minimize_scorefxn->get_weight( atom_pair_constraint ) == 0.0) minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 ); //go ahead and turn these on
 	if (minimize_scorefxn->get_weight( coordinate_constraint) == 0.0) minimize_scorefxn->set_weight( coordinate_constraint, 1.0 ); // go ahead and turn these on
-	if ( option[edensity::mapfile].user() ) minimize_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
 	check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, minimize_scorefxn );
 	minimize_scorefxn->set_weight( linear_chainbreak, 150.0 );
-	if ( option[cart_min]() ) minimize_scorefxn->set_weight( cart_bonded, 1.0 );
+	if ( option[cart_min]() & minimize_scorefxn->get_weight( cart_bonded ) == 0.0 ) minimize_scorefxn->set_weight( cart_bonded, 1.0 );
+	if ( option[edensity::mapfile].user() && minimize_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) minimize_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
 	stepwise_pose_minimizer.set_scorefxn( minimize_scorefxn );
 
 	if( option[ dump ] ) stepwise_pose_minimizer.set_silent_file( silent_file_minimize );
@@ -613,7 +613,7 @@ generate_samples_and_cluster( core::pose::Pose & pose,
 	ScoreFunctionOP pack_scorefxn = ScoreFunctionFactory::create_score_function( option[pack_weights] );
 	check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, pack_scorefxn );
 	pack_scorefxn->set_weight( linear_chainbreak, 0.2 /*arbitrary*/ );
-	if ( option[edensity::mapfile].user() ) pack_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
+	if ( option[edensity::mapfile].user() && pack_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) pack_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
 	StepWiseProteinPacker stepwise_packer( moving_residues, sample_generator );
 	stepwise_packer.set_native_pose( job_parameters->working_native_pose() );
 	stepwise_packer.set_scorefxn( pack_scorefxn );
