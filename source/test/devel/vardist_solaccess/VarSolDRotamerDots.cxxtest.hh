@@ -77,6 +77,8 @@ public:
 		dots10.increment_self_overlap();
 		dots11.increment_self_overlap();
 		dots10.intersect_residues( dots11 );
+
+		TS_ASSERT( true );
 		//ResidueKinWriter writer;
 		//std::ofstream fout( "test2.kin" );
 		//writer.write_kin_header( fout, *res10 );

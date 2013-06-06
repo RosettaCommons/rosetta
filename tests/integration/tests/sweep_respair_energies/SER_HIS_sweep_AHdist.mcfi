@@ -1,0 +1,26 @@
+CST::BEGIN
+
+  TEMPLATE::   ATOM_MAP: 1 atom_name: OG CB CA
+  TEMPLATE::   ATOM_MAP: 1 residue3:  SER
+
+  CONSTRAINT::    angle_A:   130.  2.0   10.0  360. 0
+  CONSTRAINT::  torsion_A:     0.  5.0   10.0  360. 0
+  CONSTRAINT:: torsion_AB:    90.  5.0   10.0  360. 0
+
+  ALGORITHM_INFO:: match
+    RES 1 CHI 1 -60
+    RES 1 CHI 2 180
+    RES 2 CHI 1 180
+    RES 2 CHI 2 90
+  ALGORITHM_INFO::END
+
+  TEMPLATE::   ATOM_MAP: 2 atom_name: HE2 NE2 CE1
+  TEMPLATE::   ATOM_MAP: 2 residue3:  HIS
+
+  CONSTRAINT:: distanceAB:   2.5   2.5   100.  0    250
+  CONSTRAINT::    angle_B:   180.  2.0   10.0  360. 0
+  CONSTRAINT::  torsion_B:   180.  5.0   10.0  360. 0
+
+
+CST::END
+

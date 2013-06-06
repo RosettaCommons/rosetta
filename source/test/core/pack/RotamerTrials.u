@@ -1,4 +1,4 @@
-set_abs_tolerance(0.01)score_orig = 70.2397
+set_abs_tolerance(0.01)score_orig = 70.0794
 score_rt = -117.017
 residue = 1 chi = 346.217812973053
 residue = 1 chi = 296.591058293106
