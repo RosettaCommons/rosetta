@@ -21,6 +21,7 @@ class VIP_Mover
                 core::pose::Pose initial_pose;
 		core::pose::Pose cavity_pose;
 		core::pose::Pose final_pose;
+		core::pose::Pose final_unrelaxed_pose;
 		utility::vector1<core::conformation::ResidueOP> temp_residues;
 		utility::vector1<core::Size> temp_positions;
 		utility::vector1<core::Real> temp_energies;
@@ -33,13 +34,16 @@ class VIP_Mover
 		utility::vector1<core::Size> void_neighbors;
 		utility::vector1<core::Size> void_mutatables;
 		core::Real final_energy;
+		core::Real energy_to_beat;
 
 		utility::vector1<core::Size> excluded_positions;
 		core::Size iteration_;
+		bool use_stored_best_energy;
 
 	public:
 		VIP_Mover();
 		VIP_Mover(
+                        core::pose::Pose,
                         core::pose::Pose,
                         core::pose::Pose,
                         core::pose::Pose,
@@ -60,6 +64,7 @@ class VIP_Mover
 		void set_iteration( core::Size it ) { iteration_ = it; }
 		core::Size iteration() { return iteration_; }
 		void set_initial_pose( core::pose::Pose );
+		core::pose::Pose & get_unrelaxed_pose() { return final_unrelaxed_pose; };
 		void minimize_conformation();
 		void compute_number_cavities();
 		void get_cavity_positions();
@@ -83,6 +88,8 @@ class VIP_Mover
 
 		core::Real get_final_energy(){
 			return final_energy;}
+		void set_energy_to_beat( core::Real in_value ){ energy_to_beat = in_value; }
+		void set_use_stored_energy( bool in_value ){ use_stored_best_energy = in_value; }
 		core::pose::Pose get_final_pose(){
 			return final_pose;}
 		void apply();

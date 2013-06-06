@@ -36,7 +36,9 @@ VIP_Report::get_GOE_repack_report(
 	utility::vector1<core::Real> & goe_repack_e,
 	utility::vector1<core::conformation::ResidueOP> & goe_repack_res,
 	utility::vector1<core::Size> & goe_repack_pos,
-	core::Size it
+	core::Size it,
+	bool use_stored,
+	core::Real stored_e
 ){
         using namespace basic::options;
         using namespace basic::options::OptionKeys;
@@ -50,9 +52,11 @@ VIP_Report::get_GOE_repack_report(
 	protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
 	score_em->apply( goe_native );
 
+	core::Real check_E( use_stored ? stored_e : goe_native.energies().total_energy() );
+
 	core::Size num_accepted( 0 );
 	for( core::Size i = 1; i <= goe_repack_e.size(); i++ ){
-	    if( goe_repack_e[i] < goe_native.energies().total_energy() ){
+	    if( goe_repack_e[i] < check_E ){
 		    if( goe_repack_res[i]->name() != goe_native.residue(goe_repack_pos[i]).name() ){
 					num_accepted++;
 			output << "Position: " << goe_repack_pos[i] << " Native AA: " << goe_native.residue(goe_repack_pos[i]).name() << "  Mutant AA: " << goe_repack_res[i]->name() << "  ddEgoe: " << goe_native.energies().total_energy() - goe_repack_e[i] << std::endl;}}}
@@ -71,7 +75,9 @@ VIP_Report::get_GOE_relaxed_report(
 	utility::vector1<core::Real> & goe_relax_e,
 	utility::vector1<core::conformation::ResidueOP> & goe_relax_res,
 	utility::vector1<core::Size> & goe_relax_pos,
-	core::Size it
+	core::Size it,
+	bool use_stored,
+	core::Real stored_e
   ){
         using namespace basic::options;
         using namespace basic::options::OptionKeys;
@@ -85,11 +91,13 @@ VIP_Report::get_GOE_relaxed_report(
         protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
         score_em->apply( goe_native );
 
+	core::Real check_E( use_stored ? stored_e : goe_native.energies().total_energy() );
+
 	core::Size num_accepted( 0 );
 	core::Size best_index( 0 );
 	core::Real best_score( -9999.0 );
 	for( core::Size i = 1; i <= goe_relax_e.size(); i++ ){
-	   if( goe_relax_e[i] < goe_native.energies().total_energy() ){
+	   if( goe_relax_e[i] < check_E ){
 		    if( goe_relax_res[i]->name() != goe_native.residue(goe_relax_pos[i]).name() ){
 					num_accepted++;
 					core::Real Ediff( goe_native.energies().total_energy() - goe_relax_e[i] );

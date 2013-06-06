@@ -57,6 +57,7 @@ namespace vip {
  		core::pose::Pose p,
 		core::pose::Pose cp,
 		core::pose::Pose fp,
+		core::pose::Pose fup,
 		utility::vector1<core::conformation::ResidueOP> tr,
 		utility::vector1<core::Size> tp,
 		utility::vector1<core::Real> te,
@@ -72,6 +73,7 @@ namespace vip {
 			initial_pose = p;
 			cavity_pose = cp;
 			final_pose = fp;
+			final_unrelaxed_pose = fup;
 			temp_residues = tr;
 			temp_positions = tp;
 			temp_energies = te;
@@ -84,16 +86,14 @@ namespace vip {
 			void_neighbors = vn;
 			void_mutatables = vm;
 			final_energy = fe;
+			energy_to_beat = 99999.0;
 			iteration_ = 0;
+			use_stored_best_energy = false;
 		}
 
 	VIP_Mover::~VIP_Mover(){}
 
 	void VIP_Mover::set_initial_pose( core::pose::Pose pose ){
-//		using namespace basic::options;
-//		using namespace basic::options::OptionKeys;
-//			core::pose::Pose pose;
-//			core::io::pdb::build_pose_from_pdb_as_is( pose, option[ OptionKeys::in::file::s ]().vector().front() );
 		initial_pose = pose;
 	}
 
@@ -272,7 +272,7 @@ namespace vip {
 		VIP_Report();
 		VIP_Report vip_report;
 
-		vip_report.get_GOE_repack_report( initial_pose, favorable_energies, favorable_residues, favorable_positions, iteration_ );
+		vip_report.get_GOE_repack_report( initial_pose, favorable_energies, favorable_residues, favorable_positions, iteration_, use_stored_best_energy, energy_to_beat );
 	}
 
 
@@ -290,9 +290,9 @@ namespace vip {
 			core::Real tempE = temp_energies[i];
 			if( tempE < baseE ){
 				if( initial_pose.residue(temp_positions[i]).name() != temp_residues[i]->name() ){
-					core::pose::Pose temp_pose;
-					temp_pose = initial_pose;
-					temp_pose.replace_residue( temp_positions[i], *(temp_residues[i]), true );
+					//core::pose::Pose temp_pose;
+					//temp_pose = initial_pose;
+					//temp_pose.replace_residue( temp_positions[i], *(temp_residues[i]), true );
 					favorable_residues.push_back( temp_residues[i] );
 					favorable_positions.push_back( temp_positions[i] );
 					favorable_energies.push_back( temp_energies[i] );
@@ -311,7 +311,7 @@ namespace vip {
 		VIP_Report();
 		VIP_Report vip_report;
 
-		vip_report.get_GOE_relaxed_report( initial_pose, favorable_energies, favorable_residues, favorable_positions, iteration_ );
+		vip_report.get_GOE_relaxed_report( initial_pose, favorable_energies, favorable_residues, favorable_positions, iteration_, use_stored_best_energy, energy_to_beat );
 //		vip_report.get_GOE_packstat_report( initial_pose, favorable_energies );
 	}
 
@@ -346,7 +346,8 @@ namespace vip {
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		core::Real bestE = 99999;
+		core::Real bestE( 99999.0 );
+		core::Size best_index( 99999 );
 
 		core::scoring::ScoreFunctionOP relax_score_fxn = core::scoring::ScoreFunctionFactory::create_score_function( option[cp::relax_sfxn] );
 
@@ -394,12 +395,23 @@ namespace vip {
 			protocols::simple_moves::ScoreMoverOP score_em = new protocols::simple_moves::ScoreMover(sf2);
 			score_em->apply( relax_pose );
 			favorable_energies[i] = relax_pose.energies().total_energy();
+
 			if( favorable_energies[i] < bestE ) {
+				best_index = i;
 				bestE = favorable_energies[i];
 				final_pose = relax_pose;
 				final_energy = bestE;
 			}
 		}
+
+
+		if( best_index < 99999 ) {
+			//TR << "STASHING UNRELAXED POSE" << std::endl;
+			final_unrelaxed_pose = initial_pose;
+			final_unrelaxed_pose.replace_residue( favorable_positions[best_index],
+								*(favorable_residues[best_index]), true );
+		}
+
 	}
 
 	void VIP_Mover::sort_relaxed_poses(){
@@ -470,13 +482,23 @@ namespace vip {
 				excluded_positions.push_back( initial_pose.pdb_info()->pdb2pose( exc_chain, exc_pos ) );
 				exc_file >> exc_pos;
 			}
-
-			TR << "Found " << excluded_positions.size() << " positions excluded from mutation" << std::endl;
 			exc_file.close();
-			return;
 		}
 
-		TR << "No positions will be excluded." << std::endl;
+		// Exclude any non-amino acid residues from mutation
+		for( core::Size i(1), ei( initial_pose.total_residue() ) ; i <= ei ; ++i) {
+			if( !initial_pose.residue( i ).is_protein() &&
+					( std::find(excluded_positions.begin(), excluded_positions.end(), i ) ==
+																									excluded_positions.end() ) ) {
+				excluded_positions.push_back( i );
+			}
+		}
+
+		if( excluded_positions.size() > 0 ) {
+			TR << "Found " << excluded_positions.size() << " positions excluded from mutation" << std::endl;
+		} else {
+			TR << "No positions will be excluded." << std::endl;
+		}
 		return;
 	}
 

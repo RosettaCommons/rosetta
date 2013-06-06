@@ -260,8 +260,8 @@ Options = Option_Group( '',
 			Option( 'rescore', 'Boolean', desc = 'Governs whether input poses are rescored or not in not_universal_main, defaults to false.', default = 'false' ),
 			Option('spanfile','String',desc='Membrane spanning file'),
 			Option('lipofile','String',desc='Membrane exposure file'),
-			Option('HDX','String',desc='HDX (Hydrogen exchange data file'),						
-			Option('d2h_sa_reweight','Real',desc='d2h_sa reweight', default ='1.00'),	
+			Option('HDX','String',desc='HDX (Hydrogen exchange data file'),
+			Option('d2h_sa_reweight','Real',desc='d2h_sa reweight', default ='1.00'),
 			Option( 'sucker_params', 'File', desc="Parameter file containing SplineEnergy parameters",default='scoring/spline_energy_functions/sucker.params'),
 			Option( 'fold_tree', 'File', desc="User defined fold tree to be imposed on the pose after reading from disk" ),
 			Option( 'obey_ENDMDL', 'Boolean', desc='Stop reading a PDB after ENDMDL card; effectively read only first model in multimodel NMR PDBs', default = 'false'),
@@ -485,32 +485,32 @@ Options = Option_Group( '',
 	##############################################################################
 	# ContactMap options
 	Option_Group( 'contactMap',
-		Option( 'contactMap', 'Boolean', 
-			desc="contactMap option group", 
-			legal='true', default='true' 
+		Option( 'contactMap', 'Boolean',
+			desc="contactMap option group",
+			legal='true', default='true'
 		),
-		Option( 'prefix', 'String', 
-			default = 'contact_map_', 
+		Option( 'prefix', 'String',
+			default = 'contact_map_',
 			desc = "Prefix of contactMap filename"
 		),
-		Option( 'distance_cutoff', 'Real', 
-			default = '10.0', 
+		Option( 'distance_cutoff', 'Real',
+			default = '10.0',
 			desc = "Cutoff Backbone distance for two atoms to be considered interacting"
 		),
 		Option( 'energy_cutoff', 'Real',
 			default = '1.0',
-			lower = '0.0', upper = '1.0', 
+			lower = '0.0', upper = '1.0',
 			desc= "Energy_Cutoff (percentage value - only affecting silent file input)"
 		),
-		Option( 'region_def', 'String', 
+		Option( 'region_def', 'String',
 			default = '',
-			desc = "Region definition for comparison eg: 1-10:20-30,40-50,A:ligand=X" 
+			desc = "Region definition for comparison eg: 1-10:20-30,40-50,A:ligand=X"
 		 ),
-		Option( 'row_format', 'Boolean', 
+		Option( 'row_format', 'Boolean',
 			default = 'false',
 			desc = "Flag whether to output in row instead of matrix format"
 		),
-		Option( 'distance_matrix', 'Boolean', 
+		Option( 'distance_matrix', 'Boolean',
 			default = 'false',
 			desc = "Output a distance matrix instead of a contact map"
 		),
@@ -1947,7 +1947,7 @@ Options = Option_Group( '',
 		 Option( 'prefix','String', desc="prefix for outputfiles)",default=""),
 		 Option( 'use_gzip','Boolean', desc="gzip output files", default='false'),
 		 Option( 'normalize','Real', desc="Normalizing factor (usually target sequence length)", default='1.0'),
-  ),											
+  ),
 	# correction for testing ------------------------------------------------------------
 	Option_Group( 'corrections',
 		Option( 'correct', 'Boolean',
@@ -5054,6 +5054,8 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			Option( 'skip_relax','Boolean',desc="Skip relax step... may reduce accurate identification of mutations",default='false'),
 			Option( 'local_relax','Boolean',desc="Limit relax step to neighbors",default='false'),
 			Option( 'print_intermediate_pdbs','Boolean',desc="Output a pdb file for each consecutive mutation",default='false'),
+			Option( 'use_unrelaxed_starting_points', 'Boolean', desc="For subsequent iterations, uses mutation before relaxation",default='false' ),
+			Option( 'easy_vip_acceptance', 'Boolean', desc="For all iterations, use initial energy for acceptance test",default='false' ),
                 ),
 
         # end VIP

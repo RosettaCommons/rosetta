@@ -21,7 +21,7 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -38,7 +38,8 @@ static basic::Tracer TR("VIP");
 
 //utilities
 #include <protocols/jd2/JobDistributor.hh>
-#include <devel/init.hh>
+//#include <devel/init.hh>
+#include <core/init.hh>
 #include <utility/excn/Exceptions.hh>
 
 //local options
@@ -54,14 +55,18 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	devel::init(argc, argv);
+//	devel::init(argc, argv);
+	core::init(argc, argv);
+
+	core::Real initial_E;
+	core::Real old_energy;
 
 	core::pose::Pose in_pose;
-	core::io::pdb::build_pose_from_pdb_as_is(
+	core::import_pose::pose_from_pdb(
 		in_pose,
 		option[ OptionKeys::in::file::s ]().vector().front());
 
-	core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "score12_full" );
 	protocols::simple_moves::ScoreMover scoreme = protocols::simple_moves::ScoreMover( scorefxn );
 
 //	bool iterate = true;
@@ -69,19 +74,32 @@ main( int argc, char * argv [] )
 	core::Size const ncycles = option[ cp::ncycles ];
 	core::Size const max_failures = option[ cp::max_failures ];
 
+	bool use_unrelaxed_mutants( option[ cp::use_unrelaxed_starting_points ] );
+	bool easy_acceptance( option[ cp::easy_vip_acceptance ] );
+
 	// How many failures at a given level to tolerate before failing
 	core::Size current_failures( 0 );
 
+	core::pose::Pose stored_unrelaxed_pose;
 	core::pose::Pose out_pose;
 	bool not_finished( true );
 
 	while( not_finished ){
+		TR << "Entering VIP loop with it # " << it << std::endl;
 		scoreme.apply(in_pose);
-		core::Real old_energy = in_pose.energies().total_energy();
+		if( it == 1 ) {
+			old_energy = in_pose.energies().total_energy();
+			initial_E = old_energy;
+		}
 
 		protocols::vip::VIP_Mover();
 		protocols::vip::VIP_Mover vip_mover;
-		vip_mover.set_initial_pose( in_pose );
+		if( ( it > 1 ) && use_unrelaxed_mutants && ( stored_unrelaxed_pose.total_residue() > 0 ) ) {
+			vip_mover.set_initial_pose( stored_unrelaxed_pose );
+			//TR << "Recovering stored pose with total residues = " << stored_unrelaxed_pose.total_residue() << std::endl;
+		} else {
+			vip_mover.set_initial_pose( in_pose );
+		}
 		vip_mover.set_iteration( it );
 		vip_mover.apply();
 
@@ -94,6 +112,9 @@ main( int argc, char * argv [] )
 		if( out_pose.total_residue() == 0 ) {
 			improved = false;
 		} else {
+			if( use_unrelaxed_mutants ) {
+				stored_unrelaxed_pose = vip_mover.get_unrelaxed_pose();
+			}
 			TR << "Comparing new energy " << new_energy << " with old energy " << old_energy << std::endl;
 		}
 
@@ -114,11 +135,14 @@ main( int argc, char * argv [] )
 						out_pose.dump_pdb( pdb_file );
 					}
 
+				vip_mover.set_energy_to_beat( easy_acceptance ? initial_E : new_energy );
+				vip_mover.set_use_stored_energy( true );
+
 					break;
 				}
 			}
 
-			old_energy = new_energy;
+			old_energy = ( easy_acceptance ? initial_E : new_energy );
 			in_pose = out_pose;
 			it++;
 			current_failures = 0;
