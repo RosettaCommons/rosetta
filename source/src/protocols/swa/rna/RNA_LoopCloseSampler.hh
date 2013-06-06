@@ -88,6 +88,10 @@ public:
 		sample_native_torsion_ = setting;
 	}
 
+	void set_include_current ( bool const setting ) {
+		include_current_ = setting;
+	}
+
 	void set_rbs_new_pair ( utility::vector1< Real > const & rbs_new_pair ) {
 		rbs_new_pair_ = rbs_new_pair;
 	}
@@ -123,7 +127,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_, rep_scorefxn_;
 	Size bin_size_, n_construct_;
 	Real rep_cutoff_, torsion_range_, torsion_increment_, epsilon_range_;
-	bool just_output_score_, sample_only_, sample_native_torsion_;
+	bool just_output_score_, sample_only_, include_current_, sample_native_torsion_;
 	utility::vector1< Real > rbs_new_pair_;
 
 	utility::vector1< Real > torsion_info_;

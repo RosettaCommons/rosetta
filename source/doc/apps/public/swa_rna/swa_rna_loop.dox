@@ -16,11 +16,11 @@
 March 2012 by Parin Sripakdeevong (sripakpa [at] stanford.edu) and Rhiju Das (rhiju [at] stanford.edu).
 
 @section code_demos Code and Demo
-This code builds single-stranded RNA loops using a deterministic, enumerative sampling method called Stepwise Assembly. A demo example for building the first (5' most) nucleotide of a 6-nucleotide loop is given in <code>rosetta_demos/public/SWA_RNA_Loop/</code>. The same protocol can then be recursively applied to build the remaining nucleotides in the loop, one individual nucleotide at a time.
+This code builds single-stranded RNA loops using a deterministic, enumerative sampling method called Stepwise Assembly. A demo example for building the first (5' most) nucleotide of a 6-nucleotide loop is given in <code>rosetta/demos/public/SWA_RNA_Loop/</code>. The same protocol can then be recursively applied to build the remaining nucleotides in the loop, one individual nucleotide at a time.
 
 (Note: the Stepwise Assembly method constructs full-length RNA loops through the recursive building of each individual RNA nucleotides over multiple steps. The enumerative nature of the method makes the full-calculation computationally expensive, requiring for example 15,000 CPU hours to build a single 6-nucleotide RNA loop. While this full-calculation is now feasible on a high-performance computer clusters, perform the full-calculation in the demo would be too excessive.)
 
-The central codes are located in the <code>src/protocols/swa_rna/</code> folder. The applications are in <em>apps/public/swa_rna_main</em> and <em>apps/public/swa_rna_util</em> 
+The central codes are located in the <code>src/protocols/swa_rna/</code> folder. The applications are in <em>apps/public/swa_rna_main</em> and <em>apps/public/swa_rna_util</em>
 
 
 @section refs References
@@ -47,20 +47,20 @@ There is only one mode to run SWA_RNA_Loop at present.
 You need two files:
 
 @anchor template_PDB
-@li The @ref template_PDB file: A PDB file containing the coordinates of surrounding nucleotides in the vicinity of the missing RNA loop to be build. We recommend including all surrounding nucleotides within a 10-Angstrom vicinity of the missing RNA loop. An example is available at rosetta_demos/SWA_RNA_loop/rosetta_inputs/template.pdb. Supplied PDB file must be in Rosetta RNA PDB format (see @ref Note on PDB format for RNA).
+@li The @ref template_PDB file: A PDB file containing the coordinates of surrounding nucleotides in the vicinity of the missing RNA loop to be build. We recommend including all surrounding nucleotides within a 10-Angstrom vicinity of the missing RNA loop. An example is available at rosetta/demos/SWA_RNA_loop/rosetta_inputs/template.pdb. Supplied PDB file must be in Rosetta RNA PDB format (see @ref Note on PDB format for RNA).
 
 
-@li The @ref fasta file: this is the sequence file of the full-length RNA. The fasta file has the RNA name on the first line (after >), and the sequence on the second line. Valid letters are a, c, g and u. An example fasta file is available at rosetta_demos/SWA_RNA_loop/rosetta_inputs/fasta.
+@li The @ref fasta file: this is the sequence file of the full-length RNA. The fasta file has the RNA name on the first line (after >), and the sequence on the second line. Valid letters are a, c, g and u. An example fasta file is available at rosetta/demos/SWA_RNA_loop/rosetta_inputs/fasta.
 
 @subsection Optional additional files:
-@li The native_PDB file: A PDB file containing the 'native' crystallographic or NMR structure. This PDB file should contain the coordinates of the coordinates of the native loop nucleotides plus the surrounding nucleotides inherited from @ref templte_PDB. The supplied native_PDB file is not used to guide the modeling process and only used for reporting the RMSD of the generated rosetta models to the native loop. An example is available at rosetta_demos/SWA_RNA_loop/rosetta_inputs/native.pdb. Supplied PDB file must be in Rosetta RNA PDB format (see @ref Note on PDB format for RNA).
+@li The native_PDB file: A PDB file containing the 'native' crystallographic or NMR structure. This PDB file should contain the coordinates of the coordinates of the native loop nucleotides plus the surrounding nucleotides inherited from @ref templte_PDB. The supplied native_PDB file is not used to guide the modeling process and only used for reporting the RMSD of the generated rosetta models to the native loop. An example is available at rosetta/demos/SWA_RNA_loop/rosetta_inputs/native.pdb. Supplied PDB file must be in Rosetta RNA PDB format (see @ref Note on PDB format for RNA).
 
 @section pre_process Preprocessing of input files
 
 Input PDB file can be converted into the Rosetta RNA PDB format using the following command:
 
 @verbatim
-	rosetta_tools/SWA_RNA_python/SWA_dagman_python/misc/SWA_extract_pdb.py IN_PDB.pdb -output_pdb OUT_PDB.pdb
+	rosetta/tools/SWA_RNA_python/SWA_dagman_python/misc/SWA_make_rna_rosetta_ready.py IN_PDB.pdb -output_pdb OUT_PDB.pdb
 @endverbatim
 
 Replace 'IN_PDB.pdb' with your input PDB filename. Replace 'OUT_PDB.pdb' with the filename you want the converted PDB to be outputted to.
@@ -68,38 +68,33 @@ Replace 'IN_PDB.pdb' with your input PDB filename. Replace 'OUT_PDB.pdb' with th
 @section how_to_run_the_job How to run the job
 
 
-The SWA_RNA_python package located at rosetta_tools/SWA_RNA_python/ contains the scripts necessary to setup and run the Stepwise Assembly protocol. Instructions are provided in steps 1)-4) below: 
+The SWA_RNA_python package located at rosetta/tools/SWA_RNA_python/ contains the scripts necessary to setup and run the Stepwise Assembly protocol. Instructions are provided in steps 1)-4) below:
 
-1) Specify the location of the rosetta bin folder and rosetta database folder by editing the file rosetta_tools/SWA_RNA_python/SWA_dagman_python/utility/USER_PATHS.py
-
-For example, if the main rosetta folder is located at ~/rosetta/, then the file should look as follow:
+1) Specify the location of the rosetta bin folder and rosetta database folder by editing  your .bashrc or .bash_profile with a line like:
 
 @verbatim
-	#!/usr/bin/python
-
-	USER_ROSETTA_BIN_FOLDER="~/rosetta/rosetta_source/bin/"
-	USER_ROSETTA_DATABASE_FOLDER="~/rosetta/rosetta_database/"
+export ROSETTA='~/rosetta/'
 @endverbatim
 
 2) Add the SWA_RNA_python package location to the PYTHON path. For bash shell users, the location can be directly added to the ~/.bashrc file:
 
 @verbatim
-	export PYTHONPATH=$PYTHONPATH:~/rosetta/rosetta_tools/SWA_RNA_python/
+	export PYTHONPATH=$PYTHONPATH:~/rosetta/tools/SWA_RNA_python/
 @endverbatim
 
 3) After the paths are correctly specified, the following command is used to setup everything needed run the Stepwise Assembly job:
 
 @verbatim
-	rosetta_tools/SWA_RNA_python/SWA_dagman_python/SWA_DAG/setup_SWA_RNA_dag_job_files.py -s template.pdb -fasta fasta -sample_res 3-8 -single_stranded_loop_mode True -local_demo True -native_pdb native.pdb
+	rosetta/tools/SWA_RNA_python/SWA_dagman_python/SWA_DAG/setup_SWA_RNA_dag_job_files.py -s template.pdb -fasta fasta -sample_res 3-8 -single_stranded_loop_mode True -local_demo True -native_pdb native.pdb
 @endverbatim
 
 @verbatim
-	The "-s" flag specifies the @ref template_PDB file
+	The "-s" flag specifies the template_PDB file
 	The "-fasta" flag specifies the @ref fasta file
 	The "-sample_res" flag specifies the sequence number of nucleotides in the missing loop. For example, 3-8 means that the missing loop nucleotides are located at sequence position 3 4 5 6 7 and 8.
 	The "-single_stranded_loop_mode" flag specifies that the job involve modeling a single-stranded loop (i.e. the lock-and-key problem).
 	The "-local_demo" flag indicate that this is demo to be run on a local laptop or desktop. The calculation perform here is to only build the first (5' most) nucleotide of the 6-nucleotides RNA loop.
-	The "-native_pdb" flag specifies the @ref native_PDB file and is optional. 
+	The "-native_pdb" flag specifies the native_PDB file and is optional.
 @endverbatim
 
 4) Type "source LOCAL_DEMO" to execute the Rosetta protocol.
@@ -123,7 +118,7 @@ In both silent_files, the total energy score is found under the 'score' column. 
 Finally, use the following command to extract the top 5 energy cluster centers:
 
 @verbatim
-	rosetta_tools/SWA_RNA_python/SWA_dagman_python/misc/SWA_extract_pdb.py -tag S_0 S_1 S_2 S_3 S_4  -silent_file region_0_1_sample.cluster.out
+	rosetta/tools/SWA_RNA_python/SWA_dagman_python/misc/SWA_extract_pdb.py -tag S_0 S_1 S_2 S_3 S_4  -silent_file region_0_1_sample.cluster.out
 @endverbatim
 
 After running the command, the extracted PDB files should appear in the pose_region_0_1_sample.cluster.out/ subfolder.

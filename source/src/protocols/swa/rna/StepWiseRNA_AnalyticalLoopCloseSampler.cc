@@ -256,7 +256,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	}
 
 	rna_loop_close_sampler.set_sample_only ( true );
-	rna_loop_close_sampler.set_sample_native_torsion ( true );
+	rna_loop_close_sampler.set_include_current ( true );
 	rna_loop_close_sampler.set_scorefxn ( scorefxn_ );
 
 	Size pucker_id;

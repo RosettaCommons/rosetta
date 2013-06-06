@@ -81,6 +81,7 @@ RNA_LoopCloseSampler::RNA_LoopCloseSampler ( Size const moving_suite, Size const
 	epsilon_range_ ( 40.0 ),
 	just_output_score_ ( false ),
 	sample_only_ ( false ),
+	include_current_( false ),
 	sample_native_torsion_ ( false ) {
 	RNA_AnalyticLoopCloser rna_analytic_loop_closer ( moving_suite, chainbreak_suite );
 	initialize_rep_scorefxn();
@@ -135,12 +136,14 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	Real zeta1_min = 20.0;
 	Real zeta1_max = 340.0 - bin_size_;
 	Real zeta1_increment = bin_size_;
-	
+
 	PoseCOP native_pose = get_native_pose();
-	Real const epsilon1_native = pose.torsion ( TorsionID ( moving_suite_  , id::BB, EPSILON ) );
-	Real const zeta1_native    = pose.torsion ( TorsionID ( moving_suite_  , id::BB, ZETA ) );
-	Real const alpha1_native   = pose.torsion ( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ) );
-	Real const alpha2_native   = pose.torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ) );
+	if ( sample_native_torsion_ ) utility_exit_with_message( "sample_native_torsion_ not set up properly in RNA_LoopCloseSampler.cc!" );
+
+	Real const epsilon1_current = pose.torsion ( TorsionID ( moving_suite_  , id::BB, EPSILON ) );
+	Real const zeta1_current    = pose.torsion ( TorsionID ( moving_suite_  , id::BB, ZETA ) );
+	Real const alpha1_current   = pose.torsion ( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ) );
+	Real const alpha2_current   = pose.torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ) );
 
 	RNA_AnalyticLoopCloser rna_analytic_loop_closer ( moving_suite_, chainbreak_suite_ );
 
@@ -187,11 +190,11 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	}
 
 
-	if ( sample_native_torsion_ ) {
-		pose.set_torsion ( TorsionID ( moving_suite_, id::BB, EPSILON ), epsilon1_native );
-		pose.set_torsion ( TorsionID ( moving_suite_, id::BB, ZETA ), zeta1_native );
-		pose.set_torsion ( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ), alpha1_native );
-		pose.set_torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ), alpha2_native );
+	if ( include_current_ ) {
+		pose.set_torsion ( TorsionID ( moving_suite_, id::BB, EPSILON ), epsilon1_current );
+		pose.set_torsion ( TorsionID ( moving_suite_, id::BB, ZETA ), zeta1_current );
+		pose.set_torsion ( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ), alpha1_current );
+		pose.set_torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ), alpha2_current );
 
 		//close loop.
 		rna_analytic_loop_closer.apply ( pose );
@@ -222,6 +225,7 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 			all_torsion_info_.push_back ( torsion_info_ );
 		}
 	}
+
 }
 //////////////////////////////////////////////////////////////////////////
 void
@@ -355,7 +359,7 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 	if (gamma1 < 0) gamma1 += 360;
 	if ( ( gamma1 < gammapmin || gamma1 > gammapmax ) &&
 			 ( gamma1 < gammatmin || gamma1 > gammatmax ) &&
-			 ( gamma1 < gammammin || gamma1 > gammammax ) ) {	
+			 ( gamma1 < gammammin || gamma1 > gammammax ) ) {
 		return false;
 	}
 
@@ -363,7 +367,7 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 	if (gamma2 < 0) gamma2 += 360;
 	if ( ( gamma2 < gammapmin || gamma2 > gammapmax ) &&
 			 ( gamma2 < gammatmin || gamma2 > gammatmax ) &&
-			 ( gamma2 < gammammin || gamma2 > gammammax ) ) {	
+			 ( gamma2 < gammammin || gamma2 > gammammax ) ) {
 		return false;
 	}
 
