@@ -1,6 +1,3 @@
-namespace optE { FileOptionKey const free( "optE:free" );  }
-namespace optE { FileOptionKey const fixed( "optE:fixed" );  }
-namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }
 namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant_logic_taskops_file" );  }
 namespace optE { BooleanOptionKey const optE_soft_rep( "optE:optE_soft_rep" );  }
 namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }
@@ -440,6 +437,8 @@ namespace cp { StringOptionKey const relax_mover( "cp:relax_mover" );  }
 namespace cp { BooleanOptionKey const skip_relax( "cp:skip_relax" );  }
 namespace cp { BooleanOptionKey const local_relax( "cp:local_relax" );  }
 namespace cp { BooleanOptionKey const print_intermediate_pdbs( "cp:print_intermediate_pdbs" );  }
+namespace cp { BooleanOptionKey const use_unrelaxed_starting_points( "cp:use_unrelaxed_starting_points" );  }
+namespace cp { BooleanOptionKey const easy_vip_acceptance( "cp:easy_vip_acceptance" );  }
 namespace archive { BooleanOptionKey const archive( "archive" );  }
 namespace archive { BooleanOptionKey const reread_all_structures( "archive:reread_all_structures" );  }
 namespace archive { IntegerOptionKey const completion_notify_frequency( "archive:completion_notify_frequency" );  }
@@ -664,6 +663,9 @@ namespace orbitals { BooleanOptionKey const bb_stats( "orbitals:bb_stats" );  }
 namespace orbitals { BooleanOptionKey const sc_stats( "orbitals:sc_stats" );  }
 namespace orbitals { BooleanOptionKey const orb_orb_stats( "orbitals:orb_orb_stats" );  }
 namespace orbitals { BooleanOptionKey const sc_bb( "orbitals:sc_bb" );  }
+namespace cutoutdomain { BooleanOptionKey const cutoutdomain( "cutoutdomain" );  }
+namespace cutoutdomain { IntegerOptionKey const start( "cutoutdomain:start" );  }
+namespace cutoutdomain { IntegerOptionKey const end( "cutoutdomain:end" );  }
 namespace carbohydrates { BooleanOptionKey const carbohydrates( "carbohydrates" );  }
 namespace carbohydrates { BooleanOptionKey const lock_rings( "carbohydrates:lock_rings" );  }
 namespace dwkulp { BooleanOptionKey const dwkulp( "dwkulp" );  }

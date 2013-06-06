@@ -1,4 +1,3 @@
-namespace loopfcst { FileOptionKey const dump_coord_cst_weight_array( "loopfcst:dump_coord_cst_weight_array" );  }
 namespace jumps { BooleanOptionKey const jumps( "jumps" );  }
 namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
 namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
@@ -368,9 +367,6 @@ namespace evolution { RealOptionKey const rms_topmargin( "evolution:rms_topmargi
 namespace evolution { StringOptionKey const targetdir( "evolution:targetdir" );  }
 namespace evolution { RealOptionKey const padding_score_filter( "evolution:padding_score_filter" );  }
 namespace evolution { RealOptionKey const padding_stage2_filter( "evolution:padding_stage2_filter" );  }
-namespace cutoutdomain { BooleanOptionKey const cutoutdomain( "cutoutdomain" );  }
-namespace cutoutdomain {IntegerOptionKey const start( "cutoutdomain:start" );  }
-namespace cutoutdomain {IntegerOptionKey const end( "cutoutdomain:end" );  }
 namespace cluster { BooleanOptionKey const cluster( "cluster" );  }
 namespace cluster { BooleanOptionKey const lite( "cluster:lite" );  }
 namespace cluster { RealOptionKey const input_score_filter( "cluster:input_score_filter" );  }
@@ -710,3 +706,5 @@ namespace rotamerdump { BooleanOptionKey const rotamerdump( "rotamerdump" );  }
 namespace rotamerdump { BooleanOptionKey const xyz( "rotamerdump:xyz" );  }
 namespace rotamerdump { BooleanOptionKey const one_body( "rotamerdump:one_body" );  }
 namespace rotamerdump { BooleanOptionKey const two_body( "rotamerdump:two_body" );  }
+namespace rotamerdump { BooleanOptionKey const annealer( "rotamerdump:annealer" );  }
+namespace robert { BooleanOptionKey const robert( "robert" );  }

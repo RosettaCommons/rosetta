@@ -38,6 +38,8 @@ namespace cp { extern StringOptionKey const relax_mover; }
 namespace cp { extern BooleanOptionKey const skip_relax; }
 namespace cp { extern BooleanOptionKey const local_relax; }
 namespace cp { extern BooleanOptionKey const print_intermediate_pdbs; }
+namespace cp { extern BooleanOptionKey const use_unrelaxed_starting_points; }
+namespace cp { extern BooleanOptionKey const easy_vip_acceptance; }
 
 } // namespace OptionKeys
 } // namespace options

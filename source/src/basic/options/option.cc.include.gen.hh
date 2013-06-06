@@ -113,6 +113,7 @@
 #include <basic/options/keys/templates.OptionKeys.gen.hh>
 #include <basic/options/keys/patterson.OptionKeys.gen.hh>
 #include <basic/options/keys/optE.OptionKeys.gen.hh>
+#include <basic/options/keys/cutoutdomain.OptionKeys.gen.hh>
 #include <basic/options/keys/sewing.OptionKeys.gen.hh>
 #include <basic/options/keys/residues.OptionKeys.gen.hh>
 #include <basic/options/keys/dc.OptionKeys.gen.hh>
@@ -120,5 +121,3 @@
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/cutoutdomain.OptionKeys.gen.hh>
-

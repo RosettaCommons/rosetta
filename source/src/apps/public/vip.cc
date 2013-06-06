@@ -38,8 +38,7 @@ static basic::Tracer TR("VIP");
 
 //utilities
 #include <protocols/jd2/JobDistributor.hh>
-//#include <devel/init.hh>
-#include <core/init.hh>
+#include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>
 
 //local options
@@ -55,8 +54,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-//	devel::init(argc, argv);
-	core::init(argc, argv);
+	devel::init(argc, argv);
 
 	core::Real initial_E;
 	core::Real old_energy;

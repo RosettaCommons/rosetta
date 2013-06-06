@@ -6,9 +6,10 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   basic/options/keys/cutoutfdomain.OptionKeys.gen.hh
+/// @file   basic/options/keys/cutoutdomain.OptionKeys.gen.hh
 /// @brief  basic::options::OptionKeys collection
-/// @author Gideon David Lapidoth (glapidoth@gmail.com)
+/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
+/// @author James M. Thompson (tex@u.washington.edu)
 
 #ifndef INCLUDED_basic_options_keys_cutoutdomain_OptionKeys_gen_HH
 #define INCLUDED_basic_options_keys_cutoutdomain_OptionKeys_gen_HH
@@ -21,7 +22,7 @@ namespace options {
 namespace OptionKeys {
 
 namespace cutoutdomain { extern BooleanOptionKey const cutoutdomain; }
-namespace cutoutdomain { extern IntegerOptionKey const start; } //where to start cutting out loop
+namespace cutoutdomain { extern IntegerOptionKey const start; }
 namespace cutoutdomain { extern IntegerOptionKey const end; }
 
 } // namespace OptionKeys

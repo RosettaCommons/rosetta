@@ -1,5 +1,3 @@
-namespace rotamerdump { BooleanOptionKey const annealer( "rotamerdump:annealer" );  }
-namespace robert { BooleanOptionKey const robert( "robert" );  }
 namespace robert { StringOptionKey const pairdata_input_pdb_list( "robert:pairdata_input_pdb_list" );  }
 namespace robert { RealOptionKey const pcs_maxsub_filter( "robert:pcs_maxsub_filter" );  }
 namespace robert { RealOptionKey const pcs_maxsub_rmsd( "robert:pcs_maxsub_rmsd" );  }
@@ -707,3 +705,6 @@ namespace optE { StringOptionKey const data_in( "optE:data_in" );  }
 namespace optE { StringOptionKey const data_out( "optE:data_out" );  }
 namespace optE { StringOptionKey const weights( "optE:weights" );  }
 namespace optE { StringVectorOptionKey const fix( "optE:fix" );  }
+namespace optE { FileOptionKey const free( "optE:free" );  }
+namespace optE { FileOptionKey const fixed( "optE:fixed" );  }
+namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }

@@ -3,7 +3,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/option.cc.include.gen.hh>
 #include <utility/options/OptionCollection.hh>
-
 inline void add_rosetta_options_0( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rigid::rigid, "rigid option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::rigid::chainbreak_bias, "Strength of bias applied to the translation component of rigid body moves to close chainbreak" ).def(0.00);
 option.add( basic::options::OptionKeys::rigid::close_loops, "Perform loop closure at the end of medal" ).def(true);
@@ -713,10 +712,10 @@ option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight, "use coord c
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_all_atom, "use coord constraints on all atoms and not just CA" ).def(false);
 option.add( basic::options::OptionKeys::loopfcst::use_general_protocol, "use the new machinery around classes KinematicXXX" ).def(false);
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight_array, "use these weights (per seqpos) for coord cst in rigid regions" ).def("");
+option.add( basic::options::OptionKeys::loopfcst::dump_coord_cst_weight_array, "dump these weights (per seqpos) for coord cst in rigid regions" ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::loopfcst::dump_coord_cst_weight_array, "dump these weights (per seqpos) for coord cst in rigid regions" ).def("");
-option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).legal(true).def(true);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
@@ -1085,8 +1084,6 @@ option.add( basic::options::OptionKeys::evolution::rms_topmargin, "RMS Clusterin
 option.add( basic::options::OptionKeys::evolution::targetdir, "Write target new parent polulation to this directory ! " ).def("./");
 option.add( basic::options::OptionKeys::evolution::padding_score_filter, "RMS Clustering threshold" ).def(5.0);
 option.add( basic::options::OptionKeys::evolution::padding_stage2_filter, "RMS Clustering threshold" ).def(15.0);
-option.add( basic::options::OptionKeys::cutoutdomain::start, "start residue to cut out domain" ).def(1);
-option.add( basic::options::OptionKeys::cutoutdomain::end, "end residue to cut out domain" ).def(2);
 option.add( basic::options::OptionKeys::cluster::cluster, "cluster option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cluster::lite, "uses light-weight method of outputting cluster-centers, useful for when there's a HUGE amount of data!" ).def(false);
 option.add( basic::options::OptionKeys::cluster::input_score_filter, "Only read in structures below a certain energy" ).def(1000000.0);
@@ -1426,11 +1423,11 @@ option.add( basic::options::OptionKeys::rotamerdump::rotamerdump, "rotamerdump o
 option.add( basic::options::OptionKeys::rotamerdump::xyz, "when using the RotamerDump application, output the xyz coords of every rotamer" ).def(false);
 option.add( basic::options::OptionKeys::rotamerdump::one_body, "when using the RotamerDump application, output the one_body energies of every rotamer" ).def(false);
 option.add( basic::options::OptionKeys::rotamerdump::two_body, "when using the RotamerDump application, output the two_body energies of every rotamer" ).def(false);
+option.add( basic::options::OptionKeys::rotamerdump::annealer, "Run the annealer and output the rotamers it chose" ).def(false);
+option.add( basic::options::OptionKeys::robert::robert, "robert option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rotamerdump::annealer, "Run the annealer and output the rotamers it chose" ).def(false);
-option.add( basic::options::OptionKeys::robert::robert, "robert option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::robert::pairdata_input_pdb_list, "Takes in a file containing a list of pdb locations paired with protocol specific data (eg: one disulfide pair)" ).def("");
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::robert::pairdata_input_pdb_list, "Takes in a file containing a list of pdb locations paired with protocol specific data (eg: one disulfide pair)" ).def("");
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_filter, "minimum normalized maxsub for PCS clustering protocol" ).def(0.9);
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_rmsd, "maxsub calculation's rmsd threshold" ).def(4.0);
 option.add( basic::options::OptionKeys::robert::pcs_dump_cluster, "No description" ).def(false);
@@ -2137,12 +2134,12 @@ option.add( basic::options::OptionKeys::optE::data_in, "file from which to read 
 option.add( basic::options::OptionKeys::optE::data_out, "file to which to write optE data" ).def("optE.data.out");
 option.add( basic::options::OptionKeys::optE::weights, "a conventional weightfile that optE will use to determine which weights will be counted.  All non-zero weights in the file will contribute to rotamer energies and be fit; use the -optE::fix option to fix any of these weights.  Weight values will also be used as starting values for optimization." );
 option.add( basic::options::OptionKeys::optE::fix, "weights to be fixed (must also appear in the weightfile given by the -optE::weights option)" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::free, "IterativeOptEDriver flag: specify a file to read score types that are free -- optionally include a starting weight for each score type" );
+option.add( basic::options::OptionKeys::optE::free, "IterativeOptEDriver flag: specify a file to read score types that are free -- optionally include a starting weight for each score type" );
 option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
 option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
-option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
 option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
@@ -2581,6 +2578,8 @@ option.add( basic::options::OptionKeys::cp::relax_mover, "relax w/o constraints=
 option.add( basic::options::OptionKeys::cp::skip_relax, "Skip relax step... may reduce accurate identification of mutations" ).def(false);
 option.add( basic::options::OptionKeys::cp::local_relax, "Limit relax step to neighbors" ).def(false);
 option.add( basic::options::OptionKeys::cp::print_intermediate_pdbs, "Output a pdb file for each consecutive mutation" ).def(false);
+option.add( basic::options::OptionKeys::cp::use_unrelaxed_starting_points, "For subsequent iterations, uses mutation before relaxation" ).def(false);
+option.add( basic::options::OptionKeys::cp::easy_vip_acceptance, "For all iterations, use initial energy for acceptance test" ).def(false);
 option.add( basic::options::OptionKeys::archive::archive, "archive option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::archive::reread_all_structures, "ignore pool file... reread from batches" ).def(false);
 option.add( basic::options::OptionKeys::archive::completion_notify_frequency, "tell Archive every X completed decoys" ).def(100);
@@ -2805,6 +2804,9 @@ option.add( basic::options::OptionKeys::orbitals::bb_stats, "look at orbital bac
 option.add( basic::options::OptionKeys::orbitals::sc_stats, "look at orbital sc stats" ).def(false);
 option.add( basic::options::OptionKeys::orbitals::orb_orb_stats, "look at orbital orbital stats" ).def(false);
 option.add( basic::options::OptionKeys::orbitals::sc_bb, "score the backbone" ).def(false);
+option.add( basic::options::OptionKeys::cutoutdomain::cutoutdomain, "cutoutdomain option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cutoutdomain::start, "start residue" ).def(1);
+option.add( basic::options::OptionKeys::cutoutdomain::end, "end residue" ).def(2);
 option.add( basic::options::OptionKeys::carbohydrates::carbohydrates, "carbohydrates option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::carbohydrates::lock_rings, "Sets whether or not alternative ring conformationswill be sampled by the protocol, (e.g, ring flips orpuckering).  The default value is false." ).shortd( "Are saccharide rings allowed to flip or pucker?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::dwkulp::dwkulp, "dwkulp option group" ).legal(true).def(true);
