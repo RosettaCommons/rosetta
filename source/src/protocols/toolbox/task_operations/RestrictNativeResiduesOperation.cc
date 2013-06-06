@@ -158,6 +158,11 @@ RestrictNativeResiduesOperation::apply( Pose const & pose, PackerTask & task ) c
 			designable_resis++;
 		}
 	}
+	// turn off everything in symmetric copies
+	for( core::Size ir = total_residue+1; ir <= pose.total_residue(); ++ir){
+		 task.nonconst_residue_task(ir).prevent_repacking();
+	}
+
 	if( designable_resis == 0 ) {
 		TR<<"Warning: No designable residues identified in pose."<<std::endl;
 	} else {

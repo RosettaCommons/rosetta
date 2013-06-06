@@ -12529,6 +12529,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Output a pdb file for each consecutive mutation</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-use_unrelaxed_starting_points</b> \<Boolean\><dt>
+<dd>For subsequent iterations, uses mutation before relaxation</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-easy_vip_acceptance</b> \<Boolean\><dt>
+<dd>For all iterations, use initial energy for acceptance test</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>archive</h2>
 <dl>
@@ -13597,6 +13607,22 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-sc_bb</b> \<Boolean\><dt>
 <dd>score the backbone</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+ </li>
+<li><h2>cutoutdomain</h2>
+<dl>
+<dt><b>-cutoutdomain</b> \<Boolean\><dt>
+<dd>cutoutdomain option group</dd><br>
+</dl>
+<dl>
+<dt><b>-start</b> \<Integer\><dt>
+<dd>start residue</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-end</b> \<Integer\><dt>
+<dd>end residue</dd><br>
+<dd>Default: 2</dd><br>
 </dl>
  </li>
 <li><h2>carbohydrates</h2>
