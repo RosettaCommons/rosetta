@@ -212,6 +212,7 @@ InterchainPotential::evaluate_contact_score(
 
 		contact_score += contact_score_jump;
 		}
+	if ( contact_score < -10 ) contact_score = -10;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
