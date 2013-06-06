@@ -6,7 +6,7 @@ How to get this sample_source setup:
    ln -s /path/to/datasets/top800/input/top8000_chains_eds_70 .
 
 2) run setup_resfiles.py to generate rosetta_inputs.db3:
-   python setup_resfiles.py --data_dir top8000_chains_eds_70
+   python setup_resfiles.py --data_dir top4400_chains_eds_70
 
 3) run convert_htam_names.py to convert Reduce names to hydrogen names:
    python convert hatm_names.py --data_dir top8000_chains_eds_70 --output_dir top8000_chains_eds_70_rosetta_named_hydrogens

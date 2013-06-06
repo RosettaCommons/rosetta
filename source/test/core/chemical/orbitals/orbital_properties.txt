@@ -1,10 +1,8 @@
 orbital_type     atom_type              distance  
-C.pi.sp2         CNH2_COO_aroC          0.7      
-N.pi.sp2         NH2O_Ntrp_Nhis_Narg    0.65      
-N.p.sp2          NH2O_Ntrp_Nhis_Narg    0.65      
-O.pi.sp2         ONH2_OOC               0.6       
-O.p.sp2          ONH2_OOC               0.6       
-O.p.sp3          OH                     0.6       
-S.p.sp3          S                      1.0     
-O.pi.sp2.bb      OCbb                   0.6
-O.p.sp2.bb		 OCbb                   0.6
+C.pi.sp2         CNH2_COO_aroC          1.14      
+N.pi.sp2         NH2O_Ntrp_Nhis_Narg    1.12      
+N.p.sp2          NH2O_Ntrp_Nhis_Narg    1.12      
+O.pi.sp2         ONH2_OOC               1.1       
+O.p.sp2          ONH2_OOC               1.1       
+O.p.sp3          OH                     1.1       
+S.p.sp3          S                      1.39      

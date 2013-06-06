@@ -3,7 +3,7 @@
 # icoor for connect-bond is not accurate or ideal.
 # measured from a few disulfides in 1ni1
 NAME CYX
-VARIANT SIDECHAIN_CONJUGATION
+VARIANT MODRES
 IO_STRING CYX C
 TYPE POLYMER #residue type
 AA CYS

@@ -13,5 +13,3 @@
 
 -movemap input/1MFG.movemap
 -sm_prob .25
-
--out:nooutput
