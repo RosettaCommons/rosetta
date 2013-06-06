@@ -233,11 +233,13 @@ namespace rna {
 		if(rebuild_bulge_mode_) remove_virtual_rna_residue_variant_type(pose, job_parameters_->working_moving_res());
 
 		/////////////////////////////////////Build previously virtualize sugar//////////////////////////////////////////////////
+		// A virtualized sugar occurs when a previous move was a 'floating base' step, which only samples euler angles
+		// of a base, but virtualized the attached sugar and any residues connecting that nucleotide to the 'instantiated' body of the RNA.
 		Output_title_text("Build previously virtualize sugar");
 		bool const Is_prev_sugar_virt=Is_previous_sugar_virtual( pose );
-		bool const Is_curr_sugar_virt=Is_current_sugar_virtual( pose);
-		bool const Is_five_prime_CB_sugar_virt=Is_five_prime_chain_break_sugar_virtual( pose );
-		bool const Is_three_prime_CB_sugar_virt=Is_three_prime_chain_break_sugar_virtual( pose );
+		bool const Is_curr_sugar_virt=Is_current_sugar_virtual( pose); // occurs less frequently -- typically only when connecting two pieces.
+		bool const Is_five_prime_CB_sugar_virt=Is_five_prime_chain_break_sugar_virtual( pose ); // may occur when closing loop
+		bool const Is_three_prime_CB_sugar_virt=Is_three_prime_chain_break_sugar_virtual( pose ); // may occur when closing loop
 		Size const num_nucleotides=  job_parameters_->working_moving_res_list().size();
 		Size const gap_size= job_parameters_->gap_size();
 
@@ -255,7 +257,8 @@ namespace rna {
 
 		std::cout << "num_virtual_sugar= " << num_virtual_sugar << std::endl;
 
-		if(assert_no_virt_ribose_sampling_){
+		// rd2013 -- Parin, please put in comments explaining these checks
+		if(assert_no_virt_ribose_sampling_ /*run checks*/ ){
 			if(floating_base_ && num_nucleotides==2){ //Hacky..ok the only acception right now is in floating_base_ + dinucleotide mode.
 				if(num_virtual_sugar>1) utility_exit_with_message("assert_no_virt_ribose_sampling_==true and floating_base, but num_virtual_sugar>1");
 				if(num_virtual_sugar==1){
@@ -268,6 +271,7 @@ namespace rna {
 			}
 		}
 
+		// rd2013 -- Parin, please put in comments explaining these checks. I don't understand what logic guarantees that these assertions are met.
 		if(Is_curr_sugar_virt){ //Consistency test.
 			//Right now, the only possiblility for Is_curr_sugar_virt==true is when combining two silent_files chunk at chain-break
 			if(gap_size!=0) utility_exit_with_message("Is_curr_sugar_virt==true but gap_size!=0 !!");
@@ -296,6 +300,7 @@ namespace rna {
 			utility_exit_with_message( "do_not_sample_multiple_virtual_sugar_==true && sample_ONLY_multiple_virtual_sugar_==true" );
 		}
 
+		// this was just for testing.
 		if(do_not_sample_multiple_virtual_sugar_==true){
 			if(num_virtual_sugar>1) return;
 		}
@@ -314,12 +319,13 @@ namespace rna {
 
 		//utility::vector1< pose_data_struct2 > prev_sugar_PDL, five_prime_CB_sugar_PDL, three_prime_CB_sugar_PDL;
 
+		// These parameters will be used for sampling virtual sugars and associated bulge.
 		FloatingBaseChainClosureJobParameter prev_sugar_FB_JP=FloatingBaseChainClosureJobParameter();
 		FloatingBaseChainClosureJobParameter curr_sugar_FB_JP=FloatingBaseChainClosureJobParameter();
 		FloatingBaseChainClosureJobParameter five_prime_CB_sugar_FB_JP=FloatingBaseChainClosureJobParameter();
 		FloatingBaseChainClosureJobParameter three_prime_CB_sugar_FB_JP=FloatingBaseChainClosureJobParameter();
 
-
+		// In following, PDL means pose_data_list.
 		if(Is_prev_sugar_virt){
 			std::cout << "previous_sugar floating_base_chain_closure" << std::endl;
 
@@ -328,6 +334,8 @@ namespace rna {
 
 			prev_sugar_FB_JP=FloatingBaseChainClosureJobParameter(prev_moving_res, prev_ref_res);
 			prev_sugar_FB_JP.set_base_and_pucker_state(pose, job_parameters_);
+
+			// do the sampling!
 			prev_sugar_FB_JP.PDL=previous_floating_base_chain_closure(pose, prev_sugar_FB_JP, "previous");
 
 			if(prev_sugar_FB_JP.PDL.size()==0){
@@ -343,6 +351,8 @@ namespace rna {
 
 			curr_sugar_FB_JP=FloatingBaseChainClosureJobParameter(moving_res, curr_ref_res);
 			curr_sugar_FB_JP.set_base_and_pucker_state(pose, job_parameters_);
+
+			// do the sampling!
 			curr_sugar_FB_JP.PDL=previous_floating_base_chain_closure(pose, curr_sugar_FB_JP, "current");
 
 			if(curr_sugar_FB_JP.PDL.size()==0){
@@ -356,6 +366,8 @@ namespace rna {
 
 			five_prime_CB_sugar_FB_JP=FloatingBaseChainClosureJobParameter(five_prime_chain_break_res, five_prime_chain_break_res-2);
 			five_prime_CB_sugar_FB_JP.set_base_and_pucker_state(pose, job_parameters_);
+
+			// do the sampling!
 			five_prime_CB_sugar_FB_JP.PDL=previous_floating_base_chain_closure(pose, five_prime_CB_sugar_FB_JP, "five_prime_CB");
 
 			if(five_prime_CB_sugar_FB_JP.PDL.size()==0) {
@@ -369,6 +381,8 @@ namespace rna {
 
 			three_prime_CB_sugar_FB_JP=FloatingBaseChainClosureJobParameter(three_prime_chain_break_res, three_prime_chain_break_res+2);
 			three_prime_CB_sugar_FB_JP.set_base_and_pucker_state(pose, job_parameters_);
+
+			// do the sampling!
 			three_prime_CB_sugar_FB_JP.PDL=previous_floating_base_chain_closure(pose, three_prime_CB_sugar_FB_JP, "three_prime_CB");
 
 			if(three_prime_CB_sugar_FB_JP.PDL.size()==0){
@@ -451,7 +465,7 @@ namespace rna {
 
 		if(combine_long_loop_mode_) utility_exit_with_message( "combine_long_loop_mode_ have not been implement for floating base sampling yet!!" );
 
-
+		// note, in principle can do single nucleotide too (and was used for testing), but typical use case is dinucleotide.
 		bool const Is_dinucleotide=(num_nucleotides==2);
 
 		std::cout << " NUM_NUCLEOTIDES= " <<  num_nucleotides << std::endl;
@@ -649,7 +663,7 @@ namespace rna {
 		//int const euler_angle_bin_min_MOCK=-180/(euler_angle_bin_size_MOCK);
 		//int const euler_angle_bin_max_MOCK=180/(euler_angle_bin_size_MOCK)-1;
 
-
+		// definition of euler angle grid search parameters
 		int const euler_angle_bin_min=-180/euler_angle_bin_size; //Should be -180/euler_angle_bin_size
 		int const euler_angle_bin_max=180/euler_angle_bin_size-1;  //Should be 180/euler_angle_bin_size-1
 
@@ -678,7 +692,12 @@ namespace rna {
 
 //////////////////////Probably sure convert to use the class soon...////////////////////////////////////////////////
 
-		utility::vector1 < core::kinematics::Stub > other_residues_base_list;
+		///////////////////////////////////////////////////////////////////////
+		// rd2013 -- why is this not using the BaseCentroidScreener class?
+		///////////////////////////////////////////////////////////////////////
+
+		// places where floating base can 'dock'
+		utility::vector1 < core::kinem atics::Stub > other_residues_base_list;
 
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
@@ -806,6 +825,7 @@ namespace rna {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			//WHY IS THIS SLOW, CAN IT BE MADE FASTER???
+			// rd2013  The two funcitons (check_floating_base_chain_closable) copy code, should be integrated.
 			if(prev_sugar_FB_JP.sample_sugar){
 				if(	check_floating_base_chain_closable(reference_res, prev_sugar_FB_JP.PDL, moving_rsd_at_origin_list, moving_res_base_stub, Is_prepend, (num_nucleotides - 1) )==false) continue;
 			}else{
@@ -903,6 +923,7 @@ namespace rna {
 
 						copy_bulge_res_and_ribose_torsion(prev_sugar_FB_JP, ribose_screening_pose, (*prev_sugar_FB_JP.PDL[prev_sugar_ID].pose_OP) );
 
+						// rd2013 why is this REPLICATE?
 						if(!Full_atom_van_der_Waals_screening_REPLICATE( ribose_screening_pose, base_rep_score, base_atr_score, delta_rep_score, delta_atr_score, gap_size, Is_internal)) continue;
 
 						pose::add_variant_type_to_pose_residue( ribose_screening_pose, "VIRTUAL_RIBOSE", prev_sugar_FB_JP.moving_res ); // copy_bulge_res_and_ribose_torsion removed the variant type
@@ -925,10 +946,13 @@ namespace rna {
 
 				}else{
 					if(!Check_chain_closable(ribose_screening_pose.residue(moving_res).xyz(moving_atom_name), ribose_screening_pose.residue(reference_res).xyz(reference_atom_name), (num_nucleotides - 1) )) continue;
+					// rd2013 why is this REPLICATE?
 					if(!Full_atom_van_der_Waals_screening_REPLICATE( ribose_screening_pose, base_rep_score, base_atr_score, delta_rep_score, delta_atr_score, gap_size, Is_internal)) continue;
 				}
 
 				count_data_.non_clash_ribose++;   //OK CLEARLY base_rep_score and base_atr_score is not correct!
+
+				// above was all on screening poses; the actual base of the pose hasn't been moved yet!
 
 				set_base_coordinate_frame(CB_screening_pose, moving_res, (*moving_rsd_at_origin_list[n]), moving_res_base_stub);
 
@@ -972,7 +996,7 @@ namespace rna {
 			}
 
 
-
+			// diagnostics?
 			it=base_bin_map.find(base_bin);
 
 			if(it==base_bin_map.end()){
