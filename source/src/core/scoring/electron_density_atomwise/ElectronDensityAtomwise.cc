@@ -855,7 +855,7 @@ ElectronDensityAtomwise::spline_interpolation (
   numeric::xyzVector< core::Real > const & idxX ) const {
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = {idxX[2], idxX[1], idxX[0]};
-	core::Real retval = core::scoring::electron_density::SplineInterp::interp3 ( &coeffs[0], dims, pt, 3 );
+	core::Real retval = core::scoring::electron_density::SplineInterp::interp3 ( &coeffs[0], dims, pt );
 	return retval;
 }
 
@@ -864,7 +864,7 @@ ElectronDensityAtomwise::spline_coeffs ( ObjexxFCL::FArray3D< double > & data ,
     ObjexxFCL::FArray3D< double > & coeffs ) {
 	int dims[3] = { data.u3(), data.u2(), data.u1() };
 	coeffs = data;
-	core::scoring::electron_density::SplineInterp::compute_coefficients ( &coeffs[0] , dims , 3 );
+	core::scoring::electron_density::SplineInterp::compute_coefficients3 ( &coeffs[0] , dims );
 }
 //////////////////////////////////////////////////////////////////
 //Compute Normalization factor given a pose
@@ -1131,7 +1131,7 @@ ElectronDensityAtomwise::residue_score ( core::conformation::Residue const & rsd
 numeric::xyzVector< core::Real >
 ElectronDensityAtomwise::atom_gradient ( core::pose::Pose const & pose, core::Size
     const & rsd_id, core::Size const & atm_id ) {
-	
+
 	//Skip virtual atoms
 	if ( pose.residue( rsd_id ).is_virtual( atm_id ) ) {
 		return numeric::xyzVector< core::Real > (0, 0, 0);

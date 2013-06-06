@@ -2875,9 +2875,6 @@ void ElectronDensity::compute_rho(core::pose::Pose const & pose,
 		atm_idx_ij[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (double)grid[2]);
 
 		using namespace ObjexxFCL::fmt;
-		//TR << "Atom_crd_ij " << F(8,3,atm_i.xyz().x()) << F(8,3,atm_i.xyz().y()) << F(8,3,atm_i.xyz().z()) << F(8,3,cartX.x()) << F(8,3,cartX.y()) << F(8,3,cartX.z()) << std::endl;
-		//TR << "Atom_idx_ij " << F(8,3,fracX[0]) << F(8,3,fracX[1]) << F(8,3,fracX[2]) << F(8,3,atm_idx_ij[0]) << F(8,3,atm_idx_ij[1]) << F(8,3,atm_idx_ij[2]) << std::endl;
-
 		for (int z=1; z<=calculated_density.u3(); ++z) {
 			atm_j[2] = z;
 			del_ij[2] = (atm_idx_ij[2] - atm_j[2]) / grid[2];
@@ -4210,6 +4207,18 @@ ElectronDensity::readMRCandResize(
 
 	// set map resolution
 	this->reso = reso;
+
+	// clear derived data (will be recomputed if needed)
+	fastdens_score.clear();
+
+	// ... patterson
+	PattersonEpsilon.clear(); p_o.clear();
+	p_extent = numeric::xyzVector< core::Real >(0,0,0);
+
+	// ... density tools
+	rho_calc.clear(); rho_solv.clear();
+	inv_rho_mask.clear();
+	Frho_calc.clear(); Frho_solv.clear();
 
 	// we're done!
 	isLoaded = true;

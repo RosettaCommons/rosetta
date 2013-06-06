@@ -27,6 +27,7 @@
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/qsar.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 // Core headers
@@ -401,6 +402,12 @@ init_crystal_refinement_correction() {
 		if ( ! option[ in::preserve_crystinfo ].user() ) {
 			option[in::preserve_crystinfo].value( true );
 		}
+
+		// internal coordinate minimization: behave properly
+		if ( ! option[ optimization::scale_rb ].user() ) {
+			option[optimization::scale_rb].value( 1.0 );
+		}
+
 	}
 }
 

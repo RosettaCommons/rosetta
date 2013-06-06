@@ -529,7 +529,7 @@ sampler:
 		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 2.0 );
 
 		core::Size neffcycles = (core::Size)(ncycles_*increase_cycles_);
-		if (m==4) neffcycles /=2;
+		if (m==4 || seqfrags_only_) neffcycles /=2;
 		for (int n=1; n<=(int)neffcycles; ++n) {
 			// possible actions:
 			//  1 - insert homologue frag, global frame
@@ -614,30 +614,34 @@ sampler:
 				utility::vector1<core::Real> residuals( n_prot_res , 0.0 );
 				utility::vector1<core::Real> max_residuals(3,0);
 				utility::vector1<int> max_poses(4,-1);
-				for (int i=1; i<(int)n_prot_res; ++i) {
-					if (!pose.residue_type(i).is_protein()){
-						residuals[i] = -1;
-					} else if (pose.fold_tree().is_cutpoint(i+1)) {
-						residuals[i] = -1;
-					} else if ( allowed_to_move_[i]==false ) {
-						residuals[i] = -1;
-          } else {
-						numeric::xyzVector< core::Real > c0 , n1;
-						c0 = pose.residue(i).atom(" C  ").xyz();
-						n1 = pose.residue(i+1).atom(" N  ").xyz();
-						core::Real d2 = c0.distance( n1 );
-						residuals[i] = (d2-1.328685)*(d2-1.328685);
-						if ( residuals[i] > max_residuals[1]) {
-							max_residuals[3] = max_residuals[2]; max_residuals[2] = max_residuals[1]; max_residuals[1] = residuals[i];
-							max_poses[3] = max_poses[2]; max_poses[2] = max_poses[1]; max_poses[1] = i;
-						} else if ( residuals[i] > max_residuals[2]) {
-							max_residuals[3] = max_residuals[2]; max_residuals[2] = residuals[i];
-							max_poses[3] = max_poses[2]; max_poses[2] = i;
-						} else if ( residuals[i] > max_residuals[3]) {
-							max_residuals[3] = residuals[i];
-							max_poses[3] = i;
+				if (!nofragbias_) {
+					for (int i=1; i<(int)n_prot_res; ++i) {
+						if (!pose.residue_type(i).is_protein()){
+							residuals[i] = -1;
+						} else if (pose.fold_tree().is_cutpoint(i+1)) {
+							residuals[i] = -1;
+						} else if ( allowed_to_move_[i]==false ) {
+							residuals[i] = -1;
+						} else {
+							numeric::xyzVector< core::Real > c0 , n1;
+							c0 = pose.residue(i).atom(" C  ").xyz();
+							n1 = pose.residue(i+1).atom(" N  ").xyz();
+							core::Real d2 = c0.distance( n1 );
+							residuals[i] = (d2-1.328685)*(d2-1.328685);
+							if ( residuals[i] > max_residuals[1]) {
+								max_residuals[3] = max_residuals[2]; max_residuals[2] = max_residuals[1]; max_residuals[1] = residuals[i];
+								max_poses[3] = max_poses[2]; max_poses[2] = max_poses[1]; max_poses[1] = i;
+							} else if ( residuals[i] > max_residuals[2]) {
+								max_residuals[3] = max_residuals[2]; max_residuals[2] = residuals[i];
+								max_poses[3] = max_poses[2]; max_poses[2] = i;
+							} else if ( residuals[i] > max_residuals[3]) {
+								max_residuals[3] = residuals[i];
+								max_poses[3] = i;
+							}
 						}
 					}
+				} else {
+					max_poses[3] = max_poses[2] = max_poses[1] = 0;
 				}
 
 				// 25% chance of random position

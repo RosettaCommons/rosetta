@@ -24,9 +24,15 @@ namespace scoring {
 namespace electron_density {
 namespace SplineInterp {
 
-double interp3(double *Bcoeff, int dims[3], double X[3], int degree);
-int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3], int degree);
-int compute_coefficients(double *data, int dims[3], int degree);
+// 3d --- periodic boundaries on all dimensions
+double interp3(double *Bcoeff, int dims[3], double X[3]);
+int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3]);
+int compute_coefficients3(double *data, int dims[3]);
+
+// 4d --- periodic boundaries on dimensions 2-4; mirror boundaries on dimension 1
+double interp4(double *Bcoeff, int dims[4], double X[4]);
+int grad4(double grad[4], double *Bcoeff, int dims[4], double X[4]);
+int compute_coefficients4(double *data, int dims[3]);
 
 }
 }

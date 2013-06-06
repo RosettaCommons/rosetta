@@ -31,7 +31,7 @@ namespace scoring {
 namespace electron_density {
 namespace SplineInterp {
 
-void put_line(double* data, int dim, int x1, int x2, double line[], int dims[]) {
+void put_line3(double* data, int dim, int x1, int x2, double line[], int dims[]) {
 	int i, inc;
 	double* ptr;
 
@@ -53,7 +53,7 @@ void put_line(double* data, int dim, int x1, int x2, double line[], int dims[]) 
 }
 
 
-void get_line(double* data, int dim, int x1, int x2, double line[], int dims[]) {
+void get_line3(double* data, int dim, int x1, int x2, double line[], int dims[]) {
 	int i, inc;
 	double* ptr;
 
@@ -74,16 +74,63 @@ void get_line(double* data, int dim, int x1, int x2, double line[], int dims[]) 
 	}
 }
 
-static double	InitialCausalCoefficient
-				(
-					double	c[],		// coefficients
-					long	DataLength,	// number of coefficients
-					double	z,			// actual pole
-					double	Tolerance	// admissible relative error
-				)
-{
+void put_line4(double* data, int dim, int x1, int x2, int x3, double line[], int dims[]) {
+	int i, inc;
+	double* ptr;
 
-	double	Sum, zn;
+	if (dim == 0) {          // x1 == y, x2 == z, x3 == w
+		ptr = &data[x1*dims[2]*dims[3] + x2*dims[3] + x3];
+		inc = dims[1]*dims[2]*dims[3];
+	} else if (dim == 1) {   // x1 == x, x2 == z, x3 == w
+		ptr = &data[x1*dims[1]*dims[2]*dims[3] + x2*dims[3]+ x3];
+		inc = dims[2]*dims[3];
+	} else if (dim == 2) {   // x1 == x, x2 == y, x3 == w
+		ptr = &data[x1*dims[1]*dims[2]*dims[3] + x2*dims[2]*dims[3]+ x3];
+		inc = dims[3];
+	} else {                 // x1 == x, x2 == y, x3 == z
+		ptr = &data[x1*dims[1]*dims[2]*dims[3] + x2*dims[2]*dims[3] + x3*dims[3]];
+		inc = 1;
+	}
+
+	for (i=0; i<dims[dim]; i++) {
+		*ptr = line[i] ;
+		ptr = &ptr[inc];
+	}
+}
+
+
+void get_line4(double* data, int dim, int x1, int x2, int x3, double line[], int dims[]) {
+	int i, inc;
+	double* ptr;
+
+	if (dim == 0) {          // x1 == y, x2 == z, x3 == w
+		ptr = &data[x1*dims[2]*dims[3] + x2*dims[3] + x3];
+		inc = dims[1]*dims[2]*dims[3];
+	} else if (dim == 1) {   // x1 == x, x2 == z, x3 == w
+		ptr = &data[x1*dims[1]*dims[2]*dims[3] + x2*dims[3]+ x3];
+		inc = dims[2]*dims[3];
+	} else if (dim == 2) {   // x1 == x, x2 == y, x3 == w
+		ptr = &data[x1*dims[1]*dims[2]*dims[3] + x2*dims[2]*dims[3]+ x3];
+		inc = dims[3];
+	} else {                 // x1 == x, x2 == y, x3 == z
+		ptr = &data[x1*dims[1]*dims[2]*dims[3] + x2*dims[2]*dims[3] + x3*dims[3]];
+		inc = 1;
+	}
+
+	for (i=0; i<dims[dim]; i++) {
+		line[i] = *ptr;
+		ptr = &ptr[inc];
+	}
+}
+
+static double	InitialCausalCoefficient (
+		double c[],       // coefficients
+		long DataLength,  // number of coefficients
+		double z,         // actual pole
+		double Tolerance, // admissible relative error
+		bool Mirrored     // mirror boundary?
+) {
+	double	Sum, zn, iz, z2n;
 	long	n, Horizon;
 
 	// this initialization corresponds to mirror boundaries
@@ -92,40 +139,63 @@ static double	InitialCausalCoefficient
 	if (Tolerance > 0.0) {
 		Horizon = (long)ceil(log(Tolerance) / log(fabs(z)));
 	}
-	if (Horizon < DataLength) {
-		// accelerated loop
-		zn = z;
-		Sum = c[0];
-		for (n = 1L; n < Horizon; n++) {
-			Sum += zn * c[DataLength - n];
-			zn *= z;
+
+	if (!Mirrored) {
+		if (Horizon < DataLength) {
+			// accelerated loop
+			zn = z;
+			Sum = c[0];
+			for (n = 1L; n < Horizon; n++) {
+				Sum += zn * c[DataLength - n];
+				zn *= z;
+			}
+			return(Sum);
+		} else {
+			// full loop
+			zn = z;
+			Sum = c[0];
+			for (n = 1L; n < DataLength; n++) {
+				Sum += zn * c[DataLength - n];
+				zn *= z;
+			}
+			return(Sum / (1.0 - zn));
 		}
-		return(Sum);
-	}
-	else {
-		// full loop
-		zn = z;
-		Sum = c[0];
-		for (n = 1L; n < DataLength; n++) {
-			Sum += zn * c[DataLength - n];
-			zn *= z;
+	} else {
+		if (Horizon < DataLength) {
+			// accelerated loop
+			zn = z;
+			Sum = c[0];
+			for (n = 1L; n < Horizon; n++) {
+				Sum += zn * c[n];
+				zn *= z;
+			}
+			return(Sum);
 		}
-		return(Sum / (1.0 - zn));
+		else {
+			// full loop
+			zn = z;
+			iz = 1.0 / z;
+			z2n = std::pow(z, (double)(DataLength - 1));
+			Sum = c[0] + z2n * c[DataLength - 1];
+			z2n *= z2n * iz;
+			for (n = 1L; n <= DataLength - 2; n++) {
+				Sum += (zn + z2n) * c[n];
+				zn *= z;
+				z2n *= iz;
+			}
+			return(Sum / (1.0 - zn * zn));
+		}
 	}
 }
 
 
-static double	InitialAntiCausalCoefficient
-				(
-					double	c[],		// coefficients
-					long	DataLength,	// number of samples or coefficients
-					double	z,			// actual pole
-					double	Tolerance	// admissible relative error
-				)
-{
-	// this initialization corresponds to mirror boundaries
-	// return((z / (z * z - 1.0)) * (z * c[DataLength - 2L] + c[DataLength - 1L]));
-	// modified FPD -- periodic boundaries
+static double	InitialAntiCausalCoefficient (
+		double c[],       // coefficients
+		long DataLength,  // number of coefficients
+		double z,         // actual pole
+		double Tolerance, // admissible relative error
+		bool Mirrored     // mirror boundary?
+) {
 	double Sum, zn;
 	int n, Horizon;
 
@@ -133,40 +203,41 @@ static double	InitialAntiCausalCoefficient
 	if (Tolerance > 0.0) {
 		Horizon = (long)ceil(log(Tolerance) / log(fabs(z)));
 	}
-	if (Horizon < DataLength) {
-		// accelerated loop
-		zn = z;
-		Sum = c[DataLength-1];
-		for (n = 0L; n < Horizon; n++) {
-			Sum += zn * c[n];
-			zn *= z;
+
+	if (!Mirrored) {
+		if (Horizon < DataLength) {
+			zn = z;
+			Sum = c[DataLength-1];
+			for (n = 0L; n < Horizon; n++) {
+				Sum += zn * c[n];
+				zn *= z;
+			}
+			return(-z*Sum);
 		}
-		return(-z*Sum);
-	}
-	else {
-		// full loop
-		zn = z;
-		Sum = c[DataLength-1];
-		for (n = 0L; n < DataLength-1; n++) {
-			Sum += zn * c[n];
-			zn *= z;
+		else {
+			zn = z;
+			Sum = c[DataLength-1];
+			for (n = 0L; n < DataLength-1; n++) {
+				Sum += zn * c[n];
+				zn *= z;
+			}
+			return(-z*Sum / (1.0 - zn));
 		}
-		return(-z*Sum / (1.0 - zn));
+	} else {
+		return((z / (z * z - 1.0)) * (z * c[DataLength - 2] + c[DataLength - 1]));
 	}
 }
 
 
 
-void ConvertToInterpolationCoefficients
-				(
-					double	c[],		// input samples --> output coefficients
-					long	DataLength,	// number of samples or coefficients
-					double	z[],		// poles
-					long	NbPoles,	// number of poles
-					double	Tolerance	// admissible relative error
-				)
-{
-
+void ConvertToInterpolationCoefficients (
+		double c[],		    // input samples --> output coefficients
+		long   DataLength,// number of samples or coefficients
+		double z[],       // poles
+		long   NbPoles,   // number of poles
+		double Tolerance, // admissible relative error
+		bool   Mirrored   // mirror boundary?
+) {
 	double	Lambda = 1.0;
 	long	n, k;
 
@@ -185,13 +256,13 @@ void ConvertToInterpolationCoefficients
 	// loop over all poles
 	for (k = 0L; k < NbPoles; k++) {
 		// causal initialization
-		c[0] = InitialCausalCoefficient(c, DataLength, z[k], Tolerance);
+		c[0] = InitialCausalCoefficient(c, DataLength, z[k], Tolerance, Mirrored);
 		// causal recursion
 		for (n = 1L; n < DataLength; n++) {
 			c[n] += z[k] * c[n - 1L];
 		}
 		// anticausal initialization
-		c[DataLength - 1L] = InitialAntiCausalCoefficient(c, DataLength, z[k], Tolerance);
+		c[DataLength - 1L] = InitialAntiCausalCoefficient(c, DataLength, z[k], Tolerance, Mirrored);
 		// anticausal recursion
 		for (n = DataLength - 2L; 0 <= n; n--) {
 			c[n] = z[k] * (c[n + 1L] - c[n]);
@@ -201,40 +272,14 @@ void ConvertToInterpolationCoefficients
 
 //////////////////////////////////
 
-int compute_coefficients(double *data, int dims[3], int degree) {
-	//double *line;
+int compute_coefficients3(double *data, int dims[3]) {
 	std::vector< double > line;
 	double Pole[2];
 	int NbPoles;
 	int x,y,z;
 
-	// recover the poles from a lookup table
-	switch (degree) {
-		case 2L:
-			NbPoles = 1;
-			Pole[0] = sqrt(8.0) - 3.0;
-			break;
-		case 3L:
-			NbPoles = 1;
-			Pole[0] = sqrt(3.0) - 2.0;
-			break;
-		case 4L:
-			NbPoles = 2;
-			Pole[0] = sqrt(664.0 - sqrt(438976.0)) + sqrt(304.0) - 19.0;
-			Pole[1] = sqrt(664.0 + sqrt(438976.0)) - sqrt(304.0) - 19.0;
-			break;
-		case 5L:
-			NbPoles = 2;
-			Pole[0] = sqrt(135.0 / 2.0 - sqrt(17745.0 / 4.0)) + sqrt(105.0 / 4.0)
-				- 13.0 / 2.0;
-			Pole[1] = sqrt(135.0 / 2.0 + sqrt(17745.0 / 4.0)) - sqrt(105.0 / 4.0)
-				- 13.0 / 2.0;
-			break;
-		default:
-			std::cerr << "Invalid spline degree\n";
-			return(1);
-	}
-
+	NbPoles = 1;
+	Pole[0] = sqrt(3.0) - 2.0;
 
 	// convert the image samples into interpolation coefficients
 	// in-place separable process, along x
@@ -243,12 +288,11 @@ int compute_coefficients(double *data, int dims[3], int degree) {
 	if ((int)line.size() != dims[0]) { std::cerr << "Row allocation failed\n"; return(1); }
 	for (y = 0L; y < dims[1]; y++) {
 		for (z = 0L; z < dims[2]; z++) {
-			get_line(data, 0, y, z, &line[0], dims);
-			ConvertToInterpolationCoefficients(&line[0], dims[0], Pole, NbPoles, DBL_EPSILON);
-			put_line(data, 0, y, z, &line[0], dims);
+			get_line3(data, 0, y, z, &line[0], dims);
+			ConvertToInterpolationCoefficients(&line[0], dims[0], Pole, NbPoles, DBL_EPSILON, false);
+			put_line3(data, 0, y, z, &line[0], dims);
 		}
 	}
-	//free(line);
 
 	// in-place separable process, along y
 	//line = (double *)malloc((size_t)(dims[1] * sizeof(double)));
@@ -256,12 +300,11 @@ int compute_coefficients(double *data, int dims[3], int degree) {
 	if ((int)line.size() != dims[1]) { std::cerr << "Row allocation failed\n"; return(1); }
 	for (x = 0L; x < dims[0]; x++) {
 		for (z = 0L; z < dims[2]; z++) {
-			get_line(data, 1, x, z, &line[0], dims);
-			ConvertToInterpolationCoefficients(&line[0], dims[1], Pole, NbPoles, DBL_EPSILON);
-			put_line(data, 1, x, z, &line[0], dims);
+			get_line3(data, 1, x, z, &line[0], dims);
+			ConvertToInterpolationCoefficients(&line[0], dims[1], Pole, NbPoles, DBL_EPSILON, false);
+			put_line3(data, 1, x, z, &line[0], dims);
 		}
 	}
-	//free(line);
 
 	// in-place separable process, along z
 	//line = (double *)malloc((size_t)(dims[2] * sizeof(double)));
@@ -269,103 +312,47 @@ int compute_coefficients(double *data, int dims[3], int degree) {
 	if ((int)line.size() != dims[2]) { std::cerr << "Row allocation failed\n"; return(1); }
 	for (x = 0L; x < dims[0]; x++) {
 		for (y = 0L; y < dims[1]; y++) {
-			get_line(data, 2, x, y, &line[0], dims);
-			ConvertToInterpolationCoefficients(&line[0], dims[2], Pole, NbPoles, DBL_EPSILON);
-			put_line(data, 2, x, y, &line[0], dims);
+			get_line3(data, 2, x, y, &line[0], dims);
+			ConvertToInterpolationCoefficients(&line[0], dims[2], Pole, NbPoles, DBL_EPSILON, false);
+			put_line3(data, 2, x, y, &line[0], dims);
 		}
 	}
-	//free(line);
 
 	return(0);
 }
 
 
-int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3], int degree) {
-	double wt[3][6];
+int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3]) {
+	double wt[3][4];
 	double w, w2, w4, t, t0, t1;
 	double sum_k, sum_jk;
-	int idx[3][6];
+	int idx[3][4];
 	int i,j,k, pt, dim, gradDim;
-
-	//double wtP[6], wtM[6];
 
 	// compute interpolation indexes
 	for (gradDim=0; gradDim<3; gradDim++) {
 		for (dim=0; dim<3; dim++) {
-			pt = (int)floor(X[dim] - (degree-1) / 2.0);
-			for (i = 0L; i <= degree; i++)
+			pt = (int)floor(X[dim] - (3-1) / 2.0);
+			for (i = 0L; i <= 3; i++)
 				idx[dim][i] = pt++;
 
 			// compute the interpolation weights
 			if (dim == gradDim) {
-				switch (degree) {
-					// to do: other orders
-					case 3L:
-						w = X[dim] - (double)idx[dim][1];
-						wt[dim][3] = (1.0 / 2.0) * w * w;
-						wt[dim][0] = (w - 1.0/2.0) - wt[dim][3];
-						wt[dim][2] = 1.0 + wt[dim][0] - 2.0 * wt[dim][3];
-						wt[dim][1] = - wt[dim][0] - wt[dim][2] - wt[dim][3];
-						break;
-					default:
-						std::cerr << "Invalid spline degree\n";
-						return(1);
-				}
+					w = X[dim] - (double)idx[dim][1];
+					wt[dim][3] = (1.0 / 2.0) * w * w;
+					wt[dim][0] = (w - 1.0/2.0) - wt[dim][3];
+					wt[dim][2] = 1.0 + wt[dim][0] - 2.0 * wt[dim][3];
+					wt[dim][1] = - wt[dim][0] - wt[dim][2] - wt[dim][3];
 			} else {
-				switch (degree) {
-					case 2L:
-						w = X[dim] - (double)idx[dim][1];
-						wt[dim][1] = 3.0 / 4.0 - w * w;
-						wt[dim][2] = (1.0 / 2.0) * (w - wt[dim][1] + 1.0);
-						wt[dim][0] = 1.0 - wt[dim][1] - wt[dim][2];
-						break;
-					case 3L:
-						w = X[dim] - (double)idx[dim][1];
-						wt[dim][3] = (1.0 / 6.0) * w * w * w;
-						wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
-						wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
-						wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
-						break;
-					case 4L:
-						w = X[dim] - (double)idx[dim][2];
-						w2 = w * w;
-						t = (1.0 / 6.0) * w2;
-						wt[dim][0] = 1.0 / 2.0 - w;
-						wt[dim][0] *= wt[dim][0];
-						wt[dim][0] *= (1.0 / 24.0) * wt[dim][0];
-						t0 = w * (t - 11.0 / 24.0);
-						t1 = 19.0 / 96.0 + w2 * (1.0 / 4.0 - t);
-						wt[dim][1] = t1 + t0;
-						wt[dim][3] = t1 - t0;
-						wt[dim][4] = wt[dim][0] + t0 + (1.0 / 2.0) * w;
-						wt[dim][2] = 1.0 - wt[dim][0] - wt[dim][1] - wt[dim][3] - wt[dim][4];
-						break;
-					case 5L:
-						w = X[dim] - (double)idx[dim][2];
-						w2 = w * w;
-						wt[dim][5] = (1.0 / 120.0) * w * w2 * w2;
-						w2 -= w;
-						w4 = w2 * w2;
-						w -= 1.0 / 2.0;
-						t = w2 * (w2 - 3.0);
-						wt[dim][0] = (1.0 / 24.0) * (1.0 / 5.0 + w2 + w4) - wt[dim][5];
-						t0 = (1.0 / 24.0) * (w2 * (w2 - 5.0) + 46.0 / 5.0);
-						t1 = (-1.0 / 12.0) * w * (t + 4.0);
-						wt[dim][2] = t0 + t1;
-						wt[dim][3] = t0 - t1;
-						t0 = (1.0 / 16.0) * (9.0 / 5.0 - t);
-						t1 = (1.0 / 24.0) * w * (w4 - w2 - 5.0);
-						wt[dim][1] = t0 + t1;
-						wt[dim][4] = t0 - t1;
-						break;
-					default:
-						std::cerr << "Invalid spline degree\n";
-						return(1);
-				}
+					w = X[dim] - (double)idx[dim][1];
+					wt[dim][3] = (1.0 / 6.0) * w * w * w;
+					wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
+					wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
+					wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
 			}
 
 			// _periodic_ boundary conditions
-			for (i = 0L; i <= degree; i++) {
+			for (i = 0L; i <= 3; i++) {
 				if (dims[dim] == 1)
 					idx[dim][i] = 0;
 				else
@@ -376,92 +363,46 @@ int grad3(double grad[3], double *Bcoeff, int dims[3], double X[3], int degree) 
 		}
 
 		grad[gradDim] = 0.0;
-		for (i = 0; i <= degree; i++) {  // x
+		for (i = 0; i <= 3; i++) {  // x
 			sum_jk = 0.0;
-			for (j = 0; j <= degree; j++) {  // y
+			for (j = 0; j <= 3; j++) {  // y
 				sum_k = 0.0;
-				for (k = 0; k <= degree; k++) {  // z
+				for (k = 0; k <= 3; k++) {  // z
 					sum_k += wt[2][k] * Bcoeff[idx[0][i]*dims[1]*dims[2] + idx[1][j]*dims[2] + idx[2][k]];
 				}
 				sum_jk += wt[1][j] * sum_k;
 			}
 			grad[gradDim] += wt[0][i] * sum_jk;
 		}
-		// fprintf(stderr, "---------------------------\n");
 	}
 
 	return(0);
 }
 
 
-double interp3(double *Bcoeff, int dims[3], double X[3], int degree) {
-	double wt[3][6];
+double interp3(double *Bcoeff, int dims[3], double X[3]) {
+	double wt[3][4];
 	double value;
 	double w, w2, w4, t, t0, t1;
 	double sum_k, sum_jk;
-	int idx[3][6];
+	int idx[3][4];
 	int i,j,k, pt, dim;
 
 	// interpolation indexes
 	for (dim=0; dim<3; dim++) {
-		pt = (int)floor(X[dim] - (degree-1) / 2.0);
-		for (i = 0L; i <= degree; i++)
+		pt = (int)floor(X[dim] - (3-1) / 2.0);
+		for (i = 0L; i <= 3; i++)
 			idx[dim][i] = pt++;
 
 		// interpolation weights
-		switch (degree) {
-			case 2L:
-				w = X[dim] - (double)idx[dim][1];
-				wt[dim][1] = 3.0 / 4.0 - w * w;
-				wt[dim][2] = (1.0 / 2.0) * (w - wt[dim][1] + 1.0);
-				wt[dim][0] = 1.0 - wt[dim][1] - wt[dim][2];
-				break;
-			case 3L:
-				w = X[dim] - (double)idx[dim][1];
-				wt[dim][3] = (1.0 / 6.0) * w * w * w;
-				wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
-				wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
-				wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
-				break;
-			case 4L:
-				w = X[dim] - (double)idx[dim][2];
-				w2 = w * w;
-				t = (1.0 / 6.0) * w2;
-				wt[dim][0] = 1.0 / 2.0 - w;
-				wt[dim][0] *= wt[dim][0];
-				wt[dim][0] *= (1.0 / 24.0) * wt[dim][0];
-				t0 = w * (t - 11.0 / 24.0);
-				t1 = 19.0 / 96.0 + w2 * (1.0 / 4.0 - t);
-				wt[dim][1] = t1 + t0;
-				wt[dim][3] = t1 - t0;
-				wt[dim][4] = wt[dim][0] + t0 + (1.0 / 2.0) * w;
-				wt[dim][2] = 1.0 - wt[dim][0] - wt[dim][1] - wt[dim][3] - wt[dim][4];
-				break;
-			case 5L:
-				w = X[dim] - (double)idx[dim][2];
-				w2 = w * w;
-				wt[dim][5] = (1.0 / 120.0) * w * w2 * w2;
-				w2 -= w;
-				w4 = w2 * w2;
-				w -= 1.0 / 2.0;
-				t = w2 * (w2 - 3.0);
-				wt[dim][0] = (1.0 / 24.0) * (1.0 / 5.0 + w2 + w4) - wt[dim][5];
-				t0 = (1.0 / 24.0) * (w2 * (w2 - 5.0) + 46.0 / 5.0);
-				t1 = (-1.0 / 12.0) * w * (t + 4.0);
-				wt[dim][2] = t0 + t1;
-				wt[dim][3] = t0 - t1;
-				t0 = (1.0 / 16.0) * (9.0 / 5.0 - t);
-				t1 = (1.0 / 24.0) * w * (w4 - w2 - 5.0);
-				wt[dim][1] = t0 + t1;
-				wt[dim][4] = t0 - t1;
-				break;
-			default:
-				std::cerr << "Invalid spline degree\n";
-				return(0.0);
-		}
+		w = X[dim] - (double)idx[dim][1];
+		wt[dim][3] = (1.0 / 6.0) * w * w * w;
+		wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
+		wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
+		wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
 
 		// _periodic_ boundary conditions
-		for (i = 0L; i <= degree; i++) {
+		for (i = 0L; i <= 3; i++) {
 			if (dims[dim] == 1)
 				idx[dim][i] = 0;
 			else
@@ -469,29 +410,220 @@ double interp3(double *Bcoeff, int dims[3], double X[3], int degree) {
 			if (idx[dim][i] < 0)
 				idx[dim][i] += dims[dim];
 		}
-		// mirror boundary conditions
-		// 		dims2[dim] = 2*dims[dim]-2;
-		// 		for (k = 0L; k <= degree; k++) {
-		// 			idx[dim][k] = (dims[dim] == 1L) ? (0L) : ((idx[dim][k] < 0L) ?
-		// 				(-idx[dim][k] - dims2[dim] * ((-idx[dim][k]) / dims2[dim]))
-		// 				: (idx[dim][k] - dims2[dim] * (idx[dim][k] / dims2[dim])));
-		// 			if (dims[dim] <= idx[dim][k]) {
-		// 				idx[dim][k] = dims2[dim] - idx[dim][k];
-		// 			}
-		// 		}
 	}
 
 	value = 0.0;
-	for (i = 0; i <= degree; i++) {  // x
+	for (i = 0; i <= 3; i++) {  // x
 		sum_jk = 0.0;
-		for (j = 0; j <= degree; j++) {  // y
+		for (j = 0; j <= 3; j++) {  // y
 			sum_k = 0.0;
-			for (k = 0; k <= degree; k++) {  // z
+			for (k = 0; k <= 3; k++) {  // z
 				sum_k += wt[2][k] * Bcoeff[idx[0][i]*dims[1]*dims[2] + idx[1][j]*dims[2] + idx[2][k]];
 			}
 			sum_jk += wt[1][j] * sum_k;
 		}
 		value += wt[0][i] * sum_jk;
+	}
+
+	return(value);
+}
+
+
+int compute_coefficients4(double *data, int dims[4]) {
+	std::vector< double > line;
+	double Pole[2];
+	int NbPoles;
+	int x,y,z,w;
+
+	NbPoles = 1;
+	Pole[0] = sqrt(3.0) - 2.0;
+
+	// convert the image samples into interpolation coefficients
+	// in-place separable process, along x
+	line.resize( dims[0] );
+	if ((int)line.size() != dims[0]) { std::cerr << "Row allocation failed\n"; return(1); }
+	for (y = 0L; y < dims[1]; y++) {
+		for (z = 0L; z < dims[2]; z++) {
+			for (w = 0L; w < dims[3]; w++) {
+				get_line4(data, 0, y, z, w, &line[0], dims);
+				ConvertToInterpolationCoefficients(&line[0], dims[0], Pole, NbPoles, DBL_EPSILON, true);
+				put_line4(data, 0, y, z, w, &line[0], dims);
+			}
+		}
+	}
+
+	// in-place separable process, along y
+	line.resize( dims[1] );
+	if ((int)line.size() != dims[1]) { std::cerr << "Row allocation failed\n"; return(1); }
+	for (x = 0L; x < dims[0]; x++) {
+		for (z = 0L; z < dims[2]; z++) {
+			for (w = 0L; w < dims[3]; w++) {
+				get_line4(data, 1, x, z, w, &line[0], dims);
+				ConvertToInterpolationCoefficients(&line[0], dims[1], Pole, NbPoles, DBL_EPSILON, false);
+				put_line4(data, 1, x, z, w, &line[0], dims);
+			}
+		}
+	}
+
+	// in-place separable process, along z
+	line.resize( dims[2] );
+	if ((int)line.size() != dims[2]) { std::cerr << "Row allocation failed\n"; return(1); }
+	for (x = 0L; x < dims[0]; x++) {
+		for (y = 0L; y < dims[1]; y++) {
+			for (w = 0L; w < dims[3]; w++) {
+				get_line4(data, 2, x, y, w, &line[0], dims);
+				ConvertToInterpolationCoefficients(&line[0], dims[2], Pole, NbPoles, DBL_EPSILON, false);
+				put_line4(data, 2, x, y, w, &line[0], dims);
+			}
+		}
+	}
+
+	// in-place separable process, along w
+	line.resize( dims[3] );
+	if ((int)line.size() != dims[3]) { std::cerr << "Row allocation failed\n"; return(1); }
+	for (x = 0L; x < dims[0]; x++) {
+		for (y = 0L; y < dims[1]; y++) {
+			for (z = 0L; z < dims[2]; z++) {
+				get_line4(data, 3, x, y, z, &line[0], dims);
+				ConvertToInterpolationCoefficients(&line[0], dims[3], Pole, NbPoles, DBL_EPSILON, false);
+				put_line4(data, 3, x, y, z, &line[0], dims);
+			}
+		}
+	}
+
+	return(0);
+}
+
+
+int grad4(double grad[4], double *Bcoeff, int dims[4], double X[4]) {
+	double wt[4][4];
+	double w, w2, w4, t, t0, t1;
+	double sum_l, sum_kl, sum_jkl;
+	int idx[4][4];
+	int i,j,k,l, pt, dim, gradDim;
+
+	// compute interpolation indexes
+	for (gradDim=0; gradDim<4; gradDim++) {
+		for (dim=0; dim<4; dim++) {
+			pt = (int)floor(X[dim] - (3-1) / 2.0);
+			for (i = 0L; i <= 3; i++)
+				idx[dim][i] = pt++;
+
+			// compute the interpolation weights
+			if (dim == gradDim) {
+					w = X[dim] - (double)idx[dim][1];
+					wt[dim][3] = (1.0 / 2.0) * w * w;
+					wt[dim][0] = (w - 1.0/2.0) - wt[dim][3];
+					wt[dim][2] = 1.0 + wt[dim][0] - 2.0 * wt[dim][3];
+					wt[dim][1] = - wt[dim][0] - wt[dim][2] - wt[dim][3];
+			} else {
+					w = X[dim] - (double)idx[dim][1];
+					wt[dim][3] = (1.0 / 6.0) * w * w * w;
+					wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
+					wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
+					wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
+			}
+
+			if (dim > 0) {
+				// _periodic_ boundary conditions
+				for (i = 0L; i <= 3; i++) {
+					if (dims[dim] == 1)
+						idx[dim][i] = 0;
+					else
+						idx[dim][i] = idx[dim][i] % dims[dim];
+					if (idx[dim][i] < 0)
+						idx[dim][i] += dims[dim];
+				}
+			} else {
+				// mirror boundary conditions <<< fpd flat now
+				for (i = 0L; i <= 3; i++) {
+					if (idx[dim][i] < 0)
+						idx[dim][i] = 0;
+					if (idx[dim][i] > dims[dim]-1)
+						idx[dim][i] = dims[dim]-1;
+				}
+			}
+		}
+
+		grad[gradDim] = 0.0;
+		for (i = 0; i <= 3; i++) {  // x
+			sum_jkl = 0.0;
+			for (j = 0; j <= 3; j++) {  // y
+				sum_kl = 0.0;
+				for (k = 0; k <= 3; k++) {  // z
+					sum_l = 0;
+					for (l = 0; l <= 3; l++) {  // w
+						sum_l += wt[3][l] * Bcoeff[idx[0][i]*dims[1]*dims[2]*dims[3] + idx[1][j]*dims[2]*dims[3] + idx[2][k]*dims[3] + idx[3][l]];
+					}
+					sum_kl += wt[2][k] * sum_l;
+				}
+				sum_jkl += wt[1][j] * sum_kl;
+			}
+			grad[gradDim] += wt[0][i] * sum_jkl;
+		}
+
+	}
+
+	return(0);
+}
+
+
+double interp4(double *Bcoeff, int dims[4], double X[4]) {
+	double wt[3][4];
+	double value;
+	double w, w2, w4, t, t0, t1;
+	double sum_l, sum_kl, sum_jkl;
+	int idx[3][4];
+	int i,j,k,l, pt, dim;
+
+	// interpolation indexes
+	for (dim=0; dim<4; dim++) {
+		pt = (int)floor(X[dim] - (3-1) / 2.0);
+		for (i = 0L; i <= 3; i++)
+			idx[dim][i] = pt++;
+
+		// interpolation weights
+		w = X[dim] - (double)idx[dim][1];
+		wt[dim][3] = (1.0 / 6.0) * w * w * w;
+		wt[dim][0] = (1.0 / 6.0) + (1.0 / 2.0) * w * (w - 1.0) - wt[dim][3];
+		wt[dim][2] = w + wt[dim][0] - 2.0 * wt[dim][3];
+		wt[dim][1] = 1.0 - wt[dim][0] - wt[dim][2] - wt[dim][3];
+
+		if (dim > 0) {
+			// _periodic_ boundary conditions
+			for (i = 0L; i <= 3; i++) {
+				if (dims[dim] == 1)
+					idx[dim][i] = 0;
+				else
+					idx[dim][i] = idx[dim][i] % dims[dim];
+				if (idx[dim][i] < 0)
+					idx[dim][i] += dims[dim];
+			}
+		} else {
+			for (i = 0L; i <= 3; i++) {
+				if (idx[dim][i] < 0)
+					idx[dim][i] = 0;
+				if (idx[dim][i] > dims[dim]-1)
+					idx[dim][i] = dims[dim]-1;
+			}
+		}
+	}
+
+	value = 0.0;
+	for (i = 0; i <= 3; i++) {  // x
+		sum_jkl = 0.0;
+		for (j = 0; j <= 3; j++) {  // y
+			sum_kl = 0.0;
+			for (k = 0; k <= 3; k++) {  // z
+				sum_l = 0;
+				for (l = 0; l <= 3; l++) {  // w
+					sum_l += wt[3][l] * Bcoeff[idx[0][i]*dims[1]*dims[2]*dims[3] + idx[1][j]*dims[2]*dims[3] + idx[2][k]*dims[3] + idx[3][l]];
+				}
+				sum_kl += wt[2][k] * sum_l;
+			}
+			sum_jkl += wt[1][j] * sum_kl;
+		}
+		value += wt[0][i] * sum_jkl;
 	}
 
 	return(value);

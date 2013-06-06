@@ -64,7 +64,7 @@ core::Real interp_spline(
                          numeric::xyzVector< core::Real > const & idxX ) {
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = { idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
-	core::Real retval = SplineInterp::interp3(&coeffs[0], dims, pt, 3);
+	core::Real retval = SplineInterp::interp3(&coeffs[0], dims, pt);
 	return retval;
 }
 
@@ -75,7 +75,7 @@ numeric::xyzVector<core::Real> interp_dspline(
 	int dims[3] = { coeffs.u3(), coeffs.u2(), coeffs.u1() };
 	core::Real pt[3] = { idxX[2]-1.0 , idxX[1]-1.0, idxX[0]-1.0 };
 	core::Real grad[3] = { 0,0,0 };
-	SplineInterp::grad3(&grad[0], &coeffs[0], dims, pt, 3);
+	SplineInterp::grad3(&grad[0], &coeffs[0], dims, pt);
 	return numeric::xyzVector<core::Real>(grad[2],grad[1],grad[0]);
 }
 
@@ -84,7 +84,7 @@ void spline_coeffs(
            ObjexxFCL::FArray3D< double > & coeffs) {
 	int dims[3] = { data.u3(), data.u2(), data.u1() };
 	coeffs = data;
-	SplineInterp::compute_coefficients( &coeffs[0] , dims , 3 );
+	SplineInterp::compute_coefficients3( &coeffs[0] , dims );
 }
 
 void spline_coeffs(
