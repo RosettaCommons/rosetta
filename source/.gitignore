@@ -6,8 +6,7 @@
 /external/dbio/postgreSQL/**
 /src/devel/svn_version.cc
 /src/pilot_apps.src.settings
-/src/pilot_apps.src.settings.my
-/src/devel.src.settings.my
+/src/*.my
 /src/apps/benchmark/_performance_
 /src/apps/benchmark/_old_performance_
 /src/apps/benchmark/runtime_diffs.txt
