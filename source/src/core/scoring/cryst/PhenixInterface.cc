@@ -29,6 +29,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 
 #include <core/scoring/cryst/util.hh>
 
@@ -241,11 +242,6 @@ void PhenixInterface::fitBfactors (
 	core::pose::Pose pose_asu;
 	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 
-	// may want to uncomment this at some point if we want to refine centroid structures
-	//if (pose.is_centroid()) {
-	//	makeAlaPose( pose_asu );
-	//}
-
 	fix_bfactorsH( pose_asu );
 	fix_bfactorsMissing( pose_asu );
 
@@ -402,6 +398,7 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 			                    !ref_pose_->residue(i).has_variant_type( core::chemical::DISULFIDE ) );
 
 			for (int j=1; j<=(int)rsd_i.natoms(); ++j) {
+				if (pose.residue_type(i).atom_name(j) == " CEN") continue;
 				if (pose.residue_type(i).atom_type(j).is_virtual()) continue;
 
 				if (ignore_cys_hg && pose.residue(i).atom_name(j) == " HG ") {
@@ -449,7 +446,7 @@ PyObject* PhenixInterface::pose_to_pycoords( core::pose::Pose const & pose ) {
 			if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
 			core::conformation::Residue const &rsd_i = pose.residue(i);
 			for (int j=1; j<=(int)rsd_i.natoms(); ++j) {
-				//fpd remove centroid atom
+				if (pose.residue_type(i).atom_name(j) == " CEN") continue;
 				if (pose.residue_type(i).atom_type(j).is_virtual()) continue;
 				coords.push_back( rsd_i.xyz( j ) );
 			}
@@ -509,6 +506,8 @@ void PhenixInterface::pylist_to_grads(
 		grads[i].resize( rsd_i.natoms() );
 		for (int j=1; j<=(int)rsd_i.natoms(); ++j) {
 			if (pose.residue_type(i).atom_type(j).is_virtual()) {
+				grads[i][j][0] = grads[i][j][1] = grads[i][j][2] = 0; // placeholder
+			} else if (pose.residue_type(i).atom_name(j) == " CEN") {
 				grads[i][j][0] = grads[i][j][1] = grads[i][j][2] = 0; // placeholder
 			} else if (ignore_cys_hg && pose.residue(i).atom_name(j) == " HG ") {
 				grads[i][j][0] = grads[i][j][1] = grads[i][j][2] = 0; // placeholder
@@ -849,8 +848,9 @@ void PhenixInterface::initialize_target_evaluator(
 	core::pose::Pose pose_asu;
 	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 
-	//if (pose.is_centroid()) {
-	//	makeAlaPose( pose_asu );
+	//fpd   no longer used: the pdb writing machinery handles this
+	//if (pose_asu.is_centroid()) {
+	//	makeFullatomAlaPose( pose_asu );
 	//}
 
 	core::pose::initialize_disulfide_bonds( pose_asu ); //fpd
@@ -992,7 +992,7 @@ void PhenixInterface::initialize_target_evaluator(
 #endif
 }
 
-void PhenixInterface::makeAlaPose(core::pose::Pose & pose ) {
+void PhenixInterface::makeFullatomAlaPose(core::pose::Pose & pose ) {
 	using namespace core::chemical;
 
 	// make a copy of the PDBinfo object
@@ -1000,11 +1000,10 @@ void PhenixInterface::makeAlaPose(core::pose::Pose & pose ) {
 	core::pose::PDBInfoOP pdbinfo_new = new core::pose::PDBInfo( *(pose.pdb_info()) );  // new
 	pose.pdb_info( pdbinfo_new );
 
+	// 1) mutate all (but gly) to ala
 	for( core::Size i=1; i<=pose.total_residue(); ++i ){
 		if (pose.residue(i).is_protein()
-				&& pose.residue(i).aa() != aa_pro
 				&& pose.residue(i).aa() != aa_gly
-				&& pose.residue(i).type().name() != "CYD"
 				&& pose.residue(i).aa() != aa_vrt) {
 			chemical::ResidueTypeSet const& rsd_set( pose.residue(i).residue_type_set() );
 			chemical::ResidueType const& orig_restype( pose.residue_type(i) );
@@ -1015,21 +1014,11 @@ void PhenixInterface::makeAlaPose(core::pose::Pose & pose ) {
 			conformation::copy_residue_coordinates_and_rebuild_missing_atoms(
 					pose.residue(i), *new_res, pose.conformation() );
 			pose.replace_residue(i, *new_res, false );
-
-			// steal b's from original pose
-			Size natoms_new = pose.residue(i).natoms();
-			for (Size atmid = 1; atmid <= natoms_new; ++atmid) {
-				Size atmid_map = 0;
-
-				if ( orig_restype.has_atom_name( pose.residue_type( i ).atom_name( atmid ) ) )
-					atmid_map = orig_restype.atom_index( pose.residue_type( i ).atom_name( atmid ) );
-				if (atmid_map == 0 &&	orig_restype.has_atom_name( " CB " ))
-					atmid_map = orig_restype.atom_index( " CB " ); // if atom is not defined try CB
-				Real B = (atmid_map==0) ? 0 : pdbinfo_old->temperature( i, atmid_map );
-				pose.pdb_info()->temperature( i, atmid, B );
-			}
 		}
 	}
+
+	// 2) cen->fa
+	core::util::switch_to_residue_type_set( pose, "fa_standard" );
 }
 
 std::string PhenixInterface::calculateDensityMap (

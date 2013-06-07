@@ -225,6 +225,7 @@ option.add( basic::options::OptionKeys::out::file::raw, "Use silent-type file ou
 option.add( basic::options::OptionKeys::out::file::fullatom, "Enable full-atom output of PDB or centroid structures" ).def(false);
 option.add( basic::options::OptionKeys::out::file::suppress_zero_occ_pdb_output, "Suppress output of atoms with zero (or negative) occupancy" ).def(false);
 option.add( basic::options::OptionKeys::out::file::output_virtual, "Output virtual atoms in output of PDB" ).def(false);
+option.add( basic::options::OptionKeys::out::file::no_output_cen, "Omit outputting centroids" ).def(false);
 option.add( basic::options::OptionKeys::out::file::output_orbitals, "Output all orbitals into PDB" ).def(false);
 option.add( basic::options::OptionKeys::out::file::weight_silent_scores, "weight scores in silent-file output." ).def(true);
 option.add( basic::options::OptionKeys::out::file::design_contrast, "output list comparing design sequence to native sequence" ).def("redesign");
@@ -712,10 +713,10 @@ option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight, "use coord c
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_all_atom, "use coord constraints on all atoms and not just CA" ).def(false);
 option.add( basic::options::OptionKeys::loopfcst::use_general_protocol, "use the new machinery around classes KinematicXXX" ).def(false);
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight_array, "use these weights (per seqpos) for coord cst in rigid regions" ).def("");
-option.add( basic::options::OptionKeys::loopfcst::dump_coord_cst_weight_array, "dump these weights (per seqpos) for coord cst in rigid regions" ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).legal(true).def(true);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::loopfcst::dump_coord_cst_weight_array, "dump these weights (per seqpos) for coord cst in rigid regions" ).def("");
+option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
@@ -1424,10 +1425,10 @@ option.add( basic::options::OptionKeys::rotamerdump::xyz, "when using the Rotame
 option.add( basic::options::OptionKeys::rotamerdump::one_body, "when using the RotamerDump application, output the one_body energies of every rotamer" ).def(false);
 option.add( basic::options::OptionKeys::rotamerdump::two_body, "when using the RotamerDump application, output the two_body energies of every rotamer" ).def(false);
 option.add( basic::options::OptionKeys::rotamerdump::annealer, "Run the annealer and output the rotamers it chose" ).def(false);
-option.add( basic::options::OptionKeys::robert::robert, "robert option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::robert::pairdata_input_pdb_list, "Takes in a file containing a list of pdb locations paired with protocol specific data (eg: one disulfide pair)" ).def("");
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::robert::robert, "robert option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::robert::pairdata_input_pdb_list, "Takes in a file containing a list of pdb locations paired with protocol specific data (eg: one disulfide pair)" ).def("");
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_filter, "minimum normalized maxsub for PCS clustering protocol" ).def(0.9);
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_rmsd, "maxsub calculation's rmsd threshold" ).def(4.0);
 option.add( basic::options::OptionKeys::robert::pcs_dump_cluster, "No description" ).def(false);
@@ -2136,10 +2137,10 @@ option.add( basic::options::OptionKeys::optE::weights, "a conventional weightfil
 option.add( basic::options::OptionKeys::optE::fix, "weights to be fixed (must also appear in the weightfile given by the -optE::weights option)" );
 option.add( basic::options::OptionKeys::optE::free, "IterativeOptEDriver flag: specify a file to read score types that are free -- optionally include a starting weight for each score type" );
 option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: specify a file to read score types and weights for score types that are on but fixed" );
-option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
+option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
 option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );

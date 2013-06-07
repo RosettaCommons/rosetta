@@ -24,6 +24,7 @@
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/qsar.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -401,6 +402,11 @@ init_crystal_refinement_correction() {
 		}
 		if ( ! option[ in::preserve_crystinfo ].user() ) {
 			option[in::preserve_crystinfo].value( true );
+		}
+
+		// special case for centroid scoring
+		if ( ! option[ out::file::no_output_cen ].user() ) {
+			option[out::file::no_output_cen].value( true );
 		}
 
 		// internal coordinate minimization: behave properly

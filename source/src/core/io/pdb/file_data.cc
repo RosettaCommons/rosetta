@@ -191,6 +191,10 @@ FileData::append_residue(
 		if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&
 				rsd.atom_type(j).is_virtual() ) continue;
 
+		//fpd optionally don't output centroids
+		if ( basic::options::option[ basic::options::OptionKeys::out::file::no_output_cen ]() &&
+				rsd.atom_name(j) == " CEN" ) continue;
+
 		// skip outputting zero occupancy atoms if specified
 		if ( use_PDB && basic::options::option[ basic::options::OptionKeys::out::file::suppress_zero_occ_pdb_output ]() &&
 			( rsd.seqpos() <= pdb_info->nres() ) ) {
@@ -1334,7 +1338,7 @@ build_pose_as_is1(
 	}
 	if ( basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments]() ) {
 		utility::io::izstream data(fd.filename);
-		
+
 		std::string line;
 		while( getline( data, line ) ) {
 		if( line != "##Begin comments##")

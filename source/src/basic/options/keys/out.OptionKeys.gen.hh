@@ -71,6 +71,7 @@ namespace out { namespace file { extern BooleanOptionKey const raw; } }
 namespace out { namespace file { extern BooleanOptionKey const fullatom; } }
 namespace out { namespace file { extern BooleanOptionKey const suppress_zero_occ_pdb_output; } }
 namespace out { namespace file { extern BooleanOptionKey const output_virtual; } }
+namespace out { namespace file { extern BooleanOptionKey const no_output_cen; } }
 namespace out { namespace file { extern BooleanOptionKey const output_orbitals; } }
 namespace out { namespace file { extern BooleanOptionKey const weight_silent_scores; } }
 namespace out { namespace file { extern FileOptionKey const design_contrast; } }

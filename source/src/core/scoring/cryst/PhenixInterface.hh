@@ -106,7 +106,7 @@ private:
 	void stealBfactorsFromFile(core::pose::Pose & pose, std::string filename);
 
 	// helper function
-	void makeAlaPose( core::pose::Pose & pose );
+	void makeFullatomAlaPose( core::pose::Pose & pose );
 
 	// called once to initialize the python evaluator object (needs the pose so it can't be put in the constructor)
 	void initialize_target_evaluator( core::pose::Pose const & pose, std::string eff_file="" );

@@ -1,3 +1,4 @@
+namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }
 namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant_logic_taskops_file" );  }
 namespace optE { BooleanOptionKey const optE_soft_rep( "optE:optE_soft_rep" );  }
 namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }

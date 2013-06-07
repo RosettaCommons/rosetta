@@ -1038,6 +1038,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-no_output_cen</b> \<Boolean\><dt>
+<dd>Omit outputting centroids</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-output_orbitals</b> \<Boolean\><dt>
 <dd>Output all orbitals into PDB</dd><br>
 <dd>Default: false</dd><br>

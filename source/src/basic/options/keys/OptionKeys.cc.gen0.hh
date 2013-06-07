@@ -220,6 +220,7 @@ namespace out { namespace file { BooleanOptionKey const raw( "out:file:raw" );  
 namespace out { namespace file { BooleanOptionKey const fullatom( "out:file:fullatom" );  } }
 namespace out { namespace file { BooleanOptionKey const suppress_zero_occ_pdb_output( "out:file:suppress_zero_occ_pdb_output" );  } }
 namespace out { namespace file { BooleanOptionKey const output_virtual( "out:file:output_virtual" );  } }
+namespace out { namespace file { BooleanOptionKey const no_output_cen( "out:file:no_output_cen" );  } }
 namespace out { namespace file { BooleanOptionKey const output_orbitals( "out:file:output_orbitals" );  } }
 namespace out { namespace file { BooleanOptionKey const weight_silent_scores( "out:file:weight_silent_scores" );  } }
 namespace out { namespace file { FileOptionKey const design_contrast( "out:file:design_contrast" );  } }
