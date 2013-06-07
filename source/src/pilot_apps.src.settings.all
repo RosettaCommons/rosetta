@@ -27,6 +27,7 @@ sources = {
 	"pilot/andrew" : [
 		#"optest",
 		#"mpi_msd",
+		"measure_catalytic_geometry",
 		"version_scorefunction", #Note: used for scorefunction version tests; no itest needed
 		"analyze_rtmin_failures",
 		#"find_buns",
