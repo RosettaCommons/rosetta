@@ -697,7 +697,7 @@ namespace rna {
 		///////////////////////////////////////////////////////////////////////
 
 		// places where floating base can 'dock'
-		utility::vector1 < core::kinem atics::Stub > other_residues_base_list;
+		utility::vector1 < core::kinematics::Stub > other_residues_base_list;
 
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
