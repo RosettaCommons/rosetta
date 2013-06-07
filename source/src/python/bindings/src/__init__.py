@@ -157,7 +157,9 @@ class PythonPyExitCallback(utility.PyExitCallback):
 ###############################################################################
 #
 def rosetta_database_from_env():
-    """Reads rosetta database directory from environment."""
+    """Read rosetta database directory from environment or standard install locations.
+    
+    Returns database path if found, else None."""
 
     # Figure out database dir....
     if 'PYROSETTA_DATABASE' in os.environ:
@@ -168,31 +170,35 @@ def rosetta_database_from_env():
         else:
             logger.warning('Invalid PYROSETTA_DATABASE environment variable was specified: %s', database)
 
-    if os.path.isdir('database'):
-        database = os.path.abspath('database')
-        logger.info('Found database at %s; using it....', database)
-        return database
+    database_names = ["rosetta_database", "database"]
 
-    parallel_database = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "rosetta_database"))
-    if os.path.isdir(parallel_database):
-        database = parallel_database
-        logger.info('Found rosetta_database at %s; using it....', database)
-        return database
+    for database_name in database_names:
+        candidate_paths = []
 
-    if os.path.isdir(os.environ['HOME'] + '/rosetta_database'):
-        database = os.path.abspath(os.environ['HOME'] + '/rosetta_database')
-        logger.info('Found rosetta_database at home folder, ie.: %s; using it....', database)
-        return database
+        #Current directory database
+        candidate_paths.append(database_name)
 
-    if sys.platform == "cygwin" and os.path.isdir('/rosetta_database'):
-        database = os.path.abspath('/rosetta_database')
-        logger.info('Found rosetta_database at root folder, ie.:%s; using it....', database)
-        return database
+        #Package directory database
+        candidate_paths.append(os.path.join(os.path.dirname(__file__), "..", database_name))
 
-    if os.path.isdir('rosetta/rosetta_database'):  # Mac /usr/lib install
-        database = os.path.abspath('rosetta/rosetta_database')
-        logger.info('Found rosetta_database at %s; using it....', database)
-        return database
+        #Home directory database
+        candidate_paths.append(os.path.join(os.environ['HOME'], database_name))
+
+        #Cygwin root install
+        if sys.platform == "cygwin":
+            candidate_paths.append(os.path.join('/', database_name))
+
+        # Mac /usr/lib database install
+        candidate_paths.append(os.path.join('rosetta', database_name))
+
+        for candidate in candidate_paths:
+            if os.path.isdir(candidate):
+                database = os.path.abspath(candidate)
+                logger.info('Found rosetta database at: %s; using it....', database)
+                return database
+    
+    # No database found.
+    return None
 
 # rosetta.init()
 def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=True):
