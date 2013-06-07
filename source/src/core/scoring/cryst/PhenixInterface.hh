@@ -65,6 +65,9 @@ public:
 	///@brief update mask
 	void updateSolventMask ();
 
+	///@brief update mask
+	void updateSolventMask (core::pose::Pose const & pose);
+
 	///@brief optimize fmask
 	void optimizeSolventMask ();
 
@@ -104,9 +107,6 @@ public:
 private:
 	// helper function
 	void stealBfactorsFromFile(core::pose::Pose & pose, std::string filename);
-
-	// helper function
-	void makeFullatomAlaPose( core::pose::Pose & pose );
 
 	// called once to initialize the python evaluator object (needs the pose so it can't be put in the constructor)
 	void initialize_target_evaluator( core::pose::Pose const & pose, std::string eff_file="" );

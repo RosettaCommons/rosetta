@@ -29,7 +29,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 
 #include <core/scoring/cryst/util.hh>
 
@@ -615,6 +614,28 @@ void PhenixInterface::updateSolventMask () {
 #endif
 }
 
+///@brief update mask
+void PhenixInterface::updateSolventMask (core::pose::Pose const & pose) {
+#ifdef WITH_PYTHON
+	if (!target_evaluator_) {
+		initialize_target_evaluator( pose );
+	}
+
+	PyObject *pCoords = pose_to_pycoords( pose );
+	PyObject *pMethod = PyString_FromString("update_sites_1d");
+	PyObject_CallMethodObjArgs(target_evaluator_, pMethod, pCoords, NULL);
+	HANDLE_PYTHON_ERROR("PhenixInterface::getScore() : error updating sites");
+
+	PyObject_CallMethod(target_evaluator_, "update_fmask", NULL);
+	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
+	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
+	HANDLE_PYTHON_ERROR("updateSolventMask failed");
+	TR << "After updateSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
+#else
+	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
+#endif
+}
+
 /// @brief explicitly recompute ksol/bsol
 void PhenixInterface::optimizeSolventMask () {
 #ifdef WITH_PYTHON
@@ -848,11 +869,6 @@ void PhenixInterface::initialize_target_evaluator(
 	core::pose::Pose pose_asu;
 	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 
-	//fpd   no longer used: the pdb writing machinery handles this
-	//if (pose_asu.is_centroid()) {
-	//	makeFullatomAlaPose( pose_asu );
-	//}
-
 	core::pose::initialize_disulfide_bonds( pose_asu ); //fpd
 
 	// sometimes H bfactors get lost/don't exist ... fix them
@@ -990,35 +1006,6 @@ void PhenixInterface::initialize_target_evaluator(
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
 #endif
-}
-
-void PhenixInterface::makeFullatomAlaPose(core::pose::Pose & pose ) {
-	using namespace core::chemical;
-
-	// make a copy of the PDBinfo object
-	core::pose::PDBInfoOP pdbinfo_old = pose.pdb_info();  // original
-	core::pose::PDBInfoOP pdbinfo_new = new core::pose::PDBInfo( *(pose.pdb_info()) );  // new
-	pose.pdb_info( pdbinfo_new );
-
-	// 1) mutate all (but gly) to ala
-	for( core::Size i=1; i<=pose.total_residue(); ++i ){
-		if (pose.residue(i).is_protein()
-				&& pose.residue(i).aa() != aa_gly
-				&& pose.residue(i).aa() != aa_vrt) {
-			chemical::ResidueTypeSet const& rsd_set( pose.residue(i).residue_type_set() );
-			chemical::ResidueType const& orig_restype( pose.residue_type(i) );
-
-			// borrowed from mutate resiudue
-			conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
-					rsd_set.name_map( "ALA" ), pose.residue(i), pose.conformation());
-			conformation::copy_residue_coordinates_and_rebuild_missing_atoms(
-					pose.residue(i), *new_res, pose.conformation() );
-			pose.replace_residue(i, *new_res, false );
-		}
-	}
-
-	// 2) cen->fa
-	core::util::switch_to_residue_type_set( pose, "fa_standard" );
 }
 
 std::string PhenixInterface::calculateDensityMap (
