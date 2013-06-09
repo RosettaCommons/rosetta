@@ -227,14 +227,51 @@ namespace rna {
 		Pose const pose_save = pose;
 		pose = pose_save; //this recopy is useful for triggering graphics.
 
-		initialize_scorefunctions(); //////////////// Sets up scorefunctions for a bunch of different screens ////////////////////////////////////////
+		// Sets up scorefunctions for a bunch of different screens
+		initialize_scorefunctions(); 
 
 		//Sept 2, 2010
-		if(rebuild_bulge_mode_) remove_virtual_rna_residue_variant_type(pose, job_parameters_->working_moving_res());
+		if (rebuild_bulge_mode_) remove_virtual_rna_residue_variant_type(pose, job_parameters_->working_moving_res());
 
-		/////////////////////////////////////Build previously virtualize sugar//////////////////////////////////////////////////
-		// A virtualized sugar occurs when a previous move was a 'floating base' step, which only samples euler angles
-		// of a base, but virtualized the attached sugar and any residues connecting that nucleotide to the 'instantiated' body of the RNA.
+		//////////////////////Build previously virtualize sugar/////////////////////
+		// A virtualized sugar occurs when a previous move was a 'floating base' 
+		// step, which only samples euler angles of a base, but virtualized the
+		// attached sugar and any residues connecting that nucleotide to the
+		//'instantiated' body of the RNA.
+
+		// There are potentially four different virtualized sugar positions.
+		// (1) Prev_sugar (most common case) :
+		//      This is the sugar of the nucleotide that was built immediately
+		//      before the current/moving nucleotide along the chain. Corresponds
+		//      to sugar of residue (moving_res - 1) if current step is built in
+		//      the forward (3') direction. Likewise, corresponds to sugar of 
+		//      residue (moving_res + 1) if current step built in the backward
+		//      (5') direction.
+		//
+		// (2) Current_sugar (rare) :
+		//      The sugar of the current/moving nucleotide. This sugar can
+		//      be virtual in the situation where the current step is a step to 
+		//      combine two chunks that were previously built with SWA. It is
+		//      possible that the current nucleotide (in the moving chunk) was
+		//      previously built with a 'floating base' step and therefore will
+		//      contain a virtual sugar.
+		//
+		// (3) Five_prime_chain_break_sugar :
+		//      Occurs only in the context where the current step is a
+		//      chain-closure (closing loop) step. This is the sugar of the
+		//      nucleotide immediately 5' of the chain-closure phosphate group.
+		//      Five_prime_chain_break_sugar can be identical to current_sugar
+		//      in certain situations. The code below contains check statements to
+		//      prevent double-counting in these situations.
+		//
+		// (4) Three_prime_chain_break_sugar :
+		//      Occurs only in the context where the current step is a
+		//      chain-closure (closing loop) step. This is the sugar of the
+		//      nucleotide immediately 3' of the chain-closure phosphate group.
+		//      Three_prime_chain_break_sugar can be identical to current_sugar
+		//      in certain situations. The code below contains check statements to
+		//      prevent double-counting in these situations.
+
 		Output_title_text("Build previously virtualize sugar");
 		bool const Is_prev_sugar_virt=Is_previous_sugar_virtual( pose );
 		bool const Is_curr_sugar_virt=Is_current_sugar_virtual( pose); // occurs less frequently -- typically only when connecting two pieces.
@@ -243,17 +280,19 @@ namespace rna {
 		Size const num_nucleotides=  job_parameters_->working_moving_res_list().size();
 		Size const gap_size= job_parameters_->gap_size();
 
-		Output_boolean(" Is_previous_sugar_virt=", Is_prev_sugar_virt ); Output_boolean(" Is_current_sugar_virt=", Is_curr_sugar_virt);
-		Output_boolean(" Is_five_prime_chain_break_sugar_virt=", Is_five_prime_CB_sugar_virt ); Output_boolean(" Is_three_prime_chain_break_sugar_virt=", Is_three_prime_CB_sugar_virt );
+		Output_boolean(" Is_previous_sugar_virt=", Is_prev_sugar_virt );
+		Output_boolean(" Is_current_sugar_virt=", Is_curr_sugar_virt);
+		Output_boolean(" Is_five_prime_chain_break_sugar_virt=", Is_five_prime_CB_sugar_virt );
+		Output_boolean(" Is_three_prime_chain_break_sugar_virt=", Is_three_prime_CB_sugar_virt );
 		std::cout << std::endl;
 
 		///Nov 13, 2010
 
 		Size num_virtual_sugar=0;
-		if(Is_prev_sugar_virt==true) num_virtual_sugar++;
-		if(Is_curr_sugar_virt==true) num_virtual_sugar++;
-		if(Is_five_prime_CB_sugar_virt==true) num_virtual_sugar++;
-		if(Is_three_prime_CB_sugar_virt==true) num_virtual_sugar++;
+		if (Is_prev_sugar_virt) num_virtual_sugar++;
+		if (Is_curr_sugar_virt) num_virtual_sugar++;
+		if (Is_five_prime_CB_sugar_virt) num_virtual_sugar++;
+		if (Is_three_prime_CB_sugar_virt) num_virtual_sugar++;
 
 		std::cout << "num_virtual_sugar= " << num_virtual_sugar << std::endl;
 
@@ -1617,9 +1656,9 @@ namespace rna {
 	bool
 	StepWiseRNA_ResidueSampler::Is_previous_sugar_virtual( core::pose::Pose const & pose ) const {
 
-		//check if previous sugar is virtual, if virtual then need to sample it.
-		bool const Is_prepend(  job_parameters_->Is_prepend() ); // if true, moving_suite+1 is fixed. Otherwise, moving_suite is fixed.
-		Size const moving_res(  job_parameters_->working_moving_res() ); // corresponds to user input.
+		//Check if previous sugar is virtual, if virtual then need to sample it.
+		bool const Is_prepend(  job_parameters_->Is_prepend() ); // If true, moving_suite+1 is fixed. Otherwise, moving_suite is fixed.
+		Size const moving_res(  job_parameters_->working_moving_res() ); // Corresponds to user input.
 		Size const num_nucleotides(  job_parameters_->working_moving_res_list().size() );
 		Size const previous_moving_res = (Is_prepend) ? (moving_res+num_nucleotides) : (moving_res-num_nucleotides);
 		Size const previous_bulge_res = (Is_prepend) ? (moving_res+(num_nucleotides+1)) : (moving_res-(num_nucleotides+1));
@@ -1632,9 +1671,11 @@ namespace rna {
 	bool
 	StepWiseRNA_ResidueSampler::Is_current_sugar_virtual( core::pose::Pose const & pose ) const {
 
-		//check if curr sugar is virtual, if virtual then need to sample it. This occur when combining two chunk and the moving_res in the moving_chunk was built with a dinucleotide move.
-		bool const Is_prepend(  job_parameters_->Is_prepend() );
-		Size const moving_res(  job_parameters_->working_moving_res() );
+		// Check if curr sugar is virtual. If virtual then need to sample it.
+		// This occur when combining two chunk and the moving_res 
+		// in the moving_chunk was built with a dinucleotide move.
+		bool const Is_prepend( job_parameters_->Is_prepend() );
+		Size const moving_res( job_parameters_->working_moving_res() );
 		Size const virtual_ribose_res = moving_res;
 		Size const bulge_res = (Is_prepend) ? (moving_res-1) : (moving_res+1);
 
@@ -1646,39 +1687,22 @@ namespace rna {
 	bool
 	StepWiseRNA_ResidueSampler::Is_five_prime_chain_break_sugar_virtual( core::pose::Pose const & pose ) const {
 
-		Size const moving_res(  job_parameters_->working_moving_res() );
+		Size const moving_res( job_parameters_->working_moving_res() );
 		Size const five_prime_chain_break_res = job_parameters_->five_prime_chain_break_res();
 		Size const gap_size( job_parameters_->gap_size() );
 
-		if(gap_size!=0) return false;
+		if (gap_size != 0) return false;
 
-		//if(moving_res==five_prime_chain_break_res) return false; //Mod out on June 12, 2011
+		// Make sure to not over count number of virtual_ribose-virtual_bulge
+		// pairs to be build!
+		if (moving_res == five_prime_chain_break_res) return false;
 
 		Size const five_prime_CB_bulge_res = (five_prime_chain_break_res-1);
 
-		bool sugar_is_virtual=Is_ribose_virtual(  pose, five_prime_chain_break_res, five_prime_CB_bulge_res);
+		bool sugar_is_virtual = Is_ribose_virtual( pose, five_prime_chain_break_res, five_prime_CB_bulge_res);
 
-		////////////Added on June 12, 2011////////////////
-		//Make sure that this doesn't overcount number of virtual_ribose,virtual_bulge pairs to be build!
-		if(sugar_is_virtual){
-			//This check for ribose that is virtualized during previous steps. Not inconsistent with the current moving_res being a floating base.
-			if(five_prime_chain_break_res==moving_res){
-				utility_exit_with_message( "five_prime_chain_break_res==moving_res=" + ObjexxFCL::string_of(moving_res) );
-			}
+		return sugar_is_virtual;
 
-			bool const Is_prepend(  job_parameters_->Is_prepend() );
-			Size const num_nucleotides(  job_parameters_->working_moving_res_list().size() );
-			Size const previous_moving_res = (Is_prepend) ? (moving_res+num_nucleotides) : (moving_res-num_nucleotides);
-
-			if(five_prime_chain_break_res==previous_moving_res){
-				utility_exit_with_message( "five_prime_chain_break_res==previous_moving_res=" + ObjexxFCL::string_of(previous_moving_res) );
-			}
-			return true;
-
-		}else{
-			return false;
-		}
-		//////////////////////////////////////////////////
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1690,38 +1714,19 @@ namespace rna {
 		Size const three_prime_chain_break_res = job_parameters_->five_prime_chain_break_res()+1;
 		Size const gap_size( job_parameters_->gap_size() );
 
-		if(gap_size!=0) return false;
+		if (gap_size != 0) return false;
 
-		//if(moving_res==three_prime_chain_break_res) return false; //Mod out on June 12, 2011
+		// Make sure to not over count number of virtual_ribose-virtual_bulge
+		// pairs to be build!
+		if (moving_res == three_prime_chain_break_res) return false;
 
 		Size const three_prime_CB_bulge_res = (three_prime_chain_break_res+1);
 
-		bool sugar_is_virtual=Is_ribose_virtual(  pose, three_prime_chain_break_res, three_prime_CB_bulge_res);
+		bool sugar_is_virtual = Is_ribose_virtual(  pose, three_prime_chain_break_res, three_prime_CB_bulge_res);
 
-		////////////Added on June 12, 2011////////////////
-		//Make sure that this doesn't overcount number of virtual_ribose,virtual_bulge pairs to be build!
-		if(sugar_is_virtual){
-			//This check for ribose that is virtualized during previous steps. Not inconsistent with the current moving_res being a floating base.
-			if(three_prime_chain_break_res==moving_res){
-				utility_exit_with_message( "three_prime_chain_break_res==moving_res=" + ObjexxFCL::string_of(three_prime_chain_break_res) );
-			}
-
-			bool const Is_prepend(  job_parameters_->Is_prepend() );
-			Size const num_nucleotides(  job_parameters_->working_moving_res_list().size() );
-			Size const previous_moving_res = (Is_prepend) ? (moving_res+num_nucleotides) : (moving_res-num_nucleotides);
-
-			if(three_prime_chain_break_res==previous_moving_res){
-				utility_exit_with_message( "three_prime_chain_break_res==previous_moving_res=" + ObjexxFCL::string_of(previous_moving_res) );
-			}
-			return true;
-
-		}else{
-			return false;
-		}
-		//////////////////////////////////////////////////
+		return sugar_is_virtual;
 
 	}
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
