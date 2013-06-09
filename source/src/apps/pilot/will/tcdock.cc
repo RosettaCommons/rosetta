@@ -1793,7 +1793,7 @@ struct TCDock {
 						    <<F(10,3,max_score)
 						    // <<" rate: "<<rate<<" confs/sec"
 						    // <<" "<<rate/num_threads()<<" confs/sec/thread"<<" " <<num_threads()
-							// << " hash lookups:  " << F(10,3,(Real)mhscore_->nhashlookups()/1000.0) << "K"
+							<< " hash lookups:  " << F(10,3,(Real)mhscore_->nhashlookups()/1000.0) << "K"
 							<< " confs sampled: " << F(10,3,conf_count_/1000.0) << "K"
 						    << endl;
 					}
@@ -1928,7 +1928,7 @@ struct TCDock {
 				}
 			}
 		}
-		if(mhscore_) cout << " hash lookups:  " << F(10,3,(Real)mhscore_->nhashlookups()/1000.0) << "K confs sampled: " << F(10,3,conf_count_/1000.0) << "K" << endl;
+		cout << " hash lookups:  " << F(10,3,(Real)mhscore_->nhashlookups()/1000.0) << "K confs sampled: " << F(10,3,conf_count_/1000.0) << "K" << endl;
 
 	 }
 	void dump_top_hits(vector1<LMAX> & local_maxima){
@@ -2087,7 +2087,7 @@ struct TCDock {
 				cout << " " << F(5,2,ffhist[ifh]);
 			}
 			cout << " ";
-			if(mhscore_) mhscore_->show(cout,Xforms(1,x1),Xforms(1,x2));
+			mhscore_->show(cout,Xforms(1,x1),Xforms(1,x2));
 			final_sfxn_->show(cout,x1,x2);
 
 			cout << " " << I(3,nout+1);

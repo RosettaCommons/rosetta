@@ -236,6 +236,7 @@
 #include <protocols/simple_moves/ModifyVariantTypeMoverCreator.hh>
 #include <protocols/simple_moves/MutateResidueCreator.hh>
 #include <protocols/simple_moves/PackRotamersMoverCreator.hh>
+#include <protocols/simple_moves/PSSM2BfactorMoverCreator.hh>
 #include <protocols/simple_moves/RotamerTrialsMinMoverCreator.hh>
 #include <protocols/simple_moves/RotamerTrialsMoverCreator.hh>
 #include <protocols/simple_moves/SaneMinMoverCreator.hh>

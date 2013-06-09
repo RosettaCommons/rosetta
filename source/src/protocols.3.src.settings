@@ -449,6 +449,7 @@ sources = {
 		"PackRotamersMoverLazy",
 		"PeptideStapleMover",
 		"ProlineFixMover",
+		"PSSM2BfactorMover",
 		"RepackSidechainsMover",
 		"RepulsiveOnlyMover",
 		"ReturnSidechainMover",
