@@ -23,6 +23,12 @@
 #been published, and the revision number from trunk with which the
 #benchmark was completed..
 #
+# Helpful hint: if you don't want to compile everything in here, create a apps.src.settings.my file.
+#  When using cmake, this file will override the current .settings file as the list of .cc files to compile
+#  It will not be checked into git (it is listed in .gitignore).
+#  When ready for primetime, move your apps into this .settings file.
+#
+
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {

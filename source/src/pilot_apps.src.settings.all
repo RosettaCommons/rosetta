@@ -13,6 +13,11 @@
 #Make sure you have added documentation and an integration test if you add your application here.
 #Commented-out applications (# in front) are always welcome!
 
+# Helpful hint: if you don't want to compile everything in here, create a pilot_apps.src.settings.my file.
+#  When using cmake, this file will override the current .settings file as the list of .cc files to compile
+#  It will not be checked into git (it is listed in .gitignore).
+#  When ready for primetime, move your apps into this .settings file.
+
 # PLEASE KEEP NAMES IN ALPHABETICAL ORDER!
 
 sources = {
@@ -229,7 +234,7 @@ sources = {
 	# G ######################################################################
 	"pilot/gideonla" : [
 		"CutOutDomain", # /* Grant,Documentation Location,Demo Location */
-		
+
 	],
 
 	"pilot/grant" : [

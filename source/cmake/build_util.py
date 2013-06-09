@@ -1,4 +1,4 @@
-import os, stat, shutil, sys
+import os, stat, shutil, sys, os.path
 
 # Load projects.settings file and put resultant data into PROJECT_SETTINGS
 # This script (build_util.py) is in rosetta_source/cmake/, and want rosetta_source/projects.settings
@@ -10,9 +10,14 @@ KNOWN_TESTS =PROJECTS_SETTINGS["projects"]["test"]
 def list_project_files(path_to_mini, project_name):
 	path_to_project = path_to_mini + 'src/'
 	settings_file_name = path_to_project + project_name + '.src.settings'
+
+	# allow user to override 'normal' .settings file with ,settings.my file.
+	if os.path.exists( settings_file_name + '.my' ):
+		settings_file_name += '.my'
+		print 'Found %s and going to use it!' % settings_file_name
+
 	# brutal hack for pilot_apps.src.settings.all
-	if project_name == 'pilot_apps':
-		settings_file_name += '.all'
+	if project_name == 'pilot_apps' and not os.path.exists( settings_file_name ): settings_file_name += '.all'
 
 	settings_dict = {}
 	execfile(settings_file_name, settings_dict)
@@ -44,7 +49,7 @@ def list_project_files(path_to_mini, project_name):
 			elif os.path.exists(full_path + srcfile + '.c'):
 				srcfiles.append(srcfile + '.c')
 			else:
-				raise RuntimeError('Nonexistant source file: ' + full_path + srcfile)
+				raise RuntimeError('Nonexistent source file: ' + full_path + srcfile)
 
 		if not os.path.exists(full_path):
 			# Git ignores empty directories, so if there aren't any headers or source files the listdir() below may choke.
@@ -114,7 +119,7 @@ def list_test_files(path_to_mini, test_name):
 
 def update_libraries_list(projects):
 	exclude = ['apps', 'pilot_apps']
-	out = open('build/libraries.cmake', 'w')
+	out = open( 'build/libraries.cmake', 'w')
 	out.write('SET( LIBRARIES ' + reduce(lambda x,y: x + ' ' + y, filter(lambda x: x not in exclude, projects)) + ')')
 
 def update_test_list(projects, test_path):

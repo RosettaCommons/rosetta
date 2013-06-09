@@ -2,7 +2,7 @@
 
 # make_project.py - modified from mini-interactive by tex.
 
-import os, string, sys
+import os, string, sys, os.path
 import timeit
 import build_util
 
@@ -95,6 +95,10 @@ def project_test_callback(test, project_path, test_path, test_files, test_inputs
 
 	open(test_path + "test_" + test + '.cmake', 'w').write(output)
 	print 'done.'
+
+# get in the script directory
+rosetta_cmake_directory = os.path.dirname( sys.argv[0] ) # where this script is located
+os.chdir( rosetta_cmake_directory )
 
 update_version()
 

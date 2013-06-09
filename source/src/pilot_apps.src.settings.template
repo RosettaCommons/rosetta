@@ -13,6 +13,11 @@
 #Remember also to setup the devel.src.settings.my file to include any experimental
 #files that your pilot application needs.
 
+# Helpful hint:
+#  When using cmake/make_project.py, the .settings.my file will override the usual .settings
+#  file as the list of .cc files to compile.  It will not be checked into git (it is listed in .gitignore).
+#  When ready for primetime, move your apps into this .settings file.
+
 sources = {
 	"pilot/yournamehere" : [
 		"this_is_my_pilot_app", #notice there is no .cc extension!
