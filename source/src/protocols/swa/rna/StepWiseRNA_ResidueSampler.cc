@@ -813,7 +813,7 @@ namespace rna {
 
 			if(fast_ && count_data_.both_count>1000) break;
 			if(medium_fast_ && count_data_.both_count>1000 && pose_data_list.size()>5) break;
-			if(integration_test_mode_ && count_data_.both_count>=1000) native_rmsd_screen_=true;
+			if(integration_test_mode_ && count_data_.full_score_count>=10) native_rmsd_screen_=true;
 			if(integration_test_mode_ && count_data_.rmsd_count>=10) break;
 
 			Matrix O_frame_rotation;
@@ -1023,7 +1023,7 @@ namespace rna {
 				}
 
 
-				/*current_score = */ Pose_selection_by_full_score(pose_data_list, pose, tag);
+				Pose_selection_by_full_score(pose_data_list, pose, tag);
 
 				if(verbose_){
 					std::cout << tag <<  std::endl;
@@ -1438,7 +1438,7 @@ namespace rna {
 
 			if(fast_ && count_data_.both_count>=100) break;
 			if(medium_fast_ && count_data_.both_count>=1000) break;
-			if(integration_test_mode_ && count_data_.both_count>=1000) native_rmsd_screen_=true;
+			if(integration_test_mode_ && count_data_.full_score_count>=10) native_rmsd_screen_=true;
 			if(integration_test_mode_ && count_data_.rmsd_count>=10) break;
 
 			std::string tag=create_tag("U" + sugar_tag, rotamer_generator);
@@ -1551,24 +1551,21 @@ namespace rna {
 					if ( perform_o2star_pack_ ) apply_bulge_variant( o2star_pack_pose, delta_atr_score ); /*further cut on atr, inside*/
 				}
 			}
-			/////////////////////////////////////////////////////////////////////////////////////////////
+			////////////////////////////////////////////////////////////////////
 
-//				if(fast_) screening_pose.dump_pdb( tag + ".pdb" );
-
-    	////////////////Add pose to pose_data_list if pose have good score////////////////////////////////////////////
+			///////Add pose to pose_data_list if pose have good score///////////
 
 			if ( perform_o2star_pack_ ){
-			 	sample_o2star_hydrogen( o2star_pack_pose , pose_with_original_HO2star_torsion);
+				sample_o2star_hydrogen( o2star_pack_pose , pose_with_original_HO2star_torsion);
 				copy_all_o2star_torsions(pose, o2star_pack_pose); //Copy the o2star torsions from the o2star_pack_pose to the pose!
 			}
 
 			if(include_torsion_value_in_tag_) tag+=create_rotamer_string(pose);
 
-			/*current_score=*/ Pose_selection_by_full_score(pose_data_list, pose, tag);
+			Pose_selection_by_full_score(pose_data_list, pose, tag);
 
 			if(verbose_){
 				std::cout << tag <<  std::endl;
-//				pose.dump_pdb( tag +".pdb" );
 				Output_data(silent_file_data, silent_file_, tag, true, pose, get_native_pose(), job_parameters_);
 			}
 
@@ -2027,6 +2024,8 @@ namespace rna {
 
 		using namespace core::scoring;
 
+		count_data_.full_score_count++;
+
 		Real const current_score=(*sampling_scorefxn_)(current_pose);
 
 		Update_pose_data_list(tag, pose_data_list, current_pose, current_score);
@@ -2479,7 +2478,7 @@ namespace rna {
    	integration_test_mode_ = setting;
 		if(integration_test_mode_){
 			num_pose_kept_ = 20;
-			native_rmsd_screen_=false; //Start off as false, will change to true after count_data_.both_count>=1000!
+			native_rmsd_screen_=false; // will be switched to true mid-way through sampling.
 			native_screen_rmsd_cutoff_= 1.0;
 		}
 

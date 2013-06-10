@@ -159,32 +159,33 @@ public:
 
   SillyCountStruct():
     output_pose_count( 0 ),
+    full_score_count( 0 ),
     good_bin_rep_count( 0 ),
     good_rep_rotamer_count( 0 ),
     good_atr_rotamer_count( 0 ),
     good_angle_count( 0 ),
     good_distance_count( 0 ),
-		chain_break_screening_count( 0 ),
+    chain_break_screening_count( 0 ),
     chain_closable_count( 0 ),
     Near_Native_Rotamer_Count( 0 ),
     base_pairing_count( 0 ),
     base_stack_count( 0 ),
-		strict_base_pairing_count( 0 ),
-		pass_base_centroid_screen( 0 ),
+    strict_base_pairing_count( 0 ),
+    pass_base_centroid_screen( 0 ),
     both_count( 0 ),
     tot_rotamer_count( 0 ),
     fine_rmsd_count( 0 ),
     rmsd_count( 0 ),
-		non_clash_ribose( 0 ),
-		fast_full_atom_VDW_replusion_screen( 0 ),
-		in_range_CCD_torsion( 0 ),
-		total_bin( 0 ),
-		bulge_at_chain_closure_count( 0 ),
-		before_chain_break_grid_index_screening( 0 ),
-		chain_break_grid_index_screening( 0 ),
-		residues_contact_screen( 0 ),
-		test_count_one( 0 ),
-		test_count_two( 0 )
+    non_clash_ribose( 0 ),
+    fast_full_atom_VDW_replusion_screen( 0 ),
+    in_range_CCD_torsion( 0 ),
+    total_bin( 0 ),
+    bulge_at_chain_closure_count( 0 ),
+    before_chain_break_grid_index_screening( 0 ),
+    chain_break_grid_index_screening( 0 ),
+    residues_contact_screen( 0 ),
+    test_count_one( 0 ),
+    test_count_two( 0 )
     {
   }
 
@@ -194,7 +195,8 @@ public:
 public:
 
   core::Size output_pose_count;
-	core::Size good_bin_rep_count;
+  core::Size full_score_count;
+  core::Size good_bin_rep_count;
   core::Size good_rep_rotamer_count;
   core::Size good_atr_rotamer_count;
   core::Size good_angle_count;
@@ -204,22 +206,22 @@ public:
   core::Size Near_Native_Rotamer_Count;
   core::Size base_pairing_count;
   core::Size base_stack_count;
-	core::Size strict_base_pairing_count;
-	core::Size pass_base_centroid_screen;
+  core::Size strict_base_pairing_count;
+  core::Size pass_base_centroid_screen;
   core::Size both_count;
   core::Size tot_rotamer_count;
   core::Size fine_rmsd_count;
   core::Size rmsd_count;
-	core::Size non_clash_ribose;
-	core::Size fast_full_atom_VDW_replusion_screen;
-	core::Size in_range_CCD_torsion;
-	core::Size total_bin;
-	core::Size bulge_at_chain_closure_count;
-	core::Size before_chain_break_grid_index_screening;
-	core::Size chain_break_grid_index_screening;
-	core::Size residues_contact_screen;
-	core::Size test_count_one;
-	core::Size test_count_two;
+  core::Size non_clash_ribose;
+  core::Size fast_full_atom_VDW_replusion_screen;
+  core::Size in_range_CCD_torsion;
+  core::Size total_bin;
+  core::Size bulge_at_chain_closure_count;
+  core::Size before_chain_break_grid_index_screening;
+  core::Size chain_break_grid_index_screening;
+  core::Size residues_contact_screen;
+  core::Size test_count_one;
+  core::Size test_count_two;
 };
 
 ////////////////////////////////////////////////////////////
