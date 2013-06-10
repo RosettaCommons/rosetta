@@ -485,7 +485,7 @@ def etable_atom_pair_energies(atom1, atom2, sfxn):
     etable_ptr = score_manager.etable(
                                     sfxn.energy_method_options().etable_type())
     etable=etable_ptr.get()
-    etable_energy = core.scoring.etable.TableLookupEtableEnergy(etable,
+    etable_energy = core.scoring.etable.AnalyticEtableEnergy(etable,
                                                   sfxn.energy_method_options())
 
 	# Construct AtomPairEnergy container to hold computed energies.
