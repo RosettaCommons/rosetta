@@ -105,7 +105,7 @@ namespace rna {
 		if ( rotamer_count_ > master_rotamer_list_.size() ) return false;
 
 		utility::vector1< Size > & rotamer = master_rotamer_list_[ rotamer_count_ ];
-		if ( choose_random_ ) rotamer = RG.random_element( master_rotamer_list_ );
+		if ( choose_random_ ) rotamer = numeric::random::random_element( master_rotamer_list_ );
 
 		pucker_ID_   = rotamer[1];
 		base_ID_     = rotamer[2];

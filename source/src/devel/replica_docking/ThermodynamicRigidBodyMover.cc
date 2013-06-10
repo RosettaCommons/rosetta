@@ -141,7 +141,7 @@ void ThermodynamicRigidBodyPerturbNoCenterMover::apply( core::pose::Pose& pose )
 
   // set baseclass rb_jump_ randomly from list of movable jumps
   if ( movable_jumps_.size() > 1 ) {
-    rb_jump_ = rigid_RG.random_element( movable_jumps_ );
+    rb_jump_ = numeric::random::random_element( movable_jumps_ );
   } else if ( movable_jumps_.size() == 1 ) {
     rb_jump_ = movable_jumps_[1];
     tr.Debug <<"set rb_jump_ movable_jumps_[1]" << std::endl;

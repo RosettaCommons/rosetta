@@ -177,7 +177,7 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	for ( Size count = 1; count <= driver_torsion_sets.size(); count++ ){
 
 		utility::vector1< Real > driver_torsion_set = driver_torsion_sets[ count ];
-		if ( choose_random_ ) driver_torsion_set = RG.random_element( driver_torsion_sets );
+		if ( choose_random_ ) driver_torsion_set = numeric::random::random_element( driver_torsion_sets );
 
 		runtime_assert( driver_torsion_set.size() == 4 );
 		for ( Size  k = 1; k <= driver_torsion_set.size(); k++ ) pose.set_torsion( driver_torsion_IDs[k], driver_torsion_set[k] );
