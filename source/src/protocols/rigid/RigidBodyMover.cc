@@ -238,7 +238,7 @@ RigidBodyPerturbMover::apply( core::pose::Pose & pose )
 	// Want to update our center of rotation every time we take a step.
 	// baseclass jump is chosen at random from movable jumps every apply
 	rb_jump_ = ( movable_jumps_.size() > 1 ) ?
-			numeric::random::random_element( movable_jumps_ )
+		RG.random_element( movable_jumps_ )
 		: movable_jumps_[1];
 
 	TR.Debug << "Set movable jump #" << rb_jump_ << std::endl;
@@ -419,7 +419,7 @@ RigidBodyPerturbNoCenterMover::apply( core::pose::Pose & pose )
 {
 	// set baseclass rb_jump_ randomly from list of movable jumps
 	if ( movable_jumps_.size() > 1 ) {
-		rb_jump_ = numeric::random::random_element( movable_jumps_ );
+		rb_jump_ = RG.random_element( movable_jumps_ );
 	} else if ( movable_jumps_.size() == 1 ) {
 		rb_jump_ = movable_jumps_[1];
 	} else {
@@ -497,7 +497,7 @@ RigidBodyRandomizeMover::apply( core::pose::Pose & pose )
 	flexible_jump.rotation_by_matrix( upstream_stub, rot_center_,  rotation_matrix_);
 		TRBM << "Randomize: " << "Jump (after):  " << flexible_jump << std::endl;
 	pose.set_jump( rb_jump_, flexible_jump );
-	
+
 	if(update_center_after_move_){ // update rot_center_ // TODO fix this so we don't update center, because that ruins our freezing ability
 		core::Vector dummy_up, dummy_down;
 		protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
@@ -623,7 +623,7 @@ RigidBodyDeterministicSpinMover::RigidBodyDeterministicSpinMover() : parent()
 {
     moves::Mover::type( "RigidBodyDeterministicSpin" );
     angle_magnitude_ = 0.0;
-        
+
 }
 
 ///@brief constructor with arguments
@@ -644,7 +644,7 @@ angle_magnitude_( src.angle_magnitude_)
 {}
 
 RigidBodyDeterministicSpinMover::~RigidBodyDeterministicSpinMover() {}
-    
+
 void
 RigidBodyDeterministicSpinMover::angle_magnitude( float angle_magnitude )
 {
@@ -658,14 +658,14 @@ RigidBodyDeterministicSpinMover::apply( core::pose::Pose & pose )
     TRBM << "Spin: " << "Jump (before): " << flexible_jump << std::endl;
     core::kinematics::Stub upstream_stub = pose.conformation().upstream_jump_stub( rb_jump_ );
     core::kinematics::Stub downstream_stub = pose.conformation().downstream_jump_stub( rb_jump_ );
-        
+
     core::Vector dummy_up, dummy_down;
     if ( update_spin_axis_ ){
         protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
         rot_center_ = dummy_down;
         spin_axis_ = dummy_up - rot_center_;
     }
-        
+
     TRBM << "Spin: " << "Rot (before: "
     << rot_center_.x() << " "
     << rot_center_.y() << " "
@@ -1070,7 +1070,7 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 		T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
 		return;
 	}
-	rb_jump_ = numeric::random::random_element( trans_jumps );
+	rb_jump_ = RG.random_element( trans_jumps );
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator =
 		dofs.find( rb_jump_ );
 	if ( jump_iterator == dofs.end() ) {
@@ -1188,7 +1188,7 @@ void RigidBodyDofSeqTransMover::apply( core::pose::Pose & pose )
 
   //random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
     numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::RG);
-    
+
   for ( it = start; it != end; ++it ) {
     jump_iterator = dofs_.find( *it );
     if ( jump_iterator == dofs_.end() ) {
@@ -1274,7 +1274,7 @@ void RigidBodyDofRandomTransMover::apply( core::pose::Pose & pose )
 
   //random__shuffle(rb_jumps_.begin(), rb_jumps_.end() );
   numeric::random::random_permutation(rb_jumps_.begin(), rb_jumps_.end(), numeric::random::RG);
-  
+
 	int jump_;
 	if ( rb_jumps_.size() < 1 ) return;
 	else jump_ = rb_jumps_[1];
@@ -1350,7 +1350,7 @@ RigidBodyDofPerturbMover::RigidBodyDofPerturbMover(
     T("protocols.moves.rigid_body") << "[WARNING] no movable jumps!" << std::endl;
     return;
   }
-  rb_jump_ = numeric::random::random_element( moving_jumps );
+  rb_jump_ = RG.random_element( moving_jumps );
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator =
 																				dofs.find( rb_jump_ );
 	if ( jump_iterator == dofs.end() ) {

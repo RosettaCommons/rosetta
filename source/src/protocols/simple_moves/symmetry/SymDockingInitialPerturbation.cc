@@ -822,7 +822,7 @@ void RandomSymmetrySlider::select_jump()
 		}
 	}
 	if ( !allowed.empty() )
-		set_current_jump( numeric::random::random_element( allowed ) );
+		set_current_jump( RG.random_element( allowed ) );
 }
 
 }

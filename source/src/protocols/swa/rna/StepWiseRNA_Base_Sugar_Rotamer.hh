@@ -48,7 +48,7 @@ namespace rna {
 
 		void reset();
 
-		bool initialize_master_rotamer_list();
+	  void initialize_master_rotamer_list();
 
 		bool get_next_rotamer();
 

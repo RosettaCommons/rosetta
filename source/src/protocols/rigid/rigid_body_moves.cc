@@ -38,7 +38,7 @@ namespace rigid {
 using namespace core;
 
 
-//static numeric::random::RandomGenerator RG(62458); // <- Magic number, do not change it!!!
+static numeric::random::RandomGenerator RG(62458); // <- Magic number, do not change it!!!
 
 
 int
@@ -61,7 +61,7 @@ gaussian_jump_move(
 		return 0;
 	}
 
-	int const jump_number( numeric::random::random_element( moving_jumps ) );
+	int const jump_number( RG.random_element( moving_jumps ) );
 	gaussian_jump_move( pose, jump_number, translation_magnitude, rotation_magnitude, dir );
 	return jump_number;
 }
