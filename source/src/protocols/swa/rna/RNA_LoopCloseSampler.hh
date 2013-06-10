@@ -21,6 +21,7 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
+#include <core/id/TorsionID.fwd.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
 #include <string>
@@ -92,6 +93,10 @@ public:
 		include_current_ = setting;
 	}
 
+	void set_choose_random ( bool const setting ) {
+		choose_random_ = setting;
+	}
+
 	void set_rbs_new_pair ( utility::vector1< Real > const & rbs_new_pair ) {
 		rbs_new_pair_ = rbs_new_pair;
 	}
@@ -120,6 +125,12 @@ private:
 	              Real const & rep_cutoff_,
 	              scoring::ScoreFunctionOP rep_scorefxn );
 
+	void
+	add_driver_torsion_set(
+												 utility::vector1< utility::vector1< Real > > & driver_torsion_sets,
+												 utility::vector1< core::id::TorsionID > const & driver_torsion_IDs,
+												 core::pose::Pose const & pose );
+
 private:
 
 	Size const moving_suite_, chainbreak_suite_;
@@ -128,6 +139,7 @@ private:
 	Size bin_size_, n_construct_;
 	Real rep_cutoff_, torsion_range_, torsion_increment_, epsilon_range_;
 	bool just_output_score_, sample_only_, include_current_, sample_native_torsion_;
+	bool choose_random_; // new 2013
 	utility::vector1< Real > rbs_new_pair_;
 
 	utility::vector1< Real > torsion_info_;

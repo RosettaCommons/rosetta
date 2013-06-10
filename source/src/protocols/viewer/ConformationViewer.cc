@@ -121,7 +121,7 @@ ConformationViewer::display_func()
 	//	if ( true ) center_vector = get_center( residues_ );
 
 	//display_residues( residues_, anchor_id_ ); // in viewer.cc
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user()) {
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::mapfile ].user() && false) {
 
 		const core::scoring::electron_density::ElectronDensity& edm = core::scoring::electron_density::getDensityMap();
 		runtime_assert ( edm.isMapLoaded() );

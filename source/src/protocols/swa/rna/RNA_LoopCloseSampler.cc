@@ -46,6 +46,7 @@
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/angle.functions.hh>
+#include <numeric/random/random.hh> // !! for monte carlo, new 2013.
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/tools/make_vector1.hh>
@@ -62,6 +63,7 @@
 using namespace core;
 using core::Real;
 
+static numeric::random::RandomGenerator RG(199123);  // <- Magic number, do not change it!
 
 namespace protocols {
 namespace swa {
@@ -82,7 +84,8 @@ RNA_LoopCloseSampler::RNA_LoopCloseSampler ( Size const moving_suite, Size const
 	just_output_score_ ( false ),
 	sample_only_ ( false ),
 	include_current_( false ),
-	sample_native_torsion_ ( false ) {
+	sample_native_torsion_ ( false ),
+	choose_random_( false ){
 	RNA_AnalyticLoopCloser rna_analytic_loop_closer ( moving_suite, chainbreak_suite );
 	initialize_rep_scorefxn();
 }
@@ -92,7 +95,15 @@ RNA_LoopCloseSampler::RNA_LoopCloseSampler ( Size const moving_suite, Size const
 RNA_LoopCloseSampler::~RNA_LoopCloseSampler()
 {}
 
-//////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+// iterate over 4 dofs:
+//     epsilon1, zeta1, alpha1;     alpha2
+//
+// 	solve for the other 6 by chain closure:
+//     beta1, gamma1;               epsilon2, zeta2, beta2, gamma2
+//
+// This could probably be encapsulated into a PoseSampleGenerator or something similar.
+////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	using namespace pose;
@@ -104,97 +115,72 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
 	using namespace numeric::conversions;
+	using namespace utility;
+
 	Real const fa_rep_score_baseline = initialize_fa_rep ( pose, utility::tools::make_vector1 ( moving_suite_ ), rep_scorefxn_ );
-	// iterate over 4 dofs:
-	//     epsilon1, zeta1, alpha1;    alpha2
-	// 	solve for the other 6 by chain closure:
-	//     beta1, gamma1;               epsilon2, zeta2, beta2, gamma2
-	// This should probably be encapsulated into a PoseSampleGenerator or something similar
-	//	int const bins1_ = 360 / bin_size_ ; //This is total bins, default is 18
-	//	int const bins2_ = bins1_ / 2; //This is total bins divided by 2; default is 9
+
 	PuckerState pucker_state1 = Get_residue_pucker_state ( pose, moving_suite_ );
+
 	// following is only used if we are estimating jacobians (numerically).
 	utility::vector1< utility::vector1< utility::vector1< Real > > > perturbed_solution_torsions;
 	utility::vector1< utility::vector1< Real > > J; // 6 x 6 Jacobian.
 	utility::vector1< Real > six_zeros;
-
 	for ( int i = 1; i <= 6; i++ ) six_zeros.push_back ( 0.0 );
-
 	for ( int i = 1; i <= 6; i++ ) J.push_back ( six_zeros );
+
+	// The closer.
+	RNA_AnalyticLoopCloser rna_analytic_loop_closer ( moving_suite_, chainbreak_suite_ );
+
+	// set up backbones to close.
+	// epsilon1, zeta1, alpha1; and alpha2 are 'driver torsions' -- deltas will be fixed,
+	//  and the other six torsions will be solved by analytical loop closure.
+	vector1< TorsionID > driver_torsion_IDs;
+	driver_torsion_IDs.push_back( TorsionID ( moving_suite_  , id::BB, EPSILON ) );
+	driver_torsion_IDs.push_back( TorsionID ( moving_suite_  , id::BB, ZETA ) );
+	driver_torsion_IDs.push_back( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ) );
+	driver_torsion_IDs.push_back( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ) );
+
+	vector1< vector1< Real > > driver_torsion_sets;
 
 	Real epsilon1_center = ( pucker_state1 == NORTH ) ? -150.17 : -98.45;
 	Real epsilon1_min = epsilon1_center - epsilon_range_;
 	Real epsilon1_max = epsilon1_center + epsilon_range_;
 	if (pucker_state1 == SOUTH && epsilon1_min > -178) epsilon1_min = -178.45;
 	Real epsilon1_increment = bin_size_;
+	Real zeta1_min = 20.0;
+	Real zeta1_max = 340.0 - bin_size_;
+	Real zeta1_increment = bin_size_;
 	Real alpha1_min = 20.0;
 	Real alpha1_max = 340.0 - bin_size_;
 	Real alpha1_increment = bin_size_;
 	Real alpha2_min = 20.0;
 	Real alpha2_max = 340.0 - bin_size_;
 	Real alpha2_increment = bin_size_;
-	Real zeta1_min = 20.0;
-	Real zeta1_max = 340.0 - bin_size_;
-	Real zeta1_increment = bin_size_;
-
-	PoseCOP native_pose = get_native_pose();
-	if ( sample_native_torsion_ ) utility_exit_with_message( "sample_native_torsion_ not set up properly in RNA_LoopCloseSampler.cc!" );
-
-	Real const epsilon1_current = pose.torsion ( TorsionID ( moving_suite_  , id::BB, EPSILON ) );
-	Real const zeta1_current    = pose.torsion ( TorsionID ( moving_suite_  , id::BB, ZETA ) );
-	Real const alpha1_current   = pose.torsion ( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ) );
-	Real const alpha2_current   = pose.torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ) );
-
-	RNA_AnalyticLoopCloser rna_analytic_loop_closer ( moving_suite_, chainbreak_suite_ );
 
 	for ( Real epsilon1 = epsilon1_min; epsilon1 <= epsilon1_max; epsilon1 += epsilon1_increment ) {
-		for ( Real alpha1 = alpha1_min; alpha1 <= alpha1_max; alpha1 += alpha1_increment ) {
-			for ( Real alpha2 = alpha2_min; alpha2 <= alpha2_max; alpha2 += alpha2_increment ) {
-				for ( Real zeta1 = zeta1_min; zeta1 <= zeta1_max; zeta1 += zeta1_increment ) {
-					pose.set_torsion ( TorsionID ( moving_suite_,       id::BB, EPSILON ), epsilon1 );
-					pose.set_torsion ( TorsionID ( moving_suite_,       id::BB, ZETA ),    zeta1 );
-					pose.set_torsion ( TorsionID ( moving_suite_ + 1,     id::BB, ALPHA ),   alpha1 );
-					pose.set_torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ),   alpha2 );
-
-					//close loop.
-					rna_analytic_loop_closer.apply ( pose );
-
-					// iterate over solutions -- anything with OK repulsive?
-					for ( Size n = 1; n <= rna_analytic_loop_closer.nsol(); n++ ) {
-						rna_analytic_loop_closer.fill_solution ( pose, n );
-
-						if ( !torsion_angles_within_cutoffs ( pose, moving_suite_, chainbreak_suite_ ) ) continue;
-
-						if ( !sample_only_ ) {
-							if ( !check_clash ( pose, fa_rep_score_baseline, rep_cutoff_, rep_scorefxn_ ) ) continue;
-						}
-
-						// save data
-						n_construct_++;
-						torsion_info_.clear();
-						torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_  , id::BB, EPSILON ) ) );
-						torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_  , id::BB, ZETA ) ) );
-						torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ) ) );
-						torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_ + 1, id::BB, BETA ) ) );
-						torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_ + 1, id::BB, GAMMA ) ) );
-						torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_  , id::BB, EPSILON ) ) );
-						torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_  , id::BB, ZETA ) ) );
-						torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ) ) );
-						torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, BETA ) ) );
-						torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, GAMMA ) ) );
-						all_torsion_info_.push_back ( torsion_info_ );
-					}
+		for ( Real zeta1 = zeta1_min; zeta1 <= zeta1_max; zeta1 += zeta1_increment ) {
+			for ( Real alpha1 = alpha1_min; alpha1 <= alpha1_max; alpha1 += alpha1_increment ) {
+				for ( Real alpha2 = alpha2_min; alpha2 <= alpha2_max; alpha2 += alpha2_increment ) {
+					vector1< Real > driver_torsion_set = utility::tools::make_vector1( epsilon1, zeta1, alpha1, alpha2 );
+					driver_torsion_sets.push_back( driver_torsion_set );
 				}
 			}
 		}
 	}
 
+	if ( include_current_ ) add_driver_torsion_set( driver_torsion_sets, driver_torsion_IDs, pose );
+	if ( sample_native_torsion_ && get_native_pose() ) add_driver_torsion_set( driver_torsion_sets, driver_torsion_IDs, *get_native_pose() );
 
-	if ( include_current_ ) {
-		pose.set_torsion ( TorsionID ( moving_suite_, id::BB, EPSILON ), epsilon1_current );
-		pose.set_torsion ( TorsionID ( moving_suite_, id::BB, ZETA ), zeta1_current );
-		pose.set_torsion ( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ), alpha1_current );
-		pose.set_torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ), alpha2_current );
+	PoseCOP native_pose = get_native_pose();
+	if ( sample_native_torsion_ ) utility_exit_with_message( "sample_native_torsion_ not set up properly in RNA_LoopCloseSampler.cc!" );
+
+	for ( Size count = 1; count <= driver_torsion_sets.size(); count++ ){
+
+		utility::vector1< Real > driver_torsion_set = driver_torsion_sets[ count ];
+		if ( choose_random_ ) driver_torsion_set = numeric::random::random_element( driver_torsion_sets );
+
+		runtime_assert( driver_torsion_set.size() == 4 );
+		for ( Size  k = 1; k <= driver_torsion_set.size(); k++ ) pose.set_torsion( driver_torsion_IDs[k], driver_torsion_set[k] );
 
 		//close loop.
 		rna_analytic_loop_closer.apply ( pose );
@@ -223,10 +209,27 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 			torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, BETA ) ) );
 			torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, GAMMA ) ) );
 			all_torsion_info_.push_back ( torsion_info_ );
+
+			if ( choose_random_ && all_torsion_info_.size() > 1 ) break; // our work is done!
+
 		}
+
+		if ( choose_random_ && all_torsion_info_.size() > 1 ) break; // our work is done!
 	}
 
 }
+
+///////////////////////////////////////////////////////////////////////
+void
+RNA_LoopCloseSampler::add_driver_torsion_set(
+														utility::vector1< utility::vector1< Real > > & driver_torsion_sets,
+														utility::vector1< core::id::TorsionID > const & driver_torsion_IDs,
+														pose::Pose const & pose ) {
+	utility::vector1< Real > current_driver_torsion_set;
+	for ( Size k = 1; k <= driver_torsion_IDs.size(); k++ )	 current_driver_torsion_set.push_back( pose.torsion( driver_torsion_IDs[k] ) );
+	driver_torsion_sets.push_back( current_driver_torsion_set );
+}
+
 //////////////////////////////////////////////////////////////////////////
 void
 RNA_LoopCloseSampler::fill_pose ( pose::Pose & pose, Size construct_number ) {
@@ -410,6 +413,7 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 
 	return true;
 }
+
 
 }
 }

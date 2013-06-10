@@ -221,6 +221,8 @@ OPT_KEY( Real, sampler_cluster_rmsd )
 OPT_KEY( Boolean,  output_pdb )
 OPT_KEY ( Boolean, constraint_chi )
 OPT_KEY ( Boolean, rm_virt_phosphate )
+OPT_KEY ( Boolean, choose_random )
+OPT_KEY ( Boolean, force_centroid_interaction )
 
 //////////////////////////////////////////////////////////////////////////////////////
 //Apply chi angle constraint to the purines
@@ -702,8 +704,16 @@ rna_resample_test() {
 	stepwise_rna_residue_sampler.set_VDW_atr_rep_screen ( option[ VDW_atr_rep_screen ]() );
 	stepwise_rna_residue_sampler.set_base_centroid_screener ( base_centroid_screener );
 	stepwise_rna_residue_sampler.set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener );
+	stepwise_rna_residue_sampler.set_force_centroid_interaction ( option[force_centroid_interaction]() );
+	if ( option[ choose_random ]() ){
+		stepwise_rna_residue_sampler.set_choose_random( true );
+		stepwise_rna_residue_sampler.set_cluster_rmsd( 0.0 ); // don't cluster.
+	}
 
-	if ( option[skip_sampling]() == false ) stepwise_rna_residue_sampler.apply ( pose );
+	if ( ! option[skip_sampling]() ) stepwise_rna_residue_sampler.apply ( pose );
+
+	// if testing random version of this protocol -- do it several times!
+	if ( option[ choose_random ]() )	for( Size n = 2; n <= option[ sampler_num_pose_kept](); n++ )	 stepwise_rna_residue_sampler.apply ( pose );
 
 	utility::vector1< pose_data_struct2 > & pose_data_list = stepwise_rna_residue_sampler.get_pose_data_list();
 
@@ -833,6 +843,8 @@ try {
 	NEW_OPT( output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", false); //Sept 24, 2011
 	NEW_OPT ( constraint_chi, "Constrain the chi angles", false );
 	NEW_OPT ( rm_virt_phosphate, "Remove virtual phosphate patches during minimization", false );
+	NEW_OPT ( choose_random, "ask loop closer for a random solution", false );
+	NEW_OPT ( force_centroid_interaction, "Require rebuilt residue to stack or pair with another residue", false );
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////

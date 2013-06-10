@@ -121,42 +121,35 @@ public:
 	set_base_centroid_screener ( StepWiseRNA_BaseCentroidScreenerOP & screener );
 
 	void
-	set_distinguish_pucker ( bool const & setting ) {
-		distinguish_pucker_ = setting ;
-	}
+	set_distinguish_pucker ( bool const & setting ) {		distinguish_pucker_ = setting ;	}
 
 	void
-	set_finer_sampling_at_chain_closure ( bool const & setting ) {
-		finer_sampling_at_chain_closure_ = setting;
-	}
+	set_finer_sampling_at_chain_closure ( bool const & setting ) {		finer_sampling_at_chain_closure_ = setting;	}
 
 	void
-	set_PBP_clustering_at_chain_closure ( bool const & setting ) {
-		PBP_clustering_at_chain_closure_ = setting;
-	}
+	set_PBP_clustering_at_chain_closure ( bool const & setting ) {		PBP_clustering_at_chain_closure_ = setting;	}
 
 	void
 	set_user_input_VDW_bin_screener ( StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener );
 
 	void
-	set_allow_syn_pyrimidine( bool const & setting ) { 
-		allow_syn_pyrimidine_ =setting;
-	}
+	set_allow_syn_pyrimidine( bool const & setting ) {		allow_syn_pyrimidine_ =setting;	}
 
 	void
-	set_extra_syn_chi_rotamer ( bool const & setting ) {
-		extra_syn_chi_rotamer_ = setting;
-	}
+	set_extra_syn_chi_rotamer ( bool const & setting ) {		extra_syn_chi_rotamer_ = setting;	}
 
 	void
-	set_extra_anti_chi_rotamer ( bool const & setting ) {
-		extra_anti_chi_rotamer_ = setting;
-	}
+	set_extra_anti_chi_rotamer ( bool const & setting ) {		extra_anti_chi_rotamer_ = setting;	}
 
 	void
-	set_use_phenix_geo ( bool const & setting ) {
-		use_phenix_geo_ = setting;
-	}
+	set_use_phenix_geo ( bool const & setting ) {		use_phenix_geo_ = setting;	}
+
+	void
+	set_choose_random ( bool const & setting ) {		choose_random_ = setting;	}
+
+	void
+	set_force_centroid_interaction ( bool const & setting ) {		force_centroid_interaction_ = setting;	}
+
 private:
 
 	void
@@ -268,6 +261,8 @@ private:
 	bool extra_syn_chi_rotamer_;
 	bool allow_syn_pyrimidine_;
 	bool use_phenix_geo_;
+	bool choose_random_;
+	bool force_centroid_interaction_;
 
 	StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener_;
 

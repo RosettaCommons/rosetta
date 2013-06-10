@@ -74,6 +74,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/exit.hh>
+#include <numeric/random/random.hh>
 #include <time.h>
 
 #include <string>
@@ -87,6 +88,7 @@
 using namespace core;
 using core::Real;
 using io::pdb::dump_pdb;
+static numeric::random::RandomGenerator RG(19912388);  // <- Magic number, do not change it!
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -94,7 +96,6 @@ using io::pdb::dump_pdb;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-
 
 namespace protocols {
 namespace swa {
@@ -127,8 +128,9 @@ StepWiseRNA_AnalyticalLoopCloseSampler::StepWiseRNA_AnalyticalLoopCloseSampler (
 	PBP_clustering_at_chain_closure_ ( false ), //New option Aug 15 2010
 	extra_anti_chi_rotamer_(false), //Split to syn and anti on June 16, 2011
 	extra_syn_chi_rotamer_(false), //Split to syn and anti on June 16, 2011
-	use_phenix_geo_(false) //The standard geo from PHENIX
-
+	use_phenix_geo_(false), //The standard geo from PHENIX
+	choose_random_( false ),
+	force_centroid_interaction_( false )
 {
 	set_native_pose ( job_parameters_->working_native_pose() );
 	////////////////Parin Feb 28, 2010////////////////////////////////////////////////
@@ -172,11 +174,20 @@ StepWiseRNA_AnalyticalLoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	Output_boolean ( "VDW_atr_rep_screen = ", VDW_atr_rep_screen_ );
 	std::cout << std::endl;
 	std::cout << "--------------------------------" << std::endl;
+
 	Pose const pose_save = pose;
 	pose = pose_save; //this recopy is useful for triggering graphics.
+
 	initialize_scorefunctions(); //////////////// Sets up scorefunctions for a bunch of different screens /////////
+
 	utility::vector1< pose_data_struct2 > pose_data_list;
+	if ( pose_data_list_.size() > 0 ) {
+		std::cout << "Previous poses exist in sampler: " << pose_data_list_.size() << std::endl;
+		pose_data_list = pose_data_list_;  // give the class a little memory ... later need to include reset() function.
+	}
+
 	standard_sampling ( pose, pose_data_list );
+
 	std::cout << "Total time in StepWiseRNA_AnalyticalLoopCloseSampler::apply " << static_cast<Real> ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 	Output_title_text ( "Exit StepWiseRNA_AnalyticalLoopCloseSampler::apply" );
 }
@@ -258,13 +269,21 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	rna_loop_close_sampler.set_sample_only ( true );
 	rna_loop_close_sampler.set_include_current ( true );
 	rna_loop_close_sampler.set_scorefxn ( scorefxn_ );
+	rna_loop_close_sampler.set_choose_random( choose_random_ );
 
 	Size pucker_id;
 	Size total_count = 0;
 	std::cout << "Start Generating Rotamer ..." << std::endl;
 	protocols::rna::RNA_IdealCoord const ideal_coord;
 
-	for ( pucker_id = 0; pucker_id < 2; pucker_id ++ ) {
+	// the possibilities for pucker_id. Probably should refactor slightly to be pucker_states (NORTH and SOUTH)... will soon create pucker_sampler.
+	utility::vector1< Size > pucker_ids;
+	for ( pucker_id = 0; pucker_id < 2; pucker_id ++ ) pucker_ids.push_back( pucker_id );
+
+	for ( Size k = 0; k < pucker_ids.size(); k++ ){
+
+		Size pucker_id = k;
+		if ( choose_random_ ) pucker_id = numeric::random::random_element( pucker_ids );
 		std::cout << "pucker_id = " << pucker_id << std::endl;
 
 		if (use_phenix_geo_) {
@@ -295,8 +314,11 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 		rna_loop_close_sampler.apply ( screening_pose );
 		std::cout << "Exiting Analytical Loop Closing" << std::endl;
 
+		// note that in chose_random, loop_close_sampler should return 1 loop.
 		for ( Size ii = 1; ii <= rna_loop_close_sampler.n_construct(); ++ii ) {
 			rna_loop_close_sampler.fill_pose ( screening_pose, ii );
+
+			// following initialization could be outside inner loop, right?
 			//Sample CHI torsion angle
 			BaseState base_state;
 			if ( allow_syn_pyrimidine_ ) {
@@ -304,19 +326,20 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 			} else {
 				base_state = ( core::scoring::rna::is_purine ( pose.residue ( moving_res ) ) ) ? BOTH : ANTI;
 			}
-
 			PuckerState pucker_state;
-
 			if ( pucker_id == 0 ) {
 				pucker_state = NORTH;
 			} else {
 				pucker_state = SOUTH;
 			}
-
 			StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer ( base_state, pucker_state, rna_fitted_torsion_info );
+
 			base_sugar_rotamer->set_extra_syn_chi ( extra_syn_chi_rotamer_ );
 			base_sugar_rotamer->set_extra_anti_chi ( extra_anti_chi_rotamer_ );
+			base_sugar_rotamer->set_choose_random( choose_random_ );
+
 			while ( base_sugar_rotamer->get_next_rotamer() ) {
+
 				Real chi = base_sugar_rotamer->chi();
 				screening_pose.set_torsion ( TorsionID ( moving_res , id::CHI, 1 ) ,chi );
 
@@ -336,7 +359,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 					bool found_a_centroid_interaction_partner ( false );
 					found_a_centroid_interaction_partner = base_centroid_screener_->Update_base_stub_list_and_Check_centroid_interaction ( screening_pose, count_data_ );
 
-					if ( gap_size > 0 && !found_a_centroid_interaction_partner ) continue;
+					if ( (gap_size > 0 || force_centroid_interaction_ )  && !found_a_centroid_interaction_partner ) continue;
 
 					if ( !base_centroid_screener_->Check_that_terminal_res_are_unstacked() ) continue;
 				}
@@ -371,15 +394,26 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 				ss << "U" << total_count;
 				std::string tag = ss.str();
 				total_count++;
-				/*current_score =*/ Pose_selection_by_full_score ( pose_data_list, pose, tag );
+				Real current_score = Pose_selection_by_full_score ( pose_data_list, pose, tag );
+				std::cout << "Size of pose_data_list: " << pose_data_list.size() << std::endl;
+
+				std::cout << "CURRENT SCORE " << current_score <<  std::endl;
 
 				if ( verbose_ ) {
 					std::cout << tag <<  std::endl;
 					Output_data ( silent_file_data, silent_file_, tag, true, pose, get_native_pose(), job_parameters_ );
 				}
-			}
-		}
-	}
+
+				if( choose_random_ && total_count > 0 ) break;
+
+			} // chi (side chain)
+
+			if( choose_random_ && total_count > 0 ) break;
+		} // closed main chain
+
+		if( choose_random_ && total_count > 0 ) break;
+	} // pucker
+
 
 	Output_title_text ( "Final sort and clustering" );
 	std::cout << "before erasing.. pose_data_list= " << pose_data_list.size() << std::endl;
@@ -525,7 +559,7 @@ void
 StepWiseRNA_AnalyticalLoopCloseSampler::Update_pose_data_list ( std::string const & tag, utility::vector1< pose_data_struct2 > & pose_data_list, pose::Pose const & current_pose, Real const & current_score ) const {
 	bool add_pose_to_list = false;
 
-	add_pose_to_list = ( current_score < current_score_cutoff_ ) ? true : false;
+	add_pose_to_list = ( current_score < current_score_cutoff_ );
 
 	//The order of evaluation of the two expression in the if statement is important!
 	if ( add_pose_to_list ) {

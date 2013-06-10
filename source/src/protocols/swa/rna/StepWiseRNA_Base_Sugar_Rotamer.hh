@@ -48,7 +48,11 @@ namespace rna {
 
 		void reset();
 
+		bool initialize_master_rotamer_list();
+
 		bool get_next_rotamer();
+
+		bool get_next_rotamer_original();
 
 		PuckerState const & current_pucker_state() const;
 		std::string const current_base_state() const;
@@ -61,6 +65,7 @@ namespace rna {
 
 		void set_extra_syn_chi( bool const setting){ extra_syn_chi_ =setting; }
 		void set_extra_anti_chi( bool const setting){ extra_anti_chi_ =setting; }
+		void set_choose_random( bool const setting){ choose_random_ =setting; }
 
 	private:
 
@@ -94,6 +99,11 @@ namespace rna {
 		core::Real total_variation_;
 		bool extra_anti_chi_;
 		bool extra_syn_chi_;
+
+		bool choose_random_;
+		core::Size rotamer_count_;
+		utility::vector1< utility::vector1< core::Size > > master_rotamer_list_;
+
 	};
 }
 } //swa
