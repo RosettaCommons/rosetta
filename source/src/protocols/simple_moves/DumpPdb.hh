@@ -51,6 +51,8 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	/// @brief Add timing information to filename?
 	bool addtime_;
+	/// @brief Add timing information to filename?
+	bool bfactor_;
 };
 
 

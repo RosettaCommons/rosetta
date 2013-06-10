@@ -21,6 +21,11 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
+#include <core/id/AtomID.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <utility/io/ozstream.hh>
 
 #include <utility/basic_sys_util.hh>
 
@@ -74,6 +79,19 @@ DumpPdb::~DumpPdb() {}
 
 void DumpPdb::apply( core::pose::Pose & pose ) {
 	std::string name( fname_ );
+	if (bfactor_){ /* Added by gideonla june13, prints out the the bfactor column */
+		 utility::io::ozstream out(name);
+		core::id::AtomID_Map< Real > bfactors;
+		core::pose::initialize_atomid_map( bfactors, pose, 0.0 );
+		for (core::Size seqpos=1;seqpos<=pose.total_residue();++seqpos) { // go over all pose residues
+			for( core::Size idx = 1; idx <= pose.residue( seqpos ).natoms(); ++idx ){
+		 	  core::id::AtomID atom_id(idx,seqpos);
+		 	 bfactors[atom_id] = pose.pdb_info()->temperature (  seqpos, idx);
+			}
+		} //end for loop over residues
+		core::io::pdb::dump_bfactor_pdb( pose, bfactors, out );
+		return;
+	}
 	if ( addtime_ ) {
 #ifdef USEMPI
 		name += "_" + utility::to_string(utility::mpi_rank()); 
@@ -95,6 +113,7 @@ void
 DumpPdb::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	fname_ = tag->getOption<std::string>( "fname", "dump.pdb" );
+	bfactor_ = ( tag->getOption<bool>( "bfactor", false ) );
 	if ( tag->hasOption("scorefxn") ) {
 		scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	}
