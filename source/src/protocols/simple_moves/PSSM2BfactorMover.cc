@@ -58,11 +58,18 @@ PSSM2BfactorMoverCreator::mover_name()
 
 PSSM2BfactorMover::PSSM2BfactorMover()
 	: moves::Mover("PSSM2Bfactor"),
-	offset_( 8.0 ),
-	scaling_factor_( 3.0 )
+	min_value_( -1 ),
+	max_value_( 5 )
 {
 }
 
+PSSM2BfactorMover::PSSM2BfactorMover(core::Size min_in , core::Size max_in)
+    : moves::Mover("PSSM2Bfactor"),
+    min_value_( min_in ),
+    max_value_( max_in )
+{
+}
+    
 void
 PSSM2BfactorMover::apply( Pose & pose )
 {
@@ -84,11 +91,29 @@ PSSM2BfactorMover::apply( Pose & pose )
       core::Size const seqpos( seqprof_cst->seqpos() );
       SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
       core::Real const PSSM_score( seqprof_pos->prof_row( seqpos )[ order[ pose.residue( seqpos ).name1() ] ] );
-		  core::Real const transformed_score( ( PSSM_score + offset() ) * scaling_factor() );
-		  TR<<"Position: "<<seqpos<<" pssm_val: "<<PSSM_score<<" transformed score: "<<transformed_score<<std::endl;
-		  for( core::Size idx = 1; idx <= pose.residue( seqpos ).natoms(); ++idx ){
-		 	  pose.pdb_info()->temperature( seqpos, idx, transformed_score );
-		  }
+		//Jun13 Gideon Lapidoth and Chris Norn added this so user can choose cut off PSSM values
+		core::Real temp_score = PSSM_score;
+		
+        core::Size min = 0 ;// Minimum Bfactor level used for pymolColoring
+        core::Size max = 50 ;// Maximum Bfactor level used for pymolColoring
+        core::Real alpha = (max - min)/( max_value_ +  min_value_);
+		core::Real beta = (max*min_value_ - min*max_value_)/(min_value_ - max_value_);
+		
+        core::Size tmpscore = (core::Size)PSSM_score;
+		if (tmpscore > max_value_) {
+       tmpscore = max_value_; }
+    else if (tmpscore < min_value_) {
+       tmpscore = min_value_; }
+    else {
+       tmpscore = (core::Size)PSSM_score; }
+     
+        
+        
+		core::Real const transformed_score( tmpscore * alpha + beta );
+		TR<<"Position: "<<seqpos<<" pssm_val: "<<PSSM_score<<" transformed score: "<<transformed_score<<std::endl;
+		for( core::Size idx = 1; idx <= pose.residue( seqpos ).natoms(); ++idx ){
+		  pose.pdb_info()->temperature( seqpos, idx, transformed_score );
+		}
       cst_num++;
     }//fi c->type()=="sequenceprofile"
   }//foreach
@@ -120,9 +145,10 @@ PSSM2BfactorMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-	offset( tag->getOption< core::Real >( "offset", 8.0 ) );
-	scaling_factor( tag->getOption< core::Real >( "scaling_factor", 3.0 ));
-	TR<<"PSSM2Bfactor sets offset: "<<offset()<<" scaling_factor: "<<scaling_factor()<<std::endl;
+	max_value( tag->getOption< core::Size >( "Value_for_blue", 5 ) );
+	min_value( tag->getOption< core::Size >( "Value_for_red", -1 ));
+	TR<<"PSSM2Bfactor sets Value_for_blue: "<<max_value_<<" Value_for_red: "<<min_value_<<std::endl;
 }
 } // simple_moves
 } // protocols
+
