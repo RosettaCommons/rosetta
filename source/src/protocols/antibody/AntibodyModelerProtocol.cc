@@ -114,6 +114,8 @@ void AntibodyModelerProtocol::set_default()
     middle_pack_min_       = true;
     
     bad_nter_  = true;
+	extend_h3_before_modeling_ = true;
+	idealize_h3_stems_before_modeling_ = false;
 	benchmark_ = false;
 	camelid_   = false;
 	camelid_constraints_ = false;
@@ -164,6 +166,8 @@ void AntibodyModelerProtocol::register_options()
     //option.add_relevant( OptionKeys::antibody::middle_pack_min);
     option.add_relevant( OptionKeys::antibody::h3_filter_tolerance);
     option.add_relevant( OptionKeys::antibody::bad_nter);
+	option.add_relevant( OptionKeys::antibody::extend_h3_before_modeling);
+	option.add_relevant( OptionKeys::antibody::idealize_h3_stems_before_modeling);
     option.add_relevant( OptionKeys::antibody::packonly_after_graft);
 }
 
@@ -231,6 +235,13 @@ void AntibodyModelerProtocol::init_from_options()
     if ( option[ OptionKeys::antibody::bad_nter].user()  ){
         set_bad_nter(option[ OptionKeys::antibody::bad_nter]() );
     }
+	if ( option[ OptionKeys::antibody::extend_h3_before_modeling].user()  ){
+        set_extend_h3_before_modeling(option[ OptionKeys::antibody::extend_h3_before_modeling]() );
+    }
+	if ( option[ OptionKeys::antibody::idealize_h3_stems_before_modeling].user()  ){
+        set_idealize_h3_stems_before_modeling(option[ OptionKeys::antibody::idealize_h3_stems_before_modeling]() );
+    }
+	
     //if ( option[ OptionKeys::antibody::middle_pack_min].user() ){
     //  set_middle_pack_min( option[ OptionKeys::loops::refine ] )
     //}
@@ -379,7 +390,9 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
             model_cdrh3->set_perturb_type(h3_perturb_type_); //legacy_perturb_ccd, ccd, kic
             if(cter_insert_ ==false) { model_cdrh3->turn_off_cter_insert(); }
             if(h3_filter_   ==false) { model_cdrh3->turn_off_H3_filter();   }
-            model_cdrh3->set_bad_nter(bad_nter_); 
+            model_cdrh3->set_bad_nter(bad_nter_);
+			model_cdrh3->set_extend_h3(extend_h3_before_modeling_ );
+			model_cdrh3->set_idealize_h3_stems(idealize_h3_stems_before_modeling_);
         model_cdrh3->apply( pose );
         //pose.dump_pdb("1st_finish_model_h3.pdb");
 

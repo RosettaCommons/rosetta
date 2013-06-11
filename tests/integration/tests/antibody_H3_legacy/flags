@@ -2,3 +2,5 @@
 -loops:frag_files aaFR02_09_05.200_v1_3 aaFR02_03_05.200_v1_3 none
 -s 3ETB_LH.pdb
 -restore_pre_talaris_2013_behavior
+-antibody::extend_h3_before_modeling true
+-antibody::idealize_h3_stems_before_modeling false

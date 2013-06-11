@@ -12120,6 +12120,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-extend_h3_before_modeling</b> \<Boolean\><dt>
+<dd>extend the H3 to forget the intial H3 configuration</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-idealize_h3_stems_before_modeling</b> \<Boolean\><dt>
+<dd>idealize the H3 stem, H3 grafting does not copy the coordinates which makes the grafting bad </dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
 <dt><b>-remodel</b> \<String\><dt>
 <dd>Choose a perturb method to model H3 in centroid mode</dd><br>
 <dd>Default: "legacy_perturb_ccd"</dd><br>

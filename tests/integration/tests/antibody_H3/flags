@@ -14,6 +14,8 @@
 -antibody::h3_filter_tolerance  5
 -antibody:constrain_cter
 -antibody:constrain_vlvh_qq
+-antibody::extend_h3_before_modeling false
+-antibody::idealize_h3_stems_before_modeling false
 -constraints:cst_file ./inputs/cter_constraint
 
 #more standard settings, for packages used by antibody_H3
