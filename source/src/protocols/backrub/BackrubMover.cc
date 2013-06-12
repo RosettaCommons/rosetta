@@ -620,7 +620,12 @@ protocols::backrub::BackrubMover::add_mainchain_segments(
 			core::Size resnum(resnums[i]);
 			if (resnum >= 1 && resnum <= input_pose->total_residue()) {
 				for (core::Size j = 1; j <= atomnames.size(); j++) {
-					mainchain_atomids.push_back(core::id::AtomID(input_pose->residue(resnum).atom_index(atomnames[j]), resnum ));
+					// KAB - Added if statement to only add atom to vector if it actually exists in the residue
+					// This allows for HETATMS without C-alphas (or other pivot atoms)
+					//   to be excluded automatically
+					if ( input_pose->residue(resnum).type().has_atom_name( atomnames[j] ) ) {
+						mainchain_atomids.push_back(core::id::AtomID(input_pose->residue(resnum).atom_index(atomnames[j]), resnum ));
+					}
 				}
 			}
 		}
