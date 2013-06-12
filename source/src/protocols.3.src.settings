@@ -360,6 +360,7 @@ sources = {
 		"JumpNrEvaluatorCreator",
 		"NativeEvaluatorCreator",
 		"NeighborTypeFilter",
+		"NetChargeFilter",
 		"NonSequentialNeighborsFilter",
 		"NMerPSSMEnergyFilter",
 		"PackerNeighborGraphFilter",
