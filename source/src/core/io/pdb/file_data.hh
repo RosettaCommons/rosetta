@@ -140,10 +140,10 @@ public:
 
 /// @brief A structure for storing information from PDB LINK records.
 struct LinkInformation {
-	std::string name1_;
+	std::string name1_;  // 1st atom name
 	std::string resName1_;
 	std::string resID1_;  // a 6-character resID, as defined elsewhere in FileData
-	std::string name2_;
+	std::string name2_;  // 2nd atom name
 	std::string resName2_;
 	std::string resID2_;
 	core::Distance length_;

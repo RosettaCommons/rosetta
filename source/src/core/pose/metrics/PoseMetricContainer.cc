@@ -44,7 +44,7 @@ namespace pose {
 namespace metrics {
 
 
-/// @brief default destructor
+/// @brief default constructor
 PoseMetricContainer::PoseMetricContainer() :
 	pose_ptr_( NULL ),
 	structure_is_outdated_( true ),

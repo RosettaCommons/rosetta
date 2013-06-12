@@ -9,7 +9,7 @@ ATOM  C4  CH1   X   0.11
 ATOM  C5  CH1   X   0.11
 ATOM  C6  CH2   X   0.07
 ATOM  O6  OH    X   -0.38
-ATOM  VU  VIRT VIRT 0.00   # to next residue; allows for consistent chi angles
+ATOM  HO6 VIRT VIRT 0.00   # to next residue; allows for consistent chi angles
 ATOM  O5  OOC   X   -0.34
 ATOM  O1  VIRT VIRT 0.00   # for internal res, virtual to previous residue; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
 ATOM  O2  OH    X   -0.38
@@ -23,7 +23,7 @@ ATOM  HO2 Hpol  X   0.21
 ATOM  H3  Hapo  X   0.07
 ATOM  HO3 Hpol  X   0.21
 ATOM  H4  Hapo  X   0.07
-ATOM  HO4 Hpol  X   0.21   ## <--
+ATOM  HO4 Hpol  X   0.21
 ATOM  H5  Hapo  X   0.07
 ATOM 1H6  Hapo  X   0.06   # pro-S
 ATOM 2H6  Hapo  X   0.06   # pro-R
@@ -36,7 +36,7 @@ BOND  C3   C4
 BOND  C4   C5
 BOND  C5   C6
 BOND  C6   O6
-BOND  O6   VU
+BOND  O6   HO6
 BOND  C5   O5
 CUT_BOND  O5   C1          # cyclic bond
 BOND  C1   O1
@@ -63,7 +63,7 @@ PROTON_CHI 3 SAMPLES 3 60 -60 180 EXTRA 0
 CHI 4  C3   C4   O4   HO4
 PROTON_CHI 4 SAMPLES 3 60 -60 180 EXTRA 0
 CHI 5  C4   C5   C6   O6
-CHI 6  C5   C6   O6   VU   # duplicates BB 6
+CHI 6  C5   C6   O6   HO6  # duplicates BB 6
 CHI 7  VO5  C1   C2   C3   # nu(1); duplicates BB 1, but defined differently
 CHI 8  C1   C2   C3   C4   # nu(2); duplicates BB 2
 CHI 9  C2   C3   C4   C5   # nu(3); duplicates BB 3
@@ -80,7 +80,7 @@ ICOOR_INTERNAL    C5    60.023516   70.036253    1.562526   C4    C3    C2
 ICOOR_INTERNAL    C6  -175.112472   68.828198    1.578649   C5    C4    C3
 ICOOR_INTERNAL    O6   -59.874527   64.749256    1.473304   C6    C5    C4
 ICOOR_INTERNAL  UPPER -178.777685   69.501511    1.499799   O6    C6    C5
-ICOOR_INTERNAL    VU  -178.777685   69.501511    1.499799   O6    C6    C5
+ICOOR_INTERNAL    HO6 -178.777685   69.501511    1.499799   O6    C6    C5
 ICOOR_INTERNAL    O5   -57.917154   70.697608    1.443028   C5    C4    C3
 ICOOR_INTERNAL  LOWER  -63.396951   71.218273    1.456186   C1    C2    C3
 ICOOR_INTERNAL    O1   -63.396951   71.218273    1.456186   C1    C2    C3

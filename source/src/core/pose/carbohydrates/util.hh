@@ -20,6 +20,10 @@
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/Conformation.fwd.hh>
+
+// C++ headers
+#include <string>
 
 
 namespace core {
@@ -28,6 +32,17 @@ namespace carbohydrates {
 
 /// @brief  Scan through a saccharide residue's connections to find the residue from which it follows or branches.
 core::uint find_seqpos_of_parent_residue(conformation::Residue const & residue);
+
+/// @brief  Scan through the list of atoms connected to a given "connect_atom" and return the first heavy atom found.
+std::string atom_next_to_connect_atom(conformation::Residue const & residue, std::string const connect_atom_name);
+
+/// @brief  Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of the given
+/// conformation.
+void align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, uint const sequence_position);
+
+/// @brief  Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of the given
+/// pose.
+void align_virtual_atoms_in_carbohydrate_residue(Pose & pose, uint const sequence_position);
 
 /// @brief  Calculate and return the phi angle between a saccharide residue of the given pose and the previous residue.
 core::Angle calculate_carbohydrate_phi(Pose const & pose, uint const sequence_position);

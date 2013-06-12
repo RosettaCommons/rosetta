@@ -104,6 +104,7 @@ Conformation::Conformation() :
 	utility::pointer::ReferenceCount(),
 	fold_tree_( new FoldTree ),
 	atom_tree_( new AtomTree ),
+	contains_carbohydrate_residues_( false) ,
 	residue_coordinates_need_updating_( false ),
 	residue_torsions_need_updating_( false ),
 	structure_moved_( true )
@@ -125,6 +126,9 @@ Conformation::Conformation( Conformation const & src ) :
 	fold_tree_ = new FoldTree( *src.fold_tree_ );
 	atom_tree_ = new AtomTree( *src.atom_tree_ );
 	atom_tree_->set_weak_pointer_to_self( atom_tree_() );
+
+	// carbohydrates?
+	contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
 
 	// chain info
 	chain_endings_ = src.chain_endings_;
@@ -168,6 +172,9 @@ Conformation::operator=( Conformation const & src )
 		// kinematics
 		(*fold_tree_) = (*src.fold_tree_);
 		(*atom_tree_) = (*src.atom_tree_);
+
+		// carbohydrates?
+		contains_carbohydrate_residues_ = src.contains_carbohydrate_residues_;
 
 		// chain info
 		chain_endings_ = src.chain_endings_;
