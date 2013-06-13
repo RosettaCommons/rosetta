@@ -1,3 +1,4 @@
+
 patches/CtermProteinFull.txt
 patches/Cterm_amidation.txt
 patches/NtermProteinFull.txt
@@ -65,17 +66,17 @@ patches/AcetylatedProteinNterm.txt
 
 
 ## carbohydrate patches
-### termini
+## termini
 patches/carbohydrates/lower_terminus.txt
 patches/carbohydrates/upper_terminus.txt
-### glycosylation/branching
+## glycosylation/branching
 patches/carbohydrates/N-linked_glycosylation.txt
 patches/carbohydrates/branch_lower_term.txt
 patches/carbohydrates/2-branch.txt
 patches/carbohydrates/6-branch.txt
-### modifications
+## modifications
 patches/carbohydrates/2-amination.txt
-patches/carbohydrates/N-acetyl-2-amination.txt
+#patches/carbohydrates/N-acetyl-2-amination.txt
 
 
 ## alternative backbones

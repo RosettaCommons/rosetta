@@ -450,7 +450,7 @@ void make_pose_from_sequence(
 /// saccharide residues, as sugars are named with the 1st residue as the "main chain", with all other residues named as
 /// substituents and written as prefixes.  In other words, sugars are usually drawn and named with residue 1 to the
 /// right.\n
-/// At present time, param files only exist for a limited number of sugars! ~ Labonte
+/// At present time, param files only exist for two variations of glucopyranose! ~ Labonte
 void
 make_pose_from_saccharide_sequence(pose::Pose & pose,
 		std::string const & sequence,
@@ -493,8 +493,6 @@ make_pose_from_saccharide_sequence(pose::Pose & pose,
 		add_lower_terminus_type_to_pose_residue(pose, 1);
 		add_upper_terminus_type_to_pose_residue(pose, pose.total_residue());
 	}
-
-	pose.conformation().contains_carbohydrate_residues(true);
 
 	tr.Debug << "Created carbohydrate pose with sequence: " << pose.chain_sequence(1) << endl;
 }

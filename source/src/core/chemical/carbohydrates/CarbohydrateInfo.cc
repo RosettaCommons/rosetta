@@ -641,17 +641,9 @@ CarbohydrateInfo::determine_IUPAC_names()
 	short_prefixes << long_prefixes.str();
 
 	// Substitutions
-	// TODO: How do I alphabetize substitutions?  I'll need a vector to sort.  For now, order by position.
-	for (uint position = 1; position <= n_carbons_; ++position) {
-		if (modifications_[position] == "amino sugar") {
-			long_prefixes << position << "-amino-" << position << "-deoxy-";
-		}
-		if (modifications_[position] == "acetylamino sugar") {
-			long_prefixes << position << "-(N-acetylamino)-" << position << "-deoxy-";
-		}
-		if (modifications_[position] == "acetyl sugar") {
-			long_prefixes << position << "-acetyl-";
-		}
+	if (is_amino_sugar()) {
+		uint position = modifications_.index_of("amino sugar");
+		long_prefixes << position << "-amino-" << position << "-deoxy-";
 	}
 
 	// Stereochemistry
@@ -709,9 +701,6 @@ CarbohydrateInfo::determine_IUPAC_names()
 			long_suffix << "osyl";
 			if (is_amino_sugar()) {
 				short_suffix << "N";
-			}
-			if (is_acetylated()) {
-				short_suffix << "Ac";
 			}
 		}
 		short_suffix << '-';

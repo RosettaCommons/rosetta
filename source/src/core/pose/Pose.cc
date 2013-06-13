@@ -249,7 +249,8 @@ Pose::set_new_energies_object( scoring::EnergiesOP energies )
 	energies_->set_owner( this );
 }
 
-/// @details splits the current pose into several poses containing only a single chain each.
+/// @ details splits the current pose into several poses containing only a single chain each.
+///
 utility::vector1<PoseOP>
 Pose::split_by_chain() const
 {
@@ -263,7 +264,7 @@ Pose::split_by_chain() const
 	return singlechain_poses;
 }
 
-/// @details Returns a pose containing only the given chain.
+/// @details. Returns a pose containing only the given chain. 
 PoseOP
 Pose::split_by_chain(Size const chain_id) const
 {
@@ -516,6 +517,7 @@ Pose::copy_segment(
 }
 
 
+
 Size
 Pose::total_residue() const
 {
@@ -706,7 +708,6 @@ Pose::set_phi( Size const seqpos, Real const setting )
 		uint x = residue_type(seqpos - 1).carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
 		Angle offset = carbohydrates::carbohydrate_phi_offset_from_BB(*this, seqpos);
 		conformation_->set_torsion(TorsionID(seqpos - 1, BB, x + 1), setting - offset);
-		//carbohydrates::align_virtual_atoms_in_carbohydrate_residue(*this, seqpos);
 	}
 }
 
@@ -759,7 +760,6 @@ Pose::set_psi( Size const seqpos, Real const setting )
 		TorsionType id_type = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(psi_torsion).first;
 		Size id_num = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(psi_torsion).second;
 		conformation_->set_torsion(TorsionID(seqpos - 1, id_type, id_num), setting);
-		//carbohydrates::align_virtual_atoms_in_carbohydrate_residue(*this, seqpos);
 	}
 }
 
@@ -822,7 +822,6 @@ Pose::set_omega( Size const seqpos, Real const setting )
 		TorsionType id_type = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(omega_torsion).first;
 		Size id_num = residue_type(seqpos - 1).carbohydrate_info()->glycosidic_linkage_id(omega_torsion).second;
 		conformation_->set_torsion(TorsionID(seqpos - 1, id_type, id_num), setting);
-		//carbohydrates::align_virtual_atoms_in_carbohydrate_residue(*this, seqpos);
 	}
 }
 

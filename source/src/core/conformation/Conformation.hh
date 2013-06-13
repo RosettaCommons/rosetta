@@ -15,16 +15,10 @@
 #ifndef INCLUDED_core_conformation_Conformation_hh
 #define INCLUDED_core_conformation_Conformation_hh
 
+
 // Unit headers
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.hh>
-
-// Package headers
-#include <core/conformation/signals/ConnectionEvent.fwd.hh>
-#include <core/conformation/signals/GeneralEvent.fwd.hh>
-#include <core/conformation/signals/IdentityEvent.fwd.hh>
-#include <core/conformation/signals/LengthEvent.fwd.hh>
-#include <core/conformation/signals/XYZEvent.fwd.hh>
 
 #ifdef WIN32
 #include <core/conformation/signals/ConnectionEvent.hh>
@@ -37,26 +31,47 @@
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/types.hh>
-#include <core/id/AtomID_Mask.fwd.hh>
+
 #include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID_Map.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/AtomTree.fwd.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
 
 // Utility headers
+// AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/signals/BufferedSignalHub.hh>
 #include <utility/signals/Link.hh>
 #include <utility/signals/PausableSignalHub.hh>
-#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
+
+// C++ headers
+// AUTO-REMOVED #include <list>
+
+#include <core/id/NamedAtomID.fwd.hh>
+#include <core/id/TorsionID.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/tree/Atom.hh>
+#include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/conformation/signals/ConnectionEvent.fwd.hh>
+#include <core/conformation/signals/GeneralEvent.fwd.hh>
+#include <core/conformation/signals/IdentityEvent.fwd.hh>
+#include <core/conformation/signals/LengthEvent.fwd.hh>
+#include <core/conformation/signals/XYZEvent.fwd.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
+#include <core/kinematics/AtomTree.fwd.hh>
+#include <core/kinematics/DomainMap.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+
 
 
 namespace core {
@@ -87,16 +102,16 @@ public: // typedefs
 	typedef core::conformation::signals::LengthEvent LengthEvent;
 	typedef core::conformation::signals::XYZEvent XYZEvent;
 
-	// Mirroring typedefs in AtomTree.hh to avoid it's #inclusion.
+  // Mirroring typedefs in AtomTree.hh to avoid it's #inclusion.
 	// for fragment insertions
-	typedef std::map< id::AtomID, Vector > FragXYZ;
-	typedef std::map< id::StubID, kinematics::RT > FragRT;
+  typedef std::map< id::AtomID, Vector > FragXYZ;
+  typedef std::map< id::StubID, kinematics::RT > FragRT;
 
 public:
 
-	// APL Removing accessor functions that voilate the data integrity guarantees of this class.
-	// Conformation forbids non-const access to its residues.  Iterate from 1 to total_residue and
-	// request a Residue const & instead of iterating from res_begin to res_end.
+	/// APL Removing accessor functions that voilate the data integrity guarantees of this class.
+	/// Conformation forbids non-const access to its residues.  Iterate from 1 to total_residue and
+	/// request a Residue const & instead of iterating from res_begin to res_end.
 	/// @brief HIGHLY HIGHLY ILLEGAL ACCESS GRANTED TO CONFORMATION DATA.
 	/// This function will be removed very very shortly.
 	/// @brief Returns a random-access iterator that points at the first residue in the Conformation.
@@ -177,22 +192,6 @@ public:
 	{
 		return chain_endings_.size() + 1; // last residue is not counted as chain ending
 	}
-
-
-	/// @brief Return true if this conformation contains any carbohydrate residues.
-	bool
-	contains_carbohydrate_residues() const
-	{
-		return contains_carbohydrate_residues_;
-	}
-
-	/// @brief Set whether this conformation contains any carbohydrate residues.
-	void
-	contains_carbohydrate_residues(bool const setting)
-	{
-		contains_carbohydrate_residues_ = setting;
-	}
-
 
 	/// @brief Returns the secondary structure the position  <seqpos>
 	/// @return character representing secondary structure; returns 'L' if the
@@ -418,16 +417,16 @@ public:
 
   /// @brief  Insert one conformation into another. See FoldTree::insert_fold_tree_by_jump
 	virtual
-	void
-	insert_conformation_by_jump(
-			Conformation const & conf,             // the conformation to be inserted
-			Size const insert_seqpos,              // rsd 1 in conf goes here
-			Size const insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
-			Size const anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
-			Size const anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
-			std::string const & anchor_atom = "",  // "" means take default anchor atom
-			std::string const & root_atom   = ""   // "" means take default root   atom
-	);
+  void
+  insert_conformation_by_jump(
+    Conformation const & conf,             // the conformation to be inserted
+    Size const insert_seqpos,              // rsd 1 in conf goes here
+    Size const insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
+    Size const anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
+    Size const anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
+    std::string const & anchor_atom = "",  // "" means take default anchor atom
+    std::string const & root_atom   = ""   // "" means take default root   atom
+  );
 
 	//////////////////////////////////////////////////////////////////////////
 	/// @brief copy a stretch of coordinates/torsions from another Conformation
@@ -828,7 +827,7 @@ public:
 	);
 
 	bool
-	atom_is_backbone_norefold( Size const pos, Size const atomno ) const;
+  atom_is_backbone_norefold( Size const pos, Size const atomno ) const;
 
 	/// @brief returns a mask of residues to be used in scoring
 	virtual utility::vector1<bool>
@@ -1006,15 +1005,15 @@ public: // additional observer behavior
 public: // signal management
 
 	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
-	///@note this is not a good test --Doug
+	///@brief this is nt a good test --Doug
 	bool is_residue_typeset( std::string tag ) const;
 
 	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
-	///@note this is not a good test --Doug
+	///@brief this is not a good test --Doug
 	bool is_fullatom() const;
 
 	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
-	///@note this is not a good test --Doug
+	///@brief this is not a good test --Doug
 	bool is_centroid() const;
 
 
@@ -1105,7 +1104,7 @@ private:
 #endif
 
 	/// @brief Returns a residue without triggering coordinate/torsion update
-	/// @details Use with care. Useful inside torsion/coordinate setters where we want chemical info
+	/// Use with care. Useful inside torsion/coordinate setters where we want chemical info
 	/// about a given residue but don't want to trigger the coordinate/torsion updates that go along
 	/// with a call to residue(seqpos)
 	Residue const &
@@ -1242,7 +1241,8 @@ private:
 
 
 	/// @brief  Will (if necessary) copy the xyz coordinates from the AtomTree to the Residues being managed
-	/// Always safe to call. Nothing will happen unless coords_need_updating_ is true.
+	/// Always safe to call. Nothing will happen unless coords_need_updating_
+	/// is true.
 	void
 	update_residue_coordinates() const;
 
@@ -1351,9 +1351,6 @@ private:
 	/// @brief atom tree for the kinematics
 	AtomTreeOP atom_tree_;
 
-	// Does this conformation contain any carbohydrate residues at all?
-	bool contains_carbohydrate_residues_;
-
 	/// @brief do we need to update the coordinates in the Residues?
 	mutable bool residue_coordinates_need_updating_;
 
@@ -1401,11 +1398,15 @@ private:
 
 	/// @brief LengthEvent observers
 	mutable utility::signals::BufferedSignalHub< void, XYZEvent > xyz_obs_hub_;
+
+
 };
 
 std::ostream &operator<< (std::ostream &os, Conformation const &conf);
 
 } // conformation
 } // core
+
+
 
 #endif

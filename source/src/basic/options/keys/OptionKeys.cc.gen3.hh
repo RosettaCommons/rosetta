@@ -1,3 +1,6 @@
+namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }
+namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant_logic_taskops_file" );  }
+namespace optE { BooleanOptionKey const optE_soft_rep( "optE:optE_soft_rep" );  }
 namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }
 namespace optE { BooleanOptionKey const no_hb_env_dependence_DNA( "optE:no_hb_env_dependence_DNA" );  }
 namespace optE { BooleanOptionKey const optE_no_protein_hack_elec( "optE:optE_no_protein_hack_elec" );  }
@@ -353,8 +356,6 @@ namespace antibody { BooleanOptionKey const flank_residue_min( "antibody:flank_r
 namespace antibody { BooleanOptionKey const sc_min( "antibody:sc_min" );  }
 namespace antibody { BooleanOptionKey const rt_min( "antibody:rt_min" );  }
 namespace antibody { BooleanOptionKey const bad_nter( "antibody:bad_nter" );  }
-namespace antibody { BooleanOptionKey const extend_h3_before_modeling( "antibody:extend_h3_before_modeling" );  }
-namespace antibody { BooleanOptionKey const idealize_h3_stems_before_modeling( "antibody:idealize_h3_stems_before_modeling" );  }
 namespace antibody { StringOptionKey const remodel( "antibody:remodel" );  }
 namespace antibody { StringOptionKey const refine( "antibody:refine" );  }
 namespace antibody { StringOptionKey const centroid_refine( "antibody:centroid_refine" );  }

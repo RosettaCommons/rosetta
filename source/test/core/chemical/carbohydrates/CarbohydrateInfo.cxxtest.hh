@@ -157,27 +157,15 @@ public:
 	void test_Pose_phi_psi_omega_w_polysaccharide()
 	{
 		TS_TRACE("Testing phi(), psi(), and omega() methods of Pose with polysaccharide chains.");
-		TS_ASSERT_DELTA(maltotriose_.phi(1), 0.000, 0.02);
+		TS_ASSERT_DELTA(maltotriose_.phi(1), 0.000, 0.001);
 
-		TS_ASSERT_DELTA(isomaltose_.phi(2), 44.3268, 0.02);
-		TS_ASSERT_DELTA(isomaltose_.psi(2), -170.869, 0.02);
-		TS_ASSERT_DELTA(isomaltose_.omega(2), 49.383, 0.02);
+		TS_ASSERT_DELTA(isomaltose_.phi(2), 44.3268, 0.001);
+		TS_ASSERT_DELTA(isomaltose_.psi(2), -170.869, 0.001);
+		TS_ASSERT_DELTA(isomaltose_.omega(2), 49.383, 0.001);
 
-		TS_ASSERT_DELTA(branched_fragment_.phi(5), 111.187, 0.02);
+		TS_ASSERT_DELTA(branched_fragment_.phi(5), 111.187, 0.001);
 
-		TS_ASSERT_DELTA(N_linked_.phi(6), -103.691, 0.02);
-	}
-
-	// Confirm that side-chain torsion angles are assigned correctly.
-	void test_Pose_chi_w_polysaccharide()
-	{
-		TS_TRACE("Testing chi() method of Pose with polysaccharide chains.");
-		//TS_ASSERT_DELTA(maltotriose_.chi(1, 2), 0.000, 0.02);
-		TS_ASSERT_DELTA(maltotriose_.chi(2, 2), -179.959, 0.02);
-		TS_ASSERT_DELTA(maltotriose_.chi(3, 2), 175.924, 0.02);
-		TS_ASSERT_DELTA(maltotriose_.chi(4, 2), maltotriose_.psi(3), 0.02);
-		TS_ASSERT_DELTA(maltotriose_.chi(5, 2), -161.7, 0.02);
-		TS_ASSERT_DELTA(maltotriose_.chi(6, 2), -178.781, 0.02);
+		TS_ASSERT_DELTA(N_linked_.phi(6), -103.691, 0.001);
 	}
 
 	// Confirm that branches are handled properly.

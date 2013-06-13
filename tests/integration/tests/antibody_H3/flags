@@ -14,8 +14,6 @@
 -antibody::h3_filter_tolerance  5
 -antibody:constrain_cter
 -antibody:constrain_vlvh_qq
--antibody::extend_h3_before_modeling false
--antibody::idealize_h3_stems_before_modeling false
 -constraints:cst_file ./inputs/cter_constraint
 
 #more standard settings, for packages used by antibody_H3
@@ -23,7 +21,6 @@
 -ex2 
 -extrachi_cutoff 0
 -corrections:score:use_bicubic_interpolation false  ## should be true for smooth derivatives??
--restore_pre_talaris_2013_behavior
 
 #these are standard settings for kic/ngk
 -loops:legacy_kic false

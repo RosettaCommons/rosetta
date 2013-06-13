@@ -49,8 +49,6 @@ namespace antibody { extern BooleanOptionKey const flank_residue_min; }
 namespace antibody { extern BooleanOptionKey const sc_min; }
 namespace antibody { extern BooleanOptionKey const rt_min; }
 namespace antibody { extern BooleanOptionKey const bad_nter; }
-namespace antibody { extern BooleanOptionKey const extend_h3_before_modeling; }
-namespace antibody { extern BooleanOptionKey const idealize_h3_stems_before_modeling; }
 namespace antibody { extern StringOptionKey const remodel; }
 namespace antibody { extern StringOptionKey const refine; }
 namespace antibody { extern StringOptionKey const centroid_refine; }

@@ -1,3 +1,5 @@
+namespace robert { BooleanOptionKey const robert( "robert" );  }
+namespace robert { StringOptionKey const pairdata_input_pdb_list( "robert:pairdata_input_pdb_list" );  }
 namespace robert { RealOptionKey const pcs_maxsub_filter( "robert:pcs_maxsub_filter" );  }
 namespace robert { RealOptionKey const pcs_maxsub_rmsd( "robert:pcs_maxsub_rmsd" );  }
 namespace robert { BooleanOptionKey const pcs_dump_cluster( "robert:pcs_dump_cluster" );  }
@@ -706,6 +708,3 @@ namespace optE { StringOptionKey const weights( "optE:weights" );  }
 namespace optE { StringVectorOptionKey const fix( "optE:fix" );  }
 namespace optE { FileOptionKey const free( "optE:free" );  }
 namespace optE { FileOptionKey const fixed( "optE:fixed" );  }
-namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }
-namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant_logic_taskops_file" );  }
-namespace optE { BooleanOptionKey const optE_soft_rep( "optE:optE_soft_rep" );  }

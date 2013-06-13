@@ -11,27 +11,29 @@
 /// @brief
 /// @author Phil Bradley
 
-// Unit header
-#include <core/conformation/Residue.hh>
-
 // Package headers
+#include <core/conformation/Residue.hh>
 #include <core/conformation/PseudoBond.hh>
 #include <core/conformation/Conformation.hh>
+//#include <basic/options/keys/orbitals.OptionKeys.gen.hh>
+//#include <basic/options/option.hh>
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
-
-// Project headers
-#include <core/kinematics/Stub.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/Atom.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #ifdef USEBOOSTSERIALIZE
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
 #endif
 
-// Basic headers
+// Project headers
+#include <core/kinematics/Stub.hh>
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/Atom.hh>
+#include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+
+// ObjexxFCL headers
+// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // Numeric headers
 #include <numeric/xyz.functions.hh>
@@ -39,17 +41,16 @@
 // Utility Headers
 #include <utility/assert.hh>
 #include <utility/PyAssert.hh>
-#include <utility/vector1.hh>
 
 // C++ Headers
 #include <iostream>
 
-// Boost headers
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
+#include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 
+//Auto Headers
 #define foreach BOOST_FOREACH
-
-
 namespace core {
 namespace conformation {
 
@@ -171,6 +172,7 @@ Residue::Residue(
 	}
 
 }
+
 
 
 Residue::Residue( Residue const & src )
@@ -295,6 +297,7 @@ Residue::is_similar_rotamer( Residue const & other ) const
 }
 
 
+
 void
 Residue::copy_residue_connections( Residue const & src_rsd )
 {
@@ -399,6 +402,7 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 }
 
 
+
 /// @details loop over all actcoord atoms for this ResidueType,
 /// average their actual positions in this residue.
 void
@@ -415,6 +419,7 @@ void Residue::select_orient_atoms(Size & center, Size & nbr1, Size & nbr2) const
 /// @details  Helper function: selects atoms to orient on and transforms all of my atoms to
 /// orient onto another residue. Used by place(). Need to think a bit more about the
 /// restrictions on src...
+///
 void
 Residue::orient_onto_residue( Residue const & src )
 {
@@ -511,6 +516,7 @@ void Residue::orient_onto_residue(
 /// ideal internal coords (that is why "conformation" is needed as an input argument).
 /// For residues without any backbone atoms (e.g. some ligands), center on nbr_atom instead
 /// and two of its bonded neighbors (preferring heavy atoms to hydrogens if possible).
+
 void
 Residue::place( Residue const & src, Conformation const & conformation, bool preserve_c_beta )
 {
@@ -585,6 +591,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 /// stub atoms. If any of the stub atoms are missing, build them first.
 /// Unable to build a missing atom whose stub atoms are from non-existing
 /// polymer connection and its input bogus value will not be changed.
+///
 void
 Residue::fill_missing_atoms(
 	utility::vector1< bool > missing, // make local copy
@@ -636,6 +643,7 @@ Residue::fill_missing_atoms(
 }
 
 
+
 void
 Residue::clear_residue_connections()
 {
@@ -669,7 +677,7 @@ Residue::has_incomplete_connection() const
 }
 
 
-/// @details
+/// @detailed
 /// determine whether an atom is completely connected to all possible bonded partners
 bool
 Residue::has_incomplete_connection(
@@ -731,6 +739,7 @@ Residue::residue_connection_partner(
 
 /// @details  Private function to keep the connections_to_residues_ array up to date
 /// @note  This could be made faster -- connections_to_residues_ is a std::map< > so operator[] calls are slow
+
 void
 Residue::update_connections_to_residues()
 {
@@ -889,6 +898,8 @@ Residue::set_pseudobonds_to_residue( Size resid, PseudoBondCollectionCOP pbs )
 }
 
 
+
+
 /// @details determine how many atoms n the residue and adjacent residues are bonded to the given atom
 /// (by default, intraresidue virtual atoms are excluded)
 Size
@@ -915,11 +926,11 @@ Residue::n_bonded_neighbor_all_res(
 }
 
 
-// fpd bondlength analog to set_chi
-//    like set_chi, assumes changes propagate to atomtree
-//    keyed off of chi#, so we only allow distances corresponding to chi angles to refine
-//    distance corresponds to the distance between atoms 3 and 4 defining the chi
-//    chino==0 ==> CA-CB distance, which allows us to refine ALA CB position for example
+///fpd bondlength analog to set_chi
+///    like set_chi, assumes changes propagate to atomtree
+///    keyed off of chi#, so we only allow distances corresponding to chi angles to refine
+///    distance corresponds to the distance between atoms 3 and 4 defining the chi
+///    chino==0 ==> CA-CB distance, which allows us to refine ALA CB position for example
 void
 Residue::set_d( int const chino, Real const setting ) {
 	int const effchi = (chino==0)? 1 : 0;
@@ -946,7 +957,7 @@ Residue::set_d( int const chino, Real const setting ) {
 }
 
 
-// fpd bondangle analog to set_chi (see above for details)
+///fpd bondangle analog to set_chi (see above for details)
 void
 Residue::set_theta( int const chino, Real const setting ) {
 	int const effchi = (chino==0)? 1 : 0;
@@ -989,6 +1000,7 @@ Residue::set_theta( int const chino, Real const setting ) {
 /// @details this assumes that change propagates according to the information from
 /// atom_base array, not from atom tree. So be sure not to get into an
 /// endless loop.
+///
 void
 Residue::set_chi( int const chino, Real const setting )
 {
@@ -1035,6 +1047,7 @@ Residue::set_chi( int const chino, Real const setting )
 			1e-2 );
 
 	update_actcoord();//ek added 4/28/10
+
 }
 
 
@@ -1051,12 +1064,13 @@ Residue::set_all_chi( utility::vector1< Real > const & chis )
 /////////////////////////////////////////////////////////////////////////////
 /// @details xyz --> R * xyz + v \n
 /// this uses information from atom_base array to transform all the downstream atoms
-/// along the side chain recursively. it assumes that the atom_base array will not get
+/// along the sidechain recursively. it assumes that the atom_base array will not get
 /// us into any infinite loops!
 ///
 /// @note this is not for general atom tree folding. only used in set_chi in which
 /// changes for a chi angle is fast propagated within one residue and not to invoke
 /// folding the whole atom tree.
+
 void
 Residue::apply_transform_downstream(
 	int const atomno,
@@ -1117,15 +1131,6 @@ Residue::determine_nonstandard_polymer_status()
 	nonstandard_polymer_ = false;
 }
 
-
-/// @note A misnomer; this should really be called "is_virtual_atom()". ~Labonte
-bool
-Residue::is_virtual( Size const & atomno ) const
-{
-	return rsd_type_.atom_type( atomno ).is_virtual();
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 //ja
 std::ostream & operator << ( std::ostream & os, Residue const & res )
@@ -1134,11 +1139,7 @@ std::ostream & operator << ( std::ostream & os, Residue const & res )
 	for ( Size j=1; j<=res.natoms(); ++j ) {
 		Atom const & atom ( res.atom(j) );
 		os << res.atom_name(j) << ": ";
-		os << atom.xyz().x() << ' ' << atom.xyz().y() << ' '<< atom.xyz().z();
-		if (res.is_virtual(j)) {
-			os << " (virtual)";
-		}
-		os << std::endl;
+		os << atom.xyz()(1) << ' ' << atom.xyz()(2) << ' '<< atom.xyz()(3) << std::endl;
 	}
 	if (res.is_carbohydrate()) {
 		os << std::endl;
@@ -1153,6 +1154,12 @@ std::ostream & operator << ( std::ostream & os, Atom const & atom )
 	return os;
 }
 
+////////////////////////////////////////////////
+bool
+Residue::is_virtual( Size const & atomno ) const
+{
+	return rsd_type_.atom_type( atomno ).is_virtual();
+}
 
 #ifdef USEBOOSTSERIALIZE
 // this function takes the old res, clones it rotamer library by applying it to the new res

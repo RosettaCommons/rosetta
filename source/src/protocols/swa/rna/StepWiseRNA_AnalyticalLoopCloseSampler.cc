@@ -395,9 +395,6 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 				std::string tag = ss.str();
 				total_count++;
 				Real current_score = Pose_selection_by_full_score ( pose_data_list, pose, tag );
-				std::cout << "Size of pose_data_list: " << pose_data_list.size() << std::endl;
-
-				std::cout << "CURRENT SCORE " << current_score <<  std::endl;
 
 				if ( verbose_ ) {
 					std::cout << tag <<  std::endl;

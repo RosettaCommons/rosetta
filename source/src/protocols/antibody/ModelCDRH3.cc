@@ -39,7 +39,6 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/H3CterInsert.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/conformation/util.hh>
 
 
 
@@ -110,8 +109,6 @@ void ModelCDRH3::set_default()
         
     cen_cst_ = 10.0;
 
-    extend_h3_ = true;
-    idealize_h3_stems_ = false;
         
     if(!user_defined_)
     {
@@ -179,8 +176,6 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     }
         
     simple_one_loop_fold_tree( pose_in, cdr_h3 );
-
-
 //    TR<<"*******************************************"<<std::endl;
 //    TR<<pose_in.fold_tree()<<std::endl;
 //    TR<<"*******************************************"<<std::endl;
@@ -193,30 +188,11 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
     // Building centroid mode loop
     to_centroid.apply( pose_in );
 
-    if(idealize_h3_stems_){
-		set_single_loop_fold_tree( pose_in, cdr_h3 );
-		
-		TR<<"Idealizing the H3 stems ........ "<<std::endl;
-		core::conformation::idealize_position(framework_loop_begin-1, pose_in.conformation());
-		pose_in.set_omega( framework_loop_begin - 1, 179.6 );
-		core::conformation::idealize_position(framework_loop_end+1, pose_in.conformation());
-		pose_in.set_omega( framework_loop_end + 1, 179.6 );
-		// 179.6 is from Daisuke's literature search, it is on Graylab wiki for idealization benchmark
-		
-		simple_one_loop_fold_tree( pose_in, cdr_h3 );
-    }
-
-    if(extend_h3_){
-		TR<<"Extend the H3 loop ..........."<<std::endl;
-        set_extended_torsions( pose_in, cdr_h3 );
-    }
-
-
     if(remodel_=="legacy_perturb_ccd"){
     // some initialization before you do h3 loop modeling
 //    my_LoopMover xxx ;
 //    xxx.set_extended_torsions( pose_in, cdr_h3 );
-
+       set_extended_torsions( pose_in, cdr_h3 );
        //pose_in.dump_pdb("extended_idealized_centroid.pdb");
         //JQX:  this function is in loops_main.cc file
         //      firstly, idealize the loop (indealize bonds as well)
@@ -244,7 +220,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
         remodel_mover_ = static_cast< loops::loop_mover::IndependentLoopMover * >
         ( loops::LoopMoverFactory::get_instance()->create_loop_mover(remodel_, pass_loops).get() ) ;
         if ( !remodel_mover_ ) { utility_exit_with_message( "Error: no remodel mover defined!" );}
-
+        
         // deal with the fragment files if the remodel_ type is not KIC
         if ( remodel_ != "perturb_kic"  ){
             utility::vector1< core::fragment::FragSetOP > frag_libs;
@@ -262,6 +238,7 @@ void ModelCDRH3::apply( pose::Pose & pose_in )
         remodel_mover_->set_scorefxn( lowres_scorefxn_ );
 
     }
+    
     
     /*  JQX: the following code is probably not ncessary*/
     if(bad_nter_){

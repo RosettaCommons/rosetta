@@ -18,7 +18,6 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/carbohydrates/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
 
@@ -156,7 +155,6 @@ RingConformationMover::apply(Pose & input_pose)
 	using namespace utility;
 	using namespace conformation;
 	using namespace id;
-	using namespace pose::carbohydrates;
 
 	if (option[OptionKeys::carbohydrates::lock_rings]) {
 		Warning() << "Rings have been locked; no ring conformation moves are being applied to this pose." << endl;
@@ -206,7 +204,6 @@ RingConformationMover::apply(Pose & input_pose)
 	for (Size k = 1; k <= ring_size - 2; ++k) {
 		nu_id = res.carbohydrate_info()->nu_id(k);
 		input_pose.set_torsion(TorsionID(res_num, nu_id.first, nu_id.second), conformer.second[k]);
-		align_virtual_atoms_in_carbohydrate_residue(input_pose, res_num);
 	}
 
 	TR << "Move complete." << endl;

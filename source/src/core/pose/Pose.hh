@@ -12,10 +12,10 @@
 /// @author Phil Bradley
 /// @author Modified by Sergey Lyskov
 
-/// Be very careful with #includes in this file.  As almost every file in Rosetta
+/// Be very careful with #includes in this file.  As almost every file in mini
 /// #includes Pose.hh, any header file #included here will produce a huge
-/// recompile when modified.  I pledge a personally delivered, hand-crafted
-/// ass-whooping for any fool that #includes an unnecessary .hh file in Pose.hh.
+/// recompile when modified.  I pledge a personally delivered, hand crafted
+/// ass whooping for any fool that #includes an unneccessary .hh file in Pose.hh.
 /// Allowed .hh files are few: Residue, ResidueType, Conformation, Energies
 /// AtomID and NamedAtomID.  Everything else should be forward included, or
 /// not included at all.  The above pledge applies to any header file
@@ -28,16 +28,16 @@
 #ifndef INCLUDED_core_pose_Pose_hh
 #define INCLUDED_core_pose_Pose_hh
 
+
+// type headers
+#include <core/types.hh>
+
 // Unit headers
 #include <core/pose/Pose.fwd.hh>
 
 // Package headers
 #include <core/pose/datacache/ObserverCache.fwd.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#include <core/pose/signals/ConformationEvent.fwd.hh>
-#include <core/pose/signals/DestructionEvent.fwd.hh>
-#include <core/pose/signals/EnergyEvent.fwd.hh>
-#include <core/pose/signals/GeneralEvent.fwd.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
@@ -46,11 +46,11 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 
+// AUTO-REMOVED #include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedStubID.hh>
 #include <core/id/TorsionID.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
-#include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedStubID.fwd.hh>
 
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/Jump.fwd.hh>
@@ -80,22 +80,40 @@
 #endif
 
 #include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraints.fwd.hh>
 
 #include <basic/MetricValue.fwd.hh>
 
-// Type headers
-#include <core/types.hh>
+// //#include "cst_set.h"
+// #include "jump_classes.h"
+// #include "pose_param.h"
+// #include "score_data.h"
+
+// // ObjexxFCL Headers
+// #include <ObjexxFCL/FArray3A.hh>
+// #include <ObjexxFCL/FArray4D.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/signals/BufferedSignalHub.hh>
 #include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
 
 // Numeric headers
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
+
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/DOF_ID.fwd.hh>
+#include <core/id/NamedAtomID.fwd.hh>
+#include <core/id/NamedStubID.fwd.hh>
+#include <core/pose/signals/ConformationEvent.fwd.hh>
+#include <core/pose/signals/DestructionEvent.fwd.hh>
+#include <core/pose/signals/EnergyEvent.fwd.hh>
+#include <core/pose/signals/GeneralEvent.fwd.hh>
+#include <utility/vector1.hh>
+
 
 #ifdef WIN32
 	#include <core/pose/signals/ConformationEvent.hh>
@@ -107,18 +125,25 @@
 	#include <core/id/AtomID.hh>
 #endif
 
+
+
 // C++ Headers
+// #include <cassert>
+// #include <cmath>
+// #include <cstdlib>
 #include <iostream>
 #include <sstream>
+// #include <map>
+// #include <string>
 
 
 namespace core {
 namespace pose {
 
 
-/// @brief A molecular system including residues, kinematics, and energies
+	/// A molecular system including residues, kinematics, and energies
 
-/** @details
+/**
 
   The Pose class represents a molecular system (protein-dna-ligand...)
 as a container of Rosetta Residue objects together with
@@ -159,6 +184,7 @@ Common Methods:
     Pose.sequence
     Pose.total_residue
 **/
+
 class Pose : public utility::pointer::ReferenceCount {
 
 public:
@@ -1464,6 +1490,7 @@ private: // observer notifications
 
 private: // Pose as-an-observer methods
 
+
 	/// @brief upon receiving a conformation::signals::XYZEvent
 	void
 	on_conf_xyz_change( core::conformation::signals::XYZEvent const & event );
@@ -1586,25 +1613,27 @@ private:
 #endif
 private:
 
+
+
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	/////////////////////////data ////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 
-	// the kinematics object, wraps a fold_tree and an atom_tree
-	/*
+	/// the kinematics object, wraps a fold_tree and an atom_tree
+	/**
 		 responsible for updating Residue coords in response to changes
 		 in the internal coordinates
 		 also keeps track of what has changed since last update neighbors call
-	*/
+	**/
 	ConformationOP conformation_;
 
 
-	// the cached energies object, stores total,rsd,and rsd-pair energies and neighbor info
+	/// the cached energies object, stores total,rsd,and rsd-pair energies and neighbor info
 
-	// stores information from the last energy evaluation
-	// handles cacheing rsd and rsd-pair energies
+	/// stores information from the last energy evaluation
+	/// handles cacheing rsd and rsd-pair energies
 	scoring::EnergiesOP energies_;
 
 	// data which the pose can compute (akin to "decoystats" of Rosetta++)

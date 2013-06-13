@@ -4822,14 +4822,6 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			desc='the n-terminal is bad because of bad H3 grafting',
 			default='true'
 			),
-		Option( 'extend_h3_before_modeling', 'Boolean',
-			desc='extend the H3 to forget the intial H3 configuration',
-			default='true'
-			),
-		Option( 'idealize_h3_stems_before_modeling', 'Boolean',
-			desc='idealize the H3 stem, H3 grafting does not copy the coordinates which makes the grafting bad ',
-			default='true'
-			),
 		Option('remodel', 'String',
 			desc='Choose a perturb method to model H3 in centroid mode',
 			default='legacy_perturb_ccd'

@@ -461,7 +461,7 @@ sources = {
 
 	# L ######################################################################
 	"pilot/labonte" : [
-		#"debug_labontes_current_work",
+		#"tester",
 		#"debug_branching",
 		"test_RingConformationMover",
 		"test_CarbohydrateInfo"

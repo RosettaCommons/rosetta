@@ -85,7 +85,6 @@
 #include <protocols/simple_filters/InterfaceBindingEnergyDensityFilterCreator.hh>
 #include <protocols/simple_filters/OperatorFilterCreator.hh>
 #include <protocols/simple_filters/NeighborTypeFilterCreator.hh>
-#include <protocols/simple_filters/NetChargeFilterCreator.hh>
 #include <protocols/simple_filters/NMerPSSMEnergyFilterCreator.hh>
 #include <protocols/simple_filters/PackStatFilterCreator.hh>
 #include <protocols/simple_filters/PoseInfoFilterCreator.hh>

@@ -597,7 +597,7 @@ init_tracers(){
 void
 init_source_revision(){
 	if( option[ run::version ]() ) {
-		TR << "Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url() << std::endl;
+		TR << "Mini-Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url() << std::endl;
 	}
 }
 
