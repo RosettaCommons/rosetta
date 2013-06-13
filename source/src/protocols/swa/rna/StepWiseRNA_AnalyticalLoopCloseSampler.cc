@@ -283,7 +283,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	for ( Size k = 0; k < pucker_ids.size(); k++ ){
 
 		Size pucker_id = k;
-		if ( choose_random_ ) pucker_id = numeric::random::random_element( pucker_ids );
+		if ( choose_random_ ) pucker_id = RG.random_element( pucker_ids );
 		std::cout << "pucker_id = " << pucker_id << std::endl;
 
 		if (use_phenix_geo_) {

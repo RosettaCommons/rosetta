@@ -114,6 +114,15 @@ public:
 	///@brief Restores the state of all random number generators from given stream.
 	static void restoreAllStates(std::istream & in);
 
+  /// return a random element from a utility::vector1
+	template< class T >
+	T const &
+	random_element( utility::vector1< T > const & v )
+	{
+		assert( !v.empty() );
+		return v[ RandomGenerator::random_range( 1, v.size() ) ];
+	}
+
 public: // implement the boost Uniform Random Generator concept
 
 	typedef double result_type;
@@ -139,16 +148,6 @@ private: // Fields
 		std::string const & type
 	);
 }; // RandomGenerator
-
-
-/// return a random element from a utility::vector1
-template< class T >
-T const &
-random_element( utility::vector1< T > const & v )
-{
-	assert( !v.empty() );
-	return v[ random_range( 1, v.size() ) ];
-}
 
 
 } // namespace random
