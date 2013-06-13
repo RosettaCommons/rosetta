@@ -131,7 +131,7 @@ class Tester:
 
 
     def runOneLibUnitTests(self, lib, yaml_file, log_file):
-        if Options.one  and  ( (lib, Options.one.split(':')[0]) not in self.all_tests_by_lib[lib] ): return
+        if Options.one  and  ( (lib, Options.one.split(':')[0]) not in self.all_test_suites_by_lib[lib] ): return
 
         #self.unitTestLog += self.log("-------- %s --------\n" % E)
         path = "cd " + self.testpath + " && "
@@ -162,7 +162,7 @@ class Tester:
 
         #else:
         #    print 'Test %s is not in %s, skipping...' % (Options.one, lib)
-        #    print 'tests:', self.all_tests_by_lib[lib]
+        #    print 'tests:', self.all_test_suites_by_lib[lib]
 
         # saving log to a file...
         f = open(log_file, 'w');  f.write(output);  f.close()
@@ -215,18 +215,25 @@ class Tester:
         logs_yamls = {}
 
         # Getting list of test suite's
-        self.all_tests = []
-        self.all_tests_by_lib = {}
-        for lib in UnitTestExecutable:
-            tests = []
-            for suite in commands.getoutput(self.testpath + '/' + lib + ' _ListAllTests_').split():
-                tests.append( (lib, suite) )
+        self.all_test_suites = []
+        self.all_test_suites_by_lib = {}
 
-            self.all_tests.extend( tests )
-            self.all_tests_by_lib[lib] = tests
+        self.all_tests = []
+
+        for lib in UnitTestExecutable:
+            tests = set()
+            for test in commands.getoutput(self.testpath + '/' + lib + ' _ListAllTests_').split():
+                tests.add( (lib, test.split(':')[0]) )
+                self.all_tests.append(test)
+
+            self.all_test_suites.extend( tests )
+            self.all_test_suites_by_lib[lib] = tests
+
+        #print 'Suites:', self.all_test_suites
+        #print 'Tests:', self.all_tests
 
         if Options.one:  # or Options.jobs < 5:
-            if Options.one not in [s for (l,s) in self.all_tests]:
+            if Options.one not in [s for (l,s) in self.all_test_suites] + self.all_tests:
                 print 'Test suite %s not found!' % Options.one
                 sys.exit(1)
 
@@ -275,7 +282,7 @@ class Tester:
             #self.log( "Run unit tests... Done.\n")
 
         else: # running Unit test on multiple CPU's, new style, fully parallel
-            for lib, suite in self.all_tests:
+            for lib, suite in self.all_test_suites:
                 pid = self.mfork()
                 if not pid:  # we are child process
                     self.runOneSuite(lib, suite)
@@ -294,9 +301,9 @@ class Tester:
                 log_file_h = file(log_file, 'w')
                 yaml_file_h = file(yaml_file, 'w')
                 yaml_data = {}
-                for l, suite in self.all_tests_by_lib[lib]:
+                for l, suite in self.all_test_suites_by_lib[lib]:
                     log_file_h.write( file(self.testpath + '/' + lib + '.' + suite + '.log').read() )
-                    data = yaml.load( file(self.testpath + '/' + lib + '.'+ suite + '.yaml').read() )
+                    data = yaml.load( file(self.testpath + '/' + lib + '.' + suite + '.yaml').read() )
                     for k in data:
                         if k in yaml_data: yaml_data[k] = list( set(yaml_data[k] + data[k]) )
                         else: yaml_data[k] = data[k]
@@ -429,13 +436,16 @@ def main(args):
         raise ValueError("Unknown options: %s", unknown_args)
 
     if options.database == parser.get_default_values().database:
-        if os.environ.get('ROSETTA3_DB') is not None and \
+        if path.isdir( path.join( "..", "database") ):
+            options.database = path.abspath(path.join( "..", "database"))
+
+        elif os.environ.get('ROSETTA3_DB') is not None and \
                 path.isdir(os.environ.get('ROSETTA3_DB')):
             options.database = os.environ.get('ROSETTA3_DB')
-        elif path.isdir( path.join( "..", "database") ):
-            options.database = path.abspath(path.join( "..", "database"))
+
         elif path.isdir( path.join( path.expanduser("~"), "rosetta_database") ):
             options.database = path.join( path.expanduser("~"), "rosetta_database")
+
         else:
             raise ValueError("Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database)
 
