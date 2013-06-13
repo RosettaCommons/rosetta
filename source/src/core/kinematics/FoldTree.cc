@@ -2564,6 +2564,11 @@ FoldTree::count_fixed_residues(
 ) const
 {
 	check_topology();
+	
+	//moving the call to setup_edge_counts() from check_topology() to here
+	//after thorough testing, this seems to be the only function that requires up-to-date edge
+	//count data, so moving it here should cut down on unecessary edge count calculations
+	setup_edge_counts();
 	// pass out the value for min_edge_count
 	// this is a measure of the magnitude of the largest single-residue or
 	// single-jump

@@ -964,7 +964,8 @@ FoldTree::check_topology() const
 	update_num_jump();
 	update_jump_points();
 	update_cutpoints();
-	setup_edge_counts();
+	//setup_edge_counts(); moving this call to count_fixed_residues() since it is the only
+	//function that requires up-to-date edge count data
 	//////////////////////////////////////////////////////////
 	return true;
 }
