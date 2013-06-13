@@ -1,0 +1,23 @@
+Database built trained on 5% of VALL database using lib_svm. Accuracy can be improved by smoothing input using blosum matrix. However, this significantly increases the size of the database.
+
+
+ABEGO overall: 68.0%
+A 75.0%
+B 62.3%
+E 31.8%
+G 41.4% 
+O 50.3%
+
+HLE overall: 65.6%
+helix 70.3%
+loop 70.2%
+sheet 49.1% 
+
+
+For comparison Psipred_single accuracy
+helix 66.6%
+loop 77.3%
+sheet 53.5%
+overall 67.9%
+
+So if you're picking fragments USE the frag-picking machinary which uses psipred etc. This database is designed to improve layered design for de-novo protein design.

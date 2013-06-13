@@ -381,9 +381,9 @@ RestrictWorstRegion::initialize_resfile( std::string const & orig_resfile )
 	} else {
 		resfile_ = orig_resfile.substr( pos+1, orig_resfile.size() );
 	}
-	if ( resfile_ == orig_resfile ) {
+	/*if ( resfile_ == orig_resfile ) {
 		resfile_ += "_out";
-	}
+	}*/
 	TR << "Resfile=" << resfile_ << std::endl;
 	std::string resfile_string;
 	utility::io::izstream file( orig_resfile );

@@ -38,6 +38,7 @@ sources = {
 		"minimalCstRelaxUtil",
 	],
         "devel/denovo_design": [
+                "DumpStatsSS",
                 "FastDesign",
                 "GenericSimulatedAnnealer",
                 "RestrictWorstRegion",

@@ -1044,9 +1044,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				//999 allows for frags > 9 resiudes
 				abinitio_stage( pose,999, movemap,sfxStaged_OP,1,100,sampleAllResidues,true,"full_length_frags",useFragSequence,fragScoreThreshold);
 		//Sample with 9mers in all positions------------------------------
-		abinitio_stage( pose, 9, movemap,sfxStaged_OP,1,100,sampleAllResidues,true,"9mers_allPos",useFragSequence,fragScoreThreshold);
+		/*abinitio_stage( pose, 9, movemap,sfxStaged_OP,1,100,sampleAllResidues,true,"9mers_allPos",useFragSequence,fragScoreThreshold);
 		abinitio_stage( pose, 9, movemap,sfxStaged_OP,3,500,sampleSubsetResidues,true,"9mers_subsetPos",useFragSequence,fragScoreThreshold);
 		abinitio_stage( pose, 3, movemap,sfxStaged_OP,1,100,sampleSubsetResidues,true,"3mers_subsetPos",useFragSequence,fragScoreThreshold);
+		*/
 		//cleanup to integrate with Possu------------------------------------
 		PoseOP pose_prime = new Pose( pose );
 		pose_prime->fold_tree( sealed_ft );
@@ -3092,12 +3093,18 @@ void RemodelLoopMover::set_starting_pdb(Pose & pose){
 		using core::Size;
 		PoseOP inputPose = core::import_pose::pose_from_pdb(option[OptionKeys::remodel::staged_sampling::starting_pdb]);
 		assert(inputPose->total_residue() == pose.total_residue());
-		for(Size ii=1; ii<=pose.total_residue(); ++ii){
+		for(Size ii=2; ii<pose.total_residue(); ++ii){
 				pose.set_phi(ii,inputPose->phi(ii));
 				pose.set_psi(ii,inputPose->psi(ii));
 				pose.set_omega(ii,inputPose->omega(ii));
 				pose.set_secstruct(ii,inputPose->secstruct(ii));
 		}
+		Size repeatRes = (pose.total_residue()/2)+1;
+		pose.set_phi(1,inputPose->phi(repeatRes));
+		pose.set_psi(1,inputPose->psi(repeatRes));
+		pose.set_omega(1,inputPose->omega(repeatRes));
+		pose.set_secstruct(1,inputPose->secstruct(repeatRes));
+		pose.dump_pdb("try.pdb");
 }
 
 void RemodelLoopMover::set_starting_sequence(Pose & pose){

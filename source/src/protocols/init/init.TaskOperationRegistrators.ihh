@@ -33,6 +33,7 @@ static TaskOperationRegistrator< protocols::forge::remodel::RemodelRotamerLinksC
 static TaskOperationRegistrator< protocols::toolbox::task_operations::DesignAroundOperationCreator > DesignAroundOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::JointSequenceOperationCreator > JointSequenceOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::LimitAromaChi2OperationCreator > LimitAromaChi2OperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::LinkResiduesCreator > LinkResiduesCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ModifyAnnealerCreator > ModifyAnnealerCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::PreventChainFromRepackingOperationCreator > PreventChainFromRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::PreventResiduesFromRepackingOperationCreator > PreventResiduesFromRepackingOperationCreator_registrator;

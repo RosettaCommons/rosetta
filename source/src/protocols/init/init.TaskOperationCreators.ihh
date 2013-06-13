@@ -33,6 +33,7 @@
 #include <protocols/toolbox/task_operations/DesignAroundOperationCreator.hh>
 #include <protocols/toolbox/task_operations/JointSequenceOperationCreator.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2OperationCreator.hh>
+#include <protocols/toolbox/task_operations/LinkResiduesCreator.hh>
 #include <protocols/toolbox/task_operations/ModifyAnnealerCreator.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperationCreator.hh>

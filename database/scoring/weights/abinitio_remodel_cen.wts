@@ -1,10 +1,6 @@
-# score3 from rosetta++, used in stage 4 of the ClassicAbinitio protocol.
-pair    1.0
-cbeta   1.0
-vdw     1.0
-rg      0.5
-cenpack 1.0
-hs_pair 1.0
-ss_pair 1.0
-rsigma  1.0
+vdw         1.0
 hbond_sr_bb 4.0
+rama        0.1
+cbeta 		1.0
+cenpack 	1.0
+rg_local   20.0

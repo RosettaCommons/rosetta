@@ -164,14 +164,12 @@ construct_poly_XXX_pose(
 
 			chemical::ResidueTypeCOP cur_restype = & pose.residue_type( *pos_it );
 
-
 			if( ( keep_pro && ( cur_restype->aa() == chemical::aa_pro ) )
 				||( keep_gly && ( cur_restype->aa() == chemical::aa_gly ) )
 				||( keep_disulfide_cys && ( cur_restype->aa() == chemical::aa_cys ) && cur_restype->has_variant_type( chemical::DISULFIDE ) ) )
 				{
 					continue;
 				}
-
 			utility::vector1< std::string > current_variants;
 
 			bool variants_match = cur_restype->variants_match( replace_res.type() );
@@ -182,12 +180,12 @@ construct_poly_XXX_pose(
 				chemical::ResidueTypeCOP var_replace_type = & replace_res.type();
 
 				for(core::Size var = 1; var <= current_variants.size(); var++){
-					var_replace_type = & ( restype_set->get_residue_type_with_variant_added( * var_replace_type, current_variants[ var ] ));
+						if(( cur_restype->has_variant_type( chemical::DISULFIDE ) && keep_disulfide_cys)|| (!cur_restype->has_variant_type( chemical::DISULFIDE ))) 
+						var_replace_type = & ( restype_set->get_residue_type_with_variant_added( * var_replace_type, current_variants[ var ] ));
 				}
 
 				runtime_assert( var_replace_type->name3() == aa );
 				conformation::Residue const var_replace_res( *var_replace_type, true );
-
 				pose.replace_residue( *pos_it, var_replace_res, true );
 			}
 

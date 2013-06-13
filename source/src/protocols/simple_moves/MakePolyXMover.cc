@@ -111,7 +111,7 @@ MakePolyXMover::parse_my_tag(
 	aa_ = tag->getOption<std::string>( "aa", "ALA" );
 	keep_pro_  = tag->getOption<bool>( "keep_pro", 0 );
 	keep_gly_  = tag->getOption<bool>( "keep_gly", 1 );
-	keep_disulfide_cys_  = tag->getOption<bool>( "keep_disulufide_cys", 0 );
+	keep_disulfide_cys_  = tag->getOption<bool>( "keep_disulfide_cys", 0 );
 
 	TR << "MakePolyXMover was loaded" << std::endl;
 

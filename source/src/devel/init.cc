@@ -27,6 +27,7 @@
 //#include <devel/constrained_sequence_design/SequenceConstraintFactory.hh>
 
 //mover creators
+#include <devel/denovo_design/DumpStatsSSCreator.hh>
 #include <devel/denovo_design/FastDesignCreator.hh>
 #include <devel/denovo_design/RestrictWorstRegionCreator.hh>
 #include <devel/domain_insertion/FusePosesNtoCMoverCreator.hh>
@@ -96,6 +97,7 @@
 namespace devel {
 
 // Mover creators
+static protocols::moves::MoverRegistrator< denovo_design::DumpStatsSSCreator > reg_DumpStatsSSCreator;
 static protocols::moves::MoverRegistrator< denovo_design::FastDesignCreator > reg_FastDesignCreator;
 static protocols::moves::MoverRegistrator< denovo_design::RestrictWorstRegionCreator > reg_RestrictWorstRegionCreator;
 static protocols::moves::MoverRegistrator< denovo_design::GenericSimulatedAnnealerCreator > reg_GenericSimulatedAnnealerCreator;
