@@ -696,7 +696,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_nrchi_score(
 		d111.value_, d111.dsecox_, d111.dsecoy_, d111.dsecoz_, d111.dsecoxy_, d111.dsecoxz_, d111.dsecoyz_, d111.dsecoxyz_,
 		phi_alpha, psi_alpha, nrchi_alpha,
 		10, 10, bbdep_nrchi_binsize_,
-		interpolated_energy, 
+		interpolated_energy,
 		dnrchi_score_dphi,
 		dnrchi_score_dpsi,
 		dnrchi_score_dnrchi );
@@ -769,7 +769,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::best_rotamer_energy(
 	RotamerLibraryScratchSpace & scratch
 ) const
 {
-		assert( rsd.nchi() == T+1 ); 
+		assert( rsd.nchi() == T+1 );
     Real nrchi_score( 0 );
   if ( curr_rotamer_only ) {
 	      Real dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi;
@@ -777,7 +777,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::best_rotamer_energy(
 			//Real rotameric_score =
 			parent::eval_rotameric_energy_deriv( rsd, scratch, false);
 
-        nrchi_score = bbdep_nrchi_score( rsd, scratch, dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi );	
+        nrchi_score = bbdep_nrchi_score( rsd, scratch, dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi );
 				core::conformation::Residue rsd_copy (rsd);
 				utility::vector1< Real > rsd_chi=rsd.chi();
 
@@ -802,14 +802,14 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::best_rotamer_energy(
 
 				Real dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi;
 				parent::eval_rotameric_energy_deriv( rsd, scratch, false);
-        nrchi_score = bbdep_nrchi_score( rsd, scratch, dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi );	
+        nrchi_score = bbdep_nrchi_score( rsd, scratch, dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi );
 				Real tmp_nrchi_score;
 				//search the space of terminal chiT
 				core::conformation::Residue rsd_copy (rsd);
 				utility::vector1< Real > rsd_chi=rsd.chi();
 
 				for ( Size jj = 1; jj <= rotamer_samples.size(); ++jj ) {
-						
+
 						for ( Size ii = 1; ii <= T; ++ii ) {
               		rsd_chi[ii]=rotamer_samples[jj].chi_mean()[ii];
 						}
@@ -2571,9 +2571,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_bbdep_continuous_minimizati
 		}
 	}
 
-	/// Now create the tricubic interpolation data and store that data in the 
+	/// Now create the tricubic interpolation data and store that data in the
 	if ( true ) {
-		std::cout << "Creating tricubic splines for the backbone-dependent non-rotameric chi scores" << std::endl;
+		//std::cout << "Creating tricubic splines for the backbone-dependent non-rotameric chi scores" << std::endl;
 		using namespace numeric;
 		using namespace numeric::interpolation::spline;
 		BorderFlag border[3] = { e_Periodic, e_Periodic, e_Periodic};
@@ -2614,7 +2614,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_bbdep_continuous_minimizati
 			}
 
 		}
-		std::cout << "Finished creating tricubic splines" << std::endl;
+		//std::cout << "Finished creating tricubic splines" << std::endl;
 	}
 }
 
