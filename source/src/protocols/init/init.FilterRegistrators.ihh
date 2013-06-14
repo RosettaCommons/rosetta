@@ -98,6 +98,7 @@ static FilterRegistrator< protocols::simple_filters::HolesFilterCreator > reg_Ho
 static FilterRegistrator< protocols::simple_filters::InterfaceSasaFilterCreator > reg_InterfaceSasaFilterCreator;
 static FilterRegistrator< protocols::simple_filters::InterfaceBindingEnergyDensityFilterCreator > reg_InterfaceBindingEnergyDensityFilterCreator;
 static FilterRegistrator< protocols::simple_filters::NeighborTypeFilterCreator > reg_NeighborTypeFilterCreator;
+static FilterRegistrator< protocols::simple_filters::NetChargeFilterCreator > reg_NetChargeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::NMerPSSMEnergyFilterCreator > reg_NMerPSSMEnergyFilterCreator;
 static FilterRegistrator< protocols::simple_filters::OperatorFilterCreator > reg_OperatorFilterCreator;
 static FilterRegistrator< protocols::simple_filters::PackStatFilterCreator > reg_PackStatFilterCreator;

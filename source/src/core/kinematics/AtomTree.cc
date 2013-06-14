@@ -1161,7 +1161,7 @@ AtomTree::bond_length_dof_id(
 /////////////////////////////////////////////////////////////////////////////
 ///
 /// @note this is NOT calculated straight from atom positions.Instead, it is
-/// calculated from interal DOFs. If no DOF can be found from these four atoms,
+/// calculated from internal DOFs. If no DOF can be found from these four atoms,
 /// 0.0 will be returned and a warning message is printed.
 Real
 AtomTree::torsion_angle(
@@ -1180,7 +1180,7 @@ AtomTree::torsion_angle(
 		( torsion_angle_dof_id( atom1, atom2, atom3, atom4, offset ) );
 
 	if ( !id.valid() ) {
-		// couldnt find this angle
+		// couldn't find this angle
 		TR << "AtomTree::torsion_angle() cant find dof! " <<
 			atom1 << ' ' << atom2 << ' ' << atom3 << ' ' << atom4 << std::endl;
 		return 0.0;

@@ -65,8 +65,10 @@ namespace CxxTest
 				__remove_first_command_line_arg();
 
 				for( SuiteDescription *sd = wd.firstSuite(); sd; sd = sd->next() ) {
-					std::cout << sd->suiteName() << " ";
-					//if( s == sd->suiteName() ) {
+					for( TestDescription *td = sd->firstTest(); td; td = td->next() ) {
+					    std::cout << std::string(sd->suiteName()) + ":" + td->testName() << " ";
+					}
+					//std::cout << sd->suiteName() << " ";
 				}
 				std::cout << std::endl;
 

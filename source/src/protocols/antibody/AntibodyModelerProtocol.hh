@@ -121,7 +121,12 @@ public:
     void set_bad_nter(bool setting){
         bad_nter_ = setting;
     }
-
+	void set_extend_h3_before_modeling(bool setting){
+		extend_h3_before_modeling_ = setting;
+	}
+	void set_idealize_h3_stems_before_modeling(bool setting){
+		idealize_h3_stems_before_modeling_ = setting;
+	}
 
 	void display_constraint_residues( pose::Pose & pose );
 
@@ -148,6 +153,8 @@ private:
     std::string h3_refine_type_;
     core::Real cen_cst_, high_cst_;
     bool bad_nter_;
+	bool extend_h3_before_modeling_;
+	bool idealize_h3_stems_before_modeling_;
     bool use_csts_;
 	bool constrain_vlvh_qq_, constrain_cter_;
     

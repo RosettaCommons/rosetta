@@ -394,10 +394,29 @@ public:
 
 
 	// Side-chain modifications
+	// (Be sure to update database/chemical/carbohydrates/sugar_properties.list if adding functions to this section.)
+	/// @brief  Return true if any hydroxyl group has been modified to an acetylated amino group.
+	bool
+	is_N_acetylated() const {
+		return modifications_.contains("acetylamino sugar");
+	}
+
+	/// @brief  Return true if any hydroxyl group has been modified by acetylation.
+	bool
+	is_O_acetylated() const {
+		return modifications_.contains("acetyl sugar");
+	}
+
+	/// @brief  Return true if the sugar has been acetylated at any position.
+	bool
+	is_acetylated() const {
+		return is_N_acetylated() || is_O_acetylated();
+	}
+
 	/// @brief  Return true if any hydroxyl group has been modified to an amino group or an acetylated amino group.
 	bool
 	is_amino_sugar() const {
-		return modifications_.contains("amino sugar");
+		return modifications_.contains("amino sugar") || modifications_.contains("acetylamino sugar");
 	}
 
 	/// @brief  Return true if the primary hydroxyl group is oxidized to the acid.

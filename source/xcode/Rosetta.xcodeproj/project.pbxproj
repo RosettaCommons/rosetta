@@ -1900,6 +1900,7 @@
 		11085A03FF2000CFA6C4ACF2 /* MutateResidue.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9A907CE0323344573C5CCE27 /* MutateResidue.cc */; };
 		6DCA491038F75B26E808B8FC /* O2M_MutateMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2FE04EC26B62716D06B8226E /* O2M_MutateMover.cc */; };
 		5D6F1EBD3FFF547D8231FA48 /* PDBReloadMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 56D096EA15ADBCAF695B9A39 /* PDBReloadMover.cc */; };
+		A52A571AB1E770A63CFDEBA5 /* PSSM2BfactorMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 88ED1A15508BA69A3A7287D4 /* PSSM2BfactorMover.cc */; };
 		DFE027AD3AB482C7A49BA437 /* PackRotamersMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4117FFAE5A458445472DA478 /* PackRotamersMover.cc */; };
 		0190D8FDE1F75ED2C51C7546 /* PackRotamersMoverLazy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 201799462A8F15DBC46DE50D /* PackRotamersMoverLazy.cc */; };
 		613F8086E1A0E73B7B4EE97C /* PeptideStapleMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = A178A8FEC21691C8591AEE07 /* PeptideStapleMover.cc */; };
@@ -13580,6 +13581,10 @@
 		0F89C3764DA4BB24D28E1005 /* PDBReloadMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PDBReloadMover.fwd.hh; path = ../src/protocols/simple_moves/PDBReloadMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		0CC3BB5C66316157232ABBED /* PDBReloadMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PDBReloadMover.hh; path = ../src/protocols/simple_moves/PDBReloadMover.hh; sourceTree = SOURCE_ROOT; };
 		AD49924885AB1024AF58A2DC /* PDBReloadMoverCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PDBReloadMoverCreator.hh; path = ../src/protocols/simple_moves/PDBReloadMoverCreator.hh; sourceTree = SOURCE_ROOT; };
+		88ED1A15508BA69A3A7287D4 /* PSSM2BfactorMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PSSM2BfactorMover.cc; path = ../src/protocols/simple_moves/PSSM2BfactorMover.cc; sourceTree = SOURCE_ROOT; };
+		2E4978CB0594DC53AE2DF6AE /* PSSM2BfactorMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PSSM2BfactorMover.fwd.hh; path = ../src/protocols/simple_moves/PSSM2BfactorMover.fwd.hh; sourceTree = SOURCE_ROOT; };
+		3ED7524428A4D9F290CEE7D9 /* PSSM2BfactorMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PSSM2BfactorMover.hh; path = ../src/protocols/simple_moves/PSSM2BfactorMover.hh; sourceTree = SOURCE_ROOT; };
+		BFD91385CBF5865009C865A6 /* PSSM2BfactorMoverCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PSSM2BfactorMoverCreator.hh; path = ../src/protocols/simple_moves/PSSM2BfactorMoverCreator.hh; sourceTree = SOURCE_ROOT; };
 		4117FFAE5A458445472DA478 /* PackRotamersMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PackRotamersMover.cc; path = ../src/protocols/simple_moves/PackRotamersMover.cc; sourceTree = SOURCE_ROOT; };
 		6949FF3DC3CF79156A01D5AC /* PackRotamersMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PackRotamersMover.fwd.hh; path = ../src/protocols/simple_moves/PackRotamersMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		F7DA10BD8EBF3B03499B1E3C /* PackRotamersMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PackRotamersMover.hh; path = ../src/protocols/simple_moves/PackRotamersMover.hh; sourceTree = SOURCE_ROOT; };
@@ -24607,6 +24612,10 @@
 				0F89C3764DA4BB24D28E1005 /* PDBReloadMover.fwd.hh */,
 				0CC3BB5C66316157232ABBED /* PDBReloadMover.hh */,
 				AD49924885AB1024AF58A2DC /* PDBReloadMoverCreator.hh */,
+				88ED1A15508BA69A3A7287D4 /* PSSM2BfactorMover.cc */,
+				2E4978CB0594DC53AE2DF6AE /* PSSM2BfactorMover.fwd.hh */,
+				3ED7524428A4D9F290CEE7D9 /* PSSM2BfactorMover.hh */,
+				BFD91385CBF5865009C865A6 /* PSSM2BfactorMoverCreator.hh */,
 				4117FFAE5A458445472DA478 /* PackRotamersMover.cc */,
 				6949FF3DC3CF79156A01D5AC /* PackRotamersMover.fwd.hh */,
 				F7DA10BD8EBF3B03499B1E3C /* PackRotamersMover.hh */,
@@ -30880,6 +30889,7 @@
 				11085A03FF2000CFA6C4ACF2 /* MutateResidue.cc in Sources */,
 				6DCA491038F75B26E808B8FC /* O2M_MutateMover.cc in Sources */,
 				5D6F1EBD3FFF547D8231FA48 /* PDBReloadMover.cc in Sources */,
+				A52A571AB1E770A63CFDEBA5 /* PSSM2BfactorMover.cc in Sources */,
 				DFE027AD3AB482C7A49BA437 /* PackRotamersMover.cc in Sources */,
 				0190D8FDE1F75ED2C51C7546 /* PackRotamersMoverLazy.cc in Sources */,
 				613F8086E1A0E73B7B4EE97C /* PeptideStapleMover.cc in Sources */,

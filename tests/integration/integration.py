@@ -81,7 +81,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     # )
     parser.add_option("-d", "--database",
       default="", # processed below
-      help="Path to Rosetta database. (default: $ROSETTA_DB, ../../database)",
+      help="Path to Rosetta database. (default: ../../database, $ROSETTA_DB, ~/rosetta_database)",
     )
 
     parser.add_option("-m", "--mini_home",
@@ -152,7 +152,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
       help="Add additional flags to integration tests. (default: None)",
     )
 
-	
+
 
     parser.add_option("--dbms_database_name",
       default="rosetta_tests",
@@ -194,7 +194,6 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     args = [a.strip() for a in remaining_args if a.strip()]
 
     options.mini_home = path.abspath( options.mini_home )
-    print 'Using Rosetta source dir at:', options.mini_home
 
     if options.digs > 0:
         options.num_procs = 0 # don't use local processors too, b/c local *is* a dig
@@ -205,20 +204,26 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         random.shuffle(digs)
         options.host.extend( digs[:options.digs] )
 
-    if options.database == parser.get_default_values().database:
-        if os.environ.get('ROSETTA3_DB') is not None and \
-                path.isdir(os.environ.get('ROSETTA3_DB')):
-            options.database = os.environ.get('ROSETTA3_DB')
-        else:  options.database = path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'database')
 
-        if not path.isdir( options.database ):
-            options.database = path.join( path.expanduser("~"), "rosetta_database")
+    if not path.isdir( options.database ):
+        if options.database == parser.get_default_values().database:
+            if os.environ.get('ROSETTA3_DB') is not None and \
+                    path.isdir(os.environ.get('ROSETTA3_DB')):
+                options.database = os.environ.get('ROSETTA3_DB')
+            else:  options.database = path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'database')
 
-        if not path.isdir( options.database ):
-            print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
-            return 1
+            if not path.isdir( options.database ):
+                options.database = path.join( path.expanduser("~"), "rosetta_database")
+
+            if not path.isdir( options.database ):
+                print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
+                return 1
+
     # Normalize path before we change directories!
     options.database = path.abspath(options.database)
+
+    print 'Using Rosetta source dir at: ', options.mini_home
+    print 'Using Rosetta databse dir at:', options.database
 
     # Make sure the current directory is the script directory:
     # Using argv[] here causes problems when people try to run the script as "python integration.py ..."
@@ -475,7 +480,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
         if not options.compareonly: write_runtimes(runtimes, 'new')
         from compare_times import compare_times
-        compare_times()
+        compare_times(verbose=False)
     return 0
 
 

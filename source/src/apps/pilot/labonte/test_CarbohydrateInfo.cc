@@ -58,11 +58,11 @@ test_sugar(Pose & sugar)
 	for (core::uint i = 1; i <= n_res; ++i) {
 		Residue res = sugar.residue(i);
 		//cout << res << endl << endl;
-		cout << "Residue " << i << ": " << res.name() << endl;
+		cout << "Residue " << i << ": " << endl;
 		cout << " 3-Letter Code: " << res.name3();
 		cout << "  1-Letter Code: " << res.name1() << endl;
 		cout << " PDB ID: " << sugar.pdb_info()->pose2pdb(i) << endl;
-		cout << *(res.carbohydrate_info()) << endl << endl;
+		cout << res << endl << endl;
 	}
 }
 
@@ -75,10 +75,9 @@ main(int argc, char *argv[])
 		devel::init(argc, argv);
 
 		// Declare variables.
-		Pose maltotriose, isomaltose, lactose, amylopectin, glucosamine;
-		Pose glycoprotein;
+		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer;
 
-		cout << "------------------------------------------------------------" << endl;
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing maltotriose:" << endl;
 
 		pose_from_pdb(maltotriose, PATH + "maltotriose.pdb");
@@ -86,7 +85,7 @@ main(int argc, char *argv[])
 		test_sugar(maltotriose);
 
 
-		cout << "------------------------------------------------------------" << endl;
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing isomaltose:" << endl;
 
 		pose_from_pdb(isomaltose, PATH + "isomaltose.pdb");
@@ -94,7 +93,7 @@ main(int argc, char *argv[])
 		test_sugar(isomaltose);
 
 
-		cout << "------------------------------------------------------------" << endl;
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing lactose:" << endl;
 
 		pose_from_pdb(lactose, PATH + "lactose.pdb");
@@ -102,7 +101,7 @@ main(int argc, char *argv[])
 		test_sugar(lactose);
 
 
-		cout << "------------------------------------------------------------" << endl;
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating maltotriose from sequence:" << endl;
 
 		ResidueTypeSetCAP residue_set(ChemicalManager::get_instance()->residue_type_set("fa_standard"));
@@ -116,7 +115,7 @@ main(int argc, char *argv[])
 		cout << maltotriose.chain_sequence(1) << endl;
 
 
-		cout << "------------------------------------------------------------" << endl;
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing branched amylopectin fragment:" << endl;
 
 		pose_from_pdb(amylopectin, PATH + "amylopectin_fragment.pdb");
@@ -124,27 +123,35 @@ main(int argc, char *argv[])
 		test_sugar(amylopectin);
 
 
-		cout << "------------------------------------------------------------" << endl;
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing N-glycosylated sample:" << endl;
 
-		pose_from_pdb(glycoprotein, PATH + "glycosylated_peptide.pdb");
+		pose_from_pdb(glycopeptide, PATH + "glycosylated_peptide.pdb");
 
 		//test_sugar(glycoprotein);
-		cout << endl << glycoprotein << endl;
+		cout << endl << glycopeptide << endl;
 
 		cout << "Sequences:" << endl;
 		for (core::uint i = 1; i <= 2; ++i) {
 			cout << " Chain " << i << ": ";
-			cout << glycoprotein.chain_sequence(i) << endl;
+			cout << glycopeptide.chain_sequence(i) << endl;
 		}
 
 
-		cout << "------------------------------------------------------------" << endl;
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing glucosamine:" << endl;
 
 		pose_from_pdb(glucosamine, PATH + "GlcN.pdb");
 
 		test_sugar(glucosamine);
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing N-glycosylated 14-mer:" << endl;
+
+		pose_from_pdb(N_linked_14_mer, PATH + "N-linked_14-mer_glycan.pdb");
+
+		test_sugar(N_linked_14_mer);
 
 	} catch (utility::excn::EXCN_Base const & e) {
 		cerr << "Caught exception: " << e.msg() << endl;

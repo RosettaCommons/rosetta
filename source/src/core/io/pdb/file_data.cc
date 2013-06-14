@@ -17,14 +17,15 @@
 #include <core/io/pdb/HeaderInformation.hh>
 #include <core/io/pdb/file_data.hh>
 
+// Package headers
 #include <core/io/pdb/pose_io.hh>
-#include <core/types.hh>
-
 #include <core/io/pdb/file_data_options.hh>
 #include <core/io/pdb/pdb_dynamic_reader.hh>
 #include <core/io/pdb/pdb_dynamic_reader_options.hh>
-#include <core/pose/PDBInfo.hh>
 
+// Project headers
+#include <core/types.hh>
+#include <core/io/raw_data/DisulfideFile.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/Patch.hh>
@@ -34,52 +35,44 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
-
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-
-#include <core/io/raw_data/DisulfideFile.hh>
-
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
+#include <core/pose/util.tmpl.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/cryst/util.hh>
 
-#include <core/pose/util.hh>
-
 // Basic headers
-#include <basic/options/option.hh>
-#include <basic/Tracer.hh>
-
-// option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
+// Numeric headers
 #include <numeric/random/random.hh>
 
+// Utility headers
+
+#include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
+// External headers
+#include <ObjexxFCL/format.hh>
+
+// C++ headers
 #include <fstream>
 #include <sstream>
 #include <cstdlib>
 #include <cstdio>
 #include <utility>
-#include <ObjexxFCL/format.hh>
 
-// option key includes
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-
-#include <core/pose/util.hh>
-#include <utility/vector1.hh>
-
-//Auto Headers
-#include <core/pose/util.tmpl.hh>
 
 namespace core {
 namespace io {
@@ -858,7 +851,6 @@ build_pose_as_is1(
 	utility::vector1<ResidueTemps> pose_temps;
 
 	Strings branch_lower_termini;
-	Strings branch_points;
 
 	Size const nres_pdb( rinfos.size() );
 
@@ -902,6 +894,7 @@ build_pose_as_is1(
 				true : find(check_Ctermini_begin, check_Ctermini_end, chainID ) ==  check_Ctermini_end;
 
 		// Determine polymer information: termini, branch points, etc.
+		Strings branch_points_on_this_residue;
 		bool const is_branch_point = fd.link_map.count(resid);  // if found in the linkage map
 		if (is_branch_point) {
 			// Find and store to access later:
@@ -909,7 +902,7 @@ build_pose_as_is1(
 			//     positions of branch points
 			for (Size branch = 1, n_branches = fd.link_map[resid].size(); branch <= n_branches; ++branch) {
 				branch_lower_termini.push_back(fd.link_map[resid][branch].resID2_);
-				branch_points.push_back(fd.link_map[resid][branch].name1_);  // This only matters for saccharides.
+				branch_points_on_this_residue.push_back(fd.link_map[resid][branch].name1_);
 			}
 		}
 		bool const is_branch_lower_terminus = branch_lower_termini.contains(resid);
@@ -1004,9 +997,9 @@ build_pose_as_is1(
 				// ResidueType to a residue that actually only has a single branch at the 2 or 6 position.
 				char branch_point;
 				bool branch_point_is_missing = false;
-				for (Size k = 1, n_branch_points = branch_points.size();
+				for (Size k = 1, n_branch_points = branch_points_on_this_residue.size();
 						k <= n_branch_points; ++k) {
-					branch_point = branch_points[k][2];  // 3rd column (index 2) is the atom number in all saccharides
+					branch_point = branch_points_on_this_residue[k][2];  // 3rd column (index 2) is the atom number.
 					TR.Debug << "Checking '" << rsd_type.name() <<
 							"' for branch at position " << branch_point << std::endl;
 					if (residue_type_all_patches_name(rsd_type).find(string(1, branch_point) + ")-branch") ==
@@ -1138,6 +1131,12 @@ build_pose_as_is1(
 				}
 			}
 		}
+
+		// If newly added residue was a carbohydrate, set flag on conformation.
+		if (new_rsd->is_carbohydrate()) {
+			pose.conformation().contains_carbohydrate_residues(true);
+		}
+
 		pose_to_rinfo.push_back( Size(i) );
 		pose_resids.push_back( rinfo.resid );
 		pose_temps.push_back( rinfo.temps );
@@ -1189,6 +1188,7 @@ build_pose_as_is1(
 
 	//make_upper_terminus( pose, residue_set, pose.total_residue() );
 
+
 	// now handle missing atoms
 	//id::AtomID_Mask missing( false );
 	Size num_heavy_missing = 0;
@@ -1220,6 +1220,7 @@ build_pose_as_is1(
 		}
 	}
 
+	pose.conformation().fill_missing_atoms( missing );
 
 	//ja save the pdb residue indices in the Pose //well, PDBInfo
 	//ja pdb residue indices can be negative
@@ -1266,7 +1267,6 @@ build_pose_as_is1(
 	if ( options.preserve_crystinfo() )
 		pdb_info->set_crystinfo( fd.crystinfo );
 
-	pose.conformation().fill_missing_atoms( missing );
 
 	// most DNA structures lack 5' phosphate groups. 5' phosphates must be built to serve as part of the backbone for
 	// atom/fold tree purposes. Here they are made virtual so as not to affect physical calculations.
@@ -1282,6 +1282,7 @@ build_pose_as_is1(
 			}
 		}
 	}
+
 
 	// Look for and create any remaining non-mainchain (Edge::CHEMICAL) bonds based on a specified radius from any
 	// unsatisfied residue connections.  This is used for such things as branched polymers, ubiquitination, or covalent

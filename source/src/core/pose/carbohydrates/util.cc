@@ -17,8 +17,10 @@
 
 // Package headers
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 
 // Project headers
+#include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/types.hh>
 
@@ -44,6 +46,7 @@ namespace carbohydrates {
 using namespace std;
 using namespace core;
 
+// TODO: Replace this with code using ResidueType::residue_connection_id_for_atom().
 // Scan through a saccharide residue's connections to find the residue from which it follows or branches.
 /// @return  The sequence position of the residue before this one (n-1) or the residue in the parent chain from which
 /// the branch occurs or zero if N/A, i.e., if this is the lower terminus.
@@ -63,8 +66,105 @@ find_seqpos_of_parent_residue(conformation::Residue const & residue) {
 	return 0;
 }
 
+// Scan through the list of atoms connected to a given "connect atom" and return the first heavy atom found.
+/// @return  The atom name of the 1st heavy atom next to the given "connect atom" or an empty string if no heavy atom is
+/// found
+std::string
+atom_next_to_connect_atom(conformation::Residue const & residue, std::string const connect_atom_name) {
+	using namespace utility;
+
+	// Get list of indices of all atoms connected to given connect atom.
+	vector1<uint> atom_indices = residue.bonded_neighbor(residue.atom_index(connect_atom_name));
+
+	// Search for heavy atoms.  (A residue connection is not an atom.)
+	Size n_indices = atom_indices.size();
+	for (uint i = 1; i < n_indices; ++i) {
+		if (!residue.atom_is_hydrogen(atom_indices[i])) {
+			return residue.atom_name(atom_indices[i]);
+		}
+	}
+	return "";
+}
+
+
+// Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of the given
+// conformation.
+/// @details  This method aligns virtual atom VOX, where X is the position of the cyclic oxygen, OY and HOY, where Y is
+/// the position of the anomeric carbon, (provided the residue is not the reducing end, where OY and HOY would be real
+/// atoms), and HOZ, where Z is the mainchain glycosidic bond location.  OY and HOY are aligned with the last two "main
+/// chain" atoms of the parent residue.  This ensures that torsion angles with duplicate names, e.g., chi1 and phi for
+/// internal linked aldoses, will always return the same values.  The same concept applies for HOZ, which aligns with
+/// the anomeric carbon of the downstream residue.  This method should be called after any coordinate change for a sac-
+/// charide residue and after loading a saccharide residue from a file or sequence for the first time.
+/// @note     Do I need to worry about aligning the virtual atoms left over from modified sugar patches?  Can such
+/// virtual atoms be deleted?
+void
+align_virtual_atoms_in_carbohydrate_residue(conformation::Conformation & conf, uint const sequence_position) {
+	using namespace std;
+	using namespace id;
+	using namespace conformation;
+
+	ResidueCAP res = & conf.residue(sequence_position);
+
+	// Find and align VOX, if applicable.
+	if (res->carbohydrate_info()->is_cyclic()) {
+		uint x = res->carbohydrate_info()->cyclic_oxygen();
+		uint OX = res->atom_index(res->carbohydrate_info()->cyclic_oxygen_name());
+		uint VOX = res->atom_index("VO" + string(1, x + '0'));
+
+		conf.set_xyz(AtomID(VOX, sequence_position), conf.xyz(AtomID(OX, sequence_position)));
+	}
+
+	// Find and align OY and HOY, if applicable.
+	if (!res->is_lower_terminus()) {
+		uint y = res->carbohydrate_info()->anomeric_carbon();
+		uint OY = res->atom_index("O" + string(1, y + '0'));
+		uint HOY = res->atom_index("HO" + string(1, y + '0'));
+
+		uint parent_res_seqpos = find_seqpos_of_parent_residue(*res);
+		ResidueCAP parent_res = & conf.residue(parent_res_seqpos);
+		uint OY_ref = parent_res->connect_atom(*res);
+		uint HOY_ref = parent_res->atom_index(atom_next_to_connect_atom(*parent_res, parent_res->atom_name(OY_ref)));
+
+		conf.set_xyz(AtomID(OY, sequence_position), conf.xyz(AtomID(OY_ref, parent_res_seqpos)));
+		conf.set_xyz(AtomID(HOY, sequence_position), conf.xyz(AtomID(HOY_ref, parent_res_seqpos)));
+	}
+
+	// Find and align HOZ(s), if applicable.
+	if (!res->is_upper_terminus()) {
+		uint z = res->carbohydrate_info()->mainchain_glycosidic_bond_acceptor();
+		uint HOZ = res->atom_index("HO" + string(1, z + '0'));
+
+		uint downstream_res_seqpos = sequence_position + 1;
+		ResidueCAP downstream_res = & conf.residue(downstream_res_seqpos);
+		uint HOZ_ref = downstream_res->atom_index(downstream_res->carbohydrate_info()->anomeric_carbon_name());
+
+		conf.set_xyz(AtomID(HOZ, sequence_position), conf.xyz(AtomID(HOZ_ref, downstream_res_seqpos)));
+	}
+	Size n_branches = res->carbohydrate_info()->n_branches();
+	for (uint branch_num = 1; branch_num <= n_branches; ++branch_num) {
+		uint z = res->carbohydrate_info()->branch_point(branch_num);\
+		uint OZ = res->atom_index("O" + string(1, z + '0'));
+		uint HOZ = res->atom_index("HO" + string(1, z + '0'));
+
+		uint branch_connection_id = res->type().residue_connection_id_for_atom(OZ);
+		uint branch_res_seqpos = res->residue_connection_partner(branch_connection_id);
+		ResidueCAP branch_res = & conf.residue(branch_res_seqpos);
+		uint HOZ_ref = branch_res->atom_index(branch_res->carbohydrate_info()->anomeric_carbon_name());
+
+		conf.set_xyz(AtomID(HOZ, sequence_position), conf.xyz(AtomID(HOZ_ref, branch_res_seqpos)));
+	}
+}
+
+// Set coordinates of virtual atoms (used as angle reference points) within a saccharide residue of the given pose.
+void
+align_virtual_atoms_in_carbohydrate_residue(Pose & pose, uint const sequence_position) {
+	align_virtual_atoms_in_carbohydrate_residue(pose.conformation(), sequence_position);
+}
+
+
 // Calculate and return the phi angle between a saccharide residue of the given pose and the previous residue.
-/// @details This special-case function for carbohydrate phis is necessary, because of the following:\n
+/// @details  This special-case function for carbohydrate phis is necessary, because of the following:\n
 /// For aldopyranoses, phi is defined as O5(n)-C1(n)-OX(n-1)-CX(n-1),
 /// where X is the position of the glycosidic linkage.\n
 /// For aldofuranoses, phi is defined as O4(n)-C1(n)-OX(n-1)-CX(n-1).\n
@@ -110,24 +210,9 @@ calculate_carbohydrate_phi(Pose const & pose, uint const sequence_position) {
 
 	string ref3 = res_n_minus_1->atom_name(res_n_minus_1->connect_atom(*res_n));  // OX(n-1) for polysaccharides
 
-	string ref4;  // CX(n-1) for polysaccharides; an AA carbon for the 1st saccharide residue of a glycopeptide
-	if (res_n_minus_1->is_carbohydrate()) {
-		uint x = atoi(&ref3[2]);  // 3rd column (index 2) is the atom number
-		ref4 = "C" + string(1, x + '0');  // "CX"
-	} else /* is amino acid residue */ {
-		// Get list of indices of all atoms connected to reference atom 3.
-		vector1<uint> atom_indices = res_n_minus_1->bonded_neighbor(res_n_minus_1->atom_index(ref3));
+	string ref4 = atom_next_to_connect_atom(*res_n_minus_1, ref3);  // CX(n-1) for polysaccharides
 
-		// Search for heavy atoms.  Since a residue connection is not an atom, it must be the next reference atom.
-		Size n_indices = atom_indices.size();
-		for (uint i = 1; i < n_indices; ++i) {
-			if (!res_n_minus_1->atom_is_hydrogen(atom_indices[i])) {
-				ref4 = res_n_minus_1->atom_name(atom_indices[i]);
-				break;
-			}
-		}
-	}
-
+	TR.Debug << "Reference atoms for phi calculation: " << ref1 << ", " << ref2 << ", " << ref3 << ", " << ref4 << endl;
 
 	// Obtain the position vectors (a, b, c, d) of the four reference atoms.
 	Vector a = res_n->xyz(ref1);
@@ -140,7 +225,7 @@ calculate_carbohydrate_phi(Pose const & pose, uint const sequence_position) {
 
 // Return the number of degrees by which the phi angle between a saccharide residue of the given pose and the previous
 // residue differs from the BB torsion used by Rosetta.
-/// @remarks See the details for calculate_carbohydrate_phi() for an explanation on why this method is necessary.
+/// @remarks  See the details for calculate_carbohydrate_phi() for an explanation on why this method is necessary.
 core::Angle
 carbohydrate_phi_offset_from_BB(Pose const & pose, uint const sequence_position)
 {

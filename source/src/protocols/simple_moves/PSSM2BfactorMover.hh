@@ -26,6 +26,8 @@ namespace simple_moves {
 class PSSM2BfactorMover : public moves::Mover {
 public:
 	PSSM2BfactorMover();
+	PSSM2BfactorMover(core::Size min_in , core::Size max_in);
+
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -40,14 +42,15 @@ public:
 		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & pose );
 
-	core::Real offset() const{ return offset_; }
-	void offset( core::Real const o ){ offset_ = o; }
 
-	core::Real scaling_factor() const { return scaling_factor_; }
-	void scaling_factor( core::Real const s ){ scaling_factor_ = s; }
+	core::Size min_value() const { return min_value_; }
+	void min_value( core::Size const s ){ min_value_ = s; }
+	
+	core::Size max_value() const { return max_value_; }
+	void max_value( core::Size const s ){ max_value_ = s; }
 
 private:
-	core::Real offset_, scaling_factor_; // dflt +8, x3; scaling factor to convert PSSM scores to temperature factor
+	core::Size min_value_,max_value_; 
 };
 
 

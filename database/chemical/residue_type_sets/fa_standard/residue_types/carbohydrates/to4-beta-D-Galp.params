@@ -7,7 +7,7 @@ ATOM  C2  CH1   X   0.13
 ATOM  C3  CH1   X   0.11
 ATOM  C4  CH1   X   0.11
 ATOM  O4  OH    X   -0.38
-ATOM  VU  VIRT VIRT 0.00   # to next residue; allows for consistent chi angles
+ATOM  HO4 VIRT VIRT 0.00   # to next residue; allows for consistent chi angles
 ATOM  C5  CH1   X   0.11
 ATOM  O5  OOC   X   -0.34
 ATOM  C6  CH2   X   0.07
@@ -34,7 +34,7 @@ BOND  C1   C2
 BOND  C2   C3
 BOND  C3   C4
 BOND  C4   O4
-BOND  O4   VU
+BOND  O4   HO4
 BOND  C4   C5
 BOND  C5   O5
 CUT_BOND  O5   C1          # cyclic bond
@@ -60,7 +60,7 @@ CHI 2  C1   C2   O2   HO2
 PROTON_CHI 2 SAMPLES 3 60 -60 180 EXTRA 0
 CHI 3  C2   C3   O3   HO3
 PROTON_CHI 3 SAMPLES 3 60 -60 180 EXTRA 0
-CHI 4  C3   C4   O4   VU   # duplicates BB 4, but defined differently
+CHI 4  C3   C4   O4   HO4  # duplicates BB 4, but defined differently
 CHI 5  C4   C5   C6   O6
 CHI 6  C5   C6   O6   HO6
 PROTON_CHI 6 SAMPLES 3 60 -60 180 EXTRA 0
@@ -78,7 +78,7 @@ ICOOR_INTERNAL    C3     0.000000   68.661823    1.474930   C2    C1    C3
 ICOOR_INTERNAL    C4   -60.512023   73.843937    1.569720   C3    C2    C1
 ICOOR_INTERNAL    O4   -57.422550   68.476187    1.469471   C4    C3    C2
 ICOOR_INTERNAL  UPPER -120.000011   64.875311    1.451163   O4    C4    C3
-ICOOR_INTERNAL    VU  -120.000011   64.875311    1.451163   O4    C4    C3
+ICOOR_INTERNAL    HO4 -120.000011   64.875311    1.451163   O4    C4    C3
 ICOOR_INTERNAL    C5   117.129725   73.450324    1.568111   C4    C3    O4
 ICOOR_INTERNAL    O5   -61.061789   71.134273    1.433482   C5    C4    C3
 ICOOR_INTERNAL    C6  -179.288386   67.562812    1.540525   C5    C4    C3

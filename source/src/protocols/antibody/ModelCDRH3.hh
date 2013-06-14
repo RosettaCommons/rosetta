@@ -95,6 +95,14 @@ public:
     void set_bad_nter(bool setting){
         bad_nter_ = setting;
     }
+
+    void set_extend_h3(bool setting){
+	extend_h3_ = setting;
+    }
+
+    void set_idealize_h3_stems(bool setting){
+	idealize_h3_stems_=setting;
+    }
     
 private:
 	bool user_defined_;
@@ -144,6 +152,9 @@ private:
 
     
     std::string remodel_;
+
+    bool extend_h3_;
+    bool idealize_h3_stems_;
     
 }; // class ModelCDRH3
 

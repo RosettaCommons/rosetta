@@ -22,6 +22,8 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/carbohydrates/util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -30,22 +32,11 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/chemical/residue_io.hh>
+
 #include <core/kinematics/FoldTree.hh>
-
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
-
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
 
 #include <core/pack/pack_missing_sidechains.hh>
 #include <core/pack/optimizeH.hh>
-// AUTO-REMOVED #include <core/io/raw_data/DisulfideFile.hh>
-#include <core/pose/PDBInfo.hh>
 
 #include <core/io/pdb/pdb_dynamic_reader.hh>
 #include <core/io/pdb/pdb_dynamic_reader_options.hh>
@@ -624,6 +615,18 @@ void build_pose_as_is2(
 			pack::optimize_H_and_notify( pose, missing );
 		}
 	}
+
+
+	// If pose contains carbohydrate residues, assure that their virtual atoms have the correct coordinates.
+	if (pose.conformation().contains_carbohydrate_residues()) {
+		for (uint i = 1, n_residues = pose.total_residue(); i <= n_residues; ++i) {
+			ResidueTypeCAP res_type = & pose.residue_type(i);
+			if (res_type->is_carbohydrate()) {
+				pose::carbohydrates::align_virtual_atoms_in_carbohydrate_residue(pose, i);
+			}
+		}
+	}
+
 
 	pose.pdb_info( pdb_info );
 }

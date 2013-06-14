@@ -22,6 +22,7 @@
 // Project headers
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pose/Pose.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -137,9 +138,12 @@ void DockMinMover::set_default() {
 }
 
 void DockMinMover::apply(core::pose::Pose & pose){
-	// since mc_ object is created without a pose, this reset is required!
 	( *scorefxn() )( pose );
-//	mc_->reset(pose);   // JQX: I think it is not necessary
+	if( mc_->last_accepted_pose().total_residue() == 0 ) {
+		// If the mc_ object hasn't yet been initialized (the last accepted pose is the empty pose) we need to initialize it.
+		// Otherwise, if the first move is rejected, the pose will be set to the empty pose.
+		mc_->reset(pose);
+	}
 	minimize_trial_->apply(pose);
 }
 
