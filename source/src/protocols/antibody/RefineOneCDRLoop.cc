@@ -31,18 +31,12 @@
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 #include <protocols/antibody/H3RefineCCD.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_CCD.hh>
 
-
 #include <core/chemical/VariantType.hh>
-//JQX:: this header file took care of the "CUTPOINT_LOWER" options below
-
-
-
-
 
 using basic::T;
 using basic::Error;
@@ -50,15 +44,9 @@ using basic::Warning;
 
 static basic::Tracer TR("protocols.antibody.RefineOneCDRLoop");
 
-
-
-
 using namespace core;
 namespace protocols {
 namespace antibody {
-
-
-
 
 // default constructor
 RefineOneCDRLoop::RefineOneCDRLoop( ) : Mover() {}

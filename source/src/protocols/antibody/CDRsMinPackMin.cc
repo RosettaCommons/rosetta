@@ -39,7 +39,7 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/docking/SidechainMinMover.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 
 

@@ -8,12 +8,12 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody/AntibodyUtil.cc
+/// @file protocols/antibody/util.cc
 /// @brief
 /// @author Jianqing Xu (xubest@gmail.com)
 
 // Project Headers
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 
 // Core Headers
 #include <core/kinematics/FoldTree.hh>
@@ -63,7 +63,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 
-static basic::Tracer TR("antibody.AntibodyUtil");
+static basic::Tracer TR("antibody.util");
 
 
 using namespace core;
@@ -93,7 +93,7 @@ void simple_one_loop_fold_tree(
     loops::Loop const & loop	) {
 	using namespace kinematics;
 
-	TR <<  "Utility: Setting up simple one loop fold tree" << std::endl;
+	TR.Debug <<  "Setting up simple one loop fold tree" << std::endl;
 
 	//setup fold tree for this loop
 	FoldTree f;
@@ -114,7 +114,7 @@ void simple_one_loop_fold_tree(
 
 	pose_in.fold_tree( f );
 
-	TR <<  "Utility: Finished setting up simple one loop fold tree" << std::endl;
+	TR.Debug <<  "Finished setting up simple one loop fold tree" << std::endl;
 
 	return;
 } // simple_one_loop_fold_tree
@@ -126,7 +126,7 @@ void simple_fold_tree(
     Size jumppoint2 ) {
 	using namespace kinematics;
 
-	TR <<  "Utility: Setting up simple fold tree" << std::endl;
+	TR.Debug <<  "Setting up simple fold tree" << std::endl;
 
 	//setup fold tree for this loop
 	FoldTree f;
@@ -145,7 +145,7 @@ void simple_fold_tree(
 
 	pose_in.fold_tree( f );
 
-	TR <<  "Utility: Finished setting up simple fold tree" << std::endl;
+	TR.Debug <<  "Finished setting up simple fold tree" << std::endl;
 
 	return;
 } // simple_fold_tree
@@ -186,7 +186,7 @@ void simple_fold_tree(
 bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::Loop & input_loop, bool is_camelid) {
 
 
-	TR <<  "Utility: Checking Kink/Extended CDR H3 Base Angle" << std::endl;
+	TR.Debug <<  "Checking Kink/Extended CDR H3 Base Angle" << std::endl;
 
 
 	char const light_chain = 'L';
@@ -359,14 +359,14 @@ bool CDR_H3_filter_legacy_code_with_old_rule(const pose::Pose & pose_in, loops::
 		}
 	}
 
-	TR <<  "Utility: Finished Checking Kink/Extended CDR H3 Base Angle: " << is_H3 << std::endl;
+	TR.Debug <<  "Finished Checking Kink/Extended CDR H3 Base Angle: " << is_H3 << std::endl;
 
 	return is_H3;
 } // CDR_H3_filter
 
 bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 
-	TR <<  "Utility: Checking Kink/Extended CDR H3 Base Angle" << std::endl;
+	TR.Debug <<  "Checking Kink/Extended CDR H3 Base Angle" << std::endl;
 
 	if(ab_info->is_camelid() ) {
 		return( true );
@@ -441,7 +441,7 @@ bool CDR_H3_cter_filter(const pose::Pose & pose_in, AntibodyInfoOP ab_info) {
 		passed=false;
 	}
 
-	TR <<  "Utility: Finished Checking Kink/Extended CDR H3 Base Angle: " << passed << std::endl;
+	TR.Debug <<  "Finished Checking Kink/Extended CDR H3 Base Angle: " << passed << std::endl;
 
 	return passed;
 }
@@ -450,7 +450,7 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) {
 	using namespace pack::task;
 	using namespace pack::task::operation;
 
-	TR << "Utility: Setting Up Packer Task" << std::endl;
+	TR.Debug << "Setting Up Packer Task" << std::endl;
 
 	core::pack::task::TaskFactoryOP tf = new TaskFactory;
 	tf->clear();
@@ -475,7 +475,7 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) {
 	//TODO:
 	//JQX: need to understand this pose_in!!!!
 
-	TR << "Utility: Done: Setting Up Packer Task" << std::endl;
+	TR.Debug << "Done: Setting Up Packer Task" << std::endl;
 
 	return tf;
 
@@ -545,9 +545,6 @@ core::pack::task::TaskFactoryOP setup_packer_task(pose::Pose & pose_in ) {
  }
  */
 
-//TODO:
-//JQX:
-// should input a variable here to let the user to adjust 1.9
 
 bool cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info ) {
 
@@ -601,139 +598,6 @@ Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pos
 	Real rmsG = rmsd_no_super_subset( native_pose, pose_in, superpos_partner, is_protein_backbone_including_O );
 	return ( rmsG );
 }
-
-Real
-vl_vh_packing_angle ( const pose::Pose & pose_in, AntibodyInfoOP ab_info ) {
-
-	vector1< Size > vl_vh_residues = ab_info->get_PackingAngleResidues();
-
-	vector1< numeric::xyzVector< Real > > vl_coord_set;
-	for (Size i=1; i<=8; ++i) {
-		vl_coord_set.push_back( pose_in.residue( vl_vh_residues[i] ).xyz( "CA" ) );
-	}
-
-	vector1< numeric::xyzVector< Real > > vh_coord_set;
-	for (Size i=9; i<=16; ++i) {
-		vh_coord_set.push_back( pose_in.residue( vl_vh_residues[i] ).xyz( "CA" ) );
-	}
-
-	Size vl_n_res = vl_coord_set.size();
-	numeric::xyzVector< Real > vl_centroid(0.0);
-	for (Size i = 1; i <= vl_n_res; ++i) {
-		vl_centroid += vl_coord_set[i];
-	}
-	vl_centroid /= vl_n_res;
-
-	Size vh_n_res = vh_coord_set.size();
-	numeric::xyzVector< Real > vh_centroid(0.0);
-	for (Size i = 1; i <= vh_n_res; ++i) {
-		vh_centroid += vh_coord_set[i];
-	}
-	vh_centroid /= vh_n_res;
-
-	numeric::xyzVector< Real > vl_first_principal_component = numeric::first_principal_component( vl_coord_set );
-	numeric::xyzVector< Real > vh_first_principal_component = numeric::first_principal_component( vh_coord_set );
-
-	vl_first_principal_component += vl_centroid;
-	vh_first_principal_component += vh_centroid;
-
-	Real packing_angle = numeric::dihedral_degrees( vl_first_principal_component, vl_centroid, vh_centroid, vh_first_principal_component );
-
-	if ( packing_angle > 0 ) {
-		packing_angle -= 180;
-	}
-
-	return packing_angle;
-}
-
-std::pair<core::Real,core::Real>
-kink_dihedral(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info, bool debug) {
-
-	Size kb = ab_info.kink_begin();
-	core::conformation::Residue kr0 = pose.residue(kb);
-	core::conformation::Residue kr1 = pose.residue(kb+1);
-	core::conformation::Residue kr2 = pose.residue(kb+2);
-	core::conformation::Residue kr3 = pose.residue(kb+3);
-	if (debug) {
-		//		std::string kseq = std::string(kr0.name1()) + std::string(kr1.name1()) +
-		//                 std::string(kr2.name1()) +	std::string(kr3.name1());
-		TR << "Kink is defined from pose residues " << kb << "-" << kb+3 << ": " << kr0.name1() << std::endl;
-	}
-
-	Vector CA0=kr0.xyz("CA");
-	Vector CA1=kr1.xyz("CA");
-	Vector CA2=kr2.xyz("CA");
-	Vector CA3=kr3.xyz("CA");
-
-	Real q = (CA0 - CA3).magnitude();
-	Real qbase = dihedral(CA0,CA1,CA2,CA3);
-
-	std::pair<core::Real,core::Real> qout(q,qbase);
-
-	return qout;
-}
-
-core::Real
-kink_bb_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
-
-	Size Di = ab_info.kink_anion_residue();  // N-1
-	core::conformation::Residue D  = pose.residue(Di);
-	Vector DN = D.xyz("N");
-
-	Size Ri = ab_info.kink_cation_residue();  // 0
-	core::conformation::Residue R  = pose.residue(Ri);
-	Vector RO = R.xyz("O");
-
-	TR << "H3_DN   (" << Di << "): " << D.name3() << " - " << DN << std::endl;
-	TR << "H3_RO   (" << Ri << "): " << R.name3() << " - " << RO << std::endl;
-
-	core::Real bbHBdist = ( DN - RO ).norm();
-
-	return bbHBdist;
-}
-
-
-
-core::Real
-kink_RD_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
-
-	std::vector<Vector> Aatoms = ab_info.kink_anion_atoms(pose); // N-1
-	std::vector<Vector> Catoms = ab_info.kink_cation_atoms(pose); // 0
-
-	Real HBdist = 100.0;
-	for (std::vector<Vector>::iterator Aa = Aatoms.begin(); Aa != Aatoms.end(); ++Aa) {
-		for (std::vector<Vector>::iterator Ca = Catoms.begin(); Ca != Catoms.end(); ++Ca) {
-			HBdist = std::min( HBdist, (*Aa - *Ca).norm());
-		}
-	}
-	if (HBdist == 100.0) {
-		HBdist = 0;
-	}
-	return HBdist;
-}
-
-
-core::Real
-kink_Trp_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
-
-	Size Wi = ab_info.kink_trp(); // N+1
-	core::conformation::Residue W  = pose.residue(Wi);
-	if (W.name3() != "TRP") return 0.0;
-	Vector W_NE1 = W.xyz("NE1");
-
-	Size kb1 = ab_info.kink_begin(); // N-2
-	core::conformation::Residue kb = pose.residue(kb1);
-	Vector kb1_O = kb.xyz("O");
-
-	TR << "H3_W/KB4 (" << Wi  << "): " << W.name3()  << " - " << W_NE1 << std::endl;
-	TR << "H3_KB1   (" << kb1 << "): " << kb.name3() << " - " << kb1_O << std::endl;
-
-	core::Real WHBdist = ( W_NE1 - kb1_O ).norm();
-
-	return WHBdist;
-}
-
-
 
 void align_to_native( core::pose::Pose & pose,
                       core::pose::Pose const & native_pose,

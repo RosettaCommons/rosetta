@@ -18,6 +18,7 @@
 
 #include <utility/vector1.hh>
 #include <core/types.hh>
+#include <iostream>
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // A collection of Enumerators + TypeDefs to the Antibody Namespace.
 // These keep AntibodyInfo light, allow the use of vectors instead of maps, and keep us from passing around strings.
@@ -31,21 +32,17 @@ using utility::vector1;
 using core::Size;
 
 enum CDRNameEnum {
-
     h1 = 1,
     h2,
     h3,
     l1,
     l2,
     l3,
-
     ///////// Convenience //////////////////
     start_cdr_loop = h1,
-
     H_chain_last_loop = h3,
     L_chain_last_loop = l3,
     camelid_last_loop = h3,
-
     num_cdr_loops = l3,
     CDRNameEnum_start = h1,
     CDRNameEnum_total = l3
@@ -68,7 +65,6 @@ enum AntibodyNumberingSchemeEnum {
 enum AntibodyNumberingEnum {
     start = 1,
     stop,
-
     AntibodyNumberingEnum_total = stop
 };
 
@@ -79,14 +75,12 @@ enum H3BaseTypeEnum {
     Unknown,
     H3BaseTypeEnum_start = Kinked,
     H3BaseTypeEnum_total = Unknown
-
 };
 
 ///These are used to determine the VL_VH packing angle.
 enum PackingAngleEnum {
     VL_sheet_1 = 1,
     VL_sheet_2,
-
     VH_sheet_1,
     VH_sheet_2,
 

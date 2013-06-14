@@ -17,7 +17,8 @@
 
 #include <core/pose/Pose.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/metrics.hh>
+#include <protocols/antibody/util.hh>
 
 //#include <protocols/jd2/JobDistributor.hh>
 //#include <protocols/jd2/util.hh>

@@ -165,7 +165,6 @@ AntibodyEnumManager::packing_angle_enum_to_string(PackingAngleEnum const angle_t
 	return packing_angle_to_string_[angle_type];
 }
 
-
 }
 }
 

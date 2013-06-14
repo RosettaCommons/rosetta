@@ -15,44 +15,30 @@
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
 
-
-
-#include <protocols/antibody/RefineOneCDRLoopCentroid.hh>
-
-#include <basic/Tracer.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-
-#include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/loops/loop_mover/LoopMover.hh>
+#include <basic/options/option.hh>
+#include <basic/Tracer.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/moves/RepeatMover.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <protocols/antibody/RefineOneCDRLoopCentroid.hh>
+#include <protocols/antibody/util.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
+#include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-
-
-#include <protocols/antibody/AntibodyUtil.hh>
-
-#include <core/chemical/VariantType.hh>
-//JQX:: this header file took care of the "CUTPOINT_LOWER" options below
-
-
-
-
+#include <protocols/moves/RepeatMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/MinMover.hh>//JQX:: this header file took care of the "CUTPOINT_LOWER" options below
 
 using basic::T;
 using basic::Error;
@@ -60,14 +46,9 @@ using basic::Warning;
 
 static basic::Tracer TR("protocols.antibody.RefineOneCDRLoopCentroid");
 
-
-
-
 using namespace core;
 namespace protocols {
 namespace antibody {
-
-
 
 RefineOneCDRLoopCentroid::RefineOneCDRLoopCentroid( AntibodyInfoCOP antibody_info,
         CDRNameEnum const & loop_name ) : Mover() {

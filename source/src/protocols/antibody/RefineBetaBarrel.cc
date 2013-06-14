@@ -22,7 +22,7 @@
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/antibody/RefineBetaBarrel.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 #include <protocols/antibody/LHRepulsiveRamp.hh>
 #include <protocols/antibody_legacy/LHSnugFitLegacy.hh>
 #include <protocols/loops/loops_main.hh>

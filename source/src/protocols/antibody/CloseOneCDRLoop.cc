@@ -26,7 +26,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 
 #include <basic/Tracer.hh>
 static basic::Tracer TRC("protocols.antibody.CloseOneCDRLoop");

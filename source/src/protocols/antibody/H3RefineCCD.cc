@@ -15,64 +15,48 @@
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
 
-
-
-#include <protocols/antibody/H3RefineCCD.hh>
-
-#include <basic/Tracer.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/Tracer.hh>
 
-#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/BackboneMover.hh>
-#include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMover.hh>
-#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
-
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintFactory.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/scoring/constraints/ConstraintFactory.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-
-#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
-#include <protocols/loops/loops_main.hh>
+#include <protocols/antibody/H3RefineCCD.hh>
+#include <protocols/antibody/util.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/loops/loop_closure/ccd/CcdLoopClosureMover.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
-
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
-
 #include <protocols/moves/ChangeFoldTreeMover.hh>
-#include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
-
-#include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-
-
-#include <protocols/antibody/AntibodyUtil.hh>
-
-#include <core/chemical/VariantType.hh>
-//JQX:: this header file took care of the "CUTPOINT_LOWER" options below
-
-
-
+#include <protocols/moves/RepeatMover.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/MinMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 
 
 using basic::T;
@@ -81,14 +65,9 @@ using basic::Warning;
 
 static basic::Tracer TR("protocols.antibody.H3RefineCCD");
 
-
-
-
 using namespace core;
 namespace protocols {
 namespace antibody {
-
-
 
 
 // default constructor

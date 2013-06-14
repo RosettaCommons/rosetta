@@ -23,7 +23,6 @@ sources = {
 		"Ab_TemplateInfo",
 		"AntibodyEnumManager",
 		"AntibodyInfo",
-		"AntibodyUtil",
 		"CDRClusterEnumManager",
 		"AntibodyModelerProtocol",
 		"CDRsMinPackMin",
@@ -39,6 +38,8 @@ sources = {
 		"RefineOneCDRLoop",
 		"RefineOneCDRLoopCentroid",
 		"RefineBetaBarrel",
+		"metrics",
+		"util",
 	],
 	"protocols/antibody/snugdock":[
 		"SnugDock",

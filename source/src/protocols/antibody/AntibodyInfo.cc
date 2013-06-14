@@ -32,7 +32,7 @@
 #include <core/pose/util.tmpl.hh>
 
 // Protocol Headers
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/loops/loops_main.hh>  //really?
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>

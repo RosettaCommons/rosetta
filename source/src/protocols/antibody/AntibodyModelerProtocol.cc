@@ -13,55 +13,60 @@
 /// @details
 /// @author Jianqing Xu ( xubest@gmail.com )
 
-#include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueSelector.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
-#include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/dunbrack/RotamerConstraint.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintFactory.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DiagnosticData.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
-#include <protocols/jd2/ScoreMap.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/simple_moves/ConstraintSetMover.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
-#include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/AntibodyModelerProtocol.hh>
-#include <protocols/antibody/ModelCDRH3.hh>
-#include <protocols/antibody/CDRsMinPackMin.hh>
-#include <protocols/antibody/RefineOneCDRLoop.hh>
-#include <protocols/antibody/RefineBetaBarrel.hh>
+
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueSelector.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentStructFactory.hh>
+#include <core/pack/dunbrack/RotamerConstraint.hh>
+#include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
+#include <core/pose/util.hh>
+#include <core/scoring/constraints/ConstraintFactory.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreType.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+
+#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyModelerProtocol.hh>
+#include <protocols/antibody/CDRsMinPackMin.hh>
+#include <protocols/antibody/ModelCDRH3.hh>
+#include <protocols/antibody/RefineBetaBarrel.hh>
+#include <protocols/antibody/RefineOneCDRLoop.hh>
+#include <protocols/antibody/metrics.hh>
+#include <protocols/antibody/util.hh>
+
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/ScoreMap.hh>
+#include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi
+#include <protocols/loops/loops_main.hh>
+#include <protocols/simple_moves/ConstraintSetMover.hh>
+
 using namespace ObjexxFCL::fmt;
 
 
@@ -189,8 +194,6 @@ void AntibodyModelerProtocol::init_from_options() {
 	if ( option[ OptionKeys::antibody::cter_insert ].user() ) {
 		set_CterInsert( option[ OptionKeys::antibody::cter_insert ]() );
 	}
-
-
 	if ( option[ OptionKeys::antibody::h3_filter ].user() ) {
 		set_H3Filter ( option[ OptionKeys::antibody::h3_filter ]() );
 	}
@@ -244,8 +247,11 @@ void AntibodyModelerProtocol::init_from_options() {
     //  set_middle_pack_min( option[ OptionKeys::loops::refine ] )
     //}
 
-	//add automatic -out:levels protocols.simple_moves.ConstraintSetMover:info
-	//if ( ! option[ OptionKeys::])
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	//if( option[ out::levels ].active() ) T("Levels:") << option[ out::levels ]() <<  std::endl;
+	option[ out::levels ]("protocols.simple_moves.ConstraintSetMover:debug");  // echo constraints to log
+	//if( option[ out::levels ].active() ) T("Levels:") << option[ out::levels ]() <<  std::endl;
 
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
@@ -255,7 +261,6 @@ void AntibodyModelerProtocol::init_from_options() {
 	} else {
 		set_native_pose(NULL);
 	}
-
 
 	TR <<  "Finish Reading and Setting Options !!!" << std::endl;
 }
@@ -351,11 +356,8 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	using namespace core::scoring::constraints;
 	using namespace protocols::moves;
 
-
 	// the default inital secstruct is all "L" loop!
 	pose::Pose start_pose_ = pose;
-
-
 
 	if ( !flags_and_objects_are_in_sync_ ) {
 		sync_objects_with_flags();
@@ -363,22 +365,17 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 	finalize_setup(pose);
 
-
-
-
 	basic::prof_reset();
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
 	// utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 
 	pose::set_ss_from_phipsi( pose );
 
-
 	// display constraints and return
 	if( camelid_constraints_ ) {
 		display_constraint_residues( pose );
 		return;
 	}
-
 
 	// Step 1: model the cdr h3 in centroid mode
 	// JQX notes: pay attention to the way it treats the stems when extending the loop
@@ -399,7 +396,6 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 	}
 
-
 	//if(middle_pack_min_){
 	CDRsMinPackMinOP cdrs_min_pack_min = new CDRsMinPackMin(ab_info_);
 	if(sc_min_) cdrs_min_pack_min->set_sc_min(true);
@@ -407,7 +403,6 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	cdrs_min_pack_min -> set_turnoff_minimization(packonly_after_graft_);
 	cdrs_min_pack_min -> apply(pose);
 	//}
-
 
 	// Step 2: SnugFit: relieve the clashes between L-H
 	if ( snugfit_ ) {
@@ -426,8 +421,6 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		//pose.dump_pdb("2nd_finish_snugfit.pdb");
 	}
 
-
-
 	// Step 3: Full Atom Relax
 	if(refine_h3_) {
 		RefineOneCDRLoopOP cdr_highres_refine_ = new RefineOneCDRLoop(ab_info_, h3_refine_type_, loop_scorefxn_highres_);
@@ -445,11 +438,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	cdrs_min_pack_min -> apply(pose);
 	//pose.dump_pdb("4th_final_min_pack_min.pdb");
 
-
-
-
 	// Step 4: Store the homolgy models
-
 	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose) ) ;
 
 	// Redefining CDR H3 cutpoint variants
@@ -462,9 +451,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	}
 	( *loop_scorefxn_highres_ )( pose );
 
-
 	// Finish
-
 	echo_metrics_to_jd2(pose,job);
 	set_last_move_status( protocols::moves::MS_SUCCESS );
 	basic::prof_show();
@@ -474,6 +461,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 
 void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, protocols::jd2::JobOP job) {
+
 	// align pose to native pose
 	pose::Pose native_pose = *get_native_pose();
 	antibody::AntibodyInfoOP native_ab_info = new AntibodyInfo(native_pose);
@@ -500,7 +488,7 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 		//pose.dump_pdb("aligned_L.pdb");
 	}
 	//job->add_string_real_pair("AP_constraint", atom_pair_constraint_score);
-	job->add_string_real_pair("VL_VH_angle", vl_vh_packing_angle( pose, ab_info_ ));
+	job->add_string_real_pair("VL_VH_angle", vl_vh_packing_angle( pose, *ab_info_ ));
 
 	//kink metrics
 	job->add_string_real_pair( "kink_RD_HB", kink_RD_Hbond( pose, *ab_info_ ));
@@ -510,6 +498,12 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 	std::pair<core::Real,core::Real> q = kink_dihedral( pose, *ab_info_);
 	job->add_string_real_pair("kink_q", q.first);
 	job->add_string_real_pair("kink_qbase", q.second);
+
+	std::pair<core::Real,core::Real> sasa = paratope_sasa( pose, *ab_info_);
+	job->add_string_real_pair( "CDR_SASA", sasa.first);
+	job->add_string_real_pair( "CDR_SASA_HP", sasa.second);
+	job->add_string_real_pair( "CDR_charge", Real(paratope_charge( pose, *ab_info_ )) );
+
 }
 
 

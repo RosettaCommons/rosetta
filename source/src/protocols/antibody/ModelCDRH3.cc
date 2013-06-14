@@ -34,7 +34,7 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <utility/exit.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 #include <protocols/antibody/H3PerturbCCD.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/H3CterInsert.hh>

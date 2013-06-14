@@ -17,7 +17,7 @@
 #include <protocols/antibody/design/AntibodyDatabaseManager.hh>
 #include <protocols/antibody/design/AntibodyGraftDesigner.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>

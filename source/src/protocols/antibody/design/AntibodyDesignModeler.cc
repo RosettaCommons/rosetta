@@ -17,7 +17,7 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/CDRClusterEnum.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 
 // Core Headers
 #include <core/pose/PDBInfo.hh>

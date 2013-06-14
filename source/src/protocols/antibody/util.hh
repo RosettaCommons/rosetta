@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/antibody/AntibodyUtil.hh
+/// @file protocols/antibody/util.hh
 /// @brief Utility functions for the Antibody namespace
 /// @author Jianqing Xu (xubest@gmail.com)
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
-#ifndef INCLUDED_protocols_antibody_AntibodyUtil_hh
-#define INCLUDED_protocols_antibody_AntibodyUtil_hh
+#ifndef INCLUDED_protocols_antibody_util_hh
+#define INCLUDED_protocols_antibody_util_hh
 
 
 //Core Headers
@@ -88,10 +88,6 @@ global_loop_rmsd ( const core::pose::Pose & pose_in,
 
 ////////////////////////////////////////// antibody metrics //////////////////////////////////////////
 
-/// @brief calculates the VH_VL packing angle from 2 sheet definitions on each chain from ab_info.
-core::Real
-vl_vh_packing_angle ( const core::pose::Pose & pose_in, AntibodyInfoOP ab_info );
-
 /// @brief return false if any cdr cutpoint is broken
 bool
 cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info );
@@ -101,26 +97,6 @@ cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info );
 ///   assumed to have a gap < 1.9 Ang
 core::Real
 cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
-
-
-///// kink measures /////
-
-// @brief returns distance of the sc-sc Hbond across the strands at the beginning of the H3 kink (typically Asp-Arg)
-core::Real
-kink_RD_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & abinfo);
-
-// @brief returns distance for the bb-bb Hbond across the strands at the begining of the kink (typically Asp-Arg)
-core::Real
-kink_bb_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & abinfo);
-
-
-// @brief returns distance of the Trp sc-bb Hbond across the H3 kink residues (n-1 to n+2)
-core::Real
-kink_Trp_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & abinfo);
-
-// @brief returns a pair of reals for the q distance and qbond dihedral angle from the four kink residues of the H3 C-terminal end
-std::pair<core::Real,core::Real>
-kink_dihedral( const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & abinfo, bool debug=false);
 
 
 
@@ -152,7 +128,7 @@ set_harmonic_constraint(AntibodyInfoOP & ab_info, pose::Pose & pose, CDRClusterE
 } //namespace protocols
 
 
-#endif //INCLUDED_protocols_antibody_AntibodyUtil_HH
+#endif //INCLUDED_protocols_antibody_util_HH
 
 
 

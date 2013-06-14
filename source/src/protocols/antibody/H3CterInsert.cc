@@ -31,7 +31,7 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <basic/database/open.hh>
 

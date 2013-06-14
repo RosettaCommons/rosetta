@@ -15,7 +15,7 @@
 #include <protocols/antibody/GraftedStemOptimizer.hh>
 #include <basic/Tracer.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>

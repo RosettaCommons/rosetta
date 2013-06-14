@@ -48,7 +48,7 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/Ab_TemplateInfo.hh>
 #include <protocols/antibody/GraftCDRLoopsProtocol.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 #include <protocols/antibody/CDRsMinPackMin.hh>
 #include <protocols/antibody/GraftedStemOptimizer.hh>
 

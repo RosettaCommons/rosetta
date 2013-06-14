@@ -15,8 +15,6 @@
 ///
 /// @author Jianqing Xu (xubest@gmail.com)
 
-
-
 #include <protocols/antibody_legacy/LHRepulsiveRampLegacy.hh>
 
 #include <basic/options/option.hh>
@@ -29,7 +27,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -37,11 +34,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/import_pose/import_pose.hh>
 
-
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-
-
-
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
@@ -52,7 +45,6 @@
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
-
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -68,7 +60,7 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/antibody/AntibodyUtil.hh>
+#include <protocols/antibody/util.hh>
 
 
 
