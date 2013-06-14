@@ -397,17 +397,27 @@ Splice::apply( core::pose::Pose & pose )
 		nearest_to_to = find_nearest_res( source_pose, pose, to_res(), 1/*chain*/ );
 		residue_diff = nearest_to_to - nearest_to_from - ( to_res() - from_res() );
 		if( nearest_to_from == 0 || nearest_to_to == 0 ){
-			TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
+			std::ostringstream os;
+			os<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
+			utility_exit_with_message(os.str());
+		/*	TR<<"nearest_to_from: "<<nearest_to_from<<" nearest_to_to: "<<nearest_to_to<<". Failing"<<std::endl;
 			set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 			retrieve_values();
 			return;
+		*/
+		
 		}
 		for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
 			if( source_pose.residue( i ).has_variant_type( DISULFIDE ) ){/// in future, using disulfides would be a great boon as it rigidifies loops.
-				TR<<"Residue "<<i<<" is a disulfide. Failing"<<std::endl;
+				std::ostringstream os;
+				os<<"Residue "<<i<<" is a disulfide. Failing"<<std::endl;
+				utility_exit_with_message(os.str());
+				/*TR<<"Residue "<<i<<" is a disulfide. Failing"<<std::endl;
 				set_last_move_status( protocols::moves::FAIL_DO_NOT_RETRY );
 				retrieve_values();
 				return;
+				*/
+				
 			}
 			/// Feed the source_pose dofs into the BBDofs array
 			BBDofs residue_dofs;
