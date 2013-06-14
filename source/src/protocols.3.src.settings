@@ -409,6 +409,7 @@ sources = {
 	],
 	"protocols/simple_moves": [
 		"AddCavitiesMover",
+		"AddChainMover",
 		"AddConstraintsToCurrentConformationMover",
 		"AddJobPairData",
 		"ModifyVariantTypeMover",

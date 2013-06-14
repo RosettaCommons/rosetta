@@ -218,6 +218,7 @@
 #include <protocols/seeded_abinitio/SegmentHybridizerCreator.hh>
 
 #include <protocols/simple_moves/AddConstraintsToCurrentConformationMoverCreator.hh>
+#include <protocols/simple_moves/AddChainMoverCreator.hh>
 #include <protocols/simple_moves/AddJobPairDataCreator.hh>
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
 #include <protocols/simple_moves/ClearConstraintsMoverCreator.hh>
