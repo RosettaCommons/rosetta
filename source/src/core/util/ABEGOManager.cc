@@ -11,6 +11,7 @@
 /// @brief class for ABEGO
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu )
 
+#include <core/chemical/ResidueType.hh>
 #include <core/util/ABEGOManager.hh>
 #include <core/pose/Pose.hh>
 #include <utility/exit.hh>
@@ -26,16 +27,16 @@ namespace util {
 // @brief Auto-generated virtual destructor
 ABEGOManager::~ABEGOManager() {}
 
-/// @brief add line to specify abego region	
+/// @brief add line to specify abego region
 void
 ABEGO::add_line( Real const slope, Real const intercept, bool const region )
-{	
+{
 	lines_.push_back( Line( slope, intercept, region ) );
 }
-	
+
 /// @breif 	check input torsion angles is compatible with defined abego
 bool
-ABEGO::check_rama2( Real const & phi, Real const & psi )	
+ABEGO::check_rama2( Real const & phi, Real const & psi )
 {
 	for( Size ii=1; ii<=lines_.size(); ii++ ) {
 		Real sign( psi - lines_[ ii ].slope * phi - lines_[ ii ].intercept );
@@ -46,7 +47,7 @@ ABEGO::check_rama2( Real const & phi, Real const & psi )
 	}
 	return true;
 }
-	
+
 /// @brief check input torsion angles is compatible with defined abego
 bool
 ABEGO::check_rama( Real const & phi, Real const & psi, Real const & omega )
@@ -54,7 +55,7 @@ ABEGO::check_rama( Real const & phi, Real const & psi, Real const & omega )
 	if( name() == 'X' ) {
 		return true;
 	}
-	
+
 	if ( cis_omega_ ) {
 
 		return ( fabs( omega ) < 90.0 );
@@ -67,16 +68,16 @@ ABEGO::check_rama( Real const & phi, Real const & psi, Real const & omega )
 		if ( (psi < -75.0 && phi < 0) || (psi < -100.0 && phi >= 0) ) {
 			psii = psi + 360.0;
 		}
-		
+
 		if ( phi >= phi_min_ && phi < phi_max_  &&
 			 psii >= psi_min_ && psii < psi_max_ ) {
-			
-			if( lines_.size() < 1 ) {			
-				return true;				
+
+			if( lines_.size() < 1 ) {
+				return true;
 			} else {
 				return check_rama2( phi, psii );
 			}
-			
+
 		} else {
 			return false;
 		}
@@ -89,7 +90,7 @@ ABEGOManager::ABEGOManager() : utility::pointer::ReferenceCount()
 	initialize();
 }
 
-/// @brief copy constructor	
+/// @brief copy constructor
 ABEGOManager::ABEGOManager( ABEGOManager const & rval ) : utility::pointer::ReferenceCount(),
 	totnum_abego_( rval.totnum_abego_ ),
 	name2abego_( rval.name2abego_ )
@@ -107,20 +108,20 @@ ABEGOManager::initialize()
 
 	ABEGO S( 'S', -180.0,   0.0,  100.0, 195.0, false );
 	S.add_line( -1.6, 4, false );
-	
+
 	ABEGO P( 'P', -180.0,   0.0,  100.0, 195.0, false );
-	P.add_line( -1.6, 4, true  );	
-	
+	P.add_line( -1.6, 4, true  );
+
 	ABEGO D( 'D', -180.0,    0.0, 195.0, 285.5, false );
 	ABEGO Z( 'Z', -180.0, -100.0,  50.0, 100.0, false );
 	ABEGO Y( 'Y', -100.0,    0.0,  50.0, 100.0, false );
-	
+
 	ABEGO M( 'M', -180.0,  -90.0,  -75.0,  50.0, false );
 	ABEGO N( 'N',  -90.0,    0.0,  -75.0,  50.0, false );
 
 	// X represents all torsion space ( the following parameters are no meaning. )
 	ABEGO X( 'X', 0.0, 0.0, 0.0, 0.0, false );
-	
+
 	name2abego_[ 1 ] = A;
 	name2abego_[ 2 ] = B;
 	name2abego_[ 3 ] = E;
@@ -134,7 +135,7 @@ ABEGOManager::initialize()
 	name2abego_[ 11 ] = M;
 	name2abego_[ 12 ] = N;
 	name2abego_[ 13 ] = X;
-	
+
 	totnum_abego_ = 13;
 
 }
@@ -167,7 +168,7 @@ ABEGOManager::torsion2index( Real const phi, Real const psi, Real const omega, S
 		return 0;
 	}
 }
-	
+
 
 /// @brief get abegeo index from torsion angles: ABEGO
 Size
@@ -205,11 +206,11 @@ ABEGOManager::torsion2index_level2( Real const phi, Real const psi, Real const o
 			return 3; // E
 		}
 	} else {
-		
+
 		if ( -75.0 <= psi && psi < 50.0 ) {
 			return 1; //helical
 		} else {
-			
+
 			Real ppsi;
 			if( psi < -75.0 ) {
 				ppsi = psi + 360.0;
@@ -221,13 +222,13 @@ ABEGOManager::torsion2index_level2( Real const phi, Real const psi, Real const o
 			} else {
 				return 2; // B
 			}
-			
+
 		}
-		
+
 	}
 	return 0;
 }
-	
+
 /// @brief get abego index from torsion angles: ASPZYD
 Size
 ABEGOManager::torsion2index_level3( Real const phi, Real const psi, Real const omega )
@@ -318,7 +319,7 @@ ABEGOManager::torsion2index_level4( Real const phi, Real const psi, Real const o
    }
    return 0;
 }
-	
+
 /// @brief transform abego index to symbol
 char
 ABEGOManager::index2symbol( Size const & idx )
@@ -418,10 +419,13 @@ ABEGOManager::get_symbols( Pose const & pose, Size const begin, Size const end, 
 
 	utility::vector1< String > symbols;
 	for( Size i=begin; i<=end; i++ ) {
-		Size idx = torsion2index( pose.phi( i ), pose.psi( i ), pose.omega( i ), level );
-		std::ostringstream symbol;
-		symbol << index2symbol( idx );
-		symbols.push_back( symbol.str() );
+		if( pose.residue_type( i ).is_protein() ){
+			Size idx = torsion2index( pose.phi( i ), pose.psi( i ), pose.omega( i ), level );
+			std::ostringstream symbol;
+			symbol << index2symbol( idx );
+			symbols.push_back( symbol.str() );
+		}
+		else symbols.push_back("-");
 	}
 	return symbols;
 }
@@ -433,7 +437,7 @@ ABEGOManager::get_symbols( Pose const & pose, Size const level )
 	return get_symbols( pose, 1, pose.total_residue(), level );
 }
 
-	
+
 /// @brief get abego string
 std::string
 ABEGOManager::get_abego_string( utility::vector1< std::string > abego )
@@ -455,8 +459,8 @@ ABEGOManager::get_abego_string( utility::vector1< std::string > abego )
 	}
 	return output.str();
 }
-	
-	
+
+
 /// @brief utility for getting abego
 utility::vector1< std::string >
 get_abego( core::pose::Pose const & pose, core::Size const level )
