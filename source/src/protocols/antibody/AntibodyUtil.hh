@@ -107,7 +107,7 @@ cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
 
 // @brief returns distance of the sc-sc Hbond across the strands at the beginning of the H3 kink (typically Asp-Arg)
 core::Real
-kink_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & abinfo);
+kink_RD_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & abinfo);
 
 // @brief returns distance for the bb-bb Hbond across the strands at the begining of the kink (typically Asp-Arg)
 core::Real

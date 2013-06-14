@@ -12,19 +12,15 @@
 /// @author Rhiju Das
 /// @author Jianqing Xu
 
+#include <sstream>
 
+#include <basic/Tracer.hh>
 #include <core/scoring/constraints/SquareWell2Func.hh>
-
 #include <core/types.hh>
 #include <numeric/angle.functions.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <basic/Tracer.hh>
-
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <basic/Tracer.hh>
-
+#include <numeric/constants.hh>
 #include <utility/vector1.hh>
-#include <sstream>
+#include <utility/pointer/ReferenceCount.hh>
 
 static basic::Tracer TR("core.scoring.constraints.SquareWall2Func");
 
@@ -55,6 +51,16 @@ SquareWell2Func::dfunc( Real const /*x*/ ) const
 void
 SquareWell2Func::read_data( std::istream& in ) {
 	in >> x0_ >> x_range_ >>well_depth_;
+	// check for optional DEGREES tag
+	while (in.peek() == ' ' || in.peek() == '\t') { in.get(); }
+	if ( in.peek() == 'D' ) {
+		std::string degrees;
+		in >> degrees;
+		if (degrees == "DEGREES") {
+			x0_      *= numeric::constants::r::deg2rad;
+			x_range_ *= numeric::constants::r::deg2rad;
+		}
+	}
 }
 
 void

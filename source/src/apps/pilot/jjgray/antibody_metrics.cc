@@ -67,8 +67,8 @@ main( int argc, char* argv[] ){
 	core::Real bbHbond = kink_bb_Hbond(pose, ab_info);
 	TR << "bbHbond: " << bbHbond << std::endl;
 
-	core::Real Hbond = kink_Hbond(pose, ab_info);
-	TR << "Hbond: " << Hbond << std::endl;
+	core::Real RD_Hbond = kink_RD_Hbond(pose, ab_info);
+	TR << "RD_Hbond: " << RD_Hbond << std::endl;
 	
 	core::Real WHbond = kink_Trp_Hbond(pose, ab_info);
 	TR << "WHbond: " << WHbond << std::endl;

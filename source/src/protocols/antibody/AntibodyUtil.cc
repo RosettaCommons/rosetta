@@ -700,7 +700,7 @@ kink_bb_Hbond(const core::pose::Pose & pose, const protocols::antibody::Antibody
 
 
 	core::Real
-	kink_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
+	kink_RD_Hbond(const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info) {
 
     std::vector<Vector> Aatoms = ab_info.kink_anion_atoms(pose); // N-1
     std::vector<Vector> Catoms = ab_info.kink_cation_atoms(pose); // 0

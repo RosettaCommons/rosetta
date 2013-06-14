@@ -245,6 +245,9 @@ void AntibodyModelerProtocol::init_from_options()
     //if ( option[ OptionKeys::antibody::middle_pack_min].user() ){
     //  set_middle_pack_min( option[ OptionKeys::loops::refine ] )
     //}
+
+	//add automatic -out:levels protocols.simple_moves.ConstraintSetMover:info
+	//if ( ! option[ OptionKeys::])
     
 	//set native pose if asked for
 	if ( option[ OptionKeys::in::file::native ].user() ) {
@@ -497,8 +500,9 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
     job->add_string_real_pair("VL_VH_angle", vl_vh_packing_angle( pose, ab_info_ ));
 
     //kink metrics
-    job->add_string_real_pair( "kink_HB", kink_Hbond( pose, *ab_info_ ));
+    job->add_string_real_pair( "kink_RD_HB", kink_RD_Hbond( pose, *ab_info_ ));
     job->add_string_real_pair( "kink_bb_HB", kink_bb_Hbond( pose, *ab_info_ ));
+    job->add_string_real_pair( "kink_Trp_HB", kink_Trp_Hbond( pose, *ab_info_ ));
 
 		std::pair<core::Real,core::Real> q = kink_dihedral( pose, *ab_info_);
 		job->add_string_real_pair("kink_q", q.first);

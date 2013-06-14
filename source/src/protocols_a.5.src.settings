@@ -79,3 +79,4 @@ subprojects = [
 	"sqlite3",
 	"cppdb",
 ]
+

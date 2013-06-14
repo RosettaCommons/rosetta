@@ -130,8 +130,16 @@ ConstraintSetMover::apply( Pose & pose )
 
 	if ( pose.is_fullatom() ) {
 		pose.constraint_set( constraint_set_high_res_ );
+		if (TR.Info.visible()) {
+			TR.Info << "High-res constraints:" << std::endl;
+			constraint_set_high_res_->show_definition(TR.Info, pose);
+		}
 	} else {
 		pose.constraint_set( constraint_set_low_res_ );
+		if (TR.Info.visible()) {
+			TR.Info << "Low-res constraints:" << std::endl;
+			constraint_set_low_res_->show_definition(TR.Info, pose);
+		}
 	}
 }
 

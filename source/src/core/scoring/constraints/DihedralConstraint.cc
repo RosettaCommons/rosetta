@@ -496,6 +496,7 @@ void DihedralConstraint::show_def( std::ostream& out, pose::Pose const& pose ) c
 		AtomID const & id = atom(i);
 		out << ' ' <<  atom_id_to_named_atom_id( id, pose );
 	}
+	out << ' ';
 	func_->show_definition( out );
 }
 
