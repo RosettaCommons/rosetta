@@ -1790,10 +1790,10 @@ struct TCDock {
 						    <<cmp2name_<<" "
 						    <<I(2,100*icmp1/arch().nangle1())
 						    <<"% done, max_score: "
-						    <<F(10,3,max_score) << endl
+						    <<F(10,3,max_score) << endl;
 						    // <<" rate: "<<rate<<" confs/sec"
 						    // <<" "<<rate/num_threads()<<" confs/sec/thread"<<" " <<num_threads()
-						if(mhscore_) cout<< " hash lookups:  " << F(10,3,(Real)mhscore_->nhashlookups()/1000.0) << "K"
+						if(mhscore_) cout<< " hash lookups:  " << F(10,3,(Real)mhscore_->nhashlookups()/1000.0) << "K";
 						cout<< " confs sampled: " << F(10,3,conf_count_/1000.0) << "K"
 						    << endl;
 					}
