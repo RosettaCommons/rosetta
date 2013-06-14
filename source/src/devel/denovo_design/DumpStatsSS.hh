@@ -13,6 +13,8 @@
 #ifndef INCLUDED_protocols_simple_moves_DumpStatsSS_hh
 #define INCLUDED_protocols_simple_moves_DumpStatsSS_hh
 
+#include <devel/denovo_design/DumpStatsSS.fwd.hh>
+
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -56,7 +58,7 @@ private:
   utility::io::ozstream* output_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	std::string psipred_cmd_;
-	devel::denovo_design::filters::PsiPredInterfaceOP psipred_interface_;
+	filters::PsiPredInterfaceOP psipred_interface_;
   protocols::ss_prediction::SS_predictorOP ss_predictor_;
 	protocols::jd2::parser::BluePrintOP blueprint_;
   core::Real start_time_;

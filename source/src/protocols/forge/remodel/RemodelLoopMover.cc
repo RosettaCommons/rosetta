@@ -1044,10 +1044,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				//999 allows for frags > 9 resiudes
 				abinitio_stage( pose,999, movemap,sfxStaged_OP,1,100,sampleAllResidues,true,"full_length_frags",useFragSequence,fragScoreThreshold);
 		//Sample with 9mers in all positions------------------------------
-		/*abinitio_stage( pose, 9, movemap,sfxStaged_OP,1,100,sampleAllResidues,true,"9mers_allPos",useFragSequence,fragScoreThreshold);
+		std::cout << " ***************HERE**********************" << std::endl;
+		abinitio_stage( pose, 9, movemap,sfxStaged_OP,1,100,sampleAllResidues,true,"9mers_allPos",useFragSequence,fragScoreThreshold);
 		abinitio_stage( pose, 9, movemap,sfxStaged_OP,3,500,sampleSubsetResidues,true,"9mers_subsetPos",useFragSequence,fragScoreThreshold);
 		abinitio_stage( pose, 3, movemap,sfxStaged_OP,1,100,sampleSubsetResidues,true,"3mers_subsetPos",useFragSequence,fragScoreThreshold);
-		*/
 		//cleanup to integrate with Possu------------------------------------
 		PoseOP pose_prime = new Pose( pose );
 		pose_prime->fold_tree( sealed_ft );

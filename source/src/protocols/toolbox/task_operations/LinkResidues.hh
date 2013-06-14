@@ -56,7 +56,7 @@ public:
 	virtual TaskOperationOP clone() const;
 	virtual void apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const;
 
-  virtual void parse_tag(utility::tag::TagPtr const tag);
+  virtual void parse_tag(TagPtr tag);
 
 private:
 		utility::vector1< std::string > allGroups_;
