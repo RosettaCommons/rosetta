@@ -67,6 +67,20 @@ DumpStatsSS::DumpStatsSS():
   scorefxn_(0)
 {}
 
+DumpStatsSS::DumpStatsSS(DumpStatsSS const &rval):
+	protocols::moves::Mover( DumpStatsSSCreator::mover_name() ),
+  scorefxn_(rval.scorefxn_->clone()),
+  fname_(rval.fname_),
+  output_(rval.output_),
+	psipred_cmd_(rval.psipred_cmd_),
+	psipred_interface_(rval.psipred_interface_),
+	ss_predictor_(rval.ss_predictor_),
+	blueprint_(rval.blueprint_),
+	start_time_(start_time_)	
+
+{}
+
+
 DumpStatsSS::~DumpStatsSS() {}
 
 void DumpStatsSS::apply( core::pose::Pose & pose ) {
@@ -127,7 +141,7 @@ void DumpStatsSS::set_scorefxn( core::scoring::ScoreFunctionOP scorefxn) {
 }
 
 void
-DumpStatsSS::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
+DumpStatsSS::parse_my_tag( utility::tag::TagPtr tag, DataMap & data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & )
 {
 	fname_ = tag->getOption<std::string>( "fname", "SS_stats.txt" );
 	if ( tag->hasOption("scorefxn") ) {

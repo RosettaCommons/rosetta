@@ -40,7 +40,8 @@ namespace denovo_design {
 class DumpStatsSS : public protocols::moves::Mover
 {
 public:
-	DumpStatsSS();	
+	DumpStatsSS();
+	DumpStatsSS( DumpStatsSS const &rval);
 	virtual ~DumpStatsSS();
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -52,7 +53,7 @@ public:
 	core::Real compute_svm_prob(std::string sequence, std::string wanted_ss); 
 	core::Real compute_psipred_prob(core::pose::Pose & pose , std::string wanted_ss);
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
-	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	void parse_my_tag( utility::tag::TagPtr tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	std::string fname_;
   utility::io::ozstream* output_;
