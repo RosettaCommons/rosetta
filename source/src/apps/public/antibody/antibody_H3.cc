@@ -40,24 +40,24 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace basic::options;
-	using namespace protocols::antibody;
-	using namespace protocols::jd2;
+		using namespace basic::options;
+		using namespace protocols::antibody;
+		using namespace protocols::jd2;
 
-	AntibodyModelerProtocol::register_options();
-	protocols::jd2::register_options();
-	// initialize core
-	devel::init(argc, argv);
+		AntibodyModelerProtocol::register_options();
+		protocols::jd2::register_options();
+		// initialize core
+		devel::init(argc, argv);
 
 
-	AntibodyModelerProtocolOP ab_m_h3 = new AntibodyModelerProtocol();
-	TR<<*ab_m_h3<<std::endl;
-//    exit(-1);
+		AntibodyModelerProtocolOP ab_m_h3 = new AntibodyModelerProtocol();
+		TR<<*ab_m_h3<<std::endl;
+		//    exit(-1);
 
-	JobDistributor::get_instance()->go(ab_m_h3);
+		JobDistributor::get_instance()->go(ab_m_h3);
 
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
-		 std::cout << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 }
 

@@ -39,55 +39,55 @@ using namespace core;
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace antibody {
-	
+
 void
 simple_one_loop_fold_tree(
-	core::pose::Pose & pose,
-	loops::Loop const & loop);
-    
+    core::pose::Pose & pose,
+    loops::Loop const & loop);
+
 void
 simple_fold_tree(
-	core::pose::Pose & pose_in,
-	core::Size jumppoint1,
-	core::Size cutpoint,
-	core::Size jumppoint2);
+    core::pose::Pose & pose_in,
+    core::Size jumppoint1,
+    core::Size cutpoint,
+    core::Size jumppoint2);
 
-    
+
 /// @brief Very specific packertask,
 /// @details Ubound rotamer options, repack only, protein only, no disulfides.
 core::pack::task::TaskFactoryOP
 setup_packer_task( core::pose::Pose & pose_in);
 
-    
+
 /// @brief align current Fv to native.Fv
 void
-align_to_native( core::pose::Pose & pose, 
-	core::pose::Pose const & native_pose,
-	AntibodyInfoOP const ab_info,
-	AntibodyInfoOP const native_ab_info,
-	std::string const & request_chain="LH");
+align_to_native( core::pose::Pose & pose,
+                 core::pose::Pose const & native_pose,
+                 AntibodyInfoOP const ab_info,
+                 AntibodyInfoOP const native_ab_info,
+                 std::string const & request_chain="LH");
 
-bool 
+bool
 CDR_H3_filter_legacy_code_with_old_rule(
-	const core::pose::Pose & pose_in,
-	loops::Loop & input_loop,
-	bool is_camelid);
-    
-bool 
-CDR_H3_cter_filter(
-	const core::pose::Pose & pose_in,
-	AntibodyInfoOP ab_info);
+    const core::pose::Pose & pose_in,
+    loops::Loop & input_loop,
+    bool is_camelid);
 
-    
+bool
+CDR_H3_cter_filter(
+    const core::pose::Pose & pose_in,
+    AntibodyInfoOP ab_info);
+
+
 ////////////////////////////////////////// things to compare to native //////////////////////////////////////////
 core::Real
-global_loop_rmsd ( const core::pose::Pose & pose_in, 
-	const core::pose::Pose & native_pose, 
-	loops::LoopsOP current_loop );
+global_loop_rmsd ( const core::pose::Pose & pose_in,
+                   const core::pose::Pose & native_pose,
+                   loops::LoopsOP current_loop );
 
-    
+
 ////////////////////////////////////////// antibody metrics //////////////////////////////////////////
-    
+
 /// @brief calculates the VH_VL packing angle from 2 sheet definitions on each chain from ab_info.
 core::Real
 vl_vh_packing_angle ( const core::pose::Pose & pose_in, AntibodyInfoOP ab_info );
@@ -95,7 +95,7 @@ vl_vh_packing_angle ( const core::pose::Pose & pose_in, AntibodyInfoOP ab_info )
 /// @brief return false if any cdr cutpoint is broken
 bool
 cutpoints_separation( core::pose::Pose & pose, AntibodyInfoOP & antibody_info );
-    
+
 /// @details Compute the separation at the cutpoint. The N-C distance of the
 ///   peptide bond which should be formed at the cutpoint. A closed loop is
 ///   assumed to have a gap < 1.9 Ang
@@ -130,24 +130,24 @@ kink_dihedral( const core::pose::Pose & pose, const protocols::antibody::Antibod
 //
 
 /// @brief Sets dihedral harmonic constraints to CDR and scorefxn using info in AntibodyInfo
-/// @details Currently requires Modified_AHO numbering.  A server will be available soon. 
+/// @details Currently requires Modified_AHO numbering.  A server will be available soon.
 void
 set_harmonic_constraints(AntibodyInfoOP & ab_info, pose::Pose & pose, core::scoring::ScoreFunctionOP & scorefxn);
 
 /// @brief Sets dihedral harmonic constraints to CDR using cluster info in AntibodyInfo
-/// @details Currently requires Modified_AHO numbering.  A server will be available soon. 
+/// @details Currently requires Modified_AHO numbering.  A server will be available soon.
 void
 set_harmonic_constraints(AntibodyInfoOP & ab_info, pose::Pose & pose);
 
 /// @brief set a harmonic constraint to a CDR based on cluster type
-/// @details Currently requires Modified_AHO numbering.  A server will be available soon. 
+/// @details Currently requires Modified_AHO numbering.  A server will be available soon.
 void
 set_harmonic_constraint(AntibodyInfoOP & ab_info, pose::Pose & pose, CDRClusterEnum const cluster);
-	
 
-	
 
-	
+
+
+
 } //namespace antibody
 } //namespace protocols
 

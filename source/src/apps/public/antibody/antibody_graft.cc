@@ -40,24 +40,24 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace basic::options;
-	using namespace protocols::antibody;
-	using namespace protocols::jd2;
+		using namespace basic::options;
+		using namespace protocols::antibody;
+		using namespace protocols::jd2;
 
-	GraftCDRLoopsProtocol::register_options();
-	protocols::jd2::register_options();
-	// initialize core
-	devel::init(argc, argv);
+		GraftCDRLoopsProtocol::register_options();
+		protocols::jd2::register_options();
+		// initialize core
+		devel::init(argc, argv);
 
 
-	GraftCDRLoopsProtocolOP abm = new GraftCDRLoopsProtocol();
+		GraftCDRLoopsProtocolOP abm = new GraftCDRLoopsProtocol();
     TR<<*abm<<std::endl;
-//    exit(-1);
+		//    exit(-1);
 
-	JobDistributor::get_instance()->go(abm);
+		JobDistributor::get_instance()->go(abm);
 
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
-		 std::cout << "caught exception " << e.msg() << std::endl;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
 	}
 }
 

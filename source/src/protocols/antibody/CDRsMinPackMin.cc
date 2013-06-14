@@ -61,8 +61,7 @@ namespace antibody {
 
 
 
-CDRsMinPackMin::CDRsMinPackMin(AntibodyInfoOP antibody_info) : Mover()
-{
+CDRsMinPackMin::CDRsMinPackMin(AntibodyInfoOP antibody_info) : Mover() {
 	user_defined_ = false;
 
 	ab_info_ = antibody_info;
@@ -71,12 +70,11 @@ CDRsMinPackMin::CDRsMinPackMin(AntibodyInfoOP antibody_info) : Mover()
 }
 
 CDRsMinPackMin::CDRsMinPackMin(
-	AntibodyInfoOP            antibody_info,
-	core::scoring::ScoreFunctionOP  scorefxn,
-	pack::task::TaskFactoryOP  tf,
-	kinematics::MoveMapOP      movemap
-) : Mover()
-{
+    AntibodyInfoOP            antibody_info,
+    core::scoring::ScoreFunctionOP  scorefxn,
+    pack::task::TaskFactoryOP  tf,
+    kinematics::MoveMapOP      movemap
+) : Mover() {
 	user_defined_ = true;
 
 	ab_info_               = antibody_info;
@@ -93,7 +91,7 @@ CDRsMinPackMin::~CDRsMinPackMin() {}
 
 
 
-void CDRsMinPackMin::init(){
+void CDRsMinPackMin::init() {
 
 	benchmark_ = false;
 	sc_min_ = false;
@@ -105,7 +103,7 @@ void CDRsMinPackMin::init(){
 	min_tolerance_ = 0.1;
 	update_rounds_ = 0;
 
-	if (!user_defined_){
+	if (!user_defined_) {
 		tf_ = NULL;
 		allcdr_map_ = NULL;
 
@@ -115,13 +113,12 @@ void CDRsMinPackMin::init(){
 		loop_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10. / 3. );
 	}
 
-	
+
 
 
 }
 
-void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
-{
+void CDRsMinPackMin::finalize_setup( pose::Pose & pose ) {
 	using namespace pack;
 	using namespace pack::task;
 	using namespace pack::task::operation;
@@ -130,7 +127,7 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 	using namespace protocols::moves;
 
 	cdr_sequence_move_ = new moves::SequenceMover();
-	
+
 	// **************** FoldTree ****************
 	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose)  );
 	TR<<pose.fold_tree()<<std::endl;
@@ -143,12 +140,11 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 	( *loop_scorefxn_highres_ )( pose );
 
 	//**************** MoveMap ****************
-	if(!allcdr_map_){ // use this if, because sometimes a user may input a movemap at the beginning
+	if(!allcdr_map_) { // use this if, because sometimes a user may input a movemap at the beginning
 		allcdr_map_ = new kinematics::MoveMap();
 		*allcdr_map_=ab_info_->get_MoveMap_for_Loops(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
-	}
-	else{
-		if(update_rounds_ > 0 ){
+	} else {
+		if(update_rounds_ > 0 ) {
 			allcdr_map_->clear();
 			*allcdr_map_=ab_info_->get_MoveMap_for_Loops(pose, *ab_info_->get_AllCDRs_in_loopsop(), false, true, 10.0);
 		}
@@ -156,14 +152,13 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 
 
 	//**************** TaskFactory ****************
-	if(!tf_){ //use this if, because sometimes a user may input a taskfactory at the beginning
+	if(!tf_) { //use this if, because sometimes a user may input a taskfactory at the beginning
 		tf_ = ab_info_->get_TaskFactory_AllCDRs(pose);
 
-	  	//core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
-	  	//TR<<*my_task2<<std::endl; //exit(-1);
-	}
-	else{
-		if(update_rounds_ > 0){
+		//core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
+		//TR<<*my_task2<<std::endl; //exit(-1);
+	} else {
+		if(update_rounds_ > 0) {
 			tf_->clear();
 			tf_ = ab_info_->get_TaskFactory_AllCDRs(pose);
 		}
@@ -184,22 +179,22 @@ void CDRsMinPackMin::finalize_setup( pose::Pose & pose )
 
 	// 3. PackRotamer and Trial
 	simple_moves::PackRotamersMoverOP repack = new simple_moves::PackRotamersMover( loop_scorefxn_highres_ );
-	  repack->task_factory( tf_ );
+	repack->task_factory( tf_ );
 	moves::TrialMoverOP repack_trial = new moves::TrialMover(repack, mc);
 	cdr_sequence_move_ -> add_mover(repack_trial);
 
 
 	// 4. optional, rt_min_ or sc_min_
-	if ( rt_min_ ){
-	  simple_moves::RotamerTrialsMinMoverOP rtmin = new simple_moves::RotamerTrialsMinMover( loop_scorefxn_highres_, tf_ );
-	  moves::TrialMoverOP rtmin_trial = new moves::TrialMover( rtmin, mc );
-	  cdr_sequence_move_ -> add_mover(rtmin_trial);
+	if ( rt_min_ ) {
+		simple_moves::RotamerTrialsMinMoverOP rtmin = new simple_moves::RotamerTrialsMinMover( loop_scorefxn_highres_, tf_ );
+		moves::TrialMoverOP rtmin_trial = new moves::TrialMover( rtmin, mc );
+		cdr_sequence_move_ -> add_mover(rtmin_trial);
 	}
-	if ( sc_min_ ){
-	  core::pack::task::TaskFactoryCOP my_tf( tf_); // input must be COP, weird
-	  docking::SidechainMinMoverOP scmin_mover = new docking::SidechainMinMover( loop_scorefxn_highres_, my_tf );
-	  moves::TrialMoverOP scmin_trial = new moves::TrialMover( scmin_mover, mc );
-	  cdr_sequence_move_ -> add_mover(scmin_trial);
+	if ( sc_min_ ) {
+		core::pack::task::TaskFactoryCOP my_tf( tf_); // input must be COP, weird
+		docking::SidechainMinMoverOP scmin_mover = new docking::SidechainMinMover( loop_scorefxn_highres_, my_tf );
+		moves::TrialMoverOP scmin_trial = new moves::TrialMover( scmin_mover, mc );
+		cdr_sequence_move_ -> add_mover(scmin_trial);
 	}
 
 
@@ -220,35 +215,35 @@ void CDRsMinPackMin::show( std::ostream & out ) const {
 	out << *this;
 }
 
-std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 ){
-    using namespace ObjexxFCL::fmt;
+std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 ) {
+	using namespace ObjexxFCL::fmt;
 
-    // All output will be 80 characters - 80 is a nice number, don't you think?
-    std::string line_marker = "///";
-    out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
-    out << line_marker << A( 47, "Rosetta 3 Antibody Modeler" ) << space( 27 ) << line_marker << std::endl;
-    out << line_marker << space( 74 ) << line_marker << std::endl;
-    out << line_marker << "  sc_min                : " << ab_m_2.sc_min_     << std::endl;
-    out << line_marker << "  rt_min                : " << ab_m_2.rt_min_    << std::endl;
-    out << line_marker << std::endl;
+	// All output will be 80 characters - 80 is a nice number, don't you think?
+	std::string line_marker = "///";
+	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
+	out << line_marker << A( 47, "Rosetta 3 Antibody Modeler" ) << space( 27 ) << line_marker << std::endl;
+	out << line_marker << space( 74 ) << line_marker << std::endl;
+	out << line_marker << "  sc_min                : " << ab_m_2.sc_min_     << std::endl;
+	out << line_marker << "  rt_min                : " << ab_m_2.rt_min_    << std::endl;
+	out << line_marker << std::endl;
 
-    // Display the state of the antibody modeler protocol that will be used
-    out << line_marker << std::endl;
-    out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
-    return out;
+	// Display the state of the antibody modeler protocol that will be used
+	out << line_marker << std::endl;
+	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
+	return out;
 }
 
 
 std::string CDRsMinPackMin::get_name() const {
-    return "CDRsMinPackMin";
+	return "CDRsMinPackMin";
 }
 
-void CDRsMinPackMin::set_task_factory(core::pack::task::TaskFactoryCOP tf){
-    tf_ = new pack::task::TaskFactory(*tf);
+void CDRsMinPackMin::set_task_factory(core::pack::task::TaskFactoryCOP tf) {
+	tf_ = new pack::task::TaskFactory(*tf);
 }
 
-void CDRsMinPackMin::set_move_map(kinematics::MoveMapCOP movemap){
-    allcdr_map_ = new kinematics::MoveMap(*movemap);
+void CDRsMinPackMin::set_move_map(kinematics::MoveMapCOP movemap) {
+	allcdr_map_ = new kinematics::MoveMap(*movemap);
 }
 
 

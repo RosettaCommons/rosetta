@@ -19,11 +19,11 @@
 
 namespace protocols {
 namespace antibody {
-        
-    class RefineOneCDRLoopCentroid;
-    typedef utility::pointer::owning_ptr< RefineOneCDRLoopCentroid > RefineOneCDRLoopCentroidOP;
-    typedef utility::pointer::owning_ptr< RefineOneCDRLoopCentroid const > RefineOneCDRLoopCentroidCOP;
-        
+
+class RefineOneCDRLoopCentroid;
+typedef utility::pointer::owning_ptr< RefineOneCDRLoopCentroid > RefineOneCDRLoopCentroidOP;
+typedef utility::pointer::owning_ptr< RefineOneCDRLoopCentroid const > RefineOneCDRLoopCentroidCOP;
+
 }
 }
 

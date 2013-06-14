@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody_design/CDRClusterEnumManager.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_CDRClusterEnumManager_fwd_hh
@@ -19,8 +19,8 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-namespace protocols{
-namespace antibody{
+namespace protocols {
+namespace antibody {
 
 // Forward
 class CDRClusterEnumManager;

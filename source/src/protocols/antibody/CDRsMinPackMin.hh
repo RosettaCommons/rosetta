@@ -45,10 +45,10 @@ public:
 	CDRsMinPackMin(AntibodyInfoOP antibody_info);
 
 	CDRsMinPackMin(
-		AntibodyInfoOP antibody_info, 
-		core::scoring::ScoreFunctionOP scorefxn,
-		core::pack::task::TaskFactoryOP tf,
-		core::kinematics::MoveMapOP movemap
+	    AntibodyInfoOP antibody_info,
+	    core::scoring::ScoreFunctionOP scorefxn,
+	    core::pack::task::TaskFactoryOP tf,
+	    core::kinematics::MoveMapOP movemap
 	);
 
 	// default destructor
@@ -61,15 +61,19 @@ public:
 	void set_move_map(core::kinematics::MoveMapCOP movemap);
 
 	// simple inline setters
-	void set_sc_min (bool scmin) {sc_min_ = scmin ;}
-	void set_rt_min (bool rtmin) {rt_min_ = rtmin ;}
+	void set_sc_min (bool scmin) {
+		sc_min_ = scmin ;
+	}
+	void set_rt_min (bool rtmin) {
+		rt_min_ = rtmin ;
+	}
 	void set_turnoff_minimization(bool setting) {
 		turnoff_minimization_=setting;
 	}
 
 	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const CDRsMinPackMin & ab_m_2 );
-    
+
 
 private:
 	bool sc_min_;
@@ -82,7 +86,7 @@ private:
 	//to update the task factory and movemap auto-ly
 
 	void finalize_setup( core::pose::Pose & pose );
-	void init();   
+	void init();
 	bool user_defined_; // for constructor options passed to init
 
 	AntibodyInfoOP ab_info_;
@@ -93,12 +97,12 @@ private:
 	std::string min_type_;
 	core::Real Temperature_;
 	core::Real min_tolerance_;
-    
+
 
 
 }; // class CDRsMinPackMin
-    
-    
+
+
 } // namespace antibody
 } // namespace protocols
 

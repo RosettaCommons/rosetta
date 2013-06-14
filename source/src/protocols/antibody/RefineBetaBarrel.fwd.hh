@@ -21,11 +21,11 @@
 
 namespace protocols {
 namespace antibody {
-        
-    class RefineBetaBarrel;
-    typedef utility::pointer::owning_ptr< RefineBetaBarrel > RefineBetaBarrelOP;
-    typedef utility::pointer::owning_ptr< RefineBetaBarrel const > RefineBetaBarrelCOP;
-        
+
+class RefineBetaBarrel;
+typedef utility::pointer::owning_ptr< RefineBetaBarrel > RefineBetaBarrelOP;
+typedef utility::pointer::owning_ptr< RefineBetaBarrel const > RefineBetaBarrelCOP;
+
 }
 }
 

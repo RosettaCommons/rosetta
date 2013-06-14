@@ -51,35 +51,35 @@ public:
 
 	/// @brief constructor with arguments
 	RefineOneCDRLoop(AntibodyInfoOP antibody_info, std::string refine_mode,
-		core::scoring::ScoreFunctionCOP scorefxn );
+	                 core::scoring::ScoreFunctionCOP scorefxn );
 
-    /// @brief constructor with arguments
-    RefineOneCDRLoop(AntibodyInfoOP antibody_info, 
-                     CDRNameEnum const & cdr_loop_name,
-                     std::string refine_mode,
-                     core::scoring::ScoreFunctionCOP scorefxn );
+	/// @brief constructor with arguments
+	RefineOneCDRLoop(AntibodyInfoOP antibody_info,
+	                 CDRNameEnum const & cdr_loop_name,
+	                 std::string refine_mode,
+	                 core::scoring::ScoreFunctionCOP scorefxn );
 
 	/// @brief default destructor
 	~RefineOneCDRLoop();
 
 
-	void turn_on_benchmark(){
-	  benchmark_=true;
+	void turn_on_benchmark() {
+		benchmark_=true;
 	}
-	void set_h3_filter(bool setting){
-	  H3_filter_=setting;
+	void set_h3_filter(bool setting) {
+		H3_filter_=setting;
 	}
-	void set_num_filter_tries(core::Size setting){
-	  num_filter_tries_=setting;
+	void set_num_filter_tries(core::Size setting) {
+		num_filter_tries_=setting;
 	}
-	void set_flank_relax(bool setting){
-	  flank_relax_=setting;
+	void set_flank_relax(bool setting) {
+		flank_relax_=setting;
 	}
-	void set_flank_size(core::Size setting){
-	  flank_size_=setting;
+	void set_flank_size(core::Size setting) {
+		flank_size_=setting;
 	}
-	void set_refine_mode(std::string refine_mode){
-	  refine_mode_ = refine_mode;
+	void set_refine_mode(std::string refine_mode) {
+		refine_mode_ = refine_mode;
 	}
 	virtual void apply( core::pose::Pose & pose );
 
@@ -90,7 +90,7 @@ public:
 	virtual std::string get_name() const;
 	virtual protocols::moves::MoverOP clone() const;
 
-    
+
 private:
 
 	AntibodyInfoOP ab_info_;
@@ -101,16 +101,16 @@ private:
 	bool flank_relax_;
 	core::pose::Pose start_pose_;
 	core::pack::task::TaskFactoryOP tf_;
-    bool H3_filter_;
-    core::Size num_filter_tries_;
-    std::string refine_mode_;
-    CDRNameEnum cdr_loop_name_;
-    core::Real high_cst_;
-    
-    void set_default();
-    void init();
-    void finalize_setup( core::pose::Pose & pose );
-    
+	bool H3_filter_;
+	core::Size num_filter_tries_;
+	std::string refine_mode_;
+	CDRNameEnum cdr_loop_name_;
+	core::Real high_cst_;
+
+	void set_default();
+	void init();
+	void finalize_setup( core::pose::Pose & pose );
+
 };
 
 

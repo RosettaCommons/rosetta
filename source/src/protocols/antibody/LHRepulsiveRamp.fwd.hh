@@ -19,11 +19,11 @@
 
 namespace protocols {
 namespace antibody {
-        
-    class LHRepulsiveRamp;
-    typedef utility::pointer::owning_ptr< LHRepulsiveRamp > LHRepulsiveRampOP;
-    typedef utility::pointer::owning_ptr< LHRepulsiveRamp const > LHRepulsiveRampCOP;
-        
+
+class LHRepulsiveRamp;
+typedef utility::pointer::owning_ptr< LHRepulsiveRamp > LHRepulsiveRampOP;
+typedef utility::pointer::owning_ptr< LHRepulsiveRamp const > LHRepulsiveRampCOP;
+
 }
 }
 

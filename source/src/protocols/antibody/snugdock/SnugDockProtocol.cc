@@ -52,19 +52,17 @@ namespace antibody {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///@brief default constructor
-SnugDockProtocol::SnugDockProtocol() : Mover()
-{
+SnugDockProtocol::SnugDockProtocol() : Mover() {
 	init();
 }
 
 ///@brief copy constructor
-SnugDockProtocol::SnugDockProtocol( SnugDockProtocol const & rhs ) : Mover(rhs)
-{
+SnugDockProtocol::SnugDockProtocol( SnugDockProtocol const & rhs ) : Mover(rhs) {
 	init_for_equal_operator_and_copy_constructor( *this, rhs );
 }
 
 ///@brief assignment operator
-SnugDockProtocol & SnugDockProtocol::operator=( SnugDockProtocol const & rhs ){
+SnugDockProtocol & SnugDockProtocol::operator=( SnugDockProtocol const & rhs ) {
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
 	Mover::operator=( rhs );
@@ -76,33 +74,28 @@ SnugDockProtocol & SnugDockProtocol::operator=( SnugDockProtocol const & rhs ){
 SnugDockProtocol::~SnugDockProtocol() {}
 
 /// @brief Each derived class must specify its name.
-std::string SnugDockProtocol::get_name() const
-{
+std::string SnugDockProtocol::get_name() const {
 	return type();
 }
 
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
-SnugDockProtocol::clone() const
-{
+SnugDockProtocol::clone() const {
 	return new SnugDockProtocol( *this );
 }
 
 ///@brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
-SnugDockProtocol::fresh_instance() const
-{
+SnugDockProtocol::fresh_instance() const {
 	return new SnugDockProtocol();
 }
 
 ///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
-bool SnugDockProtocol::reinitialize_for_new_input() const
-{
+bool SnugDockProtocol::reinitialize_for_new_input() const {
 	return true;
 }
 
-void SnugDockProtocol::register_options()
-{
+void SnugDockProtocol::register_options() {
 	docking::DockingProtocol::register_options();
 	SnugDock::register_options();
 	RefineOneCDRLoop::register_options();
@@ -111,8 +104,7 @@ void SnugDockProtocol::register_options()
 /////////////////////////////////////// END OF BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void SnugDockProtocol::apply( Pose & pose )
-{
+void SnugDockProtocol::apply( Pose & pose ) {
 	TR << "Beginning apply function of " + get_name() + "." << std::endl;
 
 	if ( ! antibody_info_ ) setup_objects( pose );
@@ -125,8 +117,7 @@ void SnugDockProtocol::apply( Pose & pose )
 	docking()->apply( pose );
 }
 
-void SnugDockProtocol::setup_objects( Pose const & pose )
-{
+void SnugDockProtocol::setup_objects( Pose const & pose ) {
 	TR << "Setting up data for " + get_name() + "." << std::endl;
 
 	/// AntibodyInfo is used to store information about the Ab-Ag complex and to generate useful helper objects based on
@@ -143,18 +134,16 @@ void SnugDockProtocol::setup_objects( Pose const & pose )
 
 }
 
-void SnugDockProtocol::setup_loop_refinement_movers()
-{
+void SnugDockProtocol::setup_loop_refinement_movers() {
 	using core::scoring::ScoreFunctionFactory;
 	using core::scoring::ScoreFunctionOP;
 
-	if ( ! antibody_info_ )
-	{
+	if ( ! antibody_info_ ) {
 		using utility::excn::EXCN_Msg_Exception;
 		throw EXCN_Msg_Exception( "A valid AntibodyInfo instance is required to setup " + get_name() + "'s centroid loop "
-			+ "refinement movers." );
+		                          + "refinement movers." );
 	}
-	
+
 	/// FIXME: The chain break weight configuration and constraint weight should be handled by RefineOneCDRLoop.
 	ScoreFunctionOP low_res_loop_refinement_scorefxn = ScoreFunctionFactory::create_score_function("cen_std", "score4L");
 	low_res_loop_refinement_scorefxn->set_weight( scoring::chainbreak, 1.0 );
@@ -162,40 +151,38 @@ void SnugDockProtocol::setup_loop_refinement_movers()
 	low_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, 100 );
 
 	low_res_refine_cdr_h2_ = new RefineOneCDRLoop(
-		antibody_info_,
-		h2,
-		loop_refinement_method_,
-		low_res_loop_refinement_scorefxn
+	    antibody_info_,
+	    h2,
+	    loop_refinement_method_,
+	    low_res_loop_refinement_scorefxn
 	);
 
 	low_res_refine_cdr_h3_ = new RefineOneCDRLoop(
-		antibody_info_,
-		h3,
-		loop_refinement_method_,
-		low_res_loop_refinement_scorefxn
+	    antibody_info_,
+	    h3,
+	    loop_refinement_method_,
+	    low_res_loop_refinement_scorefxn
 	);
 }
 
-void SnugDockProtocol::init()
-{
+void SnugDockProtocol::init() {
 	type( "SnugDockProtocol" );
-	
+
 	/// TODO: Allow the refinement method to be set via a mutator and from the options system
 	/// TODO: JAB Change refinement option name.  Most are NOT centroid - based refinement.
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	if ( option[ basic::options::OptionKeys::antibody::refine ].user() ) {
 		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::centroid_refine ]() ;
-	}
-	else{
+	} else {
 		loop_refinement_method_ = "refine_kic";
 	}
 }
 
 void SnugDockProtocol::init_for_equal_operator_and_copy_constructor(
-	SnugDockProtocol & lhs,
-	SnugDockProtocol const & rhs
-){
+    SnugDockProtocol & lhs,
+    SnugDockProtocol const & rhs
+) {
 	// copy all data members from rhs to lhs
 	lhs.antibody_info_ = rhs.antibody_info_;
 
@@ -207,10 +194,8 @@ void SnugDockProtocol::init_for_equal_operator_and_copy_constructor(
 	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
 }
 
-docking::DockingProtocolOP SnugDockProtocol::docking() const
-{
-	if ( ! docking_ )
-	{
+docking::DockingProtocolOP SnugDockProtocol::docking() const {
+	if ( ! docking_ ) {
 		/// The full DockingProtocol is used with a custom high resolution phase and post-low-resolution phase
 		/// All FoldTrees will be setup through AntibodyInfo so DockingProtocol's autofoldtree setup is disabled.
 		docking_ = new docking::DockingProtocol;
@@ -220,23 +205,18 @@ docking::DockingProtocolOP SnugDockProtocol::docking() const
 }
 
 void
-SnugDockProtocol::show( std::ostream & out ) const
-{
+SnugDockProtocol::show( std::ostream & out ) const {
 	out << *this;
 }
 
-std::ostream & operator<<(std::ostream& out, SnugDockProtocol const & snugdockprotocol )
-{
-	if ( snugdockprotocol.antibody_info_ )
-	{
+std::ostream & operator<<(std::ostream& out, SnugDockProtocol const & snugdockprotocol ) {
+	if ( snugdockprotocol.antibody_info_ ) {
 		out << snugdockprotocol.get_name() << " has been configured to operate on an Antibody-Antigen complex with the "
-			<< "following information:" << std::endl;
+		    << "following information:" << std::endl;
 		out << * snugdockprotocol.antibody_info_ << std::endl;
-	}
-	else
-	{
+	} else {
 		out << snugdockprotocol.get_name() << " has not been used yet.  " << snugdockprotocol.get_name()
-		<<"'s data initialization occurs the first time its apply method is called." << std::endl;
+		    <<"'s data initialization occurs the first time its apply method is called." << std::endl;
 	}
 	return out;
 }

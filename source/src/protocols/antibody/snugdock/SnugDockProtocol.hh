@@ -51,7 +51,7 @@ public: // boiler plate / virtuals
 
 	// destructor
 	virtual ~SnugDockProtocol();
-	
+
 	virtual void apply( Pose & );
 	virtual std::string get_name() const;
 
@@ -84,7 +84,7 @@ private: // data
 	RefineOneCDRLoopOP low_res_refine_cdr_h2_;
 	RefineOneCDRLoopOP low_res_refine_cdr_h3_;
 	mutable docking::DockingProtocolOP docking_;
-	
+
 	std::string loop_refinement_method_;
 
 }; // class SnugDockProtocol

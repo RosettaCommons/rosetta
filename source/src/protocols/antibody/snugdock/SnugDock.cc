@@ -58,19 +58,17 @@ namespace antibody {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///@brief default constructor
-SnugDock::SnugDock() : docking::DockingHighRes()
-{
+SnugDock::SnugDock() : docking::DockingHighRes() {
 	init();
 }
 
 ///@brief copy constructor
-SnugDock::SnugDock( SnugDock const & rhs ) : docking::DockingHighRes(rhs)
-{
+SnugDock::SnugDock( SnugDock const & rhs ) : docking::DockingHighRes(rhs) {
 	init_for_equal_operator_and_copy_constructor( *this, rhs );
 }
 
 ///@brief assignment operator
-SnugDock & SnugDock::operator=( SnugDock const & rhs ){
+SnugDock & SnugDock::operator=( SnugDock const & rhs ) {
 	//abort self-assignment
 	if ( this == &rhs ) return *this;
 	Mover::operator=( rhs );
@@ -82,33 +80,28 @@ SnugDock & SnugDock::operator=( SnugDock const & rhs ){
 SnugDock::~SnugDock() {}
 
 /// @brief Each derived class must specify its name.
-std::string SnugDock::get_name() const
-{
+std::string SnugDock::get_name() const {
 	return type();
 }
 
 //@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
-SnugDock::clone() const
-{
+SnugDock::clone() const {
 	return new SnugDock( *this );
 }
 
 ///@brief fresh_instance returns a default-constructed object for JD2
 protocols::moves::MoverOP
-SnugDock::fresh_instance() const
-{
+SnugDock::fresh_instance() const {
 	return new SnugDock();
 }
 
 ///@brief This mover retains state such that a fresh version is needed if the input Pose is about to change
-bool SnugDock::reinitialize_for_new_input() const
-{
+bool SnugDock::reinitialize_for_new_input() const {
 	return true;
 }
 
-void SnugDock::register_options()
-{
+void SnugDock::register_options() {
 	moves::RandomMover::register_options();
 	moves::SequenceMover::register_options();
 	moves::ChangeFoldTreeMover::register_options();
@@ -119,51 +112,45 @@ void SnugDock::register_options()
 /////////////////////////////////////// END OF BOILER PLATE CODE //////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void SnugDock::apply( Pose & pose )
-{
+void SnugDock::apply( Pose & pose ) {
 	TR << "Beginning apply function of " + get_name() + "." << std::endl;
 	show( TR );
-	
+
 	if ( ! high_resolution_step_ ) setup_objects( pose );
-	
+
 	/// minimize the CDRs before move to full-atom SnugDock cycle. Remove clashes which may dissociate L-H
 	pre_minimization_->apply(pose);
-	
+
 	TR << "Reinitializing the shared MC object before applying the high resolution phase of " + get_name() + "."
-		<< std::endl;
+	   << std::endl;
 
 	( * scorefxn() )( pose );
 	mc_->reset( pose );
 
-	for ( core::Size i = 0; i < number_of_high_resolution_cycles_; ++i )
-	{
+	for ( core::Size i = 0; i < number_of_high_resolution_cycles_; ++i ) {
 		high_resolution_step_->apply( pose );
 	}
 
 	TR << "Setting the structure to the state with the best score observed during the simulation" << std::endl;
 	mc_->recover_low( pose );
-	
+
 	/// Set the pose's foldtree to Ab-Ag docking (LH_A) to ensure the correct interface.
-	pose.fold_tree(antibody_info_->get_FoldTree_LH_A(pose)); 
+	pose.fold_tree(antibody_info_->get_FoldTree_LH_A(pose));
 }
 
-Size SnugDock::number_of_high_resolution_cycles() const
-{
+Size SnugDock::number_of_high_resolution_cycles() const {
 	return number_of_high_resolution_cycles_;
 }
 
-void SnugDock::number_of_high_resolution_cycles( Size const number_of_high_resolution_cycles )
-{
+void SnugDock::number_of_high_resolution_cycles( Size const number_of_high_resolution_cycles ) {
 	number_of_high_resolution_cycles_ = number_of_high_resolution_cycles;
 }
 
-void SnugDock::set_antibody_info( AntibodyInfoOP antibody_info )
-{
+void SnugDock::set_antibody_info( AntibodyInfoOP antibody_info ) {
 	antibody_info_ = antibody_info;
 }
 
-void SnugDock::setup_objects( Pose const & pose )
-{
+void SnugDock::setup_objects( Pose const & pose ) {
 	using core::scoring::ScoreFunctionOP;
 	using docking::DockMCMCycle;
 	using docking::DockMCMCycleOP;
@@ -178,14 +165,14 @@ void SnugDock::setup_objects( Pose const & pose )
 	using moves::TrialMoverOP;
 
 	TR << "Setting up data for " + get_name() + "." << std::endl;
-	
+
 	/// AntibodyInfo is used to store information about the Ab-Ag complex and to generate useful helper objects based on
 	/// that information (e.g. the various FoldTrees that are needed for SnugDock).
 	if ( ! antibody_info_ ) antibody_info_ = new AntibodyInfo( pose );
-	
+
 	///
 	pre_minimization_ = new CDRsMinPackMin( antibody_info_ );
-	
+
 
 	/// A vanilla DockMCMCycle can be used because AntibodyInfo will always make the first jump in the FoldTree dockable.
 	DockMCMCycleOP standard_dock_cycle = new DockMCMCycle;
@@ -194,26 +181,26 @@ void SnugDock::setup_objects( Pose const & pose )
 	/// The DockingHighRes base class provides a mechanism to do this.
 	tf2()->create_and_attach_task_factory( this, pose );
 	standard_dock_cycle->set_task_factory( task_factory() );
-	
+
 	/// This MonteCarlo instance uses 'standard' with the docking patch and a temperature factor of 0.8.
 	/// All movers in the high resolution step will share this MonteCarlo instance to provide consistent results.
 	mc_ = standard_dock_cycle->get_mc();
-	
+
 	ChangeFoldTreeMoverOP set_foldtree_for_ab_ag_docking = new ChangeFoldTreeMover(
-		 antibody_info_->get_FoldTree_LH_A( pose )
+	    antibody_info_->get_FoldTree_LH_A( pose )
 	);
 	ChangeFoldTreeMoverOP set_foldtree_for_vH_vL_docking = new ChangeFoldTreeMover(
-		 antibody_info_->get_FoldTree_L_HA( pose )
+	    antibody_info_->get_FoldTree_L_HA( pose )
 	);
 
 	SequenceMoverOP antibody_antigen_dock_cycle = new SequenceMover(
-		set_foldtree_for_ab_ag_docking,
-		standard_dock_cycle
+	    set_foldtree_for_ab_ag_docking,
+	    standard_dock_cycle
 	);
 
 	SequenceMoverOP vH_vL_dock_cycle = new SequenceMover(
-		set_foldtree_for_vH_vL_docking,
-		standard_dock_cycle
+	    set_foldtree_for_vH_vL_docking,
+	    standard_dock_cycle
 	);
 
 	/// TODO: Does CDRsMinPackMin need a TaskFactory to be set?  Does it get this from AntibodyInfo?
@@ -225,7 +212,7 @@ void SnugDock::setup_objects( Pose const & pose )
 	high_res_loop_refinement_scorefxn->set_weight( scoring::chainbreak, 1.0 );
 	high_res_loop_refinement_scorefxn->set_weight( scoring::overlap_chainbreak, 10./3. );
 	high_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, 100 );
-	
+
 	RefineOneCDRLoopOP refine_cdr_h2_base = new RefineOneCDRLoop( antibody_info_, h2, loop_refinement_method_, high_res_loop_refinement_scorefxn );
 	TrialMoverOP refine_cdr_h2 = new TrialMover( refine_cdr_h2_base, mc_ );
 
@@ -243,28 +230,25 @@ void SnugDock::setup_objects( Pose const & pose )
 	high_resolution_step_->add_mover( refine_cdr_h3, 0.05 );
 }
 
-void SnugDock::init()
-{	
+void SnugDock::init() {
 	type( "SnugDock" );
-	
+
 	/// TODO: Allow the refinement method to be set via a mutator and from the options system
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	if ( option[ basic::options::OptionKeys::antibody::refine ].user() ) {
 		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::refine ]() ;
-	}
-	else{
+	} else {
 		loop_refinement_method_ = "refine_kic";
 	}
-	
-	
+
+
 	number_of_high_resolution_cycles( 50 );
 
 	init_options();
 }
 
-void SnugDock::init_for_equal_operator_and_copy_constructor(SnugDock & lhs, SnugDock const & rhs)
-{
+void SnugDock::init_for_equal_operator_and_copy_constructor(SnugDock & lhs, SnugDock const & rhs) {
 	// copy all data members from rhs to lhs
 	lhs.antibody_info_ = rhs.antibody_info_;
 	lhs.mc_ = rhs.mc_;
@@ -272,17 +256,15 @@ void SnugDock::init_for_equal_operator_and_copy_constructor(SnugDock & lhs, Snug
 	// Movers
 	lhs.high_resolution_step_ = rhs.high_resolution_step_;
 	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
-	
+
 	lhs.number_of_high_resolution_cycles_ = rhs.number_of_high_resolution_cycles_;
 }
 
-void SnugDock::init_options()
-{
+void SnugDock::init_options() {
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
-	
-	if ( option[ run::test_cycles ].user() )
-	{
+
+	if ( option[ run::test_cycles ].user() ) {
 		/// Ideally we would test a larger number of cycles because we are using a random mover in the apply,
 		/// but because each submove can be quite long, this would take far too long.
 		/// TODO: Create a scientific test for SnugDock that is run regularly.
@@ -291,13 +273,11 @@ void SnugDock::init_options()
 }
 
 void
-SnugDock::show( std::ostream & out ) const
-{
+SnugDock::show( std::ostream & out ) const {
 	out << *this;
 }
 
-std::ostream & operator<<(std::ostream& out, SnugDock const & )
-{
+std::ostream & operator<<(std::ostream& out, SnugDock const & ) {
 	out << "//////////////////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	out << "/// The following description borrows heavily from Fig. 1 of:" << std::endl;
 	out << "/// Sircar A, Gray JJ (2010) SnugDock: Paratope Structural Optimization during" << std::endl;

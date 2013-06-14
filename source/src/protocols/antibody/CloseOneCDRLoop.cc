@@ -44,7 +44,7 @@ CloseOneCDRLoop::CloseOneCDRLoop( ) : Mover( "CloseOneCDRLoop" ) {
 	loop_end_   = 0+flanking_residues_;
 } // CloseOneCDRLoop default constructor
 
-    
+
 
 CloseOneCDRLoop::CloseOneCDRLoop( Size query_start, Size query_end ) : Mover( "CloseOneCDRLoop" ) {
 	set_default();
@@ -54,19 +54,18 @@ CloseOneCDRLoop::CloseOneCDRLoop( Size query_start, Size query_end ) : Mover( "C
 	loop_end_   = query_end+flanking_residues_;
 } // CloseOneCDRLoop default constructor
 
-    
-    
-    
+
+
+
 // CloseOneCDRLoop default destructor
 CloseOneCDRLoop::~CloseOneCDRLoop() {}
 
-    
-    
-    
-    
-    
-void CloseOneCDRLoop::set_default()
-{
+
+
+
+
+
+void CloseOneCDRLoop::set_default() {
 	allowed_separation_ = 1.9;
 	flanking_residues_ = 5; // default 5;
 	movemap_ = new kinematics::MoveMap();
@@ -74,30 +73,31 @@ void CloseOneCDRLoop::set_default()
 	movemap_->set_bb( false );
 } // CloseOneCDRLoop::set_default
 
-    
-    
-    
+
+
+
 std::string
-CloseOneCDRLoop::get_name() const { return "CloseOneCDRLoop"; }
+CloseOneCDRLoop::get_name() const {
+	return "CloseOneCDRLoop";
+}
 
-    
 
-    
-    
-    
-    
 
-void CloseOneCDRLoop::apply( pose::Pose & pose_in )
-{
-    using loops::loop_closure::ccd::CcdMover;
-    using loops::loop_closure::ccd::CcdMoverOP;
-    
+
+
+
+
+
+void CloseOneCDRLoop::apply( pose::Pose & pose_in ) {
+	using loops::loop_closure::ccd::CcdMover;
+	using loops::loop_closure::ccd::CcdMoverOP;
+
 	Size const N ( 1 ); // N atom
 	Size const C ( 3 ); // C atom
 
 	// Coordinates of the C and N atoms at stem
 	numeric::xyzVector_float peptide_C, peptide_N;
-    
+
 	// N-terminal
 	peptide_C = pose_in.residue( cdr_loop_start_ - 1 ).xyz( C );
 	peptide_N = pose_in.residue( cdr_loop_start_ ).xyz( N );
@@ -112,11 +112,11 @@ void CloseOneCDRLoop::apply( pose::Pose & pose_in )
 	Real nter_separation=peptide_C.distance(peptide_N);
 	Real cter_separation=peptide_C.distance(peptide_N);
 
-    
+
 	// save the starting foldtree
 	core::kinematics::FoldTree f( pose_in.fold_tree() );
 
-    
+
 	// setup movemap to only loop residues
 	utility::vector1< bool> allow_bb_move( pose_in.total_residue(), false );
 	for ( Size i=loop_start_; i<= loop_end_; ++i )

@@ -24,74 +24,74 @@
 #include <map>
 #include <string>
 
-namespace protocols{
-namespace antibody{
+namespace protocols {
+namespace antibody {
 
 ///@brief Interface to this class is in AntibodyInfo.
-class AntibodyEnumManager : public utility::pointer::ReferenceCount{
-	
-	
+class AntibodyEnumManager : public utility::pointer::ReferenceCount {
+
+
 public:
 
 	AntibodyEnumManager();
-	
+
 	virtual ~AntibodyEnumManager();
-	
+
 	////////////////// CDR names ///////////////////////////////////////////////
-	
+
 	CDRNameEnum
 	cdr_name_string_to_enum(std::string const & cdr_name) const;
-	
+
 	std::string
 	cdr_name_enum_to_string(CDRNameEnum const cdr_name) const;
-	
+
 	bool
 	cdr_name_is_present(std::string const & cdr_name) const;
-	
+
 	////////////////// Numbering Schemes ///////////////////////////////////////
-	
+
 	AntibodyNumberingSchemeEnum
 	numbering_scheme_string_to_enum(std::string const & numbering_scheme) const;
-		
+
 	std::string
 	numbering_scheme_enum_to_string(AntibodyNumberingSchemeEnum const numbering_scheme) const;
-	
+
 
 	////////////////// H3 Base Type ////////////////////////////////////////////
-	
+
 	H3BaseTypeEnum
 	h3_base_type_string_to_enum(std::string const & base_type) const;
-	
+
 	std::string
 	h3_base_type_enum_to_string(H3BaseTypeEnum const base_type) const;
-	
-	
+
+
 	///////////////// Packing Angle ////////////////////////////////////////////
 
 	PackingAngleEnum
 	packing_angle_string_to_enum(std::string const & angle_type) const;
-	
+
 	std::string
 	packing_angle_enum_to_string(PackingAngleEnum const angle_type) const;
-	
-	
-private:
-	
 
-	
+
+private:
+
+
+
 	void setup();
-	
-	
-	
+
+
+
 	utility::vector1< std::string >  cdr_name_to_string_;
 	std::map< std::string, CDRNameEnum > cdr_name_to_enum_;
-	
+
 	utility::vector1< std::string >  numbering_scheme_to_string_;
 	std::map< std::string, AntibodyNumberingSchemeEnum > numbering_scheme_to_enum_;
-	
+
 	utility::vector1< std::string >  h3_base_type_to_string_;
 	std::map< std::string, H3BaseTypeEnum > h3_base_type_to_enum_;
-	
+
 	utility::vector1< std::string >  packing_angle_to_string_;
 	std::map< std::string, PackingAngleEnum > packing_angle_to_enum_;
 };

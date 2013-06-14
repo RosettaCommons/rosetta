@@ -43,54 +43,54 @@ class RefineOneCDRLoopCentroid: public moves::Mover {
 
 public:
 
-    /// @brief constructor with arguments
-    RefineOneCDRLoopCentroid(AntibodyInfoCOP antibody_info,
-							 CDRNameEnum const & loop_name);
-	
+	/// @brief constructor with arguments
 	RefineOneCDRLoopCentroid(AntibodyInfoCOP antibody_info,
-							 CDRNameEnum const & loop_name,
-					 		core::scoring::ScoreFunctionCOP scorefxn );
-	
-    /// @brief constructor with arguments
-    RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_loop);
-	
-	RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_loop,
-							 core::scoring::ScoreFunctionCOP scorefxn );
+	                         CDRNameEnum const & loop_name);
 
-    /// @brief default destructor
+	RefineOneCDRLoopCentroid(AntibodyInfoCOP antibody_info,
+	                         CDRNameEnum const & loop_name,
+	                         core::scoring::ScoreFunctionCOP scorefxn );
+
+	/// @brief constructor with arguments
+	RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_loop);
+
+	RefineOneCDRLoopCentroid( loops::Loop const & a_cdr_loop,
+	                          core::scoring::ScoreFunctionCOP scorefxn );
+
+	/// @brief default destructor
 	~RefineOneCDRLoopCentroid();
-    
+
 
 	virtual void apply( pose::Pose & pose );
-	
-    virtual std::string get_name() const;
-	
 
-	void set_benchmark(bool const & setting){
-        benchmark_ = setting;
-    }
-	void set_snugfit(bool const & setting){
-        snug_fit_ = setting;
-    }
-	void set_refine_input_loop(bool const & setting){
-        refine_input_loop_ = setting;
-    }
-	
+	virtual std::string get_name() const;
+
+
+	void set_benchmark(bool const & setting) {
+		benchmark_ = setting;
+	}
+	void set_snugfit(bool const & setting) {
+		snug_fit_ = setting;
+	}
+	void set_refine_input_loop(bool const & setting) {
+		refine_input_loop_ = setting;
+	}
+
 	void set_score_function(core::scoring::ScoreFunctionCOP scorefxn);
 
-	
+
 private:
 	void set_default();
-    void finalize_setup( core::pose::Pose const & pose );
+	void finalize_setup( core::pose::Pose const & pose );
 	void loop_centroid_relax(
-                             pose::Pose & pose,
-                             Size const loop_begin,
-                             Size const loop_end );
-	
+	    pose::Pose & pose,
+	    Size const loop_begin,
+	    Size const loop_end );
+
 private:
-    loops::Loop the_cdr_loop_;
-    
-    bool benchmark_;
+	loops::Loop the_cdr_loop_;
+
+	bool benchmark_;
 	bool snug_fit_;
 	bool refine_input_loop_;
 	scoring::ScoreFunctionOP lowres_scorefxn_;

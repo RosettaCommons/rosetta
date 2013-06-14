@@ -25,7 +25,7 @@
 int
 main( int argc, char * argv [] )
 {
-    try {
+	try {
 		using namespace protocols::antibody;
 		using namespace protocols::jd2;
 
@@ -38,8 +38,8 @@ main( int argc, char * argv [] )
 		SnugDockProtocolOP snugdock = new SnugDockProtocol;
 		JobDistributor::get_instance()->go( snugdock );
 
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-    }
-    return 0;
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
+	}
+	return 0;
 }

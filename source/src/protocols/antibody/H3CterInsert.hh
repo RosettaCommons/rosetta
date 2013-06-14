@@ -44,7 +44,7 @@ namespace antibody {
 class H3CterInsert : public protocols::moves::Mover {
 
 public:
-    /// @brief default constructor
+	/// @brief default constructor
 	H3CterInsert();
 
 	/// @brief constructor with arguments
@@ -54,37 +54,37 @@ public:
 	/// @brief default destructor
 	~H3CterInsert();
 
-    void set_default();
+	void set_default();
 
 	virtual void apply(pose::Pose & pose );
-    virtual std::string get_name() const;
+	virtual std::string get_name() const;
 
-    // read CDR H3 C-terminal fragments (size: 4)
-    void read_H3_cter_fragment();
+	// read CDR H3 C-terminal fragments (size: 4)
+	void read_H3_cter_fragment();
 
 
 private:
 
-    // CDR H3 C-terminal fragments
+	// CDR H3 C-terminal fragments
 	utility::vector1< core::fragment::FragData > H3_base_library_;
 
-    AntibodyInfoOP ab_info_;
+	AntibodyInfoOP ab_info_;
 
-    bool user_defined_;
+	bool user_defined_;
 
-    /// @brief benchmark flag
+	/// @brief benchmark flag
 	bool benchmark_;
 
-    /// @brief is camelid antibody without light chain
+	/// @brief is camelid antibody without light chain
 	bool is_camelid_;
 
 
-    void init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark);
+	void init(AntibodyInfoOP antibody_info, bool camelid, bool benchmark);
 //    void setup_objects();
 //    void finalize_setup( core::pose::Pose & pose );
 
 
-    std::string H3_ter_library_filename_;
+	std::string H3_ter_library_filename_;
 
 };
 

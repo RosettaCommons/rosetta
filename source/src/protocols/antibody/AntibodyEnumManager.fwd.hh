@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody_design/AntibodyEnumManager.fwd.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -20,8 +20,8 @@
 #include <utility/pointer/owning_ptr.hh>
 
 
-namespace protocols{
-namespace antibody{
+namespace protocols {
+namespace antibody {
 
 // Forward
 class AntibodyEnumManager;

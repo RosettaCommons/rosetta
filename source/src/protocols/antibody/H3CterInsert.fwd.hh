@@ -28,11 +28,11 @@
 
 namespace protocols {
 namespace antibody {
-    
-    class H3CterInsert;
-    typedef utility::pointer::owning_ptr< H3CterInsert > H3CterInsertOP;
-    typedef utility::pointer::owning_ptr< H3CterInsert const > H3CterInsertCOP;
-    
+
+class H3CterInsert;
+typedef utility::pointer::owning_ptr< H3CterInsert > H3CterInsertOP;
+typedef utility::pointer::owning_ptr< H3CterInsert const > H3CterInsertCOP;
+
 }
 }
 

@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody_design/CDRClusterEnumManager.cc
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/antibody/CDRClusterEnumManager.hh>
@@ -22,17 +22,17 @@
 #include <core/types.hh>
 #include <utility/PyAssert.hh>
 
-namespace protocols{
-namespace antibody{
+namespace protocols {
+namespace antibody {
 
-CDRClusterEnumManager::CDRClusterEnumManager(){
+CDRClusterEnumManager::CDRClusterEnumManager() {
 	setup();
 }
 
-CDRClusterEnumManager::~CDRClusterEnumManager(){}
+CDRClusterEnumManager::~CDRClusterEnumManager() {}
 
 void
-CDRClusterEnumManager::setup(){
+CDRClusterEnumManager::setup() {
 
 	enum_to_string_.resize(CDRClusterEnum_total);
 	enum_to_string_[H1_10_1] = "H1-10-1";
@@ -151,7 +151,7 @@ CDRClusterEnumManager::setup(){
 	enum_to_string_[NA] = "NA";
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	string_to_enum_["H1-10-1"] = H1_10_1;
-	string_to_enum_["H1-12-1"] = H1_12_1; 
+	string_to_enum_["H1-12-1"] = H1_12_1;
 	string_to_enum_["H1-13-1"] = H1_13_1;
 	string_to_enum_["H1-13-2"] = H1_13_2;
 	string_to_enum_["H1-13-3"] = H1_13_3 ;
@@ -266,7 +266,7 @@ CDRClusterEnumManager::setup(){
 	string_to_enum_["NA"] = NA;
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	string_to_enum_["H1_10_1"] = H1_10_1;
-	string_to_enum_["H1_12_1"] = H1_12_1; 
+	string_to_enum_["H1_12_1"] = H1_12_1;
 	string_to_enum_["H1_13_1"] = H1_13_1;
 	string_to_enum_["H1_13_2"] = H1_13_2;
 	string_to_enum_["H1_13_3"] = H1_13_3 ;
@@ -387,7 +387,7 @@ CDRClusterEnumManager::cdr_cluster_enum_to_string(CDRClusterEnum const cluster) 
 
 CDRClusterEnum
 CDRClusterEnumManager::cdr_cluster_string_to_enum(std::string const & cluster) const {
-	
+
 	//This is here due to const correctness issues with [] operator
 	std::map< std::string, CDRClusterEnum >::const_iterator iter( string_to_enum_.find( cluster ) );
 	//utility::PyAssert((iter != string_to_enum_.end()), "Cluster not found");
@@ -400,6 +400,6 @@ CDRClusterEnumManager::cdr_cluster_is_present(std::string const & cluster) const
 	return iter != string_to_enum_.end();
 }
 
-	}//Antibody
+}//Antibody
 }//Protocols
 

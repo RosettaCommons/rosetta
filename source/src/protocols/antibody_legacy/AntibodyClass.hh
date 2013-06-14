@@ -27,67 +27,67 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
-	namespace antibody_legacy {
+namespace antibody_legacy {
 
-		/// antibody definition
-		class Antibody {
+/// antibody definition
+class Antibody {
 
-		public:
-			/// default constructor
-			Antibody();
+public:
+	/// default constructor
+	Antibody();
 
-			/// constructor with arguments
-			Antibody( core::pose::Pose& pose_in );
-			Antibody( core::pose::Pose& pose_in, bool camelid );
-			Antibody( core::pose::Pose& pose_in, std::string cdr_name );
+	/// constructor with arguments
+	Antibody( core::pose::Pose& pose_in );
+	Antibody( core::pose::Pose& pose_in, bool camelid );
+	Antibody( core::pose::Pose& pose_in, std::string cdr_name );
 
-			void set_defaults();
+	void set_defaults();
 
-			void set_Fv( core::pose::Pose& pose_in );
+	void set_Fv( core::pose::Pose& pose_in );
 
-			void set_Fv( core::pose::Pose& pose_in, bool camelid );
+	void set_Fv( core::pose::Pose& pose_in, bool camelid );
 
-			void populate_all_cdrs();
+	void populate_all_cdrs();
 
-			void all_cdr_fold_tree();
+	void all_cdr_fold_tree();
 
-			/// align current Fv to native.Fv
-			void align_to_native( Antibody & native );
+	/// align current Fv to native.Fv
+	void align_to_native( Antibody & native );
 
-			core::Size cdrl_[4][3];
-			core::Size cdrh_[4][3];
-			core::Size lfr_[8][3];
-			core::Size hfr_[7][3];
+	core::Size cdrl_[4][3];
+	core::Size cdrh_[4][3];
+	core::Size lfr_[8][3];
+	core::Size hfr_[7][3];
 
-			// Start coordinates of active loop
-			core::Size current_start;
-			// End coordinates of active loop
-			core::Size current_end;
+	// Start coordinates of active loop
+	core::Size current_start;
+	// End coordinates of active loop
+	core::Size current_end;
 
-			// Pose containing antibody variable region, Fv
-			core::pose::Pose Fv;
+	// Pose containing antibody variable region, Fv
+	core::pose::Pose Fv;
 
-			bool kinked_;
-			bool extended_;
-			utility::vector1< char > Fv_sequence_;
+	bool kinked_;
+	bool extended_;
+	utility::vector1< char > Fv_sequence_;
 
-			loops::Loops all_cdr_loops;
+	loops::Loops all_cdr_loops;
 
-			core::kinematics::MoveMap ab_movemap;
+	core::kinematics::MoveMap ab_movemap;
 
-		private:
+private:
 
-			core::Size cdr_h3_cut_;
-			bool camelid_;
+	core::Size cdr_h3_cut_;
+	bool camelid_;
 
-			void detect_CDR_H3_stem_type();
-			void detect_camelid_CDR_H3_stem_type();
-			void detect_regular_CDR_H3_stem_type();
-			void update_sequence();
-		};
+	void detect_CDR_H3_stem_type();
+	void detect_camelid_CDR_H3_stem_type();
+	void detect_regular_CDR_H3_stem_type();
+	void update_sequence();
+};
 
 
-	} //namespace antibody
+} //namespace antibody
 } //namespace protocols
 
 

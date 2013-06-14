@@ -20,7 +20,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>  
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/Ab_TemplateInfo.fwd.hh>
 
@@ -30,73 +30,73 @@ namespace antibody {
 /// @brief Grafts only one CDR onto a framework
 class GraftOneCDRLoop : public protocols::moves::Mover {
 public:
-		// default constructor
-		GraftOneCDRLoop();
+	// default constructor
+	GraftOneCDRLoop();
 
-		// constructor with arguments        
-		GraftOneCDRLoop(CDRNameEnum const & cdr_name,
-							AntibodyInfoOP antibody_info,
-                             Ab_TemplateInfoOP ab_t_info);
+	// constructor with arguments
+	GraftOneCDRLoop(CDRNameEnum const & cdr_name,
+	                AntibodyInfoOP antibody_info,
+	                Ab_TemplateInfoOP ab_t_info);
 
-        
-		~GraftOneCDRLoop();
-		
-		virtual void apply( core::pose::Pose & pose_in );
-		
-		virtual std::string get_name() const;
-		
-		
-		/// @brief enable benchmark mode
-		inline void enable_benchmark_mode( bool setting ) {
-			benchmark_ = setting;
-		}
-		
-		///@brief users can pass their own scorefunction for packing after grafting
-		void set_scorefxn(core::scoring::ScoreFunctionOP scorefxn){
-			scorefxn_ = scorefxn;
-		}
-		
-		///@brief R2 just graft R2 by copying some stem residues, and remove H3 to do
-		///       H3 loop modeling later. But the terminal has been changed by this
-		///       grafting. Therefore, in R3, an option for not copying h3 stem is
-		///       provided.
-		void set_no_stem_copy( bool const & setting ){
-			stem_not_graft_ = setting;
-		}
-	
-		void set_flank_size(Size setting){
-			flank_size_=setting;
-		}
-		
-        ///@brief copy ctor
-    	GraftOneCDRLoop( GraftOneCDRLoop const & rhs );
 
-    	///@brief assignment operator
-    	GraftOneCDRLoop & operator=( GraftOneCDRLoop const & rhs );
-	
+	~GraftOneCDRLoop();
+
+	virtual void apply( core::pose::Pose & pose_in );
+
+	virtual std::string get_name() const;
+
+
+	/// @brief enable benchmark mode
+	inline void enable_benchmark_mode( bool setting ) {
+		benchmark_ = setting;
+	}
+
+	///@brief users can pass their own scorefunction for packing after grafting
+	void set_scorefxn(core::scoring::ScoreFunctionOP scorefxn) {
+		scorefxn_ = scorefxn;
+	}
+
+	///@brief R2 just graft R2 by copying some stem residues, and remove H3 to do
+	///       H3 loop modeling later. But the terminal has been changed by this
+	///       grafting. Therefore, in R3, an option for not copying h3 stem is
+	///       provided.
+	void set_no_stem_copy( bool const & setting ) {
+		stem_not_graft_ = setting;
+	}
+
+	void set_flank_size(Size setting) {
+		flank_size_=setting;
+	}
+
+	///@brief copy ctor
+	GraftOneCDRLoop( GraftOneCDRLoop const & rhs );
+
+	///@brief assignment operator
+	GraftOneCDRLoop & operator=( GraftOneCDRLoop const & rhs );
+
 
 private:
-		void set_default();
-		void init();
-		void finalize_setup();
-		void initForEqualOperatorAndCopyConstructor(GraftOneCDRLoop & lhs, GraftOneCDRLoop const & rhs);
-		
-		
-private:
-		
-		// Limits of query loop
-        core::Size flank_size_;
-		core::Size stem_copy_size_;
-				
-		CDRNameEnum cdr_name_;
-		AntibodyInfoOP ab_info_;
-		Ab_TemplateInfoOP ab_t_info_;
-		
-		bool benchmark_;
-		bool stem_not_graft_;
+	void set_default();
+	void init();
+	void finalize_setup();
+	void initForEqualOperatorAndCopyConstructor(GraftOneCDRLoop & lhs, GraftOneCDRLoop const & rhs);
 
-		core::scoring::ScoreFunctionCOP scorefxn_;
-		std::string preprocessing_script_version_;
+
+private:
+
+	// Limits of query loop
+	core::Size flank_size_;
+	core::Size stem_copy_size_;
+
+	CDRNameEnum cdr_name_;
+	AntibodyInfoOP ab_info_;
+	Ab_TemplateInfoOP ab_t_info_;
+
+	bool benchmark_;
+	bool stem_not_graft_;
+
+	core::scoring::ScoreFunctionCOP scorefxn_;
+	std::string preprocessing_script_version_;
 
 
 }; // class GraftOneCDRLoop

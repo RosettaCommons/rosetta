@@ -25,41 +25,41 @@
 namespace protocols {
 namespace antibody {
 
-	/// @brief Closes only one CDR onto a framework
-	class CloseOneCDRLoop : public protocols::moves::Mover {
-	public:
-		// default constructor
-		CloseOneCDRLoop();
+/// @brief Closes only one CDR onto a framework
+class CloseOneCDRLoop : public protocols::moves::Mover {
+public:
+	// default constructor
+	CloseOneCDRLoop();
 
-		// constructor with arguments
-		CloseOneCDRLoop( core::Size query_start, core::Size query_end  );
+	// constructor with arguments
+	CloseOneCDRLoop( core::Size query_start, core::Size query_end  );
 
-		// default destructor
-		~CloseOneCDRLoop();
+	// default destructor
+	~CloseOneCDRLoop();
 
-		void set_default();
-		virtual void apply( core::pose::Pose & pose_in );
-		virtual std::string get_name() const;
+	void set_default();
+	virtual void apply( core::pose::Pose & pose_in );
+	virtual std::string get_name() const;
 
 
-		/// @brief enable benchmark mode
-		inline void enable_benchmark_mode( bool setting ) {
-			benchmark_ = setting;
-		}
+	/// @brief enable benchmark mode
+	inline void enable_benchmark_mode( bool setting ) {
+		benchmark_ = setting;
+	}
 
-	private:
-		// Limits of query loop
-		core::Size loop_start_, cdr_loop_start_;
-		core::Size loop_end_, cdr_loop_end_;
-		core::Real allowed_separation_;
-		core::Size flanking_residues_;
+private:
+	// Limits of query loop
+	core::Size loop_start_, cdr_loop_start_;
+	core::Size loop_end_, cdr_loop_end_;
+	core::Real allowed_separation_;
+	core::Size flanking_residues_;
 
-		/// @brief benchmark flag
-		bool benchmark_;
+	/// @brief benchmark flag
+	bool benchmark_;
 
-		core::kinematics::MoveMapOP movemap_;
+	core::kinematics::MoveMapOP movemap_;
 
-	}; // class CloseOneCDRLoop
+}; // class CloseOneCDRLoop
 
 
 } // antibody

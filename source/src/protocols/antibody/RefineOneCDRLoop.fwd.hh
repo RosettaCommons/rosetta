@@ -19,11 +19,11 @@
 
 namespace protocols {
 namespace antibody {
-        
-    class RefineOneCDRLoop;
-    typedef utility::pointer::owning_ptr< RefineOneCDRLoop > RefineOneCDRLoopOP;
-    typedef utility::pointer::owning_ptr< RefineOneCDRLoop const > RefineOneCDRLoopCOP;
-        
+
+class RefineOneCDRLoop;
+typedef utility::pointer::owning_ptr< RefineOneCDRLoop > RefineOneCDRLoopOP;
+typedef utility::pointer::owning_ptr< RefineOneCDRLoop const > RefineOneCDRLoopCOP;
+
 }
 }
 

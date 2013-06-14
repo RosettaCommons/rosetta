@@ -39,66 +39,66 @@
 using namespace core;
 namespace protocols {
 namespace antibody {
-        
+
 class LHSnugFitLegacy: public moves::Mover {
-            
-            
+
+
 public:
-    
-    /// @brief default constructor
+
+	/// @brief default constructor
 	LHSnugFitLegacy();
-    
+
 	/// @brief constructor with arguments
-    LHSnugFitLegacy(loops::LoopsOP loops_in );
-    LHSnugFitLegacy(antibody::AntibodyInfoOP antibody_in );
+	LHSnugFitLegacy(loops::LoopsOP loops_in );
+	LHSnugFitLegacy(antibody::AntibodyInfoOP antibody_in );
 	LHSnugFitLegacy(antibody::AntibodyInfoOP antibody_in, bool camelid );
-        
-    virtual protocols::moves::MoverOP clone() const;
-    
+
+	virtual protocols::moves::MoverOP clone() const;
+
 	/// @brief default destructor
 	~LHSnugFitLegacy();
-    
-    void set_default();
-    
 
-    virtual void apply( core::pose::Pose & pose );
-    
-    virtual std::string get_name() const;
-    
-    void set_task_factory(core::pack::task::TaskFactoryCOP tf){
-        tf_ = new core::pack::task::TaskFactory(*tf);
-    }
-    
+	void set_default();
+
+
+	virtual void apply( core::pose::Pose & pose );
+
+	virtual std::string get_name() const;
+
+	void set_task_factory(core::pack::task::TaskFactoryCOP tf) {
+		tf_ = new core::pack::task::TaskFactory(*tf);
+	}
+
 private:
 
-    AntibodyInfoOP ab_info_;
-    
-    bool user_defined_;
-    bool benchmark_;
-    bool is_camelid_;
-    loops::LoopsOP all_loops_;
-    std::string min_type_;
-    Real rot_mag_;
-    Real trans_mag_;
-    Real temperature_;
-    
-    void init(loops::LoopsOP loops_in, bool camelid);
-    
-    void setup_objects();
-    
-    void snugfit_mcm_protocol( core::pose::Pose & pose_in, loops::Loops loops_in );
-    
+	AntibodyInfoOP ab_info_;
+
+	bool user_defined_;
+	bool benchmark_;
+	bool is_camelid_;
+	loops::LoopsOP all_loops_;
+	std::string min_type_;
+	Real rot_mag_;
+	Real trans_mag_;
+	Real temperature_;
+
+	void init(loops::LoopsOP loops_in, bool camelid);
+
+	void setup_objects();
+
+	void snugfit_mcm_protocol( core::pose::Pose & pose_in, loops::Loops loops_in );
+
 	//packer task
 	core::pack::task::TaskFactoryOP tf_;
 
 };
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
 } // namespace antibody
 } // namespace protocols
 

@@ -69,10 +69,10 @@ main( int argc, char* argv[] ){
 
 	core::Real RD_Hbond = kink_RD_Hbond(pose, ab_info);
 	TR << "RD_Hbond: " << RD_Hbond << std::endl;
-	
+
 	core::Real WHbond = kink_Trp_Hbond(pose, ab_info);
 	TR << "WHbond: " << WHbond << std::endl;
-	
+
 	std::pair<core::Real,core::Real> q = kink_dihedral(pose, ab_info);
 	TR << "q: " << q.first << " " << q.second << std::endl;
 
@@ -101,7 +101,7 @@ main( int argc, char* argv[] ){
 //	TR<<*ab_m_h3<<std::endl;
 //	JobDistributor::get_instance()->go(ab_m_h3);
 //
-//	 } catch ( utility::excn::EXCN_Base const & e ) { 
+//	 } catch ( utility::excn::EXCN_Base const & e ) {
 //		 std::cout << "caught exception " << e.msg() << std::endl;
 //	}
 //}

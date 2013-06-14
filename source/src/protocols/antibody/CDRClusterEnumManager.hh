@@ -31,35 +31,35 @@ namespace protocols {
 namespace antibody {
 
 
-///@brief Interface to this class is in AntibodyInfo. 
-class CDRClusterEnumManager : public utility::pointer::ReferenceCount{
+///@brief Interface to this class is in AntibodyInfo.
+class CDRClusterEnumManager : public utility::pointer::ReferenceCount {
 public:
-	
+
 	CDRClusterEnumManager();
-	
+
 	virtual ~CDRClusterEnumManager();
-	
+
 	CDRClusterEnum
 	cdr_cluster_string_to_enum(std::string const & cluster) const;
 
 	std::string
 	cdr_cluster_enum_to_string(CDRClusterEnum const cluster) const;
-	
+
 	bool
 	cdr_cluster_is_present(std::string const & cluster) const;
-	
+
 private:
-	
-	
+
+
 	void setup();
-	
+
 	//bool initialized_;
 	utility::vector1< std::string > enum_to_string_;
 	std::map< std::string, CDRClusterEnum > string_to_enum_;
 
 };
 
-		
+
 }
 }
 

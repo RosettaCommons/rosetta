@@ -15,13 +15,13 @@
 #ifndef INCLUDED_protocols_antibody_legacy_AntibodyClass_fwd_hh
 #define INCLUDED_protocols_antibody_legacy_AntibodyClass_fwd_hh
 
-namespace protocols{
-	namespace antibody_legacy{
+namespace protocols {
+namespace antibody_legacy {
 
-		// Forward
-		class Antibody;
+// Forward
+class Antibody;
 
-	} //namespace antibody
+} //namespace antibody
 } //namespace protocols
 
 #endif //INCLUDED_protocols_AntibodyClass_FWD_HH

@@ -32,88 +32,92 @@
 using namespace core;
 namespace protocols {
 namespace antibody {
-        
+
 class LHRepulsiveRamp: public moves::Mover {
-            
-            
+
+
 public:
-    
-    /// @brief default constructor
+
+	/// @brief default constructor
 	LHRepulsiveRamp();
-    
+
 	/// @brief constructor with arguments
-    
-    LHRepulsiveRamp( docking::DockJumps const movable_jumps,
-                    core::scoring::ScoreFunctionCOP dock_scorefxn,
-                    core::scoring::ScoreFunctionCOP pack_scorefxn );
-        
-    virtual protocols::moves::MoverOP clone() const;
-    
+
+	LHRepulsiveRamp( docking::DockJumps const movable_jumps,
+	                 core::scoring::ScoreFunctionCOP dock_scorefxn,
+	                 core::scoring::ScoreFunctionCOP pack_scorefxn );
+
+	virtual protocols::moves::MoverOP clone() const;
+
 	/// @brief default destructor
 	~LHRepulsiveRamp();
-    
-    void set_default();
-    
-    void set_dock_score_func(scoring::ScoreFunctionCOP dock_scorefxn ){
-        dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
-    }
-    
-    void set_pack_score_func(scoring::ScoreFunctionCOP pack_scorefxn){
-        pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
-    }
-    
-    virtual void apply( core::pose::Pose & pose );
-    
-    virtual std::string get_name() const;
-    
-    
-    void set_task_factory(pack::task::TaskFactoryCOP tf);
-    void set_move_map(kinematics::MoveMapCOP movemap);
-    void set_dock_jump(docking::DockJumps jump);
-    Real set_rot_mag  (core::Real rot_mag)  {return rot_mag_  =rot_mag;  }
-    Real set_trans_mag(core::Real trans_mag){return trans_mag_=trans_mag;}
-    
-    
-    void set_sc_min(bool sc_min){
-        sc_min_ = sc_min;
-    }
-    
-    void set_rt_min(bool rt_min){
-        rt_min_ = rt_min;
-    }
-    
+
+	void set_default();
+
+	void set_dock_score_func(scoring::ScoreFunctionCOP dock_scorefxn ) {
+		dock_scorefxn_ = new core::scoring::ScoreFunction(*dock_scorefxn);
+	}
+
+	void set_pack_score_func(scoring::ScoreFunctionCOP pack_scorefxn) {
+		pack_scorefxn_ = new core::scoring::ScoreFunction(*pack_scorefxn);
+	}
+
+	virtual void apply( core::pose::Pose & pose );
+
+	virtual std::string get_name() const;
+
+
+	void set_task_factory(pack::task::TaskFactoryCOP tf);
+	void set_move_map(kinematics::MoveMapCOP movemap);
+	void set_dock_jump(docking::DockJumps jump);
+	Real set_rot_mag  (core::Real rot_mag)  {
+		return rot_mag_  =rot_mag;
+	}
+	Real set_trans_mag(core::Real trans_mag) {
+		return trans_mag_=trans_mag;
+	}
+
+
+	void set_sc_min(bool sc_min) {
+		sc_min_ = sc_min;
+	}
+
+	void set_rt_min(bool rt_min) {
+		rt_min_ = rt_min;
+	}
+
 private:
 
-    
-    bool user_defined_;
-    bool benchmark_;
-    core::Size rep_ramp_cycles_;
-    core::Real rot_mag_;
-    core::Real trans_mag_;
-    core::Size num_repeats_;
-    
-    scoring::ScoreFunctionOP dock_scorefxn_;
-    scoring::ScoreFunctionOP pack_scorefxn_;
-    
-    void init();
-    
+
+	bool user_defined_;
+	bool benchmark_;
+	core::Size rep_ramp_cycles_;
+	core::Real rot_mag_;
+	core::Real trans_mag_;
+	core::Size num_repeats_;
+
+	scoring::ScoreFunctionOP dock_scorefxn_;
+	scoring::ScoreFunctionOP pack_scorefxn_;
+
+	void init();
+
 	void repulsive_ramp( pose::Pose & pose_in, loops::Loops loops_in );
-    
-    
+
+
 	//packer task
-    docking::DockJumps jump_;
-    pack::task::TaskFactoryOP tf_;
-    kinematics::MoveMapOP movemap_;
-    bool sc_min_;
-    bool rt_min_;
+	docking::DockJumps jump_;
+	pack::task::TaskFactoryOP tf_;
+	kinematics::MoveMapOP movemap_;
+	bool sc_min_;
+	bool rt_min_;
 };
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
 } // namespace antibody
 } // namespace protocols
 

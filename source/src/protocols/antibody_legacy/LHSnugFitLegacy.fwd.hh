@@ -19,11 +19,11 @@
 
 namespace protocols {
 namespace antibody {
-        
-    class LHSnugFitLegacy;
-    typedef utility::pointer::owning_ptr< LHSnugFitLegacy > LHSnugFitLegacyOP;
-    typedef utility::pointer::owning_ptr< LHSnugFitLegacy const > LHSnugFitLegacyCOP;
-        
+
+class LHSnugFitLegacy;
+typedef utility::pointer::owning_ptr< LHSnugFitLegacy > LHSnugFitLegacyOP;
+typedef utility::pointer::owning_ptr< LHSnugFitLegacy const > LHSnugFitLegacyCOP;
+
 }
 }
 

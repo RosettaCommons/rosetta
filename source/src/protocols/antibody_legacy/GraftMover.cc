@@ -74,7 +74,7 @@ namespace antibody_legacy {
 using namespace core;
 using namespace moves;
 
-GraftMover::GraftMover():Mover( "GraftMover" ){
+GraftMover::GraftMover():Mover( "GraftMover" ) {
 	set_default();
 } // GraftMover default constructor
 
@@ -92,8 +92,7 @@ void GraftMover::set_default() {
 	camelid_ = false;
 } // GraftMover set_default
 
-void GraftMover::apply( pose::Pose & pose_in )
-{
+void GraftMover::apply( pose::Pose & pose_in ) {
 	TR <<  "Grafting designated CDRs" << std::endl;
 
 	Antibody antibody_in( pose_in, camelid_ );
@@ -108,38 +107,38 @@ void GraftMover::apply( pose::Pose & pose_in )
 	if( !camelid_ ) {
 		if ( graft_l1_ ) {
 			GraftOneMoverOP graftone_l1( new GraftOneMover(
-	 antibody_in.cdrl_[1][1],antibody_in.cdrl_[1][2],"l1" ));
+			                                 antibody_in.cdrl_[1][1],antibody_in.cdrl_[1][2],"l1" ));
 			graftone_l1->enable_benchmark_mode( benchmark_ );
 			graft_sequence->add_mover( graftone_l1 );
 		}
 		if ( graft_l2_ ) {
 			GraftOneMoverOP graftone_l2( new GraftOneMover(
-	 antibody_in.cdrl_[2][1],antibody_in.cdrl_[2][2],"l2" ));
+			                                 antibody_in.cdrl_[2][1],antibody_in.cdrl_[2][2],"l2" ));
 			graftone_l2->enable_benchmark_mode( benchmark_ );
 			graft_sequence->add_mover( graftone_l2 );
 		}
 		if ( graft_l3_ ) {
 			GraftOneMoverOP graftone_l3( new GraftOneMover(
-		 antibody_in.cdrl_[3][1],antibody_in.cdrl_[3][2],"l3" ));
+			                                 antibody_in.cdrl_[3][1],antibody_in.cdrl_[3][2],"l3" ));
 			graftone_l3->enable_benchmark_mode( benchmark_ );
 			graft_sequence->add_mover( graftone_l3 );
 		}
 	}
 	if ( graft_h1_ ) {
 		GraftOneMoverOP graftone_h1( new GraftOneMover(
-  antibody_in.cdrh_[1][1],antibody_in.cdrh_[1][2],"h1" ));
+		                                 antibody_in.cdrh_[1][1],antibody_in.cdrh_[1][2],"h1" ));
 		graftone_h1->enable_benchmark_mode( benchmark_ );
 		graft_sequence->add_mover( graftone_h1 );
 	}
 	if ( graft_h2_ ) {
 		GraftOneMoverOP graftone_h2( new GraftOneMover(
-  antibody_in.cdrh_[2][1],antibody_in.cdrh_[2][2],"h2" ));
+		                                 antibody_in.cdrh_[2][1],antibody_in.cdrh_[2][2],"h2" ));
 		graftone_h2->enable_benchmark_mode( benchmark_ );
 		graft_sequence->add_mover( graftone_h2 );
 	}
 	if ( graft_h3_ ) {
 		GraftOneMoverOP graftone_h3( new GraftOneMover(
-  antibody_in.cdrh_[3][1],antibody_in.cdrh_[3][2],"h3" ));
+		                                 antibody_in.cdrh_[3][1],antibody_in.cdrh_[3][2],"h3" ));
 		graftone_h3->enable_benchmark_mode( benchmark_ );
 		graft_sequence->add_mover( graftone_h3 );
 	}
@@ -153,30 +152,30 @@ void GraftMover::apply( pose::Pose & pose_in )
 		Size frmrk_loop_end_plus_one( antibody_in.cdrh_[3][2] + 1 );
 		Size cutpoint = framework_loop_begin + 1;
 		loops::Loop cdr_h3( framework_loop_begin, frmrk_loop_end_plus_one,
-												cutpoint,	0, false );
+		                    cutpoint,	0, false );
 		simple_one_loop_fold_tree( pose_in, cdr_h3);
 
 		// silly hack to make extended loops work
 		loops::LoopsOP loop_list = new loops::Loops();
 		loop_list->add_loop( cdr_h3 );
-        /* Commented out by BDW with JX's consent
+		/* Commented out by BDW with JX's consent
 		loops::loop_mover::LoopMoverOP my_loop_move = new loops::loop_mover::LoopMover( loop_list );
 		my_loop_move->set_extended_torsions( pose_in, cdr_h3 );
-        */
+		*/
 	}
 
 	if( graft_l1_ || graft_l2_ || graft_l3_ ||
-			graft_h1_ || graft_h2_ || graft_h3_ ) {
+	        graft_h1_ || graft_h2_ || graft_h3_ ) {
 		// disallowing bogus sidechains while repacking using include_current
 		utility::vector1<bool> allow_repack( nres, false );
 		for( Size i = 1; i <= nres; i++ ) {
 			if( pose_in.secstruct(i) == 'X' )
 				allow_repack[i] = true;
 			if ( !graft_h2_ && ( i >= antibody_in.cdrh_[2][1] ) &&
-					 ( i <= antibody_in.cdrh_[2][2] ) )
+			        ( i <= antibody_in.cdrh_[2][2] ) )
 				allow_repack[i] = true;
 			if ( !graft_h3_ && ( i >= antibody_in.cdrh_[3][1] ) &&
-					 ( i <= antibody_in.cdrh_[3][2] ) )
+			        ( i <= antibody_in.cdrh_[3][2] ) )
 				allow_repack[i] = true;
 		}
 
@@ -193,7 +192,7 @@ void GraftMover::apply( pose::Pose & pose_in )
 		to_full_atom.apply( pose_in );
 		//recover sidechains from starting structures
 		protocols::simple_moves::ReturnSidechainMover recover_sidechains(
-			saved_sidechains );
+		    saved_sidechains );
 		recover_sidechains.apply( pose_in );
 		bool include_current( false );
 		// High resolution scores
@@ -209,15 +208,15 @@ void GraftMover::apply( pose::Pose & pose_in )
 		// generated without using include_current
 		for( Size i = 1; i <= nres; i++ ) {
 			conformation::Residue const & original_rsd(
-				saved_sidechains.residue( i ) );
+			    saved_sidechains.residue( i ) );
 			conformation::Residue const & packed_rsd(
-				pose_in.residue( i ) );
+			    pose_in.residue( i ) );
 			if( !allow_repack[i] ) {
 				for( Size j=1; j <= packed_rsd.natoms(); ++j ) {
 					std::string const & atom_name( packed_rsd.atom_name(j) );
 					if( original_rsd.type().has_atom_name( atom_name ) )
 						pose_in.set_xyz( id::AtomID( packed_rsd.atom_index(
-							atom_name),i), original_rsd.xyz( atom_name ) );
+						                                 atom_name),i), original_rsd.xyz( atom_name ) );
 				}
 			}
 		}
@@ -229,38 +228,38 @@ void GraftMover::apply( pose::Pose & pose_in )
 		if( !camelid_ ) {
 			if ( graft_l1_ ) {
 				CloseOneMoverOP closeone_l1( new CloseOneMover(
-		  antibody_in.cdrl_[1][1],antibody_in.cdrl_[1][2]) );
+				                                 antibody_in.cdrl_[1][1],antibody_in.cdrl_[1][2]) );
 				closeone_l1->enable_benchmark_mode( benchmark_ );
 				close_grafted_loops->add_mover( closeone_l1 );
 			}
 			if ( graft_l2_ ) {
 				CloseOneMoverOP closeone_l2( new CloseOneMover(
-				  antibody_in.cdrl_[2][1],antibody_in.cdrl_[2][2]) );
+				                                 antibody_in.cdrl_[2][1],antibody_in.cdrl_[2][2]) );
 				closeone_l2->enable_benchmark_mode( benchmark_ );
 				close_grafted_loops->add_mover( closeone_l2 );
 			}
 			if ( graft_l3_ ) {
 				CloseOneMoverOP closeone_l3( new CloseOneMover(
-				  antibody_in.cdrl_[3][1],antibody_in.cdrl_[3][2]) );
+				                                 antibody_in.cdrl_[3][1],antibody_in.cdrl_[3][2]) );
 				closeone_l3->enable_benchmark_mode( benchmark_ );
 				close_grafted_loops->add_mover( closeone_l3 );
 			}
 		}
 		if ( graft_h1_ ) {
 			CloseOneMoverOP closeone_h1( new CloseOneMover(
-			  antibody_in.cdrh_[1][1],antibody_in.cdrh_[1][2]) );
+			                                 antibody_in.cdrh_[1][1],antibody_in.cdrh_[1][2]) );
 			closeone_h1->enable_benchmark_mode( benchmark_ );
 			close_grafted_loops->add_mover( closeone_h1 );
 		}
 		if ( graft_h2_ ) {
 			CloseOneMoverOP closeone_h2( new CloseOneMover(
-				antibody_in.cdrh_[2][1],antibody_in.cdrh_[2][2]) );
+			                                 antibody_in.cdrh_[2][1],antibody_in.cdrh_[2][2]) );
 			closeone_h2->enable_benchmark_mode( benchmark_ );
 			close_grafted_loops->add_mover( closeone_h2 );
 		}
 		if ( graft_h3_ ) {
 			CloseOneMoverOP closeone_h3( new CloseOneMover(
-				antibody_in.cdrh_[3][1],antibody_in.cdrh_[3][2]) );
+			                                 antibody_in.cdrh_[3][1],antibody_in.cdrh_[3][2]) );
 			closeone_h3->enable_benchmark_mode( benchmark_ );
 			close_grafted_loops->add_mover( closeone_h3 );
 		}
@@ -284,15 +283,15 @@ void GraftMover::apply( pose::Pose & pose_in )
 		// generated without using include_current
 		for( Size i = 1; i <= nres; i++ ) {
 			conformation::Residue const & original_rsd(
-				saved_sidechains.residue( i ) );
+			    saved_sidechains.residue( i ) );
 			conformation::Residue const & packed_rsd(
-				pose_in.residue( i ) );
+			    pose_in.residue( i ) );
 			if( !allow_repack[i] ) {
 				for( Size j=1; j <= packed_rsd.natoms(); ++j ) {
 					std::string const & atom_name( packed_rsd.atom_name(j) );
 					if( original_rsd.type().has_atom_name( atom_name ) )
 						pose_in.set_xyz( id::AtomID( packed_rsd.atom_index(
-							atom_name),i), original_rsd.xyz( atom_name ) );
+						                                 atom_name),i), original_rsd.xyz( atom_name ) );
 				}
 			}
 		}
@@ -331,13 +330,13 @@ void GraftMover::apply( pose::Pose & pose_in )
 
 std::string
 GraftMover::get_name() const {
-return "GraftMover";
+	return "GraftMover";
 }
 
 void GraftMover::set_packer_default(
-	pose::Pose & pose_in,
-	scoring::ScoreFunctionOP scorefxn,
-	bool include_current) {
+    pose::Pose & pose_in,
+    scoring::ScoreFunctionOP scorefxn,
+    bool include_current) {
 
 	//set up packer
 	pack::task::PackerTaskOP task;
@@ -349,9 +348,9 @@ void GraftMover::set_packer_default(
 } // GraftMover set_packer_default
 
 GraftOneMover::GraftOneMover(
-	Size query_start,
-	Size query_end,
-	std::string template_name ) : Mover( "GraftOneMover" ){
+    Size query_start,
+    Size query_end,
+    std::string template_name ) : Mover( "GraftOneMover" ) {
 	query_start_ = query_start;
 	query_end_ = query_end;
 	template_name_ = template_name;
@@ -360,7 +359,7 @@ GraftOneMover::GraftOneMover(
 
 void GraftOneMover::set_default() {
 	TRO << "Reading in template: " << template_name_ << ".pdb "
-			<< std::endl;
+	    << std::endl;
 	core::import_pose::pose_from_pdb( template_pose_, template_name_ + ".pdb" );
 	Antibody antibody( template_pose_, template_name_ );
 	template_start_ = antibody.current_start;
@@ -369,7 +368,7 @@ void GraftOneMover::set_default() {
 
 std::string
 GraftOneMover::get_name() const {
-return "GraftOneMover";
+	return "GraftOneMover";
 }
 void GraftOneMover::apply( pose::Pose & pose_in ) {
 	Size const nres( pose_in.total_residue() ); // Total residues
@@ -380,16 +379,16 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 
 	// create a sub pose with  5 flanking residues on either side of CDR loop
 	truncated_pose.conformation().delete_residue_range_slow(
-  query_end_ + 5, nres);
+	    query_end_ + 5, nres);
 	truncated_pose.conformation().delete_residue_range_slow(
-  1, query_start_ - 5);
+	    1, query_start_ - 5);
 	truncated_pose.conformation().delete_residue_range_slow(
-  5, ( query_size - 1 ) + 5 );
+	    5, ( query_size - 1 ) + 5 );
 
 	// create atom map for superimposing 2 flanking resiudes
 	id::AtomID_Map< id::AtomID > atom_map;
 	core::pose::initialize_atomid_map( atom_map, template_pose_,
-												id::BOGUS_ATOM_ID );
+	                                   id::BOGUS_ATOM_ID );
 
 	Size flank = 2; // default 2
 	for( Size start_stem = 4 - (flank-1); start_stem <= 4; start_stem++ ) {
@@ -400,7 +399,7 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 		}
 	}
 	for( Size end_stem = 4 + query_size + 1; end_stem <= 4+query_size+flank;
-			 end_stem++ ) {
+	        end_stem++ ) {
 		for( Size j=1; j <= 4; j++ ) {
 			id::AtomID const id1( j, end_stem );
 			id::AtomID const id2( j, end_stem - query_size );
@@ -408,14 +407,14 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 		}
 	}
 	scoring::superimpose_pose( template_pose_, truncated_pose,
-																	 atom_map );
+	                           atom_map );
 
 
 	// copy coordinates of properly oriented template to framework
 	for( Size i = query_start_; i <= query_end_; ++i ) {
 		conformation::Residue const & orientable_rsd(pose_in.residue(i));
 		conformation::Residue const & template_rsd( template_pose_.
-	 residue( i - (query_start_ - 5) ) );
+		        residue( i - (query_start_ - 5) ) );
 		// keeping track of missing rotamers
 		if( template_rsd.name() != orientable_rsd.name() )
 			pose_in.set_secstruct( i, 'X' );
@@ -423,19 +422,19 @@ void GraftOneMover::apply( pose::Pose & pose_in ) {
 			std::string const & atom_name( template_rsd.atom_name(j) );
 			if( orientable_rsd.type().has_atom_name( atom_name ) )
 				pose_in.set_xyz( id::AtomID( orientable_rsd.atom_index(
-																					 atom_name),i), template_rsd.xyz(
-													  atom_name ) );
+				                                 atom_name),i), template_rsd.xyz(
+				                     atom_name ) );
 			// hack for generating coordinates of amide hydrogen for target
 			// residues whose template was a Proline residue (Proline residues
 			// do not have the amide hydrogen found ubiquitously in all other
 			// amino acids)
 			if( template_rsd.name() == "PRO" && orientable_rsd.name() != "PRO"
-					&& atom_name == " CD " ){
+			        && atom_name == " CD " ) {
 				id::AtomID_Mask missing( false );
 				// dimension the missing-atom mask
 				core::pose::initialize_atomid_map( missing, pose_in );
 				missing[ id::AtomID(
-					pose_in.residue_type(i).atom_index("H"), i ) ] = true;
+				             pose_in.residue_type(i).atom_index("H"), i ) ] = true;
 				pose_in.conformation().fill_missing_atoms( missing );
 			}
 		}
@@ -466,11 +465,10 @@ void GraftMover::relax_optimized_CDR_grafts( pose::Pose & pose_in ) {
 
 
 CloseOneMover::CloseOneMover(
-	Size query_start,
-	Size query_end
+    Size query_start,
+    Size query_end
 )
-	: Mover( "CloseOneMover" )
-{
+	: Mover( "CloseOneMover" ) {
 	loop_start_ = query_start;
 	loop_end_ = query_end;
 	set_default();
@@ -503,7 +501,7 @@ void CloseOneMover::apply( pose::Pose & pose_in ) {
 
 	bool repack_flag( false );
 	if( ( nter_separation > allowed_separation_ ) ||
-			( cter_separation > allowed_separation_ ) ) {
+	        ( cter_separation > allowed_separation_ ) ) {
 		to_centroid.apply( pose_in );
 		repack_flag = true;
 	}
@@ -546,19 +544,19 @@ void CloseOneMover::apply( pose::Pose & pose_in ) {
 
 std::string
 CloseOneMover::get_name() const {
-return "CloseOneMover";
+	return "CloseOneMover";
 }
 
 void CloseOneMover::close_one_loop_stem (
- pose::Pose & pose_in,
-	Size cutpoint_in,
-	bool nter
+    pose::Pose & pose_in,
+    Size cutpoint_in,
+    bool nter
 ) {
 	using namespace protocols;
 	using namespace protocols::loops;
 
-    using loop_closure::ccd::CcdMover;
-    using loop_closure::ccd::CcdMoverOP;
+	using loop_closure::ccd::CcdMover;
+	using loop_closure::ccd::CcdMoverOP;
 
 
 	// storing starting fold tree
@@ -568,8 +566,7 @@ void CloseOneMover::close_one_loop_stem (
 	if( nter ) {
 		loop_flex_begin = cutpoint_in;
 		loop_flex_end = cutpoint_in + ( flanking_residues_ - 1 );
-	}
-	else {
+	} else {
 		loop_flex_begin = cutpoint_in - ( flanking_residues_ - 1 );
 		loop_flex_end = cutpoint_in;
 	}
@@ -593,8 +590,7 @@ void CloseOneMover::close_one_loop_stem (
 		loop_begin = loop_flex_begin - 2;
 		loop_end = loop_flex_end;
 		cutpoint = loop_flex_begin - 1;
-	}
-	else {
+	} else {
 		loop_begin = loop_flex_begin;
 		loop_end = loop_flex_end + 2;
 		cutpoint = loop_flex_end;
@@ -606,20 +602,20 @@ void CloseOneMover::close_one_loop_stem (
 	// set cutpoint variants for correct chainbreak scoring
 	if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
 		if( !pose_in.residue( cutpoint ).has_variant_type(
-				chemical::CUTPOINT_LOWER))
+		            chemical::CUTPOINT_LOWER))
 			core::pose::add_variant_type_to_pose_residue( pose_in,
-																								  chemical::CUTPOINT_LOWER,
-																									cutpoint );
+			        chemical::CUTPOINT_LOWER,
+			        cutpoint );
 		if( !pose_in.residue( cutpoint + 1 ).has_variant_type(
-				chemical::CUTPOINT_UPPER ) )
+		            chemical::CUTPOINT_UPPER ) )
 			core::pose::add_variant_type_to_pose_residue( pose_in,
-																									chemical::CUTPOINT_UPPER,
-																									cutpoint + 1 );
+			        chemical::CUTPOINT_UPPER,
+			        cutpoint + 1 );
 	}
 
 	scoring::ScoreFunctionOP lowres_scorefxn;
 	lowres_scorefxn = scoring::ScoreFunctionFactory::
-		create_score_function( "cen_std", "score4L" );
+	                  create_score_function( "cen_std", "score4L" );
 	lowres_scorefxn->set_weight( scoring::chainbreak, 10. / 3. );
 
 	Real min_tolerance = 0.001;
@@ -627,7 +623,7 @@ void CloseOneMover::close_one_loop_stem (
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
 	protocols::simple_moves::MinMoverOP loop_min_mover = new protocols::simple_moves::MinMover( loop_map,
-		lowres_scorefxn, min_type, min_tolerance, nb_list );
+	        lowres_scorefxn, min_type, min_tolerance, nb_list );
 
 	// more params
 	Size loop_size = ( loop_end - loop_begin ) + 1;
@@ -643,11 +639,11 @@ void CloseOneMover::close_one_loop_stem (
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
 	protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover( loop_map,
-																								high_move_temp,
-																								n_small_moves );
+	        high_move_temp,
+	        n_small_moves );
 	protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover( loop_map,
-																								high_move_temp,
-																								n_small_moves );
+	        high_move_temp,
+	        n_small_moves );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 5.0 );
 	small_mover->angle_max( 'L', 6.0 );
@@ -705,17 +701,16 @@ void CloseOneMover::close_one_loop_stem (
 } // CloseOneMover::close_one_loop_stem
 
 void CloseOneMover::close_one_loop_stem (
- pose::Pose & pose_in,
-	Size loop_begin,
-	Size loop_end,
-	Size cutpoint
-)
-{
+    pose::Pose & pose_in,
+    Size loop_begin,
+    Size loop_end,
+    Size cutpoint
+) {
 	using namespace protocols;
 	using namespace protocols::loops;
 
-    using loop_closure::ccd::CcdMover;
-    using loop_closure::ccd::CcdMoverOP;
+	using loop_closure::ccd::CcdMover;
+	using loop_closure::ccd::CcdMoverOP;
 
 
 	// storing starting fold tree
@@ -741,20 +736,20 @@ void CloseOneMover::close_one_loop_stem (
 	// set cutpoint variants for correct chainbreak scoring
 	if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
 		if( !pose_in.residue( cutpoint ).has_variant_type(
-				chemical::CUTPOINT_LOWER))
+		            chemical::CUTPOINT_LOWER))
 			core::pose::add_variant_type_to_pose_residue( pose_in,
-																								  chemical::CUTPOINT_LOWER,
-																									cutpoint );
+			        chemical::CUTPOINT_LOWER,
+			        cutpoint );
 		if( !pose_in.residue( cutpoint + 1 ).has_variant_type(
-				chemical::CUTPOINT_UPPER ) )
+		            chemical::CUTPOINT_UPPER ) )
 			core::pose::add_variant_type_to_pose_residue( pose_in,
-																									chemical::CUTPOINT_UPPER,
-																									cutpoint + 1 );
+			        chemical::CUTPOINT_UPPER,
+			        cutpoint + 1 );
 	}
 
 	scoring::ScoreFunctionOP lowres_scorefxn;
 	lowres_scorefxn = scoring::ScoreFunctionFactory::
-		create_score_function( "cen_std", "score4L" );
+	                  create_score_function( "cen_std", "score4L" );
 	lowres_scorefxn->set_weight( scoring::chainbreak, 10. / 3. );
 
 	Real min_tolerance = 0.001;
@@ -762,7 +757,7 @@ void CloseOneMover::close_one_loop_stem (
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
 	protocols::simple_moves::MinMoverOP loop_min_mover = new protocols::simple_moves::MinMover( loop_map,
-		lowres_scorefxn, min_type, min_tolerance, nb_list );
+	        lowres_scorefxn, min_type, min_tolerance, nb_list );
 
 	// more params
 	Size loop_size = ( loop_end - loop_begin ) + 1;
@@ -778,11 +773,11 @@ void CloseOneMover::close_one_loop_stem (
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
 	protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover( loop_map,
-																								high_move_temp,
-																								n_small_moves );
+	        high_move_temp,
+	        n_small_moves );
 	protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover( loop_map,
-																								high_move_temp,
-																								n_small_moves );
+	        high_move_temp,
+	        n_small_moves );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 5.0 );
 	small_mover->angle_max( 'L', 6.0 );
@@ -840,10 +835,9 @@ void CloseOneMover::close_one_loop_stem (
 } // CloseOneMover::close_one_loop_stem
 
 LoopRlxMover::LoopRlxMover(
-	Size query_start,
-	Size query_end
-) : Mover( "LoopRlxMover" )
-{
+    Size query_start,
+    Size query_end
+) : Mover( "LoopRlxMover" ) {
 	loop_start_ = query_start;
 	loop_end_ = query_end;
 	set_default();
@@ -889,8 +883,8 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	using namespace pack::task;
 	using namespace pack::task::operation;
 
-    using loop_closure::ccd::CcdMover;
-    using loop_closure::ccd::CcdMoverOP;
+	using loop_closure::ccd::CcdMover;
+	using loop_closure::ccd::CcdMoverOP;
 
 	TR << "LoopRlxMover: Apply" << std::endl;
 
@@ -922,20 +916,20 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	// set cutpoint variants for correct chainbreak scoring
 	if( !pose_in.residue( cutpoint ).is_upper_terminus() ) {
 		if( !pose_in.residue( cutpoint ).has_variant_type(
-				chemical::CUTPOINT_LOWER))
+		            chemical::CUTPOINT_LOWER))
 			core::pose::add_variant_type_to_pose_residue( pose_in,
-																								  chemical::CUTPOINT_LOWER,
-																									cutpoint );
+			        chemical::CUTPOINT_LOWER,
+			        cutpoint );
 		if( !pose_in.residue( cutpoint + 1 ).has_variant_type(
-				chemical::CUTPOINT_UPPER ) )
+		            chemical::CUTPOINT_UPPER ) )
 			core::pose::add_variant_type_to_pose_residue( pose_in,
-																									chemical::CUTPOINT_UPPER,
-																									cutpoint + 1 );
+			        chemical::CUTPOINT_UPPER,
+			        cutpoint + 1 );
 	}
 
 	utility::vector1< bool> allow_repack( pose_in.total_residue(), false );
 	select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
-												allow_repack);
+	                      allow_repack);
 	loop_map->set_chi( allow_repack );
 
 	protocols::simple_moves::PackRotamersMoverOP loop_repack=new protocols::simple_moves::PackRotamersMover(highres_scorefxn_);
@@ -950,7 +944,7 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	std::string min_type = std::string( "dfpmin_armijo_nonmonotone" );
 	bool nb_list = true;
 	protocols::simple_moves::MinMoverOP loop_min_mover = new protocols::simple_moves::MinMover( loop_map,
-		highres_scorefxn_, min_type, min_tolerance, nb_list );
+	        highres_scorefxn_, min_type, min_tolerance, nb_list );
 
 	// more params
 	Size n_small_moves ( numeric::max(Size(5), Size(loop_size/2)) );
@@ -965,11 +959,11 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 	Real high_move_temp = 2.00;
 	// minimize amplitude of moves if correct parameter is set
 	protocols::simple_moves::BackboneMoverOP small_mover = new protocols::simple_moves::SmallMover( loop_map,
-																								high_move_temp,
-																								n_small_moves );
+	        high_move_temp,
+	        n_small_moves );
 	protocols::simple_moves::BackboneMoverOP shear_mover = new protocols::simple_moves::ShearMover( loop_map,
-																								high_move_temp,
-																								n_small_moves );
+	        high_move_temp,
+	        n_small_moves );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 5.0 );
 	small_mover->angle_max( 'L', 6.0 );
@@ -987,13 +981,13 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 
 	// rotamer trials
 	select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
-												allow_repack);
+	                      allow_repack);
 	loop_map->set_chi( allow_repack );
 	setup_packer_task( pose_in );
 	( *highres_scorefxn_ )( pose_in );
 	tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) );
 	protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
-																			 highres_scorefxn_, tf_ );
+	    highres_scorefxn_, tf_ );
 
 	pack_rottrial->apply( pose_in );
 
@@ -1020,13 +1014,13 @@ void LoopRlxMover::apply( pose::Pose & pose_in ) {
 
 			// rotamer trials
 			select_loop_residues( pose_in, one_loop, true /*include_neighbors*/,
-														allow_repack);
+			                      allow_repack);
 			loop_map->set_chi( allow_repack );
 			setup_packer_task( pose_in );
 			( *highres_scorefxn_ )( pose_in );
 			tf_->push_back( new protocols::toolbox::task_operations::RestrictToInterface( allow_repack ) );
 			protocols::simple_moves::RotamerTrialsMoverOP pack_rottrial = new protocols::simple_moves::RotamerTrialsMover(
-																					 highres_scorefxn_, tf_ );
+			    highres_scorefxn_, tf_ );
 			pack_rottrial->apply( pose_in );
 
 			mc->boltzmann( pose_in );
@@ -1065,7 +1059,7 @@ LoopRlxMover::get_name() const {
 
 void
 LoopRlxMover::setup_packer_task(
-	pose::Pose & pose_in
+    pose::Pose & pose_in
 ) {
 	using namespace pack::task;
 	using namespace pack::task::operation;
@@ -1074,14 +1068,13 @@ LoopRlxMover::setup_packer_task(
 		tf_ = new TaskFactory( *init_task_factory_ );
 		TR << "LoopRlxMover Reinitializing Packer Task" << std::endl;
 		return;
-	}
-	else
+	} else
 		tf_ = new TaskFactory;
 
 	TR << "LoopRlxMover Setting Up Packer Task" << std::endl;
 
 	tf_->push_back( new OperateOnCertainResidues( new PreventRepackingRLT,
-		new ResidueLacksProperty("PROTEIN") ) );
+	                new ResidueLacksProperty("PROTEIN") ) );
 	tf_->push_back( new InitializeFromCommandline );
 	tf_->push_back( new IncludeCurrent );
 	tf_->push_back( new RestrictToRepacking );
@@ -1090,10 +1083,10 @@ LoopRlxMover::setup_packer_task(
 	// incorporating Ian's UnboundRotamer operation.
 	// note that nothing happens if unboundrot option is inactive!
 	pack::rotamer_set::UnboundRotamersOperationOP unboundrot =
-		new pack::rotamer_set::UnboundRotamersOperation();
+	    new pack::rotamer_set::UnboundRotamersOperation();
 	unboundrot->initialize_from_command_line();
 	operation::AppendRotamerSetOP unboundrot_operation =
-		new operation::AppendRotamerSet( unboundrot );
+	    new operation::AppendRotamerSet( unboundrot );
 	tf_->push_back( unboundrot_operation );
 	// adds scoring bonuses for the "unbound" rotamers, if any
 	core::pack::dunbrack::load_unboundrot( pose_in );

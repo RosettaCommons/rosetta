@@ -39,7 +39,7 @@ namespace antibody {
 
 class GraftCDRLoopsProtocol: public moves::Mover {
 public:
-    typedef std::map < std::string, bool > GraftMap;
+	typedef std::map < std::string, bool > GraftMap;
 
 	// default constructor
 	GraftCDRLoopsProtocol();
@@ -74,13 +74,13 @@ public:
 	void set_graft_h3( bool graft_h3 ) {
 		graft_h3_ = graft_h3;
 	}
-	void set_h3_stem_graft(bool h3_stem_graft){
+	void set_h3_stem_graft(bool h3_stem_graft) {
 		h3_no_stem_graft_=h3_stem_graft;
 	}
-	void set_packonly_after_graft (bool setting){
+	void set_packonly_after_graft (bool setting) {
 		packonly_after_graft_ = setting;
 	}
-	void set_stem_optimize (bool setting){
+	void set_stem_optimize (bool setting) {
 		stem_optimize_ = setting;
 	}
 	void set_camelid( bool camelid ) {
@@ -92,13 +92,13 @@ public:
 	void set_benchmark( bool benchmark ) {
 		benchmark_ = benchmark;
 	}
-    void set_cst_weight(core::Real cst_weight){
+	void set_cst_weight(core::Real cst_weight) {
 		cst_weight_ = cst_weight;
 	}
-    void set_sc_min (bool scmin) {
+	void set_sc_min (bool scmin) {
 		sc_min_ = scmin ;
 	}
-    void set_rt_min (bool rtmin) {
+	void set_rt_min (bool rtmin) {
 		rt_min_ = rtmin ;
 	}
 	virtual std::string get_name() const;
@@ -118,7 +118,7 @@ private:
 	void init();
 	void setup_objects();
 	void init_from_options();
-	
+
 private:
 	bool graft_l1_, graft_l2_, graft_l3_;
 	bool graft_h1_, graft_h2_, graft_h3_;
@@ -126,32 +126,32 @@ private:
 	bool packonly_after_graft_;
 	bool camelid_;
 	bool camelid_constraints_;
-    bool sc_min_;
+	bool sc_min_;
 	bool rt_min_;
 	bool benchmark_;
 	bool stem_optimize_;
-    
+
 	core::Real cst_weight_;
 	core::scoring::ScoreFunctionOP scorefxn_pack_;
 
 	AntibodyInfoOP ab_info_;
-    Ab_TemplateInfoOP ab_t_info_ ;
+	Ab_TemplateInfoOP ab_t_info_ ;
 
 	pack::task::TaskFactoryOP tf_;
 
-    protocols::moves::SequenceMoverOP graft_sequence_ ;
-    protocols::moves::SequenceMoverOP optimize_sequence_ ;
-    CDRsMinPackMinOP cdrs_min_pack_min_;
+	protocols::moves::SequenceMoverOP graft_sequence_ ;
+	protocols::moves::SequenceMoverOP optimize_sequence_ ;
+	CDRsMinPackMinOP cdrs_min_pack_min_;
 
 
 
 
 }; // class GraftCDRLoopsProtocol
 
-    
-    
-    
-    
+
+
+
+
 } // namespace antibody
 } // namespace protocols
 

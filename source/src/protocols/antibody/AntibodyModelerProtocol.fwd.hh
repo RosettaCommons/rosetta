@@ -20,9 +20,9 @@
 namespace protocols {
 namespace antibody {
 
-	class AntibodyModelerProtocol;
-	typedef utility::pointer::owning_ptr< AntibodyModelerProtocol > AntibodyModelerProtocolOP;
-	typedef utility::pointer::owning_ptr< AntibodyModelerProtocol const > AntibodyModelerProtocolCOP;
+class AntibodyModelerProtocol;
+typedef utility::pointer::owning_ptr< AntibodyModelerProtocol > AntibodyModelerProtocolOP;
+typedef utility::pointer::owning_ptr< AntibodyModelerProtocol const > AntibodyModelerProtocolCOP;
 
 }
 }
