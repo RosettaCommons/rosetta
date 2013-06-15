@@ -367,7 +367,7 @@ void make_pose_from_sequence(
 		tr.Trace << "make_pose_from_sequence():  seqpos: " << i << " " << new_rsd->aa() << std::endl;
 
 		// do the actual append
-		if ( rsd_type.has_variant_type( chemical::LOWER_TERMINUS ) ||
+		if ( rsd_type.is_lower_terminus(  ) ||
 				 rsd_type.has_variant_type( chemical::N_ACETYLATION ) ||
 				 new_rsd->aa() == chemical::aa_unk ||
 				 new_rsd->aa() == chemical::aa_vrt ||
@@ -387,7 +387,7 @@ void make_pose_from_sequence(
 				jump_to_next = true;
 			} else if ( jump_to_next ) {
 				jump_to_next = false;
-				if ( !rsd_type.has_variant_type( chemical::LOWER_TERMINUS ) )
+				if ( !rsd_type.is_lower_terminus(  ) )
 					tr.Warning << "Residue following X, Z, or an upper terminus is _not_ a lower terminus type!  Continuing ..." << std::endl;
 			}
 			pose.append_residue_by_jump( *new_rsd, 1, "", "", true ); // each time this happens, a new chain should be started
@@ -396,7 +396,7 @@ void make_pose_from_sequence(
 
 			//fpd If res i is an upper terminus but (i+1) is not a lower terminus, the code exits on a failed assertion
 			//fpd Don't let this happen; always jump in these cases
-			if (rsd_type.has_variant_type( chemical::UPPER_TERMINUS )) jump_to_next = true;
+			if (rsd_type.is_upper_terminus(  )) jump_to_next = true;
 		}
 	}
 

@@ -29,6 +29,10 @@
 #include <core/scoring/TwelveANeighborGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 
+// symmetry
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -183,21 +187,35 @@ EnvSmoothEnergy::setup_for_derivatives(
 ) const
 {
 	pose.update_residue_neighbors();
-	Size const nres( pose.total_residue() );
+	Size nres( pose.total_residue() );
+
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+		dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+	}
 
  	residue_N_.clear();
  	residue_E_.clear();
  	residue_dEdN_.clear();
 
-
 	// iterate over all the residues in the protein and count their neighbours
 	// and save values of E, N, and dEdN
 	for ( Size i = 1; i <= nres; ++i ) {
+		if( symm_info && !symm_info->bb_is_independent( i ) ) {
+			residue_E_.push_back(0);
+			residue_N_.push_back(0);
+			residue_dEdN_.push_back(0);
+			continue;
+		}
 
 		// get the appropriate residue from the pose.
 		conformation::Residue const & rsd( pose.residue(i) );
 		// currently this is only for protein residues
 		if( !rsd.is_protein() || rsd.aa() == chemical::aa_unk ) {
+			residue_E_.push_back(0);
+			residue_N_.push_back(0);
 			residue_dEdN_.push_back(0);
 			continue; //return;
 		}
@@ -238,6 +256,17 @@ EnvSmoothEnergy::setup_for_derivatives(
 		//std::cout << "ENV:  " << i << "  " << score << std::endl;
 	}
 
+	// symmetrize
+	if( symm_info ) {
+		for ( Size i = 1; i <= nres; ++i ) {
+			if( !symm_info->bb_is_independent( i ) ) {
+				Size master_i = symm_info->bb_follows( i );
+				residue_N_[i] = residue_N_[master_i];
+				residue_E_[i] = residue_E_[master_i];
+				residue_dEdN_[i] = residue_dEdN_[master_i];
+			}
+		}
+	}
 }
 
 void
@@ -544,48 +573,3 @@ EnvSmoothEnergy::version() const
 }
 }
 
-
-
-
-					/*
-					 		/////////// TEST LINEAR DERIVATIVE Correctness //////////////
-					 		{
-					 		core::Real dNdd_numerical=0;
-					 		core::Real dx = 0.001;
-
-					 		core::Real dist1 = dist;
-					 		core::Real weight1;
-					 		if( dist1 > end_sig ) weight1 = 0;
-					 		else if( dist1 < start_sig ) weight1 = 1.0;
-					 		else		weight1 =  sqr(1.0  - sqr( (dist1 - start_sig) / (end_sig - start_sig) ) );
-
-					 		core::Real dist2 = dist+dx;
-					 		core::Real weight2;
-					 		if( dist2 > end_sig ) weight2 = 0;
-					 		else if( dist2 < start_sig ) weight2 = 1.0;
-					 		else		weight2 =  sqr(1.0  - sqr( (dist2 - start_sig) / (end_sig - start_sig) ) );
-
-					 		std::cout << "I: " << dNdd << "   " << (weight2-weight1)/dx << std::endl;
-					 		}
-					 *//*
-
-					 Real const q1 = 1.0;
-					 Real const q2 = 1.0;
-					 Real const max_dis( 5.5 );
-					 Real const max_dis2( max_dis * max_dis );
-					 Real const min_dis( 1.5 );
-					 Real const min_dis2( min_dis * min_dis );
-					 	Real const C0( 322.0637 );
-					 	Real const die( 10.0 ); // 10r dielectric
-					 	Real const dEfac( -2.0 * C0 / die );
-
-					 	Real dis2 = dist;
-
-
-					 	core::Real dscoredd = 0.0;
-					 	if ( dis2 > max_dis2 ) dscoredd = 0;
-					 	else if ( dis2 < min_dis2 ) dscoredd = 0.0; // flat in this region
-						 else dscoredd =  dEfac * q1 * q2 / ( dis2 * dis2 );
-
-
-						 */
