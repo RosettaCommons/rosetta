@@ -26,8 +26,7 @@ namespace simple_moves {
 class PSSM2BfactorMover : public moves::Mover {
 public:
 	PSSM2BfactorMover();
-	PSSM2BfactorMover(core::Size min_in , core::Size max_in);
-
+	PSSM2BfactorMover(core::Real const min_in , core::Real const max_in);
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -43,14 +42,14 @@ public:
 		core::pose::Pose const & pose );
 
 
-	core::Size min_value() const { return min_value_; }
-	void min_value( core::Size const s ){ min_value_ = s; }
+	core::Real min_value() const { return min_value_; }
+	void min_value( core::Real const s ){ min_value_ = s; }
 	
-	core::Size max_value() const { return max_value_; }
-	void max_value( core::Size const s ){ max_value_ = s; }
+	core::Real max_value() const { return max_value_; }
+	void max_value( core::Real const s ){ max_value_ = s; }
 
 private:
-	core::Size min_value_,max_value_; 
+	core::Real min_value_,max_value_; // dflt -1, 5
 };
 
 
