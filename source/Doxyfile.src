@@ -467,7 +467,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = doc #This A) takes too long (a week or more) and B) mixes source and application documentation inappropriately
+INPUT                  = doc src #This A) takes too long (a week or more) and B) mixes source and application documentation inappropriately
 
 # This tag can be used to specify the character encoding of the source files that 
 # doxygen parses. Internally doxygen uses the UTF-8 encoding, which is also the default 

@@ -12,7 +12,6 @@
 
 
 // libRosetta headers
-#include <core/scoring/rms_util.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
@@ -26,7 +25,9 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
+#include <utility/string_util.hh>
 
 //Mmmm.. constraints.
 //#include <core/scoring/constraints/CoordinateConstraint.hh>
@@ -101,79 +102,25 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 // these will be available in the top-level OptionKey namespace:
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
-OPT_KEY( Boolean, chi_stats )
-OPT_KEY( Boolean, mask_loop )
+OPT_KEY( String, seq )
+OPT_KEY( Integer,seq_offset )
 OPT_KEY( String, sequence_mask_file )
-OPT_KEY( String, secstruct_file )
-OPT_KEY( String, cst_file )
-OPT_KEY( Integer, seq_offset )
 
-//////////////////////////////////////////////////////////////////
-// Following could probably be replaced with Rosetta's
-// more general fasta reader
-//////////////////////////////////////////////////////////////////
-Size
-read_alignment_fasta_file(
-				utility::vector1< std::string >  & sequences,
-				utility::vector1< std::string >  & pdb_names,
-				std::string const & fasta_file
- )
-{
-	sequences.clear();
-	pdb_names.clear();
-
-	utility::io::izstream data_stream( fasta_file );
-
-	if ( data_stream.fail() )		utility_exit_with_message( "Could not find fasta file: " + fasta_file  );
-
-	std::string line;
-	std::string sequence = "";
-
-	while( getline(data_stream, line) 	) {
-
-		while ( line.size() == 0 || line[0] == '>' || line[0] == ' '  ) {
-
-			//Finished a sequence?
-			if ( sequence.size() > 0 ) 	sequences.push_back( sequence );
-
-			//Is this a tag with the pdb names?
-			if ( line.size() > 0 && line[0] == '>' ) {
-				pdb_names.push_back( line.substr( 1, line.size()-1 ) );
-			}
-
-			sequence = "";
-			getline(data_stream, line);
-			if ( data_stream.fail() ) break;
-		}
-
-		if ( data_stream.fail() ) break;
-
-		//We're inside a sequence.
-		sequence += line;
-	}
-	if (sequence.size() > 0 ) sequences.push_back( sequence );
-
-	if ( sequences.size() == 0 )		utility_exit_with_message( "Could not find sequence inside file" + fasta_file  );
-
-	Size const alignment_length = sequences[1].size();
-	for (Size n = 1; n <= sequences.size(); n++ ){
-		std::cout << pdb_names[n] << ": " << sequences[n] << std::endl;
-		assert( sequences[n].size() == 	alignment_length );
-	}
-
-	return alignment_length;
-}
 
 ///////////////////////////////////////////////////////////////////////
 void
 setup_mask(
 					 ObjexxFCL::FArray1D_bool & sequence_mask,
-					 utility::vector1< std::string > const & sequences )
+					 utility::vector1< sequence::SequenceOP > const & sequences_from_alignment )
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
-	sequence_mask = false;
+	utility::vector1< std::string > sequences;
+	for (Size n=1; n <= sequences_from_alignment.size(); n++ )		sequences.push_back( sequences_from_alignment[n]->sequence() );
 
 	Size const alignment_length = sequences[1].size();
+	sequence_mask = ObjexxFCL::FArray1D_bool( alignment_length, false );
 
 	///////////////////////////////////////////////////////////////
 	// First pass -- rule out any part that is gapped in the alignment.
@@ -225,111 +172,35 @@ setup_mask(
 		}
 	}
 
-	////////////////////////////////////////////////
-	// Debug output
-	//	std::cout << "SETUP MASK ==>  exclude ";
-	//		for (Size i = 1; i <= alignment_length; i++ ) {
-	//			if ( sequence_mask(i) == false ) std::cout << i << " " ;
-	//		}
-	//	std::cout << std::endl;
-
-	////////////////////////////////////////////////
 	// Save into a file.
 	Size count( 0 );
-	utility::io::ozstream out( options::option[ options::OptionKeys::sequence_mask_file ]  );
-	for (Size i = 1; i <= alignment_length; i++ ) {
-		if (sequences[1][i-1] == '-' ) continue; //Assume native numbering
-		count++;
-		out << sequence_mask(i);
+	if ( option[ sequence_mask_file ].user() ) {
+		utility::io::ozstream out( option[ OptionKeys::sequence_mask_file ]() );
+		for (Size i = 1; i <= alignment_length; i++ ) {
+			if (sequences[1][i-1] == '-' ) continue; //Assume native numbering
+			count++;
+			out << sequence_mask(i);
+		}
+		out << std::endl;
+		out.close();
 	}
-	out << std::endl;
-	out.close();
 
 }
 
 ////////////////////////////////////////////////////////////////////////////
 void
-setup_alignment_map( utility::vector1< std::map< Size, Size > > & alignment2sequence, utility::vector1 < std::string > const & sequences )
-{
-
-	//Figure out mapping of alignment to each sequence.
-	Size const alignment_length( sequences[1].size() );
-	for (Size n = 1; n <= sequences.size(); n++ ){
-		Size count( 0 );
-		std::map< Size, Size > mapping;
-		for (Size i = 1; i <= alignment_length; i++ ) {
-			if ( sequences[n][i-1] != '-' ) {
-				count++;
-				mapping[ i ] = count;
-			} else {
-				mapping[ i ] = 0;
-			}
-		}
-		alignment2sequence.push_back( mapping );
-	}
-
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////
-// Would be useful utility to put somewhere else in Rosetta...
-//  perhaps will need for silent output.
-/////////////////////////////////////////////////////////////////////////////////
-std::string
-make_tag_with_dashes( utility::vector1< Size > working_res ){
-
-	using namespace ObjexxFCL;
-	std::string tag = "";
-
-	if ( working_res.size() == 0 ) return tag;
-
-	utility::vector1< std::pair<Size,Size> > working_res_segments;
-	if ( working_res.size() == 0 ) return tag;
-
-	Size start_segment = working_res[1];
-	Size last_res = working_res[1];
-
-	for (Size n = 2; n<= working_res.size(); n++ ){
-		if ( working_res[n] != last_res+1 ){
-			working_res_segments.push_back( std::make_pair( start_segment, last_res ) );
-			start_segment = working_res[n];
-		}
-		last_res = working_res[n];
-	}
-	working_res_segments.push_back( std::make_pair( start_segment, last_res ) );
-
-	for (Size n = 1; n <= working_res_segments.size(); n++ ){
-		if ( n > 1 ) tag += " ";
-		std::pair< Size, Size > const & segment = working_res_segments[n];
-		if ( segment.first == segment.second ){
-			tag += string_of( segment.first );
-		} else{
-			tag += string_of( segment.first )+"-"+string_of(segment.second);
+setup_alignment_map( std::map< Size, Size > & mapping,
+										 std::string const & sequence_from_alignment ){
+	Size count( 0 );
+	for (Size i = 1; i <= sequence_from_alignment.size(); i++ ) {
+		if ( sequence_from_alignment[i-1] != '-' ) {
+			count++;
+			mapping[ i ] = count;
+		} else {
+			mapping[ i ] = 0;
 		}
 	}
-
-	return tag;
 }
-
-
-/////////////////////////////////////////////////////////////////////////////////void
-// Would be useful utility to put somewhere else in Rosetta...
-//  perhaps will need for silent output.
-/////////////////////////////////////////////////////////////////////////////////
-std::string
-make_tag( utility::vector1< Size > working_res ){
-
-	using namespace ObjexxFCL;
-	std::string tag = "";
-
-	for (Size n = 1; n <= working_res.size(); n++ ){
-		if ( n > 1 ) tag += " ";
-		tag += string_of( working_res[n] );
-	}
-
-	return tag;
-}
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 std::string
@@ -343,30 +214,109 @@ remove_dashes( std::string const & s ){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-prepare_full_length_start_model(
-	 pose::Pose & template_pose,
-	 pose::Pose & pose,
-	 utility::vector1<std::string> const & sequences,
-	 ObjexxFCL::FArray1D_bool const & sequence_mask,
-	 utility::vector1< std::map< Size, Size > > & alignment2sequence,
-	 utility::vector1< std::string > const & pdb_names,
-	 std::string const & which_file
-																)
+prepare_threaded_model(
+											 pose::Pose & pose,
+											 std::string const & target_sequence_from_alignment,
+											 std::string const & template_sequence_from_alignment,
+											 ObjexxFCL::FArray1D_bool & sequence_mask /* should make this optional! */,
+											 Size offset = 0
+											 )
 {
+
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::pose;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace utility;
 
+	// following creates pose from scratch! Assumes that we need to add/delete, and it changes the
+	// fold-tree -- both are probably bad ideas for a general threading routine.
+	// Would be better to add or delete residues as needed, trying to be smart about fold_tree [how?].
+	// And better to skip this part if add/delete not necessary -- i.e., just isolate the "mutate sequence" part.
+	Pose const template_pose = pose;
 	pose.clear();
-	Size const alignment_length( alignment2sequence[1].size() );
 
-	// Find which template to use, based on input pdb name.
+	Size const alignment_length = target_sequence_from_alignment.size();
+	runtime_assert( alignment_length ==  template_sequence_from_alignment.size() );
+
+	if ( sequence_mask.size() == 0 ) sequence_mask = ObjexxFCL::FArray1D_bool( alignment_length, true );
+	runtime_assert( alignment_length ==  sequence_mask.size() );
+
+	std::map <Size, Size> template_alignment2sequence, target_alignment2sequence;
+	// Note that the Sequence object already has a nice function for this called resnum() -- we should just use it.
+	setup_alignment_map( template_alignment2sequence, template_sequence_from_alignment );
+	setup_alignment_map( target_alignment2sequence,   target_sequence_from_alignment );
+
+	std::string target_sequence;
+	utility::vector1< Size > working_res;
+	for (Size i = 1; i <= alignment_length; i++ ){
+
+		if ( !sequence_mask( i ) )  continue;
+
+		Size const pdb_number( template_alignment2sequence[i] );
+
+		if ( i == 1 ||  ( sequence_mask( i-1 ) && pdb_number > 1 && !template_pose.fold_tree().is_cutpoint( pdb_number-1 ) )  ){
+			pose.append_residue_by_bond( template_pose.residue( pdb_number ) );
+		} else {
+			pose.append_residue_by_jump( template_pose.residue( pdb_number ), pose.total_residue() );
+		}
+
+		//std::cout << "creating alignment ==>  template:" << pdb_number << "  target: " << target_alignment2sequence[i] << std::endl;
+		//std::cout << target_sequence_from_alignment[i-1] << ' ' << template_pose.residue( pdb_number ).name1() << std::endl;
+
+		target_sequence += target_sequence_from_alignment[i-1];
+		working_res.push_back( target_alignment2sequence[i] + offset); // will be used for PDB numbering
+	}
+
+	// fix up numbering.
+	PDBInfoOP pdb_info = new PDBInfo( pose );
+	pdb_info->set_numbering( working_res );
+	pose.pdb_info( pdb_info );
+
+	std::string current_sequence = pose.sequence();
+	std::cout << "TARGET: " << target_sequence << std::endl;
+	std::cout << "CURRENT: " << current_sequence << std::endl;
+	utility::vector1< Size > changed_pos;
+
+	std::cout << "WORKING_RES " << make_tag( working_res ) << std::endl;
+	std::cout << "WORKING_RES " << make_tag_with_dashes( working_res ) << std::endl;
+
+	/////////////////////
+	//Mutate sequence
+	/////////////////////
+	utility::vector1< int> changed_pos_working;
+	for (Size i = 1; i <= target_sequence.size(); i++ ){
+
+		char const new_seq = target_sequence[i-1];
+		if ( new_seq == current_sequence[i-1] ) continue;
+
+		changed_pos.push_back( i );
+		changed_pos_working.push_back( working_res[i] );
+
+		ResidueTypeSet const & rsd_set = pose.residue( i ).residue_type_set();
+		ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
+		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
+		Real const save_chi = pose.chi(i);
+		pose.replace_residue( i, *new_rsd, false );
+		pose.set_chi( i, save_chi );
+	}
+
+	std::cout << "Changed residues (without offset applied): " << make_tag_with_dashes( changed_pos ) << std::endl;
+	std::cout << "Changed residues (in residue numbering): "    << make_tag_with_dashes( changed_pos_working ) << std::endl;
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// Find which template to use, based on input pdb name, or, if that fails, the template sequence.
+Size
+figure_out_which_sequence_is_template( utility::vector1< sequence::SequenceOP > const & sequences_from_alignment,
+																			 pose::Pose const & template_pose,
+																			 std::string const & template_file_name ){
+
 	Size which_sequence( 0 );
-	for( Size n=1; n<=pdb_names.size(); n++ ){
-		//		std::cout << pdb_names[n] << " " << which_file << std::endl;
-		if ( pdb_names[n] == which_file ) {
+
+	for( Size n=1; n<=sequences_from_alignment.size(); n++ ){
+		if ( sequences_from_alignment[n]->id() == template_file_name ) {
 			which_sequence = n;
 			break;
 		}
@@ -376,138 +326,25 @@ prepare_full_length_start_model(
 	// If could not find template based on name, try based on sequence...
 	std::string const template_sequence = template_pose.sequence();
 	if ( which_sequence == 0 ){
-		for( Size n=1; n<=sequences.size(); n++ ){
-			if ( remove_dashes( sequences[n] ) == template_sequence ) {
+		for( Size n=1; n<=sequences_from_alignment.size(); n++ ){
+			if ( sequences_from_alignment[n]->ungapped_sequence() == template_sequence ) {
 				which_sequence = n;
 				break;
 			}
 		}
-		if ( which_sequence > 0 )  std::cout  << "Using " << pdb_names[which_sequence] << " from alignment FASTA file, as its sequence corresponds to input template PDB!" << std::endl;
+		if ( which_sequence > 0 )  std::cout  << "Using " << sequences_from_alignment[which_sequence]->id() << " from alignment FASTA file, as its sequence corresponds to input template PDB!" << std::endl;
 	}
 
 	if ( which_sequence == 0 )		utility_exit_with_message( "Could not figure out which sequence in fasta file was the template based on name or on sequence!!" );
 
-	if ( which_sequence == 1 ) std::cout << "WARNING! WARNING! Assuming template corresponds to first sequence in the alignment FASTA file " << pdb_names[which_sequence] <<  ". But that first sequence should be the target sequence!" << std::endl;
+	if ( which_sequence == 1 ) std::cout << "WARNING! WARNING! Assuming template corresponds to first sequence in the alignment FASTA file " <<  sequences_from_alignment[which_sequence]->id() <<  ". But that first sequence should be the target sequence!" << std::endl;
 
-	runtime_assert( template_sequence == remove_dashes( sequences[which_sequence] ) );
+	runtime_assert( template_sequence == remove_dashes( sequences_from_alignment[which_sequence]->ungapped_sequence()  ) );
 
-	template_pose.dump_pdb( "template.pdb" );
-
-	ResidueTypeSet const & rsd_set( template_pose.residue(1).residue_type_set() );
-
-	std::string const full_desired_sequence = sequences[1];
-	std::string desired_sequence = "";
-	utility::vector1< int > working_res;
-
-	int offset = option[ seq_offset ]();
-
-	for (Size i = 1; i <= alignment_length; i++ ){
-
-		if ( !sequence_mask( i ) )  continue;
-		Size const pdb_number( alignment2sequence[ which_sequence ][i] );
-
-		if ( i == 1 ||  ( sequence_mask( i-1 ) && pdb_number > 1 && !template_pose.fold_tree().is_cutpoint( pdb_number-1) )  ){
-			pose.append_residue_by_bond( template_pose.residue( pdb_number ) );
-		} else {
-			pose.append_residue_by_jump( template_pose.residue( pdb_number ), pose.total_residue() );
-		}
-		desired_sequence += full_desired_sequence[i-1];
-
-		// std::cout << "creating alignment ==>  template:" << pdb_number << "  target: " << alignment2sequence[1][i] << std::endl;
-		// std::cout << full_desired_sequence[i-1] << ' ' << template_pose.residue( pdb_number ).name1() << std::endl;
-
-		working_res.push_back( alignment2sequence[1][i] + offset);
-	}
-
-	// fix up numbering.
-	PDBInfoOP pdb_info = new PDBInfo( pose );
-	pdb_info->set_numbering( working_res );
-	pose.pdb_info( pdb_info );
-
-	pose.dump_pdb( "before_mutations.pdb" );
-
-	std::string current_sequence = pose.sequence();
-	std::cout << "DESIRED: " << desired_sequence << std::endl;
-	std::cout << "CURRENT: " << current_sequence << std::endl;
-	utility::vector1< Size > changed_pos;
-
-	std::cout << "WORKING_RES " << make_tag( working_res ) << std::endl;
-	std::cout << "WORKING_RES " << make_tag_with_dashes( working_res ) << std::endl;
-
-	//Write over sequence?
-	utility::vector1< int> changed_pos_working;
-	for (Size i = 1; i <= desired_sequence.size(); i++ ){
-
-		char const new_seq = desired_sequence[i-1];
-		if ( new_seq == current_sequence[i-1] ) continue;
-
-		changed_pos.push_back( i );
-		changed_pos_working.push_back( working_res[i] );
-
-		ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
-		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
-		Real const save_chi = pose.chi(i);
-		pose.replace_residue( i, *new_rsd, false );
-		pose.set_chi( i, save_chi );
-	}
-
-	//////////////////////////////////////////////////////////////////////
-	// maybe we should also change out numbering via PDBinfo object?
-	//////////////////////////////////////////////////////////////////////
-
-
-	std::cout << "Changed residues (without offset applied): " << make_tag_with_dashes( changed_pos ) << std::endl;
-
-	std::cout << "Changed residues (in residue numbering): "    << make_tag_with_dashes( changed_pos_working ) << std::endl;
-
-	std::cout << "Created threaded model for sequence: " << pdb_names[1] << std::endl;
-
-	///////////////////
-	///////////////////
-	return;
-	///////////////////
-	///////////////////
-
-	// do the following later... this is copied from a protein modeling routine, and might be worth keeping in here?
-	std::cout << "ABOUT TO DO LOOPS" << std::endl;
-	//Now need to add in residues that don't exist already. This is tricky. Need to do it segment by segment.
-	//Loop definition
-	bool in_loop( false );
-	Size start( 0 ), end( 0 );
-	utility::vector1< std::pair< Size, Size > > loops;
-	for (Size i = 1; i <= alignment_length; i++ ){
-		Size const pdb_number( alignment2sequence[1][i] );
-		if (pdb_number == 0 ) continue;
-		//std::cout << "POS:" << i <<  " " << pdb_number << " " << sequence_mask(i) << " " << in_loop << std::endl;
-
-		if ( !sequence_mask(i) && !in_loop) {
-			in_loop = true;
-			start = pdb_number;
-		}
-		if ( sequence_mask(i) && in_loop ) {
-			in_loop = false;
-			end = pdb_number-1;
-			loops.push_back( std::make_pair( start, end ) );
-		}
-	}
-
-	std::cout << "about to do termini" << std::endl;
-	//1. Will need to handle special case for termini -- not coded yet!!
-	//2. Probably will want to randomly move around cutpoint (by "prepending"!).
-	for (Size n = 1; n <= loops.size(); n++ ) {
-
-		std::cout << "LOOP " << n << " ==> " << loops[n].first << " " << loops[n].second << std::endl;
-
-		for (Size i = loops[n].first; i <= loops[n].second; i++ ) {
-			ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( desired_sequence[i-1] ).exclude_variants().select( rsd_set )[1] );
-			ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type ) );
-			pose.conformation().append_polymer_residue_after_seqpos( *new_rsd, i-1, true );
-			pose.set_omega( i, 180.0 );
-		}
-
-	}
+	return which_sequence;
 
 }
+
 
 ////////////////////////////////////////////////////////////////////////////
 void
@@ -517,40 +354,48 @@ rna_thread_test(){
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring;
 	using namespace core::pose;
+	using namespace core::sequence;
 
 	////////////////////////////////////////////////
-	//Read in fasta file.
-	std::string const fasta_file ( option[ in::file::fasta ]()[1] );
-	utility::vector1< std::string > sequences, pdb_names;
-	Size const alignment_length = read_alignment_fasta_file( sequences, pdb_names, fasta_file );
-
-	//Figure out a mask.
-	ObjexxFCL::FArray1D_bool sequence_mask( alignment_length, false );
-	setup_mask( sequence_mask, sequences );
-
-	//Get from alignment to index inside each pdb.
-	utility::vector1< std::map< Size, Size > > alignment2sequence;
-	setup_alignment_map( alignment2sequence, sequences );
-
-	////////////////////////////////////////////////
-	//Read in native pdb
-	Pose native_pose, template_pose, temp_pose;
-	PoseOP pose_op( new Pose );
-	Pose & pose( *pose_op );
-
-	//std::string native_file = option[ in::file::native ];
-	//	io::pdb::pose_from_pdb( native_pose, native_file );
-
 	//Read in template pdb.
+	Pose pose;
 	std::string template_file = option[ in::file::s ][1];
+	core::chemical::ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	core::import_pose::pose_from_pdb( pose, *rsd_set, template_file );
+	protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
 
-	core::chemical::ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+	////////////////////////////////////////////////
+	//Read in fasta file or user-inputted sequence
+	std::string template_sequence_from_alignment, target_sequence_from_alignment;
+	ObjexxFCL::FArray1D_bool sequence_mask;
+	if ( option[ seq ].user() ) {
 
-	core::import_pose::pose_from_pdb( template_pose, *rsd_set, template_file );
-	protocols::rna::figure_out_reasonable_rna_fold_tree( template_pose );
+		runtime_assert( ! option[ in::file::fasta ].user() );
+		template_sequence_from_alignment = pose.sequence();
+		target_sequence_from_alignment = option[ seq ]();
+		if ( target_sequence_from_alignment.size() != template_sequence_from_alignment.size() ) utility_exit_with_message( "Input sequence from -seq should match size of template pose specified by -s!" );
 
-	prepare_full_length_start_model( template_pose, pose, sequences, sequence_mask,  alignment2sequence, pdb_names, template_file );
+	} else {
+
+		std::string const fasta_file ( option[ in::file::fasta ]()[1] );
+		utility::vector1< std::string > sequences, pdb_names;
+		utility::vector1< SequenceOP > sequences_from_alignment = read_fasta_file( fasta_file );
+		Size const which_sequence = figure_out_which_sequence_is_template( sequences_from_alignment, pose, template_file );
+		template_sequence_from_alignment = sequences_from_alignment[ which_sequence ]->sequence();
+		target_sequence_from_alignment  = sequences_from_alignment[ 1 ]->sequence();
+
+		// We can/should replace above with standard Rosetta reader!
+		// And if we use Sequence object, that will return useful info like ungapped_sequence()...
+		// Also cool -- Sequence can include start numbering [= offset + 1].
+
+		//Figure out a mask ... this is currently not doing anything if we just have a template and a target sequence.
+		setup_mask( sequence_mask, sequences_from_alignment );
+
+	}
+
+	prepare_threaded_model( pose, target_sequence_from_alignment,
+													template_sequence_from_alignment,
+													sequence_mask, option[ seq_offset ]() );
 	protocols::rna::virtualize_5prime_phosphates( pose );
 
 	std::string outfile( "threaded.pdb" );
@@ -559,32 +404,8 @@ rna_thread_test(){
 	std::cout << "Outputting: " << outfile << std::endl;
 	pose.dump_pdb( outfile );
 
-	// later put in erraser-style refinement of threaded mutated residues --
-	// kind of an investment of time, though.
-
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////
-void
-initialize_sequence_mask( pose::Pose & pose, ObjexxFCL::FArray1D_bool & sequence_mask ) {
-
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
-	sequence_mask.dimension( pose.total_residue() );
-	sequence_mask = true;
-
-	if ( option[ sequence_mask_file ].user() ) {
-		utility::io::izstream data_stream( option[ sequence_mask_file ] );
-		std::string line;
-		getline(data_stream, line);
-		for (Size n = 1; n <= pose.total_residue(); n++ ) {
-			sequence_mask( n ) = line[n-1];
-		}
-	}
-
-}
 
 ///////////////////////////////////////////////////////////////
 void*
@@ -592,9 +413,7 @@ my_main( void* )
 {
 
 	using namespace basic::options;
-
 	rna_thread_test();
-
 	exit( 0 );
 
 }
@@ -608,13 +427,9 @@ try {
 	using namespace basic::options;
 
 	//Uh, options?
-	NEW_OPT( chi_stats, "", false );
-	NEW_OPT( mask_loop, "", false );
-	NEW_OPT( sequence_mask_file, "", "sequence_mask.txt" );
-	NEW_OPT( secstruct_file, "", "blah.secstruct" );
-	NEW_OPT( cst_file, "", "cst.txt" );
-	NEW_OPT( seq_offset, "", 0 );
-
+	NEW_OPT( seq, "target sequence (can include dashes). Must specify either this or -fasta. Length of this sequence must exactly equal length of template pose specified by -s", "");
+	NEW_OPT( seq_offset, "Integer to add to all residue numbers in output PDB", 0 );
+	NEW_OPT( sequence_mask_file, "Output name for sequence mask file (not in use at the moment)", "sequence_mask.txt" );
 	////////////////////////////////////////////////////////////////////////////
 	// setup
 	////////////////////////////////////////////////////////////////////////////

@@ -235,6 +235,12 @@ is_false_string( std::string const & value_str )
 		( value_str == "NO" ) );
 }
 
+std::string
+make_tag_with_dashes( utility::vector1< int > res_vector );
+
+std::string
+make_tag( utility::vector1< int > res_vector );
+
 }  // namespace utility
 
 #endif  // INCLUDED_utility_string_util_HH

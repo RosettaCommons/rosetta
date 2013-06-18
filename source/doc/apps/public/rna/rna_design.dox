@@ -22,7 +22,7 @@ with core routines run through the amazing Rosetta packer.
 
 For a 'minimal' demo example of RNA design:
 
-<code>rosetta_demos/public/RNA_Design</code> [in the release version]
+<code>demos/public/RNA_Design</code> [in the release version]
 
 
 @section refs References

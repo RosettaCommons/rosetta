@@ -1,18 +1,90 @@
-After checking out a fresh version run these commands to
-get a full release build of mini:
+----- Compiling with cmake -----
 
+After checking out a fresh version run these commands to
+get a full release build of rosetta:
+
+./make_project.py all
+cd build_release
+cmake -G Ninja
+ninja  
+
+of if you want to see the actual g++ commands (good for debugging):
+
+ninja -v
+
+Some more information on installing ninja below (its easy with git, which you presumably already have). 
+Ninja is a very efficient replacement for 'make'. If you want to use cmake with 'make' instead, see below.
+
+----- Building and running Unit Tests -----
+
+Usage is straightforward, and similar to regular CMake builds:
+
+#Build:
+./make_project.py all
+cd ./build_unit
+cmake -G Ninja 
+ninja 
+
+#Test
+cd rosetta/source/
+test/run.py -C -j8 --mute all # Don't forget the "-C"
+
+For those who follow the way of ninja_build.py, it's even easier:
+
+cd rosetta/source/
+./ninja_build.py remake unit # Omit "remake" if you haven't edited any *.src.settings since the last run
+test/run.py -C -j8 --mute all 
+
+
+----- Installing Ninja ---
+
+1. Download the latest version of cmake (v 2.8.8 at time of writing). 
+Currently Ninja is turned on by default for linux but not for Apple.
+
+Turn on Ninja (For Apple machine)
+Edit cmake-2.8.8/Source/CMakeLists.txt:
+
+Find the following lines :
+if(WIN32 OR APPLE)
+  SET(_CMAKE_DEFAULT_NINJA_VALUE FALSE)
+endif()
+
+and change it to :
+if(WIN32)
+  SET(_CMAKE_DEFAULT_NINJA_VALUE FALSE)
+endif()
+
+[you may not need to do this in the future if the cmake developers turn ninja on by default for apple.]
+
+  Then compile and install cmake. Run 
+ 
+./bootstrap
+make
+sudo make install
+
+2. Download ninja via github:
+
+ git clone https://github.com/martine/ninja.git
+
+ and run 
+
+   python bootstrap.py
+
+
+3. Then, follow directions above to compile.
+
+
+----- Using make instead of ninja -----
+If want to compile with make instead of ninja, you can type.
 
 ./make_project.py all
 cd build_release
 cmake .
 make
 
-
 you can also make individual executables by typing, for example
 
-make score_jd2
 make relax
-make minirosetta
 
 or individual sub libraries:
 
@@ -23,33 +95,20 @@ you can skip checking this dependencies by using /fast. for example:
 
 make myapp/fast
 
-
-
 If you want to see the actual g++ commands the make issues (good for debugging)
 issue the command like this
 
 make VERBOSE=1
 
+If you want to build and run unit tests,
 
-
-If you want to go even faster (especially for rebuilding after only changing one file), 
-use ninja instead of make... instructions in README_ninja.
-
-
-
------ Building and running Unit Tests -----
-
-Usage is straightforward, and similar to regular CMake builds:
 #Build:
-cd rosetta_source/cmake
 ./make_project.py all
 cd ./build_unit
-cmake .
-make -j8
+cmake -G Ninja 
+ninja 
+
 #Test
-cd rosetta_source/
+cd rosetta/source/
 test/run.py -C -j8 --mute all # Don't forget the "-C"
-For those who follow the way of the ninja, it's even easier:
-cd rosetta_source/
-./ninja_build.py remake unit # Omit "remake" if you haven't edited any *.src.settings since the last run
-test/run.py -C -j8 --mute all 
+

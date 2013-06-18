@@ -7,14 +7,16 @@ execfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../projects.s
 KNOWN_PROJECTS = PROJECTS_SETTINGS["projects"]["src"]
 KNOWN_TESTS =PROJECTS_SETTINGS["projects"]["test"]
 
-def list_project_files(path_to_mini, project_name):
+def list_project_files(path_to_mini, project_name, look_for_extension = 'all'):
 	path_to_project = path_to_mini + 'src/'
 	settings_file_name = path_to_project + project_name + '.src.settings'
 
 	# allow user to override 'normal' .settings file with ,settings.my file.
-	if os.path.exists( settings_file_name + '.my' ):
-		settings_file_name += '.my'
-		print 'Found %s and going to use it!' % settings_file_name
+	if len( look_for_extension ) > 0:
+		settings_file_name_with_extension = settings_file_name + '.'+ look_for_extension
+		if os.path.exists( settings_file_name_with_extension ):
+			settings_file_name = settings_file_name_with_extension
+			print 'Found %s and going to use it!' % settings_file_name
 
 	# brutal hack for pilot_apps.src.settings.all
 	if project_name == 'pilot_apps' and not os.path.exists( settings_file_name ): settings_file_name += '.all'
@@ -152,12 +154,19 @@ def project_main(path_to_mini, argv, project_callback):
 	if len(argv) < 2:
 		print 'usage: %s [project]...' % argv[0]
 		print '  known projects:'
-		for p in KNOWN_PROJECTS + ['all']:
+		for p in KNOWN_PROJECTS + ['all','my']:
 			print '    %s' % p
 		sys.exit(-1)
 	update_libraries_list(KNOWN_PROJECTS)
+
+
 	projects = argv[1:]
 	if projects == ['all']:
+		projects = KNOWN_PROJECTS
+
+	look_for_extension = 'all'
+	if projects == ['my']:
+		look_for_extension = 'my'
 		projects = KNOWN_PROJECTS
 
 	for project in projects:
@@ -165,7 +174,7 @@ def project_main(path_to_mini, argv, project_callback):
 			print 'unknown project: ' + project
 			sys.exit(-1)
 
-		project_path, project_files = list_project_files(path_to_mini, project)
+		project_path, project_files = list_project_files(path_to_mini, project, look_for_extension)
 		project_callback(project, project_path, project_files)
 
 

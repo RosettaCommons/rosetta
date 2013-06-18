@@ -76,6 +76,7 @@ put links to commonly referred to documentation pages here.
 	- @ref ligand_dock "Documentation for the ligand_dock application"
 	- @ref rna_denovo "Documentation for the RNA 3D modeling applications"
 	- @ref rna_design "Documentation for RNA fixed backbone design"
+	- @ref rna_thread "Documentation for simple RNA threading and mutation"
 	- @ref swa_rna_loop "Documentation for RNA loop modeling (lock-and-key problem) with Stepwise Assembly"
 	- @ref swa_protein_main "Documentation for enumerative protein loop modeling, short loops (part of Stepwise Assembly)"
 	- @ref swa_protein_long_loop "Documentation for long protein loop modeling by Stepwise Assembly"

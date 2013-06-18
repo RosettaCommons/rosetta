@@ -155,7 +155,7 @@ Advanced [used in rna_assembly]
 @subsection format Note on PDB format for RNA
  Input and output PDB models have residues marked rA, rC, rG, and rU, due to historical reasons. If you have a "standard" PDB file,  there is a python script available to convert it to Rosetta format:
 @verbatim
-rosetta_tools/rna/make_rna_rosetta_ready.py <pdb file>
+tools/rna/make_rna_rosetta_ready.py <pdb file>
 @endverbatim
 
 @subsection obligate Can I specify non-Watson-Crick pairs?

@@ -1,0 +1,84 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+///@author Rhiju Das
+/*!
+
+@page rna_thread Documentation for RNA threading and mutation: <em>rna_thread</em>
+
+@section metadata Metadata
+Added to documentation: June 2013
+
+@section code_demos Code and Demo
+The central code for the <em>rna_thread</em> application is in
+<code>apps/public/rna/rna_thread.cc</code>
+
+For a 'minimal' demo example of RNA threading:
+
+<code>demos/public/rna_thread</code>
+
+of the simpler RNA mutation:
+
+<code>demos/public/rna_mutate</code>
+
+@section refs References
+This threading code is currently not described in any publication.
+
+@section purpose Purpose
+This code is intended to thread new sequences onto previously solved RNA coordinates ('templates') for RNA homology modeling.
+
+@section algorithm Algorithm
+
+@section limits Limitations
+@li Within Rosetta, this code does not preserve the fold-tree
+@li The code has not been optimized for speed and is not encapsulated into a class yet.
+
+@section inputs Input Files
+@subsection required Required files
+@li The template PDB file. Must be in Rosetta RNA format (see @ref rna_denovo)
+@li An alignment fasta file.  Example:
+
+@verbatim
+> GIR1 group-I like ribozyme in I-DirI gene from D. iridis
+gguuggguugggaaguaucauggcuaaucaccaugaugcaaucggguugaacacuuaau----------------------uggguuaaa-acgg-----------------------------------ugggggacgaucccguaacauccguccuaa---------------------------------cggcgacagacugcacggcccu----------------------------------------------gccucuuagguguguucaau---gaacagucguucc------------------gaaaggaagcauccgguaucccaagacaauc
+
+>3bo3_REARRANGE.pdb
+----------------------------------------gccgugugccuugc-----gccgggaaaccaga-------uggugucaaauucggcgaaaccuaagcgcccgcccgggcguauggcaacg---------------------ccgagccaagcuucgcagccauugcacuccggcugcgaugaagguguagagacuagacggcacccaccuaaggcaaacgcuauggugc---------------------------------gcaaggcauaaggcauaguccagggaguggcgaagccacacaa----accag---acggcc-------------
+@endverbatim
+
+If you just want to mutate sequence, can supply this on command line by -seq; see below @rna_mutate.
+
+@subsection command_line How to run with this file.
+@verbatim
+rna_thread.<exe> -in:file:fasta 3bo3_REARRANGE_to_GIR1.fasta -s 3bo3_REARRANGE.pdb  -o 3bo3_REARRANGE_to_GIR1_thread.pdb -seq_offset 63
+@endverbatim
+
+This demo threads a group I intron crystallographic structure (3bo3_REARRANGE) into the group-I-like branching ribozyme GIR1, and was used in the fifth RNA puzzle trial.
+
+@section ft_options Options
+
+@verbatim
+-in:file:s                     Name of single PDB file with template coordinates
+-in:file:fasta                 Name of alignment file in FASTA format. First sequence should be
+                                target sequence, and second sequence should template sequence
+-o                             Name of output PDB file
+-seq_offset                    [optional] Integer to be added to residue numbers for output. [default=0]
+-seq                           [alternative to -in:file:fasta] sequence of output PDB. Must have
+                                same number of residues as template PDB.
+@endverbatim
+
+@section other
+
+If you just want to mutate some positions in an RNA and don't want to create a fasta file, you can run a command line like:
+
+@verbatim
+rna_thread -s rosetta_inputs/1zih_RNA.pdb  -seq gggcgcgagccu -o 1zih_A7G.pdb
+@endverbatim
+
+*/

@@ -19,6 +19,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
+#include <ObjexxFCL/string.functions.hh>
 #include <locale>
 
 // C/C++ headers
@@ -393,5 +394,62 @@ std::string string_to_sha1(std::string const & input_string)
 
 	return output_hash.str();
 }
+
+////////////////////////////////////////////////////////////////////////////
+// Compactifies vectors of strings:  1 2 3 9 10 11 to "1-3 9-11"
+// The function to go the other way (from string to vector) is available in
+// ObjexxFCL::get_ints(), I think.
+//
+std::string
+make_tag_with_dashes( utility::vector1< int > res_vector ){
+
+	using namespace ObjexxFCL;
+	std::string tag = "";
+
+	if ( res_vector.size() == 0 ) return tag;
+
+	utility::vector1< std::pair<int,int> > res_vector_segments;
+	if ( res_vector.size() == 0 ) return tag;
+
+	int start_segment = res_vector[1];
+	int last_res = res_vector[1];
+
+	for (int n = 2; n<= res_vector.size(); n++ ){
+		if ( res_vector[n] != last_res+1 ){
+			res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
+			start_segment = res_vector[n];
+		}
+		last_res = res_vector[n];
+	}
+	res_vector_segments.push_back( std::make_pair( start_segment, last_res ) );
+
+	for (int n = 1; n <= res_vector_segments.size(); n++ ){
+		if ( n > 1 ) tag += " ";
+		std::pair< int, int > const & segment = res_vector_segments[n];
+		if ( segment.first == segment.second ){
+			tag += string_of( segment.first );
+		} else{
+			tag += string_of( segment.first )+"-"+string_of(segment.second);
+		}
+	}
+
+	return tag;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+std::string
+make_tag( utility::vector1< int > res_vector ){
+
+	using namespace ObjexxFCL;
+	std::string tag = "";
+
+	for (int n = 1; n <= res_vector.size(); n++ ){
+		if ( n > 1 ) tag += " ";
+		tag += string_of( res_vector[n] );
+	}
+
+	return tag;
+}
+
 
 } // namespace utility
