@@ -867,6 +867,7 @@ build_pose_as_is1(
 	std::string chains_to_check_if_Ntermini= options.check_if_residues_are_Ntermini() ;
 	std::string::const_iterator const check_Ntermini_begin = chains_to_check_if_Ntermini.begin();
 	std::string::const_iterator const check_Ntermini_end = chains_to_check_if_Ntermini.end();
+
 	std::string chains_to_check_if_Ctermini= options.check_if_residues_are_Ctermini() ;
 	std::string::const_iterator const check_Ctermini_begin = chains_to_check_if_Ctermini.begin();
 	std::string::const_iterator const check_Ctermini_end = chains_to_check_if_Ctermini.end();
@@ -910,19 +911,6 @@ build_pose_as_is1(
 				&& check_Ntermini_for_this_chain );
 		bool const is_upper_terminus( ( i == nres_pdb || !same_chain_next ) && check_Ctermini_for_this_chain );
 
-		TR.Debug << "Residue " << i << std::endl;
-		if (is_lower_terminus) {
-			TR.Debug << "...is a lower terminus." << std::endl;
-		}
-		if (is_upper_terminus) {
-			TR.Debug << "...is an upper terminus." << std::endl;
-		}
-		if (is_branch_point) {
-			TR.Debug << "...is a branch point." << std::endl;
-		}
-		if (is_branch_lower_terminus) {
-			TR.Debug << "...is the lower terminus of a branch." << std::endl;
-		}
 
 		ResidueCoords const & xyz = rinfo.xyz;
 		ResidueTemps  const & rtemp = rinfo.temps;
@@ -936,6 +924,18 @@ build_pose_as_is1(
 			continue;
 		}
 
+		TR.Debug << "Residue " << i << std::endl;
+		/*TR.Debug << "...same_chain_prev: " << same_chain_prev << std::endl;
+		TR.Debug << "...same_chain_next: " << same_chain_next << std::endl;
+		TR.Debug << "...is last of this chain same_chain_next: " << same_chain_next << std::endl;
+		TR.Debug << "...is_lower_terminus: " << is_lower_terminus << std::endl;
+		TR.Debug << "...check_Ntermini_for_this_chain: "<< check_Ntermini_for_this_chain << std::endl;
+		TR.Debug << "...is_upper_terminus: " << is_upper_terminus << std::endl;
+		TR.Debug << "...check_Ctermini_for_this_chain: "<< check_Ctermini_for_this_chain << std::endl;
+		TR.Debug << "...is_branch_point: " << is_branch_point << std::endl;
+		TR.Debug << "...is_branch_lower_terminus: "<< is_branch_lower_terminus << std::endl;
+		TR.Debug << "...last_residue_was_recognized: " << last_residue_was_recognized << std::endl;*/
+
 		// look for best match:
 		// rsd_type should have all the atoms present in xyz
 		// try to minimize atoms missing from xyz
@@ -945,10 +945,6 @@ build_pose_as_is1(
 			ResidueType const & rsd_type( *(rsd_type_list[j]) );
 			bool const is_polymer( rsd_type.is_polymer() ); // need an example residue type, though this will
 			// remain fixed for all residue_types with the same name3
-
-			//TR.Debug << rsd_type.name() << " is_polymer " << is_polymer << std::endl;
-			//TR.Debug << rsd_type.name() << " is_lower_terminus " << rsd_type.has_variant_type( LOWER_TERMINUS ) << std::endl;
-			//TR.Debug << rsd_type.name() << " is_upper_terminus " << rsd_type.has_variant_type( UPPER_TERMINUS ) << std::endl;
 
 			// only take the desired variants
 			bool lower_term_type = rsd_type.has_variant_type( LOWER_TERMINUS ) ||
@@ -1000,8 +996,7 @@ build_pose_as_is1(
 				for (Size k = 1, n_branch_points = branch_points_on_this_residue.size();
 						k <= n_branch_points; ++k) {
 					branch_point = branch_points_on_this_residue[k][2];  // 3rd column (index 2) is the atom number.
-					TR.Debug << "Checking '" << rsd_type.name() <<
-							"' for branch at position " << branch_point << std::endl;
+					TR.Debug << "Checking '" << rsd_type.name() << "' for branch at position " << branch_point << std::endl;
 					if (residue_type_all_patches_name(rsd_type).find(string(1, branch_point) + ")-branch") ==
 							string::npos) {
 						branch_point_is_missing = true;
@@ -1096,18 +1091,33 @@ build_pose_as_is1(
 			//else runtime_assert( iter->first == " H  " && rsd_type.is_terminus() ); // special casee
 		}
 
-		// Add this new residue to the pose by appending.
 		Size const old_nres( pose.total_residue() );
+
+		/*TR.Debug << "...new residue is a polymer: " << new_rsd->type().is_polymer() << std::endl;
+		if (old_nres >=1){
+			TR.Debug << "The old residue is a polymer: " << pose.residue_type(old_nres).is_polymer() << std::endl;
+		}*/
+
+		// Add the first new residue to the pose
 		if ( !old_nres ) {
+			//TR.Debug << rsd_type.name() << " " << i << " is a new pose" << std::endl;
 			pose.append_residue_by_bond( *new_rsd );
-		} else if ( ( is_lower_terminus || !check_Ntermini_for_this_chain ) ||
-						is_branch_lower_terminus ||
+		}
+		// A new chain because this is a lower terminus (see logic above for designation)
+		// and if we're not checking it then it's a different chain from the previous
+		else if ( ( is_lower_terminus && check_Ntermini_for_this_chain || !same_chain_prev )
+						|| is_branch_lower_terminus ||
 						!new_rsd->is_polymer() ||
 						!pose.residue_type(old_nres).is_polymer() ||
 						!last_residue_was_recognized ) {
+			//
+			//TR.Debug << rsd_type.name() << " " << i << " is added by jump" << std::endl;
 			pose.append_residue_by_jump( *new_rsd, 1 /*pose.total_residue()*/ );
-		} else {
+		}
+		//Append residue to current chain dependent on bondlength
+		else {
 			if (!options.missing_dens_as_jump()) {
+				//TR.Debug << rsd_type.name() << " " << i << " is appended to chain " << chainID << std::endl;
 				pose.append_residue_by_bond( *new_rsd );
 			} else {
 				//fpd look for missing density in the input PDB
@@ -1127,6 +1137,7 @@ build_pose_as_is1(
 					core::pose::add_variant_type_to_pose_residue( pose, chemical::UPPERTERM_TRUNC, old_nres );
 					core::pose::add_variant_type_to_pose_residue( pose, chemical::LOWERTERM_TRUNC, old_nres+1 );
 				} else {
+					//TR.Debug << rsd_type.name() << " " << i << " is appended to chain" << chainID << std::endl;
 					pose.append_residue_by_bond( *new_rsd );
 				}
 			}
@@ -1142,7 +1153,7 @@ build_pose_as_is1(
 		pose_temps.push_back( rinfo.temps );
 
 		// update the pose-internal chain label if necessary
-		if ( ( ( is_lower_terminus || !check_Ntermini_for_this_chain ) || is_branch_lower_terminus) && pose.total_residue() > 1 ) {
+		if ( ( is_lower_terminus || !check_Ntermini_for_this_chain || is_branch_lower_terminus) && pose.total_residue() > 1 ) {
 			pose.conformation().insert_chain_ending( pose.total_residue() - 1 );
 		}
 
