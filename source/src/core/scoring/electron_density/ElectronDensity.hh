@@ -149,13 +149,21 @@ public:
 	getIntensities( lightPose const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso,
 		utility::vector1< core::Real > &Imodel, utility::vector1< core::Real > &Isol);
 
-	/// @brief Compute the FSC
+	/// @brief Compute model-map FSC
 	utility::vector1< core::Real >
 	getFSC( lightPose const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso );
 
-	/// @brief Compute RSCCs
+	/// @brief Compute map-map FSC
+	utility::vector1< core::Real >
+	getFSC( ObjexxFCL::FArray3D< float > const &map2, core::Size nbuckets, core::Real maxreso, core::Real minreso );
+
+	/// @brief Compute model-map RSCC
 	core::Real
 	getRSCC( lightPose const &pose );
+
+	/// @brief Compute map-map RSCC
+	core::Real
+	getRSCC( ObjexxFCL::FArray3D< float > const &map2 );
 
 	/// @brief Compute intensities, update density
 	void

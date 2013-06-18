@@ -1334,6 +1334,50 @@ ElectronDensity::getFSC(
 }
 
 /// @brief Compute the FSC in the specified resolution range
+utility::vector1< core::Real >
+ElectronDensity::getFSC(
+	ObjexxFCL::FArray3D< float > const &density2, core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
+
+	Real step = (minreso-maxreso)/nbuckets;
+
+	runtime_assert( density.u1()==density2.u1() && density.u2()==density2.u2() && density.u3()==density2.u3() );
+
+	// fft
+	ObjexxFCL::FArray3D< std::complex<double> > Fdensity2;
+	if (Fdensity.u1() == 0)
+		numeric::fourier::fft3(density, Fdensity);
+	numeric::fourier::fft3(density2, Fdensity2);
+
+	// correl
+	numeric::xyzVector< core::Real > del_ij;
+	utility::vector1<core::Real> num(nbuckets, 0.0), denom1(nbuckets, 0.0), denom2(nbuckets, 0.0);
+
+	int H,K,L;
+	for (int z=1; z<=(int)density.u3(); ++z) {
+		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
+		for (int y=1; y<=(int)density.u2(); ++y) {
+			K = (y < (int)density.u2()/2) ? y-1 : y-density.u2()-1;
+			for (int x=1; x<=(int)density.u1(); ++x) {
+				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
+				Real s_i = sqrt(S2(H,K,L));
+				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
+				if ( bucket_i > 0 && bucket_i <= (int)nbuckets ) {
+					num[bucket_i] += std::real( Fdensity2(x,y,z) * std::conj( Fdensity(x,y,z) ) );
+					denom1[bucket_i] += std::abs( Fdensity2(x,y,z) ) * std::abs( Fdensity2(x,y,z) );
+					denom2[bucket_i] += std::abs( Fdensity(x,y,z) ) * std::abs( Fdensity(x,y,z) );
+				}
+			}
+		}
+	}
+
+	for (Size i=1; i<=nbuckets; ++i) {
+		num[i] /= sqrt(denom1[i]*denom2[i]);
+	}
+
+	return num;
+}
+
+
 core::Real
 ElectronDensity::getRSCC( lightPose const &pose ) {
 	// rhoc & FrhoC
@@ -1353,6 +1397,32 @@ ElectronDensity::getRSCC( lightPose const &pose ) {
 		sumC_i  += eps_x*clc_x;
 		sumC2_i += eps_x*clc_x*clc_x;
 		vol_i   += eps_x;
+	}
+	varC_i = (sumC2_i - sumC_i*sumC_i / vol_i );
+	varO_i = (sumO2_i - sumO_i*sumO_i / vol_i ) ;
+	if (varC_i == 0 || varO_i == 0)
+		CC_i = 0;
+	else
+		CC_i = (sumCO_i - sumC_i*sumO_i/ vol_i) / sqrt( varC_i * varO_i );
+
+	return CC_i;
+}
+
+core::Real
+ElectronDensity::getRSCC( ObjexxFCL::FArray3D< float > const &density2 ) {
+	runtime_assert( density.u1()==density2.u1() && density.u2()==density2.u2() && density.u3()==density2.u3() );
+
+	core::Real sumC_i=0, sumO_i=0, sumCO_i=0, vol_i=0, CC_i=0;
+ 	core::Real sumO2_i=0.0, sumC2_i=0.0, varC_i=0, varO_i=0;
+	core::Real clc_x, obs_x, eps_x;
+	for (int x=0; x<density.u1()*density.u2()*density.u3(); ++x) {
+		clc_x = density2[x];
+		obs_x = density[x];
+
+		sumCO_i += clc_x*obs_x; sumO_i  += obs_x;
+		sumO2_i += obs_x*obs_x; sumC_i  += clc_x;
+		sumC2_i += clc_x*clc_x;
+		vol_i   += 1.0;
 	}
 	varC_i = (sumC2_i - sumC_i*sumC_i / vol_i );
 	varO_i = (sumO2_i - sumO_i*sumO_i / vol_i ) ;

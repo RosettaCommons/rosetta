@@ -40,6 +40,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 // C++ headers
 #include <iostream>
@@ -57,7 +58,8 @@ OPT_1GRP_KEY(File, edensity, alt_mapfile)
 OPT_1GRP_KEY(Integer, denstools, nresbins)
 OPT_1GRP_KEY(Real, denstools, lowres)
 OPT_1GRP_KEY(Real, denstools, hires)
-OPT_1GRP_KEY(Real, denstools, rescale_map)
+OPT_1GRP_KEY(Boolean, denstools, rescale_map)
+OPT_1GRP_KEY(Boolean, denstools, verbose)
 
 
 // fpd
@@ -175,7 +177,8 @@ densityTools()
 	// outputs
 	Size nresobins = option[ denstools::nresbins ]();
 	utility::vector1< core::Real > resobins, mapI, mapIprime, modelI, solvI, modelSum, modelmapFSC;
-	Real rscc, fsc=0;
+	utility::vector1< core::Real > mapAltI, mapmapFSC;
+	Real rscc, fsc=0, mm_rscc, mm_fsc=0;
 
 	// resolution limits for analysis
 	core::Real hires = option[ denstools::hires ]();
@@ -191,10 +194,23 @@ densityTools()
 	resobins = core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, lowres, hires);
 	mapI = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires);
 
-	// [2] 2ary map stats (intensity + map v map FSC)
-	bool usermap = false;
-	if (option[ edensity::alt_mapfile ].user()) {
-		usermap = true;
+	// [2] ALT map stats (intensity + map v map FSC)
+	core::scoring::electron_density::ElectronDensity mapAlt;
+	bool usermap = option[ edensity::alt_mapfile ].user();
+	if (usermap) {
+		std::string mapfile = option[ edensity::alt_mapfile ];
+		core::Real mapreso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
+		core::Real mapsampling = basic::options::option[ basic::options::OptionKeys::edensity::grid_spacing ]();
+		std::cerr << "Loading alternate density map" << mapfile << std::endl;
+		mapAlt.readMRCandResize( mapfile , mapreso , mapsampling );
+
+		mapAltI = mapAlt.getIntensities(nresobins, lowres, hires);
+		mapmapFSC = core::scoring::electron_density::getDensityMap().getFSC( mapAlt.data(), nresobins, lowres, hires );
+		mm_rscc = core::scoring::electron_density::getDensityMap().getRSCC( mapAlt.data() );
+
+		for (Size i=1; i<=resobins.size(); ++i)
+			mm_fsc+=mapmapFSC[i];
+		mm_fsc /= resobins.size();
 	}
 
 	// [3] model-map stats (intensity + model v map FSC + RSCC + per-res corrleations)
@@ -214,31 +230,45 @@ densityTools()
 		fsc /= resobins.size();
 	}
 
-	// [4] rescale maps to target intensity
-	if (userpose && option[ denstools::rescale_map ]()) {
-		utility::vector1< core::Real > rescale_factor(nresobins,0.0);
-		for (Size i=1; i<=nresobins; ++i)
-			rescale_factor[i] = sqrt(modelI[i] / mapI[i]);
-		core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires );
-		core::scoring::electron_density::getDensityMap().writeMRC( "scale_modelI.mrc" );
-		mapIprime = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires);
+	// [5] optionally: rescale maps to target intensity
+	if (option[ denstools::rescale_map ]()) {
+		if (userpose) {
+			utility::vector1< core::Real > rescale_factor(nresobins,0.0);
+			for (Size i=1; i<=nresobins; ++i)
+				rescale_factor[i] = sqrt(modelI[i] / mapI[i]);
+			core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires );
+			core::scoring::electron_density::getDensityMap().writeMRC( "scale_modelI.mrc" );
+			mapIprime = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires);
 
-		for (Size i=1; i<=nresobins; ++i)
-			rescale_factor[i] *= modelmapFSC[i];
-		core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires );
-		core::scoring::electron_density::getDensityMap().writeMRC( "scale_modelI_FSCwt.mrc" );
+			//for (Size i=1; i<=nresobins; ++i)
+			//	rescale_factor[i] *= modelmapFSC[i];
+			//core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires );
+			//core::scoring::electron_density::getDensityMap().writeMRC( "scale_modelI_FSCwt.mrc" );
+		} else if (usermap) {
+
+		}
 	}
 
-	// verbose ...
-	//for (Size i=1; i<=resobins.size(); ++i) {
-	//	std::cerr << resobins[i] << " " << mapI[i];
-	//	if (userpose) std::cerr << " " << modelI[i] << " " << solvI[i] << " " << modelmapFSC[i];
-	//	std::cerr << std::endl;
-	//}
+	// verbose
+	if ( option[ denstools::verbose ]()) {
+			std::cerr << "1/res  I_map1";
+			if (usermap)  std::cerr << "  I_map2  FSC_map1_map2" ;
+			if (userpose) std::cerr << "  I_model  FSC_map1_model";
+			std::cerr << std::endl;
+		for (Size i=1; i<=resobins.size(); ++i) {
+			std::cerr << resobins[i] << " " << mapI[i];
+			if (usermap)  std::cerr << " " << mapAltI[i] << " " << mapmapFSC[i];
+			if (userpose) std::cerr << " " << modelI[i] << " " << modelmapFSC[i];
+			std::cerr << std::endl;
+		}
+	}
 
 	// compact
 	if (userpose) {
 		std::cerr << pdbfile << " " << fsc << " " << rscc << std::endl;
+	}
+	if (usermap) {
+		std::cerr << option[ edensity::alt_mapfile ]() << " " << mm_fsc << " " << mm_rscc << std::endl;
 	}
 }
 
@@ -251,11 +281,12 @@ main( int argc, char * argv [] )
 {
 	try {
 	// options, random initialization
-	NEW_OPT(denstools::lowres, "lowres", 1000.0);
+	NEW_OPT(denstools::lowres, "lowres", 500.0);
 	NEW_OPT(denstools::hires, "hires", 0.0);
 	NEW_OPT(edensity::alt_mapfile, "alt mapfile", "");
 	NEW_OPT(denstools::nresbins, "#reolution bins for statistics", 20);
 	NEW_OPT(denstools::rescale_map, "scale map I == model I?", false);
+	NEW_OPT(denstools::verbose, "verbose?", false);
 	devel::init( argc, argv );
 	densityTools();
 	} catch ( utility::excn::EXCN_Base const & e ) {
