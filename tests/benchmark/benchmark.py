@@ -13,15 +13,16 @@
 ## @author Sergey Lyskov
 
 
-import os, sys, imp, shutil
+import os, sys, imp, shutil, json
 
 import argparse
 
 # do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
 _ResultCodes_ = dict(
-    _Finished_    = '_Finished_',
-    _Failed_      = '_Failed_',
-    _BuildFailed_ = '_BuildFailed_',
+    _Finished_     = '_Finished_',
+    _Failed_       = '_Failed_',
+    _BuildFailed_  = '_BuildFailed_',
+    _ScriptFailed_ = '_ScriptFailed_'
     )
 
 
@@ -52,11 +53,26 @@ def main(args):
     print( 'Running test suites: {}'.format(Options.args) )
 
     for ts in Options.args:
-        if not ts.startswith('tests/'): ts = 'tests/' + ts + '.py'
+        if not ts.startswith('tests/'): file_name = 'tests/' + ts + '.py'
+        else: file_name = ts;  ts = ts.partition('tests/')[2][:-3]  # removing dir prefix
+
+        #print file_name, ts
+
+        test_suite = imp.load_source('test_suite', file_name)
 
 
-        test_suite = imp.load_source('test_suite', ts)
+        working_dir = os.path.abspath('./results/' + ts)
+        if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
+        os.makedirs(working_dir)
 
+        res = test_suite.run_test_suite(rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, jobs=Options.jobs, verbose=True)
+
+
+        if res['suite_result'] not in _ResultCodes_.values(): print 'Warning!!! TestSuite {} failed with unknow result code: {}'.format(t, res['suite_result'])
+        else: print 'Test {} finished with output:\n{}'.format(ts, json.dumps(res, sort_keys=True, indent=2))
+
+        '''
+        # Running as individual test... may be later...
         for t in test_suite.get_tests():
             working_dir = os.path.abspath('./results/' + ts.split('/')[-1][:-3]) + '/' + t
             if os.path.isdir(working_dir): shutil.rmtree(working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
@@ -66,9 +82,7 @@ def main(args):
 
             if res not in _ResultCodes_.values(): print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res)
             else: print 'Test {} finished with output:\n{}\nAnd result code: {}'.format(t, output, res)
-
-
-
+        '''
 
 
 if __name__ == "__main__": main(sys.argv)

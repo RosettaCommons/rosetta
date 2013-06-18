@@ -14,13 +14,10 @@
 
 import os, commands
 
-class BenchmarkBuildError(Exception): pass
+class BenchmarkIntegrationError(Exception): pass
 
 
-tests = dict(
-    debug   = './scons.py bin -j{jobs}',
-    release = './scons.py bin mode=release -j{jobs}',
-)
+tests = ['i']
 
 
 def set_up():
@@ -32,39 +29,62 @@ def tear_down():
 
 
 def rollover():
-    pass
+    a_commands.getoutput("cd main/tests/integration && ./accept-changes.sh" )
 
 
 def get_tests():
-    return tests.keys()
+    TR = Tracer(verbose=True)
+    TR('Integration Test script does not support get_tests! Use run_test_suite instead!')
+    raise BenchmarkIntegrationError()
 
 
 def run_test(test, rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=False):
     TR = Tracer(verbose)
 
-    TR('Running test: "{test}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir} jobs={jobs}, hpc_driver={hpc_driver}...'.format( **vars() ) )
-
-    res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].format(jobs=jobs)), return_='tuple')
-
-    file(working_dir+'/build-log.txt', 'w').write(output)
-
-    if res: return _Failed_, output  # build failed for us actually mean test failure
-    else: return _Finished_, output
+    TR('Integration Test script does not support run_test! Use run_test_suite instead!')
+    raise BenchmarkIntegrationError()
 
 
 def run_test_suite(rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=False):
     TR = Tracer(verbose)
+    full_log = ''
 
     TR('Running test_suite: "{}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir} jobs={jobs}, hpc_driver={hpc_driver}...'.format(__name__, **vars() ) )
+
     results = {}
-    for t in tests:
-        test_working_dir = working_dir + '/' + t
-        if os.path.isdir(test_working_dir): shutil.rmtree(test_working_dir);  #print('Removing old job dir %s...' % working_dir)  # remove old dir if any
-        os.makedirs(test_working_dir)
 
-        results[t] = run_test(test=t, rosetta_dir=rosetta_dir, working_dir=test_working_dir, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose)
+    TR('Compiling...')
+    #res, output = execute('Compiling...', 'cd {}/source && ./scons.py bin mode=release -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
+    res, output = 0, 'debug... compiling...\n'
 
-    return results
+    full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
+
+    if res:
+        results['suite_result'] = _BuildFailed_
+        results['suite_log']    = full_log
+        return results
+
+    else:
+        TR('Running integration script...')
+        #res, output = execute('Running integration script...', 'cd {}/tests/integration && ./integration.py -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
+        res, output = 0, 'debug... integration.py...\n'
+        full_log += output
+
+        if res:
+            results['suite_result'] = _ScriptFailed_
+            results['suite_log']    = full_log
+            return results
+
+        files_location = rosetta_dir+'/tests/integration/new/'
+        for root, dirs, _ in os.walk(files_location):
+            if root == files_location:  # we only want to iterate over first layer
+                for d in dirs:
+                    #print 'linking: %s <-- %s' % (root + d, working_dir + d)
+                    os.symlink(root + '/' + d, working_dir + '/' + d)
+
+        results['suite_result'] = _Finished_
+        results['suite_log']    = full_log
+        return results
 
 
 # do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
