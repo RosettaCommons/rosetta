@@ -60,8 +60,8 @@ void
 NetChargeFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & )
 {
 	chain_ = tag->getOption<core::Size>( "chain", 0 );
-	net_charge_max_ = tag->getOption<int>( "max", 100 );
-	net_charge_min_ = tag->getOption<int>( "min", -100 );
+	net_charge_max_ = tag->getOption<signed int>( "max", 100 );
+	net_charge_min_ = tag->getOption<signed int>( "min", -100 );
 
 	TR<<"Net charge will be caculated for chain " << chain_ << " with maximum cutoff " << net_charge_max_ << " and minimum cutoff " << net_charge_min_ << "." << std::endl;
 }
@@ -98,7 +98,7 @@ core::Real
 NetChargeFilter::compute( core::pose::Pose const & pose ) const {
 	core::pose::Pose copy_pose = pose;
 
-	int net_charge = 0;
+	signed int net_charge = 0;
 
 	for ( core::Size i=1; i <= pose.total_residue(); ++i ) {
 	

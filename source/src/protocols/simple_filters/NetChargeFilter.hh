@@ -53,8 +53,8 @@ public:
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 private:
 	core::Size chain_;
-	int net_charge_max_;
-	int net_charge_min_;
+	signed int net_charge_max_;
+	signed int net_charge_min_;
 };
 	
 }
