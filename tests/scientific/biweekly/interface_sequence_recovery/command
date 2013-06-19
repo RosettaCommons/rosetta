@@ -1,0 +1,64 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+minidir=%(minidir)s
+
+nice %(bin)s/rosetta_scripts.%(binext)s \
+    @flags \
+    @%(scfxn)s/flags \
+    -score:weights %(scfxn)s/weights.wts \
+    -parser:script_vars scfxn=%(scfxn)s \
+    -database %(database)s >&1 \
+	| egrep -v 'TIMING' \
+	| egrep -v 'Finished.+in [0-9]+ seconds.' \
+	> interface_design.log
+
+sed 's:^:../:g' list.txt > output/inputs.txt
+
+cd output
+
+ls *pdb > designs.txt
+
+nice %(bin)s/sequence_recovery.%(binext)s \
+    -database %(database)s \
+    -native_pdb_list inputs.txt \
+    -redesign_pdb_list designs.txt \
+    -parse_taskops_file ../interface_redesign.xml \
+    &> sequence_recovery.log
+
+#nice python interface_sequence_recovery.py
+echo -e "Sequence Recovery\n=================" > .results.log
+head -n 1 sequencerecovery.txt | awk -F \t '{print $1"\t\t"$7"\t"$8"\t"$9"\t"$10"\t"$11}' >> .results.log
+tail -n+2 sequencerecovery.txt | awk -F \t '{print $1"\t\t"$7"\t\t"$8"\t\t"$9"\t\t"$10"\t\t\t"$11}' >> .results.log
+
+echo -e "\nSubstiution Matrix\n==================" >> .results.log
+cat submatrix.txt >> .results.log
+
+echo "{ 'sequence_recovery' :" $(awk -F\t '{print $10}' sequencerecovery.txt | tail -n 1) "}" > .results.yaml

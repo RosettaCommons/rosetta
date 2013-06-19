@@ -1,0 +1,11 @@
+<ROSETTASCRIPTS>
+    <TASKOPERATIONS>
+	<RestrictToInterfaceVector name=interface_vector jump=1/>
+    </TASKOPERATIONS>
+    <MOVERS>
+	<PackRotamersMover name=design_interface task_operations=interface_vector/>
+    </MOVERS>
+    <PROTOCOLS>
+	<Add mover_name=design_interface/>
+    </PROTOCOLS>
+</ROSETTASCRIPTS>

@@ -1,0 +1,27 @@
+# Flags for rotamer recovery scientific benchmark
+#
+#input structures
+#-in:path inputs
+-l list.txt
+#
+# Input processing
+-ignore_unrecognized_res
+-no_optH
+-out:path:pdb output
+#
+# Scoring
+#-hbond_sp2_correction
+#
+# Sampling
+#
+#ADD BACK, COMMENTED OUT FOR TESTING
+#
+#-ex1
+#-ex2
+#-extrachi_cutoff 0
+#-multi_cool_annealer 10
+#
+# Conserve memory
+-linmem_ig 10
+#
+-parser:protocol interface_redesign.xml
