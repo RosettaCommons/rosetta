@@ -399,7 +399,11 @@ def read_tripos_mol2(f, do_find_rings=True):
             atom = Atom(x, y, z, name, elem)
             atom.sybyl_type = f[5]
             if len(f) >= 7:
-                atom.rsd_id = int(f[6])
+                try:
+                    atom.rsd_id = int(f[6])
+                except ValueError:
+                    # Pymol produced mol2 files don't conform to the standard - ignore its error gracefully
+                    f = f[:6]
             if len(f) >= 8:
                 atom.rsd_name = f[7]
             if len(f) >= 9:
