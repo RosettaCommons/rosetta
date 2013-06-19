@@ -16,10 +16,10 @@
 #
 #ADD BACK, COMMENTED OUT FOR TESTING
 #
-#-ex1
-#-ex2
-#-extrachi_cutoff 0
-#-multi_cool_annealer 10
+-ex1
+-ex2
+-extrachi_cutoff 0
+-multi_cool_annealer 10
 #
 # Conserve memory
 -linmem_ig 10
