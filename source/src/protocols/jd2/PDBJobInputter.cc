@@ -79,7 +79,9 @@ void protocols::jd2::PDBJobInputter::fill_jobs( Jobs & jobs ){
 			jobs.push_back( JobOP( new Job( ijob, index ) ) );
 			TR.Debug << "pushing " << inputs[i] << " nstruct index " << index << std::endl;
 		}//loop over nstruct
-		TR << "pushed " << inputs[i] << " nstruct indices 1 - " << nstruct << std::endl;
+		TR << "pushed " << inputs[i] << " nstruct "
+		   << ( ( int(nstruct)==1 ) ? "index " : "indices 1 - ")
+			 << nstruct << std::endl;
 	}//loop over inputs
 }//fill_jobs
 

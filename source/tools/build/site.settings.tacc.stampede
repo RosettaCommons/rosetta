@@ -29,7 +29,7 @@ settings = {
         },
         "appends" : {
             "flags" : {
-                "warn" : [ "wd1684" ]
+                "warn" : [ "wd1684", "wd592" ]
             },
         },
         "overrides" : {
