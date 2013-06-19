@@ -187,9 +187,12 @@ kink_Trp_Hbond(const core::pose::Pose & pose, const protocols::antibody::Antibod
 std::pair<core::Real,core::Real>
 paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info ){
 
-	///////////////////Register a "SasaResiCalculator", giving it the name "sasa"///////////////////////////
-	core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new core::pose::metrics::simple_calculators::SasaCalculator;
-	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator);
+	/////////////////// Register a "sasa calculator" ///////////////////////////
+	using namespace core::pose::metrics;
+	if ( CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
+		CalculatorFactory::Instance().remove_calculator( "sasa" );
+	}
+	CalculatorFactory::Instance().register_calculator( "sasa", new simple_calculators::SasaCalculator);
 
 	///////////////////////define//////////////////////////////////////////////////////////////////////////
 	core::Real probe_radius = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius];
@@ -236,7 +239,7 @@ paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::Antibod
 			TR.Debug << "residue " << irsd.name3() << ii << std::endl;
 		}
 		polar_loop_sasa = loop_sasa - hydrop_loop_sasa;
-		/////////////////////out CDR  values//////////////////////////////////////////////
+		/////////////////////out CDR values//////////////////////////////////////////////
 		TR << "Loop " << ab_info.get_CDR_Name(loop) << ": CDR_sasa " << loop_sasa
 			 << "\tCDR hydrophobic sasa " << hydrop_loop_sasa 
 		   << "\tCDR polar sasa " << polar_loop_sasa << std::endl;

@@ -4,3 +4,12 @@
 -restore_pre_talaris_2013_behavior
 -antibody::extend_h3_before_modeling true
 -antibody::idealize_h3_stems_before_modeling false
+
+# special flags for benchmarking -- keep the run short and failproof
+-overwrite
+-loops:fast
+-loops:outer_cycles 2
+-loops:max_inner_cycles 2
+-docking:dock_mcm_first_cycles 1
+-docking:dock_mcm_second_cycles 3
+

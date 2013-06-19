@@ -581,7 +581,7 @@ Real cutpoint_separation(pose::Pose & pose_in, Size cutpoint) {
 
 Real global_loop_rmsd (const pose::Pose & pose_in, const pose::Pose & native_pose,loops::LoopsOP current_loop ) {
 	if (pose_in.total_residue() != native_pose.total_residue() ) {
-		throw excn::EXCN_Msg_Exception("The sequence length of two poses are not the same ");
+		throw excn::EXCN_BadInput("The pose sequence length does not match that of native_pose");
 	}
 
 	using namespace scoring;
@@ -609,7 +609,7 @@ void align_to_native( core::pose::Pose & pose,
 	std::string pose_seq        = pose.sequence();
 	std::string native_pose_seq = native_pose.sequence();
 	if(pose_seq != native_pose_seq   ) {
-		throw excn::EXCN_Msg_Exception(" the pose sequence does not match native_pose sequence ");
+		throw excn::EXCN_BadInput(" the pose sequence does not match native_pose sequence ");
 	}
 
 

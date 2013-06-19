@@ -470,12 +470,17 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 	// the specific constraint terms for output in the log file
 	Real atom_pair_constraint_score = pose.energies().total_energies()[ core::scoring::atom_pair_constraint ];
 	Real dihedral_constraint_score = pose.energies().total_energies()[ core::scoring::dihedral_constraint ];
+	Real total_score = pose.energies().total_energies()[ core::scoring::total_score ];
+	Real unconstrained_score = total_score - atom_pair_constraint_score - dihedral_constraint_score;
 
-	TR<< " 		atom_pair_constraint_score= "<<atom_pair_constraint_score<<std::endl;
-	TR<< "      dihedral_constraint_score= "<<dihedral_constraint_score<<std::endl;
+	TR << " 		atom_pair_constraint_score = " << atom_pair_constraint_score << std::endl;
+	TR << "      dihedral_constraint_score = " << dihedral_constraint_score << std::endl;
+	TR << "                    total_score = " << total_score << std::endl;
+	TR << "            unconstrained_score = " << unconstrained_score << std::endl;
+
+	job->add_string_real_pair( "unconstr_score", unconstrained_score );
 
 	align_to_native( pose, native_pose, ab_info_, native_ab_info, "H" );
-
 	job->add_string_real_pair("H3_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h3) ));
 	job->add_string_real_pair("H2_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h2) ));
 	job->add_string_real_pair("H1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(h1) ));
@@ -487,6 +492,7 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 		job->add_string_real_pair("L1_RMS", global_loop_rmsd( pose, *get_native_pose(), ab_info_->get_CDR_in_loopsop(l1) ));
 		//pose.dump_pdb("aligned_L.pdb");
 	}
+	
 	//job->add_string_real_pair("AP_constraint", atom_pair_constraint_score);
 	job->add_string_real_pair("VL_VH_angle", vl_vh_packing_angle( pose, *ab_info_ ));
 
@@ -496,14 +502,13 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 	job->add_string_real_pair( "kink_Trp_HB", kink_Trp_Hbond( pose, *ab_info_ ));
 
 	std::pair<core::Real,core::Real> q = kink_dihedral( pose, *ab_info_);
-	job->add_string_real_pair("kink_q", q.first);
-	job->add_string_real_pair("kink_qbase", q.second);
+	job->add_string_real_pair( "kink_q", q.first );
+	job->add_string_real_pair( "kink_qbase", q.second );
 
 	std::pair<core::Real,core::Real> sasa = paratope_sasa( pose, *ab_info_);
-	job->add_string_real_pair( "CDR_SASA", sasa.first);
-	job->add_string_real_pair( "CDR_SASA_HP", sasa.second);
+	job->add_string_real_pair( "CDR_SASA", sasa.first );
+	job->add_string_real_pair( "CDR_SASA_HP", sasa.second );
 	job->add_string_real_pair( "CDR_charge", Real(paratope_charge( pose, *ab_info_ )) );
-
 }
 
 

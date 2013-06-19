@@ -2,6 +2,7 @@
 -s ./inputs/FR02.pdb
 -in:file:native ./inputs/LH_renumbered.pdb
 -out:file:scorefile 3QOS.fasc
+-out:levels protocols.simple_moves.ConstraintSetMover:debug
 
 #how to run antibody mode -- these are the current best-practices
 -antibody::remodel              perturb_kic
@@ -38,8 +39,10 @@
 #special flags for benchmarking -- keep the run short and failproof
 -overwrite
 -loops:fast
--loops:max_kic_build_attempts 20
--loops:outer_cycles 3
--loops:max_inner_cycles 3
+-loops:max_kic_build_attempts 3
+-loops:outer_cycles 2
+-loops:max_inner_cycles 2
 -docking:dock_mcm_first_cycles 1
--docking:dock_mcm_second_cycles 8
+-docking:dock_mcm_second_cycles 3
+-run:test_cycles
+
