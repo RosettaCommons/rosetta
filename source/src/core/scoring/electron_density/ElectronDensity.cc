@@ -1177,7 +1177,7 @@ ElectronDensity::getResolutionBins( core::Size nbuckets, core::Real maxreso, cor
 	//Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
 	Real step = (minreso-maxreso)/nbuckets;
 	utility::vector1< core::Real > retval;
-	for (Size i=1; i<=nbuckets; ++i) retval.push_back( (i+0.5)*step );
+	for (Size i=1; i<=nbuckets; ++i) retval.push_back( maxreso + (i+0.5)*step );
 	return retval;
 }
 
