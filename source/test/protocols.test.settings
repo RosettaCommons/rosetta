@@ -49,7 +49,7 @@ sources = {
 		"FeaturesReporterTests",
 		"ProteinSilentReportTests",
 		"CoordSerializationTests",
-        ],
+	],
 
 	"filters" : [
 		"BasicFilters",
@@ -78,17 +78,17 @@ sources = {
 		"fold_tree_functions",
 	],
 
-        "forge/remodel" :[
-                "RemodelConstraintGenerator",
-        ],
+	"forge/remodel" :[
+		"RemodelConstraintGenerator",
+	],
 
 	"genetic_algorithm" : [
 		"Entity",
 	],
 
-        "grafting" : [
-                "GraftingTest",
-        ],
+	"grafting" : [
+		"GraftingTest",
+	],
 
 	"hotspot_hashing" : [
 		"hotspot_hashing",
@@ -101,8 +101,8 @@ sources = {
 		"JD2ResourceManagerJobInputterMultipleJobTags",
 	],
 
-       	"jd2/parser" : [
-            "BluePrint",
+	"jd2/parser" : [
+		"BluePrint",
 	],
 
 	"jobdist" : [
@@ -122,15 +122,16 @@ sources = {
 		"loophash",
 	],
 
-        "loops" : [
+	"loops" : [
 		"Loop",
 		"Loops",
 		"LoopsFileFallbackConfiguration",
 		"LoopsFileIO",
 		"LoopsFileLoader",
 		"LoopsFileOptions",
+		"LoopsFoldTree",
 		"LoopsUtil",
-        ],
+	],
 
 	"match" : [
 		"BumpGrid",
@@ -169,11 +170,11 @@ sources = {
 		"VicinitySamplingKinematicPerturber",
 	],
 
-        "nonlocal" : [
+	"nonlocal" : [
 		"Chunk",
 		"NonlocalUtil",
 		"Region",
-        ],
+	],
 
 	"optimize_weights" : [
 		"Arithmetic",
@@ -215,24 +216,24 @@ sources = {
 		"Interface",
 	],
 
-        "simple_filters" : [
-                "DdgFilter",
-        	"ResidueCountFilter",
-                "TotalSasaFilter",
-        ],
+	"simple_filters" : [
+		"DdgFilter",
+		"ResidueCountFilter",
+		"TotalSasaFilter",
+	],
 
-        "simple_moves" : [
-                "ddG",
-        	"FavorSequenceProfile",
-        ],
+	"simple_moves" : [
+		"ddG",
+		"FavorSequenceProfile",
+	],
 
-        #"simple_moves/chiral" : [
-        	#"ChiralMover",
-        #],
+	#"simple_moves/chiral" : [
+		#"ChiralMover",
+	#],
 
-        "simple_moves/oop" : [
-        	"OopPuckMover",
-        ],
+	"simple_moves/oop" : [
+		"OopPuckMover",
+	],
 
 	"sparta" : [
 		"Sparta",
@@ -244,7 +245,7 @@ sources = {
 	],
 
 	"toolbox/task_operations" : [
-                "LimitAromaChi2Operation",
+		"LimitAromaChi2Operation",
 		"ProteinInterfaceDesignOperation",
 		"RestrictOperations",
 		"RestrictNonSurfaceToRepackingOperation",
@@ -329,17 +330,17 @@ testinputfiles = [
 	"enzdes/mcfi_test.cst",
 	"enzdes/parse_cst_test.xml",
 	"enzdes/resfile_remap.resfile",
-        "forge/remodel/bad_pair.blueprint",
-        "forge/remodel/test.blueprint",
-        "forge/remodel/test.pdb",
+	"forge/remodel/bad_pair.blueprint",
+	"forge/remodel/test.blueprint",
+	"forge/remodel/test.pdb",
 	"frag_picker/t286_.6.csts",
 	"frag_picker/1a32A-H1.vall",
 	"frag_picker/1a32A-H1.9mers",
-        "grafting/2j88.pdb",
-        "grafting/2j88_NoL1.pdb",
-        "grafting/2j88_L1_overhang3_rotated.pdb",
+	"grafting/2j88.pdb",
+	"grafting/2j88_NoL1.pdb",
+	"grafting/2j88_L1_overhang3_rotated.pdb",
 	"hotspot_hashing/3ve0_IJ.pdb",
-        "jd2/parser/test.bbskel",
+	"jd2/parser/test.bbskel",
 	"jobdist/PlainSilentFileJobDistributor_test.out",
 	"jumping/jump_test.pdb",
 	"jumping/gb3_secondary_structure.dat",
@@ -352,7 +353,7 @@ testinputfiles = [
 	"ligand_docking/7cpa_7cpa_native.pdb",
 	"ligand_docking/7cpa_confs.pdb",
 	"ligand_docking/ZN1.params",
-        "loops/2GB3.pdb",
+	"loops/2GB3.pdb",
 	"match/carbaryl_LG1.params",
 	"match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb",
 	"match/MBH_LG.params",
@@ -383,8 +384,8 @@ testinputfiles = [
 	"moves/smallmoves_out.pdb",
 	"moves/test_in.pdb",
 	"moves/test_in_short.pdb",
-        "nonlocal/2GB3.pdb",
-        "nonlocal/alignment.filt",
+	"nonlocal/2GB3.pdb",
+	"nonlocal/alignment.filt",
 	"optimize_weights/1UAD.wt_complex.pdb",
 	"optimize_weights/1UAD.wt_unbounded.pdb",
 	"optimize_weights/1UAD.E38A.mut_complex.pdb",
@@ -406,7 +407,7 @@ testinputfiles = [
 	"rigid/RotateJumpAxisMover_underspecified_jump.pdb",
 	"scoring/Interface.u",
 	"scoring/dock_in.pdb",
-        "simple_moves/1bl0_auto.fasta.pssm",
+	"simple_moves/1bl0_auto.fasta.pssm",
 	#"simple_moves/chiral/AAdAdA.pdb",
 	#"simple_moves/chiral/DALA.params",
 	"simple_moves/oop/oop_test.pdb",
@@ -422,8 +423,8 @@ testinputfiles = [
 	"toolbox/task_operations/RestrictByCalculatorsOperation.u",
 	"toolbox/task_operations/ProteinInterfaceDesignOperation.u",
 	"toolbox/task_operations/ProteinInterfaceDesignOperation_all.u",
-    	"toolbox/task_operations/RestrictInterGroupVector.u",
+	"toolbox/task_operations/RestrictInterGroupVector.u",
 	"util/aHo_antibody.pdb",
-        "util/demo_loopfile.loops",
+	"util/demo_loopfile.loops",
 	"util/test_in.pdb",
 ]

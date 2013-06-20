@@ -13,86 +13,63 @@
 /// @author Chu Wang
 /// @author Daniel J. Mandell
 
-// Unit Headers
+// Unit headers
 #include <protocols/loops/loops_main.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_KIC.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopMover_CCD.hh>
+
+// Package headers
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-//#include <protocols/simple_moves/BackboneMover.hh>
-// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 
-
-// Rosetta Headers
-#include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
-
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
+// Project headers
 #include <core/chemical/ResidueSelector.hh>
-
-#include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/symmetry/util.hh>
+#include <core/conformation/util.hh>
+#include <core/fragment/BBTorsionSRFD.hh>
+#include <core/fragment/ConstantLengthFragSet.hh>
+#include <core/fragment/FragData.hh>
+#include <core/fragment/FragmentIO.hh>
+#include <core/fragment/util.hh>
+#include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <basic/options/option.hh>
-// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-//#include <core/pack/task/TaskFactory.hh>
-//#include <core/pack/task/PackerTask.hh>
-//#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/util.hh>
-#include <core/fragment/FragmentIO.hh>
-#include <core/fragment/BBTorsionSRFD.hh>
+#include <core/types.hh>
 
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// Basic headers
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/Tracer.hh>
 
-
-#include <numeric/model_quality/rms.hh>
-#include <core/id/SequenceMapping.hh>
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
-#include <basic/Tracer.hh> // tracer output
-
-//Utility Headers
-#include <numeric/random/random.hh>
+// Utility headers
+#include <utility/excn/Exceptions.hh>
 #include <utility/io/izstream.hh>
+#include <utility/vector1.hh>
 
-#include <ObjexxFCL/string.functions.hh>
+// Numeric headers
+#include <numeric/model_quality/rms.hh>
+#include <numeric/random/random.hh>
 
 // C++ Headers
 #include <iostream>
 #include <map>
 #include <string>
 
-// option key includes
-
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
-
-#include <core/fragment/FragData.hh>
-#include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
+// ObjexxFCL includes
 #include <ObjexxFCL/format.hh>
-
-//Auto Headers
-#include <core/conformation/Conformation.hh>
-
-
+#include <ObjexxFCL/string.functions.hh>
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
@@ -257,96 +234,75 @@ fold_tree_from_loops(
 
 	Size jump_num = 0;
 	Size prev_interchain_jump = 0;
-	for( Loops::const_iterator it=tmp_loops.begin(), it_end=tmp_loops.end(),
-				 it_next; it != it_end; ++it ) {
+	for( Loops::const_iterator it=tmp_loops.begin(), it_end=tmp_loops.end(), it_next; it != it_end; ++it ) {
 		it_next = it;
 		it_next++;
 
 		bool is_lower_term = pose.residue( it->start() ).is_lower_terminus();
 		bool is_upper_term = pose.residue( it->stop() ).is_upper_terminus();
 
-		Size const jump_start =
-			( is_lower_term ) ? it->start() : it->start() - 1;
-		Size const jump_stop  =
-			( is_upper_term ) ? it->stop() : it->stop() + 1;
+		bool special_start = ( it->start() == 1 ) ? true : false;
+		Size local_jump_start(1);
+
+		// Create a jump from the previous chain if applicable.
+		if ( is_lower_term && prev_interchain_jump > 0 ) {
+			local_jump_start = prev_interchain_jump;
+			prev_interchain_jump = 0;
+			special_start = true;
+		}
+
+		Size const jump_start =	(special_start) ? local_jump_start : it->start() - 1;
+		Size const jump_stop  = ( it->stop() == nres ) ? nres : it->stop() + 1;
 		Size const jump_cut   = it->cut();
-		Size const jump_next_start =
-			( it_next == it_end ) ? nres : it_next->start()-1;
 
+		Size const jump_next_start = ( it_next == it_end ) ? nres : it_next->start() - 1;
 
-		if(  it->start() == 1 ){
-			if ( ! terminal_cutpoint ) {
-				f.add_edge( jump_start, jump_stop, Edge::PEPTIDE ); // DJM: replacing with following three lines
-			}
-			else {
-				jump_num++;
-				f.add_edge( jump_start, jump_stop, jump_num );
-				f.add_edge( jump_start, jump_cut,  Edge::PEPTIDE );
-				f.add_edge( jump_cut+1, jump_stop, Edge::PEPTIDE );
-			}
-			f.add_edge( jump_stop, jump_next_start, Edge::PEPTIDE );
-			continue;
-		} else if( it->stop() == nres ) {
-			if ( ! terminal_cutpoint ) {
-				f.add_edge( jump_start, jump_stop, Edge::PEPTIDE ); // DJM: replacing with following three lines
-			}
-			else {
-				jump_num++;
-				f.add_edge( jump_start, jump_stop, jump_num );
-				f.add_edge( jump_start, jump_cut,  Edge::PEPTIDE );
-				f.add_edge( jump_cut+1, jump_stop, Edge::PEPTIDE );
-			}
-			continue;
-		} else if ( is_lower_term ) {  // internal chain break
-			// jump from the previous
-			if ( prev_interchain_jump > 0 ) {
-				jump_num++;
-				f.add_edge( prev_interchain_jump, jump_stop, jump_num );
-			} else {
-				jump_num++;
-				f.add_edge( jump_start-1, jump_stop, jump_num );
-			}
-			f.add_edge( jump_start, jump_stop,  Edge::PEPTIDE );
-			f.add_edge( jump_stop, jump_next_start, Edge::PEPTIDE );
-			prev_interchain_jump = 0;  // reset this
-			continue;
-		} else if ( is_upper_term ) {  // internal chain break
-			// if next chain begins with a loop jump must be from before this loop to after next loop
-			// we'll handle the jump when we get there
-			if ( it_next != it_end && it_next->start() == it->stop()+1) {
-				prev_interchain_jump = jump_start;
-			} else {
-				jump_num++;
-				f.add_edge( jump_start, jump_stop+1, jump_num );
-				f.add_edge( jump_stop+1, it_next->start()-1, Edge::PEPTIDE ); // JEC: also need to make a peptide edge to start the next chain (otherwise gets dropped)
-			}
-			f.add_edge( jump_start, jump_stop,  Edge::PEPTIDE );
+		f.add_edge(jump_stop, jump_next_start, Edge::PEPTIDE);
+
+		// If this is a terminal loop and the terminus should be used for the cut instead of whatever
+		// the loop's cutpoint is set to (i.e. terminal_cutpoint is false, which is the default by the
+		// way), just make an Edge that spans the loop.
+		if ((is_lower_term || is_upper_term) && !terminal_cutpoint) {
+			f.add_edge(jump_start, jump_stop, Edge::PEPTIDE);
 			continue;
 		}
 
-
-		jump_num++;
-		f.add_edge( jump_start, jump_stop, jump_num );
 		f.add_edge( jump_start, jump_cut,  Edge::PEPTIDE );
-		f.add_edge( jump_cut+1, jump_stop, Edge::PEPTIDE );
-		//		if ( jump_stop < jump_next_start )
-		f.add_edge( jump_stop, jump_next_start, Edge::PEPTIDE );
+
+		// If next chain begins with a loop, jump from this loop's start to the next loop's stop.
+		// Store the jump residue for the next pass and get the hell out of here!
+		if (is_upper_term && it_next != it_end && it_next->start() == jump_stop) {
+			prev_interchain_jump = jump_start;
+			continue;
+		}
+
+		// Increase the jump number and add a jump connecting the residues around the loop
+		++jump_num;
+		f.add_edge(jump_start, jump_stop, jump_num);
+
+		// Add edges directed from the terminal loop residues to the cutpoint
+		f.add_edge(jump_cut + 1, jump_stop, Edge::PEPTIDE);
+
 	}
 
+	// This is kind of dumb -- why don't we bail way eariler if there are no loops?
 	if ( tmp_loops.size() > 0 ) {
-		Size const first_start =
-			( tmp_loops.begin()->start() == 1 ) ? tmp_loops.begin()->start() : tmp_loops.begin()->start() - 1;
-		//	if ( first_start != 1 )
+		Size first_start = tmp_loops.begin()->start();
+		first_start = (first_start == 1) ? first_start : first_start - 1;
 		f.add_edge( 1, first_start, Edge::PEPTIDE );
 
 		// reorder
 		Size root;
-		if( tmp_loops.begin()->start() == 1 &&
-				tmp_loops.begin()->stop() != nres )
+		if( tmp_loops.begin()->start() == 1 && tmp_loops.begin()->stop() != nres ) {
 			root = tmp_loops.begin()->stop()+1;
-		else root = 1;
+		}	else {
+			root = 1;
+		}
 
-		f.reorder(root);
+		// Test for successful reordering.
+		if (!f.reorder(root)) {
+			throw utility::excn::EXCN_Msg_Exception("Unable to reorder the FoldTree for this loops set!");
+		}
 	}
 
 	// Attach remaining (non-protein) residues by jumps to the tree root.
@@ -357,8 +313,7 @@ fold_tree_from_loops(
 	}
 
 	if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
-		// special case for fold trees rooted on a VRT
-		// symmetry-safe
+		// special case for fold trees rooted on a VRT (i.e. symmetry)
 		if ( f_in.nres() != pose.total_residue() ) {
 			f.reorder( f_in.nres() );
 		} else {
@@ -379,133 +334,14 @@ void set_single_loop_fold_tree(
 )
 {
 
-	using namespace kinematics;
-
 	//setup fold tree for this loop
-	FoldTree f;
-
-	// "symmetry-safe" version
-	FoldTree const &f_in = core::conformation::symmetry::get_asymm_unit_fold_tree( pose.conformation() );
-
-	// nres points to last protein residue;
-	Size totres = f_in.nres();
-	Size nres = totres;
-	if ( nres != pose.total_residue() ) nres--;
-				// only true if pose is symm. ...  asymm foldtree is then rooted on VRT
-
-	// following residues (e.g. ligands,VRTs) will be attached by jumps
-	while( !pose.residue(nres).is_protein() ) nres -= 1;
-
-	// if the fold tree is rooted with a jump from a VRT res, maintain that jump
-	// (i believe) we only need to check if root is vrt (and not for jump)
-	//     since vrt reses can't form peptide bonds
-	// the fold tree ensures the absolute coordinates of all nonloop residues
-	//     stays unchanged
-	if ( pose.residue( pose.fold_tree().root() ).aa() == core::chemical::aa_vrt ) {
-		int newroot = f_in.root();
-
-		if( loop.start() == 1 ) {
-			f.add_edge( 1, loop.stop() + 1, Edge::PEPTIDE );
-			f.add_edge( loop.stop() + 1, nres, Edge::PEPTIDE );
-			f.add_edge( loop.stop() + 1, newroot, 1 );
-		} else if ( loop.stop() >= nres) {
-			f.add_edge( 1, nres, Edge::PEPTIDE );  //simple fold tree
-			f.add_edge( 1, newroot, 1 );
-		} else if ( pose.residue( loop.start() ).is_lower_terminus() ) {
-			if (loop.start()-1 != 1)
-				f.add_edge( 1, loop.start() - 1, Edge::PEPTIDE );
-			f.add_edge( loop.start(), nres, Edge::PEPTIDE );
-			f.add_edge( nres, newroot, 1 );
-			f.add_edge( 1, nres, 2 );
-		} else if ( pose.residue( loop.stop() ).is_upper_terminus() ) {
-			f.add_edge( 1, loop.stop(), Edge::PEPTIDE );
-			if (loop.stop() + 1 != nres)
-				f.add_edge( loop.stop() + 1, nres, Edge::PEPTIDE );
-			f.add_edge( 1, newroot, 1 );
-			f.add_edge( 1, nres, 2 );
-		} else {
-			Size jumppoint1 = loop.start() - 2;
-			Size jumppoint2 = loop.stop() + 2;
-			if( jumppoint1 < 1 )   jumppoint1 = 1;
-			if( jumppoint2 > nres) jumppoint2 = nres;
-
-			if (jumppoint1 != 1)
-				f.add_edge( 1, jumppoint1, Edge::PEPTIDE );
-			f.add_edge( jumppoint1, loop.cut(), Edge::PEPTIDE );
-			f.add_edge( loop.cut() + 1, jumppoint2, Edge::PEPTIDE );
-			if (jumppoint2 != nres)
-				f.add_edge( jumppoint2, nres, Edge::PEPTIDE );
-			f.add_edge( 1, newroot, 1 );
-			f.add_edge( jumppoint1, jumppoint2, 2 );
-		}
-
-		if( f.reorder( newroot ) == false ){
-			tt.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! " << std::endl;
-			tt.Error << "Cutpoint chosen " << loop.cut() << std::endl;
-			return; // continuing leads to a segfault - instead ignore this loop !
-		}
-
-	} else {
-		int newroot = (loop.start() == 1) ? nres : 1;
-		if( loop.start() == 1 || loop.stop() == nres  ) {
-			f.add_edge( 1, nres, Edge::PEPTIDE ); //simple fold tree
-		} else if ( pose.residue( loop.start() ).is_lower_terminus() ) {
-
-			// multi-chain Pose n-term ext
-			if ( loop.start() > 1 ) { // safety, handled above
-				f.add_edge( 1, loop.start() - 1, Edge::PEPTIDE );
-				f.add_edge( loop.start(), nres, Edge::PEPTIDE );
-				f.add_edge( 1, nres, 1 );
-			} else {
-				f.add_edge( 1, nres, Edge::PEPTIDE ); // simple fold tree
-			}
-
-		} else if ( pose.residue( loop.stop() ).is_upper_terminus() ) {
-
-			// multi-chain Pose c-term ext
-			if ( loop.stop() < nres ) { // safety, handled above
-				f.add_edge( 1, loop.stop(), Edge::PEPTIDE );
-				f.add_edge( loop.stop() + 1, nres, Edge::PEPTIDE );
-				f.add_edge( 1, nres, 1 );
-			} else {
-				f.add_edge( 1, nres, Edge::PEPTIDE ); // simple fold tree
-			}
-
-		} else {
-			Size jumppoint1 = loop.start() - 2;
-			Size jumppoint2 = loop.stop()   + 2;
-			if( jumppoint1 < 1 )   jumppoint1 = 1;
-			if( jumppoint2 > nres) jumppoint2 = nres;
-
-			f.add_edge( 1, jumppoint1, Edge::PEPTIDE ); //one jump fold tree
-			f.add_edge( jumppoint1, loop.cut(), Edge::PEPTIDE );
-			f.add_edge( loop.cut() + 1, jumppoint2, Edge::PEPTIDE );
-			f.add_edge( jumppoint2, nres, Edge::PEPTIDE );
-			f.add_edge( jumppoint1, jumppoint2, 1 );
-		}
-
-		if( f.reorder( newroot ) == false ){
-			tt.Error << "ERROR During reordering of fold tree - am ignoring this LOOP ! " << std::endl;
-			tt.Error << "Cutpoint chosen " << loop.cut() << std::endl;
-			return; // continuing leads to a segfault - instead ignore this loop !
-		}
-	}
-
-	// Attach remaining (non-protein) residues by jumps to the tree root.
-	Size jump_anchor = f.root();
-	while( nres < totres ) {
-		nres += 1;
-
-		// if we're rooted on a VRT atom dont add a jump
-		if ( nres != (Size)f.root() )
-			f.add_edge( jump_anchor, nres, f.num_jump()+1 );
-	}
-
+	kinematics::FoldTree f;
+	Loops loops;
+	loops.add_loop(loop);
+	fold_tree_from_loops(pose, loops, f);
 	tt.Warning << "Pose fold tree " << f << std::endl;
-	//pose.fold_tree( f );
+	pose.fold_tree(f);
 
-	// "symmetry-safe" version
-	core::pose::symmetry::set_asymm_unit_fold_tree( pose , f );
 }
 
 
