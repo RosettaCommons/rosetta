@@ -43,6 +43,7 @@ sources = {
 		"ChainExistsFilter",
 		"CompleteConnectionsFilter",
 		"CompoundTranslate",
+		"ComputeLigandRDF",
 		"DistributionMap",
 		"FinalMinimizer",
 		"grid_functions",

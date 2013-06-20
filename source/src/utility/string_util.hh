@@ -43,6 +43,19 @@ utility::vector1< std::string > split(const std::string &s);
 ///@brief combine strings with anything
 std::string join(utility::vector1<std::string> const & s, std::string const & connector);
 
+///@brief combine vector with anything
+template<class T>
+std::string join(utility::vector1<T> const & vector, std::string const & connector)
+{
+	std::ostringstream os;
+	typename utility::vector1<T>::const_iterator begin= vector.begin();
+	os << *begin++;
+	for(; begin != vector.end(); ++begin){
+		os<< connector<< *begin;
+	}
+	return os.str();
+}
+
 ///@brief combine strings with anything
 std::string join(std::vector<std::string> const & s, std::string const & connector);
 

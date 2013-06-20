@@ -92,6 +92,7 @@
 
 #include <protocols/ligand_docking/AddHydrogensCreator.hh>
 #include <protocols/ligand_docking/CompoundTranslateCreator.hh>
+#include <protocols/ligand_docking/ComputeLigandRDFCreator.hh>
 #include <protocols/ligand_docking/FinalMinimizerCreator.hh>
 #include <protocols/ligand_docking/GrowLigandCreator.hh>
 #include <protocols/ligand_docking/HighResDockerCreator.hh>

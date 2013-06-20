@@ -85,10 +85,7 @@ void ScreeningFeatures::write_schema_to_db(utility::sql_database::sessionOP db_s
 	screening_features.add_column(experiment_group);
 	screening_features.add_column(descriptor_data);
 	screening_features.add_foreign_key(
-		ForeignKey(struct_id,"residue_pdb_identification","struct_id")
-	);
-	screening_features.add_foreign_key(
-		ForeignKey(residue_number,"residue_pdb_identification","resNum")
+		ForeignKey(struct_id,"structures","struct_id")
 	);
 	screening_features.write(db_session);
 
@@ -98,7 +95,6 @@ void ScreeningFeatures::write_schema_to_db(utility::sql_database::sessionOP db_s
 utility::vector1<std::string> ScreeningFeatures::features_reporter_dependencies() const
 {
 	utility::vector1<std::string> dependencies;
-	dependencies.push_back("PdbDataFeatures");
 	return dependencies;
 }
 

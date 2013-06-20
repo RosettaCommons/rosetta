@@ -104,6 +104,7 @@ static MoverRegistrator< hotspot_hashing::movers::PlaceSurfaceProbeCreator> reg_
 
 static MoverRegistrator< ligand_docking::AddHydrogensCreator > reg_AddHydrogensCreator;
 static MoverRegistrator< ligand_docking::CompoundTranslateCreator > reg_CompoundTranslateCreator;
+static MoverRegistrator< ligand_docking::ComputeLigandRDFCreator >  reg_ComputeLigandRDFCreator;
 static MoverRegistrator< ligand_docking::FinalMinimizerCreator > reg_FinalMinimizerCreator;
 static MoverRegistrator< ligand_docking::GrowLigandCreator > reg_GrowLigandCreator;
 static MoverRegistrator< ligand_docking::HighResDockerCreator > reg_HighResDockerCreator;
