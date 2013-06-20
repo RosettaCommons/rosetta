@@ -230,7 +230,8 @@ public:
 		toolbox::match_enzdes_util::ExternalGeomSampler const & exgeom,
 		Size const exgeom_id,
 		bool enumerate_ligand_rotamers = false,
-		bool catalytic_bond = false
+		bool catalytic_bond = false,
+		bool build_round1_hits_twice = false
 	);
 
 	void add_secondary_upstream_match_geometry_for_constraint(
@@ -394,6 +395,7 @@ private:
 	bool generate_hits();
 	void prepare_for_hit_generation_for_constraint( Size cst_id );
 	void generate_hits_for_constraint( Size cst_id );
+	void regenerate_round1_hits();
 	bool finish_hit_generation_for_constraint( Size cst_id );
 
 	bool initialize_scaffold_build_points();
@@ -563,6 +565,8 @@ private:
 	bool output_matches_as_singular_downstream_positioning_; // use match_dspos1 output pathway?
 	mutable bool check_potential_dsbuilder_incompatibility_;
 	utility::vector1< bool > output_match_dspos1_for_geomcst_;
+
+	bool build_round1_hits_twice_;
 };
 
 class MatcherOutputStats

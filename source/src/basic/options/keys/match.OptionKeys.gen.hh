@@ -58,6 +58,7 @@ namespace match { extern IntegerOptionKey const ligand_rotamer_index; }
 namespace match { extern BooleanOptionKey const enumerate_ligand_rotamers; }
 namespace match { extern BooleanOptionKey const only_enumerate_non_match_redundant_ligand_rotamers; }
 namespace match { extern BooleanOptionKey const dynamic_grid_refinement; }
+namespace match { extern BooleanOptionKey const build_round1_hits_twice; }
 
 } // namespace OptionKeys
 } // namespace options

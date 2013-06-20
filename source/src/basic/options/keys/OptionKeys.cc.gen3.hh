@@ -273,6 +273,7 @@ namespace match { IntegerOptionKey const ligand_rotamer_index( "match:ligand_rot
 namespace match { BooleanOptionKey const enumerate_ligand_rotamers( "match:enumerate_ligand_rotamers" );  }
 namespace match { BooleanOptionKey const only_enumerate_non_match_redundant_ligand_rotamers( "match:only_enumerate_non_match_redundant_ligand_rotamers" );  }
 namespace match { BooleanOptionKey const dynamic_grid_refinement( "match:dynamic_grid_refinement" );  }
+namespace match { BooleanOptionKey const build_round1_hits_twice( "match:build_round1_hits_twice" );  }
 namespace canonical_sampling { BooleanOptionKey const canonical_sampling( "canonical_sampling" );  }
 namespace canonical_sampling { namespace probabilities { BooleanOptionKey const probabilities( "canonical_sampling:probabilities" );  } }
 namespace canonical_sampling { namespace probabilities { RealOptionKey const sc( "canonical_sampling:probabilities:sc" );  } }

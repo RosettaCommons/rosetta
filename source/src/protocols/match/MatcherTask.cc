@@ -95,7 +95,8 @@ MatcherTask::MatcherTask() :
 	upstream_downstream_residue_collision_Wfa_atr_( 1.0 ),
 	upstream_downstream_residue_collision_Wfa_rep_( 1.0 ),
 	upstream_downstream_residue_collision_Wfa_sol_( 1.0 ),
-	define_match_by_single_downstream_positioning_( false )
+	define_match_by_single_downstream_positioning_( false ),
+	build_round1_hits_twice_( false )
 {}
 
 MatcherTask::MatcherTask( MatcherTask const & other ) :
@@ -159,7 +160,7 @@ MatcherTask::operator = ( MatcherTask const & rhs )
 		upstream_downstream_residue_collision_Wfa_atr_ = rhs.upstream_downstream_residue_collision_Wfa_atr_;
 		upstream_downstream_residue_collision_Wfa_rep_ = rhs.upstream_downstream_residue_collision_Wfa_rep_;
 		upstream_downstream_residue_collision_Wfa_sol_ = rhs.upstream_downstream_residue_collision_Wfa_sol_;
-
+		build_round1_hits_twice_ = rhs.build_round1_hits_twice_;
 	}
 	return *this;
 }
@@ -416,6 +417,8 @@ MatcherTask::initialize_from_command_line()
 
 	enumerate_ligand_rotamers_ = option[ OptionKeys::match::enumerate_ligand_rotamers ];
 	only_enumerate_non_match_redundant_ligand_rotamers_ =  option[ OptionKeys::match::only_enumerate_non_match_redundant_ligand_rotamers ];
+
+	build_round1_hits_twice_ = option[ OptionKeys::match::build_round1_hits_twice ];
 }
 
 void
@@ -821,6 +824,10 @@ MatcherTask::upstream_downstream_residue_collision_Wfa_sol() const
 	return upstream_downstream_residue_collision_Wfa_sol_;
 }
 
+bool
+MatcherTask::build_round1_hits_twice() const {
+	return build_round1_hits_twice_;
+}
 
 void
 MatcherTask::validate_downstream_orientation_atoms() const

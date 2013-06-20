@@ -68,9 +68,25 @@ public:
 	DownstreamAlgorithmOP
 	clone() const;
 
+	/// @brief Enable a strategy where the first round hits are discarded after they are generated
+	/// and then, after the second round completes, they are regenerated but respecting the occ-space
+	/// hash, thereby decreasing the memory use dramatically.  That is, the hits for the first
+	/// geometric constraint (round 1 hits) are discarded, but their presence in the occupied space
+	/// hash is recorded.  Then the hits for the second round are collected, but only the ones that
+	/// fall into the regions of 6D where the hits from the first round fell.  At the end of round 2,
+	/// the occ-space hash is updated to reflect the regions of 6D where both rounds produced hits.  Then
+	/// the round 1 hits are generated a second time, and this time saved.
+	void
+	set_build_round1_hits_twice();
+
 	virtual
 	std::list< Hit >
 	build_hits_at_all_positions(
+		Matcher & matcher
+	);
+
+	std::list< Hit >
+	build_and_discard_first_round_hits_at_all_positions(
 		Matcher & matcher
 	);
 
@@ -181,6 +197,12 @@ private:
 	utility::vector1< Size > exgeom_ids_;
 
 	Size occspace_rev_id_at_last_update_;
+
+	/// @brief control whether this algorithm expects to rebuild round 1 hits
+	/// after round 2 completes.  Only used if the geom_cst_id() for this instance
+	/// is 1.
+	bool build_round1_hits_twice_;
+	bool completed_first_round1_hit_building_;
 };
 
 }

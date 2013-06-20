@@ -11722,6 +11722,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-dynamic_grid_refinement</b> \<Boolean\><dt>
 <dd>When too many hits land in the same 'connected component', requiring the 				enumeration of twoo many matches, refine the grid size to be smaller so that fewer matches have to be enumerated. 				This process works on individual connected components and is not applied to all regions of 6D.  This is significantly 				more efficient than enumerating all matches, while allowing the grid size to remain large and the rotamer and external 				geometry to remain dense. (*A connected component refers to </dd><br>
 </dl>
+<dl>
+<dt><b>-build_round1_hits_twice</b> \<Boolean\><dt>
+<dd>Memory saving strategy that avoids paying for the storage of all the round-1 hits 			and instead records only what 6D voxels those hits fall in to.  Then the second round of matching proceeds storing only the hits that 			fall into the same voxels that the hits from the first round fell into.  Then the matcher goes back and generates the first-round hits 			again, but only keeps the ones that land into the same voxels that hits from round 2 fell into.  To be used, round 2 must also use the 			classic match algorithm (and must not use secondary matching).</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>canonical_sampling</h2>
 <dl>

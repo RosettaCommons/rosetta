@@ -94,7 +94,8 @@ Matcher::Matcher() :
 	use_input_sc_( false ),
 	dynamic_grid_refinement_( false ),
 	output_matches_as_singular_downstream_positioning_( false ),
-	check_potential_dsbuilder_incompatibility_( false )
+	check_potential_dsbuilder_incompatibility_( false ),
+	build_round1_hits_twice_( false )
 {
 	relevant_downstream_atoms_.clear();
 }
@@ -251,7 +252,8 @@ void Matcher::add_external_geometry_samples_for_constraint(
 	toolbox::match_enzdes_util::ExternalGeomSampler const & exgeom,
 	Size const exgeom_id,
 	bool enumerate_ligand_rotamers /* = false */,
-	bool catalytic_bond /*= false */
+	bool catalytic_bond /*= false */,
+	bool build_round1_hits_twice /* = false */
 )
 {
 	TR << "     Adding Classical Match Algorithm with geometry samples: " << std::endl;
@@ -318,6 +320,7 @@ void Matcher::add_external_geometry_samples_for_constraint(
 		downstream_algorithms_[ cst_id ].push_back( match_algorithm );
 		representative_downstream_algorithm_[ cst_id ] = match_algorithm;
 		all_downstream_algorithms_.push_back( match_algorithm );
+		if ( cst_id == 1 && build_round1_hits_twice ) match_algorithm->set_build_round1_hits_twice();
 	}
 
 	runtime_assert( dynamic_cast< downstream::ClassicMatchAlgorithm * > ( & build_set.algorithm() ) );
@@ -577,6 +580,8 @@ Matcher::initialize_from_task(
 			output_match_dspos1_for_geomcst_[ mtask.geom_csts_downstream_output()[ ii ] ] = true;
 		}
 	}
+
+	if ( mtask.build_round1_hits_twice() ) build_round1_hits_twice_ = true;
 }
 
 /// @details Inside the CST::BEGIN blocks, The following ALGORITHM_INFO:: match input data
@@ -1064,6 +1069,11 @@ void Matcher::initialize_from_file(
 						TR << std::endl;
 
 						if ( secondary_matching ) {
+
+							if ( ii == 2 && mtask.build_round1_hits_twice() ) {
+								utility_exit_with_message( "When using the build-round1-hits-twice algorithm, round 2 must also use the classic matching algorithm" );
+							}
+
 							utility::vector1< Size > candidate_atids( 3 );
 							utility::vector1< Size > target_atids( 3 );
 							for ( Size nn = 1; nn <= 3; ++nn ) {
@@ -1086,7 +1096,8 @@ void Matcher::initialize_from_file(
 								ii, upres[ jj ], upstream_launch_atoms, downstream_3atoms, *exgs,
 								jj_mcfis[ kk ]->index(),
 								mtask.enumerate_ligand_rotamers(),
-								jj_mcfis[kk]->is_covalent() );
+								jj_mcfis[kk]->is_covalent(),
+								mtask.build_round1_hits_twice() );
 						}
 						++lex;
 					} //lex loop
@@ -1323,8 +1334,14 @@ bool Matcher::generate_hits() {
 	return true;
 }
 
+/// @details Update the per_constraint_build_points_ array for the given constraint before
+/// beginning hit generation.  This follows one of two paths depending on whether
+/// same_build_resids_for_all_csts_ is active or not.  I cannot see any reason that this
+/// function could not be called earlier than immediately before hit generation for a particular
+/// constraint.
 void Matcher::prepare_for_hit_generation_for_constraint( Size cst_id )
 {
+	assert( pose_build_resids_.size() == all_build_points_.size() ); // this function assumes the entries in these two vectors correspond to each other
 
 	if ( same_build_resids_for_all_csts_ ) {
 		per_constraint_build_points_[ cst_id ].reserve( all_build_points_.size() );
@@ -1359,26 +1376,6 @@ Matcher::get_pose_build_resids() const{
 
 void Matcher::generate_hits_for_constraint( Size cst_id )
 {
-
-	/* Putting this here temporarily
-	if ( cst_id != 1 ) {
-		/// Greedy matching: only accept hits that could lead to a match.
-		/// Greedy matching begins after round 1.
-		for ( std::list< downstream::DownstreamBuilderOP >::const_iterator
-				iter = all_downstream_builders_.begin(),
-				iter_end = all_downstream_builders_.end();
-				iter != iter_end; ++iter ) {
-			(*iter)->set_occupied_space_hash( occ_space_hash_ );
-		}
-		for ( std::list< DownstreamAlgorithmOP >::const_iterator
-				iter = all_downstream_algorithms_.begin(),
-				iter_end = all_downstream_algorithms_.end();
-				iter != iter_end; ++iter ) {
-			(*iter)->set_occupied_space_hash( occ_space_hash_ );
-		}
-
-	}*/
-
 	/// At the conclusion of hit generation, there will be new hits for this geometric constraint;
 	/// put this constraint ID at the front of the list of geom-csts to trigger primary-change responses.
 	note_primary_change_to_geom_csts_hitlist( cst_id );
@@ -1386,6 +1383,15 @@ void Matcher::generate_hits_for_constraint( Size cst_id )
 	std::list< Hit > hits = representative_downstream_algorithm_[ cst_id ]->build_hits_at_all_positions( *this );
 	hits_[ cst_id ].splice( hits_[ cst_id ].end(), hits );
 
+}
+
+/// @details just like generate_hits_for_constraint, but without calling not_primary_change_to_geom_csts_hitlist.
+/// Used with the "build round-1 hits twice" scheme.
+void Matcher::regenerate_round1_hits()
+{
+	core::Size const cst_id = 1;
+	std::list< Hit > hits = representative_downstream_algorithm_[ cst_id ]->build_hits_at_all_positions( *this );
+	hits_[ cst_id ].splice( hits_[ cst_id ].end(), hits );
 }
 
 bool
@@ -1417,6 +1423,11 @@ Matcher::finish_hit_generation_for_constraint( Size cst_id )
 
 	//if there are no hits in the list for this constraint, we can abort preemptively
 	bool hits_found( hits_[cst_id].size() != 0 );
+
+	if ( cst_id == 2 && build_round1_hits_twice_ ) {
+		regenerate_round1_hits();
+		TR << "Regenerated " << hits_[ 1 ].size() << " hits for round 1" << std::endl;
+	}
 
 	if ( ( cst_id == n_geometric_constraints_ ) || (!hits_found) ) {
 		/// We're completely done with hit generation; clean up.

@@ -21,7 +21,7 @@
 #include <protocols/match/Matcher.hh>
 #include <protocols/match/OccupiedSpaceHash.hh>
 #include <protocols/match/downstream/ActiveSiteGrid.hh>
-// AUTO-REMOVED #include <protocols/match/upstream/UpstreamBuilder.hh>
+#include <protocols/match/upstream/UpstreamBuilder.hh>
 // AUTO-REMOVED #include <protocols/match/upstream/ScaffoldBuildPoint.hh>
 #include <protocols/match/downstream/DownstreamBuilder.hh>
 
@@ -49,15 +49,23 @@ static basic::Tracer TR( "protocols.match.downstream.ClassicMatchAlgorithm" );
 
 ClassicMatchAlgorithm::ClassicMatchAlgorithm( Size geom_cst_id ) :
 	parent( geom_cst_id ),
-	occspace_rev_id_at_last_update_( 0 )
+	occspace_rev_id_at_last_update_( 0 ),
+	build_round1_hits_twice_( false ),
+	completed_first_round1_hit_building_( false )
 {}
 
 ClassicMatchAlgorithm::~ClassicMatchAlgorithm() {}
 
-
 DownstreamAlgorithmOP
 ClassicMatchAlgorithm::clone() const {
 	return new ClassicMatchAlgorithm( *this );
+}
+
+void
+ClassicMatchAlgorithm::set_build_round1_hits_twice()
+{
+	assert( geom_cst_id() == 1 );
+	build_round1_hits_twice_ = true;
 }
 
 std::list< Hit >
@@ -67,13 +75,29 @@ ClassicMatchAlgorithm::build_hits_at_all_positions(
 {
 	/// First, make sure that all downstream builders for this geometric constraint
 	/// are pointing at the matcher's occupied space grid.
-	std::list< DownstreamBuilderOP > const & dsbuilders(
-		matcher.downstream_builders( geom_cst_id() ));
-	for ( std::list< DownstreamBuilderOP >::const_iterator
-			iter = dsbuilders.begin(),
-			iter_end = dsbuilders.end();
-			iter != iter_end; ++iter ) {
-		(*iter)->set_occupied_space_hash( matcher.occ_space_hash() );
+
+	if ( geom_cst_id() == 1 && build_round1_hits_twice_ && ! completed_first_round1_hit_building_ ) {
+		/// set the occupied space grid pointer to NULL: do not discard hits because they do not fall in
+		/// the same volume of space as some other hit.  The OccSpaceHash itself contains logic to avoid
+		/// discarding such hits only so long as it is completely empty.  However, that logic is not good
+		/// enough if the strategy is to build round1 hits twice.
+		std::list< DownstreamBuilderOP > const & dsbuilders(
+			matcher.downstream_builders( geom_cst_id() ));
+		for ( std::list< DownstreamBuilderOP >::const_iterator
+				iter = dsbuilders.begin(),
+				iter_end = dsbuilders.end();
+				iter != iter_end; ++iter ) {
+			(*iter)->set_occupied_space_hash( 0 );
+		}
+	} else {
+		std::list< DownstreamBuilderOP > const & dsbuilders(
+			matcher.downstream_builders( geom_cst_id() ));
+		for ( std::list< DownstreamBuilderOP >::const_iterator
+				iter = dsbuilders.begin(),
+				iter_end = dsbuilders.end();
+				iter != iter_end; ++iter ) {
+			(*iter)->set_occupied_space_hash( matcher.occ_space_hash() );
+		}
 	}
 
 	/// Later, we'll have code right here that looks at the occspace hash and figures out which
@@ -81,8 +105,43 @@ ClassicMatchAlgorithm::build_hits_at_all_positions(
 	/// a viable hit, and then we'll adjust the usptream builder for this residue to filter out
 	/// atoms early on in hit generation... so exciting.  For now, we do not.
 
-	return parent::default_build_hits_at_all_positions( matcher );
+	if ( geom_cst_id() == 1 && build_round1_hits_twice_ && ! completed_first_round1_hit_building_ ) {
+		std::list< Hit > hits = build_and_discard_first_round_hits_at_all_positions( matcher );
+		completed_first_round1_hit_building_ = true;
+		return hits;
+	} else {
+		return parent::default_build_hits_at_all_positions( matcher );
+	}
 }
+
+std::list< Hit >
+ClassicMatchAlgorithm::build_and_discard_first_round_hits_at_all_positions(
+	Matcher & matcher
+)
+{
+	assert( geom_cst_id() == 1 );
+
+	utility::vector1< upstream::ScaffoldBuildPointCOP > const & launch_points
+	( matcher.per_constraint_build_points( geom_cst_id() ) );
+	Size n_build_points = launch_points.size();
+
+	std::list< Hit > return_hits; // Only return a single hit from this function
+	OccupiedSpaceHashOP occspace = matcher.occ_space_hash();
+	for ( Size ii = 1; ii <= n_build_points; ++ii ) {
+		// generate hits for build point ii, and insert them into the occspace hash,
+		// but throw them out at the end of this iteration since usually there are too
+		// many that get generated
+		std::list< Hit > iihits = matcher.upstream_builder( geom_cst_id() )->build( * launch_points[ ii ] );
+		for ( std::list< Hit >::const_iterator iter = iihits.begin(), iter_end = iihits.end();
+					iter != iter_end; ++iter ) {
+			occspace->insert_hit_geometry( iter->second() );
+		}
+		// save one hit so that the Matcher doesn't exit early (it will if we return 0 hits)
+		if ( return_hits.empty() && ! iihits.empty() ) { return_hits.push_back( *iihits.begin() ); }
+	}
+	return return_hits;
+}
+
 
 /// @details Reset the occupied space hash that the matcher uses so that
 /// it reflects the hits generated this round; this will cause the invalidation
@@ -102,6 +161,10 @@ ClassicMatchAlgorithm::respond_to_primary_hitlist_change(
 	}
 
 	if ( geom_cst_id() == 1 && round_just_completed == 1 ) {
+
+		/// the occspace hash has already been updated if we're using the build_round1_hits_twice logic
+		if ( build_round1_hits_twice_ ) return;
+
 		/// The first geometric constraint inserts hits into the occupied space grid;
 		/// the later geometric constraints merely mark voxels already present in the
 		/// occupied space grid with 1.

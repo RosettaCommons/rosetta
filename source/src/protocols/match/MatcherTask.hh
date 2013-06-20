@@ -288,6 +288,8 @@ public:  // Accessors
 
 	bool define_match_by_single_downstream_positioning() const;
 
+	bool build_round1_hits_twice() const;
+
 private:
 
 	void
@@ -412,6 +414,8 @@ private:
 	Real upstream_downstream_residue_collision_Wfa_sol_;
 
 	bool define_match_by_single_downstream_positioning_;
+
+	bool build_round1_hits_twice_;
 
 };
 
