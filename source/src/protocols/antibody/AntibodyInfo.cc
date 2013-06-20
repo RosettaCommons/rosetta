@@ -34,6 +34,8 @@
 // Protocol Headers
 #include <protocols/antibody/util.hh>
 #include <protocols/rigid/RB_geometry.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>  //really?
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
@@ -1105,7 +1107,7 @@ AntibodyInfo::get_cluster_length(CDRClusterEnum const cluster) {
 
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
-///				provide fold tree utilities for various purpose              ///
+///				provide fold tree utilities for various purpose                    ///
 ///                                                                          ///
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1114,20 +1116,12 @@ kinematics::FoldTreeCOP AntibodyInfo::setup_simple_fold_tree(
     Size const & cutpoint,
     Size const & jumppoint2,
     pose::Pose const & pose ) const {
-
 	using namespace kinematics;
 
-
 	FoldTreeOP f = new FoldTree();
-	f->clear();
-
-	f->add_edge( 1, jumppoint1, Edge::PEPTIDE );
-	f->add_edge( jumppoint1, cutpoint, Edge::PEPTIDE );
-	f->add_edge( cutpoint + 1, jumppoint2, Edge::PEPTIDE );
-	f->add_edge( jumppoint2, pose.total_residue(), Edge::PEPTIDE );
-	f->add_edge( jumppoint1, jumppoint2, 1 );
-	f->reorder( 1 );
-
+	loops::Loops moveable_region;
+	moveable_region.add_loop(loops::Loop(jumppoint1 + 1, jumppoint2 - 1, cutpoint));
+	loops::fold_tree_from_loops(pose, moveable_region, *f);
 	return f;
 
 }
@@ -1136,29 +1130,8 @@ kinematics::FoldTreeCOP AntibodyInfo::setup_simple_fold_tree(
 kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs (pose::Pose const & pose ) const {
 	using namespace kinematics;
 
-	FoldTreeOP f = new FoldTree();
-	f->clear();
-
-	Size jump_num = 0;
-	for( loops::Loops::const_iterator it=loopsop_having_allcdrs_->begin(), it_end=loopsop_having_allcdrs_->end(), it_next; it < it_end; ++it ) {
-
-		it_next = it;
-		it_next++;
-
-		if( it == loopsop_having_allcdrs_->begin() ) f->add_edge( 1, it->start()-1, Edge::PEPTIDE );
-
-		jump_num++;
-		f->add_edge( it->start()-1, it->stop()+1, jump_num );
-		f->add_edge( it->start()-1, it->cut(),  Edge::PEPTIDE );
-		f->add_edge( it->cut()+1, it->stop()+1, Edge::PEPTIDE );
-		if( it == (it_end-1) )
-			f->add_edge( it->stop()+1, pose.total_residue(), Edge::PEPTIDE);
-		else
-			f->add_edge( it->stop()+1, it_next->start()-1, Edge::PEPTIDE );
-	}
-
-	f->reorder(1);
-
+	kinematics::FoldTreeOP f = new FoldTree();
+	loops::fold_tree_from_loops(pose, *loopsop_having_allcdrs_, *f);
 	return f;
 
 } // all_cdr_fold_tree()
