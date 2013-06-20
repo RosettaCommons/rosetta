@@ -31,8 +31,6 @@
 #include <protocols/loops/loop_mover/IndependentLoopMover.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
 #include <protocols/simple_moves/MinMover.hh>
-#include <protocols/simple_moves/ReturnSidechainMover.hh>
-#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <utility/exit.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/H3PerturbCCD.hh>
@@ -145,10 +143,6 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	using namespace core::scoring;
 	using namespace protocols::moves;
 
-
-	pose::Pose start_pose = pose_in;
-
-
 	/// FIXME: JQX: very redudent here, just get one loops object
 	Size framework_loop_begin( ab_info_->get_CDR_loop(h3).start() );
 	Size framework_loop_end  ( ab_info_->get_CDR_loop(h3).stop()  );
@@ -176,12 +170,6 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 //    TR<<"*******************************************"<<std::endl;
 //    TR<<pose_in.fold_tree()<<std::endl;
 //    TR<<"*******************************************"<<std::endl;
-	// switching to centroid mode
-	simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
-	simple_moves::SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
-
-	// Building centroid mode loop
-	to_centroid.apply( pose_in );
 
    if(idealize_h3_stems_){
 		set_single_loop_fold_tree( pose_in, cdr_h3 );
@@ -303,18 +291,6 @@ void ModelCDRH3::apply( pose::Pose & pose_in ) {
 	//#############################
 
 
-
-
-	to_full_atom.apply( pose_in );
-
-	utility::vector1<bool> allow_chi_copy( pose_in.total_residue(), true );
-	/// FIXME: JQX very redudent loops defition
-	for( Size ii=ab_info_->get_CDR_loop(h3).start(); ii<=ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
-		allow_chi_copy[ii] = false;
-	}
-	//recover sidechains from starting structures except H3
-	protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose, allow_chi_copy );
-	recover_sidechains.apply( pose_in );
 
 	TR << "Finished applying CDR H3 modeler" << std::endl;
 

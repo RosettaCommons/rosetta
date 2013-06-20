@@ -66,6 +66,8 @@
 #include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi
 #include <protocols/loops/loops_main.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
+#include <protocols/simple_moves/ReturnSidechainMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 using namespace ObjexxFCL::fmt;
 
@@ -306,18 +308,11 @@ std::string AntibodyModelerProtocol::get_name() const {
 
 
 void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose ) {
-	TR<<"AAAAAAAA     cst_weight: "<<cst_weight_<<std::endl;
-	if(  cst_weight_ != 0.00  ) {
-		cdr_constraint_ = new simple_moves::ConstraintSetMover();
-		cdr_constraint_->apply( pose );
-	}
-
 	// check for native and input pose
 	if ( !get_input_pose() ) {
 		pose::PoseOP input_pose = new pose::Pose(pose);
 		set_input_pose( input_pose );   // JQX: pass the input_pose to the mover.input_pose_
 	}
-
 
 	pose::PoseOP native_pose;
 	if ( !get_native_pose() ) {
@@ -342,8 +337,6 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose ) {
 
 	//core::pack::task::PackerTaskOP my_task2(tf_->create_task_and_apply_taskoperations(pose));
 	//TR<<*my_task2<<std::endl; exit(-1);
-
-
 }
 
 
@@ -380,6 +373,22 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 	// Step 1: model the cdr h3 in centroid mode
 	// JQX notes: pay attention to the way it treats the stems when extending the loop
 	if(model_h3_) {
+
+		// switching to centroid mode
+		simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+		simple_moves::SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
+
+		// Building centroid mode loop
+		pose::Pose start_pose = pose;
+		to_centroid.apply( pose );
+
+		// call ConstraintSetMover
+		TR<<"Centroid cst_weight: "<<cst_weight_<<std::endl;
+		if(  cst_weight_ != 0.0  ) {
+			cdr_constraint_ = new simple_moves::ConstraintSetMover();
+			cdr_constraint_->apply( pose );
+		}
+
 		ModelCDRH3OP model_cdrh3  = new ModelCDRH3( ab_info_, loop_scorefxn_centroid_);
 		model_cdrh3->set_perturb_type(h3_perturb_type_); //legacy_perturb_ccd, ccd, kic
 		if(cter_insert_ ==false) {
@@ -394,6 +403,24 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		model_cdrh3->apply( pose );
 		//pose.dump_pdb("1st_finish_model_h3.pdb");
 
+		// back to fullatom
+		to_full_atom.apply( pose );
+
+		utility::vector1<bool> allow_chi_copy( pose.total_residue(), true );
+		/// FIXME: JQX very redudent loops defition
+		for( Size ii=ab_info_->get_CDR_loop(h3).start(); ii<=ab_info_->get_CDR_loop(h3).stop(); ii++ ) {
+			allow_chi_copy[ii] = false;
+		}
+		//recover sidechains from starting structures except H3
+		protocols::simple_moves::ReturnSidechainMover recover_sidechains( start_pose, allow_chi_copy );
+		recover_sidechains.apply( pose );
+	}
+
+	// call ConstraintSetMover
+	TR << "Full-atom cst_weight: " << cst_weight_ << std::endl;
+	if(  cst_weight_ != 0.0  ) {
+		cdr_constraint_ = new simple_moves::ConstraintSetMover();
+		cdr_constraint_->apply( pose );
 	}
 
 	//if(middle_pack_min_){
