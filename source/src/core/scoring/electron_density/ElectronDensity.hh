@@ -136,6 +136,11 @@ public:
 	/////  "Density tools"
 	/////    -- all use "light pose" representation
 	/////
+
+	/// @brief  mask the density map (like chimera 'zone' but sigmoidal mask)
+	void
+	maskDensityMap( lightPose const &pose, core::Real radius );
+
 	/// @brief get resolution bins (informational)
  	utility::vector1< core::Real >
 	getResolutionBins( core::Size nbuckets, core::Real maxreso, core::Real minreso );

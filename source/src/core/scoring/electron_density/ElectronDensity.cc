@@ -1289,6 +1289,69 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core:
 }
 
 
+void
+ElectronDensity::maskDensityMap( lightPose const &pose, core::Real radius ) {
+	// get rho_c
+	const core::Real ATOM_MASK_PADDING = 1.5;
+	if (radius == 0) { radius = ATOM_MASK; }
+
+	ObjexxFCL::FArray3D< float > mask;
+	mask.dimension(density.u1() , density.u2() , density.u3());
+	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) mask[i]=1.0;
+
+	for (int i=1 ; i<=(int)pose.size(); ++i) {
+		numeric::xyzVector< core::Real> cartX = pose[i].first - getTransform();
+		numeric::xyzVector< core::Real> fracX = c2f*cartX;
+		numeric::xyzVector< core::Real> atm_j, del_ij, atm_idx;
+		atm_idx[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
+		atm_idx[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (double)grid[1]);
+		atm_idx[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (double)grid[2]);
+		for (int z=1; z<=density.u3(); ++z) {
+			atm_j[2] = z;
+			del_ij[2] = (atm_idx[2] - atm_j[2]) / grid[2];
+			if (del_ij[2] > 0.5) del_ij[2]-=1.0; if (del_ij[2] < -0.5) del_ij[2]+=1.0;
+			del_ij[0] = del_ij[1] = 0.0;
+			if ((f2c*del_ij).length_squared() > (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) continue;
+			for (int y=1; y<=density.u2(); ++y) {
+				atm_j[1] = y;
+				del_ij[1] = (atm_idx[1] - atm_j[1]) / grid[1] ;
+				if (del_ij[1] > 0.5) del_ij[1]-=1.0; if (del_ij[1] < -0.5) del_ij[1]+=1.0;
+				del_ij[0] = 0.0;
+				if ((f2c*del_ij).length_squared() > (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) continue;
+				for (int x=1; x<=density.u1(); ++x) {
+					atm_j[0] = x;
+					del_ij[0] = (atm_idx[0] - atm_j[0]) / grid[0];
+					if (del_ij[0] > 0.5) del_ij[0]-=1.0; if (del_ij[0] < -0.5) del_ij[0]+=1.0;
+					numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);  // cartesian offset from (x,y,z) to atom_i
+					core::Real d2 = (cart_del_ij).length_squared();
+					if (d2 <= (radius+ATOM_MASK_PADDING)*(radius+ATOM_MASK_PADDING)) {
+						core::Real sigmoid_msk = exp( d2 - (ATOM_MASK)*(ATOM_MASK)  );
+						core::Real inv_msk = 1/(1+sigmoid_msk);
+						mask(x,y,z) *= (1 - inv_msk);
+					}
+				}
+			}
+		}
+	}
+
+	for (int i=1; i<=density.u1()*density.u2()*density.u3(); ++i) {
+		density[i] *= (1-mask[i]);
+	}
+
+	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]()) {
+		ElectronDensity(density,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_obs_masked.mrc");
+		ElectronDensity(mask,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "rho_mask_inv.mrc");
+	}
+
+	// clear derived data
+	fastdens_score.clear();
+	rho_calc.clear(); rho_solv.clear();
+	inv_rho_mask.clear();
+	Frho_calc.clear(); Frho_solv.clear();
+	Fdensity.clear();
+}
+
+
 /// @brief Compute the FSC in the specified resolution range
 utility::vector1< core::Real >
 ElectronDensity::getFSC(
@@ -1699,7 +1762,6 @@ utility::vector1< ObjexxFCL::FArray3D< std::complex<double> > * > ElectronDensit
 
 	return retval;
 }
-
 
 /////////////////////////////////////
 /// setup oversampled maps for fast density scoring
@@ -4082,7 +4144,7 @@ ElectronDensity::readMRCandResize(
 	// to have symmetry records when they do not.
 	mapin.seekg(0, std::ios::end);
 	filesize = mapin.tellg();
-	dataOffset = filesize - 4*(extent[0]*extent[1]*extent[2]);
+	dataOffset = filesize - 4L*((long long)extent[0]*(long long)extent[1]*(long long)extent[2]);
 	if (dataOffset != (CCP4HDSIZE + symBytes)) {
 		if (dataOffset == CCP4HDSIZE) {
 			// Bogus symmetry record information

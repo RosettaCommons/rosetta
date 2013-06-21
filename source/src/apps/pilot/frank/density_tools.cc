@@ -18,9 +18,13 @@
 #include <core/types.hh>
 
 #include <core/chemical/AA.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
+#include <core/import_pose/import_pose.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
@@ -60,6 +64,8 @@ OPT_1GRP_KEY(Real, denstools, lowres)
 OPT_1GRP_KEY(Real, denstools, hires)
 OPT_1GRP_KEY(Boolean, denstools, rescale_map)
 OPT_1GRP_KEY(Boolean, denstools, verbose)
+OPT_1GRP_KEY(Boolean, denstools, nomask)
+OPT_1GRP_KEY(Boolean, denstools, perres)
 
 
 // fpd
@@ -178,6 +184,7 @@ densityTools()
 	Size nresobins = option[ denstools::nresbins ]();
 	utility::vector1< core::Real > resobins, mapI, mapIprime, modelI, solvI, modelSum, modelmapFSC;
 	utility::vector1< core::Real > mapAltI, mapmapFSC;
+	utility::vector1< core::Real > perResCC;
 	Real rscc, fsc=0, mm_rscc, mm_fsc=0;
 
 	// resolution limits for analysis
@@ -190,6 +197,19 @@ densityTools()
 	hires = 1.0/hires;
 	lowres = 1.0/lowres;
 
+	// [0] load model, mask density
+	bool userpose = (option[ in::file::s ].user());
+	lightPose pose;
+	core::pose::Pose fullpose;  // needed for per-residue stats (if requested)
+	std::string pdbfile;
+	if (userpose) {
+		pdbfile = basic::options::start_file();
+		readPDBcoords( pdbfile, pose );
+		if (!option[ denstools::nomask ]() ) {
+			core::scoring::electron_density::getDensityMap().maskDensityMap( pose, 0 );
+		}
+	}
+
 	// [1] map intensity statistics
 	resobins = core::scoring::electron_density::getDensityMap().getResolutionBins(nresobins, lowres, hires);
 	mapI = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires);
@@ -199,10 +219,14 @@ densityTools()
 	bool usermap = option[ edensity::alt_mapfile ].user();
 	if (usermap) {
 		std::string mapfile = option[ edensity::alt_mapfile ];
-		core::Real mapreso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
-		core::Real mapsampling = basic::options::option[ basic::options::OptionKeys::edensity::grid_spacing ]();
+		core::Real mapreso = option[ edensity::mapreso ]();
+		core::Real mapsampling = option[ edensity::grid_spacing ]();
 		std::cerr << "Loading alternate density map" << mapfile << std::endl;
 		mapAlt.readMRCandResize( mapfile , mapreso , mapsampling );
+
+		if (!option[ denstools::nomask ]() ) {
+			mapAlt.maskDensityMap( pose, 0 );
+		}
 
 		mapAltI = mapAlt.getIntensities(nresobins, lowres, hires);
 		mapmapFSC = core::scoring::electron_density::getDensityMap().getFSC( mapAlt.data(), nresobins, lowres, hires );
@@ -214,13 +238,31 @@ densityTools()
 	}
 
 	// [3] model-map stats (intensity + model v map FSC + RSCC + per-res corrleations)
-	bool userpose = false;
-	lightPose pose;
-	std::string pdbfile;
-	if (option[ in::file::l ].user() || option[ in::file::s ].user()) {
-		userpose = true;
-		pdbfile = basic::options::start_file();
-		readPDBcoords( pdbfile, pose );
+	if (userpose) {
+		if (option[ denstools::perres ]()) {
+			core::chemical::ResidueTypeSetCAP rsd_set;
+			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+			core::import_pose::pose_from_pdb( fullpose, pdbfile );
+
+			core::Size nres = fullpose.total_residue();
+			perResCC.resize( nres, 0.0 );
+
+			protocols::electron_density::SetupForDensityScoringMoverOP dockindens
+				( new protocols::electron_density::SetupForDensityScoringMover );
+			dockindens->apply( fullpose );
+
+			core::scoring::electron_density::getDensityMap().set_nres( nres );
+			core::scoring::electron_density::getDensityMap().setScoreWindowContext( true );
+			core::scoring::electron_density::getDensityMap().setWindow( 3 );
+
+			core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+			scorefxn->set_weight( core::scoring::elec_dens_window, 1.0 );
+			(*scorefxn)(fullpose);
+
+			for (int r=1; r<=nres; ++r) {
+				perResCC[r] = core::scoring::electron_density::getDensityMap().matchRes( r , fullpose.residue(r), fullpose, NULL , false);
+			}
+		}
 
 		core::scoring::electron_density::getDensityMap().getIntensities( pose, nresobins, lowres, hires, modelI, solvI );
 		modelmapFSC = core::scoring::electron_density::getDensityMap().getFSC( pose, nresobins, lowres, hires );
@@ -245,7 +287,12 @@ densityTools()
 			//core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires );
 			//core::scoring::electron_density::getDensityMap().writeMRC( "scale_modelI_FSCwt.mrc" );
 		} else if (usermap) {
-
+			utility::vector1< core::Real > rescale_factor(nresobins,0.0);
+			for (Size i=1; i<=nresobins; ++i)
+				rescale_factor[i] = sqrt(mapAltI[i] / mapI[i]);
+			core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, lowres, hires );
+			core::scoring::electron_density::getDensityMap().writeMRC( "scale_altmapI.mrc" );
+			mapIprime = core::scoring::electron_density::getDensityMap().getIntensities(nresobins, lowres, hires);
 		}
 	}
 
@@ -260,6 +307,12 @@ densityTools()
 			if (usermap)  std::cerr << " " << mapAltI[i] << " " << mapmapFSC[i];
 			if (userpose) std::cerr << " " << modelI[i] << " " << modelmapFSC[i];
 			std::cerr << std::endl;
+		}
+	}
+
+	if (userpose && option[ denstools::perres ]()) {
+		for (int r=1; r<=perResCC.size(); ++r) {
+			std::cerr << "residue " << r << "  cc=" << perResCC[r] << std::endl;
 		}
 	}
 
@@ -283,10 +336,12 @@ main( int argc, char * argv [] )
 	// options, random initialization
 	NEW_OPT(denstools::lowres, "lowres", 500.0);
 	NEW_OPT(denstools::hires, "hires", 0.0);
-	NEW_OPT(edensity::alt_mapfile, "alt mapfile", "");
-	NEW_OPT(denstools::nresbins, "#reolution bins for statistics", 20);
-	NEW_OPT(denstools::rescale_map, "scale map I == model I?", false);
-	NEW_OPT(denstools::verbose, "verbose?", false);
+	NEW_OPT(edensity::alt_mapfile, "alternate mapfile", "");
+	NEW_OPT(denstools::nresbins, "#resolution bins", 20);
+	NEW_OPT(denstools::rescale_map, "scale I_map to I_modelI/I_altmap", false);
+	NEW_OPT(denstools::nomask, "nomask", false);
+	NEW_OPT(denstools::perres, "output per-residue stats", false);
+	NEW_OPT(denstools::verbose, "extra output", false);
 	devel::init( argc, argv );
 	densityTools();
 	} catch ( utility::excn::EXCN_Base const & e ) {
