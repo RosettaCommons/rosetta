@@ -110,7 +110,6 @@ typedef utility::keys::Key3Tuple< Size, Size, Size > three_atom_set;
 typedef utility::keys::Key3Tuple< Size, Size, Size > bondangle_atom_set;
 typedef utility::keys::Key4Tuple< Size, Size, Size, Size > dihedral_atom_set;
 
-
 class ResidueType : public utility::pointer::ReferenceCount {
 
 public:

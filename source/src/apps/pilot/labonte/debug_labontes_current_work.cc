@@ -19,22 +19,27 @@
 #include <iostream>
 //#include <algorithm>
 
-#include <basic/Tracer.hh>
 #include <devel/init.hh>
+#include <basic/Tracer.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-//#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+//#include <core/pose/PDBInfo.hh>
+#include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/MoveMap.hh>
+//#include <core/kinematics/MoveMap.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
 
-#include <utility/excn/Exceptions.hh>
+//#include <utility/excn/Exceptions.hh>
 //#include <utility/vector1.hh>
 //#include <utility/vector0.hh>
 
-#include <protocols/simple_moves/BackboneMover.hh>
+//#include <protocols/simple_moves/BackboneMover.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
 
 int main(int argc, char *argv[])
 {
@@ -45,7 +50,9 @@ int main(int argc, char *argv[])
 		using namespace pose;
 		using namespace utility;
 		using namespace kinematics;
-		using namespace protocols;
+		using namespace protocols::simple_moves;
+		using namespace core::scoring;
+		using namespace core::pack::task;
 
 		// initialize core
 		devel::init(argc, argv);
@@ -55,17 +62,28 @@ int main(int argc, char *argv[])
 
 		// import a test pose
 		//pose_from_pdb(pose, "/home/labonte/Workspace/test_input/test.pdb");
-
-		pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/test.pdb");
+		//pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/test.pdb");
+		pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/lactose.pdb");
 
 		cout << pose << endl << endl;
 
-		Size n_res = pose.total_residue();
+		/*Size n_res = pose.total_residue();
 		for (core::uint i = 1; i <= n_res; ++i) {
 			cout << pose.residue(i) << endl << endl;
-		}
+		}*/
 
-		pose.dump_pdb("/home/labonte/Workspace/test_output/modified_sugar.pdb", "");
+		ScoreFunction sf = *getScoreFunction();
+
+		//cout << "Initial score: " << sf(pose) << endl;
+
+		PackerTaskOP task = TaskFactory::create_packer_task(pose);
+		PackRotamersMoverOP packer = new PackRotamersMover(&sf, task);
+
+		packer->apply(pose);
+
+		//cout << "Final score: " << sf(pose) << endl;
+
+		//pose.dump_pdb("/home/labonte/Workspace/test_output/modified_sugar.pdb", "");
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
     }

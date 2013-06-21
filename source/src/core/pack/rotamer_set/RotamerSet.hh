@@ -19,42 +19,35 @@
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 
 // Package Headers
-
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
-
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 
 #ifdef WIN32 //VC++ needs full class declaration
 #include <core/scoring/trie/RotamerTrieBase.hh>
 #include <core/conformation/Residue.hh> // WIN32 INCLUDE
 #endif
 
-//#include <basic/datacache/BasicDataCache.hh>
-
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2.fwd.hh>
-
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
-
 #include <utility/vector1.hh>
 
 
 namespace core {
 namespace pack {
 namespace rotamer_set {
+
+typedef std::pair<core::Angle, core::Angle> RotamerBin;
+typedef utility::vector1<RotamerBin> RotamerBins;
 
 
 class RotamerSet : public conformation::RotamerSetBase

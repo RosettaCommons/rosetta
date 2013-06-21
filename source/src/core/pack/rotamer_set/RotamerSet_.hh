@@ -23,22 +23,20 @@
 #include <core/pack/rotamer_set/BumpSelector.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
-
 //Project headers
+#include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 #ifdef WIN32
 #include <core/scoring/trie/RotamerTrieBase.hh>
 #endif
+#include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 
 #include <core/scoring/EnergyMap.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
-
-#include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 #include <utility/vector1.hh>
 
 

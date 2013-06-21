@@ -15,30 +15,21 @@
 #ifndef INCLUDED_core_pack_rotamer_set_rotamer_building_functions_hh
 #define INCLUDED_core_pack_rotamer_set_rotamer_building_functions_hh
 
-//Unit headers
-
-
-// //Package headers
+//Package headers
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 
 // //Project headers
-#include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/graph/Graph.fwd.hh>
-// #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-// #include <core/scoring/trie/RotamerTrieBase.hh>
 
 // // Utility headers
 #include <utility/io/izstream.fwd.hh>
-
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <utility/vector1.hh>
 
-// #include <utility/pointer/owning_ptr.hh>
-// #include <utility/vector1.hh>
 
 namespace core {
 namespace pack {
@@ -93,6 +84,13 @@ build_rna_rotamers(
 );
 
 
+/// @brief Make a rotamer (Residue) for every combination of torsion angle in the rotamer bins.
+void build_carbohydrate_rotamers(conformation::Residue const & residue,
+		utility::vector1<conformation::ResidueOP> & rotamers,
+		uint current_chi_index=1,
+		utility::vector1<uint> *current_bin_indices=NULL);
+
+
 conformation::ResidueOP
 create_oriented_water_rotamer(
 	chemical::ResidueType const & h2o_type,
@@ -130,21 +128,11 @@ build_dependent_water_rotamers(
 	graph::GraphCOP packer_neighbor_graph,
 	utility::vector1< conformation::ResidueOP > & new_rotamers
 );
-// void
-// build_fixed_O_water_rotamers(
-// 	Size const seqpos,
-// 	chemical::ResidueType const & h2o_type,
-// 	pack::task::ExtraRotSample const &, // level,
-// 	pose::Pose const & pose,
-// 	graph::GraphCOP packer_neighbor_graph,
-// 	utility::vector1< conformation::ResidueOP > & new_rotamers
-// );
 
 
 } // namespace rotamer_set
 } // namespace pack
 } // namespace core
-
 
 #endif // INCLUDED_core_pack_RotamerSet_RotamerSet__HH
 

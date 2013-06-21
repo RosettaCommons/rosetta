@@ -544,7 +544,7 @@ expand_proton_chi(
 			Real ii_sample = samples[ ii ]; //chi-angle
 			if (ii == 1) { 	//change first chi in place:
 				base_chi_vec = new_chi_vec = chi_set_vector[ jj ];
-			} else { // make copys for all others
+			} else { // make copies for all others
 				new_chi_vec = new pack::dunbrack::ChiSet( *base_chi_vec );
 				chi_set_vector.push_back( new_chi_vec );
 			}

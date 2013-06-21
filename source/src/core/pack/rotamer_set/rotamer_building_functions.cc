@@ -22,9 +22,12 @@
 #include <core/pack/rotamer_set/WaterPackingInfo.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
+#include <core/pack/dunbrack/ChiSet.hh>
+#include <core/pack/dunbrack/DunbrackRotamer.hh>
 
 // Project Headers
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/AtomType.hh>
 
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
@@ -32,71 +35,50 @@
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/kinematics/Stub.hh>
+#include <core/kinematics/MoveMap.hh>
 
-// AUTO-REMOVED #include <core/scoring/LREnergyContainer.hh>
-// AUTO-REMOVED #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
-#include <basic/Tracer.hh>
-
-#include <core/graph/Graph.hh>
-
-#include <core/pose/Pose.hh>
 #include <core/scoring/constraints/Func.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <core/scoring/Energies.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
-//#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/ChiSet.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/methods/Methods.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_TorsionPotential.hh>
+#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+
+#include <core/graph/Graph.hh>
+
+#include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-// AUTO-REMOVED #include <basic/prof.hh> // profiling
-
+// Basic headers
+#include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/database/open.hh>
 
-#include <core/kinematics/MoveMap.hh>
-
+// Numeric headers
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
-
-#include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/utility.functions.hh>
-
 #include <numeric/constants.hh>
 
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
+// Utility headers
+#include <utility/io/izstream.hh>
+#include <utility/vector1.hh>
+
+// External headers
 #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/FArray3D.hh>
 
 // C++ headers
 #include <string>
 #include <iostream>
 #include <fstream>
-
-#include <core/chemical/AtomType.hh>
-#include <utility/vector1.hh>
-#include <ObjexxFCL/FArray3D.hh>
-
-//Auto Headers
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 
 
 namespace core {
@@ -107,6 +89,9 @@ static numeric::random::RandomGenerator RG(32241); // <- Magic number, do not ch
 
 static basic::Tracer tt("core.pack.rotamer_set.rotamer_building_functions",basic::t_info );
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// DNA-specific methods
 void
 read_DNA_rotlib(
   utility::io::izstream & lib_stream,
@@ -334,11 +319,8 @@ build_lib_dna_rotamers(
 	tt << "Built " << rotamers.size() << " rotamers for " << resid << " " << concrete_residue->name() << std::endl;
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
 // move this helper function
 // better yet, stuff inside new rotamer-building class
-//
 void
 build_random_dna_rotamers(
 	Size const resid,
@@ -560,8 +542,6 @@ build_random_dna_rotamers(
 	}
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 build_dna_rotamers(
 	Size const resid,
@@ -634,12 +614,12 @@ build_dna_rotamers(
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 fill_chi_rotamers_with_center_and_stddev( conformation::ResidueOP const & rot,
-																					utility::vector1< conformation::ResidueOP > & rotamers,
-																					utility::vector1< Real > const & chi_steps,
-																					Real const & center, Real const & width )
+		utility::vector1< conformation::ResidueOP > & rotamers,
+		utility::vector1< Real > const & chi_steps,
+		Real const & center, Real const & width )
 {
 	using namespace conformation;
 	for (Size n = 1 ; n <= chi_steps.size(); n++ ) {
@@ -649,7 +629,9 @@ fill_chi_rotamers_with_center_and_stddev( conformation::ResidueOP const & rot,
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// RNA-specific methods
 void
 add_rna_chi_rotamers( conformation::ResidueOP const & rot,
 											utility::vector1< conformation::ResidueOP > & rotamers,
@@ -742,8 +724,6 @@ add_rna_chi_rotamers( conformation::ResidueOP const & rot,
 
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 build_rna_chi_rotamers(
 	Size const resid,
@@ -807,7 +787,6 @@ build_rna_chi_rotamers(
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 build_rna_rotamers(
 	Size const resid,
@@ -827,9 +806,9 @@ build_rna_rotamers(
 	//////////////////////////////////////////////////////////////////////////
 	// Basic set up...
 	build_rna_chi_rotamers( resid, pose, concrete_residue, level,
-													task.residue_task( resid ).sample_rna_chi(),
-													task.include_current( resid ),
-													new_rotamers );
+			task.residue_task( resid ).sample_rna_chi(),
+			task.include_current( resid ),
+			new_rotamers );
 
 	//////////////////////////////////////////////////////////////////////////
 	// include current... this doesn't use ideal bond lengths/angles.
@@ -852,20 +831,21 @@ build_rna_rotamers(
 		Size const n_proton_chi = concrete_residue->n_proton_chi();
 
 		if ( n_proton_chi > 0 ) {
-			//This seems a little silly -- suck out the chi's, then put them back into rotamers.
+			// This seems a little silly -- suck out the chi's, then put them back into rotamers.
 			utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
 			proton_chi_chisets.push_back( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) );
 
 			for ( Size ii = 1; ii <= n_proton_chi; ++ii ) {
 				pack::dunbrack::expand_proton_chi(
-																						 task.residue_task( resid ).extrachi_sample_level(
-																																															true /*nneighb test*/,
-																																															concrete_residue->proton_chi_2_chi( ii ),
-																																															concrete_residue ),
-																						 concrete_residue,
-																						 ii, proton_chi_chisets);
+						task.residue_task( resid ).extrachi_sample_level(
+								true /*nneighb test*/,
+								concrete_residue->proton_chi_2_chi( ii ),
+								concrete_residue ),
+						concrete_residue,
+						ii,
+						proton_chi_chisets);
 			}
-			//			tt << "EXTRA CHI SETS: " << proton_chi_chisets.size() << std::endl;
+			// tt << "EXTRA CHI SETS: " << proton_chi_chisets.size() << std::endl;
 
 			Size const number_of_starting_new_rotamers = new_rotamers.size();
 			for ( Size n = 1 ; n <= number_of_starting_new_rotamers; ++n ) {
@@ -879,17 +859,81 @@ build_rna_rotamers(
 
 						Size const jj_protchi( concrete_residue->proton_chi_2_chi( jj ) );
 						new_rotamers[ new_rotamer_number ]->set_chi( jj_protchi,
-																												 proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
+								proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
 					}
 				}
 
 			}
 		}
 	} //proton chi
-
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Make a rotamer (Residue) for every combination of torsion angle in the rotamer bins.
+/// @param   <residue>: the Residue for which rotamers are to be made
+/// @param   <rotamers>: a list of rotamers (Residues) to which this method will add new rotamers
+/// @param   <current_chi_index>: internally used by this recursive method; do not pass a value
+/// @param   <current_bin_indices>: internally used by this recursive method; do not pass a value
+/// @details Uses recursion to make a nested loop n levels deep, where n is the number of side-chain torsions ("chis").
+/// @note    This currently assumes that all torsions are independent.  Ideally, we will find an alternative method for
+/// handling carbohydrate rotamer libraries....
+void
+build_carbohydrate_rotamers(conformation::Residue const & residue,
+		utility::vector1<conformation::ResidueOP> & rotamers,
+		uint current_chi_index,
+		utility::vector1<uint> *current_bin_indices)
+{
+	using namespace std;
+
+	Size n_chis = residue.type().nchi();
+
+	// On 1st (and only 1st) call per residue; create list of bin indices, one index for each side-chain torsion.
+	if (!current_bin_indices) {
+		tt.Debug << "Creating list of indices; ";
+		current_bin_indices = new utility::vector1<uint>;  // empty vector
+		tt.Debug << "nesting " << n_chis << " levels deep." << endl;
+		for (uint i = 1; i <= n_chis; ++i) {
+			current_bin_indices->push_back(0);  // Initialize with zeroes.
+		}
+	}
+
+	if (current_chi_index <= n_chis) {
+		RotamerBins bins_for_current_chi = residue.chi_rotamers(current_chi_index);
+		Size n_bins_for_current_chi = bins_for_current_chi.size();
+		if (n_bins_for_current_chi != 0) {
+			for (uint i = 1; i <= n_bins_for_current_chi; ++i) {
+				current_bin_indices->at(current_chi_index) = i;
+				build_carbohydrate_rotamers(residue, rotamers, current_chi_index + 1, current_bin_indices); // Recurse.
+			}
+		} else {  // Leave the bin index at 0 and drop to next level.
+			build_carbohydrate_rotamers(residue, rotamers, current_chi_index + 1, current_bin_indices); // Recurse
+		}
+	// If the current chi index is greater than the number of chis, every index has been changed, and it is time to
+	// cease recursing and make a rotamer from the current state of the bin indices.
+	} else {
+		//tt.Debug << *current_bin_indices << endl;
+		rotamers.push_back(residue.create_rotamer());  // Clone current residue.
+		// Set the torsions of the new rotamer to values indexed by current_bin_indices.
+		tt.Debug << "Selecting ";
+		for (uint i = 1; i <= n_chis; ++i) {
+			RotamerBins bins = residue.chi_rotamers(i);  // Get bins for ith torsion angle.
+			uint bin_index = current_bin_indices->at(i);  // Get the appropriate bin for this rotamer by index.
+			if (bin_index != 0) {  // If index is 0, there are no bins: skip setting this torsion.
+				RotamerBin bin = bins[bin_index];
+				Angle torsion = bin.first;  // first is the setting; second is the SD.
+				tt.Debug << "bin #" << current_bin_indices->at(i) <<
+						" from torsion angle chi" << i <<
+						" (" << torsion << ")  ";
+				rotamers[rotamers.size()]->set_chi(i, torsion);  // Set the rotamer's torsion angle.
+			}
+		}
+		tt.Debug << endl;
+	}
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 debug_dump_rotamers(
 	utility::vector1< conformation::ResidueOP > & rotamers
@@ -910,7 +954,9 @@ debug_dump_rotamers(
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Water-specific methods
 conformation::ResidueOP
 create_oriented_water_rotamer(
 	chemical::ResidueType const & h2o_type,
@@ -940,7 +986,6 @@ create_oriented_water_rotamer(
 	return rot;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 build_fixed_O_water_rotamers_independent(
 	Size const seqpos,
@@ -1065,14 +1110,6 @@ build_fixed_O_water_rotamers_independent(
 
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
 Vector
 build_optimal_water_O_on_donor(
 	Vector const & hxyz,
@@ -1084,7 +1121,6 @@ build_optimal_water_O_on_donor(
 
 	return ( dxyz + distance * ( hxyz - dxyz ).normalized() );
 }
-
 
 void
 build_optimal_water_Os_on_acceptor(
@@ -1143,8 +1179,6 @@ build_optimal_water_Os_on_acceptor(
 		}
 	}
 }
-
-
 
 void
 build_donor_donor_waters(
@@ -1215,7 +1249,6 @@ build_donor_donor_waters(
 		new_waters.push_back( rot );
 	}
 }
-
 
 void
 build_donor_acceptor_waters(
@@ -1316,7 +1349,6 @@ build_donor_acceptor_waters(
 	}
 }
 
-
 void
 build_acceptor_acceptor_waters(
 	conformation::Residue const & rsd1,
@@ -1405,7 +1437,6 @@ build_acceptor_acceptor_waters(
 		}
 	}
 }
-
 
 void
 build_moving_O_bridge_waters(
@@ -1571,7 +1602,6 @@ build_moving_O_water_rotamers_dependent(
 	} // nbrs of anchor_pos
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
 void
 build_moving_O_water_rotamers_independent(
 	WaterAnchorInfo const & water_info,
@@ -1664,7 +1694,6 @@ build_independent_water_rotamers(
 	}
 }
 
-
 void
 build_dependent_water_rotamers(
 	RotamerSets const & rotsets,
@@ -1695,7 +1724,8 @@ build_dependent_water_rotamers(
 
 
 }
+
+
 } // rotamer_set
 } // pack
 } // core
-

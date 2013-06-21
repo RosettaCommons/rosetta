@@ -15,60 +15,40 @@
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/rotamer_set/rotamer_building_functions.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
+#include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/dunbrack/ChiSet.hh>
+#include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <core/pack/interaction_graph/SurfacePotential.hh>
 
 // Project Headers
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/AbstractRotamerTrie.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
-#include <basic/Tracer.hh>
-
-#include <core/graph/Graph.hh>
-
-#include <core/pose/Pose.hh>
+#include <core/scoring/methods/Methods.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
-
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>
-//#include <core/scoring/ScoringManager.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/methods/Methods.hh>
-#include <core/pack/interaction_graph/SurfacePotential.hh>
+#include <core/graph/Graph.hh>
+#include <core/pose/Pose.hh>
 
-#include <core/pack/dunbrack/ChiSet.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
+// Basic headers
+#include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
-
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
-
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/utility.functions.hh>
-
-// ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
+// Utility headers
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <string>
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
-
-#include <core/conformation/AbstractRotamerTrie.hh>
-#include <utility/vector1.hh>
 
 
 namespace core {
@@ -88,7 +68,8 @@ RotamerSet_::RotamerSet_()
 
 RotamerSet_::~RotamerSet_() {}
 
-void RotamerSet_::build_rotamers(
+void
+RotamerSet_::build_rotamers(
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
 	task::PackerTask const & the_task,
@@ -143,7 +124,6 @@ RotamerSet_::add_rotamer(
 }
 
 
-
 Size
 RotamerSet_::get_n_residue_types() const
 {
@@ -159,7 +139,6 @@ RotamerSet_::get_n_residue_groups() const
 	update_rotamer_offsets();
 	return n_residue_groups_;
 }
-
 
 Size
 RotamerSet_::get_residue_type_begin( Size which_restype ) const
@@ -177,7 +156,6 @@ RotamerSet_::get_residue_group_begin( Size which_resgroup ) const
 	return residue_group_rotamers_begin_[ which_resgroup ];
 }
 
-
 Size
 RotamerSet_::get_n_rotamers_for_residue_type( Size which_restype ) const
 {
@@ -185,7 +163,6 @@ RotamerSet_::get_n_rotamers_for_residue_type( Size which_restype ) const
 	assert( which_restype <= n_residue_types_ );
 	return n_rotamers_for_restype_[ which_restype ];
 }
-
 
 Size
 RotamerSet_::get_n_rotamers_for_residue_group( Size which_resgroup ) const
@@ -206,6 +183,7 @@ RotamerSet_::get_residue_group_index_for_rotamer( Size which_rotamer ) const
 {
 	return residue_group_for_rotamers_[ which_rotamer ];
 }
+
 
 /// @details This will check for rotamer/background collisions if the PackerTask's
 /// bump_check boolean is true -- it uses the bump_check_{sidechain/full} methods
@@ -228,34 +206,28 @@ RotamerSet_::build_rotamers_for_concrete_virt(
 
 void
 RotamerSet_::build_rotamers_for_concrete(
-	pose::Pose const & pose,
-	scoring::ScoreFunction const & scorefxn,
-	task::PackerTask const & task,
-	chemical::ResidueTypeCOP concrete_residue,
-	conformation::Residue const & existing_residue,
-	graph::GraphCOP packer_neighbor_graph,
-	bool use_neighbor_context
-)
+		pose::Pose const & pose,
+		scoring::ScoreFunction const & scorefxn,
+		task::PackerTask const & task,
+		chemical::ResidueTypeCOP concrete_residue,
+		conformation::Residue const & existing_residue,
+		graph::GraphCOP packer_neighbor_graph,
+		bool use_neighbor_context)
 {
 	using namespace conformation;
 	using namespace pack::task;
 
-	//++n_residue_types_;
-	//residue_type_rotamers_begin_.push_back( num_rotamers() + 1);
-	//n_rotamers_for_restype_.push_back( 0 );
 	prepare_for_new_residue_type( *concrete_residue );
 
 	if ( task.residue_task( resid() ).optimize_h() ) {
 		build_optimize_H_rotamers( pose, task, concrete_residue, existing_residue );
-	} else if ( concrete_residue->is_DNA() ) {
-		// behavior depends on residue type. should refactor this -- at least into
-		// several separate methods that this one switches betweeen...
 
-		/// DNA rotamers //////////////////////////////////////////
+	// The behavior depends on the residue type.  This should be refactored -- at least into several separate methods
+	// that this one switches between....
+	} else if ( concrete_residue->is_DNA() ) { // DNA /////////////////////////////////////////////////////////////////
 		utility::vector1< ResidueOP > new_rotamers;
 
 		build_dna_rotamers( resid(), pose, concrete_residue, task, new_rotamers );
-
 
 		if ( task.include_current( resid() ) && existing_residue.name() == concrete_residue->name() ) {
 			ResidueOP rot = existing_residue.create_rotamer();
@@ -268,26 +240,61 @@ RotamerSet_::build_rotamers_for_concrete(
 			push_back_rotamer( new_rotamers[ii] );
 		}
 
-	}	else if ( concrete_residue->is_RNA() ) {
-
+	} else if ( concrete_residue->is_RNA() ) { // RNA /////////////////////////////////////////////////////////////////
 		utility::vector1< ResidueOP > new_rotamers;
 
 		// sample chi, include_current, and proton chi expansion is inside here:
 		build_rna_rotamers( resid(), pose, concrete_residue, task, new_rotamers, id_for_current_rotamer_ );
 
 		for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
-			//			assert( new_rotamers[ii]->seqpos() == resid() && new_rotamers[ii]->chain() == existing_residue.chain() );
+			//assert( new_rotamers[ii]->seqpos() == resid() && new_rotamers[ii]->chain() == existing_residue.chain() );
 			push_back_rotamer( new_rotamers[ii] );
 		}
 
-	} else if ( concrete_residue->name() == "VRT1" ) { /// single-atom virtual residue //////////////
+	} else if (concrete_residue->is_carbohydrate()) { // Carbohydrates ////////////////////////////////////////////////
+		// For now, rotamer bins are stored in the params files themselves.  This code will generate all the rotamers
+		// from the torsion angles listed in the params files.  (The params files do not contain PROTON_CHI records and
+		// use CHI_ROTAMER records exclusively.)  All of this will likely change in the future.
 
+		tt.Warning << "Residue " << resid() <<
+				" is a carbohydrate; rotamers for carbohydrates are not yet fully implemented." << std::endl;
+
+		/*Size n_chis = concrete_residue->nchi();
+		tt.Debug << "Residue " << resid() << " has " << n_chis << " side-chain torsions." << std::endl;
+		for (uint i = 1; i <= n_chis; ++i) {
+			RotamerBins bins = concrete_residue->chi_rotamers(i);
+			Size n_bins = bins.size();
+			tt.Debug << "Residue " << resid() << "'s chi" << i << " contains " << n_bins << " rotamer bins: ";
+			for (uint j = 1; j <= n_bins; ++j) {
+				RotamerBin bin = bins[j];
+				tt.Debug << bin.first << ' ';
+			}
+			tt.Debug << std::endl;
+		}*/
+
+		utility::vector1<ResidueOP> new_rotamers;
+
+		build_carbohydrate_rotamers(existing_residue, new_rotamers);
+
+		// Add current rotamer, if applicable.
+		if (task.include_current(resid()) && existing_residue.name() == concrete_residue->name()) {
+			ResidueOP rot = existing_residue.create_rotamer();
+			new_rotamers.push_back(rot);
+			id_for_current_rotamer_ = new_rotamers.size();
+		}
+
+		// Push back rotamers.
+		Size n_rotamers = new_rotamers.size();
+		for (uint i=1; i <= n_rotamers; ++i) {
+			push_back_rotamer(new_rotamers[i]);
+		}
+
+	} else if ( concrete_residue->name() == "VRT1" ) { // Single-atom virtual residue /////////////////////////////////
 		tt << "building VRT1 residue at " << resid() << ' ' << existing_residue.name() << "position\n";
 		if ( existing_residue.name() == concrete_residue->name() ) {
 			ResidueOP rot = existing_residue.clone();
 			push_back_rotamer( rot );
 			id_for_current_rotamer_ = num_rotamers();
-
 		} else {
 			ResidueOP rot = ResidueFactory::create_residue( *concrete_residue );
 			rot->set_xyz( 1, existing_residue.nbr_atom_xyz() );
@@ -296,8 +303,7 @@ RotamerSet_::build_rotamers_for_concrete(
 			push_back_rotamer( rot );
 		}
 
-	} else if ( concrete_residue->name() == "TP3" ) { // TIP3 water /////////////////////////////////
-
+	} else if ( concrete_residue->name() == "TP3" ) { // TIP3 water ///////////////////////////////////////////////////
 		// build rotamers for water
 		utility::vector1< ResidueOP > new_rotamers;
 
@@ -315,20 +321,17 @@ RotamerSet_::build_rotamers_for_concrete(
 			id_for_current_rotamer_ = num_rotamers();
 		}
 
-	} else { // Not DNA ///////////////////////////////////////////////////////////////////////
-
+	} else { // All other residues ////////////////////////////////////////////////////////////////////////////////////
 		utility::vector1< utility::vector1< Real > > extra_chi_steps( concrete_residue->nchi() );
 
-		int nneighbs(999);
+		Size nneighbs(999);
 		if ( use_neighbor_context ) {
 			nneighbs = pose.energies().tenA_neighbor_graph().get_node( resid() )->num_neighbors_counting_self();
 		}
-		bool buried = ( nneighbs >= int(task.residue_task(resid()).extrachi_cutoff()) || !use_neighbor_context );
+		bool buried = ( nneighbs >= task.residue_task(resid()).extrachi_cutoff() || !use_neighbor_context );
 
 		for ( Size ii = 1; ii <= concrete_residue->nchi(); ++ii ) {
-			set_extra_samples(
-				task, nneighbs, ii,
-				concrete_residue, extra_chi_steps[ ii ] );
+			set_extra_samples(task, nneighbs, ii, concrete_residue, extra_chi_steps[ ii ] );
 		}
 
 		bump_selector_.reset();
@@ -336,12 +339,16 @@ RotamerSet_::build_rotamers_for_concrete(
 
 		utility::vector1< ResidueOP > suggested_rotamers;
 
-		dunbrack::SingleResidueRotamerLibraryCAP rotlib = dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue );
+		// If rotamer library exists, generate list of suggested rotamers from that.
+		dunbrack::SingleResidueRotamerLibraryCAP rotlib =
+				dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue );
 		if (rotlib) {
-			rotlib->fill_rotamer_vector( pose, scorefxn, task, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers);
-		} else {
-			// Add proton chi rotamers even if there's no rotamer library... this will disappear when
-			// ligands get their own rotamer libraries.
+			rotlib->fill_rotamer_vector(pose, scorefxn, task, packer_neighbor_graph, concrete_residue,
+					existing_residue, extra_chi_steps, buried, suggested_rotamers);
+
+		} else /* no rotamer library exists */ {
+			// Add proton chi rotamers even if there's no rotamer library.... This will disappear when/if ligands get
+			// their own rotamer libraries.
 			if ( concrete_residue->n_proton_chi() != 0 ) {
 				utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
 				proton_chi_chisets.push_back( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) );
@@ -354,69 +361,73 @@ RotamerSet_::build_rotamers_for_concrete(
 						concrete_residue,
 						ii, proton_chi_chisets);
 				}
+
+
 				suggested_rotamers.reserve( proton_chi_chisets.size() );
 				for ( Size ii = 1; ii <= proton_chi_chisets.size(); ++ii ) {
 					suggested_rotamers.push_back( existing_residue.clone() );
 					for ( Size jj = 1; jj <= concrete_residue->n_proton_chi(); ++jj ) {
 						Size jj_protchi = concrete_residue->proton_chi_2_chi( jj );
-						suggested_rotamers[ ii ]->set_chi(
-							jj_protchi,
-							proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
+						suggested_rotamers[ ii ]->set_chi(jj_protchi, proton_chi_chisets[ ii ]->chi[ jj_protchi ] );
 					}
 				}
 			}
-			//tt << "Building rotamers for " << concrete_residue->name() << ": total number of suggested: " << suggested_rotamers.size() << '\n';
-
+			tt.Debug << "Building rotamers for " << concrete_residue->name() << ": Total number suggested: " <<
+					suggested_rotamers.size() << std::endl;
 		}
-		//tt <<
-		//	"existing: " << existing_residue.name() <<
-		//	" concrete: " << concrete_residue->name() <<
-		//	" total number of suggested: " << suggested_rotamers.size() << '\n';
 
+		tt.Debug <<
+			"Existing residue: " << existing_residue.name() <<
+			" Concrete residue: " << concrete_residue->name() <<
+			" Total number of rotamers suggested: " << suggested_rotamers.size() << std::endl;
+
+		// Look through suggested rotamers and throw out those with obvious "bumps".
 		for ( Size ii = 1; ii <= suggested_rotamers.size(); ++ii ) {
 			ResidueOP rot = suggested_rotamers[ ii ];
-			/*{
-				tt << "suggested rotamer " << ii <<' ';
-				for ( Size jj =1; jj <= rot->nchi(); jj++ ) {
-					tt << rot->chi()[jj] << ' ';
-				}
-				}*/
+			tt.Debug << " Suggested rotamer " << ii << ": ";
+			for ( Size jj = 1; jj <= rot->nchi(); ++jj ) {
+				tt.Debug << rot->chi()[jj] << ' ';
+			}
+
 			if ( task.bump_check() ) {
 				core::PackerEnergy bumpenergy = bump_check( rot, scorefxn, pose, task, packer_neighbor_graph );
-				//			tt << "bump energy: " << bumpenergy;// ss << '\n';
+				tt.Debug << " Bump energy: " << bumpenergy;
 				BumpSelectorDecision decision =  bump_selector_.iterate_bump_selector( bumpenergy );
 				switch ( decision ) {
 					case KEEP_ROTAMER :
-						//					std::cout << " ... added" << std::endl;
+						tt.Debug << " ... added" << std::endl;
 						push_back_rotamer( rot );
 						break;
 					case DELETE_PREVIOUS_ROTAMER :
-						//std::cout << " ... replace previous " << std::endl;
+						tt.Debug << " ... replace previous" << std::endl;
 						assert ( num_rotamers() > 0 );
 						rotamers_[ num_rotamers() ] = rot;
 						break;
-					case DELETE_ROTAMER : // do nothing
-						//std::cout << " ... deleted " << std::endl;
+					case DELETE_ROTAMER : // Do nothing.
+						tt.Debug << " ... deleted" << std::endl;
 						break;
 				}
 			} else {
-				//tt << "...added unchecked" << '\n';
+				tt.Debug << " ... added unchecked" << std::endl;
 				push_back_rotamer( rot );
 			}
 		}
 
+		// Do we include the current residue?
 		if ( task.include_current( resid() ) && existing_residue.name() == concrete_residue->name() ) {
-			//tt << "including current rotamer: " << existing_residue.name() << ' ' << existing_residue.seqpos() << std::endl;
+			tt.Debug << " Including current rotamer: " <<
+					existing_residue.name() << ' ' << existing_residue.seqpos() << std::endl;
 			ResidueOP rot = existing_residue.create_rotamer();
 			push_back_rotamer( rot );
 			id_for_current_rotamer_ = num_rotamers();
-			//int rotid = bump_select_rotamer( pose, scorefxn, task, rot );
+
+		// ...Or an "emergency rotamer"?
 		} else if ( suggested_rotamers.size() == 0 && concrete_residue->nchi() == 0 ) {
-			//			tt << "use emergency rotamer " << '\n';
+			tt.Warning << " Using emergency rotamer" << std::endl;
 			ResidueOP rot = ResidueFactory::create_residue( *concrete_residue, existing_residue, pose.conformation() );
 			push_back_rotamer( rot );
 		}
-	} // not DNA
+	}
 }
 
 /// @details Creates a sets of rotamers for an "optimize H" repacking:
@@ -568,7 +579,9 @@ RotamerSet_::build_optimize_H_rotamers(
 
 }
 
-void RotamerSet_::set_extra_samples(
+
+void
+RotamerSet_::set_extra_samples(
 	task::PackerTask const & task,
 	int num_10A_neighbors,
 	int chi,
@@ -641,13 +654,12 @@ void RotamerSet_::set_extra_samples(
 	}
 }
 
-
-// @ details The packer's 1-body is a combination of the rotamer internal energies (the
-// context dependent and independent one body energies), the intra-residue
-// energies defined by the two body energies, and the sum of the
-// two body energies with the background residues in this repacking.  The
-// PackerTask tells the RotamerSet_ what residues are part of the
-// background and which are being repacked.
+/// @details The packer's 1-body is a combination of the rotamer internal energies (the
+/// context dependent and independent one body energies), the intra-residue
+/// energies defined by the two body energies, and the sum of the
+/// two body energies with the background residues in this repacking.  The
+/// PackerTask tells the RotamerSet_ what residues are part of the
+/// background and which are being repacked.
 void
 RotamerSet_::compute_one_body_energies(
 	pose::Pose const & pose,
@@ -717,8 +729,7 @@ RotamerSet_::compute_one_body_energies(
 
 }
 
-
-///@details Used in OptE.  Based on the function compute_one_body_energies().  OptE needs to store the energies for all score terms for each rotamer separately.  In this context there are only rotamers at a single position, with all other positions fixed.
+/// @details Used in OptE.  Based on the function compute_one_body_energies().  OptE needs to store the energies for all score terms for each rotamer separately.  In this context there are only rotamers at a single position, with all other positions fixed.
 void
 RotamerSet_::compute_one_body_energy_maps(
 	pose::Pose const & pose,
@@ -824,11 +835,13 @@ RotamerSet_::compute_one_body_energy_maps(
 	} // long-range energy functions
 }
 
+
 Size
 RotamerSet_::num_rotamers() const
 {
 	return rotamers_.size();
 }
+
 
 Size
 RotamerSet_::id_for_current_rotamer() const
@@ -836,12 +849,12 @@ RotamerSet_::id_for_current_rotamer() const
 	return id_for_current_rotamer_;
 }
 
+
 conformation::ResidueCOP
 RotamerSet_::rotamer( Size rot_id ) const
 {
 	return rotamers_[ rot_id ];
 }
-
 
 /// @details In handing out non-const data, the guarantee of rotamer-type contiguity
 /// within the rotamers_ array, and the correspondence of the rotamer offset
@@ -854,6 +867,7 @@ RotamerSet_::nonconst_rotamer( Size rot_id )
 
 	return rotamers_[ rot_id ];
 }
+
 
 void
 RotamerSet_::store_trie(
@@ -1015,6 +1029,7 @@ RotamerSet_::prepare_for_new_residue_type( core::chemical::ResidueType const & r
 	}
 }
 
+
 bool
 RotamerSet_::different_restype( core::chemical::ResidueType const & rt1, core::chemical::ResidueType const & rt2 ) const
 {
@@ -1033,6 +1048,7 @@ RotamerSet_::different_resgroup( core::chemical::ResidueType const & rt1, core::
 	return & rt1 != & rt2 && ( rt1.name3() != rt2.name3() || rt1.nbr_radius() != rt2.nbr_radius() );
 }
 
+
 void
 RotamerSet_::new_residue_type()
 {
@@ -1041,6 +1057,7 @@ RotamerSet_::new_residue_type()
 	n_rotamers_for_restype_.push_back( 0 );
 }
 
+
 void
 RotamerSet_::new_residue_group()
 {
@@ -1048,6 +1065,7 @@ RotamerSet_::new_residue_group()
 	residue_group_rotamers_begin_.push_back( num_rotamers() + 1 );
 	n_rotamers_for_resgroup_.push_back( 0 );
 }
+
 
 void
 RotamerSet_::push_back_rotamer( conformation::ResidueOP rotamer )
@@ -1059,7 +1077,9 @@ RotamerSet_::push_back_rotamer( conformation::ResidueOP rotamer )
 	++n_rotamers_for_resgroup_[ n_residue_groups_ ];
 }
 
-void RotamerSet_::build_dependent_rotamers(
+
+void
+RotamerSet_::build_dependent_rotamers(
 	RotamerSets const & rotamer_sets,
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scorefxn,
@@ -1077,6 +1097,7 @@ void RotamerSet_::build_dependent_rotamers(
 			existing_residue, *allowed_iter, packer_neighbor_graph);
 	}
 }
+
 
 void
 RotamerSet_::build_dependent_rotamers_for_concrete(
@@ -1194,7 +1215,6 @@ RotamerSet_::update_rotamer_offsets() const
 	//std::cout << "nrestypes " << n_residue_types_ << std::endl;
 	rotamer_offsets_require_update_ = false;
 }
-
 
 } // rotamer_set
 } // pack

@@ -133,12 +133,12 @@ public:
 	void
 	reset();
 
-  /// @brief Randomly perturbs non-zero score function weights
-  void perturb_weights();
+	/// @brief Randomly perturbs non-zero score function weights
+	void perturb_weights();
 
-  /// @brief Serializes the non-zero score function term weights
-  /// Format: { term : weight, ... }
-  std::string serialize_weights() const;
+	/// @brief Serializes the non-zero score function term weights
+	/// Format: { term : weight, ... }
+	std::string serialize_weights() const;
 
 	/// @brief Initializes this ScoreFunction from the given  <filename>
 	void
@@ -177,14 +177,14 @@ public:
 
 
 	// NO LONGER IN USE! Users trying to take advantage of this saw some non-intuitive behavior.
-	/// Returns the EnergyMethodOptions object contained in this ScoreFunction.
+	// @brief Returns the EnergyMethodOptions object contained in this ScoreFunction.
 	//	methods::EnergyMethodOptions &
 	//	energy_method_options()
 	//	{
 	//		return *energy_method_options_;
 	//	}
 
-	/// Sets the EnergyMethodOptions object contained in this ScoreFunction.
+	/// @brief Sets the EnergyMethodOptions object contained in this ScoreFunction.
 	/// with appropriate update of all the energy methods.
 	void
 	set_energy_method_options(
