@@ -140,7 +140,7 @@ class Tester:
         if Options.unmute: unmute = ' -unmute ' + ' '.join(Options.unmute)
         exe = "./" + lib + ' ' + Options.one + ' --database ' + Options.database + mute + unmute
         #if self.db_path: exe += " " + self.db_path
-        print "Paths:", path, ' command line:', exe
+        print "Command line:: %s%s" % (path, exe)
 
         if os.path.isfile(yaml_file): os.remove(yaml_file)
 
