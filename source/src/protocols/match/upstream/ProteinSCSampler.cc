@@ -37,6 +37,18 @@ namespace upstream {
 
 ProteinSCSampler::~ProteinSCSampler() {}
 
+DunbrackSCSampler::DunbrackSCSampler() :
+	desymmeterize_( false )
+{}
+
+void DunbrackSCSampler::set_desymmeterize( bool setting ) {
+	desymmeterize_ = setting;
+}
+
+bool DunbrackSCSampler::desymmeterize() const {
+	return desymmeterize_;
+}
+
 /// @details If there is no library, returns a one-element vector.
 DunbrackSCSampler::DunbrackRotamerSampleDataVector
 DunbrackSCSampler::samples(
@@ -73,7 +85,38 @@ DunbrackSCSampler::samples(
 			static_cast< ProteinBackboneBuildPoint const & >
 			( bb_conf ));
 
-		return dun_rotlib->get_all_rotamer_samples( bb.phi(), bb.psi() );
+		DunbrackRotamerSampleDataVector rotamers = dun_rotlib->get_all_rotamer_samples( bb.phi(), bb.psi() );
+		if ( desymmeterize_ && rotamers.size() != 0 ) {
+			using namespace core::chemical;
+			AA aa = restype.aa();
+			if ( aa == aa_asp || aa == aa_glu || aa == aa_phe || aa == aa_tyr ) {
+				/// the odd elements will hold the original rotamers, the even elements will hold the shifted by 180 rotamers
+				DunbrackRotamerSampleDataVector desymm_rots( rotamers.size() * 2 );
+
+				/// initialize the odd elements
+				for ( core::Size ii = 1; ii <= rotamers.size(); ++ii ) {
+					desymm_rots[ 2*ii - 1 ] = rotamers[ ii ];
+					desymm_rots[ 2*ii - 1  ].set_prob( rotamers[ ii ].probability() * 0.5 );
+				}
+
+				/// initialize the even elements
+				core::Size const last_chi = rotamers[1].nchi();
+				for ( core::Size ii = 1; ii <= rotamers.size(); ++ii ) {
+					DunbrackRotamerSampleData iisample = desymm_rots[ 2*ii - 1 ];
+					if ( iisample.chi_is_nonrotameric( last_chi )) {
+						/// the ProteinUpstreamBuilder assumes that nrchi_lower_boundary < chi_mean < nrchi_upper_boundary,
+						/// so just add 180 to everything.
+						iisample.set_nrchi_lower_boundary( iisample.nrchi_lower_boundary() + 180 );
+						iisample.set_nrchi_upper_boundary( iisample.nrchi_upper_boundary() + 180 );
+					}
+					iisample.set_chi_mean( last_chi, iisample.chi_mean()[ last_chi ] + 180 );
+					desymm_rots[ 2*ii ] = iisample;
+				}
+
+				rotamers.swap( desymm_rots );
+			}
+		}
+		return rotamers;
 	} else {
 		/// No rotamer library.  Return one-element vector
 		DunbrackRotamerSampleDataVector one_element_vector( 1 );

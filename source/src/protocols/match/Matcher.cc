@@ -187,7 +187,6 @@ void Matcher::add_upstream_restype_for_constraint(
 	assert( restype->aa() <= core::chemical::num_canonical_aas );
 	assert( build_set_id_for_restype_[ cst_id ].find( restype->name() ) == build_set_id_for_restype_[ cst_id ].end() );
 
-
 	if ( ! upstream_builders_[ cst_id ] ) {
 		upstream::ProteinUpstreamBuilderOP prot_sc_builder = new upstream::ProteinUpstreamBuilder;
 		/// default to dunbrack sampler
@@ -205,6 +204,22 @@ void Matcher::add_upstream_restype_for_constraint(
 	prot_sc_builder->add_build_set( build_set );
 	build_set_id_for_restype_[ cst_id ][ restype->name() ] = prot_sc_builder->n_build_sets();
 
+}
+
+void Matcher::desymmeterize_upstream_restype_for_constraint(
+	Size cst_id
+)
+{
+	upstream::ProteinUpstreamBuilderOP prot_sc_builder = dynamic_cast< upstream::ProteinUpstreamBuilder * > ( upstream_builders_[ cst_id ]() );
+	if ( ! prot_sc_builder ) {
+		utility_exit_with_message( "Could not desymmeterize the upstream builder for geometric constraint " + utility::to_string( cst_id ) + ".  Desymmeterization is only available for protein residues." );
+	}
+	/// Replace the existing sampler with one that is desymmeterized.  This will over-write any other stored data in the DunbrackSCSampler if any
+	/// other data gets added to this class.  If new data should be added, then the ProteinUpstreamBuilder needs to be modified to hand out non-const
+	/// access to its sampler.
+	upstream::DunbrackSCSamplerOP sampler = new upstream::DunbrackSCSampler;
+	sampler->set_desymmeterize( true );
+	prot_sc_builder->set_sampler( sampler );
 }
 
 void Matcher::set_sample_startegy_for_constraint(
@@ -347,7 +362,7 @@ void Matcher::add_secondary_upstream_match_geometry_for_constraint(
 	utility::vector1< Size > const & candidate_atids,
 	utility::vector1< Size > const & target_atids,
 	toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
-	std::string SecMatchStr,
+	std::string sec_match_str,
  	core::pose::Pose const & upstream_pose
 )
 {
@@ -395,7 +410,7 @@ void Matcher::add_secondary_upstream_match_geometry_for_constraint(
 	//Description: added score term evaluator and combine with geometrySecMatchRPE
 	SecMatchResiduePairEvaluatorOP secMatch_evaluator
 				= SecMatchEvaluatorFactory::create_SecMatchResiduePairEvaluatorOP( *mcfi, target_atids, candidate_atids,
-								SecMatchStr, upstream_pose );
+								sec_match_str, upstream_pose );
 	algorithm.add_evaluator_for_target_restype( target_restype, secMatch_evaluator, mcfi->index() );
 	//END Kui
 }
@@ -408,7 +423,7 @@ Matcher::add_secondary_downstream_match_geometry_for_constraint(
 	utility::vector1< Size > const & candidate_atids,
 	utility::vector1< Size > const & target_atids,
 	toolbox::match_enzdes_util::MatchConstraintFileInfoCOP mcfi,
-	std::string SecMatchStr,
+	std::string sec_match_str,
  	core::pose::Pose const & upstream_pose,
   bool catalytic_bond
 )
@@ -462,7 +477,7 @@ Matcher::add_secondary_downstream_match_geometry_for_constraint(
 	//Description: added score term evaluator and combine with geometrySecMatchRPE
 	SecMatchResiduePairEvaluatorOP secMatch_evaluator
 				= SecMatchEvaluatorFactory::create_SecMatchResiduePairEvaluatorOP( *mcfi, target_atids, candidate_atids,
-							SecMatchStr, upstream_pose );
+							sec_match_str, upstream_pose );
 	algorithm.add_evaluator( secMatch_evaluator, mcfi->index() );
 	//End Kui
 
@@ -659,6 +674,11 @@ Matcher::initialize_from_task(
 ///       # which sets a default REQUISIT_PROBABILITY of 2 / #chi-bins.  For HIS, this is
 ///       # 2 / 36th, since there are 12 bins for chi 2 and 3 bins for chi1 (36 chi bins total).
 ///
+///       #or
+///       DESYMMETERIZE
+///       # the line above instructs the DunbrackSCSampler to expand the sampling for the symmetric amino acids
+///       # around the final (symmetric) chi angle for ASP/GLU/PHE/TYR.  For example, it would treat ASP's sampling
+///       # as if there's a difference between OD1 and OD2.
 ///
 ///   ALGORITHM_INFO::END
 ///
@@ -693,7 +713,7 @@ void Matcher::initialize_from_file(
 			for ( Size kk = 1; kk <= jj_mcfis.size(); ++kk ) {
 
 				//Author: Kui Chan Date:101309
-				std::string SecMatchStr("");
+				std::string sec_match_str("");
 
 				bool secondary_matching( false );
 				bool secondary_match_upstream_residue( false );
@@ -719,8 +739,7 @@ void Matcher::initialize_from_file(
 							llstream >> cutoff;
 							TR << "Setting dunbrack energy cutoff for restype " << upres[jj]->name() << " in constraint " << ii << " to " << cutoff << "." << std::endl;
 							set_fa_dun_cutoff_for_constraint( ii, upres[jj], cutoff );
-						}
-						else if ( first == "IGNORE_UPSTREAM_PROTON_CHI" ) {
+						} else if ( first == "IGNORE_UPSTREAM_PROTON_CHI" ) {
 							/// iterate across the proton chi, set their sample strategy to no_samples.
 							upstream::SampleStrategyData nosamps; nosamps.set_strategy( upstream::no_samples );
 							for ( Size mm = 1; mm <= upres[ jj ]->n_proton_chi(); ++mm ) {
@@ -1003,8 +1022,9 @@ void Matcher::initialize_from_file(
 							if( !secondary_matching ){
 								utility_exit_with_message( "SCORING_SECMATCH line detected without previous SECONDARY_MATCH specifier.");
 							}
-							SecMatchStr += llstr + "\n";
-
+							sec_match_str += llstr + "\n";
+						} else if ( first == "DESYMMETERIZE" ) {
+							desymmeterize_upstream_restype_for_constraint( ii );
 						} else {
 							utility_exit_with_message( "While parsing ALGORITHM:: match data. Command '" + first +"' not supported on line '" + llstr + "'");
 						}
@@ -1084,11 +1104,11 @@ void Matcher::initialize_from_file(
 								add_secondary_upstream_match_geometry_for_constraint(
 									ii, secondary_match_upstream_geomcst_id, upres[ jj ],
 									ll_downres, candidate_atids, target_atids,
-									jj_mcfis[ kk ], SecMatchStr, *upstream_pose_ );
+									jj_mcfis[ kk ], sec_match_str, *upstream_pose_ );
 							} else {
 								add_secondary_downstream_match_geometry_for_constraint(
 									ii, upres[ jj ], ll_downres,
-									candidate_atids, target_atids, jj_mcfis[ kk ], SecMatchStr, *upstream_pose_,
+									candidate_atids, target_atids, jj_mcfis[ kk ], sec_match_str, *upstream_pose_,
 									jj_mcfis[kk]->is_covalent() );
 							}
 						} else {

@@ -1147,13 +1147,16 @@ MatcherTask::determine_all_match_relevant_downstream_atoms()
 				std::string llstr = info[ ll ];
 				std::istringstream llstream( llstr );
 				std::string first, second;
-				llstream >> first >> second;
-				if( first == "SECONDARY_MATCH:" && second == "UPSTREAM_CST" ){
-					core::Size target_id(0);
-					llstream >> target_id;
-					upstream_matching = true;
-					upstream_only_geom_cst_.insert( std::pair< core::Size, core::Size >( i, target_id ));
-					break;
+				llstream >> first;
+				if( first == "SECONDARY_MATCH:" ) {
+					llstream >> second;
+					if ( second == "UPSTREAM_CST" ){
+						core::Size target_id(0);
+						llstream >> target_id;
+						upstream_matching = true;
+						upstream_only_geom_cst_.insert( std::pair< core::Size, core::Size >( i, target_id ));
+						break;
+					}
 				}
 			}
 			if( upstream_matching ) continue;

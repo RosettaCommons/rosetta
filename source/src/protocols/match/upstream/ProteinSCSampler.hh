@@ -57,8 +57,23 @@ public:
 /// Dunbrack rotamer library.  The samples that are returned are the basic
 /// rotamers and do not include any expansions by the "ex" flags.
 class DunbrackSCSampler : public ProteinSCSampler {
-
 public:
+	DunbrackSCSampler();
+
+	/// @brief Should amino acids that are symmetric about their final chi torsion
+	/// be treated as if they actually are not symmetric?  This can be useful if you
+	/// want to set a constraint to one side of the amino acid and a second constraint
+	/// to the other side.  E.g., let's say you want OD1 on ASP to contact one thing 1,
+	/// and OD2 to contact thing 2.  If you were to specify the constraint to atom type
+	/// OOC, then you wouldn't be able to prevent the case where OD1 contacted both things.
+	/// This functionality can be activated in the matcher constraint file by adding
+	/// DESYMMETERIZE
+	/// to the ALGORITHM_INFO:: block in a matcher constraint file.  E.g.
+	/// <APL NOTE: FILL IN THE REST OF THE COMMENTS HERE>
+	void set_desymmeterize( bool setting );
+
+	bool desymmeterize() const;
+
 	virtual
 	DunbrackRotamerSampleDataVector
 	samples(
@@ -66,6 +81,8 @@ public:
 		core::chemical::ResidueType const & restype
 	) const;
 
+private:
+	bool desymmeterize_;
 };
 
 }

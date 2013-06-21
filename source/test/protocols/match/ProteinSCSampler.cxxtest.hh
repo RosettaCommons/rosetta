@@ -71,7 +71,6 @@ class ProteinSCSamplerTests : public CxxTest::TestSuite {
 	// --------------- Test Cases --------------- //
 	void test_sc_sampler_ctor() {
 		using namespace core;
-		/// This test only works with the dun02 library; dun08 has a different number of rotamer wells
 
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
@@ -130,6 +129,49 @@ class ProteinSCSamplerTests : public CxxTest::TestSuite {
 			}
 			std::cout << std::endl;
 		}*/
+
+	}
+
+	void test_sc_sampler_desymmeterize() {
+		using namespace core;
+
+		core::pose::Pose trpcage = create_trpcage_ideal_pose();
+		OriginalBackboneBuildPointOP res2bp = new OriginalBackboneBuildPoint( trpcage.residue( 2 ), 1 );
+
+		DunbrackSCSampler dunsampler_symm, dunsampler_desymm;
+		dunsampler_desymm.set_desymmeterize( true );
+
+		TS_ASSERT( dunsampler_symm.desymmeterize() == false );
+		TS_ASSERT( dunsampler_desymm.desymmeterize() == true );
+
+		/// residue 9 on trpcage is ASP
+		DunbrackSCSampler::DunbrackRotamerSampleDataVector asp_samps_symm(
+			dunsampler_symm.samples( *res2bp, trpcage.residue_type( 9 ) ));
+
+		DunbrackSCSampler::DunbrackRotamerSampleDataVector asp_samps_desymm(
+			dunsampler_desymm.samples( *res2bp, trpcage.residue_type( 9 ) ));
+
+		TS_ASSERT( asp_samps_symm.size() * 2 == asp_samps_desymm.size() );
+
+		for ( core::Size ii = 1; ii <= asp_samps_symm.size(); ++ii ) {
+			core::Size ii1 = 2*ii - 1;
+			core::Size ii2 = 2*ii;
+
+			TS_ASSERT_DELTA( asp_samps_symm[ ii ].probability() * 0.5, asp_samps_desymm[ ii1 ].probability(), 1e-6 );
+			TS_ASSERT_DELTA( asp_samps_symm[ ii ].probability() * 0.5, asp_samps_desymm[ ii2 ].probability(), 1e-6 );
+
+			TS_ASSERT_DELTA( asp_samps_symm[ ii ].chi_mean()[2]      , asp_samps_desymm[ ii1 ].chi_mean()[2], 1e-6 );
+			TS_ASSERT_DELTA( asp_samps_symm[ ii ].chi_mean()[2] + 180, asp_samps_desymm[ ii2 ].chi_mean()[2], 1e-6 );
+
+			TS_ASSERT( asp_samps_symm[ ii ].nrchi_sample() );
+			if ( asp_samps_symm[ ii ].nrchi_sample() ) {
+				TS_ASSERT_DELTA( asp_samps_symm[ ii ].nrchi_lower_boundary()      , asp_samps_desymm[ ii1 ].nrchi_lower_boundary(), 1e-6 );
+				TS_ASSERT_DELTA( asp_samps_symm[ ii ].nrchi_lower_boundary() + 180, asp_samps_desymm[ ii2 ].nrchi_lower_boundary(), 1e-6 );
+
+				TS_ASSERT_DELTA( asp_samps_symm[ ii ].nrchi_upper_boundary()      , asp_samps_desymm[ ii1 ].nrchi_upper_boundary(), 1e-6 );
+				TS_ASSERT_DELTA( asp_samps_symm[ ii ].nrchi_upper_boundary() + 180, asp_samps_desymm[ ii2 ].nrchi_upper_boundary(), 1e-6 );
+			}
+		}
 
 	}
 

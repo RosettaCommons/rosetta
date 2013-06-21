@@ -208,6 +208,8 @@ public:
 		core::chemical::ResidueTypeCOP restype
 	);
 
+	void desymmeterize_upstream_restype_for_constraint( Size cst_id );
+
 	void set_sample_startegy_for_constraint(
 		Size cst_id,
 		core::chemical::ResidueTypeCOP restype,
