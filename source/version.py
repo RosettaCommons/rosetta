@@ -49,9 +49,9 @@ def svn_version():
         if (res  or  not output  or not output.isdigit() ): commit_id = 'failed_to_get_id' # simple validation
         else: commit_id = str(int(output))
 
-    if commit_id != 'unknown': ver = commit_id + ':' + ver
-
     commit_date = os.popen("git log %s -1 --format='%%ci'" % ver).read().strip()  #[:-6]
+
+    if commit_id != 'unknown': ver = commit_id + ':' + ver
 
     file( os.path.normpath("src/devel/svn_version.cc"), "w" )          .write( version_cc_template % vars())
     file( os.path.normpath("src/python/bindings/src/version.py"), "w" ).write( version_py_template % vars())
