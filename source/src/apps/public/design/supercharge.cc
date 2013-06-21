@@ -216,7 +216,7 @@ public:
 		else {
 			//score pose for hbond detection
 			using namespace core::scoring;
-			ScoreFunctionOP scorefxn = getScoreFunction();
+			ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH );
 			scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 			energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 			scorefxn->set_energy_method_options( energymethodoptions );
@@ -442,7 +442,7 @@ public:
 		task_factory->push_back( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Asc" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
 
 		using namespace core::scoring;
-		ScoreFunctionOP scorefxn = getScoreFunction();
+		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH );
 		scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 		energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn->set_energy_method_options( energymethodoptions );
@@ -501,7 +501,7 @@ public:
     task_factory->push_back(new operation::InitializeFromCommandline()); //use_input_sc
 
 		using namespace core::scoring;
-		ScoreFunctionOP scorefxn = getScoreFunction();
+		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH );
 		scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 		energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn->set_energy_method_options( energymethodoptions );
@@ -806,7 +806,7 @@ public:
 		task_factory->push_back( new operation::ReadResfile( out_path_ + '/' + "resfile_output_Rsc" ) ); // reads the resfile previously created, adds to the user resfile (if provided)
 
 		using namespace core::scoring;
-		ScoreFunctionOP scorefxn = getScoreFunction();
+		ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( PRE_TALARIS_2013_STANDARD_WTS, SCORE12_PATCH );
 		scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 		energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
 		scorefxn->set_energy_method_options( energymethodoptions );
@@ -1070,7 +1070,7 @@ public:
 	void
 	energy_comparison( Pose & native, Pose & pose ) {
 
-		TR << "Assert native and design have same number of residues" << std::endl;
+		TR << "Comparing energies of native and designed" << std::endl;
 		assert(native.total_residue() == pose.total_residue());
 
     using namespace core::pack::task;
@@ -1093,10 +1093,11 @@ public:
 		//protocols::simple_moves::MinMoverOP min_sc = new protocols::simple_moves::MinMover( movemap_sc, scorefxn_, "dfpmin_armijo", 0.01, true );
 		//protocols::simple_moves::MinMoverOP min_scbb = new protocols::simple_moves::MinMover( movemap_scbb, scorefxn_, "dfpmin_armijo", 0.01, true );
 
-
+		TR << "Packing designed" << std::endl;
     packrot_mover->apply( pose );
     packrot_mover->apply( pose );
     packrot_mover->apply( pose );
+		TR << "Packing native" << std::endl;
     packrot_mover->apply( native );
     packrot_mover->apply( native );
     packrot_mover->apply( native );

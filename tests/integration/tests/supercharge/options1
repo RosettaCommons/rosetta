@@ -6,13 +6,13 @@
 
 -surface_residue_cutoff 16
 -include_arg
--include_lys
+#-include_lys
 -refweight_arg -1.98
--refweight_lys -1.65
+#-refweight_lys -1.65
 -dont_mutate_glyprocys true
 -dont_mutate_correct_charge true
 -dont_mutate_hbonded_sidechains true
--nstruct 2
+-nstruct 1
 -compare_residue_energies_all false
 -compare_residue_energies_mut true
 
