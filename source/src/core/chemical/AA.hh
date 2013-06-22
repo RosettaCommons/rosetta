@@ -74,9 +74,28 @@ enum AA {
 	na_rad,
 	na_rcy,
 	na_ura,
+	//D-amino acids 29-47.  Keep these together as a group.
+	aa_dal,
+	aa_dcs,
+	aa_das,
+	aa_dgu,
+	aa_dph,
+	aa_dhi,
+	aa_dil,
+	aa_dly,
+	aa_dle,
+	aa_dme,
+	aa_dan,
+	aa_dpr,
+	aa_dgn,
+	aa_dar,
+	aa_dse,
+	aa_dth,
+	aa_dva,
+	aa_dtr,
+	aa_dty,
 	// virtual
 	aa_vrt,
-
 	// unknown
 	aa_unk,
 	num_aa_types = aa_unk //keep this guy last

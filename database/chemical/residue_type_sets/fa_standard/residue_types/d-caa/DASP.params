@@ -3,7 +3,7 @@
 NAME DASP
 IO_STRING DAS X
 TYPE POLYMER #residue type
-AA UNK
+AA DAS
 ATOM  N   Nbb  NH1  -0.47
 ATOM  CA  CAbb CT1  0.07
 ATOM  C   CObb C    0.51

@@ -61,6 +61,26 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "TRP" ] = aa_trp;
 	n2aa[ "TYR" ] = aa_tyr;
 
+	n2aa[ "DAL" ] = aa_dal;
+	n2aa[ "DCS" ] = aa_dcs;
+	n2aa[ "DAS" ] = aa_das;
+	n2aa[ "DGU" ] = aa_dgu;
+	n2aa[ "DPH" ] = aa_dph;
+	n2aa[ "DHI" ] = aa_dhi;
+	n2aa[ "DIL" ] = aa_dil;
+	n2aa[ "DLY" ] = aa_dly;
+	n2aa[ "DLE" ] = aa_dle;
+	n2aa[ "DME" ] = aa_dme;
+	n2aa[ "DAN" ] = aa_dan;
+	n2aa[ "DPR" ] = aa_dpr;
+	n2aa[ "DGN" ] = aa_dgn;
+	n2aa[ "DAR" ] = aa_dar;
+	n2aa[ "DSE" ] = aa_dse;
+	n2aa[ "DTH" ] = aa_dth;
+	n2aa[ "DVA" ] = aa_dva;
+	n2aa[ "DTR" ] = aa_dtr;
+	n2aa[ "DTY" ] = aa_dty;
+
 	n2aa[ "ADE" ] = na_ade;
 	n2aa[ "CYT" ] = na_cyt;
 	n2aa[ "GUA" ] = na_gua;
@@ -118,6 +138,26 @@ std::map< char, AA > setup_oneletter2aa() {
 	l2aa[ 'Z' ] = aa_unk;
 	l2aa[ 'X' ] = aa_vrt;
 
+	//vmullig -- The conflict for the D-amino acids is also a problem:
+	/*l2aa[ "A" ] = aa_dal;
+	l2aa[ "C" ] = aa_dcs;
+	l2aa[ "D" ] = aa_das;
+	l2aa[ "E" ] = aa_dgu;
+	l2aa[ "F" ] = aa_dph;
+	l2aa[ "H" ] = aa_dhi;
+	l2aa[ "I" ] = aa_dil;
+	l2aa[ "K" ] = aa_dly;
+	l2aa[ "L" ] = aa_dle;
+	l2aa[ "M" ] = aa_dme;
+	l2aa[ "N" ] = aa_dan;
+	l2aa[ "P" ] = aa_dpr;
+	l2aa[ "Q" ] = aa_dgn;
+	l2aa[ "R" ] = aa_dar;
+	l2aa[ "S" ] = aa_dse;
+	l2aa[ "T" ] = aa_dth;
+	l2aa[ "V" ] = aa_dva;
+	l2aa[ "W" ] = aa_dtr;
+	l2aa[ "Y" ] = aa_dty;*/
 	return l2aa;
 }
 

@@ -3,7 +3,7 @@
 NAME DTHR
 IO_STRING DTH X
 TYPE POLYMER #residue type
-AA UNK
+AA DTH
 ATOM  N   Nbb  NH1  -0.47
 ATOM  CA  CAbb CT1  0.07
 ATOM  C   CObb C    0.51

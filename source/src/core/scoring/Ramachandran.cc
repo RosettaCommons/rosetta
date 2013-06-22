@@ -91,6 +91,51 @@ Ramachandran::Ramachandran(
 	read_rama(rama_map_filename, use_bicubic_interpolation);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+/// @brief Returns true if passed a core::chemical::AA corresponding to a
+/// D-amino acid, and false otherwise.
+bool
+Ramachandran::is_d_aminoacid(
+	AA const res_aa
+) const {
+	using namespace core::chemical;
+	if(res_aa >= aa_dal && res_aa <= aa_dty) return true;
+	return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+/// @brief When passed a d-amino acid, returns the l-equivalent.  Returns
+/// aa_unk otherwise.
+core::chemical::AA
+Ramachandran::get_l_equivalent(
+	AA const d_aa
+) const {
+	using namespace core::chemical;
+	if(d_aa==aa_dal) return aa_ala;
+	else if(d_aa==aa_dcs) return aa_cys;
+	else if(d_aa==aa_das) return aa_asp;
+	else if(d_aa==aa_dgu) return aa_glu;
+	else if(d_aa==aa_dph) return aa_phe;
+	else if(d_aa==aa_dhi) return aa_his;
+	else if(d_aa==aa_dil) return aa_ile;
+	else if(d_aa==aa_dly) return aa_lys;
+	else if(d_aa==aa_dle) return aa_leu;
+	else if(d_aa==aa_dme) return aa_met;
+	else if(d_aa==aa_dan) return aa_asn;
+	else if(d_aa==aa_dpr) return aa_pro;
+	else if(d_aa==aa_dgn) return aa_gln;
+	else if(d_aa==aa_dar) return aa_arg;
+	else if(d_aa==aa_dse) return aa_ser;
+	else if(d_aa==aa_dth) return aa_thr;
+	else if(d_aa==aa_dva) return aa_val;
+	else if(d_aa==aa_dtr) return aa_trp;
+	else if(d_aa==aa_dty) return aa_tyr;
+
+	return aa_unk;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -300,16 +345,25 @@ Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
 			/// Danger -- not threadsafe.
 			const_cast< Ramachandran * > (this)->init_rama_sampling_table('X');
 		}
-		
-		Size n_torsions = rama_sampling_table_[res_aa].size();
+
+		AA res_aa2 = res_aa;
+		if(is_d_aminoacid(res_aa)) res_aa2=get_l_equivalent(res_aa); //Use the equivalent L-amino acid if this is a D-amino acid.
+
+		Size n_torsions = rama_sampling_table_[res_aa2].size();
 		Size index = numeric::random::random_range(1, n_torsions);
 		
 		// following lines set phi and set to values drawn proportionately from Rama space
 		// plus or minus uniform noise equal to half the bin width.
-		phi = rama_sampling_table_[res_aa][index][1] +
+		phi = rama_sampling_table_[res_aa2][index][1] +
 		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
-		psi = rama_sampling_table_[res_aa][index][2] +
+		psi = rama_sampling_table_[res_aa2][index][2] +
 		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
+
+		//Invert phi and psi if this is a D-amino acid.
+		if(is_d_aminoacid(res_aa)) {
+			phi=360.0-phi;
+			psi=360.0-psi;
+		}
 		// DJM: debug
 		//std::cout << "res_aa: " << res_aa << std::endl;
 		//std::cout << "phi: " << phi << std::endl;
@@ -532,23 +586,35 @@ Ramachandran::eval_rama_score_residue(
 
 	//int const res_aa( rsd.aa() );
 	// 	int const res_aa( pose.residue( res ).aa() );
+
+	core::chemical::AA res_aa2 = res_aa;
+	core::Real phi2 = phi;
+	core::Real psi2 = psi;
+
+	if(is_d_aminoacid(res_aa)) { //If this is a D-amino acid, invert phi and psi and use the corresponding L-amino acid for the calculation
+		res_aa2 = get_l_equivalent(res_aa);
+		phi2 = 360.0-phi;
+		psi2 = 360.0-psi;
+	}
+
 	if ( use_bicubic_interpolation ) {
 
-		rama = rama_energy_splines_[ res_aa ].F(phi,psi);
-		drama_dphi = rama_energy_splines_[ res_aa ].dFdx(phi,psi);
-		drama_dpsi = rama_energy_splines_[ res_aa ].dFdy(phi,psi);
+		rama = rama_energy_splines_[ res_aa2 ].F(phi2,psi2);
+		drama_dphi = rama_energy_splines_[ res_aa2 ].dFdx(phi2,psi2);
+		drama_dpsi = rama_energy_splines_[ res_aa2 ].dFdy(phi2,psi2);
+		//if(is_d_aminoacid(res_aa)) { printf("rama = %.4f\n", rama); fflush(stdout); } //DELETE ME!
 		return; // temp -- just stop right here
 	} else {
 
 		FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
-		FArray2A< Real > const rama_for_res( ram_probabil_(1, 1, ss_type, res_aa), zero_index, zero_index );
+		FArray2A< Real > const rama_for_res( ram_probabil_(1, 1, ss_type, res_aa2), zero_index, zero_index );
 		Real interp_p,dp_dphi,dp_dpsi;
 
 		using namespace numeric::interpolation::periodic_range::half;
-		interp_p = bilinearly_interpolated( phi, psi, binw_, n_phi_, rama_for_res, dp_dphi, dp_dpsi );
+		interp_p = bilinearly_interpolated( phi2, psi2, binw_, n_phi_, rama_for_res, dp_dphi, dp_dpsi );
 
 		if ( interp_p > 0.0 ) {
-			rama = ram_entropy_(ss_type, res_aa ) - std::log( static_cast< double >( interp_p ) );
+			rama = ram_entropy_(ss_type, res_aa2 ) - std::log( static_cast< double >( interp_p ) );
 			double const interp_p_inv_neg = -1.0 / interp_p;
 			drama_dphi = interp_p_inv_neg * dp_dphi;
 			drama_dpsi = interp_p_inv_neg * dp_dpsi;

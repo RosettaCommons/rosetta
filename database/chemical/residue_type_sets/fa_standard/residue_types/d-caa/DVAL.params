@@ -3,7 +3,7 @@
 NAME DVAL
 IO_STRING DVA X
 TYPE POLYMER #residue type
-AA UNK
+AA DVA
 ATOM  N   Nbb  NH1  -0.47
 ATOM  CA  CAbb CT1  0.07
 ATOM  C   CObb C    0.51

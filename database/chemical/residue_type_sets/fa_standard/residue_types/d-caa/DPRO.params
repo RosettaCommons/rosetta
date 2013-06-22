@@ -3,7 +3,7 @@
 NAME DPRO
 IO_STRING DPR X
 TYPE POLYMER #residue type
-AA UNK
+AA DPR
 ATOM  N   Npro N    -0.29
 ATOM  CA  CAbb CP1  0.02
 ATOM  C   CObb C    0.51

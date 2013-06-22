@@ -23,6 +23,7 @@
 #include <core/chemical/VariantType.hh>
 
 // Project headers
+#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/TorsionID.hh>
@@ -86,7 +87,7 @@ RamachandranEnergy::residue_energy(
 			return;
 	}
 
-	if ( rsd.is_protein() && rsd.aa() <= chemical::num_canonical_aas ) {
+	if ( rsd.is_protein() && (rsd.aa() <= chemical::num_canonical_aas || (rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty) ) ) {
 		Real rama_score, drama_dphi, drama_dpsi;
 		potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
 		emap[ rama ] += rama_score;

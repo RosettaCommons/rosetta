@@ -65,6 +65,15 @@ public:
 
 	virtual ~Ramachandran() ; // auto-removing definition from header{}
 
+	bool
+	is_d_aminoacid(
+		AA const res_aa
+	) const;
+
+	AA
+	get_l_equivalent(
+		AA const d_aa
+	) const;
 
 	Real
 	eval_rama_score_residue(
