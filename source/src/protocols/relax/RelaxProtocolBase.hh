@@ -148,7 +148,7 @@ protected:
 
 
 
-private:  // Essentially MoveMap settings
+protected:  // Essentially MoveMap settings
 
 	bool fix_omega_;
 	bool minimize_bond_lengths_;

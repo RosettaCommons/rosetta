@@ -367,13 +367,27 @@ FastRelax::parse_my_tag(
 	bool batch = tag->getOption< bool >( "batch", false );
 	cartesian (tag->getOption< bool >( "cartesian", false ) );
 
-	if ( tag->getOption< bool >( "bondangle", false ) )
+	if ( tag->getOption< bool >( "bondangle", false ) ) {
+		minimize_bond_angles_ = true;
 		mm->set( core::id::THETA, true );
+	}
 
-	if ( tag->getOption< bool >( "bondlength", false ) )
+	if ( tag->getOption< bool >( "bondlength", false ) ) {
+		minimize_bond_lengths_ = true;
 		mm->set( core::id::D, true );
+	}
 
 	set_movemap(mm);
+
+	if ( tag->hasOption( "min_type" ) ) {
+		min_type_ = tag->getOption< std::string >( "min_type" );
+	} else {
+		//fpd if no minimizer is specified, and we're doing flexible bond minimization
+		//fpd   we should use lbfgs (dfpmin is way too slow)
+		if ( cartesian_ || minimize_bond_angles_ || minimize_bond_lengths_ )
+			min_type_ = "lbfgs_armijo_nonmonotone";
+	}
+
 
 	if (batch) {
 		set_script_to_batchrelax_default( default_repeats_ );
