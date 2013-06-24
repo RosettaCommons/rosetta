@@ -1,0 +1,321 @@
+Here are the command lines + infiles to run 11 modes you requested on the GAGU duplex. I have tested and ensure that all command lines work on the current version of Rosetta.
+
+I hope that you wouldn't have trouble using them for your integration tests.
+
+Two modes that involves 'internal moves' to combine two chunks are not included.
+(but if you are satisfied with the stuff below, I can create and send these remaining two in the next few days.).
+
+Infiles :
+ (1) lower_helix.pdb : 2 WC BP helix
+        C2 - G15
+        A1 - U16
+
+ (2) upper_helix.pdb : 2 WC BP helix
+        U8 - A9
+        G7 - C10
+
+ (3) rosetta_mode.pdb : Full length GAGU duplex Rosetta model (used as here native)
+        U8 - A9
+        G7 - C10
+        U6 - G11
+        G5 - G12
+        A4 - G13
+        G3 - U14
+        C2 - G15
+        A1 - U16
+
+ (4) fasta : 
+         fasta file containg full-length sequence
+
+ (5) in_region_7_1.out : 
+         Silent_file containing structures with nts 1-3 and 12-16.
+         Use as input for (3) Append residue (starting from previous region in silent_file)
+
+ (6) in_region_5_3.out : 
+         Silent_file containing structures with nts 1-5 and 7-16
+         Use as input for chain-closure steps
+
+ (7) in_region_8_0.out : 
+         Silent_file containing structures with nts 1-2 and 13-16
+         Use as input for (9) Sample virtual ribose (and bulge nucleotide) after floating
+         base step (via prepend)
+
+ (8) region_7_2_sample.out : 
+         Silent_file containing structures with nts 1-4 and 12-16
+         Use as input for clustering step. 
+
+
+Currently all modes should run in ~1-3 mins in integration_test mode.
+Except for (11) Append residue and CCD close chain which took 7 mins to run.
+
+(1) Append residue to 5' end of a loop:
+
+<bin_folder>/swa_rna_main.macosgccrelease -database <database_folder>
+
+~/ROSETTA/git/Rosetta/main/source/bin/swa_rna_main.macosgccrelease \
+   -algorithm rna_sample \
+   -database ~/ROSETTA/git/Rosetta/main/database \
+   -sample_res 3 \
+   -input_res 1 2 15 16 \
+   -s lower_helix.pdb \
+   -out:file:silent region_0_1_sample.out \
+   -native rosetta_model.pdb \
+   -in:file:silent_struct_type binary_rna \
+   -fixed_res  1 8 9 16 \
+   -rmsd_res  3 4 5 6 11 12 13 14 \
+   -jump_point_pairs 1-16 8-9 \
+   -alignment_res  1-16 8-9 \
+   -fasta fasta \
+   -global_sample_res_list  3 4 5 6 11 12 13 14 \
+   -cutpoint_open  8 \
+   -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts \
+   -integration_test true \
+   -mute all \
+   -analytic_etable_evaluation 0
+
+(2) Prepend residue to 3' end of a loop:
+
+~/ROSETTA/git/Rosetta/main/source/bin/swa_rna_main.macosgccrelease \
+   -algorithm rna_sample \
+   -database ~/ROSETTA/git/Rosetta/main/database \
+   -sample_res 14 \
+   -s lower_helix.pdb \
+   -input_res 1 2 15 16 \
+   -in:file:silent_struct_type binary_rna \
+   -out:file:silent region_9_0_sample.out \
+   -native rosetta_model.pdb \
+   -fixed_res 1 8 9 16 \
+   -rmsd_res 3 4 5 6 11 12 13 14 \
+   -jump_point_pairs 1-16 8-9 \
+   -alignment_res 1-16 8-9 \
+   -fasta fasta \
+   -global_sample_res_list 3 4 5 6 11 12 13 14 \
+   -cutpoint_open  8 \
+   -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts \
+   -integration_test true \
+   -mute all \
+   -analytic_etable_evaluation 0
+
+(3) Append residue (starting from previous region in silent_file):
+
+~/ROSETTA/git/Rosetta/main/source/bin/swa_rna_main.macosgccrelease \
+   -algorithm rna_sample \
+   -database ~/ROSETTA/git/Rosetta/main/database \
+   -sample_res 4 \
+   -input_res 1 2 3 12 13 14 15 16 \
+   -tags S_000001 \
+   -in:file:silent in_region_7_1.out \
+   -in:file:silent_struct_type binary_rna \
+   -out:file:silent region_7_2_sample.out \
+   -native rosetta_model.pdb \
+   -fixed_res  1 8 9 16 \
+   -rmsd_res  3 4 5 6 11 12 13 14 \
+   -jump_point_pairs 1-16 8-9 \
+   -alignment_res  1-16 8-9 \
+   -fasta fasta \
+   -global_sample_res_list 3 4 5 6 11 12 13 14 \
+   -cutpoint_open  8 \
+   -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts \
+   -integration_test true \
+   -mute all \
+   -analytic_etable_evaluation 0
+
+(4) Clustering:
+
+~/ROSETTA/git/Rosetta/main/source/bin/swa_rna_main.macosgccrelease \
+   -algorithm rna_cluster \
+   -database ~/ROSETTA/git/Rosetta/main/database \
+   -suite_cluster_radius 1.0 \
+   -loop_cluster_radius 0.7 \
+   -clusterer_quick_alignment true \
+   -sample_res  12 \
+   -input_res 1 2 3 4 13 14 15 16 \
+   -tags S_000001 \
+   -in:file:silent region_7_2_sample.out \
+   -in:file:silent_struct_type binary_rna \
+   -out:file:silent region_7_2_cluster.out \
+   -native rosetta_model.pdb \
+   -fixed_res 1 8 9 16 \
+   -rmsd_res 3 4 5 6 11 12 13 14 \
+   -jump_point_pairs 1-16 8-9 \
+   -alignment_res 1-16 8-9 \
+   -fasta fasta \
+   -global_sample_res_list  3 4 5 6 11 12 13 14 \
+   -native_alignment_res 2 3 4 5 6 7 10 11 12 13 14 15 \
+   -cutpoint_open 8 \
+   -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts \
+   -integration_test true \
+   -mute all \
+   -analytic_etable_evaluation 0
+
+
+(5) Prepend residue to 5' terminus:
+
+~/ROSETTA/git/Rosetta/main/source/bin/swa_rna_main.macosgccrelease \
+   -algorithm rna_sample \
+   -database ~/ROSETTA/git/Rosetta/main/database \
+   -sample_res 6 \
+   -s upper_helix.pdb \
+   -input_res 7 8 9 10 \
+   -in:file:silent_struct_type binary_rna \
+   -out:file:silent region_4_5_sample.out \
+   -native rosetta_model.pdb \
+   -fixed_res 1 8 9 16 \
+   -rmsd_res 3 4 5 6 11 12 13 14 \
+   -jump_point_pairs 1-16 8-9 \
+   -alignment_res 1-16 8-9 \
+   -fasta fasta \
+   -global_sample_res_list 3 4 5 6 11 12 13 14 \
+   -cutpoint_open  8 \
+   -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts \
+   -integration_test true \
+   -mute all \
+   -analytic_etable_evaluation 0
+
+(6) Append residue to 3' terminus:
+
+~/ROSETTA/git/Rosetta/main/source/bin/swa_rna_main.macosgccrelease \
+   -algorithm rna_sample \
+   -database ~/ROSETTA/git/Rosetta/main/database \
+   -sample_res 11 \
+   -s upper_helix.pdb \
+   -input_res 7 8 9 10 \
+   -in:file:silent_struct_type binary_rna \
+   -out:file:silent region_5_6_sample.out \
+   -native rosetta_model.pdb \
+   -fixed_res 1 8 9 16 \
+   -rmsd_res 3 4 5 6 11 12 13 14 \
+   -jump_point_pairs 1-16 8-9 \
+   -alignment_res 1-16 8-9 \
+   -fasta fasta \
+   -global_sample_res_list 3 4 5 6 11 12 13 14 \
+   -cutpoint_open  8 \
+   -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts \
+   -integration_test true \
+   -mute all \
+   -analytic_etable_evaluation 0
+
+(7) Prepend dinucleotide (floating base, 5' direction):
+
+~/ROSETTA/git/Rosetta/main/source/bin/swa_rna_main.macosgccrelease \
+   -algorithm rna_sample \
+   -database ~/ROSETTA/git/Rosetta/main/database \
+   -sample_res 4 3 \
+   -floating_base true \
+   -input_res 1 2 15 16 \
+   -s lower_helix.pdb \
+   -in:file:silent_struct_type binary_rna \
+   -out:file:silent region_0_2_sample.out \
+   -native rosetta_model.pdb \
+   -fixed_res 1 8 9 16 \
+   -rmsd_res 3 4 5 6 11 12 13 14 \
+   -jump_point_pairs 1-16 8-9 \
+   -alignment_res 1-16 8-9 \
+   -fasta fasta \
+   -global_sample_res_list 3 4 5 6 11 12 13 14 \
+   -cutpoint_open 8 \
+   -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts \
+   -integration_test true \
+   -mute all \
+   -analytic_etable_evaluation 0
+
+(8) Append dinucleotide (floating base, 3' direction):
+
+~/ROSETTA/git/Rosetta/main/source/bin/swa_rna_main.macosgccrelease \
+   -algorithm rna_sample \
+   -database ~/ROSETTA/git/Rosetta/main/database \
+   -sample_res 13 14 \
+   -floating_base true \
+   -input_res 1 2 15 16 \
+   -s lower_helix.pdb \
+   -in:file:silent_struct_type binary_rna \
+   -out:file:silent region_8_0_sample.out \
+   -native rosetta_model.pdb \
+   -fixed_res 1 8 9 16 \
+   -rmsd_res 3 4 5 6 11 12 13 14 \
+   -jump_point_pairs 1-16 8-9 \
+   -alignment_res 1-16 8-9 \
+   -fasta fasta \
+   -global_sample_res_list 3 4 5 6 11 12 13 14 \
+   -cutpoint_open 8 \
+   -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts \
+   -sampler_native_rmsd_screen true" \
+   -mute all \
+   -analytic_etable_evaluation 0
+
+
+(9) Sample virtual ribose (and bulge nucleotide) after floating base step (via prepend):
+
+~/ROSETTA/git/Rosetta/main/source/bin/swa_rna_main.macosgccrelease \
+   -algorithm rna_sample_virtual_ribose \
+   -database ~/ROSETTA/git/Rosetta/main/database \
+   -sample_res 13 \
+   -sample_virtual_ribose_list 13-P \
+   -input_res 1 2 14 15 16 \
+   -tags S_000001 \
+   -in:file:silent in_region_8_0.out \
+   -in:file:silent_struct_type binary_rna \
+   -out:file:silent sample_virt_ribose_region_8_0.out \
+   -native rosetta_model.pdb \
+   -fixed_res 1 8 9 16 \
+   -rmsd_res 3 4 5 6 11 12 13 14 \
+   -jump_point_pairs 1-16 8-9 \
+   -alignment_res 1-16 8-9 \
+   -fasta fasta \
+   -global_sample_res_list  3 4 5 6 11 12 13 14 \
+   -cutpoint_open 8 \
+   -native rosetta_model.pdb \
+   -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts \
+   -mute all \
+   -analytic_etable_evaluation 0
+
+(10) Prepend residue and CCD close chain:
+
+~/ROSETTA/git/Rosetta/main/source/bin/swa_rna_main.macosgccrelease \
+   -algorithm rna_sample  \
+   -database ~/ROSETTA/git/Rosetta/main/database \
+   -sample_res  6 \
+   -cutpoint_closed 5 \
+   -input_res 1 2 3 4 5 7 8 9 10 11 12 13 14 15 16 \
+   -tags S_000001 \
+   -in:file:silent in_region_5_3.out \
+   -in:file:silent_struct_type binary_rna \
+   -out:file:silent region_4_3_sample.out \
+   -native rosetta_model.pdb \
+   -fixed_res 1 8 9 16 \
+   -rmsd_res 3 4 5 6 11 12 13 14 \
+   -jump_point_pairs 1-16 8-9 \
+   -alignment_res 1-16 8-9 \
+   -fasta fasta \
+   -global_sample_res_list  3 4 5 6 11 12 13 14 \
+   -cutpoint_open 8 \
+   -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts \
+   -integration_test true \
+   -mute all \
+   -analytic_etable_evaluation 0
+
+(11) Append residue and CCD close chain:
+
+~/ROSETTA/git/Rosetta/main/source/bin/swa_rna_main.macosgccrelease \
+   -algorithm rna_sample \
+   -database ~/ROSETTA/git/Rosetta/main/database \
+   -sample_res  6 \
+   -cutpoint_closed 6 \
+   -input_res 1 2 3 4 5 7 8 9 10 11 12 13 14 15 16 \
+   -tags S_000001 \
+   -in:file:silent in_region_5_3.out \
+   -in:file:silent_struct_type binary_rna \
+   -out:file:silent region_5_4_sample.out \
+   -native rosetta_model.pdb \
+   -fixed_res 1 8 9 16 \
+   -rmsd_res 3 4 5 6 11 12 13 14 \
+   -jump_point_pairs 1-16 8-9 \
+   -alignment_res 1-16 8-9 \
+   -fasta fasta \
+   -global_sample_res_list  3 4 5 6 11 12 13 14 \
+   -cutpoint_open 8 \
+   -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts \
+   -integration_test true \
+   -mute all \
+   -analytic_etable_evaluation 0
+

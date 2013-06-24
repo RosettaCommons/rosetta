@@ -377,7 +377,7 @@ rebuild_test(){
 	if (minimize_scorefxn->get_weight( coordinate_constraint) == 0.0) minimize_scorefxn->set_weight( coordinate_constraint, 1.0 ); // go ahead and turn these on
 	check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, minimize_scorefxn );
 	minimize_scorefxn->set_weight( linear_chainbreak, 150.0 );
-	if ( option[cart_min]() & minimize_scorefxn->get_weight( cart_bonded ) == 0.0 ) minimize_scorefxn->set_weight( cart_bonded, 1.0 );
+	if ( option[cart_min]() && ( minimize_scorefxn->get_weight( cart_bonded ) == 0.0 ) ) minimize_scorefxn->set_weight( cart_bonded, 1.0 );
 	if ( option[edensity::mapfile].user() && minimize_scorefxn->get_weight( elec_dens_atomwise ) == 0.0 ) minimize_scorefxn->set_weight( elec_dens_atomwise, 10.0 );
 	stepwise_pose_minimizer.set_scorefxn( minimize_scorefxn );
 

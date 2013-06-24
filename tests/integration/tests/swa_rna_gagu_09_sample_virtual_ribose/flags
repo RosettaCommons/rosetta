@@ -1,0 +1,20 @@
+-algorithm rna_sample_virtual_ribose 
+-sample_res 13 
+-sample_virtual_ribose_list 13-P 
+-input_res 1 2 14 15 16 
+-tags S_000001 
+-in:file:silent in_region_8_0.out 
+-in:file:silent_struct_type binary_rna 
+-out:file:silent sample_virt_ribose_region_8_0.out 
+-native rosetta_model.pdb 
+-fixed_res 1 8 9 16 
+-rmsd_res 3 4 5 6 11 12 13 14 
+-jump_point_pairs 1-16 8-9 
+-alignment_res 1-16 8-9 
+-fasta fasta 
+-global_sample_res_list  3 4 5 6 11 12 13 14 
+-cutpoint_open 8 
+-native rosetta_model.pdb 
+-score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts 
+-mute all 
+-analytic_etable_evaluation 0

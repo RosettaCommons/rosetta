@@ -374,7 +374,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     if rename_to_ref:
         os.renames('new', 'ref')
 
-        print "Just generated 'ref' results;  run again after making changes."
+        print "Just generated 'ref' results [renamed 'new' to 'ref'];  run again after making changes."
         if options.daemon:
             print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests), 0)
 

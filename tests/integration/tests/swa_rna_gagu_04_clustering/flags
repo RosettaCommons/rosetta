@@ -1,0 +1,23 @@
+-algorithm rna_cluster 
+-suite_cluster_radius 1.0 
+-loop_cluster_radius 0.7 
+-clusterer_quick_alignment true 
+-sample_res  12 
+-input_res 1 2 3 4 13 14 15 16 
+-tags S_000001 
+-in:file:silent region_7_2_sample.out 
+-in:file:silent_struct_type binary_rna 
+-out:file:silent region_7_2_cluster.out 
+-native rosetta_model.pdb 
+-fixed_res 1 8 9 16 
+-rmsd_res 3 4 5 6 11 12 13 14 
+-jump_point_pairs 1-16 8-9 
+-alignment_res 1-16 8-9 
+-fasta fasta 
+-global_sample_res_list  3 4 5 6 11 12 13 14 
+-native_alignment_res 2 3 4 5 6 7 10 11 12 13 14 15 
+-cutpoint_open 8 
+-score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts 
+-integration_test true 
+-mute all 
+-analytic_etable_evaluation 0
