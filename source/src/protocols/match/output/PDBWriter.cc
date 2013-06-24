@@ -305,7 +305,7 @@ PDBWriter::create_output_upstream_pose(
 
 	else outpose = new core::pose::Pose( *orig_upstream_pose_ );
 
-	for ( core::Size i = 1; i <= upstream_matchres.size(); ++i ) {
+	for ( core::Size i = 1, count_non_redundant = 1; i <= upstream_matchres.size(); ++i ) {
 		if( redundant_upstream_res.find( i ) != redundant_upstream_res.end() ) continue;
 		//matchres_seqpos.push_back( upstream_matchres[i]->seqpos() );
 		if( write_matchres_only_ ){
@@ -314,12 +314,12 @@ PDBWriter::create_output_upstream_pose(
 			} else {
 				outpose->append_residue_by_bond( *(upstream_matchres[i]) );
 			}
-			outpose->pdb_info()->chain( i, orig_upstream_pose_->pdb_info()->chain( upstream_matchres[i]->seqpos() ) );
-			outpose->pdb_info()->number( i, orig_upstream_pose_->pdb_info()->number( upstream_matchres[i]->seqpos() ) );
+			outpose->pdb_info()->chain( count_non_redundant, orig_upstream_pose_->pdb_info()->chain( upstream_matchres[i]->seqpos() ) );
+			outpose->pdb_info()->number( count_non_redundant, orig_upstream_pose_->pdb_info()->number( upstream_matchres[i]->seqpos() ) );
 		} else {
 			outpose->replace_residue( upstream_matchres[i]->seqpos(), *(upstream_matchres[i]), false );
 		}
-
+		++count_non_redundant; // only increment if we did not encounter a redundant residue on this iteration
 	}
 
 	assemble_remark_lines( *outpose, upstream_matchres, redundant_upstream_res, ex_geom_ids_for_upstream_res );
