@@ -135,7 +135,7 @@ Operator::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filter
 	if( op=="ABS" )
 		operation( ABS );
 	if( op=="XOR" )
-		operation( XOR );	
+		operation( XOR );
 	if( op == "BOOLEAN_OR" )
 		operation( BOOLEAN_OR );
 	if( op != "SUM" && op != "PRODUCT" && op != "NORMALIZED_SUM" && op != "MAX" && op != "MIN" && op != "SUBTRACT" && op != "ABS" && op != "BOOLEAN_OR" && op != "XOR" )
@@ -222,10 +222,11 @@ Operator::compute(
 		runtime_assert( filters().size() == 2 );
 		core::Real const val1( filters()[ 1 ]->report_sm( pose ) );
 		core::Real const val2( filters()[ 2 ]->report_sm( pose ) );
-		core::Real const xor_ret(  negate() ? -(val1*(1-val2)+(1-val1)*val2) : val1*(1-val2)+(1-val1)*val2 );
+		core::Real const xor_ret(  negate() ? -(val1*(1.0-val2)+(1.0-val1)*val2) : val1*(1.0-val2)+(1.0-val1)*val2 );
+//		TR<<"XOR. val1: "<<val1<<" vals: "<<val2<<" xor: "<<xor_ret<<std::endl;
 		return xor_ret;
 	}
-	
+
 	foreach( protocols::filters::FilterOP f, filters() ){
 		core::Real const filter_val( f()->report_sm( pose ) );
 		TR<<"Filter "<<f()->get_type()<<" return "<<filter_val<<std::endl;
