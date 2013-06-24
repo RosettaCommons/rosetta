@@ -98,7 +98,7 @@ def project_test_callback(test, project_path, test_path, test_files, test_inputs
 
 # get in the script directory
 rosetta_cmake_directory = os.path.dirname( sys.argv[0] ) # where this script is located
-os.chdir( rosetta_cmake_directory )
+os.chdir( rosetta_cmake_directory or "./" )
 
 update_version()
 
