@@ -140,6 +140,7 @@ namespace rna {
 		void set_partition_definition( ObjexxFCL::FArray1D< bool > const & setting );
 
 		void set_working_native_pose( core::pose::PoseOP & pose );
+		void set_working_native_pose( core::pose::PoseCOP pose );
 		void set_working_fixed_res(	utility::vector1< core::Size > const & working_fixed_res);
 		void set_rmsd_res_list(	utility::vector1< core::Size > const & rmsd_res_list);
 		void set_working_terminal_res(	utility::vector1< core::Size > const & working_terminal_res);
@@ -200,7 +201,7 @@ namespace rna {
 
 		ObjexxFCL::FArray1D< bool > partition_definition_;
 
-		core::pose::PoseOP working_native_pose_;
+		core::pose::PoseCOP working_native_pose_;
 
 		utility::vector1< core::Size > working_fixed_res_;
 		utility::vector1< core::Size > rmsd_res_list_;

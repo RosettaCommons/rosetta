@@ -56,6 +56,7 @@
 #include <utility/file/file_sys_util.hh> //Add by Parin on May 04, 2011.
 
 //////////////////////////////////////////////////
+#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -100,6 +101,7 @@
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/swa/rna/StepWiseRNA_ResidueSampler.hh>
+#include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
@@ -162,7 +164,7 @@ OPT_KEY( Boolean, filterer_undercount_ribose_rotamers)
 OPT_KEY( Boolean, combine_helical_silent_file)
 OPT_KEY( Boolean, exclude_alpha_beta_gamma_sampling)
 OPT_KEY( Boolean, minimize_and_score_sugar)
-OPT_KEY( Boolean, debug_eplison_south_sugar_mode)
+OPT_KEY( Boolean, debug_epsilon_south_sugar_mode)
 OPT_KEY( Boolean, rebuild_bulge_mode)
 OPT_KEY( Boolean, sampler_include_torsion_value_in_tag)
 OPT_KEY( Boolean, sampler_extra_anti_chi_rotamer)
@@ -263,8 +265,11 @@ OPT_KEY( Boolean, 	integration_test)
 OPT_KEY( Boolean, 	add_virt_root ) //For Fang's electron density code.
 OPT_KEY ( Boolean, constraint_chi )
 OPT_KEY ( Boolean, rm_virt_phosphate )
+OPT_KEY ( Boolean, choose_random )
+
 //////////////////////////////////////////////////////////////////////////////////////
-//Apply chi angle constraint to the purines
+//Apply chi angle constraint to the purines --
+// WHY IS THIS CODE COPIED IN SWA_RNA_ANALYTICAL_CLOSURE?
 void apply_chi_cst(core::pose::Pose & pose, core::pose::Pose const & ref_pose) {
 	using namespace core::conformation;
 	using namespace core::id;
@@ -1051,6 +1056,30 @@ rna_sample_virtual_ribose(){ //July 19th, 2011...rebuild the bulge nucleotides a
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void check_if_silent_file_exists(){
+
+	////////////////////////////////////////////////////////////////////////////////
+	//May 04, 2011. Make sure that the "FINAL" output silent_file doesn't exist at the beginning of the run.
+	//Mainly need this becuase the BIOX2-cluster (Stanford) is not robust...The node containing a slave_job can suddenly become unaviable and slave_job will need to be resubmitted to a new node.
+	//For example:
+	//		Your job <90107> has been killed because the execution host <node-9-30> is no longer available.
+	//		The job will be re-queued and re-run with the same jobId.
+
+	std::string const silent_file = option[ out::file::silent ]();
+
+	std::cout << "Does following file exist? " <<  silent_file << " " << utility::file::file_exists( silent_file )  << std::endl;
+
+	if ( utility::file::file_exists( silent_file ) ) {
+
+		std::cout << "WARNING: silent_file " << silent_file << " already exists! removing..." << std::endl;
+
+		int remove_file_return_value=std::remove( silent_file.c_str() );
+		std::cout << "remove_file_return_value= " <<  remove_file_return_value << " for std::remove(" << silent_file << ")" << std::endl;
+		if( !remove_file_return_value )	utility_exit_with_message("remove_file_return_value=" +ObjexxFCL::string_of(remove_file_return_value )+ "!=0 for std::remove(" + silent_file + ")" );
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
 swa_rna_sample()
@@ -1064,179 +1093,95 @@ swa_rna_sample()
 
 	Output_title_text("Enter swa_rna_sample()");
 
-	clock_t const time_start( clock() );
-
-	//////////////The time needed to create the ResidueTypeSet increase 2^N where N is the number of virtual types in the patches.txt/////////
-	//////////////Since all possible variant types combination are created and store in the ResidueTypeSet!///////////////////////////////////
-	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
-
-	std::cout << "Total time to setup ResidueTypeSet: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
-
-	core::scoring::ScoreFunctionOP scorefxn=create_scorefxn();
-
-	if(option[ minimize_and_score_native_pose]()==true){
-		if(option[ in::file::native ].user()==false) utility_exit_with_message("minimize_and_score_native_pose==True but user did not pass in native pose");
-	}
-	///////////////////////////////
 	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters(true  /*check_for_previously_closed_cutpoint_with_input_pose */);
 	StepWiseRNA_JobParametersCOP job_parameters_COP( job_parameters );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class(job_parameters);
 
   Pose pose;
 	stepwise_rna_pose_setup->apply( pose );
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
+	PoseCOP native_pose = job_parameters_COP->working_native_pose();
 
-	StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener = new StepWiseRNA_VDW_Bin_Screener();
-	if(option[ VDW_rep_screen_info].user() ){
+	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer ( pose.conformation(), get_working_directory(), 400, 400 );
 
-		user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF(option[ VDW_rep_alignment_RMSD_CUTOFF]());
+	core::scoring::ScoreFunctionOP scorefxn=create_scorefxn();
+	if ( option[ constraint_chi ]() )  apply_chi_cst( pose, *job_parameters_COP->working_native_pose() );
 
-		user_input_VDW_bin_screener->set_VDW_rep_delete_matching_res( option[ VDW_rep_delete_matching_res ]() );
+	// following is temporarily turned off... not sure why but always saying that 'file exists' on rhiju's laptop
+	//	check_if_silent_file_exists();
 
-		user_input_VDW_bin_screener->set_physical_pose_clash_dist_cutoff(option[ VDW_rep_screen_physical_pose_clash_dist_cutoff ]() );
+	// Most of the following exactly matches ERRASER_Modeler setup in swa_rna_analytical_closure. Get rid of that other file!!
+	Size const working_moving_res = job_parameters_COP->working_moving_res();
+	StepWiseRNA_ModelerOP stepwise_rna_modeler = new StepWiseRNA_Modeler( working_moving_res, scorefxn );
 
-		user_input_VDW_bin_screener->set_output_pdb( option[ output_pdb ]() );
+	stepwise_rna_modeler->set_job_parameters( job_parameters );
 
-		//This should be called last, after all options are specified
-		user_input_VDW_bin_screener->setup_using_user_input_VDW_pose(option[ VDW_rep_screen_info](), pose, job_parameters_COP);
+	stepwise_rna_modeler->set_native_pose( native_pose );
+	stepwise_rna_modeler->set_silent_file( option[ out::file::silent  ] );
+	stepwise_rna_modeler->set_sampler_num_pose_kept ( option[ sampler_num_pose_kept ]() );
+	stepwise_rna_modeler->set_fast ( option[ fast ]() );
+	stepwise_rna_modeler->set_medium_fast ( option[ medium_fast ]() );
+	// following should probably be 'reference pose' --> does not have to be native.
+	stepwise_rna_modeler->set_sampler_native_rmsd_screen ( option[ sampler_native_rmsd_screen ]() );
+	stepwise_rna_modeler->set_sampler_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() );
+	stepwise_rna_modeler->set_o2star_screen ( option[ sampler_perform_o2star_pack ]() );
+	stepwise_rna_modeler->set_verbose ( option[ VERBOSE ]() );
+	stepwise_rna_modeler->set_cluster_rmsd (	option[ sampler_cluster_rmsd ]()	);
+	stepwise_rna_modeler->set_distinguish_pucker ( option[ distinguish_pucker]() );
+	stepwise_rna_modeler->set_finer_sampling_at_chain_closure ( option[ finer_sampling_at_chain_closure]() );
+	stepwise_rna_modeler->set_PBP_clustering_at_chain_closure ( option[ PBP_clustering_at_chain_closure]() );
+	stepwise_rna_modeler->set_allow_syn_pyrimidine( option[ sampler_allow_syn_pyrimidine ]() );
+	stepwise_rna_modeler->set_extra_syn_chi_rotamer ( option[ sampler_extra_syn_chi_rotamer]() );
+	stepwise_rna_modeler->set_extra_anti_chi_rotamer ( option[ sampler_extra_anti_chi_rotamer]() );
+	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+	stepwise_rna_modeler->set_centroid_screen ( option[ centroid_screen ]() );
+	stepwise_rna_modeler->set_VDW_atr_rep_screen ( option[ VDW_atr_rep_screen ]() );
+	stepwise_rna_modeler->set_VDW_rep_screen_info ( option[ VDW_rep_screen_info ]() );
+	stepwise_rna_modeler->set_VDW_rep_alignment_RMSD_CUTOFF ( option[ VDW_rep_alignment_RMSD_CUTOFF ]() );
+	// not yet implemented.
+	//	stepwise_rna_modeler->set_force_centroid_interaction ( option[force_centroid_interaction]() );
+	stepwise_rna_modeler->set_choose_random( option[ choose_random ]()  );
+	stepwise_rna_modeler->set_nstruct( option[ out::nstruct ]() );
+	stepwise_rna_modeler->set_skip_sampling( option[ skip_sampling ]() );
+	stepwise_rna_modeler->set_perform_minimize( option[ minimizer_perform_minimize ]() );
+	stepwise_rna_modeler->set_native_edensity_score_cutoff ( option[native_edensity_score_cutoff]() );
+	stepwise_rna_modeler->set_rm_virt_phosphate ( option[rm_virt_phosphate]() );
+	stepwise_rna_modeler->set_minimize_and_score_sugar ( option[ minimize_and_score_sugar ]() );
+	stepwise_rna_modeler->set_minimize_and_score_native_pose ( option[ minimize_and_score_native_pose ]() );
+	if ( option[ num_pose_minimize ].user() ) stepwise_rna_modeler->set_num_pose_minimize( option[ num_pose_minimize ]() );
+	stepwise_rna_modeler->set_output_minimized_pose_data_list( true );
 
-	}
+	// newer options, not yet shared with ERRASER modeler. I think.
+	stepwise_rna_modeler->set_VDW_rep_delete_matching_res ( option[ VDW_rep_delete_matching_res ]() );
+	stepwise_rna_modeler->set_VDW_rep_screen_physical_pose_clash_dist_cutoff ( option[ VDW_rep_screen_physical_pose_clash_dist_cutoff ]() );
+	stepwise_rna_modeler->set_integration_test_mode( option[ integration_test ]() ); //Should set after setting sampler_native_screen_rmsd_cutoff, fast, medium_fast options.
+	stepwise_rna_modeler->set_allow_bulge_at_chainbreak( option[ allow_bulge_at_chainbreak ]() );
+	stepwise_rna_modeler->set_parin_favorite_output( option[ parin_favorite_output ]());
+	stepwise_rna_modeler->set_floating_base( option[ floating_base ]() );
+	stepwise_rna_modeler->set_include_syn_chi( option[ include_syn_chi ]() );
+	stepwise_rna_modeler->set_reinitialize_CCD_torsions( option[ reinitialize_CCD_torsions]() );
+	stepwise_rna_modeler->set_sampler_extra_epsilon_rotamer( option[ sampler_extra_epsilon_rotamer]() );
+	stepwise_rna_modeler->set_sampler_extra_beta_rotamer( option[ sampler_extra_beta_rotamer]() );
+	stepwise_rna_modeler->set_sample_both_sugar_base_rotamer( option[ sample_both_sugar_base_rotamer]() ); //Nov 12, 2010
+	stepwise_rna_modeler->set_sampler_include_torsion_value_in_tag( option[ sampler_include_torsion_value_in_tag]() );
+	stepwise_rna_modeler->set_rebuild_bulge_mode( option[ rebuild_bulge_mode ]() );
+	stepwise_rna_modeler->set_debug_epsilon_south_sugar_mode( option[ debug_epsilon_south_sugar_mode ]() );
+	stepwise_rna_modeler->set_exclude_alpha_beta_gamma_sampling( option[ exclude_alpha_beta_gamma_sampling ]() );
+	stepwise_rna_modeler->set_combine_long_loop_mode( option[ combine_long_loop_mode]() );
+	stepwise_rna_modeler->set_do_not_sample_multiple_virtual_sugar( option[ do_not_sample_multiple_virtual_sugar]() );
+	stepwise_rna_modeler->set_sample_ONLY_multiple_virtual_sugar( option[ sample_ONLY_multiple_virtual_sugar]() );
+	stepwise_rna_modeler->set_sampler_assert_no_virt_ribose_sampling( option[ sampler_assert_no_virt_ribose_sampling ]() );
+	stepwise_rna_modeler->set_allow_base_pair_only_centroid_screen( option[ allow_base_pair_only_centroid_screen ]() );
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener = new StepWiseRNA_BaseCentroidScreener( pose, job_parameters_COP );
+	// this is new, not in ERRASER (swa_rna_analytical_closure)
+	stepwise_rna_modeler->set_minimizer_perform_o2star_pack( option[ minimizer_perform_o2star_pack ]() );
+	stepwise_rna_modeler->set_minimizer_output_before_o2star_pack( option[ minimizer_output_before_o2star_pack ]() );
+	stepwise_rna_modeler->set_minimizer_rename_tag( option[ minimizer_rename_tag ]() );
 
+	// currently creates silent file -- instead we should be able to output those silent structs if we want them.
+	// probably should output best scoring pose, not whatever comes out randomly.
+	stepwise_rna_modeler->apply( pose );
 
-  //////////////////////////////////////////////////////////////////
-
-	if(option[ graphic ]()){
-		std::string const current_directory_string=get_working_directory();
-		protocols::viewer::add_conformation_viewer( pose.conformation(), current_directory_string, 400, 400 );
-	}
-
-
-	print_JobParameters_info(job_parameters_COP, "job_parameters_COP");
-
-
-  std::string const silent_file = option[ out::file::silent  ]();
-
-	////////////////////////////////////////////////////////////////////////////////
-	//May 04, 2011. Make sure that the "FINAL" output silent_file doesn't exist at the beginning of the run.
-	//Mainly need this becuase the BIOX2-cluster (Stanford) is not robust...The node containing a slave_job can suddenly become unaviable and slave_job will need to be resubmitted to a new node.
-	//For example:
-	//		Your job <90107> has been killed because the execution host <node-9-30> is no longer available.
-	//		The job will be re-queued and re-run with the same jobId.
-
-	if ( utility::file::file_exists( silent_file ) ) {
-		std::cout << "WARNING: silent_file " << silent_file << " already exist! removing..." << std::endl;
-
-		int remove_file_return_value=std::remove( silent_file.c_str() );
-		std::cout << "remove_file_return_value= " <<  remove_file_return_value << " for std::remove(" << silent_file << ")" << std::endl;
-
-		if(remove_file_return_value!=0){
-			utility_exit_with_message("remove_file_return_value=" +ObjexxFCL::string_of(remove_file_return_value )+ "!=0 for std::remove(" + silent_file + ")" );
-		}
-		//int delete_file_return_value=utility::file::file_delete( silent_file_test ); #DO NOT USE THIS SINCE ITS RETURN VALUE IS 0 regardless of whether the deletion was successful or not!
-	}
-	////////////////////////////////////////////////////////////////////////////////
-	//Constrain chi angles of purines
-	bool const chi_constraint = option[ constraint_chi ];
-	if (chi_constraint) {
-		apply_chi_cst( pose, *job_parameters_COP->working_native_pose() );
-	}
-
-	StepWiseRNA_ResidueSampler stepwise_rna_residue_sampler( job_parameters_COP );
-
-	stepwise_rna_residue_sampler.set_silent_file( silent_file + "_sampling" );
-	stepwise_rna_residue_sampler.set_scorefxn( scorefxn );
-
-	stepwise_rna_residue_sampler.set_num_pose_kept( option[ sampler_num_pose_kept ]() ); //Should set before fast, medium_fast,
-	stepwise_rna_residue_sampler.set_fast( option[ fast ]() );
-	stepwise_rna_residue_sampler.set_medium_fast( option[ medium_fast ]() );
-	stepwise_rna_residue_sampler.set_native_rmsd_screen( option[ sampler_native_rmsd_screen ]() );
-	stepwise_rna_residue_sampler.set_native_screen_rmsd_cutoff( option[ sampler_native_screen_rmsd_cutoff ]() );
-	stepwise_rna_residue_sampler.set_integration_test_mode( option[ integration_test ]() ); //Should set after setting sampler_native_screen_rmsd_cutoff, fast, medium_fast options.
-
-	stepwise_rna_residue_sampler.set_allow_bulge_at_chainbreak( option[ allow_bulge_at_chainbreak ]() );
-	stepwise_rna_residue_sampler.set_perform_o2star_pack( option[ sampler_perform_o2star_pack ]() );
-	stepwise_rna_residue_sampler.set_verbose( option[ VERBOSE ]() );
-	stepwise_rna_residue_sampler.set_output_pdb( option[ output_pdb ]() );
-	stepwise_rna_residue_sampler.set_cluster_rmsd(	option[ sampler_cluster_rmsd ]()	);
-	stepwise_rna_residue_sampler.set_parin_favorite_output( option[ parin_favorite_output ]());
-	stepwise_rna_residue_sampler.set_floating_base( option[ floating_base ]() );
-	stepwise_rna_residue_sampler.set_include_syn_chi( option[ include_syn_chi ]() );
-	stepwise_rna_residue_sampler.set_allow_syn_pyrimidine( option[ sampler_allow_syn_pyrimidine ]() );
-	stepwise_rna_residue_sampler.set_distinguish_pucker( option[ distinguish_pucker]() );
-	stepwise_rna_residue_sampler.set_finer_sampling_at_chain_closure( option[ finer_sampling_at_chain_closure]() );
-	stepwise_rna_residue_sampler.set_PBP_clustering_at_chain_closure( option[ PBP_clustering_at_chain_closure]() );
-	stepwise_rna_residue_sampler.set_reinitialize_CCD_torsions( option[ reinitialize_CCD_torsions]() );
-	stepwise_rna_residue_sampler.set_extra_epsilon_rotamer( option[ sampler_extra_epsilon_rotamer]() );
-	stepwise_rna_residue_sampler.set_extra_beta_rotamer( option[ sampler_extra_beta_rotamer]() );
-	stepwise_rna_residue_sampler.set_extra_anti_chi_rotamer( option[ sampler_extra_anti_chi_rotamer]() );
-	stepwise_rna_residue_sampler.set_extra_syn_chi_rotamer( option[ sampler_extra_syn_chi_rotamer]() );
-	stepwise_rna_residue_sampler.set_sample_both_sugar_base_rotamer( option[ sample_both_sugar_base_rotamer]() ); //Nov 12, 2010
-	stepwise_rna_residue_sampler.set_include_torsion_value_in_tag( option[ sampler_include_torsion_value_in_tag]() );
-	stepwise_rna_residue_sampler.set_rebuild_bulge_mode( option[ rebuild_bulge_mode ]() );
-	stepwise_rna_residue_sampler.set_debug_eplison_south_sugar_mode( option[ debug_eplison_south_sugar_mode ]() );
-	stepwise_rna_residue_sampler.set_exclude_alpha_beta_gamma_sampling( option[ exclude_alpha_beta_gamma_sampling ]() );
-	stepwise_rna_residue_sampler.set_combine_long_loop_mode( option[ combine_long_loop_mode]() );
-	stepwise_rna_residue_sampler.set_do_not_sample_multiple_virtual_sugar( option[ do_not_sample_multiple_virtual_sugar]() );
-	stepwise_rna_residue_sampler.set_sample_ONLY_multiple_virtual_sugar( option[ sample_ONLY_multiple_virtual_sugar]() );
-	stepwise_rna_residue_sampler.set_assert_no_virt_ribose_sampling( option[ sampler_assert_no_virt_ribose_sampling ]() );
-
-
-	stepwise_rna_residue_sampler.set_centroid_screen( option[ centroid_screen ]() );
-	stepwise_rna_residue_sampler.set_allow_base_pair_only_centroid_screen( option[ allow_base_pair_only_centroid_screen ]() );
-
-	stepwise_rna_residue_sampler.set_VDW_atr_rep_screen( option[ VDW_atr_rep_screen ]() );
-
-	stepwise_rna_residue_sampler.set_base_centroid_screener( base_centroid_screener );
-
-	stepwise_rna_residue_sampler.set_user_input_VDW_bin_screener( user_input_VDW_bin_screener );
-
-	if(option[skip_sampling]()==false) stepwise_rna_residue_sampler.apply( pose );
-
-
-	utility::vector1< pose_data_struct2 > & pose_data_list=stepwise_rna_residue_sampler.get_pose_data_list();
-
-	// let's output the final pose_data_list, just to have a look
-	if(option[ VERBOSE ]()) stepwise_rna_residue_sampler.output_pose_data_list( silent_file + "_final_sample");
-
-	if(option[minimize_and_score_native_pose]()==true){
-		pose::Pose native_pose=(*job_parameters_COP->working_native_pose());
-		pose_data_struct2 native_data_struct;
-		native_data_struct.pose_OP=new pose::Pose;
-		(*native_data_struct.pose_OP)=native_pose;
-		native_data_struct.score = 0.0;
-		native_data_struct.tag="working_native_pose";
-		pose_data_list.push_back(native_data_struct);
-	}
-
-  ////////////////////////////////////////////////////////////////
-
-	StepWiseRNA_Minimizer stepwise_rna_minimizer( stepwise_rna_residue_sampler.get_pose_data_list() , job_parameters_COP );
-	stepwise_rna_minimizer.set_silent_file( silent_file );
-	stepwise_rna_minimizer.set_verbose( option[ VERBOSE ]() );
-	stepwise_rna_minimizer.set_scorefxn( scorefxn );
-	stepwise_rna_minimizer.set_centroid_screen( option[ centroid_screen ]() );
-	stepwise_rna_minimizer.set_base_centroid_screener( base_centroid_screener );
-	stepwise_rna_minimizer.set_perform_minimize( option[ minimizer_perform_minimize ]() );
-	stepwise_rna_minimizer.set_native_rmsd_screen( option[ sampler_native_rmsd_screen ]());
-	stepwise_rna_minimizer.set_native_screen_rmsd_cutoff( option[ sampler_native_screen_rmsd_cutoff ]() + 1 ); //+1 for leniency Sept 20, 2010
-	stepwise_rna_minimizer.set_native_edensity_score_cutoff( option[ native_edensity_score_cutoff ]());
-	stepwise_rna_minimizer.set_rm_virt_phosphate ( option[rm_virt_phosphate]() );
-	stepwise_rna_minimizer.set_perform_o2star_pack( option[ minimizer_perform_o2star_pack ]() );
-	stepwise_rna_minimizer.set_output_before_o2star_pack( option[ minimizer_output_before_o2star_pack ]() );
-	stepwise_rna_minimizer.set_rename_tag( option[ minimizer_rename_tag ]() );
-
-	if(option[num_pose_minimize].user()) 	stepwise_rna_minimizer.set_num_pose_minimize( option[ num_pose_minimize ]() );
-	stepwise_rna_minimizer.set_minimize_and_score_sugar( option[  minimize_and_score_sugar ]() );
-
-	stepwise_rna_minimizer.set_user_input_VDW_bin_screener( user_input_VDW_bin_screener );
-
-	stepwise_rna_minimizer.apply( pose );
 
 }
 
@@ -1884,8 +1829,8 @@ main( int argc, char * argv [] )
 	NEW_OPT( do_not_sample_multiple_virtual_sugar, " Samplerer: do_not_sample_multiple_virtual_sugar " , false);
 	NEW_OPT( sample_ONLY_multiple_virtual_sugar, " Samplerer: sample_ONLY_multiple_virtual_sugar " , false);
 	NEW_OPT( filterer_undercount_ribose_rotamers, "Undercount all ribose_rotamers as 1 count", false); //July 29, 2011
-	NEW_OPT( exclude_alpha_beta_gamma_sampling, "Speed up the debug eplison south sugar mode", false);
-	NEW_OPT( debug_eplison_south_sugar_mode, "Check why when eplison is roughly -160 and pucker is south, energy is not favorable", false);
+	NEW_OPT( exclude_alpha_beta_gamma_sampling, "Speed up the debug epsilon south sugar mode", false);
+	NEW_OPT( debug_epsilon_south_sugar_mode, "Check why when epsilon is roughly -160 and pucker is south, energy is not favorable", false);
 	// FCC: Not doing anythin now... Just for consistency with swa_analytical_closure
 	/////////
 	NEW_OPT( sampler_extra_anti_chi_rotamer, "Samplerer: extra_anti_chi_rotamer", false);
@@ -1942,6 +1887,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( whole_struct_cluster_radius , " whole_struct_cluster_radius ", 0.5); //IMPORTANT DO NOT CHANGE
 	NEW_OPT ( constraint_chi, "Constrain the chi angles", false );
 	NEW_OPT ( rm_virt_phosphate, "Remove virtual phosphate patches during minimization", false );
+	NEW_OPT ( choose_random, "ask swa residue sampler for a random solution", false );
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

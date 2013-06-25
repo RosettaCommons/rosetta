@@ -86,6 +86,7 @@ namespace rna {
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// rd2013 --> ask parin what is all this stuff for?
 
 	core::io::silent::BinaryRNASilentStruct
 	get_binary_rna_silent_struct_safe(pose::Pose const & const_pose, std::string const & tag, std::string const & silent_file){
@@ -103,37 +104,37 @@ namespace rna {
 
 		SilentFileData silent_file_data;
 
-		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() -> 
+		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() ->
 			residue_type_set( core::chemical::RNA );
 
-		Size NUM_trails=10;
+		Size NUM_trials=10;
 		Real const local_angle_bin_size=20;
 		Real const local_z_bin_size=0.05;
 
-		pose::Pose first_trail_pose_from_silent_file;
-		pose::Pose first_trail_pose;
+		pose::Pose first_trial_pose_from_silent_file;
+		pose::Pose first_trial_pose;
 
 
 
-		for(Size trail_num=1; trail_num<=NUM_trails; trail_num++){ //Found that just rigid problem rotation of the pose solves the silent_file conversion problem
+		for(Size trial_num=1; trial_num<=NUM_trials; trial_num++){ //Found that just rigid problem rotation of the pose solves the silent_file conversion problem
 
 			pose::Pose pose=const_pose;
 
-			if(trail_num!=1){
+			if(trial_num!=1){
 
-				///////////////////////////get centoid of the structure/////////////////////////////
+				///////////////////////////get centroid of the structure/////////////////////////////
 
 				numeric::xyzVector<core::Real> centroid=Vector( 0.0, 0.0, 0.0 );
 				Size numatoms = 0;
 
 				for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-	
+
 					conformation::Residue const & rsd(pose.residue(seq_num));
 
 					for( Size at = 1; at <= rsd.natoms(); at++){
 
 						if(rsd.is_virtual(at)) continue;
-							
+
 			    		centroid += rsd.xyz(at);
  					  	numatoms++;
 					}
@@ -150,26 +151,26 @@ namespace rna {
 
 				Matrix rotation_matrix;
 
-				euler_angles.alpha=(0.25*trail_num)*local_angle_bin_size*(RADS_PER_DEG); 
-				euler_angles.gamma=(0.25*trail_num)*local_angle_bin_size*(RADS_PER_DEG); 
+				euler_angles.alpha=(0.25*trial_num)*local_angle_bin_size*(RADS_PER_DEG);
+				euler_angles.gamma=(0.25*trial_num)*local_angle_bin_size*(RADS_PER_DEG);
 
-				euler_angles.z=(0.25*trail_num)*local_z_bin_size;	//MAKE SURE THIS DOESN'T GET OUT OF BOUND!
+				euler_angles.z=(0.25*trial_num)*local_z_bin_size;	//MAKE SURE THIS DOESN'T GET OUT OF BOUND!
 				euler_angles.beta=acos(euler_angles.z);
 
 				convert_euler_to_coordinate_matrix(euler_angles, rotation_matrix);
 
-				//numeric::xyzVector<core::Real> const offset_vector=Vector( 0.0,   0.0,   1.0*(trail_num-1) );
+				//numeric::xyzVector<core::Real> const offset_vector=Vector( 0.0,   0.0,   1.0*(trial_num-1) );
 
 				for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
-	
+
 					conformation::Residue const & rsd(pose.residue(seq_num));
 
 					for( Size at = 1; at <= rsd.natoms(); at++){
 
 						id::AtomID const id( at, seq_num);
 
-						pose.set_xyz( id, pose.xyz( id) - centroid ); //This should minimize the error introoduced by the right body rotation!
-						pose.set_xyz( id, rotation_matrix * pose.xyz(id));  
+						pose.set_xyz( id, pose.xyz( id) - centroid ); //This should minimize the error introduced by the rigid body rotation!
+						pose.set_xyz( id, rotation_matrix * pose.xyz(id));
 					}
 				}
 			}
@@ -178,17 +179,17 @@ namespace rna {
 			BinaryRNASilentStruct const silent_struct( pose, tag );
 
 			if(file_exists(debug_silent_file)) remove_file(debug_silent_file);
-	
+
 			silent_file_data.write_silent_struct(DEBUG_silent_struct, debug_silent_file, false);
 
 			///////////////////////////////////////////////////////////////////////////////
-	
+
 			core::io::silent::SilentFileData import_silent_file_data;
 			import_silent_file_data.read_file( debug_silent_file );
 			pose::Pose pose_from_silent_file;
 
 			bool found_tag= false;
-			Size num_struct=0;		
+			Size num_struct=0;
 
 			for ( core::io::silent::SilentFileData::iterator iter = import_silent_file_data.begin(), end = import_silent_file_data.end(); iter != end; ++iter ){
 				num_struct+=1;
@@ -202,35 +203,35 @@ namespace rna {
 
 			if(file_exists(debug_silent_file)==false){
 				utility_exit_with_message("debug_silent_file ("+debug_silent_file+") SHOULD exist!");
-			} 
+			}
 
 			remove_file(debug_silent_file);
 
-			if(trail_num==1){
-				first_trail_pose_from_silent_file=pose_from_silent_file;
-				first_trail_pose=pose;
+			if(trial_num==1){
+				first_trial_pose_from_silent_file=pose_from_silent_file;
+				first_trial_pose=pose;
 			}
 
-			//pose.dump_pdb( "SILENT_FILE_CONVERSION_TEST_" + tag +"_TRAIL_" + lead_zero_string_of(trail_num, 3) + ".pdb" );
-			//pose_from_silent_file.dump_pdb( "IMPORTED_SILENT_FILE_CONVERSION_TEST_" + tag +"_TRAIL_" + lead_zero_string_of(trail_num, 3) + ".pdb" );
+			//pose.dump_pdb( "SILENT_FILE_CONVERSION_TEST_" + tag +"_TRIAL_" + lead_zero_string_of(trial_num, 3) + ".pdb" );
+			//pose_from_silent_file.dump_pdb( "IMPORTED_SILENT_FILE_CONVERSION_TEST_" + tag +"_TRIAL_" + lead_zero_string_of(trial_num, 3) + ".pdb" );
 
 			if(check_for_messed_up_structure(pose_from_silent_file, debug_tag)==false){
 				return silent_struct;
 
 			}else{
-			 	std::cout << "WARNING: Problem with writing pose (" << debug_tag << ") to silent_file [Attempt #" << trail_num << "]" << std::endl;   
+			 	std::cout << "WARNING: Problem with writing pose (" << debug_tag << ") to silent_file [Attempt #" << trial_num << "]" << std::endl;
 			}
 
 		}
 
 
-		first_trail_pose_from_silent_file.dump_pdb( "SILENT_FILE_CONVERSION_PROBLEM_" + tag + "_pose_from_silent_file.pdb" );
-		first_trail_pose.dump_pdb( "SILENT_FILE_CONVERSION_PROBLEM_" + tag + ".pdb" );
-		BinaryRNASilentStruct ERROR_silent_struct( first_trail_pose, debug_tag );
+		first_trial_pose_from_silent_file.dump_pdb( "SILENT_FILE_CONVERSION_PROBLEM_" + tag + "_pose_from_silent_file.pdb" );
+		first_trial_pose.dump_pdb( "SILENT_FILE_CONVERSION_PROBLEM_" + tag + ".pdb" );
+		BinaryRNASilentStruct ERROR_silent_struct( first_trial_pose, debug_tag );
 		std::string const ERROR_silent_file="SILENT_FILE_CONVERSION_PROBLEM_" + tag + ".out";
 		silent_file_data.write_silent_struct(ERROR_silent_struct, ERROR_silent_file, false);
 
-		utility_exit_with_message("Fail to write pose (" + debug_tag + ") to silent_file after "+string_of(NUM_trails)+" trails ");
+		utility_exit_with_message("Fail to write pose (" + debug_tag + ") to silent_file after "+string_of(NUM_trials)+" trials ");
 
 		////////////This is just to prevent compiler WARNING MESSAGES/////////
 		BinaryRNASilentStruct EMPTY_silent_struct;
@@ -312,7 +313,7 @@ namespace rna {
 
 			}else{
 
-				utility::vector1< core::Size > const & working_native_alignment = job_parameters_->working_native_alignment();	
+				utility::vector1< core::Size > const & working_native_alignment = job_parameters_->working_native_alignment();
 				utility::vector1< core::Size > const & working_best_alignment = job_parameters_->working_best_alignment();
 
 				if(output_extra_RMSDs){
@@ -356,7 +357,7 @@ namespace rna {
 
 
 		silent_file_data.write_silent_struct(s, silent_file, write_score_only);
-					
+
 	}
 
 }

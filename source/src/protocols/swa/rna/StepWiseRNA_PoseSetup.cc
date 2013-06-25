@@ -35,6 +35,7 @@
 #include <core/types.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
@@ -142,6 +143,8 @@ namespace rna {
 		add_terminal_res_repulsion( pose );
 
 		if( job_parameters_->add_virt_res_as_root() ) add_aa_virt_rsd_as_root(pose); //Fang's electron density code.
+
+		setup_pdb_info_with_working_residue_numbers( pose );
 
 		if(output_pdb_) pose.dump_pdb( "start.pdb" );
 
@@ -950,6 +953,7 @@ namespace rna {
 
 
 	}
+
 	////////////////////////////////////////////////////////////////////////////////////////
  	void
  	StepWiseRNA_PoseSetup::apply_virtual_res_variant(pose::Pose & pose ) const {
@@ -1030,6 +1034,32 @@ namespace rna {
 		pose.fold_tree( newF );
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	////////////////////////////////////////////////////////////////////////////////////////
+ 	void
+ 	StepWiseRNA_PoseSetup::setup_pdb_info_with_working_residue_numbers( pose::Pose & pose ) const {
+
+		using namespace core::pose;
+
+		utility::vector1< core::Size > const & is_working_res( job_parameters_->is_working_res() );
+		std::string const & full_sequence=job_parameters_->full_sequence();
+
+		utility::vector1< Size > working_res;
+		for( Size i = 1; i <= full_sequence.size(); i++ ){
+			if ( is_working_res[ i ] ){
+				working_res.push_back( i );
+				std::cout << "WORKING_RES " <<  i << std::endl;
+			}
+		}
+
+		if ( job_parameters_->add_virt_res_as_root() ){
+			working_res.push_back( full_sequence.size() + 1  );
+		}
+
+		PDBInfoOP pdb_info = new PDBInfo( pose );
+		pdb_info->set_numbering( working_res );
+		pose.pdb_info( pdb_info );
+	}
 
 
 }

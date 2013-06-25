@@ -70,6 +70,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 #include <core/sequence/AnnotatedSequence.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -110,6 +111,7 @@ SilentStruct& SilentStruct::operator= ( SilentStruct const& src ) {
 	silent_energies_ = src.silent_energies_;
 	precision_ = src.precision_;
 	scoreline_prefix_ = src.scoreline_prefix_;
+	residue_numbers_ = src.residue_numbers_;
 	return *this;
 }
 
@@ -146,6 +148,9 @@ void SilentStruct::finish_pose(
 		tr.Debug << "keep input scores... call energies into pose " << std::endl;
 		energies_into_pose( pose );
 	}
+
+	residue_numbers_into_pose( pose );
+
 }
 
 bool
@@ -914,7 +919,72 @@ SilentStruct::get_parent_remark_from_line( std::string const line ){
 
 	add_parent_remark( key, val );
 }
+
 ///////////////////////////////////////////////////////////////////////////
+// would be straightforward to expand this to chains as well...
+void
+SilentStruct::fill_struct_with_residue_numbers( pose::Pose const & pose ){
+
+	pose::PDBInfoCOP pdb_info = pose.pdb_info();
+
+	if ( !pdb_info ) return;
+
+	utility::vector1< Size > residue_numbers;
+	bool residue_numbering_is_interesting( false );
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+		residue_numbers.push_back( pdb_info->number( i ) );
+		if ( pdb_info->number( i ) != i ) residue_numbering_is_interesting = true;
+	}
+
+	if ( !residue_numbering_is_interesting ) return; // leave residue_numbers_ blank.
+
+	set_residue_numbers( residue_numbers );
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+void
+SilentStruct::residue_numbers_into_pose( pose::Pose & pose ) const{
+
+	if ( residue_numbers_.size() == 0 ) return;
+
+	runtime_assert( pose.total_residue() == residue_numbers_.size() );
+
+	pose::PDBInfoOP pdb_info = pose.pdb_info();
+	pdb_info->set_numbering( residue_numbers_ );
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+void
+SilentStruct::print_residue_numbers( std::ostream & out ) const {
+
+	if ( residue_numbers_.size() == 0 ) return;
+
+	runtime_assert( residue_numbers_.size() == nres_ );
+
+  out << "RES_NUM " << make_tag_with_dashes( residue_numbers_ ) << std::endl;
+}
+
+///////////////////////////////////////////////////////////////////////////
+void
+SilentStruct::figure_out_residue_numbers_from_line( std::istream & line_stream ) {
+	utility::vector1< Size > residue_numbers;
+	std::string resnum_string;
+	line_stream >> resnum_string; // the tag (RES_NUM)
+	line_stream >> resnum_string;
+	while( !line_stream.fail() ){
+		bool string_ok( false );
+		std::vector< int > resnums = ObjexxFCL::ints_of( resnum_string, string_ok );
+		if ( string_ok ) {
+			for ( Size i = 0; i < resnums.size(); i++ ) residue_numbers.push_back( resnums[i] );
+		} else break;
+		line_stream >> resnum_string;
+	}
+	set_residue_numbers( residue_numbers );
+}
 
 } // namespace silent
 } // namespace io

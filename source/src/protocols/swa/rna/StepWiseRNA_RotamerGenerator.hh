@@ -18,7 +18,7 @@
 #ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_hh
 #define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_hh
 
-#include <protocols/swa/rna/StepWiseRNA_Classes.hh> 
+#include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 
 #include <core/types.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -43,7 +43,7 @@ namespace rna {
 																bool const sample_lower_sugar_and_base,
 																bool const sample_upper_sugar_and_base,
 																PuckerState const pucker1,
-																PuckerState const pucker2); 
+																PuckerState const pucker2);
 
 
     virtual ~StepWiseRNA_RotamerGenerator();
@@ -53,6 +53,7 @@ namespace rna {
 		bool has_another_rotamer() const;
 
 		void update_to_next_rotamer();
+
 
 		utility::vector1< Torsion_Info > const & get_current_rotamer(){ return rotamer_list_;	}
 
@@ -70,7 +71,7 @@ namespace rna {
 
 		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting){ force_syn_chi_res_list_ = setting; } //April 29, 2011
 
-		void set_bin_size( core::Size const setting){ bin_size_=setting;} 
+		void set_bin_size( core::Size const setting){ bin_size_=setting;}
 
 		void set_extra_epsilon( bool const setting){ extra_epsilon_ =setting; }
 
@@ -93,7 +94,7 @@ namespace rna {
 
 		PuckerState	pucker_state(std::string const which_sugar);
 
-
+		void set_choose_random( bool const setting ){ choose_random_ = setting; }
 
 	private:
 /*
@@ -112,8 +113,11 @@ namespace rna {
 		void
 		initialize_extra_rotamer_perturbations();
 
-		void 
+		void
 		add_torsion_id(core::id::TorsionID const torsion_id);
+
+		void
+		update_to_random_rotamer();
 
 	private:
 
@@ -122,9 +126,8 @@ namespace rna {
 		bool const sample_lower_sugar_and_base_;
 		bool const sample_upper_sugar_and_base_;
 
-		PuckerState const pucker1_specified_; 
+		PuckerState const pucker1_specified_;
 		PuckerState const pucker2_specified_;
-
 
 		bool sample_extra_rotamers_;
 		bool fast_;
@@ -154,6 +157,8 @@ namespace rna {
 		bool allow_syn_pyrimidine_;
 		BaseState lower_base_state_;
 		BaseState upper_base_state_;
+
+		bool choose_random_;
 
   };
 

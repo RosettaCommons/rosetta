@@ -111,6 +111,7 @@ namespace rna {
 		num_pose_minimize_(999999), //Feb 02, 2012
 		minimize_and_score_sugar_(true),
 		rename_tag_(true),
+		output_minimized_pose_data_list_( true ),
 		base_centroid_screener_( 0 ) //Owning-pointer.
   {
 		set_native_pose( job_parameters_->working_native_pose() );
@@ -215,15 +216,14 @@ namespace rna {
 			Output_movemap(move_map_list_[n], dummy_pose);
 		}
 
-
-		utility::vector1 <pose_data_struct2> minimized_pose_data_list;
+		minimized_pose_data_list_.clear();
 
  		for(Size pose_ID=1; pose_ID<=pose_data_list_.size(); pose_ID++){
 
 			if(pose_ID>num_pose_minimize_){
 
-				if(minimized_pose_data_list.size()==0){
-					utility_exit_with_message("pose_ID>num_pose_minimize_ BUT minimized_pose_data_list.size()==0! This will lead to problem in SWA_sampling_post_process.py!");
+				if(minimized_pose_data_list_.size()==0){
+					utility_exit_with_message("pose_ID>num_pose_minimize_ BUT minimized_pose_data_list_.size()==0! This will lead to problem in SWA_sampling_post_process.py!");
 				}
 				std::cout << "WARNING MAX num_pose_minimize_(" << num_pose_minimize_ << ") EXCEEDED, EARLY BREAK." << std::endl;
 				break;
@@ -283,37 +283,28 @@ namespace rna {
 			pose_data.score=(*scorefxn_)(pose);
 			pose_data.pose_OP=new pose::Pose;
 			(*pose_data.pose_OP)=pose;
-			minimized_pose_data_list.push_back(pose_data);
+			minimized_pose_data_list_.push_back(pose_data);
 
-			std::cout << "SO FAR: pose_ID= " << pose_ID  << " | minimized_pose_data_list.size()= " << minimized_pose_data_list.size();
+			std::cout << "SO FAR: pose_ID= " << pose_ID  << " | minimized_pose_data_list_.size()= " << minimized_pose_data_list_.size();
 			std::cout << " | time taken= " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 			std::cout << "-------------------------------------------------------------------------------------------------" << std::endl;
 			std::cout << "-------------------------------------------------------------------------------------------------" << std::endl;
 
   		}
 
-		std::cout << "FINAL minimized_pose_data_list.size() = " << minimized_pose_data_list.size() << std::endl;
+		std::cout << "FINAL minimized_pose_data_list_.size() = " << minimized_pose_data_list_.size() << std::endl;
 
-		if(minimized_pose_data_list.size()==0){
-			std::cout << "After finish minimizing,  minimized_pose_data_list.size()==0!" << std::endl;
+		if(minimized_pose_data_list_.size()==0){
+			std::cout << "After finish minimizing,  minimized_pose_data_list_.size()==0!" << std::endl;
 			output_empty_minimizer_silent_file();
 		}
 
-		std::sort(minimized_pose_data_list.begin(), minimized_pose_data_list.end(), minimizer_sort_criteria);
+		std::sort(minimized_pose_data_list_.begin(), minimized_pose_data_list_.end(), minimizer_sort_criteria);
 
- 		for(Size pose_ID=1; pose_ID<=minimized_pose_data_list.size(); pose_ID++){
-			pose_data_struct2 & pose_data=minimized_pose_data_list[pose_ID];
-			pose::Pose & pose=(*pose_data.pose_OP);
+		if ( output_minimized_pose_data_list_ ) output_minimized_pose_data_list();
 
-			if(rename_tag_){
-				pose_data.tag = "S_"+ ObjexxFCL::lead_zero_string_of( pose_ID /* start with zero */, 6);
-			}else{
-				pose_data.tag[0]='M';  //M for minimized, these are the poses that will be clustered by master node.
-			}
-
-			output_pose_data_wrapper(pose_data.tag, pose_data.tag[0], pose, silent_file_data, silent_file_);
-		}
-
+		// output best scoring pose.
+		if ( minimized_pose_data_list_.size() > 0 ) pose = *(minimized_pose_data_list_[1].pose_OP);
 
 		std::cout << "--------------------------------------------------------------------" << std::endl;
 		std::cout << "Total time in StepWiseRNA_Minimizer: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
@@ -611,72 +602,28 @@ namespace rna {
 
 		ObjexxFCL::FArray1D< bool > allow_insert( nres, true );
 		for (Size i = 1; i <= fixed_res.size(); i++ ) allow_insert( fixed_res[ i ] ) = false;
-
-		mm.set_bb( false );
-		mm.set_chi( false );
-		mm.set_jump( false );
-
-		for(Size i = 1; i <= nres; i++ ){
-
-			if (pose.residue(i).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
-
-			//SML PHENIX conference
-			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
-				if (!pose.residue(i).is_RNA() ) continue;
-			}
-
-			utility::vector1< TorsionID > torsion_ids;
-
-			for ( Size rna_torsion_number = 1; rna_torsion_number <= NUM_RNA_MAINCHAIN_TORSIONS; rna_torsion_number++ ) {
-				torsion_ids.push_back( TorsionID( i, id::BB, rna_torsion_number ) );
-			}
-			for ( Size rna_torsion_number = 1; rna_torsion_number <= NUM_RNA_CHI_TORSIONS; rna_torsion_number++ ) {
-				torsion_ids.push_back( TorsionID( i, id::CHI, rna_torsion_number ) );
-			}
-
-
-			for ( Size n = 1; n <= torsion_ids.size(); n++ ) {
-
-				TorsionID const & torsion_id  = torsion_ids[ n ];
-
-				id::AtomID id1,id2,id3,id4;
-				bool fail = pose.conformation().get_torsion_angle_atom_ids( torsion_id, id1, id2, id3, id4 );
-				if (fail) continue; //This part is risky, should also rewrite...
-
-				// Dec 19, 2010..Crap there is a mistake here..should have realize this earlier...
-				//Should allow torsions at the edges to minimize...will have to rewrite this. This effect the gamma and beta angle of the 3' fix res.
-
-				// If there's any atom that is in a moving residue by this torsion, let the torsion move.
-				//  should we handle a special case for cutpoint atoms? I kind of want those all to move.
-				if ( !allow_insert( id1.rsd() ) && !allow_insert( id2.rsd() ) && !allow_insert( id3.rsd() )  && !allow_insert( id4.rsd() ) ) continue;
-				mm.set(  torsion_id, true );
-
-			}
-
-		}
-
-		std::cout << "pose.fold_tree().num_jump()= " << pose.fold_tree().num_jump() << std::endl;
-
-		for (Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
-			Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
-			Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
-
-			if(pose.residue(jump_pos1).aa() == core::chemical::aa_vrt) continue; //Fang's electron density code
-			if(pose.residue(jump_pos2).aa() == core::chemical::aa_vrt) continue; //Fang's electron density code
-
-			//SML PHENIX conference
-			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
-				if(!pose.residue(jump_pos1).is_RNA()) continue;
-				if(!pose.residue(jump_pos2).is_RNA()) continue;
-			}
-
-			if( allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) )	mm.set_jump( n, true );
-			std::cout << "jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << " mm.jump= "; Output_boolean(allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) );  std::cout << std::endl;
-
-		}
-
+		figure_out_swa_rna_movemap( mm, pose, allow_insert );
 	}
 
+	////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_Minimizer::output_minimized_pose_data_list(){
+
+		io::silent::SilentFileData silent_file_data;
+
+		for(Size pose_ID=1; pose_ID<=minimized_pose_data_list_.size(); pose_ID++){
+			pose_data_struct2 & pose_data=minimized_pose_data_list_[pose_ID];
+			pose::Pose & pose=(*pose_data.pose_OP);
+
+			if( rename_tag_ ){
+				pose_data.tag = "S_"+ ObjexxFCL::lead_zero_string_of( pose_ID /* start with zero */, 6);
+			}else{
+				pose_data.tag[0]='M';  //M for minimized, these are the poses that will be clustered by master node.
+			}
+
+			output_pose_data_wrapper(pose_data.tag, pose_data.tag[0], pose, silent_file_data, silent_file_);
+		}
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////
 	void

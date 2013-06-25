@@ -77,6 +77,8 @@ sources = {
 	],
 
 	"protocols/swa/rna": [
+		"ERRASER_Modeler",
+		"StepWiseRNA_Modeler",
 		"StepWiseRNA_BaseCentroidScreener",
 		"StepWiseRNA_Base_Sugar_Rotamer",
 		"StepWiseRNA_Clusterer",

@@ -151,14 +151,15 @@ namespace rna {
 		sample_both_sugar_base_rotamer_(false), //New option Nov 12, 2010 (mainly for square_RNA)
 		include_torsion_value_in_tag_(false), //For checking if the extra rotamer are important
 		rebuild_bulge_mode_(false),
-		debug_eplison_south_sugar_mode_(false),
+		debug_epsilon_south_sugar_mode_(false),
 		exclude_alpha_beta_gamma_sampling_(false),
 		combine_long_loop_mode_(false), //in this mode, the moving_residues must contact the last residue built from the other side.
 		do_not_sample_multiple_virtual_sugar_(false), //Nov 13, 2010, optimize the chain closure step speed
 		sample_ONLY_multiple_virtual_sugar_(false), //Nov 13, 2010, optimize the chain closure step speed
 		assert_no_virt_ribose_sampling_(false), //July 28 2011
-		output_pdb_(false) //Sept 24, 2011
-
+		output_pdb_(false), //Sept 24, 2011
+		choose_random_( false ), // Rhiju, Jul 2013
+		force_centroid_interaction_( false )  // Rhiju, Jul 2013
   {
 		set_native_pose( job_parameters_->working_native_pose() );
 
@@ -228,13 +229,13 @@ namespace rna {
 		pose = pose_save; //this recopy is useful for triggering graphics.
 
 		// Sets up scorefunctions for a bunch of different screens
-		initialize_scorefunctions(); 
+		initialize_scorefunctions();
 
 		//Sept 2, 2010
 		if (rebuild_bulge_mode_) remove_virtual_rna_residue_variant_type(pose, job_parameters_->working_moving_res());
 
 		//////////////////////Build previously virtualize sugar/////////////////////
-		// A virtualized sugar occurs when a previous move was a 'floating base' 
+		// A virtualized sugar occurs when a previous move was a 'floating base'
 		// step, which only samples euler angles of a base, but virtualized the
 		// attached sugar and any residues connecting that nucleotide to the
 		//'instantiated' body of the RNA.
@@ -244,13 +245,13 @@ namespace rna {
 		//      This is the sugar of the nucleotide that was built immediately
 		//      before the current/moving nucleotide along the chain. Corresponds
 		//      to sugar of residue (moving_res - 1) if current step is built in
-		//      the forward (3') direction. Likewise, corresponds to sugar of 
+		//      the forward (3') direction. Likewise, corresponds to sugar of
 		//      residue (moving_res + 1) if current step built in the backward
 		//      (5') direction.
 		//
 		// (2) Current_sugar (rare) :
 		//      The sugar of the current/moving nucleotide. This sugar can
-		//      be virtual in the situation where the current step is a step to 
+		//      be virtual in the situation where the current step is a step to
 		//      combine two chunks that were previously built with SWA. It is
 		//      possible that the current nucleotide (in the moving chunk) was
 		//      previously built with a 'floating base' step and therefore will
@@ -1108,6 +1109,10 @@ namespace rna {
 		pose::Pose const pose_copy= pose;
 
 		utility::vector1< pose_data_struct2 > pose_data_list;
+		if ( pose_data_list_.size() > 0 ) {
+			std::cout << "Previous poses exist in sampler: " << pose_data_list_.size() << std::endl;
+			pose_data_list = pose_data_list_;
+		}
 
 
 		if(	(prev_sugar_FB_JP.sample_sugar || curr_sugar_FB_JP.sample_sugar || five_prime_CB_sugar_FB_JP.sample_sugar || three_prime_CB_sugar_FB_JP.sample_sugar )==false){
@@ -1393,7 +1398,7 @@ namespace rna {
 		}
 
 
-		if(debug_eplison_south_sugar_mode_){ //only sample the sugar next to the epsilon torsion
+		if(debug_epsilon_south_sugar_mode_){ //only sample the sugar next to the epsilon torsion
 			utility_exit_with_message("Add VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE back to patches.txt before using this option!");
 			sample_sugar_and_base1 = true;
 			sample_sugar_and_base2 = false;
@@ -1409,7 +1414,6 @@ namespace rna {
 																																																		sample_sugar_and_base1,
 																																																		sample_sugar_and_base2);
 		rotamer_generator->set_fast( fast_ );
-
 		rotamer_generator->set_force_syn_chi_res_list(job_parameters_->working_force_syn_chi_res_list());
 		rotamer_generator->set_force_north_ribose_list(job_parameters_->working_force_north_ribose_list());
 		rotamer_generator->set_force_south_ribose_list(job_parameters_->working_force_south_ribose_list());
@@ -1420,8 +1424,10 @@ namespace rna {
 		rotamer_generator->set_extra_syn_chi(extra_syn_chi_rotamer_);
 		rotamer_generator->set_exclude_alpha_beta_gamma_sampling(exclude_alpha_beta_gamma_sampling_);
 		rotamer_generator->set_allow_syn_pyrimidine(allow_syn_pyrimidine_);
+		rotamer_generator->set_choose_random( choose_random_ );
 		if(gap_size==0 && finer_sampling_at_chain_closure_==true) rotamer_generator->set_bin_size(10);
 		rotamer_generator->initialize_rotamer_generator_list();
+
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// MAIN LOOP --> rotamer sampling.
@@ -1429,8 +1435,11 @@ namespace rna {
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		Real /*current_score( 0.0 ),*/ delta_rep_score( 0.0), delta_atr_score( 0.0 );
+		Size ntries( 0 ), max_ntries( 10000 ); // used in choose_random mode.
 
 		while( rotamer_generator->has_another_rotamer() ){
+
+			if ( choose_random_ && ntries++ > max_ntries ) break;
 
 			utility::vector1< Torsion_Info > const current_rotamer = rotamer_generator->get_next_rotamer();
 			apply_rotamer( screening_pose, current_rotamer);
@@ -1453,7 +1462,6 @@ namespace rna {
 				if(verbose_) std::cout << "rmsd_count = " << count_data_.rmsd_count << " total count= " << count_data_.tot_rotamer_count << std::endl;
 			}
 
-
 			if(combine_long_loop_mode_ && gap_size!=0){//residue-residue contact screen;
 //Nov 18,2010
 				if(Is_residues_in_contact(last_append_res, screening_pose, last_prepend_res, screening_pose, atom_atom_overlap_dist_cutoff, 1 /*num_atom_contacts_cutoff*/)==false){
@@ -1461,9 +1469,6 @@ namespace rna {
 				}
 				count_data_.residues_contact_screen++; //mistakenly put this inside the if loop, fix on Sept 22, 2010
 			}
-
-
-
 
 			bool is_possible_bulge=false;
 
@@ -1484,7 +1489,7 @@ namespace rna {
 
 				if(num_nucleotides>1 && is_possible_bulge==true) utility_exit_with_message( "num_nucleotides>1 but is_possible_bulge==true!" );
 
-				if ( gap_size > 0 && !found_a_centroid_interaction_partner ) continue;
+				if ( ( gap_size > 0 || force_centroid_interaction_ ) && !found_a_centroid_interaction_partner ) continue;
 				//Essential this doesn't screen for centroid interaction at chain_break.
 				//The chain break can be at both a single strand and a double strand. The statement below is stricter and doesn't screen for centroid interaction only if
 				//the chainbreak is single stranded.
@@ -1531,13 +1536,12 @@ namespace rna {
 			//////////////////////////////////////////////////////////////////////////////////////////
 			apply_rotamer( pose, current_rotamer );
 			if ( perform_o2star_pack_ ) apply_rotamer( o2star_pack_pose, current_rotamer );
+
 			//////////////////////////////////////////////////////////////////////////////////////////
 			///////////////Chain_break_screening -- CCD closure /////////////////////////////////////
 			//////////////////////////////////////////////////////////////////////////////////////////
-
 			bool bulge_added(false);
 			if ( gap_size == 0 /*really need to close it!*/ ){
-
 
 				apply_rotamer(chain_break_screening_pose, current_rotamer );
 				if( ! Chain_break_screening( chain_break_screening_pose, chainbreak_scorefxn_) ) continue;
@@ -1554,7 +1558,6 @@ namespace rna {
 			////////////////////////////////////////////////////////////////////
 
 			///////Add pose to pose_data_list if pose have good score///////////
-
 			if ( perform_o2star_pack_ ){
 				sample_o2star_hydrogen( o2star_pack_pose , pose_with_original_HO2star_torsion);
 				copy_all_o2star_torsions(pose, o2star_pack_pose); //Copy the o2star torsions from the o2star_pack_pose to the pose!
@@ -1573,6 +1576,8 @@ namespace rna {
 				remove_virtual_rna_residue_variant_type(pose, job_parameters_->working_moving_res());
 				if( perform_o2star_pack_ ) remove_virtual_rna_residue_variant_type(o2star_pack_pose, job_parameters_->working_moving_res());
 			}
+
+			if ( choose_random_ && pose_data_list.size() > 0 ) break;
 
 	 	} //while( rotamer_generator->has_another_rotamer() )
 
@@ -1597,6 +1602,19 @@ namespace rna {
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		std::cout << "FINAL COUNTS" << std::endl;
+		output_count_data();
+
+		std::cout << "Total time in StepWiseRNA_ResidueSampler: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_ResidueSampler::output_count_data(){
+
+		Size const gap_size( job_parameters_->gap_size()); /* If this is zero or one, need to screen or closable chain break */
+
 		if( gap_size <= 1) std::cout << " chain_closable_count= " << count_data_.chain_closable_count << std::endl;
 		if( gap_size == 0 ){
 		 	std::cout << " angle_n= " << count_data_.good_angle_count << " dist_n= " << count_data_.good_distance_count;
@@ -1611,7 +1629,6 @@ namespace rna {
 		std::cout << " both= " << count_data_.both_count;
 		std::cout << " bulge= " << count_data_.bulge_at_chain_closure_count;
 		std::cout << " rmsd= " << count_data_.rmsd_count << " tot= " << count_data_.tot_rotamer_count << std::endl;
-		std::cout << "Total time in StepWiseRNA_ResidueSampler: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 	}
 
@@ -1669,7 +1686,7 @@ namespace rna {
 	StepWiseRNA_ResidueSampler::Is_current_sugar_virtual( core::pose::Pose const & pose ) const {
 
 		// Check if curr sugar is virtual. If virtual then need to sample it.
-		// This occur when combining two chunk and the moving_res 
+		// This occur when combining two chunk and the moving_res
 		// in the moving_chunk was built with a dinucleotide move.
 		bool const Is_prepend( job_parameters_->Is_prepend() );
 		Size const moving_res( job_parameters_->working_moving_res() );

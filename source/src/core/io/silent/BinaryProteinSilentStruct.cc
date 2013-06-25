@@ -172,6 +172,9 @@ BinaryProteinSilentStruct::fill_struct(
 	}
 
 	chain_endings( pose.conformation().chain_endings() );
+
+	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDBInfo object.
+
 } // BinaryProteinSilentStruct
 
 
@@ -394,8 +397,10 @@ bool BinaryProteinSilentStruct::init_from_lines(
 				chain_endings_.clear();
 				parse_chain_endings( line_stream );
 				continue;
+			} else if ( iter->substr(0,7) == "RES_NUM" ) {
+				figure_out_residue_numbers_from_line( line_stream );
+				continue;
 			}
-
 
 			// parse coords
 			line_stream >> tag;

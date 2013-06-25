@@ -88,9 +88,9 @@ namespace rna {
 		skip_complicated_stuff_(false)
   {
 		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::constructor");
+
 		///////////////////////////////////////////////////////
 		// Cutpoint setup
-
 		for ( Size n = 1; n <= cutpoint_open_.size();   n++ ) {
 			is_cutpoint_( cutpoint_open_[ n ] ) = true;
 			if ( cutpoint_open_[ n ] == user_specified_cutpoint_closed ) utility_exit_with_message( "Position cannot be both cutpoint_open and user_specified_cutpoint_closed" );
@@ -106,7 +106,6 @@ namespace rna {
 		job_parameters_->set_cutpoint_closed_list(cutpoint_closed_list);
 
 		///////////////////////////////////////////////////////
-
 		Output_seq_num_list("input_res= ", input_res, 30);
 		Output_seq_num_list("input_res2= ", input_res2, 30);
 		Output_seq_num_list("moving_res_list= ", moving_res_list_, 30);
@@ -152,7 +151,10 @@ namespace rna {
 		////////////////Change the order that these functions are called on May 3, 2010 Parin S./////////////////////////////////////
 		Size root_res( 1 );
 		if ( !skip_complicated_stuff_ ){
-			InternalWorkingResidueParameter const internal_params=figure_out_partition_definition();
+
+			// Following determines which residues in the pose will keep fixed coordinates. Its complicated
+			// because of the many use cases...
+			InternalWorkingResidueParameter const internal_params = figure_out_partition_definition();
 
 			root_res = reroot_fold_tree(internal_params.fake_working_moving_suite);
 
@@ -211,7 +213,7 @@ namespace rna {
 
 		for(Size n=1; n<=alignment_res_string_list.size(); n++){
 
-			utility::vector1< std::string > alignments_res_string=Tokenize(alignment_res_string_list[n], "-");
+			utility::vector1< std::string > alignments_res_string = Tokenize(alignment_res_string_list[n], "-");
 
 			utility::vector1< core::Size > alignment_res;
 			utility::vector1< core::Size > working_alignment;
@@ -465,7 +467,9 @@ namespace rna {
 			//For build loop outward case, in this case make every residue append except for the 1st residue in the chain..
 			//check that the fold_tree is simple..could also use the is_simple_tree() function that don't really understand how this function works
 			if(fold_tree.num_cutpoint()==0){
-				if( working_fixed_res.size()!=0) utility_exit_with_message( "fold_tree.num_cutpoint()==0 but fixed_res_.size()!=0 !!" );
+
+				// commented out. It should be OK to append residue to a pose with a simple fold tree! rhiju, july 2013.
+				//				if( working_fixed_res.size()!=0) utility_exit_with_message( "fold_tree.num_cutpoint()==0 but fixed_res_.size()!=0 !!" );
 
 				if(full_to_sub[cur_seq_num]!=1) return false; //append
 
@@ -483,7 +487,7 @@ namespace rna {
 //		Output_title_text("");
 	}
 
-//Choose to use vector data structure due to its ability to access an arbitrary element of a sequence in equal time (random access)
+//Choose to use map data structure due to its ability to access an arbitrary element of a sequence in equal time (random access)
 	void
 	StepWiseRNA_JobParameters_Setup::figure_out_Is_prepend_map(){
 
@@ -780,9 +784,11 @@ namespace rna {
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			bool pass_consecutive_res_jump_partner_test=true;
 
+			// this condition should never hold -- indeed, there's a utility_exit below.
  			if ( is_working_res[ jump_partner1 ] == false || is_working_res[ jump_partner2 ] == false ){
 				 pass_consecutive_res_jump_partner_test=false;
 			}
+
 			if (moving_res_ == jump_partner2 || moving_res_ == jump_partner1){
 				 pass_consecutive_res_jump_partner_test=false;
 			}
@@ -971,6 +977,7 @@ namespace rna {
 	InternalWorkingResidueParameter
 	StepWiseRNA_JobParameters_Setup::figure_out_partition_definition(){
 
+		/////////////////////////////////////////////////////////////////////////////////////////////
 		// trick to figure out which residues are upstream vs. downstream of the moving suite --
 		// there's already a fold_tree function to do this, but it partitions based on a JUMP.
 		//  So put in a fake jump between the moving_residue and the neighbor it is connected to.
@@ -983,7 +990,7 @@ namespace rna {
 //		Size const & moving_suite( job_parameters_->working_moving_suite() );
 
 		/////////May 3, 2010/////////////////////////////////////////////////////////////////////
-
+		// Does the order of working_res matter? If so, which residue is 'closest' to attachment point?
 		utility::vector1< core::Size > const & working_moving_res_list( job_parameters_->working_moving_res_list() );
 
 		Size const working_moving_res=working_moving_res_list[1]; //The one furthest away from the existing structure
@@ -993,13 +1000,18 @@ namespace rna {
 		InternalWorkingResidueParameter internal_working_res_params;
 
 		if ( working_moving_res == 1 || fold_tree.is_cutpoint( working_moving_res - 1 ) ) { //prepend
-			fake_working_moving_suite = first_working_moving_res ;
-		} else if ( fold_tree.is_cutpoint( working_moving_res ) || working_moving_res == nres){
-			fake_working_moving_suite = first_working_moving_res - 1;
-		} else { //Internal case...problematic/complicate case....
 
-			bool const can_append  = assert_can_append(working_moving_res_list); //[14, 13, 12]
-			bool const can_prepend = assert_can_prepend(working_moving_res_list); //[12, 13, 14]
+			fake_working_moving_suite = first_working_moving_res ;
+
+		} else if ( fold_tree.is_cutpoint( working_moving_res ) || working_moving_res == nres){
+
+			fake_working_moving_suite = first_working_moving_res - 1;
+
+		} else { //Internal case...problematic/complicated case....
+
+			// I don't remember what this coding stands for. When would we supply the working_moving_res 'backwards'?
+			bool const can_append  = check_can_append(working_moving_res_list); //[14, 13, 12]
+			bool const can_prepend = check_can_prepend(working_moving_res_list); //[12, 13, 14]
 
 			Output_boolean("can_prepend= ", can_prepend ); Output_boolean(" can_append= ", can_append ); std::cout << std::endl;
 
@@ -1009,14 +1021,14 @@ namespace rna {
 			}
 
 			//Ok first find the two possible positions to put the actual_working_res.
-
 			Size possible_working_res_1=0;
 			Size possible_working_res_2=0;
 			Size found_possible_working_res=0;
 
+			//Check if this is a suite right between two previously built chunks.
 			if(working_moving_res_list.size()==1){
 
-				if( working_moving_res+1<=nres ){
+				if( working_moving_res < nres ){
 					if( input_struct_definition( working_moving_res) != input_struct_definition( working_moving_res+1 ) ) {
 						possible_working_res_1=working_moving_res;
 						possible_working_res_2=working_moving_res+1;
@@ -1024,7 +1036,7 @@ namespace rna {
 					}
 				}
 
-				if(working_moving_res-1>=1 ){
+				if( working_moving_res > 1 ){
 					if( input_struct_definition( working_moving_res) != input_struct_definition( working_moving_res-1 ) ) {
 						possible_working_res_1=working_moving_res-1;
 						possible_working_res_2=working_moving_res;
@@ -1046,9 +1058,9 @@ namespace rna {
 				}
 			}
 
-			if(found_possible_working_res!=1){
+			if(found_possible_working_res != 1){
 				std::cout << "found_possible_working_res= " << found_possible_working_res << std::endl;
-				utility_exit_with_message( "found_possible_working_res!=1" );
+				utility_exit_with_message( "found_possible_working_res != 1. Cannot figure out use case!" );
 			}
 
 			// RHIJU is disabling this temporarily for swa monte carlo stuff -- need to cleanup this entire
@@ -1064,11 +1076,11 @@ namespace rna {
 			while ( fold_tree.is_cutpoint( fake_working_moving_suite ) && fake_working_moving_suite < possible_working_res_2 ) fake_working_moving_suite++;
 
 
-			internal_working_res_params.possible_working_res_1=possible_working_res_1;
-			internal_working_res_params.possible_working_res_2=possible_working_res_2;
+			internal_working_res_params.possible_working_res_1 = possible_working_res_1;
+			internal_working_res_params.possible_working_res_2 = possible_working_res_2;
 		}
 
-		internal_working_res_params.fake_working_moving_suite=fake_working_moving_suite;
+		internal_working_res_params.fake_working_moving_suite = fake_working_moving_suite;
 		///////////////////////////////////////////////////////////////////////////////
 
 		core::kinematics::FoldTree fold_tree_with_cut_at_moving_suite = fold_tree;
@@ -1080,7 +1092,6 @@ namespace rna {
 		fold_tree_with_cut_at_moving_suite.partition_by_jump( jump_at_moving_suite, partition_definition );
 
 		job_parameters_->set_partition_definition( partition_definition ); //this is a useful decomposition.
-
 
 		return internal_working_res_params;
 	}
@@ -1122,6 +1133,7 @@ namespace rna {
 		return 1;
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Figure out a good root residue -- which partition of the pose has the fewest residues to move around?
 	core::Size
 	StepWiseRNA_JobParameters_Setup::reroot_fold_tree(core::Size const fake_working_moving_suite){
@@ -1348,8 +1360,8 @@ namespace rna {
 
 			Is_internal = true;
 
-			bool const can_append=assert_can_append(working_moving_res_list); //[14, 13, 12]
-			bool const can_prepend=assert_can_prepend(working_moving_res_list); //[12, 13, 14]
+			bool const can_append=check_can_append(working_moving_res_list); //[14, 13, 12]
+			bool const can_prepend=check_can_prepend(working_moving_res_list); //[12, 13, 14]
 
 			Size const possible_working_res_1=internal_params.possible_working_res_1; //lower
 			Size const possible_working_res_2=internal_params.possible_working_res_2; //upper
@@ -1360,6 +1372,7 @@ namespace rna {
 
 			//OK have to put moving_res AWAY from the root res...
 			if( partition_definition( possible_working_res_1 ) != partition_definition( root_res ) ){
+				// prepend case -- the parts of the pose 3' to the moving suites are fixed (containing root_res).
 				found_actual_working_res++;
 				actual_working_moving_res=possible_working_res_1;
 				Is_prepend=true;
@@ -1375,7 +1388,7 @@ namespace rna {
 							actual_working_moving_res_list.push_back(working_moving_res_list[n]-1);
 						}
 
-						if(assert_can_prepend(actual_working_moving_res_list)==false){
+						if(check_can_prepend(actual_working_moving_res_list)==false){
 							Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, 40);
 							utility_exit_with_message( "actual_working_moving_res_list fails can_prepend assertion");
 						}
@@ -1400,7 +1413,7 @@ namespace rna {
 							actual_working_moving_res_list.push_back(working_moving_res_list[n]+1);
 						}
 
-						if(assert_can_append(actual_working_moving_res_list)==false){
+						if(check_can_append(actual_working_moving_res_list)==false){
 							Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, 40);
 							utility_exit_with_message( "actual_working_moving_res_list fails can_append assertion");
 						}
@@ -1466,7 +1479,7 @@ namespace rna {
 				actual_working_moving_res_list.push_back(working_moving_res_list[n]-1);
 			}
 
-			if(assert_can_prepend(actual_working_moving_res_list)==false){
+			if(check_can_prepend(actual_working_moving_res_list)==false){
 				Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, 40);
 				utility_exit_with_message( "actual_working_moving_res_list fails can_prepend assertion");
 			}
@@ -1480,7 +1493,7 @@ namespace rna {
 					actual_working_moving_res_list.push_back(working_moving_res_list[n]+1);
 				}
 
-				if(assert_can_append(actual_working_moving_res_list)==false){
+				if(check_can_append(actual_working_moving_res_list)==false){
 					Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, 40);
 					utility_exit_with_message( "actual_working_moving_res_list fails can_append assertion");
 				}

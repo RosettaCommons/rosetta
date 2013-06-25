@@ -144,6 +144,9 @@ RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string tag ) 
 	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
 		add_jump( pose.jump(nr) );
 	}
+
+	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDBInfo object.
+
 } // RNA_SilentStruct
 
 	//Following should be easy to generalize for protein vs. RNA.
@@ -266,9 +269,11 @@ bool RNA_SilentStruct::init_from_lines(
 			} else if ( iter->substr(0,6) == "REMARK" ) {
 				//tr.Warning << "skipping duplicate sequence declaration " << std::endl;
 				continue;
-			} else if ( iter->substr(0,6) == "REMARK" ) {
+			} else if ( iter->substr(0,7) == "RES_NUM" ) {
+				figure_out_residue_numbers_from_line( line_stream );
 				continue;
 			}
+
 
 			// parse ss,torsions, and c-alpha coords
 			int seqpos;

@@ -280,6 +280,11 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	utility::vector1< Size > pucker_ids;
 	for ( pucker_id = 0; pucker_id < 2; pucker_id ++ ) pucker_ids.push_back( pucker_id );
 
+	Size max_ntries = 1;
+	if (choose_random_) max_ntries = 100;
+
+	Size ntries( 0 );
+	while( ntries++ < max_ntries && total_count == 0 ) {
 	for ( Size k = 0; k < pucker_ids.size(); k++ ){
 
 		Size pucker_id = k;
@@ -313,8 +318,8 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 		rna_loop_close_sampler.clear_all();
 		rna_loop_close_sampler.apply ( screening_pose );
 		std::cout << "Exiting Analytical Loop Closing" << std::endl;
-
-		// note that in chose_random, loop_close_sampler should return 1 loop.
+		std::cout << "Analytical Loop Closing: number of solutions = " << rna_loop_close_sampler.n_construct() << std::endl;
+		// note that in choose_random, loop_close_sampler should return 1 loop.
 		for ( Size ii = 1; ii <= rna_loop_close_sampler.n_construct(); ++ii ) {
 			rna_loop_close_sampler.fill_pose ( screening_pose, ii );
 
@@ -332,14 +337,26 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 			} else {
 				pucker_state = SOUTH;
 			}
-			StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer ( base_state, pucker_state, rna_fitted_torsion_info );
 
+			StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer ( base_state, pucker_state, rna_fitted_torsion_info );
 			base_sugar_rotamer->set_extra_syn_chi ( extra_syn_chi_rotamer_ );
 			base_sugar_rotamer->set_extra_anti_chi ( extra_anti_chi_rotamer_ );
 			base_sugar_rotamer->set_choose_random( choose_random_ );
 
-			while ( base_sugar_rotamer->get_next_rotamer() ) {
+			// This outlines what needs to happen...
 
+			//PoseSampleGeneratorOP rna_base_rotamer_generator = new RNA_BaseRotamerGenerator;
+			//rna_base_rotamer_generator->set_extra_syn_chi ( extra_syn_chi_rotamer_ );
+			//rna_base_rotamer_generator->set_extra_anti_chi ( extra_anti_chi_rotamer_ );
+			//rna_base_rotamer_generator->choose_random( choose_random_ );
+
+			//SampleStreamOP sample_stream_init = new NoOPSampleStream;
+			//StreamModelerOP base_sugar_modeler = new StreamExpander( rna_base_rotamer_generator );
+			//SampleStreamOP sample_stream = base_sugar_modeler->apply( sample_stream_init );
+			//			while ( sample_stream->get_next_pose( screening_pose ){
+
+
+			while ( base_sugar_rotamer->get_next_rotamer() ){
 				Real chi = base_sugar_rotamer->chi();
 				screening_pose.set_torsion ( TorsionID ( moving_res , id::CHI, 1 ) ,chi );
 
@@ -411,6 +428,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 		if( choose_random_ && total_count > 0 ) break;
 	} // pucker
 
+	} // ntries
 
 	Output_title_text ( "Final sort and clustering" );
 	std::cout << "before erasing.. pose_data_list= " << pose_data_list.size() << std::endl;
@@ -759,6 +777,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::Full_atom_van_der_Waals_screening ( pose
 	}
 
 	if ( delta_atr_score > ( +0.01 ) ) {
+		if (verbose_) current_pose_screen.dump_pdb( "problem.pdb" );
 		std::string const message = "delta_atr_score= " + string_of ( delta_atr_score ) + " atr_score= " + string_of ( atr_score ) + " base_atr_score= " + string_of ( base_atr_score );
 		utility_exit_with_message ( "delta_atr_score>(+0.01), " + message );
 	}

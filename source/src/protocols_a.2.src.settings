@@ -51,6 +51,10 @@ sources = {
 	"protocols/rpc": [
 		"rpc",
 	],
+	"protocols/sample_stream": [
+		"SampleStream",
+                "StreamModeler",
+	],
 	"protocols/wum": [
 		"DatabaseEntryWorkUnit",
 		"MoverList",

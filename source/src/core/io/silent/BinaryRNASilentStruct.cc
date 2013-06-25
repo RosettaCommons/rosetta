@@ -26,13 +26,7 @@
 #include <sstream>
 
 // mini headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/char.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
-
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 #include <utility/Binary_Util.hh>
 
@@ -155,6 +149,9 @@ BinaryRNASilentStruct::fill_struct(
 	for ( Size nr = 1; nr <= fold_tree().num_jump(); nr++)  {
 		add_jump( pose.jump(nr) );
 	}
+
+	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDBInfo object.
+
 } // BinaryRNASilentStruct
 
 bool BinaryRNASilentStruct::init_from_lines(
@@ -305,6 +302,9 @@ bool BinaryRNASilentStruct::init_from_lines(
 					add_jump( jump );
 				}
 				bJumps_use_IntraResStub_ = true;// jump is defined via N-C-CA rosetta++ style
+				continue;
+			} else if ( iter->substr(0,7) == "RES_NUM" ) {
+				figure_out_residue_numbers_from_line( line_stream );
 				continue;
 			}
 

@@ -135,6 +135,9 @@ namespace rna {
 		void
 		add_aa_virt_rsd_as_root( core::pose::Pose & pose );
 
+		void
+		setup_pdb_info_with_working_residue_numbers( core::pose::Pose & pose ) const;
+
 	private:
 
 //		utility::vector1< utility::vector1< Size > > input_res_vectors_;

@@ -105,6 +105,7 @@
 #include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/swa/rna/ERRASER_Modeler.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -226,6 +227,9 @@ OPT_KEY ( Boolean, force_centroid_interaction )
 
 //////////////////////////////////////////////////////////////////////////////////////
 //Apply chi angle constraint to the purines
+// in principle, could tuck the following inside ERRASER_Modeler-- could save initial pose
+// constraint set, and put it back in -- but what
+// if we want these constraint scores turned on elsewhere (e.g., in a Monte Carlo)?
 void apply_chi_cst(core::pose::Pose & pose, core::pose::Pose const & ref_pose) {
 	using namespace core::conformation;
 	using namespace core::id;
@@ -504,7 +508,8 @@ setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_
 	if ( !option[ sample_res ].user() ) utility_exit_with_message ( "Must supply sample_res!" );
 
 	/////////////////////////////////////////////////////
-	StepWiseRNA_JobParameters_Setup stepwise_rna_job_parameters_setup ( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
+	StepWiseRNA_JobParameters_Setup stepwise_rna_job_parameters_setup (
+			option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
 	    full_sequence,
 	    get_input_res ( nres, "1" ),
 	    get_input_res ( nres, "2" ),
@@ -515,8 +520,8 @@ setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_
 	stepwise_rna_job_parameters_setup.set_fixed_res ( get_fixed_res ( nres ) );
 	stepwise_rna_job_parameters_setup.set_terminal_res ( option[ terminal_res ]() );
 	stepwise_rna_job_parameters_setup.set_rmsd_res_list ( option[ rmsd_res ]() );
-	stepwise_rna_job_parameters_setup.set_jump_point_pair_list ( option[ jump_point_pairs ]() ); //Important!: Need to be called after set_fixed_res
-	stepwise_rna_job_parameters_setup.set_alignment_res ( option[ alignment_res ]() ); //Important!: Need to be called after set_fixed_res
+	stepwise_rna_job_parameters_setup.set_jump_point_pair_list ( option[ jump_point_pairs ]() ); //Important!: Needs to be called after set_fixed_res
+	stepwise_rna_job_parameters_setup.set_alignment_res ( option[ alignment_res ]() ); //Important!: Needs to be called after set_fixed_res
 	stepwise_rna_job_parameters_setup.set_native_alignment_res ( option[ native_alignment_res ]() );
 	stepwise_rna_job_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP ( option[ allow_chain_boundary_jump_partner_right_at_fixed_BP ]() ); //Hacky just to get Square RNA working.
 	/////////////////////////////Sept 1, 2010////////////
@@ -634,122 +639,71 @@ setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_pa
 	return stepwise_rna_pose_setup;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////
 void
 rna_resample_test() {
+
 	using namespace core::pose;
 	using namespace core::chemical;
 	using namespace core::kinematics;
 	using namespace core::scoring;
 	using namespace protocols::swa::rna;
-	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set ( RNA );
 
-	if ( option[ minimize_and_score_native_pose]() == true ) {
-		if ( option[ in::file::native ].user() == false ) utility_exit_with_message ( "minimize_and_score_native_pose==True but user did not pass in native pose" );
-	}
-
-	///////////////////////////////
-	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters ( true  /*check_for_previously_closed_cutpoint_with_input_pose */ );
+	StepWiseRNA_JobParametersOP	 job_parameters = setup_rna_job_parameters ( true  /*check_for_previously_closed_cutpoint_with_input_pose */ );
 	StepWiseRNA_JobParametersCOP job_parameters_COP ( job_parameters );
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = setup_pose_setup_class ( job_parameters );
+	StepWiseRNA_PoseSetupOP      stepwise_rna_pose_setup = setup_pose_setup_class ( job_parameters );
+
 	Pose pose;
 	stepwise_rna_pose_setup->apply ( pose );
 	stepwise_rna_pose_setup->setup_native_pose ( pose ); //NEED pose to align native_pose to pose.
-	StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener = new StepWiseRNA_VDW_Bin_Screener();
+	PoseCOP native_pose = job_parameters_COP->working_native_pose();
 
-	if ( option[ VDW_rep_screen_info].user() ) {
-		user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF ( option[ VDW_rep_alignment_RMSD_CUTOFF]() );
-		user_input_VDW_bin_screener->setup_using_user_input_VDW_pose ( option[ VDW_rep_screen_info](), pose, job_parameters_COP );
-		user_input_VDW_bin_screener->set_output_pdb( option[ output_pdb ]() );
-	}
+	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer ( pose.conformation(), get_working_directory(), 400, 400 );
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener = new StepWiseRNA_BaseCentroidScreener ( pose, job_parameters_COP );
-	//////////////////////////////////////////////////////////////////
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
+	if ( option[ constraint_chi ]() ) apply_chi_cst( pose, *job_parameters_COP->working_native_pose() );
 
-	if ( option[ graphic ]() ) {
-		std::string const current_directory_string = get_working_directory();
-		protocols::viewer::add_conformation_viewer ( pose.conformation(), current_directory_string, 400, 400 );
-	}
+	ERRASER_ModelerOP erraser_modeler = new ERRASER_Modeler( option[ sample_res ]()[1], scorefxn );
+	//	erraser_modeler->set_job_parameters( job_parameters_COP ); // later will automatically initialize this inside ERRASER_Modeler
+	erraser_modeler->set_native_pose( native_pose );
+	erraser_modeler->set_silent_file( option[ out::file::silent  ] );
+	erraser_modeler->set_sampler_num_pose_kept ( option[ sampler_num_pose_kept ]() );
+	erraser_modeler->set_fast ( option[ fast ]() );
+	erraser_modeler->set_medium_fast ( option[ medium_fast ]() );
+	// following should probably be 'reference pose' --> does not have to be native.
+	erraser_modeler->set_sampler_native_rmsd_screen ( option[ sampler_native_rmsd_screen ]() );
+	erraser_modeler->set_sampler_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() );
+	erraser_modeler->set_o2star_screen ( option[ sampler_perform_o2star_pack ]() );
+	erraser_modeler->set_verbose ( option[ VERBOSE ]() );
+	erraser_modeler->set_cluster_rmsd (	option[ sampler_cluster_rmsd ]()	);
+	erraser_modeler->set_distinguish_pucker ( option[ distinguish_pucker]() );
+	erraser_modeler->set_finer_sampling_at_chain_closure ( option[ finer_sampling_at_chain_closure]() );
+	erraser_modeler->set_PBP_clustering_at_chain_closure ( option[ PBP_clustering_at_chain_closure]() );
+	erraser_modeler->set_allow_syn_pyrimidine( option[ sampler_allow_syn_pyrimidine ]() );
+	erraser_modeler->set_extra_syn_chi_rotamer ( option[ sampler_extra_syn_chi_rotamer]() );
+	erraser_modeler->set_extra_anti_chi_rotamer ( option[ sampler_extra_anti_chi_rotamer]() );
+	erraser_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+	erraser_modeler->set_centroid_screen ( option[ centroid_screen ]() );
+	erraser_modeler->set_VDW_atr_rep_screen ( option[ VDW_atr_rep_screen ]() );
+	erraser_modeler->set_VDW_rep_screen_info ( option[ VDW_rep_screen_info ]() );
+	// should implement the following option when unifying with swa_rna_main
+	//	erraser_modeler->set_VDW_rep_alignment_RMSD_cutoff ( option[ VDW_rep_alignment_RMSD_cutoff ]() );
+	erraser_modeler->set_force_centroid_interaction ( option[force_centroid_interaction]() );
+	erraser_modeler->set_choose_random( option[ choose_random ]()  );
+	erraser_modeler->set_skip_sampling( option[ skip_sampling ]() );
+	erraser_modeler->set_nstruct( option[ out::nstruct ]() );
+	erraser_modeler->set_perform_minimize( option[ minimizer_perform_minimize ]() );
+	erraser_modeler->set_native_edensity_score_cutoff ( option[native_edensity_score_cutoff]() );
+	erraser_modeler->set_rm_virt_phosphate ( option[rm_virt_phosphate]() );
+	erraser_modeler->set_minimize_and_score_sugar ( option[ minimize_and_score_sugar ]() );
+	erraser_modeler->set_minimize_and_score_native_pose ( option[ minimize_and_score_native_pose ]() );
+	if ( option[ num_pose_minimize ].user() ) erraser_modeler->set_num_pose_minimize( option[ num_pose_minimize ]() );
+	erraser_modeler->set_output_minimized_pose_data_list( true );
 
-	//Constrain chi angles of purines
-	bool const chi_constraint = option[ constraint_chi ];
-	if (chi_constraint) {
-		apply_chi_cst( pose, *job_parameters_COP->working_native_pose() );
-	}
+	// currently creates silent file -- instead we should be able to output those silent structs if we want them.
+	// probably should output best scoring pose, not whatever comes out randomly.
+	erraser_modeler->apply( pose );
 
-	StepWiseRNA_AnalyticalLoopCloseSampler stepwise_rna_residue_sampler ( job_parameters_COP );
-	std::string const silent_file = option[ out::file::silent  ]();
-	stepwise_rna_residue_sampler.set_silent_file ( silent_file + "_sampling" );
-	stepwise_rna_residue_sampler.set_scorefxn ( scorefxn );
-	stepwise_rna_residue_sampler.set_num_pose_kept ( option[ sampler_num_pose_kept ]() );
-	stepwise_rna_residue_sampler.set_fast ( option[ fast ]() );
-	stepwise_rna_residue_sampler.set_medium_fast ( option[ medium_fast ]() );
-	stepwise_rna_residue_sampler.set_native_rmsd_screen ( option[ sampler_native_rmsd_screen ]() );
-	stepwise_rna_residue_sampler.set_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() );
-	stepwise_rna_residue_sampler.set_o2star_screen ( option[ sampler_perform_o2star_pack ]() );
-	stepwise_rna_residue_sampler.set_verbose ( option[ VERBOSE ]() );
-	stepwise_rna_residue_sampler.set_cluster_rmsd (	option[ sampler_cluster_rmsd ]()	);
-	stepwise_rna_residue_sampler.set_distinguish_pucker ( option[ distinguish_pucker]() );
-	stepwise_rna_residue_sampler.set_finer_sampling_at_chain_closure ( option[ finer_sampling_at_chain_closure]() );
-	stepwise_rna_residue_sampler.set_PBP_clustering_at_chain_closure ( option[ PBP_clustering_at_chain_closure]() );
-	stepwise_rna_residue_sampler.set_allow_syn_pyrimidine( option[ sampler_allow_syn_pyrimidine ]() );
-	stepwise_rna_residue_sampler.set_extra_syn_chi_rotamer ( option[ sampler_extra_syn_chi_rotamer]() );
-	stepwise_rna_residue_sampler.set_extra_anti_chi_rotamer ( option[ sampler_extra_anti_chi_rotamer]() );
-	stepwise_rna_residue_sampler.set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
-	stepwise_rna_residue_sampler.set_centroid_screen ( option[ centroid_screen ]() );
-	stepwise_rna_residue_sampler.set_VDW_atr_rep_screen ( option[ VDW_atr_rep_screen ]() );
-	stepwise_rna_residue_sampler.set_base_centroid_screener ( base_centroid_screener );
-	stepwise_rna_residue_sampler.set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener );
-	stepwise_rna_residue_sampler.set_force_centroid_interaction ( option[force_centroid_interaction]() );
-	if ( option[ choose_random ]() ){
-		stepwise_rna_residue_sampler.set_choose_random( true );
-		stepwise_rna_residue_sampler.set_cluster_rmsd( 0.0 ); // don't cluster.
-	}
-
-	if ( ! option[skip_sampling]() ) stepwise_rna_residue_sampler.apply ( pose );
-
-	// if testing random version of this protocol -- do it several times!
-	if ( option[ choose_random ]() )	for( Size n = 2; n <= option[ sampler_num_pose_kept](); n++ )	 stepwise_rna_residue_sampler.apply ( pose );
-
-	utility::vector1< pose_data_struct2 > & pose_data_list = stepwise_rna_residue_sampler.get_pose_data_list();
-
-	if ( option[minimize_and_score_native_pose]() == true ) {
-		pose::Pose native_pose = ( *job_parameters_COP->working_native_pose() );
-		pose_data_struct2 native_data_struct;
-		native_data_struct.pose_OP = new pose::Pose;
-		( *native_data_struct.pose_OP ) = native_pose;
-		native_data_struct.score = 0.0;
-		native_data_struct.tag = "working_native_pose";
-		pose_data_list.push_back ( native_data_struct );
-	}
-
-	// let's output the final pose_data_list, just to have a look
-	if ( option[ VERBOSE ]() ) {
-		stepwise_rna_residue_sampler.output_pose_data_list ( silent_file + "_final_sample" );
-	}
-
-	////////////////////////////////////////////////////////////////
-	StepWiseRNA_Minimizer stepwise_rna_minimizer ( stepwise_rna_residue_sampler.get_pose_data_list() , job_parameters_COP );
-	stepwise_rna_minimizer.set_silent_file ( silent_file );
-	stepwise_rna_minimizer.set_verbose ( option[ VERBOSE ]() );
-	stepwise_rna_minimizer.set_scorefxn ( scorefxn );
-	stepwise_rna_minimizer.set_centroid_screen ( option[ centroid_screen ]() );
-	stepwise_rna_minimizer.set_base_centroid_screener ( base_centroid_screener );
-	stepwise_rna_minimizer.set_perform_minimize( option[ minimizer_perform_minimize ]() );
-	stepwise_rna_minimizer.set_native_rmsd_screen ( option[ sampler_native_rmsd_screen ]() );
-	stepwise_rna_minimizer.set_native_edensity_score_cutoff ( option[native_edensity_score_cutoff]() );
-	stepwise_rna_minimizer.set_rm_virt_phosphate ( option[rm_virt_phosphate]() );
-	stepwise_rna_minimizer.set_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() + 1 ); //+1 for leniency Sept 20, 2010
-
-	if ( option[num_pose_minimize].user() ) 	stepwise_rna_minimizer.set_num_pose_minimize ( option[ num_pose_minimize ]() );
-
-	stepwise_rna_minimizer.set_minimize_and_score_sugar ( option[  minimize_and_score_sugar ]() );
-	stepwise_rna_minimizer.set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener );
-	stepwise_rna_minimizer.apply ( pose );
 }
 
 ///////////////////////////////////////////////////////////////

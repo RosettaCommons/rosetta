@@ -98,7 +98,7 @@ namespace rna {
 		ObjexxFCL::FArray1D< bool > const & partition_definition = job_parameters_->partition_definition();
 
 		//Used to be this before March 19, 2012. Fang switched to the version below to fix a memory leak problem.
-		//bool const root_partition = partition_definition( pose.fold_tree().root() ); 
+		//bool const root_partition = partition_definition( pose.fold_tree().root() );
 
 		//To Fang: This version is buggy since it assumes full-length pose which is not always the case!
 		//Fang modified to this version On March 18, 2012
@@ -110,7 +110,7 @@ namespace rna {
 
 		if(working_moving_partition_pos.size()==0) utility_exit_with_message("working_moving_partition_pos.size()==0!");
 
-		bool const moving_partition = partition_definition( working_moving_res ); 
+		bool const moving_partition = partition_definition( working_moving_res );
 		bool const moving_partition_check = partition_definition( working_moving_partition_pos[1] );
 
 		if(moving_partition!=moving_partition_check){
@@ -136,7 +136,7 @@ namespace rna {
 			core::kinematics::Stub base_stub;
 
 			if(is_virtual_base_( seq_num )==true){
-				base_stub=core::kinematics::Stub();	//"default" tub, this will never be called			
+				base_stub=core::kinematics::Stub();	//"default" tub, this will never be called
 			}else{
 				Vector const centroid = rna_centroid_info_->get_base_centroid( residue_object);
 				base_stub = rna_centroid_info_->get_base_coordinate_system( residue_object, centroid );
@@ -149,11 +149,11 @@ namespace rna {
 			if ( partition_definition( seq_num ) != moving_partition ) {
 				// This is a "fixed" residue -- on the same side of the moving suite as the root.
 				fixed_residues_.push_back( seq_num );
-				if ( verbose ) std::cout << " FIXED POSITION  --> " << seq_num << std::endl;
+				//if ( verbose ) std::cout << " FIXED POSITION  --> " << seq_num << std::endl;
 				is_fixed_res_( seq_num ) = true;
 			} else {
 				moving_residues_.push_back( seq_num );
-				if ( verbose ) std::cout << " MOVING POSITION --> " << seq_num << std::endl;
+				//				if ( verbose ) std::cout << " MOVING POSITION --> " << seq_num << std::endl;
 				is_moving_res_( seq_num ) = true;
 			}
 		}
@@ -190,7 +190,7 @@ namespace rna {
 			if(is_virtual_base_( terminal_res )==true){
 				utility_exit_with_message( "working_res: " + string_of(terminal_res) + " is a terminal res but has a virtual! ");
 			}
-			
+
 			is_terminal_res_( terminal_res ) = true;
 
 			for ( Size m = 1; m <= nres; m++ ) {

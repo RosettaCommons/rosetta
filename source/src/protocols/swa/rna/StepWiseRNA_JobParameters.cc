@@ -124,7 +124,7 @@ namespace rna {
 		if(num_nucleotides==0) utility_exit_with_message( "num_building_nucleotides==0!!" );
 		if(working_moving_res_==0) utility_exit_with_message( "working_moving_res_==0!!" );
 
-		
+
 		Size const working_reference_res_ = (Is_prepend_) ? working_moving_res_ + num_nucleotides : working_moving_res_ - num_nucleotides;
 
 		return working_reference_res_;
@@ -167,7 +167,7 @@ namespace rna {
 	core::kinematics::FoldTree const & StepWiseRNA_JobParameters::fold_tree() const{
 		if(fold_tree_.size()==0) utility_exit_with_message("fold_tree_.size()==0"); //Thie is the number of edge. simple_tree have 1 edge!
 		return fold_tree_;
-	} 
+	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	std::map< core::Size, bool > const & StepWiseRNA_JobParameters::Is_prepend_map() const {
 		if(Is_prepend_map_.size()==0) utility_exit_with_message("Is_prepend_map_.size()==0");
@@ -197,7 +197,7 @@ namespace rna {
 	bool const & StepWiseRNA_JobParameters::Is_internal() const{
 		return Is_internal_;
 	}
-	//////////////////////////////////////////////////////////////////////////////////////////	
+	//////////////////////////////////////////////////////////////////////////////////////////
 	bool const & StepWiseRNA_JobParameters::add_virt_res_as_root() const{
 		return add_virt_res_as_root_;
 	}
@@ -313,7 +313,7 @@ namespace rna {
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	void StepWiseRNA_JobParameters::set_working_moving_res_list( utility::vector1< Size > const & setting ){
-		working_moving_res_list_ = setting; 
+		working_moving_res_list_ = setting;
 		working_moving_res_ = working_moving_res_list_[1];
 
 		update_working_moving_suite(); //Be careful..currently when working_moving_res_list is first initialize in JP_Setup, Is_Prepend is not setup yet.
@@ -327,7 +327,7 @@ namespace rna {
 	//}
 	//////////////////////////////////////////////////////////////////////////////////////////
 	//void StepWiseRNA_JobParameters::set_working_moving_suite_list( utility::vector1< Size > const & setting ){
-	//	working_moving_suite_list_ = setting; 
+	//	working_moving_suite_list_ = setting;
 	//}
 	////////////////////////////////////////////////////////////////////////////////////////////
 	//void StepWiseRNA_JobParameters::set_working_moving_suite( Size const & setting ){
@@ -395,8 +395,14 @@ namespace rna {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_JobParameters::set_working_native_pose( core::pose::PoseCOP pose ){
+		working_native_pose_ = pose;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////
 	Size
-	StepWiseRNA_JobParameters::actually_moving_res() const{ 
+	StepWiseRNA_JobParameters::actually_moving_res() const{
 			return working_moving_res_;
 
 	}
@@ -432,36 +438,36 @@ namespace rna {
 		cutpoint_closed_list_= setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 	StepWiseRNA_JobParameters::set_working_best_alignment( utility::vector1< core::Size > const & setting){
 		working_best_alignment_=setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 	StepWiseRNA_JobParameters::set_native_alignment( utility::vector1< core::Size > const & setting){
 		native_alignment_=setting;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 	StepWiseRNA_JobParameters::set_working_native_alignment( utility::vector1< core::Size > const & setting){
 		working_native_alignment_=setting;
-	} 
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 	StepWiseRNA_JobParameters::set_global_sample_res_list( utility::vector1< core::Size > const & setting){
 		global_sample_res_list_=setting;
 		working_global_sample_res_list_=apply_full_to_sub_mapping( global_sample_res_list_, is_working_res_, full_to_sub_ );
 
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 	StepWiseRNA_JobParameters::set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting){
 		force_syn_chi_res_list_=setting;
 		working_force_syn_chi_res_list_=apply_full_to_sub_mapping( force_syn_chi_res_list_, is_working_res_, full_to_sub_ );
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 	StepWiseRNA_JobParameters::set_force_north_ribose_list( utility::vector1< core::Size > const & setting){
 		force_north_ribose_list_=setting;
 		working_force_north_ribose_list_=apply_full_to_sub_mapping( force_north_ribose_list_, is_working_res_, full_to_sub_ );
@@ -473,7 +479,7 @@ namespace rna {
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 	StepWiseRNA_JobParameters::set_force_south_ribose_list( utility::vector1< core::Size > const & setting){
 		force_south_ribose_list_=setting;
 		working_force_south_ribose_list_=apply_full_to_sub_mapping( force_south_ribose_list_, is_working_res_, full_to_sub_ );
@@ -485,13 +491,13 @@ namespace rna {
 		}
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 	StepWiseRNA_JobParameters::set_protonated_H1_adenosine_list( utility::vector1< core::Size > const & setting){
 		protonated_H1_adenosine_list_=setting;
 		working_protonated_H1_adenosine_list_=apply_full_to_sub_mapping( protonated_H1_adenosine_list_, is_working_res_, full_to_sub_ );
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
-	void 
+	void
 	StepWiseRNA_JobParameters::update_working_moving_suite(){
 
 		//std::cout << "update_working_moving_suite " << std::endl;
@@ -506,8 +512,8 @@ namespace rna {
 		if(working_moving_res_list_.size()==0) return;
 
 		if(working_moving_res_==0) utility_exit_with_message( "working_moving_res_list_.size()!=0) && (working_moving_res_==0");
-		
-	
+
+
 
 		working_moving_suite_list_.clear();
 
@@ -522,10 +528,10 @@ namespace rna {
 			}
 
 		}
-	
+
 		//check
 		if(working_moving_suite_!=working_moving_suite_list_[1]) utility_exit_with_message( "working_moving_suite_!=working_moving_suite_list_[1]");
-		
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////

@@ -108,7 +108,7 @@ namespace monte_carlo {
 
 			reorder_sub_to_full_info_after_append( pose, res_to_add );
 
-			suite_num = res_to_add-1;
+			suite_num = res_to_add - 1;
 			nucleoside_num = res_to_add;
 
 		} else {

@@ -112,6 +112,9 @@ namespace rna {
 		void
 		set_rename_tag( bool const setting ){ rename_tag_=setting;}
 
+		void
+		set_output_minimized_pose_data_list( bool const setting ){ output_minimized_pose_data_list_=setting;}
+
   private:
 
 		utility::vector1 <core::kinematics::MoveMap>
@@ -138,9 +141,13 @@ namespace rna {
 		bool
 		native_edensity_score_screener(core::pose::Pose & pose, core::pose::Pose & native_pose) const; //Fang's electron density code
 
+		void
+		output_minimized_pose_data_list();
+
 	private:
 
 		utility::vector1 <pose_data_struct2> const pose_data_list_;
+		utility::vector1 <pose_data_struct2> minimized_pose_data_list_;
 		StepWiseRNA_JobParametersCOP job_parameters_;
 
 		core::io::silent::SilentFileDataOP sfd_;
@@ -165,6 +172,8 @@ namespace rna {
 		core::Size num_pose_minimize_;
 		bool minimize_and_score_sugar_;
 		bool rename_tag_;
+		bool output_minimized_pose_data_list_;
+
 
 		std::map< core::id::AtomID, core::id::AtomID > pose_to_native_map_;
 

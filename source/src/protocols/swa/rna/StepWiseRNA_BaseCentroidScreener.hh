@@ -24,6 +24,7 @@
 #include <core/scoring/rna/RNA_CentroidInfo.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <ObjexxFCL/FArray1D.hh> /* for some reason, can't get away with just .fwd.hh */

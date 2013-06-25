@@ -465,6 +465,8 @@ ProteinSilentStruct_Template<T>::fill_struct(
 		add_jump( pose.jump(nr) );
 	}
 
+	fill_struct_with_residue_numbers( pose ); // grabs residue numbers from pose PDBInfo object.
+
 	chain_endings( pose.conformation().chain_endings() );
 }
 
@@ -583,6 +585,9 @@ bool ProteinSilentStruct_Template<T>::init_from_lines(
 			} else if ( iter->substr( 0, 13 ) == "CHAIN_ENDINGS" ) {
 				chain_endings_.clear();
 				parse_chain_endings( line_stream );
+				continue;
+			} else if ( iter->substr(0,7) == "RES_NUM" ) {
+				figure_out_residue_numbers_from_line( line_stream );
 				continue;
 			}
 

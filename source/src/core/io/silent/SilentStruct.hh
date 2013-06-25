@@ -125,6 +125,8 @@ namespace silent {
 		virtual void print_conformation( std::ostream & out ) const = 0;
 		/// @brief print the comments in this SilentStruct.
 		virtual void print_comments    ( std::ostream & out ) const;
+		/// @brief print the resnum in this SilentStruct, if filled.
+		virtual void print_residue_numbers    ( std::ostream & out ) const;
 
 		/// @brief returns the number of residues contained by this
 		/// SilentStruct.
@@ -273,7 +275,7 @@ namespace silent {
 
 		virtual core::Size mem_footprint() const { return 0; }
 
-		//By Parin Sripakdeevong (sripakpa@stanford.edu). 
+		//By Parin Sripakdeevong (sripakpa@stanford.edu).
 		void print_parent_remarks( std::ostream & out ) const;
 
 		//By Parin Sripakdeevong (sripakpa@stanford.edu).
@@ -286,7 +288,16 @@ namespace silent {
 		void add_parent_remark( std::string const name, std::string const value );
 
 		//By Parin Sripakdeevong (sripakpa@stanford.edu).
-		void get_parent_remark_from_line( std::string const line ); 
+		void get_parent_remark_from_line( std::string const line );
+
+		void set_residue_numbers( utility::vector1< Size > residue_numbers ){ residue_numbers_ = residue_numbers;}
+
+		void fill_struct_with_residue_numbers( pose::Pose const & pose );
+
+		void residue_numbers_into_pose( pose::Pose & pose ) const;
+
+		void
+		figure_out_residue_numbers_from_line( std::istream & line_stream );
 
 	protected:
 
@@ -313,6 +324,7 @@ namespace silent {
 		std::map< std::string, std::string > silent_comments_;
 		utility::vector1< SilentEnergy > silent_energies_;
 
+		utility::vector1< Size > residue_numbers_; // can be derived from PDB info.
 
 	private:
 		/// @brief Updates the "score" entry in the silent_energies.

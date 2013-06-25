@@ -169,7 +169,7 @@ namespace rna {
 		set_rebuild_bulge_mode( bool const & setting){ rebuild_bulge_mode_ = setting; }
 
 		void
-		set_debug_eplison_south_sugar_mode( bool const & setting){ debug_eplison_south_sugar_mode_ = setting; }
+		set_debug_epsilon_south_sugar_mode( bool const & setting){ debug_epsilon_south_sugar_mode_ = setting; }
 
 		void
 		set_exclude_alpha_beta_gamma_sampling( bool const & setting){ exclude_alpha_beta_gamma_sampling_ = setting; }
@@ -188,6 +188,12 @@ namespace rna {
 
 		void
 		set_output_pdb( bool const setting){ output_pdb_=setting;}
+
+		void
+		set_choose_random ( bool const & setting ) {		choose_random_ = setting;	}
+
+		void
+		set_force_centroid_interaction ( bool const & setting ) {		force_centroid_interaction_ = setting;	}
 
 
   private:
@@ -297,6 +303,8 @@ namespace rna {
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		void output_count_data();
+
 
 	private:
 
@@ -356,13 +364,15 @@ namespace rna {
 		bool sample_both_sugar_base_rotamer_;
 		bool include_torsion_value_in_tag_;
 		bool rebuild_bulge_mode_;
-		bool debug_eplison_south_sugar_mode_;
+		bool debug_epsilon_south_sugar_mode_;
 		bool exclude_alpha_beta_gamma_sampling_;
 		bool combine_long_loop_mode_;
 		bool do_not_sample_multiple_virtual_sugar_;
 		bool sample_ONLY_multiple_virtual_sugar_;
 		bool assert_no_virt_ribose_sampling_;
 		bool output_pdb_;
+		bool choose_random_;
+		bool force_centroid_interaction_;
 
 		StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener_;
 

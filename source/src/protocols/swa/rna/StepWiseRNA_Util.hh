@@ -27,18 +27,20 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <utility/vector1.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <string>
-#include <map>
 #include <core/chemical/AA.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <numeric/angle.functions.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.hh>
+#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.hh>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray.fwd.hh>
+#include <string>
+#include <map>
 #include <set>
 
 
@@ -72,10 +74,10 @@ void
 minimize_with_constraints(core::pose::Pose & pose, core::kinematics::MoveMap const & mm, core::scoring::ScoreFunctionOP const & scorefxn, core::optimization::MinimizerOptions const & options);
 
 bool
-assert_can_prepend(utility::vector1< core::Size > const & seq_num_list );
+check_can_prepend(utility::vector1< core::Size > const & seq_num_list );
 
 bool
-assert_can_append(utility::vector1< core::Size > const & seq_num_list );
+check_can_append(utility::vector1< core::Size > const & seq_num_list );
 
 void
 apply_protonated_H1_adenosine_variant_type(core::pose::Pose & pose, core::Size const & seq_num, bool const apply_check=true);
@@ -408,17 +410,17 @@ path_basename(std::string const full_path);
 
 bool
 Is_residues_in_contact(
-    core::Size const & res_ONE, 
+    core::Size const & res_ONE,
     core::pose::Pose const & pose_ONE,
-    core::Size const & res_TWO, 
-    core::pose::Pose const & pose_TWO, 
-    core::Real const atom_atom_overlap_dist_cutoff, 
-    core::Size const num_atom_contacts_cutoff, 
+    core::Size const & res_TWO,
+    core::pose::Pose const & pose_TWO,
+    core::Real const atom_atom_overlap_dist_cutoff,
+    core::Size const num_atom_contacts_cutoff,
     bool const verbose=false);
 
 void
 set_CCD_torsions_to_zero(
-    core::pose::Pose & pose, 
+    core::pose::Pose & pose,
     core::Size const five_prime_res);
 
 void
@@ -441,7 +443,7 @@ get_tag_from_pdb_filename(std::string const pdb_filename);
 
 void
 move_jump_atom_to_base(
-    core::kinematics::FoldTree & fold_tree, 
+    core::kinematics::FoldTree & fold_tree,
     std::string const & working_sequence);
 
 void
@@ -492,6 +494,12 @@ show_scorefxn_weight_lines(core::scoring::ScoreFunctionOP const & scorefxn, std:
 //Doesn't work on MAC!!
 //void
 //process_mem_usage(double& vm_usage, double& resident_set, core::Size count);
+
+void
+figure_out_swa_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pose const & pose, ObjexxFCL::FArray1D< bool > const & allow_insert );
+
+void
+figure_out_swa_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pose const & pose, utility::vector1< core::Size > const & minimize_res );
 
 }
 }

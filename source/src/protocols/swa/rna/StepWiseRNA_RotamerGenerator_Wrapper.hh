@@ -96,6 +96,8 @@ namespace rna {
 		void
 		initialize_rotamer_generator_list();
 
+		void set_choose_random( bool const setting );
+
 	private:
 
 		StepWiseRNA_RotamerGeneratorOP const
@@ -129,6 +131,9 @@ namespace rna {
 		bool exclude_alpha_beta_gamma_sampling_;
 		bool allow_syn_pyrimidine_;
 		utility::vector1< StepWiseRNA_RotamerGeneratorOP > rotamer_generator_list_;
+
+		bool choose_random_;
+
 	};
 
 }
