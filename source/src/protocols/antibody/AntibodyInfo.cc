@@ -1107,7 +1107,7 @@ AntibodyInfo::get_cluster_length(CDRClusterEnum const cluster) {
 
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
-///				provide fold tree utilities for various purpose                    ///
+///       provide fold tree utilities for various purpose                    ///
 ///                                                                          ///
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1141,73 +1141,79 @@ kinematics::FoldTreeCOP AntibodyInfo::get_FoldTree_AllCDRs (pose::Pose const & p
 ///
 /// @brief change to all CDR and VL-VH dock fold tree
 ///
-/// @authors Aroop 07/13/2010
+/// @author Aroop 07/13/2010
+/// @author Brian D. Weitzner
 ///
-/// @last_modified 07/13/2010
+/// @last_modified 06/25/2013
 ///////////////////////////////////////////////////////////////////////////
 kinematics::FoldTreeCOP
 AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 
 	using namespace kinematics;
 
-	Size nres = pose.total_residue();
-	pose::PDBInfoCOP pdb_info = pose.pdb_info();
-	char second_chain = 'H';
-	Size rb_cutpoint(0);
+	// Start by creating a FoldTree for all of the CDR loops.
+	// NOTE: Making deep copy becuase this method returns a FoldTreeCOP and we need to perform additional configuration.
+	FoldTreeOP f = new FoldTree(*get_FoldTree_AllCDRs(pose));
+	
+	// NOTE: This class assumes the first chain is the light chain,
+	// the second chain is the heavy chain and any other chains are
+	// the antigen.
+	Size end_of_light_chain = pose.conformation().chain_end(1);
+	Size light_chain_COM = geometry::residue_center_of_mass(pose, 1, end_of_light_chain);
+	Size heavy_chain_COM = geometry::residue_center_of_mass(pose, end_of_light_chain + 1, pose.total_residue());
 
-	for ( Size i = 1; i <= nres; ++i ) {
-		if( pdb_info->chain( i ) == second_chain) {
-			rb_cutpoint = i-1;
-			break;
+	// Adjust the FoldTree that is produced by fold_tree_from_loops to have no edges that span the light and heavy chains..
+	// Specifically, this will:
+	//     1) Add an edge from the end of L3 to the end of the light chain, a
+	//     2) Add an edge from the beginning of the heavy chain to the beginning of H1
+	//     3) Delete the existing edge from the end of L3 to the beginning of H1
+	Edge chain_spanning_edge = f->get_residue_edge(end_of_light_chain);
+	f->add_edge(chain_spanning_edge.start(), end_of_light_chain, Edge::PEPTIDE);
+	f->add_edge(end_of_light_chain + 1, chain_spanning_edge.stop(), Edge::PEPTIDE);
+	f->delete_edge(chain_spanning_edge);
+
+	// Make sure rb jumps do not reside in the loop region
+	// NOTE: This check is insufficient.  Perhaps the jump adjustment should be done in a while loop.
+	for(loops::Loops::const_iterator it= loopsop_having_allcdrs_->begin(), it_end = loopsop_having_allcdrs_->end();
+		it != it_end; ++it) {
+		if (light_chain_COM >= (it->start() - 1) && light_chain_COM <= (it->stop() + 1)) {
+			light_chain_COM = it->stop() + 2;
+		}
+		else if (heavy_chain_COM >= (it->start() - 1) && heavy_chain_COM <= (it->stop() + 1)) {
+			heavy_chain_COM = it->start() - 2;
 		}
 	}
 
-	Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, rb_cutpoint ) );
-	Size jump_pos2 ( geometry::residue_center_of_mass( pose,rb_cutpoint+1, nres ) );
-	//TR<<rb_cutpoint<<std::endl;
-	//TR<<jump_pos1<<std::endl;
-	//TR<<jump_pos2<<std::endl;
+	// Ok, so right now we have a FoldTree set up for all of the CDR loops and we want to modify it to also include a
+	// jump from light_chain_COM to heavy_chain_COM.
 
-	// make sure rb jumps do not reside in the loop region
-	for( loops::Loops::const_iterator it= loopsop_having_allcdrs_->begin(), it_end = loopsop_having_allcdrs_->end(); it != it_end; ++it ) {
-		if (   jump_pos1 >= ( it->start() - 1 ) && jump_pos1 <= ( it->stop() + 1)   )
-			jump_pos1 = it->stop() + 2;
-		if (   jump_pos2 >= ( it->start() - 1 ) && jump_pos2 <= ( it->stop() + 1)   )
-			jump_pos2 = it->start() - 2;
-	}
+	// Let's make sure the rigid body docking jump is always labelled "1"
+	Edge old_first_jump = f->jump_edge(1);
+	f->update_edge_label(old_first_jump.start(), old_first_jump.stop(), old_first_jump.label(), f->num_jump() + 1);
 
-	// make a simple rigid-body jump first
-	FoldTreeOP f = new FoldTree(* setup_simple_fold_tree(jump_pos1,rb_cutpoint,jump_pos2, pose ));
+	// Make the jump and always label it "1"
+	f->add_edge(light_chain_COM, heavy_chain_COM, 1);
 
-	for( loops::Loops::const_iterator it=loopsop_having_allcdrs_->begin(), it_end=loopsop_having_allcdrs_->end(); it != it_end; ++it ) {
-		Size const loop_start ( it->start() );
-		Size const loop_stop ( it->stop() );
-		Size const loop_cutpoint ( it->cut() );
-		Size edge_start(0), edge_stop(0);
-		//bool edge_found = false;  // unused ~Labonte
-		const FoldTree & f_const = *f;
-		Size const num_jump = f_const.num_jump();
-		for( FoldTree::const_iterator it2=f_const.begin(), it2_end=f_const.end(); it2 !=it2_end; ++it2 ) {
-			//TR<<it2->start()<<std::endl;
-			//TR<<it2->stop()<<std::endl;
-			edge_start = std::min( it2->start(), it2->stop() );
-			edge_stop  = std::max( it2->start(), it2->stop() );
-			if ( ! it2->is_jump() && loop_start > edge_start && loop_stop < edge_stop ) {
-				//edge_found = true;  // unused ~Labonte
-				break;
-			}
-		}
+	// Find the edges that will be affected.
+	Edge light_chain_edge = f->get_residue_edge(light_chain_COM);
+	Edge heavy_chain_edge = f->get_residue_edge(heavy_chain_COM);
 
-		f->delete_unordered_edge( edge_start, edge_stop, Edge::PEPTIDE);
-		f->add_edge( loop_start-1, loop_stop+1, num_jump+1 );
-		f->add_edge( edge_start, loop_start-1, Edge::PEPTIDE );
-		f->add_edge( loop_start-1, loop_cutpoint, Edge::PEPTIDE );
-		f->add_edge( loop_cutpoint+1, loop_stop+1, Edge::PEPTIDE );
-		f->add_edge( loop_stop+1, edge_stop, Edge::PEPTIDE );
-	}
+	// Add new edges directed toward the jump points
+	// Light chain
+	f->add_edge(light_chain_edge.start(), light_chain_COM, Edge::PEPTIDE);
+	f->add_edge(light_chain_edge.stop(), light_chain_COM, Edge::PEPTIDE);
+	
+	// Heavy chain
+	f->add_edge(heavy_chain_edge.start(), heavy_chain_COM, Edge::PEPTIDE);
+	f->add_edge(heavy_chain_edge.stop(), heavy_chain_COM, Edge::PEPTIDE);
+
+	// Delete the old edges
+	f->delete_edge(light_chain_edge);
+	f->delete_edge(heavy_chain_edge);
 
 	f->reorder(1);
 	return f;
+
 }
 
 
