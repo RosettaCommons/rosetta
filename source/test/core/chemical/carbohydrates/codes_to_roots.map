@@ -1,0 +1,14 @@
+# A list of Rosetta PDB 3-letter codes for saccharide residues mapped to the
+# corresponding root.
+
+# THIS IS JUST A LIST FOR UNIT TESTING! The actual, current list is found in
+# the database: rosetta_databse/chemical/carbohydrates/codes_to_roots.map
+# If you edit this file, you must also edit database_io.cxxtest.hh.
+
+# ALDOSES
+# Aldotriose
+Gly glycer  # TODO: Deal with this special case later.
+
+# Aldotetroses
+Ery erythr
+Thr thre

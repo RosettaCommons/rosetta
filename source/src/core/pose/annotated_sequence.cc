@@ -267,7 +267,7 @@ residue_types_from_saccharide_sequence(std::string const & sequence,
 
 			// 3-Letter code (must be found in map of allowed 3-letter codes) and suffix
 			} else if (morpheme.length() >= 3 &&
-					CarbohydrateInfo::CODE_TO_ROOT_MAP.count(morpheme.substr(0, 3))) {
+					CarbohydrateInfo::code_to_root_map().count(morpheme.substr(0, 3))) {
 				// Set defaults if missed.
 				if (!linkage_assigned) {
 					residue_type_name += "->4)-";

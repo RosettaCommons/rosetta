@@ -367,7 +367,7 @@ FileData::store_heterogen_names(std::string const & hetID, std::string const & t
 	}
 
 	// If the hetID is found in the map of Rosetta-allowed carbohydrate 3-letter codes....
-	if (CarbohydrateInfo::CODE_TO_ROOT_MAP.count(hetID)) {
+	if (CarbohydrateInfo::code_to_root_map().count(hetID)) {
 		parse_heterogen_name_for_carbohydrate_residues(name);
 	} else {
 		heterogen_names[hetID] = name;  // Non-carbohydrate heterogen names are simply stored in the standard PDB way.

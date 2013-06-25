@@ -23,6 +23,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
+#include <map>
 #include <string>
 
 
@@ -33,6 +34,10 @@ namespace carbohydrates {
 /// @brief  Return a list of strings, which are saccharide-specific properties and modifications, read from a database
 /// file.
 utility::vector1<std::string> read_properties_from_database_file(std::string const & filename);
+
+/// @brief  Return a map of strings to strings, which are saccharide-specific 3-letter codes mapped to IUPAC roots, read
+/// from a database file.
+std::map<std::string, std::string> read_codes_and_roots_from_database_file(std::string const & filename);
 
 }  // namespace carbohydrates
 }  // namespace chemical

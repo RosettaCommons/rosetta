@@ -50,6 +50,7 @@ namespace carbohydrates {
 core::Size const CarbohydrateInfo::MAX_C_SIZE_LIMIT = 9;
 core::Size const CarbohydrateInfo::MIN_C_SIZE_LIMIT = 3;
 
+/*
 // TODO: Move to database and create static const accessor.
 std::map<std::string, std::string> const CarbohydrateInfo::CODE_TO_ROOT_MAP =
 		boost::assign::map_list_of
@@ -90,30 +91,12 @@ std::map<std::string, std::string> const CarbohydrateInfo::CODE_TO_ROOT_MAP =
 				("Psi", "psic")
 				("Fru", "fruct")
 				("Sor", "sorb")
-				("Tag", "tagat");
+				("Tag", "tagat");*/
 
 using namespace core;
 
 
 // Public methods //////////////////////////////////////////////////////////////
-// Static constant data access
-utility::vector1<std::string> const &
-CarbohydrateInfo::sugar_properties()
-{
-	using namespace std;
-	using namespace utility;
-
-	static vector1<string> *SUGAR_PROPERTIES = 0;
-
-	if (!SUGAR_PROPERTIES) {
-		SUGAR_PROPERTIES = new vector1<string>(read_properties_from_database_file(
-				basic::options::option[basic::options::OptionKeys::in::path::database](1).name() +
-				"chemical/carbohydrates/sugar_properties.list"));
-	}
-
-	return *SUGAR_PROPERTIES;
-}
-
 // Standard methods ////////////////////////////////////////////////////////////
 // Empty constructor
 CarbohydrateInfo::CarbohydrateInfo() : utility::pointer::ReferenceCount()
@@ -242,6 +225,40 @@ CarbohydrateInfo::show(std::ostream & output) const
 		}
 		output << endl;
 	}
+}
+
+
+// Static constant data access
+utility::vector1<std::string> const &
+CarbohydrateInfo::sugar_properties()
+{
+	using namespace std;
+	using namespace utility;
+
+	static vector1<string> *SUGAR_PROPERTIES = NULL;
+
+	if (!SUGAR_PROPERTIES) {
+		SUGAR_PROPERTIES = new vector1<string>(read_properties_from_database_file(
+				basic::options::option[basic::options::OptionKeys::in::path::database](1).name() +
+				"chemical/carbohydrates/sugar_properties.list"));
+	}
+
+	return *SUGAR_PROPERTIES;
+}
+
+std::map<std::string, std::string> const &
+CarbohydrateInfo::code_to_root_map() {
+	using namespace std;
+
+	static map<string, string> *CODE_TO_ROOT_MAP = NULL;
+
+	if (!CODE_TO_ROOT_MAP) {
+		CODE_TO_ROOT_MAP = new map<string, string>(read_codes_and_roots_from_database_file(
+				basic::options::option[basic::options::OptionKeys::in::path::database](1).name() +
+				"chemical/carbohydrates/codes_to_roots.map"));
+	}
+
+	return *CODE_TO_ROOT_MAP;
 }
 
 

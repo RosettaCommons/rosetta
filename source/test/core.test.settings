@@ -281,6 +281,7 @@ testinputfiles = [
 	"chemical/carbohydrates/lactose.pdb",
 	"chemical/carbohydrates/GlcN.pdb",
 	"chemical/carbohydrates/sugar_properties.list",
+	"chemical/carbohydrates/codes_to_roots.map",
 	"chemical/mm_atom_properties.txt",
 	"chemical/orbitals/orbital_properties.txt",
 	"chemical/uk002.params",

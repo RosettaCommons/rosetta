@@ -1,1 +1,59 @@
- 
+# A list of Rosetta PDB 3-letter codes for saccharide residues mapped to the
+# corresponding root.
+
+# A map is created from this data in which each key is a 3-letter code and the
+# map value is the IUPAC root for that sugar.  For example, the (Rosetta) 3-
+# letter code for any glucose residue is Glc, and the corresponding root is
+# "gluc", to which suffixes such as "-ose" or "-osamine" are added, as ap-
+# propriate to the specific ResidueType.
+
+# The data in this file serves a dual purpose:
+# 1. The map is used by internal CarbohydrateInfo code for nomenclature pur-
+#    poses, as noted above.
+# 2. The map keys are used as a list of "Rosetta-allowed" carbohydrate 3-letter
+#    codes.  Any 3-letter codes in a PDB file containing saccharide residues
+#    must be converted to one of the 3-letter codes found here.  If a 3-letter
+#    code is found in this list, then and only then are the HETNAM records of
+#    PDB files parsed by FileData to determine specific saccharide
+#    ResidueTypes.
+
+# ALDOSES
+# Aldotriose
+Gly glycer  # TODO: Deal with this special case later.
+
+# Aldotetroses
+Ery erythr
+Thr thre
+
+# Aldopentoses
+Rib rib
+Ara arabin
+Xyl xyl
+Lyx lyx
+
+# Aldohexoses
+All all
+Alt altr
+Glc gluc
+Man mann
+Gul gul
+Ido id
+Gal galact
+Tal tal
+
+# KETOSES
+# Ketotriose
+DHA dihydroxyacet  # TODO: Deal with this special case later.
+
+# Ketotetrose
+Eul erythrul  # Eul is (I think) my own invention; compare Rul and Xul. ~ Labonte
+
+# Ketopentoses
+Rul ribul
+Xul xylul
+
+# Ketohexoses
+Psi psic
+Fru fruct
+Sor sorb
+Tag tagat

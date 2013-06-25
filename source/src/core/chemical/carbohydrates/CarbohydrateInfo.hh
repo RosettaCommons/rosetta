@@ -62,6 +62,16 @@ public:
 	virtual void show(std::ostream & output=std::cout) const;
 
 
+	// Static constant data access
+	/// @brief A list of allowed properties in carbohydrate .params and patch files.
+	static utility::vector1<std::string> const & sugar_properties();
+
+	/// @brief A list of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root.
+	static std::map<std::string, std::string> const & code_to_root_map();
+
+	//static std::map<std::string, std::string> const CODE_TO_ROOT_MAP;
+
+
 	// Accessors/Mutators
 	// Nomenclature
 	/// @brief  Return the full IUPAC name of the monosaccharide.
@@ -458,7 +468,7 @@ private:
 	std::string
 	root_from_code(std::string code) const
 	{
-		return CODE_TO_ROOT_MAP.find(code)->second;  // operator[] is not overloaded for const maps.
+		return code_to_root_map().find(code)->second;  // operator[] is not overloaded for const maps.
 	}
 
 	// If cyclic, define nu angles in terms of CHI ids.
@@ -496,14 +506,6 @@ private:
 	// Constants.
 	static core::Size const MAX_C_SIZE_LIMIT;  // maximum size of a carbohydrate carbon chain in Rosetta
 	static core::Size const MIN_C_SIZE_LIMIT;
-
-public:
-	// Static constant data access
-	/// @brief A list of allowed properties in carbohydrate .params and patch files.
-	static utility::vector1<std::string> const & sugar_properties();
-
-	/// @brief A list of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root.
-	static std::map<std::string, std::string> const CODE_TO_ROOT_MAP;
 };  // class CarbohydrateInfo
 
 // Insertion operator (overloaded so that CarbohydrateInfo can be "printed" in PyRosetta).

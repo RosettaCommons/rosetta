@@ -21,6 +21,9 @@
 // Utility header
 #include <utility/vector1.hh>
 
+// C++ header
+#include <map>
+
 
 class CarbohydrateDatabaseIOTests : public CxxTest::TestSuite {
 public:
@@ -50,5 +53,20 @@ public:
 				read_properties_from_database_file("core/chemical/carbohydrates/sugar_properties.list");
 
 		TS_ASSERT_EQUALS(properties.size(), 19);
+	}
+
+	// Confirm that carbohydrate properties are loaded correctly from the database.
+	void test_read_codes_and_roots_from_database_file()
+	{
+		using namespace std;
+		using namespace utility;
+		using namespace core::chemical::carbohydrates;
+
+		TS_TRACE("Testing read_codes_and_roots_from_database_file() method.");
+
+		map<string, string> map =
+				read_codes_and_roots_from_database_file("core/chemical/carbohydrates/codes_to_roots.map");
+
+		TS_ASSERT_EQUALS(map.size(), 3);
 	}
 };  // class CarbohydrateDatabaseIOTests
