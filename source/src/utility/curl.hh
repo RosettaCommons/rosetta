@@ -14,13 +14,15 @@
 #ifndef INCLUDED_utility_curl_hh
 #define INCLUDED_utility_curl_hh
 
+#ifdef WITHCURL
+
 #include <curl/curl.h>
 #include <string>
+
 
 namespace utility {
 
 // must include -lcurl during linking if you're using -dwithcurl
-#ifdef WITHCURL
 
 class CurlGet {
  public:

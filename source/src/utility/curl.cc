@@ -11,13 +11,15 @@
 /// @brief  Implements a OO interface to CURL wrapping and hiding the ugly C callbacks. 
 /// @author Mike Tyka (mike.tyka@gmail.com)
 
+#ifdef WITHCURL
+
 #include <utility/curl.hh>
 #include <utility/excn/Exceptions.hh>
+
 
 namespace utility {
   
 // must include -lcurl during linking if you're using -dwithcurl
-#ifdef WITHCURL
 
   CurlGet::CurlGet() 
   {
@@ -182,8 +184,8 @@ namespace utility {
     }
   }
 
-#endif
 
 }
 
+#endif
 

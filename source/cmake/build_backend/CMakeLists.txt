@@ -4,9 +4,14 @@ INCLUDE(../build/build.pre.cmake)
 INCLUDE(../build/external.static.cmake)
 
 ADD_DEFINITIONS(-DNDEBUG)
+ADD_DEFINITIONS(-DWITHCURL)
 ADD_DEFINITIONS(-DEXIT_THROWS_EXCEPTION)
 ADD_DEFINITIONS(-DUSE_FILE_PROVIDER)
 SET(COMPILE_FLAGS "-pipe -w -O2 -I../../external/jsoncpp/ -I/usr/include/")
+ADD_DEFINITIONS(-pipe)
+ADD_DEFINITIONS(-O2)
+ADD_DEFINITIONS(-s)
+ADD_DEFINITIONS(-w)
 
 SET( LIBRARIES
 	ObjexxFCL utility numeric basic
@@ -55,7 +60,6 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libutility.a 
     ${CMAKE_CURRENT_SOURCE_DIR}/libObjexxFCL.a 
     ${CMAKE_CURRENT_SOURCE_DIR}/libcppdb-static.a 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../external/jsoncpp/libjsoncpp.a
     -lz -lcurl ) 
 ### libc must be linked dynamically if using static ompi libs
 ##SET(LINK_DYNAMIC_LIBS "-Wl,-Bdynamic -l c")

@@ -50,6 +50,14 @@ namespace json_spirit {
     if ( value.type() != array_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON error: '" + name + "' is not an Array" ); }
     return value.get_array();
   }
+  
+  mArray read_mArray(  const std::string& json_string ){
+    mValue value;
+    read_or_throw(json_string, value);
+    if ( value.type() != array_type ) {  throw utility::excn::EXCN_Msg_Exception("JSON read error: expected an Array"); } 
+    return value.get_array();
+  }
+
 
   mObject read_mObject(  const std::string& json_string ){
     mValue value;

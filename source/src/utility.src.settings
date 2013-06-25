@@ -24,6 +24,7 @@ sources = {
 		"recent_history_queue",
 		"static_database",
 		"string_util",
+		"curl",
 	],
 	"utility/boinc": [
 		"boinc_util",

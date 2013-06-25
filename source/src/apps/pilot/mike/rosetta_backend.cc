@@ -26,6 +26,7 @@
 
 // option key includes
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
+#include <basic/options/keys/rbe.OptionKeys.gen.hh>
 
 #include <utility/json_spirit/json_spirit_value.h>
 #include <utility/json_spirit/json_spirit_reader.h>
@@ -49,7 +50,7 @@ class ServerInfo {
 
     }
 
-   const std::string url_gettask()   const { return full_url() + "/task/get";      };
+   const std::string url_gettask()   const { return full_url() + "/task/lease";      };
    const std::string url_putresult() const { return full_url() + "/structure/put"; };
    const std::string full_url() const { return server_url_ + ":" + server_port_; }
    const core::Real poll_frequency() const { return poll_frequency_; }
@@ -84,18 +85,35 @@ class RosettaJob {
         return false;
       }
 
-      if( data == std::string("[]") ){
+
+      // break down the input data
+      std::cout <<  data << std::endl;
+
+      // we only take the first job (we also only ever ask for 1 job).
+
+      utility::json_spirit::mArray parsed_json_task_array;
+      parsed_json_task_array =  utility::json_spirit::read_mArray( data );
+
+      if( parsed_json_task_array.size() == 0 ){ 
         std::cout << "No work on server" << std::endl;
         return false;
       }
+      
+      if( parsed_json_task_array.size()  > 1 ){ 
+        std::cout << "ERROR: Server returned more than 1 task!" << std::endl;
+        return false;
+      }
 
-      // break down the input data
-      //std::cout <<  data << std::endl;
+      utility::json_spirit::mArray::const_iterator it = parsed_json_task_array.begin(); 
+      
+      if( parsed_json_task_array.begin()->type() != utility::json_spirit::obj_type ){
+        throw utility::excn::EXCN_Msg_Exception("JSON error: expected an object for tasklist member:'");
+      }; 
+      const utility::json_spirit::mObject &parsed_json = parsed_json_task_array.begin()->get_obj();     
 
-      utility::json_spirit::mObject parsed_json;
       std::string payload;
       try{
-        parsed_json = utility::json_spirit::read_mObject( data );
+        //parsed_json = utility::json_spirit::read_mObject( data );
         payload = get_string( parsed_json, "payload" );
         taskname_ = get_string( parsed_json, "name" );
       }
@@ -115,7 +133,7 @@ class RosettaJob {
         return false;
       }
 
-      hash_      = get_string_or_empty( parsed_payload, "hash");
+      hash_      = get_string_or_empty( parsed_payload, "hash_sha1");
       key_       = get_string_or_empty( parsed_payload, "key");
       user_id_   = get_string_or_empty( parsed_payload, "user_id");
       operation_ = get_string_or_empty( parsed_payload, "operation");
@@ -284,6 +302,7 @@ main( int argc, char * argv [] )
   using namespace protocols::loophash;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+
   try {
 
     // initialize core
