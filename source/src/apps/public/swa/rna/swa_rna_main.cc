@@ -1048,7 +1048,7 @@ rna_sample_virtual_ribose(){ //July 19th, 2011...rebuild the bulge nucleotides a
 
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 
-
+	// Hey! This should be in a class! -- rhiju, 2013.
 	sample_user_specified_virtual_riboses(pose, sample_virtual_ribose_string_list, job_parameters_COP, scorefxn, silent_file_out, input_tags[1] );
 
 	Output_title_text("Exit rna_sample_virtual_ribose()");
@@ -1107,7 +1107,7 @@ swa_rna_sample()
 	core::scoring::ScoreFunctionOP scorefxn=create_scorefxn();
 	if ( option[ constraint_chi ]() )  apply_chi_cst( pose, *job_parameters_COP->working_native_pose() );
 
-	// following is temporarily turned off... not sure why but always saying that 'file exists' on rhiju's laptop
+	// following is temporarily turned off... should be redundant anyway with ensure_directory_for_out_silent_file_exists.
 	//	check_if_silent_file_exists();
 
 	// Most of the following exactly matches ERRASER_Modeler setup in swa_rna_analytical_closure. Get rid of that other file!!
@@ -1682,6 +1682,9 @@ ensure_directory_for_out_silent_file_exists(){
 			std::stringstream mkdir_command;
 			mkdir_command << "mkdir -p " << outdir;
 			system( mkdir_command.str().c_str() );
+		} else {
+			outstream.close();
+			std::remove( outfile.c_str() ); // note that this removes the prior outfile if it exists...
 		}
 	}
 

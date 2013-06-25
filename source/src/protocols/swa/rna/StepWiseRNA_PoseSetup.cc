@@ -1048,7 +1048,6 @@ namespace rna {
 		for( Size i = 1; i <= full_sequence.size(); i++ ){
 			if ( is_working_res[ i ] ){
 				working_res.push_back( i );
-				std::cout << "WORKING_RES " <<  i << std::endl;
 			}
 		}
 

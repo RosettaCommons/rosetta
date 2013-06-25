@@ -949,7 +949,11 @@ SilentStruct::residue_numbers_into_pose( pose::Pose & pose ) const{
 
 	if ( residue_numbers_.size() == 0 ) return;
 
-	runtime_assert( pose.total_residue() == residue_numbers_.size() );
+	if ( pose.total_residue() != residue_numbers_.size() ){
+		std::cout << "Number of residues in pose: " << pose.total_residue() << std::endl;
+		std::cout << "Number of residues in silent_struct residue_numbers: " << residue_numbers_.size() << std::endl;
+		utility_exit_with_message( "Problem with residue_numbers in silent_struct!" );
+	}
 
 	pose::PDBInfoOP pdb_info = pose.pdb_info();
 	pdb_info->set_numbering( residue_numbers_ );
@@ -963,7 +967,20 @@ SilentStruct::print_residue_numbers( std::ostream & out ) const {
 
 	if ( residue_numbers_.size() == 0 ) return;
 
-	runtime_assert( residue_numbers_.size() == nres_ );
+	if ( nres_ != residue_numbers_.size() ){
+
+		// This happens with symmetric poses! Could make
+		// symmetric poses compatible with RES_NUM but
+		// would need to put in asserts to ensure numbering
+		// matched up across all symmetry mates.
+		return;
+
+		//		std::cout << "Silent_struct has nres_: " << nres_  << std::endl;
+		//		std::cout << "but number of residues in silent_struct residue_numbers: " << residue_numbers_.size() << std::endl;
+		//		std::cout << "Residue_numbers: " << make_tag_with_dashes( residue_numbers_ ) << std::endl;
+		//		utility_exit_with_message( "Problem with residue_numbers in silent_struct!" );
+	}
+
 
   out << "RES_NUM " << make_tag_with_dashes( residue_numbers_ ) << std::endl;
 }
