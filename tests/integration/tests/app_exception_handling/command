@@ -52,14 +52,16 @@ do
 done
 
 #kdrew: test to see if exceptions were handled
-n=`grep "Abort trap" log|wc|awk '{print $1}'`
+n=`grep -i "abort" log|wc|awk '{print $1}'`
 
 if [ $n -eq 0 ]
 then
 	echo "Exceptions handled, removing log"
 	rm log
 else
-	echo "Abort trap found, check log"
+	echo ""
+	echo "Exceptions *NOT* handled! Check app_exception_handling/log for apps that terminate with 'abort', 'Aborted', 'Abort trap' or variant.  Add try/catch block in main() of those apps to properly handle exceptions (see src/apps/public/design/fixbb.cc for example)."
+	echo ""
 fi
 
 
