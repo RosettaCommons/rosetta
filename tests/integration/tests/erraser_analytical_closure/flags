@@ -21,7 +21,7 @@
 -fixed_res 1 3 4  
 -jump_point_pairs NOT_ASSERT_IN_FIXED_RES 1-4  
 -alignment_res 1-4  
--rmsd_res 4  
+-rmsd_res 2  
 -score:rna_torsion_potential RNA09_based_2012_new
 -score:weights rna/rna_hires_elec_dens 
 -edensity:mapfile 1Q9A_map.ccp4  
