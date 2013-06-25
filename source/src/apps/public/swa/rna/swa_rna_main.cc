@@ -1049,7 +1049,7 @@ rna_sample_virtual_ribose(){ //July 19th, 2011...rebuild the bulge nucleotides a
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 
 	// Hey! This should be in a class! -- rhiju, 2013.
-	sample_user_specified_virtual_riboses(pose, sample_virtual_ribose_string_list, job_parameters_COP, scorefxn, silent_file_out, input_tags[1] );
+	sample_user_specified_virtual_riboses(pose, sample_virtual_ribose_string_list, job_parameters_COP, scorefxn, silent_file_out, input_tags[1], option[ integration_test ]()  );
 
 	Output_title_text("Exit rna_sample_virtual_ribose()");
 

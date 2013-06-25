@@ -704,11 +704,23 @@ namespace rna {
 		//int const euler_angle_bin_max_MOCK=180/(euler_angle_bin_size_MOCK)-1;
 
 		// definition of euler angle grid search parameters
-		int const euler_angle_bin_min=-180/euler_angle_bin_size; //Should be -180/euler_angle_bin_size
-		int const euler_angle_bin_max=180/euler_angle_bin_size-1;  //Should be 180/euler_angle_bin_size-1
+		// Following are set by  #define in StepWiseRNA_FloatingBase_Samper_util.hh
+		// instead this should be its own class, and these should be private variables.
+		Real euler_angle_bin_size_ = euler_angle_bin_size;
+		Real euler_z_bin_size_     = euler_z_bin_size;
+		Real centroid_bin_size_    = centroid_bin_size;
 
-		int const euler_z_bin_min=int(-1/euler_z_bin_size);
-		int const euler_z_bin_max=int(1/euler_z_bin_size);
+		if ( fast_ || medium_fast_ ){ // use coarser search for speed
+			euler_angle_bin_size_ *= 4;
+			euler_z_bin_size_     *= 4;
+			centroid_bin_size_    *= 4;
+		}
+
+		int const euler_angle_bin_min=-180/euler_angle_bin_size_; //Should be -180/euler_angle_bin_size
+		int const euler_angle_bin_max=180/euler_angle_bin_size_-1;  //Should be 180/euler_angle_bin_size-1
+
+		int const euler_z_bin_min=int(-1/euler_z_bin_size_);
+		int const euler_z_bin_max=int(1/euler_z_bin_size_);
 
 		Real C5_centroid_dist=get_max_centroid_to_atom_distance(moving_rsd_at_origin_list, " C5*");
 		Real O5_centroid_dist=get_max_centroid_to_atom_distance(moving_rsd_at_origin_list, " O3*");
@@ -719,8 +731,8 @@ namespace rna {
 
 		std::cout << "max centroid to centroid distance: " << max_distance << std::endl;;
 
-		int const centroid_bin_min=int(-max_distance/centroid_bin_size);
-		int const centroid_bin_max=int(max_distance/centroid_bin_size)-1;
+		int const centroid_bin_min=int(-max_distance/centroid_bin_size_);
+		int const centroid_bin_max=int(max_distance/centroid_bin_size_)-1;
 
 		std::cout << "euler_angle_bin min= " << euler_angle_bin_min << " max " << euler_angle_bin_max << std::endl;
 		std::cout << "euler_z_bin_min min= " << euler_z_bin_min << " max " << euler_z_bin_max << std::endl;
@@ -865,7 +877,7 @@ namespace rna {
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			//WHY IS THIS SLOW, CAN IT BE MADE FASTER???
-			// rd2013  The two funcitons (check_floating_base_chain_closable) copy code, should be integrated.
+			// rd2013  The two functions (check_floating_base_chain_closable) copy code, should be integrated.
 			if(prev_sugar_FB_JP.sample_sugar){
 				if(	check_floating_base_chain_closable(reference_res, prev_sugar_FB_JP.PDL, moving_rsd_at_origin_list, moving_res_base_stub, Is_prepend, (num_nucleotides - 1) )==false) continue;
 			}else{
@@ -2494,9 +2506,10 @@ namespace rna {
 	StepWiseRNA_ResidueSampler::set_integration_test_mode( bool const & setting){
    	integration_test_mode_ = setting;
 		if(integration_test_mode_){
-			num_pose_kept_ = 20;
+			num_pose_kept_ = 2;
 			native_rmsd_screen_=false; // will be switched to true mid-way through sampling.
 			native_screen_rmsd_cutoff_= 1.0;
+			set_fast( true );
 		}
 
   }

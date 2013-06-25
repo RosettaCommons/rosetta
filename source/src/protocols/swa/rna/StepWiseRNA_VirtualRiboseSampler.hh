@@ -227,7 +227,8 @@ floating_base_chain_closure_sampling(utility::vector1< FB_Pose_Data > & pose_dat
 																	   core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
 													           core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
 																		 StepWiseRNA_VDW_Bin_ScreenerOP const & VDW_bin_screener,
-																	   bool const CCD_grid_index_screen);
+																	   bool const CCD_grid_index_screen,
+																		 bool const integration_test_mode = false);
 
 
 utility::vector1< pose_data_struct2 >
@@ -239,14 +240,15 @@ floating_base_chain_closure_post_process(utility::vector1< FB_Pose_Data > & pose
 
 utility::vector1< pose_data_struct2 >
 sample_virtual_ribose_and_bulge_and_close_chain(core::pose::Pose & viewer_pose,
-																						 FloatingBaseChainClosureJobParameter const & FB_job_params,
-																						 std::string const name,
-																						 core::scoring::ScoreFunctionOP const & scorefxn,
-																						 core::scoring::ScoreFunctionOP const & sampling_scorefxn,
-																						 core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-																						 core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
-																						 StepWiseRNA_JobParametersCOP & job_parameters,
-																						 bool const virtual_ribose_is_from_prior_step=true);
+																								FloatingBaseChainClosureJobParameter const & FB_job_params,
+																								std::string const name,
+																								core::scoring::ScoreFunctionOP const & scorefxn,
+																								core::scoring::ScoreFunctionOP const & sampling_scorefxn,
+																								core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
+																								core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
+																								StepWiseRNA_JobParametersCOP & job_parameters,
+																								bool const virtual_ribose_is_from_prior_step=true,
+																								bool const integration_test_mode = false);
 
 
 void
@@ -255,8 +257,7 @@ minimize_all_sampled_floating_bases(core::pose::Pose & viewer_pose,
 																		utility::vector1< pose_data_struct2 > & pose_data_list,
 																		core::scoring::ScoreFunctionOP const & sampling_scorefxn,
 																		StepWiseRNA_JobParametersCOP const & job_parameters,
-																		bool const virtual_ribose_is_from_prior_step=true);
-
+																		bool const virtual_ribose_is_from_prior_step=true );
 
 bool
 Is_ribose_virtual( core::pose::Pose const & pose, core::Size const previous_moving_res, core::Size const previous_bulge_res);
@@ -276,7 +277,8 @@ setup_FB_CC_JP_list(core::pose::Pose const & pose, utility::vector1< std::string
 void
 sample_user_specified_virtual_riboses(core::pose::Pose & pose, utility::vector1< std::string > const & sample_virtual_ribose_string_list,
 										 						    StepWiseRNA_JobParametersCOP & job_parameters, core::scoring::ScoreFunctionOP const & scorefxn,
-																		std::string const silent_file_out, std::string const input_tag);
+																			std::string const silent_file_out, std::string const input_tag,
+																			bool const integration_test_mode = false);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

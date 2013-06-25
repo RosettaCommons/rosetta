@@ -17,3 +17,4 @@
 -sampler_native_rmsd_screen true" 
 -mute all 
 -analytic_etable_evaluation 0
+-integration_test true
