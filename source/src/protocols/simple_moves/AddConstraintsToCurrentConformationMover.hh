@@ -16,6 +16,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 
 
 namespace protocols {
@@ -50,9 +51,12 @@ public:
 
 private:
 	// pointers to data that are passed in
-	TaskFactoryCOP task_factory_;
+	core::pack::task::TaskFactoryCOP task_factory_;
+  core::pack::task::PackerTaskOP task_;
+	bool has_task_factory_;
 
 	bool use_distance_cst_;
+	bool CA_only_;
 	core::Real cst_weight_;
 	core::Real max_distance_;
 	core::Real coord_dev_;

@@ -10,6 +10,7 @@
 /// @file protocols/simple_filters/GeometryFilter.cc
 /// @brief
 /// @author Possu Huang (possu@u.washington.edu)
+/// @author Lei Shi (shilei@u.washington.edu)
 // Project Headers
 
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -80,6 +81,8 @@ GeometryFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, 
 	cart_bonded_cutoff_ = tag->getOption<core::Real>( "cart_bonded", 20 );
 	filename_ = tag->getOption< std::string >( "cstfile", "none" );
 	cst_cutoff_ = tag->getOption< core::Real >( "cst_cutoff", 10000 );
+	start_ = tag->getOption< core::Size>( "start", -10000 );
+	end_ = tag->getOption< core::Size >( "end", 100000 );
 }
 
 bool
@@ -131,7 +134,10 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 	scorefxn->set_weight( cart_bonded, 1.0);
 	(*scorefxn)(copy_pose);
 
-	for ( Size resnum = 1; resnum <= copy_pose.total_residue(); resnum++ ){
+
+	for ( Size resnum = std::max(start_,Size(1)); resnum <= std::min(copy_pose.total_residue(),end_); resnum++ ){
+			
+				if ( copy_pose.fold_tree().is_cutpoint( resnum+1 ) || copy_pose.fold_tree().is_jump_point( resnum+1 ) ) continue;
 
 				core::Real const weight( (*scorefxn)[ core::scoring::ScoreType( cart_bonded ) ] );
 				core::Real const score( copy_pose.energies().residue_total_energies( resnum )[ core::scoring::ScoreType( cart_bonded ) ]);
@@ -140,9 +146,12 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 				// also gets omega values:
 				core::Real omega = copy_pose.omega(resnum);
 
-				TR << "residue " << resnum << " cart_bonded term: " << weighted_score ;
+				TR << "residue " << resnum << " name " << copy_pose.residue( resnum ).name3() << " cart_bonded term: " << weighted_score ;
 				TR << " omega angle: " << omega << std::endl;
-				if (abs(omega) <= omega_cutoff_ && (resnum != copy_pose.total_residue()) )  return(0);
+				
+//				copy_pose.fold_tree()
+				if ( (std::abs(omega) > 180-omega_cutoff_ && std::abs(omega) < omega_cutoff_ ) && copy_pose.residue( resnum+1 ).name3() == "PRO" )  return(0);
+				if (std::abs(omega) < omega_cutoff_ && copy_pose.residue( resnum+1 ).name3() != "PRO" )  return(0);
 				if (weighted_score >= cart_bonded_cutoff_ && ( resnum != 1 || resnum != copy_pose.total_residue() ) ) return(0);
 	}
 

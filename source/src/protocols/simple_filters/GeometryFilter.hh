@@ -55,6 +55,8 @@ private:
 	core::Real cart_bonded_cutoff_;
 	std::string filename_;
 	core::Real cst_cutoff_;
+	core::Size start_;
+	core::Size end_;
 };
 	
 }
