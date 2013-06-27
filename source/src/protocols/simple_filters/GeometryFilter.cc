@@ -81,7 +81,7 @@ GeometryFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, 
 	cart_bonded_cutoff_ = tag->getOption<core::Real>( "cart_bonded", 20 );
 	filename_ = tag->getOption< std::string >( "cstfile", "none" );
 	cst_cutoff_ = tag->getOption< core::Real >( "cst_cutoff", 10000 );
-	start_ = tag->getOption< core::Size>( "start", -10000 );
+	start_ = tag->getOption< core::Size>( "start", 1 );
 	end_ = tag->getOption< core::Size >( "end", 100000 );
 }
 
@@ -133,7 +133,6 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
 	scorefxn->set_weight( cart_bonded, 1.0);
 	(*scorefxn)(copy_pose);
-
 
 	for ( Size resnum = std::max(start_,Size(1)); resnum <= std::min(copy_pose.total_residue(),end_); resnum++ ){
 			
