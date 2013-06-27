@@ -1,3 +1,18 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   apps/pilot/andrew/find_buns.cc
+/// @brief  Application that finds buried unsatisfied hydrogen bonding groups in proteins using the variable-
+///         distance to solvent logic.  Outputs a kinemage that highlights the buried-unsatisfied polar groups
+///         and also displays all the exposed dots.
+/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+
 #include <devel/init.hh>
 #include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
 
@@ -27,50 +42,30 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/standard_mains.hh>
 
+// Utility headers
+#include <utility/file/FileName.hh>
+
 // C++ headers
 #include <fstream>
 
-int main( int argc, char * argv [] )
-{
-  try {
-	using namespace core;
-	using namespace core::chemical;
-	using namespace core::conformation;
-	using namespace core::id;
-	using namespace core::io::pdb;
-	using namespace core::graph;
-	using namespace core::pose;
-	using namespace core::scoring;
-	using namespace core::scoring::hbonds;
 
+utility::vector1< devel::vardist_solaccess::VarSolDRotamerDotsOP >
+varsoldist_rotamer_dots_for_pose(
+	core::pose::Pose const & pose
+)
+{
+	using namespace core;
+	using namespace core::graph;
+	using namespace core::scoring;
 	using namespace devel::vardist_solaccess;
 
-	using namespace basic::options;
-
-	devel::init( argc, argv );
-
-	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
-
-	if ( input_jobs.size() != 1 ) {
-		utility_exit_with_message( "Expected exactly one pdb to be specified from the -s or -l flags" );
-	}
-
-	pose::Pose pose;
-	core::import_pose::pose_from_pdb( pose, input_jobs[ 1 ]->input_tag() );
-	ScoreFunctionOP sfxn = getScoreFunction();
-	(*sfxn)(pose);
-
-	HBondSet hbset;
-	fill_hbond_set( pose, false, hbset );
-
 	utility::vector1< VarSolDRotamerDotsOP > rotamer_dots( pose.total_residue() );
-	Vector com( 0.0 );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		rotamer_dots[ ii ] = new VarSolDRotamerDots( new core::conformation::Residue( pose.residue( ii )), true );
 		rotamer_dots[ ii ]->increment_self_overlap();
-		com += pose.residue( ii ).xyz( pose.residue( ii ).nbr_atom() );
 	}
-	com /= pose.total_residue();
+
+
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		for ( Graph::EdgeListConstIter
@@ -80,6 +75,21 @@ int main( int argc, char * argv [] )
 			rotamer_dots[ ii ]->intersect_residues( *rotamer_dots[ (*iru)->get_second_node_ind() ] );
 		}
 	}
+	return rotamer_dots;
+}
+
+std::list< core::id::AtomID >
+buns_for_pose(
+	core::pose::Pose const & pose,
+	utility::vector1< devel::vardist_solaccess::VarSolDRotamerDotsOP > const & rotamer_dots,
+	core::scoring::hbonds::HBondSet const & hbset
+)
+{
+	using namespace core;
+	using namespace core::id;
+	using namespace core::graph;
+	using namespace core::scoring;
+	using namespace core::scoring::hbonds;
 
 	std::list< AtomID > buns;
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
@@ -117,19 +127,85 @@ int main( int argc, char * argv [] )
 			}
 		}
 	}
+	return buns;
+}
 
-	ConformationKinWriter writer;
-	std::ofstream fout( "test.kin" );
-	write_kinemage_header( fout, 1, "test", com );
+core::Vector
+pose_nbratom_center_of_mass(
+	core::pose::Pose const & pose
+)
+{
+	core::Vector com( 0.0 ); // center of mass
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		com += pose.residue( ii ).xyz( pose.residue( ii ).nbr_atom() );
+	}
+	com /= pose.total_residue();
+	return com;
+}
+
+void
+write_buns_and_dots_kinemage(
+	std::string const & outfile_name,
+	std::string const & structure_tag,
+	core::pose::Pose const & pose,
+	utility::vector1< devel::vardist_solaccess::VarSolDRotamerDotsOP > const & rotamer_dots,
+	std::list< core::id::AtomID > const & buns
+)
+{
+
+	core::conformation::ConformationKinWriter writer;
+	std::ofstream fout( outfile_name.c_str() );
+	core::conformation::write_kinemage_header( fout, 1, structure_tag, pose_nbratom_center_of_mass( pose ) );
 	writer.write_coords( fout, pose.conformation() );
 	fout << "@group { Dots } dominant off\n";
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) rotamer_dots[ ii ]->write_dot_kinemage( fout );
+	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) rotamer_dots[ ii ]->write_dot_kinemage( fout );
 	fout << "@group { BUns } dominant\n";
 	fout << "@balllist radius= 0.6 color= white\n";
-	for ( std::list< AtomID >::const_iterator iter = buns.begin(); iter != buns.end(); ++iter ) {
+	for ( std::list< core::id::AtomID >::const_iterator iter = buns.begin(); iter != buns.end(); ++iter ) {
 		fout << "{" << iter->rsd() << " " << pose.residue( iter->rsd() ).atom_name( iter->atomno() ) << "} P " << pose.xyz( *iter ).x() << " " << pose.xyz( *iter ).y() << " " << pose.xyz( *iter ).z() << "\n";
 	}
 
+
+}
+
+
+int main( int argc, char * argv [] )
+{
+	using namespace core;
+	using namespace core::chemical;
+	using namespace core::conformation;
+	using namespace core::id;
+	using namespace core::io::pdb;
+	using namespace core::graph;
+	using namespace core::pose;
+	using namespace core::scoring;
+	using namespace core::scoring::hbonds;
+
+	using namespace devel::vardist_solaccess;
+
+	using namespace basic::options;
+
+	try {
+		devel::init( argc, argv );
+
+		utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();
+
+		for ( core::Size ii = 1; ii <= input_jobs.size(); ++ii ) {
+			pose::Pose pose;
+			core::import_pose::pose_from_pdb( pose, input_jobs[ ii ]->input_tag() );
+			ScoreFunctionOP sfxn = getScoreFunction();
+			(*sfxn)(pose);
+
+			HBondSet hbset;
+			fill_hbond_set( pose, false, hbset );
+
+			utility::vector1< VarSolDRotamerDotsOP > rotamer_dots = varsoldist_rotamer_dots_for_pose( pose );
+			std::list< core::id::AtomID > buns = buns_for_pose( pose, rotamer_dots, hbset );
+
+			utility::file::FileName inputname = input_jobs[ ii ]->input_tag();
+			std::string outname = inputname.base();
+			write_buns_and_dots_kinemage( outname + "_buried_unsats.kin", outname, pose, rotamer_dots, buns );
+		}
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}

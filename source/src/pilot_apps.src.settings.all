@@ -35,7 +35,7 @@ sources = {
 		"measure_catalytic_geometry",
 		"version_scorefunction", #Note: used for scorefunction version tests; no itest needed
 		"analyze_rtmin_failures",
-		#"find_buns",
+		"find_buns",
 		"zn_match_symmdock", #Note: used for scorefunction version tests; no itest needed
 		"sweep_respair_energies",
 		"find_buns",

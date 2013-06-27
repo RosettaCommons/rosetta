@@ -253,7 +253,8 @@ protected:
 		pose::Pose const & pose,
 		task::PackerTask const & task,
 		chemical::ResidueTypeCOP concrete_residue,
-		conformation::Residue const & existing_residue
+		conformation::Residue const & existing_residue,
+		graph::GraphCOP packer_neighbor_graph
 	);
 
 public:
@@ -287,6 +288,15 @@ public:
 	) const;
 
 private:
+
+	/// @brief logic for building TP3 water rotamers
+	void build_tp3_water_rotamers(
+		pose::Pose const & pose,
+		task::PackerTask const & task,
+		chemical::ResidueTypeCOP concrete_residue,
+		conformation::Residue const & existing_residue,
+		graph::GraphCOP packer_neighbor_graph
+	);
 
 	/// @brief declare that a new block of residue types has begun, and that new residues
 	/// are about to be pushed back.

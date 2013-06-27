@@ -220,8 +220,7 @@ RotamerSet_::build_rotamers_for_concrete(
 	prepare_for_new_residue_type( *concrete_residue );
 
 	if ( task.residue_task( resid() ).optimize_h() ) {
-		build_optimize_H_rotamers( pose, task, concrete_residue, existing_residue );
-
+		build_optimize_H_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph );
 	// The behavior depends on the residue type.  This should be refactored -- at least into several separate methods
 	// that this one switches between....
 	} else if ( concrete_residue->is_DNA() ) { // DNA /////////////////////////////////////////////////////////////////
@@ -303,25 +302,10 @@ RotamerSet_::build_rotamers_for_concrete(
 			push_back_rotamer( rot );
 		}
 
-	} else if ( concrete_residue->name() == "TP3" ) { // TIP3 water ///////////////////////////////////////////////////
-		// build rotamers for water
-		utility::vector1< ResidueOP > new_rotamers;
+	} else if ( concrete_residue->name() == "TP3" ) { // TIP3 water /////////////////////////////////
+		build_tp3_water_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph );
+	} else { // All other residues ///////////////////////////////////////////////////////////////////////
 
-		build_independent_water_rotamers( resid(), *concrete_residue, task, pose, packer_neighbor_graph, new_rotamers );
-
-		for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
-			new_rotamers[ii]->seqpos( resid() );
-			new_rotamers[ii]->chain( existing_residue.chain() );
-			push_back_rotamer( new_rotamers[ii] );
-		}
-
-		if ( task.include_current( resid() ) && existing_residue.name() == concrete_residue->name() ) {
-			ResidueOP rot = existing_residue.create_rotamer();
-			push_back_rotamer( rot );
-			id_for_current_rotamer_ = num_rotamers();
-		}
-
-	} else { // All other residues ////////////////////////////////////////////////////////////////////////////////////
 		utility::vector1< utility::vector1< Real > > extra_chi_steps( concrete_residue->nchi() );
 
 		Size nneighbs(999);
@@ -440,7 +424,8 @@ RotamerSet_::build_optimize_H_rotamers(
 	pose::Pose const & pose,
 	task::PackerTask const & task,
 	chemical::ResidueTypeCOP concrete_residue,
-	conformation::Residue const & existing_residue
+	conformation::Residue const & existing_residue,
+	graph::GraphCOP packer_neighbor_graph
 )
 {
 	using namespace chemical;
@@ -537,6 +522,8 @@ RotamerSet_::build_optimize_H_rotamers(
 		conformation::set_chi_according_to_coordinates( *example_rotamer );
 
 		push_back_rotamer( example_rotamer );
+	} else if ( concrete_residue->name() == "TP3" ) { // TIP3 water /////////////////////////////////
+		build_tp3_water_rotamers( pose, task, concrete_residue, existing_residue, packer_neighbor_graph );
 	} else {
 		/// Rotatable proton chi
 		utility::vector1< ResidueOP > suggested_rotamers;
@@ -1006,6 +993,36 @@ RotamerSet_::bump_check(
 		}
 	}
 	return static_cast< core::PackerEnergy > (sf.weights().dot( emap ));
+}
+
+/// @details refactored into its own method so that it could be used in both regular packing
+/// and also in optimizeH.
+void
+RotamerSet_::build_tp3_water_rotamers(
+		pose::Pose const & pose,
+		task::PackerTask const & task,
+		chemical::ResidueTypeCOP concrete_residue,
+		conformation::Residue const & existing_residue,
+		graph::GraphCOP packer_neighbor_graph
+)
+{
+
+	// build rotamers for water
+	utility::vector1< ResidueOP > new_rotamers;
+
+	build_independent_water_rotamers( resid(), *concrete_residue, task, pose, packer_neighbor_graph, new_rotamers );
+
+	for ( Size ii=1; ii<= new_rotamers.size(); ++ii ) {
+		new_rotamers[ii]->seqpos( resid() );
+		new_rotamers[ii]->chain( existing_residue.chain() );
+		push_back_rotamer( new_rotamers[ii] );
+	}
+
+	if ( task.include_current( resid() ) && existing_residue.name() == concrete_residue->name() ) {
+		ResidueOP rot = existing_residue.create_rotamer();
+		push_back_rotamer( rot );
+		id_for_current_rotamer_ = num_rotamers();
+	}
 }
 
 void
