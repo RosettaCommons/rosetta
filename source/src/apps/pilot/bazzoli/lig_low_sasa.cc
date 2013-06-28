@@ -102,6 +102,8 @@ using basic::options::OptionKeys::lig_sasa_resfile;
 
 int main( int argc, char * argv [] )
 {
+	try{
+
 	NEW_OPT( lig_sasa_resfile, "ligand required SASA", "lig_sasa_resfile.txt" );
 
 	devel::init(argc, argv);
@@ -172,4 +174,8 @@ int main( int argc, char * argv [] )
 			TR << "  !HIGH!";
 		TR << std::endl;
 	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

@@ -77,6 +77,7 @@ OPT_KEY( Real, extra_point_weight )
 OPT_KEY( Real, origin_cutoff )
 
 int main( int argc, char * argv [] ) {
+	try{
 
   NEW_OPT( central_relax_pdb_num, "target residue", "-1" );
   NEW_OPT( input_protein_file, "protein file name", "protein.pdb" );
@@ -398,6 +399,9 @@ int main( int argc, char * argv [] ) {
 	//delete the optimized ligand pose pdb file
 	if(	remove(pso_pose_name.c_str()) != 0) perror( "Error deleting Ligand_PSO_pose_pdb file" );
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 
 }

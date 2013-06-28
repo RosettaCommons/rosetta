@@ -72,6 +72,8 @@ OPT_KEY( String, reference_ligand )
 
 int main( int argc, char * argv [] ) {
 
+	try{
+
   NEW_OPT( input_ligand, "ligand file name", "input_ligand.pdb" );
   NEW_OPT( reference_ligand, "reference ligand file name", "reference_ligand.pdb" );
 
@@ -134,6 +136,8 @@ int main( int argc, char * argv [] ) {
 		rmsd = sqrt(dist_sum/pose1_rsd.nheavyatoms());
 		std::cout<<"RMSD:"<<"	"<<inp_ligand<<"	"<<ref_ligand<<"	"<<rmsd<<std::endl;
 	}
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 }

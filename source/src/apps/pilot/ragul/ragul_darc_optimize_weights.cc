@@ -122,6 +122,7 @@ OPT_KEY( Real, origin_cutoff )
 OPT_KEY( Real, cst_force_constant )
 
 int main( int argc, char * argv [] ) {
+	try{
 
   NEW_OPT( central_relax_pdb_num, "target residue", "-1" );
   NEW_OPT( input_protein_file, "protein file name", "protein.pdb" );
@@ -546,6 +547,9 @@ int main( int argc, char * argv [] ) {
 		RMSDfile <<pf.rmsd(original_pose, minimized_ligand_pose)<<"\n";
 		RMSDfile.close();
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 
 }

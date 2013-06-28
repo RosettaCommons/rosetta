@@ -33,6 +33,8 @@
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/moves/Mover.hh>
@@ -96,6 +98,7 @@ using namespace basic::options;
 int
 main( int argc, char * argv [] )
 {
+    try {
 	  clk1 = clock();
 
 	devel::init(argc, argv);
@@ -169,5 +172,8 @@ main( int argc, char * argv [] )
 
 	clk2 = clock();
 	TR<<"The entire process took: "<<(clk2-clk1)/CLOCKS_PER_SEC<<std::endl;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 }

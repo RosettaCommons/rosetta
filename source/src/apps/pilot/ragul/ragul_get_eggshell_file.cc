@@ -84,6 +84,7 @@ OPT_KEY( Real, gd_z )
 OPT_KEY( Real, gs )
 
 int main( int argc, char * argv [] ) {
+	try{
 
   NEW_OPT( central_relax_pdb_num, "target residue", "-1" );
   NEW_OPT( input_protein_file, "protein file name", "protein.pdb" );
@@ -235,5 +236,8 @@ int main( int argc, char * argv [] ) {
 	std::cout<< "Written eggshell to triplet file: "<< eggshell_triplet_tag << std::endl;
 	std::cout<< "DONE!"<< std::endl;
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 }

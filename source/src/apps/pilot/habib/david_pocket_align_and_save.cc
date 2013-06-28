@@ -145,6 +145,8 @@ iface_pdb_superimpose_pose(
 /// General testing code
 int main( int argc, char * argv [] ) {
 
+	try{
+
 	NEW_OPT( comparison_relax_pdb_num, "comparison residue", "-1");
 	NEW_OPT( template_pdb_name, "template pdb", "template.pdb" );
 	NEW_OPT ( contact_list, "File name for optional list of contact residues to check","");
@@ -224,6 +226,9 @@ int main( int argc, char * argv [] ) {
 	//		fout.clear();
 
 	TR << "Done!" << std::endl;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 
 }

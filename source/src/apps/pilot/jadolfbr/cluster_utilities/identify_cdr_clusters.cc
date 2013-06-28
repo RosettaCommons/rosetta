@@ -73,9 +73,9 @@ public:
 
 int main(int argc, char* argv[])
 {
-	devel::init(argc, argv);
 	
 	try{
+		devel::init(argc, argv);
 		protocols::jd2::JobDistributor::get_instance()->go(new IdentifyCDRClusters);
 		std::cout<< "Please reference North, B., A. Lehmann, and R.L. Dunbrack, Jr., A new clustering of antibody CDR loop conformations. JMB, 2011. 406(2): p. 228-56."<<std::endl;
 	} catch(utility::excn::EXCN_Base & excn){

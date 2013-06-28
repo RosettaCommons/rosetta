@@ -71,6 +71,7 @@ public:
 };
 
 int main(int argc, char* argv[]){
+	try{
 	//Make option for centroid or not.
 	devel::init(argc, argv);
 	
@@ -82,6 +83,9 @@ int main(int argc, char* argv[]){
 		excn.show( std::cerr );
 	}
 	std::cout << "Done! -------------------------------\n";
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return(0);
 }
 

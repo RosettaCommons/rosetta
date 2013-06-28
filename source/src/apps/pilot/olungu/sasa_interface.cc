@@ -47,6 +47,8 @@ using namespace protocols::antibody;
 int
 main( int argc, char* argv[] ){
 
+	try{
+
 	devel::init(argc, argv);
 
 	//-s read in PDB
@@ -67,6 +69,9 @@ main( int argc, char* argv[] ){
 	std::cout << "Total charge " << total_charge << std::endl;
 	core::SSize p_charge = paratope_charge( pose, abinfo );
 	std::cout << "peritope charge " << p_charge << std::endl;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 }
 

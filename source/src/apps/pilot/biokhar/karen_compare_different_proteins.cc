@@ -204,6 +204,8 @@ static basic::Tracer TR( "apps.pilot.karen_pocket_compare.main" );
 /// General testing code
 int main( int argc, char * argv [] ) {
 
+	try{
+
 	NEW_OPT( template_pdb_name, "template pdb", "template.pdb" );
 	NEW_OPT( template_target_resnum, "template target residue", "-1" );
 	NEW_OPT( comparison_target_resnum, "comparison target residue", "-1" );
@@ -368,6 +370,9 @@ int main( int argc, char * argv [] ) {
 	TR << "Distance: " << best_dist << std::endl;
 
 	TR << "Done!" << std::endl;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 
 }

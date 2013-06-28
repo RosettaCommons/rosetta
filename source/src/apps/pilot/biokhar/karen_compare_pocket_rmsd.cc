@@ -86,6 +86,8 @@ bool is_interface_heavyatom(
 int
 main( int argc, char * argv [] ){
 
+	try{
+
   NEW_OPT( interface_list, "interface residues", "interface residues" );
   NEW_OPT( first_structure, "first structure", "-1" );
   NEW_OPT( second_structure, "comparison structure", "-1" );
@@ -128,6 +130,10 @@ TR << "All residue rmsd: " << CA_rms << " Interface rmsd: " << heavyatom_rms <<s
 
 
 TR << "Done computing rmsds" << std::endl;
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 
 return 0;
 

@@ -74,6 +74,8 @@ static basic::Tracer TR("motif_hash_util");
 
 
 int main(int argc, char *argv[]) {
+	try{
+
 	devel::init(argc,argv);
 
 	using namespace basic::options::OptionKeys;
@@ -155,6 +157,11 @@ int main(int argc, char *argv[]) {
 	// MotifHash mh2;
 	// utility::io::izstream ifs1("test1.txt"); ifs1 >> mh2        ; ifs1.close();
 	// utility::io::ozstream ofs2("test2.txt"); ofs2 << mh2 << endl; ofs2.close();
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 
 

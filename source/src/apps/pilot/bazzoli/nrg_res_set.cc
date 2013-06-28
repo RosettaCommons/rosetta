@@ -108,6 +108,7 @@ OPT_KEY( String, nrg_resfile )
 
 int main( int argc, char * argv [] )
 {
+	try{
 	NEW_OPT( nrg_resfile, "set of residues whose energy is to be computed", "nrg_resfile.txt" );
 
 	devel::init(argc, argv);
@@ -221,5 +222,9 @@ int main( int argc, char * argv [] )
 	tot_w_nrg = tot_u_nrgs.dot(weights);
 	TR << std::endl;
 	TR << "##### TOTAL ENERGY: " <<  tot_w_nrg << std::endl;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }
 

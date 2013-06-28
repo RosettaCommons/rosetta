@@ -90,6 +90,7 @@ OPT_KEY( Real, cst_force_constant )
 static basic::Tracer TR( "apps.pilot.ragul_darc_minimize.main" );
 
 int main( int argc, char * argv [] ){
+	try{
 
 	NEW_OPT( cst_force_constant, "coordinate constraint force constant", 0.5 );
 
@@ -282,6 +283,9 @@ int main( int argc, char * argv [] ){
 	*/
 
 	std::cout <<"bound_energy"<<"	"<<tag<<"	"<<bound_pose.energies().total_energy()<<std::endl;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 
 }

@@ -1397,6 +1397,8 @@ sweep_params_from_match_constraint_file(
 
 int main( int argc, char * argv [] )
 {
+	try{
+
 	using namespace core;
 	using namespace core::chemical;
 	using namespace core::conformation;
@@ -1464,5 +1466,8 @@ int main( int argc, char * argv [] )
 		db_session->commit();
 	}
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 }
 

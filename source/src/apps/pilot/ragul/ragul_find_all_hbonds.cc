@@ -73,6 +73,8 @@ static basic::Tracer TR( "apps.pilot.hbonds.main" );
 
 int main( int argc, char * argv [] )
 {
+	try{
+
 	devel::init(argc, argv);
 
 	// create native pose from pdb
@@ -101,5 +103,8 @@ int main( int argc, char * argv [] )
 			'(' << accep.seqpos() << ')' <<
 			accep.atom_name( hb.acc_atm()) << "\n";
 	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 }
 

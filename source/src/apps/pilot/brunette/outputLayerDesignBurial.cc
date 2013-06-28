@@ -87,6 +87,8 @@ std::string calc_burial(Pose const & pose, Real pore_radius, Real boundarySasaTh
  
 
 int main( int argc, char * argv [] ) {
+	try{
+
     using namespace core::chemical;
 	using namespace core::import_pose::pose_stream;
 	using core::import_pose::pose_from_pdb;
@@ -109,4 +111,8 @@ int main( int argc, char * argv [] ) {
         output.close();
         std::cout <<"finished " << tag << std::endl;
     }
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

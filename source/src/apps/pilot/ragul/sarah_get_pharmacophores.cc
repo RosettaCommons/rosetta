@@ -124,6 +124,7 @@ is_buried_ring(core::conformation::Residue const & rsd, core::Real ring_sasa, co
 }
 
 int main( int argc, char * argv [] ){
+	try{
 
 	NEW_OPT( input_rna, "rna file name", "rna.pdb" );
 	NEW_OPT( input_complex, "protein rna complex file name", "complex.pdb" );;
@@ -327,6 +328,9 @@ int main( int argc, char * argv [] ){
   outPDB_stream.close();
   outPDB_stream.clear();
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 
 }

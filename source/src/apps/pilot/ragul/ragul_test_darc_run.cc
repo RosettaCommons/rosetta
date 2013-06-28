@@ -102,6 +102,7 @@ OPT_KEY( Integer, add_grid_size )
 OPT_KEY( Integer, add_ext_grid_size )
 
 int main( int argc, char * argv [] ) {
+	try{
 
 	NEW_OPT( optimization_method, "optimization_method", "PSO" );
   NEW_OPT( central_relax_pdb_num, "target residue", "-1" );
@@ -542,5 +543,8 @@ int main( int argc, char * argv [] ) {
 	}else {
 		std::cout<<"ERROR! : Wrong optimization_method "<<std::endl;
 	}
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 }

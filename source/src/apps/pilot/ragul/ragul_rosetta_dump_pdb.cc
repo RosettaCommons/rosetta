@@ -73,6 +73,7 @@ static basic::Tracer TR( "apps.pilot.dump_pdb.main" );
 
 int main( int argc, char * argv [] )
 {
+	try{
 	devel::init(argc, argv);
 
 	// create native pose from pdb
@@ -82,6 +83,9 @@ int main( int argc, char * argv [] )
 	std::string out_pdb_name = "rosetta_" + input_pdb_name;
 	pose_init.dump_pdb(out_pdb_name);
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 
 }

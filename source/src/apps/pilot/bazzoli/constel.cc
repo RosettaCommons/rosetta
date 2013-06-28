@@ -122,6 +122,7 @@ using core::Size;
 
 int main( int argc, char * argv [] )
 {
+	try{
 	NEW_OPT( pair_all_res, "Extract pair constellations for all residues", false  );
 	NEW_OPT( pair_target_resnum, "Extract pair constellations for a target residue", -1 );
 	NEW_OPT( pair_target_mutations, "Extract pair constellations for a target mutation pair", "**_**" );
@@ -207,4 +208,8 @@ int main( int argc, char * argv [] )
 	}
 
 	TR << "TASK COMPLETED" << std::endl;
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+    return 0;
 }

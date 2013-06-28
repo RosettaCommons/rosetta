@@ -141,6 +141,8 @@ core::Real get_RNAring_sasa( core::conformation::Residue const & rsd, int rsdno,
 
 int main( int argc, char * argv [] ){
 
+	try {
+
 	NEW_OPT( input_rna, "rna pdb file name", "rna.pdb" );
 	NEW_OPT( input_protein, "protein pdb file name", "protein.pdb" );
 
@@ -197,6 +199,9 @@ int main( int argc, char * argv [] ){
 	}
 			complexrna_sasa_ofile.close();
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 
 }

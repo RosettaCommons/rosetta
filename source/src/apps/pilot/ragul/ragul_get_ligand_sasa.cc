@@ -104,6 +104,7 @@ static basic::Tracer TR( "apps.pilot.ragul_ligand_sasa.main" );
 
 
 int main( int argc, char * argv [] ){
+	try{
 
 	NEW_OPT( cst_force_constant, "coordinate constraint force constant", 0.5 );
 	NEW_OPT( print_init, "print the initial complex for debugging", true );
@@ -201,6 +202,9 @@ int main( int argc, char * argv [] ){
 
 	std::cout << "Scores:"<<bound_protein<<"	"<<  Total_pose_exposed_SASA <<"	"<< interface_hydrophobic_sasa <<"	"<< interface_polar_sasa <<std::endl;
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 
 }

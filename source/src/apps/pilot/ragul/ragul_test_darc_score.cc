@@ -78,6 +78,7 @@ OPT_KEY( Real, extra_point_weight )
 OPT_KEY( Real, origin_cutoff )
 
 int main( int argc, char * argv [] ) {
+	try{
 
   NEW_OPT( central_relax_pdb_num, "target residue", "-1" );
   NEW_OPT( input_protein_file, "protein file name", "protein.pdb" );
@@ -276,6 +277,9 @@ int main( int argc, char * argv [] ) {
 
 	std::cout << "DARC_SCORE : " <<  pf.fp_compare( npf, missing_pt_wt, steric_wt, extra_pt_wt ) <<std::endl;
 
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 
 }

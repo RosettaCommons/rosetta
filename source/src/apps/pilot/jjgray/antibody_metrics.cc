@@ -54,6 +54,7 @@ using namespace protocols::antibody;
 int
 main( int argc, char* argv[] ){
 
+	try{
 	devel::init(argc, argv);
 
 	//-s read in PDB
@@ -76,7 +77,9 @@ main( int argc, char* argv[] ){
 
 	std::pair<core::Real,core::Real> q = kink_dihedral(pose, ab_info);
 	TR << "q: " << q.first << " " << q.second << std::endl;
-
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 }
 

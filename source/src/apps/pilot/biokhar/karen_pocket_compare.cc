@@ -87,6 +87,8 @@ static basic::Tracer TR( "apps.pilot.karen_pocket_compare.main" );
 /// General testing code
 int main( int argc, char * argv [] ) {
 
+	try{
+
 	NEW_OPT( eggshell1_fname, "eggshell1_fname", "fname" );
 	NEW_OPT( eggshell2_fname, "eggshell2_fname", "fname" );
 
@@ -114,6 +116,10 @@ int main( int argc, char * argv [] ) {
 	//		fout.clear();
 
 	TR << "Done!" << std::endl;
+
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
 	return 0;
 
 }

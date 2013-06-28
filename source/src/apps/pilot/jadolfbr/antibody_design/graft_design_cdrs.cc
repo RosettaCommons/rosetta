@@ -100,10 +100,11 @@ public:
 
 int main(int argc, char* argv[]){
 	
-	devel::init(argc, argv);
+	try{
+
+		devel::init(argc, argv);
 
 	
-	try{
 		protocols::jd2::JobDistributor::get_instance()->go(new GraftDesignCDRs);
 	} catch ( utility::excn::EXCN_Base& excn ) {
 		std::cout << "Exception: " << std::endl;
