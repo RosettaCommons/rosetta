@@ -67,7 +67,7 @@ namespace constraints {
 	void
 	ScalarWeightedFunc::show_definition( std::ostream &out ) const
 	{
-		out << "SCALARWEIGHTEDFUNC  weight:  " << weight_ << "  func_to_weight:  ";
+		out << "SCALARWEIGHTEDFUNC  " << weight_ << " ";
 		func_to_weight_->show_definition(out);
 	}
 

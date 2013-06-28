@@ -57,6 +57,7 @@ private:
 
 	bool use_distance_cst_;
 	bool CA_only_;
+	bool bb_only_;
 	core::Real cst_weight_;
 	core::Real max_distance_;
 	core::Real coord_dev_;

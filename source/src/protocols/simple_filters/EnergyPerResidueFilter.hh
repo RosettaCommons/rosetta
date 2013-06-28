@@ -33,7 +33,7 @@ public:
 
 	EnergyPerResidueFilter( core::Size const resnum, core::scoring::ScoreFunctionCOP scorefxn,
 	   core::scoring::ScoreType const score_type, core::Real const threshold,
-	   bool const whole_interface = false, core::Size const rb_jump = 1,
+	   bool const whole_interface = false, bool const whole_protein = false, core::Size const rb_jump = 1,
 	   core::Real const interface_distance_cutoff =  8.0 , bool const bb_bb = false );
 
 	EnergyPerResidueFilter( EnergyPerResidueFilter const &init );
@@ -47,6 +47,7 @@ public:
 
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
 	core::Real report_sm( core::pose::Pose const & pose ) const;
+	core::Real compute( core::pose::Pose const & pose, core::Size const resid ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~EnergyPerResidueFilter();
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
@@ -66,6 +67,7 @@ private:
 	core::scoring::ScoreType score_type_;
 	core::Real threshold_;
 	bool whole_interface_;
+	bool whole_protein_;
 	core::Size rb_jump_;
 	core::Real interface_distance_cutoff_;
 	bool bb_bb_;

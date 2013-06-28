@@ -370,6 +370,7 @@ sources = {
 		"PDDFScoreFilter",
 		"PoolEvaluatorCreator",
 		"PoseInfoFilter",
+		"SavePoseConstraintToFileFilter",
 		"PredictedBurialEvaluator",
 		"PredictedBurialFnEvaluatorCreator",
 		"RangeFilter",

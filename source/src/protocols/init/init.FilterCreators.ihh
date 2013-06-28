@@ -98,6 +98,7 @@
 #include <protocols/simple_filters/ResiduesInInterfaceFilterCreator.hh>
 #include <protocols/simple_filters/ResidueSetChainEnergyFilterCreator.hh>
 #include <protocols/simple_filters/RotamerBoltzmannWeightFilterCreator.hh>
+#include <protocols/simple_filters/SavePoseConstraintToFileFilterCreator.hh>
 #include <protocols/simple_filters/ScoreCutoffFilterCreator.hh>
 #include <protocols/simple_filters/ScoreTypeFilterCreator.hh>
 #include <protocols/simple_filters/SigmoidFilterCreator.hh>

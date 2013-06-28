@@ -64,6 +64,7 @@ AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMov
 	has_task_factory_= false;
 	use_distance_cst_ = false;
 	CA_only_ = true;
+	bb_only_ = false;
 	max_distance_ = 12.0;
 	coord_dev_ = 1.0;
 	bound_width_ = 0.;
@@ -152,10 +153,19 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
 
 				 			if (!CA_only_)	{
 								for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
+									if (!bb_only_) {
 									pose.add_constraint( new CoordinateConstraint(
 																  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
 																  new HarmonicFunc( 0.0, coord_dev_ ) ) );
                 	TR.Debug << "Only constraint added to residue " << ires << ", atom " << iatom << std::endl;
+									} else {
+										if (pose.residue_type(ires).atom_is_backbone(iatom)) {
+																pose.add_constraint( new CoordinateConstraint(
+																  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
+																  new HarmonicFunc( 0.0, coord_dev_ ) ) );
+                									TR.Debug << "Only constraint added to residue " << ires << ", atom " << iatom << std::endl;
+										}
+									}//only for backbone atoms
 								}//loop all heavy atom
 			   		} else {			
 								pose.add_constraint( new CoordinateConstraint(
@@ -167,10 +177,19 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
         } else {
 				    if (!CA_only_)	{
 				     	for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
+								if (!bb_only_) {
 				     			pose.add_constraint( new CoordinateConstraint(
 				     											  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
 				     											  new HarmonicFunc( 0.0, coord_dev_ ) ) );
                    TR.Debug << "Constraint added to residue " << ires << ", atom " << iatom << std::endl;
+								} else {
+									if (pose.residue_type(ires).atom_is_backbone(iatom)) {
+				     										pose.add_constraint( new CoordinateConstraint(
+				     											  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
+				     											  new HarmonicFunc( 0.0, coord_dev_ ) ) );
+                   							TR.Debug << "Constraint added to residue " << ires << ", atom " << iatom << std::endl;
+									}
+								}//only for backbone atoms
 				     	}//loop all heavy atom
 			      } else {			
 						pose.add_constraint( new CoordinateConstraint(
@@ -195,10 +214,19 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
           if( (! task_->residue_task( ires ).being_designed()) && (! task_->residue_task( ires ).being_packed()) ) {
 				 			if (!CA_only_)	{
 								for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
+										if (!bb_only_) {
 										pose.add_constraint( new CoordinateConstraint(
 												  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
 												  new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
 													TR.Debug << "Only harmonic heavy constraint added to residue " << ires << ", atom " << iatom << std::endl;
+											} else {
+												if (pose.residue_type(ires).atom_is_backbone(iatom)) {
+														pose.add_constraint( new CoordinateConstraint(
+												  			AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
+												  			new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
+													      TR.Debug << "Only harmonic heavy constraint added to residue " << ires << ", atom " << iatom << std::endl;
+													}
+											}//only for backbone atoms
 								}//loop all heavy
 					    } else {
 										pose.add_constraint( new CoordinateConstraint(
@@ -210,10 +238,19 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
 				} else {
 					   if (!CA_only_)  {
                 for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
+										if (!bb_only_) {
                     pose.add_constraint( new CoordinateConstraint(
                           AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
                           new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
                           TR.Debug << "Only bound heavy coordinate_constraint added to residue " << ires << ", atom " << iatom << std::endl;
+										} else {
+                        if (pose.residue_type(ires).atom_is_backbone(iatom)) {
+                    pose.add_constraint( new CoordinateConstraint(
+                          AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
+                          new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
+                          TR.Debug << "Only bound heavy constraint added to residue " << ires << ", atom " << iatom << std::endl;
+                          }
+										}//only for backbone atoms
                 }//loop all heavy
               } else {
                     pose.add_constraint( new CoordinateConstraint(
@@ -324,6 +361,10 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 
 	if ( tag->hasOption("CA_only") ) {
 		CA_only_ = tag->getOption<bool>("CA_only",true);
+	}
+
+	if ( tag->hasOption("bb_only") ) {
+		bb_only_ = tag->getOption<bool>("bb_only",false);
 	}
 
 }
