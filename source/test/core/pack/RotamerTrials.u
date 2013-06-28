@@ -1,11 +1,11 @@
-set_abs_tolerance(0.01)score_orig = 70.0794
-score_rt = -117.017
+set_abs_tolerance(0.01)score_orig = 70.0456
+score_rt = -116.944
 residue = 1 chi = 346.217812973053
 residue = 1 chi = 296.591058293106
 residue = 3 chi = 170.896194882381
 residue = 3 chi = 265.262823893662
 residue = 4 chi = 59.8473774871914
-residue = 4 chi = 340
+residue = 4 chi = 100.000000000001
 residue = 5 chi = 279.438104403917
 residue = 5 chi = 308.391776791348
 residue = 6 chi = 270.260006243333

@@ -58,7 +58,7 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	use_incorrect_deriv_( true ),
 	use_sp2_chi_penalty_( false ),
 	sp2_BAH180_rise_( 0.75 ),
-	sp2_outer_width_( 1.0/3.0 ),
+	sp2_outer_width_( 0.357 ),
 	measure_sp3acc_BAH_from_hvy_( false ),
 	fade_energy_( false ),
 	Mbhbond_( false ) //pba
@@ -74,8 +74,7 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
 	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
 
-	if (option.has(OptionKeys::corrections::score::hb_sp2_outer_width) &&
-		option[OptionKeys::corrections::score::hb_sp2_outer_width].user()){
+	if (option.has(OptionKeys::corrections::score::hb_sp2_outer_width)) {
 		sp2_outer_width_ = option[ OptionKeys::corrections::score::hb_sp2_outer_width ];
 	}
 
@@ -98,7 +97,7 @@ HBondOptions::HBondOptions():
 	use_incorrect_deriv_( false ),
 	use_sp2_chi_penalty_( false ),
 	sp2_BAH180_rise_( 0.75 ),
-	sp2_outer_width_( 1.0/3.0 ),
+	sp2_outer_width_( 0.357 ),
 	measure_sp3acc_BAH_from_hvy_( false ),
 	fade_energy_( false ),
 	Mbhbond_( false ) //pba
@@ -118,8 +117,7 @@ HBondOptions::HBondOptions():
 	bb_donor_acceptor_check_ = ! option[ OptionKeys::score::hbond_disable_bbsc_exclusion_rule ];
 	sp2_BAH180_rise_ = option[ OptionKeys::corrections::score::hb_sp2_BAH180_rise ];
 
-	if (option.has(OptionKeys::corrections::score::hb_sp2_outer_width) &&
-		option[OptionKeys::corrections::score::hb_sp2_outer_width].user()){
+	if (option.has(OptionKeys::corrections::score::hb_sp2_outer_width)) {
 		sp2_outer_width_ = option[ OptionKeys::corrections::score::hb_sp2_outer_width ];
 	}
 

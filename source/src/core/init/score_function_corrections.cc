@@ -53,6 +53,7 @@ struct pre_talaris_2013_behavior_settings {
 	bool hbond_measure_sp3acc_BAH_from_hvy;
 	Real lj_hbond_hdis;
 	Real lj_hbond_OH_donor_dis;
+	bool hb_sp2_outer_width;
 	Real expand_st_chi2sampling;
 	std::string score_weights;
 	std::string score_patch;
@@ -71,6 +72,7 @@ pre_talaris_2013_behavior_settings::pre_talaris_2013_behavior_settings() :
 	hbond_measure_sp3acc_BAH_from_hvy( false ),
 	lj_hbond_hdis( 1.95 ),
 	lj_hbond_OH_donor_dis( 3.0 ),
+	hb_sp2_outer_width( 0.33333 ),
 	expand_st_chi2sampling( false ),
 	score_weights( "pre_talaris_2013_standard.wts" ),
 	score_patch( "" ), // the default patch to score12 is handled in the core::scoring::getScoreFunction
@@ -111,6 +113,9 @@ void revert_to_pre_talaris_2013_defaults() {
 	}
 	if ( ! option[ corrections::score::lj_hbond_OH_donor_dis ].user() ) {
 		option[ corrections::score::lj_hbond_OH_donor_dis ].default_value( restore_sc12_settings.lj_hbond_OH_donor_dis );
+	}
+	if ( ! option[ corrections::score::hb_sp2_outer_width ].user() ) {
+		option[ corrections::score::hb_sp2_outer_width ].default_value( restore_sc12_settings.hb_sp2_outer_width );
 	}
 	if ( ! option[ corrections::chemical::expand_st_chi2sampling ].user() ) {
 		option[ corrections::chemical::expand_st_chi2sampling ].default_value( restore_sc12_settings.expand_st_chi2sampling );

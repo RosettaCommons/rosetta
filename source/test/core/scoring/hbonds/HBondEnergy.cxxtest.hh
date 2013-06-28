@@ -150,7 +150,6 @@ public:
 		/// This call runs a numeric deriv check on all the free dofs in the system and makes sure
 		/// that the analytic norm matches the numeric norm to 1e-4.
 		adv.simple_deriv_check( true, 1e-6 );
-
 	}
 
 	void test_hbonds_w_sp2term_deriv_check_w_full_torsional_flexibility()

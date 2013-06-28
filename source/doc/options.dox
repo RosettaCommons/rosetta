@@ -4479,7 +4479,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-hb_sp2_outer_width</b> \<Real\><dt>
 <dd>The width between the peak when CHI=0 and BAH=120 to when the BAH is at a maximum (Units: pi * radians. E.g. 1/3 means the turn off hbonding when BAH < 60, larger values mean a wider potential). Use 0.357 in conjunction with the hb_energy_fade flag.</dd><br>
-<dd>Default: 0.33333</dd><br>
+<dd>Default: 0.357</dd><br>
 </dl>
 <dl>
 <dt><b>-hb_sp2_chipen</b> \<Boolean\><dt>
