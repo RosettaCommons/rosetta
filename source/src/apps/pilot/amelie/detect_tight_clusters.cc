@@ -30,7 +30,8 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
+// #include <core/optimization/AtomTreeMinimizer.hh> // needed?
+#include <protocols/simple_moves/MinMover.hh> 
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
@@ -47,18 +48,12 @@
 #include <core/pack/rotamer_trials.hh> 
 #include <core/pack/rtmin.hh> // rotamer trials with minimization
 //#include <core/pose/metrics/CalculatorFactory.hh> 
-#include <core/pack/dunbrack/RotamerLibrary.hh> // AS -- for symmetry-respecting subtract_chi_angles function
+//#include <core/pack/dunbrack/RotamerLibrary.hh> // AS -- for symmetry-respecting subtract_chi_angles function
+#include <protocols/rotamer_recovery/RRComparer.hh> 
 #include <protocols/backrub/BackrubMover.hh> 
 //#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-
-//#include <protocols/toolbox/PoseMetricCalculators/SasaCalculator.hh>
-//#include <protocols/toolbox/PoseMetricCalculators/NumberHBondsCalculator.hh>
-//#include <protocols/toolbox/PoseMetricCalculators/InterfaceNeighborDefinitionCalculator.hh>
-//#include <protocols/toolbox/PoseMetricCalculators/InterfaceSasaDefinitionCalculator.hh>
-//#include <protocols/toolbox/PoseMetricCalculators/InterfaceDeltaEnergeticsCalculator.hh>
-//#include <protocols/toolbox/PoseMetricCalculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -80,7 +75,7 @@ using namespace core;
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-//#include <basic/options/keys/backrub.OptionKeys.gen.hh> // we might not need this after all... 
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
 #include <fstream>
@@ -88,11 +83,11 @@ using namespace core;
 #include <map>
 
 // constants / parameters that probably won't change much:
-const core::Size min_num_neighbors = 9; // we only want buried or intermediate clusters
+//core::Size min_num_neighbors = 9; 
 const core::Size buried_threshold = 14; // >14 neighbors <=> buried cluster
 const core::Size neighbor_dist = 8; 
-const core::Size b_factor_threshold = 30; 
-const core::Real heavy_atom_dist = 4.5; // this is the value Noah used -- can be increased slightly if we get too few clusters
+//const core::Size b_factor_threshold = 30; 
+//core::Real heavy_atom_dist = 4.5; 
 // const core::Size chi_deviation_threshold = 40; // for now we're only reporting really bad repacking, deviations of 40+ in chi1 or chi2 -- might be interesting to control this via a flag though
 const core::Real repack_sphere_radius = 8;
 const core::Size rot_trials_iterations = 10;
@@ -100,9 +95,10 @@ const core::Size env_quality_check_dist = 6; // no zero-occupancy or Rosetta-reb
 const core::Size backrub_iterations = 10;
 
 basic::Tracer TR("apps.pilot.amelie.detect_tight_clusters");
-static numeric::random::RandomGenerator RG(35468412); // needed?
+static numeric::random::RandomGenerator RG(35468412); 
 
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, generate_output_structures) // (no semicolon here!) -- this would generate huge amounts of output, so by default it runs silently, only reporting which residues are involved in clusters
+OPT_1GRP_KEY(Boolean, detect_tight_clusters, require_renumbered_structures) // requires numbering to match length of structures -- hack for making the output work with external tools like OSCARstar, but has some drawbacks (see below)
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, debug) 
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, repack_8A_sphere) // if not, just repack the 4 residues in the cluster
 //OPT_1GRP_KEY(Integer, detect_tight_clusters, chi_deviation_threshold)
@@ -114,8 +110,15 @@ OPT_1GRP_KEY(Boolean, detect_tight_clusters, rot_trials_min)
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, rot_trials) 
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, sidechain_fastrelax) 
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, cartmin) 
+OPT_1GRP_KEY(Boolean, detect_tight_clusters, soft_repack_min_hard_repack_min)
 OPT_1GRP_KEY(Boolean, detect_tight_clusters, backrub)
 OPT_1GRP_KEY(Real, detect_tight_clusters, backrub_sc_prob) // probability of making a side chain move within the backrub option -- default 0.25
+
+OPT_1GRP_KEY(Boolean, detect_tight_clusters, detect_interchain_clusters) // standard detection works within proteins only, i.e. all members of the cluster have to be in the same chain -- if this flag is switched on, at least one residue must be in another chain -- may require adaptation of the burial threshold etc., in particular min_num_neighbors 
+OPT_1GRP_KEY(Real, detect_tight_clusters, min_num_neighbors) // within a chain we only want buried or intermediate clusters (9+) -- in interfaces this is not realistic though, may be adjusted
+
+OPT_1GRP_KEY(Real, detect_tight_clusters, heavy_atom_dist) // 4.5A is the value Noah used -- can be increased slightly if we get too few clusters, in particular for interchain clusters
+OPT_1GRP_KEY(Real, detect_tight_clusters, b_factor_threshold)  // 30 worked well for intrachain clusters
 
 /*  
  the following set of options os for providing an external cluster (e.e., from a baseline run) 
@@ -168,7 +171,9 @@ void compare_chi1_2_angles(
 						   const core::pose::Pose & native_p,
 						   const core::pose::Pose & repacked_p,
 						   const std::set<core::Size> & cluster,
-						   utility::vector1<int> & chi_dev_lst
+						   utility::vector1<int> & chi_dev_lst,
+						   utility::vector1<std::string> & chi_dev_details
+
 						   )
 {
 	using namespace basic::options;
@@ -180,41 +185,79 @@ void compare_chi1_2_angles(
 	}
 	
 	runtime_assert( native_p.total_residue() == repacked_p.total_residue() );
+	protocols::rotamer_recovery::RRComparerChiDiff rrc_chi_diff; 
+	rrc_chi_diff.set_max_chi_considered( 2 ); // only evaluate chi1 and chi2
+	
+	// make sure that chi_dev_details has the correct size
+	chi_dev_details.resize(cluster.size());
 	
 	for (IntegerVectorOption::const_iterator it = option[ detect_tight_clusters::chi_deviation_thresholds ]().begin(), end = option[ detect_tight_clusters::chi_deviation_thresholds ]().end(); it != end; it++) {
 		
-		const core::Size chi_deviation_threshold ( *it );
+		//const core::Size chi_deviation_threshold ( *it );
+		rrc_chi_diff.set_recovery_threshold( *it );
 		if ( option[ detect_tight_clusters::debug ]() ) {
-			TR << " checking for chi dev threshold " << chi_deviation_threshold << std::endl;
+			TR << " checking for chi dev threshold " << *it << std::endl;
 		}
 		
 		// also count how many residues have chi1 and/or chi2 off beyond our threshold
 		// iterate over cluster, not all positions, as this may include the environment if we repack more
 		std::map <core::Size, int> pos_with_chi_dev;
+
+		utility::vector1<core::Size> individual_chi_dev_vector(4); // this could be a vector of bools, but I think Size prints more reliably -- AS_DEBUG -- still needed?
+
+		int i = 0; // size isn't random-access, so I'll need a counter to keep track of where we are -- this already looks error-prone
 		for(std::set<core::Size>::iterator iter = cluster.begin(); iter != cluster.end(); iter++) {
-			using core::pack::dunbrack::subtract_chi_angles;
+			i++; // working with vector1
 			core::conformation::Residue const & refres( native_p.residue( *iter ) );
 			core::conformation::Residue const & rp_res( repacked_p.residue( *iter ) );
+			bool within_chi_threshold = false; // the logic of the reporter is inverted vs. what I did before -- it reports true if the chi delta is within the threshold (!)
+			core::Real max_chi_diff; // we're not reporting this at the moment, but the function wants it
+			bool measured = rrc_chi_diff.measure_rotamer_recovery(native_p, repacked_p, refres, rp_res, max_chi_diff, within_chi_threshold);
+			bool chi_threshold_exceeded = !within_chi_threshold;
 			
-			for ( core::Size ii = 1; ii <= std::min(refres.nchi(), core::Size(2)); ++ii ) { // we're only looking at chi1 and chi2
-				
-				
-				// TODO: exclude SER and THR from chi2 comparison -- maybe not now, as we're running with -no_optH anyway?
-				
-				if ( refres.type().is_proton_chi( ii ) ) continue; // AS -- what does this mean? (simply copied from Andrew...)
-				core::Real delta_chi = std::abs(subtract_chi_angles( refres.chi(ii), rp_res.chi(ii), refres.aa(), ii ));
-				
-				if ( option[ detect_tight_clusters::debug ]())
-					TR << "cluster position " << *iter << " -- getting chi diff for " << *iter << ", chi" << ii << " : " << delta_chi << std::endl;
-				
-				if ( delta_chi > chi_deviation_threshold ) {
+			// record residue identity or fetch existing data
+			std::string res_info;
+			if (chi_dev_details[i] != "") // AS_DEBUG -- this might not work
+				res_info = chi_dev_details[i];
+			else 
+				res_info = refres.name1();
+			
+			if (!measured) {
+				TR << "WARNING -- chi diff could not be assessed for residues at position " << *iter << std::endl;
+			} else {
+				if ( chi_threshold_exceeded ) {
 					pos_with_chi_dev[*iter]++;
 				}
+				//pos_with_chi_dev[*iter] = chi_threshold_exceeded; // I'm not sure if this is always 1 2 3 4... check -- this probably was replaced with res_info now -- AS_DEBUG remove?
+				//TR << " checking individual chi thresholds: " << i << " " << chi_threshold_exceeded << std::endl; // AS_DEBUG
+				res_info += ":" + utility::to_string(chi_threshold_exceeded);
 			}
+			chi_dev_details[i] = res_info; // store (partial) information about current residue
 		}
 		chi_dev_lst.push_back(pos_with_chi_dev.size());
 	}
 }
+
+core::kinematics::MoveMapOP derive_MoveMap_from_cluster_lst(
+															core::pose::Pose const & pose,
+															utility::vector1< bool > const & is_flexible,
+															bool allow_bb_move = false /* does this work if I don't have a separate declaration? */
+															)
+{
+	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+	
+	movemap->set_bb(allow_bb_move);
+	movemap->set_chi(false);
+	movemap->set_jump(false);
+	
+	for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
+		if ( is_flexible[i] ) {
+			movemap->set_chi( i, true );
+		}
+	}
+	return movemap;
+}
+
 
 void
 sidechain_fastrelax(
@@ -227,18 +270,8 @@ sidechain_fastrelax(
 	protocols::relax::FastRelax fastrelax( scorefxn, 0 );
 	fastrelax.cartesian( cartesian_min );
 
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-
-	movemap->set_bb(false);
-	movemap->set_chi(false);
-	movemap->set_jump(false);
-
-	for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
-		if ( is_flexible[i] ) {
-			movemap->set_chi( i, true );
-		}
-	}
-
+	core::kinematics::MoveMapOP movemap = derive_MoveMap_from_cluster_lst(pose, is_flexible, false); // should be modified to respect a flag for whether to also move the backbone
+	
 	fastrelax.set_movemap( movemap );
 	fastrelax.apply( pose );
 }
@@ -318,6 +351,11 @@ void repack_cluster(
 		// this sets the baseline and ensures that native side chains are discarded (except when running with -use_input_sc)
 		core::pack::pack_rotamers( repacked, *score_fxn, repack_packer_task );
 		
+		// making cartmin available to all protocols
+		bool const cartmin( option[ detect_tight_clusters::cartmin ] ); /// option: use cartesian-space min
+		// Phil: you should also allow setting of just the cart_bonded subterms (angle/length/etc)
+		if ( cartmin ) runtime_assert( score_fxn->get_weight( core::scoring::cart_bonded ) > 1e-3 ); 
+
 		
 		if ( option[ detect_tight_clusters::min_pack ] ) { 
 			core::pack::min_pack( repacked, *score_fxn, repack_packer_task );
@@ -335,10 +373,46 @@ void repack_cluster(
 
 		} else if ( option[ detect_tight_clusters::sidechain_fastrelax ] ) {
 			/// use Mike's fast-relax protocol, keeping the backbone fixed
-			bool const cartmin( option[ detect_tight_clusters::cartmin ] ); /// option: use cartesian-space min
-			// Phil: you should also allow setting of just the cart_bonded subterms (angle/length/etc)
-			if ( cartmin ) runtime_assert( score_fxn->get_weight( core::scoring::cart_bonded ) > 1e-3 ); 
 			sidechain_fastrelax( score_fxn, allow_repacked, cartmin, repacked );
+			
+		} else if ( option[ detect_tight_clusters::soft_repack_min_hard_repack_min ]() ) { // soft-repack+hard-min+hard-repack+hard-min, as suggested by Frank
+			
+			// make soft scorefxn
+			
+			core::scoring::ScoreFunctionOP soft_sfxn;
+			if ( option[ score::soft_wts ].user() ) 
+				soft_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( option[ score::soft_wts ]() ); 
+			else
+				soft_sfxn = core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep_design" );
+
+			// repack with soft
+			core::pack::pack_rotamers( repacked, *soft_sfxn, repack_packer_task );
+			
+			// minimize with hard -- requires movemap that must be derived from PackerTask
+			core::kinematics::MoveMapOP mm = derive_MoveMap_from_cluster_lst(repacked, allow_repacked);
+			protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover(); // no symmetry support for now
+			//const std::string min_type = "dfpmin"; // use as many defaults as possible -- not sure if we want to fix this, actually
+			//min_mover->min_type( min_type );
+			min_mover->score_function( score_fxn );
+			min_mover->cartesian( cartmin );
+			min_mover->movemap( mm );
+			min_mover->apply( repacked );
+			
+			// repack with hard -- probably requires IncludeCurrent 
+			core::pack::task::PackerTaskOP after_soft_packer_task( core::pack::task::TaskFactory::create_packer_task( p ));		
+			// we now need to tell the TaskFactory which parts are allowed to move
+			
+			after_soft_packer_task->set_bump_check( true );
+			after_soft_packer_task->initialize_from_command_line();
+			after_soft_packer_task->or_include_current( true ); // I think we want this, otherwise how to benefit from the previous step?
+			after_soft_packer_task->restrict_to_repacking(); 
+			after_soft_packer_task->restrict_to_residues( allow_repacked );
+			core::pack::pack_rotamers( repacked, *score_fxn, after_soft_packer_task );
+
+			// minimize with hard, same as above
+			min_mover->apply( repacked );
+
+			
 			
 		} else if ( option[ detect_tight_clusters::backrub ]() ) {// note that backrub only makes sense for 8A repacking
 			
@@ -579,7 +653,8 @@ void repack_cluster(
 	core::Real motif_rmsd = core::scoring::rmsd_with_super(starting_cluster, repacked_cluster, core::scoring::is_heavyatom);
 	
 	utility::vector1<int> chi_dev_lst;
-	compare_chi1_2_angles(p, repacked, cluster, chi_dev_lst);
+	utility::vector1<std::string> chi_dev_details;
+	compare_chi1_2_angles(p, repacked, cluster, chi_dev_lst, chi_dev_details);
 	
 	outfile << p_name << "\t" 
 	<< cluster_name << "\t" 
@@ -589,7 +664,12 @@ void repack_cluster(
 		outfile << "\t" << chi_dev_lst[i];
 	}
 	
-	// report RMSD per residue								
+	// report failures per residue
+	for (core::Size i = 1; i <= chi_dev_details.size(); i++) {
+		outfile << "\t" << chi_dev_details[i];
+	}
+	
+	// report RMSD per residue -- note that I think these are not symmetry-corrected								
 	for (core::Size i = 1; i <= individual_pos_RMSDs.size(); i++) {
 		outfile << "\t" << individual_pos_RMSDs[i];
 	}								   
@@ -623,34 +703,43 @@ bool passes_quality_check(
 						  core::Size i,
 						  core::Size & num_neighbors) {
 	bool acceptable = true;
+	core::Real b_factor_threshold = basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::b_factor_threshold]();
 	core::conformation::Residue res_i(p.residue(i));
 	for (core::Size ii=1; ii <= res_i.natoms(); ii++) {
 		// also remove cases with a b-factor of 0 -- these are usually rebuilt side-chains, so they're not suitable for
 		// a packing test -- and those with occupancy 0 -- however, virtual atoms are allowed to have 0 occ
-		// added parentheses to avoid logic warning; hope I got it correct ~Labonte
-		if ((p.pdb_info()->temperature(i, ii) > b_factor_threshold) ||
-				(p.residue(i).atom_type(ii).is_heavyatom() &&
-						!res_i.atom_type(ii).is_virtual() &&
-						(p.pdb_info()->temperature(i, ii) == 0 || p.pdb_info()->occupancy(i, ii) == 0))) {
-			if (basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::debug ]())
-				TR << " INITIAL FILTER -- discarding " << i;
-				TR << " because its b-factor in atom " << p.residue(i).atom_type(ii).name();
-				TR << " is too high (or 0): " << p.pdb_info()->temperature((i), ii) << std::endl;
-			acceptable = false;
-			break;
-		}
+		// added parentheses to avoid logic warning; hope I got it correct ~Labonte -- yes, thanks, looks fine -- AS
+		if ((p.pdb_info()->temperature(i, ii) > b_factor_threshold) ||	
+			(p.residue(i).atom_type(ii).is_heavyatom() &&	
+			 !res_i.atom_type(ii).is_virtual() &&	
+			 (p.pdb_info()->temperature(i, ii) == 0 || p.pdb_info()->occupancy(i, ii) == 0))) {
+				if (basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::debug ]()) {
+					TR << " INITIAL FILTER -- discarding " << i;
+					TR << " because its b-factor in atom " << p.residue(i).atom_type(ii).name();
+					TR << " is too high (or 0): " << p.pdb_info()->temperature((i), ii) << std::endl;
+				}
+				acceptable = false;
+				break;
+			}
 	}
 	// filter for surface exposure -- each CB must have at least 9 other CB within an 8A radius
+	// AS Feb 8, 2013: adapting for complexes with DNA or RNA
 	//core::Size num_cb_neighbors = 0;
 	std::map<core::Size, bool> cb_neighbors; // to make sure I only count each of them once
 	numeric::xyzVector<double> cb_i;
+	if ( !(p.residue(i).is_protein()) ) { // the residues in the cluster have to be protein residues for now -- could be changed later to also allow DNA in clusters
+		if (basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::debug ]())
+			TR << " INITIAL FILTER -- discarding " << i << " because it isn't a protein residue: " << p.residue(i) << std::endl;
+		acceptable = false;
+		//break;
+	}
 	if (p.residue(i).name1() == 'G') // assumption: we've checked b-factors above
 		cb_i = p.residue(i).xyz(" CA ");
 	else 
 		cb_i = p.residue(i).xyz(" CB ");
 	// iterate over all residues in this protein
 	for (core::Size pos = 1; pos <= p.total_residue(); pos++) {
-		if (pos != i && p.residue(pos).is_protein()) { // non-protein "residues" don't necessarily have a CB, which would cause the program to die
+		if ( pos != i && p.residue(pos).is_protein() || p.residue(pos).is_DNA() || p.residue(pos).is_RNA() ) { // non-protein "residues" don't necessarily have a CB, which would cause the program to die -- for DNA, use CA
 			
 			// test for any closeby residue with 0 occupancy or 0 b-factor (which indicates Rosetta rebuilding)
 			for (core::Size ii=1; ii <= res_i.natoms(); ii++) {
@@ -669,7 +758,7 @@ bool passes_quality_check(
 			
 			// count CB neighbors
 			numeric::xyzVector<double> cb_pos;
-			if (p.residue(pos).name1() == 'G') {
+			if (p.residue(pos).name1() == 'G' || p.residue(pos).is_DNA() || p.residue(pos).is_RNA()) {
 				cb_pos = p.residue(pos).xyz(" CA ");
 				// check the temperature of this atom
 				if (p.pdb_info()->temperature((pos), p.residue(pos).atom_index(" CA ")) == 0 || p.pdb_info()->occupancy((pos), p.residue(pos).atom_index(" CA ")) == 0 ) {
@@ -702,7 +791,7 @@ bool passes_quality_check(
 			num_neighbors++;
 		}
 	}
-	if (num_neighbors < min_num_neighbors) {
+	if (num_neighbors < basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::min_num_neighbors]() ) {
 		if (basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::debug ]())
 			TR << "INITIAL FILTER -- discarding " << i << " because it isn't buried enough: " << num_neighbors << std::endl;
 		
@@ -718,11 +807,15 @@ void find_clusters(
 				   core::pose::Pose & p, // can't be const because of the TenANeighborGraph calculation? Or p.energies()? -- actually this shouldn't matter any more, as apparently we're not using the energygraph... 
 				   core::pack::task::PackerTask & input_packer_task,
 				   std::map<std::set<core::Size>, std::string > & filtered_clusters) {
+
+	using namespace basic::options;
 	
 	utility::vector1<std::set<core::Size> > neighbors;
 	neighbors.resize(p.total_residue());
 	
 	std::map<core::Size, core::Size> num_neighbors_by_pos;
+	core::Real heavy_atom_dist = basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::heavy_atom_dist]();
+	bool find_interchain_clusters = basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::detect_interchain_clusters]();
 	
 	//core::scoring::TenANeighborGraph & energygraph(p.energies().tenA_neighbor_graph());
 	for(core::Size i = 1; i <= p.total_residue(); i++) {
@@ -766,7 +859,7 @@ void find_clusters(
 					std::string name_j = utility::to_string(p.pdb_info()->number(j));
 					core::conformation::Residue res_j(p.residue(j));
 					//core::Real min_dist = 0.0;
-					if (res_j.chain() == res_i.chain()) { // AS Aug 14: we're only looking for intrachain clusters
+					if (find_interchain_clusters || res_j.chain() == res_i.chain()) { // AS March 06, 2013: when looking for interchain clusters we don't care about chain comparison here
 						bool is_neighbor = false;
 						for (core::Size ii=1; ii <= res_i.natoms(); ii++) {
 							if (!res_i.atom_is_backbone(ii) && !res_i.atom_is_hydrogen(ii)) {
@@ -792,6 +885,8 @@ void find_clusters(
 		}
 	}
 	
+	//TR << "candidates (neigbors): " << neighbors.size() << std::endl; // debug
+	
 	std::map<std::set<core::Size>, std::string > clusters;
 	
 	// 	for(core::Size i = 1; i <= p.total_residue(); i++) {
@@ -810,9 +905,20 @@ void find_clusters(
 				if (neighbors[i].find(k) != neighbors[i].end()) {
 					for(std::set<core::Size>::iterator iter_m = neighbors[k].begin(); iter_m != neighbors[k].end(); iter_m++) {
 						core::Size m = (*iter_m);
-						if (p.residue(i).chain() == p.residue(j).chain() && p.residue(i).chain() == p.residue(k).chain() && p.residue(i).chain() == p.residue(m).chain()) { // we're only looking for intrachain clusters
-							if (neighbors[i].find(m) != neighbors[i].end() && neighbors[j].find(m) != neighbors[j].end()) {
+						if ( ( !find_interchain_clusters && p.residue(i).chain() == p.residue(j).chain() && p.residue(i).chain() == p.residue(k).chain() && p.residue(i).chain() == p.residue(m).chain() ) ||
+							( find_interchain_clusters && ( p.residue(i).chain() != p.residue(j).chain() || p.residue(i).chain() != p.residue(k).chain() || p.residue(i).chain() != p.residue(m).chain() || p.residue(j).chain() != p.residue(k).chain() || p.residue(j).chain() != p.residue(m).chain() || p.residue(k).chain() != p.residue(m).chain() ) ) ) { // default: only looking for intrachain clusters -- if detect_interchain_clusters(), some chains must (!) differ
+							
+							
+							// add debug statement here indicating the different positions and their chain? 
+							//TR << "candidate positions: " << i << " " << j << " " << k << " " << m << std::endl;
+							
+							if (neighbors[i].find(m) != neighbors[i].end() && neighbors[j].find(m) != neighbors[j].end()) { // to fulfill the criteria of both neighbors being close enough, we can only check for m here, but not k
+								
 								//found a shared neighbor!
+								
+								//TR << "found a new cluster for consideration! chains are " << p.residue(i).chain() << p.residue(j).chain() << p.residue(k).chain() << p.residue(m).chain()  << std::endl; // debug
+								
+								
 								// check if this is a new cluster
 								bool already_found = false;
 								//for(core::Size c=1; c <= clusters.size(); c++) {
@@ -833,6 +939,7 @@ void find_clusters(
 									new_cluster.insert(m);
 									
 									// determine buried-ness
+									// this may need to be adapted for the interchain clusters
 									if (num_neighbors_by_pos[i] > buried_threshold && num_neighbors_by_pos[j] > buried_threshold && num_neighbors_by_pos[k] > buried_threshold && num_neighbors_by_pos[m] > buried_threshold) {
 										clusters[new_cluster] = "buried";
 									} else {
@@ -862,213 +969,194 @@ void find_clusters(
 int main( int argc, char * argv [] ) 
 {
 	try{
+		
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		
+		// register specific options
+		OPT(packing::resfile);
+		OPT(in::file::native); // for comparison against externally repacked structures
+		NEW_OPT(detect_tight_clusters::generate_output_structures, "generate output structures (default: no)", false);
+		NEW_OPT(detect_tight_clusters::require_renumbered_structures, "require that input structures be renumbered sequentially, to match Rosetta numbering? Hint: necessary for compatibility with external tools that rely on this numbering. (default: no)", false);
+		NEW_OPT(detect_tight_clusters::debug, "debug mode? (tons of extra output)", false);
+		NEW_OPT(detect_tight_clusters::repack_8A_sphere, "repack all residues in an 8A sphere around the cluster, instead of just the 4 cluster residues", false);
+		//	NEW_OPT(detect_tight_clusters::cluster_file_suffix, "extension for the filename with the cluster results", "test");
+		NEW_OPT(detect_tight_clusters::chi_deviation_thresholds, "list of chi1/2 deviation thresholds", utility::vector1<core::Size>()); // -- haven't figured out how to give this default weights: 40, 20, 10));
+		NEW_OPT(detect_tight_clusters::min_pack, "use MinPacker", false);
+		//NEW_OPT(detect_tight_clusters::stochastic_pack, "use stochastic pack", false);
+		NEW_OPT(detect_tight_clusters::rot_trials_min, "use rotamer trials with minimization after initial repack (10 trials)", false);
+		NEW_OPT(detect_tight_clusters::rot_trials, "use rotamer trials after initial repack", false);
+		NEW_OPT(detect_tight_clusters::sidechain_fastrelax, "use sidechain fast-relax protocol", false);
+		NEW_OPT(detect_tight_clusters::cartmin, "Use cartesian space minimization. Only for sidechain-fast-relax protocol right now. Score function must have non-zero weight for cart_bonded term.", false);
+		NEW_OPT(detect_tight_clusters::backrub, "use backrub to move both backbone and side chain", false);
+		NEW_OPT(detect_tight_clusters::backrub_sc_prob, "probability of making a side chain move within backrub (default 0.25)", 0.25);
+		NEW_OPT(detect_tight_clusters::external_cluster, "provide all cluster positions in PDB numbering (chain pos vector)", utility::vector1<std::string>()); // half of these will be casted to chars, the other half to ints...
+		NEW_OPT(detect_tight_clusters::evaluate_externally_repacked_structure, "evaluate chi1/2 of an externally repacked structure -- requires -in:file:native for the reference structure", false);
+		NEW_OPT(detect_tight_clusters::repack_external_cluster, "repack and evaluate an externally provided cluster, e.g. from a baseline run", false);
+		NEW_OPT(detect_tight_clusters::detect_interchain_clusters, "detect clusters between different protein chains (default only detects clusters within a single chain)", false);
+		NEW_OPT(detect_tight_clusters::min_num_neighbors, "minimum number of neighbors each residue in a cluster must have for the cluster to be accepted (default 9 -- good for within-protein clusters, but too high for interfaces)", 9);
+		NEW_OPT(detect_tight_clusters::b_factor_threshold, "maximum allowed b-factor in any cluster residue atom", 30);
+		NEW_OPT(detect_tight_clusters::heavy_atom_dist, "maximum heavy atom distance from each cluster residue to at least 2 other residues in the cluster", 4.5);
+		NEW_OPT(detect_tight_clusters::soft_repack_min_hard_repack_min, "(hard repack to normalize, as for all runs, then) soft repack, hard minimize, hard repack w/ include_current, hard min", false);
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	
-	// register specific options
-	OPT(packing::resfile);
-	OPT(in::file::native); // for comparison against externally repacked structures
-	NEW_OPT(detect_tight_clusters::generate_output_structures, "generate output structures (default: no)", false);
-	NEW_OPT(detect_tight_clusters::debug, "debug mode? (tons of extra output)", false);
-	NEW_OPT(detect_tight_clusters::repack_8A_sphere, "repack all residues in an 8A sphere around the cluster, instead of just the 4 cluster residues", false);
-	//	NEW_OPT(detect_tight_clusters::cluster_file_suffix, "extension for the filename with the cluster results", "test");
-	NEW_OPT(detect_tight_clusters::chi_deviation_thresholds, "list of chi1/2 deviation thresholds", utility::vector1<core::Size>()); // -- haven't figured out how to give this default weights: 40, 20, 10));
-	NEW_OPT(detect_tight_clusters::min_pack, "use MinPacker", false);
-	//NEW_OPT(detect_tight_clusters::stochastic_pack, "use stochastic pack", false);
-	NEW_OPT(detect_tight_clusters::rot_trials_min, "use rotamer trials with minimization after initial repack (10 trials)", false);
-	NEW_OPT(detect_tight_clusters::rot_trials, "use rotamer trials after initial repack", false);
-	NEW_OPT(detect_tight_clusters::sidechain_fastrelax, "use sidechain fast-relax protocol", false);
-	NEW_OPT(detect_tight_clusters::cartmin, "Use cartesian space minimization. Only for sidechain-fast-relax protocol right now. Score function must have non-zero weight for cart_bonded term.", false);
-	NEW_OPT(detect_tight_clusters::backrub, "use backrub to move both backbone and side chain", false);
-	NEW_OPT(detect_tight_clusters::backrub_sc_prob, "probability of making a side chain move within backrub (default 0.25)", 0.25);
-	NEW_OPT(detect_tight_clusters::external_cluster, "provide all cluster positions in PDB numbering (chain pos vector)", utility::vector1<std::string>()); // half of these will be casted to chars, the other half to ints...
-	NEW_OPT(detect_tight_clusters::evaluate_externally_repacked_structure, "evaluate chi1/2 of an externally repacked structure -- requires -in:file:native for the reference structure", false);
-	NEW_OPT(detect_tight_clusters::repack_external_cluster, "repack and evaluate an externally provided cluster, e.g. from a baseline run", false);
-	
-	
-	
-	// initialize Rosetta
-	devel::init(argc, argv);
-	
-	std::stringstream cluster_filename_suffix;
-	if (basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::repack_8A_sphere ]()) {
-		cluster_filename_suffix << ".8A_sphere";
-	}
-	
-	/*
-	 if (option[ detect_tight_clusters::cluster_file_suffix ].user()) {
-	 cluster_filename_suffix << "." << option[ detect_tight_clusters::cluster_file_suffix ]();
-	 TR << "setting cluster file suffix: " << cluster_filename_suffix << std::endl;
-	 } 
-	 */
-	//cluster_filename_suffix << "." << option[ detect_tight_clusters::chi_deviation_threshold ]();
-	for (IntegerVectorOption::const_iterator it = option[ detect_tight_clusters::chi_deviation_thresholds ]().begin(), end = option[ detect_tight_clusters::chi_deviation_thresholds ]().end(); it != end; it++) {
-		cluster_filename_suffix << "." << *it;
-	}
-	
-	
-	
-	// get scoring function
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
-	
-	utility::vector1<std::string> pdbs = basic::options::option[ in::file::s ]();
-	core::pose::Pose p;
-	std::string p_name = pdbs[1]; // warning -- this just handles one PDB... 
-	
-	core::import_pose::pose_from_pdb( p, p_name );
-	
-	std::string outfile_core = p_name;
-	
-	
-	//p.dump_pdb( p_name+"_native.pdb" ); // only for debugging the odd rebuild-neighbor-count issues
-	
-	
-	
-	if ( option[ out::path::pdb ].user() ) { // ?
-		size_t si = outfile_core.rfind("/"); // last occurrence of /
-		if (si != std::string::npos)
-			outfile_core = outfile_core.substr(si+1); // // we only want the name, but leave out the input path
-		outfile_core = option[ out::path::pdb ]().path() + outfile_core;
-	} else if ( option[ out::path::all ].user() ) { 
-		size_t si = outfile_core.rfind("/"); // last occurrence of / 
-		if (si != std::string::npos)
-            outfile_core = outfile_core.substr(si+1); // // we only want the name, but leave out the input path   
-		outfile_core = option[ out::path::all ]().path() + outfile_core;
-	}
-	
-	// later: add option to compare against in::file::native, in case we want to (fast?)relax structures first [ideally restricting side chain conformations, I think there was some protocol for this...] and use those as starting structures, but then compare against the actual native/crystal
-	
-	(*score_fxn)(p);
-	score_fxn->show(TR, p);
-	TR << std::endl;
-	
-	// read in a resfile, if specified -- with this the user may disable regions from cluster detection, e.g. those that are too close to a HETATM (which may not be visible in runs with -ignore_unrecognized_res)
-	core::pack::task::TaskFactoryOP input_task_factory = new core::pack::task::TaskFactory;
-	input_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
-	if ( option[ packing::resfile ].user() ) {
-		input_task_factory->push_back( new core::pack::task::operation::ReadResfile );
-	} else {
-		core::pack::task::operation::RestrictToRepackingOP rtrop = new core::pack::task::operation::RestrictToRepacking; // make sure that by default everything is allowed to be repacked
-		input_task_factory->push_back( rtrop );
-	}
-	
-	//utility::vector1<std::set<core::Size> > filtered_clusters;
-	std::map< std::set<core::Size>, std::string > filtered_clusters; // also store whether the cluster is intermediate or exposed
-	
-	core::pack::task::PackerTaskOP input_task(input_task_factory->create_task_and_apply_taskoperations(p)); // this seems to be a really inefficient way do to this... 
-	
-	utility::io::ozstream outfile( outfile_core + ".cluster" + cluster_filename_suffix.str()); // this should be path-adapted
-	
-	
-	if ( option[ detect_tight_clusters::debug ]() ) {
-		p.dump_pdb( p_name+"_input.pdb" ); // to make sure Rosetta doesn't do anything funny to OSCAR's structure -- in particular, look at the Histidines!
-	}
-	
-	pose::Pose native_p(p); // actual native if provided, otherwise this is a copy of the input structure
-	(*score_fxn)(native_p);
-	
-	if (option[ detect_tight_clusters::external_cluster ].user() ) {
-		if ( option[ detect_tight_clusters::external_cluster ]().size() % 2 != 0) {
-			TR << "error -- -external_cluster parameters must always be pairs of chain and position!" << std::endl;
-			return 2;
+		
+		
+		// initialize Rosetta
+		devel::init(argc, argv);
+		
+		std::stringstream cluster_filename_suffix;
+		if (basic::options::option[ basic::options::OptionKeys::detect_tight_clusters::repack_8A_sphere ]()) {
+			cluster_filename_suffix << ".8A_sphere";
 		}
 		
+		/*
+		 if (option[ detect_tight_clusters::cluster_file_suffix ].user()) {
+		 cluster_filename_suffix << "." << option[ detect_tight_clusters::cluster_file_suffix ]();
+		 TR << "setting cluster file suffix: " << cluster_filename_suffix << std::endl;
+		 } 
+		 */
+		//cluster_filename_suffix << "." << option[ detect_tight_clusters::chi_deviation_threshold ]();
+		for (IntegerVectorOption::const_iterator it = option[ detect_tight_clusters::chi_deviation_thresholds ]().begin(), end = option[ detect_tight_clusters::chi_deviation_thresholds ]().end(); it != end; it++) {
+			cluster_filename_suffix << "." << *it;
+		}
 		
-		if ( option [ detect_tight_clusters::evaluate_externally_repacked_structure ]() ) { // requires native for reference 
-			// it might be easier to directly call comparison on the given cluster
-			if (! option[ in::file::native ].user() ) {
-				TR << "error -- native pose required for comparison with externally repacked structures!" << std::endl;
+		// get scoring function
+		core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+		
+		utility::vector1<std::string> pdbs = basic::options::option[ in::file::s ]();
+		core::pose::Pose p;
+		std::string p_name = pdbs[1]; // warning -- this just handles one PDB... 
+		
+		core::import_pose::pose_from_pdb( p, p_name );
+		
+		std::string outfile_core = p_name;
+		
+		
+		//p.dump_pdb( p_name+"_native.pdb" ); // only for debugging the odd rebuild-neighbor-count issues
+		
+		
+		
+		if ( option[ out::path::pdb ].user() ) { // ?
+			size_t si = outfile_core.rfind("/"); // last occurrence of /
+			if (si != std::string::npos)
+				outfile_core = outfile_core.substr(si+1); // // we only want the name, but leave out the input path
+			outfile_core = option[ out::path::pdb ]().path() + outfile_core;
+		} else if ( option[ out::path::all ].user() ) { 
+			size_t si = outfile_core.rfind("/"); // last occurrence of / 
+			if (si != std::string::npos)
+				outfile_core = outfile_core.substr(si+1); // // we only want the name, but leave out the input path   
+			outfile_core = option[ out::path::all ]().path() + outfile_core;
+		}
+		
+		// later: add option to compare against in::file::native, in case we want to (fast?)relax structures first [ideally restricting side chain conformations, I think there was some protocol for this...] and use those as starting structures, but then compare against the actual native/crystal
+		
+		(*score_fxn)(p);
+		score_fxn->show(TR, p);
+		TR << std::endl;
+		
+		// read in a resfile, if specified -- with this the user may disable regions from cluster detection, e.g. those that are too close to a HETATM (which may not be visible in runs with -ignore_unrecognized_res)
+		core::pack::task::TaskFactoryOP input_task_factory = new core::pack::task::TaskFactory;
+		input_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
+		if ( option[ packing::resfile ].user() ) {
+			input_task_factory->push_back( new core::pack::task::operation::ReadResfile );
+		} else {
+			core::pack::task::operation::RestrictToRepackingOP rtrop = new core::pack::task::operation::RestrictToRepacking; // make sure that by default everything is allowed to be repacked
+			input_task_factory->push_back( rtrop );
+		}
+		
+		//utility::vector1<std::set<core::Size> > filtered_clusters;
+		std::map< std::set<core::Size>, std::string > filtered_clusters; // also store whether the cluster is intermediate or exposed
+		
+		core::pack::task::PackerTaskOP input_task(input_task_factory->create_task_and_apply_taskoperations(p)); // this seems to be a really inefficient way do to this... 
+		
+		utility::io::ozstream outfile( outfile_core + ".cluster" + cluster_filename_suffix.str()); // this should be path-adapted
+		
+		
+		if ( option[ detect_tight_clusters::debug ]() ) {
+			p.dump_pdb( p_name+"_input.pdb" ); // to make sure Rosetta doesn't do anything funny to OSCAR's structure -- in particular, look at the Histidines!
+		}
+		
+		pose::Pose native_p(p); // actual native if provided, otherwise this is a copy of the input structure
+		(*score_fxn)(native_p);
+		
+		if (option[ detect_tight_clusters::external_cluster ].user() ) {
+			if ( option[ detect_tight_clusters::external_cluster ]().size() % 2 != 0) {
+				TR << "error -- -external_cluster parameters must always be pairs of chain and position!" << std::endl;
 				return 2;
 			}
-			native_p.clear();
-			core::import_pose::pose_from_pdb(native_p, option[ in::file::native ]()); // does this work?
-			(*score_fxn)(native_p); // initial scoring is required to get actual energies
-		}
-		
-		std::set<core::Size> ext_cluster;
-		std::string cluster_name = "";
-		// also extract the actual 4 residues for getting the RMSD
-		core::pose::Pose native_cluster;
-		core::pose::Pose repacked_cluster;
-		
-		for (core::Size c_pos = 1; c_pos <= option[ detect_tight_clusters::external_cluster ]().size(); c_pos += 2) {
-			
-			core::Size mapped_pos = p.pdb_info()->pdb2pose(option[ detect_tight_clusters::external_cluster ][c_pos][0], atoi(option[ detect_tight_clusters::external_cluster ][c_pos+1].c_str()));
-			
-			ext_cluster.insert(mapped_pos); // we have ensured above that there's an even number of entries, so this shouldn't produce segfaults -- the casting from strings to chars and ints is a terrible hack though
-			cluster_name += utility::to_string(p.pdb_info()->number(mapped_pos)) + "_"; 
-			
-			native_cluster.append_residue_by_jump(native_p.residue(mapped_pos), native_cluster.total_residue());
-			repacked_cluster.append_residue_by_jump(p.residue(mapped_pos), repacked_cluster.total_residue());
 			
 			
-			if ( option[ detect_tight_clusters::debug ]() ) {
-				TR << " *** evaluating external cluster *** " << option[ detect_tight_clusters::external_cluster ][c_pos] 
-				<< " " << option[ detect_tight_clusters::external_cluster ][c_pos+1] << " " 
-				<< mapped_pos << std::endl; 
+			if ( option [ detect_tight_clusters::evaluate_externally_repacked_structure ]() ) { // requires native for reference 
+				// it might be easier to directly call comparison on the given cluster
+				if (! option[ in::file::native ].user() ) {
+					TR << "error -- native pose required for comparison with externally repacked structures!" << std::endl;
+					return 2;
+				}
+				native_p.clear();
+				core::import_pose::pose_from_pdb(native_p, option[ in::file::native ]()); // does this work?
+				(*score_fxn)(native_p); // initial scoring is required to get actual energies
 			}
 			
+			std::set<core::Size> ext_cluster;
+			std::string cluster_name = "";
+			// also extract the actual 4 residues for getting the RMSD
+			core::pose::Pose native_cluster;
+			core::pose::Pose repacked_cluster;
 			
-		}
-		
-		if ( option[ detect_tight_clusters::evaluate_externally_repacked_structure ]() || option[ detect_tight_clusters::repack_external_cluster ]() ) {
-			/*
-			 utility::vector1<int> chi_dev_lst;
-			 compare_chi1_2_angles(native_p, p, ext_cluster, chi_dev_lst);
-			 
-			 core::Real motif_rmsd = core::scoring::rmsd_with_super(native_cluster, repacked_cluster, core::scoring::is_heavyatom);
-			 
-			 outfile << p_name << "\t" 
-			 << cluster_name << "\t" 
-			 << motif_rmsd;
-			 
-			 for (core::Size i = 1; i <= chi_dev_lst.size(); i++) {
-			 outfile << "\t" << chi_dev_lst[i];
-			 }
-			 
-			 // warning -- most of the energies are going to be undefined -- this won't even compile
-			 outfile << "\t" << native_p.energies().total_energy() << "\t" 
-			 << p.energies().total_energy() << "\t";	
-			 //<< motif_starting_energy << "\t" << motif_repacked_energy << "\t"<< repacked_cluster.sequence() << "\t";
-			 
-			 outfile << std::endl;
-			 */
+			for (core::Size c_pos = 1; c_pos <= option[ detect_tight_clusters::external_cluster ]().size(); c_pos += 2) {
+				
+				core::Size mapped_pos = p.pdb_info()->pdb2pose(option[ detect_tight_clusters::external_cluster ][c_pos][0], atoi(option[ detect_tight_clusters::external_cluster ][c_pos+1].c_str()));
+				
+				ext_cluster.insert(mapped_pos); // we have ensured above that there's an even number of entries, so this shouldn't produce segfaults -- the casting from strings to chars and ints is a terrible hack though
+				cluster_name += utility::to_string(p.pdb_info()->number(mapped_pos)) + "_"; 
+				
+				native_cluster.append_residue_by_jump(native_p.residue(mapped_pos), native_cluster.total_residue());
+				repacked_cluster.append_residue_by_jump(p.residue(mapped_pos), repacked_cluster.total_residue());
+				
+				
+				if ( option[ detect_tight_clusters::debug ]() ) {
+					TR << " *** evaluating external cluster *** " << option[ detect_tight_clusters::external_cluster ][c_pos] 
+					<< " " << option[ detect_tight_clusters::external_cluster ][c_pos+1] << " " 
+					<< mapped_pos << std::endl; 
+				}
+				
+				
+			}
 			
+			if ( option[ detect_tight_clusters::evaluate_externally_repacked_structure ]() || option[ detect_tight_clusters::repack_external_cluster ]() ) {
+				
+				// append to filtered_clusters in either case -- repacking or just evaluation will be checked inside the function
+				filtered_clusters[ext_cluster] = "external"; // we don't know whether this one is buried or intermediate
+			} else {
+				TR << " -- error -- you provided an external cluster but did not state whether to repack or just evaluate -- exiting" << std::endl;
+			}
 			
-			//} else if ( option[ detect_tight_clusters::repack_external_cluster ]() ) {
-			
-			// append to filtered_clusters in either case -- repacking or just evaluation will be checked inside the function
-			filtered_clusters[ext_cluster] = "external"; // we don't know whether this one is buried or intermediate
 		} else {
-			TR << " -- error -- you provided an external cluster but did not state whether to repack or just evaluate -- exiting" << std::endl;
+			if ( option[ detect_tight_clusters::require_renumbered_structures]() ) { // switch on for compatibility with external tools -- there must be a better way to check for missing and thus discarded backbones though. The problem with this approach is that the renumbering affects which residues are excluded due to proximity to a ligand (via resfiles), so it may actually lead to exclusion of the wrong residues.
+				
+				// check here whether p.total_residue() is the same as the last number in this PDB -- with -remember_unrecognized_residues this might show us which cases had "partial" backbone information that is discarded by Rosetta and would thus confuse numbering when used with other tools, such as OSCAR-star
+				core::Size num_res = p.total_residue();
+				if (num_res != core::Size(p.pdb_info()->number(num_res))) { // throws a warning if not casted.. 
+					TR << p << std::endl;
+					TR << "Structure " << p_name << " seems to have missing backbone data that was discarded -- skipping" << std::endl; // mainly for compatibility with OSCAR*
+					return 0;
+				}
+			}
+			
+			find_clusters(p, *input_task, filtered_clusters);
 		}
 		
-	} else {
 		
-		// TODO: check here whether p.total_residue() is the same as the last number in this PDB -- with -remember_unrecognized_residues this might show us which cases had "partial" backbone information that is discarded by Rosetta and would thus confuse numbering when used with other tools, such as OSCAR-star
-		core::Size num_res = p.total_residue();
-		if (num_res != core::Size(p.pdb_info()->number(num_res))) { // throws a warning if not casted.. 
-			TR << p << std::endl;
-			TR << "Structure " << p_name << " seems to have missing backbone data that was discarded -- skipping" << std::endl; // mainly for compatibility with OSCAR*
-			return 0;
-		}
+		// repack all the filtered clusters (whether externally provided or detected in this run) 
+		for (std::map<std::set<core::Size>, std::string>::const_iterator mi = filtered_clusters.begin(); mi != filtered_clusters.end(); mi++) {
+			repack_cluster(native_p, p, score_fxn, mi->first, mi->second, outfile_core, outfile);
+		}	
 		
-		// maybe we can even put this behind a flag, as not to abort runs unnecessarily
-		find_clusters(p, *input_task, filtered_clusters);
-	}
-	
-	
-	// repack all the filtered clusters (whether externally provided or detected in this run) 
-	for (std::map<std::set<core::Size>, std::string>::const_iterator mi = filtered_clusters.begin(); mi != filtered_clusters.end(); mi++) {
-		repack_cluster(native_p, p, score_fxn, mi->first, mi->second, outfile_core, outfile);
-	}	
-	
-	outfile.close();
-	
-	//score_fxn->show(TR, p);
-	
-
+		outfile.close();
+		
+		//score_fxn->show(TR, p);
+		
+		
 	} catch ( utility::excn::EXCN_Base const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 	}

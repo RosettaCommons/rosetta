@@ -24,6 +24,7 @@ sources = {
 	# A ######################################################################
 	"pilot/amelie" : [
 		"detect_tight_clusters", # /* Amelie Stein, documentation see comments in file */
+		"design_tight_clusters", # /* Amelie Stein, documentation see comments in file */
 	],
 	"pilot/andre" : [
 		#"SymmDataTest",
