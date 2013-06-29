@@ -41,6 +41,7 @@
 
 // utility
 #include <utility/tag/Tag.hh>
+#include <utility/fixedsizearray1.hh>
 #include <basic/Tracer.hh>
 
 // option
@@ -59,12 +60,13 @@ using namespace task;
 using namespace operation;
 using namespace scoring;
 using namespace constraints;
-	
-AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMover(){
+
+AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMover() {
 	has_task_factory_= false;
 	use_distance_cst_ = false;
 	CA_only_ = true;
 	bb_only_ = false;
+	inter_chain_ = true;
 	max_distance_ = 12.0;
 	coord_dev_ = 1.0;
 	bound_width_ = 0.;
@@ -72,10 +74,15 @@ AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMov
 	cst_weight_ = 1.0;
 }
 
-AddConstraintsToCurrentConformationMover::~AddConstraintsToCurrentConformationMover(){}
-		
-void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
-{
+AddConstraintsToCurrentConformationMover::~AddConstraintsToCurrentConformationMover() {}
+
+bool AddConstraintsToCurrentConformationMover::residue_to_constrain(Size const & i) const {
+	if( has_task_factory_ )
+		return (!task_->residue_task(i).being_designed()) && (!task_->residue_task(i).being_packed());
+	return true;
+}
+
+void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose ) {
 	using namespace conformation;
 	using namespace core;
 	using namespace basic::options;
@@ -87,10 +94,10 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
 	using namespace protocols::moves;
 	using namespace core::scoring;
 
-	if( has_task_factory_ ){
-			task_ = task_factory_->create_task_and_apply_taskoperations( pose );	
+	if( has_task_factory_ ) {
+		task_ = task_factory_->create_task_and_apply_taskoperations( pose );
 	}
-	
+
 	if (!use_distance_cst_) {
 		// this is not quite right without adding a virtual residue
 		/*
@@ -98,242 +105,105 @@ void AddConstraintsToCurrentConformationMover::apply( core::pose::Pose & pose )
 			core::pose::addVirtualResAsRoot(pose);
 		}
 		 */
-	
-	// TR << pose.fold_tree() << std::endl;
-	Size nres = pose.total_residue();
 
-	// find anchor residue
-	numeric::xyzVector<core::Real> sum_xyz(0.0);
-	numeric::xyzVector<core::Real> anchor_xyz(0.0);
-	core::Real natom = 0.0;
-	for ( Size ires = 1; ires <= nres; ++ires ) {
-		if ( pose.residue_type(ires).has("CA") ) {
-			Size iatom = pose.residue_type(ires).atom_index("CA");
-			sum_xyz += pose.residue(ires).xyz(iatom);
-			natom += 1.;
-		}
-		if (natom > 1e-3) {
-			anchor_xyz = sum_xyz / natom;
-		}
-	}
-	core::Real min_dist2 = 1e9;
-	Size best_anchor = 0;
-	for ( Size ires = 1; ires <= nres; ++ires ) {
-		if ( pose.residue_type(ires).has("CA") ) {
-			Size iatom = pose.residue_type(ires).atom_index("CA");
-			core::Real dist2 = pose.residue(ires).xyz(iatom).distance_squared(anchor_xyz);
-			if (dist2 < min_dist2) {
-				min_dist2 = dist2;
-				best_anchor = ires;
+		// TR << pose.fold_tree() << std::endl;
+		Size nres = pose.total_residue();
+
+		// find anchor residue
+		numeric::xyzVector<core::Real> sum_xyz(0.0);
+		numeric::xyzVector<core::Real> anchor_xyz(0.0);
+		core::Real natom = 0.0;
+		for ( Size ires = 1; ires <= nres; ++ires ) {
+			if ( pose.residue_type(ires).has("CA") ) {
+				Size iatom = pose.residue_type(ires).atom_index("CA");
+				sum_xyz += pose.residue(ires).xyz(iatom);
+				natom += 1.;
+			}
+			if (natom > 1e-3) {
+				anchor_xyz = sum_xyz / natom;
 			}
 		}
-	}
-	
-	if (best_anchor == 0) return;
-	Size best_anchor_atom = pose.residue_type(best_anchor).atom_index("CA");
-
-
-	//Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ] );
-	for ( Size ires = 1; ires <= nres; ++ires ) {
-		Size iatom;
-		if ( pose.residue_type(ires).has("CA") ) {
-			iatom = pose.residue_type(ires).atom_index("CA");
-		}
-		else if ( pose.residue_type(ires).is_DNA() ) {
-			iatom = 0;
-		}
-		else {
-			continue;
-		}
-		
-		if ( bound_width_ < 1e-3 ) {
-			if (iatom != 0) {
-        if( has_task_factory_ ){
-          if( (! task_->residue_task( ires ).being_designed()) && (! task_->residue_task( ires ).being_packed()) ) {
-
-				 			if (!CA_only_)	{
-								for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
-									if (!bb_only_) {
-									pose.add_constraint( new CoordinateConstraint(
-																  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-																  new HarmonicFunc( 0.0, coord_dev_ ) ) );
-                	TR.Debug << "Only constraint added to residue " << ires << ", atom " << iatom << std::endl;
-									} else {
-										if (pose.residue_type(ires).atom_is_backbone(iatom)) {
-																pose.add_constraint( new CoordinateConstraint(
-																  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-																  new HarmonicFunc( 0.0, coord_dev_ ) ) );
-                									TR.Debug << "Only constraint added to residue " << ires << ", atom " << iatom << std::endl;
-										}
-									}//only for backbone atoms
-								}//loop all heavy atom
-			   		} else {			
-								pose.add_constraint( new CoordinateConstraint(
-															  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-															  new HarmonicFunc( 0.0, coord_dev_ ) ) );
-            		TR.Debug << "Only constraint added to residue " << ires << ", atom " << iatom << std::endl;
-						}//only CA
-          }//only residues in task_
-        } else {
-				    if (!CA_only_)	{
-				     	for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
-								if (!bb_only_) {
-				     			pose.add_constraint( new CoordinateConstraint(
-				     											  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-				     											  new HarmonicFunc( 0.0, coord_dev_ ) ) );
-                   TR.Debug << "Constraint added to residue " << ires << ", atom " << iatom << std::endl;
-								} else {
-									if (pose.residue_type(ires).atom_is_backbone(iatom)) {
-				     										pose.add_constraint( new CoordinateConstraint(
-				     											  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-				     											  new HarmonicFunc( 0.0, coord_dev_ ) ) );
-                   							TR.Debug << "Constraint added to residue " << ires << ", atom " << iatom << std::endl;
-									}
-								}//only for backbone atoms
-				     	}//loop all heavy atom
-			      } else {			
-						pose.add_constraint( new CoordinateConstraint(
-															  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-															  new HarmonicFunc( 0.0, coord_dev_ ) ) );
-            TR.Debug << "Constraint added to residue " << ires << ", atom " << iatom << std::endl;
-						}//only add to CA
-        }//no task_factory_
-			}//proteins
-			else {
-				for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
-					pose.add_constraint( new CoordinateConstraint(
-																  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-																  new HarmonicFunc( 0.0, coord_dev_ ) ) );
+		core::Real min_dist2 = 1e9;
+		Size best_anchor = 0;
+		for ( Size ires = 1; ires <= nres; ++ires ) {
+			if ( pose.residue_type(ires).has("CA") ) {
+				Size iatom = pose.residue_type(ires).atom_index("CA");
+				core::Real dist2 = pose.residue(ires).xyz(iatom).distance_squared(anchor_xyz);
+				if (dist2 < min_dist2) {
+					min_dist2 = dist2;
+					best_anchor = ires;
 				}
 			}
-		} else {
-			//Real const cst_width( option[ OptionKeys::relax::coord_cst_width ]() );
+		}
 
-			if (iatom != 0) {
-	  		if( has_task_factory_ ){	
-          if( (! task_->residue_task( ires ).being_designed()) && (! task_->residue_task( ires ).being_packed()) ) {
-				 			if (!CA_only_)	{
-								for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
-										if (!bb_only_) {
-										pose.add_constraint( new CoordinateConstraint(
-												  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-												  new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
-													TR.Debug << "Only harmonic heavy constraint added to residue " << ires << ", atom " << iatom << std::endl;
-											} else {
-												if (pose.residue_type(ires).atom_is_backbone(iatom)) {
-														pose.add_constraint( new CoordinateConstraint(
-												  			AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-												  			new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
-													      TR.Debug << "Only harmonic heavy constraint added to residue " << ires << ", atom " << iatom << std::endl;
-													}
-											}//only for backbone atoms
-								}//loop all heavy
-					    } else {
-										pose.add_constraint( new CoordinateConstraint(
-												  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-												  new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
-													TR.Debug << "Only harmonic CA constraint added to residue " << ires << ", atom " << iatom << std::endl;
-							}//only add to CA
-					}//only residues in task_
-				} else {
-					   if (!CA_only_)  {
-                for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
-										if (!bb_only_) {
-                    pose.add_constraint( new CoordinateConstraint(
-                          AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-                          new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
-                          TR.Debug << "Only bound heavy coordinate_constraint added to residue " << ires << ", atom " << iatom << std::endl;
-										} else {
-                        if (pose.residue_type(ires).atom_is_backbone(iatom)) {
-                    pose.add_constraint( new CoordinateConstraint(
-                          AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-                          new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
-                          TR.Debug << "Only bound heavy constraint added to residue " << ires << ", atom " << iatom << std::endl;
-                          }
-										}//only for backbone atoms
-                }//loop all heavy
-              } else {
-                    pose.add_constraint( new CoordinateConstraint(
-                          AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-                          new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
-                          TR.Debug << "Only bound CA coordinate_constraint added to residue " << ires << ", atom " << iatom << std::endl;
-              }//only add to CA
-				}//no task_factory_
-			}//proteins
-			else {
-				for (iatom = 1; iatom <= pose.residue_type(ires).nheavyatoms(); ++iatom) {
-					pose.add_constraint( new CoordinateConstraint(
-															  AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom),
-															  new BoundFunc( 0, bound_width_, coord_dev_, "xyz" )) );
-				}				
-			} //non-proteins
-		}//BoundFunc
-	 }//loop through residues
+		if (best_anchor == 0) return;
+		Size best_anchor_atom = pose.residue_type(best_anchor).atom_index("CA");
+
+		for ( Size ires = 1; ires <= nres; ++ires ) {
+			Size iatom_start=1, iatom_stop=pose.residue(ires).nheavyatoms();
+			if ( pose.residue_type(ires).is_DNA() ) {
+				iatom_stop = 0;
+			} else if ( pose.residue_type(ires).is_protein() ) { 
+					if( CA_only_ && pose.residue_type(ires).has("CA") ) {
+							iatom_start = iatom_stop = pose.residue_type(ires).atom_index("CA");
+					} else if( bb_only_ ) {
+							iatom_stop = pose.residue_type(ires).last_backbone_atom();
+					} 
+			} else {
+				continue;
+			}
+
+			if( residue_to_constrain(ires) ) {
+			 for (Size iatom = iatom_start; iatom <= iatom_stop; ++iatom) {
+				pose.add_constraint( new CoordinateConstraint(
+			               AtomID(iatom,ires), AtomID(best_anchor_atom,best_anchor), pose.residue(ires).xyz(iatom), cc_func_ ) );
+				TR.Debug << "coordinate constraint added to residue " << ires << ", atom " << iatom << std::endl;
+			 }
+			}
+		}//loop through residues
 	} //cartesian
 	else {
-	  		if( has_task_factory_ ){	
-						// distance constraints
-						for (Size ires=1; ires<=pose.total_residue(); ++ires) {
-							if( task_->residue_task( ires ).being_designed() || task_->residue_task( ires ).being_packed())  continue;
-
-							if ( ! pose.residue_type(ires).has("CA") ) continue;
-							core::Size iatom = pose.residue_type(ires).atom_index("CA");
-							
-							for (Size jres=ires+min_seq_sep_; jres<=pose.total_residue(); ++jres) {
-							  if( task_->residue_task( jres ).being_designed() || task_->residue_task( jres ).being_packed())  continue;
-								if ( ! pose.residue_type(jres).has("CA") ) continue;
-								core::Size jatom = pose.residue_type(jres).atom_index("CA");
-								core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
-								if ( dist <= max_distance_ ) {
-									TR.Debug << "Only atom_pair_constraint added to residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
-        
-									pose.add_constraint(
-														new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
-																										   core::id::AtomID(jatom,jres), 
-																										   new core::scoring::constraints::ScalarWeightedFunc( cst_weight_, new core::scoring::constraints::SOGFunc( dist, coord_dev_ )  )
-																										   )
-														);
-								}
-							}
-					}
-				} else {
 		// distance constraints
 		for (Size ires=1; ires<=pose.total_residue(); ++ires) {
-			if ( ! pose.residue_type(ires).has("CA") ) continue;
-			core::Size iatom = pose.residue_type(ires).atom_index("CA");
-			
+			if (!residue_to_constrain(ires)) continue;
+			utility::fixedsizearray1<core::Size,2> iatoms(0); // both are 0
+			if( pose.residue_type(ires).has("CA")  ) iatoms[1] = pose.residue_type(ires).atom_index("CA");
+ 			if( !CA_only_ ) iatoms[2] = pose.residue_type(ires).nbr_atom();
+
 			for (Size jres=ires+min_seq_sep_; jres<=pose.total_residue(); ++jres) {
-				if ( ! pose.residue_type(jres).has("CA") ) continue;
-				core::Size jatom = pose.residue_type(jres).atom_index("CA");
-				
-				core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
-				if ( dist <= max_distance_ ) {
-					TR.Debug << "Constraint added to residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
+				if( !inter_chain_ && pose.chain(ires)!=pose.chain(jres) ) continue;
+			  if (!residue_to_constrain(jres)) continue;
+				utility::fixedsizearray1<core::Size,2> jatoms(0);
+				if( pose.residue_type(jres).has("CA") )           jatoms[1] = pose.residue_type(jres).atom_index("CA");
+ 				if( !CA_only_ ) jatoms[2] = pose.residue_type(jres).nbr_atom();
+
+ 				for(utility::fixedsizearray1<core::Size,2>::const_iterator iiatom = iatoms.begin(); iiatom != iatoms.end(); ++iiatom){
+				for(utility::fixedsizearray1<core::Size,2>::const_iterator jjatom = jatoms.begin(); jjatom != jatoms.end(); ++jjatom){
+					Size const &iatom(*iiatom), &jatom(*jjatom);
+					if( iatom==0 || jatom==0 ) continue;
+
+					core::Real dist = pose.residue(ires).xyz(iatom).distance( pose.residue(jres).xyz(jatom) );
+					if ( dist > max_distance_ ) continue;
 
 					pose.add_constraint(
-										new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires),
-																						   core::id::AtomID(jatom,jres), 
-																						   new core::scoring::constraints::ScalarWeightedFunc( cst_weight_, new core::scoring::constraints::SOGFunc( dist, coord_dev_ )  )
-																						   )
-										);
-				}
+					    new core::scoring::constraints::AtomPairConstraint( core::id::AtomID(iatom,ires), core::id::AtomID(jatom,jres),
+					            new core::scoring::constraints::ScalarWeightedFunc( cst_weight_, new core::scoring::constraints::SOGFunc( dist, coord_dev_ ) ) ) );
+					TR.Debug << "atom_pair_constraint added to residue " << ires << ", atom " << iatom << " and residue " << jres << ", atom " << jatom << " with weight " << cst_weight_ << std::endl;
+				}}
 			}
 		}
-	}//no task operations
-
 	}
 }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 AddConstraintsToCurrentConformationMover::parse_my_tag(
-								TagPtr const tag,
-								moves::DataMap & datamap,
-								Filters_map const & filters,
-								moves::Movers_map const & movers,
-								Pose const & pose
-								)
-{
+    TagPtr const tag,
+    moves::DataMap & datamap,
+    Filters_map const & filters,
+    moves::Movers_map const & movers,
+    Pose const & pose
+) {
 	if ( tag->hasOption("use_distance_cst") ) {
 		use_distance_cst_ = tag->getOption<bool>("use_distance_cst");
 	}
@@ -343,9 +213,16 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	if ( tag->hasOption("coord_dev") ) {
 		coord_dev_ = tag->getOption<core::Real>("coord_dev");
 	}
+
 	if ( tag->hasOption("bound_width") ) {
 		bound_width_ = tag->getOption<core::Real>("bound_width");
+	  if ( bound_width_ < 1e-3 ) cc_func_ = new HarmonicFunc(0.0,coord_dev_);
+	  else cc_func_ = new BoundFunc(0,bound_width_,coord_dev_,"xyz");
+	} else {
+	  if ( bound_width_ < 1e-3 ) cc_func_ = new HarmonicFunc(0.0,coord_dev_);
+	  else cc_func_ = new BoundFunc(0,bound_width_,coord_dev_,"xyz");
 	}
+
 	if ( tag->hasOption("min_seq_sep") ) {
 		min_seq_sep_ = tag->getOption<core::Size>("min_seq_sep");
 	}
@@ -353,7 +230,7 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 		cst_weight_ = tag->getOption<core::Real>("cst_weight");
 	}
 
-	if( tag->hasOption( "task_operations" ) ){
+	if( tag->hasOption( "task_operations" ) ) {
 		TR << "WARNING: task_operations only active for proteins" << std::endl;
 		has_task_factory_=true;
 		parse_task_operations( tag, datamap, filters, movers, pose );
@@ -367,52 +244,56 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 		bb_only_ = tag->getOption<bool>("bb_only",false);
 	}
 
+	if ( tag->hasOption("inter_chain_") ) {
+		inter_chain_ = tag->getOption<bool>("inter_chain",true);
+	}
+
 }
 
 void
 AddConstraintsToCurrentConformationMover::parse_task_operations(
-										 TagPtr const tag,
-										 moves::DataMap const & datamap,
-										 Filters_map const &,
-										 moves::Movers_map const &,
-										 Pose const &
-										 )
-{
+    TagPtr const tag,
+    moves::DataMap const & datamap,
+    Filters_map const &,
+    moves::Movers_map const &,
+    Pose const &
+) {
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
 	if ( new_task_factory == 0) return;
 	task_factory( new_task_factory );
 }
 
-void AddConstraintsToCurrentConformationMover::task_factory( TaskFactoryCOP tf )
-{
+void AddConstraintsToCurrentConformationMover::task_factory( TaskFactoryCOP tf ) {
 	runtime_assert( tf );
 	task_factory_ = tf;
 }
-	
-moves::MoverOP AddConstraintsToCurrentConformationMover::clone() const { return new AddConstraintsToCurrentConformationMover( *this ); }
-moves::MoverOP AddConstraintsToCurrentConformationMover::fresh_instance() const { return new AddConstraintsToCurrentConformationMover; }
+
+moves::MoverOP AddConstraintsToCurrentConformationMover::clone() const {
+	return new AddConstraintsToCurrentConformationMover( *this );
+}
+moves::MoverOP AddConstraintsToCurrentConformationMover::fresh_instance() const {
+	return new AddConstraintsToCurrentConformationMover;
+}
 
 protocols::moves::MoverOP
 AddConstraintsToCurrentConformationMoverCreator::create_mover() const {
 	return new AddConstraintsToCurrentConformationMover;
 }
-	
+
 std::string
-AddConstraintsToCurrentConformationMoverCreator::keyname() const
-{
+AddConstraintsToCurrentConformationMoverCreator::keyname() const {
 	return AddConstraintsToCurrentConformationMoverCreator::mover_name();
 }
-	
+
 std::string
-AddConstraintsToCurrentConformationMoverCreator::mover_name()
-{
+AddConstraintsToCurrentConformationMoverCreator::mover_name() {
 	return "AddConstraintsToCurrentConformationMover";
 }
-	
+
 std::string
 AddConstraintsToCurrentConformationMover::get_name() const {
 	return "AddConstraintsToCurrentConformationMover";
 }
-	
+
 } // moves
 } // protocols

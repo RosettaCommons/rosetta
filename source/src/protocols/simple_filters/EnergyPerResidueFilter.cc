@@ -83,6 +83,7 @@ EnergyPerResidueFilter::EnergyPerResidueFilter( EnergyPerResidueFilter const &in
 	score_type_( init.score_type_ ),
 	threshold_( init.threshold_ ),
 	whole_interface_ (init.whole_interface_),
+	whole_protein_ (init.whole_protein_),
 	rb_jump_ (init.rb_jump_),
 	interface_distance_cutoff_ ( init.interface_distance_cutoff_),
 	bb_bb_ ( init.bb_bb_ )
@@ -160,14 +161,13 @@ EnergyPerResidueFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::Dat
 	if (whole_interface_) {
 		resnum_ = 1;
 		energy_per_residue_filter_tracer<<"energies for all interface residues with a distance cutoff of "
-		<< interface_distance_cutoff_ << " A will be calculated \n"
-		<< "jump_number is set to "<< rb_jump_
-		<< "\n and scorefxn " << rosetta_scripts::get_score_function_name(tag) <<" will be used" <<std::endl;
+		<< interface_distance_cutoff_ << " A will be calculated " 
+		<< "jump_number is set to "<< rb_jump_ 
+		<< " and scorefxn " << rosetta_scripts::get_score_function_name(tag) <<" will be used" <<std::endl;
 	}
 
   if ( whole_protein_) {
 		resnum_ = 1;
-		energy_per_residue_filter_tracer<<"energies for all residues in protein" << std::endl;
 	} 
 
 	if (!whole_interface_ && !whole_protein_) {
@@ -189,7 +189,7 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 
 		}
 		else {
-			energy_per_residue_filter_tracer<<" \n \t --------- computing  ---------- \n \t-------- interface energies   --------\n \t \t------------------- \n" << std::endl;
+			energy_per_residue_filter_tracer<<" computing  interface energies" << std::endl;
 		  core::pose::Pose in_pose = pose;
       FArray1D_bool partner1_( in_pose.total_residue(), false );
       in_pose.fold_tree().partition_by_jump( rb_jump_, partner1_);
@@ -205,6 +205,7 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 					if ( !in_pose.residue(resid).is_protein() ) continue;
 					if( interface_obj.is_interface( resid ) ) {
 						energy= compute( pose, resid ) ;
+						energy_per_residue_filter_tracer<<"Scoretype "<<name_from_score_type( score_type_ )<<" for residue: " << pose.pdb_info()->number(resid)<<" " <<pose.residue( resid ).name3() <<" is "<<energy<<std::endl;
 						if ( energy > threshold_ ) {
 							pass=false;
 							break;
@@ -217,13 +218,14 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
 
 	} 
    if ( whole_protein_ ) {
-      energy_per_residue_filter_tracer<<" \n \t --------- computing  ---------- \n \t-------- all energies   --------\n \t \t------------------- \n" << std::endl;
+      energy_per_residue_filter_tracer<<"computing all energies" << std::endl;
 			bool pass;
 			core::Real energy;
 		  core::pose::Pose in_pose = pose;
 			for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid) {
 					if ( !in_pose.residue(resid).is_protein() ) continue;
 					energy= compute( pose ,resid ) ;
+					energy_per_residue_filter_tracer<<"Scoretype "<<name_from_score_type( score_type_ )<<" for residue: " << pose.pdb_info()->number(resid)<<" " <<pose.residue( resid ).name3() <<" is "<<energy<<std::endl;
 					if ( energy > threshold_ ) {
 							pass=false;
 							break;
@@ -272,7 +274,7 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
 			ObjexxFCL::fmt::A( 9, "hb_sc")<<
 			ObjexxFCL::fmt::A( 9, "fa_sol")<<
 			ObjexxFCL::fmt::A( 9, "fa_dun")<<
-			ObjexxFCL::fmt::A( 9, "fa_pair")<<"\n";
+			ObjexxFCL::fmt::A( 9, "fa_pair")<<std::endl;
 		for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid) {
 			if ( !in_pose.residue(resid).is_protein() ) continue;
 			if( interface_obj.is_interface( resid ) ) { // in interface
@@ -300,7 +302,7 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
 					<<ObjexxFCL::fmt::F (9 , 3, weighted_hbond_sc )<<" "
 					<<ObjexxFCL::fmt::F (9 , 3, weighted_fa_sol )<<" "
 					<<ObjexxFCL::fmt::F (9 , 3, weighted_fa_dun )<<" "
-					<<ObjexxFCL::fmt::F (9 , 3, weighted_fa_pair )<<"\n";
+					<<ObjexxFCL::fmt::F (9 , 3, weighted_fa_pair )<<std::endl;
 
 			}
 		}
@@ -308,54 +310,20 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
   if ( whole_protein_ ) {
     core::pose::Pose in_pose = pose;
     (*scorefxn_)( in_pose );
-    out<<ObjexxFCL::fmt::A(9, "chain")<<
-      ObjexxFCL::fmt::A( 9, "res")<<
-      ObjexxFCL::fmt::A( 9, "AA")<<
-      ObjexxFCL::fmt::A( 9, "total")<<
-      ObjexxFCL::fmt::A( 9, "contact")<<
-      ObjexxFCL::fmt::A( 9, "fa_atr")<<
-      ObjexxFCL::fmt::A( 9, "fa_rep")<<
-      ObjexxFCL::fmt::A( 9, "hb_bb_sc")<<
-      ObjexxFCL::fmt::A( 9, "hb_sc")<<
-      ObjexxFCL::fmt::A( 9, "fa_sol")<<
-      ObjexxFCL::fmt::A( 9, "fa_dun")<<
-      ObjexxFCL::fmt::A( 9, "fa_pair")<<"\n";
-    for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid) {
-      if ( !in_pose.residue(resid).is_protein() ) continue;
-
-        core::Real total=in_pose.energies().residue_total_energies( resid )[ ScoreType( total_score ) ];
-        core::Real weighted_fa_atr=( (*scorefxn_)[ ScoreType( fa_atr) ] ) * ( in_pose.energies().residue_total_energies( resid )[ ScoreType( fa_atr ) ]);
-        core::Real weighted_fa_rep=( (*scorefxn_)[ ScoreType( fa_rep) ] ) * ( in_pose.energies().residue_total_energies( resid )[ ScoreType( fa_rep) ]);
-        core::Real weighted_hbond_bb_sc=( (*scorefxn_)[ ScoreType( hbond_bb_sc) ] ) * ( in_pose.energies().residue_total_energies( resid )[ ScoreType( hbond_bb_sc ) ]);
-        core::Real weighted_hbond_sc=( (*scorefxn_)[ ScoreType( hbond_sc) ] ) * ( in_pose.energies().residue_total_energies( resid )[ ScoreType( hbond_sc ) ]);
-        core::Real weighted_fa_sol=( (*scorefxn_)[ ScoreType( fa_sol) ] ) * ( in_pose.energies().residue_total_energies( resid )[ ScoreType( fa_sol ) ]);
-        core::Real weighted_contact_score = weighted_fa_atr + weighted_fa_rep + weighted_hbond_bb_sc + weighted_hbond_sc + weighted_fa_sol;
-
-        core::Real weighted_fa_dun=( (*scorefxn_)[ ScoreType( fa_dun) ] ) * ( in_pose.energies().residue_total_energies( resid )[ ScoreType( fa_dun ) ]);
-        core::Real weighted_fa_pair=( (*scorefxn_)[ ScoreType( fa_pair ) ] ) * ( in_pose.energies().residue_total_energies( resid )[ ScoreType( fa_pair ) ]);
-
-        out<<
-          ObjexxFCL::fmt::A (9 , in_pose.pdb_info()->chain( resid) )<<
-          ObjexxFCL::fmt::I(9,0, in_pose.pdb_info()->number(resid))<<
-          ObjexxFCL::fmt::A (9,in_pose.residue( resid).name3())
-          <<ObjexxFCL::fmt::F (9 , 3, total) <<" "
-          <<ObjexxFCL::fmt::F (9 , 3, weighted_contact_score)<<" "
-          <<ObjexxFCL::fmt::F (9 , 3, weighted_fa_atr) <<" "
-          <<ObjexxFCL::fmt::F (9 , 3, weighted_fa_rep) <<" "
-          <<ObjexxFCL::fmt::F (9 , 3, weighted_hbond_bb_sc )<<" "
-          <<ObjexxFCL::fmt::F (9 , 3, weighted_hbond_sc )<<" "
-          <<ObjexxFCL::fmt::F (9 , 3, weighted_fa_sol )<<" "
-          <<ObjexxFCL::fmt::F (9 , 3, weighted_fa_dun )<<" "
-          <<ObjexxFCL::fmt::F (9 , 3, weighted_fa_pair )<<"\n";
-    }
+		core::Real energy;
+     for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid) {
+         if ( !in_pose.residue(resid).is_protein() ) continue;
+         energy= compute( pose ,resid ) ;
+         energy_per_residue_filter_tracer<<"Scoretype "<<name_from_score_type( score_type_ )<<" for residue: " << pose.pdb_info()->number(resid)<<" " <<pose.residue( resid ).name3() <<" is "<<energy<<std::endl;
+     }
 	} 
 
 	if (!whole_interface_ && !whole_protein_) {
 		core::Real const energy( compute( pose, resnum_ ) );
 		out<<"Scoretype "<<name_from_score_type( score_type_ )<<" for residue " << resnum_ <<" is "<<energy<<". ";
 		bool const pass( energy <= threshold_ );
-		if( pass ) out<<"passing."<<'\n';
-		else out<<"failing."<<'\n';
+		if( pass ) out<<"passing."<<std::endl;
+		else out<<"failing."<<std::endl;
   }
 }
 
@@ -388,9 +356,8 @@ EnergyPerResidueFilter::report_sm( core::pose::Pose const & pose ) const
 					}
     }
     energy=ind_energy/num_res;
-
-
 	} 
+
 	if ( whole_protein_ ) {
       core::Real ind_energy=0;
 			core::Size num_res=0;
