@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   utility/curl.hh
-/// @brief  Implements a OO interface to CURL wrapping and hiding the ugly C callbacks. 
+/// @brief  Implements a OO interface to CURL wrapping and hiding the ugly C callbacks.
 /// @author Mike Tyka (mike.tyka@gmail.com)
 
 #ifndef INCLUDED_utility_curl_hh
@@ -60,10 +60,8 @@ class CurlPost {
   std::string writebuffer;
 };
 
-#endif
-
-
 }
 
-#endif
+#endif // WITHCURL
 
+#endif // INCLUDED_utility_curl_hh
