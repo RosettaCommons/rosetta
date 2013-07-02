@@ -81,8 +81,11 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor() :
 
   // set n_rank_ and rank based on whether we are using MPI or not
 #ifdef USEMPI
-	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &rank_ ) );
-	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &n_rank_ ) );
+	int int_rank, int_n_rank;                         //don't cast pointers - copy it over instead
+	MPI_Comm_rank( MPI_COMM_WORLD, &int_rank );
+	MPI_Comm_size( MPI_COMM_WORLD, &int_n_rank );
+	rank_ = int_rank;
+	n_rank_ = int_n_rank;
 	n_worker_ = n_rank_ - min_client_rank_;
 #else
 	utility_exit_with_message( "ERROR ERROR ERROR: The MPIFileBufJobDistributor will not work unless you have compiled using extras=mpi" );
@@ -116,9 +119,12 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor(
 #ifdef USEMPI
 	//n_rank_ = MPI::COMM_WORLD.Get_size();
 	//rank_ = MPI::COMM_WORLD.Get_rank();
-	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &rank_ ) );
-	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &n_rank_ ) );
-	n_worker_ = n_rank_ - min_client_rank_;
+	int int_rank, int_n_rank;                         //don't cast pointers - copy it over instead
+  MPI_Comm_rank( MPI_COMM_WORLD, &int_rank );
+  MPI_Comm_size( MPI_COMM_WORLD, &int_n_rank );
+  rank_ = int_rank;
+  n_rank_ = int_n_rank;
+  n_worker_ = n_rank_ - min_client_rank_;
 #else
 	utility_exit_with_message( "ERROR ERROR ERROR: The MPIFileBufJobDistributor will not work unless you have compiled using extras=mpi" );
 #endif
