@@ -14,6 +14,7 @@ Import("build", "project")
 from tools.build.settings import Settings, ProjectSettings
 from tools.build import utility
 from os import symlink
+import os
 
 # Load the project settings.
 if ( "my" in map(str, BUILD_TARGETS) or "my_pilot_apps" in map(str, BUILD_TARGETS) ) and project == "pilot_apps" :
@@ -105,7 +106,10 @@ env.Prepend(**actual.symbols())
 if "static" not in build.options.extras:
   env["RPATH"] = [
       build.toplevel + "/build/src/" + build.platform,
-      build.toplevel + "/build/external/" + build.platform ]
+      build.toplevel + "/build/external/" + build.platform,
+      env.Literal("\\$$ORIGIN"),
+      env.Literal(os.path.join("\\$$ORIGIN", os.pardir, "lib")),
+  ]
 
 for entry in actual.sources:
   list_entry = entry.split('/')

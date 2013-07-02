@@ -860,29 +860,61 @@ locate_rosetta_database(){
 
 			char path[1024];
 			uint32_t path_size = sizeof( path );
+			std::string path_string;
 
 #ifdef MAC
-			_NSGetExecutablePath(path, &path_size );
+			uint32_t result = _NSGetExecutablePath(path, &path_size );
+
+			// _NSGetExecutablePath returns 0 if the path was successfully copied.
+			// Copies a null-terminated string
+			if (result == 0)
+			{
+				path_string = std::string( path );
+			}
 #endif
-#ifdef LINUX
-			readlink( "/proc/self/exe", path, path_size ); // This works on plain Linux, but not FreeBSD or Solaris.
+
+#if defined(linux) || defined(__linux__) || defined(__linux)
+			path_size = readlink( "/proc/self/exe", path, path_size ); // This works on plain Linux, but not FreeBSD or Solaris.
+
+			// readlink returns -1 on error, otherwise number of bytes written.
+			// Does not append null to string
+			if (path_size > 0)
+			{
+				path_string = std::string( path, path_size );
+			}
 #endif
+
 #ifdef WIN32
 			TR << "There is some way to automatically figure out the path to rosetta_database with GetModuleFileName in Windows. This is already set up for linux and mac, its probably just one line to change in core/init/init.cc" << std::endl;
 			// I think its this -- can someone comment out and compile on Windows? -- rhiju
 			// GetModuleFileName( NULL, path, path_size );
 #endif
 
-			std::string path_string( path );
-			Size found = path_string.find("source/"); // This better be in the path -- now part of the standard rosetta3 directory structure!
-			if ( found != std::string::npos && path_size > 0){
-				std::string rosetta_exe_dir = path_string.substr(0,found);
-				database_path = rosetta_exe_dir + "database/";
-				TR << "Looking for database based on location of executable: " << database_path << std::endl;
+			TR << "Resolved executable path: " << path_string << std::endl;
+
+			// Attempt to resolve from source/../database if 'source' is in path
+			// or ../database if not.
+
+			// Logic must be updated for windows paths if windows executable resolution is added.
+			if (path_string.length() > 0)
+			{
+				Size found = std::string::npos;
+
+				if ((found = path_string.find("source/")) && (found != std::string::npos))
+				{
+					std::string rosetta_exe_dir = path_string.substr(0,found);
+					database_path = rosetta_exe_dir + "database/";
+					TR << "Looking for database based on location of executable: " << database_path << std::endl;
+				}
+				else if ((found = path_string.rfind("/")) && (found != std::string::npos))
+				{
+					std::string rosetta_exe_dir = path_string.substr(0,found);
+					database_path = rosetta_exe_dir + "/../database/";
+					TR << "Looking for database based on location of executable: " << database_path << std::endl;
+				}
 			} else {
 				TR << "Could not determine location of executable." << std::endl;
 			}
-
 		}
 
 		if ( database_path.size() > 0 ){
@@ -890,7 +922,6 @@ locate_rosetta_database(){
 		} else {
 			TR << "Could not find database. Either specify -database or set environment variable ROSETTA3_DB." << std::endl;
 		}
-
 	}
 #endif
 }

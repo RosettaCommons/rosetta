@@ -12,7 +12,7 @@ Import("build", "project")
 
 # Python imports
 from tools.build.settings import Settings, ProjectSettings
-
+import os
 
 # Load the project settings.
 if project == "devel" :
@@ -101,7 +101,10 @@ env = build.environment.Clone()
 env.Prepend(**actual.symbols())
 if "static" not in build.options.extras:
   env["RPATH"] = [
-      build.toplevel + "/build/external/" + build.platform ]
+      build.toplevel + "/build/external/" + build.platform,
+      env.Literal("\\$$ORIGIN"),
+      env.Literal(os.path.join("\\$$ORIGIN", os.pardir, "lib")),
+  ]
 # direct SCons to the nvcc tool for CUDA source
 env.Tool('nvcc', toolpath = ['#tools/build/'])
 
