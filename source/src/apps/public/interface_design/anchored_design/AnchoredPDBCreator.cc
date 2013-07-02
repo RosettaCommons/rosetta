@@ -22,7 +22,7 @@
 
 #include <protocols/moves/Mover.hh>
 
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 #include <protocols/loops/Loops.hh>
 #include <protocols/grafting/AnchoredGraftMover.hh>

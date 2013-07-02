@@ -30,7 +30,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/options/option.hh>
 
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 // AUTO-REMOVED #include <iterator>
 
 // Utility headers

@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
 #include <protocols/toolbox/IGEdgeReweighters.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>

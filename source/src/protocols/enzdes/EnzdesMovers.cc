@@ -22,7 +22,7 @@
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/ligand_docking/ligand_functions.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>

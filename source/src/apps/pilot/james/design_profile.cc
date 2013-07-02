@@ -27,7 +27,7 @@
 #include <core/sequence/SequenceAlignment.hh>
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/moves/Mover.hh>

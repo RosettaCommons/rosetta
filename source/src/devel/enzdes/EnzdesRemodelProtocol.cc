@@ -51,7 +51,7 @@
 //#include <protocols/ligand_docking/LigandDockProtocol.hh>
 //#include <protocols/moves/MonteCarlo.hh>
 //#include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #if defined GL_GRAPHICS
  #include <protocols/viewer/viewers.hh>
 #endif

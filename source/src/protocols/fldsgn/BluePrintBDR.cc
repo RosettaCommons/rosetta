@@ -57,7 +57,7 @@
 #include <protocols/toolbox/match_enzdes_util/InvrotTree.hh>
 
 #include <protocols/moves/DataMap.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 

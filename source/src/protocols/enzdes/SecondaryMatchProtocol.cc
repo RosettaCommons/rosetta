@@ -52,7 +52,7 @@
 
 // AUTO-REMOVED #include <protocols/ligand_docking/LigandDockProtocol.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>

@@ -60,7 +60,7 @@
 // AUTO-REMOVED #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/toolbox/IGEdgeReweighters.hh>
 // AUTO-REMOVED #include <core/scoring/TwelveANeighborGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>

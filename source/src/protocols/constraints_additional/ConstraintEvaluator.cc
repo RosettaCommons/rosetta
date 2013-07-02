@@ -41,7 +41,7 @@
 
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 

@@ -17,7 +17,7 @@
 #include <basic/MetricValue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/interaction_graph/SurfacePotential.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>

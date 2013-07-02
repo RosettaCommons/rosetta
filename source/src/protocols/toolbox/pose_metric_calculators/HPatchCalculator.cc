@@ -13,7 +13,7 @@
 
 // Unit headers
 #include <protocols/toolbox/pose_metric_calculators/HPatchCalculator.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 #include <core/chemical/ResidueType.hh>
 #include <core/pose/Pose.hh>

@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <utility/tag/Tag.hh>
 #include <string>
 

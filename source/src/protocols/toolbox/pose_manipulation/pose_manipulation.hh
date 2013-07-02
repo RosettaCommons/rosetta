@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/toolbox/pose_manipulation.hh
+/// @file protocols/toolbox/pose_manipulation/pose_manipulation.hh
 /// @brief some general functions to manipulate poses. feel free to add your own
 /// @brief if you add your own, please mention your name:)
 /// @author Florian Richter, floric@u.washington.edu

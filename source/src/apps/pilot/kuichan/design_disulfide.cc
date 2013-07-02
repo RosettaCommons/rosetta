@@ -41,7 +41,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <core/util/disulfide_util.hh>
 //Packing
 #include <core/pack/rotamer_trials.hh>

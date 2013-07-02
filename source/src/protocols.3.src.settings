@@ -530,7 +530,6 @@ sources = {
 		"IGEdgeReweighters",
 		"InteratomicVarianceMatrix",
 		"KCluster",
-		"pose_manipulation",
 		"SelectResiduesByLayer",
 		"superimpose",
 	],
@@ -553,6 +552,9 @@ sources = {
 		"MatchConstraintFileInfo",
 		"util_functions",
 	],
+	"protocols/toolbox/pose_manipulation": [
+		"pose_manipulation",
+  ],
 	"protocols/toolbox/pose_metric_calculators": [
 		"BuriedUnsatisfiedPolarsCalculator",
 		"CatPiCalculator",

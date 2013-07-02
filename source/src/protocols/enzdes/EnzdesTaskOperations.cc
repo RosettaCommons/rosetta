@@ -32,7 +32,7 @@
 #include <protocols/motifs/LigandMotifSearch.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/toolbox/pose_manipulation.hh>
+// AUTO-REMOVED #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/toolbox/IGEdgeReweighters.hh>
 #include <protocols/toolbox/rotamer_set_operations/RigidBodyMoveRotSetOps.hh>
 

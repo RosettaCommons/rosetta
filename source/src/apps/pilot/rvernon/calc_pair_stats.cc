@@ -26,7 +26,7 @@
 // AUTO-REMOVED #include <core/io/pdb/file_data.hh> //reading remarks
 // AUTO-REMOVED #include <core/pose/PDBInfo.hh> //reading remarks
 
-// AUTO-REMOVED #include <protocols/toolbox/pose_manipulation.hh> // ?
+// AUTO-REMOVED #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh> // ?
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 // AUTO-REMOVED

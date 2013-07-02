@@ -59,7 +59,7 @@
 #include <protocols/moves/DataMap.fwd.hh>
 
 //Include Rosetta protocols 
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/toolbox/superimpose.hh>
 
 //Include Rosetta Job distributor engine

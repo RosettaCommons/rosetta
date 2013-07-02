@@ -14,7 +14,7 @@
 
 
 // Unit headers
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 // Project headers
 #include <core/chemical/ChemicalManager.hh>

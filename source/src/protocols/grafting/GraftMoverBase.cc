@@ -33,7 +33,7 @@
 #include <core/chemical/VariantType.hh>
 
 //Protocol Headers
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/util.hh>

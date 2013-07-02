@@ -57,7 +57,7 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/simple_moves/PackRotamersMover.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 #include <protocols/simple_moves/MinMover.hh>
 // AUTO-REMOVED #include <utility/string_util.hh>

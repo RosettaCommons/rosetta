@@ -23,7 +23,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/MetricValue.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+#include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh> //temporary include
 
