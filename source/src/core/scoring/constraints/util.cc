@@ -491,6 +491,26 @@ void drop_constraints( ConstraintCOPs& in, core::Real drop_rate ) {
 	in = out;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+void
+remove_nonbb_constraints( pose::Pose & pose) {
+
+  using namespace core::id;
+  using namespace core::conformation;
+  using namespace core::scoring::constraints;
+
+  utility::vector1<ConstraintCOP> cst_set = pose.constraint_set()->get_all_constraints();
+
+	for ( ConstraintCOPs::const_iterator it = cst_set.begin(), eit = cst_set.end(); it!=eit; ++it ) {
+		for (core::Size i=1; i<=(*it)->natoms(); i++) {
+				if (	!pose.residue((*it)->atom(i).rsd()).atom_is_backbone((*it)->atom(i).atomno()) ) {
+							pose.remove_constraint(*it, false);
+							break;
+				} //remove non-backbone constraint
+	  }//loop through residues in constraints
+	}//loop through constraint
+}
+
 
 } // namespace constraints
 } // namespace scoring

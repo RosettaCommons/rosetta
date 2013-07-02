@@ -46,6 +46,7 @@
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -77,6 +78,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
@@ -691,6 +693,20 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	using namespace core::io::silent;
 	using namespace ObjexxFCL::fmt;
 
+	//save necessary constraint in pose
+  core::scoring::constraints::ConstraintSetOP save_pose_constraint_set = new core::scoring::constraints::ConstraintSet() ;
+  if ( keep_pose_constraint_ ) {
+  		save_pose_constraint_set = pose.constraint_set()->clone();
+			core::scoring::constraints::remove_nonbb_constraints(pose);
+	}
+
+
+	if (pose.is_fullatom()) {
+				protocols::moves::MoverOP tocen = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+        tocen->apply(pose);
+	}
+
+
 	// make fragments if we don't have them at this point
 	check_and_create_fragments( pose );
 
@@ -968,7 +984,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// apply constraints
 		if ( stage2_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 			std::string cst_fn = template_cst_fn_[initial_template_index];
-			setup_centroid_constraints( pose, templates_, template_weights_, cst_fn );
+			if (!keep_pose_constraint_ ) {
+					setup_centroid_constraints( pose, templates_, template_weights_, cst_fn );
+			} 
+
 			if (add_hetatm_) {
 				add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 			}
@@ -1058,7 +1077,11 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			// apply fa constraints
 			std::string cst_fn = template_cst_fn_[initial_template_index];
 			if ( stage2_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
-				setup_fullatom_constraints( pose, templates_, template_weights_, cst_fn, fa_cst_fn_ );
+					if (!keep_pose_constraint_ ) {
+							setup_fullatom_constraints( pose, templates_, template_weights_, cst_fn, fa_cst_fn_ );
+					} else {
+							pose.constraint_set(save_pose_constraint_set);
+					}
 				if (add_hetatm_) {
 					add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 				}
@@ -1287,6 +1310,7 @@ HybridizeProtocol::parse_my_tag(
 	batch_relax_ = tag->getOption< core::Size >( "batch" , 1 );
 	jump_move_= tag->getOption< bool >( "jump_move" , false );
 	jump_move_repeat_= tag->getOption< core::Size >( "jump_move_repeat" , 1 );
+	keep_pose_constraint_= tag->getOption< bool >( "keep_pose_constraint" , false );
 
 	if( tag->hasOption( "task_operations" ) ){
 		task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );

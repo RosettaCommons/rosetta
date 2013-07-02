@@ -307,6 +307,7 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
 			}
 		}
 	} 
+
   if ( whole_protein_ ) {
     core::pose::Pose in_pose = pose;
     (*scorefxn_)( in_pose );
@@ -326,7 +327,6 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
 		else out<<"failing."<<std::endl;
   }
 }
-
 
 core::Real
 EnergyPerResidueFilter::report_sm( core::pose::Pose const & pose ) const

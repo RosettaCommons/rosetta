@@ -128,6 +128,8 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 	}
 
 	copy_pose.update_residue_neighbors();
+  
+	core::Real pass=1;
 
 	// scoring is necessary for Interface to work reliably
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
@@ -150,10 +152,20 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 				TR << " omega angle: " << omega << std::endl;
 				
 //				copy_pose.fold_tree()
-				if ( (std::abs(omega) > 180-omega_cutoff_ && std::abs(omega) < omega_cutoff_ ) && copy_pose.residue( resnum+1 ).name3() == "PRO" )  return(0);
-				if (std::abs(omega) < omega_cutoff_ && copy_pose.residue( resnum+1 ).name3() != "PRO" )  return(0);
-				if (weighted_score >= cart_bonded_cutoff_ ) return(0);
-				//if (weighted_score >= cart_bonded_cutoff_ && ( resnum != 1 || resnum != copy_pose.total_residue() ) ) return(0);
+				if ( (std::abs(omega) > 180-omega_cutoff_ && std::abs(omega) < omega_cutoff_ ) && copy_pose.residue( resnum+1 ).name3() == "PRO" )  {
+			TR << "omega " << resnum <<" "<< copy_pose.residue( resnum+1 ).name3() << " fail " << std::endl;
+			pass=0;
+		}
+
+				if (std::abs(omega) < omega_cutoff_ && copy_pose.residue( resnum+1 ).name3() != "PRO" )  {
+						TR << "omega " << resnum <<" "<< copy_pose.residue( resnum+1 ).name3() << " fail " << std::endl;
+						pass=0;
+				}
+
+				if (weighted_score >= cart_bonded_cutoff_ ) { 
+					TR << "cart_bond " << resnum <<" "<< copy_pose.residue( resnum+1 ).name3() << " fail " << std::endl;
+					pass=0;
+				}
 	}
 
 	//check the last residues
@@ -162,10 +174,10 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
   core::Real const score( copy_pose.energies().residue_total_energies( resnum )[ core::scoring::ScoreType( cart_bonded ) ]);
   core::Real weighted_score = weight * score ;
 	TR << "residue " << resnum << " name " << copy_pose.residue( resnum ).name3() << " cart_bonded term: " << weighted_score ;
-        TR << " omega angle: NA" << std::endl;
-	if (weighted_score >= cart_bonded_cutoff_) return(0);
+        TR << weighted_score  << std::endl;
 
 	if (filename_ != "none"){
+		TR << "Evaluate constraint energy?" << std::endl;
 		ConstraintSetMoverOP cst_set_mover = new ConstraintSetMover();
 		cst_set_mover->constraint_file( filename_ );
 		cst_set_mover->apply( copy_pose );
@@ -176,11 +188,11 @@ GeometryFilter::compute( core::pose::Pose const & pose ) const {
 		ScoreTypeFilter const constraint_filter( scorefxn , atom_pair_constraint, cst_cutoff_ );
     bool CScore(constraint_filter.apply( copy_pose ));
     if (!CScore){
-			return(0);
+			pass=0;
 		}
 	}
-
-	return(1);
+	
+	return pass;
 }
 
 

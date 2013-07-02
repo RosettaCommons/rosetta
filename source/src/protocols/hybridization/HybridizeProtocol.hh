@@ -179,6 +179,9 @@ private:
 	bool jump_move_;
 	core::Size jump_move_repeat_;
 
+	// constraint
+	bool keep_pose_constraint_;
+
 };
 
 } // hybridization
