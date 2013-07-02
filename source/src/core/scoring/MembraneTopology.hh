@@ -32,6 +32,9 @@ cacheable data from the pose.
 
 #include <utility/vector1.hh>
 
+#include <utility/excn/Exceptions.hh>
+#include <utility/string_util.hh>
+
 
 namespace core {
 namespace scoring {
@@ -120,7 +123,16 @@ public:
 	bool
 	allow_scoring(Size const seqpos) const
 	{
-		assert(seqpos <= allow_scoring_.size());
+		if(seqpos > allow_scoring_.size())
+		{
+			throw utility::excn::EXCN_RangeError(
+					"tried to get Membrane score for residue " +
+					utility::to_string(seqpos) +
+					" but spanfile only specifies " +
+					utility::to_string(allow_scoring_.size())+
+					" residues. Check your spanfile.");
+			return false; //so the compiler is ok with it
+		}
 		return allow_scoring_[seqpos];
 	}
 /*
