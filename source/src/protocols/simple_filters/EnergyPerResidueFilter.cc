@@ -200,7 +200,7 @@ EnergyPerResidueFilter::apply( core::pose::Pose const & pose ) const
       (*scorefxn_)( in_pose );
 			
 			bool pass;
-			core::Real energy;
+			core::Real energy=0;
 			for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid) {
 					if ( !in_pose.residue(resid).is_protein() ) continue;
 					if( interface_obj.is_interface( resid ) ) {

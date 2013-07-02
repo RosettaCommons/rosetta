@@ -56,6 +56,7 @@ void register_options() {
 }
 
 int main(int argc, char *argv[]) {
+	try {
 	register_options();
 	devel::init(argc,argv);
 	using namespace std;
@@ -225,6 +226,10 @@ int main(int argc, char *argv[]) {
 		cout << "DONE " << fn << endl;
 	}
 	*/
+
+        } catch ( utility::excn::EXCN_Base const & e ) {
+            std::cerr << "caught exception " << e.msg() << std::endl;
+        }
 
 	return 0;
 }
