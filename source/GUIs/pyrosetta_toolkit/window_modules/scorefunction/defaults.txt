@@ -1,2 +1,2 @@
-SCORE=score12prime
+SCORE=talaris2013
 PATCH=

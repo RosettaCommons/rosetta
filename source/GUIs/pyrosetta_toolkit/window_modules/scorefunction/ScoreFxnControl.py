@@ -55,6 +55,7 @@ class ScoreFxnControl():
         ]
       
         self.common_scorefunctions = [
+            "talaris2013",
             "score12prime",
             "score12",
             "orbitals",

@@ -11,6 +11,8 @@
 
 #Rosetta Imports
 from rosetta import *
+from rosetta.core.pack.task.operation import *
+from rosetta.protocols.toolbox.task_operations import *
 
 #Python Imports
 import re
@@ -295,12 +297,29 @@ class Regions:
             regions = self.get_regions_of_types(include_only_regions)
         
         for region in regions:
+            
+            
             start = region.get_rosetta_start(pose)
             end = region.get_rosetta_end(pose)
+            print "Rosetta start: "+repr(start)
+            print "Rosetta end: "+repr(end)
             for i in range(start, end+1):
                 packer_task.temporarily_set_pack_residue(i, True)
         print packer_task
         return packer_task
+    
+    def get_basic_tf(self, pose):
+        """
+        Returns a basic tf - no design, no neighbors.  Only regions set.
+        """
+        regions = self.regions
+        tf = TaskFactory()
+        tf.push_back(InitializeFromCommandline())
+        
+        tf.push_back(RestrictToRepacking())
+        mmop = RestrictToMoveMapChiOperation(self.get_movemap())
+        tf.push_back(mmop)
+        return tf
     
     #Loop/Region integration:
     def get_Loops_from_regions(self):

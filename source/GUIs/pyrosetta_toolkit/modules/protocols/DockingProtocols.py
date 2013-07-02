@@ -53,7 +53,7 @@ class DockingProtocols(ProtocolBaseClass):
         if not to_dock: return
         to_dock = to_dock.upper()
         
-        repack_interface = tkMessageBox.askyesno(message="Repack interface post-dock (score12prime)?")
+        repack_interface = tkMessageBox.askyesno(message="Repack interface post-dock (talaris2013)?")
         low_res_mover = DockingLowRes(low_res_scorefxn, 1)
         low_res_wrapper = LowResWrapper(to_dock, repack_interface, low_res_mover, low_res_scorefxn)
         
@@ -72,14 +72,14 @@ class DockingProtocols(ProtocolBaseClass):
             if result:
                 start_scorefxn = ScoreFunction()
                 start_scorefxn.assign(self.score_class.score)
-                self.score_class.score.assign(create_score_function("docking"))
+                self.score_class.score.assign(create_score_function_ws_patch("docking", "docking_min"))
             elif result == None:return
             
         to_dock = tkSimpleDialog.askstring(title = "Input", prompt="Please supply two partners (ex - A_B or A_BC ).  The first will be held rigid.")
         to_dock = to_dock.upper()
         if not to_dock: return
         
-        dock_mover = DockMCMProtocol(Vector1([1]), self.score_class.score)
+        dock_mover = DockMCMProtocol(Vector1([1]), self.score_class.score, create_score_function("talaris2013"))
 
         original_ft = self.pose.fold_tree()
         setup_foldtree(self.pose, to_dock, Vector1([1]))
@@ -125,7 +125,7 @@ class LowResWrapper:
         recover.apply(pose)
         
         if self.repack_interface:
-            pack_mover=PackRotamersMover(create_score_function("score12prime"))
+            pack_mover=PackRotamersMover(create_score_function("talaris2013"))
             pack_mover.task_factory(self.tf)
             pack_mover.apply(pose)
         

@@ -138,8 +138,11 @@ class MinimizationProtocols(ProtocolBaseClass):
         Optimizes Loop Rotamers using the PackRotamersMover
         """
         
-        packer_task = self.input_class.regions.get_packer_task(self.pose)
+        tf = self.input_class.regions.get_basic_tf(self.pose)
         pack_mover=PackRotamersMover(self.score_class.score, packer_task)
+        pack_mover.task_factory(tf)
+        pack_mover.score_function(self.score_class.score)
+        
         self.run_protocol(pack_mover)
     
 #LoopBackrubRef    

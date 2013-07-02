@@ -34,10 +34,9 @@ class OptionSystemManager:
         Else: use OptionSystemManager.add_option('string')
         """
         self.opts = []
-        self.args = rosetta.utility.vector1_string()
         self.find_rosetta_database()
         #These are expanded options from what PyRosetta __init__ has.
-        self.basic_options = ["app", "-database", self.database, "-ex1", "-ex2aro", "-use_bicubic_interpolation", "-add_orbitals", "-run:seed_offset 1000"]
+        self.basic_options = ["-database", self.database, "-ex1", "-ex2aro", "-add_orbitals", "-run:seed_offset 1000"]
         self.extra_options = []
         self.pwd = self.location()[0]
         
@@ -52,7 +51,7 @@ class OptionSystemManager:
             'Enter Custom:',
             '-dun10',
             '-ex2',
-            '-use_bicubic_interpolation',
+            '-restore_pre_talaris_2013_behavior'
             '-ignore_unrecognized_res',
             '-out:file:silent',
             '-relax:constrain_relax_to_start_coords',
@@ -99,7 +98,6 @@ class OptionSystemManager:
         self.clear_button.grid(row=r+2, column=c+2, columnspan=2, sticky=W+E)
         self.clear_current_button.grid(row = r+3, column=c+2, columnspan = 2, sticky=W+E)
     
-        print "Note: Enabling dun10 requires reloading the current pose to take effect."
         
     def print_current_options(self):
         print "Options:  "+" ".join(self.opts)
@@ -172,8 +170,7 @@ class OptionSystemManager:
         self.opts = self.opts+settings_opts
         self.extra_options = self.extra_options+settings_opts
 
-        self.args.extend(list(settings_opts))
-        rosetta.core.init(self.args)
+        rosetta.init(" ".join(self.opts))
         FILE.close()
         print "Settings loaded..."
         
@@ -204,7 +201,7 @@ class OptionSystemManager:
         Used by multiprocessing protocols to reinit rosetta with arguments held here.
         ANY arguments set by rosetta.basic.options.set_xxx_option() MAY be annihilated.
         """
-        rosetta.core.init(self.args)
+        rosetta.init(" ".join(self.opts))
         
     def reset_options(self):
         '''
@@ -215,9 +212,7 @@ class OptionSystemManager:
         print self.basic_options
         self.extra_options = []
         self.opts = self.opts+self.basic_options
-        self.args = rosetta.utility.vector1_string()
-        self.args.extend(self.opts)
-        rosetta.core.init(self.args)
+        rosetta.init(" ".join(self.opts))
         
     def extend(self):
         '''
@@ -232,10 +227,8 @@ class OptionSystemManager:
         if not string[0]=='-':string = "-"+string
         
         self.opts.append(string)
-        opts = [string]
         self.extra_options.append(string)
-        self.args.extend(opts)
-        rosetta.core.init(self.args)
+        rosetta.init(" ".join(self.opts))
         print "Options extended.."
         
 if __name__ == '__main__':
