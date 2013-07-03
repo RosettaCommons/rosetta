@@ -315,7 +315,7 @@ class PythonPDB:
         """
         Removes chain from pdb_map
         """
-        temp_pdb_map = pdb_map.copy()
+        temp_pdb_map = self.pdb_map.copy()
         for num in temp_pdb_map:
             if self.pdb_map[num]["chain"]==chain:
                 del self.pdb_map[num]

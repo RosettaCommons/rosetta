@@ -35,7 +35,13 @@ class Region:
         **Please use self.check_if_region_exists(pose) before using the region.
         """
         
-        
+        assert type(chain) == str
+        if type(start)== str:
+            start = int(start)
+            
+        if type(end) ==  str:
+            end = int(end)
+            
         self.start = start
         self.end = end
         self.chain = chain
@@ -48,6 +54,9 @@ class Region:
             self.region = repr(start)+":"+":"+chain.upper()
         else:
             self.region = repr(start)+":"+repr(end)+":"+chain.upper()
+    
+    def __str__(self):
+        return self.region
     
     def region_exists(self, pose):
         """
@@ -83,9 +92,15 @@ class Region:
         return movemap
     
     def get_region(self):
+        """
+        Gets the region string.
+        """
         return self.region
     
     def get_region_string(self):
+        """
+        Redundant.  Gets region string.
+        """
         return self.region
     
     def get_region_string_with_all_residues(self, pose):
@@ -176,6 +191,13 @@ class Regions:
     def __init__(self):
         self.regions = []
         self.current = 0
+    
+    def __str__(self):
+        loops = ""
+        for region in self.regions:
+            loops = loops+" "+str(region)
+        return loops
+    
     def __iter__(self):
         return self
     
@@ -317,7 +339,7 @@ class Regions:
         tf.push_back(InitializeFromCommandline())
         
         tf.push_back(RestrictToRepacking())
-        mmop = RestrictToMoveMapChiOperation(self.get_movemap())
+        mmop = RestrictToMoveMapChiOperation(self.get_movemap(pose))
         tf.push_back(mmop)
         return tf
     

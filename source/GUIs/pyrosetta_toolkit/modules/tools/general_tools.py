@@ -75,7 +75,7 @@ def getDist(p, res1, res2, atom1, atom2):
     """
     xyz1 = p.residue(res1).xyz(atom1)
     xyz2 = p.residue(res2).xyz(atom2)
-    return self.getDistGen(xyz1, xyz2)
+    return getDistGen(xyz1, xyz2)
 
 def getDistGen( xyz1, xyz2):
     """

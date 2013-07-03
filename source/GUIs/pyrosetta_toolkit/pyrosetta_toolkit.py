@@ -96,6 +96,9 @@ class main_window:
       print "\nRegion Selection Tips: No regions added = Full structure selected.  \nAdding Regions: For N-terminus omit start; For C-terminus omit end; For whole Chain omit start + end"
       print "For additional protocol options, please use the Option System Manager.\n"
       print "Please see RosettaCommons for full documentation and references for all protocols and tools utilized in the GUI\n"
+   
+   def quit(self):
+      self._tk_.destroy()
       
    def _initialize_GUI(self):
       """
@@ -226,12 +229,13 @@ class main_window:
       #self.output_frame.pack(side=BOTTOM, padx=3, pady=3)
       """
       
-   def run(self):
+   def run(self, run_event_loop=True):
       self._tk_.title("PyRosetta Toolkit")
       self.show_gui()
       self._tk_.grid_columnconfigure(ALL, weight=1)
       #self._tk_.grid_rowconfigure(ALL, weight=1)
-      self._tk_.mainloop()
+      if run_event_loop:
+         self._tk_.mainloop()
       
    def redirect_stdout_to_textbox(self):
       print "Redirect stdout to textbox"

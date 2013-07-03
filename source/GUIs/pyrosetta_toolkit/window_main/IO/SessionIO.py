@@ -23,7 +23,6 @@ import tkFileDialog
 from rosetta import *
 
 #Toolkit Imports
-from pyrosetta_toolkit import main_window
 from modules.tools import output as output_tools
 from modules.tools import input as input_tools
 from window_main import global_variables
@@ -40,8 +39,6 @@ class SessionIO:
         self.toolkit = toolkit
         self.indir=""
         self.outdir=""
-        
-        if 0: self.toolkit = main_window()
         
         
         #### GUI Tkinter Variables required to save and load should go here. ####

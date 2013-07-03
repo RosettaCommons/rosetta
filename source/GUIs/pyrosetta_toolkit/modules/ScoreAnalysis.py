@@ -56,10 +56,13 @@ class ScoreAnalysis:
         self.filepath = filepath
         self.read_scores()
         
-    def read_scores(self):
+    def read_scores(self, filepath = None):
         """
         Reads scores - Either .fasc, .fc, or .txt (.txt only for now)
         """
+        if filepath:
+            self.filepath = filepath
+            
         if re.search(".txt", self.filepath):
             self.read_PDBList(self.filepath)
         elif re.search(".fasc", self.filepath):
@@ -80,7 +83,7 @@ class ScoreAnalysis:
     def get_top_score_map(self):
         return self.top_score_map
     
-    def get_top_scoring(self):
+    def get_top_scoring(self, ask_copy_results= True):
         """
         Gets top score - sets self.top_score_map.  Runs copy_results
         """
@@ -91,10 +94,13 @@ class ScoreAnalysis:
         print "Top Score: %.2f"%top_score+" "+self.score_map[top_score]
         fullpath = self.score_map[top_score]
         self.top_score_map[fullpath]=top_score
-        self.copy_results(self.top_score_map, "TOP_SCORE")
+        if ask_copy_results:
+            self.copy_results(self.top_score_map, "TOP_SCORE")
+        else:
+            return fullpath
         #return top_score, fullpath
     
-    def get_top_scoring_by_percent(self, percent=False):
+    def get_top_scoring_by_percent(self, percent=False, ask_copy_results=True):
         """
         Gets top percent of poses - sets self.top_scoring_by_percent.  Runs copy_results
         """
@@ -111,10 +117,13 @@ class ScoreAnalysis:
             score = self.score_pairs[i][0]; fullpath = self.score_pairs[i][1]
             print "%.2f"%score+" "+fullpath
             self.top_scoring_by_percent_map[fullpath]=score
-            
-        self.copy_results(self.top_scoring_by_percent_map, "TOP_%.2f"%percent+"_PERCENT")
-    
-    def get_top_scoring_by_number(self, top_number=False):
+        
+        if ask_copy_results:   
+            self.copy_results(self.top_scoring_by_percent_map, "TOP_%.2f"%percent+"_PERCENT")
+        else:
+            return self.top_scoring_by_percent_map
+        
+    def get_top_scoring_by_number(self, top_number=False, ask_copy_results = True):
         """
         Gets top scoring poses - Sets self.top_scoring_by_number_map.  Runs copy_results
         """
@@ -123,13 +132,16 @@ class ScoreAnalysis:
             top_number = tkSimpleDialog.askinteger(title="Cutoff", prompt="Please enter how many top scoring poses you would like", initialvalue=10)
             if not top_number:return
         
+        print repr(top_number)
         for i in range(0, top_number):
             score = self.score_pairs[i][0]; fullpath = self.score_pairs[i][1]
             print "%.2f"%score+" "+fullpath
             self.top_scoring_by_number_map[fullpath]=score
-            
-        self.copy_results(self.top_scoring_by_number_map, "TOP_"+str(top_number))
-
+        
+        if ask_copy_results:
+            self.copy_results(self.top_scoring_by_number_map, "TOP_"+str(top_number))
+        else:
+            return self.top_scoring_by_number_map
 
     def get_score_vs_rmsd(self, native_pose, loops_as_strings):
         if not self.score_pairs: print "Please load scores.";return

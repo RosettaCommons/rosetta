@@ -150,6 +150,13 @@ class RegionalScoring():
         for type in self.scoretypes:
             e = e+self.weights[type]*emap[type]
         return e
+
+    def ret_total_unweighted_residue_energy(self, poseNum):
+        emap = self.ret_residue_energy(poseNum)
+        e = 0.0
+        for type in self.scoretypes:
+            e = e+emap[type]
+        return e
     
     def ret_residue_energy(self, poseNum):
         """

@@ -30,15 +30,15 @@ import os.path
 import loops as loop_tools
 from window_main import global_variables
 
-def RetPhiPsi(p):
-    tot=p.total_residue()
+def print_all_phi_psi(pose):
+    tot=pose.total_residue()
     print "Residue - Phi - Psi"
     for i in range(1, tot+1):
-        print repr(p.pdb_info().number(i))+":    "+repr(p.phi(i))+"  "+repr(p.psi(i))
+        print repr(pose.pdb_info().number(i))+"    "+repr(pose.phi(i))+"  "+repr(pose.psi(i))
 
-def RetFAEnergyAll(p):
-    for i in range(0, p.total_residue()):
-        p.energies().show(i)
+def print_all_residue_energies(pose):
+    for i in range(0, pose.total_residue()):
+        pose.energies().show(i)
 
 def rmsd(native, p, loops_as_strings, ca_only = False, all_atom=False):
     """
@@ -204,12 +204,12 @@ def analyze_vip(p, scorefxn):
     
 def return_energy(p, res, chain=0, type = fa_dun):
     """
-    Returns the energy of the rotamer/scoretype.
+    Returns the energy of the rotamer/scoretype by talaris2013.
     """
     
     if chain !=0:
         res = p.pdb_info().pdb2pose(chain, int(res))
-    score = create_score_function_ws_patch('standard', 'score12')
+    score = create_score_function("talaris2013")
     emap = core.scoring.EMapVector()
     score.eval_ci_1b(p.residue(res), p, emap)
     e = emap[type]

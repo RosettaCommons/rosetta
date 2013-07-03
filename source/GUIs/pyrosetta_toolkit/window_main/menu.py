@@ -50,7 +50,6 @@ from window_modules.full_control.FullControlWindow import FullControlWindow
 from window_modules.insert_bfactor.InsertBFactor import InsertBFactor
 
 import global_variables
-from pyrosetta_toolkit import main_window
 from window_main.IO import SessionIO
 
 #### Import of other GUIs in rosetta_source.  Nessessary check for eventual inclusion into PyRosetta Binaries.
@@ -74,10 +73,6 @@ class Menus():
 	self.main_menu=Menu(self.main)
 	self.score_analyzer = ScoreAnalysis(); #Needs to exist as instance due to holding data from load data.  Eventually these functions can go into it's own window.
 	
-	#Ignore tese.  It allows komodo to understand what these variables are!
-	if 0:
-	    self.main = Tk()
-	    self.toolkit = main_window()
 
     def setTk(self):
 	"""

@@ -15,6 +15,9 @@ import os
 import sys
 
 class Antibody_Structure:
+    """
+    Simple class for accessing Modified_AHO antibody numbering information outside of Rosetta.  Use protocols/antibody/AntibodyInfo if importing Rosetta.
+    """
     def __init__(self):
         #3 Different ways to access the CDR Loops.  Should be one.  Not convoluted.
         self.L1 = CDR("L1"); self.L2 = CDR("L2"); self.L3=CDR("L3");
@@ -23,67 +26,19 @@ class Antibody_Structure:
         
 
         self.CDR = {"L1":self.L1, "L2":self.L2, "L3":self.L3, "H1":self.H1, "H2":self.H2, "H3":self.H3}
-    #The antibody should have an interface.
-    #This interface should have an energy.  That does not suck. Whats the best way and energy function to calculate the interface energy?
-    #
-    def getPDB(self, Path):
+
+    def get_CDRs(self):
+        return self.CDRS
+    
+    def get_CDR(self, cdr_name):
+        return self.CDR[cdr_name]
+        
+    def get_PDB_name(self, Path):
         root, pdb = os.path.split(Path)
         pdb = pdb.split('.')[0]
         self.pdb = pdb
         return self.pdb
     
-    def setLOOOPS(self):
-        self.CDRLOOPS = Loops()
-        
-    def getLoopStructure(self):
-        x, y, z = determineCDRS([self.pdb.upper()])
-        self.representativeStructures = y[self.pdb.upper()]
-            #print "Could not locate CDR Structure.  Please update database."
-        self.CDRSTRUCTURES = z[self.pdb.upper()]
-        """
-        if len(self.CDRSTRUCTURES)!=6:
-            print "MISSING CDR CLUSTER DATA FOR ONE OR MORE CDRS"
-            print self.CDRSTRUCTURES
-            print "RETURNING::::::"
-            return
-        """
-        
-        for cdr in self.CDRS:
-            for struct in self.CDRSTRUCTURES:
-                #print struct
-                structSP = struct.split('-')
-                if cdr.name == structSP[0]:
-                    cdr.structure = struct
-
-        self.CDRSTRUCTURES = []
-        for cdr in self.CDRS:
-            try:
-                self.CDRSTRUCTURES.append(cdr.structure); #This should copy each CDR structure into the antibody.
-            except AttributeError:
-                print "MISSING CDR CLUSTER DATA FOR "+self.pdb+" "+cdr.name
-                
-                #FUTURE:
-                #ATTEMPT TO CLUSTER THE LOOP!
-                
-        #x, y, z, should be gone after this.
-    
-    def setSpecies(self, species):
-        """
-        Should have a set of species properties.
-        """
-        
-        self.species = species
-        
-    def createLoopObjects(self, p):
-        """
-        Creates loop objects for each CDR.
-        """
-        for cdr in self.CDRS:
-            start = p.pdb_info().pdb2pose(cdr.chain, cdr.Nter); end = p.pdb_info().pdb2pose(cdr.chain, cdr.Cter)
-            cut = (end - start)/2
-            cut = start+cut
-            cdr.createLoop(start, end, cut)
-            self.CDRLOOPS.add_loop(cdr.LOOP)
 
 class FRAMEWORK:
     def __init__(self):
@@ -92,7 +47,7 @@ class FRAMEWORK:
     
 class CDR:
     def __init__(self, name):
-        self.regions = { #How do we HIDE this???
+        self.regions = {
             "L1":['L', 24, 42],
             "L2":['L', 57, 72],
             "L3":['L', 107, 138],
@@ -105,13 +60,24 @@ class CDR:
         self.chain = self.region[0]
         self.Nter = self.region[1]
         self.Cter = self.region[2]
-        #The CDR should have a type attached to it.  From the paper if possible.  If not, we should try and use ben's stuff to figure out the type.
         self.residues = dict()
-    def setGene(self, gene):
+    
+    def __str__(self):
+        return str(self.regions[self.name])
+    
+    def get_pdb_chain(self):
+        return self.regions[self.name][0]
+        
+    def get_pdb_start(self):
+        return self.regions[self.name][1]
+    
+    def get_pdb_end(self):
+        return self.regions[self.name][2]
+        
+    def set_gene(self, gene):
         self.gene = gene
-    def createLoop(self, start, end, cut):
-        self.LOOP = Loop(start, end, cut)
-    def addResidue(self, name, num):
+        
+    def add_residue(self, name, num):
         self.residues[num]=Residue(name, num)
         
 class Residue:

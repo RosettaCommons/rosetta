@@ -143,20 +143,22 @@ def clean_whitespace(obj):
     else:
         return obj
 
-def save_basic_resfile(p):
+def save_basic_resfile(p, outname=None):
     """
     Saves an empty resfile, numbered by PDB with NATRO designation
+    If outname is not given, will ask where to save.
     """
     if not p.total_residue():
         print "\n No pose loaded...\n"
         return
     
     ResDic = dict()
-    outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output resfile to...")
-    if not outfilename: return
-    global_variables.current_directory=os.path.dirname(outfilename)
+    if not outname:
+        outname = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory, title="Output resfile to...")
+        if not outname: return
+    global_variables.current_directory=os.path.dirname(outname)
     
-    save_resfile_w_designdic(p, ResDic, outfilename)
+    save_resfile_w_designdic(p, ResDic, outname)
     
 def save_resfile_w_designdic(p, ResDic, filename):
     """
@@ -257,10 +259,11 @@ def saveSeqFile(p, fileout=None, loops_as_strings=None):
 
 
 
-def save_basic_blueprint(p, output=True):
+def save_basic_blueprint(p, output=True, outfilename=None):
     """
     Saves a basic blueprint file to be manually edited.
     If output is false, returns a string of the file for manipulation.
+    If outfilename is not given, will ask where to save.
     """
     if not p.total_residue():
         print "\n No pose loaded...\n"
@@ -275,8 +278,9 @@ def save_basic_blueprint(p, output=True):
         out_string = out_string+repr(pdb_num)+" "+single_letter_code+" . NATRO\n"
     
     if output:
-        outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory)
-        if not outfilename:return
+        if not outfilename:
+            outfilename = tkFileDialog.asksaveasfilename(initialdir = global_variables.current_directory)
+            if not outfilename:return
         global_variables.current_directory=os.path.dirname(outfilename)
         
         FILE = open(outfilename, 'w')
@@ -374,10 +378,6 @@ def make_PDBLIST_recursively(directory=""):
         print "No matches found.."
         return None
 
-def return_rosetta_numbering(loops_as_strings):
-    for string in loops_as_strings:
-        pass
-    
 def convert_PDBLIST_to_sqlite3db(pdblist_path):
     """
     Adds each PDB info excluding header information into an SQLITE3 Database.  The module for this is modules/PDB.py.
@@ -474,7 +474,7 @@ def score_PDBLIST(pdblist_path, score, output_class):
     """
     Outputs a simple pdb vs score for simple analysis.
     if pdblist_path=False, a dialog box opens.
-    If output_class is given, will grab the number of processors and attempt multiprocessing rescoring of all PDBs.
+    will grab the number of processors from output_class (processor StringVar variable) and attempt multiprocessing rescoring of all PDBs.
     """
     
     if not pdblist_path:
@@ -572,17 +572,13 @@ def score_PDBLIST(pdblist_path, score, output_class):
         output_class.terminal_output.set(0)
         SCORED_PDBLIST.close()
         
-        
-def convert_PDBLIST_to_rosetta_db(current_directory):
-    pass
-
 
 #### FASTA OUTPUT ####
 
-def save_FASTA(pose, base_name, outfilename = False, regions = False ):
+def save_FASTA(pose, base_name, outfilename = None, regions = None ):
     """
     If outfilename is False, will ask for a directory using current_directory.
-    If loops_as_strings is given, output FASTA of loops.
+    If loops_as_strings is given, output FASTA of loops. Base_name is used as label >base_name (region) for fasta
     Uses Pyrosetta...
     """
     if not pose.total_residue():
@@ -594,8 +590,8 @@ def save_FASTA(pose, base_name, outfilename = False, regions = False ):
         if not outfilename: return
         global_variables.current_directory = os.path.dirname(outfilename)
     OUTFILE = open(outfilename, 'w')
-    region_array = regions.get_regions()
     if regions:
+        region_array = regions.get_regions()
         for region in region_array:
             if not region.region_exists(pose):continue
             else:
@@ -611,7 +607,7 @@ def save_FASTA(pose, base_name, outfilename = False, regions = False ):
     print "FASTA written."
     return
 
-def save_FASTA_PDBLIST(pdblist_path, outfilename=False, regions=False):
+def save_FASTA_PDBLIST(pdblist_path, outfilename=None, regions=None):
     """
     If outfilename is False, will ask for a filename
     Goes through each member of PDBLIST

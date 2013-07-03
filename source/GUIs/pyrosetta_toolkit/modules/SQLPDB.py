@@ -26,17 +26,18 @@ except ImportError:
 class SQLPDB:
     def __init__(self, pdbID, modelID, structID, memory=False, path=False):
         """
-        First, we read the PDB. This can then be acessed, etc.
-        Later, we will also turn it into a structure.
-        modelID does not need to be a number...
+        modelID is basically a label
         Path specifies the db to load.
         """
         
         if memory:
             self.db = sqlite3.connect(":memory:") #Can always switch this by using a.db = "adsfasdf" to connect to a different database and add information into it.  
         else:
-            if not os.path.exists(os.path.dirname(path)):
-                os.mkdir(os.path.dirname(path))
+            if path:
+                if not os.path.exists(os.path.dirname(path)):
+                    os.mkdir(os.path.dirname(path))
+            else:
+                path = "test_db.db"
             self.db = sqlite3.connect(path)
             
         self.db_util = PDB_database(self.db)
@@ -63,11 +64,12 @@ class SQLPDB:
         """
         Reads the flat filepath specified into a database structure.
         This can then be parsed using the PDB_Database class.
+        NOTE: Reading of header not implemented.
         if header_only is True, only loads the header.  Useful for just getting specific information.  More useful to D/L it from the pdb if possible.
         If Header only, reads the header into the database.  
         """
         if filePath == "PDB":
-            print "Fetching "+pdbID+" from the PDB"
+            print "Fetching "+self.pdbID+" from the PDB"
             FILE = urllib2.urlopen(self.pdb_url+'/'+self.pdbID.lower()+'.pdb')
         else:
             FILE = open(filePath)
@@ -111,16 +113,12 @@ class SQLPDB:
                         
                         #self.stripped_pdb[line_num]["element"]=line[66:78].strip();        self.stripped_pdb[line_num]["charge"]=line[78:79].strip())
                       
-    def read_pdb_into_database_xml(self, filePath, header_only=False):
-        """
-        Reads the XML file into a pdb database.
-        """
-        pass
     
-    def fetch_and_read_pdb_into_database(self, read_header=False, header_only=False):
+    def fetch_and_read_pdb_into_database(self, pdbID, read_header=False, header_only=False):
         """
         Uses the PDB file specified, grabs it from the PDB, and reads the data in.
         """
+        self.pdbID = pdbID
         self.read_pdb_into_database_flat("PDB", read_header, header_only)
         
     
@@ -132,7 +130,7 @@ class SQLPDB:
 class PDB_database:
     """
     This class is specifically for if we already have a database.
-    Note:  This is not a ROSETTA database.  If you need to convert this, use ROSETTA! (Wonder if this is in PyRosetta!)
+    Note:  This is not a ROSETTA database.  If you need to convert this, use ROSETTA (Which now works in PyRosetta!)
     Functions are to output the database as a PDB, output specific pieces of protein as a pdb and query the database.
     """
     
@@ -143,6 +141,7 @@ class PDB_database:
             self.db = database
         self.db.row_factory = sqlite3.Row #Sets sqlite3 to return values based on a nice list of dictionaries for each row.  Pretty awesome. 
         self._reset_cursor()
+        self.occupancy_1 = False
         #MUST QUERY THE TABLE INTERESTED IN FIRST!!!
         
     def _set_db(self, database):
@@ -169,7 +168,7 @@ class PDB_database:
         
 #################Query on the Current Cursor of the PDB Database#############################################################
     
-    def query_all(self, table):
+    def query_all(self, table="pdb"):
         self.cur.execute("SELECT * FROM "+table)
         
     def query_modelID(self, table, modelID):
@@ -225,27 +224,14 @@ class PDB_database:
         
 ################Save PDB database as PDB or database!#########################################################################  
     
-    def save_cur_as_pdb(self, filename, seperate_structures=False, supress_modelSep=False):
+    def save_cur_as_pdb(self, outpath, supress_modelSep=False):
         """
         Saves the DB at the current cursor to a file. Make sure cursor is on the pdb table.
         """
-        if not seperate_structures:
-            outPath = self.outDIR+'/'+filename
-            FILE = open(outPath, 'w')
-            self._convert_and_save_to_FILE_pdbformat(self.cur, FILE, supress_modelSep)
-            FILE.close()
-    
-    def save_cur_as_db(self, filename, seperate_structures=False):
-        """
-        Saves current DB at the current cursor to an sqlite3 db file
-        """
-        pass
-    
-    def save_cur_as_csv(self, filename):
-        """
-        Saves current DB at the current cursor to a .csv file for easy manipulation, import, graphing, etc.
-        """
-        pass
+        
+        FILE = open(outpath, 'w')
+        self._convert_and_save_to_FILE_pdbformat(self.cur, FILE, supress_modelSep)
+        FILE.close()
     
     def save_whole_db_as_db(self, filename, seperate_structures=False):
         """
@@ -267,16 +253,16 @@ class PDB_database:
 
         rows = cur.fetchall()
         if not supress_model_separation:
-            pdb_previous = rows[0]['pdbID']; model_previous = rows[0]['modelID']
+            pdb_previous = rows[0]['pdbID']; struc_previous = rows[0]['strucID']
             FILE.write("MODEL\n")
             for row in rows:
-                pdb=row['pdbID']; model=row['modelID']
-                if pdb!=pdb_previous or model!=model_previous:
+                pdb=row['pdbID']; struc=row['strucID']
+                if pdb!=pdb_previous or struc!=struc_previous:
                     FILE.write("ENDMDL\n")
                     FILE.write("MODEL\n")
                 line = self._morph_db_row_to_pdb_line(row)
                 FILE.write(line+"\n")
-                pdb_previous = row['pdbID']; model_previous = row['modelID']
+                pdb_previous = row['pdbID']; struc_previous = row['strucID']
             FILE.write('ENDMDL')
         else:
             FILE.write("MODEL\n")

@@ -1,0 +1,10 @@
+/home/jadolfbr/Documents/modeling/rosetta/testing/bug_testing/1hilminimize_decoy_2.pdb	-400.993
+/home/jadolfbr/Documents/modeling/rosetta/testing/bug_testing/1hilminimize_decoy_10.pdb	-910.993
+/home/jadolfbr/Documents/modeling/rosetta/testing/bug_testing/1hilminimize_decoy_3.pdb	-800.993
+/home/jadolfbr/Documents/modeling/rosetta/testing/bug_testing/1hilminimize_decoy_6.pdb	-599.993
+/home/jadolfbr/Documents/modeling/rosetta/testing/bug_testing/1hilminimize_decoy_9.pdb	-585.993
+/home/jadolfbr/Documents/modeling/rosetta/testing/bug_testing/1hilminimize_decoy_4.pdb	-555.993
+/home/jadolfbr/Documents/modeling/rosetta/testing/bug_testing/1hilminimize_decoy_5.pdb	-535.993
+/home/jadolfbr/Documents/modeling/rosetta/testing/bug_testing/1hilminimize_decoy_1.pdb	-525.993
+/home/jadolfbr/Documents/modeling/rosetta/testing/bug_testing/1hilminimize_decoy_7.pdb	-515.993
+/home/jadolfbr/Documents/modeling/rosetta/testing/bug_testing/1hilminimize_decoy_8.pdb	-510.993

@@ -44,7 +44,9 @@ def main(args):
 
     #tests = filter(lambda x: x.endswith('.py'), sorted( os.listdir('test/') + os.listdir('demos/') ) )
 
-    def get_py_files(dir_): return [dir_ + '/' + f for f in os.listdir(dir_) if f.endswith('.py')]
+    def get_py_files(dir_):
+	if not os.path.exists(dir_): return []
+	return [dir_ + '/' + f for f in os.listdir(dir_) if f.endswith('.py')]
 
     tests = sorted( get_py_files('test') + get_py_files('demos') )
 

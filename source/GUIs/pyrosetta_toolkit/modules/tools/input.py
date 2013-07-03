@@ -52,26 +52,6 @@ def tk_get_file():
     print filename
     return filename
 
-def load_vicinity(p, lisloop, vaccinity):
-    """
-    Takes LisLoop, Vaccinity Settings, and returns the vacDic.
-    See vaccinity window module for more.
-    """
-       
-        #Dumps PDB so we can read it and find out what is in the vaccinity through good old python.
-    t = time.time()
-    tempdir = pwd + "/temp2/" + "_"+repr(t)
-    os.mkdir(tempdir)
-    p.dump_pdb(tempdir+"/temp.pdb"); temp = tempdir + "/temp.pdb"
-        
-        #Gets Residues that are in Vaccinity using python. ([res:chain]=atomic contact #)
-    vacDic = tools.interfaces.around().getVaccinity(p, lisloop, temp, vaccinity)
-    
-    rmtree(tempdir)
-    #os.mkdir(pwd+"/temp")
-    return vacDic
-
-
 def fixFilename(file):
     """
     Rosetta cannot use spaces in the filename...
