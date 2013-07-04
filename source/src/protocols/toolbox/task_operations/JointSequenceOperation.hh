@@ -109,6 +109,8 @@ private:
 	std::vector<core::sequence::SequenceOP> sequences_;
 	/// @brief Which chain to operate on
 	core::Size chain_;
+	/// @brief from which chain to extract the sequence information
+	core::Size use_chain_;
 };
 
 

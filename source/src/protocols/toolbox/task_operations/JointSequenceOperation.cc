@@ -106,8 +106,10 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 
 	core::Size seq_length = end - start + 1;
 
+	 
   // Iter through native sequence
 	for( std::vector<core::sequence::SequenceOP>::const_iterator iter(sequences_.begin()); iter != sequences_.end(); iter++ ) {
+		//TR << "it " << **iter << " " << (*iter)->length() << " vs " << seq_length << std::endl;
 		if( (*iter)->length() != seq_length ) {
 				std::string name("current pdb");
 				if( pose.pdb_info() ) {
@@ -116,6 +118,7 @@ JointSequenceOperation::apply( Pose const & pose, PackerTask & task ) const
 				TR.Warning << "WARNING: considered sequence " << (*iter)->id() << " contains a different number of residues than " << name << std::endl;
 		}
 	}
+
   // Inter through current pose sequence
 	for( core::Size ii = start; ii <= end; ++ii){
 		if( core::pose::symmetry::is_symmetric(pose) && !syminfo->chi_is_independent(ii) ) continue;
@@ -157,6 +160,9 @@ JointSequenceOperation::parse_tag( TagPtr tag )
 
 	// specifiy a chain, if 0 use all
 	chain_ = tag->getOption< core::Size >("chain", 0 );
+
+	// if a pdb file is supplied under native, which chain should be used to extract the sequence
+	use_chain_ = tag->getOption < core::Size > ("use_chain" , 0 );
 
 	if( tag->getOption< bool >( "use_native", false )) {
 		if( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {
@@ -241,17 +247,8 @@ void
 JointSequenceOperation::add_pdb( std::string filename )
 {
 	
-	core::pose::Pose new_pose;
 	core::pose::Pose pose;
-
-	core::import_pose::pose_from_pdb( new_pose, filename );
-	if( chain_ > 0 ){
-		TR << "taking only chain " << chain_ << std::endl;
-		pose = *new_pose.split_by_chain( chain_ ) ;
-	}
-	else
-		pose = new_pose;
-	
+	core::import_pose::pose_from_pdb( pose, filename );
 	add_pose( pose );
 }
 
@@ -260,10 +257,20 @@ void
 JointSequenceOperation::add_pose( Pose const & pose )
 {
 	std::string name("unknown");
-	if( pose.pdb_info() ) {
-		name = pose.pdb_info()->name();
+	core::pose::Pose new_pose;
+
+  if( use_chain_ > 0 ){
+    TR << "taking only chain " << use_chain_ << std::endl;
+    new_pose = *pose.split_by_chain( use_chain_ ) ;
+  }
+	else
+		new_pose = pose;
+
+	if( new_pose.pdb_info() ) {
+		name = new_pose.pdb_info()->name();
 	}
-	sequences_.push_back( new core::sequence::Sequence(pose.sequence(), name) );
+	sequences_.push_back( new core::sequence::Sequence(new_pose.sequence(), name) );
+
 }
 
 /// @brief Add the sequence from the given filename to the set of allowed aas
