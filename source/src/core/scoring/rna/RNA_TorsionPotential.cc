@@ -48,7 +48,6 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
 #include <basic/Tracer.hh>
@@ -518,7 +517,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 			}
 
 			/////////////////////////////////O2H/////////////////////////////////////////////////////////
-			if ( use_2prime_OH_potential_ && use_new_potential_ &&  
+			if ( use_2prime_OH_potential_ && use_new_potential_ &&
 			     get_f1_f2( id::TorsionID( seqpos, id::CHI, O2H - NUM_RNA_MAINCHAIN_TORSIONS ),	pose, id, f1, f2 ) ){
 				Real const dE_dtorsion = ( fade_delta_north_->func( delta ) * o2h_north_potential_->dfunc( o2h ) +
 																	 fade_delta_south_->func( delta ) * o2h_south_potential_->dfunc( o2h ) );

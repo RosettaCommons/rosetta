@@ -162,6 +162,8 @@ enum ScoreType {
 	//	fa_stack_purine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PURINE
 	//	fa_stack_pyrimidine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PYRIMIDINE
 	fa_stack_aro,
+	stack_elec,          // distance dependent dielectric between base atoms (attenuated parallel to plane)
+	stack_elec_base_only,
 
 	// DNA constraints-based torsional potentials
 	dna_bb_torsion,

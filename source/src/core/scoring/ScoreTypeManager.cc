@@ -314,6 +314,8 @@ ScoreTypeManager::setup_score_type_names()
 	//	name2score_type_[ "fa_stack_purine"] = fa_stack_purine;
 	//	name2score_type_[ "fa_stack_pyrimidine"] = fa_stack_pyrimidine;
 	name2score_type_[ "fa_stack_aro"] = fa_stack_aro;
+	name2score_type_[ "stack_elec"] = stack_elec;
+	name2score_type_[ "stack_elec_base_only"] = stack_elec_base_only;
 
 	name2score_type_[ "rna_torsion"] = rna_torsion;
 	name2score_type_[ "rna_sugar_close"] = rna_sugar_close;

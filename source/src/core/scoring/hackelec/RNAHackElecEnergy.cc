@@ -204,7 +204,7 @@ bool is_sugar( conformation::Residue const & rsd, Size const i )
 		return is_sugar( rsd, rsd.atom_base( i ) );
 	} else {
 		return ( ( i < rsd.first_sidechain_atom() && !is_phosphate(rsd, i) ) ||
-						 i==12 );
+						 i == 12 /*hey this is really bad!*/ );
 	}
 }
 

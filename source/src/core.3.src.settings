@@ -512,6 +512,7 @@ sources = {
 		"RNA_Util",
 		"RNA_VDW_Energy",
 		"RNA_FullAtomVDW_BasePhosphate",
+		"StackElecEnergy"
 	],
 
 	"core/scoring/rna/chemical_shift" : [
