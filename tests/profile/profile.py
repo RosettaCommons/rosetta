@@ -40,15 +40,20 @@ def run(test, options):
 
     # Running tests
     platform = Platform
-    minidir = os.path.abspath( './../../rosetta_source' );  print '  Rosetta home dir is: %s' % minidir
-    bin = os.path.join(minidir, "bin")
+
+    minidir = os.path.join(options.main, "source")
+    print '  Rosetta home dir is: %s' % minidir
+
+    bindir = os.path.join(options.main, "source", "bin")
     compiler = 'gcc'
     mode = 'release'
     binext = platform+compiler+mode
 
-    database = os.path.abspath( options.database );  print '  Rosetta database dir is: %s' % database
+    print '  Rosetta bin dir is: %s' % bindir
 
-    templates = dict(minidir=minidir, database=database, workdir=workdir, platform=platform, bin=bin, compiler=compiler, mode=mode, binext=binext)
+    print '  Rosetta database dir is: %s' % options.database
+
+    templates = dict(minidir=minidir, database=options.database, workdir=workdir, platform=platform, bin=bindir, compiler=compiler, mode=mode, binext=binext)
 
     fname = os.path.join(workdir, 'command')
     cmd = file(fname).read().strip()
@@ -114,12 +119,22 @@ def main(argv):
     '''A simple system for running protocol profile end-to-end tests in Mini.
     '''
 
+    # Attempt to resolve checkout root directory.
+    try:
+        main_dir = subprocess.check_output(["git", "rev-parse", "--show-toplevel"]).strip()
+    except subprocess.CalledProcessError:
+        main_dir = None
+
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]")
     parser.set_description(main.__doc__)
 
+    parser.add_option("-m", "--main",
+      default=main_dir,
+      help="Rosetta main directory. (default: %s)" % (main_dir if main_dir else "None"))
+
     parser.add_option("-d", "--database",
-      default=os.path.join( os.path.expanduser("~"), "rosetta_database"),
-      help="Directory where Mini database is found (default: ~/rosetta_database)",
+      default=None,
+      help="Directory where rosetta database is located. (default: <main>/database)",
     )
 
     parser.add_option("-t", "--timeout",
@@ -129,21 +144,29 @@ def main(argv):
       metavar="MINUTES",
     )
 
-
     (options, args) = parser.parse_args(argv)
+
+    if not options.main:
+        print "Unable to resolve rosetta main repository root, run profile.py from within rosetta main checkout or specify root with --main."
+        return 1
+
+    if not os.path.isdir(options.main):
+        print "Invalid rosetta main repository root %s, run profile.py from within rosetta main checkout or specify root with --main." % options.main
+        return 1
+    
+    if not options.database:
+        options.database = os.path.join(options.main, "database")
 
     if not os.path.isdir(options.database):
         print "Can't find database at %s; please use -d" % options.database
         return 1
+
     # Normalize path before we change directories!
+    options.main = os.path.abspath(options.main)
     options.database = os.path.abspath(options.database)
 
-    # Make sure the current directory is the script directory:
-    # Using argv[] here causes problems when people try to run the script as "python integration.py ..."
-    #os.chdir( path.dirname(sys.argv[0]) ) # argv[0] is the script name
-    if not os.path.isdir("tests"):
-        print "You must run this script from rosetta/rosetta_tests/profile/"
-        return 2
+    # Switch to test directory
+    os.chdir(os.path.join(options.main, "tests", "profile"))
 
     # Each test consists of a directory with a "command" file in it.
     if len(args) > 0:
