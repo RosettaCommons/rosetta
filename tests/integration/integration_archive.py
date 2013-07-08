@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 def save_results(archive, results, branch, revision, force=False):
     revision_path = path.join(archive, "revisions", revision)
 
-    if path.exists(revision_path):
+    if path.lexists(revision_path):
         if force:
             logger.info("Removing existing result: %s", revision_path)
             shutil.rmtree(revision_path)
@@ -22,7 +22,7 @@ def save_results(archive, results, branch, revision, force=False):
     shutil.copytree(results, revision_path)
 
     branch_path = path.join(archive, branch)
-    if path.exists(branch_path):
+    if path.lexists(branch_path):
         logger.info("Removing exsiting branch pointer: %s targeting: %s", branch_path, os.readlink(branch_path))
         os.remove(branch_path)
 
