@@ -41,7 +41,7 @@ public:
 
 	//destructor
 	~RNA_AddMover();
-	
+
 	using protocols::moves::Mover::apply;
   void
 	apply( core::pose::Pose & pose, Size const res_to_add, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  );
@@ -60,18 +60,35 @@ public:
 
 	void set_presample_added_residue( Size const setting ){ presample_added_residue_ = setting; }
 
+	void set_presample_by_swa( Size const setting ){ presample_by_swa_ = setting; }
+
 	void set_start_added_residue_in_aform( Size const setting ){ start_added_residue_in_aform_ = setting; }
+
+	void set_minimize_all_rebuilt_res( Size const setting ){ minimize_all_rebuilt_res_ = setting; }
+
+private:
+
+	void	fix_up_residue_type_variants_after_append( core::pose::Pose & pose, Size const res_to_add ) const;
+
+	void	fix_up_residue_type_variants_after_prepend( core::pose::Pose & pose, Size const res_to_add ) const;
+
+	void	sample_by_swa( core::pose::Pose & pose, Size const res_to_add  ) const;
+
+	void	sample_by_monte_carlo_internal( core::pose::Pose &  pose, Size const nucleoside_num, Size const suite_num ) const;
 
 private:
 
 	core::chemical::ResidueTypeSetCAP rsd_set_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	bool presample_added_residue_;
+	bool presample_by_swa_;
+	bool minimize_all_rebuilt_res_;
 	bool start_added_residue_in_aform_;
 	Size internal_cycles_;
 	RNA_TorsionMoverOP rna_torsion_mover_;
-	core::Real sample_range_small_, sample_range_large_, kT_;
-
+	core::Real sample_range_small_;
+	core::Real sample_range_large_;
+	core::Real kT_;
 };
 
 } // monte_carlo

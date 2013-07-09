@@ -21,9 +21,9 @@ namespace protocols {
 namespace swa {
 namespace monte_carlo {
 
-enum MovingResidueCase { NO_CASE=0, CHAIN_TERMINUS_5PRIME, CHAIN_TERMINUS_3PRIME, INTERNAL, FLOATING_BASE };
+	enum MovingResidueCase { NO_CASE = 0, CHAIN_TERMINUS_5PRIME, CHAIN_TERMINUS_3PRIME, INTERNAL, FLOATING_BASE };
 
-enum AddOrDeleteChoice{ NO_ADD_OR_DELETE=0, ADD, DELETE };
+	enum AddOrDeleteChoice{ NO_ADD_OR_DELETE = 0, ADD, DELETE };
 
 } // monte_carlo
 } // swa

@@ -32,6 +32,8 @@
 
 static numeric::random::RandomGenerator RG(239111);  // <- Magic number, do not change it!
 
+static basic::Tracer TR( "protocols.swa.monte_carlo.rna_swa_monte_carlo_util" ) ;
+
 using namespace core;
 using core::Real;
 
@@ -72,6 +74,40 @@ namespace monte_carlo {
 																 utility::vector1< AddOrDeleteChoice > & add_or_delete_choices ) {
 
 
+		get_potential_terminal_residues( pose, possible_res, moving_residue_cases, add_or_delete_choices, DELETE );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	get_potential_resample_residues( pose::Pose & pose,
+																	 utility::vector1< Size > & possible_res ){
+
+		utility::vector1< MovingResidueCase > moving_residue_cases;
+		utility::vector1< AddOrDeleteChoice > add_or_delete_choices;
+		get_potential_terminal_residues( pose, possible_res, moving_residue_cases, add_or_delete_choices, NO_ADD_OR_DELETE );
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	get_potential_resample_residues( pose::Pose & pose,
+																	 utility::vector1< Size > & possible_res,
+																	 utility::vector1< MovingResidueCase > & moving_residue_cases,
+																	 utility::vector1< AddOrDeleteChoice > & add_or_delete_choices ) {
+
+		get_potential_terminal_residues( pose, possible_res, moving_residue_cases, add_or_delete_choices, NO_ADD_OR_DELETE );
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	get_potential_terminal_residues( pose::Pose & pose,
+																	 utility::vector1< Size > & possible_res,
+																	 utility::vector1< MovingResidueCase > & moving_residue_cases,
+																	 utility::vector1< AddOrDeleteChoice > & add_or_delete_choices,
+																	 AddOrDeleteChoice const & choice ) {
+
+
 		Size const & nres( pose.total_residue() );
 		kinematics::FoldTree const & fold_tree( pose.fold_tree() );
 
@@ -86,13 +122,13 @@ namespace monte_carlo {
 
 				possible_res.push_back( i );
 				moving_residue_cases.push_back( CHAIN_TERMINUS_3PRIME );
-				add_or_delete_choices.push_back( DELETE );
+				add_or_delete_choices.push_back( choice );
 
 			} else if ( i == 1 || fold_tree.is_cutpoint( i-1 ) ) {
 
 				possible_res.push_back( i );
 				moving_residue_cases.push_back( CHAIN_TERMINUS_5PRIME );
-				add_or_delete_choices.push_back( DELETE );
+				add_or_delete_choices.push_back( choice );
 
 			}
 
@@ -159,20 +195,21 @@ namespace monte_carlo {
 																				Size & residue_at_chain_terminus,
 																				MovingResidueCase & moving_residue_case,
 																				AddOrDeleteChoice & add_or_delete_choice,
-																				bool const disallow_delete ) {
+																				bool const disallow_delete,
+																				bool const disallow_resample ) {
 
 
 		utility::vector1< Size >  possible_res;
 		utility::vector1< MovingResidueCase > moving_residue_cases;
 		utility::vector1< AddOrDeleteChoice > add_or_delete_choices;
 
-		if ( !disallow_delete ){
-			get_potential_delete_residues( pose,  possible_res, moving_residue_cases, add_or_delete_choices );
-		}
+		if ( !disallow_resample )  get_potential_resample_residues( pose,  possible_res, moving_residue_cases, add_or_delete_choices );
+
+		if ( !disallow_delete )    get_potential_delete_residues( pose,  possible_res, moving_residue_cases, add_or_delete_choices );
 
 		get_potential_add_residues( pose, possible_res, moving_residue_cases, add_or_delete_choices );
 
-		Size const res_idx =  int( RG.uniform() * possible_res.size() ) + 1;
+		Size const res_idx =  RG.random_range( 1, possible_res.size() );
 
 		residue_at_chain_terminus = possible_res[ res_idx ];
 		moving_residue_case       = moving_residue_cases[ res_idx ];

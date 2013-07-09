@@ -37,6 +37,23 @@ namespace monte_carlo {
 																 utility::vector1< AddOrDeleteChoice > & add_or_delete_choices );
 
 	void
+	get_potential_resample_residues( pose::Pose & pose,
+																	 utility::vector1< Size > & possible_res );
+
+	void
+	get_potential_resample_residues( pose::Pose & pose,
+																	 utility::vector1< Size > & possible_res,
+																	 utility::vector1< MovingResidueCase > & moving_residue_cases,
+																	 utility::vector1< AddOrDeleteChoice > & add_or_delete_choices );
+
+	void
+	get_potential_terminal_residues( pose::Pose & pose,
+																	 utility::vector1< Size > & possible_res,
+																	 utility::vector1< MovingResidueCase > & moving_residue_cases,
+																	 utility::vector1< AddOrDeleteChoice > & add_or_delete_choices,
+																	 AddOrDeleteChoice const & choice );
+
+	void
 	get_potential_add_residues( pose::Pose & pose,
 															utility::vector1< Size > & possible_res,
 															utility::vector1< MovingResidueCase > & moving_residue_cases,
@@ -47,7 +64,8 @@ namespace monte_carlo {
 																				Size & residue_at_chain_terminus,
 																				MovingResidueCase & moving_residue_case,
 																				AddOrDeleteChoice & add_or_delete_choice,
-																				bool const disallow_delete );
+																				bool const disallow_delete,
+																				bool const disallow_resample = true );
 
 } // monte_carlo
 } // swa

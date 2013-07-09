@@ -19,6 +19,7 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
 #include <protocols/swa/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
+#include <protocols/swa/StepWiseUtil.hh>
 
 #include <core/chemical/VariantType.hh>
 
@@ -267,6 +268,7 @@ namespace rna {
 
 		using namespace core::pose;
 		using namespace core::chemical;
+		using namespace protocols::swa;
 
 		if ( moving_res.size() != 1 ) utility_exit_with_message( "For now, StepWiseRNA_Modeler requires exactly 1 number in -moving_res unless you feed it a JobParameters object." );
 		Size const rebuild_res =  moving_res[1];
@@ -358,7 +360,13 @@ namespace rna {
 		// that fold_tree is only used in PoseSetup, and in JobParameters_Setup, and not downstream
 		// in any modelers...  -- rhiju
 
-		// user input fixed_res...
+		// user input minimize_res...
+		if ( minimize_res_.size() > 0 ) { // specifying more residues which could move during the minimize step.
+			fixed_res_.clear();
+			for ( Size n = 1; n <= nres; n++ ) {
+				if ( !Contain_seq_num( n, minimize_res_ ) )	fixed_res_.push_back( n );
+			}
+		}
 		if ( fixed_res_.size() > 0 ) 	job_parameters->set_working_fixed_res( fixed_res_ );
 
 		return job_parameters;

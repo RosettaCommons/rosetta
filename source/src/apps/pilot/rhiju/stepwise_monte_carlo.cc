@@ -1,16 +1,13 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //
-// This file is made available under the Rosetta Commons license.
-// See http://www.rosettacommons.org/license
-// (C) 199x-2007 University of Washington
-// (C) 199x-2007 University of California Santa Cruz
-// (C) 199x-2007 University of California San Francisco
-// (C) 199x-2007 Johns Hopkins University
-// (C) 199x-2007 University of North Carolina, Chapel Hill
-// (C) 199x-2007 Vanderbilt University
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file swa_monte_Carlo.cc
+/// @file swa_monte_carlo.cc
 /// @author Rhiju Das (rhiju@stanford.edu)
 
 // libRosetta headers
@@ -42,8 +39,12 @@
 //////////////////////////////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
+#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
 #include <protocols/swa/monte_carlo/RNA_AddMover.hh>
+#include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
+#include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
 #include <protocols/swa/monte_carlo/SubToFullInfo.hh>
+#include <protocols/swa/monte_carlo/SubToFullInfoUtil.hh>
 #include <protocols/swa/monte_carlo/types.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/viewer/viewers.hh>
@@ -91,6 +92,41 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 static numeric::random::RandomGenerator RG(2391021);  // <- Magic number, do not change it!
 
 OPT_KEY( IntegerVector, input_res )
+OPT_KEY( Integer, cycles )
+OPT_KEY( Boolean, minimize_single_res )
+OPT_KEY( Real, temperature )
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bool
+apply_swa_mover( pose::Pose & pose,
+								 core::scoring::ScoreFunctionOP scorefxn,
+								 std::string & move_type ){
+
+	using namespace protocols::swa::monte_carlo;
+	using namespace protocols::swa::rna;
+
+	move_type = "swa";
+
+	utility::vector1< Size > possible_res;
+	get_potential_resample_residues( pose, possible_res );
+
+	if ( possible_res.size() == 0 ) return false;
+
+	Size const remodel_res = RG.random_element( possible_res );
+
+	swa::rna::StepWiseRNA_Modeler stepwise_rna_modeler( remodel_res, scorefxn );
+	stepwise_rna_modeler.set_choose_random( true );
+	stepwise_rna_modeler.set_force_centroid_interaction( true );
+	//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+
+	if ( ! option[ minimize_single_res]() ) stepwise_rna_modeler.set_minimize_res( nonconst_sub_to_full_info_from_pose( pose ).moving_res_list() );
+
+	stepwise_rna_modeler.apply( pose );
+
+
+	return true;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
@@ -110,18 +146,16 @@ stepwise_monte_carlo()
 
 	clock_t const time_start( clock() );
 
-	// read starting pose(s) from disk
-	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
-
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
 	std::string const desired_sequence = fasta_sequence->sequence();
 
+	// read starting pose(s) from disk
+	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 	pose::Pose pose;
 	import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::s ][1] );
 	protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
 	protocols::rna::virtualize_5prime_phosphates( pose );
-	utility::vector1< Size > input_res_list = option[ input_res ]();
 
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 400, 400 );
 
@@ -136,61 +170,75 @@ stepwise_monte_carlo()
 	std::string const silent_file = option[ out::file::silent ]();
 	SilentFileData silent_file_data;
 
-	//SubToFull (minimal object needed for add/delete!)
-	utility::vector1< Size > start_moving_res_list /*blank*/;
+	//SubToFull (minimal object needed for add/delete)
 	std::map< Size, Size > sub_to_full;
+	utility::vector1< Size > input_res_list = option[ input_res ]();
 	for ( Size i = 1; i <= input_res_list.size(); i++ ) sub_to_full[i] = input_res_list[i];
+	utility::vector1< Size > start_moving_res_list /*blank*/;
 	utility::vector1< Size > cutpoints_in_full_pose /*blank*/;
 	SubToFullInfoOP sub_to_full_info_op =	new SubToFullInfo(  sub_to_full, start_moving_res_list,	desired_sequence, cutpoints_in_full_pose );
 	pose.data().set( core::pose::datacache::CacheableDataType::SUB_TO_FULL_INFO, sub_to_full_info_op );
+	swa::monte_carlo::update_pdb_info_from_sub_to_full( pose ); // for output pdb or silent file -- residue numbering.
 
-	//setup rmsd res as everything sampled.
+	//setup rmsd res as everything to be sampled.
 	std::list< Size > rmsd_res;
 	for ( Size i = 1; i <= desired_sequence.size(); i++ ) if ( !Contain_seq_num(i, input_res_list ) ) rmsd_res.push_back( i );
 
 	// scorefunction
 	core::scoring::ScoreFunctionOP scorefxn = getScoreFunction();
 
+	// mover setup
+	RNA_DeleteMoverOP rna_delete_mover = new RNA_DeleteMover;
+
+	RNA_AddMoverOP rna_add_mover = new RNA_AddMover( rsd_set, scorefxn );
+	rna_add_mover->set_start_added_residue_in_aform( false );
+	rna_add_mover->set_presample_added_residue(  true );
+	rna_add_mover->set_presample_by_swa(  true );
+	rna_add_mover->set_minimize_all_rebuilt_res( ! option[ minimize_single_res ]() );
+	RNA_AddOrDeleteMoverOP rna_add_or_delete_mover = new RNA_AddOrDeleteMover( rna_add_mover, rna_delete_mover );
+
+	// final setup
 	Pose start_pose = pose;
-
 	Size num_struct = option[ out::nstruct ]();
+	std::string move_type;
+	Real const add_delete_frequency( 0.2 );
+	bool success;
 
+	// main loop
 	for ( Size n = 1; n <= num_struct; n++ ) {
 
 		pose = start_pose;
+		MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *scorefxn, option[ temperature]() );
 
-		// following is hard-wired for now.
-		// first build scratch residue A7.
-		RNA_AddMover add_mover( rsd_set, scorefxn );
-		add_mover.apply( pose, 6 /*this is NOT global numbering, but perhaps it should be*/, CHAIN_TERMINUS_5PRIME /*prepend*/);
+		Size k( 0 );
 
-		{
-			// then sample residue A7
-			StepWiseRNA_Modeler stepwise_rna_modeler( 6, scorefxn );
-			stepwise_rna_modeler.set_choose_random( true );
-			stepwise_rna_modeler.set_force_centroid_interaction( true );
-			//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
-			stepwise_rna_modeler.apply( pose );
+		while (  k <= option[ cycles ]() ){
+
+			bool success( true );
+			if ( RG.uniform() < add_delete_frequency ){
+				rna_add_or_delete_mover->apply( pose, move_type );
+			} else {
+				// later make this an actual class!
+				success = apply_swa_mover( pose, scorefxn, move_type );
+			}
+
+			if ( !success ) continue;
+			k++;
+			monte_carlo_->boltzmann( pose, move_type );
+
+			// following can be removed later.
+			std::cout << "Monte Carlo accepted? " << monte_carlo_->mc_accepted() << std::endl;
+			monte_carlo_->show_counters();
+			pose.dump_pdb( "latest.pdb" );
+
 		}
 
-		// then build in C6
-		add_mover.apply( pose, 6 /*this is NOT global numbering, but perhaps it should be*/, CHAIN_TERMINUS_5PRIME /*prepend*/);
-		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, 5 );
-		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, 6 );
-
-		// then sample residue C6 (with CCD loop closure)
-		{
-			// then sample residue A7
-			StepWiseRNA_Modeler stepwise_rna_modeler( 6, scorefxn );
-			stepwise_rna_modeler.set_choose_random( true );
-			stepwise_rna_modeler.set_force_centroid_interaction( true );
-			//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
-			stepwise_rna_modeler.apply( pose );
-		}
+		monte_carlo_->recover_low( pose );
+		monte_carlo_->show_counters();
 
 		// output to silent file
 		BinaryRNASilentStruct s( pose, "S_"+lead_zero_string_of( n, 6 ) );
-		// following is a quick hack.
+		// following is a quick hack -- need to actually take into account moving suites
 		if ( native_pose ) 	s.add_energy( "rms", all_atom_rmsd( *native_pose, pose, rmsd_res ) );
 		silent_file_data.write_silent_struct( s, silent_file, false /*score_only*/ );
 
@@ -230,6 +278,9 @@ main( int argc, char * argv [] )
 	utility::vector1< std::string > blank_string_vector;
 
 	NEW_OPT( input_res, "input residue", blank_size_vector );
+	NEW_OPT( cycles, "Number of Monte Carlo cycles", 50 );
+	NEW_OPT( temperature, "Monte Carlo temperature", 1.0 );
+	NEW_OPT( minimize_single_res, "Minimize the residue that just got rebuilt, instead of all", false );
 
   ////////////////////////////////////////////////////////////////////////////
   // setup

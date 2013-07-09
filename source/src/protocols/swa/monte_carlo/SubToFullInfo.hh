@@ -56,17 +56,17 @@ public:
 	// properties of current, working pose
 	std::map< Size, Size > sub_to_full(){ return sub_to_full_;} //mapping from working pose to full pose.
 
-	utility::vector1< Size > moving_res_list(){ return moving_res_list_;}
+	utility::vector1< Size > moving_res_list() const{ return moving_res_list_;}
 
 	// properties of full model.
-	std::string full_sequence(){ return full_sequence_;}
+	std::string full_sequence() const{ return full_sequence_;}
 
-	utility::vector1< Size > cutpoints_in_full_pose(){ return cutpoints_in_full_pose_;}
+	utility::vector1< Size > cutpoints_in_full_pose() const{ return cutpoints_in_full_pose_;}
 
 	// properties of current, working pose
-	void set_sub_to_full( std::map< Size, Size > & setting ){ sub_to_full_ = setting;} //mapping from working pose to full pose.
+	void set_sub_to_full( std::map< Size, Size > const & setting ){ sub_to_full_ = setting;} //mapping from working pose to full pose.
 
-	void set_moving_res_list( utility::vector1< Size > & moving_res_list );
+	void set_moving_res_list( utility::vector1< Size > const & setting ){ moving_res_list_ = setting;}
 
 private:
 
@@ -84,16 +84,6 @@ private:
 
 SubToFullInfo &
 nonconst_sub_to_full_info_from_pose( core::pose::Pose & pose );
-
-void
-reorder_sub_to_full_info_after_delete( core::pose::Pose & pose, core::Size const res_to_delete );
-
-void
-reorder_sub_to_full_info_after_append( core::pose::Pose & pose, core::Size const res_to_add );
-
-void
-reorder_sub_to_full_info_after_prepend( core::pose::Pose & pose, core::Size const res_to_add );
-
 
 }
 }

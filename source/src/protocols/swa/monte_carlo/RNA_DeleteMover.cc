@@ -15,6 +15,7 @@
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
 #include <protocols/swa/monte_carlo/SubToFullInfo.hh>
+#include <protocols/swa/monte_carlo/SubToFullInfoUtil.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -60,11 +61,44 @@ namespace monte_carlo {
   RNA_DeleteMover::apply( core::pose::Pose & pose, Size const res_to_delete, MovingResidueCase const moving_residue_case )
 	{
 
+		remove_cutpoint_variants_at_res_to_delete( pose, res_to_delete );
+
 		pose.delete_polymer_residue( res_to_delete );
+
 		if ( moving_residue_case == CHAIN_TERMINUS_5PRIME )	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_delete );
 
 		// important book-keeping.
 		reorder_sub_to_full_info_after_delete( pose, res_to_delete );
+
+	}
+
+	//////////////////////////////////////////////////////////////////////
+  void
+  RNA_DeleteMover::remove_cutpoint_variants_at_res_to_delete( core::pose::Pose & pose, Size const & res_to_delete ){
+
+		using namespace core::chemical;
+		using namespace core::pose;
+
+		if ( pose.residue_type( res_to_delete ).has_variant_type( CUTPOINT_UPPER ) ){
+
+			runtime_assert( res_to_delete > 1 );
+			runtime_assert( pose.residue_type( res_to_delete - 1 ).has_variant_type( CUTPOINT_LOWER ) );
+
+			remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, res_to_delete - 1 );
+			remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, res_to_delete ); // this is actually gratuitous as we are about to delete.
+
+		}
+
+		if ( pose.residue_type( res_to_delete ).has_variant_type( CUTPOINT_LOWER ) ){
+
+			runtime_assert( res_to_delete < pose.total_residue() );
+			runtime_assert( pose.residue_type( res_to_delete+1 ).has_variant_type( CUTPOINT_UPPER ) );
+
+			remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, res_to_delete ); // this is actually gratuitous as we are about to delete.
+			remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, res_to_delete + 1 );
+
+		}
+
 	}
 
 

@@ -275,7 +275,7 @@ public: // Assignment
 	operator =( FArray4D const & a )
 	{
 		if ( this != &a ) {
-			if ( ! equal_dimension( a ) ) dimension( a );
+			if ( ! this->equal_dimension( a ) ) dimension( a );
 			Base::operator =( a );
 		}
 		return *this;

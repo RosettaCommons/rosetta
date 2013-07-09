@@ -79,7 +79,10 @@ namespace monte_carlo {
 
 		get_random_residue_at_chain_terminus( pose, res_at_terminus, moving_residue_case, add_or_delete_choice, disallow_delete  );
 
-		TR.Debug << "ADD/DELETE move ==> res: " << res_at_terminus << "  case: " << moving_residue_case << "  add/delete: " << add_or_delete_choice << std::endl;
+		//		TR.Debug << "ADD/DELETE move ==> res: " << res_at_terminus << "  case: " << moving_residue_case << "  add/delete: " << add_or_delete_choice << std::endl;
+
+		TR << std::endl;
+		TR << "Move: add_or_delete " <<  add_or_delete_choice << " with moving residue case " << moving_residue_case <<  " at " << res_at_terminus << " starting from: " << pose.annotated_sequence() << std::endl;
 
 		if ( add_or_delete_choice == DELETE ) {
 			move_type = "delete";
@@ -97,6 +100,8 @@ namespace monte_carlo {
 			// std::cout << "After add: " << (*scorefxn)( pose ) << std::endl << std::endl;
 			//pose.dump_pdb( "after_add.pdb" );
 		}
+
+		TR << "Move: " <<  add_or_delete_choice << " at " << res_at_terminus << " resulting in : " << pose.annotated_sequence() << std::endl;
 
 	}
 

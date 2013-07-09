@@ -123,6 +123,8 @@ namespace rna {
 
 		void set_fixed_res( utility::vector1< Size > const & setting ){ fixed_res_ = setting; }
 
+		void set_minimize_res( utility::vector1< Size > const & setting ){ minimize_res_ = setting; }
+
 		// additional options that are not shared with ERRASER (yet)
 		void set_VDW_rep_delete_matching_res( utility::vector1< std::string > const & setting){ VDW_rep_delete_matching_res_= setting ;}
 
@@ -184,6 +186,7 @@ namespace rna {
 
 		utility::vector1< core::Size > const moving_res_;
 		utility::vector1< core::Size > fixed_res_;
+		utility::vector1< core::Size > minimize_res_;
 		core::scoring::ScoreFunctionOP scorefxn_;
 		std::string silent_file_;
 		core::Size sampler_num_pose_kept_;

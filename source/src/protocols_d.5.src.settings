@@ -57,6 +57,7 @@ sources = {
 		"RNA_TorsionMover",
 		"RNA_SWA_MonteCarloUtil",
 		"SubToFullInfo",
+		"SubToFullInfoUtil",
 	],
 	"protocols/swa/protein": [
 		"MainChainTorsionSet",
