@@ -1,4 +1,3 @@
-namespace jumps { BooleanOptionKey const jumps( "jumps" );  }
 namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
 namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
 namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
@@ -709,3 +708,5 @@ namespace rotamerdump { BooleanOptionKey const two_body( "rotamerdump:two_body" 
 namespace rotamerdump { BooleanOptionKey const annealer( "rotamerdump:annealer" );  }
 namespace robert { BooleanOptionKey const robert( "robert" );  }
 namespace robert { StringOptionKey const pairdata_input_pdb_list( "robert:pairdata_input_pdb_list" );  }
+namespace robert { RealOptionKey const pcs_maxsub_filter( "robert:pcs_maxsub_filter" );  }
+namespace robert { RealOptionKey const pcs_maxsub_rmsd( "robert:pcs_maxsub_rmsd" );  }

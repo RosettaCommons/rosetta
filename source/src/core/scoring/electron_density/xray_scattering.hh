@@ -75,15 +75,41 @@ public:
 		weight_ = w;
 	}
 
-	// rho = C*exp(-k*X^2)
-	inline core::Real k( core::Real B, core::Real min_grid ) const {
-		// s <= real-space sigma
-		//    sig = sig+B/4;    % conv by B
-		//    sig = max( sig, (reso).^2 );  % res limit
-		//    D2 = (x-atom).^2;
-		//    rho_c_alt2(ele,:) = grid * ele * sqrt(pi/sig) * exp(-(pi^2/sig).*D2);
-		core::Real s = std::max( sigma_ + B/4 , 4*(min_grid*min_grid) ) ;
-		return ( M_PI*M_PI/s );
+	inline core::Real B( core::Real k ) const {
+		core::Real s = M_PI*M_PI/k;
+		core::Real sigma_eff = sigma_;
+		core::Real B = ( 4*( s - sigma_eff ) );
+
+		// smooth to flat at B==0
+		if (B < 0) B = 0;
+		else if (B<10) B = sqrt(10*B);
+		return ( B );
+	}
+
+	inline core::Real k( core::Real B ) const {
+		core::Real sigma_eff = sigma_;
+		core::Real B_eff = B;
+		if (B<0) B_eff = 0;
+		else if (B<10) B_eff = 0.1*B*B;
+		core::Real s = sigma_eff + B_eff/4;
+		core::Real k = M_PI*M_PI/s;
+		return k;
+	}
+
+	// calculate dK/dB at a given resolution
+	inline core::Real dk( core::Real B) const {
+		core::Real sigma_eff = sigma_;
+
+		core::Real B_eff = B;
+		if (B<0) B_eff = 0;
+		else if (B<10) B_eff = 0.1*B*B;
+		core::Real s = sigma_eff + B_eff/4;
+		core::Real dkdb = -M_PI*M_PI/(4*s*s);
+
+		if (B<0) dkdb = 0;
+		else if (B<10) dkdb *= 0.2*B;
+
+		return dkdb;
 	}
 
 	// rho = C*exp(-k*X^2)

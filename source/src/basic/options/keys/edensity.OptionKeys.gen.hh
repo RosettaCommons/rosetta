@@ -28,8 +28,10 @@ namespace edensity { extern RealOptionKey const mapreso; }
 namespace edensity { extern RealOptionKey const grid_spacing; }
 namespace edensity { extern RealOptionKey const centroid_density_mass; }
 namespace edensity { extern IntegerOptionKey const sliding_window; }
+namespace edensity { extern BooleanOptionKey const cryoem_scatterers; }
 namespace edensity { extern RealOptionKey const force_apix; }
 namespace edensity { extern RealOptionKey const fastdens_wt; }
+namespace edensity { extern RealVectorOptionKey const fastdens_params; }
 namespace edensity { extern RealOptionKey const sliding_window_wt; }
 namespace edensity { extern BooleanOptionKey const score_sliding_window_context; }
 namespace edensity { extern RealOptionKey const whole_structure_ca_wt; }
@@ -42,6 +44,7 @@ namespace edensity { extern RealOptionKey const atom_mask; }
 namespace edensity { extern RealOptionKey const ca_mask; }
 namespace edensity { extern BooleanOptionKey const score_symm_complex; }
 namespace edensity { extern RealOptionKey const sc_scaling; }
+namespace edensity { extern IntegerOptionKey const n_kbins; }
 namespace edensity { extern RealOptionKey const render_sigma; }
 
 } // namespace OptionKeys

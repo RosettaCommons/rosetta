@@ -135,6 +135,7 @@ public:
 
 private:
 	mutable bool pose_is_proper;
+	mutable bool bfactors_set;
 	virtual
 	core::Size version() const;
 };

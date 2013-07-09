@@ -714,10 +714,10 @@ option.add( basic::options::OptionKeys::loopfcst::coord_cst_all_atom, "use coord
 option.add( basic::options::OptionKeys::loopfcst::use_general_protocol, "use the new machinery around classes KinematicXXX" ).def(false);
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight_array, "use these weights (per seqpos) for coord cst in rigid regions" ).def("");
 option.add( basic::options::OptionKeys::loopfcst::dump_coord_cst_weight_array, "dump these weights (per seqpos) for coord cst in rigid regions" ).def("");
+option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
@@ -1427,11 +1427,11 @@ option.add( basic::options::OptionKeys::rotamerdump::two_body, "when using the R
 option.add( basic::options::OptionKeys::rotamerdump::annealer, "Run the annealer and output the rotamers it chose" ).def(false);
 option.add( basic::options::OptionKeys::robert::robert, "robert option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::robert::pairdata_input_pdb_list, "Takes in a file containing a list of pdb locations paired with protocol specific data (eg: one disulfide pair)" ).def("");
+option.add( basic::options::OptionKeys::robert::pcs_maxsub_filter, "minimum normalized maxsub for PCS clustering protocol" ).def(0.9);
+option.add( basic::options::OptionKeys::robert::pcs_maxsub_rmsd, "maxsub calculation's rmsd threshold" ).def(4.0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::robert::pcs_maxsub_filter, "minimum normalized maxsub for PCS clustering protocol" ).def(0.9);
-option.add( basic::options::OptionKeys::robert::pcs_maxsub_rmsd, "maxsub calculation's rmsd threshold" ).def(4.0);
-option.add( basic::options::OptionKeys::robert::pcs_dump_cluster, "No description" ).def(false);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::robert::pcs_dump_cluster, "No description" ).def(false);
 option.add( basic::options::OptionKeys::robert::pcs_cluster_coverage, "cluster coverage required" ).def(0.3);
 option.add( basic::options::OptionKeys::robert::pcs_cluster_lowscoring, "cluster lowest 20% against lowest 50%" ).def(true);
 option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).legal(true).def(true);
@@ -2096,8 +2096,10 @@ option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).de
 option.add( basic::options::OptionKeys::edensity::grid_spacing, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::centroid_density_mass, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::sliding_window, "No description" ).def(1);
+option.add( basic::options::OptionKeys::edensity::cryoem_scatterers, "No description" ).def(false);
 option.add( basic::options::OptionKeys::edensity::force_apix, "force pixel spacing to take a particular value" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::fastdens_wt, "wt of fast edens score" ).def(0.0);
+option.add( basic::options::OptionKeys::edensity::fastdens_params, "parameters for fastdens scoring" );
 option.add( basic::options::OptionKeys::edensity::sliding_window_wt, "wt of edens sliding-window score" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::score_sliding_window_context, "when using sl. win. density fit, include neighbor atoms (slows trajectory)" ).def(false);
 option.add( basic::options::OptionKeys::edensity::whole_structure_ca_wt, "wt of edens centroid (CA-only) scoring" ).def(0.0);
@@ -2110,6 +2112,7 @@ option.add( basic::options::OptionKeys::edensity::atom_mask, "override default (
 option.add( basic::options::OptionKeys::edensity::ca_mask, "override default (=6A) CA mask radius to this value (low-res scoring)" ).def(6.0);
 option.add( basic::options::OptionKeys::edensity::score_symm_complex, "If set, scores the structure over the entire symmetric complex; otherwise just use controlling monomer" ).def(false);
 option.add( basic::options::OptionKeys::edensity::sc_scaling, "Scale sidechain density by this amount (default same as mainchain density)" ).def(1.0);
+option.add( basic::options::OptionKeys::edensity::n_kbins, "Number of B-factor bins" ).def(1);
 option.add( basic::options::OptionKeys::edensity::render_sigma, "initially render at this sigma level (extras=graphics build only)" ).def(2);
 option.add( basic::options::OptionKeys::patterson::patterson, "patterson option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::patterson::debug, "No description" ).def(false);

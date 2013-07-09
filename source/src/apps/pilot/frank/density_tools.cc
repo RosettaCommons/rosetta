@@ -64,13 +64,13 @@ OPT_1GRP_KEY(Real, denstools, lowres)
 OPT_1GRP_KEY(Real, denstools, hires)
 OPT_1GRP_KEY(Boolean, denstools, rescale_map)
 OPT_1GRP_KEY(Boolean, denstools, verbose)
+OPT_1GRP_KEY(Boolean, denstools, dump_map_and_mask)
 OPT_1GRP_KEY(Boolean, denstools, nomask)
 OPT_1GRP_KEY(Boolean, denstools, perres)
 
 
-// fpd
-//   very quickly read heavy atom positions from a PDB for a possibly massive massive PDB file
-typedef utility::vector1< std::pair< numeric::xyzVector< core::Real >, std::string > > lightPose;
+using core::scoring::electron_density::poseCoords;
+using core::scoring::electron_density::poseCoord;
 
 // map atom names to elements
 //   loosely based on openbabel logic
@@ -149,23 +149,23 @@ name2elt( std::string line ) {
 
 // quick and dirty PDB read where we only care about heavyatom locations and atom ids
 void
-readPDBcoords(std::string filename, lightPose &atmlist) {
+readPDBcoords(std::string filename, poseCoords &atmlist) {
 	std::ifstream inpdb(filename.c_str());
 	std::string buf;
 
 	while (std::getline(inpdb, buf ) ) {
 		if( buf.substr(0,4)!="ATOM" && buf.substr(0,6)!="HETATM") continue;
+		poseCoord atom_i;
 
-		numeric::xyzVector< core::Real > X;
-		X[0] = atof(buf.substr(30,8).c_str());
-		X[1] = atof(buf.substr(38,8).c_str());
-		X[2] = atof(buf.substr(46,8).c_str());
+		atom_i.x_[0] = atof(buf.substr(30,8).c_str());
+		atom_i.x_[1] = atof(buf.substr(38,8).c_str());
+		atom_i.x_[2] = atof(buf.substr(46,8).c_str());
+		atom_i.B_ = atof(buf.substr(60,6).c_str());
 
-		// horrible hacky logic mapping name->elt (could use PDB fields 76-77 if Rosetta used them by default)
-		std::string elt = name2elt( buf );
-		if (elt == "H") continue;
+		atom_i.elt_ = name2elt( buf ); // horrible hacky logic mapping name->elt (could use PDB fields 76-77 if on by default)
+		if (atom_i.elt_ == "H") continue;
 
-		atmlist.push_back( std::make_pair(X,elt) );
+		atmlist.push_back( atom_i );
 	}
 }
 
@@ -199,7 +199,7 @@ densityTools()
 
 	// [0] load model, mask density
 	bool userpose = (option[ in::file::s ].user());
-	lightPose pose;
+	poseCoords pose;
 	core::pose::Pose fullpose;  // needed for per-residue stats (if requested)
 	std::string pdbfile;
 	if (userpose) {
@@ -310,6 +310,12 @@ densityTools()
 		}
 	}
 
+	// dump
+	if (userpose && option[ denstools::dump_map_and_mask ]()) {
+		core::scoring::electron_density::getDensityMap().writeMRC( "model_dens.mrc", true, false );
+		core::scoring::electron_density::getDensityMap().writeMRC( "model_mask.mrc", false, true  );
+	}
+
 	if (userpose && option[ denstools::perres ]()) {
 		for (int r=1; r<=perResCC.size(); ++r) {
 			std::cerr << "residue " << r << "  cc=" << perResCC[r] << std::endl;
@@ -336,9 +342,10 @@ main( int argc, char * argv [] )
 	// options, random initialization
 	NEW_OPT(denstools::lowres, "lowres", 500.0);
 	NEW_OPT(denstools::hires, "hires", 0.0);
-	NEW_OPT(edensity::alt_mapfile, "alternate mapfile", "");
-	NEW_OPT(denstools::nresbins, "#resolution bins", 20);
-	NEW_OPT(denstools::rescale_map, "scale I_map to I_modelI/I_altmap", false);
+	NEW_OPT(edensity::alt_mapfile, "alt mapfile", "");
+	NEW_OPT(denstools::nresbins, "#resolution bins for statistics", 20);
+	NEW_OPT(denstools::rescale_map, "scale map I == model I?", false);
+	NEW_OPT(denstools::dump_map_and_mask, "dump_map_and_mask", false);
 	NEW_OPT(denstools::nomask, "nomask", false);
 	NEW_OPT(denstools::perres, "output per-residue stats", false);
 	NEW_OPT(denstools::verbose, "extra output", false);

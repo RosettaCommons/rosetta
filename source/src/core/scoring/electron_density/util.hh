@@ -16,12 +16,14 @@
 
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/fourier/FFT.hh>
 
 #include <ObjexxFCL/FArray3D.hh>
+#include <ObjexxFCL/FArray4D.hh>
 
 #include <basic/Tracer.hh>
 
@@ -33,8 +35,21 @@ namespace core {
 namespace scoring {
 namespace electron_density {
 
+// minimal info needed for density scoring
+struct poseCoord {
+	numeric::xyzVector< core::Real > x_;
+	core::Real B_;
+	std::string elt_;
+};
+
+typedef utility::vector1< poseCoord > poseCoords;
+
 /// @brief update scorefxn with density scores from commandline
 void add_dens_scores_from_cmdline_to_scorefxn( core::scoring::ScoreFunction &scorefxn_  );
+
+/// @brief  helper function quickly guesses if a pose has non-zero B factors
+bool pose_has_nonzero_Bs( core::pose::Pose const & pose );
+bool pose_has_nonzero_Bs( poseCoords const & pose );
 
 /// @brief trilinear interpolation with periodic boundaries
 template <class S>
@@ -88,9 +103,34 @@ void spline_coeffs( ObjexxFCL::FArray3D< double > &data, ObjexxFCL::FArray3D< do
 /// @brief precompute spline coefficients (double array => double coeffs)
 void spline_coeffs( ObjexxFCL::FArray3D< float > &data, ObjexxFCL::FArray3D< double > & coeffs);
 
+void conj_map_times(ObjexxFCL::FArray3D< std::complex<double> > & map_product, ObjexxFCL::FArray3D< std::complex<double> > const & mapA, ObjexxFCL::FArray3D< std::complex<double> > const & mapB);
+
+ObjexxFCL::FArray3D< double > convolute_maps( ObjexxFCL::FArray3D< double > const & mapA, ObjexxFCL::FArray3D< double > const & mapB) ;
+
+
+/// 4d interpolants
+core::Real interp_spline(
+					 ObjexxFCL::FArray4D< double > & coeffs ,
+					 core::Real slab,
+					 numeric::xyzVector< core::Real > const & idxX );
+
+void interp_dspline(
+					ObjexxFCL::FArray4D< double > & coeffs ,
+					numeric::xyzVector< core::Real > const & idxX ,
+					core::Real slab,
+					numeric::xyzVector< core::Real > & gradX,
+					core::Real & gradSlab );
+void spline_coeffs(
+           ObjexxFCL::FArray4D< double > & data ,
+           ObjexxFCL::FArray4D< double > & coeffs);
+void spline_coeffs(
+           ObjexxFCL::FArray4D< float > & data ,
+           ObjexxFCL::FArray4D< double > & coeffs);
+
+
 ///@brief templated helper function to FFT resample a map
 template<class S, class T>
-void resample( 
+void resample(
       ObjexxFCL::FArray3D< S > const &density,
       ObjexxFCL::FArray3D< T > &newDensity,
       numeric::xyzVector< int > newDims ) {

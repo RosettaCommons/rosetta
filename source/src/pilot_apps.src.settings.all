@@ -223,7 +223,7 @@ sources = {
 		#"fast_densScore", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"perturb_bbg", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"redesign_minimize_into_density", # /* Frank Dimaio,Documentation Location,Demo Location */
-		#"multimodel_gdt", # /* Frank Dimaio,Documentation Location,Demo Location */
+		"density_tools", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"pdb_to_map", # /* Frank Dimaio,Documentation Location,Demo Location */
 		"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"rr_opt", # /* Frank Dimaio,Documentation Location,Demo Location */

@@ -146,6 +146,8 @@ FastDensEnergy::setup_for_scoring(
 		pose_is_proper = false;
 	}
 
+	bfactors_set = pose_has_nonzero_Bs( pose );
+
 	// create LR energy container (if needed)
 	LongRangeEnergyType const & lr_type( long_range_type() );
 	Energies & energies( pose.energies() );
@@ -220,7 +222,7 @@ FastDensEnergy::residue_pair_energy(
 		if (! symminfo->bb_is_independent( r ) ) return;
 	}
 
-	core::Real cc = core::scoring::electron_density::getDensityMap().matchResFast(r, rsd, pose, symminfo );
+	core::Real cc = core::scoring::electron_density::getDensityMap().matchResFast(r, rsd, pose, symminfo, !bfactors_set );
 	Real edensScore = -cc;
 
 	if (symminfo && remapSymm) {

@@ -709,3 +709,4 @@ namespace loopfcst { BooleanOptionKey const coord_cst_all_atom( "loopfcst:coord_
 namespace loopfcst { BooleanOptionKey const use_general_protocol( "loopfcst:use_general_protocol" );  }
 namespace loopfcst { FileOptionKey const coord_cst_weight_array( "loopfcst:coord_cst_weight_array" );  }
 namespace loopfcst { FileOptionKey const dump_coord_cst_weight_array( "loopfcst:dump_coord_cst_weight_array" );  }
+namespace jumps { BooleanOptionKey const jumps( "jumps" );  }

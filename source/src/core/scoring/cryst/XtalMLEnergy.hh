@@ -66,6 +66,9 @@ public:
 	virtual void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
 
 	virtual void
+	setup_for_minimizing( pose::Pose & pose, ScoreFunction const & sf, kinematics::MinimizerMapBase const & ) const;
+
+	virtual void
 	eval_atom_derivative(
 		id::AtomID const & id,
 		pose::Pose const & pose,

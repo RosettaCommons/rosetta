@@ -104,13 +104,21 @@ void XtalMLEnergy::finalize_total_energy(pose::Pose & /*pose*/, ScoreFunction co
 	emap[ xtal_ml ] += ml;
 }
 
+void
+XtalMLEnergy::setup_for_minimizing( pose::Pose & pose, ScoreFunction const & sf, kinematics::MinimizerMapBase const & ) const {
+	using namespace core::chemical;
+	getPhenixInterface().getScore( pose );
+	getPhenixInterface().updateSolventMask();
+}
+
+
 void XtalMLEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const {
 	using namespace core::chemical;
 
 	//fpd update mask
-	getPhenixInterface().updateSolventMask();
-
-	if (sf.get_weight( core::scoring::xtal_ml ) > 1e-8 )
+	//getPhenixInterface().getScore( pose );
+	getPhenixInterface().updateSolventMask( pose );
+	if (sf.get_weight( core::scoring::xtal_ml ) > 1e-8 )  //fpd: so debug_derivs (which sets score to 10^-9) doesn't trigger this
 		ml = getPhenixInterface().getScoreAndDerivs( pose, dml_dx );
 	else
 		ml = 0;
@@ -131,7 +139,7 @@ void XtalMLEnergy::eval_atom_derivative(
 
 	if (rsd_i.aa() == core::chemical::aa_vrt) return;
 
-	if (dml_dx.size() == 0) return; // 
+	if (dml_dx.size() == 0) return; //
 
 	// look up derivative
 	numeric::xyzVector< core::Real > dCCdx = dml_dx[resid][atmid];
@@ -141,7 +149,7 @@ void XtalMLEnergy::eval_atom_derivative(
 	// const core::Real NUM_DERIV_H_CEN=0.1;
 	// core::pose::Pose pose_copy = pose;
 	// numeric::xyzVector<core::Real> dCCdxn;
-	// 
+	//
 	// pose_copy.set_xyz(id, numeric::xyzVector<core::Real>( X[0]+NUM_DERIV_H_CEN,X[1],X[2] ) );
 	// core::Real CC_px = getPhenixInterface().getScore( pose_copy );
 	// pose_copy.set_xyz(id, numeric::xyzVector<core::Real>( X[0]-NUM_DERIV_H_CEN,X[1],X[2] ) );
@@ -154,11 +162,11 @@ void XtalMLEnergy::eval_atom_derivative(
 	// core::Real CC_pz = getPhenixInterface().getScore( pose_copy );
 	// pose_copy.set_xyz(id, numeric::xyzVector<core::Real>( X[0],X[1],X[2]-NUM_DERIV_H_CEN ) );
 	// core::Real CC_mz = getPhenixInterface().getScore( pose_copy );
-	// 
+	//
 	// dCCdxn[0] = (CC_px-CC_mx)/(2*NUM_DERIV_H_CEN);
 	// dCCdxn[1] = (CC_py-CC_my)/(2*NUM_DERIV_H_CEN);
 	// dCCdxn[2] = (CC_pz-CC_mz)/(2*NUM_DERIV_H_CEN);
-	// 
+	//
 	// TR << dCCdx[0] << "," << dCCdx[1] << "," << dCCdx[2] << "  ,  " << dCCdxn[0] << "," << dCCdxn[1] << "," << dCCdxn[2] << std::endl;
 
 	numeric::xyzVector<core::Real> atom_x = X;

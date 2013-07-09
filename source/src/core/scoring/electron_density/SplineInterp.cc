@@ -535,8 +535,10 @@ int grad4(double grad[4], double *Bcoeff, int dims[4], double X[4]) {
 						idx[dim][i] += dims[dim];
 				}
 			} else {
-				// mirror boundary conditions <<< fpd flat now
+				// flat boundary
 				for (i = 0L; i <= 3; i++) {
+					if (dims[dim] == 1)
+						idx[dim][i] = 0;
 					if (idx[dim][i] < 0)
 						idx[dim][i] = 0;
 					if (idx[dim][i] > dims[dim]-1)
@@ -569,11 +571,11 @@ int grad4(double grad[4], double *Bcoeff, int dims[4], double X[4]) {
 
 
 double interp4(double *Bcoeff, int dims[4], double X[4]) {
-	double wt[3][4];
+	double wt[4][4];
 	double value;
 	double w, w2, w4, t, t0, t1;
 	double sum_l, sum_kl, sum_jkl;
-	int idx[3][4];
+	int idx[4][4];
 	int i,j,k,l, pt, dim;
 
 	// interpolation indexes

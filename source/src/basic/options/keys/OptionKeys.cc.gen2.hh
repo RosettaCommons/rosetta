@@ -1,5 +1,3 @@
-namespace robert { RealOptionKey const pcs_maxsub_filter( "robert:pcs_maxsub_filter" );  }
-namespace robert { RealOptionKey const pcs_maxsub_rmsd( "robert:pcs_maxsub_rmsd" );  }
 namespace robert { BooleanOptionKey const pcs_dump_cluster( "robert:pcs_dump_cluster" );  }
 namespace robert { RealOptionKey const pcs_cluster_coverage( "robert:pcs_cluster_coverage" );  }
 namespace robert { BooleanOptionKey const pcs_cluster_lowscoring( "robert:pcs_cluster_lowscoring" );  }
@@ -665,8 +663,10 @@ namespace edensity { RealOptionKey const mapreso( "edensity:mapreso" );  }
 namespace edensity { RealOptionKey const grid_spacing( "edensity:grid_spacing" );  }
 namespace edensity { RealOptionKey const centroid_density_mass( "edensity:centroid_density_mass" );  }
 namespace edensity { IntegerOptionKey const sliding_window( "edensity:sliding_window" );  }
+namespace edensity { BooleanOptionKey const cryoem_scatterers( "edensity:cryoem_scatterers" );  }
 namespace edensity { RealOptionKey const force_apix( "edensity:force_apix" );  }
 namespace edensity { RealOptionKey const fastdens_wt( "edensity:fastdens_wt" );  }
+namespace edensity { RealVectorOptionKey const fastdens_params( "edensity:fastdens_params" );  }
 namespace edensity { RealOptionKey const sliding_window_wt( "edensity:sliding_window_wt" );  }
 namespace edensity { BooleanOptionKey const score_sliding_window_context( "edensity:score_sliding_window_context" );  }
 namespace edensity { RealOptionKey const whole_structure_ca_wt( "edensity:whole_structure_ca_wt" );  }
@@ -679,6 +679,7 @@ namespace edensity { RealOptionKey const atom_mask( "edensity:atom_mask" );  }
 namespace edensity { RealOptionKey const ca_mask( "edensity:ca_mask" );  }
 namespace edensity { BooleanOptionKey const score_symm_complex( "edensity:score_symm_complex" );  }
 namespace edensity { RealOptionKey const sc_scaling( "edensity:sc_scaling" );  }
+namespace edensity { IntegerOptionKey const n_kbins( "edensity:n_kbins" );  }
 namespace edensity { RealOptionKey const render_sigma( "edensity:render_sigma" );  }
 namespace patterson { BooleanOptionKey const patterson( "patterson" );  }
 namespace patterson { BooleanOptionKey const debug( "patterson:debug" );  }

@@ -25,6 +25,9 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>  // b factors
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Edge.hh>
@@ -276,7 +279,7 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 
 	// atom_mask
 	OneGaussianScattering cscat = get_A( "C" );
-	core::Real mask_min = 2.0 * sqrt( 2.0 / cscat.k(PattersonB,reso/2) ); //?
+	core::Real mask_min = 3.0 * sqrt( 2.0 / cscat.k(effectiveB) );
 	ATOM_MASK = mask_min;
 
 	// 2 rho_calc
@@ -300,7 +303,7 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 				chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 				std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
 				OneGaussianScattering sig_j = get_A( elt_i );
-				core::Real k = sig_j.k( PattersonB, std::max( apix, reso/2 ) );
+				core::Real k = sig_j.k( effectiveB );
 				core::Real C = sig_j.C( k );
 
 				if ( is_missing_density( atom_i.xyz() ) ) continue;
@@ -374,12 +377,17 @@ ElectronDensity::init() {
 	score_window_context_ = basic::options::option[ basic::options::OptionKeys::edensity::score_sliding_window_context ]();
 	remap_symm_ = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
 	force_apix_ = basic::options::option[ basic::options::OptionKeys::edensity::force_apix ]();
+	nkbins_ = basic::options::option[ basic::options::OptionKeys::edensity::n_kbins ]();
 
 	// more defaults
 	DensScoreInMinimizer = true;
 	ExactDerivatives = basic::options::option[ basic::options::OptionKeys::edensity::debug_derivatives ]();
 
-	PattersonB = basic::options::option[ basic::options::OptionKeys::patterson::model_B ]();
+	// use-specified B factor (may be overridden)
+	effectiveB = 0;
+	if (basic::options::option[ basic::options::OptionKeys::patterson::model_B ].user())
+		effectiveB = basic::options::option[ basic::options::OptionKeys::patterson::model_B ]();
+
 	PattersonMinR = 3.0;
 	PattersonMaxR = 20.0;
 	if (basic::options::option[ basic::options::OptionKeys::patterson::radius_cutoffs ].user() ) {
@@ -395,7 +403,7 @@ ElectronDensity::init() {
 	p_extent = p_origin = numeric::xyzVector< core::Real >(0,0,0);
 	p_grid = numeric::xyzVector< core::Size >(0,0,0);
 
-	// only used when computing exact derivatives
+	// only used when computing numeric derivatives
 	NUM_DERIV_H = 0.1;
 	NUM_DERIV_H_CEN = NUM_DERIV_H;
 }
@@ -473,7 +481,7 @@ numeric::xyzMatrix< core::Real > ElectronDensity::rotAlign2DPose(
 			chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 			std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
 			OneGaussianScattering sig_j = get_A( elt_i );
-			core::Real k = sig_j.k( PattersonB, max_del_grid );
+			core::Real k = sig_j.k( effectiveB );
 			core::Real C = sig_j.C( k );
 
 			if ( (Size) j > rsd_i.last_backbone_atom())
@@ -538,7 +546,8 @@ numeric::xyzMatrix< core::Real > ElectronDensity::rotAlign2DPose(
 	}
 
 	/// 2: resample in cylindrical shells
-	core::Real shell_spacing = max_del_grid;
+	core::Real shell_spacing = std::max( cellDimensions[0]/((double)this->grid[0]) , cellDimensions[1]/((double)this->grid[1]) );
+	shell_spacing = 2*std::max( shell_spacing , cellDimensions[2]/((double)this->grid[2]) );
 	core::Size nshells = (core::Size) std::ceil( maxRadius / shell_spacing );
 	core::Size height_samples = (core::Size) std::ceil( (maxHeight-minHeight) / shell_spacing );
 	core::Real height_spacing = (maxHeight-minHeight) / (height_samples-1);
@@ -730,7 +739,7 @@ core::Real ElectronDensity::matchCentroidPose(
 
 	// symmetry
 	bool isSymm = (symmInfo.get() != NULL);
-	bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
+	bool remapSymm = remap_symm_;
 
 	///////////////////////////
 	/// 1 COMPUTE RHO_C, MASK
@@ -959,7 +968,7 @@ core::Real ElectronDensity::matchPose(
 
 	// symmetry
 	bool isSymm = (symmInfo.get() != NULL);
-	bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
+	bool remapSymm = remap_symm_;
 
 	///////////////////////////
 	/// 1 COMPUTE RHO_C, MASK
@@ -988,7 +997,7 @@ core::Real ElectronDensity::matchPose(
 			chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 			std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
 			OneGaussianScattering sig_j = get_A( elt_i );
-			core::Real k = sig_j.k( PattersonB, max_del_grid );
+			core::Real k = sig_j.k( effectiveB );
 			core::Real C = sig_j.C( k );
 
 			// sidechain weight
@@ -1218,7 +1227,7 @@ ElectronDensity::getIntensities( core::Size nbuckets, core::Real maxreso, core::
 /// @brief Compute intensities
 void
 ElectronDensity::getIntensities(
-	lightPose const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso,
+	poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso,
 	utility::vector1< core::Real > &Imodel, utility::vector1< core::Real > &Isol) {
 
 	// rhoc & FrhoC
@@ -1279,28 +1288,33 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core:
 				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
 				if ( bucket_i > (int)nbuckets ) {
 					Fdensity(x,y,z) = 0.0;
-				} else if ( bucket_i > 0 ) {
+				} else if ( bucket_i < 0 ) {
+					Fdensity(x,y,z) = 0.0;
+				} else {
 					Fdensity(x,y,z) *= scale_i[bucket_i];
 				}
 			}
 		}
 	}
 	numeric::fourier::ifft3(Fdensity, density);
+
+	// clear derived data
+	density_change_trigger();
 }
 
 
 void
-ElectronDensity::maskDensityMap( lightPose const &pose, core::Real radius ) {
+ElectronDensity::maskDensityMap( poseCoords const &pose, core::Real radius ) {
 	// get rho_c
-	const core::Real ATOM_MASK_PADDING = 1.5;
+	const core::Real ATOM_MASK_PADDING = 2.0;
 	if (radius == 0) { radius = ATOM_MASK; }
 
 	ObjexxFCL::FArray3D< float > mask;
 	mask.dimension(density.u1() , density.u2() , density.u3());
-	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) mask[i]=1.0;
+	mask=1.0;
 
 	for (int i=1 ; i<=(int)pose.size(); ++i) {
-		numeric::xyzVector< core::Real> cartX = pose[i].first - getTransform();
+		numeric::xyzVector< core::Real> cartX = pose[i].x_ - getTransform();
 		numeric::xyzVector< core::Real> fracX = c2f*cartX;
 		numeric::xyzVector< core::Real> atm_j, del_ij, atm_idx;
 		atm_idx[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
@@ -1334,7 +1348,7 @@ ElectronDensity::maskDensityMap( lightPose const &pose, core::Real radius ) {
 		}
 	}
 
-	for (int i=1; i<=density.u1()*density.u2()*density.u3(); ++i) {
+	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) {
 		density[i] *= (1-mask[i]);
 	}
 
@@ -1344,18 +1358,14 @@ ElectronDensity::maskDensityMap( lightPose const &pose, core::Real radius ) {
 	}
 
 	// clear derived data
-	fastdens_score.clear();
-	rho_calc.clear(); rho_solv.clear();
-	inv_rho_mask.clear();
-	Frho_calc.clear(); Frho_solv.clear();
-	Fdensity.clear();
+	density_change_trigger();
 }
 
 
 /// @brief Compute the FSC in the specified resolution range
 utility::vector1< core::Real >
 ElectronDensity::getFSC(
-	lightPose const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
+	poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso ) {
 
 	//Real maxreso = 0.0;  // HKL = 000
 	//Real minreso = (1/sqrt(3)) * sqrt(S2( density.u1()/2, density.u2()/2, density.u3()/2 ));
@@ -1442,7 +1452,7 @@ ElectronDensity::getFSC(
 
 
 core::Real
-ElectronDensity::getRSCC( lightPose const &pose ) {
+ElectronDensity::getRSCC( poseCoords const &pose ) {
 	// rhoc & FrhoC
 	calcRhoC( pose );
 
@@ -1506,24 +1516,32 @@ ElectronDensity::maxNominalRes() {
 
 //
 void
-ElectronDensity::calcRhoC( lightPose const &pose ) {
+ElectronDensity::calcRhoC( poseCoords const &pose ) {
 	// get rho_c
-	const core::Real ATOM_MASK_PADDING = 1.5;
+	const core::Real ATOM_MASK_PADDING = 2.0;
 	rho_calc.dimension(density.u1() , density.u2() , density.u3());
 	inv_rho_mask.dimension(density.u1() , density.u2() , density.u3());
-	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) {
-		rho_calc[i]=0.0;
-		inv_rho_mask[i] = 1.0;
+	rho_calc=0.0;
+	inv_rho_mask = 1.0;
+
+	bool use_Bs = pose_has_nonzero_Bs( pose );  // warn on using this?
+	if (!use_Bs) {
+		TR << "Input pose has no nonzero B factors ... setting to default." << std::endl;
 	}
 
 	for (int i=1 ; i<=(int)pose.size(); ++i) {
-		std::string elt_i = pose[i].second;
+		std::string elt_i = pose[i].elt_;
 		OneGaussianScattering sig_j = get_A( elt_i );
-		core::Real k = sig_j.k( PattersonB, max_del_grid );   // to do: B factor
+		core::Real k = sig_j.k( pose[i].B_ );
+		if (use_Bs) {
+			k = std::min ( k, 4*M_PI*M_PI/minimumB );
+		} else {
+			k = std::min ( k, 4*M_PI*M_PI/effectiveB );
+		}
 		core::Real C = sig_j.C( k );
 		if ( C < 1e-6 ) continue;
 
-		numeric::xyzVector< core::Real> cartX = pose[i].first - getTransform();
+		numeric::xyzVector< core::Real> cartX = pose[i].x_ - getTransform();
 		numeric::xyzVector< core::Real> fracX = c2f*cartX;
 		numeric::xyzVector< core::Real> atm_j, del_ij, atm_idx;
 		atm_idx[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
@@ -1568,23 +1586,33 @@ ElectronDensity::calcRhoC( lightPose const &pose ) {
 //fpd
 //   flat solvent model + bsol/ksol optimization
 void
-ElectronDensity::calcRhoCandSolvent( lightPose const &pose ) {
+ElectronDensity::calcRhoCandSolvent( poseCoords const &pose ) {
 	// get rho_c
-	const core::Real ATOM_MASK_PADDING = 1.5;
+	const core::Real ATOM_MASK_PADDING = 2.0;
 	rho_calc.dimension(density.u1() , density.u2() , density.u3());
 	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) rho_calc[i]=0.0;
 
 	rho_solv.dimension(density.u1() , density.u2() , density.u3());
 	for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) rho_solv[i]=1.0;
 
+	bool use_Bs = pose_has_nonzero_Bs( pose );
+	if (!use_Bs) {
+		TR << "Input pose has no nonzero B factors ... setting to default." << std::endl;
+	}
+
 	for (int i=1 ; i<=(int)pose.size(); ++i) {
-		std::string elt_i = pose[i].second;
+		std::string elt_i = pose[i].elt_;
 		OneGaussianScattering sig_j = get_A( elt_i );
-		core::Real k = sig_j.k( PattersonB, max_del_grid );   // to do: B factor (real-space!)
+		core::Real k = sig_j.k( pose[i].B_ );
+		if (use_Bs) {
+			k = std::min ( k, 4*M_PI*M_PI/minimumB );
+		} else {
+			k = std::min ( k, 4*M_PI*M_PI/effectiveB );
+		}
 		core::Real C = sig_j.C( k );
 		if ( C < 1e-6 ) continue;
 
-		numeric::xyzVector< core::Real> cartX = pose[i].first - getTransform();
+		numeric::xyzVector< core::Real> cartX = pose[i].x_ - getTransform();
 		numeric::xyzVector< core::Real> fracX = c2f*cartX;
 		numeric::xyzVector< core::Real> atm_j, del_ij, atm_idx;
 		atm_idx[0] = pos_mod (fracX[0]*grid[0] - origin[0] + 1 , (double)grid[0]);
@@ -1624,7 +1652,7 @@ ElectronDensity::calcRhoCandSolvent( lightPose const &pose ) {
 	numeric::fourier::fft3(rho_solv, Frho_solv);
 
 	// add solvent contribution to Fmodel
-	Real ksol = 0.35, bsol = 46.0;
+	Real ksol = 0.35, bsol = 46.0;  // TO DO! fit these
 	int H,K,L;
 	for (int z=1; z<=(int)density.u3(); ++z) {
 		H = (z < (int)density.u3()/2) ? z-1 : z-density.u3() - 1;
@@ -1713,7 +1741,7 @@ utility::vector1< ObjexxFCL::FArray3D< std::complex<double> > * > ElectronDensit
 		ObjexxFCL::FArray3D<double> drhoc_dx,drhoc_dy,drhoc_dz;
 		numeric::xyzVector< core::Real > del_ij;
 
-		core::Real k = S.k( PattersonB, max_del_grid );
+		core::Real k = S.k( effectiveB );
 		core::Real C = S.C( k );
 
 		drhoc_dx.dimension(p_grid[0], p_grid[1], p_grid[2]);
@@ -1766,112 +1794,256 @@ utility::vector1< ObjexxFCL::FArray3D< std::complex<double> > * > ElectronDensit
 /////////////////////////////////////
 /// setup oversampled maps for fast density scoring
 void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose) {
-	// oversample rho_obs
-	ObjexxFCL::FArray3D< double > rho_obs_oversample;
-
-	// uncomment to oversample
-	// fastgrid[0] = findSampling( 2*grid[0], MINMULT[0] );
-	// fastgrid[1] = findSampling( 2*grid[1], MINMULT[1] );
-	// fastgrid[2] = findSampling( 2*grid[2], MINMULT[2] );
-	//
-	// fastorigin[0] = fastgrid[0]*origin[0] / ((core::Real)grid[0]);
-	// fastorigin[1] = fastgrid[1]*origin[1] / ((core::Real)grid[1]);
-	// fastorigin[2] = fastgrid[2]*origin[2] / ((core::Real)grid[2]);
-	//
-	// resample( density, rho_obs_oversample, fastgrid );
-	// TR << "Oversample " << density.u1() << "x" << density.u2() << "x" << density.u3() << " to "
-	// 										<< rho_obs_oversample.u1() << "x" << rho_obs_oversample.u2() << "x" << rho_obs_oversample.u3() << std::endl;
-
-	//fpd  don't oversample
 	fastgrid = grid;
 	fastorigin = origin;
-	rho_obs_oversample = density;
 
-	// convolute with calculated density
-	ObjexxFCL::FArray3D< double > rhoc, drhoc_dx, drhoc_dy, drhoc_dz;
-	OneGaussianScattering S = get_A( "C" );
-	//int atmid = S.a();
+	utility::vector1< core::Real > fastdens_params;
+	if (basic::options::option[ basic::options::OptionKeys::edensity::fastdens_params ].user()) {
+		fastdens_params = basic::options::option[ basic::options::OptionKeys::edensity::fastdens_params ]();
+		runtime_assert( fastdens_params.size() == 2 );
+	} else {
+		fastdens_params.push_back( 0.4 );
+		fastdens_params.push_back( 0.6 );
+	}
 
-	numeric::xyzVector< core::Real > del_ij;
-	core::Real k = S.k( PattersonB, max_del_grid );
+	ObjexxFCL::FArray3D< double > rhoc, fastdens_score_i;
+	ObjexxFCL::FArray3D< std::complex<double> > Frhoo, Frhoc;
+	rhoc.dimension(fastgrid[0], fastgrid[1], fastgrid[2]);
 
+	// atom count
 	core::Size natms=0,nres=0;
 	for (core::Size i=1; i<=pose.total_residue(); ++i) {
-		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
-		nres++;
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue; nres++;
 		core::conformation::Residue const& rsd_i = pose.residue(i);
 		natms += rsd_i.nheavyatoms();
 	}
-	//core::Real grid_scale = (V*nres) / ((core::Real)(natms*fastgrid[0]*fastgrid[1]*fastgrid[2]));
 
-	rhoc.dimension(fastgrid[0], fastgrid[1], fastgrid[2]);
-	for (int z=1; z<=(int)fastgrid[2]; ++z) {
-		if (z < (int)fastgrid[2]/2)
-			del_ij[2] = ((core::Real)z - 1.0) / fastgrid[2];
-		else
-			del_ij[2] = (((core::Real)z - fastgrid[2] - 1.0)) / fastgrid[2];
-		for (int y=1; y<=(int)fastgrid[1]; ++y) {
-			if (y < (int)fastgrid[1]/2)
-				del_ij[1] = ((core::Real)y - 1.0) / fastgrid[1] ;
-			else
-				del_ij[1] = (((core::Real)y - fastgrid[1] - 1.0)) / fastgrid[1];
-			for (int x=1; x<=(int)fastgrid[0]; ++x) {
-				if (x < (int)fastgrid[0]/2)
-					del_ij[0] = ((core::Real)x - 1.0) / fastgrid[0];
+	fastdens_score.dimension( density.u1(), density.u2(), density.u3(), nkbins_);
+
+	core::Real max_val, min_val;
+
+	// compute k limits (corresponding to B=0 and B=1000)
+	OneGaussianScattering S_C = get_A( "C" );
+	OneGaussianScattering S_O = get_A( "O" );
+	OneGaussianScattering S_N = get_A( "N" );
+	OneGaussianScattering S_S = get_A( "S" );
+
+	kmin_ = S_C.k( 1000 ); // "infinite"
+	kmax_ = std::max( std::max( std::max (S_S.k( 0 ), S_O.k( 0 )) , S_N.k( 0 )), S_C.k( 0 ) );
+	kmax_ = std::min( kmax_, 4*M_PI*M_PI/(minimumB) );
+	TR << "Setting [kmin_,kmax_] to [" << kmin_ << "," << kmax_ << "]" << std::endl;
+	if (nkbins_ > 1) {
+		kstep_ = (kmax_-kmin_) / (nkbins_-1);
+	} else {
+		kstep_ = 0.0;
+	}
+
+	// transform + standardize density map
+	{
+		ObjexxFCL::FArray3D< double > dens_std;
+		dens_std.dimension( density.u1(), density.u2(), density.u3() );
+		for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i) {
+			dens_std[i] = (density[i]-dens_mean)/dens_stdev;
+		}
+		numeric::fourier::fft3(dens_std, Frhoo);
+	}
+
+	for (int kbin=nkbins_; kbin>=1; --kbin) {
+		rhoc = 0.0;
+		numeric::xyzVector< core::Real > del_ij;
+		core::Real k = (kbin-1)*kstep_ + kmin_;
+
+		if (nkbins_ == 1) {
+			OneGaussianScattering S = get_A( "C" );
+			numeric::xyzVector< core::Real > del_ij;
+			k = std::min ( S.k(0), 4*M_PI*M_PI/effectiveB );
+		}
+
+		if (k>0) {
+			k = std::min ( k, 4*M_PI*M_PI/minimumB );
+
+			core::Real ATOM_MASK_SQ = (18/k);  // very generous mask (rho<6e-6)
+			core::Real FIXED_MASK_SQ = (3*3);
+			core::Real C = pow(k, 1.5);
+			core::Real VV = voxel_volume();
+
+			core::Real rho_sum = 0.0, rho2_sum = 0.0;
+			for (int z=1; z<=(int)fastgrid[2]; ++z) {
+				if (z < (int)fastgrid[2]/2)
+					del_ij[2] = ((core::Real)z - 1.0) / fastgrid[2];
 				else
-					del_ij[0] = (((core::Real)x - fastgrid[0] - 1.0)) / fastgrid[0];
-					numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);
-
-				core::Real d2 = (cart_del_ij).length_squared();
-
-				rhoc(x,y,z) = exp(-k*d2);
+					del_ij[2] = (((core::Real)z - fastgrid[2] - 1.0)) / fastgrid[2];
+				del_ij[0] = del_ij[1] = 0.0;
+				if ((f2c*del_ij).length_squared() > ATOM_MASK_SQ) continue;  // early exit
+				for (int y=1; y<=(int)fastgrid[1]; ++y) {
+					if (y < (int)fastgrid[1]/2)
+						del_ij[1] = ((core::Real)y - 1.0) / fastgrid[1] ;
+					else
+						del_ij[1] = (((core::Real)y - fastgrid[1] - 1.0)) / fastgrid[1];
+					del_ij[0] = 0.0;
+					if ((f2c*del_ij).length_squared() > ATOM_MASK_SQ) continue;  // early exit
+					for (int x=1; x<=(int)fastgrid[0]; ++x) {
+						if (x < (int)fastgrid[0]/2)
+							del_ij[0] = ((core::Real)x - 1.0) / fastgrid[0];
+						else
+							del_ij[0] = (((core::Real)x - fastgrid[0] - 1.0)) / fastgrid[0];
+							numeric::xyzVector< core::Real > cart_del_ij = (f2c*del_ij);
+						core::Real d2 = (cart_del_ij).length_squared();
+						if (d2 <= ATOM_MASK_SQ) {
+							rhoc(x,y,z) = C*VV*exp(-k*d2);
+						}
+					}
+				}
 			}
+
+			// standardize density & convert to an approximate CC
+			// this has been minimally tuned but might be improved
+			for (int i=0; i<fastgrid[0]*fastgrid[1]*fastgrid[2]; ++i) {
+				rhoc[i] = rhoc[i] * (std::pow( k, -fastdens_params[1] ) - fastdens_params[2]);
+			}
+		}
+
+		// ffts
+		numeric::fourier::fft3(rhoc, Frhoc);
+		Frhoc(1,1,1) = Frhoo(1,1,1) = 0.0;
+
+		TR << "Bin " << kbin << ":  B(C/N/O/S)=" << S_C.B(k) << " / " << S_N.B(k) << " / " << S_O.B(k) << " / " << S_S.B(k) << "  sum=" << Frhoc(1,1,1) << std::endl;
+
+		// convolute
+		Frhoo(1,1,1) = 0.0;
+		for (int i=1; i<=density.u1(); i++)
+		for (int j=1; j<=density.u2(); j++)
+		for (int k=1; k<=density.u3(); k++) {
+			Frhoc(i,j,k) *= ( Frhoo(i,j,k) );
+		}
+		numeric::fourier::ifft3( Frhoc , fastdens_score_i );
+
+		// copy to big array
+		for (int i=1; i<=density.u1(); i++)
+		for (int j=1; j<=density.u2(); j++)
+		for (int k=1; k<=density.u3(); k++) {
+ 			fastdens_score(i,j,k,kbin) = fastdens_score_i(i,j,k);
+		}
+
+		// normalization
+		//    [0.5% -- 99.5%] in min temp bin
+		if (kbin == nkbins_) {
+			std::vector<core::Real> scores_i( &fastdens_score_i[0], &fastdens_score_i[0]+density.u1()*density.u2()*density.u3() );
+			std::sort (scores_i.begin(), scores_i.end());
+			core::Size low_cut = (core::Size) std::floor( 0.005 * density.u1()*density.u2()*density.u3() );
+			core::Size high_cut = (core::Size) std::ceil( 0.995 * density.u1()*density.u2()*density.u3() );
+			min_val = scores_i[low_cut];
+			max_val = scores_i[high_cut];
+		}
+
+		if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]()) {
+			core::Real scalefactor = (natms/nres);
+			core::Real mu=0.5*(max_val+min_val), sigma=0.5*scalefactor*(max_val-min_val);
+			for (int i=1; i<=density.u1(); i++)
+			for (int j=1; j<=density.u2(); j++)
+			for (int k=1; k<=density.u3(); k++) {
+				fastdens_score_i(i,j,k) = (fastdens_score(i,j,k,kbin)-mu)/sigma;
+			}
+			std::ostringstream oss; oss << "fastdens" << kbin << ".mrc";
+			ElectronDensity(fastdens_score_i,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( oss.str() );
 		}
 	}
 
-	ObjexxFCL::FArray3D< std::complex<double> > Frhoo, Frhoc, Fdrhoc_dx, Fdrhoc_dy, Fdrhoc_dz;
-
-	// ffts
-	numeric::fourier::fft3(rho_obs_oversample, Frhoo);
-	numeric::fourier::fft3(rhoc, Frhoc);
-
-	// convolute
-	for (int i=1; i<=rho_obs_oversample.u1(); i++)
-	for (int j=1; j<=rho_obs_oversample.u2(); j++)
-	for (int k=1; k<=rho_obs_oversample.u3(); k++) {
-		Frhoc(i,j,k)     *= ( Frhoo(i,j,k) );
-	}
-
-	numeric::fourier::ifft3( Frhoc , fastdens_score );
-
-	// scale 'fastdens_score' so that the best score is nres/natms
-	// worst is -nres/natms
-	core::Real valMin=1e30, valMax=-1e30, mu, sigma;
-	for (int i=1; i<=rho_obs_oversample.u1(); i++)
-	for (int j=1; j<=rho_obs_oversample.u2(); j++)
-	for (int k=1; k<=rho_obs_oversample.u3(); k++) {
-		valMin = std::min(valMin,fastdens_score(i,j,k));
-		valMax = std::max(valMax,fastdens_score(i,j,k));
-	}
-	sigma = 0.5*(natms/nres)*(valMax-valMin);
-	mu = 0.5*(valMin+valMax);
-	for (int i=1; i<=rho_obs_oversample.u1(); i++)
-	for (int j=1; j<=rho_obs_oversample.u2(); j++)
-	for (int k=1; k<=rho_obs_oversample.u3(); k++) {
-		fastdens_score(i,j,k) = ( fastdens_score(i,j,k) - mu ) / sigma;
-	}
-
-	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]()) {
-		ElectronDensity(rho_obs_oversample,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "fastdens_rhoobs.mrc");
-		ElectronDensity(fastdens_score,1.0, numeric::xyzVector< core::Real >(0,0,0), false ).writeMRC( "fastdens_score.mrc");
+	core::Real scalefactor = (natms/nres);
+	core::Real mu=0.0 /*0.5*(max_val+min_val)*/, sigma=0.5*scalefactor*(max_val-min_val);
+	for (int i=0; i<nkbins_*density.u1()*density.u2()*density.u3(); ++i) {
+		fastdens_score[i] = (fastdens_score[i]-mu)/sigma;
 	}
 
 	// spline coeffs
-	ObjexxFCL::FArray3D< double > temp_coeffs;
+	ObjexxFCL::FArray4D< double > temp_coeffs;
 	spline_coeffs( fastdens_score, temp_coeffs);
 	fastdens_score = temp_coeffs;
 }
 
+
+// use a pose to rescale the fastscoring bins so they correspond to RSCC
+void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose) {
+	if ( fastdens_score.u1()*fastdens_score.u2()*fastdens_score.u3()*fastdens_score.u4() == 0 )
+		setup_fastscoring_first_time(pose);
+
+	// pose->poseCoords
+	poseCoords litePose;
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+	}
+	for (int i=1; i<=pose.total_residue(); ++i) {
+		if (!remap_symm_ && symm_info && !symm_info->bb_is_independent( i ) ) continue;
+		core::conformation::Residue const & rsd_i ( pose.residue(i) );
+		if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+
+		core::Size natoms = rsd_i.nheavyatoms();
+		for (int j=1; j<=natoms; ++j) {
+			core::conformation::Atom const &atom_j( rsd_i.atom(j) );
+			core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+
+			poseCoord coord_j;
+			coord_j.x_ = rsd_i.xyz( j );
+			coord_j.B_ = 0;
+			coord_j.elt_ = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
+
+			litePose.push_back( coord_j );
+		}
+	}
+
+	core::Size ref=1;
+	core::Real RSCC_ref=-999;
+	utility::vector1< core::Real > RSCC(nkbins_), overlap(nkbins_);
+	numeric::xyzVector< core::Real > fracX, idxX;
+	for (int kbin=nkbins_; kbin>=1; --kbin) {
+		core::Real k = (kbin-1)*kstep_ + kmin_;
+		if (k==0) continue;
+
+		overlap[kbin] = 0.0;
+		for (int i=1; i<=litePose.size(); ++i ) {
+			std::string &elt_i = litePose[i].elt_;
+			OneGaussianScattering sig_j = get_A( elt_i );
+			litePose[i].B_ = std::max(sig_j.B(k),0.01);
+
+			// compute overlap
+			fracX = c2f*litePose[i].x_;
+			idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
+			idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
+			idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
+			idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
+																						 fracX[1]*fastgrid[1] - fastorigin[1] + 1,
+																						 fracX[2]*fastgrid[2] - fastorigin[2] + 1);
+			core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
+			core::Real W = sig_j.a(  ) / 6.0;
+			overlap[kbin] += W*score_i;
+		}
+
+		// compute RSCC
+		RSCC[kbin] = getRSCC(litePose);
+		if (RSCC[kbin] > RSCC_ref) {
+			RSCC_ref = RSCC[kbin];
+			ref = kbin;
+		}
+	}
+
+	// rescale
+	for (int kbin=nkbins_; kbin>=1; --kbin) {
+		core::Real k = (kbin-1)*kstep_ + kmin_;
+		if (k==0) continue;
+
+		core::Real scale_i = RSCC[kbin]*overlap[ref] / (RSCC[ref]*overlap[kbin]);
+		TR << "BIN " << kbin << " [" << k << "] " << RSCC[kbin] << "  " << overlap[kbin] << "  " << scale_i << std::endl;
+
+		for (int i=1; i<=density.u1(); i++)
+		for (int j=1; j<=density.u2(); j++)
+		for (int k=1; k<=density.u3(); k++) {
+ 			fastdens_score(i,j,k,kbin) *= scale_i;
+		}
+	}
+}
 
 
 
@@ -2251,7 +2423,7 @@ core::Real ElectronDensity::matchPoseToPatterson(
 			chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
 			std::string elt_i = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
 			OneGaussianScattering sig_j = get_A( elt_i );
-			core::Real k = sig_j.k( PattersonB, max_del_grid );
+			core::Real k = sig_j.k( effectiveB );
 			core::Real C = sig_j.C( k );
 
 			if ( (Size) j > rsd_i.last_backbone_atom()+1)  // count CB as bb atom
@@ -2568,7 +2740,7 @@ core::Real ElectronDensity::rematchResToPatterson( core::conformation::Residue c
 	int nheavyatoms_old = rho_calc_atms[resid].size();
 	for (int j=1 ; j<=nheavyatoms_old; ++j) {
 		OneGaussianScattering const &sig_j = rho_calc_as[resid][j];
-		core::Real k = sig_j.k( PattersonB, max_del_grid );
+		core::Real k = sig_j.k( effectiveB );
 		core::Real C = sig_j.C( k );
 
 		// if this atom's weight is 0 continue
@@ -2620,7 +2792,7 @@ core::Real ElectronDensity::rematchResToPatterson( core::conformation::Residue c
 		std::string elt_i = atom_type_set[ rsd.atom_type_index( j ) ].element();
 
 		OneGaussianScattering sig_j = get_A( elt_i );
-		core::Real k = sig_j.k( PattersonB, max_del_grid );
+		core::Real k = sig_j.k( effectiveB );
 		core::Real C = sig_j.C( k );
 
 		// skip randomized residues / residues with no mass (e.g. centroids)
@@ -2735,7 +2907,7 @@ void ElectronDensity::updateCachedDensity( core::conformation::Residue const &rs
 	int nheavyatoms_old = rho_calc_atms[resid].size();
 	for (int j=1 ; j<=nheavyatoms_old; ++j) {
 		OneGaussianScattering const &sig_j = rho_calc_as[resid][j];
-		core::Real k = sig_j.k( PattersonB, max_del_grid );
+		core::Real k = sig_j.k( effectiveB );
 		core::Real C = sig_j.C( k );
 
 		// if this atom's weight is 0 continue
@@ -2779,7 +2951,7 @@ void ElectronDensity::updateCachedDensity( core::conformation::Residue const &rs
 		std::string elt_i = atom_type_set[ rsd.atom_type_index( j ) ].element();
 
 		OneGaussianScattering sig_j = get_A( elt_i );
-		core::Real k = sig_j.k( PattersonB, max_del_grid );
+		core::Real k = sig_j.k( effectiveB );
 		core::Real C = sig_j.C( k );
 
 		rho_calc_atms[resid][j] = atm_i.xyz()-p_CoM;
@@ -2831,7 +3003,7 @@ void ElectronDensity::compute_symm_rotations(
 ) {
 	// symmetry
 	bool isSymm = (symmInfo.get() != NULL);
-	bool remapSymm = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
+	bool remapSymm = remap_symm_;
 
 	if (!isSymm || !remapSymm) return;
 
@@ -2953,7 +3125,7 @@ void ElectronDensity::compute_symm_rotations(
 	}
 }
 
-
+//FPD >>this should really live in pose datacache
 void ElectronDensity::clear_dCCdx_res_cache( core::pose::Pose const &pose ) {
 	for (int i=1, iend=pose.total_residue(); i<=iend; ++i) {
 		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
@@ -2988,7 +3160,7 @@ void ElectronDensity::compute_rho(core::pose::Pose const & pose,
 		std::string elt_i = atom_type_set[ pose.residue(ires).atom_type_index( iatom ) ].element();
 
 		OneGaussianScattering sig_j = get_A( elt_i );
-		core::Real k = sig_j.k( PattersonB, max_del_grid );
+		core::Real k = sig_j.k( effectiveB );
 		core::Real C = sig_j.C( k );
 
 		if ( (Size) iatom > pose.residue(ires).last_backbone_atom()) {
@@ -3047,35 +3219,6 @@ void ElectronDensity::compute_rho(core::pose::Pose const & pose,
 		}
 
 	}
-}
-
-void conj_map_times(ObjexxFCL::FArray3D< std::complex<double> > & map_product, ObjexxFCL::FArray3D< std::complex<double> > const & mapA, ObjexxFCL::FArray3D< std::complex<double> > const & mapB) {
-	assert(mapA.u1() == mapB.u1());
-	assert(mapA.u2() == mapB.u2());
-	assert(mapA.u3() == mapB.u3());
-
-	map_product.dimension(mapA.u1(), mapA.u2(), mapA.u3());
-	for (Size i=0; i < mapA.size(); i++) {
-		map_product[i] = std::conj(mapA[i]) * mapB[i];
-	}
-}
-
-//·[A(x) * B(y-x)] over y
-ObjexxFCL::FArray3D< double > convolute_maps( ObjexxFCL::FArray3D< double > const & mapA, ObjexxFCL::FArray3D< double > const & mapB) {
-
-	ObjexxFCL::FArray3D< std::complex<double> > FmapA;
-	numeric::fourier::fft3(mapA, FmapA);
-
-	ObjexxFCL::FArray3D< std::complex<double> > FmapB;
-	numeric::fourier::fft3(mapB, FmapB);
-
-	ObjexxFCL::FArray3D< std::complex<double> > Fconv_map;
-	conj_map_times(Fconv_map, FmapB, FmapA );
-
-	ObjexxFCL::FArray3D< double > conv_map;
-	numeric::fourier::ifft3(Fconv_map , conv_map);
-
-	return conv_map;
 }
 
 /*
@@ -3465,15 +3608,15 @@ core::Real ElectronDensity::matchRes(
 		if ( i <= nResAtms) {
 			std::string elt_i = atom_type_set[ rsd.atom_type_index( i ) ].element();
 			OneGaussianScattering sig_j = get_A( elt_i );
-			k = sig_j.k( PattersonB, max_del_grid );
+			k = sig_j.k( effectiveB );
 			C = sig_j.C( k );
 		} else if (i<= lastMaskedAtom) {
 			OneGaussianScattering const &sig_j = contextAtomAs[i-nResAtms];
-			k = sig_j.k( PattersonB, max_del_grid );
+			k = sig_j.k( effectiveB );
 			C = sig_j.C( k );
 		} else {
 			OneGaussianScattering const &sig_j = neighborAtomAs[i-lastMaskedAtom];
-			k = sig_j.k( PattersonB, max_del_grid );
+			k = sig_j.k( effectiveB );
 			C = sig_j.C( k );
 		}
 
@@ -3644,7 +3787,8 @@ ElectronDensity::matchResFast(
 	int resid,
 	core::conformation::Residue const &rsd,
 	core::pose::Pose const &pose,
-	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/
+	core::conformation::symmetry::SymmetryInfoCOP symmInfo /*=NULL*/,
+	bool ignoreBs /*=false*/
 ) {
 	// make sure map is loaded
 	if (!isLoaded) {
@@ -3652,7 +3796,7 @@ ElectronDensity::matchResFast(
 		return 0.0;
 	}
 
-	if ( fastdens_score.u1()*fastdens_score.u2()*fastdens_score.u3() == 0 )
+	if ( fastdens_score.u1()*fastdens_score.u2()*fastdens_score.u3()*fastdens_score.u4() == 0 )
 		setup_fastscoring_first_time(pose);
 
 	if ( scoring_mask_.find(resid) != scoring_mask_.end() ) return 0.0;
@@ -3667,6 +3811,18 @@ ElectronDensity::matchResFast(
 	core::Real score = 0;
 	numeric::xyzVector< core::Real > fracX, idxX;
 	for (Size i=1; i<=rsd.nheavyatoms(); ++i) {
+		chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
+		std::string elt_i = atom_type_set[ rsd.atom_type_index( i ) ].element();
+		OneGaussianScattering sig_j = get_A( elt_i );
+		core::Real B = pose.pdb_info()->temperature( rsd.seqpos(), i );
+		core::Real k = sig_j.k( B );
+
+		if (ignoreBs) k = 4*M_PI*M_PI/effectiveB;
+
+		core::Real kbin = (k - kmin_)/kstep_ + 1;
+		if (kbin<1) kbin=1;
+		if (kbin>nkbins_) kbin=nkbins_;
+
 		fracX = c2f*rsd.atom(i).xyz();
 
 		idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
@@ -3675,15 +3831,16 @@ ElectronDensity::matchResFast(
 		idxX = numeric::xyzVector<core::Real>( fracX[0]*fastgrid[0] - fastorigin[0] + 1,
 		                                       fracX[1]*fastgrid[1] - fastorigin[1] + 1,
 		                                       fracX[2]*fastgrid[2] - fastorigin[2] + 1);
-		core::Real score_i = interp_spline( fastdens_score , idxX );
-		score += score_i;
+		core::Real score_i = interp_spline( fastdens_score , kbin, idxX );
+		core::Real W = sig_j.a(  ) / 6.0;
+		score += W*score_i;
 	}
 
 	return score;
 }
 
 
-//  Compute the gradient (sliding_window density score)
+//  Compute the gradient (fast density score)
 void ElectronDensity::dCCdx_fastRes(
 				int atmid, int resid,
 				numeric::xyzVector<core::Real> const &X,
@@ -3697,7 +3854,7 @@ void ElectronDensity::dCCdx_fastRes(
 		return;
 	}
 
-	if ( fastdens_score.u1()*fastdens_score.u2()*fastdens_score.u3() == 0 )
+	if ( fastdens_score.u1()*fastdens_score.u2()*fastdens_score.u3()*fastdens_score.u4() == 0 )
 		setup_fastscoring_first_time(pose);
 
 	if ( scoring_mask_.find(resid) != scoring_mask_.end() ) return;
@@ -3709,10 +3866,24 @@ void ElectronDensity::dCCdx_fastRes(
 	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
 	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
 
-	numeric::xyzVector<core::Real> dCCdX_grid = interp_dspline( fastdens_score , idxX );
-	dCCdX[0] = dCCdX_grid[0]*c2f(1,1)*fastgrid[0] + dCCdX_grid[1]*c2f(2,1)*fastgrid[1] + dCCdX_grid[2]*c2f(3,1)*fastgrid[2];
-	dCCdX[1] = dCCdX_grid[0]*c2f(1,2)*fastgrid[0] + dCCdX_grid[1]*c2f(2,2)*fastgrid[1] + dCCdX_grid[2]*c2f(3,2)*fastgrid[2];
-	dCCdX[2] = dCCdX_grid[0]*c2f(1,3)*fastgrid[0] + dCCdX_grid[1]*c2f(2,3)*fastgrid[1] + dCCdX_grid[2]*c2f(3,3)*fastgrid[2];
+	chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
+	std::string elt_i = atom_type_set[ rsd.atom_type_index( atmid ) ].element();
+	OneGaussianScattering sig_j = get_A( elt_i );
+	core::Real B = pose.pdb_info()->temperature( rsd.seqpos(), atmid );
+
+	core::Real k = sig_j.k( B );
+	core::Real kbin = (k - kmin_)/kstep_ + 1;
+	if (kbin<1) kbin=1;
+	if (kbin>nkbins_) kbin=nkbins_;
+
+	numeric::xyzVector<core::Real> dCCdX_grid;
+	core::Real dkbin;
+
+	core::Real W = sig_j.a(  ) / 6.0;
+	interp_dspline( fastdens_score , idxX, kbin,  dCCdX_grid, dkbin );
+	dCCdX[0] = W*dCCdX_grid[0]*c2f(1,1)*fastgrid[0] + W*dCCdX_grid[1]*c2f(2,1)*fastgrid[1] + W*dCCdX_grid[2]*c2f(3,1)*fastgrid[2];
+	dCCdX[1] = W*dCCdX_grid[0]*c2f(1,2)*fastgrid[0] + W*dCCdX_grid[1]*c2f(2,2)*fastgrid[1] + W*dCCdX_grid[2]*c2f(3,2)*fastgrid[2];
+	dCCdX[2] = W*dCCdX_grid[0]*c2f(1,3)*fastgrid[0] + W*dCCdX_grid[1]*c2f(2,3)*fastgrid[1] + W*dCCdX_grid[2]*c2f(3,3)*fastgrid[2];
 
 	if (ExactDerivatives) {
 		numeric::xyzVector<core::Real> dCCdX1 = dCCdX;
@@ -3721,19 +3892,14 @@ void ElectronDensity::dCCdx_fastRes(
 
 		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0]+NUM_DERIV_H_CEN,X[1],X[2] ) );
 		core::Real CC_px = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
-
 		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0]-NUM_DERIV_H_CEN,X[1],X[2] ) );
 		core::Real CC_mx = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
-
 		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1]+NUM_DERIV_H_CEN,X[2] ) );
 		core::Real CC_py = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
-
 		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1]-NUM_DERIV_H_CEN,X[2] ) );
 		core::Real CC_my = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
-
 		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1],X[2]+NUM_DERIV_H_CEN ) );
 		core::Real CC_pz = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
-
 		rsd_copy.atom( atmid ).xyz( numeric::xyzVector<core::Real>( X[0],X[1],X[2]-NUM_DERIV_H_CEN ) );
 		core::Real CC_mz = getDensityMap().matchResFast( resid, rsd_copy, pose, NULL );
 
@@ -3747,6 +3913,55 @@ void ElectronDensity::dCCdx_fastRes(
 		TR << "   " <<  dCCdX<< "  ;  " <<  dCCdX1 << std::endl;
 	}
 }
+
+//  Compute the gradient (fast density score) w.r.t B factors
+Real
+ElectronDensity::dCCdB_fastRes(
+	int atmid, int resid,
+	core::conformation::Residue const &rsd,
+	core::pose::Pose const &pose
+)
+{
+	// make sure map is loaded
+	if (!isLoaded) {
+		TR << "[ ERROR ]  ElectronDensity::dCCdB_fast called but no map is loaded!\n";
+		return 0;
+	}
+
+	if ( fastdens_score.u1()*fastdens_score.u2()*fastdens_score.u3()*fastdens_score.u4() == 0 )
+		setup_fastscoring_first_time(pose);
+
+	if ( scoring_mask_.find(resid) != scoring_mask_.end() ) return 0;
+	if ( pose.residue(resid).aa() == core::chemical::aa_vrt ) return 0;
+
+	numeric::xyzVector<core::Real> const &X = rsd.xyz(atmid);
+	numeric::xyzVector<core::Real> fracX = c2f*X;
+	numeric::xyzVector<core::Real> idxX;
+	idxX[0] = pos_mod (fracX[0]*fastgrid[0] - fastorigin[0] + 1 , (double)fastgrid[0]);
+	idxX[1] = pos_mod (fracX[1]*fastgrid[1] - fastorigin[1] + 1 , (double)fastgrid[1]);
+	idxX[2] = pos_mod (fracX[2]*fastgrid[2] - fastorigin[2] + 1 , (double)fastgrid[2]);
+
+	chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
+	std::string elt_i = atom_type_set[ rsd.atom_type_index( atmid ) ].element();
+	OneGaussianScattering sig_j = get_A( elt_i );
+	core::Real B = pose.pdb_info()->temperature( rsd.seqpos(), atmid );
+
+	core::Real k = sig_j.k( B );
+	core::Real kbin = (k - kmin_)/kstep_ + 1;
+	if (kbin<1 || kbin>nkbins_)
+		return 0;
+
+	numeric::xyzVector<core::Real> dCCdX_grid;
+	core::Real dscore_dkbin=0.0, dscore_dk;
+	interp_dspline( fastdens_score , idxX, kbin,  dCCdX_grid, dscore_dkbin );
+	dscore_dk = dscore_dkbin / kstep_;
+
+	core::Real W = sig_j.a(  ) / 6.0;
+	Real dCCdb = W*dscore_dk*sig_j.dk( B );
+
+	return dCCdb;
+}
+
 
 /////////////////////////////////////
 //  Compute the gradient (sliding_window density score)
@@ -4060,7 +4275,7 @@ ElectronDensity::readMRCandResize(
 	int  crs2xyz[3], extent[3], mode, symBytes, grid[3], origin[3];
 	int  xyz2crs[3], vol_xsize, vol_ysize, vol_zsize;
 	int xIndex, yIndex, zIndex, vol_xySize, coord[3];
-	long dataOffset, filesize;
+	unsigned long long dataOffset, filesize;
 	float *rowdata;
 
 	bool swap=false;
@@ -4127,7 +4342,8 @@ ElectronDensity::readMRCandResize(
 		swap4_aligned(&symBytes, 1);
 	}
 
-	TR << " Setting resolution to " << reso << "A" << std::endl;
+	if (reso != 0) TR << " Setting resolution to " << reso << "A" << std::endl;
+	else TR << " Setting resolution to AUTO" << std::endl;
 	TR << "          atom mask to " << ATOM_MASK << "A" << std::endl;
 	TR << "            CA mask to " << CA_MASK << "A" << std::endl;
 	TR << " Read density map'" << mapfile << "'" << std::endl;
@@ -4137,8 +4353,6 @@ ElectronDensity::readMRCandResize(
 	TR << "       grid: " << grid[0] << " x " << grid[1] << " x " << grid[2] << std::endl;
 	TR << "    celldim: " << cellDimensions[0] << " x " << cellDimensions[1] << " x " << cellDimensions[2] << std::endl;
 	TR << " cellangles: " << cellAngles[0] << " x " << cellAngles[1] << " x " << cellAngles[2] << std::endl;
-	TR << "    crs2xyz: " << crs2xyz[0] << " x " << crs2xyz[1] << " x " << crs2xyz[2] << std::endl;
-	TR << "   symBytes: " << symBytes << "\n";
 
 	// Check the dataOffset: this fixes the problem caused by files claiming
 	// to have symmetry records when they do not.
@@ -4160,6 +4374,7 @@ ElectronDensity::readMRCandResize(
 				TR << "[ WARNING ]  File is larger than expected and doesn't match header.  Reading anyway." << std::endl;
 		} else {
 			TR << "[ ERROR ] File is MUCH larger than expected and doesn't match header.  Not loading map." << std::endl;
+			TR << dataOffset  << std::endl;
 			return false;
 		}
 	}
@@ -4270,6 +4485,7 @@ ElectronDensity::readMRCandResize(
 	/// POST PROCESSING
 	// expand to unit cell
 	this->computeCrystParams();
+	TR << " voxel vol.: " << voxel_volume() << std::endl;
 
 	// mrc format maps occasionally specify a real-valued origin in a different spot in the header
  	if (  altorigin[0]!=0 &&  altorigin[0]!=0 &&  altorigin[0]!=0 &&
@@ -4304,53 +4520,53 @@ ElectronDensity::readMRCandResize(
 	// resample the map
 	if (gridSpacing > 0) this->resize( gridSpacing );
 
-	// max_del_grid is used to blur f_calc (simulating low-res scattering)
-	//    if the target resolution is greater than that allowed by max_del_grid, adjust max_del_grid
-	max_del_grid = std::max( cellDimensions[0]/((double)this->grid[0]) , cellDimensions[1]/((double)this->grid[1]) );
+	// >>> figure out effective B <<<
+	core::Real max_del_grid = std::max( cellDimensions[0]/((double)this->grid[0]) , cellDimensions[1]/((double)this->grid[1]) );
 	max_del_grid = std::max( max_del_grid , cellDimensions[2]/((double)this->grid[2]) );
-	if (reso/2 > max_del_grid) max_del_grid = reso/2;
 
-	// if "auto" input resolution is given, assume that the map is oversampled
-	if (reso == 0) max_del_grid *= 1.5;
+	// if input resolution is given, use that as long as it is greater than grid spacing
+	TR << "Minimum resolution = " << 2*max_del_grid << std::endl;
 
-	// potentially adjust mask
-	{
-		OneGaussianScattering cscat = get_A( "C" );
-		// make sure mask extends >= 2 carbon STDEVS
-		// at this min value there will be a small derivative discontinuity ... is this problematic?
-		core::Real mask_min = 2.0 * sqrt( 2.0 / cscat.k(PattersonB,max_del_grid) );
-		if (ATOM_MASK < mask_min) {
-			TR << "OVERRIDING ATOM MASK SETTING (was " << ATOM_MASK << ", now " << mask_min << ")" << std::endl;
-			ATOM_MASK = mask_min;
-		}
-		mask_min = 2.0 * sqrt(2.0) * std::max( 2.4+0.8*reso , reso ) / M_PI;
-		if (CA_MASK < mask_min) {
-			TR << "OVERRIDING CA MASK SETTING (was " << CA_MASK << ", now " << mask_min << ")" << std::endl;
-			CA_MASK = mask_min;
-		}
+	// finally, set effective B factor
+	minimumB = 16*max_del_grid*max_del_grid;
+	TR << "Minimum B factor = " << minimumB << std::endl;
+
+	// if "auto" input resolution is given (and there is no b factor fitting), assume oversampling
+	if (reso == 0)
+		max_del_grid *= 1.5;
+	else
+		max_del_grid = std::max( max_del_grid, reso/2 );
+
+	// if input resolution is given, use that as long as it is greater than grid spacing
+	TR << "Effective resolution = " << 2*max_del_grid << std::endl;
+
+	// finally, set effective B factor
+	if (effectiveB == 0)  // may be directly set via a flag
+		effectiveB = 16*max_del_grid*max_del_grid;
+	else
+		effectiveB = std::max( effectiveB, minimumB );
+	TR << "Effective B factor = " << effectiveB << std::endl;
+
+	// adjust mask widths based on resolution
+	OneGaussianScattering cscat = get_A( "C" );
+
+	// make sure mask extends >= 2 carbon STDEVS
+	core::Real mask_min = 2.0 * sqrt( effectiveB / (2*M_PI*M_PI) );
+	if (ATOM_MASK < mask_min) {
+		TR << "Override ATOM_MASK (was " << ATOM_MASK << ", now " << mask_min << ")" << std::endl;
+		ATOM_MASK = mask_min;
 	}
-
-	// fft
-	//numeric::fourier::fft3(density, Fdensity);
-
-	// post-processing
-	this->computeStats();
-	this->computeGradients();
+	mask_min = 2.0 * sqrt(2.0) * std::max( 2.4+1.6*reso , reso ) / M_PI;
+	if (CA_MASK < mask_min) {
+		TR << "Override CA_MASK (was " << CA_MASK << ", now " << mask_min << ")" << std::endl;
+		CA_MASK = mask_min;
+	}
 
 	// set map resolution
 	this->reso = reso;
 
-	// clear derived data (will be recomputed if needed)
-	fastdens_score.clear();
-
-	// ... patterson
-	PattersonEpsilon.clear(); p_o.clear();
-	p_extent = numeric::xyzVector< core::Real >(0,0,0);
-
-	// ... density tools
-	rho_calc.clear(); rho_solv.clear();
-	inv_rho_mask.clear();
-	Frho_calc.clear(); Frho_solv.clear();
+	// update/clear derived data
+	density_change_trigger();
 
 	// we're done!
 	isLoaded = true;
@@ -4600,7 +4816,7 @@ bool ElectronDensity::writeMAT(std::string filestem) {
 
 /////////////////////////////////////
 //  DEBUGGING: write _this_ map in MRC format
-bool ElectronDensity::writeMRC(std::string mapfilename) {
+bool ElectronDensity::writeMRC(std::string mapfilename, bool writeRhoCalc, bool writeRhoMask) {
 	std::fstream outx( (mapfilename).c_str() , std::ios::binary | std::ios::out );
 
 	float buff_f;
@@ -4613,6 +4829,13 @@ bool ElectronDensity::writeMRC(std::string mapfilename) {
 		TR.Error << "[ ERROR ]  Error opening MRC map for writing." << std::endl;
 		return false;
 	}
+
+	runtime_assert( !( writeRhoCalc && writeRhoMask ) ); // for now
+
+	if (writeRhoCalc)
+		runtime_assert( density.u1() == rho_calc.u1() && density.u2() == rho_calc.u2() && density.u3() == rho_calc.u3() );
+	if (writeRhoMask)
+		runtime_assert( density.u1() == inv_rho_mask.u1() && density.u2() == inv_rho_mask.u2() && density.u3() == inv_rho_mask.u3() );
 
 	// extent
 	buff_vi[0] = density.u1(); buff_vi[1] = density.u2(); buff_vi[2] = density.u3();
@@ -4683,12 +4906,35 @@ bool ElectronDensity::writeMRC(std::string mapfilename) {
 		for (coord[1] = 1; coord[1] <= density.u2(); coord[1]++) {
 			for (coord[0] = 1; coord[0] <= density.u1(); coord[0]++) {
 				buff_f = (float) density(coord[0],coord[1],coord[2]);
+				if (writeRhoCalc) buff_f = (float) rho_calc(coord[0],coord[1],coord[2]);
+				if (writeRhoMask) buff_f = 1.0 - (float) inv_rho_mask(coord[0],coord[1],coord[2]);
 				outx.write(reinterpret_cast <char*>(&buff_f), sizeof(float));
 			}
 		}
 	}
 
 	return true;
+}
+
+
+void ElectronDensity::density_change_trigger() {
+	fastdens_score.clear();
+	fastgrid = numeric::xyzVector< core::Real >(0,0,0);
+
+	PattersonEpsilon.clear(); p_o.clear();
+	p_extent = numeric::xyzVector< core::Real >(0,0,0);
+
+	Fdensity.clear();
+
+	// not strictly necessary
+	rho_calc.clear();
+	rho_solv.clear();
+	inv_rho_mask.clear();
+	Frho_calc.clear();
+	Frho_solv.clear();
+
+	computeStats();
+	computeGradients();
 }
 
 
@@ -4734,6 +4980,7 @@ void ElectronDensity::resize( core::Real approxGridSpacing ) {
 	TR << " new extent: " << density.u1() << " x " << density.u2() << " x " << density.u3() << std::endl;
 	TR << " new origin: " << origin[0] << " x " << origin[1] << " x " << origin[2] << std::endl;
 	TR << "   new grid: " << grid[0] << " x " << grid[1] << " x " << grid[2] << std::endl;
+	TR << "     new VV: " << voxel_volume() << std::endl;
 }
 
 
@@ -4800,32 +5047,15 @@ void ElectronDensity::computeStats() {
 		sum2 += density(i,j,k)*density(i,j,k);
 		dens_max = std::max(dens_max, (core::Real)density(i,j,k));
 		dens_min = std::min(dens_min, (core::Real)density(i,j,k));
-	}
-	dens_mean = sum/N;
-	dens_stdev = sqrt( sum2/N-dens_mean*dens_mean );
 
-	for (int i=1; i<=density.u1(); i++)
-	for (int j=1; j<=density.u2(); j++)
-	for (int k=1; k<=density.u3(); k++) {
-		// do we only care about nonnegative density when compuing com?  think about this
-		if (density(i,j,k) > 0) {
-			centerOfMass[0] += i*density(i,j,k);
-			centerOfMass[1] += j*density(i,j,k);
-			centerOfMass[2] += k*density(i,j,k);
-			sumCoM += density(i,j,k);
-		}
+ 		centerOfMass[0] += i*density(i,j,k);
+ 		centerOfMass[1] += j*density(i,j,k);
+ 		centerOfMass[2] += k*density(i,j,k);
+ 		sumCoM += density(i,j,k);
 	}
 	centerOfMass /= sumCoM;
-
-	TR << "Density map stats:" << std::endl;
-	TR << "      min = " << dens_min << std::endl;
-	TR << "      max = " << dens_max << std::endl;
-	TR << "     mean = " << dens_mean << std::endl;
-	TR << "    stdev = " << dens_stdev << std::endl;
-	TR << "      CoM = " << centerOfMass[0] << " , " << centerOfMass[1] << " , " << centerOfMass[2] << std::endl;
-	numeric::xyzVector< core::Real > trans = getTransform();
-	TR << "    xform = " << trans[0] << " , " << trans[1] << " , " << trans[2] << std::endl;
-	TR << "  efforig = " << efforigin[0] << " , " << efforigin[1] << " , " << efforigin[2] << std::endl;
+	dens_mean = sum/N;
+	dens_stdev = sqrt( sum2/N-dens_mean*dens_mean );
 }
 
 /////////////////////////////////////

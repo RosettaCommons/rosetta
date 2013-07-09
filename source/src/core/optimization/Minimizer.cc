@@ -766,11 +766,6 @@ Minimizer::lbfgs(
 			}
 			lm[CURPOS].ys = ys;
 
-			// underflow check
-			//if (std::fabs(ys) < 1e-12) {
-			//	TR << "Line search step leads to underflow (ys=" << ys << ")! Aborting at iter#" << ITER << std::endl;
-			//	return;
-			//}
 
 			// Recursive formula to compute dir = -(H \cdot g).
 			// 		This is described in page 779 of:
@@ -792,8 +787,7 @@ Minimizer::lbfgs(
 			for ( int pts=0; pts<bound; ++pts ) {
 				 j--;
 				 if (j<=0) j=M; // wrap around
-
-			   if (std::fabs(lm[j].ys) < 1e-9) continue;
+			   if (std::fabs(lm[j].ys) < 1e-4) continue;
 
 				 // \alpha_{j} = \rho_{j} s^{t}_{j} \cdot q_{k+1}
 				 lm[j].alpha = 0;
@@ -813,7 +807,7 @@ Minimizer::lbfgs(
 			//}
 
 			for ( int pts=0; pts<bound; ++pts ) {
-			   if (std::fabs(lm[j].ys) < 1e-9) continue;
+			   if (std::fabs(lm[j].ys) < 1e-4) continue;
 
 				 // \beta_{j} = \rho_{j} y^t_{j} \cdot \gamma_{i}
 				 core::Real beta=0.0;

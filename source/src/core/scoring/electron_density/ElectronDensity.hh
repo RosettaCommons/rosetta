@@ -19,6 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Atom.fwd.hh>
+#include <core/scoring/electron_density/util.hh>
 #include <core/scoring/electron_density/xray_scattering.hh>
 #include <core/scoring/electron_density/ElectronDensity.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -28,6 +29,7 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray3D.hh>
+#include <ObjexxFCL/FArray4D.hh>
 #include <numeric/xyzVector.hh>
 
 // C++ headers
@@ -47,9 +49,6 @@ namespace electron_density {
 const core::Real MAX_FLT = 1e37;
 
 float pos_mod(float x,float y);
-
-// minimal required info for many density calcs
-typedef utility::vector1< std::pair< numeric::xyzVector< core::Real >, std::string > > lightPose;
 
 class ElectronDensity : public utility::pointer::ReferenceCount {
 public:
@@ -88,6 +87,7 @@ public:
 		}
 	}
 
+	/// @brief Initialize map from cmd line options
 	void
 	init();
 
@@ -106,7 +106,7 @@ public:
 		core::Real gridSpacing=0.0);
 
 	/// @brief (debugging) Write MRC mapfile
-	bool writeMRC(std::string mapfilestem);
+	bool writeMRC(std::string mapfilestem, bool writeRhoCalc=false, bool writeRhoMask=false);
 
 	/// @brief (debugging) Write MATLAB v5 mapfile
 	bool writeMAT(std::string mapfilestem);
@@ -136,10 +136,9 @@ public:
 	/////  "Density tools"
 	/////    -- all use "light pose" representation
 	/////
-
 	/// @brief  mask the density map (like chimera 'zone' but sigmoidal mask)
 	void
-	maskDensityMap( lightPose const &pose, core::Real radius );
+	maskDensityMap( poseCoords const &pose, core::Real radius );
 
 	/// @brief get resolution bins (informational)
  	utility::vector1< core::Real >
@@ -151,12 +150,12 @@ public:
 
 	/// @brief Compute intensities
 	void
-	getIntensities( lightPose const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso,
+	getIntensities( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso,
 		utility::vector1< core::Real > &Imodel, utility::vector1< core::Real > &Isol);
 
 	/// @brief Compute model-map FSC
 	utility::vector1< core::Real >
-	getFSC( lightPose const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso );
+	getFSC( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso );
 
 	/// @brief Compute map-map FSC
 	utility::vector1< core::Real >
@@ -164,7 +163,7 @@ public:
 
 	/// @brief Compute model-map RSCC
 	core::Real
-	getRSCC( lightPose const &pose );
+	getRSCC( poseCoords const &pose );
 
 	/// @brief Compute map-map RSCC
 	core::Real
@@ -175,10 +174,10 @@ public:
 	scaleIntensities( utility::vector1< core::Real > I_tgt, core::Real maxreso, core::Real minreso );
 
 	void
-	calcRhoC( lightPose const &pose );
+	calcRhoC( poseCoords const &pose );
 
 	void
-	calcRhoCandSolvent( lightPose const &pose );
+	calcRhoCandSolvent( poseCoords const &pose );
 
 	core::Real
 	maxNominalRes();
@@ -215,7 +214,8 @@ public:
 	matchResFast( int resid,
 		core::conformation::Residue const &rsd,
 		core::pose::Pose const &pose,
-		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL
+		core::conformation::symmetry::SymmetryInfoCOP symmInfo=NULL,
+		bool ignoreBs=false
 	);
 
 	/// @brief Computes the symmatric rotation matrices
@@ -247,6 +247,17 @@ public:
 		core::pose::Pose const &pose,
 		numeric::xyzVector<core::Real> &gradX
 	);
+
+	/// @brief Gradient of CC w.r.t B factors
+	Real
+	dCCdB_fastRes(
+		int atmid, int resid,
+		core::conformation::Residue const &rsd,
+		core::pose::Pose const &pose
+	);
+
+	//@brief Called to initialize scorefunction scaling for B-factor refinement
+	void rescale_fastscoring_temp_bins(core::pose::Pose const &pose);
 
 	/// @brief Return the gradient of CC w.r.t. res X's CA's movement
 	/// Centroid-mode analogue of dCCdx
@@ -436,12 +447,15 @@ public:
 		R = symmap[ -subunit ].second;
 	}
 
-
-
 ///////////
 // PRIVATE MEMBER FUNCTIONS
 ///////////
 private:
+	/// @brief The function is called everytime the density changes
+	void
+	density_change_trigger();
+
+
 	// helper functions for map statistics
 	void computeGradients();
 	void computeStats();
@@ -472,6 +486,11 @@ private:
 		           + 2*k*l*RcellDimensions[1]*RcellDimensions[2]*cosRcellAngles[0] );
 	}
 
+	// volume of 1 voxel
+	double voxel_volume( ) {
+		return V / (grid[0]*grid[1]*grid[2]);
+	}
+
 ///////////
 // DATA
 ///////////
@@ -500,7 +519,9 @@ private:
 	double po_bar;
 
 	// (fast scoring) precomputed rhocrhoo, d_rhocrhoo
-	ObjexxFCL::FArray3D< double > fastdens_score;
+	ObjexxFCL::FArray4D< double > fastdens_score;
+	core::Size nkbins_;
+	core::Real kmin_,kmax_,kstep_;
 	numeric::xyzVector< int > fastgrid;           // grid & origin
 	numeric::xyzVector< core::Real > fastorigin;  // for resampled maps
 
@@ -543,7 +564,8 @@ private:
 	numeric::xyzVector< core::Real > p_CoM;
 
 	// map info
-	core::Real max_del_grid; // max dist between grid pts
+	core::Real minimumB;    // minimum B factor allowed by map
+	core::Real effectiveB;  // B factor blurring based on map resolution
 	numeric::xyzVector< int > grid;
 	numeric::xyzVector< core::Real > origin, efforigin;
 

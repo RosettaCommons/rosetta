@@ -10210,6 +10210,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1</dd><br>
 </dl>
 <dl>
+<dt><b>-cryoem_scatterers</b> \<Boolean\><dt>
+<dd>No description</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-force_apix</b> \<Real\><dt>
 <dd>force pixel spacing to take a particular value</dd><br>
 <dd>Default: 0.0</dd><br>
@@ -10218,6 +10223,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-fastdens_wt</b> \<Real\><dt>
 <dd>wt of fast edens score</dd><br>
 <dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-fastdens_params</b> \<RealVector\><dt>
+<dd>parameters for fastdens scoring</dd><br>
 </dl>
 <dl>
 <dt><b>-sliding_window_wt</b> \<Real\><dt>
@@ -10278,6 +10287,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-sc_scaling</b> \<Real\><dt>
 <dd>Scale sidechain density by this amount (default same as mainchain density)</dd><br>
 <dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-n_kbins</b> \<Integer\><dt>
+<dd>Number of B-factor bins</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
 <dl>
 <dt><b>-render_sigma</b> \<Real\><dt>

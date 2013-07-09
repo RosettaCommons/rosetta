@@ -71,8 +71,10 @@ sources = {
 		"PointMutationCalculator",
 	],
 	"protocols/electron_density": [
-		"SetupForDensityScoringMover",
+		"BfactorFittingMover",
 		"DensityMorphingMover",
+		"ScaleMapIntensities",
+		"SetupForDensityScoringMover",
 		"util",
 	],
 	"protocols/fibril": [

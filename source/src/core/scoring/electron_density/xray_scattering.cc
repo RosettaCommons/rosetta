@@ -60,24 +60,29 @@ inline double square(double x) { return (x*x); }
 OneGaussianScattering get_A( std::string elt ) {
 	static std::map< std::string, OneGaussianScattering > elt_db;
 
-	//fpd these parameters were tuned by fitting a single gaussian
-	//    to the 4-gaussian parameters in R^-1 space from 2-20A res
+	// fit to parameters from Doyle and Turner, Acta Cryst A, 1968
+	//   --> single gaussiansfit in reciprocal space
+	//   --> TO DO .. move to database, make parameters selectable
 	if (elt_db.size() == 0) {
-		elt_db["C"]  = OneGaussianScattering( 6, 4.88284);
-		elt_db["N"]  = OneGaussianScattering( 7, 5.08287);
-		elt_db["O"]  = OneGaussianScattering( 8, 4.92989);
-		elt_db["F"]  = OneGaussianScattering( 9, 4.58837);
-		elt_db["NA"] = OneGaussianScattering(11, 3.53389);
-		elt_db["MG"] = OneGaussianScattering(12, 3.11868);
-		elt_db["AL"] = OneGaussianScattering(13, 2.87655);
-		elt_db["P"]  = OneGaussianScattering(15, 2.89121);
-		elt_db["S"]  = OneGaussianScattering(16, 3.03242);
-		elt_db["K"]  = OneGaussianScattering(19, 3.32675);
-		elt_db["FE"] = OneGaussianScattering(26, 3.10519);
-
-		elt_db["X"] = OneGaussianScattering(
-			(int)(6*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()) , 4.88284);  // centroid
+		if (basic::options::option[ basic::options::OptionKeys::edensity::cryoem_scatterers ]()) {
+			// [1] electron scattering
+			elt_db["C"]  = OneGaussianScattering( 6.00000, 7.10668);  // 20-2A
+			elt_db["N"]  = OneGaussianScattering( 5.28737, 6.03448);
+			elt_db["O"]  = OneGaussianScattering( 4.74213, 5.17616);
+			elt_db["S"]  = OneGaussianScattering( 12.34197, 7.05366);
+			elt_db["X"] = OneGaussianScattering(
+				(int)(6*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()) , 4.88284);  // centroid
+		} else {
+			// [2] xray scattering
+			elt_db["C"]  = OneGaussianScattering( 6, 4.88398);  // 20-2A
+			elt_db["N"]  = OneGaussianScattering( 7, 5.08400);
+			elt_db["O"]  = OneGaussianScattering( 8, 4.92866);
+			elt_db["S"]  = OneGaussianScattering(16, 2.92593);
+			elt_db["X"] = OneGaussianScattering(
+				(int)(6*basic::options::option[ basic::options::OptionKeys::edensity::centroid_density_mass ]()) , 4.88284);  // centroid
+		}
 	}
+
 
 	if (elt_db.find( elt ) == elt_db.end()) {
 		// default to C
@@ -119,129 +124,6 @@ KromerMann get_km( std::string elt ) {
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
-
-
-// AtomScattering::AtomScattering() { }
-//
-//
-// // mask scattering
-// AtomScattering::AtomScattering( core::Real mask, core::Real reso ) {
-// 	init( mask, reso );
-// 	numeric::xyzVector< core::Real > atm_j;
-//
-// 	// ??? should there be a resolution-based sigma on the mask?
-//
-// 	for (int z=1; z<=data.u3(); ++z) {
-// 		atm_j[2] = (z-1)*i2c[2];
-// 		for (int y=1; y<=data.u2(); ++y) {
-// 			atm_j[1] = (y-1)*i2c[1];
-// 			for (int x=1; x<=data.u1(); ++x) {
-// 				atm_j[0] = (x-1)*i2c[0];
-// 				core::Real d2 = atm_j.length_squared();
-// 				core::Real inv_msk = 1/(1+exp( d2 - (mask*mask) ));
-// 				data(x,y,z) = inv_msk;
-// 			}
-// 		}
-// 	}
-// }
-//
-// // atom scattering
-// AtomScattering::AtomScattering( core::Real a, core::Real B, core::Real mask, core::Real reso ) {
-// 	init( mask, reso );
-//
-//   // 1-gaussian approx
-// 	core::Real k = (B<=0) ? square(M_PI/reso) : std::min( square(M_PI/reso) , 0.5/square(0.6+0.006*B)  );
-// 	core::Real C = pow(k/M_PI,1.5);
-// 	numeric::xyzVector< core::Real > atm_j;
-//
-// 	for (int z=1; z<=data.u3(); ++z) {
-// 		atm_j[2] = (z-1)*i2c[2];
-// 		for (int y=1; y<=data.u2(); ++y) {
-// 			atm_j[1] = (y-1)*i2c[1];
-// 			for (int x=1; x<=data.u1(); ++x) {
-// 				atm_j[0] = (x-1)*i2c[0];
-// 				core::Real d2 = atm_j.length_squared();
-// 				core::Real atm = C*a*exp(-k*d2);
-// 				data(x,y,z) = atm;
-// 			}
-// 		}
-// 	}
-// }
-//
-//
-// // common init
-// void AtomScattering::init( core::Real mask, core::Real reso ) {
-// 	this->reso = reso;
-//
-// 	// extent is max(mask+1,3xreso) <<< should this be a function of atom mask
-// 	core::Real extent = std::max( mask+1.0, 3*reso );
-//
-// 	// grid sampling (A/pt) 1/8 reso
-// 	core::Real sampling = reso/8;
-// 	core::Size ngrid = (core::Size) std::floor(extent/sampling+0.5);
-// 	sampling = extent / (double) ngrid;
-//
-// 	grid[0] = grid[1] = grid[2] = ngrid;
-// 	c2i[0] = c2i[1] = c2i[2] = 1/sampling;
-// 	i2c[0] = i2c[1] = i2c[2] = sampling;
-// 	data.dimension( (int)grid[0] , (int)grid[1] , (int)grid[2] );
-// }
-//
-//
-// // interp at a Cartesian point X
-// core::Real AtomScattering::interp_linear( numeric::xyzVector< core::Real > const & X ) const {
-// 	numeric::xyzVector< core::Real > idxX(X[0]*c2i[0],X[1]*c2i[1],X[2]*c2i[2]);  // cart -> idx
-//
-// 	// only compute density over one octant
-// 	if (idxX[0] < 0) idxX[0] *= -1;
-// 	if (idxX[1] < 0) idxX[1] *= -1;
-// 	if (idxX[2] < 0) idxX[2] *= -1;
-//
-// 	int pt000[3], pt111[3];
-// 	core::Real fpart[3],neg_fpart[3];
-//
-// 	// check for out of bounds
-// 	if (idxX[0] >= grid[0] || idxX[1] >= grid[1] || idxX[2] >= grid[2]) return 0.0;
-//
-// 	// find bounding grid points
-// 	pt000[0] = (int)(floor(idxX[0]))+1; pt111[0] = (pt000[0]+1);
-// 	pt000[1] = (int)(floor(idxX[1]))+1; pt111[1] = (pt000[1]+1);
-// 	pt000[2] = (int)(floor(idxX[2]))+1; pt111[2] = (pt000[2]+1);
-//
-// 	// interpolation coeffs
-// 	fpart[0] = idxX[0]-floor(idxX[0]); neg_fpart[0] = 1-fpart[0];
-// 	fpart[1] = idxX[1]-floor(idxX[1]); neg_fpart[1] = 1-fpart[1];
-// 	fpart[2] = idxX[2]-floor(idxX[2]); neg_fpart[2] = 1-fpart[2];
-//
-// 	assert( pt000[0] >= 1 && pt000[0] <= data.u1() );
-// 	assert( pt000[1] >= 1 && pt000[1] <= data.u2() );
-// 	assert( pt000[2] >= 1 && pt000[2] <= data.u3() );
-// 	assert( pt111[0] >= 1 && pt111[0] <= data.u1() );
-// 	assert( pt111[1] >= 1 && pt111[1] <= data.u2() );
-// 	assert( pt111[2] >= 1 && pt111[2] <= data.u3() );
-//
-//
-// 	// interpolate
-// 	core::Real retval = 0.0;
-// 	retval += neg_fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt000[0],pt000[1],pt000[2]);
-// 	retval += neg_fpart[0]*neg_fpart[1]*    fpart[2] * data(pt000[0],pt000[1],pt111[2]);
-// 	retval += neg_fpart[0]*    fpart[1]*neg_fpart[2] * data(pt000[0],pt111[1],pt000[2]);
-// 	retval += neg_fpart[0]*    fpart[1]*    fpart[2] * data(pt000[0],pt111[1],pt111[2]);
-// 	retval += fpart[0]*neg_fpart[1]*neg_fpart[2] * data(pt111[0],pt000[1],pt000[2]);
-// 	retval += fpart[0]*neg_fpart[1]*    fpart[2] * data(pt111[0],pt000[1],pt111[2]);
-// 	retval += fpart[0]*    fpart[1]*neg_fpart[2] * data(pt111[0],pt111[1],pt000[2]);
-// 	retval += fpart[0]*    fpart[1]*    fpart[2] * data(pt111[0],pt111[1],pt111[2]);
-//
-// 	return retval;
-// }
-//
-
-
-
-/////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////
-
 
 //
 bool factorsLTE5(int X) {
