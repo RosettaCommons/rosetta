@@ -86,44 +86,75 @@ def generate_resfile_from_pdb(pdbfilename, resfilename, input_sc = True ):
 	generate_resfile_from_pose(p, resfilename, input_sc)
 
 
-def mutate_residue(pose, resid, new_res):
-	"""
-	Replaces the residue at <resid> in <pose> with <new_res>.
+def mutate_residue(pose, mutant_position, mutant_aa, pack_radius=0.0,
+                                                             pack_scorefxn=''):
+    """Replace the residue at <mutant_position> in <pose> with <mutant_aa> and
+    repack any residues within <pack_radius> angstroms of the mutating
+    residue's center (nbr_atom) using <pack_scorefxn>
 
-	Note: <new_res> is the single letter name for the desired ResidueType.
+    Note: <mutant_aa> is the single letter name for the desired ResidueType
 
-	Example:
-	    mutate_residue(pose, 30, 'A')
-	See also:
-	    Pose
-	    PackRotamersMover
-	"""
-	if not pose.is_fullatom():
-		IOError("mutate_residue only works with full-atom poses.")
+    Example:
+        mutate_residue(pose, 30, "A")
+    See also:
+        Pose
+        PackRotamersMover
+    """
+    if not pose.is_fullatom():
+        IOError('mutate_residue() only works with full-atom poses.')
 
-	scorefxn = rosetta.create_score_function("talaris2013")
-	pack_task = rosetta.TaskFactory.create_packer_task(pose)
-	pack_task.initialize_from_command_line()
+    test_pose = rosetta.Pose()
+    test_pose.assign(pose)
 
-	v1 = rosetta.utility.vector1_bool()
-	mut_res = rosetta.aa_from_oneletter_code(new_res)
+    # create a standard scorefxn by default
+    if not pack_scorefxn:
+        pack_scorefxn = rosetta.get_fa_scorefxn()
 
-	for i in range(1, 21):
-		if (i == mut_res):
-			v1.append(True)
-		else:
-			v1.append(False)
+    task = rosetta.standard_packer_task(test_pose)
+    task.or_include_current(True)
 
-	for i in range(1, pose.total_residue() + 1):
-		if (i != resid):
-			pack_task.nonconst_residue_task(i).prevent_repacking()
+    # A vector1 of booleans (a specific object) is needed for specifying the
+    # mutation.  This demonstrates another more direct method of setting
+    # PackerTask options for design.
+    aa_bool = rosetta.utility.vector1_bool()
 
-	pack_task.nonconst_residue_task(resid).restrict_absent_canonical_aas(v1)
+    # PyRosetta uses several ways of tracking amino acids (ResidueTypes).
+    # The numbers 1-20 correspond individually to the 20 proteogenic amino
+    # acids.  aa_from_oneletter_code() returns the integer representation of an
+    # amino acid from its one letter code
 
-	packer = rosetta.protocols.simple_moves.PackRotamersMover(scorefxn,
-	                                                          pack_task)
-	packer.apply(pose)
-	return pose
+    # Convert mutant_aa to its integer representation.
+    mutant_aa = rosetta.aa_from_oneletter_code(mutant_aa)
+
+    # The mutation is performed by using a PackerTask with only the mutant
+    # amino acid available during design.  To do this, we construct a vector1
+    # of booleans indicating which amino acid (by its numerical designation;
+    # see above) to allow.
+    for i in range(1, 20 + 1):
+        # In Python, logical expression are evaluated with priority, thus the
+        # line below appends to aa_bool the truth (True or False) of the
+        # statement i == mutant_aa.
+        aa_bool.append(i == mutant_aa)
+
+    # Modify the mutating residue's assignment in the PackerTask using the
+    # vector1 of booleans across the proteogenic amino acids.
+    task.nonconst_residue_task(mutant_position).restrict_absent_canonical_aas(
+                                                                       aa_bool)
+
+    # Prevent residues from packing by setting the per-residue "options" of
+    # the PackerTask.
+    center = pose.residue(mutant_position).nbr_atom_xyz()
+    for i in range(1, pose.total_residue() + 1):
+        # Only pack the mutating residue and any within the pack_radius
+        if not i == mutant_position or center.distance_squared(
+                         test_pose.residue(i).nbr_atom_xyz()) > pack_radius**2:
+            task.nonconst_residue_task(i).prevent_repacking()
+
+    # Apply the mutation and pack nearby residues.
+    packer = rosetta.PackRotamersMover(pack_scorefxn, task)
+    packer.apply(test_pose)
+
+    return test_pose
 
 
 def cleanATOM(pdb_file, edit = -4):
