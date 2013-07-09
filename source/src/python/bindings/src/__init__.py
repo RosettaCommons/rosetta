@@ -158,7 +158,7 @@ class PythonPyExitCallback(utility.PyExitCallback):
 #
 def rosetta_database_from_env():
     """Read rosetta database directory from environment or standard install locations.
-    
+
     Returns database path if found, else None."""
 
     # Figure out database dir....
@@ -196,7 +196,7 @@ def rosetta_database_from_env():
                 database = os.path.abspath(candidate)
                 logger.info('Found rosetta database at: %s; using it....', database)
                 return database
-    
+
     # No database found.
     return None
 
@@ -669,10 +669,7 @@ class EnergyMethod:
                 if not s.base or issubclass(original_class, s.base):
                     self.scoreType = max(s.methods.keys() or [s.first - 1]) + 1
                     if self.scoreType > s.last:
-                        err_msg = 'Cannot find free ScoreType to create' + \
-                           '%s! (looking in range [%s, %s])' % (self.scoreName,
-                                                                s.first,
-                                                                s.last)
+                        err_msg = 'Cannot find free ScoreType to create %s! (looking in range [%s, %s])' % (self.scoreName, s.first, s.last)
                         raise Exception(err_msg)
                     s.methods[self.scoreType] = self.scoreName
                     ScoreTypesRegistry[self.scoreType] = self.scoreName
@@ -696,14 +693,12 @@ class EnergyMethod:
         if 'version' not in original_class.__dict__:
             original_class.version = _f_version
         if 'indicate_required_context_graphs' not in original_class.__dict__:
-            original_class.indicate_required_context_graphs = \
-                                              _indicate_required_context_graphs
+            original_class.indicate_required_context_graphs = _indicate_required_context_graphs
 
         original_class.creator = creator
         original_class.scoreType = rosetta.core.scoring.ScoreType(self.scoreType)
 
         _mem_EnergyCreators_.append( creator() )
-        rosetta.core.scoring.methods.PyEnergyMethodRegistrator(
-                                                      _mem_EnergyCreators_[-1])
+        rosetta.core.scoring.methods.PyEnergyMethodRegistrator(_mem_EnergyCreators_[-1])
 
         return original_class
