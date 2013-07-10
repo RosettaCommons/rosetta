@@ -16,6 +16,7 @@
 #include <devel/denovo_design/task_operations/HighestEnergyRegionCreator.hh>
 
 // package headers
+#include <devel/denovo_design/calculators/CavityCalculator.hh>
 #include <devel/denovo_design/calculators/ResidueCentralityCalculator.hh>
 #include <devel/denovo_design/filters/PsiPredInterface.hh>
 #include <protocols/flxbb/utility.hh>
@@ -542,6 +543,90 @@ DesignCatalyticResiduesOperation::get_residues_to_design( core::pose::Pose const
 		}
 	}
 	return residues_to_design;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/// DesignByCavityProximity
+////////////////////////////////////////////////////////////////////////////////
+
+/// @brief creator functions
+core::pack::task::operation::TaskOperationOP
+DesignByCavityProximityOperationCreator::create_task_operation() const {
+	return new DesignByCavityProximityOperation;
+}
+
+std::string
+DesignByCavityProximityOperationCreator::keyname() const {
+	return "DesignByCavityProximity";
+}
+
+/// @brief default constructor
+DesignByCavityProximityOperation::DesignByCavityProximityOperation() :
+	HighestEnergyRegionOperation()
+{}
+
+/// @brief destructor
+DesignByCavityProximityOperation::~DesignByCavityProximityOperation()
+{}
+
+/// @brief make clone
+core::pack::task::operation::TaskOperationOP
+DesignByCavityProximityOperation::clone() const
+{
+	return new DesignByCavityProximityOperation( *this );
+}
+
+/// @brief Gets a list of residues for design
+utility::vector1< core::Size >
+DesignByCavityProximityOperation::get_residues_to_design( core::pose::Pose const & pose ) const
+{
+	std::string const calc_name( "CavityCalculator" );
+	// check for calculator; create if it doesn't exist
+	if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calc_name ) ) {
+		calculators::CavityCalculator calculator;
+		core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc_name, calculator.clone() );
+	}
+
+	basic::MetricValue< utility::vector1< core::scoring::packstat::CavityBallCluster > > clusters;
+	pose.metric( calc_name, "cavities", clusters );
+
+	// residues will be ranked based primarily on how close they are to a cavity
+	// secondary ranking: by how big the cavity is
+	utility::vector1< std::pair< core::Size, core::Real > > res_to_score;
+
+  for( core::Size i=1; i<=pose.total_residue(); ++i ) {
+		// search for nearest cavity to this residue
+		core::Real best_score( -1 );
+		for ( core::Size ic=1; ic<=clusters.value().size(); ++ic ) {
+			core::Real score( proximity_to_cavity( pose.residue( i ), clusters.value()[ic] ) );
+			// keep score for this cluster if it is better
+			TR << "Residue " << i << " dist= " << score * clusters.value()[ic].volume << " volume= " << clusters.value()[ic].volume << " score= " << score << " with respect to cavity " << ic << std::endl;
+			if ( ( best_score < 0 ) || ( score < best_score ) ) {
+				best_score = score;
+			}
+		}
+		TR.Debug << "Residue " << i << " : " << best_score << std::endl;
+		res_to_score.push_back( std::pair< core::Size, core::Real >( i, best_score ) );
+	}
+
+	// sort the vector based on the psipred probability
+	std::sort( res_to_score.begin(), res_to_score.end(), compare_pack_energy );
+
+	utility::vector1< core::Size > residues_to_design;
+	for ( core::Size j=1; ( j<=res_to_score.size() &&	j<=regions_to_design() ); ++j ) {
+		residues_to_design.push_back( res_to_score[j].first );
+		TR << "Going to design " << pose.residue( res_to_score[j].first ).name3() << res_to_score[j].first << ", value=" << res_to_score[j].second << std::endl;
+	}
+
+	return residues_to_design;
+}
+
+/// @brief given a cavity and a residue, tells how far Cb of the residue is from the edge of the cavity. Normalizes distance by cavity volume, such that residues around larger cavities should be preferred
+core::Real
+DesignByCavityProximityOperation::proximity_to_cavity( core::conformation::Residue const & res,
+																											 core::scoring::packstat::CavityBallCluster const & cluster ) const
+{
+	return res.nbr_atom_xyz().distance( cluster.center ) / cluster.volume;
 }
 
 //namespaces

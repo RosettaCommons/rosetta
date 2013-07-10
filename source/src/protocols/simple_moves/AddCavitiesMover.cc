@@ -84,7 +84,7 @@ namespace simple_moves {
 	}
 
 	CavBalls
-	AddCavitiesMover::get_cavities( Pose & pose, Real nbdis, int nbcount, Real minsep ) {
+	AddCavitiesMover::get_cavities( Pose const & pose, Real nbdis, int nbcount, Real minsep ) {
 		Spheres spheres = core::scoring::packstat::pose_to_pack_data(pose).spheres;
 
 		SasaOptions opts;

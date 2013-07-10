@@ -60,6 +60,14 @@ public:
 	);
 	virtual std::string get_name() const;
 
+	core::scoring::packstat::CavBalls
+	get_cavities(
+		core::pose::Pose const & pose,
+		core::Real nbdis,
+		int nbcount,
+		core::Real minsep
+	);
+
 protected:
 
 	core::id::AtomID
@@ -70,14 +78,6 @@ protected:
 
 	core::conformation::ResidueOP
 	get_suck_res();
-
-	core::scoring::packstat::CavBalls
-	get_cavities(
-		core::pose::Pose & pose,
-		core::Real nbdis,
-		int nbcount,
-		core::Real minsep
-	);
 
 	core::Size max_cav_;
 	core::Real min_size_;

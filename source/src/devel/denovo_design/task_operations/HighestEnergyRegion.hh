@@ -22,8 +22,9 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-
+#include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -222,6 +223,35 @@ public:
 
 private:
 };
+
+/// @brief class for finding residues close to buried cavities and designing them
+class DesignByCavityProximityOperation : public HighestEnergyRegionOperation {
+public:
+	/// @brief default constructor
+	DesignByCavityProximityOperation();
+
+	/// @brief virtual destructor
+	virtual ~DesignByCavityProximityOperation();
+
+  /// @brief make clone
+  virtual core::pack::task::operation::TaskOperationOP clone() const;
+
+	/// @brief Gets a list of residues for design
+	virtual utility::vector1< core::Size >
+	get_residues_to_design( core::pose::Pose const & pose ) const;
+
+	/// @brief Returns the name of the class
+	virtual std::string get_name() const { return "CavityProximity"; }
+
+private:
+
+	/// @brief given a cavity and a residue, tells how far Cb of the residue is from the edge of the cavity. Normalizes distance by cavity volume, such that residues around larger cavities should be preferred
+	core::Real
+	proximity_to_cavity( core::conformation::Residue const & res,
+											 core::scoring::packstat::CavityBallCluster const & cluster ) const;
+};
+
+
 
 } // task_operations
 } // denovo_design

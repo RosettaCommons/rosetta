@@ -53,6 +53,7 @@
 #include <devel/splice/SpliceCreator.hh> //moved into devel due to release embargo
 
 // Filter creators
+#include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
 #include <devel/denovo_design/filters/SSPredictionFilterCreator.hh>
 #include <devel/denovo_design/filters/SSShapeComplementarityFilterCreator.hh>
 #include <devel/matdes/OligomericAverageDegreeFilterCreator.hh>
@@ -130,6 +131,7 @@ static protocols::moves::MoverRegistrator< devel::splice::SpliceCreator > reg_Sp
 // Task creators
 static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignByResidueCentralityOperationCreator > reg_DesignByResidueCentralityOperationCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignCatalyticResiduesOperationCreator > reg_DesignCatalyticResiduesOperationCreator;
+static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignByCavityProximityOperationCreator > reg_DesignByCavityProximityOperationCreator;
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;
@@ -138,6 +140,7 @@ static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::Ret
 static core::pack::task::operation::TaskOperationRegistrator< devel::splice::RestrictToAlignedSegmentsOperationCreator > RestrictToAlignedSegmentsCreator_registrator; //moved into devel due to release embargo
 
 // Filter creators
+static protocols::filters::FilterRegistrator< denovo_design::filters::CavityVolumeFilterCreator > reg_CavityVolumeFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::SSPredictionFilterCreator > reg_SSPredictionFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::SSShapeComplementarityFilterCreator > reg_SSShapeComplementarityFilterCreator;
 static protocols::filters::FilterRegistrator< devel::matdes::OligomericAverageDegreeFilterCreator > OligomericAverageDegreeFilterCreator_registrator;
