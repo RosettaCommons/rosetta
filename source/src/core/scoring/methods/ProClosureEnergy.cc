@@ -109,7 +109,7 @@ ProClosureEnergy::defines_score_for_residue_pair(
 	conformation::Residue const & resl( res1.seqpos() < res2.seqpos() ? res1 : res2 );
 	conformation::Residue const & resu( res1.seqpos() < res2.seqpos() ? res2 : res1 );
 
-	return res_moving_wrt_eachother && resu.aa() == chemical::aa_pro
+	return res_moving_wrt_eachother && ((resu.aa() == chemical::aa_pro) || (resu.aa() == chemical::aa_dpr)) //L-pro or D-pro
 		&& resl.seqpos() + 1 == resu.seqpos() && resl.is_bonded( resu );
 }
 
@@ -128,9 +128,9 @@ ProClosureEnergy::residue_pair_energy(
 	if ( rsd1.is_virtual_residue() ) return;
 	if ( rsd2.is_virtual_residue() ) return;
 
-	if (( rsd2.aa() == aa_pro && rsd1.is_bonded( rsd2 ) &&
+	if (( ((rsd2.aa() == aa_pro) || (rsd2.aa() == aa_dpr)) && rsd1.is_bonded( rsd2 ) &&
 			rsd1.seqpos() == rsd2.seqpos() - 1 ) ||
-			(rsd1.aa() == aa_pro && rsd1.is_bonded( rsd2 ) &&
+			( ((rsd1.aa() == aa_pro) || (rsd1.aa() == aa_dpr)) && rsd1.is_bonded( rsd2 ) &&
 			rsd1.seqpos() - 1 == rsd2.seqpos() )) {
 		Residue const & upper_res( rsd1.seqpos() > rsd2.seqpos() ? rsd1 : rsd2 );
 		Residue const & lower_res( rsd1.seqpos() > rsd2.seqpos() ? rsd2 : rsd1 );
@@ -157,7 +157,8 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & upper_res( r1_upper ? rsd1 : rsd2 );
 	conformation::Residue const & lower_res( r1_upper ? rsd2 : rsd1 );
 
-	assert( upper_res.aa() == chemical::aa_pro );
+	assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
+	const core::Real d_multiplier = ((upper_res.aa()==chemical::aa_dpr) ? -1.0 : 1.0); //A multiplier for the derivative to invert it if this is a D-amino acid.
 
 	utility::vector1< DerivVectorPair > & upper_res_atom_derivs( r1_upper ? r1_atom_derivs : r2_atom_derivs );
 	utility::vector1< DerivVectorPair > & lower_res_atom_derivs( r1_upper ? r2_atom_derivs : r1_atom_derivs );
@@ -178,7 +179,8 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 		upper_res.xyz( CD_up_id ), upper_res.xyz( N_up_id ),
 		lower_res.xyz( C_lo_id ), lower_res.xyz( O_lo_id  ),
 		chi4, f1, f2 );
-	Real deriv( weights[ pro_close ] * dchi4E_dchi4( chi4 ) );
+	chi4*=d_multiplier; //Flip for D-amino acids.
+	Real deriv( weights[ pro_close ] * d_multiplier * dchi4E_dchi4( chi4 ) );
 
 	f1 *= deriv; f2 *= deriv;
 	upper_res_atom_derivs[ N_up_id ].f1() += f1;
@@ -289,7 +291,7 @@ ProClosureEnergy::eval_intrares_energy(
 ) const
 {
 
-	if ( rsd.aa() == chemical::aa_pro ) {
+	if ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) ) {
 		if ( rsd.is_virtual_residue() )return;
 		Distance const dist2 = rsd.xyz( bbN_ ).distance_squared( rsd.xyz( scNV_ ) );
 		emap[ pro_close ] += dist2 / ( n_nv_dist_sd_ * n_nv_dist_sd_ );
@@ -305,7 +307,7 @@ ProClosureEnergy::defines_intrares_energy_for_residue(
 	conformation::Residue const & res
 ) const
 {
-	return res.aa() == chemical::aa_pro;
+	return ((res.aa() == chemical::aa_pro) || (res.aa() == chemical::aa_dpr));
 }
 
 void
@@ -317,7 +319,9 @@ ProClosureEnergy::eval_intrares_derivatives(
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const
 {
-	assert ( rsd.aa() == chemical::aa_pro );
+	assert ( (rsd.aa() == chemical::aa_pro) || (rsd.aa() == chemical::aa_dpr) );
+
+	//const core::Real d_multiplier = ( (rsd.aa() == chemical::aa_dpr) ? -1.0 : 1.0 ); //Multiplier for derivatives
 
 	assert( rsd.has( scNV_ ) );
 	assert( rsd.has( bbN_ ) );
@@ -402,7 +406,7 @@ ProClosureEnergy::measure_chi4(
 	using namespace numeric;
 	using namespace numeric::constants::d;
 
-	assert( upper_res.aa() == chemical::aa_pro );
+	assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) );
 	assert( lower_res.is_bonded( upper_res ) );
 	assert( lower_res.seqpos() == upper_res.seqpos() - 1 );
 
@@ -411,11 +415,13 @@ ProClosureEnergy::measure_chi4(
 		upper_res.xyz( bbN_ ),
 		lower_res.xyz( bbC_ ),
 		lower_res.xyz( bbO_ ));
+	if(upper_res.aa() == chemical::aa_dpr) chi4*= -1.0; //invert chi4 if this is a D-pro
 	if ( chi4 < -pi_over_2 ) chi4 += pi_2; // wrap
 	return chi4;
 }
 
 /// @details chi4 is in radians and should be in the range between -pi_over_2 and 3/2 pi
+/// If this is a D-proline, chi4 should be inverted (multiplied by -1.0) before passing to this function.
 Real
 ProClosureEnergy::chi4E(
 	Real chi4
@@ -434,6 +440,8 @@ ProClosureEnergy::chi4E(
 
 
 /// @details chi4 is in radians and should be in the range between -pi and pi
+/// If this is a D-proline, chi4 should be inverted (multiplied by -1.0) before passing to this function,
+/// and the result should also be multiplied by -1.0 before use elsewhere.
 Real
 ProClosureEnergy::dchi4E_dchi4(
 	Real chi4

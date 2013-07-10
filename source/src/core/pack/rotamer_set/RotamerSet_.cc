@@ -323,16 +323,21 @@ RotamerSet_::build_rotamers_for_concrete(
 
 		utility::vector1< ResidueOP > suggested_rotamers;
 
-		// If rotamer library exists, generate list of suggested rotamers from that.
-		dunbrack::SingleResidueRotamerLibraryCAP rotlib =
-				dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue );
+		dunbrack::SingleResidueRotamerLibraryCAP rotlib = dunbrack::RotamerLibrary::get_instance().get_rsd_library( *concrete_residue ); //For D-amino acids, returns the rotamer library for the corresponding L-amino acid
 		if (rotlib) {
-			rotlib->fill_rotamer_vector(pose, scorefxn, task, packer_neighbor_graph, concrete_residue,
-					existing_residue, extra_chi_steps, buried, suggested_rotamers);
-
-		} else /* no rotamer library exists */ {
-			// Add proton chi rotamers even if there's no rotamer library.... This will disappear when/if ligands get
-			// their own rotamer libraries.
+			rotlib->fill_rotamer_vector( pose, scorefxn, task, packer_neighbor_graph, concrete_residue, existing_residue, extra_chi_steps, buried, suggested_rotamers);
+			if(core::chemical::is_D_aa( existing_residue.aa() ) && suggested_rotamers.size() > 0 ) { //If this is a D-amino acid, flip all the chi values in the suggested_rotamers vector
+				for(core::Size i=1; i<=suggested_rotamers.size(); i++) {
+					if(suggested_rotamers[i]->nchi() > 0) {
+						for(core::Size j=1; j<=suggested_rotamers[i]->nchi(); j++) {
+							suggested_rotamers[i]->set_chi(j, -1.0*suggested_rotamers[i]->chi(j)); 
+						}
+					}
+				}
+			}
+		} else {
+			// Add proton chi rotamers even if there's no rotamer library... this will disappear when
+			// ligands get their own rotamer libraries.
 			if ( concrete_residue->n_proton_chi() != 0 ) {
 				utility::vector1< pack::dunbrack::ChiSetOP > proton_chi_chisets;
 				proton_chi_chisets.push_back( new pack::dunbrack::ChiSet( concrete_residue->nchi() ) );

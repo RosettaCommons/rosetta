@@ -15,6 +15,55 @@ END_SELECTOR
 ## now we search for a case that matches the residue, take the first one
 ## so put generic case last
 
+BEGIN_CASE ### D-amino acids #############################################
+
+BEGIN_SELECTOR
+NAME3 DAL
+NAME3 DAR
+NAME3 DAN
+NAME3 DAS
+NAME3 DCS
+NAME3 DGN
+NAME3 DGU
+NAME3 DHI
+NAME3 DIL
+NAME3 DLE
+NAME3 DLY
+NAME3 DME
+NAME3 DPH
+NAME3 DPR
+NAME3 DSE
+NAME3 DTH
+NAME3 DTR
+NAME3 DTY
+NAME3 DVA
+END_SELECTOR
+
+## these are the operations involved
+
+ADD_ATOM  OXT OOC OC -0.67
+ADD_BOND C OXT
+SET_BACKBONE_HEAVYATOM OXT
+SET_POLYMER_CONNECT UPPER NONE
+
+## making these up:
+
+SET_ICOOR O    -80.0 60 1.2 C CA N
+SET_ICOOR OXT -180.0 60 1.2 C CA O ## phi == 180 --> planar
+
+## modify properties of existing atoms
+
+SET_ATOM_TYPE O OOC
+SET_ATOM_TYPE C COO
+SET_MM_ATOM_TYPE O OC
+SET_MM_ATOM_TYPE C CC
+SET_ATOMIC_CHARGE C 0.34
+SET_ATOMIC_CHARGE O -0.67
+
+ADD_PROPERTY UPPER_TERMINUS ## implies terminus
+
+END_CASE
+
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 ## these are the operations involved

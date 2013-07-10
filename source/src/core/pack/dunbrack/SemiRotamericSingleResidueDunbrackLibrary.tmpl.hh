@@ -478,7 +478,10 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbdep(
 {
 	assert( ! bbind_nrchi_scoring_ );
 
-	parent::eval_rotameric_energy_deriv( rsd, scratch, eval_deriv );
+	//Multiplier for D-amino acids:
+	const core::Real d_multiplier = (core::chemical::is_D_aa(rsd.aa()) ) ? -1.0 : 1.0;
+
+	parent::eval_rotameric_energy_deriv( rsd, scratch, eval_deriv ); //This has been updated to allow scoring of D-amino acids.
 
 	Real chidevpen_score( 0.0 );
 	for ( Size ii = 1; ii <= T; ++ii ) {
@@ -487,7 +490,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbdep(
 
 	Real nrchi_score, dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi;
 	nrchi_score = bbdep_nrchi_score( rsd, scratch,
-		dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi );
+		dnrchiscore_dchi, dnrchiscore_dphi, dnrchiscore_dpsi ); //Handles D-amino acids; derivatives WRT phi, psi, and chi are inverted iff D-amino acid.
 
 	if ( nrchi_score != nrchi_score ) { //NaN check
 		nrchi_score = 0;
@@ -523,22 +526,22 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbdep(
 	std::fill( dE_dbb_semi.begin(), dE_dbb_semi.end(), 0.0 );
 
 	for ( Size i=1; i<= DUNBRACK_MAX_BBTOR; ++i ) {
-		dE_dbb[ i ] = scratch.dchidevpen_dbb()[ i ];
-		dE_dbb_dev[ i ] = scratch.dchidevpen_dbb()[ i ];
+		dE_dbb[ i ] = d_multiplier*scratch.dchidevpen_dbb()[ i ];
+		dE_dbb_dev[ i ] = d_multiplier*scratch.dchidevpen_dbb()[ i ];
 		//dE_dbb_rot[ i ] = scratch.dneglnrotprob_dbb()[ i ];
 	}
-	dE_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] += dnrchiscore_dphi;
-	dE_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] += dnrchiscore_dpsi;
-	dE_dbb_semi[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] = dnrchiscore_dphi;
-	dE_dbb_semi[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = dnrchiscore_dpsi;
+	dE_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] += d_multiplier*dnrchiscore_dphi;
+	dE_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] += d_multiplier*dnrchiscore_dpsi;
+	dE_dbb_semi[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] = d_multiplier*dnrchiscore_dphi;
+	dE_dbb_semi[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = d_multiplier*dnrchiscore_dpsi;
 
 
 	for ( Size i=1; i <= T; ++i ) {
-		dE_dchi[ i ] = scratch.dchidevpen_dchi()[ i ];
-		dE_dchi_dev[ i ] = scratch.dchidevpen_dchi()[ i ];
+		dE_dchi[ i ] = d_multiplier*scratch.dchidevpen_dchi()[ i ];
+		dE_dchi_dev[ i ] = d_multiplier*scratch.dchidevpen_dchi()[ i ];
 	}
-	dE_dchi[ T + 1 ] = dnrchiscore_dchi;
-	dE_dchi_semi[ T + 1 ] = dnrchiscore_dchi;
+	dE_dchi[ T + 1 ] = d_multiplier*dnrchiscore_dchi;
+	dE_dchi_semi[ T + 1 ] = d_multiplier*dnrchiscore_dchi;
 
 	parent::correct_termini_derivatives( rsd, scratch );
 
@@ -639,6 +642,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbind_nrchi_score(
 
 
 /// @brief Trilinear interpolation.  Derivatives discontinuous at edge planes.
+/// Correction: it seems that this was updated at some point to use tricubic interpolation.
+/// Note: This function has been updated to handle D-amino acids properly.
 template < Size T >
 Real
 SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_nrchi_score(
@@ -654,12 +659,17 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::bbdep_nrchi_score(
 	Size const packed_rotno( parent::rotwell_2_packed_rotno( scratch.rotwell() ));
 
 	Real nrchi = rsd.chi( T + 1 );
+	core::Real d_multiplier = 1.0; //A multiplier for D-amino acid angles.  -1.0 if D-amino acid, 1.0 otherwise.
+	if(core::chemical::is_D_aa(rsd.aa())) {
+		nrchi*=-1.0; //Invert chi if this is a D-amino acid
+		d_multiplier = -1.0;
+	}
 	Size nrchi_bin, nrchi_bin_next;
 	Real nrchi_alpha;
 	get_bbdep_nrchi_bin( nrchi, nrchi_bin, nrchi_bin_next, nrchi_alpha );
 
-	Real phi( parent::get_phi_from_rsd( rsd ) );
-	Real psi( parent::get_psi_from_rsd( rsd ) );
+	Real phi( d_multiplier * parent::get_phi_from_rsd( rsd ) ); //Inverted iff D-amino acid
+	Real psi( d_multiplier * parent::get_psi_from_rsd( rsd ) ); //Inverted iff D-amino acid
 
 	// get phi/psi bins
 	Size phibin, phibin_next, psibin, psibin_next;
@@ -979,9 +989,13 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::fill_rotamer_vector_bbind(
 {
 	RotamerLibraryScratchSpace scratch;
 
+	//Determine whether this is a D-amino acid:
+	core::Real d_multiplier = 1.0;
+	if(core::chemical::is_D_aa( existing_residue.aa() ) ) d_multiplier=-1.0;
+
 	/// Save backbone interpolation data for reuse
-	Real phi( parent::get_phi_from_rsd( existing_residue ) );
-	Real psi( parent::get_psi_from_rsd( existing_residue ) );
+	Real phi( d_multiplier * parent::get_phi_from_rsd( existing_residue ) );
+	Real psi( d_multiplier * parent::get_psi_from_rsd( existing_residue ) );
 	Size phibin, psibin, phibin_next, psibin_next;
 	Real phi_alpha, psi_alpha;
 	parent::get_phipsi_bins( phi, psi, phibin, psibin, phibin_next, psibin_next, phi_alpha, psi_alpha );
@@ -1043,6 +1057,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::fill_rotamer_vector_bbind(
 
 		if ( count_rotamers_built == max_rots_that_can_be_built ) break;
 	}
+	//If this is a D-amino acid, rotamers will subsequently need to be inverted.
 }
 
 
@@ -1064,9 +1079,13 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::fill_rotamer_vector_bbdep(
 	utility::vector1< Size > rotamer_has_been_interpolated( grandparent::n_packed_rots(), 0 );
 	typename utility::vector1< PackedDunbrackRotamer< T, Real > > interpolated_rotamers( grandparent::n_packed_rots() );
 
+	//Determine whether this is a D-amino acid:
+	core::Real d_multiplier = 1.0;
+	if(core::chemical::is_D_aa( existing_residue.aa() ) ) d_multiplier=-1.0;
+
 	/// Save backbone interpolation data for reuse
-	Real phi( parent::get_phi_from_rsd( existing_residue ) );
-	Real psi( parent::get_psi_from_rsd( existing_residue ) );
+	Real phi( d_multiplier * parent::get_phi_from_rsd( existing_residue ) );
+	Real psi( d_multiplier * parent::get_psi_from_rsd( existing_residue ) );
 	Size phibin, psibin, phibin_next, psibin_next;
 	Real phi_alpha, psi_alpha;
 	parent::get_phipsi_bins( phi, psi, phibin, psibin, phibin_next, psibin_next, phi_alpha, psi_alpha );
@@ -1121,8 +1140,8 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::fill_rotamer_vector_bbdep(
 		accumulated_probability += interpolated_nrchi_sample.prob_;
 
 		if ( count_rotamers_built == max_rots_that_can_be_built ) break;
-
 	}
+	//If this is a D-amino acid, rotamers will subsequently need to be inverted.
 }
 
 template < Size T >
@@ -2799,6 +2818,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::read_rotamer_definitions(
 }
 
 /// @details Clips to range [ nrchi_lower_angle_, nrchi_lower_angle_ + nrchi_periodicity )
+/// Note: this isn't really "clipping" (i.e. values outside of this range are not set to
+/// the minimum or maximum of the range).  Instead, it is properly returning the value
+/// within the range corresponding to a value outside of the range.
 template < Size T >
 Real
 SemiRotamericSingleResidueDunbrackLibrary< T >::clip_to_nrchi_range( Real chi ) const

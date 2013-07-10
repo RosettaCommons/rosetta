@@ -1,0 +1,16 @@
+I need to:
+==Get termini for D-amino acids working. --> DONE
+==Check rama derivatives --> OK
+==Replace the D-aas with the icoor_05_09 versions --> DONE
+==Check fa_dun --> FIXED (derivatives too).
+==Check library loading for fa_dun --> NON-ISSUE, since D-amino acids now use the L-libraries
+==Check p_aa_pp --> FIXED (derivatives, too)
+--Problem with p_aa_pp and rama: gly in the context of D-amino acids not scored properly due to asymmetric prob distn's.
+==Check how the packer works (it doesn't pack D-amino acids right now) --> FIXED
+==Check pro_close --> FIXED
+==Check pro_close derivatives --> FIXED
+==Check reference energies --> FIXED
+==Check reference energy derivatives --> DUH.  Reference energy derivs are all zero
+==Check hbonding --> FIXED
+==Check hbonding derivatives --> FIXED
+==Check omega --> Seems fine.

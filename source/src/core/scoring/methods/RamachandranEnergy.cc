@@ -87,7 +87,7 @@ RamachandranEnergy::residue_energy(
 			return;
 	}
 
-	if ( rsd.is_protein() && (rsd.aa() <= chemical::num_canonical_aas || (rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty) ) ) {
+	if ( rsd.is_protein() && (rsd.aa() <= chemical::num_canonical_aas || (rsd.aa()>=core::chemical::aa_dal && rsd.aa()<=core::chemical::aa_dty /*D-amino acids*/) ) ) {
 		Real rama_score, drama_dphi, drama_dpsi;
 		potential_.eval_rama_score_residue( rsd, rama_score, drama_dphi, drama_dpsi );
 		emap[ rama ] += rama_score;

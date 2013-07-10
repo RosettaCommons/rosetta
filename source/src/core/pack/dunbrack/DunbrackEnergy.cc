@@ -104,7 +104,7 @@ DunbrackEnergy::residue_energy(
 	if ( rsd.is_virtual_residue() ) return;
 
 	/* old		emap[ fa_dun ] = rot_lib_.rotamer_energy( rsd ); */
-	pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() ) ;
+	pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() ) ; //Returns the equivalent L-amino acid library if a D-amino acid is provided
 	if ( rotlib ) {
 		dunbrack::RotamerLibraryScratchSpace scratch;
 		emap[ fa_dun ] += rotlib->rotamer_energy( rsd, scratch );

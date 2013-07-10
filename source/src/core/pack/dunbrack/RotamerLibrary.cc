@@ -504,6 +504,8 @@ RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
 	if ( rsd_type.residue_type_set().name() == chemical::FA_STANDARD &&
 			rsd_type.rotamer_aa() <= chemical::num_canonical_aas ) {
 		return aa_libraries_[ rsd_type.rotamer_aa() ];
+	} else if (rsd_type.residue_type_set().name() == chemical::FA_STANDARD && core::chemical::is_D_aa(rsd_type.rotamer_aa()) ) { //For D-amino acids
+		return aa_libraries_[ core::chemical::get_L_equivalent( rsd_type.rotamer_aa() ) ]; //Use the rotamer library of the equivalent L-amino acid.  (Chi values will have to be inverted).
 	}
 
 	std::string const key( rsd_type.name()+"@"+rsd_type.residue_type_set().name() );

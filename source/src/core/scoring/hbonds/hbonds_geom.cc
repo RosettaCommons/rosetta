@@ -10,6 +10,7 @@
 /// @file
 /// @brief
 /// @author
+/// Modified by Vikram K. Mulligan to allow scoring of D-amino acids on 27 June 2013.
 
 // Unit headers
 #include <core/scoring/hbonds/hbonds_geom.hh>
@@ -109,32 +110,34 @@ get_hb_don_chem_type(
 		}
 	} else {
 		switch(don_rsd.aa()){
-		case aa_asn: case aa_gln: return hbdon_CXA; break;
-		case aa_his:
+		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: return hbdon_CXA; break;
+		case aa_his: case aa_dhi:
 			if (aname == " ND1"){
 				return hbdon_IMD;
 			} else {
 				assert( aname == " NE2");
 				return hbdon_IME;
 			} break;
-		case aa_trp:
+		case aa_trp: case aa_dtr:
 			return hbdon_IND; break;
-		case aa_lys:
+		case aa_lys: case aa_dly:
 			return hbdon_AMO; break;
-		case aa_arg:
+		case aa_arg: case aa_dar:
 			if (aname == " NE "){
 				return hbdon_GDE;
 			} else {
 				assert(aname == " NH1" || aname == " NH2");
 				return hbdon_GDH;
 			} break;
-		case aa_tyr:
+		case aa_tyr: case aa_dty:
 			return hbdon_AHX; break;
-		case aa_ser:
-		case aa_thr:
+		case aa_ser: case aa_dse:
+		case aa_thr: case aa_dth:
 			return hbdon_HXL; break;
 		case aa_ala: case aa_cys: case aa_asp: case aa_glu: case aa_phe:
 		case aa_gly: case aa_ile: case aa_leu: case aa_met: case aa_pro: case aa_val:
+		case aa_dal: case aa_dcs: case aa_das: case aa_dgu: case aa_dph:
+		case aa_dil: case aa_dle: case aa_dme: case aa_dpr: case aa_dva:
 			return hbdon_NONE; break;
 		case na_ade:
 			if (aname == " N6 ") {
@@ -293,18 +296,21 @@ get_hb_acc_chem_type(
 		}
 	} else {
 		switch(acc_rsd.aa()){
-		case aa_asn: case aa_gln: return hbacc_CXA; break;
-		case aa_asp: case aa_glu: return hbacc_CXL; break;
-		case aa_his:
+		case aa_asn: case aa_gln: case aa_dan: case aa_dgn: return hbacc_CXA; break;
+		case aa_asp: case aa_glu: case aa_das: case aa_dgu: return hbacc_CXL; break;
+		case aa_his: case aa_dhi:
 			if (aname == " ND1"){
 				return hbacc_IMD;
 			} else {
 				return hbacc_IME;
 			} break;
 		case aa_ala: case aa_cys: case aa_phe: case aa_gly: case aa_ile: case aa_leu:
-		case aa_met: case aa_pro: case aa_val: case aa_tyr: return hbacc_AHX; break;
-		case aa_ser: case aa_thr: return hbacc_HXL; break;
-		case aa_lys: case aa_arg: case aa_trp:
+		case aa_met: case aa_pro: case aa_val: case aa_tyr:
+		case aa_dal: case aa_dcs: case aa_dph: case aa_dil: case aa_dle:
+		case aa_dme: case aa_dpr: case aa_dva: case aa_dty: 
+			return hbacc_AHX; break;
+		case aa_ser: case aa_thr: case aa_dse: case aa_dth: return hbacc_HXL; break;
+		case aa_lys: case aa_arg: case aa_trp: case aa_dly: case aa_dar: case aa_dtr:
 			return hbacc_NONE;
 		case na_ade:
 			if (aname == " N1 " || aname == " N3 " || aname == " N7 "){

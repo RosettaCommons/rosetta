@@ -126,8 +126,8 @@ ResidueLevelTask_::ResidueLevelTask_(
 				}
 			}
 		}
-		// allow noncanonical AAs to be repacked
-		if (original_residue.aa() == aa_unk)
+		// allow noncanonical AAs and D-amino acids to be repacked
+		if (original_residue.aa() == aa_unk || core::chemical::is_D_aa( original_residue.aa() ) )
 			allowed_residue_types_.push_back( & (original_residue.type()) );
 	} else if ( original_residue.is_DNA() ) {
 		// default: all canonical DNA types w/ adducts
@@ -627,6 +627,7 @@ bool ResidueLevelTask_::flip_HNQ() const
 ///@details this function forces a fixed histidine tautomer by removing the alternate tautomer from the ResidueTypesCAPList.  The fix_his_tautomer_ boolean is maintained for reference that this has been done, but the boolean is not the source of the effect.
 void ResidueLevelTask_::or_fix_his_tautomer( bool setting )
 {
+	//TODO: Modify this function to allow D-amino acids (particularly D-his)!
 	if ( !setting || original_residue_type_->aa() != chemical::aa_his ) return;
 	fix_his_tautomer_ |= setting;
 

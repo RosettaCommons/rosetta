@@ -590,18 +590,21 @@ Ramachandran::eval_rama_score_residue(
 	core::chemical::AA res_aa2 = res_aa;
 	core::Real phi2 = phi;
 	core::Real psi2 = psi;
+	core::Real d_multiplier=1.0; //A multiplier for derivatives: 1.0 for L-amino acids, -1.0 for D-amino acids.
 
 	if(is_d_aminoacid(res_aa)) { //If this is a D-amino acid, invert phi and psi and use the corresponding L-amino acid for the calculation
 		res_aa2 = get_l_equivalent(res_aa);
-		phi2 = 360.0-phi;
-		psi2 = 360.0-psi;
+		phi2 = -phi;
+		psi2 = -psi;
+		d_multiplier = -1.0;
 	}
 
 	if ( use_bicubic_interpolation ) {
 
 		rama = rama_energy_splines_[ res_aa2 ].F(phi2,psi2);
-		drama_dphi = rama_energy_splines_[ res_aa2 ].dFdx(phi2,psi2);
-		drama_dpsi = rama_energy_splines_[ res_aa2 ].dFdy(phi2,psi2);
+		drama_dphi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdx(phi2,psi2);
+		drama_dpsi = d_multiplier*rama_energy_splines_[ res_aa2 ].dFdy(phi2,psi2);
+		//printf("drama_dphi=%.8f\tdrama_dpsi=%.8f\n", drama_dphi, drama_dpsi); //DELETE ME!
 		//if(is_d_aminoacid(res_aa)) { printf("rama = %.4f\n", rama); fflush(stdout); } //DELETE ME!
 		return; // temp -- just stop right here
 	} else {
@@ -616,8 +619,8 @@ Ramachandran::eval_rama_score_residue(
 		if ( interp_p > 0.0 ) {
 			rama = ram_entropy_(ss_type, res_aa2 ) - std::log( static_cast< double >( interp_p ) );
 			double const interp_p_inv_neg = -1.0 / interp_p;
-			drama_dphi = interp_p_inv_neg * dp_dphi;
-			drama_dpsi = interp_p_inv_neg * dp_dpsi;
+			drama_dphi = interp_p_inv_neg * d_multiplier * dp_dphi;
+			drama_dpsi = interp_p_inv_neg * d_multiplier * dp_dpsi;
 		} else {
 			//if ( runlevel > silent ) { //apl fix this
 			//	std::cout << "rama prob = 0. in eval_rama_score_residue!" << std::endl;
@@ -698,7 +701,7 @@ Ramachandran::read_rama(
 				for ( int k = 1; k <= 36; ++k ) {
 					iunit.getline( line, 60 );
 					if ( iunit.eof() ) {
-						goto L100;
+						goto L100; //May cause Velociraptor attacks.
 					} else if ( iunit.fail() ) { // Clear and continue: NO ERROR DETECTION
 						iunit.clear();
 					}

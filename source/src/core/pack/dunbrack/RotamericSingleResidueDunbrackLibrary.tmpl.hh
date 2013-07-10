@@ -450,6 +450,9 @@ RotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv(
 	/// most of the work is done in this call
 	Real score = eval_rotameric_energy_deriv( rsd, scratch, true );
 
+	//Multiplier for D-amino acids:
+	const core::Real d_multiplier = (core::chemical::is_D_aa(rsd.aa()) ) ? -1.0 : 1.0;
+
 	if ( score != score ) { // NaN check
 		score = 0;
 		std::cerr << "NaN at residue rsd: " << rsd.seqpos() << " " << rsd.name() << std::endl;
@@ -477,19 +480,19 @@ RotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv(
 
 	for ( Size i=1; i<= nbb; ++i ) {
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::use_bicubic_interpolation ] ) {
-			dE_dbb[ i ] = scratch.dneglnrotprob_dbb()[ i ] + scratch.dchidevpen_dbb()[ i ];
-			dE_dbb_dev[ i ] = scratch.dchidevpen_dbb()[ i ];
-			dE_dbb_rot[ i ] = scratch.dneglnrotprob_dbb()[ i ];
+			dE_dbb[ i ] = d_multiplier * ( scratch.dneglnrotprob_dbb()[ i ] + scratch.dchidevpen_dbb()[ i ] );
+			dE_dbb_dev[ i ] = d_multiplier * scratch.dchidevpen_dbb()[ i ];
+			dE_dbb_rot[ i ] = d_multiplier * scratch.dneglnrotprob_dbb()[ i ];
 		} else {
-			dE_dbb[ i ] = invp * scratch.drotprob_dbb()[ i ] + scratch.dchidevpen_dbb()[ i ];
-			dE_dbb_dev[ i ] = scratch.dchidevpen_dbb()[ i ];
-			dE_dbb_rot[ i ] = invp * scratch.drotprob_dbb()[ i ]; 
+			dE_dbb[ i ] = d_multiplier * ( invp * scratch.drotprob_dbb()[ i ] + scratch.dchidevpen_dbb()[ i ] );
+			dE_dbb_dev[ i ] = d_multiplier * scratch.dchidevpen_dbb()[ i ];
+			dE_dbb_rot[ i ] = d_multiplier * invp * scratch.drotprob_dbb()[ i ]; 
 		}
 	}
 
 	for ( Size i=1; i<= T; ++i ) {
-		dE_dchi[ i ] = scratch.dchidevpen_dchi()[ i ];
-		dE_dchi_dev[ i ] = scratch.dchidevpen_dchi()[ i ];
+		dE_dchi[ i ] = d_multiplier * scratch.dchidevpen_dchi()[ i ];
+		dE_dchi_dev[ i ] = d_multiplier * scratch.dchidevpen_dchi()[ i ];
 	}
 
 	correct_termini_derivatives( rsd, scratch );
@@ -511,7 +514,10 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 	// Grab data from rsd
 	//Size const nbb ( rsd.mainchain_torsions().size() );
 	//Size const nchi( rsd.nchi() );
-	ChiVector const & chi( rsd.chi() );
+	ChiVector chi ( rsd.chi() );
+	if(core::chemical::is_D_aa(rsd.aa())) {
+		for(core::Size i=1; i<=chi.size(); i++) chi[i]*=-1.0; //Invert if we're dealing with a D-amino acid.
+	}
 	//Real phi( get_phi_from_rsd( rsd ) );
 	//Real psi( get_psi_from_rsd( rsd ) );
 
@@ -555,7 +561,7 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 
 	/// Don't use derived class's version of this function.
 	//std::cout << "RSD " << rsd.seqpos() << " ";
-	RotamericSingleResidueDunbrackLibrary< T >::get_rotamer_from_chi_static( rsd.chi(), rotwell );
+	RotamericSingleResidueDunbrackLibrary< T >::get_rotamer_from_chi_static( chi /*inverted for D-amino acids*/, rotwell );
 
 	Size packed_rotno( rotwell_2_packed_rotno( rotwell ));
 	if ( packed_rotno == 0 ) {
@@ -566,7 +572,7 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 	}
 
 	PackedDunbrackRotamer< T, Real > interpolated_rotamer;
-	interpolate_rotamers( rsd, scratch, packed_rotno, interpolated_rotamer );
+	interpolate_rotamers( rsd, scratch, packed_rotno, interpolated_rotamer ); //This function inverts phi and psi for D-amino acids.
 
 	if ( dun02() ) {
 		for ( Size ii = 1; ii <= T; ++ii ) { chidev[ ii ] = subtract_chi_angles( chi[ ii ], chimean[ ii ], aa(), ii ); }
@@ -647,8 +653,8 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 
 		// Derivatives for the change in the Gaussian height normalization due to sd changing as a function of phi
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_normsd ] ) {
-			dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] += 1/chisd[ii]*dchisd_dphi[ii];
-			scratch.dE_dphi_dev()[ ii ] += 1/chisd[ii]*dchisd_dphi[ii];
+			dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] += 1.0/chisd[ii]*dchisd_dphi[ii];
+			scratch.dE_dphi_dev()[ ii ] += 1.0/chisd[ii]*dchisd_dphi[ii];
 		}
 
 		dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX  ] +=
@@ -658,8 +664,8 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 
 		// Derivatives for the change in the Gaussian height normalization due to sd changing as a function of psi
 		if ( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_normsd ] ) {
-			dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX  ] += 1/chisd[ii]*dchisd_dpsi[ii];
-			scratch.dE_dpsi_dev()[ ii ] += 1/chisd[ii]*dchisd_dpsi[ii];
+			dchidevpen_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX  ] += 1.0/chisd[ii]*dchisd_dpsi[ii];
+			scratch.dE_dpsi_dev()[ ii ] += 1.0/chisd[ii]*dchisd_dpsi[ii];
 		}
 
 		dchidevpen_dchi[ ii ] = chidev[ ii ] / ( chisd[ ii ] * chisd[ ii ] );
@@ -944,6 +950,12 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 	Real phi( get_phi_from_rsd( rsd ) );
 	Real psi( get_psi_from_rsd( rsd ) );
 
+	//For D-amino acids, invert phi and psi:
+	if(core::chemical::is_D_aa(rsd.aa())) {
+		phi*=-1.0;
+		psi*=-1.0;
+	}
+
 	Size phibin, psibin, phibin_next, psibin_next;
 	Real phi_alpha, psi_alpha;
 	get_phipsi_bins( phi, psi, phibin, psibin, phibin_next, psibin_next,phi_alpha, psi_alpha );
@@ -1071,7 +1083,10 @@ RotamericSingleResidueDunbrackLibrary< T >::get_phi_from_rsd(
 {
 	assert( rsd.is_protein() );
 	static Size const RSD_PHI_INDEX = 1; // this shouldn't be here
-	if ( rsd.is_lower_terminus() ) return parent::NEUTRAL_PHI;
+	if ( rsd.is_lower_terminus() ) {
+		if(core::chemical::is_D_aa(rsd.aa())) return -1.0*parent::NEUTRAL_PHI;
+		else return parent::NEUTRAL_PHI;
+	}
 	else return rsd.mainchain_torsion( RSD_PHI_INDEX );
 }
 
@@ -1084,7 +1099,10 @@ RotamericSingleResidueDunbrackLibrary< T >::get_psi_from_rsd(
 {
 	assert( rsd.is_protein() );
 	static Size const RSD_PSI_INDEX = 2; // this shouldn't be here
-	if ( rsd.is_upper_terminus() ) return parent::NEUTRAL_PSI;
+	if ( rsd.is_upper_terminus() ) {
+		if(core::chemical::is_D_aa(rsd.aa())) return -1.0*parent::NEUTRAL_PSI;
+		else return parent::NEUTRAL_PSI;
+	}
 	else return rsd.mainchain_torsion( RSD_PSI_INDEX );
 }
 
@@ -1104,9 +1122,13 @@ RotamericSingleResidueDunbrackLibrary< T >::fill_rotamer_vector(
 {
 	RotamerLibraryScratchSpace scratch;
 
+	///Determine whether this is a D-amino acid:
+	core::Real d_multiplier = 1.0;
+	if(core::chemical::is_D_aa( existing_residue.aa() ) ) d_multiplier = -1.0;
+
 	/// Save backbone interpolation data for reuse
-	Real phi( get_phi_from_rsd( existing_residue ) );
-	Real psi( get_psi_from_rsd( existing_residue ) );
+	Real phi( d_multiplier * get_phi_from_rsd( existing_residue ) ); //Inverted iff this is a D-amino acid.
+	Real psi( d_multiplier * get_psi_from_rsd( existing_residue ) ); //Inverted iff this is a D-amino acid.
 	Size phibin, psibin, phibin_next, psibin_next;
 	Real phi_alpha, psi_alpha;
 	get_phipsi_bins( phi, psi, phibin, psibin, phibin_next, psibin_next, phi_alpha, psi_alpha );
@@ -1137,6 +1159,7 @@ RotamericSingleResidueDunbrackLibrary< T >::fill_rotamer_vector(
 		accumulated_probability += interpolated_rotamer.rotamer_probability();
 		if ( count_rotamers_built == max_rots_that_can_be_built ) break; // this shouldn't happen...
 	}
+	//Iff this is a D-amino acid, the rotamers in the RotamerVector "rotamers" will need to be inverted subsequently.
 }
 
 template < Size T >
@@ -2000,7 +2023,10 @@ RotamericSingleResidueDunbrackLibrary< T >::get_rotamer_from_chi_static(
 	Size4 & rot
 ) const
 {
-	if ( dun02() ) { rotamer_from_chi_02( chi, aa(), T, rot ); return; }
+	core::chemical::AA aa2=aa();
+	if(core::chemical::is_D_aa(aa2)) aa2=core::chemical::get_L_equivalent(aa2);
+
+	if ( dun02() ) { rotamer_from_chi_02( chi, aa2, T, rot ); return; }
 
 	assert( chi.size() >= T );
 

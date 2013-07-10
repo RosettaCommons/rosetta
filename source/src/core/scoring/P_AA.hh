@@ -68,6 +68,15 @@ public:
 	virtual ~P_AA();
 private:
 
+	bool
+	is_d_aminoacid(
+		core::chemical::AA const res_aa
+	) const;
+
+	core::chemical::AA
+	get_l_equivalent(
+		core::chemical::AA const d_aa
+	) const;
 
 	/// @brief Initialize the amino acid probability data structures
 	void

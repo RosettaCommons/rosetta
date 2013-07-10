@@ -1,0 +1,1 @@
+D-amino acid rotamer libraries are no longer necessary.  Rosetta now handles D-amino acids by mirroring the rotameric behaviour of their L-amino acid counterparts (i.e. it uses the L-amino acid rotamer libraries).  This saves disk space and memory when using D-amino acids, and also helps to ensure that mirror-image polypeptides are scored identically.

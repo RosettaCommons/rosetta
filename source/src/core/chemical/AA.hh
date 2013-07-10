@@ -74,7 +74,7 @@ enum AA {
 	na_rad,
 	na_rcy,
 	na_ura,
-	//D-amino acids 29-47.  Keep these together as a group.
+	//D-amino acids 29-47.  Keep these together as a group, and ensure that aa_dal is first and aa_dty is last.
 	aa_dal,
 	aa_dcs,
 	aa_das,
@@ -102,10 +102,25 @@ enum AA {
 };
 
 //////////////////////////////////////////////////////////
-/// @brief give a AA string name and return its enum type
+/// @brief Give an AA string name, return its enum type.
 //////////////////////////////////////////////////////////
 AA
 aa_from_name( std::string const & name );
+
+//////////////////////////////////////////////////////////
+/// @brief Give an enum type, return true if and only if
+/// it is a D-amino acid.
+//////////////////////////////////////////////////////////
+bool
+is_D_aa( AA aa );
+
+//////////////////////////////////////////////////////////
+/// @brief Given an enum type for a D-amino acid, return
+/// the enum type for the corresponding L-amino acid (or
+/// aa_unk if a D-amino acid is not provided).
+//////////////////////////////////////////////////////////
+AA
+get_L_equivalent( AA aa );
 
 ///////////////////////////////////////////////////////
 /// @brief give a enum type and return the string name

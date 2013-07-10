@@ -633,6 +633,56 @@ ADD_PROPERTY LOWER_TERMINUS ## implies terminus
 
 END_CASE
 
+BEGIN_CASE ## Non-proline D-amino acids #####################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+NAME3 DAL
+NAME3 DAR
+NAME3 DAN
+NAME3 DAS
+NAME3 DCS
+NAME3 DGN
+NAME3 DGU
+NAME3 DHI
+NAME3 DIL
+NAME3 DLE
+NAME3 DLY
+NAME3 DME
+NAME3 DPH
+NAME3 DSE
+NAME3 DTH
+NAME3 DTR
+NAME3 DTY
+NAME3 DVA
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## 5/23/2013 sp3 bond angles (60->70.5), staggered hydrogen placement (1H 120->180)
+SET_ICOOR 1H -180 70.5 1 N CA C
+SET_ICOOR 2H -120 70.5 1 N CA 1H
+SET_ICOOR 3H -120 70.5 1 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE CA 0.21
+SET_ATOMIC_CHARGE HA 0.10
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 ## these are the operations involved

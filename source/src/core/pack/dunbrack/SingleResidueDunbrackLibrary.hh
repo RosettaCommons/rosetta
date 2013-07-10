@@ -230,7 +230,8 @@ public:
 
 	/// @brief, Turns out, when non-rotameric chi are taken out of the picture,
 	/// all remaining chi are binned the same way, except proline. Valid only for
-	/// Dun10 libraries.
+	/// Dun10 libraries.  For D-amino acids, chi must be inverted before passing
+	/// to this function.
 	inline
 	Size
 	bin_rotameric_chi(
@@ -240,7 +241,7 @@ public:
 		assert( ! dun02_ );
 		assert( -180.0 <= chi && chi <= 180.0 );
 
-		if ( aa_ == chemical::aa_pro ) {
+		if ( aa_ == chemical::aa_pro || aa_ == chemical::aa_dpr /*D-proline*/) {
 			if ( which_chi == 1 ) {
 				if ( chi > 0 ) { return 1; }
 				else { return 2; }

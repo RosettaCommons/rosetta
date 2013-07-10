@@ -239,6 +239,37 @@ aa_from_name( std::string const & name )
 	return iter->second;
 }
 
+bool
+is_D_aa( AA aa )
+{
+	if(aa>=aa_dal && aa<=aa_dty) return true;
+	else return false;
+}
+
+AA
+get_L_equivalent( AA aa ) {
+	if(aa==aa_dal) return aa_ala;
+	else if(aa==aa_dcs) return aa_cys;
+	else if(aa==aa_das) return aa_asp;
+	else if(aa==aa_dgu) return aa_glu;
+	else if(aa==aa_dph) return aa_phe;
+	else if(aa==aa_dhi) return aa_his;
+	else if(aa==aa_dil) return aa_ile;
+	else if(aa==aa_dly) return aa_lys;
+	else if(aa==aa_dle) return aa_leu;
+	else if(aa==aa_dme) return aa_met;
+	else if(aa==aa_dan) return aa_asn;
+	else if(aa==aa_dpr) return aa_pro;
+	else if(aa==aa_dgn) return aa_gln;
+	else if(aa==aa_dar) return aa_arg;
+	else if(aa==aa_dse) return aa_ser;
+	else if(aa==aa_dth) return aa_thr;
+	else if(aa==aa_dva) return aa_val;
+	else if(aa==aa_dtr) return aa_trp;
+	else if(aa==aa_dty) return aa_tyr;
+
+	return aa_unk;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief input operator for AA enum type

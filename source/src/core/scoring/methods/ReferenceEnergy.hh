@@ -23,6 +23,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
+#include <core/chemical/AA.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
@@ -57,6 +58,16 @@ public:
 	virtual
 	EnergyMethodOP
 	clone() const;
+
+	bool
+	is_d_aminoacid(
+		core::chemical::AA const res_aa
+	) const;
+
+	core::chemical::AA
+	get_l_equivalent(
+		core::chemical::AA const d_aa
+	) const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
