@@ -320,7 +320,7 @@ public:
 	);
 
 
-	/// @brief Insert a new residue by jump.  If new_chain is "true", then seqpos must be the last 
+	/// @brief Insert a new residue by jump.  If new_chain is "true", then seqpos must be the last
 	/// residue of one chain (i.e. residue(seqpos).chain() != residue(seqpos+1).chain() )
 	void
 	insert_residue_by_jump(
@@ -1062,7 +1062,7 @@ private:
 			ar << m;
 			Residue * tmp;
 			for( int i = 1; i <= residues_.size(); i++ ) {
-				tmp = residues_[i].get(); 
+				tmp = residues_[i].get();
 				ar << tmp;
 			}
 			// second passthrough is to turn off serialized flag inside ResidueType
@@ -1168,7 +1168,7 @@ private:
 
 	///
 	void
-	residues_append( Residue const & new_rsd, bool const start_new_chain );
+	residues_append( Residue const & new_rsd, bool const start_new_chain, bool const by_jump = false );
 
 	///
 	void

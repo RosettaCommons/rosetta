@@ -75,6 +75,18 @@ utility::vector1< std::string > split(const std::string &s)
 	return r;
 }
 
+utility::vector1< std::string > split_whitespace(const std::string &s){
+	std::istringstream ss( s );
+	utility::vector1<std::string> r;
+	while ( !ss.fail() ) {
+		std::string e;
+		ss >> e;
+		if ( ss.fail() ) break;
+		r.push_back(e);
+	}
+	return r;
+}
+
 std::string join(utility::vector1<std::string> const & s, std::string const & connector){
 	std::ostringstream os;
 	utility::vector1<std::string>::const_iterator begin= s.begin();

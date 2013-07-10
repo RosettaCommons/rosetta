@@ -52,7 +52,7 @@
         </MOVERS>
         <APPLY_TO_POSE>
 		        <SetupHotspotConstraints stubfile=all_native_stubs.pdb cb_force=0.5/>
-						<profile weight=0.2 file_name="input/1l6x.min.cst"/>
+						<profile weight=0.2 file_name="input/1l6x.min.sequence_profile"/>
         </APPLY_TO_POSE>
         <PROTOCOLS>
 		  		<Add mover_name=dock filter=degree/>

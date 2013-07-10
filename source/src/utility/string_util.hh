@@ -40,6 +40,10 @@ void ReadFromFileOrDie(const std::string& filename, std::string* contents);
 /// @brief split given std::string using ' ' symbol.
 utility::vector1< std::string > split(const std::string &s);
 
+/// @brief split given std::string using whitespace as a separator.
+/// Unlike string_split_multi_delim(), any group of mixed whitespace counts only as a single seperator.
+utility::vector1< std::string > split_whitespace(const std::string &s);
+
 ///@brief combine strings with anything
 std::string join(utility::vector1<std::string> const & s, std::string const & connector);
 

@@ -132,13 +132,15 @@ ConstraintSetMover::apply( Pose & pose )
 		pose.constraint_set( constraint_set_high_res_ );
 		if (TR.Debug.visible()) {
 			TR.Debug << "High-res constraints:" << std::endl;
-			constraint_set_high_res_->show_definition(TR.Info, pose);
+			constraint_set_high_res_->show_definition(TR.Debug, pose);
+			TR.Debug.flush(); // Make sure the tracer is output if the definitions don't use a std::endl
 		}
 	} else {
 		pose.constraint_set( constraint_set_low_res_ );
 		if (TR.Debug.visible()) {
 			TR.Debug << "Low-res constraints:" << std::endl;
-			constraint_set_low_res_->show_definition(TR.Info, pose);
+			constraint_set_low_res_->show_definition(TR.Debug, pose);
+			TR.Debug.flush(); // Make sure the tracer is output if the definitions don't use a std::endl
 		}
 	}
 }

@@ -33,6 +33,7 @@
 #include <string>
 
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
 
 
@@ -79,14 +80,38 @@ void SequenceProfile::read_from_checkpoint(
 		utility_exit_with_message( "ERROR: Unable to open file!" );
 	}
 	std::string line;
-	getline( input, line ); // SKIPS FIRST LINE
+
+	//Check format of file header
+	getline( input, line );
+
+	utility::vector1< std::string > header( utility::split_whitespace( line ) );
+	if( header.size() == order.size() || header.size() == order.size()+1 ) { // Skip header if it doesn't match the expected number of columns.
+		core::Size offset(0);
+		if( header.size() == order.size()+1 ) { offset = 1; }
+		for( core::Size ii=1+offset; ii <= header.size(); ++ii) {
+			if( header[ii].size() != 1 ) { break; } // Not a single letter code
+			if( core::chemical::oneletter_code_from_aa(order[ii-offset]) != header[ii][0] ) {
+				tr.Warning << "WARNING: Potential badly formatted sequence profile file '" << std::string(fn) << "'. " <<
+						"Columns should be in ACDEFGHIKLMNPQRSTVWY order. " <<
+						"Saw '" << header[ii] << "' as column header at position " << utility::to_string(ii) << ". " <<
+						"Expected '" << core::chemical::oneletter_code_from_aa(order[ii-offset]) << "'." << std::endl;
+				break;
+			}
+			alphabet_.push_back( header[ii] );
+		}
+	}
+	if( alphabet_.size() != order.size() ) {
+			tr.Debug << "No header for sequence profile checkpoint file '" << fn << "'. Assuming ACDEFGHIKLMNPQRSTVWY order." << std::endl;
+	}
+
+	//Get data in body of file
 	while( getline( input, line ) ) {
 		if ( line.substr(0,3) == "END" ) break; // end of profile
 		std::string aa;
 		utility::vector1< core::Real > prof_row;
 		prof_row.resize( order.size() );
 
-	 	std::istringstream ls( line );
+		std::istringstream ls( line );
 		ls >> aa;
 
 		core::Real aa_prob;
@@ -100,6 +125,9 @@ void SequenceProfile::read_from_checkpoint(
 			++index;
 		}
 
+		if( index != order.size() + 1 ) {
+			tr.Warning << "WARNING: Potentially incomplete profile row in '" << std::string(fn) << "'. " << std::endl;
+		}
 		aa_seq += aa;
 		new_prof.push_back( prof_row );
 	}
@@ -163,6 +191,12 @@ void SequenceProfile::read_from_file(
 		if ( line_stream.fail() ) continue;
 
 		alphabet_.push_back( aa );
+
+		if( core::chemical::oneletter_code_from_aa(order[alphabet_.size()]) != aa[0] ) {
+			utility_exit_with_message("Badly formatted pssm file. Expected ARNDCQEGHILKMFPSTWYV order in third line of file '"+
+					std::string(fn)+"'. Saw '"+aa+"' at position "+utility::to_string(alphabet_.size())+". "
+					"Expected '"+core::chemical::oneletter_code_from_aa(order[alphabet_.size()])+"'.");
+		}
 		if ( alphabet_.size() >= 20 ) break; // super-hack for pssm file format! bad james, bad!
 	}
 
@@ -192,6 +226,10 @@ void SequenceProfile::read_from_file(
 
 		seq += aa;
 	} // while( getline( input, line ) )
+
+	if( profile_.size() == 0 ) {
+		utility_exit_with_message("Profile file '"+std::string(fn)+"' does not appear to contain any data.");
+	}
 
 	tr.Debug << "Read sequence " << seq << " from  " << fn << std::endl;
 	tr.Debug << "profile dimensions are " << profile_.size() << "x"

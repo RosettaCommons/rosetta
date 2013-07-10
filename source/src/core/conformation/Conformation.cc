@@ -567,7 +567,7 @@ Conformation::append_residue(
 	bool const first_residue( seqpos == 1 );
 
 	// append to residues
-	residues_append( new_rsd_in, start_new_chain );
+	residues_append( new_rsd_in, start_new_chain, attach_by_jump );
 
 	// get reference to new rsd
 	Residue const & new_rsd( *residues_[ seqpos ] );
@@ -3058,7 +3058,7 @@ Conformation::residues_delete(
 ///  fire any signals to ensure that observer access to the residues container does not
 ///  trigger an atom tree refold prematurely.
 void
-Conformation::residues_append( Residue const & new_rsd, bool const start_new_chain )
+Conformation::residues_append( Residue const & new_rsd, bool const start_new_chain, bool const by_jump )
 {
 	residues_.push_back( new_rsd.clone() );
 	// ensure that the residue number is set
@@ -3082,8 +3082,8 @@ Conformation::residues_append( Residue const & new_rsd, bool const start_new_cha
 	// wipe residue connection data that may have been cloned from the original residue
 	residues_[ nres ]->clear_residue_connections();
 
-	// update polymeric connection status from chain id's and termini status
-	if ( nres > 1 ) update_polymeric_connection( nres-1 );
+	// update polymeric connection status from chain id's and termini status (but only if it's possible they're chemically connected)
+	if ( nres > 1 && ! by_jump ) update_polymeric_connection( nres-1 );
 
 	// have to calculate scores with this guy
 	structure_moved_ = true;
