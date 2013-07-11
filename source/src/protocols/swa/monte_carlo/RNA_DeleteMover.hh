@@ -50,7 +50,7 @@ public:
 
 private:
 
-	void
+  void
 	remove_cutpoint_variants_at_res_to_delete( core::pose::Pose & pose, Size const & res_to_delete );
 
 };

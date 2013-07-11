@@ -24,20 +24,17 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-//#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/EnergyMap.hh>
 
 // ObjexxFCL Headers
 
 // Utility headers
-#include <basic/Tracer.hh>
-
-#include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
-
+#include <basic/Tracer.hh>
 
 //// C++ headers
+
 static basic::Tracer tr("core.scoring.methods.ContactOrderEnergy");
 
 namespace core {

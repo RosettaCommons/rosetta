@@ -647,6 +647,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Residues already present in starting file</dd><br>
 </dl>
 <dl>
+<dt><b>-minimize_res</b> \<IntegerVector\><dt>
+<dd>Residues to minimize</dd><br>
+</dl>
+<dl>
 <dt><b>-md_schfile</b> \<String\><dt>
 <dd>File name containing MD schedule</dd><br>
 </dl>
@@ -4302,6 +4306,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-nmer_ref_seq_length</b> \<Integer\><dt>
 <dd>length of nmers in nmer_ref score</dd><br>
 <dd>Default: 9</dd><br>
+</dl>
+<dl>
+<dt><b>-just_calc_rmsd</b> \<Boolean\><dt>
+<dd>In rna_score, just calculate rmsd -- do not replace score.</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>ProQ</h2>
@@ -8373,6 +8382,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-rna_prot_erraser</b> \<Boolean\><dt>
 <dd>Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-deriv_check</b> \<Boolean\><dt>
+<dd>In rna_minimize, check derivatives numerically</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>
@@ -12783,6 +12797,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-backbone_only2</b> \<Boolean\><dt>
 <dd>just copy protein backbone DOFS, useful for homology modeling</dd><br>
+</dl>
+ </li>
+<li><h2>full_model</h2>
+<dl>
+<dt><b>-full_model</b> \<Boolean\><dt>
+<dd>full_model option group</dd><br>
+</dl>
+<dl>
+<dt><b>-cutpoint_open</b> \<IntegerVector\><dt>
+<dd>open cutpoints in full model</dd><br>
 </dl>
  </li>
 <li><h2>ufv</h2>

@@ -67,7 +67,7 @@ public:
 	HBondEnergy( HBondEnergy const & src );
 
 	virtual ~HBondEnergy();
-	
+
 	/// clone
 	virtual
 	methods::EnergyMethodOP
@@ -467,7 +467,6 @@ private:
 	HBondDatabaseCOP database_;
 
 	//pba FA membrane potential for membrane object initialization
-	Membrane_FAPotential const & memb_potential_;
 	mutable Vector normal_;
 	mutable Vector center_;
 	mutable Real thickness_;

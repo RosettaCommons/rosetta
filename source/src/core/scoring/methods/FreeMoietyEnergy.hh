@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/rna/RNA_BulgeEnergy.hh
+/// @file   core/scoring/methods/FreeMoietyEnergy.hh
 /// @brief  Score function class
-/// @author Rhiju Das
+/// @author Rhiju Das (rhiju@stanford.edu)
 
 
-#ifndef INCLUDED_core_scoring_rna_RNA_BulgeEnergy_hh
-#define INCLUDED_core_scoring_rna_RNA_BulgeEnergy_hh
+#ifndef INCLUDED_core_scoring_methods_FreeMoietyEnergy_hh
+#define INCLUDED_core_scoring_methods_FreeMoietyEnergy_hh
 
 // Unit headers
-#include <core/scoring/rna/RNA_BulgeEnergy.fwd.hh>
+#include <core/scoring/methods/FreeMoietyEnergy.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
@@ -31,20 +31,20 @@
 
 namespace core {
 namespace scoring {
-namespace rna {
+namespace methods {
 
 ///
-class RNA_BulgeEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
+class FreeMoietyEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
 	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
 
 public:
 
 	/// @brief ctor
-	RNA_BulgeEnergy();
+	FreeMoietyEnergy();
 
 	/// @brief dtor
-	virtual ~RNA_BulgeEnergy();
+	virtual ~FreeMoietyEnergy();
 
 	/// clone
 	virtual
@@ -64,7 +64,8 @@ public:
 		EnergyMap & emap
 	) const;
 
-	/// @brief RNA_BulgeEnergy is context independent; indicates that no
+
+	/// @brief FreeMoietyEnergy is context independent; indicates that no
 	/// context graphs are required
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
@@ -78,7 +79,7 @@ private:
 
 };
 
-} // rna
+} // methods
 } // scoring
 } // core
 

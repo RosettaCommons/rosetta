@@ -43,8 +43,8 @@
 #include <protocols/swa/monte_carlo/RNA_AddMover.hh>
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfo.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfoUtil.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <protocols/swa/monte_carlo/types.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/viewer/viewers.hh>
@@ -105,6 +105,7 @@ apply_swa_mover( pose::Pose & pose,
 
 	using namespace protocols::swa::monte_carlo;
 	using namespace protocols::swa::rna;
+	using namespace core::pose::full_model_info;
 
 	move_type = "swa";
 
@@ -120,7 +121,7 @@ apply_swa_mover( pose::Pose & pose,
 	stepwise_rna_modeler.set_force_centroid_interaction( true );
 	//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 
-	if ( ! option[ minimize_single_res]() ) stepwise_rna_modeler.set_minimize_res( nonconst_sub_to_full_info_from_pose( pose ).moving_res_list() );
+	if ( ! option[ minimize_single_res]() ) stepwise_rna_modeler.set_minimize_res( nonconst_full_model_info_from_pose( pose ).moving_res_list() );
 
 	stepwise_rna_modeler.apply( pose );
 
@@ -140,6 +141,7 @@ stepwise_monte_carlo()
   using namespace core::io::silent;
   using namespace core::optimization;
   using namespace core::import_pose;
+  using namespace core::pose::full_model_info;
 	using namespace protocols::swa::rna;
 	using namespace protocols::swa::monte_carlo;
 	using namespace protocols::moves;
@@ -171,14 +173,12 @@ stepwise_monte_carlo()
 	SilentFileData silent_file_data;
 
 	//SubToFull (minimal object needed for add/delete)
-	std::map< Size, Size > sub_to_full;
 	utility::vector1< Size > input_res_list = option[ input_res ]();
-	for ( Size i = 1; i <= input_res_list.size(); i++ ) sub_to_full[i] = input_res_list[i];
 	utility::vector1< Size > start_moving_res_list /*blank*/;
-	utility::vector1< Size > cutpoints_in_full_pose /*blank*/;
-	SubToFullInfoOP sub_to_full_info_op =	new SubToFullInfo(  sub_to_full, start_moving_res_list,	desired_sequence, cutpoints_in_full_pose );
-	pose.data().set( core::pose::datacache::CacheableDataType::SUB_TO_FULL_INFO, sub_to_full_info_op );
-	swa::monte_carlo::update_pdb_info_from_sub_to_full( pose ); // for output pdb or silent file -- residue numbering.
+	utility::vector1< Size > cutpoint_open_in_full_model /*blank*/;
+	FullModelInfoOP full_model_info_op =	new FullModelInfo(  input_res_list, start_moving_res_list,	desired_sequence, cutpoint_open_in_full_model );
+	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_op );
+	update_pdb_info_from_sub_to_full( pose ); // for output pdb or silent file -- residue numbering.
 
 	//setup rmsd res as everything to be sampled.
 	std::list< Size > rmsd_res;

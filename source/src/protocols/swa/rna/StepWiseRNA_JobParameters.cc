@@ -154,6 +154,21 @@ namespace rna {
 		return sub_to_full_;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	StepWiseRNA_JobParameters::working_res_list() const{
+
+		if ( sub_to_full_.size() == 0 ) utility_exit_with_message("sub_to_full_.size()==0. Cannot output working_res_list");
+
+		utility::vector1< Size > working_res_list;
+
+		for ( std::map< core::Size, core::Size > ::const_iterator it = sub_to_full_.begin(); it != sub_to_full_.end(); it++ ){
+			working_res_list.push_back( it->second );
+		}
+
+		return working_res_list;
+
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////
 	std::map< core::Size, core::Size > const & StepWiseRNA_JobParameters::const_full_to_sub() const{
 		if(full_to_sub_.size()==0) utility_exit_with_message("full_to_sub_.size()==0");
 		return full_to_sub_;

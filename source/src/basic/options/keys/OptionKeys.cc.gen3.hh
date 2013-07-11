@@ -472,6 +472,8 @@ namespace swa { IntegerVectorOptionKey const input_res1( "swa:input_res1" );  }
 namespace swa { IntegerVectorOptionKey const input_res2( "swa:input_res2" );  }
 namespace swa { BooleanOptionKey const backbone_only1( "swa:backbone_only1" );  }
 namespace swa { BooleanOptionKey const backbone_only2( "swa:backbone_only2" );  }
+namespace full_model { BooleanOptionKey const full_model( "full_model" );  }
+namespace full_model { IntegerVectorOptionKey const cutpoint_open( "full_model:cutpoint_open" );  }
 namespace ufv { BooleanOptionKey const ufv( "ufv" );  }
 namespace ufv { IntegerOptionKey const left( "ufv:left" );  }
 namespace ufv { IntegerOptionKey const right( "ufv:right" );  }

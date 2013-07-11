@@ -16,11 +16,11 @@
 #include <protocols/swa/monte_carlo/RNA_AddMover.hh>
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfo.hh>
 
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
@@ -28,10 +28,11 @@
 
 using namespace core;
 using core::Real;
+using namespace core::pose::full_model_info;
 
 //////////////////////////////////////////////////////////////////////////
 // Removes one residue from a 5' or 3' chain terminus, and appropriately
-// updates the pose sub_to_full_info object.
+// updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
 static basic::Tracer TR( "protocols.swa.monte_carlo.rna_add_or_delete_mover" ) ;
@@ -71,8 +72,8 @@ namespace monte_carlo {
 		MovingResidueCase moving_residue_case;
 		AddOrDeleteChoice add_or_delete_choice;
 
-		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-		utility::vector1< Size > const & moving_res_list = sub_to_full_info.moving_res_list();
+		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+		utility::vector1< Size > const & moving_res_list = full_model_info.moving_res_list();
 
 		//always have something in play!!?? Or permit removal??!! need to check this carefully.
 		bool disallow_delete  = allow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );

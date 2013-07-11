@@ -268,6 +268,7 @@ Options = Option_Group( '',
 			Option( 'new_chain_order', 'Boolean', desc='ensures chain from different MODEL records have differnet mini chains', default = 'false'),
 			Option( 'ddg_predictions_file', 'File', desc = 'File that contains mutational ddG information. Used by ddG task operation/filter.', default = ''),
 			Option( 'input_res','IntegerVector',desc='Residues already present in starting file'),
+			Option( 'minimize_res','IntegerVector',desc='Residues to minimize'),
 			Option( 'md_schfile','String',desc='File name containing MD schedule'),
 			Option("read_pdb_link_records", "Boolean",
 				desc='Sets whether or not the LINK records in PDB files are read.  '
@@ -1906,7 +1907,7 @@ Options = Option_Group( '',
 			Option('fit_pddf_area', 'Boolean', desc="PDDF curve for a scored pose will be normalized to match the area under the reference PDDF curve"
 			    , default='false' ),
 		),
-  		Option( 'sidechain_buried', 'IntegerVector', desc="count buried residues (rvernon pilot app)", default = '-1' ),
+			Option( 'sidechain_buried', 'IntegerVector', desc="count buried residues (rvernon pilot app)", default = '-1' ),
 		Option( 'sidechain_exposed', 'IntegerVector', desc="count exposed residues (rvernon pilot app)", default = '-1' ),
 		Option( 'hackelec_min_dis', 'Real', desc='changes the minimum distance cut-off for hack-elec energy', default='1.6'),
 		Option( 'hackelec_max_dis', 'Real', desc='changes the maximum distance cut-off for hack-elec energy', default='5.5'),
@@ -1937,6 +1938,7 @@ Options = Option_Group( '',
     Option( 'nmer_svm_term_length', 'Integer', desc='how many up/dnstream res to avg and incl in svm sequence encoding', default='3' ),
     Option( 'nmer_svm_pssm_feat', 'Boolean', desc='add pssm features to svm encoding?', default='true' ),
     Option( 'nmer_ref_seq_length', 'Integer', desc='length of nmers in nmer_ref score', default='9' ),
+		Option( 'just_calc_rmsd', "Boolean", desc="In rna_score, just calculate rmsd -- do not replace score.", default='false' ),
 	),
 	Option_Group ( 'ProQ',
 		 Option( 'svmmodel','Integer', desc="SVM model to use (in cross-validation, default is to use all [1-5])",default='1'),
@@ -3467,6 +3469,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'vall_torsions', 'String', desc='Torsions file containing information on fragments from RNA models', default='rna.torsions' ),
 	  Option( 'jump_database', 'String', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='rna_jumps.txt' ),
 		Option( 'rna_prot_erraser', 'Boolean', desc='Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo.', default='false' ),
+		Option( 'deriv_check', 'Boolean', desc="In rna_minimize, check derivatives numerically", default='false' ),
 	),
 	Option_Group( 'cm', # comparative modeling
     Option_Group('sanitize',
@@ -5172,6 +5175,12 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'input_res2', 'IntegerVector',desc='Residues already present in starting file2'),
 		Option( 'backbone_only1', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
 		Option( 'backbone_only2', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
+	),
+
+	################################
+	# full_model_info --> may replace swa stuff above.
+	Option_Group( 'full_model',
+		Option( 'cutpoint_open', 'IntegerVector',desc='open cutpoints in full model'),
 	),
 
 	###############################################################################

@@ -7,42 +7,43 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/SubToFullInfo.hh
+/// @file   core/scoring/methods/FullModelInfo.hh
 /// @brief  Helper functions for SubToFull object, cached inside pose.
 /// @author Rhiju Das
 
-#ifndef INCLUDED_protocols_swa_monte_carlo_SubToFullInfoUtil_hh
-#define INCLUDED_protocols_swa_monte_carlo_SubToFullInfoUtil_hh
+#ifndef INCLUDED_core_pose_full_model_info_FullModelInfoUtil_hh
+#define INCLUDED_core_pose_full_model_info_FullModelInfoUtil_hh
 
 #include <core/types.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfo.fwd.hh>
+#include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 
-namespace protocols {
-namespace swa {
-namespace monte_carlo {
+namespace core {
+namespace pose {
+namespace full_model_info {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Keep track of RNA centroid information inside the pose.
 
-// Undefined, commenting out to fix PyRosetta build  SubToFullInfo const & sub_to_full_info_from_pose( core::pose::Pose const & pose );
+	void
+	reorder_full_model_info_after_delete( core::pose::Pose & pose, core::Size const res_to_delete );
 
-SubToFullInfo &
-nonconst_sub_to_full_info_from_pose( core::pose::Pose & pose );
+	void
+	reorder_full_model_info_after_append( core::pose::Pose & pose, core::Size const res_to_add );
 
-void
-reorder_sub_to_full_info_after_delete( core::pose::Pose & pose, core::Size const res_to_delete );
+	void
+	reorder_full_model_info_after_prepend( core::pose::Pose & pose, core::Size const res_to_add );
 
-void
-reorder_sub_to_full_info_after_append( core::pose::Pose & pose, core::Size const res_to_add );
+	void
+	update_pdb_info_from_sub_to_full( core::pose::Pose & pose );
 
-void
-reorder_sub_to_full_info_after_prepend( core::pose::Pose & pose, core::Size const res_to_add );
+	utility::vector1< Size >
+	figure_out_chains_from_full_model_info( pose::Pose & pose );
 
-void
-update_pdb_info_from_sub_to_full( core::pose::Pose & pose );
+	void
+	fill_full_model_info_from_command_line( pose::Pose & pose );
 
 
 }

@@ -221,6 +221,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "envsmooth" ] = envsmooth;
 	name2score_type_[ "e_pH" ] = e_pH;
 	name2score_type_[ "rna_bulge"] = rna_bulge;
+	name2score_type_[ "free_P"] = free_P;
+	name2score_type_[ "free_2HOstar"] = free_2HOstar;
+	name2score_type_[ "intermol"] = intermol;
 	name2score_type_[ "mg_ref"] = mg_ref;
 	// Variant type to flag rotamers for alternative scoring with varying weight
 	name2score_type_[ "special_rot"] = special_rot;
@@ -301,7 +304,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_mg"] = rna_mg;
 	name2score_type_[ "rna_mg_rep"] = rna_mg_rep;
 	name2score_type_[ "rna_mg_indirect"] = rna_mg_indirect;
-	name2score_type_[ "mg_chem_pot"] = mg_chem_pot;
 
 	//Will these ever really be used?
 	name2score_type_[ "rna_base_pair_pairwise"] = rna_base_pair_pairwise;
@@ -311,11 +313,13 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "rna_base_stack_axis_pairwise"] = rna_base_stack_axis_pairwise;
 
 	name2score_type_[ "fa_stack"] = fa_stack;
-	//	name2score_type_[ "fa_stack_purine"] = fa_stack_purine;
-	//	name2score_type_[ "fa_stack_pyrimidine"] = fa_stack_pyrimidine;
 	name2score_type_[ "fa_stack_aro"] = fa_stack_aro;
 	name2score_type_[ "stack_elec"] = stack_elec;
 	name2score_type_[ "stack_elec_base_only"] = stack_elec_base_only;
+
+	name2score_type_[ "rna_loop_fixed"] = rna_loop_fixed;
+	name2score_type_[ "rna_loop_logN"] = rna_loop_logN;
+	name2score_type_[ "rna_loop_harmonic"] = rna_loop_harmonic;
 
 	name2score_type_[ "rna_torsion"] = rna_torsion;
 	name2score_type_[ "rna_sugar_close"] = rna_sugar_close;

@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/RNA_BulgeEnergy.cc
-/// @brief  RNA_Bulge energy method implementation
-/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+/// @file   core/scoring/methods/FreeMoietyEnergy.cc
+/// @brief  FreeMoiety energy method implementation
+/// @author Rhiju Das (rhiju@stanford.edu)
 
 // Unit headers
-#include <core/scoring/rna/RNA_BulgeEnergy.hh>
-#include <core/scoring/rna/RNA_BulgeEnergyCreator.hh>
+#include <core/scoring/methods/FreeMoietyEnergy.hh>
+#include <core/scoring/methods/FreeMoietyEnergyCreator.hh>
 
 // Package Headers
 #include <core/scoring/EnergyMap.hh>
@@ -27,39 +27,40 @@
 
 namespace core {
 namespace scoring {
-namespace rna {
+namespace methods {
 
 
-/// @details This must return a fresh instance of the RNA_BulgeEnergy class,
+/// @details This must return a fresh instance of the FreeMoietyEnergy class,
 /// never an instance already in use
 methods::EnergyMethodOP
-RNA_BulgeEnergyCreator::create_energy_method(
+FreeMoietyEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const &
 ) const {
-	return new RNA_BulgeEnergy;
+	return new FreeMoietyEnergy;
 }
 
 ScoreTypes
-RNA_BulgeEnergyCreator::score_types_for_method() const {
+FreeMoietyEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
-	sts.push_back( rna_bulge );
+	sts.push_back( free_P );
+	sts.push_back( free_2HOstar );
 	return sts;
 }
 
 
 
 /// ctor
-RNA_BulgeEnergy::RNA_BulgeEnergy() :
-	parent( new RNA_BulgeEnergyCreator )
+FreeMoietyEnergy::FreeMoietyEnergy() :
+	parent( new FreeMoietyEnergyCreator )
 {}
 
-RNA_BulgeEnergy::~RNA_BulgeEnergy() {}
+FreeMoietyEnergy::~FreeMoietyEnergy() {}
 
 /// clone
 core::scoring::methods::EnergyMethodOP
-RNA_BulgeEnergy::clone() const
+FreeMoietyEnergy::clone() const
 {
-	return new RNA_BulgeEnergy;
+	return new FreeMoietyEnergy;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -69,36 +70,28 @@ RNA_BulgeEnergy::clone() const
 /// @details Allocate the scratch space object on the stack to
 /// alieviate thread-safety concerns.  Scratch does not use new.
 void
-RNA_BulgeEnergy::residue_energy(
+FreeMoietyEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
 	EnergyMap & emap
 ) const
 {
-	static Real const bulge_bonus = -10.0 /*Totally made up for now*/;
 
-	if ( !rsd.is_RNA() ) return;
-
-	if ( rsd.has_variant_type( "BULGE" ) ){
-		emap[ rna_bulge ] += bulge_bonus;
-	}
-
-	if ( rsd.has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
-		emap[ rna_bulge ] += bulge_bonus;
-	}
+	if ( rsd.has_variant_type( "VIRTUAL_PHOSPHATE" ) )	      emap[ free_P ] += -1.0;
+	if ( rsd.has_variant_type( "VIRTUAL_O2STAR_HYDROGEN" ) )	emap[ free_2HOstar ] += -1.0;
 
 }
 
 
-/// @brief RNA_BulgeEnergy is context independent; indicates that no context graphs are required
+/// @brief FreeMoietyEnergy is context independent; indicates that no context graphs are required
 void
-RNA_BulgeEnergy::indicate_required_context_graphs(
+FreeMoietyEnergy::indicate_required_context_graphs(
 	utility::vector1< bool > & /*context_graphs_required*/
 ) const
 {}
 
 core::Size
-RNA_BulgeEnergy::version() const
+FreeMoietyEnergy::version() const
 {
 	return 1; // Initial versioning
 }

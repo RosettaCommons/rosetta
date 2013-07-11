@@ -14,23 +14,24 @@
 
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfo.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfoUtil.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
 
 
 using namespace core;
+using namespace core::pose::full_model_info;
 using core::Real;
 
 //////////////////////////////////////////////////////////////////////////
 // Removes one residue from a 5' or 3' chain terminus, and appropriately
-// updates the pose sub_to_full_info object.
+// updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
 static basic::Tracer TR( "protocols.swa.monte_carlo.rna_delete_mover" ) ;
@@ -68,9 +69,9 @@ namespace monte_carlo {
 		if ( moving_residue_case == CHAIN_TERMINUS_5PRIME )	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_delete );
 
 		// important book-keeping.
-		reorder_sub_to_full_info_after_delete( pose, res_to_delete );
-
+		reorder_full_model_info_after_delete( pose, res_to_delete );
 	}
+
 
 	//////////////////////////////////////////////////////////////////////
   void

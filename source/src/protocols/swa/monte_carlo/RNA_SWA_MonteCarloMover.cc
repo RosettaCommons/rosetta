@@ -13,7 +13,6 @@
 /// @author Rhiju Das
 
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloMover.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfo.hh>
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_O2StarMover.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
@@ -25,6 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -93,6 +93,7 @@ namespace monte_carlo {
 	{
 
 		using namespace protocols::moves;
+		using namespace core::pose::full_model_info;
 
 		MonteCarloOP monte_carlo = new MonteCarlo( pose, *scorefxn_, kT_ );
 
@@ -105,7 +106,7 @@ namespace monte_carlo {
 
 			move_type = "";
 
-			utility::vector1< Size > moving_res_list = nonconst_sub_to_full_info_from_pose( pose ).moving_res_list();
+			utility::vector1< Size > moving_res_list = nonconst_full_model_info_from_pose( pose ).moving_res_list();
 
 			if ( (random_number < 0.01 && do_add_delete_) || moving_res_list.size() == 0 /*got to add something!*/ ) {
 				rna_add_or_delete_mover_->apply( pose, move_type );
@@ -162,10 +163,11 @@ namespace monte_carlo {
 		using namespace core::io::silent;
 		using namespace core::conformation;
 		using namespace ObjexxFCL;
+		using namespace core::pose::full_model_info;
 
-		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-		utility::vector1< Size > working_res_list = sub_to_full_info.moving_res_list();
-		std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
+		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		utility::vector1< Size > const & working_res_list = full_model_info.moving_res_list();
+		utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
 
 		// useful to keep track of what's a working residue and what's not.
 		utility::vector1< bool > is_working_res;

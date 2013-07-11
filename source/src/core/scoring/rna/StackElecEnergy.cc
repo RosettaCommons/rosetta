@@ -225,7 +225,7 @@ StackElecEnergy::residue_pair_energy_one_way(
 			if ( is_rna_base( rsd1, m) && is_rna_base( rsd2, n) ) score_base += stack_elec_score;
 
 			//DEBUG
-			if ( std::abs( stack_elec_score ) > 0.1 ){
+			if ( std::abs( stack_elec_score ) > 0.1 && verbose_ ){
 				tr << rsd1.name1() << I( 2, rsd1.seqpos() ) ;
 				tr << " " << rsd1.type().atom_name(m) << " " << A( 4, rsd1.atom_type(m).name() );
 				tr << " [" << F(8, 3, i_charge) << "]";

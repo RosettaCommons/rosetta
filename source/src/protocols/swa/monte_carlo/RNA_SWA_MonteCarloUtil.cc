@@ -14,12 +14,12 @@
 
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
 #include <protocols/swa/monte_carlo/types.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfo.hh>
 
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/util.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
@@ -107,12 +107,13 @@ namespace monte_carlo {
 																	 utility::vector1< AddOrDeleteChoice > & add_or_delete_choices,
 																	 AddOrDeleteChoice const & choice ) {
 
+		using namespace core::pose::full_model_info;
 
 		Size const & nres( pose.total_residue() );
 		kinematics::FoldTree const & fold_tree( pose.fold_tree() );
 
-		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-		utility::vector1< Size > const & moving_res_list = sub_to_full_info.moving_res_list();
+		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		utility::vector1< Size > const & moving_res_list = full_model_info.moving_res_list();
 
 		for ( Size n = 1; n <= moving_res_list.size(); n++ ){
 
@@ -144,17 +145,19 @@ namespace monte_carlo {
 															utility::vector1< MovingResidueCase > & moving_residue_cases,
 															utility::vector1< AddOrDeleteChoice > & add_or_delete_choices ) {
 
+		using namespace core::pose::full_model_info;
+
 		Size const & nres( pose.total_residue() );
 		kinematics::FoldTree const & fold_tree( pose.fold_tree() );
 
-		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-		std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
-		utility::vector1< Size > cutpoints_in_full_pose = sub_to_full_info.cutpoints_in_full_pose();
-		Size nres_full = sub_to_full_info.full_sequence().size();
+		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
+		utility::vector1< Size > const &cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+		Size nres_full = full_model_info.full_sequence().size();
 
 		utility::vector1< bool > is_cutpoint_in_full_pose;
 		for ( Size i = 1; i <= nres_full; i++ ) is_cutpoint_in_full_pose.push_back( false );
-		for ( Size n = 1; n <= cutpoints_in_full_pose.size(); n++ ) is_cutpoint_in_full_pose[ cutpoints_in_full_pose[n] ] = true;
+		for ( Size n = 1; n <= cutpoint_open_in_full_model.size(); n++ ) is_cutpoint_in_full_pose[ cutpoint_open_in_full_model[n] ] = true;
 
 		for ( Size i = 1; i <= nres; i++ ){
 

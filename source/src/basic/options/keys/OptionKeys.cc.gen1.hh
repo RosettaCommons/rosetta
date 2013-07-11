@@ -176,6 +176,7 @@ namespace score { StringOptionKey const nmer_svm_aa_matrix( "score:nmer_svm_aa_m
 namespace score { IntegerOptionKey const nmer_svm_term_length( "score:nmer_svm_term_length" );  }
 namespace score { BooleanOptionKey const nmer_svm_pssm_feat( "score:nmer_svm_pssm_feat" );  }
 namespace score { IntegerOptionKey const nmer_ref_seq_length( "score:nmer_ref_seq_length" );  }
+namespace score { BooleanOptionKey const just_calc_rmsd( "score:just_calc_rmsd" );  }
 namespace ProQ { BooleanOptionKey const ProQ( "ProQ" );  }
 namespace ProQ { IntegerOptionKey const svmmodel( "ProQ:svmmodel" );  }
 namespace ProQ { StringOptionKey const basename( "ProQ:basename" );  }

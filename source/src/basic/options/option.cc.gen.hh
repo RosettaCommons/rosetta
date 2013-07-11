@@ -144,6 +144,7 @@ option.add( basic::options::OptionKeys::in::file::obey_ENDMDL, "Stop reading a P
 option.add( basic::options::OptionKeys::in::file::new_chain_order, "ensures chain from different MODEL records have differnet mini chains" ).def(false);
 option.add( basic::options::OptionKeys::in::file::ddg_predictions_file, "File that contains mutational ddG information. Used by ddG task operation/filter." ).def("");
 option.add( basic::options::OptionKeys::in::file::input_res, "Residues already present in starting file" );
+option.add( basic::options::OptionKeys::in::file::minimize_res, "Residues to minimize" );
 option.add( basic::options::OptionKeys::in::file::md_schfile, "File name containing MD schedule" );
 option.add( basic::options::OptionKeys::in::file::read_pdb_link_records, "Sets whether or not the LINK records in PDB files are read.  The default value is false." ).shortd( "Read LINK records?" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::in::file::native_contacts, "native contacts pair list for fnat/fnon-nat calculation in Docking" );
@@ -899,6 +900,7 @@ option.add( basic::options::OptionKeys::score::nmer_svm_aa_matrix, "nmer svm seq
 option.add( basic::options::OptionKeys::score::nmer_svm_term_length, "how many up/dnstream res to avg and incl in svm sequence encoding" ).def(3);
 option.add( basic::options::OptionKeys::score::nmer_svm_pssm_feat, "add pssm features to svm encoding?" ).def(true);
 option.add( basic::options::OptionKeys::score::nmer_ref_seq_length, "length of nmers in nmer_ref score" ).def(9);
+option.add( basic::options::OptionKeys::score::just_calc_rmsd, "In rna_score, just calculate rmsd -- do not replace score." ).def(false);
 option.add( basic::options::OptionKeys::ProQ::ProQ, "ProQ option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ProQ::svmmodel, "SVM model to use (in cross-validation, default is to use all [1-5])" ).def(1);
 option.add( basic::options::OptionKeys::ProQ::basename, "basename location for sequence specific inputfile)" ).def("");
@@ -1729,6 +1731,7 @@ option.add( basic::options::OptionKeys::rna::skip_o2star_trials, "No O2* packing
 option.add( basic::options::OptionKeys::rna::vall_torsions, "Torsions file containing information on fragments from RNA models" ).def("rna.torsions");
 option.add( basic::options::OptionKeys::rna::jump_database, "Generate a database of jumps extracted from base pairings from a big RNA file" ).def("rna_jumps.txt");
 option.add( basic::options::OptionKeys::rna::rna_prot_erraser, "Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo." ).def(false);
+option.add( basic::options::OptionKeys::rna::deriv_check, "In rna_minimize, check derivatives numerically" ).def(false);
 option.add( basic::options::OptionKeys::cm::cm, "cm option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cm::sanitize::sanitize, "sanitize option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cm::sanitize::bound_delta, "Distance in Angstroms from aligned position before a penalty is incurred" ).def(0.5);
@@ -2631,6 +2634,8 @@ option.add( basic::options::OptionKeys::swa::input_res1, "Residues already prese
 option.add( basic::options::OptionKeys::swa::input_res2, "Residues already present in starting file2" );
 option.add( basic::options::OptionKeys::swa::backbone_only1, "just copy protein backbone DOFS, useful for homology modeling" );
 option.add( basic::options::OptionKeys::swa::backbone_only2, "just copy protein backbone DOFS, useful for homology modeling" );
+option.add( basic::options::OptionKeys::full_model::full_model, "full_model option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::full_model::cutpoint_open, "open cutpoints in full model" );
 option.add( basic::options::OptionKeys::ufv::ufv, "ufv option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ufv::left, "left endpoint" );
 option.add( basic::options::OptionKeys::ufv::right, "right endpoint" );

@@ -129,6 +129,7 @@ namespace score { extern StringOptionKey const nmer_svm_aa_matrix; }
 namespace score { extern IntegerOptionKey const nmer_svm_term_length; }
 namespace score { extern BooleanOptionKey const nmer_svm_pssm_feat; }
 namespace score { extern IntegerOptionKey const nmer_ref_seq_length; }
+namespace score { extern BooleanOptionKey const just_calc_rmsd; }
 
 } // namespace OptionKeys
 } // namespace options

@@ -288,6 +288,7 @@ namespace rna { BooleanOptionKey const skip_o2star_trials( "rna:skip_o2star_tria
 namespace rna { StringOptionKey const vall_torsions( "rna:vall_torsions" );  }
 namespace rna { StringOptionKey const jump_database( "rna:jump_database" );  }
 namespace rna { BooleanOptionKey const rna_prot_erraser( "rna:rna_prot_erraser" );  }
+namespace rna { BooleanOptionKey const deriv_check( "rna:deriv_check" );  }
 namespace cm { BooleanOptionKey const cm( "cm" );  }
 namespace cm { namespace sanitize { BooleanOptionKey const sanitize( "cm:sanitize" );  } }
 namespace cm { namespace sanitize { RealOptionKey const bound_delta( "cm:sanitize:bound_delta" );  } }

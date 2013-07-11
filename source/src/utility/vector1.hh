@@ -248,13 +248,13 @@ public: // Assignment
 	}
 #endif
 
-// 	///
-// 	inline
-// 	bool
-// 	has( T const & t ) const
-// 	{
-// 		return ( std::find( begin(), end(), t ) != end() );
-// 	}
+	/// @brief useful function -- was commented out previously due, I think, to a conflict with has() in OptionKeys! Now renamed to has_value().
+ 	inline
+ 	bool
+ 	has_value( T const & t ) const
+ 	{
+ 		return ( std::find( begin(), end(), t ) != end() );
+ 	}
 
 }; // vector1
 

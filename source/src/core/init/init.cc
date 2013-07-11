@@ -46,6 +46,7 @@
 #include <core/scoring/methods/ContactOrderEnergyCreator.hh>
 #include <core/scoring/methods/EnvEnergyCreator.hh>
 #include <core/scoring/methods/EnvSmoothEnergyCreator.hh>
+#include <core/scoring/methods/IntermolEnergyCreator.hh>
 #include <core/scoring/methods/NMerRefEnergyCreator.hh>
 #include <core/scoring/methods/NMerPSSMEnergyCreator.hh>
 #include <core/scoring/methods/NMerSVMEnergyCreator.hh>
@@ -108,7 +109,10 @@
 #include <core/scoring/methods/DistanceChainbreakEnergyCreator.hh>
 #include <core/scoring/methods/Fa_MbenvEnergyCreator.hh>
 #include <core/scoring/methods/Fa_MbsolvEnergyCreator.hh>
+#include <core/scoring/methods/FreeMoietyEnergyCreator.hh>
+#include <core/scoring/methods/HybridVDW_EnergyCreator.hh>
 #include <core/scoring/methods/GenBornEnergyCreator.hh>
+#include <core/scoring/facts/FACTSEnergyCreator.hh>
 #include <core/scoring/facts/FACTSEnergyCreator.hh>
 #include <core/scoring/methods/HybridVDW_EnergyCreator.hh>
 #include <core/scoring/methods/LK_CosThetaEnergyCreator.hh>
@@ -164,6 +168,7 @@
 #include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.hh>
 #include <core/scoring/rna/StackElecEnergyCreator.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftEnergyCreator.hh>
+#include <core/scoring/rna/RNA_LoopEnergyCreator.hh>
 #include <core/scoring/sym_e/symECreator.hh>
 #include <core/scoring/saxs/FastSAXSEnergyCreator.hh>
 #include <core/scoring/saxs/SAXSEnergyCreator.hh>
@@ -293,6 +298,7 @@ static EnergyMethodRegistrator< scoring::hbonds::HBondEnergyCreator > HBondEnerg
 static EnergyMethodRegistrator< scoring::methods::ChainbreakEnergyCreator > ChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenPairEnergyCreator > CenPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ContactOrderEnergyCreator > ContactOrderEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::IntermolEnergyCreator > IntermolEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::EnvEnergyCreator > EnvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::EnvSmoothEnergyCreator > EnvSmoothEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::OmegaTetherEnergyCreator > OmegaTetherEnergyCreator_registrator;
@@ -359,6 +365,7 @@ static EnergyMethodRegistrator< scoring::methods::DirectReadoutEnergyCreator > D
 static EnergyMethodRegistrator< scoring::methods::DistanceChainbreakEnergyCreator > DistanceChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::Fa_MbenvEnergyCreator > Fa_MbenvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::Fa_MbsolvEnergyCreator > Fa_MbsolvEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::FreeMoietyEnergyCreator > FreeMoietyEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GenBornEnergyCreator > GenBornEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::FACTSEnergyCreator > FACTSEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::HybridVDW_EnergyCreator > HybridVDW_EnergyCreator_registrator;
@@ -410,6 +417,7 @@ static EnergyMethodRegistrator< scoring::rna::RNA_VDW_EnergyCreator > RNA_VDW_En
 static EnergyMethodRegistrator< scoring::rna::RNA_Mg_EnergyCreator > RNA_Mg_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomVDW_BasePhosphateCreator > RNA_FullAtomVDW_BasePhosphateCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::StackElecEnergyCreator > StackElecEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::rna::RNA_LoopEnergyCreator > RNA_LoopEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::chemical_shift::RNA_ChemicalShiftEnergyCreator > NA_ChemicalShiftEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::sym_e::symECreator > symECreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PoissonBoltzmannEnergyCreator > PoissonBoltzmannEnergyCreator_registrator;

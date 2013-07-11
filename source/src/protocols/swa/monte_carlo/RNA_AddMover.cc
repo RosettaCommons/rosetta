@@ -14,10 +14,10 @@
 
 #include <protocols/swa/monte_carlo/RNA_AddMover.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfo.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfoUtil.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/StepWiseUtil.hh>
+
 
 // libRosetta headers
 #include <core/types.hh>
@@ -26,6 +26,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
@@ -41,7 +42,7 @@ using protocols::swa::Contain_seq_num;
 
 //////////////////////////////////////////////////////////////////////////
 // Removes one residue from a 5' or 3' chain terminus, and appropriately
-// updates the pose sub_to_full_info object.
+// updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
 static basic::Tracer TR( "protocols.swa.monte_carlo.rna_add_mover" ) ;
@@ -93,13 +94,14 @@ namespace monte_carlo {
 
 		using namespace core::chemical;
 		using namespace core::pose;
+		using namespace core::pose::full_model_info;
 
 		Size suite_num( 0 ), nucleoside_num( 0 ); // will record which new dofs added.
 
 		//pose.dump_pdb( "before_add.pdb" );
-		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-		std::string const & full_sequence  = sub_to_full_info.full_sequence();
-		std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
+		FullModelInfo const & full_model_info = nonconst_full_model_info_from_pose( pose );
+		std::string const & full_sequence  = full_model_info.full_sequence();
+		utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
 
 		if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ){
 
@@ -119,7 +121,7 @@ namespace monte_carlo {
 
 			pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
 
-			reorder_sub_to_full_info_after_append( pose, res_to_add );
+			reorder_full_model_info_after_append( pose, res_to_add );
 
 			fix_up_residue_type_variants_after_append( pose, res_to_add );
 
@@ -148,7 +150,7 @@ namespace monte_carlo {
 
 			pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
 
-			reorder_sub_to_full_info_after_prepend( pose, res_to_add );
+			reorder_full_model_info_after_prepend( pose, res_to_add );
 
 			fix_up_residue_type_variants_after_prepend( pose, res_to_add );
 
@@ -188,18 +190,19 @@ namespace monte_carlo {
 	RNA_AddMover::fix_up_residue_type_variants_after_append( pose::Pose & pose, Size const res_to_add ) const {
 
 		using namespace core::chemical;
+		using namespace core::pose::full_model_info;
 
-		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-		std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
-		utility::vector1< Size > const & open_cutpoints_in_full_pose = sub_to_full_info.cutpoints_in_full_pose();
+		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
+		utility::vector1< Size > const & open_cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 
 		// Could this be a chainbreak (cutpoint_closed )?
 
-		TR << "checking for cutpoint after append: " << res_to_add << " " << sub_to_full[ res_to_add ] << " " << sub_to_full[ res_to_add + 1 ] << " " << open_cutpoints_in_full_pose.size() << std::endl;
+		TR << "checking for cutpoint after append: " << res_to_add << " " << sub_to_full[ res_to_add ] << " " << sub_to_full[ res_to_add + 1 ] << " " << open_cutpoint_open_in_full_model.size() << std::endl;
 
 		if ( res_to_add < pose.total_residue() &&
 				 sub_to_full[ res_to_add ] + 1 == sub_to_full[ res_to_add + 1 ] &&
-				 ! Contain_seq_num( sub_to_full[ res_to_add ], open_cutpoints_in_full_pose ) ){
+				 ! Contain_seq_num( sub_to_full[ res_to_add ], open_cutpoint_open_in_full_model ) ){
 			add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
 			add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
 		}
@@ -211,18 +214,19 @@ namespace monte_carlo {
 	RNA_AddMover::fix_up_residue_type_variants_after_prepend( pose::Pose & pose, Size const res_to_add ) const {
 
 		using namespace core::chemical;
+		using namespace core::pose::full_model_info;
 
-		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-		std::map< Size, Size > sub_to_full = sub_to_full_info.sub_to_full();
-		utility::vector1< Size > const & open_cutpoints_in_full_pose = sub_to_full_info.cutpoints_in_full_pose();
+		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
+		utility::vector1< Size > const & open_cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 
 		// Could this be a chainbreak (cutpoint_closed )?
 
-		TR << "checking for cutpoint after prepend: " << res_to_add << " " << sub_to_full[ res_to_add ] << " " << sub_to_full[ res_to_add - 1 ] << " " << open_cutpoints_in_full_pose.size() << std::endl;
+		TR << "checking for cutpoint after prepend: " << res_to_add << " " << sub_to_full[ res_to_add ] << " " << sub_to_full[ res_to_add - 1 ] << " " << open_cutpoint_open_in_full_model.size() << std::endl;
 
 		if ( res_to_add > 1 &&
 				 sub_to_full[ res_to_add ] - 1 == sub_to_full[ res_to_add - 1 ] &&
-				 ! Contain_seq_num( sub_to_full[ res_to_add - 1 ], open_cutpoints_in_full_pose)  ){
+				 ! Contain_seq_num( sub_to_full[ res_to_add - 1 ], open_cutpoint_open_in_full_model)  ){
 			add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add - 1  );
 			add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add    );
 		} else {
@@ -235,6 +239,8 @@ namespace monte_carlo {
 	void
 	RNA_AddMover::sample_by_swa( pose::Pose & pose, Size const res_to_add  ) const{
 
+		using namespace core::pose::full_model_info;
+
 		TR.Debug << "presampling by swa " << res_to_add << std::endl;
 
 		swa::rna::StepWiseRNA_Modeler stepwise_rna_modeler( res_to_add, scorefxn_ );
@@ -242,7 +248,7 @@ namespace monte_carlo {
 		stepwise_rna_modeler.set_force_centroid_interaction( true );
 		//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 
-		if ( minimize_all_rebuilt_res_ ) stepwise_rna_modeler.set_minimize_res( nonconst_sub_to_full_info_from_pose( pose ).moving_res_list() );
+		if ( minimize_all_rebuilt_res_ ) stepwise_rna_modeler.set_minimize_res( nonconst_full_model_info_from_pose( pose ).moving_res_list() );
 
 		stepwise_rna_modeler.apply( pose );
 	}

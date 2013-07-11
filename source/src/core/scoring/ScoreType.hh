@@ -71,6 +71,7 @@ enum ScoreType {
 	hack_elec_bb_bb,
 	hack_elec_bb_sc,
 	hack_elec_sc_sc,
+	hack_elec_nonpolar, // grab bag for nonpolar to everything else; i.e. pairs that are not in H-bonds.
 	h2o_hbond,
 	dna_dr,
 	dna_bp,
@@ -153,14 +154,11 @@ enum ScoreType {
   rna_mg, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
   rna_mg_rep, // ad-hoc, empirically validated term to prevent uncommon mg(2+)/atom interactions.
   rna_mg_indirect, //knowledge-based term for mg(2+)/RNA interactions for use in low res modeling.
-	mg_chem_pot, // chemical potential ('mu') of instantiating an explicit mg(2+) ion. Actually a simple one-body term.
 
 	// High resolution
 	rna_torsion,       // RNA torsional potential.
 	rna_sugar_close,   // constraints to keep RNA sugar closed, and with reasonably ideal geometry
 	fa_stack,          // stacking interaction modeled as pairwise atom-atom interactions
-	//	fa_stack_purine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PURINE
-	//	fa_stack_pyrimidine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PYRIMIDINE
 	fa_stack_aro,
 	stack_elec,          // distance dependent dielectric between base atoms (attenuated parallel to plane)
 	stack_elec_base_only,
@@ -238,6 +236,11 @@ enum ScoreType {
 	//Low resolution
 	rna_rg,           // Radius of gyration for RNA
 
+	// nucleotide resolution thermodynamics
+	rna_loop_fixed, // RNA loop closure terms -- attempting model full RNA folding free energy
+	rna_loop_logN,
+	rna_loop_harmonic,
+
 	//  FACTS solvation model
 	facts_elec,
 	facts_solv,
@@ -305,7 +308,12 @@ enum ScoreType {
 	e_pH,
 	rna_bulge,
   mg_ref,  // chemical potential for mg(2+) ('reference weight' in Rosetta lingo)
+	free_P, // bonus for virtualizing RNA phosphate
+	free_2HOstar, // bonus for virtualizing RNA 2'-OH
+	intermol, // cost of instantiating a chain form 1 M std state.
 	special_rot,
+
+	other_subpose, // in preparation for multi-pose stuff.
 
 	// PB potential
 	PB_elec,
@@ -357,7 +365,7 @@ enum ScoreType {
 	holes_min,
 	holes_min_mean,
 
-    rna_chem_shift, //RNA NMR chemical shift pseudo-energy term
+	rna_chem_shift, //RNA NMR chemical shift pseudo-energy term
 
 	dab_sasa, // classic 1.4A probe solvant accessible surface area
 	dab_sev,  // solvent excluded volume -- volume of atoms inflated by 1.4A
@@ -389,8 +397,6 @@ enum ScoreType {
 	neigh_vect,
 	neigh_count,
 	neigh_vect_raw,
-
-
 
 	//Symmetry bonus
 	symE_bonus,
@@ -441,7 +447,7 @@ enum ScoreType {
   //membrane environment smooth
 	Menv_smooth,
 
-    #ifdef PYROSETTA
+  #ifdef PYROSETTA
 		PyRosettaEnergy_first,
 		PyRosettaEnergy_last = PyRosettaEnergy_first + 10,
 	#endif

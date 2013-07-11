@@ -55,6 +55,7 @@ namespace rna {
 		Size const & moving_res() const;
 		Size const & working_moving_res() const;
 		utility::vector1< core::Size > const & working_moving_res_list() const;
+		utility::vector1< core::Size > working_res_list() const;
 		Size working_reference_res() const;
 
 		Size const & working_moving_suite() const;

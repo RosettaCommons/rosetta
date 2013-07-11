@@ -94,7 +94,7 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 
-#include <protocols/swa/monte_carlo/SubToFullInfo.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <protocols/swa/monte_carlo/RNA_AddMover.hh>
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
@@ -580,6 +580,7 @@ swa_rna_sample()
   using namespace core::kinematics;
   using namespace core::scoring;
   using namespace core::io::silent;
+  using namespace core::pose::full_model_info;
 	using namespace protocols::swa::rna;
 	using namespace protocols::moves;
 
@@ -621,12 +622,12 @@ swa_rna_sample()
 	// put this into its own little function?
 	std::string const & full_sequence = job_parameters->full_sequence();
 	utility::vector1< Size > const start_moving_res_list = job_parameters->working_moving_res_list();
-	SubToFullInfoOP sub_to_full_info_op =
-		new SubToFullInfo(  job_parameters->sub_to_full(),
+	FullModelInfoOP full_model_info_op =
+		new FullModelInfo(  job_parameters->working_res_list(),
 												start_moving_res_list,
 												full_sequence,
 												option[ cutpoint_open ]() );
-	pose.data().set( core::pose::datacache::CacheableDataType::SUB_TO_FULL_INFO, sub_to_full_info_op );
+	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_op );
 
 	// put this into its own little function?
 	// Set up Movers that go into Main Loop (RNA_SWA_MonteCarloMover). This could also go into RNA_SWA_MonteCarloMover. Hmm.

@@ -13,7 +13,6 @@
 /// @author Rhiju Das
 
 #include <protocols/swa/monte_carlo/RNA_O2StarMover.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfo.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -21,6 +20,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -36,7 +36,7 @@ using core::Real;
 
 //////////////////////////////////////////////////////////////////////////
 // Removes one residue from a 5' or 3' chain terminus, and appropriately
-// updates the pose sub_to_full_info object.
+// updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
 static basic::Tracer TR( "protocols.swa.monte_carlo.o2star_mover" ) ;
@@ -76,10 +76,12 @@ namespace monte_carlo {
   RNA_O2StarMover::apply( core::pose::Pose & pose, std::string & move_type )
 	{
 
+		using namespace core::pose::full_model_info;
+
 		Size o2star_res( 0 );
 
-		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-		utility::vector1< Size > moving_res_list = sub_to_full_info.moving_res_list();
+		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+		utility::vector1< Size > moving_res_list = full_model_info.moving_res_list();
 
 		if ( sample_all_o2star_ ){
 			o2star_res = get_random_o2star_residue( pose );

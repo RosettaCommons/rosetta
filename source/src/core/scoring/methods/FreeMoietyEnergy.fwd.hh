@@ -7,29 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/swa/SubToFullInfo.fwd.hh
-/// @brief  Mapping from a working pose into a bigger pose, for swa monte carlo stuff.
-/// @author Rhiju Das
-
-#ifndef INCLUDED_protocols_swa_monte_carlo_SubToFullInfo_fwd_hh
-#define INCLUDED_protocols_swa_monte_carlo_SubToFullInfo_fwd_hh
+/// @file   core/scoring/methods/FreeMoietyEnergy.fwd.hh
+/// @brief  FreeMoiety energy method forward declaration
+/// @author Rhiju Das (rhiju@stanford.edu)
 
 
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
+#ifndef INCLUDED_core_scoring_methods_FreeMoietyEnergy_fwd_hh
+#define INCLUDED_core_scoring_methods_FreeMoietyEnergy_fwd_hh
 
 
-// C++
+namespace core {
+namespace scoring {
+namespace methods {
 
-namespace protocols {
-namespace swa {
-namespace monte_carlo {
+class FreeMoietyEnergy;
 
-	class SubToFullInfo;
-	typedef utility::pointer::owning_ptr< SubToFullInfo > SubToFullInfoOP;
+} // methods
+} // scoring
+} // core
 
-}
-}
-}
 
-#endif
+#endif // INCLUDED_core_scoring_EtableEnergy_FWD_HH

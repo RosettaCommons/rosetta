@@ -14,7 +14,7 @@
 
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
-#include <protocols/swa/monte_carlo/SubToFullInfo.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <protocols/swa/monte_carlo/types.hh>
 
 // libRosetta headers
@@ -43,7 +43,7 @@ using core::Real;
 
 //////////////////////////////////////////////////////////////////////////
 // Removes one residue from a 5' or 3' chain terminus, and appropriately
-// updates the pose sub_to_full_info object.
+// updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
 
 static basic::Tracer TR( "protocols.swa.monte_carlo.rna_torsion_mover" ) ;
@@ -78,9 +78,13 @@ namespace monte_carlo {
   void
   RNA_TorsionMover::apply( core::pose::Pose & pose, std::string & move_type, Real const & sample_range )
 	{
-		SubToFullInfo & sub_to_full_info = nonconst_sub_to_full_info_from_pose( pose );
-		utility::vector1< Size > const & moving_res_list = sub_to_full_info.moving_res_list();
+
+		using namespace core::pose::full_model_info;
+
+		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+		utility::vector1< Size > const & moving_res_list = full_model_info.moving_res_list();
 		random_torsion_move( pose, moving_res_list, move_type, sample_range );
+
 	}
 
 	//////////////////////////////////////////////////////////////////////

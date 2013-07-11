@@ -235,16 +235,14 @@ HBondEnergyCreator::score_types_for_method() const {
 HBondEnergy::HBondEnergy( HBondOptions const & opts ):
 	parent( new HBondEnergyCreator ),
 	options_( new HBondOptions( opts )),
-	database_( HBondDatabase::get_database(opts.params_database_tag()) ),
-	memb_potential_( ScoringManager::get_instance()->get_Membrane_FAPotential() ) //pba
+	database_( HBondDatabase::get_database(opts.params_database_tag()) )
 {}
 
 /// copy ctor
 HBondEnergy::HBondEnergy( HBondEnergy const & src ):
 	parent( src ),
 	options_( new HBondOptions( *src.options_)) ,
-	database_( src.database_),
-	memb_potential_( src.memb_potential_) //pba
+	database_( src.database_)
 {}
 
 HBondEnergy::~HBondEnergy() {}
@@ -272,6 +270,7 @@ HBondEnergy::setup_for_packing(
 
 	//pba membrane object initialization
 	if (options_->Mbhbond()) {
+		Membrane_FAPotential const & memb_potential_ = ScoringManager::get_instance()->get_Membrane_FAPotential();
 		memb_potential_.compute_fa_projection( pose );
 		normal_ = MembraneEmbed_from_pose( pose ).normal();
 		center_ = MembraneEmbed_from_pose( pose ).center();
@@ -340,6 +339,7 @@ HBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 
 	//pba membrane object initialization
 	if (options_->Mbhbond()) {
+		Membrane_FAPotential const & memb_potential_ = ScoringManager::get_instance()->get_Membrane_FAPotential();
 		memb_potential_.compute_fa_projection( pose );
 		normal_ = MembraneEmbed_from_pose( pose ).normal();
 		center_ = MembraneEmbed_from_pose( pose ).center();
@@ -687,7 +687,7 @@ HBondEnergy::hbond_derivs_1way(
 {
 	EnergyMap emap;
 
-	//assert( don_rsd.seqpos() != acc_rsd.seqpos() ); Commented out by Parin Sripakdeevong (sripakpa@stanford.edu) on 12/26/2011 
+	//assert( don_rsd.seqpos() != acc_rsd.seqpos() ); Commented out by Parin Sripakdeevong (sripakpa@stanford.edu) on 12/26/2011
 
 	bool is_intra_res=(don_rsd.seqpos()==acc_rsd.seqpos());
 
@@ -1452,7 +1452,7 @@ bool
 HBondEnergy::defines_intrares_energy( EnergyMap const & weights ) const
 {
 
-	bool condition_1= (weights[hbond_intra]>0.0001) ? true : false;	
+	bool condition_1= (weights[hbond_intra]>0.0001) ? true : false;
 
 	bool condition_2= (options_->include_intra_res_RNA()) ? true: false;
 
@@ -1468,7 +1468,7 @@ HBondEnergy::eval_intrares_energy(
 	ScoreFunction const & ,
 	EnergyMap & emap
 ) const
-{ 
+{
 
 	if(options_->include_intra_res_RNA() && rsd.is_RNA()){
 		identify_intra_res_hbonds( *database_, rsd, false /*calculate_derivative*/, *options_, emap);
@@ -1692,7 +1692,7 @@ HBondEnergy::drawn_out_heavyatom_hydrogenatom_energy(
 			steepness_, res2_nb_, res1_nb_, at2.xyz(), at1.xyz()) : get_membrane_depth_dependent_weight(normal_,
 			center_, thickness_, steepness_, res2_nb_, res1_nb_, at2.xyz(), at1.xyz()) );
 
-		// std::cout << "flipped " << flipped << " acc " << res1_nb_ << " don " << res2_nb_ << " wat " << envweight 
+		// std::cout << "flipped " << flipped << " acc " << res1_nb_ << " don " << res2_nb_ << " wat " << envweight
 		//           << " memb " << membrane_depth_dependent_weight << std::endl;
 
 		envweight = membrane_depth_dependent_weight;

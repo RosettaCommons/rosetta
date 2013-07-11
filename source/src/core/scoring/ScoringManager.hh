@@ -274,7 +274,7 @@ private:
 	mutable carbon_hbonds::CarbonHBondPotentialOP carbon_hbond_potential_;
 	mutable rna::RNA_LowResolutionPotentialOP rna_low_resolution_potential_;
 	mutable rna::RNA_TorsionPotentialOP rna_torsion_potential_;
-    mutable rna::chemical_shift::RNA_ChemicalShiftPotential * rna_chemical_shift_potential_;
+	mutable rna::chemical_shift::RNA_ChemicalShiftPotential * rna_chemical_shift_potential_;
 	mutable P_AAOP p_aa_;
 	mutable WaterAdductHBondPotentialOP water_adduct_hbond_potential_;
 	mutable GenBornPotentialOP gen_born_potential_;

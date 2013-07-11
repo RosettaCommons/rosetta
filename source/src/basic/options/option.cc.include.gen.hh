@@ -1,3 +1,4 @@
+#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/LoopModel.OptionKeys.gen.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
 #include <basic/options/keys/filters.OptionKeys.gen.hh>

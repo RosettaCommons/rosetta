@@ -144,6 +144,7 @@ namespace in { namespace file { extern BooleanOptionKey const obey_ENDMDL; } }
 namespace in { namespace file { extern BooleanOptionKey const new_chain_order; } }
 namespace in { namespace file { extern FileOptionKey const ddg_predictions_file; } }
 namespace in { namespace file { extern IntegerVectorOptionKey const input_res; } }
+namespace in { namespace file { extern IntegerVectorOptionKey const minimize_res; } }
 namespace in { namespace file { extern StringOptionKey const md_schfile; } }
 namespace in { namespace file { extern BooleanOptionKey const read_pdb_link_records; } }
 namespace in { namespace file { extern FileOptionKey const native_contacts; } }
