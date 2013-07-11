@@ -715,13 +715,13 @@ option.add( basic::options::OptionKeys::loopfcst::use_general_protocol, "use the
 option.add( basic::options::OptionKeys::loopfcst::coord_cst_weight_array, "use these weights (per seqpos) for coord cst in rigid regions" ).def("");
 option.add( basic::options::OptionKeys::loopfcst::dump_coord_cst_weight_array, "dump these weights (per seqpos) for coord cst in rigid regions" ).def("");
 option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).legal(true).def(true);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
+option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
-option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
@@ -1429,9 +1429,7 @@ option.add( basic::options::OptionKeys::robert::robert, "robert option group" ).
 option.add( basic::options::OptionKeys::robert::pairdata_input_pdb_list, "Takes in a file containing a list of pdb locations paired with protocol specific data (eg: one disulfide pair)" ).def("");
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_filter, "minimum normalized maxsub for PCS clustering protocol" ).def(0.9);
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_rmsd, "maxsub calculation's rmsd threshold" ).def(4.0);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::robert::pcs_dump_cluster, "No description" ).def(false);
+option.add( basic::options::OptionKeys::robert::pcs_dump_cluster, "No description" ).def(false);
 option.add( basic::options::OptionKeys::robert::pcs_cluster_coverage, "cluster coverage required" ).def(0.3);
 option.add( basic::options::OptionKeys::robert::pcs_cluster_lowscoring, "cluster lowest 20% against lowest 50%" ).def(true);
 option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).legal(true).def(true);
@@ -1439,7 +1437,9 @@ option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster op
 option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
 option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
-option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
@@ -2143,9 +2143,7 @@ option.add( basic::options::OptionKeys::optE::fixed, "IterativeOptEDriver flag: 
 option.add( basic::options::OptionKeys::optE::parse_tagfile, "a file in utility::tag format that optE may parse to customize its operation" );
 option.add( basic::options::OptionKeys::optE::constant_logic_taskops_file, "a file in utility::tag format that optE uses to build a task that will not change with the context of the pose after design" );
 option.add( basic::options::OptionKeys::optE::optE_soft_rep, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
+option.add( basic::options::OptionKeys::optE::no_hb_env_dependence, "Disable environmental dependent weighting of hydrogen bond terms" );
 option.add( basic::options::OptionKeys::optE::no_hb_env_dependence_DNA, "Disable environmental dependent weighting of hydrogen bonds involving DNA" );
 option.add( basic::options::OptionKeys::optE::optE_no_protein_hack_elec, "Instruct the IterativeOptEDriver to use the soft-repulsion etable" ).def(false);
 option.add( basic::options::OptionKeys::optE::design_first, "Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights." );
@@ -2157,7 +2155,9 @@ option.add( basic::options::OptionKeys::optE::optimize_nat_rot, "With the iterat
 option.add( basic::options::OptionKeys::optE::optimize_ligand_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer around the ligand" );
 option.add( basic::options::OptionKeys::optE::optimize_pssm, "With the iterative optE driver, optimize weights to maximize the match between a BLAST generated pssm probabillity distribution" );
 option.add( basic::options::OptionKeys::optE::optimize_dGbinding, "With the iterative optE driver, optimize weights to minimize squared error between the predicted dG of binding and the experimental dG; provide a file listing 1. bound PDB structure, 2. unbound PDB structure, and 3. measured dG" );
-option.add( basic::options::OptionKeys::optE::optimize_ddG_bind_correlation, "With the iterative optE driver, optimize weights to minimize squared error between the predicted ddG of binding for a mutation to the experimental ddG; provide a file listing 1. list file containing wt complexes, 2. list file containing mut complexes, 3. list file containing wt unbounds structures, 4. list file containing mut unbounds structures, and 5. measured ddG of binding" );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optimize_ddG_bind_correlation, "With the iterative optE driver, optimize weights to minimize squared error between the predicted ddG of binding for a mutation to the experimental ddG; provide a file listing 1. list file containing wt complexes, 2. list file containing mut complexes, 3. list file containing wt unbounds structures, 4. list file containing mut unbounds structures, and 5. measured ddG of binding" );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation, "With the iterative optE driver, optimize weights to minimize the predicted ddG of mutation and the measured ddG; provide a file listing 1. repacked wt pdb list, 2. repacked mut pdb list, and 3. measured ddG triples" );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_straight_mean, "With the iterative optE driver, predict the the ddGmut to be the difference between the straight mean (1/n Sum(E_i)) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_boltzman_average, "With the iterative optE driver, predict the the ddGmut to be the difference between the boltzman average energies ( Sum( E_i * e**-E_i/kT)/Sum( e**-E_i/kT) ) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
@@ -2514,9 +2514,26 @@ option.add( basic::options::OptionKeys::antibody::camelid, "Camelid input with o
 option.add( basic::options::OptionKeys::antibody::camelid_constraints, "Display constraints file for use with camelid H3 modeler" ).def(false);
 option.add( basic::options::OptionKeys::antibody::numbering_scheme, "the numbering scheme such as chothia or aho" ).def("chothia");
 option.add( basic::options::OptionKeys::antibody::design::design, "design option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::antibody::design::graft_instructions, "Path for graft instruction file" ).def("/sampling/antibodies/design/default_graft_instructions.txt");
-option.add( basic::options::OptionKeys::antibody::design::antibody_database, "Path to the Antibody Database.  Download from dunbrack.fccc.edu" ).def("/sampling/antibodies/antibody_data_rosetta.db");
+option.add( basic::options::OptionKeys::antibody::design::instructions, "Path for instruction file" ).def("/sampling/antibodies/design/default_instructions.txt");
+option.add( basic::options::OptionKeys::antibody::design::antibody_database, "Path to the Antibody Database.  Download from dunbrack.fccc.edu" ).def("/sampling/antibodies/antibody_database_rosetta.db");
+option.add( basic::options::OptionKeys::antibody::design::do_graft_design, "Run the GraftDesign step for low-resolution cluster-based CDR structural sampling. Overrides instruction file." ).def(true);
+option.add( basic::options::OptionKeys::antibody::design::do_post_graft_design_modeling, "Run dock/min modeling step after the graft design step if run." ).def(false);
+option.add( basic::options::OptionKeys::antibody::design::do_sequence_design, "Run the CDRDesign step for high-resolution cluster-based CDR sequence design. Overrides instruction file." ).def(true);
+option.add( basic::options::OptionKeys::antibody::design::do_post_design_modeling, "Run dock/min modeling step after the sequence design step if run" ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::graft_rounds, "Rounds for graft_design.  Each round is one CDR graft from set" ).def(1000);
+option.add( basic::options::OptionKeys::antibody::design::top_graft_designs, "Number of top graft designs to keep (ensemble).  These will be written to a PDB and move onto the next step in the protocol." ).def(10);
+option.add( basic::options::OptionKeys::antibody::design::dump_post_graft_designs, "Write the top ensembles to file after the graft-design step." ).def(false);
+option.add( basic::options::OptionKeys::antibody::design::interface_dis, "Interface distance cutoff.  Used for repacking of interface, etc." ).def(4.0);
+option.add( basic::options::OptionKeys::antibody::design::neighbor_dis, "Neighbor distance cutoff.  Used for repacking after graft, minimization, etc." ).def(3.5);
+option.add( basic::options::OptionKeys::antibody::design::dock_post_graft, "Run a short lowres docking step after each graft and before any minimization." ).def(false);
+option.add( basic::options::OptionKeys::antibody::design::pack_post_graft, "Pack CDR and neighbors after each graft.  Before any docking or minimization." ).def(true);
+option.add( basic::options::OptionKeys::antibody::design::design_method, "Design method to use." ).legal("fixbb").legal("flxbb").legal("relaxed_design").def("relaxed_design");
+option.add( basic::options::OptionKeys::antibody::design::design_rounds, "Number of CDRDesign rounds" ).def(5);
+option.add( basic::options::OptionKeys::antibody::design::benchmark_basic_design, "Used to benchmark basic design vs probabilistic vs conservative.  Not for general use." ).def(false);
+option.add( basic::options::OptionKeys::antibody::design::use_filters, "Use filters after graft step and design step.  Defaults false for now to optimize sensitivity" ).def(false);
+option.add( basic::options::OptionKeys::antibody::design::stats_cutoff, "Value for probabilistic -> conservative design switch.  If number of total sequences used for probabilistic design for a particular cdr cluster being designed is less than this value, conservative design will occur.  This is why the default graft settings are type 1 clusters.  More data = better predictability." ).def(10);
+option.add( basic::options::OptionKeys::antibody::design::conservative_h3_design, "Use a conservative strategy for H3 design. Instructions file overwrites this setting" ).def(true);
+option.add( basic::options::OptionKeys::antibody::design::turn_conservation, "try to conserve turn structure using known turn-based conservative mutations during conservative design." ).def(true);
 option.add( basic::options::OptionKeys::flexPepDocking::flexPepDocking, "flexPepDocking option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::flexPepDocking::params_file, "parameters file that describe the complex details, like anchor residues, etc." );
 option.add( basic::options::OptionKeys::flexPepDocking::peptide_anchor, "Set the peptide anchor residue mannualy (instead of using the center of mass" ).lower(1).def(1);

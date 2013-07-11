@@ -12205,19 +12205,104 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>design option group</dd><br>
 </dl>
 <dl>
-<dt><b>-graft_instructions</b> \<String\><dt>
-<dd>Path for graft instruction file</dd><br>
-<dd>Default: "/sampling/antibodies/design/default_graft_instructions.txt"</dd><br>
+<dt><b>-instructions</b> \<String\><dt>
+<dd>Path for instruction file</dd><br>
+<dd>Default: "/sampling/antibodies/design/default_instructions.txt"</dd><br>
 </dl>
 <dl>
 <dt><b>-antibody_database</b> \<String\><dt>
 <dd>Path to the Antibody Database.  Download from dunbrack.fccc.edu</dd><br>
-<dd>Default: "/sampling/antibodies/antibody_data_rosetta.db"</dd><br>
+<dd>Default: "/sampling/antibodies/antibody_database_rosetta.db"</dd><br>
+</dl>
+<dl>
+<dt><b>-do_graft_design</b> \<Boolean\><dt>
+<dd>Run the GraftDesign step for low-resolution cluster-based CDR structural sampling. Overrides instruction file.</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-do_post_graft_design_modeling</b> \<Boolean\><dt>
+<dd>Run dock/min modeling step after the graft design step if run.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-do_sequence_design</b> \<Boolean\><dt>
+<dd>Run the CDRDesign step for high-resolution cluster-based CDR sequence design. Overrides instruction file.</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-do_post_design_modeling</b> \<Boolean\><dt>
+<dd>Run dock/min modeling step after the sequence design step if run</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-graft_rounds</b> \<Integer\><dt>
 <dd>Rounds for graft_design.  Each round is one CDR graft from set</dd><br>
 <dd>Default: 1000</dd><br>
+</dl>
+<dl>
+<dt><b>-top_graft_designs</b> \<Integer\><dt>
+<dd>Number of top graft designs to keep (ensemble).  These will be written to a PDB and move onto the next step in the protocol.</dd><br>
+<dd>Default: 10</dd><br>
+</dl>
+<dl>
+<dt><b>-dump_post_graft_designs</b> \<Boolean\><dt>
+<dd>Write the top ensembles to file after the graft-design step.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-interface_dis</b> \<Real\><dt>
+<dd>Interface distance cutoff.  Used for repacking of interface, etc.</dd><br>
+<dd>Default: 4.0</dd><br>
+</dl>
+<dl>
+<dt><b>-neighbor_dis</b> \<Real\><dt>
+<dd>Neighbor distance cutoff.  Used for repacking after graft, minimization, etc.</dd><br>
+<dd>Default: 3.5</dd><br>
+</dl>
+<dl>
+<dt><b>-dock_post_graft</b> \<Boolean\><dt>
+<dd>Run a short lowres docking step after each graft and before any minimization.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-pack_post_graft</b> \<Boolean\><dt>
+<dd>Pack CDR and neighbors after each graft.  Before any docking or minimization.</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-design_method</b> \<String\><dt>
+<dd>Design method to use.</dd><br>
+<dd>Default: "relaxed_design"</dd><br>
+</dl>
+<dl>
+<dt><b>-design_rounds</b> \<Integer\><dt>
+<dd>Number of CDRDesign rounds</dd><br>
+<dd>Default: 5</dd><br>
+</dl>
+<dl>
+<dt><b>-benchmark_basic_design</b> \<Boolean\><dt>
+<dd>Used to benchmark basic design vs probabilistic vs conservative.  Not for general use.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-use_filters</b> \<Boolean\><dt>
+<dd>Use filters after graft step and design step.  Defaults false for now to optimize sensitivity</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-stats_cutoff</b> \<Integer\><dt>
+<dd>Value for probabilistic -> conservative design switch.  If number of total sequences used for probabilistic design for a particular cdr cluster being designed is less than this value, conservative design will occur.  This is why the default graft settings are type 1 clusters.  More data = better predictability.</dd><br>
+<dd>Default: 10</dd><br>
+</dl>
+<dl>
+<dt><b>-conservative_h3_design</b> \<Boolean\><dt>
+<dd>Use a conservative strategy for H3 design. Instructions file overwrites this setting</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-turn_conservation</b> \<Boolean\><dt>
+<dd>try to conserve turn structure using known turn-based conservative mutations during conservative design.</dd><br>
+<dd>Default: true</dd><br>
 </dl>
  </li>
 <li><h2>flexPepDocking</h2>

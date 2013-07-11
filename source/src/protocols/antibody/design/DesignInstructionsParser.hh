@@ -16,6 +16,7 @@
 #define INCLUDED_protocols_antibody_design_DESIGNINSTRUCTIONSPARSER_HH
 
 #include <protocols/antibody/design/AntibodyGraftDesigner.hh>
+#include <protocols/antibody/design/AntibodyCDRDesigner.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <utility/vector1.hh>
@@ -30,41 +31,48 @@ namespace design {
 	using namespace protocols::antibody;
 	using std::string;
 	
-///@brief Lightweight class for parsing design instructions.  Interface to main methods in util.hh. 
+///@brief Lightweight class for parsing design instructions.
 class DesignInstructionsParser{
 
 	
 typedef std::map< CDRNameEnum, CDRGraftInstructions > GraftInstructions;
+typedef std::map< CDRNameEnum, CDRDesignInstructions > DesignInstructions;
 
 public:
-	DesignInstructionsParser(AntibodyInfoOP const & ab_info, string const path);
+	DesignInstructionsParser(AntibodyInfoCOP ab_info, string const path);
 	
 	~DesignInstructionsParser();
 
 	void
 	read_cdr_graft_instructions(GraftInstructions & instructions);
 	
+	void
+	read_cdr_design_instructions(DesignInstructions & instructions);
+	
 private:
 	
 	///Tries to find the path in either database, relative, or absolute.
 	void
-	check_path();
+	check_path() ;
 	
 	///Graft Instructions Methods
 	//void
 	//parse_cdr_graft_weights(GraftInstructions & instructions, vector1< string > & lineSP);
 	
 	void
-	parse_cdr_graft_general_options(GraftInstructions & instructions, vector1< string > & lineSP);
+	parse_cdr_graft_general_options(GraftInstructions & instructions, vector1< string > & lineSP) const;
 	
 	void
-	parse_cdr_graft_type_options(GraftInstructions & instructions, vector1 < string > & lineSP);
+	parse_cdr_graft_type_options(GraftInstructions & instructions, vector1 < string > & lineSP) const;
 	
 	void
-	parse_cdr_graft_mintype(GraftInstructions & instructions, vector1 <string> & lineSP);
+	parse_cdr_graft_mintype(GraftInstructions & instructions, vector1 <string> & lineSP) const;
+	
+	void
+	parse_cdr_design_option(DesignInstructions & instructions, vector1 <string> & lineSP) const;
 	
 	std::string instructions_path_;
-	AntibodyInfoOP ab_info_;
+	AntibodyInfoCOP ab_info_;
 	AntibodyEnumManagerOP ab_manager_;
 	CDRClusterEnumManagerOP cluster_manager_;
 }; 

@@ -163,7 +163,7 @@ insert_pose_into_pose(
 		//This is all we need, as the disulfides have already been detected in conformation. No need to mutate or optimize.
 		combined.conformation().declare_chemical_bond(new_resnum1,"SG",new_resnum2,"SG");
 	}
-		
+	
 	return combined;
 }
 

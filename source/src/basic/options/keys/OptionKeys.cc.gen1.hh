@@ -1,7 +1,3 @@
-namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
-namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
-namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
-namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
 namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
 namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
 namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
@@ -710,3 +706,11 @@ namespace robert { BooleanOptionKey const robert( "robert" );  }
 namespace robert { StringOptionKey const pairdata_input_pdb_list( "robert:pairdata_input_pdb_list" );  }
 namespace robert { RealOptionKey const pcs_maxsub_filter( "robert:pcs_maxsub_filter" );  }
 namespace robert { RealOptionKey const pcs_maxsub_rmsd( "robert:pcs_maxsub_rmsd" );  }
+namespace robert { BooleanOptionKey const pcs_dump_cluster( "robert:pcs_dump_cluster" );  }
+namespace robert { RealOptionKey const pcs_cluster_coverage( "robert:pcs_cluster_coverage" );  }
+namespace robert { BooleanOptionKey const pcs_cluster_lowscoring( "robert:pcs_cluster_lowscoring" );  }
+namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
+namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
+namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
+namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
+namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }

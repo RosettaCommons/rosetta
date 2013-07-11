@@ -9,12 +9,13 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody/design/AntibodyDatabaseManager.cc
-/// @brief Handles all loading of CDR, Framework, and cluster/dmap info from database file.
+/// @brief Handles all loading of CDR, Framework, and cluster/dmap info from external database file.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 // Antibody Headers
 #include <protocols/antibody/design/AntibodyDatabaseManager.hh>
 #include <protocols/antibody/design/AntibodyGraftDesigner.hh>
+
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/CDRClusterEnum.hh>
@@ -25,6 +26,7 @@
 //Core Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/chemical/AA.hh>
 
 //Database Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -51,7 +53,7 @@
 #include <fstream>
 
 
-static basic::Tracer TR("protocols.antibody.design.AntibodyDatabaseManager");
+static basic::Tracer TR("antibody.design.AntibodyDatabaseManager");
 
 namespace protocols {
 namespace antibody {
@@ -70,6 +72,7 @@ using namespace basic::options::OptionKeys;
 using namespace protocols::antibody;
 
 typedef std::map< CDRNameEnum, CDRGraftInstructions > GraftInstructions;
+typedef std::map< CDRNameEnum, CDRDesignInstructions > DesignInstructions;
 typedef std::map< CDRNameEnum, vector1<PoseOP> > CDRSet;
 typedef std::map< CDRNameEnum, vector1< CDRClusterEnum > > CDRClusterMap;
 typedef std::map< CDRNameEnum, vector1< std::string > > PDBMap;
@@ -77,19 +80,95 @@ typedef std::map< CDRNameEnum, vector1< std::string > > PDBMap;
 AntibodyDatabaseManager::AntibodyDatabaseManager(){
 	//protein_silent_report_ = new protocols::features::ProteinSilentReport();
 	string default_path = basic::database::full_name(basic::options::option[basic::options::OptionKeys::antibody::design::antibody_database](), true);
-	load_database(default_path);
+	start_database_session(default_path);
 
 }
-    
+
+AntibodyDatabaseManager::AntibodyDatabaseManager(std::string const database_path) {
+	start_database_session(database_path);
+}
+
 AntibodyDatabaseManager::~AntibodyDatabaseManager() {}
     
 void
-AntibodyDatabaseManager::load_database(std::string const & new_path){
-	db_path_ = new_path;
+AntibodyDatabaseManager::start_database_session(std::string const database_path) {
+	db_path_ = database_path;
 	db_session_ = basic::database::get_db_session(db_path_);         
 }
+
+vector1< CDRNameEnum >
+AntibodyDatabaseManager::load_cdr_design_data(AntibodyInfoCOP ab_info, core::pose::Pose const & pose, std::map<core::Size,AAProbabilities>& prob_set, core::Size const cutoff, DesignInstructions & instructions) {
+	if (! ab_info->clusters_setup()){
+		utility_exit_with_message("Cluster information must be set in AntibodyInfo to load the design probabilities");
+	}
+	
+	vector1<CDRNameEnum> cdrs_with_no_data;
+	
+	for (core::Size i = 1; i<=CDRNameEnum_total; ++i){
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		
+		if (! instructions[cdr].design) {
+			continue;
+		}
+		else if (instructions[cdr].design && instructions[cdr].conservative_design){
+			continue;
+		}
+
+
+		std::pair<CDRClusterEnum, core::Real > cluster_pair = ab_info->get_CDR_cluster(cdr);
+		CDRClusterEnum cluster = cluster_pair.first;
+		if (cluster == NA){
+			cdrs_with_no_data.push_back(cdr);
+			TR << ab_info->get_CDR_Name(cdr) << " is of unknown cluster.  No design probability data added. Using conservative mutations instead." << std::endl;
+			continue;
+		}
+		
+		//Check to make sure cluster is present in antibody database
+		std::string base_statement =
+			"SELECT \n"
+			"	position, \n"
+			"	probability, \n"
+			"	aa, \n"
+			"	total_seq \n"
+			"FROM\n"
+			"	cdr_residue_probabilities \n"
+			"WHERE \n"
+			"	fullcluster = ?";
+		
+		cppdb::statement select_statement(basic::database::safely_prepare_statement(base_statement, db_session_));
+		select_statement.bind(1, ab_info->get_cluster_name(cluster));
+		cppdb::result prob_result(basic::database::safely_read_from_database(select_statement));
+		
+
+		
+		while(prob_result.next()){
+			
+			if (prob_result.empty()) {
+				TR << ab_info->get_CDR_Name(cdr) << " has no design probability data.  Using conservative mutations instead." << std::endl;
+				break;
+			}
+			
+			core::Size position;
+			core::Real probability;
+			std::string amino;
+			core::Size total_seq;
+			prob_result >> position >> probability >> amino >> total_seq;
+			
+			if (  total_seq < cutoff){
+				cdrs_with_no_data.push_back(cdr);
+				TR << " The total number of CDR sequences of the cluster is lower than the set cutoff value..  Using conservative mutations instead." << std::endl;
+				break;
+			}
+			
+			core::Size rosetta_resnum = ab_info->get_CDR_end(cdr, pose) + position - 1;
+			prob_set[rosetta_resnum][core::chemical::aa_from_oneletter_code(amino[0])] = probability;
+		}
+	}
+	return cdrs_with_no_data;
+}
+
 void
-AntibodyDatabaseManager::check_for_graft_instruction_inconsistencies(AntibodyInfoOP & ab_info, GraftInstructions & instructions){
+AntibodyDatabaseManager::check_for_graft_instruction_inconsistencies(AntibodyInfoCOP ab_info, GraftInstructions & instructions) {
 	//Double check to make sure everything is kosher before grabbing Poses.
 	for (core::Size i=1; i<=CDRNameEnum_total; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -122,7 +201,7 @@ AntibodyDatabaseManager::check_for_graft_instruction_inconsistencies(AntibodyInf
 }
 
 std::pair<CDRSet, CDRClusterMap>
-AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoOP & ab_info, GraftInstructions& instructions, PDBMap & pdbmap){
+AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftInstructions& instructions, PDBMap & pdbmap){
 	
 	
 	//Check to make sure everything is kosher

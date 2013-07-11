@@ -141,20 +141,20 @@ private:
 } // protein_interface_design
 } // devel
 
-// @brief utility function for minimizing sidechain in rigid-body dof, the interface sc, and bb in the entire protein.
+/// @brief utility function for minimizing sidechain in rigid-body dof, the interface sc, and bb in the entire protein.
 // The fold_tree for minimization will be set from the centre of target_residues to the closest residue on the partner.
 // The packertask is used to decide which residues to minimize (those that are not set to prevent_repacking)
 void MinimizeInterface( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP scorefxn, utility::vector1< bool > const min_bb, utility::vector1< bool > const min_sc, utility::vector1< bool > const min_rb, bool const optimize_foldtree, utility::vector1< core::Size > const target_residues, bool const simultaneous_minimization = false );
 
 void SymMinimizeInterface( core::pose::Pose & pose, core::scoring::ScoreFunctionCOP scorefxn, utility::vector1< bool > const min_bb, utility::vector1< bool > const min_sc, utility::vector1< bool > const min_rb, /*bool const optimize_foldtree, utility::vector1< core::Size > const target_residues*/ bool const simultaneous_minimization = false );
 
-// @brief utility function for finding hbonding partners among a list of potential binder residues to a specific target
+/// @brief utility function for finding hbonding partners among a list of potential binder residues to a specific target
 // residue
 std::list< core::Size >
 hbonded( core::pose::Pose const & pose, core::Size const target_residue, std::set< core::Size > const & binders,
 		 bool const bb, bool const sc, core::Real const energy_thres, bool const bb_bb = false );
 
-// @brief utility function for finding hbonding partners among a list of potential binder residues to a specific target
+/// @brief utility function for finding hbonding partners among a list of potential binder residues to a specific target
 // residue and atom
 std::list< core::Size >
 hbonded_atom( core::pose::Pose const & pose, core::Size const target_residue, std::string target_atom, std::set< core::Size > const & binders,

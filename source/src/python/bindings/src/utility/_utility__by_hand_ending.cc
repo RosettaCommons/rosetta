@@ -59,13 +59,15 @@ void __utility_by_hand_ending__()
     expose_pair_types<core::Real, std::string>("Real", "string");
     expose_pair_types<std::string, core::Real>("string", "Real");
 
+    expose_pair_types<protocols::antibody::CDRClusterEnum, core::Real >("CDRClusterEnum", "Real");
+	
     wrap_vector1<core::scoring::ScoreType,  CP_CNCR, CP_CCR>("vector1_ScoreType");
     wrap_vector1<core::id::AtomID, CP_REF,CP_REF>("vector1_AtomID");
 
     wrap_vector1<core::pose::PoseOP,  CP_CNCR, CP_CCR>("vector1_PoseOP");
     wrap_vector1<core::pose::Pose,  CP_REF, CP_REF>("vector1_Pose");
 
-    //if( true ) { // This code never executed, but we need it so compilere create operator ostream << vector1[core::conformation::Atom]
+    //if( true ) { // This code never executed, but we need it so compiler create operator ostream << vector1[core::conformation::Atom]
     //	cout << vector1< core::conformation::Atom > () ;
     //}
     //wrap_vector1_part<core::conformation::Atom, CP_REF, CP_REF>("vector1_core_conformation_Atom");

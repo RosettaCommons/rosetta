@@ -280,44 +280,37 @@ AntibodyInfo::get_Current_AntibodyNumberingScheme() {
 	return antibody_manager_->numbering_scheme_enum_to_string(numbering_scheme_);
 }
 
-void AntibodyInfo::identify_antibody(pose::Pose const & pose) {
-	//Time to rewrite.  Who needs to have L and H as the first chains? come on.
-
+void AntibodyInfo::identify_antibody(pose::Pose const & pose){
+	
 	//Jadofbr (4/2013)  Allow any order in the PDB file by adding this for loop..
-	//Todo: Add command-line argument for other types (SCFv, nanobody, Diabody, etc.)
-	bool H_found = false;
-	vector1<char> H_sequence;
-	bool L_found = false;
-	vector1<char> L_sequence;
-	for (core::Size i = 1; i<= pose.conformation().num_chains(); ++i) {
-		if(   pose.pdb_info()->chain(pose.conformation().chain_end(i)) == 'L') {
-			L_found=true;
-			L_chain_ = i;
+	//Todo: Add command-line argument for other types (SCFv, Diabody, etc.)
+	bool H_found = false; vector1<char> H_sequence;
+	bool L_found = false; vector1<char> L_sequence;
 
-			for (core::Size x = 1; x<=pose.total_residue(); ++x) {
-				//No good way to get a chains sequence that I know about.
-				if (pose.residue(x).chain()==L_chain_) {
-					L_sequence.push_back(pose.residue(i).name1());
-					sequence_map_[x]= pose.residue(x).name1();
-				}
+	if (core::pose::has_chain('L', pose)){
+		L_found=true;
+		L_chain_ = core::pose::get_chain_id_from_chain('L', pose);
+		
+		for (core::Size x = 1; x<=pose.total_residue(); ++x){
+			if (pose.residue(x).chain()==L_chain_){
+				L_sequence.push_back(pose.residue(x).name1());
+				sequence_map_[x]= pose.residue(x).name1();
 			}
-		} else if(pose.pdb_info()->chain(pose.conformation().chain_end(i)) == 'H' ) {
-			H_found=true;
-			H_chain_=i;
-
-			for (core::Size x = 1; x<=pose.total_residue(); ++x) {
-				//No good way to get a chains sequence that I know about.
-				if (pose.residue(x).chain()==H_chain_) {
-					H_sequence.push_back(pose.residue(i).name1());
-					sequence_map_[x]= pose.residue(x).name1();
-				}
-			}
-		} else {
-			continue;
 		}
 	}
-
-
+	
+	if (core::pose::has_chain('H', pose)){
+		H_found=true;
+		H_chain_ = core::pose::get_chain_id_from_chain('H', pose);
+		
+		for (core::Size x = 1; x<=pose.total_residue(); ++x){
+			if (pose.residue(x).chain()==H_chain_){
+				H_sequence.push_back(pose.residue(x).name1());
+				sequence_map_[x]= pose.residue(x).name1();
+			}
+		}
+	}
+	
 	switch (pose.conformation().num_chains() ) {
 	case 0:
 		throw excn::EXCN_Msg_Exception("the number of chains in the input pose is '0' !!");
@@ -372,6 +365,16 @@ void AntibodyInfo::identify_antibody(pose::Pose const & pose) {
 		ab_sequence_.insert(ab_sequence_.end(), H_sequence.begin(), H_sequence.end());
 
 	}
+	
+	//Get antigen chains if present.
+	if (InputPose_has_antigen_){
+		for (core::Size i=1; i <= pose.conformation().num_chains(); ++i){
+			char chain = core::pose::get_chain_from_chain_id(i, pose);
+			if (chain != 'L' && chain != 'H'){
+				Chain_IDs_for_antigen_.push_back(chain);
+			}
+		}
+	}
 }
 
 
@@ -408,6 +411,8 @@ void AntibodyInfo::setup_CDRsInfo( pose::Pose const & pose ) {
 			// JQX:
 			// why this is different compared to other cuts of other loops?
 			// Aroop seems did this in his old R3 code, CHECK LATER !!!
+			// JAB:
+			// why is the cutpoint so close to the start of H3?  Has this been shown to be better than the middle somewhere?
 		}
 
 		loops::Loop  one_loop(loop_start_in_pose, loop_stop_in_pose, cut_position);
@@ -875,8 +880,8 @@ void AntibodyInfo::detect_and_set_regular_CDR_H3_stem_type_new_rule( pose::Pose 
 } // detect_regular_CDR_H3_stem_type()
 
 std::pair <CDRClusterEnum, Real>
-AntibodyInfo::get_CDR_cluster(CDRNameEnum const cdr_name) {
-	if (cdr_clusters_.empty()) {
+AntibodyInfo::get_CDR_cluster(CDRNameEnum const cdr_name) const  {
+	if (cdr_clusters_.empty()){
 		utility_exit_with_message("CDR clusters not setup.  Cannot proceed.");
 	}
 	return std::make_pair(cdr_clusters_[cdr_name], cdr_cluster_distances_[cdr_name]);
@@ -937,17 +942,21 @@ void
 AntibodyInfo::setup_CDR_clusters(pose::Pose const & pose) {
 
 	TR << "Setting up CDR Clusters" << std::endl;
+	cdr_clusters_.clear();
+	cdr_cluster_distances_.clear();
+	
 	cdr_clusters_.resize(CDRNameEnum_total);
 	cdr_cluster_distances_.resize(CDRNameEnum_total);
-	for (core::Size i=1; i<=CDRNameEnum_total; ++i) {
+	
+	for (core::Size i=1; i<=total_cdr_loops_; ++i) {
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
 		set_cdr_cluster(pose, cdr_name);
 	}
 }
 
 bool
-AntibodyInfo::clusters_setup() {
-	if (!cdr_clusters_.empty()) {
+AntibodyInfo::clusters_setup() const {
+	if (!cdr_clusters_.empty()){
 		return true;
 	} else {
 		return false;
@@ -1043,7 +1052,6 @@ AntibodyInfo::set_cdr_cluster(pose::Pose const & pose, CDRNameEnum const & cdr_n
 	clus_stream.close();
 
 	///Take the minimum distance as the cluster.
-	std::pair<CDRClusterEnum, Real> result;
 
 	if (! cluster_found) {
 		TR <<"Cluster not found for CDR "<<get_CDR_Name(cdr_name)<<std::endl;
@@ -1081,29 +1089,51 @@ AntibodyInfo::get_CDR_length(CDRNameEnum const & cdr_name) const {
 }
 
 std::string
-AntibodyInfo::get_cluster_name(CDRClusterEnum const cluster) {
+AntibodyInfo::get_cluster_name(CDRClusterEnum const cluster) const {
 	return cdr_cluster_manager_->cdr_cluster_enum_to_string(cluster);
 }
 
 CDRClusterEnum
-AntibodyInfo::get_cluster_enum(const std::string cluster) {
+AntibodyInfo::get_cluster_enum(const std::string cluster) const {
 	return cdr_cluster_manager_->cdr_cluster_string_to_enum(cluster);
 }
 
 CDRNameEnum
-AntibodyInfo::get_cdr_enum_for_cluster(CDRClusterEnum const cluster) {
-	std::string cluster_string = cdr_cluster_manager_->cdr_cluster_enum_to_string(cluster);
-	utility::vector1< std::string > cluster_vec = utility::string_split(cluster_string, '-');
-	return antibody_manager_->cdr_name_string_to_enum(cluster_vec[1]);
-}
-
+AntibodyInfo::get_cdr_enum_for_cluster(CDRClusterEnum const cluster) const {
+		std::string cluster_string = cdr_cluster_manager_->cdr_cluster_enum_to_string(cluster);
+		utility::vector1< std::string > cluster_vec = utility::string_split(cluster_string, '-');
+		return antibody_manager_->cdr_name_string_to_enum(cluster_vec[1]);
+	}
+	
 core::Size
-AntibodyInfo::get_cluster_length(CDRClusterEnum const cluster) {
-	std::string cluster_string = cdr_cluster_manager_->cdr_cluster_enum_to_string(cluster);
-	utility::vector1< std::string > cluster_vec = utility::string_split(cluster_string, '-');
-	return utility::string2int(cluster_vec[2]);
+AntibodyInfo::get_cluster_length(CDRClusterEnum const cluster) const {
+		std::string cluster_string = cdr_cluster_manager_->cdr_cluster_enum_to_string(cluster);
+		utility::vector1< std::string > cluster_vec = utility::string_split(cluster_string, '-');
+		return utility::string2int(cluster_vec[2]);
+	}
+
+loops::Loop
+AntibodyInfo::get_CDR_loop( CDRNameEnum const & cdr_name, pose::Pose const & pose) const {
+	
+	core::Size start = get_CDR_start(cdr_name, pose);
+	core::Size stop =  get_CDR_end(cdr_name, pose);
+	core::Size cutpoint = (stop-start)/2+start;
+	protocols::loops::Loop cdr_loop = protocols::loops::Loop(start, stop, cutpoint);
+	return cdr_loop;
+	
 }
 
+loops::LoopsOP
+AntibodyInfo::get_CDR_loops(pose::Pose const & pose) const {
+	
+	protocols::loops::LoopsOP cdr_loops;
+	for (Size i = 1; i <= total_cdr_loops_; ++i){
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		protocols::loops::Loop cdr_loop =get_CDR_loop(cdr, pose);
+		cdr_loops->add_loop(cdr_loop);
+	}
+	return cdr_loops;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 ///                                                                          ///
@@ -1231,24 +1261,24 @@ AntibodyInfo::get_FoldTree_AllCDRs_LHDock( pose::Pose const & pose ) const {
 ///////////////////////////////////////////////////////////////////////////
 kinematics::FoldTree
 AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
-
+    
 	using namespace core;
 	using namespace kinematics;
-
+    
 	Size nres = pose.total_residue();
 	pose::PDBInfoCOP pdb_info = pose.pdb_info();
 	char second_chain = 'H';
 	Size cutpoint = 0;
-
+    
 	kinematics::FoldTree LH_A_foldtree;
-
+    
 	for ( Size i = 1; i <= nres; ++i ) {
-		if(pdb_info->chain(1) != 'L') {
+		if(pdb_info->chain(1) != 'L'){
 			throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
-			break;
+		break;
 		}
 		if( (pdb_info->chain(i) == 'L') && (pdb_info->chain(i) != pdb_info->chain(i+1))) {
-			if(pdb_info->chain(i+1) != second_chain) {
+			if(pdb_info->chain(i+1) != second_chain){
 				throw excn::EXCN_Msg_Exception("Chains are not named correctly or are not in the expected order");
 				break;
 			}
@@ -1258,39 +1288,39 @@ AntibodyInfo::get_FoldTree_LH_A( pose::Pose const & pose ) const {
 			break;
 		}
 	}
-
+    
 	Size jump_pos1 ( geometry::residue_center_of_mass( pose, 1, cutpoint ) );
 	Size jump_pos2 ( geometry::residue_center_of_mass( pose, cutpoint+1, pose.total_residue() ) );
-
+    
 	//setup fold tree based on cutpoints and jump points
 	LH_A_foldtree.clear();
 	LH_A_foldtree.simple_tree( pose.total_residue() );
 	LH_A_foldtree.new_jump( jump_pos1, jump_pos2, cutpoint);
-
+    
 	Size chain_begin(0), chain_end(0);
-
+    
 	//rebuild jumps between antibody light and heavy chains
 	chain_end = cutpoint;
 	chain_begin = pose.conformation().chain_begin( pose.chain(chain_end) );
-	while (chain_begin != 1) {
+	while (chain_begin != 1){
 		chain_end = chain_begin-1;
 		LH_A_foldtree.new_jump( chain_end, chain_begin, chain_end);
 		chain_begin = pose.conformation().chain_begin( pose.chain(chain_end) );
 	}
-
+    
 	//rebuild jumps between all the antigen chains
 	chain_begin = cutpoint+1;
 	chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
-	while (chain_end != pose.total_residue()) {
+	while (chain_end != pose.total_residue()){
 		chain_begin = chain_end+1;
 		LH_A_foldtree.new_jump( chain_end, chain_begin, chain_end);
 		chain_end = pose.conformation().chain_end( pose.chain(chain_begin) );
 	}
-
+    
 	LH_A_foldtree.reorder( 1 );
 	LH_A_foldtree.check_fold_tree();
-
-	return LH_A_foldtree;
+    
+	 return LH_A_foldtree;
 }
 
 
@@ -1446,13 +1476,13 @@ AntibodyInfo::get_MoveMap_for_Loops(pose::Pose const & pose,
                                     bool const & include_nb_sc,
                                     Real const & nb_dist) const {
 	kinematics::MoveMap move_map ;
-
+	
 	move_map.clear();
 	move_map.set_chi( false );
 	move_map.set_bb( false );
 	utility::vector1< bool> bb_is_flexible( pose.total_residue(), false );
 	utility::vector1< bool> sc_is_flexible( pose.total_residue(), false );
-
+	
 	select_loop_residues( pose, the_loops, false/*include_neighbors*/, bb_is_flexible, nb_dist);
 	move_map.set_bb( bb_is_flexible );
 	if (bb_only==false) {
@@ -1481,7 +1511,7 @@ AntibodyInfo::get_MoveMap_for_AllCDRsSideChains_and_H3backbone(pose::Pose const 
 
 	TR<<"start: "<<get_CDR_start(h3, pose)<<std::endl;
 	TR<<"end  : "<<get_CDR_end(h3, pose)<<std::endl;
-	for(Size ii=get_CDR_start(h3, pose); ii<=get_CDR_end(h3, pose); ii++) {
+	for(Size ii=get_CDR_start(h3, pose); ii<=get_CDR_end(h3, pose); ii++){
 		bb_is_flexible[ii] = true;
 		TR<<"Setting Residue "<< ii<<" to be true"<<std::endl;
 	}
@@ -1490,7 +1520,7 @@ AntibodyInfo::get_MoveMap_for_AllCDRsSideChains_and_H3backbone(pose::Pose const 
 	select_loop_residues( pose, *(get_AllCDRs_in_loopsop()), include_nb_sc, sc_is_flexible, nb_dist);
 	move_map.set_chi( sc_is_flexible );
 
-	for( Size ii = 1; ii <= (get_AllCDRs_in_loopsop())->num_loop(); ++ii ) {
+	for( Size ii = 1; ii <= (get_AllCDRs_in_loopsop())->num_loop(); ++ii ){
 		move_map.set_jump( ii, false );
 	}
 
@@ -1925,7 +1955,7 @@ scoring::ScoreFunctionCOP get_Dock_ScoreFxn(void) {
 	static scoring::ScoreFunctionOP dock_scorefxn = 0;
 	if(dock_scorefxn == 0) {
 		dock_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
-		dock_scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
+		 dock_scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
 		dock_scorefxn->set_weight( core::scoring::overlap_chainbreak, 10./3. );
 	}
 	return dock_scorefxn;
@@ -1948,14 +1978,14 @@ scoring::ScoreFunctionCOP get_LoopHighRes_ScoreFxn(void) {
 	}
 	return loophighres_scorefxn;
 }
-
-AntibodyEnumManagerOP &
-AntibodyInfo::get_antibody_enum_manager() {
+	
+AntibodyEnumManagerOP
+AntibodyInfo::get_antibody_enum_manager() const {
 	return antibody_manager_;
 }
 
-CDRClusterEnumManagerOP &
-AntibodyInfo::get_cdr_cluster_enum_manager() {
+CDRClusterEnumManagerOP
+AntibodyInfo::get_cdr_cluster_enum_manager() const {
 	return cdr_cluster_manager_;
 }
 

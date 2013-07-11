@@ -33,7 +33,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-static basic::Tracer TR("protocols.antibody.design.DesignInstructionsParser");
+static basic::Tracer TR("antibody.design.DesignInstructionsParser");
 
 namespace protocols {
 namespace antibody {
@@ -44,8 +44,9 @@ namespace design {
 	using std::string;
 	
 	typedef std::map< CDRNameEnum, CDRGraftInstructions > GraftInstructions;
-
-DesignInstructionsParser::DesignInstructionsParser(AntibodyInfoOP const & ab_info, string const path){
+	typedef std::map< CDRNameEnum, CDRDesignInstructions> DesignInstructions;
+	
+DesignInstructionsParser::DesignInstructionsParser(AntibodyInfoCOP ab_info, string const path){
 	ab_info_=ab_info;
 	instructions_path_ = path;
 	//This will be refactored for singletons.
@@ -56,7 +57,7 @@ DesignInstructionsParser::DesignInstructionsParser(AntibodyInfoOP const & ab_inf
 DesignInstructionsParser::~DesignInstructionsParser(){}
 
 void
-DesignInstructionsParser::check_path(){
+DesignInstructionsParser::check_path() {
 	using namespace std;
 	ifstream check( instructions_path_.c_str(), ifstream::in);
 	if (check.good()){return;}
@@ -70,7 +71,7 @@ DesignInstructionsParser::check_path(){
 }
 
 void
-DesignInstructionsParser::read_cdr_graft_instructions(GraftInstructions & instructions){
+DesignInstructionsParser::read_cdr_graft_instructions(GraftInstructions & instructions) {
 	using namespace utility;
 	using namespace std;
 	
@@ -114,7 +115,7 @@ DesignInstructionsParser::read_cdr_graft_instructions(GraftInstructions & instru
 }
 
 void
-DesignInstructionsParser::parse_cdr_graft_type_options(GraftInstructions& instructions, vector1<string> & lineSP){
+DesignInstructionsParser::parse_cdr_graft_type_options(GraftInstructions& instructions, vector1<string> & lineSP) const {
 	
 	CDRNameEnum cdr = ab_manager_->cdr_name_string_to_enum(lineSP[1]);
 	
@@ -179,7 +180,7 @@ DesignInstructionsParser::parse_cdr_graft_type_options(GraftInstructions& instru
 }
 	
 void
-DesignInstructionsParser::parse_cdr_graft_mintype(GraftInstructions & instructions, vector1<string> & lineSP){
+DesignInstructionsParser::parse_cdr_graft_mintype(GraftInstructions & instructions, vector1<string> & lineSP) const {
 	CDRNameEnum cdr = ab_manager_->cdr_name_string_to_enum(lineSP[1]);
 	
 	string setting  = lineSP[2];
@@ -197,7 +198,7 @@ DesignInstructionsParser::parse_cdr_graft_mintype(GraftInstructions & instructio
 		else if (mintype == "REPACK"){
 			instructions[cdr].mintype = repack;
 		}
-		else if (mintype == "CENTROIDRELAX" || mintype == "CENTROID_RELAX" || mintype == "CENRELAX"){
+		else if (mintype == "CENTROIDRELAX" || mintype == "CENTROID_RELAX" || mintype == "CENRELAX" || mintype == "CEN_RELAX"){
 			instructions[cdr].mintype = centroid_relax;
 		}
 		else if (mintype == "NONE"){
@@ -205,12 +206,26 @@ DesignInstructionsParser::parse_cdr_graft_mintype(GraftInstructions & instructio
 		}
 		else{utility_exit_with_message("Unrecognized mintype option: "+lineSP[3]);}
 	}
+	else if (setting == "INCLUDE_NEIGHBOR_SC"){
+		if (mintype=="TRUE"  || mintype == "T"){
+			instructions[cdr].min_neighbor_sc = true;
+		}
+		else if (mintype == "FALSE" || mintype == "F"){
+			instructions[cdr].min_neighbor_sc = false;
+		}
+		else{utility_exit_with_message("Unrecognized min option: "+lineSP[3]);}
+	}
+	else if (setting=="FIX") {
+		if (mintype == "GRAFT" || mintype == "GRAFTING" || mintype == "GRAFT_DESIGN" || mintype == "GRAFTDESIGN"){
+			instructions[cdr].graft=false;
+		}
+	}
 	else{utility_exit_with_message("Unrecognized setting: "+lineSP[2]);}
 }
 
 
 void
-DesignInstructionsParser::parse_cdr_graft_general_options(GraftInstructions & instructions, vector1<string> & lineSP){
+DesignInstructionsParser::parse_cdr_graft_general_options(GraftInstructions & instructions, vector1<string> & lineSP) const {
 	CDRNameEnum cdr = ab_manager_->cdr_name_string_to_enum(lineSP[1]);
 	string option  = lineSP[2];
 	boost::to_upper(option);
@@ -218,13 +233,87 @@ DesignInstructionsParser::parse_cdr_graft_general_options(GraftInstructions & in
 	if (option == "FIX"){
 		instructions[cdr].graft=false;
 	}
-	else if (option == "STAYNATIVECLUSTER"){
+	else if (option == "STAYNATIVECLUSTER" || option == "STAY_NATIVE_CLUSTER"){
 		instructions[cdr].stay_native_cluster=true;
 	}
-	else if (option == "CENTERSONLY"){
+	else if (option == "CENTERSONLY" || option == "CENTERS_ONLY" || option == "CENTER_CLUSTERS_ONLY"){
 		instructions[cdr].cluster_centers_only=true;
 	}
 	else{utility_exit_with_message("Unrecognized option: "+option);}
+}
+
+void
+DesignInstructionsParser::read_cdr_design_instructions(DesignInstructions & instructions){
+	using namespace utility;
+	using namespace std;
+	
+	check_path();
+	string line;
+	ifstream instruction_file(instructions_path_.c_str());//This may need to change to izstream.  Not sure what the difference is really besides compression.
+	PyAssert((instruction_file.is_open()), "Unable to open grafting instruction file.");
+	//How to write this repeating block into a function?
+	while (getline(instruction_file, line)){
+		
+		//Skip any comments + empty lines
+		if (startswith(line, "#")){
+			continue;
+		}
+		if (startswith(line, "\n")){
+			continue;
+		}
+		
+		utility::trim(line, "\n"); //Remove trailing line break
+		vector1< string > lineSP = string_split_multi_delim(line); //Split on space or tab
+		
+		//Everything besides comments needs to have a CDR associated with it.
+		PyAssert((ab_manager_->cdr_name_is_present(lineSP[1])), "Unrecognized CDR:"+lineSP[1]);
+		
+		CDRNameEnum cdr = ab_manager_->cdr_name_string_to_enum(lineSP[1]);
+		
+		if (lineSP.size() == 1) continue;
+	
+		//Parse each line type depending on the number of columns.
+		string option  = lineSP[2];
+		
+		boost::to_upper(option);
+		
+		
+		if (lineSP.size() == 2){
+			
+			//Global OFF
+			if (option == "FIX"){
+				instructions[cdr].design = false;
+			}
+			
+		}
+		else if (lineSP.size() >= 3){
+			string setting = lineSP[3];
+			boost::to_upper(setting);
+			//Design OFF
+			if (option=="FIX" && setting=="DESIGN"){
+				instructions[cdr].design = false;
+			}
+			else if(option=="DESIGN"){
+				parse_cdr_design_option(instructions, lineSP);
+			}
+		}
+		else{
+			continue;
+		}
+	}
+}
+
+void
+DesignInstructionsParser::parse_cdr_design_option(DesignInstructions & instructions, vector1<string> & lineSP) const {
+	
+	CDRNameEnum cdr = ab_manager_->cdr_name_string_to_enum(lineSP[1]);
+	string setting = lineSP[3];
+	boost::to_upper(setting);
+	
+	//I like syntactical redundancy.
+	if (setting == "USE_CONSERVATIVE" || setting == "CONSERVATIVE" || setting == "USECONSERVATIVE" || setting=="CONSERVE" || setting=="CONSERVED"){
+		instructions[cdr].conservative_design=true;
+	}
 }
 
 } //design

@@ -1,11 +1,3 @@
-namespace robert { BooleanOptionKey const pcs_dump_cluster( "robert:pcs_dump_cluster" );  }
-namespace robert { RealOptionKey const pcs_cluster_coverage( "robert:pcs_cluster_coverage" );  }
-namespace robert { BooleanOptionKey const pcs_cluster_lowscoring( "robert:pcs_cluster_lowscoring" );  }
-namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
-namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
-namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
-namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
-namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
 namespace james { BooleanOptionKey const james( "james" );  }
 namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
@@ -710,3 +702,15 @@ namespace optE { FileOptionKey const fixed( "optE:fixed" );  }
 namespace optE { FileOptionKey const parse_tagfile( "optE:parse_tagfile" );  }
 namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant_logic_taskops_file" );  }
 namespace optE { BooleanOptionKey const optE_soft_rep( "optE:optE_soft_rep" );  }
+namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }
+namespace optE { BooleanOptionKey const no_hb_env_dependence_DNA( "optE:no_hb_env_dependence_DNA" );  }
+namespace optE { BooleanOptionKey const optE_no_protein_hack_elec( "optE:optE_no_protein_hack_elec" );  }
+namespace optE { BooleanOptionKey const design_first( "optE:design_first" );  }
+namespace optE { IntegerOptionKey const n_design_cycles( "optE:n_design_cycles" );  }
+namespace optE { BooleanOptionKey const recover_nat_rot( "optE:recover_nat_rot" );  }
+namespace optE { FileOptionKey const component_weights( "optE:component_weights" );  }
+namespace optE { BooleanOptionKey const optimize_nat_aa( "optE:optimize_nat_aa" );  }
+namespace optE { BooleanOptionKey const optimize_nat_rot( "optE:optimize_nat_rot" );  }
+namespace optE { FileOptionKey const optimize_ligand_rot( "optE:optimize_ligand_rot" );  }
+namespace optE { BooleanOptionKey const optimize_pssm( "optE:optimize_pssm" );  }
+namespace optE { FileOptionKey const optimize_dGbinding( "optE:optimize_dGbinding" );  }

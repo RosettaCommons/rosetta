@@ -1,15 +1,3 @@
-namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }
-namespace optE { BooleanOptionKey const no_hb_env_dependence_DNA( "optE:no_hb_env_dependence_DNA" );  }
-namespace optE { BooleanOptionKey const optE_no_protein_hack_elec( "optE:optE_no_protein_hack_elec" );  }
-namespace optE { BooleanOptionKey const design_first( "optE:design_first" );  }
-namespace optE { IntegerOptionKey const n_design_cycles( "optE:n_design_cycles" );  }
-namespace optE { BooleanOptionKey const recover_nat_rot( "optE:recover_nat_rot" );  }
-namespace optE { FileOptionKey const component_weights( "optE:component_weights" );  }
-namespace optE { BooleanOptionKey const optimize_nat_aa( "optE:optimize_nat_aa" );  }
-namespace optE { BooleanOptionKey const optimize_nat_rot( "optE:optimize_nat_rot" );  }
-namespace optE { FileOptionKey const optimize_ligand_rot( "optE:optimize_ligand_rot" );  }
-namespace optE { BooleanOptionKey const optimize_pssm( "optE:optimize_pssm" );  }
-namespace optE { FileOptionKey const optimize_dGbinding( "optE:optimize_dGbinding" );  }
 namespace optE { FileOptionKey const optimize_ddG_bind_correlation( "optE:optimize_ddG_bind_correlation" );  }
 namespace optE { FileOptionKey const optimize_ddGmutation( "optE:optimize_ddGmutation" );  }
 namespace optE { BooleanOptionKey const optimize_ddGmutation_straight_mean( "optE:optimize_ddGmutation_straight_mean" );  }
@@ -367,9 +355,26 @@ namespace antibody { BooleanOptionKey const camelid( "antibody:camelid" );  }
 namespace antibody { BooleanOptionKey const camelid_constraints( "antibody:camelid_constraints" );  }
 namespace antibody { StringOptionKey const numbering_scheme( "antibody:numbering_scheme" );  }
 namespace antibody { namespace design { BooleanOptionKey const design( "antibody:design" );  } }
-namespace antibody { namespace design { StringOptionKey const graft_instructions( "antibody:design:graft_instructions" );  } }
+namespace antibody { namespace design { StringOptionKey const instructions( "antibody:design:instructions" );  } }
 namespace antibody { namespace design { StringOptionKey const antibody_database( "antibody:design:antibody_database" );  } }
+namespace antibody { namespace design { BooleanOptionKey const do_graft_design( "antibody:design:do_graft_design" );  } }
+namespace antibody { namespace design { BooleanOptionKey const do_post_graft_design_modeling( "antibody:design:do_post_graft_design_modeling" );  } }
+namespace antibody { namespace design { BooleanOptionKey const do_sequence_design( "antibody:design:do_sequence_design" );  } }
+namespace antibody { namespace design { BooleanOptionKey const do_post_design_modeling( "antibody:design:do_post_design_modeling" );  } }
 namespace antibody { namespace design { IntegerOptionKey const graft_rounds( "antibody:design:graft_rounds" );  } }
+namespace antibody { namespace design { IntegerOptionKey const top_graft_designs( "antibody:design:top_graft_designs" );  } }
+namespace antibody { namespace design { BooleanOptionKey const dump_post_graft_designs( "antibody:design:dump_post_graft_designs" );  } }
+namespace antibody { namespace design { RealOptionKey const interface_dis( "antibody:design:interface_dis" );  } }
+namespace antibody { namespace design { RealOptionKey const neighbor_dis( "antibody:design:neighbor_dis" );  } }
+namespace antibody { namespace design { BooleanOptionKey const dock_post_graft( "antibody:design:dock_post_graft" );  } }
+namespace antibody { namespace design { BooleanOptionKey const pack_post_graft( "antibody:design:pack_post_graft" );  } }
+namespace antibody { namespace design { StringOptionKey const design_method( "antibody:design:design_method" );  } }
+namespace antibody { namespace design { IntegerOptionKey const design_rounds( "antibody:design:design_rounds" );  } }
+namespace antibody { namespace design { BooleanOptionKey const benchmark_basic_design( "antibody:design:benchmark_basic_design" );  } }
+namespace antibody { namespace design { BooleanOptionKey const use_filters( "antibody:design:use_filters" );  } }
+namespace antibody { namespace design { IntegerOptionKey const stats_cutoff( "antibody:design:stats_cutoff" );  } }
+namespace antibody { namespace design { BooleanOptionKey const conservative_h3_design( "antibody:design:conservative_h3_design" );  } }
+namespace antibody { namespace design { BooleanOptionKey const turn_conservation( "antibody:design:turn_conservation" );  } }
 namespace flexPepDocking { BooleanOptionKey const flexPepDocking( "flexPepDocking" );  }
 namespace flexPepDocking { StringOptionKey const params_file( "flexPepDocking:params_file" );  }
 namespace flexPepDocking { IntegerOptionKey const peptide_anchor( "flexPepDocking:peptide_anchor" );  }

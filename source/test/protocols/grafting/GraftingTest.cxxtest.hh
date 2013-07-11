@@ -14,6 +14,7 @@
 // Test headers
 #include <test/UMoverTest.hh>
 #include <test/UTracer.hh>
+#include <cxxtest/TestSuite.h>
 
 // Project Headers
 #include <protocols/grafting/AnchoredGraftMover.hh>
@@ -29,17 +30,17 @@
 
 static basic::Tracer TR("protocols.grafting.GraftTest");
 class GraftingTest : public CxxTest::TestSuite {
-    core::pose::Pose scaffold_pose; //Full PDB
+	core::pose::Pose scaffold_pose; //Full PDB
 	core::pose::Pose framework_pose; //PDB Missing a cdr.
-    core::pose::Pose piece; //CDR to graft.
-    core::Size start;
-    core::Size end;
-    core::Size flex;
-    core::Size nter_overhang;
-    core::Size cter_overhang;
-    core::Size starting_residues;
+	core::pose::Pose piece; //CDR to graft.
+	core::Size start;
+	core::Size end;
+	core::Size flex;
+	core::Size nter_overhang;
+	core::Size cter_overhang;
+	core::Size starting_residues;
 	core::Size insert_size;
-    protocols::grafting::AnchoredGraftMoverOP anchored_grafter;
+	protocols::grafting::AnchoredGraftMoverOP anchored_grafter;
 
     
     
@@ -48,7 +49,7 @@ public:
 	void setUp(){
 		
 		core_init();
-		core::import_pose::pose_from_pdb(scaffold_pose, "protocols/grafting/2j88.pdb");
+		core::import_pose::pose_from_pdb(scaffold_pose, "protocols/antibody/2j88.pdb");
 		core::import_pose::pose_from_pdb(framework_pose, "protocols/grafting/2j88_NoL1.pdb");
 		core::import_pose::pose_from_pdb(piece, "protocols/grafting/2j88_L1_overhang3_rotated.pdb");
 		

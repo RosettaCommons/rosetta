@@ -29,6 +29,15 @@ enum MinTypeEnum{
 	MinTypeEnum_total = no_min
 			
 };
+
+enum DesignTypeEnum{
+	
+	relaxed_design = 1,
+	fixbb,
+	flxbb,
+	DesignTypeEnum_total = flxbb
+			
+};
 	
 }
 }

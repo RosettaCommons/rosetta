@@ -14,6 +14,8 @@
 #include "core/coarse/Translator.hh"
 #include "core/coarse/CoarseEtable.hh"
 
+#include <protocols/antibody/CDRClusterEnum.hh>
+
 // for AP wrapping
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>

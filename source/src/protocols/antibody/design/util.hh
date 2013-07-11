@@ -9,11 +9,13 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody/design/util.hh
-/// @brief 
+/// @brief Utility functions for antibody design namespace.
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #ifndef INCLUDED_protocols_antibody_design_UTIL_HH
 #define INCLUDED_protocols_antibody_design_UTIL_HH
+
+#include <protocols/antibody/design/AntibodyDesignEnum.hh>
 
 #include <string>
 #include <core/types.hh>
@@ -28,7 +30,7 @@ using namespace utility;
 
 ///@brief Returns (?,?,?) With question marks of length n to help create database query using IN operator
 std::string
-get_string_for_IN(core::Size n);
+get_string_for_IN(core::Size const n);
 
 ///@brief Gets all possible graft permutations. 
 void
@@ -37,7 +39,13 @@ get_all_graft_permutations(
 	vector1<vector1< core::Size > > & all_permutations,
 	vector1< core::Size >current_index,
 	core::Size const recurse_index);
-		
+
+DesignTypeEnum
+design_type_from_string(std::string const design_type);
+
+std::string
+design_type_from_enum(DesignTypeEnum const design_type);
+
 } //design
 } //antibody
 } //protocols

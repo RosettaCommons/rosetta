@@ -710,3 +710,7 @@ namespace loopfcst { BooleanOptionKey const use_general_protocol( "loopfcst:use_
 namespace loopfcst { FileOptionKey const coord_cst_weight_array( "loopfcst:coord_cst_weight_array" );  }
 namespace loopfcst { FileOptionKey const dump_coord_cst_weight_array( "loopfcst:dump_coord_cst_weight_array" );  }
 namespace jumps { BooleanOptionKey const jumps( "jumps" );  }
+namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
+namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
+namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
+namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }

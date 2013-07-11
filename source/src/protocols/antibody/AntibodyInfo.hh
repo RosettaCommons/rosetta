@@ -6,7 +6,7 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
+//
 /// @file protocols/antibody/AntibodyInfo.hh
 /// @brief Class for getting antibody-specific objects and information
 /// @author Jianqing Xu (xubest@gmail.com)
@@ -129,11 +129,17 @@ public:
 	get_PackingAngleResidues() const {
 		return packing_angle_residues_;
 	}
+	
+	/// @brief gets all non-LH chains.  Empty vector if no antigen present.
+	vector1< char >
+	get_antigen_chains() const {
+		return Chain_IDs_for_antigen_;
+	}
 
 	/// @brief return pose residue number of the first residue of the H3 kink
-	Size
+	 Size
 	kink_begin() const {
-		return get_CDR_loop(h3).stop() - 2;
+	return get_CDR_loop(h3).stop() - 2;
 	}
 
 	/// @brief return pose residue number of the last residue of the H3 kink
@@ -148,7 +154,7 @@ public:
 		return get_CDR_loop(h3).stop() + 1;
 	}
 
-	/// @brief return pose residue number of the kink 'anion' (typically Asp/Glu) residue in the kink bulge HBond
+	  /// @brief return pose residue number of the kink 'anion' (typically Asp/Glu) residue in the kink bulge HBond
 	Size
 	kink_anion_residue() const {
 		return get_CDR_loop(h3).stop() - 1;
@@ -159,15 +165,15 @@ public:
 	kink_cation_residue() const {
 		return get_CDR_loop(h3).start() - 1;
 	}
-
+    
 	/// @brief return side chain anion atoms (typically Asp/Glu oxygens) in the kink bulge HBond
 	std::vector<Vector>
 	kink_anion_atoms(const core::pose::Pose & pose) const;
-
+    
 	/// @brief return side chain cation atoms (typically Lys/His nitrogens) in the kink bulge HBond
 	std::vector<Vector>
 	kink_cation_atoms(const core::pose::Pose & pose) const;
-
+    
 
 public:
 	//////////////////////////////////////////////////
@@ -181,26 +187,26 @@ public:
 
 	///@brief Check if the Cluster information is already set.  Useful for protocols.
 	bool
-	clusters_setup();
-
+	clusters_setup() const;
+	
 	/// @brief get the cdr's cluster identity and distance to cluster using it's structure
 	/// @details See North, B., A. Lehmann, et al. (2011). JMB 406(2): 228-256.
 	///  Must use setup_CDR_clusters first.
 	std::pair < CDRClusterEnum, Real >
-	get_CDR_cluster(CDRNameEnum const cdr_name);
-
+	get_CDR_cluster(CDRNameEnum const cdr_name) const;
+	
 	std::string
-	get_cluster_name(CDRClusterEnum const cluster);
-
+	get_cluster_name(CDRClusterEnum const cluster) const;
+	
 	CDRClusterEnum
-	get_cluster_enum(std::string const cluster);
-
+	get_cluster_enum(std::string const cluster) const;
+	
 	CDRNameEnum
-	get_cdr_enum_for_cluster(CDRClusterEnum const cluster);
+	get_cdr_enum_for_cluster(CDRClusterEnum const cluster) const;
 
 	core::Size
-	get_cluster_length(CDRClusterEnum const cluster);
-
+	get_cluster_length(CDRClusterEnum const cluster) const;
+	
 public:
 	///////////////////////////////////////////////////
 	//Sequence
@@ -224,25 +230,34 @@ public:
 	//Loops
 	//
 	//
-	/// @brief return the loop of a certain loop type
-	loops::LoopsOP
-	get_CDR_in_loopsop( CDRNameEnum const & cdr_name ) const {
-		return vector1_loopsop_having_cdr_[cdr_name];
-	}
 
+	
 	/// @brief return the loop of a certain loop type
 	loops::Loop
 	get_CDR_loop( CDRNameEnum const & cdr_name ) const {
 		return (*get_CDR_in_loopsop(cdr_name))[1];
 	}
+	
+	///@brief return the loop of a certain loop type on the fly
+	loops::Loop
+	get_CDR_loop( CDRNameEnum const & cdr_name, pose::Pose const & pose) const;
 
-	/// @brief return a LoopsOP object, which saves all the CDR Loop object
+	/// @brief return the loop of a certain loop type
+	loops::LoopsOP
+	get_CDR_in_loopsop( CDRNameEnum const & cdr_name ) const {
+		return vector1_loopsop_having_cdr_[cdr_name];
+	}
+	
+	/// @brief return a LoopsOP object, initialized upon class construction.
 	loops::LoopsOP
 	get_AllCDRs_in_loopsop() const {
 		return loopsop_having_allcdrs_;
 	}
-
-
+	
+	///@brief On-the-fly CDR LoopsOP
+	loops::LoopsOP
+	get_CDR_loops(pose::Pose const & pose) const;
+	
 public:
 	///////////////////////////////////////////////////
 	//FoldTrees
@@ -320,20 +335,17 @@ public:
 
 	pack::task::TaskFactoryOP
 	get_TaskFactory_OneCDR(pose::Pose & pose, CDRNameEnum const & cdr_name) const;
-
-	///@brief Add CDR flexibility to task factory.
-	//void
-	//add_CDR_to_TaskFactory(pose::Pose & pose, pack::task::TaskFactoryOP tf, CDRNameEnum const & cdr_name) const;
-
+    
+	
 public:
 
 	/// @brief use the H3 cterm coordinates in the pose to calculate the cterminal type
 	//std::string calculate_H3_base_by_coordinates(pose::Pose const & pose) const;
-	AntibodyEnumManagerOP &
-	get_antibody_enum_manager();
+	AntibodyEnumManagerOP
+	get_antibody_enum_manager() const;
 
-	CDRClusterEnumManagerOP &
-	get_cdr_cluster_enum_manager();
+	CDRClusterEnumManagerOP
+	get_cdr_cluster_enum_manager() const;
 
 	void show( std::ostream & out=std::cout );
 	friend std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info ) ;
@@ -345,8 +357,8 @@ private:
 	/////////////////////////////////////////////////////////////////////////////////////////
 	///
 	void set_default();
-
-	/// @brief check the input pose is nanobody, antibody or wrong
+    
+	/// @brief check the input pose is nanobody, antibody or wrong.  Sets sequence.  Sets Antigen chains.
 	void identify_antibody(pose::Pose const & pose);
 
 	void init(pose::Pose const & pose);
@@ -355,9 +367,8 @@ private:
 	//  Examples:
 	//           cdr_numbering_[h1][start]
 	//           packing_numbering_[VL_sheet_1][stop]
-	void
-	setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme);
-
+	void setup_numbering_info_for_scheme(AntibodyNumberingSchemeEnum const & numbering_scheme);
+	
 	/// @brief setup the CDR loops objects based on the input numbering scheme
 	void setup_CDRsInfo( pose::Pose const & pose );
 
@@ -415,6 +426,8 @@ private:
 	H3BaseTypeEnum predicted_H3_base_type_;
 	CDRNameEnum total_cdr_loops_;
 	vector1<char> Chain_IDs_for_CDRs_;
+	vector1<char> Chain_IDs_for_antigen_;
+	
 	Size L_chain_;
 	Size H_chain_;
 

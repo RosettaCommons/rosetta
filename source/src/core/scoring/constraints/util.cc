@@ -481,6 +481,7 @@ void skip_redundant_constraints( ConstraintCOPs& in, Size total_residue, Size in
 	tr.Info << "remaining non-redundant constraints " << in.size() << std::endl;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
 void drop_constraints( ConstraintCOPs& in, core::Real drop_rate ) {
 	utility::vector1< ConstraintCOP > out;
 	for (	utility::vector1< ConstraintCOP >::const_iterator it = in.begin(); it != in.end(); ++it ) {
@@ -491,7 +492,16 @@ void drop_constraints( ConstraintCOPs& in, core::Real drop_rate ) {
 	in = out;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
+void remove_constraints_of_type(core::pose::Pose & pose, std::string const type) {
+	utility::vector1< ConstraintCOP > all_csts = pose.constraint_set()->get_all_constraints();
+	for (core::Size i=1; i<=all_csts.size(); ++i){
+		if (all_csts[i]->type() == type){
+			pose.remove_constraint(all_csts[i], true);
+		}
+	}
+}
+
+
 void
 remove_nonbb_constraints( pose::Pose & pose) {
 

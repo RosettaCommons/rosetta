@@ -62,9 +62,26 @@ namespace antibody { extern BooleanOptionKey const camelid; }
 namespace antibody { extern BooleanOptionKey const camelid_constraints; }
 namespace antibody { extern StringOptionKey const numbering_scheme; }
 namespace antibody { namespace design { extern BooleanOptionKey const design; } }
-namespace antibody { namespace design { extern StringOptionKey const graft_instructions; } }
+namespace antibody { namespace design { extern StringOptionKey const instructions; } }
 namespace antibody { namespace design { extern StringOptionKey const antibody_database; } }
+namespace antibody { namespace design { extern BooleanOptionKey const do_graft_design; } }
+namespace antibody { namespace design { extern BooleanOptionKey const do_post_graft_design_modeling; } }
+namespace antibody { namespace design { extern BooleanOptionKey const do_sequence_design; } }
+namespace antibody { namespace design { extern BooleanOptionKey const do_post_design_modeling; } }
 namespace antibody { namespace design { extern IntegerOptionKey const graft_rounds; } }
+namespace antibody { namespace design { extern IntegerOptionKey const top_graft_designs; } }
+namespace antibody { namespace design { extern BooleanOptionKey const dump_post_graft_designs; } }
+namespace antibody { namespace design { extern RealOptionKey const interface_dis; } }
+namespace antibody { namespace design { extern RealOptionKey const neighbor_dis; } }
+namespace antibody { namespace design { extern BooleanOptionKey const dock_post_graft; } }
+namespace antibody { namespace design { extern BooleanOptionKey const pack_post_graft; } }
+namespace antibody { namespace design { extern StringOptionKey const design_method; } }
+namespace antibody { namespace design { extern IntegerOptionKey const design_rounds; } }
+namespace antibody { namespace design { extern BooleanOptionKey const benchmark_basic_design; } }
+namespace antibody { namespace design { extern BooleanOptionKey const use_filters; } }
+namespace antibody { namespace design { extern IntegerOptionKey const stats_cutoff; } }
+namespace antibody { namespace design { extern BooleanOptionKey const conservative_h3_design; } }
+namespace antibody { namespace design { extern BooleanOptionKey const turn_conservation; } }
 
 } // namespace OptionKeys
 } // namespace options

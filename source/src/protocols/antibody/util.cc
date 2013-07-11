@@ -26,6 +26,7 @@
 #include <core/types.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -651,57 +652,156 @@ void align_to_native( core::pose::Pose & pose,
 
 } // align_to_native()
 
-void
-set_harmonic_constraints(AntibodyInfoOP & ab_info, core::pose::Pose & pose, core::scoring::ScoreFunctionOP & scorefxn) {
-	set_harmonic_constraints(ab_info, pose);
-	scorefxn->set_weight(core::scoring::dihedral_constraint, 1.0);
-}
-
-void
-set_harmonic_constraints(AntibodyInfoOP & ab_info, core::pose::Pose & pose) {
-	if (!ab_info->clusters_setup()) {
+std::map< CDRNameEnum, bool>
+add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose){
+	std::map< CDRNameEnum, bool> result;
+	if (!ab_info->clusters_setup()){
 		ab_info->setup_CDR_clusters(pose);
 	}
 
-	for (core::Size i=1; i<=CDRNameEnum_total; ++i) {
+	for (core::Size i=1; i<=ab_info->get_total_num_CDRs(); ++i){
 		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
-		set_harmonic_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name).first);
+		result[cdr_name] = add_harmonic_cluster_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name).first);
 	}
+	return result;
 }
 
-void
-set_harmonic_constraint(AntibodyInfoOP & ab_info, core::pose::Pose & pose, CDRClusterEnum cluster) {
+std::map< CDRNameEnum, bool>
+add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints){
+	
+	std::map< CDRNameEnum, bool> result;
+	if (!ab_info->clusters_setup()){
+		ab_info->setup_CDR_clusters(pose);
+	}
+
+	for (core::Size i=1; i<=ab_info->get_total_num_CDRs(); ++i){
+		CDRNameEnum cdr_name = static_cast<CDRNameEnum>(i);
+		result[cdr_name] = add_harmonic_cluster_constraint(ab_info, pose, ab_info->get_CDR_cluster(cdr_name).first, constraints);
+	}
+	return result;
+}
+
+
+
+bool
+add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRClusterEnum const cluster){
+
+	using namespace core::scoring::constraints;
+
+	
+	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
+	if (fname=="NA"){return false;}
+	ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, new ConstraintSet, pose);
+
+	pose.add_constraints(cst->get_all_constraints());
+	return true;
+}
+
+bool
+add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRClusterEnum const cluster, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints){
+
+	using namespace core::scoring::constraints;
+	
+	
+	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
+	if (fname=="NA"){return false;}
+	
+	ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, new ConstraintSet, pose);
+
+	vector1< ConstraintCOP > local_csts = cst->get_all_constraints();
+	pose.add_constraints(local_csts);
+
+	constraints.insert(constraints.end(), local_csts.begin(), local_csts.end());
+	return true;
+}
+
+bool
+set_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRClusterEnum const cluster) {
 
 	using namespace protocols::simple_moves;
+
+
+	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
+	if (fname=="NA"){return false;}
+	ConstraintSetMoverOP cst_mover = new ConstraintSetMover();
+	cst_mover->constraint_file(fname);
+	cst_mover->apply(pose);
+	return true;
+}
+
+std::string
+get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum const cluster ){
+	
 	using namespace basic::options;
-
-
+	
+	std::string fname;
 	std::string cluster_type = ab_info->get_cluster_name(cluster);
 	if (cluster_type=="NA") {
 		TR<< "Cannot add constraint to cluster of type NA.  Skipping."<<std::endl;
-		return;
+		fname = "NA";
 	}
 	std::string path = "sampling/antibodies/cluster_based_constraints/CircularHarmonic/";
 	std::string extension = ".txt";
 	std::string specific_path = path + cluster_type + extension;
-	std::string fname = option[ OptionKeys::in::path::database ](1).name() + specific_path;
+	fname = option[ OptionKeys::in::path::database ](1).name() + specific_path;
 	if( !utility::file::file_exists(fname)) {
 		TR<< "Fname "<<fname<<" Does not exist.  No constraint will be added."<<std::endl;
-		return;
+		fname =  "NA";
 	}
-
-	TR<< "Fname "<<fname<<std::endl;
-	ConstraintSetMoverOP cst_mover = new ConstraintSetMover();
-	cst_mover->constraint_file(fname);
-	cst_mover->apply(pose);
+	return fname;
 }
 
+bool
+check_if_pose_renumbered_for_clusters(core::pose::Pose const & pose){
+	
+
+	if (core::pose::has_chain("L", pose)){
+		//L1
+		if (pose.residue(pose.pdb_info()->pdb2pose('L', 23)).name1() != 'C'){
+			TR << "Problem with L1 starting anchor residue name" <<std::endl;
+			return false;
+		}
+		if (pose.residue(pose.pdb_info()->pdb2pose('L', 43)).name1() != 'W'){
+			TR << "Problem with L1 ending anchor residue name" <<std::endl;
+			return false;
+		}
+		
+		//L3
+		if (pose.residue(pose.pdb_info()->pdb2pose('L', 106)).name1() != 'C'){
+			TR << "Problem with L3 starting anchor residue name" <<std::endl;
+			return false;
+		}
+		if (pose.residue(pose.pdb_info()->pdb2pose('L', 139)).name1() != 'F'){
+			TR << "Problem with L3 ending anchor residue name" <<std::endl;
+			return false;
+		}
+	}
+	
+	if (core::pose::has_chain("H", pose)){
+		//H1
+		if (pose.residue(pose.pdb_info()->pdb2pose('H', 23)).name1() != 'C'){
+			TR << "Problem with H1 starting anchor residue name" <<std::endl;
+			return false;
+		}
+		if (pose.residue(pose.pdb_info()->pdb2pose('H', 43)).name1() != 'W'){
+			TR << "Problem with H1 ending anchor residue name" <<std::endl;
+			return false;
+		}
+		
+		//H3
+		if (pose.residue(pose.pdb_info()->pdb2pose('H', 106)).name1() != 'C'){
+			TR << "Problem with H3 starting anchor residue name" <<std::endl;
+			return false;
+		}
+		if (pose.residue(pose.pdb_info()->pdb2pose('H', 139)).name1() != 'W'){
+			TR << "Problem with H3 ending anchor residue name" <<std::endl;
+			return false;
+		}
+	}
+	
+	return true;
+}
 
 } // namespace antibody
 } // namespace protocols
-
-
-
-
-
 

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/core/scoring/constraints/util.hh
-/// @brief utility functions for defining constraints. Maybe better placed in src/numeric?
+/// @brief utility functions for constraints. Maybe better placed in src/numeric?
 /// @author James Thompson
 
 #ifndef INCLUDED_core_scoring_constraints_util_hh
@@ -17,6 +17,7 @@
 #include <core/types.hh>
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
@@ -120,6 +121,9 @@ void add_fa_constraints_from_cmdline(
 void
 add_coordinate_constraints( core::pose::Pose & pose, core::Real const coord_sdev = 10.0 );
 
+///@brief Remove all constraints of a given type from a pose.
+void remove_constraints_of_type(core::pose::Pose & pose, std::string const type);
+
 /// @brief call this on your constraints if you have MultiConstraints before running Abinitio -- already done by broker-type application
 void choose_effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp, ConstraintCOPs& in );
 
@@ -135,6 +139,8 @@ void combine_constraints(
 void skip_redundant_constraints( ConstraintCOPs& in, core::Size total_residue, core::Size influence_width = 1 );
 void drop_constraints( ConstraintCOPs& in, core::Real drop_rate );
 void remove_nonbb_constraints( pose::Pose & pose) ;
+
+
 
 } // namespace constraints
 } // namespace scoring

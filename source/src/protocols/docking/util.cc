@@ -100,7 +100,7 @@ setup_foldtree(
 ) {
 
 	PDBInfoCOP pdb_info = pose.pdb_info();
-	movable_jumps.clear();
+	movable_jumps.clear(); //Why is this required and then cleared?
 
 	if(!pdb_info){
 		utility_exit_with_message("Attempting to setup foldtree between interface partners, however, the pdb_info object associated with the pose does not exits.");

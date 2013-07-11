@@ -169,7 +169,6 @@ void SnugDockProtocol::init() {
 	type( "SnugDockProtocol" );
 
 	/// TODO: Allow the refinement method to be set via a mutator and from the options system
-	/// TODO: JAB Change refinement option name.  Most are NOT centroid - based refinement.
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	if ( option[ basic::options::OptionKeys::antibody::refine ].user() ) {

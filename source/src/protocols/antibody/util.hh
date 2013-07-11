@@ -105,23 +105,44 @@ cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
 //
 //
 
-/// @brief Sets dihedral harmonic constraints to CDR and scorefxn using info in AntibodyInfo
-/// @details Currently requires Modified_AHO numbering.  A server will be available soon.
-void
-set_harmonic_constraints(AntibodyInfoOP & ab_info, pose::Pose & pose, core::scoring::ScoreFunctionOP & scorefxn);
 
-/// @brief Sets dihedral harmonic constraints to CDR using cluster info in AntibodyInfo
-/// @details Currently requires Modified_AHO numbering.  A server will be available soon.
-void
-set_harmonic_constraints(AntibodyInfoOP & ab_info, pose::Pose & pose);
+/// @brief Adds dihedral harmonic constraints to Pose CDRs using cluster info in AntibodyInfo
+/// @details Currently requires Modified_AHO numbering. Returns map of success/failure
+std::map<CDRNameEnum, bool>
+add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, pose::Pose & pose);
 
-/// @brief set a harmonic constraint to a CDR based on cluster type
-/// @details Currently requires Modified_AHO numbering.  A server will be available soon.
-void
-set_harmonic_constraint(AntibodyInfoOP & ab_info, pose::Pose & pose, CDRClusterEnum const cluster);
+///@brief Same as above, but adds constraints to the vector so they can be identified and removed from the pose if needed.
+///@details Returns map of success/failure
+std::map<CDRNameEnum, bool>
+add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, pose::Pose & pose, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints);
 
 
+/// @brief Adds a harmonic constraint to a Pose CDR based on cluster type
+/// @details Currently requires Modified_AHO numbering.
+bool
+add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, pose::Pose & pose, CDRClusterEnum const cluster);
 
+///@brief Same as above, but adds constraints to the vector so they can be identified and removed from the pose if needed.
+///@details Returns true or false depending on success
+bool
+add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, pose::Pose & pose, CDRClusterEnum const cluster, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints);
+
+/// @brief Uses ConstraintSetMover to set a constraint.  Through cstmover, only 1 constraint can be set a t a time.
+/// @details Currently requires Modified_AHO numbering.  Returns True or False depending on success.
+bool
+set_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, pose::Pose & pose, CDRClusterEnum const cluster);
+
+
+/// @brief Gets the cluster constraint name.  Returns NA if not found.
+std::string
+get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum const cluster);
+
+
+///@brief Very basic way to check to make sure pose residues are Modified_AHO (North, et al) scheme, which allows the clustering.
+///@details If any of these anchor residues that are checked are missing, it will return false.
+bool
+check_if_pose_renumbered_for_clusters(pose::Pose const & pose);
+	
 
 
 } //namespace antibody

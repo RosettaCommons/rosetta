@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer, email:license@u.washington.edu
 
 /// @file protocols/antibody/CDRsMinPackMin.hh
-/// @brief Build a homology model of an antibody
+/// @brief Main CDR minimization method in protocols/antibody
 /// @detailed
 ///
 ///

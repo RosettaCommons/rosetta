@@ -122,7 +122,7 @@ def main(args):
 
     parser.add_option("--partial",
       action="store_false", dest="build_all",
-      help="Build only limited subsett of py-bindings.",
+      help="Build only limited subset of py-bindings.",
       )
 
     parser.add_option("--gccxml",
@@ -234,6 +234,8 @@ def main(args):
     print "--boost-lib", options.boost_lib
     print '--update', options.update
     print '--debug', options.debug
+    print '--compiler', options.compiler
+
     #print '--numpy-support', options.numpy_support
 
     #print '--cross-compile', options.cross_compile

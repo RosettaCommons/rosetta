@@ -2257,9 +2257,19 @@ has_chain(std::string const & chain, core::pose::Pose const & pose){
 
 bool
 has_chain(char const & chain, core::pose::Pose const & pose){
-	for(core::Size i=1; i <= pose.conformation().num_chains(); i++){
+	for(core::Size i=1; i <= pose.conformation().num_chains(); ++i){
 		char this_char= get_chain_from_chain_id(i, pose);
 		if(this_char == chain){
+			return true;
+		}
+	}
+	return false;
+}
+
+bool
+has_chain(core::Size chain_id, core::pose::Pose const & pose){
+	for(core::Size i=1; i <= pose.conformation().num_chains(); ++i){
+		if (i == chain_id){
 			return true;
 		}
 	}

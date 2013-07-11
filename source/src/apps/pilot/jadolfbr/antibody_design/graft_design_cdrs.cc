@@ -13,6 +13,7 @@
 
 #include <protocols/antibody/design/AntibodyGraftDesigner.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
@@ -56,6 +57,11 @@ public:
 	
 	void
 	apply(core::pose::Pose & pose){
+		
+		if (! protocols::antibody::check_if_pose_renumbered_for_clusters(pose)){
+			utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
+		}
+		
 		AntibodyInfoOP ab_info = new AntibodyInfo(pose, Modified_AHO);
 		ab_info->show(std::cout);
 		ab_info->setup_CDR_clusters(pose);

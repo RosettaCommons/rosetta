@@ -8,12 +8,14 @@
 // (c) http://www.rosettacommons.org. Questions about this can be addressed to
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
-/// @file protocols/antibody_design/util.cc
+/// @file protocols/antibody/design/util.cc
 /// @brief 
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/antibody/design/util.hh>
+#include <boost/algorithm/string.hpp>
 #include <string>
+#include <utility/exit.hh>
 
 namespace protocols {
 namespace antibody {
@@ -22,7 +24,7 @@ namespace design {
 	using namespace utility;
 	
 std::string
-get_string_for_IN(core::Size n){
+get_string_for_IN(core::Size const n){
 	std::string result;
 	if (n==1){
 		result = "(?)";
@@ -64,6 +66,42 @@ get_all_graft_permutations(
 		}
 	}
 }
+
+DesignTypeEnum
+design_type_from_string(std::string const design_type){
+	std::string type = design_type;
+	boost::to_upper(type);
+	
+	if (type == "FLXBB"){
+		return flxbb;
+	}
+	else if(type == "FIXBB" || type == "FIXEDBB"){
+		return fixbb;
+	}
+	else if(type == "RELAXED_DESIGN" || type == "RELAX_DESIGN" || type == "RELAX_TF"){
+		return relaxed_design;
+	}
+	else{
+		utility_exit_with_message("DesignType unrecognized.  Please check AntibodyDesign settings.");
+	}
+}
+
+std::string
+design_type_to_string(DesignTypeEnum const design_type){
+	if (design_type == flxbb){
+		return "FLXBB";
+	}
+	else if(design_type==fixbb){
+		return "FIXBB";
+	}
+	else if(design_type==relaxed_design){
+		return "RELAXED_DESIGN";
+	}
+	else{
+		utility_exit_with_message("DesignType unrecognized.  Please check AntibodyDesign settings.");
+	}
+}
+
 
 } //design
 } //antibody

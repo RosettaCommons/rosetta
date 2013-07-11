@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody/design/AntibodyGraftDesigner.hh
-/// @brief 
+/// @brief Class that initially designs antibodies through grafting using an AntibodyDatabase + Modified_AHO numbering scheme
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -24,13 +24,13 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/CDRClusterEnum.hh>
 
+// Protocol Includes
 #include <protocols/grafting/AnchoredGraftMover.hh>
-
-
-#include <core/scoring/ScoreFunction.hh>
 
 // Core Includes
 #include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/constraints/Constraint.hh>
 
 // Protocol Includes
 #include <protocols/moves/Mover.hh>
@@ -52,7 +52,8 @@ namespace design{
 		bool graft; //Use grafting algorithm on this CDR?
 		bool stay_native_cluster; //Only sample within the native cluster?
 		bool cluster_centers_only;//Only use the center clusters for sampling?
-		MinTypeEnum mintype; //What to do after graft? (Could be a simple enum - but we would need a manager for it too.)
+		bool min_neighbor_sc; //Minimize neighbor sidechains during chosen minimization if possible
+		MinTypeEnum mintype; //What to do after graft?
 		std::map< Size,  bool > cluster_types; //Only sample within cluster types (Cluster types 1,2,3)
 		vector1< std::string > leave_out_pdb_ids;
 		vector1< std::string > include_only_pdb_ids;
@@ -96,9 +97,9 @@ class AntibodyGraftDesigner: public protocols::moves::Mover {
 
 public:
 	
-	AntibodyGraftDesigner(AntibodyInfoOP & ab_info);
+	AntibodyGraftDesigner(AntibodyInfoOP ab_info);
 	
-	//AntibodyGraftDesigner(AntibodyInfoOP & ab_info, std::string instruction_path);
+	AntibodyGraftDesigner(AntibodyInfoOP & ab_info, std::string instruction_path);
 			
 	virtual ~AntibodyGraftDesigner();
 	
@@ -131,7 +132,7 @@ public:
 	//
 	
 	void
-	set_scorefunction(ScoreFunctionOP & scorefxn);
+	set_scorefunction(ScoreFunctionOP scorefxn);
 	
 	void
 	set_graft_rounds(core::Size graft_rounds);
@@ -139,12 +140,29 @@ public:
 	//void
 	//set_filters();
 	
-	///@brief Options are: relax, min, repack.
+	///@brief Options are: relax, minimize, repack. Default is minimize
 	void
 	set_mintype(CDRNameEnum const cdr_name, MinTypeEnum mintype);
 	
 	void
 	set_mintype_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, MinTypeEnum mintype);
+	
+	///@brief Use Neighbor sidechains during minimization of this CDR post-graft?  
+	void
+	set_min_neighbor_sc(CDRNameEnum const cdr_name, bool const setting);
+	
+	void
+	set_min_neighbor_sc_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, bool const setting);
+	
+	
+	///@brief Set the algorithm to run a low-resolution docking step after each graft.  Default false.
+	///@details Uses command-line options for docking.  Lower inner or outer cycles if you are grafting many CDRs.  Still quicker then relax.
+	void
+	set_dock_post_graft(bool dock_post_graft);
+	
+	///@brief Set the algorithm to run a packing step with neighbor detection post graft.  Before any minimization or docking.  
+	void
+	set_pack_post_graft(bool pack_post_graft);
 	
 	///@brief Sets the protocol to keep a specific number of top designs.  Default is 10
 	void
@@ -186,11 +204,11 @@ public:
 	void
 	set_cdr(CDRNameEnum const cdr, bool const setting);
 	
-	///@brief Use this range of CDRs during design
+	///@brief Use this range of CDRs during design.  Default is all of them.
 	void
 	set_cdr_range(CDRNameEnum const cdr_start, CDRNameEnum cdr_end, bool const setting);
 	
-	
+
 	///@brief Set to only sample within the native cluster of this CDR.  
 	void
 	set_cdr_stay_in_native_cluster(CDRNameEnum const cdr, bool const setting);
@@ -200,11 +218,11 @@ public:
 	set_cdr_range_stay_in_native_cluster(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, bool const setting);
 	
 	
-	///@brief Set to only sample with clusters of the given type for this CDR.
+	///@brief Set to only sample with clusters of the given type for this CDR. Default is to only use type 1.
 	void
 	set_cdr_stay_in_type(CDRNameEnum const cdr, core::Size const type, bool const setting);
 	
-	///@brief set a range of CDRs for which to stay within a particular type.
+	///@brief set a range of CDRs for which to stay within a particular type. Default is to only use type 1.
 	void
 	set_cdr_range_stay_in_type(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, core::Size const type, bool const setting);
 	
@@ -222,6 +240,7 @@ public:
 	
 	void
 	set_cdr_max_length_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, core::Size length);
+	
 	
 	///@brief Only sample cluster centers for this CDR
 	void
@@ -291,14 +310,11 @@ private:
 	void
 	graft_cdr(pose::Pose & pose, CDRNameEnum cdr, core::Size index);
 	
-	///@brief Fixes the pose's pdb_info after graft. Start and end are rosetta residue numbers before and after the cdr.
-	void
-	fix_pdb_info(pose::Pose pose, CDRNameEnum cdr, CDRClusterEnum cluster, core::Size original_start, core::Size original_pdb_end);
 	
 	///@brief Mutates framework residues needed to stay within a particular cluster.  Only one  (L1-11-1) is known to have framework dependencies.  For now.
 	/// Will be replaced by AntibodyDesignOptimizer
-	void
-	mutate_framework_residues(pose::Pose pose, CDRClusterEnum cluster);
+	//void
+	//mutate_framework_residues(pose::Pose pose, CDRClusterEnum cluster);
 	
 private:
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -310,10 +326,13 @@ private:
 	void
 	run_deterministic_graft_algorithm(pose::Pose & pose, vector1< CDRNameEnum > & cdrs_to_design, core::Size recurse_num);
 	
-	///@breif Main algorithm used by mover
+	///@brief Main algorithm used by mover
 	void
 	run_random_graft_algorithm(pose::Pose & pose, vector1< CDRNameEnum> & cdrs_to_design);
 	
+	///@brief Fix PDB info as somehow the code for pdbinfo changed and my other method no longer works.  No idea why.
+	void
+	fix_pdb_info(pose::Pose pose, CDRNameEnum cdr, CDRClusterEnum cluster, core::Size original_start, core::Size original_pdb_end);
 	
 	//void
 	//run_stochastic_graft_algorithm(pose::Pose & pose, vector1< CDRNameEnum > & cdrs_to_design);
@@ -322,17 +341,20 @@ private:
 	map< CDRNameEnum, CDRClusterEnum > native_clusters_; //Native North cluster
 	map< CDRNameEnum,  CDRGraftInstructions > cdr_instructions_;
 	map< CDRNameEnum, SamplingWeights > sampling_instructions_;
+	
+	map< CDRNameEnum, utility::vector1< core::scoring::constraints::ConstraintCOP > >constraint_map_; //Currently set constraints.  Used for removal when nessessary.
+	
 	std::string instruction_path_;
 	CDRSet cdr_set_; //Actual poses that will be grafted.
 	CDRClusterMap cdr_cluster_map_; //Maps CDRSet to CDRClusterEnums to constrained relaxes
 	PDBMap pdbmap_; //Maps CDRSet to PDB tags
 	
 	AntibodyInfoOP ab_info_;
-	AnchoredGraftMoverOP graft_mover_; //May need one for each CDR?
+	AnchoredGraftMoverOP graft_mover_; 
 	ScoreFunctionOP scorefxn_;
 	AntibodyDesignModelerOP modeler_;
-	
 	protocols::moves::MonteCarloOP mc_;
+	
 	core::Size overhang_;
 	core::Size graft_rounds_;
 	
@@ -343,6 +365,10 @@ private:
 	vector1< core::Real> top_scores_;
 	
 	core::Size total_permutations_; //Total number of possible combinations
+	
+	//Overall Booleans
+	bool dock_post_graft_; //Run a low-resolution docking step after the graft?
+	bool pack_post_graft_; //Run a packing step with neighbor detection after the graft.  
 };
 }
 }

@@ -63,10 +63,12 @@ public:
 		AntibodyDesignModeler modeler = AntibodyDesignModeler(ab_info);
 	
 		//Setup Constraints
-		set_harmonic_constraints(ab_info, pose, scorefxn);
+		scorefxn->set_weight(dihedral_constraint, 1.0);
+		add_harmonic_cluster_constraints(ab_info, pose);
 	
 		//Run Relax.
-		modeler.relax_cdrs(pose, scorefxn, false);
+		modeler.set_scorefunction(scorefxn);
+		modeler.relax_cdrs(pose, false);
 	}
 };
 
@@ -93,4 +95,3 @@ int main(int argc, char* argv[]){
 //To be included:
 // 1) Centroid-based relax vs. Minimization vs. relax.  For testing
 // 2) Control of individual CDR's
-// 3) RelaxedDesign class I saw commited a few days ago could be cool to try.
