@@ -55,7 +55,7 @@ class Tester:
                 if r == (p, 0):  # process have ended without error
                     self.jobs.remove(p)
                 elif r[0] == p :  # process ended but with error, special case we will have to wait for all process to terminate and call system exit.
-                    for p in jobs: os.waitpid(p, 0)
+                    for p in self.jobs: os.waitpid(p, 0)
                     print 'Some of the unit test suite terminate abnormally!'
                     sys.exit(1)
 
