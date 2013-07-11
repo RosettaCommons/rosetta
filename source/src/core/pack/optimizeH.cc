@@ -115,7 +115,7 @@ optimizeH(
 	task->initialize_from_command_line();
 	task->or_optimize_h_mode( true );
 	task->or_include_current( true );
-	task->or_flip_HNQ( option[ OptionKeys::packing::flip_HNQ ].user() );
+	task->or_flip_HNQ( option[ OptionKeys::packing::flip_HNQ ] );
 	task->or_multi_cool_annealer( option[ OptionKeys::packing::optH_MCA ]() );
 
 	pack_rotamers( pose, sfxn, task );
