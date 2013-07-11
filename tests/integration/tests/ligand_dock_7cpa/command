@@ -6,6 +6,3 @@ cd %(workdir)s
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
-
-#removes unwanted versioning info from silent file
-sed -i.bak '/version/d' silent.out; rm silent.out.bak
