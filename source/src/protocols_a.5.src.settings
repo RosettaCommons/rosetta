@@ -65,6 +65,7 @@ libraries = [
 ]
 subprojects = [
 	"protocols_h.4",
+	"protocols_f.5",
 	"protocols_c.4",
 	"protocols_a.4",
 	"protocols.3",
