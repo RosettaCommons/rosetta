@@ -20,6 +20,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
+#include <numeric/xyz.functions.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -46,6 +47,15 @@ public:
 	virtual void
 	parse_my_tag( TagPtr const, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, Pose const & );
 
+private:
+    inline core::Real angle_with_x_axis_proj_y( xyzVector const & v) const { return numeric::dihedral_degrees(xyzVector(v[0],1,v[2]), xyzVector(0,1,0), xyzVector(0,0,0), xyzVector(1,0,0)); }
+        inline core::Real angle_with_y_axis_proj_x( xyzVector const & v) const { return numeric::dihedral_degrees(xyzVector(1,v[1],v[2]), xyzVector(1,0,0), xyzVector(0,0,0), xyzVector(0,1,0)); }
+   
+    inline core::Real angle_with_y_axis_proj_z( xyzVector const & v) const { return numeric::dihedral_degrees( xyzVector(v[0],v[1],1), xyzVector(0,0,1), xyzVector(0,0,0), xyzVector(0,1,0)); }
+    
+        inline core::Real angle_with_z_axis_proj_y( xyzVector const & v) const { return numeric::dihedral_degrees( xyzVector(v[0],1,v[2]), xyzVector(0,1,0), xyzVector(0,0,0), xyzVector(0,0,1)); }
+
+    
 private:
 	core::Real subunit_tolerance_;
 	core::Real plane_tolerance_;

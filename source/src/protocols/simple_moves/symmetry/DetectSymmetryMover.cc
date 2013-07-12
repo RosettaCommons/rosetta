@@ -87,82 +87,53 @@ DetectSymmetry::apply(Pose & pose) {
 		core::Real rms = core::scoring::CA_rmsd(ref_pose, test_pose);
 		TR.Debug << "rms chain " << i + 1 << " " << rms << std::endl;
 		if( rms > subunit_tolerance_ ) utility_exit_with_message("rmsd between subunits higher than subunit tolerance");
-
 	}
 	TR << seq1.size() << " residues per subunit" << std::endl;
 
 	// Translate the center of the mass of the pose to the origin
-  xyzMatrix id_rot_mat = numeric::xyzMatrix< core::Real >::identity();
-  xyzVector cm_pose = protocols::geometry::center_of_mass(pose, 1, pose.total_residue());
-	while( cm_pose[2] > plane_tolerance_) {
-		pose.apply_transform_Rx_plus_v(id_rot_mat, -1*cm_pose);
-  	cm_pose = protocols::geometry::center_of_mass(pose, 1, pose.total_residue());
-	}
+    xyzMatrix id_rot_mat = numeric::xyzMatrix< core::Real >::identity();
+    xyzVector cm_pose = protocols::geometry::center_of_mass(pose, 1, pose.total_residue());
+    pose.apply_transform_Rx_plus_v(id_rot_mat, -1*cm_pose);
 
-	// align the center of mass of chain A in the Y axis
-	// rotate around x to align the center of mass of chain a to the xy plane
-  xyzVector cm_chain_A = protocols::geometry::center_of_mass(pose, 1, seq1.size());
-	core::Real angle_cm_orig_x = numeric::angle_degrees(cm_chain_A, xyzVector(cm_chain_A[0],0,0), xyzVector(cm_chain_A[0],cm_chain_A[1], 0));
-	TR.Debug << "Angle between center of mass of chain A and x axis: " << angle_cm_orig_x << std::endl;
-	TR.Debug << "start - center of mass chain A " << cm_chain_A[0] << " " << cm_chain_A[1] << " " << cm_chain_A[2] << " " << std::endl;
-	xyzMatrix x_rot = numeric::x_rotation_matrix_degrees(angle_cm_orig_x * ((cm_chain_A[2] < 0.0)? -1 : 1) );
-	pose.apply_transform_Rx_plus_v(x_rot, xyzVector(0,0,0));
-  cm_chain_A = protocols::geometry::center_of_mass(pose, 1, seq1.size());
-	angle_cm_orig_x = numeric::angle_degrees(cm_chain_A, xyzVector(cm_chain_A[0],0,0), xyzVector(cm_chain_A[0],cm_chain_A[1], 0));
-	TR.Debug << "t1 - Angle between center of mass of chain A and x axis: " << angle_cm_orig_x << std::endl;
-	TR.Debug << "t1 - center of mass chain A " << cm_chain_A[0] << " " << cm_chain_A[1] << " " << cm_chain_A[2] << " " << std::endl;
+	//-- Align the center of mass of chain A in the Y axis --
+	//  first step: rotate around x to align the center of mass of chain A to the xy-plane
+    xyzVector cm_chain_A = protocols::geometry::center_of_mass(pose, 1, seq1.size());
+	core::Real angle_y1 = angle_with_y_axis_proj_x( cm_chain_A );
+	xyzMatrix x_rot = numeric::x_rotation_matrix_degrees( -1 * angle_y1 );
+    pose.apply_transform_Rx_plus_v(x_rot, xyzVector(0,0,0));
+	cm_chain_A = protocols::geometry::center_of_mass(pose, 1, seq1.size());
+    assert( cm_chain_A[2] > -1*plane_tolerance_ && cm_chain_A[2] < plane_tolerance_);
+    // second step: rotate around z to align the center of mass of chain A to the y-axis
+    core::Real angle_y2 = angle_with_y_axis_proj_z( cm_chain_A );
+    xyzMatrix z_rot = numeric::z_rotation_matrix_degrees( -1 * angle_y2 );
+    pose.apply_transform_Rx_plus_v(z_rot, xyzVector(0,0,0));
+	cm_chain_A = protocols::geometry::center_of_mass(pose, 1, seq1.size());
+    assert( cm_chain_A[0] > -1*plane_tolerance_ && cm_chain_A[0] < plane_tolerance_ && cm_chain_A[2] > -1*plane_tolerance_ && cm_chain_A[2] < plane_tolerance_);
 
-	// rotate around z to move the center of mass of chain A to Y axis
-	core::Real angle_cm_orig_z = numeric::angle_degrees(cm_chain_A, xyzVector(0,0,0), xyzVector(0,1,0));
-	xyzMatrix z_rot = numeric::z_rotation_matrix_degrees(angle_cm_orig_z * ((cm_chain_A[0] < 0.0) ? -1 : 1) );
-	pose.apply_transform_Rx_plus_v(z_rot, xyzVector(0,0,0));
-  cm_chain_A = protocols::geometry::center_of_mass(pose, 1, seq1.size());
-	TR.Debug << "t2 - Angle between center of mass of chain A and y axis: " << angle_cm_orig_z << std::endl;
-	TR.Debug << "t2 - center of mass chain A " << cm_chain_A[0] << " " << cm_chain_A[1] << " " << cm_chain_A[2] << " " << std::endl;
-
-    // rotate around y again to put the center of mass of the other subunits in the xy-plane
-    xyzVector cm_chain_B = protocols::geometry::center_of_mass(pose, seq1.size(), 2* seq1.size());
-	core::Real angle_cm_orig_y = numeric::angle_degrees(cm_chain_B, xyzVector(0,cm_chain_B[1],0), xyzVector(cm_chain_B[0],cm_chain_B[1], 0));
-	if(  cm_chain_B[ 0 ] < 0.0 )
-	{
-		if( cm_chain_B[2] < 0.0 ) {
-			angle_cm_orig_y = 180 + (180.0 + angle_cm_orig_y);
-            //	TR << "adjusting for com in -x -z" << std::endl;
-		} else {
-			angle_cm_orig_y = 180.0 - angle_cm_orig_y;
-            //		TR << "adjusting for com in -x +z" << std::endl;
-		}
-	} else if( cm_chain_B[2] > 0.0 ) {
-			angle_cm_orig_y = 180 + ( 180.0 - angle_cm_orig_y );
-	}
-        
-  xyzMatrix y_rot = numeric::y_rotation_matrix_degrees(angle_cm_orig_y * ((cm_chain_B[2] > 0.0) ? -1 : 1));
-	TR.Debug << "t4 - Angle between center of mass of chain B and y axis: " << angle_cm_orig_y << std::endl;
-	pose.apply_transform_Rx_plus_v(y_rot, xyzVector(0,0,0));
-  cm_chain_B = protocols::geometry::center_of_mass(pose, seq1.size(), 2* seq1.size());
-	TR.Debug << "t4 - center of mass chain B " << cm_chain_B[0] << " " << cm_chain_B[1] << " " << cm_chain_B[2] << " " << std::endl;
-    
-    for( Size i = 0; i < symmetric_type; i++)
+    //check that the com of all subunits is in the xy-plane
+      for( Size i = 0; i < symmetric_type; i++)
     {
         xyzVector cm_chain = protocols::geometry::center_of_mass(pose, i*seq1.size()+1, i * seq1.size() + seq1.size());
-        runtime_assert_msg(cm_chain[2] > -0.0001 & cm_chain[2] < 0.0001, "com of chain " + boost::lexical_cast< std::string >( i ) +  " is not properly aligned to the x-y plane");
+        runtime_assert_msg(cm_chain[2] > -1*plane_tolerance_ && cm_chain[2] < plane_tolerance_, "com of chain " + boost::lexical_cast< std::string >( i ) +  " is not properly aligned to the x-y plane");
     }
 
     // if C2 check that the vector formed my the middle point between a point and the symmetric counterpart is aligned to the z-axis
     // if the aligment ia correct the middle point between any atom and its symmetric copy has to be aligned to the z-axis.
     if( symmetric_type == 2 )
     {
-      xyzVector v1 = ( pose.residue( 1 ).xyz("CA") + pose.residue( seq1.size() + 1 ).xyz("CA") ) / 2;
-      core::Real angle_rot_axis_z_axis = numeric::angle_degrees(v1, xyzVector(0,0,0), xyzVector(0,0,1));
-      TR << v1[0] << " " << v1[1] << " " << v1[2] <<std::endl;
-      TR << angle_rot_axis_z_axis << std::endl;
-      xyzMatrix rot = numeric::y_rotation_matrix_degrees(  -1 * angle_rot_axis_z_axis );
-      pose.apply_transform_Rx_plus_v(rot, xyzVector(0,0,0));
-      for( Size i = 1, j = seq1.size()+1; i <= seq1.size(); i++,j++ )
-      {
-        xyzVector v = ( pose.residue( i ).xyz("CA") + pose.residue( j ).xyz("CA") )/ 2;
-        runtime_assert_string_msg(v[0] < 0.0001 && v[0] > -0.0001 && v[1] < 0.0001 && v[1] > -0.0001, "rotation axis not properly aligned!");
-      }
+        // vm is the middle point between the CA of the first residue and its projection
+        xyzVector vm = ( pose.residue( 1 ).xyz("CA") + pose.residue( seq1.size() + 1 ).xyz("CA") ) / 2;
+        // the com of both chains is in the y-axis so the rotation must be around the y-axis to align vm to the z-axis
+        core::Real angle_z_axis = angle_with_z_axis_proj_y( vm );
+        xyzMatrix rot1 = numeric::y_rotation_matrix_degrees(  -1 * angle_z_axis );
+        pose.apply_transform_Rx_plus_v(rot1, xyzVector(0,0,0));
+        vm = ( pose.residue( 1 ).xyz("CA") + pose.residue( seq1.size() + 1 ).xyz("CA") ) / 2;
+        assert(vm[0] > -0.001 && vm[0] < 0.001 && vm[1] > -0.001 && vm[1] < 0.001 );
+        for( Size i = 1, j = seq1.size()+1; i <= seq1.size(); i++,j++ )
+        {
+            xyzVector v = ( pose.residue( i ).xyz("CA") + pose.residue( j ).xyz("CA") )/ 2;
+            runtime_assert_string_msg(v[0] < 0.001 && v[0] > -0.001 && v[1] < 0.001 && v[1] > -0.001, "rotation axis not properly aligned!");
+        }
     }
   
   // Now that chain A is properly oriented around the Z-axis copy it to a new pose.
