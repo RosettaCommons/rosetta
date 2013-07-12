@@ -71,7 +71,6 @@ enum ScoreType {
 	hack_elec_bb_bb,
 	hack_elec_bb_sc,
 	hack_elec_sc_sc,
-	hack_elec_nonpolar, // grab bag for nonpolar to everything else; i.e. pairs that are not in H-bonds.
 	h2o_hbond,
 	dna_dr,
 	dna_bp,

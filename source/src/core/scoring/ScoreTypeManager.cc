@@ -383,7 +383,7 @@ ScoreTypeManager::setup_score_type_names()
 
 	name2score_type_[ "dummy_score_type" ] = dummy_score_type;
 
-	assert( name2score_type_.size() == end_of_score_type_enumeration );
+	runtime_assert( name2score_type_.size() == end_of_score_type_enumeration );
 
 	score_type2name_.resize( end_of_score_type_enumeration );
 	for ( std::map< std::string, ScoreType >::const_iterator iter = name2score_type_.begin(),
