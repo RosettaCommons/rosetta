@@ -74,20 +74,17 @@ public:
 
 int main(int argc, char* argv[]){
 	try{
-	//Make option for centroid or not.
-	devel::init(argc, argv);
-	
-	
-	try{
+		//Make option for centroid or not.
+		devel::init(argc, argv);
+
 		protocols::jd2::JobDistributor::get_instance()->go( new RelaxCDRsMover );
-	} catch ( utility::excn::EXCN_Base & excn ) {
-		std::cout << "Exception: " << std::endl;
-		excn.show( std::cerr );
+
+		std::cout << "Done! -------------------------------\n";
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cerr << "caught exception " << e.msg() << std::endl;
 	}
-	std::cout << "Done! -------------------------------\n";
-    } catch ( utility::excn::EXCN_Base const & e ) {
-        std::cerr << "caught exception " << e.msg() << std::endl;
-    }
+
 	return(0);
 }
 

@@ -24,9 +24,9 @@ using namespace protocols::antibody::design;
 //Description:  This application will become the Rosetta Antibody Designer.  Main code is handled through AntibodyDesignMover
 int main(int argc, char* argv[])
 {
-	devel::init(argc, argv);
-	
 	try{
+		devel::init(argc, argv);
+
 		protocols::jd2::JobDistributor::get_instance()->go(new AntibodyDesignMover);
 	}catch(utility::excn::EXCN_Base & excn){
 		std::cout << "Exception: "<<std::endl;
