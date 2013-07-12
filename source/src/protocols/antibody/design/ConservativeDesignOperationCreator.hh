@@ -9,7 +9,7 @@
 // (c) University of Washington UW TechTransfer,email:license@u.washington.edu.
 
 /// @file protocols/antibody_design/ConservativeDesignOperationCreator.hh
-/// @brief 
+/// @brief
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 
@@ -25,15 +25,17 @@ namespace protocols {
 namespace antibody {
 namespace design {
 
+// Undefined, commenting out to fix PyRosetta build
+/*
 class ConservativeDesignOperationCreator : public core::pack::task::operation::TaskOperationCreator {
 public:
 	virtual core::pack::task::operation::TaskOperationOP create_task_operation() const;
 	virtual std::string keyname() const { return "ConservativeDesignOperation"; }
 };
+*/
 
 } //namespace protocols
 } //namespace toolbox
 } //namespace task_operations
 
 #endif	//INCLUDED_protocols_antibody_design_ConservativeDesignOperationCreator.hh
-

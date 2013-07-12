@@ -32,7 +32,7 @@ using namespace utility;
 std::string
 get_string_for_IN(core::Size const n);
 
-///@brief Gets all possible graft permutations. 
+///@brief Gets all possible graft permutations.
 void
 get_all_graft_permutations(
 	vector1<core::Size > & total_cdr_set,
@@ -43,8 +43,7 @@ get_all_graft_permutations(
 DesignTypeEnum
 design_type_from_string(std::string const design_type);
 
-std::string
-design_type_from_enum(DesignTypeEnum const design_type);
+// Undefined, commenting out to fix PyRosetta build  std::string design_type_from_enum(DesignTypeEnum const design_type);
 
 } //design
 } //antibody
@@ -52,4 +51,3 @@ design_type_from_enum(DesignTypeEnum const design_type);
 
 
 #endif	//#ifndef INCLUDED_protocols/antibody/design_UTIL_HH
-

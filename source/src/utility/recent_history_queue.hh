@@ -36,7 +36,20 @@ struct history_queue_struct
 	int more_recent_ptr;
 	int element_in_rh;
 	int more_ancient_ptr;
+
+	/// WARNING WARNING WARNING:
+	/// if you going to modify this struct make sure to adjust definition of comparison operator below.
 };
+
+// Have to define it by hand because compiler does not automatically generate comparison for structs (and we need it for vector1::has_one implementaion)
+inline bool operator== (history_queue_struct const &a, history_queue_struct const &b)
+{
+    return (a.more_recent_ptr  == b.more_recent_ptr &&
+            a.element_in_rh    == b.element_in_rh &&
+            a.more_ancient_ptr == b.more_ancient_ptr);
+}
+
+
 
 /// @brief A class for keeping track of a subset of elements in a set that are
 /// pushed into a queue in a certain order, and which fall off the end of the queue
