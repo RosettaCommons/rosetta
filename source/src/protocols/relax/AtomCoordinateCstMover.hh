@@ -55,7 +55,7 @@ public:
 		core::pose::Pose const &
 	);
 
-	virtual void set_refstruct( core::pose::PoseCOP ref ) { refpose_ = ref; }
+	virtual void set_refstruct( core::pose::PoseCOP ref );
 
 	void cst_sd( core::Real sd ) { cst_sd_ = sd; }
 	core::Real cst_sd() const { return cst_sd_; }

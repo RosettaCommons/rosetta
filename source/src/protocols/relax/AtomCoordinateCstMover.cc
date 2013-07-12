@@ -99,6 +99,11 @@ AtomCoordinateCstMover::set_task_segments( core::pack::task::TaskFactoryCOP task
 	task_segments_ = taskfactory;
 }
 
+void
+AtomCoordinateCstMover::set_refstruct( core::pose::PoseCOP ref ) {
+	refpose_ = ref;
+}
+
 void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 
 	using namespace core::scoring::constraints;
