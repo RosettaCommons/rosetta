@@ -150,12 +150,18 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 
 /// following paragraph determines where PIDO and RestrictToAlignedInterface are defined.
 /// These are used in the following loop to restrict conservation profiles differently
-	core::pack::task::TaskFactoryOP temp_tf = new core::pack::task::TaskFactory;
-	temp_tf->push_back( protein_interface_design_ );
-	utility::vector1< core::Size > const designable_interface( protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ ) );
-	temp_tf = new core::pack::task::TaskFactory;
-	temp_tf->push_back( restrict_to_aligned_segments_ );
-	utility::vector1< core::Size > const designable_aligned_segments( protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ ) );
+	utility::vector1< core::Size > designable_interface, designable_aligned_segments;
+	designable_interface.clear(); designable_aligned_segments.clear();
+	if( protein_interface_design()() != NULL ){
+		core::pack::task::TaskFactoryOP temp_tf = new core::pack::task::TaskFactory;
+		temp_tf->push_back( protein_interface_design_ );
+		designable_interface = protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ );
+	}
+	if( restrict_to_aligned_segments()() != NULL ){
+		core::pack::task::TaskFactoryOP temp_tf = new core::pack::task::TaskFactory;
+		temp_tf->push_back( restrict_to_aligned_segments_ );
+		designable_aligned_segments = protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ );
+	}
 
 	tr<<"Allowing the following identities:\n";
 	runtime_assert( (seqprof->profile()).size()>=last_res );
