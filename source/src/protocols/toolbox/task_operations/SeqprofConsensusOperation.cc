@@ -15,6 +15,10 @@
 // Unit Headers
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperation.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperationCreator.hh>
+#include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
+#include <protocols/toolbox/task_operations/RestrictToAlignedSegments.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Project Headers
 #include <basic/options/option.hh>
@@ -68,7 +72,11 @@ SeqprofConsensusOperation::SeqprofConsensusOperation():
 	min_aa_probability_(0.0),
 	prob_larger_current_(true),
 	ignore_pose_profile_length_mismatch_(false),
-	convert_scores_to_probabilities_( true )
+	convert_scores_to_probabilities_( true ),
+	restrict_to_aligned_segments_( NULL ),
+	conservation_cutoff_aligned_segments_( -100000 ),
+	protein_interface_design_( NULL ),
+	conservation_cutoff_protein_interface_design_( -100000 )
 {
 	if( basic::options::option[ basic::options::OptionKeys::in::file::pssm ].user() )
 		seqprof_filename_ = basic::options::option[ basic::options::OptionKeys::in::file::pssm ][1];
@@ -138,10 +146,27 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		task.request_symmetrize_by_intersection();
   }
 	core::Size last_res (asymmetric_unit_res <= seqprof->profile().size() ? pose.total_residue() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/ );
+
+
+/// following paragraph determines where PIDO and RestrictToAlignedInterface are defined.
+/// These are used in the following loop to restrict conservation profiles differently
+	core::pack::task::TaskFactoryOP temp_tf = new core::pack::task::TaskFactory;
+	temp_tf->push_back( protein_interface_design_ );
+	utility::vector1< core::Size > const designable_interface( protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ ) );
+	temp_tf = new core::pack::task::TaskFactory;
+	temp_tf->push_back( restrict_to_aligned_segments_ );
+	utility::vector1< core::Size > const designable_aligned_segments( protocols::rosetta_scripts::residue_packer_states( pose, temp_tf, true/*designable*/, false/*packable*/ ) );
+
 	tr<<"Allowing the following identities:\n";
 	runtime_assert( (seqprof->profile()).size()>=last_res );
 	for( core::Size i = 1; i <= last_res; ++i){
-		tr<<"At position "<<i<<": "<<std::endl;
+		core::Real position_min_prob = min_aa_probability_;
+		if( protein_interface_design()() != NULL && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() )
+			position_min_prob = conservation_cutoff_protein_interface_design();
+		else if( restrict_to_aligned_segments()() != NULL && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() )
+			position_min_prob = conservation_cutoff_aligned_segments();
+
+		tr<<"At position "<<i<<"min_probability is: "<<position_min_prob<<std::endl;
 
 		if( !pose.residue_type( i ).is_protein() ) continue;
 		//std::cout << "SCO at pos " << i << " allows the following residues: ";
@@ -156,7 +181,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		}
 		for( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa){
 			core::Real prob( pos_profile[ aa ] );
-			if( prob >= min_aa_probability_ || prob >= max_prob ){
+			if( prob >= position_min_prob || prob >= max_prob ){
 				if( prob_larger_current_) {
 					if( prob >= current_prob ) keep_aas[ aa ] = true;
 				}
@@ -167,7 +192,6 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 				tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
 		}
 		tr<<std::endl;
-		keep_aas[  pose.residue_type(i).aa() ] = true; //current always allowed
 		//std::cout << " native " << pose.residue_type(i).aa() << " prob=" << native_prob << "." << std::endl;
 
 		task.nonconst_residue_task(i).restrict_absent_canonical_aas( keep_aas );
@@ -206,6 +230,29 @@ SeqprofConsensusOperation::parse_tag( TagPtr tag )
 	if( tag->hasOption("probability_larger_than_current") ) prob_larger_current_ = tag->getOption< bool >("probability_larger_than_current");
 
 	if( tag->hasOption("ignore_pose_profile_length_mismatch") ) ignore_pose_profile_length_mismatch_ = tag->getOption< bool >("ignore_pose_profile_length_mismatch");
+
+	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
+	foreach( TagPtr const sub_tag, sub_tags ){
+		if( sub_tag->getName() == "RestrictToAlignedSegments" ){
+			restrict_to_aligned_segments_ = new RestrictToAlignedSegmentsOperation;
+			tr<<"Within SeqprofConsensus I'm now reading a RestrictToAlignedSegments operation..."<<std::endl;
+			restrict_to_aligned_segments_->parse_tag( sub_tag );
+			conservation_cutoff_aligned_segments( tag->getOption< core::Real >( "conservation_cutoff_aligned_segments" ) );
+			tr<<"conservation cutoff for aligned segments: "<<conservation_cutoff_aligned_segments()<<std::endl;
+		}
+		else if( sub_tag->getName() == "ProteinInterfaceDesign" ){
+			protein_interface_design_ = new ProteinInterfaceDesignOperation;
+			tr<<"Within SeqprofConsensus I'm now reading a ProteinInterfaceDesign operation..."<<std::endl;
+			protein_interface_design_->parse_tag( sub_tag );
+			conservation_cutoff_protein_interface_design( tag->getOption< core::Real >( "conservation_cutoff_protein_interface_design" ) );
+			tr<<"conservation cutoff for protein interface design: "<<conservation_cutoff_protein_interface_design()<<std::endl;
+		}
+		else{
+			utility_exit_with_message( "SeqprofConsensus subtag not recognized: " + sub_tag->getName() );
+		}
+	}//foreach
+	runtime_assert( conservation_cutoff_protein_interface_design() <= conservation_cutoff_aligned_segments() );
+	runtime_assert( conservation_cutoff_aligned_segments() <= min_aa_probability_ );
 }
 
 core::sequence::SequenceProfileCOP
@@ -230,6 +277,20 @@ core::pack::task::operation::TaskOperationOP
 RestrictConservedLowDdgOperationCreator::create_task_operation() const
 {
 	return new RestrictConservedLowDdgOperation;
+}
+
+void
+SeqprofConsensusOperation::restrict_to_aligned_segments( RestrictToAlignedSegmentsOperationOP rtas ){ restrict_to_aligned_segments_ = rtas; }
+
+RestrictToAlignedSegmentsOperationOP
+SeqprofConsensusOperation::restrict_to_aligned_segments() const{ return restrict_to_aligned_segments_; }
+
+ProteinInterfaceDesignOperationOP
+SeqprofConsensusOperation::protein_interface_design() const{ return protein_interface_design_; }
+
+void
+SeqprofConsensusOperation::protein_interface_design( ProteinInterfaceDesignOperationOP pido ){
+	protein_interface_design_ = pido;
 }
 
 RestrictConservedLowDdgOperation::RestrictConservedLowDdgOperation()

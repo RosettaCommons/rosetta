@@ -43,7 +43,8 @@ Operator::Operator() :
 protocols::filters::Filter( "Operator" ),
 operation_( PRODUCT ),
 threshold_( 0.0 ),
-negate_( false )
+negate_( false ),
+logarithm_( false )
 {
 	filters_.clear();
 }
@@ -158,6 +159,8 @@ Operator::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap &, filter
 		relative_pose_names_ = utility::string_split( tag->getOption< std::string >( "relative_pose_names" ), ',' );
 		modify_relative_filters_pdb_names();
 	}
+	logarithm( tag->getOption< bool >( "logarithm", false ) );
+	TR<<"setting logarithm to "<<logarithm()<<std::endl;
 	TR<<" using operator "<<op<<" with "<< filters_.size()<<" filters "<<std::endl;
 }
 
@@ -242,6 +245,11 @@ Operator::compute(
 			if( filter_val >= val )
 				val = filter_val;
 		}
+	}
+	if( logarithm() ){
+		TR<<"value: "<<val<<" ";
+		val = log10( val );
+		TR<<"log10(val) = "<<val<<std::endl;
 	}
 	if( operation() == NORMALIZED_SUM )
 		val /= (core::Real) filters().size();

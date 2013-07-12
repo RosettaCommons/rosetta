@@ -26,6 +26,8 @@
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <core/types.hh>
 #include <core/io/ddg/PositionDdGInfo.fwd.hh>
+#include <protocols/toolbox/task_operations/RestrictToAlignedSegments.fwd.hh>
+#include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -85,7 +87,14 @@ public:
 	set_seqprof( core::sequence::SequenceProfileOP seqprof, bool reweight = false );
 	void convert_scores_to_probabilities( bool const c ){ convert_scores_to_probabilities_ = c; }
 	bool convert_scores_to_probabilities() const{ return convert_scores_to_probabilities_;}
-
+	RestrictToAlignedSegmentsOperationOP restrict_to_aligned_segments() const;
+	void restrict_to_aligned_segments( RestrictToAlignedSegmentsOperationOP rtas );
+	core::Real conservation_cutoff_aligned_segments() const { return conservation_cutoff_aligned_segments_; }
+	void conservation_cutoff_aligned_segments( core::Real const c ) { conservation_cutoff_aligned_segments_ = c; }
+	ProteinInterfaceDesignOperationOP protein_interface_design() const;
+	void protein_interface_design( ProteinInterfaceDesignOperationOP pido );
+	core::Real conservation_cutoff_protein_interface_design() const{ return conservation_cutoff_protein_interface_design_; }
+	void conservation_cutoff_protein_interface_design( core::Real const c ){ conservation_cutoff_protein_interface_design_ = c; }
 private:
 
 	std::string seqprof_filename_;
@@ -102,6 +111,12 @@ private:
 	/// do consensus design on one chain of a protein/protein interface
 	bool ignore_pose_profile_length_mismatch_;
 	bool convert_scores_to_probabilities_; //dflt 1; after reading the pssm, should we convert the scores to probabilities?
+
+	RestrictToAlignedSegmentsOperationOP restrict_to_aligned_segments_; // dflt NULL; this is used to define which residues are considered to be aligned for conservation_cutoff_aligned_segments_
+	core::Real conservation_cutoff_aligned_segments_; // dflt -100000;
+
+	ProteinInterfaceDesignOperationOP protein_interface_design_; //dflt NULL; this is used to define which residues are considered to be interface, for conservation_cutoff_interface_design_
+	core::Real conservation_cutoff_protein_interface_design_; // dflt -100000;
 };
 
 /// @brief a Task operation that will check whether the amino acid at a
@@ -158,7 +173,6 @@ private:
 	core::Real conservation_cutoff_; //how freqeunt a residue must be in the sequence profile to count as conserved
 	core::Real ddG_cutoff_; //how favorable the ddG at a position has to be for the residue to be considered untouchable
 	bool verbose_; //spit out information about untouchable residues
-
 };
 
 

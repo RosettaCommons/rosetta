@@ -7,15 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   devel/splice/RestrictToAlignedSegmentsOperation.hh
-/// @brief  TaskOperation class that restricts a chain to repacking
-/// @author Sarel Fleishman sarelf@uw.edu
+/// @file   protocols/toolbox/task_operations/RestrictToAlignedSegmentsOperation.hh
+/// @author Sarel Fleishman sarel@weizmann.ac.il
 
-#ifndef INCLUDED_devel_splice_RestrictToAlignedSegments_hh
-#define INCLUDED_devel_splice_RestrictToAlignedSegments_hh
+#ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegments_hh
+#define INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegments_hh
 
 // Unit Headers
-#include <devel/splice/RestrictToAlignedSegments.fwd.hh>
+#include <protocols/toolbox/task_operations/RestrictToAlignedSegments.fwd.hh>
 #include <protocols/toolbox/task_operations/RestrictOperationsBase.hh>
 
 // Project Headers
@@ -33,11 +32,12 @@
 
 #include <utility/vector1.hh>
 
-namespace devel {
-namespace splice {
+namespace protocols {
+namespace toolbox {
+namespace task_operations {
 
 ///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
-class RestrictToAlignedSegmentsOperation : public protocols::toolbox::task_operations::RestrictOperationsBase
+class RestrictToAlignedSegmentsOperation : public RestrictOperationsBase
 {
 public:
 	typedef protocols::toolbox::task_operations::RestrictOperationsBase parent;
@@ -71,7 +71,8 @@ private:
 	core::Real repack_shell_; //dflt 6A; allow repack in residues surrounding the aligned segment on chain_
 };
 
-} //namespace splice
-} //namespace devel
+} //namespace task_operations
+} //namespace toolbox
+} //namespace protocols
 
 #endif //INCLUDED_devel_splice_RestrictToAlignedSegments_hh

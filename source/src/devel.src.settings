@@ -206,7 +206,6 @@ sources = {
 		"option",
 	],
         "devel/splice": [
-		"RestrictToAlignedSegments", #moved to devel due to release embargo
 		"Splice", #moved to devel due to release embargo
 		"SpliceSegment", #moved to devel due to release embargo
         ],

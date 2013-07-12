@@ -58,6 +58,8 @@ class Operator : public filters::Filter
 		bool multi_relative() const { return multi_relative_; }
 		void multi_relative( bool const m ){ multi_relative_ = m; }
 		void modify_relative_filters_pdb_names();
+		bool logarithm() const{ return logarithm_; } //getter
+		void logarithm( bool const b ){ logarithm_ = b; } //setter
   private:
     utility::vector1< protocols::filters::FilterOP > filters_;
 		Operation operation_; // dflt PRODUCT
@@ -65,6 +67,7 @@ class Operator : public filters::Filter
 		bool negate_; // dflt false; in optimization, useful to get values between -1 - 0 rather than 0-1
 		utility::vector1< std::string > relative_pose_names_; // dflt ""; see below
 		bool multi_relative_; //dflt false; if true, searches all of the filters for RelativePoseFilters, replicates them to as many different file names as are listed in relative_pose_names_. Useful in case there are many different states that are all taken into consideration using the same operator
+		bool logarithm_; //dflt false; if true, computes the logarithm of the operator's value (10^-9 = -9)
 };
 }
 }

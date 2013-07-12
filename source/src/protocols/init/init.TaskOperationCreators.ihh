@@ -42,10 +42,10 @@
 #include <protocols/toolbox/task_operations/ReadResfileFromDBCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictToAlignedSegmentsCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictNonSurfaceToRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictResiduesToRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictInterGroupVectorOperationCreator.hh>
-//#include <protocols/toolbox/task_operations/RestrictToAlignedSegmentsCreator.hh> //moved into devel due to release embargo
 #include <protocols/toolbox/task_operations/RestrictIdentitiesAtAlignedPositionsCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToCDRH3LoopCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceCreator.hh>

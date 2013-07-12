@@ -11,21 +11,23 @@
 /// @brief
 /// @author Sarel Fleishman sarelf@uw.edu
 
-#ifndef INCLUDED_devel_splice_RestrictToAlignedSegments_fwd_hh
-#define INCLUDED_devel_splice_RestrictToAlignedSegments_fwd_hh
+#ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegments_fwd_hh
+#define INCLUDED_protocols_toolbox_task_operations_RestrictToAlignedSegments_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel {
-namespace splice {
+namespace protocols {
+namespace toolbox {
+namespace task_operations {
 
 class RestrictToAlignedSegmentsOperation;
 
 typedef utility::pointer::owning_ptr< RestrictToAlignedSegmentsOperation > RestrictToAlignedSegmentsOperationOP;
 typedef utility::pointer::owning_ptr< RestrictToAlignedSegmentsOperation const > RestrictToAlignedSegmentsOperationCOP;
 
-} //namespace splice
-} //namespace devel
+} //namespace task_operations
+} //toolbox
+} //namespace protocols
 
 #endif //INCLUDED_devel_splice_RestrictToAlignedSegments_fwd_hh
 

@@ -12,8 +12,8 @@
 /// @author Sarelf Fleishman sarelf@uw.edu
 
 // Unit Headers
-#include <devel/splice/RestrictToAlignedSegments.hh>
-#include <devel/splice/RestrictToAlignedSegmentsCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictToAlignedSegments.hh>
+#include <protocols/toolbox/task_operations/RestrictToAlignedSegmentsCreator.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <core/import_pose/import_pose.hh>
@@ -47,10 +47,11 @@
 
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR( "devel.splice.RestrictToAlignedSegmentsOperation" );
+static basic::Tracer TR( "protocols.toolbox.task_operations.RestrictToAlignedSegmentsOperation" );
 
-namespace devel {
-namespace splice {
+namespace protocols {
+namespace toolbox{
+namespace task_operations {
 
 using namespace core::pack::task::operation;
 using namespace std;
@@ -181,5 +182,6 @@ RestrictToAlignedSegmentsOperation::parse_tag( TagPtr tag )
 	repack_shell( tag->getOption< core::Real >( "repack_shell", 6.0 ));
 }
 
-} //namespace splice
-} //namespace devel
+} //namespace task_operations
+} // namespace toolbox
+} //namespace protocols
