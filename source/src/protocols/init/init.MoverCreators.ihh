@@ -200,6 +200,7 @@
 
 #include <protocols/rbsegment_relax/MakeStarTopologyCreator.hh>
 
+#include <protocols/relax/AtomCoordinateCstMoverCreator.hh>
 #include <protocols/relax/FastRelaxCreator.hh>
 
 #include <protocols/rigid/RigidBodyMoverCreator.hh>

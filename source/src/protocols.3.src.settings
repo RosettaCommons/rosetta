@@ -261,6 +261,7 @@ sources = {
 		"SolvationMetaGrid"
 	],
 	"protocols/relax": [
+		"AtomCoordinateCstMover",
 		"CentroidRelax",
 		"ClassicRelax",
 		"cst_util",

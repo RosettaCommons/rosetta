@@ -17,6 +17,8 @@
 #include <protocols/relax/cst_util.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 
+#include <protocols/relax/AtomCoordinateCstMover.hh>
+
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/io/pdb/pose_io.hh>
@@ -288,7 +290,7 @@ void RelaxProtocolBase::set_default_movemap(){
 	movemap_ = new core::kinematics::MoveMap();
 
 	if (option[ OptionKeys::in::file::movemap ].user()) {
-		
+
 		//Allow user settings to be applied before movemap is read in. But, by default, use the movemap file.
 		if ( option[ OptionKeys::relax::jump_move ].user() ){
 			movemap_->set_jump( option[ OptionKeys::relax::jump_move ]() );
@@ -297,16 +299,16 @@ void RelaxProtocolBase::set_default_movemap(){
 			movemap_->set_bb( option[ OptionKeys::relax::bb_move ]() );
 		}
 		if ( option[ OptionKeys::relax::chi_move ].user() ){
-			movemap_->set_chi( option[ OptionKeys::relax::chi_move ]() );	
+			movemap_->set_chi( option[ OptionKeys::relax::chi_move ]() );
 		}
-		
+
 		movemap_->init_from_file(option[ OptionKeys::in::file::movemap ]() );
-		
+
 	}
 	else{
 		movemap_->set_jump( option[ OptionKeys::relax::jump_move ]() );
 		movemap_->set_bb( option[ OptionKeys::relax::bb_move ]() );
-		movemap_->set_chi( option[ OptionKeys::relax::chi_move ]() );	
+		movemap_->set_chi( option[ OptionKeys::relax::chi_move ]() );
 	}
 }
 
@@ -431,121 +433,49 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 	using namespace core::pose::datacache;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
-	using namespace core::id;
 	using namespace protocols::moves;
 	using namespace core::scoring;
 
-	core::pose::Pose constraint_target_pose = pose;
-	core::id::SequenceMapping seq_map; // A mapping of pose -> constraint_target_pose numbering
-
-	//fpd  Make ramping on by default if one of -constrain_relax_* is specified
-	//fpd  Let it be overridden if '-ramp_constraints false' is specified
-	if (constrain_coords_ && !option[ OptionKeys::relax::ramp_constraints ].user() ) {
-		ramp_down_constraints_ = true;
-	}
-
-	if( constrain_relax_to_native_coords_ ){
-		if ( get_native_pose() ) {
-			constraint_target_pose = *get_native_pose();
-		} else {
-			utility_exit_with_message("Native pose needed for OptionKeys::relax::constrain_relax_to_native_coords");
+  if ( constrain_coords_ ) {
+		//fpd  Make ramping on by default if one of -constrain_relax_* is specified
+		//fpd  Let it be overridden if '-ramp_constraints false' is specified
+		if ( !option[ OptionKeys::relax::ramp_constraints ].user() ) {
+			ramp_down_constraints_ = true;
 		}
-		// TODO: Allow for input of an alignment on commandline
-		if (  pose.total_residue() == constraint_target_pose.total_residue() &&
-				( !coord_constrain_sidechains_ || pose.sequence() != constraint_target_pose.sequence() ) ) {
-			// We match in size and (for sidechains) sequence - we're looking at the traditional 1:1 mapping.
-			seq_map = core::id::SequenceMapping::identity( pose.total_residue() );
-		} else {
-			// Try to match on a PDB-identity basis, or a sequence alignment basis if that fails.
-			TR << "Length " << (coord_constrain_sidechains_?"and/or identities ":"") <<
-					"of input structure and native don't match - aligning on PDB identity or sequence." << std::endl;
-			seq_map = core::pose::sequence_map_from_pdbinfo( pose, constraint_target_pose );
-		}
-		// Align the native pose to the input pose to avoid rotation/translation based
-		//  errors.
-		//fpd  (Only if not already rooted on a VRT to avoid problems with density/symmetry)
-		if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
-			core::id::SequenceMapping rev_seq_map( seq_map ); // constraint_target_pose -> pose mapping
-			rev_seq_map.reverse();
-			core::sequence::calpha_superimpose_with_mapping(constraint_target_pose, pose, rev_seq_map);
-		}
-	} else {
-		// Aligning to input - mapping is 1:1
-		seq_map = core::id::SequenceMapping::identity( pose.total_residue() );
-	}
 
-	protocols::loops::Loops coordconstraint_segments_;
-	if( constrain_relax_segments_ ){
-		coordconstraint_segments_ = protocols::loops::Loops(  option[ OptionKeys::relax::constrain_relax_segments ]() );
-	}else{
-		assert( pose.total_residue() >= 1 );
-		coordconstraint_segments_.add_loop( protocols::loops::Loop( 1, pose.total_residue(), 1 ) );
-	}
+		protocols::relax::AtomCoordinateCstMover coord_cst_mover;
+		if( constrain_relax_to_native_coords_ ){
+			if ( get_native_pose() ) {
+				coord_cst_mover.set_refstruct( get_native_pose() );
+			} else {
+				utility_exit_with_message("Native pose needed for OptionKeys::relax::constrain_relax_to_native_coords");
+			}
+		}
 
-	if ( constrain_coords_ ) {
+		if( constrain_relax_segments_ ){
+			coord_cst_mover.set_loop_segments( new protocols::loops::Loops(  option[ OptionKeys::relax::constrain_relax_segments ]() ) );
+		}
+
 		//if -relax::coord_cst_width is given, the code instead uses _bounded_ constraints on
 		//heavy atom positions, of the specified width
-		Real const coord_sdev( option[ OptionKeys::relax::coord_cst_stdev ] );
-    bool bounded( option[ OptionKeys::relax::coord_cst_width ].user() );
-		Real const cst_width( option[ OptionKeys::relax::coord_cst_width ]() );
+		coord_cst_mover.cst_sidechain( coord_constrain_sidechains_ );
+		coord_cst_mover.cst_sd( option[ OptionKeys::relax::coord_cst_stdev ] );
+		coord_cst_mover.bounded( option[ OptionKeys::relax::coord_cst_width ].user() );
+		coord_cst_mover.cst_width( option[ OptionKeys::relax::coord_cst_width ]() );
 
-		// Add virtual root
+		// Add virtual root if one doesn't exist
 		if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
 			core::pose::addVirtualResAsRoot(pose);
 		}
 
-		core::Size nres = pose.total_residue();
-
-		for ( Size i = 1; i<= nres; ++i ) {
-			if ( pose.fold_tree().is_root(i) ) continue; // Skip root virtual atom.
-
-			if ( coordconstraint_segments_.is_loop_residue( i ) ) {
-				Size j(seq_map[i]);
-				if( j == 0 ) continue;
-				assert( j <= constraint_target_pose.total_residue() ); // Should be, if map was set up properly.
-
-				Residue const & pose_i_rsd( pose.residue(i) );
-				Residue const & targ_j_rsd( constraint_target_pose.residue(j) );
-				core::Size last_atom( pose_i_rsd.last_backbone_atom() );
-				core::Size last_targ_atom( targ_j_rsd.last_backbone_atom() );
-				bool use_atom_names(false);
-				if ( coord_constrain_sidechains_ ) {
-					last_atom = pose_i_rsd.nheavyatoms();
-					last_targ_atom = targ_j_rsd.nheavyatoms();
-					use_atom_names = pose_i_rsd.name() != targ_j_rsd.name(); // Don't bother with lookup if they're the same residue type.
-				}
-				if ( !use_atom_names && last_atom != last_targ_atom ) {
-					TR.Warning << "Warning: Coordinate constraint reference residue has different number of " << (coord_constrain_sidechains_?"heavy":"backbone") << " atoms: ref. "
-						<< targ_j_rsd.name() << " (res " << j << ") versus  " << pose_i_rsd.name() << " (res " << i << "). - skipping." << std::endl;
-					continue;
-				}
-				for ( Size ii = 1; ii<= last_atom; ++ii ) {
-					Size jj(ii);
-					if ( use_atom_names ) {
-						std::string atomname( pose_i_rsd.atom_name(ii) );
-						if ( ! targ_j_rsd.has(atomname) ) {
-							TR.Debug << "Skip adding coordinate constraints for atom " << atomname << " of residue " << i << " (" << pose_i_rsd.name() <<
-								") - not found in residue " << j << " (" << targ_j_rsd.name() << ") of reference structure." << std::endl;
-							continue;
-						}
-						jj = targ_j_rsd.atom_index( atomname );
-					}
-					core::scoring::constraints::FuncOP function;
-					if( bounded ) {
-						function = new BoundFunc( 0, cst_width, coord_sdev, "xyz" );
-					} else {
-						function = new HarmonicFunc( 0.0, coord_sdev );
-					}
-					pose.add_constraint( new CoordinateConstraint(
-						AtomID(ii,i), AtomID(1,nres), targ_j_rsd.xyz( jj ), function ) );
-				} // for atom
-			} // if(loop)
-		} // for residue
+		// Actually apply the constraints
+		coord_cst_mover.apply( pose );
 
 		if ( get_scorefxn()->get_weight( coordinate_constraint ) == 0 ) {
 			get_scorefxn()->set_weight( coordinate_constraint, 0.5 );
 		}
 
+		// Should this be only if we've added the virtual root?
 		local_movemap.set_jump( pose.num_jump(), true );
 	} // if constrain_coords_
 

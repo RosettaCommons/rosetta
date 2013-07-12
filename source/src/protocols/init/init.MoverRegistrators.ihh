@@ -216,6 +216,7 @@ static MoverRegistrator< qsar::scoring_grid::GridInitMoverCreator >  reg_GridIni
 
 static MoverRegistrator< rbsegment_relax::MakeStarTopologyMoverCreator > reg_MakeStarTopologyMoverCreator;
 
+static MoverRegistrator< relax::AtomCoordinateCstMoverCreator> reg_AtomCoordinateCstMoverCreator;
 static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 
 static MoverRegistrator< rigid::RigidBodyPerturbNoCenterMoverCreator > reg_RigidBodyPerturbNoCenterMoverCreator;
