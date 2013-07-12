@@ -228,6 +228,8 @@ ScoreTypeManager::setup_score_type_names()
 	// Variant type to flag rotamers for alternative scoring with varying weight
 	name2score_type_[ "special_rot"] = special_rot;
 
+	name2score_type_[ "other_subpose"] = other_subpose;
+
 	name2score_type_[ "env" ]    = env;
 	name2score_type_[ "burial" ] = burial;
 	name2score_type_[ "abego" ]  = abego;

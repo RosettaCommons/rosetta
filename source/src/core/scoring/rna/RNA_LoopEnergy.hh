@@ -24,7 +24,7 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/id/AtomId.hh>
+#include <core/id/AtomID.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 
