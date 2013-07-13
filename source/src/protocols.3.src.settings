@@ -478,6 +478,7 @@ sources = {
 		"TailsScoreMover",
 		"TaskAwareMinMover",
 		"TorsionDOFMover",
+		"VirtualRootMover",
 		"WobbleMover",
 	],
 	"protocols/simple_moves/asym_fold_and_dock": [

@@ -237,6 +237,7 @@ static MoverRegistrator< seeded_abinitio::SeedFoldTreeCreator > SeedFoldTreeCrea
 static MoverRegistrator< seeded_abinitio::SeedSetupMoverCreator > SeedSetupMoverCreator;
 static MoverRegistrator< seeded_abinitio::SwapSegmentCreator > SwapSegmentCreator;
 static MoverRegistrator< seeded_abinitio::SegmentHybridizerCreator > SegmentHybridizerCreator;
+
 static MoverRegistrator< simple_moves::AddConstraintsToCurrentConformationMoverCreator > reg_AddConstraintsToCurrentConformationMoverCreator;
 static MoverRegistrator< simple_moves::AddChainMoverCreator > reg_AddChainMoverCreator;
 static MoverRegistrator< simple_moves::AddJobPairDataCreator > reg_AddJobPairDataCreator;
@@ -270,6 +271,7 @@ static MoverRegistrator< simple_moves::PDBReloadMoverCreator > reg_PDBReloadMove
 static MoverRegistrator< simple_moves::SwitchResidueTypeSetMoverCreator > reg_SwitchResidueTypeSetMoverCreator;
 static MoverRegistrator< simple_moves::SwitchChainOrderMoverCreator > reg_SwitchChainOrderMoverCreator;
 static MoverRegistrator< simple_moves::TaskAwareMinMoverCreator > reg_TaskAwareMinMoverCreator;
+static MoverRegistrator< simple_moves::VirtualRootMoverCreator > reg_VirtualRootMoverCreator;
 
 static MoverRegistrator< simple_moves::sidechain_moves::SidechainMCMoverCreator > reg_SidechainMCMoverCreator;
 static MoverRegistrator< simple_moves::sidechain_moves::SidechainMoverCreator > reg_SidechainMoverCreator;
