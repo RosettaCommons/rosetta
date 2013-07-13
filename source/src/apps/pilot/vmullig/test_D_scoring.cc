@@ -117,19 +117,22 @@ int main(int argc, char *argv[]) {
 
 	//Default scorefunction:
 	core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
+	//sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
 
 	//Movers:
+	protocols::relax::FastRelax frlx(sfxn, 5);
 	protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn);
-	core::optimization::MinimizerOptions minoptions("dfpmin_armijo_nonmonotone", 0.00000001, false, false, false);
+	core::optimization::MinimizerOptions minoptions("dfpmin_armijo_nonmonotone", 0.000000001, true, false, false);
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
 	mm->set_bb(true); //Allow backbone motion
 	mm->set_chi(true); //Allow side-chain motion
 	mm->set_jump(false); //Don't bother with "jumps" (relative motion of different molecules relative one another)
 	core::optimization::AtomTreeMinimizer minimizer; //A torsion-space minimizer
+	core::optimization::CartesianMinimizer cminimizer; //A cartesian-space minimizer
 
 	core::chemical::ResidueTypeSetCAP standard_residues = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-	const string sequence = "PACDEFHIKLMNQRSTVWY"; //Use all amino acids at least once.  I put proline first so that I can put all the residues in an alpha-helical conformation.
-	const string sequence2 = "P[DPRO]A[DALA]C[DCYS]D[DASP]E[DGLU]F[DPHE]H[DHIS]I[DILE]K[DLYS]L[DLEU]M[DMET]N[DASN]Q[DGLN]R[DARG]S[DSER]T[DTHR]V[DVAL]W[DTRP]Y[DTYR]"; //Use all amino acids at least once.  I put proline first so that I can put all the residues in an alpha-helical conformation.
+	const string sequence = "APACDEFHIKLMNQRSTVWY"; //Use all amino acids at least once.  I put proline first so that I can put all the residues in an alpha-helical conformation.
+	const string sequence2 = "A[DALA]P[DPRO]A[DALA]C[DCYS]D[DASP]E[DGLU]F[DPHE]H[DHIS]I[DILE]K[DLYS]L[DLEU]M[DMET]N[DASN]Q[DGLN]R[DARG]S[DSER]T[DTHR]V[DVAL]W[DTRP]Y[DTYR]"; //Use all amino acids at least once.  I put proline first so that I can put all the residues in an alpha-helical conformation.
 	//const string sequence = "GAPACDEFHIKLA[DALA]MNQRSTVWYG"; //Use all amino acids at least once.  I put proline first so that I can put all the residues in an alpha-helical conformation.
 	//const string sequence2 = "GA[DALA]P[DPRO]A[DALA]C[DCYS]D[DASP]E[DGLU]F[DPHE]H[DHIS]I[DILE]K[DLYS]L[DLEU]AM[DMET]N[DASN]Q[DGLN]R[DARG]S[DSER]T[DTHR]V[DVAL]W[DTRP]Y[DTYR]G"; //Use all amino acids at least once.  I put proline first so that I can put all the residues in an alpha-helical conformation.
 	//const string sequence = "GAAAAAEAAARAAG";
@@ -144,10 +147,10 @@ int main(int argc, char *argv[]) {
 	//Set backbone dihedrals:
 	printf("Setting backbone dihedrals for L-peptide.\n");
 	for(core::Size ir=1; ir<=Lpose.n_residue(); ir++) {
-		if(ir>1) Lpose.set_phi(ir, -50.0);
+		if(ir>1) Lpose.set_phi(ir, -60.0);
 		if(ir<Lpose.n_residue()) {
-			Lpose.set_psi(ir, -35.0);
-			Lpose.set_omega(ir, 165.0);
+			Lpose.set_psi(ir, -45.0);
+			Lpose.set_omega(ir, 175.0);
 		}
 	}
 	Lpose.update_residue_neighbors();
@@ -156,6 +159,7 @@ int main(int argc, char *argv[]) {
 	repack_sc.apply(Lpose);
 
 	//Score:
+	//sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
 	(*sfxn)(Lpose);
 	printf("The L-peptide's energy is %.4f\n", Lpose.energies().total_energy());
 
@@ -167,12 +171,17 @@ int main(int argc, char *argv[]) {
 
 	//Minimize:
 	printf("Attempting minimization.\n");
-	minimizer.run( Lpose, *mm, *sfxn, minoptions );
+	//minimizer.run( Lpose, *mm, *sfxn, minoptions );
+	//sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
+	//cminimizer.run( Lpose, *mm, *sfxn, minoptions);
+	//sfxn->set_weight(cart_bonded, 0.0); //Turn on cart_bonded.
+	frlx.apply(Lpose);
 	(*sfxn)(Lpose);
 	printf("The L-peptide's energy after minimization is %.4f\n", Lpose.energies().total_energy());
 
 	//Output:
 	Lpose.dump_scored_pdb("Lpeptide_min.pdb", *sfxn);
+	//sfxn->set_weight(cart_bonded, 0.0); //Turn on cart_bonded.
 
 	//Mirror image pose:
 	core::pose::Pose Dpose;
@@ -239,6 +248,7 @@ int main(int argc, char *argv[]) {
 	Dpose.update_residue_neighbors();
 
 	//Score:
+	//sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
 	(*sfxn)(Dpose);
 	printf("The D-peptide's energy is %.4f\n", Dpose.energies().total_energy());
 
@@ -247,12 +257,18 @@ int main(int argc, char *argv[]) {
 
 	//Minimize:
 	printf("Attempting minimization.\n");
-	minimizer.run( Dpose, *mm, *sfxn, minoptions );
+	//minimizer.run( Dpose, *mm, *sfxn, minoptions );
+	//sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
+	//cminimizer.run( Dpose, *mm, *sfxn, minoptions);
+	//sfxn->set_weight(cart_bonded, 0.0); //Turn on cart_bonded.
+	frlx.apply(Dpose);
 	(*sfxn)(Dpose);
 	printf("The D-peptide's energy after minimization is %.4f\n", Dpose.energies().total_energy());
 	
 	//Output:
 	Dpose.dump_scored_pdb("Dpeptide_min.pdb", *sfxn);
+	//sfxn->set_weight(cart_bonded, 0.0); //Turn on cart_bonded.
+
 
 	printf("***JOB COMPLETED.***\n");
 	return 0;

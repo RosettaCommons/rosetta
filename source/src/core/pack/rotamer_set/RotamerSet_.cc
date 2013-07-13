@@ -412,7 +412,7 @@ RotamerSet_::build_rotamers_for_concrete(
 
 		// ...Or an "emergency rotamer"?
 		} else if ( suggested_rotamers.size() == 0 && concrete_residue->nchi() == 0 ) {
-			tt.Warning << " Using emergency rotamer" << std::endl;
+			tt.Debug << " Using emergency rotamer" << std::endl;
 			ResidueOP rot = ResidueFactory::create_residue( *concrete_residue, existing_residue, pose.conformation() );
 			push_back_rotamer( rot );
 		}

@@ -10,6 +10,7 @@
 /// @file   core/scoring/methods/CartesianBondedEnergy.cc
 /// @brief  Harmonic bondangle/bondlength/torsion constraints
 /// @author Frank DiMaio
+/// modified by Vikram K. Mulligan to allow D-amino acid minimization.
 
 // Unit headers
 #include <core/scoring/methods/CartBondedParameters.hh>
@@ -181,7 +182,8 @@ CartesianBondedEnergyCreator::score_types_for_method() const {
 std::string get_restag( core::chemical::ResidueType const & restype ) {
 	using namespace core::chemical;
 
-	return restype.name3();
+	if(core::chemical::is_D_aa(restype.aa())) return core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //For D-amino acids, return the L-equivalent.
+	else return restype.name3();
 }
 
 ResidueCartBondedParameters::ResidueCartBondedParameters() :
@@ -689,8 +691,8 @@ IdealParametersDatabase::lookup_bondangle_buildideal(
 	theta0 = numeric::angle_radians ( x,y,z );
 
 	// EXCEPTIONS
-	// ignore proline C-ND which is handled by pro_close
-	if (restype.aa() == core::chemical::aa_pro) {
+	// ignore proline (L- or D-proline) C-ND which is handled by pro_close
+	if (restype.aa() == core::chemical::aa_pro || restype.aa() == core::chemical::aa_dpr) {
 		bool hasCD = (atm1>0 && restype.atom_name(atm1)==" CD ")
 	    || (atm2>0 && restype.atom_name(atm2)==" CD ")
 		  || (atm3>0 && restype.atom_name(atm3)==" CD ");
@@ -701,8 +703,8 @@ IdealParametersDatabase::lookup_bondangle_buildideal(
 			Ktheta = theta0 = 0.0;
 	}
 
-	// fpd ignore centroid angle in ALA and GLY
-	if ( (restype.aa() == core::chemical::aa_ala || restype.aa() == core::chemical::aa_gly) &&
+	// fpd ignore centroid angle in ALA (L- or D-alanine) and GLY
+	if ( (restype.aa() == core::chemical::aa_ala || restype.aa() == core::chemical::aa_dal || restype.aa() == core::chemical::aa_gly) &&
 	     ( (atm1>0 && restype.atom_name(atm1) == " CEN") || (atm3>0 && restype.atom_name(atm3) == " CEN") ) ) {
 		Ktheta = theta0 = 0.0;
 	}
@@ -749,8 +751,8 @@ IdealParametersDatabase::lookup_bondlength_buildideal(
 
 	d0 = (x-y).length();
 
-	//  ignore proline C-ND which is handled by pro_close
-	if (restype.aa() == core::chemical::aa_pro &&
+	//  ignore proline (L- or D-proline) C-ND which is handled by pro_close
+	if ((restype.aa() == core::chemical::aa_pro || restype.aa() == core::chemical::aa_dpr) &&
 	    (atm1>0 && atm2>0) &&
 	    ( ( restype.atom_name(atm1) == " CD " && restype.atom_name(atm2) == " N  ") ||
 	      ( restype.atom_name(atm2) == " CD " && restype.atom_name(atm1) == " N  ") ) ) {
@@ -821,11 +823,11 @@ IdealParametersDatabase::lookup_angle(
 	boost::unordered_map< atm_name_pair, CartBondedParametersOP > *angle_table;
 	if (restype.aa() == core::chemical::aa_gly) {
 		angle_table = &bondangles_bbdep_gly_;
-	} else if (restype.aa() == core::chemical::aa_pro) {
+	} else if (restype.aa() == core::chemical::aa_pro || restype.aa() == core::chemical::aa_dpr) { //L- or D-proline
 		angle_table = &bondangles_bbdep_pro_;
 	} else if ( pre_proline ) {
 		angle_table = &bondangles_bbdep_prepro_;
-	} else if (restype.aa() == core::chemical::aa_ile || restype.aa() == core::chemical::aa_val) {
+	} else if (restype.aa() == core::chemical::aa_ile || restype.aa() == core::chemical::aa_val || restype.aa() == core::chemical::aa_dil || restype.aa() == core::chemical::aa_dva) { //L- or D-isoleucine or valine
 		angle_table = &bondangles_bbdep_valile_;
 	} else {
 		angle_table = &bondangles_bbdep_def_;
@@ -880,9 +882,9 @@ IdealParametersDatabase::lookup_length(
 	boost::unordered_map< atm_name_single, CartBondedParametersOP > *length_table;
 	if (restype.aa() == core::chemical::aa_gly) {
 		length_table = &bondlengths_bbdep_gly_;
-	} else if (restype.aa() == core::chemical::aa_pro) {
+	} else if (restype.aa() == core::chemical::aa_pro || restype.aa() == core::chemical::aa_dpr) { //D- or L-proline
 		length_table = &bondlengths_bbdep_pro_;
-	} else if (restype.aa() == core::chemical::aa_ile || restype.aa() == core::chemical::aa_val) {
+	} else if (restype.aa() == core::chemical::aa_ile || restype.aa() == core::chemical::aa_val || restype.aa() == core::chemical::aa_dil || restype.aa() == core::chemical::aa_dva) { //D- or L-isoleucine or valine
 		length_table = &bondlengths_bbdep_valile_;
 	} else if ( pre_proline ) {
 		length_table = &bondlengths_bbdep_prepro_;
@@ -989,7 +991,7 @@ IdealParametersDatabase::lookup_torsion_legacy(
 
 		//////// exceptions!
 		// fpd ignore proline C-ND which is handled by pro_close
-		if (restype.aa() == core::chemical::aa_pro) {
+		if (restype.aa() == core::chemical::aa_pro || restype.aa() == core::chemical::aa_dpr) { //D- or L-proline
 			bool hasCD = (restype.atom_name(atm1)==" CD ") || (restype.atom_name(atm2)==" CD ")
 								|| (restype.atom_name(atm3)==" CD ") || (restype.atom_name(atm4)==" CD ");
 			bool hasN = (restype.atom_name(atm1)==" N  ") || (restype.atom_name(atm2)==" N  ")
@@ -1006,11 +1008,11 @@ IdealParametersDatabase::lookup_torsion_legacy(
 		if ( restype.atom_name(atm1) == " CEN" || restype.atom_name(atm4) == " CEN") {
 			Kphi=0.0; phi0=0.0;
 		}
-		if ( restype.aa() == aa_cys && restype.has_variant_type( chemical::DISULFIDE )  &&
+		if ( (restype.aa() == aa_cys || restype.aa() == aa_dcs) && restype.has_variant_type( chemical::DISULFIDE )  && //D- or L-cystine
 				(restype.atom_name(atm2) == " SG " || restype.atom_name(atm3) == " SG ") ) {
 			Kphi=0.0; phi0=0.0;
 		}
-		if ( restype.aa() == aa_arg  &&
+		if ( (restype.aa() == aa_arg || restype.aa() == aa_dar)  && //D- or L-arginine
 				(   restype.atom_name(atm1) == " NH1" || restype.atom_name(atm4) == " NH1"
 				 || restype.atom_name(atm1) == " NH2" || restype.atom_name(atm4) == " NH2") ) {
 			phi_step = numeric::constants::d::pi;
@@ -1079,7 +1081,7 @@ IdealParametersDatabase::lookup_angle_legacy(
 	theta0 = numeric::angle_radians ( x,y,z );
 
 	//fpd ignore proline C-ND which is handled by pro_close
-	if (restype.aa() == core::chemical::aa_pro) {
+	if (restype.aa() == core::chemical::aa_pro || restype.aa() == core::chemical::aa_dpr) { //D- or L-proline
 		bool hasCD = (atm1>0 && restype.atom_name(atm1)==" CD ")
 	    || (atm2>0 && restype.atom_name(atm2)==" CD ")
 		  || (atm3>0 && restype.atom_name(atm3)==" CD ");
@@ -1090,7 +1092,7 @@ IdealParametersDatabase::lookup_angle_legacy(
 			Ktheta = theta0 = 0.0;
 	}
 
-	if ( (restype.aa() == core::chemical::aa_ala || restype.aa() == core::chemical::aa_gly) &&
+	if ( (restype.aa() == core::chemical::aa_ala || restype.aa() == core::chemical::aa_dal || restype.aa() == core::chemical::aa_gly) && //D- or L-alanine, or glycine
 	     ( (atm1>0 && restype.atom_name(atm1) == " CEN") || (atm3>0 && restype.atom_name(atm3) == " CEN") ) ) {
 		Ktheta = theta0 = 0.0;
 	}
@@ -1144,7 +1146,7 @@ IdealParametersDatabase::lookup_length_legacy(
 
 	d0 = (x-y).length();
 
-	if (restype.aa() == core::chemical::aa_pro &&
+	if ((restype.aa() == core::chemical::aa_pro || restype.aa() == core::chemical::aa_dpr) && //D- or L-proline
 	    (atm1>0 && atm2>0) &&
 	    ( ( restype.atom_name(atm1) == " CD " && restype.atom_name(atm2) == " N  ") ||
 	      ( restype.atom_name(atm2) == " CD " && restype.atom_name(atm1) == " N  ") ) ) {
@@ -1189,10 +1191,13 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 		atm_name_quad const &tuple( b_it->first );
 
+		//Get the L-equivalent 3-letter code if this is a D-amnio acid:
+		const std::string rsdname = core::chemical::is_D_aa( rsd_type.aa() ) ? core::chemical::name_from_aa( core::chemical::get_L_equivalent(rsd_type.aa()) )  : rsd_type.name();
+
 		// Skip if residue type is neither wildcard nor given residue type
 		// Is there better way of taking care of patched residues like "Gly_p:XXXX" ?
 		//if( !(tuple.get<0>().compare("*") == 0 || rsd_type.name().compare( 0, 3, tuple.get<0>() ) == 0 )) continue;
-		if( rsd_type.name().compare( 0, 3, tuple.get<0>() ) != 0 ) continue;
+		if( rsdname.compare( 0, 3, tuple.get<0>() ) != 0 ) continue;
 
 		CartBondedParametersCOP tor_params = b_it->second;
 
@@ -1327,8 +1332,8 @@ IdealParametersDatabase::create_parameters_for_restype(
 	//fpd protein only
 	if (rsd_type.is_protein()) {
 		/// backbone dependent bond lengths
-		bool is_nterm = rsd_type.aa() <= chemical::num_canonical_aas && rsd_type.is_lower_terminus();
-		bool is_cterm = rsd_type.aa() <= chemical::num_canonical_aas && rsd_type.is_upper_terminus();
+		bool is_nterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_D_aa(rsd_type.aa())) && rsd_type.is_lower_terminus()); //Modified by VKM to check for D-amino acids
+		bool is_cterm = ( (rsd_type.aa() <= chemical::num_canonical_aas || core::chemical::is_D_aa(rsd_type.aa())) && rsd_type.is_upper_terminus()); //Modified by VKM to check for D-amnio acids
 		for (int i=1; i<=5; ++i) {
 			if (i==1 && is_nterm) continue;
 			if (i==3 && rsd_type.aa() == core::chemical::aa_gly) continue;
@@ -1442,7 +1447,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 	if ( rsd_type.has( "H" ) ) {
 		restype_params->bb_H_index( rsd_type.atom_index( "H" ) );
 	}
-	if ( rsd_type.aa() == core::chemical::aa_pro && rsd_type.has( "CD" ) ) {
+	if ( (rsd_type.aa() == core::chemical::aa_pro || rsd_type.aa() == core::chemical::aa_dpr) && rsd_type.has( "CD" ) ) {
 		restype_params->pro_CD_index( rsd_type.atom_index( "CD" ) );
 	}
 
@@ -1611,9 +1616,13 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 	using namespace numeric;
 
 	assert( rsd2.seqpos() > rsd1.seqpos() );
-	bool preproline = (rsd2.aa()==core::chemical::aa_pro);
+	bool preproline = (rsd2.aa()==core::chemical::aa_pro || rsd2.aa()==core::chemical::aa_dpr); //Is rsd2 either D-proline or L-proline?
 
 	if ( rsd1.aa() == core::chemical::aa_vrt) return;
+
+	//Multipliers for D-amino acids:
+	const core::Real d_multiplier1 = core::chemical::is_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
+	const core::Real d_multiplier2 = core::chemical::is_D_aa(rsd2.aa()) ? -1.0 : 1.0 ;
 
 	ResidueCartBondedParameters const & res1params = db_->parameters_for_restype( rsd1.type(), preproline );
 	ResidueCartBondedParameters const & res2params = db_->parameters_for_restype( rsd2.type(), false );
@@ -1621,12 +1630,12 @@ CartesianBondedEnergy::eval_residue_pair_derivatives(
 	// get phi,psis for bb-dep angles/lengths
 	Real phi1=0,psi1=0,phi2=0,psi2=0;
 	if (rsd1.is_protein()) {
-		phi1 = nonnegative_principal_angle_degrees( rsd1.mainchain_torsion(1));
-		psi1 = nonnegative_principal_angle_degrees( rsd1.mainchain_torsion(2));
+		phi1 = nonnegative_principal_angle_degrees( d_multiplier1*rsd1.mainchain_torsion(1)); //Inverted if D-amino acid
+		psi1 = nonnegative_principal_angle_degrees( d_multiplier1*rsd1.mainchain_torsion(2)); //Inverted if D-amino acid
 	}
 	if (rsd2.is_protein()) {
-		phi2 = nonnegative_principal_angle_degrees( rsd2.mainchain_torsion(1));
-		psi2 = nonnegative_principal_angle_degrees( rsd2.mainchain_torsion(2));
+		phi2 = nonnegative_principal_angle_degrees( d_multiplier2*rsd2.mainchain_torsion(1)); //Inverted if D-amino acid
+		psi2 = nonnegative_principal_angle_degrees( d_multiplier2*rsd2.mainchain_torsion(2)); //Inverted if D-amino acid
 	}
 
 	// get subcomponents
@@ -1683,7 +1692,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 	core::Size resid = rsd.seqpos();
 	//bool is_nterm = ((resid==1) || pose.fold_tree().is_cutpoint( resid-1 ));
 	bool is_cterm = ((resid==pose.total_residue()) || pose.fold_tree().is_cutpoint( resid ));
-	bool preproline = (!is_cterm && pose.residue( resid+1 ).aa() == core::chemical::aa_pro);
+	bool preproline = (!is_cterm && (pose.residue( resid+1 ).aa() == core::chemical::aa_pro || pose.residue( resid+1 ).aa() == core::chemical::aa_dpr)); //i+1 residue is either D-proline or L-proline
 
 	// phi/psi
 	Real phi=0,psi=0;
@@ -1961,21 +1970,25 @@ CartesianBondedEnergy::residue_pair_energy_sorted(
 
 	core::Size resid = rsd1.seqpos();
 	bool is_cterm = (pose.fold_tree().is_cutpoint( resid ));
-	bool preproline = (!is_cterm && rsd2.aa() == core::chemical::aa_pro);
+	bool preproline = (!is_cterm && (rsd2.aa() == core::chemical::aa_pro || rsd2.aa() == core::chemical::aa_dpr)); //rsd2 is either D- or L-proline
 
 	if ( rsd1.aa() == core::chemical::aa_vrt) return;
+
+	//Multipliers for D-amino acids:
+	const core::Real d_multiplier1 = core::chemical::is_D_aa(rsd1.aa()) ? -1.0 : 1.0 ;
+	const core::Real d_multiplier2 = core::chemical::is_D_aa(rsd2.aa()) ? -1.0 : 1.0 ;
 
 	ResidueCartBondedParameters const & rsd1params = db_->parameters_for_restype( rsd1.type(), preproline );
 	ResidueCartBondedParameters const & rsd2params = db_->parameters_for_restype( rsd2.type(), false );
 
 	Real phi1=0,psi1=0,phi2=0,psi2=0;
 	if (rsd1.is_protein()) {
-		phi1 = nonnegative_principal_angle_degrees( rsd1.mainchain_torsion(1));
-		psi1 = nonnegative_principal_angle_degrees( rsd1.mainchain_torsion(2));
+		phi1 = nonnegative_principal_angle_degrees( d_multiplier1 * rsd1.mainchain_torsion(1));
+		psi1 = nonnegative_principal_angle_degrees( d_multiplier1 * rsd1.mainchain_torsion(2));
 	}
 	if (rsd2.is_protein()) {
-		phi2 = nonnegative_principal_angle_degrees( rsd2.mainchain_torsion(1));
-		psi2 = nonnegative_principal_angle_degrees( rsd2.mainchain_torsion(2));
+		phi2 = nonnegative_principal_angle_degrees( d_multiplier2 * rsd2.mainchain_torsion(1));
+		psi2 = nonnegative_principal_angle_degrees( d_multiplier2 * rsd2.mainchain_torsion(2));
 	}
 
 	// get one body component (but which has two-body influence based on whether or not rsd2 is a proline)
@@ -2004,8 +2017,8 @@ void
 CartesianBondedEnergy::eval_singleres_energy(
 	conformation::Residue const & rsd,
 	ResidueCartBondedParameters const & resparams,
-	Real phi,
-	Real psi,
+	Real phi, //Must be inverted for D-amino acids
+	Real psi, //Must be inverted for D-amino acids
 	pose::Pose const & pose,
 	EnergyMap & emap
 ) const
@@ -2033,6 +2046,8 @@ CartesianBondedEnergy::eval_singleres_improper_torsion_energies(
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
 
+	const core::Real d_multiplier = core::chemical::is_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
+
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & itps(
 		resparams.improper_torsion_parameters() );
 
@@ -2040,7 +2055,7 @@ CartesianBondedEnergy::eval_singleres_improper_torsion_energies(
 		ResidueCartBondedParameters::Size4 const & atids( itps[ ii ].first );
 		CartBondedParameters const & tor_params( *itps[ ii ].second );
 		Real Kphi = tor_params.K(0,0);
-		Real phi0 = tor_params.mu(0,0);
+		Real phi0 = d_multiplier * tor_params.mu(0,0);
 		Real phi_step=2 * pi / tor_params.period();
 		Real angle = numeric::dihedral_radians(
 			rsd.xyz( atids[1] ), rsd.xyz( atids[2] ), rsd.xyz( atids[3] ), rsd.xyz( atids[4] ) );
@@ -2080,6 +2095,8 @@ CartesianBondedEnergy::eval_singleres_torsion_energies(
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
 
+	const core::Real d_multiplier = core::chemical::is_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
+
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & tps( resparams.torsion_parameters() );
 
 	for ( Size ii = 1, iiend = tps.size(); ii <= iiend; ++ii ) {
@@ -2087,7 +2104,7 @@ CartesianBondedEnergy::eval_singleres_torsion_energies(
 		CartBondedParameters const & tor_params( *tps[ ii ].second );
 
 		Real Kphi = tor_params.K(phi,psi);
-		Real phi0 = tor_params.mu(phi,psi);
+		Real phi0 = d_multiplier * tor_params.mu(phi,psi);
 		Real phi_step = 2 * pi / tor_params.period();
 		Real angle = numeric::dihedral_radians(
 			rsd.xyz( atids[1] ), rsd.xyz( atids[2] ), rsd.xyz( atids[3] ), rsd.xyz( atids[4] ) );
@@ -2231,7 +2248,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 ) const
 {
 	using namespace core::chemical;
-	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -2275,6 +2292,13 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 		// executed was the "else" clause and it was rediculously slow.  I mean much much
 		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
 
+		// Update -- 11 July 2013 (V.K. Mulligan):
+		// At the time of the writing of THIS comment, the CartesianBondEnergy is used only
+		// to evaluate protein energetics OR energetics of D-, L-, or D/L-peptides.  If THAT
+		// persists, then this "else" clause will never be executed.  Since it will never be
+		// executed, I'm not going to try to figure out whether the comment above is true or
+		// not.  It may well be the case that what follows is REEAAALLLLY SLOW.
+
 		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
 		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
 			Size const resconn_id1( r1_resconn_ids[ii] );
@@ -2299,7 +2323,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 				std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
 
 				// lookup Ktheta and theta0
-				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd1.type(), rsd2.aa() == chemical::aa_pro,
+				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
 					atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
 				if (ang_params->is_null()) continue;
 				Real Ktheta=ang_params->K(phi1,psi1), theta0=ang_params->mu(phi1,psi1);
@@ -2339,7 +2363,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 ) const
 {
 	using namespace core::chemical;
-	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified by VKM -- check for D-amino acids
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -2383,6 +2407,13 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 		// Before the above "if" and the below "else" clauses got separated, the only code
 		// executed was the "else" clause and it was rediculously slow.  I mean much much
 		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
+
+		// Update -- 11 July 2013 (V.K. Mulligan):
+		// At the time of the writing of THIS comment, the CartesianBondEnergy is used only
+		// to evaluate protein energetics OR energetics of D-, L-, or D/L-peptides.  If THAT
+		// persists, then this "else" clause will never be executed.  Since it will never be
+		// executed, I'm not going to try to figure out whether the comment above is true or
+		// not.  It may well be the case that what follows is REEAAALLLLY SLOW.
 
 		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
 		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
@@ -2451,7 +2482,7 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 ) const
 {
 	using namespace core::chemical;
-	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -2493,6 +2524,13 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 		// Before the above "if" and the below "else" clauses got separated, the only code
 		// executed was the "else" clause and it was rediculously slow.  I mean much much
 		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
+
+		// Update -- 11 July 2013 (V.K. Mulligan):
+		// At the time of the writing of THIS comment, the CartesianBondEnergy is used only
+		// to evaluate protein energetics OR energetics of D-, L-, or D/L-peptides.  If THAT
+		// persists, then this "else" clause will never be executed.  Since it will never be
+		// executed, I'm not going to try to figure out whether the comment above is true or
+		// not.  It may well be the case that what follows is REEAAALLLLY SLOW.
 
 		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
 		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
@@ -2555,13 +2593,15 @@ CartesianBondedEnergy::eval_improper_torsions(
 
 	if ( !rsd1.is_protein() || !rsd2.is_protein()) return;
 
+	const core::Real d_multiplier2 = core::chemical::is_D_aa(rsd2.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
+
 	// backbone CA-Cprev-N-H
-	if ( rsd2.aa() != aa_pro && rsd2params.bb_H_index() != 0 ) {
+	if ( (rsd2.aa() != aa_pro && rsd2.aa() != aa_dpr /*Not D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
 		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_torsion_params();
 		if ( !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
-			Real const phi0=tor_params->mu(0,0);
-			Real const phi_step=2*pi/tor_params->period();
+			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
+			Real const phi_step = 2*pi/tor_params->period();
 			Real angle = numeric::dihedral_radians(
 				rsd2.xyz( rsd2params.bb_CA_index() ),
 				rsd1.xyz( rsd1params.bb_C_index() ),
@@ -2596,8 +2636,8 @@ CartesianBondedEnergy::eval_improper_torsions(
 		CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_torsion_params();
 		if ( !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
-			Real const phi0=tor_params->mu(0,0);
-			Real const phi_step=2*pi/tor_params->period();
+			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
+			Real const phi_step = 2*pi/tor_params->period();
 			Real angle = numeric::dihedral_radians(
 				rsd1.xyz( rsd1params.bb_O_index() ),
 				rsd1.xyz( rsd1params.bb_C_index() ),
@@ -2627,11 +2667,11 @@ CartesianBondedEnergy::eval_improper_torsions(
 	}
 
 	// proline N planarity
-	if (rsd2.aa() == core::chemical::aa_pro) {
+	if (rsd2.aa() == core::chemical::aa_pro || rsd2.aa() == core::chemical::aa_dpr) { //D- or L-proline
 		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_torsion_params();
 		if ( tor_params && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
-			Real const phi0=tor_params->mu(0,0);
+			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
 			Real const phi_step=2*pi/tor_params->period();
 			Real angle = numeric::dihedral_radians(
 				rsd2.xyz( rsd2params.pro_CD_index() ),
@@ -2690,14 +2730,16 @@ void
 CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 	conformation::Residue const & rsd,
 	ResidueCartBondedParameters const & resparams,
-	Real const phi,
-	Real const psi,
+	Real const phi, //Need to be inverted for D-amino acids
+	Real const psi, //Need to be inverted for D-amino acids
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r_atom_derivs
 ) const
 {
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
+
+	const core::Real d_multiplier = core::chemical::is_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & tps( resparams.torsion_parameters() );
 
@@ -2709,7 +2751,7 @@ CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 		CartBondedParameters const & tor_params( *tps[ ii ].second );
 
 		Real Kphi = tor_params.K(phi,psi);
-		Real phi0 = tor_params.mu(phi,psi);
+		Real phi0 = d_multiplier * tor_params.mu(phi,psi);
 		Real phi_step = 2 * pi / tor_params.period();
 
 		Vector f1(0.0), f2(0.0);
@@ -2845,6 +2887,8 @@ CartesianBondedEnergy::eval_singleres_improper_torsions_derivatives(
 	using namespace core::chemical;
 	using numeric::constants::d::pi;
 
+	const core::Real d_multiplier = core::chemical::is_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
+
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & itps(
 		resparams.improper_torsion_parameters() );
 	Real const weight = weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
@@ -2854,7 +2898,7 @@ CartesianBondedEnergy::eval_singleres_improper_torsions_derivatives(
 		Size const rt1( atids[1] ), rt2( atids[2] ), rt3( atids[3] ), rt4( atids[4] );
 		CartBondedParameters const & tor_params( *itps[ ii ].second );
 		Real Kphi = tor_params.K(0,0);
-		Real phi0 = tor_params.mu(0,0);
+		Real phi0 = d_multiplier * tor_params.mu(0,0);
 		Real phi_step=2 * pi / tor_params.period();
 
 
@@ -2910,7 +2954,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 ) const
 {
 	using namespace core::chemical;
-	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified by VKM to check for D-amino acids
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -2959,6 +3003,9 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 		// executed was the "else" clause and it was rediculously slow.  I mean much much
 		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
 
+		// Update (11 July 2013 by V.K. Mulligan): The above now executes for both D- and L-amino
+		// acid peptides and polypeptides.  What follows is for anything else.
+
 		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
 		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
 			Size const resconn_id1( r1_resconn_ids[ii] );
@@ -2983,7 +3030,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 				std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
 
 				// lookup Ktheta and theta0
-				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd1.type(), rsd2.aa() == chemical::aa_pro,
+				CartBondedParametersCOP ang_params = db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr), //D- or L-proline
 					atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
 				if (ang_params->is_null()) continue;
 				Real Ktheta=ang_params->K(phi1,psi1), theta0=ang_params->mu(phi1,psi1);
@@ -3027,7 +3074,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 ) const
 {
 	using namespace core::chemical;
-	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified by VKM -- check for D-amino acids
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -3075,6 +3122,9 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 		// Before the above "if" and the below "else" clauses got separated, the only code
 		// executed was the "else" clause and it was rediculously slow.  I mean much much
 		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
+
+		// Update (11 July 2013 by V.K. Mulligan): The above executes for both D- and L-amino acid
+		// peptides and polypeptides, now.  What follows is for everything else.
 
 		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
 		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
@@ -3139,7 +3189,7 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 ) const
 {
 	using namespace core::chemical;
-	if ( rsd1.aa() <= num_canonical_aas && rsd2.aa() <= num_canonical_aas &&
+	if ( (rsd1.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd1.aa())) && (rsd2.aa() <= num_canonical_aas || core::chemical::is_D_aa(rsd2.aa())) && //Modified to check for D-amino acids (VKM)
 			rsd1.residue_connection_partner( rsd1.upper_connect().index() )== rsd2.seqpos() ) {
 
 		/// Assumption: rsd1 and rsd2 share a peptide bond and only a peptide bond.
@@ -3180,6 +3230,9 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 		// Before the above "if" and the below "else" clauses got separated, the only code
 		// executed was the "else" clause and it was rediculously slow.  I mean much much
 		// slower than evaluating the etable energies.  REEAAALLLLY SLOW.
+
+    // Updated 11 July 2013 by V.K. Mulligan: the above code is for both D- and L- amino acid
+		// peptides, now, while what follows is for everything else.
 
 		utility::vector1< Size > const & r1_resconn_ids( rsd1.connections_to_residue( rsd2 ) );
 		for ( Size ii = 1; ii <= r1_resconn_ids.size(); ++ii ) {
@@ -3232,17 +3285,21 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 
 	assert ( res1.seqpos() < res2.seqpos() );
 
+	//Multipliers for D-amino acids:
+	//const core::Real d_multiplier1 = core::chemical::is_D_aa(res1.aa()) ? -1.0 : 1.0 ;
+	const core::Real d_multiplier2 = core::chemical::is_D_aa(res2.aa()) ? -1.0 : 1.0 ;
+
 	// backbone C-N-CA-H
 	if (!res1.is_protein() || !res2.is_protein()) return;
 	Real weight = weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
 
 	// backbone CA-Cprev-N-H
-	if ( res2.aa() != aa_pro && rsd2params.bb_H_index() != 0 ) {
+	if ( (res2.aa() != aa_pro && res2.aa() != aa_dpr /*NOT D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
 		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_torsion_params();
 		if ( !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
-			Real const phi0=tor_params->mu(0,0);
-			Real const phi_step=2*pi/tor_params->period();
+			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
+			Real const phi_step = 2*pi/tor_params->period();
 
 			Vector f1(0.0), f2(0.0);
 			Real phi=0, dE_dphi;
@@ -3294,7 +3351,7 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 			core::Size const atm4 = rsd1params.bb_O_index();
 
 			Real const Kphi = tor_params->K(0,0);
-			Real const phi0=tor_params->mu(0,0);
+			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
 			Real const phi_step=2*pi/tor_params->period();
 
 			Vector f1(0.0), f2(0.0);
@@ -3333,7 +3390,7 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 	}
 
 	// proline N planarity
-	if (res2.aa() == core::chemical::aa_pro) {
+	if (res2.aa() == core::chemical::aa_pro || res2.aa() == core::chemical::aa_dpr /*D- or L-proline*/) {
 		CartBondedParametersCOP tor_params = rsd1params.pro_cd_cprev_n_ca_interres_torsion_params();
 		if ( tor_params && !tor_params->is_null() ) {
 			core::Size const atm1 = rsd2params.pro_CD_index();
@@ -3342,7 +3399,7 @@ CartesianBondedEnergy::eval_improper_torsion_derivatives(
 			core::Size const atm4 = rsd2params.bb_CA_index();
 
 			Real const Kphi = tor_params->K(0,0);
-			Real const phi0=tor_params->mu(0,0);
+			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
 			Real const phi_step=2*pi/tor_params->period();
 
 			Vector f1(0.0), f2(0.0);
