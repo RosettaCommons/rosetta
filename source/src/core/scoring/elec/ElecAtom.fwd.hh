@@ -7,22 +7,21 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/hackelec/HackElecEnergyAroAll.fwd.hh
-/// @brief  Electrostatics for RNA class forward declaration
-/// @author Rhiju Das, modified to aroall by James Gleixner
+/// @file   core/scoring/etable/etrie/EtableAtom.fwd.hh
+/// @brief
+/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-
-#ifndef INCLUDED_core_scoring_hackelec_HackElecEnergyAroAll_fwd_hh
-#define INCLUDED_core_scoring_hackelec_HackElecEnergyAroAll_fwd_hh
+#ifndef INCLUDED_core_scoring_elec_ElecAtom_fwd_hh
+#define INCLUDED_core_scoring_elec_ElecAtom_fwd_hh
 
 namespace core {
 namespace scoring {
-namespace hackelec {
+namespace elec {
 
-class HackElecEnergyAroAll;
+class ElecAtom;
 
-}
-}
-}
+} // namespace elec
+} // namespace scoring
+} // namespace core
 
 #endif

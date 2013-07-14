@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/hackelec/RNAHackElecEnergy.cc
+/// @file   core/scoring/elec/RNA_FA_ElecEnergy.cc
 /// @brief  Electrostatics energy method for RNA class implementation
 /// @author Rhiju Das
 
 
 // Unit headers
-#include <core/scoring/hackelec/RNAHackElecEnergy.hh>
-#include <core/scoring/hackelec/RNAHackElecEnergyCreator.hh>
+#include <core/scoring/elec/RNA_FA_ElecEnergy.hh>
+#include <core/scoring/elec/RNA_FA_ElecEnergyCreator.hh>
 
 // Package headers
 #include <core/scoring/EnergyGraph.hh>
@@ -66,74 +66,74 @@
 
 namespace core {
 namespace scoring {
-namespace hackelec {
+namespace elec {
 
 
-/// @details This must return a fresh instance of the RNAHackElecEnergy class,
+/// @details This must return a fresh instance of the RNA_FA_ElecEnergy class,
 /// never an instance already in use
 methods::EnergyMethodOP
-RNAHackElecEnergyCreator::create_energy_method(
+RNA_FA_ElecEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new RNAHackElecEnergy( options );
+	return new RNA_FA_ElecEnergy( options );
 }
 
 ScoreTypes
-RNAHackElecEnergyCreator::score_types_for_method() const {
+RNA_FA_ElecEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
-	sts.push_back( hack_elec_rna_phos_phos );
-	sts.push_back( hack_elec_rna_phos_sugr );
-	sts.push_back( hack_elec_rna_phos_base );
-	sts.push_back( hack_elec_rna_sugr_sugr );
-	sts.push_back( hack_elec_rna_sugr_base );
-	sts.push_back( hack_elec_rna_base_base );
+	sts.push_back( fa_elec_rna_phos_phos );
+	sts.push_back( fa_elec_rna_phos_sugr );
+	sts.push_back( fa_elec_rna_phos_base );
+	sts.push_back( fa_elec_rna_sugr_sugr );
+	sts.push_back( fa_elec_rna_sugr_base );
+	sts.push_back( fa_elec_rna_base_base );
 	return sts;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-RNAHackElecEnergy::RNAHackElecEnergy(
+RNA_FA_ElecEnergy::RNA_FA_ElecEnergy(
 	methods::EnergyMethodOptions const & options
 ):
 	parent( options )
 {
-	set_score_types( new RNAHackElecEnergyCreator );
+	set_score_types( new RNA_FA_ElecEnergyCreator );
 }
 
 
 ////////////////////////////////////////////////////////////////////////////
-RNAHackElecEnergy::RNAHackElecEnergy( RNAHackElecEnergy const & src ):
+RNA_FA_ElecEnergy::RNA_FA_ElecEnergy( RNA_FA_ElecEnergy const & src ):
 	parent( src )
 {
-	set_score_types( new RNAHackElecEnergyCreator );
+	set_score_types( new RNA_FA_ElecEnergyCreator );
 }
 
 /// clone
 methods::EnergyMethodOP
-RNAHackElecEnergy::clone() const
+RNA_FA_ElecEnergy::clone() const
 {
-	return new RNAHackElecEnergy( *this );
+	return new RNA_FA_ElecEnergy( *this );
 }
 
 ///
 void
-RNAHackElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+RNA_FA_ElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
 ///
 void
-RNAHackElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+RNA_FA_ElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
 
-// The HackElectEnergy method stores a vector of rotamer trie objects in the Energies
+// The FA_ElectEnergy method stores a vector of rotamer trie objects in the Energies
 // object for use in rapid rotamer/background energy calculations.  Overrides default
 // do-nothing behavior.
 void
-RNAHackElecEnergy::setup_for_packing(
+RNA_FA_ElecEnergy::setup_for_packing(
 	pose::Pose &,
 	utility::vector1< bool > const &,
 	utility::vector1< bool > const &
@@ -145,7 +145,7 @@ RNAHackElecEnergy::setup_for_packing(
 // @brief Creates a rotamer trie for the input set of rotamers and stores the trie
 // in the rotamer set.
 void
-RNAHackElecEnergy::prepare_rotamers_for_packing(
+RNA_FA_ElecEnergy::prepare_rotamers_for_packing(
 	pose::Pose const &,
 	conformation::RotamerSetBase &
 ) const
@@ -157,7 +157,7 @@ RNAHackElecEnergy::prepare_rotamers_for_packing(
 // @brief Updates the cached rotamer trie for a residue if it has changed during the course of
 // a repacking
 void
-RNAHackElecEnergy::update_residue_for_packing(
+RNA_FA_ElecEnergy::update_residue_for_packing(
 	pose::Pose &,
 	Size
 ) const
@@ -171,7 +171,7 @@ RNAHackElecEnergy::update_residue_for_packing(
 
 ///
 void
-RNAHackElecEnergy::residue_pair_energy(
+RNA_FA_ElecEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
@@ -180,7 +180,7 @@ RNAHackElecEnergy::residue_pair_energy(
 ) const
 {
 	if ( rsd1.is_RNA() && rsd2.is_RNA() ) {
-		residue_pair_energy_RNA( rsd1, rsd2, emap ); // In the grand spirit of hack_elec hackiness
+		residue_pair_energy_RNA( rsd1, rsd2, emap ); // In the grand spirit of fa_elec hackiness
 	}
 	//std::cout << rsd1.seqpos() << ' ' << rsd2.seqpos() << ' ' << score << std::endl;
 }
@@ -220,11 +220,11 @@ bool is_base( conformation::Residue const & rsd, Size const i )
 
 //////////////////////////////////////////////////////////////////////////////////
 // July 22 2011. OK could potentially optimize by calculating the energy for the atom-atom pairs in which the weight term is non-zero.
-// For example, for standard weight only hack_elec_rna_phos_phos weight is non-zero. So for this case can skip non-phosphate atoms.
+// For example, for standard weight only fa_elec_rna_phos_phos weight is non-zero. So for this case can skip non-phosphate atoms.
 // Following copies a little code, but at least separates out this inelegant and
 // probably useless RNA stuff from the usual stuff.
 Real
-RNAHackElecEnergy::residue_pair_energy_RNA(
+RNA_FA_ElecEnergy::residue_pair_energy_RNA(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	EnergyMap & emap
@@ -261,7 +261,7 @@ RNAHackElecEnergy::residue_pair_energy_RNA(
 			Size path_dist( 0 );
 			if ( cpfxn->count( i, j, weight, path_dist ) ) {
 				Real score = weight *
-					coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+					coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 
 				total_score += score;
 
@@ -271,17 +271,17 @@ RNAHackElecEnergy::residue_pair_energy_RNA(
 				assert( atom2_is_base || atom2_is_sugar || atom2_is_phosphate );
 
 				if ( atom1_is_base && atom2_is_base ) {
-					emap[ hack_elec_rna_base_base ] += score;
+					emap[ fa_elec_rna_base_base ] += score;
 				} else if (  (atom1_is_base && atom2_is_sugar)  || (atom1_is_sugar && atom2_is_base) ) {
-					emap[ hack_elec_rna_sugr_base ] += score;
+					emap[ fa_elec_rna_sugr_base ] += score;
 				} else if (  (atom1_is_base && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_base) ) {
-					emap[ hack_elec_rna_phos_base ] += score;
+					emap[ fa_elec_rna_phos_base ] += score;
 				} else if (  (atom1_is_sugar && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_sugar) ) {
-					emap[ hack_elec_rna_phos_sugr ] += score;
+					emap[ fa_elec_rna_phos_sugr ] += score;
 				} else if (  (atom1_is_sugar && atom2_is_sugar)  ) {
-					emap[ hack_elec_rna_sugr_sugr ] += score;
+					emap[ fa_elec_rna_sugr_sugr ] += score;
 				} else if (  (atom1_is_phosphate && atom2_is_phosphate)  ) {
-					emap[ hack_elec_rna_phos_phos ] += score;
+					emap[ fa_elec_rna_phos_phos ] += score;
 				} else {
 					std::cout << "PROBLEM! " << rsd1.atom_name( i ) << " " << rsd2.atom_name( j ) << std::endl;
 				}
@@ -294,7 +294,7 @@ RNAHackElecEnergy::residue_pair_energy_RNA(
 }
 
 void
-RNAHackElecEnergy::evaluate_rotamer_pair_energies(
+RNA_FA_ElecEnergy::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
@@ -310,7 +310,7 @@ RNAHackElecEnergy::evaluate_rotamer_pair_energies(
 }
 
 void
-RNAHackElecEnergy::evaluate_rotamer_background_energies(
+RNA_FA_ElecEnergy::evaluate_rotamer_background_energies(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & residue,
 	pose::Pose const & pose,
@@ -326,7 +326,7 @@ RNAHackElecEnergy::evaluate_rotamer_background_energies(
 
 
 void
-RNAHackElecEnergy::eval_atom_derivative(
+RNA_FA_ElecEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
@@ -390,7 +390,7 @@ RNAHackElecEnergy::eval_atom_derivative(
 
 //////////////////////////////////////////////////
 void
-RNAHackElecEnergy::eval_atom_derivative_RNA(
+RNA_FA_ElecEnergy::eval_atom_derivative_RNA(
 	conformation::Residue const & rsd1,
 	Size const & i,
 	conformation::Residue const & rsd2,
@@ -426,11 +426,11 @@ RNAHackElecEnergy::eval_atom_derivative_RNA(
 			Vector const f2( i_xyz - j_xyz );
 			Real const dis2( f2.length_squared() );
 			Real const dE_dr_over_r = weight *
-				coulomb().eval_dhack_elecE_dr_over_r( dis2, i_charge, j_charge );
+				coulomb().eval_dfa_elecE_dr_over_r( dis2, i_charge, j_charge );
 			if ( dE_dr_over_r != 0.0 ) {
 				Vector const f1( i_xyz.cross( j_xyz ) );
-				//F1 += weights[ hack_elec ] * dE_dr_over_r * f1;
-				//F2 += weights[ hack_elec ] * dE_dr_over_r * f2;
+				//F1 += weights[ fa_elec ] * dE_dr_over_r * f1;
+				//F2 += weights[ fa_elec ] * dE_dr_over_r * f2;
 
 				bool const atom2_is_base = is_base(rsd2, j);
 				bool const atom2_is_sugar = is_sugar(rsd2, j);
@@ -438,23 +438,23 @@ RNAHackElecEnergy::eval_atom_derivative_RNA(
 				assert( atom2_is_base || atom2_is_sugar || atom2_is_phosphate );
 
 				if ( atom1_is_base && atom2_is_base ) {
-					F1 += weights[ hack_elec_rna_base_base ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_base_base ] * dE_dr_over_r * f2;
+					F1 += weights[ fa_elec_rna_base_base ] * dE_dr_over_r * f1;
+					F2 += weights[ fa_elec_rna_base_base ] * dE_dr_over_r * f2;
 				} else if (  (atom1_is_base && atom2_is_sugar)  || (atom1_is_sugar && atom2_is_base) ) {
-					F1 += weights[ hack_elec_rna_sugr_base ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_sugr_base ] * dE_dr_over_r * f2;
+					F1 += weights[ fa_elec_rna_sugr_base ] * dE_dr_over_r * f1;
+					F2 += weights[ fa_elec_rna_sugr_base ] * dE_dr_over_r * f2;
 				} else if (  (atom1_is_base && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_base) ) {
-					F1 += weights[ hack_elec_rna_phos_base ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_phos_base ] * dE_dr_over_r * f2;
+					F1 += weights[ fa_elec_rna_phos_base ] * dE_dr_over_r * f1;
+					F2 += weights[ fa_elec_rna_phos_base ] * dE_dr_over_r * f2;
 				} else if (  (atom1_is_sugar && atom2_is_phosphate)  || (atom1_is_phosphate && atom2_is_sugar) ) {
-					F1 += weights[ hack_elec_rna_phos_sugr ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_phos_sugr ] * dE_dr_over_r * f2;
+					F1 += weights[ fa_elec_rna_phos_sugr ] * dE_dr_over_r * f1;
+					F2 += weights[ fa_elec_rna_phos_sugr ] * dE_dr_over_r * f2;
 				} else if (  (atom1_is_sugar && atom2_is_sugar)  ) {
-					F1 += weights[ hack_elec_rna_sugr_sugr ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_sugr_sugr ] * dE_dr_over_r * f2;
+					F1 += weights[ fa_elec_rna_sugr_sugr ] * dE_dr_over_r * f1;
+					F2 += weights[ fa_elec_rna_sugr_sugr ] * dE_dr_over_r * f2;
 				} else if (  (atom1_is_phosphate && atom2_is_phosphate)  ) {
-					F1 += weights[ hack_elec_rna_phos_phos ] * dE_dr_over_r * f1;
-					F2 += weights[ hack_elec_rna_phos_phos ] * dE_dr_over_r * f2;
+					F1 += weights[ fa_elec_rna_phos_phos ] * dE_dr_over_r * f1;
+					F2 += weights[ fa_elec_rna_phos_phos ] * dE_dr_over_r * f2;
 				}
 
 			}
@@ -463,13 +463,13 @@ RNAHackElecEnergy::eval_atom_derivative_RNA(
 }
 
 
-/// @brief RNAHackElecEnergy is context independent; no context graphs required
+/// @brief RNA_FA_ElecEnergy is context independent; no context graphs required
 void
-RNAHackElecEnergy::indicate_required_context_graphs( utility::vector1< bool > & /* context_graphs_required */ ) const
+RNA_FA_ElecEnergy::indicate_required_context_graphs( utility::vector1< bool > & /* context_graphs_required */ ) const
 {
 }
 core::Size
-RNAHackElecEnergy::version() const
+RNA_FA_ElecEnergy::version() const
 {
 	return 1; // Initial versioning
 }

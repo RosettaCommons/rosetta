@@ -67,10 +67,10 @@ enum ScoreType {
 	lk_polar_intra_RNA,    //RNA specific score term
 	lk_nonpolar_intra_RNA, //RNA specific score term
 //	csd_torsion, //commenting out until it is implemented
-	hack_elec,
-	hack_elec_bb_bb,
-	hack_elec_bb_sc,
-	hack_elec_sc_sc,
+	fa_elec,
+	fa_elec_bb_bb,
+	fa_elec_bb_sc,
+	fa_elec_sc_sc,
 	h2o_hbond,
 	dna_dr,
 	dna_bp,
@@ -89,16 +89,16 @@ enum ScoreType {
 	fa_mbenv,       // depth dependent reference term
 	fa_mbsolv,      // burial+depth dependent term
 
-	//Split out hack_elec for RNA.
-	hack_elec_rna_phos_phos,
-	hack_elec_rna_phos_sugr,
-	hack_elec_rna_phos_base,
-	hack_elec_rna_sugr_sugr,
-	hack_elec_rna_sugr_base,
-	hack_elec_rna_base_base,
+	//Split out fa_elec for RNA.
+	fa_elec_rna_phos_phos,
+	fa_elec_rna_phos_sugr,
+	fa_elec_rna_phos_base,
+	fa_elec_rna_sugr_sugr,
+	fa_elec_rna_sugr_base,
+	fa_elec_rna_base_base,
 
-	hack_elec_aro_aro,
-	hack_elec_aro_all,
+	fa_elec_aro_aro,
+	fa_elec_aro_all,
 	hack_aro,
 
 	rna_fa_atr_base,

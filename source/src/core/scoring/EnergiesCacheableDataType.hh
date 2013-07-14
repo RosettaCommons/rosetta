@@ -25,14 +25,14 @@ namespace EnergiesCacheableDataType {
 /// @brief enum indexing the types for the DataCache within the Energies class
 enum Enum {
 	ETABLE_NBLIST = 1, // for indexing into vector1
-	HACKELEC_NBLIST,
+	ELEC_NBLIST,
 	MM_LJ_INTER_NBLIST,
 	MM_LJ_INTRA_NBLIST,
 	HBOND_SET,
 	H2O_HBOND_SET,
 	ETABLE_TRIE_COLLECTION,
 	HBOND_TRIE_COLLECTION,
-	HACKELEC_TRIE_COLLECTION,
+	ELEC_TRIE_COLLECTION,
 	MM_LJ_TRIE_COLLECTION,
 	// *** IMPORTANT ***
 	// The 'num_cacheable_data_types' below must be the last enum, and must

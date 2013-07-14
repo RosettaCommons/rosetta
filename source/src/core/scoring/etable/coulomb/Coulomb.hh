@@ -49,7 +49,7 @@ public:
 	// was private, but outside world wants to call this one:
 	inline
 	Real
-	eval_atom_atom_hack_elecE(
+	eval_atom_atom_fa_elecE(
 		Vector const & i_xyz,
 		Real const i_charge,
 		Vector const & j_xyz,
@@ -58,7 +58,7 @@ public:
 
 	inline
 	Real
-	eval_atom_atom_hack_elecE(
+	eval_atom_atom_fa_elecE(
 		Vector const & i_xyz,
 		Real const i_charge,
 		Vector const & j_xyz,
@@ -71,7 +71,7 @@ public:
 	/// i.e. the derivative of energy with respect to distance divided by the distance
 	inline
 	Real
-	eval_dhack_elecE_dr_over_r(
+	eval_dfa_elecE_dr_over_r(
 		Real const dis2,
 		Real const q1,
 		Real const q2
@@ -82,7 +82,7 @@ public:
 	inline Real max_dis2( ) const { return max_dis2_;}
 	inline Real min_dis( ) const { return min_dis_;}
 	inline Real min_dis2( ) const { return min_dis2_;}
-	inline bool smooth_hack_elec( ) const { return smooth_hack_elec_;}
+	inline bool smooth_fa_elec( ) const { return smooth_fa_elec_;}
 
 private:
 
@@ -91,7 +91,7 @@ private:
 	Real min_dis_;
 	Real min_dis2_;
 
-	bool smooth_hack_elec_; // use sigmoidal functions to eliminate derivative discontinuities?
+	bool smooth_fa_elec_; // use sigmoidal functions to eliminate derivative discontinuities?
 
 	Real low_poly_start_;
 	Real low_poly_start2_;
@@ -129,7 +129,7 @@ private:
 
 inline
 Real
-Coulomb::eval_atom_atom_hack_elecE(
+Coulomb::eval_atom_atom_fa_elecE(
 	Vector const & i_xyz,
 	Real const i_charge,
 	Vector const & j_xyz,
@@ -137,7 +137,7 @@ Coulomb::eval_atom_atom_hack_elecE(
 ) const
 {
 	Real d2;
-	return eval_atom_atom_hack_elecE(i_xyz, i_charge, j_xyz, j_charge, d2);
+	return eval_atom_atom_fa_elecE(i_xyz, i_charge, j_xyz, j_charge, d2);
 }
 
 /// @brief Use a polynomial to smooth the transition between the
@@ -145,7 +145,7 @@ Coulomb::eval_atom_atom_hack_elecE(
 /// in which the score is held constant.
 inline
 Real
-Coulomb::eval_atom_atom_hack_elecE(
+Coulomb::eval_atom_atom_fa_elecE(
 	Vector const & i_xyz,
 	Real const i_charge,
 	Vector const & j_xyz,
@@ -178,7 +178,7 @@ Coulomb::eval_atom_atom_hack_elecE(
 
 inline
 Real
-Coulomb::eval_dhack_elecE_dr_over_r(
+Coulomb::eval_dfa_elecE_dr_over_r(
 	Real const dis2,
 	Real const q1,
 	Real const q2

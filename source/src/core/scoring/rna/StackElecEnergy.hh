@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/StackElecEnergy.hh
-/// @brief  HackElec, but just 'perpendicular' to bases... trying to separate from H-bonds & geom_sol.
+/// @brief  FA_Elec, but just 'perpendicular' to bases... trying to separate from H-bonds & geom_sol.
 /// @author Rhiju Das
 
 

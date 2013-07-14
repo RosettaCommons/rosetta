@@ -4541,7 +4541,7 @@ END_PDB_FORMAT %REF%_flexbb0_5_1dm2_1aq1_0001
 FOLD_TREE  EDGE 1 274 -1  EDGE 1 275 1 X X END
 END_POSE_TAG %REF%_flexbb0_5_1dm2_1aq1_0001
 POSE_TAG flexbb0_5_1dm2_1aq1_0001
-SCORES flexbb0_5_1dm2_1aq1_0001 coordinate_constraint 25.224 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1028.79 fa_dun 156.61 fa_intra_rep 2.41842 fa_pair -32.4902 fa_rep 58.9608 fa_sol 455.178 hack_elec -30.0083 hbond_bb_sc -80.2008 hbond_lr_bb -102.747 hbond_sc -37.1862 hbond_sr_bb -284.418 interface_delta -20.4375 ligand_auto_rms_no_super 0.628569 ligand_auto_rms_with_super 0.0351263 ligand_centroid_travel 0.575219 ligand_is_touching 1 p_aa_pp -38.4903 ref -52.48 total_score -988.42
+SCORES flexbb0_5_1dm2_1aq1_0001 coordinate_constraint 25.224 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1028.79 fa_dun 156.61 fa_intra_rep 2.41842 fa_pair -32.4902 fa_rep 58.9608 fa_sol 455.178 fa_elec -30.0083 hbond_bb_sc -80.2008 hbond_lr_bb -102.747 hbond_sc -37.1862 hbond_sr_bb -284.418 interface_delta -20.4375 ligand_auto_rms_no_super 0.628569 ligand_auto_rms_with_super 0.0351263 ligand_centroid_travel 0.575219 ligand_is_touching 1 p_aa_pp -38.4903 ref -52.48 total_score -988.42
 2 1 -0.607956
 2 2 3.259147
 2 3 -1.244969
@@ -5811,7 +5811,7 @@ SCORES flexbb0_5_1dm2_1aq1_0001 coordinate_constraint 25.224 dslf_ca_dih 0 dslf_
 JUMP 1 -0.002566770074 0.990484086203 -0.137603367222 -0.908977442535 0.055047658752 0.413194583978 0.416837403137 0.126138932314 0.900186396865 7.3589 -8.4221 -12.9049
 END_POSE_TAG flexbb0_5_1dm2_1aq1_0001
 POSE_TAG flexbb0_5_1dm2_1aq1_0002
-SCORES flexbb0_5_1dm2_1aq1_0002 coordinate_constraint 25.9316 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1031.23 fa_dun 156.756 fa_intra_rep 2.48721 fa_pair -32.3584 fa_rep 60.8192 fa_sol 457.039 hack_elec -29.0213 hbond_bb_sc -82.4106 hbond_lr_bb -101.557 hbond_sc -34.3632 hbond_sr_bb -284.444 interface_delta -19.4018 ligand_auto_rms_no_super 0.831765 ligand_auto_rms_with_super 0.041439 ligand_centroid_travel 0.793799 ligand_is_touching 1 p_aa_pp -37.756 ref -52.48 total_score -982.586
+SCORES flexbb0_5_1dm2_1aq1_0002 coordinate_constraint 25.9316 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1031.23 fa_dun 156.756 fa_intra_rep 2.48721 fa_pair -32.3584 fa_rep 60.8192 fa_sol 457.039 fa_elec -29.0213 hbond_bb_sc -82.4106 hbond_lr_bb -101.557 hbond_sc -34.3632 hbond_sr_bb -284.444 interface_delta -19.4018 ligand_auto_rms_no_super 0.831765 ligand_auto_rms_with_super 0.041439 ligand_centroid_travel 0.793799 ligand_is_touching 1 p_aa_pp -37.756 ref -52.48 total_score -982.586
 2 1 -0.565664
 2 2 3.258349
 2 3 -1.251567
@@ -7081,7 +7081,7 @@ SCORES flexbb0_5_1dm2_1aq1_0002 coordinate_constraint 25.9316 dslf_ca_dih 0 dslf
 JUMP 1 -0.052749025258 0.996078475866 -0.071029643470 -0.885805105973 -0.013832411401 0.463851246227 0.461049731120 0.087386121964 0.883061046090 7.8613 -8.5119 -12.5909
 END_POSE_TAG flexbb0_5_1dm2_1aq1_0002
 POSE_TAG flexbb0_5_1dm2_1aq1_0003
-SCORES flexbb0_5_1dm2_1aq1_0003 coordinate_constraint 25.0577 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1032.23 fa_dun 155.026 fa_intra_rep 2.43275 fa_pair -32.9694 fa_rep 59.3721 fa_sol 457.382 hack_elec -30.0619 hbond_bb_sc -80.3373 hbond_lr_bb -100.902 hbond_sc -35.8266 hbond_sr_bb -286.244 interface_delta -21.0733 ligand_auto_rms_no_super 0.611443 ligand_auto_rms_with_super 0.0296352 ligand_centroid_travel 0.549545 ligand_is_touching 1 p_aa_pp -37.6652 ref -52.48 total_score -989.442
+SCORES flexbb0_5_1dm2_1aq1_0003 coordinate_constraint 25.0577 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1032.23 fa_dun 155.026 fa_intra_rep 2.43275 fa_pair -32.9694 fa_rep 59.3721 fa_sol 457.382 fa_elec -30.0619 hbond_bb_sc -80.3373 hbond_lr_bb -100.902 hbond_sc -35.8266 hbond_sr_bb -286.244 interface_delta -21.0733 ligand_auto_rms_no_super 0.611443 ligand_auto_rms_with_super 0.0296352 ligand_centroid_travel 0.549545 ligand_is_touching 1 p_aa_pp -37.6652 ref -52.48 total_score -989.442
 2 1 -0.606590
 2 2 3.261451
 2 3 -1.235594
@@ -8352,7 +8352,7 @@ SCORES flexbb0_5_1dm2_1aq1_0003 coordinate_constraint 25.0577 dslf_ca_dih 0 dslf
 JUMP 1 -0.002703873372 0.990796714548 -0.135331295379 -0.906964888860 0.054571860729 0.417656081474 0.421197553939 0.123870022430 0.898470276692 7.4136 -8.4630 -12.8767
 END_POSE_TAG flexbb0_5_1dm2_1aq1_0003
 POSE_TAG flexbb0_5_1dm2_1aq1_0004
-SCORES flexbb0_5_1dm2_1aq1_0004 coordinate_constraint 24.8447 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1029.84 fa_dun 158.881 fa_intra_rep 2.43635 fa_pair -33.0536 fa_rep 58.6248 fa_sol 455.82 hack_elec -30.2819 hbond_bb_sc -80.358 hbond_lr_bb -102.472 hbond_sc -38.3681 hbond_sr_bb -285.165 interface_delta -20.7638 ligand_auto_rms_no_super 0.595524 ligand_auto_rms_with_super 0.0153022 ligand_centroid_travel 0.512456 ligand_is_touching 1 p_aa_pp -38.352 ref -52.48 total_score -989.764
+SCORES flexbb0_5_1dm2_1aq1_0004 coordinate_constraint 24.8447 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1029.84 fa_dun 158.881 fa_intra_rep 2.43635 fa_pair -33.0536 fa_rep 58.6248 fa_sol 455.82 fa_elec -30.2819 hbond_bb_sc -80.358 hbond_lr_bb -102.472 hbond_sc -38.3681 hbond_sr_bb -285.165 interface_delta -20.7638 ligand_auto_rms_no_super 0.595524 ligand_auto_rms_with_super 0.0153022 ligand_centroid_travel 0.512456 ligand_is_touching 1 p_aa_pp -38.352 ref -52.48 total_score -989.764
 2 1 -0.599064
 2 2 3.265781
 2 3 -1.245392
@@ -9624,7 +9624,7 @@ SCORES flexbb0_5_1dm2_1aq1_0004 coordinate_constraint 24.8447 dslf_ca_dih 0 dslf
 JUMP 1 0.006666346291 0.991325148563 -0.131263131354 -0.900980021093 0.062900111926 0.429276807561 0.433809360685 0.115403751002 0.893583467191 7.4926 -8.5315 -12.8299
 END_POSE_TAG flexbb0_5_1dm2_1aq1_0004
 POSE_TAG flexbb0_5_1dm2_1aq1_0005
-SCORES flexbb0_5_1dm2_1aq1_0005 coordinate_constraint 26.9897 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1032.53 fa_dun 157.646 fa_intra_rep 2.50515 fa_pair -32.0187 fa_rep 61.2435 fa_sol 458.147 hack_elec -29.0555 hbond_bb_sc -82.8058 hbond_lr_bb -101.382 hbond_sc -33.5631 hbond_sr_bb -284.839 interface_delta -19.0347 ligand_auto_rms_no_super 0.804832 ligand_auto_rms_with_super 0.0538224 ligand_centroid_travel 0.762006 ligand_is_touching 1 p_aa_pp -38.1256 ref -52.48 total_score -980.269
+SCORES flexbb0_5_1dm2_1aq1_0005 coordinate_constraint 26.9897 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1032.53 fa_dun 157.646 fa_intra_rep 2.50515 fa_pair -32.0187 fa_rep 61.2435 fa_sol 458.147 fa_elec -29.0555 hbond_bb_sc -82.8058 hbond_lr_bb -101.382 hbond_sc -33.5631 hbond_sr_bb -284.839 interface_delta -19.0347 ligand_auto_rms_no_super 0.804832 ligand_auto_rms_with_super 0.0538224 ligand_centroid_travel 0.762006 ligand_is_touching 1 p_aa_pp -38.1256 ref -52.48 total_score -980.269
 2 1 -0.597154
 2 2 3.273008
 2 3 -1.237614
@@ -10897,7 +10897,7 @@ SCORES flexbb0_5_1dm2_1aq1_0005 coordinate_constraint 26.9897 dslf_ca_dih 0 dslf
 JUMP 1 -0.062422464680 0.997353342741 -0.037279292183 -0.886686801308 -0.038272776520 0.460783800675 0.458137481866 0.061818316863 0.886729126289 7.8772 -8.3563 -12.5292
 END_POSE_TAG flexbb0_5_1dm2_1aq1_0005
 POSE_TAG flexbb0_5_1dm2_1aq1_0006
-SCORES flexbb0_5_1dm2_1aq1_0006 coordinate_constraint 26.18 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1029.33 fa_dun 158.416 fa_intra_rep 2.44769 fa_pair -32.2864 fa_rep 58.6498 fa_sol 455.466 hack_elec -30.3047 hbond_bb_sc -80.5075 hbond_lr_bb -101.88 hbond_sc -40.2948 hbond_sr_bb -286.284 interface_delta -20.7973 ligand_auto_rms_no_super 0.598534 ligand_auto_rms_with_super 0.0273112 ligand_centroid_travel 0.545435 ligand_is_touching 1 p_aa_pp -38.7691 ref -52.48 total_score -990.973
+SCORES flexbb0_5_1dm2_1aq1_0006 coordinate_constraint 26.18 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1029.33 fa_dun 158.416 fa_intra_rep 2.44769 fa_pair -32.2864 fa_rep 58.6498 fa_sol 455.466 fa_elec -30.3047 hbond_bb_sc -80.5075 hbond_lr_bb -101.88 hbond_sc -40.2948 hbond_sr_bb -286.284 interface_delta -20.7973 ligand_auto_rms_no_super 0.598534 ligand_auto_rms_with_super 0.0273112 ligand_centroid_travel 0.545435 ligand_is_touching 1 p_aa_pp -38.7691 ref -52.48 total_score -990.973
 2 1 -0.607024
 2 2 3.254704
 2 3 -1.238449
@@ -12167,7 +12167,7 @@ SCORES flexbb0_5_1dm2_1aq1_0006 coordinate_constraint 26.18 dslf_ca_dih 0 dslf_c
 JUMP 1 0.001458710087 0.990986325049 -0.133955125813 -0.912323970354 0.056169081691 0.405598332565 0.409466537439 0.121618821851 0.904182513041 7.4150 -8.4449 -12.9128
 END_POSE_TAG flexbb0_5_1dm2_1aq1_0006
 POSE_TAG flexbb0_5_1dm2_1aq1_0007
-SCORES flexbb0_5_1dm2_1aq1_0007 coordinate_constraint 25.1282 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1031.98 fa_dun 155.422 fa_intra_rep 2.49197 fa_pair -32.9102 fa_rep 60.7075 fa_sol 457.683 hack_elec -29.0651 hbond_bb_sc -81.9037 hbond_lr_bb -102.993 hbond_sc -34.1392 hbond_sr_bb -285.023 interface_delta -19.4482 ligand_auto_rms_no_super 0.768391 ligand_auto_rms_with_super 0.0456606 ligand_centroid_travel 0.728481 ligand_is_touching 1 p_aa_pp -38.6931 ref -52.48 total_score -987.751
+SCORES flexbb0_5_1dm2_1aq1_0007 coordinate_constraint 25.1282 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1031.98 fa_dun 155.422 fa_intra_rep 2.49197 fa_pair -32.9102 fa_rep 60.7075 fa_sol 457.683 fa_elec -29.0651 hbond_bb_sc -81.9037 hbond_lr_bb -102.993 hbond_sc -34.1392 hbond_sr_bb -285.023 interface_delta -19.4482 ligand_auto_rms_no_super 0.768391 ligand_auto_rms_with_super 0.0456606 ligand_centroid_travel 0.728481 ligand_is_touching 1 p_aa_pp -38.6931 ref -52.48 total_score -987.751
 2 1 -0.563971
 2 2 3.259603
 2 3 -1.252738
@@ -13435,7 +13435,7 @@ SCORES flexbb0_5_1dm2_1aq1_0007 coordinate_constraint 25.1282 dslf_ca_dih 0 dslf
 JUMP 1 -0.054275318650 0.996209551282 -0.067975876014 -0.888112920048 -0.017045278827 0.459309154834 0.456409499276 0.085299404477 0.885671711508 7.8187 -8.4197 -12.6030
 END_POSE_TAG flexbb0_5_1dm2_1aq1_0007
 POSE_TAG flexbb0_5_1dm2_1aq1_0008
-SCORES flexbb0_5_1dm2_1aq1_0008 coordinate_constraint 25.2148 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1033.34 fa_dun 155.451 fa_intra_rep 2.44852 fa_pair -35.391 fa_rep 60.2411 fa_sol 460.316 hack_elec -29.7665 hbond_bb_sc -78.3754 hbond_lr_bb -102.328 hbond_sc -35.1207 hbond_sr_bb -284.557 interface_delta -19.5885 ligand_auto_rms_no_super 0.641085 ligand_auto_rms_with_super 0.0264628 ligand_centroid_travel 0.585374 ligand_is_touching 1 p_aa_pp -37.6439 ref -52.48 total_score -985.335
+SCORES flexbb0_5_1dm2_1aq1_0008 coordinate_constraint 25.2148 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1033.34 fa_dun 155.451 fa_intra_rep 2.44852 fa_pair -35.391 fa_rep 60.2411 fa_sol 460.316 fa_elec -29.7665 hbond_bb_sc -78.3754 hbond_lr_bb -102.328 hbond_sc -35.1207 hbond_sr_bb -284.557 interface_delta -19.5885 ligand_auto_rms_no_super 0.641085 ligand_auto_rms_with_super 0.0264628 ligand_centroid_travel 0.585374 ligand_is_touching 1 p_aa_pp -37.6439 ref -52.48 total_score -985.335
 2 1 -0.565195
 2 2 3.262569
 2 3 -1.234893
@@ -14707,7 +14707,7 @@ SCORES flexbb0_5_1dm2_1aq1_0008 coordinate_constraint 25.2148 dslf_ca_dih 0 dslf
 JUMP 1 -0.021597492664 0.997957425932 -0.060120914318 -0.892642053850 0.007833553711 0.450698124175 0.450248500286 0.063400405866 0.890649581220 7.8317 -8.4741 -12.6095
 END_POSE_TAG flexbb0_5_1dm2_1aq1_0008
 POSE_TAG flexbb0_5_1dm2_1aq1_0009
-SCORES flexbb0_5_1dm2_1aq1_0009 coordinate_constraint 24.4267 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1030.91 fa_dun 155.281 fa_intra_rep 2.39967 fa_pair -33.8954 fa_rep 60.5953 fa_sol 456.335 hack_elec -30.2935 hbond_bb_sc -78.0507 hbond_lr_bb -101.619 hbond_sc -40.6484 hbond_sr_bb -285.809 interface_delta -20.1741 ligand_auto_rms_no_super 0.587876 ligand_auto_rms_with_super 0.0136746 ligand_centroid_travel 0.509994 ligand_is_touching 1 p_aa_pp -38.289 ref -52.48 total_score -992.953
+SCORES flexbb0_5_1dm2_1aq1_0009 coordinate_constraint 24.4267 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1030.91 fa_dun 155.281 fa_intra_rep 2.39967 fa_pair -33.8954 fa_rep 60.5953 fa_sol 456.335 fa_elec -30.2935 hbond_bb_sc -78.0507 hbond_lr_bb -101.619 hbond_sc -40.6484 hbond_sr_bb -285.809 interface_delta -20.1741 ligand_auto_rms_no_super 0.587876 ligand_auto_rms_with_super 0.0136746 ligand_centroid_travel 0.509994 ligand_is_touching 1 p_aa_pp -38.289 ref -52.48 total_score -992.953
 2 1 -0.603250
 2 2 3.262802
 2 3 -1.248809
@@ -15980,7 +15980,7 @@ SCORES flexbb0_5_1dm2_1aq1_0009 coordinate_constraint 24.4267 dslf_ca_dih 0 dslf
 JUMP 1 -0.007481885065 0.993582346727 -0.112863376114 -0.897077099340 0.043197912383 0.439757453837 0.441810705207 0.104537364792 0.890996767742 7.5698 -8.4976 -12.7470
 END_POSE_TAG flexbb0_5_1dm2_1aq1_0009
 POSE_TAG flexbb0_5_1dm2_1aq1_0010
-SCORES flexbb0_5_1dm2_1aq1_0010 coordinate_constraint 26.5898 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1030.54 fa_dun 155.525 fa_intra_rep 2.45139 fa_pair -33.2306 fa_rep 59.3844 fa_sol 457.32 hack_elec -30.5599 hbond_bb_sc -78.3629 hbond_lr_bb -101.552 hbond_sc -39.4186 hbond_sr_bb -286.577 interface_delta -20.5535 ligand_auto_rms_no_super 0.600143 ligand_auto_rms_with_super 0.00916153 ligand_centroid_travel 0.540831 ligand_is_touching 1 p_aa_pp -38.9531 ref -52.48 total_score -990.406
+SCORES flexbb0_5_1dm2_1aq1_0010 coordinate_constraint 26.5898 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1030.54 fa_dun 155.525 fa_intra_rep 2.45139 fa_pair -33.2306 fa_rep 59.3844 fa_sol 457.32 fa_elec -30.5599 hbond_bb_sc -78.3629 hbond_lr_bb -101.552 hbond_sc -39.4186 hbond_sr_bb -286.577 interface_delta -20.5535 ligand_auto_rms_no_super 0.600143 ligand_auto_rms_with_super 0.00916153 ligand_centroid_travel 0.540831 ligand_is_touching 1 p_aa_pp -38.9531 ref -52.48 total_score -990.406
 2 1 -0.608750
 2 2 3.249663
 2 3 -1.231280

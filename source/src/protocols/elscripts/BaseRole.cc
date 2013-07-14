@@ -235,8 +235,8 @@ void BaseRole::instantiate_scorefxns() {
 			for (LuaIterator j=(*i)["emoptions"].begin(), end; j != end; ++j) {
 				if( j.skey() == "softrep_etable" && (*j).to<bool>() ) {
 						emoptions.etable_type( core::scoring::FA_STANDARD_SOFT );
-				} else if( j.skey() == "exclude_protein_protein_hack_elec" ) {
-					emoptions.exclude_protein_protein_hack_elec( (*j).to<bool>() );
+				} else if( j.skey() == "exclude_protein_protein_fa_elec" ) {
+					emoptions.exclude_protein_protein_fa_elec( (*j).to<bool>() );
 				} else if( j.skey() == "exclude_DNA_DNA" ) {
 					emoptions.exclude_DNA_DNA( (*j).to<bool>() );
 				} else if( j.skey() == "use_hb_env_dep_DNA" ) {

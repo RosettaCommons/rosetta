@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/hackelec/HackElecEnergyAroAroCreator.hh
-/// @brief  Declaration for the class that connects HackElecEnergyAroAro with the ScoringManager
+/// @file   src/core/scoring/elec/RNA_FA_ElecEnergyCreator.hh
+/// @brief  Declaration for the class that connects RNA_FA_ElecEnergy with the ScoringManager
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_scoring_hackelec_HackElecEnergyAroAroCreator_hh
-#define INCLUDED_core_scoring_hackelec_HackElecEnergyAroAroCreator_hh
+#ifndef INCLUDED_core_scoring_elec_RNA_FA_ElecEnergyCreator_hh
+#define INCLUDED_core_scoring_elec_RNA_FA_ElecEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -24,12 +24,12 @@
 
 namespace core {
 namespace scoring {
-namespace hackelec {
+namespace elec {
 
-class HackElecEnergyAroAroCreator : public methods::EnergyMethodCreator
+class RNA_FA_ElecEnergyCreator : public methods::EnergyMethodCreator
 {
 public:
-	/// @brief Instantiate a new HackElecEnergyAroAro
+	/// @brief Instantiate a new RNA_FA_ElecEnergy
 	virtual
 	methods::EnergyMethodOP
 		create_energy_method(

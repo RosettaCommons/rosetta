@@ -1112,18 +1112,18 @@ ScoringManager::energy_method(
 		return new custom_pair_distance::FullatomCustomPairDistanceEnergy;
 	case python:
 		return NULL;
-	case hack_elec:
-	case hack_elec_bb_bb:
-	case hack_elec_bb_sc:
-	case hack_elec_sc_sc:
-		return new hackelec::HackElecEnergy( options );
-	case hack_elec_rna_phos_phos:
-	case hack_elec_rna_phos_sugr:
-	case hack_elec_rna_phos_base:
-	case hack_elec_rna_sugr_sugr:
-	case hack_elec_rna_sugr_base:
-	case hack_elec_rna_base_base:
-		return new hackelec::RNAHackElecEnergy( options );
+	case fa_elec:
+	case fa_elec_bb_bb:
+	case fa_elec_bb_sc:
+	case fa_elec_sc_sc:
+		return new elec::FA_ElecEnergy( options );
+	case fa_elec_rna_phos_phos:
+	case fa_elec_rna_phos_sugr:
+	case fa_elec_rna_phos_base:
+	case fa_elec_rna_sugr_sugr:
+	case fa_elec_rna_sugr_base:
+	case fa_elec_rna_base_base:
+		return new elec::RNA_FA_ElecEnergy( options );
 	case dna_bp:
 	case dna_bs:
 		return new DNA_BaseEnergy;

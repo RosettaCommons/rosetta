@@ -1,5 +1,5 @@
 METHOD_WEIGHTS ref 0.136942 -0.0610066 -0.42282 -0.489735 1.11057 -0.259474 0.877498 0.351803 -0.247374 0.162328 -0.281323 -0.74998 -0.811285 -0.609973 -0.50916 -0.367417 -0.27546 0.280844 1.26533 0.899696 
-NO_PROTEIN_PROTEIN_HACK_ELEC
+NO_PROTEIN_PROTEIN_FA_ELEC
 fa_atr 0.8
 fa_rep 0.44
 fa_sol 0.65
@@ -25,6 +25,6 @@ atom_pair_constraint 1.0
 angle_constraint 1.0
 dihedral_constraint 1.0
 res_type_constraint 1.0
-hack_elec 0.5
+fa_elec 0.5
 ch_bond_bb_bb 0.5
 fa_cust_pair_dist 1.0

@@ -11,11 +11,11 @@
 /// @brief
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_scoring_hackelec_ElecAtom_hh
-#define INCLUDED_core_scoring_hackelec_ElecAtom_hh
+#ifndef INCLUDED_core_scoring_elec_ElecAtom_hh
+#define INCLUDED_core_scoring_elec_ElecAtom_hh
 
 // Unit Headers
-#include <core/scoring/hackelec/ElecAtom.fwd.hh>
+#include <core/scoring/elec/ElecAtom.fwd.hh>
 
 // Project Headers
 #include <core/conformation/Atom.hh>
@@ -27,7 +27,7 @@
 
 namespace core {
 namespace scoring {
-namespace hackelec {
+namespace elec {
 
 class ElecAtom : public conformation::Atom
 {
@@ -138,7 +138,7 @@ private:
 
 std::ostream & operator << ( std::ostream & os, ElecAtom const & atom );
 
-} // namespace hackelec
+} // namespace elec
 } // namespace scoring
 } // namespace core
 

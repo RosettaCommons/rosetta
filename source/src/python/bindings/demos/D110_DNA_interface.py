@@ -122,7 +122,7 @@ def sample_dna_interface(pdb_filename, partners,
 
     # 4. create ScoreFunctions for centroid and fullatom docking
     scorefxn = create_score_function('dna')
-    scorefxn.set_weight(hack_elec , 1)    # an "electrostatic" term
+    scorefxn.set_weight(fa_elec , 1)    # an "electrostatic" term
 
     #### global docking, a problem solved by the Rosetta DockingProtocol,
     ####    requires interface detection and refinement
@@ -392,7 +392,7 @@ algorithms perform and to find what moves best suite your problem.
 """
 The "ligand" ScoreFunction is optimized for ligand-protein interface prediction and
 is very similar to the "standard" ScoreFunction with modified weights. The
-score term "hack_elec" is activated to (further) penalize structures with poor
+score term "fa_elec" is activated to (further) penalize structures with poor
 electrostatic interactions. The adjusted (and activated) weights in the "ligand"
 ScoreFunction exist to emphasize interactions between the ligand and protein.
 Many score terms representing enthaplic bonuses (hydrogen bond formation,

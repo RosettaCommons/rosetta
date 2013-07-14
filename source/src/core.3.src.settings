@@ -321,12 +321,12 @@ sources = {
 	"core/scoring/hackaro": [
 		"HackAroEnergy",
 	],
-	"core/scoring/hackelec": [
+	"core/scoring/elec": [
 		"ElecAtom",
-		"HackElecEnergy",
-		"HackElecEnergyAroAll",
-		"HackElecEnergyAroAro",
-		"RNAHackElecEnergy",
+		"FA_ElecEnergy",
+		"FA_ElecEnergyAroAll",
+		"FA_ElecEnergyAroAro",
+		"RNA_FA_ElecEnergy",
 	],
 	"core/scoring/hbonds": [
 		"FadeInterval",

@@ -48,7 +48,7 @@
 // AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
-// AUTO-REMOVED #include <core/scoring/hackelec/HackElecEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/elec/FA_ElecEnergy.hh>
 //#include <core/scoring/etable/EtableEnergy.hh>
 // AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairAll.hh>
 // AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>

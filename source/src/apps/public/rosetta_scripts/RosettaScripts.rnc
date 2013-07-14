@@ -54,13 +54,13 @@ start =
          | element dna_elec_nobp {
              attribute weights { xsd:string }
            }
-         | element dnasoftrep_hackelec {
+         | element dnasoftrep_elec {
              attribute weights { xsd:string }
            }
          | element ddg {
              attribute weights { xsd:string }
            }
-         | element dnasoftrep_hackelec_dnabp {
+         | element dnasoftrep_elec_dnabp {
              attribute weights { xsd:string }
            }
          | element encourage_hbonds {

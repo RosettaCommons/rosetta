@@ -926,7 +926,7 @@ void FACTSPotential::calculate_GBpair_exact(
 
 			// Adjacent respair 1-4, 1-5: special care to avoid overlap with Rama term
 			// 1-4 weight is 0.0, 1-5 weight is 0.2, and else 1.0
-			// This is just to be consistent with the "hacked way" in hack_elec
+			// This is just to be consistent with the "hacked way" in fa_elec
 			Real cpweight = 1.0;
 			if( adjacent ){
 				bool is_cp = cpfxn14->count( atm1, atm2, cpweight, path_dist );
@@ -955,7 +955,7 @@ void FACTSPotential::calculate_GBpair_exact(
 			Real BRj = facts2.BR(atm2);
 			Real dshift2( 0.0 );
 
-			// Fading short-distance solvation effect, to be in harmonied with hack_elec
+			// Fading short-distance solvation effect, to be in harmonied with fa_elec
 			// Consider self-energy (and pseudo self-energy b/w 1-2, 1-3) to be free from hacking.
 			if( self_pair ){
 				dshift2 = 0.0;
@@ -1492,7 +1492,7 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 
 			// Adjacent respair 1-4, 1-5: special care to avoid overlap with Rama term
 			// 1-4 weight is 0.0, 1-5 weight is 0.2, and else 1.0
-			// This is just to be consistent with the "hacked way" in hack_elec
+			// This is just to be consistent with the "hacked way" in fa_elec
 			Real cpweight = 1.0;
 			if( adjacent ){
 				bool is_cp = cpfxn14->count( atm1, atm2, cpweight, path_dist );
@@ -1523,7 +1523,7 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 			Real BRj = facts2.BR(atm2);
 			Real dshift2( 0.0 );
 
-			// Fading short-distance solvation effect, to be in harmonied with hack_elec
+			// Fading short-distance solvation effect, to be in harmonied with fa_elec
 			// Consider self-energy (and pseudo self-energy b/w 1-2, 1-3) to be free from hacking.
 			if( self_pair ){
 				dshift2 = 0.0;

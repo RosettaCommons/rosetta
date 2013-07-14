@@ -116,7 +116,7 @@ LigandBaseProtocol::LigandBaseProtocol():
 		soft_scorefxn_ = make_tweaked_scorefxn("ligand_soft_rep", rosetta_electrostatics, rosetta_electrostatics, hbonds_downweight);
 	} else {
 		// Use plain scorefunctions - user specified ones if given, else the regular ones (but non-tweaked).
-		// Note that you should now be able to specify exclude_protein_protein_hack_elec in the weights files.
+		// Note that you should now be able to specify exclude_protein_protein_fa_elec in the weights files.
 		if ( option[ OptionKeys::score::weights ].user() || option[ OptionKeys::score::patch ].user() ) {
 			TR.Debug << "Using untweaked command-line specified (hard) scorefunction. " << std::endl;
 			hard_scorefxn_ = core::scoring::getScoreFunction();
@@ -170,7 +170,7 @@ LigandBaseProtocol::make_tweaked_scorefxn(
 
 	// manipulate EnergyMethodOptions here
 	methods::EnergyMethodOptions options( sfxn->energy_method_options() );
-	options.exclude_protein_protein_hack_elec( estat_exclude_protein );
+	options.exclude_protein_protein_fa_elec( estat_exclude_protein );
 	sfxn->set_energy_method_options( options );
 
 	sfxn->add_weights_from_file( basic::database::full_name( "scoring/weights/"+weights_tag+".wts" ) );
@@ -183,11 +183,11 @@ LigandBaseProtocol::make_tweaked_scorefxn(
 	if( sfxn->has_zero_weight( fa_intra_rep ) ) sfxn->set_weight( fa_intra_rep, 0.004 ); // from standard.wts
 
 	// For some reason, electrostatics is not in the .wts files...
-	// hack_elec has a different dielectric constant than Rosetta++ (10r vs. 6r in ++)
+	// fa_elec has a different dielectric constant than Rosetta++ (10r vs. 6r in ++)
 	// It also includes all atom pairs instead of only ligand-protein interactions.
-	if( sfxn->has_zero_weight( hack_elec ) ) sfxn->set_weight( hack_elec, 0.25 ); // from Meiler & Baker 2006
+	if( sfxn->has_zero_weight( fa_elec ) ) sfxn->set_weight( fa_elec, 0.25 ); // from Meiler & Baker 2006
 
-	if( estat_upweight ) sfxn->set_weight( hack_elec, (10./6.) * sfxn->get_weight( hack_elec ) ); // make like Rosetta++
+	if( estat_upweight ) sfxn->set_weight( fa_elec, (10./6.) * sfxn->get_weight( fa_elec ) ); // make like Rosetta++
 
 	if( hbonds_downweight ) {
 		sfxn->set_weight( hbond_sc, 1.30 ); // from Lin Jiang

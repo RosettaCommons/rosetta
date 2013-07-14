@@ -529,7 +529,7 @@ sources = {
 		#"enumeration_test",
 		#"design_symm",
 		#"char_native",
-		#"design_symm_no_hack_elec",
+		#"design_symm_no_fa_elec",
 		#"symdock_enum_3_1",
 		#"symdock_enum",
 		#"des_pos_ddG",

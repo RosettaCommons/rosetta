@@ -421,7 +421,7 @@ MMLJEnergyInter::evaluate_rotamer_pair_energies(
 	temp_table1 = 0; temp_table2 = 0;
 
 // 	// save weight information so that its available during tvt execution
-// 	hackelec_weight_ = weights[ hack_elec ];
+// 	elec_weight_ = weights[ fa_elec ];
 
 	RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( mm_lj_energy_inter_method )() ));
 	RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( mm_lj_energy_inter_method )() ));

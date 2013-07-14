@@ -1,5 +1,5 @@
 SEQUENCE: ucagguaagcag
-SCORE:     score     fa_atr     fa_rep    fa_intra_rep    lk_nonpolar    hack_elec_rna_phos_phos    ch_bond    rna_torsion    rna_sugar_close    hbond_sr_bb_sc    hbond_lr_bb_sc    hbond_sc    geom_sol    atom_pair_constraint    angle_constraint    linear_chainbreak        rms    rms_stem       N_WC      N_NWC       N_BS    f_natWC    f_natNWC    f_natBP description
+SCORE:     score     fa_atr     fa_rep    fa_intra_rep    lk_nonpolar    fa_elec_rna_phos_phos    ch_bond    rna_torsion    rna_sugar_close    hbond_sr_bb_sc    hbond_lr_bb_sc    hbond_sc    geom_sol    atom_pair_constraint    angle_constraint    linear_chainbreak        rms    rms_stem       N_WC      N_NWC       N_BS    f_natWC    f_natNWC    f_natBP description
 SCORE:   -52.413    -21.993      1.852           0.504          0.864                      0.045    -14.372          0.684              0.330            -0.009             0.000     -40.548      20.158                   0.072               0.000                0.000      4.244       2.034      3.000      1.000      7.000      1.000       0.000      0.286    S_000001
 FOLD_TREE  JEDGE 1 12 1  C2   C4   END  EDGE 1 6 -1  EDGE 12 7 -1 
 RT -0.951335 0.168124 0.258255 0.136148 0.981143 -0.137192 -0.27645 -0.095355 -0.956286 6.02609 1.15244 0.957888  

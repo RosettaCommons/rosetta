@@ -136,7 +136,7 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool 
   allowed_aas[aa_cys] = false;
   allowed_aas[aa_gly] = false;
 	allowed_aas[aa_pro] = false;
-	// Set used to design O333, for use with hack_elec9000
+	// Set used to design O333, for use with fa_elec9000
 /*
   if(hphobic_only == true) {
     allowed_aas[aa_ala] = true;
@@ -530,10 +530,10 @@ void
 	chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 	core::io::silent::SilentFileData sfd;
 
-	// Create a score function object, turn hack_elec off in the monomer
+	// Create a score function object, turn fa_elec off in the monomer
 	ScoreFunctionOP sf = getScoreFunction();
 	core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
-	eo.exclude_monomer_hack_elec(true);
+	eo.exclude_monomer_fa_elec(true);
 	sf->set_energy_method_options(eo);
 
 	utility::vector1<std::string> files = option[in::file::s]();

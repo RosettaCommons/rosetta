@@ -233,8 +233,8 @@
 #include <core/scoring/etable/etrie/TrieCountPairAll.fwd.hh>
 #include <core/scoring/etable/etrie/TrieCountPairGeneric.fwd.hh>
 #include <core/scoring/etable/etrie/TrieCountPairNone.fwd.hh>
-#include <core/scoring/hackelec/ElecAtom.fwd.hh>
-#include <core/scoring/hackelec/HackElecEnergy.fwd.hh>
+#include <core/scoring/elec/ElecAtom.fwd.hh>
+#include <core/scoring/elec/FA_ElecEnergy.fwd.hh>
 #include <core/scoring/hbonds/HBondEnergy.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/hbonds/hbtrie/HBAtom.fwd.hh>

@@ -149,24 +149,24 @@ if disulf_file != '':
     make_ads_disulf(start_pose, disulf_file)
 
 # Default score functions
-hackelec = 1.0
+elec = 1.0
 score_high = create_score_function("score12")
-score_high.set_weight(hack_elec, hackelec)
-score_high.set_weight(fa_pair, 0.0) # fa_pair duplicates what hack_elec scores
+score_high.set_weight(fa_elec, elec)
+score_high.set_weight(fa_pair, 0.0) # fa_pair duplicates what fa_elec scores
 score_high.set_weight(atom_pair_constraint, 1.0)
 score_high.set_weight(dihedral_constraint, 1.0)
         
 score_pack = create_score_function("score12")
-score_pack.set_weight(hack_elec, hackelec)
+score_pack.set_weight(fa_elec, elec)
 score_pack.set_weight(fa_rep, 0.44)
-score_pack.set_weight(fa_pair, 0.0) # fa_pair duplicates what hack_elec scores
+score_pack.set_weight(fa_pair, 0.0) # fa_pair duplicates what fa_elec scores
 score_pack.set_weight(atom_pair_constraint, 1.0)
 score_pack.set_weight(dihedral_constraint, 1.0)
     
 std_scorefxn = create_score_function("score12")
-std_scorefxn.set_weight(hack_elec, hackelec)
+std_scorefxn.set_weight(fa_elec, elec)
 std_scorefxn.set_weight(fa_rep, 0.44)
-std_scorefxn.set_weight(fa_pair, 0.0) # fa_pair duplicates what hack_elec scores
+std_scorefxn.set_weight(fa_pair, 0.0) # fa_pair duplicates what fa_elec scores
 std_scorefxn.set_weight(atom_pair_constraint, 1.0)
 std_scorefxn.set_weight(dihedral_constraint, 1.0)
 

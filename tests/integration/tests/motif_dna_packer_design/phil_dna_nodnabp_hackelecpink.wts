@@ -22,7 +22,7 @@ h2o_hbond 0.4
 h2o_intra 0.2
 chainbreak 1.0
 rama 0.2
-hack_elec 0.5
+fa_elec 0.5
 res_type_constraint 0.5
 #fa_pair 0.2
 NO_HB_ENV_DEP_DNA

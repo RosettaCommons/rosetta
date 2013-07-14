@@ -5,4 +5,4 @@ hbond_lr_bb 1.17
 hbond_sr_bb 1.17
 hbond_bb_sc 1.17
 hbond_sc 1.1
-hack_elec 0.7
+fa_elec 0.7

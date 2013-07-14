@@ -107,7 +107,7 @@ SurfaceDockingProtocol::SurfaceDockingProtocol() : Mover(){
 	score_sidechain_pack_ = scoring::getScoreFunction();
 	// setting weighs for score12
 	TR << "Setting Weights for score12" << std::endl;
-	score_sidechain_pack_->set_weight( core::scoring::hack_elec, 1.0 );
+	score_sidechain_pack_->set_weight( core::scoring::fa_elec, 1.0 );
 	//score_sidechain_pack_->set_weight(core::scoring::fa_atr,0.97);
 	//score_sidechain_pack_->set_weight(core::scoring::fa_sol,0.92);
 	//score_sidechain_pack_->set_weight(core::scoring::fa_rep,0.64);

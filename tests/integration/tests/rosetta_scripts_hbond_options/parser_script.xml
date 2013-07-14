@@ -4,7 +4,7 @@
 
 		<s_explicit weights=score12prime>
 		        Parameters options
-			<Set hbonds:params_database_tag=sp2_hackelec_params/>
+			<Set hbonds:params_database_tag=sp2_elec_params/>
 
 			Functional form options
 			<Set hbonds:exclude_self_hbonds=true/>

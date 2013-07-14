@@ -7,48 +7,48 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/RNAHackElecEnergy.hh
-/// @brief  Electrostatics for RNA
-/// @author Rhiju Das
+/// @file   core/scoring/methods/FA_ElecEnergyAroAll.hh
+/// @brief  Electrostatics between aromatics and all surrounding atoms
+/// @author Rhiju Das, modified to AroAll by James Gleixner
 
 
-#ifndef INCLUDED_core_scoring_hackelec_RNAHackElecEnergy_hh
-#define INCLUDED_core_scoring_hackelec_RNAHackElecEnergy_hh
+#ifndef INCLUDED_core_scoring_elec_FA_ElecEnergyAroAll_hh
+#define INCLUDED_core_scoring_elec_FA_ElecEnergyAroAll_hh
 
 /// Unit Headers
-#include <core/scoring/hackelec/RNAHackElecEnergy.fwd.hh>
+#include <core/scoring/elec/FA_ElecEnergyAroAll.fwd.hh>
 
 /// Package Headers
-#include <core/scoring/hackelec/HackElecEnergy.hh>
+#include <core/scoring/elec/FA_ElecEnergy.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
+
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
 #include <utility/vector1.hh>
 
 
-
 namespace core {
 namespace scoring {
-namespace hackelec {
+namespace elec {
 
 ///
-class RNAHackElecEnergy : public HackElecEnergy  {
+class FA_ElecEnergyAroAll : public FA_ElecEnergy  {
 public:
-	typedef HackElecEnergy parent;
+	typedef FA_ElecEnergy parent;
 	typedef ContextIndependentTwoBodyEnergy grandparent;
 
 public:
 
 	///
-	RNAHackElecEnergy( methods::EnergyMethodOptions const & options );
+	FA_ElecEnergyAroAll( methods::EnergyMethodOptions const & options );
 
 	///
-	RNAHackElecEnergy( RNAHackElecEnergy const & src );
+	FA_ElecEnergyAroAll( FA_ElecEnergyAroAll const & src );
 
 
 	/// clone
@@ -100,19 +100,12 @@ public:
 
 	/// @brief Returns "true" because this energy method has not been updated to
 	/// use the new derivative evaluation machinery.  Note that this class requires
-	/// the definition of this method because it's parent class, HackElecEnergy,
+	/// the definition of this method because it's parent class, FA_ElecEnergy,
 	/// HAS been updated to use the new derivative evaluation machinery, and,
 	/// if this class did not return "true", it would be asked to evaluate derivatives
 	/// in ways it cannot yet evaluate them in.
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const { return true; }
-
-
-	/// @brief Jan 10, 2012. Parin Sripakdeevon (sripakpa@stanford.edu)
-	/// Returns "false" to overwrite the behavior in the parent class (HackElecEnergy)! 
-	virtual
-	bool
-	use_extended_residue_pair_energy_interface() const { return false; }
 
 	virtual
 	void
@@ -174,14 +167,14 @@ public:
 
 
 	Real
-	residue_pair_energy_RNA(
+	residue_pair_energy_aro_aro(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		EnergyMap & emap
 	) const;
 
 	void
-	eval_atom_derivative_RNA(
+	eval_atom_derivative_aro_aro(
 	   conformation::Residue const & rsd1,
 		 Size const & i,
 		 conformation::Residue const & rsd2,

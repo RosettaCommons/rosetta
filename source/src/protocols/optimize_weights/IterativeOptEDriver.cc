@@ -2987,7 +2987,7 @@ IterativeOptEDriver::free_weights_and_refEs_from_vars(
 /// @brief
 /// Sets functional forms (e.g. soft-rep) but doesn't set any weights.
 /// If the option -optE::optE_soft_rep is specified, then an empty scorefunction with the FA_STANDARD_SOFT etable
-/// is returned.  Another option is -optE::optE_no_protein_hack_elec.  This excludes protein_protein_hack_elec in the
+/// is returned.  Another option is -optE::optE_no_protein_fa_elec.  This excludes protein_protein_fa_elec in the
 /// the scorefunction energy method options.
 ///
 ScoreFunctionOP
@@ -2999,9 +2999,9 @@ IterativeOptEDriver::configure_new_scorefunction() const
 		options.etable_type( FA_STANDARD_SOFT );
 		scorefxn->set_energy_method_options( options );
 	}
-	if ( option[ optE::optE_no_protein_hack_elec ]() ) {
+	if ( option[ optE::optE_no_protein_fa_elec ]() ) {
 		methods::EnergyMethodOptions options( scorefxn->energy_method_options() );
-		options.exclude_protein_protein_hack_elec( true );
+		options.exclude_protein_protein_fa_elec( true );
 		scorefxn->set_energy_method_options( options );
 	}
 	if ( option[ optE::no_hb_env_dependence ] ) {

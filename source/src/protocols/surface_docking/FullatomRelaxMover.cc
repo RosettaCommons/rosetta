@@ -103,12 +103,12 @@ void FullatomRelaxMover::setup_defaults(){
 	score_high_res_ = scoring::getScoreFunction();
 	// setting weighs
 	TR << "Setting Weighs" << std::endl;
-	score_high_res_->set_weight( core::scoring::hack_elec, 0.25 );
+	score_high_res_->set_weight( core::scoring::fa_elec, 0.25 );
 	//score_high_res_->set_weight(core::scoring::fa_atr,0.95);
 	//score_high_res_->set_weight(core::scoring::fa_sol,0.90);
 	//score_high_res_->set_weight(core::scoring::fa_rep,0.70);
 	// added by Robin on Jun 17
-	//score_high_res_->set_weight( core::scoring::hack_elec, 0.5 );
+	//score_high_res_->set_weight( core::scoring::fa_elec, 0.5 );
 	smallmin_type_="linmin";
 	shearmin_type_="dfpmin";
 	benchmark_=false;

@@ -1,5 +1,5 @@
 SEQUENCE: cugggacggauuuccgaaugauacaauccaaugaggagagga
-SCORE:     score     fa_atr     fa_rep    fa_intra_rep    lk_nonpolar    hack_elec_rna_phos_phos    ch_bond    rna_torsion    rna_sugar_close    fa_stack    CI_geom_sol    hbond_sr_bb_sc    hbond_lr_bb_sc    hbond_sc    atom_pair_constraint    angle_constraint    rna_bulge    linear_chainbreak    NAT_rmsd description
+SCORE:     score     fa_atr     fa_rep    fa_intra_rep    lk_nonpolar    fa_elec_rna_phos_phos    ch_bond    rna_torsion    rna_sugar_close    fa_stack    CI_geom_sol    hbond_sr_bb_sc    hbond_lr_bb_sc    hbond_sc    atom_pair_constraint    angle_constraint    rna_bulge    linear_chainbreak    NAT_rmsd description
 REMARK BINARY_SILENTFILE RNA 
 SCORE:  -123.922   -101.810     11.680           0.870         10.535                      3.965    -62.003         54.539             22.387     -69.842         92.297            -0.997           -12.611     -72.931                   0.000               0.000        0.000                0.000       0.836    S_000001
 FOLD_TREE  EDGE 1 3 -1  JEDGE 1 42 1  C4   C2   END  EDGE 42 4 -1  S_000001

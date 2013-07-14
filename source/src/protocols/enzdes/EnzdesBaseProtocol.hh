@@ -213,7 +213,7 @@ private:
 	bool minimize_all_ligand_torsions_;
 	core::Real lig_min_stddev_;
 
-	bool exclude_protein_protein_hack_elec_, fix_catalytic_aa_;
+	bool exclude_protein_protein_fa_elec_, fix_catalytic_aa_;
 
 }; //class EnzdesBaseProtocol
 

@@ -203,7 +203,7 @@ public:
 		one_score_type_test(mm_twist, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/mm_twist.data");
 		//one_score_type_test(mm_bend, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/mm_bend.u");
 		//one_score_type_test(mm_stretch, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/mm_stretch.u");
-		one_score_type_test(hack_elec, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/hack_elec.data");
+		one_score_type_test(fa_elec, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/fa_elec.data");
 		one_score_type_test(atom_pair_constraint, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/atom_pair_constraint.data");
 		one_score_type_test(coordinate_constraint, "core/scoring/symmetry/test_in.pdb", "core/scoring/symmetry/coordinate_constraint.data");
 

@@ -1,5 +1,5 @@
 SEQUENCE: cgcuucauauaugaagug
-SCORE:     score     fa_atr     fa_rep    fa_intra_rep    lk_nonpolar    hack_elec_rna_phos_phos    ch_bond    rna_torsion    rna_sugar_close    fa_stack    hbond_sr_bb_sc    hbond_lr_bb_sc    hbond_sc    geom_sol    atom_pair_constraint description
+SCORE:     score     fa_atr     fa_rep    fa_intra_rep    lk_nonpolar    fa_elec_rna_phos_phos    ch_bond    rna_torsion    rna_sugar_close    fa_stack    hbond_sr_bb_sc    hbond_lr_bb_sc    hbond_sc    geom_sol    atom_pair_constraint description
 REMARK BINARY_SILENTFILE RNA 
 SCORE:  -405.840    -51.431      8.641           0.370          0.434                     -0.369    -26.014         17.044              5.236    -317.472            -0.323             0.000     -94.993      52.496                   0.542       S_001
 FOLD_TREE  JEDGE 1 18 1  C2   C4   END  EDGE 1 9 -1  EDGE 18 10 -1  S_001

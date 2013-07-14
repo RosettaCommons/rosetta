@@ -232,7 +232,7 @@ void design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, 
 	allowed_aas[aa_cys] = false;
 	allowed_aas[aa_gly] = false;
 	allowed_aas[aa_pro] = false;
-	// Set used to design O333, for use with hack_elec9000
+	// Set used to design O333, for use with fa_elec9000
 
 	// Get the symmetry info and make the packer task
 	SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
@@ -618,10 +618,10 @@ void *dostuff(void*) {
 	Real cmp2nangle = comp_nangle[cmp2type];
 
 	option[OptionKeys::symmetry::symmetry_definition]("input/"+compkind[1].substr(0,1)+".sym");
-	// Create a score function object, turn hack_elec off in the monomer
+	// Create a score function object, turn fa_elec off in the monomer
 	ScoreFunctionOP sf = getScoreFunction();
 	// core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
-	// eo.exclude_monomer_hack_elec(true);
+	// eo.exclude_monomer_fa_elec(true);
 	// sf->set_energy_method_options(eo);
 
 	Real const contact_dist = option[matdes::design::contact_dist]();

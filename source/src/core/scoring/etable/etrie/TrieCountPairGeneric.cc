@@ -18,7 +18,7 @@
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
-#include <core/scoring/hackelec/HackElecEnergy.hh>
+#include <core/scoring/elec/FA_ElecEnergy.hh>
 #include <core/scoring/methods/MMLJEnergyInter.hh>
 
 #include <core/scoring/trie/trie_vs_trie.hh>
@@ -901,9 +901,9 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 /// Hack Elec E
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -914,9 +914,9 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -927,9 +927,9 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -939,9 +939,9 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -951,46 +951,9 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
-)
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-
-void
-TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
-)
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
-	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
-)
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -1001,9 +964,9 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -1013,9 +976,9 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -1025,9 +988,22 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+
+void
+TrieCountPairGeneric::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -1037,9 +1013,9 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -1049,9 +1025,9 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -1061,9 +1037,9 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -1073,9 +1049,9 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
 )
@@ -1085,9 +1061,33 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_trie(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & trie1,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & trie2,
-	hackelec::HackElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /* temp_table*/
+)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_trie(
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie1,
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie2,
+	elec::FA_ElecEnergy const & sfxn,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
 )
@@ -1098,9 +1098,9 @@ TrieCountPairGeneric::resolve_trie_vs_trie(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1110,9 +1110,9 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1122,9 +1122,9 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1133,21 +1133,9 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1157,9 +1145,9 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1169,9 +1157,9 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1181,20 +1169,9 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1204,9 +1181,20 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1216,53 +1204,9 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
-	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
-	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
-{
-	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
-}
-
-void
-TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -1272,9 +1216,65 @@ TrieCountPairGeneric::resolve_trie_vs_path(
 
 void
 TrieCountPairGeneric::resolve_trie_vs_path(
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & trie1,
-	trie::RotamerTrie< hackelec::ElecAtom, CountPairDataGeneric > const & trie2,
-	hackelec::HackElecEnergy const & sfxn,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_1 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_2 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< elec::ElecAtom, CountPairData_1_3 > const & /*trie2*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
+{
+	utility_exit_with_message("Dispatch error. Arrived at TrieCountPairGeneric with incompatible count pair data!");
+}
+
+
+void
+TrieCountPairGeneric::resolve_trie_vs_path(
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie1,
+	trie::RotamerTrie< elec::ElecAtom, CountPairDataGeneric > const & trie2,
+	elec::FA_ElecEnergy const & sfxn,
 	utility::vector1< core::PackerEnergy > & pair_energy_vector,
 	utility::vector1< core::PackerEnergy > & temp_vector)
 {

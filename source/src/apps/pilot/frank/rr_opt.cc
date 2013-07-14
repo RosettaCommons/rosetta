@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/hackelec/HackElecEnergy.hh>
+#include <core/scoring/elec/FA_ElecEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/util/cryst_util.hh>
@@ -75,7 +75,7 @@ OPT_1GRP_KEY(Boolean, rropt, allwts)
 OPT_1GRP_KEY(Boolean, rropt, bbmove)
 OPT_1GRP_KEY(Boolean, rropt, ideal)
 OPT_1GRP_KEY(Boolean, rropt, etable)
-OPT_1GRP_KEY(Boolean, rropt, hackelec)
+OPT_1GRP_KEY(Boolean, rropt, elec)
 OPT_1GRP_KEY(String, rropt, sflo)
 OPT_1GRP_KEY(String, rropt, sfhi)
 
@@ -134,7 +134,7 @@ sf2multivec( core::scoring::ScoreFunctionCOP scorefxn, Multivec &y, bool islow=f
 		y.push_back( scorefxn->get_weight( core::scoring::fa_intra_rep ) );
 		y.push_back( scorefxn->get_weight( core::scoring::fa_intra_sol ) );
 		y.push_back( scorefxn->get_weight( core::scoring::fa_intra_atr ) );
-		y.push_back( scorefxn->get_weight( core::scoring::hack_elec ) );
+		y.push_back( scorefxn->get_weight( core::scoring::fa_elec ) );
 		y.push_back( scorefxn->get_weight( core::scoring::hbond_sr_bb ) );  // other hbond 'riding'
 		if (option[rropt::bbmove]()) {
 			y.push_back( scorefxn->get_weight( core::scoring::rama ) );
@@ -163,7 +163,7 @@ multivec2sf( Multivec const &vars, core::scoring::ScoreFunctionOP scorefxn ) {
 		scorefxn->set_weight( core::scoring::fa_intra_rep , vars[counter++]) ;
 		scorefxn->set_weight( core::scoring::fa_intra_sol , vars[counter++]) ;
 		scorefxn->set_weight( core::scoring::fa_intra_atr , vars[counter++]) ;
-		scorefxn->set_weight( core::scoring::hack_elec , vars[counter++]) ;
+		scorefxn->set_weight( core::scoring::fa_elec , vars[counter++]) ;
 		scorefxn->set_weight( core::scoring::hbond_sr_bb , vars[counter]) ;
 		scorefxn->set_weight( core::scoring::hbond_lr_bb , vars[counter]) ;
 		scorefxn->set_weight( core::scoring::hbond_bb_sc , vars[counter]) ;

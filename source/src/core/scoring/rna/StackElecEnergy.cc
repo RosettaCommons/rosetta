@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/rna/StackElecEnergy.cc
-/// @brief  HackElec, but just 'perpendicular' to bases... trying to separate from H-bonds & geom_sol.
+/// @brief  FA_Elec, but just 'perpendicular' to bases... trying to separate from H-bonds & geom_sol.
 /// @author Rhiju Das
 
 
@@ -43,13 +43,13 @@ using namespace ObjexxFCL::fmt;
 
 
 ////////////////////////////////////////////////////////////////////////////////////
-// StackElecEnergy: Mash-up of HackElecEnergy & RNA_FullAtomStackingEnergy.
+// StackElecEnergy: Mash-up of FA_ElecEnergy & RNA_FullAtomStackingEnergy.
 //
 //  We need an approximate treatment of electrostatics, to handle several
 //   puzzles in RNA modeling, including penalties  for 5'-CG-3' turner rule,
 //   favored structures in the tandem GA motif, etc.
 //
-//  Unfortunately, just using hack_elec doesn't solve this -- severe convolution
+//  Unfortunately, just using fa_elec doesn't solve this -- severe convolution
 //   with hydrogen bonds. This stack_elec function separates electrostatics
 //   'perpendicular' to nucleobases away from hydrogen bonds & geom_sol which
 //   have been balanced to account for in-plane interactions (base pairing).
@@ -380,7 +380,7 @@ StackElecEnergy::get_stack_elec_score( Vector const & r_i,
 	Real const z = dot( z_i, r_vec );
 	Real const cos_kappa = z / r;
 
-  Real score  = coulomb().eval_atom_atom_hack_elecE( r_i, i_charge, r_j, j_charge);
+  Real score  = coulomb().eval_atom_atom_fa_elecE( r_i, i_charge, r_j, j_charge);
 
   //Orientation dependence
 	cos_kappa2 = cos_kappa * cos_kappa;
@@ -425,7 +425,7 @@ StackElecEnergy::get_stack_elec_deriv( Vector const & r_i,
 	/////////////////////////////////
 	//dE_dcoskappa
 	/////////////////////////////////
-	Real dE_dcoskappa = coulomb().eval_atom_atom_hack_elecE( r_i, i_charge, r_j, j_charge);
+	Real dE_dcoskappa = coulomb().eval_atom_atom_fa_elecE( r_i, i_charge, r_j, j_charge);
   dE_dcoskappa  *= 2 * cos_kappa;
 
 
@@ -433,7 +433,7 @@ StackElecEnergy::get_stack_elec_deriv( Vector const & r_i,
 	//dE_dr
 	/////////////////////////////////
 	Real const r2 = r_vec.length_squared();
-  Real dE_dr_over_r  = coulomb().eval_dhack_elecE_dr_over_r( r2, i_charge, j_charge );
+  Real dE_dr_over_r  = coulomb().eval_dfa_elecE_dr_over_r( r2, i_charge, j_charge );
   //Orientation dependence
   dE_dr_over_r *= cos_kappa * cos_kappa ;
 

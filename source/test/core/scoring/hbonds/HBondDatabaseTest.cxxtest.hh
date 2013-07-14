@@ -65,7 +65,7 @@ public:
 		tags.push_back( "extended_BAH_params" );
 		tags.push_back( "newCHI_params" );
 		tags.push_back( "sp2_params" );
-		tags.push_back( "sp2_hackelec_params" );
+		tags.push_back( "sp2_elec_params" );
 		for( Size i = 1; i <= tags.size(); ++i ){
 			// Validate data integrity
 			HBondOptionsCOP hb_options(new HBondOptions( tags[i] ));

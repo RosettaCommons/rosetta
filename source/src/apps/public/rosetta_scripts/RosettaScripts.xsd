@@ -97,7 +97,7 @@
                     <xs:attribute name="weights" type="xs:string" use="required" />
                   </xs:complexType>
                 </xs:element>
-                <xs:element name="dnasoftrep_hackelec">
+                <xs:element name="dnasoftrep_elec">
                   <xs:complexType>
                     <xs:attribute name="weights" type="xs:string" use="required" />
                   </xs:complexType>
@@ -107,7 +107,7 @@
                     <xs:attribute name="weights" type="xs:string" use="required" />
                   </xs:complexType>
                 </xs:element>
-                <xs:element name="dnasoftrep_hackelec_dnabp">
+                <xs:element name="dnasoftrep_elec_dnabp">
                   <xs:complexType>
                     <xs:attribute name="weights" type="xs:string" use="required" />
                   </xs:complexType>

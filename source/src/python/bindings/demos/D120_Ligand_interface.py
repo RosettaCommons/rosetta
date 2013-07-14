@@ -573,7 +573,7 @@ algorithms perform and to find what moves best suite your problem.
 """
 The "dna" ScoreFunction is optimized for DNA-protein interface prediction and
 is very similar to the "standard" ScoreFunction with modified weights. The
-score term "hack_elec" is activated to (further) penalize structures with poor
+score term "fa_elec" is activated to (further) penalize structures with poor
 electrostatic interactions since many DNA-binding proteins have a large number
 of positively charged residues to bind the negatively charged phosphate
 backbone of DNA.

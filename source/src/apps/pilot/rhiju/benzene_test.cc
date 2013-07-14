@@ -160,7 +160,7 @@ benzene_pair_score_test()
 	//////////////////////////////////////////////////////////////////
 	// OK, how about a score function?
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( RNA_HIRES_WTS );
-	scorefxn->set_weight( hack_elec, 1.0 );
+	scorefxn->set_weight( fa_elec, 1.0 );
 
 	jump.set_translation( Vector( 0.0, 3.0, 3.0 ) );
 	pose.set_jump( 1, jump );

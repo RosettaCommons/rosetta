@@ -184,7 +184,7 @@ def namespace(ns):
               #'core/scoring/hbonds',
               'core/scoring/hbonds/hbtrie',
               'core/scoring/dunbrack',
-              'core/scoring/hackelec',
+              'core/scoring/elec',
               'core/scoring/etable',
               'core/scoring/etable/count_pair',
               'core/scoring/etable/etrie',
@@ -1106,7 +1106,7 @@ def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, fi
             output += '\n#include <core/optimization/MinimizerMap.hh>\n'
             output += '\n#include <core/pack/task/PackerTask.hh>\n'
         if fname.find('RotamerTrieBase.cc') > 0:
-            output += '\n#include <core/scoring/hackelec/HackElecEnergy.hh>\n'
+            output += '\n#include <core/scoring/elec/FA_ElecEnergy.hh>\n'
         if fname.find('ScoreFunction.cc') > 0:
             output += '\n#include <core/optimization/MinimizerMap.hh>\n'
         #if fname.find('DNA_BaseEnergy.cc') > 0:
@@ -1121,7 +1121,7 @@ def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, fi
             output += '\n#include <core/pack/task/PackerTask.hh>\n'
 
         if fname.find('TrieCountPairBase.cc') > 0:
-            output += '\n#include <core/scoring/hackelec/HackElecEnergy.hh>\n'
+            output += '\n#include <core/scoring/elec/FA_ElecEnergy.hh>\n'
 
         if fname.find('FlexbbIGFactory.cc') > 0:
             output += '\n#include <core/pack/task/PackerTask.hh>\n'

@@ -48,16 +48,16 @@ make_scorefxn(std::string weights_tag){
 	// manipulate EnergyMethodOptions here
 	methods::EnergyMethodOptions options( sfxn->energy_method_options() );
 
-	options.exclude_protein_protein_hack_elec( true ); // Are we doing this in the parser version?
+	options.exclude_protein_protein_fa_elec( true ); // Are we doing this in the parser version?
 	sfxn->set_energy_method_options( options );
 	sfxn->add_weights_from_file( basic::database::full_name( "scoring/weights/"+weights_tag+".wts" ) );
 
 	if( sfxn->has_zero_weight( fa_intra_rep ) ) sfxn->set_weight( fa_intra_rep, 0.004 ); // from standard.wts
 
 	// For some reason, electrostatics is not in the .wts files...
-	// hack_elec has a different dielectric constant than Rosetta++ (10r vs. 6r in ++)
+	// fa_elec has a different dielectric constant than Rosetta++ (10r vs. 6r in ++)
 	// It also includes all atom pairs instead of only ligand-protein interactions.
-	if( sfxn->has_zero_weight( hack_elec ) ) sfxn->set_weight( hack_elec, 0.42 ); // from Meiler & Baker 2006
+	if( sfxn->has_zero_weight( fa_elec ) ) sfxn->set_weight( fa_elec, 0.42 ); // from Meiler & Baker 2006
 
 	sfxn->set_weight( hbond_sc, 1.30 ); // from Lin Jiang
 	sfxn->set_weight( hbond_bb_sc, 1.30 ); // from Lin Jiang

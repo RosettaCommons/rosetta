@@ -325,7 +325,7 @@ ScoreEachBenchmark Score_occ_sol_fitted_onebody_("core.scoring.Score_1000x_occ_s
 ScoreEachBenchmark Score_envsmooth_("core.scoring.Score_1000x_envsmooth",envsmooth,1000);
 ScoreEachBenchmark Score_cart_bonded_("core.scoring.Score_1000x_cart_bonded",cart_bonded,1000);
 ScoreEachBenchmark Score_neigh_vect_("core.scoring.Score_1000x_neigh_vect",neigh_vect,1000);
-ScoreEachBenchmark Score_hack_elec_("core.scoring.Score_1000x_hack_elec",hack_elec,1000);
+ScoreEachBenchmark Score_fa_elec_("core.scoring.Score_1000x_fa_elec",fa_elec,1000);
 
 // slow 100x
 ScoreEachBenchmark Score_mm_twist_("core.scoring.Score_100x_mm_twist",mm_twist,100);

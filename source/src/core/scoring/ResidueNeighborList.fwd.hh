@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/ResidueNeighborList.fwd.hh
-/// @brief  Forward declaration of a container class for use by the Etable and HackElec
+/// @brief  Forward declaration of a container class for use by the Etable and FA_Elec
 ///         classes for storing residue-pair level atom-neighbor information
 /// @author Andrew Leaver-Fay
 

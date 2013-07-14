@@ -100,11 +100,11 @@ namespace score { namespace saxs { extern RealOptionKey const q_step; } }
 namespace score { namespace saxs { extern BooleanOptionKey const fit_pddf_area; } }
 namespace score { extern IntegerVectorOptionKey const sidechain_buried; }
 namespace score { extern IntegerVectorOptionKey const sidechain_exposed; }
-namespace score { extern RealOptionKey const hackelec_min_dis; }
-namespace score { extern RealOptionKey const hackelec_max_dis; }
-namespace score { extern RealOptionKey const hackelec_die; }
-namespace score { extern BooleanOptionKey const hackelec_r_option; }
-namespace score { extern BooleanOptionKey const smooth_hack_elec; }
+namespace score { extern RealOptionKey const elec_min_dis; }
+namespace score { extern RealOptionKey const elec_max_dis; }
+namespace score { extern RealOptionKey const elec_die; }
+namespace score { extern BooleanOptionKey const elec_r_option; }
+namespace score { extern BooleanOptionKey const smooth_fa_elec; }
 namespace score { extern RealOptionKey const facts_GBpair_cut; }
 namespace score { extern RealOptionKey const facts_min_dis; }
 namespace score { extern RealOptionKey const facts_kappa; }

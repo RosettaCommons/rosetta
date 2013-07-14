@@ -49,13 +49,13 @@ EnergyMethodOptions::EnergyMethodOptions():
 	analytic_etable_evaluation_( false ),
 	atom_vdw_atom_type_set_name_(chemical::CENTROID), // can be set, see below
 	unfolded_energies_type_( UNFOLDED_SCORE12 ),
-	exclude_protein_protein_hack_elec_(false), // rosetta++ defaulted to true!
-	exclude_monomer_hack_elec_(false),
-	hackelec_max_dis_(5.5),
-	hackelec_min_dis_(1.5),
-	hackelec_die_(10.0),
-	hackelec_no_dis_dep_die_(false),
-	smooth_hack_elec_( false ),
+	exclude_protein_protein_fa_elec_(false), // rosetta++ defaulted to true!
+	exclude_monomer_fa_elec_(false),
+	elec_max_dis_(5.5),
+	elec_min_dis_(1.5),
+	elec_die_(10.0),
+	elec_no_dis_dep_die_(false),
+	smooth_fa_elec_( false ),
 	exclude_DNA_DNA_(true), // rosetta++ default
 	hbond_options_(new hbonds::HBondOptions()),
 	cst_max_seq_sep_(core::SZ_MAX),
@@ -74,11 +74,11 @@ EnergyMethodOptions::EnergyMethodOptions():
 
 void EnergyMethodOptions::initialize_from_options() {
 	analytic_etable_evaluation_ = basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ];
-	hackelec_max_dis_ = basic::options::option[basic::options::OptionKeys::score::hackelec_max_dis ]();
-	hackelec_min_dis_ = basic::options::option[basic::options::OptionKeys::score::hackelec_min_dis ]();
-	hackelec_die_ = basic::options::option[ basic::options::OptionKeys::score::hackelec_die ]();
-	hackelec_no_dis_dep_die_ = basic::options::option[ basic::options::OptionKeys::score::hackelec_r_option ]();
-	smooth_hack_elec_ = basic::options::option[ basic::options::OptionKeys::score::smooth_hack_elec ]();
+	elec_max_dis_ = basic::options::option[basic::options::OptionKeys::score::elec_max_dis ]();
+	elec_min_dis_ = basic::options::option[basic::options::OptionKeys::score::elec_min_dis ]();
+	elec_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_die ]();
+	elec_no_dis_dep_die_ = basic::options::option[ basic::options::OptionKeys::score::elec_r_option ]();
+	smooth_fa_elec_ = basic::options::option[ basic::options::OptionKeys::score::smooth_fa_elec ]();
 	exclude_DNA_DNA_ = basic::options::option[basic::options::OptionKeys::dna::specificity::exclude_dna_dna]; // adding because this parameter should absolutely be false for any structure with DNA in it and it doesn't seem to be read in via the weights file method, so now it's an option - sthyme
 }
 
@@ -101,13 +101,13 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 		unfolded_energies_type_ = src.unfolded_energies_type_;
 		method_weights_ = src.method_weights_;
 		ss_weights_ = src.ss_weights_;
-		exclude_protein_protein_hack_elec_ = src.exclude_protein_protein_hack_elec_;
-		exclude_monomer_hack_elec_ = src.exclude_monomer_hack_elec_;
-		hackelec_max_dis_ = src.hackelec_max_dis_;
-		hackelec_min_dis_ = src.hackelec_min_dis_;
-		hackelec_die_ = src.hackelec_die_;
-		hackelec_no_dis_dep_die_ = src.hackelec_no_dis_dep_die_;
-		smooth_hack_elec_ = src.smooth_hack_elec_;
+		exclude_protein_protein_fa_elec_ = src.exclude_protein_protein_fa_elec_;
+		exclude_monomer_fa_elec_ = src.exclude_monomer_fa_elec_;
+		elec_max_dis_ = src.elec_max_dis_;
+		elec_min_dis_ = src.elec_min_dis_;
+		elec_die_ = src.elec_die_;
+		elec_no_dis_dep_die_ = src.elec_no_dis_dep_die_;
+		smooth_fa_elec_ = src.smooth_fa_elec_;
 		exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
 		hbond_options_ = new hbonds::HBondOptions( *(src.hbond_options_) );
 		cst_max_seq_sep_ = src.cst_max_seq_sep_;
@@ -145,74 +145,74 @@ EnergyMethodOptions::unfolded_energies_type(string const & type ) {
 }
 
 bool
-EnergyMethodOptions::exclude_protein_protein_hack_elec() const {
-	return exclude_protein_protein_hack_elec_;
+EnergyMethodOptions::exclude_protein_protein_fa_elec() const {
+	return exclude_protein_protein_fa_elec_;
 }
 
 void
-EnergyMethodOptions::exclude_protein_protein_hack_elec( bool const setting ) {
-	exclude_protein_protein_hack_elec_ = setting;
+EnergyMethodOptions::exclude_protein_protein_fa_elec( bool const setting ) {
+	exclude_protein_protein_fa_elec_ = setting;
 }
 
 bool
-EnergyMethodOptions::exclude_monomer_hack_elec() const {
-	return exclude_monomer_hack_elec_;
+EnergyMethodOptions::exclude_monomer_fa_elec() const {
+	return exclude_monomer_fa_elec_;
 }
 
 void
-EnergyMethodOptions::exclude_monomer_hack_elec( bool const setting ) {
-	exclude_monomer_hack_elec_ = setting;
+EnergyMethodOptions::exclude_monomer_fa_elec( bool const setting ) {
+	exclude_monomer_fa_elec_ = setting;
 }
 
 core::Real
-EnergyMethodOptions::hackelec_max_dis() const {
-	return hackelec_max_dis_;
+EnergyMethodOptions::elec_max_dis() const {
+	return elec_max_dis_;
 }
 
 void
-EnergyMethodOptions::hackelec_max_dis( core::Real const setting ) {
-	hackelec_max_dis_ = setting;
+EnergyMethodOptions::elec_max_dis( core::Real const setting ) {
+	elec_max_dis_ = setting;
 }
 
 core::Real
-EnergyMethodOptions::hackelec_min_dis() const {
-	return hackelec_min_dis_;
+EnergyMethodOptions::elec_min_dis() const {
+	return elec_min_dis_;
 }
 
 void
-EnergyMethodOptions::hackelec_min_dis( core::Real const setting ) {
-	hackelec_min_dis_ = setting;
+EnergyMethodOptions::elec_min_dis( core::Real const setting ) {
+	elec_min_dis_ = setting;
 }
 
 core::Real
-EnergyMethodOptions::hackelec_die() const {
-	return hackelec_die_;
+EnergyMethodOptions::elec_die() const {
+	return elec_die_;
 }
 
 void
-EnergyMethodOptions::hackelec_die( core::Real const setting ) {
-	hackelec_die_ = setting;
+EnergyMethodOptions::elec_die( core::Real const setting ) {
+	elec_die_ = setting;
 }
 
 bool
-EnergyMethodOptions::hackelec_no_dis_dep_die() const {
-	return hackelec_no_dis_dep_die_;
+EnergyMethodOptions::elec_no_dis_dep_die() const {
+	return elec_no_dis_dep_die_;
 }
 
 void
-EnergyMethodOptions::hackelec_no_dis_dep_die( bool const setting ) {
-	hackelec_no_dis_dep_die_ = setting;
+EnergyMethodOptions::elec_no_dis_dep_die( bool const setting ) {
+	elec_no_dis_dep_die_ = setting;
 }
 
 bool
-EnergyMethodOptions::smooth_hack_elec() const {
-	return smooth_hack_elec_;
+EnergyMethodOptions::smooth_fa_elec() const {
+	return smooth_fa_elec_;
 }
 
 void
-EnergyMethodOptions::smooth_hack_elec( bool setting )
+EnergyMethodOptions::smooth_fa_elec( bool setting )
 {
-	smooth_hack_elec_ = setting;
+	smooth_fa_elec_ = setting;
 }
 
 
@@ -374,13 +374,13 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.unfolded_energies_type_ == b.unfolded_energies_type_ ) &&
 		( a.method_weights_ == b.method_weights_ ) &&
 		( a.ss_weights_ == b.ss_weights_ ) &&
-		( a.exclude_protein_protein_hack_elec_ == b.exclude_protein_protein_hack_elec_ ) &&
-		( a.exclude_monomer_hack_elec_ == b.exclude_monomer_hack_elec_ ) &&
-		( a.hackelec_max_dis_ == b.hackelec_max_dis_ ) &&
-		( a.hackelec_min_dis_ == b.hackelec_min_dis_ ) &&
-		( a.hackelec_die_ == b.hackelec_die_ ) &&
-		( a.hackelec_no_dis_dep_die_ == b.hackelec_no_dis_dep_die_ ) &&
-		( a.smooth_hack_elec_ == b.smooth_hack_elec_ ) &&
+		( a.exclude_protein_protein_fa_elec_ == b.exclude_protein_protein_fa_elec_ ) &&
+		( a.exclude_monomer_fa_elec_ == b.exclude_monomer_fa_elec_ ) &&
+		( a.elec_max_dis_ == b.elec_max_dis_ ) &&
+		( a.elec_min_dis_ == b.elec_min_dis_ ) &&
+		( a.elec_die_ == b.elec_die_ ) &&
+		( a.elec_no_dis_dep_die_ == b.elec_no_dis_dep_die_ ) &&
+		( a.smooth_fa_elec_ == b.smooth_fa_elec_ ) &&
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
 		( * (a.hbond_options_) == * (b.hbond_options_) ) &&
 		( a.cst_max_seq_sep_ == b.cst_max_seq_sep_ ) &&
@@ -415,16 +415,16 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	}
 	out << "EnergyMethodOptions::show: unfolded_energies_type: " << unfolded_energies_type_ << std::endl;
 	out << "EnergyMethodOptions::show: atom_vdw_atom_type_set_name: " << atom_vdw_atom_type_set_name_ << std::endl;
-	out << "EnergyMethodOptions::show: exclude_protein_protein_hack_elec: "
-			<< (exclude_protein_protein_hack_elec_ ? "true" : "false") << std::endl;
-	out << "EnergyMethodOptions::show: exclude_monomer_hack_elec: "
-			<< (exclude_monomer_hack_elec_ ? "true" : "false") << std::endl;
-	out << "EnergyMethodOptions::show: hackelec_max_dis: " << hackelec_max_dis_ << std::endl;
-	out << "EnergyMethodOptions::show: hackelec_min_dis: " << hackelec_min_dis_ << std::endl;
-	out << "EnergyMethodOptions::show: hackelec_die: " << hackelec_die_ << std::endl;
-	out << "EnergyMethodOptions::show: hackelec_no_dis_dep_die: "
-			<< (hackelec_no_dis_dep_die_ ? "true" : "false") << std::endl;
-	out << "EnergyMethodOptions::show: smooth_hack_elec: " << ( smooth_hack_elec_ ? "true" : "false" ) << std::endl;
+	out << "EnergyMethodOptions::show: exclude_protein_protein_fa_elec: "
+			<< (exclude_protein_protein_fa_elec_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: exclude_monomer_fa_elec: "
+			<< (exclude_monomer_fa_elec_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: elec_max_dis: " << elec_max_dis_ << std::endl;
+	out << "EnergyMethodOptions::show: elec_min_dis: " << elec_min_dis_ << std::endl;
+	out << "EnergyMethodOptions::show: elec_die: " << elec_die_ << std::endl;
+	out << "EnergyMethodOptions::show: elec_no_dis_dep_die: "
+			<< (elec_no_dis_dep_die_ ? "true" : "false") << std::endl;
+	out << "EnergyMethodOptions::show: smooth_fa_elec: " << ( smooth_fa_elec_ ? "true" : "false" ) << std::endl;
 	out << "EnergyMethodOptions::show: exclude_DNA_DNA: "
 			<< (exclude_DNA_DNA_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: cst_max_seq_sep: " << cst_max_seq_sep_ << std::endl;
@@ -513,23 +513,23 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_keys.push_back("unfolded_energies_type");
 	option_values.push_back(unfolded_energies_type_);
 
-	option_keys.push_back("exclude_protein_protein_hack_elec");
-	option_values.push_back(exclude_protein_protein_hack_elec_ ? "1" : "0");
+	option_keys.push_back("exclude_protein_protein_fa_elec");
+	option_values.push_back(exclude_protein_protein_fa_elec_ ? "1" : "0");
 
-	option_keys.push_back("exclude_monomer_hack_elec");
-	option_values.push_back(exclude_monomer_hack_elec_ ? "1" : "0");
+	option_keys.push_back("exclude_monomer_fa_elec");
+	option_values.push_back(exclude_monomer_fa_elec_ ? "1" : "0");
 
-	option_keys.push_back("hackelec_max_dis");
-	option_values.push_back(boost::lexical_cast<std::string>(hackelec_max_dis_));
+	option_keys.push_back("elec_max_dis");
+	option_values.push_back(boost::lexical_cast<std::string>(elec_max_dis_));
 
-	option_keys.push_back("hackelec_min_dis");
-	option_values.push_back(boost::lexical_cast<std::string>(hackelec_min_dis_));
+	option_keys.push_back("elec_min_dis");
+	option_values.push_back(boost::lexical_cast<std::string>(elec_min_dis_));
 
-	option_keys.push_back("hackelec_die");
-	option_values.push_back(boost::lexical_cast<std::string>(hackelec_die_));
+	option_keys.push_back("elec_die");
+	option_values.push_back(boost::lexical_cast<std::string>(elec_die_));
 
-	option_keys.push_back("hackelec_no_dis_dep_die");
-	option_values.push_back(hackelec_no_dis_dep_die_ ? "1" : "0");
+	option_keys.push_back("elec_no_dis_dep_die");
+	option_values.push_back(elec_no_dis_dep_die_ ? "1" : "0");
 
 	option_keys.push_back("exclude_DNA_DNA");
 	option_values.push_back(exclude_DNA_DNA_ ? "1" : "0");

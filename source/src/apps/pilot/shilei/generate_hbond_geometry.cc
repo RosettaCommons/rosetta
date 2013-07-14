@@ -164,7 +164,7 @@ public:
 
 	//initialize
 	scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction() ;
-	core::scoring::hbonds::HBondDatabaseCOP hb_database_ = core::scoring::hbonds::HBondDatabase::get_database( "sp2_hackelec_params" );
+	core::scoring::hbonds::HBondDatabaseCOP hb_database_ = core::scoring::hbonds::HBondDatabase::get_database( "sp2_elec_params" );
 
 	//copy from SemiExplicitWaterUnsatisfiedPolarsCalculator
         using namespace core;

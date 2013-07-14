@@ -94,53 +94,53 @@ public:
 
 	///
 	bool
-	exclude_protein_protein_hack_elec() const;
+	exclude_protein_protein_fa_elec() const;
 
 	///
 	void
-	exclude_protein_protein_hack_elec( bool const setting );
+	exclude_protein_protein_fa_elec( bool const setting );
 
 	///
 	bool
-	exclude_monomer_hack_elec() const;
+	exclude_monomer_fa_elec() const;
 
 	///
 	void
-	exclude_monomer_hack_elec( bool const setting );
+	exclude_monomer_fa_elec( bool const setting );
 
-	/// @brief The maximum (all atom) distance at which hack_elec is non-zero
+	/// @brief The maximum (all atom) distance at which fa_elec is non-zero
 	core::Real
-	hackelec_max_dis() const;
+	elec_max_dis() const;
 
 	void
-	hackelec_max_dis( core::Real setting );
+	elec_max_dis( core::Real setting );
 
-	/// @brief The minimium (all atom) distance for which hack_elec changes with distances
+	/// @brief The minimium (all atom) distance for which fa_elec changes with distances
 	core::Real
-	hackelec_min_dis() const;
+	elec_min_dis() const;
 
 	void
-	hackelec_min_dis( core::Real setting );
+	elec_min_dis( core::Real setting );
 
-	/// @brief The dielectric used for the hack_elec term
+	/// @brief The dielectric used for the fa_elec term
 	core::Real
-	hackelec_die() const;
+	elec_die() const;
 
 	void
-	hackelec_die( core::Real setting );
+	elec_die( core::Real setting );
 
-	/// @brief Should hack_elec use a constant (non-distance dependant) dielectric?
+	/// @brief Should fa_elec use a constant (non-distance dependant) dielectric?
 	bool
-	hackelec_no_dis_dep_die() const;
+	elec_no_dis_dep_die() const;
 
 	void
-	hackelec_no_dis_dep_die( bool setting );
+	elec_no_dis_dep_die( bool setting );
 
 	bool
-	smooth_hack_elec() const;
+	smooth_fa_elec() const;
 
 	void
-	smooth_hack_elec( bool setting );
+	smooth_fa_elec( bool setting );
 
 	///
 	bool
@@ -303,13 +303,13 @@ private:
 	std::string unfolded_energies_type_;
 	MethodWeights method_weights_;
 	SecondaryStructureWeights ss_weights_;
-	bool exclude_protein_protein_hack_elec_;
-	bool exclude_monomer_hack_elec_;
-	core::Real hackelec_max_dis_;
-	core::Real hackelec_min_dis_;
-	core::Real hackelec_die_;
-	bool hackelec_no_dis_dep_die_;
-	bool smooth_hack_elec_;
+	bool exclude_protein_protein_fa_elec_;
+	bool exclude_monomer_fa_elec_;
+	core::Real elec_max_dis_;
+	core::Real elec_min_dis_;
+	core::Real elec_die_;
+	bool elec_no_dis_dep_die_;
+	bool smooth_fa_elec_;
 	bool exclude_DNA_DNA_;
 	hbonds::HBondOptionsOP hbond_options_;
 	core::Size cst_max_seq_sep_;

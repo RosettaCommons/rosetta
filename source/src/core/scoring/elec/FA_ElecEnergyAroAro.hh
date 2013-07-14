@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/HackElecEnergyAroAro.hh
+/// @file   core/scoring/methods/FA_ElecEnergyAroAro.hh
 /// @brief  Electrostatics for RNA
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_core_scoring_hackelec_HackElecEnergyAroAro_hh
-#define INCLUDED_core_scoring_hackelec_HackElecEnergyAroAro_hh
+#ifndef INCLUDED_core_scoring_elec_FA_ElecEnergyAroAro_hh
+#define INCLUDED_core_scoring_elec_FA_ElecEnergyAroAro_hh
 
 /// Unit Headers
-#include <core/scoring/hackelec/HackElecEnergyAroAro.fwd.hh>
+#include <core/scoring/elec/FA_ElecEnergyAroAro.fwd.hh>
 
 /// Package Headers
-#include <core/scoring/hackelec/HackElecEnergy.hh>
+#include <core/scoring/elec/FA_ElecEnergy.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -34,21 +34,21 @@
 
 namespace core {
 namespace scoring {
-namespace hackelec {
+namespace elec {
 
 ///
-class HackElecEnergyAroAro : public HackElecEnergy  {
+class FA_ElecEnergyAroAro : public FA_ElecEnergy  {
 public:
-	typedef HackElecEnergy parent;
+	typedef FA_ElecEnergy parent;
 	typedef ContextIndependentTwoBodyEnergy grandparent;
 
 public:
 
 	///
-	HackElecEnergyAroAro( methods::EnergyMethodOptions const & options );
+	FA_ElecEnergyAroAro( methods::EnergyMethodOptions const & options );
 
 	///
-	HackElecEnergyAroAro( HackElecEnergyAroAro const & src );
+	FA_ElecEnergyAroAro( FA_ElecEnergyAroAro const & src );
 
 
 	/// clone
@@ -100,7 +100,7 @@ public:
 
 	/// @brief Returns "true" because this energy method has not been updated to
 	/// use the new derivative evaluation machinery.  Note that this class requires
-	/// the definition of this method because it's parent class, HackElecEnergy,
+	/// the definition of this method because it's parent class, FA_ElecEnergy,
 	/// HAS been updated to use the new derivative evaluation machinery, and,
 	/// if this class did not return "true", it would be asked to evaluate derivatives
 	/// in ways it cannot yet evaluate them in.

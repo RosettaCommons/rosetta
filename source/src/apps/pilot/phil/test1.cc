@@ -1400,7 +1400,7 @@ dna_coupled_rotamer_design_test()
 	scorefxn.set_weight( hbond_sr_bb, 1.17 ); // short-range (helical) backbone hbonds
 	scorefxn.set_weight( hbond_bb_sc, 1.17 ); // backbone-sidechain hbonds
 	scorefxn.set_weight( hbond_sc   , 1.10 ); // sidechain-sidechain hbonds
-	scorefxn.set_weight( hack_elec  , 1.00 ); // hack electrostatics
+	scorefxn.set_weight( fa_elec  , 1.00 ); // hack electrostatics
 
 	show_intrachain_energies( pose, scorefxn );
 

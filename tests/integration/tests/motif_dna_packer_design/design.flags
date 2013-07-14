@@ -18,6 +18,6 @@
 -dna::design::dna_defs X.-9.GUA
 -s anii.pdb
 -nstruct 1
--dna::specificity::score_function phil_dna_nodnabp_hackelecpink.wts
+-dna::specificity::score_function phil_dna_nodnabp_elecpink.wts
 -ignore_unrecognized_res
 -extrachi_cutoff 0

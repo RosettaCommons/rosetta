@@ -271,10 +271,10 @@ public:
 		weights[pro_close ] = 1.0;
 		verify_fibril_derivs_for_terms( weights, 1e-5 );
 
-		//6. hackelec
+		//6. elec
 		weights.zero();
-		weights[ hack_elec ] = 0.6;
-		verify_fibril_derivs_for_terms( weights, 1e-3 ); // lots of numerical noise from hack_elec
+		weights[ fa_elec ] = 0.6;
+		verify_fibril_derivs_for_terms( weights, 1e-3 ); // lots of numerical noise from fa_elec
 	}
 
 	void verify_fibril_derivs_for_terms( scoring::EnergyMap const & in_weights, Real tolerance )
@@ -437,13 +437,13 @@ public:
 			minimizer.run( pose, *mm, *scorefxn, *min_options );
 		}
 
-		{ // just hack_elec
+		{ // just fa_elec
 			scorefxn->reset();
-			scorefxn->set_weight( scoring::hack_elec, 0.5 );
+			scorefxn->set_weight( scoring::fa_elec, 0.5 );
 
 			Pose pose;
 			pose = start_pose;
-			TR << "MINTEST: hack_elec" << std::endl;
+			TR << "MINTEST: fa_elec" << std::endl;
 			minimizer.run( pose, *mm, *scorefxn, *min_options );
 		}
 

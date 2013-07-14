@@ -13,7 +13,7 @@ fa_atr 0.8
 fa_rep 0.44
 fa_sol 0.75
 fa_intra_rep 0.004
-hack_elec 0.7
+fa_elec 0.7
 pro_close 1
 hbond_sr_bb 1.17
 hbond_lr_bb 1.17

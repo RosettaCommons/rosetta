@@ -36,7 +36,7 @@ namespace toolbox {
 namespace pose_metric_calculators {
 
 /// @brief use the "score12_params" set if the -restore_pre_talaris_2013_behavior flag is on the command line
-/// and otherwise use the new and improved sp2_hackelec_params parameter set
+/// and otherwise use the new and improved sp2_elec_params parameter set
 std::string
 choose_hbond_parameter_set();
 

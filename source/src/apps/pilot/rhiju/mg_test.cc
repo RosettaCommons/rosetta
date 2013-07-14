@@ -91,8 +91,8 @@ using io::pdb::dump_pdb;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 OPT_KEY( Real, xyz_step )
-//OPT_KEY( Real, hackelec_min_dis )
-//OPT_KEY( Real, hackelec_weight )
+//OPT_KEY( Real, elec_min_dis )
+//OPT_KEY( Real, elec_weight )
 OPT_KEY( Real, score_cut )
 OPT_KEY( Real, score_cut_PDB )
 OPT_KEY( Boolean, brute_force )
@@ -599,11 +599,11 @@ mg_scan_test()
 		scorefxn = getScoreFunction();
 	} else {
 		EnergyMethodOptions energy_options;
-		//		energy_options.hackelec_min_dis(  option[ hackelec_min_dis ]() );
+		//		energy_options.elec_min_dis(  option[ elec_min_dis ]() );
 		scorefxn->set_energy_method_options( energy_options );
 		scorefxn->set_weight( rna_mg,  1.0 );
 		scorefxn->set_weight( fa_rep,  1.0 );
-		//		scorefxn->set_weight( hack_elec,  option[ hackelec_weight ]() );
+		//		scorefxn->set_weight( fa_elec,  option[ elec_weight ]() );
 	}
 
 
@@ -658,7 +658,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( brute_force, "slow xyz scan", false );
 	NEW_OPT( score_cut, "score cut for silent output", -8.0 );
 	NEW_OPT( score_cut_PDB, "score cut for PDB output", 0.0 );
-	//	NEW_OPT( hackelec_weight, "hackelec_weight", 0.5 );
+	//	NEW_OPT( elec_weight, "elec_weight", 0.5 );
 	option.add_relevant( in::file::input_res );
 
 	////////////////////////////////////////////////////////////////////////////

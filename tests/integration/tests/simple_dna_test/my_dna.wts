@@ -16,4 +16,4 @@ dslf_ss_dst 1.0
 dslf_cs_ang 1.0
 dslf_ss_dih 1.0
 dslf_ca_dih 1.0
-hack_elec 0.5
+fa_elec 0.5

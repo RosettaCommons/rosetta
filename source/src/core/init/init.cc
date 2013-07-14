@@ -97,10 +97,10 @@
 #include <core/scoring/geometric_solvation/ContextIndependentGeometricSolEnergyCreator.hh>
 #include <core/scoring/geometric_solvation/OccludedHbondSolEnergyCreator.hh>
 #include <core/scoring/geometric_solvation/OccludedHbondSolEnergy_onebodyCreator.hh>
-#include <core/scoring/hackelec/HackElecEnergyCreator.hh>
-#include <core/scoring/hackelec/HackElecEnergyAroAroCreator.hh>
-#include <core/scoring/hackelec/HackElecEnergyAroAllCreator.hh>
-#include <core/scoring/hackelec/RNAHackElecEnergyCreator.hh>
+#include <core/scoring/elec/FA_ElecEnergyCreator.hh>
+#include <core/scoring/elec/FA_ElecEnergyAroAroCreator.hh>
+#include <core/scoring/elec/FA_ElecEnergyAroAllCreator.hh>
+#include <core/scoring/elec/RNA_FA_ElecEnergyCreator.hh>
 #include <core/scoring/hackaro/HackAroEnergyCreator.hh>
 #include <core/scoring/dna/DNAChiEnergyCreator.hh>
 #include <core/scoring/dna/DNATorsionEnergyCreator.hh>
@@ -353,10 +353,10 @@ static EnergyMethodRegistrator< scoring::geometric_solvation::GeometricSolEnergy
 static EnergyMethodRegistrator< scoring::geometric_solvation::ContextIndependentGeometricSolEnergyCreator > ContextIndependentGeometricSolEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::geometric_solvation::OccludedHbondSolEnergyCreator > OccludedHbondSolEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::geometric_solvation::OccludedHbondSolEnergy_onebodyCreator > OccludedHbondSolEnergy_onebodyCreator_registrator;
-static EnergyMethodRegistrator< scoring::hackelec::HackElecEnergyCreator > HackElecEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::hackelec::RNAHackElecEnergyCreator > RNAHackElecEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::hackelec::HackElecEnergyAroAroCreator > HackElecEnergyAroAroCreator_registrator;
-static EnergyMethodRegistrator< scoring::hackelec::HackElecEnergyAroAllCreator > HackElecEnergyAroAllCreator_registrator;
+static EnergyMethodRegistrator< scoring::elec::FA_ElecEnergyCreator > FA_ElecEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::elec::RNA_FA_ElecEnergyCreator > RNA_FA_ElecEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::elec::FA_ElecEnergyAroAroCreator > FA_ElecEnergyAroAroCreator_registrator;
+static EnergyMethodRegistrator< scoring::elec::FA_ElecEnergyAroAllCreator > FA_ElecEnergyAroAllCreator_registrator;
 static EnergyMethodRegistrator< scoring::hackaro::HackAroEnergyCreator > HackAroEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::dna::DNAChiEnergyCreator > DNAChiEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::dna::DNATorsionEnergyCreator > DNATorsionEnergyCreator_registrator;

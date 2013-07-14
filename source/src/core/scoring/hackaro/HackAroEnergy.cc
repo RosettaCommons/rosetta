@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/hackelec/HackAroEnergy.cc
+/// @file   core/scoring/elec/HackAroEnergy.cc
 /// @brief  Electrostatics energy method for aromatic side chain (stand-in for pi/pi interactions).
 /// @author Rhiju Das
 
@@ -46,7 +46,7 @@
 //   with high level quantum calculations -- but note that you need really careful treatment
 //   of electron correlations to get dispersion right -- still not quite feasible for all rigid body
 //   orientations.
-// (I also tried using hackelec_aro_aro, i.e., coulomb's law between positively charged aromatic
+// (I also tried using elec_aro_aro, i.e., coulomb's law between positively charged aromatic
 //  hydrogens and the negative partial charges on aromatic carbons -- it didn't quite give me
 //  what I wanted).  Rhiju, Dec. 2009.
 /////////////////////////////////////////////////////////////////////////////////////////

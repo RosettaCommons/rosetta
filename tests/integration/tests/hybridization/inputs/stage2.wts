@@ -11,4 +11,4 @@ vdw 1.0
 atom_pair_constraint 0.5
 cart_bonded 0.05
 elec_dens_fast 2.0
-hack_elec 2.0
+fa_elec 2.0

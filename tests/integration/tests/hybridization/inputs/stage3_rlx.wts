@@ -23,4 +23,4 @@ atom_pair_constraint 2.0
 coordinate_constraint 0.0
 cart_bonded 0.5
 elec_dens_fast 5.0
-hack_elec 2.0
+fa_elec 2.0

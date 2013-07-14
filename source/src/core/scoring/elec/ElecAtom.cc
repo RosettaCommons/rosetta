@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/hackelec/ElecAtom.hh
+/// @file   core/scoring/elec/ElecAtom.hh
 /// @brief
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 // Unit Headers
-#include <core/scoring/hackelec/ElecAtom.hh>
+#include <core/scoring/elec/ElecAtom.hh>
 
 // Project Headers
 #include <core/conformation/Atom.hh>
@@ -30,7 +30,7 @@
 
 namespace core {
 namespace scoring {
-namespace hackelec {
+namespace elec {
 
 
 ElecAtom::ElecAtom() : parent(), isbb_( false ), is_hydrogen_( false ), charge_( 0.0 ) {}
@@ -66,7 +66,7 @@ std::ostream & operator << ( std::ostream & os, ElecAtom const & atom )
 	return os;
 }
 
-} // namespace hackelec
+} // namespace elec
 } // namespace scoring
 } // namespace core
 

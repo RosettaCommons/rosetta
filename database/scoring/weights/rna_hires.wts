@@ -10,5 +10,5 @@ hbond_sc        3.4
 geom_sol        0.62
 ch_bond         0.42
 lk_nonpolar     0.32
-hack_elec_rna_phos_phos 1.05
+fa_elec_rna_phos_phos 1.05
 atom_pair_constraint 1.0

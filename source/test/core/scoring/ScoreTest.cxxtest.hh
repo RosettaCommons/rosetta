@@ -90,7 +90,7 @@ public:
 		one_score_type_test(mm_twist, "core/scoring/test_in.pdb", "core/scoring/mm_twist.data");
 		//one_score_type_test(mm_bend, "core/scoring/test_in.pdb", "core/scoring/mm_bend.u");
 		//one_score_type_test(mm_stretch, "core/scoring/test_in.pdb", "core/scoring/mm_stretch.u");
-		one_score_type_test(hack_elec, "core/scoring/test_in.pdb", "core/scoring/hack_elec.data");
+		one_score_type_test(fa_elec, "core/scoring/test_in.pdb", "core/scoring/fa_elec.data");
 		one_score_type_test(atom_pair_constraint, "core/scoring/test_in.pdb", "core/scoring/atom_pair_constraint.data");
 		one_score_type_test(coordinate_constraint, "core/scoring/test_in.pdb", "core/scoring/coordinate_constraint.data");
 

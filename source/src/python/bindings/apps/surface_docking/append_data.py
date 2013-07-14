@@ -22,7 +22,7 @@ def append_scores(file, pose, scorefxn):
     # Full atom scores
     if pose.is_fullatom():
         list = [fa_atr,fa_rep,fa_sol,fa_intra_rep,fa_pair,fa_dun, hbond_sr_bb,\
-                hbond_lr_bb,hbond_bb_sc,hbond_sc,hack_elec,p_aa_pp,ref, pro_close,\
+                hbond_lr_bb,hbond_bb_sc,hbond_sc,fa_elec,p_aa_pp,ref, pro_close,\
                 atom_pair_constraint, dihedral_constraint]
     else:
         # Centroid scores

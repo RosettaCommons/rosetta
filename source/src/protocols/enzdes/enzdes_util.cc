@@ -644,7 +644,7 @@ scorefxn_update_from_options(core::scoring::ScoreFunctionOP scorefxn){
 
 	if( basic::options::option[ basic::options::OptionKeys::docking::ligand::old_estat ].user() ){
       core::scoring::methods::EnergyMethodOptions options_repack( scorefxn->energy_method_options() );
-      options_repack.exclude_protein_protein_hack_elec( basic::options::option[basic::options::OptionKeys::docking::ligand::old_estat ]  );
+      options_repack.exclude_protein_protein_fa_elec( basic::options::option[basic::options::OptionKeys::docking::ligand::old_estat ]  );
       scorefxn->set_energy_method_options( options_repack );
   }
 }

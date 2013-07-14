@@ -25,7 +25,7 @@ enum EnergyMethods
 	etable_method = 1, // first method begins at one for one-based indexing
 	dunbrack_method,
 	hbond_method,
-	hackelec_method,
+	elec_method,
 	mm_lj_energy_inter_method,
 	pair_e_method, // give this a new name!
 	reference_e_method,

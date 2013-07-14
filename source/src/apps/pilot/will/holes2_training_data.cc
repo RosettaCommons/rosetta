@@ -327,7 +327,7 @@ apply(
 
 	// score the pose
 	core::scoring::ScoreFunctionOP sf = core::scoring::getScoreFunction();
-	sf->set_weight( core::scoring::hack_elec , 1.0 );
+	sf->set_weight( core::scoring::fa_elec , 1.0 );
 	(*sf)(pose);
 
 	utility::vector1<Real> hbond_e = fill_hbond_e(pose,pb);
@@ -416,7 +416,7 @@ apply(
 			lines[tag] += string_of( e[ fa_pair   ] ) + " ";
 			lines[tag] += string_of( e[ envsmooth ] ) + " ";
 			lines[tag] += string_of( e[ p_aa_pp   ] ) + " ";
-			lines[tag] += string_of( e[ hack_elec ] ) + " ";
+			lines[tag] += string_of( e[ fa_elec ] ) + " ";
 		}
 		for( Size a = 1; a <=20; a++ ) lines[tag] += " " + string_of(pb.surf(i,a));
 		lines[tag] += "\n";

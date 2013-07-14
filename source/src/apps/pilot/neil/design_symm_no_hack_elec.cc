@@ -371,7 +371,7 @@ void
 		// Create a score function object, get the fa_rep weight from it (default = 0.44)
 		ScoreFunctionOP sf = getScoreFunction();	
 //		core::scoring::methods::EnergyMethodOptions eo = sf->energy_method_options();
-//		eo.exclude_monomer_hack_elec(true);
+//		eo.exclude_monomer_fa_elec(true);
 //		sf->set_energy_method_options(eo);
 		Real orig_rep = sf->get_weight(fa_rep);
 
@@ -546,7 +546,7 @@ void
 				core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 				ss_out->fill_struct(pose_for_design,fn);
 				ss_out->add_energy("air_energy", avg_interface_energy);
-//				ss_out->add_energy("air_hack_elec", em[core::scoring::hack_elec] / design_pos.size());
+//				ss_out->add_energy("air_fa_elec", em[core::scoring::fa_elec] / design_pos.size());
 				ss_out->add_energy("air_fa_atr", em[core::scoring::fa_atr] / design_pos.size());
 				ss_out->add_energy("air_fa_rep", em[core::scoring::fa_rep] / design_pos.size());
 				ss_out->add_energy("air_fa_dun", em[core::scoring::fa_dun] / design_pos.size());

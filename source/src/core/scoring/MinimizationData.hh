@@ -42,7 +42,7 @@ enum min_single_data{
 enum min_pair_data {
 	etab_pair_nblist = 1,
 	cst_respair_data,
-	hackelec_pair_nblist,
+	elec_pair_nblist,
 	fa_dslf_respair_data,
 	fa_custom_pair_dist_data,
 	lkb_respair_data,

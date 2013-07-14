@@ -59,8 +59,8 @@ struct pre_talaris_2013_behavior_settings {
 	std::string score_patch;
 	bool analytic_etable_evaluation;
 	std::string hbond_params;
-	bool smooth_hack_elec;
-	Real hackelec_min_dis;
+	bool smooth_fa_elec;
+	Real elec_min_dis;
 	bool dun10;
 	bool use_bicubic_interpolation;
 };
@@ -78,8 +78,8 @@ pre_talaris_2013_behavior_settings::pre_talaris_2013_behavior_settings() :
 	score_patch( "" ), // the default patch to score12 is handled in the core::scoring::getScoreFunction
 	analytic_etable_evaluation( false ),
 	hbond_params( "score12_params" ),
-	smooth_hack_elec( false ),
-	hackelec_min_dis( 1.5 ),
+	smooth_fa_elec( false ),
+	elec_min_dis( 1.5 ),
 	dun10( false ),
 	use_bicubic_interpolation( false )
 {}
@@ -135,11 +135,11 @@ void revert_to_pre_talaris_2013_defaults() {
 	if ( ! option[ score::hbond_params ].user() ) {
 		option[ score::hbond_params ].default_value( restore_sc12_settings.hbond_params );
 	}
-	if ( ! option[ score::smooth_hack_elec ].user() ) {
-		option[ score::smooth_hack_elec ].default_value( restore_sc12_settings.smooth_hack_elec );
+	if ( ! option[ score::smooth_fa_elec ].user() ) {
+		option[ score::smooth_fa_elec ].default_value( restore_sc12_settings.smooth_fa_elec );
 	}
-	if ( ! option[ score::hackelec_min_dis ].user() ) {
-		option[ score::hackelec_min_dis ].default_value( restore_sc12_settings.hackelec_min_dis );
+	if ( ! option[ score::elec_min_dis ].user() ) {
+		option[ score::elec_min_dis ].default_value( restore_sc12_settings.elec_min_dis );
 	}
 	if( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() ) {
 		utility::vector1< std::string > params;
@@ -211,19 +211,19 @@ init_hbond_sp2_correction() {
 		}
 
 		if( ! option[ score::hbond_params ].user() ) {
-			option[ score::hbond_params ].value( "sp2_hackelec_params" );
+			option[ score::hbond_params ].value( "sp2_elec_params" );
 		}
 
-		if( ! option[ score::smooth_hack_elec ].user() ) {
-			option[ score::smooth_hack_elec ].value( true );
+		if( ! option[ score::smooth_fa_elec ].user() ) {
+			option[ score::smooth_fa_elec ].value( true );
 		}
 
-		if( ! option[ score::hackelec_min_dis ].user() ) {
-			option[ score::hackelec_min_dis ].value( 1.6 );
+		if( ! option[ score::elec_min_dis ].user() ) {
+			option[ score::elec_min_dis ].value( 1.6 );
 		}
 
-		if( ! option[ score::hackelec_r_option ].user() ) {
-			option[ score::hackelec_r_option ].value( false );
+		if( ! option[ score::elec_r_option ].user() ) {
+			option[ score::elec_r_option ].value( false );
 		}
 
 		if( ! option[ basic::options::OptionKeys::chemical::set_atom_properties ].user() || option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
@@ -448,12 +448,12 @@ init_crystal_refinement_correction() {
 //		option[ score::hbond_params ].value( "score12_params" );
 //	}
 //
-//	if( ! option[ score::smooth_hack_elec ].user() ) {
-//		option[ score::smooth_hack_elec ].value( false );
+//	if( ! option[ score::smooth_fa_elec ].user() ) {
+//		option[ score::smooth_fa_elec ].value( false );
 //	}
 //
-//	if( ! option[ score::hackelec_min_dis ].user() ) {
-//		option[ score::hackelec_min_dis ].value( 1.5 );
+//	if( ! option[ score::elec_min_dis ].user() ) {
+//		option[ score::elec_min_dis ].value( 1.5 );
 //	}
 //
 //}

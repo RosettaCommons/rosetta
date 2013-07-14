@@ -118,13 +118,13 @@ void test_simple_min()
 			minimizer.run( pose, *mm, *scorefxn, *min_options );
 		}
 
-		/*{ // just hack_elec // apl -- temporarily disable hack_elec
+		/*{ // just fa_elec // apl -- temporarily disable fa_elec
 			scorefxn->reset();
-			scorefxn->set_weight( scoring::hack_elec, 0.5 );
+			scorefxn->set_weight( scoring::fa_elec, 0.5 );
 
 			Pose pose;
 			pose = start_pose;
-			TR << "MINTEST: hack_elec" << std::endl;
+			TR << "MINTEST: fa_elec" << std::endl;
 			minimizer.run( pose, *mm, *scorefxn, *min_options );
 		}*/
 

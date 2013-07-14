@@ -249,7 +249,7 @@ public:
 		scorefxn_->set_weight( pro_close, 1.0 );
 		scorefxn_->set_weight( omega, 0.5 );
 		scorefxn_->set_weight( rama, 0.2 );
-		scorefxn_->set_weight( hack_elec, 0.7 );
+		scorefxn_->set_weight( fa_elec, 0.7 );
 	}
 
 	void setup_for_mmstd() {
@@ -312,7 +312,7 @@ public:
 		scorefxn_->set_weight( pro_close, 1.0 );
 		scorefxn_->set_weight( omega, 0.5 );
 		scorefxn_->set_weight( rama, 0.2 );
-		scorefxn_->set_weight( hack_elec, 0.7 );
+		scorefxn_->set_weight( fa_elec, 0.7 );
 		scorefxn_->set_weight( cart_bonded, 0.5 );
 	}
 

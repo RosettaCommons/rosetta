@@ -5,7 +5,7 @@ METHOD_WEIGHTS ref 0.0497258 -2.46822 0.817984 0.234042 0.349976 -0.379306 1.681
 fa_atr 0.8
 fa_rep 0.4
 fa_sol 0.6
-hack_elec 0.25
+fa_elec 0.25
 pro_close 1
 fa_pair 0.8
 hbond_sr_bb 2

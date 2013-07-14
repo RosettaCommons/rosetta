@@ -92,7 +92,7 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
   loop_bb_min_allowed_dev_(0.5),
 	lig_superposition_file_read_(false),
 	rb_min_(true),
-	exclude_protein_protein_hack_elec_(true)
+	exclude_protein_protein_fa_elec_(true)
 {
 
 		Mover::type( "EnzdesFixBBProtocol" );
@@ -196,11 +196,11 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 		enable_constraint_scoreterms();
 
 		if( basic::options::option[ basic::options::OptionKeys::docking::ligand::old_estat ].user() ){
-			exclude_protein_protein_hack_elec_ = basic::options::option[ basic::options::OptionKeys::docking::ligand::old_estat ];
+			exclude_protein_protein_fa_elec_ = basic::options::option[ basic::options::OptionKeys::docking::ligand::old_estat ];
 		}
-		if( exclude_protein_protein_hack_elec_ ){
+		if( exclude_protein_protein_fa_elec_ ){
 			core::scoring::methods::EnergyMethodOptions options( scorefxn_->energy_method_options() );
-			options.exclude_protein_protein_hack_elec( true );
+			options.exclude_protein_protein_fa_elec( true );
 			scorefxn_->set_energy_method_options( options );
 		}
 

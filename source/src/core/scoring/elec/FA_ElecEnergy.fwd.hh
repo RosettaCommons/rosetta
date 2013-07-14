@@ -7,24 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/HackElecEnergy.hh
+/// @file   core/scoring/methods/FA_ElecEnergy.hh
 /// @brief  Electrostatic energy with a distance-dependant dielectric
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_hackelec_HackElecEnergy_fwd_hh
-#define INCLUDED_core_scoring_hackelec_HackElecEnergy_fwd_hh
+#ifndef INCLUDED_core_scoring_elec_FA_ElecEnergy_fwd_hh
+#define INCLUDED_core_scoring_elec_FA_ElecEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {
-namespace hackelec {
+namespace elec {
 
-class HackElecEnergy;
+class FA_ElecEnergy;
 
-typedef utility::pointer::owning_ptr< HackElecEnergy > HackElecEnergyOP;
-typedef utility::pointer::owning_ptr< HackElecEnergy const > HackElecEnergyCOP;
+typedef utility::pointer::owning_ptr< FA_ElecEnergy > FA_ElecEnergyOP;
+typedef utility::pointer::owning_ptr< FA_ElecEnergy const > FA_ElecEnergyCOP;
 
 }
 }

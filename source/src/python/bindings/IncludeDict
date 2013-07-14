@@ -351,7 +351,7 @@
 'core/scoring/etable' : (False, 999, []),
 'core/scoring/geometric_solvation' : (False, 999, []),
 'core/scoring/hackaro' : (False, 999, []),
-'core/scoring/hackelec' : (False, 999, []),
+'core/scoring/elec' : (False, 999, []),
 'core/scoring/hbonds' : (True, 999, []),
 'core/scoring/interpolation_util.hh' : (True, 999, []),
 'core/scoring/memb_etable' : (False, 999, []),

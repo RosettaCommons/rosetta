@@ -1,5 +1,5 @@
 SEQUENCE: KEMRILMLGLDAAGKTTILYKLKLGQSVTTIPTVGFNVETVTYKNVKFNVWDVGGQDKIRPLWRHYYTGTQGLIFVVDCADRDRIDEARQELHRIINDREMRDAIILIFANKQDLPDAMKPHEIQEKLGLTRIRDRNWYVQPSCATSGDGLYEGLTWLTSNYKMGREVENLILENTQLLETKNALNIVKNDLIAKVDELTCEKDVLQGELEAVKQAKLKLEEKNRELEEELRKAMGREVENLILENTQLLETKNALNIVKNDLIAKVDELTCEKDVLQGELEAVKQAKLKLEEKNRELEEELRKAZ
-SCORE:     score     fa_atr     fa_rep     fa_sol    hack_elec    hbond_sr_bb    hbond_lr_bb    hbond_bb_sc    hbond_sc    dslf_ss_dst    dslf_cs_ang    dslf_ss_dih    dslf_ca_dih     fa_dun        ref    rms  decoytime          description
+SCORE:     score     fa_atr     fa_rep     fa_sol    fa_elec    hbond_sr_bb    hbond_lr_bb    hbond_bb_sc    hbond_sc    dslf_ss_dst    dslf_cs_ang    dslf_ss_dih    dslf_ca_dih     fa_dun        ref    rms  decoytime          description
 REMARK BINARY_SILENTFILE
 SCORE:  -455.696   -551.923     16.632    257.706       -3.996        -71.928        -12.544         -7.028      -7.042          0.000          0.000          0.000          0.000     16.348    -91.920 14.633     43.000 S_bin_silentfile
 FOLD_TREE  EDGE 1 306 3  EDGE 1 75 -1  EDGE 75 163 -1  EDGE 75 199 1  EDGE 199 164 -1  EDGE 199 234 -1  EDGE 234 235 2  EDGE 235 305 -1  S_bin_silentfile

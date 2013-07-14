@@ -109,14 +109,14 @@ void ComputeLigandRDF::apply( core::pose::Pose & pose )
 	std::string rep_rdf_string(utility::join(rdf_map["fa_rep"]," "));
 	std::string atr_rdf_string(utility::join(rdf_map["fa_atr"]," "));
 	std::string A_A1_rdf_string(utility::join(rdf_map["A_A1"]," "));
-	std::string hack_elec_rdf_string(utility::join(rdf_map["hack_elec"]," "));
+	std::string fa_elec_rdf_string(utility::join(rdf_map["fa_elec"]," "));
 	std::string hbond_rdf_string(utility::join(rdf_map["hbond"]," "));
 	std::string hbond_binary_rdf_string(utility::join(rdf_map["hbond_binary"]," "));
 
 	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("fa_rep_"+mode_+"_rdf",rep_rdf_string);
 	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("fa_atr_"+mode_+"_rdf",atr_rdf_string);
 	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("A_A1_"+mode_+"_rdf",A_A1_rdf_string);
-	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("hack_elec_"+mode_+"_rdf",hack_elec_rdf_string);
+	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("fa_elec_"+mode_+"_rdf",fa_elec_rdf_string);
 	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("hbond_"+mode_+"_rdf",hbond_rdf_string);
 	protocols::jd2::JobDistributor::get_instance()->current_job()->add_string_string_pair("hbond_binary_"+mode_+"_rdf",hbond_binary_rdf_string);
 }
@@ -260,7 +260,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 	rdf_map["fa_atr"] = rdf_vector;
 	rdf_map["fa_rep"] = rdf_vector;
 	rdf_map["A_A1"] = rdf_vector;
-	rdf_map["hack_elec"] = rdf_vector;
+	rdf_map["fa_elec"] = rdf_vector;
 	rdf_map["hbond"] = rdf_vector;
 	rdf_map["hbond_binary"] = rdf_vector;
 
@@ -306,7 +306,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 		core::Real solv_energy = 0.0;
 		core::Real d2 = 0.0;
 		etable_evaluator.atom_pair_energy(protein_atom,ligand_atom,weight,atr_energy,rep_energy,solv_energy,d2);
-		core::Real hack_elec_energy = coloumb.eval_atom_atom_hack_elecE(protein_atom_coords,protein_atom_charge,ligand_atom_coords,ligand_atom_charge);
+		core::Real fa_elec_energy = coloumb.eval_atom_atom_fa_elecE(protein_atom_coords,protein_atom_charge,ligand_atom_coords,ligand_atom_charge);
 		
 		//get hbond energy if availible
 		utility::vector1< core::scoring::hbonds::HBondCOP > hbond_list(hbond_set.atom_hbonds(protein_atom_id));
@@ -344,7 +344,7 @@ std::map<std::string, utility::vector1<core::Real> > ComputeLigandRDF::compute_r
 			
 			rdf_map["fa_atr"][bin_index] += atr_energy*rdf_bin_value;
 			rdf_map["fa_rep"][bin_index] += rep_energy*rdf_bin_value;
-			rdf_map["hack_elec"][bin_index] += hack_elec_energy*rdf_bin_value;
+			rdf_map["fa_elec"][bin_index] += fa_elec_energy*rdf_bin_value;
 			rdf_map["hbond"][bin_index]	 += hbond_energy*rdf_bin_value;
 			rdf_map["A_A1"][bin_index] += rdf_bin_value;
 			rdf_map["hbond_binary"][bin_index] += rdf_bin_value*hbond_binary;

@@ -356,14 +356,14 @@ main( int argc, char * argv [] )
 		core::Vector const & ctr = the_pose->residue(ligid).nbr_atom_xyz();
 		out << "@1center " << ctr.x() << " " << ctr.y() << " " << ctr.z() << "\n";
 		out << "@1span 25\n";
-		dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(fa_atr, fa_rep, fa_sol, hbond_sc, hbond_bb_sc, hbond_lr_bb, hbond_sr_bb, hack_elec), "a+r+s+h+e");
+		dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(fa_atr, fa_rep, fa_sol, hbond_sc, hbond_bb_sc, hbond_lr_bb, hbond_sr_bb, fa_elec), "a+r+s+h+e");
 		dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(fa_atr, fa_rep), "a+r");
-		dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(fa_sol, hbond_sc, hbond_bb_sc, hbond_lr_bb, hbond_sr_bb, hack_elec), "s+h+e");
+		dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(fa_sol, hbond_sc, hbond_bb_sc, hbond_lr_bb, hbond_sr_bb, fa_elec), "s+h+e");
 		dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(fa_atr), "atr");
 		dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(fa_rep), "rep");
 		dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(fa_sol), "sol");
 		dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(hbond_sc, hbond_bb_sc, hbond_lr_bb, hbond_sr_bb), "hbond");
-		dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(hack_elec), "elec");
+		dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(fa_elec), "elec");
 		//dump_energy_kinemage(out, *the_pose, utility::tools::make_vector1(coordinate_constraint, atom_pair_constraint, angle_constraint, dihedral_constraint), "constr"); // these values not cached?
 		out.close();
 

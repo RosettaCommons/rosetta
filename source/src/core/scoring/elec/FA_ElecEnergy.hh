@@ -7,19 +7,19 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/HackElecEnergy.hh
+/// @file   core/scoring/methods/FA_ElecEnergy.hh
 /// @brief  Electrostatic energy with a distance-dependant dielectric
 /// @author Phil Bradley, modifed by James Gleixner
 
 
-#ifndef INCLUDED_core_scoring_hackelec_HackElecEnergy_hh
-#define INCLUDED_core_scoring_hackelec_HackElecEnergy_hh
+#ifndef INCLUDED_core_scoring_elec_FA_ElecEnergy_hh
+#define INCLUDED_core_scoring_elec_FA_ElecEnergy_hh
 
 // Unit Headers
-#include <core/scoring/hackelec/HackElecEnergy.fwd.hh>
+#include <core/scoring/elec/FA_ElecEnergy.fwd.hh>
 
 // Package headers
-#include <core/scoring/hackelec/ElecAtom.hh>
+#include <core/scoring/elec/ElecAtom.hh>
 
 // Project headers
 #include <core/chemical/AtomType.hh>
@@ -40,7 +40,7 @@
 
 namespace core {
 namespace scoring {
-namespace hackelec {
+namespace elec {
 
 struct weight_triple
 {
@@ -50,16 +50,16 @@ struct weight_triple
 };
 
 ///
-class HackElecEnergy : public methods::ContextIndependentTwoBodyEnergy  {
+class FA_ElecEnergy : public methods::ContextIndependentTwoBodyEnergy  {
 public:
 	typedef methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
 	///
-	HackElecEnergy( methods::EnergyMethodOptions const & options );
+	FA_ElecEnergy( methods::EnergyMethodOptions const & options );
 
 	///
-	HackElecEnergy( HackElecEnergy const & src );
+	FA_ElecEnergy( FA_ElecEnergy const & src );
 
   /// @brief Initilize constants.
 	void
@@ -316,7 +316,7 @@ public:
 		Size & /*path_dist*/
 	) const
 	{
-		return hackelec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
+		return elec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge(), d2  );
 	}
 
 	inline
@@ -326,7 +326,7 @@ public:
 		Size & /*path_dist*/
 	) const
 	{
-		return hackelec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
+		return elec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
 	}
 
 	inline
@@ -336,7 +336,7 @@ public:
 		Size & /*path_dist*/
 	) const
 	{
-		return hackelec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
+		return elec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
 	}
 
 	inline
@@ -346,20 +346,20 @@ public:
 		Size & /*path_dist*/
 	) const
 	{
-		return hackelec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_hack_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
+		return elec_weight(at1.isbb(),at2.isbb()) * coulomb().eval_atom_atom_fa_elecE( at1.xyz(), at1.charge(), at2.xyz(), at2.charge()  );
 	}
 
 	/// @brief This has to go
 	inline
 	Real
-	hackelec_weight( bool at1isbb, bool at2isbb ) const {
+	elec_weight( bool at1isbb, bool at2isbb ) const {
 		return ( at1isbb ? ( at2isbb ? wbb_bb_ : wbb_sc_ ) : ( at2isbb ? wbb_sc_ : wsc_sc_ ) );
 	}
 
 
 	inline
 	Real
-	hackelec_weight( bool at1isbb, bool at2isbb, weight_triple const & wts ) const {
+	elec_weight( bool at1isbb, bool at2isbb, weight_triple const & wts ) const {
 		return ( at1isbb ? ( at2isbb ? wts.wbb_bb_ : wts.wbb_sc_ ) : ( at2isbb ? wts.wbb_sc_ : wts.wsc_sc_ ) );
 	}
 
@@ -442,7 +442,7 @@ private:
 	bool exclude_monomer_;
 	bool exclude_DNA_DNA_;
 
-	//mutable Real hackelec_weight_; // used during trie-vs-trie algorithm
+	//mutable Real elec_weight_; // used during trie-vs-trie algorithm
 	mutable Real wbb_bb_;
 	mutable Real wbb_sc_;
 	mutable Real wsc_sc_;
@@ -454,7 +454,7 @@ private:
 
 };
 
-} // namespace hackelec
+} // namespace elec
 } // namespace scoring
 } // namespace core
 

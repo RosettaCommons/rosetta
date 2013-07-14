@@ -15,7 +15,7 @@ Testing docking high-res scoring function...
  fa_atr                       0.338   -1395.655    -471.731
  fa_rep                       0.044    1542.121      67.853
  fa_sol                       0.242     839.536     203.168
- hack_elec                    0.026     -68.237      -1.774
+ fa_elec                      0.026     -68.237      -1.774
  fa_pair                      0.164     -40.686      -6.673
  hbond_sr_bb                  0.245     -19.829      -4.858
  hbond_lr_bb                  0.245     -52.505     -12.864

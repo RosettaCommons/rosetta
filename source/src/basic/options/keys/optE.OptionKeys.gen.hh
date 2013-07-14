@@ -34,7 +34,7 @@ namespace optE { extern FileOptionKey const constant_logic_taskops_file; }
 namespace optE { extern BooleanOptionKey const optE_soft_rep; }
 namespace optE { extern BooleanOptionKey const no_hb_env_dependence; }
 namespace optE { extern BooleanOptionKey const no_hb_env_dependence_DNA; }
-namespace optE { extern BooleanOptionKey const optE_no_protein_hack_elec; }
+namespace optE { extern BooleanOptionKey const optE_no_protein_fa_elec; }
 namespace optE { extern BooleanOptionKey const design_first; }
 namespace optE { extern IntegerOptionKey const n_design_cycles; }
 namespace optE { extern BooleanOptionKey const recover_nat_rot; }

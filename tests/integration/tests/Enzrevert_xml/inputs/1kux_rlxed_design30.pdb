@@ -2656,7 +2656,7 @@ HETATM 2652  H8  X00 X   1      14.595  25.822  34.883  1.00  0.00
 TER                                                                             
 # All scores below are weighted scores, not raw scores.
 #BEGIN_POSE_ENERGIES_TABLE UM_1_G105S108C135_2_1kux_nohet_1_F1kux_nohet_1_0001_1_3_rlxed__DE_41__DE_30
-label fa_atr fa_rep fa_sol hack_elec ch_bond_bb_bb pro_close fa_cust_pair_dist fa_pair hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_ss_dst dslf_cs_ang dslf_ss_dih dslf_ca_dih atom_pair_constraint coordinate_constraint angle_constraint dihedral_constraint rama omega fa_dun p_aa_pp ref envsmooth chainbreak res_type_constraint total
+label fa_atr fa_rep fa_sol fa_elec ch_bond_bb_bb pro_close fa_cust_pair_dist fa_pair hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_ss_dst dslf_cs_ang dslf_ss_dih dslf_ca_dih atom_pair_constraint coordinate_constraint angle_constraint dihedral_constraint rama omega fa_dun p_aa_pp ref envsmooth chainbreak res_type_constraint total
 weights 0.8 0.44 0.65 0.25 0.5 1 1 0.49 0.585 1.17 1.17 1.1 0.5 2 5 5 1 1 1 1 0.2 0.5 0.56 0.32 1 0.179 1 1 NA
 pose -668.535 68.8569 312.151 -1.06858 -9.79676 0.198552 0 -7.91685 -35.3976 -58.2536 -20.8353 -13.026 0 0 0 0 5.04947 0 0.25489 0.191215 1.61327 7.78771 119.819 -12.233 4.82131 -8.32824 0 0 -314.648
 HIS_D_p:NtermProteinFull_1 -0.92594 0.104068 0.565622 0 0 0 0 0.0210151 0 0 0 0 0 0 0 0 0 0 0 0 0 0.000537404 1.71142 0 0.877498 -0.115648 0 0 2.23857

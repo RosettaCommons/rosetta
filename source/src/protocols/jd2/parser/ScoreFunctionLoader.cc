@@ -106,20 +106,20 @@ void ScoreFunctionLoader::load_data(
 					}
 				}
 
-				if( mod_tag->hasOption( "hack_elec_min_dis" )) {
-					emoptions.hackelec_min_dis( mod_tag->getOption<core::Real>( "hack_elec_min_dis" ) );
+				if( mod_tag->hasOption( "fa_elec_min_dis" )) {
+					emoptions.elec_min_dis( mod_tag->getOption<core::Real>( "fa_elec_min_dis" ) );
 				}
-				if( mod_tag->hasOption( "hack_elec_max_dis" )) {
-					emoptions.hackelec_max_dis( mod_tag->getOption<core::Real>( "hack_elec_max_dis" ) );
+				if( mod_tag->hasOption( "fa_elec_max_dis" )) {
+					emoptions.elec_max_dis( mod_tag->getOption<core::Real>( "fa_elec_max_dis" ) );
 				}
-				if( mod_tag->hasOption( "hack_elec_dielectric" )) {
-					emoptions.hackelec_die( mod_tag->getOption<core::Real>( "hack_elec_dielectric" ) );
+				if( mod_tag->hasOption( "fa_elec_dielectric" )) {
+					emoptions.elec_die( mod_tag->getOption<core::Real>( "fa_elec_dielectric" ) );
 				}
-				if( mod_tag->hasOption( "hack_elec_no_dis_dep_die" )) {
-					emoptions.hackelec_no_dis_dep_die( mod_tag->getOption<bool>( "hack_elec_no_dis_dep_die" ) );
+				if( mod_tag->hasOption( "fa_elec_no_dis_dep_die" )) {
+					emoptions.elec_no_dis_dep_die( mod_tag->getOption<bool>( "fa_elec_no_dis_dep_die" ) );
 				}
-				if( mod_tag->hasOption( "exclude_protein_protein_hack_elec" )) {
-					emoptions.exclude_protein_protein_hack_elec( mod_tag->getOption<bool>( "exclude_protein_protein_hack_elec" ) );
+				if( mod_tag->hasOption( "exclude_protein_protein_fa_elec" )) {
+					emoptions.exclude_protein_protein_fa_elec( mod_tag->getOption<bool>( "exclude_protein_protein_fa_elec" ) );
 				}
 				if( mod_tag->hasOption( "exclude_DNA_DNA" )) {
 					emoptions.exclude_DNA_DNA( mod_tag->getOption<bool>( "exclude_DNA_DNA" ) );

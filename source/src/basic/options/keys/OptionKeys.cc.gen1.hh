@@ -147,11 +147,11 @@ namespace score { namespace saxs { RealOptionKey const q_step( "score:saxs:q_ste
 namespace score { namespace saxs { BooleanOptionKey const fit_pddf_area( "score:saxs:fit_pddf_area" );  } }
 namespace score { IntegerVectorOptionKey const sidechain_buried( "score:sidechain_buried" );  }
 namespace score { IntegerVectorOptionKey const sidechain_exposed( "score:sidechain_exposed" );  }
-namespace score { RealOptionKey const hackelec_min_dis( "score:hackelec_min_dis" );  }
-namespace score { RealOptionKey const hackelec_max_dis( "score:hackelec_max_dis" );  }
-namespace score { RealOptionKey const hackelec_die( "score:hackelec_die" );  }
-namespace score { BooleanOptionKey const hackelec_r_option( "score:hackelec_r_option" );  }
-namespace score { BooleanOptionKey const smooth_hack_elec( "score:smooth_hack_elec" );  }
+namespace score { RealOptionKey const elec_min_dis( "score:elec_min_dis" );  }
+namespace score { RealOptionKey const elec_max_dis( "score:elec_max_dis" );  }
+namespace score { RealOptionKey const elec_die( "score:elec_die" );  }
+namespace score { BooleanOptionKey const elec_r_option( "score:elec_r_option" );  }
+namespace score { BooleanOptionKey const smooth_fa_elec( "score:smooth_fa_elec" );  }
 namespace score { RealOptionKey const facts_GBpair_cut( "score:facts_GBpair_cut" );  }
 namespace score { RealOptionKey const facts_min_dis( "score:facts_min_dis" );  }
 namespace score { RealOptionKey const facts_kappa( "score:facts_kappa" );  }
@@ -208,7 +208,7 @@ namespace corrections { namespace score { BooleanOptionKey const dun10( "correct
 namespace corrections { namespace score { StringOptionKey const dun10_dir( "corrections:score:dun10_dir" );  } }
 namespace corrections { namespace score { StringOptionKey const dun02_file( "corrections:score:dun02_file" );  } }
 namespace corrections { namespace score { StringOptionKey const ch_o_bond_potential( "corrections:score:ch_o_bond_potential" );  } }
-namespace corrections { namespace score { BooleanOptionKey const hack_elec_co_only( "corrections:score:hack_elec_co_only" );  } }
+namespace corrections { namespace score { BooleanOptionKey const fa_elec_co_only( "corrections:score:fa_elec_co_only" );  } }
 namespace corrections { namespace score { RealOptionKey const lj_hbond_hdis( "corrections:score:lj_hbond_hdis" );  } }
 namespace corrections { namespace score { RealOptionKey const lj_hbond_OH_donor_dis( "corrections:score:lj_hbond_OH_donor_dis" );  } }
 namespace corrections { namespace score { BooleanOptionKey const score12prime( "corrections:score:score12prime" );  } }

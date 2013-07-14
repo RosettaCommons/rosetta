@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/hackelec/HackElecEnergyAroAro.cc
+/// @file   core/scoring/elec/FA_ElecEnergyAroAro.cc
 /// @brief  Electrostatics energy method for aromatic side chain (stand-in for pi/pi interactions).
 /// @author Rhiju Das
 
 
 // Unit headers
-#include <core/scoring/hackelec/HackElecEnergyAroAro.hh>
-#include <core/scoring/hackelec/HackElecEnergyAroAroCreator.hh>
+#include <core/scoring/elec/FA_ElecEnergyAroAro.hh>
+#include <core/scoring/elec/FA_ElecEnergyAroAroCreator.hh>
 
 // Package headers
 #include <core/scoring/EnergyGraph.hh>
@@ -38,9 +38,9 @@
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// Quick version of hack_elec for just aromatic residues in proteins.
+// Quick version of fa_elec for just aromatic residues in proteins.
 //  This could be made much faster (for packing) by using Andrew Leaver-Fay's trie stuff,
-//   copying/pasting from HackElecEnergy.cc. For now, I just went with what I knew.
+//   copying/pasting from FA_ElecEnergy.cc. For now, I just went with what I knew.
 //         -- Rhiju, Nov. 2009
 
 
@@ -67,69 +67,69 @@
 
 namespace core {
 namespace scoring {
-namespace hackelec {
+namespace elec {
 
 
-/// @details This must return a fresh instance of the HackElecEnergyAroAro class,
+/// @details This must return a fresh instance of the FA_ElecEnergyAroAro class,
 /// never an instance already in use
 methods::EnergyMethodOP
-HackElecEnergyAroAroCreator::create_energy_method(
+FA_ElecEnergyAroAroCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new HackElecEnergyAroAro( options );
+	return new FA_ElecEnergyAroAro( options );
 }
 
 ScoreTypes
-HackElecEnergyAroAroCreator::score_types_for_method() const {
+FA_ElecEnergyAroAroCreator::score_types_for_method() const {
 	ScoreTypes sts;
-	sts.push_back( hack_elec_aro_aro );
+	sts.push_back( fa_elec_aro_aro );
 	return sts;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-HackElecEnergyAroAro::HackElecEnergyAroAro(
+FA_ElecEnergyAroAro::FA_ElecEnergyAroAro(
 	methods::EnergyMethodOptions const & options
 ):
 	parent( options )
 {
-	set_score_types( new HackElecEnergyAroAroCreator );
+	set_score_types( new FA_ElecEnergyAroAroCreator );
 }
 
 
 ////////////////////////////////////////////////////////////////////////////
-HackElecEnergyAroAro::HackElecEnergyAroAro( HackElecEnergyAroAro const & src ):
+FA_ElecEnergyAroAro::FA_ElecEnergyAroAro( FA_ElecEnergyAroAro const & src ):
 	parent( src )
 {
-	set_score_types( new HackElecEnergyAroAroCreator );
+	set_score_types( new FA_ElecEnergyAroAroCreator );
 }
 
 /// clone
 methods::EnergyMethodOP
-HackElecEnergyAroAro::clone() const
+FA_ElecEnergyAroAro::clone() const
 {
-	return new HackElecEnergyAroAro( *this );
+	return new FA_ElecEnergyAroAro( *this );
 }
 
 ///
 void
-HackElecEnergyAroAro::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+FA_ElecEnergyAroAro::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
 ///
 void
-HackElecEnergyAroAro::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+FA_ElecEnergyAroAro::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
 
-// The HackElectEnergy method stores a vector of rotamer trie objects in the Energies
+// The FA_ElectEnergy method stores a vector of rotamer trie objects in the Energies
 // object for use in rapid rotamer/background energy calculations.  Overrides default
 // do-nothing behavior.
 void
-HackElecEnergyAroAro::setup_for_packing(
+FA_ElecEnergyAroAro::setup_for_packing(
 	pose::Pose &,
 	utility::vector1< bool > const &,
 	utility::vector1< bool > const &
@@ -141,7 +141,7 @@ HackElecEnergyAroAro::setup_for_packing(
 // @brief Creates a rotamer trie for the input set of rotamers and stores the trie
 // in the rotamer set.
 void
-HackElecEnergyAroAro::prepare_rotamers_for_packing(
+FA_ElecEnergyAroAro::prepare_rotamers_for_packing(
 	pose::Pose const &,
 	conformation::RotamerSetBase &
 ) const
@@ -153,7 +153,7 @@ HackElecEnergyAroAro::prepare_rotamers_for_packing(
 // @brief Updates the cached rotamer trie for a residue if it has changed during the course of
 // a repacking
 void
-HackElecEnergyAroAro::update_residue_for_packing(
+FA_ElecEnergyAroAro::update_residue_for_packing(
 	pose::Pose &,
 	Size
 ) const
@@ -167,7 +167,7 @@ HackElecEnergyAroAro::update_residue_for_packing(
 
 ///
 void
-HackElecEnergyAroAro::residue_pair_energy(
+FA_ElecEnergyAroAro::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
@@ -177,7 +177,7 @@ HackElecEnergyAroAro::residue_pair_energy(
 {
 	// Aromatic means: PHE, TRP, TYR (not HIS, currently).
 	if ( rsd1.is_aromatic() && rsd2.is_aromatic() ) {
-		residue_pair_energy_aro_aro( rsd1, rsd2, emap ); // In the grand spirit of hack_elec hackiness
+		residue_pair_energy_aro_aro( rsd1, rsd2, emap ); // In the grand spirit of fa_elec hackiness
 	}
 	//std::cout << rsd1.seqpos() << ' ' << rsd2.seqpos() << ' ' << score << std::endl;
 }
@@ -204,7 +204,7 @@ bool atom_is_aro( conformation::Residue const & rsd, Size const i )
 // Following copies a little code, but at least separates out this inelegant and
 // probably useless RNA stuff from the usual stuff.
 Real
-HackElecEnergyAroAro::residue_pair_energy_aro_aro(
+FA_ElecEnergyAroAro::residue_pair_energy_aro_aro(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	EnergyMap & emap
@@ -239,10 +239,10 @@ HackElecEnergyAroAro::residue_pair_energy_aro_aro(
 			Size path_dist( 0 );
 			if ( cpfxn->count( i, j, weight, path_dist ) ) {
 				Real score = weight *
-					coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+					coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 
 				total_score += score;
-				emap[ hack_elec_aro_aro ] += score;
+				emap[ fa_elec_aro_aro ] += score;
 
 			}
 		}
@@ -253,7 +253,7 @@ HackElecEnergyAroAro::residue_pair_energy_aro_aro(
 }
 
 void
-HackElecEnergyAroAro::evaluate_rotamer_pair_energies(
+FA_ElecEnergyAroAro::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
@@ -269,7 +269,7 @@ HackElecEnergyAroAro::evaluate_rotamer_pair_energies(
 }
 
 void
-HackElecEnergyAroAro::evaluate_rotamer_background_energies(
+FA_ElecEnergyAroAro::evaluate_rotamer_background_energies(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & residue,
 	pose::Pose const & pose,
@@ -285,7 +285,7 @@ HackElecEnergyAroAro::evaluate_rotamer_background_energies(
 
 
 void
-HackElecEnergyAroAro::eval_atom_derivative(
+FA_ElecEnergyAroAro::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
@@ -348,7 +348,7 @@ HackElecEnergyAroAro::eval_atom_derivative(
 
 //////////////////////////////////////////////////
 void
-HackElecEnergyAroAro::eval_atom_derivative_aro_aro(
+FA_ElecEnergyAroAro::eval_atom_derivative_aro_aro(
 	conformation::Residue const & rsd1,
 	Size const & i,
 	conformation::Residue const & rsd2,
@@ -384,13 +384,13 @@ HackElecEnergyAroAro::eval_atom_derivative_aro_aro(
 			Vector const f2( i_xyz - j_xyz );
 			Real const dis2( f2.length_squared() );
 			Real const dE_dr_over_r = weight *
-				coulomb().eval_dhack_elecE_dr_over_r( dis2, i_charge, j_charge );
+				coulomb().eval_dfa_elecE_dr_over_r( dis2, i_charge, j_charge );
 
 			if ( dE_dr_over_r != 0.0 ) {
 				Vector const f1( i_xyz.cross( j_xyz ) );
 
-				F1 += weights[ hack_elec_aro_aro ] * dE_dr_over_r * f1;
-				F2 += weights[ hack_elec_aro_aro ] * dE_dr_over_r * f2;
+				F1 += weights[ fa_elec_aro_aro ] * dE_dr_over_r * f1;
+				F2 += weights[ fa_elec_aro_aro ] * dE_dr_over_r * f2;
 			}
 
 		}
@@ -398,13 +398,13 @@ HackElecEnergyAroAro::eval_atom_derivative_aro_aro(
 }
 
 
-/// @brief HackElecEnergyAroAro is context independent; no context graphs required
+/// @brief FA_ElecEnergyAroAro is context independent; no context graphs required
 void
-HackElecEnergyAroAro::indicate_required_context_graphs( utility::vector1< bool > & /* context_graphs_required */ ) const
+FA_ElecEnergyAroAro::indicate_required_context_graphs( utility::vector1< bool > & /* context_graphs_required */ ) const
 {
 }
 core::Size
-HackElecEnergyAroAro::version() const
+FA_ElecEnergyAroAro::version() const
 {
 	return 1; // Initial versioning
 }

@@ -45,17 +45,6 @@ sources = {
 		"SnugDock",
 		"SnugDockProtocol",
 	],
-	"protocols/antibody/design":[
-		"AntibodyCDRDesigner",
-		"AntibodyDatabaseManager",
-		"AntibodyDesignModeler",
-		"AntibodyDesignMover",
-		"AntibodyGraftDesigner",
-		"ConservativeDesignOperation",
-		"DesignInstructionsParser",
-		"ResidueProbDesignOperation",
-		"util",
-	],
 }
 include_path = [
 ]

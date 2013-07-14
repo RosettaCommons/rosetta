@@ -132,7 +132,7 @@ HighestEnergyRegionOperation::parse_tag( utility::tag::TagPtr tag )
 		protocols::rosetta_scripts::get_score_function_name(tag))
 	scorefxn_ = new core::scoring::ScoreFunction();
 	scorefxn_->initialize_from_file("sp2_correction.wts");
-	scorefxn_->set_weight( core::scoring::hack_elec, 0.5 );
+	scorefxn_->set_weight( core::scoring::fa_elec, 0.5 );
 	scorefxn_->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 	scorefxn_->set_weight( core::scoring::angle_constraint, 1.0 );
 	scorefxn_->set_weight( core::scoring::dihedral_constraint, 1.0 );

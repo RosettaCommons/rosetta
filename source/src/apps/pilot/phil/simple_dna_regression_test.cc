@@ -50,7 +50,7 @@
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hackelec/HackElecEnergy.hh>
+#include <core/scoring/elec/FA_ElecEnergy.hh>
 //#include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
@@ -792,7 +792,7 @@ show_protein_DNA_interactions(
 	using namespace scoring;
 	using namespace scoring::methods;
 	using namespace scoring::etable;
-	using namespace scoring::hackelec;
+	using namespace scoring::elec;
 	using namespace conformation;
 	using namespace scoring::hbonds;
 
@@ -806,7 +806,7 @@ show_protein_DNA_interactions(
 	TableLookupEtableEnergy const etable_energy
 		( *ScoringManager::get_instance()->etable( scorefxn.energy_method_options().etable_type() ),
 			scorefxn.energy_method_options() );
-	HackElecEnergy const elec_energy( scorefxn.energy_method_options() );
+	FA_ElecEnergy const elec_energy( scorefxn.energy_method_options() );
 
 	for ( int i=1; i<= hbond_set.nhbonds(); ++i ) {
 		HBond const & hb( hbond_set.hbond(i) );
@@ -815,7 +815,7 @@ show_protein_DNA_interactions(
 		if ( don_rsd.is_DNA() || acc_rsd.is_DNA() ) {
 // 		if ( ( don_rsd.is_DNA() && acc_rsd.is_protein() ) ||
 // 				 ( acc_rsd.is_DNA() && don_rsd.is_protein() ) ) {
-			// calculate also the atr,rep,sol and hack_elec energies of interaction, maybe also the sigmoidal electrostatic energy
+			// calculate also the atr,rep,sol and fa_elec energies of interaction, maybe also the sigmoidal electrostatic energy
 
 			Size const dhatm( hb.don_hatm() ), datm( don_rsd.atom_base( dhatm ) ), aatm( hb.acc_atm() );
 
@@ -825,9 +825,9 @@ show_protein_DNA_interactions(
 			etable_energy.atom_pair_energy( don_rsd.atom(  datm ), acc_rsd.atom( aatm ), 1.0, emap, dsq );
 			etable_energy.atom_pair_energy( don_rsd.atom( dhatm ), acc_rsd.atom( aatm ), 1.0, emap, dsq );
 			Real elecE(0.0);
-			elecE += elec_energy.eval_atom_atom_hack_elecE( don_rsd.xyz(  datm ), don_rsd.atomic_charge(  datm ),
+			elecE += elec_energy.eval_atom_atom_fa_elecE( don_rsd.xyz(  datm ), don_rsd.atomic_charge(  datm ),
 																											acc_rsd.xyz(  aatm ), acc_rsd.atomic_charge(  aatm ) );
-			elecE += elec_energy.eval_atom_atom_hack_elecE( don_rsd.xyz( dhatm ), don_rsd.atomic_charge( dhatm ),
+			elecE += elec_energy.eval_atom_atom_fa_elecE( don_rsd.xyz( dhatm ), don_rsd.atomic_charge( dhatm ),
 																											acc_rsd.xyz(  aatm ), acc_rsd.atomic_charge(  aatm ) );
 
 			std::cout << "HBOND: " << F(9,3,hb.energy() * hb.weight() ) << ' ' <<
@@ -1142,7 +1142,7 @@ motif_scan()
 
 	 fa_atr, rep, sol
 	 hbond
-	 hack_elec
+	 fa_elec
 
 **/
 
@@ -1174,7 +1174,7 @@ intra_dna_stats()
 	scorefxn.set_weight( hbond_sr_bb, 1.0 );
 	scorefxn.set_weight( hbond_bb_sc, 1.0 );
 	scorefxn.set_weight( hbond_sc, 1.0 );
-	scorefxn.set_weight( hack_elec, 1.0 );
+	scorefxn.set_weight( fa_elec, 1.0 );
 
 
 	vector1< std::string > files( basic::options::start_files() );
@@ -1206,7 +1206,7 @@ intra_dna_stats()
 				retrieve_residue_pair_energies( energies, i, partner[i], are_they_neighbors, emap );
 				std::cout << "BasePairEnergies: " << rsd.name1() << pose.residue(partner[i]).name1() << ' ' <<
 					F(9,3,emap[fa_atr]) << ' ' << F(9,3,emap[fa_rep]) << ' ' << F(9,3,emap[fa_sol]) <<
-					' ' << F(9,3,emap[hbond_sc]) << ' ' << F(9,3,emap[ hack_elec ]) << std::endl;
+					' ' << F(9,3,emap[hbond_sc]) << ' ' << F(9,3,emap[ fa_elec ]) << std::endl;
 			}
 
 			// base step energies
@@ -1218,7 +1218,7 @@ intra_dna_stats()
 				retrieve_residue_pair_energies( energies, partner[i+1], partner[i], are_they_neighbors, emap );
 				std::cout << "BaseStepEnergies: " << rsd.name1() << pose.residue(i+1).name1() << ' ' <<
 					F(9,3,emap[fa_atr]) << ' ' << F(9,3,emap[fa_rep]) << ' ' << F(9,3,emap[fa_sol]) <<
-					' ' << F(9,3,emap[hbond_sc]) << ' ' << F(9,3,emap[ hack_elec ]) << std::endl;
+					' ' << F(9,3,emap[hbond_sc]) << ' ' << F(9,3,emap[ fa_elec ]) << std::endl;
 
 				std::string dtag1, dtag2;
 				{ // i->i+1 dihedrals
@@ -2062,7 +2062,7 @@ zif268_test()
 
 		// dna specific mods
 		scorefxn->set_weight( fa_pair, 0.0 );
-		scorefxn->set_weight( hack_elec, option[ Whack_elec ] );
+		scorefxn->set_weight( fa_elec, option[ Wfa_elec ] );
 		scorefxn->set_weight( dna_bp, option[ Wdna_bp ] );
 		scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
@@ -2117,7 +2117,7 @@ bzip_test()
 
 		// dna specific mods
 		scorefxn->set_weight( fa_pair, 0.0 );
-		scorefxn->set_weight( hack_elec, option[ Whack_elec ] );
+		scorefxn->set_weight( fa_elec, option[ Wfa_elec ] );
 		scorefxn->set_weight( dna_bp, option[ Wdna_bp ] );
 		scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
@@ -2172,7 +2172,7 @@ endo_test()
 
 		// dna specific mods
 		scorefxn->set_weight( fa_pair, 0.0 );
-		scorefxn->set_weight( hack_elec, option[ Whack_elec ] );
+		scorefxn->set_weight( fa_elec, option[ Wfa_elec ] );
 		scorefxn->set_weight( dna_bp, option[ Wdna_bp ] );
 		scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 
@@ -2207,7 +2207,7 @@ tf_specificity_test(
 	std::string const & tf_name,
 	std::string wts_tag,
 	std::string const & output_tag,
-	Real const Whack_elec,
+	Real const Wfa_elec,
 	Real const Wdna_bp,
 	Real const Wdna_bs
 )
@@ -2356,7 +2356,7 @@ tf_specificity_test(
 
 	// dna specific mods
 	scorefxn->set_weight( fa_pair, 0.0 );
-	scorefxn->set_weight( hack_elec, Whack_elec );
+	scorefxn->set_weight( fa_elec, Wfa_elec );
 	scorefxn->set_weight( dna_bp, Wdna_bp );
 	scorefxn->set_weight( dna_bs, Wdna_bs );
 
@@ -2419,7 +2419,7 @@ tf_specificity_test()
 		for ( Size j=1; j<= weights_files.size(); ++j ) {
 			std::string const outtag( tfs[i] + "_" + weights_files[j] + "_" + option[ out::output_tag ] );
 
-			tf_specificity_test( tfs[i], weights_files[j], outtag, option[ Whack_elec ], option[ Wdna_bp ],
+			tf_specificity_test( tfs[i], weights_files[j], outtag, option[ Wfa_elec ], option[ Wdna_bp ],
 													 option[ Wdna_bs ] );
 		}
 	}
@@ -2433,7 +2433,7 @@ dna_specificity_test(
 	int const motif_size,
 	std::string wts_tag,
 	std::string const & output_tag,
-	Real const Whack_elec,
+	Real const Wfa_elec,
 	Real const Wdna_bp,
 	Real const Wdna_bs
 )
@@ -2468,7 +2468,7 @@ dna_specificity_test(
 
 	// dna specific mods
 	scorefxn->set_weight( fa_pair, 0.0 );
-	scorefxn->set_weight( hack_elec, Whack_elec );
+	scorefxn->set_weight( fa_elec, Wfa_elec );
 	scorefxn->set_weight( dna_bp, Wdna_bp );
 	scorefxn->set_weight( dna_bs, Wdna_bs );
 
@@ -3134,7 +3134,7 @@ luxr_test()
 		scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 		// dna specific mods
 		scorefxn->set_weight( fa_pair, 0.0 );
-		scorefxn->set_weight( hack_elec, option[ Whack_elec ] ); // was 0.5
+		scorefxn->set_weight( fa_elec, option[ Wfa_elec ] ); // was 0.5
 		scorefxn->set_weight(    dna_bp, option[ Wdna_bp    ] );
 		scorefxn->set_weight(    dna_bs, option[ Wdna_bs    ] );
 	}
@@ -3278,7 +3278,7 @@ dna_specificity_test()
 			std::cout << "FILES: " << outtag << ' ' << pdb_files[i] << ' ' << weights_files[j] << std::endl;
 
 			dna_specificity_test( pdb_files[i], option[ motif_begin ], option[ motif_size ], weights_files[j],
-														outtag, option[ Whack_elec ], option[ Wdna_bp ], option[ Wdna_bs ] );
+														outtag, option[ Wfa_elec ], option[ Wdna_bp ], option[ Wdna_bs ] );
 		}
 	}
 
@@ -3499,7 +3499,7 @@ water_test()
 // 		scorefxn.set_weight( fa_atr, 0.80 );
 // 		scorefxn.set_weight( fa_rep, 0.44 );
 // 		scorefxn.set_weight( fa_sol, 0.65 );
-// 		scorefxn.set_weight( hack_elec, 0.5 );
+// 		scorefxn.set_weight( fa_elec, 0.5 );
 // 		scorefxn.set_weight( hbond_lr_bb, 2.0 );
 // 		scorefxn.set_weight( hbond_sr_bb, 2.0 );
 // 		scorefxn.set_weight( hbond_bb_sc, 2.0 );
@@ -3769,7 +3769,7 @@ not1_test()
 		scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 		// dna specific mods
 		scorefxn->set_weight( fa_pair, 0.0 );
-		scorefxn->set_weight( hack_elec, option[ Whack_elec ] ); // was 0.5
+		scorefxn->set_weight( fa_elec, option[ Wfa_elec ] ); // was 0.5
 		scorefxn->set_weight(    dna_bp, option[ Wdna_bp    ] );
 		scorefxn->set_weight(    dna_bs, option[ Wdna_bs    ] );
 	}
@@ -4208,7 +4208,7 @@ zf_test()
 
 			// dna specific mods
 			scorefxn->set_weight( fa_pair, 0.0 );
-			scorefxn->set_weight( hack_elec, option[ Whack_elec ] );
+			scorefxn->set_weight( fa_elec, option[ Wfa_elec ] );
 			scorefxn->set_weight( dna_bp, option[ Wdna_bp ] );
 			scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 

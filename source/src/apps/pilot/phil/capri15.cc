@@ -55,7 +55,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-//#include <core/scoring/hackelec/HackElecEnergy.hh>
+//#include <core/scoring/elec/FA_ElecEnergy.hh>
 //#include <core/scoring/etable/EtableEnergy.hh>
 //#include <core/scoring/etable/count_pair/CountPairAll.hh>
 //#include <core/scoring/etable/count_pair/CountPairFunction.hh>
@@ -1193,7 +1193,7 @@ get_relax_scorefxn()
 
 	// protein-NA mods
 	scorefxn->set_weight( fa_pair, 0.0 );
-	scorefxn->set_weight( hack_elec, 0.5 );
+	scorefxn->set_weight( fa_elec, 0.5 );
 
 	// to hold the SAM in place
 	scorefxn->set_weight( atom_pair_constraint, 1.0 );

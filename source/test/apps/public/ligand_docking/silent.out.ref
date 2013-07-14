@@ -4872,7 +4872,7 @@ END_PDB_FORMAT %REF%_7cpa_7cpa_input_0001
 FOLD_TREE  EDGE 1 307 -1  EDGE 1 308 1  X X END  EDGE 1 309 2  X X END
 END_POSE_TAG %REF%_7cpa_7cpa_input_0001
 POSE_TAG 7cpa_7cpa_input_0001
-SCORES 7cpa_7cpa_input_0001 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1207.28 fa_dun 192.719 fa_intra_rep 12.3224 fa_pair -43.7129 fa_rep 177.236 fa_sol 606.894 hack_elec -38.3065 hbond_bb_sc -66.0183 hbond_lr_bb -115.616 hbond_sc -64.9966 hbond_sr_bb -257.771 interface_delta 3.98997 ligand_auto_rms_no_super 6.15004 ligand_auto_rms_with_super 3.49668 ligand_centroid_travel 2.32926 ligand_is_touching 1 p_aa_pp -39.4236 pro_close 29.0889 ref -37.51 total_score -852.374
+SCORES 7cpa_7cpa_input_0001 dslf_ca_dih 0 dslf_cs_ang 0 dslf_ss_dih 0 dslf_ss_dst 0 fa_atr -1207.28 fa_dun 192.719 fa_intra_rep 12.3224 fa_pair -43.7129 fa_rep 177.236 fa_sol 606.894 fa_elec -38.3065 hbond_bb_sc -66.0183 hbond_lr_bb -115.616 hbond_sc -64.9966 hbond_sr_bb -257.771 interface_delta 3.98997 ligand_auto_rms_no_super 6.15004 ligand_auto_rms_with_super 3.49668 ligand_centroid_travel 2.32926 ligand_is_touching 1 p_aa_pp -39.4236 pro_close 29.0889 ref -37.51 total_score -852.374
 MUTATE 69 HIS_D
 MUTATE 196 HIS
 12 5 -2.138 1.213

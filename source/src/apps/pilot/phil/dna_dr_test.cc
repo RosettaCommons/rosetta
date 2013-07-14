@@ -46,7 +46,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hackelec/HackElecEnergy.hh>
+#include <core/scoring/elec/FA_ElecEnergy.hh>
 //#include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
@@ -861,7 +861,7 @@ dna_dr_loop_test()
 			// dna specific mods
 			scorefxn->set_weight( dna_dr, wt );
 			// 			scorefxn->set_weight( fa_pair, 0.0 );
-			// 			scorefxn->set_weight( hack_elec, option[ Whack_elec ] );
+			// 			scorefxn->set_weight( fa_elec, option[ Wfa_elec ] );
 			// 			scorefxn->set_weight( dna_bp, option[ Wdna_bp ] );
 			// 			scorefxn->set_weight( dna_bs, option[ Wdna_bs ] );
 			(*scorefxn)( pose );

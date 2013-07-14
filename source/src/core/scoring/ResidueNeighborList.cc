@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/ResidueNeighborList.hh
-/// @brief  A container class for use by the Etable and HackElec classes for storing
+/// @brief  A container class for use by the Etable and FA_Elec classes for storing
 ///         lists of atom neighbors
 /// @author Andrew Leaver-Fay
 

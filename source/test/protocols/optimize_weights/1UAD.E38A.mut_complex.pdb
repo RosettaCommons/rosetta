@@ -4320,7 +4320,7 @@ weights: (fa_atr 0.8) (fa_rep 0.44) (fa_sol 0.65) (fa_intra_rep 0.004) (pro_clos
 energy_method_options: EnergyMethodOptions::show: etable_type: FA_STANDARD_DEFAULT
 EnergyMethodOptions::show: method_weights: ref 0.16 1.7 -0.67 -0.81 0.63 -0.17 0.56 0.24 -0.65 -0.1 -0.34 -0.89 0.02 -0.97 -0.98 -0.37 -0.27 0.29 0.91 0.51
 EnergyMethodOptions::show: atom_vdw_atom_type_set_name: centroid
-EnergyMethodOptions::show: exclude_protein_protein_hack_elec: false
+EnergyMethodOptions::show: exclude_protein_protein_fa_elec: false
 EnergyMethodOptions::show: exclude_DNA_DNA: true
 EnergyMethodOptions::show: use_hb_env_dep: true
 EnergyMethodOptions::show: use_hb_env_dep_DNA: true

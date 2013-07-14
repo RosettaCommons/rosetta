@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/HackElecEnergy.cc
+/// @file   core/scoring/methods/FA_ElecEnergy.cc
 /// @brief  Electrostatic energy with a distance-dependant dielectric
 /// @author Phil Bradley
 /// @author Andrew Leaver-Fay
@@ -15,8 +15,8 @@
 
 
 // Unit headers
-#include <core/scoring/hackelec/HackElecEnergy.hh>
-#include <core/scoring/hackelec/HackElecEnergyCreator.hh>
+#include <core/scoring/elec/FA_ElecEnergy.hh>
+#include <core/scoring/elec/FA_ElecEnergyCreator.hh>
 
 // Package headers
 #include <core/scoring/DerivVectorPair.hh>
@@ -71,7 +71,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-static basic::Tracer TR("core.scoring.hackelec.HackElecEnergy");
+static basic::Tracer TR("core.scoring.elec.FA_ElecEnergy");
 
 /////////////////////////////////////////////////////////////////////////////////////////
 ///
@@ -96,35 +96,35 @@ static basic::Tracer TR("core.scoring.hackelec.HackElecEnergy");
 
 namespace core {
 namespace scoring {
-namespace hackelec {
+namespace elec {
 
 
-/// @details This must return a fresh instance of the HackElecEnergy class,
+/// @details This must return a fresh instance of the FA_ElecEnergy class,
 /// never an instance already in use
 methods::EnergyMethodOP
-HackElecEnergyCreator::create_energy_method(
+FA_ElecEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new HackElecEnergy( options );
+	return new FA_ElecEnergy( options );
 }
 
 ScoreTypes
-HackElecEnergyCreator::score_types_for_method() const {
+FA_ElecEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
-	sts.push_back( hack_elec );
-	sts.push_back( hack_elec_bb_bb );
-	sts.push_back( hack_elec_bb_sc );
-	sts.push_back( hack_elec_sc_sc );
+	sts.push_back( fa_elec );
+	sts.push_back( fa_elec_bb_bb );
+	sts.push_back( fa_elec_bb_sc );
+	sts.push_back( fa_elec_sc_sc );
 	return sts;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////
-HackElecEnergy::HackElecEnergy( methods::EnergyMethodOptions const & options ):
-	parent( new HackElecEnergyCreator ),
+FA_ElecEnergy::FA_ElecEnergy( methods::EnergyMethodOptions const & options ):
+	parent( new FA_ElecEnergyCreator ),
 	coulomb_( options ),
-	exclude_protein_protein_( options.exclude_protein_protein_hack_elec() ),
-	exclude_monomer_( options.exclude_monomer_hack_elec() ),
+	exclude_protein_protein_( options.exclude_protein_protein_fa_elec() ),
+	exclude_monomer_( options.exclude_monomer_fa_elec() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {
 	coulomb_.initialize();
@@ -132,7 +132,7 @@ HackElecEnergy::HackElecEnergy( methods::EnergyMethodOptions const & options ):
 
 
 ////////////////////////////////////////////////////////////////////////////
-HackElecEnergy::HackElecEnergy( HackElecEnergy const & src ):
+FA_ElecEnergy::FA_ElecEnergy( FA_ElecEnergy const & src ):
 	parent( src ),
 	coulomb_( src.coulomb() ),
 	exclude_protein_protein_( src.exclude_protein_protein_ ),
@@ -144,20 +144,20 @@ HackElecEnergy::HackElecEnergy( HackElecEnergy const & src ):
 
 
 void
-HackElecEnergy::initialize() {
+FA_ElecEnergy::initialize() {
 	coulomb_.initialize();
 }
 
 
 /// clone
 methods::EnergyMethodOP
-HackElecEnergy::clone() const
+FA_ElecEnergy::clone() const
 {
-	return new HackElecEnergy( *this );
+	return new FA_ElecEnergy( *this );
 }
 
 void
-HackElecEnergy::setup_for_minimizing(
+FA_ElecEnergy::setup_for_minimizing(
 	pose::Pose & pose,
 	ScoreFunction const & sfxn,
 	kinematics::MinimizerMapBase const & min_map
@@ -182,40 +182,40 @@ HackElecEnergy::setup_for_minimizing(
 		}
 		// this partially becomes the EtableEnergy classes's responsibility
 		nblist->setup( pose, sfxn, *this);
-		energies.set_nblist( EnergiesCacheableDataType::HACKELEC_NBLIST, nblist );
+		energies.set_nblist( EnergiesCacheableDataType::ELEC_NBLIST, nblist );
 	}
 }
 
 
 ///
 void
-HackElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const
+FA_ElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const
 {
 	set_nres_mono(pose);
-	wbb_bb_ = sfxn.weights()[ hack_elec ] + sfxn.weights()[ hack_elec_bb_bb ];
-	wbb_sc_ = sfxn.weights()[ hack_elec ] + sfxn.weights()[ hack_elec_bb_sc ];
-	wsc_sc_ = sfxn.weights()[ hack_elec ] + sfxn.weights()[ hack_elec_sc_sc ];
+	wbb_bb_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_bb ];
+	wbb_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
+	wsc_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_sc_sc ];
 	pose.update_residue_neighbors();
 }
 
 ///
 void
-HackElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
+FA_ElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
 {
 	set_nres_mono(pose);
 	pose.update_residue_neighbors();
 	if ( pose.energies().use_nblist() ) {
-		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::HACKELEC_NBLIST ) );
+		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
 		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
 }
 
 
-// The HackElectEnergy method stores a vector of rotamer trie objects in the Energies
+// The FA_ElectEnergy method stores a vector of rotamer trie objects in the Energies
 // object for use in rapid rotamer/background energy calculations.  Overrides default
 // do-nothing behavior.
 void
-HackElecEnergy::setup_for_packing(
+FA_ElecEnergy::setup_for_packing(
 	pose::Pose & pose,
 	utility::vector1< bool > const &,
 	utility::vector1< bool > const &
@@ -234,28 +234,28 @@ HackElecEnergy::setup_for_packing(
 		RotamerTrieBaseOP one_rotamer_trie = create_rotamer_trie( pose.residue( ii ), pose );
 		tries->trie( ii, one_rotamer_trie );
 	}
-	pose.energies().data().set( EnergiesCacheableDataType::HACKELEC_TRIE_COLLECTION, tries );
+	pose.energies().data().set( EnergiesCacheableDataType::ELEC_TRIE_COLLECTION, tries );
 
 }
 
 // @brief Creates a rotamer trie for the input set of rotamers and stores the trie
 // in the rotamer set.
 void
-HackElecEnergy::prepare_rotamers_for_packing(
+FA_ElecEnergy::prepare_rotamers_for_packing(
 	pose::Pose const & pose,
 	conformation::RotamerSetBase & set
 ) const
 {
 
 	trie::RotamerTrieBaseOP rottrie = create_rotamer_trie( set, pose );
-	set.store_trie( methods::hackelec_method, rottrie );
+	set.store_trie( methods::elec_method, rottrie );
 }
 
 
 // @brief Updates the cached rotamer trie for a residue if it has changed during the course of
 // a repacking
 void
-HackElecEnergy::update_residue_for_packing(
+FA_ElecEnergy::update_residue_for_packing(
 	pose::Pose & pose,
 	Size resid
 ) const
@@ -265,7 +265,7 @@ HackElecEnergy::update_residue_for_packing(
 
 	// grab non-const & of the cached tries and replace resid's trie with a new one.
 	TrieCollection & trie_collection
-		( static_cast< TrieCollection & > (pose.energies().data().get( EnergiesCacheableDataType::HACKELEC_TRIE_COLLECTION )));
+		( static_cast< TrieCollection & > (pose.energies().data().get( EnergiesCacheableDataType::ELEC_TRIE_COLLECTION )));
 	trie_collection.trie( resid, one_rotamer_trie );
 
 }
@@ -276,7 +276,7 @@ HackElecEnergy::update_residue_for_packing(
 
 ///
 void
-HackElecEnergy::residue_pair_energy(
+FA_ElecEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
@@ -310,15 +310,15 @@ HackElecEnergy::residue_pair_energy(
 				Real weight(1.0);
 				if ( cpfxn->count( i, j, weight ) ) {
 					Real energy = weight *
-					coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+					coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 					score += energy;
 
 					if (rsd1.atom_is_backbone(i) && rsd2.atom_is_backbone(j)){
-						emap[hack_elec_bb_bb]+=energy;
+						emap[fa_elec_bb_bb]+=energy;
 					}else if (!rsd1.atom_is_backbone(i) && ! rsd2.atom_is_backbone(j)){
-						emap[hack_elec_sc_sc]+=energy;
+						emap[fa_elec_sc_sc]+=energy;
 					} else {
-						emap[hack_elec_bb_sc]+=energy;
+						emap[fa_elec_bb_sc]+=energy;
 					}
 				}
 			}
@@ -371,17 +371,17 @@ HackElecEnergy::residue_pair_energy(
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
 
-				float energy = coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+				float energy = coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				score += energy;
 				if (rsd1.atom_is_backbone(i) && rsd2.atom_is_backbone(j)){
-					emap[hack_elec_bb_bb]+=energy;
+					emap[fa_elec_bb_bb]+=energy;
 				}else if (!rsd1.atom_is_backbone(i) && ! rsd2.atom_is_backbone(j)){
-					emap[hack_elec_sc_sc]+=energy;
+					emap[fa_elec_sc_sc]+=energy;
 				} else {
-					emap[hack_elec_bb_sc]+=energy;
+					emap[fa_elec_bb_sc]+=energy;
 				}
 
-				//	score += coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				//	score += coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}*/
 		Real d2;
@@ -411,12 +411,12 @@ HackElecEnergy::residue_pair_energy(
 
 
 	}
-	emap[ hack_elec ] += score;
+	emap[ fa_elec ] += score;
 	//std::cout << rsd1.seqpos() << ' ' << rsd2.seqpos() << ' ' << score << std::endl;
 }
 
 bool
-HackElecEnergy::minimize_in_whole_structure_context( pose::Pose const & pose ) const
+FA_ElecEnergy::minimize_in_whole_structure_context( pose::Pose const & pose ) const
 {
 	return pose.energies().use_nblist_auto_update();
 }
@@ -424,7 +424,7 @@ HackElecEnergy::minimize_in_whole_structure_context( pose::Pose const & pose ) c
 
 
 bool
-HackElecEnergy::defines_score_for_residue_pair(
+FA_ElecEnergy::defines_score_for_residue_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	bool res_moving_wrt_eachother
@@ -445,14 +445,14 @@ HackElecEnergy::defines_score_for_residue_pair(
 
 
 bool
-HackElecEnergy::use_extended_residue_pair_energy_interface() const
+FA_ElecEnergy::use_extended_residue_pair_energy_interface() const
 {
 	return true;
 }
 
 
 void
-HackElecEnergy::residue_pair_energy_ext(
+FA_ElecEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	ResPairMinimizationData const & min_data,
@@ -462,18 +462,18 @@ HackElecEnergy::residue_pair_energy_ext(
 ) const
 {
 	assert( rsd1.seqpos() < rsd2.seqpos() );
-	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( hackelec_pair_nblist )() ));
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( hackelec_pair_nblist ) ) );
+	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
+	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	Real dsq, score( 0.0 );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
 		score += score_atom_pair( rsd1, rsd2, neighbs[ ii ].atomno1(), neighbs[ ii ].atomno2(), emap, neighbs[ ii ].weight(), dsq );
 	}
-	emap[ hack_elec ] += score;
+	emap[ fa_elec ] += score;
 }
 
 void
-HackElecEnergy::setup_for_minimizing_for_residue_pair(
+FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
@@ -490,7 +490,7 @@ HackElecEnergy::setup_for_minimizing_for_residue_pair(
 	assert( rsd1.seqpos() < rsd2.seqpos() );
 
 	// update the existing nblist if it's already present in the min_data object
-	ResiduePairNeighborListOP nblist( static_cast< ResiduePairNeighborList * > (pair_data.get_data( hackelec_pair_nblist )() ));
+	ResiduePairNeighborListOP nblist( static_cast< ResiduePairNeighborList * > (pair_data.get_data( elec_pair_nblist )() ));
 	if ( ! nblist ) nblist = new ResiduePairNeighborList;
 
 	/// STOLEN CODE!
@@ -499,12 +499,12 @@ HackElecEnergy::setup_for_minimizing_for_residue_pair(
 
 	nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
 
-	pair_data.set_data( hackelec_pair_nblist, nblist );
+	pair_data.set_data( elec_pair_nblist, nblist );
 }
 
 
 void
-HackElecEnergy::eval_residue_pair_derivatives(
+FA_ElecEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	ResSingleMinimizationData const &,
@@ -517,8 +517,8 @@ HackElecEnergy::eval_residue_pair_derivatives(
 ) const
 {
 	assert( rsd1.seqpos() < rsd2.seqpos() );
-	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( hackelec_pair_nblist )() ));
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( hackelec_pair_nblist ) ) );
+	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
+	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
@@ -533,9 +533,9 @@ HackElecEnergy::eval_residue_pair_derivatives(
 
 		Vector f2 = ( atom1xyz - atom2xyz );
 		Real const dis2( f2.length_squared() );
-		Real const dE_dr_over_r = neighbs[ ii ].weight() * coulomb().eval_dhack_elecE_dr_over_r( dis2, at1_charge, at2_charge );
+		Real const dE_dr_over_r = neighbs[ ii ].weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, at1_charge, at2_charge );
 		if ( dE_dr_over_r != 0.0 ) {
-			Real sfxn_weight = hackelec_weight(
+			Real sfxn_weight = elec_weight(
 				rsd1.atom_is_backbone( neighbs[ ii ].atomno1() ),
 				rsd2.atom_is_backbone( neighbs[ ii ].atomno2() ),
 				wtrip );
@@ -553,7 +553,7 @@ HackElecEnergy::eval_residue_pair_derivatives(
 
 
 void
-HackElecEnergy::backbone_backbone_energy(
+FA_ElecEnergy::backbone_backbone_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & ,
@@ -590,7 +590,7 @@ HackElecEnergy::backbone_backbone_energy(
 				Size path_dist( 0 );
 				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
-						coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+						coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
 			}
 		}
@@ -608,17 +608,17 @@ HackElecEnergy::backbone_backbone_energy(
 				Size const j = rsd2_bb_atoms[ jj ];
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
-				score += coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				score += coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}
 	}
-	emap[ hack_elec_bb_bb ] += score;
-	emap[ hack_elec ] += score;
+	emap[ fa_elec_bb_bb ] += score;
+	emap[ fa_elec ] += score;
 	//std::cout << rsd1.seqpos() << ' ' << rsd2.seqpos() << ' ' << score << std::endl;
 }
 
 void
-HackElecEnergy::backbone_sidechain_energy(
+FA_ElecEnergy::backbone_sidechain_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & ,
@@ -655,7 +655,7 @@ HackElecEnergy::backbone_sidechain_energy(
 				Size path_dist( 0 );
 				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
-						coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+						coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
 			}
 		}
@@ -673,19 +673,19 @@ HackElecEnergy::backbone_sidechain_energy(
 				Size const j = rsd2_sc_atoms[ jj ];
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
-				score += coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				score += coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}
 	}
-	emap[ hack_elec_bb_sc ] += score;
-	emap[ hack_elec ] += score;
+	emap[ fa_elec_bb_sc ] += score;
+	emap[ fa_elec ] += score;
 	//std::cout << rsd1.seqpos() << ' ' << rsd2.seqpos() << ' ' << score << std::endl;
 
 }
 
 
 void
-HackElecEnergy::sidechain_sidechain_energy(
+FA_ElecEnergy::sidechain_sidechain_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & ,
@@ -722,7 +722,7 @@ HackElecEnergy::sidechain_sidechain_energy(
 				Size path_dist( 0 );
 				if ( cpfxn->count( i, j, weight, path_dist ) ) {
 					score += weight *
-						coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
+						coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 				}
 			}
 		}
@@ -740,18 +740,18 @@ HackElecEnergy::sidechain_sidechain_energy(
 				Size const j = rsd2_sc_atoms[ jj ];
 				Real const j_charge( rsd2.atomic_charge(j) );
 				if ( j_charge == 0.0 ) continue;
-				score += coulomb().eval_atom_atom_hack_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
+				score += coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge );
 			}
 		}
 	}
-	emap[ hack_elec_sc_sc ] += score;
-	emap[ hack_elec ] += score;
+	emap[ fa_elec_sc_sc ] += score;
+	emap[ fa_elec ] += score;
 	//std::cout << rsd1.seqpos() << ' ' << rsd2.seqpos() << ' ' << score << std::endl;
 
 }
 
 void
-HackElecEnergy::finalize_total_energy(
+FA_ElecEnergy::finalize_total_energy(
 	pose::Pose & pose,
 	ScoreFunction const &,
 	EnergyMap & totals
@@ -762,7 +762,7 @@ HackElecEnergy::finalize_total_energy(
 	EnergyMap tbenergy_map;
 	// add in contributions from the nblist atom-pairs
 	NeighborList const & nblist
-		( pose.energies().nblist( EnergiesCacheableDataType::HACKELEC_NBLIST ) );
+		( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
 
 	nblist.check_domain_map( pose.energies().domain_map() );
 	utility::vector1< conformation::Residue const * > resvect;
@@ -793,21 +793,21 @@ HackElecEnergy::finalize_total_energy(
 				assert( ii_isbb + jj_isbb >= 0 && ii_isbb + jj_isbb < 3 );
 
 				Real score = nbr.weight() *
-					coulomb().eval_atom_atom_hack_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) );
+					coulomb().eval_atom_atom_fa_elecE( ires.xyz(ii), ires.atomic_charge(ii), jres.xyz(jj), jres.atomic_charge(jj) );
 
 				bb_sc_scores[ ii_isbb + jj_isbb ] += score;
 				total_score += score;
 			}
 		}
 	}
-	totals[ hack_elec ] += total_score;
-	totals[ hack_elec_bb_bb ] += bb_sc_scores[ 2 ];
-	totals[ hack_elec_bb_sc ] += bb_sc_scores[ 1 ];
-	totals[ hack_elec_sc_sc ] += bb_sc_scores[ 0 ];
+	totals[ fa_elec ] += total_score;
+	totals[ fa_elec_bb_bb ] += bb_sc_scores[ 2 ];
+	totals[ fa_elec_bb_sc ] += bb_sc_scores[ 1 ];
+	totals[ fa_elec_sc_sc ] += bb_sc_scores[ 0 ];
 }
 
 void
-HackElecEnergy::evaluate_rotamer_pair_energies(
+FA_ElecEnergy::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
@@ -830,16 +830,16 @@ HackElecEnergy::evaluate_rotamer_pair_energies(
 	temp_table1 = 0; temp_table2 = 0;
 
 	// save weight information so that its available during tvt execution
-	wbb_bb_ = sfxn.weights()[ hack_elec ] + sfxn.weights()[ hack_elec_bb_bb ];
-	wbb_sc_ = sfxn.weights()[ hack_elec ] + sfxn.weights()[ hack_elec_bb_sc ];
-	wsc_sc_ = sfxn.weights()[ hack_elec ] + sfxn.weights()[ hack_elec_sc_sc ];
+	wbb_bb_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_bb ];
+	wbb_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
+	wsc_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_sc_sc ];
 
 	/// this will later retrieve a stored rotamer trie from inside the set;
 	//EtableRotamerTrieBaseOP trie1 = create_rotamer_trie( set1, pose );
 	//EtableRotamerTrieBaseOP trie2 = create_rotamer_trie( set2, pose );
 
-	RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( hackelec_method )() ));
-	RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( hackelec_method )() ));
+	RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( elec_method )() ));
+	RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( elec_method )() ));
 
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( set1, set2, pose, sfxn );
@@ -867,7 +867,7 @@ HackElecEnergy::evaluate_rotamer_pair_energies(
 			residue_pair_energy( *set1.rotamer( ii ), *set2.rotamer( jj ), pose, sfxn, emap );
 			temp_table3( jj, ii ) += weights.dot( emap );
 			if ( std::abs( temp_table1( jj, ii ) - temp_table3( jj, ii )) > 0.001 ) {
-				std::cout << "HackElecE: Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
+				std::cout << "FA_ElecE: Residues " << set1.resid() << " & " << set2.resid() << " rotamers: " << ii << " & " << jj;
 				std::cout << " tvt/reg discrepancy: tvt= " <<  temp_table1( jj, ii ) << " reg= " << temp_table3( jj, ii );
 				std::cout << " delta: " << temp_table1( jj, ii ) - temp_table3( jj, ii ) << std::endl;
 			}
@@ -880,7 +880,7 @@ HackElecEnergy::evaluate_rotamer_pair_energies(
 }
 
 void
-HackElecEnergy::evaluate_rotamer_background_energies(
+FA_ElecEnergy::evaluate_rotamer_background_energies(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & residue,
 	pose::Pose const & pose,
@@ -907,13 +907,13 @@ HackElecEnergy::evaluate_rotamer_background_energies(
 	utility::vector1< core::PackerEnergy > temp_vector2( set.num_rotamers(), 0.0 );
 
 	// save weight information so that its available during tvt execution
-	wbb_bb_ = sfxn.weights()[ hack_elec ] + sfxn.weights()[ hack_elec_bb_bb ];
-	wbb_sc_ = sfxn.weights()[ hack_elec ] + sfxn.weights()[ hack_elec_bb_sc ];
-	wsc_sc_ = sfxn.weights()[ hack_elec ] + sfxn.weights()[ hack_elec_sc_sc ];
+	wbb_bb_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_bb ];
+	wbb_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_sc ];
+	wsc_sc_ = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_sc_sc ];
 
-	RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set.get_trie( hackelec_method )() ));
+	RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set.get_trie( elec_method )() ));
 	RotamerTrieBaseCOP trie2 = ( static_cast< TrieCollection const & >
-		( pose.energies().data().get( EnergiesCacheableDataType::HACKELEC_TRIE_COLLECTION )) ).trie( residue.seqpos() );
+		( pose.energies().data().get( EnergiesCacheableDataType::ELEC_TRIE_COLLECTION )) ).trie( residue.seqpos() );
 
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( pose.residue( set.resid() ), residue, trie1, trie2, pose, sfxn );
@@ -940,7 +940,7 @@ HackElecEnergy::evaluate_rotamer_background_energies(
 		residue_pair_energy( *set.rotamer( ii ), residue, pose, sfxn, emap );
 		temp_vector3[ ii ] += weights.dot( emap );
 		if ( std::abs( temp_vector1[ ii ] - temp_vector3[ ii ]) > 0.001 ) {
-			std::cout << "HackElecE: Residues " << set.resid() << " & " << residue.seqpos() << " rotamers: " << ii << " & bg";
+			std::cout << "FA_ElecE: Residues " << set.resid() << " & " << residue.seqpos() << " rotamers: " << ii << " & bg";
 			std::cout << " tvt/reg discrepancy: tvt= " <<  temp_vector1[ ii ] << " reg= " << temp_vector3[ ii ];
 			std::cout << " delta: " << temp_vector1[ ii ] - temp_vector3[ ii ] << std::endl;
 		}
@@ -951,28 +951,28 @@ HackElecEnergy::evaluate_rotamer_background_energies(
 }
 
 
-/// @brief HackElecEnergy distance cutoff
+/// @brief FA_ElecEnergy distance cutoff
  ///
- /// Reports the maximum heavy atom/heavy atom distance at which two residues have a non-zero hack_elec interaction energy.
+ /// Reports the maximum heavy atom/heavy atom distance at which two residues have a non-zero fa_elec interaction energy.
 Distance
-HackElecEnergy::atomic_interaction_cutoff() const
+FA_ElecEnergy::atomic_interaction_cutoff() const
 {
 	return hydrogen_interaction_cutoff();
 }
 
 etable::count_pair::CountPairFunctionCOP
-HackElecEnergy::get_intrares_countpair(
+FA_ElecEnergy::get_intrares_countpair(
 	conformation::Residue const &,
 	pose::Pose const &,
 	ScoreFunction const &
 ) const
 {
-	utility_exit_with_message( "HackElecEnergy does not define intra-residue pair energies; do not call get_intrares_countpair()" );
+	utility_exit_with_message( "FA_ElecEnergy does not define intra-residue pair energies; do not call get_intrares_countpair()" );
 	return 0;
 }
 
 etable::count_pair::CountPairFunctionCOP
-HackElecEnergy::get_count_pair_function(
+FA_ElecEnergy::get_count_pair_function(
 	Size const res1,
 	Size const res2,
 	pose::Pose const & pose,
@@ -991,7 +991,7 @@ HackElecEnergy::get_count_pair_function(
 
 
 etable::count_pair::CountPairFunctionCOP
-HackElecEnergy::get_count_pair_function(
+FA_ElecEnergy::get_count_pair_function(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2
 ) const
@@ -1010,29 +1010,29 @@ HackElecEnergy::get_count_pair_function(
 }
 
 
-/// @brief HackElecEnergy
+/// @brief FA_ElecEnergy
 void
-HackElecEnergy::indicate_required_context_graphs( utility::vector1< bool > & /* context_graphs_required */ ) const
+FA_ElecEnergy::indicate_required_context_graphs( utility::vector1< bool > & /* context_graphs_required */ ) const
 {
 }
 
 
 void
-HackElecEnergy::setup_weight_triple(
+FA_ElecEnergy::setup_weight_triple(
 	EnergyMap const & weights,
 	weight_triple & wttrip
 ) const
 {
-	wttrip.wbb_bb_ = weights[ hack_elec ] + weights[ hack_elec_bb_bb ];
-	wttrip.wbb_sc_ = weights[ hack_elec ] + weights[ hack_elec_bb_sc ];
-	wttrip.wsc_sc_ = weights[ hack_elec ] + weights[ hack_elec_sc_sc ];
+	wttrip.wbb_bb_ = weights[ fa_elec ] + weights[ fa_elec_bb_bb ];
+	wttrip.wbb_sc_ = weights[ fa_elec ] + weights[ fa_elec_bb_sc ];
+	wttrip.wsc_sc_ = weights[ fa_elec ] + weights[ fa_elec_sc_sc ];
 }
 
 /// @brief create a rotamer trie for a particular set, deciding upon the kind of count pair data that
 /// needs to be contained by the trie.
 ///
 trie::RotamerTrieBaseOP
-HackElecEnergy::create_rotamer_trie(
+FA_ElecEnergy::create_rotamer_trie(
 	conformation::RotamerSetBase const & rotset,
 	pose::Pose const & // will be need to create tries for disulfides
 ) const
@@ -1064,7 +1064,7 @@ HackElecEnergy::create_rotamer_trie(
 
 ///@details Create a one-residue rotamer trie
 trie::RotamerTrieBaseOP
-HackElecEnergy::create_rotamer_trie(
+FA_ElecEnergy::create_rotamer_trie(
 	conformation::Residue const & res,
 	pose::Pose const & // will be need to create tries for disulfides
 ) const
@@ -1099,7 +1099,7 @@ HackElecEnergy::create_rotamer_trie(
 /// from class instantiation, and therefore shared between the creation of the trie count pair classes and the regular
 /// count pair classes
 trie::TrieCountPairBaseOP
-HackElecEnergy::get_count_pair_function_trie(
+FA_ElecEnergy::get_count_pair_function_trie(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
@@ -1109,15 +1109,15 @@ HackElecEnergy::get_count_pair_function_trie(
 	conformation::Residue const & res1( pose.residue( set1.resid() ) );
 	conformation::Residue const & res2( pose.residue( set2.resid() ) );
 
-	trie::RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( methods::hackelec_method )() ));
-	trie::RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( methods::hackelec_method )() ));
+	trie::RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( methods::elec_method )() ));
+	trie::RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( methods::elec_method )() ));
 
 	return get_count_pair_function_trie( res1, res2, trie1, trie2, pose, sfxn );
 }
 
 
 trie::TrieCountPairBaseOP
-HackElecEnergy::get_count_pair_function_trie(
+FA_ElecEnergy::get_count_pair_function_trie(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
 	trie::RotamerTrieBaseCOP trie1,
@@ -1154,7 +1154,7 @@ HackElecEnergy::get_count_pair_function_trie(
 
 inline
 Real
-HackElecEnergy::score_atom_pair(
+FA_ElecEnergy::score_atom_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	Size const at1,
@@ -1164,16 +1164,16 @@ HackElecEnergy::score_atom_pair(
 	Real & d2
 ) const
 {
-	Real energy = cpweight * coulomb().eval_atom_atom_hack_elecE(
+	Real energy = cpweight * coulomb().eval_atom_atom_fa_elecE(
 		rsd1.xyz(at1), rsd1.atomic_charge(at1),
 		rsd2.xyz(at2), rsd2.atomic_charge(at2), d2);
 
 	if (rsd1.atom_is_backbone(at1) && rsd2.atom_is_backbone(at2)){
-		emap[ hack_elec_bb_bb ] += energy;
+		emap[ fa_elec_bb_bb ] += energy;
 	}else if (!rsd1.atom_is_backbone(at1) && ! rsd2.atom_is_backbone(at2)){
-		emap[ hack_elec_sc_sc ] += energy;
+		emap[ fa_elec_sc_sc ] += energy;
 	} else {
-		emap[ hack_elec_bb_sc ] += energy;
+		emap[ fa_elec_bb_sc ] += energy;
 	}
 	/*	TR << "Residue " << rsd1.seqpos() << " atom " << rsd1.atom_name(at1) << " to Residue " << rsd2.seqpos() << " atom " << rsd2.atom_name(at2)
 							 << " q1 " << rsd1.atomic_charge(at1) << " q2 " << rsd2.atomic_charge(at2)
@@ -1184,14 +1184,14 @@ HackElecEnergy::score_atom_pair(
 
 
 core::Size
-HackElecEnergy::version() const
+FA_ElecEnergy::version() const
 {
 	return 1; // Initial versioning
 }
 
 
 void
-HackElecEnergy::set_nres_mono(
+FA_ElecEnergy::set_nres_mono(
 	core::pose::Pose const & pose
 ) const {
 	for(Size i = 1; i <= pose.n_residue(); ++i) {
@@ -1205,7 +1205,7 @@ HackElecEnergy::set_nres_mono(
 
 
 bool
-HackElecEnergy::monomer_test(
+FA_ElecEnergy::monomer_test(
 	Size irsd,
 	Size jrsd
 ) const {
@@ -1215,6 +1215,6 @@ HackElecEnergy::monomer_test(
 }
 
 
-} // namespace hackelec
+} // namespace elec
 } // namespace scoring
 } // namespace core

@@ -209,7 +209,7 @@ main( int argc, char * argv [] )
 
 	//scoring::ScoreFunction scorefxn;
 	//scorefxn.set_weight( scoring::envsmooth, 1.0 );
-	//scorefxn.set_weight( scoring::hack_elec , 1.0 );
+	//scorefxn.set_weight( scoring::fa_elec , 1.0 );
 	//scorefxn.set_weight( scoring::fa_rep , 1.0 );
   /*scorefxn->set_weight( fa_atr, 0.80 );
   scorefxn->set_weight( fa_rep, 0.44 );

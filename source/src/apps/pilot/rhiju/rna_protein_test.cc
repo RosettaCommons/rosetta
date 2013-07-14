@@ -179,7 +179,7 @@ rna_protein_repack_test()
 
 	ScoreFunctionOP scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 	scorefxn->set_weight( fa_pair, 0.0 );
-	scorefxn->set_weight( hack_elec, 0.5 );
+	scorefxn->set_weight( fa_elec, 0.5 );
 	//	scorefxn->energy_method_options().exclude_DNA_DNA( false );
 
 	(*scorefxn)( pose );
@@ -215,7 +215,7 @@ rna_protein_prepack_test()
 	//OK, phil.
 	ScoreFunctionOP scorefxn = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 	scorefxn->set_weight( fa_pair, 0.0 );
-	scorefxn->set_weight( hack_elec, 0.5 );
+	scorefxn->set_weight( fa_elec, 0.5 );
 	//	scorefxn->energy_method_options().exclude_DNA_DNA( false );
 
 
@@ -439,7 +439,7 @@ rna_protein_rb_test(){
 	}
 
 	scorefxn->set_weight( fa_pair, 0.0 );
-	scorefxn->set_weight( hack_elec, 0.5 );
+	scorefxn->set_weight( fa_elec, 0.5 );
 	//	scorefxn->energy_method_options().exclude_DNA_DNA( false );
 
 	dump_pdb( pose, "start.pdb");
@@ -868,12 +868,12 @@ juke_sam_test(){
 		// Turn off rep and minimize.
 		ScoreFunctionOP scorefxn_hard = getScoreFunctionLegacy( PRE_TALARIS_2013_STANDARD_WTS );
 		scorefxn_hard->set_weight( fa_pair, 0.0 );
-		scorefxn_hard->set_weight( hack_elec, 0.5 );
+		scorefxn_hard->set_weight( fa_elec, 0.5 );
 		scorefxn_hard->set_weight( atom_pair_constraint, 1.0 );
 
 		ScoreFunctionOP scorefxn_soft = ScoreFunctionFactory::create_score_function( SOFT_REP_WTS );
 		scorefxn_soft->set_weight( fa_pair, 0.0 );
-		scorefxn_soft->set_weight( hack_elec, 0.5 );
+		scorefxn_soft->set_weight( fa_elec, 0.5 );
 		scorefxn_soft->set_weight( atom_pair_constraint, 1.0 );
 
 		ScoreFunctionOP scorefxn_soft_norep = scorefxn_soft->clone();

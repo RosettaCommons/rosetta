@@ -45,7 +45,7 @@
 #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
-//#include <core/scoring/hackelec/HackElecEnergy.hh>
+//#include <core/scoring/elec/FA_ElecEnergy.hh>
 //#include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 //#include <core/scoring/etable/count_pair/CountPairAll.hh>

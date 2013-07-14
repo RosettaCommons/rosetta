@@ -8,7 +8,7 @@ fa_pair 0.8
 fa_plane 0
 fa_dun 0.4
 ref 1
-hack_elec 0.25
+fa_elec 0.25
 hbond_lr_bb 2
 hbond_sr_bb 2
 hbond_bb_sc 2

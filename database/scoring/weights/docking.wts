@@ -7,7 +7,7 @@ hbond_lr_bb 0.245
 hbond_sr_bb 0.245 
 hbond_bb_sc 0.245 
 hbond_sc 0.245
-hack_elec 0.026
+fa_elec 0.026
 dslf_ss_dst 0.5
 dslf_cs_ang 2
 dslf_ss_dih 5

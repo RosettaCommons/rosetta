@@ -3,14 +3,14 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
 		<ligand_soft_rep weights=ligand_soft_rep>
-			<Reweight scoretype=hack_elec weight=0.42/>
+			<Reweight scoretype=fa_elec weight=0.42/>
 			<Reweight scoretype=hbond_bb_sc weight=1.3/>
 			<Reweight scoretype=hbond_sc weight=1.3/>
 			<Reweight scoretype=rama weight=0.2/>
 		</ligand_soft_rep>
 		<hard_rep weights=ligand>
 			<Reweight scoretype=fa_intra_rep weight=0.004/>
-			<Reweight scoretype=hack_elec weight=0.42/>
+			<Reweight scoretype=fa_elec weight=0.42/>
 			<Reweight scoretype=hbond_bb_sc weight=1.3/>
 			<Reweight scoretype=hbond_sc weight=1.3/>
 			<Reweight scoretype=rama weight=0.2/>

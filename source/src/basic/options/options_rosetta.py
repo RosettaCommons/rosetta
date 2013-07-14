@@ -1851,7 +1851,7 @@ Options = Option_Group( '',
 		Option( 'ramaneighbors', 'Boolean', desc='Uses neighbor-dependent ramachandran maps', default='false'),
 		Option( 'optH_weights', 'String', desc="Name of weights file (without extension .wts) to use during optH"),
 		Option( 'optH_patch', 'String', desc="Name of weights file (without extension .wts) to use during optH"),
-		Option( 'hbond_params', 'String', desc="Directory name in the database for which hydrogen bond parameters to use.", default='sp2_hackelec_params'),
+		Option( 'hbond_params', 'String', desc="Directory name in the database for which hydrogen bond parameters to use.", default='sp2_elec_params'),
 		Option( 'hbond_disable_bbsc_exclusion_rule', 'Boolean', desc="Disable the rule that protein bb/sc hbonds are excluded if the backbone group is already forming a hydrogen bond to a backbone group; with this flag, no hbonds are excluded", default='false' ),
 		Option( 'symE_units', 'Integer', desc="Number of symmetric Units in design for use with symE scoring",default='-1'),
 		Option( 'symE_bonus', 'Real', desc="Energy bonus per match for use with symE scoring",default='0.0'),
@@ -1909,13 +1909,13 @@ Options = Option_Group( '',
 		),
 			Option( 'sidechain_buried', 'IntegerVector', desc="count buried residues (rvernon pilot app)", default = '-1' ),
 		Option( 'sidechain_exposed', 'IntegerVector', desc="count exposed residues (rvernon pilot app)", default = '-1' ),
-		Option( 'hackelec_min_dis', 'Real', desc='changes the minimum distance cut-off for hack-elec energy', default='1.6'),
-		Option( 'hackelec_max_dis', 'Real', desc='changes the maximum distance cut-off for hack-elec energy', default='5.5'),
-		Option( 'hackelec_die', 'Real', desc='changes the dielectric constant for hack-elec energy', default='10.0'),
-		Option( 'hackelec_r_option', 'Boolean', desc='changes the dielectric from distance dependent to distance independent', default='false'),
-		Option( 'smooth_hack_elec', 'Boolean', desc='Smooth the discontinuities in the hackelec energy function using a sigmoidal term', default='true' ),
-		Option( 'facts_GBpair_cut','Real', desc='GBpair interaction distance cutoff (same as hackelec_max_dis)', default="10.0" ),
-		Option( 'facts_min_dis','Real', desc='GBpair interaction minimum distance (same as hackelec_min_dis)', default="1.5" ),
+		Option( 'elec_min_dis', 'Real', desc='changes the minimum distance cut-off for hack-elec energy', default='1.6'),
+		Option( 'elec_max_dis', 'Real', desc='changes the maximum distance cut-off for hack-elec energy', default='5.5'),
+		Option( 'elec_die', 'Real', desc='changes the dielectric constant for hack-elec energy', default='10.0'),
+		Option( 'elec_r_option', 'Boolean', desc='changes the dielectric from distance dependent to distance independent', default='false'),
+		Option( 'smooth_fa_elec', 'Boolean', desc='Smooth the discontinuities in the elec energy function using a sigmoidal term', default='true' ),
+		Option( 'facts_GBpair_cut','Real', desc='GBpair interaction distance cutoff (same as elec_max_dis)', default="10.0" ),
+		Option( 'facts_min_dis','Real', desc='GBpair interaction minimum distance (same as elec_min_dis)', default="1.5" ),
 		Option( 'facts_kappa','Real', desc='GBpair interaction screening factor', default="12.0" ),
 		Option( 'facts_apprx','Boolean', desc='Use approximated function form for GBpair calculation in FACTS', default="false" ),
 		Option( 'facts_asp_patch','Integer', desc='AtomicSolvationParameter set for nonpolar interaction in FACTS', default="1" ),
@@ -1976,11 +1976,11 @@ Options = Option_Group( '',
 			" -hbond_measure_sp3acc_BAH_from_hvy"
 			" -lj_hbond_hdis 1.75"
 			" -lj_hbond_OH_donor_dis 2.6"
-			" -hbond_params sp2_hackelec_params"
+			" -hbond_params sp2_elec_params"
 			" -expand_st_chi2sampling"
-			" -smooth_hack_elec"
-			" -hackelec_min_dis 1.6"
-			" -hackelec_r_option false"
+			" -smooth_fa_elec"
+			" -elec_min_dis 1.6"
+			" -elec_r_option false"
 			" -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-5.85 fa_standard:NH2O:LK_DGFREE:-7.8 fa_standard:Narg:LK_DGFREE:-10.0 fa_standard:OH:LK_DGFREE:-6.70"),
 
 		Option( 'facts_default', 'Boolean',
@@ -1990,7 +1990,7 @@ Options = Option_Group( '',
 		  " -lj_hbond_hdis 2.3"
 		  " -lj_hbond_OH_donor_dis 3.4"
 		  " -use_bicubic_interpolation "
-		  " -hbond_params sp2_hackelec_params"
+		  " -hbond_params sp2_elec_params"
 		  " -hb_sp2_chipen "
 		  " -hbond_measure_sp3acc_BAH_from_hby"
 		  " -facts_GBpair_cut 10.0"
@@ -2019,7 +2019,7 @@ Options = Option_Group( '',
 			Option( 'dun10_dir',   'String', desc="Name of dun10 dir", default="rotamer/ExtendedOpt1-5" ),
 			Option( 'dun02_file',  'String', desc="Name of dun02 input file", default="rotamer/bbdep02.May.sortlib" ),
 			Option( 'ch_o_bond_potential',   'String', desc="Name of ch_o_bond potential file (search in the local directory first, then look in the database)" , default="scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat" ),
-			Option( 'hack_elec_co_only',   'Boolean', desc="Using only CO-CO interactions in hack_elec_bb_bb", default = 'false' ),
+			Option( 'fa_elec_co_only',   'Boolean', desc="Using only CO-CO interactions in fa_elec_bb_bb", default = 'false' ),
 			Option( 'lj_hbond_hdis', 'Real', desc="Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)", default = '1.75' ),
 			Option( 'lj_hbond_OH_donor_dis', 'Real', desc="Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)", default='2.6'),
 			Option( 'score12prime', 'Boolean', desc="Restore to score funciton parameters to score12 parameters and have getScoreFuntion return with score12prime.wts. The score12prime.wts differs from standard.wts + score12.wts_patch, in that the reference energies have been optimized with optE for sequence profile recovery", default='false' ),
@@ -2054,8 +2054,8 @@ Options = Option_Group( '',
 			" -score::patch score12.wts_patch"
 			" -score::analytic_etable_evaluation false"
 			" -score::hbond_params score12_params"
-			" -score::smooth_hack_elec false"
-			" -score::hackelec_min_dis 1.5"
+			" -score::smooth_fa_elec false"
+			" -score::elec_min_dis 1.5"
 			" -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-10.0 fa_standard:NH2O:LK_DGFREE:-10.0 fa_standard:Narg:LK_DGFREE:-11.0 fa_standard:OH:LK_DGFREE:-6.77",
 			default="false" ),
 		Option_Group( 'chemical',
@@ -3357,7 +3357,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			Option( 'dump_pdbs', 'Boolean', default='false'),
 			Option( 'fast', 'Boolean', default='false'),
 			Option( 'randomize_motif', 'Boolean', default='false'),
-			Option( 'Whack_elec', 'Real', default='0'),
+			Option( 'Wfa_elec', 'Real', default='0'),
 			Option( 'Wdna_bs', 'Real', default='0'),
 			Option( 'Wdna_bp', 'Real', default='0'),
 			Option( 'minimize_tolerance', 'Real', default='0.001'),
@@ -4288,7 +4288,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'optE_soft_rep', 'Boolean', desc='Instruct the IterativeOptEDriver to use the soft-repulsion etable' ),
 		Option( 'no_hb_env_dependence', 'Boolean', desc='Disable environmental dependent weighting of hydrogen bond terms'),
 		Option( 'no_hb_env_dependence_DNA', 'Boolean', desc='Disable environmental dependent weighting of hydrogen bonds involving DNA'),
-		Option( 'optE_no_protein_hack_elec', 'Boolean', desc='Instruct the IterativeOptEDriver to use the soft-repulsion etable', default='false' ),
+		Option( 'optE_no_protein_fa_elec', 'Boolean', desc='Instruct the IterativeOptEDriver to use the soft-repulsion etable', default='false' ),
 		Option( 'design_first', 'Boolean', desc='Do not optimize the weights in the context of the native structure, but rather, start by designing the protein with the input weight set.  Requires that all score types listed in -optE::free have specificed weights.'),
 		Option( 'n_design_cycles', 'Integer', desc='The number of outer-loop design cycles to complete; default of 10 after which convergence has usually occurred', default='10'),
 		##Option( 'recover_nat_aa',   'Boolean', desc='With the iterative optE driver, use design to recover the native amino acids'),

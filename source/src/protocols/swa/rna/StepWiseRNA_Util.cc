@@ -3566,7 +3566,7 @@ principal_angle_degrees( T const & angle )
 		//////////////////////////////////////////////TESTING/////////////////////////////////////////////////
 		// Note that: rna_torsion, rna_sugar_close, fa_stack not optimized -- also irrelevant for 2'-OH sampling.
 		//just a comparison. This is extremely slow. Would need to implement trie
-		// for geom_sol, lk_nonpolar, and hackelec... Not too hard, but I don't feel like doing it now. (Rhiju)
+		// for geom_sol, lk_nonpolar, and elec... Not too hard, but I don't feel like doing it now. (Rhiju)
 		//o2star_pack_scorefxn_ = sampling_scorefxn_->clone();
 		/*
 		//Parin July 21, 2011

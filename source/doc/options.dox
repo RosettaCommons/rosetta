@@ -3900,7 +3900,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-hbond_params</b> \<String\><dt>
 <dd>Directory name in the database for which hydrogen bond parameters to use.</dd><br>
-<dd>Default: "sp2_hackelec_params"</dd><br>
+<dd>Default: "sp2_elec_params"</dd><br>
 </dl>
 <dl>
 <dt><b>-hbond_disable_bbsc_exclusion_rule</b> \<Boolean\><dt>
@@ -4170,38 +4170,38 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: -1</dd><br>
 </dl>
 <dl>
-<dt><b>-hackelec_min_dis</b> \<Real\><dt>
+<dt><b>-elec_min_dis</b> \<Real\><dt>
 <dd>changes the minimum distance cut-off for hack-elec energy</dd><br>
 <dd>Default: 1.6</dd><br>
 </dl>
 <dl>
-<dt><b>-hackelec_max_dis</b> \<Real\><dt>
+<dt><b>-elec_max_dis</b> \<Real\><dt>
 <dd>changes the maximum distance cut-off for hack-elec energy</dd><br>
 <dd>Default: 5.5</dd><br>
 </dl>
 <dl>
-<dt><b>-hackelec_die</b> \<Real\><dt>
+<dt><b>-elec_die</b> \<Real\><dt>
 <dd>changes the dielectric constant for hack-elec energy</dd><br>
 <dd>Default: 10.0</dd><br>
 </dl>
 <dl>
-<dt><b>-hackelec_r_option</b> \<Boolean\><dt>
+<dt><b>-elec_r_option</b> \<Boolean\><dt>
 <dd>changes the dielectric from distance dependent to distance independent</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
-<dt><b>-smooth_hack_elec</b> \<Boolean\><dt>
-<dd>Smooth the discontinuities in the hackelec energy function using a sigmoidal term</dd><br>
+<dt><b>-smooth_fa_elec</b> \<Boolean\><dt>
+<dd>Smooth the discontinuities in the elec energy function using a sigmoidal term</dd><br>
 <dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_GBpair_cut</b> \<Real\><dt>
-<dd>GBpair interaction distance cutoff (same as hackelec_max_dis)</dd><br>
+<dd>GBpair interaction distance cutoff (same as elec_max_dis)</dd><br>
 <dd>Default: 10.0</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_min_dis</b> \<Real\><dt>
-<dd>GBpair interaction minimum distance (same as hackelec_min_dis)</dd><br>
+<dd>GBpair interaction minimum distance (same as elec_min_dis)</dd><br>
 <dd>Default: 1.5</dd><br>
 </dl>
 <dl>
@@ -4376,11 +4376,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-hbond_sp2_correction</b> \<Boolean\><dt>
-<dd>turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_hackelec_params -expand_st_chi2sampling -smooth_hack_elec -hackelec_min_dis 1.6 -hackelec_r_option false -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-5.85 fa_standard:NH2O:LK_DGFREE:-7.8 fa_standard:Narg:LK_DGFREE:-10.0 fa_standard:OH:LK_DGFREE:-6.70</dd><br>
+<dd>turn on the hbond Sp2 correction with a single flag use with sp2_correction.wts. Note, these weight sets are chosen automatically by default. -score::hb_sp2_chipen -hb_sp2_BAH180_rise 0.75 -hb_sp2_outer_width 0.357 -hb_fade_energy -hbond_measure_sp3acc_BAH_from_hvy -lj_hbond_hdis 1.75 -lj_hbond_OH_donor_dis 2.6 -hbond_params sp2_elec_params -expand_st_chi2sampling -smooth_fa_elec -elec_min_dis 1.6 -elec_r_option false -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-5.85 fa_standard:NH2O:LK_DGFREE:-7.8 fa_standard:Narg:LK_DGFREE:-10.0 fa_standard:OH:LK_DGFREE:-6.70</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_default</b> \<Boolean\><dt>
-<dd>turn on default options for FACTS use with scorefacts.wts. Incompatible with hbond_sp2_correction option. -correct -lj_hbond_hdis 2.3 -lj_hbond_OH_donor_dis 3.4 -use_bicubic_interpolation  -hbond_params sp2_hackelec_params -hb_sp2_chipen  -hbond_measure_sp3acc_BAH_from_hby -facts_GBpair_cut 10.0 -facts_min_dis 1.5 -facts_dshift 1.4 -facts_die 1.0 -facts_kappa 12.0 -facts_asp_patch 3 -facts_intrares_scale 0.4 -facts_elec_sh_exponent 1.8</dd><br>
+<dd>turn on default options for FACTS use with scorefacts.wts. Incompatible with hbond_sp2_correction option. -correct -lj_hbond_hdis 2.3 -lj_hbond_OH_donor_dis 3.4 -use_bicubic_interpolation  -hbond_params sp2_elec_params -hb_sp2_chipen  -hbond_measure_sp3acc_BAH_from_hby -facts_GBpair_cut 10.0 -facts_min_dis 1.5 -facts_dshift 1.4 -facts_die 1.0 -facts_kappa 12.0 -facts_asp_patch 3 -facts_intrares_scale 0.4 -facts_elec_sh_exponent 1.8</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>
@@ -4461,8 +4461,8 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "scoring/score_functions/carbon_hbond/ch_o_bond_potential.dat"</dd><br>
 </dl>
 <dl>
-<dt><b>-hack_elec_co_only</b> \<Boolean\><dt>
-<dd>Using only CO-CO interactions in hack_elec_bb_bb</dd><br>
+<dt><b>-fa_elec_co_only</b> \<Boolean\><dt>
+<dd>Using only CO-CO interactions in fa_elec_bb_bb</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -4542,7 +4542,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-restore_pre_talaris_2013_behavior</b> \<Boolean\><dt>
-<dd>Restore the set of defaults that were in place before the Talaris2013 parameters were made default.  This is an umbrella flag and sets the following flags if they are not set on the command line to some other value -mistakes::chemical::pre_talaris2013_geometries true -corrections::score::dun10 false -corrections::score::use_bicubic_interpolation false -corrections::score:hb_sp2_chipen false -corrections::score::hb_fade_energy false -corrections::score::hbond_measure_sp3acc_BAH_from_hvy false -corrections::score::lj_hbond_hdis 1.95 -corrections::score::lj_hbond_OH_donor_dis 3.0 -corrections::chemical::expand_st_chi2sampling false -score::weights pre_talaris_2013_standard.wts -score::patch score12.wts_patch -score::analytic_etable_evaluation false -score::hbond_params score12_params -score::smooth_hack_elec false -score::hackelec_min_dis 1.5 -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-10.0 fa_standard:NH2O:LK_DGFREE:-10.0 fa_standard:Narg:LK_DGFREE:-11.0 fa_standard:OH:LK_DGFREE:-6.77</dd><br>
+<dd>Restore the set of defaults that were in place before the Talaris2013 parameters were made default.  This is an umbrella flag and sets the following flags if they are not set on the command line to some other value -mistakes::chemical::pre_talaris2013_geometries true -corrections::score::dun10 false -corrections::score::use_bicubic_interpolation false -corrections::score:hb_sp2_chipen false -corrections::score::hb_fade_energy false -corrections::score::hbond_measure_sp3acc_BAH_from_hvy false -corrections::score::lj_hbond_hdis 1.95 -corrections::score::lj_hbond_OH_donor_dis 3.0 -corrections::chemical::expand_st_chi2sampling false -score::weights pre_talaris_2013_standard.wts -score::patch score12.wts_patch -score::analytic_etable_evaluation false -score::hbond_params score12_params -score::smooth_fa_elec false -score::elec_min_dis 1.5 -chemical::set_atom_properties fa_standard:ONH2:LK_DGFREE:-10.0 fa_standard:NH2O:LK_DGFREE:-10.0 fa_standard:Narg:LK_DGFREE:-11.0 fa_standard:OH:LK_DGFREE:-6.77</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>
@@ -7957,7 +7957,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
-<dt><b>-Whack_elec</b> \<Real\><dt>
+<dt><b>-Wfa_elec</b> \<Real\><dt>
 <dd>No description</dd><br>
 <dd>Default: 0</dd><br>
 </dl>
@@ -10459,7 +10459,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Disable environmental dependent weighting of hydrogen bonds involving DNA</dd><br>
 </dl>
 <dl>
-<dt><b>-optE_no_protein_hack_elec</b> \<Boolean\><dt>
+<dt><b>-optE_no_protein_fa_elec</b> \<Boolean\><dt>
 <dd>Instruct the IterativeOptEDriver to use the soft-repulsion etable</dd><br>
 <dd>Default: false</dd><br>
 </dl>

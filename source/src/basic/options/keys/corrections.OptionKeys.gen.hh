@@ -42,7 +42,7 @@ namespace corrections { namespace score { extern BooleanOptionKey const dun10; }
 namespace corrections { namespace score { extern StringOptionKey const dun10_dir; } }
 namespace corrections { namespace score { extern StringOptionKey const dun02_file; } }
 namespace corrections { namespace score { extern StringOptionKey const ch_o_bond_potential; } }
-namespace corrections { namespace score { extern BooleanOptionKey const hack_elec_co_only; } }
+namespace corrections { namespace score { extern BooleanOptionKey const fa_elec_co_only; } }
 namespace corrections { namespace score { extern RealOptionKey const lj_hbond_hdis; } }
 namespace corrections { namespace score { extern RealOptionKey const lj_hbond_OH_donor_dis; } }
 namespace corrections { namespace score { extern BooleanOptionKey const score12prime; } }

@@ -1115,14 +1115,14 @@ public:
 		//pose.dump_scored_pdb("pose.pdb", *scorefxn_);
 
 		//talaris2013 score terms
-		//total fa_atr fa_rep fa_sol fa_intra_rep hack_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref 
+		//total fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref 
 		
 		utility::vector1< Real > total_native;
 		utility::vector1< Real > fa_atr_native;
 		utility::vector1< Real > fa_rep_native;
 		utility::vector1< Real > fa_sol_native;
 		utility::vector1< Real > fa_intra_rep_native;
-		utility::vector1< Real > hack_elec_native;
+		utility::vector1< Real > fa_elec_native;
 		utility::vector1< Real > pro_close_native;
 		utility::vector1< Real > hbond_sr_bb_native;
 		utility::vector1< Real > hbond_lr_bb_native;
@@ -1140,7 +1140,7 @@ public:
 		utility::vector1< Real > fa_rep;
 		utility::vector1< Real > fa_sol;
 		utility::vector1< Real > fa_intra_rep;
-		utility::vector1< Real > hack_elec;
+		utility::vector1< Real > fa_elec;
 		utility::vector1< Real > pro_close;
 		utility::vector1< Real > hbond_sr_bb;
 		utility::vector1< Real > hbond_lr_bb;
@@ -1158,7 +1158,7 @@ public:
 		utility::vector1< Real > diff_fa_rep;
 		utility::vector1< Real > diff_fa_sol;
 		utility::vector1< Real > diff_fa_intra_rep;
-		utility::vector1< Real > diff_hack_elec;
+		utility::vector1< Real > diff_fa_elec;
 		utility::vector1< Real > diff_pro_close;
 		utility::vector1< Real > diff_hbond_sr_bb;
 		utility::vector1< Real > diff_hbond_lr_bb;
@@ -1175,7 +1175,7 @@ public:
 		utility::vector1< Size > resnums;
 		
 		//talaris2013 score terms
-		//total fa_atr fa_rep fa_sol fa_intra_rep hack_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref
+		//total fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref
 
 		TR << "Initialized vectors" << std::endl;
 		TR << "Adding native energies" << std::endl;
@@ -1186,7 +1186,7 @@ public:
 			fa_rep_native.push_back(       native.energies().residue_total_energies(i)[scoring::fa_rep] );
 			fa_sol_native.push_back(       native.energies().residue_total_energies(i)[scoring::fa_sol] );
 			fa_intra_rep_native.push_back( native.energies().residue_total_energies(i)[scoring::fa_intra_rep] );
-			hack_elec_native.push_back(    native.energies().residue_total_energies(i)[scoring::hack_elec] );
+			fa_elec_native.push_back(    native.energies().residue_total_energies(i)[scoring::fa_elec] );
 			pro_close_native.push_back(    native.energies().residue_total_energies(i)[scoring::pro_close] );
 			hbond_sr_bb_native.push_back(  native.energies().residue_total_energies(i)[scoring::hbond_sr_bb] );
 			hbond_lr_bb_native.push_back(  native.energies().residue_total_energies(i)[scoring::hbond_lr_bb] );
@@ -1208,7 +1208,7 @@ public:
 			fa_rep.push_back(       pose.energies().residue_total_energies(i)[scoring::fa_rep] );
 			fa_sol.push_back(       pose.energies().residue_total_energies(i)[scoring::fa_sol] );
 			fa_intra_rep.push_back( pose.energies().residue_total_energies(i)[scoring::fa_intra_rep] );
-			hack_elec.push_back(    pose.energies().residue_total_energies(i)[scoring::hack_elec] );
+			fa_elec.push_back(    pose.energies().residue_total_energies(i)[scoring::fa_elec] );
 			pro_close.push_back(    pose.energies().residue_total_energies(i)[scoring::pro_close] );
 			hbond_sr_bb.push_back(  pose.energies().residue_total_energies(i)[scoring::hbond_sr_bb] );
 			hbond_lr_bb.push_back(  pose.energies().residue_total_energies(i)[scoring::hbond_lr_bb] );
@@ -1231,7 +1231,7 @@ public:
 		Real sum_fa_rep(0);
 		Real sum_fa_sol(0);
 		Real sum_fa_intra_rep(0);
-		Real sum_hack_elec(0);
+		Real sum_fa_elec(0);
 		Real sum_pro_close(0);
 		Real sum_hbond_sr_bb(0);
 		Real sum_hbond_lr_bb(0);
@@ -1266,7 +1266,7 @@ public:
 				Real diff_fa_rep = fa_rep[ii] - fa_rep_native[ii];
 				Real diff_fa_sol = fa_sol[ii] - fa_sol_native[ii];
 				Real diff_fa_intra_rep = fa_intra_rep[ii] - fa_intra_rep_native[ii];
-				Real diff_hack_elec = hack_elec[ii] - hack_elec_native[ii];
+				Real diff_fa_elec = fa_elec[ii] - fa_elec_native[ii];
 				Real diff_pro_close = pro_close[ii] - pro_close_native[ii];
 				Real diff_hbond_sr_bb = hbond_sr_bb[ii] - hbond_sr_bb_native[ii];
 				Real diff_hbond_lr_bb = hbond_lr_bb[ii] - hbond_lr_bb_native[ii];
@@ -1284,7 +1284,7 @@ public:
 				sum_fa_rep       += diff_fa_rep       ;
 				sum_fa_sol       += diff_fa_sol       ;
 				sum_fa_intra_rep += diff_fa_intra_rep ;
-				sum_hack_elec    += diff_hack_elec    ;
+				sum_fa_elec    += diff_fa_elec    ;
 				sum_pro_close    += diff_pro_close    ;
 				sum_hbond_sr_bb  += diff_hbond_sr_bb  ;
 				sum_hbond_lr_bb  += diff_hbond_lr_bb  ;
@@ -1304,7 +1304,7 @@ public:
 				TR << std::setprecision(4) << std::fixed << diff_fa_rep       << " ";
 				TR << std::setprecision(4) << std::fixed << diff_fa_sol       << " ";
 				TR << std::setprecision(4) << std::fixed << diff_fa_intra_rep << " ";
-				TR << std::setprecision(4) << std::fixed << diff_hack_elec    << " ";
+				TR << std::setprecision(4) << std::fixed << diff_fa_elec    << " ";
 				TR << std::setprecision(4) << std::fixed << diff_pro_close    << " ";
 				TR << std::setprecision(4) << std::fixed << diff_hbond_sr_bb  << " ";
 				TR << std::setprecision(4) << std::fixed << diff_hbond_lr_bb  << " ";
@@ -1328,7 +1328,7 @@ public:
 		TR << sum_fa_rep      <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_fa_sol      <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_fa_intra_rep<<  std::setprecision(4) << std::fixed << " ";
-		TR << sum_hack_elec   <<  std::setprecision(4) << std::fixed << " ";
+		TR << sum_fa_elec   <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_pro_close   <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_hbond_sr_bb <<  std::setprecision(4) << std::fixed << " ";
 		TR << sum_hbond_lr_bb <<  std::setprecision(4) << std::fixed << " ";
@@ -1342,7 +1342,7 @@ public:
 		TR << sum_ref         <<  std::setprecision(4) << std::fixed << " ";
 		TR << std::endl;
 
-		TR << pose.pdb_info()->name() << " score_terms: total fa_atr fa_rep fa_sol fa_intra_rep hack_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref" << std::endl;
+		TR << pose.pdb_info()->name() << " score_terms: total fa_atr fa_rep fa_sol fa_intra_rep fa_elec pro_close hbond_sr_bb hbond_lr_bb hbond_bb_sc hbond_sc dslf_fa13 rama omega fa_dun p_aa_pp ref" << std::endl;
 
 		return;
   }

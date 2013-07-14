@@ -200,7 +200,7 @@ namespace dna { namespace specificity { BooleanOptionKey const soft_rep( "dna:sp
 namespace dna { namespace specificity { BooleanOptionKey const dump_pdbs( "dna:specificity:dump_pdbs" );  } }
 namespace dna { namespace specificity { BooleanOptionKey const fast( "dna:specificity:fast" );  } }
 namespace dna { namespace specificity { BooleanOptionKey const randomize_motif( "dna:specificity:randomize_motif" );  } }
-namespace dna { namespace specificity { RealOptionKey const Whack_elec( "dna:specificity:Whack_elec" );  } }
+namespace dna { namespace specificity { RealOptionKey const Wfa_elec( "dna:specificity:Wfa_elec" );  } }
 namespace dna { namespace specificity { RealOptionKey const Wdna_bs( "dna:specificity:Wdna_bs" );  } }
 namespace dna { namespace specificity { RealOptionKey const Wdna_bp( "dna:specificity:Wdna_bp" );  } }
 namespace dna { namespace specificity { RealOptionKey const minimize_tolerance( "dna:specificity:minimize_tolerance" );  } }
@@ -705,7 +705,7 @@ namespace optE { FileOptionKey const constant_logic_taskops_file( "optE:constant
 namespace optE { BooleanOptionKey const optE_soft_rep( "optE:optE_soft_rep" );  }
 namespace optE { BooleanOptionKey const no_hb_env_dependence( "optE:no_hb_env_dependence" );  }
 namespace optE { BooleanOptionKey const no_hb_env_dependence_DNA( "optE:no_hb_env_dependence_DNA" );  }
-namespace optE { BooleanOptionKey const optE_no_protein_hack_elec( "optE:optE_no_protein_hack_elec" );  }
+namespace optE { BooleanOptionKey const optE_no_protein_fa_elec( "optE:optE_no_protein_fa_elec" );  }
 namespace optE { BooleanOptionKey const design_first( "optE:design_first" );  }
 namespace optE { IntegerOptionKey const n_design_cycles( "optE:n_design_cycles" );  }
 namespace optE { BooleanOptionKey const recover_nat_rot( "optE:recover_nat_rot" );  }

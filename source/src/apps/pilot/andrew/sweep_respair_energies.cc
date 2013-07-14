@@ -558,7 +558,7 @@ populate_database_with_dummy_data(
 		stmt.bind(1,score_type);
 		basic::database::safely_write_to_database(stmt);
 
-		score_type = "hack_elec";
+		score_type = "fa_elec";
 		stmt.bind(1,score_type);
 		basic::database::safely_write_to_database(stmt);
 
@@ -724,7 +724,7 @@ populate_database_with_dummy_data(
 					stmt.bind(3,score_val);
 					basic::database::safely_write_to_database(stmt);
 
-					score_name = "hack_elec";
+					score_name = "fa_elec";
 					score_val = dist > 2.0 ? 4.0 / dist : 4.0 / 2.0;
 					stmt.bind(1,conf_id);
 					stmt.bind(2,score_name);

@@ -10,4 +10,4 @@ hbond_sr_bb 0.857
 hbond_bb_sc 0.857
 hbond_sc 0.857
 #ref_nc 1.0
-#hack_elec 0.25
+#fa_elec 0.25

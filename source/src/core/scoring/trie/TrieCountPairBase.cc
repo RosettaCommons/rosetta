@@ -241,9 +241,9 @@ TrieCountPairBase::resolve_trie_vs_path(
 
 void
 TrieCountPairBase::resolve_trie_vs_trie(
-	RotamerTrie< hackelec::ElecAtom, etable::etrie::CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
 {
@@ -252,9 +252,9 @@ TrieCountPairBase::resolve_trie_vs_trie(
 
 void
 TrieCountPairBase::resolve_trie_vs_trie(
-	RotamerTrie< hackelec::ElecAtom, etable::etrie::CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
 {
@@ -263,9 +263,9 @@ TrieCountPairBase::resolve_trie_vs_trie(
 
 void
 TrieCountPairBase::resolve_trie_vs_trie(
-	RotamerTrie< hackelec::ElecAtom, etable::etrie::CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
 {
@@ -274,9 +274,9 @@ TrieCountPairBase::resolve_trie_vs_trie(
 
 void
 TrieCountPairBase::resolve_trie_vs_trie(
-	RotamerTrie< hackelec::ElecAtom, etable::etrie::CountPairDataGeneric > const & /*trie1*/,
+	RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/)
 {
@@ -286,9 +286,9 @@ TrieCountPairBase::resolve_trie_vs_trie(
 
 void
 TrieCountPairBase::resolve_trie_vs_path(
-	RotamerTrie< hackelec::ElecAtom, etable::etrie::CountPairData_1_1 > const & /*trie1*/,
+	RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_1 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -298,9 +298,9 @@ TrieCountPairBase::resolve_trie_vs_path(
 
 void
 TrieCountPairBase::resolve_trie_vs_path(
-	RotamerTrie< hackelec::ElecAtom, etable::etrie::CountPairData_1_2 > const & /*trie1*/,
+	RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_2 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -310,9 +310,9 @@ TrieCountPairBase::resolve_trie_vs_path(
 
 void
 TrieCountPairBase::resolve_trie_vs_path(
-	RotamerTrie< hackelec::ElecAtom, etable::etrie::CountPairData_1_3 > const & /*trie1*/,
+	RotamerTrie< elec::ElecAtom, etable::etrie::CountPairData_1_3 > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {
@@ -321,9 +321,9 @@ TrieCountPairBase::resolve_trie_vs_path(
 
 void
 TrieCountPairBase::resolve_trie_vs_path(
-	RotamerTrie< hackelec::ElecAtom, etable::etrie::CountPairDataGeneric > const & /*trie1*/,
+	RotamerTrie< elec::ElecAtom, etable::etrie::CountPairDataGeneric > const & /*trie1*/,
 	RotamerTrieBase const & /*trie2*/,
-	hackelec::HackElecEnergy const & /*sfxn*/,
+	elec::FA_ElecEnergy const & /*sfxn*/,
 	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
 	utility::vector1< core::PackerEnergy > & /*temp_vector*/)
 {

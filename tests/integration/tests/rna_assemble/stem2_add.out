@@ -1,5 +1,5 @@
 SEQUENCE: uccuaauuggga
-SCORE:     score     fa_atr     fa_rep    fa_intra_rep    lk_nonpolar    hack_elec_rna_phos_phos    ch_bond    rna_torsion    rna_sugar_close    fa_stack    hbond_sr_bb_sc    hbond_lr_bb_sc    hbond_sc    geom_sol    atom_pair_constraint description
+SCORE:     score     fa_atr     fa_rep    fa_intra_rep    lk_nonpolar    fa_elec_rna_phos_phos    ch_bond    rna_torsion    rna_sugar_close    fa_stack    hbond_sr_bb_sc    hbond_lr_bb_sc    hbond_sc    geom_sol    atom_pair_constraint description
 REMARK BINARY_SILENTFILE RNA 
 SCORE:  -258.175    -31.656      4.596           0.246          0.330                     -0.174    -17.136          9.365              3.267    -197.754            -0.159             0.000     -61.630      31.876                   0.653       S_001
 FOLD_TREE  JEDGE 1 12 1  C2   C4   END  EDGE 1 6 -1  EDGE 12 7 -1  S_001

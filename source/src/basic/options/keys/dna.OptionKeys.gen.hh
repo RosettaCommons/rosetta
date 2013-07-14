@@ -34,7 +34,7 @@ namespace dna { namespace specificity { extern BooleanOptionKey const soft_rep; 
 namespace dna { namespace specificity { extern BooleanOptionKey const dump_pdbs; } }
 namespace dna { namespace specificity { extern BooleanOptionKey const fast; } }
 namespace dna { namespace specificity { extern BooleanOptionKey const randomize_motif; } }
-namespace dna { namespace specificity { extern RealOptionKey const Whack_elec; } }
+namespace dna { namespace specificity { extern RealOptionKey const Wfa_elec; } }
 namespace dna { namespace specificity { extern RealOptionKey const Wdna_bs; } }
 namespace dna { namespace specificity { extern RealOptionKey const Wdna_bp; } }
 namespace dna { namespace specificity { extern RealOptionKey const minimize_tolerance; } }

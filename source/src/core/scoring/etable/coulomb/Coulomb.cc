@@ -30,11 +30,11 @@ namespace coulomb {
 
 ////////////////////////////////////////////////////////////////////////////
 Coulomb::Coulomb( methods::EnergyMethodOptions const & options ):
-	max_dis_( options.hackelec_max_dis() ),
-	min_dis_( options.hackelec_min_dis() ),
-	smooth_hack_elec_( options.smooth_hack_elec() ),
-	die_( options.hackelec_die() ),
-	no_dis_dep_die_( options.hackelec_no_dis_dep_die() )
+	max_dis_( options.elec_max_dis() ),
+	min_dis_( options.elec_min_dis() ),
+	smooth_fa_elec_( options.smooth_fa_elec() ),
+	die_( options.elec_die() ),
+	no_dis_dep_die_( options.elec_no_dis_dep_die() )
 {
 	initialize();
 }
@@ -44,7 +44,7 @@ Coulomb::Coulomb( methods::EnergyMethodOptions const & options ):
 Coulomb::Coulomb( Coulomb const & src ): ReferenceCount(),
 	max_dis_( src.max_dis_ ),
 	min_dis_( src.min_dis_ ),
-	smooth_hack_elec_( src.smooth_hack_elec_ ),
+	smooth_fa_elec_( src.smooth_fa_elec_ ),
 	die_( src.die_ ),
 	no_dis_dep_die_( src.no_dis_dep_die_ )
 {
@@ -76,7 +76,7 @@ Coulomb::initialize() {
 		dEfac_ = -2.0 * C0_ / die_ ;
 	}
 
-	if ( smooth_hack_elec_ ) {
+	if ( smooth_fa_elec_ ) {
 
 
 		low_poly_start_ = min_dis_ - 0.25;
