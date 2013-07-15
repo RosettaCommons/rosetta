@@ -1014,25 +1014,22 @@ namespace rna {
 	}
 
 
-
+	///////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	Output_title_text(std::string const title){
 
 		std::cout << std::endl;
 
-		Size title_length=title.size();
-		Size char_per_line=80;
-		Size dash_length=char_per_line-title_length;
+		Size title_length = title.size();
+		Size char_per_line = 80;
+		Size dash_length( 0 );
+		if ( title_length < char_per_line ) dash_length = char_per_line - title_length;
 
-		for(Size i=1; i<=dash_length/2; i++){
-			std::cout << "-";
-		}
+		for(Size i = 1; i <= dash_length/2; i++) 	std::cout << "-";
 
 		std::cout << title;
 
-		for(Size i=1; i<=dash_length/2; i++){
-			std::cout << "-";
-		}
+		for(Size i = 1; i <= dash_length/2; i++) std::cout << "-";
 
 		std::cout << std::endl;
 
