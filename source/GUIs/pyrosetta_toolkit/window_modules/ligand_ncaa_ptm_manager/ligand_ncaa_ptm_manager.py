@@ -102,7 +102,7 @@ class ligand_ncaa_ptm_manager:
         print "To permenantly enable patches and parameters for amino acids, polymers, and ligands uncomment the file in: "
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/patches.txt'
         print os.environ['PYROSETTA_DATABASE']+'/chemical/residue_type_sets/fa_standard/residue_types.txt'
-        print "It is recommended to switch at least the statistical residue-based pair potential to the coulumbic atom-based hack_elec potential (Ligands/PTM)"
+        print "It is recommended to switch at least the statistical residue-based pair potential to the coulumbic atom-based fa_elec potential (Ligands/PTM)"
         print "Consider using the mm_std scorefunction for NCAA (No DNA)"
         print "Consider using the orbitals scorefunction for DNA/RNA/NCAA (No Ligands)"
         print "Note that this may increase run time, especially for larger selections"
@@ -130,8 +130,8 @@ class ligand_ncaa_ptm_manager:
         
         self.e_function_label = Label(self.main, text = "Energy Function Optimization", font=tkFont.Font(weight='bold', size=13))
         self.electrostatics_label = Label(self.main, text = "Electrostatic")
-        self.switch_pair_to_elec_button=Button(self.main, text = "statistical -> coulombic", command = lambda: self.set_hack_elec(True))
-        self.switch_elec_to_pair_button=Button(self.main, text = "statistical <- coulombic", command = lambda: self.set_hack_elec(False))
+        self.switch_pair_to_elec_button=Button(self.main, text = "statistical -> coulombic", command = lambda: self.set_fa_elec(True))
+        self.switch_elec_to_pair_button=Button(self.main, text = "statistical <- coulombic", command = lambda: self.set_fa_elec(False))
         
         self.scorefunction_label = Label(self.main, text = "Score Function")
         self.switch_to_orbitals_button = Button(self.main, text = "Orbital Based: orbitals", command = lambda: self.set_orbitals())
@@ -339,17 +339,23 @@ class ligand_ncaa_ptm_manager:
                 print "Residue type not loaded! "+self.prop.found_name.get()
                 
                 
-    def set_hack_elec(self, bool):
+    def set_fa_elec(self, bool):
         if bool:
-            weight = self.score_class.score.get_weight(fa_pair)
-            if weight!=0:
+            fa_pair_weight = self.score_class.score.get_weight(fa_pair)
+            if fa_pair_weight!=0:
                 self.score_class.score.set_weight(fa_pair, 0)
-                self.score_class.score.set_weight(hack_elec, weight)
+                self.score_class.score.set_weight(fa_elec, weight)
+                print "Setting fa_elec at previous fa_pair weight."
+            elif self.score_class.score.get_weight(fa_elec) != 0:
+                print "fa_elec already set in scorefunction."
+                return
             else:
-                self.score_class.score.set_weight(hack_elec, .49)
+                self.score_class.score.set_weight(fa_elec, .49)
+                print "Setting fa_elec at weight of .49  This may need manual adjustment depending on the scorefunction."
         else:
-            weight = self.score_class.score.get_weight(hack_elec)
+            weight = self.score_class.score.get_weight(fa_elec)
             self.score_class.score.set_weight(fa_pair, weight)
+            print "Setting fa_pair at same weight as previous fa_elec weight"
         print "E function changed."
     
     def open_param_or_patch(self):

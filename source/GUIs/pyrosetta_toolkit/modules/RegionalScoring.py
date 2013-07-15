@@ -19,9 +19,9 @@ class RegionalScoring():
         """
         Class for quickly scoring more complex things - Regions (loops, domains, cores?), switching energy types and (possibly) rotamer libraries on-the-fly
         Not used as a container class.
-        Also for switching scoreterms (rama->rama2b, pair->hack_elec, etc.)
+        Also for switching scoreterms (rama->rama2b, pair->fa_elec, etc.)
         Some functions may eventually be ported to C++ Rosetta if they are deemed useful enough.
-        Not for General Use.
+        Not for General Use.  Soon to be deprecated.
         """
         
         self.pose = pose
@@ -200,19 +200,19 @@ class RegionalScoring():
         out = out+ " Total weighted score:                    %.3f\n"%sum_weighted
         return out
     
-#### Switches ####
+#### Switches Don't use these - deprecated####
     
     def switch_to_fa_pair(self):
-        self.score.set_weight(hack_elec, 0)
+        self.score.set_weight(fa_elec, 0)
         self.score.set_weight(fa_pair, .56)
         self.updateweights()
         self.elec_id = "fa_pair"
         
-    def switch_to_hack_elec(self):
+    def switch_to_fa_elec(self):
         self.score.set_weight(fa_pair, 0)
-        self.score.set_weight(hack_elec, .56)
+        self.score.set_weight(fa_elec, .56)
         self.updateweights()
-        self.elec_id = "hack_elec"
+        self.elec_id = "fa_elec"
         
     def switch_to_rama(self):
         self.score.set_weight(p_aa_pp, 0)

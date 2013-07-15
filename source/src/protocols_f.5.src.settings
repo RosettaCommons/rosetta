@@ -10,17 +10,6 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"protocols/antibody/design":[
-		"AntibodyCDRDesigner",
-		"AntibodyDatabaseManager",
-		"AntibodyDesignModeler",
-		"AntibodyDesignMover",
-		"AntibodyGraftDesigner",
-		"ConservativeDesignOperation",
-		"DesignInstructionsParser",
-		"ResidueProbDesignOperation",
-		"util",
-	],
 	"protocols/denovo_design/filters": [
 		"ExposedHydrophobicsFilter",
 	],

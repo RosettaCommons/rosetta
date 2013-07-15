@@ -10,6 +10,17 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"protocols/antibody/design":[
+		"AntibodyCDRDesigner",
+		"AntibodyDatabaseManager",
+		"AntibodyDesignModeler",
+		"AntibodyDesignMover",
+		"AntibodyGraftDesigner",
+		"ConservativeDesignOperation",
+		"DesignInstructionsParser",
+		"ResidueProbDesignOperation",
+		"util",
+	],
 	"protocols/cryst" : [
 	        "cryst_movers",
 	],
@@ -218,6 +229,7 @@ libraries = [
 subprojects = [
 	"protocols_f.5",
 	"protocols_b.5",
+	"protocols_a.5",
 	"protocols_h.4",
 	"protocols_g.4",
 	"protocols_b.4",
