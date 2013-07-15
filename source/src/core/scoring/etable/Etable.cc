@@ -65,8 +65,6 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <core/chemical/AtomType.hh>
 
-
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -927,8 +925,20 @@ Etable::smooth_etables_one_pair(
 		//lj_minima(atype1,atype2) = dis( which_min );
 		//lj_vals_at_minima(atype1, atype2) = min_atr;
 		EtableParamsOnePair & p = analytic_params_for_pair( atype1, atype2 );
-		p.lj_minimum = dis( which_min );
-		p.lj_val_at_minimum = min_atr;
+
+		/// OLD VERSION
+		//p.lj_minimum = dis( which_min );
+		//p.lj_val_at_minimum = min_atr;
+
+		/// Correct version
+		p.lj_minimum = lj_sigma_(atype1,atype2);
+		p.lj_val_at_minimum = -1 * std::sqrt(lj_wdepth_[atype1]*lj_wdepth_[atype2]);
+
+		//core::Real real_minima = (*fa_ats)[atype1].lj_radius() + (*fa_ats)[atype2].lj_radius();
+		//std::cout << "etable minima: " << (*fa_ats)[atype1].atom_type_name() << " " << (*fa_ats)[atype2].atom_type_name();
+		//std::cout << " dis: " << dis( which_min ) << " vs real dis: " << real_minima << " diff: " << dis( which_min )  - real_minima << " minval: " << min_atr << std::endl;
+		//std::cout << " new analytic value: " << (*fa_ats)[atype1].atom_type_name() << " " << (*fa_ats)[atype2].atom_type_name();
+		//std::cout << "p.lj_minimum " << p.lj_minimum << " p.lj_val_at_minimum " << p.lj_val_at_minimum << std::endl;
 	} else {
 		//lj_minima(atype1,atype2) = max_dis_;
 		//lj_vals_at_minima( atype1,atype2) = 0;
@@ -1079,7 +1089,7 @@ Etable::smooth_etables_one_pair(
 	/// Save the spline parameters
 	/// Represent the energy as simply the sum of the two splines: the polynomials may simply be added together.
 	{
-		SplineGenerator genclose( dis(S1), fasol1(S1) + fasol2(S1), 0, dis(E2), fasol1(E1)+fasol2(E1), dfasol(E1) );
+		SplineGenerator genclose( dis(S1), fasol1(S1) + fasol2(S1), 0, dis(E1), fasol1(E1)+fasol2(E1), dfasol(E1) );
 		InterpolatorOP interp_close( genclose.get_interpolator() );
 
 		SimpleInterpolatorOP sinterp_close = dynamic_cast< SimpleInterpolator * > (interp_close() );
@@ -1097,6 +1107,27 @@ Etable::smooth_etables_one_pair(
 		p.fasol_spline_close = sparams;
 		p.fasol_spline_close_start = dis(S1);
 		p.fasol_spline_close_end = dis(E1);
+		//std::cout << "etable fasol close spline: " << (*fa_ats)[atype1].atom_type_name() << " " << (*fa_ats)[atype2].atom_type_name();
+		//std::cout << " " << p.fasol_spline_close_start << " " << p.fasol_spline_close_end << std::endl;
+
+		/// APL TEMP!
+		//Real const dis = p.fasol_spline_close_end;
+		//Real const dis_rad1 = dis - lj_radius(atype1);
+		//Real const x1 = ( dis_rad1 * dis_rad1 ) * lk_inv_lambda2_(atype1);
+		//Real const dis_rad2 = dis - lj_radius(atype2);
+		//Real const x2 = ( dis_rad2 * dis_rad2 ) * lk_inv_lambda2_(atype2);
+		//Real const inv_dis2 = 1.0/(dis*dis);
+		//Real const analytic_fasol = inv_dis2 * ( std::exp(-x1) * p.lk_coeff1 + std::exp(-x2) * p.lk_coeff2 );
+		//Real const spline_fasol = eval_spline( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline_close );
+		//std::cout << "fasol at spline_close_end: " << analytic_fasol << " vs " << spline_fasol << " diff: " << analytic_fasol - spline_fasol << std::endl;
+
+		//Real const inv_dis = 1/dis;
+		//Real const solvE1 = std::exp(-x1) * p.lk_coeff1 * inv_dis2;
+		//Real const solvE2 = std::exp(-x2) * p.lk_coeff2 * inv_dis2;
+		//Real const analytic_fasol_deriv = -2 * ( ( dis_rad1 * lk_inv_lambda2_(atype1) + inv_dis ) * solvE1 + ( dis_rad2 * lk_inv_lambda2_(atype2) + inv_dis ) * solvE2 );
+		//Real const spline_fasol_deriv = spline_deriv( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline_close );
+		//std::cout << "fasol deriv at spline_close_end: " << analytic_fasol_deriv << " vs " << spline_fasol_deriv << " diff: " << analytic_fasol_deriv - spline_fasol_deriv << std::endl;
+		//std::cout << "fasol deriv analytical vs dfasol table: " << analytic_fasol_deriv << " vs " << dfasol(E1) << " diff: " << analytic_fasol_deriv - dfasol(E1) << std::endl;
 	}
 
 	{

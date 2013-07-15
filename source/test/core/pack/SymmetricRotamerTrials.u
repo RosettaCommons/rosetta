@@ -1,17 +1,17 @@
-set_abs_tolerance(0.01)score_orig = -213.087
-score_rt = -224.174
+set_abs_tolerance(0.01)score_orig = -212.744
+score_rt = -224.088
 residue = 1 chi = 303.363833433967
-residue = 2 chi = 67.8169155164955
-residue = 2 chi = 280
+residue = 2 chi = 296.520706751175
+residue = 2 chi = 1.53028727389473e-14
 residue = 3 chi = 178.387155519493
 residue = 3 chi = 66.6602669283302
 residue = 3 chi = 181.682049461088
 residue = 3 chi = 272.199996948242
 residue = 4 chi = 205.785543066343
 residue = 4 chi = 45.6636805040676
-residue = 5 chi = 291.577506224304
-residue = 5 chi = 167.760961465314
-residue = 5 chi = 293.501284047767
+residue = 5 chi = 290.010776628905
+residue = 5 chi = 176.56266913925
+residue = 5 chi = 296.063381585537
 residue = 6 chi = 180.963542062365
 residue = 6 chi = 66.8513194602873
 residue = 6 chi = 47.5701492844389
@@ -77,17 +77,17 @@ residue = 32 chi = 286.095563221186
 residue = 32 chi = 192.917501269973
 residue = 32 chi = 300.881685225451
 residue = 33 chi = 303.363833433967
-residue = 34 chi = 67.8169155164955
-residue = 34 chi = 280
+residue = 34 chi = 296.520706751175
+residue = 34 chi = 1.49377492973297e-14
 residue = 35 chi = 178.387155519493
 residue = 35 chi = 66.6602669283302
 residue = 35 chi = 181.682049461088
 residue = 35 chi = 272.199996948242
 residue = 36 chi = 205.785543066343
 residue = 36 chi = 45.6636805040676
-residue = 37 chi = 291.577506224304
-residue = 37 chi = 167.760961465314
-residue = 37 chi = 293.501284047767
+residue = 37 chi = 290.010776628905
+residue = 37 chi = 176.56266913925
+residue = 37 chi = 296.063381585537
 residue = 38 chi = 180.963542062365
 residue = 38 chi = 66.8513194602873
 residue = 38 chi = 47.5701492844389
@@ -153,17 +153,17 @@ residue = 64 chi = 286.095563221186
 residue = 64 chi = 192.917501269973
 residue = 64 chi = 300.881685225451
 residue = 65 chi = 303.363833433967
-residue = 66 chi = 67.8169155164953
-residue = 66 chi = 280
+residue = 66 chi = 296.520706751175
+residue = 66 chi = 360
 residue = 67 chi = 178.387155519493
 residue = 67 chi = 66.6602669283304
 residue = 67 chi = 181.682049461088
 residue = 67 chi = 272.199996948242
 residue = 68 chi = 205.785543066343
 residue = 68 chi = 45.6636805040676
-residue = 69 chi = 291.577506224304
-residue = 69 chi = 167.760961465314
-residue = 69 chi = 293.501284047767
+residue = 69 chi = 290.010776628905
+residue = 69 chi = 176.56266913925
+residue = 69 chi = 296.063381585537
 residue = 70 chi = 180.963542062365
 residue = 70 chi = 66.8513194602876
 residue = 70 chi = 47.5701492844389
