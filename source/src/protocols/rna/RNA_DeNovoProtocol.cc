@@ -123,7 +123,7 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 		monte_carlo_cycles_( 0 ), /* will be reset later */
 		monte_carlo_cycles_max_default_( 100000 ),
 		user_defined_cycles_( false ), /* will change to true if set_monte_carlo_cycles() is called */
-		all_rna_fragments_file_( basic::database::full_name("chemical/rna/RICHARDSON_RNA09.torsions") ),
+		all_rna_fragments_file_( basic::database::full_name("sampling/rna/RICHARDSON_RNA09.torsions") ),
 		silent_file_( silent_file ),
 		lores_silent_file_( "" ),
 		heat_structure_( heat_structure ),
@@ -138,14 +138,14 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol(
 		simple_rmsd_cutoff_relax_( false ),
 		allow_bulge_( allow_bulge ),
 		allow_consecutive_bulges_( false ),
-        use_chem_shift_data_( basic::options::option[ 
+        use_chem_shift_data_( basic::options::option[
                                 basic::options::OptionKeys::
                                 score::rna_chemical_shift_exp_data].user()),
 		m_Temperature_( 2.0 ),
 		frag_size_( 3 ),
 		rna_params_file_( "" ),
 		rna_data_file_( "" ),
-		jump_library_file_( basic::database::full_name("chemical/rna/1jj2_RNA_jump_library.dat" ) ),
+		jump_library_file_( basic::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) ),
 		rna_structure_parameters_( RNA_StructureParametersOP( new RNA_StructureParameters ) ),
 		rna_data_reader_( RNA_DataReaderOP( new RNA_DataReader ) ),
 		output_lores_silent_file_( false ),
@@ -632,10 +632,10 @@ RNA_DeNovoProtocol::output_silent_struct(
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_DeNovoProtocol::output_to_silent_file( 
-    core::pose::Pose & pose, 
-    std::string const & silent_file, 
-    std::string const & out_file_tag, 
+RNA_DeNovoProtocol::output_to_silent_file(
+    core::pose::Pose & pose,
+    std::string const & silent_file,
+    std::string const & out_file_tag,
     bool const score_only /* = false */) const
 {
 
@@ -1225,7 +1225,7 @@ RNA_DeNovoProtocol::apply_chem_shift_data(core::pose::Pose & pose, std::string c
 
 
 void
-RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_struct, 
+RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_struct,
 																				core::pose::Pose const & const_pose) const {
 
     using namespace core::scoring;
@@ -1248,7 +1248,7 @@ RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_
     Real const rosetta_chem_shift_score= energy_map[ scoring::rna_chem_shift ];
 
     //This statement should be very fast except possibly the 1st call.
-    core::scoring::rna::chemical_shift::RNA_ChemicalShiftPotential const & 
+    core::scoring::rna::chemical_shift::RNA_ChemicalShiftPotential const &
         rna_chemical_shift_potential( core::scoring::ScoringManager::
 																			get_instance()->get_RNA_ChemicalShiftPotential() );
 
@@ -1256,16 +1256,16 @@ RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_
 
     //rosetta_chem_shift_score --> Sum_square chemical_shift deviation.
 
-    Real const chem_shift_RMSD=sqrt( rosetta_chem_shift_score / 
+    Real const chem_shift_RMSD=sqrt( rosetta_chem_shift_score /
 																		 float(num_chem_shift_data_points) );
 
-    silent_struct.add_energy( "chem_shift_RMSD", chem_shift_RMSD);  
+    silent_struct.add_energy( "chem_shift_RMSD", chem_shift_RMSD);
 
-    silent_struct.add_energy( "num_chem_shift_data", 
-															float(num_chem_shift_data_points) ); 
+    silent_struct.add_energy( "num_chem_shift_data",
+															float(num_chem_shift_data_points) );
 
-    if(silent_struct.has_energy("rna_chem_shift")==false){ 
-        //If missing this term, then the rna_chem_shift weight is probably 
+    if(silent_struct.has_energy("rna_chem_shift")==false){
+        //If missing this term, then the rna_chem_shift weight is probably
 				//zero in the weight_file.
         silent_struct.add_energy( "rna_chem_shift", 0.0);
     }

@@ -41,7 +41,7 @@ namespace rna {
 
 //////////////////////////////////////////////////////
 RNA_IdealCoord::RNA_IdealCoord():
-	path_( basic::database::full_name("chemical/rna/ideal_geometry/") )
+	path_( basic::database::full_name("chemical/residue_type_sets/rna_phenix/ideal_geometry/") )
 {
 	init();
 }

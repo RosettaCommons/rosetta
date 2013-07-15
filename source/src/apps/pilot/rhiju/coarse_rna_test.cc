@@ -624,7 +624,7 @@ general_initialize( 	pose::Pose & pose,
 	///////////////////////////////////////////////////////////////////////////
 
 	std::string const rna_params_file_( option[ params_file ]() );
-	std::string const jump_library_file_( basic::database::full_name("chemical/rna/1jj2_coarse_jumps.dat" ) );
+	std::string const jump_library_file_( basic::database::full_name("sampling/rna/1jj2_coarse_jumps.dat" ) );
 	utility::vector1< std::string > chunk_silent_files_( option[ in::file::silent ]() );
 
 	rna_structure_parameters_ = new RNA_StructureParameters;

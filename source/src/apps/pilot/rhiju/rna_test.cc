@@ -22,7 +22,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalMaﬁnager.hh>
 
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -845,7 +845,7 @@ rna_fullatom_minimize_test()
 
 		//		if ( option[ params_file ].user() ){
 		//			protocols::rna::RNA_StructureParameters rna_structure_parameters;
-		//			std::string jump_library_file( io::database::full_name("chemical/rna/1jj2_RNA_jump_library.dat" ) );
+		//			std::string jump_library_file( io::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) );
 		//			std::string rna_params_file( 	option[ params_file ] );
 		//			rna_structure_parameters.initialize( pose, rna_params_file, jump_library_file, false );
 		//		}
@@ -2991,7 +2991,7 @@ crazy_minimize_test()
 			//User defined fold tree...
 			if ( option[ params_file ].user() ) {
 				std::string const rna_params_file =  option[ params_file ]();
-				std::string const jump_library_file( io::database::full_name("chemical/rna/1jj2_RNA_jump_library.dat" ) );
+				std::string const jump_library_file( io::database::full_name("sampling/rna/1jj2_RNA_jump_library.dat" ) );
 				RNA_StructureParametersOP rna_structure_parameters_ = new RNA_StructureParameters;
 				rna_structure_parameters_->initialize( pose, rna_params_file, jump_library_file, false /* ignore_secstruct */ );
 			} else if ( option[ crazy_fold_tree ] ) {
@@ -5199,7 +5199,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( sasa, "SASA calculator",false );
 	NEW_OPT( fa_stack_weight, "RNA full atom stacking potential weight", 1.0 );
 	NEW_OPT( cycles, "Default number of Monte Carlo cycles", 10000 );
-	NEW_OPT( vall_torsions, "Torsions file?", "chemical/rna/1jj2.torsions" );
+	NEW_OPT( vall_torsions, "Torsions file?", "sampling/rna/1jj2.torsions" );
 	NEW_OPT( temperature, "temperature", 0.3 );
 	NEW_OPT( jump_change_frequency, "jump change frequency", 0.1 );
 	NEW_OPT( close_loops, "close loops during frag insertion and jump mover", false );
@@ -5228,7 +5228,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( coordinate_constraint_weight, "coordinate constraint weight", 0.0 );
 	NEW_OPT( assemble_file, "Input file for RNA assembly", "assemble.txt" );
 	NEW_OPT( basepair_file, "Input file for RNA base pair definition", "default.basepairs" );
-	NEW_OPT( jump_library_file, "Input file for jumps", "chemical/rna/1jj2_RNA_jump_library.dat" );
+	NEW_OPT( jump_library_file, "Input file for jumps", "sampling/rna/1jj2_RNA_jump_library.dat" );
 	NEW_OPT( params_file, "Input file for pairings", "default.prm" );
 	NEW_OPT( data_file, "Input file for pairings", "default.prm" );
 	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );

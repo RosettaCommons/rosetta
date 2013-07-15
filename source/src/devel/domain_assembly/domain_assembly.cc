@@ -628,7 +628,7 @@ assemble_domains_optimize()
 	std::string filename_linkers_rna = option[ OptionKeys::DomainAssembly::da_linker_file_rna]();
 	//If a rna linker file is passed, fill the fragment library and the rna linker ranges
 	if( filename_linkers_rna != "--" ) {
-		all_rna_fragments = RNA_FragmentsOP( new FullAtomRNA_Fragments( basic::database::full_name("chemical/rna/1jj2.torsions"  ) ) );
+		all_rna_fragments = RNA_FragmentsOP( new FullAtomRNA_Fragments( basic::database::full_name("sampling/rna/1jj2.torsions"  ) ) );
 		read_linker_file( filename_linkers_rna, linker_ranges_rna);
 	}
 

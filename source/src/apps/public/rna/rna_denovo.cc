@@ -191,7 +191,7 @@ rna_denovo_test()
     protocols::rna::RNA_DeNovoProtocol rna_de_novo_protocol( nstruct,
                                                              silent_file,
                                                              heat_structure,
-                                                             minimize_structure, 
+                                                             minimize_structure,
                                                              relax_structure,
                                                              is_allow_bulge );
 
@@ -200,11 +200,11 @@ rna_denovo_test()
 	if ( option[ jump_library_file ].user() )	rna_de_novo_protocol.set_jump_library_file( in_path + option[ jump_library_file] );
  	if ( option[ basic::options::OptionKeys::rna::vall_torsions ].user() )	{
 		// check in database first
-		std::string vall_torsions_file = basic::database::full_name("/chemical/rna/" + option[ basic::options::OptionKeys::rna::vall_torsions ]() );
+		std::string vall_torsions_file = basic::database::full_name("/sampling/rna/" + option[ basic::options::OptionKeys::rna::vall_torsions ]() );
 		if (!utility::file::file_exists( vall_torsions_file ) && !utility::file::file_exists( vall_torsions_file + ".gz" ) )  vall_torsions_file = in_path + option[ basic::options::OptionKeys::rna::vall_torsions ]();
 		rna_de_novo_protocol.set_vall_torsions_file( vall_torsions_file );
 	}
-	if ( option[ use_1jj2_torsions ]() ) rna_de_novo_protocol.set_vall_torsions_file( basic::database::full_name("chemical/rna/1jj2.torsions") );
+	if ( option[ use_1jj2_torsions ]() ) rna_de_novo_protocol.set_vall_torsions_file( basic::database::full_name("sampling/rna/1jj2.torsions") );
 	if ( option[params_file].user() )	rna_de_novo_protocol.set_rna_params_file( in_path + option[ params_file ] );
 	if ( option[data_file].user() )	rna_de_novo_protocol.set_rna_data_file( in_path + option[ data_file ] );
 	if ( option[lores_scorefxn].user() )	rna_de_novo_protocol.set_lores_scorefxn( option[ lores_scorefxn ] );
@@ -309,7 +309,7 @@ try {
 	NEW_OPT( heat, "Heat (random frag insertions)", false );
 	NEW_OPT( dump, "Dump pdb", false );
 	NEW_OPT( staged_constraints, "Apply constraints in stages depending on sequence separation", false );
-	NEW_OPT( jump_library_file, "Input file for jumps", "chemical/rna/1jj2_RNA_jump_library.dat" );
+	NEW_OPT( jump_library_file, "Input file for jumps", "sampling/rna/1jj2_RNA_jump_library.dat" );
 	NEW_OPT( params_file, "Input file for pairings", "default.prm" );
 	NEW_OPT( data_file, "Input file for RNA exposure data", "" );
 	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );

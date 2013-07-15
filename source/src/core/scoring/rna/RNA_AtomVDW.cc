@@ -70,7 +70,7 @@ RNA_AtomVDW::RNA_AtomVDW()
 {
 	//Read in data file, and fill in private data.
 	utility::io::izstream stream;
-	basic::database::open( stream, "chemical/rna/rna_atom_vdw.txt" );
+	basic::database::open( stream, "scoring/rna/rna_atom_vdw.txt" );
 
 	rna_vdw_parameter_.dimension( 9, 9, 5, 5 );  // 5 = a,c,g,u,Z (Mg2+)
 	rna_vdw_parameter_ = 0.0; // zero everything out.

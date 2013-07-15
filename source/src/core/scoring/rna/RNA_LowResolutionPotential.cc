@@ -166,7 +166,7 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 void
 RNA_LowResolutionPotential::initialize_rna_basepair_xy(){
 
-	std::string const filename( "chemical/rna/rna_base_pair_xy.dat" );
+	std::string const filename( "scoring/rna/rna_base_pair_xy.dat" );
   utility::io::izstream data_stream(  basic::database::full_name( filename )  );
 
 	if ( !data_stream ) {
@@ -251,7 +251,7 @@ RNA_LowResolutionPotential::initialize_RNA_backbone_oxygen_atoms(){
 void
 RNA_LowResolutionPotential::initialize_rna_base_backbone_xy(){
 
-	std::string const filename ( "chemical/rna/rna_base_backbone_xy.dat" );
+	std::string const filename ( "scoring/rna/rna_base_backbone_xy.dat" );
 
 	// open file
   utility::io::izstream data_stream( basic::database::full_name( filename ) );
@@ -292,7 +292,7 @@ void
 RNA_LowResolutionPotential::initialize_rna_backbone_backbone()
 {
 
-	std::string const filename = "chemical/rna/rna_backbone_backbone.dat";
+	std::string const filename = "scoring/rna/rna_backbone_backbone.dat";
 
 	// open file
   utility::io::izstream data_stream(  basic::database::full_name( filename )  );
