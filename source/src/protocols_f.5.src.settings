@@ -10,9 +10,6 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"protocols/denovo_design/filters": [
-		"ExposedHydrophobicsFilter",
-	],
 	"protocols/fldsgn": [
 		"BluePrintBDR",
 		"CircularPermutation",
