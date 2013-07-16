@@ -114,6 +114,7 @@ public:
 	void set_frag_1mer_insertion_weight(core::Real frag_1mer_insertion_weight_in) { frag_1mer_insertion_weight_=frag_1mer_insertion_weight_in; }
 	void set_small_frag_insertion_weight(core::Real small_frag_insertion_weight_in) { small_frag_insertion_weight_=small_frag_insertion_weight_in; }
 	void set_big_frag_insertion_weight(core::Real big_frag_insertion_weight_in) { big_frag_insertion_weight_=big_frag_insertion_weight_in; }
+	void set_chunk_insertion_weight(core::Real chunk_insertion_weight_in) { chunk_insertion_weight_=chunk_insertion_weight_in; }
 	void set_frag_weight_aligned(core::Real frag_weight_aligned_in) { frag_weight_aligned_=frag_weight_aligned_in; }
 	void set_auto_frag_insertion_weight(bool auto_frag_insertion_weight_in) { auto_frag_insertion_weight_ = auto_frag_insertion_weight_in; }
 	void set_max_registry_shift(core::Size max_registry_shift_in) { max_registry_shift_=max_registry_shift_in; }
@@ -181,6 +182,9 @@ private:
 	core::Real small_frag_insertion_weight_;
 	// fragment insertion weight, vs. chunk insertion + small gap fragments
 	core::Real big_frag_insertion_weight_;
+	
+	core::Real chunk_insertion_weight_;
+	
 	bool add_non_init_chunks_;
 	bool domain_assembly_;
 	bool add_hetatm_;

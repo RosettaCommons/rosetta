@@ -121,6 +121,7 @@ private:
 	// small fragment insertion weight where big fragments are not allowed (across anchors) , vs. chunk insertion + big frags
 	core::Real small_frag_insertion_weight_;
 	core::Real big_frag_insertion_weight_; // fragment insertion weight, vs. chunk insertion + small gap frags
+	core::Real chunk_insertion_weight_; // re-weight chunk insertion
 	core::Real frag_weight_aligned_; // fragment insertion to the aligned region, vs. unaligned region
 	bool auto_frag_insertion_weight_; // automatically set fragment insertion weights
 	core::Size max_registry_shift_;

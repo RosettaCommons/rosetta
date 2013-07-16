@@ -224,6 +224,7 @@ HybridizeProtocol::init() {
 	frag_1mer_insertion_weight_ = option[cm::hybridize::frag_1mer_insertion_weight]();
 	small_frag_insertion_weight_ = option[cm::hybridize::small_frag_insertion_weight]();
 	big_frag_insertion_weight_ = option[cm::hybridize::big_frag_insertion_weight]();
+	chunk_insertion_weight_ = 1.;
 	hetatm_self_cst_weight_ = 10.;
 	hetatm_prot_cst_weight_ = 0.;
 	cartfrag_overlap_ = 2;
@@ -905,6 +906,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				ft_hybridize->set_frag_1mer_insertion_weight( frag_1mer_insertion_weight_ );
 				ft_hybridize->set_small_frag_insertion_weight( small_frag_insertion_weight_ );
 				ft_hybridize->set_big_frag_insertion_weight( big_frag_insertion_weight_ );
+				ft_hybridize->set_chunk_insertion_weight( chunk_insertion_weight_ );
 				ft_hybridize->set_frag_weight_aligned( frag_weight_aligned_ );
 				ft_hybridize->set_auto_frag_insertion_weight( auto_frag_insertion_weight_ );
 				ft_hybridize->set_max_registry_shift( max_registry_shift_ );
@@ -1359,6 +1361,8 @@ HybridizeProtocol::parse_my_tag(
 		small_frag_insertion_weight_ = tag->getOption< core::Real >( "small_frag_insertion_weight" );
 	if( tag->hasOption( "big_frag_insertion_weight" ) )
 		big_frag_insertion_weight_ = tag->getOption< core::Real >( "big_frag_insertion_weight" );
+	if( tag->hasOption( "chunk_insertion_weight" ) )
+		chunk_insertion_weight_ = tag->getOption< core::Real >( "chunk_insertion_weight" );
 	if( tag->hasOption( "frag_weight_aligned" ) )
 		frag_weight_aligned_ = tag->getOption< core::Real >( "frag_weight_aligned" );
 	if( tag->hasOption( "auto_frag_insertion_weight" ) )

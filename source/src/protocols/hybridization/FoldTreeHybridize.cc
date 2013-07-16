@@ -182,6 +182,8 @@ FoldTreeHybridize::init() {
 	frag_1mer_insertion_weight_ = 0.0;
 	small_frag_insertion_weight_ = 0.0;
 	big_frag_insertion_weight_ = 0.50;
+	chunk_insertion_weight_ = 5.;
+	
 	top_n_big_frag_ = 25;
 	top_n_small_frag_ = 200;
 	domain_assembly_ = false;
@@ -605,14 +607,16 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_1mers(
   utility::vector1< core::Size > jump_anchors = get_jump_anchors();
   core::Size min_small_frag_len = 999999;
   TR.Debug << "1mer fragment insertion positions and weights:" << std::endl;
-  for (core::Size i = 1; i<=frag_libs_small_.size(); ++i)
-    if (frag_libs_small_[i]->max_frag_length() < min_small_frag_len)
-      min_small_frag_len = frag_libs_small_[i]->max_frag_length();
-
+	for (core::Size i = 1; i<=frag_libs_small_.size(); ++i) {
+		if (frag_libs_small_[i]->max_frag_length() < min_small_frag_len) {
+			min_small_frag_len = frag_libs_small_[i]->max_frag_length();
+		}
+	}
+	
   core::Size last_anchor = 0;
   for (core::Size i = 1; i<=jump_anchors.size(); ++i) {
     core::Size anchor_gap = jump_anchors[i]-last_anchor-1;
-    if (anchor_gap && anchor_gap < min_small_frag_len) {
+    if (anchor_gap && (anchor_gap < min_small_frag_len)) {
       for (core::Size ipos = last_anchor+1;ipos<jump_anchors[i];++ipos) {
         residue_weights_new[ipos] = residue_weights[ipos];
         TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
@@ -621,7 +625,7 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_1mers(
     last_anchor = jump_anchors[i];
   }
   core::Size anchor_gap = num_residues_nonvirt-last_anchor;
-  if (anchor_gap && anchor_gap < min_small_frag_len) {
+  if (anchor_gap && (anchor_gap < min_small_frag_len)) {
     for (core::Size ipos = last_anchor+1;ipos<=num_residues_nonvirt;++ipos) {
       residue_weights_new[ipos] = residue_weights[ipos];
       TR.Debug << " " << ipos << ": " << F(7,5,residue_weights[ipos]) << std::endl;
@@ -1266,9 +1270,9 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	}
 	bool do_frag_inserts = false;
 	if ( total_frag_insertion_weight > 0. ) {
-		core::Real sum_weight = 0.;
-		for ( Size ires=1; ires<= residue_weights.size(); ++ires ) sum_weight += residue_weights[ires];
-		if (sum_weight > 1e-6) do_frag_inserts = true;
+		core::Real sum_residue_weight = 0.;
+		for ( Size ires=1; ires<= residue_weights.size(); ++ires ) sum_residue_weight += residue_weights[ires];
+		if (sum_residue_weight > 1e-6) do_frag_inserts = true;
 	}
 	if (do_frag_inserts) {
 		// use similar default fraction of fragment to jump moves as in KinematicAbinitio.cc
@@ -1591,18 +1595,24 @@ void FoldTreeHybridize::auto_frag_insertion_weight(
 	if (!small_n_frags) small_n_frags = top_n_small_frag_;
 	core::Size big_n_frags = big_frag_trial_mover->get_nr_frags();
 	if (!big_n_frags) big_n_frags = top_n_big_frag_;
+	
 	core::Size template_pos_coverage = 0;
 	for (core::Size i = 1; i<=template_chunks_.size(); ++i) {
 		if (strand_pairings_template_indices_.count(i)) continue;
 		template_pos_coverage += template_chunks_[i].num_loop();
 	}
+	template_pos_coverage *= chunk_insertion_weight_;
+
 	core::Size frag_1mer_pos_coverage = frag_1mer_trial_mover->get_total_frames()*frag_1mer_n_frags;
 	core::Size small_frag_pos_coverage = small_frag_trial_mover->get_total_frames()*small_n_frags;
 	core::Size big_frag_pos_coverage = big_frag_trial_mover->get_total_frames()*big_n_frags;
+
 	core::Real sum = (core::Real)(frag_1mer_pos_coverage+small_frag_pos_coverage+big_frag_pos_coverage+template_pos_coverage);
-	frag_1mer_insertion_weight_ = (core::Real)frag_1mer_pos_coverage/sum;
-	small_frag_insertion_weight_ = (core::Real)small_frag_pos_coverage/sum;
-	big_frag_insertion_weight_ = (core::Real)big_frag_pos_coverage/sum;
+	
+	frag_1mer_insertion_weight_ = ((core::Real) frag_1mer_pos_coverage)/sum;
+	small_frag_insertion_weight_ = ((core::Real) small_frag_pos_coverage)/sum;
+	big_frag_insertion_weight_ = ((core::Real) big_frag_pos_coverage)/sum;
+	
 	TR.Info << "auto_frag_insertion_weight for 1mer fragments: " << F(7,5,frag_1mer_insertion_weight_) << " " << frag_1mer_pos_coverage << std::endl;
 	TR.Info << "auto_frag_insertion_weight for small fragments: " << F(7,5,small_frag_insertion_weight_) << " " << small_frag_pos_coverage << std::endl;
 	TR.Info << "auto_frag_insertion_weight for big fragments: " << F(7,5,big_frag_insertion_weight_) << " " << big_frag_pos_coverage << std::endl;

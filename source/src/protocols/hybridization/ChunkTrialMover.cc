@@ -104,6 +104,14 @@ ChunkTrialMover::ChunkTrialMover(
 		}
 		sequence_alignments_.push_back(sequence_alignment);
 	}
+	highest_tmpl_resnum_ = 0;
+	for (core::Size i_template=1; i_template<=template_poses_.size(); ++i_template) {
+		for (core::Size ires=1; ires<=template_poses_[i_template]->total_residue(); ++ires) {
+			if (template_poses_[i_template]->pdb_info()->number(ires) > highest_tmpl_resnum_) {
+				highest_tmpl_resnum_ = template_poses_[i_template]->pdb_info()->number(ires);
+			}
+		}
+	}
 }
 
 void
@@ -178,20 +186,29 @@ core::Size ChunkTrialMover::template_number()
 void ChunkTrialMover::pick_random_chunk(core::pose::Pose & pose) {
 	int ntrials=500;
   
-  bool chosen_good_jump=false; 
+	bool chosen_good_jump=false;
 	int interfaceres;
-  while (!chosen_good_jump) {
-	//for (core::Size i=1; i<=pose.num_jump()*100; ++i){
+	while (!chosen_good_jump) {
+		//for (core::Size i=1; i<=pose.num_jump()*100; ++i){
 		jump_number_ = RG.random_range(1, pose.num_jump());
-    std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number_);
+		std::list < core::Size > downstream_residues = downstream_residues_from_jump(pose, jump_number_);
 		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
-				if (allowed_to_move_[*it]==true) {
-					 chosen_good_jump=true;
-					 interfaceres=*it;
-					 break;
-				}
+			if ( *it < highest_tmpl_resnum_ ) {
+				chosen_good_jump = true;
+				break;
+			}
 		}
-	//}
+		if (! chosen_good_jump ) continue;
+		
+		chosen_good_jump = false;
+		for (std::list<core::Size>::iterator it = downstream_residues.begin(); it != downstream_residues.end(); it++) {
+			if (allowed_to_move_[*it]==true) {
+				chosen_good_jump=true;
+				interfaceres=*it;
+				break;
+			}
+		}
+		//}
 	}
 
 	core::Size jump_residue_pose = pose.fold_tree().downstream_jump_residue(jump_number_);
@@ -215,14 +232,14 @@ ChunkTrialMover::apply(core::pose::Pose & pose) {
 	// pick a random template
 	if (random_template_) {
 		pick_random_template();
-  }
+	}
 	if (ignore_template_indices_.count(template_number())) return;
 
-  //TR << "templ number: " << template_number() << std::endl;
+	//TR << "templ number: " << template_number() << std::endl;
 	align_chunk_.set_template(	template_poses_[template_number()],
-															template_number(),
-															sequence_alignments_[template_number()]
-														);
+												template_number(),
+												sequence_alignments_[template_number()]
+												);
 
 	// random chunk or loop all chunks
 	if (align_option_ == random_chunk) {

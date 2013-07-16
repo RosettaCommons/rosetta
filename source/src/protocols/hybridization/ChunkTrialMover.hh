@@ -104,7 +104,8 @@ private:
 
 	Size template_number_; // the jump to be realigned
 	Size jump_number_; // the jump to be realigned
-
+	Size highest_tmpl_resnum_; // the highest residue number from all templates
+	
 	std::set< core::Size > ignore_template_indices_;
 
   utility::vector1<bool> allowed_to_move_;
