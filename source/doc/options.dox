@@ -127,6 +127,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-include_surfaces</b> \<Boolean\><dt>
+<dd>Sets whether or not mineral surface residues will beloaded into Rosetta.  The default value is false.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-enable_branching</b> \<Boolean\><dt>
 <dd>Sets whether or not polymer branching is allowed.  The default value is false.</dd><br>
 <dd>Default: false</dd><br>

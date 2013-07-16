@@ -28,6 +28,7 @@ namespace in { extern BooleanOptionKey const ignore_unrecognized_res; }
 namespace in { extern BooleanOptionKey const ignore_waters; }
 namespace in { extern BooleanOptionKey const add_orbitals; }
 namespace in { extern BooleanOptionKey const include_sugars; }
+namespace in { extern BooleanOptionKey const include_surfaces; }
 namespace in { extern BooleanOptionKey const enable_branching; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_res; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_water; }

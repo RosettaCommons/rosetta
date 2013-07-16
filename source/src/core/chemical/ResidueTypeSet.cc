@@ -119,6 +119,13 @@ ResidueTypeSet::ResidueTypeSet(
 					(line.substr(0, 27) == "residue_types/carbohydrates")) {
 				continue;
 			}
+			
+			//Skip mineral surface ResidueTypes unless included with surface_mode flag.
+			if ((!option[OptionKeys::in::include_surfaces]) &&
+				 (line.substr(0, 29) == "residue_types/mineral_surface"))
+			{
+				continue;
+			}
 
 			// Parse lines.
 			std::istringstream l( line );

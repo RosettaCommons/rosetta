@@ -118,6 +118,12 @@ Options = Option_Group( '',
 				'loaded into Rosetta.  The default value is false.',
 			short="Load carbohydrate residues into memory?",
 			legal=["true", "false"],
+			default="false"),	
+		Option("include_surfaces", "Boolean",
+			desc='Sets whether or not mineral surface residues will be'
+				'loaded into Rosetta.  The default value is false.',
+			short="Load mineral surface residues into memory?",
+			legal=["true", "false"],
 			default="false"),
 		Option("enable_branching", "Boolean",
 			desc='Sets whether or not polymer branching is allowed.  '

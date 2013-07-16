@@ -23,6 +23,7 @@ namespace in { BooleanOptionKey const ignore_unrecognized_res( "in:ignore_unreco
 namespace in { BooleanOptionKey const ignore_waters( "in:ignore_waters" );  }
 namespace in { BooleanOptionKey const add_orbitals( "in:add_orbitals" );  }
 namespace in { BooleanOptionKey const include_sugars( "in:include_sugars" );  }
+namespace in { BooleanOptionKey const include_surfaces( "in:include_surfaces" );  }
 namespace in { BooleanOptionKey const enable_branching( "in:enable_branching" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_res( "in:remember_unrecognized_res" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_water( "in:remember_unrecognized_water" );  }
