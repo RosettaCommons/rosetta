@@ -10,41 +10,6 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"protocols/antibody_legacy": [
-		"AntibodyClass",
-		"AntibodyModeler",
-		"CDRH3Modeler",
-		"LHRepulsiveRampLegacy",
-		"LHSnugFitLegacy",
-		"GraftMover",
-		"Ubiquitin_E2C_Modeler",
-	],
-	"protocols/antibody": [
-		"Ab_TemplateInfo",
-		"AntibodyEnumManager",
-		"AntibodyInfo",
-		"CDRClusterEnumManager",
-		"AntibodyModelerProtocol",
-		"CDRsMinPackMin",
-		"GraftCDRLoopsProtocol",
-		"GraftOneCDRLoop",
-        "GraftedStemOptimizer",
-		"CloseOneCDRLoop",
-		"H3CterInsert",
-		"H3PerturbCCD",
-		"H3RefineCCD",
-		"LHRepulsiveRamp",
-		"ModelCDRH3",
-		"RefineOneCDRLoop",
-		"RefineOneCDRLoopCentroid",
-		"RefineBetaBarrel",
-		"metrics",
-		"util",
-	],
-	"protocols/antibody/snugdock":[
-		"SnugDock",
-		"SnugDockProtocol",
-	],
 }
 include_path = [
 ]
@@ -53,9 +18,6 @@ library_path = [
 libraries = [
 ]
 subprojects = [
-	"protocols_h.4",
-	"protocols_c.4",
-	"protocols_a.4",
 	"protocols.3",
 	"protocols_a.2",
 	"protocols.1",

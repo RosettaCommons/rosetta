@@ -10,6 +10,37 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"protocols/antibody_legacy": [
+		"AntibodyClass",
+		"AntibodyModeler",
+		"CDRH3Modeler",
+		"LHRepulsiveRampLegacy",
+		"LHSnugFitLegacy",
+		"GraftMover",
+		"Ubiquitin_E2C_Modeler",
+	],
+	"protocols/antibody": [
+		"Ab_TemplateInfo",
+		"AntibodyEnumManager",
+		"AntibodyInfo",
+		"CDRClusterEnumManager",
+		"AntibodyModelerProtocol",
+		"CDRsMinPackMin",
+		"GraftCDRLoopsProtocol",
+		"GraftOneCDRLoop",
+        	"GraftedStemOptimizer",
+		"CloseOneCDRLoop",
+		"H3CterInsert",
+		"H3PerturbCCD",
+		"H3RefineCCD",
+		"LHRepulsiveRamp",
+		"ModelCDRH3",
+		"RefineOneCDRLoop",
+		"RefineOneCDRLoopCentroid",
+		"RefineBetaBarrel",
+		"metrics",
+		"util",
+	],
 	"protocols/antibody/design":[
 		"AntibodyCDRDesigner",
 		"AntibodyDatabaseManager",
@@ -20,6 +51,10 @@ sources = {
 		"DesignInstructionsParser",
 		"ResidueProbDesignOperation",
 		"util",
+	],
+	"protocols/antibody/snugdock":[
+		"SnugDock",
+		"SnugDockProtocol",
 	],
 	"protocols/cryst" : [
 	        "cryst_movers",
@@ -186,39 +221,39 @@ sources = {
 		"VLB",
                 "DockWithHotspotMover",
 	],
-  "protocols/seeded_abinitio": [
-    "CAcstGenerator",
-    "CloseFold",
-    "CoordinateCst",
-    "DefineMovableLoops",
-    "GrowPeptides",
-    "SeededAbinitio_util",
-    "SeedFoldTree",
-    "SeedSetupMover",
-    "SwapSegment",
-    "SegmentHybridizer",
-    "util"
-  ],
-  "protocols/sic_dock" : [ # sheffler
-    "Rose",
-    "SICFast",
-    "RigidScore",
-    "util",
-    "loophash_util",
-    "designability_score",
-    "read_biounit",
-    "xyzStripeHashPose",
-  ],
-  "protocols/sic_dock/scores" : [
-    "MotifHashRigidScore",
-    "TrisBpyScore",
-  ],
+  	"protocols/seeded_abinitio": [
+    		"CAcstGenerator",
+    		"CloseFold",
+    		"CoordinateCst",
+    		"DefineMovableLoops",
+    		"GrowPeptides",
+    		"SeededAbinitio_util",
+    		"SeedFoldTree",
+    		"SeedSetupMover",
+    		"SwapSegment",
+    		"SegmentHybridizer",
+    		"util"
+  	],
+  	"protocols/sic_dock" : [ # sheffler
+    		"Rose",
+    		"SICFast",
+    		"RigidScore",
+    		"util",
+    		"loophash_util",
+    		"designability_score",
+    		"read_biounit",
+    		"xyzStripeHashPose",
+  	],
+  	"protocols/sic_dock/scores" : [
+    		"MotifHashRigidScore",
+    		"TrisBpyScore",
+  	],
 	"protocols/motif_grafting/movers": [
 		"MotifGraftMover",
 	],
-  "protocols/motif_hash" : [
-    "motif_hash_stuff",
-  ],
+  	"protocols/motif_hash" : [
+    		"motif_hash_stuff",
+  	],
 }
 include_path = [
 ]
