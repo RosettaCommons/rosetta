@@ -204,11 +204,15 @@ create_subpose(
 
 	pose.clear();
 
-	// first add all as jumps
 	for ( Size i=1; i<= nres; ++i ) {
 		Size const seqpos( positions[i] );
 		conformation::Residue const & rsd( src.residue( seqpos ) );
-		pose.append_residue_by_jump( rsd, 1 );
+		// If the residue and the previous residue are bonded in the source pose, they should be bonded in the new pose
+		if( i>1 && rsd.is_polymer_bonded( positions[ i-1 ] ) ) {
+			pose.append_residue_by_bond( rsd );
+		} else {
+			pose.append_residue_by_jump( rsd, 1 );
+		}
 		if ( i>1 ) {
 			// check if this residue should be in a new chain. not a perfect check...
 			conformation::Residue const & prev_rsd( src.residue( positions[i-1] ) );

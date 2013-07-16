@@ -346,6 +346,9 @@ void ConnectRight::modify_impl( Pose & pose_left ) {
 		if ( pose_right_.residue( i ).chain() != current_chain ) {
 			current_chain = pose_right_.residue( i ).chain();
 			pose_left.append_residue_by_jump( pose_right_.residue( i ), pose_left.n_residue(), "", "", true );
+		} else if ( i > 1 && pose_right_.residue( i ).is_polymer_bonded( i-1 ) ) {
+			//If it's bonded in the source pose we probably want it bonded in the destination pose
+			pose_left.append_residue_by_bond( pose_right_.residue( i ) );
 		} else {
 			pose_left.append_residue_by_jump( pose_right_.residue( i ), pose_left.n_residue(), "", "", false );
 		}
