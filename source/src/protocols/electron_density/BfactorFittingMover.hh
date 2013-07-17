@@ -35,7 +35,8 @@ public:
 		core::Real wt_dens,
 		core::Real rmax,
 		core::Real radius_exp,
-		core::Real scorescale );
+		core::Real scorescale,
+		bool exact );
 
 	virtual ~BfactorMultifunc() {}
 
@@ -60,6 +61,7 @@ private:
 	core::Real wt_dens_;     // weight on density
 	core::Real rmax_;        // max radius (def 5)
 	core::Real radius_exp_;  // weigh neighbors by 1/r^thisval (def 1)
+	bool exact_;
 
 	// handles AtomID <-> vector index mapping
 	core::id::AtomID_Map< core::Size > atom_indices_;
@@ -97,6 +99,7 @@ private:
 	core::Size max_iter_;    // minimizer iterations
 	std::string minimizer_;    // minimizer iterations
 	bool init_;    // minimizer iterations
+	bool exact_;
 };
 
 } // moves

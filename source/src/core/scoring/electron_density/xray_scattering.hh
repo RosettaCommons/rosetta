@@ -90,7 +90,7 @@ public:
 		core::Real sigma_eff = sigma_;
 		core::Real B_eff = B;
 		if (B<0) B_eff = 0;
-		else if (B<10) B_eff = 0.1*B*B;
+		else if (B<1) B_eff = 0.1*B*B;
 		core::Real s = sigma_eff + B_eff/4;
 		core::Real k = M_PI*M_PI/s;
 		return k;
@@ -107,7 +107,7 @@ public:
 		core::Real dkdb = -M_PI*M_PI/(4*s*s);
 
 		if (B<0) dkdb = 0;
-		else if (B<10) dkdb *= 0.2*B;
+		else if (B<1) dkdb *= 0.2*B;
 
 		return dkdb;
 	}
@@ -129,45 +129,11 @@ private:
 };
 
 
-////////////
-// Precomputed scattering
-// fpd -- doesn't seem to make calculation much faster
-//
-// class AtomScattering {
-// public:
-// 	AtomScattering();
-//
-// 	// mask scattering
-// 	AtomScattering( core::Real mask, core::Real reso );
-//
-// 	// atom scattering (single gaussian)
-// 	AtomScattering( core::Real a, core::Real B, core::Real mask, core::Real reso );
-//
-// 	// TODO: atom scattering (crystallographic form-factors)
-// 	//AtomScattering( KromerMann f0, core::Real mask, core::Real reso );
-//
-// 	// interp at a Cartesian point X
-// 	core::Real interp_linear( numeric::xyzVector< core::Real > const & X ) const;
-//
-// private:
-// 	// common initialization
-// 	void init( core::Real mask, core::Real reso );
-//
-// 	ObjexxFCL::FArray3D< double > data;
-// 	numeric::xyzVector< core::Real > c2i, i2c;    // always construct orthogonal
-// 	numeric::xyzVector< core::Size > grid;
-// 	core::Real reso;
-// };
-
-
 // weight from scattering factors
 OneGaussianScattering get_A( std::string elt );
 
 // weight from scattering factors
 KromerMann get_km( std::string elt );
-
-// precomputed scattering
-//const AtomScattering & get_scattering( std::string elt );
 
 bool factorsLTE5(int X);
 bool factorsLTE19(int X);

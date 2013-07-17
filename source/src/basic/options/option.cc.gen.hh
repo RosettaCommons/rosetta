@@ -2096,7 +2096,7 @@ option.add( basic::options::OptionKeys::RBSegmentRelax::cst_seqwidth, "sequence 
 option.add( basic::options::OptionKeys::edensity::edensity, "edensity option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::edensity::debug, "No description" ).def(false);
 option.add( basic::options::OptionKeys::edensity::mapfile, "No description" );
-option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).def(3.0);
+option.add( basic::options::OptionKeys::edensity::mapreso, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::grid_spacing, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::centroid_density_mass, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::edensity::sliding_window, "No description" ).def(1);

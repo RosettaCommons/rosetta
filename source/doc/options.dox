@@ -10211,7 +10211,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-mapreso</b> \<Real\><dt>
 <dd>No description</dd><br>
-<dd>Default: 3.0</dd><br>
+<dd>Default: 0.0</dd><br>
 </dl>
 <dl>
 <dt><b>-grid_spacing</b> \<Real\><dt>

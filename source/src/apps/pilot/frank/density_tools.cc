@@ -224,7 +224,7 @@ densityTools()
 		std::cerr << "Loading alternate density map" << mapfile << std::endl;
 		mapAlt.readMRCandResize( mapfile , mapreso , mapsampling );
 
-		if (!option[ denstools::nomask ]() ) {
+		if (userpose && !option[ denstools::nomask ]() ) {
 			mapAlt.maskDensityMap( pose, 0 );
 		}
 

@@ -4236,7 +4236,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
   Option_Group( 'edensity',
                 Option( 'debug', 'Boolean', default = 'false'),
                 Option( 'mapfile', 'String' ),
-                Option( 'mapreso', 'Real', default = '3.0'),
+                Option( 'mapreso', 'Real', default = '0.0'),
                 Option( 'grid_spacing', 'Real', default = '0.0'),
                 Option( 'centroid_density_mass', 'Real', default = '0.0'),
                 Option( 'sliding_window', 'Integer', default = '1'),
@@ -4883,7 +4883,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option('numbering_scheme', 'String',
 			desc='the numbering scheme such as chothia or aho',
 			default='chothia'),
-		
+
 		Option_Group( 'design',
 			Option('instructions', 'String',
 				desc='Path for instruction file',
@@ -4950,7 +4950,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 				default='true'),
 			Option('turn_conservation', 'Boolean',
 				desc='try to conserve turn structure using known turn-based conservative mutations during conservative design.',
-				default='true'),               
+				default='true'),
 		), #design
 	), # antibody
 

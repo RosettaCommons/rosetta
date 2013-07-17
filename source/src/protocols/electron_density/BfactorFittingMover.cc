@@ -18,6 +18,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
+#include <core/scoring/electron_density/util.hh>
 #include <core/scoring/electron_density/xray_scattering.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -83,10 +84,17 @@ symmetrizeBfactors( core::pose::Pose & pose ) {
 
 
 ///
-BfactorMultifunc::BfactorMultifunc( core::pose::Pose & pose_in, core::Real wt_adp, core::Real wt_dens, core::Real rmax, core::Real radius_exp, core::Real scorescale ) :
-	pose_(pose_in), wt_adp_(wt_adp), wt_dens_(wt_dens), rmax_(rmax), radius_exp_(radius_exp), scorescale_( scorescale )
+BfactorMultifunc::BfactorMultifunc(
+		core::pose::Pose & pose_in,
+		core::Real wt_adp,
+		core::Real wt_dens,
+		core::Real rmax,
+		core::Real radius_exp,
+		core::Real scorescale,
+		bool exact ) :
+	pose_(pose_in), wt_adp_(wt_adp), wt_dens_(wt_dens), rmax_(rmax), radius_exp_(radius_exp), scorescale_( scorescale ), exact_( exact )
 {
-	B_EPS=1;
+	B_EPS=0.0001;
 
 	// map AtomIDs <-> indices
 	core::pose::initialize_atomid_map( atom_indices_, pose_in );
@@ -153,21 +161,42 @@ BfactorMultifunc::operator ()( core::optimization::Multivec const & vars ) const
 	// [[1]] density score
 	core::pose::Pose pose_copy = pose_;  // inefficient?
 	multivec2poseBfacts( vars, pose_copy );
-	//core::Real dens_score = (*sf_)( pose_copy );
 
-	core::conformation::symmetry::SymmetryInfoOP symm_info;
-  if ( core::pose::symmetry::is_symmetric(pose_copy) ) {
-    core::conformation::symmetry::SymmetricConformation & SymmConf (
-      dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose_copy.conformation()) );
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose_copy) ) {
+		core::conformation::symmetry::SymmetricConformation const & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose_copy.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
-  }
+	}
 
 	core::Real dens_score = 0;
-	for ( Size i = 1; i <= pose_copy.total_residue(); ++i ) {
-		if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
-		core::conformation::Residue const & rsd ( pose_copy.residue(i) );
-		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
-		dens_score -= core::scoring::electron_density::getDensityMap().matchResFast( i, rsd, pose_copy, NULL );
+	if (!exact_) {
+		for ( Size i = 1; i <= pose_copy.total_residue(); ++i ) {
+			if ( symm_info && !symm_info->bb_is_independent( i ) ) continue;
+			core::conformation::Residue const & rsd ( pose_copy.residue(i) );
+			if ( rsd.aa() == core::chemical::aa_vrt ) continue;
+			dens_score -= core::scoring::electron_density::getDensityMap().matchResFast( i, rsd, pose_copy, NULL );
+		}
+	} else {
+		core::scoring::electron_density::poseCoords litePose;
+		for (int i=1; i<=pose_copy.total_residue(); ++i) {
+			if (symm_info && !symm_info->bb_is_independent( i ) ) continue;
+			core::conformation::Residue const & rsd_i ( pose_copy.residue(i) );
+			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+
+			core::Size natoms = rsd_i.nheavyatoms();
+			for (int j=1; j<=natoms; ++j) {
+				core::conformation::Atom const &atom_j( rsd_i.atom(j) );
+				core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+
+				core::scoring::electron_density::poseCoord coord_j;
+				coord_j.x_ = rsd_i.xyz( j );
+				coord_j.B_ = pose_copy.pdb_info()->temperature( i, j );
+				coord_j.elt_ = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
+				litePose.push_back( coord_j );
+			}
+		}
+		dens_score -= (moving_atoms_.size()/10.0) * core::scoring::electron_density::getDensityMap().getRSCC(litePose);
 	}
 
 
@@ -240,14 +269,19 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 	multivec2poseBfacts( vars, pose_copy );
 	dE_dvars.resize( vars.size(), 0.0 );
 
-	// [[1]] density deriv
-	for (core::Size i = 1; i <= vars.size(); ++i) {
-		core::id::AtomID a_i = moving_atoms_[i];
-		core::Real dCCdb = core::scoring::electron_density::getDensityMap().dCCdB_fastRes(
-			a_i.atomno(), a_i.rsd(), pose_copy.residue( a_i.rsd() ), pose_copy );
-		dE_dvars[ i ] = -scorescale_*wt_dens_*dCCdb;
+	if (!exact_) {
+		// [[1]] density deriv
+		for (core::Size i = 1; i <= vars.size(); ++i) {
+			core::id::AtomID a_i = moving_atoms_[i];
+			core::Real dCCdb = core::scoring::electron_density::getDensityMap().dCCdB_fastRes(
+				a_i.atomno(), a_i.rsd(), pose_copy.residue( a_i.rsd() ), pose_copy );
+			dE_dvars[ i ] = -scorescale_*wt_dens_*dCCdb;
+		}
+	} else {
+		core::scoring::electron_density::getDensityMap().dCCdBs( pose_copy, dE_dvars );
+		for (core::Size i = 1; i <= vars.size(); ++i)
+			dE_dvars[i] *= -(moving_atoms_.size()/10.0)*scorescale_*wt_dens_;
 	}
-
 
 	// [[2]]  constraint deriv
 	if (wt_adp_ != 0) {
@@ -330,22 +364,12 @@ BfactorMultifunc::dfunc( core::optimization::Multivec const & vars, core::optimi
 		}
 	}
 
-	// numeric
+	// debug
 	if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]()) {
 		//core::optimization::Multivec varsCopy = vars;
 		core::Real score = (*this)(vars);
 		std::cerr << "score = " << score << std::endl;
-		//for (int i=1; i<= vars.size(); ++i) {
-		//	core::Real B = varsCopy[i];
-		// 	varsCopy[i] = B+0.01;
-		// 	core::Real scoreP1 = (*this)(varsCopy);
-		// 	varsCopy[i] = B-0.01;
-		// 	core::Real scoreM1 = (*this)(varsCopy);
-		// 	varsCopy[i] = B;
-		// 	std::cerr << i << "  " << dE_dvars[i] << "   " << (scoreP1-scoreM1)/0.02 << std::endl;
-		//}
 	}
-
 }
 
 
@@ -363,6 +387,7 @@ void BfactorFittingMover::init() {
 	scorescale_ = 100.0;
 	minimizer_ = "dfpmin_armijo";
 	init_ = true;
+	exact_ = false;
 }
 
 void BfactorFittingMover::apply(core::pose::Pose & pose) {
@@ -374,7 +399,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	options.max_iter(max_iter_);
 
 	// set up optimizer
-	BfactorMultifunc f_b( pose, wt_adp_, wt_dens_, rmax_, radius_exp_, scorescale_);
+	BfactorMultifunc f_b( pose, wt_adp_, wt_dens_, rmax_, radius_exp_, scorescale_, exact_);
 	core::optimization::Minimizer minimizer( f_b, options );
 
 	// make sure interaction graphs are set up
@@ -393,7 +418,7 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	// if b=0 set b to some small value
 	for (int i=1; i<=y.size(); ++i) if (y[i] < 1e-6) y[i] = 5;
 
-	core::scoring::electron_density::getDensityMap().rescale_fastscoring_temp_bins( pose );
+	core::scoring::electron_density::getDensityMap().rescale_fastscoring_temp_bins( pose, init_ );
 
 	// optionally grid search for best starting value
 	if (init_) {
@@ -451,6 +476,9 @@ BfactorFittingMover::parse_my_tag(
 	}
 	if ( tag->hasOption("init") ) {
 		init_ = tag->getOption<bool>("init");
+	}
+	if ( tag->hasOption("exact") ) {
+		exact_ = tag->getOption<bool>("exact");
 	}
 }
 

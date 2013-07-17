@@ -256,8 +256,15 @@ public:
 		core::pose::Pose const &pose
 	);
 
+	/// @brief calculate all gradients of CC w.r.t B factors (slow more precise version)
+	Real
+	dCCdBs(
+		core::pose::Pose const &pose,
+		utility::vector1< core::Real>  & dE_dvars
+	);
+
 	//@brief Called to initialize scorefunction scaling for B-factor refinement
-	void rescale_fastscoring_temp_bins(core::pose::Pose const &pose);
+	void rescale_fastscoring_temp_bins(core::pose::Pose const &pose, bool init=false);
 
 	/// @brief Return the gradient of CC w.r.t. res X's CA's movement
 	/// Centroid-mode analogue of dCCdx
@@ -298,8 +305,7 @@ public:
 		core::pose::Pose const & pose,
 		utility::vector1<core::id::AtomID> const & atom_ids,
 		ObjexxFCL::FArray3D< double > & rho_calc,
-		ObjexxFCL::FArray3D< double > & inv_rho_mask,
-		core::Real const ATOM_MASK_PADDING = 1.5);
+		ObjexxFCL::FArray3D< double > & inv_rho_mask);
 
 	numeric::xyzVector< double > match_fragment(
 		ObjexxFCL::FArray3D< double > const & rho_calc,
@@ -507,6 +513,7 @@ private:
 	// Controllable parameters
 	std::map< core::Size, bool > scoring_mask_;
 	core::Real reso, ATOM_MASK, CA_MASK, force_apix_, SC_scaling_;
+	core::Real ATOM_MASK_PADDING;
 	core::Size WINDOW_;
 	bool score_window_context_, remap_symm_;
 
