@@ -1027,10 +1027,11 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			movemap.set_chi( i, true );
 		}
 		ScoreFunctionOP sfxStaged_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
+		ScoreFunctionOP sfxStage0_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "score0" ) );
+
 		sfxStaged_OP->set_weight(scoring::atom_pair_constraint, 1.0);
 		if(option[OptionKeys::remodel::repeat_structure].user())
 			sfxStaged_OP->set_weight(scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure]);
-	//	sfxStaged_OP->set_weight(scoring::big_bin_constraint,10.0);
 		sfxStaged_OP->show_pretty(TR);
 		//setup fragments so they sample correctly-----------
 		Real fragScoreThreshold = 0.99999;  //1.00XX indicates 1 ABEGO or HLE mismatch.  I chose to use the numbers for future finer control
@@ -1044,10 +1045,10 @@ void RemodelLoopMover::apply( Pose & pose ) {
 				//999 allows for frags > 9 resiudes
 				abinitio_stage( pose,999, movemap,sfxStaged_OP,1,100,sampleAllResidues,true,"full_length_frags",useFragSequence,fragScoreThreshold);
 		//Sample with 9mers in all positions------------------------------
-		std::cout << " ***************HERE**********************" << std::endl;
-		abinitio_stage( pose, 9, movemap,sfxStaged_OP,1,100,sampleAllResidues,true,"9mers_allPos",useFragSequence,fragScoreThreshold);
+		//This should be read in from staging file.
+		abinitio_stage( pose, 9, movemap,sfxStage0_OP ,1,500,sampleAllResidues,false,"9mers_allPos",useFragSequence,fragScoreThreshold);
 		abinitio_stage( pose, 9, movemap,sfxStaged_OP,3,500,sampleSubsetResidues,true,"9mers_subsetPos",useFragSequence,fragScoreThreshold);
-		abinitio_stage( pose, 3, movemap,sfxStaged_OP,1,100,sampleSubsetResidues,true,"3mers_subsetPos",useFragSequence,fragScoreThreshold);
+		abinitio_stage( pose, 3, movemap,sfxStaged_OP,3,500,sampleSubsetResidues,true,"3mers_subsetPos",useFragSequence,fragScoreThreshold);
 		//cleanup to integrate with Possu------------------------------------
 		PoseOP pose_prime = new Pose( pose );
 		pose_prime->fold_tree( sealed_ft );

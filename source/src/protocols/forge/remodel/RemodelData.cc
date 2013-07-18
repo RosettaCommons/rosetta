@@ -357,7 +357,7 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 				abego.append(1,tmp_abego);
 				if(!(tmp_ss=='H'||tmp_ss=='L'||tmp_ss=='E'||tmp_ss=='D'))
 							utility_exit_with_message("First SS-term is:" + string_of(tmp_ss)+ " but must be either H,L,E or D if you want it ignored");
-				if(!(tmp_abego=='A'||tmp_abego=='B'||tmp_abego=='E'||tmp_abego=='G'||tmp_abego=='O')||(tmp_abego=='D'))
+				if(!(tmp_abego=='A'||tmp_abego=='B'||tmp_abego=='E'||tmp_abego=='G'||tmp_abego=='O'||tmp_abego=='D'))
 						utility_exit_with_message("Second SS-term is:" +string_of(tmp_abego)+" but must be either A,B,E,G,O or D if you want it ignored");
 		}
 		if(iter->sstype.size()==1 && hle_abego_mode==true)

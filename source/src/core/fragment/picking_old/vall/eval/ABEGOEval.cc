@@ -122,6 +122,10 @@ bool ABEGOEval::eval_impl(
 					flag = true;
 					break;
 				}
+				if (abego_[ pos+1 ].at( ii ) == 'D'){
+						flag = true;
+						break;
+				}
 			}
 			if( !flag ) fs.score += penalty_;
 		}
