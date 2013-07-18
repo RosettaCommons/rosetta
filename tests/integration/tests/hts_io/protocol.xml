@@ -12,7 +12,10 @@
 		<InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep"/>
 		<ReportToDB name="features_reporter" database_name="screening_features.db3" batch_description="ScreeningFeatures Data">
 			<feature name="PdbDataFeatures"/>
-			<feature name="ScreeningFeatures" chain="X" descriptors="if_X_fa_sol,if_X_fa_rep"/>
+			<feature name="ScreeningFeatures" chain="X">
+				<descriptor type="if_X_fa_sol"/>
+				<descriptor type="if_X_fa_rep"/>
+			</feature>
 		</ReportToDB>
 	</MOVERS>
 	<PROTOCOLS>

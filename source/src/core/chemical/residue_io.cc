@@ -336,10 +336,15 @@ read_topology_file(
 				l >> tag;
 			}
 
-		}else if (tag == "NUMERIC_PROPERTY "){
+		}else if (tag == "NUMERIC_PROPERTY"){
 			core::Real value = 0.0;
 			l >> tag >> value;
 			rsd->add_numeric_property(tag,value);
+		
+		}else if (tag == "STRING_PROPERTY" ) {
+			std::string value;
+			l >> tag >> value;
+			
 		}else if ( tag == "VARIANT" ) {
 			l >> tag;
 			while ( !l.fail() ) {

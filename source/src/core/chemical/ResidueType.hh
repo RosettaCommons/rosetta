@@ -1067,6 +1067,10 @@ public:
 	///@brief add a numeric property
 	void
 	add_numeric_property(std::string const & tag,core::Real value);
+	
+	///@brief add a string property
+	void
+	add_string_property(std::string const & tag, std::string value);
 
 	/// @brief delete properties
 	//    Added by Andy M. Chen in June 2009
@@ -1255,6 +1259,19 @@ public:
 		return property_it->second;
 	}
 
+	///@brief get a numeric property
+	std::string
+	get_string_property(std::string const & tag) const
+	{
+		std::map<std::string, std::string>::const_iterator property_it(string_properties_.find(tag));
+		if(property_it == string_properties_.end())
+		{
+			throw utility::excn::EXCN_KeyError(tag + " does not exist in ResidueType with name " + name3_);
+			return "";
+		}
+		return property_it->second;
+	}
+	
 	/// @brief  Generic variant access -- SLOW!!!!!
 	bool
 	has_variant_type( VariantType const & variant_type ) const
@@ -1927,6 +1944,9 @@ private:
 
 	///Here we store arbitrary numeric properties with string names
 	std::map<std::string,core::Real> numeric_properties_;
+	
+	///Here we store arbitrary string properties with string names
+	std::map<std::string,std::string> string_properties_;
 
 	//////////////////////////////////////////////////
 	// features

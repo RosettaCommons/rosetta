@@ -25,6 +25,11 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <map>
+
+#include <core/scoring/etable/EtableEnergy.hh>
+#include <core/scoring/etable/coulomb/Coulomb.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+
 namespace protocols {
 namespace ligand_docking {
 
@@ -54,6 +59,46 @@ private:
 	std::map<std::string, utility::vector1<core::Real> >  compute_rdf(
 		core::pose::Pose & pose,
 		utility::vector1<std::pair<core::id::AtomID, core::id::AtomID> > const & atom_pairs );
+
+	void get_etable_energies(
+		core::scoring::etable::AnalyticEtableEvaluator const & etable_evaluator,
+		core::conformation::Atom const & protein_atom,
+		core::conformation::Atom const & ligand_atom,
+		std::map<std::string,core::Real> & rdf_energies);
+
+	void get_fa_elec_energy(
+		core::scoring::etable::coulomb::Coulomb const & coloumb,
+		core::Vector const & protein_atom_coords,
+		core::Real const & protein_atom_charge,
+		core::Vector const & ligand_atom_coords,
+		core::Real const & ligand_atom_charge,
+		std::map<std::string,core::Real> & rdf_energies);
+
+	void get_hbond_energies(
+		core::scoring::hbonds::HBondSet const & hbond_set,
+		core::id::AtomID const & ligand_atom_id,
+		core::id::AtomID const & protein_atom_id,
+		std::map<std::string,core::Real> & rdf_energies);
+
+	void get_binary_hbond_energies(
+		core::chemical::AtomType const & protein_atom_type,
+		core::chemical::AtomType const & ligand_atom_type,
+		std::map<std::string,core::Real> & rdf_energies);
+
+	void get_orbital_energies(
+		core::pose::Pose  & pose,
+		core::id::AtomID const & protein_atom_id,
+		core::id::AtomID const & ligand_atom_id,
+		std::map<std::string,core::Real> & rdf_energies);
+
+	void get_orbital_pair_counts(
+		core::pose::Pose & pose,
+		core::id::AtomID const & protein_atom_id,
+		core::id::AtomID const & ligand_atom_id,
+		std::map<std::string,core::Real> & rdf_energies
+	);
+
+
 private:
 	std::string mode_;
 	std::string ligand_chain_;

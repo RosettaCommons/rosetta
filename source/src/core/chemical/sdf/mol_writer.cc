@@ -16,6 +16,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <set>
 
@@ -44,11 +45,14 @@ void MolWriter::output_residue(utility::io::ozstream & output_stream, core::conf
 	std::list<std::string> ctab = this->compose_ctab(residue);
 	std::list<std::string> typeinfo = this->compose_typeinfo(residue);
 	std::list<std::string> nbr_atom = this->compose_nbr_atom(residue);
+	std::list<std::string> job_data = this->compose_job_info();
 
 	prepared_lines.insert(prepared_lines.end(),metadata.begin(),metadata.end());
 	prepared_lines.insert(prepared_lines.end(),ctab.begin(),ctab.end());
 	prepared_lines.insert(prepared_lines.end(),typeinfo.begin(),typeinfo.end());
 	prepared_lines.insert(prepared_lines.end(),nbr_atom.begin(),nbr_atom.end());
+	prepared_lines.insert(prepared_lines.end(),job_data.begin(),job_data.end());
+
 
 	foreach(std::string line, prepared_lines){
 		output_stream << line;
@@ -72,7 +76,12 @@ void MolWriter::output_residue(utility::io::ozstream & output_stream, core::chem
 void MolWriter::output_residue(std::string file_name,core::conformation::ResidueCOP residue)
 {
 	utility::io::ozstream outfile;
-	outfile.open(file_name.c_str());
+
+	outfile.open(file_name.c_str(),std::ios::out | std::ios::binary);
+	if(!outfile)
+	{
+		throw utility::excn::EXCN_FileNotFound("Cannot open file"+file_name);
+	}
 	output_residue(outfile,residue);
 	outfile.close();
 }
@@ -81,7 +90,11 @@ void MolWriter::output_residue(std::string file_name,core::conformation::Residue
 void MolWriter::output_residue(std::string file_name, core::chemical::ResidueTypeOP residue_type)
 {
 	utility::io::ozstream outfile;
-	outfile.open(file_name.c_str());
+	outfile.open(file_name.c_str(), std::ios::out | std::ios::binary);
+	if(!outfile)
+	{
+		throw utility::excn::EXCN_FileNotFound("Cannot open file"+file_name);
+	}
 	output_residue(outfile,residue_type);
 	outfile.close();
 }
@@ -199,13 +212,7 @@ std::list<std::string> MolWriter::compose_bonds(core::conformation::ResidueCOP r
 				//Sorry :(
 				continue;
 			}
-			// Unused variable, but preserve the insertion.
-			//std::pair<std::set<BondData>::iterator,bool > bond_set_return =
 			bond_data_set.insert(bond);
-			//if(bond_set_return.second)
-			//{
-			//	std::cout <<bond.lower << " " <<bond.upper << " " << bond.bondType	<<std::endl;
-			//}
 		}
 	}
 
@@ -259,6 +266,22 @@ std::list<std::string> MolWriter::compose_nbr_atom(core::conformation::ResidueCO
 
 	return lines;
 }
+
+std::list<std::string> MolWriter::compose_job_info()
+{
+	std::list<std::string>	lines;
+	for(std::map<std::string,std::string>::const_iterator data_it = job_data_.begin(); data_it != job_data_.end();++data_it)
+	{
+		std::string header_name(data_it->first);
+		std::string data(data_it->second+"\n");
+		std::string header("> <"+header_name+">\n");
+		lines.push_back(header);
+		lines.push_back(data);
+		lines.push_back("\n");
+	}
+	return lines;
+}
+
 
 }
 }

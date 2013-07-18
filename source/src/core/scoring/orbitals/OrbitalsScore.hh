@@ -27,6 +27,8 @@
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <utility/vector1.hh>
 
+#include <core/id/AtomID.fwd.hh>
+
 
 namespace core{
 namespace scoring{
@@ -40,6 +42,8 @@ public:
 
 //virtual functions from score functions
 public:
+
+	OrbitalsScore();
 	OrbitalsScore(methods::EnergyMethodOptions const &);
 
 	//clone
@@ -163,9 +167,25 @@ public:
 	) const;
 
 
+	//@brief compute the various energies for a pair of atoms.  used for RDF generation
+	void get_E_haro_one_way(
+			core::pose::Pose const & pose,
+			core::id::AtomID const & atom1,
+			core::id::AtomID const & atom2,
+			EnergyMap & emap
+	) const;
+	
 	void get_E_haro_one_way(
 			core::conformation::Residue const & res1,
 			core::conformation::Residue const & res2,
+			EnergyMap & emap
+	) const;
+
+
+	void get_E_hpol_one_way(
+			core::pose::Pose const & pose,
+			core::id::AtomID const & atom1,
+			core::id::AtomID const & atom2,
 			EnergyMap & emap
 	) const;
 
@@ -174,6 +194,13 @@ public:
 			core::conformation::Residue const & res2,
 			EnergyMap & emap
 	) const;
+
+	void get_orb_orb_E(
+			core::pose::Pose const & pose,
+			core::id::AtomID const & atom1,
+			core::id::AtomID const & atom2,
+			EnergyMap & emap
+	)const;
 
 	void get_orb_orb_E(
 			core::conformation::Residue const & res1,

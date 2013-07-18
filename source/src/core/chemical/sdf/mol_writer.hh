@@ -22,7 +22,7 @@
 
 #include <utility/io/ozstream.fwd.hh>
 #include <string>
-
+#include <map>
 namespace core {
 namespace chemical {
 namespace sdf {
@@ -39,6 +39,11 @@ public:
 	void output_residue(std::string const file_name,core::conformation::ResidueCOP residue);
 	void output_residue(std::string const file_name, core::chemical::ResidueTypeOP residue_type);
 
+	inline void set_job_data(std::map<std::string,std::string> const & job_data)
+	{
+		job_data_ = job_data;
+	}
+
 private:
 
 	std::list<std::string> compose_metadata(core::conformation::ResidueCOP residue);
@@ -47,9 +52,11 @@ private:
 	std::list<std::string> compose_bonds(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_typeinfo(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_nbr_atom(core::conformation::ResidueCOP residue);
+	std::list<std::string> compose_job_info();
 
 	//utility::io::ozstream output_stream_;
 	std::string const line_header_;
+	std::map<std::string,std::string> job_data_;
 };
 
 }

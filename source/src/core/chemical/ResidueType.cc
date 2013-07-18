@@ -1175,6 +1175,12 @@ ResidueType::add_numeric_property(std::string const & tag, core::Real value)
 	numeric_properties_.insert(std::make_pair(tag,value));
 }
 
+	
+void
+ResidueType::add_string_property(std::string const & tag, std::string value)
+{
+	string_properties_.insert(std::make_pair(tag,value));
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 /// @details delete a property to this residue

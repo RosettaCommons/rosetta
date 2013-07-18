@@ -48,6 +48,7 @@ private:
 	std::string string_value_;
 	core::Real real_value_;
 	ValueType value_type_;
+	std::string ligand_chain_;
 
 
 };

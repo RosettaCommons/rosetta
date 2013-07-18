@@ -1,6 +1,6 @@
 NAME    ORBITAL_HYBRIDIZATION  ORBITAL_TYPES BOHR_RADIUS
-CNH2    0                         0              0
-COO     0                         0              0
+CNH2    2                         1              0.7
+COO     2                         1              0.7
 CH1     0                         0              0 
 CH2     0                         0              0
 CH3     0                         0              0
@@ -18,7 +18,7 @@ OOC     2                         2              0.6
 S       0                         0              0
 Nbb     2                         1              0.65
 CAbb    0                         0              0
-CObb    2                         1              0.7 
+CObb    0                         0              0 
 OCbb    2                         2              0.6
 Phos    0                         0              0
 Pbb     0                         0              0    # copied from Phos

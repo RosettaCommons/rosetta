@@ -20,6 +20,7 @@
 #include <numeric/deriv/distance_deriv.hh>
 
 #include <core/conformation/RotamerSetBase.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <core/conformation/Residue.hh>
 
@@ -37,6 +38,7 @@
 #include <numeric/conversions.hh>
 
 #include <core/id/types.hh>
+#include <core/id/AtomID.hh>
 #include <core/kinematics/Jump.hh>
 
 #include <basic/options/keys/OptionKeys.hh>
@@ -69,6 +71,19 @@ OrbitalsScoreCreator::score_types_for_method() const
 
 static basic::Tracer TR("core.scoring.orbitals_hpol");
 
+//Because we don't really use the energy method options anyways
+
+OrbitalsScore::OrbitalsScore() :
+							parent( new OrbitalsScoreCreator ),
+							lookup_table_(core::scoring::ScoringManager::get_instance()->get_OrbitalsLookupTable()),
+							max_orbital_dist_squared_(9),
+							max_dist_squared_(36)
+{
+	if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals] != 1){
+		utility_exit_with_message( "Trying to run features test without orbitals! Pass the flag -add_orbitals!" );
+	}
+}
+
 OrbitalsScore::OrbitalsScore(methods::EnergyMethodOptions const &) :
 							parent( new OrbitalsScoreCreator ),
 							lookup_table_(core::scoring::ScoringManager::get_instance()->get_OrbitalsLookupTable()),
@@ -88,7 +103,7 @@ OrbitalsScore::clone() const
 	return new OrbitalsScore(*this);
 }
 
-void OrbitalsScore::setup_for_scoring(pose::Pose & pose, ScoreFunction const & /*weights*/) const
+void OrbitalsScore::setup_for_scoring(pose::Pose & pose, ScoreFunction const & weights) const
 {
 	pose.update_residue_neighbors();
 }
@@ -105,12 +120,12 @@ void
 OrbitalsScore::setup_for_minimizing_for_residue_pair(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		pose::Pose const & /*pose*/,
-		ScoreFunction const & /*sfxn*/,
-		kinematics::MinimizerMapBase const & /*minmap*/,
-		ResSingleMinimizationData const & /*res1_data_cache*/,
-		ResSingleMinimizationData const & /*res2_data_cache*/,
-		ResPairMinimizationData & /*data_cache*/
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		kinematics::MinimizerMapBase const & minmap,
+		ResSingleMinimizationData const & res1_data_cache,
+		ResSingleMinimizationData const & res2_data_cache,
+		ResPairMinimizationData & data_cache
 ) const{
 	//std::cout << "we got to setup for minimizeing" << std::endl;
 	conformation::Residue *res1_ptr = const_cast<conformation::Residue *>(&rsd1);
@@ -254,6 +269,9 @@ void OrbitalsScore::scfxn_rules_for_energy(
 			//if ( htype == 2 ) emap[pci_pi_pi] += energy; //aromatic hydrogen
 			//if ( htype == 3 ) emap[pci_pi_pi] += energy; //bb hydrogen
 		}
+    if ( orbtype1 == 4 ) {
+      if ( htype == lookup_table_.Hpol_scOrbH ) emap[pci_salt_bridge] += energy;
+    }
 		if ( orbtype1 == 5 ) {
 			if ( htype == lookup_table_.Hpol_scOrbH ) emap[pci_salt_bridge] += energy;
 		}
@@ -296,6 +314,10 @@ core::Real OrbitalsScore::scfxn_rules_for_weight(
 			//if ( htype == 2 ) emap[pci_pi_pi] += energy; //aromatic hydrogen
 			//if ( htype == 3 ) emap[pci_pi_pi] += energy; //bb hydrogen
 		}
+    if ( orbtype1 == 4 ) {
+      if ( htype == lookup_table_.Hpol_scOrbH ) return emap[pci_salt_bridge] ;
+    }
+
 		if ( orbtype1 == 5 ) {
 			if ( htype == lookup_table_.Hpol_scOrbH ) return emap[pci_salt_bridge] ;
 		}
@@ -365,6 +387,67 @@ OrbitalsScore::residue_pair_energy(
 	get_orb_orb_E(res2, res1, emap);
 }
 
+//TODO This function duplicates code from the one directly below it.  The function below could
+// Just call this function, provided that the extra function call, AtomID construction and
+// if statement evaluation don't cause measurable slow down.  It would improve the maintainability of the code.
+void OrbitalsScore::get_orb_orb_E(
+		core::pose::Pose const & pose,
+		core::id::AtomID const & atom1,
+		core::id::AtomID const & atom2,
+		EnergyMap & emap
+)const
+{
+	core::Real orb_orb_E(0.0);
+	core::conformation::Residue const & res1(pose.conformation().residue(atom1.rsd()));
+	core::conformation::Residue const & res2(pose.conformation().residue(atom2.rsd()));
+	if(
+		res1.type().atom_is_backbone(atom1.atomno()) &&
+		res2.type().atom_is_backbone(atom2.atomno()) &&
+		res1.type().atom_type(atom1.atomno()).atom_has_orbital() &&
+		res2.type().atom_type(atom2.atomno()).atom_has_orbital() &&
+		orb_orb_rules(res1.atom_type_index(atom1.atomno()), res2.atom_type_index(atom2.atomno()))
+	)
+	{
+		utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(atom1.atomno()));
+		for(
+				utility::vector1< core::Size >::const_iterator
+				res1_orb = res1_orbs.begin(),
+				res1_orb_end = res1_orbs.end();
+				res1_orb != res1_orb_end; ++res1_orb
+		){
+
+			utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(atom2.atomno()));
+			for(
+					utility::vector1< core::Size >::const_iterator
+					res2_orb = res2_orbs.begin(),
+					res2_orb_end = res2_orbs.end();
+					res2_orb != res2_orb_end; ++res2_orb
+			){
+				numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(*res1_orb) );
+				numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
+				core::Real const orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
+				if(orb1_orb2_dist < 16){
+					core::Size const & orbital_type1(res1.orbital_type_index(*res1_orb));
+					core::Size const & orbital_type2(res2.orbital_type_index(*res2_orb));
+					core::Real const dist(std::sqrt(orb1_orb2_dist));
+					numeric::xyzVector< core::Real > const & Axyz(res1.xyz(atom1.atomno()));
+					numeric::xyzVector< core::Real > const & Dxyz(res2.xyz(atom2.atomno()));
+					core::Real const cosAOD(cos_of(Axyz, res1_Orbxyz, Dxyz));
+					core::Real const cosDOA(cos_of(Dxyz, res2_Orbxyz, Axyz));
+					core::Real d_deriv(0.0);
+					core::Real a_deriv(0.0);
+					lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, false);
+					scfxn_rules_for_energy(false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E, emap ); //dummy value for htype given
+					orb_orb_E=0.0;
+					lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, false);
+					scfxn_rules_for_energy(false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E,  emap ); //dummy value for htype given
+					orb_orb_E=0.0;
+				}
+			}
+		}
+	}
+}
+
 void OrbitalsScore::get_orb_orb_E(
 		core::conformation::Residue const & res1,
 		core::conformation::Residue const & res2,
@@ -432,6 +515,38 @@ void OrbitalsScore::get_orb_orb_E(
 }
 
 
+//TODO This function duplicates code from the one directly below it.  The function below could
+// Just call this function, provided that the extra function call, AtomID construction and
+// if statement evalution don't cause measurable slow down.  It would improve the maintainability of the code.
+void OrbitalsScore::get_E_haro_one_way(
+	core::pose::Pose const & pose,
+	core::id::AtomID const & atom1,
+	core::id::AtomID const & atom2,
+	EnergyMap & emap
+	) const
+{
+	core::conformation::Residue const & res1(pose.conformation().residue(atom1.rsd()));
+	core::conformation::Residue const & res2(pose.conformation().residue(atom2.rsd()));
+	
+	core::Real dummy_E1(0.0);//needed for generalized function get_orb_H_distance_and_energy
+	core::Real energy(0.0);
+
+	if(
+		res1.type().atom_type(atom1.atomno()).atom_has_orbital() && // Acceptor has orbital
+		res2.type().atom_type(atom2.atomno()).name() == "Haro" &&  // Donor atom is Haro
+		res1.atom_is_backbone(atom1.atomno()) //Acceptor is backbone
+	)
+	{
+		numeric::xyzVector<core::Real> const & Axyz = res1.atom(atom1.atomno()).xyz();
+		numeric::xyzVector<core::Real> const & Hxyz = res2.atom(atom2.atomno()).xyz();
+		core::Real const temp_dist = Axyz.distance_squared(Hxyz);
+		if (temp_dist < max_dist_squared_) {
+			core::Size const donor_index(res2.bonded_neighbor(atom2.atomno())[1]);
+			numeric::xyzVector<core::Real> const & Dxyz(res2.xyz(donor_index));
+			get_orb_H_distance_and_energy(res1, atom1.atomno(), Axyz, Hxyz, Dxyz, energy, dummy_E1, lookup_table_.Haro_scOrbH, false, emap);
+		}
+	}
+}
 
 void OrbitalsScore::get_E_haro_one_way(
 		core::conformation::Residue const & res1,
@@ -468,6 +583,48 @@ void OrbitalsScore::get_E_haro_one_way(
 				}
 			}
 		}
+	}
+}
+
+//TODO This function duplicates code from the one directly below it.  The function below could
+// Just call this function, provided that the extra function call, AtomID construction and
+// if statement evalution don't cause measurable slow down.  It would improve the maintainability of the code.
+void OrbitalsScore::get_E_hpol_one_way(
+		core::pose::Pose const & pose,
+		core::id::AtomID const & atom1,
+		core::id::AtomID const & atom2,
+		EnergyMap & emap
+) const
+{
+	core::Real HPOL_sc_H_sc_orb_E(0.0);
+	core::Real HPOL_bb_H_sc_orb_energy(0.0);
+
+	core::conformation::Residue const & res1(pose.conformation().residue(atom1.rsd()));
+	core::conformation::Residue const & res2(pose.conformation().residue(atom2.rsd()));
+
+	core::Size const donor_index(res2.bonded_neighbor(atom2.atomno())[1]);
+	if(
+		res1.type().atom_type(atom1.atomno()).atom_has_orbital() && // Acceptor has orbital
+		res2.type().atom_type(atom2.atomno()).name() == "Hpol" &&  // Donor atom is Haro
+		!(
+			res1.atom_is_backbone(atom1.atomno()) &&
+			res2.atom_is_backbone(donor_index)
+		)
+	)
+	{
+		numeric::xyzVector<core::Real> const & Axyz(res1.atom(atom1.atomno()).xyz());
+		numeric::xyzVector<core::Real> const & Hxyz(res2.atom(atom2.atomno()).xyz());
+
+		if( Axyz.distance_squared(Hxyz) < max_dist_squared_)
+		{
+			numeric::xyzVector<core::Real> const & Dxyz(res2.xyz(donor_index));
+			if(res2.atom_is_backbone(donor_index) || res1.atom_is_backbone(atom1.atomno())){
+				get_orb_H_distance_and_energy(res1, atom1.atomno(), Axyz, Hxyz, Dxyz, HPOL_sc_H_sc_orb_E, HPOL_bb_H_sc_orb_energy, lookup_table_.Hpol_bbOrbH, true, emap);
+			}else{
+				get_orb_H_distance_and_energy(res1, atom1.atomno(), Axyz, Hxyz, Dxyz, HPOL_sc_H_sc_orb_E, HPOL_bb_H_sc_orb_energy, lookup_table_.Hpol_scOrbH, false, emap);
+			}
+		}
+
 	}
 }
 

@@ -67,6 +67,7 @@ private:
 	std::string chain_;
 	std::map< std::string, utility::vector1<core::Vector> > starting_points_;
 	std::map<std::string,core::Vector > potential_starting_positions_;
+	bool use_file_name_;
 };
 
 void move_ligand_to_desired_centroid(

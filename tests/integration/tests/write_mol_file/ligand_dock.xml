@@ -1,0 +1,20 @@
+This protocol will simply do low-resolution followed by high-resolution docking.
+It will also report the binding energy (ddg) and buried-surface area (sasa) in the score file.
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<hard_rep weights="ligand"/>
+	</SCOREFXNS>
+	<MOVERS>
+	single movers		
+		<StartFrom name="start_from" chain="X">
+			<Coordinates x="-1.731" y="32.589" z="-5.039"/>
+		</StartFrom>
+		<InterfaceScoreCalculator name="add_scores" chains="X" scorefxn="hard_rep"/>
+		<WriteLigandMolFile name="write_ligand" chain="X" directory="output"/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name="start_from"/>
+		<Add mover_name="add_scores"/>
+		<Add mover_name="write_ligand"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

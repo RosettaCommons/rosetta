@@ -1,0 +1,27 @@
+# The orbitals scorefunction was optimized using the defaults determined at the Talaris2013 score function conference.
+# Changes include addition of hack_elec term, optimization of reference energies with optE on Jane Richardson's HiQ54 benchmark,
+# with the following commands: -corrections:chemical:icoor_05_2009 -smooth_hack_elec -hackelec_min_dis 1.3 -hackelec_r_option false 
+# -expand_st_chi2sampling -set_atom_properties fa_standard:ONH2:LK_DGFREE:-5.85 fa_standard:NH2O:LK_DGFREE:-7.8 fa_standard:Narg:LK_DGFREE:-10.0 fa_standard:OH:LK_DGFREE:-6.70 -mistakes:restore_pre_talaris_2013_behavior
+#
+#
+ETABLE FA_STANDARD_SOFT
+METHOD_WEIGHTS ref 0.166738 0.120811 -1.20284 -1.64298 0.648682 -0.237162 0.746354 0.510679 -0.410441 0.35172 -0.0309105 -0.714128 -0.564298 -0.925135 0.00188115 -0.00827638 0.137583 0.416906 1.97512 0.659696 
+fa_atr 0.8
+fa_rep 0.4
+fa_sol 0.45
+fa_intra_rep 0.004
+hack_elec 0.15
+pro_close 1
+orbitals_hpol_bb 0.2
+pci_cation_pi 0.5
+pci_pi_pi 0.065
+pci_salt_bridge 0.32
+pci_hbond 0.3
+hbond_sr_bb 0.585
+hbond_lr_bb 1.17
+dslf_fa13 1.0
+rama 0.2
+omega 0.5
+fa_dun 0.56
+p_aa_pp 0.32
+ref 1

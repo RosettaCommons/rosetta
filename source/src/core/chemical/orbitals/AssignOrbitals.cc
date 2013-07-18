@@ -21,12 +21,16 @@
 #include <numeric/constants.hh>
 #include <numeric/NumericTraits.hh>
 
+#include <basic/Tracer.hh>
+
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 
 
 namespace core{
 namespace chemical{
 namespace orbitals{
+
+basic::Tracer TR("core::chemical::orbitals::AssignOrbitals");
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
@@ -114,7 +118,7 @@ void AssignOrbitals::assign_orbitals( )
 
 					if(distance <1e-2)
 					{
-						std::cout << "WARNING: extremely small distance=" << distance << " for " <<
+						TR << "WARNING: extremely small distance=" << distance << " for " <<
 								p_orbital_element_name << " ,using 0.0 for theta and phi."<<
 								" If you were not expecting this warning, something is very wrong" <<std::endl;
 					}else
@@ -164,7 +168,13 @@ void AssignOrbitals::assign_orbitals( )
 			AObondedatoms_ = restype_->bonded_neighbor(atm_index);
 
 			//very crappy hack. This whole code sucks. WTF? Needs to be rewritten!
-			if(atmtype.name() == "Nhis"){
+			// This will skip C#N among other things, it will do it silently, this should bother you
+			if(atmtype.name() == "Nhis" && AObondedatoms_.size() < 2)
+			{
+				TR <<"WARNING: residue " << restype_->name() << " has an Nhis typed atom with < 2 bonds.  It is probably a C#N or something similar for which Rosetta has no reasonable atomtype.  This atom is not being assigned orbitals." <<std::endl;
+			}
+
+			if(atmtype.name() == "Nhis" && AObondedatoms_.size() > 1) {
 				core::Size atm_index2(AObondedatoms_[2]);//atom index of the only bonded neighbor.
 				//get the atom indices of the bonded neighbors of atm_index2.
 				utility::vector1<core::Size> neighbor_bonded_atms2(restype_->bonded_neighbor(atm_index2));
@@ -350,6 +360,7 @@ void AssignOrbitals::assign_only_pi_orbitals_to_atom(/*OrbInfo const & orbital_i
 	utility::vector1<core::Size> neighbor_bonded_atms2(restype_->bonded_neighbor(atm_index2));
 
 	core::Size atm_index3(500);
+	bool set_atm_index3 = false;
 
 	for(core::Size x=1; x<= neighbor_bonded_atms2.size(); ++x){
 		//if atm_index is not equal to the index in neighbor bonded atoms to C2,do nothing,continue the loop.
@@ -358,7 +369,13 @@ void AssignOrbitals::assign_only_pi_orbitals_to_atom(/*OrbInfo const & orbital_i
 		if(Aindex_ != neighbor_bonded_atms2[x])
 		{
 			atm_index3 = neighbor_bonded_atms2[x];
+			set_atm_index3 = true;
 		}
+	}
+	if(!set_atm_index3)
+	{
+		TR << "Warning: Unable to assign orbitals properly for atom of type " <<atmtype.name() << " On residue " << restype_->name() << " Orbital assignment for this atom is skipped" <<std::endl;
+		return;
 	}
 
 	utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vectors = cross_product_helper(Aindex_,atm_index2,atm_index3,AOdist_);
@@ -530,7 +547,7 @@ void AssignOrbitals::calculate_orbital_icoor(
 
 	if(distance <1e-2)
 	{
-		std::cout << "WARNING: extremely small distance=" << distance << " for " <<
+		TR << "WARNING: extremely small distance=" << distance << " for " <<
 				orbital_element_name << " ,using 0.0 for theta and phi."<<
 				" If you were not expecting this warning, something is very wrong" <<std::endl;
 	}else

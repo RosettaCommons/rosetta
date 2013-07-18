@@ -35,6 +35,8 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <utility/tools/make_vector.hh>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace features {
@@ -175,14 +177,29 @@ ScreeningFeatures::parse_my_tag(
 		throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures requires the 'chain' tag");
 	}
 
-	if(!tag->hasOption("descriptors"))
-	{
-		throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatuers requires the 'descriptors' tag");
-	}
-
 	chain_ = tag->getOption<std::string>("chain");
 
-	descriptors_= utility::string_split(tag->getOption<std::string>("descriptors"),',');
+	core::Size descriptor_count = 0;
+	foreach( utility::tag::TagPtr const sub_tag, tag->getTags() )
+	{
+		if(sub_tag->getName() != "descriptor")
+		{
+			throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures only supports subtags with the name 'descriptor");
+		}
+
+		if(!sub_tag->hasOption("type"))
+		{
+			throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures descriptor subtags require a 'type' option");
+		}
+
+		std::string descriptor_type(sub_tag->getOption<std::string>("type"));
+		descriptors_.push_back(descriptor_type);
+		descriptor_count++;
+	}
+	if(descriptor_count == 0)
+	{
+		throw utility::excn::EXCN_RosettaScriptsOption("ScreeningFeatures requires at least one 'descriptor' subtag");
+	}
 
 }
 

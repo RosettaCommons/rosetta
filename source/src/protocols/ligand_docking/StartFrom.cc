@@ -37,6 +37,7 @@
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/file/FileName.hh>
 
 #include <utility/json_spirit/json_spirit_reader.h>
 
@@ -78,14 +79,16 @@ StartFrom::StartFrom():
 		//utility::pointer::ReferenceCount(),
 		Mover("StartFrom"),
 		chain_(""),
-		starting_points_(){}
+		starting_points_(),
+		use_file_name_(false){}
 
 StartFrom::StartFrom(StartFrom const & that):
 		//utility::pointer::ReferenceCount(),
 		protocols::moves::Mover( that ),
 		chain_(that.chain_),
 		starting_points_(that.starting_points_),
-		potential_starting_positions_(that.potential_starting_positions_)
+		potential_starting_positions_(that.potential_starting_positions_),
+		use_file_name_(that.use_file_name_)
 {}
 
 StartFrom::~StartFrom() {}
@@ -145,6 +148,18 @@ StartFrom::parse_my_tag(
 			coords(v,pdb_tag);
 		}else if(name == "File")
 		{
+			std::string location_id_mode = child_tag->getOption<std::string>("struct_identifier","hash");
+			if(location_id_mode =="hash")
+			{
+				use_file_name_ = false;
+			}else if(location_id_mode =="file")
+			{
+				use_file_name_ = true;
+			}else
+			{
+				throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' Mover option struct_identifier can only be 'hash' or 'file'");
+			}
+
 			if(!child_tag->hasOption("filename")) throw utility::excn::EXCN_RosettaScriptsOption("'StartFrom' mover File tag requires 'filename' coordinates option");
 			parse_startfrom_file(child_tag->getOption<std::string>("filename"));
 
@@ -214,15 +229,33 @@ void StartFrom::apply(core::pose::Pose & pose){
 		move_ligand_to_desired_centroid(jump_id, desired_centroid, pose);
 	}else if(!potential_starting_positions_.empty())
 	{
-		std::string hash = core::pose::get_sha1_hash_excluding_chain(chain_[0],pose);
-		std::map<std::string,core::Vector >::iterator position_hash = potential_starting_positions_.find(hash);
-		if(position_hash != potential_starting_positions_.end())
+		std::map<std::string,core::Vector >::iterator position_id;
+		if(use_file_name_)
 		{
-			core::Size jump_id = core::pose::get_jump_id_from_chain(chain_, pose);
-			move_ligand_to_desired_centroid(jump_id, position_hash->second , pose);
+			std::string job_tag(jd2::JobDistributor::get_instance()->current_job()->input_tag());
+			utility::vector1<std::string> input_filenames(utility::split(job_tag));
+			foreach(std::string filename, input_filenames)
+			{
+				utility::file::FileName file_data(filename);
+				std::string base_name(file_data.base());
+				position_id = potential_starting_positions_.find(base_name);
+				if(position_id != potential_starting_positions_.end())
+				{
+					break;
+				}
+			}
 		}else
 		{
-			start_from_tracer << "cannot find structure with hash " <<hash <<" and tag " <<
+			std::string hash = core::pose::get_sha1_hash_excluding_chain(chain_[0],pose);
+			position_id = potential_starting_positions_.find(hash);
+		}
+		if(position_id != potential_starting_positions_.end())
+		{
+			core::Size jump_id = core::pose::get_jump_id_from_chain(chain_, pose);
+			move_ligand_to_desired_centroid(jump_id, position_id->second , pose);
+		}else
+		{
+			start_from_tracer << "cannot find structure with position id and tag " <<
 					protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag() << std::endl;
 			utility_exit_with_message("the current structure is not in the startfrom_file");
 		}
@@ -254,7 +287,8 @@ void StartFrom::parse_startfrom_file(std::string filename)
 	/*
 	[
 	    {
-	        "input_tag" : "infile.pdb",
+	        "input_tag" : "path/infile.pdb",
+	        "file_name" : "infile.pdb",
 	        "x" : 0.0020,
 	        "y" : -0.004,
 	        "z" : 0.0020,
@@ -268,19 +302,27 @@ void StartFrom::parse_startfrom_file(std::string filename)
 	{
 		utility::json_spirit::mObject position_data(start_it->get_obj());
 
-		std::string hash = position_data["hash"].get_str();
+		std::string identifier;
+		if(use_file_name_)
+		{
+			identifier = position_data["file_name"].get_str();
+		}else
+		{
+			identifier = position_data["hash"].get_str();
+		}
+
 		core::Real x = position_data["x"].get_real();
 		core::Real y = position_data["y"].get_real();
 		core::Real z = position_data["z"].get_real();
 
 		core::Vector coords(x,y,z);
-		if(potential_starting_positions_.find(hash) !=potential_starting_positions_.end() )
+		if(potential_starting_positions_.find(identifier) !=potential_starting_positions_.end() )
 		{
 
-			start_from_tracer << "WARNING: There is more than one entry in the startfrom_file with the hash " << hash <<std::endl;
+			start_from_tracer << "WARNING: There is more than one entry in the startfrom_file with the hash " << identifier <<std::endl;
 			//utility_exit_with_message("hashes in startfrom files must all be unique");
 		}
-		potential_starting_positions_[hash] = coords;
+		potential_starting_positions_[identifier] = coords;
 
 	}
 
