@@ -29,7 +29,9 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/ncbb/util.hh>
 #include <core/id/AtomID.hh>
+
 // Utility Headers
 #include <numeric/xyz.functions.hh>
 #include <basic/Tracer.hh>
@@ -53,31 +55,6 @@ using namespace core::id;
 namespace protocols {
 namespace simple_moves {
 namespace oop {
-
-void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position )
-{
-	add_oop_constraint( pose, oop_seq_position, 1.5, 0.05 );
-}
-void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, core::Real distance, core::Real std )
-{
-	using namespace core::id;
-	using namespace core::scoring;
-	using namespace core::scoring::constraints;
-
-	//kdrew: add constraint
-	HarmonicFuncOP harm_func  (new HarmonicFunc( distance, std ) );
-																			 
-	AtomID aidCYP( pose.residue( oop_seq_position ).atom_index("CYP"), oop_seq_position );
-	AtomID aidCZP( pose.residue( oop_seq_position+1 ).atom_index("CZP"), oop_seq_position+1 );
-
-	ConstraintCOP atompair = new AtomPairConstraint( aidCYP, aidCZP, harm_func );
-
-	pose.add_constraint( atompair );
-
-
-	TR << "added atom pair constraint to oop at residue: " << oop_seq_position << " with distance: " << distance << " and std: "<< std << std::endl;
-
-}
 
 void OopPatcher::apply( core::pose::Pose & pose )
 {
@@ -149,7 +126,7 @@ void OopPatcher::apply( core::pose::Pose & pose )
 
 	}// if post
 
-	add_oop_constraint( pose, oop_pre_pos_ );
+	core::pose::ncbb::add_oop_constraint( pose, oop_pre_pos_ );
 
 	//kdrew: need to do all at once at the end because occasionally will get error:
 	//kdrew: Unable to handle change in the number of residue connections in the presence of pseudobonds!

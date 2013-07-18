@@ -87,6 +87,9 @@ sources = {
 		"InterfaceSasaDefinitionCalculator",
 		"SasaCalculator",
 	],
+	"core/pose/ncbb": [
+		"util",
+	],
 	"core/pose/symmetry": [
 		"util",
 	],

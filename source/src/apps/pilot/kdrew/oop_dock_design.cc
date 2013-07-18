@@ -16,6 +16,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/pose/ncbb/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -72,6 +73,7 @@
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
@@ -318,18 +320,18 @@ OopDockDesignMinimizeMover::apply(
 	kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
 	pert_pep_mm->set_bb_true_range(pep_start, pep_end);
 
-	//kdrew: automatically find oop positions
-	utility::vector1< core::Size > oop_seq_positions;
-	for ( Size i = 1; i <= pose.total_residue(); ++i )
+	////kdrew: automatically find oop positions
+	utility::vector1< core::Size > oop_seq_positions = core::pose::ncbb::initialize_oops(pose);
+
+	for( Size i = 1; i <= oop_seq_positions.size(); i++  )
 	{
-		if( pose.residue(i).has_variant_type(chemical::OOP_PRE) == 1)
+		pert_pep_mm->set_bb( oop_seq_positions[i], false );
+
+		if( score_fxn->has_zero_weight( core::scoring::atom_pair_constraint ) )
 		{
-			oop_seq_positions.push_back( i );
-			//kdrew: set up constraints
-			add_oop_constraint( pose, i );
-			//kdrew: do not use small/shear mover on oop positions, use oop mover instead
-			pert_pep_mm->set_bb( i, false );
+			score_fxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
 		}
+
 	}
 
 	// create small and shear movers

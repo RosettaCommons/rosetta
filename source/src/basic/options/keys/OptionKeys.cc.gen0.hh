@@ -27,6 +27,7 @@ namespace in { BooleanOptionKey const include_surfaces( "in:include_surfaces" );
 namespace in { BooleanOptionKey const enable_branching( "in:enable_branching" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_res( "in:remember_unrecognized_res" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_water( "in:remember_unrecognized_water" );  }
+namespace in { BooleanOptionKey const detect_oops( "in:detect_oops" );  }
 namespace in { BooleanOptionKey const detect_disulf( "in:detect_disulf" );  }
 namespace in { RealOptionKey const detect_disulf_tolerance( "in:detect_disulf_tolerance" );  }
 namespace in { FileOptionKey const fix_disulf( "in:fix_disulf" );  }
@@ -715,4 +716,3 @@ namespace jumps { BooleanOptionKey const jumps( "jumps" );  }
 namespace jumps { BooleanOptionKey const evaluate( "jumps:evaluate" );  }
 namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for_ss" );  }
 namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
-namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }

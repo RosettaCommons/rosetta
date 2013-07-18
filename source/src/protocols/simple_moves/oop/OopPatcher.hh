@@ -26,9 +26,6 @@ namespace protocols {
 namespace simple_moves {
 namespace oop {
 
-void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position, core::Real distance, core::Real std );
-void add_oop_constraint( core::pose::Pose & pose, core::Size oop_seq_position );
-
 
 ///@details
 class OopPatcher : public protocols::moves::Mover {

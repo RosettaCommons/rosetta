@@ -133,6 +133,7 @@ Options = Option_Group( '',
 			default="false"),
 		Option( 'remember_unrecognized_res'  , 'Boolean', desc="Ignore unrecognized residues, but remember them in PDBInfo.", default='false' ),
 		Option( 'remember_unrecognized_water', 'Boolean', desc="Remember waters along with other unrecognized residues.", default='false' ),
+		Option( 'detect_oops', 'Boolean', desc="Detect oligooxopiperazines (oops) and add required constraints", default='false' ),
 		Option( 'detect_disulf', 'Boolean', desc="Forcably enable or disable disulfide detection. "
 					"When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides. Setting `-detect_disulf true` will force aggressive disulfide detection "
 					"in centroid poses based on CB distance. Setting `-detect_disulf false` disables all detection, even in full atom poses. Note that disabling disulfides causes severe clashes for native disulfides.",

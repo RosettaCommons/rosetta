@@ -147,6 +147,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-detect_oops</b> \<Boolean\><dt>
+<dd>Detect oligooxopiperazines (oops) and add required constraints</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-detect_disulf</b> \<Boolean\><dt>
 <dd>Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides. Setting `-detect_disulf true` will force aggressive disulfide detection in centroid poses based on CB distance. Setting `-detect_disulf false` disables all detection, even in full atom poses. Note that disabling disulfides causes severe clashes for native disulfides.</dd><br>
 </dl>

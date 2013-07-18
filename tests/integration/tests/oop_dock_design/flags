@@ -10,3 +10,4 @@
 -dock_design_loop_num 1
 -score:weights mm_std 
 -packing:linmem_ig 10 
+-in:detect_oops true

@@ -32,6 +32,7 @@ namespace in { extern BooleanOptionKey const include_surfaces; }
 namespace in { extern BooleanOptionKey const enable_branching; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_res; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_water; }
+namespace in { extern BooleanOptionKey const detect_oops; }
 namespace in { extern BooleanOptionKey const detect_disulf; }
 namespace in { extern RealOptionKey const detect_disulf_tolerance; }
 namespace in { extern FileOptionKey const fix_disulf; }

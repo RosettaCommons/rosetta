@@ -39,6 +39,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/ncbb/util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/cryst/util.hh>
@@ -1306,6 +1307,12 @@ build_pose_as_is1(
 	//initialized. Moving it after the pose->pdb_info has been
 	//initialized causes integration test changes
 	core::pose::initialize_disulfide_bonds(pose);
+
+	//kdrew: if detect_oops flag is set, initialize oops
+	if ( basic::options::option[ basic::options::OptionKeys::in::detect_oops ].user() )
+	{
+		core::pose::ncbb::initialize_oops(pose);
+	}
 
 	if(pose.n_residue()>1){// 1 residue fragments for ligand design.
 		pose.conformation().detect_pseudobonds();
