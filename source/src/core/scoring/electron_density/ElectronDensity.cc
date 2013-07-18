@@ -3825,7 +3825,7 @@ ElectronDensity::matchResFast(
 		chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
 		std::string elt_i = atom_type_set[ rsd.atom_type_index( i ) ].element();
 		OneGaussianScattering sig_j = get_A( elt_i );
-		core::Real B = pose.pdb_info()->temperature( rsd.seqpos(), i );
+		core::Real B = pose.pdb_info() ? pose.pdb_info()->temperature( rsd.seqpos(), i ) : effectiveB;
 		core::Real k = sig_j.k( B );
 
 		if (ignoreBs) k = 4*M_PI*M_PI/effectiveB;
