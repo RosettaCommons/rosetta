@@ -31,6 +31,14 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 
+#include <core/graph/Graph.hh>
+#include <core/pack/packer_neighbors.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/conformation/AbstractRotamerTrie.hh>
+
 // Basic headers
 #include <basic/Tracer.hh>
 
@@ -1041,6 +1049,71 @@ public:
 		Real end_score = sfxn(pose);
 		//std::cout << "end score: " << sfxn(pose) << std::endl;
 		TS_ASSERT_DELTA( -22.49034811587382, end_score, 1e-12 );
+	}
+
+	void test_etrable_trie_vs_trie() {
+		using namespace core::graph;
+		using namespace core::pose;
+		using namespace core::scoring::etable;
+		using namespace core::scoring::methods;
+		using namespace core::pack;
+		using namespace core::pack::rotamer_set;
+		using namespace core::pack::task;
+
+		Pose pose = create_trpcage_ideal_pose();
+		ScoreFunction sfxn;
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		sfxn( pose );
+
+		EnergyMethodOptions options; // default is fine
+		TableLookupEtableEnergy etab_energy( *( ScoringManager::get_instance()->etable( options.etable_type() )), options );
+
+		PackerTaskOP task = TaskFactory::create_packer_task( pose );
+		for ( Size ii = 1; ii <= 7; ++ii ) task->nonconst_residue_task(ii).prevent_repacking();
+		for ( Size ii = 12; ii <= pose.total_residue(); ++ii ) task->nonconst_residue_task(ii).prevent_repacking();
+		for ( Size ii = 8; ii <= 11; ++ii ) task->nonconst_residue_task( ii ).or_ex1( true );
+		for ( Size ii = 8; ii <= 11; ++ii ) task->nonconst_residue_task( ii ).or_ex2( true );
+
+		GraphOP packer_neighbor_graph = create_packer_graph( pose, sfxn, task );
+		RotamerSets rotsets; rotsets.set_task( task );
+		rotsets.build_rotamers( pose, sfxn, packer_neighbor_graph );
+
+		// Create tries for each of the three rotamer sets
+		for ( Size ii = 8; ii <= 11; ++ii ) etab_energy.prepare_rotamers_for_packing( pose, *rotsets.rotamer_set_for_residue( ii ) );
+		for ( Size ii = 8; ii <= 11; ++ii )	TS_ASSERT( rotsets.rotamer_set_for_residue(ii)->get_trie( etable_method )() != 0 );
+
+		Size count_comparisons( 0 );
+		for ( Size ii = 8; ii <= 11; ++ii ) {
+			RotamerSet const & iiset = *rotsets.rotamer_set_for_residue( ii );
+			for ( Size jj = ii+1; jj <= 11; ++jj ) {
+				RotamerSet const & jjset = *rotsets.rotamer_set_for_residue( jj );
+				// compute the rotamer pair energies for ii/jj
+				ObjexxFCL::FArray2D< core::PackerEnergy > energy_table( jjset.num_rotamers(), iiset.num_rotamers(), core::PackerEnergy(0.0) );
+				etab_energy.evaluate_rotamer_pair_energies( iiset, jjset, pose, sfxn, sfxn.weights(), energy_table );
+
+				/// And now verify that it worked
+				ObjexxFCL::FArray2D< core::PackerEnergy > temp_table3( energy_table );
+				temp_table3 = 0;
+				EnergyMap emap;
+				for ( Size kk = 1, kk_end = iiset.num_rotamers(); kk <= kk_end; ++kk ) {
+					for ( Size ll = 1, ll_end = jjset.num_rotamers(); ll <= ll_end; ++ll ) {
+						++count_comparisons;
+						emap.zero();
+						etab_energy.residue_pair_energy( *iiset.rotamer( kk ), *jjset.rotamer( ll ), pose, sfxn, emap );
+						temp_table3( ll, kk ) += sfxn.weights().dot( emap );
+						TS_ASSERT( std::abs( energy_table( ll, kk ) - temp_table3( ll, kk )) <= 1e-3 );
+						if ( std::abs( energy_table( ll, kk ) - temp_table3( ll, kk )) > 1e-3 ) {
+							std::cout << "Residues " << iiset.resid() << " & " << jjset.resid() << " rotamers: " << kk << " & " << ll;
+							std::cout << " tvt/reg discrepancy: tvt= " <<  energy_table( ll, kk ) << " reg= " << temp_table3( ll, kk );
+							std::cout << " delta: " << energy_table( ll, kk ) - temp_table3( ll, kk ) << std::endl;
+						}
+					}
+				}
+			}
+		}
+		//std::cout << "Total energy comparisons: " << count_comparisons << std::endl;
 	}
 
 };
