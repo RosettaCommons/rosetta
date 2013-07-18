@@ -30,6 +30,7 @@
 #include <core/pose/util.hh>
 
 #include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 
@@ -66,6 +67,7 @@ AtomCoordinateCstMoverCreator::mover_name()
 AtomCoordinateCstMover::AtomCoordinateCstMover() :
 	cst_sd_( 0.5 ),
 	bounded_( false ),
+	amb_hnq_( false ),
 	cst_width_( 0 ),
 	cst_sidechain_( false )
 {}
@@ -74,6 +76,7 @@ AtomCoordinateCstMover::AtomCoordinateCstMover( AtomCoordinateCstMover const & o
 	refpose_( other.refpose_ ),
 	cst_sd_( other.cst_sd_ ),
 	bounded_( other.bounded_ ),
+	amb_hnq_( other.amb_hnq_ ),
 	cst_width_( other.cst_width_ ),
 	cst_sidechain_( other.cst_sidechain_ ),
 	loop_segments_( other.loop_segments_ ),
@@ -198,7 +201,26 @@ void AtomCoordinateCstMover::apply( core::pose::Pose & pose) {
 				} else {
 					function = new HarmonicFunc( 0.0, cst_sd_ );
 				}
-				pose.add_constraint( new CoordinateConstraint(	core::id::AtomID(ii,i), core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( jj ), function ) );
+				if( amb_hnq_ && cst_sidechain_ &&  // Rely on shortcutting evaluation to speed things up - get to else clause as soon as possible.
+						(pose_i_rsd.aa() == core::chemical::aa_asn && targ_j_rsd.aa() == core::chemical::aa_asn && ( pose_i_rsd.atom_name(ii) == " OD1" || pose_i_rsd.atom_name(ii) == " ND2" )) ||
+						(pose_i_rsd.aa() == core::chemical::aa_gln && targ_j_rsd.aa() == core::chemical::aa_gln && ( pose_i_rsd.atom_name(ii) == " OE1" || pose_i_rsd.atom_name(ii) == " NE2" )) ||
+						(pose_i_rsd.aa() == core::chemical::aa_his && targ_j_rsd.aa() == core::chemical::aa_his &&
+								(pose_i_rsd.atom_name(ii) == " ND1" || pose_i_rsd.atom_name(ii) == " NE2" || pose_i_rsd.atom_name(ii) == " CD2" || pose_i_rsd.atom_name(ii) == " CE1")) ) {
+					std::string atom1, atom2;
+					if ( pose_i_rsd.aa() == core::chemical::aa_asn ) { atom1 = " OD1"; atom2 = " ND2"; }
+					else if ( pose_i_rsd.aa() == core::chemical::aa_gln ) { atom1 = " OE1"; atom2 = " NE2"; }
+					else if ( pose_i_rsd.aa() == core::chemical::aa_his && (pose_i_rsd.atom_name(ii) == " ND1" || pose_i_rsd.atom_name(ii) == " CD2") ) { atom1 = " ND1"; atom2 = " CD2"; }
+					else if ( pose_i_rsd.aa() == core::chemical::aa_his && (pose_i_rsd.atom_name(ii) == " NE2" || pose_i_rsd.atom_name(ii) == " CE1") ) { atom1 = " NE2"; atom2 = " CE1"; }
+					else {
+						utility_exit_with_message("Logic error in AtomCoordinateConstraints");
+					}
+					core::scoring::constraints::AmbiguousConstraintOP amb_constr( new core::scoring::constraints::AmbiguousConstraint );
+					amb_constr->add_individual_constraint( new CoordinateConstraint(  core::id::AtomID(ii,i), core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom1 ), function ) );
+					amb_constr->add_individual_constraint( new CoordinateConstraint(  core::id::AtomID(ii,i), core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( atom2 ), function ) );
+					pose.add_constraint( amb_constr );
+				} else {
+					pose.add_constraint( new CoordinateConstraint(	core::id::AtomID(ii,i), core::id::AtomID(1,pose.fold_tree().root()), targ_j_rsd.xyz( jj ), function ) );
+				}
 			} // for atom
 		} // if(loop)
 	} // for residue
@@ -217,6 +239,7 @@ AtomCoordinateCstMover::parse_my_tag(
 	bounded( tag->getOption< bool >( "bounded", false ) );
 	cst_width( tag->getOption< core::Real >( "bound_width", 0 ) );
 	cst_sidechain( tag->getOption< bool >( "sidechain", false ) );
+	ambiguous_hnq( tag->getOption< bool >( "flip_hnq", false ) );
 
 	if ( tag->hasOption("task_operations") ) { // Only do task operations if set
 		set_task_segments( protocols::rosetta_scripts::parse_task_operations(tag, data) );

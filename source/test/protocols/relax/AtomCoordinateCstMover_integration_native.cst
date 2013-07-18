@@ -13,8 +13,14 @@ CoordinateConstraint  C      6 ORIG   90 92.208 50.16 10.679 HARMONIC 0 0.5
 CoordinateConstraint  O      6 ORIG   90 92.965 50.621 11.524 HARMONIC 0 0.5
 CoordinateConstraint  CB     6 ORIG   90 93.667 48.228 10.165 HARMONIC 0 0.5
 CoordinateConstraint  CG     6 ORIG   90 95.089 48.284 9.611 HARMONIC 0 0.5
+AmbiguousConstraint
 CoordinateConstraint  OD1    6 ORIG   90 95.723 49.348 9.574 HARMONIC 0 0.5
+CoordinateConstraint  OD1    6 ORIG   90 95.601 47.127 9.191 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
+CoordinateConstraint  ND2    6 ORIG   90 95.723 49.348 9.574 HARMONIC 0 0.5
 CoordinateConstraint  ND2    6 ORIG   90 95.601 47.127 9.191 HARMONIC 0 0.5
+End_AmbiguousConstraint
 CoordinateConstraint  N      7 ORIG   90 90.903 50.389 10.66 HARMONIC 0 0.5
 CoordinateConstraint  CA     7 ORIG   90 90.29 51.199 11.694 HARMONIC 0 0.5
 CoordinateConstraint  C      7 ORIG   90 90.607 50.692 13.094 HARMONIC 0 0.5
@@ -35,8 +41,14 @@ CoordinateConstraint  O      9 ORIG   90 94.647 53.737 15.882 HARMONIC 0 0.5
 CoordinateConstraint  CB     9 ORIG   90 95.833 51.213 14.626 HARMONIC 0 0.5
 CoordinateConstraint  CG     9 ORIG   90 95.881 50.076 13.639 HARMONIC 0 0.5
 CoordinateConstraint  CD     9 ORIG   90 96.598 48.861 14.195 HARMONIC 0 0.5
+AmbiguousConstraint
 CoordinateConstraint  OE1    9 ORIG   90 96.05 47.755 14.209 HARMONIC 0 0.5
+CoordinateConstraint  OE1    9 ORIG   90 97.833 49.06 14.66 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
+CoordinateConstraint  NE2    9 ORIG   90 96.05 47.755 14.209 HARMONIC 0 0.5
 CoordinateConstraint  NE2    9 ORIG   90 97.833 49.06 14.66 HARMONIC 0 0.5
+End_AmbiguousConstraint
 CoordinateConstraint  N     10 ORIG   90 93.318 53.366 14.113 HARMONIC 0 0.5
 CoordinateConstraint  CA    10 ORIG   90 92.976 54.784 13.963 HARMONIC 0 0.5
 CoordinateConstraint  C     10 ORIG   90 92.145 55.227 15.164 HARMONIC 0 0.5
@@ -92,10 +104,22 @@ CoordinateConstraint  C     17 ORIG   90 97.539 61.042 8.505 HARMONIC 0 0.5
 CoordinateConstraint  O     17 ORIG   90 98.277 61.151 7.518 HARMONIC 0 0.5
 CoordinateConstraint  CB    17 ORIG   90 95.973 62.959 8.783 HARMONIC 0 0.5
 CoordinateConstraint  CG    17 ORIG   90 94.667 63.565 8.376 HARMONIC 0 0.5
+AmbiguousConstraint
 CoordinateConstraint  ND1   17 ORIG   90 94.397 63.959 7.081 HARMONIC 0 0.5
+CoordinateConstraint  ND1   17 ORIG   90 93.549 63.835 9.089 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
+CoordinateConstraint  CD2   17 ORIG   90 94.397 63.959 7.081 HARMONIC 0 0.5
 CoordinateConstraint  CD2   17 ORIG   90 93.549 63.835 9.089 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
+CoordinateConstraint  CE1   17 ORIG   90 92.633 64.379 8.217 HARMONIC 0 0.5
 CoordinateConstraint  CE1   17 ORIG   90 93.17 64.441 7.014 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
 CoordinateConstraint  NE2   17 ORIG   90 92.633 64.379 8.217 HARMONIC 0 0.5
+CoordinateConstraint  NE2   17 ORIG   90 93.17 64.441 7.014 HARMONIC 0 0.5
+End_AmbiguousConstraint
 CoordinateConstraint  N     18 ORIG   90 97.95 60.553 9.666 HARMONIC 0 0.5
 CoordinateConstraint  CA    18 ORIG   90 99.306 60.071 9.828 HARMONIC 0 0.5
 CoordinateConstraint  C     18 ORIG   90 99.446 58.833 8.961 HARMONIC 0 0.5
@@ -103,8 +127,14 @@ CoordinateConstraint  O     18 ORIG   90 100.485 58.605 8.351 HARMONIC 0 0.5
 CoordinateConstraint  CB    18 ORIG   90 99.57 59.697 11.284 HARMONIC 0 0.5
 CoordinateConstraint  CG    18 ORIG   90 100.922 60.148 11.772 HARMONIC 0 0.5
 CoordinateConstraint  CD    18 ORIG   90 101.001 61.655 11.866 HARMONIC 0 0.5
+AmbiguousConstraint
 CoordinateConstraint  OE1   18 ORIG   90 101.82 62.299 11.196 HARMONIC 0 0.5
+CoordinateConstraint  OE1   18 ORIG   90 100.139 62.235 12.7 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
+CoordinateConstraint  NE2   18 ORIG   90 101.82 62.299 11.196 HARMONIC 0 0.5
 CoordinateConstraint  NE2   18 ORIG   90 100.139 62.235 12.7 HARMONIC 0 0.5
+End_AmbiguousConstraint
 CoordinateConstraint  N     19 ORIG   90 98.376 58.046 8.908 HARMONIC 0 0.5
 CoordinateConstraint  CA    19 ORIG   90 98.36 56.809 8.139 HARMONIC 0 0.5
 CoordinateConstraint  C     19 ORIG   90 98.276 57.04 6.645 HARMONIC 0 0.5
@@ -199,8 +229,14 @@ CoordinateConstraint  C     33 ORIG   90 92.729 67.949 5.055 HARMONIC 0 0.5
 CoordinateConstraint  O     33 ORIG   90 93.415 67.765 4.057 HARMONIC 0 0.5
 CoordinateConstraint  CB    33 ORIG   90 93.507 69.833 6.522 HARMONIC 0 0.5
 CoordinateConstraint  CG    33 ORIG   90 94.236 70.468 5.363 HARMONIC 0 0.5
+AmbiguousConstraint
 CoordinateConstraint  OD1   33 ORIG   90 93.653 71.227 4.575 HARMONIC 0 0.5
+CoordinateConstraint  OD1   33 ORIG   90 95.526 70.172 5.255 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
+CoordinateConstraint  ND2   33 ORIG   90 93.653 71.227 4.575 HARMONIC 0 0.5
 CoordinateConstraint  ND2   33 ORIG   90 95.526 70.172 5.255 HARMONIC 0 0.5
+End_AmbiguousConstraint
 CoordinateConstraint  N     34 ORIG   90 91.408 67.827 5.058 HARMONIC 0 0.5
 CoordinateConstraint  CA    34 ORIG   90 90.653 67.454 3.865 HARMONIC 0 0.5
 CoordinateConstraint  C     34 ORIG   90 91.078 68.277 2.659 HARMONIC 0 0.5
@@ -391,8 +427,14 @@ CoordinateConstraint  O     55 ORIG   90 86.905 49.808 10.841 HARMONIC 0 0.5
 CoordinateConstraint  CB    55 ORIG   90 87.541 47.226 11.105 HARMONIC 0 0.5
 CoordinateConstraint  CG    55 ORIG   90 87.032 45.929 11.713 HARMONIC 0 0.5
 CoordinateConstraint  CD    55 ORIG   90 87.388 44.714 10.867 HARMONIC 0 0.5
+AmbiguousConstraint
 CoordinateConstraint  OE1   55 ORIG   90 86.512 43.949 10.447 HARMONIC 0 0.5
+CoordinateConstraint  OE1   55 ORIG   90 88.684 44.531 10.613 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
+CoordinateConstraint  NE2   55 ORIG   90 86.512 43.949 10.447 HARMONIC 0 0.5
 CoordinateConstraint  NE2   55 ORIG   90 88.684 44.531 10.613 HARMONIC 0 0.5
+End_AmbiguousConstraint
 CoordinateConstraint  N     56 ORIG   90 85.879 49.67 8.856 HARMONIC 0 0.5
 CoordinateConstraint  CA    56 ORIG   90 85.561 51.093 8.79 HARMONIC 0 0.5
 CoordinateConstraint  C     56 ORIG   90 84.723 51.502 9.999 HARMONIC 0 0.5
@@ -420,8 +462,14 @@ CoordinateConstraint  O     58 ORIG   90 85.771 53.841 14.714 HARMONIC 0 0.5
 CoordinateConstraint  CB    58 ORIG   90 86.965 50.59 14.868 HARMONIC 0 0.5
 CoordinateConstraint  CG    58 ORIG   90 86.756 49.596 15.985 HARMONIC 0 0.5
 CoordinateConstraint  CD    58 ORIG   90 85.428 48.871 15.863 HARMONIC 0 0.5
+AmbiguousConstraint
 CoordinateConstraint  OE1   58 ORIG   90 84.652 48.807 16.822 HARMONIC 0 0.5
+CoordinateConstraint  OE1   58 ORIG   90 85.157 48.321 14.678 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
+CoordinateConstraint  NE2   58 ORIG   90 84.652 48.807 16.822 HARMONIC 0 0.5
 CoordinateConstraint  NE2   58 ORIG   90 85.157 48.321 14.678 HARMONIC 0 0.5
+End_AmbiguousConstraint
 CoordinateConstraint  N     59 ORIG   90 87.027 52.864 13.097 HARMONIC 0 0.5
 CoordinateConstraint  CA    59 ORIG   90 87.586 54.105 12.563 HARMONIC 0 0.5
 CoordinateConstraint  C     59 ORIG   90 86.542 55.186 12.358 HARMONIC 0 0.5
@@ -444,8 +492,14 @@ CoordinateConstraint  O     61 ORIG   90 83.899 57.377 17.333 HARMONIC 0 0.5
 CoordinateConstraint  CB    61 ORIG   90 82.452 54.512 16.491 HARMONIC 0 0.5
 CoordinateConstraint  CG    61 ORIG   90 83.352 53.289 16.437 HARMONIC 0 0.5
 CoordinateConstraint  CD    61 ORIG   90 82.675 52.045 16.982 HARMONIC 0 0.5
+AmbiguousConstraint
 CoordinateConstraint  OE1   61 ORIG   90 81.551 51.711 16.589 HARMONIC 0 0.5
+CoordinateConstraint  OE1   61 ORIG   90 83.356 51.35 17.893 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
+CoordinateConstraint  NE2   61 ORIG   90 81.551 51.711 16.589 HARMONIC 0 0.5
 CoordinateConstraint  NE2   61 ORIG   90 83.356 51.35 17.893 HARMONIC 0 0.5
+End_AmbiguousConstraint
 CoordinateConstraint  N     62 ORIG   90 85.313 55.759 16.679 HARMONIC 0 0.5
 CoordinateConstraint  CA    62 ORIG   90 86.412 56.272 17.489 HARMONIC 0 0.5
 CoordinateConstraint  C     62 ORIG   90 87.068 57.506 16.873 HARMONIC 0 0.5
@@ -476,8 +530,14 @@ CoordinateConstraint  C     65 ORIG   90 83.249 61.067 11.667 HARMONIC 0 0.5
 CoordinateConstraint  O     65 ORIG   90 82.733 61.381 10.593 HARMONIC 0 0.5
 CoordinateConstraint  CB    65 ORIG   90 81.011 60.756 12.721 HARMONIC 0 0.5
 CoordinateConstraint  CG    65 ORIG   90 80.08 59.843 11.975 HARMONIC 0 0.5
+AmbiguousConstraint
 CoordinateConstraint  OD1   65 ORIG   90 80.228 59.635 10.769 HARMONIC 0 0.5
+CoordinateConstraint  OD1   65 ORIG   90 79.104 59.29 12.684 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
+CoordinateConstraint  ND2   65 ORIG   90 80.228 59.635 10.769 HARMONIC 0 0.5
 CoordinateConstraint  ND2   65 ORIG   90 79.104 59.29 12.684 HARMONIC 0 0.5
+End_AmbiguousConstraint
 CoordinateConstraint  N     66 ORIG   90 84.496 61.397 11.993 HARMONIC 0 0.5
 CoordinateConstraint  CA    66 ORIG   90 85.325 62.171 11.081 HARMONIC 0 0.5
 CoordinateConstraint  C     66 ORIG   90 85.964 61.377 9.951 HARMONIC 0 0.5
@@ -524,8 +584,14 @@ CoordinateConstraint  O     72 ORIG   90 84.42 62.217 -1.278 HARMONIC 0 0.5
 CoordinateConstraint  CB    72 ORIG   90 82.852 62.155 1.46 HARMONIC 0 0.5
 CoordinateConstraint  CG    72 ORIG   90 81.917 62.835 0.469 HARMONIC 0 0.5
 CoordinateConstraint  CD    72 ORIG   90 80.753 61.945 0.055 HARMONIC 0 0.5
+AmbiguousConstraint
 CoordinateConstraint  OE1   72 ORIG   90 80.407 61.871 -1.131 HARMONIC 0 0.5
+CoordinateConstraint  OE1   72 ORIG   90 80.138 61.263 1.033 HARMONIC 0 0.5
+End_AmbiguousConstraint
+AmbiguousConstraint
+CoordinateConstraint  NE2   72 ORIG   90 80.407 61.871 -1.131 HARMONIC 0 0.5
 CoordinateConstraint  NE2   72 ORIG   90 80.138 61.263 1.033 HARMONIC 0 0.5
+End_AmbiguousConstraint
 CoordinateConstraint  N     73 ORIG   90 85.935 62.308 0.376 HARMONIC 0 0.5
 CoordinateConstraint  CA    73 ORIG   90 86.888 63.024 -0.444 HARMONIC 0 0.5
 CoordinateConstraint  C     73 ORIG   90 87.363 62.041 -1.489 HARMONIC 0 0.5

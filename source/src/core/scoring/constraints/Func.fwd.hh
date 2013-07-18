@@ -29,6 +29,7 @@ namespace constraints {
 
 class Func;
 typedef utility::pointer::owning_ptr< Func > FuncOP;
+typedef utility::pointer::owning_ptr< const Func > FuncCOP;
 
 }
 }

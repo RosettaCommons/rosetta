@@ -60,6 +60,7 @@
 #include <core/io/silent/SilentStructFactory.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -462,6 +463,7 @@ void RelaxProtocolBase::set_up_constraints( core::pose::Pose &pose, core::kinema
 		coord_cst_mover.cst_sd( option[ OptionKeys::relax::coord_cst_stdev ] );
 		coord_cst_mover.bounded( option[ OptionKeys::relax::coord_cst_width ].user() );
 		coord_cst_mover.cst_width( option[ OptionKeys::relax::coord_cst_width ]() );
+		coord_cst_mover.ambiguous_hnq( option[ OptionKeys::packing::flip_HNQ ]() );
 
 		// Add virtual root if one doesn't exist
 		if ( pose.residue( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {

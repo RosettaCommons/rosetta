@@ -223,6 +223,7 @@ public:
 		Cst_mover.cst_sd(0.5);
 		Cst_mover.cst_sidechain( true );
 		Cst_mover.set_refstruct( native );
+		Cst_mover.ambiguous_hnq( true );
 
 		Cst_mover.apply(pose);
 

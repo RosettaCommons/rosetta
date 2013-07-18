@@ -69,6 +69,9 @@ public:
 	void cst_sidechain( bool sidechains ) { cst_sidechain_ = sidechains; }
 	bool cst_sidechain( ) const { return cst_sidechain_; }
 
+	void ambiguous_hnq( bool flip_hnq ) { amb_hnq_ = flip_hnq; }
+	bool ambiguous_hnq( ) const { return amb_hnq_; }
+
 	void set_loop_segments( protocols::loops::LoopsCOP loops);
 	void set_task_segments( core::pack::task::TaskFactoryCOP taskfactory);
 
@@ -83,6 +86,8 @@ private:
 	core::Real cst_width_;
 	///@brief Also constrain sidechains?
 	bool cst_sidechain_;
+	///@brief When making sidechain constraints, should we allow for flipping HNQ residue sidechains?
+	bool amb_hnq_;
 
 	///@brief A loop definition of constrained segments
 	protocols::loops::LoopsCOP loop_segments_;
