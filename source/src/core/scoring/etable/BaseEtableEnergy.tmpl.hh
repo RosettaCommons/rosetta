@@ -50,11 +50,8 @@
 #include <core/scoring/trie/TrieCountPairBase.hh>
 #include <core/scoring/trie/trie.functions.hh>
 
-// AUTO-REMOVED
 #include <core/scoring/etable/etrie/CountPairData_1_1.hh>
-// AUTO-REMOVED
 #include <core/scoring/etable/etrie/CountPairData_1_2.hh>
-// AUTO-REMOVED
 #include <core/scoring/etable/etrie/CountPairData_1_3.hh>
 #include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
 #include <core/scoring/etable/etrie/EtableAtom.hh>
@@ -722,7 +719,7 @@ BaseEtableEnergy< Derived >::BaseEtableEnergy(
 	exclude_DNA_DNA( options.exclude_DNA_DNA() )
 {}
 
-/// @details an explicit copy constructor is required so that the etable_evaluator_ instance, 
+/// @details an explicit copy constructor is required so that the etable_evaluator_ instance,
 /// which is held in an owning pointer, is not shared between multiple instances of this (or rather
 /// the derived) class.
 template < class Derived >
@@ -1639,9 +1636,6 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_pair_energies(
 	EtableRotamerTrieCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( etable_method )() ));
 	EtableRotamerTrieCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( etable_method )() ));
 
-	//prepare_for_residue_pair( set1.resid(), set2.resid(), pose );
-	
-
 	// figure out which trie countPairFunction needs to be used for this set
 	TrieCountPairBaseOP cp = get_count_pair_function_trie( set1, set2, pose, sfxn );
 
@@ -2017,7 +2011,7 @@ BaseEtableEnergy< Derived >::eval_atom_derivative(
 			// CoarseEtableEnergy -> both are passed as arguments
 			// static_cast<Derived const&> (*this).decide_scoretypes( idresid, nbr.rsd() );
 			//prepare_for_residue_pair( idresid, nbr.rsd(), pose );
-			if ( idresid == (Size) nbr.rsd() ) {			
+			if ( idresid == (Size) nbr.rsd() ) {
 				Real const cp_weight( nbr.weight() );  // do not use nbr->weight_func() here
 				conformation::Atom const & atom2( pose.residue( nbr.rsd() ).atom( nbr.atomno() ) );
 				Real const dE_dR_over_r( intrares_evaluator.eval_dE_dR_over_r( atom1, atom2, weights, f1, f2 ) );

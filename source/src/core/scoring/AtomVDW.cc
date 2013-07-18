@@ -47,7 +47,8 @@ static basic::Tracer TR("core.scoring.AtomVDW");
 
 
 /// @details ctor, reads data file. Need to configure to allow alternate tables/atom_sets
-AtomVDW::AtomVDW( std::string const & atom_type_set_name )
+AtomVDW::AtomVDW( std::string const & atom_type_set_name ) :
+	atom_type_set_name_( atom_type_set_name )
 {
 	// get the relevant atomset
 	chemical::AtomTypeSet const & atom_set
@@ -69,7 +70,7 @@ AtomVDW::AtomVDW( std::string const & atom_type_set_name )
 		if ( atom_type_set_name != chemical::CENTROID ) {
 			utility_exit_with_message( "cant find atom_vdw.txt in directory: "+ atom_set.directory() );
 		}
-		TR.Warning << "YOU NEED TO UPDATE YOUR MINIROSETTA DATABASE!" << std::endl;
+		TR.Warning << "YOU NEED TO UPDATE YOUR DATABASE!" << std::endl;
 		basic::database::open( stream, "scoring/AtomVDW/atom_vdw.txt" );
 		if ( !stream.good() ) {
 			utility_exit_with_message( "Unable to open scoring/AtomVDW/atom_vdw.txt!" );
@@ -110,9 +111,9 @@ AtomVDW::AtomVDW( std::string const & atom_type_set_name )
 
 void
 AtomVDW::setup_approximate_vdw_radii(
-																		 utility::vector1< int > const & atom_type_index,
-																		 chemical::AtomTypeSet const & atom_type_set
-																		 )
+	utility::vector1< int > const & atom_type_index,
+	chemical::AtomTypeSet const & atom_type_set
+)
 {
 	using namespace ObjexxFCL::fmt;
 
@@ -167,6 +168,11 @@ AtomVDW::setup_approximate_vdw_radii(
 	approximate_vdw_radii_ = R;
 }
 
+std::string
+AtomVDW::atom_type_set_name() const
+{
+	return atom_type_set_name_;
+}
 
 } // namespace scoring
 } // namespace core

@@ -76,9 +76,9 @@ ShortRangeTwoBodyEnergy::evaluate_rotamer_pair_energies(
 					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
 						Size const ll_rot_id = jj_offset + ll - 1;
 
-						emap.zero();
+						emap.zero( score_types() );
 						residue_pair_energy( *set1.rotamer( kk_rot_id ), *set2.rotamer( ll_rot_id ), pose, sfxn, emap );
-						energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy > (weights.dot( emap ));
+						energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy > (weights.dot( emap, score_types() ));
 					}
 				}
 			}
@@ -99,9 +99,9 @@ ShortRangeTwoBodyEnergy::evaluate_rotamer_background_energies(
 {
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
-		emap.zero();
+		emap.zero( score_types() );
 		residue_pair_energy( *set.rotamer( ii ), residue, pose, sfxn, emap );
-		energy_vector[ ii ] += static_cast< core::PackerEnergy > (weights.dot( emap ));
+		energy_vector[ ii ] += static_cast< core::PackerEnergy > (weights.dot( emap, score_types() ));
 	}
 }
 

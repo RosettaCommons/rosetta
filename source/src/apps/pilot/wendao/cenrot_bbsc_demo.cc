@@ -76,6 +76,7 @@
 //sampling
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/CyclicMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/simple_moves/BBGaussianMover.hh>
@@ -173,9 +174,16 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 	protocols::simple_moves::PackRotamersMoverOP packrotamersmover(new protocols::simple_moves::PackRotamersMover());
 	packrotamersmover->task_factory(main_task_factory);
 	packrotamersmover->score_function(score_sc_fxn);
-	//protocols::simple_moves::RotamerTrialsMoverOP packrotamersmover(new protocols::simple_moves::RotamerTrialsMover());
-	//packrotamersmover->task_factory(main_task_factory);
-	//packrotamersmover->score_function(score_sc_fxn);
+
+	protocols::simple_moves::RotamerTrialsMoverOP rt_mover(new protocols::simple_moves::RotamerTrialsMover());
+	rt_mover->task_factory(main_task_factory);
+	rt_mover->score_function(score_sc_fxn);
+
+	protocols::moves::CyclicMoverOP cyclic_repack_mover( new protocols::moves::CyclicMover() );
+	cyclic_repack_mover->enqueue( packrotamersmover );
+	for ( core::Size ii = 1; ii <= 19; ++ii ) {
+		cyclic_repack_mover->enqueue( rt_mover );
+	}
 
 	//gaussian mover
 	simple_moves::BBG8T3AMoverOP bbgmover(new protocols::simple_moves::BBG8T3AMover());
@@ -187,6 +195,7 @@ void relax_cenrot_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, st
 	moves::SequenceMoverOP combo( new moves::SequenceMover() );
 	combo->add_mover(bbgmover);
 	combo->add_mover(packrotamersmover);
+	//combo->add_mover( cyclic_repack_mover );
 	moves::TrialMoverOP trial ( new moves::TrialMover(combo, mc) );
 	moves::RepeatMoverOP run( new moves::RepeatMover(trial, option[relax_step_per_cycle]) );
 

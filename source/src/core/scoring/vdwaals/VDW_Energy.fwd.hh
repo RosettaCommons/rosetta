@@ -7,32 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/VDW_Energy.hh
-/// @brief  Statistically derived rotamer pair potential class declaration
+/// @file   core/scoring/vdwaals/VDW_Energy.hh
+/// @brief  Low resolution (centroid) repulsive energy
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_methods_VDW_Energy_fwd_hh
-#define INCLUDED_core_scoring_methods_VDW_Energy_fwd_hh
-
-// Unit Headers
-
-// Package headers
-
-// Project headers
-
-// Utility headers
+#ifndef INCLUDED_core_scoring_vdwaals_VDW_Energy_fwd_hh
+#define INCLUDED_core_scoring_vdwaals_VDW_Energy_fwd_hh
 
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace vdwaals {
 
-///
+
 class VDW_Energy;
+class VDWTrieEvaluator;
 
 }
 }
 }
 
-#endif // INCLUDED_core_scoring_ScoreFunction_HH
+#endif

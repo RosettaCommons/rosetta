@@ -29,6 +29,7 @@ enum EnergyMethods
 	mm_lj_energy_inter_method,
 	pair_e_method, // give this a new name!
 	reference_e_method,
+	vdw_method,
 	ramachandran_method,
 	n_energy_methods = ramachandran_method // keep this guy last
 };

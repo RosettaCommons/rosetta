@@ -886,6 +886,145 @@ public:   /// Type Resolution Functions
 		utility_exit_with_message("blah2");
 	}
 
+	/// VDW_Energy type resolution functions
+	virtual
+	void
+	trie_vs_trie(
+		RotamerTrieBase const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const
+	{
+		other.resolve_trie_vs_trie( *this, cp, sfxn, pair_energy_table, temp_table );
+	}
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const
+	{
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+	}
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const
+	{
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+	}
+
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const
+	{
+		cp.resolve_trie_vs_trie( other, *this, sfxn, pair_energy_table, temp_table );
+	}
+
+	/// This function is called when the etable energy function get mixed up with non-vdwatom tries.
+	/// It produces a utility_exit call.
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrieBase const &,
+		TrieCountPairBase &,
+		vdwaals::VDWTrieEvaluator const &,
+		ObjexxFCL::FArray2D< core::PackerEnergy > &,
+		ObjexxFCL::FArray2D< core::PackerEnergy > &
+	) const
+	{
+		utility_exit_with_message("Type resolution failure in the trie-vs-trie algorithm for the VDW_Energy function");
+	}
+
+
+	/// Four trie-vs-path type resolution functions
+	virtual
+	void
+	trie_vs_path(
+		RotamerTrieBase const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const
+	{
+		other.resolve_trie_vs_path( *this, cp, sfxn, pair_energy_vector, temp_vector );
+	}
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const
+	{
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+	}
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const
+	{
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+	}
+
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrie< vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const
+	{
+		cp.resolve_trie_vs_path( other, *this, sfxn, pair_energy_vector, temp_vector );
+	}
+
+	/// This function is called when the etable energy function get mixed up with non-etable tries.
+	/// It produces a utility_exit call.
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrieBase const &,
+		TrieCountPairBase & ,
+		vdwaals::VDWTrieEvaluator const & ,
+		utility::vector1< core::PackerEnergy > & ,
+		utility::vector1< core::PackerEnergy > &
+	) const
+	{
+		utility_exit_with_message("Type resolution failure in the trie-vs-path algorithm for the VDW_Energy function");
+	}
+
 
 	/// END Type Resolution Functions
 

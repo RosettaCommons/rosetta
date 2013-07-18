@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/methods/VDW_EnergyCreator.hh
+/// @file   src/core/scoring/vdwaals/VDW_EnergyCreator.hh
 /// @brief  Declaration for the class that connects VDW_Energy with the ScoringManager
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_scoring_methods_VDW_EnergyCreator_hh
-#define INCLUDED_core_scoring_methods_VDW_EnergyCreator_hh
+#ifndef INCLUDED_core_scoring_vdwaals_VDW_EnergyCreator_hh
+#define INCLUDED_core_scoring_vdwaals_VDW_EnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -24,15 +24,15 @@
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace vdwaals {
 
-class VDW_EnergyCreator : public EnergyMethodCreator
+class VDW_EnergyCreator : public methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new VDW_Energy
 	virtual
 	methods::EnergyMethodOP
-		create_energy_method(
+	create_energy_method(
 		methods::EnergyMethodOptions const &
 	) const;
 

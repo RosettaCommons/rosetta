@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/VDW_Energy.cc
-/// @brief  Statistically derived rotamer pair potential class implementation
+/// @file   core/scoring/vdwaals/VDW_Energy.cc
+/// @brief  Low resolution (centroid) repulsive energy
 /// @author Phil Bradley
 /// @author Andrew Leaver-Fay
 
 
 // Unit headers
-#include <core/scoring/methods/VDW_Energy.hh>
-#include <core/scoring/methods/VDW_EnergyCreator.hh>
+#include <core/scoring/vdwaals/VDW_Energy.hh>
+#include <core/scoring/vdwaals/VDW_EnergyCreator.hh>
 
 // Package headers
 #include <core/scoring/AtomVDW.hh>
@@ -28,20 +28,41 @@
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
 
+#include <core/scoring/trie/RotamerTrie.hh>
+#include <core/scoring/trie/trie.functions.hh>
+
+#include <core/scoring/vdwaals/VDWTrie.hh>
+
+#include <core/scoring/etable/etrie/CountPairData_1_1.hh>
+#include <core/scoring/etable/etrie/CountPairData_1_2.hh>
+#include <core/scoring/etable/etrie/CountPairData_1_3.hh>
+#include <core/scoring/etable/etrie/CountPairDataGeneric.hh>
+#include <core/scoring/etable/etrie/TrieCountPairAll.hh>
+#include <core/scoring/etable/etrie/TrieCountPairGeneric.hh>
+
 // Project headers
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/prof.hh>
-
 #include <core/id/AtomID.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
+
+// Utility headers
 #include <utility/vector1.hh>
 
-
+// ObjexxFCL headers
+#include <ObjexxFCL/FArray2D.hh>
 
 namespace core {
 namespace scoring {
-namespace methods {
+namespace vdwaals {
 
+static basic::Tracer TR( "core.scoring.vdwaals.VDW_Energy" );
 
 /// @details This must return a fresh instance of the VDW_Energy class,
 /// never an instance already in use
@@ -61,7 +82,7 @@ VDW_EnergyCreator::score_types_for_method() const {
 
 
 /// @details  C-TOR with method options object
-VDW_Energy::VDW_Energy( EnergyMethodOptions const & options ):
+VDW_Energy::VDW_Energy( methods::EnergyMethodOptions const & options ):
 	parent( new VDW_EnergyCreator ),
 	atom_vdw_( ScoringManager::get_instance()->get_AtomVDW( options.atom_vdw_atom_type_set_name() ) ),
 	atom_type_set_name_( options.atom_vdw_atom_type_set_name() ),
@@ -71,7 +92,7 @@ VDW_Energy::VDW_Energy( EnergyMethodOptions const & options ):
 
 
 /// clone
-EnergyMethodOP
+methods::EnergyMethodOP
 VDW_Energy::clone() const
 {
 	return new VDW_Energy( *this );
@@ -105,6 +126,15 @@ VDW_Energy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) co
 	pose.update_residue_neighbors();
 }
 
+void
+VDW_Energy::prepare_rotamers_for_packing(
+	pose::Pose const &,
+	conformation::RotamerSetBase & set
+) const
+{
+	VDWRotamerTrieOP trie = create_rotamer_trie( set );
+	set.store_trie( methods::vdw_method, trie );
+}
 
 ///
 void
@@ -285,13 +315,179 @@ void
 VDW_Energy::indicate_required_context_graphs( utility::vector1< bool > & /* context_graphs_required */ ) const
 {
 }
+
+void
+VDW_Energy::evaluate_rotamer_pair_energies(
+	conformation::RotamerSetBase const & set1,
+	conformation::RotamerSetBase const & set2,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	EnergyMap const & weights,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
+) const
+{
+	assert( set1.resid() != set2.resid() );
+
+	using namespace methods;
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table );
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table2( energy_table );
+
+	temp_table1 = 0; temp_table2 = 0;
+
+	VDWTrieEvaluator vdw_eval( *this, 6, hydrogen_interaction_cutoff2_, weights[ vdw ] );
+
+	VDWRotamerTrieCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( vdw_method )() ));
+	VDWRotamerTrieCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( vdw_method )() ));
+
+	// figure out which trie countPairFunction needs to be used for this set
+	trie::TrieCountPairBaseOP cp = get_count_pair_function_trie( set1, set2, pose );
+
+	trie1->trie_vs_trie( *trie2, *cp, vdw_eval, temp_table1, temp_table2 );
+	energy_table += temp_table1;
+}
+
+trie::TrieCountPairBaseOP
+VDW_Energy::get_count_pair_function_trie(
+	conformation::RotamerSetBase const & set1,
+	conformation::RotamerSetBase const & set2,
+	core::pose::Pose const & pose
+) const
+{
+	conformation::Residue const & res1( pose.residue( set1.resid() ) );
+	conformation::Residue const & res2( pose.residue( set2.resid() ) );
+	trie::RotamerTrieBaseCOP trie1( static_cast< trie::RotamerTrieBase const * > ( set1.get_trie( methods::vdw_method )() ));
+	trie::RotamerTrieBaseCOP trie2( static_cast< trie::RotamerTrieBase const * > ( set2.get_trie( methods::vdw_method )() ));
+
+	return get_count_pair_function_trie( res1, res2, trie1, trie2 );
+}
+
+trie::TrieCountPairBaseOP
+VDW_Energy::get_count_pair_function_trie(
+	conformation::Residue const & res1,
+	conformation::Residue const & res2,
+	trie::RotamerTrieBaseCOP trie1,
+	trie::RotamerTrieBaseCOP trie2
+) const
+{
+	using namespace etable::count_pair;
+	using namespace etable::etrie;
+
+	CPResidueConnectionType connection = CountPairFactory::determine_residue_connection( res1, res2 );
+	Size conn1 = trie1->get_count_pair_data_for_residue( res2.seqpos() );
+	Size conn2 = trie2->get_count_pair_data_for_residue( res1.seqpos() );
+	if ( connection == CP_ONE_BOND ) {
+		return new VDWTrieCountPair1B( conn1, conn2 );
+	} else if ( connection == CP_NO_BONDS ) {
+		return new TrieCountPairAll;
+	} else {
+		return new TrieCountPairGeneric( res1, res2, conn1, conn2 );
+	}
+
+
+	return 0;
+}
+
 core::Size
 VDW_Energy::version() const
 {
 	return 1; // Initial versioning
 }
 
+void
+VDW_Energy::calculate_hydrogen_interaction_cutoff()
+{
+	TR.Debug << "calculating hydrogen_interaction_cutoff" << std::endl;
+	// get the relevant atomset
+	chemical::AtomTypeSet const & atom_set
+		( *chemical::ChemicalManager::get_instance()->atom_type_set( atom_vdw_.atom_type_set_name() ) );
 
+	hydrogen_interaction_cutoff2_ = 0;
+	Size which_ii(0), which_jj(0);
+	for ( core::Size ii = 1; ii <= atom_set.n_atomtypes(); ++ii ) {
+		if ( atom_set[ ii ].is_hydrogen() ) {
+			for ( core::Size jj = ii; jj <= atom_set.n_atomtypes(); ++jj ) {
+				if ( atom_set[ jj ].is_hydrogen() ) {
+					Real iijj_interaction_dist = atom_vdw_(ii)[jj];
+					if ( iijj_interaction_dist > hydrogen_interaction_cutoff2_ ) {
+						hydrogen_interaction_cutoff2_ = iijj_interaction_dist * iijj_interaction_dist;
+						which_ii = ii;
+						which_jj = jj;
+					}
+				}
+			}
+		}
+	}
+	if ( which_ii != 0 ) {
+		TR.Debug << "Found hydrogen interaction radius 2 of " << hydrogen_interaction_cutoff2_ << "A^2 (" << std::sqrt( hydrogen_interaction_cutoff2_ );
+		TR.Debug << " A) between atoms " << atom_set[ which_ii ].atom_type_name() << " and " << atom_set[ which_jj ].atom_type_name() << std::endl;
+	} else {
+		TR.Debug << "Did not find any hydrogen atoms in atom type set " << atom_set.name() << std::endl;
+	}
+
+}
+
+VDWRotamerTrieOP
+VDW_Energy::create_rotamer_trie(
+	conformation::RotamerSetBase const & rotset
+) const
+{
+	using namespace trie;
+	using namespace etable::etrie;
+
+	CPDataCorrespondence cpdata_map( create_cpdata_correspondence_for_rotamerset( rotset ) );
+	VDWAtom at;
+	if ( cpdata_map.has_pseudobonds() ||
+			cpdata_map.max_connpoints_for_residue() > 1 ||
+			cpdata_map.n_entries() > 3 ) {
+		CountPairDataGeneric cpdat;
+		return create_trie( rotset, at, cpdat, cpdata_map, atomic_interaction_cutoff() );
+	} else if ( cpdata_map.n_entries() == 1 || cpdata_map.n_entries() == 0 /* HACK! */ ) {
+		CountPairData_1_1 cpdat;
+		return create_trie( rotset, at, cpdat, cpdata_map, atomic_interaction_cutoff() );
+	} else if ( cpdata_map.n_entries() == 2 ) {
+		CountPairData_1_2 cpdat;
+		return create_trie( rotset, at, cpdat, cpdata_map, atomic_interaction_cutoff() );
+	} else if ( cpdata_map.n_entries() == 3 ) {
+		CountPairData_1_3 cpdat;
+		return create_trie( rotset, at, cpdat, cpdata_map, atomic_interaction_cutoff() );
+	} else {
+		/// As of 10/21, all count pair data combinations should be covered. This code should not execute.
+		std::cerr << "Unsupported number of residue connections in trie construction." << std::endl;
+		utility_exit();
+		return 0;
+	}
+}
+
+
+VDWTrieEvaluator::VDWTrieEvaluator(
+	VDW_Energy const & vdw,
+	Real const atomic_interaction_cutoff,
+	Real const hydrogen_interaction_cutoff2,
+	Real const vdw_weight
+) :
+	vdw_( vdw ),
+	atomic_interaction_cutoff_( atomic_interaction_cutoff ),
+	hydrogen_interaction_cutoff2_( hydrogen_interaction_cutoff2 ),
+	vdw_weight_( vdw_weight )
+{}
+
+Distance
+VDWTrieEvaluator::atomic_interaction_cutoff() const
+{
+	return atomic_interaction_cutoff_;
+}
+
+Real
+VDWTrieEvaluator::hydrogen_interaction_cutoff2() const
+{
+	return hydrogen_interaction_cutoff2_;
+}
+
+Real
+VDWTrieEvaluator::vdw_weight() const
+{
+	return vdw_weight_;
+}
 
 }
 }

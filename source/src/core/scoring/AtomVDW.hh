@@ -57,15 +57,18 @@ public:
 		return approximate_vdw_radii_[ atom_type_index ];
 	}
 
+	std::string atom_type_set_name() const;
+
 private:
 
 	void
 	setup_approximate_vdw_radii(
-															utility::vector1< int > const & atom_type_index,
-															chemical::AtomTypeSet const & atom_type_set
-															);
+		utility::vector1< int > const & atom_type_index,
+		chemical::AtomTypeSet const & atom_type_set
+	);
 
 private:
+	std::string atom_type_set_name_;
 	utility::vector1< utility::vector1< Real > > atom_vdw_;
 
 	/// @brief  Approximation to per-atom radii, derived from atom_vdw_ data

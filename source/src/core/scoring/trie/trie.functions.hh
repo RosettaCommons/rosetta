@@ -38,6 +38,7 @@ namespace trie {
 
 /// @details
 /// Class AT must define a constructor that takes a residue const & and an atom index.
+/// Class AT must also define an operator < and an operator ==
 template < class AT, class CPDAT >
 RotamerTrieBaseOP
 create_trie(

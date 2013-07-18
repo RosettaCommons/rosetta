@@ -7,35 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/etable/etrie/TrieCountPairAll.cc
-/// @brief  The functions that belong to TrieCountPairAll other than the templated trie-vs-trie
-///         and trie-vs-path templated function calls.
+/// @file   core/scoring/vdwaals/VDWTrie.fwd.hh
+/// @brief  Trie data structure for the low-resolution (centroid) repulsive energy
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-// Unit Headers
-#include <core/scoring/etable/etrie/TrieCountPairAll.hh>
 
-// STL Headers
-#include <iostream>
+#ifndef INCLUDED_core_scoring_vdwaals_VDWTrie_FWD_HH
+#define INCLUDED_core_scoring_vdwaals_VDWTrie_FWD_HH
 
+#include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 
 namespace core {
 namespace scoring {
-namespace etable {
-namespace etrie {
+namespace vdwaals {
 
-using namespace trie;
+class VDWAtom;
+class VDWTrieCountPair1B;
+class VDWTrieCountPairAll;
 
-TrieCountPairAll::~TrieCountPairAll() {}
+typedef trie::RotamerTrieBaseOP VDWRotamerTrieOP;
+typedef trie::RotamerTrieBaseCOP VDWRotamerTrieCOP;
 
-void
-TrieCountPairAll::print()
-{
-	std::cout << "TrieCountPairAll" << std::endl;
+}
+}
 }
 
-} // namespace etrie
-} // namespace etable
-} // namespace scoring
-} // namespace core
-
+#endif

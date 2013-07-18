@@ -38,6 +38,9 @@
 #include <core/scoring/mm/mmtrie/MMEnergyTableAtom.fwd.hh>
 #include <core/scoring/methods/MMLJEnergyInter.fwd.hh>
 
+#include <core/scoring/vdwaals/VDW_Energy.fwd.hh>
+#include <core/scoring/vdwaals/VDWTrie.fwd.hh>
+
 // Project Headers
 #include <core/conformation/AbstractRotamerTrie.hh>
 
@@ -705,6 +708,119 @@ public:
 		RotamerTrieBase const & other,
 		TrieCountPairBase & cp,
 		methods::MMLJEnergyInter const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const = 0;
+
+///////////////////////////////////////////////////////////////////////////////////////
+//////////// the same methods again --- overloaded for VDW_Energy /////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+
+	virtual
+	void
+	trie_vs_trie(
+		RotamerTrieBase const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const = 0;
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrie< core::scoring::vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const = 0;
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrie< core::scoring::vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const = 0;
+
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrie< core::scoring::vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const = 0;
+
+	/// This function is called when the mm lj inter energy function get mixed up with other tries.
+	/// It produces a utility_exit call.
+	virtual
+	void
+	resolve_trie_vs_trie(
+		RotamerTrieBase const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & pair_energy_table,
+		ObjexxFCL::FArray2D< core::PackerEnergy > & temp_table
+	) const = 0;
+
+	/// Four trie-vs-path type resolution functions
+	virtual
+	void
+	trie_vs_path(
+		RotamerTrieBase const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const = 0;
+
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrie< core::scoring::vdwaals::VDWAtom, etable::etrie::CountPairData_1_1 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const = 0;
+
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrie< core::scoring::vdwaals::VDWAtom, etable::etrie::CountPairData_1_2 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const = 0;
+
+
+
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrie< core::scoring::vdwaals::VDWAtom, etable::etrie::CountPairData_1_3 > const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
+		utility::vector1< core::PackerEnergy > & pair_energy_vector,
+		utility::vector1< core::PackerEnergy > & temp_vector
+	) const = 0;
+
+	/// This function is called when the mm lj inter energy function get mixed up with other tries.
+	/// It produces a utility_exit call.
+	virtual
+	void
+	resolve_trie_vs_path(
+		RotamerTrieBase const & other,
+		TrieCountPairBase & cp,
+		vdwaals::VDWTrieEvaluator const & sfxn,
 		utility::vector1< core::PackerEnergy > & pair_energy_vector,
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const = 0;

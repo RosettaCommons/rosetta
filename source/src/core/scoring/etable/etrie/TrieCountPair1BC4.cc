@@ -1583,6 +1583,361 @@ void TrieCountPair1BC4::resolve_trie_vs_path(
 }
 
 
+/////////////////////////////// VDW Energy ////////////////////////////
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_trie(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*pair_energy_table*/,
+	ObjexxFCL::FArray2D< core::PackerEnergy > & /*temp_table*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_trie reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_1 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_2 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairData_1_3 > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
+void TrieCountPair1BC4::resolve_trie_vs_path(
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie1*/,
+	trie::RotamerTrie< vdwaals::VDWAtom, CountPairDataGeneric > const & /*trie2*/,
+	vdwaals::VDWTrieEvaluator const & /*sfxn*/,
+	utility::vector1< core::PackerEnergy > & /*pair_energy_vector*/,
+	utility::vector1< core::PackerEnergy > & /*temp_vector*/
+)
+{
+	utility_exit_with_message( "etable::etrie::TrieCountPair1BC4::resolve_trie_vs_path reached with VDW_Energy" );
+}
+
 } // namespace trie
 } // namespace etable
 } // namespace scoring

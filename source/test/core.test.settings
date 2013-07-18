@@ -221,6 +221,9 @@ sources = {
 	"scoring/symmetry" : [
 		"SymmetricScoreTest",
 	],
+	"scoring/vdwaals" : [
+		"VDW_Energy",
+	],
 	"sequence" : [
 		"ScoringSchemes",
 		"SequenceAlignment",
