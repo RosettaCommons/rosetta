@@ -237,6 +237,12 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "cbeta" ]  = cbeta;
 	name2score_type_[ "DFIRE" ]  = DFIRE;
 
+	name2score_type_[ "cen_rot_pair" ] = cen_rot_pair;
+	name2score_type_[ "cen_rot_pair_ang" ] = cen_rot_pair_ang;
+	name2score_type_[ "cen_rot_pair_dih" ] = cen_rot_pair_dih;
+	name2score_type_[ "cen_rot_env" ] = cen_rot_env;
+	name2score_type_[ "cen_rot_dun" ] = cen_rot_dun;
+
 	//bw membrane scoring terms
 	name2score_type_[ "Menv" ] = Menv;
 	name2score_type_[ "Menv_non_helix" ] = Menv_non_helix;

@@ -354,6 +354,8 @@ namespace cm { namespace hybridize { IntegerOptionKey const stage1_1_cycles( "cm
 namespace cm { namespace hybridize { IntegerOptionKey const stage1_2_cycles( "cm:hybridize:stage1_2_cycles" );  } }
 namespace cm { namespace hybridize { IntegerOptionKey const stage1_3_cycles( "cm:hybridize:stage1_3_cycles" );  } }
 namespace cm { namespace hybridize { IntegerOptionKey const stage1_4_cycles( "cm:hybridize:stage1_4_cycles" );  } }
+namespace cm { namespace hybridize { RealOptionKey const stage2_temperature( "cm:hybridize:stage2_temperature" );  } }
+namespace cm { namespace hybridize { StringOptionKey const stage1_4_cenrot_score( "cm:hybridize:stage1_4_cenrot_score" );  } }
 namespace ms { BooleanOptionKey const ms( "ms" );  }
 namespace ms { BooleanOptionKey const share_data( "ms:share_data" );  }
 namespace ms { BooleanOptionKey const verbose( "ms:verbose" );  }
@@ -715,4 +717,3 @@ namespace optE { BooleanOptionKey const optimize_nat_rot( "optE:optimize_nat_rot
 namespace optE { FileOptionKey const optimize_ligand_rot( "optE:optimize_ligand_rot" );  }
 namespace optE { BooleanOptionKey const optimize_pssm( "optE:optimize_pssm" );  }
 namespace optE { FileOptionKey const optimize_dGbinding( "optE:optimize_dGbinding" );  }
-namespace optE { FileOptionKey const optimize_ddG_bind_correlation( "optE:optimize_ddG_bind_correlation" );  }

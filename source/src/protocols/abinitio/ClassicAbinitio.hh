@@ -40,6 +40,7 @@
 
 #include <protocols/abinitio/Protocol.hh>
 #include <protocols/moves/TrialMover.fwd.hh>
+#include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 
 // ObjexxFCL Headers
 
@@ -126,6 +127,7 @@ public:
 		STAGE_3a,
 		STAGE_3b,
 		STAGE_4,
+		STAGE_4rot,
 		STAGE_5
 	};
 	///@brief This constructor does not work -- Fix it before using it.
@@ -284,6 +286,10 @@ protected:
 	virtual moves::TrialMoverOP
 	stage4_mover( core::pose::Pose &pose, int kk, moves::TrialMoverOP trials_in );
 
+	//@brief returns the Mover that is applied inside the stage4 loop
+	virtual moves::TrialMoverOP
+	stage4rot_mover( core::pose::Pose &pose, int kk, moves::TrialMoverOP trials_in );
+
 	//@brief returns the Mover that is applied inside the stage5 loop
 	virtual moves::TrialMoverOP
 	stage5_mover( core::pose::Pose &pose, moves::TrialMoverOP trials_in );//vats
@@ -394,6 +400,8 @@ protected:
 	Size stage4_cycles_; //score3
 	Size stage5_cycles_; //score3
 
+	core::Real stage4_cycles_pack_rate_;
+
 public:
 
 
@@ -405,6 +413,8 @@ private:
 	core::scoring::ScoreFunctionOP score_stage3a_; //score2
 	core::scoring::ScoreFunctionOP score_stage3b_; //score5
 	core::scoring::ScoreFunctionOP score_stage4_;  //score3
+	core::scoring::ScoreFunctionOP score_stage4rot_;  //score_cenrot
+	core::scoring::ScoreFunctionOP score_stage4rot_sc_;  //score_cenrot
 	core::scoring::ScoreFunctionOP score_stage5_; //score3 //vats lets try score3 first
 
 	//@brief flags
@@ -432,6 +442,12 @@ private:
 	moves::TrialMoverOP trial_large_;
 	moves::TrialMoverOP trial_small_;
 	moves::TrialMoverOP smooth_trial_small_;
+
+	moves::TrialMoverOP trial_small_pack_;
+	moves::TrialMoverOP smooth_trial_small_pack_;
+
+	// Cenrot Sidechain Mover
+	simple_moves::PackRotamersMoverOP pack_rotamers_;
 
 	Size total_trials_;
 

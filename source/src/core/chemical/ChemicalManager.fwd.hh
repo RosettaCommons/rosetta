@@ -32,6 +32,7 @@ class ChemicalManager;
 
 extern std::string const FA_STANDARD;
 extern std::string const CENTROID;
+extern std::string const CENTROID_ROT;
 extern std::string const COARSE_TWO_BEAD;
 extern std::string const HYBRID_FA_STANDARD_CENTROID;
 extern std::string const RNA;

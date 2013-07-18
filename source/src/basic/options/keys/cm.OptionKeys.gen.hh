@@ -86,6 +86,8 @@ namespace cm { namespace hybridize { extern IntegerOptionKey const stage1_1_cycl
 namespace cm { namespace hybridize { extern IntegerOptionKey const stage1_2_cycles; } }
 namespace cm { namespace hybridize { extern IntegerOptionKey const stage1_3_cycles; } }
 namespace cm { namespace hybridize { extern IntegerOptionKey const stage1_4_cycles; } }
+namespace cm { namespace hybridize { extern RealOptionKey const stage2_temperature; } }
+namespace cm { namespace hybridize { extern StringOptionKey const stage1_4_cenrot_score; } }
 
 } // namespace OptionKeys
 } // namespace options

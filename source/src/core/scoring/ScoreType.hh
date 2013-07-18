@@ -225,6 +225,10 @@ enum ScoreType {
 	occ_sol_fitted_onebody,
 	occ_sol_exact,
 
+	// centroid rotamer pair, P(r,ang,dih|aa)
+	cen_rot_pair, //P(r|aa)
+	cen_rot_pair_ang, //P(ang|r,aa)
+	cen_rot_pair_dih, //P(dih|r,aa)
 	pair, // centroid
 	cen_pair_smooth,  //fpd  smooth centroid pair
 	Mpair,
@@ -321,6 +325,8 @@ enum ScoreType {
 	/// centroid whole structure energies
 	cen_env_smooth,   //fpd smooth centroid env
 	cbeta_smooth,     //fpd smooth cbeta
+	cen_rot_env,
+	cen_rot_dun,
 	env,
 	cbeta,
 	DFIRE,

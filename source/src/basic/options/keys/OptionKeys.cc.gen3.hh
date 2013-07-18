@@ -1,3 +1,4 @@
+namespace optE { FileOptionKey const optimize_ddG_bind_correlation( "optE:optimize_ddG_bind_correlation" );  }
 namespace optE { FileOptionKey const optimize_ddGmutation( "optE:optimize_ddGmutation" );  }
 namespace optE { BooleanOptionKey const optimize_ddGmutation_straight_mean( "optE:optimize_ddGmutation_straight_mean" );  }
 namespace optE { BooleanOptionKey const optimize_ddGmutation_boltzman_average( "optE:optimize_ddGmutation_boltzman_average" );  }

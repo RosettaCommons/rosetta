@@ -30,6 +30,7 @@
 #include <core/scoring/OmegaTether.fwd.hh>
 #include <core/scoring/EnvPairPotential.fwd.hh>
 #include <core/scoring/SmoothEnvPairPotential.fwd.hh>
+#include <core/scoring/CenRotEnvPairPotential.fwd.hh>
 #include <core/scoring/CenHBPotential.fwd.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
@@ -129,6 +130,8 @@ public:
 	OmegaTether const & get_OmegaTether() const;
 
 	SmoothEnvPairPotential const & get_SmoothEnvPairPotential() const;
+
+	CenRotEnvPairPotential const & get_CenRotEnvPairPotential() const;
 
 	CenHBPotential const & get_CenHBPotential() const;
 
@@ -256,6 +259,7 @@ private:
 	mutable OmegaTetherOP omega_;
 	mutable EnvPairPotentialOP env_pair_potential_;
 	mutable SmoothEnvPairPotentialOP smooth_env_pair_potential_;
+	mutable CenRotEnvPairPotentialOP cen_rot_pair_potential_;
 	mutable CenHBPotentialOP cen_hb_potential_;
 	mutable SecondaryStructurePotentialOP secondary_structure_potential_;
 	mutable std::map< std::string, AtomVDWOP > atom_vdw_;

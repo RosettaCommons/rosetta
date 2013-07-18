@@ -282,7 +282,13 @@ HybridizeProtocol::init() {
 	// native
 	if ( option[ in::file::native ].user() ) {
 		native_ = new core::pose::Pose;
-		core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
+		if (option[in::file::fullatom]()){
+			core::import_pose::pose_from_pdb( *native_, option[ in::file::native ]() );
+		}
+		else {
+			core::chemical::ResidueTypeSetCAP residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
+			core::import_pose::pose_from_pdb( *native_, *residue_set, option[ in::file::native ]()  );
+		}
 	} else if ( option[ evaluation::align_rmsd_target ].user() ) {
 		native_ = new core::pose::Pose;
 		utility::vector1< std::string > const & align_rmsd_target( option[ evaluation::align_rmsd_target ]() );
@@ -290,7 +296,7 @@ HybridizeProtocol::init() {
 	}
 
 	// strand pairings
-  pairings_file_ = option[jumps::pairing_file]();
+ 	pairings_file_ = option[jumps::pairing_file]();
 	if ( option[jumps::sheets].user() ) {
 		sheets_ = option[jumps::sheets]();
 	} else {
@@ -1001,7 +1007,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			}
 		}
 
-	  if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
+		if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
 				setup_partial_coordinate_constraints(pose,allowed_to_move_);
 		}
 
@@ -1045,8 +1051,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		TR << std::endl;
 
 		core::kinematics::MoveMapOP mm=new core::kinematics::MoveMap;
-    mm->set_bb  ( true );
-    mm->set_chi ( true );
+		mm->set_bb  ( true );
+		mm->set_chi ( true );
 		mm->set_jump( true );
 
 		// stage "2.5" .. minimize with centroid energy + full-strength cart bonded
@@ -1095,7 +1101,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				}
 			}
 
-	    if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
+			if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
 			  	setup_partial_coordinate_constraints(pose,allowed_to_move_);
 			}
 

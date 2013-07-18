@@ -1,0 +1,4 @@
+patches/CtermProtein.txt
+patches/NtermProtein.txt
+patches/protein_cutpoint_upper.txt
+patches/protein_cutpoint_lower.txt

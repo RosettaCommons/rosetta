@@ -93,6 +93,12 @@
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+//add for cenrot
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+
 #include <numeric/random/DistributionSampler.hh>
 #include <numeric/util.hh>
 
@@ -686,7 +692,7 @@ FoldTreeHybridize::setup_scorefunctions(
 	score0->set_weight( core::scoring::elec_dens_fast, scorefxn_->get_weight( core::scoring::elec_dens_fast ) );
 
 	score1->reset();
-	score2->set_weight( core::scoring::linear_chainbreak, 0.1*lincb_orig );
+	score1->set_weight( core::scoring::linear_chainbreak, 0.1*lincb_orig );
 	score1->set_weight( core::scoring::atom_pair_constraint, 0.1*cst_orig );
 	score1->set_weight( core::scoring::vdw, scorefxn_->get_weight( core::scoring::vdw ) );
 	score1->set_weight( core::scoring::env, scorefxn_->get_weight( core::scoring::env ) );
@@ -1525,13 +1531,17 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		TR << "GDTMM_after_stage1_3" << ObjexxFCL::fmt::F(8,3,gdtmm) << std::endl;
 	}
 
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	if (!option[cm::hybridize::stage1_4_cenrot_score].user())
 	{
 		// stage 4 -- ramp up chainbreak
 		//    this version: 3 steps, 4000 cycles (only small fragments and last 2 steps smooth moves)
 		//  casp10 version: 4 steps, 500 cycles
-    TR.Info <<  "\n===================================================================\n";
-    TR.Info <<  "   Stage 4                                                         \n";
-    TR.Info <<  "   Folding with score3 for " << stage4_max_cycles <<std::endl;
+		TR.Info <<  "\n===================================================================\n";
+		TR.Info <<  "   Stage 4                                                         \n";
+		TR.Info <<  "   Folding with score3 for " << stage4_max_cycles <<std::endl;
 		for (int nmacro=1; nmacro<=3; ++nmacro) {
 
 			// ramp chainbreak weight as in KinematicAbinitio
@@ -1545,9 +1555,9 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			}
 
 			protocols::moves::MonteCarloOP mc4 = new protocols::moves::MonteCarlo( pose, *score3, temp );
-      mc4->set_autotemp( true, temp );
-      mc4->set_temperature( temp );
-      mc4->reset( pose );
+			mc4->set_autotemp( true, temp );
+			mc4->set_temperature( temp );
+			mc4->reset( pose );
 			(*score3)( pose );
 			moves::TrialMoverOP stage4_trials;
 			if ( nmacro == 1 ) {
@@ -1556,6 +1566,67 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			} else {
 				TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments smooth trials" << std::endl;
 				stage4_trials = new moves::TrialMover(random_chunk_and_small_frag_smooth_mover,  mc4);
+			}
+			moves::RepeatMover( stage4_trials, stage4_max_cycles ).apply(pose);
+			TR.Debug << "finished" << std::endl;
+			mc4->show_scores();
+			mc4->show_counters();
+			mc4->recover_low(pose);
+			mc4->reset( pose );
+		}
+	}
+	else { // cenrot version stage4
+		// switch to cenrot model
+		protocols::moves::MoverOP tocenrot =
+			new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT );
+		tocenrot->apply( pose );
+		// setup score
+		core::scoring::ScoreFunctionOP score_cenrot = 
+			core::scoring::ScoreFunctionFactory::create_score_function( option[cm::hybridize::stage1_4_cenrot_score]() );
+		// packer
+		using namespace core::pack::task;
+		simple_moves::PackRotamersMoverOP pack_rotamers;
+		pack_rotamers = new protocols::simple_moves::PackRotamersMover();
+		TaskFactoryOP main_task_factory = new TaskFactory;
+		main_task_factory->push_back( new operation::RestrictToRepacking );
+		pack_rotamers->task_factory(main_task_factory);
+		pack_rotamers->score_function(score_cenrot);
+		pack_rotamers->apply(pose);
+		//setup mover
+		moves::SequenceMoverOP combo_small( new moves::SequenceMover() );
+		combo_small->add_mover(random_chunk_and_small_frag_mover);
+		combo_small->add_mover(pack_rotamers);
+		moves::SequenceMoverOP combo_smooth( new moves::SequenceMover() );
+		combo_smooth->add_mover(random_chunk_and_small_frag_smooth_mover);
+		combo_smooth->add_mover(pack_rotamers);
+
+		TR.Info <<  "\n===================================================================\n";
+		TR.Info <<  "   Stage 4                                                         \n";
+		TR.Info <<  "   Folding with score_cenrot for " << stage4_max_cycles <<std::endl;
+		for (int nmacro=1; nmacro<=3; ++nmacro) {
+
+			// ramp chainbreak weight as in KinematicAbinitio
+			Real progress( 1.0* nmacro/3 );
+			Real const setting( ( 1.5*progress+2.5 ) * ( 1.0/3) * option[ jumps::increase_chainbreak ]);
+			TR.Debug << scoring::name_from_score_type(scoring::linear_chainbreak) << " " << setting << std::endl;
+			score_cenrot->set_weight( core::scoring::linear_chainbreak, setting );
+			if (overlap_chainbreaks_) {
+				TR.Debug << scoring::name_from_score_type(scoring::overlap_chainbreak) << " " << progress << std::endl;
+				score_cenrot->set_weight( core::scoring::overlap_chainbreak, progress );
+			}
+
+			protocols::moves::MonteCarloOP mc4 = new protocols::moves::MonteCarlo( pose, *score_cenrot, temp );
+			mc4->set_autotemp( true, temp );
+			mc4->set_temperature( temp );
+			mc4->reset( pose );
+			(*score_cenrot)( pose );
+			moves::TrialMoverOP stage4_trials;
+			if ( nmacro == 1 ) {
+				TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments trials" << std::endl;
+				stage4_trials = new moves::TrialMover( combo_small, mc4 );
+			} else {
+				TR.Info << "Stage 4 loop iteration " << nmacro << ": small fragments smooth trials" << std::endl;
+				stage4_trials = new moves::TrialMover( combo_smooth,  mc4);
 			}
 			moves::RepeatMover( stage4_trials, stage4_max_cycles ).apply(pose);
 			TR.Debug << "finished" << std::endl;

@@ -66,6 +66,10 @@ sources = {
 		"SingleLigandRotamerLibrary",
 		"SingleResidueDunbrackLibrary",
 	],
+	"core/pack/dunbrack/cenrot": [
+		"SingleResidueCenrotLibrary",
+		"CenRotDunEnergy",
+	],
 	"core/pack/interaction_graph": [
 		"DensePDInteractionGraph",
 		"DoubleDensePDInteractionGraph",

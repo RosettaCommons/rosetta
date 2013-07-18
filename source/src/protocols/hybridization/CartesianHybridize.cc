@@ -109,6 +109,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
 #include <boost/unordered/unordered_map.hpp>
@@ -422,9 +423,29 @@ CartesianHybridize::apply( Pose & pose ) {
 	using namespace core::pose::datacache;
 
 	//protocols::viewer::add_conformation_viewer(  pose.conformation(), "hybridize" );
-	protocols::moves::MoverOP tocen =
-		new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
-	tocen->apply( pose );
+	
+	///////////////////////////////
+	// added by yuan 06-28-2013
+	// packer
+	using namespace core::pack::task;
+	simple_moves::PackRotamersMoverOP pack_rotamers;
+	pack_rotamers = new protocols::simple_moves::PackRotamersMover();
+	TaskFactoryOP main_task_factory = new TaskFactory;
+	main_task_factory->push_back( new operation::RestrictToRepacking );
+	pack_rotamers->task_factory(main_task_factory);
+	pack_rotamers->score_function(lowres_scorefxn_);
+	
+	if (option[corrections::score::cenrot]) {
+		protocols::moves::MoverOP tocenrot =
+			new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT );
+		tocenrot->apply( pose );
+		pack_rotamers->apply(pose);
+	}
+	else {
+		protocols::moves::MoverOP tocen =
+			new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+		tocen->apply( pose );
+	}
 
 	// minimizer
 	core::optimization::MinimizerOptions options( "linmin", 0.01, true, false, false );
@@ -481,22 +502,22 @@ CartesianHybridize::apply( Pose & pose ) {
 sampler:
 	for (core::Size m=1; m<=NMACROCYCLES; ++m) {
 		core::Real bonded_weight = max_cart;
-		if (m==1)	bonded_weight = 0.0*max_cart;
+		if (m==1) bonded_weight = 0.0*max_cart;
 		if (m==2) bonded_weight = 0.01*max_cart;
 		if (m==3) bonded_weight = 0.1*max_cart;
 
 		core::Real bonded_weight_angle = max_cart_angle;
-		if (m==1)	bonded_weight_angle = 0.0*max_cart_angle;
+		if (m==1) bonded_weight_angle = 0.0*max_cart_angle;
 		if (m==2) bonded_weight_angle = 0.01*max_cart_angle;
 		if (m==3) bonded_weight_angle = 0.1*max_cart_angle;
 
 		core::Real bonded_weight_length = max_cart_length;
-		if (m==1)	bonded_weight_length = 0.0*max_cart_length;
+		if (m==1) bonded_weight_length = 0.0*max_cart_length;
 		if (m==2) bonded_weight_length = 0.01*max_cart_length;
 		if (m==3) bonded_weight_length = 0.1*max_cart_length;
 
 		core::Real bonded_weight_torsion = max_cart_torsion;
-		if (m==1)	bonded_weight_torsion = 0.0*max_cart_torsion;
+		if (m==1) bonded_weight_torsion = 0.0*max_cart_torsion;
 		if (m==2) bonded_weight_torsion = 0.01*max_cart_torsion;
 		if (m==3) bonded_weight_torsion = 0.1*max_cart_torsion;
 
@@ -526,7 +547,8 @@ sampler:
 		lowres_scorefxn_->set_weight( core::scoring::vdw, vdw_weight );
 
 		(*lowres_scorefxn_)(pose);
-		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 2.0 );
+		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 
+			option[cm::hybridize::stage2_temperature]() ); //cenrot may use higher temp
 
 		core::Size neffcycles = (core::Size)(ncycles_*increase_cycles_);
 		if (m==4 || seqfrags_only_) neffcycles /=2;
@@ -666,6 +688,14 @@ sampler:
 
 				if (library_.find(insert_pos) != library_.end())
 					apply_frame (pose, library_[insert_pos]);
+			}
+
+			//////////////////////////////
+			// added by yuan 06-28-2013
+			// repack after fragment insertion
+			//////////////////////////////
+			if (option[corrections::score::cenrot]) {
+				pack_rotamers->apply(pose);
 			}
 
 			// MC

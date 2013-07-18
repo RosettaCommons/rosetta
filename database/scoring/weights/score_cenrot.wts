@@ -1,0 +1,14 @@
+cen_rot_pair    2.0
+cen_rot_env     2.0
+cen_rot_pair_ang 2.0
+cen_rot_dun        1.0
+CENTROID_ROT
+vdw             1.0
+cbeta   1.0
+rg      2.0
+
+#cenpack 1.0
+hs_pair 1.0
+ss_pair 1.0
+rsigma  1.0
+sheet   1.0

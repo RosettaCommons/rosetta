@@ -1,0 +1,44 @@
+#generating residue type file for  TRP
+#template file ../centroid/residue_types/TRP.params
+#output file residue_types/TRP.params
+#rosetta residue topology file
+#version 0.1
+NAME TRP
+IO_STRING TRP W
+TYPE POLYMER #residue type
+AA TRP
+ATOM  N   Nbb  NH1  -0.47
+ATOM  CA  CAbb CT1  0.07
+ATOM  C   CObb C    0.51
+ATOM  O   OCbb O    -0.51
+ATOM  CB  CB    CT2  -0.18
+ATOM  H   HNbb H    0.31
+LOWER_CONNECT N
+UPPER_CONNECT C
+BOND  N    CA 
+BOND  N    H  
+BOND  CA   C  
+BOND  CA   CB 
+BOND  C    O  
+PROPERTIES PROTEIN AROMATIC
+NBR_ATOM CB
+# APL CB to sidechain heavyatom distance -- max observed at residue 74 in ubiquitin
+NBR_RADIUS 3.771
+FIRST_SIDECHAIN_ATOM CB
+ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
+ICOOR_INTERNAL    CA     0.000000  180.000000    1.458001   N     CA    C  
+ICOOR_INTERNAL    C      0.000000   68.799988    1.523258   CA    N     C  
+ICOOR_INTERNAL  UPPER  150.000031   63.799957    1.328686   C     CA    N  
+ICOOR_INTERNAL    O    179.999939   59.199955    1.231015   C     CA  UPPER
+ICOOR_INTERNAL    CB  -122.449707   69.600334    1.529823   CA    N     C  
+ICOOR_INTERNAL  LOWER -150.000046   58.299980    1.328686   N     CA    C  
+ICOOR_INTERNAL    H   -179.999878   60.850006    1.010001   N     CA  LOWER
+
+
+
+
+##centroid-specific
+ATOM  CEN CEN_TRP H 0.0
+BOND CB CEN
+CHI 1 N CA CB CEN
+ICOOR_INTERNAL CEN -88.332341 69.640641 3.296966 CB CA N

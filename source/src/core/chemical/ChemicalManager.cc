@@ -440,6 +440,8 @@ ChemicalManager::ideal_bond_length_set( std::string const & tag )
 std::string const FA_STANDARD( "fa_standard" );
 /// @brief tag name for querying centroid chemical type set.
 std::string const CENTROID( "centroid" );
+/// @brief tag name for querying centroid_rot chemical type set.
+std::string const CENTROID_ROT( "centroid_rot" );
 /// @brief tag name for querying coarse-grained chemical type set.
 std::string const COARSE_TWO_BEAD( "coarse_two_bead" );
 /// @brief tag name for querying hybrid fullatom+centroid chemical type set.

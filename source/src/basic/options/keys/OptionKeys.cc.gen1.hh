@@ -1,4 +1,3 @@
-namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
 namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
 namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
 namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
@@ -205,6 +204,7 @@ namespace corrections { namespace score { StringOptionKey const p_aa_pp( "correc
 namespace corrections { namespace score { BooleanOptionKey const p_aa_pp_nogridshift( "corrections:score:p_aa_pp_nogridshift" );  } }
 namespace corrections { namespace score { BooleanOptionKey const rama_not_squared( "corrections:score:rama_not_squared" );  } }
 namespace corrections { namespace score { FileOptionKey const rama_map( "corrections:score:rama_map" );  } }
+namespace corrections { namespace score { BooleanOptionKey const cenrot( "corrections:score:cenrot" );  } }
 namespace corrections { namespace score { BooleanOptionKey const dun10( "corrections:score:dun10" );  } }
 namespace corrections { namespace score { StringOptionKey const dun10_dir( "corrections:score:dun10_dir" );  } }
 namespace corrections { namespace score { StringOptionKey const dun02_file( "corrections:score:dun02_file" );  } }
@@ -557,6 +557,7 @@ namespace enzdes { BooleanOptionKey const parser_read_cloud_pdb( "enzdes:parser_
 namespace packing { BooleanOptionKey const packing( "packing" );  }
 namespace packing { BooleanOptionKey const repack_only( "packing:repack_only" );  }
 namespace packing { BooleanOptionKey const prevent_repacking( "packing:prevent_repacking" );  }
+namespace packing { RealOptionKey const cenrot_cutoff( "packing:cenrot_cutoff" );  }
 namespace packing { IntegerOptionKey const ndruns( "packing:ndruns" );  }
 namespace packing { BooleanOptionKey const soft_rep_design( "packing:soft_rep_design" );  }
 namespace packing { BooleanOptionKey const use_electrostatic_repulsion( "packing:use_electrostatic_repulsion" );  }

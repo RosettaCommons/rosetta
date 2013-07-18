@@ -1,0 +1,43 @@
+#generating residue type file for  LYS
+#template file ../centroid/residue_types/LYS.params
+#output file residue_types/LYS.params
+#rosetta residue topology file
+#version 0.1
+NAME LYS
+IO_STRING LYS K
+TYPE POLYMER #residue type
+AA LYS
+ATOM  N   Nbb  NH1  -0.47
+ATOM  CA  CAbb CT1  0.07
+ATOM  C   CObb C    0.51
+ATOM  O   OCbb O    -0.51
+ATOM  CB  CB    CT2  -0.18
+ATOM  H   HNbb H    0.31
+LOWER_CONNECT N
+UPPER_CONNECT C
+BOND  N    CA 
+BOND  N    H  
+BOND  CA   C  
+BOND  CA   CB 
+BOND  C    O  
+PROPERTIES PROTEIN POLAR CHARGED
+NBR_ATOM CB
+NBR_RADIUS 3.794
+FIRST_SIDECHAIN_ATOM CB
+ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
+ICOOR_INTERNAL    CA     0.000000  180.000000    1.458001   N     CA    C  
+ICOOR_INTERNAL    C      0.000000   68.800011    1.523258   CA    N     C  
+ICOOR_INTERNAL  UPPER  149.999985   63.799984    1.328685   C     CA    N  
+ICOOR_INTERNAL    O    179.999969   59.200024    1.231015   C     CA  UPPER
+ICOOR_INTERNAL    CB  -122.594955   69.498947    1.529508   CA    N     C  
+ICOOR_INTERNAL  LOWER -149.999969   58.300011    1.328685   N     CA    C  
+ICOOR_INTERNAL    H    179.999985   60.849998    1.010001   N     CA  LOWER
+
+
+
+
+##centroid-specific
+ATOM  CEN CEN_LYS H 0.0
+BOND CB CEN
+CHI 1 N CA CB CEN
+ICOOR_INTERNAL CEN -67.452047 39.915949 3.210392 CB CA N

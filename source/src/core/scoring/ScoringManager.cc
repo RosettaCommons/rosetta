@@ -21,6 +21,7 @@
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.hh>
 #include <core/scoring/PairEPotential.hh>
 #include <core/scoring/EnvPairPotential.hh>
+#include <core/scoring/CenRotEnvPairPotential.hh>
 #include <core/scoring/SmoothEnvPairPotential.hh>
 #include <core/scoring/CenHBPotential.hh>
 #include <core/scoring/MembranePotential.hh>
@@ -115,6 +116,7 @@ ScoringManager::ScoringManager() :
 	omega_( 0 ),
 	env_pair_potential_( 0 ),
 	smooth_env_pair_potential_( 0 ),
+	cen_rot_pair_potential_( 0 ),
 	cen_hb_potential_( 0 ),
 	secondary_structure_potential_( 0 ),
 	atom_vdw_(),
@@ -210,6 +212,17 @@ ScoringManager::get_SmoothEnvPairPotential() const
 		smooth_env_pair_potential_ = new SmoothEnvPairPotential();
 	}
 	return *smooth_env_pair_potential_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+CenRotEnvPairPotential const &
+ScoringManager::get_CenRotEnvPairPotential() const
+{
+	if (cen_rot_pair_potential_ == 0 )
+	{
+		cen_rot_pair_potential_ = new CenRotEnvPairPotential();
+	}
+	return *cen_rot_pair_potential_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

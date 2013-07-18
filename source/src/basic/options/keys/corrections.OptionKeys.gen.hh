@@ -38,6 +38,7 @@ namespace corrections { namespace score { extern StringOptionKey const p_aa_pp; 
 namespace corrections { namespace score { extern BooleanOptionKey const p_aa_pp_nogridshift; } }
 namespace corrections { namespace score { extern BooleanOptionKey const rama_not_squared; } }
 namespace corrections { namespace score { extern FileOptionKey const rama_map; } }
+namespace corrections { namespace score { extern BooleanOptionKey const cenrot; } }
 namespace corrections { namespace score { extern BooleanOptionKey const dun10; } }
 namespace corrections { namespace score { extern StringOptionKey const dun10_dir; } }
 namespace corrections { namespace score { extern StringOptionKey const dun02_file; } }

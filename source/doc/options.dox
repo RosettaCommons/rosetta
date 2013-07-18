@@ -4451,6 +4451,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4"</dd><br>
 </dl>
 <dl>
+<dt><b>-cenrot</b> \<Boolean\><dt>
+<dd>Use the Centroid Rotamer Model.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-dun10</b> \<Boolean\><dt>
 <dd>Use the 2010 Dunbrack library instead of either the the 2002 library.</dd><br>
 <dd>Default: true</dd><br>
@@ -6187,6 +6192,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-prevent_repacking</b> \<Boolean\><dt>
 <dd>Disable repacking (or design) at all positions</dd><br>
 <dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-cenrot_cutoff</b> \<Real\><dt>
+<dd>Cutoff to generate centroid rotamers</dd><br>
+<dd>Default: 0.16</dd><br>
 </dl>
 <dl>
 <dt><b>-ndruns</b> \<Integer\><dt>
@@ -8718,6 +8728,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-stage1_4_cycles</b> \<Integer\><dt>
 <dd>Number of cycles for ab initio stage 4 in Stage1</dd><br>
 <dd>Default: 400</dd><br>
+</dl>
+<dl>
+<dt><b>-stage2_temperature</b> \<Real\><dt>
+<dd>Monte Carlo temperature in the stage2</dd><br>
+<dd>Default: 2.0</dd><br>
+</dl>
+<dl>
+<dt><b>-stage1_4_cenrot_score</b> \<String\><dt>
+<dd>Switch to cenrot model in stage1_4</dd><br>
+<dd>Default: "score_cenrot_cm_stage1_4.wts"</dd><br>
 </dl>
  </li>
 <li><h2>ms</h2>

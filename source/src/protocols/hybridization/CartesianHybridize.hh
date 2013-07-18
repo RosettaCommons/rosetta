@@ -109,8 +109,8 @@ private:
 	// scorefunctions
 	core::scoring::ScoreFunctionOP lowres_scorefxn_, min_scorefxn_, bonds_scorefxn_, nocst_scorefxn_;
 
-  // allowed to move regions
-  utility::vector1<bool> allowed_to_move_;
+	// allowed to move regions
+	utility::vector1<bool> allowed_to_move_;
 }; //class CartesianHybridize
 
 } // hybridize

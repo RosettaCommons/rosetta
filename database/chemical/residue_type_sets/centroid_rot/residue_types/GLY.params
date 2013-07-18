@@ -1,0 +1,39 @@
+#generating residue type file for  GLY
+#template file ../centroid/residue_types/GLY.params
+#output file residue_types/GLY.params
+#rosetta residue topology file
+#version 0.1
+NAME GLY
+IO_STRING GLY G
+TYPE POLYMER #residue type
+AA GLY
+ATOM  N   Nbb  NH1  -0.47
+ATOM  CA  CAbb CT2  -0.02
+ATOM  C   CObb C    0.51
+ATOM  O   OCbb O    -0.51
+ATOM  H   HNbb H    0.31
+LOWER_CONNECT N
+UPPER_CONNECT C
+BOND  N    CA 
+BOND  N    H  
+BOND  CA   C  
+BOND  C    O  
+PROPERTIES PROTEIN
+NBR_ATOM CA
+NBR_RADIUS 2.636
+FIRST_SIDECHAIN_ATOM CEN
+ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
+ICOOR_INTERNAL    CA     0.000000  180.000000    1.458001   N     CA    C  
+ICOOR_INTERNAL    C      0.000000   68.799995    1.523259   CA    N     C  
+ICOOR_INTERNAL  UPPER  149.999969   63.800018    1.328685   C     CA    N  
+ICOOR_INTERNAL    O   -179.999985   59.200005    1.231015   C     CA  UPPER
+ICOOR_INTERNAL  LOWER -150.000015   58.300003    1.328685   N     CA    C  
+ICOOR_INTERNAL    H    180.000000   60.850040    1.010000   N     CA  LOWER
+
+
+
+
+##centroid-specific
+ATOM  CEN CEN_GLY H 0.0
+BOND CA CEN
+ICOOR_INTERNAL CEN 0.0 0.0 0.0 CA N C

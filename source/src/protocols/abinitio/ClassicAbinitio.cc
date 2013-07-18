@@ -43,6 +43,15 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/WhileMover.hh>
 #include <protocols/abinitio/AllResiduesChanged.hh>
+
+//for cenrot
+#include <protocols/moves/CompositionMover.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
 
 // AUTO-REMOVED #include <protocols/checkpoint/Checkpoint.hh>
@@ -154,6 +163,8 @@ ClassicAbinitio::ClassicAbinitio(
 	bSkipStage2_ = false;
 
 	close_chbrk_ = false;
+
+	stage4_cycles_pack_rate_ = 0.25;
 }
 
 ClassicAbinitio::ClassicAbinitio(
@@ -196,10 +207,20 @@ ClassicAbinitio::ClassicAbinitio(
 	brute_move_large_ = bml;
 	smooth_move_small_ = sms;
 
+	using namespace core::pack::task;
+	//init the packer
+	pack_rotamers_ = new protocols::simple_moves::PackRotamersMover();
+	TaskFactoryOP main_task_factory = new TaskFactory;
+	main_task_factory->push_back( new operation::RestrictToRepacking );
+	//main_task_factory->push_back( new operation::PreserveCBeta );
+	pack_rotamers_->task_factory(main_task_factory);
+
 	bSkipStage1_ = false;
 	bSkipStage2_ = false;
 
 	close_chbrk_ = false;
+
+	stage4_cycles_pack_rate_ = 0.25;
 }
 
 /// @details Call parent's copy constructor and perform a shallow
@@ -220,6 +241,7 @@ ClassicAbinitio::ClassicAbinitio( ClassicAbinitio const & src ) :
 	score_stage3a_ = src.score_stage3a_;
 	score_stage3b_ = src.score_stage3b_;
 	score_stage4_ = src.score_stage4_;
+	score_stage4rot_ = src.score_stage4rot_;
 	score_stage5_ = src.score_stage5_;
 	apply_large_frags_ = src.apply_large_frags_;
 	short_insert_region_ = src.short_insert_region_;
@@ -610,6 +632,16 @@ void ClassicAbinitio::set_trials() {
 	smooth_trial_small_ = new moves::TrialMover( smooth_move_small_, mc_ );
 	//smooth_trial_small_->set_keep_stats( true );
 	smooth_trial_small_->keep_stats_type( moves::accept_reject );
+
+	//build trial_pack mover
+	moves::SequenceMoverOP combo_small( new moves::SequenceMover() );
+	combo_small->add_mover(brute_move_small_);
+	combo_small->add_mover(pack_rotamers_);
+	trial_small_pack_ = new moves::TrialMover(combo_small, mc_);
+	moves::SequenceMoverOP combo_smooth( new moves::SequenceMover() );
+	combo_smooth->add_mover(smooth_move_small_);
+	combo_smooth->add_mover(pack_rotamers_);
+	smooth_trial_small_pack_ = new moves::TrialMover(combo_smooth, mc_);
 }
 
 //@detail sets Monto-Carlo object to default
@@ -682,6 +714,12 @@ void ClassicAbinitio::set_default_scores() {
 		score_stage4_  = ScoreFunctionFactory::create_score_function( "score3" );
 	}
 
+	//loading the cenrot score
+	score_stage4rot_ = ScoreFunctionFactory::create_score_function( "score_cenrot" );
+	score_stage4rot_->set_weight(core::scoring::cen_rot_dun, 0.0);
+	score_stage4rot_sc_ = ScoreFunctionFactory::create_score_function( "score_cenrot" );
+	score_stage4rot_sc_->set_weight(core::scoring::cen_rot_dun, 1.0);
+
 	if ( option[ OptionKeys::abinitio::stage5_patch ].user() ) { //vats
 		score_stage5_  = ScoreFunctionFactory::create_score_function( "score3", option[ OptionKeys::abinitio::stage5_patch ]() );
 	} else {
@@ -706,6 +744,7 @@ void ClassicAbinitio::set_score_weight( scoring::ScoreType type, Real setting, S
 	if (score_stage3a_ && ( stage == STAGE_3a || stage == ALL_STAGES )) score_stage3a_->set_weight(type, setting);
 	if (score_stage3b_ && ( stage == STAGE_3b || stage == ALL_STAGES )) score_stage3b_->set_weight(type, setting);
 	if (score_stage4_  && ( stage == STAGE_4  || stage == ALL_STAGES )) score_stage4_ ->set_weight(type, setting);
+	if (score_stage4rot_  && ( stage == STAGE_4  || stage == ALL_STAGES )) score_stage4rot_ ->set_weight(type, setting);
 	if (score_stage5_  && ( stage == STAGE_5  || stage == ALL_STAGES )) score_stage5_ ->set_weight(type, setting);//vats
 }
 
@@ -957,6 +996,11 @@ bool ClassicAbinitio::do_stage3_cycles( pose::Pose &pose ) {
 bool ClassicAbinitio::do_stage4_cycles( pose::Pose &pose ) {
 	Size nloop_stage4 = 3;
 
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	if ( option[corrections::score::cenrot]() ) nloop_stage4=2; 
+
 	for ( Size kk = 1; kk <= nloop_stage4; ++kk ) {
 		tr.Debug << "prepare ..." << std::endl ;
 		if ( !prepare_loop_in_stage4( pose, kk, nloop_stage4 ) ) return false;
@@ -979,11 +1023,57 @@ bool ClassicAbinitio::do_stage4_cycles( pose::Pose &pose ) {
 		}
 		get_checkpoints().debug( get_current_tag(), "stage4_kk_" + ObjexxFCL::string_of(kk),  current_scorefxn()( pose ) );
 
-
 		//don't store last structure since it will be exactly the same as the final structure delivered back via apply
 		//		if( kk < nloop_stage4 ) // <-- this line was missing although the comment above was existant.
 			//			structure_store().push_back( mc_->lowest_score_pose() );
 	}  // loop kk
+
+	if ( option[corrections::score::cenrot])
+	{
+		//switch to cenrot model
+		tr.Debug << "switching to cenrot model ..." << std::endl;
+		protocols::simple_moves::SwitchResidueTypeSetMover to_cenrot(chemical::CENTROID_ROT);
+		to_cenrot.apply(pose);
+
+		//init pose
+		(*score_stage4rot_)( pose );
+		pack_rotamers_->score_function(score_stage4rot_sc_);
+		pack_rotamers_->apply(pose);
+
+		mc_->reset(pose);
+		replace_scorefxn( pose, STAGE_4rot, 0 );
+		//mc_->set_temperature(1.0);
+		//mc_->set_autotemp(true, 1.0);
+
+		//debug
+		//tr.Debug << "starting_energy: " << (*score_stage4rot_)( pose ) << std::endl;
+		//tr.Debug << "starting_temperature: " << mc_->temperature() << std::endl;
+
+		for (Size rloop=1; rloop<=3; rloop++)
+		{
+			//change vdw weight
+			switch (rloop) {
+				case 1:
+				score_stage4rot_->set_weight(core::scoring::vdw, score_stage4rot_->get_weight(core::scoring::vdw)/9.0);
+				break;
+				case 2:
+				score_stage4rot_->set_weight(core::scoring::vdw, score_stage4rot_->get_weight(core::scoring::vdw)*3.0);
+				break;
+				case 3:
+				score_stage4rot_->set_weight(core::scoring::vdw, score_stage4rot_->get_weight(core::scoring::vdw)*3.0);
+				break;
+			}
+
+			//stage4rot
+			//for (Size iii=1; iii<=100; iii++){
+				//pose::Pose startP = pose;
+			//tr << "temperature: " << mc_->temperature() << std::endl;
+			moves::RepeatMover( stage4rot_mover( pose, rloop, trial_smooth() ), stage4_cycles()/100 ).apply(pose);
+				//tr << "delta_rms: " << core::scoring::CA_rmsd( startP, pose ) << std::endl;
+			//}
+		}
+	}
+
 	return true;
 }
 
@@ -1032,12 +1122,20 @@ ClassicAbinitio::stage4_mover( pose::Pose &, int, moves::TrialMoverOP trials ) {
 	return trials;
 }
 
+moves::TrialMoverOP
+ClassicAbinitio::stage4rot_mover( pose::Pose &, int, moves::TrialMoverOP trials ) {
+	if (trials == trial_small_) {
+		return trial_small_pack_;
+	}
+	else {
+		return smooth_trial_small_pack_;
+	}
+}
+
 moves::TrialMoverOP //vats
 ClassicAbinitio::stage5_mover( pose::Pose &, moves::TrialMoverOP trials ) {
 	return trials;
 }
-
-
 
 void ClassicAbinitio::recover_low( core::pose::Pose& pose, StageID stage ){
 	if ( contains_stageid( recover_low_stages_, stage ) ) {
@@ -1056,6 +1154,7 @@ void ClassicAbinitio::replace_scorefxn( core::pose::Pose& pose, StageID stage, c
 	if (score_stage3a_ && ( stage == STAGE_3a)) current_scorefxn( *score_stage3a_ );
 	if (score_stage3b_ && ( stage == STAGE_3b)) current_scorefxn( *score_stage3b_ );
 	if (score_stage4_  && ( stage == STAGE_4 )) current_scorefxn( *score_stage4_ );
+	if (score_stage4rot_  && ( stage == STAGE_4rot )) current_scorefxn( *score_stage4rot_ );
 	if (score_stage5_  && ( stage == STAGE_5 )) current_scorefxn( *score_stage5_ );//vats
 	Real temperature( temperature_ );
 	if ( stage == STAGE_5 ) temperature = 0.5;
@@ -1070,13 +1169,12 @@ moves::TrialMoverOP ClassicAbinitio::trial_large() {
 }
 
 moves::TrialMoverOP ClassicAbinitio::trial_small() {
-	return trial_small_;
+		return trial_small_;
 }
 
 moves::TrialMoverOP ClassicAbinitio::trial_smooth() {
-	return smooth_trial_small_;
+		return smooth_trial_small_;
 }
-
 
 // prepare stage1 sampling
 bool ClassicAbinitio::prepare_stage1( core::pose::Pose &pose ) {
@@ -1124,7 +1222,6 @@ bool ClassicAbinitio::prepare_stage4( core::pose::Pose &pose ) {
 	return true;
 }
 
-
 bool ClassicAbinitio::prepare_stage5( core::pose::Pose &pose ) {//vats
 	//	temperature_ = 0.5; //this has to be reset to original temperature!!!
 	// no special if-statement in replace_scorefxn...OL
@@ -1167,11 +1264,12 @@ bool ClassicAbinitio::prepare_loop_in_stage3( core::pose::Pose &pose/*pose*/, Si
 
 bool ClassicAbinitio::prepare_loop_in_stage4( core::pose::Pose &pose, Size iteration, Size total ){
 	replace_scorefxn( pose, STAGE_4, 1.0* iteration/total );
+
 	Real chbrk_weight_stage_4 (iteration*0.5+2.5);
 
 	if ( close_chbrk_ ){
-			set_current_weight( scoring::linear_chainbreak, chbrk_weight_stage_4 );
-			}
+		set_current_weight( scoring::linear_chainbreak, chbrk_weight_stage_4 );
+	}
 
 	return true;
 }

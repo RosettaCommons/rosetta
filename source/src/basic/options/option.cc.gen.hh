@@ -721,10 +721,10 @@ option.add( basic::options::OptionKeys::jumps::jumps, "jumps option group" ).leg
 option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoetry for all jumps in the fold-tree" ).def(false);
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
+option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
-option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
@@ -930,6 +930,7 @@ option.add( basic::options::OptionKeys::corrections::score::p_aa_pp, "Name of sc
 option.add( basic::options::OptionKeys::corrections::score::p_aa_pp_nogridshift, "the format of p_aa_pp changed from using i*10+5 (5, 15, etc) to i*10 (0,10,etc.) as grid points" );
 option.add( basic::options::OptionKeys::corrections::score::rama_not_squared, "Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (ram a+entropy) > 1.0" );
 option.add( basic::options::OptionKeys::corrections::score::rama_map, "Ramachandran file used by rama" ).def("scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4");
+option.add( basic::options::OptionKeys::corrections::score::cenrot, "Use the Centroid Rotamer Model." ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::dun10, "Use the 2010 Dunbrack library instead of either the the 2002 library." ).def(true);
 option.add( basic::options::OptionKeys::corrections::score::dun10_dir, "Name of dun10 dir" ).def("rotamer/ExtendedOpt1-5");
 option.add( basic::options::OptionKeys::corrections::score::dun02_file, "Name of dun02 input file" ).def("rotamer/bbdep02.May.sortlib");
@@ -1282,6 +1283,7 @@ option.add( basic::options::OptionKeys::enzdes::parser_read_cloud_pdb, "read clo
 option.add( basic::options::OptionKeys::packing::packing, "Packing option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::packing::repack_only, "Disable design at all positions" ).def(false);
 option.add( basic::options::OptionKeys::packing::prevent_repacking, "Disable repacking (or design) at all positions" ).def(false);
+option.add( basic::options::OptionKeys::packing::cenrot_cutoff, "Cutoff to generate centroid rotamers" ).def(0.16);
 option.add( basic::options::OptionKeys::packing::ndruns, "Number of fixbb packing iterations.  Each time packing occurs, it will pack this many times and return only the best result.  Implemented at level of PackRotamersMover." ).lower(1).def(1);
 option.add( basic::options::OptionKeys::packing::soft_rep_design, "Use larger LJ radii for softer potential" );
 option.add( basic::options::OptionKeys::packing::use_electrostatic_repulsion, "Use electrostatic repulsion" );
@@ -1799,6 +1801,8 @@ option.add( basic::options::OptionKeys::cm::hybridize::stage1_1_cycles, "Number 
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_2_cycles, "Number of cycles for ab initio stage 2 in Stage1" ).def(2000);
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_3_cycles, "Number of cycles for ab initio stage 3 in Stage1" ).def(2000);
 option.add( basic::options::OptionKeys::cm::hybridize::stage1_4_cycles, "Number of cycles for ab initio stage 4 in Stage1" ).def(400);
+option.add( basic::options::OptionKeys::cm::hybridize::stage2_temperature, "Monte Carlo temperature in the stage2" ).def(2.0);
+option.add( basic::options::OptionKeys::cm::hybridize::stage1_4_cenrot_score, "Switch to cenrot model in stage1_4" ).def("score_cenrot_cm_stage1_4.wts");
 option.add( basic::options::OptionKeys::ms::ms, "ms option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ms::share_data, "share rotamers and energies between states -- valid only if state variability is defined rotamerically" ).def(false);
 option.add( basic::options::OptionKeys::ms::verbose, "" ).def(false);
@@ -2160,10 +2164,10 @@ option.add( basic::options::OptionKeys::optE::optimize_nat_rot, "With the iterat
 option.add( basic::options::OptionKeys::optE::optimize_ligand_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer around the ligand" );
 option.add( basic::options::OptionKeys::optE::optimize_pssm, "With the iterative optE driver, optimize weights to maximize the match between a BLAST generated pssm probabillity distribution" );
 option.add( basic::options::OptionKeys::optE::optimize_dGbinding, "With the iterative optE driver, optimize weights to minimize squared error between the predicted dG of binding and the experimental dG; provide a file listing 1. bound PDB structure, 2. unbound PDB structure, and 3. measured dG" );
-option.add( basic::options::OptionKeys::optE::optimize_ddG_bind_correlation, "With the iterative optE driver, optimize weights to minimize squared error between the predicted ddG of binding for a mutation to the experimental ddG; provide a file listing 1. list file containing wt complexes, 2. list file containing mut complexes, 3. list file containing wt unbounds structures, 4. list file containing mut unbounds structures, and 5. measured ddG of binding" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optimize_ddGmutation, "With the iterative optE driver, optimize weights to minimize the predicted ddG of mutation and the measured ddG; provide a file listing 1. repacked wt pdb list, 2. repacked mut pdb list, and 3. measured ddG triples" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optimize_ddG_bind_correlation, "With the iterative optE driver, optimize weights to minimize squared error between the predicted ddG of binding for a mutation to the experimental ddG; provide a file listing 1. list file containing wt complexes, 2. list file containing mut complexes, 3. list file containing wt unbounds structures, 4. list file containing mut unbounds structures, and 5. measured ddG of binding" );
+option.add( basic::options::OptionKeys::optE::optimize_ddGmutation, "With the iterative optE driver, optimize weights to minimize the predicted ddG of mutation and the measured ddG; provide a file listing 1. repacked wt pdb list, 2. repacked mut pdb list, and 3. measured ddG triples" );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_straight_mean, "With the iterative optE driver, predict the the ddGmut to be the difference between the straight mean (1/n Sum(E_i)) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_boltzman_average, "With the iterative optE driver, predict the the ddGmut to be the difference between the boltzman average energies ( Sum( E_i * e**-E_i/kT)/Sum( e**-E_i/kT) ) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
 option.add( basic::options::OptionKeys::optE::exclude_badrep_ddGs, "With the iterative optE driver, consider only ddG data where the unweighted repulsive energy delta mut-wt < given value" );

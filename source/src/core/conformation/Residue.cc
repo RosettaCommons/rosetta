@@ -561,6 +561,9 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 			Vector const pseudoatom(
 				cross( xyz( mobile_new ) - xyz( root ), src.xyz( mobile_src ) - src.xyz( root ) ) + xyz( root )
 			);
+
+			if (pseudoatom==xyz(root)) return;
+
 			Stub new_stub(     xyz( root ), pseudoatom,     xyz( mobile_new ) ),
 					 src_stub( src.xyz( root ), pseudoatom, src.xyz( mobile_src ) );
 			// adjust sidechain coordinates by superposition of the bond 'stubs'

@@ -2022,6 +2022,7 @@ Options = Option_Group( '',
 			Option( 'p_aa_pp_nogridshift',   'Boolean', desc="the format of p_aa_pp changed from using i*10+5 (5, 15, etc) to i*10 (0,10,etc.) as grid points" ),
 			Option( 'rama_not_squared', 'Boolean', desc="Rama potential calculated as input for both rama and rama2b. By default, the potential is square for (ram a+entropy) > 1.0" ),
 			Option( 'rama_map', 'File', default = 'scoring/score_functions/rama/Rama_smooth_dyn.dat_ss_6.4', desc="Ramachandran file used by rama" ),
+			Option( 'cenrot',   'Boolean', desc="Use the Centroid Rotamer Model.", default="false" ),
 			Option( 'dun10',   'Boolean', desc="Use the 2010 Dunbrack library instead of either the the 2002 library.", default="true"  ),
 			Option( 'dun10_dir',   'String', desc="Name of dun10 dir", default="rotamer/ExtendedOpt1-5" ),
 			Option( 'dun02_file',  'String', desc="Name of dun02 input file", default="rotamer/bbdep02.May.sortlib" ),
@@ -2543,6 +2544,7 @@ Options = Option_Group( '',
 		Option( 'packing', 'Boolean', desc='Packing option group', legal='true', default='true' ),
 		Option( 'repack_only', 'Boolean', desc='Disable design at all positions', default='false' ),
 		Option( 'prevent_repacking', 'Boolean', desc='Disable repacking (or design) at all positions', default='false' ),
+		Option( 'cenrot_cutoff', 'Real', desc='Cutoff to generate centroid rotamers', default='0.16' ),
 		Option( 'ndruns', 'Integer',
 			desc='Number of fixbb packing iterations.  Each time packing occurs, it will pack this many times and return only the best result.  Implemented at level of PackRotamersMover.',
 			lower='1', default='1'
@@ -3635,6 +3637,9 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 			Option( 'stage1_2_cycles',                'Integer',    desc='Number of cycles for ab initio stage 2 in Stage1', default='2000'),
 			Option( 'stage1_3_cycles',                'Integer',    desc='Number of cycles for ab initio stage 3 in Stage1', default='2000'),
 			Option( 'stage1_4_cycles',                'Integer',    desc='Number of cycles for ab initio stage 4 in Stage1', default='400'),
+			Option( 'stage2_temperature',             'Real',       desc='Monte Carlo temperature in the stage2', default='2.0'),
+			Option( 'stage1_4_cenrot_score',          'String',     desc='Switch to cenrot model in stage1_4', default='score_cenrot_cm_stage1_4.wts'),
+
 		), # hybridize
 	), # cm
 	Option_Group( 'ms' , # multistate_design

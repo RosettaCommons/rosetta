@@ -734,7 +734,12 @@ sources = {
 
 	# W ######################################################################
 	"pilot/wendao" : [
-		"test_bbmc",
+		#"test_bbmc",
+		#"test_cen_rot",
+		#"fa_to_cenrot_score",
+ 		#"general_pair_counting",
+		#"params_opt",
+		#"cenrot_bbsc_demo",
 	],
 	"pilot/whitney" : [
 		#"whitney_identify_epitope",

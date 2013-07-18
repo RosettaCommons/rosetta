@@ -74,6 +74,7 @@
 #include <core/scoring/methods/dfire/DFIRE_EnergyCreator.hh>
 
 #include <core/pack/dunbrack/DunbrackEnergyCreator.hh>
+#include <core/pack/dunbrack/cenrot/CenRotDunEnergyCreator.hh>
 
 // define this for compiling a slimmed down version of mini libraries lacking about 3/4s of the code
 // this is required for compiling a less memory hungry version of mini for Bluegene etc..
@@ -139,6 +140,8 @@
 #include <core/scoring/methods/ResidualDipolarCouplingEnergy_RohlCreator.hh>
 #include <core/scoring/methods/SmoothCenPairEnergyCreator.hh>
 #include <core/scoring/methods/SmoothEnvEnergyCreator.hh>
+#include <core/scoring/methods/CenRotPairEnergyCreator.hh>
+#include <core/scoring/methods/CenRotEnvEnergyCreator.hh>
 #include <core/scoring/methods/CenHBEnergyCreator.hh>
 #include <core/scoring/methods/SuckerEnergyCreator.hh>
 #include <core/scoring/methods/GaussianOverlapEnergyCreator.hh>
@@ -328,6 +331,7 @@ static EnergyMethodRegistrator< scoring::methods::VDW_EnergyCreator > VDW_Energy
 static EnergyMethodRegistrator< scoring::methods::dfire::DFIRE_EnergyCreator > DFIRE_EnergyCreator_registrator;
 
 static EnergyMethodRegistrator< pack::dunbrack::DunbrackEnergyCreator > DunbrackEnergyCreator_registrator;
+static EnergyMethodRegistrator< pack::dunbrack::CenRotDunEnergyCreator > CenRotDunEnergyCreator_registrator;
 
 // define this for compiling a slimmed down version of mini libraries lacking about 3/4s of the code
 // this is required for compiling a less memory hungry version of mini for Bluegene etc..
@@ -385,6 +389,8 @@ static EnergyMethodRegistrator< scoring::methods::MembraneEnvEnergyCreator > Mem
 static EnergyMethodRegistrator< scoring::methods::MembraneEnvPenaltiesCreator > MembraneEnvPenaltiesCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SmoothCenPairEnergyCreator > SmoothCenPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SmoothEnvEnergyCreator > SmoothEnvEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::CenRotPairEnergyCreator > CenRotPairEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::CenRotEnvEnergyCreator > CenRotEnvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CenHBEnergyCreator > CenHBEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MembraneLipoCreator > MembraneLipoCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MembraneEnvSmoothEnergyCreator > MembraneEnvSmoothEnergyCreator_registrator;

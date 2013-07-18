@@ -26,6 +26,7 @@
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
+#include <core/pack/dunbrack/cenrot/SingleResidueCenrotLibrary.hh>
 // AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 
 // Project headers
@@ -508,6 +509,13 @@ RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
 		return aa_libraries_[ core::chemical::get_L_equivalent( rsd_type.rotamer_aa() ) ]; //Use the rotamer library of the equivalent L-amino acid.  (Chi values will have to be inverted).
 	}
 
+	if (rsd_type.residue_type_set().name() == chemical::CENTROID_ROT) {
+		std::string const key( rsd_type.name3() + "@" + chemical::CENTROID_ROT );
+		if ( reslibraries_.find( key ) != reslibraries_.end() ) {
+			return reslibraries_.find( key )->second;
+		} 
+	}
+
 	std::string const key( rsd_type.name()+"@"+rsd_type.residue_type_set().name() );
 	if ( reslibraries_.find( key ) != reslibraries_.end() ) {
 		return reslibraries_.find( key )->second;
@@ -902,6 +910,45 @@ RotamerLibrary::create_fa_dunbrack_libraries_from_binary()
 	} else {
 		return create_fa_dunbrack_libraries_02_from_binary();
 	}
+}
+
+void RotamerLibrary::RotamerLibrary::create_centroid_rotamer_libraries_from_ASCII()
+{
+    using namespace chemical;
+    using namespace core::pack::dunbrack::cenrot;
+
+    /// Now read in the cenrot library
+    clock_t starttime = clock();
+    utility::io::izstream libstream(basic::database::full_name("rotamer/cenrot_dunbrack.lib"));
+    //std::cout << basic::database::full_name("rotamer/centroid_rotlibs") << std::endl;
+    ResidueTypeSetCAP rsd_set=ChemicalManager::get_instance()->residue_type_set( "centroid_rot" );
+
+    chemical::AA aan = chemical::aa_unk;
+    std::string nextaa;
+    std::string thisaa;
+    libstream >> nextaa;
+
+    Size count_libraries_read( 0 );
+    while ( nextaa != "" ) {
+        aan = chemical::aa_from_name( nextaa );
+        SingleResidueCenrotLibraryOP newlib = new SingleResidueCenrotLibrary(aan);
+        /// read the rotlib for current aa and save the name of the next one
+        thisaa = nextaa;
+        nextaa = newlib->read_from_file( libstream, true );
+        ++count_libraries_read;
+
+        //fullatom lib way
+        //libraries_[ aan ] = newlib();
+        //aa_libraries_[ aan ] = newlib();
+        //libraries_ops_.push_back( newlib );
+        SingleResidueRotamerLibraryCOP dunlib( static_cast< SingleResidueRotamerLibraryCOP> ( newlib ));
+		add_residue_library(rsd_set->name_map(thisaa), dunlib);
+    }
+
+    libstream.close();
+
+    clock_t stoptime = clock();
+    TR << "Cenrot library took " << ((double)stoptime-starttime)/CLOCKS_PER_SEC << " seconds to load from ASCII" << std::endl;
 }
 
 void
@@ -1863,9 +1910,16 @@ RotamerLibrary::read_from_binary( utility::io::izstream & in )
 RotamerLibrary &
 RotamerLibrary::get_instance()
 {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
 	if ( rotamer_library_ == 0 ) {
 		rotamer_library_ = new RotamerLibrary();
 		read_dunbrack_library( *rotamer_library_ );
+
+		if ( option[ corrections::score::cenrot ] ) {
+				//hack
+				rotamer_library_->create_centroid_rotamer_libraries_from_ASCII();
+		}
 	}
 	return *rotamer_library_;
 }

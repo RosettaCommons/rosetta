@@ -294,6 +294,7 @@ private:
 	void create_fa_dunbrack_libraries_02_from_ASCII();
 	void create_fa_dunbrack_libraries_02_from_binary();
 
+	void create_centroid_rotamer_libraries_from_ASCII();
 
 	void create_fa_dunbrack_libraries_10_from_ASCII();
 	void create_fa_dunbrack_libraries_10_from_binary();
