@@ -247,8 +247,8 @@ void ResidueAtomTreeCollection::set_d( Size chi_index, Real value )
 	assert( effchi > 0 && effchi <= residue_representatives_[ active_restype_ ]->nchi() );
 	residue_uptodate_ = false;
 	atom_tree_representatives_[ active_restype_ ]->set_dof(
-		id::DOF_ID( id::AtomID( residue_representatives_[ active_restype_ ]->chi_atoms( effchi )[ baseatom ], 1 ), id::D ), 
-		            value );
+			id::DOF_ID( id::AtomID( residue_representatives_[ active_restype_ ]->chi_atoms( effchi )[ baseatom ], 1 ), id::D ),
+			value  );
 }
 
 void ResidueAtomTreeCollection::set_theta( Size chi_index, Real value )
@@ -259,7 +259,7 @@ void ResidueAtomTreeCollection::set_theta( Size chi_index, Real value )
 	assert( effchi > 0 && effchi <= residue_representatives_[ active_restype_ ]->nchi() );
 	residue_uptodate_ = false;
 	atom_tree_representatives_[ active_restype_ ]->set_dof(
-		id::DOF_ID( id::AtomID( residue_representatives_[ active_restype_ ]->chi_atoms( effchi )[ baseatom ], 1 ), id::THETA ), 
+		id::DOF_ID( id::AtomID( residue_representatives_[ active_restype_ ]->chi_atoms( effchi )[ baseatom ], 1 ), id::THETA ),
 		            numeric::constants::d::degrees_to_radians * value );
 }
 
@@ -295,7 +295,7 @@ ResidueAtomTreeCollection::set_rescoords( utility::vector1< Vector > const & coo
 
 /// @brief
 void
-ResidueAtomTreeCollection::set_rescoords( 
+ResidueAtomTreeCollection::set_rescoords(
 	utility::vector1< id::AtomID > const & atms, utility::vector1< Vector > const & coords )
 {
 	assert( atms.size() == coords.size() );

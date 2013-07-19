@@ -38,10 +38,19 @@
 #include <core/optimization/DOF_Node.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
+
+#include <ObjexxFCL/format.hh>
+using namespace ObjexxFCL::fmt;
+
+#include <basic/Tracer.hh>
 
 namespace core {
 namespace pack {
 namespace scmin {
+
+static basic::Tracer TR("core.pack.scmin.SCMinMultifunc");
 
 
 SCMinMultifunc::SCMinMultifunc(
@@ -130,6 +139,7 @@ SCMinMultifunc::operator ()( Multivec const & chi ) const
 void
 SCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dchi ) const
 {
+	using numeric::constants::d::pi;
 	using namespace scoring;
 	scminmap_.assign_dofs_to_mobile_residues( chi );
 	scminmap_.zero_atom_derivative_vectors();
@@ -215,17 +225,37 @@ SCMinMultifunc::dfunc( Multivec const & chi, Multivec & dE_dchi ) const
 	for ( Size ii = 1, iiend = scminmap_.n_dof_nodes(); ii <= iiend; ++ii ) {
 		optimization::DOF_Node & iidofnode( scminmap_.dof_node( ii ) );
 		//fpd  we assume that torsion-defined funcs have no derivatives w.r.t. d or theta DOFs
+		Real dofderiv = 0.0;
 		if (iidofnode.type() == core::id::PHI) {
 			id::TorsionID torid = scminmap_.tor_for_dof( iidofnode.dof_id() );
 			/// 4. Evaluate chi-dof derivatives
-			Real dofderiv = eval_dof_deriv_for_minnode( * g_.get_minimization_node( iidofnode.rsd() ),
+			dofderiv = eval_dof_deriv_for_minnode( * g_.get_minimization_node( iidofnode.rsd() ),
 				scminmap_.residue( iidofnode.rsd() ), pose_, junk, torid, sfxn_, sfxn_.weights() );
-
-			dE_dchi[ ii ] = optimization::torsional_derivative_from_cartesian_derivatives(
-				scminmap_.atom( iidofnode.atom_id() ), iidofnode,
-				dofderiv, numeric::constants::d::rad2deg );
 		}
+
+		// scalefactor
+		Real factor( 1.0 );
+		if ( iidofnode.type() == id::PHI ) {
+			factor = numeric::constants::d::rad2deg;
+		} else if ( iidofnode.type() == id::THETA ) {
+			factor = numeric::constants::d::rad2deg * basic::options::option[ basic::options::OptionKeys::optimization::scale_theta ]();
+			Real const theta( chi[ii] );
+			int const theta_mod ( ( static_cast< int >( std::floor( theta/180 )))%2);
+			if ( theta_mod == 1 || theta_mod == -1 ) factor *= -1.0;
+		} else if ( iidofnode.type() == id::D ) {
+			//fpd   The '0.01' here is odd
+			//fpd     the reason is that scmin works in degree-space rather than radian-space (as atom-tree-min does)
+			//fpd     we want to keep the scaling ~ the same as in atom-tree min
+			factor = (1./0.01)*basic::options::option[ basic::options::OptionKeys::optimization::scale_d ]();
+		}
+
+		dE_dchi[ ii ] = optimization::torsional_derivative_from_cartesian_derivatives(
+			scminmap_.atom( iidofnode.atom_id() ), iidofnode,
+			dofderiv, factor );
 	}
+
+	//fpd uncomment to debug
+	//scmin_numerical_derivative_check( chi, dE_dchi );
 }
 
 bool
@@ -239,40 +269,76 @@ SCMinMultifunc::dump( Multivec const & /*vars*/, Multivec const & /*vars2*/ ) co
 {}
 
 
-/*void
-SCMinMultifunc::eval_atom_deriv(
-	id::AtomID const & atom,
-	Vector & F1,
-	Vector & F2
-) const
-{
-	using namespace scoring;
+void
+SCMinMultifunc::scmin_numerical_derivative_check( Multivec const & start_vars, Multivec & dE_dvars ) const {
+	/////////////////////////////////////////////////////////////////////////////
+	// NUMERICAL DERIVATIVE CHECK
+	/////////////////////////////////////////////////////////////////////////////
 
-	Size const rsdno = atom.rsd();
-	Size const atomno = atom.atomno();
+	Size const ndofs( scminmap_.n_dof_nodes() );
 
-	conformation::Residue const & rsd = scminmap_.residue( rsdno );
+	Real const factor = 0.001; //fpd
+	Multivec dE_dvars_numeric;
+	dE_dvars_numeric.resize( ndofs, 0.0 );
 
-	MinimizationNode const & minnode =  * g_.get_minimization_node( rsdno );
-	/// 1. eval intra-residue derivatives
-	eval_atom_derivative_for_minnode( minnode, atomno, rsd, pose_, scminmap_.dm(), sfxn_, sfxn_.weights(), F1, F2 );
+	Multivec vars( start_vars );
 
-	ResSingleMinimizationData const & ressingle_min_data( minnode.res_min_data() );
-	/// 2. eval inter-residue derivatives
-	for ( graph::Node::EdgeListConstIter
-			edgeit = minnode.const_edge_list_begin(), edgeit_end = minnode.const_edge_list_end();
-			edgeit != edgeit_end; ++edgeit ) {
-		MinimizationEdge const & minedge = static_cast< MinimizationEdge const & > ( (**edgeit) );
-		Size const other_rsdno = minedge.get_other_ind( rsdno );
-		conformation::Residue const & other_rsd( scminmap_.dm()( other_rsdno ) == 0 ? scminmap_.residue( other_rsdno ) : *bg_residues_[ other_rsdno ]);
-		ResSingleMinimizationData const & other_ressingle_min_data( g_.get_minimization_node( other_rsdno )->res_min_data() );
+	for ( Size ii=1; ii<=ndofs; ++ii) {
+		Real deriv_dev = 10000.0;
 
-		eval_atom_deriv_for_minedge( minedge, atomno, rsd, other_rsd,
-			ressingle_min_data, other_ressingle_min_data,
-			pose_, scminmap_.dm(), sfxn_, sfxn_.weights(), F1, F2 );
+		vars[ii] = start_vars[ii] + factor;
+		Real const f11 = (*this)( vars );
+		vars[ii] = start_vars[ii] - factor;
+		Real const f22 = (*this)( vars );
+		Real const deriv = ( f11 - f22 ) / ( factor * 2 );
+
+		dE_dvars_numeric[ii] = deriv;
+		deriv_dev = std::min( deriv_dev, std::abs( deriv  - dE_dvars[ii] ) );
+		vars[ii] = start_vars[ii];
+
+		Real const ratio( std::abs( dE_dvars[ii] ) < 0.001 ? 0.0 : deriv / dE_dvars[ii] );
+		if ( std::abs(dE_dvars[ii]) > 0.001 || std::abs(deriv) > 0.001 ) {
+			static bool ratio_header_output( false );
+			if ( !ratio_header_output ) {
+				ratio_header_output = true;
+				TR << "ratio" << A( 6, "dofid" ) << A( 10, "doftype" ) <<
+							A( 10, "numeric" ) << A( 10, "analytic" ) << A( 10, "ratio" ) << A( 10, "vars[ii]" ) << std::endl;
+			}
+			TR << "ratio" <<  I( 6, ii ) << I( 10, scminmap_.dof_node(ii).type() ) <<
+						F( 10, 4, deriv ) <<  F( 10, 4, dE_dvars[ii] ) <<  F( 10, 4, ratio ) <<
+						F( 10, 4, start_vars[ii] ) << std::endl;
+		}
 	}
-}*/
 
+	// calculate magnitudes, dot products of gradient vectors
+	Real norm_numeric(0.0), dot(0.0);
+	Real norm(0.0);
+	for ( Size i=1; i<= ndofs; ++i ) {
+		norm += dE_dvars[i] * dE_dvars[i];
+		dot += dE_dvars[i] * dE_dvars_numeric[i];
+		norm_numeric += dE_dvars_numeric[i] * dE_dvars_numeric[i];
+	}
+	norm = std::sqrt( norm );
+	norm_numeric = std::sqrt( norm_numeric );
+
+	// handle strange cases
+	Real log_norm_ratio;
+	if ( norm < 0.001 && norm_numeric < 0.001 ) {
+		log_norm_ratio = 1.0;
+	} else if ( norm < 0.001 ) {
+		log_norm_ratio = 100.0;
+	} else if ( norm_numeric < 0.001 ) {
+		log_norm_ratio = -100.0;
+	} else {
+		log_norm_ratio = std::log( norm_numeric / norm );
+	}
+	Real const cos_theta( dot / ( norm * norm_numeric) );
+
+	TR << " norm: " << F(12,4,norm) <<
+				" norm_numeric: " << F(12,4,norm_numeric) <<
+				" cos_theta: " << F(7,4,cos_theta) <<
+				" log_norm_ratio: " << F(9,4,log_norm_ratio) << std::endl;
+}
 
 } // namespace scmin
 } // namespace pack

@@ -88,6 +88,9 @@ public:
 	void
 	dump( Multivec const & /*vars*/, Multivec const & /*vars2*/ ) const;
 
+	void
+	scmin_numerical_derivative_check( Multivec const & start_vars, Multivec & dE_dvars ) const;
+
 private:
 
 	/*void
