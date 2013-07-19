@@ -489,6 +489,8 @@ LoopsFileIO::read_loop_file_stream(
 {
 	// if the first line is a comment, consume this line and determine if the line is
 	// specifying the new file format
+	// "# FORMAT JSON" is the specification for the new format.
+	// There may or may not be a newline immediately after the "JSON" token.
 	core::Size lines_pre_read( 0 );
 	if ( loopfstream.peek() == '#' ) {
 		std::string line;
@@ -497,7 +499,7 @@ LoopsFileIO::read_loop_file_stream(
 		utility::vector1< std::string > tokens ( utility::split( line ) );
 
 		if ( tokens.size() >= 3 && tokens[2] == "FORMAT" ) {
-			if ( tokens[3] == "JSON" ) {
+			if ( tokens[3] == "JSON" || tokens[3] == "JSON\n" || tokens[3] == "JSON\r" ) {
 				JSONFormattedLoopsFileReader reader;
 				reader.set_linecount_offset( lines_pre_read );
 				LoopsFileDataOP loops = reader.read_loop_file( loopfstream, filename, prohibit_single_residue_loops );
