@@ -177,6 +177,7 @@ sources = {
 	],
 	"scoring/elec" : [
 		"FA_ElecEnergy",
+		"RNA_FA_ElecEnergy",
 	],
 	"scoring/hbonds" : [
 		"HBondDatabaseTest",

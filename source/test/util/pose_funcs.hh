@@ -46,8 +46,9 @@ pdb_string_2res_1ten_2res_trp_cage();
 
 inline
 core::pose::Pose
-fullatom_pose_from_string(
-	std::string const & pdbstring
+pose_from_string(
+	std::string const & pdbstring,
+	std::string const & residue_type_set_name
 )
 {
 	using namespace core::chemical;
@@ -57,16 +58,36 @@ fullatom_pose_from_string(
 	core::io::pdb::PDB_DReaderOptions options;
 	core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData( pdbstring, options );
 	ResidueTypeSetCAP residue_set
-		( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		( ChemicalManager::get_instance()->residue_type_set( residue_type_set_name ) );
 	core::import_pose::build_pose( fd, pose, *residue_set);
 	return pose;
 
 }
 
 inline
-core::pose::PoseOP
-fullatom_poseop_from_string(
+core::pose::Pose
+fullatom_pose_from_string(
 	std::string const & pdbstring
+)
+{
+	return pose_from_string( pdbstring, core::chemical::FA_STANDARD );
+}
+
+inline
+core::pose::Pose
+rna_pose_from_string(
+	std::string const & pdbstring
+)
+{
+	return pose_from_string( pdbstring, "rna" );
+}
+
+
+inline
+core::pose::PoseOP
+poseop_from_string(
+	std::string const & pdbstring,
+	std::string const & residue_type_set_name
 )
 {
 	using namespace core::chemical;
@@ -76,9 +97,27 @@ fullatom_poseop_from_string(
 	core::io::pdb::PDB_DReaderOptions options;
 	core::io::pdb::FileData fd = core::io::pdb::PDB_DReader::createFileData( pdbstring, options );
 	ResidueTypeSetCAP residue_set
-		( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
+		( ChemicalManager::get_instance()->residue_type_set( residue_type_set_name ) );
 	core::import_pose::build_pose( fd,*pose, *residue_set);
 	return pose;
+}
+
+inline
+core::pose::PoseOP
+fullatom_poseop_from_string(
+	std::string const & pdbstring
+)
+{
+	return poseop_from_string( pdbstring, core::chemical::FA_STANDARD );
+}
+
+inline
+core::pose::PoseOP
+rna_poseop_from_string(
+	std::string const & pdbstring
+)
+{
+	return poseop_from_string( pdbstring, "rna" );
 }
 
 inline

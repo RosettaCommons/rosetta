@@ -418,7 +418,7 @@ public:
 
 	}
 
-	/// @brief Smoothed hack-elec derivative check.
+	/// @brief Smoothed fa-elec derivative check.
 	/// Setup for minimization using a move map that says "minimize all bb and sc torsions"
 	/// Make sure that start_score matches start_func.
 	void test_elec_deriv_check_w_full_torsional_flexibility_smoothed()
@@ -449,7 +449,7 @@ public:
 
 	}
 
-	/// @brief Smoothed hack-elec derivative check.
+	/// @brief Smoothed fa-elec derivative check.
 	/// Setup for minimization using a move map that says "minimize all bb and sc torsions"
 	/// Make sure that start_score matches start_func.
 	void test_elec_deriv_check_w_full_torsional_flexibility_smoothed_wo_ddd()
@@ -482,8 +482,38 @@ public:
 	}
 
 
-	/// @brief Smoothed hack-elec finalize energy check.
-	void test_elec_finialize_energy_with_smoothing()
+	/// @brief Smoothed fa-elec finalize energy check.
+	void test_elec_nblist_autoupdate_no_smoothing()
+	{
+		using namespace core;
+		using namespace core::pose;
+		using namespace core::scoring;
+		using namespace core::scoring::methods;
+		using namespace core::optimization;
+
+		Pose pose = pdb1ubq5to13_pose();
+		methods::EnergyMethodOptions em_options;
+		em_options.smooth_fa_elec( false );
+
+		ScoreFunction sfxn;
+		sfxn.set_energy_method_options( em_options );
+		sfxn.set_weight( fa_elec, 0.75 );
+
+		kinematics::MoveMap movemap;
+		movemap.set_bb( true );
+		movemap.set_chi( true );
+
+		AtomDerivValidator adv( pose, sfxn, movemap );
+		adv.set_nblist_auto_update( true );
+
+		/// This call runs a numeric deriv check on all the free dofs in the system and makes sure
+		/// that the analytic norm matches the numeric norm to 1e-3.
+		adv.simple_deriv_check( true, 1e-6 );
+
+	}
+
+	/// @brief Smoothed fa-elec finalize energy check.
+	void test_elec_nblist_autoupdate_with_smoothing()
 	{
 		using namespace core;
 		using namespace core::pose;
@@ -503,12 +533,12 @@ public:
 		movemap.set_bb( true );
 		movemap.set_chi( true );
 
-		core::optimization::MinimizerOptions m_options( "dfpmin", 1e-1, true );
-		m_options.nblist_auto_update(true);
+		AtomDerivValidator adv( pose, sfxn, movemap );
+		adv.set_nblist_auto_update( true );
 
-		core::optimization::AtomTreeMinimizer minimizer;
-		minimizer.run( pose, movemap, sfxn, m_options);
-
+		/// This call runs a numeric deriv check on all the free dofs in the system and makes sure
+		/// that the analytic norm matches the numeric norm to 1e-3.
+		adv.simple_deriv_check( true, 1e-6 );
 
 	}
 

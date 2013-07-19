@@ -456,11 +456,13 @@ FA_ElecEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	ResPairMinimizationData const & min_data,
-	pose::Pose const &,
+	pose::Pose const & pose,
 	ScoreFunction const &,
 	EnergyMap & emap
 ) const
 {
+	if ( pose.energies().use_nblist_auto_update() ) return;
+
 	assert( rsd1.seqpos() < rsd2.seqpos() );
 	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
@@ -476,7 +478,7 @@ void
 FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	pose::Pose const &,
+	pose::Pose const & pose,
 	ScoreFunction const &,
 	kinematics::MinimizerMapBase const &,
 	ResSingleMinimizationData const &,
@@ -486,6 +488,8 @@ FA_ElecEnergy::setup_for_minimizing_for_residue_pair(
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	if ( pose.energies().use_nblist_auto_update() ) return;
+
 	etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
 	assert( rsd1.seqpos() < rsd2.seqpos() );
 
@@ -510,16 +514,18 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 	ResSingleMinimizationData const &,
 	ResSingleMinimizationData const &,
 	ResPairMinimizationData const & min_data,
-	pose::Pose const &, // provides context
+	pose::Pose const & pose, // provides context
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & r1_atom_derivs,
 	utility::vector1< DerivVectorPair > & r2_atom_derivs
 ) const
 {
+	if ( pose.energies().use_nblist_auto_update() ) return;
+
 	assert( rsd1.seqpos() < rsd2.seqpos() );
 	assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
-	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 
+	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
 	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
 	weight_triple wtrip;
@@ -551,6 +557,62 @@ FA_ElecEnergy::eval_residue_pair_derivatives(
 
 }
 
+/// @details for use only with the nblist auto-update algorithm
+void
+FA_ElecEnergy::eval_atom_derivative(
+	id::AtomID const & atom_id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &,// domain_map,
+	ScoreFunction const &,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
+) const
+{
+	using namespace etable::count_pair;
+	if ( ! pose.energies().use_nblist_auto_update() ) return;
+
+	// what is my charge?
+	Size const i( atom_id.rsd() );
+	Size const ii( atom_id.atomno() );
+	conformation::Residue const & irsd( pose.residue( i ) );
+	Real const ii_charge( irsd.atomic_charge( ii ) );
+
+	if ( ii_charge == 0.0 ) return;
+
+	Vector const & ii_xyz( irsd.xyz(ii) );
+	bool const ii_isbb( irsd.atom_is_backbone( ii ) );
+
+	assert( pose.energies().use_nblist() );
+	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
+	AtomNeighbors const & nbrs( nblist.atom_neighbors(i,ii) );
+
+	weight_triple wtrip;
+	setup_weight_triple( weights, wtrip );
+
+	for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(),
+    	it2e=nbrs.end(); it2 != it2e; ++it2 ) {
+		scoring::AtomNeighbor const & nbr( *it2 );
+		Size const j( nbr.rsd() );
+		Size const jj( nbr.atomno() );
+		conformation::Residue const & jrsd( pose.residue( j ) );
+
+		Real const jj_charge( jrsd.atomic_charge(jj) );
+		if ( jj_charge == 0.0 ) continue; /// should prune out such atoms when constructing the neighborlist!
+		Vector const & jj_xyz( jrsd.xyz( jj ) );
+		Vector f2 = ( ii_xyz - jj_xyz );
+		Real const dis2( f2.length_squared() );
+		Real const dE_dr_over_r = nbr.weight() * coulomb().eval_dfa_elecE_dr_over_r( dis2, ii_charge, jj_charge );
+		if ( dE_dr_over_r != 0.0 ) {
+			Real sfxn_weight = elec_weight( ii_isbb, jrsd.atom_is_backbone( jj ), wtrip );
+			Vector f1 = ii_xyz.cross( jj_xyz );
+			f1 *= dE_dr_over_r * sfxn_weight;
+			f2 *= dE_dr_over_r * sfxn_weight;
+			F1 += f1;
+			F2 += f2;
+		}
+	}
+}
 
 void
 FA_ElecEnergy::backbone_backbone_energy(

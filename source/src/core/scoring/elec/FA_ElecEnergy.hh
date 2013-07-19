@@ -164,6 +164,10 @@ public:
 		ResPairMinimizationData & data_cache
 	) const;
 
+	/// @brief Evaluate the atom derivative f1/f2 vectors for all atoms on rsd1
+	/// in response to the atoms on rsd2, and all the atoms on rsd2 as they
+	/// in response to the atoms on rsd1.  This method is used with the
+	/// MinimizationGraph and when nblist_autoupdate is not in use.
 	virtual
 	void
 	eval_residue_pair_derivatives(
@@ -177,6 +181,22 @@ public:
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const;
+
+	/// @brief Evaluate the derivative vectors for a particular atom in a given
+	/// (asymmetric) pose when nblist_autoupdate is being used.  nblist_autoupdate
+	/// cannot be used with symmetric poses, in rtmin, or in minpack.
+	virtual
+	void
+	eval_atom_derivative(
+		id::AtomID const & atom_id,
+		pose::Pose const & pose,
+		kinematics::DomainMap const & domain_map,
+		ScoreFunction const &,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
+
 
 	virtual
 	void
