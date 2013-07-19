@@ -15,7 +15,7 @@ do
 	else
 	echo $executable "not found, REMOVE" $directory
 	git rm -r tests/$directory #--dry-run
-	echo "rm -r ref/$directory"
+	rm -r ref/$directory
     fi
 done
 
