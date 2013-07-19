@@ -195,6 +195,7 @@ sources = {
 		"LoopOver",
 		"LoopRemodel",
 		"MapHotspot",
+		"PatchdockTransform",
 		"PeptideStapleDesignMover",
 		"PlacementAuctionMover",
 		"PlacementMinimizationMover",

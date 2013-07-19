@@ -172,6 +172,7 @@
 #include <protocols/protein_interface_design/movers/LoopOverCreator.hh>
 #include <protocols/protein_interface_design/movers/LoopRemodelCreator.hh>
 #include <protocols/protein_interface_design/movers/MapHotspotCreator.hh>
+#include <protocols/protein_interface_design/movers/PatchdockTransformCreator.hh>
 #include <protocols/protein_interface_design/movers/PeptideStapleDesignMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/PlacementAuctionMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/PlacementMinimizationMoverCreator.hh>

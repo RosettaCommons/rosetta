@@ -44,6 +44,8 @@
 
 using namespace core;
 using namespace core::scoring;
+using basic::options::option;
+using namespace basic::options::OptionKeys;
 
 static basic::Tracer TR( "protocols.protein_interface_design.read_patchdock" );
 static numeric::random::RandomGenerator RG( 15031972 ); // <- Magic number, do not change it!!!
@@ -61,7 +63,17 @@ namespace protein_interface_design {
 
 PatchdockReader::PatchdockReader(){
 	clear_internals();
+  random_entry( option[ parser::patchdock_random_entry ].user() );
+	if( random_entry() ){
+			utility::vector1< core::Size > entry_num_extrema = option[ parser::patchdock_random_entry ]();
+			runtime_assert( entry_num_extrema.size() == 2 );
+			from_entry( entry_num_extrema[ 1 ] );
+			to_entry( entry_num_extrema[ 2 ] );
+	}//fi patchdock_random_entry
+	if( option[ parser::patchdock ].user() )
+		patchdock_fname_ = option[ parser::patchdock ]();
 }
+
 PatchdockReader::~PatchdockReader() {}
 
 void
@@ -133,7 +145,7 @@ PatchdockReader::read_patchdock_entry()
 //@detailed transform a chain within the pose according to t. The transformation computed here is
 //based on patchdock's transOutput.pl and pdb_trans
 void
-transform_pose( core::pose::Pose & pose, core::Size const chain, Transformation const & t )
+PatchdockReader::transform_pose( core::pose::Pose & pose, core::Size const chain, Transformation const & t )
 {
 	core::Size const chain_begin( pose.conformation().chain_begin( chain ) );
 	core::Size const chain_end( pose.conformation().chain_end( chain ) );
@@ -180,8 +192,6 @@ transform_pose( core::pose::Pose & pose, core::Size const chain, Transformation 
 		}
 	}
 	// detect disulfides
-	using basic::options::option;
-	using namespace basic::options::OptionKeys;
 	if ( option[ in::detect_disulf ].user() ?
 			option[ in::detect_disulf ]() : // detect_disulf true
 			pose.is_fullatom() // detect_disulf default but fa pose
@@ -203,55 +213,44 @@ PatchdockReader::read_poses( core::pose::Pose & input_pose, std::string & input_
 void
 PatchdockReader::read_patchdock( std::string & input_tag, std::string & native_tag )
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
 	patchdock_entry_num_ = 0;
-	patchdock_fname_ = "";
 	bool const patchdock( option[ parser::patchdock ].user() );
-	if( patchdock ) {
-		patchdock_fname_ = option[ parser::patchdock ]();
-		if( patchdock_fname_ == "" ) { // use default patchdock fname ( 1jjj_2xxx.pdb.gz -> 1jjj_2xxx.patchdock )
-			core::Size const filename_end( input_tag.find_first_of( "." ) );
+	if( patchdock_fname_ == "" ) { // use default patchdock fname ( 1jjj_2xxx.pdb.gz -> 1jjj_2xxx.patchdock )
+		core::Size const filename_end( input_tag.find_first_of( "." ) );
 
-			patchdock_fname_ = input_tag.substr( 0, filename_end ) + ".patchdock";
+		patchdock_fname_ = input_tag.substr( 0, filename_end ) + ".patchdock";
+	}
+	TR<<"Reading from patchdock file name: "<<patchdock_fname_<<std::endl;
+	core::Size const number_of_entries = number_of_patchdock_entries();
+	if( number_of_entries == 0 )
+		utility_exit_with_message_status( "No patchdock entries found. Aborting", 0 );
+	if( random_entry() ) {
+		runtime_assert( to_entry() >= from_entry() );
+		runtime_assert( from_entry() > 0 );
+
+		TR<<number_of_entries<<" entries in patchdock file "<<patchdock_fname_<<std::endl;
+		core::Size const actual_last_entry( std::min( to_entry(), number_of_entries ) );
+		TR<<"sampling a number between "<<from_entry()<<" and "<<actual_last_entry<<std::endl;
+
+		patchdock_entry_num_ = ( core::Size ) floor( RG.uniform() * ( actual_last_entry - from_entry() + 1 ) ) + from_entry();
+		runtime_assert( patchdock_entry_num_ <= actual_last_entry );
+		runtime_assert( patchdock_entry_num_ >= from_entry() );
+		std::stringstream ss;
+		ss << "." << patchdock_entry_num_;
+		option[ out::user_tag ].value( ss.str() ); // to set the output tag
+	}
+	else{
+		core::Size const entrynum_begin( input_tag.find_first_of( "." ) );
+		core::Size const entrynum_end( input_tag.find_last_of( "." ) );
+  	std::stringstream ss( input_tag.substr( entrynum_begin+1, entrynum_end - entrynum_begin ) );
+		ss >> patchdock_entry_num_;
+		if( patchdock_entry_num_ > number_of_entries ){
+			TR<<"number of patchdock entries exceeded. You've asked for entry "<< patchdock_entry_num_<<" but only "<<number_of_entries<<" entries were found"<<std::endl;
+			utility_exit_with_message_status("aborting.", 0 );
 		}
-		TR<<"Reading from patchdock file name: "<<patchdock_fname_<<std::endl;
-		bool const patchdock_random_entry( option[ parser::patchdock_random_entry ].user() );
-		core::Size const number_of_entries = number_of_patchdock_entries();
-		if( number_of_entries == 0 )
-			utility_exit_with_message_status( "No patchdock entries found. Aborting", 0 );
-		if( patchdock_random_entry ) {
-			utility::vector1< core::Size > entry_num_extrema = option[ parser::patchdock_random_entry ]();
-
-			runtime_assert( entry_num_extrema.size() == 2 );
-			runtime_assert( entry_num_extrema[ 1 ] <= entry_num_extrema[ 2 ] );
-			runtime_assert( entry_num_extrema[ 1 ] > 0 );
-
-			TR<<number_of_entries<<" entries in patchdock file "<<patchdock_fname_<<std::endl;
-			entry_num_extrema[ 2 ] = std::min( entry_num_extrema[ 2 ], number_of_entries );
-			TR<<"sampling a number between "<<entry_num_extrema[ 1 ]<<" and "<<entry_num_extrema[ 2 ]<<std::endl;
-
-			patchdock_entry_num_ = ( core::Size ) floor( RG.uniform() * ( entry_num_extrema[ 2 ] - entry_num_extrema[ 1 ] ) ) + entry_num_extrema[ 1 ];
-			runtime_assert( patchdock_entry_num_ <= entry_num_extrema[ 2 ] );
-			runtime_assert( patchdock_entry_num_ >= entry_num_extrema[ 1 ] );
-			std::stringstream ss;
-			ss << "." << patchdock_entry_num_;
-			option[ out::user_tag ].value( ss.str() ); // to set the output tag
-		}
-		else{
-			core::Size const entrynum_begin( input_tag.find_first_of( "." ) );
-			core::Size const entrynum_end( input_tag.find_last_of( "." ) );
-	  	std::stringstream ss( input_tag.substr( entrynum_begin+1, entrynum_end - entrynum_begin ) );
-			ss >> patchdock_entry_num_;
-			if( patchdock_entry_num_ > number_of_entries ){
-				TR<<"number of patchdock entries exceeded. You've asked for entry "<< patchdock_entry_num_<<" but only "<<number_of_entries<<" entries were found"<<std::endl;
-				utility_exit_with_message_status("aborting.", 0 );
-			}
-			if( input_tag == native_tag ){
-				input_tag.replace( entrynum_begin, entrynum_end - entrynum_begin + 1, "." );
-				native_tag.replace( entrynum_begin, entrynum_end - entrynum_begin + 1, "." );
-			}
+		if( input_tag == native_tag ){
+			input_tag.replace( entrynum_begin, entrynum_end - entrynum_begin + 1, "." );
+			native_tag.replace( entrynum_begin, entrynum_end - entrynum_begin + 1, "." );
 		}
 	}
 }
@@ -263,9 +262,6 @@ PatchdockReader::read_patchdock( std::string & input_tag, std::string & native_t
 void
 PatchdockReader::read_poses( core::pose::Pose & input_pose, core::pose::Pose & native_pose, std::string & input_tag, std::string & native_tag )
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
 	if( saved_input_tag_ == input_tag && saved_native_tag_ == native_tag )
 	{//we've already read this pose, do not go to disk again
 		input_pose = *saved_input_pose_;

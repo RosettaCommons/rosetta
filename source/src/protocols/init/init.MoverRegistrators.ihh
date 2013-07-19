@@ -187,6 +187,7 @@ static MoverRegistrator< protein_interface_design::movers::LoopMoverFromCommandL
 static MoverRegistrator< protein_interface_design::movers::LoopOverCreator > reg_LoopOverCreator;
 static MoverRegistrator< protein_interface_design::movers::LoopRemodelCreator > reg_LoopRemodelCreator;
 static MoverRegistrator< protein_interface_design::movers::MapHotspotCreator > reg_MapHotspotCreator;
+static MoverRegistrator< protein_interface_design::movers::PatchdockTransformCreator > reg_PatchdockTransformCreator;
 static MoverRegistrator< protein_interface_design::movers::PeptideStapleDesignMoverCreator > reg_PeptideStapleDesignMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::PlacementAuctionMoverCreator > reg_PlacementAuctionMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::PlacementMinimizationMoverCreator > reg_PlacementMinimizationMoverCreator;
