@@ -151,6 +151,12 @@ protected:
     core::scoring::ScoreFunctionOP local_scorefxn
   );
 
+	/// @brief Use for constraint scaling -- sets the coordinate constraint weight given a scorefxn, energy map, and weight.
+	/// TL - Derived classes which may want to scale more than coordinate constraints can override this without forking apply()
+	void
+	set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
+												 core::scoring::EnergyMap const & full_weights,
+												 core::Real const weight ) const;
 private:
 
 	void read_script_file( const std::string &script_file, core::Size standard_repeats = 5  );

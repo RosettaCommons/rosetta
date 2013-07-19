@@ -366,6 +366,7 @@ FastRelax::parse_my_tag(
 
 	bool batch = tag->getOption< bool >( "batch", false );
 	cartesian (tag->getOption< bool >( "cartesian", false ) );
+	ramp_down_constraints( tag->getOption< bool >( "ramp_down_constraints", ramp_down_constraints() ) );
 
 	if ( tag->getOption< bool >( "bondangle", false ) ) {
 		minimize_bond_angles_ = true;
@@ -387,7 +388,6 @@ FastRelax::parse_my_tag(
 		if ( cartesian_ || minimize_bond_angles_ || minimize_bond_lengths_ )
 			min_type_ = "lbfgs_armijo_nonmonotone";
 	}
-
 
 	if (batch) {
 		set_script_to_batchrelax_default( default_repeats_ );
@@ -541,6 +541,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 		return;
 	}
 
+	// TL: This needs to be here because parse_my_tag uses the pose at parsetime
 	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() ); //Didn't we already set this in parse_my_tag?
 
 #if defined GL_GRAPHICS
@@ -791,8 +792,8 @@ void FastRelax::apply( core::pose::Pose & pose ){
 			local_scorefxn->set_weight( scoring::fa_rep, full_weights[ scoring::fa_rep ] * cmd.param1 );
 
 			// The third paramter is the coordinate constraint weight
-			if( constrain_coords() && (cmd.nparams >= 3) ){
-				 local_scorefxn->set_weight( scoring::coordinate_constraint,  full_weights[ scoring::coordinate_constraint ] * cmd.param3 );
+			if( ( constrain_coords() || ramp_down_constraints() ) && (cmd.nparams >= 3) ){
+				set_constraint_weight( local_scorefxn, full_weights, cmd.param3 );
 			}
 
 			// decide when to call ramady repair code
@@ -1542,6 +1543,12 @@ void FastRelax::batch_apply(
 
 }
 
+void
+FastRelax::set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
+											 core::scoring::EnergyMap const & full_weights,
+											 core::Real const weight ) const {
+	local_scorefxn->set_weight( scoring::coordinate_constraint,  full_weights[ scoring::coordinate_constraint ] * weight );
+}
 
 } // namespace relax
 
