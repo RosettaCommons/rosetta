@@ -3880,7 +3880,7 @@ void ElectronDensity::dCCdx_fastRes(
 	chemical::AtomTypeSet const & atom_type_set( rsd.atom_type_set() );
 	std::string elt_i = atom_type_set[ rsd.atom_type_index( atmid ) ].element();
 	OneGaussianScattering sig_j = get_A( elt_i );
-	core::Real B = pose.pdb_info()->temperature( rsd.seqpos(), atmid );
+	core::Real B = pose.pdb_info() ? pose.pdb_info()->temperature( rsd.seqpos(), atmid ) : effectiveB;
 
 	core::Real k = sig_j.k( B );
 	core::Real kbin = (k - kmin_)/kstep_ + 1;
@@ -3974,7 +3974,7 @@ ElectronDensity::dCCdB_fastRes(
 }
 
 //  Compute the gradient (fast density score) w.r.t B factors
-Real
+void
 ElectronDensity::dCCdBs(
 	core::pose::Pose const &pose,
 	utility::vector1< core::Real>  & dE_dvars

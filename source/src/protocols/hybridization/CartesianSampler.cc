@@ -49,6 +49,7 @@
 #include <core/pose/Remarks.hh>
 #include <core/pose/selection.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/import_pose/import_pose.hh>
 
 #include <core/pose/util.hh>
 
@@ -72,6 +73,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/USOGFunc.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -159,6 +162,7 @@ CartesianSampler::init() {
 
 	overlap_ = 2;
 	ncycles_ = 250;
+	input_as_ref_ = false;
 
 	fragment_bias_strategy_ = "uniform";
 
@@ -291,6 +295,68 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		}
 	}
 }
+
+
+// apply constraints from ref_pose into current pose
+void
+CartesianSampler::apply_constraints( core::pose::Pose &pose )
+{
+	using namespace core::scoring::constraints;
+
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		core::conformation::symmetry::SymmetricConformation & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+	}
+
+	core::Size MINSEQSEP = 8;
+	core::Real MAXDIST = 12.0;
+	core::Size GAPBUFFER = 3;
+	core::Real COORDDEV = 1.0;
+
+	pose.remove_constraints();
+
+	core::Size nres_tgt = get_num_residues_nonvirt( pose );
+
+	utility::vector1< utility::vector1< core::Real > > tgt_dists(nres_tgt);
+	utility::vector1< utility::vector1< core::Real > > tgt_weights(nres_tgt);
+
+	for (core::Size j=1; j < ref_model_.total_residue(); ++j ) {
+		if (!ref_model_.residue_type(j).is_protein()) continue;
+
+		for (core::Size k=j+1; k < ref_model_.total_residue(); ++k ) {
+			if (!ref_model_.residue_type(k).is_protein()) continue;
+			if (ref_model_.pdb_info()->number(k) - ref_model_.pdb_info()->number(j) < (int)MINSEQSEP) continue;
+
+			core::Real dist = ref_model_.residue(j).xyz(2).distance( ref_model_.residue(k).xyz(2) );
+
+			if ( dist <= MAXDIST ) {
+				core::Size resid_j = ref_model_.pdb_info()->number(j);
+				core::Size resid_k = ref_model_.pdb_info()->number(k);
+				char chnid_j = ref_model_.pdb_info()->chain(j);
+				char chnid_k = ref_model_.pdb_info()->chain(k);
+
+				core::Size tgt_resid_j = pose.pdb_info()->pdb2pose(chnid_j, resid_j);
+				core::Size tgt_resid_k = pose.pdb_info()->pdb2pose(chnid_k, resid_k);
+
+				runtime_assert ( tgt_resid_j > 0 );
+				runtime_assert ( tgt_resid_k > 0 );
+
+				// ???
+				if (symm_info && !symm_info->bb_is_independent( tgt_resid_j ) ) continue;
+				if (symm_info && !symm_info->bb_is_independent( tgt_resid_k ) )	continue;
+
+				pose.add_constraint(
+						new AtomPairConstraint( core::id::AtomID(2,tgt_resid_j), core::id::AtomID(2,tgt_resid_k),
+							new USOGFunc( dist, COORDDEV )
+						)
+					);
+			}
+		}
+	}
+}
+
 
 void
 CartesianSampler::compute_fragment_bias(Pose & pose) {
@@ -444,9 +510,11 @@ CartesianSampler::apply( Pose & pose ) {
 	  restore_sc = new protocols::simple_moves::ReturnSidechainMover( pose );
 		protocols::moves::MoverOP tocen = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
 		tocen->apply( pose );
-
-		// to do: save b factors
 	}
+
+	// constraints to reference model
+	if (input_as_ref_) ref_model_ = pose;
+	apply_constraints( pose );
 
 	// minimizer
 	core::optimization::MinimizerOptions options_minilbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
@@ -510,7 +578,7 @@ CartesianSampler::parse_my_tag(
 {
 	using namespace core::scoring;
 
-	// scorfxns
+	// scorefunction
 	if( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );
 		set_scorefunction ( data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) );
@@ -525,6 +593,14 @@ CartesianSampler::parse_my_tag(
 	}
 	if( tag->hasOption( "strategy" ) ) {
 		fragment_bias_strategy_ = tag->getOption<std::string>( "strategy" );
+	}
+
+	if( tag->hasOption( "reference_model" ) ) {
+		std::string ref_model_pdb = tag->getOption<std::string>( "reference_model" );
+		if (ref_model_pdb != "none")
+			core::import_pose::pose_from_pdb( ref_model_, ref_model_pdb );
+	} else {
+		input_as_ref_ = true;
 	}
 
 	if( tag->hasOption( "residues" ) ) {

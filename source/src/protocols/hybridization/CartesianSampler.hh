@@ -53,7 +53,7 @@ namespace hybridization {
 using namespace core;
 using namespace protocols::moves;
 using namespace protocols::loops;
-	
+
 class CartesianSampler: public protocols::moves::Mover {
 public:
 	CartesianSampler();
@@ -75,7 +75,7 @@ public:
 	std::string	get_name() const { return "CartesianSampler"; }
 
 	void parse_my_tag(
-		utility::tag::TagPtr const tag, 
+		utility::tag::TagPtr const tag,
 		moves::DataMap & data,
 		filters::Filters_map const & ,
 		moves::Movers_map const & ,
@@ -88,10 +88,14 @@ protected:
 	// apply a sequence fragment
 	void apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame );
 
-	// 
+	//
 	void compute_fragment_bias( core::pose::Pose & pose );
 
+	//
 	void update_fragment_library_pointers( );
+
+	//
+	void apply_constraints( core::pose::Pose & pose );
 
 private:
 	// parameters
@@ -106,12 +110,16 @@ private:
 	utility::vector1<numeric::random::WeightedSampler> frag_bias_;
 	std::set<core::Size> user_pos_;
 
+	// reference model
+	core::pose::Pose ref_model_;
+	bool input_as_ref_;
+
 	// scorefunctions
 	core::scoring::ScoreFunctionOP scorefxn_;
 }; //class CartesianSampler
-	
-} // hybridize 
-//} // comparative_modeling 
+
+} // hybridize
+//} // comparative_modeling
 } // protocols
 
 #endif

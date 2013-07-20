@@ -257,7 +257,7 @@ public:
 	);
 
 	/// @brief calculate all gradients of CC w.r.t B factors (slow more precise version)
-	Real
+	void
 	dCCdBs(
 		core::pose::Pose const &pose,
 		utility::vector1< core::Real>  & dE_dvars
