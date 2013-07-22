@@ -25,7 +25,7 @@
 #include <core/scoring/etable/etrie/CountPairData_1_2.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_3.fwd.hh>
 #include <core/scoring/etable/etrie/CountPairDataGeneric.fwd.hh>
-#include <core/scoring/hbonds/hbtrie/HBCPData.fwd.hh>
+#include <core/scoring/hbonds/hbtrie/HBCPData.hh> // we need full header here because we have inline template function with HBCPData as template specifier
 
 #ifdef WIN32 //VC++ needs full class declaration
  #include <core/scoring/etable/etrie/EtableAtom.hh> // WIN32 INCLUDE
