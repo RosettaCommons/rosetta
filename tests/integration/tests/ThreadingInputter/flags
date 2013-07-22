@@ -56,3 +56,5 @@
 
 -out:nstruct 1
 -run:test_cycles
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

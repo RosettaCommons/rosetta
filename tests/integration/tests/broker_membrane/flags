@@ -17,3 +17,5 @@
 
 -rmsd_select input/native/_core2.rigid input/native/_core3.rigid input/native/_core4.rigid 
 -in:file:native input/native/native.pdb
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

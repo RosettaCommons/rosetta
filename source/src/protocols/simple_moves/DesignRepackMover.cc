@@ -87,14 +87,14 @@ namespace simple_moves {
 using namespace protocols::moves;
 
 DesignRepackMover::DesignRepackMover() : protocols::moves::Mover( "DesignRepackMover" ),
-  repack_partner1_( false ), repack_partner2_( false ), design_partner1_( false ), design_partner2_( false ), min_rb_set_( false ), min_sc_set_( false ), min_bb_set_( false ), interface_distance_cutoff_( 8.0 ), repack_non_ala_( true ), optimize_foldtree_( true ), automatic_repacking_definition_( true ), use_preset_task_( false ), symmetry_( false )
+  repack_partner1_( false ), repack_partner2_( false ), design_partner1_( false ), design_partner2_( false ), min_rb_set_( false ), min_sc_set_( false ), min_bb_set_( false ), interface_distance_cutoff_( 20.0 ), repack_non_ala_( true ), optimize_foldtree_( true ), automatic_repacking_definition_( true ), use_preset_task_( false ), symmetry_( false )
 {
 	allowed_aas_.resize( core::chemical::num_canonical_aas, true );
 	prevent_repacking_.clear();
 	restrict_to_repacking_.clear();
 }
 
-DesignRepackMover::DesignRepackMover( std::string const name ) : protocols::moves::Mover( name ), repack_partner1_( false ), repack_partner2_( false ), design_partner1_( false ), design_partner2_( false ), min_rb_set_( false ), min_sc_set_( false ), min_bb_set_( false ), interface_distance_cutoff_( 8.0 ), repack_non_ala_( true ), optimize_foldtree_( true ), automatic_repacking_definition_( true ), use_preset_task_( false ), symmetry_( false )
+DesignRepackMover::DesignRepackMover( std::string const name ) : protocols::moves::Mover( name ), repack_partner1_( false ), repack_partner2_( false ), design_partner1_( false ), design_partner2_( false ), min_rb_set_( false ), min_sc_set_( false ), min_bb_set_( false ), interface_distance_cutoff_( 20.0 ), repack_non_ala_( true ), optimize_foldtree_( true ), automatic_repacking_definition_( true ), use_preset_task_( false ), symmetry_( false )
 {
 	allowed_aas_.resize( core::chemical::num_canonical_aas, true );
 }
@@ -338,7 +338,7 @@ DesignRepackMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::move
 		utility::vector1< bool > minsc( pose.total_residue(), tag->getOption< bool >( "minimize_sc", 1 ));
 		min_sc( minsc );
 	}
-	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 8.0 );
+	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 20.0 );
 	utility::vector0< TagPtr > const repack_tags( tag->getTags() );
 	for( utility::vector0< TagPtr >::const_iterator repack_it=repack_tags.begin(); repack_it!=repack_tags.end(); ++repack_it ) {
 		TagPtr const repack_ptr = *repack_it;

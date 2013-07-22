@@ -10,3 +10,5 @@
 -mute core.io.database
 -mute core.util.prof
 -mute protocols.jd2.JobDistributor
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

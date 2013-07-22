@@ -1,2 +1,3 @@
 -rot_lib_options_file NVL_rot_lib_options_-60_-40.in
-#-patch_selectors MethylatedCtermProteinFull ActylatedNtermProteinFull
+#-patch_selectors MethylatedCtermProteinFull ActylatedNtermProteinFull-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

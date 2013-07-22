@@ -6,3 +6,5 @@
 -parser:protocol RotamerProbability.xml
 -overwrite
 -use_input_sc
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

@@ -30,3 +30,5 @@
 -mute protocols.jd2.PDBJobInputter
 -mute core.pack.task
 -mute protocols.moves.MonteCarlo
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

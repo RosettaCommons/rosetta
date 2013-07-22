@@ -1,4 +1,5 @@
 -s chunk002_1lnt_RNA.pdb
 -out:file:silent MINIMIZE.out
 -native chunk002_1lnt_RNA.pdb
--analytic_etable_evaluation 0
+-analytic_etable_evaluation 0-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

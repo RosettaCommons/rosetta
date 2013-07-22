@@ -1,2 +1,4 @@
 -in:file:s input/S_1TR1A_1_0001.pdb
 -out:file:silent output/per_residue_scores.out
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

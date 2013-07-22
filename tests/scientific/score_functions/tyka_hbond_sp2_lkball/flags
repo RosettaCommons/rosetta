@@ -5,3 +5,5 @@
 -scale_rb 1
 -scale_theta 1
 -score::bonded_params 300 150 40 40 40
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

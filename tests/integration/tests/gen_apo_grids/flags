@@ -10,3 +10,5 @@
 -packstat:min_cluster_overlap 1.0 
 -packstat:min_cav_ball_radius 1.0
 -packstat:min_surface_accessibility 1.4
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

@@ -210,8 +210,8 @@ private:
 	core::Size from_res_, to_res_, saved_from_res_, saved_to_res_;
 	std::string source_pdb_;
 	bool ccd_;//dflt true; do ccd?
-	core::Real dihedral_const_;//dflt 0; gideonla
-	core::Real coor_const_;//dflt 0; gideonla
+	core::Real dihedral_const_;//dflt 1; gideonla
+	core::Real coor_const_;//dflt 1; gideonla
 	core::Real design_shell_;//dflt 6.0 gideonla
 	core::Real pack_shell_;//dflt 8.0 gideonla
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt score12 with reweighted sheet weight

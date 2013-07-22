@@ -7,3 +7,5 @@
 -ignore_unrecognized_res
 -score:weights pH_standard.wts
 -no_output
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

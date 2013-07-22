@@ -23,3 +23,5 @@
 -mute core.util.prof ## don't show timing info
 -mute core.io.database ## don't show database info
 -run:test_cycles ## to make integration test fast
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

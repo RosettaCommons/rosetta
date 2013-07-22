@@ -5,3 +5,5 @@
 #so this test can cover some other related functionality
 -s inputs/dummy_align_input.pdb
 -match::scaffold_active_site_residues inputs/dummy.pos
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

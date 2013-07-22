@@ -4,4 +4,5 @@
 -edensity:mapfile ../../tests/repack_with_elec_dens/r1xu1sf_2mFobs-DFmodel_map_coeffs_1.ccp4
 -edensity:mapreso 1.9
 -edensity:grid_spacing 3 # for production runs consider using '45% mapreso' 
--parser:script_vars symmdef=../../tests/repack_with_elec_dens/inputs/1xu1FH_D.symm
+-parser:script_vars symmdef=../../tests/repack_with_elec_dens/inputs/1xu1FH_D.symm-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

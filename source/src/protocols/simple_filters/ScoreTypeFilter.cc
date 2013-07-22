@@ -38,6 +38,13 @@
 #include <utility/excn/Exceptions.hh>
 #include <protocols/elscripts/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
+#include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/option_macros.hh>
+#include <core/pose/util.hh>
 
 namespace protocols{
 namespace simple_filters {

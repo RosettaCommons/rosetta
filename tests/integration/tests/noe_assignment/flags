@@ -2,3 +2,5 @@
  -noesy:in:peaks cn5.peaks n.peaks ali.peaks aro.peaks 
  -noesy:in:resonances resonances.prot 
  -residues:patch_selectors CENTROID_HA
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

@@ -1,3 +1,5 @@
 -in:file:s input/1dikA.pdb input/1ezaA.pdb input/1ggoA.pdb
 -in:file:rescore true
 -out:file:silent_struct_type score
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

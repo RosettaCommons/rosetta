@@ -11,3 +11,5 @@
 -mute			core.util.prof
 -mute			core.chemical
 -mute			protocols.jumping
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

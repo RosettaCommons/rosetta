@@ -5,3 +5,5 @@
 -in:file:silent ../../tests/cluster/t288_.score.50.out
 -in:file:silent_struct_type binary
 -nooutput
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

@@ -121,7 +121,7 @@ BuildAlaPose::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filters:
 	design_partner2_ = tag->getOption<bool>( "partner2", 1 );
 	repack_partner1_ = design_partner1_;
 	repack_partner2_ = design_partner2_;
-	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 8.0 );
+	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 20.0 );
 
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	TR<<"defined BuildAlaPose mover "<<" for partners "<<( repack_partner1_ ? "1" : "" )<<( repack_partner2_ ? "2": "" )<<" with distance cutoff "<<

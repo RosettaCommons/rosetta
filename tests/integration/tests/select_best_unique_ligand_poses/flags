@@ -61,3 +61,5 @@
   -old_estat
   -max_poses 10
   -min_rms 1.0
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

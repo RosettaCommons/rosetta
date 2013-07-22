@@ -8,3 +8,5 @@
 -out:file:alignment  remapped.filt 
 -aln_length_filter_quantile 0.75  
 
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

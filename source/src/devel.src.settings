@@ -34,6 +34,9 @@ sources = {
 	"devel/coupled_sidechains": [
 		"CoupledSidechainProtocol2",
 	],
+  	"devel/cutoutdomain": [
+		"CutOutDomain", #moved to devel due to release embargo
+        ],
 	"devel/cstEnergyBalance": [
 		"minimalCstRelaxUtil",
 	],

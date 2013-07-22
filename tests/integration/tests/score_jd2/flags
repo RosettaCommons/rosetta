@@ -1,3 +1,5 @@
 -in:file:s 1l2y.pdb 1l2y.pdb
 -out:file:silent output/trpcage.out
 -out:file:silent_struct_type pdb
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

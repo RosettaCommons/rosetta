@@ -14,3 +14,5 @@
 -sparse_pdb_output
 -jd2:dd_parser
 -score::weights phil_dna_nodnabp_hackelec
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

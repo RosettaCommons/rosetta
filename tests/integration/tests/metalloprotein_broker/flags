@@ -34,3 +34,5 @@
 -out:level 500
 -out:levels core:error
 -out:file:scorefile score.sc
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

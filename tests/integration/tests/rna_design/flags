@@ -5,4 +5,5 @@
 -score:weights rna_hires.wts
 -mute core.io.database
 
--analytic_etable_evaluation 0
+-analytic_etable_evaluation 0-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

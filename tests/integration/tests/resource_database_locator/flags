@@ -1,3 +1,5 @@
 -overwrite
 -resource_definition_files resources.xml
 -parser:protocol parser_script.xml
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

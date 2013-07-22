@@ -13,3 +13,5 @@
 -docking:docking_centroid_outer_cycles 1 # make the low resolution docking phase of the test fast
 -docking:docking_centroid_inner_cycles 3 # make the low resolution docking phase of the test fast
 
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

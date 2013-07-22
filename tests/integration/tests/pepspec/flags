@@ -21,3 +21,5 @@
 -pepspec::n_append 1
 
 -o test
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

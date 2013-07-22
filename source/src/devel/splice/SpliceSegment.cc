@@ -44,7 +44,7 @@ void
 SpliceSegment::read_profile( string const file_name, string const segment_name ){
 	SequenceProfileOP new_seqprof( new SequenceProfile );
 	utility::file::FileName const fname( file_name );
-	TR<<"reading sequence profile from "<<file_name<<std::endl;
+	//TR<<"reading sequence profile from "<<file_name<<std::endl;
 	new_seqprof->read_from_file( fname );
 	sequence_profile_.insert( pair< string, SequenceProfileOP >( segment_name, new_seqprof ) );
 }
@@ -80,11 +80,11 @@ concatenate_profiles( utility::vector1< SequenceProfileOP > const profiles, util
 	core::Size current_profile_size( 0 );
 	core::Size current_segment_name( 1 );
 	foreach( SequenceProfileOP const prof, profiles ){
-		TR<<"now adding profile of segment "<< segment_names_ordered[ current_segment_name]<<std::endl;
+		//TR<<"now adding profile of segment "<< segment_names_ordered[ current_segment_name]<<std::endl;
 		
 		for( core::Size pos = 1; pos <= prof->size(); ++pos ){
 			current_profile_size++;
-			TR<<"The sequence profile row for this residue is: "<<prof->prof_row(pos)<<std::endl;
+			TR.Debug<<"The sequence profile row for this residue is: "<<prof->prof_row(pos)<<std::endl;
 			// Check that the flanking segments of the desigend segment are according to profile concensus
 		
 			concatenated_profile->prof_row( prof->prof_row( pos ), current_profile_size );
@@ -101,7 +101,7 @@ SpliceSegment::read_pdb_profile( std::string const file_name ){
   utility::io::izstream data( file_name );
   if ( !data )
 		utility_exit_with_message( "File not found " + file_name );
-	TR<<"Loading pdb profile pairs from file "<<file_name<<std::endl;
+	//TR<<"Loading pdb profile pairs from file "<<file_name<<std::endl;
 	string line;
 	while (getline( data, line )){
 	istringstream line_stream( line );

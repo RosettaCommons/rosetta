@@ -6,3 +6,5 @@
 -run:n_cycles 300
 -norepack1
 -overwrite
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

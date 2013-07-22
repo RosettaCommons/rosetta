@@ -12,6 +12,19 @@
 /// @author Sarel Fleishman (sarel@weizmann.ac.il)
 /// @modified by gideonla (glapidoth@gmail.com)
 
+///Clarifications about Variables:
+/*
+ * Template_pose = The pose that is used as refrence for all the start and end positions of loop segments
+ * Souce_pose = The 
+ * startn = the position on the pose where the loop starts (N-ter)
+ * startc = The position on the pose where the loop ends (C-ter)
+ * from_res = The user supplies loop start residues accoding to Template PDB. Splice.cc updates this to be the correct residue accrding to the current pose (both 
+ * 			  Structures are lianged)
+ * to_res = Same as from_res but apllies to the C-ter of the segment
+ * 
+
+ */
+
 
 // Unit headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -102,6 +115,7 @@ namespace splice {
 
 static basic::Tracer TR( "devel.splice.Splice" );
 static basic::Tracer TR_ccd( "devel.splice.Splice_ccd" );
+		std::string tempPDBname;
 
 static numeric::random::RandomGenerator RG( 78289 );
 std::string
@@ -158,7 +172,9 @@ Splice::Splice() :
 			segment_type_( "" ),
 			profile_weight_away_from_interface_( 1.0 ),
 			restrict_to_repacking_chain2_( true ),
-			add_sequence_constraints_only_( false )
+			add_sequence_constraints_only_( false ),
+			coor_const_(1),
+			dihedral_const_(1)
 {
 	torsion_database_.clear();
 	delta_lengths_.clear();
@@ -209,7 +225,7 @@ copy_stretch( core::pose::Pose & target, core::pose::Pose const & source, core::
 	//	target.dump_pdb( "after_copy_stretch_llc_test.pdb" );
 
 	target.copy_segment( to_nearest_on_source - from_nearest_on_source + 1, source, from_res, from_nearest_on_source );
-	// target.dump_pdb( "after_copy_stretch_test.pdb" );
+	//target.dump_pdb( "after_copy_stretch_test.pdb" );
 }
 
 /// The checkpointing file has the following structure: the first line contains an ordered list of the dbase_subset_ for splice to iterate over the loop database. The second line contains the last element tested (the loop-entry number in the database; not the iterator to it!) and the third line contains the best element tested (again, the loop number from the database, not the iterator!).
@@ -405,7 +421,7 @@ Splice::apply( core::pose::Pose & pose )
 			retrieve_values();
 			return;
 		*/
-		
+
 		}
 		for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
 			if( source_pose.residue( i ).has_variant_type( DISULFIDE ) ){/// in future, using disulfides would be a great boon as it rigidifies loops.
@@ -417,7 +433,7 @@ Splice::apply( core::pose::Pose & pose )
 				retrieve_values();
 				return;
 				*/
-				
+
 			}
 			/// Feed the source_pose dofs into the BBDofs array
 			BBDofs residue_dofs;
@@ -512,9 +528,9 @@ Splice::apply( core::pose::Pose & pose )
 		}
 		TR<<std::endl;
 		//New test to see what is the sequence of the new loop
-		TR<<"The sequence of the new loop is: ";
+		TR.Debug<<"The sequence of the source loop is: ";
 		for( core::Size i = nearest_to_from; i <= std::min( nearest_to_to, to_res() - from_res() + nearest_to_from ); ++i ){
-			TR<<source_pose.aa( i )<< " ";
+			TR.Debug<<source_pose.residue( i ).name1()<< " ";
 		}
 		TR<<std::endl;
 		cut_site = loop_positions_in_source[ (core::Size) ( RG.uniform() * loop_positions_in_source.size()) ] - nearest_to_from + from_res();
@@ -552,6 +568,7 @@ Splice::apply( core::pose::Pose & pose )
 	/// Now decide on residue identities: Alanine throughout except when the template pose has Gly, Pro or a residue that is the same as that in the original pose
 	utility::vector1< core::Size > pro_gly_res; //keeping track of where pro/gly residues are placed
 	pro_gly_res.clear();
+	//pose.dump_pdb("before_threading.pdb");
 	for( core::Size i = 0; i < total_residue_new; ++i ){
 		core::Size const pose_resi( from_res() + i );
 		std::string const dofs_resn( dofs[ i + 1 ].resn() );
@@ -568,6 +585,7 @@ Splice::apply( core::pose::Pose & pose )
 			}
 			else
 				threaded_seq += 'x';
+			//pose.replace_residue(pose_resi,source_pose.residue(nearest_to_from+i),0);
 			continue;
 		}
 		core::Size const host_chain( 1 );
@@ -588,7 +606,7 @@ Splice::apply( core::pose::Pose & pose )
 			}
 		}
 	}
-	//   pose.dump_pdb( "after_sequence_thread_at_line_551.pdb" );
+	//pose.dump_pdb( "after_sequence_thread.pdb" );
 	using namespace protocols::toolbox::task_operations;
 	using namespace core::pack::task;
 	ThreadSequenceOperationOP tso = new ThreadSequenceOperation;
@@ -615,7 +633,7 @@ Splice::apply( core::pose::Pose & pose )
 	DesignAroundOperationOP dao = new DesignAroundOperation;
 	dao->design_shell( (design_task_factory()() == NULL ? 0.0 : design_shell()) ); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
 	dao->repack_shell( pack_shell() );
-	for( core::Size i = from_res() - 1; i <= from_res() + total_residue_new + 1; ++i ){
+	for( core::Size i = from_res(); i <= from_res() + total_residue_new - 1; ++i ){
 		if( !pose.residue( i ).has_variant_type( DISULFIDE ) )
 			dao->include_residue( i );
 	}
@@ -655,10 +673,16 @@ Splice::apply( core::pose::Pose & pose )
 
 	if( ccd() ){
 		using namespace protocols::loops;
-		Loop loop( std::max( (core::Size) 2, from_res() - 6 )/*start*/, std::min( pose.total_residue()-1, to_res() + 6 )/*stop*/, cut_site/*cut*/ );
+
+		core::Size const startn(from_res());
+		core::Size const startc(from_res() + total_residue_new - 1 );
+
+///		Loop loop( std::max( (core::Size) 2, from_res() - 6 )/*start*/, std::min( pose.total_residue()-1, to_res() + 6 )/*stop*/, cut_site/*cut*/ );
+		Loop loop( startn, startc, cut_site ); /// Gideon & Sarel (8Jul13): we're now respecting the user's choice of from_res to_res and not melting the framework
 		LoopsOP loops = new Loops();
 		loops->push_back( loop );
 
+		/// Gideon & Sarel (8Jul13): the comment below is no longer true, see comments above.
 		/// Set ccd to minimize 4 residues at each loop terminus including the first residue of the loop. This way,
 		/// the torsion in the loop are maintained. Allow repacking around the loop.
 		/// If disulfide occurs in the range that is allowed to minimize, adjust that region to not include disulf
@@ -671,7 +695,10 @@ Splice::apply( core::pose::Pose & pose )
 		mm->set_chi( false ); mm->set_bb( false ); mm->set_jump( false );
 		mm->set_jump( 2, true ); /// 1Feb13 for cases in which the we're splicing in the presence of a ligand
 		/// First look for disulfides. Those should never be moved.
-		core::Size disulfn( 0 ), disulfc( 0 );
+///8Jul13: Gideon & Sarel: we previously melted the framework down from the from_res to_res points. Now, we respect the
+/// user's choice of from_res to_res, but the user has to make sure that the span doesn't contain a disulfide.
+/// a disulfide within the span will result in an assertion
+/*		core::Size disulfn( 0 ), disulfc( 0 );
 		for( core::Size i = from_res() - 3; i <= from_res(); ++i ){
 			if( pose.residue( i ).has_variant_type( DISULFIDE ) ){
 				disulfn = i;
@@ -682,33 +709,35 @@ Splice::apply( core::pose::Pose & pose )
 				disulfc = i;
 				break;
 			}
-		}
-		core::Size const startn( disulfn > 0 ? disulfn + 1 : from_res() - 3 );
-		core::Size const startc( disulfc > 0 ? disulfc - 6 : from_res() + total_residue_new - ( res_move() - 3 ) );
-		
-	
-		
-		
-		for( core::Size i = startn; i <= startn + res_move() - 1; ++i ){
+		}*/
+		//TR<<"startn="<<startn<<std::endl;
+		//TR<<"Residues allowed to minimize"<<std::endl;
+		for( core::Size i = startn; i <= std::min( startn + res_move()-1, startc ); ++i ){
+		//TR<<i<<"+";
 			mm->set_chi( i, true );
 			mm->set_bb( i, true );
-			
+
 		}
-		
-		for( core::Size i = startc; i <= startc + res_move() - 1; ++i ){
+		//TR<<""<<std::endl;;
+			//	TR<<"Residues allowed to minimize"<<std::endl;
+		//TR<<"starcn="<<startc<<std::endl;
+
+		for( core::Size i = std::max( startn, startc - res_move() + 1); i <= startc; ++i ){
+			//Debuging stuff:
+		//TR<<i<<"+";
 			mm->set_chi( i, true ); //allowing chi angle movement
 			mm->set_bb( i, true ); //allowing bb movement
-			
 		}
+		//TR<<""<<std::endl;;
 
 		ccd_mover.set_task_factory( tf );
 		ccd_mover.move_map( mm );
-		
-		
+
+
 		//pose.dump_pdb("before_ccd.pdb");
 		add_dihedral_constraints(pose, source_pose,nearest_to_from,nearest_to_to,cut_site  );//add dihedral constraints loop
 		add_coordinate_constraints(pose, source_pose,nearest_to_from,nearest_to_to);//add coordiante constraints to loop
-		
+
 		//as control I want to see which residues are allowed to be design according to design shell.Gideonla may13
 		utility::vector1< core::Size > designable_residues = residue_packer_states (pose,tf, true, false);
 		TR<<"Residues Allowed to Design:"<<std::endl;
@@ -716,16 +745,17 @@ Splice::apply( core::pose::Pose & pose )
 			TR<<pose.residue(*i).name1()<<*i<<",";
 		}
 		TR<<std::endl;
-		
+
 		utility::vector1< core::Size > packable_residues = residue_packer_states (pose,tf, false, true);
 		TR<<"Residues Allowed to Repack:"<<std::endl;
 		for (utility::vector1<core::Size>::const_iterator i (packable_residues.begin()); i != packable_residues.end(); ++i) {
 			TR<<pose.residue(*i).name1()<<*i<<",";
 		}
 		TR<<std::endl;
+		scorefxn()->show(pose);//before ccd starts make sure we have all constratins in place, gidoenla Jul13
 		ccd_mover.apply( pose );
-
-		/// following ccd, compute rmsd to source loop to ensure that you haven't moved too much. This is pretty decent filter
+		//pose.dump_pdb("after_ccd.pdb");
+		/// following ccd, compute rmsd to source loop to ensure that you haven't moved too much. This is a pretty decent filter
 		if( torsion_database_fname_ == "" ){ // no use computing rms if coming from a database (no coordinates)
 			core::Real rms( 0 );
 			for( core::Size i = 0; i <= total_residue_new - 1; ++i ){
@@ -740,6 +770,12 @@ Splice::apply( core::pose::Pose & pose )
 				retrieve_values();
 				return;
 			}
+			//print rms value to output pdb strucutre
+				std::string Result;         
+				std::ostringstream convert; 
+				convert << average_rms;     
+				Result = convert.str(); 
+				core::pose::add_comment(pose,"RMSD to source loop",Result);//change correct association between current loop and pdb file
 			if( !splice_filter()->apply( pose ) ){
 				TR<<"Failing because filter fails"<<std::endl;
 				set_last_move_status( protocols::moves::FAIL_RETRY );
@@ -751,7 +787,7 @@ Splice::apply( core::pose::Pose & pose )
 		/// output the dofs directly to a dbase file rather than to a log file.
 		TaskFactoryOP tf_dofs = new TaskFactory;
 		DesignAroundOperationOP dao_dofs = new DesignAroundOperation;
-		for( core::Size i = startn; i <= startc + res_move() - 1; ++i )
+		for( core::Size i = startn; i <= std::min(startc + res_move() - 1,startc); ++i )
 			dao_dofs->include_residue( i );
 		dao_dofs->design_shell( 0 );/// only include the loop residues
 		tf_dofs->push_back( dao_dofs );
@@ -759,18 +795,18 @@ Splice::apply( core::pose::Pose & pose )
 		torsion.task_factory( tf_dofs );
 		torsion.task_factory_set( true );
 		torsion.apply( pose );
-		core::Size const stop_on_template( startc + res_move() - 1 - residue_diff );
+		core::Size const stop_on_template( to_res());
 		TR_ccd << "start, stop, cut: "<<startn<<" "<<stop_on_template<<" "<<cut_site<<std::endl; /// used for the dbase
 
 		/// Now write to dbase disk file
 		if( loop_dbase_file_name_ != "" ){
 			std::ofstream dbase_file;
 			dbase_file.open( loop_dbase_file_name_.c_str(), std::ios::app );
-			for( core::Size i = startn; i <= startc + res_move() - 1; ++i )
+			for( core::Size i = startn; i <= std::min( startc + res_move() - 1, startc ); ++i )
 				dbase_file << pose.phi( i )<<' '<<pose.psi( i )<<' '<<pose.omega( i )<<' '<<pose.residue( i ).name3()<<' ';
 			dbase_file << startn<<' '<<stop_on_template<<' '<<cut_site<<' ';
 			if( loop_pdb_source_ != "" )
-				dbase_file << loop_pdb_source_<<std::endl;
+				dbase_file <<tempPDBname<<std::endl;
 			else
 				dbase_file << "cut" << std::endl; // the word cut is used as a placeholder. It is advised to use instead the source pdb file in this field so as to keep track of the origin of dbase loops
 			dbase_file.close();
@@ -815,7 +851,9 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
 
 	typedef utility::vector1< std::string > StringVec;
+	///Adding Checker. If the "Current Segment" does not appear in the list of segements than exit with error
 	segment_names_ordered_.clear(); //This string vector hold all the segment names inserted bythe user to ensure that the sequence profile is built according to tthe user
+	bool check_segment = 0;//This is set to false unless current segment appears in the segment lis
 	foreach( TagPtr const sub_tag, sub_tags ){
 		if( sub_tag->getName() == "Segments" ){
 			use_sequence_profiles_ = true;
@@ -845,23 +883,29 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 				//TR<<"Now working on segment:"<<segment_name<<"\n";
 				foreach( std::string const s, profile_name_pairs ){
 					StringVec const profile_name_file_name( utility::string_split( s, ':' ) );
-					TR<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
+					//TR<<"pssm file:"<<profile_name_file_name[ 2 ]<<",segment name:"<<profile_name_file_name[ 1 ]<<std::endl;
 
 					splice_segment->read_profile( profile_name_file_name[ 2 ], profile_name_file_name[ 1 ] );
 
 				}
 				splice_segment->read_pdb_profile( pdb_profile_match );
 
-				TR<<"the segment name is: "<<segment_name<<std::endl;
+				//TR<<"the segment name is: "<<segment_name<<std::endl;
+				if (segment_name.compare(segment_type_) == 0){
+						check_segment=1	;
+				}
 				splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
 				segment_names_ordered_.push_back(segment_name);
 			}//foreach segment_tag
 		}// fi Segments
 	}//foreach sub_tag
+	if (!check_segment){
+			utility_exit_with_message( "Segment "+segment_type_+" was not found in the list of segemnts. Check XML file\n");
+	}
 	 scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	add_sequence_constraints_only( tag->getOption< bool >( "add_sequence_constraints_only", false ) );
 	if( add_sequence_constraints_only() ){
-		TR<<"add_sequence_constraints only set to true. Therefore I'm not parsing any of the other Splice flags. Ask Assaf!"<<std::endl;
+		TR<<"add_sequence_constraints only set to true. Therefore not parsing any of the other Splice flags."<<std::endl;
 		return;
 	}
 
@@ -904,10 +948,10 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 		source_pdb( tag->getOption< std::string >( "source_pdb" ) );
 
 	ccd( tag->getOption< bool >( "ccd", 1 ) );
-	dihedral_const(tag->getOption< core::Real >( "dihedral_const", 0 ) );//Added by gideonla Apr13, set here any real posiive value to impose dihedral constraints on loop
-	coor_const(tag->getOption< core::Real >( "coor_const", 0 ) );//Added by gideonla May13, set here any real to impose coordinate constraint on loop
-	design_shell(tag->getOption< core::Real >( "design_shell", 6.0 ) );//Added by gideonla May13, 
-	pack_shell(tag->getOption< core::Real >( "pack_shell", 8.0 ) );//Added by gideonla May13, 
+	//dihedral_const(tag->getOption< core::Real >( "dihedral_const", 0 ) );//Added by gideonla Apr13, set here any real posiive value to impose dihedral constraints on loop
+	//coor_const(tag->getOption< core::Real >( "coor_const", 0 ) );//Added by gideonla May13, set here any real to impose coordinate constraint on loop
+	design_shell(tag->getOption< core::Real >( "design_shell", 6.0 ) );//Added by gideonla May13,
+	pack_shell(tag->getOption< core::Real >( "pack_shell", 8.0 ) );//Added by gideonla May13,
 	rms_cutoff( tag->getOption< core::Real >( "rms_cutoff", 999999 ) );
 	runtime_assert( !(tag->hasOption( "torsion_database" ) && tag->hasOption( "rms_cutoff" )) ); // torsion database doesn't specify coordinates so no point in computing rms
 	res_move( tag->getOption< core::Size >( "res_move", 4 ) );
@@ -1214,8 +1258,8 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 
 	//	std::string temp_pdb_name = pdb_tag.erase(pdb_tag.size() - 5); //JD adds "_0001" to input name, we need to erase it
 		//pdb_tag = temp_pdb_name +".pdb";
-		TR<<" The scafold file name is :"<<pdb_tag<<std::endl;//file name of -s pdb file
-		core::pose::read_comment_pdb(pdb_tag,pose); //read comments from pdb file
+		TR<<" The scaffold file name is :"<<pdb_tag<<std::endl;//file name of -s pdb file
+//		core::pose::read_comment_pdb(pdb_tag,pose); //read comments from pdb file
 /*		std::string pdb_dump_fname_("test2");
 		std::ofstream out( pdb_dump_fname_.c_str() );
 		pose.dump_pdb(out); //Testing out comment pdb, comment this out after test (GDL) */
@@ -1224,11 +1268,10 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 			utility_exit_with_message("Please check comments field in the pdb file (header= ##begin comments##), could not find any comments");
 		}
 		///This code will cut the source pdb file name and extract the four letter code
-		std::string tempPDBname;
 		if (torsion_database_fname_!=""){
 			TR<<"Torsion data base filename is: "<<torsion_database_fname_<<std::endl;
 			tempPDBname = dofs_pdb_name;
-			TR<<"tempPDBname: "<<tempPDBname<<std::endl;
+			//TR<<"tempPDBname: "<<tempPDBname<<std::endl;
 /*	    std::string pdb_dump_fname_("before_splice.pdb");
 		std::ofstream out( pdb_dump_fname_.c_str() );
 		pose.dump_pdb(out); //Testing out comment pdb, comment this out after test (GDL) */
@@ -1273,7 +1316,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 
 		foreach( std::string const segment_type, segment_names_ordered_ ){ //<- Start of PDB segment iterator
 			if (splice_segments_[ segment_type ]->pdb_profile(pdb_segments_[segment_type])==0){
-				utility_exit_with_message(" could not find the source pdb name:: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type_+"\n");
+				utility_exit_with_message(" could not find the source pdb name:: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type+"\n");
 			}
 			profile_vector.push_back( splice_segments_[ segment_type ]->pdb_profile( pdb_segments_[segment_type] ));
 		} // <- End of PDB segment iterator
@@ -1292,7 +1335,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 					ss << pose.residue(aapos).name1();
 					ss >> s;
 					if (check_aa(s, profile_vector[seg]->prof_row(pos))) {
-					TR.Warning << "Check PSSM, aa : " <<aapos<<pose.aa(aapos)<<" has a sub optimal identitty accroding to the PSSM"<<std::endl;
+					TR.Warning << "Check PSSM, aa : " <<aapos<<pose.aa(aapos)<<"Has a low PSSM score"<<std::endl;
 					}
 				}
 				}
@@ -1308,7 +1351,6 @@ void
 Splice::load_pdb_segments_from_pose_comments( core::pose::Pose const & pose ){
 	if(use_sequence_profiles_){
 		//If we are using sequence profiles then the condition is true and function can run
-
 		using namespace std;
 		map< string, string > const comments = core::pose::get_all_comments( pose );
 		TR<<"The size of comments is: "<<comments.size()<<std::endl;
@@ -1355,7 +1397,7 @@ find_residues_on_chain1_inside_interface( core::pose::Pose const & pose ){
 
 void
 Splice::add_sequence_constraints( core::pose::Pose & pose){
-	if(use_sequence_profiles_){		
+	if(use_sequence_profiles_){
 		using namespace core::scoring::constraints;
 
 		/// first remove existing sequence constraints
@@ -1364,7 +1406,7 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 		TR<<"Total number of constraints at start: "<<constraints.size()<<std::endl;
 		core::Size cst_num( 0 );
 		foreach( ConstraintCOP const c, constraints ){
-			if( c->type() == "SequenceProfile" ){//only remove profile sequence constraints 
+			if( c->type() == "SequenceProfile" ){//only remove profile sequence constraints
 				pose.remove_constraint( c );
 				cst_num++;
 			}
@@ -1382,8 +1424,8 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 		TR<<"Upweighting sequence constraint for residues: ";
 		if (pose.conformation().num_chains() == 1){//If pose has only one chain (no ligand) than all residues are weighted the same
 			for( core::Size seqpos = pose.conformation().chain_begin( 1 ); seqpos <= pose.conformation().chain_end( 1 ); ++seqpos ) {
-				TR<<"Now adding constraint to aa: "<<seqpos<<pose.aa(seqpos)<<std::endl;
-				TR<<"The sequence profile row for that residue is: "<<seqprof->prof_row(seqpos)<<std::endl;
+				TR.Debug<<"Now adding constraint to aa: "<<seqpos<<pose.aa(seqpos)<<std::endl;
+				TR.Debug<<"The sequence profile row for that residue is: "<<seqprof->prof_row(seqpos)<<std::endl;
 				SequenceProfileConstraintOP spc( new SequenceProfileConstraint( pose, seqpos, seqprof ) );
 				//spc->weight( 1000 );
 				pose.add_constraint( spc );
@@ -1407,9 +1449,9 @@ Splice::add_sequence_constraints( core::pose::Pose & pose){
 			TR<<"Added a total of "<<cst_num<<" sequence constraints."<<std::endl;
 			TR<<"Now the pose has a total of "<<pose.constraint_set()->get_all_constraints().size()<<" constraints"<<std::endl;
 		}
-	
-	
-	
+
+
+
 		/// just checking that the scorefxn has upweighted res_type_constraint
 		core::Real const score_weight( scorefxn()->get_weight( core::scoring::res_type_constraint ) );
 		TR<<"res_type_constraint weight is set to "<<score_weight<<std::endl;
@@ -1430,23 +1472,20 @@ Splice::add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose co
 	TR<<"Anchor residue for the coordinate constraint is "<<fixed_res<<std::endl;
 	TR<<"Current pose CA xyz coordinate/source pdb CA xyz coordinate:"<<std::endl;
 	core::id::AtomID const anchor_atom( core::id::AtomID( pose.residue( fixed_res ).atom_index( "CA" ), fixed_res ) );
-	if(!(coor_const_<0.001)){
 		for( core::Size i = nearest_to_from; i <= nearest_to_to; ++i ){
-			core::scoring::constraints::FuncOP coor_cont_fun = new core::scoring::constraints::HarmonicFunc(0.0,coor_const_);
+			core::scoring::constraints::FuncOP coor_cont_fun = new core::scoring::constraints::HarmonicFunc(0.0,1);
 			cst.push_back( new core::scoring::constraints::CoordinateConstraint( core::id::AtomID(pose.residue(from).atom_index("CA"), from), anchor_atom, source_pose.residue(i).atom("CA").xyz(),coor_cont_fun));
-			//Print xyz coor of current pose CA atoms vs. source pose 
+			//Print xyz coor of current pose CA atoms vs. source pose
 			TR<<from<<pose.aa(from)<<" "<<pose.residue(from).atom("CA").xyz()[0]<<","<<pose.residue(from).atom("CA").xyz()[1]<<","<<pose.residue(from).atom("CA").xyz()[2]<<" / "<<
 			i<<source_pose.aa(i)<<" "<<source_pose.residue(i).atom("CA").xyz()[0]<<","<<pose.residue(i).atom("CA").xyz()[1]<<","<<pose.residue(i).atom("CA").xyz()[2]<<std::endl;
 			from++;
-			pose.add_constraints(cst);		
+			pose.add_constraints(cst);
 		}
-		scorefxn()->show(pose);
-	}
+		//scorefxn()->show(pose);
 }
 
 void
 Splice::add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size cut_site){
-if(!(dihedral_const_<0.001)){//if user sets dihedral constraints to 0 then no dihedral constraints are imposed; gideonla may13
 	core::Size from = protocols::rosetta_scripts::find_nearest_res(pose, source_pose,nearest_to_from, 1/*chain*/ ); //The following for loop itterates over the source pose residues
 	//inorder to compare the angles we keep track of the corresponding residues in the template pose
 	TR<<"Apllying Dihedral constraints to pose, internal weight = "<< dihedral_const_<<", Pose/Source PDB:"<<std::endl;
@@ -1455,36 +1494,36 @@ if(!(dihedral_const_<0.001)){//if user sets dihedral constraints to 0 then no di
 		//Set up constraints for the phi angle
 		core::id::AtomID phi_resi_n( source_pose.residue_type( i ).atom_index( "N" ), i );
 		numeric::xyzVector< core::Real > xyz_Ni = source_pose.residue(i).atom("N").xyz();
-		
+
 		core::id::AtomID phi_resj_c( source_pose.residue_type( i-1 ).atom_index( "C" ), i-1 );
 		numeric::xyzVector< core::Real > xyz_Cj = source_pose.residue(i-1).atom( "C" ).xyz();
-		
+
 		core::id::AtomID phi_resi_co( source_pose.residue_type( i ).atom_index( "C" ), i );
 		numeric::xyzVector< core::Real > xyz_Ci = source_pose.residue(i).atom( "C" ).xyz();
-		
+
 		core::id::AtomID phi_resi_ca( source_pose.residue_type( i ).atom_index( "CA" ), i );
 		numeric::xyzVector< core::Real > xyz_Cai = source_pose.residue(i).atom( "CA" ).xyz();
-		
-		
-		
+
+
+
 		TR<<"Phi: "<<from<<pose.aa(from)<<":"<<pose.phi(from)<<" / "<<i<<source_pose.aa(i)<<":"<<numeric::dihedral_degrees(xyz_Cj,xyz_Ni,xyz_Cai,xyz_Ci) <<std::endl;
-		core::scoring::constraints::FuncOP di_const_func_phi = new core::scoring::constraints::CircularHarmonicFunc((source_pose.phi(i)*numeric::constants::d::pi_2)/360,dihedral_const_);
+		core::scoring::constraints::FuncOP di_const_func_phi = new core::scoring::constraints::CircularHarmonicFunc((source_pose.phi(i)*numeric::constants::d::pi_2)/360,1);
 		csts.push_back( new core::scoring::constraints::DihedralConstraint(phi_resj_c,phi_resi_n,phi_resi_ca,phi_resi_co, di_const_func_phi ) );
 		//for debuggin comment this out
-		
+
 		//Set up constraints for the psi angle
 		core::id::AtomID psi_resi_n( source_pose.residue_type( i ).atom_index( "N" ), i );
 		xyz_Ni = source_pose.residue(i).atom("N").xyz();
-		
+
 		core::id::AtomID psi_resj_n( source_pose.residue_type( i+1 ).atom_index( "N" ), i+1 );
 		numeric::xyzVector< core::Real > xyz_Nj = source_pose.residue(i+1).atom("N").xyz();
-		
+
 		core::id::AtomID psi_resi_co( source_pose.residue_type( i ).atom_index( "C" ), i );
 		xyz_Ci = source_pose.residue(i).atom("C").xyz();
-		
+
 		core::id::AtomID psi_resi_ca( source_pose.residue_type( i ).atom_index( "CA" ), i );
 		xyz_Cai = source_pose.residue(i).atom("CA").xyz();
-		
+
 		//for each residue the ideal angle is taken from the "donor" pdb
 		core::scoring::constraints::FuncOP di_const_func_psi = new core::scoring::constraints::CircularHarmonicFunc((source_pose.psi(i)*numeric::constants::d::pi_2)/360,1);
 		csts.push_back( new core::scoring::constraints::DihedralConstraint(psi_resi_n,psi_resi_ca,psi_resi_co,psi_resj_n, di_const_func_psi ) );
@@ -1492,28 +1531,27 @@ if(!(dihedral_const_<0.001)){//if user sets dihedral constraints to 0 then no di
 		//Set up constraints for the omega angle
 		core::id::AtomID omega_resj_n( source_pose.residue_type( i+1 ).atom_index( "N" ), i+1);
 		xyz_Ni = source_pose.residue(i+1).atom("N").xyz();
-		
+
 		core::id::AtomID omega_resi_ca( source_pose.residue_type( i ).atom_index( "CA" ), i );
 		xyz_Cai = source_pose.residue(i).atom("CA").xyz();
-		
+
 		core::id::AtomID omega_resi_co( source_pose.residue_type( i ).atom_index( "C" ), i );
 		xyz_Ci = source_pose.residue(i).atom("C").xyz();
-		
+
 		core::id::AtomID omega_resj_ca( source_pose.residue_type( i+1 ).atom_index( "CA" ), i+1);
 		numeric::xyzVector< core::Real > xyz_Caj = source_pose.residue(i+1).atom("CA").xyz();
 		TR<<"omega: "<<from<<pose.aa(from)<<":"<<pose.omega(from)<<" / "<<i<<source_pose.aa(i)<<":"<<numeric::dihedral_degrees(xyz_Cai,xyz_Ci,xyz_Nj,xyz_Caj) <<std::endl;
 		//for each residue the ideal angle is taken from the "donor" pdb
 		core::scoring::constraints::FuncOP di_const_func_omega = new core::scoring::constraints::CircularHarmonicFunc((source_pose.omega(i)*numeric::constants::d::pi_2)/360,1);
 		csts.push_back( new core::scoring::constraints::DihedralConstraint(omega_resi_ca,omega_resi_co, omega_resj_n, omega_resj_ca, di_const_func_omega ) );
-		
-		pose.add_constraints(csts);		
+
+		pose.add_constraints(csts);
 		from++;//every itteration we must increment "from"
 		}
 		core::Real const score_weight( scorefxn()->get_weight( core::scoring::dihedral_constraint ) );
 		TR<<"dihedral_constraint weight is set to "<<score_weight<<std::endl;
-		scorefxn()->show(pose);
+		//scorefxn()->show(pose);
 		//pose.dump_pdb("at_end_of_dihedral_const.pdb");
-	}
 }
 
 core::Real

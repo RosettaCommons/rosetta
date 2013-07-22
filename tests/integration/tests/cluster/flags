@@ -11,3 +11,5 @@
 -limit_total_structures 200
 -cluster:radius 4.0
 -out:prefix output/test_
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

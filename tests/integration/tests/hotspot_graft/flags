@@ -17,3 +17,5 @@
 # protocols.filters.Filter: Compound logical statement is 0.
 
 -restore_pre_talaris_2013_behavior
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

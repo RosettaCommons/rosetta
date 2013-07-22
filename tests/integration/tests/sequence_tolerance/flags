@@ -8,3 +8,5 @@
 -seq_tol:fitness_master_weights 1 1 1 2
 -score:weights input/standard_NO_HB_ENV_DEP.wts
 -score:ref_offsets HIS 1.2
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

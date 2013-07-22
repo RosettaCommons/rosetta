@@ -11,3 +11,5 @@
 -out:file:scorefile score.fasc
 -run:no_prof_info_in_silentout
 -docking:no_filters
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

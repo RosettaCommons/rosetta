@@ -9,3 +9,5 @@
 -out:file:silent output/dock.out
 -out:file:scorefile output/scores.fasc
 -no_prof_info_in_silentout
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

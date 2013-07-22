@@ -11,3 +11,5 @@
 -score:weights score3
 
 -in:file:native inputs/1ubi.pdb
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

@@ -15,4 +15,5 @@
 -jd2:delete_old_poses
 #
 #
--parser:protocol features.xml
+-parser:protocol features.xml-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

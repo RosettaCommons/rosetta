@@ -59,3 +59,5 @@
   -soft_rep
   ## Like Rosetta++, only evaluate the Coloumb term between protein and ligand.
   -old_estat
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

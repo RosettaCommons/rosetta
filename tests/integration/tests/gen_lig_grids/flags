@@ -4,3 +4,5 @@
 -grid_lig_cutoff 4.0
 -grid_bb_cutoff 2.25
 -grid_active_res_cutoff 5.0
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

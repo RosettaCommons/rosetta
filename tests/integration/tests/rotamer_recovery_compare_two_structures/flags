@@ -31,3 +31,5 @@
 
 #For for use with a feature database see the 'rotamer_recovery'
 #integration test or the 'rotamer_recovery' scientific benchmarks
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

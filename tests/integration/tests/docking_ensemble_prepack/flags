@@ -6,3 +6,5 @@
 -mute core.io.database
 -ensemble1 pdblist1
 -ensemble2 pdblist2
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

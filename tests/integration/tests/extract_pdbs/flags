@@ -1,3 +1,5 @@
 -in:file:silent_struct_type binary
 -out:file:residue_type_set centroid
 -in:file:silent t288_.cen.out
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label

@@ -17,3 +17,5 @@
 -pepspec::homol_csts
 -pepspec::n_peptides 1
 -o docktest
+-score:weights score12_w_corrections.wts
+-out:no_nstruct_label
