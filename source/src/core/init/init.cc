@@ -331,7 +331,7 @@ static EnergyMethodRegistrator< scoring::methods::dfire::DFIRE_EnergyCreator > D
 static EnergyMethodRegistrator< scoring::vdwaals::VDW_EnergyCreator > VDW_EnergyCreator_registrator;
 
 static EnergyMethodRegistrator< pack::dunbrack::DunbrackEnergyCreator > DunbrackEnergyCreator_registrator;
-static EnergyMethodRegistrator< pack::dunbrack::CenRotDunEnergyCreator > CenRotDunEnergyCreator_registrator;
+static EnergyMethodRegistrator< pack::dunbrack::cenrot::CenRotDunEnergyCreator > CenRotDunEnergyCreator_registrator;
 
 // define this for compiling a slimmed down version of mini libraries lacking about 3/4s of the code
 // this is required for compiling a less memory hungry version of mini for Bluegene etc..

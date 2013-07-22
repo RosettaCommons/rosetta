@@ -33,6 +33,7 @@
 namespace core {
 namespace pack {
 namespace dunbrack {
+namespace cenrot {
 
 using namespace scoring;
 using namespace scoring::methods;
@@ -135,6 +136,7 @@ private:
 };
 
 
+}
 }
 }
 }

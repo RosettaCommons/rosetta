@@ -71,9 +71,6 @@ public:
 		EnergyMap & emap
 	) const;
 
-	//bool
-	//minimize_in_whole_structure_context( pose::Pose const & ) const { return false; }
-
 	virtual
 	void
 	finalize_total_energy(

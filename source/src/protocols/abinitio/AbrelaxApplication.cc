@@ -2011,7 +2011,17 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 			if ( !option[ OptionKeys::abinitio::no_write_failures ]()
 				|| ( passes_filters && !loop_closure_failed && abinitio_protocol.get_last_move_status() == moves::MS_SUCCESS ) ) {
 				// write to silent file
-				process_decoy( fold_pose, fold_pose.is_fullatom() ? *fullatom_scorefxn : *centroid_scorefxn, new_output_tag, *pss );
+				//process_decoy( fold_pose, fold_pose.is_fullatom() ? *fullatom_scorefxn : *centroid_scorefxn, new_output_tag, *pss );
+				if (fold_pose.is_fullatom()) {
+						process_decoy( fold_pose,  *fullatom_scorefxn, new_output_tag, *pss );
+				}
+				else if (fold_pose.is_centroid()) {
+						process_decoy( fold_pose,  *centroid_scorefxn, new_output_tag, *pss );
+				}
+				else {
+						core::scoring::ScoreFunctionOP cenrot_scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("score_cenrot");
+						process_decoy( fold_pose, *cenrot_scorefxn, new_output_tag, *pss );
+				}
 
 				// write this to score-file if applicable
 				if ( silent_score_file_ ) {

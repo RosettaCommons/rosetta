@@ -99,7 +99,7 @@ CenRotPairEnergy::residue_pair_energy(
 	// important: the real cutoff is: atomic_interaction_cutoff + nbr_rad1 + nbr_rad2 !!!
 	// maybe not ... use bigger cutoff to be safe 
 	// check the boundary directly
-	if (cendist>12.0) return;
+	if (cendist<1e-4 || cendist>12.0) return;
 
 	// accumulate total energies
 	Real pair_score( 0.0 );
@@ -137,7 +137,7 @@ CenRotPairEnergy::eval_residue_pair_derivatives(
 	Vector const atom_y = rsd2.atom(rsd2.nbr_atom()+1).xyz();
 	Real const cendist = atom_x.distance( atom_y );
 
-	if (cendist>12.0) return;
+	if (cendist<1e-4 || cendist>12.0) return;
 
 	Real dpair_dr(0.0);
 	potential_.evaluate_cen_rot_pair_deriv( rsd1, rsd2, cendist, dpair_dr );

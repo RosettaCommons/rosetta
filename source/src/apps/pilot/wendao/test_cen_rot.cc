@@ -49,6 +49,8 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 #include <numeric/constants.hh>
@@ -86,6 +88,77 @@ static numeric::random::RandomGenerator RG(62331911);
 basic::Tracer TR("pilot.wendao.cenrot");
 std::map<std::string, Real> masslst;
 
+OPT_KEY(Boolean, debug_cenrot_min)
+
+int main( int argc, char * argv [] ) {
+	NEW_OPT(debug_cenrot_min, "debug cenrot min", false);
+
+	devel::init(argc, argv);
+	masslst["C"]=12.0107;
+	masslst["O"]=15.9994;
+	masslst["S"]=32.066;
+	masslst["N"]=14.00674;
+	masslst["H"]=1.00794;
+	
+	ResidueTypeSetCAP rsd_set;
+	rsd_set=ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
+	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid("centroid");
+	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
+	protocols::simple_moves::SwitchResidueTypeSetMover to_cenrot("centroid_rot");
+
+	Pose p;
+	core::import_pose::pose_from_pdb( p, *rsd_set, option[ in::file::native ]() );
+	to_cenrot.apply(p);
+	core::scoring::ScoreFunctionOP score_fxn = core::scoring::ScoreFunctionFactory::create_score_function( "test" );
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	if (!option[debug_cenrot_min]()) {
+		std::cout << "min_init" << std::endl;
+		protocols::simple_moves::MinMover minmover;
+		minmover.score_function(*score_fxn);
+		minmover.min_type("dfpmin");
+		minmover.tolerance(1e-4);
+		core::kinematics::MoveMapOP final_mm = new core::kinematics::MoveMap();
+		//final_mm->set_chi( true );
+		final_mm->set_bb( true );
+		minmover.movemap(final_mm);
+
+		std::cout << "min_apply" << std::endl;
+		minmover.apply(p);
+		
+	}
+	else {
+		core::kinematics::MoveMap mm;
+		mm.set_bb( true );
+		//only for sidechain
+		mm.set_chi ( true );
+		//mm.set( core::id::THETA, true );
+		//mm.set( core::id::D, true );
+
+		score_fxn->show(TR,p);
+		TR.flush();
+
+		core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.00001, true, true, true );
+		core::optimization::CartesianMinimizer minimizer;
+		std::cout << "CART MINTEST: " << "\n";
+		long t1=clock();
+		minimizer.run( p, mm, *score_fxn, options );
+		long t2=clock();
+		double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
+		std::cout << "end score: " << (*score_fxn)(p) << "\n";
+		std::cout << "MIN TIME: " << time << " sec \n";
+	}
+
+	(*score_fxn)(p);
+	score_fxn->show(TR,p);
+	TR.flush();
+	p.dump_pdb("minimized.pdb");
+	return 0;
+}
+
+/*
 void switch_to_residue_type_set_cenrot( core::pose::Pose & pose ) {
 	//clear old energy cache
 	pose.energies().clear();
@@ -177,96 +250,38 @@ void switch_to_residue_type_set_cenrot( core::pose::Pose & pose ) {
 	}
 }
 
-int main( int argc, char * argv [] ) {
-	devel::init(argc, argv);
-	masslst["C"]=12.0107;
-	masslst["O"]=15.9994;
-	masslst["S"]=32.066;
-	masslst["N"]=14.00674;
-	masslst["H"]=1.00794;
-	
-	ResidueTypeSetCAP rsd_set;
-	rsd_set=ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
-	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid("centroid");
-	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
-	protocols::simple_moves::SwitchResidueTypeSetMover to_cenrot("centroid_rot");
+	if(0){
+		p.dump_pdb("out_fa.pdb");
 
-	Pose p;
-	core::import_pose::pose_from_pdb( p, *rsd_set, option[ in::file::native ]() );
-	core::scoring::ScoreFunctionOP score_fxn = core::scoring::getScoreFunction();
+		//switch
+		//std::cout << "switch" << std::endl;
+		if (0) {
+			to_centroid.apply(p);
+		} else {
+			to_cenrot.apply(p);
+		}
 
-	p.dump_pdb("out_fa.pdb");
+		p.dump_pdb("out_cenrot.pdb");
 
-	//switch
-	//std::cout << "switch" << std::endl;
-	if (0) {
+		to_fullatom.apply(p);
+		p.dump_pdb("out_fa2.pdb");
+
+		switch_to_residue_type_set_cenrot(p);
+		p.dump_pdb("out_cenrot2.pdb");
+
 		to_centroid.apply(p);
-	} else {
+		p.dump_pdb("out_cen.pdb");
+
 		to_cenrot.apply(p);
+		p.dump_pdb("out_cenrot3.pdb");	
+
+		//std::cout << p.residue(1).type().name() << std::endl;
+		//std::cout << "E0= " << (*score_fxn)(p) << std::endl;
+		//score_fxn->show(TR,p);
+		//TR.flush();
+
+
+
+		return 0;
 	}
-
-	p.dump_pdb("out_cenrot.pdb");
-
-	to_fullatom.apply(p);
-	p.dump_pdb("out_fa2.pdb");
-
-	switch_to_residue_type_set_cenrot(p);
-	p.dump_pdb("out_cenrot2.pdb");
-
-	to_centroid.apply(p);
-	p.dump_pdb("out_cen.pdb");
-
-	to_cenrot.apply(p);
-	p.dump_pdb("out_cenrot3.pdb");	
-
-	//std::cout << p.residue(1).type().name() << std::endl;
-	//std::cout << "E0= " << (*score_fxn)(p) << std::endl;
-	//score_fxn->show(TR,p);
-	//TR.flush();
-
-
-
-	return 0;
-
-	if (0) {
-		std::cout << "min_init" << std::endl;
-		protocols::simple_moves::MinMover minmover;
-		minmover.score_function(*score_fxn);
-		minmover.min_type("dfpmin");
-		minmover.tolerance(1e-4);
-		core::kinematics::MoveMapOP final_mm = new core::kinematics::MoveMap();
-		//final_mm->set_chi( true );
-		final_mm->set_bb( true );
-		minmover.movemap(final_mm);
-
-		std::cout << "min_apply" << std::endl;
-		minmover.apply(p);
-		
-	}
-	else {
-		core::kinematics::MoveMap mm;
-		mm.set_bb( true );
-		//only for sidechain
-		//mm.set_chi ( true );
-		//mm.set( core::id::THETA, true );
-		//mm.set( core::id::D, true );
-
-		core::optimization::MinimizerOptions options( "lbfgs_armijo_nonmonotone", 0.00001, true, true, true );
-		core::optimization::CartesianMinimizer minimizer;
-		std::cout << "CART MINTEST: " << "\n";
-		std::cout << "start score: " << (*score_fxn)(p) << "\n";
-		long t1=clock();
-		minimizer.run( p, mm, *score_fxn, options );
-		long t2=clock();
-		double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
-		std::cout << "end score: " << (*score_fxn)(p) << "\n";
-		std::cout << "MIN TIME: " << time << " sec \n";
-	}
-
-	(*score_fxn)(p);
-	score_fxn->show(TR,p);
-	TR.flush();
-	p.dump_pdb("minimized.pdb");
-	return 0;
-}
-
+*/

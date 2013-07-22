@@ -11,8 +11,8 @@
 /// @brief  CenRot version of centroid Dunbrack Energy
 /// @author Yuan Liu
 
-#ifndef INCLUDED_core_scoring_methods_CenRotDunEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_CenRotDunEnergyCreator_hh
+#ifndef INCLUDED_core_pack_dunbrack_CenRotDunEnergyCreator_hh
+#define INCLUDED_core_pack_dunbrack_CenRotDunEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -24,6 +24,7 @@
 namespace core {
 namespace pack {
 namespace dunbrack {
+namespace cenrot {
 
 using namespace scoring;
 using namespace scoring::methods;
@@ -46,6 +47,7 @@ public:
 
 };
 
+}
 }
 }
 }

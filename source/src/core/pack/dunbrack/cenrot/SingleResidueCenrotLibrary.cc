@@ -125,6 +125,8 @@ std::string SingleResidueCenrotLibrary::read_from_file(
 		Size phi_bin, psi_bin;
 		get_phipsi_bins(phi, psi, phi_bin, psi_bin);
 
+		if(count<=all_rots_bb_(phi_bin,psi_bin).size())break;
+
 		CentroidRotamerSampleData crsd(
 				prob, dis,
 				ang*numeric::constants::r::pi_over_180,
@@ -134,6 +136,10 @@ std::string SingleResidueCenrotLibrary::read_from_file(
 
 		if (all_rots_bb_(phi_bin,psi_bin).size()!=count) {
 			TR.Debug << "Warning: index (col-2) in cenrotlib file is wrong!" << std::endl;
+			TR.Debug << "Warning: " << my_name << ": ndx=" 
+			<< count << " real=" << all_rots_bb_(phi_bin,psi_bin).size() 
+			<< " phi=" << phi << " psi=" << psi << std::endl;
+
 		}
 	}
 
@@ -322,9 +328,9 @@ CentroidRotamerSampleData const & SingleResidueCenrotLibrary::get_closest_rotame
 /// If curr_rotamer_only is true, then consider only the idealized version of the
 /// residue's current rotamer (local optimum); otherwise, consider all rotamers (global optimum).
 Real SingleResidueCenrotLibrary::best_rotamer_energy(
-	conformation::Residue const & rsd,
-	bool curr_rotamer_only,
-	RotamerLibraryScratchSpace & scratch
+	conformation::Residue const &, //rsd,
+	bool , //curr_rotamer_only,
+	RotamerLibraryScratchSpace & //scratch
 ) const {
 	return 0.0;
 }
@@ -333,24 +339,24 @@ Real SingleResidueCenrotLibrary::best_rotamer_energy(
 /// distribution and assign chi angles to the input rsd.
 /// -- currently no perturbation allowed
 void SingleResidueCenrotLibrary::assign_random_rotamer_with_bias(
-	conformation::Residue const & rsd,
-	RotamerLibraryScratchSpace & scratch,
-	numeric::random::RandomGenerator & RG,
-	ChiVector & new_chi_angles,
-	bool perturb_from_rotamer_center
+	conformation::Residue const &, //rsd,
+	RotamerLibraryScratchSpace &, //scratch,
+	numeric::random::RandomGenerator &, //RG,
+	ChiVector &, //new_chi_angles,
+	bool //perturb_from_rotamer_center
 ) const {
 	TR.Debug << "do not use this function anymore, CHIs are not the only dof" << std::endl;
 }
 
 void SingleResidueCenrotLibrary::fill_rotamer_vector(
 	pose::Pose const & pose,
-	scoring::ScoreFunction const & scorefxn,
+	scoring::ScoreFunction const &, //scorefxn,
 	pack::task::PackerTask const & task,
-	graph::GraphCOP packer_neighbor_graph,
+	graph::GraphCOP, //packer_neighbor_graph,
 	chemical::ResidueTypeCOP concrete_residue,
 	conformation::Residue const& existing_residue,
-	utility::vector1< utility::vector1< Real > > const & extra_chi_steps,
-	bool buried,
+	utility::vector1< utility::vector1< Real > > const &, //extra_chi_steps,
+	bool, //buried,
 	RotamerVector & rotamers
 ) const {
 	Size const max_rots_that_can_be_built = max_rot_num;
@@ -416,7 +422,7 @@ void SingleResidueCenrotLibrary::fill_rotamer_vector(
 	}
 }
 
-void SingleResidueCenrotLibrary::write_to_file( utility::io::ozstream &out ) const
+void SingleResidueCenrotLibrary::write_to_file( utility::io::ozstream & ) const
 {
 	TR.Debug << "cenrot write func" << std::endl;
 }
@@ -635,7 +641,7 @@ Real CentroidRotamerSampleData::cal_distance_squared( const DOF3 & sample, bool 
 }
 
 void CentroidRotamerSampleData::assign_random_rotamer(
-	DOF3 &sample, numeric::random::RandomGenerator & RG ) const
+	DOF3 &sample, numeric::random::RandomGenerator & ) const
 {
 	//temp just return best
 	sample[1] = distance_;

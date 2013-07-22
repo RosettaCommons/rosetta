@@ -598,7 +598,7 @@ void process_the_pose(core::pose::PoseOP &native_pose, core::pose::Pose & p, std
 		main_task_factory->push_back( rtrop );
 		
 		// C-beta atoms should not be altered during packing because branching atoms are optimized
-		main_task_factory->push_back( new operation::PreserveCBeta );
+		// main_task_factory->push_back( new operation::PreserveCBeta );
 
 		protocols::simple_moves::PackRotamersMover packrotamersmover;
 		packrotamersmover.task_factory(main_task_factory);

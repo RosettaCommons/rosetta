@@ -46,6 +46,7 @@
 namespace core {
 namespace pack {
 namespace dunbrack {
+namespace cenrot {
 
 using namespace scoring;
 using namespace scoring::methods;
@@ -83,7 +84,7 @@ CenRotDunEnergy::clone() const {
 /////////////////////////////////////////////////////////////////////////////
 // scoring
 /////////////////////////////////////////////////////////////////////////////
-void CenRotDunEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+void CenRotDunEnergy::setup_for_scoring( pose::Pose &, ScoreFunction const & ) const {
 	// compute interpolated number of neighbors at various distance cutoffs
 	//pose.update_residue_neighbors();
 	//potential_.compute_centroid_environment( pose );
@@ -94,7 +95,7 @@ using namespace core::pack::dunbrack::cenrot;
 
 void CenRotDunEnergy::residue_energy(
 	conformation::Residue const & rsd,
-	pose::Pose const & pose,
+	pose::Pose const &,  //pose,
 	EnergyMap & emap
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -216,7 +217,7 @@ Real CenRotDunEnergy::eval_dof_derivative(
 void CenRotDunEnergy::eval_residue_derivatives(
 	conformation::Residue const & rsd,
 	ResSingleMinimizationData const &,
-	pose::Pose const & pose,
+	pose::Pose const &, //pose,
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const {
@@ -300,9 +301,8 @@ void CenRotDunEnergy::eval_residue_derivatives(
 	atom_derivs[ nD ].f2() += w_dih * f2_D;
 }
 
-
 void CenRotDunEnergy::finalize_total_energy(
-	pose::Pose & pose,
+	pose::Pose &, //pose,
 	ScoreFunction const &,
 	EnergyMap &
 ) const {
@@ -312,6 +312,7 @@ core::Size CenRotDunEnergy::version() const {
 	return 1; // Initial versioning
 }
 
+}
 }
 }
 }
