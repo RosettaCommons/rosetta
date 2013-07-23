@@ -43,11 +43,11 @@ void gather_coords(
 
 	natoms = 0;
 	for ( Size ii = 1; ii <= model.total_residue(); ++ii ) {
-		if (!model.residue(ii).is_protein()) continue;
 		Size const native_ii( mapping[ii] );
 		bool skip(
 			native_ii == 0 ||
-			native_ii > native.total_residue()
+			native_ii > native.total_residue() ||
+			(!model.residue(ii).is_protein())
 		);
 		if ( !skip ) ++natoms;
 	}
@@ -56,11 +56,11 @@ void gather_coords(
 
 	Size n_gap(0);
 	for ( Size ii = 1; ii <= model.total_residue(); ++ii ) {
-		if (!model.residue(ii).is_protein()) continue;
 		Size const native_ii(mapping[ii]);
 		bool skip(
 			native_ii == 0 ||
-			native_ii > native.total_residue()
+			native_ii > native.total_residue() ||
+			(!model.residue(ii).is_protein())
 		);
 		if ( skip ) {
 			n_gap++;

@@ -36,6 +36,7 @@
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/Energies.hh>
@@ -513,6 +514,8 @@ CartesianSampler::apply( Pose & pose ) {
 	}
 
 	// constraints to reference model
+	// save current constraint set
+	core::scoring::constraints::ConstraintSetOP saved_csts = pose.constraint_set()->clone();
 	if (input_as_ref_) ref_model_ = pose;
 	apply_constraints( pose );
 
@@ -568,6 +571,10 @@ CartesianSampler::apply( Pose & pose ) {
 		tofa->apply( pose );
 		restore_sc->apply( pose );
 	}
+
+	// reapply old constraints
+	pose.remove_constraints();
+	pose.constraint_set( saved_csts );
 }
 
 
