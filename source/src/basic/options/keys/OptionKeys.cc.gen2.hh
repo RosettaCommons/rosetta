@@ -1,3 +1,5 @@
+namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
+namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
 namespace james { BooleanOptionKey const james( "james" );  }
 namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
@@ -716,4 +718,3 @@ namespace optE { BooleanOptionKey const optimize_nat_aa( "optE:optimize_nat_aa" 
 namespace optE { BooleanOptionKey const optimize_nat_rot( "optE:optimize_nat_rot" );  }
 namespace optE { FileOptionKey const optimize_ligand_rot( "optE:optimize_ligand_rot" );  }
 namespace optE { BooleanOptionKey const optimize_pssm( "optE:optimize_pssm" );  }
-namespace optE { FileOptionKey const optimize_dGbinding( "optE:optimize_dGbinding" );  }

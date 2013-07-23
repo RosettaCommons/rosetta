@@ -722,10 +722,10 @@ option.add( basic::options::OptionKeys::jumps::evaluate, "evaluate N-CA-C gemoet
 option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def from this fragset" ).def("");
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
+option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
-option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
 option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
@@ -879,17 +879,21 @@ option.add( basic::options::OptionKeys::score::elec_die, "changes the dielectric
 option.add( basic::options::OptionKeys::score::elec_r_option, "changes the dielectric from distance dependent to distance independent" ).def(false);
 option.add( basic::options::OptionKeys::score::smooth_fa_elec, "Smooth the discontinuities in the elec energy function using a sigmoidal term" ).def(true);
 option.add( basic::options::OptionKeys::score::facts_GBpair_cut, "GBpair interaction distance cutoff (same as elec_max_dis)" ).def(10.0);
-option.add( basic::options::OptionKeys::score::facts_min_dis, "GBpair interaction minimum distance (same as elec_min_dis)" ).def(1.5);
 option.add( basic::options::OptionKeys::score::facts_kappa, "GBpair interaction screening factor" ).def(12.0);
 option.add( basic::options::OptionKeys::score::facts_apprx, "Use approximated function form for GBpair calculation in FACTS" ).def(false);
 option.add( basic::options::OptionKeys::score::facts_asp_patch, "AtomicSolvationParameter set for nonpolar interaction in FACTS" ).def(1);
-option.add( basic::options::OptionKeys::score::facts_selfenergy_scale, "Relative scale for FACTS self energy to pair energy" ).def(1.0);
-option.add( basic::options::OptionKeys::score::facts_plane_to_self, "Add atoms in same plane to self energy pairs" ).def(false);
-option.add( basic::options::OptionKeys::score::facts_intrares_scale, "Relative scale for FACTS intrares energy to interres energy" ).def(0.0);
+option.add( basic::options::OptionKeys::score::facts_plane_to_self, "Add atoms in same plane to self energy pairs" ).def(true);
 option.add( basic::options::OptionKeys::score::facts_saltbridge_correction, "FACTS Self energy parameter scaling factor for polarH" ).def(1.0);
-option.add( basic::options::OptionKeys::score::facts_dshift, "FACTS pair term denominator distance shift" ).def(0.0);
+option.add( basic::options::OptionKeys::score::facts_dshift, "FACTS pair term denominator distance shift" ).def(1.5);
+option.add( basic::options::OptionKeys::score::facts_dshift_sb, "FACTS pair term denominator distance shift for salt-bridging sidechains" ).def(2.0);
 option.add( basic::options::OptionKeys::score::facts_die, "FACTS dielectric constant" ).def(1.0);
-option.add( basic::options::OptionKeys::score::facts_elec_sh_exponent, "Shift function exponent for electrostatic part in FACTS" ).def(2.0);
+option.add( basic::options::OptionKeys::score::facts_intra_solv_scale, "FACTS GB scale for intrares bonded pairs: [1-4, 1-5, >1-5]" ).def(0.8).def(0.2).def(0.0);
+option.add( basic::options::OptionKeys::score::facts_adjbb_elec_scale, "FACTS Coulomb scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.2).def(0.4).def(0.6).def(0.6).def(0.6);
+option.add( basic::options::OptionKeys::score::facts_adjbb_solv_scale, "FACTS GB scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.8).def(0.6).def(0.6).def(0.6).def(0.6);
+option.add( basic::options::OptionKeys::score::facts_adjsc_elec_scale, "FACTS Coulomb scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.2).def(0.4).def(0.6).def(0.6).def(0.6);
+option.add( basic::options::OptionKeys::score::facts_adjsc_solv_scale, "FACTS GB scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.8).def(0.6).def(0.6).def(0.6).def(0.6);
+option.add( basic::options::OptionKeys::score::facts_charge_dir, "directory where residue topology files for FACTS charge are stored" ).def("scoring/score_functions/facts");
+option.add( basic::options::OptionKeys::score::facts_eff_charge_dir, "directory where residue topology files for FACTS charge are stored" ).def("scoring/score_functions/facts/eff");
 option.add( basic::options::OptionKeys::score::nmer_ref_energies, "nmer ref energies database filename" );
 option.add( basic::options::OptionKeys::score::nmer_ref_energies_list, "list of nmer ref energies database filenames" );
 option.add( basic::options::OptionKeys::score::nmer_pssm, "nmer pssm database filename" );
@@ -1441,11 +1445,11 @@ option.add( basic::options::OptionKeys::robert::pcs_cluster_lowscoring, "cluster
 option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
-option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
+option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
@@ -2163,10 +2167,10 @@ option.add( basic::options::OptionKeys::optE::optimize_nat_aa, "With the iterati
 option.add( basic::options::OptionKeys::optE::optimize_nat_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer in the native context" );
 option.add( basic::options::OptionKeys::optE::optimize_ligand_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer around the ligand" );
 option.add( basic::options::OptionKeys::optE::optimize_pssm, "With the iterative optE driver, optimize weights to maximize the match between a BLAST generated pssm probabillity distribution" );
-option.add( basic::options::OptionKeys::optE::optimize_dGbinding, "With the iterative optE driver, optimize weights to minimize squared error between the predicted dG of binding and the experimental dG; provide a file listing 1. bound PDB structure, 2. unbound PDB structure, and 3. measured dG" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optimize_ddG_bind_correlation, "With the iterative optE driver, optimize weights to minimize squared error between the predicted ddG of binding for a mutation to the experimental ddG; provide a file listing 1. list file containing wt complexes, 2. list file containing mut complexes, 3. list file containing wt unbounds structures, 4. list file containing mut unbounds structures, and 5. measured ddG of binding" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optimize_dGbinding, "With the iterative optE driver, optimize weights to minimize squared error between the predicted dG of binding and the experimental dG; provide a file listing 1. bound PDB structure, 2. unbound PDB structure, and 3. measured dG" );
+option.add( basic::options::OptionKeys::optE::optimize_ddG_bind_correlation, "With the iterative optE driver, optimize weights to minimize squared error between the predicted ddG of binding for a mutation to the experimental ddG; provide a file listing 1. list file containing wt complexes, 2. list file containing mut complexes, 3. list file containing wt unbounds structures, 4. list file containing mut unbounds structures, and 5. measured ddG of binding" );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation, "With the iterative optE driver, optimize weights to minimize the predicted ddG of mutation and the measured ddG; provide a file listing 1. repacked wt pdb list, 2. repacked mut pdb list, and 3. measured ddG triples" );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_straight_mean, "With the iterative optE driver, predict the the ddGmut to be the difference between the straight mean (1/n Sum(E_i)) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_boltzman_average, "With the iterative optE driver, predict the the ddGmut to be the difference between the boltzman average energies ( Sum( E_i * e**-E_i/kT)/Sum( e**-E_i/kT) ) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );

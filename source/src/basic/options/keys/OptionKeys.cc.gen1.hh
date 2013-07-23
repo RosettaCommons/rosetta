@@ -1,4 +1,3 @@
-namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
 namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
 namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
 namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
@@ -153,17 +152,21 @@ namespace score { RealOptionKey const elec_die( "score:elec_die" );  }
 namespace score { BooleanOptionKey const elec_r_option( "score:elec_r_option" );  }
 namespace score { BooleanOptionKey const smooth_fa_elec( "score:smooth_fa_elec" );  }
 namespace score { RealOptionKey const facts_GBpair_cut( "score:facts_GBpair_cut" );  }
-namespace score { RealOptionKey const facts_min_dis( "score:facts_min_dis" );  }
 namespace score { RealOptionKey const facts_kappa( "score:facts_kappa" );  }
 namespace score { BooleanOptionKey const facts_apprx( "score:facts_apprx" );  }
 namespace score { IntegerOptionKey const facts_asp_patch( "score:facts_asp_patch" );  }
-namespace score { RealOptionKey const facts_selfenergy_scale( "score:facts_selfenergy_scale" );  }
 namespace score { BooleanOptionKey const facts_plane_to_self( "score:facts_plane_to_self" );  }
-namespace score { RealOptionKey const facts_intrares_scale( "score:facts_intrares_scale" );  }
 namespace score { RealOptionKey const facts_saltbridge_correction( "score:facts_saltbridge_correction" );  }
 namespace score { RealOptionKey const facts_dshift( "score:facts_dshift" );  }
+namespace score { RealOptionKey const facts_dshift_sb( "score:facts_dshift_sb" );  }
 namespace score { RealOptionKey const facts_die( "score:facts_die" );  }
-namespace score { RealOptionKey const facts_elec_sh_exponent( "score:facts_elec_sh_exponent" );  }
+namespace score { RealVectorOptionKey const facts_intra_solv_scale( "score:facts_intra_solv_scale" );  }
+namespace score { RealVectorOptionKey const facts_adjbb_elec_scale( "score:facts_adjbb_elec_scale" );  }
+namespace score { RealVectorOptionKey const facts_adjbb_solv_scale( "score:facts_adjbb_solv_scale" );  }
+namespace score { RealVectorOptionKey const facts_adjsc_elec_scale( "score:facts_adjsc_elec_scale" );  }
+namespace score { RealVectorOptionKey const facts_adjsc_solv_scale( "score:facts_adjsc_solv_scale" );  }
+namespace score { StringOptionKey const facts_charge_dir( "score:facts_charge_dir" );  }
+namespace score { StringOptionKey const facts_eff_charge_dir( "score:facts_eff_charge_dir" );  }
 namespace score { StringOptionKey const nmer_ref_energies( "score:nmer_ref_energies" );  }
 namespace score { StringOptionKey const nmer_ref_energies_list( "score:nmer_ref_energies_list" );  }
 namespace score { StringOptionKey const nmer_pssm( "score:nmer_pssm" );  }
@@ -715,5 +718,3 @@ namespace robert { BooleanOptionKey const pcs_cluster_lowscoring( "robert:pcs_cl
 namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
 namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
 namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
-namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
-namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }

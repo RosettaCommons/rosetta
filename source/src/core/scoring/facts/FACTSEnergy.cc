@@ -138,10 +138,10 @@ void FACTSEnergy::residue_pair_energy(
 	FACTSPoseInfo const & facts_info
 		( static_cast< FACTSPoseInfo const & >( pose.data().get( pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) ); // SHOULD BE FAST!
 
-	Real E_elec, E_solv;
-	potential_.evaluate_polar_energy( rsd1, facts_info.residue_info( rsd1.seqpos() ), rsd2, E_elec, E_solv );
+	Real E_elec, E_solv_self, E_solv_pair;
+	potential_.evaluate_polar_energy( rsd1, facts_info.residue_info( rsd1.seqpos() ), rsd2, E_elec, E_solv_self, E_solv_pair );
 	emap[ facts_elec ] += E_elec;
-	emap[ facts_solv ] += E_solv;
+	emap[ facts_solv ] += E_solv_self + E_solv_pair;
 }
 
 
@@ -156,10 +156,10 @@ void FACTSEnergy::eval_intrares_energy(
 	FACTSResidueInfo const & facts
 		( pose.data().get< FACTSPoseInfo >( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ).residue_info( rsd.seqpos()));
 
-	Real E_elec, E_solv;
-	potential_.evaluate_polar_energy( rsd, facts, rsd, E_elec, E_solv );
+	Real E_elec, E_solv_self, E_solv_pair;
+	potential_.evaluate_polar_energy( rsd, facts, rsd, E_elec, E_solv_self, E_solv_pair );
 	emap[ facts_elec ] += E_elec;
-	emap[ facts_solv ] += E_solv;
+	emap[ facts_solv ] += E_solv_self + E_solv_pair;
 	emap[ facts_sasa ] += potential_.evaluate_nonpolar_energy( rsd, facts, rsd );
 
 }
@@ -183,25 +183,20 @@ void FACTSEnergy::evaluate_rotamer_intrares_energies(
 	FACTSPoseInfo const & facts_pose_info
 		( static_cast< FACTSPoseInfo const & >( pose.data().get( pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) );
 
-	utility::vector1< Real > dBRi1( pose.residue(set.resid()).natoms(), 0.0 );
-	utility::vector1< Real > dBRi2( pose.residue(set.resid()).natoms(), 0.0 );
-	utility::vector1< Real > dSAi1( pose.residue(set.resid()).natoms(), 0.0 );
-	utility::vector1< Real > dSAi2( pose.residue(set.resid()).natoms(), 0.0 );
-
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
 
-		Real E_elec, E_solv;
+		Real E_elec, E_solv_pair, E_solv_self;
 		potential_.evaluate_polar_otf_energy( *set.rotamer( ii ), facts_info.residue_info( ii ),
 																					*set.rotamer( ii ), facts_info.residue_info( ii ),
-																					dBRi1, dBRi2, E_elec, E_solv,
-																					false );
+																					E_elec, E_solv_self, E_solv_pair
+																					);
 
 		Real const E_sasa
 			( potential_.evaluate_nonpolar_energy( *set.rotamer( ii ), facts_info.residue_info( ii ),
 																						 *set.rotamer( ii ) ));
 
 		energies[ ii ] += static_cast< core::PackerEnergy > ( sfxn[ facts_elec ] * E_elec
-																													+ sfxn[ facts_solv ] * E_solv
+																													+ sfxn[ facts_solv ] * (E_solv_pair + E_solv_self)
 																													+ sfxn[ facts_sasa ] * E_sasa );
 
 	}
@@ -230,10 +225,10 @@ void FACTSEnergy::evaluate_rotamer_intrares_energy_maps(
 
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
 
-		Real E_elec, E_solv;
+		Real E_elec, E_solv_pair, E_solv_self;
 		potential_.evaluate_polar_otf_energy( *set.rotamer( ii ), facts_info.residue_info( ii ),
 																					*set.rotamer( ii ), facts_info.residue_info( ii ),
-																					dBRi1, dBRi2, E_elec, E_solv, false
+																					E_elec, E_solv_self, E_solv_pair
 																					);
 
 		Real const E_sasa
@@ -241,7 +236,7 @@ void FACTSEnergy::evaluate_rotamer_intrares_energy_maps(
 																						 *set.rotamer( ii ) ));
 
 			(emaps[ ii ])[ facts_elec ] += E_elec ;
-			(emaps[ ii ])[ facts_solv ] += E_solv ;
+			(emaps[ ii ])[ facts_solv ] += E_solv_pair + E_solv_self ;
 			(emaps[ ii ])[ facts_sasa ] += E_sasa ;
 	}
 }
@@ -298,17 +293,17 @@ void FACTSEnergy::evaluate_rotamer_pair_energies(
 					for ( Size ll = 1, lle = set2.get_n_rotamers_for_residue_type( jj ); ll <= lle; ++ll ) {
 						Size const ll_rot_id = jj_offset + ll - 1;
 
-						Real E_elec, E_solv;
+						Real E_elec, E_solv_pair, E_solv_self;
 						potential_.evaluate_polar_otf_energy( *set1.rotamer( kk_rot_id ), facts_info1.residue_info( kk_rot_id ),
 																									*set2.rotamer( ll_rot_id ), facts_info2.residue_info( ll_rot_id ),
-																									dBRi1, dBRi2,	E_elec, E_solv,
-																									false );
+																									E_elec, E_solv_self, E_solv_pair
+																									);
 						Real const E_sasa
 							( potential_.evaluate_nonpolar_energy( *set1.rotamer( kk_rot_id ), facts_info1.residue_info( kk_rot_id ),
 																										 *set2.rotamer( ll_rot_id ) ) );
 
 						energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights[ facts_elec ] * E_elec
-																																											 + weights[ facts_solv ] * E_solv
+																																											 + weights[ facts_solv ] * (E_solv_self + E_solv_pair)
 																																											 + weights[ facts_sasa ] * E_sasa );
 					}
 				}
@@ -341,11 +336,6 @@ void FACTSEnergy::evaluate_rotamer_background_energies(
 	FACTSRotamerSetInfo const & facts_set_info
 		( set.data().get< FACTSRotamerSetInfo >( FACTS_ROTAMER_SET_INFO ) );
 
-	utility::vector1< Real > dBRi1( pose.residue(set.resid()).natoms(), 0.0 );
-	utility::vector1< Real > dBRi2( rsd.natoms(), 0.0 );
-	utility::vector1< Real > dSAi1( pose.residue(set.resid()).natoms(), 0.0 );
-	utility::vector1< Real > dSAi2( rsd.natoms(), 0.0 );
-
 	for ( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ) {
 		Size const ii_offset = set.get_residue_type_begin( ii );
 		Residue const & ii_example_rotamer( *set.rotamer( ii_offset ));
@@ -362,15 +352,15 @@ void FACTSEnergy::evaluate_rotamer_background_energies(
 			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 				Size const kk_rot_id = ii_offset + kk - 1;
 
-				Real E_elec, E_solv;
+				Real E_elec, E_solv_self, E_solv_pair;
 				potential_.evaluate_polar_otf_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
 																							rsd, facts_rsd_info,
-																							dBRi1, dBRi2, E_elec, E_solv, false );
+																							E_elec, E_solv_self, E_solv_pair );
 				Real const E_sasa
 					( potential_.evaluate_nonpolar_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
 																								 rsd) );
 				energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > ( weights[ facts_elec ] * E_elec
-																																					+	weights[ facts_solv ] * E_solv
+																																					+	weights[ facts_solv ] * (E_solv_self+E_solv_pair)
 																																					+ weights[ facts_sasa ] * E_sasa );
 				//std::cout << "Background: " << ii << " " << kk << " " << kk_rot_id << " " << polarE << " " << nonpolarE << std::endl;
 			} // kk - rotamers for residue types
@@ -398,11 +388,6 @@ void FACTSEnergy::evaluate_rotamer_background_energy_maps(
 	FACTSRotamerSetInfo const & facts_set_info
 		( set.data().get< FACTSRotamerSetInfo >( FACTS_ROTAMER_SET_INFO ) );
 
-	utility::vector1< Real > dBRi1( pose.residue(set.resid()).natoms(), 0.0 );
-	utility::vector1< Real > dBRi2( rsd.natoms(), 0.0 );
-	utility::vector1< Real > dSAi1( pose.residue(set.resid()).natoms(), 0.0 );
-	utility::vector1< Real > dSAi2( rsd.natoms(), 0.0 );
-
 	for ( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ) {
 		Size const ii_offset = set.get_residue_type_begin( ii );
 		Residue const & ii_example_rotamer( *set.rotamer( ii_offset ));
@@ -419,15 +404,15 @@ void FACTSEnergy::evaluate_rotamer_background_energy_maps(
 			for ( Size kk = 1, kke = set.get_n_rotamers_for_residue_type( ii ); kk <= kke; ++kk ) {
 				Size const kk_rot_id = ii_offset + kk - 1;
 
-				Real E_elec, E_solv;
+				Real E_elec, E_solv_self, E_solv_pair;
 				potential_.evaluate_polar_otf_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
 																							rsd, facts_rsd_info,
-																							dBRi1, dBRi2,	E_elec, E_solv, false);
+																							E_elec, E_solv_self, E_solv_pair );
 				Real const E_sasa
 					( potential_.evaluate_nonpolar_energy( *set.rotamer( kk_rot_id ), facts_set_info.residue_info( kk_rot_id ),
 																								 rsd ) );
 				(emaps[ kk_rot_id ])[ facts_elec ] += E_elec;
-				(emaps[ kk_rot_id ])[ facts_solv ] += E_solv;
+				(emaps[ kk_rot_id ])[ facts_solv ] += E_solv_self + E_solv_pair;
 				(emaps[ kk_rot_id ])[ facts_sasa ] += E_sasa;
 			} // kk - rotamers for residue types
 		} // nbrs

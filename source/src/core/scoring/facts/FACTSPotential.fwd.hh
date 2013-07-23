@@ -16,9 +16,16 @@
 #define INCLUDED_core_scoring_facts_FACTSPotential_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
+#include <core/chemical/ResidueType.hh>
 
 namespace core {
 namespace scoring {
+
+  //Declaring a class of type FACTSResidueInfo
+  class FACTSRsdTypeInfo;
+	//Creating an alias for a pointer of type FACTSResidueInfo
+  typedef utility::pointer::owning_ptr< FACTSRsdTypeInfo > FACTSRsdTypeInfoOP;
+  typedef utility::pointer::owning_ptr< FACTSRsdTypeInfo const > FACTSRsdTypeInfoCOP;
 
   //Declaring a class of type FACTSResidueInfo
   class FACTSResidueInfo;
@@ -38,7 +45,8 @@ namespace scoring {
 	//Creating an alias for a pointer of type FACTSResidueInfo
   typedef utility::pointer::owning_ptr< FACTSPotential > FACTSPotentialOP;
 
-	//struct xyz_coordinates;
+	typedef std::map< chemical::ResidueType const *, FACTSRsdTypeInfoCOP > FACTSRsdTypeMap;
+
 } // scoring
 } // core
 

@@ -7,40 +7,39 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/facts/FACTSEnergyCreator.hh
-/// @brief  Declaration for the class that connects FACTSEnergy with the ScoringManager
-/// @author Hahnbeom Park
+// @file:   core/scoring/facts/FACTSEnergyCreator.cc
+// @brief:  Header-file for FACTSEnergyCreator class declaration
+// @author: Hahnbeom Park
 
-#ifndef INCLUDED_apps_pilot_khorvash_FACTSEnergyCreator_HH
-#define INCLUDED_apps_pilot_khorvash_FACTSEnergyCreator_HH
+#ifndef INCLUDED_core_scoring_facts_FACTSEnergyCreator_HH
+#define INCLUDED_core_scoring_facts_FACTSEnergyCreator_HH
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
 namespace core {
-	namespace scoring {
-		namespace methods {
+namespace scoring {
+namespace methods {
 
-			class FACTSEnergyCreator : public EnergyMethodCreator
-			{
+class FACTSEnergyCreator : public EnergyMethodCreator
+{
 
-			public:
-				/// @brief Instantiate a new GenBornEnergy
-				virtual
-				methods::EnergyMethodOP
-				create_energy_method(
-														 methods::EnergyMethodOptions const &
-														 ) const;
+public:
+	/// @brief Instantiate a new GenBornEnergy
+	virtual
+	methods::EnergyMethodOP
+	create_energy_method(
+											 methods::EnergyMethodOptions const &
+											 ) const;
+	
+	/// @brief Return the set of score types claimed by the EnergyMethod
+	/// this EnergyMethodCreator creates in its create_energy_method() function
+	virtual
+	ScoreTypes
+	score_types_for_method() const;
 
-				/// @brief Return the set of score types claimed by the EnergyMethod
-				/// this EnergyMethodCreator creates in its create_energy_method() function
-				virtual
-				ScoreTypes
-				score_types_for_method() const;
-
-			};
-
-		}
-	}
+};
+}
+}
 }
 
 #endif

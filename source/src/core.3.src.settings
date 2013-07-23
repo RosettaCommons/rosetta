@@ -315,6 +315,8 @@ sources = {
 	],
 
 	"core/scoring/facts": [
+		"FACTSResidue",
+		"FACTSPose",
 		"FACTSPotential",
 		"FACTSEnergy",
 	],

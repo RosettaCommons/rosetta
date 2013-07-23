@@ -319,12 +319,14 @@ void FACTSRsdTypeInfo::initialize_intrasolv( chemical::ResidueType const & rsd )
 					}
       }
 
+			/*
       if( plane_to_self && rsd.aa() == core::chemical::aa_his ) {
 				// Add all pairs in D or E position
 				if( ( rsd.atom_name(atm1).compare( 2, 1, "D" ) == 0 || rsd.atom_name(atm1).compare( 2, 1, "E" ) == 0)&&
 						( rsd.atom_name(atm2).compare( 2, 1, "D" ) == 0 || rsd.atom_name(atm2).compare( 2, 1, "E" ) == 0) )
 					intra_solv_scale_[atm1][atm2] = 1.0;
       }
+			*/
 
 			if( plane_to_self && rsd.aa() == core::chemical::aa_gln ) {
 				// Add all pairs in E position
