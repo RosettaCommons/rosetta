@@ -10,5 +10,3 @@
 -mute core.io
 -mute core.conformation
 -mute core.pack
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

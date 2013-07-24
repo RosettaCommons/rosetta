@@ -4,5 +4,3 @@
 -pocket_max_spacing 12
 -pocket_psp false
 -pocket_sps
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

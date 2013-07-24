@@ -1,21 +1,13 @@
 ## Keywords that are replace are listed in ~mtyka/homo_bench/help_keywords.txt
-
 -frag3 input/boinc_aacasd_rhodopsin_03_05.200_v1_3.gz
 -frag9 input/boinc_aacasd_rhodopsin_09_05.200_v1_3.gz
 -in:file:fasta input/casd_rhodopsin.fasta
 #-in:file:native input/native/native.pdb
-
 @flags_membrane 
 @flags_always
-
 #just to check that switching to fullatom works without troubles -- this will produce high score! 
 -relax:sequence
 -relax:sequence_file input/quick_repack.txt
-
 -run:test_cycles
-
-
 -rmsd_select input/native/_core2.rigid input/native/_core3.rigid input/native/_core4.rigid 
 -in:file:native input/native/native.pdb
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

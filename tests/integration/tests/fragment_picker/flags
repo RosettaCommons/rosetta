@@ -15,5 +15,3 @@
 -mute				core.util.prof
 -mute 				core.conformation
 -mute				core.chemical
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

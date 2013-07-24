@@ -1,35 +1,22 @@
 #For documentation see
 #https://wiki.rosettacommons.org/index.php/RotamerRecoveryScientificBenchmark
-
 # don't generate an output structure
 -out:nooutput
-
 # the input structure, processed with the vanilla fixbb app with NATAA
 #with revision r51212
 -s 1l2y_0001.pdb
-
 #Output rotamer recovery results here
 -out:file:rotamer_recovery benchmark_results.log
-
 ##### What protocol should be used to get reference and new structures ####
 -rotamer_recovery:protocol RRProtocolReferenceStructure
 -native ../../tests/fixbb/1l2y.pdb
-
 #-rotamer_recovery:protocol RRProtocolMinPack
 #-rotamer_recovery:protocol RRProtocolRTMin
-
-
 ##### When is a rotamer recovered? #######
 -rotamer_recovery:comparer RRComparerRotBins
 #-rotamer_recovery:comparer RRComparerAutomorphicRMSD
-
-
 ##### How should the results be reported ######
 -rotamer_recovery:reporter RRReporterSimple
 #-rotamer_recovery:reporter RRReporterHuman
-
-
 #For for use with a feature database see the 'rotamer_recovery'
 #integration test or the 'rotamer_recovery' scientific benchmarks
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

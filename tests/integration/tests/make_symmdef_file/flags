@@ -2,6 +2,3 @@
 -overwrite
 -parser:protocol parser_script.xml
 -mute protocols.jd2.PDBJobInputter core.scoring.etable basic.io.database
-
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

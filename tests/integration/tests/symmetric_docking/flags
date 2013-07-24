@@ -8,6 +8,3 @@
 -symmetry:initialize_rigid_body_dofs
 -symmetry:symmetric_rmsd
 -ignore_unrecognized_res
-
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

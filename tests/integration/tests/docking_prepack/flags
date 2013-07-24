@@ -8,5 +8,3 @@
 -out:file:fullatom #output in fullatom scorefile
 -out:file:scorefile 1brs.fasc
 -mute core.io.database
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

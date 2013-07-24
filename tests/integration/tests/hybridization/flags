@@ -4,7 +4,6 @@
 -nstruct 1
 -ignore_unrecognized_res
 -extra_res inputs/GTP.params 
-
 # relax options
 -relax:cartesian
 -relax:minimize_bond_angles
@@ -20,22 +19,15 @@
 -score:weights inputs/stage2.wts
 -use_bicubic_interpolation
 -hybridize:stage1_probability 1.0
-
 # density map options
 -edensity:mapfile inputs/GDP_finalmap_b_seg.mrc
 -edensity:score_symm_complex true
 -edensity:mapreso 15.0
 -edensity:grid_spacing 7.0
 -edensity:realign no
-
 -icoor_05_2009
-
 -output_virtual
-
 -mute core.io.pdb.file_data core.conformation.Conformation core.util.switchresiduetypeset
 -hybridize:starting_template 1
-
 # reduce memory footprint
 -chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer  VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

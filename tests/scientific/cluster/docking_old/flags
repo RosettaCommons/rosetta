@@ -5,5 +5,3 @@
 -nstruct 1000 
 -mute core 
 -out:file:fullatom
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

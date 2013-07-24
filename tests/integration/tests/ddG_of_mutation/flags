@@ -19,5 +19,4 @@
 -constraints:cst_file 2ci2.cst  
 -ddg:output_silent true 
 -ddg:opt_radius 12.0
--score:fa_max_dis 9.0-score:weights score12_w_corrections.wts
--out:no_nstruct_label
+-score:fa_max_dis 9.0

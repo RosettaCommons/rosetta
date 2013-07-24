@@ -1,4 +1,2 @@
 -l two_restype_pairs.list
 -score:weights some_scores.wts
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

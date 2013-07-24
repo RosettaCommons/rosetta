@@ -15,5 +15,3 @@
 -mute core.io.database
 -run:no_prof_info_in_silentout
 -out:file:scorefile score.sc
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

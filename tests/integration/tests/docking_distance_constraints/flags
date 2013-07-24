@@ -11,5 +11,3 @@
 -out:file:fullatom #output in fullatom scorefile
 -mute core.io.database
 #-docking:use_legacy_protocol
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

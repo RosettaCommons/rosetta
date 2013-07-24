@@ -16,8 +16,5 @@
  -ex2
 -parser
  -protocol ligand_dock.xml
-
 -mute core.util.prof ## dont show timing info
 -mute core.io.database
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

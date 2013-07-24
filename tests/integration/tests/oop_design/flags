@@ -1,21 +1,13 @@
 # turn on oop patches
 -include_patches patches/oop_pre.txt patches/oop_post.txt 
-
 # first chain is target, second chain is oop
 -s ./inputs/mdm2_oopAAAA.pdb
-
 # production
 #-nstruct 1000
 -nstruct 1
-
 # which residues on oop to design
 -oop_design_positions 1 2 3 4 
-
 # number of perturbations during pertubations phase, default is 10
 #-pert_num 100
-
 # number of pertubation + design cycles
 -design_loop_num 10
-
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

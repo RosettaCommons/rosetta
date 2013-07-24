@@ -15,6 +15,4 @@
 -input_res 1 2 9 10 11 12 13 14 15 16 17 
 -integration_test true
 -mute all
-
--analytic_etable_evaluation 0-score:weights score12_w_corrections.wts
--out:no_nstruct_label
+-analytic_etable_evaluation 0

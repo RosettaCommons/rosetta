@@ -1,24 +1,38 @@
 <dock_design>
-	<TASKOPERATIONS>
-		<RestrictIdentitiesAtAlignedPositions name=keep source_pdb="template.pdb" resnums=137,139/>
-		<RestrictIdentitiesAtAlignedPositions name=hold source_pdb="template.pdb" resnums=184/>
-	</TASKOPERATIONS>
-	<SCOREFXNS>
-  	<sc12_w_correction weights=score12_w_corrections/>
-  	<score12_chainbreak weights=score12_w_corrections>
-	    <Reweight scoretype=chainbreak weight=1/>
-		</score12_chainbreak>
-	</SCOREFXNS>
-	<FILTERS>
-	  <ScoreType name=chainbreak_val scorefxn=score12_chainbreak score_type=chainbreak threshold=15/>
-	</FILTERS>
-	<MOVERS>
-		<Splice name=splice1 loop_pdb_source="%%source%%" source_pdb="%%source%%" design_task_operations=keep,hold loop_dbase_file_name="torsion.db" scorefxn=sc12_w_correction ccd=1 res_move=7 randomize_cut=1 from_res=160 to_res=172 splice_filter=chainbreak_val rms_cutoff=6.5 template_file="template.pdb"/>
-	  <Splice name=splice2 loop_pdb_source="%%source%%" source_pdb="%%source%%" loop_dbase_file_name="torsion.db" scorefxn=sc12_w_correction ccd=1 res_move=5 randomize_cut=1 from_res=210 to_res=219 rms_cutoff=6.5 splice_filter=chainbreak_val template_file="template.pdb"/>
+         <TASKOPERATIONS>
+    		<InitializeFromCommandline name=init/>
+		<SeqprofConsensus name=seqprofcons min_aa_probability=3 probability_larger_than_current=0 ignore_pose_profile_length_mismatch=1/>
+  	</TASKOPERATIONS>
+        <SCOREFXNS>
+  <sc12_w_correction weights=score12_w_corrections>
+	<Reweight scoretype="res_type_constraint" weight=0.5/>
+	<Reweight scoretype="coordinate_constraint" weight=0.1/>
+	<Reweight scoretype="dihedral_constraint" weight=1/>
+	</sc12_w_correction>
+  <score12_chainbreak weights=score12_w_corrections>
+            <Reweight scoretype=chainbreak weight=1/>
+        </score12_chainbreak>
+        </SCOREFXNS>
+        <FILTERS>
+          <ScoreType name=chainbreak_val scorefxn=score12_chainbreak score_type=chainbreak threshold=100/>
+        </FILTERS>
+        <MOVERS>
+				 <Splice name=splice loop_pdb_source="source1.pdb" source_pdb="source1.pdb" loop_dbase_file_name="seg4.db" scorefxn=sc12_w_correction ccd=1 res_move=100 
+randomize_cut=1 cut_secondarystruc=0 from_res=209 to_res=218 rms_cutoff=100 splice_filter=chainbreak_val thread_ala=0 template_file="template.pdb" design_task_operations=init,seqprofcons design=1> 
+ 			<Segments current_segment=Seg4>
+				<Seg1 pdb_profile_match="pdb_profile_match.Seg1" profiles="L1.16_L2.8:L1.16_L2.8.PSSM"/>
+                                <Seg2 pdb_profile_match="pdb_profile_match.Seg2" profiles="Seg2.10.1:Seg2.10.1.PSSM"/>
+                                <Seg3 pdb_profile_match="pdb_profile_match.Seg3" profiles="H1.14_H2.17:H1.14_H2.17.PSSM"/>
+                                <Seg4 pdb_profile_match="pdb_profile_match.Seg4" profiles="Seg4.15.8:Seg4.15.8.PSSM,Seg4.24.3:Seg4.24.3.PSSM"/>
+                        </Segments>
+		</Splice>
+        </MOVERS>
 
-	</MOVERS>
-	<PROTOCOLS>
-		<Add mover=splice1/>
-		<Add mover=splice2/>
-	</PROTOCOLS>
+				<FILTERS>
+				</FILTERS>
+        <APPLY_TO_POSE>
+        </APPLY_TO_POSE>
+        <PROTOCOLS>
+                <Add mover=splice/>
+        </PROTOCOLS>
 </dock_design>

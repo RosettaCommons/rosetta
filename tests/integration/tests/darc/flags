@@ -2,5 +2,4 @@
 -ligand input/DIZ_0001.fa.pdb
 -extra_res_fa input/DIZ.fa.params
 -ray_file input/rays.txt
--num_runs 10-score:weights score12_w_corrections.wts
--out:no_nstruct_label
+-num_runs 10

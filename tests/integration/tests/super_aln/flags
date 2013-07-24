@@ -1,9 +1,5 @@
 -in:file:alignment input/A3RIY0_ECOLX.1BLS.aln
 -in:file:s input/A3RIY0_ECOLX.pdb input/1BLS_0001.pdb
 -cm:aln_format grishin
-
 -out:file:o output/A3RIY0_ECOLX.super.pdb
-
 -ignore_unrecognized_res
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

@@ -30,5 +30,3 @@
 -mute core.conformation
 -mute core.pack
 -add_orbitals
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

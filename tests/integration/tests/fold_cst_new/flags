@@ -1,48 +1,36 @@
 ## Keywords that are replace are listed in help_keywords.txt
 -use_general_protocol
-
 #-loop:close_loops
 #-loop:short_frag_cycles .5
 #-loop:scored_frag_cycles .5
 #-abinitio:fastrelax
-
 -frag3 inputs/boinc_aacs_nsp1_03_05.200_v1_3.gz
 -frag9 inputs/boinc_aacs_nsp1_09_05.200_v1_3.gz
 -in:file:fasta inputs/nsp1_.fasta
 -in:file:native inputs/native.pdb
 #-in:file:fullatom
-
 -abinitio:debug
 -abinitio:debug_structures
-
-
 #don't have prove that this actually helps.. maybe in the refinement stage..
 -increase_cycles 0.1
 -cst_file inputs/fullatom.cst
 -residues:patch_selectors CENTROID_HA
 -cst_weight 0.05
-
 -fold_cst:no_minimize
 -jumps:topology_file inputs/native.top
-
 #-sample_ss_jumps
 -jumps:ramp_chainbreaks
 -sep_switch_accelerate 0.8
 #-jump_residues_move
 -skip_convergence_check
 -overlap_chainbreak
-
 #-new_centroid_packing
 -rsd_wt_helix 0.5
 -rsd_wt_loop 0.5
-
 -mute core.chemical
 -mute core.conformation
 -run:no_prof_info_in_silentout
 -rmsd_target inputs/truncate_native.pdb
 -rmsd_column noflex
-
 -out:user_tag nsp1
 -out:file:silent s.out
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

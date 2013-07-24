@@ -6,9 +6,3 @@
 -out:file:silent			out
 -score:saxs:ref_pddf			1igdA-fa-hist.pddf
 -mute 	core.chemical
-
-
-
-
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

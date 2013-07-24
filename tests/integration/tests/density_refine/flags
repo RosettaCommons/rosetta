@@ -15,6 +15,3 @@
 -default_max_cycles 50
 -in::missing_density_to_jump
 -in::preserve_crystinfo
-
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

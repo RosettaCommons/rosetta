@@ -34,5 +34,3 @@
 -mute core.io.database
 -out:level 500
 -out:file:scorefile score.sc
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

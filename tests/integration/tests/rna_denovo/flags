@@ -10,6 +10,4 @@
 -dump
 -mute core.io.database
 -vary_geometry
-
--analytic_etable_evaluation 0-score:weights score12_w_corrections.wts
--out:no_nstruct_label
+-analytic_etable_evaluation 0

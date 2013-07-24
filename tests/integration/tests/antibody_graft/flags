@@ -3,6 +3,3 @@
 -in:file:native ./LH_renumbered.pdb    # native structure-
 -antibody:h3_no_stem_graft true # graft the H3, but do not copy the stems from the templates, see details in documents
 -restore_pre_talaris_2013_behavior
-
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

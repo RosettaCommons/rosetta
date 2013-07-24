@@ -2,5 +2,3 @@
 -in:file:native input/native.pdb
 -in:file:silent_struct_type binary
 -in:file:residue_type_set fa_standard
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

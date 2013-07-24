@@ -1,13 +1,11 @@
 -s inputs/1a19.pdb
 -constraints:cst_fa_file inputs/1a19_sc.cst
-
 ## Enable for production runs
 #-ex1
 #-ex2
 #-linmem_ig 10
 #-nblist_autoupdate true
 #-flip_HNQ
-
 -use_input_sc
 -correct
 -no_his_his_pairE
@@ -19,8 +17,4 @@
 -relax:script inputs/short_relax_script
 -ignore_unrecognized_res
 -preserve_header
-
 -chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm 
-
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

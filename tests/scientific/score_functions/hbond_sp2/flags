@@ -1,2 +1,1 @@
--corrections:hbond_sp2_correction-score:weights score12_w_corrections.wts
--out:no_nstruct_label
+-corrections:hbond_sp2_correction

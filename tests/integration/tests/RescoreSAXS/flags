@@ -1,17 +1,12 @@
 -score:saxs:ref_spectrum      gb3_Apr06.dat
-
 -in:file:native		1igdA-idealized.pdb
 -in:file:s			1igdA-idealized.pdb
-
 -in:file:residue_type_set 	fa_standard
 -score:weights			score13
-
 -score:saxs:q_min		0.01
 -score:saxs:q_max		0.5
 -score:saxs:q_step		0.1
-
 -out:level 			350
 -mute 				core.chemical
 -mute 				core.io.database
--mute				core.conformation.Conformation-score:weights score12_w_corrections.wts
--out:no_nstruct_label
+-mute				core.conformation.Conformation

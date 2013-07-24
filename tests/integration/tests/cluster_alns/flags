@@ -3,5 +3,3 @@
 -in:file:template_pdb input/1nqlA.pdb input/1rxqA.pdb input/1yy9A.pdb input/2f22A.pdb
 -run:debug true
 -in:file:fasta input/t369_.fasta
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

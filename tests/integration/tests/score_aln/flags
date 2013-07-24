@@ -3,14 +3,10 @@
 -in:file:template_pdb input/2gj3A.pdb input/2wkqA.pdb input/2z6dA.pdb
 -in:file:alignment input/alignment.filt
 -cm:aln_format grishin
-
 # optional output
 -out:file:silent output/t523_.aln.dat
-
 # options for profile-profile alignment rescoring (not required)
 -cm:seq_score L1
 -cm:min_gap_open -2.0
 -cm:min_gap_extend  -0.5
 -in:file:pssm input/t523_.fasta.5.pssm input/2gj3A.fasta.5.pssm input/2wkqA.fasta.5.pssm input/2z6dA.fasta.5.pssm input/t523_.fasta.5.pssm
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

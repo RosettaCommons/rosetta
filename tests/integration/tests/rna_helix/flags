@@ -1,6 +1,4 @@
 -out:nstruct 1 
 -fasta stem2_add.fasta 
 -out:file:silent stem2_add.out
-
--analytic_etable_evaluation 0-score:weights score12_w_corrections.wts
--out:no_nstruct_label
+-analytic_etable_evaluation 0

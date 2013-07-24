@@ -7,5 +7,4 @@
 -nstruct 1
 -out:pdb
 -out:prefix output/flipped_
--out:file:scorefile output/scores.fasc-score:weights score12_w_corrections.wts
--out:no_nstruct_label
+-out:file:scorefile output/scores.fasc

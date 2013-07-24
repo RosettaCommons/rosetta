@@ -1,5 +1,3 @@
 -in:file:extra_res_fa URA1.params
 -in:file:extra_res_fa HPY1.params
 -mute core.io.database
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

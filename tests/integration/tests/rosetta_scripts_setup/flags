@@ -6,5 +6,3 @@
 -parser:protocol example_script.xml
 -parser:script_vars sasaconf=0 dock_sf=score12 inter_cutoff=10 ala_rep=5 sub_ala_rep=2
 -overwrite
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

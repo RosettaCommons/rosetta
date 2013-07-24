@@ -1,8 +1,5 @@
 -add_orbitals
 -use_bicubic_interpolation
 -dun10
-
 #output orbitals to pdb
 #-output_orbitals
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

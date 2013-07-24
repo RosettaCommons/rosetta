@@ -23,9 +23,3 @@
 -nblist_autoupdate
 -unboundrot inputs/1q91_CHGW_d1_mod.pdb
 -mute core.io.database core.scoring.NeighborList
-
-
-
-
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

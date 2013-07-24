@@ -2,5 +2,3 @@
 -out:file:silent chunk002_1lnt_denovo_run.CLUSTER.out
 -cluster:radius 2.0
 -out:nstruct 2
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

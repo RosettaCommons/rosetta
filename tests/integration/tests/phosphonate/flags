@@ -1,5 +1,3 @@
 -in:file:s input/2xhm_AnCE_k26_clean.pdb
 -out:pdb
 -Ntermini B
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

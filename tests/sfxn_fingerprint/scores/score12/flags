@@ -3,5 +3,3 @@
 -in:file:silent_struct_type binary
 -in:file:fullatom
 -out:nooutput
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

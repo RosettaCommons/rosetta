@@ -1,4 +1,2 @@
 -in:file:s inputs/1f4pA.pdb
 -james:dist_thresholds 10
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

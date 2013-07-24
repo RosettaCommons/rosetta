@@ -24,5 +24,3 @@
 -native 2it7.pdb  
 -out:file:silent 2it7_rebuild.out 
 -disulfide_file 2it7.disulf
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

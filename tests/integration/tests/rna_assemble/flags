@@ -9,5 +9,4 @@
 -close_loops  
 -in:file:silent  stem1_add.out stem2_add.out stem3_add.out motif1_add.20decoys.out motif2_add.20decoys.out motif3_add.20decoys.out 
 -chunk_res  1-9 63-71 13-18 28-33 42-47 55-60 1-18 28-47 55-71 13-33 42-60
--analytic_etable_evaluation false # unfortunately, LKCosTheta and analytic etable evaluation are incompatible-score:weights score12_w_corrections.wts
--out:no_nstruct_label
+-analytic_etable_evaluation false # unfortunately, LKCosTheta and analytic etable evaluation are incompatible

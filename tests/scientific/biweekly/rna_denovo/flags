@@ -9,5 +9,3 @@
 -filter_lores_base_pairs
 -output_lores_silent_file
 -mute core.io.database
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

@@ -1,18 +1,14 @@
 -run:protocol broker
 -broker:setup input/setup_broker.tpb
 -run:test_cycles
-
 -frag3 input/boinc_aacs_hr1958_03_05.200_v1_3.gz
 -frag9 input/boinc_aacs_hr1958_09_05.200_v1_3.gz
 -in:file:fasta input/fasta
 -in:file:native input/native.pdb
-
 -fold_cst:no_minimize
 #-jumps:residue_pair_jump_file ./input/1dsvA.residue_pair_jump_cst
-
 -no_prof_info_in_silentout
 -mute core.io.database
-
 -in:file:silent input/low_2.out
 -in:file:fullatom
 -in:file:silent_struct_type binary
@@ -22,5 +18,3 @@
 -out:nstruct 1
 -out:level 300
 -out:file:scorefile score.sc
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

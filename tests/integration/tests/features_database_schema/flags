@@ -1,8 +1,5 @@
 -dbms:database_name features_database_schema.db3
-
 # for the OrbitalsFeatures reporter
 -add_orbitals
-
 # for the UnrecognizedAtomFeatures
--remember_unrecognized_res-score:weights score12_w_corrections.wts
--out:no_nstruct_label
+-remember_unrecognized_res

@@ -20,5 +20,3 @@
 -out:nstruct 1
 -ignore_unrecognized_res
 -overwrite
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

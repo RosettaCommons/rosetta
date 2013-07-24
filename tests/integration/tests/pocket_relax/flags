@@ -10,5 +10,3 @@
 -s input/1r2d_closed.pdb
 -nstruct 1
 -cst_fa_file input/constraints
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

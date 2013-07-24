@@ -4,5 +4,4 @@
 -mute all
 -unmute protocols.UnfoldedStateEnergyCalculator
 -no_optH true
--detect_disulf false-score:weights score12_w_corrections.wts
--out:no_nstruct_label
+-detect_disulf false

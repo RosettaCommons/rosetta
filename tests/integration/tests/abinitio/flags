@@ -5,5 +5,3 @@
 -out:file:silent 1l2y_silent.out
 -run:no_prof_info_in_silentout
 -mute core.io.database
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

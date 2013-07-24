@@ -9,13 +9,11 @@
 -ex2aro
 #-use_input_sc # consider using (see documentation)
 #-unboundrot input/unbound.pdb # use if unbound structure or another structure with 'good' rotamers is available
-
 -frag3 input/frags/frags.3mers.offset
 -frag9 input/frags/frags.9mers.offset
 -flexPepDocking:frag5 input/frags/frags.5mers.offset
 -flexPepDocking:frag5_weight 0.25
 -flexPepDocking:frag9_weight 0.1
-
 #-out:level 600
 -mute core.io.database
 -mute core.util.prof
@@ -30,5 +28,3 @@
 -mute protocols.jd2.PDBJobInputter
 -mute core.pack.task
 -mute protocols.moves.MonteCarlo
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

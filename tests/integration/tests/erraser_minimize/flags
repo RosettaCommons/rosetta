@@ -10,5 +10,3 @@
 -scale_d 100
 -scale_theta 10
 -analytic_etable_evaluation false # incompatible with LKCosTheta, unfortunately
--score:weights score12_w_corrections.wts
--out:no_nstruct_label

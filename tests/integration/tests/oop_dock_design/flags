@@ -11,8 +11,6 @@
 -score:weights mm_std 
 -packing:linmem_ig 10 
 <<<<<<< HEAD
--score:weights score12_w_corrections.wts
--out:no_nstruct_label
 =======
 -in:detect_oops true
 >>>>>>> 1ce2a73e8e484d60a59552aa23905ef117b279f8

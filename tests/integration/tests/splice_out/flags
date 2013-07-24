@@ -1,17 +1,19 @@
--s template.pdb
+-use_input_sc
+-extrachi_cutoff 8
+-ignore_unrecognized_res
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
+-corrections::correct
+-corrections::score:no_his_his_pairE
+-jd2:ntrials 1
+-overwrite
+-restore_pre_talaris_2013_behavior
+-score:weights score12_w_corrections.wts
+-mute protocols.jd2.DockDesignParser
+-loops:outer_cycles    2
+-loops:max_inner_cycles 2
+-unmute protocols.simple_filters.ScoreTypeFilter
+-pdb_comments true
 -parser:script_vars source=source.pdb
 -mute core.util.prof ## dont show timing info
 -out:file:fullatom
 -mute core.io.database
--jd2:ntrials 1
--parser:protocol splice_out.xml
--overwrite
--use_input_sc
--loops:outer_cycles 2
--loops:max_inner_cycles 2
--corrections::correct
--corrections::score:no_his_his_pairE
--ignore_unrecognized_res
--chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
--score:weights score12_w_corrections.wts
--out:no_nstruct_label
