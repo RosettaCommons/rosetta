@@ -151,8 +151,8 @@ void FragmentSampler::checkpointed_cycle_block(
 
 	if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 		tr.Info << "Timeperstep: " << (double(endtime) - starttime )/(CLOCKS_PER_SEC ) << std::endl;
+	  jd2::output_intermediate_pose( pose, id2string( stage_id ) );
 	}
-	jd2::output_intermediate_pose( pose, id2string( stage_id ) );
 }
 
 void FragmentSampler::apply( pose::Pose & pose ) {
@@ -173,7 +173,9 @@ void FragmentSampler::apply( pose::Pose & pose ) {
     
 	total_trials_ = 0;
 	current_scorefxn()(pose);
+  if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 	jd2::output_intermediate_pose( pose, "stage0" );
+	}
     
 	try {
 		if ( !contains_stageid( skip_stages_, STAGE_1 ) ) {
@@ -389,7 +391,9 @@ FragmentSampler::mover( pose::Pose const& pose, StageID stage_id, core::scoring:
 void FragmentSampler::do_stage1_cycles( pose::Pose &pose ) {
 	moves::RepeatMover( new moves::TrialMover( mover( pose, STAGE_1, current_scorefxn() ), mc_ptr() ), stage1_cycles() ).apply( pose );
 	mc().reset( pose ); // make sure that we keep the final structure
+  if ( option[ basic::options::OptionKeys::abinitio::debug ]() ) {
 	jd2::output_intermediate_pose( pose, "stage1_cycles" );
+	}
 }
 
 void FragmentSampler::do_stage2_cycles( pose::Pose &pose ) {

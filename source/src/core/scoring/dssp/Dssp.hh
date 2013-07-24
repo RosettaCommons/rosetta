@@ -79,6 +79,7 @@ public:
 	char get_dssp_secstruct( core::Size resid );
 
 	std::string get_dssp_secstruct();
+	std::string get_dssp_reduced_IG_as_L_secstruct();
 
 	float bb_pair_score( Size res1, Size res2 );
 

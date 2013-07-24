@@ -702,7 +702,8 @@ sources = {
 		"cluster_hotspot_docking",
 		"score_hotspot_cst",
 		"compute_Irmsd",
-		"match_disulfide_to_scaffold",
+		"tmalign_cluster",
+		#"match_disulfide_to_scaffold",
 		#"docking_parallel",
 	],
 	"pilot/smlewis" : [

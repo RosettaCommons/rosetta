@@ -26,6 +26,7 @@
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/selection.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -54,7 +55,9 @@ namespace filters {
 HelixKinkFilter::HelixKinkFilter():
 	Filter( "HelixKink" ),
 	bend_angle_( 20.0 ),
-	secstruct_( "" )
+	secstruct_( "" ),
+	string_resnums_( "" ),
+	select_resnums_( 0 )
 {}
 
 
@@ -63,7 +66,9 @@ HelixKinkFilter::HelixKinkFilter( HelixKinkFilter const & rval ):
 	//utility::pointer::ReferenceCount(),
 	Super( rval ),
 	bend_angle_( rval.bend_angle_ ),
-	secstruct_( rval.secstruct_ )
+	secstruct_( rval.secstruct_ ),
+	string_resnums_( rval.string_resnums_),
+	select_resnums_( rval.select_resnums_)
 {}
 
 
@@ -95,14 +100,45 @@ HelixKinkFilter::apply( Pose const & pose ) const
 		TR << " Pose does not have HBOND_SET. Checking hbonds will be skipped. " << std::endl;
 	}
 
+
+	//vector to help quickly identify if a helix contains residues of interest 
+	utility::vector1<bool> residues_to_check;
+	if ( select_resnums_ ) {
+	  utility::vector1< core::Size > const res_set_vec (core::pose::get_resnum_list_ordered( string_resnums_, pose ));
+  	residues_to_check.resize(pose.total_residue(),false);
+			TR << "filter residues contain: ";
+		for( core::Size i_res_vec = 1; i_res_vec <= res_set_vec.size(); ++i_res_vec ){
+			residues_to_check[res_set_vec[ i_res_vec ]]=true;
+			TR << res_set_vec[ i_res_vec ] << " ";
+		}
+	   TR << std::endl;
+	} else {
+  	residues_to_check.resize(pose.total_residue(),true);
+	}
+
 	// check kink
 	for( Size ii=1; ii<=helices.size(); ++ii ) {
+		bool check = false;
+		if ( select_resnums_ ) {
+				for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it != ite; ++it ) {
+		    		if (residues_to_check[it]) {
+							check=true;
+							//TR << "Helix " << ii << ", " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", is considered" << std::endl;
+		    			break;
+						}
+							//TR << "Helix " << ii << ", " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", NOT considered" << std::endl;
+	      }
+		}
+
+		if (!check ) continue;
 
 		TR << "Helix " << ii << ", res " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", ";
 		// check helix bend
 		if ( helices[ ii ]->bend() > bend_angle_ ) {
 			TR << "is bended angle=" << helices[ ii ]->bend() << std::endl;
 			return false;
+		} else {
+			TR << "is bended angle=" << helices[ ii ]->bend() << std::endl;
 		}
 
 		// check broken hydrogen within helix
@@ -142,6 +178,14 @@ HelixKinkFilter::parse_my_tag(
 		protocols::jd2::parser::BluePrint blue( blueprint );
 		secstruct_ = blue.secstruct();
 	}
+  // residues that need to contained in helix
+	if ( tag->hasOption( "resnums" ) ) {
+		TR << "Only filter helix that contains residues specified in resnums" << std::endl;
+    select_resnums_=true;
+    string_resnums_ = tag->getOption< std::string >( "resnums" );
+  } else {
+    select_resnums_=false;
+  }
 }
 
 protocols::filters::FilterOP

@@ -103,7 +103,10 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
 	runtime_assert( nres == init_pose_->total_residue() );
 	kinematics::Jump new_jump;
 	core::Size const rb_jump( jumpid_ );
+	if ( jumpid_ > 0 ) {
 	new_jump = pose.jump( rb_jump );
+	}
+
 	for( core::Size res=1; res<=nres; ++res ) {
 		if( allsc_ ) { // replace all sidechains
 			pose.replace_residue( res, init_pose_->residue( res ), true/*orient_backbone*/ );
@@ -133,7 +136,9 @@ SaveAndRetrieveSidechains::apply( Pose & pose )
       } //if variants don't match
     }
 	}
-	pose.set_jump( rb_jump, new_jump );
+	if ( jumpid_ > 0 ) {
+		pose.set_jump( rb_jump, new_jump );
+	}
 	TR.flush();
 }
 

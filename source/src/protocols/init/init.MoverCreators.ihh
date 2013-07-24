@@ -196,6 +196,7 @@
 #include <protocols/protein_interface_design/movers/ShoveResidueMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/VLBCreator.hh>
 #include <protocols/protein_interface_design/movers/DockWithHotspotMoverCreator.hh>
+#include <protocols/protein_interface_design/movers/TopologyBrokerMoverCreator.hh>
 
 #include <protocols/qsar/RenderGridsToKinemageCreator.hh>
 #include <protocols/qsar/scoring_grid/GridInitMoverCreator.hh>

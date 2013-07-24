@@ -20,6 +20,7 @@
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
+#include <utility/tag/Tag.hh>
 
 // Parser headers
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
@@ -56,7 +57,8 @@ DsspMoverCreator::mover_name()
 }
 
 DsspMover::DsspMover():
-	Mover( DsspMoverCreator::mover_name() )
+	Mover( DsspMoverCreator::mover_name() ),
+	reduced_IG_as_L_(0)
 {}
 
 DsspMover::~DsspMover()
@@ -64,6 +66,7 @@ DsspMover::~DsspMover()
 
 /// @brief clone this object
 DsspMover::MoverOP DsspMover::clone() const {
+
 	return new DsspMover( *this );
 }
 
@@ -75,9 +78,16 @@ DsspMover::MoverOP DsspMover::fresh_instance() const {
 /// @details virtual main
 void DsspMover::apply( Pose & pose )
 {
+	if (!reduced_IG_as_L_) {
 	core::scoring::dssp::Dssp dssp( pose );
 	dssp.insert_ss_into_pose( pose );
 	TR << dssp.get_dssp_secstruct() << std::endl;
+	} else {
+  TR << "reduce IG as L" << std::endl;
+	core::scoring::dssp::Dssp dssp( pose );
+	dssp.insert_ss_into_pose_no_IG_helix( pose );
+	TR << dssp.get_dssp_secstruct() << std::endl;
+	}
 }
 
 std::string
@@ -88,12 +98,13 @@ DsspMover::get_name() const {
 /// @brief parse xml
 void
 DsspMover::parse_my_tag(
-	TagPtr const,
+	TagPtr const tag,
 	DataMap &,
 	Filters_map const &,
 	Movers_map const &,
 	Pose const & )
 {
+	reduced_IG_as_L_ = tag->getOption<bool>( "reduced_IG_as_L" , 0 );
 	TR << "DsspMover loaded." << std::endl;
 }
 

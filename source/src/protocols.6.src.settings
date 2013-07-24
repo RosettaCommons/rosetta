@@ -221,6 +221,7 @@ sources = {
 		"ShoveResidueMover",
 		"VLB",
                 "DockWithHotspotMover",
+                "TopologyBrokerMover",
 	],
   	"protocols/seeded_abinitio": [
     		"CAcstGenerator",

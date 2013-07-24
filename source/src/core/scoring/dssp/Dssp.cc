@@ -537,6 +537,16 @@ Dssp::get_dssp_secstruct() {
 	return sequence;
 }
 
+std::string
+Dssp::get_dssp_reduced_IG_as_L_secstruct() {
+  dssp_reduced_IG_as_L( dssp_secstruct_ );
+  std::string sequence;
+  for ( core::Size i = 1; i <= total_residue_;/*pose.total_residue();*/ ++i ) {
+    sequence += dssp_secstruct_( i );
+  }
+  return sequence;
+}
+
 float
 Dssp::bb_pair_score( Size res1, Size res2 )
 {

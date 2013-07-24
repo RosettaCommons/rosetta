@@ -63,6 +63,9 @@ public:
 
 	void parse_my_tag( TagPtr const, DataMap &, Filters_map const &, Movers_map const &, Pose const & );
 
+private:
+  bool reduced_IG_as_L_;
+
 
 };
 

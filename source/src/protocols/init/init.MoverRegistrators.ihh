@@ -212,6 +212,7 @@ static MoverRegistrator< protein_interface_design::movers::TryRotamersCreator > 
 static MoverRegistrator< protein_interface_design::movers::ShoveResidueMoverCreator > reg_ShoveResidueMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::VLBCreator > reg_VLBCreator;
 static MoverRegistrator< protein_interface_design::movers::DockWithHotspotMoverCreator > reg_DockWithHotspotMoverCreator;
+static MoverRegistrator< protein_interface_design::movers::TopologyBrokerMoverCreator> reg_TopologyBrokerMoverCreator;
 
 static MoverRegistrator< qsar::RenderGridsToKinemageCreator > reg_RenderGridsToKinemageCreator;
 static MoverRegistrator< qsar::scoring_grid::GridInitMoverCreator >  reg_GridInitMoverCreator;

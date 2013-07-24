@@ -118,6 +118,10 @@ private:
 	/// @brief
 	String secstruct_;
 
+	/// @brief
+	String string_resnums_;
+  bool select_resnums_;
+
 };
 
 } // filters
