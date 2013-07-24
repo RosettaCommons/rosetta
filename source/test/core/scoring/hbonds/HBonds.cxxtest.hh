@@ -32,6 +32,7 @@
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
+#include <core/id/AtomID.hh>
 // AUTO-REMOVED #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -232,7 +233,25 @@ public:
 		fill_hbond_set(pose,
 			true, /* calculate derivative */
 			hbond_set);
-
+		
+		
+		for (Size i = 1; i <= pose.total_residue(); ++i){
+		    if (hbond_set.nhbonds(i, false) > 0){
+			utility::vector1< HBondCOP > const residue_hbonds = hbond_set.residue_hbonds(i, false /* include all*/);
+			TS_ASSERT(residue_hbonds.size() >= 1);
+			for (Size k = 1; i <= pose.residue(i).natoms(); ++i){
+			    id::AtomID atom = id::AtomID(k, i);
+			    if (hbond_set.nhbonds(atom, false) >= 1){
+				utility::vector1< HBondCOP > const atom_hbonds = hbond_set.atom_hbonds(atom, false /* include only allowed*/);
+				TS_ASSERT(atom_hbonds.size() >= 1);
+				break;
+			    }
+			}
+			
+			break;
+		    }
+		}
+		
 		for( Size i=1; i <= hbond_set.nhbonds(); ++i ){
 			const HBond hbond( hbond_set.hbond(i) );
 			const Residue acc_res( pose.residue(hbond.acc_res()));

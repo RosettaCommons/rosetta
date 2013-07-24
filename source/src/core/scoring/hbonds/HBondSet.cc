@@ -242,6 +242,49 @@ HBond::hbond_energy_comparer( HBondCOP a, HBondCOP b )
 	return ( a->energy() * a->weight() < b->energy() * b->weight() );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+Real
+HBond::get_AHDangle(core::pose::Pose const & pose) const {
+
+	PointPosition const Dxyz(pose.residue(don_res()).xyz(pose.residue(don_res()).atom_base(don_hatm())));
+	PointPosition const Hxyz(pose.residue(don_res()).xyz(don_hatm()));
+	PointPosition const Axyz(pose.residue(acc_res()).xyz(acc_atm()));
+	return numeric::angle_degrees(Axyz, Hxyz, Dxyz);
+	
+}
+
+Real
+HBond::get_BAHangle(core::pose::Pose const & pose) const {
+	
+	PointPosition const Bxyz(pose.residue(acc_res()).xyz(pose.residue(acc_res()).atom_base(acc_atm())));
+	PointPosition const Hxyz(pose.residue(don_res()).xyz(don_hatm()));
+	PointPosition const Axyz(pose.residue(acc_res()).xyz(acc_atm()));
+	return numeric::angle_degrees(Bxyz, Axyz, Hxyz);
+}
+
+Real
+HBond::get_BAtorsion(core::pose::Pose const & pose) const {
+	
+	Size const base_atomno(pose.residue(acc_res()).atom_base(acc_atm()));
+	Size const bbase_atomno(pose.residue(acc_res()).atom_base(base_atomno));
+	PointPosition const Bxyz(pose.residue(acc_res()).xyz(base_atomno));
+	PointPosition const BBxyz(pose.residue(acc_res()).xyz(bbase_atomno));
+	PointPosition const Hxyz(pose.residue(don_res()).xyz(don_hatm()));
+	PointPosition const Axyz(pose.residue(acc_res()).xyz(acc_atm()));
+	
+	return dihedral_degrees(BBxyz, Bxyz, Axyz, Hxyz);
+}
+
+Real
+HBond::get_HAdist(core::pose::Pose const & pose) const {
+	
+	PointPosition const Hxyz(pose.residue(don_res()).xyz(don_hatm()));
+	PointPosition const Axyz(pose.residue(acc_res()).xyz(acc_atm()));
+	return Hxyz.distance(Axyz);
+	
+}
+
 ///
 void
 HBond::show( std::ostream & out ) const
@@ -287,21 +330,13 @@ HBond::show(
 	Size const acc_pdb_chain(pose.pdb_info()->chain(acc_res()));
 	Size const acc_pdb_number(pose.pdb_info()->number(acc_res()));
 	char const acc_pdb_icode(pose.pdb_info()->icode(acc_res()));
-	Size const base_atomno(pose.residue(acc_res()).atom_base(acc_atm()));
-	Size const bbase_atomno(pose.residue(acc_res()).atom_base(base_atomno));
 	std::string const acc_res_name(pose.residue(acc_res()).type().name3());
 	std::string const acc_atom_name(pose.residue(acc_res()).atom_name(acc_atm()));
 
-	PointPosition const Dxyz(pose.residue(don_res()).xyz(don_atomno));
-	PointPosition const Hxyz(pose.residue(don_res()).xyz(don_hatm()));
-	PointPosition const Axyz(pose.residue(acc_res()).xyz(acc_atm()));
-	PointPosition const Bxyz(pose.residue(acc_res()).xyz(base_atomno));
-	PointPosition const BBxyz(pose.residue(acc_res()).xyz(bbase_atomno));
-
-	Real const HAdist(Hxyz.distance(Axyz));
-	Real const AHDangle(numeric::angle_degrees(Axyz, Hxyz, Dxyz));
-	Real const BAHangle(numeric::angle_degrees(Bxyz, Axyz, Hxyz));
-	Real const BAtorsion(dihedral_degrees(BBxyz, Bxyz, Axyz, Hxyz));
+	Real const HAdist = get_HAdist(pose);
+	Real const AHDangle = get_AHDangle(pose);
+	Real const BAHangle = get_BAHangle(pose);
+	Real const BAtorsion = get_BAtorsion(pose);
 
 	// In the pdb format, a residue is uniquely identified by
 	// the chain, the residue number and the insertion code
@@ -408,12 +443,13 @@ HBondSet::HBondSet( HBondOptions const & opts, Size const nres):
 /// The pose must be non-const because the neighbor graph may need to
 /// be initialized.
 HBondSet::HBondSet(
-	pose::Pose & pose ) :
+	pose::Pose & pose,
+	bool const bb_only /*true*/) :
 	options_(new HBondOptions()),
 	atom_map_init_(false)
 {
 	pose.update_residue_neighbors();
-	setup_for_residue_pair_energies(pose, false);
+	setup_for_residue_pair_energies(pose, false, bb_only);
 }
 
 ///@brief convenience constructor. If you need more controlled
@@ -423,12 +459,13 @@ HBondSet::HBondSet(
 /// be initialized.
 HBondSet::HBondSet(
 	HBondOptions const & opts,
-	pose::Pose & pose) :
+	pose::Pose & pose,
+	bool const bb_only /*true*/) :
 	options_( new HBondOptions(opts)),
 	atom_map_init_(false)
 {
 	pose.update_residue_neighbors();
-	setup_for_residue_pair_energies(pose, false);
+	setup_for_residue_pair_energies(pose, false, bb_only);
 }
 
 
@@ -523,13 +560,6 @@ basic::datacache::CacheableDataOP
 HBondSet::clone() const
 {
 	return new HBondSet( *this );
-}
-
-/// \brief  Number of hbonds
-Size
-HBondSet::nhbonds() const
-{
-	return hbonds_.size();
 }
 
 
@@ -647,18 +677,63 @@ HBondSet::don_bbg_in_bb_bb_hbond( Size const residue ) const
 	return backbone_backbone_donor_[ residue ];
 }
 
-/// \brief  Get a vector of all the hbonds involving this atom
-utility::vector1< HBondCOP > const &
-HBondSet::atom_hbonds( AtomID const & atom ) const
+/// \brief  Number of hbonds
+Size
+HBondSet::nhbonds() const
 {
-	setup_atom_map();
-	HBondAtomMap::const_iterator iter( atom_map_.find( atom ) );
-	if ( iter == atom_map_.end() ) {
-		return empty_list_of_hbonds_;
-	} else return iter->second;
+	return hbonds_.size();
 }
 
-/// \brief  Delete all the data
+Size
+HBondSet::nhbonds(Size const seqpos, bool include_only_allowed /* true */) const
+{
+	utility::vector1< HBondCOP > const bonds = residue_hbonds(seqpos, include_only_allowed);
+	return bonds.size();
+}
+
+Size
+HBondSet::nhbonds( AtomID const & atom, bool include_only_allowed /* true */) const
+{
+	utility::vector1< HBondCOP > const bonds = atom_hbonds(atom, include_only_allowed);
+	return bonds.size(); 
+}
+
+/// @brief  Get a vector of all the hbonds involving this atom
+utility::vector1< HBondCOP > const
+HBondSet::atom_hbonds( AtomID const & atom, bool include_only_allowed /* true */ ) const
+{
+	setup_atom_map();
+	utility::vector1< HBondCOP > result_bonds;
+	HBondAtomMap::const_iterator iter( atom_map_.find( atom ) );
+	if ( iter != atom_map_.end() ) {
+	    utility::vector1< HBondCOP > bonds = iter->second;
+	    for (Size i = 1; i <= bonds.size(); ++i){
+		if ((include_only_allowed && allow_hbond(*bonds[i])) || !include_only_allowed){
+		    result_bonds.push_back(bonds[i]);
+		}
+		else continue;
+	    }
+	}
+	
+	return result_bonds;
+}
+
+utility::vector1< HBondCOP > const
+HBondSet::residue_hbonds(const Size seqpos, bool include_only_allowed /* true */ ) const
+{
+	utility::vector1< HBondCOP > bonds;
+	
+	for ( Size i=1; i<= nhbonds(); ++i ) {
+		HBond const & bond(hbond(i));
+		if ((bond.don_res() == seqpos || bond.acc_res() == seqpos) 
+		&& ((include_only_allowed && allow_hbond(*bonds[i])) || !include_only_allowed) ){
+			bonds.push_back( &bond );
+		}
+	}
+	return bonds;
+}
+
+/// @brief  Delete all the data
 void
 HBondSet::clear()
 {
@@ -707,7 +782,6 @@ HBondSet::setup_atom_map() const // lazy updating
 	if ( atom_map_init_ ) return;
 	atom_map_init_ = true;
 	for ( Size i=1; i<= hbonds_.size(); ++i ) {
-		if ( !allow_hbond(i) ) continue;
 		HBond const & hb( hbond(i) );
 		AtomID const don_atom( hb.don_hatm(), hb.don_res() );
 		AtomID const acc_atom( hb.acc_atm() , hb.acc_res() );
@@ -761,15 +835,9 @@ HBondSet::setup_for_residue_pair_energies(
 				Size const neighbor_id( (*ir)->get_other_ind( i ) );
 				// Don't include VRTs in neighbor count
 				if ( pose.residue( neighbor_id ).aa() == core::chemical::aa_vrt ) continue;
-				chemical::ResidueType const & nbr_rsd( pose.residue_type( neighbor_id ) );
-				if ( nbr_rsd.is_protein() ) {
-					nbrs_[i] += 1;
-				} else if ( nbr_rsd.is_DNA() ) {
-					nbrs_[i] += 1;
-// 					nbrs_[i] += 3;
-				} else {
-					nbrs_[i] += 1;
-				}
+				//chemical::ResidueType const & nbr_rsd( pose.residue_type( neighbor_id ) );
+				nbrs_[i] += 1;
+
 			}
 // 			std::cout << "nbrdiff: old= " << tenA_neighbor_graph.get_node(i)->num_neighbors_counting_self() << " new= " <<
 // 				nbrs_[i] << std::endl;
@@ -885,9 +953,6 @@ HBondSet::show(
 }
 
 
-
-
-utility::vector1< HBondCOP > HBondSet::empty_list_of_hbonds_;
 
 }
 }
