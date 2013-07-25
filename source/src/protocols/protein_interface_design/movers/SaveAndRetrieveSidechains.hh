@@ -21,6 +21,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/moves/DataMapObj.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
@@ -59,10 +60,13 @@ public:
 	protocols::moves::MoverOP clone() const;
 	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new SaveAndRetrieveSidechains ); }
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	bool two_step() const{ return two_step_; }
+	void two_step( bool const b ) { two_step_ = b; }
 private:
 	PoseOP init_pose_;
-	bool allsc_, ensure_variant_matching_;
+	bool allsc_, ensure_variant_matching_, two_step_; // two_step: dflt false; on first apply, record sidechains, on second apply, enforce them.
 	core::Size jumpid_;
+	utility::pointer::owning_ptr< protocols::moves::DataMapObj< bool > > first_apply_; // internal for two_step_
 };
 
 } // movers

@@ -71,6 +71,10 @@ SaveAndRetrieveSidechains::SaveAndRetrieveSidechains() :
 	allsc_ = false; // default
 	jumpid_ = 1; //default
 	ensure_variant_matching_ = false; //default
+	two_step_ = false;
+	first_apply_ = new protocols::moves::DataMapObj< bool >;
+	first_apply_->obj = true;
+	init_pose_ = new core::pose::Pose;
 }
 
 SaveAndRetrieveSidechains::SaveAndRetrieveSidechains(
@@ -93,10 +97,16 @@ void
 SaveAndRetrieveSidechains::apply( Pose & pose )
 {
 	typedef conformation::Residue Residue;
-	TR << "Retrieving sidechains...\n";
+	if( two_step() && first_apply_->obj ){
+		TR<<"Saving sidechains."<<std::endl;
+		*init_pose_ = pose;
+		first_apply_->obj = false;
+		return;
+	}
+	TR << "Retrieving sidechains..."<<std::endl;
 	Size nres = pose.total_residue();
 	if (nres != init_pose_->total_residue() && core::pose::symmetry::is_symmetric(pose)) {
-		conformation::symmetry::SymmetricConformation & symm_conf ( 
+		conformation::symmetry::SymmetricConformation & symm_conf (
 				dynamic_cast<conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		nres = symm_conf.Symmetry_Info()->num_independent_residues();
 	}
@@ -150,8 +160,11 @@ SaveAndRetrieveSidechains::get_name() const {
 void
 SaveAndRetrieveSidechains::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
-	init_pose_ = new core::pose::Pose( pose );
+	first_apply_->obj = true;
 	allsc_ = tag->getOption<bool>( "allsc", 0 );
+	two_step( tag->getOption< bool >( "two_step", false ) );
+	if( !two_step() )
+		init_pose_ = new core::pose::Pose( pose );
 }
 
 protocols::moves::MoverOP
