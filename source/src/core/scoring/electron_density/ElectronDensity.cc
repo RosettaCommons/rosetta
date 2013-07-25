@@ -1925,8 +1925,13 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 		if (kbin == nkbins_) {
 			std::vector<core::Real> scores_i( &fastdens_score_i[0], &fastdens_score_i[0]+density.u1()*density.u2()*density.u3() );
 			std::sort (scores_i.begin(), scores_i.end());
-			core::Size low_cut = (core::Size) std::floor( 0.005 * density.u1()*density.u2()*density.u3() );
-			core::Size high_cut = (core::Size) std::ceil( 0.995 * density.u1()*density.u2()*density.u3() );
+			//core::Size low_cut = (core::Size) std::floor( 0.005 * density.u1()*density.u2()*density.u3() );
+			//core::Size high_cut = (core::Size) std::ceil( 0.995 * density.u1()*density.u2()*density.u3() );
+
+			//fpd  the percentage based normalization (above) fails when the map is almost empty
+			//fpd  instead we revert to old formulation where absolute max/min is used for normalization
+			core::Size low_cut = 4;
+			core::Size high_cut = density.u1()*density.u2()*density.u3()-5;
 			min_val = scores_i[low_cut];
 			max_val = scores_i[high_cut];
 		}

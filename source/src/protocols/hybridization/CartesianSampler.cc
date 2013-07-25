@@ -316,7 +316,8 @@ CartesianSampler::apply_constraints( core::pose::Pose &pose )
 	core::Size GAPBUFFER = 3;
 	core::Real COORDDEV = 1.0;
 
-	pose.remove_constraints();
+	//fpd keep constraints from input pose
+	//pose.remove_constraints();
 
 	core::Size nres_tgt = get_num_residues_nonvirt( pose );
 
