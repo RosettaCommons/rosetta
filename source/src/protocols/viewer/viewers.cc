@@ -736,10 +736,10 @@ std::map<std::string, Vector>  get_sidechain_color_rhiju() {
     sidechain_color_rhiju[ "RAD" ] = Vector( 0.5, 0.5, 0.0); //yellow
     sidechain_color_rhiju[ "RCY" ] = Vector( 0.0, 0.5, 0.0); //green
     sidechain_color_rhiju[ "URA" ] = Vector( 0.5, 0.0, 0.0); //red
-    sidechain_color_rhiju[ " rG" ] = Vector( 0.0, 0.0, 0.5); //blue
-    sidechain_color_rhiju[ " rA" ] = Vector( 0.5, 0.5, 0.0); //yellow
-    sidechain_color_rhiju[ " rC" ] = Vector( 0.0, 0.5, 0.0); //green
-    sidechain_color_rhiju[ " rU" ] = Vector( 0.5, 0.0, 0.0); //red
+    sidechain_color_rhiju[ "  G" ] = Vector( 0.0, 0.0, 0.5); //blue
+    sidechain_color_rhiju[ "  A" ] = Vector( 0.5, 0.5, 0.0); //yellow
+    sidechain_color_rhiju[ "  C" ] = Vector( 0.0, 0.5, 0.0); //green
+    sidechain_color_rhiju[ "  U" ] = Vector( 0.5, 0.0, 0.0); //red
 
     return sidechain_color_rhiju;
 }

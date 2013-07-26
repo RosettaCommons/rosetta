@@ -67,11 +67,11 @@ get_base_pucker(
 {
 
 	utility::vector1< std::string > names;
-	names.push_back( "C1*" );
-	names.push_back( "C2*" );
-	names.push_back( "C3*" );
-	names.push_back( "C4*" );
-	names.push_back( "O4*" );
+	names.push_back( "C1'" );
+	names.push_back( "C2'" );
+	names.push_back( "C3'" );
+	names.push_back( "C4'" );
+	names.push_back( "O4'" );
 
 	utility::vector1< Vector > atoms;
 	for ( int i=1; i<= 5; ++i ) {
@@ -245,7 +245,7 @@ get_z_axis(
 Vector
 strand_orientation_vector( conformation::Residue const & rsd, int const strand )
 {
-	Vector orient( rsd.xyz("C3*") - rsd.xyz("C4*" ) );
+	Vector orient( rsd.xyz("C3'") - rsd.xyz("C4'" ) );
 	if ( strand == 2 ) orient *= -1.0f;
 	orient.normalize();
 	return orient;
@@ -1276,11 +1276,11 @@ get_base_pucker(
 	using numeric::conversions::degrees;
 
 	utility::vector1< std::string > names;
-	names.push_back( "C1*" );
-	names.push_back( "C2*" );
-	names.push_back( "C3*" );
-	names.push_back( "C4*" );
-	names.push_back( "O4*" );
+	names.push_back( "C1'" );
+	names.push_back( "C2'" );
+	names.push_back( "C3'" );
+	names.push_back( "C4'" );
+	names.push_back( "O4'" );
 
 	utility::vector1< Vector > atoms;
 	for ( int i=1; i<= 5; ++i ) {

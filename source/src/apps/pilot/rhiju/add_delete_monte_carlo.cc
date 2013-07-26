@@ -798,7 +798,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( medium_fast, "quick runthrough for debugging (keep more poses and not as fast as fast option)", false );
 	NEW_OPT( centroid_screen, "centroid_screen", true);
 	NEW_OPT( allow_base_pair_only_centroid_screen, "allow_base_pair_only_centroid_screen", false); //This only effect floating base sampling + dinucleotide.. deprecate option
-	NEW_OPT( sampler_perform_o2star_pack, "perform O2* hydrogen packing inside StepWiseRNA_ResidueSampler", true );
+	NEW_OPT( sampler_perform_o2star_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
 	NEW_OPT( allow_bulge_at_chainbreak, "Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", true );
 
 	NEW_OPT( add_lead_zero_to_tag, "Add lead zero to clusterer output tag ", false);

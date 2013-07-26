@@ -536,7 +536,7 @@ ContextIndependentGeometricSolEnergy::get_acceptor_base_atm_xyz( conformation::R
 		// following handles the special case in which acceptor has two base residues -- occurs for
 		//  N inside rings.
 		// This matches machinery in hbonds_geom.cc.  That doesn't mean that the base atom is set
-		//  totally correctly -- water (TIP3.params) and O4* in nucleic acids still have weird base atoms,
+		//  totally correctly -- water (TIP3.params) and O4' in nucleic acids still have weird base atoms,
 		//  but at least the hbonds and geom_sol match up.
 		Vector dummy;
 		chemical::Hybridization acc_hybrid( acc_rsd.atom_type( acc_atm ).hybridization());

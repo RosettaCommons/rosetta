@@ -242,7 +242,7 @@ namespace rna {
 				if( (working_rsd.xyz(working_first_sc_at)-VDW_rep_rsd.xyz(VDW_rep_first_sc_at)).length_squared() > dist_cutoff*dist_cutoff ) continue;
 							
 				//Consistency TEST: through screen ensure that every atoms is at the same position. (O(n)*O(m))/////////////////// 
-				bool found_O1P=false; bool found_O2P=false; bool found_O5=false; bool found_P=false;
+				bool found_OP2=false; bool found_OP1=false; bool found_O5=false; bool found_P=false;
 
 				for(Size working_at=1; working_at<=working_rsd.natoms(); working_at++){ //I wonder if we should just consider heavy atom? (rsd_1.nheavyatoms())
 
@@ -253,14 +253,14 @@ namespace rna {
 					//std::cout << "atom=" << working_at  << "|name=" << working_rsd.type().atom_name(working_at) << "|type=" << working_rsd.atom_type(working_at).name();
 					//std::cout << "|element()=" << working_rsd.atom_type(working_at).element() << "|" << std::endl;
 
-					if(working_atom_name==" O1P"){ found_O1P=true; continue; }
-					if(working_atom_name==" O2P"){ found_O2P=true; continue; }
-					if(working_atom_name==" O5*"){ found_O5=true; continue; }
+					if(working_atom_name==" OP2"){ found_OP2=true; continue; }
+					if(working_atom_name==" OP1"){ found_OP1=true; continue; }
+					if(working_atom_name==" O5'"){ found_O5=true; continue; }
 					if(working_atom_name==" P  "){ found_P=true; continue; }
 
-					if(working_atom_name=="1H5*"){ continue; }
-					if(working_atom_name=="2H5*"){ continue; }
-					if(working_atom_name=="2HO*"){ continue; }
+					if(working_atom_name==" H5'"){ continue; }
+					if(working_atom_name=="H5''"){ continue; }
+					if(working_atom_name=="HO2'"){ continue; }
 
 					if(working_rsd.atom_type(working_at).name()=="VIRT") continue; //mainly to deal with "OVU1", "OVL1", "OVL2" 
 
@@ -280,8 +280,8 @@ namespace rna {
 					}
 				}
 
-				if(found_O1P==false) utility_exit_with_message("found_O1P==false");	
-				if(found_O2P==false) utility_exit_with_message("found_O2P==false");	
+				if(found_OP2==false) utility_exit_with_message("found_OP2==false");	
+				if(found_OP1==false) utility_exit_with_message("found_OP1==false");	
 				if(found_O5==false)  utility_exit_with_message("found_O5==false");	
 				if(found_P==false)   utility_exit_with_message("found_P==false");	
 				///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -819,11 +819,11 @@ namespace rna {
 					bool Is_moving_phosphate=false;
 		
 					if(rsd.type().atom_name(at)==" P  ") Is_moving_phosphate=true;
-					if(rsd.type().atom_name(at)==" O1P") Is_moving_phosphate=true;
-					if(rsd.type().atom_name(at)==" O2P") Is_moving_phosphate=true;
-					if(rsd.type().atom_name(at)==" O5*") Is_moving_phosphate=true;
-					if(rsd.type().atom_name(at)=="1H5*") Is_moving_phosphate=true;
-					if(rsd.type().atom_name(at)=="2H5*") Is_moving_phosphate=true;
+					if(rsd.type().atom_name(at)==" OP2") Is_moving_phosphate=true;
+					if(rsd.type().atom_name(at)==" OP1") Is_moving_phosphate=true;
+					if(rsd.type().atom_name(at)==" O5'") Is_moving_phosphate=true;
+					if(rsd.type().atom_name(at)==" H5'") Is_moving_phosphate=true;
+					if(rsd.type().atom_name(at)=="H5''") Is_moving_phosphate=true;
 
 					if(Is_moving_phosphate){
 						moving_phosphate_atom_list.push_back( std::make_pair( n, rsd.type().atom_name(at) ) );

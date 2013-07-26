@@ -675,13 +675,13 @@ Conformation::rebuild_polymer_bond_dependent_atoms( Size const seqpos, int const
 
 
  	for ( Size i=1, ie=rsd.natoms(); i<= ie; ++i ) {
-//			if( upper_lower == -1 && rsd.atom_name( i ) == " O1P" ) std::cout << "Conformation.cc O1P, seqpos= " << seqpos << std::endl;
-//			if( upper_lower == -1 && rsd.atom_name( i ) == " O2P" ) std::cout << "Conformation.cc O2P, seqpos= " << seqpos << std::endl;
+//			if( upper_lower == -1 && rsd.atom_name( i ) == " OP2" ) std::cout << "Conformation.cc OP2, seqpos= " << seqpos << std::endl;
+//			if( upper_lower == -1 && rsd.atom_name( i ) == " OP1" ) std::cout << "Conformation.cc OP1, seqpos= " << seqpos << std::endl;
 
 
  		if ( ( upper_lower == -1 && rsd.icoor(i).depends_on_polymer_lower() ) ||
-				 ( upper_lower == -1 && rsd.atom_name( i ) == " O2P" ) || //TERRIBLE HACK! FIX bEFORE CHECKING IN!
-				 ( upper_lower == -1 && rsd.atom_name( i ) == " O1P" ) || //TERRIBLE HACK! FIX BEFORE CHECKING IN!
+				 ( upper_lower == -1 && rsd.atom_name( i ) == " OP1" ) || //TERRIBLE HACK! FIX bEFORE CHECKING IN!
+				 ( upper_lower == -1 && rsd.atom_name( i ) == " OP2" ) || //TERRIBLE HACK! FIX BEFORE CHECKING IN!
  				 ( upper_lower ==  1 && rsd.icoor(i).depends_on_polymer_upper() ) ) {
  			set_xyz( AtomID(i,seqpos), rsd.icoor(i).build( rsd, *this ) );
  		}

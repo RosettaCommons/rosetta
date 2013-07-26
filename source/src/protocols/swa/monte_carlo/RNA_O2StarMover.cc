@@ -154,7 +154,7 @@ namespace monte_carlo {
 				Size j( (*iter)->get_other_ind( i ) );
 
 				// check for potential interaction of o2* of this new residue and any atom in moving residue.
-				Vector const & o2star_other = pose.residue( j ).xyz( " O2*" );
+				Vector const & o2star_other = pose.residue( j ).xyz( " O2'" );
 				for ( Size n = 1; n <= pose.residue( i ).natoms(); n++ ){
 					if ( ( pose.residue( i ).xyz( n ) - o2star_other ).length() < DIST_CUTOFF ) {
 						residues_allowed_to_be_packed[ j ] = true;
@@ -165,7 +165,7 @@ namespace monte_carlo {
 				// check for potential interaction of o2* of moving residue and any atom in this new residue
 				if (residues_allowed_to_be_packed[ i ]) continue;
 
-				Vector const & o2star_i = pose.residue( i ).xyz( " O2*" );
+				Vector const & o2star_i = pose.residue( i ).xyz( " O2'" );
 				for ( Size n = 1; n <= pose.residue( j ).natoms(); n++ ){
 					if ( ( pose.residue( j ).xyz( n ) - o2star_i ).length() < DIST_CUTOFF ) {
 						residues_allowed_to_be_packed[ i ] = true;

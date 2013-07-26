@@ -1416,7 +1416,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 				std::string atm1name=rsd_type.atom_name( loconn_ats[ii].key2() ); boost::trim(atm1name);
 				std::string atm2name=rsd_type.atom_name( loconn_ats[ii].key1() ); boost::trim(atm2name);
 				std::string atm3name="C";
-				if (rsd_type.is_RNA()) atm3name="O3*";
+				if (rsd_type.is_RNA()) atm3name="O3'";
 
 				// lookup Ktheta and theta0
 				CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,

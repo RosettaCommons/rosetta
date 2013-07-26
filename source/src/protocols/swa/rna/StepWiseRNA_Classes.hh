@@ -57,7 +57,7 @@ class Jump_point{
 
 		Jump_point():
 		five_prime_seq_num( 0 ),
-		five_prime_atom("O3*"),
+		five_prime_atom("O3'"),
 		three_prime_seq_num( 0 ),
 		three_prime_atom("P"),
 		cut_point( 0 )

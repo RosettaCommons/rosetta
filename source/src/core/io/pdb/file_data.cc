@@ -20,6 +20,7 @@
 // Package headers
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/pdb/file_data_options.hh>
+#include <core/io/pdb/file_data_fixup.hh>
 #include <core/io/pdb/pdb_dynamic_reader.hh>
 #include <core/io/pdb/pdb_dynamic_reader_options.hh>
 
@@ -532,53 +533,6 @@ std::ostream& operator <<(std::ostream &os, FileData const & fd)
 	return os;
 }
 
-/// @details  Temporary hacky hack
-/// Need better mechanism for this
-std::string
-convert_res_name( std::string const & name )
-{
-	if      ( name == " DA" ) return "  A";
-	else if ( name == " DC" ) return "  C";
-	else if ( name == " DG" ) return "  G";
-	else if ( name == " DT" ) return "  T";
-	else if ( name == " Ad" ) return "  A";
-	else if ( name == " Cd" ) return "  C";
-	else if ( name == " Gd" ) return "  G";
-	else if ( name == " Td" ) return "  T";
-	else if ( name == "MSE" ) {
-		TR << "Reading MSE as MET!" << std::endl;
-		return "MET";
-	}
-	return name;
-}
-
-std::string
-convert_atom_name( std::string const & res_name, std::string atom_name )
-{
-	if( atom_name.size() != 4 ){
-		std::string message= res_name+" has atom "+ atom_name+", with size!=4";
-		utility_exit_with_message(message);
-	};
-	//atom_name = strip_whitespace( atom_name );
-	if ( res_name == "5MC" ||
-			res_name == "  A" ||
-			res_name == "  C" ||
-			res_name == "  G" ||
-			res_name == "  T" ||
-			res_name == "  U" ) {
-		/// DNA or RNA
-		if ( atom_name == " OP1" ) return " O1P";
-		if ( atom_name == " OP2" ) return " O2P";
-		if ( atom_name[3] == '\'' ) return atom_name.substr(0,3)+"*";
-		if ( res_name == "  T" && atom_name == " C7 " ) return " C5M";
-	} else if ( res_name == "MET" && atom_name == " S  " ) {
-		return " SD ";
-	} else if ( res_name == "MET" && atom_name == "SE  " ) {
-		TR << "Reading Selenium SE from MSE as SD from MET" << std::endl;
-		return " SD ";
-	}
-	return atom_name;
-}
 
 /// @details Convert FileData in to set of residues, sequences, coordinates.
 /// this is a convenience function, no magic done here.
@@ -618,23 +572,8 @@ void FileData::create_working_data(
 			std::string resid( buf ); // include chain ID
 			resid.resize(6);
 
-			//chu modify the logic how atoms are treated with zero or negative occupancy field.
-			if ( ai.occupancy == 0.0 ) {
-				if( options.randomize_missing_coords() ) {
-					randomize_missing_coords( ai );
-				} else if ( !options.ignore_zero_occupancy() ) {
-					// do nothing and keep this atom as it is
-				} else {
-					//When flag default changes from true to false, change to TR.Debug and remove second line
-					TR.Warning << "PDB reader is ignoring atom " << atom_name << " in residue " << resid
-										 << ".  Pass flag -ignore_zero_occupancy false to change this behavior" << std::endl;
-					continue; // skip this atom with zero occ by default
-				}
-			} else if ( ai.occupancy < 0.0 ) { // always randomize coords for atoms with negative occ
-				randomize_missing_coords( ai );
-			} else {
-				// do nothing for normal atoms with positive occ
-			}
+			bool const ok = update_atom_information_based_on_occupancy( ai, options, resid );
+			if (!ok) continue;
 
 			ResidueInformation new_res( ai );
 			new_res.resid = resid;
@@ -650,6 +589,34 @@ void FileData::create_working_data(
 			}
 		}
 	}
+
+	convert_nucleic_acid_residue_info_to_standard( rinfo );
+
+}
+
+
+// @brief what to do if occupancy is 0.0?
+//chu modify the logic how atoms are treated with zero or negative occupancy field.
+bool
+FileData::update_atom_information_based_on_occupancy( AtomInformation & ai, FileDataOptions const & options, std::string const & resid ) const {
+
+	if ( ai.occupancy == 0.0 ) {
+		if( options.randomize_missing_coords() ) {
+			randomize_missing_coords( ai );
+		} else if ( !options.ignore_zero_occupancy() ) {
+			// do nothing and keep this atom as it is
+		} else {
+			//When flag default changes from true to false, change to TR.Debug and remove second line
+			TR.Warning << "PDB reader is ignoring atom " << ai.name << " in residue " << resid
+								 << ".  Pass flag -ignore_zero_occupancy false to change this behavior" << std::endl;
+			return false; // skip this atom with zero occ by default
+		}
+	} else if ( ai.occupancy < 0.0 ) { // always randomize coords for atoms with negative occ
+		randomize_missing_coords( ai );
+	} else {
+		// do nothing for normal atoms with positive occ
+	}
+	return true;
 }
 
 
@@ -668,7 +635,7 @@ inline std::string local_strip_whitespace( std::string const & name )
 /// tex - that's a stupid way of defining missing density, as atoms can be at the origin for other
 /// reasons. This has been updated to check for occupancy to define missing density rather than atoms
 /// located at the origin.
-void FileData::randomize_missing_coords( AtomInformation & ai ) {
+void FileData::randomize_missing_coords( AtomInformation & ai ) const {
 	//	if( ai.resSeq == 1 && ai.name == " N  ") return;//ignore first atom. Rosetta pdbs start with 0.000
 	if ( ai.x == 0.000 && ai.y == 0.000 && ai.z == 0.000 && ai.occupancy <= 0.0 ){
 		TR << "Randomized: " << ai.name << " " << ai.resName << "  " << ai.resSeq << std::endl;
@@ -1092,6 +1059,8 @@ build_pose_as_is1(
 			//else runtime_assert( iter->first == " H  " && rsd_type.is_terminus() ); // special casee
 		}
 
+		check_and_correct_sister_atoms( new_rsd );
+
 		Size const old_nres( pose.total_residue() );
 
 		/*TR.Debug << "...new residue is a polymer: " << new_rsd->type().is_polymer() << std::endl;
@@ -1509,6 +1478,7 @@ pose_from_pose(
 	id::AtomID_Mask missing( false );
 	build_pose_as_is1( fd, new_pose, residue_set, missing, options );
 }
+
 
 } // namespace pdb
 } // namespace io

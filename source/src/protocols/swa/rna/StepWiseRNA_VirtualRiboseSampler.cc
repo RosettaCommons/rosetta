@@ -97,7 +97,7 @@ namespace rna {
 
 		for( Size n_1 = 1; n_1 <= rsd_1.natoms(); n_1++){
 
-			//atom 1-4 are " P  ", " O1P", " O2P" and " O5*"
+			//atom 1-4 are " P  ", " OP2", " OP1" and " O5'"
 			Size const act_res_1= (Is_prepend && n_1 <= 4) ? res_1 + 1: res_1;
 
 			if(pose.residue(act_res_1).atom_type(n_1).name()=="VIRT" ) continue;
@@ -428,8 +428,8 @@ namespace rna {
 
 				////////////////////////////////////////////Screens/////////////////////////////////////////////
 				//OK check that with this sugar, the chain can be theoretically closed..
-				std::string const moving_atom_name= (FB_job_params.Is_prepend) ? "O3*" : " C5*";
-				std::string const reference_atom_name= (FB_job_params.Is_prepend) ? " C5*" : "O3*";
+				std::string const moving_atom_name= (FB_job_params.Is_prepend) ? "O3'" : " C5'";
+				std::string const reference_atom_name= (FB_job_params.Is_prepend) ? " C5'" : "O3'";
 				Distance O3i_C5iplus2_distance=(pose_with_ribose.residue(FB_job_params.moving_res).xyz(moving_atom_name) - pose_with_ribose.residue(FB_job_params.reference_res).xyz(reference_atom_name) ).length();
 
 				(*atr_rep_screening_scorefxn)(pose_with_ribose);
@@ -619,7 +619,7 @@ namespace rna {
 				apply_rotamer( screening_pose, current_rotamer);
 
 				apply_rotamer( viewer_pose, current_rotamer);
-				viewer_pose.residue(1).xyz("C5*"); //This is just to force the viewer_pose to update...
+				viewer_pose.residue(1).xyz("C5'"); //This is just to force the viewer_pose to update...
 
 
 				//VDW_screen_bin
@@ -679,7 +679,7 @@ namespace rna {
 					num_closed_chain_pose++;
 
 					viewer_pose=current_pose; //Crap this is hard copy...computationally expensive!!
-					viewer_pose.residue(1).xyz("C5*"); //This is just to force the viewer_pose to update...
+					viewer_pose.residue(1).xyz("C5'"); //This is just to force the viewer_pose to update...
 
 					if ( integration_test_mode && num_closed_chain_pose > 1 ) break;
 				} // going through pose data list

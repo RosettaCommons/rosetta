@@ -90,8 +90,8 @@ get_phosphate_stub( core::conformation::Residue const & rsd ){
 	using namespace core::kinematics;
 
 	Vector const centroid = rsd.xyz( " P  " );
-	Vector const a = rsd.xyz( " O1P" );
-	Vector const b = rsd.xyz( " O2P" );
+	Vector const a = rsd.xyz( " OP2" );
+	Vector const b = rsd.xyz( " OP1" );
 	Vector y = (a + b)/2.0 - centroid;
 	y.normalize();
 
@@ -191,8 +191,8 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 																				rsd_j.xyz( rsd_j.abase2( jj ) ),
 																				xyz_base, dummy );
 						theta = numeric::conversions::degrees( angle_of( xyz_mg, xyz_jj, xyz_base ) );
-						//						if ( rsd_j.atom_name( jj ) == " O1P" && distance < 3.0){
-							//							std::cout << "O1P " << jj << " " << " " << xyz_jj.x() << " " << xyz_base.x() << " " << xyz_mg.x() << " " << theta << std::endl;
+						//						if ( rsd_j.atom_name( jj ) == " OP2" && distance < 3.0){
+							//							std::cout << "OP2 " << jj << " " << " " << xyz_jj.x() << " " << xyz_base.x() << " " << xyz_mg.x() << " " << theta << std::endl;
 						//						}
 					}
 

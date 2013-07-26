@@ -1,7 +1,7 @@
 #rosetta residue topology file
 #version 0.1
 NAME RAD
-IO_STRING  rA a
+IO_STRING   A a
 TYPE POLYMER #residue type
 AA RAD
 ATOM  P   PHOS   H   1.5

@@ -261,14 +261,14 @@ filebase( std::string const & file )
 
 	 for the latter, seems like we need an alignment to t033_.fasta ? In case we've done some trimming??
 
-	 K/R     centroid contacts to phosphate backbone O1P/O2P
-	 S/T/N/Q centroid contacts to phosphate backbone O1P/O2P
-	 D/E/H   centroid contacts to O2*
+	 K/R     centroid contacts to phosphate backbone OP2/OP1
+	 S/T/N/Q centroid contacts to phosphate backbone OP2/OP1
+	 D/E/H   centroid contacts to O2'
 
 	 vdw/hybrid vdw
 
 	 backbone O to O2'
-	 backbone N to O1P, O2P
+	 backbone N to OP2, OP1
 
 	 distance between SAM CE and rGU N1
 

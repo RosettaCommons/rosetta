@@ -306,7 +306,7 @@ void
 RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) const
 {
 	//We don't know a priori which atom numbers correspond to which
-	// atom names (e.g., O2* on an adenosine could be different depending
+	// atom names (e.g., O2' on an adenosine could be different depending
 	// on whether its at a chainbreak, terminus, etc.)
 	//Better to do a quick setup every time to pinpoint atoms that require
 	//  monitoring for VDW clashes.

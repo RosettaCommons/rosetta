@@ -259,12 +259,12 @@ get_watson_crick_base_pair_atoms(
 
 	if ( aa1==na_rad && aa2==na_ura) {
 		atom_ids1.push_back( " N1 ");		atom_ids2.push_back( " H3 ");
-		atom_ids1.push_back( "1H6 ");		atom_ids2.push_back( " O4 ");
+		atom_ids1.push_back( " H61");		atom_ids2.push_back( " O4 ");
 		return;
 	} else if ( aa1==na_rgu && aa2==na_rcy) {
 		atom_ids1.push_back( " H1 ");		atom_ids2.push_back( " N3 ");
-		atom_ids1.push_back( "2H2 ");		atom_ids2.push_back( " O2 ");
-		atom_ids1.push_back( " O6 ");		atom_ids2.push_back( "2H4 ");
+		atom_ids1.push_back( " H21");		atom_ids2.push_back( " O2 ");
+		atom_ids1.push_back( " O6 ");		atom_ids2.push_back( " H41");
 		return;
 	} else if ( aa1==na_rgu && aa2==na_ura) {
 		atom_ids1.push_back( " O6 ");		atom_ids2.push_back( " H3 ");
@@ -272,12 +272,12 @@ get_watson_crick_base_pair_atoms(
 		return;
 	} else	if ( aa2==na_rad && aa1==na_ura) {
 		atom_ids2.push_back( " N1 ");		atom_ids1.push_back( " H3 ");
-		atom_ids2.push_back( "1H6 ");		atom_ids1.push_back( " O4 ");
+		atom_ids2.push_back( " H61");		atom_ids1.push_back( " O4 ");
 		return;
 	} else if ( aa2==na_rgu && aa1==na_rcy) {
 		atom_ids2.push_back( " H1 ");		atom_ids1.push_back( " N3 ");
-		atom_ids2.push_back( "2H2 ");		atom_ids1.push_back( " O2 ");
-		atom_ids2.push_back( " O6 ");		atom_ids1.push_back( "2H4 ");
+		atom_ids2.push_back( " H21");		atom_ids1.push_back( " O2 ");
+		atom_ids2.push_back( " O6 ");		atom_ids1.push_back( " H41");
 		return;
 	} else if ( aa2==na_rgu && aa1==na_ura) {
 		atom_ids2.push_back( " O6 ");		atom_ids1.push_back( " H3 ");
@@ -318,13 +318,13 @@ is_rna_chainbreak( core::pose::Pose const & pose, Size const i ) {
 
 	//A little inefficient, since atom indices for these backbone
 	// atoms should be the same for all RNA residue types. I think.
-	Size atom_O3star = current_rsd.atom_index( " O3*" );
+	Size atom_O3star = current_rsd.atom_index( " O3'" );
 	Size atom_P      =    next_rsd.atom_index( " P  " );
 	Real const dist2 =
 		( current_rsd.atom( atom_O3star ).xyz() - next_rsd.atom( atom_P ).xyz() ).length_squared();
 
 	if ( dist2 > CHAINBREAK_CUTOFF2 ) {
-		//std::cout << "Found chainbreak at residue "<< i << " .  O3*-P distance: " << sqrt( dist2 ) << std::endl;
+		//std::cout << "Found chainbreak at residue "<< i << " .  O3'-P distance: " << sqrt( dist2 ) << std::endl;
 		return true;
 	}
 
@@ -341,9 +341,9 @@ initialize_non_main_chain_sugar_atoms() {
 	if (init) return;
 
 	non_main_chain_sugar_atoms.clear();
-	non_main_chain_sugar_atoms.push_back( " C2*" );
-	non_main_chain_sugar_atoms.push_back( " C1*" );
-	non_main_chain_sugar_atoms.push_back( " O4*" );
+	non_main_chain_sugar_atoms.push_back( " C2'" );
+	non_main_chain_sugar_atoms.push_back( " C1'" );
+	non_main_chain_sugar_atoms.push_back( " O4'" );
 
 	init = true;
 }
@@ -365,7 +365,7 @@ fix_sugar_coords_WORKS_BUT_SLOW(
 	conformation::Residue const & rsd( pose.residue( i ) );
 
 	//Yup, hard-wired...
-	kinematics::Stub const input_stub( rsd.xyz( " C3*" ), rsd.xyz( " C3*" ), rsd.xyz( " C4*" ), rsd.xyz( " C5*" ) );
+	kinematics::Stub const input_stub( rsd.xyz( " C3'" ), rsd.xyz( " C3'" ), rsd.xyz( " C4'" ), rsd.xyz( " C5'" ) );
 
 	utility::vector1< Vector > start_vectors;
 	utility::vector1< utility::vector1< Real > > new_dof_sets;
@@ -423,7 +423,7 @@ prepare_scratch_residue(
 	}
 
 	//Yup, hard-wired...
-	kinematics::Stub const input_stub( scratch_rsd->xyz( " C3*" ), scratch_rsd->xyz( " C3*" ), scratch_rsd->xyz( " C4*" ), scratch_rsd->xyz( " C5*" ) );
+	kinematics::Stub const input_stub( scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( " C3'" ), scratch_rsd->xyz( " C4'" ), scratch_rsd->xyz( " C5'" ) );
 
 	for (Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
 		//Desired location
@@ -432,7 +432,7 @@ prepare_scratch_residue(
 		scratch_rsd->set_xyz( j, v2 );
 	}
 
-	Size const o2star_index( scratch_rsd->atom_index( " O2*" ) );
+	Size const o2star_index( scratch_rsd->atom_index( " O2'" ) );
 	scratch_rsd->set_xyz( o2star_index, scratch_rsd->build_atom_ideal( o2star_index, pose.conformation() ) );
 
 }
@@ -489,7 +489,7 @@ fix_sugar_coords(
 
 		pose.set_dof( DOF_ID( AtomID( j, i), THETA), numeric::constants::d::pi - theta );
 
-		// I commented out the following because otherwise, O4* at the 5' end of a pose did not get set properly. (RD, Nov. 2010)
+		// I commented out the following because otherwise, O4' at the 5' end of a pose did not get set properly. (RD, Nov. 2010)
 		//  but there may be fallout.
 		// if ( input_stub_atom2->is_jump() ) continue; //HEY NEED TO BE CAREFUL HERE.
 
@@ -531,34 +531,34 @@ initialize_atoms_for_which_we_need_new_dofs(
 	//
 	conformation::Residue const & rsd( pose.residue( i ) );
 
- 	core::kinematics::tree::AtomCOP c1star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C1*" ), i ) ) );
- 	core::kinematics::tree::AtomCOP o2star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " O2*" ), i ) ) );
- 	core::kinematics::tree::AtomCOP c2star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C2*" ), i ) ) );
+ 	core::kinematics::tree::AtomCOP c1star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C1'" ), i ) ) );
+ 	core::kinematics::tree::AtomCOP o2star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " O2'" ), i ) ) );
+ 	core::kinematics::tree::AtomCOP c2star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C2'" ), i ) ) );
 
 	if ( (c1star_atom->parent()->id()).atomno() == first_base_atom_index( rsd ) ) {
 		// There's a jump to this residue.
 		//std::cout << "RESIDUE WITH JUMP CONNECTIVITY : " <<  i << std::endl;
-		atoms_for_which_we_need_new_dofs.push_back( " C2*" );
-		atoms_for_which_we_need_new_dofs.push_back( " C3*" );
-		atoms_for_which_we_need_new_dofs.push_back( " O4*" );
-		atoms_for_which_we_need_new_dofs.push_back( " C4*" );
-		atoms_for_which_we_need_new_dofs.push_back( " C5*" );
-		atoms_for_which_we_need_new_dofs.push_back( " O3*" );
+		atoms_for_which_we_need_new_dofs.push_back( " C2'" );
+		atoms_for_which_we_need_new_dofs.push_back( " C3'" );
+		atoms_for_which_we_need_new_dofs.push_back( " O4'" );
+		atoms_for_which_we_need_new_dofs.push_back( " C4'" );
+		atoms_for_which_we_need_new_dofs.push_back( " C5'" );
+		atoms_for_which_we_need_new_dofs.push_back( " O3'" );
 
 	} else if ( (c2star_atom->parent()->id()).atomno() ==  (o2star_atom->id()).atomno() ) {
 
-		atoms_for_which_we_need_new_dofs.push_back( " C1*" );
-		atoms_for_which_we_need_new_dofs.push_back( " C3*" );
-		atoms_for_which_we_need_new_dofs.push_back( " O4*" );
-		atoms_for_which_we_need_new_dofs.push_back( " C4*" );
-		atoms_for_which_we_need_new_dofs.push_back( " C5*" );
-		atoms_for_which_we_need_new_dofs.push_back( " O3*" );
+		atoms_for_which_we_need_new_dofs.push_back( " C1'" );
+		atoms_for_which_we_need_new_dofs.push_back( " C3'" );
+		atoms_for_which_we_need_new_dofs.push_back( " O4'" );
+		atoms_for_which_we_need_new_dofs.push_back( " C4'" );
+		atoms_for_which_we_need_new_dofs.push_back( " C5'" );
+		atoms_for_which_we_need_new_dofs.push_back( " O3'" );
 
 	} else {
 
-		atoms_for_which_we_need_new_dofs.push_back( " C1*" );
-		atoms_for_which_we_need_new_dofs.push_back( " C2*" );
-		atoms_for_which_we_need_new_dofs.push_back( " O4*" );
+		atoms_for_which_we_need_new_dofs.push_back( " C1'" );
+		atoms_for_which_we_need_new_dofs.push_back( " C2'" );
+		atoms_for_which_we_need_new_dofs.push_back( " O4'" );
 
 	}
 
@@ -697,8 +697,8 @@ get_rna_base_centroid( conformation::Residue const & rsd , bool verbose){
   Size numatoms = 0;
 
 	//Consistency check:
-	//if(rsd.type().atom_name(rsd.first_sidechain_atom()) !=" O2*") utility_exit_with_message( "rsd.type().atom_name(rsd.first_sidechain_atom()) !=\" O2*\" " );
-	//if(rsd.atom_name( rsd.first_sidechain_atom() )!=" O2*") utility_exit_with_message("rsd.atom_name( rsd.first_sidechain_atom() )!=\" O2*\"");
+	//if(rsd.type().atom_name(rsd.first_sidechain_atom()) !=" O2'") utility_exit_with_message( "rsd.type().atom_name(rsd.first_sidechain_atom()) !=\" O2'\" " );
+	//if(rsd.atom_name( rsd.first_sidechain_atom() )!=" O2'") utility_exit_with_message("rsd.atom_name( rsd.first_sidechain_atom() )!=\" O2'\"");
 
 	if( rsd.RNA_type().o2star_index()!=rsd.first_sidechain_atom() ){
 		utility_exit_with_message( "rsd.RNA_info().o2star_index()!=rsd.first_sidechain_atom()");
@@ -821,11 +821,11 @@ get_atoms_involved_in_phosphate_torsion()
 		atoms_involved_in_phosphate_torsion.clear();
 
 		atoms_involved_in_phosphate_torsion.push_back( " P  " );
-		atoms_involved_in_phosphate_torsion.push_back( " O1P" );
-		atoms_involved_in_phosphate_torsion.push_back( " O2P" );
-		atoms_involved_in_phosphate_torsion.push_back( " O5*" );
-		atoms_involved_in_phosphate_torsion.push_back( "1H5*" );
-		atoms_involved_in_phosphate_torsion.push_back( "2H5*" );
+		atoms_involved_in_phosphate_torsion.push_back( " OP2" );
+		atoms_involved_in_phosphate_torsion.push_back( " OP1" );
+		atoms_involved_in_phosphate_torsion.push_back( " O5'" );
+		atoms_involved_in_phosphate_torsion.push_back( " H5'" );
+		atoms_involved_in_phosphate_torsion.push_back( "H5''" );
 
 		init = true;
 

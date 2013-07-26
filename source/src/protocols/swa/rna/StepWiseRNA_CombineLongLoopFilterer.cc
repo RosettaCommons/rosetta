@@ -134,8 +134,8 @@ namespace rna {
 			figure_out_last_appended_and_last_prepended_res();
 
 			//O3I_C5I_PLUS_ONE_MAX_DIST=3.968000
-			//max_centroid_to_atom_distance for atom:  C5* base RAD: 6.18959
-			//max_centroid_to_atom_distance for atom:  O3* base RAD: 6.65341
+			//max_centroid_to_atom_distance for atom:  C5' base RAD: 6.18959
+			//max_centroid_to_atom_distance for atom:  O3' base RAD: 6.65341
 			//For is for a A-nucleotides, more chi rotamers
 			//Suppose that moving_res is making base-stack contact to the last SWA-built residue from the another side:
 			//	Then atom-atom distance must be lesser than minus_contact_dist_cutoff_(1)+atom vanderWaal radius -> for Carbon: 	1.70
@@ -537,12 +537,12 @@ namespace rna {
 		core::conformation::Residue const & last_append_rsd=side_ONE_pose.residue(input_pose_ONE_last_appended_res_);
 		core::conformation::Residue const & last_prepend_rsd=side_TWO_pose.residue(input_pose_TWO_last_prepended_res_);
 
-		numeric::xyzVector<core::Real> const anchor_atom_xyz = (Is_prepend) ? last_prepend_rsd.xyz("C5*") : last_append_rsd.xyz("O3*");
+		numeric::xyzVector<core::Real> const anchor_atom_xyz = (Is_prepend) ? last_prepend_rsd.xyz("C5'") : last_append_rsd.xyz("O3'");
 
 		core::conformation::Residue const & enforce_contact_rsd= (Is_prepend) ? last_append_rsd : last_prepend_rsd;
 
-		if(enforce_contact_rsd.type().atom_name(enforce_contact_rsd.first_sidechain_atom()) !=" O2*"){ 
-			utility_exit_with_message( "enforce_contact_rsd.type().atom_name(enforce_contact_rsd.first_sidechain_atom()) !=\" O2*\" " );
+		if(enforce_contact_rsd.type().atom_name(enforce_contact_rsd.first_sidechain_atom()) !=" O2'"){ 
+			utility_exit_with_message( "enforce_contact_rsd.type().atom_name(enforce_contact_rsd.first_sidechain_atom()) !=\" O2'\" " );
 		}
 
 		Size const first_at= (moving_res_to_base_contact_only_) ? (enforce_contact_rsd.first_sidechain_atom()+1) : 1;
@@ -596,7 +596,7 @@ namespace rna {
 			//OK STILL HAVE TO WRITE CODE FOR THE DINUCLEOTIDE case....
 			//July 19th, 2011..This assumes that the 5' and 3' ribose is already built (not virtual!) but this might not be the case!
 
-			if (Check_chain_closable(side_TWO_pose.residue(input_pose_TWO_last_prepended_res_).xyz("C5*") , side_ONE_pose.residue(input_pose_ONE_last_appended_res_).xyz("O3*"), previous_step_gap_size)==false) return false;
+			if (Check_chain_closable(side_TWO_pose.residue(input_pose_TWO_last_prepended_res_).xyz("C5'") , side_ONE_pose.residue(input_pose_ONE_last_appended_res_).xyz("O3'"), previous_step_gap_size)==false) return false;
 			
 			filterer_count_.chain_closable_screen++;
 

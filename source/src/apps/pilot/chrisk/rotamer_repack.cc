@@ -116,10 +116,10 @@ basic::Tracer TRscmove("rot_anl.scmove");
 //Map of the atoms that are used in each motif
 std::map < std::string, utility::vector1< std::string > > sc_rmsd_AtomIDs(
 	utility::tools::make_map(
-	std::string("  A"), utility::tools::make_vector1( std::string("N6"), std::string("C5"), std::string("N7") ),
-	std::string("  C"), utility::tools::make_vector1( std::string("N4"), std::string("C4"), std::string("C5") ),
-	std::string("  G"), utility::tools::make_vector1( std::string("O6"), std::string("C5"), std::string("N7") ),
-	std::string("  T"), utility::tools::make_vector1( std::string("O4"), std::string("C5"), std::string("C5M") ),
+	std::string(" DA"), utility::tools::make_vector1( std::string("N6"), std::string("C5"), std::string("N7") ),
+	std::string(" DC"), utility::tools::make_vector1( std::string("N4"), std::string("C4"), std::string("C5") ),
+	std::string(" DG"), utility::tools::make_vector1( std::string("O6"), std::string("C5"), std::string("N7") ),
+	std::string(" DT"), utility::tools::make_vector1( std::string("O4"), std::string("C5"), std::string("C7") ),
 	std::string("GLY"), utility::tools::make_vector1( std::string("N"), std::string("CA"), std::string("C") ),
 	std::string("ALA"), utility::tools::make_vector1( std::string("CB"), std::string("CA"), std::string("N") ),
 	std::string("CYS"), utility::tools::make_vector1( std::string("SG"), std::string("CB"), std::string("CA") ),

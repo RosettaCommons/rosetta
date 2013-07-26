@@ -430,7 +430,7 @@ Motif::generate_atom_ints(
 	// Size res1_atom1_index = rsd_type.atom_index( res1_atom1_name_ ); // Unused variable causes warning
 	// Size res1_atom2_index = rsd_type.atom_index( res1_atom2_name_ ); // Unused variable causes warning
 	// Size res1_atom3_index = rsd_type.atom_index( res1_atom3_name_ ); // Unused variable causes warning
-	
+
 	// FIXME: these local variables have the same name as data members!
 	// int res1_atom1_int_ = rsd_type.atom( res1_atom1_index).atom_type_index(); // Unused variable causes warning
 	// int res1_atom2_int_ = rsd_type.atom( res1_atom2_index ).atom_type_index(); // Unused variable causes warning
@@ -1261,7 +1261,7 @@ std::map < std::string, utility::vector1< std::string > > Motif::motifAtomIDs(
 	std::string("ADE"), utility::tools::make_vector1( std::string("N6"), std::string("C5"), std::string("N7") ),
 	std::string("CYT"), utility::tools::make_vector1( std::string("N4"), std::string("C4"), std::string("C5") ),
 	std::string("GUA"), utility::tools::make_vector1( std::string("O6"), std::string("C5"), std::string("N7") ),
-	std::string("THY"), utility::tools::make_vector1( std::string("O4"), std::string("C5"), std::string("C5M") ),
+	std::string("THY"), utility::tools::make_vector1( std::string("O4"), std::string("C5"), std::string("C7") ),
 	std::string("ALA"), utility::tools::make_vector1( std::string("CB"), std::string("CA"), std::string("N") ),
 	std::string("CYS"), utility::tools::make_vector1( std::string("SG"), std::string("CB"), std::string("CA") ),
 	std::string("ASP"), utility::tools::make_vector1( std::string("OD1"), std::string("CG"), std::string("OD2") ),

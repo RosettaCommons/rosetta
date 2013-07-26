@@ -110,7 +110,7 @@ RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string tag ) 
 	// conformation information
 	sequence( pose.sequence() );
 	resize( pose.total_residue() );
-	static const std::string important_atom = "C4*";
+	static const std::string important_atom = "C4'";
 	for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 		core::conformation::Residue resi = pose.residue(i);
 
@@ -123,11 +123,11 @@ RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string tag ) 
 		} // if ( fullatom )
 
 		//New (Feb. 2009)...
-		// x-y-z of coordinates of C2*, C1*, and O4*, in a local coordinate system defined
-		// by C3*, C4*, and C5* (as "stub" atoms).
+		// x-y-z of coordinates of C2', C1', and O4', in a local coordinate system defined
+		// by C3', C4', and C5' (as "stub" atoms).
 		{
 			non_main_chain_sugar_coords_defined_ = true;
-			kinematics::Stub const input_stub( resi.xyz( " C3*" ), resi.xyz( " C3*" ), resi.xyz( " C4*" ), resi.xyz( " C5*" ) );
+			kinematics::Stub const input_stub( resi.xyz( " C3'" ), resi.xyz( " C3'" ), resi.xyz( " C4'" ), resi.xyz( " C5'" ) );
 			utility::vector1< Vector > vecs;
 			scoring::rna::initialize_non_main_chain_sugar_atoms();
 			for (Size n = 1; n <= scoring::rna::non_main_chain_sugar_atoms.size(); n++  ) {
@@ -304,7 +304,7 @@ bool RNA_SilentStruct::init_from_lines(
 				}
 			}
 
-			//Added Feb. 2009... information on C2*, C1*, and O4* -- in general they have
+			//Added Feb. 2009... information on C2', C1', and O4' -- in general they have
 			// varying bond lengths and bond angles to keep sugar ring closed.
 			line_stream >> x >> y >> z;
 			Vector temp_vec( x, y, z );
@@ -507,7 +507,7 @@ void RNA_SilentStruct::print_conformation( std::ostream & output ) const {
 Real RNA_SilentStruct::get_debug_rmsd() {
 	pose::Pose temp_pose;
 	FArray2D< Real > rebuilt_coords (3, coords_.size() ), original_coords( 3, coords_.size() );
-	static std::string atom_name = "C4*";
+	static std::string atom_name = "C4'";
 
 	// build temp_pose from coordinates
 	fill_pose( temp_pose );

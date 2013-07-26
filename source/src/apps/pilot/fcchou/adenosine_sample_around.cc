@@ -387,7 +387,7 @@ adenine_probe_score_test()
 	} else if ( sample_another_adenosine_ ){
 		new_res = pose.residue(1).clone();
 	} else {
-		core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( "  C" ) ); // just a carbon atom.
+		core::chemical::ResidueTypeCOPs const & rsd_type_list ( residue_set.name3_map ( " DC" ) ); // just a carbon atom.
 		new_res = ( core::conformation::ResidueFactory::create_residue ( *rsd_type_list[1] ) );
 	}
 

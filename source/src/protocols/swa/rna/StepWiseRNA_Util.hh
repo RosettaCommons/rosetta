@@ -50,8 +50,8 @@ namespace protocols {
 namespace swa {
 namespace rna {
 
-bool Is_O1P_atom(std::string const & atom_name);
-bool Is_O2P_atom(std::string const & atom_name);
+bool Is_OP2_atom(std::string const & atom_name);
+bool Is_OP1_atom(std::string const & atom_name);
 bool Is_P_atom(std::string const & atom_name);
 bool Is_O2star_atom(std::string const & atom_name);
 bool Is_O3star_atom(std::string const & atom_name);

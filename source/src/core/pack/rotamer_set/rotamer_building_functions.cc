@@ -184,21 +184,21 @@ build_lib_dna_rotamers(
 
 		assert( rsd.is_NA() && mini_pose.residue(seqpos-1).is_NA() );
 
-		Vector const P_O3( ( next_rsd.xyz("P") - rsd.xyz("O3*") ) );
+		Vector const P_O3( ( next_rsd.xyz("P") - rsd.xyz("O3'") ) );
 		Real const target_distance( P_O3.length() );
 
-		Real const P_bond_angle (angle_of( next_rsd.xyz("O5*"), next_rsd.xyz("P")  ,  rsd.xyz("O3*")  ));
-		Real const O3_bond_angle(angle_of( next_rsd.xyz("P")  ,      rsd.xyz("O3*"),  rsd.xyz("C3*")  ));
+		Real const P_bond_angle (angle_of( next_rsd.xyz("O5'"), next_rsd.xyz("P")  ,  rsd.xyz("O3'")  ));
+		Real const O3_bond_angle(angle_of( next_rsd.xyz("P")  ,      rsd.xyz("O3'"),  rsd.xyz("C3'")  ));
 
 		// tt << "P-O3 dist.=" << target_distance << ", P_bond_angle=" << P_bond_angle << ", O3_bond_angle=" << O3_bond_angle << std::endl;
 
 		ConstraintSetOP cst_set( new ConstraintSet() );
-		cst_set->add_constraint( new AtomPairConstraint( AtomID(rsd.atom_index("O3*"),seqpos), AtomID(next_rsd.atom_index("P"),seqpos+1),
+		cst_set->add_constraint( new AtomPairConstraint( AtomID(rsd.atom_index("O3'"),seqpos), AtomID(next_rsd.atom_index("P"),seqpos+1),
 																										 new HarmonicFunc( target_distance, std_length ) ) );
-		cst_set->add_constraint( new AngleConstraint   ( AtomID(next_rsd.atom_index("O5*"),seqpos+1), AtomID(next_rsd.atom_index("P"),seqpos+1),
-																										 AtomID(rsd.atom_index("O3*"),seqpos), new HarmonicFunc( P_bond_angle, std_angle ) ) );
-		cst_set->add_constraint( new AngleConstraint   ( AtomID(next_rsd.atom_index("P"),seqpos+1),   AtomID(next_rsd.atom_index("O3*"),seqpos),
-																										 AtomID(rsd.atom_index("C3*"),seqpos), new HarmonicFunc( O3_bond_angle, std_angle ) ) );
+		cst_set->add_constraint( new AngleConstraint   ( AtomID(next_rsd.atom_index("O5'"),seqpos+1), AtomID(next_rsd.atom_index("P"),seqpos+1),
+																										 AtomID(rsd.atom_index("O3'"),seqpos), new HarmonicFunc( P_bond_angle, std_angle ) ) );
+		cst_set->add_constraint( new AngleConstraint   ( AtomID(next_rsd.atom_index("P"),seqpos+1),   AtomID(next_rsd.atom_index("O3'"),seqpos),
+																										 AtomID(rsd.atom_index("C3'"),seqpos), new HarmonicFunc( O3_bond_angle, std_angle ) ) );
 
 		// could also add angle constraints
 		mini_pose.constraint_set( cst_set );
@@ -234,9 +234,9 @@ build_lib_dna_rotamers(
 			TorsionID const id ( seqpos, CHI, 1 );
 			mini_pose.set_torsion( id, (*dihedrals)[7] );
 
-			Vector const rot_P_O3( ( next_rsd.xyz("P") - mini_pose.residue(seqpos).xyz("O3*") ) );
+			Vector const rot_P_O3( ( next_rsd.xyz("P") - mini_pose.residue(seqpos).xyz("O3'") ) );
 
-			// consider rotamers only if P-O3* distance is "similar" to that in the original structure.
+			// consider rotamers only if P-O3' distance is "similar" to that in the original structure.
 			if ( fabs( target_distance - rot_P_O3.length() ) <  distance_cutoff ) {
 
 				accept_rotamer = true;
@@ -279,9 +279,9 @@ build_lib_dna_rotamers(
 					Residue const &
 						cur_rsd( mini_pose.residue( seqpos ) ),
 						cur_next_rsd( mini_pose.residue(seqpos+1) );
-					Vector const cur_P_O3( ( cur_next_rsd.xyz("P") - cur_rsd.xyz("O3*") ) );
-					Real const cur_P_bond_angle ( angle_of( cur_next_rsd.xyz("O5*"), cur_next_rsd.xyz("P")  ,  cur_rsd.xyz("O3*")  ) );
-					Real const cur_O3_bond_angle( angle_of( cur_next_rsd.xyz("P")  ,      cur_rsd.xyz("O3*"),  cur_rsd.xyz("C3*")  ) );
+					Vector const cur_P_O3( ( cur_next_rsd.xyz("P") - cur_rsd.xyz("O3'") ) );
+					Real const cur_P_bond_angle ( angle_of( cur_next_rsd.xyz("O5'"), cur_next_rsd.xyz("P")  ,  cur_rsd.xyz("O3'")  ) );
+					Real const cur_O3_bond_angle( angle_of( cur_next_rsd.xyz("P")  ,      cur_rsd.xyz("O3'"),  cur_rsd.xyz("C3'")  ) );
 
 					Real const diff_length ( fabs( cur_P_O3.length()  - target_distance ) );
 
@@ -416,16 +416,16 @@ build_random_dna_rotamers(
 
 		utility::vector1< Vector > bonds, atoms;
 
-		atoms.push_back( prev_rsd.xyz("O3*") );
+		atoms.push_back( prev_rsd.xyz("O3'") );
 		atoms.push_back(      rsd.xyz(  "P") );
-		atoms.push_back(      rsd.xyz("O5*") );
-		atoms.push_back(      rsd.xyz("C5*") );
-		atoms.push_back(      rsd.xyz("C4*") );
+		atoms.push_back(      rsd.xyz("O5'") );
+		atoms.push_back(      rsd.xyz("C5'") );
+		atoms.push_back(      rsd.xyz("C4'") );
 
-		Vector const r( rsd.xyz("O3*") );
+		Vector const r( rsd.xyz("O3'") );
 
-		Vector const n1( ( next_rsd.xyz(  "P") -      rsd.xyz("O3*" ) ).normalized() );
-		Vector const n2( ( next_rsd.xyz("O5*") - next_rsd.xyz(  "P" ) ).normalized() );
+		Vector const n1( ( next_rsd.xyz(  "P") -      rsd.xyz("O3'" ) ).normalized() );
+		Vector const n2( ( next_rsd.xyz("O5'") - next_rsd.xyz(  "P" ) ).normalized() );
 
 		Real l1( 0.0 );
 		utility::vector1< Real > v1(4), v2(4);
@@ -530,8 +530,8 @@ build_random_dna_rotamers(
 			rotamers[ rotamers.size() ]->copy_residue_connections( existing_residue );
 
 			// check dr:
-			//Vector const r0( mini_pose.residue(seqpos).xyz("O4*") - pose.residue(resid).xyz("O4*") );
-			//Vector const r ( mini_pose.residue(seqpos).xyz("O3*") - pose.residue(resid).xyz("O3*") );
+			//Vector const r0( mini_pose.residue(seqpos).xyz("O4'") - pose.residue(resid).xyz("O4'") );
+			//Vector const r ( mini_pose.residue(seqpos).xyz("O3'") - pose.residue(resid).xyz("O3'") );
 			//tt << "r: " << tag << F(9,3,r.length()) << F(9,3,r.dot( n1 )) << F(9,3,r.dot( n2 ) ) << std::endl;
 
 			// confirm that phosphate is in the same place

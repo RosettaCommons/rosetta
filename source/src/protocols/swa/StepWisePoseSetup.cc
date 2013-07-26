@@ -641,7 +641,7 @@ return "StepWisePoseSetup";
 	StepWisePoseSetup::get_swa_jump_atom( core::conformation::Residue const & rsd ){
 
 		//if (rsd.is_RNA() ) return rsd.atom_name( rsd.chi_atoms(1)[4] );
-		if (rsd.is_RNA() ) return " C4*";
+		if (rsd.is_RNA() ) return " C4'";
 
 		if (rsd.is_protein() ) return " CA ";
 
@@ -1065,7 +1065,7 @@ return "StepWisePoseSetup";
 				Size const cutpos = full_to_sub[ cutpoint ];
 
 				// Taken from Parin's code. Need to make sure virtual atoms are correctly positioned
-				// next to O1P, O2P.
+				// next to OP2, OP1.
 				if ( pose.residue( cutpos ).is_RNA() ) protocols::swa::rna::Correctly_position_cutpoint_phosphate_torsions( pose, cutpos, false /*verbose*/ );
 
 				pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
@@ -1553,7 +1553,7 @@ return "StepWisePoseSetup";
 					continue;
 				}
 
-				// distance from O3* to P
+				// distance from O3' to P
 				cst_set->add_constraint( new AtomPairConstraint( atom_id1, atom_id2, repulsion_func ) );
 
 			}

@@ -154,10 +154,10 @@ build_optimal_water_Os_on_acceptor(
 	std::string const & acc_atm_name( acc_rsd.atom_name( acc_atm ) );
 
 	if ( acc_rsd.is_DNA() && acc_rsd.atom_is_backbone( acc_atm ) &&
-			 ( acc_atm_name == " O1P" || acc_atm_name == " O2P" ) ) {
+			 ( acc_atm_name == " OP2" || acc_atm_name == " OP1" ) ) {
 		// special case: hydration of the DNA phosphate group
 		b1_xyz = acc_rsd.xyz( "P" );
-		b2_xyz = ( ( acc_atm_name == " O1P" ) ? acc_rsd.xyz( "O2P" ) : acc_rsd.xyz( "O1P" ) );
+		b2_xyz = ( ( acc_atm_name == " OP2" ) ? acc_rsd.xyz( "OP1" ) : acc_rsd.xyz( "OP2" ) );
 		// these numbers are taken from "Hydration of the Phosphate Group in Double-Helical DNA",
 		// Schneider, Patel, and Berman, Biophysical Journal Vol. 75 2422-2434
 		theta = 180.0 - 125.0;

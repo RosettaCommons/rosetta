@@ -117,7 +117,7 @@ rna_helix_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 
 	// go through end of each helix, to start of next one.
 	// define base-pair coordinate system, 3DNA style.
-	// save 3d coordinates of next O5*, O3*, and next base-pair-centroid
+	// save 3d coordinates of next O5', O3', and next base-pair-centroid
 	// save how many residues intervening until next base pair.
 
 	total_residues += res_count;

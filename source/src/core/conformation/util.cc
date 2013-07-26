@@ -892,7 +892,7 @@ get_root_atomno(
 				// have to correlate perfectly with chemical
 				return rsd.mainchain_atom( rsd.mainchain_atoms().size() );
 			} else {
-				// C for proteins, O3* for DNA
+				// C for proteins, O3' for DNA
 				return rsd.upper_connect_atom(); //mainchain_atoms()[ rsd.mainchain_atoms().size() ];
 			}
 		} else {
@@ -1513,7 +1513,7 @@ get_anchor_atomno(
 	int const forward( 1 ), backward( -1 );
 
 	if ( dir == forward ) {
-		// C for proteins, O3* for DNA
+		// C for proteins, O3' for DNA
 		if ( rsd.is_polymer() ) {
 			if ( rsd.is_upper_terminus() ) {
 				// this is a little strange to be folding through a terminal residue but kinematics doesn't

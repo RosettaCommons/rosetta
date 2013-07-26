@@ -769,7 +769,7 @@ main ( int argc, char * argv [] ) {
 	NEW_OPT ( bulge_res, "optional: residues to be turned into a bulge variant", blank_size_vector );
 	NEW_OPT ( centroid_screen, "centroid_screen", true );
 	NEW_OPT ( VDW_atr_rep_screen, "classic VDW_atr_rep_screen", true );
-	NEW_OPT ( sampler_perform_o2star_pack, "perform O2* hydrogen packing inside StepWiseRNA_ResidueSampler", true );
+	NEW_OPT ( sampler_perform_o2star_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
 	NEW_OPT ( fast, "quick runthrough for debugging", false );
 	NEW_OPT ( medium_fast, "quick runthrough for debugging (keep more poses and not as fast as fast option)", false );
 	NEW_OPT ( VERBOSE, "VERBOSE", false );

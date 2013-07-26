@@ -80,11 +80,11 @@
 #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/types.hh>
 
-#include <core/options/option.hh>
-#include <core/options/after_opts.hh>
-#include <core/options/util.hh>
+#include <basic/options/option.hh>
+#include <basic/options/after_opts.hh>
+#include <basic/options/util.hh>
 
-#include <core/options/option_macros.hh>
+#include <basic/options/option_macros.hh>
 #include <protocols/idealize/idealize.hh>
 
 #include <protocols/viewer/viewers.hh>
@@ -93,7 +93,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 
-#include <core/util/basic.hh>
+#include <basic/util/basic.hh>
 
 #include <core/io/database/open.hh>
 
@@ -143,23 +143,23 @@
 
 //silly using/typedef
 
-#include <core/util/Tracer.hh>
+#include <basic/util/Tracer.hh>
 using core::util::T;
 
 // option key includes
 
-#include <core/options/keys/out.OptionKeys.gen.hh>
-#include <core/options/keys/score.OptionKeys.gen.hh>
-#include <core/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <time.h>
 
-using core::util::Error;
-using core::util::Warning;
+using basic::util::Error;
+using basic::util::Warning;
 
 using namespace core;
 using namespace protocols;
-using namespace core::options::OptionKeys;
+using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
@@ -340,8 +340,8 @@ OPT_KEY( Real, coordinate_constraint_weight )
 void
 figure_out_icoord_test( ){
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 
 	ResidueTypeSetCAP rsd_set;
@@ -443,8 +443,8 @@ void
 rna_fullatom_score_test()
 {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::io::silent;
@@ -657,15 +657,15 @@ setup_rna_chainbreak_constraints(
 		if ( rsd1.is_NA() && !rsd1.is_upper_terminus() && rsd2.is_NA() && !rsd2.is_lower_terminus() ) {
 			//			tt << "adding dna chainbreak constraint between residues " << i << " and " << i+1 << std::endl;
 
-			AtomID const C3_id( rsd1.atom_index( "C3*" ), i   );
-			AtomID const O3_id( rsd1.atom_index( "O3*" ), i   );
+			AtomID const C3_id( rsd1.atom_index( "C3'" ), i   );
+			AtomID const O3_id( rsd1.atom_index( "O3'" ), i   );
 			AtomID const  P_id( rsd2.atom_index( "P"   ), i+1 );
-			AtomID const O5_id( rsd2.atom_index( "O5*" ), i+1 );
+			AtomID const O5_id( rsd2.atom_index( "O5'" ), i+1 );
 
-			// distance from O3* to P
+			// distance from O3' to P
 			cst_set->add_constraint( new AtomPairConstraint( O3_id, P_id, distance_func ) );
 
-			// angle at O3*
+			// angle at O3'
 			cst_set->add_constraint( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) );
 
 			// angle at P
@@ -723,8 +723,8 @@ get_basepair_atoms( pose::Pose & pose,
 	if ( aa1=='a' && aa2=='g') {
 		std::cout << "BIG PROBLEM!" << std::endl;
 		std::cout << "CRAZY STACK HACK!" << std::endl;
-		atom1 = " C2*";
-		atom2 = " O4*";
+		atom1 = " C2'";
+		atom2 = " O4'";
 	}
 
 	//	assert( 1+1 == 3);
@@ -795,8 +795,8 @@ void
 rna_fullatom_minimize_test()
 {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -898,8 +898,8 @@ void
 rna_fullatom_multiscore_test()
 {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -976,8 +976,8 @@ void
 convert_to_native_test()
 {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -1013,8 +1013,8 @@ convert_to_native_test()
 void
 rna_fullatom_minimize_silent_test()
 {
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -1105,8 +1105,8 @@ void
 rna_o2star_test()
 {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -1165,8 +1165,8 @@ void
 rna_lores_score_test()
 {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 
@@ -1200,8 +1200,8 @@ void
 rna_lores_score_silent_test()
 {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::io::silent;
@@ -1295,8 +1295,8 @@ void
 pymol_struct_type_test()
 {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 
@@ -1346,8 +1346,8 @@ void
 rna_design_gap_test()
 {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::scoring::methods;
@@ -1431,8 +1431,8 @@ rna_design_gap_test()
 void
 print_internal_coord_test()
 {
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::id;
@@ -1463,7 +1463,7 @@ print_internal_coord_test()
 
 	//	 f.set_jump_atoms( 1,
 	//										 core::scoring::rna::chi1_torsion_atom( pose.residue( end ) ),
-	//										 " O2*" );
+	//										 " O2'" );
 
 	f.set_jump_atoms( 1, " Y  ", " Y  " );
 	pose.fold_tree( f );
@@ -1478,12 +1478,12 @@ print_internal_coord_test()
 	pose.set_xyz( id::NamedAtomID( "OVU1", cutpos+1),  pose.residue( cutpos   ).xyz( " S  " ) );
 
 
-	//Special trick to figure out where to put VO4* virtual atom for sugar ring closure.
+	//Special trick to figure out where to put VO4' virtual atom for sugar ring closure.
 	// 	for (Size i= 1; i <= pose.total_residue(); i++ ) {
 	// 		conformation::Residue const & rsd( pose.residue( i ) ) ;
 	 // 		for (Size j = 1; j <= rsd.natoms(); j++ ) {
-	 // 			if ( rsd.atom_name( j ) == "VO4*" ) {
-	 // 				pose.set_xyz( id::AtomID(j,i ), rsd.xyz( "O4*") );
+	 // 			if ( rsd.atom_name( j ) == "VO4'" ) {
+	 // 				pose.set_xyz( id::AtomID(j,i ), rsd.xyz( "O4'") );
 	 // 			}
 	 // 		}
 	 // 	}
@@ -1516,8 +1516,8 @@ print_internal_coord_test()
 void
 set_ideal_geometry( pose::Pose & pose, pose::Pose const & extended_pose, chemical::ResidueTypeSetCAP & rsd_set ) {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	if ( option[ in::file::s ].active() ) {
 
@@ -1573,8 +1573,8 @@ copy_rna_torsions( Size const new_pos, Size const src_pos, pose::Pose & new_pose
 void
 rna_assemble_test() {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 
@@ -1838,8 +1838,8 @@ print_torsions_check( pose::Pose & pose )
 void
 rna_torsion_check_test(){
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 
@@ -1887,8 +1887,8 @@ rna_torsion_check_test(){
 ///////////////////////////////////////////////////////////////////////
 void
 rna_close_chainbreaks_test(){
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::pose;
@@ -1964,8 +1964,8 @@ rna_close_chainbreaks_test(){
 void
 rna_jumping_test(){
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 
@@ -2455,8 +2455,8 @@ initialize_pymol_colors(){
 void
 create_rna_benchmark_test(){
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
@@ -2543,8 +2543,8 @@ rna_chain_closure_test()
 	using namespace chemical;
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -2624,8 +2624,8 @@ setup_crazy_fold_tree( pose::Pose & pose, core::chemical::ResidueTypeSetCAP & rs
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
 	using namespace core::conformation;
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::kinematics;
 	using namespace core::id;
 
@@ -2677,8 +2677,8 @@ rna_backbone_rebuild_test()
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
 	using namespace core::conformation;
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::kinematics;
 	using namespace core::id;
 
@@ -2777,13 +2777,13 @@ rna_backbone_rebuild_test()
 
 		mini_pose.fold_tree( mini_f );
 
-		id::AtomID base_atom1_id(       mini_pose.residue(1).atom_index( " C1*" ), 1 );
+		id::AtomID base_atom1_id(       mini_pose.residue(1).atom_index( " C1'" ), 1 );
 		tree::AtomCOP base_atom1 ( & mini_pose.atom_tree().atom( base_atom1_id ) );
 
-		id::AtomID forward_connect1_id( mini_pose.residue(1).atom_index( " O3*" ), 1 );
+		id::AtomID forward_connect1_id( mini_pose.residue(1).atom_index( " O3'" ), 1 );
 		tree::AtomCOP forward_connect1 ( & mini_pose.atom_tree().atom( forward_connect1_id ) );
 
-		id::AtomID base_atom2_id(       mini_pose.residue(2).atom_index( " C1*" ), 2 );
+		id::AtomID base_atom2_id(       mini_pose.residue(2).atom_index( " C1'" ), 2 );
 		tree::AtomCOP base_atom2 ( & mini_pose.atom_tree().atom( base_atom2_id ) );
 
 		base_base_jumps.push_back( Jump( base_atom1->get_stub(), base_atom2->get_stub() ) );
@@ -2796,9 +2796,9 @@ rna_backbone_rebuild_test()
 	{
 		Size const i( 1 );
 
-		id::AtomID base_atom1_id(       pose.residue(i).atom_index( " C1*" ), i );
+		id::AtomID base_atom1_id(       pose.residue(i).atom_index( " C1'" ), i );
 		tree::AtomCOP base_atom1 ( & pose.atom_tree().atom( base_atom1_id ) );
-		id::AtomID base_atom2_id(       pose.residue(i+1).atom_index( " C1*" ), i+1 );
+		id::AtomID base_atom2_id(       pose.residue(i+1).atom_index( " C1'" ), i+1 );
 		tree::AtomCOP base_atom2 ( & pose.atom_tree().atom( base_atom2_id ) );
 		Jump current_jump( base_atom1->get_stub(), base_atom2->get_stub() );
 
@@ -2833,9 +2833,9 @@ rna_backbone_rebuild_test()
 	// Now close the rest of the residues...
 	for (Size i = 2; i < nres_real; i++ ){
 
-		id::AtomID base_atom1_id(       pose.residue(i).atom_index( " O3*" ), i );
+		id::AtomID base_atom1_id(       pose.residue(i).atom_index( " O3'" ), i );
 		tree::AtomCOP base_atom1 ( & pose.atom_tree().atom( base_atom1_id ) );
-		id::AtomID base_atom2_id(       pose.residue(i+1).atom_index( " C1*" ), i+1 );
+		id::AtomID base_atom2_id(       pose.residue(i+1).atom_index( " C1'" ), i+1 );
 		tree::AtomCOP base_atom2 ( & pose.atom_tree().atom( base_atom2_id ) );
 		Jump current_jump( base_atom1->get_stub(), base_atom2->get_stub() );
 
@@ -2885,8 +2885,8 @@ rna_filter_base_pairs_test()
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
 	using namespace core::conformation;
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::io::silent;
 
 	ResidueTypeSetCAP rsd_set;
@@ -2943,8 +2943,8 @@ void
 crazy_minimize_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -3061,8 +3061,8 @@ void
 sasa_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -3077,21 +3077,21 @@ sasa_test()
 
 	utility::vector1< std::string > atom_names_sugar, atom_names_sugar_hydrogen, atom_names_phosphate,
 		atom_names_dms, atom_names_kethoxal;
-	atom_names_sugar.push_back( " C1*");
-	atom_names_sugar.push_back( " C2*");
-	atom_names_sugar.push_back( " C3*");
-	atom_names_sugar.push_back( " C4*");
-	atom_names_sugar.push_back( " C5*");
+	atom_names_sugar.push_back( " C1'");
+	atom_names_sugar.push_back( " C2'");
+	atom_names_sugar.push_back( " C3'");
+	atom_names_sugar.push_back( " C4'");
+	atom_names_sugar.push_back( " C5'");
 
-	atom_names_sugar_hydrogen.push_back( " H1*");
-	atom_names_sugar_hydrogen.push_back( "1H2*");
-	atom_names_sugar_hydrogen.push_back( " H3*");
-	atom_names_sugar_hydrogen.push_back( " H4*");
-	atom_names_sugar_hydrogen.push_back( "1H5*");
-	atom_names_sugar_hydrogen.push_back( "2H5*");
+	atom_names_sugar_hydrogen.push_back( " H1'");
+	atom_names_sugar_hydrogen.push_back( " H2'");
+	atom_names_sugar_hydrogen.push_back( " H3'");
+	atom_names_sugar_hydrogen.push_back( " H4'");
+	atom_names_sugar_hydrogen.push_back( " H5'");
+	atom_names_sugar_hydrogen.push_back( "H5''");
 
-	atom_names_phosphate.push_back( " O1P" );
-	atom_names_phosphate.push_back( " O2P" );
+	atom_names_phosphate.push_back( " OP2" );
+	atom_names_phosphate.push_back( " OP1" );
 
 	atom_names_dms.push_back( " N1 " );
 	atom_names_dms.push_back( " N3 " );
@@ -3122,10 +3122,10 @@ sasa_test()
 			output_sasa( std::cout, pose, n, atom_sasa, atom_names_sugar, true );
 			output_sasa( std::cout, pose, n, atom_sasa, atom_names_sugar_hydrogen, true );
 			output_sasa( std::cout, pose, n, atom_sasa, atom_names_phosphate, true );
-			output_sasa( std::cout, pose, n, atom_sasa, atom_names_dms, (resname == " rA" || resname == " rC")  );
-			output_sasa( std::cout, pose, n, atom_sasa, atom_names_kethoxal, (resname == " rG") );
+			output_sasa( std::cout, pose, n, atom_sasa, atom_names_dms, (resname == "  A" || resname == "  C")  );
+			output_sasa( std::cout, pose, n, atom_sasa, atom_names_kethoxal, (resname == "  G") );
 
-			// O1P/O2P
+			// OP2/OP1
 			// A or C watson/crick N (DMS)
 			// G watson/crick N
 			//
@@ -3144,8 +3144,8 @@ void
 env_sugar_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -3162,11 +3162,11 @@ env_sugar_test()
 	if ( option[ rsd_type_set ]() == "coarse_rna" ){
 		atom_names_sugar.push_back( " S  ");
 	} else {
-		atom_names_sugar.push_back( " C1*");
-		atom_names_sugar.push_back( " C2*");
-		atom_names_sugar.push_back( " C3*");
-		atom_names_sugar.push_back( " C4*");
-		atom_names_sugar.push_back( " C5*");
+		atom_names_sugar.push_back( " C1'");
+		atom_names_sugar.push_back( " C2'");
+		atom_names_sugar.push_back( " C3'");
+		atom_names_sugar.push_back( " C4'");
+		atom_names_sugar.push_back( " C5'");
 	}
 
 	Real const probe_radius_bin_size( 2.0 );
@@ -3254,8 +3254,8 @@ void
 print_hbonds_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -3337,8 +3337,8 @@ get_backbone_rotamers( utility::vector1< utility::vector1 <Real > > & backbone_r
 											 PuckerState const & pucker1,
 											 PuckerState const & pucker2 ) {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
@@ -3489,8 +3489,8 @@ void
 dinucleotide_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
@@ -3667,8 +3667,8 @@ void
 build_next_nucleotide_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::scoring;
@@ -3727,13 +3727,13 @@ build_next_nucleotide_test()
 
 	utility::vector1< std::pair< std::string, std::string> > atom_pairs;
 	if (prepend_res) {
-		atom_pairs.push_back( std::make_pair( " O3*", " O3*" ) );
-		atom_pairs.push_back( std::make_pair( " C3*", " C3*" ) );
-		atom_pairs.push_back( std::make_pair( " C4*", " C4*" ) );
+		atom_pairs.push_back( std::make_pair( " O3'", " O3'" ) );
+		atom_pairs.push_back( std::make_pair( " C3'", " C3'" ) );
+		atom_pairs.push_back( std::make_pair( " C4'", " C4'" ) );
 	} else {
 		atom_pairs.push_back( std::make_pair( " P  ", " P  " ) );
-		atom_pairs.push_back( std::make_pair( " O5*", " O5*" ) );
-		atom_pairs.push_back( std::make_pair( " C5*", " C5*" ) );
+		atom_pairs.push_back( std::make_pair( " O5'", " O5'" ) );
+		atom_pairs.push_back( std::make_pair( " C5'", " C5'" ) );
 	}
 
 	pose.replace_residue( which_res, *new_rsd, atom_pairs );
@@ -3874,8 +3874,8 @@ copy_rotamerized_torsions( pose::Pose & pose,
 
 	using namespace core::scoring;
 	using namespace core::scoring::rna;
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 
 	conformation::Residue rsd( source_pose.residue( i ) );
 
@@ -4005,8 +4005,8 @@ void
 rotamerize_rna_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
@@ -4141,8 +4141,8 @@ void
 calc_rmsd_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -4215,9 +4215,9 @@ output_sugar_geometry_parameters(
 		}
 
 		//////////////////////////////////////////////
-		Real const a = (rsd.xyz( " O4*" ) - rsd.xyz( " C4*" )).length();
-		Real const b = (rsd.xyz( " C3*" ) - rsd.xyz( " C4*" )).length();
-		Real const c = (rsd.xyz( "VO4*" ) - rsd.xyz( " C3*" )).length();
+		Real const a = (rsd.xyz( " O4'" ) - rsd.xyz( " C4'" )).length();
+		Real const b = (rsd.xyz( " C3'" ) - rsd.xyz( " C4'" )).length();
+		Real const c = (rsd.xyz( "VO4'" ) - rsd.xyz( " C3'" )).length();
 		Real const theta = numeric::conversions::degrees( std::acos( ( a*a + b*b - c*c )/(2 * a *b ) ) );
 		out << ' ' << theta;
 
@@ -4265,10 +4265,10 @@ put_it_in_list(
 void
 fill_sugar_atom_list( utility::vector1< std::string> & sugar_atom_list )
 {
-	sugar_atom_list.push_back( " C2*" );
-	sugar_atom_list.push_back( " O2*" );
-	sugar_atom_list.push_back( " C1*" );
-	sugar_atom_list.push_back( " O4*" );
+	sugar_atom_list.push_back( " C2'" );
+	sugar_atom_list.push_back( " O2'" );
+	sugar_atom_list.push_back( " C1'" );
+	sugar_atom_list.push_back( " O4'" );
 	sugar_atom_list.push_back( "BASE" );
 }
 
@@ -4279,20 +4279,20 @@ fill_bond_atoms(
 								utility::vector1< utility::vector1< std::string> > & bond_angle_atoms
 								)
 {
-	put_it_in_list( bond_length_atoms, " C3*", " C4*" );
-	put_it_in_list( bond_length_atoms, " C2*", " C3*" );
-	put_it_in_list( bond_length_atoms, " C1*", " C2*" );
-	put_it_in_list( bond_length_atoms, " C4*", " O4*" );
-	put_it_in_list( bond_length_atoms, " O4*", " C1*" );
-	put_it_in_list( bond_length_atoms, " C1*", "BASE" );
+	put_it_in_list( bond_length_atoms, " C3'", " C4'" );
+	put_it_in_list( bond_length_atoms, " C2'", " C3'" );
+	put_it_in_list( bond_length_atoms, " C1'", " C2'" );
+	put_it_in_list( bond_length_atoms, " C4'", " O4'" );
+	put_it_in_list( bond_length_atoms, " O4'", " C1'" );
+	put_it_in_list( bond_length_atoms, " C1'", "BASE" );
 
-	put_it_in_list( bond_angle_atoms, " C3*", " C4*", " O4*" );
-	put_it_in_list( bond_angle_atoms, " C2*", " C3*", " C4*" );
-	put_it_in_list( bond_angle_atoms, " C1*", " C2*", " C3*" );
-	put_it_in_list( bond_angle_atoms, " C2*", " C1*", " O4*" );
-	put_it_in_list( bond_angle_atoms, " C4*", " O4*", " C1*" );
-	put_it_in_list( bond_angle_atoms, " C2*", " C1*", "BASE" );
-	put_it_in_list( bond_angle_atoms, " O4*", " C1*", "BASE" );
+	put_it_in_list( bond_angle_atoms, " C3'", " C4'", " O4'" );
+	put_it_in_list( bond_angle_atoms, " C2'", " C3'", " C4'" );
+	put_it_in_list( bond_angle_atoms, " C1'", " C2'", " C3'" );
+	put_it_in_list( bond_angle_atoms, " C2'", " C1'", " O4'" );
+	put_it_in_list( bond_angle_atoms, " C4'", " O4'", " C1'" );
+	put_it_in_list( bond_angle_atoms, " C2'", " C1'", "BASE" );
+	put_it_in_list( bond_angle_atoms, " O4'", " C1'", "BASE" );
 
 }
 
@@ -4358,16 +4358,16 @@ replace_torsion_angles( pose::Pose & extended_pose, pose::Pose & fixed_pose, pos
 
 	for (Size i = 1; i <= pose.total_residue(); i++ ) {
 		Residue rsd = pose.residue( i );
-		kinematics::Stub const input_stub( rsd.xyz( " C3*" ), rsd.xyz( " C3*" ), rsd.xyz( " C4*" ), rsd.xyz( " C5*" ) );
+		kinematics::Stub const input_stub( rsd.xyz( " C3'" ), rsd.xyz( " C3'" ), rsd.xyz( " C4'" ), rsd.xyz( " C5'" ) );
 
 		Residue rsd_fixed = fixed_pose.residue( i );
-		kinematics::Stub const input_stub_fixed( rsd_fixed.xyz( " C3*" ), rsd_fixed.xyz( " C3*" ), rsd_fixed.xyz( " C4*" ), rsd_fixed.xyz( " C5*" ) );
+		kinematics::Stub const input_stub_fixed( rsd_fixed.xyz( " C3'" ), rsd_fixed.xyz( " C3'" ), rsd_fixed.xyz( " C4'" ), rsd_fixed.xyz( " C5'" ) );
 
 		utility::vector1< std::string > my_atoms;
-		my_atoms.push_back( " C2*" );
-		my_atoms.push_back( " C1*" );
-		my_atoms.push_back( " O4*" );
-		//my_atoms.push_back( " C4*" );
+		my_atoms.push_back( " C2'" );
+		my_atoms.push_back( " C1'" );
+		my_atoms.push_back( " O4'" );
+		//my_atoms.push_back( " C4'" );
 
 		utility::vector1< Vector > start_vectors;
 		utility::vector1< utility::vector1< Real > > new_dof_sets;
@@ -4422,7 +4422,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 		Real const delta = rsd.mainchain_torsion( 4 );
 
 		{
-			std::string const atom_name = " C2*";
+			std::string const atom_name = " C2'";
 			Size const j = rsd.atom_index( atom_name );
 			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
 			if (delta < 100.0 ) {
@@ -4435,7 +4435,7 @@ fix_sugar_bond_angles_EMPIRICAL( pose::Pose & pose )
 
 
 		{
-			std::string const atom_name = " O4*";
+			std::string const atom_name = " O4'";
 			Size const j = rsd.atom_index( atom_name );
 			core::kinematics::tree::AtomCOP current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
 			if (delta < 100.0 ) {
@@ -4464,43 +4464,43 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 
 		core::conformation::Residue const & rsd( pose.residue( i ) );
 
-		Real const a = (rsd.xyz( " O4*" ) - rsd.xyz( " C4*" )).length();
-		Real const b = (rsd.xyz( " C3*" ) - rsd.xyz( " C4*" )).length();
-		Real const c = (rsd.xyz( "VO4*" ) - rsd.xyz( " C3*" )).length();
+		Real const a = (rsd.xyz( " O4'" ) - rsd.xyz( " C4'" )).length();
+		Real const b = (rsd.xyz( " C3'" ) - rsd.xyz( " C4'" )).length();
+		Real const c = (rsd.xyz( "VO4'" ) - rsd.xyz( " C3'" )).length();
 		Real const theta = std::acos( ( c*c - a*a - b*b )/(2 * a *b ) );
 
 		{
-			kinematics::Stub const input_stub( rsd.xyz( " C4*"), rsd.xyz( " C4*"),
-																				 rsd.xyz( " C3*"), rsd.xyz( " O4*") );
+			kinematics::Stub const input_stub( rsd.xyz( " C4'"), rsd.xyz( " C4'"),
+																				 rsd.xyz( " C3'"), rsd.xyz( " O4'") );
 
-			Vector v1 = input_stub.global2local( rsd.xyz( " O4*" ) );
+			Vector v1 = input_stub.global2local( rsd.xyz( " O4'" ) );
 			//			std::cout << "VEC " << v1.x() << " " << v1.y() << " " << v1.z() << std::endl;
 
-			std::string atom_name = " O4*";
+			std::string atom_name = " O4'";
 			Size const j = rsd.atom_index( atom_name );
 			pose.set_xyz( id::AtomID(j,i), input_stub.spherical( 0.0, theta, a ) );
 
-			//v1 = input_stub.global2local( rsd.xyz( " O4*" ) );
+			//v1 = input_stub.global2local( rsd.xyz( " O4'" ) );
 			//			std::cout << "VEC_NEW " << v1.x() << " " << v1.y() << " " << v1.z() << std::endl;
 
 		}
 
-		//		std::cout << "LENGTH_O4*_VO4*: " << ( pose.residue(i).xyz( "VO4*" ) - pose.residue(i).xyz(" C3*") ).length() << " " << ( pose.residue(i).xyz( " O4*" ) - pose.residue(i).xyz(" C3*") ).length() << " " << std::endl;
+		//		std::cout << "LENGTH_O4'_VO4': " << ( pose.residue(i).xyz( "VO4'" ) - pose.residue(i).xyz(" C3'") ).length() << " " << ( pose.residue(i).xyz( " O4'" ) - pose.residue(i).xyz(" C3'") ).length() << " " << std::endl;
 
 
-		std::string atom_name = " C2*";
+		std::string atom_name = " C2'";
 		Size j = rsd.atom_index( atom_name );
 		{
-			kinematics::Stub const input_stub( rsd.xyz( " C3*"), rsd.xyz( " C3*"),
-																				 rsd.xyz( " C4*"), rsd.xyz( " C2*") );
+			kinematics::Stub const input_stub( rsd.xyz( " C3'"), rsd.xyz( " C3'"),
+																				 rsd.xyz( " C4'"), rsd.xyz( " C2'") );
 
 
-			Vector const v1 = input_stub.global2local( pose.residue(i).xyz( " O4*" ) );
-			Vector const v2 = input_stub.global2local( pose.residue(i).xyz( "VO4*" ) );
+			Vector const v1 = input_stub.global2local( pose.residue(i).xyz( " O4'" ) );
+			Vector const v2 = input_stub.global2local( pose.residue(i).xyz( "VO4'" ) );
 			//Real const theta_difference = std::atan2( v2.y(), v2.x() )  - std::atan2( v1.y(), v1.x() ) ;
 
-			//			std::cout << "BLAH  " << input_stub.global2local( pose.residue(i).xyz( " O4*" ) ).x() << " " <<
-			//				input_stub.global2local( pose.residue(i).xyz( "VO4*" ) ).x() << std::endl;
+			//			std::cout << "BLAH  " << input_stub.global2local( pose.residue(i).xyz( " O4'" ) ).x() << " " <<
+			//				input_stub.global2local( pose.residue(i).xyz( "VO4'" ) ).x() << std::endl;
 
 			Real const d = sqrt( v2.x() * v2.x() + v2.y()*v2.y() );
 			Real const alpha = std::atan2( v2.y(), v2.x() );
@@ -4510,8 +4510,8 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 			id::DOF_ID dof_id( DOF_ID( id::AtomID( j, i), THETA ) );
 			pose.set_dof(  dof_id, pose.dof( dof_id ) + theta_difference );
 
-			//			std::cout << "BLAH2 " << input_stub.global2local( pose.residue(i).xyz( " O4*" ) ).x() << " " <<
-			//				input_stub.global2local( pose.residue(i).xyz( "VO4*" ) ).x() << std::endl;
+			//			std::cout << "BLAH2 " << input_stub.global2local( pose.residue(i).xyz( " O4'" ) ).x() << " " <<
+			//				input_stub.global2local( pose.residue(i).xyz( "VO4'" ) ).x() << std::endl;
 
 		}
 
@@ -4522,8 +4522,8 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 			core::kinematics::tree::AtomCOP input_stub_atom3( current_atom->input_stub_atom3() );
 			kinematics::Stub const input_stub( input_stub_atom1->xyz(), input_stub_atom1->xyz(), input_stub_atom2->xyz(), input_stub_atom3->xyz());
 
-			Vector const v1 = input_stub.global2local( pose.residue(i).xyz( " O4*" ) );
-			Vector const v2 = input_stub.global2local( pose.residue(i).xyz( "VO4*" ) );
+			Vector const v1 = input_stub.global2local( pose.residue(i).xyz( " O4'" ) );
+			Vector const v2 = input_stub.global2local( pose.residue(i).xyz( "VO4'" ) );
 			Real const phi_difference = std::atan2( v2.z(), v2.y() )  - std::atan2( v1.z(), v1.y() ) ;
 			//std::cout << "PHI_DIFFERENCE " << phi_difference << std::endl;
 			id::DOF_ID dof_id( DOF_ID( id::AtomID( j, i), PHI ) );
@@ -4533,13 +4533,13 @@ fix_sugar_bond_angles_CLOSE_BOND( pose::Pose & pose )
 		}
 
 		//{
-		//Vector const v1 = input_stub.global2local( pose.residue(i).xyz( " O4*" ) );
-		//Vector const v2 = input_stub.global2local( pose.residue(i).xyz( "VO4*" ) );
+		//Vector const v1 = input_stub.global2local( pose.residue(i).xyz( " O4'" ) );
+		//Vector const v2 = input_stub.global2local( pose.residue(i).xyz( "VO4'" ) );
 		//Real const phi_difference = std::atan2( v2.z(), v2.y() )  - std::atan2( v1.z(), v1.y() ) ;
 		//std::cout << "PHI_DIFFERENCE_NEW " << phi_difference << std::endl;
 		//}
 
-		//		std::cout << "LENGTH: " << ( pose.residue(i).xyz( "VO4*" ) - pose.residue(i).xyz( " O4*" ) ).length() << std::endl;
+		//		std::cout << "LENGTH: " << ( pose.residue(i).xyz( "VO4'" ) - pose.residue(i).xyz( " O4'" ) ).length() << std::endl;
 
 
 	}
@@ -4552,8 +4552,8 @@ void
 sugar_geometry_RNA_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -4608,8 +4608,8 @@ void
 sugar_frag_RNA_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
@@ -4655,8 +4655,8 @@ void
 color_by_geom_sol_RNA_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::pose;
 	using namespace core::id;
@@ -4702,8 +4702,8 @@ void
 color_by_lj_base_RNA_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::pose;
 	using namespace core::id;
@@ -4757,8 +4757,8 @@ void
 rna_stats_test()
 {
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::pose;
 	using namespace core::id;
@@ -4806,8 +4806,8 @@ void
 files_for_openMM_test(){
 
 	// Read in pdb.
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::pose;
 	using namespace core::id;
@@ -4936,8 +4936,8 @@ files_for_openMM_test(){
 void
 print_secstruct_test(){
  	using namespace core::chemical;
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
 
 	ResidueTypeSetCAP rsd_set;
@@ -4961,8 +4961,8 @@ print_secstruct_test(){
 void
 print_all_torsions_test(){
  	using namespace core::chemical;
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
 	using namespace core::id;
 	using namespace scoring::rna;
@@ -5052,7 +5052,7 @@ void*
 my_main( void* )
 {
 
-	using namespace core::options;
+	using namespace basic::options;
 
 	if ( option[ create_vall_torsions ] ) {
 		create_rna_vall_torsions_test();
@@ -5154,7 +5154,7 @@ main( int argc, char * argv [] )
 
 	try {
 
-	using namespace core::options;
+	using namespace basic::options;
 
 	//Uh, options?
 	NEW_OPT( create_vall_torsions, "Generate a torsions file from a big RNA file", false );

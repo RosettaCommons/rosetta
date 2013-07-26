@@ -206,10 +206,12 @@ HBondFeatures::write_hbond_chem_types_table_schema(
  	insert_or_ignore(t, c, list_of("'hbacc_HXL'")("'aHXL: s,t'"), db_session);
 	insert_or_ignore(t, c, list_of("'hbacc_PCA_DNA'")("'aPCA_DNA: O{1,2}P'"), db_session);
 	insert_or_ignore(t, c, list_of("'hbacc_PES_DNA'")("'aPES_DNA: O{3,5}*'"), db_session);
-	insert_or_ignore(t, c, list_of("'hbacc_RRI_DNA'")("'aRRI_DNA: O4*'"), db_session);
+	// note: the \'\' shows up as '' which, finally,  will escape to '
+	insert_or_ignore(t, c, list_of("'hbacc_RRI_DNA'")("'aRRI_DNA: O4\'\''"), db_session);
 	insert_or_ignore(t, c, list_of("'hbacc_PCA_RNA'")("'aPCA_RNA: O{1,2}P'"), db_session);
 	insert_or_ignore(t, c, list_of("'hbacc_PES_RNA'")("'aPES_RNA: O{3,5}*'"), db_session);
-	insert_or_ignore(t, c, list_of("'hbacc_RRI_RNA'")("'aRRI_RNA: O4*'"), db_session);
+	// note: the \'\' shows up as '' which, finally,  will escape to '
+	insert_or_ignore(t, c, list_of("'hbacc_RRI_RNA'")("'aRRI_RNA: O4\'\''"), db_session);
  	insert_or_ignore(t, c, list_of("'hbacc_H2O'")("'aH2O'"), db_session);
 	insert_or_ignore(t, c, list_of("'hbacc_GENERIC_SP2BB'")("'aGEN: sp2 bb'"), db_session);
 	insert_or_ignore(t, c, list_of("'hbacc_GENERIC_SP2SC'")("'aGEN: sp2 sc'"), db_session);

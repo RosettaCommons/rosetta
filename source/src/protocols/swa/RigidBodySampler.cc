@@ -573,8 +573,8 @@ RigidBodySampler::~RigidBodySampler() {}
 			if ( !( ( in_vector( don_res_num, moving_res_ ) && in_vector( acc_res_num, fixed_res_ ) ) ||
 							( in_vector( acc_res_num, moving_res_ ) && in_vector( don_res_num, fixed_res_ ) ) ) ) continue;
 
-			if ( ignore_o2star_hbonds_in_filter_ && ( pose.residue_type( don_res_num ).atom_name( don_hatm ) == "2HO*" ) ) continue;
-			if ( ignore_o2star_hbonds_in_filter_ && ( pose.residue_type( acc_res_num ).atom_name( acc_atm  ) == " O2*" ) ) continue;
+			if ( ignore_o2star_hbonds_in_filter_ && ( pose.residue_type( don_res_num ).atom_name( don_hatm ) == "HO2'" ) ) continue;
+			if ( ignore_o2star_hbonds_in_filter_ && ( pose.residue_type( acc_res_num ).atom_name( acc_atm  ) == " O2'" ) ) continue;
 
 			num_cross_hbonds++;
 
@@ -592,7 +592,7 @@ RigidBodySampler::~RigidBodySampler() {}
 		Real const DIST_CUTOFF = 4.0;
 
 		for ( Size n = 1; n <= moving_res_.size(); n++ ){
-			Vector const & o2star_xyz = pose.residue( moving_res_[n] ).xyz( " O2*" );
+			Vector const & o2star_xyz = pose.residue( moving_res_[n] ).xyz( " O2'" );
 			for ( Size m = 1; m <= fixed_res_.size(); m++ ){
 				for ( Size k = 1; k <= pose.residue_type( fixed_res_[m] ).nheavyatoms(); k++ ) {
 					if ( ( o2star_xyz - pose.residue( fixed_res_[m] ).xyz( k ) ).length() < DIST_CUTOFF )	return true;
@@ -601,7 +601,7 @@ RigidBodySampler::~RigidBodySampler() {}
 		}
 
 		for ( Size n = 1; n <= fixed_res_.size(); n++ ){
-			Vector const & o2star_xyz = pose.residue( fixed_res_[n] ).xyz( " O2*" );
+			Vector const & o2star_xyz = pose.residue( fixed_res_[n] ).xyz( " O2'" );
 			for ( Size m = 1; m <= moving_res_.size(); m++ ){
 				for ( Size k = 1; k <= pose.residue_type( moving_res_[m] ).nheavyatoms(); k++ ) {
 					if ( ( o2star_xyz - pose.residue( moving_res_[m]).xyz( k ) ).length() < DIST_CUTOFF )	return true;

@@ -1043,10 +1043,10 @@ get_base_pair_coordinate_system( pose::Pose const & pose, Size const res1, Size 
 	using namespace core::id;
 	using namespace core::chemical;
 
-	Vector x = pose.xyz( NamedAtomID(" C1*", res2 ) ) -  pose.xyz( NamedAtomID(" C1*", res1 )  );
+	Vector x = pose.xyz( NamedAtomID(" C1'", res2 ) ) -  pose.xyz( NamedAtomID(" C1'", res1 )  );
 	x.normalize();
 
-	centroid = 0.5 * ( pose.xyz( NamedAtomID(" C1*", res2 ) ) +  pose.xyz( NamedAtomID(" C1*", res1 )  ) );
+	centroid = 0.5 * ( pose.xyz( NamedAtomID(" C1'", res2 ) ) +  pose.xyz( NamedAtomID(" C1'", res1 )  ) );
 
   Size res_type = pose.residue( res1 ).aa();
 

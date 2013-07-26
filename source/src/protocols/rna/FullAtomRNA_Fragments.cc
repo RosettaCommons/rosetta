@@ -456,7 +456,7 @@ FragmentLibrary::~FragmentLibrary() {}
 
 			line_stream >> dummy_char;
 
-			//In the new style fragment set... keep track of C3*, C2*, O4* coordinates
+			//In the new style fragment set... keep track of C3', C2', O4' coordinates
 			// explicitly, allowing for non-ideal bond lengths and bond angles.
 			if ( dummy_char == 'S' ) {
 				vall_non_main_chain_sugar_coords_defined_ = true;

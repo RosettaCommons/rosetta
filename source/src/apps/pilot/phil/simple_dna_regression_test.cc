@@ -576,16 +576,16 @@ wriggle_test(
 
 	utility::vector1< Vector > bonds, atoms;
 
-	atoms.push_back( prev_rsd.xyz("O3*") );
+	atoms.push_back( prev_rsd.xyz("O3'") );
 	atoms.push_back(      rsd.xyz(  "P") );
-	atoms.push_back(      rsd.xyz("O5*") );
-	atoms.push_back(      rsd.xyz("C5*") );
-	atoms.push_back(      rsd.xyz("C4*") );
+	atoms.push_back(      rsd.xyz("O5'") );
+	atoms.push_back(      rsd.xyz("C5'") );
+	atoms.push_back(      rsd.xyz("C4'") );
 
-	Vector const r( rsd.xyz("O3*") );
+	Vector const r( rsd.xyz("O3'") );
 
-	Vector const n1( ( next_rsd.xyz(  "P") -      rsd.xyz("O3*" ) ).normalized() );
-	Vector const n2( ( next_rsd.xyz("O5*") - next_rsd.xyz(  "P" ) ).normalized() );
+	Vector const n1( ( next_rsd.xyz(  "P") -      rsd.xyz("O3'" ) ).normalized() );
+	Vector const n2( ( next_rsd.xyz("O5'") - next_rsd.xyz(  "P" ) ).normalized() );
 
 	Real l1( 0.0 );
 	utility::vector1< Real > v1(4), v2(4);
@@ -694,8 +694,8 @@ wriggle_test(
 		dump_pdb( pose, "test_"+tag+"_"+lead_zero_string_of(seqpos,4)+"_"+lead_zero_string_of(r,4)+".pdb" );
 
 		// check dr:
-		Vector const r0( pose.residue(seqpos).xyz("O4*") - start_pose.residue(seqpos).xyz("O4*") );
-		Vector const r ( pose.residue(seqpos).xyz("O3*") - start_pose.residue(seqpos).xyz("O3*") );
+		Vector const r0( pose.residue(seqpos).xyz("O4'") - start_pose.residue(seqpos).xyz("O4'") );
+		Vector const r ( pose.residue(seqpos).xyz("O3'") - start_pose.residue(seqpos).xyz("O3'") );
 
 		std::cout << "r: " << tag << F(9,3,r.length()) << F(9,3,r.dot( n1 )) << F(9,3,r.dot( n2 ) ) << std::endl;
 		} // rr
@@ -891,9 +891,9 @@ find_dna_rotamers(
 			mini_pose.append_residue_by_bond(      rsd );
  			mini_pose.append_residue_by_bond( next_rsd );
 
-			// kinematics::Stub const takeoff(      rsd.xyz("P"), prev_rsd.xyz("O3*"), prev_rsd.xyz("C3*") );
- 			kinematics::Stub const takeoff(      rsd.xyz("C4*"), rsd.xyz("O4*"), rsd.xyz("C1*") );
- 			// kinematics::Stub const landing( next_rsd.xyz("P"),      rsd.xyz("O3*"),      rsd.xyz("C3*") );
+			// kinematics::Stub const takeoff(      rsd.xyz("P"), prev_rsd.xyz("O3'"), prev_rsd.xyz("C3'") );
+ 			kinematics::Stub const takeoff(      rsd.xyz("C4'"), rsd.xyz("O4'"), rsd.xyz("C1'") );
+ 			// kinematics::Stub const landing( next_rsd.xyz("P"),      rsd.xyz("O3'"),      rsd.xyz("C3'") );
 
 			id::AtomID_Mask mask;
 			id::initialize( mask, mini_pose );
@@ -936,7 +936,7 @@ find_dna_rotamers(
 // 			Real const    zeta( rsd.mainchain_torsion(5) );
 // 			Real const     chi( rsd.chi(1) );
 
-// 			Vector const o3( rsd.xyz( "O3*" ) ); // look at RotamerSet_.cc dna rotamer code for examples of getting positions
+// 			Vector const o3( rsd.xyz( "O3'" ) ); // look at RotamerSet_.cc dna rotamer code for examples of getting positions
 
 
 
@@ -960,11 +960,11 @@ get_base_pucker(
 {
 
 	utility::vector1< std::string > names;
-	names.push_back( "C1*" );
-	names.push_back( "C2*" );
-	names.push_back( "C3*" );
-	names.push_back( "C4*" );
-	names.push_back( "O4*" );
+	names.push_back( "C1'" );
+	names.push_back( "C2'" );
+	names.push_back( "C3'" );
+	names.push_back( "C4'" );
+	names.push_back( "O4'" );
 
 	utility::vector1< Vector > atoms;
 	for ( int i=1; i<= 5; ++i ) {
@@ -1534,16 +1534,16 @@ phosphate_stats()
 			if ( !rsd.is_DNA() || !prev_rsd.is_DNA() ||
 					 rsd.is_terminus() || prev_rsd.is_terminus() ) continue;
 
-			kinematics::Stub stub( rsd.xyz("P"), prev_rsd.xyz("O3*"), rsd.xyz("O5*") );
+			kinematics::Stub stub( rsd.xyz("P"), prev_rsd.xyz("O3'"), rsd.xyz("O5'") );
 
-			Vector const & o1p( rsd.xyz("O1P" ) );
-			Vector const & o2p( rsd.xyz("O2P" ) );
+			Vector const & o1p( rsd.xyz("OP2" ) );
+			Vector const & o2p( rsd.xyz("OP1" ) );
 
 			if ( counter==0 ) {
 				out << atom_line( " P  ", rsd.name3(), stub.global2local( rsd.xyz("P") ), counter );
-				out << atom_line( " O1P", rsd.name3(), stub.global2local( rsd.xyz("O1P") ), counter );
-				out << atom_line( " O2P", rsd.name3(), stub.global2local( rsd.xyz("O2P") ), counter );
-				out << atom_line( " O5*", rsd.name3(), stub.global2local( rsd.xyz("O5*") ), counter );
+				out << atom_line( " OP2", rsd.name3(), stub.global2local( rsd.xyz("OP2") ), counter );
+				out << atom_line( " OP1", rsd.name3(), stub.global2local( rsd.xyz("OP1") ), counter );
+				out << atom_line( " O5'", rsd.name3(), stub.global2local( rsd.xyz("O5'") ), counter );
 			}
 
 			for ( Size j=1; j<= pose.total_residue(); ++j ) {
@@ -3399,7 +3399,7 @@ water_test()
 // 		Size const anchor2( 20 );
 // 		std::string const anchor2_atom( "N7" );
  		//Size const anchor2( 29 );
- 		std::string const anchor2_atom( "2H6" );
+ 		std::string const anchor2_atom( "H62" );
 
 		kinematics::MoveMap mm;
 
@@ -3413,9 +3413,9 @@ water_test()
 			hydrate_atoms[ na_gua ].push_back( "N7" );
 			hydrate_atoms[ na_gua ].push_back( "O6" );
 			hydrate_atoms[ na_ade ].push_back( "N7" );
-			hydrate_atoms[ na_ade ].push_back( "2H6" );
+			hydrate_atoms[ na_ade ].push_back( "H62" );
 
-			hydrate_atoms[ na_cyt ].push_back( "1H4" );
+			hydrate_atoms[ na_cyt ].push_back( "H42" );
 			hydrate_atoms[ na_thy ].push_back( "O4" );
 
 			for ( Size i=1; i<= pose.total_residue(); ++i ) {
@@ -4306,7 +4306,7 @@ find_dna_chainbreaks( pose::Pose const & pose )
 		conformation::Residue const & rsd1( pose.residue(i  ) );
 		conformation::Residue const & rsd2( pose.residue(i+1) );
 		if ( rsd1.is_DNA() && rsd2.is_DNA() ) {
-			if ( rsd1.xyz("O3*").distance( rsd2.xyz("P") ) > threshold ) {
+			if ( rsd1.xyz("O3'").distance( rsd2.xyz("P") ) > threshold ) {
 				breaks.push_back( i );
 			}
 		}
@@ -4758,8 +4758,8 @@ main( int argc, char * argv [] )
 
 	protocols::viewer::viewer_main( my_main );
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cout << "caught exception " << e.msg() << std::endl; 
-	} 
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
 }
 
 		// 		// now do specificity calculation

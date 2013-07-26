@@ -135,11 +135,11 @@ DNATorsionPotential::add_sugar_ring_closure_constraints( conformation::Residue c
 
 	Size const & i( rsd.seqpos() );
 
-	Size const c1star_index = rsd.atom_index( "C1*" );
-	Size const c2star_index = rsd.atom_index( "C2*" );
-	Size const c3star_index = rsd.atom_index( "C3*" );
-	Size const o3star_index = rsd.atom_index( "O3*" );
-	Size const c4star_index = rsd.atom_index( "C4*" );
+	Size const c1star_index = rsd.atom_index( "C1'" );
+	Size const c2star_index = rsd.atom_index( "C2'" );
+	Size const c3star_index = rsd.atom_index( "C3'" );
+	Size const o3star_index = rsd.atom_index( "O3'" );
+	Size const c4star_index = rsd.atom_index( "C4'" );
 
 	cst_set.add_constraint( new constraints::AtomPairConstraint( id::AtomID( c2star_index, i),
 																															 id::AtomID( c3star_index, i),
@@ -167,7 +167,7 @@ DNATorsionPotential::add_sugar_ring_closure_constraints( conformation::Residue c
 																																			 dna_sugar_close );
 	cst_set.add_constraint( angle3 );
 
-	// Need to add an improper dihedral to keep the hydrogens correct on C2*
+	// Need to add an improper dihedral to keep the hydrogens correct on C2'
 
 
 
@@ -185,8 +185,8 @@ DNATorsionPotential::add_dna_base_distance_constraints(
 		conformation::Residue const & next_rsd( pose.residue( i + 1 ) );
 		if( !rsd.is_DNA() || !next_rsd.is_DNA() || rsd.is_upper_terminus() ) continue; //job undone: need to add conditions when the rsd is not basepaired
 
-		Size const H2star_index = pose.residue( i ).atom_index( "2H2*" );
-		Size const H1star_index = pose.residue( i ).atom_index( "1H2*" );
+		Size const H2star_index = pose.residue( i ).atom_index( "H21*" );
+		Size const H1star_index = pose.residue( i ).atom_index( " H2'" );
 		Size H68_index, next_H68_index;
 		if( rsd.type().aa() == na_ade || rsd.type().aa() == na_gua )
 			H68_index = pose.residue( i ).atom_index( "H8" );
@@ -399,60 +399,60 @@ DNATorsionPotential::init_dna_torsion_parameters()
 
 	// Now the relevant atom names
 
-	alpha_atom_names_.push_back( "O3*" );
+	alpha_atom_names_.push_back( "O3'" );
 	alpha_atom_names_.push_back( "P" );
-	alpha_atom_names_.push_back( "O5*" );
-	alpha_atom_names_.push_back( "C5*" );
+	alpha_atom_names_.push_back( "O5'" );
+	alpha_atom_names_.push_back( "C5'" );
 
 	beta_atom_names_.push_back( "P" );
-	beta_atom_names_.push_back( "O5*" );
-	beta_atom_names_.push_back( "C5*" );
-	beta_atom_names_.push_back( "C4*" );
+	beta_atom_names_.push_back( "O5'" );
+	beta_atom_names_.push_back( "C5'" );
+	beta_atom_names_.push_back( "C4'" );
 
-	gamma_atom_names_.push_back( "O5*" );
-	gamma_atom_names_.push_back( "C5*" );
-	gamma_atom_names_.push_back( "C4*" );
-	gamma_atom_names_.push_back( "C3*" );
+	gamma_atom_names_.push_back( "O5'" );
+	gamma_atom_names_.push_back( "C5'" );
+	gamma_atom_names_.push_back( "C4'" );
+	gamma_atom_names_.push_back( "C3'" );
 
-	delta_atom_names_.push_back( "C5*" );
-	delta_atom_names_.push_back( "C4*" );
-	delta_atom_names_.push_back( "C3*" );
-	delta_atom_names_.push_back( "O3*" );
+	delta_atom_names_.push_back( "C5'" );
+	delta_atom_names_.push_back( "C4'" );
+	delta_atom_names_.push_back( "C3'" );
+	delta_atom_names_.push_back( "O3'" );
 
-	epsilon_atom_names_.push_back( "C4*" );
-	epsilon_atom_names_.push_back( "C3*" );
-	epsilon_atom_names_.push_back( "O3*" );
+	epsilon_atom_names_.push_back( "C4'" );
+	epsilon_atom_names_.push_back( "C3'" );
+	epsilon_atom_names_.push_back( "O3'" );
 	epsilon_atom_names_.push_back( "P" );
 
-	zeta_atom_names_.push_back( "C3*" );
-	zeta_atom_names_.push_back( "O3*" );
+	zeta_atom_names_.push_back( "C3'" );
+	zeta_atom_names_.push_back( "O3'" );
 	zeta_atom_names_.push_back( "P" );
-	zeta_atom_names_.push_back( "O5*" );
+	zeta_atom_names_.push_back( "O5'" );
 
-	nu0_atom_names_.push_back( "C4*" );
-	nu0_atom_names_.push_back( "O4*" );
-	nu0_atom_names_.push_back( "C1*" );
-	nu0_atom_names_.push_back( "C2*" );
+	nu0_atom_names_.push_back( "C4'" );
+	nu0_atom_names_.push_back( "O4'" );
+	nu0_atom_names_.push_back( "C1'" );
+	nu0_atom_names_.push_back( "C2'" );
 
-	nu1_atom_names_.push_back( "O4*" );
-	nu1_atom_names_.push_back( "C1*" );
-	nu1_atom_names_.push_back( "C2*" );
-	nu1_atom_names_.push_back( "C3*" );
+	nu1_atom_names_.push_back( "O4'" );
+	nu1_atom_names_.push_back( "C1'" );
+	nu1_atom_names_.push_back( "C2'" );
+	nu1_atom_names_.push_back( "C3'" );
 
-	nu2_atom_names_.push_back( "C1*" );
-	nu2_atom_names_.push_back( "C2*" );
-	nu2_atom_names_.push_back( "C3*" );
-	nu2_atom_names_.push_back( "C4*" );
+	nu2_atom_names_.push_back( "C1'" );
+	nu2_atom_names_.push_back( "C2'" );
+	nu2_atom_names_.push_back( "C3'" );
+	nu2_atom_names_.push_back( "C4'" );
 
-	nu3_atom_names_.push_back( "C2*" );
-	nu3_atom_names_.push_back( "C3*" );
-	nu3_atom_names_.push_back( "C4*" );
-	nu3_atom_names_.push_back( "O4*" );
+	nu3_atom_names_.push_back( "C2'" );
+	nu3_atom_names_.push_back( "C3'" );
+	nu3_atom_names_.push_back( "C4'" );
+	nu3_atom_names_.push_back( "O4'" );
 
-	nu4_atom_names_.push_back( "C3*" );
-	nu4_atom_names_.push_back( "C4*" );
-	nu4_atom_names_.push_back( "O4*" );
-	nu4_atom_names_.push_back( "C1*" );
+	nu4_atom_names_.push_back( "C3'" );
+	nu4_atom_names_.push_back( "C4'" );
+	nu4_atom_names_.push_back( "O4'" );
+	nu4_atom_names_.push_back( "C1'" );
 
 }
 

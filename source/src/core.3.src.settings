@@ -16,6 +16,7 @@ sources = {
 	"core/io/pdb": [
 		"Field",
 		"file_data",
+		"file_data_fixup",
 		"file_data_options",
 		"HeaderInformation",
 		"pdb_dynamic_reader",

@@ -722,8 +722,8 @@ namespace rna {
 		int const euler_z_bin_min=int(-1/euler_z_bin_size_);
 		int const euler_z_bin_max=int(1/euler_z_bin_size_);
 
-		Real C5_centroid_dist=get_max_centroid_to_atom_distance(moving_rsd_at_origin_list, " C5*");
-		Real O5_centroid_dist=get_max_centroid_to_atom_distance(moving_rsd_at_origin_list, " O3*");
+		Real C5_centroid_dist=get_max_centroid_to_atom_distance(moving_rsd_at_origin_list, " C5'");
+		Real O5_centroid_dist=get_max_centroid_to_atom_distance(moving_rsd_at_origin_list, " O3'");
 
 		Real const Max_O3_to_C5_DIST= (num_nucleotides==1) ? O3I_C5I_PLUS_ONE_MAX_DIST : O3I_C5IPLUS2_MAX_DIST;
 
@@ -784,7 +784,7 @@ namespace rna {
 			base_info.M=core::scoring::rna::get_rna_base_coordinate_system( residue_object, base_info.v );
 
 
-			//	Real distance_square=( base_info.v - pose.residue(reference_res).xyz(" C5*") ).length_squared();
+			//	Real distance_square=( base_info.v - pose.residue(reference_res).xyz(" C5'") ).length_squared();
 			//Fix on Jan 15 , 2011..how did I let allow this error to exist for so long!
 			Real const distance_square=( base_info.v - core::scoring::rna::get_rna_base_centroid(pose.residue(reference_res) , false ) ).length_squared();
 
@@ -942,8 +942,8 @@ namespace rna {
 				//ribose_screening_pose.dump_pdb( "FIXED_ribose_screening_pose_"+tag+".pdb" );
 
 				//OK check that with this sugar, the chain can be theoretically closed..
-				std::string const moving_atom_name= (Is_prepend) ? "O3*" : " C5*";
-				std::string const reference_atom_name= (Is_prepend) ? " C5*" : "O3*";
+				std::string const moving_atom_name= (Is_prepend) ? "O3'" : " C5'";
+				std::string const reference_atom_name= (Is_prepend) ? " C5'" : "O3'";
 
 				if(gap_size == 0) if(Check_chain_closable(ribose_screening_pose, five_prime_chain_break_res, 0 )==false ) continue;
 

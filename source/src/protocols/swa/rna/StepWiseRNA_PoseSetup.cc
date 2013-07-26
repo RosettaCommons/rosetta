@@ -406,7 +406,7 @@ namespace rna {
 			// Remove all variant types
       // DO TO LIST: Need to remove atom constraint and remove angle constaint as well
 			//NOTES: June 16, 2011
-			//Should LOWER_TERMINUS and UPPER_TERMINUS be removed as well? LOWER_TERMINUS does determine the position of  O1P and O2P?
+			//Should LOWER_TERMINUS and UPPER_TERMINUS be removed as well? LOWER_TERMINUS does determine the position of  OP2 and OP1?
 			//Also should then check that pose.residue_type(i).variant_types() is the empty?
 			//Alternatively could convert to FARFAR way and use the NEW_copy_dof that match atom names (MORE ROBUST!). This way doesn't need to remove any variant type from the chunk_pose?
 
@@ -632,9 +632,9 @@ namespace rna {
 
 		conformation::Residue const & input_pose_O2star_rsd=input_pose.residue(O2star_seq_num);
 
-		if ( !input_pose_O2star_rsd.has( " O2*" ) ) utility_exit_with_message( "rsd at input_seq_num= " + string_of(O2star_seq_num) + " doesn't have O2* atom! " );
+		if ( !input_pose_O2star_rsd.has( " O2'" ) ) utility_exit_with_message( "rsd at input_seq_num= " + string_of(O2star_seq_num) + " doesn't have O2' atom! " );
 
-		numeric::xyzVector<core::Real> const O2star_xyz= input_pose_O2star_rsd.xyz( input_pose_O2star_rsd.atom_index( " O2*" ) );
+		numeric::xyzVector<core::Real> const O2star_xyz= input_pose_O2star_rsd.xyz( input_pose_O2star_rsd.atom_index( " O2'" ) );
 
 
 		for(Size input_pose_seq_num=1; input_pose_seq_num<=input_res_list.size(); input_pose_seq_num++){
@@ -684,7 +684,7 @@ namespace rna {
 				Size const cutpos = full_to_sub[ cutpoint_closed];
 
 				// Taken from Parin's code. Need to make sure virtual atoms are correctly positioned
-				// next to O1P, O2P.
+				// next to OP2, OP1.
 				Correctly_position_cutpoint_phosphate_torsions( pose, cutpos, false /*verbose*/ );
 
 				pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
@@ -850,7 +850,7 @@ namespace rna {
 					continue;
 				}
 
-				// distance from O3* to P
+				// distance from O3' to P
 				cst_set->add_constraint( new AtomPairConstraint( atom_id1, atom_id2, repulsion_func ) );
 
 			}

@@ -238,14 +238,14 @@ retrieve_capri_data_from_pose( pose::Pose const & pose )
 
 	 for the latter, seems like we need an alignment to t033_.fasta ? In case we've done some trimming??
 
-	 K/R     centroid contacts to phosphate backbone O1P/O2P
-	 S/T/N/Q centroid contacts to phosphate backbone O1P/O2P
-	 D/E/H   centroid contacts to O2*
+	 K/R     centroid contacts to phosphate backbone OP2/OP1
+	 S/T/N/Q centroid contacts to phosphate backbone OP2/OP1
+	 D/E/H   centroid contacts to O2'
 
 	 vdw/hybrid vdw
 
 	 backbone O to O2'
-	 backbone N to O1P, O2P
+	 backbone N to OP2, OP1
 
 	 distance between SAM CE and rGU N1
 
@@ -362,9 +362,9 @@ CapriTwoBodyEnergy::residue_pair_energy(
 		Residue const & protein_rsd( rsd1.is_protein() ? rsd1 : rsd2 );
 		Residue const &     rna_rsd( rsd1.is_protein() ? rsd2 : rsd1 );
 
-		Vector const & xyz_o1p   ( rna_rsd.xyz("O1P" ) );
-		Vector const & xyz_o2p   ( rna_rsd.xyz("O2P" ) );
-		Vector const & xyz_o2star( rna_rsd.xyz("O2*") );
+		Vector const & xyz_o1p   ( rna_rsd.xyz("OP2" ) );
+		Vector const & xyz_o2p   ( rna_rsd.xyz("OP1" ) );
+		Vector const & xyz_o2star( rna_rsd.xyz("O2'") );
 
 		// protein centroid (protein nbr-atom) contacts to rna
 		Real centroid_score( 0.0 );

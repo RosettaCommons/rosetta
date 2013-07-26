@@ -184,7 +184,7 @@ get_hb_don_chem_type(
 				return hbdon_GENERIC_SC;
 			} else if ( aname == "WN6" || aname == "WN7" ){
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCTS
-			} else if ( aname == " O2*" ){
+			} else if ( aname == " O2'" ){
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
@@ -200,7 +200,7 @@ get_hb_don_chem_type(
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " O2*" ){
+			} else if ( aname == " O2'" ){
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
@@ -212,7 +212,7 @@ get_hb_don_chem_type(
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_CXA.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " O2*" ){
+			} else if ( aname == " O2'" ){
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
@@ -224,7 +224,7 @@ get_hb_don_chem_type(
 				/// WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_IND.
 				return hbdon_GENERIC_SC;
-			} else if ( aname == " O2*" ){
+			} else if ( aname == " O2'" ){
 				///. WARNING this is set to hbdon_GENERIC_SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbdon_HXL
 				return hbdon_GENERIC_SC;
@@ -262,19 +262,19 @@ get_hb_acc_chem_type(
 				return hbacc_PBA;
 			}
 		} else if (acc_rsd.is_DNA()){
-			if (aname == " O1P" || aname == " O2P" ){
+			if (aname == " OP2" || aname == " OP1" ){
 				return hbacc_PCA_DNA;
-			} else if (aname == " O5*" || aname == " O3*"){
+			} else if (aname == " O5'" || aname == " O3'"){
 				return hbacc_PES_DNA;
-			} else if (aname == " O4*"){
+			} else if (aname == " O4'"){
 				return hbacc_RRI_DNA;
 			}
 		}else if ( acc_rsd.is_RNA() ){
-			if (aname == " O1P" || aname == " O2P" || aname == " O3P"){
+			if (aname == " OP2" || aname == " OP1" || aname == " O3P"){
 				return hbacc_PCA_RNA;
-			} else if (aname == " O5*" || aname == " O3*"){
+			} else if (aname == " O5'" || aname == " O3'"){
 				return hbacc_PES_RNA;
-			} else if (aname == " O4*"){
+			} else if (aname == " O4'"){
 				return hbacc_RRI_RNA;
 			}
 		} else {
@@ -358,7 +358,7 @@ get_hb_acc_chem_type(
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_GENERIC_RINGSC;
-			} else if (aname == " O2*") {
+			} else if (aname == " O2'") {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
@@ -372,7 +372,7 @@ get_hb_acc_chem_type(
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_GENERIC_SP2SC;
-			} else if (aname == " O2*") {
+			} else if (aname == " O2'") {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
@@ -386,7 +386,7 @@ get_hb_acc_chem_type(
 				/// WARNING this is set to hbacc_GENERIC_RINGSC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_IME.
 				return hbacc_GENERIC_RINGSC;
-			} else if (aname == " O2*") {
+			} else if (aname == " O2'") {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
@@ -396,7 +396,7 @@ get_hb_acc_chem_type(
 				/// WARNING this is set to hbacc_GENERIC_SP2SC for backwards compatibility only!!!
 				/// it should actually be sidechain hbacc_CXA.
 				return hbacc_GENERIC_SP2SC;
-			} else if (aname == " O2*") {
+			} else if (aname == " O2'") {
 				/// WARNING this is set to hbacc_GENERIC_SP3BB for backwards compatibility only!!!
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;

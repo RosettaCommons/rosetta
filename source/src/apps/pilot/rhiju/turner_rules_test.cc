@@ -3338,8 +3338,8 @@ main( int argc, char * argv [] )
 	NEW_OPT( force_antiparallel_bases, "force antiparallel bases", false );
 	NEW_OPT( force_parallel_bases, "force parallel bases", false );
 	NEW_OPT( center_around_native, "center around native", false );
-	NEW_OPT( ignore_o2star_hbonds_in_filter, "Ignore O2* hbonds in cutoff of rigid body sampler", false );
-	NEW_OPT( assign_WC_edges, "Ignore O2* hbonds in cutoff of rigid body sampler", false );
+	NEW_OPT( ignore_o2star_hbonds_in_filter, "Ignore O2' hbonds in cutoff of rigid body sampler", false );
+	NEW_OPT( assign_WC_edges, "Ignore O2' hbonds in cutoff of rigid body sampler", false );
 	NEW_OPT( virtualize_phosphate,   "virtualize phosphate instead of backbone", false );
 	NEW_OPT( superimpose_over_all_res,   "during clustering, calculate rms over all residues", false );
 	NEW_OPT( south1,   "", false );

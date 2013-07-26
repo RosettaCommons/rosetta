@@ -527,11 +527,11 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 	bool any_missing( false );
 	for ( Size i=1; i<= natoms(); ++i ) {
 
-		//The O2* is a special case for RNA, because it is a "sidechain" atom that
+		//The O2' is a special case for RNA, because it is a "sidechain" atom that
 		// branches off the backbone separately from the base. This could be
 		// coded more robustly by modifying orient_onto_residue() properly.
 
-		if ( !rsd_type_.atom_is_backbone(i) && !(rsd_type_.atom_name(i) == " O2*") && !(rsd_type_.atom_name(i) == "2HO*") ) continue;
+		if ( !rsd_type_.atom_is_backbone(i) && !(rsd_type_.atom_name(i) == " O2'") && !(rsd_type_.atom_name(i) == "HO2'") ) continue;
 		if ( src.has( rsd_type_.atom_name(i) ) ) {
 			atoms()[i].xyz( src.atom( src.atom_index( rsd_type_.atom_name(i) ) ).xyz() );
 		} else {
@@ -548,7 +548,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 		std::string root("CA"), mobile_new("CB"), mobile_src("CB");
 
 		if ( is_RNA() ){
-			root = " C1*";
+			root = " C1'";
 			mobile_new = atom_name( chi_atoms( 1 )[ 3 ] ); //First atom in base...
 			mobile_src = src.atom_name( src.chi_atoms( 1 )[ 3 ] ); //First atom in base...
 		}
@@ -571,7 +571,7 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 			for ( Size atom_index(1); atom_index <= type().natoms(); ++atom_index ) {
 				if ( type().atom_is_backbone( atom_index ) ) continue;
 				//special case for RNA
-				if ( type().atom_name( atom_index ) == " O2*" || type().atom_name( atom_index ) == "2HO*" ) continue;
+				if ( type().atom_name( atom_index ) == " O2'" || type().atom_name( atom_index ) == "HO2'" ) continue;
 				Vector const old_xyz( atoms()[ atom_index ].xyz() );
 				Vector const new_xyz( src_stub.local2global( new_stub.global2local( old_xyz ) ) );
 				atoms()[ atom_index ].xyz( new_xyz );

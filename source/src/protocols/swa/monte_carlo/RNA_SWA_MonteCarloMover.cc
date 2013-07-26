@@ -148,9 +148,9 @@ namespace monte_carlo {
 		// could initialize this once somewhere else.
 		next_suite_atoms_.clear();
 		next_suite_atoms_.push_back(" P  ");
-		next_suite_atoms_.push_back(" O1P");
-		next_suite_atoms_.push_back(" O2P");
-		next_suite_atoms_.push_back(" O5*");
+		next_suite_atoms_.push_back(" OP2");
+		next_suite_atoms_.push_back(" OP1");
+		next_suite_atoms_.push_back(" O5'");
 	}
 
 

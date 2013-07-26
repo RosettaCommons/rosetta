@@ -92,8 +92,8 @@ get_phosphate_stub( core::conformation::Residue const & rsd ){
 	using namespace core::kinematics;
 
 	Vector const centroid = rsd.xyz( " P  " );
-	Vector const a = rsd.xyz( " O1P" );
-	Vector const b = rsd.xyz( " O2P" );
+	Vector const a = rsd.xyz( " OP2" );
+	Vector const b = rsd.xyz( " OP1" );
 	Vector y = (a + b)/2.0 - centroid;
 	y.normalize();
 

@@ -153,7 +153,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 				break;
 			}
 			if ( !best_index ) utility_exit_with_message( " can't find residue type at pos " + ObjexxFCL::string_of(seqpos) +
-				"in sequence "+ sequence_in);
+				" in sequence "+ sequence_in);
 			// add the ResidueTypeCOP
 			requested_types.push_back( rsd_type_list[ best_index ] );
 		}

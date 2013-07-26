@@ -350,10 +350,10 @@ RNA_Minimizer::update_allow_insert_with_extra_minimize_res( pose::Pose const & p
 		if ( !pose.residue( i+1 ).is_RNA() ) continue;
 
 		// go ahead and minimize backbone torsions up to next pucker.
-		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " O1P", i+1 ), pose ) );
-		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " O2P", i+1 ), pose ) );
+		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " OP2", i+1 ), pose ) );
+		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " OP1", i+1 ), pose ) );
 		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " P  ", i+1 ), pose ) );
-		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " O5*", i+1 ), pose ) );
+		atom_ids_to_move.push_back( named_atom_id_to_atom_id( id::NamedAtomID( " O5'", i+1 ), pose ) );
 
 	}
 

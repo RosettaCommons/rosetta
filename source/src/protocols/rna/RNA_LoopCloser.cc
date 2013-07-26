@@ -459,13 +459,13 @@ RNA_LoopCloser::get_chainbreak_xyz( pose::Pose & pose,
 	upstream_xyzs.clear();
 	downstream_xyzs.clear();
 
-	upstream_xyzs.push_back( pose.residue( cutpoint ).xyz( " O3*" ) );
+	upstream_xyzs.push_back( pose.residue( cutpoint ).xyz( " O3'" ) );
 	upstream_xyzs.push_back( pose.residue( cutpoint ).xyz( "OVL1" ) );
 	upstream_xyzs.push_back( pose.residue( cutpoint ).xyz( "OVL2" ) );
 
 	downstream_xyzs.push_back( pose.residue( cutpoint+1 ).xyz( "OVU1" ) );
 	downstream_xyzs.push_back( pose.residue( cutpoint+1 ).xyz( " P  " ) );
-	downstream_xyzs.push_back( pose.residue( cutpoint+1 ).xyz( " O5*" ) );
+	downstream_xyzs.push_back( pose.residue( cutpoint+1 ).xyz( " O5'" ) );
 
 	Real mean_dist_err( 0.0 );
 	for (Size m = 1; m <= upstream_xyzs.size(); m++ ){
@@ -482,7 +482,7 @@ RNA_LoopCloser::get_gap_distance( pose::Pose & pose,
 										Size const cutpoint
 										) const
 {
-	return ( pose.residue(cutpoint).xyz( " O3*" ) - pose.residue(cutpoint).xyz(" C5*" ) ).length();
+	return ( pose.residue(cutpoint).xyz( " O3'" ) - pose.residue(cutpoint).xyz(" C5'" ) ).length();
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -504,7 +504,7 @@ RNA_LoopCloser::get_extra_cutpoints( pose::Pose const & pose ) const
 		if ( !pose.residue( cutpos   ).has_variant_type( chemical::CUTPOINT_LOWER )  ||
 				 !pose.residue( cutpos+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) {
 
-			// go through pose constraints -- was there any constraint holding residue i's O3*  to i+1's P?
+			// go through pose constraints -- was there any constraint holding residue i's O3'  to i+1's P?
 			bool cst_found( false );
 			ConstraintCOPs csts( pose.constraint_set()->get_all_constraints() );
 
@@ -518,10 +518,10 @@ RNA_LoopCloser::get_extra_cutpoints( pose::Pose const & pose ) const
 					Size const j = cst->atom( 2 ).rsd();
 					std::string const name2 = pose.residue( j ).atom_name( cst->atom( 2 ).atomno() );
 
-					if ( i == cutpos && j == cutpos+1 && name1 == " O3*" && name2 == " P  " ){
+					if ( i == cutpos && j == cutpos+1 && name1 == " O3'" && name2 == " P  " ){
 						cst_found = true; break;
 					}
-					if ( j == cutpos && i == cutpos+1 && name2 == " O3*" && name1 == " P  " ){
+					if ( j == cutpos && i == cutpos+1 && name2 == " O3'" && name1 == " P  " ){
 						cst_found = true; break;
 					}
 

@@ -740,7 +740,7 @@ LigandMotifSearch::incorporate_motifs(
 
 			Real rmsdtest_ir2(100.0);
 
-			// This atom type is only C1* because that atom is common
+			// This atom type is only C1' because that atom is common
 			// to all DNA bases and it is basically in the plane of the base
 			// Right now we're looking at a motif -- we don't have triplet yet.  Don't place because maybe nothing in common (need to do test once we're in triplet loop).
 

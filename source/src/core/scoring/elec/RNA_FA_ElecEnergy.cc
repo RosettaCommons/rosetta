@@ -193,7 +193,7 @@ bool is_phosphate( conformation::Residue const & rsd, Size const i )
 		return is_phosphate( rsd, rsd.atom_base( i ) );
 	} else {
 		//MAGIC NUMBERS! BAD!
-		return ( i==1 || i==2 || i==3 || i==4 || i==9 ); //P, O1P, O2P, O5*, O3*
+		return ( i==1 || i==2 || i==3 || i==4 || i==9 ); //P, OP2, OP1, O5', O3'
 	}
 }
 

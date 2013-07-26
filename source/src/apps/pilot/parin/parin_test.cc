@@ -1481,9 +1481,9 @@ calculate_theoretical_RNA_length(){
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "test", 400, 400 );
 						
-	std::string start_atom=" O3*"; //" C5*", " C1*";
+	std::string start_atom=" O3'"; //" C5'", " C1'";
 	core::Size start_res=2;
-	std::string end_atom=" O3*"; //" O3*" , "P";
+	std::string end_atom=" O3'"; //" O3'" , "P";
 	core::Size end_res=1;
 
 	Size const bin_size=5;
@@ -1564,12 +1564,12 @@ calculate_bulge_length_distribution(){
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "test", 400, 400 );
 
-	std::string start_atom_1=" C5*"; //" C1*";
-	std::string start_atom_2=" C4*"; //" C1*";
+	std::string start_atom_1=" C5'"; //" C1'";
+	std::string start_atom_2=" C4'"; //" C1'";
 	core::Size start_res=3;
 
-	std::string end_atom_1=" O3*"; //"P";
-	std::string end_atom_2=" C3*"; //"P";
+	std::string end_atom_1=" O3'"; //"P";
+	std::string end_atom_2=" C3'"; //"P";
 	core::Size end_res=1;
 
 
@@ -1623,12 +1623,12 @@ calculate_theoretical_RNA_length_with_bond_angle_dependence(){
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "test", 400, 400 );
 
-	std::string start_atom_1=" C5*"; //" C1*";
-	std::string start_atom_2=" C4*"; //" C1*";
+	std::string start_atom_1=" C5'"; //" C1'";
+	std::string start_atom_2=" C4'"; //" C1'";
 	core::Size start_res=3;
 
-	std::string end_atom_1=" O3*"; //"P";
-	std::string end_atom_2=" C3*"; //"P";
+	std::string end_atom_1=" O3'"; //"P";
+	std::string end_atom_2=" C3'"; //"P";
 	core::Size end_res=2;
 
 	Size bin_size=10;
@@ -1793,12 +1793,12 @@ extract_clash_list(){
 			for(Size atomno_1=1; atomno_1<=sample_rsd.natoms(); atomno_1++){ //include hydrogen atoms
 
 			std::string const & atom_name_1=rsd_1.type().atom_name(atomno_1);
-			if(atom_name_1=="2HO*") continue;
+			if(atom_name_1=="HO2'") continue;
 			if(rsd_1.atom_type(atomno_1).name()=="VIRT") continue; 
 
 
 			bool const Is_3_prime_phosphate_1=Is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
-			bool const Is_5_prime_phosphate_1=Is_five_prime_phosphate_atom(atom_name_1);  //This is O5', O1P, O2P and P 
+			bool const Is_5_prime_phosphate_1=Is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
 
 			bool const Is_base_sugar_1=(Is_3_prime_phosphate_1==false && Is_5_prime_phosphate_1==false);
 
@@ -1809,7 +1809,7 @@ extract_clash_list(){
 				}
 
 				std::string const & atom_name_2=rsd_2.type().atom_name(atomno_2);
-				if(atom_name_2=="2HO*") continue;
+				if(atom_name_2=="HO2'") continue;
 				//if(rsd_2.atom_type(atomno_2).name()=="VIRT") continue; 
 
 				bool const Is_3_prime_phosphate_2=Is_three_prime_phosphate_atom(atom_name_2);
@@ -2066,13 +2066,13 @@ extract_hydrogen_bonds_statistic(){
 		
 		if(hbond_type=="BASE-2*OH" || hbond_type=="2*OH-BASE" ) hbond_count.base_O2star++;
 
-		if(hbond_type=="BASE-O4**" || hbond_type=="O4**-BASE" ) hbond_count.base_O4star++;
+		if(hbond_type=="BASE-O4'*" || hbond_type=="O4'*-BASE" ) hbond_count.base_O4star++;
 
 		if(hbond_type=="BASE-PHOS" || hbond_type=="PHOS-BASE" ) hbond_count.base_phos++;
 
 		if(hbond_type=="2*OH-2*OH" || hbond_type=="2*OH-2*OH" ) hbond_count.O2star_O2star++;
 
-		if(hbond_type=="2*OH-O4**" || hbond_type=="O4**-2*OH" ) hbond_count.O2star_O4star++;
+		if(hbond_type=="2*OH-O4'*" || hbond_type=="O4'*-2*OH" ) hbond_count.O2star_O4star++;
 
 		if(hbond_type=="2*OH-PHOS" || hbond_type=="PHOS-2*OH" ) hbond_count.O2star_phos++;
 
@@ -2726,7 +2726,7 @@ Is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1,
 	}
 
 
-	if( (Is_O1P_atom(atom_name_1) || Is_O2P_atom(atom_name_1) ) ){
+	if( (Is_OP2_atom(atom_name_1) || Is_OP1_atom(atom_name_1) ) ){
 
 		if(seq_num_1==(seq_num_2+1)){ 
 
@@ -2781,12 +2781,12 @@ setup_VDW_rep_atom_map_list(pose::Pose const & pose, utility::vector1< std::pair
 	for(Size atomno_1=1; atomno_1<=rsd_1.natoms(); atomno_1++){ //include hydrogen atoms
 
 		std::string const & atom_name_1=rsd_1.type().atom_name(atomno_1);
-		if(atom_name_1=="2HO*") continue;
+		if(atom_name_1=="HO2'") continue;
 		if(rsd_1.atom_type(atomno_1).name()=="VIRT") continue; 
 
 
 		bool const Is_3_prime_phosphate_1=Is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
-		bool const Is_5_prime_phosphate_1=Is_five_prime_phosphate_atom(atom_name_1);  //This is O5', O1P, O2P and P 
+		bool const Is_5_prime_phosphate_1=Is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
 
 		bool const Is_base_sugar_1=(Is_3_prime_phosphate_1==false && Is_5_prime_phosphate_1==false);
 
@@ -2805,7 +2805,7 @@ setup_VDW_rep_atom_map_list(pose::Pose const & pose, utility::vector1< std::pair
 				}
 
 				std::string const & atom_name_2=rsd_2.type().atom_name(atomno_2);
-				if(atom_name_2=="2HO*") continue;
+				if(atom_name_2=="HO2'") continue;
 				if(rsd_2.atom_type(atomno_2).name()=="VIRT") continue; 
 
 				bool const Is_3_prime_phosphate_2=Is_three_prime_phosphate_atom(atom_name_2);
@@ -2920,12 +2920,12 @@ pass_VDW_replusion_screen_slow(pose::Pose const & pose, Real const VDW_overlap_d
 	for(Size atomno_1=1; atomno_1<=rsd_1.natoms(); atomno_1++){ //include hydrogen atoms
 
 		std::string const & atom_name_1=rsd_1.type().atom_name(atomno_1);
-		if(atom_name_1=="2HO*") continue;
+		if(atom_name_1=="HO2'") continue;
 		if(rsd_1.atom_type(atomno_1).name()=="VIRT") continue; 
 
 
 		bool const Is_3_prime_phosphate_1=Is_three_prime_phosphate_atom(atom_name_1); //This is just the O3' atom
-		bool const Is_5_prime_phosphate_1=Is_five_prime_phosphate_atom(atom_name_1);  //This is O5', O1P, O2P and P 
+		bool const Is_5_prime_phosphate_1=Is_five_prime_phosphate_atom(atom_name_1);  //This is O5', OP2, OP1 and P 
 
 		bool const Is_base_sugar_1=(Is_3_prime_phosphate_1==false && Is_5_prime_phosphate_1==false);
 
@@ -2936,7 +2936,7 @@ pass_VDW_replusion_screen_slow(pose::Pose const & pose, Real const VDW_overlap_d
 			}
 
 			std::string const & atom_name_2=rsd_2.type().atom_name(atomno_2);
-			if(atom_name_2=="2HO*") continue;
+			if(atom_name_2=="HO2'") continue;
 			if(rsd_2.atom_type(atomno_2).name()=="VIRT") continue; 
 
 			bool const Is_3_prime_phosphate_2=Is_three_prime_phosphate_atom(atom_name_2);

@@ -245,8 +245,8 @@ void apply_chi_cst(core::pose::Pose & pose, core::pose::Pose const & ref_pose) {
 		if ( res.is_RNA() ) {
 			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
 			FuncOP chi_cst_func ( new CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
-			AtomID const atom1 (res.atom_index("C2*"), i);
-			AtomID const atom2 (res.atom_index("C1*"), i);
+			AtomID const atom1 (res.atom_index("C2'"), i);
+			AtomID const atom2 (res.atom_index("C1'"), i);
 			AtomID const atom3 ( is_purine(res) ? res.atom_index("N9") : res.atom_index("N1"), i);
 			AtomID const atom4 ( is_purine(res) ? res.atom_index("C4") : res.atom_index("C2"), i);
 			cst_set->add_constraint( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) );
@@ -775,7 +775,7 @@ try {
 	NEW_OPT ( bulge_res, "optional: residues to be turned into a bulge variant", blank_size_vector );
 	NEW_OPT ( centroid_screen, "centroid_screen", true );
 	NEW_OPT ( VDW_atr_rep_screen, "classic VDW_atr_rep_screen", true );
-	NEW_OPT ( sampler_perform_o2star_pack, "perform O2* hydrogen packing inside StepWiseRNA_ResidueSampler", true );
+	NEW_OPT ( sampler_perform_o2star_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
 	NEW_OPT ( fast, "quick runthrough for debugging", false );
 	NEW_OPT ( medium_fast, "quick runthrough for debugging (keep more poses and not as fast as fast option)", false );
 	NEW_OPT ( VERBOSE, "VERBOSE", false );

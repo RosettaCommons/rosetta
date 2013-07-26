@@ -3,19 +3,18 @@ ATOM_TYPE_SET fa_standard
 ELEMENT_SET fa_standard
 MM_ATOM_TYPE_SET fa_standard
 
-residue_types/RAD.params
-residue_types/RCY.params
-residue_types/RGU.params
-residue_types/URA.params
-
+../fa_standard/residue_types/nucleic/rna/RAD.params
+../fa_standard/residue_types/nucleic/rna/RCY.params
+../fa_standard/residue_types/nucleic/rna/RGU.params
+../fa_standard/residue_types/nucleic/rna/URA.params
 ../fa_standard/residue_types/rosetta_specific/VRT.params
 ../fa_standard/residue_types/rosetta_specific/VRT1.params
 
-##probe atom for testing solvation stuff:
-#residue_types/extra/C.params
 
 ## water & metal ions
 #../fa_standard/residue_types/water/TP3.params
-# for now, following matches what is in fa_standard
-residue_types/MG.params
+../fa_standard/residue_types/metal_ions/MG.params
+
+##probe atom for testing solvation stuff:
+# ../fa_standard/residue_types/nucleic/extra/residue_types/extra/C.params
 

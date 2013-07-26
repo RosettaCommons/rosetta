@@ -94,19 +94,19 @@ RNA_ResidueType::update_derived_rna_data(ResidueTypeCOP const residue_type_in){
 	if(Is_virtual_atom_list_.size()!=residue_type_->natoms()) utility_exit_with_message("Is_virtual_atom_list_.size()!=residue_type_->natoms()");
 
 
-	o2star_index_=residue_type_->atom_index( " O2*" );
-	ho2star_index_=residue_type_->atom_index( "2HO*" );
+	o2star_index_=residue_type_->atom_index( " O2'" );
+	ho2star_index_=residue_type_->atom_index( "HO2'" );
 
 	p_atom_index_  =residue_type_->atom_index( " P  " );
-	o1p_atom_index_=residue_type_->atom_index( " O1P" );
-	o2p_atom_index_=residue_type_->atom_index( " O2P" );
-	o5star_index_  =residue_type_->atom_index( " O5*" );
-	o3star_index_  =residue_type_->atom_index( " O3*" );
+	o1p_atom_index_=residue_type_->atom_index( " OP2" );
+	o2p_atom_index_=residue_type_->atom_index( " OP1" );
+	o5star_index_  =residue_type_->atom_index( " O5'" );
+	o3star_index_  =residue_type_->atom_index( " O3'" );
 
-	o4star_index_=residue_type_->atom_index( " O4*" );
-	c1star_index_=residue_type_->atom_index( " C1*" );
-	c2star_index_=residue_type_->atom_index( " C2*" );
-	c4star_index_=residue_type_->atom_index( " C4*" );
+	o4star_index_=residue_type_->atom_index( " O4'" );
+	c1star_index_=residue_type_->atom_index( " C1'" );
+	c2star_index_=residue_type_->atom_index( " C2'" );
+	c4star_index_=residue_type_->atom_index( " C4'" );
 
 	base_atom_list_.clear(); 
 
@@ -356,7 +356,7 @@ RNA_ResidueType::ho2star_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(ho2star_index_==atom_index( "2HO*" )); //remove after testing!
+	//if(rna_check_) runtime_assert(ho2star_index_==atom_index( "HO2'" )); //remove after testing!
 
 	return ho2star_index_;
 }
@@ -369,7 +369,7 @@ RNA_ResidueType::o2star_index() const
 
 	//////////////////////////////
 	//residue_type_->require_final();
-	//runtime_assert(o2star_index_==residue_type_->atom_index( " O2*" )); //remove after testing!
+	//runtime_assert(o2star_index_==residue_type_->atom_index( " O2'" )); //remove after testing!
 	//	std::cout << "--------------------------------------" << std::endl;
 	//	std::cout << "Inside RNA_ResidueType::o2star_index()" << std::endl;
 	//	std::cout << "name_from_aa(residue_type_->aa())=" << name_from_aa(residue_type_->aa())<< std::endl;
@@ -401,7 +401,7 @@ RNA_ResidueType::o1p_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(o1p_atom_index_==atom_index( " O1P" )); //remove after testing!
+	//if(rna_check_) runtime_assert(o1p_atom_index_==atom_index( " OP2" )); //remove after testing!
 
 	return o1p_atom_index_;
 }
@@ -412,7 +412,7 @@ RNA_ResidueType::o2p_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(o2p_atom_index_==atom_index( " O2P" )); //remove after testing!
+	//if(rna_check_) runtime_assert(o2p_atom_index_==atom_index( " OP1" )); //remove after testing!
 	return o2p_atom_index_;
 }
 
@@ -422,7 +422,7 @@ RNA_ResidueType::o5star_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(o5star_index_==atom_index( " O5*" )); //remove after testing!
+	//if(rna_check_) runtime_assert(o5star_index_==atom_index( " O5'" )); //remove after testing!
 	return o5star_index_;
 }
 
@@ -432,7 +432,7 @@ RNA_ResidueType::o3star_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ ) ;
-	//if(rna_check_) runtime_assert(o3star_index_==atom_index( " O3*" )); //remove after testing!
+	//if(rna_check_) runtime_assert(o3star_index_==atom_index( " O3'" )); //remove after testing!
 	return o3star_index_;
 }
 
@@ -442,7 +442,7 @@ RNA_ResidueType::o4star_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(o4star_index_==atom_index( " O4*" )); //remove after testing!
+	//if(rna_check_) runtime_assert(o4star_index_==atom_index( " O4'" )); //remove after testing!
 	return o4star_index_;
 }
 
@@ -451,7 +451,7 @@ RNA_ResidueType::c1star_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(c1star_index_==atom_index( " C1*" )); //remove after testing!
+	//if(rna_check_) runtime_assert(c1star_index_==atom_index( " C1'" )); //remove after testing!
 	return c1star_index_;
 }
 
@@ -460,7 +460,7 @@ RNA_ResidueType::c2star_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(c2star_index_==atom_index( " C2*" )); //remove after testing!
+	//if(rna_check_) runtime_assert(c2star_index_==atom_index( " C2'" )); //remove after testing!
 	return c2star_index_;
 }
 
@@ -469,7 +469,7 @@ RNA_ResidueType::c4star_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(c4star_index_==atom_index( " C4*" )); //remove after testing!
+	//if(rna_check_) runtime_assert(c4star_index_==atom_index( " C4'" )); //remove after testing!
 	return c4star_index_;
 }
 ////////////////////////////////RNA specific stuff...maybe move function into its own class?///////////

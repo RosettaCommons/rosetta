@@ -116,10 +116,10 @@ static basic::Tracer TR( "apps.pilot.ragul.sarah_get_rna_pharmacophore" );
 // cutoff value choosen based on the PDB scan of protein-RNA complxes
 bool
 is_buried_ring(core::conformation::Residue const & rsd, core::Real ring_sasa, core::Real sasa_cutoff){
-	if (rsd.name3() == " rA") return ring_sasa <= sasa_cutoff;//46.81 ;
-	else if (rsd.name3() == " rC")  return ring_sasa <= sasa_cutoff;//31.09 ;
-	else if (rsd.name3() == " rG")  return ring_sasa <= sasa_cutoff;//45.06 ;
-	else if (rsd.name3() == " rU")  return ring_sasa <= sasa_cutoff;//52.66 ;
+	if (rsd.name3() == "  A") return ring_sasa <= sasa_cutoff;//46.81 ;
+	else if (rsd.name3() == "  C")  return ring_sasa <= sasa_cutoff;//31.09 ;
+	else if (rsd.name3() == "  G")  return ring_sasa <= sasa_cutoff;//45.06 ;
+	else if (rsd.name3() == "  U")  return ring_sasa <= sasa_cutoff;//52.66 ;
 	else return false;
 }
 

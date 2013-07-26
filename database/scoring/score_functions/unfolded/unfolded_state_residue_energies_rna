@@ -1,7 +1,7 @@
 # Rhiju -- first attempt to include unfolded state energies for RNA.
 AA       fa_atr
 WEIGHT   1.0 
- rA      5.0
- rC      2.0
- rG      5.0
- rU      2.0
+  A      5.0
+  C      2.0
+  G      5.0
+  U      2.0

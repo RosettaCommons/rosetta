@@ -90,39 +90,39 @@ namespace swa {
 namespace rna {
 
 
-	bool Is_O1P_atom(std::string const & atom_name){			return (atom_name==" O1P"); }
+	bool Is_OP2_atom(std::string const & atom_name){			return (atom_name==" OP2"); }
 
-	bool Is_O2P_atom(std::string const & atom_name){			return (atom_name==" O2P"); }
+	bool Is_OP1_atom(std::string const & atom_name){			return (atom_name==" OP1"); }
 
 	bool Is_P_atom(std::string const & atom_name){				return (atom_name==" P  "); }
 
-	bool Is_O2star_atom(std::string const & atom_name){  return (atom_name==" O2*"); }
+	bool Is_O2star_atom(std::string const & atom_name){  return (atom_name==" O2'"); }
 
-	bool Is_O3star_atom(std::string const & atom_name){  return (atom_name==" O3*"); }
+	bool Is_O3star_atom(std::string const & atom_name){  return (atom_name==" O3'"); }
 
-	bool Is_O4star_atom(std::string const & atom_name){  return (atom_name==" O4*"); }
+	bool Is_O4star_atom(std::string const & atom_name){  return (atom_name==" O4'"); }
 
-	bool Is_O5star_atom(std::string const & atom_name){	return (atom_name==" O5*"); }
+	bool Is_O5star_atom(std::string const & atom_name){	return (atom_name==" O5'"); }
 
-	bool Is_C2star_atom(std::string const & atom_name){  return (atom_name==" C2*"); }
+	bool Is_C2star_atom(std::string const & atom_name){  return (atom_name==" C2'"); }
 
-	bool Is_C3star_atom(std::string const & atom_name){  return (atom_name==" C3*"); }
+	bool Is_C3star_atom(std::string const & atom_name){  return (atom_name==" C3'"); }
 
-	bool Is_C4star_atom(std::string const & atom_name){  return (atom_name==" C4*"); }
+	bool Is_C4star_atom(std::string const & atom_name){  return (atom_name==" C4'"); }
 
-	bool Is_C5star_atom(std::string const & atom_name){  return (atom_name==" C5*"); }
+	bool Is_C5star_atom(std::string const & atom_name){  return (atom_name==" C5'"); }
 
-	bool Is_1H5star_atom(std::string const & atom_name){ return (atom_name=="1H5*"); }
+	bool Is_1H5star_atom(std::string const & atom_name){ return (atom_name==" H5'"); }
 
-	bool Is_2H5star_atom(std::string const & atom_name){ return (atom_name=="2H5*"); }
+	bool Is_2H5star_atom(std::string const & atom_name){ return (atom_name=="H5''"); }
 
-	bool Is_H3star_atom(std::string const & atom_name){  return (atom_name==" H3*"); }
+	bool Is_H3star_atom(std::string const & atom_name){  return (atom_name==" H3'"); }
 
-	bool Is_H4star_atom(std::string const & atom_name){  return (atom_name==" H4*"); }
+	bool Is_H4star_atom(std::string const & atom_name){  return (atom_name==" H4'"); }
 
 	bool Is_three_prime_phosphate_atom(std::string const & atom_name){ return (Is_O3star_atom(atom_name)); }
 
-	bool Is_five_prime_phosphate_atom(std::string const & atom_name){ return (Is_O5star_atom(atom_name) || Is_O1P_atom(atom_name) || Is_O2P_atom(atom_name) || Is_P_atom(atom_name)) ; }
+	bool Is_five_prime_phosphate_atom(std::string const & atom_name){ return (Is_O5star_atom(atom_name) || Is_OP2_atom(atom_name) || Is_OP1_atom(atom_name) || Is_P_atom(atom_name)) ; }
 
 	bool Is_phosphate_atom(std::string const & atom_name){ return ( Is_three_prime_phosphate_atom(atom_name) || Is_five_prime_phosphate_atom(atom_name) ); }
 
@@ -965,8 +965,8 @@ namespace rna {
 
 
 		//    From RAD.param file
-		//	  ICOOR_INTERNAL  UPPER -175.907669   60.206192    1.607146   O3*   C3*   C4*   , Upper is P1
-		//    ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*   , Lower is O3'
+		//	  ICOOR_INTERNAL  UPPER -175.907669   60.206192    1.607146   O3'   C3'   C4'   , Upper is P1
+		//    ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'   , Lower is O3'
 		//    Bug that bond distance is not the same. Rhiju suggest using 1.593103
 
 		//Original (Amber?) parameter 1.608, 119.8, 103.4
@@ -992,15 +992,15 @@ namespace rna {
 		Residue const & rsd1( pose.residue(five_prime_res) );
 		Residue const & rsd2( pose.residue(three_prime_res) );
 
-		AtomID const C3_id( rsd1.atom_index( "C3*" ), five_prime_res);
-		AtomID const O3_id( rsd1.atom_index( "O3*" ), five_prime_res);
+		AtomID const C3_id( rsd1.atom_index( "C3'" ), five_prime_res);
+		AtomID const O3_id( rsd1.atom_index( "O3'" ), five_prime_res);
 		AtomID const  P_id( rsd2.atom_index( "P"   ), three_prime_res);
-		AtomID const O5_id( rsd2.atom_index( "O5*" ), three_prime_res);
+		AtomID const O5_id( rsd2.atom_index( "O5'" ), three_prime_res);
 
-		// distance from O3* to P
+		// distance from O3' to P
 		cst_set->add_constraint( new AtomPairConstraint( O3_id, P_id, distance_func ) );
 
-		// angle at O3*
+		// angle at O3'
 		cst_set->add_constraint( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) );
 
 		// angle at P
@@ -1476,8 +1476,8 @@ namespace rna {
 			conformation::Residue const & rsd_1=pose1.residue(moving_res_1);
 			conformation::Residue const & rsd_2=pose2.residue(moving_res_2);
 
-			if(rsd_1.type().atom_name(atomno_1) ==" O2*") continue; //Exclude the O2star oxygen
-			if(rsd_2.type().atom_name(atomno_2) ==" O2*") continue; //Exclude the O2star oxygen
+			if(rsd_1.type().atom_name(atomno_1) ==" O2'") continue; //Exclude the O2star oxygen
+			if(rsd_2.type().atom_name(atomno_2) ==" O2'") continue; //Exclude the O2star oxygen
 
 			if(ignore_virtual_atom){
 				if(rsd_1.atom_type(atomno_1).name()=="VIRT"  || rsd_2.atom_type(atomno_2).name()=="VIRT") continue;
@@ -1562,7 +1562,7 @@ namespace rna {
 
 		for( Size atomno = 1; atomno <= num_heavy_backbone_atoms; atomno++){
 
-			Size const res_count = (atomno <=4) ? 2 : 1; //atom 1-4 are " P  ", " O1P", " O2P" and " O5*"
+			Size const res_count = (atomno <=4) ? 2 : 1; //atom 1-4 are " P  ", " OP2", " OP1" and " O5'"
 
 			for(Size ii=1; ii<res_count; ii++){
 
@@ -1642,7 +1642,7 @@ namespace rna {
 
 		for( Size atomno = 1; atomno <= num_heavy_backbone_atoms; atomno++){
 
-			//atom 1-4 are " P  ", " O1P", " O2P" and " O5*"
+			//atom 1-4 are " P  ", " OP2", " OP1" and " O5'"
 			Size const res_num_1= (prepend_res && atomno <= 4) ? moving_res_1 + 1: moving_res_1;
 			Size const res_num_2= (prepend_res && atomno <= 4) ? moving_res_2 + 1: moving_res_2;
 
@@ -1688,7 +1688,7 @@ namespace rna {
 	 	}
 
 
-			// O1P<-->O2P check on phosphate positions closest to fixed side
+			// OP2<-->OP1 check on phosphate positions closest to fixed side
 		if(verbose && false){
 			Size const res_num_1= (prepend_res) ? moving_res_1 + 1: moving_res_1;
 			Size const res_num_2= (prepend_res) ? moving_res_2 + 1: moving_res_2;
@@ -1716,7 +1716,7 @@ namespace rna {
 		//Use to call Calculate_dist_to_close_chain function, but that requires rebuild_unit_struct
 		Size const three_prime_chain_break_res= five_prime_chain_break_res + 1; //THIS ASSUME THAT GAP RESIDUES DOESN'T EXIST
 
-		return Check_chain_closable(pose.residue(three_prime_chain_break_res).xyz("C5*") , pose.residue(five_prime_chain_break_res).xyz("O3*"), gap_size);
+		return Check_chain_closable(pose.residue(three_prime_chain_break_res).xyz("C5'") , pose.residue(five_prime_chain_break_res).xyz("O3'"), gap_size);
 
 	}
 
@@ -1782,7 +1782,7 @@ namespace rna {
 		//This is potentially dangerous since even in the case where gap_size!=0...it assume that there is not residues between 3' and 5' res....
 		Size const three_prime_chain_break_res= five_prime_chain_break_res + 1;
 
-		Distance C5_O3_dist=(three_prime_pose.residue(three_prime_chain_break_res).xyz("C5*") - five_prime_pose.residue(five_prime_chain_break_res).xyz("O3*") ).length();
+		Distance C5_O3_dist=(three_prime_pose.residue(three_prime_chain_break_res).xyz("C5'") - five_prime_pose.residue(five_prime_chain_break_res).xyz("O3'") ).length();
 
 
 
@@ -1802,7 +1802,7 @@ namespace rna {
 
 		get_C4_C3_distance_range(five_prime_rsd, three_prime_rsd, C4_C3_min, C4_C3_max);
 
-		Distance C4_C3_dist=(three_prime_pose.residue(three_prime_chain_break_res).xyz(" C4*") - five_prime_pose.residue(five_prime_chain_break_res).xyz(" C3*") ).length();
+		Distance C4_C3_dist=(three_prime_pose.residue(three_prime_chain_break_res).xyz(" C4'") - five_prime_pose.residue(five_prime_chain_break_res).xyz(" C3'") ).length();
 
 		if( (C4_C3_dist > (C4_C3_max+leniency_dist )) || (C4_C3_dist < (C4_C3_min-leniency_dist )) ) return false;
 
@@ -1817,8 +1817,8 @@ namespace rna {
 												 	 Distance & C4_C3_dist_max){
 
 
-			numeric::xyzVector<Real> start_vector=five_prime_rsd.xyz(" O3*")-five_prime_rsd.xyz(" C3*");
-			numeric::xyzVector<Real> end_vector=three_prime_rsd.xyz(" C4*")-three_prime_rsd.xyz(" C5*");
+			numeric::xyzVector<Real> start_vector=five_prime_rsd.xyz(" O3'")-five_prime_rsd.xyz(" C3'");
+			numeric::xyzVector<Real> end_vector=three_prime_rsd.xyz(" C4'")-three_prime_rsd.xyz(" C5'");
 
 			start_vector.normalize();
 			end_vector.normalize();
@@ -1980,7 +1980,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		std::cout << "Movemap (in term of partial_pose seq_num): " << std::endl;
 		std::cout << A(spacing,"res_num" ) << A(spacing," alpha  ") << A(spacing,"  beta  ") << A(spacing," gamma  ");
 		std::cout << A(spacing," delta  ") << A(spacing,"eplison ") << A(spacing,"  zeta  ") << A(spacing," chi_1  ");
-		std::cout << A(spacing,"  nu_2  ") << A(spacing,"  nu_1  ") << A(spacing,"chi_O2* ") << std::endl;
+		std::cout << A(spacing,"  nu_2  ") << A(spacing,"  nu_1  ") << A(spacing,"chi_O2' ") << std::endl;
 
 		for(Size n=1; n<= total_residue; n++){
 
@@ -2046,8 +2046,8 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			core::conformation::Residue const & rsd = pose.residue(seq_num);
 			Size const at= rsd.first_sidechain_atom();
 
-			if(rsd.type().atom_name(at) !=" O2*") {
-				std::string const exit_message= "seq_num= " + string_of(seq_num) + ", rsd.type().atom_name(at) !=\" O2*\" ";
+			if(rsd.type().atom_name(at) !=" O2'") {
+				std::string const exit_message= "seq_num= " + string_of(seq_num) + ", rsd.type().atom_name(at) !=\" O2'\" ";
 				utility_exit_with_message( exit_message);
 			}
 		}
@@ -2072,7 +2072,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			}
 
 			core::conformation::Residue const & rsd = pose.residue(seq_num);
-			Size at=rsd.atom_index( "2HO*" );
+			Size at=rsd.atom_index( "HO2'" );
 
 			if(rsd.atom_type(at).name()=="VIRT"){
 				if(verbose) std::cout << "res " << seq_num << " has a virtual o2star hydrogen! " << std::endl;
@@ -2310,7 +2310,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 	/////////////////////////////////////////////////////////////////////////////////////
 
 
-	//When a CUTPOINT_UPPER is added to 3' chain_break residue, the EXISTENCE of the CUTPOINT_UPPER atoms means that the alpha torsion which previously DOES NOT exist due to the chain_break now exist. The alpha value is automatically defined to the A-form value by Rosetta. However Rosetta does not automatically adjust the O1P and O2P atom position to account for this fact. So it is important that the O1P and O2P atoms position are correctly set to be consistent with A-form alpha torsion before the CUTPOINT_UPPER IS ADDED Parin Jan 2, 2009
+	//When a CUTPOINT_UPPER is added to 3' chain_break residue, the EXISTENCE of the CUTPOINT_UPPER atoms means that the alpha torsion which previously DOES NOT exist due to the chain_break now exist. The alpha value is automatically defined to the A-form value by Rosetta. However Rosetta does not automatically adjust the OP2 and OP1 atom position to account for this fact. So it is important that the OP2 and OP1 atoms position are correctly set to be consistent with A-form alpha torsion before the CUTPOINT_UPPER IS ADDED Parin Jan 2, 2009
 	//Uncomment print_backbone_torsion on Dec 26, 2010
 	void
 	Correctly_position_cutpoint_phosphate_torsions(pose::Pose & current_pose, Size const five_prime_chainbreak,  bool verbose /*=false*/){
@@ -2348,7 +2348,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		//Actually just by prepending the residue causes the alpha torsion to automatically be set to -64.0274,
 		//so the manual setting below is actually not needed, May 24, 2010.. Parin S.
 		//These are the initial value of virtual upper and lower cutpoint atom.
-		//Actaully only the alpha (id::BB, 1) is important here since it set the position of O3' (LOWER) atom which in turn determines  O1P and O2P atom
+		//Actaully only the alpha (id::BB, 1) is important here since it set the position of O3' (LOWER) atom which in turn determines  OP2 and OP1 atom
 		current_pose.set_torsion( TorsionID( three_prime_chainbreak+1, id::BB, 1 ), -64.027359 );
 
 		/* BEFORE AUG 24, 2011
@@ -2359,24 +2359,24 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		*/
 
 		//RAD.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*
-		//ICOOR_INTERNAL    O1P -111.509000   71.937134    1.485206   P     O5* LOWER
-		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
 
 		//RCY.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*
-		//ICOOR_INTERNAL    O1P -111.509000   71.937134    1.485206   P     O5* LOWER
-		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
 
 		//RGU.params
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*
-		//ICOOR_INTERNAL    O1P -111.509000   71.937134    1.485206   P     O5* LOWER
-		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
 
 		//URA.parms
-		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5*   C5*
-		//ICOOR_INTERNAL    O1P -111.509000   71.937134    1.485206   P     O5* LOWER
-		//ICOOR_INTERNAL    O2P -130.894000   71.712189    1.485010   P     O5*   O1P
+		//ICOOR_INTERNAL  LOWER  -64.027359   71.027062    1.593103   P     O5'   C5'
+		//ICOOR_INTERNAL    OP2 -111.509000   71.937134    1.485206   P     O5' LOWER
+		//ICOOR_INTERNAL    OP1 -130.894000   71.712189    1.485010   P     O5'   OP2
 
 		if(verbose){
 			//dump_pdb(current_pose, "After_setting_torsion_to_A_form.pdb");

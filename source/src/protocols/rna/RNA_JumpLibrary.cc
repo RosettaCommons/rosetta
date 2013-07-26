@@ -149,9 +149,9 @@ RNA_JumpLibrary::check_forward_backward(
 {
 	if (atom_name == " ?  " ) {
 		if ( forward ) {
-			atom_name = " O5*";
+			atom_name = " O5'";
 		} else {
-			atom_name = " O3*";
+			atom_name = " O3'";
 			j = t->jump_backward();
 		}
 	}

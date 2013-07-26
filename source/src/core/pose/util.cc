@@ -1715,7 +1715,7 @@ setup_atom_id_map_match_atom_names(
 			// protein backbone atoms -- for homology modeling. Good to copy H, O, CB (just off of the mainchain) since they encode information on phi, psi, omega.
 			//			if ( backbone_only &&
 			//					 !( atom_name1 == " N  " || atom_name1 == " CA " || atom_name1 == " C  " || atom_name1 == " H  " ||  atom_name1 == " O  " || atom_name1 == " CB " )  &&
-			//					 !( atom_name1 == " P  " || atom_name1 == " O1P" || atom_name1 == " O2P" || atom_name1 == " O5*" || atom_name1 == " C5*" || atom_name1 == " C4*" || atom_name1 == " O4*" || atom_name1 == " C3*" || atom_name1 == " O3*" || atom_name1 == " C1*" || atom_name1 == " C2*" || atom_name1 == " O2*" || atom_name1 == "1H5*" || atom_name1 == "2H5*" || atom_name1 == " H4*" || atom_name1 == " H3*" || atom_name1 == "1H2*" || atom_name1 == "2HO*" ) ) continue;
+			//					 !( atom_name1 == " P  " || atom_name1 == " OP2" || atom_name1 == " OP1" || atom_name1 == " O5'" || atom_name1 == " C5'" || atom_name1 == " C4'" || atom_name1 == " O4'" || atom_name1 == " C3'" || atom_name1 == " O3'" || atom_name1 == " C1'" || atom_name1 == " C2'" || atom_name1 == " O2'" || atom_name1 == " H5'" || atom_name1 == "H5''" || atom_name1 == " H4'" || atom_name1 == " H3'" || atom_name1 == " H2'" || atom_name1 == "HO2'" ) ) continue;
 
 			// Following is generic...
 			if ( backbone_only &&

@@ -138,7 +138,7 @@ check_for_contacts( pose::Pose & pose, Size const i,
 
 	bool found_contact( false );
   for ( Size ii=rsd_i.first_sidechain_atom()+1 ; ii<= rsd_i.nheavyatoms(); ++ii ) {
-		//		if ( rsd_i.atom_name( ii ) == " O2*" ) continue;
+		//		if ( rsd_i.atom_name( ii ) == " O2'" ) continue;
 		Real const dist2( (rsd_i.xyz( ii ) - atom_j ).length_squared() ) ;
     if ( dist2 < CONTACT_CUTOFF2 ) {
 			//			std::cout << dist2 << " " <<  i << " " << rsd_i.atom_name( ii ) << std::endl;
@@ -182,9 +182,9 @@ check_for_contacts_and_output_jump_o2star( pose::Pose & pose, Size const i, Size
 	conformation::Residue const & rsd_i( pose.residue( i ) );
 	conformation::Residue const & rsd_j( pose.residue( j ) );
 
-	std::string const atom_name = " O2*";
+	std::string const atom_name = " O2'";
 	Vector const atom_vector = rsd_j.xyz( atom_name );
-	Vector const dir_vector  = rsd_j.xyz( " O2*" ) - rsd_j.xyz( " C2*" );
+	Vector const dir_vector  = rsd_j.xyz( " O2'" ) - rsd_j.xyz( " C2'" );
 	if ( !check_for_contacts( pose, i, atom_vector, dir_vector, edge_i, orientation) ) return;
 
 	char const edge_j = '2';
@@ -194,8 +194,8 @@ check_for_contacts_and_output_jump_o2star( pose::Pose & pose, Size const i, Size
 																rsd_i.xyz( rsd_i.chi_atoms(1)[2] ) );
 
 	kinematics::Stub const stub2( rsd_j.xyz( atom_name ),
-																rsd_j.xyz( " C2*" ),
-																rsd_j.xyz( " C3*" ) );
+																rsd_j.xyz( " C2'" ),
+																rsd_j.xyz( " C3'" ) );
 
 	dataout << "PAIR " <<
 		I(5, i) << ' ' << edge_i << ' ' <<
@@ -222,13 +222,13 @@ check_for_contacts_and_output_jump_phosphate( pose::Pose & pose, Size const i, S
 	conformation::Residue const & prev_rsd( pose.residue( j-1 ) );
 
 
-	Vector dir_vector  = cross( rsd_j.xyz( " O2P" ) - rsd_j.xyz( " P  " ),
-															rsd_j.xyz( " O1P" ) - rsd_j.xyz( " P  " ) );
+	Vector dir_vector  = cross( rsd_j.xyz( " OP1" ) - rsd_j.xyz( " P  " ),
+															rsd_j.xyz( " OP2" ) - rsd_j.xyz( " P  " ) );
 
-	std::string atom_name = " O1P";
+	std::string atom_name = " OP2";
 	Vector atom_vector = rsd_j.xyz( atom_name );
 	if ( !check_for_contacts( pose, i, atom_vector, dir_vector, edge_i, orientation) ) {
-		atom_name = " O2P";
+		atom_name = " OP1";
 		atom_vector = rsd_j.xyz( atom_name );
 		if (!check_for_contacts( pose, i, atom_vector, dir_vector, edge_i, orientation) ) return;
 	}
@@ -242,11 +242,11 @@ check_for_contacts_and_output_jump_phosphate( pose::Pose & pose, Size const i, S
 
 	kinematics::Stub const stub2_fwd( rsd_j.xyz( atom_name ),
 																		rsd_j.xyz( " P  " ),
-																		prev_rsd.xyz( " O3*" ) );
+																		prev_rsd.xyz( " O3'" ) );
 
 	kinematics::Stub const stub2_back( rsd_j.xyz( atom_name ),
 																		 rsd_j.xyz( " P  " ),
-																		 rsd_j.xyz( " O5*" ) );
+																		 rsd_j.xyz( " O5'" ) );
 
 	dataout << "PAIR " <<
 		I(5, i) << ' ' << edge_i << ' ' <<

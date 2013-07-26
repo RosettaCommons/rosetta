@@ -90,14 +90,14 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::confo
 		//tr << "atom check: " << j << " " << atom_type_name << "." << std::endl;
 
 		// This information should probably go into a special RNA_Mg_Potential.cc function or something.
-		if ( atom_type_name == "OOC" ) { // This is a  O1P or O2P nonbridging phosphate oxygen
+		if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
 			is_phosphate_oxygen = true;
 			return gaussian_parameter_phosphate_oxygen_;
 		} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
 			return gaussian_parameter_imine_;
 		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 			return gaussian_parameter_exocyclic_oxygen_;
-		} else if ( rsd.atom_name( j ) == " O2*" ){
+		} else if ( rsd.atom_name( j ) == " O2'" ){
 			return gaussian_parameter_o2star_;
 		} else if ( rsd.atom_name(j) == " P  " ){
 			return gaussian_parameter_phosphate_p_;
@@ -121,13 +121,13 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter( co
 		std::string const atom_type_name = rsd.atom_type( j ).name();
 
 		// This information should probably go into a special RNA_Mg_Potential.cc function or something.
-		if ( atom_type_name == "OOC" ) { // This is a  O1P or O2P nonbridging phosphate oxygen
+		if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
 			return gaussian_parameter_phosphate_oxygen_indirect_;
 		} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
 			return gaussian_parameter_imine_indirect_;
 		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 			return gaussian_parameter_exocyclic_oxygen_indirect_;
-		} else if ( rsd.atom_name( j ) == " O2*" ){
+		} else if ( rsd.atom_name( j ) == " O2'" ){
 			return gaussian_parameter_o2star_indirect_;
 		}
 	}
@@ -145,13 +145,13 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_gaussian_parameter( co
 		std::string const atom_type_name = rsd.atom_type( j ).name();
 
 		// This information should probably go into a special RNA_Mg_Potential.cc function or something.
-		if ( atom_type_name == "OOC" ) { // This is a  O1P or O2P nonbridging phosphate oxygen
+		if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
 			return gaussian_parameter_costheta_phosphate_oxygen_;
 		} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
 			return gaussian_parameter_costheta_imine_;
 		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 			return gaussian_parameter_costheta_exocyclic_oxygen_;
-		} else if ( rsd.atom_name( j ) == " O2*" ){
+		} else if ( rsd.atom_name( j ) == " O2'" ){
 			return gaussian_parameter_costheta_o2star_;
 		} else if ( atom_type_name == "Hpol" ){
 			return gaussian_parameter_costheta_polar_H_;
@@ -172,13 +172,13 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_indirect_gaussian_para
 		std::string const atom_type_name = rsd.atom_type( j ).name();
 
 		// This information should probably go into a special RNA_Mg_Potential.cc function or something.
-		if ( atom_type_name == "OOC" ) { // This is a  O1P or O2P nonbridging phosphate oxygen
+		if ( atom_type_name == "OOC" ) { // This is a  OP2 or OP1 nonbridging phosphate oxygen
 			return gaussian_parameter_costheta_phosphate_oxygen_indirect_;
 		} else if ( atom_type_name == "Nhis" ) { // imine nitrogens
 			return gaussian_parameter_costheta_imine_indirect_;
 		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 			return gaussian_parameter_costheta_exocyclic_oxygen_indirect_;
-		} else if ( rsd.atom_name( j ) == " O2*" ){
+		} else if ( rsd.atom_name( j ) == " O2'" ){
 			return gaussian_parameter_costheta_o2star_indirect_;
 		}
 	}
@@ -192,7 +192,7 @@ void
 RNA_Mg_KnowledgeBasedPotential::setup_info_for_mg_calculation( pose::Pose & pose ) const
 {
 	//We don't know a priori which atom numbers correspond to which
-	// atom names (e.g., O2* on an adenosine could be different depending
+	// atom names (e.g., O2' on an adenosine could be different depending
 	// on whether its at a chainbreak, terminus, etc.)
 	//Better to do a quick setup every time to pinpoint atoms that require
 	//  monitoring for Mg binding.

@@ -230,9 +230,11 @@ public:
 	void
 	init_from_pose( core::pose::Pose const & pose, utility::vector1< core::Size > const & residue_indices );
 
-	///@brief randomize missing density
-	void randomize_missing_coords( AtomInformation & ai );
+	bool
+	update_atom_information_based_on_occupancy( AtomInformation & ai, FileDataOptions const & options, std::string const & resid ) const;
 
+	///@brief randomize missing density
+	void randomize_missing_coords( AtomInformation & ai ) const;
 
 	/// @brief Debug printing
 	friend std::ostream& operator <<(std::ostream &os, FileData const &);
@@ -289,6 +291,8 @@ public:
 		core::pose::Pose const & pose,
 		bool preserve_crystinfo = false
 	);
+
+
 };  // class FileData
 
 void
@@ -407,6 +411,7 @@ pose_from_pose(
 	utility::vector1< core::Size > const & residue_indices,
 	FileDataOptions const & options
 );
+
 
 
 } // namespace pdb

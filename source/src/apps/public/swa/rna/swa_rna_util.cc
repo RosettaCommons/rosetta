@@ -944,9 +944,9 @@ slice_ellipsoid_envelope(){
 
 	utility::vector1< core::Size > keep_res_list;
 
-	numeric::xyzVector<Real> const five_prime_foci=pose.residue(five_prime_boundary).xyz(" O3*");
+	numeric::xyzVector<Real> const five_prime_foci=pose.residue(five_prime_boundary).xyz(" O3'");
 
-	numeric::xyzVector<Real> const three_prime_foci=pose.residue(three_prime_boundary).xyz(" C5*");
+	numeric::xyzVector<Real> const three_prime_foci=pose.residue(three_prime_boundary).xyz(" C5'");
 
 	Real const expand_radius=option[ surrounding_radius ]();
 	Real const int_expand_radius=int(10*expand_radius);

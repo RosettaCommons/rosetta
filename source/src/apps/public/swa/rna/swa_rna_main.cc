@@ -285,8 +285,8 @@ void apply_chi_cst(core::pose::Pose & pose, core::pose::Pose const & ref_pose) {
 		if ( res.is_RNA() && (res.aa() == na_rad || res.aa() == na_rgu)) {
 			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
 			FuncOP chi_cst_func ( new CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
-			AtomID const atom1 (res.atom_index("C2*"), i);
-			AtomID const atom2 (res.atom_index("C1*"), i);
+			AtomID const atom1 (res.atom_index("C2'"), i);
+			AtomID const atom2 (res.atom_index("C1'"), i);
 			AtomID const atom3 ( is_purine(res) ? res.atom_index("N9") : res.atom_index("N1"), i);
 			AtomID const atom4 (is_purine(res) ? res.atom_index("C4") : res.atom_index("C2"), i);
 			cst_set->add_constraint( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) );
@@ -1853,7 +1853,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( centroid_screen, "centroid_screen", true);
 	NEW_OPT( allow_base_pair_only_centroid_screen, "allow_base_pair_only_centroid_screen", false); //This only effect floating base sampling + dinucleotide.. deprecate option
 	NEW_OPT( VDW_atr_rep_screen, "classic VDW_atr_rep_screen", true);
-	NEW_OPT( sampler_perform_o2star_pack, "perform O2* hydrogen packing inside StepWiseRNA_ResidueSampler", true );
+	NEW_OPT( sampler_perform_o2star_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
 	NEW_OPT( allow_bulge_at_chainbreak, "Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", true );
 
 	//////////////Minimizer////////////
@@ -1861,7 +1861,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( minimize_and_score_sugar, "minimize and sugar torsion+angle? and include the rna_sugar_close_score_term ", true); //Sept 15, 2010
 	NEW_OPT( minimizer_perform_minimize, "minimizer_perform_minimize", true );
 	NEW_OPT( minimizer_output_before_o2star_pack, "minimizer_output_before_o2star_pack", false);
-	NEW_OPT( minimizer_perform_o2star_pack, "perform O2* hydrogen packing inside StepWiseRNA_Minimizer", true); //Jan 19, 2012
+	NEW_OPT( minimizer_perform_o2star_pack, "perform O2' hydrogen packing inside StepWiseRNA_Minimizer", true); //Jan 19, 2012
 	NEW_OPT( minimizer_rename_tag, "Reorder and rename the tag by the energy_score", true); //March 15, 2012
 	NEW_OPT( native_edensity_score_cutoff, "native_edensity_score_cutoff", -1.0 ); //Fang's electron density code
 

@@ -373,10 +373,10 @@ create_rna_vall_torsions( pose::Pose & pose,
 			}
 
 			//New (Feb., 2009) ...
-			// x-y-z of coordinates of C2*, C1*, and O4*, in a local coordiante system defined
-			// by C3*, C4*, and C5* (as "stub" atoms).
+			// x-y-z of coordinates of C2', C1', and O4', in a local coordiante system defined
+			// by C3', C4', and C5' (as "stub" atoms).
 			conformation::Residue rsd = pose.residue( i );
-			kinematics::Stub const input_stub( rsd.xyz( " C3*" ), rsd.xyz( " C3*" ), rsd.xyz( " C4*" ), rsd.xyz( " C5*" ) );
+			kinematics::Stub const input_stub( rsd.xyz( " C3'" ), rsd.xyz( " C3'" ), rsd.xyz( " C4'" ), rsd.xyz( " C5'" ) );
 
 			torsions_out << " S  " ;
 			for (Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
@@ -437,7 +437,7 @@ get_o1p_o2p_sign( pose::Pose const & pose ) {
 		conformation::Residue const & rsd( pose.residue(i)  );
 		if (!rsd.is_RNA() ) continue;
 
-		sign = dot( rsd.xyz( " O5*" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " O2P" ) - rsd.xyz( " P  " ), rsd.xyz( " O1P" ) - rsd.xyz( " P  " ) ) );
+		sign = dot( rsd.xyz( " O5'" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " OP1" ) - rsd.xyz( " P  " ), rsd.xyz( " OP2" ) - rsd.xyz( " P  " ) ) );
 
 		found_valid_sign=true;
 
@@ -465,7 +465,7 @@ get_o1p_o2p_sign( pose::Pose const & pose , Size res_num) {
 		if(rsd.is_RNA()==false) utility_exit_with_message("rsd.is_RNA()==false!");
 	}
 
-	Real const sign = dot( rsd.xyz( " O5*" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " O2P" ) - rsd.xyz( " P  " ), rsd.xyz( " O1P" ) - rsd.xyz( " P  " ) ) );
+	Real const sign = dot( rsd.xyz( " O5'" ) - rsd.xyz( " P  " ), cross( rsd.xyz( " OP1" ) - rsd.xyz( " P  " ), rsd.xyz( " OP2" ) - rsd.xyz( " P  " ) ) );
 
 	return sign;
 }
@@ -519,7 +519,7 @@ ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 	if ( sign1 * sign2 > 0 ) return;
 
 	std::cout << "*************************************************************" << std::endl;
-	std::cout << " Warning ... flipping O1P <--> O2P to match mini convention  " << std::endl;
+	std::cout << " Warning ... flipping OP2 <--> OP1 to match mini convention  " << std::endl;
 	std::cout << "*************************************************************" << std::endl;
 
 	for (Size i = 1; i <= pose.total_residue(); i++ ) {
@@ -527,13 +527,13 @@ ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 		conformation::Residue const & rsd( pose.residue(i) );
 		if (!rsd.is_RNA() ) continue;
 
-		if (!rsd.type().has( " O1P")) continue;
-		if (!rsd.type().has( " O2P")) continue;
+		if (!rsd.type().has( " OP2")) continue;
+		if (!rsd.type().has( " OP1")) continue;
 
-		Vector const temp1 = rsd.xyz( " O1P" );
-		Vector const temp2 = rsd.xyz( " O2P" );
-		pose.set_xyz( id::AtomID( rsd.atom_index( " O1P" ), i ), temp2 );
-		pose.set_xyz( id::AtomID( rsd.atom_index( " O2P" ), i ), temp1 );
+		Vector const temp1 = rsd.xyz( " OP2" );
+		Vector const temp2 = rsd.xyz( " OP1" );
+		pose.set_xyz( id::AtomID( rsd.atom_index( " OP2" ), i ), temp2 );
+		pose.set_xyz( id::AtomID( rsd.atom_index( " OP1" ), i ), temp1 );
 	}
 
 }
@@ -556,7 +556,7 @@ make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
 
 		if ( sign1 * sign2 < 0 ) {
 
-			//std::cout << " Flipping O1P <--> O2P " << "res_num " << res_num << " | sign1: " << sign1 << " | sign2: " << sign2 << std::endl;
+			//std::cout << " Flipping OP2 <--> OP1 " << "res_num " << res_num << " | sign1: " << sign1 << " | sign2: " << sign2 << std::endl;
 
 			conformation::Residue const & rsd( pose.residue(res_num) );
 
@@ -565,10 +565,10 @@ make_phosphate_nomenclature_matches_mini( pose::Pose & pose)
 				utility_exit_with_message("residue # " + string_of(res_num)+ " should be a RNA nucleotide!");
 			};
 
-			Vector const temp1 = rsd.xyz( " O1P" );
-			Vector const temp2 = rsd.xyz( " O2P" );
-			pose.set_xyz( id::AtomID( rsd.atom_index( " O1P" ), res_num ), temp2 );
-			pose.set_xyz( id::AtomID( rsd.atom_index( " O2P" ), res_num ), temp1 );
+			Vector const temp1 = rsd.xyz( " OP2" );
+			Vector const temp2 = rsd.xyz( " OP1" );
+			pose.set_xyz( id::AtomID( rsd.atom_index( " OP2" ), res_num ), temp2 );
+			pose.set_xyz( id::AtomID( rsd.atom_index( " OP1" ), res_num ), temp1 );
 		}
 	}
 }
@@ -711,8 +711,8 @@ setup_base_pair_constraints(
 
 
 		if ( !pose.residue(i).is_coarse() ) { //fullatom
-			Size const atom1 = pose.residue(i).type().atom_index( " C1*" ) ;
-			Size const atom2 = pose.residue(j).type().atom_index( " C1*" ) ;
+			Size const atom1 = pose.residue(i).type().atom_index( " C1'" ) ;
+			Size const atom2 = pose.residue(j).type().atom_index( " C1'" ) ;
 			pose.add_constraint( new AtomPairConstraint(
 																									id::AtomID(atom1,i),
 																									id::AtomID(atom2,j),
@@ -939,11 +939,11 @@ convert_based_on_match_type( std::string const RNA_string, Size const type ){
 Vector
 get_sugar_centroid( core::conformation::Residue const & rsd ){
 	Vector cen( 0.0 );
-	cen += rsd.xyz(  rsd.atom_index( " C1*" ) );
-	cen += rsd.xyz(  rsd.atom_index( " C2*" ) );
-	cen += rsd.xyz(  rsd.atom_index( " C3*" ) );
-	cen += rsd.xyz(  rsd.atom_index( " C4*" ) );
-	cen += rsd.xyz(  rsd.atom_index( " O4*" ) );
+	cen += rsd.xyz(  rsd.atom_index( " C1'" ) );
+	cen += rsd.xyz(  rsd.atom_index( " C2'" ) );
+	cen += rsd.xyz(  rsd.atom_index( " C3'" ) );
+	cen += rsd.xyz(  rsd.atom_index( " C4'" ) );
+	cen += rsd.xyz(  rsd.atom_index( " O4'" ) );
 	cen /= 5.0;
 	return cen;
 }
@@ -984,7 +984,7 @@ make_coarse_pose( pose::Pose const & pose, pose::Pose & coarse_pose ){
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		coarse_pose.set_xyz(  NamedAtomID( " P  ", n ),  pose.xyz( NamedAtomID( " P  ", n )) );
 
-		//coarse_pose.set_xyz(  NamedAtomID( " S  ", n ),  pose.xyz( NamedAtomID( " C4*", n )) );
+		//coarse_pose.set_xyz(  NamedAtomID( " S  ", n ),  pose.xyz( NamedAtomID( " C4'", n )) );
 		Vector sugar_centroid = get_sugar_centroid( pose.residue( n ) );
 		coarse_pose.set_xyz(  NamedAtomID( " S  ", n ),  sugar_centroid );
 
@@ -1181,13 +1181,13 @@ print_internal_coords( core::pose::Pose const & pose ) {
 
 // 		/////////////////////////////////
 // 		if ( option[ rsd_type_set]() == "rna" ){
-// 			std::cout << "Give me LOWER-P-O5* " << 180.0 - numeric::conversions::degrees( numeric::angle_radians( pose.residue(i-1).xyz( "O3*" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ) ) ) << std::endl;
-// 			std::cout << "Give me O1P-P-O5* " << 180.0 - numeric::conversions::degrees( numeric::angle_radians( rsd.xyz( "O1P" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ) ) ) << std::endl;
-// 			std::cout << "Give me O2P-P-O5* " << 180.0 - numeric::conversions::degrees( numeric::angle_radians( rsd.xyz( "O2P" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ) ) ) << std::endl;
+// 			std::cout << "Give me LOWER-P-O5' " << 180.0 - numeric::conversions::degrees( numeric::angle_radians( pose.residue(i-1).xyz( "O3'" ), rsd.xyz( "P" ), rsd.xyz( "O5'" ) ) ) << std::endl;
+// 			std::cout << "Give me OP2-P-O5' " << 180.0 - numeric::conversions::degrees( numeric::angle_radians( rsd.xyz( "OP2" ), rsd.xyz( "P" ), rsd.xyz( "O5'" ) ) ) << std::endl;
+// 			std::cout << "Give me OP1-P-O5' " << 180.0 - numeric::conversions::degrees( numeric::angle_radians( rsd.xyz( "OP1" ), rsd.xyz( "P" ), rsd.xyz( "O5'" ) ) ) << std::endl;
 
-// 			Real main_torsion = numeric::conversions::degrees(  numeric::dihedral_radians( pose.residue(i-1).xyz( "O3*" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ), rsd.xyz( "C5*" ) ) );
-// 			Real main_torsion1 = numeric::conversions::degrees(  numeric::dihedral_radians( pose.residue(i).xyz( "O1P" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ), rsd.xyz( "C5*" ) ) );
-// 			Real main_torsion2 = numeric::conversions::degrees(  numeric::dihedral_radians( pose.residue(i).xyz( "O2P" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ), rsd.xyz( "C5*" ) ) );
+// 			Real main_torsion = numeric::conversions::degrees(  numeric::dihedral_radians( pose.residue(i-1).xyz( "O3'" ), rsd.xyz( "P" ), rsd.xyz( "O5'" ), rsd.xyz( "C5'" ) ) );
+// 			Real main_torsion1 = numeric::conversions::degrees(  numeric::dihedral_radians( pose.residue(i).xyz( "OP2" ), rsd.xyz( "P" ), rsd.xyz( "O5'" ), rsd.xyz( "C5'" ) ) );
+// 			Real main_torsion2 = numeric::conversions::degrees(  numeric::dihedral_radians( pose.residue(i).xyz( "OP1" ), rsd.xyz( "P" ), rsd.xyz( "O5'" ), rsd.xyz( "C5'" ) ) );
 
 // 			std::cout << "OFFSETS: " << main_torsion1 - main_torsion << " " << main_torsion2 - main_torsion1 << std::endl;
 // 		}

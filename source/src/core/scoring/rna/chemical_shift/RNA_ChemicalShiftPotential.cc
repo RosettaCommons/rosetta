@@ -105,17 +105,17 @@ namespace chemical_shift {
 
 		utility::vector1< utility::vector1< std::string > >proton_entry_list;
 
-		proton_entry_list.push_back(string_list("H1*"));
-		proton_entry_list.push_back(string_list("1H2*"));
-		proton_entry_list.push_back(string_list("H3*"));
-		proton_entry_list.push_back(string_list("H4*"));
+		proton_entry_list.push_back(string_list("H1'"));
+		proton_entry_list.push_back(string_list(" H2'"));
+		proton_entry_list.push_back(string_list("H3'"));
+		proton_entry_list.push_back(string_list("H4'"));
 
 		if(H5_prime_mode_=="UNIQUE"){
-			proton_entry_list.push_back(string_list("1H5*"));
-			proton_entry_list.push_back(string_list("2H5*"));
+			proton_entry_list.push_back(string_list(" H5'"));
+			proton_entry_list.push_back(string_list("H5''"));
 
 		}else if(H5_prime_mode_=="LEAST_SQUARE" || H5_prime_mode_=="LEAST_SQUARE_IGNORE_DUPLICATE"){
-			proton_entry_list.push_back(string_list("1H5*", "2H5*")); 
+			proton_entry_list.push_back(string_list(" H5'", "H5''")); 
 
 		}else{
 			utility_exit_with_message("Invalid H5_prime_mode_ (" + H5_prime_mode_ + ")!");
@@ -186,19 +186,19 @@ namespace chemical_shift {
 	bool
 	is_polar_hydrogen(std::string const input_atom_name){
 
-		if(input_atom_name=="2HO*" || input_atom_name=="HO2'") return true;
+		if(input_atom_name=="HO2'" || input_atom_name=="HO2'") return true;
 
-		if(input_atom_name=="1H2"  || input_atom_name=="H21") return true;
+		if(input_atom_name=="H22"  || input_atom_name=="H21") return true;
 
-		if(input_atom_name=="2H2"  || input_atom_name=="H22") return true;
+		if(input_atom_name=="H21"  || input_atom_name=="H22") return true;
 
-		if(input_atom_name=="1H4"  || input_atom_name=="H41") return true;
+		if(input_atom_name=="H41"  || input_atom_name=="H41") return true;
 
-		if(input_atom_name=="2H4"  || input_atom_name=="H42") return true;
+		if(input_atom_name=="H42"  || input_atom_name=="H42") return true;
 
-		if(input_atom_name=="1H6"  || input_atom_name=="H61") return true;
+		if(input_atom_name=="H61"  || input_atom_name=="H61") return true;
 
-		if(input_atom_name=="2H6"  || input_atom_name=="H62") return true;
+		if(input_atom_name=="H62"  || input_atom_name=="H62") return true;
 
 		if(input_atom_name=="H1") return true;
 
@@ -222,22 +222,22 @@ namespace chemical_shift {
 
 		//Assume that input_atom_name is a non_polar hydrogen atom! Other atoms should be filtered before reaching this point!
 		if(input_atom_name=="H1'"){
-			rosetta_atom_name="H1*";
+			rosetta_atom_name="H1'";
 
 		}else if(input_atom_name=="H2'"){
-			rosetta_atom_name="1H2*";
+			rosetta_atom_name=" H2'";
 
 		}else if(input_atom_name=="H3'"){
-			rosetta_atom_name="H3*";
+			rosetta_atom_name="H3'";
 
 		}else if(input_atom_name=="H4'"){
-			rosetta_atom_name="H4*";
+			rosetta_atom_name="H4'";
 
 		}else if(input_atom_name=="H5'"){
-			rosetta_atom_name="1H5*";
+			rosetta_atom_name=" H5'";
 
 		}else if(input_atom_name=="H5''"){
-			rosetta_atom_name="2H5*";
+			rosetta_atom_name="H5''";
 		}else{
 			rosetta_atom_name=input_atom_name;
 		}
@@ -468,19 +468,19 @@ namespace chemical_shift {
 			if( CS_data.res_aa!=chemical::na_ura) utility_exit_with_message("CS_data.atom_name==\"H3\" but CS_data.res_aa!=na_ura!");
 		}
 
-		if(CS_data.atom_name=="1H2" || CS_data.atom_name=="2H2"){
+		if(CS_data.atom_name=="H22" || CS_data.atom_name=="H21"){
 			if( CS_data.res_aa!=chemical::na_rgu){
 				utility_exit_with_message("CS_data.atom_name==\"" + CS_data.atom_name + "\" but CS_data.res_aa!=na_rgu!");
 			}
 		}
 
-		if(CS_data.atom_name=="1H4" || CS_data.atom_name=="2H4"){
+		if(CS_data.atom_name=="H41" || CS_data.atom_name=="H42"){
 			if( CS_data.res_aa!=chemical::na_rcy){
 				utility_exit_with_message("CS_data.atom_name==\"" + CS_data.atom_name + "\" but CS_data.res_aa!=na_rcy!");
 			}
 		}
 
-		if(CS_data.atom_name=="1H6" || CS_data.atom_name=="2H6"){
+		if(CS_data.atom_name=="H61" || CS_data.atom_name=="H62"){
 			if( CS_data.res_aa!=chemical::na_rad){
 				utility_exit_with_message("CS_data.atom_name==\"" + CS_data.atom_name + "\" but CS_data.res_aa!=na_rad!");
 			}
@@ -916,9 +916,9 @@ namespace chemical_shift {
 
 			Size num_matching_atom_pairs_found=0;
 
-			if(CS_data_one.atom_name=="1H5*" && CS_data_two.atom_name=="2H5*") num_matching_atom_pairs_found++;
+			if(CS_data_one.atom_name==" H5'" && CS_data_two.atom_name=="H5''") num_matching_atom_pairs_found++;
 
-			if(CS_data_one.atom_name=="2H5*" && CS_data_two.atom_name=="1H5*") num_matching_atom_pairs_found++;
+			if(CS_data_one.atom_name=="H5''" && CS_data_two.atom_name==" H5'") num_matching_atom_pairs_found++;
 
 			if(num_matching_atom_pairs_found!=1) utility_exit_with_message("num_matching_atom_pairs_found=(" +string_of(num_matching_atom_pairs_found)+")!=1");
 			///////////////////////////////////////////////////////////////////////

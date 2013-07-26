@@ -419,10 +419,10 @@ MotifSearch::incorporate_motifs(
 				Real ztest_ir2(0.0);
 				Real rmsdtest_ir2(100.0);
 
-				// This atom type is only C1* because that atom is common
+				// This atom type is only C1' because that atom is common
 				// to all DNA bases and it is basically in the plane of the base
-				core::conformation::Atom atm( baseres2->atom("C1*") );
-				core::conformation::Atom auto_atm( baseres2->atom("C1*") );
+				core::conformation::Atom atm( baseres2->atom("C1'") );
+				core::conformation::Atom auto_atm( baseres2->atom("C1'") );
 				motifcop->place_atom( *(rotset->nonconst_rotamer(ir2)), *baseres2, atm );
 				if( automorphism ) {
 					motifcop->place_atom( *(rotset->nonconst_rotamer(ir2)), *baseres2, auto_atm, false );
@@ -442,10 +442,10 @@ MotifSearch::incorporate_motifs(
 							type != atend; ++type ) {
 						if( basetype == *type ) {
 							// Should have a test to ensure that it has the atom types I'll be using?
-							Real dtest1( atm.xyz().distance_squared( posecopy.residue( *bpos ).xyz( "C1*" ) ) );
+							Real dtest1( atm.xyz().distance_squared( posecopy.residue( *bpos ).xyz( "C1'" ) ) );
 							Real dtest1_auto(100);
 							if( automorphism ) {
-								dtest1_auto = ( auto_atm.xyz().distance_squared( posecopy.residue( *bpos ).xyz( "C1*" ) ) );
+								dtest1_auto = ( auto_atm.xyz().distance_squared( posecopy.residue( *bpos ).xyz( "C1'" ) ) );
 							}
 
 							if( ! automorphism ) {

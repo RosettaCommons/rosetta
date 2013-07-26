@@ -106,10 +106,10 @@ rescale_phosphate_charges(
 
 	vector1< string > atoms;
 	atoms.push_back( "P" );
-	atoms.push_back( "O1P" );
-	atoms.push_back( "O2P" );
-	atoms.push_back( "O5*" );
-	atoms.push_back( "O3*" );
+	atoms.push_back( "OP2" );
+	atoms.push_back( "OP1" );
+	atoms.push_back( "O5'" );
+	atoms.push_back( "O3'" );
 
 	ResidueTypeSet & rsd_set( ChemicalManager::get_instance()->nonconst_residue_type_set( FA_STANDARD ) );
 

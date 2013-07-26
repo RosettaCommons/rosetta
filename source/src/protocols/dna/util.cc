@@ -231,10 +231,10 @@ std::string dna_comp_name_str( std::string const & dna ) {
 	if ( dna == "CYT" ) return "GUA";
 	if ( dna == "GUA" ) return "CYT";
 	if ( dna == "THY" ) return "ADE";
-	if ( dna == "  A" ) return "  T";
-	if ( dna == "  C" ) return "  G";
-	if ( dna == "  G" ) return "  C";
-	if ( dna == "  T" ) return "  A";
+	if ( dna == " DA" ) return " DT";
+	if ( dna == " DC" ) return " DG";
+	if ( dna == " DG" ) return " DC";
+	if ( dna == " DT" ) return " DA";
 	utility_exit_with_message( "Bad DNA name " + dna );
 	return "NONE";
 }
@@ -243,14 +243,14 @@ std::string dna_comp_name_str( std::string const & dna ) {
 /// @brief intended to convert any DNA "threeletter code" into the full three-letter code. Note that this does not (necessarily) return the same thing as residue_type::name3 (which returns "  N" format as of Dec 2008)
 std::string dna_full_name3( std::string const & name3 )
 {
-	if ( name3 == "  A" || name3 == " DA" || name3 == "ADE" ) return "ADE";
-	if ( name3 == "  C" || name3 == " DC" || name3 == "CYT" ) return "CYT";
-	if ( name3 == "  G" || name3 == " DG" || name3 == "GUA" ) return "GUA";
-	if ( name3 == "  T" || name3 == " DT" || name3 == "THY" ) return "THY";
-	if ( name3 == " rA" ) return "RAD";
-	if ( name3 == " rC" ) return "RCY";
-	if ( name3 == " rG" ) return "RGU";
-	if ( name3 == " rU" ) return "URA";
+	if ( name3 == " DA" || name3 == "ADE" ) return "ADE";
+	if ( name3 == " DC" || name3 == "CYT" ) return "CYT";
+	if ( name3 == " DG" || name3 == "GUA" ) return "GUA";
+	if ( name3 == " DT" || name3 == "THY" ) return "THY";
+	if ( name3 == "  A" ) return "RAD";
+	if ( name3 == "  C" ) return "RCY";
+	if ( name3 == "  G" ) return "RGU";
+	if ( name3 == "  U" ) return "URA";
 	return name3;
 }
 
@@ -872,7 +872,7 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 			for( Size prot_res = chain_start[ this_chain ] ; prot_res <= chain_end[ this_chain ] ; ++prot_res ) {
 				for( Size dna_res = 1 ; dna_res <= nres ; ++dna_res ) {
 					if( !pose.residue( dna_res ).is_DNA() ) continue;
-					Real check_dist = pose.residue( prot_res ).xyz( "CA" ).distance_squared( pose.residue( dna_res ).xyz( "C1*" ) );
+					Real check_dist = pose.residue( prot_res ).xyz( "CA" ).distance_squared( pose.residue( dna_res ).xyz( "C1'" ) );
 					if( check_dist < best_dist ) {
 						best_dist = check_dist;
 						protein_root[ this_chain ] = prot_res;
@@ -995,7 +995,7 @@ make_base_pair_aware_fold_tree ( pose::Pose const & pose )
 			for( Size dna_res = chain_start[ this_chain ] ; dna_res <= chain_end[ this_chain ] ; ++dna_res ) {
 				for( Size prot_res = 1 ; prot_res <= nres ; ++prot_res ) {
 					if( !pose.residue( prot_res ).is_protein() ) continue;
-					Real check_dist = pose.residue( prot_res ).xyz( "CA" ).distance_squared( pose.residue( dna_res ).xyz( "C1*" ) );
+					Real check_dist = pose.residue( prot_res ).xyz( "CA" ).distance_squared( pose.residue( dna_res ).xyz( "C1'" ) );
 					if( check_dist < best_dist ) {
 						best_dist = check_dist;
 						protein_root[ this_chain ] = prot_res;
@@ -1099,7 +1099,7 @@ set_base_segment_chainbreak_constraints(
 	Real const O3_P_distance( 1.608 );
 	Real const O3_angle( 119.8 );
 	Real const  P_angle( 103.4 );
-	Real const  O1P_angle( 108.23 );
+	Real const  OP2_angle( 108.23 );
 
 	Real const distance_stddev( 0.3 ); // amber is 0.0659
 	Real const angle_stddev_degrees( 35 ); // amber is 8.54 (P angle), 5.73 (O3 angle)
@@ -1107,7 +1107,7 @@ set_base_segment_chainbreak_constraints(
 	FuncOP const distance_func( new HarmonicFunc( O3_P_distance, distance_stddev ) );
 	FuncOP const O3_angle_func( new HarmonicFunc( radians( O3_angle ), radians( angle_stddev_degrees ) ) );
 	FuncOP const  P_angle_func( new HarmonicFunc( radians(  P_angle ), radians( angle_stddev_degrees ) ) );
-	FuncOP const O1P_angle_func( new HarmonicFunc( radians(  O1P_angle ), radians( angle_stddev_degrees ) ) );
+	FuncOP const OP2_angle_func( new HarmonicFunc( radians(  OP2_angle ), radians( angle_stddev_degrees ) ) );
 
 	assert( start_base <= end_base );
 
@@ -1118,21 +1118,21 @@ set_base_segment_chainbreak_constraints(
 
 		// Setup constraints to close bb
 
-		AtomID const C3_id( rsd1.atom_index( "C3*" ), start_base - 1 );
-		AtomID const O3_id( rsd1.atom_index( "O3*" ), start_base - 1 );
+		AtomID const C3_id( rsd1.atom_index( "C3'" ), start_base - 1 );
+		AtomID const O3_id( rsd1.atom_index( "O3'" ), start_base - 1 );
 		AtomID const  P_id( rsd2.atom_index( "P"   ), start_base );
-		AtomID const O5_id( rsd2.atom_index( "O5*" ), start_base );
-		AtomID const O1P_id( rsd2.atom_index( "O1P" ), start_base );
+		AtomID const O5_id( rsd2.atom_index( "O5'" ), start_base );
+		AtomID const OP2_id( rsd2.atom_index( "OP2" ), start_base );
 
-     // distance from O3* to P
+     // distance from O3' to P
      pose.add_constraint( new AtomPairConstraint( O3_id, P_id, distance_func ) );
-     // angle at O3*
+     // angle at O3'
      pose.add_constraint( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) );
      // angle at P
      pose.add_constraint( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) );
      // another angle at P - try not to get goofy geometries
      pose.add_constraint( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) );
-     pose.add_constraint( new AngleConstraint( O3_id, P_id, O1P_id,  O1P_angle_func ) );
+     pose.add_constraint( new AngleConstraint( O3_id, P_id, OP2_id,  OP2_angle_func ) );
 	}
 
 	// Next the end base
@@ -1142,16 +1142,16 @@ set_base_segment_chainbreak_constraints(
 
 		// Setup constraints to close bb
 
-		AtomID const C3_id( rsd1.atom_index( "C3*" ), end_base );
-		AtomID const O3_id( rsd1.atom_index( "O3*" ), end_base );
+		AtomID const C3_id( rsd1.atom_index( "C3'" ), end_base );
+		AtomID const O3_id( rsd1.atom_index( "O3'" ), end_base );
 		AtomID const  P_id( rsd2.atom_index( "P"   ), end_base + 1 );
-		AtomID const O5_id( rsd2.atom_index( "O5*" ), end_base + 1 );
-		AtomID const O1P_id( rsd2.atom_index( "O1P" ), end_base + 1 );
+		AtomID const O5_id( rsd2.atom_index( "O5'" ), end_base + 1 );
+		AtomID const OP2_id( rsd2.atom_index( "OP2" ), end_base + 1 );
 
-     // distance from O3* to P
+     // distance from O3' to P
      pose.add_constraint( new AtomPairConstraint( O3_id, P_id, distance_func ) );
-     pose.add_constraint( new AngleConstraint( O3_id, P_id, O1P_id,  O1P_angle_func ) );
-     // angle at O3*
+     pose.add_constraint( new AngleConstraint( O3_id, P_id, OP2_id,  OP2_angle_func ) );
+     // angle at O3'
      pose.add_constraint( new AngleConstraint( C3_id, O3_id, P_id, O3_angle_func ) );
      // angle at P
      pose.add_constraint( new AngleConstraint( O3_id, P_id, O5_id,  P_angle_func ) );

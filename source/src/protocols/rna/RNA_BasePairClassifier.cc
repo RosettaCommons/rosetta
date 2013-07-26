@@ -102,11 +102,10 @@ update_edge_hbond_numbers(
 		if ( atom_name == " N3 "  ||
 				 atom_name == " C2 "  ||
 				 atom_name == " C4 "  ||
-				 atom_name == " C1 "  ||
-				 atom_name == " C2 "  ||
-				 atom_name == " C3*"  ||
-				 atom_name == " O3*"  ||
-				 atom_name == " O2*"   ) N_S++;
+				 atom_name == " C1'"  ||
+				 atom_name == " C3'"  ||
+				 atom_name == " O3'"  ||
+				 atom_name == " O2'"   ) N_S++;
 
 	} else if ( rsd.aa() == na_rcy ) {
 
@@ -120,11 +119,10 @@ update_edge_hbond_numbers(
 
 		if ( atom_name == " O2 "  ||
 				 atom_name == " N1 "  ||
-				 atom_name == " C1*"  ||
-				 atom_name == " C2*"  ||
-				 atom_name == " C3*"  ||
-				 atom_name == " O3*"  ||
-				 atom_name == " O2*"   ) N_S++;
+				 atom_name == " C1'"  ||
+				 atom_name == " C3'"  ||
+				 atom_name == " O3'"  ||
+				 atom_name == " O2'"   ) N_S++;
 
 	} else if ( rsd.aa() == na_rgu ) {
 
@@ -141,9 +139,8 @@ update_edge_hbond_numbers(
 				 atom_name == " N2 "  ||
 				 atom_name == " C4 "  ||
 				 atom_name == " N9 "  ||
-				 atom_name == " C1*"  ||
-				 atom_name == " C2*"  ||
-				 atom_name == " O2*"   ) N_S++;
+				 atom_name == " C1'"  ||
+				 atom_name == " O2'"   ) N_S++;
 
 	} else if ( rsd.aa() == na_ura ) {
 
@@ -157,11 +154,10 @@ update_edge_hbond_numbers(
 
 		if ( atom_name == " O2 "  ||
 				 atom_name == " N1 "  ||
-				 atom_name == " C1*"  ||
-				 atom_name == " C2*"  ||
-				 atom_name == " C3*"  ||
-				 atom_name == " O3*"  ||
-				 atom_name == " O2*"   ) N_S++;
+				 atom_name == " C1'"  ||
+				 atom_name == " C3'"  ||
+				 atom_name == " O3'"  ||
+				 atom_name == " O2'"   ) N_S++;
 
 	} else {
 		std::cout << "PROBLEM !!!! " << rsd.aa() << std::endl;
@@ -186,8 +182,8 @@ update_edge_hbond_numbers_careful_hydrogen(
 
 	if (rsd.aa() == na_rad && atom_name == " N6 ") {
 		//std::cout << "CHECKING " << rsd.seqpos() << std::endl;
-		if ( (rsd.xyz( rsd.atom_index("1H6 ") ) - other_rsd.xyz( other_atm )).length()  <
-				 (rsd.xyz( rsd.atom_index("2H6 ") ) - other_rsd.xyz( other_atm )).length() ) {
+		if ( (rsd.xyz( rsd.atom_index(" H61") ) - other_rsd.xyz( other_atm )).length()  <
+				 (rsd.xyz( rsd.atom_index(" H62") ) - other_rsd.xyz( other_atm )).length() ) {
 			N_W++;
 		} else {
 			N_H++;
@@ -195,8 +191,11 @@ update_edge_hbond_numbers_careful_hydrogen(
 	}
 
 	if (rsd.aa() == na_rcy && atom_name == " N4 ") {
-		if ( (rsd.xyz( rsd.atom_index("1H4 ") ) - other_rsd.xyz( other_atm )).length()  <
-				 (rsd.xyz( rsd.atom_index("2H4 ") ) - other_rsd.xyz( other_atm )).length() ) {
+		//		TR << "cyt check " << rsd.seqpos() << " to " << other_rsd.seqpos() << " atom " << other_rsd.atom_name( other_atm ) <<
+		//			"  dist to H42 " << (rsd.xyz( rsd.atom_index(" H42") ) - other_rsd.xyz( other_atm )).length() <<
+		//			" dist to H41 " << (rsd.xyz( rsd.atom_index(" H41") ) - other_rsd.xyz( other_atm )).length()  << std::endl;
+		if ( (rsd.xyz( rsd.atom_index(" H42") ) - other_rsd.xyz( other_atm )).length()  <
+				 (rsd.xyz( rsd.atom_index(" H41") ) - other_rsd.xyz( other_atm )).length() ) {
 			N_H++;
 		} else {
 			N_W++;
@@ -204,8 +203,8 @@ update_edge_hbond_numbers_careful_hydrogen(
 	}
 
 	if (rsd.aa() == na_rgu && atom_name == " N2 ") {
-		if ( (rsd.xyz( rsd.atom_index("1H2 ") ) - other_rsd.xyz( other_atm )).length()  <
-				 (rsd.xyz( rsd.atom_index("2H2 ") ) - other_rsd.xyz( other_atm )).length() ) {
+		if ( (rsd.xyz( rsd.atom_index(" H22") ) - other_rsd.xyz( other_atm )).length()  <
+				 (rsd.xyz( rsd.atom_index(" H21") ) - other_rsd.xyz( other_atm )).length() ) {
 			N_S++;
 		} else {
 			N_W++;

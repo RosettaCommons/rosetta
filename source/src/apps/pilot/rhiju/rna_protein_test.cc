@@ -426,7 +426,7 @@ rna_protein_rb_test(){
 	} else 	{
 		std::cout << "Setting up 1zdi (MS2 coat protein/RNA) fold tree " << nres << std::endl;
 		f.new_jump( 214, 267, 258 );
-		f.set_jump_atoms( 1, " CB ", " O2*" );
+		f.set_jump_atoms( 1, " CB ", " O2'" );
 	}
 	pose.fold_tree( f );
 
@@ -705,12 +705,12 @@ rna_protein_pdbstats_test(){
 	}
 
 	utility::vector1 < std::string > RNA_backbone_oxygen_atoms;
-	RNA_backbone_oxygen_atoms.push_back( " O1P");
-	RNA_backbone_oxygen_atoms.push_back( " O2P");
-	RNA_backbone_oxygen_atoms.push_back( " O5*");
-	RNA_backbone_oxygen_atoms.push_back( " O4*");
-	RNA_backbone_oxygen_atoms.push_back( " O3*");
-	RNA_backbone_oxygen_atoms.push_back( " O2*");
+	RNA_backbone_oxygen_atoms.push_back( " OP2");
+	RNA_backbone_oxygen_atoms.push_back( " OP1");
+	RNA_backbone_oxygen_atoms.push_back( " O5'");
+	RNA_backbone_oxygen_atoms.push_back( " O4'");
+	RNA_backbone_oxygen_atoms.push_back( " O3'");
+	RNA_backbone_oxygen_atoms.push_back( " O2'");
 	Size const num_RNA_backbone_oxygen_atoms = RNA_backbone_oxygen_atoms.size();
 
 	//////////////////////////

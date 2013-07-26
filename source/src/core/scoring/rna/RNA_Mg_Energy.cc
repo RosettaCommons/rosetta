@@ -281,11 +281,11 @@ RNA_Mg_Energy::residue_pair_energy_one_way(
 
   }
 
-  // there appear to be very few (if any) metal ions that bind to both the O1P and O2P of a single phosphate -- so let's use the best of those scores.
+  // there appear to be very few (if any) metal ions that bind to both the OP2 and OP1 of a single phosphate -- so let's use the best of those scores.
   if ( phosphate_scores.size() == 1 ) phosphate_scores.push_back( 0.0 );
 
   if ( phosphate_scores.size() > 1 ){
-    runtime_assert( phosphate_scores.size() == 2 ); // O1P and O2P
+    runtime_assert( phosphate_scores.size() == 2 ); // OP2 and OP1
     score += std::min( phosphate_scores[1], phosphate_scores[2] );
   }
 

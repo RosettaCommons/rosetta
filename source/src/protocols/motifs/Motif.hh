@@ -192,7 +192,7 @@ public:
 		core::conformation::Residue & mobile,
 		core::conformation::Atom & atm,
 		bool one_three = true,
-		std::string const atomtype = "C1*"
+		std::string const atomtype = "C1'"
 	) const;
 
 	virtual void
@@ -210,7 +210,7 @@ public:
 		bool forward,
 		core::conformation::Atom & atm,
 		bool one_three = true,
-		std::string const atomtype = "C1*"
+		std::string const atomtype = "C1'"
 	) const;
 
 	virtual void

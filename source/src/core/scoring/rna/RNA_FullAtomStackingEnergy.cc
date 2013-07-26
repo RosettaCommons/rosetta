@@ -186,7 +186,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 
 		if(m==rsd1.first_sidechain_atom()){
 			//Consistency check
-			if(rsd1.type().atom_name(m) !=" O2*") utility_exit_with_message( "m==rsd1.first_sidechain_atom() but rsd1.type().atom_name(m) !=\" O2*\" ");
+			if(rsd1.type().atom_name(m) !=" O2'") utility_exit_with_message( "m==rsd1.first_sidechain_atom() but rsd1.type().atom_name(m) !=\" O2'\" ");
 			continue;
 		}
 
@@ -201,7 +201,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 
 			if(n==rsd2.first_sidechain_atom() && base_base_only_){
 				//Consistency check
-				if(rsd2.type().atom_name(n) !=" O2*") utility_exit_with_message( "n==rsd2.first_sidechain_atom() but rsd2.type().atom_name(n) !=\" O2*\" ");
+				if(rsd2.type().atom_name(n) !=" O2'") utility_exit_with_message( "n==rsd2.first_sidechain_atom() but rsd2.type().atom_name(n) !=\" O2'\" ");
 				continue;
 			}
 
@@ -263,7 +263,7 @@ RNA_FullAtomStackingEnergy::check_base_base_OK(
 
 	if(m==rsd1.first_sidechain_atom()){
 		//Consistency check
-		if(rsd1.type().atom_name(m) !=" O2*") utility_exit_with_message( "m==rsd1.first_sidechain_atom() but rsd1.type().atom_name(m) !=\" O2*\" ");
+		if(rsd1.type().atom_name(m) !=" O2'") utility_exit_with_message( "m==rsd1.first_sidechain_atom() but rsd1.type().atom_name(m) !=\" O2'\" ");
 		return false;
 	}
 
@@ -273,7 +273,7 @@ RNA_FullAtomStackingEnergy::check_base_base_OK(
 
 	if(n==rsd2.first_sidechain_atom() && base_base_only_){
 		//Consistency check
-		if(rsd2.type().atom_name(n) !=" O2*") utility_exit_with_message( "n==rsd2.first_sidechain_atom() but rsd2.type().atom_name(n) !=\" O2*\" ");
+		if(rsd2.type().atom_name(n) !=" O2'") utility_exit_with_message( "n==rsd2.first_sidechain_atom() but rsd2.type().atom_name(n) !=\" O2'\" ");
 		return false;
 	}
 

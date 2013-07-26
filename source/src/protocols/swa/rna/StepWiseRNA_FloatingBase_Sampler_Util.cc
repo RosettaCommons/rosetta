@@ -313,9 +313,9 @@ namespace rna {
   		using namespace chemical;
 
 
-		std::string const center_atom = (Is_prepend) ? " C4*" : " C3*";
-		std::string const x_axis_atom = (Is_prepend) ? " H4*" : " C2*";
-		std::string const y_axis_atom = (Is_prepend) ? " C5*" : " H3*";
+		std::string const center_atom = (Is_prepend) ? " C4'" : " C3'";
+		std::string const x_axis_atom = (Is_prepend) ? " H4'" : " C2'";
+		std::string const y_axis_atom = (Is_prepend) ? " C5'" : " H3'";
 
 		if(verbose){
 			std::cout << "Get_ribose_stub function: ";
@@ -684,7 +684,7 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	//Find the " O3*" atom coordinate (prepend), " C5*" atom coordinate (append)
+	//Find the " O3'" atom coordinate (prepend), " C5'" atom coordinate (append)
 	void
 	get_specific_atom_coordinate(std::string const & atom_name,
  														   numeric::xyzVector<core::Real> & atom_pos,
@@ -801,8 +801,8 @@ namespace rna {
 
 			Residue const & rsd_at_origin=(*rsd_at_origin_list[n]);
 
-			std::string const moving_atom_name= (Is_prepend) ? "O3*" : " C5*"; 
-			std::string const reference_atom_name= (Is_prepend) ? " C5*" : "O3*";
+			std::string const moving_atom_name= (Is_prepend) ? "O3'" : " C5'"; 
+			std::string const reference_atom_name= (Is_prepend) ? " C5'" : "O3'";
 
 			numeric::xyzVector<core::Real> atom_coordinate;
 
@@ -840,8 +840,8 @@ namespace rna {
 
 			Residue const & rsd_at_origin=(*rsd_at_origin_list[n]);
 
-			std::string const moving_atom_name= (Is_prepend) ? "O3*" : " C5*"; 
-			std::string const reference_atom_name= (Is_prepend) ? " C5*" : "O3*";
+			std::string const moving_atom_name= (Is_prepend) ? "O3'" : " C5'"; 
+			std::string const reference_atom_name= (Is_prepend) ? " C5'" : "O3'";
 
 			numeric::xyzVector<core::Real> atom_coordinate;
 

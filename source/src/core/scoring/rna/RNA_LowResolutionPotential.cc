@@ -233,12 +233,12 @@ void
 RNA_LowResolutionPotential::initialize_RNA_backbone_oxygen_atoms(){
 
 	RNA_backbone_oxygen_atoms_.clear();
-	RNA_backbone_oxygen_atoms_.push_back( " O1P");
-	RNA_backbone_oxygen_atoms_.push_back( " O2P");
-	RNA_backbone_oxygen_atoms_.push_back( " O5*");
-	RNA_backbone_oxygen_atoms_.push_back( " O4*");
-	RNA_backbone_oxygen_atoms_.push_back( " O3*");
-	RNA_backbone_oxygen_atoms_.push_back( " O2*");
+	RNA_backbone_oxygen_atoms_.push_back( " OP2");
+	RNA_backbone_oxygen_atoms_.push_back( " OP1");
+	RNA_backbone_oxygen_atoms_.push_back( " O5'");
+	RNA_backbone_oxygen_atoms_.push_back( " O4'");
+	RNA_backbone_oxygen_atoms_.push_back( " O3'");
+	RNA_backbone_oxygen_atoms_.push_back( " O2'");
 
 	//Useful for preventing string lookups:
 	o2p_index_within_special_backbone_atoms_    =  2;
@@ -281,9 +281,9 @@ RNA_LowResolutionPotential::initialize_rna_backbone_backbone_weights(){
 	rna_backbone_backbone_weight_.dimension( 6 );
 	rna_backbone_backbone_weight_ = 0.0;
 
-	rna_backbone_backbone_weight_( 1 ) = 1.0; // O1P
-	rna_backbone_backbone_weight_( 2 ) = 1.0; // O2P
-	rna_backbone_backbone_weight_( 6 ) = 2.0; // O2*
+	rna_backbone_backbone_weight_( 1 ) = 1.0; // OP2
+	rna_backbone_backbone_weight_( 2 ) = 1.0; // OP1
+	rna_backbone_backbone_weight_( 6 ) = 2.0; // O2'
 }
 
 
@@ -322,13 +322,13 @@ void
 RNA_LowResolutionPotential::initialize_rna_repulsive_weights(){
 
 	// Note that unless specified by user "-rna_phosphate_repulse_all"
-	//  only O2P-O2P repulsion will be calculated. See eval_rna_phosphate_score().
-	rna_repulsive_weight_( 1 ) = 1.0; // O1P
-	rna_repulsive_weight_( 2 ) = 1.0; // O2P
-	rna_repulsive_weight_( 3 ) = 1.0; // O5*
-	rna_repulsive_weight_( 4 ) = 1.0; // O4*
-	rna_repulsive_weight_( 5 ) = 1.0; // O3*
-	// O2* --> weight stays at zero.
+	//  only OP1-OP1 repulsion will be calculated. See eval_rna_phosphate_score().
+	rna_repulsive_weight_( 1 ) = 1.0; // OP2
+	rna_repulsive_weight_( 2 ) = 1.0; // OP1
+	rna_repulsive_weight_( 3 ) = 1.0; // O5'
+	rna_repulsive_weight_( 4 ) = 1.0; // O4'
+	rna_repulsive_weight_( 5 ) = 1.0; // O3'
+	// O2' --> weight stays at zero.
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -974,8 +974,8 @@ RNA_LowResolutionPotential::initialize_more_precise_base_pair_cutoffs() //Doesn'
 	zeta_hoogsteen_cutoff_precise_.dimension ( 4 );
 	zeta_sugar_cutoff_precise_.dimension ( 4 );
 
-	setup_precise_zeta_cutoffs( na_rad, "1H6 ", " C2 " );
-	setup_precise_zeta_cutoffs( na_rcy, "1H4 ", " O2 " );
+	setup_precise_zeta_cutoffs( na_rad, " H61", " C2 " );
+	setup_precise_zeta_cutoffs( na_rcy, " H42", " O2 " );
 	setup_precise_zeta_cutoffs( na_rgu, " O6 ", " N2 " );
 	setup_precise_zeta_cutoffs( na_ura, " O4 ", " O2 " );
 
@@ -1686,7 +1686,7 @@ RNA_LowResolutionPotential::rna_backbone_backbone_pair_energy_one_way(
 
 	//  static Real const dist_cutoff ( 6.0 );
 
-	//	std::string const atom_i = " O2*";
+	//	std::string const atom_i = " O2'";
 
 	Size const i( rsd1.seqpos() );
 	Size const j( rsd2.seqpos() );
@@ -1813,7 +1813,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_backbone_backbone(
 	//	ObjexxFCL::FArray2D< Size > const &
 	//		atom_numbers_for_backbone_score_calculations = rna_scoring_info.atom_numbers_for_backbone_score_calculations();
 
-	// FIRST WAY, check if this atom is O2P, cycle over other oxygen atoms.
+	// FIRST WAY, check if this atom is OP1, cycle over other oxygen atoms.
 	Size const atom_num_o2star = atom_numbers_for_backbone_score_calculations_[  o2star_index_within_special_backbone_atoms_ ];
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
@@ -1950,7 +1950,7 @@ RNA_LowResolutionPotential::rna_repulsive_pair_energy_one_way(
 	Size const i = rsd1.seqpos();
 	Size const j = rsd2.seqpos();
 
-	//	std::string const atom_i = " O2P";
+	//	std::string const atom_i = " OP1";
 	Size const atom_num_i = atom_numbers_for_backbone_score_calculations_[ o2p_index_within_special_backbone_atoms_ ];
 
 	Vector const heavy_atom_i = rsd1.xyz( atom_num_i );
@@ -1967,7 +1967,7 @@ RNA_LowResolutionPotential::rna_repulsive_pair_energy_one_way(
 		//By default only repel o2p.
 		if (!rna_repulse_all_  &&  m != o2p_index_within_special_backbone_atoms_ ) continue;
 
-		//Don't double-count O2P <--> O2P interactions
+		//Don't double-count OP1 <--> OP1 interactions
 		if (atom_num_j == atom_num_i && j < i) continue;
 
 		Vector const heavy_atom_j( rsd2.xyz( atom_num_j ) );
@@ -2034,7 +2034,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_repulsive(
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
 	if ( atom_num_i == atom_num_o2p ) {
-		// FIRST WAY, check if this atom is O2P, cycle over other oxygen atoms.
+		// FIRST WAY, check if this atom is OP1, cycle over other oxygen atoms.
 
 		Vector const heavy_atom_i = rsd1.xyz( atom_num_i );
 
@@ -2060,7 +2060,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_repulsive(
 
 				Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ];
 
-				// Don't double-count O2P <--> O2P interactions
+				// Don't double-count OP1 <--> OP1 interactions
 				//  if (atom_num_j == atom_num_i && j < i) continue;
 
 				Vector const heavy_atom_j( rsd2.xyz( atom_num_j ) );
@@ -2087,7 +2087,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_repulsive(
 		}
 	} else {
 
-		// SECOND WAY, check if this atom is a backbone oxygen atoms, cycle over other O2P's.
+		// SECOND WAY, check if this atom is a backbone oxygen atoms, cycle over other OP1's.
 		Size n = find_backbone_oxygen_atom( atom_num_i );
 
 		if ( n > 0 && rna_repulsive_weight_( n ) >= 0.001 ) {
@@ -2109,14 +2109,14 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_repulsive(
 				conformation::Residue const & rsd2( pose.residue( j ) );
 				if ( !rsd2.is_RNA() ) continue;
 
-				// Go over O2P atoms.
+				// Go over OP1 atoms.
 				Size const m = o2p_index_within_special_backbone_atoms_;
 				Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ];
 
 				//By default only repel o2p.
 				if (!rna_repulse_all_  &&  n != o2p_index_within_special_backbone_atoms_ ) continue;
 
-				// Don't double-count O2P <--> O2P interactions
+				// Don't double-count OP1 <--> OP1 interactions
 				//  if (atom_num_j == atom_num_i && j < i) continue;
 
 				Vector const heavy_atom_j( rsd2.xyz( atom_num_j ) );
@@ -2209,7 +2209,7 @@ RNA_LowResolutionPotential::check_atom_numbers_for_backbone_oxygens( chemical::R
 // RNA_LowResolutionPotential::initialize_atom_numbers_for_backbone_score_calculations( pose::Pose & pose ) const
 // {
 // 	//We don't know a priori which atom numbers correspond to which
-// 	// atom names (e.g., O2* on an adenosine could be different depending
+// 	// atom names (e.g., O2' on an adenosine could be different depending
 // 	// on whether its at a chainbreak, terminus, etc.)
 // 	//Better to do a quick setup every time to pinpoint atoms that require
 // 	//  monitoring for VDW clashes.

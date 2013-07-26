@@ -1,7 +1,7 @@
 #rosetta residue topology file
 #version 0.1
 NAME URA
-IO_STRING  rU u
+IO_STRING   U u
 TYPE POLYMER #residue type
 AA URA
 ATOM  P   PHOS   H   1.5

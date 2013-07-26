@@ -433,9 +433,9 @@ namespace toolbox{
 							if ( atom_name == "OVL1" ){
 								alternative_named_atom_id = NamedAtomID( " P  ", i+1 );
 							} else if ( atom_name == "OVL2" ) {
-								alternative_named_atom_id = NamedAtomID( " O5*", i+1 );
+								alternative_named_atom_id = NamedAtomID( " O5'", i+1 );
 							} else if ( atom_name == "OVU1" ) {
-								alternative_named_atom_id = NamedAtomID( " O3*", i-1 );
+								alternative_named_atom_id = NamedAtomID( " O3'", i-1 );
 							}	else {
 								continue;
 							}

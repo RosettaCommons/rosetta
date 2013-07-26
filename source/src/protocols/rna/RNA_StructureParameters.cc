@@ -524,7 +524,7 @@ RNA_StructureParameters::check_forward_backward(
 
 	if ( pose.residue( jump_pos ).is_coarse() || !pose.residue( jump_pos ).is_RNA() )  return true;
 
-	Size atomno = pose.residue( jump_pos ).atom_index( " O5*" );
+	Size atomno = pose.residue( jump_pos ).atom_index( " O5'" );
 	AtomCOP current_atom ( & pose.atom_tree().atom( id::AtomID( atomno,jump_pos) ) );
 	id::AtomID const parent_id( current_atom->parent()->id() );
 	std::string const & parent_name( pose.residue(parent_id.rsd()).atom_name(parent_id.atomno()) );
@@ -889,7 +889,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		// also useful -- if user has an input pdb, put the root in there, if possible.
 		for (Size n = pose.total_residue(); n >= 1; n-- ){ // not sure why I did this backwards...
 			if ( pose.residue(n).is_RNA() &&
-					 allow_insert_->get_domain( named_atom_id_to_atom_id( id::NamedAtomID( " C1*", n ), pose ) ) == 1 /*1 means the first inputted pose*/ &&
+					 allow_insert_->get_domain( named_atom_id_to_atom_id( id::NamedAtomID( " C1'", n ), pose ) ) == 1 /*1 means the first inputted pose*/ &&
 					 possible_root(f,n) ) {
 				f.reorder( n );
 				break;
@@ -1076,8 +1076,8 @@ RNA_StructureParameters::check_base_pairs( pose::Pose & pose ) const
 		}
 
 		// are these part of the pose that is actually being moved?
-		if  ( !allow_insert_->get( named_atom_id_to_atom_id( id::NamedAtomID( "C1*", i ), pose ) ) ) continue;
-		if  ( !allow_insert_->get( named_atom_id_to_atom_id( id::NamedAtomID( "C1*", j ), pose ) ) ) continue;
+		if  ( !allow_insert_->get( named_atom_id_to_atom_id( id::NamedAtomID( "C1'", i ), pose ) ) ) continue;
+		if  ( !allow_insert_->get( named_atom_id_to_atom_id( id::NamedAtomID( "C1'", j ), pose ) ) ) continue;
 
 		if ( !rna_low_resolution_potential.check_forming_base_pair(pose,i,j) ) {
 			tr << "MISSING BASE PAIR " << i << " " << j << std::endl;
@@ -1132,8 +1132,8 @@ RNA_StructureParameters::setup_base_pair_constraints( core::pose::Pose & pose )
 		if ( !pose.residue(i).is_RNA() ) continue;
 		if ( !pose.residue(j).is_RNA() ) continue;
 
-		if ( !allow_insert_->get( named_atom_id_to_atom_id( NamedAtomID( "C1*", i ), pose ) ) &&
-				 !allow_insert_->get( named_atom_id_to_atom_id( NamedAtomID( "C1*", j ), pose ) ) ) continue; //assumed to be frozen, so no need to set up constraints?
+		if ( !allow_insert_->get( named_atom_id_to_atom_id( NamedAtomID( "C1'", i ), pose ) ) &&
+				 !allow_insert_->get( named_atom_id_to_atom_id( NamedAtomID( "C1'", j ), pose ) ) ) continue; //assumed to be frozen, so no need to set up constraints?
 
 		pairings.push_back( std::make_pair( i, j ) ) ;
 	}

@@ -120,10 +120,10 @@ RNA_LoopEnergy::update_rna_loop_atoms_and_lengths( pose::Pose & pose ) const {
 			runtime_assert( num_loop_suites > 1 );
 
 			rna_loop_lengths_.push_back( num_loop_suites );
-			loop_takeoff_atoms_.push_back( AtomID( pose.residue( n ).atom_index( " O3*" )  , n ) );
-			loop_landing_atoms_.push_back( AtomID( pose.residue( n+1 ).atom_index( " C5*" ), n+1 ) );
+			loop_takeoff_atoms_.push_back( AtomID( pose.residue( n ).atom_index( " O3'" )  , n ) );
+			loop_landing_atoms_.push_back( AtomID( pose.residue( n+1 ).atom_index( " C5'" ), n+1 ) );
 
-			tr.Debug << "Found RNA loop: " << AtomID( pose.residue( n ).atom_index( " O3*" )  , n ) << " -- " <<  AtomID( pose.residue( n+1 ).atom_index( " C5*" ), n+1 ) << std::endl << "  loop length: " << num_loop_suites;
+			tr.Debug << "Found RNA loop: " << AtomID( pose.residue( n ).atom_index( " O3'" )  , n ) << " -- " <<  AtomID( pose.residue( n+1 ).atom_index( " C5'" ), n+1 ) << std::endl << "  loop length: " << num_loop_suites;
 
 		}
 

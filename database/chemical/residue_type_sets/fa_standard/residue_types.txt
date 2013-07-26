@@ -33,13 +33,17 @@ residue_types/l-caa/TYR.params
 residue_types/l-caa/VAL.params
 
 ## Nucleic Acid Types
-residue_types/nucleic/ADE.params
-residue_types/nucleic/THY.params
-residue_types/nucleic/CYT.params
-residue_types/nucleic/GUA.params
-#residue_types/nucleic/GNP.params
-#residue_types/nucleic/GDP.params
-#residue_types/nucleic/GTP.params
+residue_types/nucleic/dna/ADE.params
+residue_types/nucleic/dna/THY.params
+residue_types/nucleic/dna/CYT.params
+residue_types/nucleic/dna/GUA.params
+#residue_types/nucleic/dna/GNP.params
+#residue_types/nucleic/dna/GDP.params
+#residue_types/nucleic/dna/GTP.params
+residue_types/nucleic/rna/RAD.params
+residue_types/nucleic/rna/RCY.params
+residue_types/nucleic/rna/RGU.params
+residue_types/nucleic/rna/URA.params
 
 ## Metal Ion Types
 residue_types/metal_ions/CA.params
@@ -100,6 +104,8 @@ residue_types/staple/08B.params
 ## Water Types
 residue_types/water/TP3.params
 residue_types/water/TP5.params
+## HOH is a copy of TP3 (but with residue name HOH), and allows for direct readin of PDBs without cleanup -- perhaps can remove TP3?
+#residue_types/water/HOH.params
 
 ## D-CAA Types
 #residue_types/d-caa/DALA.params
