@@ -66,15 +66,23 @@ void add_hbs_constraint( core::pose::Pose & pose, core::Size hbs_pre_position, c
 
 	//kdrew: add constraint
 	HarmonicFuncOP harm_func  (new HarmonicFunc( distance, std ) );
+	HarmonicFuncOP harm_func_0  (new HarmonicFunc( 0, std ) );
 																			 
 	AtomID aidCYH( pose.residue( hbs_pre_position ).atom_index("CYH"), hbs_pre_position );
 	AtomID aidCZH( pose.residue( hbs_pre_position+2 ).atom_index("CZH"), hbs_pre_position+2 );
+	AtomID aidVYH( pose.residue( hbs_pre_position ).atom_index("VYH"), hbs_pre_position );
+	AtomID aidVZH( pose.residue( hbs_pre_position+2 ).atom_index("VZH"), hbs_pre_position+2 );
 
 	ConstraintCOP atompair = new AtomPairConstraint( aidCYH, aidCZH, harm_func );
+	ConstraintCOP atompair2 = new AtomPairConstraint( aidCYH, aidVYH, harm_func_0 );
+	ConstraintCOP atompair3 = new AtomPairConstraint( aidCZH, aidVZH, harm_func_0 );
 
 	pose.add_constraint( atompair );
+	pose.add_constraint( atompair2 );
+	pose.add_constraint( atompair3 );
 
 	TR << "added atom pair constraint to hbs with distance: " << distance << " and std: "<< std << std::endl;
+	TR << "and atom pair constraints with the virtual atoms" << std::endl;
 
 }
 

@@ -51,6 +51,10 @@ sources = {
 		"MSA_design", # /* Justin Ashworth, documentation pending further testing, test/integration/tests/sequence_profile_constraints */
 		#"jd2_parser_DNAInt", # /* Justin Ashworth, doc/apps/pilot/jd2_parser_DNAInt.dox, */
 	],
+	"pilot/awatkins" : [
+		"hbs_dock_design",
+		"hbs_creator",
+	],
 
 	# B ######################################################################
 	"pilot/barak" : [
