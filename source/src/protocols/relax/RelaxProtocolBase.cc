@@ -259,7 +259,7 @@ void RelaxProtocolBase::set_default_minimization_settings(){
 	minimize_bondangle_subset_  = option[ OptionKeys::relax::minimize_bondangle_subset ]();
 
 	//fpd extras
-	cartesian_ = option[ OptionKeys::relax::cartesian ]();
+	cartesian_ = option[ OptionKeys::relax::cartesian ]() || option[ OptionKeys::relax::dualspace ]();	// dualspace uses Cartesian - set up accordingly
 	if ( option[ OptionKeys::relax::min_type ].user() )
 		min_type_ = option[ OptionKeys::relax::min_type ]();
 	else if (cartesian_ || minimize_bond_lengths_ || minimize_bond_angles_)
