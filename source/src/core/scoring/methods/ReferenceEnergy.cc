@@ -142,6 +142,12 @@ ReferenceEnergy::residue_energy(
 		return;
 	}
 
+	// reference weights for RNA...
+	if ( rsd.is_RNA() && ( aa_weights_.size() > num_canonical_aas ) ) {
+		emap[ ref ] += aa_weights_[ rsd.aa() ];
+		return;
+	}
+
 	/// else -- use the default reference weights from r++
 	if ( rsd.type().aa() > num_canonical_aas ) return;
 

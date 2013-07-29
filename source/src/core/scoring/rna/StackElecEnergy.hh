@@ -157,7 +157,8 @@ private:
 															conformation::Residue const & rsd1,
 															conformation::Residue const & rsd2,
 															pose::Pose const & pose,
-															Real & score_aro
+															Real & score_base_base,
+															Real & score_base_bb
 															) const;
 
 	bool

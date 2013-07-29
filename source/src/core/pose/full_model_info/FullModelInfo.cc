@@ -16,6 +16,7 @@
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 
 // Package headers
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -66,7 +67,7 @@ FullModelInfo::FullModelInfo( 	utility::vector1< Size > const & sub_to_full,
 FullModelInfo::FullModelInfo( pose::Pose const & pose ) :
 	CacheableData(),
 	sub_to_full_( get_res_num_from_pdb_info( pose ) ),
-	full_sequence_( pose.sequence() ),
+	full_sequence_( get_sequence_with_gaps_filled_with_n( pose ) ),
 	cutpoint_open_in_full_model_( get_cutpoint_open_from_pdb_info( pose ) )
 {
 }
@@ -90,6 +91,7 @@ FullModelInfo::get_res_num_from_pdb_info( pose::Pose const & pose ) const{
 	utility::vector1< Size > resnum;
 
 	PDBInfoCOP pdb_info = pose.pdb_info();
+
 	if ( pdb_info )	{
 		for ( Size n = 1; n <= pose.total_residue(); n++ ) resnum.push_back( pdb_info->number( n ) );
 	} else {
@@ -100,27 +102,45 @@ FullModelInfo::get_res_num_from_pdb_info( pose::Pose const & pose ) const{
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+std::string
+FullModelInfo::get_sequence_with_gaps_filled_with_n( pose::Pose const & pose ) const{
+
+	// should also be smart about not filling in n's between chains.
+	// anyway. this is a quick hack for now.
+
+	std::string sequence;
+	sequence.push_back( pose.sequence()[ 0 ]  );
+	for ( Size n = 2; n <= pose.total_residue(); n++ ){
+
+		Size const prev_res_num    = sub_to_full_[ n-1 ];
+		Size const current_res_num = sub_to_full_[ n ];
+		for ( Size i = prev_res_num+1; i < current_res_num; i++ ) sequence.push_back( 'n' );
+		sequence.push_back( pose.sequence()[ n-1 ] );
+
+	}
+
+	return sequence;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
 FullModelInfo::get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const{
 
 	PDBInfoCOP pdb_info = pose.pdb_info();
 	utility::vector1< Size > cutpoint_open;
 
-	if ( pdb_info )	 {
+	for ( Size n = 1; n < pose.total_residue(); n++ ){
 
-		for ( Size n = 1; n < pose.total_residue(); n++ ){
-			if ( pdb_info->chain( n ) != pdb_info->chain( n+1 ) )	cutpoint_open.push_back( n ); // hopefully this will be smart about cutpoints? no it isn't.
+		if ( pdb_info &&  (pdb_info->chain( n ) != pdb_info->chain( n+1 )) )	{
+			cutpoint_open.push_back( n );
+			continue;
 		}
 
-	} else {
-
-		for ( Size n = 1; n < pose.total_residue(); n++ ){
-			if ( pose.fold_tree().is_cutpoint( n ) &&
-					 !pose.residue( n ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
-					 !pose.residue( n+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
-				cutpoint_open.push_back( n );
-			}
-		}
+		//		if ( pose.fold_tree().is_cutpoint( n ) &&
+		//				 !pose.residue( n ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+		//				 !pose.residue( n+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
+		//			cutpoint_open.push_back( n );
+		//		}
 
 	}
 
@@ -136,17 +156,22 @@ const_full_model_info_from_pose( pose::Pose const & pose )
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @details Either returns a non-const reference to the rna_scoring object already stored
-/// in the pose, or creates a new rna scoring info object, places it in the pose, and returns
+/// @details Either returns a non-const reference to the FullModelInfo object already stored
+/// in the pose, or creates a new FullModelInfo object, places it in the pose, and returns
 /// a non-const reference to it.
 FullModelInfo &
 nonconst_full_model_info_from_pose( pose::Pose & pose )
 {
+
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) ) {
-		return *( static_cast< FullModelInfo * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO )() ));
+		// following takes time -- so we shouldn't call this nonconst function a lot.
+		if ( check_full_model_info_OK( pose ) ){
+			return *( static_cast< FullModelInfo * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO )() ));
+		}
 	}
 
 	FullModelInfoOP full_model_info = new FullModelInfo( pose );
+
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info );
 	return *full_model_info;
 }

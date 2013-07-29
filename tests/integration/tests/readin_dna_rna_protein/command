@@ -50,8 +50,5 @@ cd %(workdir)s
     | egrep -vf ../../ignore_list \
     > log
 
-
-score -s 4HKQ.pdb  -extra_res_fa ~/src/rosetta/main/database/chemical/residue_type_sets/fa_standard/residue_types/water/HOH.params
-
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 

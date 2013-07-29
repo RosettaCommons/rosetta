@@ -200,8 +200,8 @@ update_pdb_info_from_sub_to_full( pose::Pose & pose ){
 
 	using namespace core::pose;
 
-	FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
-	utility::vector1< Size > sub_to_full = full_model_info.sub_to_full();
+	FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+	utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
 
 	// following may not be necessary anymore -- sub_to_full *is* working_res
 	utility::vector1< Size > working_res;
@@ -211,6 +211,14 @@ update_pdb_info_from_sub_to_full( pose::Pose & pose ){
 	if ( ! pdb_info ) pdb_info = new PDBInfo( pose );
 
 	pdb_info->set_numbering( working_res );
+
+	// fill chains...
+	utility::vector1< Size > chain_numbers = figure_out_chains_from_full_model_info( pose );
+	utility::vector1< char > chains;
+	std::string const chain_char = "ABCDEFGHIJKLMNOPQRSTUVWZYX"; // hope this works.
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) chains.push_back( chain_char[ chain_numbers[n]-1 ] );
+	pdb_info->set_chains( chains );
+
 	pose.pdb_info( pdb_info );
 
 }
@@ -255,6 +263,7 @@ figure_out_chains_from_full_model_info( pose::Pose & pose ) {
 	utility::vector1< Size > chains( pose.total_residue(), 1 );
 
 	for ( Size n = 1; n <= pose.total_residue(); n++ ){
+		runtime_assert( sub_to_full[ n ] <= chains_full.size() );
 		chains[ n ]  = chains_full[ sub_to_full[ n ] ];
 		tr.Debug << "Setting chain at " << n << " to " << chains[ n  ] << std::endl;
 	}
@@ -316,6 +325,28 @@ fill_full_model_info_from_command_line( pose::Pose & pose ){
 }
 
 
+///////////////////////////////////////////////////////////////////
+bool
+check_full_model_info_OK( pose::Pose const & pose ){
+
+	using namespace core::pose::full_model_info;
+
+	FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+
+	utility::vector1< Size > sub_to_full = full_model_info.sub_to_full();
+	std::string const & sequence = full_model_info.full_sequence();
+
+	if ( sub_to_full.size() != pose.total_residue() ) return false;
+
+	if ( sequence.size() < pose.total_residue() ) return false;
+
+	for ( Size n = 1; n <= sub_to_full.size(); n++ ){
+		if ( sequence[ sub_to_full[ n ] - 1 ] != pose.residue_type( n ).name1() ) return false;
+	}
+
+	return true;
+
+}
 
 
 

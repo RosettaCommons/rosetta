@@ -21,7 +21,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/rna/RNA_IdealCoord.fwd.hh>
+#include <core/optimization/AtomTreeMinimizer.fwd.hh>
+#include <core/optimization/MinimizerOptions.fwd.hh>
 #include <protocols/rna/RNA_IdealCoord.hh>
 
 #include <core/types.hh>
@@ -30,18 +31,23 @@
 // AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-#include <utility/vector1.hh>
-
-
 
 namespace protocols {
 namespace rna {
 
+	// helper function -- which characters correspond to gaps?
+	bool
+	is_blank_seq( char const & c );
+
 /// @brief The RNA de novo structure modeling protocol
 class RNA_HelixAssembler: public protocols::moves::Mover {
 public:
+
 	/// @brief Construct the protocol object
 	RNA_HelixAssembler();
+
+	/// @brief Destroy the protocol object
+	~RNA_HelixAssembler();
 
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const;
@@ -57,39 +63,87 @@ public:
 	void random_perturbation( bool const & setting ) { random_perturbation_ = setting; }
 
 	void
+	set_dump( bool const & setting ) { dump_ = setting; }
+
+	void
 	set_minimize_all( bool const & setting ) { minimize_all_ = setting; }
 
 	void
 	set_scorefxn( core::scoring::ScoreFunctionOP setting );
 
 	void
+	set_finish_scorefxn( core::scoring::ScoreFunctionOP setting );
+
+	void
 	use_phenix_geo( bool const setting );
 
 	void set_model_and_remove_capping_residues( bool setting ){ model_and_remove_capping_residues_ = setting; }
 
+	void
+	build_helix( core::pose::Pose & pose, std::string const & full_sequence );
+
 private:
 
 	void
-	set_Aform_torsions( core::pose::Pose & pose, Size const & n );
-
-
-	void
-	build_on_base_pair( core::pose::Pose & pose, Size const & n, char const & seq1, char const & seq2 );
+	initialize_minimizer();
 
 	void
-	minimize_base_step( core::pose::Pose & pose, Size const n );
+	set_Aform_torsions( core::pose::Pose & pose, Size const & n ) const;
 
 	void
-	put_constraints_on_base_step( core::pose::Pose & pose, Size const & n );
+	build_on_base_pair( core::pose::Pose & pose, Size const & n, char const & seq1, char const & seq2 ) const;
 
 	void
-	get_rid_of_capping_base_pairs( core::pose::Pose & pose );
+	minimize_base_step( core::pose::Pose & pose, Size const n, core::scoring::ScoreFunctionOP scorefxn ) const;
+
+	void
+	put_constraints_on_base_step( core::pose::Pose & pose, Size const & n ) const;
+
+	void
+	get_rid_of_capping_base_pairs( core::pose::Pose & pose ) const;
+
+	std::string
+	figure_out_and_remove_dangling_ends( std::string const & full_sequence );
+
+	void
+	build_dangling_ends( pose::Pose & pose ) const;
+
+	void
+	build_dangle_seq1_5prime( pose::Pose & pose, std::string const & dangle_seq ) const;
+
+	void
+	build_dangle_seq2_5prime( pose::Pose & pose, std::string const & dangle_seq ) const;
+
+	void
+	build_dangle_seq1_3prime( pose::Pose & pose, std::string const & dangle_seq ) const;
+
+	void
+	build_dangle_seq2_3prime( pose::Pose & pose, std::string const & dangle_seq ) const;
+
+	core::Size
+	get_cutpoint( pose::Pose const & pose ) const;
+
+	void
+	append_Aform_residue( pose::Pose & pose, Size const & n, char const & nt ) const;
+
+	void
+	prepend_Aform_residue( pose::Pose & pose, Size const & n, char const & nt ) const;
+
+	void
+	minimize_append_res( pose::Pose & pose, Size const n ) const;
+
+	void
+	minimize_prepend_res( pose::Pose & pose, Size const n ) const;
+
+	void
+	fill_chain_info( pose::Pose & pose, std::string const & full_sequence );
 
 private:
 
-	bool verbose_;
+	bool dump_;
 	bool random_perturbation_;
 	bool minimize_all_;
+	bool minimize_jump_;
 	bool use_phenix_geo_;
 	std::string const ideal_jump;
 
@@ -107,11 +161,22 @@ private:
 
 	core::Real perturb_amplitude_;
 
-	core::scoring::ScoreFunctionOP scorefxn;
+	core::scoring::ScoreFunctionOP scorefxn_;
+
+	core::scoring::ScoreFunctionOP finish_scorefxn_;
 
 	protocols::rna::RNA_IdealCoord ideal_coord_;
 
 	bool model_and_remove_capping_residues_;
+	std::string const capping_residues_;
+
+	core::optimization::AtomTreeMinimizerOP minimizer_;
+	core::optimization::MinimizerOptionsOP minimizer_options_;
+
+	std::string dangle_seq1_5prime_;
+	std::string dangle_seq1_3prime_;
+	std::string dangle_seq2_5prime_;
+	std::string dangle_seq2_3prime_;
 
 }; // class RNA_HelixAssembler
 

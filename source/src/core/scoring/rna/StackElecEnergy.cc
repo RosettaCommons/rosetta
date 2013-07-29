@@ -81,7 +81,8 @@ ScoreTypes
 StackElecEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( stack_elec );
-	sts.push_back( stack_elec_base_only );
+	sts.push_back( stack_elec_base_base );
+	sts.push_back( stack_elec_base_bb   );
 	return sts;
 }
 
@@ -154,14 +155,15 @@ StackElecEnergy::residue_pair_energy(
 {
 
 
-	Real score_base1( 0.0 ), score_base2( 0.0 );
+	Real score_base_base1( 0.0 ), score_base_base2( 0.0 );
+	Real score_base_bb1( 0.0 ), score_base_bb2( 0.0 );
 
-	Real const score = residue_pair_energy_one_way( rsd1, rsd2, pose, score_base1 ) +
-		residue_pair_energy_one_way( rsd2, rsd1, pose, score_base2 ) ;
+	Real const score = residue_pair_energy_one_way( rsd1, rsd2, pose, score_base_base1, score_base_bb1 ) +
+		residue_pair_energy_one_way( rsd2, rsd1, pose, score_base_base2, score_base_bb2 ) ;
 
-  emap[ stack_elec ]       += score;
-
-	emap[ stack_elec_base_only ]   += score_base1 + score_base2;
+  emap[ stack_elec ]           += score;
+	emap[ stack_elec_base_base ] += score_base_base1 + score_base_base2;
+	emap[ stack_elec_base_bb ]   += score_base_bb1   + score_base_bb2;
 
 	if ( verbose_ && std::abs( score ) > 0.01 ) {
 		tr.Info << "respair " << rsd1.name3()  << rsd1.seqpos() << " --- " << rsd2.name3() << rsd2.seqpos() << ": " << F( 8, 3,score) << std::endl;
@@ -176,11 +178,13 @@ StackElecEnergy::residue_pair_energy_one_way(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	Real & score_base
+	Real & score_base_base,
+	Real & score_base_bb
 ) const
 {
 
-	score_base = 0.0;
+	score_base_base = 0.0;
+	score_base_bb   = 0.0;
 
 	// currently defined only for RNA -- could easily generalize to DNA or proteins,
 	//  as long as we precompute centroid & base-normals for rings.
@@ -220,9 +224,14 @@ StackElecEnergy::residue_pair_energy_one_way(
 
 			Real cos_kappa2( 0.0 ); // useful for output...
 			Real const stack_elec_score = get_stack_elec_score( atom_i, atom_j, i_charge, j_charge, M_i, cos_kappa2 );
+
 			score += stack_elec_score;
 
-			if ( is_rna_base( rsd1, m) && is_rna_base( rsd2, n) ) score_base += stack_elec_score;
+			if ( is_rna_base( rsd2, n) ) {
+				score_base_base += stack_elec_score;
+			} else {
+				score_base_bb   += stack_elec_score;
+			}
 
 			//DEBUG
 			if ( std::abs( stack_elec_score ) > 0.1 && verbose_ ){
@@ -332,7 +341,8 @@ StackElecEnergy::eval_atom_derivative(
 
 				Vector force_vector_i = weights[ stack_elec ] * deriv_vector_i;
 
-				if ( weights[ stack_elec_base_only ] != 0.0 && is_rna_base( rsd2, n ) ) force_vector_i += weights[ stack_elec_base_only ] * deriv_vector_i;
+				if ( weights[ stack_elec_base_base ] != 0.0 &&  is_rna_base( rsd2, n ) ) force_vector_i += weights[ stack_elec_base_base ] * deriv_vector_i;
+				if ( weights[ stack_elec_base_bb   ] != 0.0 && !is_rna_base( rsd2, n ) ) force_vector_i += weights[ stack_elec_base_bb   ] * deriv_vector_i;
 
 				//Force/torque with which occluding atom j acts on "dipole" i.
 				F1 += -1.0 * cross( force_vector_i, atom_j );
@@ -349,7 +359,8 @@ StackElecEnergy::eval_atom_derivative(
 
 				Vector force_vector_j = weights[ stack_elec ] * deriv_vector_j;
 
-				if ( weights[ stack_elec_base_only ] != 0.0 && is_rna_base( rsd1, m ) ) force_vector_j += weights[ stack_elec_base_only ] * deriv_vector_j;
+				if ( weights[ stack_elec_base_base ] != 0.0  &&  is_rna_base( rsd1, m ) )  force_vector_j += weights[ stack_elec_base_base ] * deriv_vector_j;
+				if ( weights[ stack_elec_base_bb   ] != 0.0  && !is_rna_base( rsd1, m ) )  force_vector_j += weights[ stack_elec_base_bb   ] * deriv_vector_j;
 
 				F1 += cross( force_vector_j, atom_i );
 				F2 += force_vector_j;

@@ -1,0 +1,18 @@
+# first 20 reference weights are protein; then four for DNA; then four for RNA [G,A,C,U]
+METHOD_WEIGHTS ref 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0   0 0 0 0    2.51  2.17  1.71  2.28
+NO_HB_ENV_DEP
+fa_atr          0.13
+fa_rep          0.12
+fa_intra_rep    0.0029
+fa_stack        0.078
+rna_torsion     2.0
+rna_sugar_close 0.5
+hbond_sc        0.58
+lk_nonpolar     0.15
+geom_sol        0.10
+fa_elec_rna_phos_phos 1.0
+stack_elec      0.46
+intermol        1.4
+ref             1.0
+rna_loop        1.0
+linear_chainbreak 5.0

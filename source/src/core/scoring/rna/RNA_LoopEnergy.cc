@@ -50,6 +50,7 @@ RNA_LoopEnergyCreator::create_energy_method(
 ScoreTypes
 RNA_LoopEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
+	sts.push_back( rna_loop );
 	sts.push_back( rna_loop_fixed );
 	sts.push_back( rna_loop_logN );
 	sts.push_back( rna_loop_harmonic );
@@ -60,7 +61,9 @@ RNA_LoopEnergyCreator::score_types_for_method() const {
 /// c-tor
 RNA_LoopEnergy::RNA_LoopEnergy() :
 	parent( new RNA_LoopEnergyCreator ),
-	persistence_length2_( 8.0 * 8.0 )
+	rna_loop_fixed_cost_( 4.5 ), // in kcal/mol
+	persistence_length2_( 5.0 * 5.0 ), // in Angstroms^2
+	kB_T_( 0.616 ) // in kcal/mol, at T = 37 C.
 {}
 
 /// clone
@@ -93,7 +96,7 @@ RNA_LoopEnergy::update_rna_loop_atoms_and_lengths( pose::Pose & pose ) const {
 	using namespace core::pose::full_model_info;
 	using namespace core::id;
 
-	FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+	FullModelInfo const & full_model_info = nonconst_full_model_info_from_pose( pose );
 	utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
 	utility::vector1< Size > const chains = figure_out_chains_from_full_model_info( pose );
 
@@ -145,6 +148,7 @@ RNA_LoopEnergy::finalize_total_energy(
 
 	Real intermol_( 0.0 );
 
+	totals[ rna_loop          ] = 0.0;
 	totals[ rna_loop_fixed    ] = 0.0;
 	totals[ rna_loop_logN     ] = 0.0;
 	totals[ rna_loop_harmonic ] = 0.0;
@@ -153,19 +157,21 @@ RNA_LoopEnergy::finalize_total_energy(
 
 		/////////////////////////////////////////////////////////////////////
 		// score function weighting will determine actual penalty.
-		totals[ rna_loop_fixed ] += 1.0;
+		totals[ rna_loop_fixed ] += rna_loop_fixed_cost_;
 
-		// prefactor should be something like (3/2) * k_B T.
+		// prefactor should be something like (3/2) * k_B T
 		// score function weighting will determine actual penalty.
-		totals[ rna_loop_logN  ] += log( static_cast<Real>( rna_loop_lengths_[ n ] ) );
+		totals[ rna_loop_logN  ] += 1.5 * kB_T_ * log( static_cast<Real>( rna_loop_lengths_[ n ] ) );
 
 		/////////////////////////////////////////////////////////////////////
 		// harmonic term -- assuming a random Gaussian chain.
 		Real const gaussian_variance = rna_loop_lengths_[ n ] * persistence_length2_;
 		Real const loop_distance2 = get_loop_distance2( pose.xyz( loop_takeoff_atoms_[ n ] ), pose.xyz( loop_landing_atoms_[ n ] ) );
-		totals[ rna_loop_harmonic ] += loop_distance2 / ( 2 * gaussian_variance );
+		totals[ rna_loop_harmonic ] += kB_T_ * loop_distance2 / ( 2 * gaussian_variance );
 
 	}
+
+	totals[ rna_loop ] = totals[ rna_loop_fixed ] + totals[ rna_loop_logN ] + totals[ rna_loop_harmonic ];
 
 } // finalize_total_energy
 
@@ -239,6 +245,9 @@ RNA_LoopEnergy::eval_atom_derivative(
 		F1 += weights[ rna_loop_harmonic ] * f1;
 		F2 += weights[ rna_loop_harmonic ] * f2;
 
+		F1 += weights[ rna_loop ] * f1;
+		F2 += weights[ rna_loop ] * f2;
+
 	}
 
 	if ( loop_landing_atoms_.has_value( atom_id ) ){
@@ -258,6 +267,9 @@ RNA_LoopEnergy::eval_atom_derivative(
 
 		F1 += weights[ rna_loop_harmonic ] * f1;
 		F2 += weights[ rna_loop_harmonic ] * f2;
+
+		F1 += weights[ rna_loop ] * f1;
+		F2 += weights[ rna_loop ] * f2;
 
 	}
 

@@ -686,7 +686,7 @@ void
 setup_base_pair_constraints(
 														pose::Pose & pose,
 														utility::vector1< std::pair< Size, Size > > const &  pairings,
-														Real const suppress_factor )
+														Real const suppress_factor /* = 1.0 */ )
 {
 
 	using namespace core::scoring::constraints;

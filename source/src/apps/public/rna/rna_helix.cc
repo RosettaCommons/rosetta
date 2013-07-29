@@ -35,6 +35,7 @@
 #include <protocols/rna/RNA_HelixAssembler.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/init/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
@@ -74,6 +75,8 @@ using io::pdb::dump_pdb;
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( StringVector,  seq )
 OPT_KEY( Boolean,  minimize_all )
+OPT_KEY( Boolean,  dump )
+OPT_KEY( String,  finish_weights )
 
 /////////////////////////////////////////////////
 void
@@ -81,6 +84,7 @@ rna_build_helix_test(){
 
  	using namespace core::scoring;
  	using namespace core::chemical;
+ 	using namespace core::sequence;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
@@ -91,7 +95,7 @@ rna_build_helix_test(){
 	std::string full_sequence;
 	if ( option[ in::file::fasta ].user() ) {
 		std::string const fasta_file = option[ in::file::fasta ]()[1];
-		core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
+		SequenceOP fasta_sequence = read_fasta_file( fasta_file )[1];
 		full_sequence = fasta_sequence->sequence();
 	} else if ( option[ seq ].user() ){
 		utility::vector1< std::string > full_sequence_segments = option[ seq ]();
@@ -111,18 +115,26 @@ rna_build_helix_test(){
 
 	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo] ();
 	ResidueTypeSetCAP rsd_set;
-	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+	rsd_set = ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	pose::Pose pose;
-	pose::make_pose_from_sequence( pose, full_sequence,	*rsd_set );
+	std::string sequence_to_build;
+	for (Size n = 1; n <= full_sequence.size(); n++ ) if ( !is_blank_seq( full_sequence[n-1]) ) sequence_to_build.push_back( full_sequence[ n-1 ] );
+	pose::make_pose_from_sequence( pose, sequence_to_build,	*rsd_set );
 
 	RNA_HelixAssembler rna_helix_assembler;
 	//rna_helix_assembler.random_perturbation( true );
 	rna_helix_assembler.set_minimize_all( option[ minimize_all ]() );
+	rna_helix_assembler.set_dump( option[ dump ]() );
 	rna_helix_assembler.use_phenix_geo( is_use_phenix_geo );
 	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
-		core::scoring::ScoreFunctionOP scorefxn = getScoreFunction();
+		ScoreFunctionOP scorefxn = getScoreFunction();
 		rna_helix_assembler.set_scorefxn ( scorefxn );
+	}
+	// if following is blank, there won't be a 'final' minimize.
+	if ( option[ finish_weights ].user() ){
+		ScoreFunctionOP finish_scorefxn = ScoreFunctionFactory::create_score_function( option[ finish_weights ]()  );
+		rna_helix_assembler.set_finish_scorefxn( finish_scorefxn );
 	}
 	rna_helix_assembler.set_model_and_remove_capping_residues( true );
 
@@ -136,11 +148,12 @@ rna_build_helix_test(){
 	for (Size n = 1; n <= nstruct; n++ ) {
 		rna_helix_assembler.apply( pose, full_sequence );
 
-		std::string const tag( "S_"+lead_zero_string_of(n, 3) );
 		if ( output_silent ) {
+			std::string const tag( "S_"+lead_zero_string_of(n, 3) );
 			BinaryRNASilentStruct s( pose, tag );
 			silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 		}
+
 		pose.dump_pdb( outfile );
 	}
 
@@ -174,6 +187,8 @@ try {
 	utility::vector1< std::string > blank_string_vector;
 	NEW_OPT( seq, "Input sequence", blank_string_vector );
 	NEW_OPT( minimize_all, "minimize all torsions in response to each base pair addition", false );
+	NEW_OPT( dump, "dump intermediate pdbs", false );
+	NEW_OPT( finish_weights, "[ optional ] score function to do a second minimize with after each base pair addition", "" );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

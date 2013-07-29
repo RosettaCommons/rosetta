@@ -34,11 +34,14 @@
 // Utility headers
 #include <utility/io/izstream.hh>
 #include <utility/file/file_sys_util.hh>
+#include <basic/Tracer.hh>
 
 // C++ headers
 #include <iostream>
 
 #include <utility/vector1.hh>
+
+static basic::Tracer tr("core.scoring.UnfoldedStatePotential");
 
 
 namespace core {
@@ -153,6 +156,7 @@ UnfoldedStatePotential::raw_unfolded_state_energymap( std::string const & aa_nam
 
 	// the energies stored in the database file aren't probabilities; don't take the log of them, that doesn't make sense!
 	e = ( unfolded_energy_.find( aa_name3 ) )->second;
+
 }
 
 

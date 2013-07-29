@@ -74,6 +74,7 @@ rna_fullatom_minimize_test()
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
 	using namespace protocols::toolbox;
+	using namespace protocols::rna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -121,10 +122,12 @@ rna_fullatom_minimize_test()
 	while ( input->has_another_pose() ){
 
 		input->fill_pose( pose, *rsd_set );
-		protocols::rna::ensure_phosphate_nomenclature_matches_mini( pose );
 		i++;
-		protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
+
+		ensure_phosphate_nomenclature_matches_mini( pose );
 		core::pose::full_model_info::fill_full_model_info_from_command_line( pose ); // only does something if -in:file:fasta specified.
+		figure_out_reasonable_rna_fold_tree( pose );
+		virtualize_5prime_phosphates( pose );
 
 		std::cout << pose.fold_tree() << std::endl;
 

@@ -117,11 +117,12 @@ rna_score_test()
 	while ( input->has_another_pose() ){
 
 		input->fill_pose( pose, *rsd_set );
-		protocols::rna::ensure_phosphate_nomenclature_matches_mini( pose );
 		i++;
-		protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
-		//		protocols::rna::virtualize_5prime_phosphates( pose ); // should we have this on by deafult?
+
+		protocols::rna::ensure_phosphate_nomenclature_matches_mini( pose );
 		core::pose::full_model_info::fill_full_model_info_from_command_line( pose ); // only does something if -in:file:fasta specified.
+		protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
+		protocols::rna::virtualize_5prime_phosphates( pose ); // should we have this on by deafult?
 
 		// graphics viewer.
 		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );

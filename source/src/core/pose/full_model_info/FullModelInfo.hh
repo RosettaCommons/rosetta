@@ -76,6 +76,9 @@ public:
 	utility::vector1< Size >
 	get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const;
 
+	std::string
+	get_sequence_with_gaps_filled_with_n( pose::Pose const & pose ) const;
+
 private:
 
 	// properties of current, working pose

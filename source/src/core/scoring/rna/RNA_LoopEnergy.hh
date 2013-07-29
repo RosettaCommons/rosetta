@@ -99,7 +99,9 @@ private:
 	virtual
 	core::Size version() const;
 
+	Real const rna_loop_fixed_cost_;
 	Real const persistence_length2_;
+	Real const kB_T_;
 
 	// might be better to cache the following inside the pose...
 	mutable utility::vector1< Size > rna_loop_lengths_;

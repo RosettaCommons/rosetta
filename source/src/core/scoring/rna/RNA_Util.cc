@@ -26,6 +26,7 @@
 #include <core/chemical/AtomType.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/chemical/AA.hh>
 
 // Project headers
@@ -326,6 +327,10 @@ is_rna_chainbreak( core::pose::Pose const & pose, Size const i ) {
 	if ( dist2 > CHAINBREAK_CUTOFF2 ) {
 		//std::cout << "Found chainbreak at residue "<< i << " .  O3'-P distance: " << sqrt( dist2 ) << std::endl;
 		return true;
+	}
+
+	if ( pose.pdb_info() ){
+		if ( pose.pdb_info()->number( i ) + 1 != pose.pdb_info()->number( i+1 ) ) return true;
 	}
 
 	return false;

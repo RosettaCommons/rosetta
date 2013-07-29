@@ -45,6 +45,8 @@ namespace full_model_info {
 	void
 	fill_full_model_info_from_command_line( pose::Pose & pose );
 
+	bool
+	check_full_model_info_OK( pose::Pose const & pose );
 
 }
 }

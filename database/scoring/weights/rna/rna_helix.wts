@@ -8,4 +8,5 @@ rna_sugar_close 		     0.7
 hbond_sc        		     5.0
 lk_nonpolar     		     0.32
 CI_geom_sol        		     0.25
-atom_pair_constraint                 0.1
+atom_pair_constraint                 2.0
+#atom_pair_constraint                 0.1

@@ -160,7 +160,9 @@ enum ScoreType {
 	fa_stack,          // stacking interaction modeled as pairwise atom-atom interactions
 	fa_stack_aro,
 	stack_elec,          // distance dependent dielectric between base atoms (attenuated parallel to plane)
-	stack_elec_base_only,
+	stack_elec_base_base,
+	stack_elec_base_bb,
+	polar_rep,
 
 	// DNA constraints-based torsional potentials
 	dna_bb_torsion,
@@ -240,7 +242,8 @@ enum ScoreType {
 	rna_rg,           // Radius of gyration for RNA
 
 	// nucleotide resolution thermodynamics
-	rna_loop_fixed, // RNA loop closure terms -- attempting model full RNA folding free energy
+	rna_loop,  // RNA loop closure terms -- attempting model full RNA folding free energy
+	rna_loop_fixed,
 	rna_loop_logN,
 	rna_loop_harmonic,
 
