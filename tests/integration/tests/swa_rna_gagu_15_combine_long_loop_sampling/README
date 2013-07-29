@@ -1,0 +1,14 @@
+(15) combine_long_loop sampling step
+    [6 nts loop from 1S72, OLLM_chain_closure_only]
+
+# COMBINE :
+#    region_0_3 structure (append-side) :
+#           N1-N2-G3-A4-           -N-..-N47
+# AND :
+#    region_5_0 structure (prepend-side) :
+#           N1-N2-        -G6-A7-A8-N-..-N47
+#
+# Append-chunk and prepend-chunk tags from tag-pairs found at the 
+# <job_queue_ID>th line in filtered_tag_pairs.txt
+#
+# Sample missing nucleotde (U5) and close-chain.

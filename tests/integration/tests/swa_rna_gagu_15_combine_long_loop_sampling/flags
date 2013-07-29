@@ -1,0 +1,26 @@
+-algorithm rna_sample
+-filter_output_filename filtered_tag_pairs.txt
+-clusterer_num_pose_kept 1000
+-filter_for_previous_clash true
+-filterer_undercount_ribose_rotamers true
+-sample_res  5
+-cutpoint_closed 5
+-combine_long_loop_mode true
+-job_queue_ID 0
+-filter_output_filename filtered_tag_pairs.txt
+-input_res 1 2 3 4 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
+-input_res2 1 2 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
+-in:file:silent in_region_0_2.out in_region_4_0.out
+-in:file:silent_struct_type binary_rna
+-out:file:silent region_4_3_from_0_2_and_4_0.out
+-native native.pdb
+-fixed_res 1 2 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
+-rmsd_res  3 4 5 6 7 8
+-jump_point_pairs 1-47
+-alignment_res  1-47
+-fasta fasta
+-global_sample_res_list  3 4 5 6 7 8
+-score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts
+-integration_test true
+-mute all
+-analytic_etable_evaluation 0

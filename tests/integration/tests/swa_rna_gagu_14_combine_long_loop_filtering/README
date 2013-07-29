@@ -1,0 +1,24 @@
+(14) combine_long_loop, filtering step
+    [6 nts loop from 1S72, OLLM_chain_closure_only]
+
+# Full length structure (47 nucleotides):
+#           N1-N2-G3-A4-U5-G6-A7-A8-N-..-N47
+#
+# region_0_3 structure (append-side) :
+#           N1-N2-G3-A4-           -N-..-N47
+#
+# region_5_0 structure (prepend-side) :
+#           N1-N2-        -G6-A7-A8-N-..-N47
+#
+# Filtering step outputs promising tag-pairs that do not form steric clashes
+# and satisfies chain closure distance filters to "filtered_tag_pairs.txt".
+#
+# First tag is silent_struct from region_0_2 (append-side). 
+# Second tag is silent_struct from region_4_0 (prepend-side).
+#
+# -clusterer_num_pose_kept specifies number of tag-pairs outputted to
+# filtered_tag_pairs.txt
+#
+# -filter_for_previous_clash is true and this filters out conformations
+# where the residues from region_0_2 and residues from the region_4_0
+# form steric clashes.

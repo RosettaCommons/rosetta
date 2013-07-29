@@ -1,0 +1,19 @@
+(13) Chunk combination & closure :
+
+#                 U08 -- A09                       
+#                 G07 -- C10                       
+#                 U06    G11                    
+#   COMBINE       G05          WITH                     A12
+#   Top chunk --> A04          Bottom chunk -->         G13
+#                                                G03    U14
+#                                                C02 -- G15
+#                                                A01 -- U16
+#
+# Sample G03-A04 suite, chain-closure at G11-A12 suite.
+#
+# Top-chunk and bottom-chunk tags from tag-pairs found at the <job_queue_ID>th
+# line in filtered_tag_pairs.txt
+#
+# This move not actually used in since too computational expensive, requiring
+# combination of N**2 possible chunks (N top-half chunks X N bottom-half chunks).
+

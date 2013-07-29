@@ -234,6 +234,7 @@ namespace rna {
 		stepwise_rna_minimizer.set_rm_virt_phosphate (  rm_virt_phosphate_ );
 		stepwise_rna_minimizer.set_native_screen_rmsd_cutoff (  sampler_native_screen_rmsd_cutoff_ + 1 ); //+1 for leniency Sept 20, 2010
 
+		if ( integration_test_mode_ ) num_pose_minimize_ = 1;
 		if ( num_pose_minimize_ > 0 ) stepwise_rna_minimizer.set_num_pose_minimize ( num_pose_minimize_ );
 		stepwise_rna_minimizer.set_minimize_and_score_sugar ( minimize_and_score_sugar_ );
 		stepwise_rna_minimizer.set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener );
