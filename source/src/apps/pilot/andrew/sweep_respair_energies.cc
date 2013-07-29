@@ -1179,6 +1179,7 @@ sweep_params_from_match_constraint_file(
 	std::string pose_seq = std::string("G") + res1n1 + "GGGGG" + res2n1 + "G";
 	std::cout << "creating pose from sequence: " << pose_seq << std::endl;
 	core::pose::make_pose_from_sequence( pose, pose_seq, *fa_restypeset );
+
 	for ( core::Size ii = 1; ii <= 9; ++ii ) {
 		pose.set_phi( ii, -121 );
 		pose.set_psi( ii,  136 );

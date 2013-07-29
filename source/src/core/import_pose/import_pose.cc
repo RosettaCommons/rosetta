@@ -100,12 +100,10 @@ read_additional_pdb_data(
 	bool read_fold_tree
 )
 {
-
-	if ( (!read_fold_tree) && (!options.fold_tree_io()) ) return;
-
-	// split on newlines
+	// split additional_pdb_data s into newlines
 	utility::vector1< std::string > lines;
 	Size start=0, i=0;
+
 	while(start < s.size()) {
 		if( s[i] == '\n' || s[i] == '\r' /* || i==s.size()-1 */) {
 			lines.push_back( std::string(s.begin()+start, s.begin()+i) );
@@ -118,11 +116,43 @@ read_additional_pdb_data(
 		}
 	}
 
-	//
-	for ( Size i=1; i<= lines.size(); ++i ) {
+	//Added by Daniel-Adriano Silva, used to read PDBinfo-LABEL
+	//TR.Debug << "Setting PDBinfo-labels from PDB file." << std::endl;
+	for ( i=1; i<= lines.size(); ++i ) {
 		std::string const & line( lines[i] );
+		if( line.size() > 21 && line.substr(0,21) == "REMARK PDBinfo-LABEL:" ){ 
+			//Parse and split string
+			utility::vector1 < std::string > remark_values;
+			utility::vector1 < std::string > tmp_remark_values = utility::string_split(line, ' ');
+			//Copy non-empty (i.e. !' ') elements to remark_values
+			if ( tmp_remark_values .size() > 3){
+				for ( Size j=3; j<= tmp_remark_values.size(); ++j ) {
+					if(tmp_remark_values[j] != ""){
+						remark_values.push_back(tmp_remark_values[j]);
+					}
+				}
+			}
+			//Check that we have at least two elements left ([1]=index, [2-n]=PDBinfo-labels)
+			if (remark_values.size() > 1){
+				core::Size tmp_ndx=atoi(remark_values[1].c_str());
+				if ( tmp_ndx <= pose.total_residue() ) { 
+					for ( Size j=2; j<= remark_values.size(); ++j ) {
+						pose.pdb_info()->add_reslabel(tmp_ndx,remark_values[j]);
+					}
+				}else{
+					TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.total_residue()  << std::endl;
+				}
+			}else{
+				TR.Fatal << "pose_io:: PDBinfo-LABEL io failure: " << line << ' ' << pose.total_residue() << std::endl;
+			}
+		}
+	}
 
-		// look for fold_tree info
+	if ( (!read_fold_tree) && (!options.fold_tree_io()) ) return;
+
+	for ( i=1; i<= lines.size(); ++i ) {
+		std::string const & line( lines[i] );
+		// Look for fold_tree info
 		if ( line.size() >= 16 && line.substr(0,16) == "REMARK FOLD_TREE" ) {
 			std::istringstream l( line );
 			std::string tag;
@@ -138,7 +168,6 @@ read_additional_pdb_data(
 			}
 		}
 	}
-
 }
 
 

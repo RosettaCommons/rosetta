@@ -675,10 +675,9 @@ public: // single residue accessors
 	String
 	pose2pdb( Size const res ) const;
 
-	/// @brief returns the pose(number) label associated to the residue
-	/// @note the retrun string is a concatenation of all the strings inside of the vector label<>
+	/// @brief returns the pose(number) labels associated to the residue
 	/// @param[in] res  residue in pose numbering
-	String
+	utility::vector1 < std::string >
 	get_reslabels( Size const res ) const;
 
 public: // single residue mutators

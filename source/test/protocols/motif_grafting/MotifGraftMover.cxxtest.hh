@@ -70,23 +70,46 @@ namespace {
 			
 			std::cout << "Start Test 1" << std::endl;
 			
-			//Create the mover and initialize the parameters
+			//Create the mover 
 			std::cout << "Creating mover" << std::endl;
 			MotifGraftMover mgm;
 			std::cout << "Intializing mover" << std::endl;
+			
+			// initialize the parameters
+			std::string	s_context				=	"protocols/motif_grafting/2nm1_context.pdb";				//context structure
+			std::string	s_motif					=	"protocols/motif_grafting/1zx3a_as_motif_1fragment.pdb";	//motif with one fragment
+			core::Real	r_RMSD					=	0.5;														//RMSD tol
+			core::Real	r_NC_RMSD				=	0.5;															//NC points RMSD tol
+			core::Size  s_ClashTol				=	5;															//Clash Score tol
+			std::string	s_comb_d				=	"0:0";														//Combinatory delta
+			std::string	s_max_frag_d			=	"0:0";														//Max Fragment relpacement delta
+			std::string	s_clash_res				=	"GLY";														//Clash score test residue
+			std::string	s_hotspots				=	"";															//hotspots
+			bool		b_full_bb_alignment		=	false;														//full_bb_alignment  
+			bool		b_allow_ind_frag_alig	=	false;														//allow_independent_alignment_per_fragment
+			bool		b_only_copy_sidechain	=	false;														//only copy sidechains for hotspots (opposed to graft)
+			bool		b_only_if_Npoint_eq		=	false;														//graft only if Npoint aminoacid identities are equal
+			bool		b_only_if_Cpoint_eq		=	false;														//graft only if Cpoint aminoacid identities are equal
+			bool		b_revert_to_native		=	false;														//revert to the native scafold sequence after grafting
+			bool		b_allow_repeat			=	false;														//Allow repeat same graft 
+			
 			mgm.init_parameters(
-				"protocols/motif_grafting/2nm1_context.pdb",  //context structure
-				"protocols/motif_grafting/1zx3a_as_motif_1fragment.pdb",  //motif with two fragments
-				0.5,	//RMSD tol
-				0.0,	//Clash Score tol
-				"0:0", //Combinatory delta
-				"0:0", //Max Fragment relpacement delta
-				"GLY", //Clash score test residue
-				"", //hotspots
-				true,		//full_bb_alignment  
-				true,		//optimum_alignment_per_fragment
-				false		//Allow repeat same graft 
-				);
+				s_context,
+				s_motif,
+				r_RMSD,
+				r_NC_RMSD,
+				s_ClashTol,
+				s_comb_d,
+				s_max_frag_d,
+				s_clash_res,
+				s_hotspots,
+				b_full_bb_alignment,
+				b_allow_ind_frag_alig,
+				b_only_copy_sidechain,
+				b_only_if_Npoint_eq,
+				b_only_if_Cpoint_eq,
+				b_revert_to_native,
+				b_allow_repeat);
 			
 			//Import the test scaffold
 			std::cout << "Importing Pose" << std::endl;
@@ -134,29 +157,53 @@ namespace {
 			std::cout << "End Test" << std::endl;
 		}
 		
+		
 		void test_self_graft_recovery_twoFragment_using_fixBBmatching()
 		{
 			using namespace protocols::motif_grafting::movers;
 			
-			std::cout << "Start Test 1" << std::endl;
+			std::cout << "Start Test 2" << std::endl;
 			
-			//Create the mover and initialize the parameters
+			//Create the mover 
 			std::cout << "Creating mover" << std::endl;
 			MotifGraftMover mgm;
 			std::cout << "Intializing mover" << std::endl;
+			
+			// initialize the parameters
+			std::string	s_context				=	"protocols/motif_grafting/2nm1_context.pdb";				//context structure
+			std::string	s_motif					=	"protocols/motif_grafting/1zx3a_as_motif_2fragment.pdb";	//motif with one fragment
+			core::Real	r_RMSD					=	0.5;														//RMSD tol
+			core::Real	r_NC_RMSD				=	0.5;														//NC points RMSD tol
+			core::Size  s_ClashTol				=	5;															//Clash Score tol
+			std::string	s_comb_d				=	"0:0,0:0";													//Combinatory delta
+			std::string	s_max_frag_d			=	"0:0,0:0";													//Max Fragment relpacement delta
+			std::string	s_clash_res				=	"GLY";														//Clash score test residue
+			std::string	s_hotspots				=	"";															//hotspots
+			bool 		b_full_bb_alignment		=	true;														//full_bb_alignment  
+			bool 		b_allow_ind_frag_alig	=	false;														//allow_independent_alignment_per_fragment
+			bool 		b_only_copy_sidechain	=	false;														//only copy sidechains for hotspots (opposed to graft)
+			bool		b_only_if_Npoint_eq		=	false;														//graft only if Npoint aminoacid identities are equal
+			bool		b_only_if_Cpoint_eq		=	false;														//graft only if Cpoint aminoacid identities are equal
+			bool 		b_revert_to_native		=	true;														//revert to the native scafold sequence after grafting
+			bool 		b_allow_repeat			=	false;														//Allow repeat same graft 
+			
 			mgm.init_parameters(
-				"protocols/motif_grafting/2nm1_context.pdb",  //context structure
-				"protocols/motif_grafting/1zx3a_as_motif_2fragment.pdb",  //motif with two fragments
-				0.5,	//RMSD tol
-				0.0,	//Clash Score tol
-				"0:0,0:0", //Combinatory delta
-				"0:0,0:0", //Max Fragment relpacement delta
-				"GLY", //Clash score test residue
-				"", //hotspots
-				true,		//full_bb_alignment  
-				true,		//optimum_alignment_per_fragment
-				false		//Allow repeat same graft 
-				);
+				s_context,
+				s_motif,
+				r_RMSD,
+				r_NC_RMSD,
+				s_ClashTol,
+				s_comb_d,
+				s_max_frag_d,
+				s_clash_res,
+				s_hotspots,
+				b_full_bb_alignment,
+				b_allow_ind_frag_alig,
+				b_only_copy_sidechain,
+				b_only_if_Npoint_eq,
+				b_only_if_Cpoint_eq,
+				b_revert_to_native,
+				b_allow_repeat);
 			
 			//Import the test scaffold
 			std::cout << "Importing Pose" << std::endl;
@@ -169,6 +216,8 @@ namespace {
 			std::cout << "Applying mover" << std::endl;
 			//Apply the mover
 			mgm.apply(testPose);
+			
+			std::cout << "Mover Finished" << std::endl;
 			
 			//get the sequence of the epigraft
 			std::string seq_motif_after=testPose.chain_sequence(2);
@@ -210,23 +259,46 @@ namespace {
 			
 			std::cout << "Start Test 3" << std::endl;
 			
-			//Create the mover and initialize the parameters
+			//Create the mover 
 			std::cout << "Creating mover" << std::endl;
 			MotifGraftMover mgm;
 			std::cout << "Intializing mover" << std::endl;
+			
+			// initialize the parameters
+			std::string	s_context				=	"protocols/motif_grafting/2nm1_context.pdb";				//context structure
+			std::string	s_motif					=	"protocols/motif_grafting/1zx3a_as_motif_1fragment.pdb";	//motif with one fragment
+			core::Real	r_RMSD					=	0.5;														//RMSD tol
+			core::Real	r_NC_RMSD				=	0.5;														//NC points RMSD tol
+			core::Size  s_ClashTol				=	5;															//Clash Score tol
+			std::string	s_comb_d				=	"0:0";														//Combinatory delta
+			std::string	s_max_frag_d			=	"0:0";														//Max Fragment relpacement delta
+			std::string	s_clash_res				=	"GLY";														//Clash score test residue
+			std::string	s_hotspots				=	"";															//hotspots
+			bool 		b_full_bb_alignment		=	false;														//full_bb_alignment  
+			bool 		b_allow_ind_frag_alig	=	true;														//allow_independent_alignment_per_fragment
+			bool 		b_only_copy_sidechain	=	false;														//only copy sidechains for hotspots (opposed to graft)
+			bool		b_only_if_Npoint_eq		=	false;														//graft only if Npoint aminoacid identities are equal
+			bool		b_only_if_Cpoint_eq		=	false;														//graft only if Cpoint aminoacid identities are equal
+			bool 		b_revert_to_native		=	false;														//revert to the native scafold sequence after grafting
+			bool 		b_allow_repeat			=	false;														//Allow repeat same graft 
+			
 			mgm.init_parameters(
-				"protocols/motif_grafting/2nm1_context.pdb",  //context structure
-				"protocols/motif_grafting/1zx3a_as_motif_1fragment.pdb",  //motif with two fragments
-				0.5,	//RMSD tol
-				0.0,	//Clash Score tol
-				"0:0", //Combinatory delta
-				"0:0", //Max Fragment relpacement delta
-				"GLY", //Clash score test residue
-				"", //hotspots
-				false,		//full_bb_alignment  
-				true,		//optimum_alignment_per_fragment
-				false		//Allow repeat same graft 
-				);
+				s_context,
+				s_motif,
+				r_RMSD,
+				r_NC_RMSD,
+				s_ClashTol,
+				s_comb_d,
+				s_max_frag_d,
+				s_clash_res,
+				s_hotspots,
+				b_full_bb_alignment,
+				b_allow_ind_frag_alig,
+				b_only_copy_sidechain,
+				b_only_if_Npoint_eq,
+				b_only_if_Cpoint_eq,
+				b_revert_to_native,
+				b_allow_repeat);
 			
 			//Import the test scaffold
 			std::cout << "Importing Pose" << std::endl;
@@ -273,6 +345,7 @@ namespace {
 			}
 			std::cout << "End Test" << std::endl;
 		}
+		
 		
 		void test_self_graft_recovery_twoFragment_using_end2endMatching()
 		{
@@ -280,23 +353,46 @@ namespace {
 			
 			std::cout << "Start Test 4" << std::endl;
 			
-			//Create the mover and initialize the parameters
+			//Create the mover 
 			std::cout << "Creating mover" << std::endl;
 			MotifGraftMover mgm;
 			std::cout << "Intializing mover" << std::endl;
+			
+			// initialize the parameters
+			std::string	s_context				=	"protocols/motif_grafting/2nm1_context.pdb";				//context structure
+			std::string	s_motif					=	"protocols/motif_grafting/1zx3a_as_motif_2fragment.pdb";	//motif with one fragment
+			core::Real	r_RMSD					=	0.5;														//RMSD tol
+			core::Real	r_NC_RMSD				=	0.5;														//NC points RMSD tol
+			core::Size  s_ClashTol				=	5;															//Clash Score tol
+			std::string	s_comb_d				=	"0:0,0:0";													//Combinatory delta
+			std::string	s_max_frag_d			=	"0:0,0:0";													//Max Fragment relpacement delta
+			std::string	s_clash_res				=	"GLY";														//Clash score test residue
+			std::string	s_hotspots				=	"";															//hotspots
+			bool 		b_full_bb_alignment		=	true;														//full_bb_alignment  
+			bool 		b_allow_ind_frag_alig	=	true;														//allow_independent_alignment_per_fragment
+			bool 		b_only_copy_sidechain	=	true;														//only copy sidechains for hotspots (opposed to graft)
+			bool		b_only_if_Npoint_eq		=	true;														//graft only if Npoint aminoacid identities are equal
+			bool		b_only_if_Cpoint_eq		=	true;														//graft only if Cpoint aminoacid identities are equal
+			bool 		b_revert_to_native		=	true;														//revert to the native scafold sequence after grafting
+			bool 		b_allow_repeat			=	false;														//Allow repeat same graft 
+			
 			mgm.init_parameters(
-				"protocols/motif_grafting/2nm1_context.pdb",  //context structure
-				"protocols/motif_grafting/1zx3a_as_motif_2fragment.pdb",  //motif with two fragments
-				0.5,	//RMSD tol
-				0.0,	//Clash Score tol
-				"0:0,0:0", //Combinatory delta
-				"0:0,0:0", //Max Fragment relpacement delta
-				"GLY", //Clash score test residue
-				"", //hotspots
-				false,		//full_bb_alignment  
-				true,		//optimum_alignment_per_fragment
-				false		//Allow repeat same graft 
-				);
+				s_context,
+				s_motif,
+				r_RMSD,
+				r_NC_RMSD,
+				s_ClashTol,
+				s_comb_d,
+				s_max_frag_d,
+				s_clash_res,
+				s_hotspots,
+				b_full_bb_alignment,
+				b_allow_ind_frag_alig,
+				b_only_copy_sidechain,
+				b_only_if_Npoint_eq,
+				b_only_if_Cpoint_eq,
+				b_revert_to_native,
+				b_allow_repeat);
 			
 			//Import the test scaffold
 			std::cout << "Importing Pose" << std::endl;
@@ -338,288 +434,6 @@ namespace {
 							core::id::AtomID id( j, i );
 							//std::cout << testPose.xyz(id)(1) << " : " << challengePose.xyz(id)(1) << std::endl;
 							TS_ASSERT_DELTA( testPose.xyz(id), challengePose.xyz(id), 0.001 );
-						}
-				}
-			}
-			std::cout << "End Test" << std::endl;
-		}
-		
-		void test_self_graft_recovery_oneFragment_using_end2endMatching_variableInsertionSize()
-		{
-			using namespace protocols::motif_grafting::movers;
-			
-			std::cout << "Start Test 5" << std::endl;
-			
-			//Create the mover and initialize the parameters
-			std::cout << "Creating mover" << std::endl;
-			MotifGraftMover mgm;
-			std::cout << "Intializing mover" << std::endl;
-			mgm.init_parameters(
-				"protocols/motif_grafting/2nm1_context.pdb",  //context structure
-				"protocols/motif_grafting/1zx3a_as_motif_1fragment.pdb",  //motif with two fragments
-				0.5,	//RMSD tol
-				0.0,	//Clash Score tol
-				"0:0", //Combinatory delta
-				"", //Max Fragment relpacement delta
-				"GLY", //Clash score test residue
-				"", //hotspots
-				false,		//full_bb_alignment  
-				true,		//optimum_alignment_per_fragment
-				false		//Allow repeat same graft 
-				);
-			
-			//Import the test scaffold
-			std::cout << "Importing Pose" << std::endl;
-			core::pose::Pose testPose;
-			core::import_pose::pose_from_pdb( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" );
-			
-			//Get the original sequence
-			std::string seq_motif_before=testPose.chain_sequence(1);
-			
-			std::cout << "Applying mover" << std::endl;
-			//Apply the mover
-			mgm.apply(testPose);
-			
-			//get the sequence of the epigraft
-			std::string seq_motif_after=testPose.chain_sequence(2);
-			
-			//Check that the sequences are equal:
-			TS_ASSERT(seq_motif_before.size()==seq_motif_after.size());
-			for ( core::Size i=0; i < seq_motif_before.size(); ++i ){
-				//std::cout << seq_motif_before.at(i) << " : " << seq_motif_after.at(i) << std::endl;
-				TS_ASSERT( seq_motif_before.at(i) == seq_motif_after.at(i) );
-			}
-			
-			/////Import the target scaffold "Real Answer"
-			core::pose::Pose challengePose;
-			core::import_pose::pose_from_pdb( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" );
-			
-			
-			/////Check that "Answer" and the "Real Answer" sequences are equal size:
-			TS_ASSERT( testPose.total_residue() == challengePose.total_residue() );
-			
-			/////Check that the atomic positions of the "Answer" and the "Real Answer" are equal
-			for ( core::Size i = 1; i <= testPose.total_residue(); ++i ) {
-					//core::conformation::ResidueOP resA = new core::conformation::Residue (testPose.residue( i ) );
-					//core::conformation::ResidueOP resB = new core::conformation::Residue (challengePose.residue( i ) );
-					for ( core::Size j = 1; j <= testPose.residue_type(i).natoms(); ++j ) {
-						//This is because of the hack on the 1st hydrogen (1H) of the first motif
-						if (!testPose.residue(i).atom_is_hydrogen(j)){
-							core::id::AtomID id( j, i );
-							//std::cout << testPose.xyz(id)(1) << " : " << challengePose.xyz(id)(1) << std::endl;
-							TS_ASSERT_DELTA( testPose.xyz(id), challengePose.xyz(id), 0.001 );
-						}
-				}
-			}
-			std::cout << "End Test" << std::endl;
-		}
-		
-		void test_self_graft_recovery_twoFragment_using_end2endMatching_variableInsertionSize()
-		{
-			using namespace protocols::motif_grafting::movers;
-			
-			std::cout << "Start Test 6" << std::endl;
-			
-			//Create the mover and initialize the parameters
-			std::cout << "Creating mover" << std::endl;
-			MotifGraftMover mgm;
-			std::cout << "Intializing mover" << std::endl;
-			mgm.init_parameters(
-				"protocols/motif_grafting/2nm1_context.pdb",  //context structure
-				"protocols/motif_grafting/1zx3a_as_motif_2fragment.pdb",  //motif with two fragments
-				0.5,	//RMSD tol
-				0.0,	//Clash Score tol
-				"0:0,0:0", //Combinatory delta
-				"", //Max Fragment relpacement delta
-				"GLY", //Clash score test residue
-				"", //hotspots
-				false,		//full_bb_alignment  
-				true,		//optimum_alignment_per_fragment
-				false		//Allow repeat same graft 
-				);
-			
-			//Import the test scaffold
-			std::cout << "Importing Pose" << std::endl;
-			core::pose::Pose testPose;
-			core::import_pose::pose_from_pdb( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" );
-			
-			//Get the original sequence
-			std::string seq_motif_before=testPose.chain_sequence(1);
-			
-			std::cout << "Applying mover" << std::endl;
-			//Apply the mover
-			mgm.apply(testPose);
-			
-			//get the sequence of the epigraft
-			std::string seq_motif_after=testPose.chain_sequence(2);
-			
-			//Check that the sequences are equal:
-			TS_ASSERT(seq_motif_before.size()==seq_motif_after.size());
-			for ( core::Size i=0; i < seq_motif_before.size(); ++i ){
-				//std::cout << seq_motif_before.at(i) << " : " << seq_motif_after.at(i) << std::endl;
-				TS_ASSERT( seq_motif_before.at(i) == seq_motif_after.at(i) );
-			}
-			
-			/////Import the target scaffold "Real Answer"
-			core::pose::Pose challengePose;
-			core::import_pose::pose_from_pdb( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" );
-			
-			
-			/////Check that "Answer" and the "Real Answer" sequences are equal size:
-			TS_ASSERT( testPose.total_residue() == challengePose.total_residue() );
-			
-			/////Check that the atomic positions of the "Answer" and the "Real Answer" are equal
-			for ( core::Size i = 1; i <= testPose.total_residue(); ++i ) {
-					//core::conformation::ResidueOP resA = new core::conformation::Residue (testPose.residue( i ) );
-					//core::conformation::ResidueOP resB = new core::conformation::Residue (challengePose.residue( i ) );
-					for ( core::Size j = 1; j <= testPose.residue_type(i).natoms(); ++j ) {
-						//This is because of the hack on the 1st hydrogen (1H) of the first motif
-						if (!testPose.residue(i).atom_is_hydrogen(j)){
-							core::id::AtomID id( j, i );
-							//std::cout << testPose.xyz(id)(1) << " : " << challengePose.xyz(id)(1) << std::endl;
-							TS_ASSERT_DELTA( testPose.xyz(id), challengePose.xyz(id), 0.001 );
-						}
-				}
-			}
-			std::cout << "End Test" << std::endl;
-		}
-		
-		void test_self_graft_recovery_twoFragment_using_end2endMatching_variableInsertionSize_variableMotifSize()
-		{
-			using namespace protocols::motif_grafting::movers;
-			
-			std::cout << "Start Test 7" << std::endl;
-			
-			//Create the mover and initialize the parameters
-			std::cout << "Creating mover" << std::endl;
-			MotifGraftMover mgm;
-			std::cout << "Intializing mover" << std::endl;
-			mgm.init_parameters(
-				"protocols/motif_grafting/2nm1_context.pdb",  //context structure
-				"protocols/motif_grafting/1zx3a_as_motif_2fragment.pdb",  //motif with two fragments
-				0.5,	//RMSD tol
-				0.0,	//Clash Score tol
-				"3:3,3:3", //Combinatory delta
-				"", //Max Fragment relpacement delta
-				"GLY", //Clash score test residue
-				"", //hotspots
-				false,		//full_bb_alignment  
-				true,		//optimum_alignment_per_fragment
-				false		//Allow repeat same graft 
-				);
-			
-			//Import the test scaffold
-			std::cout << "Importing Pose" << std::endl;
-			core::pose::Pose testPose;
-			core::import_pose::pose_from_pdb( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" );
-			
-			//Get the original sequence
-			std::string seq_motif_before=testPose.chain_sequence(1);
-			
-			std::cout << "Applying mover" << std::endl;
-			//Apply the mover
-			mgm.apply(testPose);
-			
-			//get the sequence of the epigraft
-			std::string seq_motif_after=testPose.chain_sequence(2);
-			
-			//Check that the sequences are equal:
-			TS_ASSERT(seq_motif_before.size()==seq_motif_after.size());
-			for ( core::Size i=0; i < seq_motif_before.size(); ++i ){
-				//std::cout << seq_motif_before.at(i) << " : " << seq_motif_after.at(i) << std::endl;
-				TS_ASSERT( seq_motif_before.at(i) == seq_motif_after.at(i) );
-			}
-			
-			/////Import the target scaffold "Real Answer"
-			core::pose::Pose challengePose;
-			core::import_pose::pose_from_pdb( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" );
-			
-			
-			/////Check that "Answer" and the "Real Answer" sequences are equal size:
-			TS_ASSERT( testPose.total_residue() == challengePose.total_residue() );
-			
-			/////Check that the atomic positions of the "Answer" and the "Real Answer" are equal
-			for ( core::Size i = 1; i <= testPose.total_residue(); ++i ) {
-					//core::conformation::ResidueOP resA = new core::conformation::Residue (testPose.residue( i ) );
-					//core::conformation::ResidueOP resB = new core::conformation::Residue (challengePose.residue( i ) );
-					for ( core::Size j = 1; j <= testPose.residue_type(i).natoms(); ++j ) {
-						//This is because of the hack on the 1st hydrogen (1H) of the first motif
-						if (!testPose.residue(i).atom_is_hydrogen(j)){
-							core::id::AtomID id( j, i );
-							//std::cout << testPose.xyz(id)(1) << " : " << challengePose.xyz(id)(1) << std::endl;
-							//ToDo: Check why it needs a bit more of tolerance?
-							TS_ASSERT_DELTA( testPose.xyz(id), challengePose.xyz(id), 0.01 );
-						}
-				}
-			}
-			std::cout << "End Test" << std::endl;
-		}
-		
-		void test_self_graft_recovery_threeFragment_using_end2endMatching_variableInsertionSize_variableMotifSize()
-		{
-			using namespace protocols::motif_grafting::movers;
-			
-			std::cout << "Start Test 8" << std::endl;
-			
-			//Create the mover and initialize the parameters
-			std::cout << "Creating mover" << std::endl;
-			MotifGraftMover mgm;
-			std::cout << "Intializing mover" << std::endl;
-			mgm.init_parameters(
-				"protocols/motif_grafting/2nm1_context.pdb",  //context structure
-				"protocols/motif_grafting/1zx3a_as_motif_3fragment.pdb",  //motif with two fragments
-				0.5,	//RMSD tol
-				0.0,	//Clash Score tol
-				"1:1,1:1,0:0", //Combinatory delta
-				"", //Max Fragment relpacement delta
-				"GLY", //Clash score test residue
-				"", //hotspots
-				false,		//full_bb_alignment  
-				true,		//optimum_alignment_per_fragment
-				false		//Allow repeat same graft 
-				);
-			
-			//Import the test scaffold
-			std::cout << "Importing Pose" << std::endl;
-			core::pose::Pose testPose;
-			core::import_pose::pose_from_pdb( testPose, "protocols/motif_grafting/1zx3a_translated_and_rotated.pdb" );
-			
-			//Get the original sequence
-			std::string seq_motif_before=testPose.chain_sequence(1);
-			
-			std::cout << "Applying mover" << std::endl;
-			//Apply the mover
-			mgm.apply(testPose);
-			
-			//get the sequence of the epigraft
-			std::string seq_motif_after=testPose.chain_sequence(2);
-			
-			//Check that the sequences are equal:
-			TS_ASSERT(seq_motif_before.size()==seq_motif_after.size());
-			for ( core::Size i=0; i < seq_motif_before.size(); ++i ){
-				//std::cout << seq_motif_before.at(i) << " : " << seq_motif_after.at(i) << std::endl;
-				TS_ASSERT( seq_motif_before.at(i) == seq_motif_after.at(i) );
-			}
-			
-			/////Import the target scaffold "Real Answer"
-			core::pose::Pose challengePose;
-			core::import_pose::pose_from_pdb( challengePose, "protocols/motif_grafting/2nm1_1zx3a_hybrid.pdb" );
-			
-			
-			/////Check that "Answer" and the "Real Answer" sequences are equal size:
-			TS_ASSERT( testPose.total_residue() == challengePose.total_residue() );
-			
-			/////Check that the atomic positions of the "Answer" and the "Real Answer" are equal
-			for ( core::Size i = 1; i <= testPose.total_residue(); ++i ) {
-					//core::conformation::ResidueOP resA = new core::conformation::Residue (testPose.residue( i ) );
-					//core::conformation::ResidueOP resB = new core::conformation::Residue (challengePose.residue( i ) );
-					for ( core::Size j = 1; j <= testPose.residue_type(i).natoms(); ++j ) {
-						//This is because of the hack on the 1st hydrogen (1H) of the first motif
-						if (!testPose.residue(i).atom_is_hydrogen(j)){
-							core::id::AtomID id( j, i );
-							//std::cout << testPose.xyz(id)(1) << " : " << challengePose.xyz(id)(1) << std::endl;
-							//ToDo: Check why it needs a bit more of tolerance?
-							TS_ASSERT_DELTA( testPose.xyz(id), challengePose.xyz(id), 0.01 );
 						}
 				}
 			}

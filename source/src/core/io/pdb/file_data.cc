@@ -727,6 +727,25 @@ write_additional_pdb_data(
 			}
 		}
 	}
+	
+	//Added by Daniel-Adriano Silva, used to write the PDBInfoLabels to the REMARK
+	//First test that the pdb_info() is not empty
+	if ( pose.pdb_info() ){
+		//The output the labels
+		for (core::Size i=1; i<=pose.n_residue(); ++i) {
+			utility::vector1 < std::string > tmp_v_reslabels =  pose.pdb_info()->get_reslabels(i);
+			core::Size numLables=tmp_v_reslabels.size();
+			//Only write if the residue has any label (keep the file as small as possible)
+			if ( numLables > 0 ){
+				out << "REMARK PDBinfo-LABEL: " << I( 4, i );
+				for (core::Size lndx=1; lndx <= numLables; ++lndx){
+					out << " " << tmp_v_reslabels[lndx];
+				}
+				out << std::endl;
+			}
+		}
+	}
+	
 }
 
 void
