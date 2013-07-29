@@ -166,18 +166,10 @@ ICoorAtomID::xyz(
 Vector const &
 ICoorAtomID::xyz( conformation::Residue const & rsd ) const
 {
-	if ( type_ == INTERNAL ) {
-		return rsd.atom( atomno_ ).xyz();
-	} else if ( type_ == POLYMER_LOWER ) {
-		return rsd.type().lower_connect().icoor().build( rsd );
-	} else if ( type_ == POLYMER_UPPER ) {
-		return rsd.type().upper_connect().icoor().build( rsd );
-	} else if ( type_ == CONNECT ) {
-		return rsd.type().residue_connection( atomno_ ).icoor().build( rsd );
-		utility_exit_with_message( "unrecognized stub atom id type!" );
-	}
+	runtime_assert( type_ == INTERNAL ); // I warned you!
+	return rsd.atom( atomno_ ).xyz();
 }
-	
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 id::AtomID
@@ -238,14 +230,15 @@ AtomICoor::build(
 Vector
 AtomICoor::build( conformation::Residue const & rsd ) const
 {
-	kinematics::Stub built_stub( stub_atom1_.xyz( rsd ),
-		stub_atom2_.xyz( rsd ),
-		stub_atom3_.xyz( rsd ));
-			
-	assert( built_stub.is_orthogonal( 0.001 ) );
-	
-	return built_stub.spherical( phi_, theta_, d_ );
+	assert( kinematics::Stub( stub_atom1_.xyz( rsd ),
+			stub_atom2_.xyz( rsd ),
+			stub_atom3_.xyz( rsd ) ).is_orthogonal( 0.001 ) );
+
+	return kinematics::Stub( stub_atom1_.xyz( rsd ),
+			stub_atom2_.xyz( rsd ),
+			stub_atom3_.xyz( rsd ) ).spherical( phi_, theta_, d_ );
 }
+
 
 } // chemical
 } // core

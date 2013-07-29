@@ -603,12 +603,13 @@ Residue::fill_missing_atoms(
 				if ( (seqpos_ == 1                   && ic.depends_on_polymer_lower()) ||
 					(Size(seqpos_) == conformation.size() && ic.depends_on_polymer_upper()) ) {
 					missing[i] = false;
-					TR.Warning << "[ WARNING ] missing an atom: " << seqpos_ << " " << atom_name(i) << " that depends on a nonexistent polymer connection! "
-						<< std::endl <<  " --> generating coordinates using idealized coordinates." << std::endl;
-					set_xyz( i, ic.build(*this));
+					TR.Warning << "[ WARNING ] missing an atom that depends on a nonexistent polymer connection! " <<
+						seqpos_ << ' ' << atom_name(i) << std::endl << " --> using existing bogus coordinates!" << std::endl;
 					continue;
 				}
+
 				still_missing = true;
+
 				// check to see if any of our stub atoms are missing:
 				bool stub_atoms_missing( false );
 				for ( Size j=1; j<= 3; ++j ) {
@@ -622,7 +623,7 @@ Residue::fill_missing_atoms(
 						break;
 					}
 				}
-				
+
 				if ( !stub_atoms_missing ) {
 					// no stub atoms missing: build our ideal coordinates
 					missing[i] = false;
@@ -633,6 +634,8 @@ Residue::fill_missing_atoms(
 			}
 		}
 	}
+
+
 }
 
 
