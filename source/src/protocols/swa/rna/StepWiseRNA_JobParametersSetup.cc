@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWiseRNA_JobParameters_Setup
+/// @file StepWiseRNA_JobParametersSetup
 /// @brief Sets up pose and job parameters for RNA stepwise building.
 /// @detailed
 /// @author Rhiju Das, Parin Sripakdeevong
 
 
 //////////////////////////////////
-#include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
+#include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
@@ -70,7 +70,7 @@ namespace rna {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-	StepWiseRNA_JobParameters_Setup::StepWiseRNA_JobParameters_Setup( utility::vector1< core::Size > const & moving_res_list,
+	StepWiseRNA_JobParametersSetup::StepWiseRNA_JobParametersSetup( utility::vector1< core::Size > const & moving_res_list,
 																																		std::string const & full_sequence,
 																																		utility::vector1< core::Size > const & input_res,
 																																		utility::vector1< core::Size > const & input_res2,
@@ -87,7 +87,7 @@ namespace rna {
 		simple_append_map_(false),
 		skip_complicated_stuff_(false)
   {
-		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::constructor");
+		Output_title_text("Enter StepWiseRNA_JobParametersSetup::constructor", TR );
 
 		///////////////////////////////////////////////////////
 		// Cutpoint setup
@@ -106,10 +106,10 @@ namespace rna {
 		job_parameters_->set_cutpoint_closed_list(cutpoint_closed_list);
 
 		///////////////////////////////////////////////////////
-		Output_seq_num_list("input_res= ", input_res, 30);
-		Output_seq_num_list("input_res2= ", input_res2, 30);
-		Output_seq_num_list("moving_res_list= ", moving_res_list_, 30);
-		std::cout << "moving_res= " << moving_res_ << std::endl;
+		Output_seq_num_list("input_res= ", input_res, TR, 30 );
+		Output_seq_num_list("input_res2= ", input_res2, TR, 30 );
+		Output_seq_num_list("moving_res_list= ", moving_res_list_, TR, 30 );
+		TR << "moving_res= " << moving_res_ << std::endl;
 
 		utility::vector1< utility::vector1< Size > > input_res_vectors;
 		input_res_vectors.push_back( input_res );
@@ -122,23 +122,23 @@ namespace rna {
 
 		figure_out_working_sequence_and_mapping(); //Initialize this here since full_to_sub and Is_working_res is needed by many setting functions
 
-		Output_title_text("Exit StepWiseRNA_JobParameters_Setup::constructor");
+		Output_title_text("Exit StepWiseRNA_JobParametersSetup::constructor", TR );
 	}
 
   //////////////////////////////////////////////////////////////////////////
   //destructor
-  StepWiseRNA_JobParameters_Setup::~StepWiseRNA_JobParameters_Setup()
+  StepWiseRNA_JobParametersSetup::~StepWiseRNA_JobParametersSetup()
   {}
 
 	//////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters_Setup::apply() {
+	StepWiseRNA_JobParametersSetup::apply() {
 
 		using namespace core::pose;
 		using namespace core::kinematics;
 		using namespace core::chemical;
 
-		Output_title_text("Enter StepWiseRNA_JobParameter_Setup::apply");
+		Output_title_text("Enter StepWiseRNA_JobParameter_Setup::apply", TR );
 
 		setup_additional_cutpoint_closed();
 
@@ -179,15 +179,34 @@ namespace rna {
 			figure_out_best_working_alignment();
 		}
 
-		Output_title_text("Exit StepWiseRNA_JobParameter_Setup::apply");
+		Output_title_text("Exit StepWiseRNA_JobParameter_Setup::apply", TR );
 
 	}
 
-	//////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< core::Size >
-	StepWiseRNA_JobParameters_Setup::get_user_input_alignment_res_list(core::Size const root_res){
+	StepWiseRNA_JobParametersSetup::get_user_input_alignment_res_list(core::Size const root_res){
 
-		Output_title_text("Enter get_user_input_alignment_res_list");
+		//////////////////////////////////////////////////////////////////////////
+		// 1. Why is alignment_res a string vector? I see that there is a Tokenize to
+		//   parse dashes, but why? -- rhiju
+		//
+		//    Alignment_res is a string vector to allow user to specify multiple possible
+		//    alignments. Allow us to distinguish the follow cases:
+		//
+		//        i. 1-16 8-9 (align poses using res 1 and 16 OR res 8 and 9)
+		//        ii. 1-6 7-12 (align poses using res 1 and 6 OR res 7 and 12)
+		//        iii. 1-6-7-12 (align poses using res 1, 8, 9 and 16)
+		//
+		//                C01-C02-A03-A04-A05-A06-G07-G08
+		//                 |   |   .   .   .   .   |   |
+		//                C16-C16-G14-G13-G12-G11-C10-C09
+		//
+		//    If multiple possible alignments are specified, the choice of the best
+		//    alignment is determined by the get_user_input_alignment_res_list() function
+		//    inside StepWiseRNA_JobParametersSetup class.  -- parin (2013)
+
+		Output_title_text("Enter get_user_input_alignment_res_list", TR );
 
 		utility::vector1< core::Size > working_best_alignment;
 
@@ -198,7 +217,7 @@ namespace rna {
 		utility::vector1< std::string > const & alignment_res_string_list=alignment_res_string_list_;
 
 		if(alignment_res_string_list.size()==0){
-			std::cout << "WARNING: alignment_res_string_list.size()==0. EARLY RETURN AN EMPTY LIST" << std::endl;
+			TR << "WARNING: alignment_res_string_list.size()==0. EARLY RETURN AN EMPTY LIST" << std::endl;
 			return working_best_alignment;
 		}
 
@@ -207,8 +226,8 @@ namespace rna {
 			utility_exit_with_message( "need to called set_fixed_res before calling set_alignment_res" );
 		}
 
-		Output_boolean("filter_user_alignment_res_= ", filter_user_alignment_res_); std::cout << std::endl;
-		Output_seq_num_list("fixed_res= ", fixed_res_, 30);
+		Output_boolean("filter_user_alignment_res_= ", filter_user_alignment_res_, TR ); TR << std::endl;
+		Output_seq_num_list("fixed_res= ", fixed_res_, TR, 30 );
 
 
 		for(Size n=1; n<=alignment_res_string_list.size(); n++){
@@ -228,7 +247,7 @@ namespace rna {
 
 				for(Size ii=1; ii<=alignment_res.size(); ii++){
 					Size seq_num=alignment_res[ii];
-					if(Contain_seq_num(seq_num, fixed_res_)) actual_alignment_res.push_back(seq_num);
+					if(fixed_res_.has_value(seq_num)) actual_alignment_res.push_back(seq_num);
 				}
 
 				working_alignment=apply_full_to_sub_mapping(actual_alignment_res, job_parameters_);
@@ -251,14 +270,14 @@ namespace rna {
 		}
 
 
-		Output_seq_num_list("best_working_align= ", apply_sub_to_full_mapping(working_best_alignment, job_parameters_), 30);
+		Output_seq_num_list("best_working_align= ", apply_sub_to_full_mapping(working_best_alignment, job_parameters_), TR, 30 );
 
 //		if(alignment_res_string_list.size()>0 && working_best_alignment.size()==0){ Not compatible with build from scratch mode! Sept 08, 2010
 //			utility_exit_with_message( "User supplied alignment_res_string_list but working_best_alignment.size()==0!!" );
 //		}
 
 
-		Output_title_text("");
+		Output_title_text("", TR );
 		return working_best_alignment;
 
 	}
@@ -266,9 +285,9 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////
 	//no user specified alignment, have to figure this out internally
 	void
-	StepWiseRNA_JobParameters_Setup::figure_out_best_working_alignment(){
+	StepWiseRNA_JobParametersSetup::figure_out_best_working_alignment(){
 
-		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::figure_out_best_working_alignment. no user specified alignment, have to figure this out internally");
+		Output_title_text("Enter StepWiseRNA_JobParametersSetup::figure_out_best_working_alignment. no user specified alignment, have to figure this out internally", TR );
 
 		core::kinematics::FoldTree const & fold_tree = job_parameters_->fold_tree();
 		utility::vector1< core::Size > working_fixed_res( job_parameters_->working_fixed_res() );
@@ -297,7 +316,7 @@ namespace rna {
 			//For example at the last building-step of of build-outward mode + idealized helix.
 			//if( working_fixed_res.size()!=0) utility_exit_with_message( "working_alignment.size()==0 but fixed_res_.size()!=0 !!" );
 
-			std::cout << " special case of building loop outward...no fixed element. " << std::endl;
+			TR << " special case of building loop outward...no fixed element. " << std::endl;
 
 			//Basically include every working_res as an alignment_res.....INCLUDING THE MOVING RES!
 			//Don't worry about virtual res, this is taken care of by the function create_alignment_id_map(). Parin Apr 23, 2010
@@ -309,9 +328,9 @@ namespace rna {
 			}
 		}
 
-		Output_seq_num_list("working_fixed_res= ", working_fixed_res, 30);
-		Output_seq_num_list("working_alignment= ", working_alignment, 30);
-		Output_seq_num_list("working_alignment= ", working_alignment, 30);
+		Output_seq_num_list("working_fixed_res= ", working_fixed_res, TR, 30 );
+		Output_seq_num_list("working_alignment= ", working_alignment, TR, 30 );
+		Output_seq_num_list("working_alignment= ", working_alignment, TR, 30 );
 
 		job_parameters_->set_working_best_alignment(working_alignment);
 
@@ -319,14 +338,14 @@ namespace rna {
 			utility_exit_with_message( "job_parameters_->working_best_alignment().size()==0" );
 		}
 
-		Output_title_text("");
+		Output_title_text("", TR );
 
 	}
 	/////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters_Setup::figure_out_working_sequence_and_mapping(){ //working_sequence is now updated internally by JP.
+	StepWiseRNA_JobParametersSetup::figure_out_working_sequence_and_mapping(){ //working_sequence is now updated internally by JP.
 
-		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::figure_out_working_sequence_and_mapping");
+		Output_title_text("Enter StepWiseRNA_JobParametersSetup::figure_out_working_sequence_and_mapping", TR );
 
 		// There are up to two input poses. Need to merge their input residues and figure out chain boundaries.
 		std::string const & full_sequence=job_parameters_->full_sequence();
@@ -376,13 +395,13 @@ namespace rna {
 		job_parameters_->set_working_moving_res_list(  working_moving_res_list ); //This automatically set working_moving_res as well (Jan 15, 2011)
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		Output_title_text("");
+		Output_title_text("", TR );
 
 	}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	StepWiseRNA_JobParameters_Setup::figure_out_Is_build_pose_from_scratch(){
+//	StepWiseRNA_JobParametersSetup::figure_out_Is_build_pose_from_scratch(){
 //		bool const build_pose_from_scratch( job_parameters_->Is_build_pose_from_scratch() );
 //	}
 
@@ -390,9 +409,9 @@ namespace rna {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	bool
-	StepWiseRNA_JobParameters_Setup::figure_out_Is_residue_prepend(Size const seq_num) const {
+	StepWiseRNA_JobParametersSetup::figure_out_Is_residue_prepend(Size const seq_num) const {
 
-//		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::figure_out_Is_residue_prepend");
+//		Output_title_text("Enter StepWiseRNA_JobParametersSetup::figure_out_Is_residue_prepend", TR );
 
 		using namespace ObjexxFCL;
 
@@ -403,7 +422,7 @@ namespace rna {
 		utility::vector1< core::Size > working_fixed_res( job_parameters_->working_fixed_res() );
 
 		if(is_working_res[seq_num]==false){
-			Output_bool_list("Is_working_res= ", is_working_res, 30);
+			Output_bool_list("Is_working_res= ", is_working_res, TR, 30 );
 			utility_exit_with_message( "In Is_residue_prependable function. Input seq_num: " + string_of(seq_num) + " is not a element of moving_res_list_");
 		}
 
@@ -427,7 +446,7 @@ namespace rna {
 				}
 			}
 
-			if(Contain_seq_num(cur_seq_num, fixed_res_) ) return true; //Is_prepend
+			if(fixed_res_.has_value(cur_seq_num) ) return true; //Is_prepend
 
 			//For build loop outward case, in this case make every residue append except for the 1st residue in the chain..
 			//check that the fold_tree is simple..could also use the is_simple_tree() function that don't really understand how this function works
@@ -462,7 +481,7 @@ namespace rna {
 				}
 			}
 
-			if(Contain_seq_num(cur_seq_num, fixed_res_) ) return false; //Is_append
+			if(fixed_res_.has_value(cur_seq_num) ) return false; //Is_append
 
 			//For build loop outward case, in this case make every residue append except for the 1st residue in the chain..
 			//check that the fold_tree is simple..could also use the is_simple_tree() function that don't really understand how this function works
@@ -480,26 +499,53 @@ namespace rna {
 		}
 
 		//Error, if reach this point of the function
-		std::cout << "Error: Figure_out_Is_residue_prepend, residue seq_num: " << seq_num << std::endl;
-		std::cout << "Cannot attach residue by either prepending and appending!" << std::endl;
+		TR << "Error: Figure_out_Is_residue_prepend, residue seq_num: " << seq_num << std::endl;
+		TR << "Cannot attach residue by either prepending and appending!" << std::endl;
 		exit (1);
 
-//		Output_title_text("");
+//		Output_title_text("", TR );
 	}
 
-//Choose to use map data structure due to its ability to access an arbitrary element of a sequence in equal time (random access)
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Choose to use map data structure due to its ability to access an arbitrary element of a sequence in equal time (random access)
 	void
-	StepWiseRNA_JobParameters_Setup::figure_out_Is_prepend_map(){
+	StepWiseRNA_JobParametersSetup::figure_out_Is_prepend_map(){
+		//
+		//6. What is this Is_prepend_map used for?
+		//   Why is its setup connected to rmsd_res_list?
+		//                 -- rhiju
+		//
+		//  void
+		//  StepWiseRNA_JobParametersSetup::figure_out_Is_prepend_map():
+		//
+		//   Is_prepend_map is used during RMSD calculation [see rmsd_over_residue_list()
+		//   function in StepWiseRNA_Util.cc]
+		//
+		//   It determine whether the atoms in the 5' or 3' phosphate should be
+		//   included in each residue's RMSD calculation.
+		//
+		//   For example if prepend_map[2] is true, then it specifies that res 2 was
+		//   built by prepend and its 3' phosphate should be included in the RMSD calc.
+		//   Likewise if prepend_map[5] is false, then it specifies that res 5 was
+		//   built by append and its 5' phosphate should be included in the RMSD calc.
+		//
+		//   As you might guess, this is important only for edge residues (the one right
+		//   at the 5' and 3' end of the chains).
+		//
+		//   There is probably better ways to handle this problem: for example include
+		//   both 3' and 5' phosphate atoms of residues in RMSD calc. by default and
+		//   then skip atoms that are virtualized.
+		//                     -- parin (2013)
 
-		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::figure_out_Is_residue_prepend_map");
+		Output_title_text("Enter StepWiseRNA_JobParametersSetup::figure_out_Is_residue_prepend_map", TR );
 
 		utility::vector1< core::Size > const & rmsd_res_list= job_parameters_->rmsd_res_list();
-		Output_seq_num_list("rmsd_res_list= ", rmsd_res_list, 30);
+		Output_seq_num_list("rmsd_res_list= ", rmsd_res_list, TR, 30 );
 		std::map< core::Size, bool > Is_prepend_map;
 
 		if(simple_append_map_){
 
-			std::cout << "WARNING using simple_append_map!" << std::endl;
+			TR << "WARNING using simple_append_map!" << std::endl;
 			//Only initial Is_residue_prepend for rebuild residues;
 
 			for(Size n=1; n<=rmsd_res_list.size(); n++){
@@ -518,12 +564,12 @@ namespace rna {
 
 		job_parameters_->set_Is_prepend_map( Is_prepend_map );
 
-		Output_title_text("");
+		Output_title_text("", TR );
 	}
 	//////////////////////////////////////////////////////////////////////////
 
 	utility::vector1< core::Size >
-	StepWiseRNA_JobParameters_Setup::get_previously_closed_cutpoint_from_imported_silent_file() const{
+	StepWiseRNA_JobParametersSetup::get_previously_closed_cutpoint_from_imported_silent_file() const{
 
 		using namespace ObjexxFCL;
 
@@ -551,17 +597,39 @@ namespace rna {
 			}
 		}
 
-		Output_seq_num_list("previously_closed_cutpoint_= ", previously_closed_cutpoint, 30);
+		Output_seq_num_list("previously_closed_cutpoint_= ", previously_closed_cutpoint, TR, 30 );
 
 		return previously_closed_cutpoint;
 	}
+
 	//////////////////////////////////////////////////////////////////////////
-
-
 	void
-	StepWiseRNA_JobParameters_Setup::setup_additional_cutpoint_closed(){
+	StepWiseRNA_JobParametersSetup::setup_additional_cutpoint_closed(){
+		//The setup_additional_cutpoint_closed() checks and adds any
+		//       additional cutpoint_closed.
+		//
+		//       It is necessary to add an additional cutpoint_closed in the
+		//       following situation:
+		//
+		//                 C1-N2-N3-N4-N5-N6-N7-G8
+		//
+		//       Suppose C1 and G8 is a jump-point pair. We want to keep the
+		//       relative coordinates of C1 and C8 fixed.
+		//
+		//       The function setup_additional_cutpoint_closed() will check to see if
+		//       any of the residues N2 to N7 are non_fixed_res (movable during
+		//       minimization). If there is a non_fixed_res, then there must be a
+		//       cutpoint somewhere in between C1 and G8 in order to keep the
+		//       relative coordinates of C1 and C8 fixed.
+		//
+		//       The function setup_additional_cutpoint_closed() check if any such
+		//       cutpoint was already specified by the user. If no such point is
+		//       specified, then it adds an any additional cutpoint_closed.
+		//
+		//       A real use case is finding the cutpoint-closed position of the
+		//       tetraloop, described in iii. in setup_rna_job_parameters in swa_rna_main.cc
 
-		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::setup_additional_cutpoint_closed");
+		Output_title_text("Enter StepWiseRNA_JobParametersSetup::setup_additional_cutpoint_closed", TR );
 		utility::vector1< core::Size > const & is_working_res( job_parameters_->is_working_res() );
 		utility::vector1< Size > const & cutpoint_closed_list = job_parameters_->cutpoint_closed_list();
 		Size const nres( job_parameters_->full_sequence().size() );
@@ -575,19 +643,25 @@ namespace rna {
 //		utility::vector1< core::Size > accounted_for_non_fixed_res;
 
 		for(Size seq_num=1; seq_num<=nres; seq_num++){
-			if( Contain_seq_num(seq_num, fixed_res_) == false){
+			if( fixed_res_.has_value(seq_num) == false){
 				non_fixed_res.push_back(seq_num);
 			}
 		}
 
 		//0==false, 1==true
-		Output_size_list("Is_working_res= ", is_working_res, 30);
-		Output_bool_list("Is_working_res= ", is_working_res, 30);
-		Output_seq_num_list("fixed res= ", fixed_res_, 30);
-		Output_seq_num_list("non_fixed res= ", non_fixed_res, 30);
+		Output_size_list("Is_working_res= ", is_working_res, TR, 30 );
+		Output_bool_list("Is_working_res= ", is_working_res, TR, 30 );
+		Output_seq_num_list("fixed res= ", fixed_res_, TR, 30 );
+		Output_seq_num_list("non_fixed res= ", non_fixed_res, TR, 30 );
 
 		if(new_cutpoint_closed_list.size()>0){
-			std::cout << "user_specified_cutpoint_closed= " << new_cutpoint_closed_list[1] << std::endl;
+			TR << "user_specified_cutpoint_closed= " << new_cutpoint_closed_list[1] << std::endl;
+		}
+
+		utility::vector1< Size > jump_res_list;
+		for ( Size i = 1; i <= jump_point_pair_list_.size(); i++ ) {
+			jump_res_list.push_back( jump_point_pair_list_[i].first );
+			jump_res_list.push_back( jump_point_pair_list_[i].second );
 		}
 
 		for(Size n=1; n<=non_fixed_res.size(); n++){
@@ -604,7 +678,7 @@ namespace rna {
 					break;
 				}
 
-				if( Contain_seq_num(seq_num, jump_point_pair_list_) && is_working_res[seq_num] ){
+				if( jump_res_list.has_value(seq_num) && is_working_res[seq_num] ){
 					five_prime_boundary=seq_num;
 					break;
 				}
@@ -618,7 +692,7 @@ namespace rna {
 					break;
 				}
 
-				if( Contain_seq_num(seq_num, jump_point_pair_list_) && is_working_res[seq_num] ){
+				if( jump_res_list.has_value(seq_num) && is_working_res[seq_num] ){
 					three_prime_boundary=seq_num;
 					break;
 				}
@@ -662,7 +736,7 @@ namespace rna {
 
 			for(Size seq_num=five_prime_boundary; seq_num <= three_prime_boundary-1; seq_num++){
 
-				if( Contain_seq_num(seq_num, previously_closed_cutpoint) && is_working_res[seq_num]){
+				if( previously_closed_cutpoint.has_value(seq_num) && is_working_res[seq_num]){
 					cutpoint=seq_num;
 					break;
 				}
@@ -679,7 +753,7 @@ namespace rna {
 						utility_exit_with_message( "three_prime_fixed_res > three_prime_boundary of fixed base pair ?? " );
 					}
 
-					if( Contain_seq_num(seq_num, fixed_res_) && is_working_res[seq_num] ){
+					if( fixed_res_.has_value(seq_num) && is_working_res[seq_num] ){
 						three_prime_fixed_res=seq_num;
 						break;
 					}
@@ -696,14 +770,14 @@ namespace rna {
 
 		}
 
-		std::cout << "added_cutpoint_closed_= ";
+		TR << "added_cutpoint_closed_= ";
 		for(Size n=1; n<=added_cutpoint_closed_.size(); n++){
-			std::cout << " " << added_cutpoint_closed_[n];
+			TR << " " << added_cutpoint_closed_[n];
 		}
-		std::cout << std::endl;
+		TR << std::endl;
 
-		Output_seq_num_list("cutpoint_closed_= ", new_cutpoint_closed_list, 30);
-		Output_title_text("");
+		Output_seq_num_list("cutpoint_closed_= ", new_cutpoint_closed_list, TR, 30 );
+		Output_title_text("", TR );
 
 		job_parameters_->set_cutpoint_closed_list(new_cutpoint_closed_list);
 
@@ -713,9 +787,9 @@ namespace rna {
 	///////////////////////////////////////////////////////////////////////////////////
 
 	void
-	StepWiseRNA_JobParameters_Setup::figure_out_chain_boundaries(){
+	StepWiseRNA_JobParametersSetup::figure_out_chain_boundaries(){
 
-		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::figure_out_chain_boundaries");
+		Output_title_text("Enter StepWiseRNA_JobParametersSetup::figure_out_chain_boundaries", TR );
 
 		Size const nres( job_parameters_->full_sequence().size() );
 
@@ -734,7 +808,7 @@ namespace rna {
 
 			if (n > 1 && ( pos > end_chain + 1 || is_cutpoint_( end_chain ) ) ) {//pos > end_chain + 1 happen if !is_working_res[ pos ]==true. i.e a gap in the chain
 
-				std::cout << "start_chain= " << start_chain << " end_chain= " << end_chain << std::endl;
+				TR << "start_chain= " << start_chain << " end_chain= " << end_chain << std::endl;
 
 				chain_boundaries.push_back( std::make_pair( start_chain, end_chain ) ); //The last chain...
 
@@ -748,21 +822,21 @@ namespace rna {
 		if( (start_chain > 0)==false ) utility_exit_with_message( "start_chain > 0" );
 
 		chain_boundaries.push_back( std::make_pair( start_chain, end_chain ) );
-		std::cout << "start_chain= " << start_chain << " end_chain= " << end_chain << std::endl;
+		TR << "start_chain= " << start_chain << " end_chain= " << end_chain << std::endl;
 
 
 		job_parameters_->set_chain_boundaries( chain_boundaries );
 
 
-		Output_title_text("");
+		Output_title_text("", TR );
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters_Setup::figure_out_jump_partners() {
+	StepWiseRNA_JobParametersSetup::figure_out_jump_partners() {
 
-		Output_title_text("StepWiseRNA_JobParameters_Setup::figure_out_jump_partners");
-		Output_boolean("allow_chain_boundary_jump_partner_right_at_fixed_BP_= ", allow_chain_boundary_jump_partner_right_at_fixed_BP_ ); std::cout << std::endl;
+		Output_title_text("StepWiseRNA_JobParametersSetup::figure_out_jump_partners", TR );
+		Output_boolean("allow_chain_boundary_jump_partner_right_at_fixed_BP_= ", allow_chain_boundary_jump_partner_right_at_fixed_BP_, TR ); TR << std::endl;
 
 
 		jump_partners_.clear();
@@ -774,7 +848,7 @@ namespace rna {
 
 		Size const num_chains( chain_boundaries.size() );
 
-		std::cout << "num_chains= " << num_chains << std::endl;
+		TR << "num_chains= " << num_chains << std::endl;
 		for ( Size n = 1 ; n < num_chains; n++ ) {
 
 			Size const jump_partner1 = chain_boundaries[n].second;
@@ -794,8 +868,8 @@ namespace rna {
 			}
 
 			if(jump_partner1+1==jump_partner2 &&
-				Contain_seq_num(jump_partner1, cutpoint_closed_list)==false && //not a cutpoint closed
-				( ( Contain_seq_num(jump_partner1, fixed_res_) && Contain_seq_num(jump_partner2, fixed_res_) )	 ||
+				cutpoint_closed_list.has_value(jump_partner1)==false && //not a cutpoint closed
+				( ( fixed_res_.has_value(jump_partner1) && fixed_res_.has_value(jump_partner2) )	 ||
 					( allow_chain_boundary_jump_partner_right_at_fixed_BP_ && pass_consecutive_res_jump_partner_test) ) //Nov 2010, get Square RNA to work
 				){
 
@@ -803,7 +877,7 @@ namespace rna {
 
 				if (moving_res_ == jump_partner2 || moving_res_ == jump_partner1) utility_exit_with_message( "jump_partner should not be moving_res_!" );
 
-				std::cout << std::setw(80) << "jump_partner1+1=jump_partner2 case: jump_partner1= " << jump_partner1 << "  jump_partner2= " << jump_partner2 << std::endl;
+				TR << std::setw(80) << "jump_partner1+1=jump_partner2 case: jump_partner1= " << jump_partner1 << "  jump_partner2= " << jump_partner2 << std::endl;
 				jump_partners_.push_back( std::make_pair( full_to_sub[ jump_partner1 ], full_to_sub[ jump_partner2 ] ) );
 			}else{
 
@@ -827,8 +901,8 @@ namespace rna {
 							if(jump_point_pair_list_[i].first <= jump_partner1 && jump_partner2 <= jump_point_pair_list_[i].second){
 								if(is_working_res[jump_point_pair_list_[i].first] && is_working_res[jump_point_pair_list_[i].second] ){
 									fixed_base_pair=jump_point_pair_list_[i];
-									std::cout << "warning allow_chain_boundary_jump_partner_right_at_fixed_BP_=true" << std::endl;
-									std::cout << "jump_partner1(local)= " << fixed_base_pair.first << "  jump_partner2(local)= " << fixed_base_pair.second << " is right at a fixed_BP " << std::endl;
+									TR << "warning allow_chain_boundary_jump_partner_right_at_fixed_BP_=true" << std::endl;
+									TR << "jump_partner1(local)= " << fixed_base_pair.first << "  jump_partner2(local)= " << fixed_base_pair.second << " is right at a fixed_BP " << std::endl;
 									found_jump_point_pair=true;
 									break;
 								}
@@ -841,17 +915,17 @@ namespace rna {
 
 				if(found_jump_point_pair==false) utility_exit_with_message( "Cannot find found_jump_point_pair!" );
 
-				std::cout << std::setw(80) << "exterior_fixed_base_pair_case : jump_partner1= " << fixed_base_pair.first << "  jump_partner2= " << fixed_base_pair.second << std::endl;
+				TR << std::setw(80) << "exterior_fixed_base_pair_case : jump_partner1= " << fixed_base_pair.first << "  jump_partner2= " << fixed_base_pair.second << std::endl;
 				jump_partners_.push_back( std::make_pair( full_to_sub[ fixed_base_pair.first ], full_to_sub[ fixed_base_pair.second ] ) );
 			}
 		}
 
-		Output_title_text("");
+		Output_title_text("", TR );
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters_Setup::figure_out_cuts() {
+	StepWiseRNA_JobParametersSetup::figure_out_cuts() {
 
 		cuts_.clear();
 
@@ -867,9 +941,9 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters_Setup::setup_fold_tree(){
+	StepWiseRNA_JobParametersSetup::setup_fold_tree(){
 
-		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::setup_fold_tree");
+		Output_title_text("Enter StepWiseRNA_JobParametersSetup::setup_fold_tree", TR );
 
 		std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
 
@@ -889,7 +963,7 @@ namespace rna {
 			jump_point( 1, i ) = jump_partners_[i].first;
 			jump_point( 2, i ) = jump_partners_[i].second;
 			cuts( i ) = cuts_[ i ];
-			//			std::cout << " HELLO: " << jump_point( 1, i ) << " " << jump_point( 2, i ) << " " << cuts( i ) << std::endl;
+			//			TR << " HELLO: " << jump_point( 1, i ) << " " << jump_point( 2, i ) << " " << cuts( i ) << std::endl;
 		}
 
 		Size const root_res = ( full_to_sub[ moving_res_ ] == 1 ) ? nres : 1;
@@ -930,24 +1004,24 @@ namespace rna {
 				utility_exit_with_message( "Invalid downstream_res!!" );
 			}
 
-			std::cout << "upstream_res= " << k << upstream_res << " upstream_jump_atom= " << upstream_jump_atom;
-			std::cout << " downstream_res= " << k << downstream_res << " downstream_jump_atom= " << downstream_jump_atom << std::endl;
+			TR << "upstream_res= " << k << upstream_res << " upstream_jump_atom= " << upstream_jump_atom;
+			TR << " downstream_res= " << k << downstream_res << " downstream_jump_atom= " << downstream_jump_atom << std::endl;
 
 			fold_tree.set_jump_atoms( i, downstream_jump_atom, upstream_jump_atom);
 
 //			Residue const & rsd1( pose.residue( k ) );
 //			Residue const & rsd2( pose.residue( m ) );
-//			std::cout << "rsd1.name()= " << rsd1.name() << " rsd1.atom_name( rsd1.chi_atoms(1)[4] )= " << rsd1.atom_name( rsd1.chi_atoms(1)[4] );
-//			std::cout << "  rsd2.name()= " << rsd2.name() << " rsd2.atom_name( rsd1.chi_atoms(1)[4] )= " << rsd2.atom_name( rsd2.chi_atoms(1)[4] ) << std::endl;
+//			TR << "rsd1.name()= " << rsd1.name() << " rsd1.atom_name( rsd1.chi_atoms(1)[4] )= " << rsd1.atom_name( rsd1.chi_atoms(1)[4] );
+//			TR << "  rsd2.name()= " << rsd2.name() << " rsd2.atom_name( rsd1.chi_atoms(1)[4] )= " << rsd2.atom_name( rsd2.chi_atoms(1)[4] ) << std::endl;
 
 		}
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 
-		Output_fold_tree_info(fold_tree, "StepWiseRNA_JobParameters_Setup::setup_fold_tree()");
+		Output_fold_tree_info(fold_tree, "StepWiseRNA_JobParametersSetup::setup_fold_tree()");
 
 		job_parameters_->set_fold_tree( fold_tree );
 
-		Output_title_text("");
+		Output_title_text("", TR );
 
 	}
 
@@ -955,19 +1029,19 @@ namespace rna {
 	///////////////////////////////////////////////////////////////////////////////////
 
 	core::Size
-	StepWiseRNA_JobParameters_Setup::input_struct_definition(core::Size const working_seq_num){
+	StepWiseRNA_JobParametersSetup::input_struct_definition(core::Size const working_seq_num){
 
 		utility::vector1< utility::vector1< Size > > const & input_res_vectors=job_parameters_->input_res_vectors();
 
 		if(input_res_vectors.size()!=2) utility_exit_with_message( "Is_internal case but input_res_vectors.size()!=2" );
 		std::map< core::Size, core::Size > & sub_to_full( job_parameters_->sub_to_full() );
 
-		if( Contain_seq_num(sub_to_full[working_seq_num], input_res_vectors[1]) ) return 1;
+		if( input_res_vectors[1].has_value(sub_to_full[working_seq_num]) ) return 1;
 
-		if( Contain_seq_num(sub_to_full[working_seq_num], input_res_vectors[2]) ) return 2;
+		if( input_res_vectors[2].has_value(sub_to_full[working_seq_num]) ) return 2;
 
-		std::cout << "working_seq_num= " << working_seq_num << " full_seq_num= " << sub_to_full[working_seq_num] << std::endl;
-		std::cout << "ADASDasd" << std::endl;
+		TR << "working_seq_num= " << working_seq_num << " full_seq_num= " << sub_to_full[working_seq_num] << std::endl;
+		TR << "ADASDasd" << std::endl;
 		utility_exit_with_message( "seq_num is not part of both input_res_vectors[1] or input_res_vectors[2]" );
 		return 0; //Just to prevent compiler warning...
 
@@ -975,7 +1049,7 @@ namespace rna {
 
 	///////////////////////////////////////////////////////////////////////////////////
 	InternalWorkingResidueParameter
-	StepWiseRNA_JobParameters_Setup::figure_out_partition_definition(){
+	StepWiseRNA_JobParametersSetup::figure_out_partition_definition(){
 
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		// trick to figure out which residues are upstream vs. downstream of the moving suite --
@@ -1009,14 +1083,59 @@ namespace rna {
 
 		} else { //Internal case...problematic/complicated case....
 
-			// I don't remember what this coding stands for. When would we supply the working_moving_res 'backwards'?
+			// I don't remember what this coding stands for. When would we supply the working_moving_res 'backwards'? -- rhiju
+			//			So the order of the working_moving_res should only matters if there is
+			//       more than 1 moving_res (e.g. dinucleotide move)
+			//
+			//       One possible use case that I can think of is dinucleotide + chain-chain.
+			//       (although this move is current not used in default runs)
+			//
+			//               N1-N2-C3-C4-N5-N6.
+			//
+			//       Suppose we start with :
+			//
+			//               N1-N2       N5-N6
+			//
+			//       Dinucleotide move can be used to close the chain in two ways:
+			//
+			//           i. Append [4, 3] : Treat res 4 as sampling base and 3 as bulge.
+			//           ii. Prepend [3, 4] Treat res 3 as sampling base and 4 as bulge.
+			//
+			//           Note that the first residue in the list is always the one that
+			//           is sampled (in this case by 'floating base' sampling). The
+			//           second and subsequent residues are bulge res.
+			//
+			//       However, it should be possible to figure out which direction to built
+			//       using just the cutpoint-closed position in this case. So perhaps ordering
+			//       the working_moving_res is a redundant feature that should be removed?
+			//
+			// I thought of another (more realistic) use case for question 5:
+			//
+			//
+			//               N6-N7
+			//               N5-N8
+			//               C4
+			//               C3
+			//               N2 N9
+			//               N1-N10
+			//
+			//       In this case, working_moving_res [3,4] and [4,3] gives different
+			//       behavior:
+			//
+			//           i. Append [4, 3] : Treat res 4 as sampling base and 3 as bulge.
+			//           ii. Prepend [4, 3] : Treat res 3 as sampling base and 4 as bulge.
+			//
+			//       Although, this move is also currently not used in default SWA runs.
+			//
+
+
 			bool const can_append  = check_can_append(working_moving_res_list); //[14, 13, 12]
 			bool const can_prepend = check_can_prepend(working_moving_res_list); //[12, 13, 14]
 
-			Output_boolean("can_prepend= ", can_prepend ); Output_boolean(" can_append= ", can_append ); std::cout << std::endl;
+			Output_boolean("can_prepend= ", can_prepend, TR ); Output_boolean(" can_append= ", can_append, TR ); TR << std::endl;
 
 			if(!can_prepend && !can_append){
-				Output_seq_num_list("working_moving_res_list:" , working_moving_res_list);
+				Output_seq_num_list("working_moving_res_list:" , working_moving_res_list, TR );
 				utility_exit_with_message( "Cannot prepend or append residue in working_moving_res_list" );
 			}
 
@@ -1059,7 +1178,7 @@ namespace rna {
 			}
 
 			if(found_possible_working_res != 1){
-				std::cout << "found_possible_working_res= " << found_possible_working_res << std::endl;
+				TR << "found_possible_working_res= " << found_possible_working_res << std::endl;
 				utility_exit_with_message( "found_possible_working_res != 1. Cannot figure out use case!" );
 			}
 
@@ -1072,7 +1191,7 @@ namespace rna {
 			fake_working_moving_suite = possible_working_res_1; //This is kinda adhoc...can choose any res between possible_working_res_1 and (possible_working_res_2-1)
 
 			// rhiju -- found boundary case -- this whole setup stuff needs to be cleaned up.
-			std::cout << "POSSIBLE_WORKING_RES1 " << possible_working_res_1 << " POSSIBLE_WORKING_RES2 " << possible_working_res_2 << std::endl;
+			TR << "POSSIBLE_WORKING_RES1 " << possible_working_res_1 << " POSSIBLE_WORKING_RES2 " << possible_working_res_2 << std::endl;
 			while ( fold_tree.is_cutpoint( fake_working_moving_suite ) && fake_working_moving_suite < possible_working_res_2 ) fake_working_moving_suite++;
 
 
@@ -1085,7 +1204,7 @@ namespace rna {
 
 		core::kinematics::FoldTree fold_tree_with_cut_at_moving_suite = fold_tree;
 
-		std::cout << "FAKE_WORKING_MOVING_SUITE " << fake_working_moving_suite << std::endl;
+		TR << "FAKE_WORKING_MOVING_SUITE " << fake_working_moving_suite << std::endl;
 
 		Size const jump_at_moving_suite = make_cut_at_moving_suite( fold_tree_with_cut_at_moving_suite, fake_working_moving_suite );
 
@@ -1112,7 +1231,7 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Figure out a good root residue -- ideally in a fixed segment!
 	core::Size
-	StepWiseRNA_JobParameters_Setup::reroot_fold_tree_simple(){
+	StepWiseRNA_JobParametersSetup::reroot_fold_tree_simple(){
 
 		core::kinematics::FoldTree const & fold_tree = job_parameters_->fold_tree();
 
@@ -1136,9 +1255,9 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Figure out a good root residue -- which partition of the pose has the fewest residues to move around?
 	core::Size
-	StepWiseRNA_JobParameters_Setup::reroot_fold_tree(core::Size const fake_working_moving_suite){
+	StepWiseRNA_JobParametersSetup::reroot_fold_tree(core::Size const fake_working_moving_suite){
 
-		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::reroot_fold_tree");
+		Output_title_text("Enter StepWiseRNA_JobParametersSetup::reroot_fold_tree", TR );
 
 		ObjexxFCL::FArray1D< bool > const & partition_definition = job_parameters_->partition_definition();
 		core::kinematics::FoldTree const & fold_tree = job_parameters_->fold_tree();
@@ -1234,10 +1353,10 @@ namespace rna {
 			}
 		}
 
-		std::cout << "Num. res in partition 0:  " << num_partition_0 << ".   Num. res in partition 1: " << num_partition_1 << std::endl;
-		std::cout << "Moving_res full seq_num   = "   << sub_to_full[moving_res] << ", partition "   << partition_definition( moving_res ) << std::endl;
-		std::cout << "fake_working_moving_suite = "   << sub_to_full[fake_working_moving_suite ] << ", partition "   << partition_definition( fake_working_moving_suite ) << std::endl;
-		std::cout << "New root res full seq_num = " << sub_to_full[root_res]   << ", partition " << partition_definition( root_res ) << std::endl;
+		TR << "Num. res in partition 0:  " << num_partition_0 << ".   Num. res in partition 1: " << num_partition_1 << std::endl;
+		TR << "Moving_res full seq_num   = "   << sub_to_full[moving_res] << ", partition "   << partition_definition( moving_res ) << std::endl;
+		TR << "fake_working_moving_suite = "   << sub_to_full[fake_working_moving_suite ] << ", partition "   << partition_definition( fake_working_moving_suite ) << std::endl;
+		TR << "New root res full seq_num = " << sub_to_full[root_res]   << ", partition " << partition_definition( root_res ) << std::endl;
 
 
 		if( (root_res > 0)==false ) utility_exit_with_message( "(root_res > 0)==false" );
@@ -1260,16 +1379,16 @@ namespace rna {
 		job_parameters_->set_working_moving_partition_pos( working_moving_partition_pos );
 		job_parameters_->set_fold_tree( rerooted_fold_tree );
 
-		Output_fold_tree_info(fold_tree, "StepWiseRNA_JobParameters_Setup::reroot_fold_tree()");
+		Output_fold_tree_info(fold_tree, "StepWiseRNA_JobParametersSetup::reroot_fold_tree()");
 
-		Output_title_text("");
+		Output_title_text("", TR );
 
 		return root_res;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters_Setup::figure_out_gap_size_and_five_prime_chain_break_res(){
+	StepWiseRNA_JobParametersSetup::figure_out_gap_size_and_five_prime_chain_break_res(){
 
 		utility::vector1< std::pair< core::Size, core::Size > > const & chain_boundaries(	 job_parameters_->chain_boundaries() );
 
@@ -1323,15 +1442,15 @@ namespace rna {
 
 	}
 	///////////////////////////////////////////////////////////////////////////////////////////////////
-	StepWiseRNA_JobParametersOP & StepWiseRNA_JobParameters_Setup::job_parameters(){
+	StepWiseRNA_JobParametersOP & StepWiseRNA_JobParametersSetup::job_parameters(){
 		return job_parameters_;
 	}
 
 	/////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters_Setup::figure_out_Prepend_Internal(core::Size const root_res, InternalWorkingResidueParameter const & internal_params){
+	StepWiseRNA_JobParametersSetup::figure_out_Prepend_Internal(core::Size const root_res, InternalWorkingResidueParameter const & internal_params){
 
-		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::figure_out_Prepend_Internal");
+		Output_title_text("Enter StepWiseRNA_JobParametersSetup::figure_out_Prepend_Internal", TR );
 		std::map< core::Size, core::Size > & sub_to_full( job_parameters_->sub_to_full() );
 
 		ObjexxFCL::FArray1D< bool > const & partition_definition = job_parameters_->partition_definition();
@@ -1356,7 +1475,7 @@ namespace rna {
 			Is_internal = false;
 		} else { //The problematic internal case....this case is quite complicated....
 
-			std::cout << "Is_internal case " << std::endl;
+			TR << "Is_internal case " << std::endl;
 
 			Is_internal = true;
 
@@ -1389,7 +1508,7 @@ namespace rna {
 						}
 
 						if(check_can_prepend(actual_working_moving_res_list)==false){
-							Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, 40);
+							Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, TR );
 							utility_exit_with_message( "actual_working_moving_res_list fails can_prepend assertion");
 						}
 					}
@@ -1414,30 +1533,30 @@ namespace rna {
 						}
 
 						if(check_can_append(actual_working_moving_res_list)==false){
-							Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, 40);
+							Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, TR );
 							utility_exit_with_message( "actual_working_moving_res_list fails can_append assertion");
 						}
 					}
 				}
 			}
 			if(actual_working_moving_res_list[1]!=actual_working_moving_res){
-				std::cout << "actual_working_moving_res= " << actual_working_moving_res << std::endl;
-				Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, 40);
+				TR << "actual_working_moving_res= " << actual_working_moving_res << std::endl;
+				Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, TR );
 				utility_exit_with_message( "actual_working_moving_res_list[1]!=actual_working_moving_res" );
 			}
 
 			if(found_actual_working_res!=1){
-				std::cout << "found_actual_working_res= " << found_actual_working_res << std::endl;
+				TR << "found_actual_working_res= " << found_actual_working_res << std::endl;
 				utility_exit_with_message( "found_actual_working_res!=1" );
 			}
 //////////////////////////////////////////////////////////////
 
-			Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, 40);
-			Output_seq_num_list("user_input_working_moving_res_list= ", working_moving_res_list, 40);
+			Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, TR );
+			Output_seq_num_list("user_input_working_moving_res_list= ", working_moving_res_list, TR );
 
-			std::cout << "User input moving_res full seq_num= " << sub_to_full[working_moving_res] << ", partition "   << partition_definition( working_moving_res ) << std::endl;
-			std::cout << "Actual moving_res full seq_num= " << sub_to_full[actual_working_moving_res_list[1]] << ", partition "   << partition_definition( actual_working_moving_res_list[1] ) << std::endl;
-			std::cout << "New root res full seq_num=      " << sub_to_full[root_res]   << ", partition " << partition_definition( root_res ) << std::endl;
+			TR << "User input moving_res full seq_num= " << sub_to_full[working_moving_res] << ", partition "   << partition_definition( working_moving_res ) << std::endl;
+			TR << "Actual moving_res full seq_num= " << sub_to_full[actual_working_moving_res_list[1]] << ", partition "   << partition_definition( actual_working_moving_res_list[1] ) << std::endl;
+			TR << "New root res full seq_num=      " << sub_to_full[root_res]   << ", partition " << partition_definition( root_res ) << std::endl;
 
 			//reset working_moving_res and working_moving_res_list
 			//job_parameters_->set_working_moving_res( actual_working_moving_res);
@@ -1458,11 +1577,12 @@ namespace rna {
 		if( !job_parameters_->Is_internal() ){
 			bool const should_be_prepend = ( partition_definition( fake_working_moving_suite ) != partition_definition( root_res ) );
 			if ( should_be_prepend != job_parameters_->Is_prepend() ) {
-				std::cout << "sub_to_full[fake_working_moving_suite]= " << sub_to_full[fake_working_moving_suite];
-				std::cout << " partition_definition( fake_working_moving_suite )= " << partition_definition( fake_working_moving_suite );
-				std::cout << " sub_to_full[root_res]= " << sub_to_full[root_res];
-				std::cout << " partition_definition( root_res )= " << partition_definition( root_res ) << std::endl;
-				Output_boolean("should_be_prepend= ", should_be_prepend); Output_boolean(" job_parameters_->Is_prepend() = ", job_parameters_->Is_prepend() ); std::cout << std::endl;
+				TR << "sub_to_full[fake_working_moving_suite]= " << sub_to_full[fake_working_moving_suite];
+				TR << " partition_definition( fake_working_moving_suite )= " << partition_definition( fake_working_moving_suite );
+				TR << " sub_to_full[root_res]= " << sub_to_full[root_res];
+				TR << " partition_definition( root_res )= " << partition_definition( root_res ) << std::endl;
+				Output_boolean("should_be_prepend= ", should_be_prepend, TR );
+				Output_boolean(" job_parameters_->Is_prepend() = ", job_parameters_->Is_prepend(), TR ); TR << std::endl;
 				utility_exit_with_message( "Possible problem with prepend/append assignment!!" );
 			}
 		}
@@ -1480,7 +1600,7 @@ namespace rna {
 			}
 
 			if(check_can_prepend(actual_working_moving_res_list)==false){
-				Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, 40);
+				Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, TR );
 				utility_exit_with_message( "actual_working_moving_res_list fails can_prepend assertion");
 			}
 		}
@@ -1494,7 +1614,7 @@ namespace rna {
 				}
 
 				if(check_can_append(actual_working_moving_res_list)==false){
-					Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, 40);
+					Output_seq_num_list("actual_working_moving_res_list= ", actual_working_moving_res_list, TR );
 					utility_exit_with_message( "actual_working_moving_res_list fails can_append assertion");
 				}
 		}
@@ -1507,9 +1627,9 @@ namespace rna {
 
   //////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters_Setup::set_fixed_res( utility::vector1 < core::Size > const & fixed_res ){
+	StepWiseRNA_JobParametersSetup::set_fixed_res( utility::vector1 < core::Size > const & fixed_res ){
 
-		Output_title_text("Enter StepWiseRNA_JobParameters_Setup::set_fixed_res");
+		Output_title_text("Enter StepWiseRNA_JobParametersSetup::set_fixed_res", TR );
 
 		fixed_res_ = fixed_res;
 
@@ -1517,14 +1637,14 @@ namespace rna {
 
 
 
-		Output_seq_num_list("moving_res_list= ", moving_res_list_, 30);
+		Output_seq_num_list("moving_res_list= ", moving_res_list_, TR, 30 );
 
-		Output_boolean("allow_fixed_res_at_moving_res_= ", allow_fixed_res_at_moving_res_ ); std::cout << std::endl;
+		Output_boolean("allow_fixed_res_at_moving_res_= ", allow_fixed_res_at_moving_res_, TR ); TR << std::endl;
 
 
 		if(allow_fixed_res_at_moving_res_==false){ //Nov 15, 2010 (the outer if statement)
 			for(Size n=1; n<=moving_res_list_.size(); n++){
-				if( Contain_seq_num(moving_res_list_[n], fixed_res_) ){
+				if( fixed_res_.has_value(moving_res_list_[n]) ){
 					utility_exit_with_message( "moving_res " + string_of(moving_res_list_[n]) + " should not be in fixed_res_list!");
 				}
 			}
@@ -1532,26 +1652,26 @@ namespace rna {
 
 		job_parameters_->set_working_fixed_res(  apply_full_to_sub_mapping( fixed_res_ , StepWiseRNA_JobParametersCOP(job_parameters_) ) );
 
-		Output_title_text("");
+		Output_title_text("", TR );
 
 	}
 
   //////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters_Setup::set_terminal_res( utility::vector1 < core::Size > const & terminal_res ){
+	StepWiseRNA_JobParametersSetup::set_terminal_res( utility::vector1 < core::Size > const & terminal_res ){
 
 
 		job_parameters_->set_working_terminal_res(  apply_full_to_sub_mapping( terminal_res , StepWiseRNA_JobParametersCOP(job_parameters_) ) );
 
 
-//		Output_seq_num_list("working_terminal_res= ", job_parameters_->working_terminal_res(), 30);
+//		Output_seq_num_list("working_terminal_res= ", job_parameters_->working_terminal_res(), TR, 30 );
 
 	}
 
   //////////////////////////////////////////////////////////////////////////
 
 	void
-	StepWiseRNA_JobParameters_Setup::set_rmsd_res_list(utility::vector1< core::Size > const & input_rmsd_res_list ){
+	StepWiseRNA_JobParametersSetup::set_rmsd_res_list(utility::vector1< core::Size > const & input_rmsd_res_list ){
 
 		utility::vector1< core::Size > const & is_working_res( job_parameters_->is_working_res() );
 		utility::vector1< core::Size > actual_rmsd_res_list;
@@ -1568,10 +1688,21 @@ namespace rna {
 
   //////////////////////////////////////////////////////////////////////////
 	//example input: "1-2-3-4-5-6-7-8-9-10-11-12-25-26 19-20"
-
-
 	void
-	StepWiseRNA_JobParameters_Setup::set_jump_point_pair_list(utility::vector1< std::string > const & jump_point_pairs_string){
+	StepWiseRNA_JobParametersSetup::set_jump_point_pair_list(utility::vector1< std::string > const & jump_point_pairs_string){
+
+		// 2. Why is jump_point_pairs a string vector? OK to allow pairs readin "1,2 3,4"
+		//  (but also make backwards compatible with "1-2 3-4"?  -- rhiju
+		//
+		//    Jump_point_pairs is a string vector to specify integer pairs. Allow us
+		//    to distinguish:
+		//
+		//        i.  1-16 8-9  (jump points between res 1 and 16 and between res 8 and 9)
+		//        ii. 1-8  9-16 (jump points between res 1 and 8 and between res 9 and 16)
+		//
+		//   OK to a new PairIntegerOption type?
+		//
+		//    Yes, the "PairIntegerOption" seems like a good idea.
 
 		jump_point_pair_list_.clear();
 
@@ -1596,7 +1727,7 @@ namespace rna {
 			std::pair< core::Size, core::Size > jump_point_pair=std::make_pair(string_to_int(JP_pair_string[1]), string_to_int(JP_pair_string[2]) );
 
 			if(jump_point_pair.first >= jump_point_pair.second ){
-				output_pair_size(jump_point_pair);
+				output_pair_size(jump_point_pair, TR );
 				utility_exit_with_message( "jump_point_pair.first >= jump_point_pair.second!");
 			}
 
@@ -1606,19 +1737,19 @@ namespace rna {
 
 		Sort_pair_list(jump_point_pair_list_); //sort the BP list by the 1st element
 
-		output_pair_size_vector(jump_point_pair_list_, "jump_point_pair_list: ");
+		output_pair_size(jump_point_pair_list_, "jump_point_pair_list: ", TR );
 
-		Output_boolean("assert_in_fixed_res= ", assert_in_fixed_res);
+		Output_boolean("assert_in_fixed_res= ", assert_in_fixed_res, TR );
 
 		//Ensure that every seq_num in jump_point_pair_list_ is a fixed_res
 		if(assert_in_fixed_res==true){
 			for(Size n=1; n<=jump_point_pair_list_.size(); n++){
 
-				if(Contain_seq_num(jump_point_pair_list_[n].first, fixed_res_) ==false){
+				if(fixed_res_.has_value(jump_point_pair_list_[n].first) ==false){
 					utility_exit_with_message( "seq_num ("+ ObjexxFCL::string_of(jump_point_pair_list_[n].first)   +") is in jump_point_pair_list_ but is not a fixed res!");
 				}
 
-				if(Contain_seq_num(jump_point_pair_list_[n].second, fixed_res_)==false){
+				if(fixed_res_.has_value(jump_point_pair_list_[n].second)==false){
 					utility_exit_with_message( "seq_num ("+ ObjexxFCL::string_of(jump_point_pair_list_[n].second) +") is in jump_point_pair_list_ but is not a fixed res!");
 				}
 
@@ -1629,23 +1760,23 @@ namespace rna {
   //////////////////////////////////////////////////////////////////////////
 
 	void
-	StepWiseRNA_JobParameters_Setup::set_native_alignment_res(utility::vector1< Size > const & setting){
+	StepWiseRNA_JobParametersSetup::set_native_alignment_res(utility::vector1< Size > const & setting){
 
 		utility::vector1< Size > const native_alignment = setting;
 
 		job_parameters_->set_native_alignment(  native_alignment );
 		job_parameters_->set_working_native_alignment(  apply_full_to_sub_mapping( native_alignment, StepWiseRNA_JobParametersCOP(job_parameters_) ) );
 
-		Output_title_text("StepWiseRNA_JobParameters_Setup::set_native_alignment_res");
-		Output_seq_num_list("native_alignment= ", job_parameters_->native_alignment() );
-		Output_seq_num_list("working_native_alignment= ", job_parameters_->working_native_alignment() );
-		Output_title_text("");
+		Output_title_text("StepWiseRNA_JobParametersSetup::set_native_alignment_res", TR );
+		Output_seq_num_list("native_alignment= ", job_parameters_->native_alignment(), TR );
+		Output_seq_num_list("working_native_alignment= ", job_parameters_->working_native_alignment(), TR );
+		Output_title_text("", TR );
 
 	}
   //////////////////////////////////////////////////////////////////////////
 
 	void
-	StepWiseRNA_JobParameters_Setup::set_global_sample_res_list( utility::vector1 < core::Size > const & setting ){
+	StepWiseRNA_JobParametersSetup::set_global_sample_res_list( utility::vector1 < core::Size > const & setting ){
 
 		utility::vector1< Size > const global_sample_res_list = setting;
 		job_parameters_->set_global_sample_res_list(  global_sample_res_list );
@@ -1655,7 +1786,7 @@ namespace rna {
   //////////////////////////////////////////////////////////////////////////
 
 	void
-	StepWiseRNA_JobParameters_Setup::set_force_syn_chi_res_list( utility::vector1 < core::Size > const & setting ){
+	StepWiseRNA_JobParametersSetup::set_force_syn_chi_res_list( utility::vector1 < core::Size > const & setting ){
 
 		utility::vector1< Size > const force_syn_chi_res_list = setting;
 		job_parameters_->set_force_syn_chi_res_list(  force_syn_chi_res_list );
@@ -1665,7 +1796,7 @@ namespace rna {
   //////////////////////////////////////////////////////////////////////////
 
 	void
-	StepWiseRNA_JobParameters_Setup::set_force_north_ribose_list( utility::vector1 < core::Size > const & setting ){
+	StepWiseRNA_JobParametersSetup::set_force_north_ribose_list( utility::vector1 < core::Size > const & setting ){
 
 		utility::vector1 < core::Size > const force_north_ribose_list=setting;
 		job_parameters_->set_force_north_ribose_list(  force_north_ribose_list );
@@ -1675,7 +1806,7 @@ namespace rna {
   //////////////////////////////////////////////////////////////////////////
 
 	void
-	StepWiseRNA_JobParameters_Setup::set_force_south_ribose_list( utility::vector1 < core::Size > const & setting ){
+	StepWiseRNA_JobParametersSetup::set_force_south_ribose_list( utility::vector1 < core::Size > const & setting ){
 
 		utility::vector1 < core::Size > const force_south_ribose_list=setting;
 		job_parameters_->set_force_south_ribose_list(  force_south_ribose_list );
@@ -1685,7 +1816,7 @@ namespace rna {
   //////////////////////////////////////////////////////////////////////////
 
 	void
-	StepWiseRNA_JobParameters_Setup::set_protonated_H1_adenosine_list( utility::vector1 < core::Size > const & setting ){
+	StepWiseRNA_JobParametersSetup::set_protonated_H1_adenosine_list( utility::vector1 < core::Size > const & setting ){
 
 		utility::vector1 < core::Size > const protonated_H1_adenosine_list=setting;
 		job_parameters_->set_protonated_H1_adenosine_list(  protonated_H1_adenosine_list );
@@ -1695,14 +1826,14 @@ namespace rna {
 
   //////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters_Setup::set_output_extra_RMSDs( bool const setting){
+	StepWiseRNA_JobParametersSetup::set_output_extra_RMSDs( bool const setting){
 
 		job_parameters_->set_output_extra_RMSDs( setting);
 
 	}
   //////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_JobParameters_Setup::set_add_virt_res_as_root( bool const setting){
+	StepWiseRNA_JobParametersSetup::set_add_virt_res_as_root( bool const setting){
 
 		job_parameters_->set_add_virt_res_as_root(setting );
 

@@ -109,7 +109,7 @@ namespace rna {
 
 		using namespace ObjexxFCL;
 
-		if(verbose_) Output_title_text("Enter StepWiseRNA_PoseSetup::apply");
+		if(verbose_) Output_title_text("Enter StepWiseRNA_PoseSetup::apply", TR );
 
 		// actually make the pose, set fold tree, copy in starting templates from disk.
 
@@ -118,12 +118,12 @@ namespace rna {
 		if(copy_DOF_){
 
 			make_pose( pose_without_cutpoints ); //Create pose with random torsions
-			std::cout << "read_input_pose_and_copy_dofs( pose_without_cutpoints )" << std::endl;
+			TR << "read_input_pose_and_copy_dofs( pose_without_cutpoints )" << std::endl;
 			read_input_pose_and_copy_dofs( pose_without_cutpoints );
 
 			make_pose( pose ); //Create pose with random torsions
 			pose.fold_tree( job_parameters_->fold_tree());
-			std::cout << "read_input_pose_and_copy_dofs( pose )" << std::endl;
+			TR << "read_input_pose_and_copy_dofs( pose )" << std::endl;
 			read_input_pose_and_copy_dofs( pose );
 
 		}else{
@@ -148,7 +148,7 @@ namespace rna {
 
 		if(output_pdb_) pose.dump_pdb( "start.pdb" );
 
-		if(verbose_ ) Output_title_text("Exit StepWiseRNA_PoseSetup::apply");
+		if(verbose_ ) Output_title_text("Exit StepWiseRNA_PoseSetup::apply", TR );
 	}
 
 	////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ namespace rna {
 		using namespace core::pose;
 		using namespace protocols::rna;
 
-		if(verbose_) Output_title_text("Enter StepWiseRNA_PoseSetup::setup_native_pose");
+		if(verbose_) Output_title_text("Enter StepWiseRNA_PoseSetup::setup_native_pose", TR );
 
 		utility::vector1< core::Size > const & is_working_res( job_parameters_->is_working_res() );
 		std::string const & working_sequence( job_parameters_->working_sequence() );
@@ -180,7 +180,7 @@ namespace rna {
 
 		//First option is to pass in the full length native
 		if(native_pose_copy.sequence() ==  job_parameters_->full_sequence() ){
-			std::cout << "User passed in full length native pose" << std::endl;
+			TR << "User passed in full length native pose" << std::endl;
 
 			(*working_native_pose)=native_pose_copy;
 
@@ -191,18 +191,18 @@ namespace rna {
 			}
 
 		}else if( native_pose_copy.sequence() ==  working_sequence){ //Could also pass in the working_native_pose directly
-			std::cout << "User passed in working native pose" << std::endl;
+			TR << "User passed in working native pose" << std::endl;
 			(*working_native_pose)=native_pose_copy;
 		}else{
-			std::cout <<  std::setw(50) << "  native_pose_copy.sequence() = " << native_pose_copy.sequence()  << std::endl;
-			std::cout <<  std::setw(50) << "  job_parameters_->full_sequence()= " << job_parameters_->full_sequence() << std::endl;
-			std::cout <<  std::setw(50) << "  working_sequence= " << working_sequence << std::endl;
+			TR <<  std::setw(50) << "  native_pose_copy.sequence() = " << native_pose_copy.sequence()  << std::endl;
+			TR <<  std::setw(50) << "  job_parameters_->full_sequence()= " << job_parameters_->full_sequence() << std::endl;
+			TR <<  std::setw(50) << "  working_sequence= " << working_sequence << std::endl;
 			utility_exit_with_message( "The native pose passed in by the User does not match both the full_sequence and the working sequence of the inputted fasta_file" );
 		}
 
 		if(working_native_pose->sequence() !=  working_sequence ){
-			std::cout <<  std::setw(50) << "working_native_pose->sequence()= " << working_native_pose->sequence();
-			std::cout <<  std::setw(50) << "working_sequence= " << working_sequence << std::endl;
+			TR <<  std::setw(50) << "working_native_pose->sequence()= " << working_native_pose->sequence();
+			TR <<  std::setw(50) << "working_sequence= " << working_sequence << std::endl;
 			utility_exit_with_message( "working_native_pose->sequence() !=  working_sequence" );
 		}
 
@@ -216,33 +216,33 @@ namespace rna {
 		utility::vector1< core::Size > const & working_native_alignment = job_parameters_->working_native_alignment();
 
 		if(working_native_alignment.size()!=0){ //User specified the native alignment res.
-			std::cout << "working_native_alignment.size()!=0!, align native_pose with working_native_alignment!" << std::endl;
+			TR << "working_native_alignment.size()!=0!, align native_pose with working_native_alignment!" << std::endl;
 
 			for(Size n=1; n<=working_native_alignment.size(); n++){
 				Size const seq_num=working_native_alignment[n];
-				if( Contain_seq_num(seq_num, working_moving_res_list) ) continue;
-				if( Contain_seq_num(seq_num, working_moving_partition_pos) ) continue; //Sept 14, 2011.
+				if( working_moving_res_list.has_value(seq_num) ) continue;
+				if( working_moving_partition_pos.has_value(seq_num) ) continue; //Sept 14, 2011.
 				act_working_alignment.push_back(seq_num);
 			}
 
 
 		}else{ //Use default alignment res.
-			std::cout << "working_native_alignment.size()==0!, align native_pose with working_best_alignment!" << std::endl;
+			TR << "working_native_alignment.size()==0!, align native_pose with working_best_alignment!" << std::endl;
 
 			for(Size n=1; n<=working_best_alignment.size(); n++){
 				Size const seq_num=working_best_alignment[n];
-				if( Contain_seq_num(seq_num, working_moving_res_list) ) continue;
-				if( Contain_seq_num(seq_num, working_moving_partition_pos) ) continue; //Sept 14, 2011.
+				if( working_moving_res_list.has_value(seq_num) ) continue;
+				if( working_moving_partition_pos.has_value(seq_num) ) continue; //Sept 14, 2011.
 				act_working_alignment.push_back(seq_num);
 			}
 		}
 
 
-		Output_seq_num_list("act_working_alignment= ", act_working_alignment, 40);
-		Output_seq_num_list("working_moving_res_list= ", working_moving_res_list, 40);
-		Output_seq_num_list("working_moving_partition_pos= ", working_moving_partition_pos, 40);
-		Output_seq_num_list("working_native_alignment= ", working_native_alignment, 40);
-		Output_seq_num_list("working_best_alignment= ", working_best_alignment, 40);
+		Output_seq_num_list("act_working_alignment= ", act_working_alignment, TR );
+		Output_seq_num_list("working_moving_res_list= ", working_moving_res_list, TR );
+		Output_seq_num_list("working_moving_partition_pos= ", working_moving_partition_pos, TR );
+		Output_seq_num_list("working_native_alignment= ", working_native_alignment, TR );
+		Output_seq_num_list("working_best_alignment= ", working_best_alignment, TR );
 
 		if(act_working_alignment.size()==0) utility_exit_with_message("act_working_alignment.size()==0");
 
@@ -290,7 +290,7 @@ namespace rna {
 
 
 
-		if(verbose_) Output_title_text("Exit StepWiseRNA_PoseSetup::setup_native_pose");
+		if(verbose_) Output_title_text("Exit StepWiseRNA_PoseSetup::setup_native_pose", TR );
 
 	}
 
@@ -314,7 +314,7 @@ namespace rna {
 				pose_name.append(".pdb");
 			}
 
-			//  if(verbose) std::cout << "	The following pose will be imported :" << pose_name << std::endl;
+			//  if(verbose) TR << "	The following pose will be imported :" << pose_name << std::endl;
 			import_pose::pose_from_pdb( import_pose, *rsd_set_, pose_name );
 			protocols::rna::make_phosphate_nomenclature_matches_mini( import_pose );
 
@@ -330,7 +330,7 @@ namespace rna {
 		std::string const & full_sequence=job_parameters_->full_sequence();
 
 		if ( import_pose.total_residue() != input_res.size() ){
-			 std::cout << "import_pose.total_residue()= " << import_pose.total_residue() << " input_res.size()= " << input_res.size() << std::endl;
+			 TR << "import_pose.total_residue()= " << import_pose.total_residue() << " input_res.size()= " << input_res.size() << std::endl;
 			 utility_exit_with_message( "input pose does not have same # residues as input res" );
 		}
 		bool match( true );
@@ -360,7 +360,7 @@ namespace rna {
 		make_pose_from_sequence( pose, working_sequence, *rsd_set_, false /*auto_termini*/);
 
 		if(output_pdb_){
-			std::cout << "outputting extended_chain.pdb" << std::endl;
+			TR << "outputting extended_chain.pdb" << std::endl;
 			pose.dump_pdb( "extended_chain.pdb" );
 		}
 
@@ -389,7 +389,7 @@ namespace rna {
 		Pose start_pose_with_variant;
 		for ( Size i = 1; i <= input_tags_.size(); i++ ){
 
-			std::cout << "import_pose " << i << std::endl;
+			TR << "import_pose " << i << std::endl;
 
 	 		//Ok account for special case of build loop outward from scratch...
 			if(input_tags_[i]=="build_from_scratch"){
@@ -450,7 +450,7 @@ namespace rna {
 			std::map< core::Size, core::Size > res_map;  //This is map from sub numbering to input_res numbering..
 			for ( Size n = 1; n <= input_res.size(); n++ ) {
 				res_map[ full_to_sub[ input_res[n] ] ] = n;
-				//std::cout << full_to_sub_[ input_res_[ n ] ] << " " << n << std::endl;
+				//TR << full_to_sub_[ input_res_[ n ] ] << " " << n << std::endl;
 			}
 
 			//Does this work for the "overlap residue" case?? If there is a overlap residue, then order of input_res will manner...Parin Jan 2, 2010.
@@ -489,11 +489,11 @@ namespace rna {
 					//start_pose_with_variant does not have PROTONATED_H1_ADENOSINE variant type since the input_pdb does not have the variant type or loses the variant when imported into Rosetta.
 
 					if ( start_pose_with_variant.residue(n).has_variant_type("PROTONATED_H1_ADENOSINE") ) { //May 03, 2011
-						Output_seq_num_list("protonate_H1_adenosine_list= ", job_parameters_->protonated_H1_adenosine_list());
+						Output_seq_num_list("protonate_H1_adenosine_list= ", job_parameters_->protonated_H1_adenosine_list(), TR );
 						utility_exit_with_message("start_pose have PROTONATED_H1_ADENOSINE variant type at full_seq_num=" + ObjexxFCL::string_of(input_res[n]) + " even though it was read in from PDB file!");
 					}
 
-					if(Contain_seq_num( input_res[n], job_parameters_->protonated_H1_adenosine_list() )){
+					if( (job_parameters_->protonated_H1_adenosine_list()).has_value( input_res[n])){
 						apply_protonated_H1_adenosine_variant_type( pose, full_to_sub[ input_res[n] ]);
 					}
 
@@ -505,8 +505,8 @@ namespace rna {
 							utility_exit_with_message("start_pose have PROTONATED_H1_ADENOSINE variant type at full_seq_num=" + ObjexxFCL::string_of(input_res[n]) + " but rsd.aa()!=core::chemical::na_rad!");
 						}
 
-						if(Contain_seq_num( input_res[n], job_parameters_->protonated_H1_adenosine_list() )==false){
-							Output_seq_num_list("protonate_H1_adenosine_list= ", job_parameters_->protonated_H1_adenosine_list());
+						if( (job_parameters_->protonated_H1_adenosine_list()).has_value( input_res[n])==false){
+							Output_seq_num_list("protonate_H1_adenosine_list= ", job_parameters_->protonated_H1_adenosine_list(), TR );
 							utility_exit_with_message("full_seq_num=" + ObjexxFCL::string_of(input_res[n]) + " is have a PROTONATED_H1_ADENOSINE variant type in the start_pose but is not in the protonate_H1_adenosine_list");
 						}
 
@@ -518,7 +518,7 @@ namespace rna {
 			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			if(output_pdb_) pose.dump_pdb( "copy_dof_" + string_of(i) + ".pdb" );
-			std::cout << pose.fold_tree() << std::endl;
+			TR << pose.fold_tree() << std::endl;
 		}
 
 		protocols::rna::assert_phosphate_nomenclature_matches_mini( pose );//Just to be safe, Jun 11, 2010
@@ -536,7 +536,7 @@ namespace rna {
 		using namespace core::conformation;
 		using namespace core::id;
 
-		if(verbose_) Output_title_text("Enter StepWiseRNA_PoseSetup::correctly_copy_HO2star_position");
+		if(verbose_) Output_title_text("Enter StepWiseRNA_PoseSetup::correctly_copy_HO2star_position", TR );
 
 		if(output_pdb_) working_pose.dump_pdb( "copy_dof_pose_BEFORE_correctly_copy_HO2star_positions.pdb" );
 
@@ -561,19 +561,19 @@ namespace rna {
 
 		for(Size n=1; n<=input_res_vectors[1].size(); n++){
 			Size const seq_num=input_res_vectors[1][n];
-			if(Contain_seq_num(seq_num, input_res_vectors[2])==true){
+			if(input_res_vectors[2].has_value(seq_num)==true){
 				common_res_list.push_back(seq_num);
 			}
 		}
 
 		if(verbose_){
-			Output_seq_num_list("input_res_vectors[1]= ", input_res_vectors[1], 30);
-			Output_seq_num_list("input_res_vectors[2]= ", input_res_vectors[2], 30);
-			Output_seq_num_list("common_res_list= ", common_res_list, 30);
+			Output_seq_num_list("input_res_vectors[1]= ", input_res_vectors[1], TR, 30 );
+			Output_seq_num_list("input_res_vectors[2]= ", input_res_vectors[2], TR, 30 );
+			Output_seq_num_list("common_res_list= ", common_res_list, TR, 30 );
 		}
 
 		if(common_res_list.size()==0) {
-			if(verbose_) Output_title_text("Exit StepWiseRNA_PoseSetup::correctly_copy_HO2star_position");
+			if(verbose_) Output_title_text("Exit StepWiseRNA_PoseSetup::correctly_copy_HO2star_position", TR );
 			return; //No common/background residues...
 		}
 
@@ -600,22 +600,22 @@ namespace rna {
 			//pose.set_torsion( TorsionID( moving_res, id::CHI, 4 ), 0 );  //This torsion is not sampled. Arbitary set to zero to prevent randomness
 			id::TorsionID const torsion_id(working_seq_num , id::CHI, 4 );
 
-			if(verbose_) std::cout << "full_seq_num= " << full_seq_num << " nearest_dist_ONE= " << nearest_dist_ONE << " nearest_dist_TWO= " << nearest_dist_TWO;
+			if(verbose_) TR << "full_seq_num= " << full_seq_num << " nearest_dist_ONE= " << nearest_dist_ONE << " nearest_dist_TWO= " << nearest_dist_TWO;
 
 			if(nearest_dist_ONE < nearest_dist_TWO){
 				working_pose.set_torsion( torsion_id, start_pose_list[1].torsion(TorsionID( input_ONE_seq_num, id::CHI, 4 )) );
-				std::cout << " NEARER TO INPUT_POSE_ONE " ;
+				TR << " NEARER TO INPUT_POSE_ONE " ;
 			}else{
 				working_pose.set_torsion( torsion_id, start_pose_list[2].torsion(TorsionID( input_TWO_seq_num, id::CHI, 4 )) );
-				std::cout << " NEARER TO INPUT_POSE_TWO " ;
+				TR << " NEARER TO INPUT_POSE_TWO " ;
 			}
 
-			std::cout << std::endl;
+			TR << std::endl;
 
 		}
 
 		if(output_pdb_) working_pose.dump_pdb( "copy_dof_pose_AFTER_correctly_copy_HO2star_positions.pdb" );
-		if(verbose_) Output_title_text("Exit StepWiseRNA_PoseSetup::correctly_copy_HO2star_position");
+		if(verbose_) Output_title_text("Exit StepWiseRNA_PoseSetup::correctly_copy_HO2star_position", TR );
 
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -640,7 +640,7 @@ namespace rna {
 		for(Size input_pose_seq_num=1; input_pose_seq_num<=input_res_list.size(); input_pose_seq_num++){
 			Size const full_seq_num=input_res_list[input_pose_seq_num];
 
-			if(Contain_seq_num(full_seq_num, common_res_list)==true) continue; //A common/background res..not a residue built by SWA.
+			if(common_res_list.has_value(full_seq_num)==true) continue; //A common/background res..not a residue built by SWA.
 
 			conformation::Residue const & input_pose_rsd=input_pose.residue(input_pose_seq_num);
 
@@ -679,7 +679,7 @@ namespace rna {
 
 			if ( full_to_sub.find( cutpoint_closed ) != full_to_sub.end() && full_to_sub.find( cutpoint_closed+1 ) != full_to_sub.end() ) {
 
-				std::cout << "Applying cutpoint variants to " << cutpoint_closed << std::endl;
+				TR << "Applying cutpoint variants to " << cutpoint_closed << std::endl;
 
 				Size const cutpos = full_to_sub[ cutpoint_closed];
 
@@ -691,7 +691,7 @@ namespace rna {
 				pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos+1 );
 
 
-			std::cout << "pose (before copy): " << std::endl;
+			TR << "pose (before copy): " << std::endl;
 			print_backbone_torsions(pose, cutpos);
 			print_backbone_torsions(pose, cutpos+1);
 
@@ -703,10 +703,10 @@ namespace rna {
 			} // i
 
 			if(verbose_) {
-				std::cout << "pose_without_cutpoints " << std::endl;
+				TR << "pose_without_cutpoints " << std::endl;
 				print_backbone_torsions(pose_without_cutpoints, cutpos);
 				print_backbone_torsions(pose_without_cutpoints, cutpos+1);
-				std::cout << "pose: " << std::endl;
+				TR << "pose: " << std::endl;
 				print_backbone_torsions(pose, cutpos);
 				print_backbone_torsions(pose, cutpos+1);
 			}
@@ -818,7 +818,7 @@ namespace rna {
 			}
 		}
 
-		Output_seq_num_list("working_terminal_res_list= ", working_terminal_res, 40);
+		Output_seq_num_list("working_terminal_res_list= ", working_terminal_res, TR );
 		/////////////////////////////////////////////////
 		Distance const DIST_CUTOFF = 8.0;
 		FuncOP const repulsion_func( new FadeFunc( -2.0 /*min*/, DIST_CUTOFF /*max*/, 1.0 /*fade zone width*/, 100.0 /*penalty*/ ) );
@@ -828,14 +828,14 @@ namespace rna {
 			Size const k = working_terminal_res[ i ];
 			Residue const & rsd1( pose.residue( k ) );
 			if(rsd1.has_variant_type("VIRTUAL_RNA_RESIDUE")){
-				std::cout << "rsd1.has_variant_type(\"VIRTUAL_RNA_RESIDUE\"), seq_num= " << k << " Ignore terminal_res_repulsion distance constraint " << std::endl;
+				TR << "rsd1.has_variant_type(\"VIRTUAL_RNA_RESIDUE\"), seq_num= " << k << " Ignore terminal_res_repulsion distance constraint " << std::endl;
 				continue;
 			}
 			for ( Size m = 1; m <= nres; m++ ) {
 
 				Residue const & rsd2( pose.residue( m ) );
 				if(rsd2.has_variant_type("VIRTUAL_RNA_RESIDUE")){
-					 std::cout << "rsd2.has_variant_type(\"VIRTUAL_RNA_RESIDUE\"), seq_num= " << m << " Ignore terminal_res_repulsion distance constraint " << std::endl;
+					 TR << "rsd2.has_variant_type(\"VIRTUAL_RNA_RESIDUE\"), seq_num= " << m << " Ignore terminal_res_repulsion distance constraint " << std::endl;
 					 continue;
 				}
 
@@ -846,7 +846,7 @@ namespace rna {
 				if ( ( ( is_moving_res( k )  && is_moving_res( m ) ) ||
 							 ( is_fixed_res(  k )  && is_fixed_res(  m ) ) ) &&
 						 ( pose.xyz( atom_id1 ) - pose.xyz( atom_id2 ) ).length() < DIST_CUTOFF ) {
-					//std::cout << "Not adding repulsive constraint between " << k << " and " << m << " already closeby in same partition" << std::endl;
+					//TR << "Not adding repulsive constraint between " << k << " and " << m << " already closeby in same partition" << std::endl;
 					continue;
 				}
 
@@ -859,9 +859,9 @@ namespace rna {
 		pose.constraint_set( cst_set );
 
 		/* For debugging....
-		std::cout << "constraints " << std::endl;
+		TR << "constraints " << std::endl;
 		core::scoring::constraints::ConstraintSetOP cst_set(  pose.constraint_set()->clone() );
-		cst_set->show(std::cout);
+		cst_set->show(TR);
 		pose.remove_constraints();
 		*/
 	}
@@ -878,10 +878,10 @@ namespace rna {
 		if(rebuild_bulge_mode_){
 			//OK as long as we will definitely remove the virtual variant type from this res before sampling and minimizing!
 			apply_check=false;
-			std::cout << "rebuild_bulge_mode_=true, setting apply_check for apply_protonated_H1_adenosine_variant_type to false" << std::endl;
+			TR << "rebuild_bulge_mode_=true, setting apply_check for apply_protonated_H1_adenosine_variant_type to false" << std::endl;
 		}
 
-		if( Contain_seq_num(working_moving_res, working_protonated_H1_adenosine_list ) ){
+		if( working_protonated_H1_adenosine_list.has_value(working_moving_res) ){
 			apply_protonated_H1_adenosine_variant_type( pose, working_moving_res, apply_check );
 		}
 
@@ -901,24 +901,24 @@ namespace rna {
 	//Check that all protonated_H1_adenosine exist in the pose!
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
-			if( Contain_seq_num(seq_num, working_protonated_H1_adenosine_list ) ){
+			if( working_protonated_H1_adenosine_list.has_value(seq_num) ){
 
 				if(pose.residue(seq_num).aa() != core::chemical::na_rad){
 					print_JobParameters_info(StepWiseRNA_JobParametersCOP(job_parameters_), "DEBUG job_parameters");
-					utility_exit_with_message("Contain_seq_num(seq_num, working_protonated_H1_adenosine_list )==true but pose.residue(seq_num).aa() != core::chemical::na_rad, seq_num= " + string_of(seq_num) );
+					utility_exit_with_message("working_protonated_H1_adenosine_list.has_value(seq_num)==true but pose.residue(seq_num).aa() != core::chemical::na_rad, seq_num= " + string_of(seq_num) );
 				}
 
 				if(pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE")==false && pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")==false){
 					print_JobParameters_info(StepWiseRNA_JobParametersCOP(job_parameters_), "DEBUG job_parameters");
-					utility_exit_with_message("Contain_seq_num(seq_num, working_protonated_H1_adenosine_list )==true but residue doesn't either PROTONATED_H1_ADENOSINE or VIRTUAL_RNA_RESIDUE variant type , seq_num=" + string_of(seq_num) );
+					utility_exit_with_message("working_protonated_H1_adenosine_list.has_value(seq_num)==true but residue doesn't either PROTONATED_H1_ADENOSINE or VIRTUAL_RNA_RESIDUE variant type , seq_num=" + string_of(seq_num) );
 				}
 			}else{
 				if(pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE") ){
 
 					print_JobParameters_info(StepWiseRNA_JobParametersCOP(job_parameters_), "DEBUG job_parameters");
-					std::cout << "ERROR: seq_num=" << seq_num << std::endl;
-					std::cout << "ERROR: start_pose.residue(n).aa()=" << name_from_aa(pose.residue(seq_num).aa()) << std::endl;
-					utility_exit_with_message("Contain_seq_num(seq_num, working_protonated_H1_adenosine_list)==false but pose.residue(seq_num).has_variant_type(\"PROTONATED_H1_ADENOSINE\") )==false");
+					TR << "ERROR: seq_num=" << seq_num << std::endl;
+					TR << "ERROR: start_pose.residue(n).aa()=" << name_from_aa(pose.residue(seq_num).aa()) << std::endl;
+					utility_exit_with_message("working_protonated_H1_adenosine_list.has_value(seq_num)==false but pose.residue(seq_num).has_variant_type(\"PROTONATED_H1_ADENOSINE\") )==false");
 				}
 
 			}
@@ -944,7 +944,7 @@ namespace rna {
 		for ( Size i = 1; i <= bulge_res_.size(); i++ ) {
 			Size const seq_num=bulge_res_[i];
 
-			if( Contain_seq_num(seq_num, terminal_res) == true) utility_exit_with_message("seq_num: " + string_of(seq_num) + " cannot be both both a bulge_res and a terminal res!");
+			if( terminal_res.has_value(seq_num) == true) utility_exit_with_message("seq_num: " + string_of(seq_num) + " cannot be both both a bulge_res and a terminal res!");
 
 			if(full_to_sub.find( seq_num ) == full_to_sub.end() ) continue;
 
@@ -977,13 +977,13 @@ namespace rna {
 
 		if( apply_virtual_res_variant_at_dinucleotide_ &&  Is_dinucleotide){
 			if(working_bulge_moving_res!=job_parameters_->working_moving_res_list()[2]){
-				Output_boolean("Is_prepend= ", job_parameters_->Is_prepend() );
-				std::cout << " working_moving_res= " << working_moving_res << std::endl;
-				std::cout << "working_bulge_moving_res= " << working_bulge_moving_res << " working_moving_res_list()[2]= " << job_parameters_->working_moving_res_list()[2] << std::endl;
+				Output_boolean("Is_prepend= ", job_parameters_->Is_prepend(), TR );
+				TR << " working_moving_res= " << working_moving_res << std::endl;
+				TR << "working_bulge_moving_res= " << working_bulge_moving_res << " working_moving_res_list()[2]= " << job_parameters_->working_moving_res_list()[2] << std::endl;
 				utility_exit_with_message( "working_bulge_moving_res!=working_moving_res_list[2]" );
 			}
 
-			if( Contain_seq_num(working_bulge_moving_res, working_terminal_res ) == true){
+			if( working_terminal_res.has_value(working_bulge_moving_res) == true){
 				 utility_exit_with_message("working_bulge_moving_res cannot be both both a virtual_res and a terminal res!");
 			}
 			apply_virtual_rna_residue_variant_type( pose, working_bulge_moving_res);
@@ -995,7 +995,7 @@ namespace rna {
 		for(Size i=1; i<=virtual_res_list_.size(); i++){
 			Size const seq_num=virtual_res_list_[i];
 
-			if( Contain_seq_num(seq_num, terminal_res) == true) utility_exit_with_message("seq_num: " + string_of(seq_num) + " cannot be both both a virtual_res and a terminal res!");
+			if( terminal_res.has_value(seq_num) == true) utility_exit_with_message("seq_num: " + string_of(seq_num) + " cannot be both both a virtual_res and a terminal res!");
 
 			if(full_to_sub.find( seq_num ) == full_to_sub.end() ) continue;
 

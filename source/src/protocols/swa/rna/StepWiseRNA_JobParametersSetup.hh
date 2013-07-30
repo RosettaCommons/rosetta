@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file SWA_JobParameters_Setup.hh
+/// @file SWA_JobParametersSetup.hh
 /// @brief
 /// @detailed
 ///
@@ -15,8 +15,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_Setup_HH
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_JobParameters_Setup_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_JobParametersSetup_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_JobParametersSetup_HH
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -39,11 +39,11 @@ namespace rna {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  class StepWiseRNA_JobParameters_Setup: public utility::pointer::ReferenceCount {
+  class StepWiseRNA_JobParametersSetup: public utility::pointer::ReferenceCount {
   public:
 
     //constructor!
-		StepWiseRNA_JobParameters_Setup( utility::vector1< core::Size > const & moving_res_list,
+		StepWiseRNA_JobParametersSetup( utility::vector1< core::Size > const & moving_res_list,
 													 std::string const & full_sequence,
 													 utility::vector1< core::Size > const & input_res,
 													 utility::vector1< core::Size > const & input_res2,
@@ -52,7 +52,7 @@ namespace rna {
 
 
     //destructor -- necessary? yes of course it is
-    virtual ~StepWiseRNA_JobParameters_Setup();
+    virtual ~StepWiseRNA_JobParametersSetup();
 
     virtual void apply();
 

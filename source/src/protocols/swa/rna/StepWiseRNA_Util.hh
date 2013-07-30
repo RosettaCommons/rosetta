@@ -39,6 +39,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray.fwd.hh>
+#include <basic/Tracer.hh>
 #include <string>
 #include <map>
 #include <set>
@@ -188,40 +189,34 @@ utility::vector1<std::string>
 Tokenize(std::string const str, std::string delimiters);
 
 bool
-Contain_seq_num(core::Size const & seq_num, utility::vector1< std::pair< core::Size, core::Size >  > const & residue_pair_list);
-
-bool
-Contain_seq_num(core::Size const & seq_num, utility::vector1< core::Size > const & residue_list);
-
-bool
 Is_virtual_base(core::conformation::Residue const & rsd);
 
 void
-output_pair_size(std::pair<core::Size, core::Size> const & pair_size);
+output_pair_size(std::pair<core::Size, core::Size> const & pair_size, basic::Tracer & TR );
 
 void
-output_pair_size_vector(utility::vector1 <std::pair<core::Size, core::Size> > const & pair_size_vector, std::string const & output_string, core::Size const spacing=40);
+output_pair_size(utility::vector1 <std::pair<core::Size, core::Size> > const & pair_size_vector, std::string const & output_string, basic::Tracer & TR, core::Size const spacing=40 );
 
 bool
 pair_sort_citeria(std::pair<core::Size, core::Size> pair_one, std::pair<core::Size, core::Size> pair_two);
 
 void sort_seq_num_list(utility::vector1<core::Size> & seq_num_list);
 
-void Output_seq_num_list(std::string const tag, utility::vector1<core::Size> const & seq_num_list, core::Size const spacing=40);
+void Output_seq_num_list(std::string const tag, utility::vector1<core::Size> const & seq_num_list, basic::Tracer & TR, core::Size const spacing=40 );
 
 bool
 Is_equivalent_vector(utility::vector1<core::Size> const & seq_num_list_1, utility::vector1<core::Size> const & seq_num_list_2);
 
-void Output_is_prepend_map(std::string const tag, std::map< core::Size, bool > const & my_map, core::Size const max_seq_num, core::Size const tag_spacing=40);
+void Output_is_prepend_map(std::string const tag, std::map< core::Size, bool > const & my_map, core::Size const max_seq_num, basic::Tracer & TR, core::Size const tag_spacing=40 );
 
 void
-Output_bool_list(std::string const tag, utility::vector1< bool > const & bool_list, core::Size const spacing=40);
+Output_bool_list(std::string const tag, utility::vector1< bool > const & bool_list, basic::Tracer & TR, core::Size const spacing=40 );
 
 void
-Output_bool_list(std::string const tag, utility::vector1< core::Size > const & size_list, core::Size const spacing=40);
+Output_bool_list(std::string const tag, utility::vector1< core::Size > const & size_list, basic::Tracer & TR, core::Size const spacing=40 );
 
 void
-Output_size_list(std::string const tag, utility::vector1< core::Size > const & size_list, core::Size const spacing=40);
+Output_size_list(std::string const tag, utility::vector1< core::Size > const & size_list, basic::Tracer & TR, core::Size const spacing=40 );
 
 // Undefined, commenting out to fix PyRosetta build  bool seq_num_list_sort_citeria(core::Size seq_num_1, Residue_info seq_num_2);
 
@@ -297,7 +292,7 @@ void
 suite_square_deviation(core::pose::Pose const & pose1, core::pose::Pose const & pose2, bool const & prepend_res, core::Size const & moving_res_1, core::Size const & moving_res_2, core::Size& atom_count, core::Real& sum_sd, bool verbose, bool const ignore_virtual_atom);
 
 void
-Output_title_text(std::string const title);
+Output_title_text(std::string const title, basic::Tracer & TR );
 
 bool
 Check_chain_closable(numeric::xyzVector<core::Real> const & xyz_1, numeric::xyzVector<core::Real> const & xyz_2, core::Size const gap_size);
@@ -321,10 +316,10 @@ void
 Freeze_sugar_torsions(core::kinematics::MoveMap & mm, core::Size const total_residue);
 
 void
-Output_boolean(std::string const & tag, bool boolean);
+Output_boolean(std::string const & tag, bool boolean, basic::Tracer & TR );
 
 void
-Output_boolean(bool boolean);
+Output_boolean(bool boolean, basic::Tracer & TR );
 
 void
 Output_movemap(core::kinematics::MoveMap const & mm, core::pose::Pose const & pose);

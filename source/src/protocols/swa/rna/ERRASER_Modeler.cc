@@ -16,7 +16,7 @@
 #include <protocols/swa/rna/StepWiseRNA_AnalyticalLoopCloseSampler.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
+#include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
 
@@ -25,8 +25,11 @@
 #include <core/pose/Pose.hh>
 
 #include <utility/tools/make_vector1.hh>
+#include <basic/Tracer.hh>
 
 #include <ObjexxFCL/string.functions.hh>
+
+static basic::Tracer TR( "protocols.swa.rna.ERRASER_Modeler" );
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // This needs to be unified with StepWiseRNA_Modeler!
@@ -123,7 +126,7 @@ namespace rna {
 		StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener = new StepWiseRNA_BaseCentroidScreener ( pose, job_parameters_ );
 		stepwise_rna_residue_sampler.set_base_centroid_screener ( base_centroid_screener );
 
-		StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener = new StepWiseRNA_VDW_Bin_Screener();
+		StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener = new StepWiseRNA_VDW_BinScreener();
 		if ( VDW_rep_screen_info_.size() > 0 ) {
 			user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF ( VDW_rep_alignment_RMSD_CUTOFF_ );
 			user_input_VDW_bin_screener->setup_using_user_input_VDW_pose( VDW_rep_screen_info_, pose, job_parameters_ );
@@ -149,7 +152,7 @@ namespace rna {
 		num_sampled_ = pose_data_list.size();
 		if ( num_sampled_ == 0 ){
 
-			std::cout << "WARNING! WARNING! WARNING! pose_data_list.size() == 0! " << std::endl;
+			TR << "WARNING! WARNING! WARNING! pose_data_list.size() == 0! " << std::endl;
 			//			if ( ! skip_sampling_ ) utility_exit_with_message( "No op in ERRASER_modeler!" );
 			pose_data_struct2 data_struct;
 			data_struct.pose_OP = new Pose( pose );
@@ -227,7 +230,7 @@ namespace rna {
 		Size cutpoint_closed = rebuild_res;
 		if ( !pose.fold_tree().is_cutpoint( cutpoint_closed ) ) utility_exit_with_message( "ERRASER requires a chainbreak right at sampled residue" );
 
-		StepWiseRNA_JobParameters_Setup stepwise_rna_job_parameters_setup( moving_res,
+		StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup( moving_res,
 																																			 full_sequence,
 																																			 input_res1,
 																																			 input_res2,
@@ -268,7 +271,7 @@ namespace rna {
 		job_parameters->set_working_native_pose( get_native_pose() );
 
 		// should we also set the fold_tree here -- just take the pose's actual fold tree?
-		// that fold_tree is only used in PoseSetup, and in JobParameters_Setup, and not downstream
+		// that fold_tree is only used in PoseSetup, and in JobParametersSetup, and not downstream
 		// in any modelers...  -- rhiju
 
 		// user input fixed_res...

@@ -22,8 +22,8 @@
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>     //Feb 02, 2012: Need this to pass rosetta_tools/python_cc_reader/test_all_headers_compile.py
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>     //Feb 02, 2012: Need this to pass rosetta_tools/python_cc_reader/test_all_headers_compile.py
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -107,7 +107,7 @@ namespace rna {
 		set_native_screen_rmsd_cutoff( core::Real const setting ){native_screen_rmsd_cutoff_=setting;}
 
 		void
-		set_user_input_VDW_bin_screener(StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener){ user_input_VDW_bin_screener_= user_input_VDW_bin_screener; }
+		set_user_input_VDW_bin_screener(StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener){ user_input_VDW_bin_screener_= user_input_VDW_bin_screener; }
 
 		void
 		set_rename_tag( bool const setting ){ rename_tag_=setting;}
@@ -181,7 +181,7 @@ namespace rna {
 
 		StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
 
-		StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener_;
+		StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
 
 
   };

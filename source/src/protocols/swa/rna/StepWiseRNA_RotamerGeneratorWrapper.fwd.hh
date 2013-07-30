@@ -9,10 +9,11 @@
 
 /// @file   core/pose/Pose.fwd.hh
 /// @brief  Various OPS for various classes.
+/// @author Rhiju Das
 /// @author Parin Sripakdeevong
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_Base_Sugar_Rotamer_FWD_HH
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_Base_Sugar_Rotamer_FWD_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGeneratorWrapper_FWD_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGeneratorWrapper_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -20,9 +21,9 @@ namespace protocols{
 namespace swa{
 namespace rna{
 
-	class StepWiseRNA_Base_Sugar_Rotamer;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_Base_Sugar_Rotamer > StepWiseRNA_Base_Sugar_RotamerOP;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_Base_Sugar_Rotamer const > StepWiseRNA_Base_Sugar_RotamerCOP;
+	class StepWiseRNA_RotamerGeneratorWrapper;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGeneratorWrapper > StepWiseRNA_RotamerGeneratorWrapperOP;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGeneratorWrapper const > StepWiseRNA_RotamerGeneratorWrapperCOP;
 
 }
 }

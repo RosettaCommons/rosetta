@@ -390,7 +390,7 @@ return "StepWisePoseSetup";
 			std::cout << "Adding potential jump! " << std::endl;
 
 			std::pair< Size, Size > jump_pair = std::make_pair( full_to_sub[ i ], full_to_sub[ j ] );
-			if ( !Contain_seq_num( i, moving_res_list_ ) && !Contain_seq_num( j, moving_res_list_ ) ){
+			if ( !moving_res_list_.has_value( i) && !moving_res_list_.has_value( j) ){
 				potential_jump_partners.push_back( jump_pair );
 			} else {
 				potential_jump_partners_low_priority.push_back( jump_pair );
@@ -1150,7 +1150,7 @@ return "StepWisePoseSetup";
 		bool const root_partition = partition_definition( pose.fold_tree().root() );
 
 		for ( Size i = 1; i <= working_superimpose_res.size(); i++ ) {
-			if ( !Contain_seq_num( working_superimpose_res[ i ], working_fixed_res ) ){
+			if ( !working_fixed_res.has_value( working_superimpose_res[ i ]) ){
 				std::cout <<  "working superimpose_res " << working_superimpose_res[ i] << " not in fixed_res? " << std::endl;
 				utility_exit_with_message( "You will get weird results if superimpose_res residues are allowed to move!" );
 			}

@@ -40,6 +40,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
+#include <basic/Tracer.hh>
 
 using namespace core;
 
@@ -55,6 +56,8 @@ using numeric::conversions::degrees;
 using numeric::angle_radians;
 using numeric::principal_angle;
 using numeric::dihedral_radians;
+
+static basic::Tracer TR( "protocols.swa.rna.RNA_AnalyticLoopCloser" );
 
 namespace protocols {
 namespace swa {
@@ -170,7 +173,7 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	dt_ang[ 9 ] =  phi_O3star_nextP_nextO5star_nextC5star;
 
 	if ( verbose_ ) {
-		std::cout <<  "after chainbreak geometry fix" << std::endl;
+		TR <<  "after chainbreak geometry fix" << std::endl;
 		output_chainTORS ( dt_ang, db_ang, db_len );
 	}
 
@@ -262,7 +265,7 @@ RNA_AnalyticLoopCloser::figure_out_offset (
   core::Real const & original_torsion_value,
   utility::vector1< core::Real > & offset_save ) {
 	if ( dof_id == BOGUS_DOF_ID ) { //expected at cutpoint!
-		std::cout <<  "Problem with DOF_ID " << dof_id << std::endl;
+		TR <<  "Problem with DOF_ID " << dof_id << std::endl;
 		utility_exit_with_message ( "Problem with DOF_ID" );
 		//		}
 	} else {
@@ -270,8 +273,8 @@ RNA_AnalyticLoopCloser::figure_out_offset (
 		dof_ids_.push_back ( dof_id );
 
 		if ( verbose_ ) {
-			std::cout << dof_id;
-			std::cout << "  offset " << pose.dof ( dof_id ) << " " << radians ( original_torsion_value )
+			TR << dof_id;
+			TR << "  offset " << pose.dof ( dof_id ) << " " << radians ( original_torsion_value )
 			          << " " << pose.dof ( dof_id ) - radians ( original_torsion_value ) << std::endl;
 		}
 	}
@@ -289,9 +292,9 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 
 	if ( choose_least_perturb_solution_ ) {
 		if ( verbose_ )		{
-			std::cout << "---------------------------------- " << std::endl;
-			std::cout << "   start pose " << std::endl;
-			std::cout << "---------------------------------- " << std::endl;
+			TR << "---------------------------------- " << std::endl;
+			TR << "   start pose " << std::endl;
+			TR << "---------------------------------- " << std::endl;
 			utility::vector1<Real> dt_ang, db_len, db_ang;
 			utility::vector1<utility::vector1<Real> > atoms;
 			fill_chainTORS ( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
@@ -326,16 +329,16 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 		fill_solution ( pose, best_sol );
 
 		if ( verbose_ ) { //consistency check.
-			std::cout << "---------------------------------- " << std::endl;
-			std::cout << "   solution " << best_sol << std::endl;
-			std::cout << "---------------------------------- " << std::endl;
+			TR << "---------------------------------- " << std::endl;
+			TR << "   solution " << best_sol << std::endl;
+			TR << "---------------------------------- " << std::endl;
 			output_chainTORS ( t_ang_[best_sol], b_ang_[best_sol], b_len_[best_sol] );
 		}
 
 		//		fill_solution( pose, best_sol );
 
 		if ( verbose_ )		{
-			std::cout << "pose " << best_sol << ": " << std::endl;
+			TR << "pose " << best_sol << ": " << std::endl;
 			utility::vector1<Real> dt_ang, db_len, db_ang;
 			utility::vector1<utility::vector1<Real> > atoms;
 			fill_chainTORS ( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
@@ -357,9 +360,9 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 			}
 
 			if ( verbose_ && n == 2 ) { //consistency check.
-				std::cout << "solution " << n << ": " << std::endl;
+				TR << "solution " << n << ": " << std::endl;
 				output_chainTORS ( t_ang_[n], b_ang_[n], b_len_[n] );
-				std::cout << "pose " << n << ": " << std::endl;
+				TR << "pose " << n << ": " << std::endl;
 				utility::vector1<Real> dt_ang, db_len, db_ang;
 				utility::vector1<utility::vector1<Real> > atoms;
 				fill_chainTORS ( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
@@ -457,17 +460,17 @@ void
 RNA_AnalyticLoopCloser::output_chainTORS ( utility::vector1< core::Real > const & dt_ang,
     utility::vector1< core::Real > const & db_ang,
     utility::vector1< core::Real > const & db_len ) const {
-	std::cout << "------  chainTORS output ---- " << std::endl;
+	TR << "------  chainTORS output ---- " << std::endl;
 
 	for ( Size i = 1; i <= dt_ang.size(); i++ ) {
-		std::cout << I ( 3, i ) << " ";
-		std::cout << "TORSIONS: ";
-		std::cout << F ( 8, 3, dt_ang[ i ] ) << " ";
-		std::cout << "   BOND_ANGLES: ";
-		std::cout << F ( 8, 3, db_ang[ i ] ) << " ";
-		std::cout << "   BOND_LENGTHS: ";
-		std::cout << F ( 8, 3, db_len[ i ] ) << " ";
-		std::cout << std::endl;
+		TR << I ( 3, i ) << " ";
+		TR << "TORSIONS: ";
+		TR << F ( 8, 3, dt_ang[ i ] ) << " ";
+		TR << "   BOND_ANGLES: ";
+		TR << F ( 8, 3, db_ang[ i ] ) << " ";
+		TR << "   BOND_LENGTHS: ";
+		TR << F ( 8, 3, db_len[ i ] ) << " ";
+		TR << std::endl;
 	}
 }
 
@@ -487,7 +490,7 @@ RNA_AnalyticLoopCloser::fill_chainTORS (
 	utility::vector1< Vector > atoms_xyz;
 
 	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {
-		//		std::cout << "filling: " << atom_ids_[i].atomno() << " " << atom_ids_[i].rsd() << std::endl;
+		//		TR << "filling: " << atom_ids_[i].atomno() << " " << atom_ids_[i].rsd() << std::endl;
 		atoms_xyz.push_back ( pose.xyz ( atom_ids_[ i ] ) );
 	}
 

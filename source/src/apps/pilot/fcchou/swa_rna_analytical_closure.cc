@@ -92,11 +92,11 @@
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_Clusterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
+#include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
 #include <ObjexxFCL/string.functions.hh>
@@ -354,7 +354,7 @@ get_silent_file_tags() {
 	}
 
 	if ( option[ job_queue_ID ].user() && option[ filter_output_filename ].user() ) {
-		Output_title_text ( "importing tag from filter_outfile" );
+		Output_title_text( "importing tag from filter_outfile", TR );
 		tags_from_filterer_outfile = true;
 		std::string const filtered_tag_file = option[ filter_output_filename ]();
 		std::ifstream infile;
@@ -391,7 +391,7 @@ get_silent_file_tags() {
 		input_silent_file_tags.clear();
 		input_silent_file_tags.push_back ( line_list[1] );
 		input_silent_file_tags.push_back ( line_list[2] );
-		Output_title_text ( "" );
+		Output_title_text( "", TR );
 	}
 
 	if ( ( tags_from_command_line == false ) && ( tags_from_filterer_outfile == false ) ) {
@@ -468,7 +468,7 @@ setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_
 	if ( !option[ sample_res ].user() ) utility_exit_with_message ( "Must supply sample_res!" );
 
 	/////////////////////////////////////////////////////
-	StepWiseRNA_JobParameters_Setup stepwise_rna_job_parameters_setup ( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
+	StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup ( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
 	    full_sequence,
 	    get_input_res ( nres, "1" ),
 	    get_input_res ( nres, "2" ),
@@ -623,7 +623,7 @@ rna_resample_test() {
 	Pose pose;
 	stepwise_rna_pose_setup->apply ( pose );
 	stepwise_rna_pose_setup->setup_native_pose ( pose ); //NEED pose to align native_pose to pose.
-	StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener = new StepWiseRNA_VDW_Bin_Screener();
+	StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener = new StepWiseRNA_VDW_BinScreener();
 
 	if ( option[ VDW_rep_screen_info].user() ) {
 		user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF ( option[ VDW_rep_alignment_RMSD_CUTOFF]() );

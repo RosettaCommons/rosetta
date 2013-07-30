@@ -17,7 +17,7 @@
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.hh>
 #include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 //////////////////////////////////
@@ -54,7 +54,7 @@ namespace swa {
 namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	StepWiseRNA_RotamerGenerator_Wrapper::StepWiseRNA_RotamerGenerator_Wrapper(
+	StepWiseRNA_RotamerGeneratorWrapper::StepWiseRNA_RotamerGeneratorWrapper(
 								core::pose::Pose const & pose,
 								utility::vector1< core::Size > const & moving_suite_list,
 								bool const & sample_sugar_and_base1,
@@ -83,13 +83,13 @@ namespace rna {
 		bool const can_append  = check_can_append( moving_suite_list_ ); //[13,12]
 
 		if (!can_prepend && !can_append){
-			Output_seq_num_list("working_moving_suite_list_:" , moving_suite_list_);
+			Output_seq_num_list("working_moving_suite_list_:" , moving_suite_list_, TR );
 			utility_exit_with_message( "Cannot prepend or append residue in moving_suite_list_" );
 		}
 
 		if (moving_suite_list_.size()>1){
 			if (can_prepend && can_append){
-				Output_seq_num_list("working_moving_suite_list_:" , moving_suite_list_);
+				Output_seq_num_list("working_moving_suite_list_:" , moving_suite_list_, TR );
 				utility_exit_with_message( "moving_suite_list_.size()>1 but BOTH can_prepend = true && can_append == true!" );
 			}
 		}
@@ -105,48 +105,50 @@ namespace rna {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	StepWiseRNA_RotamerGenerator_Wrapper::~StepWiseRNA_RotamerGenerator_Wrapper(){}
+	StepWiseRNA_RotamerGeneratorWrapper::~StepWiseRNA_RotamerGeneratorWrapper(){}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_RotamerGenerator_Wrapper::initialize_rotamer_generator_list(){
+	StepWiseRNA_RotamerGeneratorWrapper::initialize_rotamer_generator_list(){
 
-		Output_title_text("Enter StepWiseRNA_RotamerGenerator::initialize_rotamer_generator_list");
-		Output_boolean("sample_sugar_and_base1_ =  " , sample_sugar_and_base1_);
-		Output_boolean("  sample_sugar_and_base2_ =  " , sample_sugar_and_base2_);
-		Output_boolean("  Is_prepend_(only_meaningful_if_#res>1) =  ", Is_prepend_);
-		Output_boolean("  sample_extra_rotamers_ =  " , sample_extra_rotamers_);
-		Output_boolean("  include_syn_chi_ =  " , include_syn_chi_);
-		Output_boolean("  allow_syn_pyrimidine_ =  " , allow_syn_pyrimidine_);
-		std::cout << std::endl;
-		Output_boolean("exclude_alpha_beta_gamma_sampling_: ", exclude_alpha_beta_gamma_sampling_);
-		Output_boolean("  extra_beta_: ", extra_beta_ ); Output_boolean(" extra_epsilon_: ", extra_epsilon_);
-		Output_boolean(" extra_anti_chi_: ", extra_anti_chi_); Output_boolean(" extra_syn_chi_: ", extra_syn_chi_);
-		std::cout << std::endl;
-		Output_seq_num_list("working_moving_suite_list_:" , moving_suite_list_);
-		Output_seq_num_list("working_force_syn_chi_res_list_:", force_syn_chi_res_list_);
-		Output_seq_num_list("working_force_north_ribose_list_:", force_north_ribose_list_);
-		Output_seq_num_list("working_force_south_ribose_list_:", force_south_ribose_list_);
+		Output_title_text("Enter StepWiseRNA_RotamerGenerator::initialize_rotamer_generator_list", TR );
+		Output_boolean("sample_sugar_and_base1_ =  " , sample_sugar_and_base1_, TR );
+		Output_boolean("  sample_sugar_and_base2_ =  " , sample_sugar_and_base2_, TR );
+		Output_boolean("  Is_prepend_(only_meaningful_if_#res>1) =  ", Is_prepend_, TR );
+		Output_boolean("  sample_extra_rotamers_ =  " , sample_extra_rotamers_, TR );
+		Output_boolean("  include_syn_chi_ =  " , include_syn_chi_, TR );
+		Output_boolean("  allow_syn_pyrimidine_ =  " , allow_syn_pyrimidine_, TR );
+		TR << std::endl;
+		Output_boolean("exclude_alpha_beta_gamma_sampling_: ", exclude_alpha_beta_gamma_sampling_, TR );
+		Output_boolean("  extra_beta_: ", extra_beta_, TR );
+		Output_boolean(" extra_epsilon_: ", extra_epsilon_, TR);
+		Output_boolean(" extra_anti_chi_: ", extra_anti_chi_, TR );
+		Output_boolean(" extra_syn_chi_: ", extra_syn_chi_, TR);
+		TR << std::endl;
+		Output_seq_num_list("working_moving_suite_list_:" , moving_suite_list_, TR );
+		Output_seq_num_list("working_force_syn_chi_res_list_:", force_syn_chi_res_list_, TR );
+		Output_seq_num_list("working_force_north_ribose_list_:", force_north_ribose_list_, TR );
+		Output_seq_num_list("working_force_south_ribose_list_:", force_south_ribose_list_, TR );
 
 		for (Size n = 1; n <= force_north_ribose_list_.size(); n++){
-			if (Contain_seq_num(force_north_ribose_list_[n], force_south_ribose_list_)){
+			if (force_south_ribose_list_.has_value(force_north_ribose_list_[n])){
 				utility_exit_with_message("seq_num =  " + ObjexxFCL::string_of(force_north_ribose_list_[n]) + " is in both force_north_ribose_list_ and force_south_ribose_list_! " );
 			}
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////////////////////
 		for (Size list_position = rotamer_generator_list_.size(); list_position >= 1; list_position--){
-			std::cout << "list_position =  " << list_position << " working_moving_suite =  " << moving_suite_list_[list_position] << std::endl;
+			TR << "list_position =  " << list_position << " working_moving_suite =  " << moving_suite_list_[list_position] << std::endl;
 			rotamer_generator_list_[list_position] = setup_rotamer_generator(list_position); //This assumes that rotamer_generator[list_position+1] is setup and properly initialized
 		}
 
-		Output_title_text("Exit StepWiseRNA_RotamerGenerator::initialize_rotamer_generator_list");
+		Output_title_text("Exit StepWiseRNA_RotamerGenerator::initialize_rotamer_generator_list", TR );
 
 	}
 
 	////////////////////////////////////////////////////////////////////////
 	StepWiseRNA_RotamerGeneratorOP const
-	StepWiseRNA_RotamerGenerator_Wrapper::setup_rotamer_generator(Size const list_position){
+	StepWiseRNA_RotamerGeneratorWrapper::setup_rotamer_generator(Size const list_position){
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		bool sample_lower_sugar_and_base, sample_upper_sugar_and_base;
@@ -187,7 +189,7 @@ namespace rna {
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		bool const Is_bulge  =  (list_position == 1) ? false : true;
-		std::cout << "list_position = " << list_position; Output_boolean(" Is_bulge =  " , Is_bulge); std::cout << std::endl;
+		TR << "list_position = " << list_position; Output_boolean(" Is_bulge =  " , Is_bulge, TR ); TR << std::endl;
 
 		bool const sample_extra_rotamers =  (Is_bulge) ? false : sample_extra_rotamers_;
 		bool const fast  =  (list_position == 1) ? fast_ : false; //Only make the sampling suite fast..
@@ -229,7 +231,7 @@ namespace rna {
 
 	////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_RotamerGenerator_Wrapper::set_fast( bool const & fast ){
+	StepWiseRNA_RotamerGeneratorWrapper::set_fast( bool const & fast ){
 		fast_ = fast;
 
 	}
@@ -241,7 +243,7 @@ namespace rna {
 	//Second		if sample_sugar_pucker == False, then pucker_state then specifies the pucker determine from input pose or rotamer_generator_list_[list_position+1]
 
 	PuckerState
-	StepWiseRNA_RotamerGenerator_Wrapper::Get_residue_pucker_state_internal( core::pose::Pose const & pose, Size const list_position, std::string const which_sugar, bool sample_sugar_pucker) const{
+	StepWiseRNA_RotamerGeneratorWrapper::Get_residue_pucker_state_internal( core::pose::Pose const & pose, Size const list_position, std::string const which_sugar, bool sample_sugar_pucker) const{
 
 
 
@@ -251,9 +253,9 @@ namespace rna {
 
 		if (sample_sugar_pucker){
 
-			if (Contain_seq_num(working_moving_pucker, force_north_ribose_list_)) return NORTH;
+			if (force_north_ribose_list_.has_value(working_moving_pucker)) return NORTH;
 
-			if (Contain_seq_num(working_moving_pucker, force_south_ribose_list_)) return SOUTH;
+			if (force_south_ribose_list_.has_value(working_moving_pucker)) return SOUTH;
 
 			return ALL;
 
@@ -300,12 +302,12 @@ namespace rna {
 				}
 			}
 
-			if (Contain_seq_num(working_moving_pucker, force_north_ribose_list_) && pucker_state != NORTH){
-				utility_exit_with_message("Contain_seq_num(working_moving_pucker, force_north_ribose_list_) && pucker_state != NORTH, working_moving_pucker = " + ObjexxFCL::string_of(working_moving_pucker) );
+			if (force_north_ribose_list_.has_value(working_moving_pucker) && pucker_state != NORTH){
+				utility_exit_with_message("force_north_ribose_list_.has_value(working_moving_pucker) && pucker_state != NORTH, working_moving_pucker = " + ObjexxFCL::string_of(working_moving_pucker) );
 			}
 
-			if (Contain_seq_num(working_moving_pucker, force_south_ribose_list_) && pucker_state != SOUTH){
-				utility_exit_with_message("Contain_seq_num(working_moving_pucker, force_south_ribose_list_) && pucker_state != SOUTH, working_moving_pucker = " + ObjexxFCL::string_of(working_moving_pucker) );
+			if (force_south_ribose_list_.has_value(working_moving_pucker) && pucker_state != SOUTH){
+				utility_exit_with_message("force_south_ribose_list_.has_value(working_moving_pucker) && pucker_state != SOUTH, working_moving_pucker = " + ObjexxFCL::string_of(working_moving_pucker) );
 			}
 
 			return pucker_state;
@@ -316,7 +318,7 @@ namespace rna {
 
 	////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_RotamerGenerator_Wrapper::has_another_rotamer() const{
+	StepWiseRNA_RotamerGeneratorWrapper::has_another_rotamer() const{
 
 		if ( choose_random_ ) return true; // can always get another random rotamer!
 
@@ -330,7 +332,7 @@ namespace rna {
 
 	////////////////////////////////////////////////////////////////////////
 	utility::vector1< Torsion_Info >
-	StepWiseRNA_RotamerGenerator_Wrapper::get_next_rotamer(){
+	StepWiseRNA_RotamerGeneratorWrapper::get_next_rotamer(){
 
 		using namespace core::id;
 
@@ -357,7 +359,7 @@ namespace rna {
 					break;
 				} else {
 					need_initialization_list[n] = true;
-					std::cout << "Bulge_rotamer_ID =  " << rotamer_generator_list_[2]->group_rotamer() << std::endl;
+					TR << "Bulge_rotamer_ID =  " << rotamer_generator_list_[2]->group_rotamer() << std::endl;
 				}
 			}
 
@@ -381,26 +383,26 @@ namespace rna {
 			}
 		}
 
-//		std::cout << "all_rotamer_list.size() =  " << all_rotamer_list.size() << std::endl;
+//		TR << "all_rotamer_list.size() =  " << all_rotamer_list.size() << std::endl;
 
 		return all_rotamer_list;
 	}
 
 	/////////////////////////////////////////////////////////////////////////
 	core::Size
-	StepWiseRNA_RotamerGenerator_Wrapper::group_rotamer(core::Size const list_position) {
+	StepWiseRNA_RotamerGeneratorWrapper::group_rotamer(core::Size const list_position) {
 		return rotamer_generator_list_[list_position]->group_rotamer();
 	}
 
 	/////////////////////////////////////////////////////////////////////////
 	core::Size
-	StepWiseRNA_RotamerGenerator_Wrapper::subgroup_rotamer(core::Size const list_position) {
+	StepWiseRNA_RotamerGeneratorWrapper::subgroup_rotamer(core::Size const list_position) {
 		return rotamer_generator_list_[list_position]->subgroup_rotamer();
 	}
 
 	/////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_RotamerGenerator_Wrapper::set_choose_random( bool const  setting ){
+	StepWiseRNA_RotamerGeneratorWrapper::set_choose_random( bool const  setting ){
 		choose_random_ = setting;
 	}
 

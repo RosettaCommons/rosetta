@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWiseRNA_RotamerGenerator_Wrapper.hh
+/// @file StepWiseRNA_RotamerGeneratorWrapper.hh
 /// @brief
 /// @detailed
 ///
@@ -15,8 +15,8 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_Wrapper_HH
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_Wrapper_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGeneratorWrapper_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGeneratorWrapper_HH
 
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 
@@ -40,16 +40,16 @@ namespace protocols {
 namespace swa {
 namespace rna {
 
-	class StepWiseRNA_RotamerGenerator_Wrapper: public utility::pointer::ReferenceCount {
+	class StepWiseRNA_RotamerGeneratorWrapper: public utility::pointer::ReferenceCount {
 
 	public:
-		StepWiseRNA_RotamerGenerator_Wrapper(
+		StepWiseRNA_RotamerGeneratorWrapper(
 								core::pose::Pose const & pose,
 								utility::vector1< core::Size > const & moving_suite_list,
 								bool const & sample_sugar_and_base1,
 								bool const & sample_sugar_and_base2 );
 
-	  virtual ~StepWiseRNA_RotamerGenerator_Wrapper();
+	  virtual ~StepWiseRNA_RotamerGeneratorWrapper();
 
 		bool has_another_rotamer() const;
 

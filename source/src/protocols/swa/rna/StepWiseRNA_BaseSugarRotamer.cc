@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWiseRNA_Base_Sugar_Rotamer
+/// @file StepWiseRNA_BaseSugarRotamer
 /// @brief Parameters to be passed between different modules of stepwise RNA building.
 /// @detailed
 /// @author Parin Sripakdeevong
 
 
 //////////////////////////////////
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
@@ -35,7 +35,7 @@ using core::Real;
 static numeric::random::RandomGenerator RG(2952388);  // <- Magic number, do not change it!
 using ObjexxFCL::fmt::F;
 
-static basic::Tracer TR( "protocols.swa.rna.stepwise_rna_base_sugar_rotamer" );
+static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_BaseSugarRotamer" );
 
 namespace protocols {
 namespace swa {
@@ -43,7 +43,7 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// Constructor
-	StepWiseRNA_Base_Sugar_Rotamer::StepWiseRNA_Base_Sugar_Rotamer(
+	StepWiseRNA_BaseSugarRotamer::StepWiseRNA_BaseSugarRotamer(
 											BaseState const & base_state,
 											PuckerState const & pucker_state,
 											core::scoring::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
@@ -71,7 +71,7 @@ namespace rna {
 		}else if(base_state == SYN){
 			base_state_list_.push_back(SYN);
 		}else if(base_state == NONE){
-			//std::cout << "BLAH: base_state == NONE" << std::endl;
+			//TR << "BLAH: base_state == NONE" << std::endl;
 		}else{
 			utility_exit_with_message( "Invalid base_state_=" + ObjexxFCL::string_of(base_state_) );
 		}
@@ -93,12 +93,12 @@ namespace rna {
 
   //////////////////////////////////////////////////////////////////////////
   //destructor
-  StepWiseRNA_Base_Sugar_Rotamer::~StepWiseRNA_Base_Sugar_Rotamer()
+  StepWiseRNA_BaseSugarRotamer::~StepWiseRNA_BaseSugarRotamer()
   {}
 
   //////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_Base_Sugar_Rotamer::get_next_rotamer(){
+	StepWiseRNA_BaseSugarRotamer::get_next_rotamer(){
 
 		if ( master_rotamer_list_.size() == 0 ) initialize_master_rotamer_list();
 
@@ -122,7 +122,7 @@ namespace rna {
 
   //////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_Base_Sugar_Rotamer::initialize_master_rotamer_list(){
+	StepWiseRNA_BaseSugarRotamer::initialize_master_rotamer_list(){
 		runtime_assert( rotamer_count_ == 1 );
 		runtime_assert( pucker_ID_ == 1 );
 		// new -- keep track of all possibilities in a master list.
@@ -134,7 +134,7 @@ namespace rna {
 			// this is confusing, but should be fixable if we refactor a bit.
 			master_rotamer_list_.push_back( utility::tools::make_vector1( pucker_ID_old_, base_ID_old_, base_std_ID_old_ ) );
 		}
-		// std::cout <<  "Number of states in StepWiseRNA_Base_Sugar_Rotamer=" + ObjexxFCL::string_of( master_rotamer_list_.size() );
+		// TR <<  "Number of states in StepWiseRNA_BaseSugarRotamer=" + ObjexxFCL::string_of( master_rotamer_list_.size() );
 		rotamer_count_ = 1;
 		reset();
 	}
@@ -144,7 +144,7 @@ namespace rna {
 	// great (and not memory intensive), but makes it harder to get random states.
   //////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_Base_Sugar_Rotamer::get_next_rotamer_original(){
+	StepWiseRNA_BaseSugarRotamer::get_next_rotamer_original(){
 
 		if(pucker_ID_ > pucker_state_list_.size()) return false;
 
@@ -232,10 +232,10 @@ namespace rna {
 
   //////////////////////////////////////////////////////////////////////////
 	PuckerState const &
-	StepWiseRNA_Base_Sugar_Rotamer::current_pucker_state() const {
+	StepWiseRNA_BaseSugarRotamer::current_pucker_state() const {
 
-//		std::cout << "pucker_ID_old_= " << pucker_ID_old_ << std::endl;
-//		std::cout << "pucker_state_list_.size()= " << pucker_state_list_.size() << std::endl;
+//		TR << "pucker_ID_old_= " << pucker_ID_old_ << std::endl;
+//		TR << "pucker_state_list_.size()= " << pucker_state_list_.size() << std::endl;
 
 		PuckerState const & pucker_state=pucker_state_list_[pucker_ID_old_];
 
@@ -247,7 +247,7 @@ namespace rna {
   //////////////////////////////////////////////////////////////////////////
 
 	std::string const
-	StepWiseRNA_Base_Sugar_Rotamer::current_base_state() const {
+	StepWiseRNA_BaseSugarRotamer::current_base_state() const {
 
 		using namespace ObjexxFCL;
 
@@ -274,7 +274,7 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////
 	std::string const
-	StepWiseRNA_Base_Sugar_Rotamer::current_tag() const {
+	StepWiseRNA_BaseSugarRotamer::current_tag() const {
 
 		std::string tag=current_base_state();
 
@@ -291,7 +291,7 @@ namespace rna {
 	}
   //////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_Base_Sugar_Rotamer::reset() {
+	StepWiseRNA_BaseSugarRotamer::reset() {
 
 		rotamer_count_ = 1;
 

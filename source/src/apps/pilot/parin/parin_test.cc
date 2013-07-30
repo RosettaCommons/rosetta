@@ -102,10 +102,10 @@
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
 #include <protocols/rna/RNA_LoopCloser.fwd.hh>
 
@@ -271,8 +271,8 @@ multiple_variant_type_test(){
 		output_pose_name+="iAU";
 		dump_pdb( pose, output_pose_name+ ".pdb" );	
 
-		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ));
-		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ));
+		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
+		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 	
 		/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,8 +283,8 @@ multiple_variant_type_test(){
 		dump_pdb( pose, output_pose_name+ ".pdb" );	
 	
 		
-		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ));
-		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ));
+		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
+		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 
 	
@@ -294,8 +294,8 @@ multiple_variant_type_test(){
 		output_pose_name+="iRP";
 		dump_pdb( pose, output_pose_name+ ".pdb" );	
 
-		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ));
-		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ));
+		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
+		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 
 		std::cout << "REMOVE VIRTUAL_RNA_RESIDUE_UPPER " << std::endl;
@@ -303,8 +303,8 @@ multiple_variant_type_test(){
 		output_pose_name+="iRU";
 		dump_pdb( pose, output_pose_name+ ".pdb" );		
 
-		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ));
-		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ));
+		Output_boolean(" VIRTUAL_PHOSPHATE= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_PHOSPHATE" ), TR );
+		Output_boolean(" VIRTUAL_RNA_RESIDUE_UPPER= ", pose.residue( seq_num  ).has_variant_type( "VIRTUAL_RNA_RESIDUE_UPPER" ), TR );
 		std::cout << std::endl;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -621,11 +621,11 @@ hermann_phase_two_minimize(){
 	Size const num_extra_rounds=20;
 
 
-	Output_boolean("biox_submit= ", biox_submit); std::cout << std::endl;
-	Output_boolean("output_silentfile_every_round= ", output_silentfile_every_round); std::cout << std::endl;
-	Output_boolean("output_copy_DOF= ", output_copy_DOF); std::cout << std::endl;
-	Output_boolean("skip_minimize= ", skip_minimize); std::cout << std::endl;
-	Output_boolean("extra_minimize_rounds= ", extra_minimize_rounds); std::cout << std::endl;
+	Output_boolean("biox_submit= ", biox_submit, TR ); std::cout << std::endl;
+	Output_boolean("output_silentfile_every_round= ", output_silentfile_every_round, TR ); std::cout << std::endl;
+	Output_boolean("output_copy_DOF= ", output_copy_DOF, TR ); std::cout << std::endl;
+	Output_boolean("skip_minimize= ", skip_minimize, TR ); std::cout << std::endl;
+	Output_boolean("extra_minimize_rounds= ", extra_minimize_rounds, TR ); std::cout << std::endl;
 
 
 	bool copy_DOF=false;
@@ -699,7 +699,7 @@ hermann_phase_two_minimize(){
 
 	utility::vector1< core::Size > const minimize_res_list= option[ minimize_res ]();
 	
-	Output_seq_num_list("minimize_res_list= ", minimize_res_list, 30);
+	Output_seq_num_list("minimize_res_list= ", minimize_res_list, TR, 30 );
 
 	utility::vector1< std::string > const	fold_tree_string_list= option[ fold_tree_strings ]();	
 	std::string const filtered_tag_file=option[ filter_filename  ]();
@@ -765,7 +765,7 @@ hermann_phase_two_minimize(){
 	std::cout << "total_min_rounds= " << scorefxn_list.size() << " num_extra_rounds= " << num_extra_rounds << std::endl;
 
 	////////////////////////////////////Setup fold_tree...////////////////////////////////////////////////////////////////////
-	Output_title_text("Setup FOLD_TREE");
+	Output_title_text("Setup FOLD_TREE", TR );
 	core::kinematics::FoldTree fold_tree( total_res );
 
 	for(Size ii=1; ii<=fold_tree_string_list.size(); ii++){
@@ -831,7 +831,7 @@ hermann_phase_two_minimize(){
 		utility_exit_with_message( "scorefxn_list.size()"+string_of(scorefxn_list.size())+"!mm_list.size()("+string_of(mm_list.size())+")" );
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	Output_title_text("IMPORT_FILTERED_FILENAME");
+	Output_title_text("IMPORT_FILTERED_FILENAME", TR );
 
 	Size const num_nstruct_per_node=option[ user_num_nstruct_per_node ]();
 	Size const JOB_ID_MOD_CUTOFF=option[ user_JOB_ID_MOD_CUTOFF ]();
@@ -975,7 +975,7 @@ hermann_phase_two_minimize(){
 		std::cout << "SO_FAR: num_tag_pair_found= " << num_tag_pair_found << " time_taken=" << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC <<std::endl;
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 		if(copy_DOF){
-			Output_title_text("COPY DOFS");
+			Output_title_text("COPY DOFS", TR );
 
 			pose::Pose copy_DOF_pose;
 
@@ -1013,7 +1013,7 @@ hermann_phase_two_minimize(){
 
 			//continue;
 		}else{
-			Output_title_text("IMPORT PDB");
+			Output_title_text("IMPORT PDB", TR );
 			//import PDB? CAN JUST COPY DOF? MIGHT NEED the alignment helix...
 
 			std::cout << "importing " << import_pose_tag << std::endl;
@@ -1182,9 +1182,9 @@ hermann_phase_two_minimize(){
 				BinaryRNASilentStruct s( full_pose, full_pose_tag_MOD );
 
 				if(verbose){
-						protocols::swa::rna::Output_seq_num_list("native_virtual_res_list=", native_virtual_res_list);
-						protocols::swa::rna::Output_seq_num_list("native_alignment_res_list=",native_alignment_res_list);
-						protocols::swa::rna::Output_seq_num_list("rmsd_res_list=",rmsd_res_list);
+						protocols::swa::rna::Output_seq_num_list("native_virtual_res_list=", native_virtual_res_list, TR );
+						protocols::swa::rna::Output_seq_num_list("native_alignment_res_list=",native_alignment_res_list, TR );
+						protocols::swa::rna::Output_seq_num_list("rmsd_res_list=",rmsd_res_list, TR );
 				}
 
 
@@ -1321,10 +1321,10 @@ hermann_phase_two(){
 	utility::vector1< pose_data_struct2 > upper_pose_data_list=convert_silent_file_to_pose_data_list(silent_files_list[2]);
 
 
-	Output_title_text("align LOWER SWA pdbs");
+	Output_title_text("align LOWER SWA pdbs", TR );
 	align_pdbs_function(static_pose, lower_pose_data_list, lower_alignment_res_pair_list, 	alignment_RMSD_cutoff);
 
-	Output_title_text("align UPPER SWA pdbs");
+	Output_title_text("align UPPER SWA pdbs", TR );
 	align_pdbs_function(static_pose, upper_pose_data_list, upper_alignment_res_pair_list, 	alignment_RMSD_cutoff);
 
 
@@ -1589,7 +1589,7 @@ calculate_bulge_length_distribution(){
 
 	std::cout << "setup_delta_rotamer_generator" << std::endl;
 	BaseState const bulge_base_state = (is_purine( (*pose_data_list[1].pose_OP).residue( FB_job_params.bulge_res ) ) ) ? BOTH: ANTI;
-	StepWiseRNA_Base_Sugar_RotamerOP bulge_base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer( bulge_base_state, ALL, rna_fitted_torsion_info);
+	StepWiseRNA_BaseSugarRotamerOP bulge_base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( bulge_base_state, ALL, rna_fitted_torsion_info);
 
 
 //for(Size e2=min_angle; e2<=max_angle; e2+=bin_size){
@@ -1779,7 +1779,7 @@ extract_clash_list(){
 
 	sort_seq_num_list(sample_res_list);
 
-	Output_seq_num_list("sample_res_list= ", sample_res_list, 40);
+	Output_seq_num_list("sample_res_list= ", sample_res_list, TR );
 
 	for(Size seq_num_1=1; seq_num_1<=sample_res_list.size(); seq_num_1++){
 
@@ -1914,7 +1914,7 @@ extract_hydrogen_bonds_statistic(){
 
 	utility::vector1< core::Size > sample_res_list=input_sample_res_list;
 
-	Output_boolean("include_edge_phosphate= ", include_edge_phosphate); std::cout << std::endl;
+	Output_boolean("include_edge_phosphate= ", include_edge_phosphate, TR ); std::cout << std::endl;
 
 
 	if(include_edge_phosphate){ //Assume continuous_range for now.
@@ -1936,8 +1936,8 @@ extract_hydrogen_bonds_statistic(){
 
 	}
 
-	Output_seq_num_list("input_sample_res_list= ", input_sample_res_list, 40);
-	Output_seq_num_list("sample_res_list= ", sample_res_list, 40);
+	Output_seq_num_list("input_sample_res_list= ", input_sample_res_list, TR );
+	Output_seq_num_list("sample_res_list= ", sample_res_list, TR );
 
 	utility::vector1< Hydrogen_Bond_Info > hydrogen_bond_info_list;
 
@@ -2313,7 +2313,7 @@ minimize_pdb(){
 	mm.set_chi( false );
 	mm.set_jump( false );
 
-	Output_seq_num_list("minimize_res_list= ", minimize_res_list, 30);
+	Output_seq_num_list("minimize_res_list= ", minimize_res_list, TR, 30 );
 
 	for(Size n=1; n<=minimize_res_list.size(); n++){
 		Size const seq_num=minimize_res_list[n];
@@ -3011,9 +3011,9 @@ cluster_rotamers(bool const second_stage,
 								utility::vector1< utility::vector1< numeric::xyzVector<Real> > > & cluster_center_xyz_list){
 
 	if(second_stage){
-		Output_title_text("Enter Rosetta cluster_rotamers function SECOND_STAGE");
+		Output_title_text("Enter Rosetta cluster_rotamers function SECOND_STAGE", TR );
 	}else{
-		Output_title_text("Enter Rosetta cluster_rotamers function FIRST_STAGE");
+		Output_title_text("Enter Rosetta cluster_rotamers function FIRST_STAGE", TR );
 	}
 
 	using namespace core::chemical;
@@ -3062,7 +3062,7 @@ cluster_rotamers(bool const second_stage,
 
 	std::cout << "------------------------------------------------------" << std::endl;
 	std::cout << "sequence=" << sequence << std::endl;
-	Output_boolean("Is_prepend= ", Is_prepend); std::cout << std::endl;
+	Output_boolean("Is_prepend= ", Is_prepend, TR ); std::cout << std::endl;
 	std::cout << "sample_res= " << sample_res << std::endl;
 	std::cout << "sample_suite= " << sample_suite << std::endl;
 	std::cout << "bin_size= " << bin_size << std::endl;
@@ -3070,13 +3070,13 @@ cluster_rotamers(bool const second_stage,
 	std::cout << "large_cluster_rmsd= " << large_cluster_rmsd << std::endl;
 	std::cout << "VDW_overlap_dist_cutoff= " << VDW_overlap_dist_cutoff << std::endl;
 	std::cout << "num_atom_VDW_clash_cutoff= " << num_atom_VDW_clash_cutoff << std::endl;
-	Output_boolean("replusion_screen= ", replusion_screen); std::cout << std::endl;
+	Output_boolean("replusion_screen= ", replusion_screen, TR ); std::cout << std::endl;
 	std::cout << "silent_file= " << silent_file << std::endl;
-	Output_boolean("QUICK= ", QUICK); std::cout << std::endl;
-	Output_boolean("sparse_output= ", sparse_output); std::cout << std::endl;
-	Output_boolean("create_rotamer_silent_file= ", create_rotamer_silent_file); std::cout << std::endl;
-	Output_boolean("VDW_rep_screening_slow_check= ", VDW_rep_screening_slow_check); std::cout << std::endl;
-	Output_boolean("optimize_screening= ", optimize_screening); std::cout << std::endl;
+	Output_boolean("QUICK= ", QUICK, TR ); std::cout << std::endl;
+	Output_boolean("sparse_output= ", sparse_output, TR ); std::cout << std::endl;
+	Output_boolean("create_rotamer_silent_file= ", create_rotamer_silent_file, TR ); std::cout << std::endl;
+	Output_boolean("VDW_rep_screening_slow_check= ", VDW_rep_screening_slow_check, TR ); std::cout << std::endl;
+	Output_boolean("optimize_screening= ", optimize_screening ); std::cout << std::endl;
 
 
 
@@ -3123,7 +3123,7 @@ cluster_rotamers(bool const second_stage,
 	bool const sample_sugar_and_base2= (Is_prepend) ? false : true;
 
 
-	StepWiseRNA_RotamerGenerator_WrapperOP rotamer_generator = new StepWiseRNA_RotamerGenerator_Wrapper( pose,
+	StepWiseRNA_RotamerGeneratorWrapperOP rotamer_generator = new StepWiseRNA_RotamerGeneratorWrapper( pose,
 																																																	working_moving_suite_list,
 																																																	sample_sugar_and_base1,
 																																																	sample_sugar_and_base2);
@@ -3209,7 +3209,7 @@ cluster_rotamers(bool const second_stage,
 	PuckerState pucker_state=ALL;
 	core::scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 
-	StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer( base_state, pucker_state, rna_fitted_torsion_info);
+	StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( base_state, pucker_state, rna_fitted_torsion_info);
 	base_sugar_rotamer->set_extra_chi(extra_chi_rotamer);
 
 	Size count=0;
@@ -3258,8 +3258,8 @@ cluster_rotamers(bool const second_stage,
 
 				if(pass_VDW_rep_screen!=pass_VDW_rep_screen_check){
 					std::cout << "pass_VDW_rep_screen!=pass_VDW_rep_screen_check" << rotamer_count << std::endl;
-					Output_boolean("pass_VDW_rep_screen=", pass_VDW_rep_screen); std::cout << std::endl;
-					Output_boolean("pass_VDW_rep_screen=", pass_VDW_rep_screen_check); std::cout << std::endl;
+					Output_boolean("pass_VDW_rep_screen=", pass_VDW_rep_screen, TR ); std::cout << std::endl;
+					Output_boolean("pass_VDW_rep_screen=", pass_VDW_rep_screen_check, TR ); std::cout << std::endl;
 					utility_exit_with_message("pass_VDW_rep_screen!=pass_VDW_rep_screen_check");
 				}	
 
@@ -3306,8 +3306,8 @@ cluster_rotamers(bool const second_stage,
 
 				if(pass_screen!=pass_screen_check){
 					std::cout << "pass_screen!=pass_screen_check for rotamer_count= " << rotamer_count << std::endl;
-					Output_boolean("pass_screen=", pass_screen); std::cout << std::endl;
-					Output_boolean("pass_screen_check=", pass_screen_check); std::cout << std::endl;
+					Output_boolean("pass_screen=", pass_screen, TR ); std::cout << std::endl;
+					Output_boolean("pass_screen_check=", pass_screen_check, TR ); std::cout << std::endl;
 					utility_exit_with_message("pass_screen!=pass_screen_check for rotamer_count");
 				}				
 			}
@@ -3351,9 +3351,9 @@ cluster_rotamers(bool const second_stage,
 	std::cout << "Total time_taken:" <<  static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC <<std::endl;
 
 	if(second_stage){
-		Output_title_text("Exit Rosetta cluster_rotamers function SECOND_STAGE");
+		Output_title_text("Exit Rosetta cluster_rotamers function SECOND_STAGE", TR );
 	}else{
-		Output_title_text("Exit Rosetta cluster_rotamers function FIRST_STAGE");
+		Output_title_text("Exit Rosetta cluster_rotamers function FIRST_STAGE", TR );
 	}
 
 }
@@ -3364,7 +3364,7 @@ cluster_rotamers(bool const second_stage,
 void
 cluster_rotamers_wrapper(){
 
-	Output_title_text("Enter Rosetta cluster_rotamers WRAPPER ");
+	Output_title_text("Enter Rosetta cluster_rotamers WRAPPER ", TR );
 
 
 	utility::vector1< utility::vector1< numeric::xyzVector<Real> > > first_stage_cluster_center_xyz_list;
@@ -3397,7 +3397,7 @@ cluster_rotamers_wrapper(){
 			cluster_rotamers(false, optimize_screening, cluster_rmsd, large_cluster_rmsd, empty_list, first_stage_cluster_center_xyz_list );
 	}
 
-	Output_title_text("Exit Rosetta cluster_rotamers WRAPPER ");
+	Output_title_text("Exit Rosetta cluster_rotamers WRAPPER ", TR );
 
 
 }

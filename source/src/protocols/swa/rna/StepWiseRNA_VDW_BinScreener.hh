@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWiseRNA_VDW_Bin_Screener.hh
+/// @file StepWiseRNA_VDW_BinScreener.hh
 /// @brief
 /// @detailed
 ///
 /// @author Parin Sripkaddevong
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_VDW_Bin_Screener_hh
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_VDW_Bin_Screener_hh
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_VDW_BinScreener_hh
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_VDW_BinScreener_hh
 
 
 
@@ -87,15 +87,15 @@ namespace rna {
 
 	
 
-  class StepWiseRNA_VDW_Bin_Screener: public utility::pointer::ReferenceCount {
+  class StepWiseRNA_VDW_BinScreener: public utility::pointer::ReferenceCount {
  
 	 public:
 
     //constructor!
-		StepWiseRNA_VDW_Bin_Screener();
+		StepWiseRNA_VDW_BinScreener();
 
     //destructor -- necessary?
-    virtual ~StepWiseRNA_VDW_Bin_Screener();
+    virtual ~StepWiseRNA_VDW_BinScreener();
 
 		void
 		FARFAR_setup_using_user_input_VDW_pose(utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose);

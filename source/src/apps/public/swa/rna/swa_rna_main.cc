@@ -64,6 +64,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
+#include <basic/Tracer.hh>
 ///////////////////////////////////////////////////
 #include <protocols/idealize/idealize.hh>
 
@@ -104,11 +105,11 @@
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
+#include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_Clusterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
@@ -147,6 +148,8 @@ using utility::vector1;
 using io::pdb::dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
+
+static basic::Tracer TR( "swa_rna_main" );
 
 
 OPT_KEY( Boolean, do_not_sample_multiple_virtual_sugar)
@@ -345,7 +348,7 @@ get_fixed_res(core::Size const nres){
 	}else if( minimize_res_list.size()!=0){
 
 		for(Size seq_num=1; seq_num<=nres; seq_num++){
-			if( Contain_seq_num( seq_num, minimize_res_list) ) continue;
+			if( minimize_res_list.has_value( seq_num) ) continue;
 			actual_fixed_res_list.push_back(seq_num);
 		}
 
@@ -430,7 +433,7 @@ get_input_res(core::Size const nres , std::string const pose_num){
 	}else if( missing_res_list.size()!=0){
 
 		for(Size seq_num=1; seq_num<=nres; seq_num++){
-			if( Contain_seq_num( seq_num, missing_res_list) ) continue;
+			if( missing_res_list.has_value( seq_num) ) continue;
 			actual_input_res_list.push_back(seq_num);
 		}
 
@@ -467,7 +470,7 @@ get_silent_file_tags(){
 
 	if(option[ job_queue_ID ].user() && option[ filter_output_filename ].user()){
 
-		Output_title_text("importing tag from filter_outfile");
+		Output_title_text("importing tag from filter_outfile", TR );
 
 		bool combine_long_loop=option[ combine_long_loop_mode ]();
 
@@ -524,7 +527,7 @@ get_silent_file_tags(){
 		input_silent_file_tags.push_back(line_list[1]);
 		input_silent_file_tags.push_back(line_list[2]);
 
-		Output_title_text("");
+		Output_title_text("", TR );
 
 	}
 
@@ -741,9 +744,95 @@ setup_simple_full_length_rna_job_parameters(){
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-
 protocols::swa::rna::StepWiseRNA_JobParametersOP
 setup_rna_job_parameters(bool check_for_previously_closed_cutpoint_with_input_pose=false){
+	// Describe use_case of flag check_for_previously_closed_cutpoint_with_input_pose? -- rhiju
+	//
+	//   i. Consider tetraloop-receptor motif:
+	//
+	//
+	//        Tetraloop
+	//            |      G14-C15
+	//            |      G13-C16
+	//           A4 A5   U12 U17  <--Receptor
+	//          G3   A6  U11 U18
+	//           C2-G7   C10-C19
+	//           C1-G8   C09-C20
+	//
+	//
+	//    Assumes a fold-tree with jump-points C1-C8, G8-C09, C09-C20 and G14-C15
+	//
+	//   ii. Suppose tetraloop was built first:
+	//
+	//           A4*A5
+	//          G3   A6
+	//           C2-G7   C10-C19
+	//           C1-G8   C09-C20
+	//
+	//       Becuase C1-C8 is a jump-point, there must be a corresponding closed-
+	//       cutpoint somwhere in the loop (e.g. between A4 and A5; see *). This
+	//       closed-cutpoint position can also be different for the various poses
+	//       in the silent_file (assuming that multiple built-up paths were allowed).
+	//
+	//
+	//   iii. Now we start building the receptor:
+	//
+	//
+	//           A4*A5
+	//          G3   A6  U11
+	//           C2-G7   C10-C19
+	//           C1-G8   C09-C20
+	//
+	//       Rhiju: Why is this so important that it is required as input for
+	//              setup_rna_job_parameters?
+	//
+	//       The setup_rna_job_parameters class is responsible for figuring out
+	//       the fold_tree. For simple motifs, such as a single hairpin or a
+	//       single double-stranded motif, setup_rna_job_parameters can figure
+	//       what the fold_tree is using just information specified from command-line
+	//       (jump_point_pairs, cutpoint_open, cutpoint_closed and etcs).
+	//
+	//       However, for more complex motif like tetraloop-receptor, it cannot
+	//       figure out the previously_closed_cupoint position of the tetraloop (i.e
+	//       where the * position is located) by using just the command line
+	//       information.
+	//
+	//       Setting check_for_previously_closed_cutpoint_with_input_pose to true
+	//       tells the class to look inside the input_pose to figure out where this
+	//       closed_cutpoint is located (see get_previously_closed_cutpoint_from_
+	//       imported_silent_file() function insetup_rna_job_parameters class for
+	//       futher details).
+	//
+	//       Lastly, note that the setup_rna_job_parameters class will still be able
+	//       to come up with a fold_tree even when
+	//       check_for_previously_closed_cutpoint_with_input_pose is false (default)
+	//       In this case, however, the fold_tree might not have the correct
+	//       closed-cutpoint position.
+	//
+	//       This is actually the default behavior since in most cases
+	//       (e.g. clustering, filtering), the specific details of the fold_tree
+	//       is not used. Additionally clustering and filtering deals with multiple
+	//       poses and not all of them have the same previously_closed_cutpoint
+	//       anyways.
+	//
+	// For "check_for_previously_closed_cutpoint_with_input_pose", can we just make
+	//    it true by default? -- rhiju
+	//
+	//        I would say no.
+	//
+	//        If "check_for_previously_closed_cutpoint_with_input_pose" is true, then
+	//        user will be required to pass in --in:file:silent and -tags options
+	//        from command line. These flags are appropriate for the sampler but
+	//        might not be appropriate for filterer and clusterer where -tags option is
+	//        not required. Essentially the clusterer and filterer deals with multiple
+	//        poses and the specific details each pose's fold_tree (e.g. the position
+	//        of the previously_closed_cutpoint) is not used.
+	//
+	//        To simplify the code, I would suggest removing the
+	//        "check_for_previously_closed_cutpoint_with_input_pose" option all together.
+	//        Perhaps, the benefit of this option (as outlined in the last email) isn't
+	//        worth the extra complexity it brings to the code.
+	//             -- parin (2013)
 
 	using namespace protocols::swa::rna;
 	using namespace ObjexxFCL;
@@ -760,7 +849,7 @@ setup_rna_job_parameters(bool check_for_previously_closed_cutpoint_with_input_po
 
 	/////////////////////////////////////////////////////
 
-	StepWiseRNA_JobParameters_Setup stepwise_rna_job_parameters_setup( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
+	StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
 																								 										 full_sequence,
 																								 										 get_input_res(nres, "1" ),
 																								 										 get_input_res(nres, "2" ),
@@ -771,7 +860,11 @@ setup_rna_job_parameters(bool check_for_previously_closed_cutpoint_with_input_po
 	stepwise_rna_job_parameters_setup.set_fixed_res( get_fixed_res(nres) );
 	stepwise_rna_job_parameters_setup.set_terminal_res( option[ terminal_res ]() );
 	stepwise_rna_job_parameters_setup.set_rmsd_res_list( option[ rmsd_res ]() );
+
+	// jump_point_pairs is string of pairs  "1-16 8-9", assumed for now to be connected by dashes.  See note in StepWiseRNA_JobParametersSetup.cc
 	stepwise_rna_job_parameters_setup.set_jump_point_pair_list( option[ jump_point_pairs ]() ); //Important!: Need to be called after set_fixed_res
+
+	//  Alignment_res is a string vector to allow user to specify multiple possible alignments. Note that 1-6 7-12 is different from 1-6-7-12. See note in StepWiseRNA_JobParametersSetup.cc
 	stepwise_rna_job_parameters_setup.set_alignment_res( option[ alignment_res ]() );
 	stepwise_rna_job_parameters_setup.set_filter_user_alignment_res( option[ filter_user_alignment_res ]() );
 	stepwise_rna_job_parameters_setup.set_native_alignment_res( option[ native_alignment_res ]() );
@@ -1007,7 +1100,7 @@ rna_sample_virtual_ribose(){ //July 19th, 2011...rebuild the bulge nucleotides a
   using namespace core::scoring;
 	using namespace protocols::swa::rna;
 
-	Output_title_text("Enter rna_sample_virtual_ribose()");
+	Output_title_text("Enter rna_sample_virtual_ribose()", TR );
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -1051,7 +1144,7 @@ rna_sample_virtual_ribose(){ //July 19th, 2011...rebuild the bulge nucleotides a
 	// Hey! This should be in a class! -- rhiju, 2013.
 	sample_user_specified_virtual_riboses(pose, sample_virtual_ribose_string_list, job_parameters_COP, scorefxn, silent_file_out, input_tags[1], option[ integration_test ]()  );
 
-	Output_title_text("Exit rna_sample_virtual_ribose()");
+	Output_title_text("Exit rna_sample_virtual_ribose()", TR );
 
 }
 
@@ -1091,7 +1184,7 @@ swa_rna_sample()
   using namespace core::scoring;
 	using namespace protocols::swa::rna;
 
-	Output_title_text("Enter swa_rna_sample()");
+	Output_title_text("Enter swa_rna_sample()", TR );
 
 	StepWiseRNA_JobParametersOP	job_parameters = setup_rna_job_parameters(true  /*check_for_previously_closed_cutpoint_with_input_pose */);
 	StepWiseRNA_JobParametersCOP job_parameters_COP( job_parameters );
@@ -1211,7 +1304,7 @@ swa_rna_cluster(){
 
 	//////////////////////////////////////////////////////////////
 
-	StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener = new StepWiseRNA_VDW_Bin_Screener();
+	StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener = new StepWiseRNA_VDW_BinScreener();
 	if(option[ VDW_rep_screen_info].user() ){ //This is used for post_processing only. Main VDW_rep_screener should be in the samplerer.
 
 		user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF(option[ VDW_rep_alignment_RMSD_CUTOFF]());
@@ -1383,7 +1476,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 	using namespace core::id;
 	using namespace core::optimization;
 
-	Output_title_text("Enter post_rebuild_bulge_assembly()");
+	Output_title_text("Enter post_rebuild_bulge_assembly()", TR );
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -1454,7 +1547,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 
 		if(has_virtual_rna_residue_variant_type(rebuild_pose, seq_num)) utility_exit_with_message("rebuild_pose has virtaul_residue at seq_num("+string_of(seq_num)+")!");
 
-		if(Contain_seq_num(seq_num, protonated_H1_adenosine_list)){
+		if(protonated_H1_adenosine_list.has_value(seq_num)){
 
 			if(rebuild_pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE")==false){
 				utility_exit_with_message("seq_num(" + string_of(seq_num)+") is in protonated_H1_adenosine_list but rebuild_pose does not have PROTONATED_H1_ADENOSINE variant type!");
@@ -1548,7 +1641,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 		}
 	}
 
-	Output_seq_num_list("virtual_res_list= ", virtual_res_list, 30);
+	Output_seq_num_list("virtual_res_list= ", virtual_res_list, TR, 30 );
 	////////////////////////////////////////////////////////////////////////////////////
 
 	for(Size seq_num=1; seq_num<=output_pose.total_residue(); seq_num++){
@@ -1639,7 +1732,7 @@ post_rebuild_bulge_assembly() ///Oct 22, 2011
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	for(Size seq_num=1; seq_num<=output_pose.total_residue(); seq_num++){
-		if( Contain_seq_num(seq_num, virtual_res_list) ){
+		if( virtual_res_list.has_value(seq_num) ){
 			apply_virtual_rna_residue_variant_type(output_pose, seq_num, true /*apply_check*/);
 		}
 	}

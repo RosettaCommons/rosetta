@@ -107,7 +107,7 @@ namespace rna {
 		contact_dist_cutoff_(-1.0), //two atoms are considered in contact if their VDW radius edge is within 1.0 Angstrom of each other
 		clash_dist_cutoff_(0.8),    //two atoms are considered clash if their VDW radius edge overlap by 0.8 Angstrom. 
 															 //0.8 is appropriate for VDW clash screen, although value about 1.2 would be more appropriate if we consider minimum H-bond distance
-															 //See StepWiseRNA_VDW_Bin_Screener.cc for details.
+															 //See StepWiseRNA_VDW_BinScreener.cc for details.
 //		num_contact_cutoff_(9), //num of contact between the two sides before discarding pose (Used to be 1 before Nov 18, 2010)
 		num_contact_cutoff_(1), //num of contact between the two sides before discarding pose (Used to be 1 before Nov 18, 2010)
 		num_clash_cutoff_(1), // num of clash between the two sides before discarding pose.
@@ -142,11 +142,11 @@ namespace rna {
 
 			//so 3.968000 + (6.18959 or 6.65341) + (1) + (3.4)=
 			moving_res_contact_dist_cutoff_=3.968000+6.65341+1+3.4;
-			std::cout << "moving_res_contact_dist_cutoff_= " << moving_res_contact_dist_cutoff_ << std::endl;
-			std::cout << "contact_dist_cutoff_= " << contact_dist_cutoff_ << std::endl;
-			std::cout << "clash_dist_cutoff_= " << clash_dist_cutoff_ << std::endl;
-			std::cout << "num_contact_cutoff_= " << num_contact_cutoff_ << std::endl;
-			std::cout << "num_clash_cutoff_= " << num_clash_cutoff_ << std::endl;
+			TR << "moving_res_contact_dist_cutoff_= " << moving_res_contact_dist_cutoff_ << std::endl;
+			TR << "contact_dist_cutoff_= " << contact_dist_cutoff_ << std::endl;
+			TR << "clash_dist_cutoff_= " << clash_dist_cutoff_ << std::endl;
+			TR << "num_contact_cutoff_= " << num_contact_cutoff_ << std::endl;
+			TR << "num_clash_cutoff_= " << num_clash_cutoff_ << std::endl;
 
 		}
 
@@ -174,7 +174,7 @@ namespace rna {
 
 			Size const seq_num=input_res_vectors[1][n];
 
-			if(Contain_seq_num(seq_num, input_res_vectors[2])){
+			if(input_res_vectors[2].has_value(seq_num)){
 				common_res_list.push_back(seq_num);
 			}
 
@@ -185,7 +185,7 @@ namespace rna {
 
 		for(Size n=1; n<=input_res_vectors[1].size(); n++){
 			Size const seq_num=input_res_vectors[1][n];
-			if(Contain_seq_num(seq_num, common_res_list)==false){
+			if(common_res_list.has_value(seq_num)==false){
 			 
 				full_pose_appended_res_list.push_back(seq_num);
 				input_pose_ONE_appended_res_list_.push_back(full_to_input_res_map_ONE_.find(seq_num)->second);
@@ -199,7 +199,7 @@ namespace rna {
 
 		for(Size n=1; n<=input_res_vectors[2].size(); n++){
 			Size const seq_num=input_res_vectors[2][n];
-			if(Contain_seq_num(seq_num, common_res_list)==false){
+			if(common_res_list.has_value(seq_num)==false){
 
 				full_pose_prepended_res_list.push_back(seq_num);
 				input_pose_TWO_prepended_res_list_.push_back(full_to_input_res_map_TWO_.find(seq_num)->second);
@@ -207,11 +207,11 @@ namespace rna {
 			}
 		}
 
-		Output_seq_num_list("full_pose_appended_res:" , full_pose_appended_res_list); 
-		Output_seq_num_list("full_pose_prepended_res:" , full_pose_prepended_res_list); 
+		Output_seq_num_list("full_pose_appended_res:" , full_pose_appended_res_list, TR ); 
+		Output_seq_num_list("full_pose_prepended_res:" , full_pose_prepended_res_list, TR ); 
 
-		Output_seq_num_list("input_ONE_appended_res:" , input_pose_ONE_appended_res_list_); 
-		Output_seq_num_list("input_TWO_prepended_res:" , input_pose_TWO_prepended_res_list_); 
+		Output_seq_num_list("input_ONE_appended_res:" , input_pose_ONE_appended_res_list_, TR ); 
+		Output_seq_num_list("input_TWO_prepended_res:" , input_pose_TWO_prepended_res_list_, TR ); 
 
 		
 	}
@@ -258,8 +258,8 @@ namespace rna {
 		Size const full_last_prepended_res=input_res_vectors[2][input_pose_TWO_last_prepended_res_];
 
 
-		std::cout << "full_pose_last_appended_res_= " << full_last_appended_res << " input_pose_ONE_last_appended_res_= " << input_pose_ONE_last_appended_res_;
-		std::cout << " full_pose_last_prepended_res_= " << full_last_prepended_res << " input_pose_TWO_last_prepended_res_= " << input_pose_TWO_last_prepended_res_ << std::endl;
+		TR << "full_pose_last_appended_res_= " << full_last_appended_res << " input_pose_ONE_last_appended_res_= " << input_pose_ONE_last_appended_res_;
+		TR << " full_pose_last_prepended_res_= " << full_last_prepended_res << " input_pose_TWO_last_prepended_res_= " << input_pose_TWO_last_prepended_res_ << std::endl;
 	
 
 /*
@@ -309,7 +309,7 @@ namespace rna {
 		using namespace core::pose;
 		using namespace ObjexxFCL;
 
-//		Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer::convert_silent_file_to_pose_data_list (" + path_basename(silent_file) +  ")");
+//		Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer::convert_silent_file_to_pose_data_list (" + path_basename(silent_file) +  ")", TR );
 
 
 		utility::vector1< pose_data_struct2 > pose_data_list;
@@ -370,7 +370,7 @@ namespace rna {
 
 //		if(pose_data_list.size()==0) utility_exit_with_message("pose_data_list.size()==0" );
 
-//		Output_title_text("Exit StepWiseRNA_CombineLongLoopFilterer::convert_silent_file_to_pose_data_list (" + path_basename(silent_file) +  ")");
+//		Output_title_text("Exit StepWiseRNA_CombineLongLoopFilterer::convert_silent_file_to_pose_data_list (" + path_basename(silent_file) +  ")", TR );
 
 
 		return pose_data_list;
@@ -383,7 +383,7 @@ namespace rna {
 																									  utility::vector1< pose_data_struct2 > const & side_TWO_pose_data_list){
  		using namespace chemical;
 
-		Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer::align_all_pose ");
+		Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer::align_all_pose ", TR );
 
 		if(side_ONE_pose_data_list.size()==0) utility_exit_with_message("side_ONE_pose_data_list.size()==0" );
 		if(side_TWO_pose_data_list.size()==0) utility_exit_with_message("side_TWO_pose_data_list.size()==0" );
@@ -428,7 +428,7 @@ namespace rna {
 
 
 
-		Output_title_text("Exit StepWiseRNA_CombineLongLoopFilterer::align_all_pose ");
+		Output_title_text("Exit StepWiseRNA_CombineLongLoopFilterer::align_all_pose ", TR );
 
 
 	}
@@ -567,7 +567,7 @@ namespace rna {
 
 		using namespace ObjexxFCL;
 
-		//if(verbose_) Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer::do_some_filtering(" + side_ONE_pose_data.tag + "," +  side_TWO_pose_data.tag  +")" );
+		//if(verbose_) Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer::do_some_filtering(" + side_ONE_pose_data.tag + "," +  side_TWO_pose_data.tag  +")", TR );
 
 
 		//Would this slow down the code?
@@ -642,7 +642,7 @@ namespace rna {
 
 		using namespace ObjexxFCL;
 
-		Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer::do_some_filtering for side_ONE_pose_list_id_=" + string_of(side_ONE_pose_list_id_) + "/" + string_of(side_ONE_NUM_pose_list_) + " side_ONE_pose_list_id_=" + string_of(side_TWO_pose_list_id_) + "/" + string_of(side_TWO_NUM_pose_list_)  );
+		Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer::do_some_filtering for side_ONE_pose_list_id_=" + string_of(side_ONE_pose_list_id_) + "/" + string_of(side_ONE_NUM_pose_list_) + " side_ONE_pose_list_id_=" + string_of(side_TWO_pose_list_id_) + "/" + string_of(side_TWO_NUM_pose_list_), TR );
 
 
 //		std::ofstream outfile; 
@@ -686,8 +686,8 @@ namespace rna {
 				pass_screen_struct_pair_++;
 
 				//ok will print to file after finish debugging 
-				std::cout << "struct pair: (" <<  side_ONE_pose_data.tag  << " ," <<  side_TWO_pose_data.tag << ") pass screening test. ";
-				std::cout << pass_screen_struct_pair_ << " out of " << total_input_struct_pair_ << " passed screen so far" << std::endl;
+				TR << "struct pair: (" <<  side_ONE_pose_data.tag  << " ," <<  side_TWO_pose_data.tag << ") pass screening test. ";
+				TR << pass_screen_struct_pair_ << " out of " << total_input_struct_pair_ << " passed screen so far" << std::endl;
 
 
 				Combine_Tags_Info combine_tag_info;
@@ -703,7 +703,7 @@ namespace rna {
 //		outfile.flush();
 //		outfile.close();
 
-		Output_title_text("Exit StepWiseRNA_CombineLongLoopFilterer::do_some_filtering");
+		Output_title_text("Exit StepWiseRNA_CombineLongLoopFilterer::do_some_filtering", TR );
 
 		 	
 
@@ -759,9 +759,9 @@ namespace rna {
 		}
 
 
-		std::cout << "max_pose_data_list_size_= " <<  max_pose_data_list_size_<< std::endl;
-		std::cout << "total_pose_side_ONE= " << total_pose_side_ONE << " side_ONE_NUM_pose_list_= " << side_ONE_NUM_pose_list_<< std::endl;
-		std::cout << "total_pose_side_TWO= " << total_pose_side_TWO << " side_TWO_NUM_pose_list_= " << side_TWO_NUM_pose_list_<< std::endl;
+		TR << "max_pose_data_list_size_= " <<  max_pose_data_list_size_<< std::endl;
+		TR << "total_pose_side_ONE= " << total_pose_side_ONE << " side_ONE_NUM_pose_list_= " << side_ONE_NUM_pose_list_<< std::endl;
+		TR << "total_pose_side_TWO= " << total_pose_side_TWO << " side_TWO_NUM_pose_list_= " << side_TWO_NUM_pose_list_<< std::endl;
 
 
 	}
@@ -777,10 +777,10 @@ namespace rna {
 		tag_to_source_map_TWO_.clear();
 
 
-		std::cout << "silent_file_stream_ONE_ parent_remarks" << std::endl;
+		TR << "silent_file_stream_ONE_ parent_remarks" << std::endl;
 		while ( silent_file_stream_ONE_->has_another_pose() ) {
 			core::io::silent::SilentStructOP const silent_struct( silent_file_stream_ONE_->next_struct() );
-			//silent_struct->print_parent_remarks(std::cout);
+			//silent_struct->print_parent_remarks(TR);
 
 			std::string const & tag( silent_struct->decoy_tag() );
 
@@ -798,12 +798,12 @@ namespace rna {
 			}
 
 		}
-		std::cout << "--------------------------------" << std::endl;
+		TR << "--------------------------------" << std::endl;
 
-		std::cout << "silent_file_stream_TWO_ parent_remarks" << std::endl;
+		TR << "silent_file_stream_TWO_ parent_remarks" << std::endl;
 		while ( silent_file_stream_TWO_->has_another_pose() ) {
 			core::io::silent::SilentStructOP const silent_struct( silent_file_stream_TWO_->next_struct() );
-			//silent_struct->print_parent_remarks(std::cout);
+			//silent_struct->print_parent_remarks(TR);
 
 			std::string const & tag( silent_struct->decoy_tag() );
 
@@ -823,7 +823,7 @@ namespace rna {
 
 
 		}
-		std::cout << "--------------------------------" << std::endl;
+		TR << "--------------------------------" << std::endl;
 
 
 		silent_file_stream_ONE_->reset();
@@ -965,17 +965,17 @@ namespace rna {
 
 		clock_t const time_start( clock() ); 
 
-		Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer:apply");
+		Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer:apply", TR );
 
 
-		Output_boolean("parin_favorite_ouput= ", parin_favorite_output_); std::cout << std::endl;
-		Output_boolean(" combine_helical_silent_file_= ", combine_helical_silent_file_); std::cout << std::endl;
-		Output_boolean(" filter_for_previous_contact_= ", filter_for_previous_contact_); std::cout << std::endl;
-		Output_boolean(" filter_for_previous_clash_= ", filter_for_previous_clash_); std::cout << std::endl;
-		Output_boolean(" filter_for_chain_closable_= ", filter_for_chain_closable_); std::cout << std::endl;
-		Output_boolean(" filter_for_moving_res_contact_= ", filter_for_moving_res_contact_); std::cout << std::endl;
-		Output_boolean(" moving_res_to_base_contact_only_= ", moving_res_to_base_contact_only_); std::cout << std::endl;
-		std::cout << "max_decoys_(nstruct)= " << max_decoys_ << std::endl;
+		Output_boolean("parin_favorite_ouput= ", parin_favorite_output_, TR ); TR << std::endl;
+		Output_boolean(" combine_helical_silent_file_= ", combine_helical_silent_file_, TR ); TR << std::endl;
+		Output_boolean(" filter_for_previous_contact_= ", filter_for_previous_contact_, TR ); TR << std::endl;
+		Output_boolean(" filter_for_previous_clash_= ", filter_for_previous_clash_, TR ); TR << std::endl;
+		Output_boolean(" filter_for_chain_closable_= ", filter_for_chain_closable_, TR ); TR << std::endl;
+		Output_boolean(" filter_for_moving_res_contact_= ", filter_for_moving_res_contact_, TR ); TR << std::endl;
+		Output_boolean(" moving_res_to_base_contact_only_= ", moving_res_to_base_contact_only_, TR ); TR << std::endl;
+		TR << "max_decoys_(nstruct)= " << max_decoys_ << std::endl;
 
 		setup_silent_file_stream();
 		figure_out_NUM_pose_list();
@@ -1001,21 +1001,21 @@ namespace rna {
 		}
 
 
-		std::cout << "CombineLongLoopFilterer COUNTS (BEFORE FINAL SCORE SCREENING)" << std::endl;
-		std::cout << pass_screen_struct_pair_ << " out of " << total_input_struct_pair_ << " passed screen" << std::endl;
+		TR << "CombineLongLoopFilterer COUNTS (BEFORE FINAL SCORE SCREENING)" << std::endl;
+		TR << pass_screen_struct_pair_ << " out of " << total_input_struct_pair_ << " passed screen" << std::endl;
 
 
-		std::cout << "total_count= " << filterer_count_.total_count;
-		std::cout << " score_cut_count= " << filterer_count_.score_cut_count;
-		std::cout << " chain_closable= " << filterer_count_.chain_closable_screen;
-		std::cout << " filter_for_previous_contact= " << filterer_count_.filter_for_previous_contact;
-		std::cout << " filter_for_previous_clash= " << filterer_count_.filter_for_previous_clash;
-		std::cout << " filter_for_moving_res_contact= " << filterer_count_.filter_for_moving_res_contact;
-		std::cout << std::endl;
+		TR << "total_count= " << filterer_count_.total_count;
+		TR << " score_cut_count= " << filterer_count_.score_cut_count;
+		TR << " chain_closable= " << filterer_count_.chain_closable_screen;
+		TR << " filter_for_previous_contact= " << filterer_count_.filter_for_previous_contact;
+		TR << " filter_for_previous_clash= " << filterer_count_.filter_for_previous_clash;
+		TR << " filter_for_moving_res_contact= " << filterer_count_.filter_for_moving_res_contact;
+		TR << std::endl;
 
 			
 
-		std::cout << "StepWiseRNA_CombineLongLoopFilterer::apply: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "StepWiseRNA_CombineLongLoopFilterer::apply: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 		if( (filterered_combine_tag_info_list_.size() ) != pass_screen_struct_pair_){
 			utility_exit_with_message(" (filterered_combine_tag_info_list_.size() ) != pass_screen_struct_pair_");
@@ -1028,7 +1028,7 @@ namespace rna {
 		Size pass_screen_struct_pair_undercount_ribose_rotamers=0;
 
 
-		//std::cout << "best_combine_score_= " << best_combine_score_ << " score_diff_cut_= " << score_diff_cut_ << std::endl;
+		//TR << "best_combine_score_= " << best_combine_score_ << " score_diff_cut_= " << score_diff_cut_ << std::endl;
 
 		//OK have to sort the filtererer_combine_tag_info_list.
 		sort_Combine_Tags_Info(filterered_combine_tag_info_list_); //Oct 19,2010
@@ -1053,13 +1053,13 @@ namespace rna {
 
 					if(Is_sibling_ribose_rotamer_pose(combine_tag_info.side_two_tag, prev_combine_tag_info.side_two_tag, tag_to_source_map_TWO_)==false) continue;
 
-					std::cout << "tag_pair: ";	
-					std::cout << "(" << std::setw(28) << std::left << combine_tag_info.side_one_tag       << ",";
-					std::cout <<         std::setw(28) << std::left << combine_tag_info.side_two_tag       << ")" ;
-					std::cout << " is a sibling of prev_tag_pair: ";
-					std::cout << "(" << std::setw(28) << std::left << prev_combine_tag_info.side_one_tag  << ",";
-					std::cout <<         std::setw(28) << std::left << prev_combine_tag_info.side_two_tag  << ")" ;
-					std::cout << std::endl;
+					TR << "tag_pair: ";	
+					TR << "(" << std::setw(28) << std::left << combine_tag_info.side_one_tag       << ",";
+					TR <<         std::setw(28) << std::left << combine_tag_info.side_two_tag       << ")" ;
+					TR << " is a sibling of prev_tag_pair: ";
+					TR << "(" << std::setw(28) << std::left << prev_combine_tag_info.side_one_tag  << ",";
+					TR <<         std::setw(28) << std::left << prev_combine_tag_info.side_two_tag  << ")" ;
+					TR << std::endl;
 
 					match_existing_pair=true;
 
@@ -1090,7 +1090,7 @@ namespace rna {
 			}
 
 			if(max_decoys_reached){
-				std::cout <<" max_decoys_ (" << max_decoys_ << "), early break! " << std::endl;
+				TR <<" max_decoys_ (" << max_decoys_ << "), early break! " << std::endl;
 				break;
 			}
 
@@ -1103,14 +1103,14 @@ namespace rna {
 		outfile.flush();
 		outfile.close();
 
-		std::cout << "CombineLongLoopFilterer COUNTS (AFTER FINAL SCORE SCREENING)" << std::endl;
-		std::cout << "pass_screen_struct_pair_ACT= " << pass_screen_struct_pair_ACT << std::endl;
-		std::cout << "pass_screen_struct_pair_undercount_ribose_rotamers= " << pass_screen_struct_pair_undercount_ribose_rotamers << std::endl;
-		std::cout << "StepWiseRNA_CombineLongLoopFilterer::final_output: " << static_cast<Real>( clock() - time_start_FINAL_output ) / CLOCKS_PER_SEC << std::endl;
-		std::cout << "StepWiseRNA_CombineLongLoopFilterer::apply: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "CombineLongLoopFilterer COUNTS (AFTER FINAL SCORE SCREENING)" << std::endl;
+		TR << "pass_screen_struct_pair_ACT= " << pass_screen_struct_pair_ACT << std::endl;
+		TR << "pass_screen_struct_pair_undercount_ribose_rotamers= " << pass_screen_struct_pair_undercount_ribose_rotamers << std::endl;
+		TR << "StepWiseRNA_CombineLongLoopFilterer::final_output: " << static_cast<Real>( clock() - time_start_FINAL_output ) / CLOCKS_PER_SEC << std::endl;
+		TR << "StepWiseRNA_CombineLongLoopFilterer::apply: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 
-		Output_title_text("Exit StepWiseRNA_CombineLongLoopFilterer:apply");
+		Output_title_text("Exit StepWiseRNA_CombineLongLoopFilterer:apply", TR );
 
 	}
 }

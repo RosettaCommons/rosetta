@@ -21,7 +21,7 @@
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
@@ -145,23 +145,23 @@ namespace rna {
 		using namespace protocols::rna;
 		using namespace core::optimization;
 
-		Output_title_text("Enter StepWiseRNA_Minimizer::apply");
+		Output_title_text("Enter StepWiseRNA_Minimizer::apply", TR );
 
-		Output_boolean(" verbose_=", verbose_ ); std::cout << std::endl;
-		Output_boolean(" native_screen_=", native_screen_ ); std::cout << std::endl;
-		std::cout << " native_screen_rmsd_cutoff_=" << native_screen_rmsd_cutoff_ << std::endl;
-		Output_boolean(" perform_electron_density_screen_=", perform_electron_density_screen_ ); std::cout << std::endl;
-		Output_boolean(" rm_virt_phosphate_=", rm_virt_phosphate_ ); std::cout << std::endl;
-		std::cout << " native_edensity_score_cutoff_=" << native_edensity_score_cutoff_ << std::endl;
-		Output_boolean(" centroid_screen_=", centroid_screen_ ); std::cout << std::endl;
-		Output_boolean(" perform_o2star_pack_=", perform_o2star_pack_); std::cout << std::endl;
-		Output_boolean(" output_before_o2star_pack_=", output_before_o2star_pack_ ); std::cout << std::endl;
-		std::cout << " (Upper_limit) num_pose_minimize_=" << num_pose_minimize_<< " pose_data_list.size()= " << pose_data_list_.size() <<  std::endl;
-		Output_boolean(" minimize_and_score_sugar_=", minimize_and_score_sugar_ ); std::cout << std::endl;
-		Output_boolean(" user_inputted_VDW_bin_screener_=", user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose() ); std::cout << std::endl;
-		Output_seq_num_list(" working_global_sample_res_list=", job_parameters_->working_global_sample_res_list() );
-		Output_boolean(" perform_minimize_=", perform_minimize_); std::cout << std::endl;
-		Output_boolean(" rename_tag_=", rename_tag_); std::cout << std::endl;
+		Output_boolean(" verbose_=", verbose_, TR ); TR << std::endl;
+		Output_boolean(" native_screen_=", native_screen_, TR ); TR << std::endl;
+		TR << " native_screen_rmsd_cutoff_=" << native_screen_rmsd_cutoff_ << std::endl;
+		Output_boolean(" perform_electron_density_screen_=", perform_electron_density_screen_, TR ); TR << std::endl;
+		Output_boolean(" rm_virt_phosphate_=", rm_virt_phosphate_, TR ); TR << std::endl;
+		TR << " native_edensity_score_cutoff_=" << native_edensity_score_cutoff_ << std::endl;
+		Output_boolean(" centroid_screen_=", centroid_screen_, TR ); TR << std::endl;
+		Output_boolean(" perform_o2star_pack_=", perform_o2star_pack_, TR ); TR << std::endl;
+		Output_boolean(" output_before_o2star_pack_=", output_before_o2star_pack_, TR ); TR << std::endl;
+		TR << " (Upper_limit) num_pose_minimize_=" << num_pose_minimize_<< " pose_data_list.size()= " << pose_data_list_.size() <<  std::endl;
+		Output_boolean(" minimize_and_score_sugar_=", minimize_and_score_sugar_, TR ); TR << std::endl;
+		Output_boolean(" user_inputted_VDW_bin_screener_=", user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose(), TR ); TR << std::endl;
+		Output_seq_num_list(" working_global_sample_res_list=", job_parameters_->working_global_sample_res_list(), TR );
+		Output_boolean(" perform_minimize_=", perform_minimize_, TR ); TR << std::endl;
+		Output_boolean(" rename_tag_=", rename_tag_, TR ); TR << std::endl;
 
 		clock_t const time_start( clock() );
 
@@ -180,7 +180,7 @@ namespace rna {
 		/////////////////////////////////////////////////////////
 
 		if(pose_data_list_.size()==0){
-			std::cout << "pose_data_list_.size()==0, early exit from StepWiseRNA_Minimizer::apply" << std::endl;
+			TR << "pose_data_list_.size()==0, early exit from StepWiseRNA_Minimizer::apply" << std::endl;
 			output_empty_minimizer_silent_file();
 			return;
 		}
@@ -193,26 +193,26 @@ namespace rna {
 		bool o2star_pack_verbose=true;
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++ ){
-			if(Contain_seq_num(seq_num, working_fixed_res)) continue;
+			if(working_fixed_res.has_value(seq_num)) continue;
 			working_minimize_res.push_back(seq_num);
 		}
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		//Check scorefxn
-		std::cout << "check scorefxn" << std::endl;
-		scorefxn_->show( std::cout, dummy_pose );
+		TR << "check scorefxn" << std::endl;
+		scorefxn_->show( TR, dummy_pose );
 
 		if( move_map_list_.size()==0 ) move_map_list_=Get_default_movemap( dummy_pose );
 
 		if(minimize_and_score_sugar_==false){
-			std::cout << "WARNING: minimize_and_score_sugar_ is FALSE, freezing all DELTA, NU_1 and NU_2 torsions." << std::endl;
+			TR << "WARNING: minimize_and_score_sugar_ is FALSE, freezing all DELTA, NU_1 and NU_2 torsions." << std::endl;
 			for(Size n=1; n<=move_map_list_.size(); n++){
 				Freeze_sugar_torsions( move_map_list_[n] , nres );
 			}
 		}
 
 		for(Size n=1; n<=move_map_list_.size(); n++){
-			std::cout << "OUTPUT move_map_list[" << n << "]:" << std::endl;
+			TR << "OUTPUT move_map_list[" << n << "]:" << std::endl;
 			Output_movemap(move_map_list_[n], dummy_pose);
 		}
 
@@ -225,11 +225,11 @@ namespace rna {
 				if(minimized_pose_data_list_.size()==0){
 					utility_exit_with_message("pose_ID>num_pose_minimize_ BUT minimized_pose_data_list_.size()==0! This will lead to problem in SWA_sampling_post_process.py!");
 				}
-				std::cout << "WARNING MAX num_pose_minimize_(" << num_pose_minimize_ << ") EXCEEDED, EARLY BREAK." << std::endl;
+				TR << "WARNING MAX num_pose_minimize_(" << num_pose_minimize_ << ") EXCEEDED, EARLY BREAK." << std::endl;
 				break;
 			}
 
-			std::cout << "Minimizing pose_ID= " << pose_ID << std::endl;
+			TR << "Minimizing pose_ID= " << pose_ID << std::endl;
 
  			std::string tag=pose_data_list_[pose_ID].tag;
 			pose=(*pose_data_list_[pose_ID].pose_OP); //This actually create a hard copy.....need this to get the graphic working..
@@ -265,7 +265,7 @@ namespace rna {
 
 				if( gap_size == 0 ){
 					Real mean_dist_err = rna_loop_closer.apply( pose, five_prime_chain_break_res );
-					std::cout << "mean_dist_err (round= " << round << " ) = " <<  mean_dist_err << std::endl;
+					TR << "mean_dist_err (round= " << round << " ) = " <<  mean_dist_err << std::endl;
 
 					if(perform_o2star_pack_) o2star_minimize(pose, scorefxn_, get_surrounding_O2star_hydrogen(pose, working_minimize_res, o2star_pack_verbose) );
 					if(perform_minimize_) minimizer.run( pose, mm, *(scorefxn_), options );
@@ -285,17 +285,17 @@ namespace rna {
 			(*pose_data.pose_OP)=pose;
 			minimized_pose_data_list_.push_back(pose_data);
 
-			std::cout << "SO FAR: pose_ID= " << pose_ID  << " | minimized_pose_data_list_.size()= " << minimized_pose_data_list_.size();
-			std::cout << " | time taken= " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
-			std::cout << "-------------------------------------------------------------------------------------------------" << std::endl;
-			std::cout << "-------------------------------------------------------------------------------------------------" << std::endl;
+			TR << "SO FAR: pose_ID= " << pose_ID  << " | minimized_pose_data_list_.size()= " << minimized_pose_data_list_.size();
+			TR << " | time taken= " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+			TR << "-------------------------------------------------------------------------------------------------" << std::endl;
+			TR << "-------------------------------------------------------------------------------------------------" << std::endl;
 
   		}
 
-		std::cout << "FINAL minimized_pose_data_list_.size() = " << minimized_pose_data_list_.size() << std::endl;
+		TR << "FINAL minimized_pose_data_list_.size() = " << minimized_pose_data_list_.size() << std::endl;
 
 		if(minimized_pose_data_list_.size()==0){
-			std::cout << "After finish minimizing,  minimized_pose_data_list_.size()==0!" << std::endl;
+			TR << "After finish minimizing,  minimized_pose_data_list_.size()==0!" << std::endl;
 			output_empty_minimizer_silent_file();
 		}
 
@@ -306,11 +306,11 @@ namespace rna {
 		// output best scoring pose.
 		if ( minimized_pose_data_list_.size() > 0 ) pose = *(minimized_pose_data_list_[1].pose_OP);
 
-		std::cout << "--------------------------------------------------------------------" << std::endl;
-		std::cout << "Total time in StepWiseRNA_Minimizer: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
-		std::cout << "--------------------------------------------------------------------" << std::endl;
+		TR << "--------------------------------------------------------------------" << std::endl;
+		TR << "Total time in StepWiseRNA_Minimizer: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "--------------------------------------------------------------------" << std::endl;
 
-		Output_title_text("Exit StepWiseRNA_Minimizer::apply");
+		Output_title_text("Exit StepWiseRNA_Minimizer::apply", TR );
 
 	}
 
@@ -374,7 +374,7 @@ namespace rna {
 		//tag_first_char=M for minimize
 
 	 	tag[0]=tag_first_char;
-		std::cout << "tag= " << tag <<  std::endl;
+		TR << "tag= " << tag <<  std::endl;
 		(*scorefxn_)(pose); //Score pose to ensure that that it has a score to be output
 		Output_data(silent_file_data, out_silent_file, tag, false , pose, get_native_pose(), job_parameters_);
 
@@ -401,7 +401,7 @@ namespace rna {
 
 		 using namespace core::id;
 
-		 std::cout << "Freeze pose sugar torsions, nres=" << nres << std::endl;
+		 TR << "Freeze pose sugar torsions, nres=" << nres << std::endl;
 
 		 for(Size i=1; i<=nres; i++){
 
@@ -443,7 +443,7 @@ namespace rna {
 				//So to prevent code exit, will just screen for out of range sugar here.
 				//Oct 28, 2010 ...ok check for messed up nu1 and nu2 as well. Note that check_for_messed_up_structure() also check for messed up delta but the range is smaller than below.
 				if(check_for_messed_up_structure(pose, in_tag)==true){
-					std::cout << "gap_size == 0, " << in_tag << " discarded: messed up structure " << std::endl;
+					TR << "gap_size == 0, " << in_tag << " discarded: messed up structure " << std::endl;
 					pass_screen=false;
 				}
 
@@ -455,7 +455,7 @@ namespace rna {
 				if( (five_prime_rsd.has_variant_type("VIRTUAL_RNA_RESIDUE")==false) && (five_prime_rsd.has_variant_type("VIRTUAL_RIBOSE")==false)){
 					if( (five_prime_delta>1.0 && five_prime_delta<179.00)==false ){
 
-						std::cout << "gap_size == 0, " << in_tag << " discarded: five_prime_chain_break_res= " << five_prime_chain_break_res << " five_prime_CB_delta= " << five_prime_delta << " is out of range " << std::endl;
+						TR << "gap_size == 0, " << in_tag << " discarded: five_prime_chain_break_res= " << five_prime_chain_break_res << " five_prime_CB_delta= " << five_prime_delta << " is out of range " << std::endl;
 						pass_screen=false;
 					}
 				}
@@ -466,7 +466,7 @@ namespace rna {
 				if( (three_prime_rsd.has_variant_type("VIRTUAL_RNA_RESIDUE")==false) && (three_prime_rsd.has_variant_type("VIRTUAL_RIBOSE")==false)){
 					if( (three_prime_delta>1.0 && three_prime_delta<179.00)==false ){
 
-						std::cout << "gap_size == 0, " << in_tag << " discarded: three_prime_chain_break_res= " << (five_prime_chain_break_res+1) << " three_prime_CB_delta= " << three_prime_delta << " is out of range " << std::endl;
+						TR << "gap_size == 0, " << in_tag << " discarded: three_prime_chain_break_res= " << (five_prime_chain_break_res+1) << " three_prime_CB_delta= " << three_prime_delta << " is out of range " << std::endl;
 						pass_screen=false;
 					}
 				}
@@ -477,7 +477,7 @@ namespace rna {
 				if(base_centroid_screener_==0) utility_exit_with_message("base_centroid_screener_==0!");
 
 				if ( !base_centroid_screener_->Update_base_stub_list_and_Check_that_terminal_res_are_unstacked( pose, true /*reinitialize*/ ) ){
-					std::cout << in_tag << " discarded: fail Check_that_terminal_res_are_unstacked	" << std::endl;
+					TR << in_tag << " discarded: fail Check_that_terminal_res_are_unstacked	" << std::endl;
 					pass_screen=false;
 				}
 			}
@@ -494,7 +494,7 @@ namespace rna {
 				Real const loop_rmsd=	 rmsd_over_residue_list( *get_native_pose(), pose, job_parameters_, true /*ignore_virtual_atom*/);
 
 				if(rmsd > native_screen_rmsd_cutoff_ || loop_rmsd > native_screen_rmsd_cutoff_){
-					std::cout << in_tag << " discarded: fail native_rmsd_screen. rmsd= " << rmsd << " loop_rmsd= " << loop_rmsd << " native_screen_rmsd_cutoff_= " << native_screen_rmsd_cutoff_ << std::endl;
+					TR << in_tag << " discarded: fail native_rmsd_screen. rmsd= " << rmsd << " loop_rmsd= " << loop_rmsd << " native_screen_rmsd_cutoff_= " << native_screen_rmsd_cutoff_ << std::endl;
 					pass_screen=false;
 				}
 			}
@@ -513,7 +513,7 @@ namespace rna {
 
 			bool const pass_native = native_edensity_score_screener(pose, native_pose);
 			if(pass_native==false){
-				std::cout << in_tag << " discarded: fail native_edensity_score_screening" << std::endl;
+				TR << in_tag << " discarded: fail native_edensity_score_screening" << std::endl;
 				pass_screen=false;
 			}
 	  }
@@ -530,7 +530,7 @@ namespace rna {
 			bool const pass_physical_pose_VDW_rep_screen=user_input_VDW_bin_screener_->VDW_rep_screen_with_act_pose( pose, working_global_sample_res_list, true /*local verbose*/);
 
 			if( pass_physical_pose_VDW_rep_screen==false){
-				std::cout << in_tag << " discarded: fail physical_pose_VDW_rep_screen" << std::endl;
+				TR << in_tag << " discarded: fail physical_pose_VDW_rep_screen" << std::endl;
 				pass_screen=false;
 			}
 
@@ -558,10 +558,10 @@ namespace rna {
 		core::Size nres = pose.total_residue();
 		core::Real native_score_cutoff = native_score / (static_cast <double> (nres)) *
 		(1 - native_edensity_score_cutoff_);
-		std::cout << "pose_score = " << pose_score << std::endl;
-		std::cout << "native_score = " << native_score << std::endl;
+		TR << "pose_score = " << pose_score << std::endl;
+		TR << "native_score = " << native_score << std::endl;
 		if (pose_score > native_score - native_score_cutoff) {
-			std::cout << "Fail native edensity score screening!" << std::endl;
+			TR << "Fail native edensity score screening!" << std::endl;
 			return false;
 		} else {
 			return true;

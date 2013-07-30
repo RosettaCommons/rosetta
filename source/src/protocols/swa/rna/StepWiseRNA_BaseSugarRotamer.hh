@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWiseRNA_Base_Sugar_Rotamer
+/// @file StepWiseRNA_BaseSugarRotamer
 /// @brief
 /// @detailed
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_Base_Sugar_Rotamer_HH
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_Base_Sugar_Rotamer_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_BaseSugarRotamer_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_BaseSugarRotamer_HH
 
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.fwd.hh>
@@ -34,17 +34,17 @@ namespace protocols {
 namespace swa {
 namespace rna {
 
-	class StepWiseRNA_Base_Sugar_Rotamer: public utility::pointer::ReferenceCount {
+	class StepWiseRNA_BaseSugarRotamer: public utility::pointer::ReferenceCount {
 	public:
 
 		//constructor!
-		StepWiseRNA_Base_Sugar_Rotamer(
+		StepWiseRNA_BaseSugarRotamer(
 											BaseState const & base_state,
 											PuckerState const & pucker_state,
 											core::scoring::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
 											core::Size const bin_size=20);
 
-    virtual ~StepWiseRNA_Base_Sugar_Rotamer();
+    virtual ~StepWiseRNA_BaseSugarRotamer();
 
 		void reset();
 

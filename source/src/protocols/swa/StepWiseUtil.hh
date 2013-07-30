@@ -26,16 +26,11 @@
 #include <numeric/xyzVector.hh>
 #include <string>
 #include <map>
-// AUTO-REMOVED #include <core/chemical/AA.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.fwd.hh>
-// AUTO-REMOVED #include <set>
+#include <basic/Tracer.fwd.hh>
 
 //Auto Headers
 #include <core/id/AtomID.fwd.hh>
@@ -60,14 +55,15 @@ namespace swa {
 	bool
 	Contain_seq_num(Size const & seq_num, utility::vector1< Size > const & residue_list);
 
+	//following copies code that is in rna/StepWiseRNA_Util? Remove the latter?
 	void
-	Output_boolean(std::string const & tag, bool boolean);
+	Output_boolean(std::string const & tag, bool boolean, basic::Tracer & TR );
 
 	void
-	Output_boolean(bool boolean);
+	Output_boolean(bool boolean, basic::Tracer & TR );
 
 	void
-	Output_movemap(kinematics::MoveMap const & mm, Size const total_residue);
+	Output_movemap(kinematics::MoveMap const & mm, Size const total_residue, basic::Tracer & TR);
 
 	void
 	Figure_out_moving_residues( kinematics::MoveMap & mm, pose::Pose const & pose,

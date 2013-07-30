@@ -10,10 +10,9 @@
 /// @file   core/pose/Pose.fwd.hh
 /// @brief  Various OPS for various classes.
 /// @author Rhiju Das
-/// @author Parin Sripakdeevong
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_Wrapper_FWD_HH
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_Wrapper_FWD_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_VDW_BinScreener_fwd_hh
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_VDW_BinScreener_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -21,9 +20,9 @@ namespace protocols{
 namespace swa{
 namespace rna{
 
-	class StepWiseRNA_RotamerGenerator_Wrapper;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGenerator_Wrapper > StepWiseRNA_RotamerGenerator_WrapperOP;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGenerator_Wrapper const > StepWiseRNA_RotamerGenerator_WrapperCOP;
+	class StepWiseRNA_VDW_BinScreener;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_VDW_BinScreener > StepWiseRNA_VDW_BinScreenerOP;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_VDW_BinScreener const > StepWiseRNA_VDW_BinScreenerCOP;
 
 }
 }

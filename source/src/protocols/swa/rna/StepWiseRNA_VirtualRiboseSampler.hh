@@ -39,8 +39,9 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh> //June 02, 2011
+#include <protocols/swa/rna/FloatingBaseChainClosureJobParameter.hh>
 #include <core/pose/Pose.hh> //June 02, 2011
 #include <core/scoring/rna/RNA_Util.hh> //June 02, 2011
 
@@ -75,115 +76,6 @@ class FB_Pose_Data{
 	core::Real base_rep_score;
 	core::kinematics::FoldTree starting_fold_tree;
 	core::scoring::constraints::ConstraintSetOP starting_cst_set_OP;
-
-};
-
-
-
-class FloatingBaseChainClosureJobParameter{
-
-	public:
-
-
-		FloatingBaseChainClosureJobParameter(core::Size const input_moving_res, core::Size const input_reference_res):
-			sample_sugar(true),
-			moving_res ( input_moving_res ),
-			reference_res( input_reference_res ),
-			moving_res_pucker_state( ALL ),
-			bulge_res_pucker_state( ALL ),
-			moving_res_base_state( BOTH ),
-			bulge_res_base_state( BOTH )
-		{
-
-			PDL.clear(); //pose_data_list
-			Is_prepend= (moving_res>reference_res) ? false: true;
-			bulge_res= (Is_prepend) ? reference_res-1: reference_res+1;
-			bulge_suite = (Is_prepend) ? bulge_res : bulge_res-1;
-			five_prime_chain_break= (Is_prepend) ? moving_res: moving_res-1;
-
-			////////////////////////Consistency check!////////////////////////////////////////
-			if(Is_prepend){
-				if(moving_res+2!=reference_res){
-					std::cout << "moving_res= " << moving_res << " reference_res= " << reference_res;
-					utility_exit_with_message("prepend, but moving_res+2!=reference_res!");
-				}
-			}else{
-				if(moving_res-2!=reference_res){
-					std::cout << "moving_res= " << moving_res << " reference_res= " << reference_res;
-					utility_exit_with_message("append, but moving_res-2!=reference_res!");
-				}
-			}
-
-		}
-
-		FloatingBaseChainClosureJobParameter():
-			sample_sugar( false)
-		{
-			PDL.clear(); //pose_data_list
-		};
-
-		~FloatingBaseChainClosureJobParameter(){};
-
-
-		void
-		check_compatibility(core::Size const nres) const{
-			using namespace ObjexxFCL;
-
-			if(moving_res<1 || moving_res> nres) utility_exit_with_message( "moving_res<1 || moving_res> nres. moving_res= " + string_of(moving_res) );
-			if(bulge_res <1 || bulge_res> nres) utility_exit_with_message( "bulge_res <1 || bulge_res> nres. bulge_res= " + string_of(bulge_res) );
-			if(reference_res<1 || reference_res> nres) utility_exit_with_message( "reference_res<1 || reference_res> nres. reference_res= " + string_of(reference_res) );
-
-			//Should check here that moving_res contain virtual ribose and bulge_res is a virtual_rna_residue?
-		}
-
-		void
-		set_base_and_pucker_state(core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP const & JP){
-
-			////////////////////////June 02, 2011 Add BaseState and PuckerState information///
-			moving_res_pucker_state=ALL;
-			if( Contain_seq_num(moving_res, JP->working_force_north_ribose_list() ) ) moving_res_pucker_state=NORTH;
-			if( Contain_seq_num(moving_res, JP->working_force_south_ribose_list() ) ) moving_res_pucker_state=SOUTH;
-
-			moving_res_base_state = (core::scoring::rna::is_purine( pose.residue( moving_res ) ) ) ? BOTH: ANTI;
-			if( Contain_seq_num(moving_res, JP->working_force_syn_chi_res_list()  ) ) moving_res_base_state=SYN;
-
-			bulge_res_pucker_state=ALL;
-			if( Contain_seq_num(bulge_res, JP->working_force_north_ribose_list() ) ) bulge_res_pucker_state=NORTH;
-			if( Contain_seq_num(bulge_res, JP->working_force_south_ribose_list() ) ) bulge_res_pucker_state=SOUTH;
-
-			bulge_res_base_state = (core::scoring::rna::is_purine( pose.residue( bulge_res ) ) ) ? BOTH: ANTI;
-			if( Contain_seq_num(bulge_res, JP->working_force_syn_chi_res_list()  ) ) bulge_res_base_state=SYN;
-
-			////////////////////////Print data!////////////////////////////////////////
-			std::cout << "FloatingBaseChainClosureJobParameter: " << std::endl;
-			Output_boolean(" Is_prepend= " , Is_prepend);
-			std::cout << " reference_res=" << reference_res;
-
-			std::cout <<" moving_res=" << moving_res;
-			print_base_state("|base_state=", moving_res_base_state );
-			print_ribose_pucker_state("|pucker_state=", moving_res_pucker_state);
-
-			std::cout << " bulge_res= " << bulge_res;
-			print_base_state("|base_state=", bulge_res_base_state );
-			print_ribose_pucker_state("|pucker_state=", bulge_res_pucker_state);
-
-			std::cout << " bulge_suite= " << bulge_suite << " five_prime_chain_break= " << five_prime_chain_break;
-
-		}
-
-	public:
-		bool sample_sugar;
-		core::Size moving_res;
-		core::Size reference_res;
-		bool Is_prepend;
-		core::Size bulge_res;
-		core::Size bulge_suite;
-		core::Size five_prime_chain_break;
-		PuckerState moving_res_pucker_state;
-		PuckerState bulge_res_pucker_state;
-		BaseState moving_res_base_state;
-		BaseState bulge_res_base_state;
-		utility::vector1< pose_data_struct2 > PDL; //pose_data_list of possible ribose conformations.
 
 };
 
@@ -226,7 +118,7 @@ floating_base_chain_closure_sampling(utility::vector1< FB_Pose_Data > & pose_dat
 																		 FloatingBaseChainClosureJobParameter const & FB_job_params,
 																	   core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
 													           core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-																		 StepWiseRNA_VDW_Bin_ScreenerOP const & VDW_bin_screener,
+																		 StepWiseRNA_VDW_BinScreenerOP const & VDW_bin_screener,
 																	   bool const CCD_grid_index_screen,
 																		 bool const integration_test_mode = false);
 

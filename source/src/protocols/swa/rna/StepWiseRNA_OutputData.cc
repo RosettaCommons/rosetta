@@ -17,7 +17,7 @@
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh> //Oct 22, 2011...Not sure why the code worked without this!
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_FloatingBase_Sampler_Util.hh> //Sept 26, 2011
+#include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh> //Sept 26, 2011
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 
@@ -63,6 +63,8 @@
 #include <numeric/conversions.hh>
 #include <numeric/NumericTraits.hh>
 
+#include <basic/Tracer.hh>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -79,6 +81,8 @@
 
 using namespace core;
 
+static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_OutputData" );
+
 namespace protocols {
 namespace swa {
 namespace rna {
@@ -86,10 +90,26 @@ namespace rna {
 
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// rd2013 --> ask parin what is all this stuff for?
-
 	core::io::silent::BinaryRNASilentStruct
 	get_binary_rna_silent_struct_safe(pose::Pose const & const_pose, std::string const & tag, std::string const & silent_file){
+
+		// What's the deal with this creation of silent struct and deletion? -- rhiju
+		//    do you remember the scenario in which you really needed all this?
+		//
+		//        What I encountered was that sometime a pose structure that have entirely
+		//        normal coordinates inside Rosetta becomes messed up when written as a
+		//        silent_struct. I also noticed that if the pose is then slightly rotated
+		//        (eular angles), then this problem will disappear.
+		//
+		//        So essentially, the get_binary_rna_silent_struct_safe() function writes a
+		//        pose as a silent_struct to file and then checks whether the silent_struct is
+		//        messed up. If it is messed, the function rotates the pose and rewrite the
+		//        silent_struct. This process continues until the silent_struct is no longer
+		//        messed-up or maximum trial (10) is reached.
+		//
+		//        For most cases, the silent_struct is successfully written on the first
+		//        trial since a very small fraction (perhaps 0.01%) of pose experience
+		//        this problem. -- parin (2013)
 
 		using namespace core::io::silent;
 		using namespace core::scoring;
@@ -219,7 +239,7 @@ namespace rna {
 				return silent_struct;
 
 			}else{
-			 	std::cout << "WARNING: Problem with writing pose (" << debug_tag << ") to silent_file [Attempt #" << trial_num << "]" << std::endl;
+			 	TR << "WARNING: Problem with writing pose (" << debug_tag << ") to silent_file [Attempt #" << trial_num << "]" << std::endl;
 			}
 
 		}
@@ -285,7 +305,7 @@ namespace rna {
 
 		BinaryRNASilentStruct s=get_binary_rna_silent_struct_safe_wrapper( pose, tag, silent_file, write_score_only);
 
-		//s.print_header( std::cout );
+		//s.print_header( TR );
 		//s.precision(5); REALLY COOL. SET higher precision so that their is no energy rank ambiguity!.
 
 		bool const output_extra_RMSDs=job_parameters_->output_extra_RMSDs();

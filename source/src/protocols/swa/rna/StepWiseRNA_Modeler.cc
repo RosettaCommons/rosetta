@@ -16,7 +16,7 @@
 #include <protocols/swa/rna/StepWiseRNA_ResidueSampler.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
+#include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/swa/StepWiseUtil.hh>
@@ -28,8 +28,11 @@
 #include <core/pose/Pose.hh>
 
 #include <utility/tools/make_vector1.hh>
+#include <basic/Tracer.hh>
 
 #include <ObjexxFCL/string.functions.hh>
+
+static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_Modeler" );
 
 namespace protocols {
 namespace swa {
@@ -167,7 +170,7 @@ namespace rna {
 		StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener = new StepWiseRNA_BaseCentroidScreener ( pose, job_parameters_ );
 		stepwise_rna_residue_sampler.set_base_centroid_screener ( base_centroid_screener );
 
-		StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener = new StepWiseRNA_VDW_Bin_Screener();
+		StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener = new StepWiseRNA_VDW_BinScreener();
 		if ( VDW_rep_screen_info_.size() > 0 ) {
 			user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF ( VDW_rep_alignment_RMSD_CUTOFF_ );
 
@@ -200,7 +203,7 @@ namespace rna {
 		num_sampled_ = pose_data_list.size();
 		if ( num_sampled_ == 0 ){
 
-			std::cout << "WARNING! WARNING! WARNING! pose_data_list.size() == 0! " << std::endl;
+			TR << "WARNING! WARNING! WARNING! pose_data_list.size() == 0! " << std::endl;
 			//			if ( ! skip_sampling_ ) utility_exit_with_message( "No op in StepWiseRNA_modeler!" );
 			pose_data_struct2 data_struct;
 			data_struct.pose_OP = new Pose( pose );
@@ -288,10 +291,10 @@ namespace rna {
 		utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open;
 		input_res1 = not_rebuild_res;
 
-		std::cout << "IN SETUP_JOB_PARAMETERS_FOR_SWA! " << std::endl;
+		TR << "IN SETUP_JOB_PARAMETERS_FOR_SWA! " << std::endl;
 
-		std::cout << pose.fold_tree() << std::endl;
-		std::cout << rebuild_res << std::endl;
+		TR << pose.fold_tree() << std::endl;
+		TR << rebuild_res << std::endl;
 
 		Size cutpoint_closed( 0 );
 		// check for cutpoint variant.
@@ -316,7 +319,7 @@ namespace rna {
 		if ( cutpoint_closed > 0 && !pose.fold_tree().is_cutpoint( cutpoint_closed ) ) utility_exit_with_message( "StepWiseRNA requires a chainbreak right at sampled residue" );
 		if ( cutpoint_closed > 0 && (rebuild_res == 1 || rebuild_res == pose.total_residue()) ) utility_exit_with_message( "StepWiseRNA requires that residue is not at terminus!" );
 
-		StepWiseRNA_JobParameters_Setup stepwise_rna_job_parameters_setup( moving_res,
+		StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup( moving_res,
 																																			 full_sequence,
 																																			 input_res1,
 																																			 input_res2,
@@ -358,14 +361,14 @@ namespace rna {
 		job_parameters->set_working_native_pose( get_native_pose() );
 
 		// should we also set the fold_tree here -- just take the pose's actual fold tree?
-		// that fold_tree is only used in PoseSetup, and in JobParameters_Setup, and not downstream
+		// that fold_tree is only used in PoseSetup, and in JobParametersSetup, and not downstream
 		// in any modelers...  -- rhiju
 
 		// user input minimize_res...
 		if ( minimize_res_.size() > 0 ) { // specifying more residues which could move during the minimize step.
 			fixed_res_.clear();
 			for ( Size n = 1; n <= nres; n++ ) {
-				if ( !Contain_seq_num( n, minimize_res_ ) )	fixed_res_.push_back( n );
+				if ( !minimize_res_.has_value( n) )	fixed_res_.push_back( n );
 			}
 		}
 		if ( fixed_res_.size() > 0 ) 	job_parameters->set_working_fixed_res( fixed_res_ );

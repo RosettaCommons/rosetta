@@ -51,6 +51,9 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/exit.hh>
+
+#include <basic/Tracer.hh>
+
 #include <time.h>
 
 #include <string>
@@ -64,6 +67,7 @@ using namespace core;
 using core::Real;
 
 static numeric::random::RandomGenerator RG(199123);  // <- Magic number, do not change it!
+static basic::Tracer TR( "protocols.swa.rna.RNA_LoopCloseSampler" );
 
 namespace protocols {
 namespace swa {
@@ -310,14 +314,14 @@ RNA_LoopCloseSampler::check_clash ( pose::Pose & pose,
 	( *rep_scorefxn ) ( pose );
 	EnergyMap const & energy_map = pose.energies().total_energies();
 	Real const fa_rep_score = energy_map[ fa_rep ] * rep_scorefxn->get_weight ( fa_rep );
-	//	std::cout << fa_rep_score << " " << fa_rep_score_baseline << std::endl;
+	//	TR << fa_rep_score << " " << fa_rep_score_baseline << std::endl;
 
 	if ( ( fa_rep_score - fa_rep_score_baseline ) > rep_cutoff_ ) return false;
 
 	static Real const tolerance ( 1.0e-3 );
 
 	if ( ( fa_rep_score - fa_rep_score_baseline ) < -1.0 * tolerance ) {
-		std::cout << fa_rep_score << " " << fa_rep_score_baseline << std::endl;
+		TR << fa_rep_score << " " << fa_rep_score_baseline << std::endl;
 		//		utility_exit_with_message( "Weird fa_rep?" );
 	}
 

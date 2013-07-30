@@ -91,7 +91,7 @@
 #include <protocols/swa/rna/StepWiseRNA_ResidueSampler.hh>
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
+#include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -303,7 +303,7 @@ get_fixed_res(core::Size const nres){
 	}else if( minimize_res_list.size()!=0){
 
 		for(Size seq_num=1; seq_num<=nres; seq_num++){
-			if( Contain_seq_num( seq_num, minimize_res_list) ) continue;
+			if( minimize_res_list.has_value( seq_num) ) continue;
 			actual_fixed_res_list.push_back(seq_num);
 		}
 
@@ -352,7 +352,7 @@ get_input_res(core::Size const nres , std::string const pose_num){
 	}else if( missing_res_list.size()!=0){
 
 		for(Size seq_num=1; seq_num<=nres; seq_num++){
-			if( Contain_seq_num( seq_num, missing_res_list) ) continue;
+			if( missing_res_list.has_value( seq_num) ) continue;
 			actual_input_res_list.push_back(seq_num);
 		}
 
@@ -471,7 +471,7 @@ setup_rna_job_parameters(){
 
 	/////////////////////////////////////////////////////
 
-	StepWiseRNA_JobParameters_Setup stepwise_rna_job_parameters_setup( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
+	StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup( option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
 																								 										 full_sequence,
 																								 										 get_input_res(nres, "1" ),
 																								 										 get_input_res(nres, "2" ),

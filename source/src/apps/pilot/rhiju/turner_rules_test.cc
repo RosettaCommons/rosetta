@@ -66,11 +66,11 @@
 #include <protocols/swa/RigidBodySampler.hh>
 #include <protocols/swa/InputStreamWithResidueInfo.hh>
 #include <protocols/swa/rna/rigid_body_settings.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
 #include <protocols/swa/rna/RNA_AnalyticLoopCloser.hh>
 #include <protocols/swa/rna/RNA_LoopCloseSampler.hh>
 #include <devel/init.hh>
@@ -248,9 +248,9 @@ apply_ideal_A_form_torsions( pose::Pose & pose ){
 
 	// For now assume delta, chi are at ideal values.
 	static RNA_FittedTorsionInfo rna_fitted_torsion_info;
-	StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer( ANTI, NORTH, rna_fitted_torsion_info, 20.0, 3 );
+	StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( ANTI, NORTH, rna_fitted_torsion_info, 20.0, 3 );
 
-	// This is kind of ugly. Need to know that the second Base_Sugar_Rotamer  is the "ideal" one.
+	// This is kind of ugly. Need to know that the second BaseSugarRotamer  is the "ideal" one.
 	// Anyway, stick with this for now, then consult with Parin on better design.
 	base_sugar_rotamer->get_next_rotamer();
 	base_sugar_rotamer->get_next_rotamer();
@@ -1364,9 +1364,9 @@ setup_two_base_pair_pose( pose::Pose & pose ){
 
 	// For now assume delta, chi are at ideal values.
 	RNA_FittedTorsionInfo rna_fitted_torsion_info;
-	StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer( ANTI, NORTH, rna_fitted_torsion_info, 20.0, 3 );
+	StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( ANTI, NORTH, rna_fitted_torsion_info, 20.0, 3 );
 
-	// This is kind of ugly. Need to know that the second Base_Sugar_Rotamer  is the "ideal" one.
+	// This is kind of ugly. Need to know that the second BaseSugarRotamer  is the "ideal" one.
 	// Anyway, stick with this for now, then consult with Parin on better design.
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
@@ -1530,7 +1530,7 @@ sample_new_base_in_two_base_pair_pose( pose::Pose & pose,
 	//	suite_res_list.push_back( 1 );
 
 	Real const bin_size = get_bin_size();
-	StepWiseRNA_RotamerGenerator_WrapperOP rotamer_generator = new StepWiseRNA_RotamerGenerator_Wrapper( pose,
+	StepWiseRNA_RotamerGeneratorWrapperOP rotamer_generator = new StepWiseRNA_RotamerGeneratorWrapper( pose,
 																																																			 suite_res_list,
 																																																			 false /*sample_sugar_and_base1*/,
 																																																			 false /*sample_sugar_and_base2*/,
@@ -2273,7 +2273,7 @@ setup_two_base_pair_pose_with_chainbreak( pose::Pose & pose,
 
 	// For now assume delta, chi are at ideal values.
 	RNA_FittedTorsionInfo rna_fitted_torsion_info;
-	StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer( ANTI, NORTH, rna_fitted_torsion_info, 20.0, 3 );
+	StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( ANTI, NORTH, rna_fitted_torsion_info, 20.0, 3 );
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 	for ( Size i = 1; i <= pose.total_residue(); i++ ){
@@ -2918,9 +2918,9 @@ setup_dinucleotide_pose( pose::Pose & pose ){
 
 	// For now assume delta, chi are at ideal values.
 	RNA_FittedTorsionInfo rna_fitted_torsion_info;
-	StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer( ANTI, NORTH, rna_fitted_torsion_info, 20, 3 );
+	StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( ANTI, NORTH, rna_fitted_torsion_info, 20, 3 );
 
-	// This is kind of ugly. Need to know that the second Base_Sugar_Rotamer  is the "ideal" one.
+	// This is kind of ugly. Need to know that the second BaseSugarRotamer  is the "ideal" one.
 	// Anyway, stick with this for now, then consult with Parin on better design.
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
 	std::cout << "NEXT ROTAMER: " << base_sugar_rotamer->get_next_rotamer() << std::endl;
@@ -3022,7 +3022,7 @@ dinucleotide_test(){
 	utility::vector1< Size > suite_res_list = make_vector1( moving_suite );
 
 	Real const bin_size = get_bin_size();
-	StepWiseRNA_RotamerGenerator_WrapperOP rotamer_generator = new StepWiseRNA_RotamerGenerator_Wrapper( pose,
+	StepWiseRNA_RotamerGeneratorWrapperOP rotamer_generator = new StepWiseRNA_RotamerGeneratorWrapper( pose,
 																																																			 suite_res_list,
 																																																			 false /*sample_sugar_and_base1*/,
 																																																			 false /*sample_sugar_and_base2*/,

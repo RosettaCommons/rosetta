@@ -22,12 +22,13 @@
 //#include <numeric/xyzVector.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_VirtualRiboseSampler.hh>
+#include <protocols/swa/rna/FloatingBaseChainClosureJobParameter.hh>>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_FloatingBase_Sampler_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>     //Feb 02, 2012: Need this to pass rosetta_tools/python_cc_reader/test_all_headers_compile.py
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>     //Feb 02, 2012: Need this to pass rosetta_tools/python_cc_reader/test_all_headers_compile.py
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <protocols/simple_moves/GreenPacker.fwd.hh>
@@ -145,7 +146,7 @@ namespace rna {
 		set_reinitialize_CCD_torsions( bool const & setting){ reinitialize_CCD_torsions_ =setting; }
 
 		void
-		set_user_input_VDW_bin_screener(StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener){ user_input_VDW_bin_screener_= user_input_VDW_bin_screener; }
+		set_user_input_VDW_bin_screener(StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener){ user_input_VDW_bin_screener_= user_input_VDW_bin_screener; }
 
 		void
 		set_extra_epsilon_rotamer( bool const & setting){ extra_epsilon_rotamer_ = setting; }
@@ -273,7 +274,7 @@ namespace rna {
 		cluster_pose_data_list(utility::vector1< pose_data_struct2 > & pose_data_list);
 
 		std::string
-		create_tag(std::string const prestring, StepWiseRNA_RotamerGenerator_WrapperOP const & rotamer_generator) const;
+		create_tag(std::string const prestring, StepWiseRNA_RotamerGeneratorWrapperOP const & rotamer_generator) const;
 
 		core::kinematics::Stub
 		get_reference_stub(core::Size const reference_res, core::pose::Pose const & pose) const;
@@ -374,7 +375,7 @@ namespace rna {
 		bool choose_random_;
 		bool force_centroid_interaction_;
 
-		StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener_;
+		StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
 
 
   };

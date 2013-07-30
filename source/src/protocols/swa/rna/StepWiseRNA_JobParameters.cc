@@ -22,10 +22,14 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <basic/Tracer.hh>
+
 #include <string>
 
 using namespace core;
 using core::Real;
+
+static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_JobParameters" );
 
 namespace protocols {
 namespace swa {
@@ -317,8 +321,8 @@ namespace rna {
 
 		update_working_sequence();
 
-		std::cout << "full_sequence_= " << full_sequence_ << std::endl;
-		std::cout << "working_sequence_= " <<  working_sequence_ << std::endl;
+		TR << "full_sequence_= " << full_sequence_ << std::endl;
+		TR << "working_sequence_= " <<  working_sequence_ << std::endl;
 
 	}
 
@@ -488,7 +492,7 @@ namespace rna {
 		working_force_north_ribose_list_=apply_full_to_sub_mapping( force_north_ribose_list_, is_working_res_, full_to_sub_ );
 
 		for(Size n=1; n<=force_north_ribose_list_.size(); n++){
-			if(Contain_seq_num(force_north_ribose_list_[n], force_south_ribose_list_)){
+			if(force_south_ribose_list_.has_value(force_north_ribose_list_[n])){
 				utility_exit_with_message("seq_num= " + ObjexxFCL::string_of(force_north_ribose_list_[n]) + " is in both force_north_ribose_list_ and force_south_ribose_list_! " );
 			}
 		}
@@ -500,7 +504,7 @@ namespace rna {
 		working_force_south_ribose_list_=apply_full_to_sub_mapping( force_south_ribose_list_, is_working_res_, full_to_sub_ );
 
 		for(Size n=1; n<=force_north_ribose_list_.size(); n++){
-			if(Contain_seq_num(force_north_ribose_list_[n], force_south_ribose_list_)){
+			if(force_south_ribose_list_.has_value(force_north_ribose_list_[n])){
 				utility_exit_with_message("seq_num= " + ObjexxFCL::string_of(force_north_ribose_list_[n]) + " is in both force_north_ribose_list_ and force_south_ribose_list_! " );
 			}
 		}
@@ -515,7 +519,7 @@ namespace rna {
 	void
 	StepWiseRNA_JobParameters::update_working_moving_suite(){
 
-		//std::cout << "update_working_moving_suite " << std::endl;
+		//TR << "update_working_moving_suite " << std::endl;
 		if( (working_moving_res_list_.size()==0) && (working_moving_res_!=0) ){
 			utility_exit_with_message( "working_moving_res_list_.size()==0) && (working_moving_res_!=0");
 		}
@@ -562,14 +566,14 @@ namespace rna {
 		}
 
 		//output for debug
-		//		std::cout << "full_to_sub" << std::endl;
+		//		TR << "full_to_sub" << std::endl;
 		for (it=full_to_sub.begin(); it!=full_to_sub.end(); it++ ){
-			//			std::cout << it->first << " => " << it->second << std::endl;
+			//			TR << it->first << " => " << it->second << std::endl;
 		}
 
-		//		std::cout << "sub_to_full" << std::endl;
+		//		TR << "sub_to_full" << std::endl;
 		for (it=sub_to_full.begin(); it!=sub_to_full.end(); it++ ){
-			//		std::cout << it->first << " => " << it->second << std::endl;
+			//		TR << it->first << " => " << it->second << std::endl;
 		}
 
 		return sub_to_full;

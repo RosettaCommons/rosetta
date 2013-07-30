@@ -15,17 +15,17 @@
 
 //////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_FloatingBase_Sampler_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -86,17 +86,17 @@ namespace rna {
 								core::Real const base_axis_CUTOFF,
 								core::Real const base_planarity_CUTOFF){
 
-		//std::cout << "ENTER Is_base_stack base_axis_CUTOFF= " << base_axis_CUTOFF << " base_planarity_CUTOFF= " << base_planarity_CUTOFF << std::endl;
+		//TR << "ENTER Is_base_stack base_axis_CUTOFF= " << base_axis_CUTOFF << " base_planarity_CUTOFF= " << base_planarity_CUTOFF << std::endl;
 
 		core::Real const small_offset=0.000001; //0.0001;
 
-		//std::cout << "small_offset= " << small_offset << std::endl;
+		//TR << "small_offset= " << small_offset << std::endl;
 
 		for(Size i=1; i<=other_residues_base_list.size(); i++){
 
-			//std::cout << std::endl;
+			//TR << std::endl;
 
-			//std::cout << "Is_base_stacking i= " << i << std::endl;
+			//TR << "Is_base_stacking i= " << i << std::endl;
 
 			core::kinematics::Stub const & base_info=other_residues_base_list[i];
 			numeric::xyzVector<Real> const other_z_vector=base_info.M.col_z();
@@ -106,35 +106,35 @@ namespace rna {
 			subtract( moving_res_base.v, base_info.v, centroid_diff);
 			Real const centroid_distance=centroid_diff.length();
 
-			//std::cout << " centroid_distance= " << centroid_distance;
+			//TR << " centroid_distance= " << centroid_distance;
 
 			if( centroid_distance>(6.3640+small_offset) ) continue;
 
 			Real const base_z_offset_one=std::abs(dot( centroid_diff, other_z_vector));
 			Real const base_z_offset_two=std::abs(dot( centroid_diff, rebuild_z_vector));
 
-			//std::cout << " base_z_offset_one= " << base_z_offset_one << " base_z_offset_two= " << base_z_offset_two;
+			//TR << " base_z_offset_one= " << base_z_offset_one << " base_z_offset_two= " << base_z_offset_two;
 
 			if( (base_z_offset_one>(4.5000+small_offset) || base_z_offset_one<(2.5000-small_offset)) && (base_z_offset_two>(4.5000+small_offset) || base_z_offset_two<(2.5000-small_offset)) ) continue;
 
 			Real const base_axis_one=base_z_offset_one/centroid_distance;
 			Real const base_axis_two=base_z_offset_two/centroid_distance;
 
-			//std::cout << " base_axis_one= " << base_axis_one << " base_axis_two= " << base_axis_two;
+			//TR << " base_axis_one= " << base_axis_one << " base_axis_two= " << base_axis_two;
 
 			if( base_axis_one<(base_axis_CUTOFF-small_offset) && base_axis_two<(base_axis_CUTOFF-small_offset) ) continue;
 
 			Real const base_planarity=std::abs(dot( other_z_vector, rebuild_z_vector));
 
-			//std::cout << " base_planarity= " << base_planarity;
+			//TR << " base_planarity= " << base_planarity;
 
 			if( base_planarity<(base_planarity_CUTOFF-small_offset) ) continue;
 
-			//std::cout << " PASS_BASE_STACKING_SCREEN i= " << i << std::endl;
+			//TR << " PASS_BASE_STACKING_SCREEN i= " << i << std::endl;
 
 			return true; //If reach this point means success!
 		}
-		//std::cout << std::endl;
+		//TR << std::endl;
 
 		return false;
 	}
@@ -145,17 +145,17 @@ namespace rna {
 					  	 	core::Real const base_axis_CUTOFF,
 		           core::Real const base_planarity_CUTOFF){
 
-		//std::cout << "ENTER Is_base_pair base_axis_CUTOFF= " << base_axis_CUTOFF << " base_planarity_CUTOFF= " << base_planarity_CUTOFF << std::endl;
+		//TR << "ENTER Is_base_pair base_axis_CUTOFF= " << base_axis_CUTOFF << " base_planarity_CUTOFF= " << base_planarity_CUTOFF << std::endl;
 
 		core::Real const small_offset=0.000001; //0.0001;
 
-		//std::cout << "small_offset= " << small_offset << std::endl;
+		//TR << "small_offset= " << small_offset << std::endl;
 
 		for(Size i=1; i<=other_residues_base_list.size(); i++){
 
-			//std::cout << std::endl;
+			//TR << std::endl;
 
-			//std::cout << "Is_base_pair i= " << i << std::endl;
+			//TR << "Is_base_pair i= " << i << std::endl;
 
 			core::kinematics::Stub const & base_info=other_residues_base_list[i];
 			numeric::xyzVector<Real> const other_z_vector=base_info.M.col_z();
@@ -166,7 +166,7 @@ namespace rna {
 
 			Real const centroid_distance=centroid_diff.length();
 
-			//std::cout << " centroid_distance= " << centroid_distance;
+			//TR << " centroid_distance= " << centroid_distance;
 
 			//if(centroid_distance>(12.0000+small_offset) ) continue; Test on Feb 23, 2011.
 
@@ -175,20 +175,20 @@ namespace rna {
 			Real const base_z_offset_one=std::abs(dot( centroid_diff, other_z_vector));
 			Real const base_z_offset_two=std::abs(dot( centroid_diff, rebuild_z_vector));
 
-			//std::cout << " base_z_offset_one= " << base_z_offset_one << " base_z_offset_two= " << base_z_offset_two;
+			//TR << " base_z_offset_one= " << base_z_offset_one << " base_z_offset_two= " << base_z_offset_two;
 
 			if(base_z_offset_one>(3.0000+small_offset) && base_z_offset_two>(3.0000+small_offset) ) continue;
 
 			Real const base_axis_one=base_z_offset_one/centroid_distance;
 			Real const base_axis_two=base_z_offset_two/centroid_distance;
 
-			//std::cout << " base_axis_one= " << base_axis_one << " base_axis_two= " << base_axis_two;
+			//TR << " base_axis_one= " << base_axis_one << " base_axis_two= " << base_axis_two;
 
 			if(base_axis_one>(base_axis_CUTOFF+small_offset) && base_axis_two>(base_axis_CUTOFF+small_offset) ) continue; //This is a stronger condition compare to baze_z_off_set check
 
 			Real const base_planarity=std::abs(dot( rebuild_z_vector, other_z_vector));
 
-			//std::cout << " base_planarity= " << base_planarity;
+			//TR << " base_planarity= " << base_planarity;
 
 			if( base_planarity<(base_planarity_CUTOFF-small_offset)  ) continue;
 
@@ -200,18 +200,18 @@ namespace rna {
 			numeric::xyzVector<Real> const centroid_diff_perpendicular_two= centroid_diff-centroid_diff_parallel_two;
 			Real const rho_two=centroid_diff_perpendicular_two.length();
 
-			//std::cout << " rho_one= " << rho_one << " rho_two= " << rho_two;
+			//TR << " rho_one= " << rho_one << " rho_two= " << rho_two;
 
 			//if( ( rho_one>(10.0000+small_offset) ) && (rho_two>(10.0000+small_offset) ) ) continue; Test on Feb 23, 2011.
 
 			if((rho_one<(5.0000-small_offset) || rho_one>(10.0000+small_offset) ) && (rho_two<(5.0000-small_offset) || rho_two>(10.0000+small_offset) )) continue;
 
-			//std::cout << " PASS_BASE_PAIR_SCREEN i= " << i << std::endl;
+			//TR << " PASS_BASE_PAIR_SCREEN i= " << i << std::endl;
 
 			return true; //If reach this point means success!
 		}
 
-		//std::cout << std::endl;
+		//TR << std::endl;
 
 		return false;			
 	}
@@ -222,7 +222,7 @@ namespace rna {
 		Real const base_axis_CUTOFF=0.9000;
 		Real const base_planarity_CUTOFF=0.9000;
 
-		//std::cout << "ENTER Is_strong_base_stack " << std::endl;
+		//TR << "ENTER Is_strong_base_stack " << std::endl;
 
 		return Is_base_stack(moving_res_base, other_residues_base_list, base_axis_CUTOFF, base_planarity_CUTOFF);
 	
@@ -231,14 +231,14 @@ namespace rna {
 	bool
 	Is_medium_base_stack_and_medium_base_pair(core::kinematics::Stub const & moving_res_base, utility::vector1 < core::kinematics::Stub > const & other_residues_base_list){
 
-		//std::cout << "ENTER Is_medium_base_stack_and_medium_base_pair" << std::endl;
+		//TR << "ENTER Is_medium_base_stack_and_medium_base_pair" << std::endl;
 
 		bool base_stack = Is_base_stack(moving_res_base, other_residues_base_list, 0.7070 /*base_axis_CUTOFF*/, 0.7070 /*base_planarity_CUTOFF*/);
 
 		bool base_pair = Is_base_pair(moving_res_base, other_residues_base_list, 0.5000 /*base_axis_CUTOFF*/, 0.7070 /*base_planarity_CUTOFF*/); 
 		//value in Base_screener_class is 0.866 Sept 16 2010, Parin S.
 
-		//std::cout << "EXIT Is_medium_base_stack_and_medium_base_pair" << std::endl;
+		//TR << "EXIT Is_medium_base_stack_and_medium_base_pair" << std::endl;
 
 		return (base_stack && base_pair);
 	
@@ -273,9 +273,9 @@ namespace rna {
 			if ( strong_stack_base || medium_base_stack_and_medium_base_pair || (allow_base_pair_only_screen && strict_base_pair) ){
 				count_data.pass_base_centroid_screen++;
 
-				//std::cout << "test_count_one=" << count_data.test_count_one << " test_count_two=" << count_data.test_count_two;
-				//std::cout << " base_stack_count= " << count_data.base_stack_count << " count_data.base_pairing_count= " <<  count_data.base_pairing_count;
-				//Output_boolean(" strong_stack_base= ", strong_stack_base); Output_boolean(" medium_bs_and_bp= ", medium_base_stack_and_medium_base_pair); std::cout << std::endl;
+				//TR << "test_count_one=" << count_data.test_count_one << " test_count_two=" << count_data.test_count_two;
+				//TR << " base_stack_count= " << count_data.base_stack_count << " count_data.base_pairing_count= " <<  count_data.base_pairing_count;
+				//Output_boolean(" strong_stack_base= ", strong_stack_base, TR ); Output_boolean(" medium_bs_and_bp= ", medium_base_stack_and_medium_base_pair); TR << std::endl;
 
 
 				return true;
@@ -318,9 +318,9 @@ namespace rna {
 		std::string const y_axis_atom = (Is_prepend) ? " C5'" : " H3'";
 
 		if(verbose){
-			std::cout << "Get_ribose_stub function: ";
-			Output_boolean("Is prepend= ", Is_prepend); 
-			std::cout << "  center_atom= " << center_atom << "  x_axis_atom= " << x_axis_atom << "  y_axis_atom= " << y_axis_atom << std::endl;
+			TR << "Get_ribose_stub function: ";
+			Output_boolean("Is prepend= ", Is_prepend, TR ); 
+			TR << "  center_atom= " << center_atom << "  x_axis_atom= " << x_axis_atom << "  y_axis_atom= " << y_axis_atom << std::endl;
 		}
 
 		core::kinematics::Stub anchor_ribose_stub;
@@ -497,9 +497,9 @@ namespace rna {
 		}
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		std::cout << std::setw(50) << std::left << "Analysis " + DOF_one + "_" + DOF_two;
-		std::cout << " tot_count = " << std::setw(15) << std::left << total_count << " tot_occ= " << std::setw(15) << std::left << total_occupied_bin;
-		std::cout << " tot_count/tot_occ_bin= " << std::setw(5) << std::left << (double(total_count)/double(total_occupied_bin)) << std::endl;
+		TR << std::setw(50) << std::left << "Analysis " + DOF_one + "_" + DOF_two;
+		TR << " tot_count = " << std::setw(15) << std::left << total_count << " tot_occ= " << std::setw(15) << std::left << total_occupied_bin;
+		TR << " tot_count/tot_occ_bin= " << std::setw(5) << std::left << (double(total_count)/double(total_occupied_bin)) << std::endl;
 
 
 	}
@@ -531,8 +531,8 @@ namespace rna {
 
 		Analyze_base_bin_map(base_bin_map, "euler_z", "gamma", foldername);
 
-//		std::cout << "Is_dinucleotide= " << Is_dinucleotide << std::endl;
-		std::cout << "centroid_bin_size= " << centroid_bin_size << "  euler_angle_bin_size= " <<  euler_angle_bin_size << "  euler_z_bin_size= " << euler_z_bin_size << std::endl;
+//		TR << "Is_dinucleotide= " << Is_dinucleotide << std::endl;
+		TR << "centroid_bin_size= " << centroid_bin_size << "  euler_angle_bin_size= " <<  euler_angle_bin_size << "  euler_z_bin_size= " << euler_z_bin_size << std::endl;
 
 
 	}
@@ -591,7 +591,7 @@ namespace rna {
 			utility_exit_with_message( "determinant != 1.00 !!!" );
 		}
 
-//		std::cout << "determinant= " << determinant << std::endl;
+//		TR << "determinant= " << determinant << std::endl;
 
 /*
 		xx_( m.xx_ ), xy_( m.xy_ ), xz_( m.xz_ ),
@@ -635,7 +635,7 @@ namespace rna {
 
 			for( Size at = 1; at <= rsd.natoms(); at++){
 				std::string const & atom_name=rsd.type().atom_name(at);	
-				if(verbose)	std::cout << "seq_num= " << seq_num << " atom_name= " << atom_name << std::endl;	
+				if(verbose)	TR << "seq_num= " << seq_num << " atom_name= " << atom_name << std::endl;	
 
 				id::AtomID const id( at, seq_num);
 
@@ -670,7 +670,7 @@ namespace rna {
 		// Size count=0; // Unused variable causes warning.
 		for( Size at = 1; at <= rsd.natoms(); at++){
 			// std::string const & atom_name=rsd.type().atom_name(at); // Unused variable causes warning.
-//			std::cout << "atom_name= " << atom_name << std::endl;	
+//			TR << "atom_name= " << atom_name << std::endl;	
 //			AtomID id( j, i )
 			id::AtomID const id( at, seq_num);
 	
@@ -720,10 +720,10 @@ namespace rna {
 			Real const distance =( rsd_at_origin.xyz(atom_name) - centroid ).length();
 
 			if(max_distance< distance) max_distance=distance;
-			std::cout << " sugar/base conformation num: " << n << " distance = " << distance << std::endl;
+			TR << " sugar/base conformation num: " << n << " distance = " << distance << std::endl;
 		}
 
-		std::cout << "max_centroid_to_atom_distance for atom: " << atom_name << " base " << name_from_aa((*rsd_at_origin_list[1]).aa()) << ": " << max_distance << std::endl;
+		TR << "max_centroid_to_atom_distance for atom: " << atom_name << " base " << name_from_aa((*rsd_at_origin_list[1]).aa()) << ": " << max_distance << std::endl;
 
 		return max_distance;
 	}
@@ -739,16 +739,16 @@ namespace rna {
 		using namespace core::conformation;
 		using namespace core::scoring::rna;
 
-		std::cout << "-------setup_residue_at_origin_list (various sugar rotamers) for pose: " << pose_name << "-------" << std::endl;
-		Output_boolean("extra_anti_chi_rotamer= " , extra_anti_chi_rotamer); std::cout << std::endl;
-		Output_boolean("extra_syn_chi_rotamer= " , extra_syn_chi_rotamer); std::cout << std::endl;
+		TR << "-------setup_residue_at_origin_list (various sugar rotamers) for pose: " << pose_name << "-------" << std::endl;
+		Output_boolean("extra_anti_chi_rotamer= " , extra_anti_chi_rotamer, TR ); TR << std::endl;
+		Output_boolean("extra_syn_chi_rotamer= " , extra_syn_chi_rotamer, TR ); TR << std::endl;
 		
 		BaseState base_state = (core::scoring::rna::is_purine( pose.residue( moving_res ) )) ? BOTH: ANTI;	
 
 		PuckerState pucker_state=ALL;
 		core::scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 
-		StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer( base_state, pucker_state, rna_fitted_torsion_info);
+		StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( base_state, pucker_state, rna_fitted_torsion_info);
 		base_sugar_rotamer->set_extra_anti_chi(extra_anti_chi_rotamer);
 		base_sugar_rotamer->set_extra_syn_chi(extra_syn_chi_rotamer);
 
@@ -759,9 +759,9 @@ namespace rna {
 		while(base_sugar_rotamer->get_next_rotamer()){
 			count++;
 	
-			std::cout << " 	delta1= " <<  F(8, 3, base_sugar_rotamer->delta()) << " 	chi_1= " <<  F(8, 3, base_sugar_rotamer->chi());
-			std::cout << " 	nu2_1= " <<  F(8, 3, base_sugar_rotamer->nu2())    << " 	nu1_1= " <<  F(8, 3, base_sugar_rotamer->nu1());
-			std::cout << std::endl;
+			TR << " 	delta1= " <<  F(8, 3, base_sugar_rotamer->delta()) << " 	chi_1= " <<  F(8, 3, base_sugar_rotamer->chi());
+			TR << " 	nu2_1= " <<  F(8, 3, base_sugar_rotamer->nu2())    << " 	nu1_1= " <<  F(8, 3, base_sugar_rotamer->nu1());
+			TR << std::endl;
 
 			pose::Pose pose_at_origin = pose; //This make sure that it is not possible to link different rsd in the generated list to the same pose Apr 10, 2010 Parin
 
@@ -782,7 +782,7 @@ namespace rna {
 //			pose_at_origin.dump_pdb( "res_at_origin"+ string_of(count) + ".pdb"  );
 		}
 
-		std::cout << "--------------------------------" << std::endl;
+		TR << "--------------------------------" << std::endl;
 		return rsd_at_origin_list;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -854,8 +854,8 @@ combine_loops_test(){
 
 		std::cout << "check this out: " << working_loop_end << " " << working_loop_start << std::endl;
 
-		bool const loop_start_is_after_cutpoint = ( loop_start == 1  || working_loop_start == 1 || Contain_seq_num( loop_start-1, obligate_cuts ) );
-		bool const loop_end_is_before_cutpoint  = ( loop_end == nres || working_loop_end == working_nres || Contain_seq_num( loop_end, obligate_cuts ) );
+		bool const loop_start_is_after_cutpoint = ( loop_start == 1  || working_loop_start == 1 || obligate_cuts.has_value( loop_start-1) );
+		bool const loop_end_is_before_cutpoint  = ( loop_end == nres || working_loop_end == working_nres || obligate_cuts.has_value( loop_end) );
 		assert( !( loop_start_is_after_cutpoint && loop_end_is_before_cutpoint ) );
 
 		FoldTree f( nres );

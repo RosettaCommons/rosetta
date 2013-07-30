@@ -18,9 +18,9 @@
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_FloatingBase_Sampler_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -130,7 +130,7 @@ public:
 	set_PBP_clustering_at_chain_closure ( bool const & setting ) {		PBP_clustering_at_chain_closure_ = setting;	}
 
 	void
-	set_user_input_VDW_bin_screener ( StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener );
+	set_user_input_VDW_bin_screener ( StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener );
 
 	void
 	set_allow_syn_pyrimidine( bool const & setting ) {		allow_syn_pyrimidine_ =setting;	}
@@ -202,7 +202,7 @@ private:
 	cluster_pose_data_list ( utility::vector1< pose_data_struct2 > & pose_data_list );
 
 	std::string
-	create_tag ( std::string const prestring, StepWiseRNA_RotamerGenerator_WrapperOP const & rotamer_generator ) const;
+	create_tag ( std::string const prestring, StepWiseRNA_RotamerGeneratorWrapperOP const & rotamer_generator ) const;
 
 	std::string //silly function to convert to real to string
 	create_torsion_value_string ( core::Real const & torsion_value ) const;
@@ -264,7 +264,7 @@ private:
 	bool choose_random_;
 	bool force_centroid_interaction_;
 
-	StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener_;
+	StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
 
 
 };

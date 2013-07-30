@@ -9,10 +9,10 @@
 
 /// @file   core/pose/Pose.fwd.hh
 /// @brief  Various OPS for various classes.
-/// @author Rhiju Das
+/// @author Parin Sripakdeevong
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_VDW_Bin_Screener_fwd_hh
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_VDW_Bin_Screener_fwd_hh
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_BaseSugarRotamer_FWD_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_BaseSugarRotamer_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -20,9 +20,9 @@ namespace protocols{
 namespace swa{
 namespace rna{
 
-	class StepWiseRNA_VDW_Bin_Screener;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_VDW_Bin_Screener > StepWiseRNA_VDW_Bin_ScreenerOP;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_VDW_Bin_Screener const > StepWiseRNA_VDW_Bin_ScreenerCOP;
+	class StepWiseRNA_BaseSugarRotamer;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_BaseSugarRotamer > StepWiseRNA_BaseSugarRotamerOP;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_BaseSugarRotamer const > StepWiseRNA_BaseSugarRotamerCOP;
 
 }
 }

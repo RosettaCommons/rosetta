@@ -68,6 +68,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 
 #include <iostream>
 #include <fstream>
@@ -84,6 +85,8 @@
 
 
 using namespace core;
+
+static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_Util" );
 
 namespace protocols {
 namespace swa {
@@ -170,7 +173,7 @@ namespace rna {
 
 		bool verbose=true;
 
-		if(verbose) std::cout << "Applying PROTONATED_H1_ADENOSINE variant_type to seq_num " << seq_num << std::endl;
+		if(verbose) TR << "Applying PROTONATED_H1_ADENOSINE variant_type to seq_num " << seq_num << std::endl;
 
 		if(apply_check){
 			//Basically the two variant type are not compatible, VIRTUAL_RNA_RESIDUE variant type currently does not virtualize the protonated H1 atom.
@@ -181,7 +184,7 @@ namespace rna {
 
 
 		if(pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE")){
-			std::cout << "WARNING pose already have PROTONATED_H1_ADENOSINE variant_type at seq_num= " << seq_num << ", early RETURN!" << std::endl;
+			TR << "WARNING pose already have PROTONATED_H1_ADENOSINE variant_type at seq_num= " << seq_num << ", early RETURN!" << std::endl;
 			return;
 			//utility_exit_with_message("pose already have PROTONATED_H1_ADENOSINE variant_type at seq_num= " + ObjexxFCL::string_of(seq_num));
 		}
@@ -220,7 +223,7 @@ namespace rna {
 
 		//Basically the two variant type are not compatible, VIRTUAL_RNA_RESIDUE variant type currently does not virtualize the protonated H1 atom.
 		if(pose.residue(seq_num).has_variant_type("PROTONATED_H1_ADENOSINE")){
-			std::cout << "Removing PROTONATED_H1_ADENOSINE variant_type from seq_num= " << seq_num << " before adding VIRTUAL_RNA_RESIDUE variant_type since the two variant_types are not compatible!" << std::endl;
+			TR << "Removing PROTONATED_H1_ADENOSINE variant_type from seq_num= " << seq_num << " before adding VIRTUAL_RNA_RESIDUE variant_type since the two variant_types are not compatible!" << std::endl;
 			pose::remove_variant_type_from_pose_residue( pose, "PROTONATED_H1_ADENOSINE", seq_num );
 		}
 		//OK PROTONATED_H1_ADENOSINE variant type should also be removed when adding VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE variant type or BULGE variant type.
@@ -294,12 +297,12 @@ namespace rna {
 		if(pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")==false) return false;
 
 		if( (seq_num+1)>pose.total_residue()){ //Check in range
-			std::cout << "(seq_num+1)= " << (seq_num+1)  << std::endl;
+			TR << "(seq_num+1)= " << (seq_num+1)  << std::endl;
 			utility_exit_with_message( "(seq_num+1)>pose.total_residue()!" );
 		}
 
 		if(pose.residue(seq_num+1).has_variant_type("VIRTUAL_RNA_RESIDUE_UPPER")==false){
-			std::cout << "Problem seq_num= " << seq_num << std::endl;
+			TR << "Problem seq_num= " << seq_num << std::endl;
 			utility_exit_with_message("res (" + string_of(seq_num) + ") has_variant_type VIRTUAL_RNA_RESIDUE but res seq_num+1 (" + string_of(seq_num+1) + ")does not have variant_type VIRTUAL_RNA_RESIDUE_UPPER");
 		}
 
@@ -325,7 +328,7 @@ namespace rna {
 			Size skip_variant_count=0;
 
 			for ( Size i=1; i<= target_variants.size(); i++ ) {
-				//std::cout << "seq_num=" << seq_num << " variant_type[" << i << "]=" << target_variants[i] << std::endl;
+				//TR << "seq_num=" << seq_num << " variant_type[" << i << "]=" << target_variants[i] << std::endl;
 
 				if ( pose.residue(seq_num).type().has_variant_type( target_variants[i] )==false ) utility_exit_with_message("pose.residue(seq_num).type().has_variant_type( target_variants[i] )==false!");
 
@@ -345,8 +348,8 @@ namespace rna {
 			}
 
 			if(pose.residue(seq_num).type().variant_types().size()!=skip_variant_count){
-				std::cout << "pose.residue(seq_num).type().variant_types().size()=" << pose.residue(seq_num).type().variant_types().size() << std::endl;
-				std::cout << "skip_variant_count=" << skip_variant_count << std::endl;
+				TR << "pose.residue(seq_num).type().variant_types().size()=" << pose.residue(seq_num).type().variant_types().size() << std::endl;
+				TR << "skip_variant_count=" << skip_variant_count << std::endl;
 				utility_exit_with_message("pose.residue(seq_num).type().variant_types().size()!=skip_variant_count");
 			}
 
@@ -490,7 +493,7 @@ namespace rna {
 		ss << string;
 		ss >> int_of_string;
 
-	//	std::cout << "The string  " <<  string << " have the corresponding int value " << int_of_string << std::endl;
+	//	TR << "The string  " <<  string << " have the corresponding int value " << int_of_string << std::endl;
 
 		return int_of_string;
 	}*/
@@ -522,7 +525,7 @@ namespace rna {
 		ss >> real_of_string;
 		return real_of_string;
 
-		//std::cout << "The string  " <<  string << " have the corresponding real value " << real_of_string << std::endl;
+		//TR << "The string  " <<  string << " have the corresponding real value " << real_of_string << std::endl;
 	}
 	*/
 
@@ -568,26 +571,6 @@ namespace rna {
 		return tokens;
 	}
 
- 	bool
- 	Contain_seq_num(Size const & seq_num, utility::vector1< std::pair< core::Size, core::Size >  > const & residue_pair_list){
-		for(Size j=1; j<=residue_pair_list.size(); j++){
- 			if(seq_num==residue_pair_list[j].first || seq_num==residue_pair_list[j].second) {
- 				return true;
- 			}
- 		}
- 		return false;
-	}
-
- 	bool
- 	Contain_seq_num(Size const & seq_num, utility::vector1< core::Size > const & residue_list){
- 		for(Size j=1; j<=residue_list.size(); j++){
- 			if(seq_num==residue_list[j]) {
- 				return true;
- 			}
- 		}
- 		return false;
- 	}
-
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	bool
@@ -616,9 +599,9 @@ namespace rna {
 		bool const method_2= ( rsd.has_variant_type("VIRTUAL_RNA_RESIDUE") || rsd.has_variant_type("BULGE") ) ? true : false;
 
 		if(method_1!=method_2){
-			Output_boolean("Is_virtual_base determination by method_1: ", method_1 );
-			Output_boolean("Is_virtual_base determination by method_2: ", method_2 );
-			std::cout << std::endl;
+			Output_boolean("Is_virtual_base determination by method_1: ", method_1, TR );
+			Output_boolean("Is_virtual_base determination by method_2: ", method_2, TR );
+			TR << std::endl;
 			utility_exit_with_message( "Is_virtual_base determination by the two methods are not the same!" );
 		}
 
@@ -631,7 +614,7 @@ namespace rna {
 	void
 	setup_suite_atom_id_map(conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, id::AtomID_Map< id::AtomID > & atom_ID_map, bool const base_only){
 
-		//std::cout << "blah blah blah " << std::endl;
+		//TR << "blah blah blah " << std::endl;
 		setup_suite_atom_id_map(rsd_1, rsd_2, rsd_1.seqpos(), rsd_2.seqpos(), atom_ID_map , base_only);
 
 	}
@@ -713,20 +696,20 @@ namespace rna {
 
  		id::AtomID_Map< id::AtomID > atom_ID_map;
 
-//		Output_boolean("atom_ID_map before initialize Is_empty?  ", atom_ID_map.empty()); std::cout << std::endl;
+//		Output_boolean("atom_ID_map before initialize Is_empty?  ", atom_ID_map.empty(), TR ); TR << std::endl;
 
 		pose::initialize_atomid_map( atom_ID_map, mod_pose, id::BOGUS_ATOM_ID );
 
  		if(ref_pose.sequence()!=mod_pose.sequence()){
-			std::cout << "ref_pose.sequence()= " << ref_pose.sequence() << std::endl;
-			std::cout << "mod_pose.sequence()= " << mod_pose.sequence() << std::endl;
+			TR << "ref_pose.sequence()= " << ref_pose.sequence() << std::endl;
+			TR << "mod_pose.sequence()= " << mod_pose.sequence() << std::endl;
  			utility_exit_with_message( "ref_pose.sequence()!=mod_pose.sequence()");
  		}
 
 
  		for ( Size seq_num = 1; seq_num <= mod_pose.total_residue(); ++seq_num ) {
 			if (mod_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code.
- 			if(!Contain_seq_num(seq_num, rmsd_residue_list)) continue;
+ 			if(!rmsd_residue_list.has_value(seq_num)) continue;
 
  			setup_suite_atom_id_map(mod_pose, ref_pose, seq_num, atom_ID_map, base_only);
 
@@ -753,13 +736,13 @@ namespace rna {
 		if(found_non_virtual_base==false){
 			for(Size n=1; n<=working_best_alignment.size(); n++){
 				Size const seq_num=working_best_alignment[n];
-				std::cout << "seq_num= " << seq_num;
-				Output_boolean("  Is_virtual_base( " + moving_tag + " ):", Is_virtual_base(moving_pose.residue(seq_num) ) );
-				Output_boolean("  Is_virtual_base( " + static_tag + " ):", Is_virtual_base(static_pose.residue(seq_num) ) );
-				std::cout << std::endl;
+				TR << "seq_num= " << seq_num;
+				Output_boolean("  Is_virtual_base( " + moving_tag + " ):", Is_virtual_base(moving_pose.residue(seq_num) ), TR );
+				Output_boolean("  Is_virtual_base( " + static_tag + " ):", Is_virtual_base(static_pose.residue(seq_num) ), TR );
+				TR << std::endl;
 			}
 			std::string error_message= "Error in aligning " + moving_tag + " to " + static_tag + ". No non-virtual_base in working_best_alignment to align the poses!";
-			std::cout << error_message << std::endl;
+			TR << error_message << std::endl;
 			utility_exit_with_message(error_message);
 		}
 
@@ -770,23 +753,23 @@ namespace rna {
 //				current_pose.dump_pdb( tag+ "_current_pose_after_alignment");
 		if(check_for_messed_up_structure(moving_pose, moving_tag)==true){
 			std::string error_message= "Error in aligning " + moving_tag + " to " + static_tag + "!";
-			std::cout << error_message << std::endl;
+			TR << error_message << std::endl;
 			utility_exit_with_message( moving_tag + " is messed up ...this is probably an alignment problem");
 		};
 	}
 
 	void
-	output_pair_size(std::pair<Size, Size> const & pair_size){
-		std::cout << "( " << pair_size.first << ", " << pair_size.second << " ) ";
+	output_pair_size(std::pair<Size, Size> const & pair_size, basic::Tracer & TR ){
+		TR << "( " << pair_size.first << ", " << pair_size.second << " ) ";
 	}
 
 	void
-	output_pair_size_vector(utility::vector1 <std::pair<Size, Size> > const & pair_size_vector, std::string const & output_string, core::Size const spacing){
-		std::cout << std::setw(spacing) << std::left << output_string << " :";
+	output_pair_size(utility::vector1 <std::pair<Size, Size> > const & pair_size_vector, std::string const & output_string, basic::Tracer & TR, core::Size const spacing ){
+		TR << std::setw(spacing) << std::left << output_string << " :";
 		for(Size n=1; n<=pair_size_vector.size(); n++){
-			output_pair_size(pair_size_vector[n]);
+			output_pair_size(pair_size_vector[n], TR );
 		}
-		std::cout << std::endl;
+		TR << std::endl;
 	}
 
 	//Sort by the first element. Low number on the top of the list
@@ -811,12 +794,12 @@ namespace rna {
 		sort(seq_num_list.begin(), seq_num_list.end(), seq_num_sort_citeria);
 	}
 	void
-	Output_seq_num_list(std::string const tag, utility::vector1<core::Size> const & seq_num_list, core::Size const spacing){
+	Output_seq_num_list(std::string const tag, utility::vector1<core::Size> const & seq_num_list, basic::Tracer & TR, core::Size const spacing ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
 
-		std::cout <<  std::setw(spacing) << tag;
+		TR <<  std::setw(spacing) << tag;
 
 		utility::vector1<core::Size> sorted_seq_num_list=seq_num_list;
 		sort_seq_num_list(sorted_seq_num_list);
@@ -825,14 +808,14 @@ namespace rna {
 		for(Size n=1; n<=sorted_seq_num_list.size(); n++){
 
 			while(seq_num<sorted_seq_num_list[n]){
-				std::cout << A(4," ");
+				TR << A(4," ");
 				seq_num++;
 			}
-			std::cout << I(4, sorted_seq_num_list[n]);
+			TR << I(4, sorted_seq_num_list[n]);
 			seq_num++;
 		}
 
-		std::cout << std::endl;
+		TR << std::endl;
 
 	}
 
@@ -855,15 +838,15 @@ namespace rna {
 
 	}
 
-	void Output_is_prepend_map(std::string const tag, std::map< core::Size, bool > const & my_map, core::Size const max_seq_num, core::Size const tag_spacing){
+	void Output_is_prepend_map(std::string const tag, std::map< core::Size, bool > const & my_map, core::Size const max_seq_num, basic::Tracer & TR, core::Size const tag_spacing ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
 
-		std::cout << std::setw(tag_spacing) << tag;
+		TR << std::setw(tag_spacing) << tag;
 
 		Size spacing=4;
-//		std::cout << std::setw(30) << "Is_residue_prepend:";
+//		TR << std::setw(30) << "Is_residue_prepend:";
 		for(Size seq_num=1; seq_num<=max_seq_num; seq_num++){
 			char prepend_char;
 			if(my_map.find(seq_num)!=my_map.end()){
@@ -871,48 +854,48 @@ namespace rna {
 			}else{
 				prepend_char = '-';
 			}
-			std::cout << std::setw(spacing) << prepend_char;
+			TR << std::setw(spacing) << prepend_char;
 		}
-		std::cout << std::endl;
+		TR << std::endl;
 
 	}
 
 	void
-	Output_bool_list(std::string const tag, utility::vector1<Size > const & size_list, core::Size const spacing){
+	Output_bool_list(std::string const tag, utility::vector1<Size > const & size_list, basic::Tracer & TR, core::Size const spacing ){
 		utility::vector1< bool > bool_list;
 
 		for(Size n=1; n<=size_list.size(); n++){
 			bool_list.push_back(size_list[n]);
 		}
-		Output_bool_list(tag, bool_list, spacing);
+		Output_bool_list(tag, bool_list, TR, spacing );
 	}
 
 	void
-	Output_bool_list(std::string const tag, utility::vector1<bool > const & bool_list, core::Size const spacing){
+	Output_bool_list(std::string const tag, utility::vector1<bool > const & bool_list, basic::Tracer & TR, core::Size const spacing ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
 
-		std::cout <<  std::setw(spacing) << tag;
+		TR <<  std::setw(spacing) << tag;
 
 		for(Size seq_num=1; seq_num <= bool_list.size(); seq_num++){
-			Output_boolean(bool_list[seq_num]);
+			Output_boolean(bool_list[seq_num], TR );
 		}
-		std::cout << std::endl;
+		TR << std::endl;
 	}
 
 	void
-	Output_size_list(std::string const tag, utility::vector1< Size > const & size_list, core::Size const spacing){
+	Output_size_list(std::string const tag, utility::vector1< Size > const & size_list, basic::Tracer & TR, core::Size const spacing ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
 
-		std::cout <<  std::setw(spacing) << tag;
+		TR <<  std::setw(spacing) << tag;
 
 		for(Size seq_num=1; seq_num <= size_list.size(); seq_num++){
-			std::cout << I(4, size_list[seq_num]);
+			TR << I(4, size_list[seq_num]);
 		}
-		std::cout << std::endl;
+		TR << std::endl;
 	}
 
 
@@ -934,7 +917,7 @@ namespace rna {
 	Get_five_prime_chain_break(pose::Pose const & pose){
 
 		if(!Is_close_chain_break(pose)){
-			std::cout << "In StepWiseRNA_ResidueSampler::Get_five_prime_chain_break, the function should not be called! "<< std::endl;
+			TR << "In StepWiseRNA_ResidueSampler::Get_five_prime_chain_break, the function should not be called! "<< std::endl;
 			exit(1);
 		};
 
@@ -946,7 +929,7 @@ namespace rna {
 			return seq_num;
 		}
 
-		std::cout << "In StepWiseRNA_ResidueSampler::Get_five_prime_chain_break, cannot find five_prime_chain_break" << std::endl;
+		TR << "In StepWiseRNA_ResidueSampler::Get_five_prime_chain_break, cannot find five_prime_chain_break" << std::endl;
 		exit(1);
 	}
 */
@@ -1008,30 +991,30 @@ namespace rna {
 
 		pose.constraint_set( cst_set );
 
-		//std::cout << "pose_cst_set" << std::endl;
-		//cst_set->show(std::cout);
+		//TR << "pose_cst_set" << std::endl;
+		//cst_set->show(TR);
 
 	}
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	Output_title_text(std::string const title){
+	Output_title_text(std::string const title, basic::Tracer & TR ){
 
-		std::cout << std::endl;
+		TR << std::endl;
 
 		Size title_length = title.size();
 		Size char_per_line = 80;
 		Size dash_length( 0 );
 		if ( title_length < char_per_line ) dash_length = char_per_line - title_length;
 
-		for(Size i = 1; i <= dash_length/2; i++) 	std::cout << "-";
+		for(Size i = 1; i <= dash_length/2; i++) 	TR << "-";
 
-		std::cout << title;
+		TR << title;
 
-		for(Size i = 1; i <= dash_length/2; i++) std::cout << "-";
+		for(Size i = 1; i <= dash_length/2; i++) TR << "-";
 
-		std::cout << std::endl;
+		TR << std::endl;
 
 	}
 
@@ -1039,12 +1022,12 @@ namespace rna {
 	void
 	Output_fold_tree_info(kinematics::FoldTree const & fold_tree, std::string const pose_name){
 
-		std::cout << "fold tree of " << pose_name << ": " << std::endl;
+		TR << "fold tree of " << pose_name << ": " << std::endl;
 		for(int i=1; i<=fold_tree.num_cutpoint(); i++){
-			std::cout << std::setw(30) << "jump_point_num= " << i;
-			std::cout << "   cutpoint= " << fold_tree.cutpoint(i);
-			std::cout << "   5' jump_point= " << fold_tree.jump_point( 1, i ) << "," << fold_tree.upstream_atom(i);
-			std::cout << "   3' jump_point= " << fold_tree.jump_point( 2, i ) << "," << fold_tree.downstream_atom(i) << std::endl;
+			TR << std::setw(30) << "jump_point_num= " << i;
+			TR << "   cutpoint= " << fold_tree.cutpoint(i);
+			TR << "   5' jump_point= " << fold_tree.jump_point( 1, i ) << "," << fold_tree.upstream_atom(i);
+			TR << "   3' jump_point= " << fold_tree.jump_point( 2, i ) << "," << fold_tree.downstream_atom(i) << std::endl;
 		}
 	}
 
@@ -1102,21 +1085,21 @@ namespace rna {
 
 		Size const spacing=10;
 
-		std::cout <<  std::setw(18) << "Torsions= ";
-		std::cout << std::setw(spacing)<< rotamer[1] << " ";
-		std::cout << std::setw(spacing)<< rotamer[2] << " ";
-		std::cout << std::setw(spacing)<< rotamer[3] << " ";
-		std::cout << std::setw(spacing)<< rotamer[4] << " ";
-		std::cout << std::setw(spacing)<< rotamer[5] << " ";
-		std::cout << std::setw(spacing)<< rotamer[6] << " ";
-		std::cout << std::setw(spacing)<< rotamer[7] << " ";
-		std::cout << std::setw(spacing)<< rotamer[8] << " ";
-		std::cout << std::setw(spacing)<< rotamer[9] << " ";
-		std::cout << std::setw(spacing)<< rotamer[10] << " ";
-		std::cout << std::setw(spacing)<< rotamer[11] << " ";
-		std::cout << std::setw(spacing)<< rotamer[12] << " ";
-		std::cout << std::setw(spacing)<< rotamer[13] << " ";
-		std::cout << std::endl;
+		TR <<  std::setw(18) << "Torsions= ";
+		TR << std::setw(spacing)<< rotamer[1] << " ";
+		TR << std::setw(spacing)<< rotamer[2] << " ";
+		TR << std::setw(spacing)<< rotamer[3] << " ";
+		TR << std::setw(spacing)<< rotamer[4] << " ";
+		TR << std::setw(spacing)<< rotamer[5] << " ";
+		TR << std::setw(spacing)<< rotamer[6] << " ";
+		TR << std::setw(spacing)<< rotamer[7] << " ";
+		TR << std::setw(spacing)<< rotamer[8] << " ";
+		TR << std::setw(spacing)<< rotamer[9] << " ";
+		TR << std::setw(spacing)<< rotamer[10] << " ";
+		TR << std::setw(spacing)<< rotamer[11] << " ";
+		TR << std::setw(spacing)<< rotamer[12] << " ";
+		TR << std::setw(spacing)<< rotamer[13] << " ";
+		TR << std::endl;
 
 	}
 
@@ -1182,16 +1165,16 @@ namespace rna {
 
 
 		if( pose1.sequence()!=full_sequence ){
-			std::cout << "pose1.sequence()= " << pose1.sequence() << std::endl;
-			std::cout << "pose2.sequence()= " << pose2.sequence() << std::endl;
-			std::cout << "full_sequence= " << full_sequence << std::endl;
+			TR << "pose1.sequence()= " << pose1.sequence() << std::endl;
+			TR << "pose2.sequence()= " << pose2.sequence() << std::endl;
+			TR << "full_sequence= " << full_sequence << std::endl;
 			utility_exit_with_message( "pose1.sequence()!=full_sequence" );
 		}
 
 		if( pose2.sequence()!=full_sequence ){
-			std::cout << "pose1.sequence()= " << pose1.sequence() << std::endl;
-			std::cout << "pose2.sequence()= " << pose2.sequence() << std::endl;
-			std::cout << "full_sequence= " << full_sequence << std::endl;
+			TR << "pose1.sequence()= " << pose1.sequence() << std::endl;
+			TR << "pose2.sequence()= " << pose2.sequence() << std::endl;
+			TR << "full_sequence= " << full_sequence << std::endl;
 			utility_exit_with_message( "pose2.sequence()!=full_sequence" );
 		}
 
@@ -1200,16 +1183,16 @@ namespace rna {
 /*
 		//OK check that input pose is full_length.
 		if(pose1.total_residue()!=pose2.total_residue()){
-			std::cout << "pose1.total_residue()= " << pose1.total_residue() << std::endl;
-			std::cout << "pose2.total_residue()= " << pose2.total_residue() << std::endl;
+			TR << "pose1.total_residue()= " << pose1.total_residue() << std::endl;
+			TR << "pose2.total_residue()= " << pose2.total_residue() << std::endl;
 			utility_exit_with_message( "pose1.total_residue()!=pose2.total_residue()");
 		}
 
 
 		//if(full_to_sub.size()!=pose1.total_residue()){
 			return 99.99; //not full length pose!
-			//std::cout << "full_to_sub.size()= " << full_to_sub.size() << std::endl;
-			//std::cout << "pose1.total_residue()= " << pose1.total_residue() << std::endl;
+			//TR << "full_to_sub.size()= " << full_to_sub.size() << std::endl;
+			//TR << "pose1.total_residue()= " << pose1.total_residue() << std::endl;
 			//utility_exit_with_message( "full_to_sub.size()!=pose1.total_residue()");
 		}
 
@@ -1224,17 +1207,17 @@ namespace rna {
 
 			if(full_seq_num!=map_seq_num){
 				return 88.88; //not full length pose!
-				//std::cout << "full_seq_num= " << full_seq_num << std::endl;
-				//std::cout << "map_seq_num= " << map_seq_num << std::endl;
+				//TR << "full_seq_num= " << full_seq_num << std::endl;
+				//TR << "map_seq_num= " << map_seq_num << std::endl;
 				//utility_exit_with_message( "full_seq_num!=map_seq_num)");
 			}
 		}
 */
 
 		if(verbose){
-			Output_title_text("Enter full_length_rmsd_over_residue_list function");
-			Output_boolean("ignore_virtual_atom= ",ignore_virtual_atom); std::cout << std::endl;
-			Output_seq_num_list("residue_list= ", residue_list, 30);
+			Output_title_text("Enter full_length_rmsd_over_residue_list function", TR );
+			Output_boolean("ignore_virtual_atom= ",ignore_virtual_atom, TR ); TR << std::endl;
+			Output_seq_num_list("residue_list= ", residue_list, TR, 30 );
 		}
 
 		Size atom_count=0;
@@ -1266,9 +1249,9 @@ namespace rna {
 			}
 
 			if(verbose){
-				std::cout << "full_seq_num= " << full_seq_num;
-				Output_boolean(" Is_prepend= ",Is_prepend);
-				Output_boolean(" both_pose_res_is_virtual= ",both_pose_res_is_virtual); std::cout << std::endl;
+				TR << "full_seq_num= " << full_seq_num;
+				Output_boolean(" Is_prepend= ",Is_prepend, TR );
+				Output_boolean(" both_pose_res_is_virtual= ",both_pose_res_is_virtual, TR ); TR << std::endl;
 			}
 
 			if(both_pose_res_is_virtual) continue;
@@ -1277,9 +1260,9 @@ namespace rna {
 			//add sd of each atom to sum_sd
 			suite_square_deviation(pose1, pose2, Is_prepend, full_seq_num, full_seq_num, atom_count, sum_sd, verbose, ignore_virtual_atom);
 
-			if( ( (full_seq_num+1)<=total_res) && Contain_seq_num(full_seq_num+1, residue_list)==false){
+			if( ( (full_seq_num+1)<=total_res) && residue_list.has_value(full_seq_num+1)==false){
 
-				if(verbose) std::cout << "Phosphate_edge_res_(full_seq_num+1)= " << full_seq_num+1 << std::endl;
+				if(verbose) TR << "Phosphate_edge_res_(full_seq_num+1)= " << full_seq_num+1 << std::endl;
 
 				phosphate_square_deviation(pose1, pose2, full_seq_num+1, full_seq_num+1, atom_count, sum_sd, verbose, ignore_virtual_atom);
 			}
@@ -1293,8 +1276,8 @@ namespace rna {
 		if(atom_count==0) rmsd=0.0; //special case...implement this on May 5, 2010
 
 		if(verbose){
-			std::cout << "sum_sd= " << sum_sd << " atom_count= " << atom_count << " rmsd= " << rmsd << std::endl;
-			Output_title_text("Exit In full_length_rmsd_over_residue_list function");
+			TR << "sum_sd= " << sum_sd << " atom_count= " << atom_count << " rmsd= " << rmsd << std::endl;
+			Output_title_text("Exit In full_length_rmsd_over_residue_list function", TR );
 		}
 
 		return (std::max(0.01, rmsd));
@@ -1305,9 +1288,9 @@ namespace rna {
 	rmsd_over_residue_list(pose::Pose const & pose1, pose::Pose const & pose2, utility::vector1 < Size > const & residue_list, std::map< core::Size, core::Size > const & full_to_sub, std::map< core::Size, bool > const & Is_prepend_map, bool const verbose, bool const ignore_virtual_atom){
 
 		if(verbose){
-			Output_title_text("Enter rmsd_over_residue_list function");
-			Output_boolean("ignore_virtual_atom= ",ignore_virtual_atom); std::cout << std::endl;
-			Output_seq_num_list("residue_list= ", residue_list, 30);
+			Output_title_text("Enter rmsd_over_residue_list function", TR );
+			Output_boolean("ignore_virtual_atom= ",ignore_virtual_atom, TR ); TR << std::endl;
+			Output_seq_num_list("residue_list= ", residue_list, TR, 30 );
 		}
 
 
@@ -1326,8 +1309,9 @@ namespace rna {
 
 
 			if(verbose){
-				std::cout << "Full_seq_num= " << full_seq_num << " partial_seq_num= " << seq_num;
-				Output_boolean(" Is_prepend= ",Is_prepend); Output_boolean(" both_pose_res_is_virtual= ",both_pose_res_is_virtual); std::cout << std::endl;
+				TR << "Full_seq_num= " << full_seq_num << " partial_seq_num= " << seq_num;
+				Output_boolean(" Is_prepend= ",Is_prepend, TR );
+				Output_boolean(" both_pose_res_is_virtual= ",both_pose_res_is_virtual, TR); TR << std::endl;
 			}
 
 			if(both_pose_res_is_virtual) continue;
@@ -1344,8 +1328,8 @@ namespace rna {
 		if(atom_count==0) rmsd=0.0; //special case...implement this on May 5, 2010
 
 		if(verbose){
-			std::cout << "sum_sd= " << sum_sd << " atom_count= " << atom_count << " rmsd= " << rmsd << std::endl;
-			Output_title_text("Exit rmsd_over_residue_list function");
+			TR << "sum_sd= " << sum_sd << " atom_count= " << atom_count << " rmsd= " << rmsd << std::endl;
+			Output_title_text("Exit rmsd_over_residue_list function", TR );
 		}
 
 	  	return (std::max(0.01, rmsd));
@@ -1374,13 +1358,13 @@ namespace rna {
 
 		num_atoms=std::max(pose1.residue(suite_num_1).nheavyatoms(), pose2.residue(suite_num_2).nheavyatoms());
 
-		std::cout << "num_atoms: " << num_atoms << std::endl;
+		TR << "num_atoms: " << num_atoms << std::endl;
 
 		for(Size n=1; n<= num_atoms;  n++){
 
-			std::cout << " atom num = " <<  n;
-			std::cout << "  atom_name of the pose1 " <<  pose1.residue(suite_num_1).atom_name(n);
-			std::cout << "  atom_name of the pose2 " <<  pose2.residue(suite_num_2).atom_name(n) << std::endl;
+			TR << " atom num = " <<  n;
+			TR << "  atom_name of the pose1 " <<  pose1.residue(suite_num_1).atom_name(n);
+			TR << "  atom_name of the pose2 " <<  pose2.residue(suite_num_2).atom_name(n) << std::endl;
 
 		}
 	}
@@ -1393,19 +1377,19 @@ namespace rna {
 		Size num_side_chain_atom;
 
 		if(name_from_aa(res_aa)=="RAD") {
-			if(verbose) std::cout << "name_from_aa: RAD" << std::endl;
+			if(verbose) TR << "name_from_aa: RAD" << std::endl;
 			num_side_chain_atom=11;
 		} else if(name_from_aa(res_aa)=="RCY") {
-			if(verbose) std::cout << "name_from_aa: RCY" << std::endl;
+			if(verbose) TR << "name_from_aa: RCY" << std::endl;
 			num_side_chain_atom=9;
 		} else if(name_from_aa(res_aa)=="RGU") {
-			if(verbose) std::cout << "name_from_aa: RGU" << std::endl;
+			if(verbose) TR << "name_from_aa: RGU" << std::endl;
 			num_side_chain_atom=12;
 		} else if(name_from_aa(res_aa)=="URA") {
-			if(verbose) std::cout << "name_from_aa: URA" << std::endl;
+			if(verbose) TR << "name_from_aa: URA" << std::endl;
 			num_side_chain_atom=9;
 		} else {
-			std::cout << "Error, cannot identify residue type" << std::endl;
+			TR << "Error, cannot identify residue type" << std::endl;
 			num_side_chain_atom=0;
 			exit (1);
 		}
@@ -1429,7 +1413,7 @@ namespace rna {
 		}
 
 //		if(rsd_1.atom_type(atomno_1).name()=="VIRT"  || rsd_2.atom_type(atomno_2).name()=="VIRT") {
-//			std::cout << "atom_name_1= " << atom_name_1 << " atom_name_2= " << atom_name_2 << std::endl;
+//			TR << "atom_name_1= " << atom_name_1 << " atom_name_2= " << atom_name_2 << std::endl;
 //			utility_exit_with_message( "rsd_1.atom_type(n).name()==\"VIRT\"  || rsd_2.atom_type(n).name()==\"VIRT\" =TRUE!");
 //		}
 		////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1438,9 +1422,9 @@ namespace rna {
 
 
 		if(verbose){
-			std::cout << " atom_name of the atom1= " << atom_name_1 << " " << rsd_1.seqpos();
-			std::cout << " atom_name of the atom2= " << atom_name_2 << " " << rsd_2.seqpos();
-			std::cout << " Dist_squared= " << dist_squared << std::endl;
+			TR << " atom_name of the atom1= " << atom_name_1 << " " << rsd_1.seqpos();
+			TR << " atom_name of the atom2= " << atom_name_2 << " " << rsd_2.seqpos();
+			TR << " Dist_squared= " << dist_squared << std::endl;
 		}
 
 		return dist_squared;
@@ -1464,7 +1448,7 @@ namespace rna {
 
 		Size const num_side_chain_atom=Get_num_side_chain_atom_from_res_name(res_aa, verbose);
 
-		if ( verbose ) std::cout << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
+		if ( verbose ) TR << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
 
   		//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
 		//the virtaul O2star hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
@@ -1484,7 +1468,7 @@ namespace rna {
 			}
 
 			if(rsd_1.atom_type(atomno_1).name()=="VIRT"  && rsd_2.atom_type(atomno_2).name()=="VIRT") { //Change this to "AND" on Apr 5
-//					std::cout << "Both atoms are VIRTUAL! moving_res_1= " << moving_res_1 << " moving_res_2= " << moving_res_2 << " atomno_1= " << atomno_1 << " atomno_2= " << atomno_2 << std::endl;
+//					TR << "Both atoms are VIRTUAL! moving_res_1= " << moving_res_1 << " moving_res_2= " << moving_res_2 << " atomno_1= " << atomno_1 << " atomno_2= " << atomno_2 << std::endl;
 				continue;
 			}
 
@@ -1503,7 +1487,7 @@ namespace rna {
 
 		if(res_aa!=res_aa2) utility_exit_with_message( "res_aa (" + name_from_aa(res_aa) + ")!=res_aa2 (" + name_from_aa(res_aa2) + ") " );
 
-		if ( verbose ) std::cout << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
+		if ( verbose ) TR << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
 
 		for( Size atomno = 1; atomno <= 4; atomno++){
 
@@ -1556,7 +1540,7 @@ namespace rna {
 
 		Size const num_side_chain_atom=Get_num_side_chain_atom_from_res_name(res_aa, verbose);
 
-		if ( verbose ) std::cout << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
+		if ( verbose ) TR << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
 
 		Size const num_heavy_backbone_atoms=11; //RNA contain 11 heavy backbone atoms.
 
@@ -1598,7 +1582,7 @@ namespace rna {
 			}
 
 			if(rsd_1.atom_type(atomno_1).name()=="VIRT"  && rsd_2.atom_type(atomno_2).name()=="VIRT") { //Change this to "AND" on Apr 5
-//					std::cout << "Both atoms are VIRTUAL! moving_res_1= " << moving_res_1 << " moving_res_2= " << moving_res_2 << " atomno_1= " << atomno_1 << " atomno_2= " << atomno_2 << std::endl;
+//					TR << "Both atoms are VIRTUAL! moving_res_1= " << moving_res_1 << " moving_res_2= " << moving_res_2 << " atomno_1= " << atomno_1 << " atomno_2= " << atomno_2 << std::endl;
 				continue;
 			}
 
@@ -1627,16 +1611,16 @@ namespace rna {
 		Size const num_side_chain_atom=Get_num_side_chain_atom_from_res_name(res_aa, verbose);
 
 		if(false && verbose){
-			std::cout << " residue type1= " <<  res_aa << " residue type2= " <<  res_aa2;
-			std::cout << " 1st_side_atom1= " <<  first_sidechain_atom1;
-			std::cout << " 1st_side_atom2= " <<  first_sidechain_atom2;
-			std::cout << " nheavyatoms1= " <<  pose1.residue(moving_res_1).nheavyatoms();
-			std::cout << " nheavyatoms2= " <<  pose2.residue(moving_res_2).nheavyatoms() << std::endl;
-			std::cout << " num_side_chain_atom = " <<  num_side_chain_atom << std::endl;
+			TR << " residue type1= " <<  res_aa << " residue type2= " <<  res_aa2;
+			TR << " 1st_side_atom1= " <<  first_sidechain_atom1;
+			TR << " 1st_side_atom2= " <<  first_sidechain_atom2;
+			TR << " nheavyatoms1= " <<  pose1.residue(moving_res_1).nheavyatoms();
+			TR << " nheavyatoms2= " <<  pose2.residue(moving_res_2).nheavyatoms() << std::endl;
+			TR << " num_side_chain_atom = " <<  num_side_chain_atom << std::endl;
 			Print_heavy_atoms(moving_res_1, moving_res_2, pose1, pose2);
 		}
 
-		if ( verbose ) std::cout << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << "    PREPEND? " << prepend_res << std::endl;
+		if ( verbose ) TR << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << "    PREPEND? " << prepend_res << std::endl;
 
 		Size const num_heavy_backbone_atoms=11; //RNA contain 11 heavy backbone atoms.
 
@@ -1655,7 +1639,7 @@ namespace rna {
 			}
 
 			if(rsd_1.atom_type(atomno).name()=="VIRT"  && rsd_2.atom_type(atomno).name()=="VIRT") {
-//					std::cout << "Both atoms are VIRTUAL! res_num_1= " << res_num_1 << " res_num_2= " << res_num_2 << " atomno= " << atomno << std::endl;
+//					TR << "Both atoms are VIRTUAL! res_num_1= " << res_num_1 << " res_num_2= " << res_num_2 << " atomno= " << atomno << std::endl;
 				continue;
 			}
 
@@ -1679,7 +1663,7 @@ namespace rna {
 			}
 
 			if(rsd_1.atom_type(atomno_1).name()=="VIRT"  && rsd_2.atom_type(atomno_2).name()=="VIRT") { //Change this to "AND" on Apr 5
-	//					std::cout << "Both atoms are VIRTUAL! moving_res_1= " << moving_res_1 << " moving_res_2= " << moving_res_2 << " atomno_1= " << atomno_1 << " atomno_2= " << atomno_2 << std::endl;
+	//					TR << "Both atoms are VIRTUAL! moving_res_1= " << moving_res_1 << " moving_res_2= " << moving_res_2 << " atomno_1= " << atomno_1 << " atomno_2= " << atomno_2 << std::endl;
 				continue;
 			}
 
@@ -1693,13 +1677,13 @@ namespace rna {
 			Size const res_num_1= (prepend_res) ? moving_res_1 + 1: moving_res_1;
 			Size const res_num_2= (prepend_res) ? moving_res_2 + 1: moving_res_2;
 			Distance dist_squared = (pose1.residue(res_num_1).xyz( 2 ) - pose2.residue(res_num_2).xyz( 3 ) ).length_squared();
-			std::cout << " atom_name of the pose1= " << pose1.residue(res_num_1).atom_name(2)  << " " << res_num_1;
-			std::cout << " atom_name of the pose2= " << pose2.residue(res_num_2).atom_name(3)  << " " << res_num_2;
-			std::cout << " Switch Phosphate1= " << " dist_squared= " << dist_squared << std::endl;
+			TR << " atom_name of the pose1= " << pose1.residue(res_num_1).atom_name(2)  << " " << res_num_1;
+			TR << " atom_name of the pose2= " << pose2.residue(res_num_2).atom_name(3)  << " " << res_num_2;
+			TR << " Switch Phosphate1= " << " dist_squared= " << dist_squared << std::endl;
 			dist_squared = (pose1.residue(res_num_1).xyz( 3 ) - pose2.residue(res_num_2).xyz( 2 ) ).length_squared();
-			std::cout << " atom_name of the pose1= " << pose1.residue(res_num_1).atom_name(3)  << " " << res_num_1;
-			std::cout << " atom_name of the pose2= " << pose2.residue(res_num_2).atom_name(2)  << " " << res_num_2;
-			std::cout << " Switch Phosphate2= " << " dist_squared= " << dist_squared << std::endl;
+			TR << " atom_name of the pose1= " << pose1.residue(res_num_1).atom_name(3)  << " " << res_num_1;
+			TR << " atom_name of the pose2= " << pose2.residue(res_num_2).atom_name(2)  << " " << res_num_2;
+			TR << " Switch Phosphate2= " << " dist_squared= " << dist_squared << std::endl;
 		}
 
 
@@ -1775,7 +1759,7 @@ namespace rna {
 																		 Size const five_prime_chain_break_res, Size const gap_size ){
 
 		if( gap_size != 0 ){
-			std::cout << "gap_size= " << gap_size;
+			TR << "gap_size= " << gap_size;
 			utility_exit_with_message( "gap_size!=0" );
 		}
 
@@ -1867,7 +1851,7 @@ namespace rna {
 			else if(dot_product > 0.90 && dot_product < 0.95  ) {C4_C3_dist_min= 4.374;  C4_C3_dist_max= 6.357; }
 			else if(dot_product > 0.95 && dot_product < 1.00  ) {C4_C3_dist_min= 4.570;  C4_C3_dist_max= 6.349; }
 			else{
-				std::cout << "dot_product= " << dot_product << std::endl;
+				TR << "dot_product= " << dot_product << std::endl;
 				utility_exit_with_message( "Invalid dot_product!" );
 			}
 
@@ -1923,7 +1907,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 	 using namespace core::id;
 
-	 std::cout << "Freeze pose sugar torsions, total_residue=" << total_residue << std::endl;
+	 TR << "Freeze pose sugar torsions, total_residue=" << total_residue << std::endl;
 
 	 for(Size i=1; i<=total_residue; i++){
 
@@ -1936,30 +1920,30 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	Output_boolean(std::string const & tag, bool boolean){
+	Output_boolean(std::string const & tag, bool boolean, basic::Tracer & TR ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
-		std::cout << tag;
+		TR << tag;
 
 		if(boolean==true){
-			std::cout << A(4,"T");
+			TR << A(4,"T");
 		} else {
-			std::cout << A(4,"F");
+			TR << A(4,"F");
 		}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	void
-	Output_boolean(bool boolean){
+	Output_boolean(bool boolean, basic::Tracer & TR ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
 
 		if(boolean==true){
-			std::cout << A(4,"T");
+			TR << A(4,"T");
 		} else {
-			std::cout << A(4,"F");
+			TR << A(4,"F");
 		}
 	}
 
@@ -1976,50 +1960,50 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		Size spacing=10;
 
-		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
-		std::cout << "Movemap (in term of partial_pose seq_num): " << std::endl;
-		std::cout << A(spacing,"res_num" ) << A(spacing," alpha  ") << A(spacing,"  beta  ") << A(spacing," gamma  ");
-		std::cout << A(spacing," delta  ") << A(spacing,"eplison ") << A(spacing,"  zeta  ") << A(spacing," chi_1  ");
-		std::cout << A(spacing,"  nu_2  ") << A(spacing,"  nu_1  ") << A(spacing,"chi_O2' ") << std::endl;
+		TR << "--------------------------------------------------------------------------------------" << std::endl;
+		TR << "Movemap (in term of partial_pose seq_num): " << std::endl;
+		TR << A(spacing,"res_num" ) << A(spacing," alpha  ") << A(spacing,"  beta  ") << A(spacing," gamma  ");
+		TR << A(spacing," delta  ") << A(spacing,"eplison ") << A(spacing,"  zeta  ") << A(spacing," chi_1  ");
+		TR << A(spacing,"  nu_2  ") << A(spacing,"  nu_1  ") << A(spacing,"chi_O2' ") << std::endl;
 
 		for(Size n=1; n<= total_residue; n++){
 
-			std::cout << I(spacing, 3 , n);
-			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  1 ))); std::cout << A(1+(spacing-4)/2, "");
-			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  2 ))); std::cout << A(1+(spacing-4)/2, "");
-			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  3 ))); std::cout << A(1+(spacing-4)/2, "");
-			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  4 ))); std::cout << A(1+(spacing-4)/2, "");
-			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  5 ))); std::cout << A(1+(spacing-4)/2, "");
-			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  6 ))); std::cout << A(1+(spacing-4)/2, "");
-			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 1 ))); std::cout << A(1+(spacing-4)/2, "");
-			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 2 ))); std::cout << A(1+(spacing-4)/2, "");
-			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 3 ))); std::cout << A(1+(spacing-4)/2, "");
-			std::cout << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 4 ))); std::cout << A(1+(spacing-4)/2, "");
-			std::cout << std::endl;
+			TR << I(spacing, 3 , n);
+			TR << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  1 )), TR ); TR << A(1+(spacing-4)/2, "");
+			TR << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  2 )), TR ); TR << A(1+(spacing-4)/2, "");
+			TR << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  3 )), TR ); TR << A(1+(spacing-4)/2, "");
+			TR << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  4 )), TR ); TR << A(1+(spacing-4)/2, "");
+			TR << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  5 )), TR ); TR << A(1+(spacing-4)/2, "");
+			TR << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::BB,  6 )), TR ); TR << A(1+(spacing-4)/2, "");
+			TR << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 1 )), TR ); TR << A(1+(spacing-4)/2, "");
+			TR << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 2 )), TR ); TR << A(1+(spacing-4)/2, "");
+			TR << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 3 )), TR ); TR << A(1+(spacing-4)/2, "");
+			TR << A(-1+(spacing-4)/2, ""); Output_boolean(mm.get(TorsionID( n , id::CHI, 4 )), TR ); TR << A(1+(spacing-4)/2, "");
+			TR << std::endl;
 		}
-		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+		TR << "--------------------------------------------------------------------------------------" << std::endl;
 
 
 
-		std::cout << "print movemap jump_points [explicit method]: " << std::endl;
+		TR << "print movemap jump_points [explicit method]: " << std::endl;
 		for (Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
 			Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
 			Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
 
-			std::cout << "n=" << n << " | jump_pos1= " << jump_pos1 << " | jump_pos2= " << jump_pos2;
-			std::cout << " | mm.get_jump(n) = "; Output_boolean( mm.get_jump(n) );
-			std::cout << std::endl;
+			TR << "n=" << n << " | jump_pos1= " << jump_pos1 << " | jump_pos2= " << jump_pos2;
+			TR << " | mm.get_jump(n) = "; Output_boolean( mm.get_jump(n), TR );
+			TR << std::endl;
 
 		}
-		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+		TR << "--------------------------------------------------------------------------------------" << std::endl;
 
 		//From core/kinematic/MoveMap.hh
 		//typedef std::map< id::JumpID, bool > JumpID_Map
-		std::cout << "print movemap jump_points [iterator method]: " << std::endl;
+		TR << "print movemap jump_points [iterator method]: " << std::endl;
 	  for (std::map< id::JumpID, bool >::const_iterator it=mm.jump_id_begin(); it!=mm.jump_id_end(); it++ ){
-	    std::cout << "movemap jump==true for jump_pos1=" << it->first << " | jump_pos2=" << it->second << std::endl;
+	    TR << "movemap jump==true for jump_pos1=" << it->first << " | jump_pos2=" << it->second << std::endl;
 		}
-		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+		TR << "--------------------------------------------------------------------------------------" << std::endl;
 
 	}
 
@@ -2057,7 +2041,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
 			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ){
-				if(verbose) std::cout << "res " << seq_num << " is core::chemical::aa_vrt! " << std::endl;
+				if(verbose) TR << "res " << seq_num << " is core::chemical::aa_vrt! " << std::endl;
 				Is_O2star_hydrogen_virtual_list.push_back(false); //false since not virtual O2star_hydrogen
 				continue;
 			}
@@ -2065,7 +2049,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			//SML PHENIX conference
 			if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
 				if( !pose.residue(seq_num).is_RNA() ){
-					if(verbose) std::cout << "res " << seq_num << " is not RNA " << std::endl;
+					if(verbose) TR << "res " << seq_num << " is not RNA " << std::endl;
 					Is_O2star_hydrogen_virtual_list.push_back(false); //false since not virtual O2star_hydrogen
 					continue;
 				}
@@ -2075,7 +2059,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			Size at=rsd.atom_index( "HO2'" );
 
 			if(rsd.atom_type(at).name()=="VIRT"){
-				if(verbose) std::cout << "res " << seq_num << " has a virtual o2star hydrogen! " << std::endl;
+				if(verbose) TR << "res " << seq_num << " has a virtual o2star hydrogen! " << std::endl;
 				Is_O2star_hydrogen_virtual_list.push_back(true);
 			}else{
 				Is_O2star_hydrogen_virtual_list.push_back(false);
@@ -2094,7 +2078,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
 			if(Is_O2star_hydrogen_virtual_list[seq_num]) continue;
 
-			//if(verbose) std::cout << "res " << seq_num << " is a working_moving_res" << std::endl;
+			//if(verbose) TR << "res " << seq_num << " is a working_moving_res" << std::endl;
 			surrounding_O2star_hydrogen.push_back(seq_num);
 			num_o2star_moving_res++;
 		}
@@ -2104,7 +2088,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		for(Size seq_num=1; seq_num<= pose.total_residue(); seq_num++){
 
 			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-			if(Contain_seq_num(seq_num, surrounding_O2star_hydrogen) ) continue;
+			if(surrounding_O2star_hydrogen.has_value(seq_num) ) continue;
 
 			bool Is_surrounding_res=false;
 
@@ -2132,7 +2116,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 					Real const dist_square = (surrounding_rsd.xyz(surr_at)-moving_rsd.xyz(moving_at) ).length_squared();
 
 					if( dist_square  < cutoff_dist*cutoff_dist){
-						if(verbose) std::cout << "res " << seq_num << " is a 1st layer surrounding O2star_hydrogen res, dist_square = " << dist_square << std::endl;
+						if(verbose) TR << "res " << seq_num << " is a 1st layer surrounding O2star_hydrogen res, dist_square = " << dist_square << std::endl;
 						surrounding_O2star_hydrogen.push_back(seq_num);
 						Is_surrounding_res=true;
 						break;
@@ -2150,7 +2134,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 			for(Size seq_num=1; seq_num<= pose.total_residue(); seq_num++){
 
 				if (pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-				if(Contain_seq_num(seq_num, surrounding_O2star_hydrogen) ) continue;
+				if(surrounding_O2star_hydrogen.has_value(seq_num) ) continue;
 
 				core::conformation::Residue const & rsd_1 = pose.residue(seq_num);
 				Size const at_1= rsd_1.first_sidechain_atom();
@@ -2167,7 +2151,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 					Real const dist_square = (rsd_1.xyz(at_1)-rsd_2.xyz(at_2) ).length_squared();
 
 					if( dist_square  < cutoff_dist*cutoff_dist){
-						if(verbose) std::cout << "res " << seq_num << " is layer " << layer_num << " surrounding O2star_hydrogen res, dist_square = " << dist_square << std::endl;
+						if(verbose) TR << "res " << seq_num << " is layer " << layer_num << " surrounding O2star_hydrogen res, dist_square = " << dist_square << std::endl;
 						surrounding_O2star_hydrogen.push_back(seq_num);
 						add_new_O2star_hydrogen=true;
 						break;
@@ -2191,7 +2175,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		}
 
 		if(verbose){
-			std::cout << "num_o2star_moving_res= " << num_o2star_moving_res << "  surrounding_O2star_hydrogen.size()= " << surrounding_O2star_hydrogen.size() << std::endl;
+			TR << "num_o2star_moving_res= " << num_o2star_moving_res << "  surrounding_O2star_hydrogen.size()= " << surrounding_O2star_hydrogen.size() << std::endl;
 		}
 
 		return surrounding_O2star_hydrogen;
@@ -2217,7 +2201,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 	void
 	o2star_minimize(pose::Pose& pose, core::scoring::ScoreFunctionOP const & packer_scorefxn, utility::vector1< core::Size > const & O2star_pack_seq_num){
 
-		Output_seq_num_list("O2star_pack_seq_num= " , O2star_pack_seq_num);
+		Output_seq_num_list("O2star_pack_seq_num= " , O2star_pack_seq_num, TR );
 
 		pack::task::PackerTaskOP task = create_standard_o2star_pack_task(pose, O2star_pack_seq_num);
 		task->initialize_from_command_line();
@@ -2241,7 +2225,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
 			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-			if(Contain_seq_num(seq_num, O2star_pack_seq_num) && pose.residue(seq_num).is_RNA() ){ //pack this residue!
+			if(O2star_pack_seq_num.has_value(seq_num) && pose.residue(seq_num).is_RNA() ){ //pack this residue!
 
 				/*
 				NOTE: the ex4 option allows sampling of extra torsion angles ("ex") at
@@ -2269,7 +2253,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
-			if(Contain_seq_num(seq_num, O2star_pack_seq_num) && pose.residue(seq_num).is_RNA() ){ //pack this residue!
+			if(O2star_pack_seq_num.has_value(seq_num) && pose.residue(seq_num).is_RNA() ){ //pack this residue!
 
 				o2star_pack_task_->nonconst_residue_task(seq_num).and_extrachi_cutoff( 0 );
 				o2star_pack_task_->nonconst_residue_task(seq_num).or_ex4( true ); //extra O2star sampling
@@ -2291,20 +2275,20 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		using namespace core::id;
 
 		conformation::Residue const & suite_lower_res=pose.residue(five_prime_chainbreak);
-		std::cout << std::setw(5) << " ep= " << std::setw(15) << suite_lower_res.mainchain_torsion(5);
-		std::cout << std::setw(5) << " z= "  << std::setw(15) << suite_lower_res.mainchain_torsion(6);
+		TR << std::setw(5) << " ep= " << std::setw(15) << suite_lower_res.mainchain_torsion(5);
+		TR << std::setw(5) << " z= "  << std::setw(15) << suite_lower_res.mainchain_torsion(6);
 
 
 		Size const three_prime_chainbreak=five_prime_chainbreak+1;
 
 		if (three_prime_chainbreak <= pose.total_residue()) {
 			conformation::Residue const & suite_upper_res=pose.residue(three_prime_chainbreak);
-			std::cout << std::setw(5) << " a= "  << std::setw(15) << suite_upper_res.mainchain_torsion(1);
-			std::cout << std::setw(5) << " b= "  << std::setw(15) << suite_upper_res.mainchain_torsion(2);
-			std::cout << std::setw(5) << " g= "  << std::setw(15) << suite_upper_res.mainchain_torsion(3);
+			TR << std::setw(5) << " a= "  << std::setw(15) << suite_upper_res.mainchain_torsion(1);
+			TR << std::setw(5) << " b= "  << std::setw(15) << suite_upper_res.mainchain_torsion(2);
+			TR << std::setw(5) << " g= "  << std::setw(15) << suite_upper_res.mainchain_torsion(3);
 		}
 
-		std::cout << std::endl;
+		TR << std::endl;
 
 	}
 	/////////////////////////////////////////////////////////////////////////////////////
@@ -2323,17 +2307,17 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		static const ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance() ->
 			residue_type_set(	core::chemical::RNA );
 
-		if(verbose) Output_title_text("ENTER Correctly_position_cutpoint_phosphate_torsions function");
+		if(verbose) Output_title_text("ENTER Correctly_position_cutpoint_phosphate_torsions function", TR );
 
 		chemical::AA res_aa = aa_from_name( "RAD" );
 		ResidueOP new_rsd = conformation::ResidueFactory::create_residue( *(rsd_set->aa_map( res_aa )[1]) ) ;
-		if(verbose) std::cout << "  res_aa: " << res_aa << std::endl;
+		if(verbose) TR << "  res_aa: " << res_aa << std::endl;
 
 		Size three_prime_chainbreak=five_prime_chainbreak+1;
 
 		if(verbose){
 			//dump_pdb(current_pose, "Before_prepending_dummy_nucleotide");
-			std::cout <<  std::setw(50) << "Before_prepending_dummy_nucleotide";
+			TR <<  std::setw(50) << "Before_prepending_dummy_nucleotide";
 			print_backbone_torsions(current_pose, five_prime_chainbreak);
 		}
 
@@ -2342,7 +2326,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		if(verbose){
 			//dump_pdb(current_pose, "Before_setting_torsion_to_A_form.pdb");
-			std::cout << std::setw(50) << "Before_setting_torsion_to_A_form";
+			TR << std::setw(50) << "Before_setting_torsion_to_A_form";
 			print_backbone_torsions(current_pose, five_prime_chainbreak+1);
 		}
 		//Actually just by prepending the residue causes the alpha torsion to automatically be set to -64.0274,
@@ -2380,17 +2364,17 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 
 		if(verbose){
 			//dump_pdb(current_pose, "After_setting_torsion_to_A_form.pdb");
-			std::cout << std::setw(50) << "After_setting_torsion_to_A_form"; print_backbone_torsions(current_pose, five_prime_chainbreak+1);
+			TR << std::setw(50) << "After_setting_torsion_to_A_form"; print_backbone_torsions(current_pose, five_prime_chainbreak+1);
 		}
 
 		current_pose.delete_polymer_residue(five_prime_chainbreak+1);
 
 		if(verbose){
 			//dump_pdb(current_pose, "After_deleting_dummy_nucleotide");
-			std::cout << std::setw(50) << "After_deleting_dummy_nucleotide"; print_backbone_torsions(current_pose, five_prime_chainbreak);
+			TR << std::setw(50) << "After_deleting_dummy_nucleotide"; print_backbone_torsions(current_pose, five_prime_chainbreak);
 		}
 
-		if(verbose) Output_title_text("EXIT Correctly_position_cutpoint_phosphate_torsions function");
+		if(verbose) Output_title_text("EXIT Correctly_position_cutpoint_phosphate_torsions function", TR );
 
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -2405,7 +2389,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		using namespace core::kinematics;
 
 		if(template_pose.total_residue()!=pose.total_residue()){
-			std::cout << "template_pose.total_residue()= " << template_pose.total_residue() << " pose.total_residue()= " << pose.total_residue() << std::endl;
+			TR << "template_pose.total_residue()= " << template_pose.total_residue() << " pose.total_residue()= " << pose.total_residue() << std::endl;
 			utility_exit_with_message( "template_pose.total_residue()!=pose.total_residue()" );
 		}
 
@@ -2416,12 +2400,12 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		}
 
 		if(start_torsion_ID.type()!=id::BB){
-			std::cout << "start_torsion_ID: " << start_torsion_ID;
+			TR << "start_torsion_ID: " << start_torsion_ID;
 			utility_exit_with_message( "start_torsion_ID.type()!=id::BB" );
 		}
 
 		if(end_torsion_ID.type()!=id::BB){
-			std::cout << "end_torsion_ID: " << start_torsion_ID;
+			TR << "end_torsion_ID: " << start_torsion_ID;
 			utility_exit_with_message( "end_torsion_ID.type()!=id::BB" );
 		}
 
@@ -2476,7 +2460,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 	void
 	remove_chain_break_jump_point(core::pose::Pose & pose, core::Size const five_prime_cutpoint, core::kinematics::FoldTree const fold_tree_without_cutpoint){
 
-		std::cout << "remove_chain_break_jump_point " << std::endl;
+		TR << "remove_chain_break_jump_point " << std::endl;
 
 		pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_LOWER, five_prime_cutpoint );
 		pose::remove_variant_type_from_pose_residue( pose , chemical::CUTPOINT_UPPER, five_prime_cutpoint+1 );
@@ -2518,7 +2502,7 @@ dot_min= 0.950000  dot_max= 1.000000  C4_C3_dist_min= 4.570000  C4_C3_dist_max 6
 		//		fold_tree.new_jump( five_prime_seq_num, three_prime_seq_num, cut_point );
 		fold_tree.new_jump( reference_base , moving_base , cutpoint); //Choose the residue five_prime of the actual cutpoint position
 
-		if(verbose) std::cout << "after add new jump point" << std::endl;
+		if(verbose) TR << "after add new jump point" << std::endl;
 
 		Residue const & rsd1( pose.residue( i ) );
 		Residue const & rsd2( pose.residue( j ) );
@@ -2619,13 +2603,13 @@ principal_angle_degrees( T const & angle )
 			Real nu_1 = numeric::principal_angle_degrees(rsd.chi(3));
 
 
-//			std::cout << " tag= " << tag << " seq_num= " << seq_num << " delta= " << delta << " chi= " << chi << " nu_2= " << nu_2 << " nu_1= " << nu_1 << std::endl;
+//			TR << " tag= " << tag << " seq_num= " << seq_num << " delta= " << delta << " chi= " << chi << " nu_2= " << nu_2 << " nu_1= " << nu_1 << std::endl;
 
 			if((delta>-0.01 && delta<0.01) || (nu_2>-0.01 && nu_2<0.01) || (nu_1>-0.01 && nu_1<0.01)){ //observation is that messed up structure will have delta value of zero
-				std::cout << "Warning: " << tag << " is probably a messed up pose, will be ignored" << std::endl;
-				std::cout << " seq_num= " << seq_num << " delta= " << delta << " chi= " << chi << " nu_2= " << nu_2 << " nu_1= " << nu_1 << std::endl;
+				TR << "Warning: " << tag << " is probably a messed up pose, will be ignored" << std::endl;
+				TR << " seq_num= " << seq_num << " delta= " << delta << " chi= " << chi << " nu_2= " << nu_2 << " nu_1= " << nu_1 << std::endl;
 				if( (rsd.has_variant_type("VIRTUAL_RNA_RESIDUE")==true) || (rsd.has_variant_type("VIRTUAL_RIBOSE")==true) ){ //Implement on Oct 28,2010
-					std::cout << "OK lets NOT ignore yet since this rsd has virtual_res or virtual_ribose variant type..continue checking.. " << std::endl;
+					TR << "OK lets NOT ignore yet since this rsd has virtual_res or virtual_ribose variant type..continue checking.. " << std::endl;
 				}else{
 					return true;
 				}
@@ -2665,17 +2649,17 @@ principal_angle_degrees( T const & angle )
 		static scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 		Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
 
-		if(verbose) std::cout << "  DELTA_CUTOFF angle=" << DELTA_CUTOFF;
+		if(verbose) TR << "  DELTA_CUTOFF angle=" << DELTA_CUTOFF;
 
 		conformation::Residue const & rsd(pose.residue(seq_num));
 		Real delta = numeric::principal_angle_degrees(rsd.mainchain_torsion( DELTA ));
 
 		if((delta>1.0 && delta<179.00)==false){
-			std::cout << " seq_num= " << seq_num << " delta angle= " << delta << std::endl;
+			TR << " seq_num= " << seq_num << " delta angle= " << delta << std::endl;
 
 /////////////////////////
 			if(pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){
-				std::cout << "Warning: delta angle is out of range for virtual_residue at seq_num "<< seq_num<< "!" << std::endl;
+				TR << "Warning: delta angle is out of range for virtual_residue at seq_num "<< seq_num<< "!" << std::endl;
 			}else{
 				//This part is now obsolete .... Apr 30, 2010...
 				//A possibility for a out of range delta is for imported pdbs (upper element of 1q93 for example).
@@ -2702,7 +2686,7 @@ principal_angle_degrees( T const & angle )
 			}
 		}
 
-		if(verbose) std::cout << "  delta angle=" << delta << std::endl;
+		if(verbose) TR << "  delta angle=" << delta << std::endl;
 
 		if (delta <= DELTA_CUTOFF) {
 			return NORTH;
@@ -2855,11 +2839,11 @@ principal_angle_degrees( T const & angle )
 				if(atom_atom_dist_squared<(cutoff_sum_VDW_radius*cutoff_sum_VDW_radius)){
 					num_atom_contacts_so_far++;
 					if(verbose){
-						std::cout << "res_ONE= " << res_ONE << " res_TWO= " << res_TWO << " num_atom_contacts_so_far= " << num_atom_contacts_so_far << "|";
-						std::cout << " VDW_radius_ONE= " << VDW_radius_ONE << " VDW_radius_TWO= " << VDW_radius_TWO;
-						std::cout << " atom_atom_overlap_dist_cutoff= " << atom_atom_overlap_dist_cutoff << " cutoff_sum_VDW_radius= " << cutoff_sum_VDW_radius;
-						std::cout << " atom_atom_dist= " << (rsd_ONE.xyz(at_ONE)-rsd_TWO.xyz(at_TWO)).length();
-						std::cout << " " << rsd_ONE.atom_name(at_ONE) << " of res_ONE and " << rsd_TWO.atom_name(at_TWO) << " of res_TWO are in contact! " << std::endl;
+						TR << "res_ONE= " << res_ONE << " res_TWO= " << res_TWO << " num_atom_contacts_so_far= " << num_atom_contacts_so_far << "|";
+						TR << " VDW_radius_ONE= " << VDW_radius_ONE << " VDW_radius_TWO= " << VDW_radius_TWO;
+						TR << " atom_atom_overlap_dist_cutoff= " << atom_atom_overlap_dist_cutoff << " cutoff_sum_VDW_radius= " << cutoff_sum_VDW_radius;
+						TR << " atom_atom_dist= " << (rsd_ONE.xyz(at_ONE)-rsd_TWO.xyz(at_TWO)).length();
+						TR << " " << rsd_ONE.atom_name(at_ONE) << " of res_ONE and " << rsd_TWO.atom_name(at_TWO) << " of res_TWO are in contact! " << std::endl;
 					}
 				}
 
@@ -2879,14 +2863,14 @@ principal_angle_degrees( T const & angle )
 
 	}
 
-	//////////////This function was originally part of SWA_RNA_Sampler and used for the Richardson code. Move to Util, so that FloatingBase_Sampler_Util will have access to it////////////
+	//////////////This function was originally part of SWA_RNA_Sampler and used for the Richardson code. Move to Util, so that FloatingBaseSamplerUtil will have access to it////////////
 	void
 	set_CCD_torsions_to_zero(core::pose::Pose & pose, Size const five_prime_res){
 
  		using namespace core::chemical;
 		using namespace core::conformation;
 	  using namespace core::id;
-		//std::cout << "set_CCD_torsions_to_zero" << std::endl;
+		//TR << "set_CCD_torsions_to_zero" << std::endl;
 
 		//Size const five_prime_res = job_parameters_->five_prime_chain_break_res();
 		Size const three_prime_res = five_prime_res+1;
@@ -2915,8 +2899,8 @@ principal_angle_degrees( T const & angle )
         }
 
         if(verbose){
-            std::cout << "allow_bulge_res_list.size()==0, ";
-            std::cout << "Getting default_allowed_bulge_res!" << std::endl;
+            TR << "allow_bulge_res_list.size()==0, ";
+            TR << "Getting default_allowed_bulge_res!" << std::endl;
         }
 
 
@@ -2980,18 +2964,18 @@ principal_angle_degrees( T const & angle )
 
 
 		if(verbose){
-			std::cout << "Enter virtualize_bulges() " << std::endl;
-			std::cout << "rna_bulge_bonus= " << rna_bulge_bonus << std::endl;
-			Output_boolean("allow_pre_virtualize= ",allow_pre_virtualize); std::cout << std::endl;
-			Output_boolean("allow_consecutive_bulges= ",allow_consecutive_bulges); std::cout << std::endl;
-			Output_seq_num_list("allow_bulge_res_list= ", allow_bulge_res_list, 40);
+			TR << "Enter virtualize_bulges() " << std::endl;
+			TR << "rna_bulge_bonus= " << rna_bulge_bonus << std::endl;
+			Output_boolean("allow_pre_virtualize= ",allow_pre_virtualize, TR ); TR << std::endl;
+			Output_boolean("allow_consecutive_bulges= ",allow_consecutive_bulges, TR ); TR << std::endl;
+			Output_seq_num_list("allow_bulge_res_list= ", allow_bulge_res_list, TR );
 
 			//Testing to see if checking in apply_virtual_rna_residue_variant_type can be violated!//////////
 			pose::Pose testing_pose=input_pose;
 
 			for(Size seq_num=1; seq_num<=total_res; seq_num++){
 				if (testing_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-				if(Contain_seq_num(seq_num, allow_bulge_res_list)==false ) continue;
+				if(allow_bulge_res_list.has_value(seq_num)==false ) continue;
 				apply_virtual_rna_residue_variant_type(testing_pose, seq_num, true /*apply_check*/);
 			}
 			//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3024,7 +3008,7 @@ principal_angle_degrees( T const & angle )
 
 			for(Size seq_num=1; seq_num<=total_res; seq_num++){
 				if (input_pose.residue(seq_num).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-				if(Contain_seq_num(seq_num, allow_bulge_res_list)==false ) continue;
+				if(allow_bulge_res_list.has_value(seq_num)==false ) continue;
 
 				if(input_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){
 					if(input_pose.residue(seq_num+1).has_variant_type("VIRTUAL_RNA_RESIDUE_UPPER")==false){ //consistency_check
@@ -3057,7 +3041,7 @@ principal_angle_degrees( T const & angle )
 					num_res_virtualized++;
 					num_res_virtualized_in_this_round++;
 
-					std::cout << "tag= " << tag << " round_num= " << round_num << " seq_num= " << seq_num << ". new_score (" << new_score << ") is lesser than base_score (" << base_score << "). " << std::endl;
+					TR << "tag= " << tag << " round_num= " << round_num << " seq_num= " << seq_num << ". new_score (" << new_score << ") is lesser than base_score (" << base_score << "). " << std::endl;
 
 					apply_virtual_rna_residue_variant_type(input_pose, seq_num, true)	;
 
@@ -3073,14 +3057,14 @@ principal_angle_degrees( T const & angle )
 		Real const final_score=(*scorefxn)(working_pose);
 
 		if(num_res_virtualized>0){
-			std::cout << "----------------------------------------------------------" << std::endl;
-			std::cout << "Inside virtualize_bulges() " << std::endl;
-			std::cout << "TOTAL_NUM_ROUND= " << round_num << std::endl;
-			std::cout << "tag= " << tag << std::endl;
-			std::cout << "num_res_virtualized= " << num_res_virtualized << std::endl;
-			std::cout << "start_score= " << start_score << std::endl;
-			std::cout << "final_score= " << final_score << std::endl;
-			std::cout << "----------------------------------------------------------" << std::endl;
+			TR << "----------------------------------------------------------" << std::endl;
+			TR << "Inside virtualize_bulges() " << std::endl;
+			TR << "TOTAL_NUM_ROUND= " << round_num << std::endl;
+			TR << "tag= " << tag << std::endl;
+			TR << "num_res_virtualized= " << num_res_virtualized << std::endl;
+			TR << "start_score= " << start_score << std::endl;
+			TR << "final_score= " << final_score << std::endl;
+			TR << "----------------------------------------------------------" << std::endl;
 
 		}
 
@@ -3112,7 +3096,7 @@ principal_angle_degrees( T const & angle )
 		return tag;
 	}
 
-	//DUPLICATE OF CODE IN StepWiseRNA_JobParameters_Setup.cc
+	//DUPLICATE OF CODE IN StepWiseRNA_JobParametersSetup.cc
 	void
 	move_jump_atom_to_base(core::kinematics::FoldTree & fold_tree, std::string const & working_sequence){
 
@@ -3147,8 +3131,8 @@ principal_angle_degrees( T const & angle )
 				utility_exit_with_message( "Invalid downstream_res!!" );
 			}
 
-			std::cout << "upstream_res= " << k << upstream_res << " upstream_jump_atom= " << upstream_jump_atom;
-			std::cout << " downstream_res= " << k << downstream_res << " downstream_jump_atom= " << downstream_jump_atom << std::endl;
+			TR << "upstream_res= " << k << upstream_res << " upstream_jump_atom= " << upstream_jump_atom;
+			TR << " downstream_res= " << k << downstream_res << " downstream_jump_atom= " << downstream_jump_atom << std::endl;
 
 			fold_tree.set_jump_atoms( i, downstream_jump_atom, upstream_jump_atom);
 
@@ -3174,23 +3158,23 @@ principal_angle_degrees( T const & angle )
 
 		using namespace ObjexxFCL;
 
-		Output_title_text("printing JobParameters Information for " + JP_name );
+		Output_title_text("printing JobParameters Information for " + JP_name, TR );
 
 		utility::vector1< Size > empty_seq_num_list;
 		empty_seq_num_list.clear();
 
-		std::cout << "full_sequence= " <<  JP->full_sequence();
-		std::cout << " working_sequence= " <<  JP->working_sequence();
-		std::cout << " moving_res= " <<  JP->moving_res();
-		std::cout << " working_moving_res= " << JP->working_moving_res();
-		std::cout << " working_moving_suite= " <<  JP->working_moving_suite() << std::endl;
+		TR << "full_sequence= " <<  JP->full_sequence();
+		TR << " working_sequence= " <<  JP->working_sequence();
+		TR << " moving_res= " <<  JP->moving_res();
+		TR << " working_moving_res= " << JP->working_moving_res();
+		TR << " working_moving_suite= " <<  JP->working_moving_suite() << std::endl;
 
 
-		std::cout << "gap_size= " << JP->gap_size();
-		std::cout << " five_prime_chain_break_res= " << JP->five_prime_chain_break_res();
-		Output_boolean(" Is_prepend= ",  JP->Is_prepend() ) ;
-		Output_boolean(" Is_internal= " , JP->Is_internal() );
-		Output_boolean(" output_extra_RMSDs= ", JP->	output_extra_RMSDs() ); std::cout << std::endl;
+		TR << "gap_size= " << JP->gap_size();
+		TR << " five_prime_chain_break_res= " << JP->five_prime_chain_break_res();
+		Output_boolean(" Is_prepend= ",  JP->Is_prepend(), TR ) ;
+		Output_boolean(" Is_internal= " , JP->Is_internal(), TR );
+		Output_boolean(" output_extra_RMSDs= ", JP->	output_extra_RMSDs(), TR ); TR << std::endl;
 
 
 		//std::map< core::Size, core::Size > full_to_sub_;
@@ -3202,54 +3186,54 @@ principal_angle_degrees( T const & angle )
 
 		//core::pose::PoseOP working_native_pose_;
 
-		std::cout << "------------full_stuff------------" << std::endl;
-		Output_bool_list("is_working_res= " , JP->is_working_res() );
+		TR << "------------full_stuff------------" << std::endl;
+		Output_bool_list("is_working_res= " , JP->is_working_res(), TR );
 
 		for(Size n=1; n<=JP->input_res_vectors().size(); n++){
-			Output_seq_num_list("input_res_vectors[" + string_of(n) + "]", JP->input_res_vectors()[n] );
+			Output_seq_num_list("input_res_vectors[" + string_of(n) + "]", JP->input_res_vectors()[n], TR );
 		}
-		Output_seq_num_list("global_sample_res_list= ", JP->global_sample_res_list() );
+		Output_seq_num_list("global_sample_res_list= ", JP->global_sample_res_list(), TR );
 
-		if(JP->force_syn_chi_res_list().size()>0)  Output_seq_num_list("force_syn_chi_res_list= " , JP->force_syn_chi_res_list() );
-		if(JP->force_north_ribose_list().size()>0) Output_seq_num_list("force_north_ribose_list= ", JP->force_north_ribose_list() );
-		if(JP->force_south_ribose_list().size()>0) Output_seq_num_list("force_south_ribose_list= ", JP->force_south_ribose_list() );
-		if(JP->protonated_H1_adenosine_list().size()>0) Output_seq_num_list("protonated_H1_adenosine_list ", JP->protonated_H1_adenosine_list() );
-
-
+		if(JP->force_syn_chi_res_list().size()>0)  Output_seq_num_list("force_syn_chi_res_list= " , JP->force_syn_chi_res_list(), TR );
+		if(JP->force_north_ribose_list().size()>0) Output_seq_num_list("force_north_ribose_list= ", JP->force_north_ribose_list(), TR );
+		if(JP->force_south_ribose_list().size()>0) Output_seq_num_list("force_south_ribose_list= ", JP->force_south_ribose_list(), TR );
+		if(JP->protonated_H1_adenosine_list().size()>0) Output_seq_num_list("protonated_H1_adenosine_list ", JP->protonated_H1_adenosine_list(), TR );
 
 
 
-		Output_is_prepend_map("Is_prepend_map= ", JP->Is_prepend_map() , JP->full_sequence().size());
-		Output_seq_num_list("rmsd_res_list= ", 								JP->rmsd_res_list() 								);
-
-		Output_seq_num_list("native_alignment=",  							JP->native_alignment() );
-		Output_seq_num_list("cutpoint_closed_list=", 					JP->cutpoint_closed_list() );
 
 
-		std::cout << "------------working_stuff------------" << std::endl;
+		Output_is_prepend_map("Is_prepend_map= ", JP->Is_prepend_map() , JP->full_sequence().size(), TR );
+		Output_seq_num_list("rmsd_res_list= ", 								JP->rmsd_res_list() 								, TR );
 
-		Output_seq_num_list("working_global_sample_res_list= ", JP->working_global_sample_res_list() );
-		if(JP->force_syn_chi_res_list().size()>0)  Output_seq_num_list("working_force_syn_chi_res_list= ", JP->working_force_syn_chi_res_list() );
-		if(JP->force_north_ribose_list().size()>0) Output_seq_num_list("working_force_north_ribose_list= ", JP->working_force_north_ribose_list() );
-		if(JP->force_south_ribose_list().size()>0) Output_seq_num_list("working_force_south_ribose_list= ", JP->working_force_south_ribose_list() );
-		if(JP->protonated_H1_adenosine_list().size()>0) Output_seq_num_list("working_protonated_H1_adenosine_list= ", JP->working_protonated_H1_adenosine_list() );
+		Output_seq_num_list("native_alignment=",  							JP->native_alignment(), TR );
+		Output_seq_num_list("cutpoint_closed_list=", 					JP->cutpoint_closed_list(), TR );
 
 
-		Output_seq_num_list("working_fixed_res= " ,						JP->working_fixed_res() 						);
+		TR << "------------working_stuff------------" << std::endl;
+
+		Output_seq_num_list("working_global_sample_res_list= ", JP->working_global_sample_res_list(), TR );
+		if(JP->force_syn_chi_res_list().size()>0)  Output_seq_num_list("working_force_syn_chi_res_list= ", JP->working_force_syn_chi_res_list(), TR );
+		if(JP->force_north_ribose_list().size()>0) Output_seq_num_list("working_force_north_ribose_list= ", JP->working_force_north_ribose_list(), TR );
+		if(JP->force_south_ribose_list().size()>0) Output_seq_num_list("working_force_south_ribose_list= ", JP->working_force_south_ribose_list(), TR );
+		if(JP->protonated_H1_adenosine_list().size()>0) Output_seq_num_list("working_protonated_H1_adenosine_list= ", JP->working_protonated_H1_adenosine_list(), TR );
+
+
+		Output_seq_num_list("working_fixed_res= " ,						JP->working_fixed_res() 						, TR );
 
 		if(Is_simple_full_length_JP==false){
-			Output_seq_num_list("working_moving_res_list= " , JP->working_moving_res_list() );
-			Output_seq_num_list("working_moving_suite_list= " , JP->working_moving_suite_list() );
+			Output_seq_num_list("working_moving_res_list= " , JP->working_moving_res_list(), TR );
+			Output_seq_num_list("working_moving_suite_list= " , JP->working_moving_suite_list(), TR );
 		}else{
-			Output_seq_num_list("line_filler " , empty_seq_num_list );
-			Output_seq_num_list("line_filler " , empty_seq_num_list );
+			Output_seq_num_list("line_filler " , empty_seq_num_list, TR );
+			Output_seq_num_list("line_filler " , empty_seq_num_list, TR );
 		}
 
-		Output_seq_num_list("working_terminal_res= ", 					JP->working_terminal_res() 					);
-		Output_seq_num_list("working_moving_partition_pos= ",  JP->working_moving_partition_pos()  );
+		Output_seq_num_list("working_terminal_res= ", 					JP->working_terminal_res() 					, TR );
+		Output_seq_num_list("working_moving_partition_pos= ",  JP->working_moving_partition_pos(), TR );
 
-		Output_seq_num_list("working_best_alignment=", 				JP->working_best_alignment() );
-		Output_seq_num_list("working_native_alignment=", 			JP->working_native_alignment() );
+		Output_seq_num_list("working_best_alignment=", 				JP->working_best_alignment(), TR );
+		Output_seq_num_list("working_native_alignment=", 			JP->working_native_alignment(), TR );
 
 		if(Is_simple_full_length_JP==false){
 			utility::vector1<bool > vector1_partition_definition;
@@ -3258,13 +3242,13 @@ principal_angle_degrees( T const & angle )
 				vector1_partition_definition.push_back(JP->partition_definition()(n) );
 			}
 
-			Output_bool_list("partition_definition=", 	vector1_partition_definition );
+			Output_bool_list("partition_definition=", 	vector1_partition_definition, TR );
 
-			std::cout << "root_res= " << JP->fold_tree().root() << std::endl;
+			TR << "root_res= " << JP->fold_tree().root() << std::endl;
 			Output_fold_tree_info(JP->fold_tree() , "fold_tree");
 		}
 
-		Output_title_text("");
+		Output_title_text("", TR );
 
 
 	}
@@ -3307,7 +3291,7 @@ principal_angle_degrees( T const & angle )
 		 resident_set = rss * page_size_kb;
 
 
-	 std::cout << "memory_usage= " << count << " " << pid << " " << comm << " " << state << " " << ppid << " " << pgrp << " " << session << " " << tty_nr << " " << tpgid << " " << flags << " " << minflt <<  " " <<  cminflt << " " << majflt << " " << cmajflt << " "<< utime << " " << stime << " " << cutime << " " << cstime << " " << priority << " "<< nice << " "<<  O << " "<<  itrealvalue << " "<<  starttime << " "<<  vsize << " " << rss << std::endl;
+	 TR << "memory_usage= " << count << " " << pid << " " << comm << " " << state << " " << ppid << " " << pgrp << " " << session << " " << tty_nr << " " << tpgid << " " << flags << " " << minflt <<  " " <<  cminflt << " " << majflt << " " << cmajflt << " "<< utime << " " << stime << " " << cutime << " " << cstime << " " << priority << " "<< nice << " "<<  O << " "<<  itrealvalue << " "<<  starttime << " "<<  vsize << " " << rss << std::endl;
 
 	}
 */
@@ -3385,7 +3369,7 @@ principal_angle_degrees( T const & angle )
 
 		utility::vector1< core::scoring::rna::Base_pair> const native_base_pair_list = classify_base_pairs_strict( native_pose, act_rmsd_res_list);
 
-		//std::cout << "BLAH" << std::endl;
+		//TR << "BLAH" << std::endl;
 
 		Size native_WC=0;
 		Size native_NWC=0;
@@ -3412,8 +3396,8 @@ principal_angle_degrees( T const & angle )
 					recovered_NWC++;
 				} else {
 					if(verbose){
-						std::cout << "Missing native base pair " << pose.residue( native_base_pair.res1 ).name1() << " " << pose.residue( native_base_pair.res2 ).name1() << "  ";
-						native_base_pair.print_info(); std::cout << std::endl;
+						TR << "Missing native base pair " << pose.residue( native_base_pair.res1 ).name1() << " " << pose.residue( native_base_pair.res2 ).name1() << "  ";
+						native_base_pair.print_info(); TR << std::endl;
 					}
 				}
 			}
@@ -3450,14 +3434,14 @@ principal_angle_degrees( T const & angle )
 /////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	print_atom_info(pose::Pose const & pose, Size const seq_num, std::string const pose_name){
-		std::cout << "print_atom_info for pose: " << pose_name << " seq_num= " << seq_num << std::endl;
+		TR << "print_atom_info for pose: " << pose_name << " seq_num= " << seq_num << std::endl;
 
 		conformation::Residue const & rsd=pose.residue(seq_num); //static_pose
 
 		for(Size at=1; at<=rsd.natoms(); at++){ //I wonder if we should just consider heavy atom? (rsd_1.nheavyatoms())
 
-			std::cout << "atom=" << at  << "|name=" << rsd.type().atom_name(at) << "|type=" << rsd.atom_type(at).name();
-			std::cout << "|element()=" << rsd.atom_type(at).element() << "|" << std::endl;
+			TR << "atom=" << at  << "|name=" << rsd.type().atom_name(at) << "|type=" << rsd.atom_type(at).name();
+			TR << "|element()=" << rsd.atom_type(at).element() << "|" << std::endl;
 
 		}
 
@@ -3465,10 +3449,10 @@ principal_angle_degrees( T const & angle )
 /////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	print_individual_atom_info(core::conformation::Residue const & rsd, Size const atomno, std::string const rsd_name){
-		std::cout << "individual_atom_info: rsd_name " << rsd_name;
+		TR << "individual_atom_info: rsd_name " << rsd_name;
 
-		std::cout << " atom=" << atomno  << "|name=" << rsd.type().atom_name(atomno) << "|type=" << rsd.atom_type(atomno).name();
-		std::cout << "|element()=" << rsd.atom_type(atomno).element() << "|" << std::endl;
+		TR << " atom=" << atomno  << "|name=" << rsd.type().atom_name(atomno) << "|type=" << rsd.atom_type(atomno).name();
+		TR << "|element()=" << rsd.atom_type(atomno).element() << "|" << std::endl;
 
 	}
 
@@ -3488,11 +3472,11 @@ principal_angle_degrees( T const & angle )
 		}else if(base_state==NONE){
 			base_state_string="NONE";
 		}else{
-			std::cout << "Invalid base state=" << base_state << std::endl;
+			TR << "Invalid base state=" << base_state << std::endl;
 			utility_exit_with_message( "Invalid base state!" );
 		}
 
-		std::cout << tag << std::setw(4) << std::left <<  base_state_string << " ";
+		TR << tag << std::setw(4) << std::left <<  base_state_string << " ";
 	}
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -3509,11 +3493,11 @@ principal_angle_degrees( T const & angle )
 		}else if(pucker_state==ALL){
 			pucker_state_string="ALL";
 		}else{
-			std::cout << "Invalid pucker state=" << pucker_state << std::endl;
+			TR << "Invalid pucker state=" << pucker_state << std::endl;
 			utility_exit_with_message( "Invalid pucker state!" );
 		}
 
-		std::cout << tag << std::setw(5) << std::left << pucker_state_string << " ";
+		TR << tag << std::setw(5) << std::left << pucker_state_string << " ";
 
 	}
 
@@ -3653,10 +3637,10 @@ rescale_scorefxn(core::scoring::ScoreFunctionOP const & starting_scorefxn, Real 
 		}
 	}
 
-	std::cout << std::endl;
+	TR << std::endl;
 
 
-	std::cout << "n_score_types= " << int(n_score_types) << " non_zero_weight= " << non_zero_weight << " scaling_factor= " << scaling_factor << std::endl;
+	TR << "n_score_types= " << int(n_score_types) << " non_zero_weight= " << non_zero_weight << " scaling_factor= " << scaling_factor << std::endl;
 
 
 	show_scorefxn_weight_lines(rescaled_scorefxn, "AFTER REWEIGHT");
@@ -3673,11 +3657,11 @@ show_scorefxn_weight_lines(core::scoring::ScoreFunctionOP const & scorefxn, std:
 	using namespace core::scoring;
 	using namespace ObjexxFCL::fmt;
 
-	std::cout << "----------------" << title << "----------------" << std::endl;
+	TR << "----------------" << title << "----------------" << std::endl;
 
-	std::cout << "----------------------------------------------\n";
-	std::cout << " Scores                             Weight\n";
-	std::cout << "----------------------------------------------\n";
+	TR << "----------------------------------------------\n";
+	TR << " Scores                             Weight\n";
+	TR << "----------------------------------------------\n";
 
 	pose::Pose empty_pose=*(new pose::Pose);
 
@@ -3686,7 +3670,7 @@ show_scorefxn_weight_lines(core::scoring::ScoreFunctionOP const & scorefxn, std:
 		core::Real const weight=scorefxn->get_weight( ScoreType(n) );
 
 		if(weight!= 0.0){
-			std::cout << ' ' << LJ(30,ScoreType(n)) << ' '<< F(11,5, weight ) << std::endl;
+			TR << ' ' << LJ(30,ScoreType(n)) << ' '<< F(11,5, weight ) << std::endl;
 		}
 	}
 
@@ -3695,7 +3679,7 @@ show_scorefxn_weight_lines(core::scoring::ScoreFunctionOP const & scorefxn, std:
 		dash_string+="-";
 	}
 
-	std::cout << "----------------" << dash_string << "----------------" << std::endl;
+	TR << "----------------" << dash_string << "----------------" << std::endl;
 
 }
 
@@ -3773,7 +3757,7 @@ show_scorefxn_weight_lines(core::scoring::ScoreFunctionOP const & scorefxn, std:
 		}
 
 		// why is this in the internal loop? -- rhiju
-		std::cout << "pose.fold_tree().num_jump()= " << pose.fold_tree().num_jump() << std::endl;
+		TR << "pose.fold_tree().num_jump()= " << pose.fold_tree().num_jump() << std::endl;
 
 		for (Size n = 1; n <= pose.fold_tree().num_jump(); n++ ){
 			Size const jump_pos1( pose.fold_tree().upstream_jump_residue( n ) );
@@ -3789,7 +3773,7 @@ show_scorefxn_weight_lines(core::scoring::ScoreFunctionOP const & scorefxn, std:
 			}
 
 			if( allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) )	mm.set_jump( n, true );
-			std::cout << "jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << " mm.jump= "; Output_boolean(allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) );  std::cout << std::endl;
+			TR << "jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << " mm.jump= "; Output_boolean(allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ), TR );  TR << std::endl;
 
 		}
 

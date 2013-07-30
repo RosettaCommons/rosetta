@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file StepWiseRNA_FloatingBase_Sampler_Util.hh
+/// @file StepWiseRNA_FloatingBaseSamplerUtil.hh
 /// @brief
 /// @detailed
 ///
 ///  @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_FloatingBase_Sampler_Util_HH
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_FloatingBase_Sampler_Util_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_FloatingBaseSamplerUtil_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_FloatingBaseSamplerUtil_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -39,7 +39,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh> //June 02, 2011
 #include <core/pose/Pose.hh> //June 02, 2011
 #include <core/scoring/rna/RNA_Util.hh> //June 02, 2011

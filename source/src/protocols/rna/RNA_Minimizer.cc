@@ -134,14 +134,14 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 		TR << "Check it! SEQUENCE " << pose.sequence() << std::endl;
 	  TR << "In protocols.rna.rna_minimizer.apply()" << std::endl;
 		TR << "min_type_=" << min_type_ << std::endl;
-		protocols::swa::rna::Output_boolean("deriv_check_: ", deriv_check_ ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("use_coordinate_constraints_: ", use_coordinate_constraints_ ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("skip_o2star_trials_: ", skip_o2star_trials_ ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("perform_minimizer_run_: ", perform_minimizer_run_); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("vary_bond_geometry_: ", vary_bond_geometry_ ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("include_default_linear_chainbreak_: ", include_default_linear_chainbreak_ ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("do_dump_pdb_: ", do_dump_pdb_ ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("verbose_: ", verbose_ ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("deriv_check_: ", deriv_check_, TR ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("use_coordinate_constraints_: ", use_coordinate_constraints_, TR ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("skip_o2star_trials_: ", skip_o2star_trials_, TR ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("perform_minimizer_run_: ", perform_minimizer_run_, TR ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("vary_bond_geometry_: ", vary_bond_geometry_, TR ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("include_default_linear_chainbreak_: ", include_default_linear_chainbreak_, TR ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("do_dump_pdb_: ", do_dump_pdb_, TR ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("verbose_: ", verbose_, TR ); std::cout << std::endl;
 	}
 
 

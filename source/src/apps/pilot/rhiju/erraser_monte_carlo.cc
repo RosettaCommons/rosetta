@@ -187,7 +187,7 @@ erraser_monte_carlo()
 	}
 
 	utility::vector1< Size > fixed_res;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) if ( !Contain_seq_num ( i, sample_res_list ) ) fixed_res.push_back( i );
+	for ( Size i = 1; i <= pose.total_residue(); i++ ) if ( !sample_res_list.has_value( i) ) fixed_res.push_back( i );
 
 	// monte carlo setup.
 	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *scorefxn, option[ temperature]() );

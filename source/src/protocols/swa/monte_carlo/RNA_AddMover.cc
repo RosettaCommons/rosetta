@@ -16,8 +16,6 @@
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/swa/StepWiseUtil.hh>
-
 
 // libRosetta headers
 #include <core/types.hh>
@@ -38,7 +36,6 @@
 
 using namespace core;
 using core::Real;
-using protocols::swa::Contain_seq_num;
 
 //////////////////////////////////////////////////////////////////////////
 // Removes one residue from a 5' or 3' chain terminus, and appropriately
@@ -202,7 +199,7 @@ namespace monte_carlo {
 
 		if ( res_to_add < pose.total_residue() &&
 				 sub_to_full[ res_to_add ] + 1 == sub_to_full[ res_to_add + 1 ] &&
-				 ! Contain_seq_num( sub_to_full[ res_to_add ], open_cutpoint_open_in_full_model ) ){
+				 ! open_cutpoint_open_in_full_model.has_value( sub_to_full[ res_to_add ]) ){
 			add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
 			add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
 		}
@@ -226,7 +223,7 @@ namespace monte_carlo {
 
 		if ( res_to_add > 1 &&
 				 sub_to_full[ res_to_add ] - 1 == sub_to_full[ res_to_add - 1 ] &&
-				 ! Contain_seq_num( sub_to_full[ res_to_add - 1 ], open_cutpoint_open_in_full_model)  ){
+				 ! open_cutpoint_open_in_full_model.has_value( sub_to_full[ res_to_add - 1 ])  ){
 			add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add - 1  );
 			add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add    );
 		} else {

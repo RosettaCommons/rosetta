@@ -51,6 +51,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
+#include <basic/Tracer.hh>
 #include <protocols/idealize/idealize.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
@@ -99,11 +100,11 @@
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_Clusterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters_Setup.hh>
+#include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/swa/rna/ERRASER_Modeler.hh>
 
@@ -146,7 +147,7 @@ using io::pdb::dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
-
+static basic::Tracer TR( "swa_rna_analytical_closure" );
 
 
 OPT_KEY ( Boolean, add_virt_root )
@@ -291,7 +292,7 @@ get_fixed_res ( core::Size const nres ) {
 		actual_fixed_res_list = fixed_res_list;
 	} else if ( minimize_res_list.size() != 0 ) {
 		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
-			if ( Contain_seq_num ( seq_num, minimize_res_list ) ) continue;
+			if ( minimize_res_list.has_value( seq_num) ) continue;
 
 			actual_fixed_res_list.push_back ( seq_num );
 		}
@@ -367,7 +368,7 @@ get_input_res ( core::Size const nres , std::string const pose_num ) {
 		actual_input_res_list = input_res_list;
 	} else if ( missing_res_list.size() != 0 ) {
 		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
-			if ( Contain_seq_num ( seq_num, missing_res_list ) ) continue;
+			if ( missing_res_list.has_value( seq_num) ) continue;
 
 			actual_input_res_list.push_back ( seq_num );
 		}
@@ -394,7 +395,7 @@ get_silent_file_tags() {
 	}
 
 	if ( option[ job_queue_ID ].user() && option[ filter_output_filename ].user() ) {
-		Output_title_text ( "importing tag from filter_outfile" );
+		Output_title_text( "importing tag from filter_outfile", TR );
 		tags_from_filterer_outfile = true;
 		std::string const filtered_tag_file = option[ filter_output_filename ]();
 		std::ifstream infile;
@@ -431,7 +432,7 @@ get_silent_file_tags() {
 		input_silent_file_tags.clear();
 		input_silent_file_tags.push_back ( line_list[1] );
 		input_silent_file_tags.push_back ( line_list[2] );
-		Output_title_text ( "" );
+		Output_title_text( "", TR );
 	}
 
 	if ( ( tags_from_command_line == false ) && ( tags_from_filterer_outfile == false ) ) {
@@ -508,7 +509,7 @@ setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_
 	if ( !option[ sample_res ].user() ) utility_exit_with_message ( "Must supply sample_res!" );
 
 	/////////////////////////////////////////////////////
-	StepWiseRNA_JobParameters_Setup stepwise_rna_job_parameters_setup (
+	StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup (
 			option[ sample_res ](), /*the first element of moving_res_list is the sampling_res*/
 	    full_sequence,
 	    get_input_res ( nres, "1" ),

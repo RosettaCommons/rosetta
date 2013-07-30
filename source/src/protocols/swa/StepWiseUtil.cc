@@ -95,49 +95,39 @@ namespace swa {
 		return false;
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- 	bool
- 	Contain_seq_num(Size const & seq_num, utility::vector1< core::Size > const & residue_list){
- 		for(Size j=1; j<=residue_list.size(); j++){
- 			if(seq_num==residue_list[j]) {
- 				return true;
- 			}
- 		}
- 		return false;
- 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	Output_boolean(std::string const & tag, bool boolean){
+	Output_boolean(std::string const & tag, bool boolean, basic::Tracer & TR ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
-		std::cout << tag;
+		TR << tag;
 
 		if(boolean==true){
-			std::cout << A(4,"T");
+			TR << A(4,"T");
 		} else {
-			std::cout << A(4,"F");
+			TR << A(4,"F");
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	Output_boolean(bool boolean){
+	Output_boolean(bool boolean, basic::Tracer & TR ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
 
 		if(boolean==true){
-			std::cout << A(4,"T");
+			TR << A(4,"T");
 		} else {
-			std::cout << A(4,"F");
+			TR << A(4,"F");
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	Output_movemap(kinematics::MoveMap const & mm, Size const total_residue){
+	Output_movemap(kinematics::MoveMap const & mm, Size const total_residue, basic::Tracer & TR){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
@@ -152,16 +142,16 @@ namespace swa {
 		for(Size n=1; n<= total_residue; n++){
 
 			std::cout << I(spacing, 3 , n);
-			Output_boolean(mm.get(TorsionID( n , id::BB,  1 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::BB,  2 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::BB,  3 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::BB,  4 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::BB,  5 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::BB,  6 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::CHI, 1 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::CHI, 2 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::CHI, 3 ))); A(spacing-4, "");
-			Output_boolean(mm.get(TorsionID( n , id::CHI, 4 ))); A(spacing-4, "");
+			Output_boolean(mm.get(TorsionID( n , id::BB,  1 )), TR ); A(spacing-4, "");
+			Output_boolean(mm.get(TorsionID( n , id::BB,  2 )), TR ); A(spacing-4, "");
+			Output_boolean(mm.get(TorsionID( n , id::BB,  3 )), TR ); A(spacing-4, "");
+			Output_boolean(mm.get(TorsionID( n , id::BB,  4 )), TR ); A(spacing-4, "");
+			Output_boolean(mm.get(TorsionID( n , id::BB,  5 )), TR ); A(spacing-4, "");
+			Output_boolean(mm.get(TorsionID( n , id::BB,  6 )), TR ); A(spacing-4, "");
+			Output_boolean(mm.get(TorsionID( n , id::CHI, 1 )), TR ); A(spacing-4, "");
+			Output_boolean(mm.get(TorsionID( n , id::CHI, 2 )), TR ); A(spacing-4, "");
+			Output_boolean(mm.get(TorsionID( n , id::CHI, 3 )), TR ); A(spacing-4, "");
+			Output_boolean(mm.get(TorsionID( n , id::CHI, 4 )), TR ); A(spacing-4, "");
 			std::cout << std::endl;
 		}
 	}
@@ -324,7 +314,7 @@ namespace swa {
 		// 		}
 
  		for ( Size seq_num = 1; seq_num <= mod_pose.total_residue(); ++seq_num ) {
-			if ( !Contain_seq_num(seq_num, superimpose_res ) ) continue;
+			if ( !superimpose_res.has_value(seq_num) ) continue;
 			res_map[ seq_num ] = seq_num;
 		}
 

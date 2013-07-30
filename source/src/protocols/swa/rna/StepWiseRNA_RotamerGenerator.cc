@@ -16,8 +16,8 @@
 //////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 //////////////////////////////////
 
@@ -89,7 +89,7 @@ namespace rna {
 	//This function is called only after all the parameter setting functions (set_bin_size, set_include_syn_chi, set_sample_extra_rotamers, set_fast and etc..) had been called!...
 	void
 	StepWiseRNA_RotamerGenerator::initialize_rotamer_generator(core::pose::Pose const & pose){
-		Output_title_text("Enter StepWiseRNA_RotamerGenerator::initialize_rotamer_generator");
+		Output_title_text("Enter StepWiseRNA_RotamerGenerator::initialize_rotamer_generator", TR );
 
 		bins1_= 360/bin_size_;     //This is total bins, default is 18
 		bins2_= bins1_/2;          //This is total bins divided by 2; default is 9
@@ -103,7 +103,7 @@ namespace rna {
 		initialize_rotamers();
 		initialize_extra_rotamer_perturbations();
 		reset();
-		Output_title_text("Exit StepWiseRNA_RotamerGenerator::initialize_rotamer_generator");
+		Output_title_text("Exit StepWiseRNA_RotamerGenerator::initialize_rotamer_generator", TR );
 	}
 
 	////////////////////////////////////////////////////////////////////////
@@ -148,7 +148,7 @@ namespace rna {
 			if (torsion_ids_[n]==torsion_id){
 				delta_value=rotamer_centers_[group_rotamer_][n];
 
-				std::cout << "  DELTA_CUTOFF angle=" << DELTA_CUTOFF << "  delta angle=" << delta_value << std::endl;
+				TR << "  DELTA_CUTOFF angle=" << DELTA_CUTOFF << "  delta angle=" << delta_value << std::endl;
 
 				if ((delta_value>1.0 && delta_value<179.00)==false){
 					utility_exit_with_message( "delta angle out of range!" );
@@ -212,7 +212,7 @@ namespace rna {
 			if ( sample_extra_rotamers_ ) {
 				subgroup_rotamer_++;
 				if ( subgroup_rotamer_ > extra_rotamer_perturbations_.size() ) {
-					if (verbose_) std::cout << "Done with rotamer ... " << group_rotamer_ << " out of " << rotamer_centers_.size() << std::endl;
+					if (verbose_) TR << "Done with rotamer ... " << group_rotamer_ << " out of " << rotamer_centers_.size() << std::endl;
 					subgroup_rotamer_ = 1;
 					group_rotamer_++;
 				}
@@ -261,14 +261,14 @@ namespace rna {
 			if ( is_purine( pose.residue( moving_suite_+1 ) ) || allow_syn_pyrimidine_)	upper_base_state_=BOTH;
 		}
 
-		if ( Contain_seq_num(moving_suite_  , force_syn_chi_res_list_) ){ //lower base
+		if ( force_syn_chi_res_list_.has_value(moving_suite_  ) ){ //lower base
 			if ( (is_purine( pose.residue( moving_suite_   ) )==false) && (allow_syn_pyrimidine_==false) ){
 				utility_exit_with_message("forcing working_res= "+ ObjexxFCL::string_of(moving_suite_  ) +" to be syn chi but residue is pyrimidine and allow_syn_pyrimidine_==false!");
 			}
 			lower_base_state_=SYN;
 		}
 
-		if ( Contain_seq_num(moving_suite_+1, force_syn_chi_res_list_) ){ //upper base
+		if ( force_syn_chi_res_list_.has_value(moving_suite_+1) ){ //upper base
 			if ( (is_purine( pose.residue( moving_suite_+1 ) )==false) && (allow_syn_pyrimidine_==false) ){
 				utility_exit_with_message("forcing working_res= "+ ObjexxFCL::string_of(moving_suite_+1) +" to be syn chi but residue is pyrimidine and allow_syn_pyrimidine_==false!");
 			}
@@ -344,21 +344,23 @@ namespace rna {
 		}
 
 		if (verbose_){
-			std::cout << "moving_suite_= " << moving_suite_ << " bin_size= " << bin_size_ << " bins1_= " << bins1_ << " bins2_= " << bins2_ << " bins3_= " << bins3_ << std::endl;
-			Output_boolean("extra_beta_: ", extra_beta_ ); Output_boolean(" extra_epsilon_: ", extra_epsilon_);
-			Output_boolean(" extra_anti_chi_: ", extra_anti_chi_); Output_boolean(" extra_syn_chi_: ", extra_syn_chi_);
-			std::cout << " beta_bins_= " << beta_bins_ << " eps_bins_ = " << eps_bins_ << std::endl;
-			Output_boolean("sample_chi_torsion_= ", sample_chi_torsion_ );
-			Output_boolean(" sample_extra_rotamers_= ", sample_extra_rotamers_);
-			Output_boolean(" exclude_alpha_beta_gamma_sampling_: ", exclude_alpha_beta_gamma_sampling_);
-			std::cout << std::endl;
-			Output_boolean("sample_lower_sugar_and_base_= " , sample_lower_sugar_and_base_);
+			TR << "moving_suite_= " << moving_suite_ << " bin_size= " << bin_size_ << " bins1_= " << bins1_ << " bins2_= " << bins2_ << " bins3_= " << bins3_ << std::endl;
+			Output_boolean("extra_beta_: ", extra_beta_, TR );
+			Output_boolean(" extra_epsilon_: ", extra_epsilon_, TR);
+			Output_boolean(" extra_anti_chi_: ", extra_anti_chi_, TR );
+			Output_boolean(" extra_syn_chi_: ", extra_syn_chi_, TR);
+			TR << " beta_bins_= " << beta_bins_ << " eps_bins_ = " << eps_bins_ << std::endl;
+			Output_boolean("sample_chi_torsion_= ", sample_chi_torsion_, TR );
+			Output_boolean(" sample_extra_rotamers_= ", sample_extra_rotamers_, TR );
+			Output_boolean(" exclude_alpha_beta_gamma_sampling_: ", exclude_alpha_beta_gamma_sampling_, TR );
+			TR << std::endl;
+			Output_boolean("sample_lower_sugar_and_base_= " , sample_lower_sugar_and_base_, TR );
 			print_ribose_pucker_state(" pucker1_specified= ", pucker1_specified_);
 			print_base_state(" lower_base_state= ", lower_base_state_);
-			Output_boolean(" sample_upper_sugar_and_base_= " , sample_upper_sugar_and_base_);
+			Output_boolean(" sample_upper_sugar_and_base_= " , sample_upper_sugar_and_base_, TR );
 			print_ribose_pucker_state(" pucker2_specified_= ", pucker2_specified_);
 			print_base_state(" upper_base_state= ", upper_base_state_ );
-			std::cout << std::endl;
+			TR << std::endl;
 		}
 
 		if (pucker1_specified_==ALL && sample_lower_sugar_and_base_==false){
@@ -371,8 +373,8 @@ namespace rna {
 
 		Real epsilon1( 0.0 ),	zeta1( 0.0 ),	alpha2( 0.0 ),	beta2( 0.0 ),	gamma2( 0.0 );
 
-		StepWiseRNA_Base_Sugar_RotamerOP lower_base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer( lower_base_state_, pucker1_specified_, rna_fitted_torsion_info, bin_size_);
-		StepWiseRNA_Base_Sugar_RotamerOP upper_base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer( upper_base_state_, pucker2_specified_, rna_fitted_torsion_info, bin_size_);
+		StepWiseRNA_BaseSugarRotamerOP lower_base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( lower_base_state_, pucker1_specified_, rna_fitted_torsion_info, bin_size_);
+		StepWiseRNA_BaseSugarRotamerOP upper_base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( upper_base_state_, pucker2_specified_, rna_fitted_torsion_info, bin_size_);
 
 		lower_base_sugar_rotamer->set_extra_anti_chi(extra_anti_chi_);
 		upper_base_sugar_rotamer->set_extra_anti_chi(extra_anti_chi_);
@@ -386,13 +388,13 @@ namespace rna {
 			upper_base_sugar_rotamer->reset();
 
 			while (upper_base_sugar_rotamer->get_next_rotamer()){
-//			std::cout << "Exit upper_base_sugar_rotamer->get_next_rotamer()" << std::endl;
+//			TR << "Exit upper_base_sugar_rotamer->get_next_rotamer()" << std::endl;
 
-				std::cout << " 	delta1= " <<  F(8, 3, lower_base_sugar_rotamer->delta()) << " 	chi_1= " <<  F(8, 3, lower_base_sugar_rotamer->chi());
-				std::cout << " 	nu2_1= " <<  F(8, 3, lower_base_sugar_rotamer->nu2())    << " 	nu1_1= " <<  F(8, 3, lower_base_sugar_rotamer->nu1());
-				std::cout << " 	delta2= " <<  F(8, 3, upper_base_sugar_rotamer->delta()) << " 	chi_2= " <<  F(8, 3, upper_base_sugar_rotamer->chi());
-				std::cout << " 	nu2_2= " <<  F(8, 3, upper_base_sugar_rotamer->nu2())    << " 	nu1_2= " <<  F(8, 3, upper_base_sugar_rotamer->nu1());
-				std::cout << std::endl;
+				TR << " 	delta1= " <<  F(8, 3, lower_base_sugar_rotamer->delta()) << " 	chi_1= " <<  F(8, 3, lower_base_sugar_rotamer->chi());
+				TR << " 	nu2_1= " <<  F(8, 3, lower_base_sugar_rotamer->nu2())    << " 	nu1_1= " <<  F(8, 3, lower_base_sugar_rotamer->nu1());
+				TR << " 	delta2= " <<  F(8, 3, upper_base_sugar_rotamer->delta()) << " 	chi_2= " <<  F(8, 3, upper_base_sugar_rotamer->chi());
+				TR << " 	nu2_2= " <<  F(8, 3, upper_base_sugar_rotamer->nu2())    << " 	nu1_2= " <<  F(8, 3, upper_base_sugar_rotamer->nu1());
+				TR << std::endl;
 
 				//epsilon depends on delta of same residue...
 				for (int e1 = 1; e1 <= 1; e1++ ) {
@@ -467,7 +469,7 @@ namespace rna {
 			}
 		}
 
-		std::cout << "rotamer_centers_[1].size()= " << rotamer_centers_[1].size() << "  torsion_ids_.size()= " << torsion_ids_.size() << std::endl;
+		TR << "rotamer_centers_[1].size()= " << rotamer_centers_[1].size() << "  torsion_ids_.size()= " << torsion_ids_.size() << std::endl;
 		if (rotamer_centers_[1].size()!=torsion_ids_.size()){
 			utility_exit_with_message( "rotamer_centers_[1].size()!=torsion_ids_.size()" );
 		}
@@ -544,7 +546,7 @@ namespace rna {
 			}
 		}
 
-		std::cout << "extra_rotamer_perturbations_[1].size()= " << extra_rotamer_perturbations_[1].size() << "  perturb_torsion_ids_.size()= " << perturb_torsion_ids_.size() << std::endl;
+		TR << "extra_rotamer_perturbations_[1].size()= " << extra_rotamer_perturbations_[1].size() << "  perturb_torsion_ids_.size()= " << perturb_torsion_ids_.size() << std::endl;
 		if (extra_rotamer_perturbations_[1].size()!=perturb_torsion_ids_.size()){
 			utility_exit_with_message( "extra_rotamer_perturbations_[1].size()!=perturb_torsion_ids_.size()" );
 		}

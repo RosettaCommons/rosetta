@@ -19,10 +19,10 @@
 #include <protocols/swa/rna/StepWiseRNA_ResidueSampler.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_FloatingBase_Sampler_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
 
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
@@ -169,9 +169,9 @@ namespace rna {
 
 		std::map< core::Size, bool > const & Is_prepend_map = job_parameters_->Is_prepend_map();
 
-		Output_is_prepend_map("Is_prepend_map= ", Is_prepend_map , job_parameters_->full_sequence().size(), 30);
-		Output_seq_num_list("rmsd_res= ", rmsd_res_list, 30);
-		Output_seq_num_list("working_rmsd_res= ", working_rmsd_res_, 30);
+		Output_is_prepend_map("Is_prepend_map= ", Is_prepend_map , job_parameters_->full_sequence().size(), TR, 30 );
+		Output_seq_num_list("rmsd_res= ", rmsd_res_list, TR, 30 );
+		Output_seq_num_list("working_rmsd_res= ", working_rmsd_res_, TR, 30 );
 		////////////////////////////////////////////////////////////////////////////////
 
   }
@@ -201,28 +201,28 @@ namespace rna {
 
 		using namespace ObjexxFCL;
 
-		Output_title_text("Enter StepWiseRNA_ResidueSampler::apply");
+		Output_title_text("Enter StepWiseRNA_ResidueSampler::apply", TR );
 
 		clock_t const time_start( clock() );
 
 		//output screen options
-		std::cout << "--------SCREEN OPTIONS---------- "<< std::endl;
-		Output_boolean("fast_ = ", fast_ ); std::cout << std::endl;
-		Output_boolean("medium_fast_ = ", medium_fast_ ); std::cout << std::endl;
-		Output_boolean("integration_test_mode_ = ", integration_test_mode_ ); std::cout << std::endl;
-		Output_boolean("native_rmsd_screen = ", native_rmsd_screen_ ); std::cout << std::endl;
-		std::cout << "native_screen_rmsd_cutoff = " << native_screen_rmsd_cutoff_ << std::endl;
-		Output_boolean("perform_o2star_pack = ", perform_o2star_pack_ ); std::cout << std::endl;
-		Output_seq_num_list("working_moving_partition_pos= ", job_parameters_->working_moving_partition_pos(), 40);
-		Output_boolean("centroid_screen = ", centroid_screen_ ); std::cout << std::endl;
-		Output_boolean("allow_base_pair_only_centroid_screen = ", allow_base_pair_only_centroid_screen_ ); std::cout << std::endl;
-		Output_boolean("VDW_atr_rep_screen = ", VDW_atr_rep_screen_ ); std::cout << std::endl;
-		Output_boolean("sample_both_sugar_base_rotamer_ = ", sample_both_sugar_base_rotamer_ ); std::cout << std::endl;
-		Output_boolean("do_not_sample_multiple_virtual_sugar_ = ", do_not_sample_multiple_virtual_sugar_ ); std::cout << std::endl;
-		Output_boolean("sample_ONLY_multiple_virtual_sugar_ = ", sample_ONLY_multiple_virtual_sugar_ ); std::cout << std::endl;
-		Output_boolean("assert_no_virt_ribose_sampling_ =" , assert_no_virt_ribose_sampling_ ); std::cout << std::endl;
-		Output_boolean("distinguish_pucker_ ", distinguish_pucker_); std::cout << std::endl;
-		std::cout << "--------------------------------" << std::endl;
+		TR << "--------SCREEN OPTIONS---------- "<< std::endl;
+		Output_boolean("fast_ = ", fast_, TR ); TR << std::endl;
+		Output_boolean("medium_fast_ = ", medium_fast_, TR ); TR << std::endl;
+		Output_boolean("integration_test_mode_ = ", integration_test_mode_, TR ); TR << std::endl;
+		Output_boolean("native_rmsd_screen = ", native_rmsd_screen_, TR ); TR << std::endl;
+		TR << "native_screen_rmsd_cutoff = " << native_screen_rmsd_cutoff_ << std::endl;
+		Output_boolean("perform_o2star_pack = ", perform_o2star_pack_, TR ); TR << std::endl;
+		Output_seq_num_list("working_moving_partition_pos= ", job_parameters_->working_moving_partition_pos(), TR );
+		Output_boolean("centroid_screen = ", centroid_screen_, TR ); TR << std::endl;
+		Output_boolean("allow_base_pair_only_centroid_screen = ", allow_base_pair_only_centroid_screen_, TR ); TR << std::endl;
+		Output_boolean("VDW_atr_rep_screen = ", VDW_atr_rep_screen_, TR ); TR << std::endl;
+		Output_boolean("sample_both_sugar_base_rotamer_ = ", sample_both_sugar_base_rotamer_, TR ); TR << std::endl;
+		Output_boolean("do_not_sample_multiple_virtual_sugar_ = ", do_not_sample_multiple_virtual_sugar_, TR ); TR << std::endl;
+		Output_boolean("sample_ONLY_multiple_virtual_sugar_ = ", sample_ONLY_multiple_virtual_sugar_, TR ); TR << std::endl;
+		Output_boolean("assert_no_virt_ribose_sampling_ =" , assert_no_virt_ribose_sampling_, TR ); TR << std::endl;
+		Output_boolean("distinguish_pucker_ ", distinguish_pucker_, TR ); TR << std::endl;
+		TR << "--------------------------------" << std::endl;
 
 
 		Pose const pose_save = pose;
@@ -273,7 +273,7 @@ namespace rna {
 		//      in certain situations. The code below contains check statements to
 		//      prevent double-counting in these situations.
 
-		Output_title_text("Build previously virtualize sugar");
+		Output_title_text("Build previously virtualize sugar", TR );
 		bool const Is_prev_sugar_virt=Is_previous_sugar_virtual( pose );
 		bool const Is_curr_sugar_virt=Is_current_sugar_virtual( pose); // occurs less frequently -- typically only when connecting two pieces.
 		bool const Is_five_prime_CB_sugar_virt=Is_five_prime_chain_break_sugar_virtual( pose ); // may occur when closing loop
@@ -281,11 +281,11 @@ namespace rna {
 		Size const num_nucleotides=  job_parameters_->working_moving_res_list().size();
 		Size const gap_size= job_parameters_->gap_size();
 
-		Output_boolean(" Is_previous_sugar_virt=", Is_prev_sugar_virt );
-		Output_boolean(" Is_current_sugar_virt=", Is_curr_sugar_virt);
-		Output_boolean(" Is_five_prime_chain_break_sugar_virt=", Is_five_prime_CB_sugar_virt );
-		Output_boolean(" Is_three_prime_chain_break_sugar_virt=", Is_three_prime_CB_sugar_virt );
-		std::cout << std::endl;
+		Output_boolean(" Is_previous_sugar_virt=", Is_prev_sugar_virt, TR );
+		Output_boolean(" Is_current_sugar_virt=", Is_curr_sugar_virt, TR );
+		Output_boolean(" Is_five_prime_chain_break_sugar_virt=", Is_five_prime_CB_sugar_virt, TR );
+		Output_boolean(" Is_three_prime_chain_break_sugar_virt=", Is_three_prime_CB_sugar_virt, TR );
+		TR << std::endl;
 
 		///Nov 13, 2010
 
@@ -295,7 +295,7 @@ namespace rna {
 		if (Is_five_prime_CB_sugar_virt) num_virtual_sugar++;
 		if (Is_three_prime_CB_sugar_virt) num_virtual_sugar++;
 
-		std::cout << "num_virtual_sugar= " << num_virtual_sugar << std::endl;
+		TR << "num_virtual_sugar= " << num_virtual_sugar << std::endl;
 
 		// rd2013 -- Parin, please put in comments explaining these checks
 		if(assert_no_virt_ribose_sampling_ /*run checks*/ ){
@@ -322,12 +322,12 @@ namespace rna {
 
 		if(floating_base_){
 			if(Is_five_prime_CB_sugar_virt){ //This is rare since floating_base sampling is not often used at chain-closure step!
-				std::cout << "WARNING: floating_base_ and Is_five_prime_CB_sugar_virt case. Code not implemented yet, early return!" << std::endl;
+				TR << "WARNING: floating_base_ and Is_five_prime_CB_sugar_virt case. Code not implemented yet, early return!" << std::endl;
 				return;
 			}
 
 			if(Is_three_prime_CB_sugar_virt){ //This is rare since floating_base sampling is not often used at chain-closure step!
-				std::cout << "WARNING: floating_base_ and Is_three_prime_CB_sugar_virt case. Code not implemented yet, early return!" << std::endl;
+				TR << "WARNING: floating_base_ and Is_three_prime_CB_sugar_virt case. Code not implemented yet, early return!" << std::endl;
 				return;
 			}
 
@@ -367,7 +367,7 @@ namespace rna {
 
 		// In following, PDL means pose_data_list.
 		if(Is_prev_sugar_virt){
-			std::cout << "previous_sugar floating_base_chain_closure" << std::endl;
+			TR << "previous_sugar floating_base_chain_closure" << std::endl;
 
 			Size const prev_moving_res = (Is_prepend) ? (moving_res+num_nucleotides) : (moving_res-num_nucleotides);
 			Size const prev_ref_res = (Is_prepend) ? (moving_res+(num_nucleotides+2)) : (moving_res-(num_nucleotides+2));
@@ -379,13 +379,13 @@ namespace rna {
 			prev_sugar_FB_JP.PDL=previous_floating_base_chain_closure(pose, prev_sugar_FB_JP, "previous");
 
 			if(prev_sugar_FB_JP.PDL.size()==0){
-				std::cout << "Is_prev_sugar_virt==True but prev_sugar_FB_JP.PDL.size()==0!" << std::endl;
+				TR << "Is_prev_sugar_virt==True but prev_sugar_FB_JP.PDL.size()==0!" << std::endl;
 				return;
 			}
 		}
 
 		if(Is_curr_sugar_virt){ //June 12, 2011
-			std::cout << "current_sugar floating_base_chain_closure" << std::endl;
+			TR << "current_sugar floating_base_chain_closure" << std::endl;
 
 			Size const curr_ref_res = (Is_prepend) ? (moving_res-2) : (moving_res+2);
 
@@ -396,13 +396,13 @@ namespace rna {
 			curr_sugar_FB_JP.PDL=previous_floating_base_chain_closure(pose, curr_sugar_FB_JP, "current");
 
 			if(curr_sugar_FB_JP.PDL.size()==0){
-				std::cout << "Is_curr_sugar_virt==True but curr_sugar_FB_JP.PDL.size()==0!" << std::endl;
+				TR << "Is_curr_sugar_virt==True but curr_sugar_FB_JP.PDL.size()==0!" << std::endl;
 				return;
 			}
 		}
 
 		if(Is_five_prime_CB_sugar_virt){
-			std::cout << "five_prime_CB_sugar floating_base_chain_closure" << std::endl;
+			TR << "five_prime_CB_sugar floating_base_chain_closure" << std::endl;
 
 			five_prime_CB_sugar_FB_JP=FloatingBaseChainClosureJobParameter(five_prime_chain_break_res, five_prime_chain_break_res-2);
 			five_prime_CB_sugar_FB_JP.set_base_and_pucker_state(pose, job_parameters_);
@@ -411,13 +411,13 @@ namespace rna {
 			five_prime_CB_sugar_FB_JP.PDL=previous_floating_base_chain_closure(pose, five_prime_CB_sugar_FB_JP, "five_prime_CB");
 
 			if(five_prime_CB_sugar_FB_JP.PDL.size()==0) {
-				std::cout << "Is_five_prime_CB_sugar_virt==True but five_prime_CB_sugar_FB_JP.PDL.size()==0!" << std::endl;
+				TR << "Is_five_prime_CB_sugar_virt==True but five_prime_CB_sugar_FB_JP.PDL.size()==0!" << std::endl;
 				return;
 			}
 		}
 
 		if(Is_three_prime_CB_sugar_virt){
-			std::cout << "three_prime_CB_sugar floating_base_chain_closure:" << std::endl;
+			TR << "three_prime_CB_sugar floating_base_chain_closure:" << std::endl;
 
 			three_prime_CB_sugar_FB_JP=FloatingBaseChainClosureJobParameter(three_prime_chain_break_res, three_prime_chain_break_res+2);
 			three_prime_CB_sugar_FB_JP.set_base_and_pucker_state(pose, job_parameters_);
@@ -426,15 +426,15 @@ namespace rna {
 			three_prime_CB_sugar_FB_JP.PDL=previous_floating_base_chain_closure(pose, three_prime_CB_sugar_FB_JP, "three_prime_CB");
 
 			if(three_prime_CB_sugar_FB_JP.PDL.size()==0){
-				std::cout << "Is_three_prime_CB_sugar_virt==True but three_prime_CB_sugar_FB_JP.PDL.size()==0!" << std::endl;
+				TR << "Is_three_prime_CB_sugar_virt==True but three_prime_CB_sugar_FB_JP.PDL.size()==0!" << std::endl;
 				return;
 			}
 		}
 
 		if(	num_virtual_sugar>0 ){
-			std::cout << "Contain_virtual_sugar==true" << std::endl;
+			TR << "Contain_virtual_sugar==true" << std::endl;
 		}else{
-			std::cout << "Contain_virtual_sugar==false" << std::endl;
+			TR << "Contain_virtual_sugar==false" << std::endl;
 		}
 
 		/////////////Sort the pose_data_list by score..should be determined according to torsional potential score.	/////////////////////////
@@ -465,9 +465,9 @@ namespace rna {
 			}
 		}
 
-		std::cout << "Total time in StepWiseRNA_ResidueSampler::apply " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "Total time in StepWiseRNA_ResidueSampler::apply " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
-		Output_title_text("Exit StepWiseRNA_ResidueSampler::apply");
+		Output_title_text("Exit StepWiseRNA_ResidueSampler::apply", TR );
 
 	}
 
@@ -475,7 +475,7 @@ namespace rna {
 	void
 	StepWiseRNA_ResidueSampler::floating_base_sampling(pose::Pose & pose, FloatingBaseChainClosureJobParameter const & prev_sugar_FB_JP){
 
-		Output_title_text("Enter StepWiseRNA_ResidueSampler::floating_base_sampling");
+		Output_title_text("Enter StepWiseRNA_ResidueSampler::floating_base_sampling", TR );
 
 		using namespace core::chemical;
 		using namespace core::conformation;
@@ -508,16 +508,16 @@ namespace rna {
 		// note, in principle can do single nucleotide too (and was used for testing), but typical use case is dinucleotide.
 		bool const Is_dinucleotide=(num_nucleotides==2);
 
-		std::cout << " NUM_NUCLEOTIDES= " <<  num_nucleotides << std::endl;
-		Output_boolean(" IS_DINUCLEOTIDE= ", Is_dinucleotide); std::cout << std::endl;
-		std::cout << " GAP SIZE " << gap_size << std::endl;
-		std::cout << " MOVING RES " << moving_res << std::endl;
-		std::cout << " MOVING SUITE " << moving_suite << std::endl;
-		Output_boolean(" PREPEND ", Is_prepend ); std::cout << std::endl;
-		Output_boolean(" INTERNAL ", Is_internal); std::cout << std::endl;
-		std::cout << " REFERENCE_RES " << reference_res << std::endl;
-		std::cout << " FLOATING_BASE_FIVE_PRIME_CHAIN_BREAK " << floating_base_five_prime_chain_break << std::endl;
-		Output_boolean(" build_pose_from_scratch_= ", build_pose_from_scratch_); std::cout << std::endl;
+		TR << " NUM_NUCLEOTIDES= " <<  num_nucleotides << std::endl;
+		Output_boolean(" IS_DINUCLEOTIDE= ", Is_dinucleotide, TR ); TR << std::endl;
+		TR << " GAP SIZE " << gap_size << std::endl;
+		TR << " MOVING RES " << moving_res << std::endl;
+		TR << " MOVING SUITE " << moving_suite << std::endl;
+		Output_boolean(" PREPEND ", Is_prepend, TR ); TR << std::endl;
+		Output_boolean(" INTERNAL ", Is_internal, TR ); TR << std::endl;
+		TR << " REFERENCE_RES " << reference_res << std::endl;
+		TR << " FLOATING_BASE_FIVE_PRIME_CHAIN_BREAK " << floating_base_five_prime_chain_break << std::endl;
+		Output_boolean(" build_pose_from_scratch_= ", build_pose_from_scratch_, TR ); TR << std::endl;
 
 		if(Is_dinucleotide==true && Is_internal==true) utility_exit_with_message( "Is_dinucleotide==true && Is_internal==true)!!" );
 		if(num_nucleotides!=1 && num_nucleotides!=2) utility_exit_with_message( "num_nucleotides!=1 and num_nucleotides!=2" );
@@ -527,11 +527,11 @@ namespace rna {
 			Size const user_input_num_pose_kept=num_pose_kept_;
 			num_pose_kept_=4*num_pose_kept_;
 
-			//std::cout << "Accessible conformational space is larger when sampling a dinucleotide " << std::endl;
-			std::cout << "allow_base_pair_only_centroid_screen_==true for floating base + dinucleotide sampling mode " << std::endl;
-			std::cout << "Increase num_pose_kept by 4 folds" << std::endl;
+			//TR << "Accessible conformational space is larger when sampling a dinucleotide " << std::endl;
+			TR << "allow_base_pair_only_centroid_screen_==true for floating base + dinucleotide sampling mode " << std::endl;
+			TR << "Increase num_pose_kept by 4 folds" << std::endl;
 
-			std::cout << " user_input_num_pose_kept= " << user_input_num_pose_kept << " num_pose_kept_ " << num_pose_kept_ << std::endl;
+			TR << " user_input_num_pose_kept= " << user_input_num_pose_kept << " num_pose_kept_ " << num_pose_kept_ << std::endl;
 
 		}
 
@@ -553,7 +553,7 @@ namespace rna {
 			//PURPOSE OF THIS IS FOR FLOATING BASE CHAIN CLOSURE
 			//NEED TO ADD THIS BEFORE calculating moving_rsd_at_origin_list since adding OVL1, OVL2 and OVU1 will change atoms number and positions in the residue
 
-			std::cout << "setup_chain_break_jump_point for floating_base_five_prime_chain_break= " <<  floating_base_five_prime_chain_break << std::endl;
+			TR << "setup_chain_break_jump_point for floating_base_five_prime_chain_break= " <<  floating_base_five_prime_chain_break << std::endl;
 			//pose.dump_pdb( "pose_before_setup_floating_base_chain_break.pdb" );
 
 			setup_chain_break_jump_point( pose , moving_res, reference_res, floating_base_five_prime_chain_break, true );
@@ -565,7 +565,7 @@ namespace rna {
 
 		core::kinematics::Stub const reference_stub=get_reference_stub(reference_res, pose);
 
-		StepWiseRNA_VDW_Bin_ScreenerOP VDW_bin_screener= new StepWiseRNA_VDW_Bin_Screener();
+		StepWiseRNA_VDW_BinScreenerOP VDW_bin_screener= new StepWiseRNA_VDW_BinScreener();
 		VDW_bin_screener->setup_using_working_pose( pose , job_parameters_ );
 
 		user_input_VDW_bin_screener_->reference_xyz_consistency_check( reference_stub.v );
@@ -602,7 +602,7 @@ namespace rna {
 				utility_exit_with_message("pose have VIRTUAL_PHOSPHATE AT five_prime_chain_break_res+1!");
 			}
 
-			std::cout << "Adding harmonic chainbreak to standard job_params five_prime_chain_break_res= " << five_prime_chain_break_res << std::endl;
+			TR << "Adding harmonic chainbreak to standard job_params five_prime_chain_break_res= " << five_prime_chain_break_res << std::endl;
 		 	Add_harmonic_chainbreak_constraint(pose, five_prime_chain_break_res );
 
 		}
@@ -619,7 +619,7 @@ namespace rna {
 				utility_exit_with_message("pose have VIRTUAL_PHOSPHATE AT floating_base_five_prime_chain_break+1!");
 			}
 
-			std::cout << "Adding harmonic chainbreak to floating_base_five_prime_chain_break= " <<  floating_base_five_prime_chain_break << std::endl;
+			TR << "Adding harmonic chainbreak to floating_base_five_prime_chain_break= " <<  floating_base_five_prime_chain_break << std::endl;
 		 	Add_harmonic_chainbreak_constraint(pose, floating_base_five_prime_chain_break );
 
 		}
@@ -670,14 +670,14 @@ namespace rna {
 
 		utility::vector1 <core::conformation::ResidueOP> const moving_rsd_at_origin_list
 																												=setup_residue_at_origin_list(pose, moving_res, extra_anti_chi_rotamer_, extra_syn_chi_rotamer_, "pose");
-		//std::cout << "Change to Residue const & moving_rsd_at_origin=(*moving_rsd_at_origin_list[5]) " << std::endl;
+		//TR << "Change to Residue const & moving_rsd_at_origin=(*moving_rsd_at_origin_list[5]) " << std::endl;
 		//Residue const & moving_rsd_at_origin=(*moving_rsd_at_origin_list[5]);
 
 		//March 26, 2011.. after move create screening poses and modify pose variant to ABOVE
 		utility::vector1 <core::conformation::ResidueOP> const screening_moving_rsd_at_origin_list
 																												=setup_residue_at_origin_list(screening_pose, moving_res, extra_anti_chi_rotamer_, extra_syn_chi_rotamer_,"screening_pose");
 
-		std::cout << "Change to Residue const & screening_moving_rsd_at_origin=(*screening_moving_rsd_at_origin_list[5]) " << std::endl;
+		TR << "Change to Residue const & screening_moving_rsd_at_origin=(*screening_moving_rsd_at_origin_list[5]) " << std::endl;
 		Residue const & screening_moving_rsd_at_origin=(*screening_moving_rsd_at_origin_list[5]);
 		//Doesn't really matter which sugar/base conformation the rsd has...any member of the list is fine. (NEED TO CHECK THAT THIS WORKS!)
 		//UMM, in score vs. rmsd (Trail 7(old) vs. Trail 15(new))....rmsd and disrimination slight worst....could be an artifact of new sugar position.....
@@ -687,14 +687,14 @@ namespace rna {
 																												=setup_residue_at_origin_list(ribose_screening_pose, moving_res, extra_anti_chi_rotamer_, extra_syn_chi_rotamer_, "ribose_screening_pose");
 
 		if(moving_rsd_at_origin_list.size()!=screening_moving_rsd_at_origin_list.size()){
-			std::cout << "moving_rsd_at_origin_list.size()= " << moving_rsd_at_origin_list.size() << std::endl;
-			std::cout << "screening_moving_rsd_at_origin_list.size()= " << screening_moving_rsd_at_origin_list.size() << std::endl;
+			TR << "moving_rsd_at_origin_list.size()= " << moving_rsd_at_origin_list.size() << std::endl;
+			TR << "screening_moving_rsd_at_origin_list.size()= " << screening_moving_rsd_at_origin_list.size() << std::endl;
 			utility_exit_with_message("moving_rsd_at_origin_list.size()!=screening_moving_rsd_at_origin_list.size()");
 		}
 
 		if(moving_rsd_at_origin_list.size()!=ribose_screening_moving_rsd_at_origin_list.size()){
-			std::cout << "moving_rsd_at_origin_list.size()= " << moving_rsd_at_origin_list.size() << std::endl;
-			std::cout << "ribose_screening_moving_rsd_at_origin_list.size()= " << ribose_screening_moving_rsd_at_origin_list.size() << std::endl;
+			TR << "moving_rsd_at_origin_list.size()= " << moving_rsd_at_origin_list.size() << std::endl;
+			TR << "ribose_screening_moving_rsd_at_origin_list.size()= " << ribose_screening_moving_rsd_at_origin_list.size() << std::endl;
 			utility_exit_with_message("moving_rsd_at_origin_list.size()!=ribose_screening_moving_rsd_at_origin_list.size()");
 		}
 
@@ -729,14 +729,14 @@ namespace rna {
 
 		Real const max_distance=Max_O3_to_C5_DIST+C5_centroid_dist+O5_centroid_dist+1; //Theoretical maximum dist between the two base's centroid, +1 is to be lenient
 
-		std::cout << "max centroid to centroid distance: " << max_distance << std::endl;;
+		TR << "max centroid to centroid distance: " << max_distance << std::endl;;
 
 		int const centroid_bin_min=int(-max_distance/centroid_bin_size_);
 		int const centroid_bin_max=int(max_distance/centroid_bin_size_)-1;
 
-		std::cout << "euler_angle_bin min= " << euler_angle_bin_min << " max " << euler_angle_bin_max << std::endl;
-		std::cout << "euler_z_bin_min min= " << euler_z_bin_min << " max " << euler_z_bin_max << std::endl;
-		std::cout << "centroid_bin min= " << centroid_bin_min<< " max " << centroid_bin_max << std::endl;
+		TR << "euler_angle_bin min= " << euler_angle_bin_min << " max " << euler_angle_bin_max << std::endl;
+		TR << "euler_z_bin_min min= " << euler_z_bin_min << " max " << euler_z_bin_max << std::endl;
+		TR << "centroid_bin min= " << centroid_bin_min<< " max " << centroid_bin_max << std::endl;
 
 		std::map<Base_bin , int , compare_base_bin> base_bin_map;
 		std::map<Base_bin , int , compare_base_bin>::const_iterator it;
@@ -755,7 +755,7 @@ namespace rna {
 		for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
 			if(pose.residue(seq_num).aa() == core::chemical::aa_vrt ){ //Fang's electron density code
-				std::cout << "Residue.aa() " << seq_num << " is core::chemical::aa_vrt!" << std::endl;
+				TR << "Residue.aa() " << seq_num << " is core::chemical::aa_vrt!" << std::endl;
 				continue;
 			}
 			//SML PHENIX conference
@@ -765,17 +765,17 @@ namespace rna {
 
 			conformation::Residue const & residue_object=pose.residue( seq_num );
 			if(residue_object.has_variant_type( "VIRTUAL_RNA_RESIDUE" )){
-				std::cout << "Residue " << seq_num << " is a VIRTUAL_RNA_RESIDUE!" << std::endl;
+				TR << "Residue " << seq_num << " is a VIRTUAL_RNA_RESIDUE!" << std::endl;
 				continue;
 			}
 
 			if(seq_num==moving_res){
-				std::cout << "Residue " << seq_num << " is a MOVING RESIDUE!" << std::endl;
+				TR << "Residue " << seq_num << " is a MOVING RESIDUE!" << std::endl;
 				continue;
 			}
 
-			if(Contain_seq_num(seq_num, job_parameters_->working_terminal_res())){
-				std::cout << "Residue " << seq_num << " is a TERMINAL_RESIDUE!" << std::endl;
+			if( (job_parameters_->working_terminal_res()).has_value(seq_num)){
+				TR << "Residue " << seq_num << " is a TERMINAL_RESIDUE!" << std::endl;
 				continue;
 			}
 
@@ -791,14 +791,14 @@ namespace rna {
 
 			Real const distance=std::sqrt(distance_square);
 
-			std::cout << "distance= " << distance;
+			TR << "distance= " << distance;
 
 			if(  distance > (max_distance+6.364)) { //6.364 is max centroid to centroid distance for base-stacking centroid_screening.
-				std::cout << " Residue " << seq_num << " is too far from the reference res: " <<  reference_res << std::endl;
+				TR << " Residue " << seq_num << " is too far from the reference res: " <<  reference_res << std::endl;
 				continue;
 			}
 
-			std::cout << " Add to other_residues_base_list: " << seq_num << std::endl;
+			TR << " Add to other_residues_base_list: " << seq_num << std::endl;
 
 			other_residues_base_list.push_back(base_info);
 		}
@@ -818,7 +818,7 @@ namespace rna {
 		utility::vector1< pose_data_struct2 > pose_data_list;
 
    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		Output_title_text("START FLOATING BASE SAMPLING");
+		Output_title_text("START FLOATING BASE SAMPLING", TR );
 
 
 		for(base_bin.euler_alpha=euler_angle_bin_min; base_bin.euler_alpha<=euler_angle_bin_max; base_bin.euler_alpha++){
@@ -925,7 +925,7 @@ namespace rna {
 				if( rmsd_over_residue_list( *get_native_pose(), screening_pose, job_parameters_, true /*ignore_virtual_atom*/)>(native_screen_rmsd_cutoff_)) continue; //Oct 14, 2010
 
 				count_data_.rmsd_count++;
-				if(verbose_) std::cout << "rmsd_count = " << count_data_.rmsd_count << " total count= " << count_data_.tot_rotamer_count << std::endl;
+				if(verbose_) TR << "rmsd_count = " << count_data_.rmsd_count << " total count= " << count_data_.tot_rotamer_count << std::endl;
 			}
 
 			if( !Full_atom_van_der_Waals_screening( screening_pose, base_rep_score, base_atr_score, delta_rep_score, delta_atr_score, gap_size, Is_internal) ) continue;
@@ -1039,7 +1039,7 @@ namespace rna {
 				Pose_selection_by_full_score(pose_data_list, pose, tag);
 
 				if(verbose_){
-					std::cout << tag <<  std::endl;
+					TR << tag <<  std::endl;
 					Output_data(silent_file_data, silent_file_, tag, true, pose, get_native_pose(), job_parameters_);
 				}
 
@@ -1066,27 +1066,27 @@ namespace rna {
 		}
 
 
-		Output_title_text("Final sort and clustering: BEFORE floating base_chain_closure");
+		Output_title_text("Final sort and clustering: BEFORE floating base_chain_closure", TR );
 
 		std::sort(pose_data_list.begin(), pose_data_list.end(), sort_criteria);
 		cluster_pose_data_list(pose_data_list);
 		if( pose_data_list.size()>num_pose_kept_ ) pose_data_list.erase(pose_data_list.begin()+num_pose_kept_, pose_data_list.end());
-		std::cout<< "after erasing.. pose_data_list= " << pose_data_list.size() << std::endl;
+		TR<< "after erasing.. pose_data_list= " << pose_data_list.size() << std::endl;
 
-		std::cout << "floating base sampling time : " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "floating base sampling time : " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 		if( gap_size == 0 ){
-		 	std::cout << " angle_n= " << count_data_.good_angle_count << " dist_n= " << count_data_.good_distance_count;
-			std::cout << " chain_break_screening= "<< count_data_.chain_break_screening_count << std::endl;
+		 	TR << " angle_n= " << count_data_.good_angle_count << " dist_n= " << count_data_.good_distance_count;
+			TR << " chain_break_screening= "<< count_data_.chain_break_screening_count << std::endl;
 		}
 
-		std::cout << " stack_n= " << count_data_.base_stack_count << " pair_n= " << count_data_.base_pairing_count;
-		std::cout << " strict_pair_n= " << count_data_.strict_base_pairing_count << " centroid_n= " << count_data_.pass_base_centroid_screen;
-		std::cout << " bin_rep= " << count_data_.good_bin_rep_count << " atr= " << count_data_.good_atr_rotamer_count << " rep= " << count_data_.good_rep_rotamer_count;
-		std::cout << " both= " << count_data_.both_count << " total_bin= " << count_data_.tot_rotamer_count << " total_screen_bin= " << total_screen_bin;
-		std::cout << "  closable= " << count_data_.chain_closable_count << "  non_clash_ribose= " << count_data_.non_clash_ribose << std::endl;
-		std::cout << " WARNING centroid_n count is severely UNDERSTIMATED...need to be multiply by (euler_angle_bin_max-euler_angle_bin_min+1): ";
-		std::cout << (euler_angle_bin_max-euler_angle_bin_min+1) << std::endl;
+		TR << " stack_n= " << count_data_.base_stack_count << " pair_n= " << count_data_.base_pairing_count;
+		TR << " strict_pair_n= " << count_data_.strict_base_pairing_count << " centroid_n= " << count_data_.pass_base_centroid_screen;
+		TR << " bin_rep= " << count_data_.good_bin_rep_count << " atr= " << count_data_.good_atr_rotamer_count << " rep= " << count_data_.good_rep_rotamer_count;
+		TR << " both= " << count_data_.both_count << " total_bin= " << count_data_.tot_rotamer_count << " total_screen_bin= " << total_screen_bin;
+		TR << "  closable= " << count_data_.chain_closable_count << "  non_clash_ribose= " << count_data_.non_clash_ribose << std::endl;
+		TR << " WARNING centroid_n count is severely UNDERSTIMATED...need to be multiply by (euler_angle_bin_max-euler_angle_bin_min+1): ";
+		TR << (euler_angle_bin_max-euler_angle_bin_min+1) << std::endl;
 
 		if(verbose_){ //Don't really need this......May 1, 2010...
 			std::string const foldername="test/";
@@ -1122,7 +1122,7 @@ namespace rna {
 
 		utility::vector1< pose_data_struct2 > pose_data_list;
 		if ( pose_data_list_.size() > 0 ) {
-			std::cout << "Previous poses exist in sampler: " << pose_data_list_.size() << std::endl;
+			TR << "Previous poses exist in sampler: " << pose_data_list_.size() << std::endl;
 			pose_data_list = pose_data_list_;
 		}
 
@@ -1201,7 +1201,7 @@ namespace rna {
 			///////Ok, finally have to remove clashes that may arise due to the fact that the floating base sugar sampling and minimization were done individually of each other///
 			minimize_all_sampled_floating_bases(pose, sampled_sugar_FB_JP_list, starting_pose_data_list, sampling_scorefxn_, job_parameters_, true /*virtual_ribose_is_from_prior_step*/);
 
-			std::cout << "starting_pose_data_list.size()= " << starting_pose_data_list.size() << std::endl;
+			TR << "starting_pose_data_list.size()= " << starting_pose_data_list.size() << std::endl;
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 			SilentFileData silent_file_data;
@@ -1251,7 +1251,7 @@ namespace rna {
 		using namespace protocols::rna;
 		using namespace core::id;
 
-		Output_title_text("Enter StepWiseRNA_ResidueSampler::standard_sampling");
+		Output_title_text("Enter StepWiseRNA_ResidueSampler::standard_sampling", TR );
 
 		clock_t const time_start( clock() );
 
@@ -1284,42 +1284,42 @@ namespace rna {
 			Size const user_input_num_pose_kept=num_pose_kept_;
 			num_pose_kept_=4*num_pose_kept_;
 
-			//std::cout << "Accessible conformational space is larger when sampling a dinucleotide " << std::endl;
-			std::cout << "allow_base_pair_only_centroid_screen_==true + dinucleotide sampling" << std::endl;
-			std::cout << "Note that allow_base_pair_only_centroid_screen_ doesn't effect the screening in standard sampling mode." <<std::endl;
-			std::cout << "Just keeping more pose to be consistent with floating base mode + keep high score basepairing conformations." << std::endl;
-			std::cout << "Increase num_pose_kept by 4 folds" << std::endl;
+			//TR << "Accessible conformational space is larger when sampling a dinucleotide " << std::endl;
+			TR << "allow_base_pair_only_centroid_screen_==true + dinucleotide sampling" << std::endl;
+			TR << "Note that allow_base_pair_only_centroid_screen_ doesn't effect the screening in standard sampling mode." <<std::endl;
+			TR << "Just keeping more pose to be consistent with floating base mode + keep high score basepairing conformations." << std::endl;
+			TR << "Increase num_pose_kept by 4 folds" << std::endl;
 
-			std::cout << " user_input_num_pose_kept= " << user_input_num_pose_kept << " num_pose_kept_ " << num_pose_kept_ << std::endl;
+			TR << " user_input_num_pose_kept= " << user_input_num_pose_kept << " num_pose_kept_ " << num_pose_kept_ << std::endl;
 
 		}
 
 		if(build_pose_from_scratch_){
-			std::cout << "Since build_pose_from_scratch, choose to increase NUM_POSE_KEPT by 36 fold. ";
-			std::cout << " Somewhat hacky..since sample both sugar..want to make sure that we keep are good energy score states " << std::endl;
-			std::cout << "Old_num_pose_kept_ = " << num_pose_kept_  << std::endl;
+			TR << "Since build_pose_from_scratch, choose to increase NUM_POSE_KEPT by 36 fold. ";
+			TR << " Somewhat hacky..since sample both sugar..want to make sure that we keep are good energy score states " << std::endl;
+			TR << "Old_num_pose_kept_ = " << num_pose_kept_  << std::endl;
 			num_pose_kept_= 36* num_pose_kept_;
-			std::cout << "New_num_pose_kept_ = " << num_pose_kept_  << std::endl;
+			TR << "New_num_pose_kept_ = " << num_pose_kept_  << std::endl;
 		}
 
 		if(sample_both_sugar_base_rotamer_){
-			std::cout << "Since build_pose_from_scratch, choose to increase NUM_POSE_KEPT by 12 fold. ";
-			std::cout << " Somewhat hacky..since sample both sugar..want to make sure that we keep are good energy score states " << std::endl;
-			std::cout << "Old_num_pose_kept_ = " << num_pose_kept_  << std::endl;
+			TR << "Since build_pose_from_scratch, choose to increase NUM_POSE_KEPT by 12 fold. ";
+			TR << " Somewhat hacky..since sample both sugar..want to make sure that we keep are good energy score states " << std::endl;
+			TR << "Old_num_pose_kept_ = " << num_pose_kept_  << std::endl;
 			num_pose_kept_= 12* num_pose_kept_;
-			std::cout << "New_num_pose_kept_ = " << num_pose_kept_  << std::endl;
+			TR << "New_num_pose_kept_ = " << num_pose_kept_  << std::endl;
 		}
 
 
-		std::cout << " NUM_NUCLEOTIDES= " <<  num_nucleotides << std::endl;
-		Output_boolean(" IS_DINUCLEOTIDE= ", Is_dinucleotide); std::cout << std::endl;
-		std::cout << " GAP SIZE " << gap_size << std::endl;
-		std::cout << " MOVING RES " << moving_res << std::endl;
-		std::cout << " MOVING SUITE " << moving_suite << std::endl;
-		Output_boolean(" PREPEND ", Is_prepend ); std::cout << std::endl;
-		Output_boolean(" INTERNAL ", Is_internal); std::cout << std::endl;
-		Output_boolean(" allow_bulge_at_chainbreak_ ", allow_bulge_at_chainbreak_); std::cout << std::endl;
-		Output_boolean(" build_pose_from_scratch_= ", build_pose_from_scratch_); std::cout << std::endl;
+		TR << " NUM_NUCLEOTIDES= " <<  num_nucleotides << std::endl;
+		Output_boolean(" IS_DINUCLEOTIDE= ", Is_dinucleotide, TR ); TR << std::endl;
+		TR << " GAP SIZE " << gap_size << std::endl;
+		TR << " MOVING RES " << moving_res << std::endl;
+		TR << " MOVING SUITE " << moving_suite << std::endl;
+		Output_boolean(" PREPEND ", Is_prepend, TR ); TR << std::endl;
+		Output_boolean(" INTERNAL ", Is_internal, TR ); TR << std::endl;
+		Output_boolean(" allow_bulge_at_chainbreak_ ", allow_bulge_at_chainbreak_, TR ); TR << std::endl;
+		Output_boolean(" build_pose_from_scratch_= ", build_pose_from_scratch_, TR ); TR << std::endl;
 
 		//for combine_long_loop_mode_
 		Size const last_append_res=(Is_prepend) ? moving_res-1: moving_res;
@@ -1327,9 +1327,9 @@ namespace rna {
 		Real const atom_atom_overlap_dist_cutoff=-1.0; //value taken from CombineLongLoopFilterer...two atoms in contact if there VDW edge are within 1 angstrom of each other.
 
 		if(combine_long_loop_mode_ && gap_size!=0){//residue-residue contact screen;
-			std::cout << "combine_long_loop_mode_ && gap_size==0" << std::endl;
-			std::cout << "Enforcing contact between LAST_APPEND_RES: " << last_append_res << " and LAST_PREPEND_RES: " << last_prepend_res  << std::endl;
-			std::cout << "atom_atom_overlap_dist_cutoff " << atom_atom_overlap_dist_cutoff << std::endl;
+			TR << "combine_long_loop_mode_ && gap_size==0" << std::endl;
+			TR << "Enforcing contact between LAST_APPEND_RES: " << last_append_res << " and LAST_PREPEND_RES: " << last_prepend_res  << std::endl;
+			TR << "atom_atom_overlap_dist_cutoff " << atom_atom_overlap_dist_cutoff << std::endl;
 		}
 
 
@@ -1378,12 +1378,12 @@ namespace rna {
 		pose::Pose chain_break_screening_pose = pose_with_virtual_O2star_hydrogen; //Hard copy
 
 		if ( gap_size == 0 )	{ //harmonic angle and distnace constraints are used ONLY by chainbreak_screening
-			std::cout << "five_prime_chain_break_res= " << five_prime_chain_break_res << std::endl;
+			TR << "five_prime_chain_break_res= " << five_prime_chain_break_res << std::endl;
 		 	Add_harmonic_chainbreak_constraint(chain_break_screening_pose, five_prime_chain_break_res );
 		}
 
 
-		////////////////////////////////////Setup RotamerGenerator_Wrapper/////////////////////////////////////////
+		////////////////////////////////////Setup RotamerGeneratorWrapper/////////////////////////////////////////
 
 		// Note: Is_prepend should be generalized to include two more possibilities:
 		//   we are creating a dinucleotide from scratch --> sample sugar/chi for both moving_res and
@@ -1421,7 +1421,7 @@ namespace rna {
 		utility::vector1< core::Size > const working_moving_suite_list(  job_parameters_->working_moving_suite_list() );
 
 
-		StepWiseRNA_RotamerGenerator_WrapperOP rotamer_generator = new StepWiseRNA_RotamerGenerator_Wrapper( pose,
+		StepWiseRNA_RotamerGeneratorWrapperOP rotamer_generator = new StepWiseRNA_RotamerGeneratorWrapper( pose,
 																																																		working_moving_suite_list,
 																																																		sample_sugar_and_base1,
 																																																		sample_sugar_and_base2);
@@ -1471,7 +1471,7 @@ namespace rna {
 				if( rmsd_over_residue_list( *get_native_pose(), screening_pose, job_parameters_, false)>(native_screen_rmsd_cutoff_) ) continue; //Oct 14, 2010
 
 				count_data_.rmsd_count++;
-				if(verbose_) std::cout << "rmsd_count = " << count_data_.rmsd_count << " total count= " << count_data_.tot_rotamer_count << std::endl;
+				if(verbose_) TR << "rmsd_count = " << count_data_.rmsd_count << " total count= " << count_data_.tot_rotamer_count << std::endl;
 			}
 
 			if(combine_long_loop_mode_ && gap_size!=0){//residue-residue contact screen;
@@ -1537,7 +1537,7 @@ namespace rna {
 				//Residue at 5' of building region also have O3' atom that is covalently bond to the phosphate atom of loop res next to it. VDW_rep doesn't realize this and this lead to clash. Hence This Residue should not be excluded in the VDW_bin_screen_pose as well. Feb 21, 2011.
 
 				if( user_input_VDW_bin_screener_->VDW_rep_screen(screening_pose, moving_res )==false){
-					//std::cout << tag << " pass Full_atom_VDW_screening but fail user_input_VDW_bin_screening! " << std::endl;
+					//TR << tag << " pass Full_atom_VDW_screening but fail user_input_VDW_bin_screening! " << std::endl;
 					continue;
 				}
 				count_data_.good_bin_rep_count++;
@@ -1580,7 +1580,7 @@ namespace rna {
 			Pose_selection_by_full_score(pose_data_list, pose, tag);
 
 			if(verbose_){
-				std::cout << tag <<  std::endl;
+				TR << tag <<  std::endl;
 				Output_data(silent_file_data, silent_file_, tag, true, pose, get_native_pose(), job_parameters_);
 			}
 
@@ -1593,11 +1593,11 @@ namespace rna {
 
 	 	} //while( rotamer_generator->has_another_rotamer() )
 
-		Output_title_text("Final sort and clustering");
+		Output_title_text("Final sort and clustering", TR );
 		std::sort(pose_data_list.begin(), pose_data_list.end(), sort_criteria);
 		cluster_pose_data_list(pose_data_list);
 		if( pose_data_list.size()>num_pose_kept_ ) pose_data_list.erase(pose_data_list.begin()+num_pose_kept_, pose_data_list.end());
-		std::cout<< "after erasing.. pose_data_list= " << pose_data_list.size() << std::endl;
+		TR<< "after erasing.. pose_data_list= " << pose_data_list.size() << std::endl;
 
 		//Hacky..temporary until we fix the reroot atom problem..This is just for calculating rmsd purposes... Apr 27 , 2010 Parin/////////////////////////////////////////////
 		if(build_pose_from_scratch_ && get_native_pose()){
@@ -1613,10 +1613,10 @@ namespace rna {
 		}
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		std::cout << "FINAL COUNTS" << std::endl;
+		TR << "FINAL COUNTS" << std::endl;
 		output_count_data();
 
-		std::cout << "Total time in StepWiseRNA_ResidueSampler: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "Total time in StepWiseRNA_ResidueSampler: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 	}
 
@@ -1627,20 +1627,20 @@ namespace rna {
 
 		Size const gap_size( job_parameters_->gap_size()); /* If this is zero or one, need to screen or closable chain break */
 
-		if( gap_size <= 1) std::cout << " chain_closable_count= " << count_data_.chain_closable_count << std::endl;
+		if( gap_size <= 1) TR << " chain_closable_count= " << count_data_.chain_closable_count << std::endl;
 		if( gap_size == 0 ){
-		 	std::cout << " angle_n= " << count_data_.good_angle_count << " dist_n= " << count_data_.good_distance_count;
-			std::cout << " chain_break_screening= "<< count_data_.chain_break_screening_count << std::endl;
+		 	TR << " angle_n= " << count_data_.good_angle_count << " dist_n= " << count_data_.good_distance_count;
+			TR << " chain_break_screening= "<< count_data_.chain_break_screening_count << std::endl;
 		}
-		if(combine_long_loop_mode_ && gap_size!=0) std::cout << "res_contact= " << count_data_.residues_contact_screen << " ";
+		if(combine_long_loop_mode_ && gap_size!=0) TR << "res_contact= " << count_data_.residues_contact_screen << " ";
 
-		std::cout << "stack= " << count_data_.base_stack_count << " pair= " << count_data_.base_pairing_count;
-		std::cout << " strict_pair_n= " << count_data_.strict_base_pairing_count;
-		std::cout << " atr= " << count_data_.good_atr_rotamer_count;
-		std::cout << " rep= " << count_data_.good_rep_rotamer_count;
-		std::cout << " both= " << count_data_.both_count;
-		std::cout << " bulge= " << count_data_.bulge_at_chain_closure_count;
-		std::cout << " rmsd= " << count_data_.rmsd_count << " tot= " << count_data_.tot_rotamer_count << std::endl;
+		TR << "stack= " << count_data_.base_stack_count << " pair= " << count_data_.base_pairing_count;
+		TR << " strict_pair_n= " << count_data_.strict_base_pairing_count;
+		TR << " atr= " << count_data_.good_atr_rotamer_count;
+		TR << " rep= " << count_data_.good_rep_rotamer_count;
+		TR << " both= " << count_data_.both_count;
+		TR << " bulge= " << count_data_.bulge_at_chain_closure_count;
+		TR << " rmsd= " << count_data_.rmsd_count << " tot= " << count_data_.tot_rotamer_count << std::endl;
 
 	}
 
@@ -1663,7 +1663,7 @@ namespace rna {
 		std::string const reference_stub_type="base"; //"ribose"
 		core::kinematics::Stub reference_stub;
 
-		std::cout << "-----------------------get reference stub-----------------------" << std::endl;
+		TR << "-----------------------get reference stub-----------------------" << std::endl;
 		if(reference_stub_type=="ribose"){
 			reference_stub = Get_ribose_stub(pose.residue( reference_res ), job_parameters_->Is_prepend() , true);
 		}else{ //Use the base
@@ -1671,8 +1671,8 @@ namespace rna {
 			reference_stub.M=core::scoring::rna::get_rna_base_coordinate_system( pose.residue( reference_res ) , reference_stub.v);
 		}
 
-		std::cout << " reference_stub.v: x= " << reference_stub.v[0] << " y= " << reference_stub.v[1] << " z= " << reference_stub.v[2] << std::endl;
-		std::cout << "---------------------------------------------------------------------" << std::endl;
+		TR << " reference_stub.v: x= " << reference_stub.v[0] << " y= " << reference_stub.v[1] << " z= " << reference_stub.v[2] << std::endl;
+		TR << "---------------------------------------------------------------------" << std::endl;
 
 		return reference_stub;
 	}
@@ -1787,7 +1787,7 @@ namespace rna {
 
 		if(sample_both_sugar_base_rotamer_==true){ //Nov 15, 2010
 			Size const extra_sample_sugar_base_res= (Is_prepend) ? (working_moving_res+1) : (working_moving_res-1);
-			if(verbose_) std::cout << "extra_sample_sugar_base_res= " << extra_sample_sugar_base_res << std::endl;
+			if(verbose_) TR << "extra_sample_sugar_base_res= " << extra_sample_sugar_base_res << std::endl;
 			pose::add_variant_type_to_pose_residue( base_pose_screen, "VIRTUAL_RIBOSE", extra_sample_sugar_base_res );
 		}
 
@@ -1804,7 +1804,7 @@ namespace rna {
 		EnergyMap const & energy_map=base_pose_screen.energies().total_energies();
 		base_atr_score = atr_rep_screening_scorefxn_->get_weight(fa_atr) * energy_map[ scoring::fa_atr ]; //
 		base_rep_score = atr_rep_screening_scorefxn_->get_weight(fa_rep) * energy_map[ scoring::fa_rep ];
-		std::cout << "base_rep= " << base_rep_score << " base_atr= " << base_atr_score << std::endl;
+		TR << "base_rep= " << base_rep_score << " base_atr= " << base_atr_score << std::endl;
 
 		if(output_pdb_) base_pose_screen.dump_pdb( "base_atr_rep_after.pdb" );
 
@@ -1823,7 +1823,7 @@ namespace rna {
 		bool const root_partition = partition_definition( rerooted_fold_tree.root() );
 
 		for (Size seq_num=1; seq_num<=nres; seq_num++){
-//			if(Contain_seq_num(seq_num, working_moving_res_list)) continue; //Exclude working_moving_residues (the one being sampled..)
+//			if(working_moving_res_list.has_value(seq_num)) continue; //Exclude working_moving_residues (the one being sampled..)
 
 			if ( partition_definition( seq_num ) == 0){
 			 	partition_0_seq_num_list.push_back( seq_num );
@@ -1930,13 +1930,13 @@ namespace rna {
 		if((angle_score<5) && (distance_score<5)){
 			count_data_.chain_break_screening_count++;
 			if(verbose_){
-				//				std::cout << " C5_O3= " << C5_O3_distance << " C5_O3_n= " << count_data_.C5_O3_distance_count;
-				std::cout << "  chain_closable_count= " << count_data_.chain_closable_count;
-				std::cout << " angle= " << angle_score << " dist= " << distance_score;
-				std::cout << " angle_n= " << count_data_.good_angle_count;
-				std::cout << " dist_n= " << count_data_.good_distance_count;
-				std::cout << " chain_break_screening= " << count_data_.chain_break_screening_count;
-				std::cout << " tot= " << count_data_.tot_rotamer_count << std::endl;
+				//				TR << " C5_O3= " << C5_O3_distance << " C5_O3_n= " << count_data_.C5_O3_distance_count;
+				TR << "  chain_closable_count= " << count_data_.chain_closable_count;
+				TR << " angle= " << angle_score << " dist= " << distance_score;
+				TR << " angle_n= " << count_data_.good_angle_count;
+				TR << " dist_n= " << count_data_.good_distance_count;
+				TR << " chain_break_screening= " << count_data_.chain_break_screening_count;
+				TR << " tot= " << count_data_.tot_rotamer_count << std::endl;
 			}
 			return true;
 		} else {
@@ -1999,14 +1999,14 @@ namespace rna {
 				bulge_added=true;
 
 				if (verbose_){
-					std::cout << "delta_atr " << delta_atr_score << " passes cutoff for bulge. " << atr_cutoff_for_bulge;
-					std::cout << "  bulge= " << count_data_.bulge_at_chain_closure_count << "  both= " << count_data_.both_count << " tot= " << count_data_.tot_rotamer_count << std::endl;
+					TR << "delta_atr " << delta_atr_score << " passes cutoff for bulge. " << atr_cutoff_for_bulge;
+					TR << "  bulge= " << count_data_.bulge_at_chain_closure_count << "  both= " << count_data_.both_count << " tot= " << count_data_.tot_rotamer_count << std::endl;
 				}
 
 			} else {
 
 				bulge_added=false;
-				if (verbose_) std::cout << "delta_atr " << delta_atr_score << " DOES NOT PASS cutoff for bulge " << atr_cutoff_for_bulge << std::endl;
+				if (verbose_) TR << "delta_atr " << delta_atr_score << " DOES NOT PASS cutoff for bulge " << atr_cutoff_for_bulge << std::endl;
 
 			}
 		}
@@ -2028,7 +2028,7 @@ namespace rna {
 		if(add_pose_to_list){
 
 			if(verbose_){
-				std::cout << "tag= " << tag << " current_score_cutoff_ " << current_score_cutoff_ << " score= " << current_score;
+				TR << "tag= " << tag << " current_score_cutoff_ " << current_score_cutoff_ << " score= " << current_score;
 			}
 
 			pose_data_struct2 current_pose_data;
@@ -2043,7 +2043,7 @@ namespace rna {
 			//}
 
 			pose_data_list.push_back(current_pose_data);
-			if(verbose_) std::cout << " pose_data_list.size= " << pose_data_list.size() << std::endl;
+			if(verbose_) TR << " pose_data_list.size= " << pose_data_list.size() << std::endl;
 		}
 	}
 
@@ -2064,9 +2064,9 @@ namespace rna {
 			cluster_pose_data_list(pose_data_list);
 			if(pose_data_list.size()>num_pose_kept_){
 				pose_data_list.erase(pose_data_list.begin()+num_pose_kept_, pose_data_list.end());
-				std::cout<< "after erasing.. pose_data_list.size()= " << pose_data_list.size() << std::endl;
+				TR<< "after erasing.. pose_data_list.size()= " << pose_data_list.size() << std::endl;
 			}else{
-				std::cout<< "pose_data_list.size()= " << pose_data_list.size() << std::endl;
+				TR<< "pose_data_list.size()= " << pose_data_list.size() << std::endl;
 			}
 		}
 
@@ -2110,11 +2110,11 @@ namespace rna {
 					if(rmsd < cluster_rmsd_ && (same_pucker || !distinguish_pucker_) ){
 						pose_state_list[j]=false;
 						if(verbose_) {
-							std::cout << "rmsd= " << rmsd << "  pose " << pose_data_list[j].tag << " is a neighbor of pose " << pose_data_list[i].tag;
-							std::cout << " same_pucker= "; Output_boolean(same_pucker);
+							TR << "rmsd= " << rmsd << "  pose " << pose_data_list[j].tag << " is a neighbor of pose " << pose_data_list[i].tag;
+							TR << " same_pucker= "; Output_boolean(same_pucker, TR );
 							print_ribose_pucker_state(" center_pucker= ", Get_residue_pucker_state((*pose_data_list[i].pose_OP), actually_moving_res));
 							print_ribose_pucker_state(" curr_pucker= ", Get_residue_pucker_state((*pose_data_list[j].pose_OP), actually_moving_res));
-							std::cout << std::endl;
+							TR << std::endl;
 						}
 					}
 				}
@@ -2196,17 +2196,17 @@ namespace rna {
 
 		if( pass_atr_rep_screen ) {
 			if ( verbose_ ) {
-				std::cout << " rep= " << delta_rep_score << " atr= " << delta_atr_score;
-				std::cout << "  stack_n= " << count_data_.base_stack_count << " pair_n= " << count_data_.base_pairing_count;
-				std::cout << "  strict_pair_n= " << count_data_.strict_base_pairing_count;
-				std::cout << "  centroid_n= " << count_data_.pass_base_centroid_screen;
-				std::cout << "  bin_rep_n= " << count_data_.good_bin_rep_count;
-				std::cout << "  atr_n= " << count_data_.good_atr_rotamer_count;
-				std::cout << "  rep_n= " << count_data_.good_rep_rotamer_count;
-				std::cout << "  both= " << count_data_.both_count << " tot= " << count_data_.tot_rotamer_count;
-				std::cout << "  closable= " << count_data_.chain_closable_count;
-				std::cout << "  non_clash_ribose= " << count_data_.non_clash_ribose;
-				std::cout << std::endl;
+				TR << " rep= " << delta_rep_score << " atr= " << delta_atr_score;
+				TR << "  stack_n= " << count_data_.base_stack_count << " pair_n= " << count_data_.base_pairing_count;
+				TR << "  strict_pair_n= " << count_data_.strict_base_pairing_count;
+				TR << "  centroid_n= " << count_data_.pass_base_centroid_screen;
+				TR << "  bin_rep_n= " << count_data_.good_bin_rep_count;
+				TR << "  atr_n= " << count_data_.good_atr_rotamer_count;
+				TR << "  rep_n= " << count_data_.good_rep_rotamer_count;
+				TR << "  both= " << count_data_.both_count << " tot= " << count_data_.tot_rotamer_count;
+				TR << "  closable= " << count_data_.chain_closable_count;
+				TR << "  non_clash_ribose= " << count_data_.non_clash_ribose;
+				TR << std::endl;
 			}
 			return true;
 		} else {
@@ -2281,15 +2281,15 @@ namespace rna {
 			//	if((delta_atr_score<(-1)) && ((delta_rep_score+delta_atr_score) < 200) ) { //This causes about 5times more pose to pass the screen (50,000 poses vs 10,000 poses)
 			count_data_.both_count++;
 			if ( verbose_ ) {
-				std::cout << " rep= " << delta_rep_score << " atr= " << delta_atr_score;
-				if(combine_long_loop_mode_ && (job_parameters_->gap_size()!=0) ) std::cout << " res_contact= " << count_data_.residues_contact_screen;
-				std::cout << "  stack_n= " << count_data_.base_stack_count << " pair_n= " << count_data_.base_pairing_count;
-				std::cout << "  strict_pair_n= " << count_data_.strict_base_pairing_count;
-				std::cout << "  centroid_n= " << count_data_.pass_base_centroid_screen;
-				std::cout << "  bin_rep_n= " << count_data_.good_bin_rep_count;
-				std::cout << "  atr_n= " << count_data_.good_atr_rotamer_count;
-				std::cout << "  rep_n= " << count_data_.good_rep_rotamer_count;
-				std::cout << "  both= " << count_data_.both_count << " tot= " << count_data_.tot_rotamer_count << std::endl;
+				TR << " rep= " << delta_rep_score << " atr= " << delta_atr_score;
+				if(combine_long_loop_mode_ && (job_parameters_->gap_size()!=0) ) TR << " res_contact= " << count_data_.residues_contact_screen;
+				TR << "  stack_n= " << count_data_.base_stack_count << " pair_n= " << count_data_.base_pairing_count;
+				TR << "  strict_pair_n= " << count_data_.strict_base_pairing_count;
+				TR << "  centroid_n= " << count_data_.pass_base_centroid_screen;
+				TR << "  bin_rep_n= " << count_data_.good_bin_rep_count;
+				TR << "  atr_n= " << count_data_.good_atr_rotamer_count;
+				TR << "  rep_n= " << count_data_.good_rep_rotamer_count;
+				TR << "  both= " << count_data_.both_count << " tot= " << count_data_.tot_rotamer_count << std::endl;
 			}
 			return true;
 		} else {
@@ -2335,9 +2335,9 @@ namespace rna {
 
 			if ( partition_definition( i ) != root_partition ) {
 				current_group = 0;
-				std::cout << "GREENPACKER SAMPLER " << i << std::endl;
+				TR << "GREENPACKER SAMPLER " << i << std::endl;
 			} else {
-				std::cout << "GREENPACKER SPECTATOR   " << i <<  " --> group " << spectator_group << std::endl;
+				TR << "GREENPACKER SPECTATOR   " << i <<  " --> group " << spectator_group << std::endl;
 			}
 			group_ids.push_back( current_group );
 		}
@@ -2376,7 +2376,7 @@ namespace rna {
 		//reset the HO2star torsion to its starting value as to prevent randomness due to conformations sampling order...
 		copy_all_o2star_torsions(pose, pose_with_original_HO2star_torsion);
 
-		//std::cout << "Packing 2'-OH ... ";
+		//TR << "Packing 2'-OH ... ";
 		if ( use_green_packer_ ) {
 			o2star_green_packer_->apply( pose );
 		} else {
@@ -2447,7 +2447,7 @@ namespace rna {
 	////////////////////////////////////////////////////////////////////////
 
 	std::string
-	StepWiseRNA_ResidueSampler::create_tag(std::string const prestring, StepWiseRNA_RotamerGenerator_WrapperOP const & rotamer_generator) const {
+	StepWiseRNA_ResidueSampler::create_tag(std::string const prestring, StepWiseRNA_RotamerGeneratorWrapperOP const & rotamer_generator) const {
 
 		using namespace ObjexxFCL;
 
@@ -2579,7 +2579,7 @@ namespace rna {
 	void
 	StepWiseRNA_ResidueSampler::set_cluster_rmsd( Real const & setting ){
 		cluster_rmsd_ = setting;
-		std::cout << "Set cluster_rmsd to " << cluster_rmsd_ << std::endl;
+		TR << "Set cluster_rmsd to " << cluster_rmsd_ << std::endl;
 	}
 
 	//////////////////////////////////////////////////////////////////

@@ -107,7 +107,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		input_  = new core::import_pose::pose_stream::SilentFilePoseInputStream();
 		input_->set_order_by_energy( true );
 
-		//max_decoys_ = 9999999999; Feb 02, 2012; This lead to server-test error at R47198 
+		//max_decoys_ = 9999999999; Feb 02, 2012; This lead to server-test error at R47198
 		//score_diff_cut_ = 1000000000.0; Feb 02, 2012; This might lead to server-test error at R47198
 		max_decoys_ = 999999; //Feb 02, 2012;
 		score_diff_cut_ = 100000.0; //Feb 02, 2012;
@@ -115,7 +115,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		whole_struct_cluster_radius_ = 0.5;
 		suite_cluster_radius_= 999.99;
-		loop_cluster_radius_= 999.99; 
+		loop_cluster_radius_= 999.99;
 
 		rename_tags_ = false;
 		job_parameters_exist_=false;
@@ -154,57 +154,57 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		using namespace core::chemical;
 		using namespace core::pose;
 
-		clock_t const time_start( clock() ); 
-		Output_title_text("StepWiseRNA_Clusterer::cluster()");
+		clock_t const time_start( clock() );
+		Output_title_text("StepWiseRNA_Clusterer::cluster()", TR );
 
-		Output_boolean("verbose_= ", verbose_); std::cout << std::endl;
-		Output_boolean("skip_clustering_= ", skip_clustering_); std::cout << std::endl;
+		Output_boolean("verbose_= ", verbose_, TR ); TR << std::endl;
+		Output_boolean("skip_clustering_= ", skip_clustering_, TR ); TR << std::endl;
 
-		if(skip_clustering_){ 
+		if(skip_clustering_){
 
 			//Commented out Dec 11, 2011. CHANGE TO SET THIS FROM COMMAND_LINE (See for example SWA_cluster.py!
-			//std::cout << "skip_clustering==true --> set keep_pose_in_memory to false" << std::endl;
-			//keep_pose_in_memory_=false; 
+			//TR << "skip_clustering==true --> set keep_pose_in_memory to false" << std::endl;
+			//keep_pose_in_memory_=false;
 
-			std::cout << "skip_clustering==true --> set keep_pose_in_memory_hydrid_ to false" << std::endl; //HACKY!
+			TR << "skip_clustering==true --> set keep_pose_in_memory_hydrid_ to false" << std::endl; //HACKY!
 			keep_pose_in_memory_hydrid_=false; //HACKY!
 		}
 
-		
+
 		///March 20, 2011/////////////////////
 		if(( perform_VDW_rep_screen_==true) && (VDW_rep_screen_info_.size()==0) ){
-			std::cout << "User pass in perform_VDW_rep_screen_==true but VDW_rep_screen_info_.size()==0" << std::endl;
-			std::cout << "Override and set perform_VDW_rep_screen_ to false" << std::endl;
+			TR << "User pass in perform_VDW_rep_screen_==true but VDW_rep_screen_info_.size()==0" << std::endl;
+			TR << "Override and set perform_VDW_rep_screen_ to false" << std::endl;
 			perform_VDW_rep_screen_=false;
 		}
-	
-		Output_boolean("perform_VDW_rep_screen_= ", perform_VDW_rep_screen_); std::cout << std::endl;
-		Output_boolean("perform_filters_= ", perform_filters_); std::cout << std::endl;///June 14, 2011 Perform other filters aside from VDW_rep_screen.
+
+		Output_boolean("perform_VDW_rep_screen_= ", perform_VDW_rep_screen_, TR ); TR << std::endl;
+		Output_boolean("perform_filters_= ", perform_filters_, TR ); TR << std::endl;///June 14, 2011 Perform other filters aside from VDW_rep_screen.
 
 		if(perform_filters_ && (skip_clustering_==false)) utility_exit_with_message("perform_filters_ but skip_clustering_==false");
 		if(perform_VDW_rep_screen_ && (skip_clustering_==false))  utility_exit_with_message("perform_VDW_rep_screen_ but skip_clustering_==false");
 		/////////////////////////////////////
 
-		std::cout << "suite_cluster_radius_= " << suite_cluster_radius_ << std::endl;
-		std::cout << "loop_cluster_radius_= " << loop_cluster_radius_ << std::endl;
-		Output_boolean("job_parameters_exist_= ", job_parameters_exist_); std::cout << std::endl;
-		Output_boolean("quick_alignment_= ", quick_alignment_); std::cout << std::endl;
-		Output_boolean("align_only_over_base_atoms_=", align_only_over_base_atoms_); std::cout << std::endl;
-		Output_boolean("two_stage_clustering_= ", two_stage_clustering_); std::cout << std::endl;
-		Output_boolean("keep_pose_in_memory_= ", keep_pose_in_memory_); std::cout << std::endl;
-		Output_boolean("keep_pose_in_memory_hydrid_= ", keep_pose_in_memory_hydrid_); std::cout << std::endl;
-		Output_boolean("optimize_memory_usage_(by slicing out fixed region of the pose)= ", optimize_memory_usage_); std::cout << std::endl;
-		Output_boolean("distinguish_pucker_= ", distinguish_pucker_); std::cout << std::endl;
-		Output_boolean("add_lead_zero_to_tag_= ", add_lead_zero_to_tag_); std::cout << std::endl;
-		Output_boolean("PBP_clustering_at_chain_closure_= ", PBP_clustering_at_chain_closure_); std::cout << std::endl;
-		Output_boolean("full_length_loop_rmsd_clustering_= ", full_length_loop_rmsd_clustering_); std::cout << std::endl;
-		Output_boolean("ignore_FARFAR_no_auto_bulge_tag_= ", ignore_FARFAR_no_auto_bulge_tag_); std::cout << std::endl;
-		Output_boolean("ignore_FARFAR_no_auto_bulge_parent_tag_= ", ignore_FARFAR_no_auto_bulge_parent_tag_); std::cout << std::endl;
-		Output_boolean("ignore_unmatched_virtual_res_= ", ignore_unmatched_virtual_res_); std::cout << std::endl;
+		TR << "suite_cluster_radius_= " << suite_cluster_radius_ << std::endl;
+		TR << "loop_cluster_radius_= " << loop_cluster_radius_ << std::endl;
+		Output_boolean("job_parameters_exist_= ", job_parameters_exist_, TR ); TR << std::endl;
+		Output_boolean("quick_alignment_= ", quick_alignment_, TR ); TR << std::endl;
+		Output_boolean("align_only_over_base_atoms_=", align_only_over_base_atoms_, TR ); TR << std::endl;
+		Output_boolean("two_stage_clustering_= ", two_stage_clustering_, TR ); TR << std::endl;
+		Output_boolean("keep_pose_in_memory_= ", keep_pose_in_memory_, TR ); TR << std::endl;
+		Output_boolean("keep_pose_in_memory_hydrid_= ", keep_pose_in_memory_hydrid_, TR ); TR << std::endl;
+		Output_boolean("optimize_memory_usage_(by slicing out fixed region of the pose)= ", optimize_memory_usage_, TR ); TR << std::endl;
+		Output_boolean("distinguish_pucker_= ", distinguish_pucker_, TR ); TR << std::endl;
+		Output_boolean("add_lead_zero_to_tag_= ", add_lead_zero_to_tag_, TR ); TR << std::endl;
+		Output_boolean("PBP_clustering_at_chain_closure_= ", PBP_clustering_at_chain_closure_, TR ); TR << std::endl;
+		Output_boolean("full_length_loop_rmsd_clustering_= ", full_length_loop_rmsd_clustering_, TR ); TR << std::endl;
+		Output_boolean("ignore_FARFAR_no_auto_bulge_tag_= ", ignore_FARFAR_no_auto_bulge_tag_, TR ); TR << std::endl;
+		Output_boolean("ignore_FARFAR_no_auto_bulge_parent_tag_= ", ignore_FARFAR_no_auto_bulge_parent_tag_, TR ); TR << std::endl;
+		Output_boolean("ignore_unmatched_virtual_res_= ", ignore_unmatched_virtual_res_, TR ); TR << std::endl;
 
-		std::cout << "max_decoys_= " << max_decoys_ << std::endl;
-		std::cout << "score_diff_cut_= " << score_diff_cut_ << std::endl;
-		Output_boolean("perform_score_diff_cut_= ", perform_score_diff_cut_); std::cout << std::endl;
+		TR << "max_decoys_= " << max_decoys_ << std::endl;
+		TR << "score_diff_cut_= " << score_diff_cut_ << std::endl;
+		Output_boolean("perform_score_diff_cut_= ", perform_score_diff_cut_, TR ); TR << std::endl;
 
 		//////////basic initialization///////////////
 		pose_output_list_.clear();
@@ -213,7 +213,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		/////////////////////////////////////////////
 
 		if(optimize_memory_usage_){
-			if(!job_parameters_exist_) utility_exit_with_message("optimize_memory_usage=True but job_parameters_exist_=False!"); 		
+			if(!job_parameters_exist_) utility_exit_with_message("optimize_memory_usage=True but job_parameters_exist_=False!");
 			sliced_pose_job_params_.setup(job_parameters_);
 		}
 
@@ -237,14 +237,14 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 
 		if(tag_output_list_.size()!=silent_struct_output_list_.size()) utility_exit_with_message( "tag_output_list_.size()!=silent_struct_output_list_.size()");
-	
+
 		if((keep_pose_in_memory_==true) && (keep_pose_in_memory_hydrid_==false) ){
 			if(pose_output_list_.size()!=tag_output_list_.size()) utility_exit_with_message( "pose_output_list_.size()!=tag_output_list_.size()");
 		}
 
 
-		std::cout << "Final cluster_pose_list size= " << silent_struct_output_list_.size() << std::endl;
-		std::cout << "Total clustering time : " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "Final cluster_pose_list size= " << silent_struct_output_list_.size() << std::endl;
+		TR << "Total clustering time : " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 	}
 
@@ -268,18 +268,18 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 
 		//get the first pose in the silent_file_stream.
-		while ( input_->has_another_pose() ) {		
+		while ( input_->has_another_pose() ) {
 			num_silent_struct++;
 
 			core::io::silent::SilentStructOP const silent_struct( input_->next_struct() );
-		
-			if(found_valid_struct==false){		
+
+			if(found_valid_struct==false){
 				PoseOP pose_op( new Pose );
-				silent_struct->fill_pose( *pose_op, *rsd_set_ ); 
+				silent_struct->fill_pose( *pose_op, *rsd_set_ );
 
 				std::string const & tag( silent_struct->decoy_tag() );
 
-				if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue; 
+				if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue;
 
 				first_pose_before_slicing=(*pose_op);
 
@@ -301,43 +301,43 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		//Building region 11_4 of J5/J5a hinge 2r8s
 		//12 nucleotides pose, 4G, 2C, 3U and 3A
 		//209,155 silent struct  280 large clusters pose, and 9889 normal pose.
-		//the size of the silent_file is: 1.4G REGION_11_4/start_from_region_11_2_sample_filtered.out 
-		//So 6.69 KB. 0.55 KB per nucleotide 
-		//Memory limit on Biox is 
+		//the size of the silent_file is: 1.4G REGION_11_4/start_from_region_11_2_sample_filtered.out
+		//So 6.69 KB. 0.55 KB per nucleotide
+		//Memory limit on Biox is
  		//MEMLIMIT
  		//4000000 KB, 4G.
 		//So mememory used to store pose is 2.4G for (9889+280=10169 pose)
 		//236 KB per pose. 19 KB per nucleotide.
 
-		//Consistency check: 
+		//Consistency check:
 		//Finished reading 164975 structures from REGION_4_8/start_from_region_5_8_sample_filtered.out
 		//553M    REGION_4_8/start_from_region_5_8_sample_filtered.out
 		//This is 1ZIH 4-8 is res 5-9, (5,6,7,8,9)-> 5 res. -> 0.6 KB per nucleotide!!
 		//Finished reading 247508 structures from REGION_4_8/start_from_region_4_7_sample_filtered.out
-		//277M    REGION_4_8/start_from_region_4_7_sample_filtered.out 
+		//277M    REGION_4_8/start_from_region_4_7_sample_filtered.out
 		//->0.2 KB per nucleotide... WHY DOESN THE VALUE FLUCTUATE SO MUCH??
 
 		//4,000,000=(max_memory_pose_num_)*19*(total_res) + (num_silent_struct)*(0.078)*(total_res)
 		Real const total_memory=4000000;
 
 		Real const memory_taken_by_silent_struct=(num_silent_struct*0.55*total_res_before_slicing);
-		
+
 		if(memory_taken_by_silent_struct > total_memory){
 			max_memory_pose_num_=0;
-			std::cout << "memory_taken_by_silent_struct (" << memory_taken_by_silent_struct << ") > specified_total_memory(" << total_memory << ")" << std::endl;
+			TR << "memory_taken_by_silent_struct (" << memory_taken_by_silent_struct << ") > specified_total_memory(" << total_memory << ")" << std::endl;
 		}else{
 			max_memory_pose_num_= int( 0.7*( (total_memory-memory_taken_by_silent_struct)/(19*total_res) ) );  //0.7 is to be on the safe side
 		}
 
-		std::cout << "--------------StepWiseRNA_Clusterer::initialize_max_memory_pose_num----------" << std::endl; 
-		Output_boolean("optimize_memory_usage_ (by slicing)= ", optimize_memory_usage_); std::cout << std::endl;
-		std::cout << "first_pose total_res (before_slicing)= " << total_res_before_slicing << std::endl;
-		std::cout << "first_pose total_res (already account for slicing)= " << total_res << std::endl;
-		std::cout << "num_silent_struct= " << num_silent_struct << std::endl;
-		std::cout << "memory_taken_by_silent_struct= " << memory_taken_by_silent_struct << std::endl;
-		std::cout << "max_memory_pose_num_= " << max_memory_pose_num_ << std::endl;
-		std::cout << "time in function= " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
-		std::cout << "--------------StepWiseRNA_Clusterer::initialize_max_memory_pose_num----------" << std::endl; 
+		TR << "--------------StepWiseRNA_Clusterer::initialize_max_memory_pose_num----------" << std::endl;
+		Output_boolean("optimize_memory_usage_ (by slicing)= ", optimize_memory_usage_, TR ); TR << std::endl;
+		TR << "first_pose total_res (before_slicing)= " << total_res_before_slicing << std::endl;
+		TR << "first_pose total_res (already account for slicing)= " << total_res << std::endl;
+		TR << "num_silent_struct= " << num_silent_struct << std::endl;
+		TR << "memory_taken_by_silent_struct= " << memory_taken_by_silent_struct << std::endl;
+		TR << "max_memory_pose_num_= " << max_memory_pose_num_ << std::endl;
+		TR << "time in function= " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "--------------StepWiseRNA_Clusterer::initialize_max_memory_pose_num----------" << std::endl;
 
 	}
 
@@ -348,7 +348,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		using namespace core::pose;
 		using namespace ObjexxFCL;
 
-		if(!job_parameters_exist_) utility_exit_with_message("perform_VDW_rep_screen_=True but job_parameters_exist_=False!"); 		
+		if(!job_parameters_exist_) utility_exit_with_message("perform_VDW_rep_screen_=True but job_parameters_exist_=False!");
 
 		if(optimize_memory_usage_) utility_exit_with_message("perform_VDW_rep_screen_=True and optimize_memory_usage_=True!");
 
@@ -357,15 +357,15 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		input_->reset(); //reset the silentfile stream to the beginning..
 
 		//get the first pose in the silent_file_stream.
-		while ( input_->has_another_pose() ) {		
+		while ( input_->has_another_pose() ) {
 
 			PoseOP pose_op( new Pose );
 			core::io::silent::SilentStructOP const silent_struct( input_->next_struct() );
-			silent_struct->fill_pose( *pose_op, *rsd_set_ ); 
+			silent_struct->fill_pose( *pose_op, *rsd_set_ );
 
 			std::string const & tag( silent_struct->decoy_tag() );
 
-			if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue; 
+			if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue;
 
 			if(optimize_memory_usage_) (*pose_op)=sliced_pose_job_params_.create_sliced_pose(*pose_op);
 
@@ -373,7 +373,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			user_input_VDW_bin_screener_->setup_using_user_input_VDW_pose( VDW_rep_screen_info_, (*pose_op), StepWiseRNA_JobParametersCOP(job_parameters_) );
 
-			break;			
+			break;
 
 		}
 
@@ -389,21 +389,21 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		using namespace core::pose;
 		using namespace ObjexxFCL;
 
-		if(!job_parameters_exist_) utility_exit_with_message("quick_alignment_=True but job_parameters_exist_=False!"); 		
+		if(!job_parameters_exist_) utility_exit_with_message("quick_alignment_=True but job_parameters_exist_=False!");
 
 
-		//OK first check that it valid to use the quick_alignment_pose mode... in this mode, all alignment must be fixed res..However, this check itself is not enough to gaurantee that quicj_alignemnt_mode will work. Another requirement is that all the residue in working_best_alignment must be fixed in space with respect to each other. I try to ensure that this is always the case by making sure that every residues in the working_best_alignment is in the root_partition. (See StepWiseRNA_JobParameters_Setup.cc)
+		//OK first check that it valid to use the quick_alignment_pose mode... in this mode, all alignment must be fixed res..However, this check itself is not enough to gaurantee that quicj_alignemnt_mode will work. Another requirement is that all the residue in working_best_alignment must be fixed in space with respect to each other. I try to ensure that this is always the case by making sure that every residues in the working_best_alignment is in the root_partition. (See StepWiseRNA_JobParametersSetup.cc)
 
 		utility::vector1< core::Size > const working_best_alignment= job_parameters_->working_best_alignment();
 		utility::vector1< core::Size > const working_fixed_res =job_parameters_->working_fixed_res();
 
 		for(Size n=1; n<=working_best_alignment.size(); n++){
 			Size const seq_num=working_best_alignment[n];
-	
-			if(Contain_seq_num(seq_num, working_fixed_res)==false) {
 
-				Output_seq_num_list("working_best_alignment= ", working_best_alignment, 30);
-				Output_seq_num_list("working_fixed_res= ", working_fixed_res, 30);
+			if(working_fixed_res.has_value(seq_num)==false) {
+
+				Output_seq_num_list("working_best_alignment= ", working_best_alignment, TR, 30 );
+				Output_seq_num_list("working_fixed_res= ", working_fixed_res, TR, 30 );
 
 				utility_exit_with_message( "quick_alignment_mode is true. However: seq_num " + string_of(seq_num) + " is a element of working_best_alignment BUT not a element of working_fixed_res ");
 
@@ -416,16 +416,16 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		quick_alignment_pose_is_intialized_=true;
 
 		//get the first pose in the silent_file_stream.
-		while ( input_->has_another_pose() ) {		
+		while ( input_->has_another_pose() ) {
 
 
 			PoseOP pose_op( new Pose );
 			core::io::silent::SilentStructOP const silent_struct( input_->next_struct() );
-			silent_struct->fill_pose( *pose_op, *rsd_set_ ); 
+			silent_struct->fill_pose( *pose_op, *rsd_set_ );
 
 			std::string const & tag( silent_struct->decoy_tag() );
 
-			if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue; 
+			if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue;
 
 			if(optimize_memory_usage_) (*pose_op)=sliced_pose_job_params_.create_sliced_pose(*pose_op);
 
@@ -433,13 +433,13 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			quick_alignment_pose_=(*pose_op);
 			quick_alignment_tag_=tag;
-			std::cout << "found quick alignment_pose, tag= " << tag << std::endl;
+			TR << "found quick alignment_pose, tag= " << tag << std::endl;
 
-			break;			
+			break;
 
 		}
 
-		if(output_pdb_) quick_alignment_pose_.dump_pdb( "quick_alignment_pose_" + quick_alignment_tag_ + ".pdb"); 
+		if(output_pdb_) quick_alignment_pose_.dump_pdb( "quick_alignment_pose_" + quick_alignment_tag_ + ".pdb");
 
 		input_->reset(); //reset the silentfile stream to the beginning..
 
@@ -465,14 +465,14 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 	void
 	StepWiseRNA_Clusterer::two_stage_clustering(){
 
-		Output_title_text("Enter two_stage_clustering function");
+		Output_title_text("Enter two_stage_clustering function", TR );
 
 		Real const whole_struct_cluster_radius_actual=whole_struct_cluster_radius_;
 		Real const loop_cluster_radius_actual  = loop_cluster_radius_;
 		Real const suite_cluster_radius_actual = suite_cluster_radius_;
 		bool const keep_pose_in_memory_actual=keep_pose_in_memory_;
 		bool const keep_pose_in_memory_hydrid_actual=keep_pose_in_memory_hydrid_;
-	
+
 		whole_struct_cluster_radius_=2.0; //hard code
 		loop_cluster_radius_= 2.0; //hard_code
 		suite_cluster_radius_= 999; //hard_code ...no suite_cluster...
@@ -480,10 +480,10 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		keep_pose_in_memory_hydrid_=false;
 		use_triangle_inequality_=false;
 
-		Output_title_text("First stage: large RMSD clustering");
+		Output_title_text("First stage: large RMSD clustering", TR );
 
 		input_->reset(); //reset the silentfile stream to the beginning..
-		do_some_clustering(); 
+		do_some_clustering();
 
 		large_cluster_pose_list_ = pose_output_list_;
 		pose_output_list_.clear();
@@ -497,7 +497,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		create_large_cluster_centers_member_list();
 
 		//////////////////////////////////////////////////////
-		Output_title_text("Second stage: Actual clustering");
+		Output_title_text("Second stage: Actual clustering", TR );
 
 
 		//Reset to actual (user specified) value
@@ -510,7 +510,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		use_triangle_inequality_=true;
 
 		input_->reset(); //reset the silentfile stream to the beginning..
-		do_some_clustering(); 
+		do_some_clustering();
 
 	}
 
@@ -519,12 +519,12 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 	void
 	StepWiseRNA_Clusterer::create_large_cluster_centers_member_list(){
-		
+
 		using namespace core::pose;
 
 
-		Output_title_text("create_large_cluster_centers_member_list");
-		clock_t const time_start( clock() ); 
+		Output_title_text("create_large_cluster_centers_member_list", TR );
+		clock_t const time_start( clock() );
 
 		cluster_centers_neighbor_list_.clear();
 
@@ -537,7 +537,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		std::map< core::Size, core::Size > const & full_to_sub = get_act_full_to_sub();
 		std::map< core::Size, bool > const & Is_prepend_map = get_act_Is_prepend_map();
 
-		Size input_ID=0; 
+		Size input_ID=0;
 
 		Real last_cluster_center_score( 0.0 ); //does slicing the pose change the score?
 		getPoseExtraScores( *(large_cluster_pose_list_[large_cluster_pose_list_.size()]), "score", last_cluster_center_score );
@@ -547,7 +547,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			input_ID++; //count messed up poses as well
 
 			if( (input_ID % 1000) ==0){
-				std::cout << "input_ID= " << input_ID << " time taken so far= " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+				TR << "input_ID= " << input_ID << " time taken so far= " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 			}
 
 
@@ -561,7 +561,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			std::string const & tag( silent_struct->decoy_tag() );
 
 			//Hacky thing. Ignore messed structure until we find a fix
-			if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue; 
+			if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue;
 
 			if(optimize_memory_usage_) (*pose_op)=sliced_pose_job_params_.create_sliced_pose(*pose_op);
 
@@ -578,7 +578,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 				pose::Pose const & cluster_center_pose=*(large_cluster_pose_list_[n]);
 
 				if(quick_alignment_==false) align_poses(*pose_op, "current_pose", cluster_center_pose, "large_cluster_center", alignment_res, align_only_over_base_atoms_);
-		
+
 				Real const RMSD=rmsd_over_residue_list(*pose_op , cluster_center_pose, rmsd_res_list, full_to_sub, Is_prepend_map, false);
 
 				if(RMSD<(loop_cluster_radius_*1.5)){ //A neigbor/member of this cluster_center
@@ -591,9 +591,9 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			}
 		}
 
-		std::cout << "check large_cluster_pose_list_ member size " << std::endl;
+		TR << "check large_cluster_pose_list_ member size " << std::endl;
 		for(Size n=1; n<=large_cluster_pose_list_.size(); n++){
-			std::cout << "cluster center " << n << " has " << cluster_centers_neighbor_list_[n].size() << " members " << std::endl;
+			TR << "cluster center " << n << " has " << cluster_centers_neighbor_list_[n].size() << " members " << std::endl;
 		}
 
 
@@ -610,18 +610,18 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		using namespace ObjexxFCL;
 
 
-		Output_title_text("StepWiseRNA_Clusterer::create_silent_file_and_tag_list()");
+		Output_title_text("StepWiseRNA_Clusterer::create_silent_file_and_tag_list()", TR );
 
 		input_->reset(); //reset the silentfile stream to the beginning..
 
-		tag_output_list_.clear();	
+		tag_output_list_.clear();
 		silent_struct_output_list_.clear();
 		pose_output_list_.clear();
 
 		utility::vector1 < core::Size > working_global_sample_res_list;
 		utility::vector1 < core::Size > working_filter_virtual_res_list;
 
-		
+
 		if(perform_VDW_rep_screen_ || perform_filters_){
 
 			if(job_parameters_exist_==false) utility_exit_with_message("(perform_VDW_rep_screen_ || perform_filters_) but job_parameters_exist_==false!");
@@ -629,13 +629,13 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			working_global_sample_res_list=job_parameters_->working_global_sample_res_list();
 			working_filter_virtual_res_list=apply_full_to_sub_mapping(filter_virtual_res_list_, job_parameters_);
 
-			Output_seq_num_list("filter_virtual_res_list_=", filter_virtual_res_list_, 50); 
-			Output_seq_num_list("working_filter_virtual_res_list=", working_filter_virtual_res_list, 50); 
-			Output_seq_num_list("working_global_sample_res_list=", working_global_sample_res_list, 50);
-			std::cout << "min_num_south_ribose_filter_=" << min_num_south_ribose_filter_ << std::endl;
+			Output_seq_num_list("filter_virtual_res_list_=", filter_virtual_res_list_, TR, 50 );
+			Output_seq_num_list("working_filter_virtual_res_list=", working_filter_virtual_res_list, TR, 50 );
+			Output_seq_num_list("working_global_sample_res_list=", working_global_sample_res_list, TR, 50 );
+			TR << "min_num_south_ribose_filter_=" << min_num_south_ribose_filter_ << std::endl;
 		}
 
-		Size input_ID=0; 
+		Size input_ID=0;
 
 		bool filter_verbose=true;
 
@@ -648,11 +648,11 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			if(pass_FARFAR_no_auto_bulge_filter(silent_struct)==false) continue;
 
 			if(perform_VDW_rep_screen_ || perform_filters_ ){
-				
-				PoseOP pose_op( new Pose );
-				silent_struct->fill_pose( *pose_op, *rsd_set_ ); //umm is the pose still connected to the silent_struct? 
 
-				if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue; 
+				PoseOP pose_op( new Pose );
+				silent_struct->fill_pose( *pose_op, *rsd_set_ ); //umm is the pose still connected to the silent_struct?
+
+				if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue;
 
 				///Jan 12, 2012:Consistency check://///
 				if(job_parameters_exist_){
@@ -670,8 +670,8 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 					bool const pass_VDW_rep_screen=user_input_VDW_bin_screener_->VDW_rep_screen_with_act_pose( (*pose_op), working_global_sample_res_list, false /*local verbose*/);
 					if(pass_VDW_rep_screen==false){
-						if(filter_verbose) std::cout << "tag= " << tag << " fail VDW_rep_screen! " << std::endl;
-						continue;					
+						if(filter_verbose) TR << "tag= " << tag << " fail VDW_rep_screen! " << std::endl;
+						continue;
 					}
 				}
 
@@ -689,7 +689,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 						if((*pose_op).residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")) continue;
 						if(Get_residue_pucker_state((*pose_op), seq_num)!=NORTH){
 							pass_filter=false;
-							if(filter_verbose) std::cout << "pose= " << tag << " doesn't have north_ribose at seq_num= " << seq_num << std::endl;
+							if(filter_verbose) TR << "pose= " << tag << " doesn't have north_ribose at seq_num= " << seq_num << std::endl;
 						}
 					}
 
@@ -700,7 +700,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 						if((*pose_op).residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")) continue;
 						if(Get_residue_pucker_state((*pose_op), seq_num)!=SOUTH){
 							 pass_filter=false;
-							if(filter_verbose) std::cout << "pose= " << tag << " doesn't have south_ribose at seq_num= " << seq_num << std::endl;
+							if(filter_verbose) TR << "pose= " << tag << " doesn't have south_ribose at seq_num= " << seq_num << std::endl;
 						}
 					}
 
@@ -711,7 +711,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 						if((*pose_op).residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")) continue;
 						if(Get_residue_base_state((*pose_op), seq_num)!=SYN){
 						 	pass_filter=false;
-							if(filter_verbose) std::cout << "pose= " << tag << " doesn't have syn_chi at seq_num= " << seq_num << std::endl;
+							if(filter_verbose) TR << "pose= " << tag << " doesn't have syn_chi at seq_num= " << seq_num << std::endl;
 						}
 					}
 
@@ -719,7 +719,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 						Size const seq_num=working_filter_virtual_res_list[n];
 						if((*pose_op).residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")==false){
 							pass_filter=false;
-							if(filter_verbose) std::cout << "pose= " << tag << " doesn't have virtual_rna_residue variant_type at seq_num= " << seq_num << std::endl;
+							if(filter_verbose) TR << "pose= " << tag << " doesn't have virtual_rna_residue variant_type at seq_num= " << seq_num << std::endl;
 						}
 					}
 
@@ -731,7 +731,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 								num_south_ribose+=1;
 							}
 						}
-						//if(filter_verbose) std::cout << "pose= " << tag << " have " << num_south_ribose << " south_pucker_ribose." << std::endl;
+						//if(filter_verbose) TR << "pose= " << tag << " have " << num_south_ribose << " south_pucker_ribose." << std::endl;
 						if(num_south_ribose<min_num_south_ribose_filter_) pass_filter=false;
 					}
 
@@ -741,7 +741,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			}
 
-			if(verbose_) std::cout << "Adding " << tag << " ID= " << input_ID << std::endl;
+			if(verbose_) TR << "Adding " << tag << " ID= " << input_ID << std::endl;
 
 			tag_output_list_.push_back(  tag );
 			silent_struct_output_list_.push_back(  silent_struct  );
@@ -758,12 +758,12 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		}
 
 		if(perform_VDW_rep_screen_ || perform_filters_){
-			std::cout << tag_output_list_.size() << " out of " << input_ID << " poses pass the filters." << std::endl;
+			TR << tag_output_list_.size() << " out of " << input_ID << " poses pass the filters." << std::endl;
 		}
 
 		input_->reset(); //reset the silentfile stream to the beginning..
 
-		Output_title_text("");
+		Output_title_text("", TR );
 
 
 	}
@@ -775,15 +775,15 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		using namespace core::pose;
 		using namespace ObjexxFCL;
 
-		clock_t const time_start( clock() ); 
+		clock_t const time_start( clock() );
 
-		input_->reset(); 				 					//Dec 11, 2011. 
-		tag_output_list_.clear();	 					//Dec 11, 2011. 
-		silent_struct_output_list_.clear(); //Dec 11, 2011. 
-		pose_output_list_.clear(); 					//Dec 11, 2011. 
+		input_->reset(); 				 					//Dec 11, 2011.
+		tag_output_list_.clear();	 					//Dec 11, 2011.
+		silent_struct_output_list_.clear(); //Dec 11, 2011.
+		pose_output_list_.clear(); 					//Dec 11, 2011.
 
 		if(use_triangle_inequality_) all_pose_to_output_pose_ID_map_.clear();
-		
+
 		bool Is_first_pose = true;
 		bool score_min_defined = false;
 		Real score_min = 0.0;
@@ -817,7 +817,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			TR << " Num_pose_clustered so far " << num_pose_clustered << std::endl;
 
 			//Hacky thing. Ignore messed structure until we find a fix...ideally should just remove messed up pose from input_ at beginning of the Class.
-			if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue; 
+			if(protocols::swa::rna::check_for_messed_up_structure((*pose_op), tag)==true) continue;
 
 			///Jan 12, 2012:Consistency check://///
 			if(job_parameters_exist_){
@@ -839,7 +839,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 				first_pose_=(*pose_op);
 				Is_first_pose=false;
 			}
-	
+
 
 			/////////////////////////////////////////////////////////
 
@@ -848,7 +848,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			if ( OK )  {
 				TR << "ADDING " << tag << std::endl;
-			
+
 				tag_output_list_.push_back(  tag );
 
 				if(keep_pose_in_memory_==true){
@@ -858,9 +858,9 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 					}
 				}
-				
+
 				silent_struct_output_list_.push_back(  silent_struct  );
-		
+
 				if(use_triangle_inequality_) {
 
 					if(input_ID>all_pose_to_output_pose_ID_map_.size()){
@@ -870,14 +870,14 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 					all_pose_to_output_pose_ID_map_[input_ID]=silent_struct_output_list_.size();
 				}
 
-				if( silent_struct_output_list_.size() >= max_decoys_ ) break;	
-	
+				if( silent_struct_output_list_.size() >= max_decoys_ ) break;
+
 			}
 
 			num_pose_clustered++;
 
 			if( (num_pose_clustered % 100) ==0){
-				std::cout << "num_pose_clustered= " << num_pose_clustered << " num_cluster_centers= " << silent_struct_output_list_.size() << " time_taken_so_far= " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+				TR << "num_pose_clustered= " << num_pose_clustered << " num_cluster_centers= " << silent_struct_output_list_.size() << " time_taken_so_far= " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 			}
 		}
 
@@ -889,8 +889,8 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 	/////////////////////////////////////////////////////////////////////
 
 	bool
-	StepWiseRNA_Clusterer::Is_old_individual_suite_cluster(pose::Pose const & current_pose, 
-                                                     pose::Pose const & cluster_center_pose, 
+	StepWiseRNA_Clusterer::Is_old_individual_suite_cluster(pose::Pose const & current_pose,
+                                                     pose::Pose const & cluster_center_pose,
                                                      utility::vector1 < core::Size > const & rmsd_res_list,
 																									std::map< core::Size, core::Size > const & full_to_sub,
 																									std::map< core::Size, bool > const & Is_prepend_map,
@@ -924,7 +924,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			if(ignore_unmatched_virtual_res_==false){ //Sep 07. 2011
 
 				if(current_is_virtual_res != center_is_virtual_res){
-					return false; //current_pose is not part of this cluster center 
+					return false; //current_pose is not part of this cluster center
 				}
 
 			}
@@ -934,27 +934,27 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 				continue;
 			}
 
-	
+
 			if(PBP_clustering_at_chain_closure_ && job_parameters_->gap_size()==0 ){ //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
 				rmsd_list[i] =	 phosphate_base_phosphate_rmsd( current_pose, cluster_center_pose, seq_num, false /*ignore_virtual_atom*/);
 			}else{
 				rmsd_list[i] =  suite_rmsd(current_pose, cluster_center_pose, seq_num, Is_prepend, false /*ignore_virtaul_atom*/);
 			}
 
-			if(rmsd_list[i]> cluster_radius ) return false; //current_pose is not part of this cluster center 
+			if(rmsd_list[i]> cluster_radius ) return false; //current_pose is not part of this cluster center
 
 
 			if(distinguish_pucker_){
 
-				if(current_is_virtual_ribose != center_is_virtual_ribose){ 
-					//New on Oct 09, 2011. This should NOT lead to any new changes, since virtual_ribose is usually accompanied by virtual_res at the neighoring nucleotide. 
+				if(current_is_virtual_ribose != center_is_virtual_ribose){
+					//New on Oct 09, 2011. This should NOT lead to any new changes, since virtual_ribose is usually accompanied by virtual_res at the neighoring nucleotide.
 					return false;
 				}
 
 				bool check_pucker=true;
 
-				if(current_is_virtual_ribose && center_is_virtual_ribose){ 
-					//New on Oct 09, 2011. This should remove "false" new cluster where current pose and cluster center pose differ only by the pucker of a virtual_ribose. 
+				if(current_is_virtual_ribose && center_is_virtual_ribose){
+					//New on Oct 09, 2011. This should remove "false" new cluster where current pose and cluster center pose differ only by the pucker of a virtual_ribose.
 					check_pucker=false;
 				}
 
@@ -969,7 +969,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			if(distinguish_pucker_){
 				if(rmsd_list[i]> cluster_radius || (same_ribose_pucker_list[i]==false)) return false; //current_pose is not part of this cluster center
 			}else{
-				if(rmsd_list[i]> cluster_radius ) return false; //current_pose is not part of this cluster center 
+				if(rmsd_list[i]> cluster_radius ) return false; //current_pose is not part of this cluster center
 			}
 			*/
 
@@ -985,23 +985,25 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 				if(current_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE") && cluster_center_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){
 					both_pose_res_is_virtual=true;
 				}
-				std::cout << "full_seq_num= " << full_seq_num << " seq_num= " << seq_num; Output_boolean(" Is_prepend= ",Is_prepend); Output_boolean(" both_pose_res_is_virtual= ",both_pose_res_is_virtual);
-				std::cout << " same_pucker[" << i << "]= "; Output_boolean(same_ribose_pucker_list[i]);
+				TR << "full_seq_num= " << full_seq_num << " seq_num= " << seq_num;
+				Output_boolean(" Is_prepend= ",Is_prepend, TR );
+				Output_boolean(" both_pose_res_is_virtual= ",both_pose_res_is_virtual, TR);
+				TR << " same_pucker[" << i << "]= "; Output_boolean(same_ribose_pucker_list[i], TR );
 				print_ribose_pucker_state(" curr_pucker= ", Get_residue_pucker_state(current_pose, seq_num));
 				print_ribose_pucker_state(" center_pucker= ", Get_residue_pucker_state(cluster_center_pose, seq_num));
-				std::cout << " rmsd_list[" << i << "]= " << rmsd_list[i];
+				TR << " rmsd_list[" << i << "]= " << rmsd_list[i];
 
 				if(ignore_unmatched_virtual_res_){
 					if(current_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")!=cluster_center_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE")){
-						std::cout << " Ignoring unmatched_virtual_res= "; 
-						Output_boolean(" curr_virt= ", current_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE") );
-						Output_boolean(" center_virt= ", cluster_center_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE") );
+						TR << " Ignoring unmatched_virtual_res= ";
+						Output_boolean(" curr_virt= ", current_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE"), TR );
+						Output_boolean(" center_virt= ", cluster_center_pose.residue(seq_num).has_variant_type("VIRTUAL_RNA_RESIDUE"), TR );
 					}
 				}
 
-				std::cout << std::endl;
+				TR << std::endl;
 			}
-			
+
 		}
 
 		return true; //current_pose is not part of this cluster center
@@ -1014,23 +1016,23 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		using namespace core::pose;
 		using namespace ObjexxFCL;
 
-//		std::cout << "enter get_poseOP(" << n << ")" << std::endl;
+//		TR << "enter get_poseOP(" << n << ")" << std::endl;
 
 		if(keep_pose_in_memory_){
 			if(keep_pose_in_memory_hydrid_==false || n<=max_memory_pose_num_){
 
 				if(pose_output_list_.size()<n) utility_exit_with_message( "pose_output_list_.size() (" +string_of(pose_output_list_.size()) +") <n ("+ string_of(n) +")" );
-				
+
 				return pose_output_list_[ n ]; //if quick_alignment is true then this pose is already aligned to the quick_alignment_pose?
 			}
 		}
 
 		//OK if reach this point means that pose is not stored in the pose_output_list_, need to extract it from the silent_file.
 		core::pose::PoseOP pose_op( new Pose );
-		silent_struct_output_list_[n]->fill_pose( *pose_op, *rsd_set_ ); 
-		
+		silent_struct_output_list_[n]->fill_pose( *pose_op, *rsd_set_ );
+
 		if(optimize_memory_usage_) (*pose_op)=sliced_pose_job_params_.create_sliced_pose(*pose_op);
-		
+
 		if(quick_alignment_) align_to_quick_alignment_pose((*pose_op), tag_output_list_[n] );
 
 		return pose_op;
@@ -1054,7 +1056,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		Size num_cluster_center_used=0;
 
 		Real current_score( 0.0 );
-	
+
 		getPoseExtraScores( current_pose, "score", current_score ); //Is this slow?
 
 		fail_triangle_inequality_list.assign(silent_struct_output_list_.size(), false);
@@ -1071,11 +1073,11 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			if((cluster_center_score+0.001)>current_score) break; //0.001 to make account for round off error.  Umm maybe faster without this break statement?
 
-			// std::cout << "cluster_center_score= " << cluster_center_score << " current_score= " << current_score << std::endl;
+			// TR << "cluster_center_score= " << cluster_center_score << " current_score= " << current_score << std::endl;
 
 			num_cluster_center_used++;
 
-			Real const RMSD=rmsd_over_residue_list(current_pose, cluster_center_pose, rmsd_res_list, full_to_sub, Is_prepend_map, false); 
+			Real const RMSD=rmsd_over_residue_list(current_pose, cluster_center_pose, rmsd_res_list, full_to_sub, Is_prepend_map, false);
 			//problem is that bulge residues are excluded?? The weight of the RMSD and member.RMSD might not be the same... Aug 9, 2010
 
 			utility::vector1< Cluster_Member > const & member_list=cluster_centers_neighbor_list_[n];
@@ -1084,7 +1086,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 				Cluster_Member const & member=member_list[ii];
 
-				if((member.score+0.001)>current_score) break; //0.001 to account for round off errors. 
+				if((member.score+0.001)>current_score) break; //0.001 to account for round off errors.
 
 				if( (RMSD-member.RMSD)>(loop_cluster_radius_+0.02) ){ //satisfies triangle inequality
 
@@ -1092,7 +1094,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 						utility_exit_with_message( "member.ID (" + string_of(member.ID)  + ") > all_pose_to_output_pose_ID_map_.size() ( " +  string_of(all_pose_to_output_pose_ID_map_.size()) + ") ");
 					}
 
-					Size const output_pose_ID=all_pose_to_output_pose_ID_map_[member.ID];	
+					Size const output_pose_ID=all_pose_to_output_pose_ID_map_[member.ID];
 
 					if(output_pose_ID==0) continue; //member is not a output_pose..
 
@@ -1101,19 +1103,19 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 					}
 
 					if(fail_triangle_inequality_list[output_pose_ID]==false) num_fail_triangle_inequality++;
-				
+
 					fail_triangle_inequality_list[output_pose_ID]=true;
 
 				}
 			}
 		}
-		//std::cout << "num_cluster_center_used= " << num_cluster_center_used;
-		std::cout << "num_fail_triangle_inequality= " << num_fail_triangle_inequality << " out_of= " << silent_struct_output_list_.size() << std::endl;
+		//TR << "num_cluster_center_used= " << num_cluster_center_used;
+		TR << "num_fail_triangle_inequality= " << num_fail_triangle_inequality << " out_of= " << silent_struct_output_list_.size() << std::endl;
 
 	}
 
 	//////////////////////////////////////////////////////////////////
-	bool 
+	bool
 	StepWiseRNA_Clusterer::Is_new_cluster_center_with_job_parameters(core::pose::PoseOP const & pose_op, std::string const & tag){
 
 		using namespace core::scoring;
@@ -1160,15 +1162,15 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 				loop_rmsd=rmsd_over_residue_list(current_pose, cluster_center_pose, rmsd_res_list, full_to_sub, Is_prepend_map, false /*verbose*/, false /*ignore_virtual_atom*/);
 			}
 
-			bool old_loop_cluster=(loop_rmsd < loop_cluster_radius_ ); 
+			bool old_loop_cluster=(loop_rmsd < loop_cluster_radius_ );
 
 			if(verbose_){
-				std::cout << "Between " << tag << " AND " << cluster_center_tag << ": loop_rmsd=" << loop_rmsd << " ";
-				Output_boolean("Is_old_suite_cluster= ", old_suite_cluster); std::cout << std::endl;
+				TR << "Between " << tag << " AND " << cluster_center_tag << ": loop_rmsd=" << loop_rmsd << " ";
+				Output_boolean("Is_old_suite_cluster= ", old_suite_cluster, TR ); TR << std::endl;
 			}
-	
+
 			if(old_suite_cluster==true && old_loop_cluster==true){
-				std::cout << tag << " is a neighbor of " << cluster_center_tag << std::endl;
+				TR << tag << " is a neighbor of " << cluster_center_tag << std::endl;
 				return false;
 			}
 
@@ -1190,7 +1192,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			Real rmsd = all_atom_rmsd( *(get_poseOP(n)) , *pose_op );
 
-			if ( rmsd < whole_struct_cluster_radius_ )	return false; 
+			if ( rmsd < whole_struct_cluster_radius_ )	return false;
 		}
 		return true;
 	}
@@ -1209,7 +1211,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		}else{
 			return check_for_closeness_without_job_parameters(pose_op);
 		}
-	
+
 	}
 
 
@@ -1247,7 +1249,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file(std::string const & silent_file,  
+	StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file(std::string const & silent_file,
 				                                                     protocols::swa::rna::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup,
 																													bool const write_score_only){
 
@@ -1255,19 +1257,19 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		using namespace core::scoring;
 		using namespace core::pose;
 
-		clock_t const time_start( clock() ); 
+		clock_t const time_start( clock() );
 
-		Output_title_text("ENTER StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file()");
+		Output_title_text("ENTER StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file()", TR );
 
 		if(job_parameters_exist_==false) utility_exit_with_message("job_parameters_exist_==false!");
 
 		///This could actually work...but it is just yet tested!
 		if(job_parameters_->Is_simple_full_length_job_params()==true) utility_exit_with_message("job_parameters_->Is_simple_full_length_job_params()==true!");
 
-		Output_boolean("write_score_only= ", write_score_only); std::cout << std::endl;
+		Output_boolean("write_score_only= ", write_score_only, TR ); TR << std::endl;
 
 		utility::vector1< core::Size > const & working_best_alignment = job_parameters_->working_best_alignment();
-		utility::vector1< core::Size > const & working_native_alignment = job_parameters_->working_native_alignment();	
+		utility::vector1< core::Size > const & working_native_alignment = job_parameters_->working_native_alignment();
 		std::string const & full_sequence=job_parameters_->full_sequence();
 
 
@@ -1283,7 +1285,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		//bool const ignore_min_decoys=true; //Over the keep min_decoy mode...Comment out on Dec 11, 2011.
 
 		//float best_score=9999999999999; //lead to server-test build error at R47198; Feb 02, 2012
-		//Real best_score=999999999; //Should Fix server-test build error BUT yet not tested; Feb 02, 2012 
+		//Real best_score=999999999; //Should Fix server-test build error BUT yet not tested; Feb 02, 2012
 
 		std::map< core::Size, bool > Is_prepend_map;
 		Is_prepend_map.clear();
@@ -1300,7 +1302,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			SilentStructOP s( silent_struct_output_list_[ n ] );
 
 			if((n % 100) ==0){
-				std::cout << "recalculate rmsd for " << tag << " n= " << n << " taken time " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC  << std::endl;
+				TR << "recalculate rmsd for " << tag << " n= " << n << " taken time " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC  << std::endl;
 			}
 			core::pose::PoseOP const pose_op=get_poseOP(n);
 			core::pose::Pose pose=(*pose_op);
@@ -1313,13 +1315,13 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			//This kinda weird in that setup_native_pose actually set the working_native_pose in the job_parameters...this interdependency is not good!
 			if(Is_valid_first_struct){
 				//best_score = score;
-				stepwise_rna_pose_setup->setup_native_pose( pose ); //Setup native_pose;	
+				stepwise_rna_pose_setup->setup_native_pose( pose ); //Setup native_pose;
 				Is_full_length_pose=( pose.total_residue()==full_sequence.size()) ? true : false;
-				Output_boolean("Is_full_length_pose= ", Is_full_length_pose); std::cout << std::endl;
+				Output_boolean("Is_full_length_pose= ", Is_full_length_pose, TR ); TR << std::endl;
 
 				Is_valid_first_struct=false;
-			}	
-			
+			}
+
 			//if(score > best_score + score_diff_cut_) break; //Comment out on Dec 11, 2011.
 
 			PoseOP native_pose_OP=new Pose;
@@ -1356,7 +1358,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			s->add_energy( "NEW_NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants, *native_pose_OP, rmsd_res_list, full_to_sub, Is_prepend_map, false /*verbose*/, true /*ignore_virtual_atom*/) );
 
-			////March 7, 2011....Output BASE-PAIRS STATISTIC/////////////////////////////// 
+			////March 7, 2011....Output BASE-PAIRS STATISTIC///////////////////////////////
 			//utility::vector1< core::Size > const working_rmsd_res_list=apply_full_to_sub_mapping(rmsd_res_list, job_parameters_);
 
 			//Nov 01, 2011 WARNING THIS currently does not work if there is protonated Adenosine!
@@ -1372,13 +1374,13 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			///////////////////////////////////////////////////////////////////////////////////////////////
 
 			silent_file_data.write_silent_struct( *s, silent_file, write_score_only );
-		
+
 		}
 
-		std::cout << "Total # pose alignment and rmsd recalculation= " << silent_struct_output_list_.size() << std::endl; 
-		std::cout << "Total recalculate rmsd time : " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "Total # pose alignment and rmsd recalculation= " << silent_struct_output_list_.size() << std::endl;
+		TR << "Total recalculate rmsd time : " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
-		Output_title_text("EXIT StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file()");
+		Output_title_text("EXIT StepWiseRNA_Clusterer::recalculate_rmsd_and_output_silent_file()", TR );
 
 	}
 
@@ -1390,9 +1392,9 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		using namespace core::scoring;
 		using namespace core::pose;
 
-		clock_t const time_start( clock() ); 
+		clock_t const time_start( clock() );
 
-		Output_title_text("ENTER StepWiseRNA_Clusterer::get_best_neighboring_shift_RMSD_and_output_silent_file()");
+		Output_title_text("ENTER StepWiseRNA_Clusterer::get_best_neighboring_shift_RMSD_and_output_silent_file()", TR );
 
 		if(job_parameters_exist_==false) utility_exit_with_message("job_parameters_exist_==false!");
 
@@ -1413,8 +1415,8 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		SilentFileData silent_file_data;
 
-		std::cout << "loop_cluster_radius_ = "  << loop_cluster_radius_  << std::endl;
-		std::cout << "suite_cluster_radius_= "  << suite_cluster_radius_ << std::endl;
+		TR << "loop_cluster_radius_ = "  << loop_cluster_radius_  << std::endl;
+		TR << "suite_cluster_radius_= "  << suite_cluster_radius_ << std::endl;
 
 		bool Is_full_length_pose=true; //Will be init first time the loop is tranversed.
 
@@ -1426,7 +1428,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			SilentStructOP s( silent_struct_output_list_[ n ] );
 
 			if((n % 100) ==0){
-				std::cout << "find_best_neighboring_shift_rmsd for " << tag << " n= " << n << " taken time " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC  << std::endl;
+				TR << "find_best_neighboring_shift_rmsd for " << tag << " n= " << n << " taken time " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC  << std::endl;
 			}
 
 			core::pose::PoseOP const current_pose_op=get_poseOP(n);
@@ -1436,11 +1438,11 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			if(Is_valid_first_struct){
 				 Is_full_length_pose=( current_pose.total_residue()==full_sequence.size()) ? true : false;
-				 Output_boolean("Is_full_length_pose= ", Is_full_length_pose); std::cout << std::endl;
+				 Output_boolean("Is_full_length_pose= ", Is_full_length_pose, TR ); TR << std::endl;
 
 				Is_valid_first_struct=false;
 
-			}	
+			}
 
 			Real start_score( 0.0 );
 			bool has_total_score=getPoseExtraScores( current_pose, "score", start_score );
@@ -1463,11 +1465,11 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 				core::pose::PoseOP const other_pose_op=get_poseOP( other_pose_ID );
 				core::pose::Pose other_pose=(*other_pose_op);
 
-				if(protocols::swa::rna::check_for_messed_up_structure(other_pose, other_tag)==true) continue;				
+				if(protocols::swa::rna::check_for_messed_up_structure(other_pose, other_tag)==true) continue;
 
 				if(quick_alignment_==false) align_poses(other_pose, other_tag, current_pose, tag, working_best_alignment, align_only_over_base_atoms_);
 
-				
+
 				bool old_suite_cluster=Is_old_individual_suite_cluster(current_pose, other_pose, rmsd_res_list, full_to_sub, Is_prepend_map, suite_cluster_radius_ );
 
 				Real loop_rmsd=99.99;
@@ -1479,10 +1481,10 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 					loop_rmsd=rmsd_over_residue_list(current_pose, other_pose, rmsd_res_list, full_to_sub, Is_prepend_map, false /*verbose*/, false /*ignore_virtual_atom*/);
 				}
 
-				bool old_loop_cluster=(loop_rmsd < loop_cluster_radius_ ); 
-	
+				bool old_loop_cluster=(loop_rmsd < loop_cluster_radius_ );
+
 				if(old_suite_cluster==true && old_loop_cluster==true){
-					if(verbose_) std::cout << tag << " is a neighbor of " << other_tag << std::endl;
+					if(verbose_) TR << tag << " is a neighbor of " << other_tag << std::endl;
 				}else{
 					continue; //Not a neighor!
 				}
@@ -1499,9 +1501,9 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			float const new_score=start_score-start_shift_score+best_shift_score;
 
-			//setPoseExtraScores(pose, "score", new_score); 
-			//setPoseExtraScores(pose, "shift_score", best_shift_score); 
-			//setPoseExtraScores(pose, "self_shift_score", start_shift_score); 
+			//setPoseExtraScores(pose, "score", new_score);
+			//setPoseExtraScores(pose, "shift_score", best_shift_score);
+			//setPoseExtraScores(pose, "self_shift_score", start_shift_score);
 			//add_score_line_string(pose, "src_shift_tag", best_shift_tag);
 
 			SilentStructOP new_silent_struct=s->clone(); //Important to create new one since shift_score is being changed!!!
@@ -1512,13 +1514,13 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			new_silent_struct->add_string_value("src_shift_tag", best_shift_tag);
 
 			silent_file_data.write_silent_struct( *new_silent_struct, silent_file, false /*write_score_only*/ );
-				
+
 		}
 
-		std::cout << "silent_struct_output_list_.size()= " << silent_struct_output_list_.size() << std::endl; 
-		std::cout << "Total get_best_neighboring_shift_RMSD_and_output_silent_file time : " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "silent_struct_output_list_.size()= " << silent_struct_output_list_.size() << std::endl;
+		TR << "Total get_best_neighboring_shift_RMSD_and_output_silent_file time : " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
-		Output_title_text("EXIT StepWiseRNA_Clusterer::get_best_neighboring_shift_RMSD_and_output_silent_file()");
+		Output_title_text("EXIT StepWiseRNA_Clusterer::get_best_neighboring_shift_RMSD_and_output_silent_file()", TR );
 
 
 	}
@@ -1529,7 +1531,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 	StepWiseRNA_Clusterer::create_tags_map(){
 
 
-		Output_title_text("ENTER StepWiseRNA_Clusterer::create_tag_map()");
+		Output_title_text("ENTER StepWiseRNA_Clusterer::create_tag_map()", TR );
 
 		input_->reset(); //reset the silentfile stream to the beginning..
 
@@ -1539,10 +1541,10 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		//mymap.count(c)
 
 		while( input_->has_another_pose() ) {
-			
+
 			core::io::silent::SilentStructOP const silent_struct( input_->next_struct() );
 
-			std::string const tag = silent_struct->decoy_tag();	
+			std::string const tag = silent_struct->decoy_tag();
 
 			if(ignore_FARFAR_no_auto_bulge_tag_){
 
@@ -1552,12 +1554,12 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			}
 
-			
+
 			if(ignore_FARFAR_no_auto_bulge_parent_tag_){
 
 				if(silent_struct->has_parent_remark("PARENT_TAG")==false){
-					std::cout << "silent_struct (" << tag  << ") missing PARENT_TAG!" << std::endl;
-					silent_struct->print_parent_remarks(std::cout); 
+					TR << "silent_struct (" << tag  << ") missing PARENT_TAG!" << std::endl;
+					silent_struct->print_parent_remarks(TR);
 					utility_exit_with_message("silent_struct (" + tag + ") missing PARENT_TAG!");
 				}
 
@@ -1573,7 +1575,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		input_->reset(); //reset the silentfile stream to the beginning..
 
-		Output_title_text("EXIT StepWiseRNA_Clusterer::create_tag_map()");
+		Output_title_text("EXIT StepWiseRNA_Clusterer::create_tag_map()", TR );
 
 	}
 
@@ -1582,7 +1584,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 	StepWiseRNA_Clusterer::pass_FARFAR_no_auto_bulge_filter(core::io::silent::SilentStructOP const & silent_struct) const{
 
 		//This only effects to FARFAR models!
-		//For the purpose of clustering, assume that the NO_AUTO_BULGE belong to the same same cluster as the WITH_AUTO_BULGE pose.	
+		//For the purpose of clustering, assume that the NO_AUTO_BULGE belong to the same same cluster as the WITH_AUTO_BULGE pose.
 		//So if a instance of the pose with WITH_AUTO_BULGE exist in the silent_file then ignore the NO_AUTO_BULGE version of the pose!
 		//The WITH_AUTO_BULGE pose always have better energy!
 
@@ -1601,12 +1603,12 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			if(found_curr_tag!=std::string::npos){
 
 				std::string WITH_AUTO_BULGE_curr_tag=tag;
-		
+
 				WITH_AUTO_BULGE_curr_tag.replace( found_curr_tag, 14, WITH_AUTO_BULGE_STR );
 
 				if(current_tags_map_.count(WITH_AUTO_BULGE_curr_tag)>0){
 
-					std::cout << "Ignoring NO_AUTO_BULGE pose: " << tag << " since WITH_BULGE_curr_tag: " << WITH_AUTO_BULGE_curr_tag << " exist!" << std::endl;  
+					TR << "Ignoring NO_AUTO_BULGE pose: " << tag << " since WITH_BULGE_curr_tag: " << WITH_AUTO_BULGE_curr_tag << " exist!" << std::endl;
 					return false;
 
 				}
@@ -1633,13 +1635,13 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			if(found_parent_tag!=std::string::npos){
 
 				std::string WITH_AUTO_BULGE_parent_tag=parent_tag;
-	
+
 				WITH_AUTO_BULGE_parent_tag.replace( found_parent_tag, 14, WITH_AUTO_BULGE_STR );
 
 				if(parent_tags_map_.count(WITH_AUTO_BULGE_parent_tag)>0){
 
-					std::cout << "Ignoring NO_AUTO_BULGE pose: " << tag << " with parent_tag: " << parent_tag;
-					std::cout << ", since WITH_AUTO_BULGE_parent_tag " << WITH_AUTO_BULGE_parent_tag << " exist!" <<  std::endl;  
+					TR << "Ignoring NO_AUTO_BULGE pose: " << tag << " with parent_tag: " << parent_tag;
+					TR << ", since WITH_AUTO_BULGE_parent_tag " << WITH_AUTO_BULGE_parent_tag << " exist!" <<  std::endl;
 					return false;
 
 				}
@@ -1652,14 +1654,14 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 
 	//////////////////////////////////////////////
-	void 
+	void
 	StepWiseRNA_Clusterer::set_job_parameters( protocols::swa::rna::StepWiseRNA_JobParametersCOP & job_parameters){
 
-		job_parameters_=job_parameters; 
+		job_parameters_=job_parameters;
 
 	}
 	//////////////////////////////////////////////
-	void 
+	void
 	StepWiseRNA_Clusterer::set_job_parameters_exist( bool const job_parameters_exist){
 
 		job_parameters_exist_=job_parameters_exist;
@@ -1677,19 +1679,19 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 	StepWiseRNA_Clusterer::get_act_rmsd_res_list()	 const {
 		utility::vector1 < core::Size > const & rmsd_res_list = (optimize_memory_usage_) ? sliced_pose_job_params_.sliced_pose_rmsd_res_list : job_parameters_->rmsd_res_list();
 		return rmsd_res_list;
-	}	
+	}
 
 	std::map< core::Size, core::Size > const &
 	StepWiseRNA_Clusterer::get_act_full_to_sub()	 const {
 		std::map< core::Size, core::Size > const & full_to_sub =(optimize_memory_usage_) ? sliced_pose_job_params_.sliced_pose_full_to_sub   : job_parameters_->const_full_to_sub();
 		return full_to_sub;
-	}	
+	}
 
 	std::map< core::Size, bool > const &
 	StepWiseRNA_Clusterer::get_act_Is_prepend_map() const 	{
 		std::map< core::Size, bool > const & Is_prepend_map =   (optimize_memory_usage_) ? sliced_pose_job_params_.sliced_pose_Is_prepend_map: job_parameters_->Is_prepend_map();
 		return Is_prepend_map ;
-	}	
+	}
 
 
 
@@ -1697,7 +1699,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 	void
 	SlicedPoseJobParameters::setup(protocols::swa::rna::StepWiseRNA_JobParametersCOP & job_parameters){
 
-		Output_title_text("Enter SlicedPoseJobParameters::setup()");
+		Output_title_text("Enter SlicedPoseJobParameters::setup()", TR );
 
 		Is_setup_=true;
 
@@ -1705,7 +1707,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		utility::vector1< core::Size > const & working_best_alignment( job_parameters->working_best_alignment() );
 		utility::vector1 < core::Size > const & rmsd_res_list = job_parameters->rmsd_res_list();
 		std::map< core::Size, bool > const & Is_prepend_map = job_parameters->Is_prepend_map();
-		std::map< core::Size, core::Size > const & sub_to_full( job_parameters->const_sub_to_full() ); 
+		std::map< core::Size, core::Size > const & sub_to_full( job_parameters->const_sub_to_full() );
 
 
 		utility::vector1< core::Size > working_rmsd_res_list=apply_full_to_sub_mapping(rmsd_res_list, job_parameters);
@@ -1714,24 +1716,24 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		for(Size seq_num=1; seq_num<=nres; seq_num++){
 			bool keep_res=false;
 
-			if(Contain_seq_num(seq_num, working_best_alignment) ) {
-				std::cout << "seq_num " << seq_num << " is in working_best_alignment res "<< std::endl;
+			if(working_best_alignment.has_value(seq_num) ) {
+				TR << "seq_num " << seq_num << " is in working_best_alignment res "<< std::endl;
 				keep_res=true;
 			}
 
-	
-			if(Contain_seq_num(seq_num, working_rmsd_res_list) ){
-				std::cout << "seq_num " << seq_num << " is in working_rmsd_res_list "<< std::endl;
+
+			if(working_rmsd_res_list.has_value(seq_num) ){
+				TR << "seq_num " << seq_num << " is in working_rmsd_res_list "<< std::endl;
 				keep_res=true;
 			}
 
-			if(keep_res==false && (seq_num+1)<=nres && Contain_seq_num(seq_num+1, working_rmsd_res_list) ){
-				std::cout << "seq_num " << seq_num << " is in working_rmsd_res_list-1 "<< std::endl;
+			if(keep_res==false && (seq_num+1)<=nres && working_rmsd_res_list.has_value(seq_num+1) ){
+				TR << "seq_num " << seq_num << " is in working_rmsd_res_list-1 "<< std::endl;
 				keep_res=true;
 			}
 
-			if(keep_res==false && (seq_num-1)>=1 && Contain_seq_num(seq_num-1, working_rmsd_res_list) ){
-				std::cout << "seq_num " << seq_num << " is in working_rmsd_res_list+1 "<< std::endl;
+			if(keep_res==false && (seq_num-1)>=1 && working_rmsd_res_list.has_value(seq_num-1) ){
+				TR << "seq_num " << seq_num << " is in working_rmsd_res_list+1 "<< std::endl;
 				keep_res=true;
 			}
 
@@ -1748,18 +1750,18 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 		}
 
-		std::cout << "------------Before slice to After slice seq_num------------" << std::endl;
+		TR << "------------Before slice to After slice seq_num------------" << std::endl;
 		for(Size seq_num=1; seq_num<=working_to_sliced_res_map_.size(); seq_num++){
-			std::cout << seq_num << "----> " << working_to_sliced_res_map_[seq_num] << std::endl;
+			TR << seq_num << "----> " << working_to_sliced_res_map_[seq_num] << std::endl;
 
-			if(Contain_seq_num(seq_num, working_best_alignment) ) sliced_pose_best_alignment.push_back(working_to_sliced_res_map_[seq_num]) ;
-			if(Contain_seq_num(seq_num, working_rmsd_res_list) ) sliced_pose_rmsd_res_list.push_back(working_to_sliced_res_map_[seq_num]) ;
+			if(working_best_alignment.has_value(seq_num) ) sliced_pose_best_alignment.push_back(working_to_sliced_res_map_[seq_num]) ;
+			if(working_rmsd_res_list.has_value(seq_num) ) sliced_pose_rmsd_res_list.push_back(working_to_sliced_res_map_[seq_num]) ;
 		}
-		std::cout << "-----------------------------------------------------------" << std::endl;
+		TR << "-----------------------------------------------------------" << std::endl;
 
-		std::cout << "------------After slice to Before slice seq_num------------" << std::endl;
+		TR << "------------After slice to Before slice seq_num------------" << std::endl;
 		for(Size seq_num=1; seq_num<=sliced_to_working_res_map_.size(); seq_num++){
-			std::cout << seq_num << "----> " << sliced_to_working_res_map_[seq_num] << std::endl;
+			TR << seq_num << "----> " << sliced_to_working_res_map_[seq_num] << std::endl;
 			sliced_pose_full_to_sub[seq_num]=seq_num; //identity
 
 			Size const working_seq_num=sliced_to_working_res_map_[seq_num];
@@ -1768,7 +1770,7 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			sliced_pose_Is_prepend_map[seq_num] =(Is_prepend);
 
 		}
-		std::cout << "-----------------------------------------------------------" << std::endl;
+		TR << "-----------------------------------------------------------" << std::endl;
 
 		//////////////////////////////////////////////
 		bool in_delete_range=false;
@@ -1781,10 +1783,10 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			if(in_delete_range==false ){
 
-				if(seq_num== (Is_sliced_res_.size()+1) ) continue; 
+				if(seq_num== (Is_sliced_res_.size()+1) ) continue;
 
 				if( Is_sliced_res_[seq_num]==false){
-					range_begin=seq_num;	
+					range_begin=seq_num;
 					in_delete_range=true;
 				}
 
@@ -1792,25 +1794,25 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 				if( seq_num==(Is_sliced_res_.size()+1) || Is_sliced_res_[seq_num]==true ){
 					range_end=seq_num-1;	//This obviously fail if seq_num=0...but this cannot occur since in_delete_range is false at first cycle.
 					in_delete_range=false;
-					
+
 					delete_res_range_list_.push_back( std::make_pair(range_begin, range_end) );
 					range_end=0;
 					range_begin=0;
 				}
 			}
-		} 
+		}
 		//////////////////////////////////////////////
 
 
 		//output debug
-		Output_seq_num_list("sliced_pose_best_alignment= ", sliced_pose_best_alignment, 50);
-		Output_seq_num_list("sliced_pose_rmsd_res_list= ", sliced_pose_rmsd_res_list, 50);
-		Output_is_prepend_map("sliced_pose_Is_prepend_map= " , sliced_pose_Is_prepend_map, working_to_sliced_res_map_.size(), 50);		
-		output_pair_size_vector(delete_res_range_list_, "delete_res_range_list= " , 50);		
+		Output_seq_num_list("sliced_pose_best_alignment= ", sliced_pose_best_alignment, TR, 50 );
+		Output_seq_num_list("sliced_pose_rmsd_res_list= ", sliced_pose_rmsd_res_list, TR, 50 );
+		Output_is_prepend_map("sliced_pose_Is_prepend_map= " , sliced_pose_Is_prepend_map, working_to_sliced_res_map_.size(), TR, 50 );
+		output_pair_size(delete_res_range_list_, "delete_res_range_list= " , TR, 50 );
 
-		Output_title_text("Exit SlicedPoseJobParameters::setup()");
+		Output_title_text("Exit SlicedPoseJobParameters::setup()", TR );
 
-	}	
+	}
 
 	//////////////////////////////////////////////
 	core::pose::Pose
@@ -1832,10 +1834,10 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 //		for(Size seq_num=Is_sliced_res_.size(); seq_num>=1; seq_num--){
 //			if(Is_sliced_res_[seq_num]==false){
-//				sliced_pose.conformation().delete_residue_slow(seq_num);	
+//				sliced_pose.conformation().delete_residue_slow(seq_num);
 //				sliced_pose.conformation().delete_polymer_residue(seq_num); //doesn't work at jump_point...
 //			}
-//		} 
+//		}
 
 		for(Size n=delete_res_range_list_.size(); n>=1; n--){
 			sliced_pose.conformation().delete_residue_range_slow( delete_res_range_list_[n].first, delete_res_range_list_[n].second );
@@ -1844,10 +1846,10 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 		if(sliced_pose.total_residue()!=sliced_to_working_res_map_.size()){
 			utility_exit_with_message("working_pose.total_res() ( " + string_of(working_pose.total_residue()) + ") != sliced_to_working.size() ( " + string_of( sliced_to_working_res_map_.size() )+ ")" );
 		}
-		
 
-//		working_pose.dump_pdb( "clusterer_working_pose.pdb");  
-//		sliced_pose.dump_pdb( "clusterer_sliced_pose.pdb");  
+
+//		working_pose.dump_pdb( "clusterer_working_pose.pdb");
+//		sliced_pose.dump_pdb( "clusterer_sliced_pose.pdb");
 
 //		exit(1);
 

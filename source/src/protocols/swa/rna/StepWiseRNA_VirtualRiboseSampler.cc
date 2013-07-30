@@ -17,17 +17,17 @@
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh> //Sept 26, 2011
 #include <protocols/swa/rna/StepWiseRNA_VirtualRiboseSampler.hh>
-//#include <protocols/swa/rna/StepWiseRNA_FloatingBase_Sampler_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.fwd.hh>
+//#include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -76,7 +76,7 @@
 
 using namespace core;
 
-static basic::Tracer TR( "protocols.swa.stepwise_rna_virtual_ribose_sampler" );
+static basic::Tracer TR( "protocols.swa.StepWiseRNA_VirtualRiboseSampler" );
 
 namespace protocols {
 namespace swa {
@@ -152,11 +152,11 @@ namespace rna {
 			count_data.good_rep_rotamer_count++;
 
 			if ( verbose ) {
-				std::cout << "rep= " << delta_rep_score;
-				std::cout << " rep_n= " << count_data.good_rep_rotamer_count;
-				std::cout << " fast_rep_count= " << count_data.fast_full_atom_VDW_replusion_screen;
-				std::cout << " bin_rep_count= " << count_data.good_bin_rep_count;
- 				std::cout << " tot= " << count_data.tot_rotamer_count << std::endl;
+				TR << "rep= " << delta_rep_score;
+				TR << " rep_n= " << count_data.good_rep_rotamer_count;
+				TR << " fast_rep_count= " << count_data.fast_full_atom_VDW_replusion_screen;
+				TR << " bin_rep_count= " << count_data.good_bin_rep_count;
+ 				TR << " tot= " << count_data.tot_rotamer_count << std::endl;
 			}
 			return true;
 		} else {
@@ -197,14 +197,14 @@ namespace rna {
 			count_data.chain_break_screening_count++;
 
 			if(verbose){
-				std::cout << " tag= " << tag;
-				std::cout << " chain_closable_count= " << count_data.chain_closable_count;
-				std::cout << " angle= " << angle_score << " dist= " << distance_score;
-				std::cout << " angle_n= " << count_data.good_angle_count;
-				std::cout << " dist_n= " << count_data.good_distance_count;
-				std::cout << " chain_break_screening= " << count_data.chain_break_screening_count;
-				std::cout << " in_range_CCD_torsion= " << count_data.in_range_CCD_torsion;
-				std::cout << " tot= " << count_data.tot_rotamer_count << std::endl;
+				TR << " tag= " << tag;
+				TR << " chain_closable_count= " << count_data.chain_closable_count;
+				TR << " angle= " << angle_score << " dist= " << distance_score;
+				TR << " angle_n= " << count_data.good_angle_count;
+				TR << " dist_n= " << count_data.good_distance_count;
+				TR << " chain_break_screening= " << count_data.chain_break_screening_count;
+				TR << " in_range_CCD_torsion= " << count_data.in_range_CCD_torsion;
+				TR << " tot= " << count_data.tot_rotamer_count << std::endl;
 			}
 			return true;
 		} else {
@@ -247,7 +247,7 @@ namespace rna {
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-		StepWiseRNA_Base_Sugar_RotamerOP base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer( FB_job_params.moving_res_base_state, FB_job_params.moving_res_pucker_state, rna_fitted_torsion_info);
+		StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( FB_job_params.moving_res_base_state, FB_job_params.moving_res_pucker_state, rna_fitted_torsion_info);
 
 		//July 28th, 2011 Could set extra_chi here, BUT necessary?
 
@@ -297,9 +297,9 @@ namespace rna {
 
 
 				if(verbose){
-					std::cout << " 	delta1= " <<  F(8, 3, base_sugar_rotamer->delta()) << " 	chi_1= " <<  F(8, 3, base_sugar_rotamer->chi());
-					std::cout << " 	nu2_1= " <<  F(8, 3, base_sugar_rotamer->nu2())    << " 	nu1_1= " <<  F(8, 3, base_sugar_rotamer->nu1());
-					std::cout << std::endl;
+					TR << " 	delta1= " <<  F(8, 3, base_sugar_rotamer->delta()) << " 	chi_1= " <<  F(8, 3, base_sugar_rotamer->chi());
+					TR << " 	nu2_1= " <<  F(8, 3, base_sugar_rotamer->nu2())    << " 	nu1_1= " <<  F(8, 3, base_sugar_rotamer->nu1());
+					TR << std::endl;
 				}
 
 				pose_with_ribose.set_torsion( TorsionID( FB_job_params.moving_res , id::BB, 4 ) , base_sugar_rotamer->delta());
@@ -327,9 +327,9 @@ namespace rna {
 					//////////////////////Note that this error doesn't seem to occur if virtual_ribose is sampled in same step as SAMPLER/ (no Hbond_tripped!)///////////////////////////////////
 					//////////////////////The non-rescale scorefxn does however causes the floating base from moving far away from the starting point even in the same step as SAMPLER case//////
 					//////////////////////Also generally the minimizer same and seperate step virtual sampler doesn't give the same results!/////////////////////////////////////////////////////
-					std::cout << "--------------START Creating rescaled one_tenth_ribose_score_fxn_without_ch_bond--------------" << std::endl;
+					TR << "--------------START Creating rescaled one_tenth_ribose_score_fxn_without_ch_bond--------------" << std::endl;
 					core::scoring::ScoreFunctionOP rescaled_ribose_score_fxn_without_ch_bond=rescale_scorefxn(ribose_scorefxn_without_ch_bond, 0.1);
-					std::cout << "--------------FINISH Creating rescaled one_tenth_ribose_score_fxn_without_ch_bond--------------" << std::endl;
+					TR << "--------------FINISH Creating rescaled one_tenth_ribose_score_fxn_without_ch_bond--------------" << std::endl;
 					/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 					AtomTreeMinimizer minimizer;
@@ -345,8 +345,8 @@ namespace rna {
 					MinimizerOptions options_standard( "dfpmin_atol", tolerance, use_nblist, false, false );      //Switch to absolute tolerance on Sept 21, 2011
 					MinimizerOptions options_armijo( "dfpmin_armijo_atol", tolerance, use_nblist, false, false ); //Add this on Sept 21, 2011
 
-					std::cout << "options_standard: min_type= " << options_standard.min_type() << " minimize_tolerance= "  << options_standard.minimize_tolerance() << std::endl;
-					std::cout << "options_armijo  : min_type= " << options_armijo.min_type()   << " minimize_tolerance= "  << options_armijo.minimize_tolerance()   << std::endl;
+					TR << "options_standard: min_type= " << options_standard.min_type() << " minimize_tolerance= "  << options_standard.minimize_tolerance() << std::endl;
+					TR << "options_armijo  : min_type= " << options_armijo.min_type()   << " minimize_tolerance= "  << options_armijo.minimize_tolerance()   << std::endl;
 
 					options_standard.nblist_auto_update( true );
 					options_armijo.nblist_auto_update( true );
@@ -357,7 +357,7 @@ namespace rna {
 					mm.set_chi(false);
 
 
-					if(verbose) std::cout << "pose.fold_tree().num_jump()= " << pose_with_ribose.fold_tree().num_jump() << std::endl;
+					if(verbose) TR << "pose.fold_tree().num_jump()= " << pose_with_ribose.fold_tree().num_jump() << std::endl;
 
 					Size bulge_jump_1, bulge_jump_2, bulge_cutpoint;
 					if(FB_job_params.moving_res>FB_job_params.reference_res){//consistency check (from setup_chain_break_jump_point function)
@@ -370,7 +370,7 @@ namespace rna {
 						bulge_cutpoint=FB_job_params.moving_res;
 					}
 
-					if(verbose) std::cout << "bulge_cutpoint= " << bulge_cutpoint << " bulge_jump_1= " << bulge_jump_1 << " bulge_jump_2= " << bulge_jump_2 << std::endl;
+					if(verbose) TR << "bulge_cutpoint= " << bulge_cutpoint << " bulge_jump_1= " << bulge_jump_1 << " bulge_jump_2= " << bulge_jump_2 << std::endl;
 
 
 					bool found_desired_jump_ID=false;
@@ -379,11 +379,11 @@ namespace rna {
 						Size const jump_pos2( pose_with_ribose.fold_tree().downstream_jump_residue( jump_ID ) );
 						Size const cutpoint=pose_with_ribose.fold_tree().cutpoint(jump_ID);
 
-						if(verbose) std::cout << "jump at jump_ID= " << jump_ID << " cutpoint= " << cutpoint << " jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << std::endl;
+						if(verbose) TR << "jump at jump_ID= " << jump_ID << " cutpoint= " << cutpoint << " jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << std::endl;
 
 						if( (jump_pos1==bulge_jump_1 &&	jump_pos2==bulge_jump_2 ) || (jump_pos1==bulge_jump_2 &&	jump_pos1==bulge_jump_2 ) ) {
 							found_desired_jump_ID=true;
-							if(verbose) std::cout << "add movemap jump at jump_ID= " << jump_ID << " cutpoint= " << cutpoint << " jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << std::endl;
+							if(verbose) TR << "add movemap jump at jump_ID= " << jump_ID << " cutpoint= " << cutpoint << " jump_pos1= " << jump_pos1 << " jump_pos2= " << jump_pos2 << std::endl;
 							mm.set_jump( jump_ID, true );
 						}
 					}
@@ -394,7 +394,7 @@ namespace rna {
 					//	core::scoring::constraints::add_coordinate_constraints( pose_with_ribose );//crap I left this on for May_28_1CSL_SYN_CHI_floating_base_use_May_18_data run!
 
 					viewer_pose= pose_with_ribose;
-					std::cout << "removing ribose clashes pose # " << n << " sugar_rotamer # " << count << " " << std::endl;
+					TR << "removing ribose clashes pose # " << n << " sugar_rotamer # " << count << " " << std::endl;
 
 					/////////////Switch to armijo on Sept 21, 2011///////////////////////////////////////////////////////////////////////////////////////
 					/////////////My understanding is that dfpmin_armijo is a "inexact" line search whereas the standard dfpmin is a exact line search///////
@@ -435,16 +435,16 @@ namespace rna {
 				(*atr_rep_screening_scorefxn)(pose_with_ribose);
 				pose_data.base_rep_score = atr_rep_screening_scorefxn->get_weight(fa_rep) * pose_with_ribose.energies().total_energies()[ scoring::fa_rep ];
 
-				std::cout << "tag= " << pose_data.tag << " with_ribose_rep= " << pose_data.base_rep_score << " without_ribose_rep_score= " << without_ribose_rep_score << " O3i_C5iplus2_dist= " << O3i_C5iplus2_distance;
+				TR << "tag= " << pose_data.tag << " with_ribose_rep= " << pose_data.base_rep_score << " without_ribose_rep_score= " << without_ribose_rep_score << " O3i_C5iplus2_dist= " << O3i_C5iplus2_distance;
 
 
 				if(O3i_C5iplus2_distance>O3I_C5IPLUS2_MAX_DIST){
-					std::cout << " O3i_C5iplus2_dist>O3I_C5IPLUS2_MAX_DIST(" << O3I_C5IPLUS2_MAX_DIST << ") " << std::endl;
+					TR << " O3i_C5iplus2_dist>O3I_C5IPLUS2_MAX_DIST(" << O3I_C5IPLUS2_MAX_DIST << ") " << std::endl;
 					continue;
 				}
 
 				if((pose_data.base_rep_score-without_ribose_rep_score)>10){
-					std::cout << " RIBOSE_rep_score>10! "<< std::endl;
+					TR << " RIBOSE_rep_score>10! "<< std::endl;
 					continue;
 				}
 				input_pose_data_pass_screen=true;
@@ -464,12 +464,12 @@ namespace rna {
 			if(input_pose_data_pass_screen) num_input_pose_data_pass_screen++;
 		}
 
-		Output_title_text("");
+		Output_title_text("", TR );
 
-		std::cout << "input_pose_data_list.size()= " << input_pose_data_list.size() << " num_input_pose_data_pass_screen= " << num_input_pose_data_pass_screen;
-		std::cout << " pose_data_list.size()= " << pose_data_list.size() << std::endl;
+		TR << "input_pose_data_list.size()= " << input_pose_data_list.size() << " num_input_pose_data_pass_screen= " << num_input_pose_data_pass_screen;
+		TR << " pose_data_list.size()= " << pose_data_list.size() << std::endl;
 
-		std::cout << "Total time in Floating_base_chain_closure SETUP: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "Total time in Floating_base_chain_closure SETUP: " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 		viewer_pose=viewer_pose_copy;
 
@@ -485,11 +485,11 @@ namespace rna {
 																		 FloatingBaseChainClosureJobParameter const & FB_job_params,
 																		 core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
 														          core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-																		 StepWiseRNA_VDW_Bin_ScreenerOP const & VDW_bin_screener,
+																		 StepWiseRNA_VDW_BinScreenerOP const & VDW_bin_screener,
 																			 bool const CCD_grid_index_screen,
 																			 bool const integration_test_mode ){
 
-		Output_title_text("Floating_base_chain_closure SAMPLING");
+		Output_title_text("Floating_base_chain_closure SAMPLING", TR );
 
 		if(pose_data_list.size()==0) return; //early return
 
@@ -519,7 +519,7 @@ namespace rna {
 		///Ok we need to create different rotamer_generator for the 1. backbone/exclude delta, 2. delta. and chi. (depend on delta)
 		///This is necessary for optimization since CCD solution doesn't depend on chi torsion value
 
-		std::cout << "setup backbone_rotamer_generator" << std::endl;
+		TR << "setup backbone_rotamer_generator" << std::endl;
 		utility::vector1< core::Size > bulge_suite_list;
 		bulge_suite_list.clear();
 		bulge_suite_list.push_back(FB_job_params.bulge_suite);
@@ -533,9 +533,9 @@ namespace rna {
 		}
 
 
-		//Will generate both NORTH AND SOUTH PUCKER HERE EVEN IF FB_job_params.bulge_res_pucker_state!=ALL..BUT OK SINCE WILL PERFORM MATCH WITH Base_Sugar_RotamerOP in the actual loop.
-		StepWiseRNA_RotamerGenerator_WrapperOP backbone_rotamer_generator =
-						new StepWiseRNA_RotamerGenerator_Wrapper( viewer_pose, bulge_suite_list, sample_sugar_and_base1, sample_sugar_and_base2);
+		//Will generate both NORTH AND SOUTH PUCKER HERE EVEN IF FB_job_params.bulge_res_pucker_state!=ALL..BUT OK SINCE WILL PERFORM MATCH WITH BaseSugarRotamerOP in the actual loop.
+		StepWiseRNA_RotamerGeneratorWrapperOP backbone_rotamer_generator =
+						new StepWiseRNA_RotamerGeneratorWrapper( viewer_pose, bulge_suite_list, sample_sugar_and_base1, sample_sugar_and_base2);
 
 		backbone_rotamer_generator->set_fast( integration_test_mode );
 		backbone_rotamer_generator->set_sample_chi_torsion(false);
@@ -550,9 +550,9 @@ namespace rna {
 
 		backbone_rotamer_generator->initialize_rotamer_generator_list();
 
-		std::cout << "setup_delta_rotamer_generator" << std::endl;
+		TR << "setup_delta_rotamer_generator" << std::endl;
 
-		StepWiseRNA_Base_Sugar_RotamerOP bulge_base_sugar_rotamer = new StepWiseRNA_Base_Sugar_Rotamer( FB_job_params.bulge_res_base_state, FB_job_params.bulge_res_pucker_state, rna_fitted_torsion_info);
+		StepWiseRNA_BaseSugarRotamerOP bulge_base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( FB_job_params.bulge_res_base_state, FB_job_params.bulge_res_pucker_state, rna_fitted_torsion_info);
 
 		//July 28th, 2011 Could set extra_chi here, BUT necessary?
 
@@ -688,14 +688,14 @@ namespace rna {
 			if ( integration_test_mode && num_closed_chain_pose > 1 ) break;
 		} // backbone rotamer
 
-		std::cout << " bin_rep_count= " << count_data.good_bin_rep_count;
-		std::cout << " fast_rep_count= " << count_data.fast_full_atom_VDW_replusion_screen;
-		std::cout << " chain_closable= " << count_data.chain_closable_count;
-		std::cout << " angle_n= " << count_data.good_angle_count << " dist_n= " << count_data.good_distance_count;
-		std::cout << " rep= " << count_data.good_rep_rotamer_count;
-		std::cout << " rmsd= " << count_data.rmsd_count << " tot= " << count_data.tot_rotamer_count << std::endl;
-		std::cout << " " << num_closed_chain_pose << " out of " << pose_data_list.size() << " pose were closable" << std::endl;
-		std::cout << "Total time in Floating_base_chain_closure SAMPLING: " << static_cast<Real>( clock() - time_start_sampling ) / CLOCKS_PER_SEC << std::endl;
+		TR << " bin_rep_count= " << count_data.good_bin_rep_count;
+		TR << " fast_rep_count= " << count_data.fast_full_atom_VDW_replusion_screen;
+		TR << " chain_closable= " << count_data.chain_closable_count;
+		TR << " angle_n= " << count_data.good_angle_count << " dist_n= " << count_data.good_distance_count;
+		TR << " rep= " << count_data.good_rep_rotamer_count;
+		TR << " rmsd= " << count_data.rmsd_count << " tot= " << count_data.tot_rotamer_count << std::endl;
+		TR << " " << num_closed_chain_pose << " out of " << pose_data_list.size() << " pose were closable" << std::endl;
+		TR << "Total time in Floating_base_chain_closure SAMPLING: " << static_cast<Real>( clock() - time_start_sampling ) / CLOCKS_PER_SEC << std::endl;
 	}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -715,7 +715,7 @@ namespace rna {
 			using namespace core::id;
 			using namespace ObjexxFCL;
 
-			Output_title_text("Floating_base_chain_closure POST_PROCESSING");
+			Output_title_text("Floating_base_chain_closure POST_PROCESSING", TR );
 			//clock_t const time_start_post_processing( clock() );
 
 			utility::vector1< pose_data_struct2 > output_pose_data_list;
@@ -772,7 +772,7 @@ namespace rna {
 
 				viewer_pose= (*pose_data_list[n].pose_OP);
 
-				std::cout << "POST_PROCESSING pose # " << n << " out of " << pose_data_list.size() << " " << std::endl;;
+				TR << "POST_PROCESSING pose # " << n << " out of " << pose_data_list.size() << " " << std::endl;;
 				minimizer.run( viewer_pose, mm, *(bulge_chain_closure_scorefxn), options );
 
 				viewer_pose.constraint_set( pose_data_list[n].starting_cst_set_OP);
@@ -799,7 +799,7 @@ namespace rna {
 
 			return output_pose_data_list;
 			// The following line would never have been reached. ~Labonte
-			//std::cout << "Total time in Floating_base_chain_closure_post_processing: " <<
+			//TR << "Total time in Floating_base_chain_closure_post_processing: " <<
 					//static_cast<Real>( clock() - time_start_post_processing ) / CLOCKS_PER_SEC << std::endl;
 
 	}
@@ -822,7 +822,7 @@ namespace rna {
 		using namespace core::id;
 		using namespace ObjexxFCL;
 
-		Output_title_text("Enter minimize_all_sampled_floating_bases");
+		Output_title_text("Enter minimize_all_sampled_floating_bases", TR );
 
 		pose::Pose const viewer_pose_copy=viewer_pose;
 
@@ -885,7 +885,7 @@ namespace rna {
 				if (job_parameters->gap_size() == 0) pose::add_variant_type_to_pose_residue( viewer_pose, "VIRTUAL_PHOSPHATE", job_parameters->five_prime_chain_break_res()+1 );
 			}
 
-			std::cout << "minimize_all_sampled_floating_bases pose # " << n << " out of " << pose_data_list.size() << " " << std::endl;;
+			TR << "minimize_all_sampled_floating_bases pose # " << n << " out of " << pose_data_list.size() << " " << std::endl;;
 			minimizer.run( viewer_pose, mm, (*sampling_scorefxn), options );
 //			o2star_minimize(viwer_pose, sampling_scorefxn)
 //			minimizer.run( viewer_pose, mm, (*sampling_scorefxn), options );
@@ -895,7 +895,7 @@ namespace rna {
 				for(Size ii=1; ii<=working_moving_partition_pos.size(); ii++){
 					Size const seq_num=working_moving_partition_pos[ii];
 
-					if(Contain_seq_num(seq_num, already_virtualized_res_list)) continue;
+					if(already_virtualized_res_list.has_value(seq_num)) continue;
 
 					pose::remove_variant_type_from_pose_residue( viewer_pose, "VIRTUAL_RNA_RESIDUE", seq_num );
 				}
@@ -909,7 +909,7 @@ namespace rna {
 
 		viewer_pose=viewer_pose_copy;
 
-		Output_title_text("Exit minimize_all_sampled_floating_bases");
+		Output_title_text("Exit minimize_all_sampled_floating_bases", TR );
 
 	}
 
@@ -925,7 +925,7 @@ namespace rna {
 		Size const nres= pose.total_residue();
 
 		if( ( ribose_res+1)!= bulge_res && ( ribose_res-1)!= bulge_res ) {
-			std::cout << "ribose_res= " << ribose_res << " bulge_res= " << bulge_res << std::endl;
+			TR << "ribose_res= " << ribose_res << " bulge_res= " << bulge_res << std::endl;
 			utility_exit_with_message( "( ribose_res+1)!= bulge_res && ( ribose_res-1)!= bulge_res)" );
 		}
 
@@ -1008,7 +1008,7 @@ namespace rna {
 		using namespace ObjexxFCL;
 		using namespace core::io::silent;
 
-		Output_title_text("Enter sample_virtual_ribose_and_bulge_and_close_chain()");
+		Output_title_text("Enter sample_virtual_ribose_and_bulge_and_close_chain()", TR );
 		clock_t const time_start( clock() );
 
 		pose::Pose const viewer_pose_copy=viewer_pose; //BACKUP
@@ -1079,7 +1079,7 @@ namespace rna {
 		ignore_res_list.push_back(FB_job_params.bulge_res);
 		ignore_res_list.push_back(FB_job_params.reference_res);
 
- 	  StepWiseRNA_VDW_Bin_ScreenerOP prev_floating_base_VDW_bin_screener= new StepWiseRNA_VDW_Bin_Screener();
+ 	  StepWiseRNA_VDW_BinScreenerOP prev_floating_base_VDW_bin_screener= new StepWiseRNA_VDW_BinScreener();
 
 		//Feb 21, 2011...one thing is that the 2'-OH hydrogen is not virtualized here...
 		//But OK, since consistent with the actual input_pose not having virtualized 2'-OH.
@@ -1117,7 +1117,7 @@ namespace rna {
 
 				for(Size ii=1; ii<=other_partition_pos.size(); ii++){
 					Size const seq_num=other_partition_pos[ii];
-					if(Contain_seq_num(seq_num, already_virtualized_res_list)) continue;
+					if(already_virtualized_res_list.has_value(seq_num)) continue;
 					pose::remove_variant_type_from_pose_residue( current_pose, "VIRTUAL_RNA_RESIDUE", seq_num);
 				}
 				if (job_parameters->gap_size() == 0) pose::remove_variant_type_from_pose_residue( current_pose, "VIRTUAL_PHOSPHATE", job_parameters->five_prime_chain_break_res()+1 );
@@ -1128,9 +1128,9 @@ namespace rna {
 
 		}
 
-		std::cout << "Time in sample_virtual_ribose_and_bulge_and_close_chain(): " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "Time in sample_virtual_ribose_and_bulge_and_close_chain(): " << static_cast<Real>( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
-		Output_title_text("Exit sample_virtual_ribose_and_bulge_and_close_chain()");
+		Output_title_text("Exit sample_virtual_ribose_and_bulge_and_close_chain()", TR );
 
 		viewer_pose=viewer_pose_copy;
 
@@ -1214,9 +1214,9 @@ namespace rna {
 			Size const full_bulge_res=(Is_prepend) ? full_ribose_res+1 : full_ribose_res-1;
 			Size const full_ref_res=  (Is_prepend) ? full_ribose_res+2 : full_ribose_res-2;
 
-			std::cout << "Case: " << sample_virtual_ribose_string_list[n];
-			std::cout << " full_ribose_res= " << full_ribose_res << " full_bulge_res= " << full_bulge_res << " full_ref_res= " << full_ref_res;
-			Output_boolean(" Is_prepend= " , Is_prepend);
+			TR << "Case: " << sample_virtual_ribose_string_list[n];
+			TR << " full_ribose_res= " << full_ribose_res << " full_bulge_res= " << full_bulge_res << " full_ref_res= " << full_ref_res;
+			Output_boolean(" Is_prepend= " , Is_prepend, TR );
 
 			if( pose.total_residue()!=working_sequence.size() ){
 				utility_exit_with_message( "pose.total_residue()=("+string_of(pose.total_residue())+")!="+string_of(working_sequence.size())+") working_sequence().size()");
@@ -1228,15 +1228,15 @@ namespace rna {
 
 				bool const ribose_is_virtual=pose.residue(working_ribose_res).has_variant_type("VIRTUAL_RIBOSE");
 
-				std::cout << " | working_ribose_res= " << working_ribose_res;
-				Output_boolean(" ribose_is_virtual= " , ribose_is_virtual);
+				TR << " | working_ribose_res= " << working_ribose_res;
+				Output_boolean(" ribose_is_virtual= " , ribose_is_virtual, TR );
 
 				if(ribose_is_virtual){
 
 					Size const working_bulge_res=check_validity_and_get_working_res(full_bulge_res, job_parameters);
 					Size const working_ref_res=check_validity_and_get_working_res(full_ref_res, job_parameters);
 
-					std::cout << " | working_bulge_res= " << working_bulge_res << " working_ref_res= " << working_ref_res;
+					TR << " | working_bulge_res= " << working_bulge_res << " working_ref_res= " << working_ref_res;
 
 					if(Is_prepend){
 						if(working_ribose_res!=(working_bulge_res-1)) utility_exit_with_message("prepend but working_ribose_res!=(working_bulge_res-1)");
@@ -1263,11 +1263,11 @@ namespace rna {
 
 			}else{
 
-				std::cout << " | full_ribose_res is not a working res! ";
+				TR << " | full_ribose_res is not a working res! ";
 
 			}
 
-			std::cout << std::endl;
+			TR << std::endl;
 		}
 
 		return FB_CC_JP_list;
@@ -1288,7 +1288,7 @@ namespace rna {
 		using namespace core::scoring;
 		using namespace core::conformation;
 
-		Output_title_text("Enter StepWiseRNA_VirtualRiboseSampler::sample_virtual_ribose");
+		Output_title_text("Enter StepWiseRNA_VirtualRiboseSampler::sample_virtual_ribose", TR );
 
 		// clock_t const time_start( clock() ); // Unused variable causes warning.
 
@@ -1319,10 +1319,10 @@ namespace rna {
 
 		utility::vector1< FloatingBaseChainClosureJobParameter > FB_CC_JP_list=setup_FB_CC_JP_list(pose, sample_virtual_ribose_string_list, job_parameters);
 
-		std::cout << "num_virtual_ribose= " << FB_CC_JP_list.size() << std::endl;
+		TR << "num_virtual_ribose= " << FB_CC_JP_list.size() << std::endl;
 
 		if(FB_CC_JP_list.size()==0){
-			std::cout << "no_virtual_ribose (FB_CC_JP_list.size()==0). EARLY RETURN/NO OUTPUT SILENT_FILE!" << std::endl;
+			TR << "no_virtual_ribose (FB_CC_JP_list.size()==0). EARLY RETURN/NO OUTPUT SILENT_FILE!" << std::endl;
 
 			std::ofstream outfile;
 			outfile.open(silent_file_out.c_str()); //Opening the file with this command removes all prior content..
@@ -1348,7 +1348,7 @@ namespace rna {
 
 
 			if(curr_FB_JP.PDL.size()==0){
-				std::cout << "Case n= " << n << " Is_sugar_virt==True but curr_FB_JP.PDL.size()==0. EARLY RETURN!" << std::endl;
+				TR << "Case n= " << n << " Is_sugar_virt==True but curr_FB_JP.PDL.size()==0. EARLY RETURN!" << std::endl;
 
 				std::ofstream outfile;
 				outfile.open(silent_file_out.c_str()); //Opening the file with this command removes all prior content..
@@ -1378,7 +1378,7 @@ namespace rna {
 
 			(*scorefxn)(pose);
 
-			//std::cout << "starting_pose_tag= " << starting_pose_tag= << std::endl;
+			//TR << "starting_pose_tag= " << starting_pose_tag= << std::endl;
 			//pose.energies().show();
 
 

@@ -80,12 +80,12 @@ namespace rna {
 			conformation::Residue const & residue_object=pose.residue( seq_num );
 
 			if(residue_object.has_variant_type( "VIRTUAL_RNA_RESIDUE" )){
-				std::cout << "Residue " << seq_num << " is a VIRTUAL_RNA_RESIDUE!" << std::endl;
+				TR << "Residue " << seq_num << " is a VIRTUAL_RNA_RESIDUE!" << std::endl;
 				is_virtual_base_( seq_num ) = true;
 			}
 
 			if(residue_object.has_variant_type( "BULGE" )){
-				std::cout << "Residue " << seq_num << " is a BULGE!" << std::endl;
+				TR << "Residue " << seq_num << " is a BULGE!" << std::endl;
 				is_virtual_base_( seq_num ) = true;
 			}
 		}
@@ -114,10 +114,10 @@ namespace rna {
 		bool const moving_partition_check = partition_definition( working_moving_partition_pos[1] );
 
 		if(moving_partition!=moving_partition_check){
-			std::cout << "working_moving_res= " << working_moving_res << std::endl;
-			Output_seq_num_list("working_moving_partition_pos= ", job_parameters_->working_moving_partition_pos(), 40);
-			std::cout << "moving_partition= " << moving_partition << std::endl;
-			std::cout << "moving_partition_check= " << moving_partition_check << std::endl;
+			TR << "working_moving_res= " << working_moving_res << std::endl;
+			Output_seq_num_list("working_moving_partition_pos= ", job_parameters_->working_moving_partition_pos(), TR );
+			TR << "moving_partition= " << moving_partition << std::endl;
+			TR << "moving_partition_check= " << moving_partition_check << std::endl;
 			utility_exit_with_message("moving_partition!=moving_partition_check!");
 		}
 
@@ -149,11 +149,11 @@ namespace rna {
 			if ( partition_definition( seq_num ) != moving_partition ) {
 				// This is a "fixed" residue -- on the same side of the moving suite as the root.
 				fixed_residues_.push_back( seq_num );
-				//if ( verbose ) std::cout << " FIXED POSITION  --> " << seq_num << std::endl;
+				//if ( verbose ) TR << " FIXED POSITION  --> " << seq_num << std::endl;
 				is_fixed_res_( seq_num ) = true;
 			} else {
 				moving_residues_.push_back( seq_num );
-				//				if ( verbose ) std::cout << " MOVING POSITION --> " << seq_num << std::endl;
+				//				if ( verbose ) TR << " MOVING POSITION --> " << seq_num << std::endl;
 				is_moving_res_( seq_num ) = true;
 			}
 		}
@@ -161,8 +161,8 @@ namespace rna {
 
 //		moving_residues_ does not necessarily equal job_parameters_->working_moving_partition_pos since job_parameters_->working_moving_partition_pos include virtual residues. May 25, 2010
 //		if(Is_equivalent_vector(moving_residues_,job_parameters_->working_moving_partition_pos())==false){
-//			Output_seq_num_list("moving_residues_= " , moving_residues_, 50);
-//			Output_seq_num_list("job_parameters_->working_moving_partition_pos()= " , job_parameters_->working_moving_partition_pos(), 50);
+//			Output_seq_num_list("moving_residues_= " , moving_residues_, 50, TR );
+//			Output_seq_num_list("job_parameters_->working_moving_partition_pos()= " , job_parameters_->working_moving_partition_pos(), 50, TR );
 //			utility_exit_with_message( "moving_residues_,job_parameters_->working_moving_partition_pos()) ==false ");
 //		}
 
@@ -184,7 +184,7 @@ namespace rna {
 
 		for ( Size n = 1; n <= terminal_res_.size(); n++ ) {
 
-			//			std::cout << "NRES " << pose.total_residue() << " " << is_terminal_res_.size() << "      " << terminal_res_[ n ] << std::endl;
+			//			TR << "NRES " << pose.total_residue() << " " << is_terminal_res_.size() << "      " << terminal_res_[ n ] << std::endl;
 			Size const terminal_res = terminal_res_[ n ];
 
 			if(is_virtual_base_( terminal_res )==true){
@@ -195,15 +195,15 @@ namespace rna {
 
 			for ( Size m = 1; m <= nres; m++ ) {
 
-				//				std::cout << " about to check stack: --- " << std::endl;
-				//				std::cout << " TERMINAL_RES " << terminal_res << " " << is_moving_res_( terminal_res ) <<  " " << is_fixed_res_( terminal_res ) << std::endl;
-				//				std::cout << " M            " << m << " " << is_moving_res_( m ) <<  " " << is_fixed_res_( m ) << std::endl;
+				//				TR << " about to check stack: --- " << std::endl;
+				//				TR << " TERMINAL_RES " << terminal_res << " " << is_moving_res_( terminal_res ) <<  " " << is_fixed_res_( terminal_res ) << std::endl;
+				//				TR << " M            " << m << " " << is_moving_res_( m ) <<  " " << is_fixed_res_( m ) << std::endl;
 
 				if ( ( is_moving_res_( terminal_res )  && is_moving_res_( m ) ) ||
 						 ( is_fixed_res_(  terminal_res )  && is_fixed_res_(  m ) ) ){
 
 					stacked_on_terminal_res_in_original_pose_( terminal_res, m )  = check_stack_base( terminal_res, m );
-					//if ( stacked_on_terminal_res_in_original_pose_( terminal_res, m ) ) std::cout << "ALREADY STACKED: " << terminal_res << " " << m << std::endl;
+					//if ( stacked_on_terminal_res_in_original_pose_( terminal_res, m ) ) TR << "ALREADY STACKED: " << terminal_res << " " << m << std::endl;
 
 				}
 			}
@@ -222,14 +222,14 @@ namespace rna {
 		numeric::xyzVector<Real> centroid_diff;
 		subtract( rebuild_residue_base_stub.v, base_stub.v, centroid_diff);
 		Real centroid_distance=centroid_diff.length();
-		if ( verbose ) std::cout << "Centroid Distance: " << centroid_distance << std::endl;
+		if ( verbose ) TR << "Centroid Distance: " << centroid_distance << std::endl;
 		if(centroid_distance > base_stack_dist_cutoff_) return false;
 
 		Real base_z_offset_one=std::abs(dot( centroid_diff, other_z_vector));
 		Real base_z_offset_two=std::abs(dot( centroid_diff, rebuild_z_vector));
 
-		if ( verbose ) std::cout << "Base Z offset 1: " << base_z_offset_one << std::endl;
-		if ( verbose ) std::cout << "Base Z offset 2: " << base_z_offset_two << std::endl;
+		if ( verbose ) TR << "Base Z offset 1: " << base_z_offset_one << std::endl;
+		if ( verbose ) TR << "Base Z offset 2: " << base_z_offset_two << std::endl;
 
 		if ( (base_z_offset_one > base_stack_z_offset_max_ || base_z_offset_one <  base_stack_z_offset_min_) &&
 				 (base_z_offset_two > base_stack_z_offset_max_ || base_z_offset_two <  base_stack_z_offset_min_)) return false;
@@ -237,14 +237,14 @@ namespace rna {
 		Real base_axis_one=base_z_offset_one/centroid_distance;
 		Real base_axis_two=base_z_offset_two/centroid_distance;
 
-		if ( verbose ) std::cout << "Base Axis 1: " << base_axis_one << std::endl;
-		if ( verbose ) std::cout << "Base Axis 2: " << base_axis_two << std::endl;
+		if ( verbose ) TR << "Base Axis 1: " << base_axis_one << std::endl;
+		if ( verbose ) TR << "Base Axis 2: " << base_axis_two << std::endl;
 
 		if ( base_axis_one < base_stack_axis_cutoff_ && base_axis_two < base_stack_axis_cutoff_) return false;
 
 		Real base_planarity = std::abs(dot( other_z_vector, rebuild_z_vector));
 
-		if ( verbose ) std::cout << "Base planarity: " << base_planarity << std::endl;
+		if ( verbose ) TR << "Base planarity: " << base_planarity << std::endl;
 
 		if (base_planarity < base_stack_planarity_cutoff_ ) return false;
 
@@ -355,7 +355,7 @@ namespace rna {
 		if ( !base_pairing && !stack_base ) return false;
 
 
-		//		std::cout << " BASE_PAIRING " << base_pairing << "  BASE_STACKING " << stack_base << std::endl;
+		//		TR << " BASE_PAIRING " << base_pairing << "  BASE_STACKING " << stack_base << std::endl;
 		return true;
 
 	}
@@ -398,14 +398,14 @@ namespace rna {
 
 			for ( Size m = 1; m <= moving_residues_.size(); m++ ) {
 				Size const & moving_res = moving_residues_[ m ];
-				if (verbose) std::cout << "about to check stack: " << terminal_res << " " << moving_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) << std::endl;
+				if (verbose) TR << "about to check stack: " << terminal_res << " " << moving_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) << std::endl;
 				if ( !stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) &&
 						 check_stack_base( terminal_res, moving_res, verbose  ) ) return false;
 			}
 
 			for ( Size m = 1; m <= fixed_residues_.size(); m++ ) {
 				Size const & fixed_res = fixed_residues_[ m ];
-				if (verbose) std::cout << "about to check stack: " << terminal_res << " " << fixed_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) << std::endl;
+				if (verbose) TR << "about to check stack: " << terminal_res << " " << fixed_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) << std::endl;
 				if ( !stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) &&
 						 check_stack_base( terminal_res, fixed_res, verbose  ) ) return false;
 			}

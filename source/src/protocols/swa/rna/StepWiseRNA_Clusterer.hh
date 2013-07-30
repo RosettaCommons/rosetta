@@ -30,8 +30,8 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 
 #include <protocols/swa/rna/StepWiseRNA_PoseSetup.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_Bin_Screener.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
+#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 
 #include <map>
 
@@ -188,7 +188,7 @@ namespace rna {
 		set_VDW_rep_screen_info( utility::vector1< std::string > const & setting ){ VDW_rep_screen_info_=setting; }
 
 		void
-		set_user_input_VDW_bin_screener(protocols::swa::rna::StepWiseRNA_VDW_Bin_ScreenerOP const & user_input_VDW_bin_screener){ user_input_VDW_bin_screener_= user_input_VDW_bin_screener; }
+		set_user_input_VDW_bin_screener(protocols::swa::rna::StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener){ user_input_VDW_bin_screener_= user_input_VDW_bin_screener; }
 
 		void
 		set_full_length_loop_rmsd_clustering(bool const & setting){full_length_loop_rmsd_clustering_= setting; }
@@ -325,7 +325,7 @@ namespace rna {
 		std::string quick_alignment_tag_;
 		bool skip_clustering_;
 
-		protocols::swa::rna::StepWiseRNA_VDW_Bin_ScreenerOP user_input_VDW_bin_screener_;
+		protocols::swa::rna::StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
 		bool perform_VDW_rep_screen_;
 		bool perform_filters_;
 		Size min_num_south_ribose_filter_;

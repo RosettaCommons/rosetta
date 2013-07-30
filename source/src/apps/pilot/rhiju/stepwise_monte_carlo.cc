@@ -182,7 +182,7 @@ stepwise_monte_carlo()
 
 	//setup rmsd res as everything to be sampled.
 	std::list< Size > rmsd_res;
-	for ( Size i = 1; i <= desired_sequence.size(); i++ ) if ( !Contain_seq_num(i, input_res_list ) ) rmsd_res.push_back( i );
+	for ( Size i = 1; i <= desired_sequence.size(); i++ ) if ( !input_res_list.has_value(i) ) rmsd_res.push_back( i );
 
 	// scorefunction
 	core::scoring::ScoreFunctionOP scorefxn = getScoreFunction();

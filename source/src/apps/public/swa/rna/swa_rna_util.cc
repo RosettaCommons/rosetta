@@ -58,6 +58,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
+#include <basic/Tracer.hh>
 ///////////////////////////////////////////////////
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -104,10 +105,10 @@
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.hh>
-#include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
+#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
+#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
 #include <protocols/rna/RNA_LoopCloser.fwd.hh>
 
@@ -148,6 +149,8 @@ using io::pdb::dump_pdb;
 using namespace protocols::swa::rna;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
+
+static basic::Tracer TR( "swa_rna_util" );
 
 OPT_KEY( String, 	algorithm)
 OPT_KEY( Real, surrounding_radius)
@@ -239,8 +242,8 @@ align_pose_general(core::pose::Pose const & static_pose, std::string const stati
 			Size const moving_seq_num=alignment_res_pair_list[n].second;
 
 			std::cout << "static_seq_num= " << static_seq_num << " moving_seq_num= " << moving_seq_num;
-			Output_boolean("  Is_virtual_base( " + static_tag + " ):", Is_virtual_base(static_pose.residue(static_seq_num) ) );
-			Output_boolean("  Is_virtual_base( " + moving_tag + " ):", Is_virtual_base(moving_pose.residue(moving_seq_num) ) );
+			Output_boolean("  Is_virtual_base( " + static_tag + " ):", Is_virtual_base(static_pose.residue(static_seq_num) ), TR );
+			Output_boolean("  Is_virtual_base( " + moving_tag + " ):", Is_virtual_base(moving_pose.residue(moving_seq_num) ), TR );
 			std::cout << std::endl;
 		}
 		std::string error_message= "Error in aligning " + moving_tag + " to " + static_tag + ". No non-virtual_base in working_best_alignment to align the poses!";
@@ -339,9 +342,9 @@ full_length_rmsd_over_reside_list_general(pose::Pose const & pose_one, pose::Pos
 	using namespace ObjexxFCL;
 
 	if(verbose){
-		Output_title_text("Enter full_length_rmsd_over_residue_list_general function");
-		Output_boolean("ignore_virtual_atom= ",ignore_virtual_atom); std::cout << std::endl;
-		output_pair_size_vector(rmsd_res_pair_list, "rmsd_res_pair_list= ");
+		Output_title_text("Enter full_length_rmsd_over_residue_list_general function", TR );
+		Output_boolean("ignore_virtual_atom= ",ignore_virtual_atom, TR ); std::cout << std::endl;
+		output_pair_size(rmsd_res_pair_list, "rmsd_res_pair_list= ", TR );
 	}
 
 	utility::vector1<Size> rmsd_res_list_one;
@@ -398,8 +401,8 @@ full_length_rmsd_over_reside_list_general(pose::Pose const & pose_one, pose::Pos
 
 		if(verbose){
 			std::cout << "seq_num_one= " << seq_num_one << " seq_num_two= " << seq_num_two;
-			Output_boolean(" Is_prepend= ",Is_prepend);
-			Output_boolean(" both_pose_res_is_virtual= ",both_pose_res_is_virtual); std::cout << std::endl;
+			Output_boolean(" Is_prepend= ",Is_prepend, TR );
+			Output_boolean(" both_pose_res_is_virtual= ",both_pose_res_is_virtual, TR ); std::cout << std::endl;
 		}
 
 		if(both_pose_res_is_virtual) continue;
@@ -426,8 +429,8 @@ full_length_rmsd_over_reside_list_general(pose::Pose const & pose_one, pose::Pos
 			bool Is_phosphate_edge_res_one=false;
 			bool Is_phosphate_edge_res_two=false;
 
-			if(Contain_seq_num(seq_num_one+1, rmsd_res_list_one)==false ) Is_phosphate_edge_res_one=true;
-			if(Contain_seq_num(seq_num_two+1, rmsd_res_list_two)==false ) Is_phosphate_edge_res_two=true;
+			if(rmsd_res_list_one.has_value(seq_num_one+1)==false ) Is_phosphate_edge_res_one=true;
+			if(rmsd_res_list_two.has_value(seq_num_two+1)==false ) Is_phosphate_edge_res_two=true;
 
 			if(Is_phosphate_edge_res_one!=Is_phosphate_edge_res_two){
 				std::cout << "seq_num_one+1= " << seq_num_one+1 << " seq_num_two+1= " << seq_num_two+1 << std::endl;
@@ -454,7 +457,7 @@ full_length_rmsd_over_reside_list_general(pose::Pose const & pose_one, pose::Pos
 
 	if(verbose){
 		std::cout << "sum_sd= " << sum_sd << " atom_count= " << atom_count << " rmsd= " << rmsd << std::endl;
-		Output_title_text("Exit In full_length_rmsd_over_residue_list function_general");
+		Output_title_text("Exit In full_length_rmsd_over_residue_list function_general", TR );
 	}
 
 	return (std::max(0.01, rmsd));
@@ -483,7 +486,7 @@ align_pdbs(){
 
 	bool const align_base_only = option[align_only_over_base_atoms ]();
 
-	Output_boolean("align_base_only= ", align_base_only); std::cout << std::endl;
+	Output_boolean("align_base_only= ", align_base_only, TR ); std::cout << std::endl;
 
 
 	std::string const static_pdb_tag = option[ in::file::native ]();
@@ -494,7 +497,7 @@ align_pdbs(){
 
 	utility::vector1< core::Size > const native_virtual_res_list = option[ native_virtual_res ]();
 
-	Output_seq_num_list("native_virtual_res_list= ", native_virtual_res_list);
+	Output_seq_num_list("native_virtual_res_list= ", native_virtual_res_list, TR );
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if(alignment_res_string_pair_list.size()==0) utility_exit_with_message( "alignment_res_string_pair_list.size()==0" );
@@ -609,8 +612,8 @@ calculate_pairwise_RMSD(){
 	bool const do_dump_pdb = option[ dump ]();
 	Real const alignment_RMSD_cutoff=option[ alignment_RMSD_CUTOFF ]();
 
-	Output_boolean("align_base_only= ", align_base_only); std::cout << std::endl;
-	Output_boolean("do_dump_pdb= ", do_dump_pdb); std::cout << std::endl;
+	Output_boolean("align_base_only= ", align_base_only, TR ); std::cout << std::endl;
+	Output_boolean("do_dump_pdb= ", do_dump_pdb, TR ); std::cout << std::endl;
 	std::cout << "alignment_RMSD_cutoff= " << alignment_RMSD_cutoff << std::endl;
 
 
@@ -679,8 +682,8 @@ calculate_pairwise_RMSD(){
 	for(Size n=1; n<= rmsd_res_pair_list.size(); n++){
 		Size native_rmsd_res= rmsd_res_pair_list[n].first;
 		Size decoy_rmsd_res = rmsd_res_pair_list[n].second;
-		Output_boolean("Is_native_virtual_res(" +string_of(native_rmsd_res)+")=", native_pose.residue(native_rmsd_res).has_variant_type("VIRTUAL_RNA_RESIDUE") );
-		Output_boolean(" | Is_decoy_virtual_res(" +string_of(decoy_rmsd_res)+")=", decoy_pose.residue(decoy_rmsd_res).has_variant_type("VIRTUAL_RNA_RESIDUE") );
+		Output_boolean("Is_native_virtual_res(" +string_of(native_rmsd_res)+")=", native_pose.residue(native_rmsd_res).has_variant_type("VIRTUAL_RNA_RESIDUE"), TR );
+		Output_boolean(" | Is_decoy_virtual_res(" +string_of(decoy_rmsd_res)+")=", decoy_pose.residue(decoy_rmsd_res).has_variant_type("VIRTUAL_RNA_RESIDUE"), TR );
 		std::cout << std::endl;
 	}
 
@@ -924,7 +927,7 @@ slice_ellipsoid_envelope(){
 
 	utility::vector1< core::Size > additional_slice_res_list= option[ additional_slice_res]();
 
-	Output_seq_num_list("additional_slice_res_list= ", additional_slice_res_list, 40);
+	Output_seq_num_list("additional_slice_res_list= ", additional_slice_res_list, TR );
 
 	for(Size ii=1; ii<=additional_slice_res_list.size(); ii++){
 		if(additional_slice_res_list[ii]<1)  utility_exit_with_message("additional_slice_res_list[" +string_of(ii) + "]<1");
@@ -1011,13 +1014,13 @@ slice_ellipsoid_envelope(){
 
 	for(Size seq_num=1; seq_num<=pose.total_residue(); seq_num++){
 
-		if(Contain_seq_num(seq_num, sample_res_list)){
+		if(sample_res_list.has_value(seq_num)){
 			std::cout << "res " << seq_num << " is a sample_res" << std::endl;
 			keep_res_list.push_back(seq_num);
 			continue;
 		}
 
-		if( Contain_seq_num(seq_num, additional_slice_res_list) ){
+		if( additional_slice_res_list.has_value(seq_num) ){
 			std::cout << "res " << seq_num << " is in additional_slice_res_list" << std::endl;
 			keep_res_list.push_back(seq_num);
 			continue;
@@ -1061,14 +1064,14 @@ slice_ellipsoid_envelope(){
 
 			if(method_1!=method_2){
 				std::cout << "method_1!=method_2" << std::endl;
-				Output_boolean("method_1= ", method_1); std::cout << std::endl;
-				Output_boolean("method_2= ", method_2); std::cout << std::endl;
+				Output_boolean("method_1= ", method_1, TR ); std::cout << std::endl;
+				Output_boolean("method_2= ", method_2, TR ); std::cout << std::endl;
 				utility_exit_with_message("method_1!=method_2");
 			}
 
 
 			if(method_1){
-				if(Contain_seq_num(seq_num, keep_res_list)==false){ //Not already in the list!
+				if(keep_res_list.has_value(seq_num)==false){ //Not already in the list!
 					std::cout << "seq_num (" << seq_num << ") is a surrounding_res, sum_distances_to_foci= " << sum_distances_to_foci << " major_diameter= " << major_diameter << std::endl;
 					keep_res_list.push_back(seq_num);
 					//break;
@@ -1081,7 +1084,7 @@ slice_ellipsoid_envelope(){
 
 	for(Size seq_num=pose.total_residue(); seq_num>=1; seq_num--){
 
-		if(Contain_seq_num(seq_num, keep_res_list)==false){
+		if(keep_res_list.has_value(seq_num)==false){
 
 			for(Size n=1; n<=sample_res_final_seq_num.size(); n++){
 				if(sample_res_list[n]>seq_num){
@@ -1196,7 +1199,7 @@ slice_sample_res_and_surrounding(){
 
 	utility::vector1< core::Size > additional_slice_res_list= option[ additional_slice_res]();
 
-	Output_seq_num_list("additional_slice_res_list= ", additional_slice_res_list, 40);
+	Output_seq_num_list("additional_slice_res_list= ", additional_slice_res_list, TR );
 
 
 	for(Size ii=1; ii<=additional_slice_res_list.size(); ii++){
@@ -1209,13 +1212,13 @@ slice_sample_res_and_surrounding(){
 
 	for(Size seq_num=pose.total_residue(); seq_num>=1; seq_num--){
 
-		if(Contain_seq_num(seq_num, sample_res_list)){
+		if(sample_res_list.has_value(seq_num)){
 			std::cout << "res " << seq_num << " is a sample_res" << std::endl;
 			keep_res_list.push_back(seq_num);
 			continue;
 		}
 
-		if( Contain_seq_num(seq_num, additional_slice_res_list) ){
+		if( additional_slice_res_list.has_value(seq_num) ){
 			std::cout << "res " << seq_num << " is in additional_slice_res_list" << std::endl;
 			keep_res_list.push_back(seq_num);
 			continue;
