@@ -50,16 +50,6 @@ sources = {
 		"FloppyTailMover",
 		"FloppyTail_publication",
 	],
-	"protocols/rbsegment_relax": [
-		"AutoRBRelaxMover",
-		"MakeStarTopology",
-		"FragInsertAndAlignMover",
-		"RBSegment",
-		"RBSegmentMover",
-		"RBSegmentRelax",
-		"RBSegmentRelax_main",
-		"util",
-	],
 }
 include_path = [
 ]

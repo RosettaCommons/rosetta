@@ -42,7 +42,7 @@ class RBResidueRange {
 public:
 	RBResidueRange() {}
 
-	RBResidueRange( int begin, int end , RBSegmentType type ) :
+	RBResidueRange( int begin, int end , RBSegmentType type=RB_DEFAULT ) :
 		res_first( begin ),
 		res_last( end ),
 		seg_type( type )

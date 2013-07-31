@@ -202,6 +202,7 @@
 #include <protocols/qsar/scoring_grid/GridInitMoverCreator.hh>
 
 #include <protocols/rbsegment_relax/MakeStarTopologyCreator.hh>
+#include <protocols/rbsegment_relax/OptimizeThreadingCreator.hh>
 
 #include <protocols/relax/AtomCoordinateCstMoverCreator.hh>
 #include <protocols/relax/FastRelaxCreator.hh>

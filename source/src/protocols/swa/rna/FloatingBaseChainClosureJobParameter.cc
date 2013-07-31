@@ -69,9 +69,9 @@ namespace rna {
 			sample_sugar( false)
 		{
 			PDL.clear(); //pose_data_list
-		};
+		}
 
-	FloatingBaseChainClosureJobParameter::~FloatingBaseChainClosureJobParameter(){};
+	FloatingBaseChainClosureJobParameter::~FloatingBaseChainClosureJobParameter(){}
 
 
 	void

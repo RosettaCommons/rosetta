@@ -98,6 +98,17 @@ sources = {
 		"StructureIndependentPeakCalibrator",
 		"util",
 	],
+	"protocols/rbsegment_relax": [
+		"AutoRBRelaxMover",
+		"MakeStarTopology",
+		"FragInsertAndAlignMover",
+		"OptimizeThreading",
+		"RBSegment",
+		"RBSegmentMover",
+		"RBSegmentRelax",
+		"RBSegmentRelax_main",
+		"util",
+	],
 	"protocols/surface_docking": [
 		"CentroidRelaxMover",
 		"FullatomRelaxMover",

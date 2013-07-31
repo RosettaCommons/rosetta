@@ -327,12 +327,12 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 			id::AtomID id( a_i, r_i );
 			numeric::xyzVector< Real > newX = R * (pose.xyz(id) - CA1) + CA2;
 
-			//pose.set_xyz( id, newX );
 			atm_ids.push_back( id );
 			atm_xyzs.push_back( newX );
 		}
 	}
 	pose.batch_set_xyz( atm_ids, atm_xyzs );
+	last_shift_ = dir*mag;
 }
 
 

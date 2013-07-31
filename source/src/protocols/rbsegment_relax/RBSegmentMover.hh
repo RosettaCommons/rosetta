@@ -230,17 +230,21 @@ public:
 	/// @brief constructor
 	SequenceShiftMover(RBSegment const & seg, core::Size magnitude=2) :
 		RBSegmentMover(seg),
-		magnitude_(magnitude)
+		magnitude_(magnitude),
+		last_shift_(0)
 	{}
 
 	/// @brief constructor
 	SequenceShiftMover(RBResidueRange const &rb, core::Size magnitude=2) :
 		RBSegmentMover(RBSegment(rb)),
-		magnitude_(magnitude)
+		magnitude_(magnitude),
+		last_shift_(0)
 	{}
 
-	SequenceShiftMover() {
-		magnitude_ = 2;
+	SequenceShiftMover() :
+		RBSegmentMover(),
+		magnitude_(4),
+		last_shift_(0){
 	}
 
 	/// @brief clone this object
@@ -256,11 +260,13 @@ public:
 	/// @brief Apply a +1 or -1 residue "shift" to this helix
 	void apply( core::pose::Pose & pose ) ;
 
+	inline int last_shift() { return last_shift_; }
+
 private:
 	core::Size magnitude_;
+	int last_shift_;
 
 	virtual std::string get_name() const;
-
 };
 
 ///////////////////////////////////////////
