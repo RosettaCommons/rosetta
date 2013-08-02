@@ -247,6 +247,13 @@ FileData PDB_DReader::createFileData(std::vector<Record> & VR, PDB_DReaderOption
 			ri.num = atoi( VR[i]["remarkNum"].value.c_str() ),
 			ri.value = VR[i]["value"].value;
 
+			//Added by DANIEL to skip reading the PDBinfo-LABEL, which comes "nfo-LABEL:"
+			//Those are read in a different way, using: core.import_pose().read_additional_pdb_data()
+			if( ( ri.value.size() >= 10 ) && ( ri.value.substr(0,10) == "nfo-LABEL:" ) )
+			{
+				continue;
+			}
+
 			fd.remarks->push_back(ri);
 		} else if( VR[i]["type"].value == "CRYST1")  {
 			pose::CrystInfo ci;

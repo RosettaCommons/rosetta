@@ -67,6 +67,12 @@ read_additional_pdb_data(
 	bool read_fold_tree = false
 );
 
+void
+read_pdbinfo_labels(
+  std::string const & s,
+  pose::Pose & pose
+);
+
 /// @brief Returns a PoseOP object from the Pose created from input
 /// PDB  <filename>
 /// @note: in PyRosetta, this will return a Pose object

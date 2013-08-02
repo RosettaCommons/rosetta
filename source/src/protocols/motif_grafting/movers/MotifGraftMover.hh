@@ -53,12 +53,12 @@ namespace protocols
 		{
 			/**@brief structure that contains the data of corresponding fragments in the motif and scaffold**/
 			struct motif2scaffold_indexes
-				{
+			{
 					core::Size motifLow;
 					core::Size motifHigh;
 					core::Size scaffoldLow;
 					core::Size scaffoldHigh;
-				};
+			};
 			
 			/**@brief structure that contains the motif2scaffold_indexes data in a vector and adds fields for fragment matching information**/
 			struct motif2scaffold_data
@@ -69,10 +69,11 @@ namespace protocols
 				numeric::xyzVector< core::Real > TvecB;
 				core::Real RMSD;
 				core::Real motif_fragments_RMSD;
-				core::Real clash_score;
+				core::Size clash_score;
 				utility::vector1 < utility::vector1< core::Size > > vvr_hotspots;
-				bool b_optimum_alignment_per_fragment;
+				bool b_allow_independent_alignment_per_fragment;
 				bool b_full_motif_bb_alignment;
+				bool b_graft_only_hotspots_by_sidechain_replacement;
 			};
 			
 			//Function used to sort the motif2scaffold_indexes by > of the scaffold indexes
@@ -98,13 +99,14 @@ namespace protocols
 							motif_fragments_RMSD = data.motif_fragments_RMSD;
 							clash_score = data.clash_score;
 							v_indexes = data.v_indexes;
-							b_optimum_alignment_per_fragment = data.b_optimum_alignment_per_fragment;
+							b_allow_independent_alignment_per_fragment = data.b_allow_independent_alignment_per_fragment;
 							b_full_motif_bb_alignment = data.b_full_motif_bb_alignment;
+							b_graft_only_hotspots_by_sidechain_replacement = data.b_graft_only_hotspots_by_sidechain_replacement;
 						};
 					//Overwrites <operator
 					bool operator <(const MotifMatch& other) const
 					{
-						if (b_optimum_alignment_per_fragment){
+						if (b_allow_independent_alignment_per_fragment){
 							return motif_fragments_RMSD > other.motif_fragments_RMSD;
 						}
 						return RMSD > other.RMSD;
@@ -114,9 +116,10 @@ namespace protocols
 					core::Real get_RMSD() const { return RMSD; }
 					core::Real get_motif_fragments_RMSD() const { return motif_fragments_RMSD; }
 					core::Real get_clash_score() const { return clash_score; }
-					std::string get_optimum_alignment_per_fragment_mode() const {
+					bool b_is_full_motif_bb_alignment() const { return b_full_motif_bb_alignment; }
+					std::string get_allow_independent_alignment_per_fragment_mode() const {
 						std::stringstream converter;
-						converter << b_optimum_alignment_per_fragment;
+						converter << b_allow_independent_alignment_per_fragment;
 						return converter.str(); 
 					};
 					std::string get_full_motif_bb_alignment_mode() const {
@@ -124,17 +127,17 @@ namespace protocols
 						converter << b_full_motif_bb_alignment;
 						return converter.str(); 
 					};
-					std::string get_motif_ranges() const {
+					std::string get_motif_ranges(core::Size const & ndx_shift) const {
 						std::string s_out=""; 
 						for (core::Size i=1; i<= v_indexes.size(); ++i ){ 
-							s_out += " " + utility::to_string(v_indexes[i].motifLow) + "," + utility::to_string(v_indexes[i].motifHigh); 
+							s_out += " " + utility::to_string(ndx_shift + v_indexes[i].motifLow) + "," + utility::to_string(ndx_shift + v_indexes[i].motifHigh); 
 						}
 						return s_out;
 					};
-					std::string get_scaffold_ranges() const { 
+					std::string get_scaffold_ranges(core::Size const & ndx_shift) const { 
 						std::string s_out=""; 
 						for (core::Size i=1; i<= v_indexes.size(); ++i ){ 
-							s_out += " " + utility::to_string(v_indexes[i].scaffoldLow) + "," + utility::to_string(v_indexes[i].scaffoldHigh); 
+							s_out += " " + utility::to_string(ndx_shift + v_indexes[i].scaffoldLow) + "," + utility::to_string(ndx_shift + v_indexes[i].scaffoldHigh); 
 						}
 						return s_out; 
 					};
@@ -154,8 +157,9 @@ namespace protocols
 					core::Real motif_fragments_RMSD;
 					core::Real clash_score;
 					utility::vector1< motif2scaffold_indexes > v_indexes;
-					bool b_optimum_alignment_per_fragment;
+					bool b_allow_independent_alignment_per_fragment;
 					bool b_full_motif_bb_alignment;
+					bool b_graft_only_hotspots_by_sidechain_replacement;
 			};//END class MotifMatch
 			
 			class MotifGraftMover : public protocols::moves::Mover
@@ -169,13 +173,18 @@ namespace protocols
 						std::string const & s_contextStructure,
 						std::string const & s_motif,
 						core::Real  const & r_RMSD_tolerance,
-						core::Real  const & r_clash_score_cutoff,
+						core::Real  const & r_NC_points_RMSD_tolerance,
+						core::Size  const & i_clash_score_cutoff,
 						std::string const & s_combinatory_fragment_size_delta,
 						std::string const & s_max_fragment_replacement_size_delta,
 						std::string const & s_clash_test_residue,
 						std::string const & s_hotspots,
-						bool        const & b_full_motif_bb_alignment,
-						bool        const & b_optimum_alignment_per_fragment,
+						bool              & b_full_motif_bb_alignment,
+						bool        const & b_allow_independent_alignment_per_fragment,
+						bool        const & b_graft_only_hotspots_by_sidechain_replacement,
+						bool        const & b_only_allow_if_N_point_match_aa_identity,
+						bool        const & b_only_allow_if_C_point_match_aa_identity,
+						bool        const & b_revert_graft_to_native_sequence,
 						bool        const & b_allow_repeat_same_graft_output);
 					
 					/**@brief MotifGraftMover Destructor**/
@@ -220,13 +229,15 @@ namespace protocols
 					
 					/**@brief Identify all potential matches for the given target scaffold (this is where the motif grafting code is called)**/
 					std::priority_queue<MotifMatch> generate_scaffold_matches(
-						core::pose::Pose const & target_scaffold, 
-						core::pose::PoseOP const & target_motif_,
-						core::pose::PoseOP const & target_contextStructure_);
+						core::pose::Pose & target_scaffold, 
+						core::pose::PoseOP & target_motif_,
+						core::pose::PoseOP & target_contextStructure_);
 					
 					/** @brief Generate pose corresponding to the given match **/
 					void generate_match_pose(
 						core::pose::Pose & target_pose,
+						core::pose::Pose const & contextStructure,
+						bool b_revert_graft_to_native_sequence,
 						MotifMatch motif_match);
 					
 					/**@brief Return a priority queue with the sucessful epigrafts **/
@@ -235,13 +246,17 @@ namespace protocols
 						core::pose::PoseOP const & target_motif_, 
 						core::pose::PoseOP const & target_contextStructure_,
 						core::Real const & RMSD_tol,
-						core::Real const & clash_cutoff,
+						core::Real const & NC_points_RMSD_tol,
+						core::Size const & clash_cutoff,
 						std::string const & clash_test_residue,
 						utility::vector1 < std::pair< long int, long int > > const & max_fragment_replacement_size_delta_,
 						utility::vector1 < std::pair< core::Size, core::Size > > const & combinatory_fragment_size_delta,
 						utility::vector1 < utility::vector1< core::Size > > const & vvr_hotspots,
 						bool const & b_full_motif_bb_alignment,
-						bool const & b_optimum_alignment_per_fragment,
+						bool const & b_allow_independent_alignment_per_fragment,
+						bool const & b_graft_only_hotspots_by_sidechain_replacement,
+						bool const & b_only_allow_if_N_point_match_aa_identity,
+						bool const & b_only_allow_if_C_point_match_aa_identity,
 						std::priority_queue<MotifMatch> & pq);
 					
 					/**@brief Functions that takes the scaffold, motif, contextStructure and superposition transform data. Deletes from the supperposition data
@@ -250,8 +265,14 @@ namespace protocols
 						core::pose::Pose const & p_scaffold, 
 						core::pose::Pose const & p_motif_,
 						core::pose::Pose const & p_contextStructure_,
-						core::Real const & clash_cutoff,
+						core::Size const & clash_cutoff,
 						utility::vector1< motif2scaffold_data > & v_m2s_data);
+						
+					/**@brief Count the Number of Clashes between two poses*/
+					core::Size count_clashes_between_two_poses(
+						core::pose::Pose const & p_A, 
+						core::pose::Pose const & p_B,
+						core::Size clash_cutoff);
 					
 					/**@brief Function that returns by reference a rotated copy of the pose */
 					core::pose::Pose get_rotated_and_translated_pose(
@@ -277,6 +298,7 @@ namespace protocols
 							motif2scaffold_data & m2s_dat,
 							bool const & skip_motif_extremes);
 					
+					
 					/**@brief Performs alignment of the protein BB on the selected aminoacids. 
 					 **Returns the RMSD,
 					 **Returns by reference the rotation Matrix and Translation Vector,
@@ -290,6 +312,22 @@ namespace protocols
 						numeric::xyzMatrix< core::Real > & RotM,
 						numeric::xyzVector< core::Real > & TvecA,
 						numeric::xyzVector< core::Real > & TvecB);
+						
+					/**@brief Performs alignment of the protein BB on the selected aminoacids. 
+					 **Returns the RMSD,
+					 **Returns by reference the rotation Matrix and Translation Vector,
+					 **Will fail if both poses are not protein <-This can be fixed by adding a list of the atoms to align to the function, but I am not doing it now.
+					 **Will fail if the number of residues to align is not the same in the two poses. **/
+					core::Real get_bb_alignment_and_transformation_wTipsExtraInfo(
+						utility::vector1< bool > const & v_isNorC,
+						core::pose::Pose const & poseA,
+						utility::vector1< core::Size > const & positions_to_alignA,
+						core::pose::Pose const & poseB,
+						utility::vector1< core::Size > const & positions_to_alignB,
+						numeric::xyzMatrix< core::Real > & RotM,
+						numeric::xyzVector< core::Real > & TvecA,
+						numeric::xyzVector< core::Real > & TvecB,
+						utility::vector1< core::Real > & RMSD_tip_elements);
 					
 					/**@brief Returns the BB distance of two poses respect to indexes**/
 					core::Real get_bb_distance(
@@ -297,6 +335,7 @@ namespace protocols
 						utility::vector1< core::Size > const & positions_to_alignA,
 						core::pose::Pose const & poseB,
 						utility::vector1< core::Size > const & positions_to_alignB);
+						
 					
 					/** @brief Helper Fortran wrapper to get the aligment of two matrixes as well as the corresponding transform**/
 					void superposition_transform(
@@ -314,9 +353,11 @@ namespace protocols
 						core::pose::Pose const & p_scaffold, 
 						core::pose::PoseOP const & p_motif_,
 						core::Real const & RMSD_tol,
+						core::Real const & tip_RMSD_tol,
 						utility::vector1 < utility::vector1< core::Size > > const & vvr_hotspots,
 						bool const & b_full_motif_bb_alignment,
-						bool const & b_optimum_alignment_per_fragment,
+						bool const & b_allow_independent_alignment_per_fragment,
+						bool const & b_graft_only_hotspots_by_sidechain_replacement,
 						utility::vector1< motif2scaffold_data > & v_m2s_data);
 					
 					/** @brief returns a copy of the pose that replaces all the aminoacids for a single selected aminoacid**/
@@ -327,14 +368,18 @@ namespace protocols
 					/** @brief returns by reference two vectors of indexes (vv_scaffold_fragments_indexes, v_motif_fragments_indexes) 
 					 ** that hold the lower and upper bounds of the fragments. Indeed the corresponding to the scaffold one is a vector 
 					 **of vectors, since each pose_scaffold can have many matches**/
-					bool get_fragments_by_CA_distances(
+					bool get_fragments_by_CA_distances_and_NCpoints_restrains(
 						core::pose::Pose const & p_scaffold, 
 						core::pose::PoseOP const & p_motif_,
 						utility::vector1< utility::vector1 < std::pair< core::Size, core::Size > > > & vv_scaffold_fragments_indexes,
 						utility::vector1< std::pair< core::Size, core::Size > > & v_motif_fragments_indexes,
 						core::Real const & RMSD_tol,
 						utility::vector1 < std::pair< long int, long int > > const & max_fragment_replacement_size_delta,
-						utility::vector1< std::pair< core::Size, core::Size > > const & v_motif_fragments_permutation);
+						utility::vector1< std::pair< core::Size, core::Size > > const & v_motif_fragments_permutation,
+						bool const & b_only_allow_if_N_point_match_aa_identity,
+						bool const & b_only_allow_if_C_point_match_aa_identity,
+						bool const & b_N_point_can_replace_proline,
+						bool const & b_C_point_can_replace_proline);
 					
 					/** @brief Generates all the discontinuous fragments combinations that are within the tol restriction.
 					 ** Reduce the combinations by matching intra chains distances by pairs.
@@ -354,28 +399,38 @@ namespace protocols
 						std::string const & s_contextStructure,
 						std::string const & s_motif,
 						core::Real  const & r_RMSD_tolerance,
-						core::Real  const & r_clash_score_cutoff,
+						core::Real  const & r_NC_points_RMSD_tolerance,
+						core::Size  const & i_clash_score_cutoff,
 						std::string const & s_combinatory_fragment_size_delta,
 						std::string const & s_max_fragment_replacement_size_delta,
 						std::string const & s_clash_test_residue,
 						std::string const & s_hotspots,
-						bool        const & b_full_motif_bb_alignment,
-						bool        const & b_optimum_alignment_per_fragment,
+						bool              & b_full_motif_bb_alignment,
+						bool        const & b_allow_independent_alignment_per_fragment,
+						bool        const & b_graft_only_hotspots_by_sidechain_replacement,
+						bool        const & b_only_allow_if_N_point_match_aa_identity,
+						bool        const & b_only_allow_if_C_point_match_aa_identity,
+						bool        const & b_revert_graft_to_native_sequence,
 						bool        const & b_allow_repeat_same_graft_output);
 					
 				protected:
 					core::pose::PoseOP gp_p_contextStructure_;
 					core::pose::PoseOP gp_p_motif_;
 					core::Real         gp_r_RMSD_tolerance_;
-					core::Real         gp_r_clash_score_cutoff_;
-					utility::vector1 < std::pair< core::Size, core::Size > > gp_vp_combinatory_fragment_size_delta_;
-					utility::vector1 < std::pair< long int, long int > >     gp_vp_max_fragment_replacement_size_delta_;
+					core::Real         gp_r_NC_points_RMSD_tolerance_;
+					core::Size         gp_i_clash_score_cutoff_;
+					utility::vector1 < std::pair< core::Size, core::Size > >  gp_vp_combinatory_fragment_size_delta_;
+					utility::vector1 < std::pair< long int, long int > >      gp_vp_max_fragment_replacement_size_delta_;
 					std::string        gp_s_clash_test_residue_;
-					utility::vector1 < utility::vector1< core::Size > > gp_vvr_hotspots_;
+					utility::vector1 < utility::vector1< core::Size > >       gp_vvr_hotspots_;
 					bool               gp_b_full_motif_bb_alignment_;
-					bool               gp_b_optimum_alignment_per_fragment_;
+					bool               gp_b_allow_independent_alignment_per_fragment_;
 					bool               gp_b_allow_repeat_same_graft_output_;
 					bool               gp_b_is_first_run_;
+					bool               gp_b_graft_only_hotspots_by_sidechain_replacement_;
+					bool               gp_b_only_allow_if_N_point_match_aa_identity_;
+					bool               gp_b_only_allow_if_C_point_match_aa_identity_;
+					bool               gp_b_revert_graft_to_native_sequence_;
 					
 					core::pose::PoseOP gp_p_target_pose_; //Swap space for our input pose
 					std::priority_queue<MotifMatch> motif_match_results_;
