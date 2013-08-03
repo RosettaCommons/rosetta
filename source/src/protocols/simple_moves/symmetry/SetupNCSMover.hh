@@ -19,6 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <basic/datacache/CacheableData.hh>
 
 
 namespace protocols {
@@ -26,6 +27,30 @@ namespace simple_moves {
 namespace symmetry {
 
 ///////////////////////////////////////////////////////////////////////////////
+// ncs residue mapping
+//   - stored in the pose and accessable by other movers
+class NCSResMapping:  public basic::datacache::CacheableData {
+public:
+	NCSResMapping( core::pose::Pose &pose );
+
+	basic::datacache::CacheableDataOP clone() const {
+		return new NCSResMapping(*this);
+	}
+
+	utility::vector1< core::Size > get_equiv( core::Size resid );
+	core::Size get_equiv( core::Size groupID, core::Size resid );
+
+	void set_equiv( core::Size group_num, core::Size res1, core::Size res2 );
+
+	core::Size ngroups() { return ngroups_; }
+
+private:
+	utility::vector1< utility::vector1< core::Size > > mapping_;
+	core::Size ngroups_, nres_;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
 
 class SetupNCSMover : public protocols::moves::Mover {
 public:
@@ -81,8 +106,8 @@ public:
 	void set_weight( core::Real wt_in) { wt_ = wt_in; }
 	core::Real weight( ) { return wt_; }
 
-	void set_sd( core::Real sd_in) { sd_ = sd_in; } 
-	core::Real sd( ) { return sd_; } 
+	void set_sd( core::Real sd_in) { sd_ = sd_in; }
+	core::Real sd( ) { return sd_; }
 
 private:
 	utility::vector1< std::string > src_;
@@ -92,9 +117,9 @@ private:
 	utility::vector1< std::string > srcD_;
 	utility::vector1< std::string > tgtD_;
 
-	bool bb_, chi_, symmetric_sequence_, distance_pair_; 
+	bool bb_, chi_, symmetric_sequence_, distance_pair_;
 
-	core::Real limit_, wt_, wtD_, sd_; 
+	core::Real limit_, wt_, wtD_, sd_;
 };
 
 } // symmetry

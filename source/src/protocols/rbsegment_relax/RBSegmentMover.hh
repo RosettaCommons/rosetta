@@ -15,31 +15,22 @@
 #ifndef INCLUDED_protocols_rbsegment_relax_RBSegmentMover_hh
 #define INCLUDED_protocols_rbsegment_relax_RBSegmentMover_hh
 
-// Package headers
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/rigid/RB_geometry.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
-//#include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
-//devel Headers
 #include <protocols/rbsegment_relax/RBSegment.hh>
+#include <protocols/hybridization/util.hh>
 
 // C++ Headers
 #include <map>
 
-// Utility Headers
-// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
-#include <numeric/xyzVector.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
-
 #include <utility/pointer/ReferenceCount.hh>
-
 #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
+#include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
 
@@ -74,6 +65,9 @@ public:
 
 	/// @brief Apply the rigid-body fragment mover to a pose.  Must be defined by derived classes.
 	virtual void apply( core::pose::Pose & pose ) = 0;
+
+	/// @brief Set the segment this mover is working on
+	virtual void set_segment( RBSegment const & seg) { segment_ = seg; }
 
 	virtual std::string get_name() const;
 
@@ -228,43 +222,68 @@ public:
 class SequenceShiftMover : public RBSegmentMover {
 public:
 	/// @brief constructor
-	SequenceShiftMover(RBSegment const & seg, core::Size magnitude=2) :
+	SequenceShiftMover(RBSegment const & seg, core::Size magnitude=4) :
 		RBSegmentMover(seg),
 		magnitude_(magnitude),
-		last_shift_(0)
+		last_move_(0)
 	{}
 
 	/// @brief constructor
-	SequenceShiftMover(RBResidueRange const &rb, core::Size magnitude=2) :
+	SequenceShiftMover(core::pose::Pose const & pose_in, RBSegment const & seg, core::Size magnitude=4) :
+		RBSegmentMover(seg),
+		magnitude_(magnitude),
+		last_move_(0),
+		ref_pose_(pose_in)
+	{
+		core::Size nres = hybridization::get_num_residues_nonvirt( pose_in );
+		offsets_.resize(nres,0);
+	}
+
+	/// @brief constructor
+	SequenceShiftMover(RBResidueRange const &rb, core::Size magnitude=4) :
 		RBSegmentMover(RBSegment(rb)),
 		magnitude_(magnitude),
-		last_shift_(0)
+		last_move_(0)
 	{}
 
 	SequenceShiftMover() :
 		RBSegmentMover(),
 		magnitude_(4),
-		last_shift_(0){
-	}
+		last_move_(0)
+	{}
 
 	/// @brief clone this object
-	virtual protocols::moves::MoverOP clone() const { return RBSegmentMoverOP(new SequenceShiftMover(*this)); }
+	virtual protocols::moves::MoverOP
+	clone() const { return RBSegmentMoverOP(new SequenceShiftMover(*this)); }
 
 	/// @brief set movement parameters.  ignore all input args
-	virtual void set_movement( core::Real sigAxisR=0.0, core::Real sigAxisT=0.0, core::Real sigOffAxisR=0.0, core::Real sigOffAxisT=0.0)
-	{
-		if ( sigAxisR != 0.0 || sigAxisT != 0.0 || sigOffAxisR != 0.0 || sigOffAxisT != 0.0 )
-			std::cerr << "SequenceShiftMover : Ignore params (" << sigAxisR << ", " << sigAxisT << ", " << sigOffAxisR << ", " << sigOffAxisT << ")\n";
-	}
+	virtual void
+	set_movement( core::Real /*sigAxisR=0.0*/, core::Real /*sigAxisT=0.0*/, core::Real /*sigOffAxisR=0.0*/, core::Real /*sigOffAxisT=0.0*/)	{ }
 
-	/// @brief Apply a +1 or -1 residue "shift" to this helix
-	void apply( core::pose::Pose & pose ) ;
+	/// @brief Apply a + or - residue "shift" to this helix
+	void
+	apply( core::pose::Pose & pose );
 
-	inline int last_shift() { return last_shift_; }
+	/// @brief Last move accepted; update offsets_
+	void
+	trigger_accept();
+
+
+	/// @brief Return a score: the minimum number of block shifts accumulated
+	int
+	score();
+
+
+	/// @brief IF ref_pose is given, get a list of residues to rebuild via fragment insertion
+	loops::LoopsOP
+	get_residues_to_rebuild();
 
 private:
 	core::Size magnitude_;
-	int last_shift_;
+	int last_move_;
+
+	core::pose::Pose ref_pose_;
+	utility::vector1< int > offsets_;
 
 	virtual std::string get_name() const;
 };

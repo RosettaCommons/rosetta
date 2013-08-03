@@ -262,77 +262,224 @@ void GaussianRBSegmentMover::getCoordinateTransformation(
 
 
 ///////////////////////////////////////////
-///  Apply a "register shift" move to this fragment.  Shift {-2,-1,1,2}
+///  Apply a "register shift" move to this fragment.
 ///////////////////////////////////////////
 void SequenceShiftMover::apply( core::pose::Pose & pose ) {
-	// if the segment is not simple (i.e. contains >1 continuous segment) output error msg
-	if (!segment_.isSimple()) {
-		TR << "[ ERROR ] SequenceShiftMover::apply() called on compound segment!" << std::endl;
-		exit(1);
-	}
-
 	// pick a direction at random
 	int dir = (rbseg_RG.random_range(0,1))? -1 : 1;
 	int mag = rbseg_RG.random_range(1,magnitude_);
+	core::Size nres = hybridization::get_num_residues_nonvirt( pose );
+
+	if (offsets_.size() != nres) {
+		offsets_.clear();
+		offsets_.resize(nres,0);
+	}
 
 	TR.Debug << "SequenceShiftMover::apply() [" << dir*mag << "]" << std::endl;
-
-	// now apply to transformation to every atom in [startRes,endRes]
-	Size i_start = std::max(segment_[1].start(), (Size)1);
-	Size i_end   = std::min(segment_[1].end(), pose.total_residue());
-	Size nres  = i_end - i_start + 1;
-
-	numeric::xyzVector< Real > C1,N1,C2,N2, CA1, CA2;
-	numeric::xyzMatrix< Real > R;
-
-	// avoid compiler warning
-	R.xx(0.0);R.xy(0.0);R.xz(0.0);
-	R.yx(0.0);R.yy(0.0);R.yz(0.0);
-	R.zx(0.0);R.zy(0.0);R.zz(0.0);
 
 	utility::vector1< id::AtomID > atm_ids;
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
-	for ( Size i = 0; i < nres-mag; ++i ) {
-		// "transform" r_i to r_j
-		Size r_i = (dir==1)? i_start+i : i_end-i;
-		Size r_j = r_i+dir*mag;
+	for (Size i=1; i<=segment_.nContinuousSegments(); ++i) {
+		// apply to transformation to every atom in this segment
+		Size i_start = std::max(segment_[i].start(), (Size)1);
+		Size i_end   = std::min(segment_[i].end(), pose.total_residue());
 
-		CA1 = pose.residue(r_i).atom("CA").xyz();
-		C1 = pose.residue(r_i).atom("C").xyz() - CA1;  // offset from CA
-		N1 = pose.residue(r_i).atom("N").xyz() - CA1;  // offset from CA
-		CA2 = pose.residue(r_j).atom("CA").xyz();
-		C2 = pose.residue(r_j).atom("C").xyz() - CA2;  // offset from CA
-		N2 = pose.residue(r_j).atom("N").xyz() - CA2;  // offset from CA
+		Size nres_seg  = i_end - i_start + 1;
 
-		// get rotation from (i+dir) to i
-		R = numeric::alignVectorSets( C1,N1, C2,N2 );
+		numeric::xyzVector< Real > C1,N1,C2,N2, CA1, CA2;
+		numeric::xyzMatrix< Real > R, R1;
 
-		// apply transformation to every atom in this res
-		for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
-			id::AtomID id( a_i, r_i );
-			numeric::xyzVector< Real > newX = R * (pose.xyz(id) - CA1) + CA2;
+		// avoid compiler warning
+		R.xx(0.0);R.xy(0.0);R.xz(0.0);
+		R.yx(0.0);R.yy(0.0);R.yz(0.0);
+		R.zx(0.0);R.zy(0.0);R.zz(0.0);
+		R1.xx(0.0);R1.xy(0.0);R1.xz(0.0);
+		R1.yx(0.0);R1.yy(0.0);R1.yz(0.0);
+		R1.zx(0.0);R1.zy(0.0);R1.zz(0.0);
 
-			//pose.set_xyz( id, newX );
-			atm_ids.push_back( id );
-			atm_xyzs.push_back( newX );
+		for ( Size i = 0; i < nres_seg-mag; ++i ) {
+			// "transform" r_i to r_j
+			Size r_i = (dir==1)? i_start+i : i_end-i;
+			Size r_j = r_i+dir*mag;
+
+			CA1 = pose.residue(r_i).atom("CA").xyz();
+			C1 = pose.residue(r_i).atom("C").xyz() - CA1;  // offset from CA
+			N1 = pose.residue(r_i).atom("N").xyz() - CA1;  // offset from CA
+			CA2 = pose.residue(r_j).atom("CA").xyz();
+			C2 = pose.residue(r_j).atom("C").xyz() - CA2;  // offset from CA
+			N2 = pose.residue(r_j).atom("N").xyz() - CA2;  // offset from CA
+
+			// get rotation from (i+dir) to i
+			R = numeric::alignVectorSets( C1,N1, C2,N2 );
+
+			// apply transformation to every atom in this res
+			for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
+				id::AtomID id( a_i, r_i );
+				numeric::xyzVector< Real > newX = R * (pose.xyz(id) - CA1) + CA2;
+
+				//pose.set_xyz( id, newX );
+				atm_ids.push_back( id );
+				atm_xyzs.push_back( newX );
+			}
+		}
+
+		// final 'mag+1' residues
+		//    if there is a reference pose, use that
+		//    otherwise, duplicate the last residues' xform
+		for ( Size i = 0; i < (Size)mag; ++i ) {
+			Size r_i = (dir==1)? i_end-i : i_start+i;
+			Size r_j = r_i + dir*mag + offsets_[r_i];
+
+			bool crosses_cut = (ref_pose_.total_residue() == 0);
+			for (int k = 0; k<=i && !crosses_cut; ++k) {
+				Size r_k = (dir==1)? i_end-k : i_start+k;
+				Size r_l = r_k + dir*mag + offsets_[r_k];
+				if (r_l>nres || r_l < 1) continue;
+				crosses_cut |= ref_pose_.fold_tree().is_cutpoint((dir==1)?r_l:r_l+1);
+				//if (crosses_cut) std::cerr << "CROSS CUT: " << i << " " << r_k << " -> " << r_l << std::endl;
+			}
+
+			if ( r_j<=nres && r_j >= 1 && !crosses_cut) {
+				CA1 = pose.residue(r_i).atom("CA").xyz();
+				C1 = pose.residue(r_i).atom("C").xyz() - CA1;  // offset from CA
+				N1 = pose.residue(r_i).atom("N").xyz() - CA1;  // offset from CA
+				CA2 = ref_pose_.residue(r_j).atom("CA").xyz();
+				C2 = ref_pose_.residue(r_j).atom("C").xyz() - CA2;  // offset from CA
+				N2 = ref_pose_.residue(r_j).atom("N").xyz() - CA2;  // offset from CA
+
+				// get rotation from (i+dir) to i
+				R1 = numeric::alignVectorSets( C1,N1, C2,N2 );
+
+				// apply transformation to every atom in this res
+				for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
+					id::AtomID id( a_i, r_i );
+					numeric::xyzVector< Real > newX = R1 * (pose.xyz(id) - CA1) + CA2;
+
+					//pose.set_xyz( id, newX );
+					atm_ids.push_back( id );
+					atm_xyzs.push_back( newX );
+				}
+			} else {
+				for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
+					id::AtomID id( a_i, r_i );
+					numeric::xyzVector< Real > newX = R * (pose.xyz(id) - CA1) + CA2;
+					atm_ids.push_back( id );
+					atm_xyzs.push_back( newX );
+				}
+			}
 		}
 	}
 
-	// final 'mag+1' residues have a single transformation applied
-	// just apply the final transformation to these "extra" residues
-	for ( Size i = 0; i < (Size)mag; ++i ) {
-		Size r_i = (dir==1)? i_end-i : i_start+i;
-		for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
-			id::AtomID id( a_i, r_i );
-			numeric::xyzVector< Real > newX = R * (pose.xyz(id) - CA1) + CA2;
-
-			atm_ids.push_back( id );
-			atm_xyzs.push_back( newX );
-		}
-	}
 	pose.batch_set_xyz( atm_ids, atm_xyzs );
-	last_shift_ = dir*mag;
+
+	last_move_ = dir*mag;
+}
+
+void SequenceShiftMover::trigger_accept() {
+	// apply shift to array and score
+	for (int j=1; j<=segment_.nContinuousSegments(); ++j) {
+		for (int k=(int)segment_[j].start(); k<=(int)segment_[j].end(); ++k) {
+			offsets_[k] += last_move_;
+		}
+	}
+}
+
+int
+SequenceShiftMover::score() {
+	int score_aln=0;
+
+	// # block shifts
+	for (int j=2; j<=(int)offsets_.size(); ++j)
+		score_aln += abs(offsets_[j] - offsets_[j-1]);
+
+	// penalize "unaligned" residues
+	utility::vector1<bool> residues_to_rebuild (offsets_.size(), false);
+	for (int i=1; i<=offsets_.size(); ++i) {
+
+		if (residues_to_rebuild[i]) continue;
+
+		// case 1: alignment passes N- or C- term
+		if (offsets_[i]+i<1 || offsets_[i]+i>offsets_.size()) {
+			residues_to_rebuild[i]=true;
+		}
+
+		// case 2: residues overlap
+		for (int j=i+1; j<=offsets_.size(); ++j) {
+			if (offsets_[i]+i == offsets_[j]+j) {
+				residues_to_rebuild[i]=residues_to_rebuild[j]=true;
+			}
+		}
+
+		// case 3: alignment crosses cutpoint
+		int dir = (offsets_[i]>0) ? 1:-1;
+		for (int j=i+dir; j!=i+offsets_[i]+dir && !residues_to_rebuild[i]; j+=dir) {
+			if (ref_pose_.fold_tree().is_cutpoint((dir==1)?j:j+1)) {
+				residues_to_rebuild[i]=true;
+			}
+		}
+	}
+	for (int i=1; i<=offsets_.size(); ++i) {
+		if (residues_to_rebuild[i]) score_aln++;
+	}
+
+	return score_aln;
+}
+
+
+loops::LoopsOP
+SequenceShiftMover::get_residues_to_rebuild() {
+	loops::LoopsOP retval = new loops::Loops;
+	if (ref_pose_.total_residue() == 0)
+		return retval;
+
+	utility::vector1<bool> residues_to_rebuild (offsets_.size(), false);
+	for (int i=1; i<=offsets_.size(); ++i) {
+
+		if (residues_to_rebuild[i]) continue;
+
+		// case 1: alignment passes N- or C- term
+		if (offsets_[i]+i<1 || offsets_[i]+i>offsets_.size()) {
+			residues_to_rebuild[i]=true;
+		}
+
+		// case 2: residues overlap
+		for (int j=i+1; j<=offsets_.size(); ++j) {
+			if (offsets_[i]+i == offsets_[j]+j) {
+				residues_to_rebuild[i]=residues_to_rebuild[j]=true;
+			}
+		}
+
+		// case 3: alignment crosses cutpoint
+		int dir = (offsets_[i]>0) ? 1:-1;
+		for (int j=i+dir; j!=i+offsets_[i]+dir && !residues_to_rebuild[i]; j+=dir) {
+			if (ref_pose_.fold_tree().is_cutpoint((dir==1)?j:j-1)) {
+				residues_to_rebuild[i]=true;
+			}
+		}
+	}
+
+	bool inloop=false;
+	int loopstart,loopstop;
+	for (int i=1; i<=residues_to_rebuild.size(); ++i) {
+		if (!inloop && residues_to_rebuild[i]) {
+			inloop=true;
+			loopstart=i;
+		}
+		if (inloop && !residues_to_rebuild[i]) {
+			inloop=false;
+			loopstop = i-1;
+			if (!ref_pose_.fold_tree().is_cutpoint(loopstart-1)) loopstart--;
+			if (!ref_pose_.fold_tree().is_cutpoint(loopstop)) loopstop++;
+			retval->add_loop( loopstart,loopstop, (int)std::floor(0.5*(loopstart+loopstop+1)) );
+		}
+	}
+	if (inloop) {
+		if (!ref_pose_.fold_tree().is_cutpoint(loopstart-1)) loopstart--;
+		retval->add_loop( loopstart,residues_to_rebuild.size(),
+		                  (int)std::floor(0.5*(loopstart+residues_to_rebuild.size()+1)) );
+	}
+	return retval;
 }
 
 

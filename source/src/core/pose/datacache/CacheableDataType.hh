@@ -78,12 +78,13 @@ enum Enum {
 	SURFACE_PARAMS,
 	PB_LIFETIME_CACHE, // Poisson-boltzmann energy state dependent data (see PoissonBoltzmannEnergy)
 	FULL_MODEL_INFO, // protocols/swa/monte_carlo/SubToFullInfo.cc
+	NCS_RESIDUE_MAPPING,
 
 	// *** IMPORTANT ***
 	// The 'num_cacheable_data_types' below must be the last enum, and must
 	// always be set equal to the (last-1) enum.  If you append a new enum
 	// to the list, remember to change the value below!
-  num_cacheable_data_types = FULL_MODEL_INFO
+  num_cacheable_data_types = NCS_RESIDUE_MAPPING
 };
 
 static std::string get_name( CacheableDataType::Enum datatype);

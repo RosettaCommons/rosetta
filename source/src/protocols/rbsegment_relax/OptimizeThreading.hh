@@ -21,9 +21,11 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/loops/Loops.hh>
 
 
 namespace protocols {
@@ -31,15 +33,22 @@ namespace rbsegment_relax {
 
 class OptimizeThreadingMover : public moves::Mover {
 public:
-	OptimizeThreadingMover() : Mover(), nsteps_(1000), weight_(0.1) {
+	OptimizeThreadingMover() : Mover(), nsteps_(1000), rebuild_cycles_(200), max_shift_(4), weight_(0.1), temperature_(2.0) {
 		scorefxn_ = new core::scoring::ScoreFunction();
 		scorefxn_->set_weight( core::scoring::atom_pair_constraint , 1.0 );
+		scorefxn_sampling_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
+		if (scorefxn_sampling_->get_weight(core::scoring::atom_pair_constraint) == 0)
+			scorefxn_sampling_->set_weight( core::scoring::atom_pair_constraint , 1.0 );
+		if (scorefxn_sampling_->get_weight(core::scoring::dihedral_constraint) == 0)
+			scorefxn_sampling_->set_weight( core::scoring::dihedral_constraint , 1.0 );
+
 	}
 
 	virtual std::string get_name() const { return OptimizeThreadingMoverCreator::mover_name(); }
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new OptimizeThreadingMover( *this ) ) ); }
 
 	virtual void apply( core::pose::Pose & pose );
+
 	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
@@ -48,9 +57,12 @@ public:
 			core::pose::Pose const & pose );
 
 private:
-	core::scoring::ScoreFunctionOP scorefxn_;
-	core::Size nsteps_;
-	core::Real weight_;
+	// helper function
+	void rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP loops);
+
+	core::scoring::ScoreFunctionOP scorefxn_, scorefxn_sampling_;
+	core::Size nsteps_, rebuild_cycles_, max_shift_;
+	core::Real weight_,temperature_;
 };
 
 

@@ -80,6 +80,7 @@ CacheableDataType::initialize_name_map() {
 	name2enum_["STRUCTURAL_CONSERVATION"] = STRUCTURAL_CONSERVATION;
   name2enum_["SURFACE_PARAMS"] = SURFACE_PARAMS;
   name2enum_["FULL_MODEL_INFO"] = FULL_MODEL_INFO;
+  name2enum_["NCS_RESIDUE_MAPPING"] = NCS_RESIDUE_MAPPING;
 
 	assert( name2enum_.size() == CacheableDataType::num_cacheable_data_types );
 

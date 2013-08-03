@@ -24,6 +24,10 @@ class SetupNCSMover;
 typedef utility::pointer::owning_ptr< SetupNCSMover > SetupNCSMoverOP;
 typedef utility::pointer::owning_ptr< SetupNCSMover const > SetupNCSMoverCOP;
 
+class NCSResMapping;
+typedef utility::pointer::owning_ptr< NCSResMapping > NCSResMappingOP;
+typedef utility::pointer::owning_ptr< NCSResMapping const > NCSResMappingCOP;
+
 } // symmetry
 } // moves
 } // rosetta
