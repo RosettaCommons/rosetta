@@ -72,7 +72,7 @@ namespace rna {
 		std::map< core::Size, bool > const & Is_prepend_map() const;
 
 
-		utility::vector1< std::pair< core::Size, core::Size > > const & chain_boundaries() const;
+		utility::vector1< std::pair < core::Size, core::Size > > const & chain_boundaries() const;
 		//Size const & which_chain_has_moving_res() const;
 		Size const & gap_size() const;
 		Size const & five_prime_chain_break_res() const;
@@ -81,7 +81,7 @@ namespace rna {
 		bool const & Is_internal() const;
 		bool const & add_virt_res_as_root() const;
 
-		ObjexxFCL::FArray1D< bool > const & partition_definition() const;
+		ObjexxFCL::FArray1D < bool > const & partition_definition() const;
 
 		utility::vector1< core::Size > const &  working_fixed_res() const;
 		utility::vector1< core::Size > const &  rmsd_res_list() const;
@@ -127,38 +127,38 @@ namespace rna {
 		void set_is_working_res( utility::vector1< core::Size > const & setting );
 		void set_full_to_sub( std::map< core::Size, core::Size > const & setting );
 
-		void set_fold_tree(core::kinematics::FoldTree const & setting);
+		void set_fold_tree( core::kinematics::FoldTree const & setting );
 		void set_Is_prepend_map( std::map< core::Size, bool > const & setting );
 
 
-		void set_chain_boundaries( utility::vector1< std::pair< core::Size, core::Size > > const & setting );
+		void set_chain_boundaries( utility::vector1< std::pair < core::Size, core::Size > > const & setting );
 		//void set_which_chain_has_moving_res( Size const & setting );
 		void set_gap_size( Size const & setting );
 		void set_five_prime_chain_break_res( Size const & setting );
 
 		void set_Is_prepend( bool const & setting );
 		void set_Is_internal( bool const & setting );
-		void set_partition_definition( ObjexxFCL::FArray1D< bool > const & setting );
+		void set_partition_definition( ObjexxFCL::FArray1D < bool > const & setting );
 
 		void set_working_native_pose( core::pose::PoseOP & pose );
 		void set_working_native_pose( core::pose::PoseCOP pose );
-		void set_working_fixed_res(	utility::vector1< core::Size > const & working_fixed_res);
-		void set_rmsd_res_list(	utility::vector1< core::Size > const & rmsd_res_list);
-		void set_working_terminal_res(	utility::vector1< core::Size > const & working_terminal_res);
-		void set_working_moving_partition_pos(	utility::vector1< core::Size > const & working_moving_partition_pos);
-		void set_input_res_vectors(	utility::vector1< utility::vector1< Size > > const & setting);
-		void set_cutpoint_closed_list( utility::vector1< core::Size >  const & setting);
-		void set_working_best_alignment(utility::vector1< core::Size > const & setting);
+		void set_working_fixed_res(	utility::vector1< core::Size > const & working_fixed_res );
+		void set_rmsd_res_list(	utility::vector1< core::Size > const & rmsd_res_list );
+		void set_working_terminal_res(	utility::vector1< core::Size > const & working_terminal_res );
+		void set_working_moving_partition_pos(	utility::vector1< core::Size > const & working_moving_partition_pos );
+		void set_input_res_vectors(	utility::vector1< utility::vector1< Size > > const & setting );
+		void set_cutpoint_closed_list( utility::vector1< core::Size >  const & setting );
+		void set_working_best_alignment( utility::vector1< core::Size > const & setting );
 
-		void set_native_alignment( utility::vector1< core::Size > const & setting);
-		void set_working_native_alignment( utility::vector1< core::Size > const & setting);
+		void set_native_alignment( utility::vector1< core::Size > const & setting );
+		void set_working_native_alignment( utility::vector1< core::Size > const & setting );
 
-		void set_global_sample_res_list( utility::vector1< core::Size > const & setting);
-		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting);
-		void set_force_north_ribose_list( utility::vector1< core::Size > const & setting);
-		void set_force_south_ribose_list( utility::vector1< core::Size > const & setting);
-		void set_protonated_H1_adenosine_list( utility::vector1< core::Size > const & setting);
-		void set_add_virt_res_as_root( bool const setting){ add_virt_res_as_root_=setting; }
+		void set_global_sample_res_list( utility::vector1< core::Size > const & setting );
+		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting );
+		void set_force_north_ribose_list( utility::vector1< core::Size > const & setting );
+		void set_force_south_ribose_list( utility::vector1< core::Size > const & setting );
+		void set_protonated_H1_adenosine_list( utility::vector1< core::Size > const & setting );
+		void set_add_virt_res_as_root( bool const setting ){ add_virt_res_as_root_ = setting; }
 
 
 		core::pose::PoseCOP	working_native_pose() const;
@@ -170,7 +170,7 @@ namespace rna {
 		void update_working_moving_suite();
 		void update_working_sequence();
 
-		std::map< core::Size, core::Size > create_sub_to_full_map(std::map< core::Size, core::Size > const & full_to_sub) const;
+		std::map< core::Size, core::Size > create_sub_to_full_map( std::map< core::Size, core::Size > const & full_to_sub ) const;
 
 	private:
 
@@ -191,7 +191,7 @@ namespace rna {
 		std::map< core::Size, core::Size > sub_to_full_;
 		std::map< core::Size, bool > Is_prepend_map_;
 
-		utility::vector1< std::pair< core::Size, core::Size > > chain_boundaries_;
+		utility::vector1< std::pair < core::Size, core::Size > > chain_boundaries_;
 		//Size which_chain_has_moving_res_;
 		Size gap_size_;
 		Size five_prime_chain_break_res_;
@@ -200,7 +200,7 @@ namespace rna {
 		bool Is_internal_;
 		bool add_virt_res_as_root_;
 
-		ObjexxFCL::FArray1D< bool > partition_definition_;
+		ObjexxFCL::FArray1D < bool > partition_definition_;
 
 		core::pose::PoseCOP working_native_pose_;
 

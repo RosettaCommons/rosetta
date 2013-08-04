@@ -58,10 +58,10 @@ namespace rna {
 		public:
 
 		VDW_RepScreeninfo():
-			input_string(""),
-			pose_name(""),
-			in_root_partition(false),
-			import_ID(0)
+			input_string( "" ),
+			pose_name( "" ),
+			in_root_partition( false ),
+			import_ID( 0 )
 		{
 			VDW_align_res.clear();
 			working_align_res.clear();
@@ -98,78 +98,78 @@ namespace rna {
     virtual ~StepWiseRNA_VDW_BinScreener();
 
 		void
-		FARFAR_setup_using_user_input_VDW_pose(utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose);
+		FARFAR_setup_using_user_input_VDW_pose( utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose );
 
 
 		void
-		setup_using_user_input_VDW_pose(utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose, StepWiseRNA_JobParametersCOP const & job_parameters );
+		setup_using_user_input_VDW_pose( utility::vector1< std::string > const & VDW_rep_screen_pose_info, core::pose::Pose const & const_working_pose, StepWiseRNA_JobParametersCOP const & job_parameters );
 	
 		void
-		setup_using_working_pose(core::pose::Pose const & const_working_pose, StepWiseRNA_JobParametersCOP const & job_parameters );
+		setup_using_working_pose( core::pose::Pose const & const_working_pose, StepWiseRNA_JobParametersCOP const & job_parameters );
 
 
 		void
-		update_VDW_screen_bin(core::pose::Pose const & pose, 
+		update_VDW_screen_bin( core::pose::Pose const & pose, 
 												utility::vector1< core::Size > const & ignore_res_list, 
 												bool const Is_prepend,  //associated with ignore_res_list
-												std::ofstream & outfile_act);
+												std::ofstream & outfile_act );
 
 		void
-		create_VDW_screen_bin(core::pose::Pose const & pose, 
+		create_VDW_screen_bin( core::pose::Pose const & pose, 
 												utility::vector1< core::Size > const & ignore_res_list, 
 												bool const Is_prepend,  //associated with ignore_res_list
-				                 numeric::xyzVector<core::Real> const & reference_xyz, 
-												bool const verbose=false);
+				                 numeric::xyzVector< core::Real > const & reference_xyz, 
+												bool const verbose = false );
 		void
-		create_VDW_screen_bin(utility::vector1< VDW_RepScreeninfo > const & VDW_rep_screen_info_list,  
-				                  numeric::xyzVector<core::Real> const & reference_xyz, 
-												 bool const verbose);
+		create_VDW_screen_bin( utility::vector1< VDW_RepScreeninfo > const & VDW_rep_screen_info_list,  
+				                  numeric::xyzVector< core::Real > const & reference_xyz, 
+												 bool const verbose );
 
 
 		void
-		create_VDW_screen_bin(utility::vector1< core::pose::Pose> const & pose_list, 
+		create_VDW_screen_bin( utility::vector1< core::pose::Pose > const & pose_list, 
 												utility::vector1< utility::vector1< core::Size > > const & list_of_ignore_res_list, 
 												utility::vector1< bool > const list_of_Is_prepend,  
-				                 numeric::xyzVector<core::Real> const & reference_xyz, 
-												bool const verbose);
+				                 numeric::xyzVector< core::Real > const & reference_xyz, 
+												bool const verbose );
 
 
 
 		//fast version
 		bool
-		VDW_rep_screen(core::pose::Pose const & screening_pose, //Warning..this pose coordinate is not update...use here for VIRTUAL atom screening.
+		VDW_rep_screen( core::pose::Pose const & screening_pose, //Warning..this pose coordinate is not update...use here for VIRTUAL atom screening.
 																					 core::Size const & moving_res, 
 																					 core::conformation::Residue const & rsd_at_origin, 
-																					 core::kinematics::Stub const & moving_res_base_stub); //the actual updated coordiate
+																					 core::kinematics::Stub const & moving_res_base_stub ); //the actual updated coordiate
 
 		//Slow version (in the sense that position of screening_pose had to be updated before this function is called)..
 		bool
-		VDW_rep_screen( core::pose::Pose const & screening_pose, core::Size const & moving_res);
+		VDW_rep_screen( core::pose::Pose const & screening_pose, core::Size const & moving_res );
 
 		bool
-		VDW_rep_screen_with_act_pose(core::pose::Pose const & screening_pose, utility::vector1< core::Size > const & moving_res_list, bool const local_verbose=true);
+		VDW_rep_screen_with_act_pose( core::pose::Pose const & screening_pose, utility::vector1< core::Size > const & moving_res_list, bool const local_verbose = true );
 
 
 		bool
 		user_inputted_VDW_screen_pose() const;
 
 		void
-		reference_xyz_consistency_check( numeric::xyzVector<core::Real> const & inputted_reference_xyz) const;
+		reference_xyz_consistency_check( numeric::xyzVector< core::Real > const & inputted_reference_xyz ) const;
 
 		void
-		set_VDW_rep_alignment_RMSD_CUTOFF( core::Real const & setting){ VDW_rep_alignment_RMSD_CUTOFF_= setting ;}
+		set_VDW_rep_alignment_RMSD_CUTOFF( core::Real const & setting ){ VDW_rep_alignment_RMSD_CUTOFF_ = setting ; }
 
 		void
-		set_VDW_rep_delete_matching_res( utility::vector1< std::string > const & setting){ VDW_rep_ignore_matching_res_= setting ;}
+		set_VDW_rep_delete_matching_res( utility::vector1< std::string > const & setting ){ VDW_rep_ignore_matching_res_ = setting ; }
 
 		//void
 		//align_to_first_working_pose(core::pose::Pose & pose, std::string const & tag) const;
 
 		void
-		set_physical_pose_clash_dist_cutoff( core::Real const & setting){ physical_pose_clash_dist_cutoff_= setting ;}
+		set_physical_pose_clash_dist_cutoff( core::Real const & setting ){ physical_pose_clash_dist_cutoff_ = setting ; }
 
 		void
-		set_output_pdb( bool const setting){ output_pdb_=setting;}
+		set_output_pdb( bool const setting ){ output_pdb_ = setting; }
 
 		private:
 
@@ -177,55 +177,55 @@ namespace rna {
 		check_VDW_screen_bin_is_setup() const;
 
 		bool
-		Is_atom_bin_in_range(Atom_Bin const & atom_pos_bin) const;
+		Is_atom_bin_in_range( Atom_Bin const & atom_pos_bin ) const;
 
 		bool
-	 	check_atom_bin_in_range(Atom_Bin const & atom_pos_bin);
+	 	check_atom_bin_in_range( Atom_Bin const & atom_pos_bin );
 
 		void
-		set_reference_xyz(numeric::xyzVector<core::Real> const & reference_xyz);
+		set_reference_xyz( numeric::xyzVector< core::Real > const & reference_xyz );
 		
 		Atom_Bin
-		get_atom_bin(numeric::xyzVector<core::Real> const & atom_pos) const;
+		get_atom_bin( numeric::xyzVector< core::Real > const & atom_pos ) const;
 
-		numeric::xyzVector<core::Real> 
-		get_atom_pos(Atom_Bin const & atom_bin) const;
+		numeric::xyzVector< core::Real > 
+		get_atom_pos( Atom_Bin const & atom_bin ) const;
 
 		void
-		output_atom_bin(std::string const filename) const;
+		output_atom_bin( std::string const filename ) const;
 
 
 		/*
 		void
-		delete_matching_res_in_VDW_rep_screen_pose(core::pose::Pose & VDW_rep_screen_pose, 
+		delete_matching_res_in_VDW_rep_screen_pose( core::pose::Pose & VDW_rep_screen_pose, 
 																				 		core::pose::Pose const & working_pose, 
 																				 		utility::vector1< core::Size > const & VDW_rep_screen_align_res,
 																				 		utility::vector1< core::Size > const & working_align_res,
 																						std::map< core::Size, core::Size > & full_to_sub,
-																						bool const verbose) const;
+																						bool const verbose ) const;
 		*/
 
 		//replacement for delete_matching_res_in_VDW_rep_screen_pose()!
 		utility::vector1< core::Size > 
-		get_matching_res_in_VDW_rep_screen_pose(core::pose::Pose const & VDW_rep_screen_pose, 
+		get_matching_res_in_VDW_rep_screen_pose( core::pose::Pose const & VDW_rep_screen_pose, 
 																				 	core::pose::Pose const & working_pose, 
 																				 	utility::vector1< core::Size > const & VDW_rep_screen_align_res,
 																				 	utility::vector1< core::Size > const & working_align_res,
-																					std::map< core::Size, core::Size > & full_to_sub) const;
+																					std::map< core::Size, core::Size > & full_to_sub ) const;
 
 
 		void
-		align_VDW_rep_screen_pose(core::pose::Pose & VDW_rep_screen_pose, 
+		align_VDW_rep_screen_pose( core::pose::Pose & VDW_rep_screen_pose, 
 														 core::pose::Pose const & working_pose, 
 														 utility::vector1< core::Size > const & VDW_rep_screen_align_res,
 														 utility::vector1< core::Size > const & working_align_res,
-														 bool const verbose) const;
+														 bool const verbose ) const;
 
 		void
-		create_VDW_rep_screen_pose(VDW_RepScreeninfo & VDW_rep_screen_info, //This function update this class!
+		create_VDW_rep_screen_pose( VDW_RepScreeninfo & VDW_rep_screen_info, //This function update this class!
 															core::pose::Pose const & working_pose, 
 															std::map< core::Size, core::Size > & full_to_sub,
-															bool const verbose) const;
+															bool const verbose ) const;
 
 
 
@@ -245,7 +245,7 @@ namespace rna {
 
 			//Still working...
 			utility::vector1< utility::vector1< utility::vector1< bool > > > VDW_screen_bin_;
-			numeric::xyzVector<core::Real> reference_xyz_;
+			numeric::xyzVector< core::Real > reference_xyz_;
 
 			core::Real VDW_rep_alignment_RMSD_CUTOFF_;
 			bool tolerate_off_range_atom_bin_;

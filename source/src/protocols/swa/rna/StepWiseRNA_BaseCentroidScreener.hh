@@ -47,7 +47,7 @@ namespace rna {
 		virtual ~StepWiseRNA_BaseCentroidScreener();
 
 		bool
-		Update_base_stub_list_and_Check_centroid_interaction( core::pose::Pose const & pose , SillyCountStruct & count_data);
+		Update_base_stub_list_and_Check_centroid_interaction( core::pose::Pose const & pose, SillyCountStruct & count_data );
 
 		// Undefined, commenting out to fix PyRosetta build
 		// bool non_adjacent_and_stack_base(core::pose::Pose const & pose,  Size const & pos1, Size const & pos2, bool const verbose = false  );
@@ -81,7 +81,7 @@ namespace rna {
 		check_base_pairing( core::kinematics::Stub const & rebuild_residue_base_stub, core::kinematics::Stub const & base_stub   ) const;
 
 		bool
-		Check_centroid_interaction(SillyCountStruct & count_data) const;
+		Check_centroid_interaction( SillyCountStruct & count_data ) const;
 
 		void
 		Update_base_stub_list( core::pose::Pose const & pose );
@@ -110,11 +110,11 @@ namespace rna {
 		utility::vector1 < core::kinematics::Stub > base_stub_list_;
 
 		utility::vector1< core::Size > terminal_res_;
-		ObjexxFCL::FArray1D< bool > is_terminal_res_;
-		ObjexxFCL::FArray1D< bool > is_fixed_res_;
-		ObjexxFCL::FArray1D< bool > is_moving_res_;
-		ObjexxFCL::FArray1D< bool > is_virtual_base_; //Parin Mar 6
-		ObjexxFCL::FArray2D< bool > stacked_on_terminal_res_in_original_pose_;
+		ObjexxFCL::FArray1D < bool > is_terminal_res_;
+		ObjexxFCL::FArray1D < bool > is_fixed_res_;
+		ObjexxFCL::FArray1D < bool > is_moving_res_;
+		ObjexxFCL::FArray1D < bool > is_virtual_base_; //Parin Mar 6
+		ObjexxFCL::FArray2D < bool > stacked_on_terminal_res_in_original_pose_;
   };
 
 }

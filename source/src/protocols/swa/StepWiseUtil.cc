@@ -26,9 +26,10 @@
 #include <core/conformation/Conformation.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
-
 #include <core/pose/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/util.tmpl.hh>
@@ -36,6 +37,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_Util.hh>
+#include <core/scoring/rms_util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
@@ -57,6 +59,7 @@ using namespace core;
 using numeric::conversions::degrees;
 using numeric::conversions::radians;
 
+static basic::Tracer TR( "protocols.swa.StepWiseUtil" );
 
 namespace protocols {
 namespace swa {
@@ -98,7 +101,7 @@ namespace swa {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	Output_boolean(std::string const & tag, bool boolean, basic::Tracer & TR ){
+	Output_boolean(std::string const & tag, bool boolean, std::ostream & TR ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
@@ -113,7 +116,7 @@ namespace swa {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	Output_boolean(bool boolean, basic::Tracer & TR ){
+	Output_boolean(bool boolean, std::ostream & TR ){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
@@ -127,7 +130,7 @@ namespace swa {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	Output_movemap(kinematics::MoveMap const & mm, Size const total_residue, basic::Tracer & TR){
+	Output_movemap(kinematics::MoveMap const & mm, Size const total_residue, std::ostream & TR){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
@@ -734,6 +737,99 @@ rotate( pose::Pose & pose, Matrix const M,
 		translate_and_rotate_residue_to_origin( pose, i, utility::tools::make_vector1( i ) );
 	}
 
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	add_to_atom_id_map_after_checks( std::map< id::AtomID, id::AtomID> & atom_id_map,
+																	 std::string const & atom_name,
+																	 Size const & n1, Size const & n2,
+																	 pose::Pose const & pose1, pose::Pose const & pose2 ){
+
+		using namespace core::id;
+
+		runtime_assert ( n1 >= 1 && n1 <= pose1.total_residue() );
+		runtime_assert ( n2 >= 1 && n2 <= pose2.total_residue() );
+		runtime_assert( pose1.residue_type( n1 ).aa() == pose2.residue_type( n2 ).aa() );
+
+		if ( ! pose1.residue_type( n1 ).has( atom_name ) ) return;
+		if ( ! pose2.residue_type( n2 ).has( atom_name ) ) return;
+
+		Size const idx1 = pose1.residue_type( n1 ).atom_index( atom_name );
+		Size const idx2 = pose2.residue_type( n2 ).atom_index( atom_name );
+
+		if ( pose1.residue_type( n1 ).is_virtual( idx1 ) ) return;
+		if ( pose2.residue_type( n2 ).is_virtual( idx2 ) ) return;
+
+		atom_id_map[ AtomID( idx1, n1 ) ] = AtomID( idx2, n2 );
+
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Real
+	get_all_atom_rmsd( pose::Pose const & pose, pose::Pose const & native_pose, utility::vector1< Size > const & rmsd_res ){
+
+		using namespace core::pose::full_model_info;
+		using namespace core::id;
+		using namespace core::chemical;
+
+		// first need to slice up native_pose to match residues in actual pose.
+		// define atoms over which to compute RMSD, using rmsd_res.
+		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		utility::vector1< Size > const sub_to_full = full_model_info.sub_to_full();
+
+		utility::vector1< Size > working_rmsd_res;
+		for ( Size n = 1; n <= pose.total_residue(); n++ ){
+			if ( rmsd_res.has_value( sub_to_full[ n ] ) ) working_rmsd_res.push_back( n );
+		}
+
+		std::map< AtomID, AtomID > atom_id_map;
+		for ( Size k = 1; k <= working_rmsd_res.size(); k++ ){
+
+			Size const n = working_rmsd_res[ k ];
+
+			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
+				add_to_atom_id_map_after_checks( atom_id_map,
+																				 pose.residue_type( n ).atom_name( q ),
+																				 n, sub_to_full[ n ],
+																				 pose, native_pose );
+			}
+
+			if ( ! working_rmsd_res.has_value( n + 1 ) &&
+					 ( n + 1 ) <= pose.total_residue() &&
+					 ( !pose.fold_tree().is_cutpoint( n ) || pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) ) {
+				// RNA-specific. Would be trivial to expand to proteins.
+				runtime_assert( pose.residue_type( n + 1 ).is_RNA() );
+				add_to_atom_id_map_after_checks( atom_id_map, " P  ", n + 1, sub_to_full[ n + 1 ], pose, native_pose );
+				add_to_atom_id_map_after_checks( atom_id_map, " OP1", n + 1, sub_to_full[ n + 1 ], pose, native_pose );
+				add_to_atom_id_map_after_checks( atom_id_map, " OP2", n + 1, sub_to_full[ n + 1 ], pose, native_pose );
+				add_to_atom_id_map_after_checks( atom_id_map, " O5'", n + 1, sub_to_full[ n + 1 ], pose, native_pose );
+			}
+		}
+
+		TR << "Calculating RMSD over " << atom_id_map.size() << " atoms." << std::endl;
+		Real rmsd( 0.0 );
+		if ( atom_id_map.size() > 0 ) rmsd = scoring::rms_at_all_corresponding_atoms( pose, native_pose, atom_id_map );
+
+		return rmsd;
+
+	}
+
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	get_number_missing_residues( pose::Pose const & pose ) {
+
+		using namespace core::pose::full_model_info;
+
+		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		utility::vector1< Size > const sub_to_full = full_model_info.sub_to_full();
+		std::string const full_sequence = full_model_info.full_sequence();
+
+		return ( full_sequence.size() - sub_to_full.size() );
+
+	}
 
 
 }

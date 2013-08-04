@@ -34,8 +34,8 @@ namespace protocols {
 namespace swa {
 namespace rna {
 
-	FloatingBaseChainClosureJobParameter::FloatingBaseChainClosureJobParameter(core::Size const input_moving_res, core::Size const input_reference_res):
-			sample_sugar(true),
+	FloatingBaseChainClosureJobParameter::FloatingBaseChainClosureJobParameter( core::Size const input_moving_res, core::Size const input_reference_res ):
+			sample_sugar( true ),
 			moving_res ( input_moving_res ),
 			reference_res( input_reference_res ),
 			moving_res_pucker_state( ALL ),
@@ -45,28 +45,28 @@ namespace rna {
 		{
 
 			PDL.clear(); //pose_data_list
-			Is_prepend= (moving_res>reference_res) ? false: true;
-			bulge_res= (Is_prepend) ? reference_res-1: reference_res+1;
-			bulge_suite = (Is_prepend) ? bulge_res : bulge_res-1;
-			five_prime_chain_break= (Is_prepend) ? moving_res: moving_res-1;
+			Is_prepend = ( moving_res > reference_res ) ? false: true;
+			bulge_res = ( Is_prepend ) ? reference_res - 1: reference_res + 1;
+			bulge_suite = ( Is_prepend ) ? bulge_res : bulge_res - 1;
+			five_prime_chain_break = ( Is_prepend ) ? moving_res: moving_res - 1;
 
 			////////////////////////Consistency check!////////////////////////////////////////
-			if(Is_prepend){
-				if(moving_res+2!=reference_res){
-					std::cout << "moving_res= " << moving_res << " reference_res= " << reference_res;
-					utility_exit_with_message("prepend, but moving_res+2!=reference_res!");
+			if ( Is_prepend ){
+				if ( moving_res + 2 != reference_res ){
+					std::cout << "moving_res = " << moving_res << " reference_res = " << reference_res;
+					utility_exit_with_message( "prepend, but moving_res + 2 != reference_res!" );
 				}
-			}else{
-				if(moving_res-2!=reference_res){
-					std::cout << "moving_res= " << moving_res << " reference_res= " << reference_res;
-					utility_exit_with_message("append, but moving_res-2!=reference_res!");
+			} else{
+				if ( moving_res - 2 != reference_res ){
+					std::cout << "moving_res = " << moving_res << " reference_res = " << reference_res;
+					utility_exit_with_message( "append, but moving_res - 2 != reference_res!" );
 				}
 			}
 
 		}
 
 	FloatingBaseChainClosureJobParameter::FloatingBaseChainClosureJobParameter():
-			sample_sugar( false)
+			sample_sugar( false )
 		{
 			PDL.clear(); //pose_data_list
 		}
@@ -75,48 +75,48 @@ namespace rna {
 
 
 	void
-	FloatingBaseChainClosureJobParameter::check_compatibility(core::Size const nres) const{
+	FloatingBaseChainClosureJobParameter::check_compatibility( core::Size const nres ) const{
 			using namespace ObjexxFCL;
 
-			if(moving_res<1 || moving_res> nres) utility_exit_with_message( "moving_res<1 || moving_res> nres. moving_res= " + string_of(moving_res) );
-			if(bulge_res <1 || bulge_res> nres) utility_exit_with_message( "bulge_res <1 || bulge_res> nres. bulge_res= " + string_of(bulge_res) );
-			if(reference_res<1 || reference_res> nres) utility_exit_with_message( "reference_res<1 || reference_res> nres. reference_res= " + string_of(reference_res) );
+			if ( moving_res < 1 || moving_res > nres ) utility_exit_with_message( "moving_res < 1 || moving_res > nres. moving_res = " + string_of( moving_res ) );
+			if ( bulge_res < 1 || bulge_res > nres ) utility_exit_with_message( "bulge_res < 1 || bulge_res > nres. bulge_res = " + string_of( bulge_res ) );
+			if ( reference_res < 1 || reference_res > nres ) utility_exit_with_message( "reference_res < 1 || reference_res > nres. reference_res = " + string_of( reference_res ) );
 
 			//Should check here that moving_res contain virtual ribose and bulge_res is a virtual_rna_residue?
 	}
 
 	void
-	FloatingBaseChainClosureJobParameter::set_base_and_pucker_state(core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP const & JP){
+	FloatingBaseChainClosureJobParameter::set_base_and_pucker_state( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP const & JP ){
 
 			////////////////////////June 02, 2011 Add BaseState and PuckerState information///
-			moving_res_pucker_state=ALL;
-			if(  (JP->working_force_north_ribose_list()).has_value(moving_res) ) moving_res_pucker_state=NORTH;
-			if(  (JP->working_force_south_ribose_list()).has_value(moving_res) ) moving_res_pucker_state=SOUTH;
+			moving_res_pucker_state = ALL;
+			if (  ( JP->working_force_north_ribose_list() ).has_value( moving_res ) ) moving_res_pucker_state = NORTH;
+			if (  ( JP->working_force_south_ribose_list() ).has_value( moving_res ) ) moving_res_pucker_state = SOUTH;
 
-			moving_res_base_state = (core::scoring::rna::is_purine( pose.residue( moving_res ) ) ) ? BOTH: ANTI;
-			if(  (JP->working_force_syn_chi_res_list()).has_value(moving_res) ) moving_res_base_state=SYN;
+			moving_res_base_state = ( core::scoring::rna::is_purine( pose.residue( moving_res ) ) ) ? BOTH: ANTI;
+			if (  ( JP->working_force_syn_chi_res_list() ).has_value( moving_res ) ) moving_res_base_state = SYN;
 
-			bulge_res_pucker_state=ALL;
-			if(  (JP->working_force_north_ribose_list()).has_value(bulge_res) ) bulge_res_pucker_state=NORTH;
-			if(  (JP->working_force_south_ribose_list()).has_value(bulge_res) ) bulge_res_pucker_state=SOUTH;
+			bulge_res_pucker_state = ALL;
+			if (  ( JP->working_force_north_ribose_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = NORTH;
+			if (  ( JP->working_force_south_ribose_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = SOUTH;
 
-			bulge_res_base_state = (core::scoring::rna::is_purine( pose.residue( bulge_res ) ) ) ? BOTH: ANTI;
-			if(  (JP->working_force_syn_chi_res_list()).has_value(bulge_res) ) bulge_res_base_state=SYN;
+			bulge_res_base_state = ( core::scoring::rna::is_purine( pose.residue( bulge_res ) ) ) ? BOTH: ANTI;
+			if (  ( JP->working_force_syn_chi_res_list() ).has_value( bulge_res ) ) bulge_res_base_state = SYN;
 
 			////////////////////////Print data!////////////////////////////////////////
 			std::cout << "FloatingBaseChainClosureJobParameter: " << std::endl;
-			Output_boolean(" Is_prepend= " , Is_prepend, TR );
-			std::cout << " reference_res=" << reference_res;
+			Output_boolean( " Is_prepend = ", Is_prepend, TR );
+			std::cout << " reference_res = " << reference_res;
 
-			std::cout <<" moving_res=" << moving_res;
-			print_base_state("|base_state=", moving_res_base_state );
-			print_ribose_pucker_state("|pucker_state=", moving_res_pucker_state);
+			std::cout << " moving_res = " << moving_res;
+			print_base_state( "|base_state = ", moving_res_base_state );
+			print_ribose_pucker_state( "|pucker_state = ", moving_res_pucker_state, TR.Debug );
 
-			std::cout << " bulge_res= " << bulge_res;
-			print_base_state("|base_state=", bulge_res_base_state );
-			print_ribose_pucker_state("|pucker_state=", bulge_res_pucker_state);
+			std::cout << " bulge_res = " << bulge_res;
+			print_base_state( "|base_state = ", bulge_res_base_state );
+			print_ribose_pucker_state( "|pucker_state = ", bulge_res_pucker_state, TR.Debug );
 
-			std::cout << " bulge_suite= " << bulge_suite << " five_prime_chain_break= " << five_prime_chain_break;
+			std::cout << " bulge_suite = " << bulge_suite << " five_prime_chain_break = " << five_prime_chain_break;
 
 	}
 

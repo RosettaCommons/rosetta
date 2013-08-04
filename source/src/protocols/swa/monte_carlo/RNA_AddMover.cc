@@ -63,7 +63,8 @@ namespace monte_carlo {
 		rna_torsion_mover_( new RNA_TorsionMover ),
 		sample_range_small_( 5.0 ),
 		sample_range_large_( 40.0 ),
-		kT_( 0.5 )
+		kT_( 0.5 ),
+		num_random_samples_( 1 )
 	{}
 
   //////////////////////////////////////////////////////////////////////////
@@ -112,9 +113,13 @@ namespace monte_carlo {
 
 			chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
 			chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set_->aa_map( my_aa ) );
+
+
 			// iterate over rsd_types, pick one.
 			chemical::ResidueType const & rsd_type = *rsd_type_list[1];
 			core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
+
+			remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS", res_to_build_off ); // got to be safe.
 
 			pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
 
@@ -135,15 +140,19 @@ namespace monte_carlo {
 			runtime_assert( sub_to_full[ res_to_add ] > 1 );
 
 			char newrestype = full_sequence[ (sub_to_full[ res_to_add ] - 1) - 1 ];
-			//std::cout << "I want to add: " << newrestype << std::endl;
+			TR << "I want to add: " << newrestype << " before " << res_to_build_off << std::endl;
 
 			chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
+
 			chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set_->aa_map( my_aa ) );
+
 			// iterate over rsd_types, pick one.
 			chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+
 			core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
 
 			remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add ); // got to be safe.
+			remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS", res_to_add ); // got to be safe.
 
 			pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
 
@@ -195,13 +204,17 @@ namespace monte_carlo {
 
 		// Could this be a chainbreak (cutpoint_closed )?
 
-		TR << "checking for cutpoint after append: " << res_to_add << " " << sub_to_full[ res_to_add ] << " " << sub_to_full[ res_to_add + 1 ] << " " << open_cutpoint_open_in_full_model.size() << std::endl;
+		TR.Debug << "checking for cutpoint after append: " << res_to_add << " " << sub_to_full[ res_to_add ] << " " << sub_to_full[ res_to_add + 1 ] << " " << open_cutpoint_open_in_full_model.size() << std::endl;
 
 		if ( res_to_add < pose.total_residue() &&
 				 sub_to_full[ res_to_add ] + 1 == sub_to_full[ res_to_add + 1 ] &&
 				 ! open_cutpoint_open_in_full_model.has_value( sub_to_full[ res_to_add ]) ){
+
 			add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
+
+			remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res_to_add + 1 );
 			add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
+
 		}
 
 	}
@@ -244,6 +257,10 @@ namespace monte_carlo {
 		stepwise_rna_modeler.set_choose_random( true );
 		stepwise_rna_modeler.set_force_centroid_interaction( true );
 		//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+
+		// new -- try multiple 'shots on goal' before minimizing.
+		stepwise_rna_modeler.set_num_random_samples( num_random_samples_ );
+		stepwise_rna_modeler.set_num_pose_minimize( 1 );
 
 		if ( minimize_all_rebuilt_res_ ) stepwise_rna_modeler.set_minimize_res( nonconst_full_model_info_from_pose( pose ).moving_res_list() );
 

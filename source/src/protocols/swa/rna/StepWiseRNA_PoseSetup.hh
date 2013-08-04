@@ -44,57 +44,57 @@ namespace rna {
   public:
 
     //constructor!
-		StepWiseRNA_PoseSetup(StepWiseRNA_JobParametersOP & job_parameters);
+		StepWiseRNA_PoseSetup( StepWiseRNA_JobParametersOP & job_parameters );
 
     //destructor -- necessary?
     ~StepWiseRNA_PoseSetup();
 
 		/////////////////////////////////////////////////////////////////////////
 
-	  virtual void apply( core::pose::Pose & pose);
+	  virtual void apply( core::pose::Pose & pose );
 
 		virtual std::string get_name() const;
 
 		void
-		set_input_tags( utility::vector1< std::string > const & setting){ input_tags_=setting; } //Only called if COPY_DOF is true
+		set_input_tags( utility::vector1< std::string > const & setting ){ input_tags_ = setting; } //Only called if COPY_DOF is true
 
 		void
-		set_silent_files_in( utility::vector1< std::string > const & setting){ silent_files_in_= setting; } //Only called if COPY_DOF is true
+		set_silent_files_in( utility::vector1< std::string > const & setting ){ silent_files_in_ = setting; } //Only called if COPY_DOF is true
 
 		void
 		set_bulge_res( utility::vector1 < core::Size > const & bulge_res ){ bulge_res_ = bulge_res; }
 
 		void
-		set_virtual_res( utility::vector1 < core::Size > const & virtual_res_list){ virtual_res_list_ = virtual_res_list; }
+		set_virtual_res( utility::vector1 < core::Size > const & virtual_res_list ){ virtual_res_list_ = virtual_res_list; }
 
 		void
 		set_native_virtual_res( utility::vector1 < core::Size > const & native_virtual_res_list ){ native_virtual_res_list_ = native_virtual_res_list; } //Parin Mar 22, 2010
 
 		void
-		set_copy_DOF( bool const setting){ copy_DOF_=setting;} //Parin Mar 29, 2010
+		set_copy_DOF( bool const setting ){ copy_DOF_ = setting; } //Parin Mar 29, 2010
 
 		void
-		set_verbose( bool const setting){ verbose_=setting;}
+		set_verbose( bool const setting ){ verbose_ = setting; }
 
 		void
 		setup_native_pose( core::pose::Pose & pose );
 
 		void
-		set_rebuild_bulge_mode( bool const setting){ rebuild_bulge_mode_=setting;}
+		set_rebuild_bulge_mode( bool const setting ){ rebuild_bulge_mode_ = setting; }
 
 		void
-		set_output_pdb( bool const setting){ output_pdb_=setting;}
+		set_output_pdb( bool const setting ){ output_pdb_ = setting; }
 
 		void
-		set_apply_virtual_res_variant_at_dinucleotide( bool const setting){ apply_virtual_res_variant_at_dinucleotide_=setting;}
+		set_apply_virtual_res_variant_at_dinucleotide( bool const setting ){ apply_virtual_res_variant_at_dinucleotide_ = setting; }
 
 		void
-		set_align_to_native( bool const setting){ align_to_native_=setting;}
+		set_align_to_native( bool const setting ){ align_to_native_ = setting; }
 
   	private:
 
 		void
-		Import_pose( Size const & i, core::pose::Pose & import_pose) const; //Only called if COPY_DOF is true
+		Import_pose( Size const & i, core::pose::Pose & import_pose ) const; //Only called if COPY_DOF is true
 
 		void
 		make_pose( core::pose::Pose & pose ); //Only called if COPY_DOF is true
@@ -103,7 +103,7 @@ namespace rna {
 		read_input_pose_and_copy_dofs( core::pose::Pose & pose ); //Only called if COPY_DOF is true
 
 		void
-		apply_cutpoint_variants( core::pose::Pose & pose , core::pose::Pose & pose_without_cutpoints);
+		apply_cutpoint_variants( core::pose::Pose & pose, core::pose::Pose & pose_without_cutpoints );
 
 		void
 		apply_bulge_variants( core::pose::Pose & pose ) const;
@@ -115,13 +115,13 @@ namespace rna {
 		add_terminal_res_repulsion( core::pose::Pose & pose ) const;
 
  		void
- 		apply_virtual_res_variant(core::pose::Pose & pose ) const;
+ 		apply_virtual_res_variant( core::pose::Pose & pose ) const;
 
 		void
-		correctly_copy_HO2star_positions( core::pose::Pose & full_pose , utility::vector1<core::pose::Pose> const & start_pose_list);
+		correctly_copy_HO2star_positions( core::pose::Pose & full_pose, utility::vector1< core::pose::Pose > const & start_pose_list );
 
 		core::Real
-		get_nearest_dist_to_O2star( core::Size const O2star_seq_num, core::pose::Pose const & input_pose, utility::vector1< core::Size > const input_res_list , utility::vector1< core::Size > const & common_res_list);
+		get_nearest_dist_to_O2star( core::Size const O2star_seq_num, core::pose::Pose const & input_pose, utility::vector1< core::Size > const input_res_list, utility::vector1< core::Size > const & common_res_list );
 
 		//void
 		//ensure_idealize_bond_length_bond_angle_at_cutpoint( core::pose::Pose & working_pose);

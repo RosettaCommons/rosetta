@@ -89,7 +89,7 @@
 using namespace core;
 using core::Real;
 using io::pdb::dump_pdb;
-static numeric::random::RandomGenerator RG(19912388);  // <- Magic number, do not change it!
+static numeric::random::RandomGenerator RG( 19912388 );  // <- Magic number, do not change it!
 
 static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_AnalyticalLoopCloseSampler" );
 
@@ -129,9 +129,9 @@ StepWiseRNA_AnalyticalLoopCloseSampler::StepWiseRNA_AnalyticalLoopCloseSampler (
 	current_score_cutoff_ ( 99999 ), //New option May 12, 2010
 	finer_sampling_at_chain_closure_ ( false ), //New option Jun 10 2010
 	PBP_clustering_at_chain_closure_ ( false ), //New option Aug 15 2010
-	extra_anti_chi_rotamer_(false), //Split to syn and anti on June 16, 2011
-	extra_syn_chi_rotamer_(false), //Split to syn and anti on June 16, 2011
-	use_phenix_geo_(false), //The standard geo from PHENIX
+	extra_anti_chi_rotamer_( false ), //Split to syn and anti on June 16, 2011
+	extra_syn_chi_rotamer_( false ), //Split to syn and anti on June 16, 2011
+	use_phenix_geo_( false ), //The standard geo from PHENIX
 	choose_random_( false ),
 	force_centroid_interaction_( false )
 {
@@ -140,9 +140,9 @@ StepWiseRNA_AnalyticalLoopCloseSampler::StepWiseRNA_AnalyticalLoopCloseSampler (
 	utility::vector1 < core::Size > const & rmsd_res_list = job_parameters_->rmsd_res_list();
 	working_rmsd_res_ = apply_full_to_sub_mapping ( rmsd_res_list, job_parameters );
 	std::map< core::Size, bool > const & Is_prepend_map = job_parameters_->Is_prepend_map();
-	Output_is_prepend_map( "Is_prepend_map= ", Is_prepend_map , job_parameters_->full_sequence().size(), TR, 30 );
-	Output_seq_num_list( "rmsd_res= ", rmsd_res_list, TR, 30 );
-	Output_seq_num_list( "working_rmsd_res= ", working_rmsd_res_, TR, 30 );
+	Output_is_prepend_map( "Is_prepend_map = ", Is_prepend_map, job_parameters_->full_sequence().size(), TR, 30 );
+	Output_seq_num_list( "rmsd_res = ", rmsd_res_list, TR, 30 );
+	Output_seq_num_list( "working_rmsd_res = ", working_rmsd_res_, TR, 30 );
 	////////////////////////////////////////////////////////////////////////////////
 }
 
@@ -171,7 +171,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	TR << "native_screen_rmsd_cutoff = " << native_screen_rmsd_cutoff_ << std::endl;
 	Output_boolean( "o2star_screen = ", o2star_screen_, TR );
 	TR << std::endl;
-	Output_seq_num_list( "working_moving_partition_pos= ", job_parameters_->working_moving_partition_pos(), TR );
+	Output_seq_num_list( "working_moving_partition_pos = ", job_parameters_->working_moving_partition_pos(), TR );
 	Output_boolean( "centroid_screen = ", centroid_screen_, TR );
 	TR << std::endl;
 	Output_boolean( "VDW_atr_rep_screen = ", VDW_atr_rep_screen_, TR );
@@ -191,14 +191,14 @@ StepWiseRNA_AnalyticalLoopCloseSampler::apply ( core::pose::Pose & pose ) {
 
 	standard_sampling ( pose, pose_data_list );
 
-	TR << "Total time in StepWiseRNA_AnalyticalLoopCloseSampler::apply " << static_cast<Real> ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+	TR << "Total time in StepWiseRNA_AnalyticalLoopCloseSampler::apply " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 	Output_title_text( "Exit StepWiseRNA_AnalyticalLoopCloseSampler::apply", TR );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
-StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & pose , utility::vector1< pose_data_struct2 > & pose_data_list ) {
+StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & pose, utility::vector1< pose_data_struct2 > & pose_data_list ) {
 	using namespace core::scoring;
 	using namespace core::pose;
 	using namespace core::io::silent;
@@ -217,7 +217,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	Size const num_nucleotides ( job_parameters_->working_moving_res_list().size() );
 	Size const five_prime_chain_break_res = job_parameters_->five_prime_chain_break_res();
 	Size const cutpoint_closed = cutpoint_closed_list[1];
-	TR << " NUM_NUCLEOTIDES= " <<  num_nucleotides << std::endl;
+	TR << " NUM_NUCLEOTIDES = " <<  num_nucleotides << std::endl;
 	TR << " GAP SIZE " << gap_size << std::endl;
 	TR << " MOVING RES " << moving_res << std::endl;
 	TR << " MOVING SUITE " << moving_suite << std::endl;
@@ -253,7 +253,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	if ( gap_size == 0 ) pose::add_variant_type_to_pose_residue ( screening_pose, "VIRTUAL_PHOSPHATE", five_prime_chain_break_res + 1 );
 
 	//Start the Rotamer Sampling
-	Real /*current_score ( 0.0 ),*/ delta_rep_score ( 0.0 ), delta_atr_score ( 0.0 );
+	Real /*current_score ( 0.0 ), */ delta_rep_score ( 0.0 ), delta_atr_score ( 0.0 );
 	core::Real delta_pucker;
 	core::Real nu2_pucker;
 	core::Real nu1_pucker;
@@ -284,21 +284,21 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	for ( pucker_id = 0; pucker_id < 2; pucker_id ++ ) pucker_ids.push_back( pucker_id );
 
 	Size max_ntries = 1;
-	if (choose_random_) max_ntries = 100;
+	if ( choose_random_ ) max_ntries = 100;
 
 	Size ntries( 0 );
-	while( ntries++ < max_ntries && total_count == 0 ) {
+	while ( ntries++ < max_ntries && total_count == 0 ) {
 	for ( Size k = 0; k < pucker_ids.size(); k++ ){
 
 		Size pucker_id = k;
 		if ( choose_random_ ) pucker_id = RG.random_element( pucker_ids );
 		TR << "pucker_id = " << pucker_id << std::endl;
 
-		if (use_phenix_geo_) {
+		if ( use_phenix_geo_ ) {
 			if ( pucker_id == 0 ) { //Sample North Pucker
-				ideal_coord.apply( screening_pose, moving_res, true);
+				ideal_coord.apply( screening_pose, moving_res, true );
 			} else { //Sample South Pucker
-				ideal_coord.apply( screening_pose, moving_res, false);
+				ideal_coord.apply( screening_pose, moving_res, false );
 			}
 		} else {
 			if ( pucker_id == 0 ) { //Sample North Pucker
@@ -311,9 +311,9 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 				nu1_pucker = rna_fitted_torsion_info.ideal_nu1_south();
 			}
 
-			screening_pose.set_torsion ( TorsionID ( moving_res , id::BB, 4 ) , delta_pucker );
-			screening_pose.set_torsion ( TorsionID ( moving_res , id::CHI, 2 ) , nu2_pucker );
-			screening_pose.set_torsion ( TorsionID ( moving_res , id::CHI, 3 ) , nu1_pucker );
+			screening_pose.set_torsion ( TorsionID ( moving_res, id::BB, 4 ), delta_pucker );
+			screening_pose.set_torsion ( TorsionID ( moving_res, id::CHI, 2 ), nu2_pucker );
+			screening_pose.set_torsion ( TorsionID ( moving_res, id::CHI, 3 ), nu1_pucker );
 		}
 
 		//Loop Closure
@@ -361,7 +361,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 
 			while ( base_sugar_rotamer->get_next_rotamer() ){
 				Real chi = base_sugar_rotamer->chi();
-				screening_pose.set_torsion ( TorsionID ( moving_res , id::CHI, 1 ) ,chi );
+				screening_pose.set_torsion ( TorsionID ( moving_res, id::CHI, 1 ), chi );
 
 				//Native RMSD Screening
 				if ( native_rmsd_screen_ && get_native_pose() ) {
@@ -371,7 +371,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 
 					count_data_.rmsd_count++;
 
-					if ( verbose_ ) TR << "rmsd_count = " << count_data_.rmsd_count << " total count= " << count_data_.tot_rotamer_count << std::endl;
+					if ( verbose_ ) TR << "rmsd_count = " << count_data_.rmsd_count << " total count = " << count_data_.tot_rotamer_count << std::endl;
 				}
 
 				//Centroid Screening
@@ -379,7 +379,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 					bool found_a_centroid_interaction_partner ( false );
 					found_a_centroid_interaction_partner = base_centroid_screener_->Update_base_stub_list_and_Check_centroid_interaction ( screening_pose, count_data_ );
 
-					if ( (gap_size > 0 || force_centroid_interaction_ )  && !found_a_centroid_interaction_partner ) continue;
+					if ( ( gap_size > 0 || force_centroid_interaction_ )  && !found_a_centroid_interaction_partner ) continue;
 
 					if ( !base_centroid_screener_->Check_that_terminal_res_are_unstacked() ) continue;
 				}
@@ -399,16 +399,16 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 
 				//Copy the Torsion angles of screen_pose to pose
 				copy_suite_torsion ( pose, screening_pose, moving_res );
-				if (use_phenix_geo_) {
+				if ( use_phenix_geo_ ) {
 					if ( pucker_id == 0 ) { //Sample North Pucker
-						ideal_coord.apply( pose, moving_res, true);
+						ideal_coord.apply( pose, moving_res, true );
 					} else { //Sample South Pucker
-						ideal_coord.apply( pose, moving_res, false);
+						ideal_coord.apply( pose, moving_res, false );
 					}
 				}
 
 				////////////////Add pose to pose_data_list/////
-				if ( o2star_screen_ ) sample_o2star_hydrogen ( pose , pose_with_original_HO2star_torsion );
+				if ( o2star_screen_ ) sample_o2star_hydrogen ( pose, pose_with_original_HO2star_torsion );
 
 				std::stringstream ss;
 				ss << "U" << total_count;
@@ -421,20 +421,20 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 					Output_data ( silent_file_data, silent_file_, tag, true, pose, get_native_pose(), job_parameters_ );
 				}
 
-				if( choose_random_ && total_count > 0 ) break;
+				if ( choose_random_ && total_count > 0 ) break;
 
 			} // chi (side chain)
 
-			if( choose_random_ && total_count > 0 ) break;
+			if ( choose_random_ && total_count > 0 ) break;
 		} // closed main chain
 
-		if( choose_random_ && total_count > 0 ) break;
+		if ( choose_random_ && total_count > 0 ) break;
 	} // pucker
 
 	} // ntries
 
 	Output_title_text( "Final sort and clustering", TR );
-	TR << "before erasing.. pose_data_list= " << pose_data_list.size() << std::endl;
+	TR << "before erasing.. pose_data_list = " << pose_data_list.size() << std::endl;
 	std::sort ( pose_data_list.begin(), pose_data_list.end(), sort_criteria2 );
 	cluster_pose_data_list ( pose_data_list );
 
@@ -442,27 +442,27 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 		pose_data_list.erase ( pose_data_list.begin() + num_pose_kept_, pose_data_list.end() );
 	}
 
-	TR << "after erasing.. pose_data_list= " << pose_data_list.size() << std::endl;
+	TR << "after erasing.. pose_data_list = " << pose_data_list.size() << std::endl;
 	pose_data_list_ = pose_data_list;
-	//Hacky..temporary until we fix the reroot atom problem..This is just for calculating rmsd purposes... Apr 27 , 2010 Parin
+	//Hacky..temporary until we fix the reroot atom problem..This is just for calculating rmsd purposes... Apr 27, 2010 Parin
 	//////////////////////////////////////////////////////////////////////////////////////////
 	TR << "FINAL COUNTS" << std::endl;
 
-	if ( gap_size <= 1 ) TR << " chain_closable_count= " << count_data_.chain_closable_count << std::endl;
+	if ( gap_size <= 1 ) TR << " chain_closable_count = " << count_data_.chain_closable_count << std::endl;
 
 	if ( gap_size == 0 ) {
-		TR << " angle_n= " << count_data_.good_angle_count << " dist_n= " << count_data_.good_distance_count;
-		TR << " chain_break_screening= " << count_data_.chain_break_screening_count << std::endl;
+		TR << " angle_n = " << count_data_.good_angle_count << " dist_n = " << count_data_.good_distance_count;
+		TR << " chain_break_screening = " << count_data_.chain_break_screening_count << std::endl;
 	}
 
-	TR << "stack= " << count_data_.base_stack_count << " pair= " << count_data_.base_pairing_count;
-	TR << " strict_pair_n= " << count_data_.strict_base_pairing_count;
-	TR << " atr= " << count_data_.good_atr_rotamer_count;
-	TR << " rep= " << count_data_.good_rep_rotamer_count;
-	TR << " both= " << count_data_.both_count;
-	TR << " bulge= " << count_data_.bulge_at_chain_closure_count;
-	TR << " rmsd= " << count_data_.rmsd_count << " tot= " << count_data_.tot_rotamer_count << std::endl;
-	TR << "Total time in StepWiseRNA_AnalyticalLoopCloseSampler: " << static_cast<Real> ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+	TR << "stack = " << count_data_.base_stack_count << " pair = " << count_data_.base_pairing_count;
+	TR << " strict_pair_n = " << count_data_.strict_base_pairing_count;
+	TR << " atr = " << count_data_.good_atr_rotamer_count;
+	TR << " rep = " << count_data_.good_rep_rotamer_count;
+	TR << " both = " << count_data_.both_count;
+	TR << " bulge = " << count_data_.bulge_at_chain_closure_count;
+	TR << " rmsd = " << count_data_.rmsd_count << " tot = " << count_data_.tot_rotamer_count << std::endl;
+	TR << "Total time in StepWiseRNA_AnalyticalLoopCloseSampler: " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 }
 
 
@@ -522,7 +522,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::get_base_atr_rep_score ( core::pose::Pos
 	EnergyMap const & energy_map = base_pose_screen.energies().total_energies();
 	base_atr_score = atr_rep_screening_scorefxn_->get_weight ( fa_atr ) * energy_map[ scoring::fa_atr ]; //
 	base_rep_score = atr_rep_screening_scorefxn_->get_weight ( fa_rep ) * energy_map[ scoring::fa_rep ];
-	TR << "base_rep= " << base_rep_score << " base_atr= " << base_atr_score << std::endl;
+	TR << "base_rep = " << base_rep_score << " base_atr = " << base_atr_score << std::endl;
 
 	if ( verbose_ ) base_pose_screen.dump_pdb ( "base_atr_rep_after.pdb" );
 
@@ -530,7 +530,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::get_base_atr_rep_score ( core::pose::Pos
 	/*
 
 	Size const nres = job_parameters_->working_sequence().size();
-	utility::vector1< Size > const working_moving_res_list=job_parameters_->working_moving_res_list();
+	utility::vector1< Size > const working_moving_res_list = job_parameters_->working_moving_res_list();
 
 
 	utility::vector1< Size > partition_0_seq_num_list;
@@ -539,20 +539,20 @@ StepWiseRNA_AnalyticalLoopCloseSampler::get_base_atr_rep_score ( core::pose::Pos
 
 	bool const root_partition = partition_definition( rerooted_fold_tree.root() );
 
-	for (Size seq_num=1; seq_num<=nres; seq_num++){
+	for ( Size seq_num = 1; seq_num <= nres; seq_num++ ){
 	//			if(working_moving_res_list.has_value(seq_num)) continue; //Exclude working_moving_residues (the one being sampled..)
 
-		if ( partition_definition( seq_num ) == 0){
+		if ( partition_definition( seq_num ) == 0 ){
 		 	partition_0_seq_num_list.push_back( seq_num );
-		}else if( partition_definition( seq_num ) == 1){
+		} else if ( partition_definition( seq_num ) == 1 ){
 		 	partition_1_seq_num_list.push_back( seq_num );
-		}else{
-			utility_exit_with_message("seq_num " + string_of(seq_num) + " is not both in either partition!!" );
+		} else{
+			utility_exit_with_message( "seq_num " + string_of( seq_num ) + " is not both in either partition!!" );
 		}
 	}
 
-	sort_seq_num_list(partition_0_seq_num_list); //Low seq_num on the top of the list [1,2,3,4,5]
-	sort_seq_num_list(partition_1_seq_num_list); //Low seq_num on the top of the list [1,2,3,4,5]
+	sort_seq_num_list( partition_0_seq_num_list ); //Low seq_num on the top of the list [1,2,3,4,5]
+	sort_seq_num_list( partition_1_seq_num_list ); //Low seq_num on the top of the list [1,2,3,4,5]
 
 	*/
 }
@@ -561,7 +561,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::get_base_atr_rep_score ( core::pose::Pos
 ////////////////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_AnalyticalLoopCloseSampler::initialize_scorefunctions() {
-	initialize_common_scorefxns(scorefxn_, sampling_scorefxn_, atr_rep_screening_scorefxn_, chainbreak_scorefxn_, o2star_pack_scorefxn_);
+	initialize_common_scorefxns( scorefxn_, sampling_scorefxn_, atr_rep_screening_scorefxn_, chainbreak_scorefxn_, o2star_pack_scorefxn_ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -582,7 +582,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::Update_pose_data_list ( std::string cons
 	//The order of evaluation of the two expression in the if statement is important!
 	if ( add_pose_to_list ) {
 		if ( verbose_ ) {
-			TR << "tag= " << tag << " current_score_cutoff_ " << current_score_cutoff_ << " score= " << current_score;
+			TR << "tag = " << tag << " current_score_cutoff_ " << current_score_cutoff_ << " score = " << current_score;
 		}
 
 		pose_data_struct2 current_pose_data;
@@ -598,13 +598,13 @@ StepWiseRNA_AnalyticalLoopCloseSampler::Update_pose_data_list ( std::string cons
 
 		pose_data_list.push_back ( current_pose_data );
 
-		if ( verbose_ ) TR << " pose_data_list.size= " << pose_data_list.size() << std::endl;
+		if ( verbose_ ) TR << " pose_data_list.size = " << pose_data_list.size() << std::endl;
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Real
-StepWiseRNA_AnalyticalLoopCloseSampler::Pose_selection_by_full_score ( utility::vector1< pose_data_struct2 >& pose_data_list, pose::Pose & current_pose, std::string const & tag ) {
+StepWiseRNA_AnalyticalLoopCloseSampler::Pose_selection_by_full_score ( utility::vector1< pose_data_struct2 > & pose_data_list, pose::Pose & current_pose, std::string const & tag ) {
 	using namespace core::scoring;
 	Real const current_score = ( *sampling_scorefxn_ ) ( current_pose );
 	Update_pose_data_list ( tag, pose_data_list, current_pose, current_score );
@@ -615,9 +615,9 @@ StepWiseRNA_AnalyticalLoopCloseSampler::Pose_selection_by_full_score ( utility::
 
 		if ( pose_data_list.size() > num_pose_kept_ ) {
 			pose_data_list.erase ( pose_data_list.begin() + num_pose_kept_, pose_data_list.end() );
-			TR << "after erasing.. pose_data_list.size()= " << pose_data_list.size() << std::endl;
+			TR << "after erasing.. pose_data_list.size() = " << pose_data_list.size() << std::endl;
 		} else {
-			TR << "pose_data_list.size()= " << pose_data_list.size() << std::endl;
+			TR << "pose_data_list.size() = " << pose_data_list.size() << std::endl;
 		}
 	}
 
@@ -628,7 +628,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::Pose_selection_by_full_score ( utility::
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Dec 18, 2009...took off alot of optimization from this code since it is very fast (not rate limiting) anyways.
 void
-StepWiseRNA_AnalyticalLoopCloseSampler::cluster_pose_data_list ( utility::vector1< pose_data_struct2 >& pose_data_list ) {
+StepWiseRNA_AnalyticalLoopCloseSampler::cluster_pose_data_list ( utility::vector1< pose_data_struct2 > & pose_data_list ) {
 	bool const Is_prepend ( job_parameters_->Is_prepend() );
 	Size const actually_moving_res = job_parameters_->actually_moving_res();
 	utility::vector1< bool > pose_state_list ( pose_data_list.size(), true );
@@ -644,7 +644,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::cluster_pose_data_list ( utility::vector
 				if ( PBP_clustering_at_chain_closure_ && job_parameters_->gap_size() == 0 ) { //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
 					rmsd =	 phosphate_base_phosphate_rmsd ( ( *pose_data_list[i].pose_OP ), ( *pose_data_list[j].pose_OP ), actually_moving_res,  false /*ignore_virtual_atom*/ );
 				} else {
-					rmsd = suite_rmsd ( ( *pose_data_list[i].pose_OP ), ( *pose_data_list[j].pose_OP ), actually_moving_res, Is_prepend , false /*ignore_virtual_atom*/ );
+					rmsd = suite_rmsd ( ( *pose_data_list[i].pose_OP ), ( *pose_data_list[j].pose_OP ), actually_moving_res, Is_prepend, false /*ignore_virtual_atom*/ );
 				}
 
 				bool const same_pucker = Is_same_ribose_pucker ( ( *pose_data_list[i].pose_OP ), ( *pose_data_list[j].pose_OP ), actually_moving_res );
@@ -653,11 +653,11 @@ StepWiseRNA_AnalyticalLoopCloseSampler::cluster_pose_data_list ( utility::vector
 					pose_state_list[j] = false;
 
 					if ( verbose_ ) {
-						TR << "rmsd= " << rmsd << "  pose " << pose_data_list[j].tag << " is a neighbor of pose " << pose_data_list[i].tag;
-						TR << " same_pucker= ";
+						TR << "rmsd = " << rmsd << "  pose " << pose_data_list[j].tag << " is a neighbor of pose " << pose_data_list[i].tag;
+						TR << " same_pucker = ";
 						Output_boolean( same_pucker, TR );
-						print_ribose_pucker_state ( " center_pucker= ", Get_residue_pucker_state ( ( *pose_data_list[i].pose_OP ), actually_moving_res ) );
-						print_ribose_pucker_state ( " curr_pucker= ", Get_residue_pucker_state ( ( *pose_data_list[j].pose_OP ), actually_moving_res ) );
+						print_ribose_pucker_state ( " center_pucker = ", Get_residue_pucker_state ( ( *pose_data_list[i].pose_OP ), actually_moving_res ), TR );
+						print_ribose_pucker_state ( " curr_pucker = ", Get_residue_pucker_state ( ( *pose_data_list[j].pose_OP ), actually_moving_res ), TR );
 						TR << std::endl;
 					}
 				}
@@ -665,7 +665,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::cluster_pose_data_list ( utility::vector
 		}
 	}
 
-	utility::vector1< pose_data_struct2> clustered_pose_data_list;
+	utility::vector1< pose_data_struct2 > clustered_pose_data_list;
 
 	for ( Size i = 1; i <= pose_data_list.size(); i++ ) {
 		if ( pose_state_list[i] == true ) {
@@ -731,16 +731,16 @@ StepWiseRNA_AnalyticalLoopCloseSampler::Full_atom_van_der_Waals_screening_REPLIC
 
 	if ( pass_atr_rep_screen ) {
 		if ( verbose_ ) {
-			TR << " rep= " << delta_rep_score << " atr= " << delta_atr_score;
-			TR << "  stack_n= " << count_data_.base_stack_count << " pair_n= " << count_data_.base_pairing_count;
-			TR << "  strict_pair_n= " << count_data_.strict_base_pairing_count;
-			TR << "  centroid_n= " << count_data_.pass_base_centroid_screen;
-			TR << "  bin_rep_n= " << count_data_.good_bin_rep_count;
-			TR << "  atr_n= " << count_data_.good_atr_rotamer_count;
-			TR << "  rep_n= " << count_data_.good_rep_rotamer_count;
-			TR << "  both= " << count_data_.both_count << " tot= " << count_data_.tot_rotamer_count;
-			TR << "  closable= " << count_data_.chain_closable_count;
-			TR << "  non_clash_ribose= " << count_data_.non_clash_ribose;
+			TR << " rep = " << delta_rep_score << " atr = " << delta_atr_score;
+			TR << "  stack_n = " << count_data_.base_stack_count << " pair_n = " << count_data_.base_pairing_count;
+			TR << "  strict_pair_n = " << count_data_.strict_base_pairing_count;
+			TR << "  centroid_n = " << count_data_.pass_base_centroid_screen;
+			TR << "  bin_rep_n = " << count_data_.good_bin_rep_count;
+			TR << "  atr_n = " << count_data_.good_atr_rotamer_count;
+			TR << "  rep_n = " << count_data_.good_rep_rotamer_count;
+			TR << "  both = " << count_data_.both_count << " tot = " << count_data_.tot_rotamer_count;
+			TR << "  closable = " << count_data_.chain_closable_count;
+			TR << "  non_clash_ribose = " << count_data_.non_clash_ribose;
 			TR << std::endl;
 		}
 
@@ -775,14 +775,14 @@ StepWiseRNA_AnalyticalLoopCloseSampler::Full_atom_van_der_Waals_screening ( pose
 	delta_atr_score = atr_score - base_atr_score;
 
 	if ( delta_rep_score < ( -0.01 ) ) {
-		std::string const message = "delta_rep_score= " + string_of ( delta_rep_score ) + " rep_score= " + string_of ( rep_score ) + " base_rep_score= " + string_of ( base_rep_score );
-		utility_exit_with_message ( "delta_rep_score<(-0.01), " + message );
+		std::string const message = "delta_rep_score = " + string_of ( delta_rep_score ) + " rep_score = " + string_of ( rep_score ) + " base_rep_score = " + string_of ( base_rep_score );
+		utility_exit_with_message ( "delta_rep_score < (  - 0.01 ), " + message );
 	}
 
-	if ( delta_atr_score > ( +0.01 ) ) {
-		if (verbose_) current_pose_screen.dump_pdb( "problem.pdb" );
-		std::string const message = "delta_atr_score= " + string_of ( delta_atr_score ) + " atr_score= " + string_of ( atr_score ) + " base_atr_score= " + string_of ( base_atr_score );
-		utility_exit_with_message ( "delta_atr_score>(+0.01), " + message );
+	if ( delta_atr_score > ( + 0.01 ) ) {
+		if ( verbose_ ) current_pose_screen.dump_pdb( "problem.pdb" );
+		std::string const message = "delta_atr_score = " + string_of ( delta_atr_score ) + " atr_score = " + string_of ( atr_score ) + " base_atr_score = " + string_of ( base_atr_score );
+		utility_exit_with_message ( "delta_atr_score > (  + 0.01 ), " + message );
 	}
 
 	Real actual_rep_cutoff = rep_cutoff_; //defualt
@@ -815,14 +815,14 @@ StepWiseRNA_AnalyticalLoopCloseSampler::Full_atom_van_der_Waals_screening ( pose
 		count_data_.both_count++;
 
 		if ( verbose_ ) {
-			TR << " rep= " << delta_rep_score << " atr= " << delta_atr_score;
-			TR << "  stack_n= " << count_data_.base_stack_count << " pair_n= " << count_data_.base_pairing_count;
-			TR << "  strict_pair_n= " << count_data_.strict_base_pairing_count;
-			TR << "  centroid_n= " << count_data_.pass_base_centroid_screen;
-			TR << "  bin_rep_n= " << count_data_.good_bin_rep_count;
-			TR << "  atr_n= " << count_data_.good_atr_rotamer_count;
-			TR << "  rep_n= " << count_data_.good_rep_rotamer_count;
-			TR << "  both= " << count_data_.both_count << " tot= " << count_data_.tot_rotamer_count << std::endl;
+			TR << " rep = " << delta_rep_score << " atr = " << delta_atr_score;
+			TR << "  stack_n = " << count_data_.base_stack_count << " pair_n = " << count_data_.base_pairing_count;
+			TR << "  strict_pair_n = " << count_data_.strict_base_pairing_count;
+			TR << "  centroid_n = " << count_data_.pass_base_centroid_screen;
+			TR << "  bin_rep_n = " << count_data_.good_bin_rep_count;
+			TR << "  atr_n = " << count_data_.good_atr_rotamer_count;
+			TR << "  rep_n = " << count_data_.good_rep_rotamer_count;
+			TR << "  both = " << count_data_.both_count << " tot = " << count_data_.tot_rotamer_count << std::endl;
 		}
 
 		return true;
@@ -841,7 +841,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::initialize_o2star_packer_task ( core::po
 	o2star_pack_task_ =  pack::task::TaskFactory::create_packer_task ( pose );
 
 	for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ) {
-		if ( O2star_pack_seq_num.has_value( seq_num) && pose.residue ( seq_num ).is_RNA() ) { //pack this residue!
+		if ( O2star_pack_seq_num.has_value( seq_num ) && pose.residue ( seq_num ).is_RNA() ) { //pack this residue!
 			o2star_pack_task_->nonconst_residue_task ( seq_num ).and_extrachi_cutoff ( 0 );
 			o2star_pack_task_->nonconst_residue_task ( seq_num ).or_ex4 ( true ); //extra O2star sampling
 			o2star_pack_task_->nonconst_residue_task ( seq_num ).or_include_current ( true );
@@ -857,19 +857,19 @@ StepWiseRNA_AnalyticalLoopCloseSampler::initialize_o2star_packer_task ( core::po
 			//Commented off becuase now this function is called by sample_o2star_hydrogen and this is computationally expensive? Parin S. Jan 28, 2010
 			//		o2star_pack_task_->initialize_from_command_line();
 
-			for (Size i = 1; i <= pose.total_residue(); i++) {
-				if ( !pose.residue(i).is_RNA() ) continue;
-				o2star_pack_task_->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
+			for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+				if ( !pose.residue( i ).is_RNA() ) continue;
+				o2star_pack_task_->nonconst_residue_task( i ).and_extrachi_cutoff( 0 );
 				// Following could be useful...
-				o2star_pack_task_->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
-				o2star_pack_task_->nonconst_residue_task(i).or_include_current( true );
+				o2star_pack_task_->nonconst_residue_task( i ).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
+				o2star_pack_task_->nonconst_residue_task( i ).or_include_current( true );
 			}
 	*/
 }
 
 ////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_AnalyticalLoopCloseSampler::sample_o2star_hydrogen ( core::pose::Pose & pose , core::pose::Pose & pose_with_original_HO2star_torsion ) {
+StepWiseRNA_AnalyticalLoopCloseSampler::sample_o2star_hydrogen ( core::pose::Pose & pose, core::pose::Pose & pose_with_original_HO2star_torsion ) {
 	using namespace core::id;
 	using namespace core::conformation;
 
@@ -878,8 +878,8 @@ StepWiseRNA_AnalyticalLoopCloseSampler::sample_o2star_hydrogen ( core::pose::Pos
 		if ( pose.residue ( seq_num ).aa() == core::chemical::aa_vrt ) continue; //FCC
 
 		//SML PHENIX conference
-		if (basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value()){
-			if ( !pose.residue ( seq_num ).is_RNA()) continue;
+		if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ){
+			if ( !pose.residue ( seq_num ).is_RNA() ) continue;
 		}
 
 		pose.set_torsion ( TorsionID ( seq_num, id::CHI, 4 ), pose_with_original_HO2star_torsion.torsion ( TorsionID ( seq_num, id::CHI, 4 ) ) );
@@ -1015,7 +1015,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::output_pose_data_list ( std::string cons
 	using namespace core::io::silent;
 
 	if ( verbose_ == false ) { //consistency check Apr 3, 2010
-		utility_exit_with_message ( "verbose_==false, but StepWiseRNA_AnalyticalLoopCloseSampler::output_pose_data_list is still called?!" );
+		utility_exit_with_message ( "verbose_ == false, but StepWiseRNA_AnalyticalLoopCloseSampler::output_pose_data_list is still called?!" );
 	}
 
 	SilentFileData silent_file_data;

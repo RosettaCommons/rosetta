@@ -66,7 +66,7 @@
 using namespace core;
 using core::Real;
 
-static numeric::random::RandomGenerator RG(199123);  // <- Magic number, do not change it!
+static numeric::random::RandomGenerator RG( 199123 );  // <- Magic number, do not change it!
 static basic::Tracer TR( "protocols.swa.rna.RNA_LoopCloseSampler" );
 
 namespace protocols {
@@ -139,8 +139,8 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	// epsilon1, zeta1, alpha1; and alpha2 are 'driver torsions' -- deltas will be fixed,
 	//  and the other six torsions will be solved by analytical loop closure.
 	vector1< TorsionID > driver_torsion_IDs;
-	driver_torsion_IDs.push_back( TorsionID ( moving_suite_  , id::BB, EPSILON ) );
-	driver_torsion_IDs.push_back( TorsionID ( moving_suite_  , id::BB, ZETA ) );
+	driver_torsion_IDs.push_back( TorsionID ( moving_suite_ , id::BB, EPSILON ) );
+	driver_torsion_IDs.push_back( TorsionID ( moving_suite_ , id::BB, ZETA ) );
 	driver_torsion_IDs.push_back( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ) );
 	driver_torsion_IDs.push_back( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ) );
 
@@ -149,7 +149,7 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	Real epsilon1_center = ( pucker_state1 == NORTH ) ? -150.17 : -98.45;
 	Real epsilon1_min = epsilon1_center - epsilon_range_;
 	Real epsilon1_max = epsilon1_center + epsilon_range_;
-	if (pucker_state1 == SOUTH && epsilon1_min > -178) epsilon1_min = -178.45;
+	if ( pucker_state1 == SOUTH && epsilon1_min > -178 ) epsilon1_min = -178.45;
 	Real epsilon1_increment = bin_size_;
 	Real zeta1_min = 20.0;
 	Real zeta1_max = 340.0 - bin_size_;
@@ -202,13 +202,13 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 			// save data
 			n_construct_++;
 			torsion_info_.clear();
-			torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_  , id::BB, EPSILON ) ) );
-			torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_  , id::BB, ZETA ) ) );
+			torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_ , id::BB, EPSILON ) ) );
+			torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_ , id::BB, ZETA ) ) );
 			torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ) ) );
 			torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_ + 1, id::BB, BETA ) ) );
 			torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_ + 1, id::BB, GAMMA ) ) );
-			torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_  , id::BB, EPSILON ) ) );
-			torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_  , id::BB, ZETA ) ) );
+			torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_ , id::BB, EPSILON ) ) );
+			torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_ , id::BB, ZETA ) ) );
 			torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ) ) );
 			torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, BETA ) ) );
 			torsion_info_.push_back ( pose.torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, GAMMA ) ) );
@@ -247,13 +247,13 @@ RNA_LoopCloseSampler::fill_pose ( pose::Pose & pose, Size construct_number ) {
 	using namespace protocols::swa::rna;
 	using namespace numeric::conversions;
 	utility::vector1< Real > & torsion_info = all_torsion_info_[construct_number];
-	pose.set_torsion ( TorsionID ( moving_suite_  , id::BB, EPSILON ), torsion_info[1] );
-	pose.set_torsion ( TorsionID ( moving_suite_  , id::BB, ZETA ), torsion_info[2] );
+	pose.set_torsion ( TorsionID ( moving_suite_ , id::BB, EPSILON ), torsion_info[1] );
+	pose.set_torsion ( TorsionID ( moving_suite_ , id::BB, ZETA ), torsion_info[2] );
 	pose.set_torsion ( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ), torsion_info[3] );
 	pose.set_torsion ( TorsionID ( moving_suite_ + 1, id::BB, BETA ), torsion_info[4] );
 	pose.set_torsion ( TorsionID ( moving_suite_ + 1, id::BB, GAMMA ), torsion_info[5] );
-	pose.set_torsion ( TorsionID ( chainbreak_suite_  , id::BB, EPSILON ), torsion_info[6] );
-	pose.set_torsion ( TorsionID ( chainbreak_suite_  , id::BB, ZETA ), torsion_info[7] );
+	pose.set_torsion ( TorsionID ( chainbreak_suite_ , id::BB, EPSILON ), torsion_info[6] );
+	pose.set_torsion ( TorsionID ( chainbreak_suite_ , id::BB, ZETA ), torsion_info[7] );
 	pose.set_torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ), torsion_info[8] );
 	pose.set_torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, BETA ), torsion_info[9] );
 	pose.set_torsion ( TorsionID ( chainbreak_suite_ + 1, id::BB, GAMMA ), torsion_info[10] );
@@ -354,16 +354,16 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 
 	//Beta
 	Real beta1 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( moving_suite + 1, id::BB, BETA ) ) );
-	if (beta1 < 0) beta1 += 360;
+	if ( beta1 < 0 ) beta1 += 360;
 	if ( beta1 < betamin || beta1 > betamax ) return false;
 
 	Real beta2 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( chainbreak_suite + 1, id::BB, BETA ) ) );
-	if (beta2 < 0) beta2 += 360;
+	if ( beta2 < 0 ) beta2 += 360;
 	if ( beta2 < betamin || beta2 > betamax ) return false;
 
 	//Gamma
 	Real gamma1 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( moving_suite + 1, id::BB, GAMMA ) ) );
-	if (gamma1 < 0) gamma1 += 360;
+	if ( gamma1 < 0 ) gamma1 += 360;
 	if ( ( gamma1 < gammapmin || gamma1 > gammapmax ) &&
 			 ( gamma1 < gammatmin || gamma1 > gammatmax ) &&
 			 ( gamma1 < gammammin || gamma1 > gammammax ) ) {
@@ -371,7 +371,7 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 	}
 
 	Real gamma2 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( chainbreak_suite + 1, id::BB, GAMMA ) ) );
-	if (gamma2 < 0) gamma2 += 360;
+	if ( gamma2 < 0 ) gamma2 += 360;
 	if ( ( gamma2 < gammapmin || gamma2 > gammapmax ) &&
 			 ( gamma2 < gammatmin || gamma2 > gammatmax ) &&
 			 ( gamma2 < gammammin || gamma2 > gammammax ) ) {
@@ -381,8 +381,8 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 	//Epsilon
 	PuckerState pucker_state1 = Get_residue_pucker_state ( pose, chainbreak_suite );
 	Real epsilon1 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( moving_suite, id::BB, EPSILON ) ) );
-	if (epsilon1 < 0) epsilon1 += 360;
-	if (pucker_state1 == NORTH) {
+	if ( epsilon1 < 0 ) epsilon1 += 360;
+	if ( pucker_state1 == NORTH ) {
 		if ( epsilon1 < epsilonmin_n || epsilon1 > epsilonmax_n ) return false;
 	} else {
 		if ( epsilon1 < epsilonmin_s || epsilon1 > epsilonmax_s ) return false;
@@ -390,8 +390,8 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 
 	PuckerState pucker_state2 = Get_residue_pucker_state ( pose, chainbreak_suite );
 	Real epsilon2 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( chainbreak_suite, id::BB, EPSILON ) ) );
-	if (epsilon2 < 0) epsilon2 += 360;
-	if (pucker_state2 == NORTH) {
+	if ( epsilon2 < 0 ) epsilon2 += 360;
+	if ( pucker_state2 == NORTH ) {
 		if ( epsilon2 < epsilonmin_n || epsilon2 > epsilonmax_n ) return false;
 	} else {
 		if ( epsilon2 < epsilonmin_s || epsilon2 > epsilonmax_s ) return false;
@@ -399,20 +399,20 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 
 	//Zeta
 	Real zeta1 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( moving_suite, id::BB, ZETA ) ) );
-	if (zeta1 < 0) zeta1 += 360;
+	if ( zeta1 < 0 ) zeta1 += 360;
 	if ( zeta1 < zetamin || zeta1 > zetamax ) return false;
 
 	Real zeta2 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( chainbreak_suite, id::BB, ZETA ) ) );
-	if (zeta2 < 0) zeta2 += 360;
+	if ( zeta2 < 0 ) zeta2 += 360;
 	if ( zeta2 < zetamin || zeta1 > zetamax ) return false;
 
 	//Alpha
 	Real alpha1 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( moving_suite + 1, id::BB, ALPHA ) ) );
-	if (alpha1 < 0) alpha1 += 360;
+	if ( alpha1 < 0 ) alpha1 += 360;
 	if ( alpha1 < alphamin || alpha1 > alphamax ) return false;
 
 	Real alpha2 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( chainbreak_suite + 1, id::BB, ALPHA ) ) );
-	if (alpha2 < 0) alpha2 += 360;
+	if ( alpha2 < 0 ) alpha2 += 360;
 	if ( alpha2 < alphamin || alpha2 > alphamax ) return false;
 
 	return true;

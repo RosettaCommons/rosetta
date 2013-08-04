@@ -3,3 +3,4 @@
 -ex1:level 1
 -dump
 -score:weights rna_hires.wts
+-analytic_etable_evaluation False

@@ -97,9 +97,9 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	///// kinematic loop close.
 	// Following copied from, e.g., KinematicMover.cc.  Need to elaborate for terminal residues!
 	// inputs to loop closure
-	utility::vector1<utility::vector1<Real> > atoms;
-	utility::vector1<Size> pivots ( 3 ), order ( 3 );
-	utility::vector1<Real> dt_ang, db_len, db_ang;
+	utility::vector1< utility::vector1< Real > > atoms;
+	utility::vector1< Size > pivots ( 3 ), order ( 3 );
+	utility::vector1< Real > dt_ang, db_len, db_ang;
 	// doesn't matter.
 	order[1] = 1;
 	order[2] = 2;
@@ -196,7 +196,7 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 ///////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_AnalyticLoopCloser::figure_out_dof_ids_and_offsets ( pose::Pose const & pose,
-    utility::vector1<Real> const & dt_ang ) {
+    utility::vector1< Real > const & dt_ang ) {
 	////////////////////////////////////////////////////////////////////////////////////
 	// Note that the torsion angles that we solved for do not directly correspond to
 	// torsion angles in the atom-tree. But they are right up to an *offset*, which
@@ -213,46 +213,46 @@ RNA_AnalyticLoopCloser::figure_out_dof_ids_and_offsets ( pose::Pose const & pose
 	/////////////////////////////////////////
 	// pivot 1
 	/////////////////////////////////////////
-	id1 = AtomID ( pose.residue(moving_suite_ + 1).atom_index ( " P  " ), moving_suite_ + 1 );
-	id2 = AtomID ( pose.residue(moving_suite_ + 1).atom_index ( " O5'" ), moving_suite_ + 1 );
-	id3 = AtomID ( pose.residue(moving_suite_ + 1).atom_index ( " C5'" ), moving_suite_ + 1 );
-	id4 = AtomID ( pose.residue(moving_suite_ + 1).atom_index ( " C4'" ), moving_suite_ + 1 );
+	id1 = AtomID ( pose.residue( moving_suite_ + 1 ).atom_index ( " P  " ), moving_suite_ + 1 );
+	id2 = AtomID ( pose.residue( moving_suite_ + 1 ).atom_index ( " O5'" ), moving_suite_ + 1 );
+	id3 = AtomID ( pose.residue( moving_suite_ + 1 ).atom_index ( " C5'" ), moving_suite_ + 1 );
+	id4 = AtomID ( pose.residue( moving_suite_ + 1 ).atom_index ( " C4'" ), moving_suite_ + 1 );
 	dof_id = pose.atom_tree().torsion_angle_dof_id ( id1, id2, id3, id4 );
 	figure_out_offset ( pose, dof_id, dt_ang[ 3 * 1 + 1 ], offset_save_ );
-	id1 = AtomID ( pose.residue(moving_suite_ + 1).atom_index ( " O5'" ), moving_suite_ + 1 );
-	id2 = AtomID ( pose.residue(moving_suite_ + 1).atom_index ( " C5'" ), moving_suite_ + 1 );
-	id3 = AtomID ( pose.residue(moving_suite_ + 1).atom_index ( " C4'" ), moving_suite_ + 1 );
-	id4 = AtomID ( pose.residue(moving_suite_ + 1).atom_index ( " C3'" ), moving_suite_ + 1 );
+	id1 = AtomID ( pose.residue( moving_suite_ + 1 ).atom_index ( " O5'" ), moving_suite_ + 1 );
+	id2 = AtomID ( pose.residue( moving_suite_ + 1 ).atom_index ( " C5'" ), moving_suite_ + 1 );
+	id3 = AtomID ( pose.residue( moving_suite_ + 1 ).atom_index ( " C4'" ), moving_suite_ + 1 );
+	id4 = AtomID ( pose.residue( moving_suite_ + 1 ).atom_index ( " C3'" ), moving_suite_ + 1 );
 	dof_id = pose.atom_tree().torsion_angle_dof_id ( id1, id2, id3, id4 );
 	figure_out_offset ( pose, dof_id, dt_ang[ 3 * 1 + 2 ], offset_save_ );
 	/////////////////////////////////////////
 	// pivot 2
 	/////////////////////////////////////////
-	id1 = AtomID ( pose.residue(chainbreak_suite_).atom_index ( " C4'" ), chainbreak_suite_ );
-	id2 = AtomID ( pose.residue(chainbreak_suite_).atom_index ( " C3'" ), chainbreak_suite_ );
-	id3 = AtomID ( pose.residue(chainbreak_suite_).atom_index ( " O3'" ), chainbreak_suite_ );
-	id4 = AtomID ( pose.residue(chainbreak_suite_).atom_index ( "OVL1" ), chainbreak_suite_ );
+	id1 = AtomID ( pose.residue( chainbreak_suite_ ).atom_index ( " C4'" ), chainbreak_suite_ );
+	id2 = AtomID ( pose.residue( chainbreak_suite_ ).atom_index ( " C3'" ), chainbreak_suite_ );
+	id3 = AtomID ( pose.residue( chainbreak_suite_ ).atom_index ( " O3'" ), chainbreak_suite_ );
+	id4 = AtomID ( pose.residue( chainbreak_suite_ ).atom_index ( "OVL1" ), chainbreak_suite_ );
 	dof_id = pose.atom_tree().torsion_angle_dof_id ( id1, id2, id3, id4 );
 	figure_out_offset ( pose, dof_id, dt_ang[ 3 * 2 + 1 ], offset_save_ );
-	id1 = AtomID ( pose.residue(chainbreak_suite_).atom_index ( " C3'" ), chainbreak_suite_ );
-	id2 = AtomID ( pose.residue(chainbreak_suite_).atom_index ( " O3'" ), chainbreak_suite_ );
-	id3 = AtomID ( pose.residue(chainbreak_suite_).atom_index ( "OVL1" ), chainbreak_suite_ );
-	id4 = AtomID ( pose.residue(chainbreak_suite_).atom_index ( "OVL2" ), chainbreak_suite_ );
+	id1 = AtomID ( pose.residue( chainbreak_suite_ ).atom_index ( " C3'" ), chainbreak_suite_ );
+	id2 = AtomID ( pose.residue( chainbreak_suite_ ).atom_index ( " O3'" ), chainbreak_suite_ );
+	id3 = AtomID ( pose.residue( chainbreak_suite_ ).atom_index ( "OVL1" ), chainbreak_suite_ );
+	id4 = AtomID ( pose.residue( chainbreak_suite_ ).atom_index ( "OVL2" ), chainbreak_suite_ );
 	dof_id = pose.atom_tree().torsion_angle_dof_id ( id1, id2, id3, id4 );
 	figure_out_offset ( pose, dof_id, dt_ang[ 3 * 2 + 2 ], offset_save_ );
 	/////////////////////////////////////////
 	// pivot 3
 	/////////////////////////////////////////
-	id1 = AtomID ( pose.residue(chainbreak_suite_ + 1).atom_index ( " P  " ), chainbreak_suite_ + 1 );
-	id2 = AtomID ( pose.residue(chainbreak_suite_ + 1).atom_index ( " O5'" ), chainbreak_suite_ + 1 );
-	id3 = AtomID ( pose.residue(chainbreak_suite_ + 1).atom_index ( " C5'" ), chainbreak_suite_ + 1 );
-	id4 = AtomID ( pose.residue(chainbreak_suite_ + 1).atom_index ( " C4'" ), chainbreak_suite_ + 1 );
+	id1 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " P  " ), chainbreak_suite_ + 1 );
+	id2 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " O5'" ), chainbreak_suite_ + 1 );
+	id3 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " C5'" ), chainbreak_suite_ + 1 );
+	id4 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " C4'" ), chainbreak_suite_ + 1 );
 	dof_id = pose.atom_tree().torsion_angle_dof_id ( id1, id2, id3, id4 );
 	figure_out_offset ( pose, dof_id, dt_ang[ 3 * 3 + 1 ], offset_save_ );
-	id1 = AtomID ( pose.residue(chainbreak_suite_ + 1).atom_index ( " O5'" ), chainbreak_suite_ + 1 );
-	id2 = AtomID ( pose.residue(chainbreak_suite_ + 1).atom_index ( " C5'" ), chainbreak_suite_ + 1 );
-	id3 = AtomID ( pose.residue(chainbreak_suite_ + 1).atom_index ( " C4'" ), chainbreak_suite_ + 1 );
-	id4 = AtomID ( pose.residue(chainbreak_suite_ + 1).atom_index ( " C3'" ), chainbreak_suite_ + 1 );
+	id1 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " O5'" ), chainbreak_suite_ + 1 );
+	id2 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " C5'" ), chainbreak_suite_ + 1 );
+	id3 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " C4'" ), chainbreak_suite_ + 1 );
+	id4 = AtomID ( pose.residue( chainbreak_suite_ + 1 ).atom_index ( " C3'" ), chainbreak_suite_ + 1 );
 	dof_id = pose.atom_tree().torsion_angle_dof_id ( id1, id2, id3, id4 );
 	figure_out_offset ( pose, dof_id, dt_ang[ 3 * 3 + 2 ], offset_save_ );
 }
@@ -295,8 +295,8 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 			TR << "---------------------------------- " << std::endl;
 			TR << "   start pose " << std::endl;
 			TR << "---------------------------------- " << std::endl;
-			utility::vector1<Real> dt_ang, db_len, db_ang;
-			utility::vector1<utility::vector1<Real> > atoms;
+			utility::vector1< Real > dt_ang, db_len, db_ang;
+			utility::vector1< utility::vector1< Real > > atoms;
 			fill_chainTORS ( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
 			output_chainTORS ( dt_ang, db_ang, db_len );
 			pose.dump_pdb ( "before_closed.pdb" );
@@ -339,8 +339,8 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 
 		if ( verbose_ )		{
 			TR << "pose " << best_sol << ": " << std::endl;
-			utility::vector1<Real> dt_ang, db_len, db_ang;
-			utility::vector1<utility::vector1<Real> > atoms;
+			utility::vector1< Real > dt_ang, db_len, db_ang;
+			utility::vector1< utility::vector1< Real > > atoms;
 			fill_chainTORS ( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
 			output_chainTORS ( dt_ang, db_ang, db_len );
 			pose.dump_pdb ( "closed.pdb" );
@@ -363,8 +363,8 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 				TR << "solution " << n << ": " << std::endl;
 				output_chainTORS ( t_ang_[n], b_ang_[n], b_len_[n] );
 				TR << "pose " << n << ": " << std::endl;
-				utility::vector1<Real> dt_ang, db_len, db_ang;
-				utility::vector1<utility::vector1<Real> > atoms;
+				utility::vector1< Real > dt_ang, db_len, db_ang;
+				utility::vector1< utility::vector1< Real > > atoms;
 				fill_chainTORS ( pose, atom_ids_, atoms, dt_ang, db_ang, db_len );
 				output_chainTORS ( dt_ang, db_ang, db_len );
 			}
@@ -373,7 +373,7 @@ RNA_AnalyticLoopCloser::apply_solutions ( core::pose::Pose & pose ) {
 		fill_solution ( pose, best_sol );
 	} else {
 		assert ( choose_random_solution_ );
-		Size const n = static_cast<int> ( nsol_ * RG.uniform() ) + 1;
+		Size const n = static_cast< int > ( nsol_ * RG.uniform() ) + 1;
 		fill_solution ( pose, n );
 	}
 }
@@ -478,15 +478,15 @@ RNA_AnalyticLoopCloser::output_chainTORS ( utility::vector1< core::Real > const 
 void
 RNA_AnalyticLoopCloser::fill_chainTORS (
   core::pose::Pose const & pose,
-  utility::vector1< id::NamedAtomID> const & atom_ids_,
-  utility::vector1<utility::vector1<Real> > & atoms,
-  utility::vector1<Real> & dt_ang,
-  utility::vector1<Real> & db_ang,
-  utility::vector1<Real> & db_len ) const {
+  utility::vector1< id::NamedAtomID > const & atom_ids_,
+  utility::vector1< utility::vector1< Real > > & atoms,
+  utility::vector1< Real > & dt_ang,
+  utility::vector1< Real > & db_ang,
+  utility::vector1< Real > & db_len ) const {
 	using namespace core::kinematics;
 	using namespace numeric::kinematic_closure;
-	utility::vector1<utility::vector1<Real> > Q0 ( 3 );
-	utility::vector1<Real> R0 ( 3 );
+	utility::vector1< utility::vector1< Real > > Q0 ( 3 );
+	utility::vector1< Real > R0 ( 3 );
 	utility::vector1< Vector > atoms_xyz;
 
 	for ( Size i = 1; i <= atom_ids_.size(); i++ ) {

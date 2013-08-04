@@ -59,33 +59,33 @@ namespace rna {
 
 		void set_fast( bool const & setting );
 
-		void set_sample_chi_torsion( bool const & setting){ sample_chi_torsion_ = setting; }
+		void set_sample_chi_torsion( bool const & setting ){ sample_chi_torsion_ = setting; }
 
-		void set_include_syn_chi( bool const include_syn_chi) { include_syn_chi_ = include_syn_chi; }
+		void set_include_syn_chi( bool const include_syn_chi ) { include_syn_chi_ = include_syn_chi; }
 
-		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting){ force_syn_chi_res_list_ = setting; }
+		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting ){ force_syn_chi_res_list_ = setting; }
 
-		void set_force_north_ribose_list( utility::vector1< core::Size > const & setting){ force_north_ribose_list_ = setting; }
+		void set_force_north_ribose_list( utility::vector1< core::Size > const & setting ){ force_north_ribose_list_ = setting; }
 
-		void set_force_south_ribose_list( utility::vector1< core::Size > const & setting){ force_south_ribose_list_ = setting; }
+		void set_force_south_ribose_list( utility::vector1< core::Size > const & setting ){ force_south_ribose_list_ = setting; }
 
-		void set_bin_size( core::Size const setting){ bin_size_=setting; }
+		void set_bin_size( core::Size const setting ){ bin_size_ = setting; }
 
-		void set_extra_epsilon( bool const setting){ extra_epsilon_ =setting; }
+		void set_extra_epsilon( bool const setting ){ extra_epsilon_ = setting; }
 
-		void set_extra_beta( bool const setting){ extra_beta_ =setting; }
+		void set_extra_beta( bool const setting ){ extra_beta_ = setting; }
 
-		void set_extra_anti_chi( bool const setting){ extra_anti_chi_ =setting; }
+		void set_extra_anti_chi( bool const setting ){ extra_anti_chi_ = setting; }
 
-		void set_extra_syn_chi( bool const setting){ extra_syn_chi_ =setting; }
+		void set_extra_syn_chi( bool const setting ){ extra_syn_chi_ = setting; }
 
-		void set_exclude_alpha_beta_gamma_sampling(  bool const setting){ exclude_alpha_beta_gamma_sampling_ =setting; }
+		void set_exclude_alpha_beta_gamma_sampling(  bool const setting ){ exclude_alpha_beta_gamma_sampling_ = setting; }
 
-		void set_allow_syn_pyrimidine(  bool const setting){ allow_syn_pyrimidine_ =setting; }
+		void set_allow_syn_pyrimidine(  bool const setting ){ allow_syn_pyrimidine_ = setting; }
 
 
-		core::Size group_rotamer(core::Size const list_position);
-		core::Size subgroup_rotamer(core::Size const list_position);
+		core::Size group_rotamer( core::Size const list_position );
+		core::Size subgroup_rotamer( core::Size const list_position );
 
 //		core::Size group_rotamer(core::Size const list_position) { return 1; }
 //		core::Size subgroup_rotamer(core::Size const list_position) { return 1; }
@@ -101,10 +101,10 @@ namespace rna {
 	private:
 
 		StepWiseRNA_RotamerGeneratorOP const
-		setup_rotamer_generator(core::Size const list_position);
+		setup_rotamer_generator( core::Size const list_position );
 
 		PuckerState
-		Get_residue_pucker_state_internal( core::pose::Pose const & pose, Size list_position, std::string which_sugar, bool sample_sugar_pucker) const;
+		Get_residue_pucker_state_internal( core::pose::Pose const & pose, Size list_position, std::string which_sugar, bool sample_sugar_pucker ) const;
 
 
 	private:

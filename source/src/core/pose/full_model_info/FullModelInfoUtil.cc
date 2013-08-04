@@ -40,7 +40,7 @@
 #include <string>
 #include <map>
 
-static basic::Tracer tr("core.pose.full_model_info.FullModelInfoUtil");
+static basic::Tracer TR("core.pose.full_model_info.FullModelInfoUtil");
 
 ///////////////////////////////////////////////////////
 // Keep track of some base geometry that is
@@ -150,30 +150,34 @@ reorder_sub_to_full_after_append( utility::vector1< Size > const & sub_to_full,
 void
 reorder_full_model_info_after_delete( pose::Pose & pose, Size const res_to_delete ){
 
-	FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+	// make a copy...
+	FullModelInfoOP full_model_info = new FullModelInfo( const_full_model_info_from_pose( pose ) );
 
-	utility::vector1< Size > sub_to_full_new = reorder_sub_to_full_after_delete( full_model_info.sub_to_full(), res_to_delete );
-	utility::vector1< Size > moving_res_list_new = reorder_moving_res_list_after_delete( full_model_info.moving_res_list(), res_to_delete );
+	utility::vector1< Size > sub_to_full_new = reorder_sub_to_full_after_delete( full_model_info->sub_to_full(), res_to_delete );
+	utility::vector1< Size > moving_res_list_new = reorder_moving_res_list_after_delete( full_model_info->moving_res_list(), res_to_delete );
 
-	full_model_info.set_sub_to_full( sub_to_full_new );
-	full_model_info.set_moving_res_list( moving_res_list_new );
+	full_model_info->set_sub_to_full( sub_to_full_new );
+	full_model_info->set_moving_res_list( moving_res_list_new );
+	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info );
 
-	update_pdb_info_from_sub_to_full( pose );
+	update_pdb_info_from_full_model_info( pose );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 reorder_full_model_info_after_append( pose::Pose & pose, Size const res_to_add ){
 
-	FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+	// make a copy...
+	FullModelInfoOP full_model_info = new FullModelInfo( const_full_model_info_from_pose( pose ) );
 
-	utility::vector1< Size > sub_to_full_new = reorder_sub_to_full_after_append( full_model_info.sub_to_full(), res_to_add );
-	utility::vector1< Size > moving_res_list_new = reorder_moving_res_list_after_insert( full_model_info.moving_res_list(), res_to_add );
+	utility::vector1< Size > sub_to_full_new = reorder_sub_to_full_after_append( full_model_info->sub_to_full(), res_to_add );
+	utility::vector1< Size > moving_res_list_new = reorder_moving_res_list_after_insert( full_model_info->moving_res_list(), res_to_add );
 
-	full_model_info.set_sub_to_full( sub_to_full_new );
-	full_model_info.set_moving_res_list( moving_res_list_new );
+	full_model_info->set_sub_to_full( sub_to_full_new );
+	full_model_info->set_moving_res_list( moving_res_list_new );
+	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info );
 
-	update_pdb_info_from_sub_to_full( pose );
+	update_pdb_info_from_full_model_info( pose );
 
 }
 
@@ -181,22 +185,24 @@ reorder_full_model_info_after_append( pose::Pose & pose, Size const res_to_add )
 void
 reorder_full_model_info_after_prepend( pose::Pose & pose, Size const res_to_add ){
 
-	FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+	// make a copy...
+	FullModelInfoOP full_model_info = new FullModelInfo( const_full_model_info_from_pose( pose ) );
 
-	utility::vector1< Size > sub_to_full_new = reorder_sub_to_full_after_prepend( full_model_info.sub_to_full(), res_to_add );
-	utility::vector1< Size > moving_res_list_new = reorder_moving_res_list_after_insert( full_model_info.moving_res_list(), res_to_add );
+	utility::vector1< Size > sub_to_full_new = reorder_sub_to_full_after_prepend( full_model_info->sub_to_full(), res_to_add );
+	utility::vector1< Size > moving_res_list_new = reorder_moving_res_list_after_insert( full_model_info->moving_res_list(), res_to_add );
 
-	full_model_info.set_sub_to_full( sub_to_full_new );
-	full_model_info.set_moving_res_list( moving_res_list_new );
+	full_model_info->set_sub_to_full( sub_to_full_new );
+	full_model_info->set_moving_res_list( moving_res_list_new );
+	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info );
 
-	update_pdb_info_from_sub_to_full( pose );
+	update_pdb_info_from_full_model_info( pose );
 
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-update_pdb_info_from_sub_to_full( pose::Pose & pose ){
+update_pdb_info_from_full_model_info( pose::Pose & pose ){
 
 	using namespace core::pose;
 
@@ -240,7 +246,7 @@ figure_out_chains_from_full_model_info( pose::Pose & pose ) {
 	std::string const & sequence = full_model_info.full_sequence();
 	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 
-	tr.Debug << "HEY! GOT FULL_MODEL_INFO " << sub_to_full.size() << " " << cutpoint_open_in_full_model.size() << std::endl;
+	TR.Debug << "HEY! GOT FULL_MODEL_INFO " << sub_to_full.size() << " " << cutpoint_open_in_full_model.size() << std::endl;
 
 	utility::vector1< Size > cutpoint_open_in_full_model_including_terminus = cutpoint_open_in_full_model;
 	cutpoint_open_in_full_model_including_terminus.push_back( sequence.size() );
@@ -252,7 +258,7 @@ figure_out_chains_from_full_model_info( pose::Pose & pose ) {
 
 		Size const & end_res = cutpoint_open_in_full_model_including_terminus[ i ];
 
-		tr.Debug << "chain " << i << ": " << start_res << " to " << end_res << std::endl;
+		TR.Debug << "chain " << i << ": " << start_res << " to " << end_res << std::endl;
 		for ( Size n = start_res; n <= end_res; n++ ) chains_full.push_back( i );
 
 		start_res = end_res + 1;
@@ -265,7 +271,7 @@ figure_out_chains_from_full_model_info( pose::Pose & pose ) {
 	for ( Size n = 1; n <= pose.total_residue(); n++ ){
 		runtime_assert( sub_to_full[ n ] <= chains_full.size() );
 		chains[ n ]  = chains_full[ sub_to_full[ n ] ];
-		tr.Debug << "Setting chain at " << n << " to " << chains[ n  ] << std::endl;
+		TR.Debug << "Setting chain at " << n << " to " << chains[ n  ] << std::endl;
 	}
 
 	return chains;
@@ -319,7 +325,7 @@ fill_full_model_info_from_command_line( pose::Pose & pose ){
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_op );
 
 	// it might make sense to just use pdb_info instead of input_res_list...
-	update_pdb_info_from_sub_to_full( pose ); // for output pdb or silent file -- residue numbering.
+	update_pdb_info_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
 
 
 }
@@ -336,12 +342,21 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	utility::vector1< Size > sub_to_full = full_model_info.sub_to_full();
 	std::string const & sequence = full_model_info.full_sequence();
 
-	if ( sub_to_full.size() != pose.total_residue() ) return false;
+	if ( sub_to_full.size() != pose.total_residue() ) {
+		TR.Debug << "sub_to_full size != pose.total_residue() " << sub_to_full.size() << " " << pose.total_residue() << std::endl;
+		return false;
+	}
 
-	if ( sequence.size() < pose.total_residue() ) return false;
+	if ( sequence.size() < pose.total_residue() ) {
+		TR.Debug << "sequence.size() << pose.total_residue()" << std::endl;
+		return false;
+	}
 
 	for ( Size n = 1; n <= sub_to_full.size(); n++ ){
-		if ( sequence[ sub_to_full[ n ] - 1 ] != pose.residue_type( n ).name1() ) return false;
+		if ( sequence[ sub_to_full[ n ] - 1 ] != pose.residue_type( n ).name1() ) {
+			TR.Debug << "no match at " << n << " " << sequence[ sub_to_full[ n ] - 1 ] << ' ' <<  pose.residue_type( n ).name1() << std::endl;
+			return false;
+		}
 	}
 
 	return true;

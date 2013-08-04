@@ -43,7 +43,7 @@ namespace rna {
 																bool const sample_lower_sugar_and_base,
 																bool const sample_upper_sugar_and_base,
 																PuckerState const pucker1,
-																PuckerState const pucker2);
+																PuckerState const pucker2 );
 
 
     virtual ~StepWiseRNA_RotamerGenerator();
@@ -65,34 +65,34 @@ namespace rna {
 
 		void set_fast( bool const setting ){ fast_ = setting; }
 
-		void set_sample_chi_torsion( bool const setting) { sample_chi_torsion_= setting; }
+		void set_sample_chi_torsion( bool const setting ) { sample_chi_torsion_ = setting; }
 
-		void set_include_syn_chi( bool const setting){ include_syn_chi_=setting; }
+		void set_include_syn_chi( bool const setting ){ include_syn_chi_ = setting; }
 
-		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting){ force_syn_chi_res_list_ = setting; } //April 29, 2011
+		void set_force_syn_chi_res_list( utility::vector1< core::Size > const & setting ){ force_syn_chi_res_list_ = setting; } //April 29, 2011
 
-		void set_bin_size( core::Size const setting){ bin_size_=setting;}
+		void set_bin_size( core::Size const setting ){ bin_size_ = setting; }
 
-		void set_extra_epsilon( bool const setting){ extra_epsilon_ =setting; }
+		void set_extra_epsilon( bool const setting ){ extra_epsilon_ = setting; }
 
-		void set_extra_beta( bool const setting){ extra_beta_ =setting; }
+		void set_extra_beta( bool const setting ){ extra_beta_ = setting; }
 
-		void set_extra_anti_chi( bool const setting){ extra_anti_chi_ =setting; }
+		void set_extra_anti_chi( bool const setting ){ extra_anti_chi_ = setting; }
 
-		void set_extra_syn_chi( bool const setting){ extra_syn_chi_ =setting; }
+		void set_extra_syn_chi( bool const setting ){ extra_syn_chi_ = setting; }
 
-		void set_exclude_alpha_beta_gamma_sampling(  bool const setting){ exclude_alpha_beta_gamma_sampling_ =setting; }
+		void set_exclude_alpha_beta_gamma_sampling(  bool const setting ){ exclude_alpha_beta_gamma_sampling_ = setting; }
 
-		void set_allow_syn_pyrimidine(  bool const setting){ allow_syn_pyrimidine_ =setting; }
+		void set_allow_syn_pyrimidine(  bool const setting ){ allow_syn_pyrimidine_ = setting; }
 
-		void initialize_rotamer_generator(core::pose::Pose const & pose);
+		void initialize_rotamer_generator( core::pose::Pose const & pose );
 
 		core::Size num_rotamer_centers();
 		core::Size const & group_rotamer();
 		core::Size const & subgroup_rotamer();
 		core::Size const & moving_suite();
 
-		PuckerState	pucker_state(std::string const which_sugar);
+		PuckerState	pucker_state( std::string const which_sugar );
 
 		void set_choose_random( bool const setting ){ choose_random_ = setting; }
 
@@ -114,7 +114,7 @@ namespace rna {
 		initialize_extra_rotamer_perturbations();
 
 		void
-		add_torsion_id(core::id::TorsionID const torsion_id);
+		add_torsion_id( core::id::TorsionID const torsion_id );
 
 		void
 		update_to_random_rotamer();

@@ -67,6 +67,7 @@ namespace rna {
 		VDW_atr_rep_screen_( true ),
 		force_centroid_interaction_( false ),
 		choose_random_( false ),
+		num_random_samples_( 1 ),
 		skip_sampling_( false ),
 		perform_minimize_( true ),
 		minimize_and_score_sugar_( true ),
@@ -185,16 +186,17 @@ namespace rna {
 
 		if ( choose_random_ ){
 			stepwise_rna_residue_sampler.set_choose_random( true );
+			stepwise_rna_residue_sampler.set_num_random_samples( num_random_samples_ );
 			stepwise_rna_residue_sampler.set_cluster_rmsd( 0.0 ); // don't cluster.
 		}
 
 		// unique to this file -- not in ERRASER_Modeler yet.
-		print_JobParameters_info(job_parameters_, "job_parameters_COP");
+		print_JobParameters_info( job_parameters_, "job_parameters_COP", TR.Debug );
 
 		// nstruct is usually 1, unless choose_random is on -- then we need to call several times to
 		// get a bunch of poses back.
 		if ( ! skip_sampling_ ) {
-			for( Size n = 1; n <= nstruct_; n++ ){
+			for ( Size n = 1; n <= nstruct_; n++ ){
 				stepwise_rna_residue_sampler.apply ( pose );
 			}
 		}
@@ -204,6 +206,10 @@ namespace rna {
 		if ( num_sampled_ == 0 ){
 
 			TR << "WARNING! WARNING! WARNING! pose_data_list.size() == 0! " << std::endl;
+
+			return; // don't do a minimize...
+
+			// following not in use...
 			//			if ( ! skip_sampling_ ) utility_exit_with_message( "No op in StepWiseRNA_modeler!" );
 			pose_data_struct2 data_struct;
 			data_struct.pose_OP = new Pose( pose );
@@ -213,7 +219,7 @@ namespace rna {
 		}
 
 		if ( minimize_and_score_native_pose_ ) {
-			if ( !get_native_pose() ) utility_exit_with_message ( "minimize_and_score_native_pose==True but user did not pass in native pose" );
+			if ( !get_native_pose() ) utility_exit_with_message ( "minimize_and_score_native_pose == True but user did not pass in native pose" );
 			pose_data_struct2 native_data_struct;
 			native_data_struct.pose_OP = new Pose( *get_native_pose() ); //hopefully this clones...
 			native_data_struct.score = 0.0;
@@ -281,28 +287,26 @@ namespace rna {
 		Size nres = pose.total_residue();
 
 		// what if there is a virtual residue? need to remove it, actually, before running stepwise_rna_job_parameters_setup.
-		if ( full_sequence[nres-1] == 'X' ){
-			full_sequence = full_sequence.substr(0,nres-1);
+		if ( full_sequence[nres - 1] == 'X' ){
+			full_sequence = full_sequence.substr( 0, nres - 1 );
 			nres -= 1;
 		}
 		utility::vector1< Size > not_rebuild_res;
-		for (Size n = 1; n <= nres; n++ ) if ( n != rebuild_res ) not_rebuild_res.push_back( n );
+		for ( Size n = 1; n <= nres; n++ ) if ( n != rebuild_res ) not_rebuild_res.push_back( n );
 
 		utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open;
 		input_res1 = not_rebuild_res;
 
-		TR << "IN SETUP_JOB_PARAMETERS_FOR_SWA! " << std::endl;
-
-		TR << pose.fold_tree() << std::endl;
-		TR << rebuild_res << std::endl;
+		TR.Debug << pose.fold_tree() << std::endl;
+		TR.Debug << "Rebuild residue: " << rebuild_res << std::endl;
 
 		Size cutpoint_closed( 0 );
 		// check for cutpoint variant.
 		if ( pose.residue_type( rebuild_res ).has_variant_type( CUTPOINT_UPPER ) ){
-			runtime_assert( pose.residue_type( rebuild_res-1 ).has_variant_type( CUTPOINT_LOWER  ) );
-			cutpoint_closed = rebuild_res-1;
+			runtime_assert( pose.residue_type( rebuild_res - 1 ).has_variant_type( CUTPOINT_LOWER  ) );
+			cutpoint_closed = rebuild_res - 1;
 		} else if (  pose.residue_type( rebuild_res ).has_variant_type( CUTPOINT_LOWER ) ){
-			runtime_assert( pose.residue_type( rebuild_res+1 ).has_variant_type( CUTPOINT_UPPER  ) );
+			runtime_assert( pose.residue_type( rebuild_res + 1 ).has_variant_type( CUTPOINT_UPPER  ) );
 			cutpoint_closed = rebuild_res;
 		} else if ( rebuild_res == 1  ){
 			/*must be a prepend!*/;
@@ -317,7 +321,7 @@ namespace rna {
 		}
 
 		if ( cutpoint_closed > 0 && !pose.fold_tree().is_cutpoint( cutpoint_closed ) ) utility_exit_with_message( "StepWiseRNA requires a chainbreak right at sampled residue" );
-		if ( cutpoint_closed > 0 && (rebuild_res == 1 || rebuild_res == pose.total_residue()) ) utility_exit_with_message( "StepWiseRNA requires that residue is not at terminus!" );
+		if ( cutpoint_closed > 0 && ( rebuild_res == 1 || rebuild_res == pose.total_residue() ) ) utility_exit_with_message( "StepWiseRNA requires that residue is not at terminus!" );
 
 		StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup( moving_res,
 																																			 full_sequence,
@@ -337,7 +341,7 @@ namespace rna {
 		// not sure about the following -- instead, how about reading jump residues from within pose itself?
 		if ( cutpoint_closed > 0 || cutpoint_open.size() > 0 ){
 			utility::vector1< std::string > jump_point_pair_list;
-			jump_point_pair_list.push_back( ObjexxFCL::string_of(rebuild_res-1) + "-" + ObjexxFCL::string_of(rebuild_res+1) );
+			jump_point_pair_list.push_back( ObjexxFCL::string_of( rebuild_res - 1 ) + "-" + ObjexxFCL::string_of( rebuild_res + 1 ) );
 			stepwise_rna_job_parameters_setup.set_jump_point_pair_list( jump_point_pair_list ); //Important!: Needs to be called after set_fixed_res
 		}
 
@@ -368,7 +372,7 @@ namespace rna {
 		if ( minimize_res_.size() > 0 ) { // specifying more residues which could move during the minimize step.
 			fixed_res_.clear();
 			for ( Size n = 1; n <= nres; n++ ) {
-				if ( !minimize_res_.has_value( n) )	fixed_res_.push_back( n );
+				if ( !minimize_res_.has_value( n ) )	fixed_res_.push_back( n );
 			}
 		}
 		if ( fixed_res_.size() > 0 ) 	job_parameters->set_working_fixed_res( fixed_res_ );

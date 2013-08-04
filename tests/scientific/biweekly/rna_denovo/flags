@@ -9,3 +9,4 @@
 -filter_lores_base_pairs
 -output_lores_silent_file
 -mute core.io.database
+-analytic_etable_evaluation False

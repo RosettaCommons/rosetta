@@ -133,7 +133,7 @@ public:
 	set_user_input_VDW_bin_screener ( StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener );
 
 	void
-	set_allow_syn_pyrimidine( bool const & setting ) {		allow_syn_pyrimidine_ =setting;	}
+	set_allow_syn_pyrimidine( bool const & setting ) {		allow_syn_pyrimidine_ = setting;	}
 
 	void
 	set_extra_syn_chi_rotamer ( bool const & setting ) {		extra_syn_chi_rotamer_ = setting;	}
@@ -189,10 +189,10 @@ private:
 	initialize_o2star_packer_task ( core::pose::Pose const & pose );
 
 	void
-	sample_o2star_hydrogen ( core::pose::Pose & pose , core::pose::Pose & pose_with_original_HO2star_torsion );
+	sample_o2star_hydrogen ( core::pose::Pose & pose, core::pose::Pose & pose_with_original_HO2star_torsion );
 
 	core::Real
-	Pose_selection_by_full_score ( utility::vector1< pose_data_struct2 >& pose_data_list, core::pose::Pose & current_pose, std::string const & tag );
+	Pose_selection_by_full_score ( utility::vector1< pose_data_struct2 > & pose_data_list, core::pose::Pose & current_pose, std::string const & tag );
 
 
 	void

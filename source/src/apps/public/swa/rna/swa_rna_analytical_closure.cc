@@ -231,7 +231,7 @@ OPT_KEY ( Boolean, force_centroid_interaction )
 // in principle, could tuck the following inside ERRASER_Modeler-- could save initial pose
 // constraint set, and put it back in -- but what
 // if we want these constraint scores turned on elsewhere (e.g., in a Monte Carlo)?
-void apply_chi_cst(core::pose::Pose & pose, core::pose::Pose const & ref_pose) {
+void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose ) {
 	using namespace core::conformation;
 	using namespace core::id;
 	using namespace core::scoring;
@@ -241,15 +241,15 @@ void apply_chi_cst(core::pose::Pose & pose, core::pose::Pose const & ref_pose) {
 
 	Size const nres = pose.total_residue();
 	ConstraintSetOP cst_set = new ConstraintSet;
-	for (Size i = 1; i <= nres; ++i) {
-		Residue const & res = pose.residue(i);
+	for ( Size i = 1; i <= nres; ++i ) {
+		Residue const & res = pose.residue( i );
 		if ( res.is_RNA() ) {
 			Real const chi = numeric::conversions::radians( ref_pose.torsion( TorsionID( i, id::CHI, 1 ) ) );
 			FuncOP chi_cst_func ( new CharmmPeriodicFunc( chi, 1.0, 1.0 ) );
-			AtomID const atom1 (res.atom_index("C2'"), i);
-			AtomID const atom2 (res.atom_index("C1'"), i);
-			AtomID const atom3 ( is_purine(res) ? res.atom_index("N9") : res.atom_index("N1"), i);
-			AtomID const atom4 ( is_purine(res) ? res.atom_index("C4") : res.atom_index("C2"), i);
+			AtomID const atom1 ( res.atom_index( "C2'" ), i );
+			AtomID const atom2 ( res.atom_index( "C1'" ), i );
+			AtomID const atom3 ( is_purine( res ) ? res.atom_index( "N9" ) : res.atom_index( "N1" ), i );
+			AtomID const atom4 ( is_purine( res ) ? res.atom_index( "C4" ) : res.atom_index( "C2" ), i );
 			cst_set->add_constraint( new DihedralConstraint( atom1, atom2, atom3, atom4, chi_cst_func ) );
 		}
 	}
@@ -263,7 +263,7 @@ get_working_directory() {
 	std::string current_directory_string;
 
 	if ( !GetCurrentDir ( cCurrentPath, sizeof ( cCurrentPath ) ) ) {
-		utility_exit_with_message ( "!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath))" );
+		utility_exit_with_message ( "!GetCurrentDir( cCurrentPath, sizeof( cCurrentPath ) )" );
 	}
 
 	//cCurrentPath[sizeof(cCurrentPath) - 1] = '/0'; /* not really required */
@@ -271,7 +271,7 @@ get_working_directory() {
 	std::stringstream ss;
 	ss << cCurrentPath;
 	ss >> current_directory_string;
-	std::cout << "current_directory= " << current_directory_string << std::endl;
+	std::cout << "current_directory = " << current_directory_string << std::endl;
 	return current_directory_string;
 }
 
@@ -292,7 +292,7 @@ get_fixed_res ( core::Size const nres ) {
 		actual_fixed_res_list = fixed_res_list;
 	} else if ( minimize_res_list.size() != 0 ) {
 		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
-			if ( minimize_res_list.has_value( seq_num) ) continue;
+			if ( minimize_res_list.has_value( seq_num ) ) continue;
 
 			actual_fixed_res_list.push_back ( seq_num );
 		}
@@ -320,7 +320,7 @@ Is_nonempty_input_silent_file ( std::string const input_silent_file, std::string
 	//	bool found_queue_ID = false;
 	bool found_line = getline ( infile, line );
 
-	if ( found_line == false ) utility_exit_with_message ( "No line exist in input_silent_file= " + input_silent_file );
+	if ( found_line == false ) utility_exit_with_message ( "No line exist in input_silent_file = " + input_silent_file );
 
 	size_t found_substring = line.find ( exit_key_string );
 
@@ -331,7 +331,7 @@ Is_nonempty_input_silent_file ( std::string const input_silent_file, std::string
 		std::string next_line;
 		bool found_next_line = getline ( infile, next_line );
 
-		if ( found_next_line ) std::cout << "input silent_file contain more than one line! next_line= " << next_line << std::endl;
+		if ( found_next_line ) std::cout << "input silent_file contain more than one line! next_line = " << next_line << std::endl;
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		return false;
@@ -342,7 +342,7 @@ Is_nonempty_input_silent_file ( std::string const input_silent_file, std::string
 //////////////////////////////////////////////////////////////////////////////////////
 
 utility::vector1< core::Size >
-get_input_res ( core::Size const nres , std::string const pose_num ) {
+get_input_res ( core::Size const nres, std::string const pose_num ) {
 	using namespace protocols::swa::rna;
 	utility::vector1< core::Size > input_res_list;
 	utility::vector1< core::Size > missing_res_list;
@@ -368,7 +368,7 @@ get_input_res ( core::Size const nres , std::string const pose_num ) {
 		actual_input_res_list = input_res_list;
 	} else if ( missing_res_list.size() != 0 ) {
 		for ( Size seq_num = 1; seq_num <= nres; seq_num++ ) {
-			if ( missing_res_list.has_value( seq_num) ) continue;
+			if ( missing_res_list.has_value( seq_num ) ) continue;
 
 			actual_input_res_list.push_back ( seq_num );
 		}
@@ -410,7 +410,7 @@ get_silent_file_tags() {
 		//Becareful here... job_queue_ID start from ZERO!
 		int const queue_ID = option[ job_queue_ID ]();
 		int ID = 0;
-		std::cout << "queue_ID= " << queue_ID << std::endl;
+		std::cout << "queue_ID = " << queue_ID << std::endl;
 		std::string tag_pair_string;
 		bool found_queue_ID = false;
 
@@ -424,9 +424,9 @@ get_silent_file_tags() {
 		}
 
 		//Warning queue_ID start at ZERO!
-		if ( found_queue_ID == false ) utility_exit_with_message ( "found_queue_ID==false, queue_ID= " + string_of ( queue_ID ) + " num_tag_string_in_file= " + string_of ( ID ) );
+		if ( found_queue_ID == false ) utility_exit_with_message ( "found_queue_ID == false, queue_ID = " + string_of ( queue_ID ) + " num_tag_string_in_file = " + string_of ( ID ) );
 
-		std::cout << "import silent_file_tags: " << tag_pair_string << " from filter_output_filename= " << filtered_tag_file << std::endl;
+		std::cout << "import silent_file_tags: " << tag_pair_string << " from filter_output_filename = " << filtered_tag_file << std::endl;
 		infile.close();
 		utility::vector1< std::string > const line_list = Tokenize ( tag_pair_string, " \t\n\f\v" ); //Oct 19, 2010..now filterer_outfile contain other terms.
 		input_silent_file_tags.clear();
@@ -436,11 +436,11 @@ get_silent_file_tags() {
 	}
 
 	if ( ( tags_from_command_line == false ) && ( tags_from_filterer_outfile == false ) ) {
-		utility_exit_with_message ( "(tags_from_command_line==false) && (tags_from_filterer_outfile==false)" );
+		utility_exit_with_message ( "( tags_from_command_line == false ) && ( tags_from_filterer_outfile == false )" );
 	}
 
 	if ( ( tags_from_command_line == true ) && ( tags_from_filterer_outfile == true ) ) {
-		utility_exit_with_message ( "(tags_from_command_line==true) && (tags_from_filterer_outfile==true)" );
+		utility_exit_with_message ( "( tags_from_command_line == true ) && ( tags_from_filterer_outfile == true )" );
 	}
 
 	return input_silent_file_tags;
@@ -455,38 +455,38 @@ create_scorefxn() {
 
 	std::string score_weight_file;
 
-	Size num_score_weight_file=0;
+	Size num_score_weight_file = 0;
 
 	if ( option[ basic::options::OptionKeys::score::weights ].user() ) {
-		score_weight_file= option[ basic::options::OptionKeys::score::weights ]();
+		score_weight_file = option[ basic::options::OptionKeys::score::weights ]();
 		std::cout << "User passed in score:weight option: " << score_weight_file << std::endl;
 		num_score_weight_file++;
 	}
 
 
-	if(num_score_weight_file==0){
+	if ( num_score_weight_file == 0 ){
 		//rna_loop_hires_04092010.wts is same as 5X_linear_quarter_fa_stack_and_adjust_bulge_ss_benchmark.wts
 		//change default from single_strand_benchmark to 5X_linear_chainbreak_single_strand_benchmark on May 24, 2010
 		//change default to 5X_linear_quarter_fa_stack_and_adjust_bulge_ss_benchmark.wts" on April 9th, 2011
 		//score_weight_file="rna_loop_hires_04092010.wts";
-		utility_exit_with_message("User to need to pass in score:weights"); //Remove the default weight on Sept 28, 2011 Parin S.
+		utility_exit_with_message( "User to need to pass in score:weights" ); //Remove the default weight on Sept 28, 2011 Parin S.
 	}
 
-	if(num_score_weight_file>1){
-		std::cout << "num_score_weight_file (inputted by user)=" << num_score_weight_file << std::endl;
-		utility_exit_with_message("num_score_weight_file>1");
+	if ( num_score_weight_file > 1 ){
+		std::cout << "num_score_weight_file ( inputted by user ) = " << num_score_weight_file << std::endl;
+		utility_exit_with_message( "num_score_weight_file > 1" );
 	}
 
 	core::scoring::ScoreFunctionOP scorefxn = getScoreFunction();
 
 
-	if(option[minimize_and_score_sugar]()==false){
+	if ( option[minimize_and_score_sugar]() == false ){
 		std::cout << "WARNING minimize_and_score_sugar is false, SET rna_sugar_close weight to 0.0 " << std::endl;
     scorefxn->set_weight( rna_sugar_close, 0.000000000000 );
  	}
 
 	std::cout << "---------score function weights----------" << std::endl;
-	scorefxn->show(std::cout);
+	scorefxn->show( std::cout );
 	std::cout << "-----------------------------------------" << std::endl;
 
 
@@ -537,7 +537,7 @@ setup_rna_job_parameters ( bool check_for_previously_closed_cutpoint_with_input_
 			input_tags = get_silent_file_tags();
 
 			if ( silent_files_in.size() != input_tags.size() ) {
-				utility_exit_with_message ( "silent_files_in.size(" + string_of ( silent_files_in.size() ) + ")!=input_tags.size(" + string_of ( input_tags.size() ) + ")" );
+				utility_exit_with_message ( "silent_files_in.size( " + string_of ( silent_files_in.size() ) + " ) != input_tags.size( " + string_of ( input_tags.size() ) + " )" );
 			}
 		}
 
@@ -567,7 +567,7 @@ setup_copy_DOF_input ( protocols::swa::rna::StepWiseRNA_PoseSetupOP & stepwise_r
 		input_tags = get_silent_file_tags();
 
 		if ( silent_files_in.size() != input_tags.size() ) {
-			utility_exit_with_message ( "silent_files_in.size()!=input_tags.size()" );
+			utility_exit_with_message ( "silent_files_in.size() != input_tags.size()" );
 		}
 	}
 
@@ -588,9 +588,9 @@ setup_copy_DOF_input ( protocols::swa::rna::StepWiseRNA_PoseSetupOP & stepwise_r
 
 	for ( Size n = 1; n <= input_tags.size(); n++ ) {
 		if ( n <= silent_files_in.size() ) {
-			std::cout << "silent_file tag= " << input_tags[n] << " silent_file= " << silent_files_in[n] << std::endl;
+			std::cout << "silent_file tag = " << input_tags[n] << " silent_file = " << silent_files_in[n] << std::endl;
 		} else {
-			std::cout << "input_tag= " << input_tags[n] << std::endl;
+			std::cout << "input_tag = " << input_tags[n] << std::endl;
 		}
 	}
 
@@ -600,7 +600,7 @@ setup_copy_DOF_input ( protocols::swa::rna::StepWiseRNA_PoseSetupOP & stepwise_r
 }
 
 protocols::swa::rna::StepWiseRNA_PoseSetupOP
-setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_parameters, bool const copy_DOF=true){
+setup_pose_setup_class( protocols::swa::rna::StepWiseRNA_JobParametersOP & job_parameters, bool const copy_DOF = true ){
 
   using namespace core::pose;
   using namespace core::chemical;
@@ -613,22 +613,22 @@ setup_pose_setup_class(protocols::swa::rna::StepWiseRNA_JobParametersOP & job_pa
 
 	// Read in native_pose.
 	PoseOP native_pose;
-	if (option[ in::file::native ].user() ) {
+	if ( option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
 		import_pose::pose_from_pdb( *native_pose, *rsd_set, option[ in::file::native ]() );
 		std::cout << "native_pose->fold_tree(): " << native_pose->fold_tree();
-		std::cout << "native_pose->annotated_sequence(true): " << native_pose->annotated_sequence( true ) << std::endl;
-		protocols::rna::make_phosphate_nomenclature_matches_mini( *native_pose);
+		std::cout << "native_pose->annotated_sequence( true ): " << native_pose->annotated_sequence( true ) << std::endl;
+		protocols::rna::make_phosphate_nomenclature_matches_mini( *native_pose );
 	}
 
 
 //	StepWiseRNA_PoseSetup stepwise_rna_pose_setup( pdb_tags, silent_files_in, job_parameters);
 
-	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = new StepWiseRNA_PoseSetup( job_parameters);
-	stepwise_rna_pose_setup->set_copy_DOF(copy_DOF);
+	StepWiseRNA_PoseSetupOP stepwise_rna_pose_setup = new StepWiseRNA_PoseSetup( job_parameters );
+	stepwise_rna_pose_setup->set_copy_DOF( copy_DOF );
 
-	if(copy_DOF==true){
-		setup_copy_DOF_input(stepwise_rna_pose_setup);
+	if ( copy_DOF == true ){
+		setup_copy_DOF_input( stepwise_rna_pose_setup );
 	}
 
 	stepwise_rna_pose_setup->set_virtual_res( option[ virtual_res ]() );
@@ -724,21 +724,21 @@ try {
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< std::string > blank_string_vector;
 	NEW_OPT ( add_virt_root, "add_virt_root", false );
-	NEW_OPT ( job_queue_ID, " rna_resample_test()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported (start from 0!)" , 0 );
+	NEW_OPT ( job_queue_ID, " rna_resample_test()/combine_long_loop mode: Specify the tag pair in filter_output_filename to be read in and imported ( start from 0! )", 0 );
 	NEW_OPT ( filter_output_filename, "CombineLongLoopFilterer: filter_output_filename", "filter_struct.txt" ); //Sept 12, 2010
 	NEW_OPT ( filter_for_previous_contact, "CombineLongLoopFilterer: filter_for_previous_contact", false ); //Sept 12, 2010
 	NEW_OPT ( filter_for_previous_clash, "CombineLongLoopFilterer: filter_for_previous_clash", false ); //Sept 12, 2010
 //New option Aug 15 2010 //Reinitialize_CCD_torsion to zero before every CCD chain closure
 	NEW_OPT ( minimize_and_score_native_pose, "minimize_and_score_native_pose ", false ); //Sept 15, 2010
-	NEW_OPT ( minimize_and_score_sugar, "minimize and sugar torsion+angle? and include the rna_sugar_close_score_term ", true ); //Sept 15, 2010
-	NEW_OPT( sampler_allow_syn_pyrimidine, "sampler_allow_syn_pyrimidine", false);
+	NEW_OPT ( minimize_and_score_sugar, "minimize and sugar torsion + angle? and include the rna_sugar_close_score_term ", true ); //Sept 15, 2010
+	NEW_OPT( sampler_allow_syn_pyrimidine, "sampler_allow_syn_pyrimidine", false );
 	NEW_OPT ( sampler_extra_syn_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
 	NEW_OPT ( sampler_extra_anti_chi_rotamer, "Samplerer: extra_chi_rotamer", false );
 	NEW_OPT ( PBP_clustering_at_chain_closure, "Samplerer: PBP_clustering_at_chain_closure", false );
 	NEW_OPT ( clusterer_two_stage_clustering, "Cluster is two stage..using triangle inequaility to speed up clustering", true ); //Change to true on Oct 10, 2010
 	NEW_OPT ( clusterer_keep_pose_in_memory, "reduce memory usage for the clusterer", true ); //Aug 6, 2010
 	NEW_OPT ( finer_sampling_at_chain_closure, "Samplerer: finer_sampling_at_chain_closure", false ); //Jun 9, 2010
-	NEW_OPT ( VDW_rep_screen_info, "VDW_rep_screen_info to create VDW_rep_screen_bin (useful when building loop from large poses)", blank_string_vector ); //Jun 9, 2010
+	NEW_OPT ( VDW_rep_screen_info, "VDW_rep_screen_info to create VDW_rep_screen_bin ( useful when building loop from large poses )", blank_string_vector ); //Jun 9, 2010
 	NEW_OPT ( VDW_rep_alignment_RMSD_CUTOFF, "use with VDW_rep_screen_info", 0.001 ); //Nov 12, 2010
 	NEW_OPT ( graphic, "Turn graphic on/off", true ); //May 5, 2010
 	NEW_OPT ( recreate_silent_struct, "Special mode to recreate_silent_struct for clusterer output...for analysis purposes", false ); //May 5, 2010
@@ -750,14 +750,14 @@ try {
 	NEW_OPT ( add_lead_zero_to_tag, "Add lead zero to clusterer output tag ", false );
 	NEW_OPT ( distinguish_pucker, "distinguish pucker when cluster:both in sampler and clusterer", true );
 	NEW_OPT ( input_tag_list, "input_tag_list", blank_string_vector );
-	NEW_OPT ( native_virtual_res , " native_virtual_res ", blank_size_vector );
-	NEW_OPT ( suite_cluster_radius , " individual_suite_cluster_radius ", 999.99 ); //IMPORTANT DO NOT CHANGE
-	NEW_OPT ( loop_cluster_radius , " loop_cluster_radius ", 999.99 ); //IMPORTANT DO NOT CHANGE
-	NEW_OPT ( alignment_res , " align_res_list ", blank_string_vector );
-	NEW_OPT ( native_alignment_res , " native_alignment_res ", blank_size_vector );
-	NEW_OPT ( jump_point_pairs , " jump_point_pairs ", blank_string_vector );
+	NEW_OPT ( native_virtual_res, " native_virtual_res ", blank_size_vector );
+	NEW_OPT ( suite_cluster_radius, " individual_suite_cluster_radius ", 999.99 ); //IMPORTANT DO NOT CHANGE
+	NEW_OPT ( loop_cluster_radius, " loop_cluster_radius ", 999.99 ); //IMPORTANT DO NOT CHANGE
+	NEW_OPT ( alignment_res, " align_res_list ", blank_string_vector );
+	NEW_OPT ( native_alignment_res, " native_alignment_res ", blank_size_vector );
+	NEW_OPT ( jump_point_pairs, " jump_point_pairs ", blank_string_vector );
 	NEW_OPT ( sample_res, "residues to build, the first element is the actual sample res while the other are the bulge residues", blank_size_vector );
-	NEW_OPT ( prepend , "prepend ", true );
+	NEW_OPT ( prepend, "prepend ", true );
 	// Note that this could be specified in a PDB INFO file -- but how about for silent files?
 	NEW_OPT ( cluster_type, "cluster_type", "all_atom" );
 	NEW_OPT ( input_res, "Residues already present in starting pose_1", blank_size_vector );
@@ -778,7 +778,7 @@ try {
 	NEW_OPT ( VDW_atr_rep_screen, "classic VDW_atr_rep_screen", true );
 	NEW_OPT ( sampler_perform_o2star_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
 	NEW_OPT ( fast, "quick runthrough for debugging", false );
-	NEW_OPT ( medium_fast, "quick runthrough for debugging (keep more poses and not as fast as fast option)", false );
+	NEW_OPT ( medium_fast, "quick runthrough for debugging ( keep more poses and not as fast as fast option )", false );
 	NEW_OPT ( VERBOSE, "VERBOSE", false );
 	NEW_OPT ( sampler_native_rmsd_screen, "native_rmsd_screen ResidueSampler", false );
 	NEW_OPT ( sampler_native_screen_rmsd_cutoff, "sampler_native_screen_rmsd_cutoff", 2.0 );
@@ -794,8 +794,8 @@ try {
 	NEW_OPT ( algorithm, "Specify algorithm to execute", "" );
 	NEW_OPT ( allow_chain_boundary_jump_partner_right_at_fixed_BP, "allow_chain_boundary_jump_partner_right_at_fixed_BP, mainly just to get SQUARE RNA working", false ); //Nov 6, 2010
 	NEW_OPT ( allow_fixed_res_at_moving_res, "allow_fixed_res_at_moving_res, mainly just to get Hermann Duplex working", false ); //Nov 15, 2010
-	NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5); //DO NOT CHANGE THIS!
-	NEW_OPT( output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", false); //Sept 24, 2011
+	NEW_OPT( sampler_cluster_rmsd, " Clustering rmsd of conformations in the sampler", 0.5 ); //DO NOT CHANGE THIS!
+	NEW_OPT( output_pdb, "output_pdb: If true, then will dump the pose into a PDB file at different stages of the stepwise assembly process.", false ); //Sept 24, 2011
 	NEW_OPT ( constraint_chi, "Constrain the chi angles", false );
 	NEW_OPT ( rm_virt_phosphate, "Remove virtual phosphate patches during minimization", false );
 	NEW_OPT ( choose_random, "ask loop closer for a random solution", false );

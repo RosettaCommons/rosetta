@@ -143,7 +143,7 @@ namespace rna {
 		// nstruct is usually 1, unless choose_random is on -- then we need to call several times to
 		// get a bunch of poses back.
 		if ( ! skip_sampling_ ) {
-			for( Size n = 1; n <= nstruct_; n++ ){
+			for ( Size n = 1; n <= nstruct_; n++ ){
 				stepwise_rna_residue_sampler.apply ( pose );
 			}
 		}
@@ -162,7 +162,7 @@ namespace rna {
 		}
 
 		if ( minimize_and_score_native_pose_ ) {
-			if ( !get_native_pose() ) utility_exit_with_message ( "minimize_and_score_native_pose==True but user did not pass in native pose" );
+			if ( !get_native_pose() ) utility_exit_with_message ( "minimize_and_score_native_pose == True but user did not pass in native pose" );
 			pose_data_struct2 native_data_struct;
 			native_data_struct.pose_OP = new Pose( *get_native_pose() ); //hopefully this clones...
 			native_data_struct.score = 0.0;
@@ -217,12 +217,12 @@ namespace rna {
 		Size nres = pose.total_residue();
 
 		// what if there is a virtual residue? need to remove it, actually, before running stepwise_rna_job_parameters_setup.
-		if ( full_sequence[nres-1] == 'X' ){
-			full_sequence = full_sequence.substr(0,nres-1);
+		if ( full_sequence[nres - 1] == 'X' ){
+			full_sequence = full_sequence.substr( 0, nres - 1 );
 			nres -= 1;
 		}
 		utility::vector1< Size > not_rebuild_res;
-		for (Size n = 1; n <= nres; n++ ) if ( n != rebuild_res ) not_rebuild_res.push_back( n );
+		for ( Size n = 1; n <= nres; n++ ) if ( n != rebuild_res ) not_rebuild_res.push_back( n );
 
 		utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open /*blank*/;
 		input_res1 = not_rebuild_res;
@@ -248,7 +248,7 @@ namespace rna {
 
 		// not sure about the following -- instead, how about reading jump residues from within pose itself?
 		utility::vector1< std::string > jump_point_pair_list;
-		jump_point_pair_list.push_back( ObjexxFCL::string_of(rebuild_res-1) + "-" + ObjexxFCL::string_of(rebuild_res+1) );
+		jump_point_pair_list.push_back( ObjexxFCL::string_of( rebuild_res - 1 ) + "-" + ObjexxFCL::string_of( rebuild_res + 1 ) );
 		stepwise_rna_job_parameters_setup.set_jump_point_pair_list( jump_point_pair_list ); //Important!: Needs to be called after set_fixed_res
 
 		utility::vector1< std::string > alignment_res; //why is this a string vector?????

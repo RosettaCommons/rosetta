@@ -35,55 +35,55 @@ namespace rna {
 	};
 
 	void
-	Print_torsion_info(core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const type);
+	Print_torsion_info( core::pose::Pose const & pose, core::Size const seq_num, core::Size const rna_torsion_number, std::string const type );
 
-	utility::vector1 <Residue_info>
-	Convert_rebuild_residue_string_to_list(std::string const & rebuild_residue_string);
+	utility::vector1 < Residue_info >
+	Convert_rebuild_residue_string_to_list( std::string const & rebuild_residue_string );
 
 	void
-	Output_residue_struct(Residue_info const & residue);
+	Output_residue_struct( Residue_info const & residue );
 
 	std::string
-	Get_one_letter_name(std::string const & three_letter_name);
+	Get_one_letter_name( std::string const & three_letter_name );
 
 	std::string
-	Get_three_letter_name(std::string const & one_letter_name);
+	Get_three_letter_name( std::string const & one_letter_name );
 
 	core::Size
-	get_max_seq_num_from_res_map(std::map< core::Size, core::Size > const & my_map);
+	get_max_seq_num_from_res_map( std::map< core::Size, core::Size > const & my_map );
 
 
 	void
-	output_res_map(std::map< core::Size, core::Size > const & my_map, core::Size const max_seq_num);
+	output_res_map( std::map< core::Size, core::Size > const & my_map, core::Size const max_seq_num );
 
 	// Undefined, commenting out to fix PyRosetta build  void output_is_prepend_map(std::map< core::Size, bool > const & my_map, core::Size const max_seq_num);
 
 	void
-	Output_residue_list(utility::vector1<Residue_info> residue_list);
+	Output_residue_list( utility::vector1< Residue_info > residue_list );
 
 	utility::vector1< Residue_info >
-	Get_residue_list_from_fasta(std::string const full_fasta_sequence);
+	Get_residue_list_from_fasta( std::string const full_fasta_sequence );
 
 	Residue_info
-	Get_residue_from_seq_num(core::Size const & seq_num, utility::vector1 <Residue_info> const & residue_list);
+	Get_residue_from_seq_num( core::Size const & seq_num, utility::vector1 < Residue_info > const & residue_list );
 
 	bool
-	Contain_residue_at_seq_num(core::Size seq_num, utility::vector1 <Residue_info> const & residue_list);
+	Contain_residue_at_seq_num( core::Size seq_num, utility::vector1 < Residue_info > const & residue_list );
 
-	utility::vector1 < utility::vector1 <Residue_info> >
-	Create_strand_list(utility::vector1 <Residue_info> const & residue_list);
+	utility::vector1 < utility::vector1 < Residue_info > >
+	Create_strand_list( utility::vector1 < Residue_info > const & residue_list );
 
-	utility::vector1 <Residue_info>
-	Set_Difference(utility::vector1 <Residue_info> const & residue_list_1, utility::vector1 <Residue_info> const & residue_list_2);
+	utility::vector1 < Residue_info >
+	Set_Difference( utility::vector1 < Residue_info > const & residue_list_1, utility::vector1 < Residue_info > const & residue_list_2 );
 
-	utility::vector1 <Residue_info>
-	Set_Union(utility::vector1 <Residue_info> const & residue_list_1, utility::vector1 <Residue_info> const & residue_list_2);
+	utility::vector1 < Residue_info >
+	Set_Union( utility::vector1 < Residue_info > const & residue_list_1, utility::vector1 < Residue_info > const & residue_list_2 );
 
 	bool
-	residue_list_sort_citeria(Residue_info residue_info_1, Residue_info residue_info_2);
+	residue_list_sort_citeria( Residue_info residue_info_1, Residue_info residue_info_2 );
 
 	void
-	sort_residue_list(utility::vector1<Residue_info>& residue_list);
+	sort_residue_list( utility::vector1< Residue_info > & residue_list );
 
 
 }

@@ -44,18 +44,18 @@ namespace rna {
 		public:
 	
 			 SlicedPoseJobParameters():
-				verbose_(true),
-				Is_setup_(false)
+				verbose_( true ),
+				Is_setup_( false )
 			{
 			}
 
 			virtual ~SlicedPoseJobParameters(); // auto-removing definition from header{};
 
 			void 
-			setup(protocols::swa::rna::StepWiseRNA_JobParametersCOP & job_parameters);
+			setup( protocols::swa::rna::StepWiseRNA_JobParametersCOP & job_parameters );
 
 			core::pose::Pose
-			create_sliced_pose(core::pose::Pose const & working_pose);
+			create_sliced_pose( core::pose::Pose const & working_pose );
 
 		public:
 			utility::vector1< core::Size > sliced_pose_best_alignment; //check
@@ -70,7 +70,7 @@ namespace rna {
 			utility::vector1< bool > Is_sliced_res_;
 			utility::vector1 < core::Size > working_to_sliced_res_map_; 
 			utility::vector1 < core::Size > sliced_to_working_res_map_; 
-			utility::vector1< std::pair< core::Size, core::Size > > delete_res_range_list_;
+			utility::vector1< std::pair < core::Size, core::Size > > delete_res_range_list_;
 			bool verbose_;
 			bool Is_setup_;
 
@@ -85,7 +85,7 @@ namespace rna {
 		Cluster_Member():
 		ID( 0 ),
 		RMSD( 0.0 ),
-		score(9999.99)
+		score( 9999.99 )
 		{
 		}
 
@@ -136,21 +136,21 @@ namespace rna {
 
 		void set_add_lead_zero_to_tag( core::Real const & setting ){ add_lead_zero_to_tag_ = setting; }
 
-		void set_job_parameters( protocols::swa::rna::StepWiseRNA_JobParametersCOP & job_parameters);
+		void set_job_parameters( protocols::swa::rna::StepWiseRNA_JobParametersCOP & job_parameters );
 
-		void set_job_parameters_exist( bool const job_parameters_exist);
+		void set_job_parameters_exist( bool const job_parameters_exist );
 
-		void set_quick_alignment( bool const & setting){ quick_alignment_ = setting;}
+		void set_quick_alignment( bool const & setting ){ quick_alignment_ = setting; }
 
-		void set_align_only_over_base_atoms( bool const & setting){ align_only_over_base_atoms_ = setting; }
+		void set_align_only_over_base_atoms( bool const & setting ){ align_only_over_base_atoms_ = setting; }
 	
-		void set_optimize_memory_usage(  bool const & setting){ optimize_memory_usage_ = setting;}
+		void set_optimize_memory_usage(  bool const & setting ){ optimize_memory_usage_ = setting; }
 
-		void set_keep_pose_in_memory(  bool const & setting){ keep_pose_in_memory_ = setting;}
+		void set_keep_pose_in_memory(  bool const & setting ){ keep_pose_in_memory_ = setting; }
 
-		void set_two_stage_clustering(  bool const & setting){ two_stage_clustering_ = setting;}
+		void set_two_stage_clustering(  bool const & setting ){ two_stage_clustering_ = setting; }
 
-		void set_verbose(  bool const & setting){ verbose_ = setting;}
+		void set_verbose(  bool const & setting ){ verbose_ = setting; }
 
 
 		void cluster();
@@ -159,51 +159,51 @@ namespace rna {
 		output_silent_file( std::string const & silent_file );
 
 		void
-		recalculate_rmsd_and_output_silent_file(std::string const & silent_file, 
+		recalculate_rmsd_and_output_silent_file( std::string const & silent_file, 
 				                                    protocols::swa::rna::StepWiseRNA_PoseSetupOP & stepwise_rna_pose_setup,
-																					bool const write_score_only);
+																					bool const write_score_only );
 
 		void
 		get_best_neighboring_shift_RMSD_and_output_silent_file( std::string const & silent_file );
 
 		void
-		set_PBP_clustering_at_chain_closure( bool const & setting){ PBP_clustering_at_chain_closure_ =setting; }
+		set_PBP_clustering_at_chain_closure( bool const & setting ){ PBP_clustering_at_chain_closure_ = setting; }
 
 		void
-		set_skip_clustering( bool const & setting){skip_clustering_= setting; }
+		set_skip_clustering( bool const & setting ){ skip_clustering_ = setting; }
 
 		void
-		set_filter_virtual_res_list( utility::vector1 < core::Size > const & setting){ filter_virtual_res_list_=setting; }
+		set_filter_virtual_res_list( utility::vector1 < core::Size > const & setting ){ filter_virtual_res_list_ = setting; }
 
 		void
-		set_perform_VDW_rep_screen( bool const & setting){perform_VDW_rep_screen_= setting; }
+		set_perform_VDW_rep_screen( bool const & setting ){ perform_VDW_rep_screen_ = setting; }
 
 		void
-		set_perform_filters( bool const & setting){perform_filters_= setting; }
+		set_perform_filters( bool const & setting ){ perform_filters_ = setting; }
 
 		void
-		set_min_num_south_ribose_filter( Size const & setting){min_num_south_ribose_filter_= setting; }
+		set_min_num_south_ribose_filter( Size const & setting ){ min_num_south_ribose_filter_ = setting; }
 
 		void
-		set_VDW_rep_screen_info( utility::vector1< std::string > const & setting ){ VDW_rep_screen_info_=setting; }
+		set_VDW_rep_screen_info( utility::vector1< std::string > const & setting ){ VDW_rep_screen_info_ = setting; }
 
 		void
-		set_user_input_VDW_bin_screener(protocols::swa::rna::StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener){ user_input_VDW_bin_screener_= user_input_VDW_bin_screener; }
+		set_user_input_VDW_bin_screener( protocols::swa::rna::StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener ){ user_input_VDW_bin_screener_ = user_input_VDW_bin_screener; }
 
 		void
-		set_full_length_loop_rmsd_clustering(bool const & setting){full_length_loop_rmsd_clustering_= setting; }
+		set_full_length_loop_rmsd_clustering( bool const & setting ){ full_length_loop_rmsd_clustering_ = setting; }
 
 		void
-		set_ignore_FARFAR_no_auto_bulge_tag(bool const & setting){ignore_FARFAR_no_auto_bulge_tag_=setting; }
+		set_ignore_FARFAR_no_auto_bulge_tag( bool const & setting ){ ignore_FARFAR_no_auto_bulge_tag_ = setting; }
 
 		void
-		set_ignore_FARFAR_no_auto_bulge_parent_tag(bool const & setting){ignore_FARFAR_no_auto_bulge_parent_tag_=setting; }
+		set_ignore_FARFAR_no_auto_bulge_parent_tag( bool const & setting ){ ignore_FARFAR_no_auto_bulge_parent_tag_ = setting; }
 
 		void
-		set_ignore_unmatched_virtual_res(bool const & setting){ignore_unmatched_virtual_res_=setting; }
+		set_ignore_unmatched_virtual_res( bool const & setting ){ ignore_unmatched_virtual_res_ = setting; }
 
 		void
-		set_output_pdb( bool const setting){ output_pdb_=setting;}
+		set_output_pdb( bool const setting ){ output_pdb_ = setting; }
 
   private:
 
@@ -224,30 +224,30 @@ namespace rna {
 
 
 		bool 
-		Is_old_individual_suite_cluster(core::pose::Pose const & current_pose, 
+		Is_old_individual_suite_cluster( core::pose::Pose const & current_pose, 
                                     core::pose::Pose const & cluster_center_pose,
                                     utility::vector1 < core::Size > const & rmsd_res_list,
 																	std::map< core::Size, core::Size > const & full_to_sub,
 																	std::map< core::Size, bool > const & Is_prepend_map,
-																	core::Real const & cluster_radius) const;
+																	core::Real const & cluster_radius ) const;
 
 
 		core::pose::PoseOP
-		get_poseOP(Size const n);
+		get_poseOP( Size const n );
 
 		void
-		setup_fail_triangle_inequailty_list(core::pose::Pose & current_pose, std::string const & tag, utility::vector1< bool > & fail_triangle_inequality_list);
+		setup_fail_triangle_inequailty_list( core::pose::Pose & current_pose, std::string const & tag, utility::vector1< bool > & fail_triangle_inequality_list );
 
 
 		bool 
-		Is_new_cluster_center_with_job_parameters(core::pose::PoseOP const & pose_op, std::string const & tag);
+		Is_new_cluster_center_with_job_parameters( core::pose::PoseOP const & pose_op, std::string const & tag );
 
 		bool
 		check_for_closeness_without_job_parameters( core::pose::PoseOP const & pose_op );
 
 
 		bool
-		check_for_closeness( core::pose::PoseOP const & pose_op , std::string const & tag );
+		check_for_closeness( core::pose::PoseOP const & pose_op, std::string const & tag );
 
 		utility::vector1< core::Size > const &
 		get_act_alignment_res()  const;
@@ -268,7 +268,7 @@ namespace rna {
 		initialize_max_memory_pose_num();
 
 		void
-		align_to_quick_alignment_pose(core::pose::Pose & pose, std::string const & tag) const;
+		align_to_quick_alignment_pose( core::pose::Pose & pose, std::string const & tag ) const;
 
 		void
 		initialize_VDW_rep_screener();
@@ -277,7 +277,7 @@ namespace rna {
 		create_tags_map();
 
 		bool
-		pass_FARFAR_no_auto_bulge_filter(core::io::silent::SilentStructOP const & silent_struct) const;
+		pass_FARFAR_no_auto_bulge_filter( core::io::silent::SilentStructOP const & silent_struct ) const;
 
 
   private:
@@ -317,7 +317,7 @@ namespace rna {
 		core::pose::Pose first_pose_;
 		utility::vector1< utility::vector1< Cluster_Member > > cluster_centers_neighbor_list_;
 		utility::vector1< core::pose::PoseOP > large_cluster_pose_list_;
-		utility::vector1< core::Size> all_pose_to_output_pose_ID_map_;
+		utility::vector1< core::Size > all_pose_to_output_pose_ID_map_;
 		bool PBP_clustering_at_chain_closure_;
 
 		bool quick_alignment_pose_is_intialized_;

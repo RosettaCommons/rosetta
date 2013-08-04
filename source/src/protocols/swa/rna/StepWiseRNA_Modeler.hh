@@ -103,6 +103,8 @@ namespace rna {
 
 		void set_choose_random( bool const & setting ){ choose_random_ = setting; }
 
+		void set_num_random_samples( Size const & setting ){ num_random_samples_ = setting; }
+
 		void set_skip_sampling( bool const & setting ){ skip_sampling_ = setting; }
 
 		void set_perform_minimize( bool const & setting ){ perform_minimize_ = setting; }
@@ -126,52 +128,52 @@ namespace rna {
 		void set_minimize_res( utility::vector1< Size > const & setting ){ minimize_res_ = setting; }
 
 		// additional options that are not shared with ERRASER (yet)
-		void set_VDW_rep_delete_matching_res( utility::vector1< std::string > const & setting){ VDW_rep_delete_matching_res_= setting ;}
+		void set_VDW_rep_delete_matching_res( utility::vector1< std::string > const & setting ){ VDW_rep_delete_matching_res_ = setting ; }
 
-		void set_VDW_rep_screen_physical_pose_clash_dist_cutoff( bool const & setting ){ VDW_rep_screen_physical_pose_clash_dist_cutoff_ = setting;}
+		void set_VDW_rep_screen_physical_pose_clash_dist_cutoff( bool const & setting ){ VDW_rep_screen_physical_pose_clash_dist_cutoff_ = setting; }
 
-		void set_integration_test_mode( bool const & setting ){ integration_test_mode_ = setting;}
+		void set_integration_test_mode( bool const & setting ){ integration_test_mode_ = setting; }
 
-		void set_allow_bulge_at_chainbreak( bool const & setting ){ allow_bulge_at_chainbreak_ = setting;}
+		void set_allow_bulge_at_chainbreak( bool const & setting ){ allow_bulge_at_chainbreak_ = setting; }
 
-		void set_parin_favorite_output( bool const & setting ){ parin_favorite_output_ = setting;}
+		void set_parin_favorite_output( bool const & setting ){ parin_favorite_output_ = setting; }
 
-		void set_floating_base( bool const & setting ){ floating_base_ = setting;}
+		void set_floating_base( bool const & setting ){ floating_base_ = setting; }
 
-		void set_include_syn_chi( bool const & setting ){ include_syn_chi_ = setting;}
+		void set_include_syn_chi( bool const & setting ){ include_syn_chi_ = setting; }
 
-		void set_reinitialize_CCD_torsions( bool const & setting ){ reinitialize_CCD_torsions_ = setting;}
+		void set_reinitialize_CCD_torsions( bool const & setting ){ reinitialize_CCD_torsions_ = setting; }
 
-		void set_sampler_extra_epsilon_rotamer( bool const & setting ){ sampler_extra_epsilon_rotamer_ = setting;}
+		void set_sampler_extra_epsilon_rotamer( bool const & setting ){ sampler_extra_epsilon_rotamer_ = setting; }
 
-		void set_sampler_extra_beta_rotamer( bool const & setting ){ sampler_extra_beta_rotamer_ = setting;}
+		void set_sampler_extra_beta_rotamer( bool const & setting ){ sampler_extra_beta_rotamer_ = setting; }
 
-		void set_sample_both_sugar_base_rotamer( bool const & setting ){ sample_both_sugar_base_rotamer_ = setting;}
+		void set_sample_both_sugar_base_rotamer( bool const & setting ){ sample_both_sugar_base_rotamer_ = setting; }
 
-		void set_sampler_include_torsion_value_in_tag( bool const & setting ){ sampler_include_torsion_value_in_tag_ = setting;}
+		void set_sampler_include_torsion_value_in_tag( bool const & setting ){ sampler_include_torsion_value_in_tag_ = setting; }
 
-		void set_rebuild_bulge_mode( bool const & setting ){ rebuild_bulge_mode_ = setting;}
+		void set_rebuild_bulge_mode( bool const & setting ){ rebuild_bulge_mode_ = setting; }
 
-		void set_debug_epsilon_south_sugar_mode( bool const & setting ){ debug_epsilon_south_sugar_mode_ = setting;}
+		void set_debug_epsilon_south_sugar_mode( bool const & setting ){ debug_epsilon_south_sugar_mode_ = setting; }
 
-		void set_exclude_alpha_beta_gamma_sampling( bool const & setting ){ exclude_alpha_beta_gamma_sampling_ = setting;}
+		void set_exclude_alpha_beta_gamma_sampling( bool const & setting ){ exclude_alpha_beta_gamma_sampling_ = setting; }
 
-		void set_combine_long_loop_mode( bool const & setting ){ combine_long_loop_mode_ = setting;}
+		void set_combine_long_loop_mode( bool const & setting ){ combine_long_loop_mode_ = setting; }
 
-		void set_do_not_sample_multiple_virtual_sugar( bool const & setting ){ do_not_sample_multiple_virtual_sugar_ = setting;}
+		void set_do_not_sample_multiple_virtual_sugar( bool const & setting ){ do_not_sample_multiple_virtual_sugar_ = setting; }
 
-		void set_sample_ONLY_multiple_virtual_sugar( bool const & setting ){ sample_ONLY_multiple_virtual_sugar_ = setting;}
+		void set_sample_ONLY_multiple_virtual_sugar( bool const & setting ){ sample_ONLY_multiple_virtual_sugar_ = setting; }
 
-		void set_sampler_assert_no_virt_ribose_sampling( bool const & setting ){ sampler_assert_no_virt_ribose_sampling_ = setting;}
+		void set_sampler_assert_no_virt_ribose_sampling( bool const & setting ){ sampler_assert_no_virt_ribose_sampling_ = setting; }
 
-		void set_allow_base_pair_only_centroid_screen( bool const & setting ){ allow_base_pair_only_centroid_screen_ = setting;}
+		void set_allow_base_pair_only_centroid_screen( bool const & setting ){ allow_base_pair_only_centroid_screen_ = setting; }
 
 		// this is new, not in ERRASER (swa_rna_analytical_closure)
-		void set_minimizer_perform_o2star_pack( bool const & setting ){ minimizer_perform_o2star_pack_ = setting;}
+		void set_minimizer_perform_o2star_pack( bool const & setting ){ minimizer_perform_o2star_pack_ = setting; }
 
-		void set_minimizer_output_before_o2star_pack( bool const & setting ){ minimizer_output_before_o2star_pack_ = setting;}
+		void set_minimizer_output_before_o2star_pack( bool const & setting ){ minimizer_output_before_o2star_pack_ = setting; }
 
-		void set_minimizer_rename_tag( bool const & setting ){ minimizer_rename_tag_ = setting;}
+		void set_minimizer_rename_tag( bool const & setting ){ minimizer_rename_tag_ = setting; }
 
 
 	public:
@@ -212,6 +214,7 @@ namespace rna {
 		bool VDW_atr_rep_screen_;
 		bool force_centroid_interaction_;
 		bool choose_random_;
+		Size num_random_samples_;
 		bool skip_sampling_;
 		bool perform_minimize_;
 		bool minimize_and_score_sugar_;

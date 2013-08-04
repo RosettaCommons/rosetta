@@ -89,7 +89,7 @@ private:
 
 	void
 	figure_out_dof_ids_and_offsets ( pose::Pose const & pose,
-	                                 utility::vector1<Real> const & dt_ang );
+	                                 utility::vector1< Real > const & dt_ang );
 
 	void
 	figure_out_offset (
@@ -110,11 +110,11 @@ private:
 	void
 	fill_chainTORS (
 	  pose::Pose const & pose,
-	  utility::vector1< id::NamedAtomID> const & atom_ids,
-	  utility::vector1<utility::vector1<Real> > & atoms,
-	  utility::vector1<Real> & dt_ang,
-	  utility::vector1<Real> & db_ang,
-	  utility::vector1<Real> & db_len ) const;
+	  utility::vector1< id::NamedAtomID > const & atom_ids,
+	  utility::vector1< utility::vector1< Real > > & atoms,
+	  utility::vector1< Real > & dt_ang,
+	  utility::vector1< Real > & db_ang,
+	  utility::vector1< Real > & db_len ) const;
 
 
 private:
@@ -131,7 +131,7 @@ private:
 	utility::vector1< Real > offset_save_;
 	utility::vector1< id::DOF_ID > dof_ids_;
 
-	utility::vector1<utility::vector1<Real> > t_ang_, b_ang_, b_len_;
+	utility::vector1< utility::vector1< Real > > t_ang_, b_ang_, b_len_;
 
 	bool choose_least_perturb_solution_;
 	bool choose_best_solution_;

@@ -59,29 +59,29 @@ namespace rna {
 		StepWiseRNA_JobParametersOP & job_parameters();
 
 		void
-		set_fixed_res(utility::vector1 < core::Size > const & fixed_res );
+		set_fixed_res( utility::vector1 < core::Size > const & fixed_res );
 
 		// Undefined, commenting out to fix PyRosetta build  void set_virtual_res(utility::vector1 < core::Size > const & set_virtual_res_list);
 
 		void
-		set_terminal_res(utility::vector1 < core::Size > const & terminal_res );
+		set_terminal_res( utility::vector1 < core::Size > const & terminal_res );
 
 		// // Undefined, commenting out to fix PyRosetta build  void set_bulge_res(utility::vector1 < core::Size > const & bulge_res );
 
 		void
-		set_jump_point_pair_list(utility::vector1< std::string > const & jump_point_pairs_string);
+		set_jump_point_pair_list( utility::vector1< std::string > const & jump_point_pairs_string );
 
 		void
-		set_rmsd_res_list(utility::vector1< core::Size > const & setting );
+		set_rmsd_res_list( utility::vector1< core::Size > const & setting );
 
 		void
-		set_alignment_res(utility::vector1< std::string > const & setting){alignment_res_string_list_=setting; }
+		set_alignment_res( utility::vector1< std::string > const & setting ){ alignment_res_string_list_ = setting; }
 
 		void
-		set_filter_user_alignment_res(bool const setting){filter_user_alignment_res_=setting; }
+		set_filter_user_alignment_res( bool const setting ){ filter_user_alignment_res_ = setting; }
 
 		void
-		set_native_alignment_res(utility::vector1< Size > const & native_alignment);
+		set_native_alignment_res( utility::vector1< Size > const & native_alignment );
 
 		void
 		set_global_sample_res_list( utility::vector1 < core::Size > const & setting );
@@ -99,28 +99,28 @@ namespace rna {
 		set_protonated_H1_adenosine_list( utility::vector1 < core::Size > const & setting );
 
 		void
-		set_output_extra_RMSDs( bool const setting);
+		set_output_extra_RMSDs( bool const setting );
 
 		void
-		set_add_virt_res_as_root( bool const setting);
+		set_add_virt_res_as_root( bool const setting );
 
 		void
-		set_input_tags( utility::vector1< std::string > const & setting){ input_tags_=setting; } //Only called if check_for_previously_closed_cutpoint_with_input_pose is true
+		set_input_tags( utility::vector1< std::string > const & setting ){ input_tags_ = setting; } //Only called if check_for_previously_closed_cutpoint_with_input_pose is true
 
 		void
-		set_silent_files_in( utility::vector1< std::string > const & setting){ silent_files_in_= setting; } //Only called if check_for_previously_closed_cutpoint_with_input_pose  is true
+		set_silent_files_in( utility::vector1< std::string > const & setting ){ silent_files_in_ = setting; } //Only called if check_for_previously_closed_cutpoint_with_input_pose  is true
 
 		void
-		set_allow_chain_boundary_jump_partner_right_at_fixed_BP( bool const setting){ allow_chain_boundary_jump_partner_right_at_fixed_BP_=setting; }
+		set_allow_chain_boundary_jump_partner_right_at_fixed_BP( bool const setting ){ allow_chain_boundary_jump_partner_right_at_fixed_BP_ = setting; }
 
 		void
-		set_allow_fixed_res_at_moving_res( bool const setting){ allow_fixed_res_at_moving_res_=setting; }
+		set_allow_fixed_res_at_moving_res( bool const setting ){ allow_fixed_res_at_moving_res_ = setting; }
 
 		void
-		set_simple_append_map( bool const setting){ simple_append_map_=setting; }
+		set_simple_append_map( bool const setting ){ simple_append_map_ = setting; }
 
 		void
-		set_skip_complicated_stuff( bool const setting){ skip_complicated_stuff_=setting; }
+		set_skip_complicated_stuff( bool const setting ){ skip_complicated_stuff_ = setting; }
 
 
   private:
@@ -148,7 +148,7 @@ namespace rna {
 		setup_fold_tree();
 
 		void
-		figure_out_Prepend_Internal(core::Size const root_res, InternalWorkingResidueParameter const & internal_params);
+		figure_out_Prepend_Internal( core::Size const root_res, InternalWorkingResidueParameter const & internal_params );
 
 		void
 		figure_out_working_moving_suite();
@@ -157,10 +157,10 @@ namespace rna {
 		figure_out_Is_prepend_map();
 
 		bool
-		figure_out_Is_residue_prepend(core::Size const seq_num) const;
+		figure_out_Is_residue_prepend( core::Size const seq_num ) const;
 
 		core::Size
-		input_struct_definition(core::Size const working_seq_num);
+		input_struct_definition( core::Size const working_seq_num );
 
 		InternalWorkingResidueParameter
 		figure_out_partition_definition();
@@ -169,7 +169,7 @@ namespace rna {
 		figure_out_gap_size_and_five_prime_chain_break_res();
 
 		core::Size
-		reroot_fold_tree(core::Size const fake_working_moving_suite);
+		reroot_fold_tree( core::Size const fake_working_moving_suite );
 
 		core::Size
 		reroot_fold_tree_simple();
@@ -181,7 +181,7 @@ namespace rna {
 		figure_out_best_working_alignment();
 
 		utility::vector1< core::Size >
-		get_user_input_alignment_res_list(core::Size const root_res);
+		get_user_input_alignment_res_list( core::Size const root_res );
 
 		utility::vector1< core::Size >
 		get_previously_closed_cutpoint_from_imported_silent_file() const;
@@ -198,9 +198,9 @@ namespace rna {
 		utility::vector1< Size > added_cutpoint_closed_;
 		utility::vector1< Size > fixed_res_;
 
-		ObjexxFCL::FArray1D< bool > is_cutpoint_;
-		utility::vector1< std::pair< core::Size, core::Size > > jump_point_pair_list_;
-		utility::vector1< std::pair< core::Size, core::Size > > jump_partners_;
+		ObjexxFCL::FArray1D < bool > is_cutpoint_;
+		utility::vector1< std::pair < core::Size, core::Size > > jump_point_pair_list_;
+		utility::vector1< std::pair < core::Size, core::Size > > jump_partners_;
 		utility::vector1< core::Size > cuts_;
 
 		StepWiseRNA_JobParametersOP job_parameters_;

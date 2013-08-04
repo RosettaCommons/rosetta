@@ -30,7 +30,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
-#include <basic/Tracer.fwd.hh>
 
 //Auto Headers
 #include <core/id/AtomID.fwd.hh>
@@ -57,13 +56,13 @@ namespace swa {
 
 	//following copies code that is in rna/StepWiseRNA_Util? Remove the latter?
 	void
-	Output_boolean(std::string const & tag, bool boolean, basic::Tracer & TR );
+	Output_boolean(std::string const & tag, bool boolean, std::ostream & TR );
 
 	void
-	Output_boolean(bool boolean, basic::Tracer & TR );
+	Output_boolean(bool boolean, std::ostream & TR );
 
 	void
-	Output_movemap(kinematics::MoveMap const & mm, Size const total_residue, basic::Tracer & TR);
+	Output_movemap(kinematics::MoveMap const & mm, Size const total_residue, std::ostream & TR);
 
 	void
 	Figure_out_moving_residues( kinematics::MoveMap & mm, pose::Pose const & pose,
@@ -160,6 +159,19 @@ namespace swa {
 
 	void
 	translate_and_rotate_residue_to_origin( pose::Pose & pose, Size const i );
+
+	void
+	add_to_atom_id_map_after_checks( std::map< id::AtomID, id::AtomID> & atom_id_map,
+																	 std::string const & atom_name,
+																	 Size const & n1, Size const & n2,
+																	 pose::Pose const & pose1, pose::Pose const & pose2 );
+
+	Real
+	get_all_atom_rmsd( pose::Pose const & pose, pose::Pose const & native_pose, utility::vector1< Size > const & rmsd_res );
+
+	Size
+	get_number_missing_residues( pose::Pose const & pose );
+
 
 }
 }

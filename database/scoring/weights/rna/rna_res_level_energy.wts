@@ -7,9 +7,11 @@ fa_intra_rep    0.0029
 fa_stack        0.078
 rna_torsion     2.0
 rna_sugar_close 0.5
+hbond_sr_bb_sc  0.58
+hbond_lr_bb_sc  0.58
 hbond_sc        0.58
 lk_nonpolar     0.15
-geom_sol        0.10
+CI_geom_sol        0.10
 fa_elec_rna_phos_phos 1.0
 stack_elec      0.46
 intermol        1.4

@@ -49,7 +49,7 @@ namespace rna {
 			side_one_tag( "" ),
 			side_two_tag( "" ),
 			//combine_score( 999999999999.99 ) //Feb 12, 2012 This might lead to server-test error at R47200
-			combine_score( 999999.9) //Feb 12, 2012
+			combine_score( 999999.9 ) //Feb 12, 2012
 		{
 		}
 
@@ -94,7 +94,7 @@ namespace rna {
   public:
 
     //constructor!
-		StepWiseRNA_CombineLongLoopFilterer( StepWiseRNA_JobParametersCOP const & job_parameters, bool const combine_helical_silent_file);
+		StepWiseRNA_CombineLongLoopFilterer( StepWiseRNA_JobParametersCOP const & job_parameters, bool const combine_helical_silent_file );
 
     //destructor -- necessary?
     virtual ~StepWiseRNA_CombineLongLoopFilterer();
@@ -103,28 +103,28 @@ namespace rna {
 
 
 		void
-		set_silent_files_in( utility::vector1< std::string > const & setting){ silent_files_in_= setting; } //Only called if COPY_DOF is true
+		set_silent_files_in( utility::vector1< std::string > const & setting ){ silent_files_in_ = setting; } //Only called if COPY_DOF is true
 
 		void
-		set_parin_favorite_output( bool const setting){ parin_favorite_output_=setting; }
+		set_parin_favorite_output( bool const setting ){ parin_favorite_output_ = setting; }
 
 		void
 		filter();
 
 		void
-		set_output_filename(std::string const setting){output_filename_=setting;}
+		set_output_filename( std::string const setting ){ output_filename_ = setting; }
 
 		//void
 		//set_score_diff_cut(core::Real const setting){score_diff_cut_=setting;}
 
 		void
-		set_filter_for_previous_contact(core::Real const setting){filter_for_previous_contact_=setting;}
+		set_filter_for_previous_contact( core::Real const setting ){ filter_for_previous_contact_ = setting; }
 
 		void
-		set_filter_for_previous_clash(core::Real const setting){filter_for_previous_clash_=setting;}
+		set_filter_for_previous_clash( core::Real const setting ){ filter_for_previous_clash_ = setting; }
 
 		void
-		set_undercount_ribose_rotamers( bool const setting){ undercount_ribose_rotamers_=setting;}
+		set_undercount_ribose_rotamers( bool const setting ){ undercount_ribose_rotamers_ = setting; }
 
 		void set_max_decoys( core::Size const & setting ){ max_decoys_ = setting; }
 
@@ -138,34 +138,34 @@ namespace rna {
 
 
 		utility::vector1< pose_data_struct2 >
-		convert_silent_file_to_pose_data_list( core::import_pose::pose_stream::SilentFilePoseInputStreamOP & silent_file_stream, core::Size const pose_list_id);
+		convert_silent_file_to_pose_data_list( core::import_pose::pose_stream::SilentFilePoseInputStreamOP & silent_file_stream, core::Size const pose_list_id );
 
 
 		bool
-		previously_builded_res_VDW_filter(pose_data_struct2 const & side_ONE_pose_data ,
-																		pose_data_struct2 const & side_TWO_pose_data ,
+		previously_builded_res_VDW_filter( pose_data_struct2 const & side_ONE_pose_data,
+																		pose_data_struct2 const & side_TWO_pose_data,
 																		core::Real const overlap_dist_cutoff,
-																		core::Size const num_atom_contacts_cutoff);
+																		core::Size const num_atom_contacts_cutoff );
 
 		bool
-		previously_builded_res_contact_filter(pose_data_struct2 const & side_ONE_pose_data , pose_data_struct2 const & side_TWO_pose_data );
+		previously_builded_res_contact_filter( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data );
 
 		bool
-		previously_builded_res_clash_filter(pose_data_struct2 const & side_ONE_pose_data , pose_data_struct2 const & side_TWO_pose_data );
+		previously_builded_res_clash_filter( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data );
 
 		bool
-		moving_res_contact_filter(pose_data_struct2 const & side_ONE_pose_data , pose_data_struct2 const & side_TWO_pose_data );
+		moving_res_contact_filter( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data );
 
 		void
 		align_all_pose( utility::vector1< pose_data_struct2 > const & side_ONE_pose_data_list,
-									 utility::vector1< pose_data_struct2 > const & side_TWO_pose_data_list);
+									 utility::vector1< pose_data_struct2 > const & side_TWO_pose_data_list );
 
 
 		void
 		do_some_filtering();
 
 		bool
-		pass_all_filters(pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data );
+		pass_all_filters( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data );
 
 		void
 		setup_silent_file_stream();
@@ -180,17 +180,17 @@ namespace rna {
 //		score_sort_citeria(Combine_Tags_Info tag_info_1, Combine_Tags_Info tag_info_2);
 
 		void
-		sort_Combine_Tags_Info(utility::vector1< Combine_Tags_Info > & combine_tags_info_list);
+		sort_Combine_Tags_Info( utility::vector1< Combine_Tags_Info > & combine_tags_info_list );
 
 
 		std::string
-		get_parent_tag(utility::vector1<std::string> const & tag_token) const;
+		get_parent_tag( utility::vector1< std::string > const & tag_token ) const;
 
 		bool
-		Is_virt_sample_ribose_tag(std::string const & tag, utility::vector1<std::string> const & tag_token) const;
+		Is_virt_sample_ribose_tag( std::string const & tag, utility::vector1< std::string > const & tag_token ) const;
 
 		bool
-		Is_sibling_ribose_rotamer_pose(std::string const & curr_tag, std::string const & prev_tag, std::map< std::string , std::string > const & tag_to_source_map) const;
+		Is_sibling_ribose_rotamer_pose( std::string const & curr_tag, std::string const & prev_tag, std::map< std::string, std::string > const & tag_to_source_map ) const;
 
 
 	private:
@@ -217,8 +217,8 @@ namespace rna {
 		core::Size pass_screen_struct_pair_;
 		core::Size input_pose_ONE_last_appended_res_;
 		core::Size input_pose_TWO_last_prepended_res_;
-		utility::vector1<core::Size> input_pose_ONE_appended_res_list_;
-		utility::vector1<core::Size> input_pose_TWO_prepended_res_list_;
+		utility::vector1< core::Size > input_pose_ONE_appended_res_list_;
+		utility::vector1< core::Size > input_pose_TWO_prepended_res_list_;
 
 		std::map< core::Size, core::Size > full_to_input_res_map_ONE_;
 		std::map< core::Size, core::Size > full_to_input_res_map_TWO_;
@@ -242,8 +242,8 @@ namespace rna {
 		Size max_decoys_;
 		bool combine_helical_silent_file_;
 
-		std::map< std::string , std::string > tag_to_source_map_ONE_;
-		std::map< std::string , std::string > tag_to_source_map_TWO_;
+		std::map< std::string, std::string > tag_to_source_map_ONE_;
+		std::map< std::string, std::string > tag_to_source_map_TWO_;
 
 
 	};

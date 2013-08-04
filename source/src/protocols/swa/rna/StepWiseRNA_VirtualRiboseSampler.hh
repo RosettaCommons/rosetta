@@ -56,10 +56,10 @@ class FB_Pose_Data{
 
 		FB_Pose_Data():
 		score( 0.0 ),
-		tag("tag_blah"),
-		base_tag("base_tag_blah"),
-		Is_chain_close(false),
-		base_rep_score(999999)
+		tag( "tag_blah" ),
+		base_tag( "base_tag_blah" ),
+		Is_chain_close( false ),
+		base_rep_score( 999999 )
 
 	{
 	}
@@ -83,55 +83,55 @@ class FB_Pose_Data{
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 bool
-fast_full_atom_VDW_repulsion_screen(core::pose::Pose const & pose, core::Size const res_1, core::Size const res_2, bool const Is_prepend);
+fast_full_atom_VDW_repulsion_screen( core::pose::Pose const & pose, core::Size const res_1, core::Size const res_2, bool const Is_prepend );
 
 
 //Duplication of Chain_break_screening function from StepWiseRNA_ResidueSampler.cc. NEED TO MERGE THEM BACK TOGETHER AFTER TESTING! Apr 20,2010. Parin S.
 bool
-floating_base_full_atom_van_der_Waals_screening(core::pose::Pose & current_pose_screen,
+floating_base_full_atom_van_der_Waals_screening( core::pose::Pose & current_pose_screen,
 																								core::Real const & base_rep_score,
 																								core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
 																		 						SillyCountStruct & count_data,
-																								bool const verbose);
+																								bool const verbose );
 
 //Duplication of Chain_break_screening function from StepWiseRNA_ResidueSampler.cc. NEED TO MERGE THEM BACK TOGETHER AFTER TESTING! Apr 20,2010. Parin S.
 bool
-floating_base_chain_break_screening(core::pose::Pose & chain_break_screening_pose,
+floating_base_chain_break_screening( core::pose::Pose & chain_break_screening_pose,
 																	core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
 																	SillyCountStruct & count_data,
 																	core::Size const & five_prime_res,
 																	std::string const & tag,
-                                    bool const verbose);
+                                    bool const verbose );
 
 
 utility::vector1< FB_Pose_Data >
-floating_base_chain_closure_setup(utility::vector1< pose_data_struct2 > const & input_pose_data_list,
+floating_base_chain_closure_setup( utility::vector1< pose_data_struct2 > const & input_pose_data_list,
 																	FloatingBaseChainClosureJobParameter const & FB_job_params,
 																	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
 																	core::scoring::ScoreFunctionOP const & full_scorefxn,
 																	core::pose::Pose & viewer_pose,
-																	bool const do_minimize);
+																	bool const do_minimize );
 
 void
-floating_base_chain_closure_sampling(utility::vector1< FB_Pose_Data > & pose_data_list,
+floating_base_chain_closure_sampling( utility::vector1< FB_Pose_Data > & pose_data_list,
 	                                   core::pose::Pose & viewer_pose,
 																		 FloatingBaseChainClosureJobParameter const & FB_job_params,
 																	   core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
 													           core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
 																		 StepWiseRNA_VDW_BinScreenerOP const & VDW_bin_screener,
 																	   bool const CCD_grid_index_screen,
-																		 bool const integration_test_mode = false);
+																		 bool const integration_test_mode = false );
 
 
 utility::vector1< pose_data_struct2 >
-floating_base_chain_closure_post_process(utility::vector1< FB_Pose_Data > & pose_data_list,
+floating_base_chain_closure_post_process( utility::vector1< FB_Pose_Data > & pose_data_list,
 	                                       core::pose::Pose & viewer_pose,
 																				 core::scoring::ScoreFunctionOP const & sampling_scorefxn,
 																		 		 FloatingBaseChainClosureJobParameter const & FB_job_params,
-																				 bool const rm_chain_break_jump_point=true);
+																				 bool const rm_chain_break_jump_point = true );
 
 utility::vector1< pose_data_struct2 >
-sample_virtual_ribose_and_bulge_and_close_chain(core::pose::Pose & viewer_pose,
+sample_virtual_ribose_and_bulge_and_close_chain( core::pose::Pose & viewer_pose,
 																								FloatingBaseChainClosureJobParameter const & FB_job_params,
 																								std::string const name,
 																								core::scoring::ScoreFunctionOP const & scorefxn,
@@ -139,38 +139,38 @@ sample_virtual_ribose_and_bulge_and_close_chain(core::pose::Pose & viewer_pose,
 																								core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
 																								core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
 																								StepWiseRNA_JobParametersCOP & job_parameters,
-																								bool const virtual_ribose_is_from_prior_step=true,
-																								bool const integration_test_mode = false);
+																								bool const virtual_ribose_is_from_prior_step = true,
+																								bool const integration_test_mode = false );
 
 
 void
-minimize_all_sampled_floating_bases(core::pose::Pose & viewer_pose,
-																		utility::vector1<FloatingBaseChainClosureJobParameter> const & FB_JP_list,
+minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
+																		utility::vector1< FloatingBaseChainClosureJobParameter > const & FB_JP_list,
 																		utility::vector1< pose_data_struct2 > & pose_data_list,
 																		core::scoring::ScoreFunctionOP const & sampling_scorefxn,
 																		StepWiseRNA_JobParametersCOP const & job_parameters,
-																		bool const virtual_ribose_is_from_prior_step=true );
+																		bool const virtual_ribose_is_from_prior_step = true );
 
 bool
-Is_ribose_virtual( core::pose::Pose const & pose, core::Size const previous_moving_res, core::Size const previous_bulge_res);
+Is_ribose_virtual( core::pose::Pose const & pose, core::Size const previous_moving_res, core::Size const previous_bulge_res );
 
 void
-copy_bulge_res_and_ribose_torsion(FloatingBaseChainClosureJobParameter const & FB_job_params, core::pose::Pose & pose, core::pose::Pose const & template_pose);
+copy_bulge_res_and_ribose_torsion( FloatingBaseChainClosureJobParameter const & FB_job_params, core::pose::Pose & pose, core::pose::Pose const & template_pose );
 
 void
-enumerate_starting_pose_data_list(utility::vector1< pose_data_struct2 > & starting_pose_data_list,
+enumerate_starting_pose_data_list( utility::vector1< pose_data_struct2 > & starting_pose_data_list,
 																utility::vector1< FloatingBaseChainClosureJobParameter > const & FB_CC_JP_list,
-																core::pose::Pose const & pose);
+																core::pose::Pose const & pose );
 
 
 utility::vector1< FloatingBaseChainClosureJobParameter >
-setup_FB_CC_JP_list(core::pose::Pose const & pose, utility::vector1< std::string > const & sample_virtual_ribose_string_list, StepWiseRNA_JobParametersCOP & job_parameters);
+setup_FB_CC_JP_list( core::pose::Pose const & pose, utility::vector1< std::string > const & sample_virtual_ribose_string_list, StepWiseRNA_JobParametersCOP & job_parameters );
 
 void
-sample_user_specified_virtual_riboses(core::pose::Pose & pose, utility::vector1< std::string > const & sample_virtual_ribose_string_list,
+sample_user_specified_virtual_riboses( core::pose::Pose & pose, utility::vector1< std::string > const & sample_virtual_ribose_string_list,
 										 						    StepWiseRNA_JobParametersCOP & job_parameters, core::scoring::ScoreFunctionOP const & scorefxn,
 																			std::string const silent_file_out, std::string const input_tag,
-																			bool const integration_test_mode = false);
+																			bool const integration_test_mode = false );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -37,7 +37,7 @@ namespace full_model_info {
 	reorder_full_model_info_after_prepend( core::pose::Pose & pose, core::Size const res_to_add );
 
 	void
-	update_pdb_info_from_sub_to_full( core::pose::Pose & pose );
+	update_pdb_info_from_full_model_info( core::pose::Pose & pose );
 
 	utility::vector1< Size >
 	figure_out_chains_from_full_model_info( pose::Pose & pose );

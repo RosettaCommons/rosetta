@@ -42,7 +42,7 @@ namespace rna {
 											BaseState const & base_state,
 											PuckerState const & pucker_state,
 											core::scoring::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
-											core::Size const bin_size=20);
+											core::Size const bin_size = 20 );
 
     virtual ~StepWiseRNA_BaseSugarRotamer();
 
@@ -58,14 +58,14 @@ namespace rna {
 		std::string const current_base_state() const;
 		std::string const current_tag() const;
 
-		core::Real const & chi()   const {return chi_;}
-		core::Real const & delta() const {return delta_;}
-		core::Real const & nu2() 	 const {return nu2_;}
-		core::Real const & nu1() 	 const {return nu1_;}
+		core::Real const & chi()   const { return chi_; }
+		core::Real const & delta() const { return delta_; }
+		core::Real const & nu2() 	 const { return nu2_; }
+		core::Real const & nu1() 	 const { return nu1_; }
 
-		void set_extra_syn_chi( bool const setting){ extra_syn_chi_ =setting; }
-		void set_extra_anti_chi( bool const setting){ extra_anti_chi_ =setting; }
-		void set_choose_random( bool const setting){ choose_random_ =setting; }
+		void set_extra_syn_chi( bool const setting ){ extra_syn_chi_ = setting; }
+		void set_extra_anti_chi( bool const setting ){ extra_anti_chi_ = setting; }
+		void set_choose_random( bool const setting ){ choose_random_ = setting; }
 
 	private:
 

@@ -66,15 +66,18 @@ public:
 
 	void set_minimize_all_rebuilt_res( Size const setting ){ minimize_all_rebuilt_res_ = setting; }
 
+	void set_num_random_samples( Size const & setting ){ num_random_samples_ = setting; }
+
 private:
 
-	void	fix_up_residue_type_variants_after_append( core::pose::Pose & pose, Size const res_to_add ) const;
+	void fix_up_residue_type_variants_after_append( core::pose::Pose & pose, Size const res_to_add ) const;
 
-	void	fix_up_residue_type_variants_after_prepend( core::pose::Pose & pose, Size const res_to_add ) const;
+	void fix_up_residue_type_variants_after_prepend( core::pose::Pose & pose, Size const res_to_add ) const;
 
-	void	sample_by_swa( core::pose::Pose & pose, Size const res_to_add  ) const;
+	void sample_by_swa( core::pose::Pose & pose, Size const res_to_add  ) const;
 
-	void	sample_by_monte_carlo_internal( core::pose::Pose &  pose, Size const nucleoside_num, Size const suite_num ) const;
+	void sample_by_monte_carlo_internal( core::pose::Pose &  pose, Size const nucleoside_num, Size const suite_num ) const;
+
 
 private:
 
@@ -89,6 +92,7 @@ private:
 	core::Real sample_range_small_;
 	core::Real sample_range_large_;
 	core::Real kT_;
+	Size num_random_samples_;
 };
 
 } // monte_carlo

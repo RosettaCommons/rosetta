@@ -57,9 +57,9 @@ class Jump_point{
 
 		Jump_point():
 		five_prime_seq_num( 0 ),
-		five_prime_atom("O3'"),
+		five_prime_atom( "O3'" ),
 		three_prime_seq_num( 0 ),
-		three_prime_atom("P"),
+		three_prime_atom( "P" ),
 		cut_point( 0 )
 	{
 	}
@@ -79,7 +79,7 @@ class Jump_point{
 // Why don't we just keep this in a "regular" kinematics::Stub?
 /*
 struct base_stub{
-  numeric::xyzVector<core::Real> centroid;
+  numeric::xyzVector< core::Real > centroid;
   Matrix base_coordinate_matrix;
 };
 */
@@ -102,7 +102,7 @@ struct Torsion_Info{
 class Torsion_Info{
 	public:
 	 Torsion_Info():
-			value(0.0)
+			value( 0.0 )
 		{
 		}
 

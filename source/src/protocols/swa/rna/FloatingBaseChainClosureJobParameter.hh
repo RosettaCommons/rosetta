@@ -32,17 +32,17 @@ namespace rna {
 
 	public:
 
-		FloatingBaseChainClosureJobParameter(core::Size const input_moving_res, core::Size const input_reference_res);
+		FloatingBaseChainClosureJobParameter( core::Size const input_moving_res, core::Size const input_reference_res );
 
 		FloatingBaseChainClosureJobParameter();
 
 		~FloatingBaseChainClosureJobParameter();
 
 		void
-		check_compatibility(core::Size const nres) const;
+		check_compatibility( core::Size const nres ) const;
 
 		void
-		set_base_and_pucker_state(core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP const & JP);
+		set_base_and_pucker_state( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP const & JP );
 
 	public:
 		bool sample_sugar;
