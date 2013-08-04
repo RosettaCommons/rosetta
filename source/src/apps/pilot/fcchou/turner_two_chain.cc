@@ -1011,8 +1011,14 @@ bp_score_calibrate()
 
 	utility::vector1< Size > moving_res;
 	for (Size i = len1 + 1; i <= total_len; ++i) moving_res.push_back(i);
+	pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
+	pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", 2 );
+	pose::add_variant_type_to_pose_residue( pose, "5PRIME_END_OH", 1 );
+	pose::add_variant_type_to_pose_residue( pose, "5PRIME_END_OH", 2 );
+	pose::add_variant_type_to_pose_residue( pose, "3PRIME_END_OH", 1 );
+	pose::add_variant_type_to_pose_residue( pose, "3PRIME_END_OH", 2 );
 	pose.dump_pdb("start_bp.pdb");
-
+/*
 
 	translate( pose_ref, Vector( 0.2, 0, 0 ), pose_ref, moving_res );
 
@@ -1024,6 +1030,9 @@ bp_score_calibrate()
 		Real const score = (*scorefxn) (pose);
 		out << i << ' ' << score << std::endl;
 	}
+
+	translate( pose, Vector( 20, 0, 0 ), pose_ref, moving_res );
+*/	
 }
 //////////////////////////////////
 void*
@@ -1046,7 +1055,9 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-    try {
+
+	try {
+
 	using namespace core;
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< Real > blank_size_vector_real;
@@ -1075,8 +1086,9 @@ main( int argc, char * argv [] )
 	//////////////////////////////
 
 	protocols::viewer::viewer_main( my_main );
-    } catch ( utility::excn::EXCN_Base const & e ) {
-                              std::cout << "caught exception " << e.msg() << std::endl;
-                                  }
-        return 0;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+  }
+  return 0;
 }
