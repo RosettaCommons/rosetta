@@ -89,6 +89,15 @@ pack_rotamers_setup(
 	interaction_graph::InteractionGraphBaseOP & ig
 );
 
+// PyRosetta compatible version
+interaction_graph::InteractionGraphBaseOP
+pack_rotamers_setup(
+	pose::Pose & pose,
+	scoring::ScoreFunction const & scfxn,
+	task::PackerTaskCOP task,
+	rotamer_set::RotamerSetsOP rotsets
+);
+
 void
 setup_IG_res_res_weights(
 	pose::Pose const & pose,
@@ -137,6 +146,16 @@ symmetric_pack_rotamers_setup(
   rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets,
   interaction_graph::InteractionGraphBaseOP & ig
 );
+
+// PyRosetta compatible version
+interaction_graph::InteractionGraphBaseOP
+symmetric_pack_rotamers_setup(
+  pose::Pose & pose,
+  scoring::ScoreFunction const & scfxn,
+  task::PackerTaskCOP task,
+  rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets
+);
+
 Real
 symmetric_pack_rotamers_run(
   pose::Pose & pose,

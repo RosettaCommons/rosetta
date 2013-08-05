@@ -235,6 +235,20 @@ pack_rotamers_setup(
 }
 
 
+// PyRosetta compatible version
+interaction_graph::InteractionGraphBaseOP
+pack_rotamers_setup(
+	pose::Pose & pose,
+	scoring::ScoreFunction const & scfxn,
+	task::PackerTaskCOP task,
+	rotamer_set::RotamerSetsOP rotsets)
+{
+	interaction_graph::InteractionGraphBaseOP ig;
+	pack_rotamers_setup(pose, scfxn, task, rotsets, ig);
+	return ig;
+}
+
+
 /// @brief upweights certain edges in the interaction graph if this is specified in the task
 void
 setup_IG_res_res_weights(
@@ -422,6 +436,21 @@ symmetric_pack_rotamers_setup(
 
 }
 
+// PyRosetta compatible version
+interaction_graph::InteractionGraphBaseOP
+symmetric_pack_rotamers_setup(
+  pose::Pose & pose,
+  scoring::ScoreFunction const & scfxn,
+  task::PackerTaskCOP task,
+  rotamer_set::symmetry::SymmetricRotamerSetsOP rotsets
+)
+{
+	interaction_graph::InteractionGraphBaseOP ig;
+	symmetric_pack_rotamers_setup(pose, scfxn, task, rotsets, ig);
+	return ig;
+}
+
+
 // @begin pack_rotamers_run
 // @details as simple as possible
 Real
@@ -506,4 +535,3 @@ symmetric_pack_rotamers_run(
 
 } // namespace pack
 } // namespace core
-

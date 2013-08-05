@@ -51,8 +51,7 @@ namespace swa {
 	bool
 	Is_close_chain_break(pose::Pose const & pose);
 
-	bool
-	Contain_seq_num(Size const & seq_num, utility::vector1< Size > const & residue_list);
+	// Undefined, commenting out to fix PyRosetta build  bool Contain_seq_num(Size const & seq_num, utility::vector1< Size > const & residue_list);
 
 	//following copies code that is in rna/StepWiseRNA_Util? Remove the latter?
 	void
