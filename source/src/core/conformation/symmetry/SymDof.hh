@@ -111,6 +111,10 @@ class SymDof {
 	bool
   has_range2_upper( int df ) const;
 
+	// @details is range2 a bounds?
+	bool
+  range2_is_bound( int df ) const;
+
 	// @detail return the direction( upstream or downstream )
 	// of the jump for a dof
 	int
@@ -136,7 +140,7 @@ class SymDof {
 		ar & upper_range_dof_jumps1_;
 		ar & lower_range_dof_jumps2_;
 		ar & upper_range_dof_jumps2_;
-		ar & has_range1_lower_;	
+		ar & has_range1_lower_;
 		ar & has_range1_upper_;
 		ar & has_range2_lower_;
 		ar & has_range2_upper_;
@@ -144,6 +148,7 @@ class SymDof {
 	}
 #endif
 
+	utility::vector1< bool > range2_is_bound_; // is a particular dof allowed to move?
 	utility::vector1< bool > allowed_dof_jumps_; // is a particular dof allowed to move?
 	utility::vector1< Real > lower_range_dof_jumps1_; // store the lower boundary of range1
 	utility::vector1< Real > upper_range_dof_jumps1_; // store the upper boundary of range1

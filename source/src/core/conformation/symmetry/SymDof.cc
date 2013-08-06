@@ -41,6 +41,7 @@ SymDof::SymDof()
 		has_range1_upper_.push_back(false);
 		has_range2_lower_.push_back(false);
 		has_range2_upper_.push_back(false);
+		range2_is_bound_.push_back(false);
 		jump_dir_.push_back( 1 );
   }
 
@@ -58,6 +59,7 @@ SymDof::SymDof( SymDof const & src )
 	has_range2_lower_ = src.has_range2_lower_;
 	has_range2_upper_ = src.has_range2_upper_;
 	jump_dir_ = src.jump_dir_;
+	range2_is_bound_ = src.range2_is_bound_;
 }
 
 SymDof &
@@ -73,6 +75,7 @@ SymDof::operator=( SymDof const & src ) {
 		has_range2_lower_ = src.has_range2_lower_;
 		has_range2_upper_ = src.has_range2_upper_;
 		jump_dir_ = src.jump_dir_;
+		range2_is_bound_ = src.range2_is_bound_;
 	}
 	return *this;
 }
@@ -182,6 +185,14 @@ SymDof::has_range2_upper( int df ) const
 	return has_range2_upper_[df];
 }
 
+// @details has a upper boundary of range2 been specified?
+bool
+SymDof::range2_is_bound( int df ) const
+{
+	assert( df >= X_DOF && df <= Z_ANGLE_DOF );
+	return range2_is_bound_[df];
+}
+
 // @detail return the direction( upstream or downstream )
 // of the jump for a dof
 int
@@ -199,8 +210,10 @@ SymDof::jump_direction( int df ) const
 // There are two ranges that can be specified enclosed by parenthesises ie. x(0-50:2-3)
 void SymDof::read( std::string dof_line )
 {
-	// replace parenthesis with space for easier parsing
+	// replace parenthesis/bracket with space for easier parsing
 	std::replace( dof_line.begin(), dof_line.end(), ')', ' ' );
+	std::replace( dof_line.begin(), dof_line.end(), ']', ' ' );
+
 	std::istringstream l( dof_line );
 	while ( true ) {
 		std::string j;
@@ -208,9 +221,11 @@ void SymDof::read( std::string dof_line )
 		if ( l.fail() ) break;
 		// first read dof_type
 		int dof_type(0);
+
 		//  Split for parsing
-		utility::vector1< std::string> split ( utility::string_split( j, '(' ) );
-		//std::cout<< dof_line <<" "<<j<<" "<<split[0]<<std::endl;
+		bool has_bracket = (j.find('[') != j.npos);
+		utility::vector1< std::string> split ( utility::string_split( j, has_bracket?'[':'(' ) );
+
 		if ( split[1] == "x" ) dof_type = X_DOF;
 		if ( split[1] == "y" ) dof_type = Y_DOF;
 		if ( split[1] == "z" ) dof_type = Z_DOF;
@@ -218,6 +233,12 @@ void SymDof::read( std::string dof_line )
 		if ( split[1] == "angle_y" ) dof_type = Y_ANGLE_DOF;
 		if ( split[1] == "angle_z" ) dof_type = Z_ANGLE_DOF;
 		if ( dof_type == 0 ) utility_exit_with_message("Dof type must be x,y,z,x_angle,y_angle,z_angle...");
+
+		// bracket implies that range2 is an absolute bound
+		if (has_bracket) range2_is_bound_[dof_type] = true;
+
+		// range2_is_bound_ unsupported for rotations
+		runtime_assert ( !has_bracket || dof_type==X_DOF || dof_type==Y_DOF || dof_type==Z_DOF );
 
 		// Allow dof is true
 		allowed_dof_jumps_[dof_type] = true;
@@ -251,6 +272,12 @@ void SymDof::read( std::string dof_line )
 					} else {
 						upper_range_dof_jumps2_[dof_type] = lower_range_dof_jumps2_[dof_type];
 					}
+				}
+
+				// quick sanity check
+				if (range2_is_bound_[dof_type]) {
+					runtime_assert ( lower_range_dof_jumps2_[dof_type] <= lower_range_dof_jumps1_[dof_type] &&
+					                 upper_range_dof_jumps2_[dof_type] >= upper_range_dof_jumps1_[dof_type] );
 				}
 			}
 			// Parse the jump direction. Either dof_type(n2c) or dof_type(c2n)

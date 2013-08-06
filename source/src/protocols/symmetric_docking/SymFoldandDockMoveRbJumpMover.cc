@@ -51,7 +51,6 @@ void
 SymFoldandDockMoveRbJumpMover::apply( core::pose::Pose & pose )
 {
 	using namespace core::conformation::symmetry;
-
 	protocols::simple_moves::symmetry::SetupForSymmetryMover setup;
 	setup.apply( pose );
 	core::pose::symmetry::find_new_symmetric_jump_residues( pose );

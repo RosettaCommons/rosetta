@@ -583,21 +583,24 @@ void SymmetrySlider::slide(core::pose::Pose & pose)
 	// the selection of current_jump_
 	while ( SymmetrySlider::allowed_current_slide() ) {
 		std::map< Size, core::conformation::symmetry::SymDof >::iterator dof_iterator;
-			while ( SymmetrySlider::continue_slide ( pose ) ) {
-				// Select a new slide
-				// We slide until the slide criteria is satisfied
-				select_jump();
-				dof_iterator = dofs.find(SymmetrySlider::get_current_jump() );
-				core::conformation::symmetry::SymDof dof ( (*dof_iterator).second );
-				assert( dof_iterator != dofs.end() );
+		bool last_slide_good = true;
+		while ( last_slide_good && SymmetrySlider::continue_slide( pose ) ) {
+			// Select a new slide
+			// We slide until the slide criteria is satisfied
+			select_jump();
+			dof_iterator = dofs.find(SymmetrySlider::get_current_jump() );
+			core::conformation::symmetry::SymDof dof ( (*dof_iterator).second );
+			assert( dof_iterator != dofs.end() );
 
-				// slide along the current jump
-				rigid::RigidBodyDofTransMover dofmover( dof, SymmetrySlider::get_current_jump(), SymmetrySlider::step_size() );
-				//fpd pick slide direction
-				if ( InvertJump_[ (*dof_iterator).first ]) {
-					dofmover.trans_axis().negate();
-				}
-				dofmover.apply( pose );
+			// slide along the current jump
+			rigid::RigidBodyDofTransMover dofmover( dof, SymmetrySlider::get_current_jump(), SymmetrySlider::step_size() );
+			//fpd pick slide direction
+			if ( InvertJump_[ (*dof_iterator).first ]) {
+				dofmover.trans_axis().negate();
+			}
+			dofmover.apply( pose );
+			last_slide_good = dofmover.last_slide_good();
+			if (!last_slide_good) reset_slide_ = true;
 		}
 
 		dof_iterator = dofs.find(SymmetrySlider::get_current_jump() );

@@ -1001,7 +1001,7 @@ RigidBodyDofSeqRandomizeMover::get_name() const {
 
 
 // default constructor
-RigidBodyDofTransMover::RigidBodyDofTransMover() : parent(), jump_dir_(n2c)
+RigidBodyDofTransMover::RigidBodyDofTransMover() : parent(), jump_dir_(n2c), last_slide_good_(false)
 {
 	moves::Mover::type( "RigidBodyDofTrans" );
 }
@@ -1018,8 +1018,10 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 	int const rb_jump_in,
 	core::Real step_size
 ):
-	RigidBodyMover( rb_jump_in )
+	RigidBodyMover( rb_jump_in ),
+	last_slide_good_(false)
 {
+	dof_ = dof;
 	moves::Mover::type( "RigidBodyDofTrans" );
 	jump_dir_ = n2c;
 	// This is fishy. We should not have different directions for the same jump
@@ -1045,7 +1047,8 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 RigidBodyDofTransMover::RigidBodyDofTransMover(
 	std::map< Size, core::conformation::symmetry::SymDof > dofs
 ):
-	RigidBodyMover()
+	RigidBodyMover(),
+	last_slide_good_(false)
 {
 
 	utility::vector1< int > trans_jumps;
@@ -1076,20 +1079,20 @@ RigidBodyDofTransMover::RigidBodyDofTransMover(
 	if ( jump_iterator == dofs.end() ) {
 		T("protocols.moves.rigid_body") << "[WARNING] jump dof not found!" << std::endl;
 	} else {
-		core::conformation::symmetry::SymDof dof( (*jump_iterator).second );
+		dof_ = (*jump_iterator).second ;
 		// This is fishy. We should not have different directions for the same jump
 		// need to put in checks for that...
-		if ( dof.jump_direction(1) == c2n || dof.jump_direction(2) == c2n
-			  || dof.jump_direction(3) == c2n ) jump_dir_ = c2n;
+		if ( dof_.jump_direction(1) == c2n || dof_.jump_direction(2) == c2n
+			  || dof_.jump_direction(3) == c2n ) jump_dir_ = c2n;
 		core::Vector zero(0,0,0), x(1,0,0), y(0,1,0), z(0,0,1);
 		trans_axis_ = zero;
-		if ( dof.allow_dof(1) ) {
+		if ( dof_.allow_dof(1) ) {
 			zero += x;
 		}
-		if ( dof.allow_dof(2) ) {
+		if ( dof_.allow_dof(2) ) {
 			zero += y;
 		}
-		if ( dof.allow_dof(3) ) {
+		if ( dof_.allow_dof(3) ) {
 			zero += z;
 		}
 		trans_axis_ = zero;
@@ -1101,7 +1104,8 @@ RigidBodyDofTransMover::RigidBodyDofTransMover( RigidBodyDofTransMover const & s
 	parent( src ),
 	jump_dir_( src.jump_dir_ ),
 	step_size_( src.step_size_ ),
-	trans_axis_( src.trans_axis_ )
+	trans_axis_( src.trans_axis_ ),
+	last_slide_good_(false)
 {}
 
 RigidBodyDofTransMover::~RigidBodyDofTransMover() {}
@@ -1109,12 +1113,24 @@ RigidBodyDofTransMover::~RigidBodyDofTransMover() {}
 
 void RigidBodyDofTransMover::apply( core::pose::Pose & pose )
 {
+	last_slide_good_ = true;
   core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );
 	int c2n(-1);
     TRBM.Debug << "Translate: " << "Jump (before): " << flexible_jump << std::endl;
 	Vector trans_start ( flexible_jump.get_translation() );
 	if ( jump_dir_ == c2n ) flexible_jump.reverse();
-  flexible_jump.set_translation( trans_start + step_size_*trans_axis_ );
+
+	// if range2_is_bound is set, make sure jump stays within bound
+	core::Vector x_i = trans_start + step_size_*trans_axis_;
+	for (int ii=1; ii<=3; ++ii) {
+		if (dof_.allow_dof(ii) && dof_.range2_is_bound(ii) && dof_.has_range2_lower(ii)) {
+			if ( x_i[ii] < dof_.range2_lower(ii) || x_i[ii] > dof_.range2_upper(ii) ) {
+				last_slide_good_ = false;
+				return;
+			}
+		}
+	}
+  flexible_jump.set_translation( x_i );
 	if ( jump_dir_ == c2n ) flexible_jump.reverse();
     TRBM.Debug << "Translate: " << "Jump (after):  " << flexible_jump << std::endl;
   pose.set_jump( rb_jump_, flexible_jump );
@@ -1381,18 +1397,26 @@ void RigidBodyDofPerturbMover::apply( core::pose::Pose & pose )
 		if ( dof_.allow_dof(i) ) {
 			// the dat in the dof takes precedence
 			core::Real transmag;
-			if ( dof_.has_range2_lower(i) ) transmag = dof_.range2_lower(i);
+			if ( dof_.has_range2_lower(i) && !dof_.range2_is_bound(i)) transmag = dof_.range2_lower(i);
 			else transmag = trans_mag_;
 			if ( dof_.jump_direction(i) == c2n ) flexible_jump.reverse();
 			flexible_jump.gaussian_move_single_rb( dir_, transmag, i );
 			if ( dof_.jump_direction(i) == c2n ) flexible_jump.reverse();
+
+			// if range2_is_bound is set, make sure jump stays within bound
+			if (dof_.has_range2_lower(i) && dof_.range2_is_bound(i)) {
+				core::Vector trans_i = flexible_jump.rt().get_translation();
+				trans_i(i) = std::min( dof_.range2_lower(i), trans_i(i) );
+				trans_i(i) = std::max( dof_.range2_upper(i), trans_i(i) );
+				flexible_jump.rt().set_translation( trans_i );
+			}
 		}
 	}
 	for ( Size i = 4; i<= 6; ++i ) {
 		if ( dof_.allow_dof(i) ) {
 			// the dat in the dof takes precedence
 			core::Real rotmag;
-			if ( dof_.has_range2_lower(i) ) rotmag = dof_.range2_lower(i);
+			if ( dof_.has_range2_lower(i) && !dof_.range2_is_bound(i) ) rotmag = dof_.range2_lower(i);
 			else rotmag = rot_mag_;
 			if ( dof_.jump_direction(i) == c2n ) flexible_jump.reverse();
 				flexible_jump.gaussian_move_single_rb( dir_, rotmag, i );
@@ -1453,7 +1477,6 @@ RigidBodyDofSeqPerturbMover::~RigidBodyDofSeqPerturbMover() {}
 
 void RigidBodyDofSeqPerturbMover::apply( core::pose::Pose & pose )
 {
-
 	std::map< Size, core::conformation::symmetry::SymDof >::iterator jump_iterator;
 	utility::vector1< int >::iterator start, end, it;
 	start = rb_jumps_.begin();

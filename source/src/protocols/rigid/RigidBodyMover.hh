@@ -516,13 +516,17 @@ public:
 
 	void step_size( core::Real step_size_in ) { step_size_ = step_size_in; }
 
+	bool last_slide_good( ) { return last_slide_good_; }
+
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
 private:
+	bool last_slide_good_;
 	int jump_dir_;
 	core::Real step_size_;
 	core::Vector trans_axis_;
+	core::conformation::symmetry::SymDof dof_;
 }; // class RigidBodyDofTransMover
 
 

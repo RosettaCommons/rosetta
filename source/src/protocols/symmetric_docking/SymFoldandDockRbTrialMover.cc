@@ -135,7 +135,7 @@ SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	// Setup Monte Carlo object
 	protocols::moves::MonteCarloOP monteCarlo_ = new protocols::moves::MonteCarlo(pose, *scorefxn_, 2.0 );
 
-	//set up mover for docking
+	// set up mover for docking
 	protocols::rigid::RigidBodyDofSeqPerturbMover rb_perturb =
 		protocols::rigid::RigidBodyDofSeqPerturbMover( dofs , rot_mag_trial, trans_mag_trial );
 
