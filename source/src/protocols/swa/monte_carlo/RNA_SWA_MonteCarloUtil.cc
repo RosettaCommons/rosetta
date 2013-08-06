@@ -199,24 +199,87 @@ namespace monte_carlo {
 																				MovingResidueCase & moving_residue_case,
 																				AddOrDeleteChoice & add_or_delete_choice,
 																				bool const disallow_delete,
-																				bool const disallow_resample ) {
+																				bool const disallow_resample ){
 
+		utility::vector1< Size > sample_res; /*leave empty if no filter*/
+		get_random_residue_at_chain_terminus( pose, residue_at_chain_terminus,
+																					moving_residue_case, add_or_delete_choice,
+																					disallow_delete, disallow_resample,
+																					sample_res );
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	get_random_residue_at_chain_terminus( pose::Pose & pose,
+																				Size & residue_at_chain_terminus,
+																				MovingResidueCase & moving_residue_case,
+																				AddOrDeleteChoice & add_or_delete_choice,
+																				bool const disallow_delete,
+																				bool const disallow_resample,
+																				utility::vector1< Size > const & sample_res /*leave empty if no filter*/) {
+
+		using namespace core::pose::full_model_info;
 
 		utility::vector1< Size >  possible_res;
 		utility::vector1< MovingResidueCase > moving_residue_cases;
 		utility::vector1< AddOrDeleteChoice > add_or_delete_choices;
 
 		if ( !disallow_resample )  get_potential_resample_residues( pose,  possible_res, moving_residue_cases, add_or_delete_choices );
-
 		if ( !disallow_delete )    get_potential_delete_residues( pose,  possible_res, moving_residue_cases, add_or_delete_choices );
 
 		get_potential_add_residues( pose, possible_res, moving_residue_cases, add_or_delete_choices );
 
+		if ( sample_res.size() > 0 ) filter_by_sample_res( possible_res, moving_residue_cases, add_or_delete_choices,
+																											 sample_res, const_full_model_info_from_pose( pose ).sub_to_full() );
+
 		Size const res_idx =  RG.random_range( 1, possible_res.size() );
+		runtime_assert( res_idx > 0 );
 
 		residue_at_chain_terminus = possible_res[ res_idx ];
 		moving_residue_case       = moving_residue_cases[ res_idx ];
 		add_or_delete_choice      = add_or_delete_choices[ res_idx ];
+
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	filter_by_sample_res(
+											 utility::vector1< Size >  & possible_res,
+											 utility::vector1< MovingResidueCase > & moving_residue_cases,
+											 utility::vector1< AddOrDeleteChoice > & add_or_delete_choices,
+											 utility::vector1< Size > const & sample_res,
+											 utility::vector1< Size > const & sub_to_full ){
+
+		if ( sample_res.size() == 0 ) return;
+
+		utility::vector1< Size >  possible_res_filtered;
+		utility::vector1< MovingResidueCase > moving_residue_cases_filtered;
+		utility::vector1< AddOrDeleteChoice > add_or_delete_choices_filtered;
+
+		for ( Size i = 1; i <= possible_res.size(); i++ ){
+
+			if ( add_or_delete_choices[ i ] == ADD ){
+
+				// need to check if added residue is permitted, given sample res.
+				if ( moving_residue_cases[ i ] == CHAIN_TERMINUS_3PRIME ) { // prepend
+					if ( ! sample_res.has_value( sub_to_full[ possible_res[i] ] + 1 ) ) continue;
+				} else {
+					runtime_assert( moving_residue_cases[ i ] == CHAIN_TERMINUS_5PRIME ) // prepend
+					if ( ! sample_res.has_value( sub_to_full[ possible_res[i] ] - 1 ) ) continue;
+				}
+			}
+
+			possible_res_filtered.push_back( possible_res[ i ] );
+			moving_residue_cases_filtered.push_back( moving_residue_cases[ i ] );
+			add_or_delete_choices_filtered.push_back( add_or_delete_choices[ i ] );
+
+		}
+
+		possible_res = 	possible_res_filtered;
+		moving_residue_cases = moving_residue_cases_filtered;
+		add_or_delete_choices = add_or_delete_choices_filtered;
 
 	}
 

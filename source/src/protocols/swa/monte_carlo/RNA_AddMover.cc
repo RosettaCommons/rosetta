@@ -32,6 +32,8 @@
 
 #include <basic/Tracer.hh>
 
+#include <numeric/random/random.hh>
+
 #include <map>
 
 using namespace core;
@@ -41,6 +43,8 @@ using core::Real;
 // Removes one residue from a 5' or 3' chain terminus, and appropriately
 // updates the pose full_model_info object.
 //////////////////////////////////////////////////////////////////////////
+
+static numeric::random::RandomGenerator RG(2555512);  // <- Magic number, do not change it!
 
 static basic::Tracer TR( "protocols.swa.monte_carlo.rna_add_mover" ) ;
 
@@ -109,6 +113,7 @@ namespace monte_carlo {
 			Size const res_to_add = res_to_build_off + 1;
 
 			char newrestype = full_sequence[ (sub_to_full[ res_to_build_off ] + 1) - 1 ];
+			choose_random_if_unspecified_nucleotide( newrestype );
 			//std::cout << "I want to add: " << newrestype << std::endl;
 
 			chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
@@ -140,6 +145,8 @@ namespace monte_carlo {
 			runtime_assert( sub_to_full[ res_to_add ] > 1 );
 
 			char newrestype = full_sequence[ (sub_to_full[ res_to_add ] - 1) - 1 ];
+			choose_random_if_unspecified_nucleotide( newrestype );
+
 			TR << "I want to add: " << newrestype << " before " << res_to_build_off << std::endl;
 
 			chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
@@ -291,6 +298,19 @@ namespace monte_carlo {
 		} // monte carlo cycles
 	}
 
+
+	////////////////////////////////////////////////////////////////////
+	void
+	RNA_AddMover::choose_random_if_unspecified_nucleotide( char & newrestype ) const {
+
+		std::string const rna_chars = "acgu";
+
+		if ( newrestype == 'n' ){
+			newrestype = rna_chars[ RG.random_range( 1, rna_chars.size() ) - 1 ];
+			TR << "Choosing random nucleotide: " << newrestype;
+		}
+
+	}
 
 
 }

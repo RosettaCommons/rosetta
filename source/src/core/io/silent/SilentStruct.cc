@@ -80,7 +80,7 @@ namespace core {
 namespace io {
 namespace silent {
 
-static basic::Tracer tr("core.io.silent");
+static basic::Tracer tr("core.io.silent.SilentStruct");
 
 
 template <>
@@ -981,8 +981,7 @@ SilentStruct::print_residue_numbers( std::ostream & out ) const {
 		//		utility_exit_with_message( "Problem with residue_numbers in silent_struct!" );
 	}
 
-
-  out << "RES_NUM " << make_tag_with_dashes( residue_numbers_ ) << std::endl;
+	out << "RES_NUM " << make_tag_with_dashes( residue_numbers_ ) <<  " " << decoy_tag() << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1000,7 +999,9 @@ SilentStruct::figure_out_residue_numbers_from_line( std::istream & line_stream )
 		} else break;
 		line_stream >> resnum_string;
 	}
+
 	set_residue_numbers( residue_numbers );
+
 }
 
 } // namespace silent

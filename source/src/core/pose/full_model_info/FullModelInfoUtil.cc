@@ -353,8 +353,10 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	}
 
 	for ( Size n = 1; n <= sub_to_full.size(); n++ ){
-		if ( sequence[ sub_to_full[ n ] - 1 ] != pose.residue_type( n ).name1() ) {
-			TR.Debug << "no match at " << n << " " << sequence[ sub_to_full[ n ] - 1 ] << ' ' <<  pose.residue_type( n ).name1() << std::endl;
+		char sequence_char = sequence[ sub_to_full[ n ] - 1 ];
+		if ( sequence_char == 'n' ) continue; // any nucleotide
+		if ( sequence_char != pose.residue_type( n ).name1() ) {
+			TR.Debug << "no match at " << n << " " << sequence_char << ' ' <<  pose.residue_type( n ).name1() << std::endl;
 			return false;
 		}
 	}

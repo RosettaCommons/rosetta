@@ -18,6 +18,7 @@
 #define INCLUDED_protocols_swa_monte_carlo_RNA_DeleteMover_hh
 
 #include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/swa/monte_carlo/types.hh>
@@ -33,13 +34,16 @@ namespace monte_carlo {
 class RNA_DeleteMover: public protocols::moves::Mover {
 public:
 
+	//constructor
+	RNA_DeleteMover();
 
-	//destructor -- necessary? -- YES destructors are necessary.
+	//destructor
 	~RNA_DeleteMover();
 
 	using protocols::moves::Mover::apply;
+
   void
-	apply( core::pose::Pose & pose, Size const res_to_delete, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  );
+	apply( core::pose::Pose & pose, Size const res_to_delete, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  ) const ;
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
@@ -48,10 +52,21 @@ public:
 	void
 	wipe_out_moving_residues( core::pose::Pose & pose );
 
+	void
+	minimize_after_delete( core::pose::Pose & pose ) const;
+
+	void set_minimize_after_delete( bool const setting ){ minimize_after_delete_ = setting; }
+
+	void set_minimize_scorefxn( core::scoring::ScoreFunctionOP minimize_scorefxn );
+
 private:
 
   void
-	remove_cutpoint_variants_at_res_to_delete( core::pose::Pose & pose, Size const & res_to_delete );
+	remove_cutpoint_variants_at_res_to_delete( core::pose::Pose & pose, Size const & res_to_delete ) const;
+
+	core::scoring::ScoreFunctionOP minimize_scorefxn_;
+
+	bool minimize_after_delete_;
 
 };
 

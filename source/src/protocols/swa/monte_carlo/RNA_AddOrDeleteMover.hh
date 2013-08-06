@@ -51,12 +51,14 @@ public:
 
 	void set_allow_deletion_of_last_residue( bool const setting ){ allow_deletion_of_last_residue_ = setting; }
 
+	void set_sample_res( utility::vector1< Size > const & setting ){ sample_res_ = setting; }
+
 private:
 
 	RNA_AddMoverOP rna_add_mover_;
 	RNA_DeleteMoverOP rna_delete_mover_;
 	bool allow_deletion_of_last_residue_;
-
+	utility::vector1< Size > sample_res_;
 };
 
 } // monte_carlo

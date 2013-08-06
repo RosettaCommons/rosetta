@@ -78,6 +78,9 @@ private:
 
 	void sample_by_monte_carlo_internal( core::pose::Pose &  pose, Size const nucleoside_num, Size const suite_num ) const;
 
+	void
+	choose_random_if_unspecified_nucleotide( char & newrestype ) const;
+
 
 private:
 

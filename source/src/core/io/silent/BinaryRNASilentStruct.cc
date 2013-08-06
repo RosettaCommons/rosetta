@@ -72,7 +72,7 @@ namespace core {
 namespace io {
 namespace silent {
 
-static basic::Tracer tr("core.io.silent");
+static basic::Tracer tr("core.io.silent.BinaryRNASilentStruct");
 
 
 /// @brief Constructors.
@@ -305,6 +305,7 @@ bool BinaryRNASilentStruct::init_from_lines(
 				continue;
 			} else if ( iter->substr(0,7) == "RES_NUM" ) {
 				figure_out_residue_numbers_from_line( line_stream );
+
 				continue;
 			}
 

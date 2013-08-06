@@ -15,10 +15,7 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueSelector.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -193,7 +190,7 @@ setup_alignment_map( std::map< Size, Size > & mapping,
 										 std::string const & sequence_from_alignment ){
 	Size count( 0 );
 	for (Size i = 1; i <= sequence_from_alignment.size(); i++ ) {
-		if ( sequence_from_alignment[i-1] != '-' ) {
+		if ( sequence_from_alignment[ i-1 ] != '-' ) {
 			count++;
 			mapping[ i ] = count;
 		} else {
@@ -226,6 +223,7 @@ prepare_threaded_model(
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::pose;
+	using namespace protocols::rna;
 	using namespace utility;
 
 	// following creates pose from scratch! Assumes that we need to add/delete, and it changes the
@@ -287,17 +285,11 @@ prepare_threaded_model(
 	for (Size i = 1; i <= target_sequence.size(); i++ ){
 
 		char const new_seq = target_sequence[i-1];
-		if ( new_seq == current_sequence[i-1] ) continue;
+		if ( mutate_position( pose, i, new_seq ) ){
+			changed_pos.push_back( i );
+			changed_pos_working.push_back( working_res[i] );
+		}
 
-		changed_pos.push_back( i );
-		changed_pos_working.push_back( working_res[i] );
-
-		ResidueTypeSet const & rsd_set = pose.residue( i ).residue_type_set();
-		ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
-		ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
-		Real const save_chi = pose.chi(i);
-		pose.replace_residue( i, *new_rsd, false );
-		pose.set_chi( i, save_chi );
 	}
 
 	std::cout << "Changed residues (without offset applied): " << make_tag_with_dashes( changed_pos ) << std::endl;

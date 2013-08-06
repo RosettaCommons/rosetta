@@ -57,7 +57,7 @@ namespace core {
 namespace io {
 namespace silent {
 
-static basic::Tracer tr("core.io.silent");
+static basic::Tracer tr("core.io.silent.SilentFileData");
 static numeric::random::RandomGenerator RG(21458);
 
 SilentFileData::~SilentFileData() {
@@ -598,7 +598,9 @@ SilentFileData::read_stream(
 			mylines.clear();
 		}
 		if ( ( line.substr(0,7) == "SCORE: " || line.substr(0,10) == "SEQUENCE: " ) && mylines.size() > 3 ) {
+
 			bool init_good = tmp_struct->init_from_lines( mylines, *this );
+
 			if ( !init_good && throw_exception_on_bad_structs ) {
 				 	throw utility::excn::EXCN_BadInput(
 						"failure to read decoy "+tmp_struct->decoy_tag()+

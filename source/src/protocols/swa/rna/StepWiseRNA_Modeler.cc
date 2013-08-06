@@ -203,14 +203,12 @@ namespace rna {
 
 		utility::vector1< pose_data_struct2 > & pose_data_list = stepwise_rna_residue_sampler.get_pose_data_list();
 		num_sampled_ = pose_data_list.size();
-		if ( num_sampled_ == 0 ){
-
+		if ( num_sampled_ == 0 && !skip_sampling_ ){
 			TR << "WARNING! WARNING! WARNING! pose_data_list.size() == 0! " << std::endl;
-
 			return; // don't do a minimize...
+		}
 
-			// following not in use...
-			//			if ( ! skip_sampling_ ) utility_exit_with_message( "No op in StepWiseRNA_modeler!" );
+		if ( skip_sampling_ /* still want to minimize*/ ){
 			pose_data_struct2 data_struct;
 			data_struct.pose_OP = new Pose( pose );
 			data_struct.score = 0.0;

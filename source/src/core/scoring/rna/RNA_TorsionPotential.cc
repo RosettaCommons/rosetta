@@ -574,10 +574,18 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 			initialize_potential_from_file( o2h_north_potential_, "o2h_north_potential.txt" );
 			initialize_potential_from_file( o2h_south_potential_, "o2h_south_potential.txt" );
 		} else {
-			initialize_potential_from_file( chi_north_potential_guanosine_, "chi_north_potential_guanosine.txt" );
-			initialize_potential_from_file( chi_south_potential_guanosine_, "chi_south_potential_guanosine.txt" );
-			initialize_potential_from_file( chi_north_potential_others_, "chi_north_potential_others.txt" );
-			initialize_potential_from_file( chi_south_potential_others_, "chi_south_potential_others.txt" );
+			std::string const full_filename = basic::database::full_name( path_to_torsion_files_ + "/chi_north_potential_others.txt"   );
+			if( utility::file::file_exists( full_filename ) ){
+				initialize_potential_from_file( chi_north_potential_guanosine_, "chi_north_potential_guanosine.txt" );
+				initialize_potential_from_file( chi_south_potential_guanosine_, "chi_south_potential_guanosine.txt" );
+				initialize_potential_from_file( chi_north_potential_others_, "chi_north_potential_others.txt" );
+				initialize_potential_from_file( chi_south_potential_others_, "chi_south_potential_others.txt" );
+			} else { // really old potential form (e.g., rd2008)
+				initialize_potential_from_file( chi_north_potential_guanosine_, "chi_north_potential.txt" );
+				initialize_potential_from_file( chi_south_potential_guanosine_, "chi_south_potential.txt" );
+				initialize_potential_from_file( chi_north_potential_others_, "chi_north_potential.txt" );
+				initialize_potential_from_file( chi_south_potential_others_, "chi_south_potential.txt" );
+			}
 		}
 
 	}

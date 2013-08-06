@@ -17,7 +17,9 @@
 #include <protocols/rna/RNA_SecStructInfo.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/forge/methods/fold_tree_functions.hh>
+#include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -1284,6 +1286,28 @@ involved_in_phosphate_torsion( std::string atomname )
 		if (  atomname == atoms_involved[ n ] ) return true;
 	}
 	return false;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+bool
+mutate_position( pose::Pose & pose, Size const i, char const & new_seq ){
+
+	using namespace core::conformation;
+	using namespace core::chemical;
+
+	if ( new_seq == pose.sequence()[i-1] ) return false;
+
+	ResidueTypeSet const & rsd_set = pose.residue( i ).residue_type_set();
+
+	ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
+	ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
+
+	Real const save_chi = pose.chi(i);
+	pose.replace_residue( i, *new_rsd, false );
+	pose.set_chi( i, save_chi );
+
+	return true;
 }
 
 } // namespace rna

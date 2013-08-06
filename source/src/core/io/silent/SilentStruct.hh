@@ -290,7 +290,7 @@ namespace silent {
 		//By Parin Sripakdeevong (sripakpa@stanford.edu).
 		void get_parent_remark_from_line( std::string const line );
 
-		void set_residue_numbers( utility::vector1< Size > residue_numbers ){ residue_numbers_ = residue_numbers;}
+		void set_residue_numbers( utility::vector1< Size > const & residue_numbers ){ residue_numbers_ = residue_numbers;}
 
 		void fill_struct_with_residue_numbers( pose::Pose const & pose );
 

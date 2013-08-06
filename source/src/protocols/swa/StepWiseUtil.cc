@@ -18,6 +18,8 @@
 #include <protocols/swa/protein/StepWiseProteinUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 
+#include <protocols/rna/RNA_ProtocolUtil.hh>
+
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
@@ -769,18 +771,33 @@ rotate( pose::Pose & pose, Matrix const M,
 	Real
 	get_all_atom_rmsd( pose::Pose const & pose, pose::Pose const & native_pose, utility::vector1< Size > const & rmsd_res ){
 
-		using namespace core::pose::full_model_info;
-		using namespace core::id;
 		using namespace core::chemical;
+		using namespace core::id;
+		using namespace core::pose;
+		using namespace core::pose::full_model_info;
+		using namespace protocols::rna;
+
+		Pose native_pose_local = native_pose; // local working copy, mutated in cases where nucleotides have been designed ('n')
 
 		// first need to slice up native_pose to match residues in actual pose.
 		// define atoms over which to compute RMSD, using rmsd_res.
 		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
 		utility::vector1< Size > const sub_to_full = full_model_info.sub_to_full();
+		std::string const full_sequence = full_model_info.full_sequence();
 
 		utility::vector1< Size > working_rmsd_res;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
-			if ( rmsd_res.has_value( sub_to_full[ n ] ) ) working_rmsd_res.push_back( n );
+			if ( rmsd_res.has_value( sub_to_full[ n ] ) ) {
+				working_rmsd_res.push_back( n );
+
+				char const pose_nt = pose.sequence()[ n-1 ];
+				if ( full_sequence[ sub_to_full[ n ] - 1 ] == 'n' ){
+					mutate_position( native_pose_local, sub_to_full[ n ], pose_nt );
+				} else {
+					runtime_assert( full_sequence[ sub_to_full[ n ] - 1 ] == pose_nt);
+				}
+				runtime_assert( native_pose_local.sequence()[ sub_to_full[ n ] - 1] == pose_nt );
+			}
 		}
 
 		std::map< AtomID, AtomID > atom_id_map;
@@ -792,7 +809,7 @@ rotate( pose::Pose & pose, Matrix const M,
 				add_to_atom_id_map_after_checks( atom_id_map,
 																				 pose.residue_type( n ).atom_name( q ),
 																				 n, sub_to_full[ n ],
-																				 pose, native_pose );
+																				 pose, native_pose_local );
 			}
 
 			if ( ! working_rmsd_res.has_value( n + 1 ) &&
@@ -800,10 +817,10 @@ rotate( pose::Pose & pose, Matrix const M,
 					 ( !pose.fold_tree().is_cutpoint( n ) || pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) ) {
 				// RNA-specific. Would be trivial to expand to proteins.
 				runtime_assert( pose.residue_type( n + 1 ).is_RNA() );
-				add_to_atom_id_map_after_checks( atom_id_map, " P  ", n + 1, sub_to_full[ n + 1 ], pose, native_pose );
-				add_to_atom_id_map_after_checks( atom_id_map, " OP1", n + 1, sub_to_full[ n + 1 ], pose, native_pose );
-				add_to_atom_id_map_after_checks( atom_id_map, " OP2", n + 1, sub_to_full[ n + 1 ], pose, native_pose );
-				add_to_atom_id_map_after_checks( atom_id_map, " O5'", n + 1, sub_to_full[ n + 1 ], pose, native_pose );
+				add_to_atom_id_map_after_checks( atom_id_map, " P  ", n + 1, sub_to_full[ n + 1 ], pose, native_pose_local );
+				add_to_atom_id_map_after_checks( atom_id_map, " OP1", n + 1, sub_to_full[ n + 1 ], pose, native_pose_local );
+				add_to_atom_id_map_after_checks( atom_id_map, " OP2", n + 1, sub_to_full[ n + 1 ], pose, native_pose_local );
+				add_to_atom_id_map_after_checks( atom_id_map, " O5'", n + 1, sub_to_full[ n + 1 ], pose, native_pose_local );
 			}
 		}
 

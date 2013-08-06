@@ -78,7 +78,10 @@ namespace monte_carlo {
 		//always have something in play!!?? Or permit removal??!! need to check this carefully.
 		bool disallow_delete  = allow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );
 
-		get_random_residue_at_chain_terminus( pose, res_at_terminus, moving_residue_case, add_or_delete_choice, disallow_delete  );
+		get_random_residue_at_chain_terminus( pose, res_at_terminus,
+																					moving_residue_case, add_or_delete_choice,
+																					disallow_delete, true /*disallow_resample*/,
+																					sample_res_ /* empty means no filter on what residues can be added */ );
 
 		//		TR.Debug << "ADD/DELETE move ==> res: " << res_at_terminus << "  case: " << moving_residue_case << "  add/delete: " << add_or_delete_choice << std::endl;
 		//		TR.Debug << std::endl;

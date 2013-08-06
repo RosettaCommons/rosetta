@@ -269,7 +269,7 @@ OPT_KEY( Boolean, 	add_virt_root ) //For Fang's electron density code.
 OPT_KEY ( Boolean, constraint_chi )
 OPT_KEY ( Boolean, rm_virt_phosphate )
 OPT_KEY ( Boolean, choose_random )
-OPT_KEY ( Integer, num_random )
+OPT_KEY( Integer, num_random_samples )
 
 //////////////////////////////////////////////////////////////////////////////////////
 //Apply chi angle constraint to the purines --
@@ -1248,6 +1248,7 @@ swa_rna_sample()
 	// not yet implemented.
 	//	stepwise_rna_modeler->set_force_centroid_interaction ( option[force_centroid_interaction]() );
 	stepwise_rna_modeler->set_choose_random( option[ choose_random ]()  );
+	stepwise_rna_modeler->set_num_random_samples( option[ num_random_samples ]() );
 	stepwise_rna_modeler->set_nstruct( option[ out::nstruct ]() );
 	stepwise_rna_modeler->set_skip_sampling( option[ skip_sampling ]() );
 	stepwise_rna_modeler->set_perform_minimize( option[ minimizer_perform_minimize ]() );
@@ -1998,7 +1999,7 @@ main( int argc, char * argv [] )
 	NEW_OPT ( constraint_chi, "Constrain the chi angles", false );
 	NEW_OPT ( rm_virt_phosphate, "Remove virtual phosphate patches during minimization", false );
 	NEW_OPT ( choose_random, "ask swa residue sampler for a random solution", false );
-	NEW_OPT ( num_random, "Number of samples from swa residue sampler before minimizing best", 1 );
+	NEW_OPT( num_random_samples, "Number of samples from swa residue sampler before minimizing best", 1 );
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

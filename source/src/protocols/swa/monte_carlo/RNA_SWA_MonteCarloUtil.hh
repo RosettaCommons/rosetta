@@ -65,7 +65,24 @@ namespace monte_carlo {
 																				MovingResidueCase & moving_residue_case,
 																				AddOrDeleteChoice & add_or_delete_choice,
 																				bool const disallow_delete,
+																				bool const disallow_resample,
+																				utility::vector1< Size > const & sample_res );
+
+	void
+	get_random_residue_at_chain_terminus( pose::Pose & pose,
+																				Size & residue_at_chain_terminus,
+																				MovingResidueCase & moving_residue_case,
+																				AddOrDeleteChoice & add_or_delete_choice,
+																				bool const disallow_delete,
 																				bool const disallow_resample = true );
+
+	void
+	filter_by_sample_res(
+											 utility::vector1< Size >  & possible_res,
+											 utility::vector1< MovingResidueCase > & moving_residue_cases,
+											 utility::vector1< AddOrDeleteChoice > & add_or_delete_choices,
+											 utility::vector1< Size > const & sample_res,
+											 utility::vector1< Size > const & sub_to_full );
 
 } // monte_carlo
 } // swa

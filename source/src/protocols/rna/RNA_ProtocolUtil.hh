@@ -157,6 +157,10 @@ translate_virtual_anchor_to_first_rigid_body( core::pose::Pose & pose );
 bool
 involved_in_phosphate_torsion( std::string atomname );
 
+bool
+mutate_position( core::pose::Pose & pose, core::Size const i, char const & new_seq );
+
+
 } //rna
 } // protocols
 

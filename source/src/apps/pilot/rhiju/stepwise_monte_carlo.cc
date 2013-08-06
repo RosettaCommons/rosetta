@@ -102,6 +102,7 @@ OPT_KEY( Boolean, minimize_single_res )
 OPT_KEY( Real, temperature )
 OPT_KEY( Real, add_delete_frequency )
 OPT_KEY( Integer, num_random_samples )
+OPT_KEY( IntegerVector, sample_res )
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,6 +204,7 @@ stepwise_monte_carlo()
 
 	// mover setup
 	RNA_DeleteMoverOP rna_delete_mover = new RNA_DeleteMover;
+	rna_delete_mover->set_minimize_scorefxn( scorefxn );
 
 	RNA_AddMoverOP rna_add_mover = new RNA_AddMover( rsd_set, scorefxn );
 	rna_add_mover->set_start_added_residue_in_aform( false );
@@ -210,7 +212,9 @@ stepwise_monte_carlo()
 	rna_add_mover->set_presample_by_swa(  true );
 	rna_add_mover->set_minimize_all_rebuilt_res( ! option[ minimize_single_res ]() );
 	rna_add_mover->set_num_random_samples( option[ num_random_samples ]() );
+
 	RNA_AddOrDeleteMoverOP rna_add_or_delete_mover = new RNA_AddOrDeleteMover( rna_add_mover, rna_delete_mover );
+	rna_add_or_delete_mover->set_sample_res( option[ sample_res ]() );
 
 	// final setup
 	Pose start_pose = pose;
@@ -307,6 +311,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( add_delete_frequency, "Frequency of add/delete vs. resampling", 0.5 );
 	NEW_OPT( minimize_single_res, "Minimize the residue that just got rebuilt, instead of all", false );
 	NEW_OPT( num_random_samples, "Number of samples from swa residue sampler before minimizing best", 1 );
+	NEW_OPT( sample_res, "specify particular residues that should be rebuild (as opposed to all missing in starting PDB)", blank_size_vector );
 
   ////////////////////////////////////////////////////////////////////////////
   // setup

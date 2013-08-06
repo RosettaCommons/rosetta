@@ -15,10 +15,12 @@
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
@@ -43,7 +45,9 @@ namespace monte_carlo {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-	//  RNA_DeleteMover::RNA_DeleteMover()  {}
+	RNA_DeleteMover::RNA_DeleteMover():
+		minimize_after_delete_( true )
+  {}
 
   //////////////////////////////////////////////////////////////////////////
   //destructor
@@ -59,7 +63,7 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////
   void
-  RNA_DeleteMover::apply( core::pose::Pose & pose, Size const res_to_delete, MovingResidueCase const moving_residue_case )
+  RNA_DeleteMover::apply( core::pose::Pose & pose, Size const res_to_delete, MovingResidueCase const moving_residue_case ) const
 	{
 
 		remove_cutpoint_variants_at_res_to_delete( pose, res_to_delete );
@@ -70,12 +74,14 @@ namespace monte_carlo {
 
 		// important book-keeping.
 		reorder_full_model_info_after_delete( pose, res_to_delete );
+
+		if ( minimize_after_delete_ ) minimize_after_delete( pose );
 	}
 
 
 	//////////////////////////////////////////////////////////////////////
   void
-  RNA_DeleteMover::remove_cutpoint_variants_at_res_to_delete( core::pose::Pose & pose, Size const & res_to_delete ){
+  RNA_DeleteMover::remove_cutpoint_variants_at_res_to_delete( core::pose::Pose & pose, Size const & res_to_delete ) const {
 
 		using namespace core::chemical;
 		using namespace core::pose;
@@ -105,11 +111,15 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////
 	void
-	RNA_DeleteMover::wipe_out_moving_residues( pose::Pose & pose ){
+	RNA_DeleteMover::wipe_out_moving_residues( pose::Pose & pose ) {
 
 		utility::vector1< Size >  possible_res;
 		utility::vector1< MovingResidueCase > moving_residue_cases;
 		utility::vector1< AddOrDeleteChoice > add_or_delete_choices;
+
+		// don't do any minimizing -- just get rid of everything...
+		bool const minimize_after_delete_save( minimize_after_delete_ );
+		minimize_after_delete_ = false;
 
 		get_potential_delete_residues( pose,
 																	 possible_res,
@@ -120,6 +130,46 @@ namespace monte_carlo {
 			apply( pose, possible_res[1], moving_residue_cases[1] );
 			wipe_out_moving_residues( pose );
 		}
+
+		minimize_after_delete_ = minimize_after_delete_save;
+
+	}
+
+	////////////////////////////////////////////////////////////////////
+	void
+	RNA_DeleteMover::set_minimize_scorefxn( core::scoring::ScoreFunctionOP minimize_scorefxn ){
+		minimize_scorefxn_ = minimize_scorefxn;
+	}
+
+	////////////////////////////////////////////////////////////////////
+	void
+	RNA_DeleteMover::minimize_after_delete( pose::Pose & pose ) const{
+
+		using namespace core::pose::full_model_info;
+
+		runtime_assert( minimize_scorefxn_ != 0 );
+
+		TR << "Minimizing after delete " << std::endl;
+
+		TR << "Initial: " << ( *minimize_scorefxn_) ( pose ) << std::endl;
+
+		// following is a bit of a hack.
+		// however, I wanted to make sure that I use the same minimizer as AddMover.
+
+		// need a 'sampling' residue to send into StepWiseRNA_Modeler. It actually wont be sampled
+		// because of skip_sampling.
+		utility::vector1< Size > possible_res;
+		get_potential_resample_residues( pose, possible_res );
+		if ( possible_res.size() == 0 ) return;
+		Size const some_residue = possible_res[ 1 ];
+
+		swa::rna::StepWiseRNA_Modeler stepwise_rna_modeler( some_residue, minimize_scorefxn_ );
+		stepwise_rna_modeler.set_skip_sampling( true );
+		stepwise_rna_modeler.set_minimize_res( nonconst_full_model_info_from_pose( pose ).moving_res_list() );
+
+		stepwise_rna_modeler.apply( pose );
+
+		TR << "Final: " << ( *minimize_scorefxn_) ( pose ) << std::endl;
 
 	}
 
