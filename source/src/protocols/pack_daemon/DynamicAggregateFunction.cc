@@ -251,11 +251,14 @@ IterativeVectorExpression::active_variables() const
 utility::vector1< std::list< std::string > >
 IterativeVectorExpression::active_variables_vector() const
 {
-	utility::vector1< std::list< std::string > > active_varibles_vector( size() );
-	//for ( Size ii = 1; ii <= vars_.size(); ++ii ) {
-	//	active_varibles_vector[ ii ] = vars_->active_variables();
-	//}
-	utility_exit_with_message( "IterativeVectorExpression::active_variables_vector has not yet been implemented.  Email Andrew");
+	core::Size const mysize = size();
+	utility::vector1< std::list< std::string > > active_varibles_vector( mysize );
+	for ( Size ii = 1; ii <= input_vector_expressions_.size(); ++ii ) {
+		utility::vector1< std::list< std::string > > ii_active_varibles_vector = input_vector_expressions_[ ii ]->active_variables_vector();
+		for ( Size jj = 1; jj <= mysize; ++jj ) {
+			active_varibles_vector[ jj ].splice( active_varibles_vector[ jj ].end(), ii_active_varibles_vector[ jj ] );
+		}
+	}
 	return active_varibles_vector;
 }
 

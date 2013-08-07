@@ -60,7 +60,7 @@ using namespace core::pack::rotamer_set;
 class TestCalculator : public NPDPropCalculator
 {
 public:
-	
+
 	virtual
 	core::Real
 	calculate( core::pose::Pose const & /* p */ ) { return 1.0; };
