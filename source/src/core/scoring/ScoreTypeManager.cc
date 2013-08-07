@@ -325,7 +325,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "stack_elec"] = stack_elec;
 	name2score_type_[ "stack_elec_base_base"] = stack_elec_base_base;
 	name2score_type_[ "stack_elec_base_bb"] = stack_elec_base_bb;
-	name2score_type_[ "polar_rep"] = polar_rep;
 
 	name2score_type_[ "rna_loop"] = rna_loop;
 	name2score_type_[ "rna_loop_fixed"] = rna_loop_fixed;
@@ -346,8 +345,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_intra_RNA_base_phos_sol" ] = fa_intra_RNA_base_phos_sol;
 	name2score_type_[ "hbond_intra" ] = hbond_intra; //Currently affects only RNA.
 	name2score_type_[ "geom_sol_intra_RNA"    ] = geom_sol_intra_RNA;
-	name2score_type_[ "CI_geom_sol"    ] = CI_geom_sol;
-	name2score_type_[ "CI_geom_sol_intra_RNA"    ] = CI_geom_sol_intra_RNA;
+	name2score_type_[ "geom_sol_fast"    ] = geom_sol_fast;
+	name2score_type_[ "geom_sol_fast_intra_RNA"    ] = geom_sol_fast_intra_RNA;
 
 	name2score_type_[ "dna_bb_torsion"] = dna_bb_torsion;
 	name2score_type_[ "dna_sugar_close"] = dna_sugar_close;

@@ -162,15 +162,14 @@ enum ScoreType {
 	stack_elec,          // distance dependent dielectric between base atoms (attenuated parallel to plane)
 	stack_elec_base_base,
 	stack_elec_base_bb,
-	polar_rep,
 
 	// DNA constraints-based torsional potentials
 	dna_bb_torsion,
 	dna_sugar_close,
 	dna_base_distance,
 
-	CI_geom_sol,           //Context independent version. Currently tested only for RNA case.
-	CI_geom_sol_intra_RNA, //RNA specific score term
+	geom_sol_fast,           //Context independent version. Currently tested only for RNA case.
+	geom_sol_fast_intra_RNA, //RNA specific score term
 
 	fa_cust_pair_dist,  // custom short range 2b
 	custom_atom_pair,

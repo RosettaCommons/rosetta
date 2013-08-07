@@ -758,7 +758,7 @@ namespace rna {
 			////Hacky fix: this shouldn't be necessary but is required to fix bug (rna_sugar_close score adn geom_sol doesn't check for virtual_atoms)////////
 			////PREVENT RANDOM ENERGETIC PENALTY!////
 			//bulge_chain_closure_scorefxn->set_weight( geom_sol, 62); //100X normal weight //MOD OUT July 23, 2011. GEOM_SOL and CI_GEOM_SOL NOW DOES CHECK FOR VIRTUAL_ATOM!
-			//bulge_chain_closure_scorefxn->set_weight( CI_geom_sol, 62); //100X normal weight //ADD AND MOD OUT July 23, 2011. GEOM_SOL and CI_GEOM_SOL NOW DOES CHECK FOR VIRTUAL_ATOM!
+			//bulge_chain_closure_scorefxn->set_weight( geom_sol_fast, 62); //100X normal weight //ADD AND MOD OUT July 23, 2011. GEOM_SOL and CI_GEOM_SOL NOW DOES CHECK FOR VIRTUAL_ATOM!
 
 			bulge_chain_closure_scorefxn->set_weight( rna_sugar_close, 70 ); //100X normal weight
 

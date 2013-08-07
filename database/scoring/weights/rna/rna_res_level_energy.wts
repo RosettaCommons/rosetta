@@ -11,7 +11,7 @@ hbond_sr_bb_sc  0.58
 hbond_lr_bb_sc  0.58
 hbond_sc        0.58
 lk_nonpolar     0.15
-CI_geom_sol        0.10
+geom_sol_fast        0.10
 fa_elec_rna_phos_phos 1.0
 stack_elec      0.46
 intermol        1.4

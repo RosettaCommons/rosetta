@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/ContextIndependentGeometricSolEnergy.hh
-/// @brief  Hydrogen bond energy method class declaration
+/// @brief  Geometric solvation energy.
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu), Rhiju Das (rhiju@stanford.edu)
 
 
@@ -18,13 +18,10 @@
 
 // Unit Headers
 #include <core/scoring/geometric_solvation/ContextIndependentGeometricSolEnergy.fwd.hh>
+#include <core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.fwd.hh>
 #include <core/types.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/hbonds/constants.hh>
-#include <core/scoring/hbonds/types.hh>
-#include <core/scoring/hbonds/HBondDatabase.fwd.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 
 // Project headers
@@ -54,16 +51,6 @@ public:
 	virtual
 	methods::EnergyMethodOP
 	clone() const;
-
-	///
-	virtual
-	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
-
-	///
-	virtual
-	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -105,12 +92,6 @@ public:
 		Vector & F2
 	) const;
 
-	Real
-	eval_atom_energy(
-		id::AtomID const & atom_id,
-		pose::Pose const & pose
-	) const;
-
 
 	virtual
 	bool
@@ -129,114 +110,13 @@ public:
 	Distance
 	atomic_interaction_cutoff() const;
 
-	// Undefined, commenting out to fix PyRosetta build  Real hydrogen_interaction_cutoff2() const;
+	virtual
+	core::Size version() const;
 
-	///@brief ContextIndependentGeometricSolEnergy is NOT context sensitive
+	///@brief GeometricSolEnergy is context sensitive
 	virtual
 	void indicate_required_context_graphs(
-		utility::vector1< bool > & /*context_graphs_required*/ ) const;
-
-private:
-
-	inline
-	Real
-	res_res_geometric_sol_one_way(
-		conformation::Residue const & polar_rsd,
-		conformation::Residue const & occ_rsd,
-		pose::Pose const & pose ) const;
-
-	inline
-	Real
-	donorRes_occludingRes_geometric_sol_one_way(
-		conformation::Residue const & don_rsd,
-		conformation::Residue const & occ_rsd,
-		pose::Pose const & pose ) const;
-
-	inline
-	Real
-	acceptorRes_occludingRes_geometric_sol_one_way(
-		conformation::Residue const & acc_rsd,
-		conformation::Residue const & occ_rsd,
-		pose::Pose const & pose ) const;
-
-	inline
-	Real
-	occluded_water_hbond_penalty(
-    bool const & is_donor,
-		hbonds::HBEvalTuple const & hbond_eval_type,
-		Vector const & polar_atm_xyz,
-		Vector const & base_atm_xyz,
-		Vector const & occluding_atm_xyz,
-		bool const update_deriv = false,
-		hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS) const;
-
-	inline
-	void
-	set_water_base_atm(
-    Vector const & base_v,
-		Vector const & atom_v,
-		Vector const & water_v,
-		Vector & water_base_v,
-		Real const & xH /*cos(theta)*/,
-		Distance const & bond_length ) const;
-
-	inline
-	Real
-	get_water_cos(
-		Vector const & base_atm_xyz,
-		Vector const & polar_atm_xyz,
-		Vector const & occluding_atm_xyz ) const;
-
-	bool
-	atom_is_donor( conformation::Residue const & rsd, Size const atm ) const;
-
-	bool
-	atom_is_donor_h( conformation::Residue const & rsd, Size const atm ) const;
-
-	bool
-	atom_is_acceptor( conformation::Residue const & rsd, Size const atm ) const;
-
-	bool
-	atom_is_heavy( conformation::Residue const & rsd, Size const atm ) const;
-
-
-	void
-	get_atom_atom_geometric_solvation_for_donor(
-	  Size const & don_h_atm,
-		conformation::Residue const & don_rsd,
-		Size const & occ_atm,
-		conformation::Residue const & occ_rsd,
-		pose::Pose const & pose,
-		Real & energy,
-		bool const update_deriv = false,
-		hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
-	) const;
-
-	void
-	get_atom_atom_geometric_solvation_for_acceptor(
-	  Size const & acc_atm,
-		conformation::Residue const & acc_rsd,
-		Size const & occ_atm,
-		conformation::Residue const & occ_rsd,
-		pose::Pose const & pose,
-		Real & energy,
-		bool const update_deriv = false,
-		hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
-	) const;
-
-
-	Real
-	donorRes_occludingRes_geometric_sol_RNA_intra(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose ) const;
-
-	Real
-	acceptorRes_occludingRes_geometric_sol_RNA_intra(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose ) const;
-
-	Vector
-	get_acceptor_base_atm_xyz( conformation::Residue const & acc_rsd, Size const & acc_atm ) const;
+		utility::vector1< bool > & context_graphs_required ) const;
 
 private:
 
@@ -245,17 +125,8 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 	methods::EnergyMethodOptionsOP options_;
 
+	GeometricSolEnergyEvaluatorOP evaluator_;
 
-	// no Hbonds longer than sqrt of this (the square)
-	hbonds::HBondDatabaseCOP hb_database_;
-	Real const dist_cut2_;
-	Real const geometric_sol_scale_;
-
-	bool const correct_geom_sol_acceptor_base_;
-	bool const verbose_;
-
-	virtual
-	core::Size version() const;
 
 };
 

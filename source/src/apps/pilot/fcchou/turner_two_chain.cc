@@ -612,7 +612,7 @@ MC_run () {
 	scoretypes.push_back( hbond_intra );
 	scoretypes.push_back( rna_torsion );
 	scoretypes.push_back( fa_stack );
-	scoretypes.push_back( CI_geom_sol );
+	scoretypes.push_back( geom_sol_fast );
 	scoretypes.push_back( lk_nonpolar );
 
 	for (Size i = 1; i <= scoretypes.size(); ++i) {
