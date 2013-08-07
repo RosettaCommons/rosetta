@@ -57,7 +57,7 @@
 
 // RNA stuff
 #include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
@@ -1504,7 +1504,7 @@ return "StepWisePoseSetup";
 		using namespace core::conformation;
 		using namespace core::id;
 		using namespace core::scoring::constraints;
-		using namespace core::scoring::rna;
+		using namespace core::chemical::rna;
 
 		ConstraintSetOP cst_set( pose.constraint_set()->clone() );
 		assert( cst_set );

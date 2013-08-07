@@ -19,7 +19,7 @@
 // AUTO-REMOVED #include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
 
 // Package headers
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
@@ -35,6 +35,9 @@
 
 
 // C++
+
+using namespace core::chemical::rna;
+
 
 ///////////////////////////////////////////////////////
 // Keep track of some base geometry that is
@@ -92,7 +95,7 @@ RNA_RawBaseBaseInfo::zero()
 void
 RNA_RawBaseBaseInfo::copy_values( RNA_RawBaseBaseInfo const & src, Size const & i, Size const & j )
 {
-	for (Size k = 1; k <= rna::NUM_EDGES; k++ ){
+	for (Size k = 1; k <= NUM_EDGES; k++ ){
 		base_pair_array_(i,j,k) = src.base_pair_array_(i,j,k);
 		base_stagger_array_(i,j,k) = src.base_stagger_array_(i,j,k);
 		base_axis_array_(i,j,k) = src.base_axis_array_(i,j,k);

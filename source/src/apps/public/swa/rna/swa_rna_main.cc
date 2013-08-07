@@ -30,8 +30,8 @@
 
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
@@ -277,10 +277,9 @@ OPT_KEY( Integer, num_random_samples )
 void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose ) {
 	using namespace core::conformation;
 	using namespace core::id;
-	using namespace core::scoring;
-	using namespace core::scoring::rna;
 	using namespace core::scoring::constraints;
 	using namespace core::chemical;
+	using namespace core::chemical::rna;
 
 	Size const nres = pose.total_residue();
 	ConstraintSetOP cst_set = new ConstraintSet;
@@ -319,7 +318,7 @@ get_working_directory(){
 	ss << cCurrentPath;
 	ss >> current_directory_string;
 
-	std::cout << "current_directory = " << current_directory_string << std::endl;
+	//std::cout << "current_directory = " << current_directory_string << std::endl;
 
 	return current_directory_string;
 }

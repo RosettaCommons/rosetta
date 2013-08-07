@@ -1478,7 +1478,7 @@
 #include "../src/core/scoring/rna/RNA_TorsionEnergyCreator.hh"
 #include "../src/core/scoring/rna/RNA_TorsionPotential.fwd.hh"
 #include "../src/core/scoring/rna/RNA_TorsionPotential.hh"
-#include "../src/core/scoring/rna/RNA_Util.hh"
+#include "../src/core/chemical/rna/RNA_Util.hh"
 #include "../src/core/scoring/rna/RNA_VDW_Energy.fwd.hh"
 #include "../src/core/scoring/rna/RNA_VDW_Energy.hh"
 #include "../src/core/scoring/rna/RNA_VDW_EnergyCreator.hh"

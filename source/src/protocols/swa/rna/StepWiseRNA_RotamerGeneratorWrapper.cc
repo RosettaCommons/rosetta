@@ -24,7 +24,7 @@
 
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/FArray1D.hh>

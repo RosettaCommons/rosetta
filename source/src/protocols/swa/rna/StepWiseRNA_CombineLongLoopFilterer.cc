@@ -31,7 +31,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>

@@ -12,7 +12,7 @@
 
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/sequence/Sequence.hh>
@@ -543,8 +543,8 @@ rna_build_helix_test_precompute(){
 	FoldTree f( 2 );
 	f.new_jump(1,2,1);
 	f.set_jump_atoms( 1,
-										core::scoring::rna::chi1_torsion_atom( pose.residue(1) ),
-										core::scoring::rna::chi1_torsion_atom( pose.residue(2) ) );
+										core::chemical::rna::chi1_torsion_atom( pose.residue(1) ),
+										core::chemical::rna::chi1_torsion_atom( pose.residue(2) ) );
 	pose.fold_tree( f );
 	PoseOP reference_pose_start = base_doublet_pose[ sequence_start ];
 
@@ -569,8 +569,8 @@ rna_build_helix_test_precompute(){
 
 		ResidueOP rsd2( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( seq2 ) )[1] ) ) );
 		pose.insert_residue_by_jump( *rsd2, n+1, n,
-																 core::scoring::rna::chi1_torsion_atom( *rsd2 ),
-																 core::scoring::rna::chi1_torsion_atom( *rsd1 ) );
+																 core::chemical::rna::chi1_torsion_atom( *rsd2 ),
+																 core::chemical::rna::chi1_torsion_atom( *rsd1 ) );
 
 
 		std::string base_pair_to_base_pair_seq = full_sequence.substr( n-2, 1)	+ full_sequence.substr(n-1,1)

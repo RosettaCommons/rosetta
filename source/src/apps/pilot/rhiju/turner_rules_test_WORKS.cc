@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/Energies.hh>
@@ -293,7 +293,7 @@ define_states_test(){
 	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::kinematics;
 	using namespace core::optimization;
 	using namespace core::pose;
@@ -308,8 +308,8 @@ define_states_test(){
 	FoldTree f( 2 );
 	f.new_jump( 1, 2, 1);
 	f.set_jump_atoms( 1,
-										core::scoring::rna::chi1_torsion_atom( pose.residue( 1) ),
-										core::scoring::rna::chi1_torsion_atom( pose.residue( 2) )   );
+										core::chemical::rna::chi1_torsion_atom( pose.residue( 1) ),
+										core::chemical::rna::chi1_torsion_atom( pose.residue( 2) )   );
 	pose.dump_pdb( "start.pdb" );
 
 	// Virtualize backbone

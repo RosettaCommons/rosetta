@@ -14,7 +14,7 @@
 #define INCLUDED_core_scoring_rna_RNA_BaseDoubletClasses_hh
 
 #include <core/types.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 // C++ Headers
 #include <iomanip>
@@ -23,6 +23,7 @@
 
 //using core::Size;
 //using core::Real;
+using namespace core::chemical::rna;
 
 namespace core {
 namespace scoring {

@@ -1,5 +1,5 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts = 2 noet:
+// vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -17,8 +17,7 @@
 #include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
@@ -46,7 +45,7 @@ namespace rna {
 	StepWiseRNA_BaseSugarRotamer::StepWiseRNA_BaseSugarRotamer(
 											BaseState const & base_state,
 											PuckerState const & pucker_state,
-											core::scoring::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
+											core::chemical::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
 											core::Size const bin_size ): //This is to determine the bin value for chi
 		base_state_( base_state ),
 		pucker_state_( pucker_state ),

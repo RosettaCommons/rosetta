@@ -67,7 +67,7 @@ RNA_Mg_KnowledgeBasedPotential::RNA_Mg_KnowledgeBasedPotential():
 }
 
 //////////////////////////////////////////////////////////////////
-Gaussian_parameter
+GaussianParameter
 RNA_Mg_KnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
 	bool is_phosphate_oxygen( false );
 	return get_mg_potential_gaussian_parameter( rsd, j, is_phosphate_oxygen );
@@ -78,7 +78,7 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::confo
 // This is actually pretty general, and would even work for non-RNA residues, but
 // for now stick to RNA where I've tried to derive a reasonable low resolution potential
 // from the available PDB statistics in the RNA09 set.
-Gaussian_parameter
+GaussianParameter
 RNA_Mg_KnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::conformation::Residue const & rsd, Size const j, bool & is_phosphate_oxygen ) const{
 
 	is_phosphate_oxygen = false;
@@ -108,12 +108,12 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::confo
 		}
 	}
 
-	return Gaussian_parameter( 0.0, 0.0, 0.0 );
+	return GaussianParameter( 0.0, 0.0, 0.0 );
 }
 
 
 /////////////////////////////////
-Gaussian_parameter
+GaussianParameter
 RNA_Mg_KnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
 
 	if ( rsd.is_RNA() ) {
@@ -132,12 +132,12 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter( co
 		}
 	}
 
-	return Gaussian_parameter( 0.0, 0.0, 0.0 );
+	return GaussianParameter( 0.0, 0.0, 0.0 );
 }
 
 
 /////////////////////////////////
-Gaussian_parameter
+GaussianParameter
 RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
 
 	if ( rsd.is_RNA() ) {
@@ -160,11 +160,11 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_gaussian_parameter( co
 		}
 	}
 
-	return Gaussian_parameter( 0.0, 0.0, 0.0 );
+	return GaussianParameter( 0.0, 0.0, 0.0 );
 }
 
 /////////////////////////////////
-Gaussian_parameter
+GaussianParameter
 RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const{
 
 	if ( rsd.is_RNA() ) {
@@ -183,7 +183,7 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_indirect_gaussian_para
 		}
 	}
 
-	return Gaussian_parameter( 0.0, 0.0, 0.0 );
+	return GaussianParameter( 0.0, 0.0, 0.0 );
 }
 
 
@@ -225,7 +225,7 @@ RNA_Mg_KnowledgeBasedPotential::setup_info_for_mg_calculation( pose::Pose & pose
 
 			// we go over all atoms, because we are putting in some repulsions (from polar hydrogens & phosphorus)
 			for (Size j = 1; j <= rsd.natoms(); j++ ){
-				Gaussian_parameter gaussian_parameter = get_mg_potential_gaussian_parameter( rsd, j );
+				GaussianParameter gaussian_parameter = get_mg_potential_gaussian_parameter( rsd, j );
 				//tr << j << rsd.atom_name(j) << " ==> gaussian parameter " << gaussian_parameter.center << std::endl;
 				if ( gaussian_parameter.center > 0.0 ) atom_numbers[ i ].push_back( j );
 			}

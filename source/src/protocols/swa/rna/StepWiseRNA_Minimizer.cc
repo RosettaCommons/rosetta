@@ -33,7 +33,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
-#include <core/scoring/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -418,7 +417,7 @@ namespace rna {
 	StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::string const in_tag, core::io::silent::SilentFileData & silent_file_data ) const{
 
 		using namespace core::scoring;
-		using namespace core::scoring::rna;
+		using namespace core::chemical::rna;
 		using namespace core::pose;
 		using namespace core::io::silent;
 		using namespace protocols::rna;
@@ -593,7 +592,6 @@ namespace rna {
   {
 
 		using namespace core::id;
-		using namespace core::scoring::rna;
 		using namespace ObjexxFCL;
 
 		Size const nres( pose.total_residue() );

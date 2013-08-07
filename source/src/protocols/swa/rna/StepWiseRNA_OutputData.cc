@@ -24,7 +24,6 @@
 
 #include <protocols/rna/RNA_BasePairClassifier.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
-#include <core/scoring/rna/RNA_Util.hh>
 
 #include <core/scoring/ScoreType.hh> //Parin Sept 20, 2011.
 //////////////////////////////////
@@ -46,7 +45,7 @@
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>

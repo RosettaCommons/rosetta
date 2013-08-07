@@ -22,7 +22,7 @@
 
 #include <protocols/rna/RNA_BasePairClassifier.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 #include <core/scoring/ScoreType.hh> //Parin Sept 20, 2011.
 //////////////////////////////////
@@ -46,7 +46,7 @@
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -852,7 +852,7 @@ namespace rna {
 			if ( my_map.find( seq_num ) != my_map.end() ){
 				prepend_char = ( my_map.find( seq_num )->second ) ? 'P' : 'A';
 			} else{
-				prepend_char = ' - ';
+				prepend_char = '-';
 			}
 			outstream << std::setw( spacing ) << prepend_char;
 		}
@@ -2322,7 +2322,7 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 		}
 
 		current_pose.prepend_polymer_residue_before_seqpos( *new_rsd, three_prime_chainbreak, true );
-		scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+		chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
 		if ( verbose ){
 			//dump_pdb(current_pose, "Before_setting_torsion_to_A_form.pdb");
@@ -2385,7 +2385,7 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
  		using namespace core::chemical;
 		using namespace core::conformation;
 		using namespace core::id;
-		using namespace core::scoring::rna;
+		using namespace core::chemical::rna;
 		using namespace core::kinematics;
 
 		if ( template_pose.total_residue() != pose.total_residue() ){
@@ -2585,7 +2585,7 @@ principal_angle_degrees( T const & angle )
 	bool
 	check_for_messed_up_structure( core::pose::Pose const & pose, std::string const & tag ){
 		using namespace core::scoring;
-		using namespace core::scoring::rna;
+		using namespace core::chemical::rna;
 
 		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
 
@@ -2623,7 +2623,7 @@ principal_angle_degrees( T const & angle )
 	Get_residue_base_state( core::pose::Pose const & pose, Size const seq_num ){
 
 		using namespace core::scoring;
-		using namespace core::scoring::rna;
+		using namespace core::chemical::rna;
 
 		Real const CHI_CUTOFF = 15.0; //Kinda RANDOM..ROUGH average between north chi_anti (~79) and north chi_syn (~-50)
 
@@ -2644,9 +2644,9 @@ principal_angle_degrees( T const & angle )
 	Get_residue_pucker_state( core::pose::Pose const & pose, Size const seq_num, bool const verbose ){
 
 		using namespace core::scoring;
-		using namespace core::scoring::rna;
+		using namespace core::chemical::rna;
 
-		static scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+		static RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 		Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
 
 		if ( verbose ) TR.Debug << "  DELTA_CUTOFF angle = " << DELTA_CUTOFF;

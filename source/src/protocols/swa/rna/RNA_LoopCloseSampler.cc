@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
@@ -111,15 +111,10 @@ RNA_LoopCloseSampler::~RNA_LoopCloseSampler()
 void
 RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	using namespace pose;
-	using namespace scoring;
-	using namespace io::silent;
 	using namespace chemical;
 	using namespace id;
-	using namespace scoring::rna;
-	using namespace protocols::swa;
-	using namespace protocols::swa::rna;
+	using namespace chemical::rna;
 	using namespace numeric::conversions;
-	using namespace utility;
 
 	Real const fa_rep_score_baseline = initialize_fa_rep ( pose, utility::tools::make_vector1 ( moving_suite_ ), rep_scorefxn_ );
 
@@ -138,13 +133,13 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 	// set up backbones to close.
 	// epsilon1, zeta1, alpha1; and alpha2 are 'driver torsions' -- deltas will be fixed,
 	//  and the other six torsions will be solved by analytical loop closure.
-	vector1< TorsionID > driver_torsion_IDs;
+	utility::vector1< TorsionID > driver_torsion_IDs;
 	driver_torsion_IDs.push_back( TorsionID ( moving_suite_ , id::BB, EPSILON ) );
 	driver_torsion_IDs.push_back( TorsionID ( moving_suite_ , id::BB, ZETA ) );
 	driver_torsion_IDs.push_back( TorsionID ( moving_suite_ + 1, id::BB, ALPHA ) );
 	driver_torsion_IDs.push_back( TorsionID ( chainbreak_suite_ + 1, id::BB, ALPHA ) );
 
-	vector1< vector1< Real > > driver_torsion_sets;
+	utility::vector1< utility::vector1< Real > > driver_torsion_sets;
 
 	Real epsilon1_center = ( pucker_state1 == NORTH ) ? -150.17 : -98.45;
 	Real epsilon1_min = epsilon1_center - epsilon_range_;
@@ -165,7 +160,7 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 		for ( Real zeta1 = zeta1_min; zeta1 <= zeta1_max; zeta1 += zeta1_increment ) {
 			for ( Real alpha1 = alpha1_min; alpha1 <= alpha1_max; alpha1 += alpha1_increment ) {
 				for ( Real alpha2 = alpha2_min; alpha2 <= alpha2_max; alpha2 += alpha2_increment ) {
-					vector1< Real > driver_torsion_set = utility::tools::make_vector1( epsilon1, zeta1, alpha1, alpha2 );
+					utility::vector1< Real > driver_torsion_set = utility::tools::make_vector1( epsilon1, zeta1, alpha1, alpha2 );
 					driver_torsion_sets.push_back( driver_torsion_set );
 				}
 			}
@@ -238,14 +233,8 @@ RNA_LoopCloseSampler::add_driver_torsion_set(
 void
 RNA_LoopCloseSampler::fill_pose ( pose::Pose & pose, Size construct_number ) {
 	using namespace pose;
-	using namespace scoring;
-	using namespace io::silent;
-	using namespace chemical;
 	using namespace id;
-	using namespace scoring::rna;
-	using namespace protocols::swa;
-	using namespace protocols::swa::rna;
-	using namespace numeric::conversions;
+	using namespace chemical::rna;
 	utility::vector1< Real > & torsion_info = all_torsion_info_[construct_number];
 	pose.set_torsion ( TorsionID ( moving_suite_ , id::BB, EPSILON ), torsion_info[1] );
 	pose.set_torsion ( TorsionID ( moving_suite_ , id::BB, ZETA ), torsion_info[2] );
@@ -340,7 +329,7 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
     Size const moving_suite,
     Size const chainbreak_suite ) {
 	using namespace id;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace protocols::swa::rna;
 
 	static Size const epsilonmin_n = 155, epsilonmax_n = 310;

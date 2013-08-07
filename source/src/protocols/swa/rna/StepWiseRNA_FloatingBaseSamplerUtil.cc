@@ -20,8 +20,8 @@
 #include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
@@ -661,9 +661,9 @@ namespace rna {
 
 		conformation::Residue const & rsd( pose.residue( seq_num ) );
 
-		numeric::xyzVector< core::Real > centroid = core::scoring::rna::get_rna_base_centroid( rsd, verbose ); 
+		numeric::xyzVector< core::Real > centroid = core::chemical::rna::get_rna_base_centroid( rsd, verbose ); 
 
-		numeric::xyzMatrix< core::Real > base_coordinate_matrix = core::scoring::rna::get_rna_base_coordinate_system( rsd, centroid ); 
+		numeric::xyzMatrix< core::Real > base_coordinate_matrix = core::chemical::rna::get_rna_base_coordinate_system( rsd, centroid ); 
 
 		numeric::xyzMatrix< core::Real > invert_coordinate_matrix = inverse( base_coordinate_matrix );
 	
@@ -715,7 +715,7 @@ namespace rna {
 
 		for ( Size n = 1; n <= rsd_at_origin_list.size(); n++ ){
 			Residue const & rsd_at_origin = ( *rsd_at_origin_list[n] );
-			numeric::xyzVector< core::Real > const centroid = core::scoring::rna::get_rna_base_centroid( rsd_at_origin, false ); //optimize by returning this by reference? Apr 10, 2010
+			numeric::xyzVector< core::Real > const centroid = core::chemical::rna::get_rna_base_centroid( rsd_at_origin, false ); //optimize by returning this by reference? Apr 10, 2010
 
 			Real const distance = ( rsd_at_origin.xyz( atom_name ) - centroid ).length();
 
@@ -743,10 +743,10 @@ namespace rna {
 		Output_boolean( "extra_anti_chi_rotamer = ", extra_anti_chi_rotamer, TR ); TR << std::endl;
 		Output_boolean( "extra_syn_chi_rotamer = ", extra_syn_chi_rotamer, TR ); TR << std::endl;
 		
-		BaseState base_state = ( core::scoring::rna::is_purine( pose.residue( moving_res ) ) ) ? BOTH: ANTI;	
+		BaseState base_state = ( core::chemical::rna::is_purine( pose.residue( moving_res ) ) ) ? BOTH: ANTI;	
 
 		PuckerState pucker_state = ALL;
-		core::scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
+		core::chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 
 		StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( base_state, pucker_state, rna_fitted_torsion_info );
 		base_sugar_rotamer->set_extra_anti_chi( extra_anti_chi_rotamer );

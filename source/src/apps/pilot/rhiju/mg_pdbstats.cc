@@ -20,7 +20,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/rna/RNA_AtomVDW.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/import_pose/import_pose.hh>
@@ -122,7 +122,7 @@ mg_pdbstats_from_pose( utility::io::ozstream & out,
 	using namespace core::chemical;
 	using namespace core::kinematics;
 	using namespace core::scoring::hbonds;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 
 	static Real const DIST_CUTOFF ( 8.0 );
 	static Real const VDW_DIST_CUTOFF ( 4.5 );

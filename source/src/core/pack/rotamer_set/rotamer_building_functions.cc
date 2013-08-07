@@ -47,7 +47,7 @@
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
 #include <core/graph/Graph.hh>
 
@@ -636,10 +636,10 @@ void
 add_rna_chi_rotamers( conformation::ResidueOP const & rot,
 											utility::vector1< conformation::ResidueOP > & rotamers,
 											pack::task::ExtraRotSample const & level,
-											scoring::rna::Gaussian_parameter_set const & gaussian_parameter_set )
+											chemical::rna::GaussianParameter_set const & gaussian_parameter_set )
 {
 	using namespace conformation;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace pack::task;
 
 	utility::vector1< Real > chi_steps;
@@ -709,14 +709,14 @@ add_rna_chi_rotamers( conformation::ResidueOP const & rot,
 		break;
 	}
 
-	Gaussian_parameter const & gaussian_parameter( gaussian_parameter_set[1] );
+	GaussianParameter const & gaussian_parameter( gaussian_parameter_set[1] );
 	fill_chi_rotamers_with_center_and_stddev( rot, rotamers,
 																						chi_steps,
 																						gaussian_parameter.center, gaussian_parameter.width );
 
 	//Add in syn configurations for purines.
 	if ( rot->aa() == chemical::na_rad || rot->aa() == chemical::na_rgu ) {
-		Gaussian_parameter const & gaussian_parameter2( gaussian_parameter_set[2] );
+		GaussianParameter const & gaussian_parameter2( gaussian_parameter_set[2] );
 		fill_chi_rotamers_with_center_and_stddev( rot, rotamers,
 																							chi_steps,
 																							gaussian_parameter2.center, gaussian_parameter2.width );
@@ -755,11 +755,11 @@ build_rna_chi_rotamers(
 	//	}
 
 	//To define base, need a torsion that depends on sugar pucker...
-	static scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+	static chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 	static Real const delta_cutoff = rna_fitted_torsion_info.delta_cutoff();
 
 	//Different chi angles depending on sugar pucker.
-	Real const delta( existing_residue.mainchain_torsion( scoring::rna::DELTA ) );
+	Real const delta( existing_residue.mainchain_torsion( chemical::rna::DELTA ) );
 	//	if ( delta <= delta_cutoff ) {
 	//		rot->set_chi( 3 /*nu1*/ , rna_fitted_torsion_info.gaussian_parameter_set_nu1_north()[1].center );
 	//	} else { // South, or 2'-endo sugar pucker.

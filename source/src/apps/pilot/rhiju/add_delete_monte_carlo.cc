@@ -29,7 +29,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>

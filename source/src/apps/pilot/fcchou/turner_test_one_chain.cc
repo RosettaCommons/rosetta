@@ -25,10 +25,10 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -128,7 +128,7 @@ OPT_KEY( RealVector, kT_list )
 OPT_KEY( RealVector, ST_weight_list )
 OPT_KEY( Real, exchange_rate )
 
-static const scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
+static const chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 static numeric::random::RandomGenerator RG(245075);  // <- Magic number, do not change it!
 
 
@@ -166,7 +166,7 @@ read_scores( utility::vector1 < RNA_scores > & scores, std::string const & in_na
 utility::vector1< Real >
 get_suite_ideal_A_form_torsions(){
 
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	static utility::vector1< Real >  ideal_A_form_torsions;
 	if (ideal_A_form_torsions.size() == 0) {
@@ -187,7 +187,7 @@ apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
 													Size const moving_res){
 
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	Real delta, nu2, nu1;
 	if (torsion_set[1] < 115) { //North pucker, [6] is delta angle (only pick one of the two states)
@@ -213,7 +213,7 @@ apply_suite_torsion( utility::vector1< Real > const & torsion_set,
 											bool const sample_3prime_pucker = true){
 
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	pose.set_torsion( TorsionID( moving_suite, id::BB, 5 ), torsion_set[1] );   //epsilon
 	pose.set_torsion( TorsionID( moving_suite, id::BB, 6 ), torsion_set[2] );   //zeta
@@ -255,7 +255,7 @@ setup_one_chain_pose ( pose::Pose & pose, bool is_virtualize = true ) {
 	using namespace id;
 	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
@@ -293,7 +293,7 @@ initialize_o2star_pack( pose::Pose const & pose,
 	using namespace pack;
 	using namespace pack::task;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		o2star_pack_task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
@@ -442,14 +442,14 @@ void
 one_chain_MC_sampling(){
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
 	using namespace pack;
 	using namespace pack::task;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	Pose pose, pose_full, lowest_pose;
 	Real lowest_score = 9999;
@@ -669,14 +669,14 @@ void
 one_chain_ST_MC () {
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
 	using namespace pack;
 	using namespace pack::task;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	Pose pose, pose_full, lowest_pose;
 	Real lowest_score = 9999;
@@ -887,14 +887,14 @@ void
 one_chain_SWA_cluster(){
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
 	using namespace pack;
 	using namespace pack::task;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	//////////////////////
 	//SWA cluster centers
@@ -1285,14 +1285,14 @@ void
 one_chain_torsion_cluster(){
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
 	using namespace pack;
 	using namespace pack::task;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 
 	//Initialize one_chain_torsion_clustering
@@ -1569,14 +1569,14 @@ void
 unpack_binary () {
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
 	using namespace pack;
 	using namespace pack::task;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	std::string const outfile = option[ out::file::o ] ();
 	std::string const infile  = option[  in::file::s ] () [1];

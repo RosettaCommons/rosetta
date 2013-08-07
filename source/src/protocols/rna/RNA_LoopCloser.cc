@@ -16,7 +16,7 @@
 // AUTO-REMOVED #include <protocols/rna/RNA_Minimizer.hh>
 // AUTO-REMOVED #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
@@ -233,7 +233,6 @@ RNA_LoopCloser::check_closure( core::pose::Pose & pose, Real ccd_tolerance )
 Real
 RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Size > const & connections, Size const & cutpoint ) const
 {
-	using namespace core::scoring::rna;
 	using namespace core::id;
 
 	if ( !input_pose.residue( cutpoint ).is_RNA() ||
@@ -287,18 +286,18 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 	// This is totally hard-wired and hacky -- should be easy to fix though.
 		f.new_jump( 1, 4, 1 );
 		f.set_jump_atoms( 1,
-											core::scoring::rna::chi1_torsion_atom( pose.residue(1) ),
-											core::scoring::rna::chi1_torsion_atom( pose.residue(4) )   );
+											core::chemical::rna::chi1_torsion_atom( pose.residue(1) ),
+											core::chemical::rna::chi1_torsion_atom( pose.residue(4) )   );
 		f.new_jump( 2, 3, 2 );
 		f.set_jump_atoms( 2,
-											core::scoring::rna::chi1_torsion_atom( pose.residue(2) ),
-											core::scoring::rna::chi1_torsion_atom( pose.residue(3) )   );
+											core::chemical::rna::chi1_torsion_atom( pose.residue(2) ),
+											core::chemical::rna::chi1_torsion_atom( pose.residue(3) )   );
 
 	} else {
 		f.new_jump( 1, 2, 1 );
 		f.set_jump_atoms( 1,
-											core::scoring::rna::chi1_torsion_atom( pose.residue(1) ),
-											core::scoring::rna::chi1_torsion_atom( pose.residue(2) )   );
+											core::chemical::rna::chi1_torsion_atom( pose.residue(1) ),
+											core::chemical::rna::chi1_torsion_atom( pose.residue(2) )   );
 	}
 
 	pose.fold_tree( f );
@@ -553,7 +552,7 @@ RNA_LoopCloser::setup_variants_at_extra_cutpoints( pose::Pose & pose, utility::v
 		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos+1 );
 
 		for (Size i = cutpos; i <= cutpos + 1; i++ ){
-			for (Size j = 1; j <= scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
+			for (Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
 				id::TorsionID torsion_id( i, id::BB, j );
 				pose.set_torsion( torsion_id, pose_copy.torsion( torsion_id ) ) ;
 			} // j
@@ -577,7 +576,7 @@ RNA_LoopCloser::remove_variants_at_extra_cutpoints( pose::Pose & pose, utility::
 		core::pose::remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos+1 );
 
 		for (Size i = cutpos; i <= cutpos + 1; i++ ){
-			for (Size j = 1; j <= scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
+			for (Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
 				id::TorsionID torsion_id( i, id::BB, j );
 				pose.set_torsion( torsion_id, pose_copy.torsion( torsion_id ) ) ;
 			} // j

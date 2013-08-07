@@ -32,7 +32,7 @@
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/scoring/rna/RNA_ScoringUtil.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -1034,7 +1034,7 @@ RNA_LowResolutionPotential::eval_rna_base_pair_energy_one_way(
 	Size const j( res_j.seqpos() );
 
 	// Zero out these arrays for the residue pair of interest.
-	for (Size k = 1; k <= rna::NUM_EDGES; k++ ){
+	for (Size k = 1; k <= NUM_EDGES; k++ ){
 	  base_pair_array( i, j, k ) = 0.0;
 	  base_axis_array( i, j, k ) = 0.0;
 	  base_stagger_array( i, j, k ) = 0.0;

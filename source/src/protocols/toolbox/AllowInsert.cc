@@ -25,7 +25,7 @@
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/scoring/rna/RNA_Util.hh> // for information on phosphate atoms.
+#include <core/chemical/rna/RNA_Util.hh> // for information on phosphate atoms.
 
 #include <utility/exit.hh>
 
@@ -239,7 +239,7 @@ namespace toolbox{
 			set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( " P  ", i ), pose ) ), setting );
 		} else {
 
-			utility::vector1< std::string > const & atoms_involved = core::scoring::rna::get_atoms_involved_in_phosphate_torsion();
+			utility::vector1< std::string > const & atoms_involved = core::chemical::rna::atoms_involved_in_phosphate_torsion;
 			for ( Size n = 1; n <= atoms_involved.size(); n++ ){
 				set_domain( AtomID( named_atom_id_to_atom_id( NamedAtomID( atoms_involved[ n ], i ), pose ) ), setting );
 			}

@@ -29,7 +29,7 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 //////////////////////////////////
 #include <core/types.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -43,7 +43,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
@@ -257,7 +257,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	core::Real delta_pucker;
 	core::Real nu2_pucker;
 	core::Real nu1_pucker;
-	core::scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
+	core::chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 
 
 	RNA_LoopCloseSampler rna_loop_close_sampler ( moving_suite, cutpoint_closed );
@@ -332,7 +332,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 			if ( allow_syn_pyrimidine_ ) {
 				base_state = BOTH;
 			} else {
-				base_state = ( core::scoring::rna::is_purine ( pose.residue ( moving_res ) ) ) ? BOTH : ANTI;
+				base_state = ( core::chemical::rna::is_purine ( pose.residue ( moving_res ) ) ) ? BOTH : ANTI;
 			}
 			PuckerState pucker_state;
 			if ( pucker_id == 0 ) {

@@ -24,7 +24,7 @@
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/util.hh>

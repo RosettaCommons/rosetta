@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_swa_monte_carlo_RNA_TorsionMover_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/swa/monte_carlo/types.hh>
@@ -111,7 +111,7 @@ private:
 private:
 
 	Size default_sample_range_;
-	core::scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info_;
+	core::chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info_;
 
 };
 

@@ -44,7 +44,7 @@
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 
@@ -129,9 +129,8 @@ RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string tag ) 
 			non_main_chain_sugar_coords_defined_ = true;
 			kinematics::Stub const input_stub( resi.xyz( " C3'" ), resi.xyz( " C3'" ), resi.xyz( " C4'" ), resi.xyz( " C5'" ) );
 			utility::vector1< Vector > vecs;
-			scoring::rna::initialize_non_main_chain_sugar_atoms();
-			for (Size n = 1; n <= scoring::rna::non_main_chain_sugar_atoms.size(); n++  ) {
-				Vector v = input_stub.global2local( resi.xyz( scoring::rna::non_main_chain_sugar_atoms[ n ] ) );
+			for (Size n = 1; n <= chemical::rna::non_main_chain_sugar_atoms.size(); n++  ) {
+				Vector v = input_stub.global2local( resi.xyz( chemical::rna::non_main_chain_sugar_atoms[ n ] ) );
 				vecs.push_back( v );
 			}
 			non_main_chain_sugar_coords_[i] = vecs;
@@ -293,12 +292,12 @@ bool RNA_SilentStruct::init_from_lines(
 			//  since we'll eventually need to use RNA (or protein) .params files
 			//  to create the pose, couldn't we look up the residue
 			//  and figure out how many torsions are required?
-			for ( Size n = 1; n <= core::scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ){
+			for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ){
 				line_stream	>> torsion_value;
 				temp_mainchain_torsions.push_back( torsion_value  );
 			}
 			if (fullatom_) {
-				for ( Size n = 1; n <= core::scoring::rna::NUM_RNA_CHI_TORSIONS; n++ ){
+				for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; n++ ){
 					line_stream	>> torsion_value;
 					temp_chi_torsions.push_back( torsion_value  );
 				}
@@ -416,7 +415,7 @@ void RNA_SilentStruct::fill_pose(
 		//  since we'll eventually need to use RNA (or protein) .params files
 		//  to create the pose, couldn't we look up the residue
 		//  and figure out how many torsions are required?
-		for ( Size n = 1; n <= core::scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ){
+		for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ){
 			id::TorsionID rna_torsion_id( seqpos, id::BB, n );
 			//			std::cout << rna_torsion_id << " " << mainchain_torsions_[ seqpos ][n ] << std::endl;
 			pose.set_torsion( rna_torsion_id,
@@ -425,7 +424,7 @@ void RNA_SilentStruct::fill_pose(
 
 
 		if (fullatom_) {
-			for ( Size n = 1; n <= core::scoring::rna::NUM_RNA_CHI_TORSIONS; n++ ){
+			for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; n++ ){
 				id::TorsionID rna_torsion_id( seqpos, id::CHI, n );
 				pose.set_torsion( rna_torsion_id,
 													chi_torsions_[seqpos][n] );
@@ -442,7 +441,7 @@ void RNA_SilentStruct::fill_pose(
 
 		pose::Pose const & reference_pose = pose; /*try to avoid refolds*/
 		for ( Size seqpos = 1; seqpos <= nres(); ++seqpos ) {
-			scoring::rna::apply_non_main_chain_sugar_coords( non_main_chain_sugar_coords_[ seqpos ], pose, reference_pose, seqpos );
+			chemical::rna::apply_non_main_chain_sugar_coords( non_main_chain_sugar_coords_[ seqpos ], pose, reference_pose, seqpos );
 		}
 	}
 
@@ -477,11 +476,11 @@ void RNA_SilentStruct::print_conformation( std::ostream & output ) const {
 		output << I( 4, i ) << ' '
 					 << this_secstr << ' ';
 
-		for ( Size n = 1; n <= core::scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ){
+		for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ){
 			output << F( 9, 3, mainchain_torsions_[i][n] );
 		}
 		if ( fullatom_ ) {
-			for ( Size n = 1; n <= core::scoring::rna::NUM_RNA_CHI_TORSIONS; n++ ){
+			for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; n++ ){
 				output << F( 9, 3, chi_torsions_[i][n] );
 			}
 		}

@@ -61,13 +61,14 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CharmmPeriodicFunc.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/import_pose/import_pose.hh>
@@ -234,10 +235,9 @@ OPT_KEY ( Boolean, force_centroid_interaction )
 void apply_chi_cst( core::pose::Pose & pose, core::pose::Pose const & ref_pose ) {
 	using namespace core::conformation;
 	using namespace core::id;
-	using namespace core::scoring;
-	using namespace core::scoring::rna;
 	using namespace core::scoring::constraints;
 	using namespace core::chemical;
+	using namespace core::chemical::rna;
 
 	Size const nres = pose.total_residue();
 	ConstraintSetOP cst_set = new ConstraintSet;
@@ -271,7 +271,7 @@ get_working_directory() {
 	std::stringstream ss;
 	ss << cCurrentPath;
 	ss >> current_directory_string;
-	std::cout << "current_directory = " << current_directory_string << std::endl;
+	//std::cout << "current_directory = " << current_directory_string << std::endl;
 	return current_directory_string;
 }
 

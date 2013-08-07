@@ -16,7 +16,7 @@
 
 // Unit Headers
 #include <core/scoring/rna/RNA_TorsionPotential.fwd.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
 // Project Headers
 #include <core/types.hh>

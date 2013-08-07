@@ -17,7 +17,6 @@
 #include <protocols/rna/RNA_DataReader.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
 
 // Package Headers
 #include <core/pose/Pose.hh>
@@ -83,10 +82,7 @@ RNA_DataReader::initialize(
 void
 RNA_DataReader::read_burial_info( std::istringstream & line_stream, ObjexxFCL::FArray1D< bool > & array_to_fill ) {
 
-	using namespace core::scoring::rna;
-
 	Size pos( 0 );
-
 
 	while ( !line_stream.fail() ) {
 

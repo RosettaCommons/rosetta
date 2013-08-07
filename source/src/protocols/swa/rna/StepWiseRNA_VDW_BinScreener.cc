@@ -20,7 +20,7 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
 #include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 //////////////////////////////////
@@ -135,7 +135,7 @@ namespace rna {
 
 		Size const reference_res( job_parameters->working_reference_res() ); //the last static_residues that this attach to the moving residues
 
-		numeric::xyzVector< core::Real > const reference_xyz = core::scoring::rna::get_rna_base_centroid( const_working_pose.residue( reference_res ), false /*verbose*/ );
+		numeric::xyzVector< core::Real > const reference_xyz = core::chemical::rna::get_rna_base_centroid( const_working_pose.residue( reference_res ), false /*verbose*/ );
 
 
 		pose::Pose working_pose = const_working_pose; //Feb 20, 2011..just to make sure that the o2star hydrogens are virtualized. Since this hydrogen can vary during sampling.
@@ -775,7 +775,7 @@ namespace rna {
 		TR << "Get reference xyz: " << std::endl;
 		TR << "working_reference_res = " << reference_res << std::endl;
 
-		numeric::xyzVector< core::Real > const reference_xyz = core::scoring::rna::get_rna_base_centroid( const_working_pose.residue( reference_res ), true );
+		numeric::xyzVector< core::Real > const reference_xyz = core::chemical::rna::get_rna_base_centroid( const_working_pose.residue( reference_res ), true );
 		TR << "--------------------------------------------------------" << std::endl;
 
 		create_VDW_screen_bin( VDW_rep_screen_info_list_, reference_xyz, false /*verbose*/ );

@@ -29,7 +29,7 @@
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
 
 //Mmmm.. constraints.
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>

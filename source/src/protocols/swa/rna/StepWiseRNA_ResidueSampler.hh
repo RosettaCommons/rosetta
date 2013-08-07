@@ -22,7 +22,7 @@
 //#include <numeric/xyzVector.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_VirtualRiboseSampler.hh>
-#include <protocols/swa/rna/FloatingBaseChainClosureJobParameter.hh>>
+#include <protocols/swa/rna/FloatingBaseChainClosureJobParameter.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>

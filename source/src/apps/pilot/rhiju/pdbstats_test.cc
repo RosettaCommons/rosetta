@@ -17,7 +17,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
@@ -637,7 +637,7 @@ get_ring_centroids_and_stubs( core::conformation::Residue const & rsd,
 															utility::vector1< core::kinematics::Stub > & ring_stubs ){
 
 	using namespace core::chemical;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::kinematics;
 
 	ring_centroids.clear();
@@ -688,7 +688,7 @@ rna_stack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 	using namespace core::kinematics;
 	using namespace core::scoring;
 	using namespace protocols::rna;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	Size const nres = pose.total_residue();
 

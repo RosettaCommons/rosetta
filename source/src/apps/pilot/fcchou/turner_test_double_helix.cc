@@ -27,10 +27,10 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <protocols/rna/RNA_SuiteAssign.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -128,7 +128,7 @@ OPT_KEY( String,  reference_rigid_body_samples_fixed_pair )
 OPT_KEY( RealVector, kT_list )
 OPT_KEY( RealVector, ST_weight_list )
 
-static const scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
+static const chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 static numeric::random::RandomGenerator RG(5075);  // <- Magic number, do not change it!
 
 typedef std::pair< unsigned int, float[4]> RNA_scores; //count, total_score, hbond_sc, fa_stack, rna_torsion
@@ -161,7 +161,7 @@ read_scores( utility::vector1 < RNA_scores > & scores, std::string const & in_na
 utility::vector1< Real >
 get_suite_ideal_A_form_torsions(){
 
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	static utility::vector1< Real >  ideal_A_form_torsions;
 	if (ideal_A_form_torsions.size() == 0) {
@@ -191,7 +191,7 @@ apply_suite_torsions( utility::vector1< Real > const & torsion_set,
 											bool const sample_3prime_pucker = true){
 
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	pose.set_torsion( TorsionID( moving_suite, id::BB, 5 ), torsion_set[1] );   //epsilon
 	pose.set_torsion( TorsionID( moving_suite, id::BB, 6 ), torsion_set[2] );   //zeta
@@ -232,7 +232,7 @@ initialize_o2star_pack( pose::Pose const & pose,
 	using namespace pack;
 	using namespace pack::task;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		o2star_pack_task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
@@ -421,7 +421,7 @@ setup_double_helix_pose ( pose::Pose & pose){
 	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace optimization;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -438,8 +438,8 @@ setup_double_helix_pose ( pose::Pose & pose){
 	FoldTree f( n_res );
 	f.new_jump( 1, n_res, chain_len );
 	f.set_jump_atoms( 1,
-										scoring::rna::chi1_torsion_atom( pose.residue( 1 ) ),
-										scoring::rna::chi1_torsion_atom( pose.residue( n_res ) )   );
+										chemical::rna::chi1_torsion_atom( pose.residue( 1 ) ),
+										chemical::rna::chi1_torsion_atom( pose.residue( n_res ) )   );
 	pose.fold_tree( f );
 
 	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
@@ -611,14 +611,14 @@ void
 double_helix_test(){
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
 	using namespace pack;
 	using namespace pack::task;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	std::string output_pdb = option[out_pdb] ();
 
@@ -834,14 +834,14 @@ void
 helix_ST(){
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
 	using namespace pack;
 	using namespace pack::task;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	std::string output_pdb = option[out_pdb] ();
 
@@ -1082,14 +1082,14 @@ void
 minimize_and_score () {
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
 	using namespace pack;
 	using namespace pack::task;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	//Setup scoring function
 	std::string const force_field_name = option[force_field];

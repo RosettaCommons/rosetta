@@ -38,7 +38,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <numeric/conversions.hh>
@@ -260,7 +260,7 @@ namespace swa {
 		using namespace core::pose;
 		using namespace core::chemical;
 		using namespace core::conformation;
-		using namespace core::scoring::rna;
+		using namespace core::chemical::rna;
 
 		new_pose.clear();
 

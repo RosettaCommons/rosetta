@@ -22,8 +22,8 @@
 #include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
@@ -239,7 +239,7 @@ namespace rna {
 
 		clock_t const time_start( clock() );
 
-		core::scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+		core::chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
 		utility::vector1< FB_Pose_Data > pose_data_list; //This is the output pose_data_list;
 
@@ -511,7 +511,7 @@ namespace rna {
 		using namespace core::scoring;
 		using namespace ObjexxFCL;
 
-		core::scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+		core::chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
 		viewer_pose = ( *pose_data_list[1].pose_OP );
 		pose::Pose screening_pose = viewer_pose;
@@ -1070,8 +1070,8 @@ namespace rna {
 		//////////////////////////////////////////////////////////////////////create_VDW_screen_bin//////////////////////////////////////////////////////////////////////////////////////////
 
 		core::kinematics::Stub reference_stub;
-		reference_stub.v = core::scoring::rna::get_rna_base_centroid(  input_pose.residue( FB_job_params.reference_res ), true );
-		reference_stub.M = core::scoring::rna::get_rna_base_coordinate_system( input_pose.residue( FB_job_params.reference_res ), reference_stub.v );
+		reference_stub.v = core::chemical::rna::get_rna_base_centroid(  input_pose.residue( FB_job_params.reference_res ), true );
+		reference_stub.M = core::chemical::rna::get_rna_base_coordinate_system( input_pose.residue( FB_job_params.reference_res ), reference_stub.v );
 
 
 		utility::vector1 < core::Size > ignore_res_list;

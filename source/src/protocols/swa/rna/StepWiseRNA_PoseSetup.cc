@@ -27,7 +27,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -696,7 +696,7 @@ namespace rna {
 			print_backbone_torsions( pose, cutpos + 1 );
 
 			for ( Size i = cutpos; i <= cutpos + 1; i++ ){
-				for ( Size j = 1; j <= scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
+				for ( Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
 					id::TorsionID torsion_id( i, id::BB, j );
 					pose.set_torsion( torsion_id, pose_without_cutpoints.torsion( torsion_id ) ); //This makes sure that the chain_break torsions have the correct value
 				} // j
@@ -791,7 +791,7 @@ namespace rna {
 		using namespace core::conformation;
 		using namespace core::id;
 		using namespace core::scoring::constraints;
-		using namespace core::scoring::rna;
+		using namespace core::chemical::rna;
 
 		ConstraintSetOP cst_set( pose.constraint_set()->clone() );
 		assert( cst_set );

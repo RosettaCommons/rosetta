@@ -18,7 +18,7 @@
 // Unit Headers
 #include <core/scoring/rna/RNA_Mg_KnowledgeBasedPotential.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/rna/Gaussian_parameter.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
 // Package headers
 
@@ -29,6 +29,8 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
+
+using namespace core::chemical::rna;
 
 namespace core {
 namespace scoring {
@@ -41,50 +43,50 @@ public:
 	/// @brief ctor, reads data file
 	RNA_Mg_KnowledgeBasedPotential();
 
-	Gaussian_parameter
+	GaussianParameter
 	get_mg_potential_gaussian_parameter( core::conformation::Residue const & rsd, Size const j, bool & is_phosphate_oxygen ) const;
 
-	Gaussian_parameter
+	GaussianParameter
 	get_mg_potential_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const;
 
-	Gaussian_parameter
+	GaussianParameter
 	get_mg_potential_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const;
 
 	void setup_info_for_mg_calculation( core::pose::Pose & pose ) const;
 
-	Gaussian_parameter
+	GaussianParameter
 	get_mg_potential_costheta_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const;
 
-	Gaussian_parameter
+	GaussianParameter
 	get_mg_potential_costheta_indirect_gaussian_parameter( core::conformation::Residue const & rsd, Size const j ) const;
 
 private: //data
 
-	Gaussian_parameter const gaussian_parameter_phosphate_oxygen_;
-	Gaussian_parameter const gaussian_parameter_imine_           ;
-	Gaussian_parameter const gaussian_parameter_exocyclic_oxygen_;
-	Gaussian_parameter const gaussian_parameter_o2star_          ;
+	GaussianParameter const gaussian_parameter_phosphate_oxygen_;
+	GaussianParameter const gaussian_parameter_imine_           ;
+	GaussianParameter const gaussian_parameter_exocyclic_oxygen_;
+	GaussianParameter const gaussian_parameter_o2star_          ;
 
-	Gaussian_parameter const gaussian_parameter_phosphate_p_     ;
-	Gaussian_parameter const gaussian_parameter_polar_H_         ;
-	Gaussian_parameter const gaussian_parameter_nonpolar_H_         ;
+	GaussianParameter const gaussian_parameter_phosphate_p_     ;
+	GaussianParameter const gaussian_parameter_polar_H_         ;
+	GaussianParameter const gaussian_parameter_nonpolar_H_         ;
 
-	Gaussian_parameter const gaussian_parameter_phosphate_oxygen_indirect_;
-	Gaussian_parameter const gaussian_parameter_imine_indirect_           ;
-	Gaussian_parameter const gaussian_parameter_exocyclic_oxygen_indirect_;
-	Gaussian_parameter const gaussian_parameter_o2star_indirect_          ;
+	GaussianParameter const gaussian_parameter_phosphate_oxygen_indirect_;
+	GaussianParameter const gaussian_parameter_imine_indirect_           ;
+	GaussianParameter const gaussian_parameter_exocyclic_oxygen_indirect_;
+	GaussianParameter const gaussian_parameter_o2star_indirect_          ;
 
-	Gaussian_parameter const gaussian_parameter_costheta_phosphate_oxygen_;
-	Gaussian_parameter const gaussian_parameter_costheta_imine_           ;
-	Gaussian_parameter const gaussian_parameter_costheta_exocyclic_oxygen_;
-	Gaussian_parameter const gaussian_parameter_costheta_o2star_          ;
-	Gaussian_parameter const gaussian_parameter_costheta_polar_H_          ;
-	Gaussian_parameter const gaussian_parameter_costheta_nonpolar_H_          ;
+	GaussianParameter const gaussian_parameter_costheta_phosphate_oxygen_;
+	GaussianParameter const gaussian_parameter_costheta_imine_           ;
+	GaussianParameter const gaussian_parameter_costheta_exocyclic_oxygen_;
+	GaussianParameter const gaussian_parameter_costheta_o2star_          ;
+	GaussianParameter const gaussian_parameter_costheta_polar_H_          ;
+	GaussianParameter const gaussian_parameter_costheta_nonpolar_H_          ;
 
-	Gaussian_parameter const gaussian_parameter_costheta_phosphate_oxygen_indirect_;
-	Gaussian_parameter const gaussian_parameter_costheta_imine_indirect_           ;
-	Gaussian_parameter const gaussian_parameter_costheta_exocyclic_oxygen_indirect_;
-	Gaussian_parameter const gaussian_parameter_costheta_o2star_indirect_          ;
+	GaussianParameter const gaussian_parameter_costheta_phosphate_oxygen_indirect_;
+	GaussianParameter const gaussian_parameter_costheta_imine_indirect_           ;
+	GaussianParameter const gaussian_parameter_costheta_exocyclic_oxygen_indirect_;
+	GaussianParameter const gaussian_parameter_costheta_o2star_indirect_          ;
 
 	};
 

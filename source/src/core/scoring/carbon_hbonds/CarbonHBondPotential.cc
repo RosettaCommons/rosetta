@@ -14,7 +14,7 @@
 
 // Unit Headers
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.hh>
-#include <core/scoring/rna/RNA_Util.hh> // for get_fade_correction
+#include <core/scoring/rna/RNA_ScoringUtil.hh> // for get_fade_correction
 
 // Package headers
 

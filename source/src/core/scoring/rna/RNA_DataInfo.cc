@@ -19,7 +19,7 @@
 // AUTO-REMOVED #include <core/scoring/rna/RNA_DataInfo.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
 
 // Project headers
 // AUTO-REMOVED #include <core/chemical/AA.hh>

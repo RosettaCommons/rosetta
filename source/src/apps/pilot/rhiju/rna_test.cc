@@ -30,10 +30,10 @@
 #include <core/scoring/geometric_solvation/GeometricSolEnergy.hh>
 #include <core/scoring/geometric_solvation/GeometricSolEnergyCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/sasa.hh>
@@ -386,7 +386,7 @@ figure_out_icoord_test( ){
 	start_pose = pose;
 
 	//Hmm, do I understand how to address the atom tree degrees of freedom?
-	for (Size j=1; j <= core::scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+	for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
 
 		pose = start_pose;
 
@@ -411,7 +411,7 @@ figure_out_icoord_test( ){
 	}
 
 
-	for (Size j=1; j <= core::scoring::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+	for (Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
 
 		pose = start_pose;
 
@@ -1458,11 +1458,11 @@ print_internal_coord_test()
 
 
 	//	 f.set_jump_atoms( 1,
-	//										 core::scoring::rna::chi1_torsion_atom( pose.residue( start ) ),
-	//										 core::scoring::rna::chi1_torsion_atom( pose.residue( end ) ) );
+	//										 core::chemical::rna::chi1_torsion_atom( pose.residue( start ) ),
+	//										 core::chemical::rna::chi1_torsion_atom( pose.residue( end ) ) );
 
 	//	 f.set_jump_atoms( 1,
-	//										 core::scoring::rna::chi1_torsion_atom( pose.residue( end ) ),
+	//										 core::chemical::rna::chi1_torsion_atom( pose.residue( end ) ),
 	//										 " O2'" );
 
 	f.set_jump_atoms( 1, " Y  ", " Y  " );
@@ -1530,13 +1530,13 @@ set_ideal_geometry( pose::Pose & pose, pose::Pose const & extended_pose, chemica
 
 		pose = ideal_pose;
 		for ( Size i = 1; i <= pose.total_residue(); i++ ){
-			for (Size j=1; j <= core::scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+			for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
 				id::TorsionID my_ID( i, id::BB, j );
 				pose.set_torsion( my_ID, extended_pose.torsion( my_ID ) );
 			}
 
 			//Is it really necessary to hard code 6 backbone torsion angles and 4 chi angles?
-			for (Size j=1; j <= core::scoring::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+			for (Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
 				id::TorsionID my_ID( i, id::CHI, j );
 				pose.set_torsion( my_ID, extended_pose.torsion( my_ID ) );
 			}
@@ -1552,13 +1552,13 @@ set_ideal_geometry( pose::Pose & pose, pose::Pose const & extended_pose, chemica
 void
 copy_rna_torsions( Size const new_pos, Size const src_pos, pose::Pose & new_pose, pose::Pose & src_pose)
 {
-	for (Size j=1; j <= core::scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+	for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
 		id::TorsionID    my_ID( new_pos, id::BB, j );
 		id::TorsionID input_ID( src_pos, id::BB, j );
 		new_pose.set_torsion( my_ID, src_pose.torsion( input_ID ) );
 	}
 
-	for (Size j=1; j <= core::scoring::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+	for (Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
 		id::TorsionID    my_ID(  new_pos, id::CHI, j );
 		id::TorsionID input_ID(  src_pos, id::CHI, j );
 		new_pose.set_torsion( my_ID, src_pose.torsion( input_ID ) );
@@ -1679,8 +1679,8 @@ rna_assemble_test() {
 			conformation::Residue const & rsd1( pose.residue(jump1) );
 			conformation::Residue const & rsd2( pose.residue(jump2) );
 			f.set_jump_atoms( initial_num_jump + m,
-												core::scoring::rna::chi1_torsion_atom( rsd1 ),
-												core::scoring::rna::chi1_torsion_atom( rsd2 ) );
+												core::chemical::rna::chi1_torsion_atom( rsd1 ),
+												core::chemical::rna::chi1_torsion_atom( rsd2 ) );
 		}
 		pose.fold_tree( f );
 
@@ -1820,12 +1820,12 @@ print_torsions_check( pose::Pose & pose )
 {
 	for (Size i = 1 ; i < pose.total_residue(); i ++ ) {
 		std::cout << "POSITION " << I(3,i);
-		for (Size j=1; j <= core::scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+		for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
 			id::TorsionID    my_ID( i, id::BB, j );
 			std::cout << " BB" << j << " " << F(8,3,pose.torsion(my_ID) ) << ";";
 		}
 
-		for (Size j=1; j <= core::scoring::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+		for (Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
 			id::TorsionID    my_ID(  i, id::CHI, j );
 			std::cout << " CHI" << j << " " << F(8,3,pose.torsion(my_ID) ) << ";";
 		}
@@ -1930,7 +1930,7 @@ rna_close_chainbreaks_test(){
 
 	// Copy bb torsions over.
 	for (Size i = 1; i <= pose.total_residue(); i++ ) {
-		for (Size j = 1; j <= scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
+		for (Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
 			id::TorsionID torsion_id( i, id::BB, j );
 			pose.set_torsion( torsion_id, start_pose.torsion( torsion_id ) ) ;
 		}
@@ -2047,7 +2047,7 @@ Size
 is_regular_helix( pose::Pose const & pose,
 									Size const & seqpos ){
 
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::chemical;
 	using namespace core::conformation;
 
@@ -2459,7 +2459,7 @@ create_rna_benchmark_test(){
 	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 
 	// hmmm.
 	using namespace benchmark_ns;
@@ -2542,7 +2542,7 @@ rna_chain_closure_test()
 {
 	using namespace chemical;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -2566,15 +2566,15 @@ rna_chain_closure_test()
 	kinematics::FoldTree f( pose.total_residue() );
 	f.new_jump( cutpoint, cutpoint+1, cutpoint );
 	f.set_jump_atoms( 1,
-										core::scoring::rna::chi1_torsion_atom( pose.residue( cutpoint) ),
-										core::scoring::rna::chi1_torsion_atom( pose.residue( cutpoint+1) )   );
+										core::chemical::rna::chi1_torsion_atom( pose.residue( cutpoint) ),
+										core::chemical::rna::chi1_torsion_atom( pose.residue( cutpoint+1) )   );
 	pose.fold_tree( f );
 
 	add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpoint );
 	add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpoint+1 );
 
 	for (Size i = cutpoint; i <= cutpoint+1; i++ ){
-		for (Size j=1; j <= core::scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+		for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
 			id::TorsionID my_ID( i, id::BB, j );
 			pose.set_torsion( my_ID, start_pose.torsion( my_ID ) );
 		}
@@ -2622,7 +2622,7 @@ setup_crazy_fold_tree( pose::Pose & pose, core::chemical::ResidueTypeSetCAP & rs
 {
 	using namespace chemical;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::conformation;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -2654,7 +2654,7 @@ setup_crazy_fold_tree( pose::Pose & pose, core::chemical::ResidueTypeSetCAP & rs
 	for (Size n = 1; n <= num_jumps; n++ ){
 		f.set_jump_atoms( n,
 											"ORIG",
-											core::scoring::rna::chi1_torsion_atom( pose.residue( n ) )   );
+											core::chemical::rna::chi1_torsion_atom( pose.residue( n ) )   );
 
 	}
 
@@ -2675,7 +2675,7 @@ rna_backbone_rebuild_test()
 {
 	using namespace chemical;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::conformation;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -2736,7 +2736,7 @@ rna_backbone_rebuild_test()
 		Real val( 0.0 );
 		line_stream >> dummychar;
 		utility::vector1 < Real > torsion_set;
-		for (Size i = 1; i <= core::scoring::rna::NUM_RNA_TORSIONS; i++ ) {
+		for (Size i = 1; i <= core::chemical::rna::NUM_RNA_TORSIONS; i++ ) {
 			line_stream  >> val;
 			torsion_set.push_back( val );
 		}
@@ -2883,7 +2883,7 @@ rna_filter_base_pairs_test()
 {
 	using namespace chemical;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::conformation;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -3340,7 +3340,7 @@ get_backbone_rotamers( utility::vector1< utility::vector1 <Real > > & backbone_r
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+	chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
 	utility::vector1< Real > torsion_samples;
 	if ( option[ more_rotamers ] ) {
@@ -3355,7 +3355,7 @@ get_backbone_rotamers( utility::vector1< utility::vector1 <Real > > & backbone_r
 	Real delta1, nu2_1, nu1_1, epsilon1, zeta1;
 	Real alpha2, beta2, gamma2, delta2, nu2_2, nu1_2;
 
-	scoring::rna::Gaussian_parameter gp( 0.0, 0.0, 0.0);
+	chemical::rna::GaussianParameter gp( 0.0, 0.0, 0.0);
 
 	for (int d1 = 1; d1 <= 2; d1++ ) {
 
@@ -3512,7 +3512,7 @@ dinucleotide_test()
 																					*rsd_set );
 	dump_pdb( pose, "start.pdb" );
 
-	scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+	chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 	for (Size i = 1; i <=2; i++ ) { // starting values for torsions.
 
 		pose.set_torsion( TorsionID( i, id::BB, 1 ), rna_fitted_torsion_info.gaussian_parameter_set_alpha()[1].center );
@@ -3638,7 +3638,7 @@ void vary_geometry_RNA( pose::Pose & pose, kinematics::MoveMap & mm )
 
 	using namespace core::id;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::scoring::constraints;
 
 	ConstraintSetOP cst_set( 	pose.constraint_set()->clone() ) ;
@@ -3738,7 +3738,7 @@ build_next_nucleotide_test()
 
 	pose.replace_residue( which_res, *new_rsd, atom_pairs );
 
-	scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+	chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
 	pose.set_torsion( TorsionID( which_res, id::BB, 1 ), rna_fitted_torsion_info.gaussian_parameter_set_alpha()[1].center );
 	pose.set_torsion( TorsionID( which_res, id::BB, 2 ), rna_fitted_torsion_info.gaussian_parameter_set_beta()[1].center );
@@ -3869,11 +3869,11 @@ copy_rotamerized_torsions( pose::Pose & pose,
 													 pose::Pose & source_pose,
 													 Size const i,
 													 Size const rna_torsion_number,
-													 scoring::rna::Gaussian_parameter_set const & gaussian_parameter_set )
+													 chemical::rna::GaussianParameter_set const & gaussian_parameter_set )
 {
 
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -3937,9 +3937,9 @@ void
 rotamerize_structure( pose::Pose & pose, pose::Pose & source_pose )
 {
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 
-	scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+	chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
 	Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
 	Size const nres( pose.total_residue() );
@@ -3978,9 +3978,9 @@ rotamerize_structure( pose::Pose & pose, pose::Pose & source_pose )
 
 
 		if (delta <= DELTA_CUTOFF) { // North, or 3'-endo sugar pucker, favored by RNA.
-			copy_rotamerized_torsions( pose, source_pose, i, core::scoring::rna::CHI, rna_fitted_torsion_info.gaussian_parameter_set_chi_north());
+			copy_rotamerized_torsions( pose, source_pose, i, core::chemical::rna::CHI, rna_fitted_torsion_info.gaussian_parameter_set_chi_north());
 		} else { // South, or 2'-endo sugar pucker.
-			copy_rotamerized_torsions( pose, source_pose, i, core::scoring::rna::CHI, rna_fitted_torsion_info.gaussian_parameter_set_chi_south());
+			copy_rotamerized_torsions( pose, source_pose, i, core::chemical::rna::CHI, rna_fitted_torsion_info.gaussian_parameter_set_chi_south());
 		}
 
 		if (delta <= DELTA_CUTOFF) { // North, or 3'-endo sugar pucker, favored by RNA.
@@ -4015,7 +4015,7 @@ rotamerize_rna_test()
 	using namespace core::io::silent;
 	using namespace core::id;
 	using namespace protocols::rna;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -4185,7 +4185,7 @@ output_sugar_geometry_parameters(
 {
 
 	using namespace core::conformation;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	Size const nres ( pose.total_residue() );
 
 	for ( Size i = 1; i <= nres; i++ ) {
@@ -4312,7 +4312,7 @@ output_sugar_internal_dof( pose::Pose & pose, utility::vector1< std::string > co
 		for (Size n = 1; n <= sugar_atom_list.size(); n++ ) {
 
 			std::string atom_name(  sugar_atom_list[ n ] );
-			if ( atom_name == "BASE" ) atom_name = core::scoring::rna::first_base_atom( pose.residue(i) );
+			if ( atom_name == "BASE" ) atom_name = core::chemical::rna::first_base_atom( pose.residue(i) );
 
 			Size const j = rsd.atom_index( atom_name );
 
@@ -4344,11 +4344,11 @@ replace_torsion_angles( pose::Pose & extended_pose, pose::Pose & fixed_pose, pos
 	using namespace core::id;
 
 	for (Size i = 1; i <= pose.total_residue(); i++ ) {
-		for (Size j=1; j <= core::scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+		for (Size j=1; j <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
 			id::TorsionID my_ID( i, id::BB, j );
 			extended_pose.set_torsion( my_ID, pose.torsion( my_ID ) );
 		}
-		for (Size j=1; j <= core::scoring::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+		for (Size j=1; j <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
 			id::TorsionID my_ID( i, id::CHI, j );
 			extended_pose.set_torsion( my_ID, pose.torsion( my_ID ) );
 		}
@@ -4627,22 +4627,22 @@ sugar_frag_RNA_test()
 	kinematics::FoldTree f( pose.total_residue() );
 	f.new_jump(1,2,1);
 	f.set_jump_atoms( 1,
-										core::scoring::rna::chi1_torsion_atom( pose.residue( 1) ),
-										core::scoring::rna::chi1_torsion_atom( pose.residue( 2) )   );
+										core::chemical::rna::chi1_torsion_atom( pose.residue( 1) ),
+										core::chemical::rna::chi1_torsion_atom( pose.residue( 2) )   );
 	pose.fold_tree( f );
 	std::cout << f << std::endl;
 
 	{
 		pose::Pose pose_temp = pose;
 		for( Size  n = 1; n <= pose.total_residue(); n++ )  {
-			scoring::rna::apply_ideal_c2endo_sugar_coords( pose_temp, n /*, true  */ );
+			chemical::rna::apply_ideal_c2endo_sugar_coords( pose_temp, n /*, true  */ );
 		}
 		pose_temp.dump_pdb( "final_WORKS.pdb" );
 	}
 	{
 		pose::Pose pose_temp = pose;
 		for( Size  n = 1; n <= pose.total_residue(); n++ )  {
-			scoring::rna::apply_ideal_c2endo_sugar_coords( pose_temp, n /*, false */ );
+			chemical::rna::apply_ideal_c2endo_sugar_coords( pose_temp, n /*, false */ );
 		}
 		pose_temp.dump_pdb( "final_NOWORKS.pdb" );
 	}
@@ -4721,7 +4721,7 @@ color_by_lj_base_RNA_test()
 	EtableOP etable_ptr
 		( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
 									EtableOptions() ) );
-	//	core::scoring::rna::RNA_LJ_BaseEnergy rna_lj_base_energy( *etable_ptr );
+	//	core::chemical::rna::RNA_LJ_BaseEnergy rna_lj_base_energy( *etable_ptr );
 
 	Pose pose;
 
@@ -4790,7 +4790,7 @@ rna_stats_test()
 		io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
 		protocols::rna::ensure_phosphate_nomenclature_matches_mini( pose );
 
-		utility::vector1< core::scoring::rna::Base_pair > base_pair_list;
+		utility::vector1< core::chemical::rna::Base_pair > base_pair_list;
 		utility::vector1< bool > is_bulged;
 		classify_base_pairs( pose, base_pair_list, is_bulged );
 
@@ -4965,7 +4965,7 @@ print_all_torsions_test(){
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose;
 	using namespace core::id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -4983,7 +4983,7 @@ print_all_torsions_test(){
 							<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, DELTA ) ) )
 							<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, EPSILON ) ) )
 							<< ' ' << F( 8, 3, pose.torsion( TorsionID( n, id::BB, ZETA ) ) )
-							<< "   " << F( 8, 3, pose.torsion( TorsionID( n, id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) )
+							<< "   " << F( 8, 3, pose.torsion( TorsionID( n, id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) )
 							<< std::endl;
 	}
 

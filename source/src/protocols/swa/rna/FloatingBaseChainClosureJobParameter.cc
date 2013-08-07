@@ -18,8 +18,8 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 
-#include <core/pose/Pose.hh>>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/pose/Pose.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 #include <core/types.hh>
 
@@ -93,14 +93,14 @@ namespace rna {
 			if (  ( JP->working_force_north_ribose_list() ).has_value( moving_res ) ) moving_res_pucker_state = NORTH;
 			if (  ( JP->working_force_south_ribose_list() ).has_value( moving_res ) ) moving_res_pucker_state = SOUTH;
 
-			moving_res_base_state = ( core::scoring::rna::is_purine( pose.residue( moving_res ) ) ) ? BOTH: ANTI;
+			moving_res_base_state = ( core::chemical::rna::is_purine( pose.residue( moving_res ) ) ) ? BOTH: ANTI;
 			if (  ( JP->working_force_syn_chi_res_list() ).has_value( moving_res ) ) moving_res_base_state = SYN;
 
 			bulge_res_pucker_state = ALL;
 			if (  ( JP->working_force_north_ribose_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = NORTH;
 			if (  ( JP->working_force_south_ribose_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = SOUTH;
 
-			bulge_res_base_state = ( core::scoring::rna::is_purine( pose.residue( bulge_res ) ) ) ? BOTH: ANTI;
+			bulge_res_base_state = ( core::chemical::rna::is_purine( pose.residue( bulge_res ) ) ) ? BOTH: ANTI;
 			if (  ( JP->working_force_syn_chi_res_list() ).has_value( bulge_res ) ) bulge_res_base_state = SYN;
 
 			////////////////////////Print data!////////////////////////////////////////

@@ -47,7 +47,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftPotential.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
@@ -1100,6 +1100,7 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 	if ( !get_native_pose() ) return;
 
 	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace conformation;
 
 	pose::Pose native_pose = *get_native_pose();

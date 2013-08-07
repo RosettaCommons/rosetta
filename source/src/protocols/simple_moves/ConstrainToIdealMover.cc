@@ -20,8 +20,8 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <protocols/toolbox/AllowInsert.hh> //need to move AllowInsert to toolbox XRW2
 
 #include <core/conformation/Residue.hh>
@@ -336,7 +336,7 @@ ConstrainToIdealMover::i_want_this_atom_to_move( core::conformation::Residue con
 {
 
 	if (k > residue2.first_sidechain_atom() &&
-		k != core::scoring::rna::first_base_atom_index( residue2 ) ) return false;
+		k != core::chemical::rna::first_base_atom_index( residue2 ) ) return false;
 
 	if ( residue2.is_virtual( k ) ) {
 		//		std::cout << "Is this virtual? " << residue2.atom_name( k ) << std::endl;
@@ -495,7 +495,7 @@ void
 apply_ideal_coordinates_for_alternative_pucker( core::pose::Pose const & pose, core::pose::Pose & pose_reference )
 {
 
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
 	core::Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );

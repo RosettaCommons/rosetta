@@ -38,7 +38,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.hh>

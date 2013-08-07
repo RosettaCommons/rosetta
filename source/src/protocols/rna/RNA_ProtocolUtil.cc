@@ -19,8 +19,8 @@
 #include <protocols/forge/methods/fold_tree_functions.hh>
 #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/Residue.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -111,7 +111,7 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 			continue;
 		}
 
-		if ( scoring::rna::is_rna_chainbreak( pose, i ) ){
+		if ( chemical::rna::is_rna_chainbreak( pose, i ) ){
 
 			//std::cout << "CHAINBREAK between " << i << " and " << i+1 << std::endl;
 
@@ -126,8 +126,8 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 			//f.set_jump_atoms( m, current_rsd.atom_name( jump_atom1 ), next_rsd.atom_name( jump_atom2 ) );
 
 			f.set_jump_atoms( m,
-												core::scoring::rna::chi1_torsion_atom( current_rsd ),
-												core::scoring::rna::chi1_torsion_atom( next_rsd )   );
+												chemical::rna::chi1_torsion_atom( current_rsd ),
+												chemical::rna::chi1_torsion_atom( next_rsd )   );
 
 		}
 
@@ -327,8 +327,6 @@ create_rna_vall_torsions( pose::Pose & pose,
 
 	//	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	initialize_non_main_chain_sugar_atoms();
-
 	for (Size i=1; i <= total_residue; ++i) {
 		if ( is_num_in_list(i, exclude_res_list) ) continue;
 
@@ -353,23 +351,23 @@ create_rna_vall_torsions( pose::Pose & pose,
 			idealizer.apply( mini_pose );
 			idealizer.apply( mini_pose );
 
-			for (Size j=1; j <= core::scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+			for (Size j=1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
 				id::TorsionID my_ID( offset, id::BB, j );
 				torsions_out << F( 12, 6, mini_pose.torsion( my_ID ) );
 			}
 
-			for (Size j=1; j <= core::scoring::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+			for (Size j=1; j <= chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
 				id::TorsionID my_ID( offset, id::CHI, j );
 				torsions_out << F( 12, 6, mini_pose.torsion( my_ID ) ) << " ";
 			}
 
 		} else {
-			for (Size j=1; j <= core::scoring::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
+			for (Size j=1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; ++j) {
 				id::TorsionID my_ID( i, id::BB, j );
 				torsions_out << F( 12, 6, pose.torsion( my_ID ) );
 			}
 
-			for (Size j=1; j <= core::scoring::rna::NUM_RNA_CHI_TORSIONS; ++j) {
+			for (Size j=1; j <= chemical::rna::NUM_RNA_CHI_TORSIONS; ++j) {
 				id::TorsionID my_ID( i, id::CHI, j );
 				torsions_out << F( 12, 6, pose.torsion( my_ID ) ) << " ";
 			}
@@ -1280,7 +1278,7 @@ translate_virtual_anchor_to_first_rigid_body( pose::Pose & pose ){
 bool
 involved_in_phosphate_torsion( std::string atomname )
 {
-	utility::vector1< std::string > const & atoms_involved = core::scoring::rna::get_atoms_involved_in_phosphate_torsion();
+	utility::vector1< std::string > const & atoms_involved = core::chemical::rna::atoms_involved_in_phosphate_torsion;
 
 	for ( Size n = 1; n <= atoms_involved.size(); n++ ){
 		if (  atomname == atoms_involved[ n ] ) return true;

@@ -22,7 +22,7 @@
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
@@ -49,6 +49,7 @@
 
 #include <utility/vector1.hh>
 
+using namespace core::chemical::rna;
 
 namespace core {
 namespace scoring {

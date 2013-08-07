@@ -28,7 +28,7 @@
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/EnergyGraph.hh>
 
 #include <core/id/AtomID.hh>
@@ -750,7 +750,7 @@ ContextIndependentGeometricSolEnergy::eval_atom_derivative_intra_RNA(
 	if ( atom_is_donor_h( current_rsd, current_atm ) ) {
 		for (Size m = 1; m <= other_rsd.nheavyatoms(); m++ ){
 
-			if(core::scoring::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, m)==false) continue;
+			if(chemical::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, m)==false) continue;
 
 			get_atom_atom_geometric_solvation_for_donor( current_atm, current_rsd, m, other_rsd, pose, energy, update_deriv, deriv );
 
@@ -763,7 +763,7 @@ ContextIndependentGeometricSolEnergy::eval_atom_derivative_intra_RNA(
 	if ( atom_is_acceptor( current_rsd, atom_id.atomno() ) ) {
 		for (Size m = 1; m <= other_rsd.nheavyatoms(); m++ ){
 
-			if(core::scoring::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, m)==false) continue;
+			if(chemical::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, m)==false) continue;
 
 			get_atom_atom_geometric_solvation_for_acceptor( current_atm, current_rsd, m, other_rsd, pose, energy, update_deriv, deriv );
 
@@ -778,7 +778,7 @@ ContextIndependentGeometricSolEnergy::eval_atom_derivative_intra_RNA(
 		for ( chemical::AtomIndices::const_iterator hnum  = other_rsd.Hpos_polar().begin(), hnume = other_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
 			Size const don_h_atm( *hnum );
 
-			if(core::scoring::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, don_h_atm)==false) continue;
+			if(chemical::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, don_h_atm)==false) continue;
 
 			get_atom_atom_geometric_solvation_for_donor( don_h_atm, other_rsd, atom_id.atomno(), current_rsd, pose, energy, update_deriv, deriv );
 
@@ -790,7 +790,7 @@ ContextIndependentGeometricSolEnergy::eval_atom_derivative_intra_RNA(
 		for ( chemical::AtomIndices::const_iterator anum  = other_rsd.accpt_pos().begin(), anume = other_rsd.accpt_pos().end(); anum != anume; ++anum ) {
 			Size const acc_atm ( *anum );
 
-			if(core::scoring::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, acc_atm)==false) continue;
+			if(chemical::rna::Is_base_phosphate_atom_pair(current_rsd, other_rsd, current_atm, acc_atm)==false) continue;
 
 			get_atom_atom_geometric_solvation_for_acceptor( acc_atm, other_rsd, atom_id.atomno(), current_rsd, pose, energy, update_deriv, deriv );
 
@@ -1030,7 +1030,7 @@ ContextIndependentGeometricSolEnergy::donorRes_occludingRes_geometric_sol_RNA_in
 		Size const don_h_atm( *hnum );
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
 
-			if(core::scoring::rna::Is_base_phosphate_atom_pair(rsd, rsd, occ_atm, don_h_atm)==false) continue;
+			if(chemical::rna::Is_base_phosphate_atom_pair(rsd, rsd, occ_atm, don_h_atm)==false) continue;
 
 			get_atom_atom_geometric_solvation_for_donor( don_h_atm, don_rsd, occ_atm, occ_rsd, pose, energy );
 			res_solE += energy;
@@ -1061,7 +1061,7 @@ ContextIndependentGeometricSolEnergy::acceptorRes_occludingRes_geometric_sol_RNA
 		Size const acc_atm( *anum );
 		for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
 
-			if(core::scoring::rna::Is_base_phosphate_atom_pair(rsd, rsd, occ_atm, acc_atm)==false) continue;
+			if(chemical::rna::Is_base_phosphate_atom_pair(rsd, rsd, occ_atm, acc_atm)==false) continue;
 
 			get_atom_atom_geometric_solvation_for_acceptor( acc_atm, acc_rsd, occ_atm, occ_rsd, pose, energy);
 			res_solE += energy;

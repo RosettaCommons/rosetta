@@ -24,8 +24,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/rna/RNA_SuiteAssign.hh>
-#include <core/scoring/rna/RNA_Util.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
@@ -164,7 +164,7 @@ lariat_modeling ()
 	using namespace chemical;
 	using namespace scoring;
 	using namespace core::id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;

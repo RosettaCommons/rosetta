@@ -22,7 +22,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/Gaussian_parameter.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 
 // Project headers
@@ -147,13 +147,13 @@ private:
 															) const;
 	Real
 	get_gaussian_potential_score(
-															 Gaussian_parameter const & mg_potential_gaussian_parameter,
+															 GaussianParameter const & mg_potential_gaussian_parameter,
 															 Vector const & pos1,
 															 Vector const & pos2 ) const;
 
 	Real
 	get_gaussian_score(
-										 Gaussian_parameter const & mg_potential_gaussian_parameter,
+										 GaussianParameter const & mg_potential_gaussian_parameter,
 										 Real const d) const;
 
 	Real

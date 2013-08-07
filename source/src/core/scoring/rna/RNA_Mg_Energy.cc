@@ -26,7 +26,6 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/rna/Gaussian_parameter.hh>
 #include <basic/Tracer.hh>
 
 // Project headers
@@ -44,6 +43,7 @@
 #include <ObjexxFCL/format.hh>
 
 using ObjexxFCL::fmt::I;
+using namespace core::chemical::rna;
 
 static basic::Tracer tr("core.scoring.rna.RNA_Mg_Energy");
 
@@ -227,7 +227,7 @@ RNA_Mg_Energy::residue_pair_energy_one_way(
 
     Distance d = ( i_xyz - j_xyz ).length();
 
-    Gaussian_parameter const & mg_potential_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_gaussian_parameter( rsd1, i, is_phosphate_oxygen );
+    GaussianParameter const & mg_potential_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_gaussian_parameter( rsd1, i, is_phosphate_oxygen );
 
     Real cos_theta( -999.0 );
     bool get_angle_form_factor = false;
@@ -239,7 +239,7 @@ RNA_Mg_Energy::residue_pair_energy_one_way(
 
       if ( get_angle_form_factor ){
 	cos_theta = get_cos_theta( rsd1, i, i_xyz, j_xyz );
-	Gaussian_parameter const & mg_potential_costheta_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_costheta_gaussian_parameter( rsd1, i );
+	GaussianParameter const & mg_potential_costheta_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_costheta_gaussian_parameter( rsd1, i );
 	Real const angle_potential = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta );
 	binding_score *= angle_potential;
       }
@@ -255,7 +255,7 @@ RNA_Mg_Energy::residue_pair_energy_one_way(
 
 
     // indirect interactions, simple pair-wise
-    Gaussian_parameter const & mg_potential_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_indirect_gaussian_parameter( rsd1, i );
+    GaussianParameter const & mg_potential_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_indirect_gaussian_parameter( rsd1, i );
 
     if ( d < indirect_interaction_cutoff_ && mg_potential_indirect_gaussian_parameter.center > 0.0 ){
 
@@ -266,7 +266,7 @@ RNA_Mg_Energy::residue_pair_energy_one_way(
 
 	  if ( cos_theta < -1.0 ) cos_theta = get_cos_theta( rsd1, i, i_xyz, j_xyz );
 
-	  Gaussian_parameter const & mg_potential_costheta_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_costheta_indirect_gaussian_parameter( rsd1, i );
+	  GaussianParameter const & mg_potential_costheta_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_costheta_indirect_gaussian_parameter( rsd1, i );
 	  Real const angle_potential_indirect = get_gaussian_score( mg_potential_costheta_indirect_gaussian_parameter, cos_theta );
 	  binding_score_indirect *= angle_potential_indirect;
 
@@ -300,7 +300,7 @@ RNA_Mg_Energy::residue_pair_energy_one_way(
 /////////////////////////////////
 Real
 RNA_Mg_Energy::get_gaussian_potential_score(
-					    Gaussian_parameter const & mg_potential_gaussian_parameter,
+					    GaussianParameter const & mg_potential_gaussian_parameter,
 					    Vector const & pos1,
 					    Vector const & pos2 ) const
 { // later expand to do derivative calculation
@@ -313,7 +313,7 @@ RNA_Mg_Energy::get_gaussian_potential_score(
 ///////////////////////////////////////////////////
 Real
 RNA_Mg_Energy::get_gaussian_score(
-					    Gaussian_parameter const & mg_potential_gaussian_parameter,
+					    GaussianParameter const & mg_potential_gaussian_parameter,
 					    Real const d) const
 { // later expand to do derivative calculation
 

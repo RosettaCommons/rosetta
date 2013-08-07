@@ -25,7 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
 #include <string>
 #include <map>
@@ -41,7 +41,7 @@ namespace rna {
 		StepWiseRNA_BaseSugarRotamer(
 											BaseState const & base_state,
 											PuckerState const & pucker_state,
-											core::scoring::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
+											core::chemical::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
 											core::Size const bin_size = 20 );
 
     virtual ~StepWiseRNA_BaseSugarRotamer();
@@ -74,7 +74,7 @@ namespace rna {
 
 		BaseState const base_state_;
 		PuckerState const pucker_state_;
-		core::scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info_;
+		core::chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info_;
 		core::Size const inputted_bin_size_; // must be 20, 10, or 5
 		core::Size bin_size_;
 		core::Size num_base_std_ID_;

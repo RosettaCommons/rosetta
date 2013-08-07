@@ -25,7 +25,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -203,7 +203,7 @@ RNA_TorsionMover::apply_nucleoside_torsion( utility::vector1< Real > const & tor
 													Size const moving_res){
 
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	Real delta, nu2, nu1;
 	if (torsion_set[1] < 115) { //North pucker, [6] is delta angle (only pick one of the two states)
@@ -229,7 +229,7 @@ RNA_TorsionMover::apply_suite_torsion( utility::vector1< Real > const & torsion_
 										 Size const moving_suite ){
 
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	pose.set_torsion( TorsionID( moving_suite, id::BB, 5 ), torsion_set[1] );   //epsilon
 	pose.set_torsion( TorsionID( moving_suite, id::BB, 6 ), torsion_set[2] );   //zeta
@@ -251,7 +251,7 @@ RNA_TorsionMover::apply_random_nucleoside_torsion( pose::Pose & pose,
 
 	Size chi_rotamer = 1;
 	// could be syn if purine.
-	if ( scoring::rna::is_purine( pose.residue( moving_res ) ) && RG.uniform() < 0.5 ) chi_rotamer = 2;
+	if ( chemical::rna::is_purine( pose.residue( moving_res ) ) && RG.uniform() < 0.5 ) chi_rotamer = 2;
 
 	if ( north_pucker ){
 		torsion_set.push_back( rna_fitted_torsion_info_.ideal_delta_north() );

@@ -26,7 +26,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/sasa.hh>
@@ -95,7 +95,7 @@ namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUT
 using namespace core;
 //using namespace protocols;
 using namespace basic::options::OptionKeys;
-using namespace core::scoring::rna;
+using namespace core::chemical::rna;
 
 using utility::vector1;
 using io::pdb::dump_pdb;
@@ -176,7 +176,7 @@ get_rna_base_pairing_status( core::pose::Pose & pose,
 	protocols::rna::classify_base_pairs( pose, base_pair_list, is_bulged ); // could also get 'energies' for each base pair...
 
 	for ( Size n = 1; n <= base_pair_list.size(); n++ ) {
-		Base_pair const base_pair = base_pair_list[ n ];
+		scoring::rna::Base_pair const base_pair = base_pair_list[ n ];
 		update_edge_paired(  base_pair.res1, base_pair.edge1, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 		update_edge_paired(  base_pair.res2, base_pair.edge2, wc_edge_paired, hoogsteen_edge_paired, sugar_edge_paired );
 	}
@@ -216,7 +216,7 @@ rna_features_from_pose( utility::io::ozstream & out, pose::Pose & pose )
 	using namespace core::kinematics;
 	using namespace core::id;
 	using namespace protocols::rna;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	vector1< std::string > feature_names;
 	vector1< char > chains;

@@ -27,10 +27,10 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <protocols/rna/RNA_SuiteAssign.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/dna/base_geometry.hh>
 #include <core/sequence/util.hh>
@@ -113,7 +113,7 @@ using utility::tools::make_vector1;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
-static const scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
+static const chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 static numeric::random::RandomGenerator RG(5075);  // <- Magic number, do not change it!
 
 typedef utility::vector1<float> float_vec;
@@ -142,7 +142,7 @@ OPT_KEY( Boolean, save_base_steps )
 std::pair < Backbone_Torsion, Nucleoside_Torsion >
 ideal_A_form_torsions(){
 
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	std::pair < Backbone_Torsion, Nucleoside_Torsion > ideal_torsions;
 
@@ -165,7 +165,7 @@ apply_backbone( Backbone_Torsion const & backbone,
 								Size const suite ){
 
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	pose.set_torsion( TorsionID( suite  , id::BB, 5 ), backbone[0] ); //epsilon
 	pose.set_torsion( TorsionID( suite  , id::BB, 6 ), backbone[1] ); //zeta
@@ -181,7 +181,7 @@ apply_nucleoside( Nucleoside_Torsion const & nucleoside,
 								  Size const residue ){
 
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	static protocols::rna::RNA_IdealCoord const ideal_coord_rna;
 
@@ -217,7 +217,7 @@ get_backbone( Backbone_Torsion & backbone,
 							Size const suite ){
 
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	backbone[0] = pose.torsion( TorsionID( suite  , id::BB, 5 ) ); //epsilon
 	backbone[1] = pose.torsion( TorsionID( suite  , id::BB, 6 ) ); //zeta
@@ -233,7 +233,7 @@ get_nucleoside( Nucleoside_Torsion & nucleoside,
 								Size const residue ){
 
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	
 	nucleoside[0] = pose.torsion( TorsionID( residue, id::BB , 4 ) ); //delta
@@ -335,7 +335,7 @@ setup_pose ( pose::Pose & pose){
 	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace optimization;
 
 	std::string const sequence1 = option[ seq1 ]();
@@ -366,8 +366,8 @@ setup_pose ( pose::Pose & pose){
 	FoldTree f( total_len );
 	f.new_jump( 1, total_len, len1 );
 	f.set_jump_atoms( 1,
-										scoring::rna::chi1_torsion_atom( pose.residue( 1 ) ),
-										scoring::rna::chi1_torsion_atom( pose.residue( total_len ) )   );
+										chemical::rna::chi1_torsion_atom( pose.residue( 1 ) ),
+										chemical::rna::chi1_torsion_atom( pose.residue( total_len ) )   );
 	pose.fold_tree( f );
 
 	utility::vector1< Size > strand1_res, strand2_res;
@@ -593,11 +593,11 @@ void
 MC_run () {
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace pose;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	//Setup scoring function
 	std::string const force_field_name = option[force_field];

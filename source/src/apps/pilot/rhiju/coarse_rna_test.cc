@@ -34,7 +34,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
@@ -236,7 +236,7 @@ void
 pdb_stats( pose::Pose const & pose, utility::vector1< protocols::swa::rna::PuckerState > const & pucker_states ) {
 
 	using namespace core::id;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::kinematics;
 	using numeric::angle_radians;
 	using numeric::conversions::degrees;
@@ -335,7 +335,7 @@ vdw_stats( pose::Pose const & pose ) {
 
 	using namespace core::conformation;
 	using namespace core::id;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::kinematics;
 
 	utility::io::ozstream out1( "vdw.txt" );
@@ -510,7 +510,7 @@ create_bp_jump_database_test( ){
 
 	using namespace chemical;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
@@ -860,7 +860,7 @@ figure_out_base_pair_partner( pose::Pose & pose, std::map< Size, Size > & partne
 {
 
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::chemical;
 	using namespace core::conformation;
 
@@ -1231,7 +1231,7 @@ mismatch_test(){
 	using namespace core::chemical;
 	using namespace core::id;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::io::silent;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

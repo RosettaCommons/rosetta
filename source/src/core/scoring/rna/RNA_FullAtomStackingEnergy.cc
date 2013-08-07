@@ -22,7 +22,7 @@
 // AUTO-REMOVED #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
@@ -50,6 +50,7 @@
 // C++
 
 static basic::Tracer tr("core.scoring.rna.RNA_FullAtomStackingEnergy");
+using namespace core::chemical::rna;
 
 namespace core {
 namespace scoring {

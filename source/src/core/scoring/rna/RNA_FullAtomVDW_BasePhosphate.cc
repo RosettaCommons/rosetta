@@ -17,7 +17,7 @@
 #include <core/scoring/etable/Etable.hh>
 
 // Package Headers
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/types.hh>
 
@@ -39,6 +39,7 @@
 // C++
 
 
+using namespace core::chemical::rna;
 
 
 namespace core {

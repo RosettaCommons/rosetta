@@ -23,7 +23,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -121,7 +121,7 @@ void
 rotate_into_nucleobase_frame( core::pose::Pose & pose ){
 
 	using namespace core::conformation;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::id;
 
 	// assuming pose has an RNA at residue 1 -- will rotate just that residue.

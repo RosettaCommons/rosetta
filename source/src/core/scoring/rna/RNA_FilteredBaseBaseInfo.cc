@@ -19,7 +19,7 @@
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 // Package headers
 
@@ -43,6 +43,7 @@
 // Keep track of some base geometry that is
 // useful for RNA scoring.
 ///////////////////////////////////////////////////////
+using namespace core::chemical::rna;
 
 namespace core {
 namespace scoring {

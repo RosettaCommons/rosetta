@@ -23,8 +23,8 @@
 
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
@@ -137,7 +137,7 @@ namespace rna {
 		using namespace core::id;
 
 		//A variable declared static in a function retains its state between calls to that function. Parin Feb 6, 2010
-		static scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+		static chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 		Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
 
 		TorsionID const & torsion_id = ( which_sugar == "lower" ) ? TorsionID( moving_suite_, BB, 4 ) : TorsionID( moving_suite_ + 1, BB, 4 );
@@ -235,7 +235,7 @@ namespace rna {
 	////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseRNA_RotamerGenerator::initialize_sample_base_states( core::pose::Pose const & pose ){
-		using namespace core::scoring::rna;
+		using namespace core::chemical::rna;
 
 		/* BEFORE APRIL 29, 2011
 		if ( include_syn_chi_ ){
@@ -311,7 +311,7 @@ namespace rna {
 
 
 
-		core::scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
+		core::chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 
 		torsion_ids_.clear();
 		rotamer_centers_.clear();

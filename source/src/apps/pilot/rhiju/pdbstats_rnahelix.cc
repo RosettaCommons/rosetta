@@ -17,7 +17,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
@@ -103,7 +103,7 @@ rna_helix_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Si
 	using namespace core::kinematics;
 	using namespace core::scoring;
 	using namespace protocols::rna;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	Size const nres = pose.total_residue();
 

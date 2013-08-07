@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/rna/RNA_Util.cc
+/// @file   core/chemical/rna/RNA_Util.cc
 /// @author Rhiju Das
 
 // Unit headers
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/types.hh>
 
 // Package headers
@@ -48,7 +48,7 @@
 
 
 namespace core {
-namespace scoring {
+namespace chemical {
 namespace rna {
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -337,22 +337,6 @@ is_rna_chainbreak( core::pose::Pose const & pose, Size const i ) {
 
 }
 
-//////////////////////////////////////////////////
-utility::vector1< std::string > non_main_chain_sugar_atoms;
-
-void
-initialize_non_main_chain_sugar_atoms() {
-	static bool init( false );
-	if (init) return;
-
-	non_main_chain_sugar_atoms.clear();
-	non_main_chain_sugar_atoms.push_back( " C2'" );
-	non_main_chain_sugar_atoms.push_back( " C1'" );
-	non_main_chain_sugar_atoms.push_back( " O4'" );
-
-	init = true;
-}
-
 ////////////////////////////////////////////////////////////////////////////
 // Following is quite slow, because it works on a residue in the context
 //  of a full pose -- a lot of time wasted on refolding everything.
@@ -524,7 +508,6 @@ initialize_atoms_for_which_we_need_new_dofs(
 {
 
 	using namespace core::id;
-	using namespace core::scoring::rna;
 	using namespace core::kinematics;
 	using namespace conformation;
 
@@ -583,7 +566,6 @@ apply_non_main_chain_sugar_coords(
 {
 
 	using namespace core::id;
-	using namespace core::scoring::rna;
 
 	/////////////////////////////////////////////
 	// Save desired torsion values.
@@ -596,7 +578,6 @@ apply_non_main_chain_sugar_coords(
 
 	/////////////////////////////////////////////
 	//What DOFS do I need to get the ring atoms where I want them?
-	initialize_non_main_chain_sugar_atoms();
 	utility::vector1< std::string > atoms_for_which_we_need_new_dofs;
 
 	initialize_atoms_for_which_we_need_new_dofs( atoms_for_which_we_need_new_dofs,  pose, i );
@@ -643,43 +624,6 @@ apply_ideal_c2endo_sugar_coords(
 
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// Simple cubic spline.
-void
-get_fade_correction(
-   Real const z,
-	 Real const cutoff_lower,
-	 Real const cutoff_upper,
-	 Real const fade_zone,
-	 Real & fade_value,
-	 Real & fade_deriv )
-{
-	assert( fade_zone > 0 );
-
-	fade_value = 1.0;
-	fade_deriv = 0.0;
-
-	if (z < cutoff_lower || z > cutoff_upper ){
-		fade_value = 0.0;
-	} else if ( z < cutoff_lower + fade_zone ) {
-		//Check little strip near lower cutoff.
-		Real const b = -1.0 * ( z - (cutoff_lower + fade_zone) )/ fade_zone;
-		Real const b2 = b*b;
-		Real const b3 = b2*b;
-		fade_value = ( 2 * b3 - 3 * b2 + 1 );
-		fade_deriv = -1.0 * (6 * b2 - 6 * b ) / fade_zone;
-	} else if ( z > cutoff_upper - fade_zone ) {
-		//Check little strip near upper cutoff.
-		Real const b =  ( z - (cutoff_upper - fade_zone) )/ fade_zone;
-		Real const b2 = b*b;
-		Real const b3 = b2*b;
-		fade_value = ( 2 * b3 - 3 * b2 + 1 );
-		fade_deriv = (6 * b2 - 6 * b ) / fade_zone;
-	}
-
-	return;
-
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //Unify the version in StepWiseRNA_Utill.cc and RNA_CentroidInfo.cc on June 25, 2011
@@ -814,33 +758,7 @@ Is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::
 
 }
 
-////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< std::string > const &
-get_atoms_involved_in_phosphate_torsion()
-{
-	static utility::vector1< std::string > atoms_involved_in_phosphate_torsion;
-	static bool init( false );
-
-	if ( !init ){
-
-		atoms_involved_in_phosphate_torsion.clear();
-
-		atoms_involved_in_phosphate_torsion.push_back( " P  " );
-		atoms_involved_in_phosphate_torsion.push_back( " OP2" );
-		atoms_involved_in_phosphate_torsion.push_back( " OP1" );
-		atoms_involved_in_phosphate_torsion.push_back( " O5'" );
-		atoms_involved_in_phosphate_torsion.push_back( " H5'" );
-		atoms_involved_in_phosphate_torsion.push_back( "H5''" );
-
-		init = true;
-
-	}
-
-	return atoms_involved_in_phosphate_torsion;
-
-}
-
 
 } //ns rna
-} //ns scoring
+} //ns chemical
 } //ns core

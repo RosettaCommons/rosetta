@@ -12,7 +12,7 @@
 
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>

@@ -22,7 +22,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>

@@ -30,7 +30,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -268,7 +268,7 @@ void
 RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 
 	using namespace core::id;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 
 	Size const nres( pose.total_residue() );
 

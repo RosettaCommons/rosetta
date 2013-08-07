@@ -43,7 +43,6 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh> //June 02, 2011
 #include <protocols/swa/rna/FloatingBaseChainClosureJobParameter.hh>
 #include <core/pose/Pose.hh> //June 02, 2011
-#include <core/scoring/rna/RNA_Util.hh> //June 02, 2011
 
 
 namespace protocols {

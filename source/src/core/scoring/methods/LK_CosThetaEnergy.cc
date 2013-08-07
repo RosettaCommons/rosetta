@@ -23,7 +23,7 @@
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -44,6 +44,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
+using namespace core::chemical::rna;
 
 namespace core {
 namespace scoring {
@@ -272,7 +273,7 @@ LK_CosThetaEnergy::get_residue_energy_RNA_intra(
 			Size path_dist( 0 );
 			if ( cpfxn->count( i, j, cp_weight, path_dist ) ) {
 
-				if(core::scoring::rna::Is_base_phosphate_atom_pair(rsd1, rsd2, i, j)==false) continue;
+				if(Is_base_phosphate_atom_pair(rsd1, rsd2, i, j)==false) continue;
 
 				Vector const heavy_atom_j( rsd2.xyz( j ) );
 
@@ -539,7 +540,7 @@ LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
 		Size path_dist( 0 );
 		if ( cpfxn->count(m, n, cp_weight, path_dist ) ) {
 
-			if(core::scoring::rna::Is_base_phosphate_atom_pair(rsd1, rsd2, m, n)==false) continue;
+			if(Is_base_phosphate_atom_pair(rsd1, rsd2, m, n)==false) continue;
 
 			Vector const heavy_atom_j( rsd2.xyz( n ) );
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;

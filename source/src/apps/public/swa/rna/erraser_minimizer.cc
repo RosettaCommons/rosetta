@@ -54,7 +54,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
@@ -100,7 +100,7 @@
 ///////////////////////////////////////////////////
 
 #include <core/pose/PDBInfo.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 
@@ -185,7 +185,7 @@ check_in_bond_angle_list ( core::id::AtomID const & atom_id1,
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
 apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference ) {
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 	Real const DELTA_CUTOFF ( rna_fitted_torsion_info.delta_cutoff() );
 	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo ];
@@ -321,7 +321,7 @@ check_if_really_connected (
 bool
 i_want_this_atom_to_move ( conformation::Residue const & residue2, Size const & k ) {
 	if ( k > residue2.first_sidechain_atom() &&
-	     k != scoring::rna::first_base_atom_index ( residue2 ) ) return false;
+	     k != chemical::rna::first_base_atom_index ( residue2 ) ) return false;
 
 	if ( residue2.atom_type ( k ).name() == "VIRT" ) {
 		//		std::cout << "Is this virtual? " << residue2.atom_name( k ) << std::endl;
@@ -544,7 +544,7 @@ void
 setup_fold_tree ( pose::Pose & pose, utility::vector1< core::Size > const & cutpoint_list ) {
 	using namespace chemical;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::conformation;
 	using namespace core::kinematics;
 	using namespace core::id;
@@ -577,7 +577,6 @@ void
 setup_fold_tree_sample_res ( pose::Pose & pose, utility::vector1< core::Size > const & sample_res_list ) {
 	using namespace chemical;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
 	using namespace core::conformation;
 	using namespace core::kinematics;
 	using namespace core::id;
@@ -606,7 +605,7 @@ pyrimidine_flip_trial( pose::Pose & pose,
 {
 	using namespace core::id;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::conformation;
 	using namespace core::pose;
 	using namespace core::chemical;
@@ -644,7 +643,7 @@ pdb_minimizer() {
 	using namespace core::chemical;
 	using namespace core::kinematics;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::scoring::constraints;
 	using namespace core::optimization;
 	using namespace core::id;

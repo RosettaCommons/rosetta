@@ -27,7 +27,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
@@ -205,8 +205,8 @@ RNA_HelixAssembler::build_helix( core::pose::Pose & pose, std::string const & fu
 	FoldTree f( 2 );
 	f.new_jump( 1, 2, 1);
 	f.set_jump_atoms( 1,
-										core::scoring::rna::chi1_torsion_atom( pose.residue(1) ),
-										core::scoring::rna::chi1_torsion_atom( pose.residue(2) ) );
+										core::chemical::rna::chi1_torsion_atom( pose.residue(1) ),
+										core::chemical::rna::chi1_torsion_atom( pose.residue(2) ) );
 	pose.fold_tree( f );
 
 	/////////////////////////////////////
@@ -356,8 +356,8 @@ RNA_HelixAssembler::get_rid_of_capping_base_pairs( pose::Pose & pose ) const {
 	FoldTree f( nres );
 	f.new_jump( nres/2-1, nres/2+2, nres/2);  // put jump across second-to-last base pair
 	f.set_jump_atoms( 1,
-										core::scoring::rna::chi1_torsion_atom( pose.residue(nres/2-1) ),
-										core::scoring::rna::chi1_torsion_atom( pose.residue(nres/2+2) ) );
+										core::chemical::rna::chi1_torsion_atom( pose.residue(nres/2-1) ),
+										core::chemical::rna::chi1_torsion_atom( pose.residue(nres/2+2) ) );
 	f.reorder( nres/2-1 ); // root cannot be deleted, I think, so place it at this second-to-last base pair.
 	pose.fold_tree( f );
 

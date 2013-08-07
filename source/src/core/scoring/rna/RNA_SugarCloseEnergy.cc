@@ -16,8 +16,8 @@
 #include <core/scoring/rna/RNA_SugarCloseEnergyCreator.hh>
 
 // Package Headers
-#include <core/scoring/rna/RNA_Util.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 // AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
@@ -44,6 +44,7 @@
 
 // C++
 
+using namespace core::chemical::rna;
 
 namespace core {
 namespace scoring {

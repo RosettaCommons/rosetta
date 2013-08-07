@@ -26,10 +26,10 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/Energies.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -223,7 +223,7 @@ OPT_KEY( String,  output_base2_torsion_M_v_lists )
 utility::vector1< Real >
 get_suite_ideal_A_form_torsions(){
 
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	static RNA_FittedTorsionInfo rna_fitted_torsion_info;
 
 	utility::vector1< Real >  ideal_A_form_torsions;
@@ -241,7 +241,7 @@ get_suite_ideal_A_form_torsions(){
 void
 apply_ideal_A_form_torsions( pose::Pose & pose ){
 
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace id;
 	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
@@ -279,7 +279,7 @@ apply_south_syn_to_dinucleotide_pose( pose::Pose & pose ){
 
 	using namespace options;
 	using namespace options::OptionKeys;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace id;
 
 	RNA_FittedTorsionInfo rna_fitted_torsion_info;
@@ -296,51 +296,51 @@ apply_south_syn_to_dinucleotide_pose( pose::Pose & pose ){
 	// fix the chi angles
 	if ( option[ syn_chi1 ]() ){
 		if( option[ south1 ]() ){
-			pose.set_torsion( TorsionID( 1,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			pose.set_torsion( TorsionID( 1,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 												rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[2].center );
 		} else {
-			pose.set_torsion( TorsionID( 1,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			pose.set_torsion( TorsionID( 1,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 												rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[2].center );
 		}
 	} else {
 		if( option[ south1 ]() ){
-			pose.set_torsion( TorsionID( 1,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			pose.set_torsion( TorsionID( 1,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 												rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[1].center );
 		} else {
-			pose.set_torsion( TorsionID( 1,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			pose.set_torsion( TorsionID( 1,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 												rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center );
 		}
 	}
 
 	if ( option[ syn_chi2 ]() ){
 		if( option[ south2 ]() ){
-			pose.set_torsion( TorsionID( 2,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			pose.set_torsion( TorsionID( 2,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 												rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[2].center );
 		} else {
-			pose.set_torsion( TorsionID( 2,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			pose.set_torsion( TorsionID( 2,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 												rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[2].center );
 		}
 	} else {
 		if( option[ south2 ]() ){
-			pose.set_torsion( TorsionID( 2,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			pose.set_torsion( TorsionID( 2,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 												rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[1].center );
 		} else {
-			pose.set_torsion( TorsionID( 2,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			pose.set_torsion( TorsionID( 2,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 												rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center );
 		}
 	}
 
 	if ( option[ chi1 ].user() ){
-			pose.set_torsion( TorsionID( 1,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			pose.set_torsion( TorsionID( 1,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 												option[ chi1 ]() );
 	}
 	if ( option[ chi2 ].user() ){
-			pose.set_torsion( TorsionID( 2,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+			pose.set_torsion( TorsionID( 2,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 												option[ chi2 ]() );
 	}
 
-	std::cout << "### CHI ANGLES: " << pose.torsion( TorsionID( 1, id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) <<
-		" " << pose.torsion( TorsionID( 2, id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) << std::endl;
+	std::cout << "### CHI ANGLES: " << pose.torsion( TorsionID( 1, id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) <<
+		" " << pose.torsion( TorsionID( 2, id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ) ) << std::endl;
 
 
 }
@@ -356,13 +356,13 @@ initialize_base_pair( pose::Pose & pose,
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace pose;
 	using namespace id;
 	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
@@ -376,8 +376,8 @@ initialize_base_pair( pose::Pose & pose,
 	FoldTree f( 2 );
 	f.new_jump( 1, 2, 1);
 	f.set_jump_atoms( 1,
-										scoring::rna::chi1_torsion_atom( pose.residue( 1) ),
-										scoring::rna::chi1_torsion_atom( pose.residue( 2) )   );
+										chemical::rna::chi1_torsion_atom( pose.residue( 1) ),
+										chemical::rna::chi1_torsion_atom( pose.residue( 2) )   );
 	pose.fold_tree( f );
 	//	pose.dump_pdb( "start.pdb" );
 
@@ -423,7 +423,7 @@ initialize_rigid_body_sampler( utility::vector1< Size > const & moving_res1,
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -539,7 +539,7 @@ cluster_silent_file_data( io::silent::SilentFileDataOP & sfd ){
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -579,7 +579,7 @@ adjust_pose_chi( core::pose::Pose & pose,
 								 Size const res,
 								 Real const delstd ){
 
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace protocols::swa::rna;
 	using namespace core::id;
 
@@ -594,11 +594,11 @@ adjust_pose_chi( core::pose::Pose & pose,
 	//	std::cout << "CHECK_THIS. RES: " << res << " PUCKER: " << pucker << " CHI: " << which_chi << std::endl;
 
 	if ( pucker == NORTH ){
-		pose.set_torsion( TorsionID( res,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+		pose.set_torsion( TorsionID( res,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 											rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[which_chi].center +
 											delstd * rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[which_chi].width );
 	} else {
-		pose.set_torsion( TorsionID( res,   id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
+		pose.set_torsion( TorsionID( res,   id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS ),
 											rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[which_chi].center +
 											delstd * rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[which_chi].width );
 	}
@@ -666,7 +666,7 @@ define_states_test(){
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -870,7 +870,7 @@ base_doublet_rmsd_test(){
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -947,7 +947,7 @@ cluster_rigid_body_settings_test(){
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -1084,7 +1084,7 @@ finely_sample_base_pair_test(){
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -1213,7 +1213,7 @@ assign_rigid_body_settings_to_clusters_test(){
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -1331,7 +1331,7 @@ setup_two_base_pair_pose( pose::Pose & pose ){
 	using namespace id;
 	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 	make_pose_from_sequence( pose, "ccgg", *rsd_set );
@@ -1339,8 +1339,8 @@ setup_two_base_pair_pose( pose::Pose & pose ){
 	FoldTree f( 4 );
 	f.new_jump( 1, 4, 2 );
 	f.set_jump_atoms( 1,
-										scoring::rna::chi1_torsion_atom( pose.residue( 1 ) ),
-										scoring::rna::chi1_torsion_atom( pose.residue( 4 ) )   );
+										chemical::rna::chi1_torsion_atom( pose.residue( 1 ) ),
+										chemical::rna::chi1_torsion_atom( pose.residue( 4 ) )   );
 	pose.fold_tree( f );
 
 	add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
@@ -1441,7 +1441,7 @@ save_torsions( pose::Pose const & pose,
 							 utility::vector1< utility::vector1< Real > > & torsion_list ){
 
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	utility::vector1< Real > torsion_set;
 
@@ -1506,7 +1506,7 @@ sample_new_base_in_two_base_pair_pose( pose::Pose & pose,
 	using namespace chemical;
 	using namespace pose;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace protocols::swa::rna;
 
 	///////////////////////////////////////////////////////////////////////////////////
@@ -1644,7 +1644,7 @@ void
 apply_suite_torsions( utility::vector1< Real > const & torsion_set, pose::Pose & pose,  Size const moving_suite  ){
 
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	pose.set_torsion( TorsionID( moving_suite,   id::BB, EPSILON ),  torsion_set[1] );
 	pose.set_torsion( TorsionID( moving_suite,   id::BB, ZETA ),     torsion_set[2] );
@@ -1681,7 +1681,7 @@ do_the_match(
 
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -1689,7 +1689,7 @@ do_the_match(
 	using namespace id;
 	using namespace protocols::swa;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace protocols::swa::rna;
 	using namespace options;
 	using namespace options::OptionKeys;
@@ -1886,7 +1886,7 @@ grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > 
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -1894,7 +1894,7 @@ grid_matcher( 	utility::vector1< utility::vector1< utility::vector1< Real > > > 
 	using namespace id;
 	using namespace protocols::swa;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace protocols::swa::rna;
 
 	Vector v1; 	Matrix M1;
@@ -2085,7 +2085,7 @@ two_base_pairs_test(){
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -2093,7 +2093,7 @@ two_base_pairs_test(){
 	using namespace id;
 	using namespace protocols::swa;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace protocols::swa::rna;
 
 	/////////////////////////////////////////////
@@ -2233,7 +2233,7 @@ setup_two_base_pair_pose_with_chainbreak( pose::Pose & pose,
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -2241,7 +2241,7 @@ setup_two_base_pair_pose_with_chainbreak( pose::Pose & pose,
 	using namespace id;
 	using namespace protocols::swa;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace protocols::swa::rna;
 
 	/////////////////////////////////////////////////////////////////
@@ -2253,12 +2253,12 @@ setup_two_base_pair_pose_with_chainbreak( pose::Pose & pose,
 	FoldTree f( 4 );
 	f.new_jump( 1, 4, chainbreak_suite );
 	f.set_jump_atoms( 1,
-										scoring::rna::chi1_torsion_atom( pose.residue( 1 ) ),
-										scoring::rna::chi1_torsion_atom( pose.residue( 4 ) )   );
+										chemical::rna::chi1_torsion_atom( pose.residue( 1 ) ),
+										chemical::rna::chi1_torsion_atom( pose.residue( 4 ) )   );
 	f.new_jump( 2, 3, 2 );
 	f.set_jump_atoms( 2,
-										scoring::rna::chi1_torsion_atom( pose.residue( 2 ) ),
-										scoring::rna::chi1_torsion_atom( pose.residue( 3 ) )   );
+										chemical::rna::chi1_torsion_atom( pose.residue( 2 ) ),
+										chemical::rna::chi1_torsion_atom( pose.residue( 3 ) )   );
 	pose.fold_tree( f );
 
 	add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
@@ -2300,7 +2300,7 @@ minimize_poses( pose::Pose & pose,
 	using namespace core::optimization;
 	using namespace core::id;
 	using namespace core::scoring;
-	using namespace core::scoring::rna;
+	using namespace core::chemical::rna;
 	using namespace core::kinematics;
 	using namespace core::io::silent;
 	using namespace options;
@@ -2358,7 +2358,7 @@ minimize_poses( pose::Pose & pose,
 ////////////////////////////////////////////////////////////////////////////
 bool check_filter_base_stack( pose::Pose const & pose ){
 
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	static RNA_CentroidInfo rna_centroid_info;
 
@@ -2380,7 +2380,7 @@ void
 assign_stack_faces( core::io::silent::SilentStructOP & s ){
 
 	using namespace pose;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	static RNA_CentroidInfo rna_centroid_info;
 
@@ -2429,7 +2429,7 @@ apply_filter_base_stack_direction( protocols::swa::PoseList & minimize_pose_list
 void
 apply_filter_base_stack_direction( core::io::silent::SilentFileDataOP &  sfd ){
 
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace protocols::swa;
 	using namespace pose;
 	using namespace kinematics;
@@ -2458,7 +2458,7 @@ base_pair_to_base_pair_test(){
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -2627,7 +2627,7 @@ sample_state_to_state(
 	using namespace io::silent;
 	using namespace chemical;
 	using namespace id;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
 
@@ -2906,7 +2906,7 @@ setup_dinucleotide_pose( pose::Pose & pose ){
 	using namespace id;
 	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
@@ -2982,7 +2982,7 @@ dinucleotide_test(){
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -2992,7 +2992,7 @@ dinucleotide_test(){
 	using namespace id;
 	using namespace protocols::swa;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace protocols::swa::rna;
 
 	std::string const outfile_prefix = option[ out::file::o ]();
@@ -3107,7 +3107,7 @@ delta_chi_correction_test(){
 	using namespace options::OptionKeys;
 	using namespace chemical;
 	using namespace scoring;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace kinematics;
 	using namespace optimization;
 	using namespace pose;
@@ -3115,7 +3115,7 @@ delta_chi_correction_test(){
 	using namespace id;
 	using namespace protocols::swa;
 	using namespace utility::io;
-	using namespace scoring::rna;
+	using namespace chemical::rna;
 	using namespace protocols::swa::rna;
 
 	ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
@@ -3167,7 +3167,7 @@ delta_chi_correction_test(){
 		Real const diff_score = start_score - end_score;
 		out << n
 			<< ' ' << pose.torsion( TorsionID( 1, id::BB, DELTA ) )
-			<< ' ' << pose.torsion( TorsionID( 1, id::CHI, scoring::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS) )
+			<< ' ' << pose.torsion( TorsionID( 1, id::CHI, chemical::rna::CHI - NUM_RNA_MAINCHAIN_TORSIONS) )
 			<< ' ' << start_score << ' ' << end_score << ' ' << diff_score << std::endl;
 
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE_AND_", 1 );

@@ -15,7 +15,7 @@
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
 // Numeric Headers
 #include <numeric/angle.functions.hh>
@@ -195,6 +195,8 @@ namespace rna {
 	std::pair <std::string, std::pair <Size, Real> > 
 	suite_assign(pose::Pose const & pose, Size const res)
 	{
+		using namespace core::chemical::rna;
+
 		//Parameters///////////////////////////
 		static Size const epsilonmin = 155, epsilonmax = 310;
 		static Size const delta3min  =  55, delta3max  = 110;
@@ -232,13 +234,13 @@ namespace rna {
 		///////////////////////////////////////
 
 		utility::vector1 <Real> torsions;
-		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res-1).mainchain_torsion( scoring::rna::DELTA ) ) );
-		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res-1).mainchain_torsion( scoring::rna::EPSILON ) ) );
-		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res-1).mainchain_torsion( scoring::rna::ZETA ) ) );
-		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( scoring::rna::ALPHA ) ) );
-		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( scoring::rna::BETA ) ) );
-		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( scoring::rna::GAMMA ) ) );
-		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( scoring::rna::DELTA ) ) );
+		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res-1).mainchain_torsion( DELTA ) ) );
+		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res-1).mainchain_torsion( EPSILON ) ) );
+		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res-1).mainchain_torsion( ZETA ) ) );
+		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( ALPHA ) ) );
+		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( BETA ) ) );
+		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( GAMMA ) ) );
+		torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( DELTA ) ) );
 		for (Size i = 1; i <= torsions.size(); ++i) {
 			torsions[i] = std::fmod(torsions[i], 360.0);
 			if (torsions[i] < 0) torsions[i] += 360;

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/rna/RNA_Util.hh
+/// @file   core/chemical/rna/RNA_Util.hh
 /// @brief
 /// @author Rhiju
 
-#ifndef INCLUDED_core_scoring_rna_RNA_Util_hh
-#define INCLUDED_core_scoring_rna_RNA_Util_hh
+#ifndef INCLUDED_core_chemical_rna_RNA_Util_hh
+#define INCLUDED_core_chemical_rna_RNA_Util_hh
 
 #include <core/types.hh>
 
@@ -27,20 +27,22 @@
 
 
 namespace core {
-namespace scoring {
+namespace chemical {
 namespace rna{
 
 ///////////////////////////////////////////////////////////////////////////////
-enum __RNA_UTIL__ {X, WATSON_CRICK, HOOGSTEEN, SUGAR, O2STAR, PHOSPHATE };
+enum __BaseEdge__ {X, WATSON_CRICK, HOOGSTEEN, SUGAR, O2STAR, PHOSPHATE };
 Size const NUM_EDGES( 3 );
 Size const NUM_RNA_TORSIONS( 10 );
 Size const NUM_RNA_MAINCHAIN_TORSIONS( 6 );
 Size const NUM_RNA_CHI_TORSIONS( NUM_RNA_TORSIONS - NUM_RNA_MAINCHAIN_TORSIONS  );
 
 ///////////////////////////////////////////////////////////////////////////////
-extern utility::vector1< std::string > non_main_chain_sugar_atoms;
-void	initialize_non_main_chain_sugar_atoms();
+static const char* __arg1__ [] = {" C2'", " C1'", " O4'"};
+utility::vector1< std::string > const non_main_chain_sugar_atoms(__arg1__, __arg1__ + 3);
 
+static const char* __arg2__ [] = {" P  ", " OP2", " OP1", " O5'", " H5'", "H5''"};
+utility::vector1< std::string > const atoms_involved_in_phosphate_torsion(__arg2__, __arg2__ + 6);
 ///////////////////////////////////////////////////////////////////////////////
 Size
 convert_acgu_to_1234( char const c );
@@ -106,24 +108,6 @@ apply_ideal_c2endo_sugar_coords(
 		core::Size const & i
 																);
 
-
-	//void
-	//apply_torsions_and_non_main_chain_sugar_coords(
-	//    utility::vector1< Vector > const & non_main_chain_sugar_coords,
-	//		core::pose::Pose & pose,
-	//		core::Size const & i,
-	//		utility::vector1< Real > const & rna_torsions	);
-
-void
-get_fade_correction(
-										Real const z,
-										Real const cutoff_lower,
-										Real const cutoff_upper,
-										Real const fade_zone,
-										Real & fade_value,
-										Real & fade_deriv );
-
-
 //Copied from Parin SRC on Dec 23, 2011.
 numeric::xyzVector<core::Real>
 get_rna_base_centroid( core::conformation::Residue const & rsd , bool verbose);
@@ -134,11 +118,8 @@ get_rna_base_coordinate_system( core::conformation::Residue const & rsd, numeric
 bool
 Is_base_phosphate_atom_pair( conformation::Residue const & rsd_1, conformation::Residue const & rsd_2, Size const atomno_1, Size const atomno_2);
 
-utility::vector1< std::string > const &
-get_atoms_involved_in_phosphate_torsion();
-
 } //ns rna
-} //ns scoring
+} //ns chemical
 } //ns core
 
 #endif

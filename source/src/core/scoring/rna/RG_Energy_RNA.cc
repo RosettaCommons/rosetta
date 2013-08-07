@@ -17,7 +17,7 @@
 #include <core/scoring/rna/RG_Energy_RNACreator.hh>
 
 // Package headers
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 // AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
@@ -40,6 +40,7 @@
 
 // C++
 
+using namespace core::chemical::rna;
 
 namespace core {
 namespace scoring {
@@ -197,7 +198,7 @@ RG_Energy_RNA::eval_atom_derivative(
 	// geometry relative to the base first sidechain atom -- apply it there.
 	//
 
-	if ( atom_num_i == rna::first_base_atom_index( rsd ) ) {
+	if ( atom_num_i == first_base_atom_index( rsd ) ) {
 
 		Vector const v( base_centroids[i] );
 		Vector f2 = ( v - center_of_mass_ )/ ( (nres - 1 ) * rg_ );

@@ -41,7 +41,7 @@
 #include <core/scoring/rna/chemical_shift/RNA_CS_MagneticAnisotropy.hh>
 #include <math.h>
 #include <numeric/xyzVector.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>
 
@@ -1505,7 +1505,7 @@ namespace chemical_shift {
 		}
 
 
-		if(atomno == chi1_torsion_atom_index( rsd ))	{ //first chi1_torsion_atom serves as 'proxy' for the ring_center!
+		if(atomno == chemical::rna::chi1_torsion_atom_index( rsd ))	{ //first chi1_torsion_atom serves as 'proxy' for the ring_center!
 
 			get_ring_current_deriv_for_src_base(pose, rsd, atomno, f1, f2);
 

@@ -29,8 +29,9 @@
 #include <numeric/xyzMatrix.hh>
 
 #include <utility/vector1.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
+using namespace core::chemical::rna;
 
 // C++
 

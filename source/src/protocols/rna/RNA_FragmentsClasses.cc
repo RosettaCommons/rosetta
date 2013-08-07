@@ -15,7 +15,7 @@
 #include <protocols/rna/RNA_FragmentsClasses.hh>
 #include <protocols/rna/RNA_SecStructInfo.hh>
 
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/pose/Pose.hh>
 
 // AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
@@ -57,7 +57,7 @@ namespace rna{
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	TorsionSet::TorsionSet( Size const size ){
-		torsions.dimension( core::scoring::rna::NUM_RNA_TORSIONS, SRange(0, size) );
+		torsions.dimension( core::chemical::rna::NUM_RNA_TORSIONS, SRange(0, size) );
 		torsion_source_name.dimension( SRange(0, size), std::string( 4, ' ' )  );
 		secstruct.dimension( SRange(0, size), 'L' );
 		non_main_chain_sugar_coords_defined = false;
@@ -72,7 +72,7 @@ namespace rna{
 		size_ = src.size_;
 
 		for (Size offset = 0; offset < size_; offset++){
-			for (Size j = 1; j <= core::scoring::rna::NUM_RNA_TORSIONS; j++ ){
+			for (Size j = 1; j <= core::chemical::rna::NUM_RNA_TORSIONS; j++ ){
 				torsions( j, offset) = src.torsions( j, offset);
 			}
 			torsion_source_name( offset ) = src.torsion_source_name( offset );
@@ -123,7 +123,7 @@ namespace rna{
 		TorsionSet torsion_set( size );
 
 		for (Size offset = 0; offset < size; offset++){
-			for (Size j = 1; j <= core::scoring::rna::NUM_RNA_TORSIONS; j++ ){
+			for (Size j = 1; j <= core::chemical::rna::NUM_RNA_TORSIONS; j++ ){
 				torsion_set.torsions( j, offset) = vall.torsions( j, position+offset);
 			}
 			torsion_set.torsion_source_name( offset ) = vall.name( position+offset );
@@ -336,7 +336,7 @@ namespace rna{
 			vall_sequence.push_back( dummy_char );
 
 			utility::vector1 < Real > dummy_vec;
-			for (Size i = 1; i <= core::scoring::rna::NUM_RNA_TORSIONS; i++ ) {
+			for (Size i = 1; i <= core::chemical::rna::NUM_RNA_TORSIONS; i++ ) {
 				line_stream >> dummy_real;
 				dummy_vec.push_back( dummy_real );
 			}
@@ -361,7 +361,7 @@ namespace rna{
 			vall_secstruct.push_back( dummy_char );
 
 			utility::vector1 < bool > dummy_vec2;
-			for (Size i = 1; i <= core::scoring::rna::NUM_EDGES; i++ ) {
+			for (Size i = 1; i <= core::chemical::rna::NUM_EDGES; i++ ) {
 				line_stream >> dummy_bool;
 				dummy_vec2.push_back( dummy_bool );
 			}
@@ -386,18 +386,18 @@ namespace rna{
 
 		///////////////////////////////////////////////////////////////
 		// Permanent storage.
-		vall_torsions_.dimension ( SRange(0, core::scoring::rna::NUM_RNA_TORSIONS), vall_size_ );
+		vall_torsions_.dimension ( SRange(0, core::chemical::rna::NUM_RNA_TORSIONS), vall_size_ );
 		vall_sequence_.dimension ( vall_size_ );
 		vall_secstruct_.dimension ( vall_size_ );
 		vall_is_chainbreak_.dimension ( vall_size_ );
-		vall_edge_is_base_pairing_.dimension( vall_size_, core::scoring::rna::NUM_EDGES );
+		vall_edge_is_base_pairing_.dimension( vall_size_, core::chemical::rna::NUM_EDGES );
 		vall_name_.dimension( vall_size_ );
 
 		if ( vall_non_main_chain_sugar_coords_defined_ ) vall_non_main_chain_sugar_coords_.dimension( vall_size_, 3, 3 );
 
 		for (Size n = 1; n <= vall_size_; n++ ) {
 
-			for (Size i = 1; i <= core::scoring::rna::NUM_RNA_TORSIONS; i++ ) {
+			for (Size i = 1; i <= core::chemical::rna::NUM_RNA_TORSIONS; i++ ) {
 				vall_torsions_( i, n ) = vall_torsions[ n ][ i ];
 			}
 
@@ -412,7 +412,7 @@ namespace rna{
 			vall_sequence_( n ) = vall_sequence[ n ];
 			vall_secstruct_( n ) = vall_secstruct[ n ];
 			vall_is_chainbreak_( n ) = vall_is_chainbreak[ n ];
-			for (Size i = 1; i <= core::scoring::rna::NUM_EDGES; i++ ) {
+			for (Size i = 1; i <= core::chemical::rna::NUM_EDGES; i++ ) {
 				vall_edge_is_base_pairing_( n , i) = vall_edge_is_base_pairing[ n ][ i ];
 			}
 			vall_name_( n ) = vall_name[ n ];

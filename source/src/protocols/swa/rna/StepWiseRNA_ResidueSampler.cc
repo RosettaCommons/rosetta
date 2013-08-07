@@ -27,7 +27,7 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh> //Sept 26, 2011
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 
 
 //#include <protocols/swa/rna/StepWiseRNA_Dinucleotide_Sampler_Util.hh>
@@ -45,7 +45,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -781,13 +781,13 @@ namespace rna {
 			}
 
 			core::kinematics::Stub base_info;
-			base_info.v = core::scoring::rna::get_rna_base_centroid( residue_object, true );
-			base_info.M = core::scoring::rna::get_rna_base_coordinate_system( residue_object, base_info.v );
+			base_info.v = core::chemical::rna::get_rna_base_centroid( residue_object, true );
+			base_info.M = core::chemical::rna::get_rna_base_coordinate_system( residue_object, base_info.v );
 
 
 			//	Real distance_square=( base_info.v - pose.residue(reference_res).xyz(" C5'") ).length_squared();
 			//Fix on Jan 15, 2011..how did I let allow this error to exist for so long!
-			Real const distance_square = ( base_info.v - core::scoring::rna::get_rna_base_centroid( pose.residue( reference_res ), false ) ).length_squared();
+			Real const distance_square = ( base_info.v - core::chemical::rna::get_rna_base_centroid( pose.residue( reference_res ), false ) ).length_squared();
 
 
 			Real const distance = std::sqrt( distance_square );
@@ -1671,8 +1671,8 @@ namespace rna {
 		if ( reference_stub_type == "ribose" ){
 			reference_stub = Get_ribose_stub( pose.residue( reference_res ), job_parameters_->Is_prepend(), true );
 		} else{ //Use the base
-			reference_stub.v = core::scoring::rna::get_rna_base_centroid(  pose.residue( reference_res ), true );
-			reference_stub.M = core::scoring::rna::get_rna_base_coordinate_system( pose.residue( reference_res ), reference_stub.v );
+			reference_stub.v = core::chemical::rna::get_rna_base_centroid(  pose.residue( reference_res ), true );
+			reference_stub.M = core::chemical::rna::get_rna_base_coordinate_system( pose.residue( reference_res ), reference_stub.v );
 		}
 
 		TR.Debug << " reference_stub.v: x = " << reference_stub.v[0] << " y = " << reference_stub.v[1] << " z = " << reference_stub.v[2] << std::endl;

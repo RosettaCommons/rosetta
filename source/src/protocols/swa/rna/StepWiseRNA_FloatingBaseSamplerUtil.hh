@@ -24,25 +24,20 @@
 #include <numeric/xyzVector.hh>
 #include <string>
 #include <map>
-#include <core/chemical/AA.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
 #include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <set>
 #include <ObjexxFCL/string.functions.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh> //June 02, 2011
 #include <core/pose/Pose.hh> //June 02, 2011
-#include <core/scoring/rna/RNA_Util.hh> //June 02, 2011
 
 //#define centroid_bin_size 0.5
 //#define euler_angle_bin_size 5

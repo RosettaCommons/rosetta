@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/types.hh>
 #include <core/init/init.hh>
@@ -101,7 +101,7 @@ prepare_fold_tree_for_erraser( pose::Pose & pose,
 															 utility::vector1< Size > const sample_res_list ){
 
   using namespace core::kinematics;
-  using namespace core::scoring::rna;
+  using namespace core::chemical::rna;
 
 	FoldTree f = pose.fold_tree();
 

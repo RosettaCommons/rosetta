@@ -33,7 +33,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -191,7 +191,7 @@ RNA_StructureParameters::initialize_secstruct( core::pose::Pose & pose  )
 			if (  rna_pairing.edge1 == 'W' &&
 						rna_pairing.edge2 == 'W' &&
 						rna_pairing.orientation == 'A' &&
-						core::scoring::rna::possibly_canonical( pose.residue( rna_pairing.pos1 ).aa(),
+						core::chemical::rna::possibly_canonical( pose.residue( rna_pairing.pos1 ).aa(),
 																										pose.residue( rna_pairing.pos2 ).aa() ) )	 {
 				rna_secstruct_[ rna_pairing.pos1 - 1 ] = 'H';
 				rna_secstruct_[ rna_pairing.pos2 - 1 ] = 'H';
@@ -215,7 +215,7 @@ RNA_StructureParameters::get_stem_residues( core::pose::Pose const & pose ) cons
 		if (  rna_pairing.edge1 == 'W' &&
 					rna_pairing.edge2 == 'W' &&
 					rna_pairing.orientation == 'A' &&
-					core::scoring::rna::possibly_canonical( pose.residue( rna_pairing.pos1 ).aa(),
+					core::chemical::rna::possibly_canonical( pose.residue( rna_pairing.pos1 ).aa(),
 																									pose.residue( rna_pairing.pos2 ).aa() ) )	 {
 			in_stem.push_back( rna_pairing.pos1 );
 			in_stem.push_back( rna_pairing.pos2 );
@@ -922,8 +922,8 @@ RNA_StructureParameters::fill_in_default_jump_atoms( kinematics::FoldTree & f, p
 		Size const jump_pos1( f.upstream_jump_residue( i ) );
 		Size const jump_pos2( f.downstream_jump_residue( i ) );
 		f.set_jump_atoms( i,
-											scoring::rna::default_jump_atom( pose.residue( jump_pos1 ) ),
-											scoring::rna::default_jump_atom( pose.residue( jump_pos2) ) );
+											chemical::rna::default_jump_atom( pose.residue( jump_pos1 ) ),
+											chemical::rna::default_jump_atom( pose.residue( jump_pos2) ) );
 	}
 
 }
@@ -1010,7 +1010,6 @@ RNA_StructureParameters::random_jump_change( pose::Pose & pose ) const
 {
 
 	using namespace core::conformation;
-	using namespace core::scoring::rna;
 	using namespace core::id;
 
 	// Any jumps in here to tweak?
@@ -1062,8 +1061,7 @@ RNA_StructureParameters::random_jump_change( pose::Pose & pose ) const
 bool
 RNA_StructureParameters::check_base_pairs( pose::Pose & pose ) const
 {
-	using namespace scoring::rna;
-	static RNA_LowResolutionPotential const rna_low_resolution_potential;
+	static scoring::rna::RNA_LowResolutionPotential const rna_low_resolution_potential;
 
 	for (Size n = 1; n <= rna_pairing_list_.size(); n++ ){
 

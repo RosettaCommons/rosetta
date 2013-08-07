@@ -20,7 +20,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/database/open.hh>
 
@@ -34,7 +34,7 @@
 
 using namespace core;
 using namespace core::pose;
-using namespace core::scoring::rna;
+using namespace core::chemical::rna;
 
 namespace protocols {
 namespace rna {
