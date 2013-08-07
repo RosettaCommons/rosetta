@@ -10,7 +10,10 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-	"core/io/ddg": [
+    "core/chemical/rna": [
+        "RNA_Util",
+    ],
+    "core/io/ddg": [
 		"PositionDdGInfo",
 	],
 	"core/io/pdb": [
