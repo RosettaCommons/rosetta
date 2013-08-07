@@ -932,6 +932,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMa
 		runtime_assert( dynamic_cast< protocols::rosetta_scripts::ParsedProtocol * >( mover_() ));
 
 	bool const adaptive( tag->getOption< bool >( "adaptive", true ) );
+	sample_type_ = tag->getOption< String >( "sample_type", "low" );
 	add_filter( find_filter->second->clone(), adaptive, temperature_, sample_type_ );
 	String const sfxn ( tag->getOption< String >( "scorefxn_name", "" ) );
 	if( sfxn != "" ){
@@ -963,7 +964,6 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, protocols::moves::DataMa
 	preapply_ = tag->getOption< bool >( "preapply", 1 ); // Default true for historical reasons
 	recover_low_ = tag->getOption< bool >( "recover_low", 1 );
 	boltz_rank_ = tag->getOption< bool >( "bolz_rank", 0 );
-	sample_type_ = tag->getOption< String >( "sample_type", "low" );
 
 	utility::vector1< TagPtr > const branch_tags( tag->getTags() );
 	foreach( TagPtr const btag, branch_tags ){
