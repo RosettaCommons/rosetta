@@ -26,6 +26,7 @@
 #define foreach BOOST_FOREACH
 #include <utility/string_util.hh>
 #include <protocols/filters/BasicFilters.hh>
+#include <limits>
 namespace protocols{
 namespace simple_filters {
 
@@ -248,7 +249,7 @@ Operator::compute(
 	}
 	if( logarithm() ){
 		TR<<"value: "<<val<<" ";
-		val = log10( val );
+		val = log10( val + std::numeric_limits< core::Real >::epsilon() );
 		TR<<"log10(val) = "<<val<<std::endl;
 	}
 	if( operation() == NORMALIZED_SUM )

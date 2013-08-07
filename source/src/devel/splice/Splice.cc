@@ -15,13 +15,13 @@
 ///Clarifications about Variables:
 /*
  * Template_pose = The pose that is used as refrence for all the start and end positions of loop segments
- * Souce_pose = The 
+ * Souce_pose = The
  * startn = the position on the pose where the loop starts (N-ter)
  * startc = The position on the pose where the loop ends (C-ter)
- * from_res = The user supplies loop start residues accoding to Template PDB. Splice.cc updates this to be the correct residue accrding to the current pose (both 
+ * from_res = The user supplies loop start residues accoding to Template PDB. Splice.cc updates this to be the correct residue accrding to the current pose (both
  * 			  Structures are lianged)
  * to_res = Same as from_res but apllies to the C-ter of the segment
- * 
+ *
 
  */
 
@@ -323,6 +323,7 @@ Splice::find_dbase_entry( core::pose::Pose const & pose )
 		numeric::random::random_permutation( dbase_subset_.begin(), dbase_subset_.end(), RG );
 		current_dbase_entry_ = dbase_subset_.begin();
 		load_from_checkpoint();
+		first_pass_ = false;
 	} // fi first_pass
 	if( dbase_iterate() ){
 		load_from_checkpoint();
@@ -771,10 +772,10 @@ Splice::apply( core::pose::Pose & pose )
 				return;
 			}
 			//print rms value to output pdb strucutre
-				std::string Result;         
-				std::ostringstream convert; 
-				convert << average_rms;     
-				Result = convert.str(); 
+				std::string Result;
+				std::ostringstream convert;
+				convert << average_rms;
+				Result = convert.str();
 				core::pose::add_comment(pose,"RMSD to source loop",Result);//change correct association between current loop and pdb file
 			if( !splice_filter()->apply( pose ) ){
 				TR<<"Failing because filter fails"<<std::endl;

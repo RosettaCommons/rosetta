@@ -131,6 +131,7 @@ namespace docking {
 DockingProtocol::DockingProtocol()
 {
 	user_defined_ = false;
+	if_ensemble_ = false; // valgrind complains about uninitialized variable w/o this.
 	init(utility::tools::make_vector1<core::SSize>(1), false, false, true, NULL, NULL);
 }
 
@@ -245,7 +246,7 @@ DockingProtocol::set_default()
 	ignore_default_docking_task_ = false;
 	design_ = false;
     if_ensemble_ = false;
-    
+
 	lowres_inner_cycles_ = 50;
 	lowres_outer_cycles_ = 10;
 
@@ -294,7 +295,7 @@ void DockingProtocol::sync_objects_with_flags()
         if( ensemble2_filename_ != "" ){
             if_ensemble_ = true;
         }
-		        
+
         if ( !perturber_ ){
 			perturber_ = new DockingInitialPerturbation( movable_jumps_, true /*slide into contact*/ );
 	}
@@ -527,11 +528,11 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		end_res = cutpoint;
 
 		ensemble1_ = new DockingEnsemble( start_res, end_res, rb_jump, ensemble1_filename_, "dock_ens_conf1", docking_scorefxn_low_, docking_scorefxn_high_ );
-        
+
 		TR << "Ensemble 2: " << ensemble2_filename_ << std::endl;
 		start_res = cutpoint + 1;
 		end_res = pose.total_residue();
-       
+
 		ensemble2_ = new DockingEnsemble( start_res, end_res, rb_jump, ensemble2_filename_, "dock_ens_conf2", docking_scorefxn_low_, docking_scorefxn_high_ );
 
 		// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble file
@@ -544,7 +545,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		set_lowres_scorefxn( docking_scorefxn_ens );
 		// pass the scorefunction to the low res mover
 		docking_lowres_mover_->set_scorefxn( docking_scorefxn_low_ );
-        
+
         //docking_highres_ens = new core::scoring::ScoreFunction( *docking_scorefxn_high_ );
         //docking_highres_ens->set_weight( core::scoring::dock_ens_conf, 1.0 );
         //set_highres_scorefxn( docking_highres_ens, docking_scorefxn_pack_ ); // sets csts for mc and minimization, but not packing
@@ -573,11 +574,11 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
             ensemble_mover->set_ensemble1( ensemble1_ );
             ensemble_mover->set_ensemble2( ensemble2_ );
         }
-        
+
         docking_lowres_mover_->set_inner_cycles( lowres_inner_cycles_ );
         docking_lowres_mover_->set_outer_cycles( lowres_outer_cycles_ );
     }
-    
+
 	// set relevant information to legacy high res mover
 	if ( docking_highres_mover_ ) {
 		if ( docking_highres_mover_->get_name() == "DockingHighResLegacy" && design_ ) {
@@ -627,7 +628,8 @@ bool DockingProtocol::reinitialize_for_new_input() const {
 
 ///@brief copy ctor
 DockingProtocol::DockingProtocol( DockingProtocol const & rhs ) :
-	Mover(rhs)
+	Mover(rhs),
+	if_ensemble_( false ) // valgrind complains about uninitialized variable w/o this.
 {
 	initForEqualOperatorAndCopyConstructor(*this, rhs);
 }
