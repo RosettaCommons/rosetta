@@ -193,12 +193,14 @@ void IterativeVectorExpression::initialize(
 IterativeVectorExpression::values
 IterativeVectorExpression::vector_values() const
 {
-	Size s = size();
-	if ( s == 0 ) { values empty; return empty; }
+	Size const n_vals = size();
+	Size const n_inputs = input_vector_expressions_.size();
 
-	utility::vector1< values > vec_of_values( s );
+	if ( n_vals == 0 ) { values empty; return empty; }
 
-	for ( Size ii = 1; ii <= s; ++ii ) {
+	utility::vector1< values > vec_of_values( n_inputs );
+
+	for ( Size ii = 1; ii <= n_inputs; ++ii ) {
 		vec_of_values[ ii ] = input_vector_expressions_[ ii ]->vector_values();
 		if ( ii != 1 ) {
 			if ( vec_of_values[ ii ].size() != vec_of_values[ ii - 1 ].size() ) {
@@ -208,9 +210,9 @@ IterativeVectorExpression::vector_values() const
 			}
 		}
 	}
-	values return_vals( vec_of_values[ 1 ].size(), 0.0 );
-	for ( Size ii = 1; ii <= return_vals.size(); ++ii ) {
-		for ( Size jj = 1; jj <= s; ++jj ) {
+	values return_vals( n_vals, 0.0 );
+	for ( Size ii = 1; ii <= n_vals; ++ii ) {
+		for ( Size jj = 1; jj <= n_inputs; ++jj ) {
 			local_variables_[ jj ]->set_value( vec_of_values[ jj ][ ii ] );
 		}
 		return_vals[ ii ] = (*expression_)();
