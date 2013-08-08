@@ -46,52 +46,14 @@ namespace chemical {
 namespace carbohydrates {
 
 // Define static data.
-// If we ever add rare sugars larger than 9 carbons, increase the value.
+// These values should not change. Hypothetically, one could have a carbohydrate larger than 9 carbons in length, but I
+// have never seen one.  (Most sugars will have 5 or 6 carbons; sialic acids are common and have 9 carbons.)  If a 10-
+// carbon or larger sugar is needed, a major refactoring will need to occur, due to how the atoms are named -- the third
+// column in the PDB and params format is a single-digit atom number.  If a 10-carbon or larger sugar is simply a
+// ligand, it would probably be best to treat it as such with a "non-carbohydrate" params file. ~Labonte
 core::Size const CarbohydrateInfo::MAX_C_SIZE_LIMIT = 9;
 core::Size const CarbohydrateInfo::MIN_C_SIZE_LIMIT = 3;
 
-/*
-// TODO: Move to database and create static const accessor.
-std::map<std::string, std::string> const CarbohydrateInfo::CODE_TO_ROOT_MAP =
-		boost::assign::map_list_of
-				// Aldotriose
-				("Gly", "glycer")  // TODO: Deal with this special case later.
-
-				// Aldotetroses
-				("Ery", "erythr")
-				("Thr", "thre")
-
-				// Aldopentoses
-				("Rib", "rib")
-				("Ara", "arabin")
-				("Xyl", "xyl")
-				("Lyx", "lyx")
-
-				// Aldohexoses
-				("All", "all")
-				("Alt", "altr")
-				("Glc", "gluc")
-				("Man", "mann")
-				("Gul", "gul")
-				("Ido", "id")
-				("Gal", "galact")
-				("Tal", "tal")
-
-				// Ketotriose
-				("DHA", "dihydroxyacet")  // TODO: Deal with this special case later.
-
-				// Ketotetrose
-				("Eul", "erythrul")  // "Eul" is my own invention; compare Rul and Xul. ~ Labonte
-
-				// Ketopentoses
-				("Rul", "ribul")
-				("Xul", "xylul")
-
-				// Ketohexoses
-				("Psi", "psic")
-				("Fru", "fruct")
-				("Sor", "sorb")
-				("Tag", "tagat");*/
 
 using namespace core;
 

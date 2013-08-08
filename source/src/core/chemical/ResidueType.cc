@@ -765,9 +765,7 @@ ResidueType::add_orbital(
 /// @details add a bond between atom1 and atom2 and add a BondType object referencing the bond (default bond type of SingleBond)
 /** update bonded_neighbor_ and resize it as necessary **/
 void
-ResidueType::add_bond(
-	std::string const & atom_name1,
-	std::string const & atom_name2)
+ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_name2)
 {
 	// signal that we need to update the derived data
 	finalized_ = false;
@@ -826,7 +824,8 @@ ResidueType::add_bond(
 }
 
 /// @details add a bond between atom1 and atom2 and add a BondType object referencing the bond using the specified bondName
-void ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_name2, BondName bondLabel)
+void
+ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_name2, BondName bondLabel)
 {
 	// signal that we need to update the derived data
 	finalized_ = false;

@@ -69,8 +69,6 @@ public:
 	/// @brief A list of Rosetta PDB 3-letter codes for saccharide residues mapped to the corresponding root.
 	static std::map<std::string, std::string> const & code_to_root_map();
 
-	//static std::map<std::string, std::string> const CODE_TO_ROOT_MAP;
-
 
 	// Accessors/Mutators
 	// Nomenclature

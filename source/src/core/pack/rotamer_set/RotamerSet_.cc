@@ -258,22 +258,9 @@ RotamerSet_::build_rotamers_for_concrete(
 		tt.Warning << "Residue " << resid() <<
 				" is a carbohydrate; rotamers for carbohydrates are not yet fully implemented." << std::endl;
 
-		/*Size n_chis = concrete_residue->nchi();
-		tt.Debug << "Residue " << resid() << " has " << n_chis << " side-chain torsions." << std::endl;
-		for (uint i = 1; i <= n_chis; ++i) {
-			RotamerBins bins = concrete_residue->chi_rotamers(i);
-			Size n_bins = bins.size();
-			tt.Debug << "Residue " << resid() << "'s chi" << i << " contains " << n_bins << " rotamer bins: ";
-			for (uint j = 1; j <= n_bins; ++j) {
-				RotamerBin bin = bins[j];
-				tt.Debug << bin.first << ' ';
-			}
-			tt.Debug << std::endl;
-		}*/
-
 		utility::vector1<ResidueOP> new_rotamers;
 
-		build_carbohydrate_rotamers(existing_residue, new_rotamers);
+		build_rotamers_from_rotamer_bins(existing_residue, new_rotamers);
 
 		// Add current rotamer, if applicable.
 		if (task.include_current(resid()) && existing_residue.name() == concrete_residue->name()) {

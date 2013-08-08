@@ -34,8 +34,7 @@ class CarbohydrateInfoTests : public CxxTest::TestSuite {
 public:
 	// Standard methods ////////////////////////////////////////////////////////
 	// Initialization
-	void
-	setUp()
+	void setUp()
 	{
 		using namespace core::pose;
 		using namespace core::import_pose;
@@ -64,8 +63,7 @@ public:
 	}
 
 	// Destruction
-	void
-	tearDown()
+	void tearDown()
 	{}
 
 

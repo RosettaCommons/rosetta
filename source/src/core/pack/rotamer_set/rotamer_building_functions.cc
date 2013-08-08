@@ -870,16 +870,18 @@ build_rna_rotamers(
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Make a rotamer (Residue) for every combination of torsion angle in the rotamer bins.
+// Make a rotamer (Residue) for every combination of torsion angle in the rotamer bins listed in the params file for the
+// given Residue.
 /// @param   <residue>: the Residue for which rotamers are to be made
 /// @param   <rotamers>: a list of rotamers (Residues) to which this method will add new rotamers
-/// @param   <current_chi_index>: internally used by this recursive method; do not pass a value
-/// @param   <current_bin_indices>: internally used by this recursive method; do not pass a value
+/// @param   <current_chi_index>: internally used by this recursive method; DO NOT PASS A VALUE!
+/// @param   <current_bin_indices>: internally used by this recursive method; DO NOT PASS A VALUE!
 /// @details Uses recursion to make a nested loop n levels deep, where n is the number of side-chain torsions ("chis").
-/// @note    This currently assumes that all torsions are independent.  Ideally, we will find an alternative method for
-/// handling carbohydrate rotamer libraries....
+/// @author  Labonte
+/// @note    This currently assumes that all torsions are independent.  For now, this is the default method of handling
+/// carbohydrate rotamers.  Ideally, we will find an alternative method for handling carbohydrate rotamer libraries....
 void
-build_carbohydrate_rotamers(conformation::Residue const & residue,
+build_rotamers_from_rotamer_bins(conformation::Residue const & residue,
 		utility::vector1<conformation::ResidueOP> & rotamers,
 		uint current_chi_index,
 		utility::vector1<uint> *current_bin_indices)
@@ -904,10 +906,10 @@ build_carbohydrate_rotamers(conformation::Residue const & residue,
 		if (n_bins_for_current_chi != 0) {
 			for (uint i = 1; i <= n_bins_for_current_chi; ++i) {
 				current_bin_indices->at(current_chi_index) = i;
-				build_carbohydrate_rotamers(residue, rotamers, current_chi_index + 1, current_bin_indices); // Recurse.
+				build_rotamers_from_rotamer_bins(residue, rotamers, current_chi_index + 1, current_bin_indices); // Recurse.
 			}
 		} else {  // Leave the bin index at 0 and drop to next level.
-			build_carbohydrate_rotamers(residue, rotamers, current_chi_index + 1, current_bin_indices); // Recurse
+			build_rotamers_from_rotamer_bins(residue, rotamers, current_chi_index + 1, current_bin_indices); // Recurse
 		}
 	// If the current chi index is greater than the number of chis, every index has been changed, and it is time to
 	// cease recursing and make a rotamer from the current state of the bin indices.
