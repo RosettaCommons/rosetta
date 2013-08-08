@@ -854,9 +854,10 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	typedef utility::vector1< std::string > StringVec;
 	///Adding Checker. If the "Current Segment" does not appear in the list of segements than exit with error
 	segment_names_ordered_.clear(); //This string vector hold all the segment names inserted bythe user to ensure that the sequence profile is built according to tthe user
-	bool check_segment = 0;//This is set to false unless current segment appears in the segment lis
+	bool check_segment = true;
 	foreach( TagPtr const sub_tag, sub_tags ){
 		if( sub_tag->getName() == "Segments" ){
+			check_segment = false;//This is set to false unless current segment appears in the segment list
 			use_sequence_profiles_ = true;
 			profile_weight_away_from_interface( tag->getOption< core::Real >( "profile_weight_away_from_interface", 1.0 ) );
 			segment_type_ = sub_tag->getOption< std::string >( "current_segment" );
@@ -893,7 +894,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 
 				//TR<<"the segment name is: "<<segment_name<<std::endl;
 				if (segment_name.compare(segment_type_) == 0){
-						check_segment=1	;
+						check_segment=true;
 				}
 				splice_segments_.insert( std::pair< std::string, SpliceSegmentOP >( segment_name, splice_segment ) );
 				segment_names_ordered_.push_back(segment_name);
