@@ -39,7 +39,7 @@ def exe_exists(exe):
     return False
 
 #Input argument parsing with argparse
-help_message1 = "Build Rosetta using CMake + Ninja. See source/cmake/README_ninja for more instructions."
+help_message1 = "Build Rosetta using CMake + Ninja. See source/cmake/README for more info."
 help_message2 = (
     "examples:\n" +
     "ninja.build.py release        Standard Release build\n" +

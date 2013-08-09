@@ -1,4 +1,22 @@
------ Compiling with cmake -----
+----- Use ninja_build.py -----
+The easiest way to use cmake + ninja is to use main/source/ninja_build.py.
+
+See below for instruction for installing cmake and ninja.
+
+After proper installation, run
+
+./ninja_build.py (assuming you are at source/)
+
+to obtain a list of help info.
+
+Quick examples:
+
+./ninja_build.py r -remake (Release build, use -remake for the first run)
+./ninja_build.py r (build afterwards if you did not edit *.src.settings
+./ninja_build.py d (Debug build)
+./ninja_build.py u (Unit test build, see below)
+
+----- Compiling with cmake + ninja -----
 
 After checking out a fresh version run these commands to
 get a full release build of rosetta:
@@ -19,27 +37,31 @@ Ninja is a very efficient replacement for 'make'. If you want to use cmake with 
 
 Usage is straightforward, and similar to regular CMake builds:
 
-#Build:
+#Build using ninja_build.py:
+
+cd rosetta/main/source/
+./ninja_build.py -remake unit 
+(Omit "remake" if you haven't edited any *.src.settings since the last run)
+
+or just use the command lines:
+
 ./make_project.py all
 cd ./build_unit
 cmake -G Ninja 
 ninja 
 
 #Test
-cd rosetta/source/
-test/run.py -C -j8 --mute all # Don't forget the "-C"
 
-For those who follow the way of ninja_build.py, it's even easier:
-
-cd rosetta/source/
-./ninja_build.py remake unit # Omit "remake" if you haven't edited any *.src.settings since the last run
-test/run.py -C -j8 --mute all 
+cd rosetta/main/source/
+test/run.py -C -j8 --mute all (Don't forget the "-C")
 
 
------ Installing Ninja ---
+----- Installing CMake + Ninja ---
 
-1. Download the latest version of cmake (v 2.8.8 at time of writing). 
-Currently Ninja is turned on by default for linux but not for Apple.
+1. Download the latest version of cmake (> v2.8.8). 
+
+######The following is for cmake 2.8.8 only#################
+Ninja is turned on by default for linux but not for Apple in cmake 2.8.8.
 
 Turn on Ninja (For Apple machine)
 Edit cmake-2.8.8/Source/CMakeLists.txt:
@@ -53,11 +75,10 @@ and change it to :
 if(WIN32)
   SET(_CMAKE_DEFAULT_NINJA_VALUE FALSE)
 endif()
+############################################################
 
-[you may not need to do this in the future if the cmake developers turn ninja on by default for apple.]
+Now compile and install cmake. Run  
 
-  Then compile and install cmake. Run 
- 
 ./bootstrap
 make
 sudo make install
@@ -71,8 +92,8 @@ sudo make install
    python bootstrap.py
 
 
-3. Then, follow directions above to compile.
-
+3. Make sure you have both 'cmake' and 'ninja' available from shell command.
+If not add them to your $PATH environmental variable.
 
 ----- Using make instead of ninja -----
 If want to compile with make instead of ninja, you can type.
@@ -99,16 +120,3 @@ If you want to see the actual g++ commands the make issues (good for debugging)
 issue the command like this
 
 make VERBOSE=1
-
-If you want to build and run unit tests,
-
-#Build:
-./make_project.py all
-cd ./build_unit
-cmake -G Ninja 
-ninja 
-
-#Test
-cd rosetta/source/
-test/run.py -C -j8 --mute all # Don't forget the "-C"
-
