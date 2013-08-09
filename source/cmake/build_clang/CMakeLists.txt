@@ -12,15 +12,7 @@ INCLUDE(../build/${LINK_RULES}.build.cmake)
 
 ADD_DEFINITIONS(-DNDEBUG)
 
-SET(COMPILE_FLAGS "-pipe -w")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -w -ffast-math -funroll-loops -finline-functions")
-
-IF(${COMPILER} STREQUAL "clang")
-    SET(CMAKE_C_COMPILER  "clang")
-	SET(CMAKE_CXX_COMPILER "clang++")
-    #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O4")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -std=c++98 -D__extern_always_inline=inline")
-ENDIF(${COMPILER} STREQUAL "clang")
+SET(COMPILE_FLAGS "-pipe -w -O3 -std=c++98 -Qunused-arguments -D__extern_always_inline=inline")
 
 INCLUDE(../build/build.post.cmake)
 

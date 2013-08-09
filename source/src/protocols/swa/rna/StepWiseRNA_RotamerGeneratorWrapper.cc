@@ -75,6 +75,7 @@ namespace rna {
 		extra_syn_chi_( false ), //Aug 30, 2010
 		exclude_alpha_beta_gamma_sampling_( false ),
 		allow_syn_pyrimidine_( false ),
+		choose_random_( false ),
 		rotamer_generator_list_( moving_suite_list_.size(), NULL )
 	{
 
