@@ -25,7 +25,6 @@ sources = {
 		"RNA_FragmentMover",
 		"RNA_Fragments",
 		"RNA_HelixAssembler",
-		"RNA_IdealCoord",
 		"RNA_JumpLibrary",
 		"RNA_LoopCloser",
 		"RNA_Minimizer",
@@ -33,7 +32,6 @@ sources = {
 		"RNA_Relaxer",
 		"RNA_SecStructInfo",
 		"RNA_StructureParameters",
-		"RNA_SuiteAssign",
 	],
 	"protocols/swa": [
 		"InputStreamWithResidueInfo",

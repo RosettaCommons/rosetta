@@ -18,7 +18,6 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <core/kinematics/Stub.hh>
@@ -86,27 +85,6 @@ get_watson_crick_base_pair_atoms(
 	 chemical::AA const & aa2,
 	 utility::vector1< std::string > & atom_ids1,
 	 utility::vector1< std::string > & atom_ids2	 );
-
-bool
-is_cutpoint_open( core::pose::Pose const & pose, Size const i );
-
-bool
-is_rna_chainbreak( core::pose::Pose const & pose, Size const i );
-
-
-void
-apply_non_main_chain_sugar_coords(
-    utility::vector1< Vector > const & non_main_chain_sugar_coords,
-		core::pose::Pose & pose,
-		core::pose::Pose const & reference_pose,
-		core::Size const & i
-																	);
-
-void
-apply_ideal_c2endo_sugar_coords(
-		core::pose::Pose & pose,
-		core::Size const & i
-																);
 
 //Copied from Parin SRC on Dec 23, 2011.
 numeric::xyzVector<core::Real>

@@ -22,6 +22,7 @@
 
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/RNA_Util.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <protocols/toolbox/AllowInsert.hh> //need to move AllowInsert to toolbox XRW2
 
 #include <core/conformation/Residue.hh>
@@ -503,8 +504,7 @@ apply_ideal_coordinates_for_alternative_pucker( core::pose::Pose const & pose, c
 	for (core::Size n = 1; n <= pose.total_residue(); n++ ) {
 		core::Real const delta = pose.residue( n ).mainchain_torsion( DELTA );
 		if ( delta > DELTA_CUTOFF ) {
-			//apply_ideal_c2endo_sugar_coords( pose_reference, pose_reference, n );
-			apply_ideal_c2endo_sugar_coords( pose_reference, n );
+			core::pose::rna::apply_ideal_c2endo_sugar_coords( pose_reference, n );
 		}
 	}
 

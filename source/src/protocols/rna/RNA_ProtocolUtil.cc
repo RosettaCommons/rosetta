@@ -19,6 +19,7 @@
 #include <protocols/forge/methods/fold_tree_functions.hh>
 #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -111,7 +112,7 @@ figure_out_reasonable_rna_fold_tree( pose::Pose & pose )
 			continue;
 		}
 
-		if ( chemical::rna::is_rna_chainbreak( pose, i ) ){
+		if ( pose::rna::is_rna_chainbreak( pose, i ) ){
 
 			//std::cout << "CHAINBREAK between " << i << " and " << i+1 << std::endl;
 

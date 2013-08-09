@@ -17,6 +17,7 @@
 
 // Package Headers
 #include <core/chemical/rna/RNA_Util.hh>
+#include <core/pose/rna/RNA_Util.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
@@ -838,7 +839,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 			//This happen frequently, for example when modeling single-stranded RNA loop (PNAS December 20, 2011 vol. 108 no. 51 20573-20578).
 			//Actually if chain_break is cutpoint_open, pose.conformation().get_torsion_angle_atom_ids() should fail, which leads to the EARLY RETURN FALSE statement at the beginning of this function.
 
-			bool const violate_max_O3_prime_to_P_bond_dist= is_rna_chainbreak(pose, rsd_1.seqpos());
+			bool const violate_max_O3_prime_to_P_bond_dist= pose::rna::is_rna_chainbreak(pose, rsd_1.seqpos());
 
 			//Note that cutpoint_closed_torsions are NOT considered as chain_break_torsion since we want to score them EVEN when skip_chainbreak_torsions_=true!
 			//Necessary since for cutpoint_closed_torsions, the max O3_prime_to_P_bond_dist might be violated during stages of the Fragment Assembly and Stepwise Assembly where the chain is not yet closed.

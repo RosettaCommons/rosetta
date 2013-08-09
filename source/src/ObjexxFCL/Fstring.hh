@@ -1387,7 +1387,6 @@ public: // Comparison
 
 
 	/// @brief Fstring == Fstring Case-Optionally?
-	friend
 	inline
 	bool
 	equal( Fstring const & s, Fstring const & t, bool const exact_case = true )
@@ -1401,7 +1400,6 @@ public: // Comparison
 
 
 	/// @brief Fstring == char Case-Optionally?
-	friend
 	inline
 	bool
 	equal( Fstring const & s, char const c, bool const exact_case = true )
@@ -1415,7 +1413,6 @@ public: // Comparison
 
 
 	/// @brief char == Fstring Case-Optionally?
-	friend
 	inline
 	bool
 	equal( char const c, Fstring const & s, bool const exact_case = true )

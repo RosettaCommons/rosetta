@@ -6,12 +6,12 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-/// @file   protocols/rna/RNA_IdealCoord.cc
+/// @file   core/pose/rna/RNA_IdealCoord.cc
 /// @brief  Apply ideal RNA geometry to a residue or a pose
 /// @author  Fang-Chieh Chou
 
 // Unit headers
-#include <protocols/rna/RNA_IdealCoord.hh>
+#include <core/pose/rna/RNA_IdealCoord.hh>
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -21,7 +21,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/import_pose/import_pose.hh>
+#include <core/io/pdb/file_data.hh>
 #include <basic/database/open.hh>
 
 // Numeric headers
@@ -32,11 +32,10 @@
 #include <string>
 #include <cmath>
 
-using namespace core;
-using namespace core::pose;
 using namespace core::chemical::rna;
 
-namespace protocols {
+namespace core {
+namespace pose {
 namespace rna {
 
 //////////////////////////////////////////////////////
@@ -50,7 +49,7 @@ RNA_IdealCoord::~RNA_IdealCoord() {}
 
 /////////////////////////////////////////////////////
 bool RNA_IdealCoord::is_torsion_exists(Pose const & pose, id::TorsionID const & torsion_id) const {
-	using namespace core::id;
+	using namespace id;
 	Size res_index = torsion_id.rsd();
 	if ( res_index < 1 || res_index > pose.total_residue() ) return false;
 
@@ -73,9 +72,9 @@ void RNA_IdealCoord::init() {
 
 	//Initialize the reference poses
 	chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set ( "rna" );
-	Pose ref_pose;
 	for (Size i = 1; i <= pdb_file_list.size(); ++i) {
-		import_pose::pose_from_pdb ( ref_pose, *rsd_set, pdb_file_list[i] );
+		Pose ref_pose;
+		io::pdb::build_pose_from_pdb_as_is(ref_pose, *rsd_set, pdb_file_list[i] );
 		ref_pose_list_.push_back(ref_pose);
 	}
 }
@@ -83,9 +82,9 @@ void RNA_IdealCoord::init() {
 /////////////////////////////////////////////////////
 void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, bool const is_north, bool const keep_backbone_torsion ) const {
 
-	using namespace core::id;
-	using namespace core::chemical;
-	using namespace core::conformation;
+	using namespace id;
+	using namespace chemical;
+	using namespace conformation;
 
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;
@@ -165,5 +164,6 @@ void RNA_IdealCoord::apply( Pose & pose, utility::vector1 < Size > const & pucke
 }
 /////////////////////////////////////////////////
 
+}
 }
 }

@@ -44,6 +44,7 @@
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 
 #include <core/chemical/ChemicalManager.hh>
@@ -292,12 +293,12 @@ bool RNA_SilentStruct::init_from_lines(
 			//  since we'll eventually need to use RNA (or protein) .params files
 			//  to create the pose, couldn't we look up the residue
 			//  and figure out how many torsions are required?
-			for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ){
+			for ( Size n = 1; n <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; n++ ){
 				line_stream	>> torsion_value;
 				temp_mainchain_torsions.push_back( torsion_value  );
 			}
 			if (fullatom_) {
-				for ( Size n = 1; n <= core::chemical::rna::NUM_RNA_CHI_TORSIONS; n++ ){
+				for ( Size n = 1; n <= chemical::rna::NUM_RNA_CHI_TORSIONS; n++ ){
 					line_stream	>> torsion_value;
 					temp_chi_torsions.push_back( torsion_value  );
 				}
@@ -441,7 +442,7 @@ void RNA_SilentStruct::fill_pose(
 
 		pose::Pose const & reference_pose = pose; /*try to avoid refolds*/
 		for ( Size seqpos = 1; seqpos <= nres(); ++seqpos ) {
-			chemical::rna::apply_non_main_chain_sugar_coords( non_main_chain_sugar_coords_[ seqpos ], pose, reference_pose, seqpos );
+			pose::rna::apply_non_main_chain_sugar_coords( non_main_chain_sugar_coords_[ seqpos ], pose, reference_pose, seqpos );
 		}
 	}
 

@@ -23,7 +23,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/optimization/AtomTreeMinimizer.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
-#include <protocols/rna/RNA_IdealCoord.hh>
+#include <core/pose/rna/RNA_IdealCoord.hh>
 
 #include <core/types.hh>
 
@@ -106,37 +106,37 @@ private:
 	figure_out_and_remove_dangling_ends( std::string const & full_sequence );
 
 	void
-	build_dangling_ends( pose::Pose & pose ) const;
+	build_dangling_ends( core::pose::Pose & pose ) const;
 
 	void
-	build_dangle_seq1_5prime( pose::Pose & pose, std::string const & dangle_seq ) const;
+	build_dangle_seq1_5prime( core::pose::Pose & pose, std::string const & dangle_seq ) const;
 
 	void
-	build_dangle_seq2_5prime( pose::Pose & pose, std::string const & dangle_seq ) const;
+	build_dangle_seq2_5prime( core::pose::Pose & pose, std::string const & dangle_seq ) const;
 
 	void
-	build_dangle_seq1_3prime( pose::Pose & pose, std::string const & dangle_seq ) const;
+	build_dangle_seq1_3prime( core::pose::Pose & pose, std::string const & dangle_seq ) const;
 
 	void
-	build_dangle_seq2_3prime( pose::Pose & pose, std::string const & dangle_seq ) const;
+	build_dangle_seq2_3prime( core::pose::Pose & pose, std::string const & dangle_seq ) const;
 
 	core::Size
-	get_cutpoint( pose::Pose const & pose ) const;
+	get_cutpoint( core::pose::Pose const & pose ) const;
 
 	void
-	append_Aform_residue( pose::Pose & pose, Size const & n, char const & nt ) const;
+	append_Aform_residue( core::pose::Pose & pose, Size const & n, char const & nt ) const;
 
 	void
-	prepend_Aform_residue( pose::Pose & pose, Size const & n, char const & nt ) const;
+	prepend_Aform_residue( core::pose::Pose & pose, Size const & n, char const & nt ) const;
 
 	void
-	minimize_append_res( pose::Pose & pose, Size const n ) const;
+	minimize_append_res( core::pose::Pose & pose, Size const n ) const;
 
 	void
-	minimize_prepend_res( pose::Pose & pose, Size const n ) const;
+	minimize_prepend_res( core::pose::Pose & pose, Size const n ) const;
 
 	void
-	fill_chain_info( pose::Pose & pose, std::string const & full_sequence );
+	fill_chain_info( core::pose::Pose & pose, std::string const & full_sequence );
 
 private:
 
@@ -165,7 +165,7 @@ private:
 
 	core::scoring::ScoreFunctionOP finish_scorefxn_;
 
-	protocols::rna::RNA_IdealCoord ideal_coord_;
+	core::pose::rna::RNA_IdealCoord ideal_coord_;
 
 	bool model_and_remove_capping_residues_;
 	std::string const capping_residues_;

@@ -14,7 +14,7 @@
 /// @brief
 
 #include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/rna/RNA_IdealCoord.hh>
+#include <core/pose/rna/RNA_IdealCoord.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 // libRosetta headers
 #include <core/types.hh>
@@ -54,6 +54,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -185,13 +186,14 @@ check_in_bond_angle_list ( core::id::AtomID const & atom_id1,
 //////////////////////////////////////////////////////////////////////////////////////////////
 void
 apply_ideal_coordinates ( pose::Pose const & pose, pose::Pose & pose_reference ) {
+	using namespace core::pose::rna;
 	using namespace core::chemical::rna;
 	RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 	Real const DELTA_CUTOFF ( rna_fitted_torsion_info.delta_cutoff() );
 	bool const is_use_phenix_geo = option[ basic::options::OptionKeys::rna::corrected_geo ];
 	utility::vector1 <Size> pucker_conformation (pose_reference.total_residue(), 0);
 		
-	protocols::rna::RNA_IdealCoord ideal_coord;
+	RNA_IdealCoord ideal_coord;
 	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
 		if ( pose.residue ( n ).aa() == core::chemical::aa_vrt ) continue; //FCC
 

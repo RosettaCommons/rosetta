@@ -24,6 +24,7 @@
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/pose/util.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
@@ -386,7 +387,7 @@ FragmentLibrary::~FragmentLibrary() {}
 				}
 
 				if (!change_sugar) continue;
-				apply_non_main_chain_sugar_coords( vecs, pose, reference_pose, position_offset );
+				pose::rna::apply_non_main_chain_sugar_coords( vecs, pose, reference_pose, position_offset );
 
 			}
 		}

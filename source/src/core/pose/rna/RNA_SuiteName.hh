@@ -1,0 +1,115 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file core/chemical/rna/RNA_SuiteName.hh
+/// @brief RNA suite assignment ported from suitename program
+/// @author Fang-Chieh Chou
+
+
+#ifndef INCLUDED_core_pose_rna_RNA_SuiteName_HH
+#define INCLUDED_core_pose_rna_RNA_SuiteName_HH
+
+#include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/io/ozstream.fwd.hh>
+
+// Utility headers
+
+// ObjexxFCL headers
+
+//// C++ headers
+#include <string>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
+
+typedef std::pair<std::string, core::Real> SuiteAssignment;
+
+namespace core {
+namespace pose {
+namespace rna {
+//////////////////////////////////////////////////
+class RNA_SuiteAssignment {
+public:
+	std::string name;
+	Real suiteness;
+
+	RNA_SuiteAssignment ( std::string const name_in, Real const suiteness_in):
+		name( name_in ),
+		suiteness( suiteness_in )
+	{}
+
+	RNA_SuiteAssignment () : name( "" ), suiteness( 0 ) {}
+};
+/////////////////////////////////////////
+class RNA_SuiteInfo {
+public:
+	std::string name;
+	Size classifier;
+	utility::vector1<Real> torsion;
+
+	RNA_SuiteInfo ( std::string const name_in, Size const classifier_in, utility::vector1<Real> const & torsion_in ):
+		name( name_in ),
+		classifier( classifier_in ),
+		torsion( torsion_in )
+	{}
+
+	RNA_SuiteInfo () : name( "" ), classifier( 0 ) {}
+};
+
+////////////////////////////////////////
+class RNA_SuiteName {
+public:
+
+	RNA_SuiteName();
+	~RNA_SuiteName();
+
+	RNA_SuiteInfo name2suite( std::string const name );
+	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in);
+	RNA_SuiteAssignment assign(Pose const & pose, Size const res);
+	//////////////////////////////////
+	utility::vector1 <RNA_SuiteInfo> all_suites;
+	RNA_SuiteAssignment outlier, suite_undefined;
+
+	Size epsilonmin, epsilonmax,
+			 delta3min , delta3max,
+			 delta2min , delta2max,
+		 	 gammapmin , gammapmax,
+			 gammatmin , gammatmax,
+			 gammammin , gammammax,
+			 alphamin  , alphamax,
+			 betamin   , betamax,
+			 zetamin   , zetamax;
+
+	utility::vector1<Size> regular_half_width;
+	utility::vector1<std::string> dominant_suites;
+	utility::vector1<std::string> satellite_suites;
+	utility::vector1< utility::vector1<Size> > half_width_sat;
+	utility::vector1< utility::vector1<Size> > half_width_dom;
+
+private:
+	Real distance_4d(utility::vector1<Real> const &torsion1, utility::vector1<Real> const &torsion2, 
+			utility::vector1<Size> const & half_width);
+
+	Real distance_7d(utility::vector1<Real> const &torsion1, utility::vector1 <Real> const &torsion2,
+			utility::vector1<Size> const & half_width);
+
+	bool is_in_between( utility::vector1<Real> const & target, 
+			utility::vector1<Real> const & dominant,
+			utility::vector1<Real> const & satellite );
+
+	///////////////////////////////////////
+};
+
+}
+}
+}
+
+#endif

@@ -47,6 +47,7 @@ sources = {
 	"core/chemical/rna": [
 		"RNA_ResidueType",
 		"RNA_FittedTorsionInfo",
+		"RNA_Util",
 	],
 
 	"core/chemical/carbohydrates": [

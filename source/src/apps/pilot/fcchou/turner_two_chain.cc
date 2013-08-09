@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <protocols/rna/RNA_SuiteAssign.hh>
+#include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -64,7 +64,7 @@
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/rna/RNA_IdealCoord.hh>
+#include <core/pose/rna/RNA_IdealCoord.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
@@ -183,7 +183,7 @@ apply_nucleoside( Nucleoside_Torsion const & nucleoside,
 	using namespace id;
 	using namespace chemical::rna;
 
-	static protocols::rna::RNA_IdealCoord const ideal_coord_rna;
+	static core::pose::rna::RNA_IdealCoord const ideal_coord_rna;
 
 	if (nucleoside[0]  < 115) { //North
 		if ( pose.torsion( TorsionID( residue, id::BB, 4 ) ) > 115) {
@@ -833,7 +833,7 @@ torsion2pdb()
 {
 	utility::vector1< Real > const all_torsions = option[ input_torsion ] ();
 
-	Pose pose;
+	core::pose::Pose pose;
 	setup_pose(pose);
 
 	std::string const sequence1 = option[ seq1 ]();
@@ -890,7 +890,7 @@ hessian_estimate()
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( force_field_name );
 
 	//Pose setup
-	Pose pose;
+	pose::Pose pose;
 	setup_pose(pose);
 
 	std::string const sequence1 = option[ seq1 ]();
@@ -999,7 +999,7 @@ bp_score_calibrate()
 	ScoreFunctionOP scorefxn = ScoreFunctionFactory::create_score_function( force_field_name );
 
 	//Pose setup
-	Pose pose, pose_ref;
+	pose::Pose pose, pose_ref;
 	setup_pose(pose);
 	pose_ref = pose;
 

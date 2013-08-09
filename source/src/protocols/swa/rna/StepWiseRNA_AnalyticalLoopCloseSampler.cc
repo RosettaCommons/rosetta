@@ -64,7 +64,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
-#include <protocols/rna/RNA_IdealCoord.hh>
+#include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <basic/options/option.hh>
@@ -277,7 +277,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 	Size pucker_id;
 	Size total_count = 0;
 	TR << "Start Generating Rotamer ..." << std::endl;
-	protocols::rna::RNA_IdealCoord const ideal_coord;
+	core::pose::rna::RNA_IdealCoord const ideal_coord;
 
 	// the possibilities for pucker_id. Probably should refactor slightly to be pucker_states (NORTH and SOUTH)... will soon create pucker_sampler.
 	utility::vector1< Size > pucker_ids;

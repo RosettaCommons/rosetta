@@ -33,6 +33,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/ScoreType.hh>
@@ -1061,6 +1062,7 @@ RNA_StructureParameters::random_jump_change( pose::Pose & pose ) const
 bool
 RNA_StructureParameters::check_base_pairs( pose::Pose & pose ) const
 {
+	using namespace core::pose::rna;
 	static scoring::rna::RNA_LowResolutionPotential const rna_low_resolution_potential;
 
 	for (Size n = 1; n <= rna_pairing_list_.size(); n++ ){

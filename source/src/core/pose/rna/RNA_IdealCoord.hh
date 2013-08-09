@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/rna/RNA_IdealCoord.hh
+/// @file core/pose/rna/RNA_IdealCoord.hh
 /// @brief Apply ideal RNA geometry to a residue or a pose
 /// @author Fang-Chieh Chou
 
 
-#ifndef INCLUDED_protocols_rna_RNA_IdealCoord_HH
-#define INCLUDED_protocols_rna_RNA_IdealCoord_HH
+#ifndef INCLUDED_core_pose_rna_RNA_IdealCoord_HH
+#define INCLUDED_core_pose_rna_RNA_IdealCoord_HH
 
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -31,10 +31,8 @@
 #include <string>
 
 
-using namespace core;
-using namespace core::pose;
-
-namespace protocols {
+namespace core {
+namespace pose {
 namespace rna {
 
 class RNA_IdealCoord {
@@ -57,6 +55,7 @@ private:
 	std::string const path_;
 };
 
+}
 }
 }
 

@@ -12,21 +12,23 @@
 /// @author Fang-Chieh Chou
 
 
-#ifndef INCLUDED_protocols_rna_RNA_IdealCoord_fwd_HH
-#define INCLUDED_protocols_rna_RNA_IdealCoord_fwd_HH
+#ifndef INCLUDED_core_pose_rna_RNA_IdealCoord_fwd_HH
+#define INCLUDED_core_pose_rna_RNA_IdealCoord_fwd_HH
 
 // C++
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.fwd.hh>
 
-namespace protocols {
+namespace core {
+namespace pose {
 namespace rna {
 
 class RNA_IdealCoord;
 typedef utility::pointer::owning_ptr< RNA_IdealCoord > RNA_IdealCoordOP;
 typedef utility::pointer::access_ptr< RNA_IdealCoord > RNA_IdealCoordAP;
 
+}
 }
 }
 

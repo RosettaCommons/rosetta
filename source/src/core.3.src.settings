@@ -10,9 +10,6 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
-    "core/chemical/rna": [
-        "RNA_Util",
-    ],
     "core/io/ddg": [
 		"PositionDdGInfo",
 	],
@@ -94,7 +91,12 @@ sources = {
 	"core/pose/ncbb": [
 		"util",
 	],
-	"core/pose/symmetry": [
+    "core/pose/rna": [
+        "RNA_Util",
+        "RNA_IdealCoord",
+        "RNA_SuiteName",
+    ],
+    "core/pose/symmetry": [
 		"util",
 	],
 	"core/scoring": [

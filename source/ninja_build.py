@@ -18,6 +18,7 @@ print "Options"
 print "remake: Full build process by running make_project.py and cmake too (slower)."
 print "my: Just compile apps in apps.src.settings.my and pilot_apps.src.settings.my. (remake is necessary at the first time)"
 print "debug:  build debug version instead."
+print "clang:  build with clang."
 print "unit: build unit test version."
 print "###################################################################"
 
@@ -26,6 +27,7 @@ is_debug = "debug" in sys.argv
 is_remake = "remake" in sys.argv
 is_unit = "unit" in sys.argv
 is_my = "my" in sys.argv
+is_clang = "clang" in sys.argv
 
 #Check if required files exists
 assert exists("./cmake/make_project.py")
@@ -44,7 +46,9 @@ if is_unit:
     os.chdir("./build_unit")
 elif is_debug:
     os.chdir("./build_debug")
-else :
+elif is_clang:
+    os.chdir("./build_clang")
+else:
     os.chdir("./build_release")
 
 if is_remake :
