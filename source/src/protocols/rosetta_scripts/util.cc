@@ -231,7 +231,11 @@ saved_reference_pose( utility::tag::TagPtr const in_tag, protocols::moves::DataM
 
 /// @brief utility function for parse_movemap which goes over each of the tags in a movemap section
 void
-foreach_movemap_tag( utility::tag::TagPtr const in_tag, core::pose::Pose const & pose, core::kinematics::MoveMapOP mm ){
+foreach_movemap_tag(
+	utility::tag::TagPtr const in_tag,
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMapOP mm
+){
 	using namespace core::kinematics;
 	using namespace utility::tag;
 
@@ -291,7 +295,13 @@ foreach_movemap_tag( utility::tag::TagPtr const in_tag, core::pose::Pose const &
 
 /// @brief variant of parse_movemap that takes in a datamap and searches it for already existing movemaps
 void
-parse_movemap( utility::tag::TagPtr const in_tag, core::pose::Pose const & pose, core::kinematics::MoveMapOP & mm, protocols::moves::DataMap & data, bool const reset_map ){
+parse_movemap(
+	utility::tag::TagPtr const in_tag,
+	core::pose::Pose const & pose,
+	core::kinematics::MoveMapOP & mm,
+	protocols::moves::DataMap & data,
+	bool const reset_map
+){
 	using utility::tag::TagPtr;
 	using namespace core::kinematics;
 

@@ -93,6 +93,8 @@ list of them.
    STATE vector command
    State-Vector File Format
    Expression Synatx
+	 POSE_ENERGY command
+	 POSE_ENERGY_VECTOR command
    SCALAR_EXPRESSION command
    VECTOR_VARIABLE command
    VECTOR_EXPRESSION command
@@ -493,6 +495,32 @@ CAUTION: include spaces around everything.  The string "3-4" would tokenize as
 Instead, the string "3 - 4" would tokenize as "Literal(3) MinusSign Literal(4)"
 and this would parse correctly.
 
+=== Section: POSE_ENERGY command ===
+
+The POSE_ENERGY command allows you to score a PDB file once at the beginning of
+execution and to include that score as a constant in subsequent calculations.  This
+could be useful if you want to subtract-out the difference between two different
+backbone conformations for the same chemical species.
+
+The syntax for the POSE_ENERGY command is
+@verbatim
+POSE_ENERGY <varname> <pdb>
+@endverbatim
+
+=== Section: POSE_ENERGY_VECTOR command ===
+
+Like the POSE_ENERGY command, the POSE_ENERGY_VECTOR command allows you to
+score structures and to use those scores in subsequent calculations.  This
+command creates a vector variable instead of a scalar variable, so it could
+for example be used in VECTOR_EXPRESSION commands.
+
+The syntax for the POSE_ENERGY_VECTOR command is
+@verbatim
+POSE_ENERGY_VECTOR <varname> <listfilename>
+@endverbatim
+
+where the contents of <listfilename> should contain a list of pdbs, one per line.
+Empty lines and lines beginning with '#' are ignored.
 
 === Section: SCALAR_EXPRESSION command ===
 
@@ -551,8 +579,8 @@ VECTOR_EXPRESSION FOR <localvar> IN <vectorvar>( , <localvar2> IN <vectorvar2>)*
 
 where the iteration variables "localvar" and "localvar2" etc. are allowed to appear in the expression
 on the right hand side of the equals sign, but must not have been declared as non-local variables in
-any previous variable-declaring statement (i.e. they are allowed to have appeared in previous
-VECTOR_EXPRESSION commands).  This creates the new vector variable with the name "newvarname."
+any previous variable-declaring statement (i.e. they are allowed to have appeared as local variables in
+previous VECTOR_EXPRESSION commands).  This creates the new vector variable with the name "newvarname."
 
 Example 1: if the vector variable "trpcage" had been previously declared, then a new vector variable
 could be declared as follows:

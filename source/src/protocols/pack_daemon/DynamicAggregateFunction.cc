@@ -1149,7 +1149,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_line(
 
 	core::pose::Pose pose;
 	core::import_pose::pose_from_pdbstring( pose, pdb_string, pdb_name );
-	
+
 	if ( pose.total_residue() == 0 ) {
 		throw utility::excn::EXCN_Msg_Exception( "Input pose given in file '"
 			+ pdb_name + "' has zero residues.  Encountered while processing the '" + varname + "' variable in the DynamicAggregateFunction"
@@ -1205,7 +1205,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		}
 	}
 
-   std::list< std::string > pdb_names;
+	std::list< std::string > pdb_names;
 	Size count_pdbs = 0;
 	Size pdbvec_linenum = 0;
 	while ( pdbvec_file ) {
@@ -1243,7 +1243,7 @@ DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
 		}
 		core::pose::Pose pose;
    	core::import_pose::pose_from_pdbstring( pose, pdb_string, *iter );
-		
+
 		if ( pose.total_residue() == 0 ) {
 			throw utility::excn::EXCN_Msg_Exception( "Input pose given in file '"
 				+ *iter + "' has zero residues.  Encountered while processing the '" + varname + "' variable in the DynamicAggregateFunction"
@@ -1308,8 +1308,8 @@ DynamicAggregateFunction::process_NPD_PROPERTY_line(
 		if ( variable_names_dec_line_.find( original_varname ) != variable_names_dec_line_.end() ) {
 			throw utility::excn::EXCN_Msg_Exception( "Expected to read the name for the existing state or state vector"
 				" in the DynamicAggregateFunction input file, but instead was given the name of a non-state variable, "
-				+ original_varname + " that had previously been declared on line " + 
-				utility::to_string( variable_names_dec_line_[ original_varname ] ) + 
+				+ original_varname + " that had previously been declared on line " +
+				utility::to_string( variable_names_dec_line_[ original_varname ] ) +
 				".\n Error while processing line " + utility::to_string( line_number ) + "\n" + line );
 		} else {
 			throw utility::excn::EXCN_Msg_Exception( "Read the name '" + original_varname + "' but "
@@ -1814,7 +1814,7 @@ DynamicAggregateFunction::create_state_variable_expressions(
 				surrogate->root_expression( variable_expressions_for_states_[ count_state ] );
 
 				npd_variable_indices_for_states_[ count_state ].push_back( std::make_pair( count_npd_index, npditer->first ) );
-				variable_expressions_for_npd_properties_[ count_npd_index ] = 
+				variable_expressions_for_npd_properties_[ count_npd_index ] =
 					variable_expressions_[ count_variable_index ] = surrogate;
 				variable_name_2_variable_exp_index_[ npditer->second ] = count_variable_index;
 				scalar_expression_map_[ npditer->second ] = variable_expressions_[ count_variable_index ];
@@ -1877,7 +1877,7 @@ DynamicAggregateFunction::create_variable_vector_expressions(
 					std::string ii_npd_varname = npditer->second + "_" + utility::to_string( ii );
 					SurrogateVariableExpressionOP surrogate = new SurrogateVariableExpression( ii_npd_varname, 0.0 );
 					surrogate->root_expression( variable_expressions_for_states_[ count_state ] );
-					variable_expressions_for_npd_properties_[ count_npd_index ] = 
+					variable_expressions_for_npd_properties_[ count_npd_index ] =
 						variable_expressions_[ count_variable_index ] = surrogate;
 					npd_property_variables[ npditer->first ].push_back( variable_expressions_[ count_variable_index ] );
 					variable_name_2_variable_exp_index_[ ii_npd_varname ] = count_variable_index;
@@ -2342,7 +2342,7 @@ DynamicAggregateFunction::assign_jobs_to_local_daemon_set(
 			corr_stream,
 			sfn.resfile_name_,
 			resfile_stream );
-		for ( std::list< std::pair< Size, std::string > >::const_iterator 
+		for ( std::list< std::pair< Size, std::string > >::const_iterator
 				npditer = npd_variable_indices_for_states_[ state_id ].begin(),
 				npditer_end = npd_variable_indices_for_states_[ state_id ].end();
 				npditer != npditer_end; ++npditer ) {
@@ -2379,9 +2379,9 @@ DynamicAggregateFunction::assign_jobs_to_remote_daemon_sets(
 		int n_npd_properties_to_send = npd_variable_indices_for_states_[ state_id ].size();
 		utility::send_integer_to_node( proc_id, n_npd_properties_to_send );
 		//int count_npd = 0;
-		for ( std::list< std::pair< Size, std::string > >::const_iterator 
-				npditer = npd_variable_indices_for_states_[ state_id ].begin(), 
-				npditer_end = npd_variable_indices_for_states_[ state_id ].end(); 
+		for ( std::list< std::pair< Size, std::string > >::const_iterator
+				npditer = npd_variable_indices_for_states_[ state_id ].begin(),
+				npditer_end = npd_variable_indices_for_states_[ state_id ].end();
 				npditer != npditer_end; ++npditer) {
 			//++count_npd;
 			utility::send_integer_to_node( proc_id, npditer->first );
