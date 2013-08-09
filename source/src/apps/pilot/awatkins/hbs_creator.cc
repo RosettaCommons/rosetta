@@ -143,6 +143,7 @@ typedef utility::pointer::owning_ptr< HbsCreatorMover const > HbsCreatorMoverCOP
 int
 main( int argc, char* argv[] )
 {
+	try {
 	utility::vector1< core::Size > empty_vector(0);
 
 	option.add( hbs_creator::hbs_chain, "Chain from PDB to be mimicked. Default 'A'. Use letters." ).def("A");
@@ -162,6 +163,10 @@ main( int argc, char* argv[] )
 
 	//call job distributor
 	protocols::jd2::JobDistributor::get_instance()->go( HC_mover );
+    } catch ( utility::excn::EXCN_Base const & e ) {
+        std::cerr << "caught exception " << e.msg() << std::endl;
+    }
+	return 0;
 
 }//main
 
