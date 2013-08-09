@@ -75,6 +75,7 @@ public:
 	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in);
 	RNA_SuiteAssignment assign(Pose const & pose, Size const res);
 	//////////////////////////////////
+	Real dist_pow;
 	utility::vector1 <RNA_SuiteInfo> all_suites;
 	RNA_SuiteAssignment outlier, suite_undefined;
 

@@ -37,8 +37,9 @@ namespace rna {
 	//Constructor////////////////////////////////
 	RNA_SuiteName::RNA_SuiteName() { 
 		using utility::tools::make_vector1;
-		outlier = RNA_SuiteAssignment("!!", -1);
-		suite_undefined = RNA_SuiteAssignment("__", -1);
+		outlier = RNA_SuiteAssignment("!!", 0);
+		suite_undefined = RNA_SuiteAssignment("__", 0);
+		dist_pow = 3; //suitename default
 		//Parameters copied from suitename program//////////////////////
 		all_suites.push_back( RNA_SuiteInfo( "1a", 330, make_vector1( 81.495, 212.250, 288.831, 294.967, 173.990, 53.550, 81.035 ) ) );
 		all_suites.push_back( RNA_SuiteInfo( "1m", 330, make_vector1( 83.513, 218.120, 291.593, 292.247, 222.300, 58.067, 86.093 ) ) );
@@ -170,7 +171,7 @@ namespace rna {
 			sum += diff * diff * diff;
 		}
 
-		return pow(sum, 1.0 / 3.0);
+		return pow(sum, 1.0 / dist_pow);
 	}
 
 	////////////////////////////////////////////
@@ -191,7 +192,7 @@ namespace rna {
 			sum += diff * diff * diff;
 		}
 
-		return pow(sum, 1.0 / 3.0);
+		return pow(sum, 1.0 / dist_pow);
 	}
 
 	//////////////////////////////////////////////
@@ -272,15 +273,14 @@ namespace rna {
 		}
 
 		Size best_index(0), dom_index(0);
-		Real best_dist(0), dom_dist(0);
+		Real best_dist(999), dom_dist(999);
 		
 		for (Size i = 1; i <= all_suites.size(); ++i) {
 			if (all_suites[i].classifier != classifier) continue;
 			Real const dist = distance_4d(torsions, all_suites[i].torsion, regular_half_width);
 			if (dist > 1) continue;
 			//std::cout << dist <<std::endl;
-			Size const find_index = dominant_suites.index( all_suites[i].name );
-			if (find_index != 0) {
+			if ( dominant_suites.has_value( all_suites[i].name ) ) {
 				dom_index = i;
 				dom_dist = dist;
 			} else if (dist < best_dist) {
@@ -299,7 +299,8 @@ namespace rna {
 		} else {
 			if (dom_index != 0) {
 				Size const find_index = satellite_suites.index(all_suites[best_index].name);
-				if (find_index != 0 && is_in_between(torsions, all_suites[dom_index].torsion, all_suites[best_index].torsion) ) {
+				if ( satellite_suites.has_value(all_suites[best_index].name) &&
+						 is_in_between(torsions, all_suites[dom_index].torsion, all_suites[best_index].torsion) ) {
 					Real const satellite_dist = distance_4d(torsions, all_suites[best_index].torsion, half_width_sat[find_index]);
 					Real const dominant_dist = distance_4d(torsions, all_suites[dom_index].torsion, half_width_dom[find_index]);
 					if (satellite_dist > dominant_dist) {

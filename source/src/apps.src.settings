@@ -168,7 +168,8 @@ sources = {
 		"rna_helix",
 		"rna_minimize",
 		"rna_score",
-                "rna_thread",
+        "rna_thread",
+        "rna_suitename",
 	],
 	"public/swa/rna": [
 		"swa_rna_analytical_closure",
