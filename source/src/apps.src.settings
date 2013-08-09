@@ -60,16 +60,18 @@ sources = {
 	],
 	"public/analysis": [
 		"contactMap",
-		"InterfaceAnalyzer",
-		"score",
-		"score_jd2",
                 "ensemble_analysis",
                 "fast_clustering",
+		"InterfaceAnalyzer",
+		"per_residue_energies",
+		"residue_energy_breakdown",
+		"score",
+		"score_jd2",
 	],
 	"public/antibody": [
 		"antibody_legacy",
-        "antibody_graft",
-        "antibody_H3",
+		"antibody_graft",
+		"antibody_H3",
 	],
 	"public/boinc": [
 		"minirosetta",

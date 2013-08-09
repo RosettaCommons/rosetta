@@ -11,6 +11,7 @@
 /// @brief utility functions for defining constraints. Maybe better placed in src/numeric?
 /// @author James Thompson
 
+#include <core/scoring/constraints/util.hh>
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>

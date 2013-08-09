@@ -9,6 +9,7 @@
 /// @file per_residue_energies.cc
 /// @brief simple application for printing out energies from a Pose.
 /// @author James Thompson
+/// @author Promoted to public by Rocco Moretti (rmoretti@u.washington.edu)
 
 #include <devel/init.hh>
 #include <core/types.hh>

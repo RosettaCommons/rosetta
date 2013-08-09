@@ -1,0 +1,2 @@
+-in:file:s input/S_1TR1A_1_0001.pdb
+-out:file:silent output/per_residue_energies.out

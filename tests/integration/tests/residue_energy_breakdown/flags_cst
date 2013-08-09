@@ -1,0 +1,4 @@
+-in:file:s input/S_1TR1A_1_0001.pdb
+-constraints::cst_file input/cstfile.cst
+-constraints::cst_weight 1.0
+-out:file:silent output/residue_score_breakdown_cst.out

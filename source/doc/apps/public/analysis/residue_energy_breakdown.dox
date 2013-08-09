@@ -18,12 +18,12 @@
 @page residue_energy_breakdown Documentation of the residue_energy_breakdown utility
 
 @section metadata Metadata
-This document was edited March 29th 2010 by Rocco Moretti. This application was created and documented by Rocco Moretti, et al.
+This document was edited Aug 9th 2013 by Rocco Moretti. This application was created and documented by Rocco Moretti, et al.
 
 @section description  Description
 Occasionally one would like to know how the structural energy breaks down into the interactions between the various residues. (For example, which two residues are giving a large clash/repulsive score, or if a particular salt bridge is contributing as much to the score as you think it might.) This utility takes one or more structure files (pdbs or silent files) and then outputs as a whitespace-seperated scorefile the residue-by-residue breakdown on a per-scoreterm level. Also included are the "one body" energies of each residue, which includes the "two body" interaction of the residue with itself.
 
-If individual residue-pair interactions are not needed, see the per_residue_energies application for a similar utility.
+If individual residue-pair interactions are not needed, the application per_residue_energies outputs a similar scoretable where energies are summed at a per-residue level. (Similar to the per residue scoring table at the end of a Rosetta PDB, but in a conveniently formatted form.) 
 
 @section caveats Limitations and Caveats
 
@@ -33,9 +33,9 @@ While the total (weighted) score should be the same as the sum of the individual
 
 @section input Input
 
-Observes standard input flags (e.g. -in:file :s, -in:file :silent, etc.). Multiple input structures may be specified.
+Observes standard input flags (e.g. -in:file:s, -in:file:silent, etc.). Multiple input structures may be specified.
 
-The name of the output file is specified with -out:file :silent
+The name of the output file is specified with -out:file:silent
 
 Scorefunction weights files are specified with -score:weights and -score:patch, as usual.
 

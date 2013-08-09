@@ -353,7 +353,6 @@ sources = {
 		#"basic_thread",
 		#"kdtree_disulf",
 		#"sc_interaction",
-		"per_residue_energies",
 		#"casp9_superdev",
 		#"thread_fast",
 		#"burial",
@@ -656,7 +655,6 @@ sources = {
 		#"SurfaceGroups",
 	],
 	"pilot/rmoretti" : [
-		"residue_energy_breakdown", # /* Rocco Moretti, doc/apps/pilot/residue_energy_breakdown.dox, test/integration/tests/residue_energy_breakdown/ */
 		"extract_atomtree_diffs_jd1", # /* Old, jd1 version of extract_atomtree_diffs, in case someone really needs it.*/
 		"ligand_rpkmin_jd1", # /* Old, jd1 version of ligand_rpkmin, in case someone really needs it. */
 		"ligand_dock_jd1", # /* Old, jd1 version of ligand_dock, in case someone really needs it. */

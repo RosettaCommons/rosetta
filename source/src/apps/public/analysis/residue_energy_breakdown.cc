@@ -20,11 +20,13 @@
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/util.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -69,8 +71,11 @@ main( int argc, char* argv [] ) {
 	core::scoring::methods::EnergyMethodOptionsOP emopts(
 		new core::scoring::methods::EnergyMethodOptions( scorefxn->energy_method_options() )
 	);
-	emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );;
+	emopts->hbond_options().decompose_bb_hb_into_pair_energies( true );
 	scorefxn->set_energy_method_options( *emopts );
+	// Post-loading commandline scorefunction alterations.
+	core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *scorefxn );
+	// TODO: Do we need other scorefunction modifications here?
 
 	SilentFileData sfd;
 	core::pose::Pose current_pose;
@@ -79,9 +84,15 @@ main( int argc, char* argv [] ) {
 
 	while ( input.has_another_pose() ) {
 		input.fill_pose( current_pose, *rsd_set );
+
+		// Load commandline pose modifications
+		core::scoring::constraints::add_constraints_from_cmdline_to_pose( current_pose );
+		// TODO: Others that should go here? Disulfides, rotamer bonuses, etc.?
+
 		(*scorefxn)(current_pose);
-		EnergyGraph const & egraph( current_pose.energies().energy_graph() );
-		std::string tag(  core::pose::tag_from_pose(current_pose) );
+		Energies const & pose_energies( current_pose.energies() );
+		EnergyGraph const & egraph( pose_energies.energy_graph() );
+		std::string tag( core::pose::tag_from_pose(current_pose) );
 
 		//One body energies
 		for ( Size ii = 1; ii <= current_pose.total_residue(); ++ii ) {
@@ -110,10 +121,31 @@ main( int argc, char* argv [] ) {
 		// Two body energies
 		for ( Size ii = 1; ii <= current_pose.total_residue(); ++ii ) {
 			for ( Size jj = ii + 1; jj <= current_pose.total_residue(); ++jj ) {
+				EnergyMap pair_energies;
+				bool output( false );
+
+				// Short Range
 				EnergyEdge const * edge(egraph.find_energy_edge(ii, jj));
-				if ( edge == 0 ) continue;
-				EnergyMap unwt_pair_energies( edge->fill_energy_map() );
-				EnergyMap pair_energies( unwt_pair_energies * weights );
+				if ( edge != 0 ) {
+					EnergyMap unwt_pair_energies( edge->fill_energy_map() );
+					pair_energies += unwt_pair_energies * weights;
+					output = true;
+				}
+
+				// Long Range
+				for( Size lr = 1; lr <= core::scoring::methods::n_long_range_types; lr++){
+					LREnergyContainerCOP lrec = pose_energies.long_range_container( core::scoring::methods::LongRangeEnergyType( lr ) );
+					if( !lrec || lrec->empty()) { continue; }
+					for ( ResidueNeighborConstIteratorOP rni( lrec->const_upper_neighbor_iterator_begin( ii ) ),
+							end( lrec->const_upper_neighbor_iterator_end( ii ) ); *rni != *end; ++(*rni) ) {
+						if( rni->upper_neighbor_id() != jj ) { continue; }
+						rni->accumulate_energy( pair_energies );
+						output = true;
+					}
+				}
+
+				//Output
+				if( !output ) { continue; }
 
 				SilentStructOP ss( new ScoreFileSilentStruct );
 				ss->decoy_tag( tag + "_" + string_of(ii) + "_" + string_of(jj) );
