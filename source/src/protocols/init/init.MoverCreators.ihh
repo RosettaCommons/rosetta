@@ -203,6 +203,7 @@
 
 #include <protocols/rbsegment_relax/MakeStarTopologyCreator.hh>
 #include <protocols/rbsegment_relax/OptimizeThreadingCreator.hh>
+#include <protocols/rbsegment_relax/IdealizeHelicesCreator.hh>
 
 #include <protocols/relax/AtomCoordinateCstMoverCreator.hh>
 #include <protocols/relax/FastRelaxCreator.hh>

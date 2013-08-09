@@ -103,6 +103,7 @@ sources = {
 		"MakeStarTopology",
 		"FragInsertAndAlignMover",
 		"OptimizeThreading",
+		"IdealizeHelices",
 		"RBSegment",
 		"RBSegmentMover",
 		"RBSegmentRelax",

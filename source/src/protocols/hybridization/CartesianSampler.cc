@@ -26,6 +26,7 @@
 
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
@@ -196,6 +197,12 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 	int aln_len = overlap_;
 	runtime_assert( overlap_>=1 && overlap_<=len/2);
 
+	// see if the pose has NCS
+	simple_moves::symmetry::NCSResMappingOP ncs;
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
+		ncs = ( static_cast< simple_moves::symmetry::NCSResMapping* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING )() ));
+	}
+
 	// number of protein residues in the asymmetric unit
 	core::Size nres = pose.total_residue();
 	core::conformation::symmetry::SymmetryInfoCOP symm_info;
@@ -222,6 +229,9 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 	}
 
 	int maxtries = frame.nr_frags() / 2;
+	ObjexxFCL::FArray2D< core::Real > init_coords( 3, 2*4*aln_len );
+	ObjexxFCL::FArray2D< core::Real > final_coords( 3, 2*4*aln_len );
+
 	for (int tries = 0; tries<maxtries; ++tries) {
 		ww = 1.0;
 		uu = 0.0;
@@ -229,7 +239,6 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		com2 = numeric::xyzVector< core::Real >(0,0,0);
 
 		// grab coords
-		ObjexxFCL::FArray2D< core::Real > init_coords( 3, 2*4*aln_len );
 		for (int ii=-aln_len; ii<aln_len; ++ii) {
 			int i = (ii>=0) ? (nterm?len-ii-1:ii) : (cterm?-ii-1:len+ii);
 			numeric::xyzVector< core::Real > x_1 = pose.residue(start+i).atom(" C  ").xyz();
@@ -253,7 +262,6 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		frame.apply( toget, pose_copy );
 
 		// grab new coords
-		ObjexxFCL::FArray2D< core::Real > final_coords( 3, 2*4*aln_len );
 		for (int ii=-aln_len; ii<aln_len; ++ii) {
 			int i = (ii>=0) ? (nterm?len-ii-1:ii) : (cterm?-ii-1:len+ii);
 			numeric::xyzVector< core::Real > x_1 = pose_copy.residue(start+i).atom(" C  ").xyz();
@@ -262,7 +270,7 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 			numeric::xyzVector< core::Real > x_4 = pose_copy.residue(start+i).atom(" N  ").xyz();
 			com2 += x_1+x_2+x_3+x_4;
 			for (int j=0; j<3; ++j) {
-			final_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
+				final_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
 				final_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
 				final_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
 				final_coords(j+1,4*(ii+aln_len)+4) = x_4[j];
@@ -295,6 +303,54 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 			pose.set_xyz( id, R * ( pose_copy.xyz(id) - com2) + com1 );
 		}
 	}
+
+	// apply to NCS-symmetric copies
+	if (ncs) {
+		for (int j=1; j<=ncs->ngroups(); ++j ) {
+			bool all_are_mapped = true;
+			for ( Size k= 0; k< len && all_are_mapped; ++k )
+				all_are_mapped &= (ncs->get_equiv( j,start+k )!=0);
+			if (!all_are_mapped) continue;
+
+			core::Size remap_start = ncs->get_equiv( j, start );
+
+			// grab coords of ncs copy
+			com1 = numeric::xyzVector< core::Real >(0,0,0);
+			for (int ii=-aln_len; ii<aln_len; ++ii) {
+				int i = (ii>=0) ? (nterm?len-ii-1:ii) : (cterm?-ii-1:len+ii);
+				numeric::xyzVector< core::Real > x_1 = pose.residue(remap_start+i).atom(" C  ").xyz();
+				numeric::xyzVector< core::Real > x_2 = pose.residue(remap_start+i).atom(" O  ").xyz();
+				numeric::xyzVector< core::Real > x_3 = pose.residue(remap_start+i).atom(" CA ").xyz();
+				numeric::xyzVector< core::Real > x_4 = pose.residue(remap_start+i).atom(" N  ").xyz();
+				com1 += x_1+x_2+x_3+x_4;
+				for (int j=0; j<3; ++j) {
+					init_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
+					init_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
+					init_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
+					init_coords(j+1,4*(ii+aln_len)+4) = x_4[j];
+				}
+			}
+			com1 /= 2.0*4.0*aln_len;
+			for (int ii=0; ii<2*4*aln_len; ++ii) {
+				for ( int j=0; j<3; ++j ) init_coords(j+1,ii+1) -= com1[j];
+			}
+
+			// align+xform
+			numeric::Real ctx; float rms;
+			numeric::model_quality::findUU( final_coords, init_coords, ww, 2*4*aln_len, uu, ctx );
+			numeric::model_quality::calc_rms_fast( rms, final_coords, init_coords, ww, 2*4*aln_len, ctx );
+			numeric::xyzMatrix< core::Real > R;
+			R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
+			R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
+			R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
+			for ( Size i = 0; i < len; ++i ) {
+				for ( Size j = 1; j <= pose.residue_type(start+i).natoms(); ++j ) {
+					core::id::AtomID id( j, remap_start+i );
+					pose.set_xyz( id, R * ( pose_copy.xyz(id) - com2) + com1 );
+				}
+			}
+		}
+	}
 }
 
 
@@ -315,9 +371,6 @@ CartesianSampler::apply_constraints( core::pose::Pose &pose )
 	core::Real MAXDIST = 12.0;
 	core::Size GAPBUFFER = 3;
 	core::Real COORDDEV = 1.0;
-
-	//fpd keep constraints from input pose
-	//pose.remove_constraints();
 
 	core::Size nres_tgt = get_num_residues_nonvirt( pose );
 
@@ -378,6 +431,8 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 	}
 	while (!pose.residue(nres).is_protein()) nres--;
 
+	fragmentProbs.resize(nres);
+
 	if (fragment_bias_strategy_ == "density") {
 		// find segments with worst agreement to the density
 		core::scoring::electron_density::ElectronDensity &edm = core::scoring::electron_density::getDensityMap();
@@ -398,7 +453,6 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 
 		utility::vector1<core::Real> per_resCC;
 		per_resCC.resize(nres);
-		fragmentProbs.resize(nres);
 		core::Real CCsum=0, CCsum2=0;
 		(*myscore)(pose);
 
@@ -416,7 +470,6 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		}
 	} else if (fragment_bias_strategy_ == "bfactors") {
 		// find segments with highest bfactors
-		fragmentProbs.resize(nres);
 		core::Real Btemp=25;  // no idea what value makes sense here
 		                      // with Btemp = 25, a B=100 is ~54 times more likely to be sampled than B=0
 
