@@ -280,12 +280,12 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 	utility::vector1< id::AtomID > atm_ids;
 	utility::vector1< numeric::xyzVector< core::Real> > atm_xyzs;
 
-	for (Size i=1; i<=segment_.nContinuousSegments(); ++i) {
+	for (Size ii=1; ii<=segment_.nContinuousSegments(); ++ii) {
 		// apply to transformation to every atom in this segment
-		Size i_start = std::max(segment_[i].start(), (Size)1);
-		Size i_end   = std::min(segment_[i].end(), pose.total_residue());
+		int i_start = std::max(segment_[ii].start(), (Size)1);
+		int i_end   = std::min(segment_[ii].end(), pose.total_residue());
 
-		Size nres_seg  = i_end - i_start + 1;
+		int nres_seg  = i_end - i_start + 1;
 
 		numeric::xyzVector< Real > C1,N1,C2,N2, CA1, CA2;
 		numeric::xyzMatrix< Real > R, R1;
@@ -298,7 +298,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 		R1.yx(0.0);R1.yy(0.0);R1.yz(0.0);
 		R1.zx(0.0);R1.zy(0.0);R1.zz(0.0);
 
-		for ( Size i = 0; i < nres_seg-mag; ++i ) {
+		for ( int i = 0; i < nres_seg-mag; ++i ) {
 			// "transform" r_i to r_j
 			Size r_i = (dir==1)? i_start+i : i_end-i;
 			Size r_j = r_i+dir*mag;
@@ -327,9 +327,9 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 		// final 'mag+1' residues
 		//    if there is a reference pose, use that
 		//    otherwise, duplicate the last residues' xform
-		for ( Size i = 0; i < (Size)mag; ++i ) {
-			Size r_i = (dir==1)? i_end-i : i_start+i;
-			Size r_j = r_i + dir*mag + offsets_[r_i];
+		for ( int i = 0; i < mag; ++i ) {
+			int r_i = (dir==1)? i_end-i : i_start+i;
+			int r_j = r_i + dir*mag + offsets_[r_i];
 
 			bool crosses_cut = (ref_pose_.total_residue() == 0);
 			for (int k = 0; k<=i && !crosses_cut; ++k) {

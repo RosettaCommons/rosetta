@@ -3835,7 +3835,9 @@ ElectronDensity::matchResFast(
 
 		if (ignoreBs) k = 4*M_PI*M_PI/effectiveB;
 
-		core::Real kbin = (k - kmin_)/kstep_ + 1;
+		core::Real kbin = 1;
+		if (nkbins_>1)
+			kbin = (k - kmin_)/kstep_ + 1;
 		if (kbin<1) kbin=1;
 		if (kbin>nkbins_) kbin=nkbins_;
 
@@ -3888,7 +3890,9 @@ void ElectronDensity::dCCdx_fastRes(
 	core::Real B = pose.pdb_info() ? pose.pdb_info()->temperature( rsd.seqpos(), atmid ) : effectiveB;
 
 	core::Real k = sig_j.k( B );
-	core::Real kbin = (k - kmin_)/kstep_ + 1;
+	core::Real kbin = 1;
+	if (nkbins_>1)
+		kbin = (k - kmin_)/kstep_ + 1;
 	if (kbin<1) kbin=1;
 	if (kbin>nkbins_) kbin=nkbins_;
 
@@ -3963,6 +3967,8 @@ ElectronDensity::dCCdB_fastRes(
 	core::Real B = pose.pdb_info()->temperature( rsd.seqpos(), atmid );
 
 	core::Real k = sig_j.k( B );
+	if (nkbins_ == 1)
+		return 0;
 	core::Real kbin = (k - kmin_)/kstep_ + 1;
 	if (kbin<1 || kbin>nkbins_)
 		return 0;

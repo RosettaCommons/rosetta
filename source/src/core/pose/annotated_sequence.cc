@@ -117,6 +117,9 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 	// setup the pose by appending the appropriate residues
 	for ( Size seqpos = 1; seqpos <= one_letter_sequence.length(); ++seqpos ) {
 		char aa = one_letter_sequence[ seqpos-1 ]; // string indexing is zero-based!
+
+		if (aa == '/') continue;  //fpd: force a chainbreak
+
 		chemical::AA my_aa = chemical::aa_from_oneletter_code( aa );
 
 		bool is_lower_terminus(false), is_upper_terminus(false);
@@ -133,8 +136,8 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 			// use aa_map to find list of possible ResidueTypes
 			chemical::ResidueTypeCOPs const & rsd_type_list( residue_set.aa_map( my_aa ) );
 			// for non-annotated sequence, assume single chain for now
-			is_lower_terminus = auto_termini && ( seqpos == 1 );
-			is_upper_terminus = auto_termini && ( seqpos == one_letter_sequence.length() );
+			is_lower_terminus = auto_termini && ( seqpos == 1 || one_letter_sequence[ seqpos-2 ]=='/');
+			is_upper_terminus = auto_termini && ( seqpos == one_letter_sequence.length() || one_letter_sequence[ seqpos ]=='/' );
 			bool const is_terminus( is_lower_terminus || is_upper_terminus ); // redundant, but for convenience
 
 			Size best_index = 0;
@@ -164,6 +167,7 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 
 	return requested_types;
 }
+
 
 
 // Return a list of carbohydrate ResidueTypes corresponding to an annotated polysaccharide sequence.
@@ -339,7 +343,9 @@ void make_pose_from_sequence(
 {
 	// grab residue types
 	chemical::ResidueTypeCOPs requested_types = core::pose::residue_types_from_sequence( sequence_in, residue_set, auto_termini );
-	assert( core::pose::annotated_to_oneletter_sequence( sequence_in ).length() == requested_types.size() );
+
+	//fpd   change '==' to '>=' since the oneletter seq may have chain seperators ('/')
+	assert( core::pose::annotated_to_oneletter_sequence( sequence_in ).length() >= requested_types.size() );
 
 	// clear the pose
 	pose.clear();
