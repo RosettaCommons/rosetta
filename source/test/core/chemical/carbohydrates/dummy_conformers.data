@@ -1,0 +1,14 @@
+# A list of ring conformation definitions for six-membered rings.
+
+# THIS IS JUST FAKE DATA FOR UNIT TESTING! The actual, current data is found in
+# the database:
+# rosetta_databse/chemical/carbohydrates/N-membered_ring_conformers.data, where
+# N is the ring size. If you edit this file, you must also edit
+# database_io.cxxtest.hh.
+
+# Specific   General
+# Conformer  Conformer                  Ideal Angles
+# Name       Name          nu1    nu2    nu3    nu4    nu5    nu6    nu7    nu8
+  1F2        foo         -60.0   60.0  -60.0   60.0  -60.0   60.0    0.0    0.0
+  1,2B       bar          60.0  -60.0   60.0  -60.0   60.0  -60.0    0.0    0.0
+  W1         woo         -60.0   30.0   30.0  -60.0   30.0   30.0    0.0    0.0

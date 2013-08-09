@@ -9,7 +9,7 @@
 
 /// @file    core/chemical/carbohydrates/CarbohydrateInfo.cc
 /// @brief   Method definitions for CarbohydrateInfo.
-/// @author  labonte
+/// @author  Labonte
 
 // Unit header
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
@@ -33,7 +33,6 @@
 #include <sstream>
 
 // Boost headers
-#include <boost/assign/list_of.hpp>
 #include <boost/algorithm/string.hpp>
 
 
@@ -60,14 +59,6 @@ using namespace core;
 
 // Public methods //////////////////////////////////////////////////////////////
 // Standard methods ////////////////////////////////////////////////////////////
-// Empty constructor
-CarbohydrateInfo::CarbohydrateInfo() : utility::pointer::ReferenceCount()
-{
-	chemical::ResidueTypeCAP residue_type;
-
-	init(residue_type);
-}
-
 // Standard constructor
 /// @param    <residue_type>: the ResidueType object containing this CarbohydrateInfo
 CarbohydrateInfo::CarbohydrateInfo(core::chemical::ResidueTypeCAP residue_type) : utility::pointer::ReferenceCount()
@@ -76,7 +67,8 @@ CarbohydrateInfo::CarbohydrateInfo(core::chemical::ResidueTypeCAP residue_type) 
 }
 
 // Copy constructor
-CarbohydrateInfo::CarbohydrateInfo(CarbohydrateInfo const & object_to_copy) : utility::pointer::ReferenceCount(object_to_copy)
+CarbohydrateInfo::CarbohydrateInfo(CarbohydrateInfo const & object_to_copy) :
+		utility::pointer::ReferenceCount(object_to_copy)
 {
 	copy_data(*this, object_to_copy);
 }
@@ -328,6 +320,14 @@ CarbohydrateInfo::glycosidic_linkage_id(core::uint torsion_index) const
 
 
 // Private methods /////////////////////////////////////////////////////////////
+// Empty constructor
+CarbohydrateInfo::CarbohydrateInfo() : utility::pointer::ReferenceCount()
+{
+	chemical::ResidueTypeCAP residue_type;
+
+	init(residue_type);
+}
+
 // Initialize data members from properties.
 void
 CarbohydrateInfo::init(core::chemical::ResidueTypeCAP residue_type)

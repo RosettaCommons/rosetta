@@ -9,7 +9,7 @@
 
 /// @file    core/chemical/carbohydrates/CarbohydrateInfo.hh
 /// @brief   Declarations and simple accessor/mutator definitions for CarbohydrateInfo.
-/// @author  labonte
+/// @author  Labonte
 
 #ifndef INCLUDED_core_chemical_carbohydrates_CarbohydrateInfo_HH
 #define INCLUDED_core_chemical_carbohydrates_CarbohydrateInfo_HH
@@ -41,9 +41,6 @@ namespace carbohydrates {
 class CarbohydrateInfo : public utility::pointer::ReferenceCount {
 public:
 	// Standard methods ////////////////////////////////////////////////////////
-	/// @brief  Empty constructor
-	CarbohydrateInfo();
-
 	/// @brief  Standard constructor
 	CarbohydrateInfo(core::chemical::ResidueTypeCAP residue_type);
 
@@ -70,7 +67,7 @@ public:
 	static std::map<std::string, std::string> const & code_to_root_map();
 
 
-	// Accessors/Mutators
+	// Accessors/Mutators //////////////////////////////////////////////////////
 	// Nomenclature
 	/// @brief  Return the full IUPAC name of the monosaccharide.
 	std::string
@@ -443,6 +440,9 @@ public:
 
 private:
 	// Private methods /////////////////////////////////////////////////////////
+	// Empty constructor
+	CarbohydrateInfo();
+
 	// Initialize data members from properties.
 	void init(core::chemical::ResidueTypeCAP residue_type);
 
@@ -472,7 +472,8 @@ private:
 	// If cyclic, define nu angles in terms of CHI ids.
 	void define_nu_ids();
 
-	// Private data ////////////////////////////////////////////////////////////
+
+	// Private data //////////////////////////////////////////////////////////////////////////////////////////////////
 	core::chemical::ResidueTypeCAP residue_type_;
 	std::string full_name_;
 	std::string short_name_;
@@ -508,7 +509,6 @@ private:
 
 // Insertion operator (overloaded so that CarbohydrateInfo can be "printed" in PyRosetta).
 std::ostream & operator<<(std::ostream & output, CarbohydrateInfo const & object_to_output);
-
 
 
 }  // namespace carbohydrates

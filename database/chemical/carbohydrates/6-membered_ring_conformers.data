@@ -1,0 +1,93 @@
+# A list of ring conformation definitions for six-membered rings.
+
+# Conformer nomenclature is explained in French & Dowd. (1994) J. Comp. Chem.,
+# 15(5)), 561-70.
+
+# In general, numbers (or the letter O) represent ring position.  Four atoms
+# are found for the conformer in question that form a plane, and the atoms are
+# arranged in a clockwise fashion from oxygen (O).  Numbers (or O) given before
+# the symbol, (which are also superscripted if the font allows,) indicate atoms
+# that are above the plane.  Subscripted numbers (or O) to the right of the
+# symbol indicate atoms below the plane.
+
+#        O
+#  nu6 /   \ nu0
+#     /     \
+#    C5      C1
+#    |       |
+# nu4|       |nu1
+#    |       |
+#    C4      C5
+#     \     /
+#  nu3 \   / nu2
+#        C3
+
+# It should be noted that the specific names here are for aldoses.  Ketoses
+# will have different labels.  For example, the two chair conformers for a 2-
+# ketose would be 2C5 and 5C2, since C1 is exocyclic.
+
+# We only need 4 torsion angles to define a 6-membered conformer, so only the
+# 1st 4 nu values will be stored in Rosetta.  However, all 6 angles are listed
+# here for completeness.
+
+# Since these are internal ring torsions, the sum must be 0 degrees.
+
+# There are 38 possible ring conformers.
+
+# Specific   General
+# Conformer  Conformer                  Ideal Angles
+# Name       Name          nu1    nu2    nu3    nu4    nu5    nu0
+
+# 2 Chair Conformations (Local Minima)
+# (1C4, 3CO, & 5C2 are equivalent.)
+  1C4        chair       -60.0   60.0  -60.0   60.0  -60.0   60.0
+  4C1        chair        60.0  -60.0   60.0  -60.0   60.0  -60.0
+
+# 6 Twist-Boat (Skew) Conformations (Local Minima)
+# (1S5 & 4S2 are equivalent.)
+  1S5        twist-boat  -60.0   30.0   30.0  -60.0   30.0   30.0
+  2SO        twist-boat   30.0  -60.0   30.0   30.0  -60.0   30.0
+  3S1        twist-boat   30.0   30.0  -60.0   30.0   30.0  -60.0
+
+  5S1        twist-boat   60.0  -30.0  -30.0   60.0  -30.0  -30.0
+  OS2        twist-boat  -30.0   60.0  -30.0  -30.0   60.0  -30.0
+  1S3        twist-boat  -30.0  -30.0   60.0  -30.0  -30.0   60.0
+
+# 6 Boat Conformations
+  O,3B       boat          0.0   60.0  -60.0    0.0   60.0  -60.0
+  1,4B       boat        -60.0    0.0   60.0  -60.0    0.0   60.0
+  2,5B       boat         60.0  -60.0    0.0   60.0  -60.0    0.0
+
+  BO,3       boat          0.0  -60.0   60.0    0.0  -60.0   60.0
+  B1,4       boat         60.0    0.0  -60.0   60.0    0.0  -60.0
+  B2,5       boat        -60.0   60.0    0.0  -60.0   60.0    0.0
+
+# 12 Envelope Conformations (Local Maxima)
+  OB         envelope     30.0    0.0    0.0  -30.0   60.0  -60.0
+  1B         envelope    -60.0   30.0    0.0    0.0  -30.0   60.0
+  2B         envelope     60.0  -60.0   30.0    0.0    0.0  -30.0
+  3B         envelope    -30.0   60.0  -60.0   30.0    0.0    0.0
+  4B         envelope      0.0  -30.0   60.0  -60.0   30.0    0.0
+  5B         envelope      0.0    0.0  -30.0   60.0  -60.0   30.0
+
+  BO         envelope    -30.0    0.0    0.0   30.0  -60.0   60.0
+  B1         envelope     60.0  -30.0    0.0    0.0   30.0  -60.0
+  B2         envelope    -60.0   60.0  -30.0    0.0    0.0   30.0
+  B3         envelope     30.0  -60.0   60.0  -30.0    0.0    0.0
+  B4         envelope      0.0   30.0  -60.0   60.0  -30.0    0.0
+  B5         envelope      0.0    0.0   30.0  -60.0   60.0  -30.0
+
+# 12 Half-Chair (Twist-Chair) Conformations (Local Maxima)
+  OH1        half-chair   60.0  -30.0    0.0  -30.0   60.0  -60.0
+  1H2        half-chair  -60.0   60.0  -30.0    0.0  -30.0   60.0
+  2H3        half-chair   60.0  -60.0   60.0  -30.0    0.0  -30.0
+  3H4        half-chair  -30.0   60.0  -60.0   60.0  -30.0    0.0
+  4H5        half-chair    0.0  -30.0   60.0  -60.0   60.0  -30.0
+  5HO        half-chair  -30.0    0.0  -30.0   60.0  -60.0   60.0
+
+  1HO        half-chair  -60.0   30.0    0.0   30.0  -60.0   60.0
+  2H1        half-chair   60.0  -60.0   30.0    0.0   30.0  -60.0
+  3H2        half-chair  -60.0   60.0  -60.0   30.0    0.0   30.0
+  4H3        half-chair   30.0  -60.0   60.0  -60.0   30.0    0.0
+  5H4        half-chair    0.0   30.0  -60.0   60.0  -60.0   30.0
+  OH5        half-chair   30.0    0.0   30.0  -60.0   60.0  -60.0

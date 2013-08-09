@@ -14,13 +14,15 @@
 #ifndef INCLUDED_core_chemical_carbohydrates_database_io_HH
 #define INCLUDED_core_chemical_carbohydrates_database_io_HH
 
-// Unit header
+// Package header
+#include <core/chemical/carbohydrates/RingConformerSet.hh>
 
 // Project headers
 #include <core/types.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
+#include <utility/io/izstream.hh>
 
 // C++ headers
 #include <map>
@@ -31,6 +33,10 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
+/// @brief  Local method that opens a file and returns its data as a list of lines after checking for errors.
+utility::vector1<std::string> get_lines_from_file_data(std::string const & filename);
+
+
 /// @brief  Return a list of strings, which are saccharide-specific properties and modifications, read from a database
 /// file.
 utility::vector1<std::string> read_properties_from_database_file(std::string const & filename);
@@ -38,6 +44,10 @@ utility::vector1<std::string> read_properties_from_database_file(std::string con
 /// @brief  Return a map of strings to strings, which are saccharide-specific 3-letter codes mapped to IUPAC roots, read
 /// from a database file.
 std::map<std::string, std::string> read_codes_and_roots_from_database_file(std::string const & filename);
+
+/// @brief  Return a list of ring conformers, read from a database file.
+utility::vector1<RingConformer> read_conformers_from_database_file_for_ring_size(std::string const & filename,
+		core::Size ring_size);
 
 }  // namespace carbohydrates
 }  // namespace chemical

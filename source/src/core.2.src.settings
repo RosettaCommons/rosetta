@@ -52,6 +52,7 @@ sources = {
 
 	"core/chemical/carbohydrates": [
 		"CarbohydrateInfo",
+		"RingConformerSet",
 		"database_io",
 	],
 

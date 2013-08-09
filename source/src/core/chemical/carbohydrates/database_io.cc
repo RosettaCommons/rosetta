@@ -39,15 +39,15 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
-// Return a list of strings, which are saccharide-specific properties and modifications, read from a database file.
+// Local method that opens a file and returns its data as a list of lines after checking for errors.
+/// @details  Blank and commented lines are not returned and the file is closed before returning the lines.
 utility::vector1<std::string>
-read_properties_from_database_file(std::string const & filename)
+get_lines_from_file_data(std::string const & filename)
 {
 	using namespace std;
 	using namespace utility;
 	using namespace utility::file;
 	using namespace utility::io;
-	using namespace core;
 
 	// Check if file exists.
 	if(!file_exists(filename)) {
@@ -55,24 +55,35 @@ read_properties_from_database_file(std::string const & filename)
 	}
 
 	// Open file.
-	izstream data(filename.c_str());
+	izstream data((filename.c_str()));
 	if (!data.good()) {
 		utility_exit_with_message("Unable to open database file: '" + filename + "'");
 	}
 
 	string line;
-	vector1<string> properties;
+	vector1<string> lines;
 
-	// Read lines.
 	while (getline(data, line)) {
 		trim(line, " \t\n");  // Remove leading and trailing whitespace.
 		if ((line.size() < 1) || (line[0] == '#')) continue;  // Skip comments and blank lines.
 
-		properties.push_back(line);
+		lines.push_back(line);
 	}
 
-	// Close file.
 	data.close();
+
+	return lines;
+}
+
+
+// Return a list of strings, which are saccharide-specific properties and modifications, read from a database file.
+utility::vector1<std::string>
+read_properties_from_database_file(std::string const & filename)
+{
+	using namespace std;
+	using namespace utility;
+
+	vector1<string> properties = get_lines_from_file_data(filename);
 
 	TR.Debug << "Read " << properties.size() << " properties from the carbohydrate database." << endl;
 
@@ -86,30 +97,13 @@ read_codes_and_roots_from_database_file(std::string const & filename)
 {
 	using namespace std;
 	using namespace utility;
-	using namespace utility::file;
-	using namespace utility::io;
-	using namespace core;
 
-	// Check if file exists.
-	if(!file_exists(filename)) {
-		utility_exit_with_message("Cannot find database file: '" + filename + "'");
-	}
-
-	// Open file.
-	izstream data(filename.c_str());
-	if (!data.good()) {
-		utility_exit_with_message("Unable to open database file: '" + filename + "'");
-	}
-
-	string line;
+	vector1<string> lines = get_lines_from_file_data(filename);
 	map<string, string> codes_to_roots;
 
-	// Read lines.
-	while (getline(data, line)) {
-		trim(line, " \t\n");  // Remove leading and trailing whitespace.
-		if ((line.size() < 1) || (line[0] == '#')) continue;  // Skip comments and blank lines.
-
-		istringstream line_word_by_word(line);
+	Size n_lines = lines.size();
+	for (uint i = 1; i <= n_lines; ++i) {
+		istringstream line_word_by_word(lines[i]);
 		string key;  // The map key is the 3-letter code, e.g., "Glc", for "glucose".
 		string value;  // The map value is the IUPAC root, e.g., "gluc", for " glucose".
 
@@ -118,12 +112,42 @@ read_codes_and_roots_from_database_file(std::string const & filename)
 		codes_to_roots[key] = value;
 	}
 
-	// Close file.
-	data.close();
-
 	TR.Debug << "Read " << codes_to_roots.size() << " 3-letter code mappings from the carbohydrate database." << endl;
 
 	return codes_to_roots;
+}
+
+// Return a list of ring conformers, read from a database file.
+utility::vector1<RingConformer>
+read_conformers_from_database_file_for_ring_size(std::string const & filename, core::Size ring_size)
+{
+	using namespace std;
+	using namespace utility;
+
+	vector1<string> lines = get_lines_from_file_data(filename);
+	vector1<RingConformer> conformers;
+
+	Size n_lines = lines.size();
+	for (uint i = 1; i <= n_lines; ++i) {
+		istringstream line_word_by_word(lines[i]);
+		RingConformer conformer;
+
+		// We only need 2 less than the number of nu angles to define a ring conformer.
+		conformer.ideal_angles.resize(ring_size - 2);
+
+		line_word_by_word >> conformer.specific_name >> conformer.general_name;
+
+		for (uint nu = 1; nu <= ring_size - 2; ++nu) {
+			line_word_by_word >> conformer.ideal_angles[nu];
+		}
+
+		conformers.push_back(conformer);
+	}
+
+	TR.Debug << "Read " << conformers.size() << " " <<
+			ring_size << "-membered ring conformers from the carbohydrate database." << endl;
+
+	return conformers;
 }
 
 }  // namespace carbohydrates

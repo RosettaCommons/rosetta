@@ -1,0 +1,61 @@
+# A list of ring conformation definitions for five-membered rings.
+
+# Conformer nomenclature is explained in French & Dowd. (1994) J. Comp. Chem.,
+# 15(5)), 561-70.
+
+# In general, numbers (or the letter O) represent ring position.  Three atoms
+# are found for the conformer in question that form a plane, and the atoms are
+# arranged in a clockwise fashion from oxygen (O).  Numbers (or O) given before
+# the symbol, (which are also superscripted if the font allows,) indicate atoms
+# that are above the plane.  Subscripted numbers (or O) to the right of the
+# symbol indicate atoms below the plane.
+
+#         O
+#   nu4 /   \ nu0
+#     /       \
+#   C4          C1
+#    \         /
+# nu3 \       / nu1
+#      C3----C2
+#        nu2
+
+# It should be noted that the specific names here are for aldoses.  Ketoses
+# will have different labels, since C1 is exocyclic.
+
+# We only need 3 torsion angles to define a 5-membered conformer, so only the
+# 1st 3 nu values will be stored in Rosetta.  However, all 5 angles are listed
+# here for completeness.
+
+# Since these are internal ring torsions, the sum must be 0 degrees.
+
+# There are 20 possible ring conformers.
+
+# Specific   General
+# Conformer  Conformer               Ideal Angles
+# Name       Name          nu1    nu2    nu3    nu4    nu0
+
+# 10 Envelope Conformations
+  OE         envelope     30.0    0.0  -30.0   60.0  -60.0
+  1E         envelope    -60.0   30.0    0.0  -30.0   60.0
+  2E         envelope     60.0  -60.0   30.0    0.0  -30.0
+  3E         envelope    -30.0   60.0  -60.0   30.0    0.0
+  4E         envelope      0.0  -30.0   60.0  -60.0   30.0
+
+  EO         envelope    -30.0    0.0   30.0  -60.0   60.0
+  E1         envelope     60.0  -30.0    0.0   30.0  -60.0
+  E2         envelope    -60.0   60.0  -30.0    0.0   30.0
+  E3         envelope     30.0  -60.0   60.0  -30.0    0.0
+  E4         envelope      0.0   30.0  -60.0   60.0  -30.0
+
+# 10 Twist Conformations
+  OT1        twist        60.0  -30.0  -30.0   60.0  -60.0
+  1T2        twist       -60.0   60.0  -30.0  -30.0   60.0
+  2T3        twist        60.0  -60.0   60.0  -30.0  -30.0
+  3T4        twist       -30.0   60.0  -60.0   60.0  -30.0
+  4T5        twist       -30.0  -30.0   60.0  -60.0   60.0
+
+  1TO        twist       -60.0   30.0   30.0  -60.0   60.0
+  2T1        twist        60.0  -60.0   30.0   30.0  -60.0
+  3T2        twist       -60.0   60.0  -60.0   30.0   30.0
+  4T3        twist        30.0  -60.0   60.0  -60.0   30.0
+  5T4        twist        30.0   30.0  -60.0   60.0  -60.0

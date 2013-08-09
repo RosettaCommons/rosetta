@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    CarbohydrateInfo.fwd.hh
+/// @file    core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh
 /// @brief   Forward declarations for CarbohydrateInfo.
-/// @author  labonte
+/// @author  Labonte
 
 #ifndef INCLUDED_core_chemical_carbohydrates_CarbohydrateInfo_FWD_HH
 #define INCLUDED_core_chemical_carbohydrates_CarbohydrateInfo_FWD_HH

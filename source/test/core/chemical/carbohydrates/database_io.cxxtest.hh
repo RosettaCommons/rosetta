@@ -17,6 +17,7 @@
 
 // Unit header
 #include <core/chemical/carbohydrates/database_io.hh>
+#include <core/chemical/carbohydrates/RingConformerSet.hh>
 
 // Utility header
 #include <utility/vector1.hh>
@@ -27,7 +28,7 @@
 
 class CarbohydrateDatabaseIOTests : public CxxTest::TestSuite {
 public:
-	// Standard methods ////////////////////////////////////////////////////////
+	// Standard methods ///////////////////////////////////////////////////////////////////////////////////////////////
 	// Initialization
 	void setUp()
 	{
@@ -39,7 +40,7 @@ public:
 	{}
 
 
-	// Tests ///////////////////////////////////////////////////////////////////
+	// Tests //////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Confirm that carbohydrate properties are loaded correctly from the database.
 	void test_read_properties_from_database_file()
 	{
@@ -55,7 +56,7 @@ public:
 		TS_ASSERT_EQUALS(properties.size(), 19);
 	}
 
-	// Confirm that carbohydrate properties are loaded correctly from the database.
+	// Confirm that carbohydrate 3-letter codes and roots are loaded correctly from the database.
 	void test_read_codes_and_roots_from_database_file()
 	{
 		using namespace std;
@@ -68,5 +69,24 @@ public:
 				read_codes_and_roots_from_database_file("core/chemical/carbohydrates/codes_to_roots.map");
 
 		TS_ASSERT_EQUALS(map.size(), 3);
+	}
+
+	// Confirm that carbohydrate ring conformers are loaded correctly from the database.
+	void test_conformers_from_database_file_for_ring_size()
+	{
+		using namespace std;
+		using namespace utility;
+		using namespace core::chemical::carbohydrates;
+
+		TS_TRACE("Testing read_conformers_from_database_file_for_ring_size() method.");
+
+		vector1<RingConformer> conformers =
+				read_conformers_from_database_file_for_ring_size(
+						"core/chemical/carbohydrates/dummy_conformers.data", 8);
+
+		TS_ASSERT_EQUALS(conformers.size(), 3);
+		TS_ASSERT_EQUALS(conformers[1].specific_name, "1F2");
+		TS_ASSERT_EQUALS(conformers[2].general_name, "bar");
+		TS_ASSERT_EQUALS(conformers[3].ideal_angles.size(), 6);  // 2 fewer angles than the ring size should be read.
 	}
 };  // class CarbohydrateDatabaseIOTests
