@@ -114,7 +114,10 @@ void ConstraintFragmentSampler::set_defaults() {
 	Parent::set_defaults();
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	set_constraint_weight( option[ OptionKeys::constraints::cst_weight ] );
+	if ( option[ OptionKeys::constraints::cst_weight ].user() ){
+		set_constraint_weight( option[ OptionKeys::constraints::cst_weight ] );
+
+	}
 	show_viol_level_ = option[OptionKeys::constraints::viol_level];
 	max_seq_sep_fudge_ = 1.0; //models rosetta++ behaviour.
 
