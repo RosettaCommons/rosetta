@@ -66,9 +66,7 @@ private:
 	PoseOP init_pose_;
 	bool allsc_, ensure_variant_matching_, two_step_; // two_step: dflt false; on first apply, record sidechains, on second apply, enforce them.
 	core::Size jumpid_;
-	//We're not saving this on the DataMap - a simple bool will cause less problems.
-	//utility::pointer::owning_ptr< protocols::moves::DataMapObj< bool > > first_apply_; // internal for two_step_
-	bool first_apply_;
+	utility::pointer::owning_ptr< protocols::moves::DataMapObj< bool > > first_apply_; // internal for two_step_
 };
 
 } // movers

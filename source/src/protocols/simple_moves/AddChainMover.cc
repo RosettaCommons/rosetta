@@ -65,6 +65,7 @@ AddChainMover::apply( Pose & pose )
 
 	Pose new_pose;
 
+	TR<<"Before addchain, total residues: "<<pose.total_residue()<<std::endl;
 	core::import_pose::pose_from_pdb( new_pose, fname() );
 	new_pose.conformation().detect_disulfides();
 	(*scorefxn()) ( new_pose );
@@ -74,6 +75,7 @@ AddChainMover::apply( Pose & pose )
 	pose.update_residue_neighbors();
 	(*scorefxn())( pose );
 	pose.pdb_info( new core::pose::PDBInfo( pose, true ) ); //reinitialize the PDBInfo
+	TR<<"After addchain, total residues: "<<pose.total_residue()<<std::endl;
 }
 
 std::string

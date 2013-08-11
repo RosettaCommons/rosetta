@@ -172,10 +172,13 @@ Splice::Splice() :
 			segment_type_( "" ),
 			profile_weight_away_from_interface_( 1.0 ),
 			restrict_to_repacking_chain2_( true ),
-			add_sequence_constraints_only_( false ),
 			coor_const_(1),
-			dihedral_const_(1)
+			design_shell_(6.0),
+			pack_shell_(8.0),
+			scorefxn_(NULL)
 {
+	dihedral_const_ = 1;
+	add_sequence_constraints_only_ = false;
 	torsion_database_.clear();
 	delta_lengths_.clear();
 	dbase_subset_.clear();
@@ -1328,20 +1331,20 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		///that the PSSM score of the falnking segments of the current designed segment agree with the identity of the aa (i.e if
 		/// we are designing L1 then we would expect that segments Frm.light1 and Frm.light2 have concensus aa identities)
 
-		core::Size aapos=0;
-		for(core::Size seg=1; seg <=profile_vector.size() ; seg++ ){
-			for( core::Size pos = 1; pos <= profile_vector[seg]->size(); ++pos ){
-				++aapos;
-				if (abs((int)seg-(int)(current_segment_pos))==1){
-					std::stringstream ss; std::string s;
-					ss << pose.residue(aapos).name1();
-					ss >> s;
-					if (check_aa(s, profile_vector[seg]->prof_row(pos))) {
-					TR.Warning << "Check PSSM, aa : " <<aapos<<pose.aa(aapos)<<"Has a low PSSM score"<<std::endl;
-					}
-				}
-				}
-			}
+//		core::Size aapos=0;
+//		for(core::Size seg=1; seg <=profile_vector.size() ; seg++ ){
+//			for( core::Size pos = 1; pos <= profile_vector[seg]->size(); ++pos ){
+//				++aapos;
+//				if (abs((int)seg-(int)(current_segment_pos))==1){
+//					std::stringstream ss; std::string s;
+//					ss << pose.residue(aapos).name1();
+//					ss >> s;
+//					if (check_aa(s, profile_vector[seg]->prof_row(pos))) {
+//					TR.Warning << "Check PSSM, aa : " <<aapos<<pose.aa(aapos)<<"Has a low PSSM score"<<std::endl;
+//					}
+//				}
+//				}
+//			}
 
 
 		return concatenate_profiles( profile_vector,segment_names_ordered_ );
@@ -1487,7 +1490,7 @@ Splice::add_coordinate_constraints( core::pose::Pose & pose, core::pose::Pose co
 }
 
 void
-Splice::add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size cut_site){
+Splice::add_dihedral_constraints( core::pose::Pose & pose, core::pose::Pose const & source_pose,core::Size nearest_to_from,core::Size nearest_to_to, core::Size/* cut_site */){
 	core::Size from = protocols::rosetta_scripts::find_nearest_res(pose, source_pose,nearest_to_from, 1/*chain*/ ); //The following for loop itterates over the source pose residues
 	//inorder to compare the angles we keep track of the corresponding residues in the template pose
 	TR<<"Apllying Dihedral constraints to pose, internal weight = "<< dihedral_const_<<", Pose/Source PDB:"<<std::endl;

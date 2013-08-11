@@ -617,6 +617,7 @@ sources = {
 		"RestrictToNeighborhoodOperation",
 		"RestrictToTerminiOperation",
 		"SeqprofConsensusOperation",
+		"SelectResiduesWithinChain",
 		"SetIGTypeOperation",
 		"ThreadSequenceOperation",
 		"SelectBySASAOperation",

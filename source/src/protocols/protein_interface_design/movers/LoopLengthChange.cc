@@ -30,7 +30,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <core/pose/PDBInfo.hh>
-
+#include <core/kinematics/FoldTree.hh>
 
 namespace protocols {
 namespace protein_interface_design {
@@ -73,9 +73,15 @@ LoopLengthChange::apply( core::pose::Pose & pose )
 	TR<<"Changing loop "<<loop_start()<<"-"<<loop_end()<<" by "<<delta()<<std::endl;
   runtime_assert( loop_end() >= loop_start() );
   runtime_assert( loop_end() + delta() >= loop_start() );
+	core::kinematics::FoldTreeCOP ft( pose.fold_tree() );
+	core::Size jump_count( 0 );
   if( delta() < 0 ){
     for( int del(0); del>delta(); --del ){
-      pose.delete_polymer_residue( loop_end() + del );
+			if( ft->is_jump_point( loop_end() + del ) ){
+				TR<<"LoopLengthChange called across a jump. I'm skipping the jump residue"<<std::endl;
+				jump_count++;
+			}
+      pose.delete_polymer_residue( loop_end() + del - jump_count );
 //			pose.conformation().insert_ideal_geometry_at_polymer_bond( loop_start() );
 //			pose.conformation().insert_ideal_geometry_at_polymer_bond( loop_start() + 1 );
 		}

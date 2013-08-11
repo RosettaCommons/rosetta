@@ -56,6 +56,7 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictTo
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToNeighborhoodOperationCreator > RestrictToNeighborhoodOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToTerminiOperationCreator > RestrictToTerminiOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SeqprofConsensusOperationCreator > SeqprofConsensusOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectResiduesWithinChainOperationCreator > SelectResiduesWithinChainCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SetIGTypeOperationCreator > SetIGTypeOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ThreadSequenceOperationCreator > ThreadSequenceOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SelectBySASAOperationCreator > SelectBySASAOperationCreator_registrator;

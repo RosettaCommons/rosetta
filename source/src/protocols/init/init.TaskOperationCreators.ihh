@@ -55,6 +55,7 @@
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToTerminiOperationCreator.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperationCreator.hh> //also effectively RestrictConservedLowDdgOperationCreator.hh
+#include <protocols/toolbox/task_operations/SelectResiduesWithinChainCreator.hh>
 #include <protocols/toolbox/task_operations/SetIGTypeOperationCreator.hh>
 #include <protocols/toolbox/task_operations/ThreadSequenceOperationCreator.hh>
 #include <protocols/toolbox/task_operations/SelectBySASAOperationCreator.hh>
