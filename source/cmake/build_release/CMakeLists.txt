@@ -12,7 +12,9 @@ INCLUDE(../build/${LINK_RULES}.build.cmake)
 
 ADD_DEFINITIONS(-DNDEBUG)
 
-SET(COMPILE_FLAGS "-std=c++98 -pipe -ffor-scope -w -O3 -ffast-math -funroll-loops")
+SET(COMPILE_FLAGS "-std=c++98 -pipe -ffor-scope -w -O3 -ffast-math -funroll-loops -finline-functions")
+SET(CMAKE_CXX_FLAGS "-std=c++98 -pipe -ffor-scope -w -O3 -ffast-math -funroll-loops -finline-functions")
+
 #SET(COMPILE_FLAGS "-pipe -w")
 #SET(COMPILE_FLAGS "-pipe -w -O2")
 #SET(COMPILE_FLAGS "-pipe -w -O3 -ffast-math -funroll-loops -finline-functions -finline-limit=20000 -s")

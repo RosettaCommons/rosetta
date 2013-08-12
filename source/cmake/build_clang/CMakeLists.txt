@@ -13,6 +13,7 @@ INCLUDE(../build/${LINK_RULES}.build.cmake)
 ADD_DEFINITIONS(-DNDEBUG)
 
 SET(COMPILE_FLAGS "-pipe -w -O3 -std=c++98 -Qunused-arguments -D__extern_always_inline=inline")
+SET(CMAKE_CXX_FLAGS "-pipe -w -O3 -std=c++98 -Qunused-arguments -D__extern_always_inline=inline")
 
 INCLUDE(../build/build.post.cmake)
 
