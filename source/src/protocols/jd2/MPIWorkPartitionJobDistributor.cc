@@ -70,8 +70,8 @@ MPIWorkPartitionJobDistributor::MPIWorkPartitionJobDistributor() :
   //npes_ = MPI::COMM_WORLD.Get_size();
   //rank_ = MPI::COMM_WORLD.Get_rank();
 	int int_npes, int_rank;																	//don't cast pointers - copy it over instead
-	MPI_Comm_rank( MPI_COMM_WORLD, &int_rank_ );
-	MPI_Comm_size( MPI_COMM_WORLD, &int_npes_ );
+	MPI_Comm_rank( MPI_COMM_WORLD, &int_rank );
+	MPI_Comm_size( MPI_COMM_WORLD, &int_npes );
 	rank_ = int_rank;
 	npes_ = int_npes;
 #endif
