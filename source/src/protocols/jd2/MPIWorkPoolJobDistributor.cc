@@ -69,10 +69,13 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
 {
 	// set npes and rank based on whether we are using MPI or not
 #ifdef USEMPI
-	//npes_ = MPI::COMM_WORLD.Get_size();
-	//rank_ = MPI::COMM_WORLD.Get_rank();
-	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &rank_ ) );
-	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &npes_ ) );
+  //npes_ = MPI::COMM_WORLD.Get_size();
+  //rank_ = MPI::COMM_WORLD.Get_rank();
+  int int_npes, int_rank;                                 //don't cast pointers - copy it over instead
+  MPI_Comm_rank( MPI_COMM_WORLD, &int_rank_ );
+  MPI_Comm_size( MPI_COMM_WORLD, &int_npes_ );
+  rank_ = int_rank;
+  npes_ = int_npes;
 #else
 	utility_exit_with_message( "ERROR ERROR ERROR: The MPIWorkPoolJobDistributor will not work unless you have compiled using extras=mpi" );
 #endif

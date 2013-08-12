@@ -9,6 +9,7 @@
 
 /// @file   protocols/features/ProteinBondGeometryFeatures.cc
 /// @brief  report Backbone Torsional Angle features
+/// @author Patrick Conway
 /// @author Matthew O'Meara
 
 // Unit Headers
@@ -377,6 +378,7 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 		if(!rsd.is_protein()) continue;
 
 		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+		//energy computations are not up to date with current cart_bonded - the rest is ok
 
 		// get residue type
 		core::chemical::ResidueType const & rsd_type = rsd.type();
@@ -427,9 +429,9 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 			stmt.bind(3,rt2);
 			stmt.bind(4,rt1);
 			stmt.bind(5,rt3);
-			stmt.bind(6,rsd.atom_type( rt2 ).name());
-			stmt.bind(7,rsd.atom_type( rt1 ).name());
-			stmt.bind(8,rsd.atom_type( rt3 ).name());
+			stmt.bind(6,rsd.atom_name( rt2 ));
+			stmt.bind(7,rsd.atom_name( rt1 ));
+			stmt.bind(8,rsd.atom_name( rt3 ));
 			stmt.bind(9,theta0);
 			stmt.bind(10,angle);
 			stmt.bind(11,angle-theta0);
@@ -459,6 +461,7 @@ ProteinBondGeometryFeatures::report_interres_angles(
 			if(!rsd2.is_protein()) continue;
 
 			//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+		  //energy computations are not up to date with current cart_bonded - the rest is ok
 
 			// bail out if the residues aren't bonded
 			if (!rsd1.is_bonded(rsd2)) continue;
@@ -515,9 +518,9 @@ ProteinBondGeometryFeatures::report_interres_angles(
 					stmt.bind(4,resconn_atomno1);
 					stmt.bind(5,res1_lower_atomno);
 					stmt.bind(6, resconn_atomno2);
-					stmt.bind(7, rsd1.atom_type( resconn_atomno1 ).name());
-					stmt.bind(8, rsd1.atom_type( res1_lower_atomno ).name());
-					stmt.bind(9, rsd2.atom_type( resconn_atomno2 ).name());
+					stmt.bind(7, rsd1.atom_name( resconn_atomno1 ));
+					stmt.bind(8, rsd1.atom_name( res1_lower_atomno ));
+					stmt.bind(9, rsd2.atom_name( resconn_atomno2 ));
 					stmt.bind(10,theta0);
 					stmt.bind(11,angle);
 					stmt.bind(12,angle-theta0);
@@ -558,9 +561,9 @@ ProteinBondGeometryFeatures::report_interres_angles(
 					stmt.bind(4,resconn_atomno2);
 					stmt.bind(5,res2_lower_atomno);
 					stmt.bind(6, resconn_atomno1);
-					stmt.bind(7, rsd2.atom_type( resconn_atomno2 ).name());
-					stmt.bind(8, rsd2.atom_type( res2_lower_atomno ).name());
-					stmt.bind(9, rsd1.atom_type( resconn_atomno1 ).name());
+					stmt.bind(7, rsd2.atom_name( resconn_atomno2 ));
+					stmt.bind(8, rsd2.atom_name( res2_lower_atomno ));
+					stmt.bind(9, rsd1.atom_name( resconn_atomno1 ));
 					stmt.bind(10,theta0);
 					stmt.bind(11,angle);
 					stmt.bind(12,angle-theta0);
@@ -589,6 +592,7 @@ ProteinBondGeometryFeatures::report_intrares_lengths(
 		if(!rsd.is_protein()) continue;
 
 		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+		//energy computations are not up to date with current cart_bonded - the rest is ok
 
 		core::chemical::ResidueType const & rsd_type = rsd.type();
 
@@ -624,8 +628,8 @@ ProteinBondGeometryFeatures::report_intrares_lengths(
 					stmt.bind(2,i);
 					stmt.bind(3,atm_i);
 					stmt.bind(4,atm_j);
-					stmt.bind(5, rsd.atom_type( atm_i ).name());
-					stmt.bind(6, rsd.atom_type( atm_j ).name());
+					stmt.bind(5, rsd.atom_name( atm_i ));
+					stmt.bind(6, rsd.atom_name( atm_j ));
 					stmt.bind(7,d0);
 					stmt.bind(8,d);
 					stmt.bind(9,d-d0);
@@ -658,6 +662,7 @@ ProteinBondGeometryFeatures::report_interres_lengths(
 			if(!rsd2.is_protein()) continue;
 
 			//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+		  //energy computations are not up to date with current cart_bonded - the rest is ok
 
 			// bail out if the residues aren't bonded
 			if (!rsd1.is_bonded(rsd2)) continue;
@@ -699,8 +704,8 @@ ProteinBondGeometryFeatures::report_interres_lengths(
 				stmt.bind(3,j);
 				stmt.bind(4,resconn_atomno1);
 				stmt.bind(5,resconn_atomno2);
-				stmt.bind(6, rsd1.atom_type( resconn_atomno1 ).name());
-				stmt.bind(7, rsd2.atom_type( resconn_atomno2 ).name());
+				stmt.bind(6, rsd1.atom_name( resconn_atomno1 ));
+				stmt.bind(7, rsd2.atom_name( resconn_atomno2 ));
 				stmt.bind(8,d0);
 				stmt.bind(9,length);
 				stmt.bind(10,length-d0);
@@ -728,6 +733,7 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 		if(!rsd.is_protein()) continue;
 
 		//following code ripped off from core/scoring/methods/CartesianBondedEnergy.cc
+		//energy computations are not up to date with current cart_bonded - the rest is ok
 
 		core::chemical::ResidueType const & rsd_type = rsd.type();
 
@@ -766,10 +772,10 @@ ProteinBondGeometryFeatures::report_intrares_torsions(
 			stmt.bind(4,rt2);
 			stmt.bind(5,rt3);
 			stmt.bind(6,rt4);
-			stmt.bind(7,rsd.atom_type( rt1 ).name() );
-			stmt.bind(8,rsd.atom_type( rt2 ).name() );
-			stmt.bind(9,rsd.atom_type( rt3 ).name() );
-			stmt.bind(10,rsd.atom_type( rt4 ).name() );
+			stmt.bind(7,rsd.atom_name( rt1 ) );
+			stmt.bind(8,rsd.atom_name( rt2 ) );
+			stmt.bind(9,rsd.atom_name( rt3 ) );
+			stmt.bind(10,rsd.atom_name( rt4 ) );
 			stmt.bind(11,phi0);
 			stmt.bind(12,angle);
 			stmt.bind(13,del_phi);
