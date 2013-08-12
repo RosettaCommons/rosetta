@@ -170,7 +170,11 @@ void ScoreFunctionLoader::load_data(
 			in_scorefxn->set_energy_method_options( emoptions );
 		}
 
-		data.add( "scorefxns" , scorefxn_name, in_scorefxn );
+		bool const data_add_status = data.add( "scorefxns" , scorefxn_name, in_scorefxn );
+
+		if( !data_add_status )
+			utility_exit_with_message( "scorefxn " + scorefxn_name + " already exists in the DataMap, possibly as a default scorefxn. Please rename." );
+
 	}//end user-defined scorefxns
 	TR.flush();
 }
