@@ -46,7 +46,7 @@
 		<Shear name=shear>
 		  <MoveMap name=move_chain2/>
 		</Shear>
-		<PackRotamersMover name=pack task_operations=pack_interface/>
+		<PackRotamersMover name=pack scorefxn=score12 task_operations=pack_interface/>
 		<ParsedProtocol name=shear_small_pack mode=random_order>
 			<Add mover=shear/>
 			<Add mover=pack/>
@@ -66,7 +66,7 @@
 			<Add mover=small_mc_low_temp/>
 		</ParsedProtocol>
 		<GenericMonteCarlo name=outer_loop scorefxn_name=score12 mover_name=frag_shear_small temperature=0.4 trials=5/>
-		<FastRelax name=relax_chainb>
+		<FastRelax name=relax_chainb scorefxn=score12>
 			<MoveMap>
 				<Chain number=1 bb=0 chi=0/>
 				<Chain number=2 bb=1 chi=1/>

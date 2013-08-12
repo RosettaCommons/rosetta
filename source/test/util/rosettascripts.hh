@@ -95,10 +95,10 @@ inline void prime_Movers( Movers_map & movers ) {
 
 inline void prime_Data( DataMap & data ) {
 	core::scoring::ScoreFunctionOP commandline_sfxn = core::scoring::getScoreFunction();
-	core::scoring::ScoreFunctionOP score12 = core::scoring::getScoreFunction();
+	core::scoring::ScoreFunctionOP talaris2013 = core::scoring::getScoreFunction();
 
 	data.add( "scorefxns", "commandline", commandline_sfxn );
-	data.add( "scorefxns", "score12", score12 );
+	data.add( "scorefxns", "talaris2013", talaris2013 );
 }
 
 ///@brief A simple filter for helping to test nested classes

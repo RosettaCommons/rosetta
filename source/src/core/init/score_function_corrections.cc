@@ -473,5 +473,44 @@ init_score_function_corrections(){
 	init_crystal_refinement_correction();
 }
 
+void
+check_score_function_sanity(
+	std::string const & scorefxn_key,
+	bool only_warn
+) {
+	if( scorefxn_key == "score12" ){
+		if( ! option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+			TR.Error
+				<< "**********************************************" << std::endl
+				<< "To use the '" << scorefxn_key << "' score function" << std::endl
+				<< "please using the " << std::endl
+				<< std::endl
+				<< "        -resore_pre_talaris_2013_behavior" << std::endl
+				<< std::endl
+				<< "flag on the command line." << std::endl
+				<< "**********************************************" << std::endl;
+			if(!only_warn){
+				throw utility::excn::EXCN_BadInput("Missing -restore_pre_talaris_2013_behavior flag.");
+			}
+		}
+	} else if( scorefxn_key == "talaris2013" ){
+		if( option[ mistakes::restore_pre_talaris_2013_behavior ] ) {
+			TR.Error
+				<< "**********************************************" << std::endl
+				<< "To use the '" << scorefxn_key << "' score function" << std::endl
+				<< "please don't using the " << std::endl
+				<< std::endl
+				<< "        -resore_pre_talaris_2013_behavior" << std::endl
+				<< std::endl
+				<< "flag on the command line." << std::endl
+				<< "**********************************************" << std::endl;
+			if(!only_warn){
+				throw utility::excn::EXCN_BadInput("Using -restore_pre_talaris_2013_behavior flag with talaris2013 energy function");
+			}
+		}
+	}
+
+}
+
 } // namespace
 } // namespace

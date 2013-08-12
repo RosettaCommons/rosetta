@@ -1,7 +1,5 @@
 -ignore_unrecognized_res
 #
-# Why not use energy method corrections?
--correct
 #
 # Use as input, structures S_56 and S_73 from the collection of
 # structures stored in the binary silent file for the cluster test:

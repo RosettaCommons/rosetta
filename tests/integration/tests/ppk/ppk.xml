@@ -2,12 +2,12 @@
         <SCOREFXNS>
         </SCOREFXNS>
         <FILTERS>
-					<ScoreType name=total_score score_type=total_score threshold=100/>
+					<ScoreType name=total_score scorefxn=score12 score_type=total_score threshold=100/>
 					<Delta name=delta_score upper=1 lower=0 range=1 filter=total_score unbound=1 jump=1 confidence=0/>
         </FILTERS>
         <MOVERS>
                 <Prepack name=ppk jump_number=1 scorefxn=score12/>
-								<MinMover name=min bb=1 chi=1>
+								<MinMover name=min scorefxn=score12 bb=1 chi=1>
 									<MoveMap>
 										<Chain number=1 bb=0 chi=0/>
 										<Chain number=2 bb=0 chi=1/>

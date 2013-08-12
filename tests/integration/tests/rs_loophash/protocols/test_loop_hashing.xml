@@ -16,8 +16,8 @@ This protocol finds loop conformations that are compatible with binding the doub
    <FILTERS>
 			<ScoreType name=fa_filter scorefxn=fa_score score_type=total_score threshold=-10/>
 			<ScoreType name=cen_filter scorefxn=cen_score score_type=total_score threshold=100/>
-			<Ddg name=high_binding threshold=-15/> this isn't very good, but we're modeling against a double-Val endonuclease
-			<Ddg name=low_binding threshold=-10/>
+			<Ddg name=high_binding scorefxn=score12 threshold=-15/> this isn't very good, but we're modeling against a double-Val endonuclease
+			<Ddg name=low_binding scorefxn=score12 threshold=-10/>
 			<CompoundStatement name=unfavorable_binding>
 				<AND filter_name=true_filter/>
 				<ANDNOT filter_name=low_binding/>
@@ -30,7 +30,7 @@ This protocol finds loop conformations that are compatible with binding the doub
 					<Jump number=1 setting=0/>
 				</MoveMap>
 			</FastRelax>
-			<PackRotamersMover name=make_ala_loop task_operations=ala_loop/>
+			<PackRotamersMover name=make_ala_loop scorefxn=score12 task_operations=ala_loop/>
 			<LoopHash name=loophash_H2 start_pdb_num=25H stop_pdb_num=32H loop_sizes=3 ncentroid=32 db_path="./"/> batch_size=8 relax_move=relax
 			<build_Ala_pose name=alapose partner1=1 partner2=1/>
      </MOVERS>

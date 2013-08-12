@@ -6,3 +6,4 @@
 -parser:protocol RotamerProbability.xml
 -overwrite
 -use_input_sc
+-restore_pre_talaris_2013_behavior

@@ -45,7 +45,7 @@
         <SaveAndRetrieveSidechains name="srsc" allsc=1 />
 
         <RepackMinimize name="des1" minimize_bb="0" minimize_rb="1" scorefxn_repack="soft_rep" scorefxn_minimize="hard_scorefxn" interface_cutoff_distance="10.0" task_operations="limitchi2"/>
-        <RepackMinimize name="des2" minimize_bb="0" minimize_rb="1" interface_cutoff_distance="10.0" task_operations="limitchi2"/>
+        <RepackMinimize name="des2" minimize_bb="0" minimize_rb="1" scorefxn_repack="score12" scorefxn_minimize="score12" interface_cutoff_distance="10.0" task_operations="limitchi2"/>
 
         <PlaceSimultaneously name="place_hotspot_all" chain_to_design="2" repack_non_ala="1" optimize_fold_tree="1" minimize_rb="0" max_cb_dist="1.5" stubscorefxn="backbone_stub_linear_constraint" coor_cst_cutoff="400" >
             <DesignMovers>

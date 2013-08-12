@@ -8,7 +8,7 @@ rostta_scripts -s  PDB  -parser:protocol RotamerBoltzmann.xml -ex1 -ex2 -use_inp
 	<SCOREFXNS>
 	</SCOREFXNS>
 	<FILTERS>
-		<RotamerBoltzmannWeight name=boltz ddG_threshold=0.6 task_operations=pido jump=1 compute_entropy_reduction=1 energy_reduction_factor=1.0 temperature=0.8/>
+		<RotamerBoltzmannWeight name=boltz scorefxn=score12 ddG_threshold=0.6 task_operations=pido jump=1 compute_entropy_reduction=1 energy_reduction_factor=1.0 temperature=0.8/>
 	</FILTERS>
 	<MOVERS>
 		<AtomTree name=docking_tree docking_ft=1/>

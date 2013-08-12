@@ -79,7 +79,7 @@ rosetta_scripts.linuxgccrelease -database ~/minirosetta_database -extra_res_fa l
                 <AddOrRemoveMatchCsts name=cst_readd cst_instruction="add_pregenerated"/>
 	        <AddOrRemoveMatchCsts name=cst_remove cst_instruction="remove" keep_covalent=1/>
 		<ScoreMover name=score scorefxn=enzdes verbose=0 />
-		<PackRotamersMover name=repack task_operations=init,LigInterface,catrespack,repack_only/>
+		<PackRotamersMover name=repack scorefxn=score12 task_operations=init,LigInterface,catrespack,repack_only/>
 	        #A native residue score bump. IDENTITY with weight of 1 gives -1 to native, 0 to all others
                 # Set to give roughtly -0.05 to native and 0 to others, to match the old cst5 behavior, need to test
 		<FavorSequenceProfile name=fsp scaling=prob use_native=1 matrix=IDENTITY weight=0.05 scorefxns=enzdes />

@@ -18,6 +18,7 @@
 
 // Project Headers
 #include <core/types.hh>
+#include <core/init/score_function_corrections.hh>
 #include <protocols/filters/Filter.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Conformation.hh>
@@ -178,6 +179,35 @@ parse_score_function(
 	std::string const scorefxn_key( tag->getOption<std::string>(option_name, dflt_key) );
 	if ( ! data.has( "scorefxns", scorefxn_key ) ) {
 		throw utility::excn::EXCN_RosettaScriptsOption("ScoreFunction " + scorefxn_key + " not found in DataMap. To add a score function to the data map, define a score function in the <SCOREFXNS/>.'");
+	}
+
+	try{
+		core::init::check_score_function_sanity(scorefxn_key, false);
+	} catch(utility::excn::EXCN_BadInput & e){
+		stringstream err_msg;
+		err_msg
+			<< std::endl << std::endl
+			<< "Error getting score function from";
+		if( tag->hasOption("name") ){
+			err_msg
+				<< " the tag '" << tag->getOption<std::string>("name") << "' of type ";
+		} else {
+			err_msg
+				<< " a tag of type ";
+		}
+		err_msg
+			<< "'" << tag->getName() << "':" << std::endl;
+
+		if( !tag->hasOption(option_name) ){
+			err_msg
+				<< "  No value for option '" << option_name << "' is provided, so it is using the default value of '" << dflt_key << "'" << std::endl;
+		} else {
+			err_msg
+				<< "  The value for option '" << option_name << "' = '" << scorefxn_key << "'" << std::endl;
+		}
+		err_msg
+			<< "ERROR MESSAGE: " << e << std::endl;
+		throw utility::excn::EXCN_RosettaScriptsOption(err_msg.str());
 	}
 	return data.get< ScoreFunction* >( "scorefxns", scorefxn_key );
 }

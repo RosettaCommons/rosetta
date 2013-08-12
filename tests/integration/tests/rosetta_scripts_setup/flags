@@ -5,4 +5,5 @@
 -jd2:ntrials 1
 -parser:protocol example_script.xml
 -parser:script_vars sasaconf=0 dock_sf=score12 inter_cutoff=10 ala_rep=5 sub_ala_rep=2
+-restore_pre_talaris_2013_behavior
 -overwrite

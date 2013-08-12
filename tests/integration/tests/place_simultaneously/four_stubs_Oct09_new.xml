@@ -63,10 +63,10 @@ This protocol first places one hot-spot residue by the place-scaffold approach a
     		<Docking name=dock fullatom=0 local_refine=0 score_low=stub_docking_low/>
     		<Docking name=dockfa task_operations=pr fullatom=1 local_refine=1 optimize_fold_tree=0 score_high=score12_coord_cst/>
 		<If name=dock_if_not_pass filter_name=not_hbond_ddg_sasa true_mover_name=dockfa/>
-		<BackrubDD name=br interface_distance_cutoff=10.0 moves=1000/>
-		<RepackMinimize name=des1 minimize_bb=0 minimize_rb=1 scorefxn_repack=soft_rep scorefxn_minimize=score_docking interface_cutoff_distance=10.0/>
-		<RepackMinimize name=des2 minimize_bb=0 minimize_rb=1 interface_cutoff_distance=10.0/>
-		<RepackMinimize name=des3 minimize_bb=0 minimize_rb=1 interface_cutoff_distance=10.0/>### It's recommended to use minimize_bb=1 here but too slow
+		<BackrubDD name=br scorefxn=score12 interface_distance_cutoff=10.0 moves=1000/>
+		<RepackMinimize name=des1 scorefxn_repack=score12 scorefxn_minimize=score12 minimize_bb=0 minimize_rb=1 scorefxn_repack=soft_rep scorefxn_minimize=score_docking interface_cutoff_distance=10.0/>
+		<RepackMinimize name=des2 scorefxn_repack=score12 scorefxn_minimize=score12 minimize_bb=0 minimize_rb=1 interface_cutoff_distance=10.0/>
+		<RepackMinimize name=des3 scorefxn_repack=score12 scorefxn_minimize=score12 minimize_bb=0 minimize_rb=1 interface_cutoff_distance=10.0/>### It's recommended to use minimize_bb=1 here but too slow
 		<SaveAndRetrieveSidechains name=srsc/>
 		<Auction name=auction_mover>
 			<StubSets>

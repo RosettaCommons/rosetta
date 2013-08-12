@@ -17,6 +17,8 @@
 #ifndef INCLUDED_core_init_score_function_corrections_hh
 #define INCLUDED_core_init_score_function_corrections_hh
 
+#include <string>
+
 namespace core {
 namespace init {
 
@@ -45,6 +47,10 @@ void init_restore_score12prime();
 /// @brief Initialize the latest and greatest score function parameters
 void init_score_function_corrections();
 
+/// @brief Check if a score function is requested with incompatible option flags
+void check_score_function_sanity(
+	std::string const & scorefxn_key,
+	bool warn_only=false);
 
 } // namespace
 } // namespace

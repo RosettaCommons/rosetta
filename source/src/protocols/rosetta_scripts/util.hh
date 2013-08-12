@@ -57,21 +57,21 @@ core::pack::task::TaskFactoryOP
 parse_task_operations( std::string const task_list, protocols::moves::DataMap const & data );
 
 ///@brief Look up the score function defined in the <SCOREFXNS/>
-///through the given option. Default to 'score12' by default.
+///through the given option. Default to 'talaris2013' by default.
 core::scoring::ScoreFunctionOP
 parse_score_function(
 	utility::tag::TagPtr const tag,
 	std::string const & option_name,
 	protocols::moves::DataMap const & data,
-	std::string const dflt_key="score12" );
+	std::string const dflt_key="talaris2013" );
 
 ///@brief Look up the score function defined in the <SCOREFXNS/>
-///through the option 'scorefxn='. Default to 'score12' by default.
+///through the option 'scorefxn='. Default to 'talaris2013' by default.
 core::scoring::ScoreFunctionOP
 parse_score_function(
 	utility::tag::TagPtr const tag,
 	protocols::moves::DataMap const & data,
-	std::string const dflt_key="score12" );
+	std::string const dflt_key="talaris2013" );
 
 ///@brief Look up the name of assigned score function to the given
 ///option. Use this to prevent hard coding default score functions into

@@ -425,12 +425,13 @@ void JobDistributor::go_main(protocols::moves::MoverOP mover)
 			} catch (utility::excn::EXCN_Base& excn)
 			{
 				basic::Error()
-						<< "ERROR: Exception caught by JobDistributor while trying to get pose from job "
-						<< job_outputter_->output_name(current_job_) << excn
-						<< std::endl;
+					<< "ERROR: Exception caught by JobDistributor while trying to get pose from job '"
+					<< job_outputter_->output_name(current_job_) << "'" << std::endl
+					<< excn
+					<< std::endl;
 				basic::Error()
-						<< "Treating failure as bad input; canceling similar jobs"
-						<< std::endl;
+					<< "Treating failure as bad input; canceling similar jobs"
+					<< std::endl;
 				remove_bad_inputs_from_job_list();
 				job_failed(pose, false);
 				continue;

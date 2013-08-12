@@ -6,3 +6,4 @@
 -parser:protocol four_stubs_Oct09_new.xml
 -overwrite
 -use_input_sc
+-restore_pre_talaris_2013_behavior
