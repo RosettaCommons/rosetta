@@ -16,6 +16,7 @@
 #include <core/chemical/carbohydrates/database_io.hh>
 
 // Package headers
+#include <core/chemical/carbohydrates/RingConformerSet.hh>
 #include <core/chemical/ResidueType.hh>
 
 // Utility headers
@@ -191,6 +192,7 @@ CarbohydrateInfo::sugar_properties()
 
 	static vector1<string> *SUGAR_PROPERTIES = NULL;
 
+	// If statement ensures that the data is only created once, i.e., is constant.
 	if (!SUGAR_PROPERTIES) {
 		SUGAR_PROPERTIES = new vector1<string>(read_properties_from_database_file(
 				basic::options::option[basic::options::OptionKeys::in::path::database](1).name() +
@@ -206,6 +208,7 @@ CarbohydrateInfo::code_to_root_map() {
 
 	static map<string, string> *CODE_TO_ROOT_MAP = NULL;
 
+	// If statement ensures that the data is only created once, i.e., is constant.
 	if (!CODE_TO_ROOT_MAP) {
 		CODE_TO_ROOT_MAP = new map<string, string>(read_codes_and_roots_from_database_file(
 				basic::options::option[basic::options::OptionKeys::in::path::database](1).name() +
@@ -233,6 +236,13 @@ CarbohydrateInfo::base_name() const
 	} else {
 		return root + "ose";
 	}
+}
+
+// Return a pointer to the object containing the set of ring conformers possible for this saccharide.
+core::chemical::carbohydrates::RingConformerSetCOP
+CarbohydrateInfo::ring_conformer_set() const
+{
+	return conformer_set_;
 }
 
 // Return the attachment point of the downstream saccharide residue attached to ith branch off of this residue.
@@ -355,6 +365,8 @@ CarbohydrateInfo::init(core::chemical::ResidueTypeCAP residue_type)
 	determine_IUPAC_names();
 
 	define_nu_ids();
+
+	conformer_set_ = new RingConformerSet(ring_size_);
 }
 
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
@@ -381,6 +393,7 @@ CarbohydrateInfo::copy_data(
 	object_to_copy_to.branch_points_ = object_to_copy_from.branch_points_;
 	object_to_copy_to.has_exocyclic_linkage_ = object_to_copy_from.has_exocyclic_linkage_;
 	object_to_copy_to.glycosidic_linkage_id_ = object_to_copy_from.glycosidic_linkage_id_;
+	object_to_copy_to.conformer_set_ = object_to_copy_from.conformer_set_;
 }
 
 // Return the number of carbon atoms (not counting R groups) in the ResidueType.

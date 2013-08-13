@@ -18,6 +18,7 @@
 #include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
 
 // Package headers
+#include <core/chemical/carbohydrates/RingConformerSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 
 // Project headers
@@ -318,6 +319,10 @@ public:
 	}
 
 
+	/// @brief    Return a pointer to the object containing the set of ring conformers possible for this saccharide.
+	core::chemical::carbohydrates::RingConformerSetCOP ring_conformer_set() const;
+
+
 	// Anomeric form
 	/// @brief    Get the anomeric form for the monosaccharide.
 	/// @return   "alpha", "beta", or ""
@@ -501,6 +506,8 @@ private:
 
 	// The nu angles should always be the last CHI angles defined in the param file or by a patch file.
 	utility::vector1<std::pair<core::id::TorsionType, core::uint> > nu_id_;
+
+	RingConformerSetOP conformer_set_;  // set of all possible ring conformers
 
 	// Constants.
 	static core::Size const MAX_C_SIZE_LIMIT;  // maximum size of a carbohydrate carbon chain in Rosetta

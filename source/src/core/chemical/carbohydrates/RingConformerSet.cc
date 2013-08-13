@@ -16,17 +16,27 @@
 #include <core/chemical/carbohydrates/database_io.hh>
 
 // Basic headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
+// Numeric headers
+#include <numeric/random/random.hh>
+
 // C++ headers
 #include <iostream>
+#include <sstream>
+
 
 // Construct tracer.
 static basic::Tracer TR("core.chemical.carbohydrates.RingConformerSet");
+
+// Construct random-number generator.
+static numeric::random::RandomGenerator RG(28);  // the 2nd perfect number
 
 
 namespace core {
@@ -76,14 +86,21 @@ RingConformerSet::show(std::ostream & output) const
 {
 	using namespace std;
 
+	output << "Possible ring conformers:" << endl;
+
+	Size n_conformers = conformers_.size();
+	for (uint i = 1; i <= n_conformers; ++i) {
+		output << "   " << conformers_[i]->specific_name << endl;
+	}
+
 	output << endl;
 }
 
 
 // Accessors/Mutators
 // Return the conformer that is the best fit for the provided list of nu angles.
-RingConformerOP
-RingConformerSet::get_conformer_from_nus(utility::vector1<core::Angle> angles)
+RingConformerCOP
+RingConformerSet::get_conformer_from_nus(utility::vector1<core::Angle> /*angles*/) const
 {
 	RingConformerOP conformer;
 
@@ -91,8 +108,8 @@ RingConformerSet::get_conformer_from_nus(utility::vector1<core::Angle> angles)
 }
 
 // Return the conformer that is known from studies (if available) to be the lowest energy ring conformer.
-RingConformerOP
-RingConformerSet::get_lowest_energy_conformer()
+RingConformerCOP
+RingConformerSet::get_lowest_energy_conformer() const
 {
 	RingConformerOP conformer;
 
@@ -100,18 +117,18 @@ RingConformerSet::get_lowest_energy_conformer()
 }
 
 // Return a random conformer from the set.
-RingConformerOP
-RingConformerSet::get_random_conformer()
+RingConformerCOP
+RingConformerSet::get_random_conformer() const
 {
-	RingConformerOP conformer;
+	uint i = uint(RG.uniform() * conformers_.size() + 1);
 
-	return conformer;
+	return conformers_[i];
 }
 
 // Return a random conformer from the subset of conformers that are local minima.
 // TODO: better?: overload get_random_conformer and pass enum, such as "LOCAL_MIN"
-RingConformerOP
-RingConformerSet::get_random_local_min_conformer()
+RingConformerCOP
+RingConformerSet::get_random_local_min_conformer() const
 {
 	RingConformerOP conformer;
 
@@ -134,14 +151,11 @@ RingConformerSet::init(core::uint ring_size)
 
 	ring_size_ = ring_size;
 
-	// TEMP
-	RingConformer conformer;
-	conformer.specific_name = "1C4";
-	conformer.general_name = "chair";
-	Angle angles[4];
-	angles[0] = -60.0; angles[1] = 60.0; angles[2] = -60.0; angles[3] = 60.0;
-	conformer.ideal_angles = vector1<Angle>(angles, angles + 4);
-	conformers_.push_back(&conformer);
+	Size n_conformers = conformers_for_ring_size(ring_size_).size();
+	for (uint i = 1; i <= n_conformers; ++i) {
+		RingConformerCOP conformer = &conformers_for_ring_size(ring_size_).at(i);
+		conformers_.push_back(conformer);
+	}
 }
 
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
@@ -152,6 +166,35 @@ RingConformerSet::copy_data(
 {
 	object_to_copy_to.ring_size_ = object_to_copy_from.ring_size_;
 	object_to_copy_to.conformers_ = object_to_copy_from.conformers_;
+}
+
+
+// Static constant data access
+utility::vector1<RingConformer> const &
+RingConformerSet::conformers_for_ring_size(core::Size ring_size)
+{
+	using namespace std;
+	using namespace utility;
+
+	static map<uint, vector1<RingConformer> > *CONFORMERS = NULL;
+
+	// If statement ensures that the data is only created once, i.e., is constant.
+	if (!CONFORMERS) {
+		// A map of sets of ring conformers keyed by ring size
+		CONFORMERS = new map<uint, vector1<RingConformer> >;
+	}
+
+	// Only create sets one time, as needed, for each ring size.
+	if (!CONFORMERS->count(ring_size)) {
+		stringstream filename(stringstream::out);
+		filename << "chemical/carbohydrates/" << ring_size << "-membered_ring_conformers.data";
+		vector1<RingConformer> conformers = read_conformers_from_database_file_for_ring_size(
+				basic::options::option[basic::options::OptionKeys::in::path::database](1).name() +
+				filename.str(), ring_size);
+		CONFORMERS->insert(make_pair(ring_size, conformers));
+	}
+
+	return CONFORMERS->at(ring_size);
 }
 
 

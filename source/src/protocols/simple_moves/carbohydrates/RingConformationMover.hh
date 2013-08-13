@@ -40,13 +40,6 @@ namespace carbohydrates {
 /// @remarks  This class is a work in progress....
 class RingConformationMover: public moves::Mover {
 public:
-	// Type definitions ////////////////////////////////////////////////////////
-	// A pair defining a ring conformer:
-	// first: the name of the conformer (e.g., 1C4, 1,4B, etc.)
-	// second: a list of torsion angle values defining that conformation
-	// A conformer can be defined by two fewer torsion angles than the size of the ring.
-	typedef std::pair<std::string, utility::vector1<core::Angle> > ring_conf_def;
-
 	// Standard methods ////////////////////////////////////////////////////////
 	/// @brief  Default constructor
 	RingConformationMover();
@@ -107,10 +100,6 @@ private:
 	// Private data ////////////////////////////////////////////////////////////
 	core::kinematics::MoveMapOP movemap_;
 	utility::vector1<core::Size> residue_list_;  // list of movable carbohydrate residues by residue number
-
-	// Lists of conformation defintions
-	utility::vector1<ring_conf_def> five_membered_ring_conformers_;
-	utility::vector1<ring_conf_def> six_membered_ring_conformers_;
 
 };  // class RingConformationMover
 

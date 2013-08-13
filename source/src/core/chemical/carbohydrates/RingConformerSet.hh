@@ -65,17 +65,17 @@ public:
 
 	// Accessors/Mutators ////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief  Return the conformer that is the best fit for the provided list of nu angles.
-	RingConformerOP get_conformer_from_nus(utility::vector1<core::Angle> angles);
+	RingConformerCOP get_conformer_from_nus(utility::vector1<core::Angle> angles) const;
 
 	/// @brief  Return the conformer that is known from studies (if available) to be the lowest energy ring conformer.
-	RingConformerOP get_lowest_energy_conformer();
+	RingConformerCOP get_lowest_energy_conformer() const;
 
 	/// @brief  Return a random conformer from the set.
-	RingConformerOP get_random_conformer();
+	RingConformerCOP get_random_conformer() const;
 
 	/// @brief  Return a random conformer from the subset of conformers that are local minima.
 	// TODO: better?: overload get_random_conformer and pass enum, such as "LOCAL_MIN"
-	RingConformerOP get_random_local_min_conformer();
+	RingConformerCOP get_random_local_min_conformer() const;
 
 
 private:
@@ -90,12 +90,17 @@ private:
 	void copy_data(RingConformerSet object_to_copy_to, RingConformerSet object_to_copy_from);
 
 
+	// Static constant data access
+	/// @brief A set of ring conformers for the requested ring size.
+	static utility::vector1<RingConformer> const & conformers_for_ring_size(core::Size ring_size);
+
+
 	// Private data //////////////////////////////////////////////////////////////////////////////////////////////////
 	core::Size ring_size_;  // almost always 5 or 6, but one could make a RingConformerSet for other sizes
 	// TODO: Should this data be const?  Can it be const?  The same applies to CarbohydrateInfo data.
 
 	// TODO: Make this a static const map<uint, vector1<RingConformer> >, with the vector indexed by an enum.
-	utility::vector1<RingConformerOP> conformers_;
+	utility::vector1<RingConformerCOP> conformers_;
 
 };  // class RingConformerSet
 

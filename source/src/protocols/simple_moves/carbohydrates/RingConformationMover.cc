@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    RingConformationMover.cc
+/// @file    protocols/simple_moves/carbohydrates/RingConformationMover.cc
 /// @brief   Method definitions for RingConformationMover.
-/// @author  labonte
+/// @author  Labonte
 
 // Unit headers
 #include <protocols/simple_moves/carbohydrates/RingConformationMover.hh>
@@ -17,6 +17,7 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/chemical/carbohydrates/RingConformerSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -44,7 +45,7 @@ static basic::Tracer TR("protocols.simple_moves.carbohydrates.RingConformationMo
 using basic::Warning;
 
 // Construct random-number generator.
-static numeric::random::RandomGenerator RG(17);  // Does this # mattter?
+static numeric::random::RandomGenerator RG(17);  // the 7th prime
 
 
 namespace protocols {
@@ -52,6 +53,7 @@ namespace simple_moves {
 namespace carbohydrates {
 
 using namespace core;
+
 
 // Public methods //////////////////////////////////////////////////////////////
 // Standard methods ////////////////////////////////////////////////////////////
@@ -157,6 +159,7 @@ RingConformationMover::apply(Pose & input_pose)
 	using namespace conformation;
 	using namespace id;
 	using namespace pose::carbohydrates;
+	using namespace chemical::carbohydrates;
 
 	if (option[OptionKeys::carbohydrates::lock_rings]) {
 		Warning() << "Rings have been locked; no ring conformation moves are being applied to this pose." << endl;
@@ -176,36 +179,23 @@ RingConformationMover::apply(Pose & input_pose)
 
 	TR << "Applying " << get_name() << " to pose...." << endl;
 
-	Size i = Size(RG.uniform() * residue_list_.size() + 1);
-	Size res_num = residue_list_[i];
+	core::uint i = core::uint(RG.uniform() * residue_list_.size() + 1);
+	core::uint res_num = residue_list_[i];
 	Residue res = input_pose.residue(res_num);
 
 	TR << "Selected residue " << res_num << ": " << res.name() << endl;
 
-	Size ring_size = res.carbohydrate_info()->ring_size();
-	ring_conf_def conformer;
-	Size j;
+	RingConformerCOP conformer = res.carbohydrate_info()->ring_conformer_set()->get_random_conformer();
 
-	switch (ring_size) {
-		case 5:
-			//j = Size(RG.uniform() * five_membered_ring_conformers_.size() + 1);
-			//conformer = five_membered_ring_conformers_[j];
-			Warning() << "Ring flips for 5-membered rings not yet coded!" << endl;
-			return;
-		case 6:
-			j = Size(RG.uniform() * six_membered_ring_conformers_.size() + 1);
-			conformer = six_membered_ring_conformers_[j];
-			break;
-	}
-
-	TR << "Selected the " << conformer.first << " conformation to apply." << endl;
+	TR << "Selected the " << conformer->specific_name << " conformation to apply." << endl;
 
 	TR << "Making move...." << endl;
 
 	pair<TorsionType, Size> nu_id;
-	for (Size k = 1; k <= ring_size - 2; ++k) {
-		nu_id = res.carbohydrate_info()->nu_id(k);
-		input_pose.set_torsion(TorsionID(res_num, nu_id.first, nu_id.second), conformer.second[k]);
+	Size ring_size = res.carbohydrate_info()->ring_size();
+	for (Size j = 1; j <= ring_size - 2; ++j) {
+		nu_id = res.carbohydrate_info()->nu_id(j);
+		input_pose.set_torsion(TorsionID(res_num, nu_id.first, nu_id.second), conformer->ideal_angles[j]);
 		align_virtual_atoms_in_carbohydrate_residue(input_pose, res_num);
 	}
 
@@ -239,59 +229,6 @@ RingConformationMover::init(core::kinematics::MoveMapOP movemap)
 	type("RingConformationMover");
 
 	movemap_ = movemap;
-
-	// TODO: Create ring_conformer_io.cc file that will include function to read the below data from rosetta_database.
-
-	// TODO: Define furanose ring conformers.
-
-	// TODO: Properly name other conformers.
-
-	// Define pyranose ring conformers.
-
-	// (C-style arrays should normally be avoided, but it makes initializing the vector1 so much easier.)
-	// We only need 4 torsion angles to define a 6-membered conformer.
-	Angle angles[4];
-
-	// Two chair conformers
-	// It's lazy, but for now, I am adding multiple copies of each to compete with entropy of multiple twist-boat states.
-	// This will result in a 2:1 chair to twist-boat ratio, which at least matches the CAPRI 27 starting structure.
-	for (Size i = 1; i <= 6; ++i) {
-		angles[0] = -60.0; angles[1] = 60.0; angles[2] = -60.0; angles[3] = 60.0;
-		six_membered_ring_conformers_.push_back(make_pair("1C4", vector1<Angle>(angles, angles + 4)));
-		angles[0] = 60.0; angles[1] = -60.0; angles[2] = 60.0; angles[3] = -60.0;
-		six_membered_ring_conformers_.push_back(make_pair("4C1", vector1<Angle>(angles, angles + 4)));
-	}
-
-	// Six boat conformers
-	// We'll assume these are always energy maxima and comment them out for now.  Maybe add option for them later?
-	/*angles[0] = 0.0; angles[1] = -60.0; angles[2] = 60.0; angles[3] = 0.0;
-	six_membered_ring_conformers_.push_back(make_pair("boat", vector1<Real>(angles, angles + 4)));
-	angles[0] = 60.0; angles[1] = 0.0; angles[2] = -60.0; angles[3] = 60.0;
-	six_membered_ring_conformers_.push_back(make_pair("B1,4", vector1<Real>(angles, angles + 4)));
-	angles[0] = -60.0; angles[1] = 60.0; angles[2] = 0.0; angles[3] = -60.0;
-	six_membered_ring_conformers_.push_back(make_pair("boat", vector1<Real>(angles, angles + 4)));
-
-	angles[0] = 0.0; angles[1] = 60.0; angles[2] = -60.0; angles[3] = 0.0;
-	six_membered_ring_conformers_.push_back(make_pair("boat", vector1<Real>(angles, angles + 4)));
-	angles[0] = -60.0; angles[1] = 0.0; angles[2] = 60.0; angles[3] = -60.0;
-	six_membered_ring_conformers_.push_back(make_pair("1,4B", vector1<Real>(angles, angles + 4)));
-	angles[0] = 60.0; angles[1] = -60.0; angles[2] = 0.0; angles[3] = 60.0;
-	six_membered_ring_conformers_.push_back(make_pair("boat", vector1<Real>(angles, angles + 4)));*/
-
-	// Six twist-boat conformers
-	angles[0] = -30.0; angles[1] = -30.0; angles[2] = 60.0; angles[3] = -30.0;
-	six_membered_ring_conformers_.push_back(make_pair("4S1", vector1<Real>(angles, angles + 4)));
-	angles[0] = -30.0; angles[1] = 60.0; angles[2] = -30.0; angles[3] = -30.0;
-	six_membered_ring_conformers_.push_back(make_pair("twist-boat", vector1<Real>(angles, angles + 4)));
-	angles[0] = 60.0; angles[1] = -30.0; angles[2] = -30.0; angles[3] = 60.0;
-	six_membered_ring_conformers_.push_back(make_pair("twist-boat", vector1<Real>(angles, angles + 4)));
-
-	angles[0] = 30.0; angles[1] = 30.0; angles[2] = -60.0; angles[3] = 30.0;
-	six_membered_ring_conformers_.push_back(make_pair("1S4", vector1<Real>(angles, angles + 4)));
-	angles[0] = 30.0; angles[1] = -60.0; angles[2] = 30.0; angles[3] = 30.0;
-	six_membered_ring_conformers_.push_back(make_pair("twist-boat", vector1<Real>(angles, angles + 4)));
-	angles[0] = -60.0; angles[1] = 30.0; angles[2] = 30.0; angles[3] = -60.0;
-	six_membered_ring_conformers_.push_back(make_pair("twist-boat", vector1<Real>(angles, angles + 4)));
 }
 
 // Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
@@ -302,11 +239,6 @@ RingConformationMover::copy_data(
 {
 	object_to_copy_to.movemap_ = object_to_copy_from.movemap_;
 	object_to_copy_to.residue_list_ = object_to_copy_from.residue_list_;
-
-	object_to_copy_to.five_membered_ring_conformers_ =
-			object_to_copy_from.five_membered_ring_conformers_;
-	object_to_copy_to.six_membered_ring_conformers_ =
-				object_to_copy_from.six_membered_ring_conformers_;
 }
 
 // Setup list of movable carbohydrate residues from MoveMap.
