@@ -135,7 +135,7 @@ namespace rna {
 		centroid_screen_( true ),
 		allow_base_pair_only_centroid_screen_( false ), //allow for possibility of conformation that base_pair but does not base_stack
 		VDW_atr_rep_screen_( true ),
-		include_syn_chi_( false ),
+		include_syn_chi_( true ),
 		allow_syn_pyrimidine_( false ), //New option Nov 15, 2010
 		distinguish_pucker_( true ),
 		build_pose_from_scratch_( false ), //July 03, 2012. This was previously uninitialized in floating_base_sampling mode! lead to early return from cluster_pose_data_list() function on some compiler/machine! [Specifically on the Biox2-cluster RUNS after converted to qsub (~April 2012)

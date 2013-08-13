@@ -38,6 +38,7 @@
 
 //////////////////////////////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/swa/rna/ERRASER_Modeler.hh>
 #include <protocols/swa/StepWiseUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
@@ -98,45 +99,94 @@ static basic::Tracer TR( "apps.pilot.rhiju.stepwise_monte_carlo" );
 OPT_KEY( IntegerVector, input_res )
 OPT_KEY( IntegerVector, cutpoint_open )
 OPT_KEY( Integer, cycles )
-OPT_KEY( Boolean, minimize_single_res )
+OPT_KEY( Real, minimize_single_res_frequency )
+OPT_KEY( Boolean, allow_internal_moves )
 OPT_KEY( Real, temperature )
 OPT_KEY( Real, add_delete_frequency )
+OPT_KEY( Real, just_min_after_mutation_frequency )
 OPT_KEY( Integer, num_random_samples )
 OPT_KEY( IntegerVector, sample_res )
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// This should go to its own class soon!
+// do it right after fang's erraser/swa unification & corrected_geo.
 bool
 apply_swa_mover( pose::Pose & pose,
 								 core::scoring::ScoreFunctionOP scorefxn,
+								 bool const minimize_single_res,
 								 std::string & move_type ){
 
-	using namespace protocols::swa::monte_carlo;
+	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
+	using namespace protocols::swa::monte_carlo;
 	using namespace core::pose::full_model_info;
 
-	move_type = "swa";
+	utility::vector1< Size > const & moving_res = nonconst_full_model_info_from_pose( pose ).moving_res_list();
+	if ( moving_res.size() == 0 ) return false;
 
-	utility::vector1< Size > possible_res;
-	get_potential_resample_residues( pose, possible_res );
+	Size remodel_res( 0 );
 
-	if ( possible_res.size() == 0 ) return false;
+	bool const allow_internal_moves_ = option[ allow_internal_moves ]();
+	if ( allow_internal_moves_ ){
+		remodel_res =	RG.random_element( moving_res );
+	} else {
+		utility::vector1< Size > possible_res;
+		get_potential_resample_residues( pose, possible_res );
+		if ( possible_res.size() == 0 ) return false;
+		remodel_res =	RG.random_element( possible_res );
+	}
+	TR << "About to remodel residue " << remodel_res << " in " << pose.annotated_sequence() << std::endl;
 
-	Size const remodel_res = RG.random_element( possible_res );
+	bool const did_mutation = mutate_res_if_allowed( pose, remodel_res ); // based on 'n' in full_model_info.full_sequence
 
-	swa::rna::StepWiseRNA_Modeler stepwise_rna_modeler( remodel_res, scorefxn );
-	stepwise_rna_modeler.set_choose_random( true );
-	stepwise_rna_modeler.set_force_centroid_interaction( true );
-	//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+	Real const just_min_after_mutation_frequency_ = option[ just_min_after_mutation_frequency ]();
+	bool just_min_after_mutation_ = ( did_mutation && ( RG.uniform() < just_min_after_mutation_frequency_ ) );
 
-	stepwise_rna_modeler.set_num_random_samples( option[ num_random_samples ]() );
-	stepwise_rna_modeler.set_num_pose_minimize( 1 );
+	if ( is_at_terminus( pose, remodel_res ) ){
+		swa::rna::StepWiseRNA_Modeler stepwise_rna_modeler( remodel_res, scorefxn );
+		//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+		stepwise_rna_modeler.set_force_centroid_interaction( true );
+		stepwise_rna_modeler.set_choose_random( true );
+		stepwise_rna_modeler.set_num_random_samples( option[ num_random_samples ]() );
+		stepwise_rna_modeler.set_num_pose_minimize( 1 );
 
-	if ( ! option[ minimize_single_res]() ) stepwise_rna_modeler.set_minimize_res( nonconst_full_model_info_from_pose( pose ).moving_res_list() );
+		if ( just_min_after_mutation_ ) stepwise_rna_modeler.set_skip_sampling( true );
+		if ( ! minimize_single_res ) stepwise_rna_modeler.set_minimize_res( moving_res );
 
-	stepwise_rna_modeler.apply( pose );
+		stepwise_rna_modeler.apply( pose );
+
+		move_type = "swa";
+
+	} else {
+
+		runtime_assert( allow_internal_moves_ );
+
+		// note that following looks almost exactly like stepwise_rna_modeler -- would be best to unify the classes!
+		// we should be able to do this after Fang unifies StepWiseRNA_ResidueSampler and StepWiseRNA_AnalyticCloseSampler
+
+		std::cout << "GOING TO RUN ERRASER " << remodel_res << " in " << pose.annotated_sequence() << std::endl;
+		ERRASER_Modeler erraser_modeler( remodel_res, scorefxn );
+		//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+		erraser_modeler.set_force_centroid_interaction( true );
+		erraser_modeler.set_choose_random( true );
+		erraser_modeler.set_num_random_samples( option[ num_random_samples ]() );
+		erraser_modeler.set_num_pose_minimize( 1 );
+
+		if ( just_min_after_mutation_ ) erraser_modeler.set_skip_sampling( true );
+		if ( ! minimize_single_res ) erraser_modeler.set_minimize_res( moving_res );
+
+		erraser_modeler.apply( pose );
+
+		move_type = "erraser";
+
+	}
+
+	if ( did_mutation ) move_type += "-mut";
+	if ( just_min_after_mutation_ ) move_type = "mut";
 
 	return true;
+
 }
 
 
@@ -210,7 +260,7 @@ stepwise_monte_carlo()
 	rna_add_mover->set_start_added_residue_in_aform( false );
 	rna_add_mover->set_presample_added_residue(  true );
 	rna_add_mover->set_presample_by_swa(  true );
-	rna_add_mover->set_minimize_all_rebuilt_res( ! option[ minimize_single_res ]() );
+	//	rna_add_mover->set_minimize_all_rebuilt_res( ! option[ minimize_single_res ]() );
 	rna_add_mover->set_num_random_samples( option[ num_random_samples ]() );
 
 	RNA_AddOrDeleteMoverOP rna_add_or_delete_mover = new RNA_AddOrDeleteMover( rna_add_mover, rna_delete_mover );
@@ -221,6 +271,7 @@ stepwise_monte_carlo()
 	Size num_struct = option[ out::nstruct ]();
 	std::string move_type;
 	Real const add_delete_frequency_ = option[ add_delete_frequency ]();
+	Real const minimize_single_res_frequency_ = option[ minimize_single_res_frequency ]();
 	bool success;
 
 	// main loop
@@ -237,11 +288,14 @@ stepwise_monte_carlo()
 		while (  k <= option[ cycles ]() ){
 
 			bool success( true );
+			bool const minimize_single_res = ( RG.uniform() <= minimize_single_res_frequency_ );
+
 			if ( RG.uniform() < add_delete_frequency_ ){
+				rna_add_or_delete_mover->set_minimize_all_rebuilt_res(  ! minimize_single_res );
 				rna_add_or_delete_mover->apply( pose, move_type );
 			} else {
 				// later make this an actual class!
-				success = apply_swa_mover( pose, scorefxn, move_type );
+				success = apply_swa_mover( pose, scorefxn, minimize_single_res, move_type );
 			}
 
 			if ( !success ) continue;
@@ -249,6 +303,7 @@ stepwise_monte_carlo()
 			k++;
 			scorefxn->show( TR, pose );
 
+			if ( minimize_single_res ) move_type += "-minsngl";
 			monte_carlo_->boltzmann( pose, move_type );
 
 			// following can be removed later.
@@ -309,7 +364,9 @@ main( int argc, char * argv [] )
 	NEW_OPT( cycles, "Number of Monte Carlo cycles", 50 );
 	NEW_OPT( temperature, "Monte Carlo temperature", 1.0 );
 	NEW_OPT( add_delete_frequency, "Frequency of add/delete vs. resampling", 0.5 );
-	NEW_OPT( minimize_single_res, "Minimize the residue that just got rebuilt, instead of all", false );
+	NEW_OPT( just_min_after_mutation_frequency, "After a mutation, how often to just minimize (without further sampling the mutated residue)", 0.5 );
+	NEW_OPT( minimize_single_res_frequency, "Frequency with which to minimize the residue that just got rebuilt, instead of all", 0.0 );
+	NEW_OPT( allow_internal_moves, "Allow moves in which internal cutpoints are created to allow ERRASER rebuilds", false );
 	NEW_OPT( num_random_samples, "Number of samples from swa residue sampler before minimizing best", 1 );
 	NEW_OPT( sample_res, "specify particular residues that should be rebuild (as opposed to all missing in starting PDB)", blank_size_vector );
 

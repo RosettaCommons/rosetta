@@ -849,5 +849,19 @@ rotate( pose::Pose & pose, Matrix const M,
 	}
 
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	is_at_terminus( core::pose::Pose const & pose, Size const i ){
+
+		if ( i == pose.total_residue() || pose.fold_tree().is_cutpoint( i ) ){ // could be a 3' chain terminus
+			return true;
+		} else if ( i == 1 || pose.fold_tree().is_cutpoint( i-1 ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+
 }
 }

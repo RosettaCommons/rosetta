@@ -20,6 +20,7 @@
 #include <protocols/swa/rna/ERRASER_Modeler.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <core/types.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
@@ -34,11 +35,10 @@ namespace rna {
 	public:
 
 	//constructor
-		ERRASER_Modeler( core::Size const sample_res, core::scoring::ScoreFunctionOP scorefxn );
+		ERRASER_Modeler( core::scoring::ScoreFunctionOP scorefxn );
 
-		// should also make the following as an overloaded constructor.
-		//ERRASER_Modeler( utility::vector1< core::Size > const moving_res,
-		//										 core::scoring::ScoreFunctionOP scorefxn );
+	//constructor
+		ERRASER_Modeler( core::Size const sample_res, core::scoring::ScoreFunctionOP scorefxn );
 
 		//destructor
 		~ERRASER_Modeler();
@@ -46,6 +46,12 @@ namespace rna {
 	public:
 
 		virtual void apply( core::pose::Pose & pose );
+
+		void
+		run_erraser( core::pose::Pose & pose );
+
+		void
+		apply( core::pose::Pose & pose, Size const sample_res );
 
 		virtual std::string get_name() const;
 
@@ -103,6 +109,8 @@ namespace rna {
 
 		void set_choose_random( bool const & setting ){ choose_random_ = setting; }
 
+		void set_num_random_samples( Size const & setting ){ num_random_samples_ = setting; }
+
 		void set_skip_sampling( bool const & setting ){ skip_sampling_ = setting; }
 
 		void set_perform_minimize( bool const & setting ){ perform_minimize_ = setting; }
@@ -123,17 +131,39 @@ namespace rna {
 
 		void set_fixed_res( utility::vector1< Size > const & setting ){ fixed_res_ = setting; }
 
-	public:
+		void set_minimize_res( utility::vector1< Size > const & setting ){ minimize_res_ = setting; }
+
 		StepWiseRNA_JobParametersOP
 		setup_job_parameters_for_erraser( utility::vector1< Size > moving_res, core::pose::Pose const & pose );
+
+	private:
+
+		void
+		initialize_variables();
+
+		void
+		put_in_cutpoints( core::pose::Pose & pose );
+
+		void
+		take_out_cutpoints( core::pose::Pose & pose );
+
+		bool
+		is_part_of_cutpoint_with_variants( core::pose::Pose const & pose, Size const sample_res );
+
+		void
+		prepare_fold_tree_for_erraser( core::pose::Pose & pose );
+
+		void
+		update_fixed_res_and_minimize_res( core::pose::Pose const & pose );
 
 	private:
 
 		StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
 		core::pose::PoseCOP native_pose_;
 
-		utility::vector1< core::Size > const moving_res_;
+		utility::vector1< core::Size > moving_res_;
 		utility::vector1< core::Size > fixed_res_;
+		utility::vector1< core::Size > minimize_res_;
 		core::scoring::ScoreFunctionOP scorefxn_;
 		std::string silent_file_;
 		core::Size sampler_num_pose_kept_;
@@ -159,6 +189,7 @@ namespace rna {
 		bool VDW_atr_rep_screen_;
 		bool force_centroid_interaction_;
 		bool choose_random_;
+		Size num_random_samples_;
 		bool skip_sampling_;
 		bool perform_minimize_;
 		bool minimize_and_score_sugar_;
@@ -170,7 +201,11 @@ namespace rna {
 		bool output_pdb_;
 		bool output_minimized_pose_data_list_;
 
+		core::kinematics::FoldTree fold_tree_save_;
+
 	};
+
+
 
 } //rna
 } //swa

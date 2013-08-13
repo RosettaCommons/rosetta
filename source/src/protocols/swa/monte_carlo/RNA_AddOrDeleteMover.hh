@@ -53,6 +53,8 @@ public:
 
 	void set_sample_res( utility::vector1< Size > const & setting ){ sample_res_ = setting; }
 
+	void set_minimize_all_rebuilt_res( bool const setting );
+
 private:
 
 	RNA_AddMoverOP rna_add_mover_;

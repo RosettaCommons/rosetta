@@ -148,6 +148,9 @@ public:
 	set_choose_random ( bool const & setting ) {		choose_random_ = setting;	}
 
 	void
+	set_num_random_samples( Size const & setting ){ num_random_samples_ = setting; }
+
+	void
 	set_force_centroid_interaction ( bool const & setting ) {		force_centroid_interaction_ = setting;	}
 
 private:
@@ -262,6 +265,7 @@ private:
 	bool allow_syn_pyrimidine_;
 	bool use_phenix_geo_;
 	bool choose_random_;
+	Size num_random_samples_;
 	bool force_centroid_interaction_;
 
 	StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;

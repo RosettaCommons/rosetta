@@ -82,7 +82,7 @@ namespace rna {
 		allow_bulge_at_chainbreak_( false ),
 		parin_favorite_output_( false ),
 		floating_base_( false ),
-		include_syn_chi_( false ),
+		include_syn_chi_( true ),
 		reinitialize_CCD_torsions_( false ),
 		sampler_extra_epsilon_rotamer_( false ),
 		sampler_extra_beta_rotamer_( false ),

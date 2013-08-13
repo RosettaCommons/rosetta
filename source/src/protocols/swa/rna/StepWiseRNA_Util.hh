@@ -493,6 +493,12 @@ figure_out_swa_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pose con
 void
 figure_out_swa_rna_movemap( core::kinematics::MoveMap & mm, core::pose::Pose const & pose, utility::vector1< core::Size > const & minimize_res );
 
+void
+choose_random_if_unspecified_nucleotide( char & newrestype );
+
+bool
+mutate_res_if_allowed( core::pose::Pose & pose, core::Size const mutate_res, core::Real const mutation_frequency = 0.5 );
+
 }
 }
 }

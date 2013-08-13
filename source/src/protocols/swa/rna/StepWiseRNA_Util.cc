@@ -19,8 +19,8 @@
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh> //Oct 22, 2011..for some reason Util.cc have JP.hh BUT JP.cc also have Util.hh!!! SHOULD RESOLVE THIS!
 
-
 #include <protocols/rna/RNA_BasePairClassifier.hh>
+#include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 
@@ -36,6 +36,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/import_pose/import_pose.hh>
@@ -70,6 +71,8 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
+#include <numeric/random/random.hh>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -85,6 +88,8 @@
 
 
 using namespace core;
+
+static numeric::random::RandomGenerator RG(257572);  // <- Magic number, do not change it!
 
 static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_Util" );
 
@@ -3778,6 +3783,49 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 
 	}
 
+
+	////////////////////////////////////////////////////////////////////
+	void
+	choose_random_if_unspecified_nucleotide( char & newrestype ) {
+
+		std::string const rna_chars = "acgu";
+
+		if ( newrestype == 'n' ){
+			newrestype = rna_chars[ RG.random_range( 1, rna_chars.size() ) - 1 ];
+			TR << "Choosing random nucleotide: " << newrestype << std::endl;
+		}
+
+	}
+
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	mutate_res_if_allowed( pose::Pose & pose, Size const mutate_res, Real const mutation_frequency /* = 0.5 */ ){
+
+		using namespace core::pose::full_model_info;
+		using namespace protocols::rna;
+
+		// first need to slice up native_pose to match residues in actual pose.
+		// define atoms over which to compute RMSD, using rmsd_res.
+		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		utility::vector1< Size > const sub_to_full = full_model_info.sub_to_full();
+		std::string const full_sequence = full_model_info.full_sequence();
+
+		if ( RG.uniform() < mutation_frequency) {
+
+			char nt = full_sequence[ sub_to_full[ mutate_res ] - 1 ];
+			choose_random_if_unspecified_nucleotide( nt );
+
+			char const nt_orig = pose.sequence()[ mutate_res - 1 ];
+			if ( nt != nt_orig ) {
+				protocols::rna::mutate_position( pose, mutate_res, nt );
+				return true;
+			}
+		}
+		return false;
+
+	}
 
 
 

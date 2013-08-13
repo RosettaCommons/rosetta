@@ -18,6 +18,8 @@
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/rna/RNA_Util.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/util.hh>

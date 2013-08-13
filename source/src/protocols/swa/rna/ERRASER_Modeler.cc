@@ -19,10 +19,14 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParametersSetup.hh>
 #include <protocols/swa/rna/StepWiseRNA_Minimizer.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
+#include <protocols/swa/StepWiseUtil.hh>
 
 #include <core/types.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 #include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
@@ -41,44 +45,59 @@ namespace protocols {
 namespace swa {
 namespace rna {
 
+	//Constructor  [not sure if this is necessary.]
+	ERRASER_Modeler::ERRASER_Modeler(	core::scoring::ScoreFunctionOP scorefxn ):
+		scorefxn_( scorefxn )
+	{
+		initialize_variables();
+	}
+
+
 	//Constructor
 	ERRASER_Modeler::ERRASER_Modeler( core::Size const sample_res,
 																		core::scoring::ScoreFunctionOP scorefxn ) :
 		moving_res_( utility::tools::make_vector1( sample_res ) ),
-		scorefxn_( scorefxn ),
-		silent_file_( "" ),
-		sampler_num_pose_kept_( 108 ),
-		num_pose_minimize_( 99999 ),
-		nstruct_( 1 ),
-		num_sampled_( 0 ),
-		sampler_native_screen_rmsd_cutoff_( 2.0 ),
-		cluster_rmsd_( 0.5 ),
-		native_edensity_score_cutoff_( -1 ),
-		fast_( false ),
-		medium_fast_( false ),
-		sampler_native_rmsd_screen_( false ),
-		o2star_screen_( true ),
-		verbose_( false ),
-		distinguish_pucker_( true ),
-		finer_sampling_at_chain_closure_( false ),
-		PBP_clustering_at_chain_closure_( false ),
-		allow_syn_pyrimidine_( false ),
-		extra_syn_chi_rotamer_( false ),
-		extra_anti_chi_rotamer_( false ),
-		use_phenix_geo_( false ),
-		centroid_screen_( true ),
-		VDW_atr_rep_screen_( true ),
-		force_centroid_interaction_( false ),
-		choose_random_( false ),
-		skip_sampling_( false ),
-		perform_minimize_( true ),
-		minimize_and_score_sugar_( true ),
-		minimize_and_score_native_pose_( false ),
-		rm_virt_phosphate_( false ),
-		VDW_rep_alignment_RMSD_CUTOFF_( 0.001 ),
-		output_pdb_( false ),
-		output_minimized_pose_data_list_( false )
-	{}
+		scorefxn_( scorefxn )
+	{
+		initialize_variables();
+	}
+
+	void
+	ERRASER_Modeler::initialize_variables() {
+		silent_file_ = "";
+		sampler_num_pose_kept_ = 108;
+		num_pose_minimize_ = 99999;
+		nstruct_ = 1;
+		num_sampled_ = 0;
+		sampler_native_screen_rmsd_cutoff_ = 2.0;
+		cluster_rmsd_ = 0.5;
+		native_edensity_score_cutoff_ = -1;
+		fast_ = false;
+		medium_fast_ = false;
+		sampler_native_rmsd_screen_ = false;
+		o2star_screen_ = true;
+		verbose_ = false;
+		distinguish_pucker_ = true;
+		finer_sampling_at_chain_closure_ = false;
+		PBP_clustering_at_chain_closure_ = false;
+		allow_syn_pyrimidine_ = false;
+		extra_syn_chi_rotamer_ = false;
+		extra_anti_chi_rotamer_ = false;
+		use_phenix_geo_ = false;
+		centroid_screen_ = true;
+		VDW_atr_rep_screen_ = true;
+		force_centroid_interaction_ = false;
+		choose_random_ = false;
+		num_random_samples_ = 1;
+		skip_sampling_ = false;
+		perform_minimize_ = true;
+		minimize_and_score_sugar_ = true;
+		minimize_and_score_native_pose_ = false;
+		rm_virt_phosphate_ = false;
+		VDW_rep_alignment_RMSD_CUTOFF_ = 0.001;
+		output_pdb_ = false;
+		output_minimized_pose_data_list_ = false;
+	}
 
 	//Destructor
 	ERRASER_Modeler::~ERRASER_Modeler()
@@ -92,7 +111,38 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////
 	void
+	ERRASER_Modeler::apply( core::pose::Pose & pose, Size const sample_res ){
+
+		// this is kind of silly, but should be useful in future SWA [?].
+		moving_res_ = utility::tools::make_vector1( sample_res );
+		apply( pose );
+
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////
+	void
 	ERRASER_Modeler::apply( core::pose::Pose & pose ){
+
+		runtime_assert( moving_res_.size() == 1 );
+		Size const & sample_res = moving_res_[1];
+
+		if ( is_at_terminus( pose, sample_res ) && is_part_of_cutpoint_with_variants( pose, sample_res ) ){
+			TR.Debug << "Residue " << sample_res << " is at terminus -- going straight into ERRASER!" << std::endl;
+			run_erraser( pose );
+		} else {
+			// This is complicated -- it might be better to have this in a separate class, which contains ERRASER modeler inside it.
+			// need to talk to Fang.
+			TR.Debug << "Residue " << sample_res << " is not at terminus -- putting in temporary cutpoints for ERRASER!" << std::endl;
+			put_in_cutpoints( pose );
+			run_erraser( pose );
+			take_out_cutpoints( pose );
+		}
+	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	void
+	ERRASER_Modeler::run_erraser( core::pose::Pose & pose ){
 
 		using namespace core::pose;
 		using namespace core::chemical;
@@ -101,6 +151,8 @@ namespace rna {
 		using namespace protocols::swa::rna;
 
 		if ( !job_parameters_ ) job_parameters_ = setup_job_parameters_for_erraser( moving_res_, pose );
+
+		runtime_assert( is_part_of_cutpoint_with_variants( pose, moving_res_[1] ) );
 
 		StepWiseRNA_AnalyticalLoopCloseSampler stepwise_rna_residue_sampler ( job_parameters_ );
 		stepwise_rna_residue_sampler.set_silent_file ( silent_file_ + "_sampling" );
@@ -137,6 +189,7 @@ namespace rna {
 
 		if ( choose_random_ ){
 			stepwise_rna_residue_sampler.set_choose_random( true );
+			stepwise_rna_residue_sampler.set_num_random_samples( num_random_samples_ );
 			stepwise_rna_residue_sampler.set_cluster_rmsd( 0.0 ); // don't cluster.
 		}
 
@@ -193,6 +246,8 @@ namespace rna {
 		stepwise_rna_minimizer.apply ( pose );
 
 		// Need to make sure that final pose output is the lowest scoring one. Is it?
+
+		job_parameters_ = 0; // force next time to create job parameters appropriate for the job!
 
 
 	}
@@ -259,7 +314,7 @@ namespace rna {
 		// could use this later to minimize more residues...
 		//stepwise_rna_job_parameters_setup.set_global_sample_res_list( option[ global_sample_res_list ]() ); //March 20, 2011
 
-		// NOT SURE ABOUT THIS. false by deafult, but shows up as true in 'normal' erraser runs.
+		// NOT SURE ABOUT THIS. false by default, but shows up as true in 'normal' erraser runs.
 		stepwise_rna_job_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP ( true );
 
 		stepwise_rna_job_parameters_setup.set_add_virt_res_as_root( true );
@@ -274,10 +329,30 @@ namespace rna {
 		// that fold_tree is only used in PoseSetup, and in JobParametersSetup, and not downstream
 		// in any modelers...  -- rhiju
 
-		// user input fixed_res...
+		update_fixed_res_and_minimize_res( pose );
 		if ( fixed_res_.size() > 0 ) 	job_parameters->set_working_fixed_res( fixed_res_ );
 
 		return job_parameters;
+	}
+
+
+	///////////////////////////////////////////////////////////////////////////////
+	void
+	ERRASER_Modeler::update_fixed_res_and_minimize_res( core::pose::Pose const & pose ){
+
+		Size const & nres = pose.total_residue();
+
+		// user input minimize_res...
+		if ( minimize_res_.size() > 0 ) { // specifying more residues which could move during the minimize step.
+			fixed_res_.clear();
+			for ( Size n = 1; n <= nres; n++ ) {
+				if ( !minimize_res_.has_value( n ) )	fixed_res_.push_back( n );
+			}
+		} else {
+			for ( Size n = 1; n <= nres; n++ ) {
+				if ( !fixed_res_.has_value( n ) )	minimize_res_.push_back( n );
+			}
+		}
 	}
 
 
@@ -292,6 +367,108 @@ namespace rna {
 	///////////////////////////////////////////////////////////////////////////////
 	core::pose::PoseCOP
 	ERRASER_Modeler::get_native_pose(){ return native_pose_; }
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	ERRASER_Modeler::is_part_of_cutpoint_with_variants( core::pose::Pose const & pose, Size const sample_res ){
+
+		using namespace core::chemical;
+
+		//		if ( pose.residue_type( sample_res ).has_variant_type( CUTPOINT_UPPER ) ){
+		//			runtime_assert(  sample_res > 1 &&
+		//											 pose.residue_type( sample_res - 1 ).has_variant_type( CUTPOINT_LOWER ) );
+		//			return true;
+		//		}
+
+		if ( pose.residue_type( sample_res ).has_variant_type( CUTPOINT_LOWER ) ){
+			runtime_assert(  sample_res < pose.total_residue() &&
+											 pose.residue_type( sample_res + 1 ).has_variant_type( CUTPOINT_UPPER ) );
+			return true;
+		}
+
+		return false;
+	}
+
+
+	/////////////////////////////////////////////////////////////////////////
+	void
+	ERRASER_Modeler::prepare_fold_tree_for_erraser( core::pose::Pose & pose ){
+
+		using namespace core::kinematics;
+		using namespace core::chemical::rna;
+
+		runtime_assert( moving_res_.size() == 1 );
+		Size const & sample_res = moving_res_[1];
+
+		TR.Debug << "GETTING FOLD TREE " << std::endl;
+
+		FoldTree f = pose.fold_tree();
+
+		update_fixed_res_and_minimize_res( pose );
+		utility::vector1< Size > sample_res_list = minimize_res_;
+
+		// figure out jump points that bracket the cut.
+		Size jump_start( sample_res - 1);
+		while ( jump_start > 1 && minimize_res_.has_value( jump_start ) && !f.is_cutpoint( jump_start - 1 ) ) jump_start--;
+
+		Size jump_end( sample_res + 1);
+		while ( jump_end < pose.total_residue() && minimize_res_.has_value( jump_end ) && !f.is_cutpoint( jump_end ) ) jump_end++;
+
+
+		Size const cutpoint = sample_res;
+		TR.Debug << "ADDING CUTPOINT TO FOLD_TREE: " << jump_start << " " << jump_end << " " << cutpoint << std::endl;
+		f.new_jump( jump_start, jump_end, cutpoint );
+
+		Size const which_jump = f.jump_nr( jump_start, jump_end );
+		f.set_jump_atoms( which_jump,
+											jump_start,
+											default_jump_atom( pose.residue( jump_start ) ),
+											jump_end,
+											default_jump_atom( pose.residue( jump_end   ) ) );
+
+		pose.fold_tree( f );
+		TR.Debug << "NEW FOLD TREE " << pose.fold_tree() << std::endl;
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	void ERRASER_Modeler::put_in_cutpoints( core::pose::Pose & pose ){
+
+		using namespace core::chemical;
+
+		runtime_assert( moving_res_.size() == 1 );
+		Size const & sample_res = moving_res_[1];
+
+		fold_tree_save_ = pose.fold_tree();
+
+		// create reasonable fold tree
+		prepare_fold_tree_for_erraser( pose );
+
+		// add chainbreak variants -- put this in fold_tree?
+		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, sample_res   );
+		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, sample_res + 1 );
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	ERRASER_Modeler::take_out_cutpoints( core::pose::Pose & pose ){
+
+		using namespace core::chemical;
+
+		runtime_assert( moving_res_.size() == 1 );
+		Size const & sample_res = moving_res_[1];
+
+		// remove chainbreak variants. along with fold_tree restorer, put into separate function.
+		remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, sample_res   );
+		remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, sample_res + 1 );
+
+		// return to simple fold tree
+		pose.fold_tree( fold_tree_save_ );
+
+	}
+
 
 
 } //rna

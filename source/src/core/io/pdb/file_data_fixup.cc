@@ -215,7 +215,7 @@ convert_nucleic_acid_atom_name_to_standard( AtomInformation & atom_info ){
 	static bool init( false );
 
 
-	//  stars (*)  are changed to primes (') already in convert_atom_name.
+	//  stars (*)  are changed to primes (').
 	if ( atom_info.name[3] == '\*' ) atom_info.name = atom_info.name.substr(0,3) + "\'";
 
 	// just initialize map once.

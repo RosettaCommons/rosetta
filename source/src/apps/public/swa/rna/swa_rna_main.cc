@@ -1222,6 +1222,7 @@ swa_rna_sample()
 
 	stepwise_rna_modeler->set_job_parameters( job_parameters );
 
+	// NOTE: Still need to put in minimize_res & fixed_res !?
 	stepwise_rna_modeler->set_native_pose( native_pose );
 	stepwise_rna_modeler->set_silent_file( option[ out::file::silent  ] );
 	stepwise_rna_modeler->set_sampler_num_pose_kept ( option[ sampler_num_pose_kept ]() );
@@ -1244,7 +1245,7 @@ swa_rna_sample()
 	stepwise_rna_modeler->set_VDW_atr_rep_screen ( option[ VDW_atr_rep_screen ]() );
 	stepwise_rna_modeler->set_VDW_rep_screen_info ( option[ VDW_rep_screen_info ]() );
 	stepwise_rna_modeler->set_VDW_rep_alignment_RMSD_CUTOFF ( option[ VDW_rep_alignment_RMSD_CUTOFF ]() );
-	// not yet implemented.
+	// should we have force_centroid_interaction as a swa option? or is it covered by something else?
 	//	stepwise_rna_modeler->set_force_centroid_interaction ( option[force_centroid_interaction]() );
 	stepwise_rna_modeler->set_choose_random( option[ choose_random ]()  );
 	stepwise_rna_modeler->set_num_random_samples( option[ num_random_samples ]() );

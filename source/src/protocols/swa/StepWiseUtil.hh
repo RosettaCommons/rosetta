@@ -171,6 +171,9 @@ namespace swa {
 	Size
 	get_number_missing_residues( pose::Pose const & pose );
 
+	bool
+	is_at_terminus( core::pose::Pose const & pose, Size const i );
+
 
 }
 }

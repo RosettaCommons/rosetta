@@ -16,6 +16,7 @@
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/swa/rna/StepWiseRNA_Util.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -97,6 +98,7 @@ namespace monte_carlo {
 		using namespace core::chemical;
 		using namespace core::pose;
 		using namespace core::pose::full_model_info;
+		using namespace protocols::swa::rna;
 
 		Size suite_num( 0 ), nucleoside_num( 0 ); // will record which new dofs added.
 
@@ -107,8 +109,8 @@ namespace monte_carlo {
 
 		if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ){
 
-			runtime_assert( res_to_build_off < pose.total_residue() ); // wait is this necessary?
-			runtime_assert( sub_to_full[ res_to_build_off ] < sub_to_full[ res_to_build_off+1 ] -1 );
+			runtime_assert( res_to_build_off == pose.total_residue() || sub_to_full[ res_to_build_off ] < sub_to_full[ res_to_build_off+1 ] -1 );
+			runtime_assert( sub_to_full[ res_to_build_off ] < full_sequence.size() );
 
 			Size const res_to_add = res_to_build_off + 1;
 
@@ -239,7 +241,7 @@ namespace monte_carlo {
 
 		// Could this be a chainbreak (cutpoint_closed )?
 
-		TR << "checking for cutpoint after prepend: " << res_to_add << " " << sub_to_full[ res_to_add ] << " " << sub_to_full[ res_to_add - 1 ] << " " << open_cutpoint_open_in_full_model.size() << std::endl;
+		TR.Debug << "checking for cutpoint after prepend: " << res_to_add << " " << sub_to_full[ res_to_add ] << " " << sub_to_full[ res_to_add - 1 ] << " " << open_cutpoint_open_in_full_model.size() << std::endl;
 
 		if ( res_to_add > 1 &&
 				 sub_to_full[ res_to_add ] - 1 == sub_to_full[ res_to_add - 1 ] &&
@@ -266,6 +268,7 @@ namespace monte_carlo {
 		//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 
 		// new -- try multiple 'shots on goal' before minimizing.
+		TR << "Presampling with SWA: " << num_random_samples_ << " samples. " << std::endl;
 		stepwise_rna_modeler.set_num_random_samples( num_random_samples_ );
 		stepwise_rna_modeler.set_num_pose_minimize( 1 );
 
@@ -298,19 +301,6 @@ namespace monte_carlo {
 		} // monte carlo cycles
 	}
 
-
-	////////////////////////////////////////////////////////////////////
-	void
-	RNA_AddMover::choose_random_if_unspecified_nucleotide( char & newrestype ) const {
-
-		std::string const rna_chars = "acgu";
-
-		if ( newrestype == 'n' ){
-			newrestype = rna_chars[ RG.random_range( 1, rna_chars.size() ) - 1 ];
-			TR << "Choosing random nucleotide: " << newrestype;
-		}
-
-	}
 
 
 }

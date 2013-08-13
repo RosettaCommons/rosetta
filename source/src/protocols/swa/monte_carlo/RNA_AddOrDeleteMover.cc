@@ -108,11 +108,20 @@ namespace monte_carlo {
 
 	}
 
+	///////////////////////////////////////////////////////////////////////////////
+	void
+	RNA_AddOrDeleteMover::set_minimize_all_rebuilt_res( bool const setting ){
+		rna_add_mover_->set_minimize_all_rebuilt_res( setting );
+		rna_delete_mover_->set_minimize_after_delete( setting );
+	}
 
+
+	///////////////////////////////////////////////////////////////////////////////
 	std::string
 	RNA_AddOrDeleteMover::get_name() const {
 		return "RNA_AddOrDeleteMover";
 	}
+
 
 }
 }

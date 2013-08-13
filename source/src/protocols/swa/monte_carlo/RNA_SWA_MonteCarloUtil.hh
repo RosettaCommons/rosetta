@@ -84,6 +84,7 @@ namespace monte_carlo {
 											 utility::vector1< Size > const & sample_res,
 											 utility::vector1< Size > const & sub_to_full );
 
+
 } // monte_carlo
 } // swa
 } // protocols

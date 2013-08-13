@@ -63,6 +63,9 @@ public:
 	// properties of full model.
 	std::string full_sequence() const{ return full_sequence_;}
 
+	// set properties of full model.
+	void set_full_sequence( std::string const & setting ) { full_sequence_ = setting;}
+
 	utility::vector1< Size > cutpoint_open_in_full_model() const { return cutpoint_open_in_full_model_;}
 
 	// properties of current, working pose

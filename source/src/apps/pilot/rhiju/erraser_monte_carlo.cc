@@ -33,15 +33,18 @@
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/util.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/import_pose/import_pose.hh>
 
+
 //////////////////////////////////////////////////////////
 #include <protocols/swa/rna/ERRASER_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
+#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -86,42 +89,34 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 static numeric::random::RandomGenerator RG(2391021);  // <- Magic number, do not change it!
 
 OPT_KEY( IntegerVector, sample_res )
+OPT_KEY( IntegerVector, design_res )
 OPT_KEY( Integer, cycles )
 OPT_KEY( Real, temperature )
 OPT_KEY( Boolean, cart_min )
+OPT_KEY( Boolean, minimize_single_res )
+OPT_KEY( Integer, num_random_samples )
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // eventually could make this a class.
 // writing as an app for quick testing.
 // places to cleanup are marked below
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void
-prepare_fold_tree_for_erraser( pose::Pose & pose,
-															 core::Size const erraser_res,
-															 utility::vector1< Size > const sample_res_list ){
+setup_design_res( pose::Pose & pose ){
 
-  using namespace core::kinematics;
-  using namespace core::chemical::rna;
+	using namespace core::pose::full_model_info;
+	utility::vector1< Size > design_res_ = option[ design_res ]();
+	FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+	std::string full_sequence = full_model_info.full_sequence();
 
-	FoldTree f = pose.fold_tree();
+	for ( Size i = 1; i <= design_res_.size(); i++ ){
+		full_sequence[ design_res_[ i ] - 1 ] = 'n';
+	}
 
-	Size start( sample_res_list[1]-1 ), end( sample_res_list[ sample_res_list.size() ]+1 );
-	Size const cutpoint = erraser_res;
+	full_model_info.set_full_sequence( full_sequence );
+	//	std::cout << "NEW SEQUENCE: " << const_full_model_info_from_pose( pose ).full_sequence();
 
-	std::cout << "ADDING CUTPOINT TO FOLD_TREE: " << start << " " << end << " " << cutpoint << std::endl;
-	f.new_jump( start, end, cutpoint );
-
-	Size const which_jump = f.jump_nr( start, end );
-
-	runtime_assert( which_jump > 0 );
-	runtime_assert( f.upstream_jump_residue( which_jump ) == start );
-	runtime_assert( f.downstream_jump_residue( which_jump ) == end );
-
-	// may need to be smarter about whether start/end are upstream/downstream
-	f.set_jump_atoms( which_jump, default_jump_atom( pose.residue(start) ), default_jump_atom( pose.residue(end) ) );
-
-	pose.fold_tree( f );
-	std::cout << "NEW FOLD TREE " << pose.fold_tree() << std::endl;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,6 +132,7 @@ erraser_monte_carlo()
   using namespace core::optimization;
   using namespace core::import_pose;
 	using namespace protocols::swa::rna;
+	using namespace protocols::swa::monte_carlo;
 	using namespace protocols::moves;
 
 	clock_t const time_start( clock() );
@@ -148,6 +144,7 @@ erraser_monte_carlo()
 	import_pose::pose_from_pdb( pose, *rsd_set, option[ in::file::s ][1] );
 	protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
 	protocols::rna::virtualize_5prime_phosphates( pose );
+	setup_design_res( pose );
 
 	protocols::viewer::add_conformation_viewer ( pose.conformation(), "current", 400, 400 );
 
@@ -186,46 +183,25 @@ erraser_monte_carlo()
 		scorefxn->show( std::cout, pose );
 	}
 
-	utility::vector1< Size > fixed_res;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) if ( !sample_res_list.has_value( i) ) fixed_res.push_back( i );
-
 	// monte carlo setup.
 	MonteCarloOP monte_carlo_ = new MonteCarlo( pose, *scorefxn, option[ temperature]() );
 
 	for ( Size n = 1; n <= option[ cycles ](); n++ ){
 
-		FoldTree const f_save = pose.fold_tree();
-
-		// create reasonable fold tree
 		Size const erraser_res = RG.random_element( sample_res_list );
-		prepare_fold_tree_for_erraser( pose, erraser_res, sample_res_list );
+		bool const did_mutation = mutate_res_if_allowed( pose, erraser_res );
 
-		// add chainbreak variants -- put this in fold_tree?
-		add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, erraser_res   );
-		add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, erraser_res+1 );
+		ERRASER_Modeler erraser_modeler( erraser_res, scorefxn );
+		erraser_modeler.set_choose_random( true );
+		erraser_modeler.set_force_centroid_interaction( true );
+		if ( !option[ minimize_single_res ]() )  erraser_modeler.set_minimize_res( sample_res_list );
+		erraser_modeler.set_use_phenix_geo( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+		erraser_modeler.set_num_random_samples( option[ num_random_samples ]() );
+		erraser_modeler.set_num_pose_minimize( 1 );
 
-		// run ERRASER_Modeler
-		ERRASER_ModelerOP erraser_modeler = new ERRASER_Modeler( erraser_res, scorefxn );
-		erraser_modeler->set_choose_random( true );
-		erraser_modeler->set_force_centroid_interaction( true );
-		erraser_modeler->set_fixed_res( fixed_res );
-		erraser_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
-		//		erraser_modeler->set_verbose( true );
-		if ( n == 1 ) erraser_modeler->set_skip_sampling( true ); // just do minimize on first round.
-
-		erraser_modeler->apply( pose );
-
-		std::string const move_type = erraser_modeler->get_num_sampled() ? "erraser" : "erraser_no_op";
-
-		// display not necessary?
-		std::cout << "After ERRASER move" << std::endl;
-		scorefxn->show( std::cout, pose );
-
-		// remove chainbreak variants. along with fold_tree restorer, put into separate function.
-		remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_LOWER, erraser_res   );
-		remove_variant_type_from_pose_residue( pose, chemical::CUTPOINT_UPPER, erraser_res+1 );
-		// return to simple fold tree
-		pose.fold_tree( f_save );
+		erraser_modeler.apply( pose, erraser_res );
+		std::string move_type = erraser_modeler.get_num_sampled() ? "erraser" : "erraser_no_op";
+		if ( did_mutation ) move_type += "-mut";
 
 		std::cout << "After ERRASER move and formally remove cutpoint" << std::endl;
 		scorefxn->show( std::cout, pose );
@@ -281,9 +257,12 @@ main( int argc, char * argv [] )
 	utility::vector1< std::string > blank_string_vector;
 
 	NEW_OPT( sample_res, "residues to build", blank_size_vector );
+	NEW_OPT( design_res, "residues to re-design", blank_size_vector );
 	NEW_OPT( cycles, "Number of Monte Carlo cycles", 50 );
 	NEW_OPT( temperature, "Monte Carlo temperature", 1.0 );
 	NEW_OPT( cart_min, "Do Cartesian minimizations", false );
+	NEW_OPT( minimize_single_res, "Minimize the residue that just got rebuilt, instead of all", false );
+	NEW_OPT( num_random_samples, "Number of samples from swa residue sampler before minimizing best", 1 );
 
   ////////////////////////////////////////////////////////////////////////////
   // setup

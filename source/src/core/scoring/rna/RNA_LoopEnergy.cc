@@ -61,9 +61,9 @@ RNA_LoopEnergyCreator::score_types_for_method() const {
 /// c-tor
 RNA_LoopEnergy::RNA_LoopEnergy() :
 	parent( new RNA_LoopEnergyCreator ),
-	rna_loop_fixed_cost_( 4.5 ), // in kcal/mol
+	rna_loop_fixed_cost_( 7.3 ), /// in k_B T, at T = 37 C.
 	persistence_length2_( 5.0 * 5.0 ), // in Angstroms^2
-	kB_T_( 0.616 ) // in kcal/mol, at T = 37 C.
+	kB_T_( 1.0 ) // in k_B T, at T = 37 C.
 {}
 
 /// clone
