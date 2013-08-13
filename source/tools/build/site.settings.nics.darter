@@ -1,0 +1,54 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Copy this file into user.settings:
+#
+#   cp user.settings.template user.settings
+#
+# and customize to fit your site's environment
+# DO NOT make changes to this template
+# DO NOT try and check in user.settings
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+
+# Settings here are added to the combined build settings, after all basic
+# and site settings, to allow you to override anything you need to.
+# They can in turn be overriden by the project settings.
+#
+# NOTE: At some point this file will allow you to have multiple settings
+# and select between them from the options.  For now there is only the
+# single "user" settings.
+
+import os
+
+
+settings = {
+    "user" : {
+        "prepends" : {
+        },
+        "appends" : {
+            # Uncomment the line below and the "import os" line above
+            # to let SCons find ICC (assuming it's on your PATH already)
+            # This is commented-out by default because it makes SCons
+            # sensitive to your entire path.  This is necessary in
+            # some environments, but has the unfortunate consequence
+            # that any change whatsoever to the PATH variable (or its
+            # contents) will force a complete recompile.
+            "program_path"  : os.environ["PATH"].split(":"),
+
+            # Uncomment the line below to enable experimental mute level control in Tracer's
+            #"defines" : [ 'EXPERIMENTAL_TRACER_FEATURES' ],
+        },
+        "overrides" : {
+            "cxx" : "CC",
+	        "cc" : "cc",
+            "ENV" : os.environ,
+        
+	},
+        "removes" : {
+        },
+    }
+}
