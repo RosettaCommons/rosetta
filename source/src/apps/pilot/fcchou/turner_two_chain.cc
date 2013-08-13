@@ -608,12 +608,14 @@ MC_run () {
 	//Scorefxn list (hbond_sc, fa_stack, rna_torsion)
 	utility::vector1< ScoreFunctionOP > scorefxns;
 	utility::vector1< ScoreType > scoretypes;
+	scoretypes.push_back( fa_atr );
+	scoretypes.push_back( fa_rep );
 	scoretypes.push_back( hbond_sc );
-	scoretypes.push_back( hbond_intra );
 	scoretypes.push_back( rna_torsion );
 	scoretypes.push_back( fa_stack );
 	scoretypes.push_back( geom_sol_fast );
 	scoretypes.push_back( lk_nonpolar );
+	scoretypes.push_back( stack_elec );
 
 	for (Size i = 1; i <= scoretypes.size(); ++i) {
 		ScoreFunctionOP scorefxn_test = new ScoreFunction;
@@ -1011,28 +1013,50 @@ bp_score_calibrate()
 
 	utility::vector1< Size > moving_res;
 	for (Size i = len1 + 1; i <= total_len; ++i) moving_res.push_back(i);
+/*
 	pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
 	pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", 2 );
 	pose::add_variant_type_to_pose_residue( pose, "5PRIME_END_OH", 1 );
 	pose::add_variant_type_to_pose_residue( pose, "5PRIME_END_OH", 2 );
 	pose::add_variant_type_to_pose_residue( pose, "3PRIME_END_OH", 1 );
 	pose::add_variant_type_to_pose_residue( pose, "3PRIME_END_OH", 2 );
+*/
 	pose.dump_pdb("start_bp.pdb");
-/*
 
-	translate( pose_ref, Vector( 0.2, 0, 0 ), pose_ref, moving_res );
 
 	ozstream out;
 	out.open("scores.txt");
 
-	for (Real i = 0; i <= 6; i += 0.01) {
-		translate( pose, Vector( i, 0, 0 ), pose_ref, moving_res );
+	for (Real i = -6; i <= 6; i += 0.01) {
+		//translate( pose, Vector( i, 0, 0 ), pose_ref, moving_res );
+		//translate( pose, Vector( 0, 0, i ), pose_ref, moving_res );
+		translate( pose, Vector( 0, i, 0 ), pose_ref, moving_res );
 		Real const score = (*scorefxn) (pose);
 		out << i << ' ' << score << std::endl;
-	}
+		if ( i - (-4.6) < 0.0001 ) {
+			pose.dump_pdb("bp_-4.6.pdb");
+		}
 
-	translate( pose, Vector( 20, 0, 0 ), pose_ref, moving_res );
-*/	
+		if ( i - (-3.7) < 0.0001 ) {
+			pose.dump_pdb("bp_-3.7.pdb");
+		}
+
+		if ( i - (-0.8) < 0.0001 ) {
+			pose.dump_pdb("bp_-0.8.pdb");
+		}
+
+		if ( i - (0.04) < 0.0001 ) {
+			pose.dump_pdb("bp_0.04.pdb");
+		}
+		
+		if ( i - (2.1) < 0.0001 ) {
+			pose.dump_pdb("bp_2.1.pdb");
+		}
+
+	}
+	pose.dump_pdb("end_bp.pdb");
+
+	
 }
 //////////////////////////////////
 void*

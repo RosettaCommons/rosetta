@@ -264,7 +264,7 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			tr << "ATOM_VDW set to CENTROID_ROT" << std::endl;
 			energy_method_options_->atom_vdw_atom_type_set_name( "centroid_rot" );
 		} else if ( tag == "INCLUDE_INTRA_RES_RNA_HB" ) {
-			std::cout << "INCLUDE_INTRA_RES_RNA_HB==true" << std::endl;
+			tr << "INCLUDE_INTRA_RES_RNA_HB==true" << std::endl;
 			energy_method_options_->hbond_options().include_intra_res_RNA( true );
 		} else if ( tag == "INCLUDE_HB_DNA_DNA" ) {
 			energy_method_options_->hbond_options().exclude_DNA_DNA( false );
@@ -775,6 +775,18 @@ ScoreFunction::score_components( pose::Pose & pose ) const
 	return pose.energies().total_energy();
 }*/
 
+///////////////////////////////////////////////////////////////////////////////
+Real 
+ScoreFunction::score_by_scoretype(
+	pose::Pose & pose,
+	ScoreType const t, 
+	bool const weighted
+) const {
+	(*this)(pose); //make sure scores are set
+	Real score = pose.energies().total_energies()[t];
+	if (weighted) score *= weights_[t];
+	return score;
+}
 ///////////////////////////////////////////////////////////////////////////////
 core::Real
 ScoreFunction::get_sub_score(

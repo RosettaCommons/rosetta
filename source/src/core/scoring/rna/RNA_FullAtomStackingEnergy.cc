@@ -19,19 +19,20 @@
 #include <core/scoring/rna/RNA_FullAtomStackingEnergyCreator.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
+#include <core/scoring/NeighborList.tmpl.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
-// AUTO-REMOVED #include <core/chemical/rna/RNA_Util.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <basic/Tracer.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFactory.hh>
+#include <core/scoring/etable/count_pair/CountPairNone.hh>
+#include <core/scoring/etable/count_pair/CountPairAll.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-
 #include <core/chemical/AtomType.hh>
 
 
@@ -101,7 +102,7 @@ RNA_FullAtomStackingEnergy::clone() const
 
 ///
 void
-RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const
 {
   pose.update_residue_neighbors();
 
@@ -109,10 +110,15 @@ RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction 
   rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
   rna_centroid_info.update( pose );
 
+	pose.update_residue_neighbors();
+	if ( pose.energies().use_nblist() ) {
+		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
+		nblist.prepare_for_scoring( pose, scfxn, *this );
+	}
 }
 
 void
-RNA_FullAtomStackingEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+RNA_FullAtomStackingEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & scfxn) const
 {
   pose.update_residue_neighbors();
 
@@ -149,6 +155,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 		//		tr.Info << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << score << std::endl;
 	}
 
+	tr.Info << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << score << std::endl;
 }
 
 
@@ -523,13 +530,58 @@ RNA_FullAtomStackingEnergy::finalize_total_energy(
 Distance
 RNA_FullAtomStackingEnergy::atomic_interaction_cutoff() const
 {
-  return 0.0; /// Uh, I don't know.
+  return dist_cutoff_ + 2 * chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH; //Similar to FA_ElecEnergy
 }
 
 core::Size
 RNA_FullAtomStackingEnergy::version() const
 {
        return 1; // Initial versioning
+}
+
+etable::count_pair::CountPairFunctionCOP
+RNA_FullAtomStackingEnergy::get_intrares_countpair(
+	conformation::Residue const &,
+	pose::Pose const &,
+	ScoreFunction const &
+) const
+{
+	utility_exit_with_message( "FA_ElecEnergy does not define intra-residue pair energies; do not call get_intrares_countpair()" );
+	return 0;
+}
+
+etable::count_pair::CountPairFunctionCOP
+RNA_FullAtomStackingEnergy::get_count_pair_function(
+	Size const res1,
+	Size const res2,
+	pose::Pose const & pose,
+	ScoreFunction const &
+) const
+{
+	using namespace etable::count_pair;
+	if ( res1 == res2 ) {
+		return new CountPairNone;
+	}
+
+	conformation::Residue const & rsd1( pose.residue( res1 ) );
+	conformation::Residue const & rsd2( pose.residue( res2 ) );
+	return get_count_pair_function( rsd1, rsd2 );
+}
+
+
+etable::count_pair::CountPairFunctionCOP
+RNA_FullAtomStackingEnergy::get_count_pair_function(
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2
+) const
+{
+	using namespace etable::count_pair;
+
+	if ( !rsd1.is_RNA() ) return new CountPairNone;
+	if ( !rsd2.is_RNA() ) return new CountPairNone;
+	if ( rsd1.seqpos() == rsd2.seqpos() ) return new CountPairNone;
+	return new CountPairAll;
+
 }
 
 

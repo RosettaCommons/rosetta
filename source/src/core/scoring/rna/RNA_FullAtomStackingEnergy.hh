@@ -24,6 +24,7 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -60,11 +61,11 @@ public:
 
 	virtual
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const;
 
 	virtual
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const;
+	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & scfxn) const;
 
 	virtual
 	void
@@ -117,6 +118,28 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
 
+	/// @brief Interface function for class NeighborList.
+	etable::count_pair::CountPairFunctionCOP
+	get_intrares_countpair(
+		conformation::Residue const &,
+		pose::Pose const &,
+		ScoreFunction const &
+	) const;
+
+	/// @brief Interface function for class NeighborList.
+	etable::count_pair::CountPairFunctionCOP
+	get_count_pair_function(
+		Size const,
+		Size const,
+		pose::Pose const &,
+		ScoreFunction const &
+	) const;
+
+	etable::count_pair::CountPairFunctionCOP
+	get_count_pair_function(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	) const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data

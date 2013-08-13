@@ -265,6 +265,13 @@ public:
 		return weights_[ t ];
 	}
 
+	/// @brief Returns the score of the ScoreType  <t>
+	Real score_by_scoretype(
+		pose::Pose & pose, 
+		ScoreType const t, 
+		bool const weighted = true 
+	) const;
+
 	/// @brief Returns an EnergyMap of the current set of weights
 	///
 	/// example(s):
