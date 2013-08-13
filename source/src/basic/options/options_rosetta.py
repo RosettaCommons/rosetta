@@ -3807,7 +3807,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
       ),
     Option( 'kic_min_after_repack', 'Boolean',
       desc='Should the kinematic closure refine protocol minimize after repacking steps',
-      default='false'
+      default='true'
       ),
 		Option( 'optimize_only_kic_region_sidechains_after_move', 'Boolean',
       desc='Should we perform rotamer trials and minimization after every KIC move but only within the loops:neighbor_dist of the residues in the moved KIC segment. Useful to speed up when using very large loop definitions (like when whole chains are used for ensemble generation).',
@@ -3909,7 +3909,15 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
                 ),
                 Option( 'kic_bump_overlap_factor', 'Real',
                         desc="allow some atomic overlap in initial loop closures (should be remediated in subsequent repacking and minimization)",
-                        default='0.49'
+                        default='0.36'
+                ),
+                Option( 'kic_cen_weights', 'String',
+                        desc='centroid weight set to be used for KIC and next-generation KIC -- note that the smooth weights are strongly recommended for use with Talaris2013',
+                        default="score4_smooth"
+                ),
+                Option( 'kic_cen_patch', 'String',
+                        desc='weights patch file to be used for KIC+NGK centroid modeling stage',
+                        default=""
                 ),
 
 		## next-generation KIC
@@ -3958,8 +3966,8 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
             default='false'
 		),
 		Option ( 'legacy_kic', 'Boolean',
-			desc='always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more',
-			default='true'
+			desc='always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more (false by default)',
+			default='false'
 		),
 
 		## QuickCCD

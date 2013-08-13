@@ -451,6 +451,8 @@ namespace loops { IntegerOptionKey const kinematic_wrapper_cycles( "loops:kinema
 namespace loops { IntegerOptionKey const kic_num_rotamer_trials( "loops:kic_num_rotamer_trials" );  }
 namespace loops { BooleanOptionKey const kic_omega_sampling( "loops:kic_omega_sampling" );  }
 namespace loops { RealOptionKey const kic_bump_overlap_factor( "loops:kic_bump_overlap_factor" );  }
+namespace loops { StringOptionKey const kic_cen_weights( "loops:kic_cen_weights" );  }
+namespace loops { StringOptionKey const kic_cen_patch( "loops:kic_cen_patch" );  }
 namespace loops { StringOptionKey const restrict_kic_sampling_to_torsion_string( "loops:restrict_kic_sampling_to_torsion_string" );  }
 namespace loops { BooleanOptionKey const derive_torsion_string_from_native_pose( "loops:derive_torsion_string_from_native_pose" );  }
 namespace loops { BooleanOptionKey const always_remodel_full_loop( "loops:always_remodel_full_loop" );  }
@@ -716,5 +718,3 @@ namespace optE { BooleanOptionKey const recover_nat_rot( "optE:recover_nat_rot" 
 namespace optE { FileOptionKey const component_weights( "optE:component_weights" );  }
 namespace optE { BooleanOptionKey const optimize_nat_aa( "optE:optimize_nat_aa" );  }
 namespace optE { BooleanOptionKey const optimize_nat_rot( "optE:optimize_nat_rot" );  }
-namespace optE { FileOptionKey const optimize_ligand_rot( "optE:optimize_ligand_rot" );  }
-namespace optE { BooleanOptionKey const optimize_pssm( "optE:optimize_pssm" );  }

@@ -1,3 +1,5 @@
+namespace optE { FileOptionKey const optimize_ligand_rot( "optE:optimize_ligand_rot" );  }
+namespace optE { BooleanOptionKey const optimize_pssm( "optE:optimize_pssm" );  }
 namespace optE { FileOptionKey const optimize_dGbinding( "optE:optimize_dGbinding" );  }
 namespace optE { FileOptionKey const optimize_ddG_bind_correlation( "optE:optimize_ddG_bind_correlation" );  }
 namespace optE { FileOptionKey const optimize_ddGmutation( "optE:optimize_ddGmutation" );  }

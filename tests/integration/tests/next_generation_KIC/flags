@@ -8,10 +8,6 @@
 #-loops:kic_rama2b ## commented out as this needs lots of memory, working on a way to make this integration-testable
 -kic_omega_sampling
 -allow_omega_move true
--loops:kic_bump_overlap_factor 0.36
--legacy_kic false
--kic_min_after_repack true
--corrections:score:use_bicubic_interpolation false
 -in:file:fullatom
 -in:file:native input/4fxn.start.pdb
 -in:file:s input/4fxn.start.pdb

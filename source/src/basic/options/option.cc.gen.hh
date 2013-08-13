@@ -1873,7 +1873,7 @@ option.add( basic::options::OptionKeys::loops::vicinity_degree, "number of degre
 option.add( basic::options::OptionKeys::loops::neighbor_dist, "CB distance cutoff for repacking, rotamer trails, and side-chain minimization during loop modeling. NOTE: values over 10.0 are effectively reduced to 10.0" ).def(10.0);
 option.add( basic::options::OptionKeys::loops::kic_max_seglen, "maximum size of residue segments used in kinematic closure calculations" ).def(12);
 option.add( basic::options::OptionKeys::loops::kic_recover_last, "If true, do not recover lowest scoring pose after each outer cycle and at end of protocol in kic remodel and refine" ).def(false);
-option.add( basic::options::OptionKeys::loops::kic_min_after_repack, "Should the kinematic closure refine protocol minimize after repacking steps" ).def(false);
+option.add( basic::options::OptionKeys::loops::kic_min_after_repack, "Should the kinematic closure refine protocol minimize after repacking steps" ).def(true);
 option.add( basic::options::OptionKeys::loops::optimize_only_kic_region_sidechains_after_move, "Should we perform rotamer trials and minimization after every KIC move but only within the loops:neighbor_dist of the residues in the moved KIC segment. Useful to speed up when using very large loop definitions (like when whole chains are used for ensemble generation)." ).def(false);
 option.add( basic::options::OptionKeys::loops::max_kic_build_attempts, "Number of attempts at initial kinematic closure loop building" ).def(10000);
 option.add( basic::options::OptionKeys::loops::remodel_kic_attempts, "Number of kic attempts per inner cycle during perturb_kic protocol" ).def(300);
@@ -1899,7 +1899,9 @@ option.add( basic::options::OptionKeys::loops::spread, "when automatically ident
 option.add( basic::options::OptionKeys::loops::kinematic_wrapper_cycles, "maximum number of KinematicMover apply() tries per KinematicWrapper apply()" ).def(20);
 option.add( basic::options::OptionKeys::loops::kic_num_rotamer_trials, "number of RotamerTrial iterations in each KIC cycle -- default is 1" ).def(1);
 option.add( basic::options::OptionKeys::loops::kic_omega_sampling, "Perform sampling of omega angles around 179.6 for trans, and including 0 for pre-prolines -- default false, for legacy reasons" ).def(false);
-option.add( basic::options::OptionKeys::loops::kic_bump_overlap_factor, "allow some atomic overlap in initial loop closures (should be remediated in subsequent repacking and minimization)" ).def(0.49);
+option.add( basic::options::OptionKeys::loops::kic_bump_overlap_factor, "allow some atomic overlap in initial loop closures (should be remediated in subsequent repacking and minimization)" ).def(0.36);
+option.add( basic::options::OptionKeys::loops::kic_cen_weights, "centroid weight set to be used for KIC and next-generation KIC -- note that the smooth weights are strongly recommended for use with Talaris2013" ).def("score4_smooth");
+option.add( basic::options::OptionKeys::loops::kic_cen_patch, "weights patch file to be used for KIC+NGK centroid modeling stage" ).def("");
 option.add( basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string, "restrict kinematic loop closure sampling to the phi/psi angles specified in the torsion string" ).def("");
 option.add( basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose, "apply torsion-restricted sampling, and derive the torsion string from the native [or, if not provided, starting] structure" ).def(false);
 option.add( basic::options::OptionKeys::loops::always_remodel_full_loop, "always remodel the full loop segment (i.e. the outer pivots are always loop start & end) -- currently this only applies to the perturb stage -- EXPERIMENTAL" ).def(false);
@@ -1911,7 +1913,7 @@ option.add( basic::options::OptionKeys::loops::kic_rama2b, "use neighbor-depende
 option.add( basic::options::OptionKeys::loops::kic_no_centroid_min, "don't minimize in centroid mode during KIC perturb" ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_leave_centroid_after_initial_closure, "only use centroid mode for initial loop closure -- all further loop closures will be performed in full-atom" ).def(false);
 option.add( basic::options::OptionKeys::loops::kic_repack_neighbors_only, "select neigbors for repacking via the residue-dependent NBR_RADIUS, not via a generic threshold (WARNING: this overrides any setting in -loops:neighbor_dist)" ).def(false);
-option.add( basic::options::OptionKeys::loops::legacy_kic, "always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more" ).def(true);
+option.add( basic::options::OptionKeys::loops::legacy_kic, "always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more (false by default)" ).def(false);
 option.add( basic::options::OptionKeys::loops::alternative_closure_protocol, "use WidthFirstSliding..." ).def(false);
 option.add( basic::options::OptionKeys::loops::chainbreak_max_accept, "accept all loops that have a lower cumulative chainbreak score (linear,quadratic(if present), and overlap)" ).def(2.0);
 option.add( basic::options::OptionKeys::loops::debug_loop_closure, "dump structures before and after loop closing" ).def(false);
@@ -2165,11 +2167,11 @@ option.add( basic::options::OptionKeys::optE::recover_nat_rot, "With the iterati
 option.add( basic::options::OptionKeys::optE::component_weights, "With the iterative optE driver, weight the individual components according to the input file -- default weight of 1 for all components.  Weight file consists of component-name/weight pairs on separate lines: e.g. prob_native_structure 100.0" );
 option.add( basic::options::OptionKeys::optE::optimize_nat_aa, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer" );
 option.add( basic::options::OptionKeys::optE::optimize_nat_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer in the native context" );
-option.add( basic::options::OptionKeys::optE::optimize_ligand_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer around the ligand" );
-option.add( basic::options::OptionKeys::optE::optimize_pssm, "With the iterative optE driver, optimize weights to maximize the match between a BLAST generated pssm probabillity distribution" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optimize_dGbinding, "With the iterative optE driver, optimize weights to minimize squared error between the predicted dG of binding and the experimental dG; provide a file listing 1. bound PDB structure, 2. unbound PDB structure, and 3. measured dG" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optimize_ligand_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer around the ligand" );
+option.add( basic::options::OptionKeys::optE::optimize_pssm, "With the iterative optE driver, optimize weights to maximize the match between a BLAST generated pssm probabillity distribution" );
+option.add( basic::options::OptionKeys::optE::optimize_dGbinding, "With the iterative optE driver, optimize weights to minimize squared error between the predicted dG of binding and the experimental dG; provide a file listing 1. bound PDB structure, 2. unbound PDB structure, and 3. measured dG" );
 option.add( basic::options::OptionKeys::optE::optimize_ddG_bind_correlation, "With the iterative optE driver, optimize weights to minimize squared error between the predicted ddG of binding for a mutation to the experimental ddG; provide a file listing 1. list file containing wt complexes, 2. list file containing mut complexes, 3. list file containing wt unbounds structures, 4. list file containing mut unbounds structures, and 5. measured ddG of binding" );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation, "With the iterative optE driver, optimize weights to minimize the predicted ddG of mutation and the measured ddG; provide a file listing 1. repacked wt pdb list, 2. repacked mut pdb list, and 3. measured ddG triples" );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_straight_mean, "With the iterative optE driver, predict the the ddGmut to be the difference between the straight mean (1/n Sum(E_i)) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );

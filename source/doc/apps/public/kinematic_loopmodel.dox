@@ -155,6 +155,8 @@ LOOP 88 95 92 0 1
 @endverbatim
 @li The following 'expert' options may be used to customize the behavior of KIC:
 @verbatim
+-loops:kic_cen_weights          Centroid weight set to be used; use of smooth weights is strongly recommended when bicubic interpolation is used, which is now active by default. [String]
+-loops:kic_cen_patch            Optional patch for centroid weights. [String]
 -loops:neighbor_dist            Only optimize side-chains with C-beta atoms within this many angstroms of any loop C-beta atom.
                                 default = '10.0'. To speed up runs, try '6.0'. [Float]
 -loops:vicinity_sampling        Sample non-pivot torsions within a vicinity of their input values. default = 'false'.

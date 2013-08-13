@@ -4210,11 +4210,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 10.0</dd><br>
 </dl>
 <dl>
-<dt><b>-facts_min_dis</b> \<Real\><dt>
-<dd>GBpair interaction minimum distance (same as elec_min_dis)</dd><br>
-<dd>Default: 1.5</dd><br>
-</dl>
-<dl>
 <dt><b>-facts_kappa</b> \<Real\><dt>
 <dd>GBpair interaction screening factor</dd><br>
 <dd>Default: 12.0</dd><br>
@@ -4230,19 +4225,9 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1</dd><br>
 </dl>
 <dl>
-<dt><b>-facts_selfenergy_scale</b> \<Real\><dt>
-<dd>Relative scale for FACTS self energy to pair energy</dd><br>
-<dd>Default: 1.0</dd><br>
-</dl>
-<dl>
 <dt><b>-facts_plane_to_self</b> \<Boolean\><dt>
 <dd>Add atoms in same plane to self energy pairs</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-facts_intrares_scale</b> \<Real\><dt>
-<dd>Relative scale for FACTS intrares energy to interres energy</dd><br>
-<dd>Default: 0.0</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_saltbridge_correction</b> \<Real\><dt>
@@ -4252,7 +4237,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-facts_dshift</b> \<Real\><dt>
 <dd>FACTS pair term denominator distance shift</dd><br>
-<dd>Default: 0.0</dd><br>
+<dd>Default: 1.5</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_dshift_sb</b> \<Real\><dt>
+<dd>FACTS pair term denominator distance shift for salt-bridging sidechains</dd><br>
+<dd>Default: 2.0</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_die</b> \<Real\><dt>
@@ -4260,9 +4250,39 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1.0</dd><br>
 </dl>
 <dl>
-<dt><b>-facts_elec_sh_exponent</b> \<Real\><dt>
-<dd>Shift function exponent for electrostatic part in FACTS</dd><br>
-<dd>Default: 2.0</dd><br>
+<dt><b>-facts_intra_solv_scale</b> \<RealVector\><dt>
+<dd>FACTS GB scale for intrares bonded pairs: [1-4, 1-5, >1-5]</dd><br>
+<dd>Default: ['0.8', '0.2', '0.0']</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_adjbb_elec_scale</b> \<RealVector\><dt>
+<dd>FACTS Coulomb scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
+<dd>Default: ['0.2', '0.4', '0.6', '0.6', '0.6']</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_adjbb_solv_scale</b> \<RealVector\><dt>
+<dd>FACTS GB scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
+<dd>Default: ['0.8', '0.6', '0.6', '0.6', '0.6']</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_adjsc_elec_scale</b> \<RealVector\><dt>
+<dd>FACTS Coulomb scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
+<dd>Default: ['0.2', '0.4', '0.6', '0.6', '0.6']</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_adjsc_solv_scale</b> \<RealVector\><dt>
+<dd>FACTS GB scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
+<dd>Default: ['0.8', '0.6', '0.6', '0.6', '0.6']</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_charge_dir</b> \<String\><dt>
+<dd>directory where residue topology files for FACTS charge are stored</dd><br>
+<dd>Default: "scoring/score_functions/facts"</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_eff_charge_dir</b> \<String\><dt>
+<dd>directory where residue topology files for FACTS charge are stored</dd><br>
+<dd>Default: "scoring/score_functions/facts/eff"</dd><br>
 </dl>
 <dl>
 <dt><b>-nmer_ref_energies</b> \<String\><dt>
@@ -9073,7 +9093,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-kic_min_after_repack</b> \<Boolean\><dt>
 <dd>Should the kinematic closure refine protocol minimize after repacking steps</dd><br>
-<dd>Default: false</dd><br>
+<dd>Default: true</dd><br>
 </dl>
 <dl>
 <dt><b>-optimize_only_kic_region_sidechains_after_move</b> \<Boolean\><dt>
@@ -9209,7 +9229,17 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-kic_bump_overlap_factor</b> \<Real\><dt>
 <dd>allow some atomic overlap in initial loop closures (should be remediated in subsequent repacking and minimization)</dd><br>
-<dd>Default: 0.49</dd><br>
+<dd>Default: 0.36</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_cen_weights</b> \<String\><dt>
+<dd>centroid weight set to be used for KIC and next-generation KIC -- note that the smooth weights are strongly recommended for use with Talaris2013</dd><br>
+<dd>Default: "score4_smooth"</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_cen_patch</b> \<String\><dt>
+<dd>weights patch file to be used for KIC+NGK centroid modeling stage</dd><br>
+<dd>Default: ""</dd><br>
 </dl>
 <dl>
 <dt><b>-restrict_kic_sampling_to_torsion_string</b> \<String\><dt>
@@ -9268,8 +9298,8 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-legacy_kic</b> \<Boolean\><dt>
-<dd>always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more</dd><br>
-<dd>Default: true</dd><br>
+<dd>always select the start pivot first and then the end pivot -- biases towards sampling the C-terminal part of the loop more (false by default)</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-alternative_closure_protocol</b> \<Boolean\><dt>

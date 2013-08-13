@@ -96,6 +96,8 @@ namespace loops { extern IntegerOptionKey const kinematic_wrapper_cycles; }
 namespace loops { extern IntegerOptionKey const kic_num_rotamer_trials; }
 namespace loops { extern BooleanOptionKey const kic_omega_sampling; }
 namespace loops { extern RealOptionKey const kic_bump_overlap_factor; }
+namespace loops { extern StringOptionKey const kic_cen_weights; }
+namespace loops { extern StringOptionKey const kic_cen_patch; }
 namespace loops { extern StringOptionKey const restrict_kic_sampling_to_torsion_string; }
 namespace loops { extern BooleanOptionKey const derive_torsion_string_from_native_pose; }
 namespace loops { extern BooleanOptionKey const always_remodel_full_loop; }
