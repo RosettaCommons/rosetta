@@ -155,7 +155,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy(
 		//		tr.Info << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << score << std::endl;
 	}
 
-	tr.Info << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << score << std::endl;
+	//tr.Info << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << score << std::endl;
 }
 
 
