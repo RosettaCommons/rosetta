@@ -70,7 +70,8 @@ public:
 		EnergyMap & emap
 	) const;
 
-	void
+	// Undefined, commenting out to fix PyRosetta build
+	/* void
 	eval_atom_derivative_intra_RNA(
 		 id::AtomID const & atom_id,
 		 pose::Pose const & pose,
@@ -78,6 +79,7 @@ public:
 		 Vector & F1,
 		 Vector & F2
 	) const;
+	*/
 
 	/// f1 and f2 are zeroed
 	virtual
@@ -135,4 +137,3 @@ private:
 } // core
 
 #endif
-
