@@ -170,7 +170,7 @@ get_suite_ideal_A_form_torsions(){
 		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_alpha()[1].center );
 		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_beta()[1].center );
 		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_gamma()[1].center );
-		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.ideal_delta_north() );
+		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.delta_north() );
 		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center );
 		for (Size i = 1; i <= ideal_A_form_torsions.size(); ++i) {
 			if (ideal_A_form_torsions[i] > 360) {
@@ -201,13 +201,13 @@ apply_suite_torsions( utility::vector1< Real > const & torsion_set,
 
 	Real delta, nu2, nu1;
 	if (torsion_set[6] < 115) { //North pucker, [6] is delta angle (only pick one of the two states)
-		delta = rna_fitted_torsion_info.ideal_delta_north();
-		nu2 = rna_fitted_torsion_info.ideal_nu2_north();
-		nu1 = rna_fitted_torsion_info.ideal_nu1_north();
+		delta = rna_fitted_torsion_info.delta_north();
+		nu2 = rna_fitted_torsion_info.nu2_north();
+		nu1 = rna_fitted_torsion_info.nu1_north();
 	} else { //South pucker
-		delta = rna_fitted_torsion_info.ideal_delta_south();
-		nu2 = rna_fitted_torsion_info.ideal_nu2_south();
-		nu1 = rna_fitted_torsion_info.ideal_nu1_south();
+		delta = rna_fitted_torsion_info.delta_south();
+		nu2 = rna_fitted_torsion_info.nu2_south();
+		nu1 = rna_fitted_torsion_info.nu1_south();
 	}
 
 	if (sample_3prime_pucker) {
@@ -278,8 +278,8 @@ create_random_angle_from_range_list(utility::vector1< std::pair <Real, Real> > c
 //////////////////////////////////
 void
 create_random_torsions(utility::vector1< Real > & torsion_list, bool const modify_pucker = true) {
-	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	static const Real delta_north = rna_fitted_torsion_info.delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.delta_south();
 
 	//Sample all ranges
 	const Real alpha   = create_random_angle_from_range();
@@ -307,8 +307,8 @@ sample_near_current_torsion(utility::vector1< Real > & torsion_list,
 														utility::vector1< Real > const & lower_bound,
 														bool const modify_pucker = true, 
 														bool const cyclic = true) {
-	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	static const Real delta_north = rna_fitted_torsion_info.delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.delta_south();
 	static Real new_torsion;
 
 	for (Size i = 1; i <= 7; ++i) {

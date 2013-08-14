@@ -30,6 +30,8 @@
 
 static basic::Tracer TR( "protocols.swa.FloatingBaseChainClosureJobParameter" );
 
+using namespace core::chemical::rna;
+
 namespace protocols {
 namespace swa {
 namespace rna {
@@ -38,10 +40,10 @@ namespace rna {
 			sample_sugar( true ),
 			moving_res ( input_moving_res ),
 			reference_res( input_reference_res ),
-			moving_res_pucker_state( ALL ),
-			bulge_res_pucker_state( ALL ),
-			moving_res_base_state( BOTH ),
-			bulge_res_base_state( BOTH )
+			moving_res_pucker_state( WHATEVER ),
+			bulge_res_pucker_state( WHATEVER ),
+			moving_res_base_state( WHATEVER ),
+			bulge_res_base_state( WHATEVER )
 		{
 
 			PDL.clear(); //pose_data_list
@@ -88,19 +90,19 @@ namespace rna {
 	void
 	FloatingBaseChainClosureJobParameter::set_base_and_pucker_state( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP const & JP ){
 
-			////////////////////////June 02, 2011 Add BaseState and PuckerState information///
-			moving_res_pucker_state = ALL;
+			////////////////////////June 02, 2011 Add core::Size and core::Size information///
+			moving_res_pucker_state = WHATEVER;
 			if (  ( JP->working_force_north_ribose_list() ).has_value( moving_res ) ) moving_res_pucker_state = NORTH;
 			if (  ( JP->working_force_south_ribose_list() ).has_value( moving_res ) ) moving_res_pucker_state = SOUTH;
 
-			moving_res_base_state = ( core::chemical::rna::is_purine( pose.residue( moving_res ) ) ) ? BOTH: ANTI;
+			moving_res_base_state = ( core::chemical::rna::is_purine( pose.residue( moving_res ) ) ) ? WHATEVER: ANTI;
 			if (  ( JP->working_force_syn_chi_res_list() ).has_value( moving_res ) ) moving_res_base_state = SYN;
 
-			bulge_res_pucker_state = ALL;
+			bulge_res_pucker_state = WHATEVER;
 			if (  ( JP->working_force_north_ribose_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = NORTH;
 			if (  ( JP->working_force_south_ribose_list() ).has_value( bulge_res ) ) bulge_res_pucker_state = SOUTH;
 
-			bulge_res_base_state = ( core::chemical::rna::is_purine( pose.residue( bulge_res ) ) ) ? BOTH: ANTI;
+			bulge_res_base_state = ( core::chemical::rna::is_purine( pose.residue( bulge_res ) ) ) ? WHATEVER: ANTI;
 			if (  ( JP->working_force_syn_chi_res_list() ).has_value( bulge_res ) ) bulge_res_base_state = SYN;
 
 			////////////////////////Print data!////////////////////////////////////////

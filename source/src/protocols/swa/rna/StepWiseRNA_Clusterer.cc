@@ -27,6 +27,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
@@ -57,6 +58,7 @@
 #include <time.h>
 
 using namespace core;
+using namespace core::chemical::rna;
 using core::Real;
 using basic::T;
 

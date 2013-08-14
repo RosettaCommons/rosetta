@@ -19,7 +19,7 @@
 
 
 
-#include <protocols/swa/rna/StepWiseRNA_Classes.hh> /*For PuckerState and Torsion_Info*/
+#include <protocols/swa/rna/StepWiseRNA_Classes.hh> /*For core::Size and Torsion_Info*/
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 
 #include <core/pose/Pose.hh>

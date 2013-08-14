@@ -152,7 +152,7 @@ ideal_A_form_torsions(){
 	ideal_torsions.first[3] = rna_fitted_torsion_info.gaussian_parameter_set_beta()[1].center;
 	ideal_torsions.first[4] = rna_fitted_torsion_info.gaussian_parameter_set_gamma()[1].center;
 
-	ideal_torsions.second[0] = rna_fitted_torsion_info.ideal_delta_north();
+	ideal_torsions.second[0] = rna_fitted_torsion_info.delta_north();
 	ideal_torsions.second[1] = rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center;
 	
 	return ideal_torsions;
@@ -400,8 +400,8 @@ random_angle(float & angle, Real const lower_bound = -180, Real const upper_boun
 /////////////////////////////////
 void
 random_delta(float & angle) {
-	static const float delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const float delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	static const float delta_north = rna_fitted_torsion_info.delta_north();
+	static const float delta_south = rna_fitted_torsion_info.delta_south();
 	angle = (RG.uniform() < 0.5) ? delta_north : delta_south;
 }
 /////////////////////////////////

@@ -26,6 +26,8 @@
 #include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/pose/rna/RNA_IdealCoord.hh>
 #include <core/chemical/AA.hh>
 
 // Project headers
@@ -107,7 +109,7 @@ fix_sugar_coords_WORKS_BUT_SLOW(
 								 utility::vector1< utility::vector1< id::DOF_Type > > which_dofs,
 								 utility::vector1< Vector > const & non_main_chain_sugar_coords,
 								 Pose & pose,
-								 Size const & i )
+								 Size const i )
 {
 
 	using namespace core::id;
@@ -195,7 +197,7 @@ fix_sugar_coords(
 								 utility::vector1< Vector > const & non_main_chain_sugar_coords,
 								 Pose & pose,
 								 Pose const & reference_pose,
-								 Size const & i )
+								 Size const i )
 {
 
 	using namespace core::id;
@@ -262,7 +264,7 @@ fix_sugar_coords(
 void
 initialize_atoms_for_which_we_need_new_dofs(
 					utility::vector1< std::string > & atoms_for_which_we_need_new_dofs,
-					Pose const & pose,  Size const & i)
+					Pose const & pose,  Size const i)
 {
 
 	using namespace id;
@@ -318,7 +320,7 @@ apply_non_main_chain_sugar_coords(
     utility::vector1< Vector > const & non_main_chain_sugar_coords,
 		Pose & pose,
 		Pose const & reference_pose,
-		Size const & i
+		Size const i
  )
 {
 
@@ -352,10 +354,13 @@ apply_non_main_chain_sugar_coords(
 }
 
 ////////////////////////////////////////////////////////////////////
+//FANG: All these sugar coord stuffs should be deprecated in favor of
+//RNA_IdealCoord class? Are there any performance concern for using
+//copy_dof_match_atom_name there?
 void
 apply_ideal_c2endo_sugar_coords(
 		Pose & pose,
-		Size const & i
+		Size const i
  )
 {
 
@@ -371,16 +376,53 @@ apply_ideal_c2endo_sugar_coords(
 	pose.set_torsion( id::TorsionID( i, id::CHI, 3), 156.438552 );
 	pose.set_torsion( id::TorsionID( i, id::CHI, 4), 179.890442 );
 
-	utility::vector1< Vector > non_main_chain_sugar_coords;
-	non_main_chain_sugar_coords.push_back( Vector(  0.329122,   -0.190929,   -1.476983  ) );
-	non_main_chain_sugar_coords.push_back( Vector( -0.783512,   -1.142556,   -1.905737  ) );
-	non_main_chain_sugar_coords.push_back( Vector( -1.928054,   -0.731911,   -1.195034  ) );
+	static utility::vector1< Vector > _non_main_chain_sugar_coords;
+	_non_main_chain_sugar_coords.push_back( Vector(  0.329122,   -0.190929,   -1.476983  ) );
+	_non_main_chain_sugar_coords.push_back( Vector( -0.783512,   -1.142556,   -1.905737  ) );
+	_non_main_chain_sugar_coords.push_back( Vector( -1.928054,   -0.731911,   -1.195034  ) );
 
-	apply_non_main_chain_sugar_coords( non_main_chain_sugar_coords, pose, pose, i );
-
-
+	apply_non_main_chain_sugar_coords( _non_main_chain_sugar_coords, pose, pose, i );
 }
 
+void
+apply_pucker(
+	Pose & pose,
+	Size const i,
+	Size const pucker_state,
+	bool const skip_same_state,
+	bool const idealize_coord
+) {
+	assert (pucker_state == NORTH || pucker_state == SOUTH);
+
+	static const RNA_FittedTorsionInfo torsion_info;
+	static const RNA_IdealCoord ideal_coord;
+	Real delta, nu1, nu2;
+
+	if (skip_same_state) {
+		Real const delta_curr = pose.torsion( id::TorsionID( i, id::BB,  4 ) );
+		Size const pucker_state_curr = (delta < torsion_info.delta_cutoff()) ? NORTH : SOUTH;
+		if (pucker_state_curr == pucker_state) return;
+	}
+  
+	if (idealize_coord) {
+		ideal_coord.apply(pose, i, pucker_state);
+	} else {
+		if (pucker_state == NORTH) {
+			delta = torsion_info.delta_north();
+			nu2 = torsion_info.nu2_north();
+			nu1 = torsion_info.nu1_north();
+		} else {
+			delta = torsion_info.delta_south();
+			nu2 = torsion_info.nu2_south();
+			nu1 = torsion_info.nu1_south();
+		}
+		pose.set_torsion( id::TorsionID( i, id::BB,  4 ), delta );
+		pose.set_torsion( id::TorsionID( i, id::CHI, 2 ), nu2 );
+		pose.set_torsion( id::TorsionID( i, id::CHI, 3 ), nu1 );
+	}
+}
+
+//
 
 } //ns rna
 } //ns pose

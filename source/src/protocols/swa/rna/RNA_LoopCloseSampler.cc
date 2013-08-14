@@ -118,7 +118,7 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 
 	Real const fa_rep_score_baseline = initialize_fa_rep ( pose, utility::tools::make_vector1 ( moving_suite_ ), rep_scorefxn_ );
 
-	PuckerState pucker_state1 = Get_residue_pucker_state ( pose, moving_suite_ );
+	core::Size pucker_state1 = Get_residue_pucker_state ( pose, moving_suite_ );
 
 	// following is only used if we are estimating jacobians (numerically).
 	utility::vector1< utility::vector1< utility::vector1< Real > > > perturbed_solution_torsions;
@@ -368,7 +368,7 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 	}
 
 	//Epsilon
-	PuckerState pucker_state1 = Get_residue_pucker_state ( pose, chainbreak_suite );
+	core::Size pucker_state1 = Get_residue_pucker_state ( pose, chainbreak_suite );
 	Real epsilon1 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( moving_suite, id::BB, EPSILON ) ) );
 	if ( epsilon1 < 0 ) epsilon1 += 360;
 	if ( pucker_state1 == NORTH ) {
@@ -377,7 +377,7 @@ RNA_LoopCloseSampler::torsion_angles_within_cutoffs ( pose::Pose const & pose,
 		if ( epsilon1 < epsilonmin_s || epsilon1 > epsilonmax_s ) return false;
 	}
 
-	PuckerState pucker_state2 = Get_residue_pucker_state ( pose, chainbreak_suite );
+	core::Size pucker_state2 = Get_residue_pucker_state ( pose, chainbreak_suite );
 	Real epsilon2 = numeric::principal_angle_degrees ( pose.torsion ( TorsionID ( chainbreak_suite, id::BB, EPSILON ) ) );
 	if ( epsilon2 < 0 ) epsilon2 += 360;
 	if ( pucker_state2 == NORTH ) {

@@ -49,9 +49,7 @@ class GaussianParameter {
 };
 /////////////////////////////////
 
-enum _RNA_FittedTorsionInfo_ { WHATEVER, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU2, NU1, O2H};
-
-typedef utility::vector1< GaussianParameter > GaussianParameter_set;
+typedef utility::vector1< GaussianParameter > GaussianParameterSet;
 
 class RNA_FittedTorsionInfo : public utility::pointer::ReferenceCount  {
 
@@ -61,32 +59,41 @@ public:
 
 	virtual ~RNA_FittedTorsionInfo();
 
-	Real delta_cutoff() const { return DELTA_CUTOFF_; }
+	GaussianParameterSet gaussian_parameter_set_alpha() const{ return gaussian_parameter_set_alpha_; }
+	GaussianParameterSet gaussian_parameter_set_beta() const{ return gaussian_parameter_set_beta_; }
+	GaussianParameterSet gaussian_parameter_set_gamma() const{ return gaussian_parameter_set_gamma_; }
+	GaussianParameterSet gaussian_parameter_set_delta_north() const{ return gaussian_parameter_set_delta_north_; }
+	GaussianParameterSet gaussian_parameter_set_delta_south() const{ return gaussian_parameter_set_delta_south_; }
+	GaussianParameterSet gaussian_parameter_set_epsilon_north() const{ return gaussian_parameter_set_epsilon_north_; }
+	GaussianParameterSet gaussian_parameter_set_epsilon_south() const{ return gaussian_parameter_set_epsilon_south_; }
+	GaussianParameterSet gaussian_parameter_set_zeta_alpha_sc_minus() const{ return gaussian_parameter_set_zeta_alpha_sc_minus_; }
+	GaussianParameterSet gaussian_parameter_set_zeta_alpha_sc_plus() const{ return gaussian_parameter_set_zeta_alpha_sc_plus_; }
+	GaussianParameterSet gaussian_parameter_set_zeta_alpha_ap() const{ return gaussian_parameter_set_zeta_alpha_ap_; }
+	GaussianParameterSet gaussian_parameter_set_chi_north() const{ return gaussian_parameter_set_chi_north_; }
+	GaussianParameterSet gaussian_parameter_set_chi_south() const{ return gaussian_parameter_set_chi_south_; }
+	GaussianParameterSet gaussian_parameter_set_nu2_north() const{ return gaussian_parameter_set_nu2_north_; }
+	GaussianParameterSet gaussian_parameter_set_nu2_south() const{ return gaussian_parameter_set_nu2_south_; }
+	GaussianParameterSet gaussian_parameter_set_nu1_north() const{ return gaussian_parameter_set_nu1_north_; }
+	GaussianParameterSet gaussian_parameter_set_nu1_south() const{ return gaussian_parameter_set_nu1_south_; }
 
-	GaussianParameter_set gaussian_parameter_set_alpha() const{ return gaussian_parameter_set_alpha_; }
-	GaussianParameter_set gaussian_parameter_set_beta() const{ return gaussian_parameter_set_beta_; }
-	GaussianParameter_set gaussian_parameter_set_gamma() const{ return gaussian_parameter_set_gamma_; }
-	GaussianParameter_set gaussian_parameter_set_delta_north() const{ return gaussian_parameter_set_delta_north_; }
-	GaussianParameter_set gaussian_parameter_set_delta_south() const{ return gaussian_parameter_set_delta_south_; }
-	GaussianParameter_set gaussian_parameter_set_epsilon_north() const{ return gaussian_parameter_set_epsilon_north_; }
-	GaussianParameter_set gaussian_parameter_set_epsilon_south() const{ return gaussian_parameter_set_epsilon_south_; }
-	GaussianParameter_set gaussian_parameter_set_zeta_alpha_sc_minus() const{ return gaussian_parameter_set_zeta_alpha_sc_minus_; }
-	GaussianParameter_set gaussian_parameter_set_zeta_alpha_sc_plus() const{ return gaussian_parameter_set_zeta_alpha_sc_plus_; }
-	GaussianParameter_set gaussian_parameter_set_zeta_alpha_ap() const{ return gaussian_parameter_set_zeta_alpha_ap_; }
-	GaussianParameter_set gaussian_parameter_set_chi_north() const{ return gaussian_parameter_set_chi_north_; }
-	GaussianParameter_set gaussian_parameter_set_chi_south() const{ return gaussian_parameter_set_chi_south_; }
-	GaussianParameter_set gaussian_parameter_set_nu2_north() const{ return gaussian_parameter_set_nu2_north_; }
-	GaussianParameter_set gaussian_parameter_set_nu2_south() const{ return gaussian_parameter_set_nu2_south_; }
-	GaussianParameter_set gaussian_parameter_set_nu1_north() const{ return gaussian_parameter_set_nu1_north_; }
-	GaussianParameter_set gaussian_parameter_set_nu1_south() const{ return gaussian_parameter_set_nu1_south_; }
+	Real delta_north() const{ return ideal_delta_north_; }
+	Real nu2_north() const{ return ideal_nu2_north_; }
+	Real nu1_north() const{ return ideal_nu1_north_; }
 
-	Real ideal_delta_north() const{ return ideal_delta_north_; }
-	Real ideal_nu2_north() const{ return ideal_nu2_north_; }
-	Real ideal_nu1_north() const{ return ideal_nu1_north_; }
+	Real delta_south() const{ return ideal_delta_south_; }
+	Real nu2_south() const{ return ideal_nu2_south_; }
+	Real nu1_south() const{ return ideal_nu1_south_; }
 
-	Real ideal_delta_south() const{ return ideal_delta_south_; }
-	Real ideal_nu2_south() const{ return ideal_nu2_south_; }
-	Real ideal_nu1_south() const{ return ideal_nu1_south_; }
+	Real alpha_aform() const{ return gaussian_parameter_set_alpha_[1].center; }
+	Real beta_aform() const{ return gaussian_parameter_set_beta_[1].center; }
+	Real gamma_aform() const{ return gaussian_parameter_set_gamma_[1].center; }
+	Real epsilon_aform() const{ return gaussian_parameter_set_epsilon_north_[1].center; }
+	Real zeta_aform() const{ return gaussian_parameter_set_zeta_alpha_sc_minus_[1].center; }
+
+	Real chi_north() const{ return gaussian_parameter_set_chi_north_[1].center; }
+	Real chi_south() const{ return gaussian_parameter_set_chi_south_[1].center; }
+
+	Real delta_cutoff() const { return delta_cutoff_; }
 
 private:
 
@@ -96,24 +103,22 @@ private:
 
 	bool rna_tight_torsions_;
 
-	GaussianParameter_set gaussian_parameter_set_alpha_;
-	GaussianParameter_set gaussian_parameter_set_beta_;
-	GaussianParameter_set gaussian_parameter_set_gamma_;
-	GaussianParameter_set gaussian_parameter_set_delta_north_;
-	GaussianParameter_set gaussian_parameter_set_delta_south_;
-	GaussianParameter_set gaussian_parameter_set_epsilon_north_;
-	GaussianParameter_set gaussian_parameter_set_epsilon_south_;
-	GaussianParameter_set gaussian_parameter_set_zeta_alpha_sc_minus_;
-	GaussianParameter_set gaussian_parameter_set_zeta_alpha_sc_plus_;
-	GaussianParameter_set gaussian_parameter_set_zeta_alpha_ap_;
-	GaussianParameter_set gaussian_parameter_set_chi_north_;
-	GaussianParameter_set gaussian_parameter_set_chi_south_;
-	GaussianParameter_set gaussian_parameter_set_nu2_north_;
-	GaussianParameter_set gaussian_parameter_set_nu2_south_;
-	GaussianParameter_set gaussian_parameter_set_nu1_north_;
-	GaussianParameter_set gaussian_parameter_set_nu1_south_;
-
-	Real const DELTA_CUTOFF_;
+	GaussianParameterSet gaussian_parameter_set_alpha_;
+	GaussianParameterSet gaussian_parameter_set_beta_;
+	GaussianParameterSet gaussian_parameter_set_gamma_;
+	GaussianParameterSet gaussian_parameter_set_delta_north_;
+	GaussianParameterSet gaussian_parameter_set_delta_south_;
+	GaussianParameterSet gaussian_parameter_set_epsilon_north_;
+	GaussianParameterSet gaussian_parameter_set_epsilon_south_;
+	GaussianParameterSet gaussian_parameter_set_zeta_alpha_sc_minus_;
+	GaussianParameterSet gaussian_parameter_set_zeta_alpha_sc_plus_;
+	GaussianParameterSet gaussian_parameter_set_zeta_alpha_ap_;
+	GaussianParameterSet gaussian_parameter_set_chi_north_;
+	GaussianParameterSet gaussian_parameter_set_chi_south_;
+	GaussianParameterSet gaussian_parameter_set_nu2_north_;
+	GaussianParameterSet gaussian_parameter_set_nu2_south_;
+	GaussianParameterSet gaussian_parameter_set_nu1_north_;
+	GaussianParameterSet gaussian_parameter_set_nu1_south_;
 
 	Real const ideal_delta_north_;
 	Real const ideal_nu2_north_;
@@ -122,6 +127,8 @@ private:
 	Real const ideal_delta_south_;
 	Real const ideal_nu2_south_;
 	Real const ideal_nu1_south_;
+
+	Real const delta_cutoff_;
 
 };
 

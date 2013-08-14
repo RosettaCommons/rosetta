@@ -52,10 +52,10 @@ namespace rna {
 		core::Size bulge_res;
 		core::Size bulge_suite;
 		core::Size five_prime_chain_break;
-		PuckerState moving_res_pucker_state;
-		PuckerState bulge_res_pucker_state;
-		BaseState moving_res_base_state;
-		BaseState bulge_res_base_state;
+		core::Size moving_res_pucker_state;
+		core::Size bulge_res_pucker_state;
+		core::Size moving_res_base_state;
+		core::Size bulge_res_base_state;
 		utility::vector1< pose_data_struct2 > PDL; //pose_data_list of possible ribose conformations.
 
 	};

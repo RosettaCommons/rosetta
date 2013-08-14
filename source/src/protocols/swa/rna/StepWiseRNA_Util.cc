@@ -22,8 +22,6 @@
 #include <protocols/rna/RNA_BasePairClassifier.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
-#include <core/chemical/rna/RNA_Util.hh>
-
 #include <core/scoring/ScoreType.hh> //Parin Sept 20, 2011.
 //////////////////////////////////
 
@@ -48,6 +46,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -88,6 +87,7 @@
 
 
 using namespace core;
+using namespace core::chemical::rna;
 
 static numeric::random::RandomGenerator RG(257572);  // <- Magic number, do not change it!
 
@@ -2624,7 +2624,7 @@ principal_angle_degrees( T const & angle )
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
-	BaseState
+	core::Size
 	Get_residue_base_state( core::pose::Pose const & pose, Size const seq_num ){
 
 		using namespace core::scoring;
@@ -2645,7 +2645,7 @@ principal_angle_degrees( T const & angle )
 
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	PuckerState
+	core::Size
 	Get_residue_pucker_state( core::pose::Pose const & pose, Size const seq_num, bool const verbose ){
 
 		using namespace core::scoring;
@@ -3464,12 +3464,12 @@ principal_angle_degrees( T const & angle )
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 	void
-	print_base_state( std::string const tag, BaseState const base_state, std::ostream & outstream /* = std::cout */ ){
+	print_base_state( std::string const tag, core::Size const base_state, std::ostream & outstream /* = std::cout */ ){
 
 		std::string base_state_string = "";
 
-		if ( base_state == BOTH ){
-			base_state_string = "BOTH";
+		if ( base_state == WHATEVER ){
+			base_state_string = "WHATEVER";
 		} else if ( base_state == ANTI ){
 			base_state_string = "ANTI";
 		} else if ( base_state == SYN ){
@@ -3487,7 +3487,7 @@ principal_angle_degrees( T const & angle )
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 	void
-	print_ribose_pucker_state( std::string const tag, PuckerState const pucker_state, std::ostream & outstream /* = std::cout */ ){
+	print_ribose_pucker_state( std::string const tag, core::Size const pucker_state, std::ostream & outstream /* = std::cout */ ){
 
 		std::string pucker_state_string = "";
 
@@ -3495,8 +3495,8 @@ principal_angle_degrees( T const & angle )
 			pucker_state_string = "NORTH";
 		} else if ( pucker_state == SOUTH ){
 			pucker_state_string = "SOUTH";
-		} else if ( pucker_state == ALL ){
-			pucker_state_string = "ALL";
+		} else if ( pucker_state == WHATEVER ){
+			pucker_state_string = "WHATEVER";
 		} else{
 			outstream << "Invalid pucker state = " << pucker_state << std::endl;
 			utility_exit_with_message( "Invalid pucker state!" );

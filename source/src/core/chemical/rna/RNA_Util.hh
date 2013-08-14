@@ -30,7 +30,11 @@ namespace chemical {
 namespace rna{
 
 ///////////////////////////////////////////////////////////////////////////////
+enum __RNA_Torsion__ {WHATEVER, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU2, NU1, O2H};
+enum __PuckerState__ {NORTH=1, SOUTH};
+enum __ChiState__ {ANTI=1, SYN, NONE}; 
 enum __BaseEdge__ {X, WATSON_CRICK, HOOGSTEEN, SUGAR, O2STAR, PHOSPHATE };
+
 Size const NUM_EDGES( 3 );
 Size const NUM_RNA_TORSIONS( 10 );
 Size const NUM_RNA_MAINCHAIN_TORSIONS( 6 );

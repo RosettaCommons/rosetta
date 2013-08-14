@@ -19,7 +19,7 @@
 
 
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>
-#include <protocols/swa/rna/StepWiseRNA_Classes.hh> /*For PuckerState and Torsion_Info*/
+#include <protocols/swa/rna/StepWiseRNA_Classes.hh> /*For core::Size and Torsion_Info*/
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh> //Sept 26, 2011 Parin S.

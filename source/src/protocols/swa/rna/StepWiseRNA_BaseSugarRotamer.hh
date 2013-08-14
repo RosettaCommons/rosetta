@@ -39,8 +39,8 @@ namespace rna {
 
 		//constructor!
 		StepWiseRNA_BaseSugarRotamer(
-											BaseState const & base_state,
-											PuckerState const & pucker_state,
+											core::Size const & base_state,
+											core::Size const & pucker_state,
 											core::chemical::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
 											core::Size const bin_size = 20 );
 
@@ -54,7 +54,7 @@ namespace rna {
 
 		bool get_next_rotamer_original();
 
-		PuckerState const & current_pucker_state() const;
+		core::Size const & current_pucker_state() const;
 		std::string const current_base_state() const;
 		std::string const current_tag() const;
 
@@ -72,16 +72,16 @@ namespace rna {
 	private:
 
 
-		BaseState const base_state_;
-		PuckerState const pucker_state_;
+		core::Size const base_state_;
+		core::Size const pucker_state_;
 		core::chemical::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info_;
 		core::Size const inputted_bin_size_; // must be 20, 10, or 5
 		core::Size bin_size_;
 		core::Size num_base_std_ID_;
 
 		core::Size num_base_ID_;  //Should make this a const
-		utility::vector1 < PuckerState > pucker_state_list_; //Should make this a const
-		utility::vector1 < BaseState > base_state_list_; //April 30, 2011
+		utility::vector1 < core::Size > pucker_state_list_; //Should make this a const
+		utility::vector1 < core::Size > base_state_list_; //April 30, 2011
 
 		core::Size pucker_ID_;
 		core::Size base_ID_;

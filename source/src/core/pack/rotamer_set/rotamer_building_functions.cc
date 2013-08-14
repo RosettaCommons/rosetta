@@ -636,7 +636,7 @@ void
 add_rna_chi_rotamers( conformation::ResidueOP const & rot,
 											utility::vector1< conformation::ResidueOP > & rotamers,
 											pack::task::ExtraRotSample const & level,
-											chemical::rna::GaussianParameter_set const & gaussian_parameter_set )
+											chemical::rna::GaussianParameterSet const & gaussian_parameter_set )
 {
 	using namespace conformation;
 	using namespace chemical::rna;

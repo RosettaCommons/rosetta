@@ -20,10 +20,11 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/optimization/AtomTreeMinimizer.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
-#include <core/pose/rna/RNA_IdealCoord.hh>
+#include <core/id/TorsionID.fwd.hh>
 
 #include <core/types.hh>
 
@@ -130,6 +131,12 @@ private:
 	prepend_Aform_residue( core::pose::Pose & pose, Size const & n, char const & nt ) const;
 
 	void
+	perturb_torsion(
+		core::pose::Pose & pose,
+		utility::vector1<core::id::TorsionID> const & id_list
+	) const;
+
+	void
 	minimize_append_res( core::pose::Pose & pose, Size const n ) const;
 
 	void
@@ -149,23 +156,13 @@ private:
 
 	core::chemical::ResidueTypeSetCAP rsd_set;
 
-	core::Real const ALPHA_A_FORM;
-	core::Real const BETA_A_FORM;
-	core::Real const GAMMA_A_FORM;
-	core::Real const DELTA_A_FORM;
-	core::Real const EPSILON_A_FORM;
-	core::Real const ZETA_A_FORM;
-	core::Real const CHI_A_FORM;
-	core::Real const NU2_A_FORM;
-	core::Real const NU1_A_FORM;
+	core::chemical::rna::RNA_FittedTorsionInfo const torsion_info;
 
 	core::Real perturb_amplitude_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 
 	core::scoring::ScoreFunctionOP finish_scorefxn_;
-
-	core::pose::rna::RNA_IdealCoord ideal_coord_;
 
 	bool model_and_remove_capping_residues_;
 	std::string const capping_residues_;

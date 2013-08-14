@@ -34,6 +34,7 @@
 #include <string>
 
 using namespace core;
+using namespace core::chemical::rna;
 using core::Real;
 using ObjexxFCL::fmt::F;
 
@@ -91,7 +92,7 @@ namespace rna {
 		if ( moving_suite_list_.size() > 1 ){
 			if ( can_prepend && can_append ){
 				Output_seq_num_list( "working_moving_suite_list_:", moving_suite_list_, TR.Debug );
-				utility_exit_with_message( "moving_suite_list_.size() > 1 but BOTH can_prepend = true && can_append == true!" );
+				utility_exit_with_message( "moving_suite_list_.size() > 1 but WHATEVER can_prepend = true && can_append == true!" );
 			}
 		}
 
@@ -185,8 +186,8 @@ namespace rna {
 
 		// Following function does not necessarily look in the pose for the information it needs -- it can look at previously set up
 		// rotamer generators!
-		PuckerState const lower_res_puckerstate  =  Get_residue_pucker_state_internal( pose_, list_position, "lower", sample_lower_sugar_and_base );
-		PuckerState const upper_res_puckerstate  =  Get_residue_pucker_state_internal( pose_, list_position, "upper", sample_upper_sugar_and_base );
+		core::Size const lower_res_puckerstate  =  Get_residue_pucker_state_internal( pose_, list_position, "lower", sample_lower_sugar_and_base );
+		core::Size const upper_res_puckerstate  =  Get_residue_pucker_state_internal( pose_, list_position, "upper", sample_upper_sugar_and_base );
 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		bool const Is_bulge  =  ( list_position == 1 ) ? false : true;
@@ -243,7 +244,7 @@ namespace rna {
 	//First 		if sample_sugar_pucker == True,  then pucker_state then specifies the pucker to be sampled by rotamer_generator_list_[list_position]
 	//Second		if sample_sugar_pucker == False, then pucker_state then specifies the pucker determine from input pose or rotamer_generator_list_[list_position+1]
 
-	PuckerState
+	core::Size
 	StepWiseRNA_RotamerGeneratorWrapper::Get_residue_pucker_state_internal( core::pose::Pose const & pose, Size const list_position, std::string const which_sugar, bool sample_sugar_pucker ) const{
 
 
@@ -258,11 +259,11 @@ namespace rna {
 
 			if ( force_south_ribose_list_.has_value( working_moving_pucker ) ) return SOUTH;
 
-			return ALL;
+			return WHATEVER;
 
 		} else{
 
-			PuckerState pucker_state;
+			core::Size pucker_state;
 
 			bool Is_first_of_multiple_res_plus_internal_case = false;
 

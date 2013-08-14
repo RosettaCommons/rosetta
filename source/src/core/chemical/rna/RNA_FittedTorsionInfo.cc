@@ -14,15 +14,12 @@
 // Unit headers
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
-#include <utility/vector1.hh>
-
-
 // Package headers
-
 
 // Project headers
 
 // Utility headers
+#include <utility/vector1.hh>
 
 // C++
 
@@ -38,7 +35,6 @@ namespace rna {
 
 	RNA_FittedTorsionInfo::RNA_FittedTorsionInfo():
 		rna_tight_torsions_( true ),
-		DELTA_CUTOFF_( 115.0 ),
 		//// Following are torsions that are optimized to minimize rna_torsion + sugar_close.
 		////  [ Due to frustration, impossible to satisfy ideal bond lengths+angles for arbitrary delta. ]
 		ideal_delta_north_( 85.4184 ),
@@ -46,7 +42,8 @@ namespace rna {
 		ideal_nu1_north_( 92.2042 ),
 		ideal_delta_south_( 152.467 ),
 		ideal_nu2_south_( -38.085 ),
-		ideal_nu1_south_( 150.133 )
+		ideal_nu1_south_( 150.133 ),
+		delta_cutoff_(115.0)
 	{
 		init_rna_torsion_gaussian_parameters();
 	}
@@ -129,8 +126,6 @@ namespace rna {
 		gaussian_parameter_set_nu1_south_.push_back( GaussianParameter(57.04, 155.51,  6.00) );
 
 	}
-
-
 
 }
 }

@@ -72,6 +72,7 @@
 
 
 using namespace core;
+using namespace core::chemical::rna;
 
 static basic::Tracer TR( "protocols.swa.rna.stepwise_rna_floating_base_sampler_util" ) ;
 
@@ -743,9 +744,9 @@ namespace rna {
 		Output_boolean( "extra_anti_chi_rotamer = ", extra_anti_chi_rotamer, TR ); TR << std::endl;
 		Output_boolean( "extra_syn_chi_rotamer = ", extra_syn_chi_rotamer, TR ); TR << std::endl;
 		
-		BaseState base_state = ( core::chemical::rna::is_purine( pose.residue( moving_res ) ) ) ? BOTH: ANTI;	
+		core::Size base_state = ( core::chemical::rna::is_purine( pose.residue( moving_res ) ) ) ? WHATEVER: ANTI;	
 
-		PuckerState pucker_state = ALL;
+		core::Size pucker_state = WHATEVER;
 		core::chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 
 		StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( base_state, pucker_state, rna_fitted_torsion_info );

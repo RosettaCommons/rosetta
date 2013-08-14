@@ -27,6 +27,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/pose/rna/RNA_Util.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
@@ -88,19 +89,11 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	use_phenix_geo_( false ),
 	ideal_jump( "RT -0.994805 -0.0315594 0.0967856 -0.0422993 0.992919 -0.111004 -0.092597 -0.114522 -0.989096 6.34696 -0.449942 0.334582 " ),
 	rsd_set( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
-	ALPHA_A_FORM( -64.11),
-	BETA_A_FORM( 176.33),
-	GAMMA_A_FORM( 53.08),
-	DELTA_A_FORM( 82.90),
-	EPSILON_A_FORM( -150.17),
-	ZETA_A_FORM( -71.45),
-	CHI_A_FORM( 79.43),
-	NU2_A_FORM( 38.82),
-	NU1_A_FORM( 95.34),
 	perturb_amplitude_( 10.0 ),
 	scorefxn_( core::scoring::ScoreFunctionFactory::create_score_function( "rna/rna_helix" ) ),
 	model_and_remove_capping_residues_( true ),
-	capping_residues_( "gc" )
+	capping_residues_( "gc" ),
+	torsion_info()
 {
 	Mover::type("RNA_HelixAssembler");
 	//	scorefxn_->set_weight( core::scoring::atom_pair_constraint, 5.0 );
@@ -252,21 +245,16 @@ void
 RNA_HelixAssembler::set_Aform_torsions( pose::Pose & pose, Size const & n ) const
 {
 	using namespace core::id;
-	pose.set_torsion( TorsionID( n, BB, 1),  ALPHA_A_FORM);
-	pose.set_torsion( TorsionID( n, BB, 2),   BETA_A_FORM);
-	pose.set_torsion( TorsionID( n, BB, 3),  GAMMA_A_FORM);
-	pose.set_torsion( TorsionID( n, BB, 4),  DELTA_A_FORM);
-	pose.set_torsion( TorsionID( n, BB, 5),  EPSILON_A_FORM);
-	pose.set_torsion( TorsionID( n, BB, 6),  ZETA_A_FORM);
+	using namespace core::pose::rna;
+	using namespace core::chemical::rna;
+	pose.set_torsion( TorsionID( n, BB, 1), torsion_info.alpha_aform() );
+	pose.set_torsion( TorsionID( n, BB, 2), torsion_info.beta_aform() );
+	pose.set_torsion( TorsionID( n, BB, 3), torsion_info.gamma_aform() );
+	pose.set_torsion( TorsionID( n, BB, 4), torsion_info.delta_north() );
+	pose.set_torsion( TorsionID( n, BB, 5), torsion_info.epsilon_aform() );
+	pose.set_torsion( TorsionID( n, BB, 6), torsion_info.zeta_aform() );
 
-	if (use_phenix_geo_) {
-		ideal_coord_.apply(pose, n);
-		pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
-	} else {
-		pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
-		pose.set_torsion( TorsionID( n, CHI, 2),  NU2_A_FORM);
-		pose.set_torsion( TorsionID( n, CHI, 3),  NU1_A_FORM);
-	}
+	apply_pucker(pose, n, NORTH, false /*skip_same_state*/, use_phenix_geo_);
 }
 
 /////////////////////////////////////////////////
@@ -510,37 +498,24 @@ RNA_HelixAssembler::append_Aform_residue( pose::Pose & pose, Size const & n, cha
 
 	/////////////////////////////////////
 	ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
-	pose.append_polymer_residue_after_seqpos(   *rsd1, n, true /*build_ideal_geometry*/ );
+	pose.append_polymer_residue_after_seqpos( *rsd1, n, true /*build_ideal_geometry*/ );
 
-	pose.set_torsion( TorsionID( n, BB, 5),  EPSILON_A_FORM);
-	pose.set_torsion( TorsionID( n, BB, 6),  ZETA_A_FORM);
-
-	pose.set_torsion( TorsionID( n+1, BB, 1),  ALPHA_A_FORM);
-	pose.set_torsion( TorsionID( n+1, BB, 2),   BETA_A_FORM);
-	pose.set_torsion( TorsionID( n+1, BB, 3),  GAMMA_A_FORM);
-	pose.set_torsion( TorsionID( n+1, BB, 4),  DELTA_A_FORM);
-	pose.set_torsion( TorsionID( n+1, BB, 5),  EPSILON_A_FORM);
-	pose.set_torsion( TorsionID( n+1, BB, 6),  ZETA_A_FORM);
-
-	if (use_phenix_geo_) {
-		ideal_coord_.apply(pose, n+1);
-		pose.set_torsion( TorsionID( n+1, CHI, 1),  CHI_A_FORM);
-	} else {
-		pose.set_torsion( TorsionID( n+1, CHI, 1),  CHI_A_FORM);
-		pose.set_torsion( TorsionID( n+1, CHI, 2),  NU2_A_FORM);
-		pose.set_torsion( TorsionID( n+1, CHI, 3),  NU1_A_FORM);
-	}
+	pose.set_torsion( TorsionID( n, BB, 5), torsion_info.epsilon_aform());
+	pose.set_torsion( TorsionID( n, BB, 6), torsion_info.zeta_aform());
+	set_Aform_torsions( pose, n+1 );
 
 	if ( random_perturbation_ ) {
-		pose.set_torsion( TorsionID( n, BB, 5),  EPSILON_A_FORM + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n, BB, 6),  ZETA_A_FORM    + perturb_amplitude_ * RG.gaussian() );
-
-		pose.set_torsion( TorsionID( n+1, BB, 1),  ALPHA_A_FORM   + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n+1, BB, 2),  BETA_A_FORM    + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n+1, BB, 3),  GAMMA_A_FORM   + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n+1, BB, 5),  EPSILON_A_FORM + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n+1, BB, 6),  ZETA_A_FORM    + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n+1, CHI, 1), CHI_A_FORM     + perturb_amplitude_ * RG.gaussian() );
+		utility::vector1<TorsionID> id_list;
+		id_list.push_back( TorsionID( n, BB, 5) );
+		id_list.push_back( TorsionID( n, BB, 6) );
+		id_list.push_back( TorsionID( n+1, BB, 1) );
+		id_list.push_back( TorsionID( n+1, BB, 2) );
+		id_list.push_back( TorsionID( n+1, BB, 3) );
+		id_list.push_back( TorsionID( n+1, BB, 4) );
+		id_list.push_back( TorsionID( n+1, BB, 5) );
+		id_list.push_back( TorsionID( n+1, BB, 6) );
+		id_list.push_back( TorsionID( n+1, CHI, 1) );
+		perturb_torsion(pose, id_list);
 	}
 }
 
@@ -558,41 +533,39 @@ RNA_HelixAssembler::prepend_Aform_residue( pose::Pose & pose, Size const & n, ch
 	ResidueOP rsd2( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( nt ) )[1] ) ) );
 	pose.prepend_polymer_residue_before_seqpos( *rsd2, n, true /*build_ideal_geometry*/ );
 
-	pose.set_torsion( TorsionID( n, BB, 1),  ALPHA_A_FORM);
-	pose.set_torsion( TorsionID( n, BB, 2),   BETA_A_FORM);
-	pose.set_torsion( TorsionID( n, BB, 3),  GAMMA_A_FORM);
-	pose.set_torsion( TorsionID( n, BB, 4),  DELTA_A_FORM);
-	pose.set_torsion( TorsionID( n, BB, 5),  EPSILON_A_FORM);
-	pose.set_torsion( TorsionID( n, BB, 6),  ZETA_A_FORM);
+	set_Aform_torsions( pose, n );
+	pose.set_torsion( TorsionID( n+1, BB, 1), torsion_info.alpha_aform());
+	pose.set_torsion( TorsionID( n+1, BB, 2), torsion_info.beta_aform());
+	pose.set_torsion( TorsionID( n+1, BB, 3), torsion_info.gamma_aform());
 
-	pose.set_torsion( TorsionID( n+1, BB, 1),  ALPHA_A_FORM);
-	pose.set_torsion( TorsionID( n+1, BB, 2),  BETA_A_FORM);
-	pose.set_torsion( TorsionID( n+1, BB, 3),  GAMMA_A_FORM);
-
-	if (use_phenix_geo_) {
-		ideal_coord_.apply(pose, n);
-		pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
-	} else {
-		pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM);
-		pose.set_torsion( TorsionID( n, CHI, 2),  NU2_A_FORM);
-		pose.set_torsion( TorsionID( n, CHI, 3),  NU1_A_FORM);
-	}
 
 	// perturb all torsion angles except those at sugar puckers (DELTA, NU1, NU2 )
 	if ( random_perturbation_ ) {
-		pose.set_torsion( TorsionID( n, BB, 1),   ALPHA_A_FORM   + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n, BB, 2),   BETA_A_FORM    + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n, BB, 3),   GAMMA_A_FORM   + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n, BB, 5),   EPSILON_A_FORM + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n, BB, 6),   ZETA_A_FORM    + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n, CHI, 1),  CHI_A_FORM     + perturb_amplitude_ * RG.gaussian() );
-
-		pose.set_torsion( TorsionID( n+1, BB, 1),  ALPHA_A_FORM + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n+1, BB, 2),  BETA_A_FORM  + perturb_amplitude_ * RG.gaussian() );
-		pose.set_torsion( TorsionID( n+1, BB, 3),  GAMMA_A_FORM + perturb_amplitude_ * RG.gaussian() );
+		utility::vector1<TorsionID> id_list;
+		id_list.push_back( TorsionID( n, BB, 1) );
+		id_list.push_back( TorsionID( n, BB, 2) );
+		id_list.push_back( TorsionID( n, BB, 3) );
+		id_list.push_back( TorsionID( n, BB, 4) );
+		id_list.push_back( TorsionID( n, BB, 5) );
+		id_list.push_back( TorsionID( n, BB, 6) );
+		id_list.push_back( TorsionID( n, CHI, 1) );
+		id_list.push_back( TorsionID( n+1, BB, 1) );
+		id_list.push_back( TorsionID( n+1, BB, 2) );
+		id_list.push_back( TorsionID( n+1, BB, 3) );
+		perturb_torsion(pose, id_list);
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////////
+void
+RNA_HelixAssembler::perturb_torsion(
+	pose::Pose & pose,
+	utility::vector1<id::TorsionID> const & id_list
+) const {
+	for (Size i = 1; i <= id_list.size(); ++i) {
+		pose.set_torsion( id_list[i], pose.torsion(id_list[i]) + perturb_amplitude_ * RG.gaussian() ); 
+	}
+}
 //////////////////////////////////////////////////////////////////////////////////
 void
 RNA_HelixAssembler::minimize_append_res( pose::Pose & pose, Size const n ) const {

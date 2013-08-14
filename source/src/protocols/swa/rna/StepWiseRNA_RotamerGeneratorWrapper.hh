@@ -103,7 +103,7 @@ namespace rna {
 		StepWiseRNA_RotamerGeneratorOP const
 		setup_rotamer_generator( core::Size const list_position );
 
-		PuckerState
+		core::Size
 		Get_residue_pucker_state_internal( core::pose::Pose const & pose, Size list_position, std::string which_sugar, bool sample_sugar_pucker ) const;
 
 

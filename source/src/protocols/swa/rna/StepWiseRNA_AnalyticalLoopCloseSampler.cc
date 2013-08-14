@@ -87,6 +87,7 @@
 
 
 using namespace core;
+using namespace core::chemical::rna;
 using core::Real;
 using io::pdb::dump_pdb;
 static numeric::random::RandomGenerator RG( 19912388 );  // <- Magic number, do not change it!
@@ -304,13 +305,13 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 			}
 		} else {
 			if ( pucker_id == 0 ) { //Sample North Pucker
-				delta_pucker = rna_fitted_torsion_info.ideal_delta_north();
-				nu2_pucker = rna_fitted_torsion_info.ideal_nu2_north();
-				nu1_pucker = rna_fitted_torsion_info.ideal_nu1_north();
+				delta_pucker = rna_fitted_torsion_info.delta_north();
+				nu2_pucker = rna_fitted_torsion_info.nu2_north();
+				nu1_pucker = rna_fitted_torsion_info.nu1_north();
 			} else { //Sample South Pucker
-				delta_pucker = rna_fitted_torsion_info.ideal_delta_south();
-				nu2_pucker = rna_fitted_torsion_info.ideal_nu2_south();
-				nu1_pucker = rna_fitted_torsion_info.ideal_nu1_south();
+				delta_pucker = rna_fitted_torsion_info.delta_south();
+				nu2_pucker = rna_fitted_torsion_info.nu2_south();
+				nu1_pucker = rna_fitted_torsion_info.nu1_south();
 			}
 
 			screening_pose.set_torsion ( TorsionID ( moving_res, id::BB, 4 ), delta_pucker );
@@ -330,13 +331,13 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 
 			// following initialization could be outside inner loop, right?
 			//Sample CHI torsion angle
-			BaseState base_state;
+			core::Size base_state;
 			if ( allow_syn_pyrimidine_ ) {
-				base_state = BOTH;
+				base_state = WHATEVER;
 			} else {
-				base_state = ( core::chemical::rna::is_purine ( pose.residue ( moving_res ) ) ) ? BOTH : ANTI;
+				base_state = ( core::chemical::rna::is_purine ( pose.residue ( moving_res ) ) ) ? WHATEVER : ANTI;
 			}
-			PuckerState pucker_state;
+			core::Size pucker_state;
 			if ( pucker_id == 0 ) {
 				pucker_state = NORTH;
 			} else {

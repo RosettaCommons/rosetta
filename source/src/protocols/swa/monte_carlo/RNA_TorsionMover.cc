@@ -163,8 +163,8 @@ namespace monte_carlo {
 //////////////////////////////////////////////////
 void
 RNA_TorsionMover::sample_near_suite_torsion(utility::vector1< Real > & torsion_list, Real const stddev) {
-	//	static const Real delta_north = rna_fitted_torsion_info_.ideal_delta_north();
-	//	static const Real delta_south = rna_fitted_torsion_info_.ideal_delta_south();
+	//	static const Real delta_north = rna_fitted_torsion_info_.delta_north();
+	//	static const Real delta_south = rna_fitted_torsion_info_.delta_south();
 
 	torsion_list[1] += RG.gaussian() * stddev;
 	torsion_list[2] += RG.gaussian() * stddev;
@@ -180,8 +180,8 @@ RNA_TorsionMover::sample_near_suite_torsion(utility::vector1< Real > & torsion_l
 //  why not use principal_value  [-180 to 180]?
 void
 RNA_TorsionMover::sample_near_nucleoside_torsion(utility::vector1< Real > & torsion_list, Real const stddev) {
-	static const Real delta_north = rna_fitted_torsion_info_.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info_.ideal_delta_south();
+	static const Real delta_north = rna_fitted_torsion_info_.delta_north();
+	static const Real delta_south = rna_fitted_torsion_info_.delta_south();
 
 	if (RG.uniform() < 0.2) {
 		torsion_list[1]  = (RG.uniform() < 0.5) ? delta_south : delta_north;
@@ -207,13 +207,13 @@ RNA_TorsionMover::apply_nucleoside_torsion( utility::vector1< Real > const & tor
 
 	Real delta, nu2, nu1;
 	if (torsion_set[1] < 115) { //North pucker, [6] is delta angle (only pick one of the two states)
-		delta = rna_fitted_torsion_info_.ideal_delta_north();
-		nu2 = rna_fitted_torsion_info_.ideal_nu2_north();
-		nu1 = rna_fitted_torsion_info_.ideal_nu1_north();
+		delta = rna_fitted_torsion_info_.delta_north();
+		nu2 = rna_fitted_torsion_info_.nu2_north();
+		nu1 = rna_fitted_torsion_info_.nu1_north();
 	} else { //South pucker
-		delta = rna_fitted_torsion_info_.ideal_delta_south();
-		nu2 = rna_fitted_torsion_info_.ideal_nu2_south();
-		nu1 = rna_fitted_torsion_info_.ideal_nu1_south();
+		delta = rna_fitted_torsion_info_.delta_south();
+		nu2 = rna_fitted_torsion_info_.nu2_south();
+		nu1 = rna_fitted_torsion_info_.nu1_south();
 	}
 
 	pose.set_torsion( TorsionID( moving_res, id::BB,  4 ), delta );
@@ -254,10 +254,10 @@ RNA_TorsionMover::apply_random_nucleoside_torsion( pose::Pose & pose,
 	if ( chemical::rna::is_purine( pose.residue( moving_res ) ) && RG.uniform() < 0.5 ) chi_rotamer = 2;
 
 	if ( north_pucker ){
-		torsion_set.push_back( rna_fitted_torsion_info_.ideal_delta_north() );
+		torsion_set.push_back( rna_fitted_torsion_info_.delta_north() );
 		torsion_set.push_back( rna_fitted_torsion_info_.gaussian_parameter_set_chi_north()[chi_rotamer].center );
 	} else {
-		torsion_set.push_back( rna_fitted_torsion_info_.ideal_delta_south() );
+		torsion_set.push_back( rna_fitted_torsion_info_.delta_south() );
 		torsion_set.push_back( rna_fitted_torsion_info_.gaussian_parameter_set_chi_south()[chi_rotamer].center );
 	}
 
@@ -308,7 +308,7 @@ RNA_TorsionMover::apply_nucleoside_torsion_Aform(
 																								 Size const moving_res ){
 
 	utility::vector1< Real > ideal_A_form_torsions;
-	ideal_A_form_torsions.push_back( rna_fitted_torsion_info_.ideal_delta_north() );
+	ideal_A_form_torsions.push_back( rna_fitted_torsion_info_.delta_north() );
 	ideal_A_form_torsions.push_back( rna_fitted_torsion_info_.gaussian_parameter_set_chi_north()[1].center );
 	apply_nucleoside_torsion( ideal_A_form_torsions, pose, moving_res );
 }

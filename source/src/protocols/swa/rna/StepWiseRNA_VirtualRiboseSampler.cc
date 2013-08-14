@@ -493,7 +493,7 @@ namespace rna {
 
 		if ( pose_data_list.size() == 0 ) return; //early return
 
-		//std::map<PuckerState, std::map<Base_bin, int, compare_base_bin> > chain_closure_grid_index; //"CCD_grid_index_screen no longer supported!"
+		//std::map<core::Size, std::map<Base_bin, int, compare_base_bin> > chain_closure_grid_index; //"CCD_grid_index_screen no longer supported!"
 
 		if ( CCD_grid_index_screen ){
 			utility_exit_with_message( "CCD_grid_index_screen no longer supported!" );
@@ -533,7 +533,7 @@ namespace rna {
 		}
 
 
-		//Will generate both NORTH AND SOUTH PUCKER HERE EVEN IF FB_job_params.bulge_res_pucker_state!=ALL..BUT OK SINCE WILL PERFORM MATCH WITH BaseSugarRotamerOP in the actual loop.
+		//Will generate both NORTH AND SOUTH PUCKER HERE EVEN IF FB_job_params.bulge_res_pucker_state!=WHATEVER..BUT OK SINCE WILL PERFORM MATCH WITH BaseSugarRotamerOP in the actual loop.
 		StepWiseRNA_RotamerGeneratorWrapperOP backbone_rotamer_generator =
 						new StepWiseRNA_RotamerGeneratorWrapper( viewer_pose, bulge_suite_list, sample_sugar_and_base1, sample_sugar_and_base2 );
 

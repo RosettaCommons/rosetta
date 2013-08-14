@@ -175,7 +175,7 @@ get_suite_ideal_A_form_torsions(){
 		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_alpha()[1].center );
 		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_beta()[1].center );
 		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_gamma()[1].center );
-		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.ideal_delta_north() );
+		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.delta_north() );
 		ideal_A_form_torsions.push_back( rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center );
 	}
 	return ideal_A_form_torsions;
@@ -191,13 +191,13 @@ apply_nucleoside_torsion( utility::vector1< Real > const & torsion_set,
 
 	Real delta, nu2, nu1;
 	if (torsion_set[1] < 115) { //North pucker, [6] is delta angle (only pick one of the two states)
-		delta = rna_fitted_torsion_info.ideal_delta_north();
-		nu2 = rna_fitted_torsion_info.ideal_nu2_north();
-		nu1 = rna_fitted_torsion_info.ideal_nu1_north();
+		delta = rna_fitted_torsion_info.delta_north();
+		nu2 = rna_fitted_torsion_info.nu2_north();
+		nu1 = rna_fitted_torsion_info.nu1_north();
 	} else { //South pucker
-		delta = rna_fitted_torsion_info.ideal_delta_south();
-		nu2 = rna_fitted_torsion_info.ideal_nu2_south();
-		nu1 = rna_fitted_torsion_info.ideal_nu1_south();
+		delta = rna_fitted_torsion_info.delta_south();
+		nu2 = rna_fitted_torsion_info.nu2_south();
+		nu1 = rna_fitted_torsion_info.nu1_south();
 	}
 
 	pose.set_torsion( TorsionID( moving_res, id::BB,  4 ), delta );
@@ -223,13 +223,13 @@ apply_suite_torsion( utility::vector1< Real > const & torsion_set,
 
 	Real delta, nu2, nu1;
 	if (torsion_set[6] < 115) { //North pucker, [6] is delta angle (only pick one of the two states)
-		delta = rna_fitted_torsion_info.ideal_delta_north();
-		nu2 = rna_fitted_torsion_info.ideal_nu2_north();
-		nu1 = rna_fitted_torsion_info.ideal_nu1_north();
+		delta = rna_fitted_torsion_info.delta_north();
+		nu2 = rna_fitted_torsion_info.nu2_north();
+		nu1 = rna_fitted_torsion_info.nu1_north();
 	} else { //South pucker
-		delta = rna_fitted_torsion_info.ideal_delta_south();
-		nu2 = rna_fitted_torsion_info.ideal_nu2_south();
-		nu1 = rna_fitted_torsion_info.ideal_nu1_south();
+		delta = rna_fitted_torsion_info.delta_south();
+		nu2 = rna_fitted_torsion_info.nu2_south();
+		nu1 = rna_fitted_torsion_info.nu1_south();
 	}
 
 	if (sample_3prime_pucker) {
@@ -339,8 +339,8 @@ create_random_angle_from_range_list(utility::vector1< std::pair <Real, Real> > c
 //////////////////////////////////
 void
 create_random_suite_torsion(utility::vector1< Real > & torsion_list) {
-	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	static const Real delta_north = rna_fitted_torsion_info.delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.delta_south();
 
 	//Sample all ranges
 	const Real alpha   = create_random_angle_from_range();
@@ -363,8 +363,8 @@ create_random_suite_torsion(utility::vector1< Real > & torsion_list) {
 //////////////////////////////////
 void
 create_random_nucleoside_torsion(utility::vector1< Real > & torsion_list) {
-	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	static const Real delta_north = rna_fitted_torsion_info.delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.delta_south();
 
 	//Sample all ranges
 	const Real chi     = create_random_angle_from_range();
@@ -377,8 +377,8 @@ create_random_nucleoside_torsion(utility::vector1< Real > & torsion_list) {
 //////////////////////////////////
 void
 sample_near_suite_torsion(utility::vector1< Real > & torsion_list, Real const stddev) {
-	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	static const Real delta_north = rna_fitted_torsion_info.delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.delta_south();
 
 	torsion_list[1] += RG.gaussian() * stddev;
 	torsion_list[2] += RG.gaussian() * stddev;
@@ -400,8 +400,8 @@ sample_near_suite_torsion(utility::vector1< Real > & torsion_list, Real const st
 //////////////////////////////////
 void
 sample_near_nucleoside_torsion(utility::vector1< Real > & torsion_list, Real const stddev) {
-	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	static const Real delta_north = rna_fitted_torsion_info.delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.delta_south();
 
 	if (RG.uniform() < 0.2) {
 		torsion_list[1]  = (RG.uniform() < 0.5) ? delta_south : delta_north;
@@ -1133,8 +1133,8 @@ utility::vector1< Real > id2torsion(Size torsion_id) {
 	utility::vector1< Real > torsion_list;
 	//Ordering: epsilon, zeta, alpha, beta, gamma, chi1, chi2, delta1, delta2
 	static utility::vector1< Real > const  A_form_torsion_set = get_suite_ideal_A_form_torsions();
-	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	static const Real delta_north = rna_fitted_torsion_info.delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.delta_south();
 	Size remainder; 
 	Real angle;
 	for (Size i = 1; i <= 7; ++i) {
@@ -1170,8 +1170,8 @@ torsion2id ( utility::vector1< Real > const & nucleoside_torsion,
              utility::vector1< Real > const & suite_torsion) {
 
 	static utility::vector1< Real > const A_form_torsion = get_suite_ideal_A_form_torsions();
-	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	static const Real delta_north = rna_fitted_torsion_info.delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.delta_south();
 	Size id = 0;
 	Size multiplier = 1;
 	Real angle_diff;
@@ -1251,8 +1251,8 @@ sort_mine( std::pair <Size, Size> const i, std::pair <Size, Size> const j) {
 /*
 void test() {
 	static utility::vector1< Real > const A_form_torsion = get_suite_ideal_A_form_torsions();
-	static const Real delta_north = rna_fitted_torsion_info.ideal_delta_north();
-	static const Real delta_south = rna_fitted_torsion_info.ideal_delta_south();
+	static const Real delta_north = rna_fitted_torsion_info.delta_north();
+	static const Real delta_south = rna_fitted_torsion_info.delta_south();
 	utility::vector1< Real > nucleoside_torsion, suite_torsion;
 	nucleoside_torsion.push_back(delta_north);
 	nucleoside_torsion.push_back(155.22);

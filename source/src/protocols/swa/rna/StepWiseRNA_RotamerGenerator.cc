@@ -36,6 +36,7 @@
 #include <string>
 
 using namespace core;
+using namespace core::chemical::rna;
 using core::Real;
 using ObjexxFCL::fmt::F;
 
@@ -54,8 +55,8 @@ namespace rna {
                Size const moving_suite,
 							bool const sample_lower_sugar_and_base,
 							bool const sample_upper_sugar_and_base,
-							PuckerState const pucker1,
-							PuckerState const pucker2 ):
+							core::Size const pucker1,
+							core::Size const pucker2 ):
 		moving_suite_( moving_suite ),
 		sample_lower_sugar_and_base_( sample_lower_sugar_and_base ),
 		sample_upper_sugar_and_base_( sample_upper_sugar_and_base ),
@@ -131,7 +132,7 @@ namespace rna {
 	}
 
 	////////////////////////////////////////////////////////////////////////
-	PuckerState
+	core::Size
 	StepWiseRNA_RotamerGenerator::pucker_state( std::string const which_sugar ){
 
 		using namespace core::id;
@@ -235,8 +236,6 @@ namespace rna {
 	////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseRNA_RotamerGenerator::initialize_sample_base_states( core::pose::Pose const & pose ){
-		using namespace core::chemical::rna;
-
 		/* BEFORE APRIL 29, 2011
 		if ( include_syn_chi_ ){
 			if ( allow_syn_pyrimidine_ ){
@@ -257,8 +256,8 @@ namespace rna {
 		upper_base_state_ = ANTI;
 
 		if ( include_syn_chi_ == true ){
-			if ( is_purine( pose.residue( moving_suite_   ) ) || allow_syn_pyrimidine_ )	lower_base_state_ = BOTH;
-			if ( is_purine( pose.residue( moving_suite_ + 1 ) ) || allow_syn_pyrimidine_ )	upper_base_state_ = BOTH;
+			if ( is_purine( pose.residue( moving_suite_   ) ) || allow_syn_pyrimidine_ )	lower_base_state_ = WHATEVER;
+			if ( is_purine( pose.residue( moving_suite_ + 1 ) ) || allow_syn_pyrimidine_ )	upper_base_state_ = WHATEVER;
 		}
 
 		if ( force_syn_chi_res_list_.has_value( moving_suite_  ) ){ //lower base
@@ -306,11 +305,7 @@ namespace rna {
 	////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseRNA_RotamerGenerator::initialize_rotamers(){
-
 		using namespace core::id;
-
-
-
 		core::chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 
 		torsion_ids_.clear();
@@ -319,12 +314,12 @@ namespace rna {
 		///////////////////////////////////////////////////////////////////////////////////////
 		if ( sample_lower_sugar_and_base_ /* sample it */ ){
 			add_torsion_id( TorsionID( moving_suite_   , BB, 4 ) );  //delta1
-			add_torsion_id( TorsionID( moving_suite_   , CHI, 2 ) ); //nu2_1
-			add_torsion_id( TorsionID( moving_suite_   , CHI, 3 ) ); //nu1_1
+			add_torsion_id( TorsionID( moving_suite_   , id::CHI, 2 ) ); //nu2_1
+			add_torsion_id( TorsionID( moving_suite_   , id::CHI, 3 ) ); //nu1_1
 		}
 
 		if ( lower_base_state_ != NONE ){
-			add_torsion_id( TorsionID( moving_suite_   , CHI, 1 ) ); //chi_1
+			add_torsion_id( TorsionID( moving_suite_   , id::CHI, 1 ) ); //chi_1
 		}
 
 		add_torsion_id( TorsionID( moving_suite_   , BB, 5 ) ); // epsilon1
@@ -335,12 +330,12 @@ namespace rna {
 
 		if ( sample_upper_sugar_and_base_ /* sample it */ ){
 			add_torsion_id( TorsionID( moving_suite_ + 1, BB, 4 ) );  //delta2
-			add_torsion_id( TorsionID( moving_suite_ + 1, CHI, 2 ) ); //nu2_2 (this is the one that include the delta bond atom)
-			add_torsion_id( TorsionID( moving_suite_ + 1, CHI, 3 ) ); //nu1_2 (this is the one that include the base nitrogen atom), actually nearer to chi
+			add_torsion_id( TorsionID( moving_suite_ + 1, id::CHI, 2 ) ); //nu2_2 (this is the one that include the delta bond atom)
+			add_torsion_id( TorsionID( moving_suite_ + 1, id::CHI, 3 ) ); //nu1_2 (this is the one that include the base nitrogen atom), actually nearer to chi
 		}
 
 		if ( upper_base_state_ != NONE ){
-			add_torsion_id( TorsionID( moving_suite_ + 1, CHI, 1 ) ); //chi_2
+			add_torsion_id( TorsionID( moving_suite_ + 1, id::CHI, 1 ) ); //chi_2
 		}
 
 		if ( verbose_ ){
@@ -363,12 +358,12 @@ namespace rna {
 			TR.Debug << std::endl;
 		}
 
-		if ( pucker1_specified_ == ALL && sample_lower_sugar_and_base_ == false ){
-			utility_exit_with_message( "pucker1_specified == ALL but sample_lower_sugar_and_base_ == false" );
+		if ( pucker1_specified_ == WHATEVER && sample_lower_sugar_and_base_ == false ){
+			utility_exit_with_message( "pucker1_specified == WHATEVER but sample_lower_sugar_and_base_ == false" );
 		}
 
-		if ( pucker2_specified_ == ALL && sample_upper_sugar_and_base_ == false ){
-			utility_exit_with_message( "pucker2_specified == ALL but sample_upper_sugar_and_base_ == false" );
+		if ( pucker2_specified_ == WHATEVER && sample_upper_sugar_and_base_ == false ){
+			utility_exit_with_message( "pucker2_specified == WHATEVER but sample_upper_sugar_and_base_ == false" );
 		}
 
 		Real epsilon1( 0.0 ),	zeta1( 0.0 ),	alpha2( 0.0 ),	beta2( 0.0 ),	gamma2( 0.0 );

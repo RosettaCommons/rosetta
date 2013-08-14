@@ -46,10 +46,6 @@ namespace protocols {
 namespace swa {
 namespace rna {
 
-enum PuckerState{ ALL, NORTH, SOUTH };
-enum BaseState{ BOTH, ANTI, SYN, NONE }; //April 29, 2011 USED TO BE //enum BaseState{ BOTH, ANTI, NONE };
-
-
 
 class Jump_point{
 

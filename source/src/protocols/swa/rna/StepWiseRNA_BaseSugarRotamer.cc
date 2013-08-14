@@ -18,6 +18,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
@@ -30,6 +31,7 @@
 #include <string>
 
 using namespace core;
+using namespace core::chemical::rna;
 using core::Real;
 static numeric::random::RandomGenerator RG( 2952388 );  // <- Magic number, do not change it!
 using ObjexxFCL::fmt::F;
@@ -43,8 +45,8 @@ namespace rna {
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// Constructor
 	StepWiseRNA_BaseSugarRotamer::StepWiseRNA_BaseSugarRotamer(
-											BaseState const & base_state,
-											PuckerState const & pucker_state,
+											core::Size const & base_state,
+											core::Size const & pucker_state,
 											core::chemical::rna::RNA_FittedTorsionInfo const & rna_fitted_torsion_info,
 											core::Size const bin_size ): //This is to determine the bin value for chi
 		base_state_( base_state ),
@@ -62,7 +64,7 @@ namespace rna {
 
 
 		base_state_list_.clear(); //April 30, 2011
-		if ( base_state_ == BOTH ){
+		if ( base_state_ == WHATEVER ){
 			base_state_list_.push_back( ANTI );
 			base_state_list_.push_back( SYN );
 		} else if ( base_state_ == ANTI ){
@@ -77,7 +79,7 @@ namespace rna {
 
 		//WARNING..DO NOT TRY TO INTRODUCE "NONE" value. pucker_state needs alway be defined even if not sampled, since EPSILON (in Rotamer Generator) depends on value of pucker_state! April 30, 2011
 		pucker_state_list_.clear();
-		if ( pucker_state_ == ALL ){
+		if ( pucker_state_ == WHATEVER ){
 			pucker_state_list_.push_back( NORTH );
 			pucker_state_list_.push_back( SOUTH );
 		} else if ( pucker_state_ == NORTH ){
@@ -152,7 +154,7 @@ namespace rna {
 		base_ID_old_ = base_ID_;
 		base_std_ID_old_ = base_std_ID_;
 
-		PuckerState const & curr_pucker_state = current_pucker_state();
+		core::Size const & curr_pucker_state = current_pucker_state();
 
 		Size base_center_ID = 99;
 		if ( base_state_list_.size() != 0 ){
@@ -186,18 +188,18 @@ namespace rna {
 				chi_ = rna_fitted_torsion_info_.gaussian_parameter_set_chi_north()[ base_center_ID ].center + bin_size_*( base_std_ID_ - 1 ) - ( total_variation_/2 );
 			}
 
-			delta_ = rna_fitted_torsion_info_.ideal_delta_north();
-			nu2_ = rna_fitted_torsion_info_.ideal_nu2_north();
-			nu1_ = rna_fitted_torsion_info_.ideal_nu1_north();
+			delta_ = rna_fitted_torsion_info_.delta_north();
+			nu2_ = rna_fitted_torsion_info_.nu2_north();
+			nu1_ = rna_fitted_torsion_info_.nu1_north();
 		}	else if ( curr_pucker_state == SOUTH ) {
 
 			if ( base_state_list_.size() != 0 ){
 				chi_ = rna_fitted_torsion_info_.gaussian_parameter_set_chi_south()[ base_center_ID ].center + bin_size_*( base_std_ID_ - 1 ) - ( total_variation_/2 );
 			}
 
-			delta_ = rna_fitted_torsion_info_.ideal_delta_south(); //default
-			nu2_ = rna_fitted_torsion_info_.ideal_nu2_south(); //default
-			nu1_ = rna_fitted_torsion_info_.ideal_nu1_south(); //default
+			delta_ = rna_fitted_torsion_info_.delta_south(); //default
+			nu2_ = rna_fitted_torsion_info_.nu2_south(); //default
+			nu1_ = rna_fitted_torsion_info_.nu1_south(); //default
 
 //			delta_ = rna_fitted_torsion_info_.gaussian_parameter_set_delta_south()[ 1 ].center;
 //			nu2_ = rna_fitted_torsion_info_.gaussian_parameter_set_nu2_south()[ 1 ].center;
@@ -230,13 +232,13 @@ namespace rna {
 	}
 
   //////////////////////////////////////////////////////////////////////////
-	PuckerState const &
+	core::Size const &
 	StepWiseRNA_BaseSugarRotamer::current_pucker_state() const {
 
 //		TR << "pucker_ID_old_ = " << pucker_ID_old_ << std::endl;
 //		TR << "pucker_state_list_.size() = " << pucker_state_list_.size() << std::endl;
 
-		PuckerState const & pucker_state = pucker_state_list_[pucker_ID_old_];
+		core::Size const & pucker_state = pucker_state_list_[pucker_ID_old_];
 
 		if ( pucker_state != NORTH && pucker_state != SOUTH ) utility_exit_with_message( "pucker_state should equal NORTH or SOUTH!" );
 

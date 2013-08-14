@@ -35,11 +35,35 @@ namespace pose {
 namespace rna {
 
 	//Constructor////////////////////////////////
-	RNA_SuiteName::RNA_SuiteName() { 
+	RNA_SuiteName::RNA_SuiteName():
+		epsilonmin(155),
+		epsilonmax(310),
+		delta3min(55),
+		delta3max(110),
+		delta2min(120),
+		delta2max(175),
+		gammapmin(20),
+		gammapmax(95),
+		gammatmin(140),
+		gammatmax(215),
+		gammammin(260),
+		gammammax(335),
+		alphamin(25),
+		alphamax(335),
+		betamin(50),
+		betamax(290),
+		zetamin(25),
+		zetamax(335),
+		outlier("!!", 0),
+		suite_undefined("__", 0),
+		dist_pow(3)
+	{
+		init();
+	}
+
+	////////////////////////////////////////////////////////
+	void RNA_SuiteName::init() {
 		using utility::tools::make_vector1;
-		outlier = RNA_SuiteAssignment("!!", 0);
-		suite_undefined = RNA_SuiteAssignment("__", 0);
-		dist_pow = 3; //suitename default
 		//Parameters copied from suitename program//////////////////////
 		all_suites.push_back( RNA_SuiteInfo( "1a", 330, make_vector1( 81.495, 212.250, 288.831, 294.967, 173.990, 53.550, 81.035 ) ) );
 		all_suites.push_back( RNA_SuiteInfo( "1m", 330, make_vector1( 83.513, 218.120, 291.593, 292.247, 222.300, 58.067, 86.093 ) ) );
@@ -95,16 +119,6 @@ namespace rna {
 		all_suites.push_back( RNA_SuiteInfo( "2u", 221, make_vector1( 143.940, 258.200, 298.240, 279.640, 183.680, 183.080, 145.120 ) ) );
 		all_suites.push_back( RNA_SuiteInfo( "2o", 222, make_vector1( 147.342, 256.475, 295.508, 287.408, 194.525, 293.725, 150.458 ) ) );
 
-		epsilonmin = 155; epsilonmax = 310;
-		delta3min  =  55; delta3max  = 110;
-		delta2min  = 120; delta2max  = 175;
-		gammapmin  =  20; gammapmax  =  95;
-		gammatmin  = 140; gammatmax  = 215;
-		gammammin  = 260; gammammax  = 335;
-		alphamin   =  25; alphamax   = 335;
-		betamin    =  50; betamax    = 290;
-		zetamin    =  25; zetamax    = 335;
-
 		const char* _arg1 [5] = {"1a", "1c", "1b", "0a", "6n"};
 		utility::vector1<std::string> _dominant_suites(_arg1, _arg1 + 5);
 		const char* _arg2 [9] = {"1m", "1L", "&a", "1f", "1[", "4a", "#a", "0i", "6j"};
@@ -140,7 +154,7 @@ namespace rna {
 	RNA_SuiteName::~RNA_SuiteName() {}
 
 	/////////////////////////////////////////////////////////
-	RNA_SuiteInfo RNA_SuiteName::name2suite( std::string const name ){
+	RNA_SuiteInfo RNA_SuiteName::name2suite( std::string const name ) const{
 		for (Size i = 1; i <= all_suites.size(); ++i) {
 			if (all_suites[i].name == name) {
 				return all_suites[i];
@@ -154,9 +168,11 @@ namespace rna {
 	//Suite assignment codes
 
 	//Distance computation///////////////////////////////
-	Real RNA_SuiteName::distance_4d(utility::vector1<Real> const &torsion1,
-		utility::vector1<Real> const &torsion2, utility::vector1<Size> const & half_width)
-	{
+	Real RNA_SuiteName::distance_4d(
+		utility::vector1<Real> const &torsion1,
+		utility::vector1<Real> const &torsion2, 
+		utility::vector1<Size> const & half_width
+	) const	{
 		//By suitename default, distance with power of 3 is used.
 		Real sum = 0;
 		for (Size i = 2; i <= 5; ++i) {
@@ -175,9 +191,11 @@ namespace rna {
 	}
 
 	////////////////////////////////////////////
-	Real RNA_SuiteName::distance_7d(utility::vector1<Real> const &torsion1,
-		utility::vector1<Real> const &torsion2, utility::vector1<Size> const & half_width)
-	{
+	Real RNA_SuiteName::distance_7d(
+		utility::vector1<Real> const & torsion1,
+		utility::vector1<Real> const & torsion2,
+		utility::vector1<Size> const & half_width
+	) const	{
 		//By suitename default, distance with power of 3 is used.
 		Real sum = 0;
 		for (Size i = 1; i <= 7; ++i) {
@@ -196,10 +214,11 @@ namespace rna {
 	}
 
 	//////////////////////////////////////////////
-	bool RNA_SuiteName::is_in_between( utility::vector1<Real> const &target, 
-	                    utility::vector1<Real> const &dominant,
-											utility::vector1<Real> const &satellite )
-	{
+	bool RNA_SuiteName::is_in_between( 
+		utility::vector1<Real> const &target, 
+	  utility::vector1<Real> const &dominant,
+		utility::vector1<Real> const &satellite
+	) const	{
 		Real inner_product_dom (0), inner_product_sat (0);
 		for (Size i = 2; i <= 5; ++i) {
 			inner_product_dom += (target[i] - dominant[i]) * (satellite[i] - dominant[i]);
@@ -212,7 +231,7 @@ namespace rna {
 
 	//Suite assign/////////////////////////
 	RNA_SuiteAssignment
-	RNA_SuiteName::assign(Pose const & pose, Size const res) {
+	RNA_SuiteName::assign(Pose const & pose, Size const res) const {
 		using namespace chemical::rna;
 		if ( is_rna_chainbreak(pose, res - 1) ) return suite_undefined;
 		utility::vector1 <Real> torsions;
@@ -227,7 +246,7 @@ namespace rna {
 	}
 
 	RNA_SuiteAssignment 
-	RNA_SuiteName::assign(utility::vector1<Real> const & torsions_in)	{
+	RNA_SuiteName::assign(utility::vector1<Real> const & torsions_in)	const {
 		using namespace chemical::rna;
 		assert( torsions_in.size() == 7);
 

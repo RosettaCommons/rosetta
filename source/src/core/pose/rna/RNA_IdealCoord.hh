@@ -42,17 +42,21 @@ public:
 	~RNA_IdealCoord();
 
 	//Apply ideal coords to one residue. Keep the backbone torsion values by default
-	void apply( Pose & pose, Size const seqpos, bool const is_north = true, bool const keep_backbone_torsion = true ) const;
+	void apply( Pose & pose, Size const seqpos, Size pucker, bool const keep_backbone_torsion = true ) const;
 
 	//Apply ideal coords to whole pose.
-	//pucker_conformations: 0 for skipping, 1 for North, 2 for South
-	void apply( Pose & pose, utility::vector1 < Size > const & pucker_conformations, bool const keep_backbone_torsion = true ) const;
+	//pucker_conformations: 0 for keeping pucker, 1 for North, 2 for South
+	void apply( Pose & pose, utility::vector1 < Size > const & puckers, bool const keep_backbone_torsion = true ) const;
+
+	//Apply ideal coords to whole pose. Keep all pucker state
+	void apply( Pose & pose, bool const keep_backbone_torsion = true ) const;
 
 private:
 	void init();
 	bool is_torsion_exists(Pose const & pose, id::TorsionID const & torsion_id) const;
 	utility::vector1 < Pose > ref_pose_list_;
 	std::string const path_;
+	Real delta_cutoff_;
 };
 
 }

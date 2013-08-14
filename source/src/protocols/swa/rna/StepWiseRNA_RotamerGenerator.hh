@@ -42,8 +42,8 @@ namespace rna {
     StepWiseRNA_RotamerGenerator( Size const moving_suite,
 																bool const sample_lower_sugar_and_base,
 																bool const sample_upper_sugar_and_base,
-																PuckerState const pucker1,
-																PuckerState const pucker2 );
+																core::Size const pucker1,
+																core::Size const pucker2 );
 
 
     virtual ~StepWiseRNA_RotamerGenerator();
@@ -92,7 +92,7 @@ namespace rna {
 		core::Size const & subgroup_rotamer();
 		core::Size const & moving_suite();
 
-		PuckerState	pucker_state( std::string const which_sugar );
+		core::Size	pucker_state( std::string const which_sugar );
 
 		void set_choose_random( bool const setting ){ choose_random_ = setting; }
 
@@ -126,8 +126,8 @@ namespace rna {
 		bool const sample_lower_sugar_and_base_;
 		bool const sample_upper_sugar_and_base_;
 
-		PuckerState const pucker1_specified_;
-		PuckerState const pucker2_specified_;
+		core::Size const pucker1_specified_;
+		core::Size const pucker2_specified_;
 
 		bool sample_extra_rotamers_;
 		bool fast_;
@@ -155,8 +155,8 @@ namespace rna {
 		bool extra_syn_chi_;
 		bool exclude_alpha_beta_gamma_sampling_;
 		bool allow_syn_pyrimidine_;
-		BaseState lower_base_state_;
-		BaseState upper_base_state_;
+		core::Size lower_base_state_;
+		core::Size upper_base_state_;
 
 		bool choose_random_;
 

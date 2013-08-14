@@ -363,10 +363,10 @@ apply_rotamer( core::pose::Pose & pose, utility::vector1< Torsion_Info >  const 
 bool
 check_for_messed_up_structure( core::pose::Pose const & pose, std::string const & tag );
 
-BaseState
+core::Size
 Get_residue_base_state( core::pose::Pose const & pose, core::Size const seq_num );
 
-PuckerState
+core::Size
 Get_residue_pucker_state( core::pose::Pose const & pose, core::Size const seq_num, bool verbose = false );
 
 bool
@@ -460,10 +460,10 @@ void
 print_individual_atom_info( core::conformation::Residue const & rsd, core::Size const atomno, std::string const rsd_name );
 
 void
-print_base_state( std::string const tag, BaseState const base_state, std::ostream & outstream = std::cout );
+print_base_state( std::string const tag, core::Size const base_state, std::ostream & outstream = std::cout );
 
 void
-print_ribose_pucker_state( std::string const tag, PuckerState const pucker_state, std::ostream & outstream = std::cout );
+print_ribose_pucker_state( std::string const tag, core::Size const pucker_state, std::ostream & outstream = std::cout );
 
 
 void

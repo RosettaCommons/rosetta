@@ -71,23 +71,24 @@ public:
 	RNA_SuiteName();
 	~RNA_SuiteName();
 
-	RNA_SuiteInfo name2suite( std::string const name );
-	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in);
-	RNA_SuiteAssignment assign(Pose const & pose, Size const res);
+	RNA_SuiteInfo name2suite( std::string const name ) const;
+	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in) const;
+	RNA_SuiteAssignment assign(Pose const & pose, Size const res) const;
 	//////////////////////////////////
-	Real dist_pow;
+	Real const dist_pow;
 	utility::vector1 <RNA_SuiteInfo> all_suites;
-	RNA_SuiteAssignment outlier, suite_undefined;
+	RNA_SuiteAssignment const outlier, suite_undefined;
 
-	Size epsilonmin, epsilonmax,
-			 delta3min , delta3max,
-			 delta2min , delta2max,
-		 	 gammapmin , gammapmax,
-			 gammatmin , gammatmax,
-			 gammammin , gammammax,
-			 alphamin  , alphamax,
-			 betamin   , betamax,
-			 zetamin   , zetamax;
+	Size const 
+		epsilonmin, epsilonmax,
+		delta3min , delta3max,
+		delta2min , delta2max,
+		gammapmin , gammapmax,
+		gammatmin , gammatmax,
+		gammammin , gammammax,
+		alphamin  , alphamax,
+		betamin   , betamax,
+		zetamin   , zetamax;
 
 	utility::vector1<Size> regular_half_width;
 	utility::vector1<std::string> dominant_suites;
@@ -96,15 +97,17 @@ public:
 	utility::vector1< utility::vector1<Size> > half_width_dom;
 
 private:
+	void init();
+
 	Real distance_4d(utility::vector1<Real> const &torsion1, utility::vector1<Real> const &torsion2, 
-			utility::vector1<Size> const & half_width);
+			utility::vector1<Size> const & half_width) const;
 
 	Real distance_7d(utility::vector1<Real> const &torsion1, utility::vector1 <Real> const &torsion2,
-			utility::vector1<Size> const & half_width);
+			utility::vector1<Size> const & half_width) const;
 
 	bool is_in_between( utility::vector1<Real> const & target, 
 			utility::vector1<Real> const & dominant,
-			utility::vector1<Real> const & satellite );
+			utility::vector1<Real> const & satellite ) const;
 
 	///////////////////////////////////////
 };
