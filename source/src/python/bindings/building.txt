@@ -4,79 +4,50 @@
 (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-Latest tested revision: 29093
+@brief  PyRosetta building docs
+@author Sergey Lyskov
 
-List of currently binded namespaces:
+For additional information please see: http://www.pyrosetta.org/documentation#TOC-Building-PyRosetta-from-source
 
-core:
-core/chemical:
-core/conformation:
-core/fragment:
-core/fragment/picking:
-core/fragment/picking/vall:
-core/fragment/picking/vall/gen:
-core/graph:
-core/grid:
-core/id:
-core/io:
-core/io/pdb:
-core/io/pose_stream:
-core/kinematics:
-core/kinematics/tree:
-core/mm:
-core/optimization:
-core/pack:
-core/pack/annealer:
-core/pack/task:
-core/pack/task/ops:
-core/pose:
-core/pose/datacache:
-core/pose/metrics:
-core/scoring:
-core/scoring/constraints:
-core/scoring/dna:
-core/scoring/dssp:
-core/scoring/electron_density:
-core/scoring/hbonds:
-core/scoring/methods:
-core/scoring/trie:
-core/sequence:
-core/util:
-basic/datacache:
 
-numeric:
-numeric/fourier:
-numeric/interpolation:
-numeric/interpolation/periodic_range:
-numeric/interpolation/periodic_range/periodic_value:
-numeric/interpolation/spline:
-numeric/random:
+*** Building PyRosetta from source
 
-protocols:
-protocols/abinitio:
-protocols/antibody:
-protocols/constraints_additional:
-protocols/docking:
-protocols/electron_density:
-protocols/flexpack:
-protocols/flexpack/annealer:
-protocols/flexpack/interaction_graph:
-protocols/flexpack/task:
-protocols/flxbb:
-protocols/idealize:
-protocols/jd2:
-protocols/ligand_docking:
-protocols/loops:
-protocols/moves:
-protocols/relax:
-protocols/toolbox:
-protocols/toolbox/TaskOperations:
-protocols/topology_broker:
+    In some cases it might be beneficial to build PyRosetta from source instead of using pre-build binaries.
+Here is the list of cases when it might be a good idea to consider building from source:
 
-utility:
-utility/file:
-utility/pointer:
-utility/tag:
+ - You need to have bindings for your own custom C++ code that is not part of Rosetta master branch.
+
+ - PyRosetta need to run by custom-build Python (for example if you would like to use some Python packages
+   from MacPorts, Fink or Homebrew who deploy its own version of Python)
+
+ - You need to use different version of Python.
+
+ - You can't install GLIBC required by pre-build binaries.
+
+ - You running on 32Bit system.
+
+
+
+1. Deploying PyRosetta build environment
+    Before we can compile PyRosetta we will need setup PyRosetta build environment. Step-by-step instruction for
+this procedure is available in: main/source/src/python/bindings/building.txt in Rosetta main Git repository. We
+also provide python script that automate it. It is available in Rosetta/tools repository in
+rosetta/tools/PyRosetta.develop/DeployPyRosetta.py. Please run 'DeployPyRosetta.py --help' to see available
+configuration options. After DeployPyRosetta.py script is run in to completion it should produce dir containing
+all necessary tools and generate BuildPyRosetta.sh shell script that could be copied in to Rosetta source dir to
+compile PyRosetta.
+
+
+2. Building PyRosetta
+    After successfully deploying PyRosetta build environment copy generated BuildPyRosetta.sh in to main Rosetta
+source dir: /rosetta/main/source/BuildPyRosetta.sh and run it within this dir in order to build PyRosetta. Script
+will parse Rosetta C++ code, generate source code for Python bindings and compile it and store results in to
+/rosetta/main/source/src/python/bindings/rosetta dir. For full list of available command line options please
+run 'BuildPyRosetta.sh --help'.
+
+
+
+----- Deploying PyRosetta build environment by hand: -----
 
 Requirements -------------------------------------
     To build python bindings on Linux system you have to make sure that the following packages are installed and accessible (added to your path variable):
@@ -247,5 +218,3 @@ Linux:
 export LIBPATH=current/rosetta:$LIBPATH
 export LD_LIBRARY_PATH=current/rosetta
 export PYTHONPATH=current:$PYTHONPATH
-
-
