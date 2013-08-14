@@ -19,6 +19,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
+#include <numeric/random/random.hh>
+#include <utility/string_util.hh>
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -33,6 +35,8 @@ static basic::Tracer TR("protocols.simple_moves.AddChainMover");
 
 namespace protocols {
 namespace simple_moves {
+
+static numeric::random::RandomGenerator RG( 14082013 );
 
 std::string
 AddChainMoverCreator::keyname() const
@@ -54,7 +58,8 @@ AddChainMoverCreator::mover_name()
 AddChainMover::AddChainMover()
 	: moves::Mover("AddChain"),
 	fname_( "" ),
-	new_chain_( true )
+	new_chain_( true ),
+	random_access_( false )
 {
 }
 
@@ -103,7 +108,17 @@ AddChainMover::parse_my_tag(
 	protocols::moves::Movers_map const &,
 	core::pose::Pose const & )
 {
-	fname( tag->getOption< std::string >( "file_name" ) );
+	random_access( tag->getOption< bool >( "random_access", false ) );
+	if( random_access() ){
+		std::string const fnames( tag->getOption< std::string >( "file_name" ) );
+		utility::vector1< std::string > const split_names( utility::string_split< std::string >( fnames, ',', std::string()) );
+		TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
+		core::Size const random_num = (core::Size) (RG.uniform() * split_names.size()) + 1;
+		TR<<"choosing number: "<<random_num<<" "<<split_names[ random_num ]<<std::endl;
+		fname( split_names[ random_num ] );
+	}
+	else
+		fname( tag->getOption< std::string >( "file_name" ) );
 	new_chain( tag->getOption< bool >( "new_chain", 1 ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	TR<<"AddChain sets fname: "<<fname()<<" new_chain: "<<new_chain()<<std::endl;
