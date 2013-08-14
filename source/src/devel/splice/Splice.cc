@@ -60,6 +60,7 @@
 #include <utility/vector1.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/DataMapObj.hh>
+#include <protocols/simple_moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
@@ -115,8 +116,7 @@ namespace splice {
 
 static basic::Tracer TR( "devel.splice.Splice" );
 static basic::Tracer TR_ccd( "devel.splice.Splice_ccd" );
-		std::string tempPDBname;
-
+		
 static numeric::random::RandomGenerator RG( 78289 );
 std::string
 SpliceCreator::keyname() const
@@ -172,12 +172,11 @@ Splice::Splice() :
 			segment_type_( "" ),
 			profile_weight_away_from_interface_( 1.0 ),
 			restrict_to_repacking_chain2_( true ),
-			coor_const_(1),
 			design_shell_(6.0),
-			pack_shell_(8.0),
-			scorefxn_(NULL)
+			repack_shell_(8.0),
+			scorefxn_(NULL),
+			Pdb4LetName_("")
 {
-	dihedral_const_ = 1;
 	add_sequence_constraints_only_ = false;
 	torsion_database_.clear();
 	delta_lengths_.clear();
@@ -636,7 +635,7 @@ Splice::apply( core::pose::Pose & pose )
 	tf->push_back( tso );
 	DesignAroundOperationOP dao = new DesignAroundOperation;
 	dao->design_shell( (design_task_factory()() == NULL ? 0.0 : design_shell()) ); // threaded sequence operation needs to design, and will restrict design to the loop, unless design_task_factory is defined, in which case a larger shell can be defined
-	dao->repack_shell( pack_shell() );
+	dao->repack_shell( repack_shell() );
 	for( core::Size i = from_res(); i <= from_res() + total_residue_new - 1; ++i ){
 		if( !pose.residue( i ).has_variant_type( DISULFIDE ) )
 			dao->include_residue( i );
@@ -756,8 +755,11 @@ Splice::apply( core::pose::Pose & pose )
 			TR<<pose.residue(*i).name1()<<*i<<",";
 		}
 		TR<<std::endl;
+		TR<<"Weighted score function before ccd:"<<std::endl;
 		scorefxn()->show(pose);//before ccd starts make sure we have all constratins in place, gidoenla Jul13
 		ccd_mover.apply( pose );
+		TR<<"Weighted score function after ccd:"<<std::endl;
+		scorefxn()->show(pose);//before ccd starts make sure we have all constratins in place, gidoenla Jul13
 		//pose.dump_pdb("after_ccd.pdb");
 		/// following ccd, compute rmsd to source loop to ensure that you haven't moved too much. This is a pretty decent filter
 		if( torsion_database_fname_ == "" ){ // no use computing rms if coming from a database (no coordinates)
@@ -774,12 +776,21 @@ Splice::apply( core::pose::Pose & pose )
 				retrieve_values();
 				return;
 			}
-			//print rms value to output pdb strucutre
+
+			//print rms value to output pdb structure
 				std::string Result;
-				std::ostringstream convert;
-				convert << average_rms;
-				Result = convert.str();
+				std::string Result_filter;        
+				std::ostringstream convert; 
+				std::ostringstream convert_filter; 
+				convert << average_rms;     
+				Result = convert.str(); 
+
 				core::pose::add_comment(pose,"RMSD to source loop",Result);//change correct association between current loop and pdb file
+				
+				//print ChainBreak value to output pdb structure
+				convert_filter << splice_filter()->score( pose );
+				Result_filter = convert_filter.str(); 
+				core::pose::add_comment(pose,"Chainbreak Val:",Result_filter);
 			if( !splice_filter()->apply( pose ) ){
 				TR<<"Failing because filter fails"<<std::endl;
 				set_last_move_status( protocols::moves::FAIL_RETRY );
@@ -810,19 +821,30 @@ Splice::apply( core::pose::Pose & pose )
 				dbase_file << pose.phi( i )<<' '<<pose.psi( i )<<' '<<pose.omega( i )<<' '<<pose.residue( i ).name3()<<' ';
 			dbase_file << startn<<' '<<stop_on_template<<' '<<cut_site<<' ';
 			if( loop_pdb_source_ != "" )
-				dbase_file <<tempPDBname<<std::endl;
+				dbase_file <<Pdb4LetName_<<std::endl;
 			else
 				dbase_file << "cut" << std::endl; // the word cut is used as a placeholder. It is advised to use instead the source pdb file in this field so as to keep track of the origin of dbase loops
 			dbase_file.close();
 		}
 	}// fi ccd
 	else{ // if no ccd, still need to thread sequence
+		//Debugging, remove after, gideonla aug13
+		//TR<<"NOT DOING CCD, DOING REPACKING INSTEAD"<<std::endl;
 		PackerTaskOP ptask = tf()->create_task_and_apply_taskoperations( pose );
 		protocols::simple_moves::PackRotamersMover prm( scorefxn(), ptask );
 		//		pose.conformation().detect_disulfides();
 		//		pose.update_residue_neighbors();
 		//		(*scorefxn())(pose);
 		prm.apply( pose );
+		//pose.dump_pdb("before_rtmin.pdb");
+		//After Re-packing we add RotamerTrialMover to resolve any left over clashes, gideonla Aug13
+		TaskFactoryOP tf_rtmin  = new TaskFactory(*tf);//this taskfactory (tf_rttmin) is only used here. I don't want to affect other places in splice, gideonla aug13
+		tf_rtmin->push_back( new operation::RestrictToRepacking()); //W don't rtmin to do design
+		ptask = tf_rtmin()->create_task_and_apply_taskoperations( pose );
+		protocols::simple_moves::RotamerTrialsMinMover rtmin( scorefxn(), *ptask );
+		rtmin.apply(pose);
+		//pose.dump_pdb("after_rtmin.pdb");
+		
 	}
 	saved_fold_tree_ = new core::kinematics::FoldTree( pose.fold_tree() );
 	retrieve_values();
@@ -956,7 +978,7 @@ Splice::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &data, protoco
 	//dihedral_const(tag->getOption< core::Real >( "dihedral_const", 0 ) );//Added by gideonla Apr13, set here any real posiive value to impose dihedral constraints on loop
 	//coor_const(tag->getOption< core::Real >( "coor_const", 0 ) );//Added by gideonla May13, set here any real to impose coordinate constraint on loop
 	design_shell(tag->getOption< core::Real >( "design_shell", 6.0 ) );//Added by gideonla May13,
-	pack_shell(tag->getOption< core::Real >( "pack_shell", 8.0 ) );//Added by gideonla May13,
+	repack_shell(tag->getOption< core::Real >( "repack_shell", 8.0 ) );//Added by gideonla May13,
 	rms_cutoff( tag->getOption< core::Real >( "rms_cutoff", 999999 ) );
 	runtime_assert( !(tag->hasOption( "torsion_database" ) && tag->hasOption( "rms_cutoff" )) ); // torsion database doesn't specify coordinates so no point in computing rms
 	res_move( tag->getOption< core::Size >( "res_move", 4 ) );
@@ -1275,31 +1297,31 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		///This code will cut the source pdb file name and extract the four letter code
 		if (torsion_database_fname_!=""){
 			TR<<"Torsion data base filename is: "<<torsion_database_fname_<<std::endl;
-			tempPDBname = dofs_pdb_name;
-			//TR<<"tempPDBname: "<<tempPDBname<<std::endl;
+			Pdb4LetName_ = dofs_pdb_name;
+			//TR<<"Pdb4LetName_: "<<Pdb4LetName_<<std::endl;
 /*	    std::string pdb_dump_fname_("before_splice.pdb");
 		std::ofstream out( pdb_dump_fname_.c_str() );
 		pose.dump_pdb(out); //Testing out comment pdb, comment this out after test (GDL) */
 
 		}
 		else {
-			tempPDBname = source_pdb_;//
+			Pdb4LetName_ = source_pdb_;//
 		}
 		// Remove directory if present.
 		// Do this before extension removal in case directory has a period character.
-		const size_t last_slash_idx = tempPDBname.find_last_of("\\/");
+		const size_t last_slash_idx = Pdb4LetName_.find_last_of("\\/");
 		if (std::string::npos != last_slash_idx)
 		{
-			tempPDBname.erase(0, last_slash_idx + 1);
+			Pdb4LetName_.erase(0, last_slash_idx + 1);
 		}
 		// Remove extension if present.
-		const size_t period_idx = tempPDBname.rfind('.');
+		const size_t period_idx = Pdb4LetName_.rfind('.');
 		if (std::string::npos != period_idx) {
-			tempPDBname.erase(period_idx);
+			Pdb4LetName_.erase(period_idx);
 		}
 		if (!add_sequence_constraints_only_){///If only doing sequence constraints then don't add to pose comments source name
-		TR<<"The currnet segment is: "<<segment_type_<<" and the source pdb is "<<tempPDBname<<std::endl;
-		core::pose::add_comment(pose,"segment_"+segment_type_,tempPDBname);//change correct association between current loop and pdb file
+		TR<<"The currnet segment is: "<<segment_type_<<" and the source pdb is "<<Pdb4LetName_<<std::endl;
+		core::pose::add_comment(pose,"segment_"+segment_type_,Pdb4LetName_);//change correct association between current loop and pdb file
 		}
 
 		load_pdb_segments_from_pose_comments(pose); // get segment name and pdb accosiation from comments in pdb file
@@ -1331,20 +1353,32 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		///that the PSSM score of the falnking segments of the current designed segment agree with the identity of the aa (i.e if
 		/// we are designing L1 then we would expect that segments Frm.light1 and Frm.light2 have concensus aa identities)
 
-//		core::Size aapos=0;
-//		for(core::Size seg=1; seg <=profile_vector.size() ; seg++ ){
-//			for( core::Size pos = 1; pos <= profile_vector[seg]->size(); ++pos ){
-//				++aapos;
-//				if (abs((int)seg-(int)(current_segment_pos))==1){
-//					std::stringstream ss; std::string s;
-//					ss << pose.residue(aapos).name1();
-//					ss >> s;
-//					if (check_aa(s, profile_vector[seg]->prof_row(pos))) {
-//					TR.Warning << "Check PSSM, aa : " <<aapos<<pose.aa(aapos)<<"Has a low PSSM score"<<std::endl;
-//					}
-//				}
-//				}
-//			}
+
+		core::Size aapos=0;
+		//TR<<"TESTING PSSMs"<<std::endl;
+		for(core::Size seg=1; seg <=profile_vector.size() ; seg++ ){//go over all the PSSM sements provided by the user
+			for( core::Size pos /*go over profile ids*/ = 1; pos <= profile_vector[seg]->size(); ++pos ){
+				++aapos;//go over pose residue
+				//TR<<pose.residue(aapos).name1()<<aapos<<" CYS score is: "<<profile_vector[seg]->prof_row(pos)[2]<<std::endl;
+				if ((profile_vector[seg]->prof_row(pos)[2])>8){//If the profile vector holds a disulfide Cys it will have a pssm score over 8
+					std::stringstream ss; std::string s;
+					ss << pose.residue(aapos).name1();
+					ss >> s;
+					//TR<<"found a dis cys="<<s<<std::endl;
+					if (s.compare("C") != 0){
+						std::string seqpos;         
+						std::ostringstream convert;
+						convert << aapos;      // insert the textual representation of 'Number' in the characters in the stream
+						seqpos = convert.str(); // set 'Result' to the contents of the stream
+						utility_exit_with_message(" PSSM and pose might be misaligned, position "+ s+seqpos+ " should be a CYS\n");
+						//utility_exit_with_message(" could not find the source pdb name:: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type+"\n");
+					} //fi
+				}//fi
+			}//end inner segment for
+		}//end pssm segment for
+
+
+
 
 
 		return concatenate_profiles( profile_vector,segment_names_ordered_ );
@@ -1570,6 +1604,7 @@ Splice::profile_weight_away_from_interface( core::Real const p ){
 }
 
 
+//This function is not called anymore, consider removing; gideonla Aug13
 bool
 Splice::check_aa(std::string curraa, utility::vector1<core::Real > profRow)
  {

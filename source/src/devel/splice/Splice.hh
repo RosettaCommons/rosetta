@@ -112,15 +112,13 @@ public:
 	std::string source_pdb() const { return source_pdb_; }
 	void source_pdb( std::string const s ){ source_pdb_ = s; }
 	void ccd( bool const c ){ ccd_ = c;}
-	void dihedral_const(core::Real const d){ dihedral_const_ = d;} //setter for dihedral_const option
-	void coor_const(core::Real const c) {coor_const_ = c;}
 	void design_shell(core::Real const c) {design_shell_ = c;}
-	void pack_shell(core::Real const c) {pack_shell_ = c;}
+	void repack_shell(core::Real const c) {repack_shell_ = c;}
 	bool ccd() const { return ccd_; }
 	core::Real dihedral_const() const { return dihedral_const_; } //getter for dihedral_const option
 	core::Real coor_const() const {return coor_const_ ;}
 	core::Real design_shell() const {return design_shell_ ;}
-	core::Real pack_shell() const {return pack_shell_ ;}
+	core::Real repack_shell() const {return repack_shell_ ;}
 	void scorefxn( core::scoring::ScoreFunctionOP sf );
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	core::Real rms_cutoff() const{ return rms_cutoff_; }
@@ -213,7 +211,7 @@ private:
 	core::Real dihedral_const_;//dflt 1; gideonla
 	core::Real coor_const_;//dflt 1; gideonla
 	core::Real design_shell_;//dflt 6.0 gideonla
-	core::Real pack_shell_;//dflt 8.0 gideonla
+	core::Real repack_shell_;//dflt 8.0 gideonla
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt score12 with reweighted sheet weight
 	core::Real rms_cutoff_; //dflt 99999; after splicing, checks the average displacement of Ca atoms in the source and target segments. Failure leads to mover failure and no output
 	core::Size res_move_; //dflt 4; how many residues to allow to move during ccd
@@ -244,6 +242,8 @@ private:
 	std::string loop_pdb_source_; //dflt ""; what is the source pdb from which the loop came? This is used in writing the loop to the loop dbase, and helps keep track of where loops come from during design.
 	utility::pointer::owning_ptr< protocols::moves::DataMapObj< std::string > > mover_tag_; /// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
 	protocols::filters::FilterOP splice_filter_;
+	std::string Pdb4LetName_;
+
 
 ///sequence profiles
 	bool use_sequence_profiles_; // dflt false; set internally only, by whether or not the Segments are defined
