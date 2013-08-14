@@ -241,40 +241,45 @@ fold_tree_from_loops(
 		bool is_lower_term = pose.residue( it->start() ).is_lower_terminus();
 		bool is_upper_term = pose.residue( it->stop() ).is_upper_terminus();
 
-		bool special_start = ( it->start() == 1 ) ? true : false;
 		Size local_jump_start(1);
-
-		// Create a jump from the previous chain if applicable.
-		if ( is_lower_term && prev_interchain_jump > 0 ) {
-			local_jump_start = prev_interchain_jump;
-			prev_interchain_jump = 0;
-			special_start = true;
-		}
-
-		Size const jump_start =	(special_start) ? local_jump_start : it->start() - 1;
-		Size const jump_stop  = ( it->stop() == nres ) ? nres : it->stop() + 1;
+		Size jump_start =	it->start()-1;
+		Size jump_stop  = it->stop()+1;
 		Size const jump_cut   = it->cut();
 
 		Size const jump_next_start = ( it_next == it_end ) ? nres : it_next->start() - 1;
 
-		f.add_edge(jump_stop, jump_next_start, Edge::PEPTIDE);
+		if (jump_stop <= nres && jump_stop < jump_next_start) f.add_edge(jump_stop, jump_next_start, Edge::PEPTIDE);
 
 		// If this is a terminal loop and the terminus should be used for the cut instead of whatever
 		// the loop's cutpoint is set to (i.e. terminal_cutpoint is false, which is the default by the
 		// way), just make an Edge that spans the loop.
 		if ((is_lower_term || is_upper_term) && !terminal_cutpoint) {
-			f.add_edge(jump_start, jump_stop, Edge::PEPTIDE);
+			if (is_lower_term && is_upper_term)
+				utility_exit_with_message("Trying to make a loop that covers an entire chain. No anchor position possible!");
+
+			if (is_lower_term) {
+				f.add_edge(jump_start+1, jump_stop, Edge::PEPTIDE);
+				if (prev_interchain_jump > 0)
+					f.add_edge(prev_interchain_jump, jump_stop, ++jump_num);
+				else if (jump_start>0)
+					f.add_edge(jump_start, jump_stop, ++jump_num);
+				prev_interchain_jump = 0;
+			} else { // is_upper_term
+				prev_interchain_jump = jump_start;
+				f.add_edge(jump_start, jump_stop-1, Edge::PEPTIDE);
+
+				// if we're not rebuilding the adjacent n-term, add a jump to the next segment
+				if ( (it_next != it_end && it_next->start() != jump_stop) || ( it_next == it_end && jump_stop != nres+1))
+					f.add_edge(jump_start, jump_stop, ++jump_num);
+			}
 			continue;
 		}
+		prev_interchain_jump = 0;
+
+		if ( jump_start==0 ) jump_start=1;
+		if ( jump_stop>nres ) jump_stop=nres;
 
 		f.add_edge( jump_start, jump_cut,  Edge::PEPTIDE );
-
-		// If next chain begins with a loop, jump from this loop's start to the next loop's stop.
-		// Store the jump residue for the next pass and get the hell out of here!
-		if (is_upper_term && it_next != it_end && it_next->start() == jump_stop) {
-			prev_interchain_jump = jump_start;
-			continue;
-		}
 
 		// Increase the jump number and add a jump connecting the residues around the loop
 		++jump_num;
@@ -282,7 +287,6 @@ fold_tree_from_loops(
 
 		// Add edges directed from the terminal loop residues to the cutpoint
 		f.add_edge(jump_cut + 1, jump_stop, Edge::PEPTIDE);
-
 	}
 
 	// This is kind of dumb -- why don't we bail way eariler if there are no loops?
@@ -640,28 +644,28 @@ set_move_map_for_centroid_loop(
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-///// @details When building loops on a homology model, the qualities of the loop stems are 
+///// @details When building loops on a homology model, the qualities of the loop stems are
 ///// hard to control. Implementing small/shear/ccd movers to them may be too much. One
 ///// may just want to minimize them when the loop refinement protocl is doing minimization.
 ///// This is the function to add these extra residues to the movemap.  --JQX
 ////////////////////////////////////////////////////////////////////////////////////////
-void    
+void
 add_loop_flank_residues_bb_to_movemap(
     Loops const & loops,
     core::kinematics::MoveMap & mm,
     core::Size flank_size
 ){
-               
+
     for( Loops::const_iterator it=loops.begin(), it_end=loops.end(); it != it_end; ++it ) {
-          
+
         for(Size i=(it->start()-flank_size); i<=(it->start()-1); i++){
             mm.set_bb(i, true);
         }
-                                                     
+
         for(Size i=(it->stop()+1); i<=(it->stop()+flank_size); i++){
             mm.set_bb(i, true);
         }
-                                                                           
+
     }
 
 }

@@ -42,11 +42,13 @@ class LoopsFoldTreeTest : public CxxTest::TestSuite {
 
 private:
 	PoseOP pose_;
-	
+	PoseOP pose_multichain_;
+
 public:
   void setUp() {
     protocols_init();
 		pose_ = core::import_pose::pose_from_pdb("protocols/loops/2GB3.pdb");
+		pose_multichain_ = core::import_pose::pose_from_pdb("protocols/loops/4DZM.pdb");
   }
 
 	void test_SingleLoopFoldTree() {
@@ -234,6 +236,72 @@ public:
 		TS_ASSERT(ft.edge_label(29, pose_->total_residue()) == 1);
 	}
 
+	void test_Multichain_CtermLoop() {
+		FoldTree ft(pose_multichain_->total_residue());
+
+		// pose_multichain_ has two 31-residue chains
+
+		Loops loops;
+		loops.add_loop(Loop(25, 31, 31));
+
+		// generate a FoldTree from the Loops instance
+		fold_tree_from_loops(*pose_multichain_, loops, ft);
+
+		// Test N-term loop
+		// 1) Edge from  1 -> 24
+		TS_ASSERT(ft.edge_label(1, 24) == Edge::PEPTIDE);
+
+		// 2) Edge from  24 -> 31
+		TS_ASSERT(ft.edge_label(24, 31) == Edge::PEPTIDE);
+
+		// 3) Edge from  32 -> 62
+		TS_ASSERT(ft.edge_label(32, 62) == Edge::PEPTIDE);
+
+		// 4) Jump from 24 -> 32
+		TS_ASSERT(ft.edge_label(24, 32) == 1);
+	}
+
+	void test_Multichain_NtermLoop() {
+		FoldTree ft(pose_multichain_->total_residue());
+
+		// pose_multichain_ has two 31-residue chains
+		Loops loops;
+		loops.add_loop(Loop(32, 38, 32));
+
+		// generate a FoldTree from the Loops instance
+		fold_tree_from_loops(*pose_multichain_, loops, ft);
+
+		TS_ASSERT(ft.edge_label(1, 31) == Edge::PEPTIDE);
+
+		TS_ASSERT(ft.edge_label(39, 32) == Edge::PEPTIDE);
+
+		TS_ASSERT(ft.edge_label(39, 62) == Edge::PEPTIDE);
+
+		TS_ASSERT(ft.edge_label(31, 39) == 1);
+	}
+
+	void test_Multichain_NandCtermLoop() {
+		FoldTree ft(pose_multichain_->total_residue());
+
+		// pose_multichain_ has two 31-residue chains
+		Loops loops;
+		loops.add_loop(Loop(25, 31, 31));
+		loops.add_loop(Loop(32, 38, 32));
+
+		// generate a FoldTree from the Loops instance
+		fold_tree_from_loops(*pose_multichain_, loops, ft);
+
+		TS_ASSERT(ft.edge_label(1, 24) == Edge::PEPTIDE);
+
+		TS_ASSERT(ft.edge_label(24, 31) == Edge::PEPTIDE);
+
+		TS_ASSERT(ft.edge_label(39, 32) == Edge::PEPTIDE);
+
+		TS_ASSERT(ft.edge_label(39, 62) == Edge::PEPTIDE);
+
+		TS_ASSERT(ft.edge_label(24, 39) == 1);
+
+	}
 };
 
 }  // anonymous namespace

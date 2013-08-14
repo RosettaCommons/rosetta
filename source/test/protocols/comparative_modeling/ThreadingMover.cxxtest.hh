@@ -188,11 +188,11 @@ void test_basic_threading() {
 	using core::import_pose::pose_from_pdb;
 	using core::pose::make_pose_from_sequence;
 
-	SequenceOP query( new Sequence( "LNE-DILILGCSAMGDEVLE-ESEFEPFIEEI-STKISGKKVALFG", "4fxn_", '-' ) );
-	SequenceOP templ( new Sequence( "FEGFDLVLLGCSTWGDDSIELQDDFIPLFDSLEETGAQGRKVACFG", "1f4pA", '-' ) );
+	SequenceOP query( new Sequence( "LNE-DILILGCSAMGDEVLE-ESEFEPFIEEI-STKISGKKVALFG", "4fxn_", 0 ) );
+	SequenceOP templ( new Sequence( "FEGFDLVLLGCSTWGDDSIELQDDFIPLFDSLEETGAQGRKVACFG", "1f4pA", 0 ) );
 	SequenceAlignment align;
-	align.add_sequence(templ);
 	align.add_sequence(query);
+	align.add_sequence(templ);
 
 	Pose template_pose;
 	core::import_pose::pose_from_pdb( template_pose, "protocols/comparative_modeling/1f4pA.pdb" );
@@ -209,11 +209,11 @@ void test_basic_threading() {
 	for ( Size ii = 1; ii <= query_pose.total_residue(); ++ii ) {
 		if ( map[ii] != 0 ) {
 			//Size const tmpl_ii( map[ii] );
-			TS_ASSERT_DELTA(
-				query_pose.residue(ii).xyz(atom_name),
-				template_pose.residue(ii).xyz(atom_name),
-				TOLERANCE
-			);
+			core::Vector tgt_x = query_pose.residue(ii).xyz(atom_name);
+			core::Vector src_x = query_pose.residue(ii).xyz(atom_name);
+			TS_ASSERT_DELTA(tgt_x[0],src_x[0],TOLERANCE);
+			TS_ASSERT_DELTA(tgt_x[1],src_x[1],TOLERANCE);
+			TS_ASSERT_DELTA(tgt_x[2],src_x[2],TOLERANCE);
 		}
 	}
 } // test_basic_threading

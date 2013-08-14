@@ -16,7 +16,7 @@ sources = {
 		"PseudocontactShiftEnergy",
 		"WobbleMover",
 	],
-	
+
 	"antibody": [
 		"AntibodyInfo",
 	],
@@ -367,6 +367,7 @@ testinputfiles = [
 	"ligand_docking/7cpa_confs.pdb",
 	"ligand_docking/ZN1.params",
 	"loops/2GB3.pdb",
+	"loops/4DZM.pdb",
 	"match/carbaryl_LG1.params",
 	"match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb",
 	"match/MBH_LG.params",

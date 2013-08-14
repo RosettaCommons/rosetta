@@ -186,10 +186,6 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 		sshift.set_segment( RBSegment(ncs_segments) );
 		sshift.apply( pose );
 
-		//std::ostringstream oss;
-		//oss << "out" << i<< ".pdb";
-		//pose.dump_pdb( oss.str() );
-
 		core::Real score_cst = (*scorefxn_)(pose);
 		core::Real score_aln = sshift.score();
 
@@ -203,6 +199,10 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 				pose = acc_pose;
 			} else {
 				// accept, not new best
+				//std::ostringstream oss;
+				//oss << "out" << i<< ".pdb";
+				//pose.dump_pdb( oss.str() );
+
 				acc_pose = pose;
 				acc_score = score;
 				sshift.trigger_accept();
@@ -214,10 +214,18 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 			acc_score = score;
 			sshift.trigger_accept();
 			if (score < best_score) {
+				//std::ostringstream oss;
+				//oss << "out" << i<< ".pdb";
+				//pose.dump_pdb( oss.str() );
+
 				TR << "New best!  Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
 				best_pose = pose;
 				best_score = score;
 			} else {
+				//std::ostringstream oss;
+				//oss << "out" << i<< ".pdb";
+				//pose.dump_pdb( oss.str() );
+
 				TR << "Accept!    Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
 			}
 		}
@@ -235,9 +243,31 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 void
 OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP loops) {
 	if (loops->size() != 0) {
-		// set foldtree + variants
-		loops->auto_choose_cutpoints(pose);
+		// see if the pose has NCS
+		simple_moves::symmetry::NCSResMappingOP ncs;
+		if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
+			ncs = ( static_cast< simple_moves::symmetry::NCSResMapping* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING )() ));
+		}
+
 		core::kinematics::FoldTree f_in=pose.fold_tree(), f_new;
+
+		// set foldtree + variants
+		for( protocols::loops::Loops::iterator it=loops->v_begin(), it_end=loops->v_end(); it!=it_end; ++it ) {
+			// if loop crosses a cut maintain that cut
+			bool crosses_cut=false;
+			Size i = 0;
+			for( i=it->start(); i<=it->stop() && !crosses_cut; ++i ) {
+				crosses_cut |= f_in.is_cutpoint(i);
+			}
+			if (crosses_cut) {
+				it->set_cut(i-1); //?
+			} else {
+				it->set_cut( it->midpoint() );  // be deterministic so ncs copies match up
+			}
+			// to do? what if we cross two cuts?
+		}
+
+
 		protocols::loops::fold_tree_from_loops( pose, *loops, f_new);
 		pose.fold_tree( f_new );
 		protocols::loops::add_cutpoint_variants( pose );
@@ -267,14 +297,10 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 		core::fragment::FragSetOP frags1 = new core::fragment::ConstantLengthFragSet( 1 );
 		core::fragment::chop_fragments( *frags3, *frags1 );
 
-		// setup fragment movers
-		protocols::simple_moves::ClassicFragmentMoverOP frag1mover, frag3mover;
-		frag3mover = new protocols::simple_moves::ClassicFragmentMover( frags3, mm_loop );
-		frag3mover->set_check_ss( false );
-		frag3mover->enable_end_bias_check( false );
-		frag1mover = new protocols::simple_moves::ClassicFragmentMover( frags1, mm_loop );
-		frag1mover->set_check_ss( false );
-		frag1mover->enable_end_bias_check( false );
+		// make a vector of fragments for random access (why does FragSet not have this?!?)
+		utility::vector1< core::fragment::FrameOP > frames1, frames3;
+		for (core::fragment::FrameIterator it = frags1->nonconst_begin(); it != frags1->nonconst_end(); ++it) frames1.push_back( *it );
+		for (core::fragment::FrameIterator it = frags3->nonconst_begin(); it != frags3->nonconst_end(); ++it) frames3.push_back( *it );
 
 		// extend + idealize loops
 		for( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
@@ -292,10 +318,33 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *scorefxn_sampling_, 2.0 );
 
 			for (Size n=1; n<=ninnerCyc; ++n) {
-				frag3mover->apply( pose ); (*scorefxn_sampling_)(pose);
-				mc->boltzmann( pose , "frag3" );
-				frag1mover->apply( pose ); (*scorefxn_sampling_)(pose);
-				mc->boltzmann( pose , "frag1" );
+				utility::vector1< core::fragment::FrameOP > & working_frames = (n%2)?frames3:frames1;
+
+				//frag3mover->apply( pose );
+				int frame_idx = numeric::random::random_range(1,working_frames.size());
+				core::fragment::FrameOP frame_i = working_frames[frame_idx];
+				int frag_idx = numeric::random::random_range(1,frame_i->nr_frags());
+				core::fragment::FragDataCOP to_insert = frame_i->fragment_ptr(frag_idx);
+				to_insert->apply( pose, *frame_i );
+
+				// now apply to ncs copies
+				if (ncs) {
+					for (int j=1; j<=ncs->ngroups(); ++j ) {
+						bool all_are_mapped = true;
+						for ( Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k )
+							all_are_mapped &= (ncs->get_equiv( j,k )!=0);
+						if (!all_are_mapped) continue;
+						core::Size remap_start = ncs->get_equiv( j, frame_i->start() );
+						core::Size remap_stop = ncs->get_equiv( j, frame_i->stop() );
+						if (remap_stop-remap_start != frame_i->stop()-frame_i->start()) continue;
+						to_insert->apply( pose, remap_start, remap_stop );
+					}
+				}
+
+				(*scorefxn_sampling_)(pose);
+				if (mc->boltzmann( pose , (n%2)?"frag3":"frag1" )) {
+					std::cerr << "out " << i << "_" << n << ": " << frame_i->stop() << std::endl;
+				}
 			}
 			mc->show_scores();
 			mc->show_counters();
