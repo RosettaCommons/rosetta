@@ -216,7 +216,7 @@ CartesianNormalModeMover::apply( pose::Pose &pose )
 
 		protocols::relax::FastRelax relax_prot( sfxn_, 1 );
 		relax_prot.set_movemap( mm_ );
-		relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
+		relax_prot.min_type("lbfgs_armijo_nonmonotone");
 
 		relax_prot.cartesian( true ); // force to use cartesian
 
@@ -411,7 +411,7 @@ TorsionNormalModeMover::apply( pose::Pose &pose )
 
 		protocols::relax::FastRelax relax_prot( sfxn_, 1 );
 		relax_prot.set_movemap( mm_ );
-		relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
+		relax_prot.min_type("lbfgs_armijo_nonmonotone");
 
 		gen_coord_constraint( pose, expose, dummy );
 

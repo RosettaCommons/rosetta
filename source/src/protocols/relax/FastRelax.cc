@@ -369,24 +369,24 @@ FastRelax::parse_my_tag(
 	ramp_down_constraints( tag->getOption< bool >( "ramp_down_constraints", ramp_down_constraints() ) );
 
 	if ( tag->getOption< bool >( "bondangle", false ) ) {
-		minimize_bond_angles_ = true;
+		minimize_bond_angles( true );
 		mm->set( core::id::THETA, true );
 	}
 
 	if ( tag->getOption< bool >( "bondlength", false ) ) {
-		minimize_bond_lengths_ = true;
+		minimize_bond_lengths( true );
 		mm->set( core::id::D, true );
 	}
 
 	set_movemap(mm);
 
 	if ( tag->hasOption( "min_type" ) ) {
-		min_type_ = tag->getOption< std::string >( "min_type" );
+		min_type( tag->getOption< std::string >( "min_type" ) );
 	} else {
 		//fpd if no minimizer is specified, and we're doing flexible bond minimization
 		//fpd   we should use lbfgs (dfpmin is way too slow)
-		if ( cartesian_ || minimize_bond_angles_ || minimize_bond_lengths_ )
-			min_type_ = "lbfgs_armijo_nonmonotone";
+		if ( cartesian() || minimize_bond_angles() || minimize_bond_lengths() )
+			min_type( "lbfgs_armijo_nonmonotone" );
 	}
 
 	if (batch) {
@@ -514,12 +514,12 @@ void FastRelax::do_minimize(
 
   protocols::simple_moves::MinMoverOP min_mover;
   if ( core::pose::symmetry::is_symmetric( pose ) )  {
-    min_mover = new simple_moves::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
+    min_mover = new simple_moves::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type(), tolerance, true );
   } else {
-    min_mover = new protocols::simple_moves::MinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
+    min_mover = new protocols::simple_moves::MinMover( local_movemap, local_scorefxn, min_type(), tolerance, true );
   }
-	min_mover->cartesian( cartesian_ );
-	if (max_iter_ > 0) min_mover->max_iter( max_iter_ );
+	min_mover->cartesian( cartesian() );
+	if (max_iter() > 0) min_mover->max_iter( max_iter() );
   min_mover->apply( pose );
 }
 

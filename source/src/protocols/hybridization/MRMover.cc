@@ -305,8 +305,8 @@ void MRMover::apply( Pose &pose ) {
 		mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
 		mm->set( core::id::THETA, true );
 		relax_prot->set_movemap( mm );
-		relax_prot->set_min_type("lbfgs_armijo_nonmonotone");
-		relax_prot->set_max_iter( relax_max_iter_ );
+		relax_prot->min_type("lbfgs_armijo_nonmonotone");
+		relax_prot->max_iter( relax_max_iter_ );
 		relax_prot->apply( pose );
 	}
 }

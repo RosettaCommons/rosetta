@@ -1110,7 +1110,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				// do relax _without_ ramping down coordinate constraints
 				TR << " batch_relax 1 : " << std::endl;
 				protocols::relax::FastRelax relax_prot( fa_scorefxn_, relax_repeats_ ,"NO CST RAMPING" );
-				relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
+				relax_prot.min_type("lbfgs_armijo_nonmonotone");
 				relax_prot.apply(pose);
 			} else {
 				// batch relax
@@ -1122,7 +1122,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 
 				if (post_centroid_structs.size() == batch_relax_) {
 					protocols::relax::FastRelax relax_prot( fa_scorefxn_ );
-					relax_prot.set_min_type("lbfgs_armijo_nonmonotone");
+					relax_prot.min_type("lbfgs_armijo_nonmonotone");
 					relax_prot.set_force_nonideal(true);
 					relax_prot.set_script_to_batchrelax_default( relax_repeats_ );
 				  //relax_prot.set_movemap(mm);

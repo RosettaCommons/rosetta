@@ -27,14 +27,13 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 //// C++ headers
 #include <string>
 
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -43,8 +42,6 @@ namespace relax {
 class RelaxProtocolBase : public moves::Mover {
 public:
 	typedef moves::Mover parent;
-
-public:
 
 	RelaxProtocolBase( core::scoring::ScoreFunctionOP );
 	RelaxProtocolBase( std::string const & movername = "RelaxProtocol" );
@@ -55,109 +52,84 @@ public:
 
 	static void register_options();
 
+  void apply_disulfides( core::pose::Pose & pose );
+
 	// Default options -------------------------------------
 	void set_defaults();
 	void set_default_minimization_settings();
 	void set_default_coordinate_settings();
 	void set_default_movemap();
 
-protected:
+	// Public accessors
+	core::kinematics::MoveMapOP get_movemap() { return movemap_; }
+	const core::scoring::ScoreFunctionCOP get_scorefxn() const { return scorefxn_; }
+	core::pack::task::TaskFactoryOP const & get_task_factory() const { return task_factory_; }
+	
+	bool cartesian() const { return cartesian_; }
+	std::string min_type() const { return min_type_; }
+	Size max_iter() const { return max_iter_; }
+	bool dry_run() const { return dry_run_; }
 
-	void initialize_movemap( core::pose::Pose const & pose, core::kinematics::MoveMap & movemap );
+	bool constrain_relax_to_native_coords() const { return constrain_relax_to_native_coords_; }
+	bool constrain_relax_to_start_coords() const { return constrain_relax_to_start_coords_; }
+	bool constrain_coords() const { return constrain_coords_; }
+	bool explicit_ramp_constraints() const { return explicit_ramp_constraints_; }
+	bool ramp_down_constraints() const { return ramp_down_constraints_; }
+	bool constrain_relax_segments() const { return constrain_relax_segments_; }
+	
+	// Public mutators
+	void set_movemap( core::kinematics::MoveMapOP movemap ) { movemap_ = movemap; }
+	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) { scorefxn_ = scorefxn; }
+	void set_task_factory( core::pack::task::TaskFactoryOP task_factory ) { task_factory_ = task_factory; }
 
-public:
-	// Accesors -------------------------------------
+	void cartesian( bool newval ) { cartesian_ = newval; }
+	void min_type( std::string min_type ) { min_type_ = min_type; }
+	void max_iter( Size max_iter ) { max_iter_ = max_iter; }
+	void dry_run( bool setting ) { dry_run_ = setting; }
 
-	void fix_omega( bool setting );
-	void minimize_bond_lengths( bool setting );
-	void minimize_bond_angles( bool setting );
-	void minimize_bondlength_subset( int setting );
-	void minimize_bondangle_subset( int setting );
-
-	bool fix_omega() const;
-	bool minimize_bond_lengths() const;
-	bool minimize_bond_angles() const;
-	int minimize_bondlength_subset() const;
-	int minimize_bondangle_subset() const;
-
-	bool constrain_relax_to_native_coords() const {  return    constrain_relax_to_native_coords_;}
-	bool constrain_relax_to_start_coords() const {  return     constrain_relax_to_start_coords_;}
-	bool constrain_coords() const {  return                    constrain_coords_;}
-	bool explicit_ramp_constraints() const {  return           explicit_ramp_constraints_;}
-	bool ramp_down_constraints() const {  return               ramp_down_constraints_;}
-	bool constrain_relax_segments() const {  return            constrain_relax_segments_;}
-
-	bool limit_aroma_chi2() const { return limit_aroma_chi2_; }
-
-	void constrain_relax_to_native_coords( bool constrain_relax_to_native_coords ) {
-		constrain_relax_to_native_coords_ = constrain_relax_to_native_coords;
-	}
-	void constrain_relax_to_start_coords(  bool constrain_relax_to_start_coords ) {
-		constrain_relax_to_start_coords_ = constrain_relax_to_start_coords;
-	}
-	void constrain_coords( bool constrain_coords ) {
-		constrain_coords_ = constrain_coords;
-	}
+	void constrain_relax_to_native_coords( bool constrain_relax_to_native_coords ) { constrain_relax_to_native_coords_ = constrain_relax_to_native_coords; }
+	void constrain_relax_to_start_coords(  bool constrain_relax_to_start_coords ) { constrain_relax_to_start_coords_ = constrain_relax_to_start_coords; }
+	void constrain_coords( bool constrain_coords ) { constrain_coords_ = constrain_coords; }
+	void constrain_relax_segments( bool constrain_relax_segments ) { constrain_relax_segments_ = constrain_relax_segments; }
 	void ramp_down_constraints( bool ramp_down_constraints ) {
 		explicit_ramp_constraints_ = true;
 		ramp_down_constraints_ =  ramp_down_constraints;
 	}
-	void constrain_relax_segments( bool constrain_relax_segments ) {
-		constrain_relax_segments_ = constrain_relax_segments;
-	}
 
-	// get/set cartesian minimization option
-	void cartesian( bool newval ) { cartesian_ = newval; }
-	bool cartesian( ) const { return cartesian_; }
-
-	core::kinematics::MoveMapOP get_movemap();
-	void set_movemap( core::kinematics::MoveMapOP movemap );
-
-	void set_min_type( std::string min_type );
-	void set_max_iter( Size max_iter );
-
-public:
-	void set_scorefxn( core::scoring::ScoreFunctionOP score );
-	const core::scoring::ScoreFunctionCOP get_scorefxn() const;
-
-	void set_task_factory( core::pack::task::TaskFactoryOP taskf );
-	core::pack::task::TaskFactoryOP const & get_task_factory() const;
-
-	void set_dry_run( bool setting ) {
-		dry_run_ = setting;
-	}
-
-	bool dry_run() const {
-		return dry_run_;
-	}
 
 protected:
-	core::scoring::ScoreFunctionOP get_scorefxn();
+	core::scoring::ScoreFunctionOP get_scorefxn() { return scorefxn_; }
+
+	// Accessors -------------------------------------
+	bool fix_omega() const { return fix_omega_; }
+	bool minimize_bond_lengths() const { return minimize_bond_lengths_; }
+	bool minimize_bond_angles() const { return minimize_bond_angles_; }
+	int minimize_bondlength_subset() const { return minimize_bondlength_subset_; }
+	int minimize_bondangle_subset() const { return minimize_bondangle_subset_; }
+	bool limit_aroma_chi2() const { return limit_aroma_chi2_; }
 
 
+	// Mutators -------------------------------------
+	void fix_omega( bool fix_omega ) { fix_omega_ = fix_omega; }
+  void minimize_bond_lengths( bool minimize_bond_lengths ) { minimize_bond_lengths_ = minimize_bond_lengths; }
+  void minimize_bond_angles( bool minimize_bond_angles ) { minimize_bond_angles_ = minimize_bond_angles; }
+  void minimize_bondangle_subset( int minimize_bondangle_subset ) { minimize_bondangle_subset_ = minimize_bondangle_subset; }
+  void minimize_bondlength_subset( int minimize_bondlength_subset ) { minimize_bondlength_subset_ = minimize_bondlength_subset; }
+	
 
-public:
-  void apply_disulfides( core::pose::Pose & pose );
-
-protected:
+	void initialize_movemap( core::pose::Pose const & pose, core::kinematics::MoveMap & movemap );
 	void set_up_constraints( core::pose::Pose &pose,  core::kinematics::MoveMap & local_movemap );
-
 	void output_debug_structure( core::pose::Pose & pose, std::string prefix );
 
-
-
-
-
-protected:  // Essentially MoveMap settings
-
+private:
+  // Essentially MoveMap settings
 	bool fix_omega_;
 	bool minimize_bond_lengths_;
 	bool minimize_bond_angles_;
 	int minimize_bondangle_subset_;
 	int minimize_bondlength_subset_;
 
-protected:  // Constraint settings
-
+  // Constraint settings
 	bool constrain_relax_to_native_coords_;
 	bool constrain_relax_to_start_coords_;
 	bool constrain_coords_;
@@ -175,11 +147,7 @@ protected:  // Constraint settings
 	/// maximum minimizer iterations
 	core::Size max_iter_;
 
-protected:
-
 	bool limit_aroma_chi2_;
-
-private: // other private variables
 
 	// The movemap
 	core::kinematics::MoveMapOP movemap_;

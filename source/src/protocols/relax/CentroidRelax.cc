@@ -205,7 +205,7 @@ namespace relax {
 
     void
     CentroidRelax::set_cartesian(bool cart){
-        cartesian_ = cart;
+        cartesian( cart );
         
         if (cart){
             set_min_type("lbfgs_armijo_nonmonotone");
@@ -221,7 +221,7 @@ namespace relax {
     }
     void
     CentroidRelax::set_min_type(string min){
-        min_type_ = min; 
+        min_type( min ); 
     }
     
     void
@@ -313,11 +313,11 @@ namespace relax {
         //Initialize MinMover
         MinMoverOP minmover;
         if ( core::pose::symmetry::is_symmetric( pose ) )  {
-            minmover = new symmetry::SymMinMover( movemap_, cen_scorefxn_, min_type_, def_parameters.min_params[1], true );}
+            minmover = new symmetry::SymMinMover( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true );}
         else {
-            minmover = new MinMover( movemap_, cen_scorefxn_, min_type_, def_parameters.min_params[1], true );
+            minmover = new MinMover( movemap_, cen_scorefxn_, min_type(), def_parameters.min_params[1], true );
         }
-	minmover->cartesian( cartesian_ );
+	minmover->cartesian( cartesian() );
 	
         //Test to make sure something is ramped - If not, run basic.
         if (!ramp_vdw_ && !ramp_rama_){

@@ -227,18 +227,6 @@ void RelaxProtocolBase::initialize_movemap(
 
 }
 
-void RelaxProtocolBase::set_scorefxn( core::scoring::ScoreFunctionOP score ) {
-	scorefxn_ = score;
-}
-
-core::scoring::ScoreFunctionOP RelaxProtocolBase::get_scorefxn() {
-	return scorefxn_;
-}
-
-const core::scoring::ScoreFunctionCOP RelaxProtocolBase::get_scorefxn() const {
-	return scorefxn_;
-}
-
 void RelaxProtocolBase::set_defaults(){
 	set_default_minimization_settings();
 	set_default_coordinate_settings();
@@ -313,34 +301,6 @@ void RelaxProtocolBase::set_default_movemap(){
 	}
 }
 
-void RelaxProtocolBase::set_movemap( core::kinematics::MoveMapOP movemap ) {
-	movemap_ = movemap;
-}
-
-void RelaxProtocolBase::set_min_type( std::string min_type ) {
-	min_type_ = min_type;
-}
-
-void RelaxProtocolBase::set_max_iter( Size max_iter ) {
-	max_iter_ = max_iter;
-}
-
-void RelaxProtocolBase::set_task_factory( core::pack::task::TaskFactoryOP taskf ) {
-	task_factory_ = taskf;
-}
-
-void RelaxProtocolBase::fix_omega( bool setting ) { fix_omega_ = setting; }
-void RelaxProtocolBase::minimize_bond_lengths( bool setting ) { minimize_bond_lengths_ = setting; }
-void RelaxProtocolBase::minimize_bond_angles( bool setting ) { minimize_bond_angles_ = setting; }
-void RelaxProtocolBase::minimize_bondangle_subset( int setting ) { minimize_bondangle_subset_ = setting; }
-void RelaxProtocolBase::minimize_bondlength_subset( int setting ) { minimize_bondlength_subset_ = setting; }
-
-bool RelaxProtocolBase::fix_omega() const { return fix_omega_;}
-bool RelaxProtocolBase::minimize_bond_lengths() const { return minimize_bond_lengths_;}
-bool RelaxProtocolBase::minimize_bond_angles() const { return minimize_bond_angles_;}
-int RelaxProtocolBase::minimize_bondlength_subset() const { return minimize_bondlength_subset_;}
-int RelaxProtocolBase::minimize_bondangle_subset() const { return minimize_bondangle_subset_;}
-
 void RelaxProtocolBase::register_options()
 {
 	using namespace basic::options;
@@ -357,18 +317,6 @@ void RelaxProtocolBase::register_options()
 	option.add_relevant( OptionKeys::relax::minimize_bondlength_subset );
 	option.add_relevant( OptionKeys::relax::minimize_bondlength_subset );
 
-}
-
-core::kinematics::MoveMapOP
-RelaxProtocolBase::get_movemap()
-{
-	return movemap_;
-}
-
-core::pack::task::TaskFactoryOP const &
-RelaxProtocolBase::get_task_factory() const
-{
-	return task_factory_;
 }
 
 

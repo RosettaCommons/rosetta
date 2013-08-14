@@ -272,7 +272,7 @@ public:
 		protocols::relax::RelaxProtocolBaseOP relax_prot = protocols::relax::generate_relax_from_cmd();
 		relax_prot->set_current_tag( get_current_tag() );
 		relax_prot->cartesian( true );
-		relax_prot->set_min_type("lbfgs_armijo_nonmonotone");
+		relax_prot->min_type("lbfgs_armijo_nonmonotone");
 		relax_prot->set_movemap(mm_relax);
 
 		core::scoring::ScoreFunctionOP cart_fa = new core::scoring::ScoreFunction(*fadens_scorefxn_);

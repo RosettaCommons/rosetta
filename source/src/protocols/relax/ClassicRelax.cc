@@ -245,7 +245,7 @@ void ClassicRelax::set_default( bool const use_default_movemap ){
 	TR <<  "Setting up default relax setting" << std::endl;
 	// minimization
 	//min_type = std::string("dfpmin_armijo_nonmonotone");
-	min_type = min_type_;
+	min_type = RelaxProtocolBase::min_type();																	// use the base class min_type value
 	nb_list = true;
 
 
@@ -617,7 +617,7 @@ void ClassicRelax::apply( core::pose::Pose & pose ){
 		moves::TrialMoverOP phase1_trial( new moves::TrialMover( phase1_min, mc_ ) );
 
 		moves::RampingMoverOP full_cycle_phase1_;
-		if ( ramp_down_constraints_ ) {
+		if ( ramp_down_constraints() ) {
 			core::scoring::EnergyMap starting_weights, final_weights;
 			starting_weights = final_weights = get_scorefxn()->weights();
 			starting_weights[ fa_rep             ] = start_rep_weight * starting_weights[ fa_rep ]; // ramp up repulsion

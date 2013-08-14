@@ -162,7 +162,7 @@ void AbrelaxMover::set_defaults() {
 		//in test_cycles we don't test relax...
 		//special relax integration test takes care of that...
 		// so make it fast here... dry_run means just an energy evaluation
-		relax_protocol()->set_dry_run( true );
+		relax_protocol()->dry_run( true );
 	}
 }
 
