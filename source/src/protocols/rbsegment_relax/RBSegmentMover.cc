@@ -467,16 +467,23 @@ SequenceShiftMover::get_residues_to_rebuild() {
 
 	bool inloop=false;
 	int loopstart,loopstop;
-	for (int i=1; i<=residues_to_rebuild.size(); ++i) {
-		if (!inloop && residues_to_rebuild[i]) {
+
+	//A: extend loops by 1 residue if they do not cross a cut
+	utility::vector1<bool> ext_residues_to_rebuild = residues_to_rebuild;
+	for (int i=2; i<=residues_to_rebuild.size()-1; ++i) {
+		if (residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i-1))
+			ext_residues_to_rebuild[i-1] = true;
+		if (residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i))
+			ext_residues_to_rebuild[i+1] = true;
+	}
+
+	for (int i=1; i<=ext_residues_to_rebuild.size(); ++i) {
+		if (!inloop && ext_residues_to_rebuild[i]) {
 			inloop=true;
 			loopstart=i;
-		}
-		if (inloop && !residues_to_rebuild[i]) {
+		} else if (inloop && !ext_residues_to_rebuild[i]) {
 			inloop=false;
 			loopstop = i-1;
-			if (!ref_pose_.fold_tree().is_cutpoint(loopstart-1)) loopstart--;
-			if (!ref_pose_.fold_tree().is_cutpoint(loopstop)) loopstop++;
 			retval->add_loop( loopstart,loopstop, (int)std::floor(0.5*(loopstart+loopstop+1)) );
 		}
 	}
