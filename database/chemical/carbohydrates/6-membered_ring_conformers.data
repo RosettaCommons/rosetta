@@ -66,19 +66,19 @@
   B2,5       boat                 2  -60.0   60.0    0.0  -60.0   60.0    0.0
 
 # 12 Envelope (Sofa, Half-Boat) Conformations (Local Maxima)
-  OB         envelope             1   30.0    0.0    0.0  -30.0   60.0  -60.0
-  1B         envelope             1  -60.0   30.0    0.0    0.0  -30.0   60.0
-  2B         envelope             1   60.0  -60.0   30.0    0.0    0.0  -30.0
-  3B         envelope             1  -30.0   60.0  -60.0   30.0    0.0    0.0
-  4B         envelope             1    0.0  -30.0   60.0  -60.0   30.0    0.0
-  5B         envelope             1    0.0    0.0  -30.0   60.0  -60.0   30.0
+  OE         envelope             1   30.0    0.0    0.0  -30.0   60.0  -60.0
+  1E         envelope             1  -60.0   30.0    0.0    0.0  -30.0   60.0
+  2E         envelope             1   60.0  -60.0   30.0    0.0    0.0  -30.0
+  3E         envelope             1  -30.0   60.0  -60.0   30.0    0.0    0.0
+  4E         envelope             1    0.0  -30.0   60.0  -60.0   30.0    0.0
+  5E         envelope             1    0.0    0.0  -30.0   60.0  -60.0   30.0
 
-  BO         envelope             1  -30.0    0.0    0.0   30.0  -60.0   60.0
-  B1         envelope             1   60.0  -30.0    0.0    0.0   30.0  -60.0
-  B2         envelope             1  -60.0   60.0  -30.0    0.0    0.0   30.0
-  B3         envelope             1   30.0  -60.0   60.0  -30.0    0.0    0.0
-  B4         envelope             1    0.0   30.0  -60.0   60.0  -30.0    0.0
-  B5         envelope             1    0.0    0.0   30.0  -60.0   60.0  -30.0
+  EO         envelope             1  -30.0    0.0    0.0   30.0  -60.0   60.0
+  E1         envelope             1   60.0  -30.0    0.0    0.0   30.0  -60.0
+  E2         envelope             1  -60.0   60.0  -30.0    0.0    0.0   30.0
+  E3         envelope             1   30.0  -60.0   60.0  -30.0    0.0    0.0
+  E4         envelope             1    0.0   30.0  -60.0   60.0  -30.0    0.0
+  E5         envelope             1    0.0    0.0   30.0  -60.0   60.0  -30.0
 
 # 12 Half-Chair (Twist-Chair) Conformations (Local Maxima)
   OH1        half-chair           1   60.0  -30.0    0.0  -30.0   60.0  -60.0
