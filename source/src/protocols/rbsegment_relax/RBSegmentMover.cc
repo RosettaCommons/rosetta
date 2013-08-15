@@ -434,6 +434,7 @@ SequenceShiftMover::get_residues_to_rebuild() {
 		return retval;
 
 	utility::vector1<bool> residues_to_rebuild (offsets_.size(), false);
+
 	for (int i=1; i<=offsets_.size(); ++i) {
 
 		if (residues_to_rebuild[i]) continue;
@@ -441,20 +442,25 @@ SequenceShiftMover::get_residues_to_rebuild() {
 		// case 1: alignment passes N- or C- term
 		if (offsets_[i]+i<1 || offsets_[i]+i>offsets_.size()) {
 			residues_to_rebuild[i]=true;
+			continue;
 		}
 
-		// case 2: residues overlap
-		for (int j=i+1; j<=offsets_.size(); ++j) {
-			if (offsets_[i]+i == offsets_[j]+j) {
-				residues_to_rebuild[i]=residues_to_rebuild[j]=true;
+		// case 2: alignment crosses cutpoint
+		int dir = (offsets_[i]>0) ? 1:-1;
+		int step = (offsets_[i]>0) ? 0:-1;
+		for (int j=i; j!=i+offsets_[i] && !residues_to_rebuild[i]; j+=dir) {
+			if (ref_pose_.fold_tree().is_cutpoint(j+step)) {
+				residues_to_rebuild[i]=true;
+				//std::cerr << "at " << i << " cross cut " << j << std::endl;
 			}
 		}
+		if (residues_to_rebuild[i]) continue;
 
-		// case 3: alignment crosses cutpoint
-		int dir = (offsets_[i]>0) ? 1:-1;
-		for (int j=i+dir; j!=i+offsets_[i]+dir && !residues_to_rebuild[i]; j+=dir) {
-			if (ref_pose_.fold_tree().is_cutpoint((dir==1)?j:j-1)) {
-				residues_to_rebuild[i]=true;
+		// case 3: another residue is mapped here
+		for (int j=i+1; j<=offsets_.size(); ++j) {
+			if (offsets_[i]+i == offsets_[j]+j) {
+				//std::cerr << "res " << i << " and " << j << " collide" << std::endl;
+				residues_to_rebuild[i]=residues_to_rebuild[j]=true;
 			}
 		}
 	}

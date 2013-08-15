@@ -269,6 +269,8 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 
 
 		protocols::loops::fold_tree_from_loops( pose, *loops, f_new);
+		//std::cerr << f_new << std::endl;
+
 		pose.fold_tree( f_new );
 		protocols::loops::add_cutpoint_variants( pose );
 
@@ -343,7 +345,19 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 
 				(*scorefxn_sampling_)(pose);
 				if (mc->boltzmann( pose , (n%2)?"frag3":"frag1" )) {
-					std::cerr << "out " << i << "_" << n << ": " << frame_i->stop() << std::endl;
+					;
+					//std::ostringstream oss;
+					//oss << "out" << i << "_" << n << ".pdb";
+					//pose.dump_pdb( oss.str() );
+
+					//std::cerr << "out " << i << "_" << n << ": " << frame_i->start() << std::endl;
+					//for (int j=1; j<=ncs->ngroups(); ++j ) {
+					//	bool all_are_mapped = true;
+					//	for ( Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k ) all_are_mapped &= (ncs->get_equiv( j,k )!=0);
+					//	if (!all_are_mapped) continue;
+					//	core::Size remap_start = ncs->get_equiv( j, frame_i->start() );
+					//	std::cerr << "  ---> " << remap_start << std::endl;
+					//}
 				}
 			}
 			mc->show_scores();
