@@ -88,9 +88,9 @@ RingConformerSet::show(std::ostream & output) const
 
 	output << "Possible ring conformers:" << endl;
 
-	Size n_conformers = conformers_.size();
+	Size n_conformers = nondegenerate_conformers_.size();
 	for (uint i = 1; i <= n_conformers; ++i) {
-		output << "   " << conformers_[i]->specific_name << endl;
+		output << "   " << nondegenerate_conformers_[i]->specific_name << endl;
 	}
 
 	output << endl;
@@ -98,6 +98,13 @@ RingConformerSet::show(std::ostream & output) const
 
 
 // Accessors/Mutators
+// Return a list of all nondegenerate conformers in the set.
+utility::vector1<RingConformerCOP>
+RingConformerSet::get_all_nondegenerate_conformers() const
+{
+	return nondegenerate_conformers_;
+}
+
 // Return the conformer that is the best fit for the provided list of nu angles.
 RingConformerCOP
 RingConformerSet::get_conformer_from_nus(utility::vector1<core::Angle> /*angles*/) const
@@ -120,9 +127,9 @@ RingConformerSet::get_lowest_energy_conformer() const
 RingConformerCOP
 RingConformerSet::get_random_conformer() const
 {
-	uint i = uint(RG.uniform() * conformers_.size() + 1);
+	uint i = uint(RG.uniform() * degenerate_conformers_.size() + 1);
 
-	return conformers_[i];
+	return degenerate_conformers_[i];
 }
 
 // Return a random conformer from the subset of conformers that are local minima.
@@ -154,7 +161,17 @@ RingConformerSet::init(core::uint ring_size)
 	Size n_conformers = conformers_for_ring_size(ring_size_).size();
 	for (uint i = 1; i <= n_conformers; ++i) {
 		RingConformerCOP conformer = &conformers_for_ring_size(ring_size_).at(i);
-		conformers_.push_back(conformer);
+		nondegenerate_conformers_.push_back(conformer);
+		for (uint copy_num = 1; copy_num <= conformer->degeneracy; ++copy_num) {
+			degenerate_conformers_.push_back(conformer);
+		}
+
+		// Other subsets
+		// TODO:
+		// if (CarbohydrateInfo->vector_of_names_from_params_file.contains(conformer->specific_name))...
+		// will need CAP back to owning CarbohydrateInfo or eventually ResidueType
+		//energy_minima_conformers_ = vector1<RingConformerCOP>();  // TEMP
+		//energy_maxima_conformers_ = vector1<RingConformerCOP>();  // TEMP
 	}
 }
 
@@ -165,7 +182,10 @@ RingConformerSet::copy_data(
 		RingConformerSet object_to_copy_from)
 {
 	object_to_copy_to.ring_size_ = object_to_copy_from.ring_size_;
-	object_to_copy_to.conformers_ = object_to_copy_from.conformers_;
+	object_to_copy_to.nondegenerate_conformers_ = object_to_copy_from.nondegenerate_conformers_;
+	object_to_copy_to.degenerate_conformers_ = object_to_copy_from.degenerate_conformers_;
+	//object_to_copy_to.energy_minima_conformers_ = object_to_copy_from.energy_minima_conformers_;
+	//object_to_copy_to.energy_maxima_conformers_ = object_to_copy_from.energy_maxima_conformers_;
 }
 
 

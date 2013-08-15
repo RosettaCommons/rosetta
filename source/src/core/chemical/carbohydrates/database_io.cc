@@ -135,7 +135,7 @@ read_conformers_from_database_file_for_ring_size(std::string const & filename, c
 		// We only need 2 less than the number of nu angles to define a ring conformer.
 		conformer.ideal_angles.resize(ring_size - 2);
 
-		line_word_by_word >> conformer.specific_name >> conformer.general_name;
+		line_word_by_word >> conformer.specific_name >> conformer.general_name >> conformer.degeneracy;
 
 		for (uint nu = 1; nu <= ring_size - 2; ++nu) {
 			line_word_by_word >> conformer.ideal_angles[nu];

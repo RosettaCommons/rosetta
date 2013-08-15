@@ -28,34 +28,37 @@
 
 # Since these are internal ring torsions, the sum must be 0 degrees.
 
+# Degeneracy is the number of copies to load into a degenerate conformer set.
+# It only applies for larger ring sizes.
+
 # There are 20 possible ring conformers.
 
 # Specific   General
-# Conformer  Conformer               Ideal Angles
-# Name       Name          nu1    nu2    nu3    nu4    nu0
+# Conformer  Conformer                          Ideal Angles
+# Name       Name       Degeneracy    nu1    nu2    nu3    nu4    nu0
 
 # 10 Envelope Conformations
-  OE         envelope     30.0    0.0  -30.0   60.0  -60.0
-  1E         envelope    -60.0   30.0    0.0  -30.0   60.0
-  2E         envelope     60.0  -60.0   30.0    0.0  -30.0
-  3E         envelope    -30.0   60.0  -60.0   30.0    0.0
-  4E         envelope      0.0  -30.0   60.0  -60.0   30.0
+  OE         envelope            1   30.0    0.0  -30.0   60.0  -60.0
+  1E         envelope            1  -60.0   30.0    0.0  -30.0   60.0
+  2E         envelope            1   60.0  -60.0   30.0    0.0  -30.0
+  3E         envelope            1  -30.0   60.0  -60.0   30.0    0.0
+  4E         envelope            1    0.0  -30.0   60.0  -60.0   30.0
 
-  EO         envelope    -30.0    0.0   30.0  -60.0   60.0
-  E1         envelope     60.0  -30.0    0.0   30.0  -60.0
-  E2         envelope    -60.0   60.0  -30.0    0.0   30.0
-  E3         envelope     30.0  -60.0   60.0  -30.0    0.0
-  E4         envelope      0.0   30.0  -60.0   60.0  -30.0
+  EO         envelope            1  -30.0    0.0   30.0  -60.0   60.0
+  E1         envelope            1   60.0  -30.0    0.0   30.0  -60.0
+  E2         envelope            1  -60.0   60.0  -30.0    0.0   30.0
+  E3         envelope            1   30.0  -60.0   60.0  -30.0    0.0
+  E4         envelope            1    0.0   30.0  -60.0   60.0  -30.0
 
 # 10 Twist Conformations
-  OT1        twist        60.0  -30.0  -30.0   60.0  -60.0
-  1T2        twist       -60.0   60.0  -30.0  -30.0   60.0
-  2T3        twist        60.0  -60.0   60.0  -30.0  -30.0
-  3T4        twist       -30.0   60.0  -60.0   60.0  -30.0
-  4T5        twist       -30.0  -30.0   60.0  -60.0   60.0
+  OT1        twist               1   60.0  -30.0  -30.0   60.0  -60.0
+  1T2        twist               1  -60.0   60.0  -30.0  -30.0   60.0
+  2T3        twist               1   60.0  -60.0   60.0  -30.0  -30.0
+  3T4        twist               1  -30.0   60.0  -60.0   60.0  -30.0
+  4T5        twist               1  -30.0  -30.0   60.0  -60.0   60.0
 
-  1TO        twist       -60.0   30.0   30.0  -60.0   60.0
-  2T1        twist        60.0  -60.0   30.0   30.0  -60.0
-  3T2        twist       -60.0   60.0  -60.0   30.0   30.0
-  4T3        twist        30.0  -60.0   60.0  -60.0   30.0
-  5T4        twist        30.0   30.0  -60.0   60.0  -60.0
+  1TO        twist               1  -60.0   30.0   30.0  -60.0   60.0
+  2T1        twist               1   60.0  -60.0   30.0   30.0  -60.0
+  3T2        twist               1  -60.0   60.0  -60.0   30.0   30.0
+  4T3        twist               1   30.0  -60.0   60.0  -60.0   30.0
+  5T4        twist               1   30.0   30.0  -60.0   60.0  -60.0

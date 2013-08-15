@@ -37,6 +37,8 @@ struct RingConformer : public utility::pointer::ReferenceCount {
 	std::string specific_name;  // e.g., "1C4"
 	std::string general_name;  // e.g., "chair"
 
+	core::uint degeneracy; // E.g., 1C4 has a degeneracy of 3, since 3CO and 5C2 are equivalent.
+
 	// a list of the torsion angles for the 1st n-2 nu angles, where n is the ring size.
 	utility::vector1<core::Angle> ideal_angles;
 };  // struct RingConformer
@@ -64,6 +66,9 @@ public:
 
 
 	// Accessors/Mutators ////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief  Return a list of all nondegenerate conformers in the set.
+	utility::vector1<RingConformerCOP> get_all_nondegenerate_conformers() const;
+
 	/// @brief  Return the conformer that is the best fit for the provided list of nu angles.
 	RingConformerCOP get_conformer_from_nus(utility::vector1<core::Angle> angles) const;
 
@@ -97,10 +102,15 @@ private:
 
 	// Private data //////////////////////////////////////////////////////////////////////////////////////////////////
 	core::Size ring_size_;  // almost always 5 or 6, but one could make a RingConformerSet for other sizes
-	// TODO: Should this data be const?  Can it be const?  The same applies to CarbohydrateInfo data.
+	// TODO: Should this data be const?  Can it be const?  The same applies to CarbohydrateInfo data.  I don't think
+	// it can be const unless it is set in the initializer, but I am not using the initializer....
 
-	// TODO: Make this a static const map<uint, vector1<RingConformer> >, with the vector indexed by an enum.
-	utility::vector1<RingConformerCOP> conformers_;
+	// TODO: Make these map<uint, vector1<RingConformer> >s, with the vectors indexed by an enum?
+	// Ring Conformer Subsets
+	utility::vector1<RingConformerCOP> nondegenerate_conformers_;
+	utility::vector1<RingConformerCOP> degenerate_conformers_;  // includes multiple copies of degenerate conformers
+	utility::vector1<RingConformerCOP> energy_minima_conformers_;
+	utility::vector1<RingConformerCOP> energy_maxima_conformers_;
 
 };  // class RingConformerSet
 
