@@ -1,4 +1,3 @@
-namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
 namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
 namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
 namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
@@ -160,7 +159,10 @@ namespace score { RealOptionKey const facts_saltbridge_correction( "score:facts_
 namespace score { RealOptionKey const facts_dshift( "score:facts_dshift" );  }
 namespace score { RealOptionKey const facts_dshift_sb( "score:facts_dshift_sb" );  }
 namespace score { RealOptionKey const facts_die( "score:facts_die" );  }
-namespace score { RealVectorOptionKey const facts_intra_solv_scale( "score:facts_intra_solv_scale" );  }
+namespace score { RealVectorOptionKey const facts_intbb_elec_scale( "score:facts_intbb_elec_scale" );  }
+namespace score { RealVectorOptionKey const facts_intbb_solv_scale( "score:facts_intbb_solv_scale" );  }
+namespace score { RealVectorOptionKey const facts_intsc_elec_scale( "score:facts_intsc_elec_scale" );  }
+namespace score { RealVectorOptionKey const facts_intsc_solv_scale( "score:facts_intsc_solv_scale" );  }
 namespace score { RealVectorOptionKey const facts_adjbb_elec_scale( "score:facts_adjbb_elec_scale" );  }
 namespace score { RealVectorOptionKey const facts_adjbb_solv_scale( "score:facts_adjbb_solv_scale" );  }
 namespace score { RealVectorOptionKey const facts_adjsc_elec_scale( "score:facts_adjsc_elec_scale" );  }
@@ -717,4 +719,3 @@ namespace robert { RealOptionKey const pcs_cluster_coverage( "robert:pcs_cluster
 namespace robert { BooleanOptionKey const pcs_cluster_lowscoring( "robert:pcs_cluster_lowscoring" );  }
 namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
 namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
-namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }

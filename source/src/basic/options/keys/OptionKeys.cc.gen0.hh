@@ -718,3 +718,4 @@ namespace jumps { FileOptionKey const extra_frags_for_ss( "jumps:extra_frags_for
 namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" );  }
 namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
 namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
+namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }

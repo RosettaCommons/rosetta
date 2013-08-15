@@ -114,7 +114,10 @@ namespace score { extern RealOptionKey const facts_saltbridge_correction; }
 namespace score { extern RealOptionKey const facts_dshift; }
 namespace score { extern RealOptionKey const facts_dshift_sb; }
 namespace score { extern RealOptionKey const facts_die; }
-namespace score { extern RealVectorOptionKey const facts_intra_solv_scale; }
+namespace score { extern RealVectorOptionKey const facts_intbb_elec_scale; }
+namespace score { extern RealVectorOptionKey const facts_intbb_solv_scale; }
+namespace score { extern RealVectorOptionKey const facts_intsc_elec_scale; }
+namespace score { extern RealVectorOptionKey const facts_intsc_solv_scale; }
 namespace score { extern RealVectorOptionKey const facts_adjbb_elec_scale; }
 namespace score { extern RealVectorOptionKey const facts_adjbb_solv_scale; }
 namespace score { extern RealVectorOptionKey const facts_adjsc_elec_scale; }

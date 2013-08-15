@@ -723,10 +723,10 @@ option.add( basic::options::OptionKeys::jumps::extra_frags_for_ss, "use ss-def f
 option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix ccd in re-runs" ).def(false);
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
 option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
+option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
-option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
 option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
 option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
@@ -887,11 +887,14 @@ option.add( basic::options::OptionKeys::score::facts_saltbridge_correction, "FAC
 option.add( basic::options::OptionKeys::score::facts_dshift, "FACTS pair term denominator distance shift" ).def(1.5);
 option.add( basic::options::OptionKeys::score::facts_dshift_sb, "FACTS pair term denominator distance shift for salt-bridging sidechains" ).def(2.0);
 option.add( basic::options::OptionKeys::score::facts_die, "FACTS dielectric constant" ).def(1.0);
-option.add( basic::options::OptionKeys::score::facts_intra_solv_scale, "FACTS GB scale for intrares bonded pairs: [1-4, 1-5, >1-5]" ).def(0.8).def(0.2).def(0.0);
-option.add( basic::options::OptionKeys::score::facts_adjbb_elec_scale, "FACTS Coulomb scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.2).def(0.4).def(0.6).def(0.6).def(0.6);
-option.add( basic::options::OptionKeys::score::facts_adjbb_solv_scale, "FACTS GB scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.8).def(0.6).def(0.6).def(0.6).def(0.6);
-option.add( basic::options::OptionKeys::score::facts_adjsc_elec_scale, "FACTS Coulomb scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.2).def(0.4).def(0.6).def(0.6).def(0.6);
-option.add( basic::options::OptionKeys::score::facts_adjsc_solv_scale, "FACTS GB scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.8).def(0.6).def(0.6).def(0.6).def(0.6);
+option.add( basic::options::OptionKeys::score::facts_intbb_elec_scale, "FACTS Coulomb scale for intrares bonded pairs: [1-4, 1-5, >1-5]" ).def(0.7).def(1.0).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_intbb_solv_scale, "FACTS GB scale for intrares bonded pairs: [1-4, 1-5, >1-5]" ).def(1.0).def(1.0).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_intsc_elec_scale, "FACTS Coulomb scale for intrares bonded pairs: [1-4, 1-5, >1-5]" ).def(1.0).def(1.0).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_intsc_solv_scale, "FACTS GB scale for intrares bonded pairs: [1-4, 1-5, >1-5]" ).def(1.0).def(1.0).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_adjbb_elec_scale, "FACTS Coulomb scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.8).def(0.8).def(1.0).def(1.0).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_adjbb_solv_scale, "FACTS GB scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(1.0).def(1.0).def(1.0).def(1.0).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_adjsc_elec_scale, "FACTS Coulomb scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.8).def(0.8).def(1.0).def(1.0).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_adjsc_solv_scale, "FACTS GB scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(1.0).def(1.0).def(1.0).def(1.0).def(1.0);
 option.add( basic::options::OptionKeys::score::facts_charge_dir, "directory where residue topology files for FACTS charge are stored" ).def("scoring/score_functions/facts");
 option.add( basic::options::OptionKeys::score::facts_eff_charge_dir, "directory where residue topology files for FACTS charge are stored" ).def("scoring/score_functions/facts/eff");
 option.add( basic::options::OptionKeys::score::nmer_ref_energies, "nmer ref energies database filename" );
@@ -1444,10 +1447,10 @@ option.add( basic::options::OptionKeys::robert::pcs_cluster_coverage, "cluster c
 option.add( basic::options::OptionKeys::robert::pcs_cluster_lowscoring, "cluster lowest 20% against lowest 50%" ).def(true);
 option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
+option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);

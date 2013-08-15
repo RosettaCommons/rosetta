@@ -191,7 +191,14 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 		// Iter res1 over enumeration_shell only
 		if( facts1.natoms() == 0 ) continue;
 
-			if( facts1.enumeration_shell() )
+		// Assign SASA/BR by given input
+		if( context_given_ ){
+			res_res_burial_by_given( rsd1, facts1 );
+			continue;
+		}
+
+		// Otherwise go through...
+		if( facts1.enumeration_shell() )
 			res_res_burial_for_scoring( rsd1, facts1, rsd1, facts1 );
 
 		// changed again from upperedge to edge to take care of enumeration_shell stuffs
@@ -230,13 +237,12 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 		FACTSResidueInfo & facts1( facts_info->residue_info( res1 ) );
 		Residue const & rsd1( pose.residue( res1 ) );
 
-		if( facts1.enumeration_shell() ){
+		if( facts1.enumeration_shell() )
 			if( do_apprx_ ){
 				calculate_GBpair_fast( rsd1, rsd1, facts1, facts1 );
 			} else {
 				calculate_GBpair_exact( rsd1, rsd1, facts1, facts1 );
 			}
-		}
 
 		// changed again from upperedge to edge to take care of enumeration_shell stuffs
 		for ( graph::Graph::EdgeListConstIter
@@ -295,28 +301,6 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 			//}
 		}
 	}
-	*/
-
-	/*
-	// Cummulative SA values per structure
-	std::map< std::string, Real > SAtotal;
-	std::map< std::string, Real >::const_iterator it;
-
-	for( res1 = 1; res1 <= nres; ++ res1 ){
-		FACTSResidueInfo & facts1( facts_info->residue_info( res1 ) );
-		Residue const & rsd1( pose.residue( res1 ) );
-
-		for( Size atm1 = 1; atm1 <= pose.residue(res1).natoms(); ++atm1 ){
-			string atmname = pose.residue(res1).atom_type(atm1).atom_type_name();
-			if( !SAtotal.count( atmname ) ) SAtotal[atmname] = 0.0;
-			SAtotal[atmname]  += facts1.sasa(atm1);
-		}
-	}
-
-	TR.Debug << "SAtotal: ";
-	for( it = SAtotal.begin(); it != SAtotal.end(); ++it )
-		TR.Debug << " " << std::setw(4) << it->first << " " << it->second;
-	TR.Debug << std::endl;
 	*/
 
 }// END setup_for_scoring
@@ -382,6 +366,23 @@ void FACTSPotential::res_res_burial(
 		}
 	}
 }//end res_res_burial
+
+void FACTSPotential::res_res_burial_given(
+																		conformation::Residue const & rsd1,
+																		FACTSResidueInfo & facts1
+																		) const
+{
+	Size natoms1 = rsd1.natoms();
+
+	FACTSRsdTypeInfoCOP factstype = facts1.restypeinfo();
+
+	for ( Size atm1 = 1; atm1 <= natoms1; ++atm1 ) {
+		if ( factstype->not_using(atm1) ) continue;
+		facts1.Ai_[atm1]    = rsa_given_*(factstype.Amax(atm1)-factstype1.Amin(atm1)) + factstype.Amin(atm1);
+		facts1.nmtr_[atm1]  = rsa_given_*(factstype.Bmax(atm1)-factstype1.Bmin(atm1)) + factstype.Bmin(atm1);
+		facts1.dnmtr_[atm1] = 1.0;
+	}
+}//end res_res_burial_given
 
 // This function has same logic with res_res_burial, but modified for efficient scoring
 // and for derivative evaluation
@@ -562,18 +563,36 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
 		if( scale_solv >= 0.0 ) self_pair = true;
 
 	} else if ( adjacent ){
+		// Use full solvation whatever relationship is
+		//scale_solv = 1.0;
+
 		// Turn off elec for angle pairs
 		if( path_dist <= 2 ){
 			self_pair = true;
 			scale_elec = 0.0;
 			scale_solv = 1.0;
 
-		// Rule from 1-4
+		// Rule for 1-4 to 1-7
+		// otherwise (from 1-8) turn on full strength for both elec/solv
 		// BB-BB
 		} else if( rsd1.atom_is_backbone(atm1) && rsd2.atom_is_backbone(atm2) ){
 			self_pair = true;
+			//scale_solv = 1.0;
 
-			if( path_dist <= 5 ){
+			/*
+			if(( rsd1.atom_name(atm1).compare(" C  ") == 0 || rsd1.atom_name(atm1).compare(" O  ") == 0 ) &&
+				 ( rsd2.atom_name(atm2).compare(" C  ") == 0 || rsd2.atom_name(atm2).compare(" O  ") == 0 ) ){
+				scale_solv = adjbb_solv_scale( 1 );
+				scale_elec = adjbb_elec_scale( 1 );
+			}	else 
+			if(( rsd1.atom_name(atm1).compare(" N  ") == 0 || rsd1.atom_name(atm1).compare(" H  ") == 0 ) &&
+				 ( rsd2.atom_name(atm2).compare(" N  ") == 0 || rsd2.atom_name(atm2).compare(" H  ") == 0 ) ){
+				scale_solv = adjbb_solv_scale( 1 );
+				scale_elec = adjbb_elec_scale( 1 );
+			}	else 
+			*/
+
+			if( path_dist <= 6 ){
 				scale_solv = adjbb_solv_scale( path_dist - 2 );
 				scale_elec = adjbb_elec_scale( path_dist - 2 );
 			} else {
@@ -585,20 +604,26 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
 		} else if(( !rsd1.atom_is_backbone(atm1) && rsd2.atom_is_backbone(atm2)) || 
 							( rsd1.atom_is_backbone(atm1) && !rsd2.atom_is_backbone(atm2)) ) {
 
-			if( (rsd1.atom_is_backbone(atm1) &&
-					 ( rsd1.atom_name(atm1).compare(" C  ") == 0 || rsd1.atom_name(atm1).compare(" O  ") == 0 )) ||
-					( rsd2.atom_is_backbone(atm2) &&
-						( rsd2.atom_name(atm2).compare(" N  ") == 0 || rsd2.atom_name(atm2).compare(" H  ") == 0 ))
+			/*
+			if( !rsd2.atom_is_backbone(atm2) && rsd2.aa() == core::chemical::aa_asp ||
+					!rsd2.atom_is_backbone(atm2) && rsd2.aa() == core::chemical::aa_asn ||
+					!rsd1.atom_is_backbone(atm1) && rsd1.aa() == core::chemical::aa_asn ||
+					!rsd1.atom_is_backbone(atm1) && rsd1.aa() == core::chemical::aa_asp 
 					){
-				self_pair = true;
-
-				if( path_dist <= 5 ){
-					scale_solv = adjsc_solv_scale( path_dist - 2 );
-					scale_elec = adjsc_elec_scale( path_dist - 2 );
+				scale_solv = 1.0;
+				if( path_dist == 3 ){
+					scale_elec = 0.0;
+				} else if( path_dist == 4 ){
+					scale_elec = 0.0;
 				} else {
-					scale_solv = adjsc_solv_scale( 4 );
-					scale_elec = adjsc_elec_scale( 4 );
+					scale_elec = 0.6;
 				}
+			} else 
+			*/
+
+			if( path_dist <= 6 ){
+				scale_solv = adjsc_solv_scale( path_dist - 2 );
+				scale_elec = adjsc_elec_scale( path_dist - 2 );
 			} else {
 				scale_solv = adjsc_solv_scale( 5 );
 				scale_elec = adjsc_elec_scale( 5 );
@@ -608,9 +633,8 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
 	} else { // 2-residue separation
 		if(( rsd1.atom_name(atm1).compare(" C  ") == 0 || rsd1.atom_name(atm1).compare(" O  ") == 0 ) &&
 			 ( rsd2.atom_name(atm2).compare(" N  ") == 0 || rsd2.atom_name(atm2).compare(" H  ") == 0 ) ){
-			self_pair = true;
-			scale_solv = adjbb_solv_scale( 4 );
-			scale_elec = adjbb_elec_scale( 4 );
+			scale_solv = adjbb_solv_scale( 5 );
+			scale_elec = adjbb_elec_scale( 5 );
 		}
 	}
 }
@@ -691,8 +715,8 @@ void FACTSPotential::calculate_GBpair_exact(
 				dshift2 = dshift2_saltbridge_;
 			} else if ( !rsd1.atom_is_backbone(atm1) || !rsd2.atom_is_backbone(atm2) ){
 				dshift2 = dshift2_;
-			} else {
-				dshift2 = 0.0;
+			//} else if ( rsd1.atom_is_backbone(atm1) || rsd2.atom_is_backbone(atm2) ){
+			//dshift2 = 1.0;
 			}
 			if( self_pair )	dshift2 = 0.0;
 
@@ -1561,8 +1585,7 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 			if( same_res ) sintra = 0.5;
 
 			// Don't use intraelec in packer!
-			//if( !same_res ) 
-			E_elec += sintra*sf2*felec; 
+			if( !same_res ) E_elec += sintra*sf2*felec; 
 
 			if( self_pair ){
 				E_solv_self -= sintra*fsolv*sf2;

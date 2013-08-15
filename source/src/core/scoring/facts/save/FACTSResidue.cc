@@ -104,6 +104,10 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
   Size const FACTS_C1_INDEX    ( rsd.atom_type_set().extra_parameter_index( "FACTS_C1"     ) );
   Size const FACTS_C2_INDEX    ( rsd.atom_type_set().extra_parameter_index( "FACTS_C2"     ) );
   Size const FACTS_C3_INDEX    ( rsd.atom_type_set().extra_parameter_index( "FACTS_C3"     ) );
+  Size const FACTS_AMAX_INDEX  ( rsd.atom_type_set().extra_parameter_index( "FACTS_AMAX"   ) );
+  Size const FACTS_AMIN_INDEX  ( rsd.atom_type_set().extra_parameter_index( "FACTS_AMIN"   ) );
+  Size const FACTS_BMAX_INDEX  ( rsd.atom_type_set().extra_parameter_index( "FACTS_BMAX"   ) );
+  Size const FACTS_BMIN_INDEX  ( rsd.atom_type_set().extra_parameter_index( "FACTS_BMIN"   ) );
 
   Size FACTS_ALPHA_INDEX;
   Size const asp_patch( option[ score::facts_asp_patch ]() );
@@ -135,6 +139,10 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
   not_using_.resize( natoms() );
   charged_.resize( natoms(), true );
   is_chargedH_.resize( natoms() );
+  Amax_.resize( natoms() );
+  Amin_.resize( natoms() );
+  Bmax_.resize( natoms() );
+  Bmin_.resize( natoms() );
 
 	// Read new charge set specified by "score::facts_charge_dir"
 	bool const do_apprx( option[ score::facts_apprx ]() );
@@ -231,6 +239,10 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
       c1_[i] = type.extra_parameter( FACTS_C1_INDEX );
       c2_[i] = type.extra_parameter( FACTS_C2_INDEX );
       c3_[i] = type.extra_parameter( FACTS_C3_INDEX );
+      Amax_[i] = type.extra_parameter( FACTS_AMAX_INDEX );
+      Amin_[i] = type.extra_parameter( FACTS_AMIN_INDEX );
+      Bmax_[i] = type.extra_parameter( FACTS_BMAX_INDEX );
+      Bmin_[i] = type.extra_parameter( FACTS_BMIN_INDEX );
     }
     volume_[i] = (4.0/3.0) * Math_PI * vdw_radius * vdw_radius * vdw_radius;
   }
@@ -256,10 +268,8 @@ void FACTSRsdTypeInfo::initialize_intrasolv( chemical::ResidueType const & rsd )
 
   bool const plane_to_self( basic::options::option[ basic::options::OptionKeys::score::facts_plane_to_self ]() );
 
-	utility::vector1< Real > const intbb_solv_scale =
-		basic::options::option[ basic::options::OptionKeys::score::facts_intbb_solv_scale ]();
-	utility::vector1< Real > const intsc_solv_scale =
-		basic::options::option[ basic::options::OptionKeys::score::facts_intsc_solv_scale ]();
+	utility::vector1< Real > const intra_solv_scale =
+		basic::options::option[ basic::options::OptionKeys::score::facts_intra_solv_scale ]();
 
   // 1-4 is important for solvation free energy of ASN/GLN/SER/THR
   // backbone rule is important to give reasonable "distinct" bb solvation for ALA/VAL/ILE/LEU
@@ -267,29 +277,30 @@ void FACTSRsdTypeInfo::initialize_intrasolv( chemical::ResidueType const & rsd )
   for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 ){
 
     for( Size atm2 = 1; atm2 <= rsd.natoms(); ++atm2 ){
+      if( rsd.atom_is_backbone(atm1) && rsd.atom_is_backbone(atm2)){
+				if( rsd.path_distance(atm1,atm2) <= 2 ){
+					intra_solv_scale_[atm1][atm2] = 1.0;
+
+				} else if( rsd.path_distance(atm1,atm2) == 3 ){
+					intra_solv_scale_[atm1][atm2] = 0.8;
+
+				} else if( rsd.path_distance(atm1,atm2) >= 4 ){
+					intra_solv_scale_[atm1][atm2] = 0.2;
+				}
+
+      } else 
 			if( rsd.path_distance(atm1,atm2) <= 2 ){
 				intra_solv_scale_[atm1][atm2] = 1.0;
 
-			} else if( rsd.atom_is_backbone( atm1 ) && rsd.atom_is_backbone( atm2 ) ){
-				if( rsd.path_distance(atm1,atm2) == 3 ){
-					intra_solv_scale_[atm1][atm2] = intbb_solv_scale[1];
-				} else if( rsd.path_distance(atm1,atm2) == 4 ){
-					intra_solv_scale_[atm1][atm2] = intbb_solv_scale[2];
-				} else {
-					intra_solv_scale_[atm1][atm2] = intbb_solv_scale[3];
-				}
+      } else if( rsd.path_distance(atm1,atm2) == 3 ){
+				intra_solv_scale_[atm1][atm2] = intra_solv_scale[1];
 
-      } else {//if( rsd.atom_is_backbone( atm1 ) || rsd.atom_is_backbone( atm2 ) ){
-				if( rsd.path_distance(atm1,atm2) == 3 ){
-					intra_solv_scale_[atm1][atm2] = intsc_solv_scale[1];
-				} else if( rsd.path_distance(atm1,atm2) == 4 ){
-					intra_solv_scale_[atm1][atm2] = intsc_solv_scale[2];
-				} else {
-					intra_solv_scale_[atm1][atm2] = intsc_solv_scale[3];
-				}
-				//} else {
-				//intra_solv_scale_[atm1][atm2] = 0.0;
-			}
+      } else if( rsd.path_distance(atm1,atm2) == 4 ){
+				intra_solv_scale_[atm1][atm2] = intra_solv_scale[2];
+
+      } else {
+				intra_solv_scale_[atm1][atm2] = intra_solv_scale[3];
+      }
     }
   }
   
@@ -388,46 +399,10 @@ void FACTSRsdTypeInfo::initialize_intrasolv( chemical::ResidueType const & rsd )
 void FACTSRsdTypeInfo::initialize_intraelec( chemical::ResidueType const & rsd )
 {
 
-	utility::vector1< Real > const intbb_elec_scale =
-		basic::options::option[ basic::options::OptionKeys::score::facts_intbb_elec_scale ]();
-	utility::vector1< Real > const intsc_elec_scale =
-		basic::options::option[ basic::options::OptionKeys::score::facts_intsc_elec_scale ]();
-
   intra_elec_scale_.resize( rsd.natoms() );
   for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 )
-    intra_elec_scale_[atm1].resize( rsd.natoms() );
-
-  for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 ){
-
-		for( Size atm2 = 1; atm2 <= rsd.natoms(); ++atm2 ){
-			if( rsd.path_distance(atm1,atm2) <= 2 ){
-				intra_elec_scale_[atm1][atm2] = 0.0;
-
-			} else if( rsd.atom_is_backbone( atm1 ) && rsd.atom_is_backbone( atm2 ) ){
-				if( rsd.path_distance(atm1,atm2) == 3 ){
-					intra_elec_scale_[atm1][atm2] = intbb_elec_scale[1];
-				} else if( rsd.path_distance(atm1,atm2) == 4 ){
-					intra_elec_scale_[atm1][atm2] = intbb_elec_scale[2];
-				} else {
-					intra_elec_scale_[atm1][atm2] = intbb_elec_scale[3];
-				}
-				
-      } else {//if( rsd.atom_is_backbone( atm1 ) || rsd.atom_is_backbone( atm2 ) ){
-				if( rsd.path_distance(atm1,atm2) == 3 ){
-					intra_elec_scale_[atm1][atm2] = intsc_elec_scale[1];
-				} else if( rsd.path_distance(atm1,atm2) == 4 ){
-					intra_elec_scale_[atm1][atm2] = intsc_elec_scale[2];
-				} else {
-					intra_elec_scale_[atm1][atm2] = intsc_elec_scale[3];
-				}
-				//} else {
-				//intra_elec_scale_[atm1][atm2] = 0.0;
-			}
-		}
-
-	}
-
-	/*
+    intra_elec_scale_[atm1].resize( rsd.natoms(), 0.0 );
+  
   Real const scale( 0.3 );
   Real const scaleH( scale );
   Real const scaleN( scale*0.5 );
@@ -463,17 +438,15 @@ void FACTSRsdTypeInfo::initialize_intraelec( chemical::ResidueType const & rsd )
     Size const atmHG( rsd.atom_index("HG1") );
     //Real const qN( std::abs(rsd.atomic_charge( atmN )) );
     //Real const qH( std::abs(rsd.atomic_charge( atmH )) );
-
+    
     // Rescale relative strength not to disturb rotamer probability
     intra_elec_scale_[atmN][atmHG] = scaleN;
     intra_elec_scale_[atmHG][atmN] = scaleN;
-
+    
     intra_elec_scale_[atmH][atmHG] = scaleH;
     intra_elec_scale_[atmHG][atmH] = scaleH;
-
+    
   }
-	*/
-
 }
   
 /// FACTSRsdTypeInfo

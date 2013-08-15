@@ -4250,29 +4250,44 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1.0</dd><br>
 </dl>
 <dl>
-<dt><b>-facts_intra_solv_scale</b> \<RealVector\><dt>
+<dt><b>-facts_intbb_elec_scale</b> \<RealVector\><dt>
+<dd>FACTS Coulomb scale for intrares bonded pairs: [1-4, 1-5, >1-5]</dd><br>
+<dd>Default: ['0.7', '1.0', '1.0']</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_intbb_solv_scale</b> \<RealVector\><dt>
 <dd>FACTS GB scale for intrares bonded pairs: [1-4, 1-5, >1-5]</dd><br>
-<dd>Default: ['0.8', '0.2', '0.0']</dd><br>
+<dd>Default: ['1.0', '1.0', '1.0']</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_intsc_elec_scale</b> \<RealVector\><dt>
+<dd>FACTS Coulomb scale for intrares bonded pairs: [1-4, 1-5, >1-5]</dd><br>
+<dd>Default: ['1.0', '1.0', '1.0']</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_intsc_solv_scale</b> \<RealVector\><dt>
+<dd>FACTS GB scale for intrares bonded pairs: [1-4, 1-5, >1-5]</dd><br>
+<dd>Default: ['1.0', '1.0', '1.0']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_adjbb_elec_scale</b> \<RealVector\><dt>
 <dd>FACTS Coulomb scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
-<dd>Default: ['0.2', '0.4', '0.6', '0.6', '0.6']</dd><br>
+<dd>Default: ['0.8', '0.8', '1.0', '1.0', '1.0']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_adjbb_solv_scale</b> \<RealVector\><dt>
 <dd>FACTS GB scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
-<dd>Default: ['0.8', '0.6', '0.6', '0.6', '0.6']</dd><br>
+<dd>Default: ['1.0', '1.0', '1.0', '1.0', '1.0']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_adjsc_elec_scale</b> \<RealVector\><dt>
 <dd>FACTS Coulomb scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
-<dd>Default: ['0.2', '0.4', '0.6', '0.6', '0.6']</dd><br>
+<dd>Default: ['0.8', '0.8', '1.0', '1.0', '1.0']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_adjsc_solv_scale</b> \<RealVector\><dt>
 <dd>FACTS GB scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
-<dd>Default: ['0.8', '0.6', '0.6', '0.6', '0.6']</dd><br>
+<dd>Default: ['1.0', '1.0', '1.0', '1.0', '1.0']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_charge_dir</b> \<String\><dt>

@@ -61,6 +61,11 @@ public:
   inline Real d1(Size const atm) const{ return d1_[atm]; }
   inline Real d2(Size const atm) const{ return d2_[atm]; }
 
+  inline Real Amax(Size const atm) const{ return Amax_[atm]; }
+  inline Real Amin(Size const atm) const{ return Amin_[atm]; }
+  inline Real Bmax(Size const atm) const{ return Bmax_[atm]; }
+  inline Real Bmin(Size const atm) const{ return Bmin_[atm]; }
+ 
   inline Real alpha( Size const atm ) const { return alpha_[atm]; }
   inline Real COradius2(Size const atm ) const{ return COradius2_[atm]; }
   inline Real volume(Size const atm ) const{ return volume_[atm]; }
@@ -111,6 +116,11 @@ private:
   utility::vector1< bool > is_chargedH_;
   utility::vector1< bool > charged_;
 
+	// Max/Minimum A,B values that residue type can have: used when condition is given as input
+	utility::vector1< Real > Amax_;
+	utility::vector1< Real > Amin_;
+	utility::vector1< Real > Bmax_;
+	utility::vector1< Real > Bmin_;
 };
 
 /**************************************************************************************************/
