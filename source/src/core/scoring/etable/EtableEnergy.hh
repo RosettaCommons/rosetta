@@ -83,12 +83,37 @@ public:
 			rep_weight_ * rep +
 			sol_weight_ * solv;
 	}
+
 	inline
 	Real
 	hydrogen_interaction_cutoff2() const
 	{
 		return hydrogen_interaction_cutoff2_;
 	}
+
+	virtual
+	void
+	atom_pair_energy_v(
+    conformation::Atom const & atom1,
+    conformation::Atom const & atom2,
+    Real const weight,
+		Real & atrE,
+		Real & repE,
+		Real & solE,
+		Real & d2
+	) const = 0;
+
+	/*
+	Rhiju, uncomment this function and implement it in the TableLookupEvaluator
+	virtual
+	void
+	atom_pair_lk_energy_v(
+    conformation::Atom const & atom1,
+    conformation::Atom const & atom2,
+		Real & solE1,
+		Real & solE2
+		) const = 0;
+	*/
 
 private:
 
@@ -173,18 +198,6 @@ public:
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const;
 
-//	void
-//	atom_pair_energy_v(
-//    conformation::Atom const & atom1,
-//    conformation::Atom const & atom2,
-//    Real const weight,
-//		EnergyMap & emap,
-//		Real & d2
-//	) const
-//	{
-//		atom_pair_energy( atom1, atom2, weight, emap, d2 );
-//	}
-
 	inline
 	void
 	atom_pair_energy(
@@ -216,6 +229,14 @@ public:
 		atom_pair_energy( atom1, atom2, weight, atrE, repE, solE, d2 );
 	}
 
+	virtual
+	void
+	atom_pair_lk_energy_v(
+    conformation::Atom const & atom1,
+    conformation::Atom const & atom2,
+		Real & solE1,
+		Real & solE2
+	) const;
 
 	inline
 	void
@@ -380,6 +401,7 @@ public:
 		utility::vector1< core::PackerEnergy > & temp_vector
 	) const;
 
+	virtual
 	void
 	atom_pair_energy_v(
     conformation::Atom const & atom1,
@@ -391,6 +413,17 @@ public:
 	{
 		atom_pair_energy( atom1, atom2, weight, emap, d2 );
 	}
+
+	/* Rhiju, uncomment this declaration.
+	virtual
+	void
+	atom_pair_lk_energy_v(
+    conformation::Atom const & atom1,
+    conformation::Atom const & atom2,
+		Real & solE1,
+		Real & solE2
+	) const;
+	*/
 
 	inline
 	void
@@ -409,19 +442,19 @@ public:
 		emap[st_sol()]+=solv;
 	}
 
-//	virtual
-//	void
-//	atom_pair_energy_v(
-//    conformation::Atom const & atom1,
-//    conformation::Atom const & atom2,
-//    Real const weight,
-//		Real & atrE,
-//		Real & repE,
-//		Real & solE,
-//		Real & d2
-//	) const {
-//		atom_pair_energy( atom1, atom2, weight, atrE, repE, solE, d2 );
-//	}
+	virtual
+	void
+	atom_pair_energy_v(
+    conformation::Atom const & atom1,
+    conformation::Atom const & atom2,
+    Real const weight,
+		Real & atrE,
+		Real & repE,
+		Real & solE,
+		Real & d2
+	) const {
+		atom_pair_energy( atom1, atom2, weight, atrE, repE, solE, d2 );
+	}
 
 	inline
 	void

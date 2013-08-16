@@ -20,10 +20,11 @@
 ///
 ///
 /// @authors
-/// I dont know?
+/// Phil Bradley
+/// Andrew Leaver-Fay
 /// Steven Combs - comments and skipping of virtual atoms
 ///
-/// @last_modified December 6 2010
+/// @last_modified August 2013
 /////////////////////////////////////////////////////////////////////////
 
 
@@ -66,7 +67,7 @@ namespace core {
 namespace scoring {
 namespace etable {
 
-/// Simple struct for holding the cubic spline polynomials used in
+/// @brief %SplineParameters is a simple struct for holding the cubic spline polynomials used in
 /// the etable to interpolate the lennard-jones attractive and
 /// LK-solvation terms to zero smoothly.  These splines have
 /// exactly two knots to represent them, and the same x values
@@ -85,14 +86,16 @@ struct SplineParameters
 	{}
 };
 
-/// Add in extra repulsion for particular atom pairs, if needed,
+/// @brief the ExtraQuadraticRepulsion class is used to
+/// add in extra repulsion for particular atom pairs, if needed,
 /// (e.g. for OCbb/OCbb) where the functional form is:
 /// fa_rep += (xhi - x)^2 * slope
 /// for values of x between xlo and xhi, and
 /// fa_rep += (x - xlo ) * extrapolated_slope + ylo
 /// where extrapolated slope can be anything, but, to defined
 /// a function with continuous derivatives, should be
-/// extrapolated_slope = (xhi-xlo)^2*slope
+/// extrapolated_slope = (xhi-xlo)^2*slope.  This is the
+/// analytical implementation of the "modify_pot" behavior.
 struct ExtraQuadraticRepulsion
 {
 	Real xlo, xhi;
@@ -107,6 +110,9 @@ struct ExtraQuadraticRepulsion
 	{}
 };
 
+/// @brief %EtableParamsOnePair describes all of the parameters for a particular
+/// pair of atom types necessary to evaluate the Lennard-Jones and LK solvation
+/// energies.
 struct EtableParamsOnePair
 {
 	Real maxd2;
@@ -129,8 +135,15 @@ struct EtableParamsOnePair
 	Real lk_min_dis2sigma_value;
 	Real fasol_spline_close_start;
 	Real fasol_spline_close_end;
-	SplineParameters fasol_spline_close;
-	SplineParameters fasol_spline_far;
+
+	SplineParameters fasol_spline_close;  // mututal desolvation of atoms 1 and 2
+	SplineParameters fasol_spline_far;    // mututal desolvation of atoms 1 and 2
+
+	SplineParameters fasol_spline1_close; // desolvation of atom 1 by atom 2
+	SplineParameters fasol_spline1_far;   // desolvation of atom 1 by atom 2
+
+	SplineParameters fasol_spline2_close; // desolvation of atom 2 by atom 1
+	SplineParameters fasol_spline2_far;   // desolvation of atom 2 by atom 1
 	Real ljatr_final_weight;
 	Real fasol_final_weight;
 
@@ -160,7 +173,7 @@ struct EtableParamsOnePair
 };
 
 
-/// jk Class definition for Etable
+/// @brief Class definition for Etable
 class Etable : public utility::pointer::ReferenceCount {
 
 public:
@@ -276,21 +289,26 @@ public:
 		return max_hydrogen_hydrogen_cutoff_;
 	}
 
-	///
+	/// @brief The distance cutoff beyond which any pair of heavy-atoms is
+	/// guaranteed to have an interaction energy of zero.  This function is
+	/// used by the NeighborList
 	Real
 	nblist_dis2_cutoff_XX() const
 	{
 		return nblist_dis2_cutoff_XX_;
 	}
 
-	///
+	/// @brief The distance cutoff beyond which a hydrogen/heavy-atom pair is
+	/// guaranteed to have an interaction energy of zero.  This function is used
+	/// by the NeighborList
 	Real
 	nblist_dis2_cutoff_XH() const
 	{
 		return nblist_dis2_cutoff_XH_;
 	}
 
-	///
+	/// @brief The distance cutoff beyond which any hydrogen/hydrogen pair is guaranteed
+	/// to have an interaction energy of zero.  This function is used by the NeighborList
 	Real
 	nblist_dis2_cutoff_HH() const
 	{
@@ -307,7 +325,7 @@ public:
 	Real
 	max_hydrogen_lj_radius() const;
 
-	/// set these up in the ctor
+	/// @brief Return the Lennard-Jones radius for an atom.
 	inline
 	Real
 	lj_radius( int const i ) const
@@ -315,37 +333,38 @@ public:
 		return lj_radius_[i];
 	}
 
-	///
+	/// @brief Return the Lennard-Jones well depth for an atom
 	Real
 	lj_wdepth( int const i ) const
 	{
 		return lj_wdepth_[i];
 	}
 
-	///
+	/// @brief Return the Lazardis Karplus DGFree value for an atom
 	Real
 	lk_dgfree( int const i ) const
 	{
 		return lk_dgfree_[i];
 	}
 
-	///
+	/// @brief Return the Lazaridis Karplus volume for an atom
 	Real
 	lk_volume( int const i ) const
 	{
 		return lk_volume_[i];
 	}
 
-	///
+	/// @brief Return the Lazaridis Karplus "lambda" value (correlation distance) for an atom
 	Real
 	lk_lambda( int const i ) const
 	{
 		return lk_lambda_[i];
 	}
 
-	/// @brief use the analytic_etable_evaluation function, but
-	/// evaluate the function at the old grid points and then interpolate.
-	/// Useful for comparing the original etable evaluation with the
+	/// @brief Use the analytic_etable_evaluation function to evaluate the energy
+	/// of two atoms, but  evaluate the function at the old grid points and then
+	/// interpolate between them the way the existing etable does (in square
+	/// distance space). Useful for comparing the original etable evaluation with the
 	/// analytic evaluation.
 	void
 	interpolated_analytic_etable_evaluation(
@@ -370,6 +389,18 @@ public:
 		Real & d2
 	) const;
 
+	/// @brief Use an analytic functional form of the etable to evaluate only the LK atom-pair energy
+	/// computing the desolvation of atom1 by atom2 separately from the desolvation of atom2 by atom1.
+	inline
+	void
+	analytic_lk_energy(
+		conformation::Atom const & at1,
+		conformation::Atom const & at2,
+		Real & fa_solE1,
+		Real & fa_solE2
+	) const;
+
+	/// @brief Analytically evaluate the energy derivatives for a pair of atoms
 	inline
 	void
 	analytic_etable_derivatives(
@@ -378,6 +409,19 @@ public:
 		Real & dljatrE_ddis,
 		Real & dljrepE_ddis,
 		Real & dfasolE_ddis,
+		Real & inv_d
+	) const;
+
+	/// @brief Analytically evaluate the LK solvation derivatives for a pair of atoms, separately
+	/// computing the derivative for atom2's desolvation of atom1 (dfasolE1_ddis) and atom1's desolvation
+	/// of atom2 (dfasolE2_ddis).
+	inline
+	void
+	analytic_lk_derivatives(
+		conformation::Atom const & at1,
+		conformation::Atom const & at2,
+		Real & dfasolE1_ddis,
+		Real & dfasolE2_ddis,
 		Real & inv_d
 	) const;
 
@@ -439,6 +483,37 @@ private:
 		Real const dis,
 		EtableParamsOnePair const & p
 	) const;
+
+
+	/// @brief Evaluate the mututal desolvation energy as atom 1 and atom 2 approach.
+	/// Combine the desolvation of atom 1 by atom 2 into the same value as the desolvation
+	/// of atom 2 by atom 1.
+	inline
+	void
+	analytic_lk_evaluation(
+		int const atype1,
+		int const atype2,
+		EtableParamsOnePair const & p,
+		Real const dis,
+		Real const inv_dis2,
+		Real & fa_solE
+	) const;
+
+	/// @brief Evaluate the LK solvation energy for a pair of atoms
+	/// individually; fa_solE1 returns the desolvation of atom 1 by atom 2
+	/// and fa_solE2 returns the desolvation of atom 2 by atom 1.
+	inline
+	void
+	analytic_lk_evaluation_individual(
+		int const atype1,
+		int const atype2,
+		EtableParamsOnePair const & p,
+		Real const dis,
+		Real const inv_dis2,
+		Real & fa_solE1,
+		Real & fa_solE2
+	) const;
+
 
 public:
 
@@ -738,8 +813,8 @@ private:
 	void
 	calc_etable_value(
 		Real dis2,
-		int & atype1,
-		int & atype2,
+		int atype1,
+		int atype2,
 		Real & atrE,
 		Real & d_atrE,
 		Real & repE,
@@ -747,16 +822,21 @@ private:
 		Real & solvE1,
 		Real & solvE2,
 		Real & dsolvE1,
-		Real & dsolvE2,
-		ObjexxFCL::FArray2< Real > & lj_sigma,
-		ObjexxFCL::FArray2< Real > & lj_r6_coeff,
-		ObjexxFCL::FArray2< Real > & lj_r12_coeff,
-		ObjexxFCL::FArray2< Real > & lj_switch_intercept,
-		ObjexxFCL::FArray2< Real > & lj_switch_slope,
-		ObjexxFCL::FArray1< Real > & lk_inv_lambda2,
-		ObjexxFCL::FArray2< Real > & lk_coeff,
-		ObjexxFCL::FArray2< Real > & lk_min_dis2sigma_value
-	);
+		Real & dsolvE2
+	) const;
+
+	/// @brief Analyticaly calculate the Lazaridis-Karplus solvation energy and derivatives
+	/// for a pair of atoms at a given distance
+	void
+	lk_solv_energy_and_deriv(
+		int atype1,
+		int atype2,
+		Real dis,
+		Real & solvE1,
+		Real & solvE2,
+		Real & dsolvE1,
+		Real & dsolvE2
+	) const;
 
 	//void
 	//zero_hydrogen_and_water_ljatr();
@@ -852,46 +932,40 @@ Etable::analytic_etable_evaluation(
 	lj_repE = repE;
 
 	/// Now handle solvation.
-	/// a) At distances below p.fasol_spline_close_start, the value of fasol is held constant.
-	/// b) Then there's a spline to smooth between this constant region and the exponential region.
-	/// c) Then the exponential region.
-	/// d) Then the spline to smooth between the exponential region and where the energy goes to zero.
-	if ( dis < p.fasol_spline_close_start ) {
-		fa_solE = p.fasol_spline_close.ylo * p.fasol_final_weight;
-	} else if ( dis < p.fasol_spline_close_end ) {
-		fa_solE = eval_spline( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline_close );
-		fa_solE *= p.fasol_final_weight;
-		//Real const fasol_spline_knots_diff = p.fasol_spline_close_end - p.fasol_spline_close_start;
-		//Real const fasol_spline_knots_diff_inv = 1/fasol_spline_knots_diff;
-		//Real const a = ( p.fasol_spline_close_end - dis ) * fasol_spline_knots_diff_inv;
-		//Real const b = ( dis - p.fasol_spline_close_start ) * fasol_spline_knots_diff_inv;
-		//SplineParameters const & sp = p.fasol_spline_close;
-		//fa_solE = a*sp.ylo + b*sp.yhi + ((a*a*a-a)*sp.y2lo + (b*b*b-b)*sp.y2hi)*fasol_spline_knots_diff*fasol_spline_knots_diff / 6;
-	} else if ( dis < fasol_spline_far_xlo ) {
-		/// exponential evaluation
-		/// assert( atype1 <= atype2 ), which is accomplished at the top of this function.
-		Real const dis_rad1 = dis - lj_radius(atype1);
-		Real const x1 = ( dis_rad1 * dis_rad1 ) * lk_inv_lambda2_(atype1);
-		Real const dis_rad2 = dis - lj_radius(atype2);
-		Real const x2 = ( dis_rad2 * dis_rad2 ) * lk_inv_lambda2_(atype2);
+	analytic_lk_evaluation( atype1, atype2, p, dis, inv_dis2, fa_solE );
+}
 
-		fa_solE =  inv_dis2 * ( std::exp(-x1) * p.lk_coeff1 + std::exp(-x2) * p.lk_coeff2 );
-		fa_solE *= p.fasol_final_weight;
+inline
+void
+Etable::analytic_lk_energy(
+	conformation::Atom const & at1,
+	conformation::Atom const & at2,
+	Real & fa_solE1,
+	Real & fa_solE2
+) const
+{
+	using namespace core;
+	using namespace core::scoring::etable;
 
-	} else if ( dis < fasol_spline_far_xhi ) {
-		fa_solE = eval_spline( dis,
-			fasol_spline_far_xlo, fasol_spline_far_xhi,
-			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
-			p.fasol_spline_far );
-		//Real const a = ( fasol_spline_far_xhi - dis ) * fasol_spline_far_diff_xhi_xlo_inv;
-		//Real const b = ( dis - fasol_spline_far_xlo ) * fasol_spline_far_diff_xhi_xlo_inv;
-		//SplineParameters const & sp = p.fasol_spline_far;
-		//
-		//fa_solE = a*sp.ylo + b*sp.yhi + ((a*a*a-a)*sp.y2lo + (b*b*b-b)*sp.y2hi)*fasol_spline_far_diff_xhi_xlo*fasol_spline_far_diff_xhi_xlo / 6;
-		fa_solE *= p.fasol_final_weight;
-	} else {
-		fa_solE = 0;
-	}
+	fa_solE1 = fa_solE2 = 0.0;
+
+	Real dis2 = at1.xyz().distance_squared( at2.xyz() );
+
+	//  ctsa - epsilon allows final bin value to be calculated
+	if ( dis2 > max_dis2 + epsilon ) return;
+
+	int atype1 = at1.type() < at2.type() ? at1.type() : at2.type();
+	int atype2 = at1.type() < at2.type() ? at2.type() : at1.type();
+	bool inorder = at1.type() < at2.type(); // otherwise, atype1 and atype2 are swapped
+
+	EtableParamsOnePair const & p = analytic_params_for_pair( atype1, atype2 );
+	if ( dis2 < min_dis2 ) dis2 = min_dis2;
+
+	Real const dis = std::sqrt(dis2);
+	Real const inv_dis = 1.0/dis;
+	Real const inv_dis2 = inv_dis * inv_dis;
+
+	analytic_lk_evaluation_individual( atype1, atype2, p, dis, inv_dis2, inorder ? fa_solE1 : fa_solE2, inorder ? fa_solE2 : fa_solE1 );
 }
 
 inline
@@ -909,8 +983,8 @@ Etable::analytic_etable_derivatives(
 	using namespace core::scoring::etable;
 	Real dis2 = at1.xyz().distance_squared( at2.xyz() );
 
-	int atype1 = at1.type() < at2.type() ? at1.type() : at2.type();
-	int atype2 = at1.type() < at2.type() ? at2.type() : at1.type();
+	int const atype1 = at1.type() < at2.type() ? at1.type() : at2.type();
+	int const atype2 = at1.type() < at2.type() ? at2.type() : at1.type();
 	dljatrE_ddis = dljrepE_ddis = dfasolE_ddis = 0.0; inv_d = 1;
 
 	// locals
@@ -1019,6 +1093,69 @@ Etable::analytic_etable_derivatives(
 	} else {
 		dfasolE_ddis = 0;
 	}
+}
+
+inline
+void
+Etable::analytic_lk_derivatives(
+	conformation::Atom const & at1,
+	conformation::Atom const & at2,
+	Real & dfasolE1_ddis,
+	Real & dfasolE2_ddis,
+	Real & inv_d
+) const
+{
+	using namespace core;
+	using namespace core::scoring::etable;
+	Real dis2 = at1.xyz().distance_squared( at2.xyz() );
+
+	int const atype1 = at1.type() < at2.type() ? at1.type() : at2.type();
+	int const atype2 = at1.type() < at2.type() ? at2.type() : at1.type();
+	dfasolE1_ddis = dfasolE2_ddis = 0.0; inv_d = 1;
+
+	//  ctsa - epsilon allows final bin value to be calculated
+	if ( dis2 > max_dis2 + epsilon ) return;
+
+	EtableParamsOnePair const & p = analytic_params_for_pair( atype1, atype2 );
+	if ( dis2 < min_dis2 ) dis2 = min_dis2;
+
+	if ( dis2 > p.maxd2 ) return;
+	Real const dis = std::sqrt(dis2);
+	Real const inv_dis = 1.0/dis; inv_d = inv_dis;
+	Real const inv_dis2 = inv_dis * inv_dis;
+
+	if ( dis < p.fasol_spline_close_start ) {
+		dfasolE1_ddis = 0;
+		dfasolE2_ddis = 0;
+	} else if ( dis < p.fasol_spline_close_end ) {
+		dfasolE1_ddis = spline_deriv( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline1_close );
+		dfasolE1_ddis *= p.fasol_final_weight;
+		dfasolE2_ddis = spline_deriv( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline2_close );
+		dfasolE2_ddis *= p.fasol_final_weight;
+	} else if ( dis < fasol_spline_far_xlo ) {
+		/// exponential evaluation
+		Real const dis_rad1 = dis - lj_radius(atype1);
+		Real const x1 = ( dis_rad1 * dis_rad1 ) * lk_inv_lambda2_(atype1);
+		Real const dis_rad2 = dis - lj_radius(atype2);
+		Real const x2 = ( dis_rad2 * dis_rad2 ) * lk_inv_lambda2_(atype2);
+
+		Real const solvE1 = std::exp(-x1) * p.lk_coeff1 * inv_dis2;
+		Real const solvE2 = std::exp(-x2) * p.lk_coeff2 * inv_dis2;
+		dfasolE1_ddis = -2 * p.fasol_final_weight * ( dis_rad1 * lk_inv_lambda2_(atype1) + inv_dis ) * solvE1;
+		dfasolE2_ddis = -2 * p.fasol_final_weight * ( dis_rad2 * lk_inv_lambda2_(atype2) + inv_dis ) * solvE2;
+
+	} else if ( dis < fasol_spline_far_xhi ) {
+		dfasolE1_ddis = spline_deriv( dis, fasol_spline_far_xlo, fasol_spline_far_xhi,
+			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
+			p.fasol_spline1_far ) * p.fasol_final_weight;
+		dfasolE2_ddis = spline_deriv( dis, fasol_spline_far_xlo, fasol_spline_far_xhi,
+			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
+			p.fasol_spline2_far ) * p.fasol_final_weight;
+	} else {
+		dfasolE1_ddis = 0;
+		dfasolE2_ddis = 0;
+	}
+
 }
 
 //void
@@ -1165,6 +1302,115 @@ Etable::analytic_ljatr_spline_ramp_to_zero_deriv(
 	assert( dis >= p.ljatr_spline_xlo );
 	assert( dis <= p.ljatr_spline_xhi );
 	return spline_deriv( dis, p.ljatr_spline_xlo, p.ljatr_spline_xhi, p.ljatr_spline_parameters );
+}
+
+/// @details Note that atype1 must be less than or equal to atype2; the
+/// EtableParamsOnePair are stored only once for atom types i and j.
+void
+Etable::analytic_lk_evaluation(
+	int const atype1,
+	int const atype2,
+	EtableParamsOnePair const & p,
+	Real const dis,
+	Real const inv_dis2,
+	Real & fa_solE
+) const
+{
+	assert( atype1 <= atype2 );
+
+	/// a) At distances below p.fasol_spline_close_start, the value of fasol is held constant.
+	/// b) Then there's a spline to smooth between this constant region and the exponential region.
+	/// c) Then the exponential region.
+	/// d) Then the spline to smooth between the exponential region and where the energy goes to zero.
+	if ( dis < p.fasol_spline_close_start ) {
+		fa_solE = p.fasol_spline_close.ylo * p.fasol_final_weight;
+	} else if ( dis < p.fasol_spline_close_end ) {
+		fa_solE = eval_spline( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline_close );
+		fa_solE *= p.fasol_final_weight;
+		//Real const fasol_spline_knots_diff = p.fasol_spline_close_end - p.fasol_spline_close_start;
+		//Real const fasol_spline_knots_diff_inv = 1/fasol_spline_knots_diff;
+		//Real const a = ( p.fasol_spline_close_end - dis ) * fasol_spline_knots_diff_inv;
+		//Real const b = ( dis - p.fasol_spline_close_start ) * fasol_spline_knots_diff_inv;
+		//SplineParameters const & sp = p.fasol_spline_close;
+		//fa_solE = a*sp.ylo + b*sp.yhi + ((a*a*a-a)*sp.y2lo + (b*b*b-b)*sp.y2hi)*fasol_spline_knots_diff*fasol_spline_knots_diff / 6;
+	} else if ( dis < fasol_spline_far_xlo ) {
+		/// exponential evaluation
+		/// assert( atype1 <= atype2 ), which is accomplished at the top of this function.
+		Real const dis_rad1 = dis - lj_radius(atype1);
+		Real const x1 = ( dis_rad1 * dis_rad1 ) * lk_inv_lambda2_(atype1);
+		Real const dis_rad2 = dis - lj_radius(atype2);
+		Real const x2 = ( dis_rad2 * dis_rad2 ) * lk_inv_lambda2_(atype2);
+
+		fa_solE =  inv_dis2 * ( std::exp(-x1) * p.lk_coeff1 + std::exp(-x2) * p.lk_coeff2 );
+		fa_solE *= p.fasol_final_weight;
+
+	} else if ( dis < fasol_spline_far_xhi ) {
+		fa_solE = eval_spline( dis,
+			fasol_spline_far_xlo, fasol_spline_far_xhi,
+			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
+			p.fasol_spline_far );
+		//Real const a = ( fasol_spline_far_xhi - dis ) * fasol_spline_far_diff_xhi_xlo_inv;
+		//Real const b = ( dis - fasol_spline_far_xlo ) * fasol_spline_far_diff_xhi_xlo_inv;
+		//SplineParameters const & sp = p.fasol_spline_far;
+		//
+		//fa_solE = a*sp.ylo + b*sp.yhi + ((a*a*a-a)*sp.y2lo + (b*b*b-b)*sp.y2hi)*fasol_spline_far_diff_xhi_xlo*fasol_spline_far_diff_xhi_xlo / 6;
+		fa_solE *= p.fasol_final_weight;
+	} else {
+		fa_solE = 0;
+	}
+}
+
+/// @details The etable parameters are stored such that the atom type of
+/// atom 1 is less than or equal to the atom type of atom 2, so that
+/// the caller of this function will need to keep track of which atom
+/// is which.
+void
+Etable::analytic_lk_evaluation_individual(
+	int const atype1,
+	int const atype2,
+	EtableParamsOnePair const & p,
+	Real const dis,
+	Real const inv_dis2,
+	Real & fa_solE1,
+	Real & fa_solE2
+) const
+{
+	assert( atype1 <= atype2 );
+
+	/// a) At distances below p.fasol_spline_close_start, the value of fasol is held constant.
+	/// b) Then there's a spline to smooth between this constant region and the exponential region.
+	/// c) Then the exponential region.
+	/// d) Then the spline to smooth between the exponential region and where the energy goes to zero.
+	if ( dis < p.fasol_spline_close_start ) {
+		fa_solE1 = p.fasol_spline1_close.ylo * p.fasol_final_weight;
+		fa_solE2 = p.fasol_spline2_close.ylo * p.fasol_final_weight;
+	} else if ( dis < p.fasol_spline_close_end ) {
+		fa_solE1 = p.fasol_final_weight * eval_spline( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline1_close );
+		fa_solE2 = p.fasol_final_weight * eval_spline( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline2_close );
+	} else if ( dis < fasol_spline_far_xlo ) {
+		/// exponential evaluation
+		Real const dis_rad1 = dis - lj_radius(atype1);
+		Real const x1 = ( dis_rad1 * dis_rad1 ) * lk_inv_lambda2_(atype1);
+		Real const dis_rad2 = dis - lj_radius(atype2);
+		Real const x2 = ( dis_rad2 * dis_rad2 ) * lk_inv_lambda2_(atype2);
+
+		fa_solE1 = p.fasol_final_weight * inv_dis2 * std::exp(-x1) * p.lk_coeff1;
+		fa_solE2 = p.fasol_final_weight * inv_dis2 * std::exp(-x2) * p.lk_coeff2;
+
+	} else if ( dis < fasol_spline_far_xhi ) {
+		fa_solE1 = p.fasol_final_weight * eval_spline( dis,
+			fasol_spline_far_xlo, fasol_spline_far_xhi,
+			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
+			p.fasol_spline1_far );
+
+		fa_solE2 = p.fasol_final_weight * eval_spline( dis,
+			fasol_spline_far_xlo, fasol_spline_far_xhi,
+			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
+			p.fasol_spline2_far );
+
+	} else {
+		fa_solE1 = fa_solE2 = 0;
+	}
 }
 
 inline

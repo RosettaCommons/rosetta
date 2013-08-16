@@ -76,197 +76,6 @@ public:
 
 	void tearDown() {}
 
-	/*void interpolated_analytic_etable_evaluation(
-		core::scoring::etable::Etable const & e,
-		core::conformation::Atom const & at1,
-		core::conformation::Atom const & at2,
-		core::Real & lj_atrE,
-		core::Real & lj_repE,
-		core::Real & fa_solE
-	)
-	{
-		Real ljatrE_lo, ljrepE_lo, fasolE_lo;
-		Real ljatrE_hi, ljrepE_hi, fasolE_hi;
-		core::conformation::Atom at2_lo( at2 ), at2_hi( at2 );
-		Real dis2 = at1.xyz().distance_squared( at2.xyz() );
-		int dis2bin = (int) ( dis2 * e.bins_per_A2 );
-
-		Real dis2lo = Real(dis2bin) / e.bins_per_A2;
-		Real dis2hi = Real(dis2bin  + 1 )/e.bins_per_A2;
-		at2_lo.xyz( Vector( std::sqrt( dis2lo ), 0, 0 ));
-		at2_hi.xyz( Vector( std::sqrt( dis2hi ), 0, 0 ));
-
-		analytic_etable_evaluation( e, at1, at2_lo, ljatrE_lo, ljrepE_lo, fasolE_lo );
-		analytic_etable_evaluation( e, at1, at2_hi, ljatrE_hi, ljrepE_hi, fasolE_hi );
-
-		Real alpha = (dis2*e.bins_per_A2 - dis2bin);
-		//std::cout << "debug " << dis2 << " " << dis2lo << " " << dis2hi << " " << alpha << " " << 1-alpha << " " << ljatrE_lo << " " << ljatrE_hi << std::endl;
-
-		lj_atrE = alpha * ljatrE_hi + (1-alpha) * ljatrE_lo;
-		lj_repE = alpha * ljrepE_hi + (1-alpha) * ljrepE_lo;
-		fa_solE = alpha * fasolE_hi + (1-alpha) * fasolE_lo;
-	}
-
-	void
-	analytic_etable_evaluation(
-		core::scoring::etable::Etable const & e,
-		core::conformation::Atom const & at1,
-		core::conformation::Atom const & at2,
-		core::Real & lj_atrE,
-		core::Real & lj_repE,
-		core::Real & fa_solE
-	)
-	{
-		using namespace core;
-		using namespace core::scoring::etable;
-		Real dis2 = at1.xyz().distance_squared( at2.xyz() );
-
-		int atype1 = at1.type();
-		int atype2 = at2.type();
-		lj_atrE = 0; lj_repE = 0; fa_solE = 0;
-
-		// Pasted directly from Etable.cc:calc_etable_value
-		// locals
-		Real ljE,d_ljE,x1,x2;
-		Real dis;
-		Real inv_dis,inv_dis2,inv_dis6,inv_dis7,inv_dis12,inv_dis13;
-		Real dis2sigma;
-		int xtra_atype1,xtra_atype2;
-		//int const atype_sulfur = { 16 };
-
-		// include after local variables to allow data statements to initialize
-		Real atrE = 0.;
-		Real d_atrE = 0.;
-		Real repE = 0.;
-		Real d_repE = 0.;
-		Real solvE1 = 0.;
-		Real solvE2 = 0.;
-		Real dsolvE1 = 0.;
-		Real dsolvE2 = 0.;
-
-		//  ctsa - epsilon allows final bin value to be calculated
-		if ( dis2 > e.max_dis2 + e.epsilon ) return;
-
-		if ( dis2 < e.min_dis2 ) dis2 = e.min_dis2;
-
-		dis = std::sqrt(dis2);
-		inv_dis = 1.0/dis;
-		inv_dis2 = inv_dis * inv_dis;
-
-
-
-		//  ctsa - switch to disulfide bonded atom types
-		//    when conditions are met
-		// if ( ( atype1 == atype_sulfur && atype2 == atype_sulfur ) &&
-		//  dis < disulfide_dis_thresh ) {
-		// xtra_atype1 = n_atomtypes + 1;
-		// xtra_atype2 = n_atomtypes + 1;
-		// } else {
-		xtra_atype1 = atype1;
-		xtra_atype2 = atype2;
-		//}
-
-
-		dis2sigma = dis / e.lj_sigma(xtra_atype1,xtra_atype2);
-
-		std::pair< Real, Real > const & ljatr_spline_xlo_xhi = e.ljatr_spline_xlo_xhi(atype1,atype2);
-		if ( dis2sigma < e.lj_switch_dis2sigma ) {
-			//  ctsa - use linear ramp instead of lj when the dis/sigma
-			//    ratio drops below theshold
-			d_ljE = e.lj_switch_slope(xtra_atype1,xtra_atype2);
-			ljE = dis*d_ljE + e.lj_switch_intercept(xtra_atype1,xtra_atype2);
-		} else if ( dis < ljatr_spline_xlo_xhi.first ) {
-			//  ctsa - calc regular lennard-jones
-			inv_dis6  = inv_dis2 * inv_dis2 * inv_dis2;
-			inv_dis7  = inv_dis6 * inv_dis;
-			inv_dis12 = inv_dis6 * inv_dis6;
-			inv_dis13 = inv_dis12 * inv_dis;
-
-			ljE = e.lj_r12_coeff(xtra_atype1,xtra_atype2) * inv_dis12 +
-				e.lj_r6_coeff(xtra_atype1,xtra_atype2) * inv_dis6;
-
-			d_ljE = -12.*e.lj_r12_coeff(xtra_atype1,xtra_atype2) * inv_dis13-6. *
-				e.lj_r6_coeff(xtra_atype1,xtra_atype2) * inv_dis7;
-		} else if ( dis < ljatr_spline_xlo_xhi.second ) {
-			Real width = (ljatr_spline_xlo_xhi.second - ljatr_spline_xlo_xhi.first);
-			Real invwidth = 1/width;
-			Real a = ( ljatr_spline_xlo_xhi.second - dis ) * invwidth;
-			Real b = ( dis - ljatr_spline_xlo_xhi.first ) * invwidth;
-			SplineParameters sp = e.ljatr_spline_parameters( at1.type(), at2.type() );
-			ljE = a*sp.ylo + b*sp.yhi + ((a*a*a-a)*sp.y2lo + (b*b*b-b)*sp.y2hi)*width*width / 6;
-		} else {
-			/// assuming e.ljatr_spline_xhi == LK distance cutoff
-			return;
-		}
-
-		if ( e.ljrep_from_negcrossing(at1.type(), at2.type() )) {
-			if (ljE < 0 ) {
-				atrE = ljE;
-			} else {
-				repE = ljE;
-			}
-		} else if ( dis < e.lj_minima( at1.type(), at2.type() ) ) {
-			atrE = e.lj_vals_at_minima( at1.type(), at2.type() );
-			repE = ljE - atrE;
-		} else {
-			atrE = ljE;
-		}
-
-		ExtraQuadraticRepulsion const & exrep = e.ljrep_extra_repulsion(atype1,atype2);
-		if ( dis < exrep.xhi ) {
-			if ( dis < exrep.xlo ) {
-				repE += ( dis - exrep.xlo ) * exrep.extrapolated_slope + exrep.ylo;
-			} else {
-				repE += ( exrep.xhi - dis ) * ( exrep.xhi - dis ) * exrep.slope;
-			}
-		}
-
-		//if ( ljE < 0. ) {
-		//	atrE = ljE;
-		//	d_atrE = d_ljE;
-		//} else {
-		//	repE = ljE;
-		//	d_repE = d_ljE;
-		//}
-
-
-		std::pair< Real, Real > fasol_spline_close_knots( e.fasol_spline_close_start_end(at1.type(),at2.type()) );
-		if ( dis < fasol_spline_close_knots.first ) {
-			fa_solE = e.fasol_spline_close(at1.type(),at2.type() ).ylo;
-		} else if ( dis < fasol_spline_close_knots.second ) {
-			Real fasol_spline_knots_diff = fasol_spline_close_knots.second - fasol_spline_close_knots.first;
-			Real fasol_spline_knots_diff_inv = 1/fasol_spline_knots_diff;
-      Real a = ( fasol_spline_close_knots.second - dis ) * fasol_spline_knots_diff_inv;
-      Real b = ( dis - fasol_spline_close_knots.first ) * fasol_spline_knots_diff_inv;
-      SplineParameters const & sp = e.fasol_spline_close( at1.type(), at2.type() );
-      fa_solE = a*sp.ylo + b*sp.yhi + ((a*a*a-a)*sp.y2lo + (b*b*b-b)*sp.y2hi)*fasol_spline_knots_diff*fasol_spline_knots_diff / 6;
-		} else if ( dis < e.fasol_spline_far_xlo ) {
-			/// exponential evaluation
-      Real dis_rad = dis - e.lj_radius(atype1);
-      //Real dis_rad = dis - atom_type(atype1).lj_radius();
-      x1 = ( dis_rad * dis_rad ) * e.lk_inv_lambda2(atype1);
-      dis_rad = dis - e.lj_radius(atype2);
-      //dis_rad = dis - atom_type(atype2).lj_radius();
-      x2 = ( dis_rad * dis_rad ) * e.lk_inv_lambda2(atype2);
-
-      fa_solE =  std::exp(-x1) * e.lk_coeff(atype1,atype2) * inv_dis2;
-      fa_solE += std::exp(-x2) * e.lk_coeff(atype2,atype1) * inv_dis2;
-		} else if ( dis < e.fasol_spline_far_xhi ) {
-      Real a = ( e.fasol_spline_far_xhi - dis ) * e.fasol_spline_far_diff_xhi_xlo_inv;
-      Real b = ( dis - e.fasol_spline_far_xlo ) * e.fasol_spline_far_diff_xhi_xlo_inv;
-      SplineParameters const & sp = e.fasol_spline_far( at1.type(), at2.type() );
-      fa_solE = a*sp.ylo + b*sp.yhi + ((a*a*a-a)*sp.y2lo + (b*b*b-b)*sp.y2hi)*e.fasol_spline_far_diff_xhi_xlo*e.fasol_spline_far_diff_xhi_xlo / 6;
-		} else {
-			fa_solE = 0;
-		}
-
-		lj_atrE = atrE * e.ljatr_final_weight(at1.type(),at2.type());
-		lj_repE = repE;
-		fa_solE *= e.fasol_final_weight(at1.type(),at2.type());
-
-		//fa_solE = solvE1 + solvE2;
-	}*/
-
 	Real
 	normalized_difference(
 		Real val1,
@@ -355,6 +164,56 @@ public:
 					if ( normalized_difference( dfasol_ana, dfasol_num  ) > tolerance && dfasol_ana - dfasol_num > tolerance ) {
 						std::cout << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << " " << step * kk <<
 							"   Sol: " << dfasol_ana << " " << dfasol_num << " diff: " << dfasol_ana - dfasol_num << std::endl;
+					}
+
+				}
+			}
+		}
+	}
+
+	void test_etable_analytic_lk_individual()
+	{
+		using namespace core;
+		using namespace core::pose;
+		using namespace core::scoring;
+		using namespace core::scoring::etable;
+		using namespace core::scoring::methods;
+
+		Pose pose = create_trpcage_ideal_pose();
+		EnergyMethodOptions options; // default is fine
+
+		Etable const & etable( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
+
+		conformation::Atom at1, at2;
+		at1.type(1); at2.type(2);
+		at1.xyz( Vector(0,0,0) ); at2.xyz( Vector(0,0,1) );
+
+		Real step = 1e-2;
+		Real range = etable.max_dis();
+		Size nsteps = Size( range / step ) + 1;
+		//Real d2;
+
+		Real offset = 0; //1e-5;
+		for ( Size ii = 1; ii <= etable.n_atomtypes(); ++ii ) {
+			at1.type(ii);
+			for ( Size jj = 1; jj <= etable.n_atomtypes(); ++jj ) {
+				at2.type(jj);
+				//std::cout << "looking at " << (*etable.atom_set())[ii].name() << " " << (*etable.atom_set())[jj].name() << std::endl;
+
+
+				for ( Size kk = 2; kk <= nsteps; ++kk ) { // skip d = 0.01; this is etable.min_dis and messes up derivative calculations
+					Real dummy_ljatr, dummy_ljrep, fasol_regular, dummy_d2;
+					Real fasol_individual_1, fasol_individual_2;
+
+					at2.xyz( Vector(step*kk+offset,0,0) );
+
+					etable.analytic_etable_evaluation( at1, at2, dummy_ljatr, dummy_ljrep, fasol_regular, dummy_d2 );
+					etable.analytic_lk_energy( at1, at2, fasol_individual_1, fasol_individual_2 );
+
+					/// There's surprising disagreement in some atom pairs (22 vs 22) as high as 5e-4
+					TS_ASSERT_DELTA( fasol_regular, fasol_individual_1 + fasol_individual_2, 1e-3 );
+					if ( std::abs( fasol_regular - ( fasol_individual_1 + fasol_individual_2 )) > 1e-3 ) {
+						std::cout << "Error: " << ii << " " << jj << " " << step*kk+offset << " " << fasol_regular << " vs " << fasol_individual_1 + fasol_individual_2 << " ( " << fasol_individual_1 << " + " << fasol_individual_2 << "); diff= " << fasol_regular - ( fasol_individual_1 + fasol_individual_2 ) << std::endl;
 					}
 
 				}

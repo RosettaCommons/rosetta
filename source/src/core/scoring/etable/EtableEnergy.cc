@@ -361,6 +361,17 @@ TableLookupEvaluator::trie_vs_path(
 	trie1.trie_vs_path( trie2, cp, *this, pair_energy_vector, temp_vector );
 }
 
+/*void
+TableLookupEvaluator::atom_pair_lk_energy_v(
+  conformation::Atom const & atom1,
+  conformation::Atom const & atom2,
+	Real & solE1,
+	Real & solE2
+) const
+{
+	// Rhiju: insert code here to evaluate the lk sol; probably want to move LK_CosThetaEnergy::eval_lk to the Etable class
+}*/
+
 
 AnalyticEtableEvaluator::AnalyticEtableEvaluator( Etable const & etable ) :
 	EtableEvaluator( etable ),
@@ -458,6 +469,17 @@ AnalyticEtableEvaluator::trie_vs_path(
 ) const
 {
 	trie1.trie_vs_path( trie2, cp, *this, pair_energy_vector, temp_vector );
+}
+
+void
+AnalyticEtableEvaluator::atom_pair_lk_energy_v(
+  conformation::Atom const & atom1,
+  conformation::Atom const & atom2,
+	Real & solE1,
+	Real & solE2
+) const
+{
+	etable_.analytic_lk_energy( atom1, atom2, solE1, solE2 );
 }
 
 
