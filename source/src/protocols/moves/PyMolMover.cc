@@ -114,23 +114,28 @@ UDPSocketClient::UDPSocketClient( UDPSocketClient const & other ) :
 	socket_addr_( other.socket_addr_ ),
 	socket_h_( other.socket_h_ )
 {
-	// reinit connection using coppied info
+#ifndef  __native_client__
+  // reinit connection using coppied info
 	socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
+#endif
 }
 
 UDPSocketClient::~UDPSocketClient()
 {
 	//#ifndef WIN_PYROSETTA
+#ifndef  __native_client__
   #ifdef WIN32
 	  closesocket(socket_h_);
 	#else
 		close(socket_h_);
 	#endif
 	//#endif
+#endif
 }
 
 void UDPSocketClient::sendMessage(std::string msg)
 {
+#ifndef  __native_client__
 	int count = 1;
 	if( msg.size() > max_packet_size_ )  { count = msg.size()/max_packet_size_ + 1; }
 
@@ -149,6 +154,7 @@ void UDPSocketClient::sendMessage(std::string msg)
 	}
 
 	sentCount_++;
+#endif
 }
 
 void UDPSocketClient::sendRAWMessage(int globalPacketID, int packetI, int packetCount, char * msg_begin, char *msg_end)
@@ -171,6 +177,7 @@ void UDPSocketClient::sendRAWMessage(int globalPacketID, int packetI, int packet
 void
 UDPSocketClient::show(std::ostream & output) const
 {
+#ifndef  __native_client__
 	output << "max packet size: " << max_packet_size_ << std::endl;
 	output << "sent count: " << sentCount_ << std::endl;
 	output << "socket handel: " << socket_h_ << std::endl;
@@ -190,6 +197,7 @@ UDPSocketClient::show(std::ostream & output) const
 	output << "socket address family: " << socket_addr_.sin_family << std::endl;
 	output << "socket address port: " << socket_addr_.sin_port << std::endl;
 	output << "socket address address: " << socket_addr_.sin_addr.s_addr << std::endl;
+#endif
 }
 
 std::ostream &
@@ -312,6 +320,7 @@ void PyMolMover::print(std::string const & message)
 
 void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, utility::vector1<int> const & energies)
 {
+#ifndef  __native_client__
 	if( !is_it_time() ) return;
 
 	std::string msg(7*energies.size(), ' ');
@@ -346,10 +355,12 @@ void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, uti
 	//TR << "Sending message, Size:" << message.size() << std::endl;
 
 	link_.sendMessage(message);
+#endif
 }
 
 void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_type)
 {
+#ifndef  __native_client__
 	if( !is_it_time() ) return;
 
 	if( pose.energies().energies_updated() ) {
@@ -398,6 +409,7 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 
 		link_.sendMessage(message);
 	}
+#endif
 }
 
 /// Send specified energy to PyMOL.
@@ -409,7 +421,8 @@ void PyMolMover::send_energy(Pose const &pose, std::string const & stype)
 
 void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors, X11Colors default_color)
 {
-	utility::vector1<int> energies( pose.total_residue(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.total_residue()
+#ifndef  __native_client__
+utility::vector1<int> energies( pose.total_residue(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.total_residue()
 
 	for(std::map<int, int>:: const_iterator i = colors.begin(); i!=colors.end(); ++i) {
 		PyAssert( (*i).first >=1 && (*i).first <= static_cast<int>(pose.total_residue()),
@@ -420,6 +433,7 @@ void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors
 		energies[ (*i).first ] = (*i).second;  // for r in colors: energies[r-1] = X11Colors[ colors[r] ][0]
 	}
 	send_RAW_Energies(pose, "X11Colors", energies);  //self._send_RAW_Energies(pose, 'X11Colors', energies, autoscale=False)
+#endif
 }
 
 void PyMolMover::show(std::ostream & output) const

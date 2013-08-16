@@ -25,6 +25,8 @@
 namespace protocols {
 namespace wum2 {
 
+#ifndef __native_client__
+
 using namespace boost;
 
 struct StatusRequest;
@@ -96,6 +98,8 @@ struct StatusRequest {
 	}
 #endif
 };
+
+#endif
 
 } // wum2
 } // protocols

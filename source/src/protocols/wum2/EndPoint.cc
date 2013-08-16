@@ -18,7 +18,9 @@
 namespace protocols {
 namespace wum2 {
 
+#ifndef __native_client__
 EndPoint::EndPoint( function < uint64_t () > role_available_mem  ) : role_available_mem_( role_available_mem) {}
+#endif
 
 } // wum2
 } // protocols

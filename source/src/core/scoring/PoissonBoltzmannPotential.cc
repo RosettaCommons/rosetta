@@ -243,7 +243,8 @@ PB::solve_pb( core::pose::Pose const & pose,
 							std::string const & tag,
 							std::map<std::string, bool> const &charged_residues )
 {
-	using namespace std;
+#ifndef __native_client__	
+  using namespace std;
 	time_t begin;
 	time(&begin);
 
@@ -280,6 +281,8 @@ PB::solve_pb( core::pose::Pose const & pose,
 	time_t end;
 	time(&end);
 	TR << "PB took " << end-begin << " seconds" << std::endl;
+#endif
+
 }
 void
 PB::load_APBS_potential()

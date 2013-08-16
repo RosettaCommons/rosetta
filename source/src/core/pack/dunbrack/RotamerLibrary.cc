@@ -1292,7 +1292,8 @@ RotamerLibrary::write_binary_fa_dunbrack_libraries() const
 void
 RotamerLibrary::write_binary_fa_dunbrack_libraries_02() const
 {
-	std::string binary_filename = get_binary_name_02();
+#ifndef __native_client__
+  std::string binary_filename = get_binary_name_02();
 	std::string tempfilename = random_tempname( "dun02_binary" );
 
 	TR << "Opening file " << tempfilename << " for output." << std::endl;
@@ -1316,13 +1317,14 @@ RotamerLibrary::write_binary_fa_dunbrack_libraries_02() const
 	} else {
 		TR << "Unable to open temporary file in rosetta database for writing the binary version of the Dunbrack02 library." << std::endl;
 	}
-
+#endif
 }
 
 
 void
 RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const
 {
+#ifndef __native_client__
 	std::string binary_filename = get_binary_name_10();
 	std::string tempfilename = random_tempname( "dun10_binary" );
 
@@ -1412,6 +1414,7 @@ RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const
 	} else {
 		TR << "Unable to open temporary file in rosetta database for writing the binary version of the Dunbrack '10 library." << std::endl;
 	}
+#endif
 }
 
 

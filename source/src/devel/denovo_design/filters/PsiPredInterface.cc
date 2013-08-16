@@ -217,8 +217,13 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 	command += " > /dev/null";
 #endif
 	TR.Debug << "Trying to run " << command << std::endl;
-	core::Size retval = system( command.c_str() );
-	if ( retval != 0 ){
+
+#ifdef __native_client__
+  core::Size retval = 1;
+#else
+  core::Size retval = system( command.c_str() );
+#endif
+  if ( retval != 0 ){
 		utility_exit_with_message( "Failed to run the psipred command, which was \"" + command + "\". Something went wrong. Make sure you specified the full path to the psipred command in your XML file. Return code=" + boost::lexical_cast<std::string>( retval ) );
 	}
 

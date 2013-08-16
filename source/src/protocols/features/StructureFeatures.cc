@@ -174,9 +174,6 @@ StructureFeatures::report_features(
 	string const & tag,
 	string const & input_tag
 ){
-
-#ifndef __native_client__
-
 	InsertGenerator structures_insert("structures");
 	structures_insert.add_column("batch_id");
 	structures_insert.add_column("tag");
@@ -193,7 +190,6 @@ StructureFeatures::report_features(
 
 	StructureID inserted_struct_id(structure_sequence_id);
 
-#endif
 	return inserted_struct_id;
 }
 

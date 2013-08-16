@@ -176,7 +176,7 @@ std::ostream & operator<<(std::ostream & out, QuaternionGrid const & q);
 
 class QuatDBMetadata {
 public:
-	QuatDBMetadata(std::string _name, long _N, numeric::Real _radius, numeric::Real _cover, numeric::Real _delta ) : name(_name),N(_N),radius(_radius),cover(_cover),delta(_delta) {}
+	QuatDBMetadata(std::string _name, long _NN, numeric::Real _radius, numeric::Real _cover, numeric::Real _delta ) : name(_name),N(_NN),radius(_radius),cover(_cover),delta(_delta) {}
 	std::string name;
 	long N;
 	numeric::Real radius,cover,delta;
