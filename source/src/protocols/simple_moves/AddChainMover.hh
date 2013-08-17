@@ -54,7 +54,7 @@ public:
 	bool random_access() const{ return random_access_; }
 	void random_access( bool const b ){ random_access_ = b; }
 private:
-	std::string fname_; //dflt ""; pdb name to load
+	std::string fname_; //dflt ""; pdb names to load (can accept a comma-separated list)
 	bool new_chain_; //dflt true; add as a new chain?
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt score12; used to score the new pose
 	bool random_access_; //dflt false; if true randomly choose one file name from a list and work with that throughout the run.

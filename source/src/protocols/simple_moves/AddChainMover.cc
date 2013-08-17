@@ -69,9 +69,14 @@ AddChainMover::apply( Pose & pose )
 	using namespace core::pose;
 
 	Pose new_pose;
+	utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
+	TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
+	core::Size const random_num = (core::Size) (RG.uniform() * split_names.size()) + 1;
+	std::string const curr_fname( split_names[ random_num ] );
+	TR<<"choosing number: "<<random_num<<" "<<curr_fname<<std::endl;
 
 	TR<<"Before addchain, total residues: "<<pose.total_residue()<<std::endl;
-	core::import_pose::pose_from_pdb( new_pose, fname() );
+	core::import_pose::pose_from_pdb( new_pose, curr_fname );
 	new_pose.conformation().detect_disulfides();
 	(*scorefxn()) ( new_pose );
 
@@ -109,16 +114,14 @@ AddChainMover::parse_my_tag(
 	core::pose::Pose const & )
 {
 	random_access( tag->getOption< bool >( "random_access", false ) );
+	fname( tag->getOption< std::string >( "file_name" ) );
 	if( random_access() ){
-		std::string const fnames( tag->getOption< std::string >( "file_name" ) );
-		utility::vector1< std::string > const split_names( utility::string_split< std::string >( fnames, ',', std::string()) );
+		utility::vector1< std::string > const split_names( utility::string_split< std::string >( fname(), ',', std::string()) );
 		TR<<"Found "<<split_names.size()<<" file names"<<std::endl;
-		core::Size const random_num = (core::Size) (RG.uniform() * split_names.size()) + 1;
-		TR<<"choosing number: "<<random_num<<" "<<split_names[ random_num ]<<std::endl;
-		fname( split_names[ random_num ] );
+//		core::Size const random_num = (core::Size) (RG.uniform() * split_names.size()) + 1;
+//		TR<<"choosing number: "<<random_num<<" "<<split_names[ random_num ]<<std::endl;
+//		fname( split_names[ random_num ] );
 	}
-	else
-		fname( tag->getOption< std::string >( "file_name" ) );
 	new_chain( tag->getOption< bool >( "new_chain", 1 ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	TR<<"AddChain sets fname: "<<fname()<<" new_chain: "<<new_chain()<<std::endl;
