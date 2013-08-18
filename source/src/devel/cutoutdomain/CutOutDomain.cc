@@ -84,18 +84,18 @@ CutOutDomain::apply( core::pose::Pose & pose )
 {
 	core::pose::Pose Temp_pose;
 	core::import_pose::pose_from_pdb( Temp_pose, source_pdb_name_ );
-	core::Size from = find_nearest_res(pose,Temp_pose,start_res_, 1/*chain*/ );
+	core::Size from = find_nearest_res(Temp_pose,pose,start_res_, 1/*chain*/ );
 	//	TR<<from<<std::endl;
-		core::Size to  = find_nearest_res(pose,Temp_pose,end_res_, 1/*chain*/ );
+		core::Size to  = find_nearest_res(Temp_pose,pose,end_res_, 1/*chain*/ );
 		//TR<<to<<std::endl;
-		TR<<"First resdiue in the target pose "<<name<<" : "<<Temp_pose.residue(from).name1()<<from<<std::endl;
-		TR<<"End resdiue in the target pose "<<name<<" : "<<Temp_pose.residue(to).name1()<<to<<std::endl;
-		Temp_pose.conformation().delete_residue_range_slow( to+1,Temp_pose.total_residue() );
-		Temp_pose.conformation().delete_residue_range_slow( 1,from+1 );
-		
-		TR<<"First resdiue in the target pose "<<name<<" : "<<to<<std::endl;
-		std::string output_name = suffix_+Temp_pose.pdb_info()->name();
-		Temp_pose.dump_pdb(output_name);
+		TR<<"Start resdiue on the source pose "<<source_pdb_name_<<" : "<<Temp_pose.residue(start_res_).name1()<<start_res_<<std::endl;
+		TR<<"Start resdiue on the target pose "<<pose.pdb_info()->name()<<" : "<<pose.residue(from).name1()<<from<<std::endl;
+		TR<<"End resdiue on the source pose "<<source_pdb_name_<<" : "<<Temp_pose.residue(end_res_).name1()<<end_res_<<std::endl;
+		TR<<"End resdiue on the target pose "<<pose.pdb_info()->name()<<" : "<<pose.residue(to).name1()<<to<<std::endl;
+		pose.conformation().delete_residue_range_slow( to+1,pose.total_residue() );
+		pose.conformation().delete_residue_range_slow( 1,from+1 );
+		//hack so Rosetta doesn't call scoring function at the end
+		pose.dump_pdb(suffix_);
 }
 
 
