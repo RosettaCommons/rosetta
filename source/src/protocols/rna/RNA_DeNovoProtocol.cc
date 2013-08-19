@@ -86,6 +86,7 @@
 #include <vector>
 #include <list>
 #include <string>
+#include <iostream>
 #include <sstream>
 #include <fstream>
 #ifdef WIN32
@@ -379,6 +380,57 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 std::string
 RNA_DeNovoProtocol::get_name() const {
 	return "RNA_DeNovoProtocol";
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_DeNovoProtocol::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output <<   "nstruct:                       " << nstruct_  <<
+	      "\nMonte Carlo cycles:            " << monte_carlo_cycles_ <<
+				"\nMC cycle max default:          " << monte_carlo_cycles_max_default_ <<
+				"\nUser defined MC cycles:        " << (user_defined_cycles_  ? "True" : "False") <<
+				"\nAll RNA fragment file:         " << all_rna_fragments_file_ <<
+				"\nHeat structure:                " << (heat_structure_ ? "True" : "False") <<
+				"\nDump pdb:                      " << (dump_pdb_ ? "True" : "False") <<
+				"\nMinimize structure:            " << (minimize_structure_ ? "True" : "False") <<
+				"\nRelax structure:               " << (relax_structure_ ? "True" : "False") <<
+				"\nIgnore secstruct:              " << (ignore_secstruct_ ? "True" : "False") <<
+				"\nDo close loops:                " << (do_close_loops_ ? "True" : "False") <<
+				"\nClose loops at end:            " << (close_loops_at_end_ ? "True" : "False") <<
+				"\nClose loops in each round:     " << (close_loops_in_last_round_ ? "True" : "False") <<
+				"\nClose loops after each move:   " << (close_loops_after_each_move_ ? "True" : "False") <<
+				"\nSimple rmsd cutoff relax:      " << (simple_rmsd_cutoff_relax_ ? "True" : "False") <<
+				"\nAllow bulges:                  " << (allow_bulge_ ? "True" : "False") <<
+				"\nAllow consecutive bulges:      " << (allow_consecutive_bulges_ ? "True" : "False") <<
+				"\nUse chem shift data:           " << (use_chem_shift_data_ ? "True" : "False") <<
+				"\nDefault temperature for MC:    " << m_Temperature_ <<
+				"\nFragment size:                 " << frag_size_ <<
+				"\nInput rna params file?:        " << ((rna_params_file_ == "" ) ? "No" : "Yes") <<
+				"\nInput rna data file?:          " << ((rna_data_file_ == "" ) ? "No" : "Yes") <<
+				"\nJump library file:             " << jump_library_file_ <<
+				"\nOutput lores silent file:      " << (output_lores_silent_file_ ? "True" : "False") <<
+				"\nFilter lores base pairs:       " << (filter_lores_base_pairs_ ? "True" : "False") <<
+				"\nFilter lores base pairs early: " << (filter_lores_base_pairs_early_ ? "True" : "False") <<
+				"\nFilter chain closure:          " << (filter_chain_closure_ ? "True" : "False") <<
+				"\nFilter chain closure distance: " << filter_chain_closure_distance_ <<
+				"\nFilter chain closure halfway:  " << (filter_chain_closure_halfway_ ? "True" : "False") <<
+				"\nVary bond geometry:            " << (vary_bond_geometry_ ? "True" : "False") <<
+				"\nBinary RNA output:             " << (binary_rna_output_ ? "True" : "False") <<
+				"\nJump change frequency:         " << jump_change_frequency_ <<
+				"\nChunk coverage:                " << chunk_coverage_ <<
+				"\nStaged constraints:            " << (staged_constraints_ ? "True" : "False") <<
+				"\nTitrate stack bonus:           " << (titrate_stack_bonus_ ? "True" : "False") <<
+				"\nMove first rigid body:         " << (move_first_rigid_body_ ? "True" : "False") <<
+				"\nRoot at first rigid body:      " << (root_at_first_rigid_body_ ? "True" : "False") <<
+				"\nOutput Filters:                " << (output_filters_ ? "True" : "False") <<
+				"\nLores score early:             " << (lores_score_early_ ? "True" : "False") <<
+				"\nLores score final:             " << (lores_score_final_ ? "True" : "False") <<
+				"\nAutofilter:                    " << (autofilter_ ? "True" : "False") <<
+				"\nAutofilter score quantile:     " << autofilter_score_quantile_;
+
 }
 
 
@@ -1273,6 +1325,11 @@ RNA_DeNovoProtocol::add_chem_shift_info(core::io::silent::SilentStruct & silent_
 
 }
 
+std::ostream &operator<< ( std::ostream &os, RNA_DeNovoProtocol const &mover )
+{
+	mover.show(os);
+	return os;
+}
 
 } // namespace rna
 } // namespace protocols

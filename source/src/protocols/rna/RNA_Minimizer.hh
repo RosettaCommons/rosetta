@@ -48,6 +48,8 @@ public:
 
 	virtual std::string get_name() const;
 
+	virtual void show(std::ostream & output=std::cout) const;
+
 	void deriv_check( bool const setting ){ deriv_check_ = setting; }
 
 	void use_coordinate_constraints( bool const setting ){ use_coordinate_constraints_ = setting; }
@@ -119,6 +121,8 @@ private:
 
 
 }; // class RNA_Minimizer
+
+std::ostream &operator<< ( std::ostream &os, RNA_Minimizer const &mover );
 
 } //rna
 } // protocols

@@ -75,6 +75,8 @@ public:
 
 	virtual std::string get_name() const;
 
+	virtual void show(std::ostream & output=std::cout) const;
+
 	void
 	set_dump_pdb( bool const setting ){ dump_pdb_ = setting; };
 
@@ -398,7 +400,7 @@ private:
 
 }; // class RNA_DeNovoProtocol
 
-
+std::ostream &operator<< ( std::ostream &os, RNA_DeNovoProtocol const &mover );
 
 }
 } // protocols

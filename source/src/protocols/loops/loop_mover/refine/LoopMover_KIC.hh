@@ -72,6 +72,7 @@ public:
 
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
+	virtual void show(std::ostream & output=std::cout) const;
 
 	///@brief update the vector of movemaps, one for each loop in loops_
 	void
@@ -116,6 +117,8 @@ private:
 													      // KIC move but only within the neighbor_dist of the KIC segment
 	bool flank_residue_min_; //JQX
 };
+
+std::ostream &operator<< ( std::ostream &os, LoopMover_Refine_KIC const &mover );
 
 } //namespace refine
 } //namespace loop_mover

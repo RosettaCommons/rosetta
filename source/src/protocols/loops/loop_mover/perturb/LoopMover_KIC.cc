@@ -596,6 +596,22 @@ LoopMover_Perturb_KIC::get_name() const {
 	return "LoopMover_Perturb_KIC";
 }
 
+void
+LoopMover_Perturb_KIC::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output <<   "Maximum KIC segment length:             " << max_seglen_ <<
+				"\nRecover the lowest energy conformation: " << (recover_low_ ? "True" : "False") <<
+				"\nMaximum KIC build attempts:             " << max_kic_build_attempts_ <<
+				"\nRemodel KIC attempts:                   " << remodel_kic_attempts_;
+}
+
+std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_KIC const &mover )
+{
+	mover.show(os);
+	return os;
+}
+
 basic::Tracer & LoopMover_Perturb_KIC::tr() const
 {
     return TR;

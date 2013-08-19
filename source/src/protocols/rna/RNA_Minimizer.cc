@@ -67,6 +67,7 @@
 //C++ headers
 #include <vector>
 #include <string>
+#include <iostream>
 #include <sstream>
 // AUTO-REMOVED #include <fstream>
 #ifdef WIN32
@@ -238,6 +239,26 @@ RNA_Minimizer::get_name() const {
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_Minimizer::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output <<   "Deriv check:              " << (deriv_check_ ? "True" : "False")  <<
+				"\nSkip o2star trials:       " << (skip_o2star_trials_ ? "True" : "False") <<
+				"\nPerform minimizer run:    " << (perform_minimizer_run_ ? "True" : "False") <<
+				"\nVary bond geometry:       " << (vary_bond_geometry_ ? "True" : "False") <<
+				"\nSet verbose:              " << (verbose_ ? "True" : "False") <<
+				"\nDump pdb:                 " << (do_dump_pdb_ ? "True" : "False") <<
+				"\nMove first rigid body:    " << (move_first_rigid_body_ ? "True" : "False") <<
+				"\nMin type:                 " << min_type_ <<
+				"\nScore function:           " << scorefxn_->get_name() <<
+				"\nUse coordinate constraints:        " << (use_coordinate_constraints_ ? "True" : "False")  <<
+				"\nInclude default linear chainbreak: " << (include_default_linear_chainbreak_ ? "True" : "False");
+
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // Make this its own Mover?
 void
@@ -380,6 +401,13 @@ RNA_Minimizer::set_allow_insert(toolbox::AllowInsertOP allow_insert ){
 void
 RNA_Minimizer::set_extra_minimize_res( utility::vector1< core::Size > setting ){
 	extra_minimize_res_ = setting;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+std::ostream &operator<< ( std::ostream &os, RNA_Minimizer const &mover )
+{
+	mover.show(os);
+	return os;
 }
 
 } // namespace rna

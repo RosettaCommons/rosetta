@@ -829,6 +829,19 @@ LoopMover_Refine_KIC::get_name() const {
 	return "LoopMover_Refine_KIC";
 }
 
+void
+LoopMover_Refine_KIC::show(std::ostream & output) const
+{
+	Mover::show(output);
+	output <<   "Neighbor distance of the KIC segment:   " << neighbor_dist_ <<
+				"\nMaximum KIC segment length:             " << max_seglen_ <<
+				"\nRecover the lowest energy conformation: " << (recover_low_ ? "True" : "False") <<
+				"\nMinimize after repacking:               " << (min_after_repack_ ? "True" : "False") <<
+				"\nFix sidechains neighboring the loop:    " << (fix_natsc_ ? "True" : "False") <<
+				"\nOptimize only within the neighbor distance after every KIC move: " <<
+				(optimize_only_kic_region_sidechains_after_move_ ? "True" : "False");
+}
+
 /// detailed
 /// Update the MoveMaps that define, for each loop in loops_, which residues may be minimized.
 /// Allows for minimization to apply only to the neighborhood around the segment that KIC moved, in cases
@@ -901,6 +914,12 @@ LoopMover_Refine_KIC::set_movemap_from_kic_segment(
 	protocols::loops::Loops kic_seg;
 	kic_seg.add_loop( kic_start, kic_end, kic_start );
 	loops_set_move_map( pose, kic_seg, fix_natsc_, cur_mm, neighbor_dist_);
+}
+
+std::ostream &operator<< ( std::ostream &os, LoopMover_Refine_KIC const &mover )
+{
+	mover.show(os);
+	return os;
 }
 
 basic::Tracer & LoopMover_Refine_KIC::tr() const

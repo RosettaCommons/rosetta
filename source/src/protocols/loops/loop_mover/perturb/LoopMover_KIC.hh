@@ -60,6 +60,8 @@ public:
 
 	virtual std::string get_name() const;
 
+	virtual void show(std::ostream & output=std::cout) const;
+
 	virtual void  set_extended_torsions(
 		core::pose::Pose & pose,
 		Loop const & loop
@@ -99,6 +101,8 @@ protected:
 
     virtual basic::Tracer & tr() const;
 };
+
+std::ostream &operator<< ( std::ostream &os, LoopMover_Perturb_KIC const &mover );
 
 } //namespace perturb
 } //namespace loop_mover
