@@ -1354,6 +1354,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		/// we are designing L1 then we would expect that segments Frm.light1 and Frm.light2 have concensus aa identities)
 
 
+		if (ccd_==0){//if CDD if false we are only doing splice_in, then we should check whether PSSM and pose are aligned correctly, gideonla Aug13
 		core::Size aapos=0;
 		//TR<<"TESTING PSSMs"<<std::endl;
 		for(core::Size seg=1; seg <=profile_vector.size() ; seg++ ){//go over all the PSSM sements provided by the user
@@ -1376,7 +1377,7 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 				}//fi
 			}//end inner segment for
 		}//end pssm segment for
-
+		}
 
 
 
