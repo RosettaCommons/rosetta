@@ -10,7 +10,7 @@ INCLUDE(../build/build.pre.cmake)
 INCLUDE(../build/${LINK_RULES}.build.cmake)
 
 ADD_DEFINITIONS(-D_DEBUG)
-SET(COMPILE_FLAGS "-c -std=c++98 -pipe -ffor-scope -Wall -Wextra -pedantic -Wno-long-long -O0 -g -ggdb -ffloat-store")
+SET(COMPILE_FLAGS "-std=c++98 -pipe -ffor-scope -Wall -Wextra -pedantic -Wno-long-long -O0 -g -ggdb -ffloat-store")
 SET(CMAKE_CXX_FLAGS "${COMPILE_FLAGS}")
 
 INCLUDE(../build/build.post.cmake)
