@@ -116,7 +116,7 @@ namespace splice {
 
 static basic::Tracer TR( "devel.splice.Splice" );
 static basic::Tracer TR_ccd( "devel.splice.Splice_ccd" );
-		
+
 static numeric::random::RandomGenerator RG( 78289 );
 std::string
 SpliceCreator::keyname() const
@@ -779,17 +779,17 @@ Splice::apply( core::pose::Pose & pose )
 
 			//print rms value to output pdb structure
 				std::string Result;
-				std::string Result_filter;        
-				std::ostringstream convert; 
-				std::ostringstream convert_filter; 
-				convert << average_rms;     
-				Result = convert.str(); 
+				std::string Result_filter;
+				std::ostringstream convert;
+				std::ostringstream convert_filter;
+				convert << average_rms;
+				Result = convert.str();
 
 				core::pose::add_comment(pose,"RMSD to source loop",Result);//change correct association between current loop and pdb file
-				
+
 				//print ChainBreak value to output pdb structure
 				convert_filter << splice_filter()->score( pose );
-				Result_filter = convert_filter.str(); 
+				Result_filter = convert_filter.str();
 				core::pose::add_comment(pose,"Chainbreak Val:",Result_filter);
 			if( !splice_filter()->apply( pose ) ){
 				TR<<"Failing because filter fails"<<std::endl;
@@ -844,7 +844,7 @@ Splice::apply( core::pose::Pose & pose )
 		protocols::simple_moves::RotamerTrialsMinMover rtmin( scorefxn(), *ptask );
 		rtmin.apply(pose);
 		//pose.dump_pdb("after_rtmin.pdb");
-		
+
 	}
 	saved_fold_tree_ = new core::kinematics::FoldTree( pose.fold_tree() );
 	retrieve_values();
@@ -1354,29 +1354,29 @@ Splice::generate_sequence_profile(core::pose::Pose & pose)
 		/// we are designing L1 then we would expect that segments Frm.light1 and Frm.light2 have concensus aa identities)
 
 
-		if (ccd_==0){//if CDD if false we are only doing splice_in, then we should check whether PSSM and pose are aligned correctly, gideonla Aug13
-		core::Size aapos=0;
-		//TR<<"TESTING PSSMs"<<std::endl;
-		for(core::Size seg=1; seg <=profile_vector.size() ; seg++ ){//go over all the PSSM sements provided by the user
-			for( core::Size pos /*go over profile ids*/ = 1; pos <= profile_vector[seg]->size(); ++pos ){
-				++aapos;//go over pose residue
-				//TR<<pose.residue(aapos).name1()<<aapos<<" CYS score is: "<<profile_vector[seg]->prof_row(pos)[2]<<std::endl;
-				if ((profile_vector[seg]->prof_row(pos)[2])>8){//If the profile vector holds a disulfide Cys it will have a pssm score over 8
-					std::stringstream ss; std::string s;
-					ss << pose.residue(aapos).name1();
-					ss >> s;
-					//TR<<"found a dis cys="<<s<<std::endl;
-					if (s.compare("C") != 0){
-						std::string seqpos;         
-						std::ostringstream convert;
-						convert << aapos;      // insert the textual representation of 'Number' in the characters in the stream
-						seqpos = convert.str(); // set 'Result' to the contents of the stream
-						utility_exit_with_message(" PSSM and pose might be misaligned, position "+ s+seqpos+ " should be a CYS\n");
-						//utility_exit_with_message(" could not find the source pdb name:: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type+"\n");
-					} //fi
-				}//fi
-			}//end inner segment for
-		}//end pssm segment for
+		if (ccd_){//if CCD is true we're splicing out a segment, so it's important to ensure that the disulfides are in place. In rare cases where there are highly conserved cysteines in other parts of the protein this might lead to exit, but these cases are < 1/1000
+			core::Size aapos=0;
+			//TR<<"TESTING PSSMs"<<std::endl;
+			for(core::Size seg=1; seg <=profile_vector.size() ; seg++ ){//go over all the PSSM sements provided by the user
+				for( core::Size pos /*go over profile ids*/ = 1; pos <= profile_vector[seg]->size(); ++pos ){
+					++aapos;//go over pose residue
+					//TR<<pose.residue(aapos).name1()<<aapos<<" CYS score is: "<<profile_vector[seg]->prof_row(pos)[2]<<std::endl;
+					if ((profile_vector[seg]->prof_row(pos)[2])>8){//If the profile vector holds a disulfide Cys it will have a pssm score over 8
+						std::stringstream ss; std::string s;
+						ss << pose.residue(aapos).name1();
+						ss >> s;
+						//TR<<"found a dis cys="<<s<<std::endl;
+						if (s.compare("C") != 0){
+							std::string seqpos;
+							std::ostringstream convert;
+							convert << aapos;      // insert the textual representation of 'Number' in the characters in the stream
+							seqpos = convert.str(); // set 'Result' to the contents of the stream
+							utility_exit_with_message(" PSSM and pose might be misaligned, position "+ s+seqpos+ " should be a CYS\n");
+							//utility_exit_with_message(" could not find the source pdb name:: "+ pdb_segments_[segment_type]+ ", in pdb_profile_match file."+segment_type+"\n");
+						} //fi
+					}//fi
+				}//end inner segment for
+			}//end pssm segment for
 		}
 
 
