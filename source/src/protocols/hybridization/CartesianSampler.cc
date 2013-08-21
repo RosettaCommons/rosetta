@@ -35,10 +35,16 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
 
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <protocols/simple_moves/PackRotamersMover.hh>
+#include <protocols/simple_moves/RotamerTrialsMover.hh>
+
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/scoring/cryst/PhenixInterface.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/Energies.hh>
 #include <core/sequence/util.hh>
@@ -61,6 +67,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ScalarWeightedFunc.hh>
 #include <core/scoring/constraints/SOGFunc.hh>
@@ -162,14 +170,25 @@ CartesianSampler::init() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
+	temp_ = 2.0;
+	rms_cutoff_ = 1.5;
 	overlap_ = 2;
 	ncycles_ = 250;
+	nminsteps_ = 10;
 	input_as_ref_ = false;
+	fullatom_ = false;
+	bbmove_ = false;
 
 	fragment_bias_strategy_ = "uniform";
+	selection_bias_ = "none";
 
 	// default scorefunction
-	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
+	if (!fullatom_)
+		set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
+	else
+		set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "soft_rep" ) );
+
+	set_fa_scorefunction ( core::scoring::getScoreFunction() );
 }
 
 void
@@ -189,13 +208,140 @@ CartesianSampler::update_fragment_library_pointers() {
 protocols::moves::MoverOP CartesianSampler::clone() const { return new CartesianSampler( *this ); }
 protocols::moves::MoverOP CartesianSampler::fresh_instance() const { return new CartesianSampler; }
 
+// get frag->pose transform, return RMS
+core::Real
+CartesianSampler::get_transform(
+					core::pose::Pose const &pose, core::pose::Pose const &frag, core::Size startpos,
+					core::Vector &preT, core::Vector &postT, numeric::xyzMatrix< core::Real > &R) {
+	int aln_len = overlap_;
+	int len = frag.total_residue();
+	if (frag.residue(len).aa() == core::chemical::aa_vrt) len--;
+	ObjexxFCL::FArray1D< core::Real > ww( 2*4*aln_len, 1.0 );
+	ObjexxFCL::FArray2D< core::Real > uu( 3, 3, 0.0 ), init_coords( 3, 2*4*aln_len ), final_coords( 3, 2*4*aln_len );
+	preT = numeric::xyzVector< core::Real >(0,0,0);
+	postT = numeric::xyzVector< core::Real >(0,0,0);
+
+	bool nterm = ( (startpos == 1) || pose.fold_tree().is_cutpoint(startpos-1) );
+	bool cterm = ( pose.fold_tree( ).is_cutpoint(startpos+len-1) );
+
+	// grab coords
+	for (int ii=-aln_len; ii<aln_len; ++ii) {
+		int i = (ii>=0) ? (nterm?len-ii-1:ii) : (cterm?-ii-1:len+ii);
+		numeric::xyzVector< core::Real > x_1 = pose.residue(startpos+i).atom(1).xyz();
+		numeric::xyzVector< core::Real > x_2 = pose.residue(startpos+i).atom(2).xyz();
+		numeric::xyzVector< core::Real > x_3 = pose.residue(startpos+i).atom(3).xyz();
+		numeric::xyzVector< core::Real > x_4 = pose.residue(startpos+i).atom(4).xyz();
+		postT += x_1+x_2+x_3+x_4;
+		for (int j=0; j<3; ++j) {
+			init_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
+			init_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
+			init_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
+			init_coords(j+1,4*(ii+aln_len)+4) = x_4[j];
+		}
+	}
+	postT /= 2.0*4.0*aln_len;
+	for (int ii=0; ii<2*4*aln_len; ++ii) {
+		for ( int j=0; j<3; ++j ) init_coords(j+1,ii+1) -= postT[j];
+	}
+
+	// grab new coords
+	for (int ii=-aln_len; ii<aln_len; ++ii) {
+		int i = (ii>=0) ? (nterm?len-ii-1:ii) : (cterm?-ii-1:len+ii);
+		numeric::xyzVector< core::Real > x_1 = frag.residue(i+1).atom(1).xyz();
+		numeric::xyzVector< core::Real > x_2 = frag.residue(i+1).atom(2).xyz();
+		numeric::xyzVector< core::Real > x_3 = frag.residue(i+1).atom(3).xyz();
+		numeric::xyzVector< core::Real > x_4 = frag.residue(i+1).atom(4).xyz();
+		preT += x_1+x_2+x_3+x_4;
+		for (int j=0; j<3; ++j) {
+			final_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
+			final_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
+			final_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
+			final_coords(j+1,4*(ii+aln_len)+4) = x_4[j];
+		}
+	}
+	preT /= 2.0*4.0*aln_len;
+	for (int ii=0; ii<2*4*aln_len; ++ii) {
+		for ( int j=0; j<3; ++j ) final_coords(j+1,ii+1) -= preT[j];
+	}
+
+	numeric::Real ctx;
+	float rms;
+	numeric::model_quality::findUU( final_coords, init_coords, ww, 2*4*aln_len, uu, ctx );
+	numeric::model_quality::calc_rms_fast( rms, final_coords, init_coords, ww, 2*4*aln_len, ctx );
+
+	R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
+	R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
+	R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
+
+	return ((core::Real)rms);
+}
+
+// apply csts to frag
 void
+CartesianSampler::apply_csts( core::pose::Pose &working_frag,	core::pose::Pose const &pose, core::Size startpos ) {
+	using namespace core::scoring::constraints;
+
+	working_frag.remove_constraints();
+	int len = working_frag.total_residue();
+	if (working_frag.residue(len).aa() == core::chemical::aa_vrt) len--;
+
+	bool nterm = ( (startpos == 1) || pose.fold_tree().is_cutpoint(startpos-1) );
+	bool cterm = ( pose.fold_tree( ).is_cutpoint(startpos+len-1) );
+
+	if (!nterm) {
+		for (int j=0; j<overlap_; ++j) {
+			for (int i=1; i<=3; ++i) {
+				working_frag.add_constraint(
+					new CoordinateConstraint(
+						core::id::AtomID(i,j+1),
+						core::id::AtomID(2,working_frag.total_residue()),
+						pose.residue(startpos+j).atom(i).xyz(),
+						new HarmonicFunc( 0.0, 1.0 )
+					)
+				);
+			}
+		}
+	}
+	if (!cterm) {
+		for (int j=len-overlap_; j<len; ++j) {
+			for (int i=1; i<=3; ++i) {
+				working_frag.add_constraint(
+					new CoordinateConstraint(
+						core::id::AtomID(i,j+1),
+						core::id::AtomID(2,working_frag.total_residue()),
+						pose.residue(startpos+j).atom(i).xyz(),
+						new HarmonicFunc( 0.0, 1.0 )
+					)
+				);
+			}
+		}
+	}
+}
+
+
+// transform fragment
+void
+CartesianSampler::apply_transform( core::pose::Pose &frag, core::Vector const &preT, core::Vector const &postT, numeric::xyzMatrix< core::Real > const &R) {
+	// apply rotation to ALL atoms
+	// x_i' <- = R*x_i + com1;
+	for ( Size i = 1; i <= frag.total_residue(); ++i ) {
+		for ( Size j = 1; j <= frag.residue_type(i).natoms(); ++j ) {
+			core::id::AtomID id( j, i );
+			frag.set_xyz( id, R * ( frag.xyz(id) - preT) + postT );
+		}
+	}
+}
+
+
+
+bool
 CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame ) {
 	core::Size start = frame.start(),len = frame.length();
 	core::Size end = start + len - 1;
-
-	int aln_len = overlap_;
 	runtime_assert( overlap_>=1 && overlap_<=len/2);
+
+	// set the frame's insert point to 1
+	frame.shift_to(1);
 
 	// see if the pose has NCS
 	simple_moves::symmetry::NCSResMappingOP ncs;
@@ -203,105 +349,120 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		ncs = ( static_cast< simple_moves::symmetry::NCSResMapping* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING )() ));
 	}
 
-	// number of protein residues in the asymmetric unit
-	core::Size nres = pose.total_residue();
-	core::conformation::symmetry::SymmetryInfoCOP symm_info;
-	if ( core::pose::symmetry::is_symmetric(pose) ) {
-		core::conformation::symmetry::SymmetricConformation & SymmConf (
-			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
-		symm_info = SymmConf.Symmetry_Info();
-		nres = symm_info->num_independent_residues();
-	}
-	while (!pose.residue(nres).is_protein()) nres--;
+	// make subpose at this position
+	// we assume the frame does not cross a jump
+	core::pose::Pose frag;
+	for (int i=0; i<(int)len; ++i) frag.append_residue_by_bond( pose.residue( start+i ) );
+	for (int i=0; i<(int)len; ++i) core::conformation::idealize_position(i+1, frag.conformation());
 
-	bool nterm = ( (start == 1) || pose.fold_tree( ).is_cutpoint(start-1) );
-	bool cterm = ( (end == nres) || pose.fold_tree( ).is_cutpoint(end) );
-
-	// insert frag
-	core::pose::Pose pose_copy = pose;
-
-	ObjexxFCL::FArray1D< numeric::Real > ww( 2*4*aln_len, 1.0 );
-	ObjexxFCL::FArray2D< numeric::Real > uu( 3, 3, 0.0 );
-	numeric::xyzVector< core::Real > com1(0,0,0), com2(0,0,0);
-
-	for (int i=0; i<(int)len; ++i) {
-		core::conformation::idealize_position(start+i, pose_copy.conformation());
-	}
-
-	int maxtries = frame.nr_frags() / 2;
-	ObjexxFCL::FArray2D< core::Real > init_coords( 3, 2*4*aln_len );
-	ObjexxFCL::FArray2D< core::Real > final_coords( 3, 2*4*aln_len );
-
-	for (int tries = 0; tries<maxtries; ++tries) {
-		ww = 1.0;
-		uu = 0.0;
-		com1 = numeric::xyzVector< core::Real >(0,0,0);
-		com2 = numeric::xyzVector< core::Real >(0,0,0);
-
-		// grab coords
-		for (int ii=-aln_len; ii<aln_len; ++ii) {
-			int i = (ii>=0) ? (nterm?len-ii-1:ii) : (cterm?-ii-1:len+ii);
-			numeric::xyzVector< core::Real > x_1 = pose.residue(start+i).atom(" C  ").xyz();
-			numeric::xyzVector< core::Real > x_2 = pose.residue(start+i).atom(" O  ").xyz();
-			numeric::xyzVector< core::Real > x_3 = pose.residue(start+i).atom(" CA ").xyz();
-			numeric::xyzVector< core::Real > x_4 = pose.residue(start+i).atom(" N  ").xyz();
-			com1 += x_1+x_2+x_3+x_4;
-			for (int j=0; j<3; ++j) {
-				init_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
-				init_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
-				init_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
-				init_coords(j+1,4*(ii+aln_len)+4) = x_4[j];
-			}
-		}
-		com1 /= 2.0*4.0*aln_len;
-		for (int ii=0; ii<2*4*aln_len; ++ii) {
-			for ( int j=0; j<3; ++j ) init_coords(j+1,ii+1) -= com1[j];
-		}
-
-		core::Size toget = numeric::random::random_range( 1, frame.nr_frags() );
-		frame.apply( toget, pose_copy );
-
-		// grab new coords
-		for (int ii=-aln_len; ii<aln_len; ++ii) {
-			int i = (ii>=0) ? (nterm?len-ii-1:ii) : (cterm?-ii-1:len+ii);
-			numeric::xyzVector< core::Real > x_1 = pose_copy.residue(start+i).atom(" C  ").xyz();
-			numeric::xyzVector< core::Real > x_2 = pose_copy.residue(start+i).atom(" O  ").xyz();
-			numeric::xyzVector< core::Real > x_3 = pose_copy.residue(start+i).atom(" CA ").xyz();
-			numeric::xyzVector< core::Real > x_4 = pose_copy.residue(start+i).atom(" N  ").xyz();
-			com2 += x_1+x_2+x_3+x_4;
-			for (int j=0; j<3; ++j) {
-				final_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
-				final_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
-				final_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
-				final_coords(j+1,4*(ii+aln_len)+4) = x_4[j];
-			}
-		}
-		com2 /= 2.0*4.0*aln_len;
-		for (int ii=0; ii<2*4*aln_len; ++ii) {
-			for ( int j=0; j<3; ++j ) final_coords(j+1,ii+1) -= com2[j];
-		}
-
-		numeric::Real ctx; float rms;
-		numeric::model_quality::findUU( final_coords, init_coords, ww, 2*4*aln_len, uu, ctx );
-		numeric::model_quality::calc_rms_fast( rms, final_coords, init_coords, ww, 2*4*aln_len, ctx );
-
-		if (rms < 0.5) break;
-		if (tries >= maxtries/4 && rms < 1) break;
-		if (tries >= maxtries/2 && rms < 1.5) break;
-	}
-
+	core::Vector preT, postT;
 	numeric::xyzMatrix< core::Real > R;
-	R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
-	R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
-	R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
+	core::Size maxtries,frag_toget;
+	core::Real rms;
 
-	// apply rotation to ALL atoms
-	// x_i' <- = R*x_i + com1;
-	for ( Size i = 0; i < len; ++i ) {
-		for ( Size j = 1; j <= pose.residue_type(start+i).natoms(); ++j ) {
-			core::id::AtomID id( j, start+i );
-			pose.set_xyz( id, R * ( pose_copy.xyz(id) - com2) + com1 );
+	if (selection_bias_ == "none") {
+		maxtries = frame.nr_frags(); // bias-dependent
+		int tries;
+		bool frag_chosen=false;
+		for (tries = 0; tries<maxtries && !frag_chosen; ++tries) {
+			frag_toget = numeric::random::random_range( 1, frame.nr_frags() ); // bias-dependent
+			frame.apply( frag_toget, frag );
+			rms = get_transform( pose,  frag,  start,	preT, postT, R);
+			frag_chosen = (rms < 0.5) || (tries >= maxtries/4 && rms < 1) || (tries >= maxtries/2 && rms < 2); // bias-dependent
 		}
+		TR << "after " << tries+1 << " tries, fragment " << frag_toget << "chosen with RMS = " << rms << std::endl;
+
+		apply_transform( frag,	preT, postT, R);
+		for ( Size i = 0; i < len; ++i )
+			pose.replace_residue( start+i, frag.residue(i+1), false );
+	} else if (selection_bias_ == "density") {
+
+		// set up minimizer
+		core::optimization::AtomTreeMinimizer rbminimizer;
+		core::optimization::MinimizerOptions options_rb( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
+		options_rb.max_iter(20);
+		core::kinematics::MoveMap mm_rb;
+		mm_rb.set_bb ( bbmove_ );
+		mm_rb.set_chi ( false );
+		mm_rb.set_jump ( true );
+
+		// scorefunctions
+		if (fa_scorefxn_->get_weight( core::scoring::elec_dens_fast ) == 0)
+			fa_scorefxn_->set_weight( core::scoring::elec_dens_fast , 20 );
+		core::scoring::ScoreFunctionOP densonly = new core::scoring::ScoreFunction();
+		if (bbmove_ && fa_scorefxn_->get_weight( core::scoring::coordinate_constraint ) == 0)
+			fa_scorefxn_->set_weight( core::scoring::coordinate_constraint , 1 );
+
+		densonly->set_weight( core::scoring::elec_dens_fast, 5.0 );
+
+		// set up packer
+		core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
+		main_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
+		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
+		pack_mover->task_factory( main_task_factory );
+		pack_mover->score_function( fa_scorefxn_ );
+
+		// prepare fragment
+		core::pose::addVirtualResAsRoot(frag);
+		protocols::simple_moves::SwitchResidueTypeSetMover to_fa("fa_standard");
+		protocols::simple_moves::SwitchResidueTypeSetMover to_cen("centroid");
+		if (!fullatom_) to_fa.apply( frag );
+
+		core::Size nattempts = 0;
+		core::Real best_dens_score = 1e30, best_rms;
+		for (int i=1; i<=frame.nr_frags(); ++i) {
+			core::pose::Pose working_frag = frag;
+			frame.apply( i, working_frag );
+			rms = get_transform( pose,  working_frag,  start,	preT, postT, R);
+			if (rms<=rms_cutoff_) {
+				nattempts++;
+
+				// orient
+				apply_transform( working_frag,	preT, postT, R);
+
+				// cenmin+repack+min
+				to_cen.apply( working_frag );
+				(*densonly)(working_frag);
+				rbminimizer.run( working_frag, mm_rb, *densonly, options_rb );
+				to_fa.apply( working_frag );
+				pack_mover->apply( working_frag );
+
+				core::Real dens_score;
+				if (bbmove_) {
+					apply_csts( working_frag,	pose, start );
+					(*fa_scorefxn_)(working_frag);
+					rbminimizer.run( working_frag, mm_rb, *fa_scorefxn_, options_rb );
+					dens_score = (*fa_scorefxn_) (working_frag);
+				} else {
+					(*densonly)(working_frag);
+					rbminimizer.run( working_frag, mm_rb, *densonly, options_rb );
+					dens_score = (*densonly) (working_frag);
+				}
+
+				if (dens_score<best_dens_score) {
+					best_rms = rms;
+					best_dens_score = dens_score;
+					frag = working_frag;
+				}
+				if (nattempts >=25) break;  //fpd within helices often all fragments will match
+			}
+		}
+
+		if (nattempts > 0) {
+			TR << "Best frag ( out of "<< nattempts << ") with score="  << best_dens_score << "  rms=" << best_rms << std::endl;
+
+			// best scoring fragment saved
+			if (!fullatom_) to_cen.apply( frag );
+			for ( Size i = 0; i < len; ++i )
+				pose.replace_residue( start+i, frag.residue(i+1), false );
+		} else {
+			TR << "No acceptable fragments" << std::endl;
+			rms_cutoff_+=0.05;
+			frame.shift_to(start);
+			return false;
+		}
+	} else {
+		utility_exit_with_message("Unrecognized fragbias!");
 	}
 
 	// apply to NCS-symmetric copies
@@ -313,44 +474,16 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 			if (!all_are_mapped) continue;
 
 			core::Size remap_start = ncs->get_equiv( j, start );
-
-			// grab coords of ncs copy
-			com1 = numeric::xyzVector< core::Real >(0,0,0);
-			for (int ii=-aln_len; ii<aln_len; ++ii) {
-				int i = (ii>=0) ? (nterm?len-ii-1:ii) : (cterm?-ii-1:len+ii);
-				numeric::xyzVector< core::Real > x_1 = pose.residue(remap_start+i).atom(" C  ").xyz();
-				numeric::xyzVector< core::Real > x_2 = pose.residue(remap_start+i).atom(" O  ").xyz();
-				numeric::xyzVector< core::Real > x_3 = pose.residue(remap_start+i).atom(" CA ").xyz();
-				numeric::xyzVector< core::Real > x_4 = pose.residue(remap_start+i).atom(" N  ").xyz();
-				com1 += x_1+x_2+x_3+x_4;
-				for (int j=0; j<3; ++j) {
-					init_coords(j+1,4*(ii+aln_len)+1) = x_1[j];
-					init_coords(j+1,4*(ii+aln_len)+2) = x_2[j];
-					init_coords(j+1,4*(ii+aln_len)+3) = x_3[j];
-					init_coords(j+1,4*(ii+aln_len)+4) = x_4[j];
-				}
-			}
-			com1 /= 2.0*4.0*aln_len;
-			for (int ii=0; ii<2*4*aln_len; ++ii) {
-				for ( int j=0; j<3; ++j ) init_coords(j+1,ii+1) -= com1[j];
-			}
-
-			// align+xform
-			numeric::Real ctx; float rms;
-			numeric::model_quality::findUU( final_coords, init_coords, ww, 2*4*aln_len, uu, ctx );
-			numeric::model_quality::calc_rms_fast( rms, final_coords, init_coords, ww, 2*4*aln_len, ctx );
-			numeric::xyzMatrix< core::Real > R;
-			R.xx( uu(1,1) ); R.xy( uu(2,1) ); R.xz( uu(3,1) );
-			R.yx( uu(1,2) ); R.yy( uu(2,2) ); R.yz( uu(3,2) );
-			R.zx( uu(1,3) ); R.zy( uu(2,3) ); R.zz( uu(3,3) );
-			for ( Size i = 0; i < len; ++i ) {
-				for ( Size j = 1; j <= pose.residue_type(start+i).natoms(); ++j ) {
-					core::id::AtomID id( j, remap_start+i );
-					pose.set_xyz( id, R * ( pose_copy.xyz(id) - com2) + com1 );
-				}
-			}
+			get_transform( pose,  frag,  remap_start,	preT, postT, R);
+			apply_transform( frag,	preT, postT, R);
+			for ( Size i = 0; i < len; ++i )
+				pose.replace_residue( remap_start+i, frag.residue(i+1), false );
 		}
 	}
+
+	// restore frame
+	frame.shift_to(start);
+	return true;
 }
 
 
@@ -437,19 +570,20 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		// find segments with worst agreement to the density
 		core::scoring::electron_density::ElectronDensity &edm = core::scoring::electron_density::getDensityMap();
 		edm.setScoreWindowContext( true );
-		edm.setWindow( 3 );
+		edm.setWindow( 3 );  // smoother to use 3-res window
 
 		// score the pose
 		core::scoring::ScoreFunctionOP myscore = new core::scoring::ScoreFunction();
 		myscore->set_weight( core::scoring::elec_dens_window, 1.0 );
+
+		// make sure interaction graph gets computed
 		if (pose.is_fullatom())
 			myscore->set_weight( core::scoring::fa_rep, 1.0 );
 		else
 			myscore->set_weight( core::scoring::vdw, 1.0 );
 
-		if (core::pose::symmetry::is_symmetric(pose) ) {
+		if (core::pose::symmetry::is_symmetric(pose) )
 			myscore = new core::scoring::symmetry::SymmetricScoreFunction(*myscore);
-		}
 
 		utility::vector1<core::Real> per_resCC;
 		per_resCC.resize(nres);
@@ -465,8 +599,13 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		CCsum2 = sqrt( CCsum2/nres-CCsum*CCsum );
 
 		for (int r=1; r<=(int)nres; ++r) {
-			fragmentProbs[r] = exp( (CCsum-per_resCC[r])/CCsum2 );
-			TR << "Prob_dens_density( " << r << " ) = " << fragmentProbs[r] << " ; CC=" << per_resCC[r] << " (Z=" << (CCsum-per_resCC[r])/CCsum2 << ")" << std::endl;
+			if (per_resCC[r]<0.6)
+				fragmentProbs[r] = 1.0;
+			else if (per_resCC[r]<0.75)
+				fragmentProbs[r] = 0.25;
+			else
+				fragmentProbs[r] = 0.05;
+			TR << "residue " << r << ": " << " rscc=" << per_resCC[r] << " weight=" <<fragmentProbs[r] << std::endl;
 		}
 	} else if (fragment_bias_strategy_ == "bfactors") {
 		// find segments with highest bfactors
@@ -525,6 +664,7 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 
 	// for each fragment size, smooth over the fragment window
 	//   - handle mapping from frame->seqpos
+	//   - don't allow any insertions that cross cuts
 	for (Size i_frag_set = 1; i_frag_set<=fragments_.size(); ++i_frag_set) {
 		utility::vector1< core::Real > frame_weights(fragments_[i_frag_set]->nr_frames(), 0.0);
 		for (Size i_frame = 1; i_frame <= fragments_[i_frag_set]->nr_frames(); ++i_frame) {
@@ -537,6 +677,10 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 			for(int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end; ++i_pos)
 				frame_weights[i_frame] += fragmentProbs[i_pos];
 			frame_weights[i_frame] /= (seqpos_end-seqpos_start+1);
+
+			for(int i_pos = (int)seqpos_start; i_pos<=(int)seqpos_end-1; ++i_pos)
+				if (pose.fold_tree().is_cutpoint(i_pos))
+					frame_weights[i_frame] = 0.0;
 		}
 		frag_bias_[i_frag_set].weights(frame_weights);
 	}
@@ -554,17 +698,42 @@ CartesianSampler::apply( Pose & pose ) {
 		update_fragment_library_pointers();
 	}
 
+	if (!mc_scorefxn_) mc_scorefxn_ = scorefxn_;
+
+	// derived scorefunctions
+	scorefxn_dens_ = new core::scoring::ScoreFunction();
+	scorefxn_dens_->set_weight( core::scoring::elec_dens_fast, 1.0 );
+	scorefxn_xray_ = new core::scoring::ScoreFunction();
+	scorefxn_xray_->set_weight( core::scoring::xtal_ml, 100.0 );
+	if (core::pose::symmetry::is_symmetric(pose) ) {
+		scorefxn_dens_ = new core::scoring::symmetry::SymmetricScoreFunction(*scorefxn_dens_);
+		scorefxn_xray_ = new core::scoring::symmetry::SymmetricScoreFunction(*scorefxn_xray_);
+	}
+
 	// using the current fragment_bias_strategy_, compute bias
 	// do this from fullatom (if the input pose is fullatom)
 	compute_fragment_bias(pose);
 
+	// number of protein residues in ASU
+	core::Size nres = pose.total_residue();
+	core::conformation::symmetry::SymmetryInfoCOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+	 	core::conformation::symmetry::SymmetricConformation & SymmConf (
+	 		dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+	 	symm_info = SymmConf.Symmetry_Info();
+	 	nres = symm_info->num_independent_residues();
+	}
+	while (!pose.residue(nres).is_protein()) nres--;
+
 	//
 	bool fullatom_input = pose.is_fullatom();
 	protocols::moves::MoverOP restore_sc;
-	if (fullatom_input) {
+	if (fullatom_input && !fullatom_) {
 	  restore_sc = new protocols::simple_moves::ReturnSidechainMover( pose );
 		protocols::moves::MoverOP tocen = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
 		tocen->apply( pose );
+	} else if (!fullatom_input && fullatom_) {
+		utility_exit_with_message("ERROR! Expected fullatom input.");
 	}
 
 	// constraints to reference model
@@ -573,54 +742,88 @@ CartesianSampler::apply( Pose & pose ) {
 	if (input_as_ref_) ref_model_ = pose;
 	apply_constraints( pose );
 
-	// minimizer
+	// stepwise minimizer
 	core::optimization::MinimizerOptions options_minilbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
-	options_minilbfgs.max_iter(5);
-	core::optimization::MinimizerOptions options_lbfgs( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
-	options_lbfgs.max_iter(200);
+	options_minilbfgs.max_iter(nminsteps_);
 
 	// to do ... make this parsable
 	core::optimization::CartesianMinimizer minimizer;
-	core::kinematics::MoveMap mm;
-	mm.set_bb  ( true );
-	mm.set_chi ( true );
-	mm.set_jump( true );
+	core::kinematics::MoveMap mm, mm_local;
+	mm.set_bb  ( true ); mm.set_chi ( true ); mm.set_jump( true );
 
 	if (core::pose::symmetry::is_symmetric(pose) ) {
 		core::pose::symmetry::make_symmetric_movemap( pose, mm );
 	}
 
 	Pose pose_in = pose;
-	core::Size nres = pose.total_residue();
-	if (pose.residue(nres).aa() == core::chemical::aa_vrt) nres--;
-	core::Size n_prot_res = pose.total_residue();
-	while (!pose.residue(n_prot_res).is_protein()) n_prot_res--;
-
 	(*scorefxn_)(pose);
-	protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *scorefxn_, 2.0 );
+	protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *mc_scorefxn_, temp_ );
+
+scorefxn_->show_line_headers(TR);
+scorefxn_->show_line(TR,pose);
 
 	for (int n=1; n<=(int)ncycles_; ++n) {
-		// pick fragment set
-		core::Size i_frag_set = numeric::random::random_range(1, fragments_.size());
+		bool success=false;
+		int try_count=1000;
+		int insert_pos;
+		core::Size i_frag_set;
 
-		// pick insertion position
-		core::Size insert_pos = frag_bias_[i_frag_set].random_sample(RG);
+		while (!success && --try_count>0) {
+			// pick fragment set
+			i_frag_set = numeric::random::random_range(1, fragments_.size());
 
-		if (library_[i_frag_set].find(insert_pos) != library_[i_frag_set].end())
-			apply_frame (pose, library_[i_frag_set][insert_pos]);
+			// pick insertion position
+			insert_pos = (int)frag_bias_[i_frag_set].random_sample(RG);
+			int ntries=50;
+			while (library_[i_frag_set].find(insert_pos) != library_[i_frag_set].end() && --ntries>0)
+				insert_pos = frag_bias_[i_frag_set].random_sample(RG);
 
-		// MC
-		(*scorefxn_)(pose);
-		minimizer.run( pose, mm, *scorefxn_, options_minilbfgs );
-		mc->boltzmann( pose );
+			if (library_[i_frag_set].find(insert_pos) == library_[i_frag_set].end()) {
+				TR << "ERROR! unable to find allowed fragment inserts after " << ntries << " attempts.  Continuing.";
+				continue;
+			}
+
+			success = apply_frame (pose, library_[i_frag_set][insert_pos]);
+		}
+
+		// restricted movemap
+		int start_move = std::max(1,insert_pos-4);
+		int stop_move = std::min(nres,insert_pos+library_[i_frag_set][insert_pos].length()+3);
+		for (int i=start_move; i<=stop_move; ++i) {
+			mm_local.set_bb(i,true);
+			mm_local.set_chi(i,true);
+		}
+
+		// min + MC
+		core::Real scoreinit = (*scorefxn_)(pose);
+scorefxn_->show_line(TR,pose);
+TR << std::endl;
+		minimizer.run( pose, mm_local, *scorefxn_, options_minilbfgs );
+		core::Real scorefinal = (*scorefxn_)(pose);
+scorefxn_->show_line(TR,pose);
+TR << std::endl;
+(*scorefxn_xray_)(pose);
+TR << core::scoring::cryst::getPhenixInterface().getInfoLine() << std::endl;
+
+		(*mc_scorefxn_)(pose);
+		bool accept = mc->boltzmann( pose );
+mc->show_scores();
+		if (accept) {
+			TR << "Insert at " << insert_pos << " accepted!" << std::endl;
+		} else {
+			TR << "Insert at " << insert_pos << " rejected!" << std::endl;
+		}
 	}
+	mc->show_scores();
+	mc->show_counters();
 	mc->recover_low(pose);
 
-	// final minimization
-	(*scorefxn_)(pose); minimizer.run( pose, mm, *scorefxn_, options_lbfgs );
-	(*scorefxn_)(pose);
+	// final minimization (make optional?)
+	//(*scorefxn_)(pose);
+	//minimizer.run( pose, mm, *scorefxn_, options_lbfgs );
+	//(*scorefxn_)(pose);
 
-	if (fullatom_input) {
+	if (fullatom_input && !fullatom_) {
 		protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
 		tofa->apply( pose );
 		restore_sc->apply( pose );
@@ -645,7 +848,31 @@ CartesianSampler::parse_my_tag(
 		set_scorefunction ( data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) );
 	}
 
+	// fullatom scorefunction
+	if( tag->hasOption( "fascorefxn" ) ) {
+		std::string const scorefxn_name( tag->getOption<std::string>( "fascorefxn" ) );
+		set_fa_scorefunction ( data.get< ScoreFunction * >( "scorefxns", scorefxn_name ) );
+	}
+
+	// mc scorefunction
+	if( tag->hasOption( "mcscorefxn" ) ) {
+		std::string const scorefxn_name( tag->getOption<std::string>( "mcscorefxn" ) );
+		mc_scorefxn_ = data.get< ScoreFunction * >( "scorefxns", scorefxn_name );
+	}
+
 	// options
+	if( tag->hasOption( "fullatom" ) ) {
+		fullatom_ = tag->getOption<bool >( "fullatom" );
+	}
+	if( tag->hasOption( "bbmove" ) ) {
+		bbmove_ = tag->getOption<bool >( "bbmove" );
+	}
+	if( tag->hasOption( "temp" ) ) {
+		temp_ = tag->getOption<core::Real  >( "temp" );
+	}
+	if( tag->hasOption( "nminsteps" ) ) {
+		nminsteps_ = tag->getOption<core::Size  >( "nminsteps" );
+	}
 	if( tag->hasOption( "overlap" ) ) {
 		overlap_ = tag->getOption<core::Size>( "overlap" );
 	}
@@ -654,6 +881,9 @@ CartesianSampler::parse_my_tag(
 	}
 	if( tag->hasOption( "strategy" ) ) {
 		fragment_bias_strategy_ = tag->getOption<std::string>( "strategy" );
+	}
+	if( tag->hasOption( "fragbias" ) ) {
+		selection_bias_ = tag->getOption<std::string>( "fragbias" );
 	}
 
 	if( tag->hasOption( "reference_model" ) ) {

@@ -35,6 +35,7 @@
 #include <ObjexxFCL/format.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/model_quality/rms.hh>
 #include <numeric/model_quality/maxsub.hh>
 #include <numeric/random/WeightedSampler.hh>
@@ -68,6 +69,9 @@ public:
 	// set the centroid scorefunction
 	void set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) { scorefxn_=scorefxn_in; }
 
+	// set the fullatom scorefunction (only used for some option sets)
+	void set_fa_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in) { fa_scorefxn_=scorefxn_in; }
+
 	// set options
 	void set_ncycles(core::Size ncycles_in) { ncycles_=ncycles_in; }
 	void set_overlap(core::Size overlap_in) { overlap_=overlap_in; }
@@ -86,7 +90,7 @@ public:
 
 protected:
 	// apply a sequence fragment
-	void apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame );
+	bool apply_frame( core::pose::Pose & pose, core::fragment::Frame &frame );
 
 	//
 	void compute_fragment_bias( core::pose::Pose & pose );
@@ -97,9 +101,20 @@ protected:
 	//
 	void apply_constraints( core::pose::Pose & pose );
 
+	// get frag->pose transform, return RMS
+	core::Real get_transform(
+		core::pose::Pose const &pose, core::pose::Pose const &frag, core::Size startpos,
+		core::Vector &preT, core::Vector &postT, numeric::xyzMatrix< core::Real > &R);
+
+	// transform fragment
+	void apply_transform( core::pose::Pose &frag, core::Vector const &preT, core::Vector const &postT, numeric::xyzMatrix< core::Real > const &R);
+
+	void apply_csts( core::pose::Pose &working_frag,	core::pose::Pose const &pose, core::Size start );
+
 private:
 	// parameters
-	core::Size ncycles_, overlap_;
+	core::Size ncycles_, overlap_, nminsteps_;
+	core::Real rms_cutoff_;
 
 	// fragments
 	utility::vector1<core::fragment::FragSetOP> fragments_;
@@ -109,13 +124,19 @@ private:
 	std::string fragment_bias_strategy_;
 	utility::vector1<numeric::random::WeightedSampler> frag_bias_;
 	std::set<core::Size> user_pos_;
+	core::Real temp_;
+
+	// selection bias
+	std::string selection_bias_;
 
 	// reference model
 	core::pose::Pose ref_model_;
 	bool input_as_ref_;
+	bool fullatom_,bbmove_;
 
 	// scorefunctions
-	core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP scorefxn_, fa_scorefxn_, mc_scorefxn_;  // mc_scorefxn allows us to minimize and eval with different scorefxns
+	core::scoring::ScoreFunctionOP scorefxn_dens_, scorefxn_xray_;
 }; //class CartesianSampler
 
 } // hybridize
