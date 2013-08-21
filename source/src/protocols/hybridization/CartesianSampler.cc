@@ -457,7 +457,6 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 				pose.replace_residue( start+i, frag.residue(i+1), false );
 		} else {
 			TR << "No acceptable fragments" << std::endl;
-			rms_cutoff_+=0.05;
 			frame.shift_to(start);
 			return false;
 		}
@@ -710,6 +709,12 @@ CartesianSampler::apply( Pose & pose ) {
 		scorefxn_xray_ = new core::scoring::symmetry::SymmetricScoreFunction(*scorefxn_xray_);
 	}
 
+	// see if the pose has NCS
+	simple_moves::symmetry::NCSResMappingOP ncs;
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
+		ncs = ( static_cast< simple_moves::symmetry::NCSResMapping* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING )() ));
+	}
+
 	// using the current fragment_bias_strategy_, compute bias
 	// do this from fullatom (if the input pose is fullatom)
 	compute_fragment_bias(pose);
@@ -775,8 +780,8 @@ scorefxn_->show_line(TR,pose);
 			// pick insertion position
 			insert_pos = (int)frag_bias_[i_frag_set].random_sample(RG);
 			int ntries=50;
-			while (library_[i_frag_set].find(insert_pos) != library_[i_frag_set].end() && --ntries>0)
-				insert_pos = frag_bias_[i_frag_set].random_sample(RG);
+			while (library_[i_frag_set].find(insert_pos) == library_[i_frag_set].end() && --ntries>0)
+				insert_pos = (int)frag_bias_[i_frag_set].random_sample(RG);
 
 			if (library_[i_frag_set].find(insert_pos) == library_[i_frag_set].end()) {
 				TR << "ERROR! unable to find allowed fragment inserts after " << ntries << " attempts.  Continuing.";
@@ -787,11 +792,23 @@ scorefxn_->show_line(TR,pose);
 		}
 
 		// restricted movemap
-		int start_move = std::max(1,insert_pos-4);
-		int stop_move = std::min(nres,insert_pos+library_[i_frag_set][insert_pos].length()+3);
+		// TO DO we should check of chainbreaks
+		// TO DO min window extension (curr 6) should be a parameter
+		int start_move = std::max(1,insert_pos-6);
+		int stop_move = std::min(nres,insert_pos+library_[i_frag_set][insert_pos].length()+5);
 		for (int i=start_move; i<=stop_move; ++i) {
 			mm_local.set_bb(i,true);
 			mm_local.set_chi(i,true);
+			// ncs
+			if (ncs) {
+				for (int j=1; j<=ncs->ngroups(); ++j ) {
+					core::Size remap_i = ncs->get_equiv( j, i );
+					if (remap_i!=0) {
+						mm_local.set_bb(remap_i,true);
+						mm_local.set_chi(remap_i,true);
+					}
+				}
+			}
 		}
 
 		// min + MC
@@ -869,6 +886,9 @@ CartesianSampler::parse_my_tag(
 	}
 	if( tag->hasOption( "temp" ) ) {
 		temp_ = tag->getOption<core::Real  >( "temp" );
+	}
+	if( tag->hasOption( "rms" ) ) {
+		rms_cutoff_ = tag->getOption<core::Real  >( "rms" );
 	}
 	if( tag->hasOption( "nminsteps" ) ) {
 		nminsteps_ = tag->getOption<core::Size  >( "nminsteps" );
