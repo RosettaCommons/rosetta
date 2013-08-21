@@ -129,6 +129,8 @@ void SnugDock::apply( Pose & pose ) {
 
 	for ( core::Size i = 0; i < number_of_high_resolution_cycles_; ++i ) {
 		high_resolution_step_->apply( pose );
+		TR << "SnugDock Moves Acceptance Rate" << std::endl;
+		mc_->show_counters();
 	}
 
 	TR << "Setting the structure to the state with the best score observed during the simulation" << std::endl;

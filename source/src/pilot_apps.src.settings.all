@@ -547,6 +547,9 @@ sources = {
 		#"r_segment_rdc",
 		#"r_SymDock_viewer",
 	],
+	"pilot/nmarze" : [
+		#"packing_angle",
+	],
 	"pilot/nobuyasu" : [
 		#"flxbb", # /* Nobuyasu,Documentation Location,Demo Location */
 		"foldptn", # /* Nobuyasu,Documentation Location,Demo Location */

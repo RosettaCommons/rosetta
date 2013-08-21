@@ -105,7 +105,6 @@ void RefineOneCDRLoop::init( ) {
 
 
 void RefineOneCDRLoop::set_default() {
-	cdr_loop_name_  = h3;
 	flank_size_     = 2;
 	H3_filter_      = true;
 	flank_relax_    = true;
