@@ -51,6 +51,8 @@
 #define TAG_EXIT_ACK 4
 #define TAG_SLAVE_ERROR 5
 
+#define BATCH_STRING_SIZE 2000
+
 #define SSTR( x ) dynamic_cast< std::ostringstream & >( \
         ( std::ostringstream() << std::dec << x ) ).str() 
 
@@ -128,57 +130,6 @@ int main(int argc, char *argv[]) {
 	core::scoring::ScoreFunctionOP scorefxn;
 	scorefxn = core::scoring::getScoreFunction();
 
-
-	// init job list
-	if ( ! option[ OptionKeys::batchrelax_mpi::jobfile ].user() )
-		utility_exit_with_message( "supply a jobfile with flag -batchrelax_mpi::jobfile in format <silentfile native.pdb>" );	
-	string jobs_file_str = option[ OptionKeys::batchrelax_mpi::jobfile ];
-	ifstream jobs_file( jobs_file_str.c_str() );
-	vector<string> jobs;
-	string line;
-	map<string, bool> filelock;			//only used on master node
-
-	if (jobs_file.is_open()) {
-    		while ( jobs_file.good() ) {
-      			getline (jobs_file,line);
-			if (line.size() > 0) {
-				jobs.push_back( line );
-				cout << line << endl;
-			}
-    		}
-    		jobs_file.close();
-  	}	
-
-	// parse jobs list and split into batches
-	vector<string> batches;				//yes, im mixing vector0 and vector1 in this app - sue me
-	SilentFileData sfd;
-	string silent_file_name;
-	int infile_size;
-	int num_batches_in_file;
-	utility::vector1<string> tags;
-	for ( vector<string>::iterator it = jobs.begin(); it != jobs.end(); ++it ) {
-		silent_file_name = split_string( *it, 0 );
-		tags = sfd.read_tags_fast(silent_file_name);
-		infile_size = tags.size();
-		if (!isUnique( tags ))
-			utility_exit_with_message( silent_file_name + " does not have unique tags. this breaks the batching algorithm because SilentFileData is too stupid to handle tag collision and doesn't support indexing by number" );
-		num_batches_in_file = infile_size / batch_size + 1;
-		int start, end = 1;
-		for ( start = 1; ; start += batch_size ) {
-			end = start + batch_size - 1;
-			if ( end >= infile_size ) {
-				end = infile_size;
-				batches.push_back( *it + " " + SSTR(start) + " " + SSTR(end) );
-				break;
-			}
-			batches.push_back( *it + " " + SSTR(start) + " " + SSTR(end) );
-		}
-	}
-
-	//for ( vector<string>::iterator it = batches.begin(); it != batches.end(); ++it ) 
-	//	cout << *it << endl;
-
-
 	//mpi init
 	int numprocs = 1, rank = 1;
 	int EXIT_BATCH_ID = -1;
@@ -195,15 +146,77 @@ int main(int argc, char *argv[]) {
 
 	//handle master here
 	if (rank == 0 && numprocs > 1) {
-		int next_batch;
+		// create job list
+		if ( ! option[ OptionKeys::batchrelax_mpi::jobfile ].user() )
+			utility_exit_with_message( "supply a jobfile with flag -batchrelax_mpi::jobfile in format <silentfile native.pdb>" );	
+		string jobs_file_str = option[ OptionKeys::batchrelax_mpi::jobfile ];
+		ifstream jobs_file( jobs_file_str.c_str() );
+		vector<string> jobs;
+		string line;
+		map<string, bool> filelock;			//only used on master node
+
+		if (jobs_file.is_open()) {
+			while ( jobs_file.good() ) {
+				getline (jobs_file,line);
+				if (line.size() > 0) {
+					jobs.push_back( line );
+					//cout << line << endl;
+				}
+			}
+			jobs_file.close();
+		}	
+
+		// parse jobs list and split into batches
+		vector<string> batches;				//yes, im mixing vector0 and vector1 in this app - sue me
+		SilentFileData sfd;
+		string silent_file_name;
+		int infile_size;
+		int num_batches_in_file;
+		utility::vector1<string> tags;
+		for ( vector<string>::iterator it = jobs.begin(); it != jobs.end(); ++it ) {
+			silent_file_name = split_string( *it, 0 );
+			tags = sfd.read_tags_fast(silent_file_name);
+			infile_size = tags.size();
+			if (!isUnique( tags ))
+				utility_exit_with_message( silent_file_name + " does not have unique tags. this breaks the batching algorithm because SilentFileData is too stupid to handle tag collision and doesn't support indexing by number" );
+			num_batches_in_file = infile_size / batch_size + 1;
+			int start, end = 1;
+			for ( start = 1; ; start += batch_size ) {
+				end = start + batch_size - 1;
+				if ( end >= infile_size ) {
+					end = infile_size;
+					batches.push_back( *it + " " + SSTR(start) + " " + SSTR(end) );
+					break;
+				}
+				batches.push_back( *it + " " + SSTR(start) + " " + SSTR(end) );
+			}
+		}
+
+		//for ( vector<string>::iterator it = batches.begin(); it != batches.end(); ++it ) 
+			//cout << *it << endl;
+
 		#ifdef USEMPI
+		// broadcast batch list - send size, then each batch line by line
+		int batch_size = batches.size();
+		char* batch_string = new char[BATCH_STRING_SIZE];
+
+		MPI_Bcast( &batch_size, 1, MPI_INT, 0, MPI_COMM_WORLD );
+		for ( vector<string>::iterator it = batches.begin(); it != batches.end(); ++it ) {
+			if ( it->size() > BATCH_STRING_SIZE ) 
+				utility_exit_with_message("batch string size exceeds BATCH_STRING_SIZE (" + SSTR(BATCH_STRING_SIZE) + ")");
+			std::strcpy( batch_string, it->c_str() );
+			MPI_Bcast( batch_string, BATCH_STRING_SIZE, MPI_CHAR, 0, MPI_COMM_WORLD );
+		}
+
+		// initial batch assignments - iterate thru nodes and send
+		int next_batch;
 		for (next_batch = 0; next_batch < batches.size(); ++next_batch) {
 			if (next_batch > numprocs - 2)	// - 2 to count head node and 0-based indexing	
 				break;			// all slaves are full, move on 
 			MPI_Send( &next_batch, 1, MPI_INT, next_batch+1, TAG_BATCH_ASSIGN, MPI_COMM_WORLD );
 		}
 
-		// if we have more procs than batchs, kill off the remaining processors
+		// if we have more procs than batches, kill off the remaining processors
 		if ( next_batch <= numprocs - 2 )
 		{
 			for ( int ii = next_batch; ii <= numprocs - 2; ++ii ) {
@@ -279,13 +292,29 @@ int main(int argc, char *argv[]) {
 
 	//handle slaves here
 	else if (numprocs > 1) {
+		vector<string> batches;
 		int batch_id;
 		SilentFileDataOP sfd_in;
 		core::pose::PoseOP native_pose;
 		string silent_filename = "";
 		string silent_out_filename = "";
+		
 		#ifdef USEMPI
-		while ( true )		// block for messages until receive batch_id: EXIT_BATCH_ID, then quit
+
+		// receive batch list here 
+		char batch_string[BATCH_STRING_SIZE];
+		int expected_batch_size;
+
+		// get batch size and then get all batch strings
+		MPI_Bcast( &expected_batch_size, 1, MPI_INT, 0, MPI_COMM_WORLD );
+		for( int i = 0; i < expected_batch_size; ++i )
+		{
+			MPI_Bcast( &batch_string, BATCH_STRING_SIZE, MPI_CHAR, 0, MPI_COMM_WORLD );
+			batches.push_back( batch_string );
+		}
+		
+		// block for messages until receive batch_id: EXIT_BATCH_ID, then quit loop
+		while ( true )
 		{
 			MPI_Recv( &batch_id, 1, MPI_INT, 0, TAG_BATCH_ASSIGN, MPI_COMM_WORLD, &status );
 			if ( batch_id == EXIT_BATCH_ID ) {
@@ -294,7 +323,7 @@ int main(int argc, char *argv[]) {
 			}
 
 			// run batch
-			cout << "running " << batches[batch_id] << endl;
+		//	cout << "running " << batches[batch_id] << endl;
 		//	wait_for_gdb();
 
 			SilentFileDataOP sfd_out = new SilentFileData();
@@ -372,7 +401,7 @@ int main(int argc, char *argv[]) {
 	}
 	//if no slaves, run batches on master
 	else {
-		cout << "only 1 core? use src/apps/pilot/mtyka/batchrelax.cc - dont want to refactor for this use case" << endl;
+		TR << "only 1 core? use src/apps/pilot/mtyka/batchrelax.cc - dont want to refactor for this use case" << endl;
 	}
 
 	#ifdef USEMPI

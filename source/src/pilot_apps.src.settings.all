@@ -601,6 +601,10 @@ sources = {
 	],
 	"pilot/possu" : [
 	],
+	"pilot/ptconway" : [
+		#"batchrelax_mpi",
+		#"elec_dens_rot_recov",
+	],
 
 	# Q ######################################################################
 
