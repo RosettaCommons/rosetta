@@ -71,6 +71,8 @@ static basic::Tracer TR("core.scoring.cryst.XtalMLEnergy");
 ScoreTypes XtalMLEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( xtal_ml );
+	sts.push_back( xtal_rwork );
+	sts.push_back( xtal_rfree );
 	return sts;
 }
 
@@ -89,19 +91,17 @@ methods::EnergyMethodOP XtalMLEnergy::clone() const {
 	return new XtalMLEnergy( *this );
 }
 
-void XtalMLEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &sf ) const {
-	using namespace core::chemical;
+void XtalMLEnergy::setup_for_scoring( pose::Pose & , ScoreFunction const & ) const {
 
-	if (sf.get_weight( core::scoring::xtal_ml ) > 1e-8 )
-		ml = getPhenixInterface().getScore( pose );
-	else
-		ml = 0;
 }
 
-void XtalMLEnergy::finalize_total_energy(pose::Pose & /*pose*/, ScoreFunction const &, EnergyMap & emap) const {
-	// all the work is done in setup for scoring
-	// just return results here
-	emap[ xtal_ml ] += ml;
+void XtalMLEnergy::finalize_total_energy(pose::Pose & pose, ScoreFunction const &sf, EnergyMap & emap) const {
+	using namespace core::scoring;
+	if (sf.get_weight( core::scoring::xtal_ml ) > 1e-8 || sf.get_weight( core::scoring::xtal_rwork ) > 1e-8 || sf.get_weight( core::scoring::xtal_rfree) > 1e-8) {
+		emap[ xtal_ml ] += getPhenixInterface().getScore( pose );
+		emap[ xtal_rwork ] += getPhenixInterface().getR( );
+		emap[ xtal_rfree ] += getPhenixInterface().getRfree( );
+	}
 }
 
 void
@@ -115,10 +115,14 @@ XtalMLEnergy::setup_for_minimizing( pose::Pose & pose, ScoreFunction const & sf,
 void XtalMLEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const {
 	using namespace core::chemical;
 
+	if (sf.get_weight( core::scoring::xtal_rwork ) > 1e-8)
+		utility_exit_with_message( "xtal_rwork  is not minimizable!" );
+	if (sf.get_weight( core::scoring::xtal_rfree ) > 1e-8)
+		utility_exit_with_message( "xtal_rfree is not minimizable!" );
+
 	//fpd update mask
-	//getPhenixInterface().getScore( pose );
 	getPhenixInterface().updateSolventMask( pose );
-	if (sf.get_weight( core::scoring::xtal_ml ) > 1e-8 )  //fpd: so debug_derivs (which sets score to 10^-9) doesn't trigger this
+	if (sf.get_weight( core::scoring::xtal_ml ) > 1e-8 )
 		ml = getPhenixInterface().getScoreAndDerivs( pose, dml_dx );
 	else
 		ml = 0;

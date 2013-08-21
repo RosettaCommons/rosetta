@@ -449,6 +449,8 @@ enum ScoreType {
 
 	// crystallographic ML target
 	xtal_ml,
+	xtal_rwork,
+	xtal_rfree,
 
 	hpatch,
   //membrane environment smooth
