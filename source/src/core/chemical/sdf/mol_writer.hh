@@ -33,6 +33,7 @@ class MolWriter
 {
 public:
 	MolWriter();
+	MolWriter(std::string const & ctab_mode);
 	void output_residue(utility::io::ozstream & output_stream, core::conformation::ResidueCOP residue);
 	void output_residue(utility::io::ozstream & output_stream, core::chemical::ResidueTypeOP residue_type);
 
@@ -46,6 +47,8 @@ public:
 
 private:
 
+	enum CtabMode {V2000,V3000};
+
 	std::list<std::string> compose_metadata(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_ctab(core::conformation::ResidueCOP residue);
 	std::list<std::string> compose_atoms(core::conformation::ResidueCOP residue);
@@ -57,6 +60,7 @@ private:
 	//utility::io::ozstream output_stream_;
 	std::string const line_header_;
 	std::map<std::string,std::string> job_data_;
+	CtabMode ctab_mode_;
 };
 
 }

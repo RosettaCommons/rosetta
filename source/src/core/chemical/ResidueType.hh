@@ -211,6 +211,13 @@ public:
 		return n_hbond_donors_;
 	}
 
+	/// @brief number of bonds
+	Size
+	nbonds() const
+	{
+		return nbonds_;
+	}
+
 	/// @brief path distance (number of bonds separated) between a pair of atoms
 	int
 	path_distance( Size at1, Size at2 ) const { return path_distance_[ at1][at2]; }
@@ -1775,6 +1782,8 @@ private:
 	Size first_sidechain_hydrogen_;
 	/// number of dihedral angle atom sets
 	Size ndihe_;
+	/// number of bonds
+	Size nbonds_;
 
 
 	//////////////////////////////////////////////////////////////////////

@@ -249,6 +249,7 @@ read_topology_file(
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
 		std::string tag,atom1,atom2,atom3,atom4, rotate, orbitals_tag, orbital;
+		core::Size bond_type;
 		l >> tag;
 		if ( l.fail() ) continue;
 		if ( tag == "CONNECT" ) {
@@ -273,7 +274,10 @@ read_topology_file(
 			l >> atom1 >> atom2;
 			rsd->add_bond( atom1, atom2 );
 
-		} else if ( tag == "CUT_BOND" ) {
+		}else if ( tag == "BOND_TYPE" ) {
+			l >> atom1 >> atom2 >> bond_type;
+			rsd->add_bond(atom1,atom2,static_cast<core::chemical::BondName>(bond_type));
+		}else if ( tag == "CUT_BOND" ) {
 			l >> atom1 >> atom2;
 			rsd->add_cut_bond( atom1, atom2 );
 

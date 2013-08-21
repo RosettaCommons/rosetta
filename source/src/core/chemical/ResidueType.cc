@@ -131,6 +131,7 @@ ResidueType::ResidueType(
 	n_backbone_heavyatoms_(0),
 	first_sidechain_hydrogen_( 0 ),
 	ndihe_( 0 ),
+	nbonds_(0),
 	rotamer_library_name_( "" ),
 	use_ncaa_rotlib_( false ),
 	ncaa_rotlib_n_rots_( 0 ),
@@ -199,6 +200,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	n_backbone_heavyatoms_(residue_type.n_backbone_heavyatoms_),
 	first_sidechain_hydrogen_( residue_type.first_sidechain_hydrogen_ ),
 	ndihe_( residue_type.ndihe_ ),
+	nbonds_(residue_type.nbonds_),
 	orbital_bonded_neighbor_(residue_type.orbital_bonded_neighbor_),
 	bonded_neighbor_(residue_type.bonded_neighbor_),
 	bonded_neighbor_type_(residue_type.bonded_neighbor_type_),
@@ -770,6 +772,8 @@ ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_n
 	// signal that we need to update the derived data
 	finalized_ = false;
 
+	nbonds_++;
+
 	if ( !has( atom_name1 ) || !has( atom_name2 ) ) {
 	   std::string message = "add_bond: atoms " + atom_name1 + " and " + atom_name2 + " dont exist!";
 		utility_exit_with_message( message  );
@@ -827,6 +831,7 @@ ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_n
 void
 ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_name2, BondName bondLabel)
 {
+	nbonds_++;
 	// signal that we need to update the derived data
 	finalized_ = false;
 

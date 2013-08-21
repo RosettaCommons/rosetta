@@ -932,7 +932,7 @@ def write_param_file(f, molfile, name, frag_id, base_confs, max_confs, amino_aci
         for a2 in atom.children: write_atoms(a2)
     write_atoms(root_atom)
     for bond in bonds:
-        f.write("BOND %-4s %-4s\n" % (bond.a1.name, bond.a2.name))
+        f.write("BOND_TYPE %-4s %-4s %-4s\n" % (bond.a1.name, bond.a2.name, bond.order))
     # Define chi angles
     # Iterating over the bonds is non-trivial and we need multiple passes, so we define a generator:
     def rot_bond_iter(bonds):

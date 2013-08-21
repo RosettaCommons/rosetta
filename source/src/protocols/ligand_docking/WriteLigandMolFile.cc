@@ -133,7 +133,7 @@ void WriteLigandMolFile::apply(core::pose::Pose & pose)
 		output_path = directory_+"/"+subdir+"/"+job_tag+".mol";
 	}
 
-	core::chemical::sdf::MolWriter mol_writer;
+	core::chemical::sdf::MolWriter mol_writer("V2000");
 
 	jd2::Job::StringStringPairs string_string_data(job_dist->current_job()->get_string_string_pairs());
 	jd2::Job::StringRealPairs string_real_data(job_dist->current_job()->get_string_real_pairs());

@@ -10,7 +10,7 @@ fa_atr 0.8
 fa_rep 0.4
 fa_sol 0.45
 fa_intra_rep 0.004
-hack_elec 0.15
+fa_elec 0.15
 pro_close 1
 orbitals_hpol_bb 0.2
 pci_cation_pi 0.5
