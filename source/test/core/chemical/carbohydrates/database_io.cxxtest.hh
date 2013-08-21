@@ -87,6 +87,6 @@ public:
 		TS_ASSERT_EQUALS(conformers.size(), 3);
 		TS_ASSERT_EQUALS(conformers[1].specific_name, "1F2");
 		TS_ASSERT_EQUALS(conformers[2].general_name, "bar");
-		TS_ASSERT_EQUALS(conformers[3].ideal_angles.size(), 6);  // 2 fewer angles than the ring size should be read.
+		TS_ASSERT_EQUALS(conformers[3].nu_angles.size(), 6);  // 2 fewer angles than the ring size should be read.
 	}
 };  // class CarbohydrateDatabaseIOTests

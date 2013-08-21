@@ -285,6 +285,7 @@ testinputfiles = [
 	"chemical/carbohydrates/glycosylated_peptide.pdb",
 	"chemical/carbohydrates/lactose.pdb",
 	"chemical/carbohydrates/GlcN.pdb",
+	"chemical/carbohydrates/beta-psicose.pdb",
 	"chemical/carbohydrates/sugar_properties.list",
 	"chemical/carbohydrates/codes_to_roots.map",
 	"chemical/carbohydrates/dummy_conformers.data",

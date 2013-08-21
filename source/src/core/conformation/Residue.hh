@@ -1897,7 +1897,7 @@ private:
 	//-- should be CAP, perhaps?
 	ResidueType const & rsd_type_;
 
-	/// @brief our conformation atoms (not kinematic atom pointers) with xyz positiona and atom type
+	/// @brief our conformation atoms (not kinematic atom pointers) with xyz positions and atom type
 	Atoms atoms_;
 
 	utility::vector1<orbitals::OrbitalXYZCoords> orbitals_;

@@ -16,6 +16,7 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/chemical/carbohydrates/RingConformerSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
@@ -75,7 +76,7 @@ main(int argc, char *argv[])
 		devel::init(argc, argv);
 
 		// Declare variables.
-		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer;
+		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, psicose;
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing maltotriose:" << endl;
@@ -145,6 +146,8 @@ main(int argc, char *argv[])
 
 		test_sugar(glucosamine);
 
+		cout << *glucosamine.residue(1).carbohydrate_info()->ring_conformer_set();
+
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Importing N-glycosylated 14-mer:" << endl;
@@ -152,6 +155,16 @@ main(int argc, char *argv[])
 		pose_from_pdb(N_linked_14_mer, PATH + "N-linked_14-mer_glycan.pdb");
 
 		test_sugar(N_linked_14_mer);
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing beta-D-psicopyranose:" << endl;
+
+		pose_from_pdb(psicose, PATH + "beta-psicose.pdb");
+
+		test_sugar(psicose);
+
+		cout << *psicose.residue(1).carbohydrate_info()->ring_conformer_set();
 
 	} catch (utility::excn::EXCN_Base const & e) {
 		cerr << "Caught exception: " << e.msg() << endl;

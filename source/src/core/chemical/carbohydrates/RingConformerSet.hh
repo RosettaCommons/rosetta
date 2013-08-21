@@ -33,14 +33,28 @@ namespace core {
 namespace chemical {
 namespace carbohydrates {
 
+
+/// @brief  Enumerators for the three Cremer-Pople "ring-puckering" parameters used to describe 4-, 5-, and 6-membered
+/// ring conformers
+enum CPParameter {
+	q = 1,  // used to describe all ring sizes greater than 3
+	PHI,    // used to describe all ring sizes greater than 4
+	THETA   // used to describe all ring sizes greater than 5
+};
+
+
 struct RingConformer : public utility::pointer::ReferenceCount {
 	std::string specific_name;  // e.g., "1C4"
 	std::string general_name;  // e.g., "chair"
 
 	core::uint degeneracy; // E.g., 1C4 has a degeneracy of 3, since 3CO and 5C2 are equivalent.
 
+	// a list of 1 (for 4-membered rings), 2 (for 5-membered rings), or 3 (for 6-membered rings) Cremer-Pople "ring
+	// puckering" parameters
+	utility::vector1<core::Real> CP_parameters;  // phi and theta are angles in degrees; q is a distance in Angstroms
+
 	// a list of the torsion angles for the 1st n-2 nu angles, where n is the ring size.
-	utility::vector1<core::Angle> ideal_angles;
+	utility::vector1<core::Angle> nu_angles;
 };  // struct RingConformer
 
 
@@ -48,7 +62,7 @@ class RingConformerSet : public utility::pointer::ReferenceCount {
 public:
 	// Standard methods //////////////////////////////////////////////////////////////////////////////////////////////
 	/// @brief  Standard constructor
-	RingConformerSet(core::uint ring_size);
+	RingConformerSet(core::uint const ring_size);
 
 	/// @brief  Copy constructor
 	RingConformerSet(RingConformerSet const & object_to_copy);
@@ -57,7 +71,7 @@ public:
 	RingConformerSet & operator=(RingConformerSet const & object_to_copy);
 
 	// Destructor
-	~RingConformerSet();
+	virtual ~RingConformerSet();
 
 
 	// Standard Rosetta methods //////////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +84,7 @@ public:
 	utility::vector1<RingConformerCOP> get_all_nondegenerate_conformers() const;
 
 	/// @brief  Return the conformer that is the best fit for the provided list of nu angles.
-	RingConformerCOP get_conformer_from_nus(utility::vector1<core::Angle> angles) const;
+	RingConformerCOP get_conformer_from_nus(utility::vector1<core::Angle> const angles) const;
 
 	/// @brief  Return the conformer that is known from studies (if available) to be the lowest energy ring conformer.
 	RingConformerCOP get_lowest_energy_conformer() const;
@@ -89,7 +103,7 @@ private:
 	RingConformerSet();
 
 	// Initialize data members for the given ring size.
-	void init(core::uint ring_size);
+	void init(core::uint const ring_size);
 
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 	void copy_data(RingConformerSet object_to_copy_to, RingConformerSet object_to_copy_from);
@@ -114,7 +128,9 @@ private:
 
 };  // class RingConformerSet
 
-// Insertion operator (overloaded so that RingConformerSet can be "printed" in PyRosetta).
+// Insertion operators (overloaded so that RingConformer and RingConformerSet can be "printed" in PyRosetta).
+std::ostream & operator<<(std::ostream & output, RingConformer const & object_to_output);
+
 std::ostream & operator<<(std::ostream & output, RingConformerSet const & object_to_output);
 
 

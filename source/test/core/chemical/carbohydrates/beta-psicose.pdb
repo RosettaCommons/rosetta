@@ -1,0 +1,25 @@
+HETNAM     Psi X   1  ->5)-beta-D-Psip
+HETATM    1  C2  Psi X   1       1.342   1.676   3.151  1.00  0.00           C
+HETATM    2  C3  Psi X   1       2.377   0.518   3.409  1.00  0.00           C
+HETATM    3  C4  Psi X   1       1.747  -0.806   3.515  1.00  0.00           C
+HETATM    4  C5  Psi X   1       0.977  -1.154   2.213  1.00  0.00           C
+HETATM    5  O5  Psi X   1       1.910  -1.223   1.024  1.00  0.00           O
+HETATM    6  HO5 Psi X   1       2.700  -2.485   0.950  1.00  0.00           C
+HETATM    7  C6  Psi X   1      -0.081   0.003   2.052  1.00  0.00           C
+HETATM    8  O6  Psi X   1       0.599   1.329   1.959  1.00  0.00           O
+HETATM    9  C1  Psi X   1       1.983   3.077   3.033  1.00  0.00           C
+HETATM   10  O1  Psi X   1       0.770   3.779   3.196  1.00  0.00           O
+HETATM   11  O2  Psi X   1       0.433   1.937   4.225  1.00  0.00           O
+HETATM   12  O3  Psi X   1       3.216   0.257   2.336  1.00  0.00           O
+HETATM   13  O4  Psi X   1       2.854  -1.532   3.562  1.00  0.00           O
+HETATM   14 1H1  Psi X   1       2.448   3.252   2.063  1.00  0.00           H
+HETATM   15 2H1  Psi X   1       2.703   3.283   3.825  1.00  0.00           H
+HETATM   16  HO1 Psi X   1       0.206   2.928   3.458  1.00  0.00           H
+HETATM   17  HO2 Psi X   1      -0.101   1.157   4.513  1.00  0.00           H
+HETATM   18  H3  Psi X   1       2.970   0.743   4.312  1.00  0.00           H
+HETATM   19  HO3 Psi X   1       2.568  -0.065   1.493  1.00  0.00           H
+HETATM   20  H4  Psi X   1       1.077  -0.868   4.385  1.00  0.00           H
+HETATM   21  HO4 Psi X   1       3.369  -0.940   2.820  1.00  0.00           H
+HETATM   22  H5  Psi X   1       0.484  -2.150   2.291  1.00  0.00           H
+HETATM   23 1H6  Psi X   1      -0.661  -0.166   1.145  1.00  0.00           H
+HETATM   24 2H6  Psi X   1      -0.747   0.002   2.915  1.00  0.00           H

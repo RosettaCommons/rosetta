@@ -409,7 +409,7 @@ residue_types/l-ncaa/NVL.params
 #residue_types/beta-peptide/B3Y.params
 
 ## Polysaccharide Types (require -include_sugars flag to be loaded in)
-### Hexoses
+### Aldohexoses
 #### Glucoses
 residue_types/carbohydrates/to3-alpha-D-Glcp.params
 residue_types/carbohydrates/to4-alpha-D-Glcp.params
@@ -421,3 +421,6 @@ residue_types/carbohydrates/to4-beta-D-Galp.params
 residue_types/carbohydrates/to3-beta-D-Manp.params
 residue_types/carbohydrates/to2-alpha-D-Manp.params
 residue_types/carbohydrates/to3-alpha-D-Manp.params
+### Ketohexoses
+#### Psicoses
+residue_types/carbohydrates/to5-beta-D-Psip.params

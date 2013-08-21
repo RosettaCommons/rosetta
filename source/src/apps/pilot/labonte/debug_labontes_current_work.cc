@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 		cout << conformers.size() << endl;
 		cout << conformers[1].specific_name << endl;
 		cout << conformers[2].general_name << endl;
-		cout << conformers[3].ideal_angles.size() << endl;
+		cout << conformers[3].nu_angles.size() << endl;
 
 		//pose.dump_pdb("/home/labonte/Workspace/test_output/modified_sugar.pdb", "");
     } catch ( utility::excn::EXCN_Base const & e ) {

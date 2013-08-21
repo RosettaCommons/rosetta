@@ -10,6 +10,8 @@ END_SELECTOR
 
 BEGIN_CASE
 
+## I need a way to convert only the correct atoms....
+
 SET_ATOM_TYPE HO4 Hpol
 SET_MM_ATOM_TYPE HO4 X
 SET_ATOMIC_CHARGE HO4 0.21

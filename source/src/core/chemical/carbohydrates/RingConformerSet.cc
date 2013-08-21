@@ -13,6 +13,8 @@
 
 // Unit header
 #include <core/chemical/carbohydrates/RingConformerSet.hh>
+
+// Package header
 #include <core/chemical/carbohydrates/database_io.hh>
 
 // Basic headers
@@ -50,7 +52,7 @@ using namespace core;
 // Standard methods ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Standard constructor
 /// @param    <ring_size>: an unsigned integer expressing the size of the saccharide ring
-RingConformerSet::RingConformerSet(core::uint ring_size) : utility::pointer::ReferenceCount()
+RingConformerSet::RingConformerSet(core::uint const ring_size) : utility::pointer::ReferenceCount()
 {
 	init(ring_size);
 }
@@ -90,7 +92,7 @@ RingConformerSet::show(std::ostream & output) const
 
 	Size n_conformers = nondegenerate_conformers_.size();
 	for (uint i = 1; i <= n_conformers; ++i) {
-		output << "   " << nondegenerate_conformers_[i]->specific_name << endl;
+		output << "   " << *nondegenerate_conformers_[i] << endl;
 	}
 
 	output << endl;
@@ -107,7 +109,7 @@ RingConformerSet::get_all_nondegenerate_conformers() const
 
 // Return the conformer that is the best fit for the provided list of nu angles.
 RingConformerCOP
-RingConformerSet::get_conformer_from_nus(utility::vector1<core::Angle> /*angles*/) const
+RingConformerSet::get_conformer_from_nus(utility::vector1<core::Angle> const /*angles*/) const
 {
 	RingConformerOP conformer;
 
@@ -152,7 +154,7 @@ RingConformerSet::RingConformerSet() : utility::pointer::ReferenceCount()
 
 // Initialize data members for the given ring size.
 void
-RingConformerSet::init(core::uint ring_size)
+RingConformerSet::init(core::uint const ring_size)
 {
 	using namespace utility;
 
@@ -219,7 +221,34 @@ RingConformerSet::conformers_for_ring_size(core::Size ring_size)
 
 
 // Helper methods /////////////////////////////////////////////////////////////////////////////////////////////////////
-// Insertion operator (overloaded so that RingConformerSet can be "printed" in PyRosetta).
+// Insertion operators (overloaded so that RingConformer RingConformerSet can be "printed" in PyRosetta).
+std::ostream &
+operator<<(std::ostream & output, RingConformer const & object_to_output)
+{
+	output << object_to_output.specific_name << " (" << object_to_output.general_name << "): ";
+	Size n_CP_parameters = object_to_output.CP_parameters.size();
+	if (n_CP_parameters == 2 /* (for 5-membered rings) */ ||
+			n_CP_parameters == 3 /* (for 6-membered rings) */) {
+		output << "C-P parameters (q, phi, theta): ";
+		for (uint parameter = 1; parameter <= n_CP_parameters; ++parameter) {
+			if (parameter > 1) {
+				output << ", ";
+			}
+			output << object_to_output.CP_parameters[parameter];
+		}
+		output << "; ";
+	}
+	output << "nu angles (degrees): ";
+	Size n_angles = object_to_output.nu_angles.size();
+	for (uint i = 1; i <= n_angles; ++i) {
+				if (i > 1) {
+					output << ", ";
+				}
+				output << object_to_output.nu_angles[i];
+			}
+	return output;
+}
+
 std::ostream &
 operator<<(std::ostream & output, RingConformerSet const & object_to_output)
 {

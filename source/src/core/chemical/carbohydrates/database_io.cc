@@ -14,6 +14,9 @@
 // Unit header
 #include <core/chemical/carbohydrates/database_io.hh>
 
+// Package header
+#include <core/chemical/carbohydrates/RingConformerSet.hh>
+
 // Project headers
 #include <core/types.hh>
 
@@ -124,6 +127,10 @@ read_conformers_from_database_file_for_ring_size(std::string const & filename, c
 	using namespace std;
 	using namespace utility;
 
+	if (ring_size < 3) {
+		utility_exit_with_message("Cannot load database file: An invalid ring size was provided.");
+	}
+
 	vector1<string> lines = get_lines_from_file_data(filename);
 	vector1<RingConformer> conformers;
 
@@ -132,13 +139,20 @@ read_conformers_from_database_file_for_ring_size(std::string const & filename, c
 		istringstream line_word_by_word(lines[i]);
 		RingConformer conformer;
 
-		// We only need 2 less than the number of nu angles to define a ring conformer.
-		conformer.ideal_angles.resize(ring_size - 2);
+		// We only need 2 less than the number of nu angles to define a ring conformer by internal angles.
+		conformer.nu_angles.resize(ring_size - 2);
+
+		// We need 3 less than the number of nu angles to define a ring conformer by Cremer-Pople parameters.
+		conformer.CP_parameters.resize(ring_size - 3);
 
 		line_word_by_word >> conformer.specific_name >> conformer.general_name >> conformer.degeneracy;
 
+		for (uint parameter = 1; parameter <= ring_size - 3; ++parameter) {
+			line_word_by_word >> conformer.CP_parameters[parameter];
+		}
+
 		for (uint nu = 1; nu <= ring_size - 2; ++nu) {
-			line_word_by_word >> conformer.ideal_angles[nu];
+			line_word_by_word >> conformer.nu_angles[nu];
 		}
 
 		conformers.push_back(conformer);

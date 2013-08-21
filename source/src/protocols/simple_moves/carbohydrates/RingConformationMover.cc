@@ -195,7 +195,7 @@ RingConformationMover::apply(Pose & input_pose)
 	Size ring_size = res.carbohydrate_info()->ring_size();
 	for (Size j = 1; j <= ring_size - 2; ++j) {
 		nu_id = res.carbohydrate_info()->nu_id(j);
-		input_pose.set_torsion(TorsionID(res_num, nu_id.first, nu_id.second), conformer->ideal_angles[j]);
+		input_pose.set_torsion(TorsionID(res_num, nu_id.first, nu_id.second), conformer->nu_angles[j]);
 		align_virtual_atoms_in_carbohydrate_residue(input_pose, res_num);
 	}
 
