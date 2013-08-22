@@ -117,7 +117,6 @@ int main(int argc, char *argv[]) {
 	// handle options
 	core::Size nstruct = option[ OptionKeys::out::nstruct ];
 	core::Size batch_size = option[ OptionKeys::batch_relax::batch_size ];
-	TR << "The BATCHSIZE: " << batch_size << std::endl;
 
 	// init residue set
 	core::chemical::ResidueTypeSetCAP rsd_set;
@@ -167,30 +166,37 @@ int main(int argc, char *argv[]) {
 		}	
 
 		// parse jobs list and split into batches
-		vector<string> batches;				//yes, im mixing vector0 and vector1 in this app - sue me
+		vector<string> batches;				// yes, im mixing vector0 and vector1 in this app - sue me
 		SilentFileData sfd;
 		string silent_file_name;
-		int infile_size;
-		int num_batches_in_file;
+		int infile_size;				// number of incoming structures
+		int num_batches_in_file;		
 		utility::vector1<string> tags;
-		for ( vector<string>::iterator it = jobs.begin(); it != jobs.end(); ++it ) {
-			silent_file_name = split_string( *it, 0 );
+		for ( vector<string>::iterator it = jobs.begin(); it != jobs.end(); ++it ) {	// for each job in list, get structures and divide into batches
+			silent_file_name = split_string( *it, 0 );				// sf path is first word on job line (native path is second word)
 			tags = sfd.read_tags_fast(silent_file_name);
 			infile_size = tags.size();
 			if (!isUnique( tags ))
 				utility_exit_with_message( silent_file_name + " does not have unique tags. this breaks the batching algorithm because SilentFileData is too stupid to handle tag collision and doesn't support indexing by number" );
 			num_batches_in_file = infile_size / batch_size + 1;
 			int start, end = 1;
-			for ( start = 1; ; start += batch_size ) {
+			bool breakLoop = false;
+			// create batches by computing tag indexes and pushing start/end of range with silent file name
+			for ( start = 1; ; start += batch_size ) {						
 				end = start + batch_size - 1;
-				if ( end >= infile_size ) {
-					end = infile_size;
-					batches.push_back( *it + " " + SSTR(start) + " " + SSTR(end) );
-					break;
+				if ( end >= infile_size ) {							
+					end = infile_size;							// don't run over end of file, recompute index of last structure
+					breakLoop = true;							// we're done with this file, signal exit from loop
 				}
-				batches.push_back( *it + " " + SSTR(start) + " " + SSTR(end) );
+				for ( int nstruct_i = 0; nstruct_i < nstruct; ++nstruct_i )			// duplicate batch for each nstruct
+					batches.push_back( *it + " " + SSTR(start) + " " + SSTR(end) );
+				if (breakLoop)
+					break;
 			}
 		}
+
+		// if batch size is less than 1/4 of batch_size, move it to the end - "stable sort" preserves input order
+		// do this later - it's not THAT important, but a good idea nonetheless
 
 		//for ( vector<string>::iterator it = batches.begin(); it != batches.end(); ++it ) 
 			//cout << *it << endl;
@@ -233,6 +239,7 @@ int main(int argc, char *argv[]) {
 
 			//try to clear the write approve queue
 			if ( write_approve_queue.size() ) {
+				TR << "write approve queue size: " << write_approve_queue.size() << endl;
 				for ( vector< pair<int,int> >::iterator it = write_approve_queue.begin(); it != write_approve_queue.end(); ) {
 					if ( ! filelock[ split_string(batches[it->first],0) ] ) {	// if unlocked, send write approval and erase from queue
 						MPI_Send( &batch_id, 1, MPI_INT, it->second, TAG_WRITE_APPROVE, MPI_COMM_WORLD );
@@ -257,6 +264,7 @@ int main(int argc, char *argv[]) {
 			MPI_Recv( &batch_id, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status );
 
 			if (status.MPI_TAG == TAG_WRITE_REQUEST) {
+				TR << "master Recv loop: processing TAG_WRITE_REQUEST from " << status.MPI_SOURCE << endl;
 				if ( filelock[ split_string(batches[batch_id],0) ] ) 
 					write_approve_queue.push_back( make_pair( batch_id, status.MPI_SOURCE ) );
 				
@@ -266,6 +274,7 @@ int main(int argc, char *argv[]) {
 				}
 			}
 			else if (status.MPI_TAG == TAG_WRITE_SUCCESS) {
+				TR << "master Recv loop: processing TAG_WRITE_SUCCESS from " << status.MPI_SOURCE << endl;
 				filelock[ split_string(batches[batch_id],0) ] = false;
 				if ( next_batch < batches.size() ) {
 					MPI_Send( &next_batch, 1, MPI_INT, status.MPI_SOURCE, TAG_BATCH_ASSIGN, MPI_COMM_WORLD );
@@ -276,9 +285,11 @@ int main(int argc, char *argv[]) {
 				}
 			}
 			else if (status.MPI_TAG == TAG_EXIT_ACK) {
+				TR << "master Recv loop: processing TAG_EXIT_ACK from " << status.MPI_SOURCE << endl;
 				++num_exit_acks;
 			}
 			else if (status.MPI_TAG == TAG_SLAVE_ERROR) {
+				TR << "master Recv loop: processing TAG_SLAVE_ERROR from " << status.MPI_SOURCE << endl;
 				++num_exit_acks;
 			}
 			//else
@@ -312,6 +323,7 @@ int main(int argc, char *argv[]) {
 			MPI_Bcast( &batch_string, BATCH_STRING_SIZE, MPI_CHAR, 0, MPI_COMM_WORLD );
 			batches.push_back( batch_string );
 		}
+		TR << "expected batch_size: " << expected_batch_size << " actual batch_size: " << batches.size() << endl;
 		
 		// block for messages until receive batch_id: EXIT_BATCH_ID, then quit loop
 		while ( true )
@@ -321,6 +333,7 @@ int main(int argc, char *argv[]) {
 				MPI_Send( &BLANK, 1, MPI_INT, 0, TAG_EXIT_ACK, MPI_COMM_WORLD );
 				break;
 			}
+			TR << "slave Recv loop: received batch_id " << batch_id << " corresponding to " << batches[batch_id] << endl;
 
 			// run batch
 		//	cout << "running " << batches[batch_id] << endl;
@@ -347,6 +360,9 @@ int main(int argc, char *argv[]) {
 				input_structs.push_back( sfd_in->get_structure( tags[tag_index] ).clone() ); 
 			}
 
+			nstruct = 1; 	// use batch list to distribute nstruct rather than forcing a sequential loop
+					// get rid of deep copy when it becomes obvious i'll never use a sequential loop 
+
 			for ( core::Size j=0;j<nstruct;j++ ) {
 				// make a deep copy of the input_structs list so we can reuse input_structs
 				std::vector<SilentStructOP> relax_structs;
@@ -367,9 +383,9 @@ int main(int argc, char *argv[]) {
 				relax.batch_apply( relax_structs );
 				long endtime = time(NULL);
 				TR << "TIME: " << endtime - starttime << " seconds" << endl;
+				TR << "RESULTING DECOYS SIZE: " << relax_structs.size() << endl;
 
 				// Now save the resulting decoys
-
 				for( std::vector < SilentStructOP >::const_iterator it = relax_structs.begin();
 					it != relax_structs.end();
 					++ it )
@@ -409,7 +425,7 @@ int main(int argc, char *argv[]) {
 	#endif
 
 	} catch ( utility::excn::EXCN_Base const & e ) {
-		std::cerr << "caught exception " << e.msg() << std::endl;
+		std::cerr << "caught exception " << e.msg() << endl;
 	}
 
 	return 0;
