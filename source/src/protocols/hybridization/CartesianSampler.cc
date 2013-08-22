@@ -502,7 +502,7 @@ CartesianSampler::apply_constraints( core::pose::Pose &pose )
 	core::Size MINSEQSEP = 8;
 	core::Real MAXDIST = 12.0;
 	core::Size GAPBUFFER = 3;
-	core::Real COORDDEV = 1.0;
+	core::Real COORDDEV = 0.39894;
 
 	core::Size nres_tgt = get_num_residues_nonvirt( pose );
 
@@ -753,7 +753,7 @@ CartesianSampler::apply( Pose & pose ) {
 
 	// to do ... make this parsable
 	core::optimization::CartesianMinimizer minimizer;
-	core::kinematics::MoveMap mm, mm_local;
+	core::kinematics::MoveMap mm;
 	mm.set_bb  ( true ); mm.set_chi ( true ); mm.set_jump( true );
 
 	if (core::pose::symmetry::is_symmetric(pose) ) {
@@ -794,6 +794,7 @@ scorefxn_->show_line(TR,pose);
 		// restricted movemap
 		// TO DO we should check of chainbreaks
 		// TO DO min window extension (curr 6) should be a parameter
+		core::kinematics::MoveMap mm_local;
 		int start_move = std::max(1,insert_pos-6);
 		int stop_move = std::min(nres,insert_pos+library_[i_frag_set][insert_pos].length()+5);
 		for (int i=start_move; i<=stop_move; ++i) {
@@ -824,6 +825,7 @@ TR << core::scoring::cryst::getPhenixInterface().getInfoLine() << std::endl;
 
 		(*mc_scorefxn_)(pose);
 		bool accept = mc->boltzmann( pose );
+
 mc->show_scores();
 		if (accept) {
 			TR << "Insert at " << insert_pos << " accepted!" << std::endl;
@@ -908,10 +910,10 @@ CartesianSampler::parse_my_tag(
 
 	if( tag->hasOption( "reference_model" ) ) {
 		std::string ref_model_pdb = tag->getOption<std::string>( "reference_model" );
-		if (ref_model_pdb != "none")
+		if (ref_model_pdb != "input")
 			core::import_pose::pose_from_pdb( ref_model_, ref_model_pdb );
-	} else {
-		input_as_ref_ = true;
+		else
+			input_as_ref_ = true;
 	}
 
 	if( tag->hasOption( "residues" ) ) {
