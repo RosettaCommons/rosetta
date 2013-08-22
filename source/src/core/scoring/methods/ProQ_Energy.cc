@@ -777,7 +777,7 @@ ProQ_Energy::calculate_feature_vector(pose::Pose & pose,
 
 	//SURF 24 4x6
 	surf_feature(pose,rsd_sasa_rel,feature_vector,113);
-	return;
+
 	for(Size i=1;i<=nres_;++i) {
 
 
