@@ -886,6 +886,17 @@ if ($cryst_mode == 1) {
 		[1,-1,-1] ,[1,-1,0] ,[1,-1,1] ,  [1,0,-1] ,[1,0,0] ,[1,0,1] ,  [1,1,-1] ,[1,1,0] ,[1,1,1]
 	];
 
+	#my $Ts_expand = [];
+	#foreach my $ii (-3..3) {
+	#	foreach my $jj (-3..3) {
+	#		foreach my $kk (0..0) {
+	#			if ($ii != 0 || $jj != 0 || $kk != 0) {
+	#				push @{$Ts_expand}, [$ii,$jj,$kk];
+	#			}
+	#		}
+	#	}
+	#}
+
 	# nmr check
 	my %symminterface = ();
 	my $nmr = 0;
@@ -1178,7 +1189,11 @@ if ($cryst_mode == 1) {
 		$outpdb = $outpdb."_symm.pdb";
 	}
 	open (OUTPDB, ">$outpdb");
+
+
+	my $mdlidx = 1;
 	my $chnidx = 0;
+	print OUTMDL "MODEL $mdlidx\n";
 	my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 	foreach my $symmkey (@syminterfaces_all) {
 		my ($j_symm,$shiftX,$shiftY,$shiftZ) = split '_',$symmkey;
@@ -1200,6 +1215,12 @@ if ($cryst_mode == 1) {
 		}
 		print OUTPDB "TER   \n";
 		$chnidx++;
+		if ($chnidx == 62) {
+			$chnidx=0;
+			$mdlidx++;
+			print OUTPDB "ENDMDL\n";
+			print OUTPDB "MODEL $mdlidx\n";
+		}
 	}
 	close(OUTPDB);
 }
@@ -2040,8 +2061,8 @@ if ($helix_mode == 1) {
 	my $chnidx = 0;
 	my $chains = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 
-	foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
 
+	foreach my $sec_shift ( -$nperp_repeats..$nperp_repeats ) {
 		foreach my $subunit (0 .. $nsubunits_to_gen) {
 			foreach my $i (0..$sym_order_ncs-1) {
 				my $id =  $sec_shift."_".$subunit."_".$i;
@@ -2098,6 +2119,7 @@ if ($helix_mode == 1) {
 	foreach my $debug_line (@fakepdblines) {
 		print OUTPDB $debug_line;
 	}
+	print OUTMDL "ENDMDL\n";
 
 	######################################
 	foreach my $line (@filebuf) {
@@ -2162,7 +2184,7 @@ if ($pseudo_mode == 1) {
 	$symmname = $symmname."_pseudo".scalar(keys %chains)."fold";
 	print "symmetry_name $symmname\n";
 
-	print "E = 1*VRT_0_base";
+	print "E = 2*VRT_0_base";
 	foreach my $i (1..($#Rs)) {
 		my $estring = " + 1*(VRT_0_base:VRT_".($i)."_base)";
 		$estring =~ s/_-(\d)/_n\1/g;
