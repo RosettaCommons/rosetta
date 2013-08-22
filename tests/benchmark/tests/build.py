@@ -48,8 +48,13 @@ def run_test(test, rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=Fa
 
     file(working_dir+'/build-log.txt', 'w').write(output)
 
-    if res: return _Failed_, output  # build failed for us actually mean test failure
-    else: return _Finished_, output
+    res_code = _Failed_ if res else _Finished_
+
+    #if res: return _Failed_,   output  # We do not use '_BuildFailed_' because build failed for us actually mean test failure
+    #else:   return _Finished_, output
+
+    return {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+
 
 
 def run_test_suite(rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=False):
@@ -67,11 +72,20 @@ def run_test_suite(rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=Fa
     return results
 
 
-# do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
+
+# Standard funtions and constants below ---------------------------------------------------------------------------------
+# Do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
 _Finished_     = '_Finished_'
 _Failed_       = '_Failed_'
 _BuildFailed_  = '_BuildFailed_'
 _ScriptFailed_ = '_ScriptFailed_'
+
+_StateKey_    = 'state'
+_ResultsKey_  = 'results'
+_LogKey_      = 'log'
+# Keys below will be used only in up-stream, do to set them here
+#_StartedKey_  = 'started'
+#_FinishedKey_ = 'finished'
 
 
 def Tracer(verbose=False):
