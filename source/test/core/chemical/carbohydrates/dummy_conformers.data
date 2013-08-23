@@ -7,8 +7,8 @@
 # database_io.cxxtest.hh.
 
 # Specific   General
-# Conformer  Conformer  Degeneracy                        Ideal Angles
-# Name       Name                     nu1    nu2    nu3    nu4    nu5    nu6    nu7    nu8
-  1F2        foo                 1  -60.0   60.0  -60.0   60.0  -60.0   60.0    0.0    0.0
-  1,2B       bar                 2   60.0  -60.0   60.0  -60.0   60.0  -60.0    0.0    0.0
-  W1         woo                 3  -60.0   30.0   30.0  -60.0   30.0   30.0    0.0    0.0
+# Conformer  Conformer  Degeneracy   Ideal Cremer-Pople Parameters                    Ideal Angles (degrees)
+# Name       Name                     q    phi  theta    eta   iota    nu1    nu2    nu3    nu4    nu5    nu6    nu7    nu8
+  1F2        foo                 1  0.0   15.0   30.0   45.0   60.0  -60.0   60.0  -60.0   60.0  -60.0   60.0    0.0    0.0
+  1,2B       bar                 2  0.5   75.0   90.0  105.0  120.0   60.0  -60.0   60.0  -60.0   60.0  -60.0    0.0    0.0
+  W1         woo                 3  1.0  135.0  150.0  165.0  180.0  -60.0   30.0   30.0  -60.0   30.0   30.0    0.0    0.0

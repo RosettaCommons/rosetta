@@ -17,25 +17,19 @@
 #include <core/kinematics/ResidueCoordinateChangeList.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
-// AUTO-REMOVED #include <core/kinematics/tree/BondedAtom.hh>
-// AUTO-REMOVED #include <core/kinematics/tree/JumpAtom.hh>
-// AUTO-REMOVED #include <core/kinematics/util.hh>
+#include <core/kinematics/AtomWithDOFChange.hh>
+#include <core/kinematics/types.hh>
+#include <core/kinematics/tree/Atom.hh>
 
+// Basic headers
 #include <basic/basic.hh> // periodic_range
 #include <basic/prof.hh> // profiling
 #include <basic/Tracer.hh> // profiling
 
-
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
-//#include <ObjexxFCL/FArray4D.h>
-//#include <ObjexxFCL/formatted.io.h>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/all.fwd.hh>
 #include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
@@ -44,17 +38,10 @@
 
 // Utility headers
 #include <utility/assert.hh>
-// AUTO-REMOVED #include <utility/io/orstream.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <cstdlib>
-// AUTO-REMOVED #include <cstdio>
-
-#include <core/kinematics/AtomWithDOFChange.hh>
-#include <core/kinematics/types.hh>
-#include <core/kinematics/tree/Atom.hh>
-#include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -101,7 +88,6 @@ AtomTree::~AtomTree()
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 /// @details copy ctor, uses operator=
 AtomTree::AtomTree( AtomTree const & src ) :
@@ -124,69 +110,6 @@ void AtomTree::set_weak_pointer_to_self( AtomTreeCAP self_pointer )
 	assert( self_pointer() == this );
 	this_weak_ptr_ = self_pointer;
 }
-
-
-/**
-/////////////////////////////////////////////////////////////////////////////
-///
-///@li update xyz or internal coord before adding this atom.
-///@li notify xyz or internal coord need to be updated after adding this atom.
-///@li if atom id2 is not in the AtomID_Map and root atom is not set, atom id1
-///    is set as the root of the tree (the parent of the root is 0).
-///@li if atom id2 is in the AtomID_Map, atom id1 is added into the map either
-///    as a bonded_atom or jump_atom and atom id2 is set as its parent.
-///@li Throw an error if atom id2 is not in the map and root atom is already set.
-///
-void
-AtomTree::add_atom(
-	AtomID const & id1,
-	AtomID const & id2,
-	bool const add_bonded_atom,
-	bool const from_xyz
-)
-{
-	if ( from_xyz ) {
-		update_xyz_coords();
-	} else {
-		update_internal_coords();
-	}
-
-
-	AtomOP parent(0);
-	if ( !id2.valid() || // root
-		!atom_pointer_.has( id2 ) ||
-		atom_pointer_[ id2 ] == 0 ) {
-		//
-		if ( root_ != 0 ) {
-			utility_exit_with_message("add_atom: parent not in the tree");
-		}
-	} else {
-		parent = atom_pointer_[ id2 ];
-	}
-
-	// create the new atom
-	AtomOP atom( add_bonded_atom ?
-		static_cast< AtomOP >( new BondedAtom() ) :
-		static_cast< AtomOP >( new JumpAtom() ) );
-	atom->id( id1 );
-	atom_pointer_.set( id1, atom );
-
-	if ( parent ) {
-		parent->append_atom( atom );
-	} else {
-		root_ = atom;
-		atom->parent( 0 );
-	}
-
-
-	if ( from_xyz ) {
-		internal_coords_need_updating_ = true;
-	} else {
-		xyz_coords_need_updating_ = true;
-	}
-
-}
-**/
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -241,56 +164,6 @@ AtomTree::replace_tree(
 	set_new_topology();
 }
 
-/**
-void
-AtomTree::setup_backrub_segment(
-	utility::vector1< AtomID > const & mainchain,
-	AtomID const & downstream_id, // mainchain child of last atom in mainchain vector
-	utility::vector1< std::pair< Size, Size > > const & edges,
-	Size const first_new_pseudo_residue
-)
-{
-
-	// this assumes that the segment of mainchain has exactly one connection in and exactly one connection out, (to
-	// the downstream_id atom) and all of the atoms to be replaced are bonded atoms
-	//
-	for ( Size i=1; i<= mainchain.size(); ++i ) {
-		assert( !( atom_pointer_[ mainchain[i] ]->is_jump() ) );
-	}
-	AtomID const last_mainchain_id( mainchain[ mainchain.size() ] );
-	assert( atom_pointer_[ downstream_id ]->parent()->id() == last_mainchain_id );
-
-	// operation is done "by xyz" leaving the internal coords out of date
-	update_xyz_coords();
-
-	AtomOP subtree_root
-		( setup_backrub_atom_tree( mainchain, downstream_id, atom_pointer_, edges, first_new_pseudo_residue ) );
-	assert( subtree_root->id() == mainchain[1] );
-
-	AtomOP old_root( atom_pointer_[ mainchain[1] ] );
-	AtomOP anchor( old_root->parent() );
-
-	AtomOP downstream_atom( atom_pointer_[ downstream_id ] );
-	downstream_atom->parent()->delete_atom( downstream_atom ); // delete the old outgoing connection
-
-	// update atom_pointer_
-	subtree_root->update_atom_pointer( atom_pointer_, true );
-
-	// insert the new tree
-	anchor->replace_atom( old_root, subtree_root ); // incoming connection
-	atom_pointer_[ last_mainchain_id ]->insert_atom( downstream_atom ); // outoing connection
-
-	// erase the old tree
-	// this call will erase and delete all of old_root's children
-	old_root->erase();
-	// free the last bit of old data
-	delete old_root;
-
-	internal_coords_need_updating_ = true;
-
-}
-**/
-
 
 /// @details  This is a helper function to find a linear transform that when applied to the downstream stub
 /// has the effect that RT( instub, transformed-downstream-stub) == target_rt
@@ -320,9 +193,6 @@ find_stub_transform(
 	A = M1 * R * M2.transposed();
 	b = M1 * t + v1 - A * v2;
 }
-
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -513,7 +383,6 @@ AtomTree::replace_residue_subtree(
 	set_new_topology();
 
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -809,9 +678,7 @@ AtomTree::torsion_angle_dof_id(
 		// atom4 - atom1 = atom4 - dof_atom1 + ( dof_atom1 - atom1 )
 		//
 		// so offset == dof_atom1 - atom1 ~ dihedral from atom1 to dof_atom1
-		//
 
-		//
 		Real const dihedral_from_atom1_to_dof_atom1
 			( sign_factor * std::acos( cos_phi3 ) );
 
@@ -863,7 +730,6 @@ AtomTree::torsion_angle_dof_id(
 	// failure
 	return id::BOGUS_DOF_ID;
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1365,7 +1231,6 @@ AtomTree::update_internal_coords() const
 }
 
 
-
 /// @details  Set the transform between two stubs
 /// Returns the atomid of the jump atom which moved.
 /// @note  Requires that there be a jump in the atomtree between a pair of atoms in the stubs
@@ -1700,7 +1565,6 @@ AtomTree::get_frag_pseudo_stub_id(
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 /// private helper for fragment insertion routines
 ///
@@ -1847,7 +1711,6 @@ AtomTree::get_frag_parent_local_xyz(
 	assert( !fail ); // since pseudo stub atoms are all in the fragment
 	return local_stub.local2global( current_stub.global2local( xyz( parent->atom_id() ) ) );
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2148,484 +2011,5 @@ AtomTree::promote_sameresidue_nonjump_child( AtomID const & parent_atom_id )
 	set_new_topology();
 }
 
-
-
-
-// 			while ( it != path1.end() &&
-// 							std::find( stub1_ids.begin(), stub1_ids.end(), (*it)->parent()->atom_id() ) != stub1_ids.end() ) ++it;
-// 			if ( it == path1.end() ) {
-// 				it = path2.begin();
-// 				while ( it != path2.end() &&
-// 								std::find( stub2_ids.begin(), stub2_ids.end(), (*it)->parent()->atom_id() ) != stub2_ids.end() ) ++it;
-// 				if ( it == path2.end() ) {
-// 					utility_exit_with_message( "AtomTree::make_stub_transform: Unable to find bond to cut!" );
-// 				}
-// 			}
-// 		}
-
-
 } // namespace kinematics
 } // namespace core
-// 		// we use the internal dof's if necessary to calculate the offset
-// 		assert( !internal_coords_need_updating_ );
-
-// 		offset = 0.0;
-
-// 		assert( atom_pointer_[ atom_id1 ] && atom_pointer_[ atom_id2 ] &&
-// 						atom_pointer_[ atom_id3 ] && atom_pointer_[ atom_id4 ] );
-
-// 		// STUART -- (low priority) I'd like to be able to cache
-// 		// the results of this calculation to allow faster access.
-
-
-// 		// reorder the atoms if necessary so that atom2 is the parent of atom3
-// 		// and atom3 is the parent of atom4
-// 		AtomOPatom1( 0 ), *atom2( 0 ), *atom3( 0 ), *atom4( 0 );
-
-// 		if ( atom_pointer_[ atom_id3 ]->parent()->atom_id() == atom_id2 ) {
-// 			atom1 = atom_pointer_[ atom_id1 ];
-// 			atom2 = atom_pointer_[ atom_id2 ];
-// 			atom3 = atom_pointer_[ atom_id3 ];
-// 			atom4 = atom_pointer_[ atom_id4 ];
-// 		} else if ( atom_pointer_[ atom_id2 ]->parent()->atom_id() == atom_id3 ) {
-// 			atom1 = atom_pointer_[ atom_id4 ];
-// 			atom2 = atom_pointer_[ atom_id3 ];
-// 			atom3 = atom_pointer_[ atom_id2 ];
-// 			atom4 = atom_pointer_[ atom_id1 ];
-// 		} else {
-// 			// no good!
-// 			return BOGUS_DOF_ID;
-// 		}
-// 		assert( atom3->parent() == atom2 );
-// 		if ( atom4->parent() != atom3 ) {
-// 			// also no good
-// 			return BOGUS_DOF_ID;
-// 		} else if ( atom4->is_jump() ) {
-// 			// also no good
-// 			return BOGUS_DOF_ID;
-// 		}
-
-
-// 		Atom const
-// 			*dof_atom1( atom2->parent() ),
-// 			*dof_atom4( atom3->get_nonjump_atom(0) ); // guaranteed not a jump
-
-// 		// this is the answer:
-// 		DOF_ID dof_id( dof_atom4->atom_id(), PHI );
-
-
-// 		///////////////////////////////////////////////////////////////////////////
-// 		// handle the easiest case: perfect match with an atomtree DOF
-// 		//
-// 		if ( dof_atom1 == atom1 &&
-// 				 dof_atom4 == atom4 ) {
-// 			assert( &(atom4->input_stub_atom0()) == atom3 &&
-// 							&(atom4->input_stub_atom1()) == atom3 &&
-// 							&(atom4->input_stub_atom2()) == atom2 &&
-// 							&(atom4->input_stub_atom3()) == atom1 );
-
-// 			offset = 0.0;
-// 			return dof_id;
-// 		}
-
-// 		// now calculate the offset
-// 		// by summing contributions from both ends
-// 		offset = 0.0;
-
-// 		// handle offset between atom4 and atom3's first child
-// 		// note that we already know that atom4 is one of atom3's children
-// 		// ( see above )
-// 		//
-// 		if ( dof_atom4 != atom4 ) {
-
-// 			// recall: torsion(atom1-4) = dof(dof_id) + offset
-// 			//
-// 			offset += atom3->dihedral_between_bonded_children( dof_atom4, atom4 );
-// 		}
-
-
-// 		// handle offset between atom1 and true atom1
-// 		// the only case we can do is if atom1->parent() == atom2
-// 		//
-// 		// this will happen, eg for chi1 if we are folding c2n:
-// 		//
-// 		// atom1 =  N    while    dof_atom1 = parent(atom2) =  C
-// 		// atom2 = CA
-// 		// atom3 = CB
-// 		// atom4 = CG
-// 		//
-// 		if ( dof_atom1 != atom1 ) {
-// 			if ( atom1->parent() != atom2 || atom1->is_jump() ) {
-// 				// no good!
-// 				return BOGUS_DOF_ID;
-// 			}
-
-// 			// a little tricky: we don't want to access the positions,
-// 			// since we can't be sure that they are up to date in a routine
-// 			// that would be called inside dof setting and getting routines
-// 			//
-// 			//
-// 			// need to use some spherical geometry
-// 			//
-// 			// we've got three unit vectors:
-// 			//
-// 			// u1 -- from atom2 to atom1
-// 			// u2 -- from dof_atom1 to atom2
-// 			// u3 -- from atom2 to atom3
-// 			//
-// 			// the angle between u2 and u1 = theta1 = atom1(THETA)
-// 			// the angle between u2 and u3 = theta3 = atom3(THETA)
-// 			// the torsion between u1 and u3 along u2 = phi2 = atom2->bonded_dih(1,3)
-// 			//
-// 			Real
-// 				theta1( atom1->dof( THETA ) ),
-// 				theta3( atom3->dof( THETA ) ),
-// 				phi2( atom2->dihedral_between_bonded_children( atom1, atom3 ) );
-
-// 			// want to solve for phi3 -- dihedral between u2 and u1 along axis
-// 			// defined by u3
-// 			//
-// 			// spherical law of cosines says:
-// 			//
-// 			// cos(theta2) = cos(theta1) * cos(theta3) +
-// 			//               sin(theta1) * sin(theta3) * cos(phi2)
-// 			//
-// 			// so we can solve for cos(theta2); then use formula again to solve for
-// 			// cos(phi3).
-// 			//
-// 			Real cos_theta2 = std::cos( theta1 ) * std::cos( theta3 ) +
-// 				std::sin( theta1 ) * std::sin( theta3 ) * std::cos( phi2 );
-
-// 			Real sin_theta2 = std::sqrt( 1 - cos_theta2 * cos_theta2 );
-
-// 			// use formula again interchanging 2 and 3
-// 			Real cos_phi3 = ( cos( theta3 ) - cos( theta1 ) * cos_theta2 ) /
-// 				( sin( theta1 ) * sin_theta2 );
-
-// 			// PHIL! really should handle degenerate cases more carefully
-// 			// PHIL! also could reuse some of the trig calculations
-
-
-// 			std::cout << "PHIL: calculate the sign factor in AtomTree::torsion_angle_dof_id!" << std::endl;
-
-// 			Real sign_factor( 1.0 ); // this is not correct
-
-// 			offset += sign_factor * std::acos( cos_phi3 );
-
-// 		}
-
-// 		// offset is passed out by reference
-// 		return dof_id;
-// 	}
-// /////////////////////////////////////////////////////////////////////////////
-// /// tmp hack
-
-// class AtomBondChecker {
-// public:
-// 	typedef id::BondID BondID;
-
-// public:
-
-// 	AtomBondChecker( utility::vector1< BondID > const & bonds_in ):
-// 		bonds_( bonds_in )
-// 	{}
-
-
-// 	bool
-// 	operator()( AtomCOP const & atom )
-// 	{
-// 		BondID id( atom->atom_id(), atom->parent()->atom_id() );
-// 		if ( std::find( bonds_.begin(), bonds_.end(), id ) == bonds_.end() ) id.reverse();
-
-// 		// return true if bond between atom and parent is in the list:
-// 		return ( std::find( bonds_.begin(), bonds_.end(), id ) != bonds_.end() );
-// 	}
-
-// private:
-// 	utility::vector1< BondID > bonds_;
-
-
-// };
-
-// 																 vector1< id::StubID > const & outstub_ids,
-// 																 vector1< RT > const & outstub_transforms,
-// 																 vector1< AtomID > const & frag_ids,
-// 																 vector1< Vector > const & frag_xyz, // or use std::map< AtomID, Vector > ??
-// 	AtomID id1( child.atom_id() ),id2,id3;
-// 	if ( child->n_nonjump_children() == 0 ) {
-// 		fail = true;
-// 		return Vector(0.0);
-// 	} else if ( child->n_nonjump_children() == 1 ) {
-// 		AtomCOP gchild( child->get_nonjump_atom( 0 ) ); // frag or child of frag
-// 		id2 = gchild->atom_id();
-// 		if ( gchild->n_nonjump_children() == 0 ) {
-// 			fail = true;
-// 			return Vector(0.0);
-// 		} else {
-// 			id3 = gchild->get_nonjump_atom(0)->atom_id(); // frag or child of frag or grandchild of frag
-// 		}
-// 	} else {
-// 		id2 = child->get_nonjump_atom(0)->atom_id(); // frag or child of frag
-// 		id3 = child->get_nonjump_atom(1)->atom_id(); // frag or child of frag
-// 	}
-// /////////////////////////////////////////////////////////////////////////////
-// /////////////////////////////////////////////////////////////////////////////
-// // private, called recursively
-// //
-// void
-// AtomTree::insert_stub_transforms(
-// 																 id::StubID const & instub_id,
-// 																 utility::vector1< id::StubID > const & outstub_ids,
-// 																 utility::vector1< RT > const & transforms,
-// 																 id::AtomID_Mask & exclude,
-// 																 utility::vector1< id::AtomID > & moved_atoms
-// )
-// {
-// 	assert( outstub_ids.size() == transforms.size() );
-// 	Size const nstub( outstub_ids.size() );
-
-// 	// build vector of stub atom ids
-
-// 	// trim stub atom ids to exclude overlapping atoms
-
-// 	vector1< vector1< AtomCOP > > paths( nstub );
-// 	for ( Size i=1; i<= nstub; ++i ) {
-// 		get_atom_path( out_atom_ids[i][1], in_atom_ids[1], paths[i] );
-// 		sizes.push_back( paths[i].size () );
-// 	}
-
-// 	///
-// 	Size const stub_index( argmin( sizes ) ); // see rotamer_trials.cc
-// 	vector1< AtomCOP > stub_path( paths[ stub_index ] );
-
-
-// 	/// choose an atom to move ///////////////////////////////////////////////
-// 	AtomOP moving_atom( 0 );
-// 	// first look for jump atom:
-// 	for ( Size i=1; i<= stub_path.size(); ++i ) {
-// 		AtomID const & id( stub_path[i]->atom_id() );
-// 		if ( !excluded[ id ] && stub_path[i]->is_jump() ) {
-// 			moving_atom = atom_pointer_[ id ];
-// 			break;
-// 		}
-// 	}
-// 	for ( Size i=1; i<= stub_path.size(); ++i ) {
-// 		AtomID const & id( stub_path[i]->atom_id() );
-// 		if ( !excluded[ id ] ) {
-// 			excluded[ id ] = true;
-// 			if ( !moving_atom ) moving_atom = atom_pointer_[ id ];
-// 			break;
-// 		}
-// 	}
-// 	if ( !moving_atom ) utility_exit_with_message( "AtomTree stub fragment insertion failed!!" );
-
-// 	bool const moving_atom_on_incoming_root_path( my_path.back()->atom_is_on_root_path( moving_atom ) );
-// 	assert( moving_atom_on_incoming_root_path || my_path.front()->atom_is_on_root_path( moving_atom ) );
-
-// 	//// now figure out what transform we need to apply
-// 	Stub stub1( xyz( stub1_id.atom1 ), xyz( stub1_id.atom2 ), xyz( stub1_id.atom3 ) );
-// 	Stub stub2( xyz( stub2_id.atom1 ), xyz( stub2_id.atom2 ), xyz( stub2_id.atom3 ) );
-// 	RT rt( target_rt );
-// 	if ( moving_atom_on_path1 ) {
-// 		// in this case when we transform the atom we will actually move the stub1 atoms, so reverse for consistency
-// 		rt.reverse();
-// 		Stub const tmp( stub1 );
-// 		stub1 = stub2;
-// 		stub2 = tmp;
-// 	}
-
-// 	// now things are arranged so that when we transform moving_atom and children, stub1 stays fixed and stub2 moves.
-// 	// and we want RT( stub1, new_stub2 ) == target_rt
-
-// 	Stub::Matrix const & M1( stub1.M ), M2( stub2.M ), R( rt.get_rotation() );
-// 	Vector const & v1( stub1.v ), v2( stub2.v ), t( rt.get_translation() );
-
-// 	// look for a transformation of the form x |----> A*x + b
-// 	//
-// 	// this will change stub2 to stub2' with M2' = A * M2, v2' = A*v2 + b
-// 	//
-// 	// if we let (R,t) be the target RT, then we want
-// 	//
-// 	//  R = M1^T * M2' = M1^T * A * M2  ==> A = M1 * R * M2^T
-// 	//
-// 	//  t = M1^T * ( v2' - v1 ) ==> v2' = M1 * t + v1, which with b = v2' - A*v2 gives b = M1 * t + v1 - A * v2
-// 	//
-
-// 	Stub::Matrix const A( M1 * R * M2.transposed() );
-// 	Vector const b( M1 * t + v1 - A * v2 );
-
-// 	update_xyz_coords();
-
-// 	moving_atom->transform_Ax_plus_b_recursive( A, b );
-// 	internal_coords_need_updating_ = true;
-
-
-// 	{ // debug
-// 		Stub const new_stub1( xyz( stub1_id.atom1 ), xyz( stub1_id.atom2 ), xyz( stub1_id.atom3 ) );
-// 		Stub const new_stub2( xyz( stub2_id.atom1 ), xyz( stub2_id.atom2 ), xyz( stub2_id.atom3 ) );
-// 		RT const new_rt( new_stub1, new_stub2 );
-// 		std::cout << "debugRTD: " << new_rt.distance_squared( target_rt ) << std::endl;
-
-// 		assert( new_rt.distance_squared( target_rt ) < 1e-3 );
-// 	}
-
-// 	//// tell the outside world which atom we moved (ie subtree rooted at this atom has moved)
-// 	return moving_atom->atom_id();
-
-// }
-
-
-// /////////////////////////////////////////////////////////////////////////////
-
-// id::AtomID
-// AtomTree::make_stub_transform(
-// 	id::StubID const & stub1_id, // triplet of atomids
-// 	id::StubID const & stub2_id, // triplet of atomids
-// 	RT const & target_rt,
-// 	utility::vector1< id::BondID > const & preferred_bonds
-// )
-// {
-// 	//using tree::Atom;
-
-// 	//// get path between origin atoms of both stubs /////////////////////
-// 	utility::vector1< AtomCOP > path1, path2;
-
-// 	AtomOP const stub1_atom1( atom_pointer_[ stub1_id.atom1 ] );
-// 	AtomOP const stub2_atom1( atom_pointer_[ stub2_id.atom1 ] );
-
-
-// 	stub1_atom1->get_path_from_root( path1 );
-// 	stub2_atom1->get_path_from_root( path2 );
-
-// 	assert( path1.front() == root_       && path2.front() == root_ &&
-// 					path1.back () == stub1_atom1 && path2.back () == stub2_atom1 );
-
-// 	//// Now remove all the common ancestors, and reverse the paths so they start at stub origin atoms
-// 	{
-// 		Size lcai(1); // last_common_ancestor_index
-// 		Size const s1( path1.size() );
-// 		Size const s2( path2.size() );
-// 		while ( lcai < s1 && lcai < s2 ) {
-// 			++lcai;
-// 			if ( path1[ lcai ] != path2[ lcai ] ) {
-// 				--lcai;
-// 				break;
-// 			}
-// 		}
-// 		path1.erase( path1.begin(), path1.begin() + lcai );
-// 		path2.erase( path2.begin(), path2.begin() + lcai );
-// 		assert( path1.empty() || path2.empty() ||
-// 						( path1[ 1 ] != path2[ 1 ] && path1[ 1 ]->parent() == path2[ 1 ]->parent() ) );
-// 		std::reverse( path1.begin(), path1.end() );
-// 		std::reverse( path2.begin(), path2.end() );
-// 		assert( path1.empty() || path1[ 1 ] == stub1_atom1 );
-// 		assert( path2.empty() || path2[ 1 ] == stub2_atom1 );
-
-
-// 		// trim backward to get past all stub atoms
-// 		utility::vector1< AtomID > stub1_ids, stub2_ids;
-// 		stub1_ids.push_back( stub1_id.atom1 );
-// 		stub1_ids.push_back( stub1_id.atom2 );
-// 		stub1_ids.push_back( stub1_id.atom3 );
-// 		stub2_ids.push_back( stub2_id.atom1 );
-// 		stub2_ids.push_back( stub2_id.atom2 );
-// 		stub2_ids.push_back( stub2_id.atom3 );
-//  		while ( !path1.empty() &&
-//  						std::find( stub1_ids.begin(), stub1_ids.end(), path1.front()->parent()->atom_id() ) != stub1_ids.end() ) {
-//  			path1.erase( path1.begin() );
-//  		}
-//  		while ( !path2.empty() &&
-//  						std::find( stub2_ids.begin(), stub2_ids.end(), path2.front()->parent()->atom_id() ) != stub2_ids.end() ) {
-//  			path2.erase( path2.begin() );
-//  		}
-// 	}
-
-
-// 	// use this to find atoms whose bond to a parent is in preferred_bond_ids
-// 	AtomBondChecker bond_checker( preferred_bonds );
-
-// 	//// first look for a jump on either path that matches the preferred_bonds set
-
-// 	// make paths with just the jump atoms
-// 	utility::vector1< AtomCOP > path1_jumps, path2_jumps;
-// 	for ( Size i=1; i<= path1.size(); ++i ) if ( path1[i]->is_jump() ) path1_jumps.push_back( path1[i] );
-// 	for ( Size i=1; i<= path2.size(); ++i ) if ( path2[i]->is_jump() ) path2_jumps.push_back( path2[i] );
-
-// 	utility::vector1< AtomCOP >::iterator it = find_if( path1_jumps.begin(), path1_jumps.end(), bond_checker );
-// 	if ( it == path1_jumps.end() )             it = find_if( path2_jumps.begin(), path2_jumps.end(), bond_checker );
-// 	if ( it == path2_jumps.end() )             it = find_if(       path1.begin(),       path1.end(), bond_checker );
-// 	if ( it ==       path1.end() )             it = find_if(       path2.begin(),       path2.end(), bond_checker );
-// 	if ( it ==       path2.end() ) {
-// 		// no atoms matched the preferred bonds set
-// 		// choose a jump if it exists
-// 		// otherwise choose ...
-
-// 		if ( !path1_jumps.empty() ) {
-// 			it = path1_jumps.begin();
-// 		} else if ( ! path2_jumps.empty() ) {
-// 			it = path2_jumps.begin();
-// 		} else if ( !path1.empty() ) {
-// 			it = path1.begin();
-// 		} else if ( !path2.empty() ) {
-// 			it = path2.begin();
-// 		} else {
-// 			utility_exit_with_message( "AtomTree::make_stub_transform: Unable to find bond to cut!" );
-// 		}
-// 	}
-
-// 	AtomOP moving_atom( atom_pointer_[ (*it)->atom_id() ] ); // get nonconst version
-// 	bool const moving_atom_on_path1( std::find( path1.begin(), path1.end(), *it ) != path1.end() );;
-
-// 	//// now figure out what transform we need to apply
-// 	Stub stub1( xyz( stub1_id.atom1 ), xyz( stub1_id.atom2 ), xyz( stub1_id.atom3 ) );
-// 	Stub stub2( xyz( stub2_id.atom1 ), xyz( stub2_id.atom2 ), xyz( stub2_id.atom3 ) );
-// 	RT rt( target_rt );
-// 	if ( moving_atom_on_path1 ) {
-// 		// in this case when we transform the atom we will actually move the stub1 atoms, so reverse for consistency
-// 		rt.reverse();
-// 		Stub const tmp( stub1 );
-// 		stub1 = stub2;
-// 		stub2 = tmp;
-// 	}
-
-// 	// now things are arranged so that when we transform moving_atom and children, stub1 stays fixed and stub2 moves.
-// 	// and we want RT( stub1, new_stub2 ) == target_rt
-
-// 	Stub::Matrix const & M1( stub1.M ), M2( stub2.M ), R( rt.get_rotation() );
-// 	Vector const & v1( stub1.v ), v2( stub2.v ), t( rt.get_translation() );
-
-// 	// look for a transformation of the form x |----> A*x + b
-// 	//
-// 	// this will change stub2 to stub2' with M2' = A * M2, v2' = A*v2 + b
-// 	//
-// 	// if we let (R,t) be the target RT, then we want
-// 	//
-// 	//  R = M1^T * M2' = M1^T * A * M2  ==> A = M1 * R * M2^T
-// 	//
-// 	//  t = M1^T * ( v2' - v1 ) ==> v2' = M1 * t + v1, which with b = v2' - A*v2 gives b = M1 * t + v1 - A * v2
-// 	//
-
-// 	Stub::Matrix const A( M1 * R * M2.transposed() );
-// 	Vector const b( M1 * t + v1 - A * v2 );
-
-// 	update_xyz_coords();
-
-// 	moving_atom->transform_Ax_plus_b_recursive( A, b );
-// 	internal_coords_need_updating_ = true;
-
-
-// 	{ // debug
-// 		Stub const new_stub1( xyz( stub1_id.atom1 ), xyz( stub1_id.atom2 ), xyz( stub1_id.atom3 ) );
-// 		Stub const new_stub2( xyz( stub2_id.atom1 ), xyz( stub2_id.atom2 ), xyz( stub2_id.atom3 ) );
-// 		RT const new_rt( new_stub1, new_stub2 );
-// 		std::cout << "debugRTD: " << new_rt.distance_squared( target_rt ) << std::endl;
-
-// 		assert( new_rt.distance_squared( target_rt ) < 1e-3 );
-// 	}
-
-// 	//// tell the outside world which atom we moved (ie subtree rooted at this atom has moved)
-// 	return moving_atom->atom_id();
-
-// }
-
-

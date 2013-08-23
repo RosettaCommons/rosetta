@@ -83,8 +83,16 @@ public:
 	/// @brief  Return a list of all nondegenerate conformers in the set.
 	utility::vector1<RingConformerCOP> get_all_nondegenerate_conformers() const;
 
+
+	/// @brief  Return the conformer corresponding to the requested name.
+	RingConformerCOP get_ideal_conformer_by_name(std::string const name) const;
+
+	/// @brief  Return the conformer that is the best fit for the provided Cremer-Pople parameters.
+	RingConformerCOP get_ideal_conformer_by_CP_parameters(utility::vector1<core::Real> const parameters) const;
+
 	/// @brief  Return the conformer that is the best fit for the provided list of nu angles.
-	RingConformerCOP get_conformer_from_nus(utility::vector1<core::Angle> const angles) const;
+	RingConformerCOP get_ideal_conformer_from_nus(utility::vector1<core::Angle> const angles) const;
+
 
 	/// @brief  Return the conformer that is known from studies (if available) to be the lowest energy ring conformer.
 	RingConformerCOP get_lowest_energy_conformer() const;

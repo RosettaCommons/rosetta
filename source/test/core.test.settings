@@ -24,6 +24,7 @@ sources = {
 	"chemical/carbohydrates" : [
 		"CarbohydrateInfo",
 		"database_io",
+		"RingConformerSet",
 	],
 	"chemical/orbitals" :[
 		"OrbitalTypeSet",

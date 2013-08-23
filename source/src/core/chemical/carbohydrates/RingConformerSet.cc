@@ -28,6 +28,7 @@
 
 // Numeric headers
 #include <numeric/random/random.hh>
+#include <numeric/angle.functions.hh>
 
 // C++ headers
 #include <iostream>
@@ -107,14 +108,140 @@ RingConformerSet::get_all_nondegenerate_conformers() const
 	return nondegenerate_conformers_;
 }
 
+
+// Return the conformer corresponding to the requested name.
+/// @param    <name>: the IUPAC name for a specific ring conformation, e.g., "1C4"
+/// @details  For a saccharide residue, the provided name assumes a ring with the anomeric carbon labeled 1.  That is,
+/// for a 2-ketopyranose in the 2C5 chair form, provide 1C4.
+/// @return   a pointer to a RingConformer or NULL, if no match is found
+/// @note     This is slow, but it should not be called by most protocols, which will pull randomly from various
+/// subsets.
+RingConformerCOP
+RingConformerSet::get_ideal_conformer_by_name(std::string const name) const
+{
+	using namespace std;
+
+	RingConformerCOP conformer;
+
+	Size n_conformers = nondegenerate_conformers_.size();
+	for (uint i = 1; i <= n_conformers; ++i) {
+		conformer = nondegenerate_conformers_[i];
+		if (conformer->specific_name == name) {
+			return conformer;
+		}
+	}
+
+	TR.Warning << "No conformer " << name << " found in this set; returning NULL." << endl;
+	return NULL;
+}
+
+// Return the conformer that is the best fit for the provided Cremer-Pople parameters.
+/// @param    <parameter>: an appropriate, ordered list of C-P parameters, with angles in degrees:\n
+/// @details  For 4-membered rings, provide q.\n
+/// For 5-membered rings, provide q, phi.\n
+/// For 6-membered rings, provide q, phi, theta.
+/// For ideal conformers, q is ignored, if non-zero, except for 4-membered rings, where only the sign matters.
+/// @return   a pointer to a RingConformer or NULL, if no match is found
+/// @note     This is slow, but it should not be called by most protocols, which will pull randomly from various
+/// subsets.
+RingConformerCOP
+RingConformerSet::get_ideal_conformer_by_CP_parameters(utility::vector1<core::Real> const parameters) const
+{
+	using namespace std;
+	using namespace numeric;
+
+	// Drop out if this is not a 4- to 6-membered ring set.
+	if (ring_size_ == 3) {
+		TR.Error << "A 3-membered ring can only be planar; returning NULL." << endl;
+		return NULL;
+	}
+	if (ring_size_ > 6) {
+		TR.Error << "Rosetta does not currently handle C-P parameters for rings larger than size 6;" <<
+				" returning NULL." << endl;
+	}
+
+	Size n_parameters = parameters.size();
+
+	// Check for reasonable values.
+	if (n_parameters != ring_size_ - 3) {
+		TR.Error << "A " << ring_size_ << "-membered ring is described by exactly " << ring_size_ - 3 <<
+				" Cremer-Pople parameters, yet " << n_parameters << " was/were provided; returning NULL." << endl;
+		return NULL;
+	}
+	if (parameters[q] == 0.0) {
+		TR.Error << "Planar ring conformations are not handled by Rosetta; please specify a non-zero q value;" <<
+				" returning NULL" << endl;
+		return NULL;
+	}
+
+	RingConformerCOP conformer;
+	Size n_conformers = nondegenerate_conformers_.size();
+	uint adjusted_phi, adjusted_theta;
+
+	// Interpret parameters as appropriate for this ring size.
+	switch (ring_size_) {
+		case 4:
+			TR.Warning << "4-membered rings not yet handled in Rosetta; returning NULL." << endl;  // TEMP
+			if (parameters[q] > 0) {
+				return NULL;  // TEMP
+			} else /* q < 0 */ {
+				return NULL;  // TEMP
+			}
+			break;
+		case 5:
+			// Adjust input to the nearest 18th degree.
+			adjusted_phi = uint((nonnegative_principal_angle_degrees(parameters[PHI]) + 18/2) / 18) * 18;
+
+			TR.Debug << "Searching for phi = " << adjusted_phi << "..." << endl;
+
+			for (uint i = 1; i <= n_conformers; ++i) {
+				conformer = nondegenerate_conformers_[i];
+				if (uint(conformer->CP_parameters[PHI]) == adjusted_phi) {
+					return conformer;
+				}
+			}
+			break;
+		case 6:
+			// Adjust input to the nearest 30th and 45th degrees, respectively.
+			adjusted_phi = uint((nonnegative_principal_angle_degrees(parameters[PHI]) + 30/2) / 30) * 30;
+			adjusted_theta = uint((nonnegative_principal_angle_degrees(parameters[THETA]) + 45/2) / 45) * 45;
+
+			// Theta must be between 0 and 180.
+			if (adjusted_theta > 180) {
+				adjusted_theta = 360 - adjusted_theta;
+			}
+
+			// If at the poles, phi is meaningless, so set to arbitrary value 180, as listed in database.
+			if (adjusted_theta == 180 || adjusted_theta == 0) {
+				adjusted_phi = 180;
+			}
+
+			TR.Debug << "Searching for phi = " << adjusted_phi << " and theta = " << adjusted_theta << "..." << endl;
+
+			for (uint i = 1; i <= n_conformers; ++i) {
+				conformer = nondegenerate_conformers_[i];
+				if (uint(conformer->CP_parameters[PHI]) == adjusted_phi) {
+					if (uint(conformer->CP_parameters[THETA]) == adjusted_theta) {
+						return conformer;
+					}
+				}
+			}
+			break;
+	}
+
+	TR.Warning << "No conformer with given parameters found in this set; returning NULL." << endl;
+	return NULL;
+}
+
 // Return the conformer that is the best fit for the provided list of nu angles.
 RingConformerCOP
-RingConformerSet::get_conformer_from_nus(utility::vector1<core::Angle> const /*angles*/) const
+RingConformerSet::get_ideal_conformer_from_nus(utility::vector1<core::Angle> const /*angles*/) const
 {
-	RingConformerOP conformer;
+	RingConformerCOP conformer;
 
 	return conformer;
 }
+
 
 // Return the conformer that is known from studies (if available) to be the lowest energy ring conformer.
 RingConformerCOP
