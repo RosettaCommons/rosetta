@@ -186,7 +186,7 @@ void RNA_SuiteRotamer::init_standard() {
 				new_rotamer_agg->add_rotamer( nucleoside_rotamer2 );
 			}
 
-			/////Add to the this sampler/////
+			/////Add to this sampler/////
 			add_rotamer( new_rotamer_agg );
 		}
 	}
@@ -269,7 +269,7 @@ void RNA_SuiteRotamer::init_fast() {
 				new_rotamer_agg->add_rotamer( nucleoside_rotamer2 );
 			}
 
-			/////Add to the this sampler/////
+			/////Add to this sampler/////
 			add_rotamer( new_rotamer_agg );
 		}
 	}
