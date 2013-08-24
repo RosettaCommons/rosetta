@@ -16,7 +16,10 @@
 #ifndef INCLUDED_protocols_rotamer_sampler_RotamerSized_HH
 #define INCLUDED_protocols_rotamer_sampler_RotamerSized_HH
 
+// Unit headers
 #include <protocols/rotamer_sampler/RotamerSized.fwd.hh>
+
+// Package headers
 #include <protocols/rotamer_sampler/RotamerBase.hh>
 
 namespace protocols {

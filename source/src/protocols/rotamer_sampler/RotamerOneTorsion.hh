@@ -16,12 +16,16 @@
 #ifndef INCLUDED_protocols_rotamer_sampler_RotamerOneTorsion_HH
 #define INCLUDED_protocols_rotamer_sampler_RotamerOneTorsion_HH
 
+// Unit headers
 #include <protocols/rotamer_sampler/RotamerOneTorsion.fwd.hh>
 
+// Package headers
+#include <protocols/rotamer_sampler/RotamerSized.hh>
+
+// Project headers
 #include <core/types.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/rotamer_sampler/RotamerSized.hh>
 
 namespace protocols {
 namespace rotamer_sampler {

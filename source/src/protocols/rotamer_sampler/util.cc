@@ -12,10 +12,14 @@
 /// @detailed
 /// @author Fang-Chieh Chou
 
-//////////////////////////////////
+// Unit headers
 #include <protocols/rotamer_sampler/util.hh>
-#include <utility/vector1.hh>
+
+// Project headers
 #include <basic/Tracer.hh>
+
+// Utility headers
+#include <utility/vector1.hh>
 
 using namespace core;
 static basic::Tracer TR( "protocols.rotamer_sampler.util" );

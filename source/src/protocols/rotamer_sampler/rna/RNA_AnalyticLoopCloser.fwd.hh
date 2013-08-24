@@ -14,10 +14,7 @@
 #ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_AnalyticLoopCloser_FWD_HH
 #define INCLUDED_protocols_rotamer_sampler_rna_RNA_AnalyticLoopCloser_FWD_HH
 
-
-//Auto Headers
 #include <utility/pointer/owning_ptr.hh>
-
 
 namespace protocols {
 namespace rotamer_sampler {

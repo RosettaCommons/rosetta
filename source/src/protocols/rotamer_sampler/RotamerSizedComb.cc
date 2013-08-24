@@ -12,9 +12,14 @@
 /// @detailed
 /// @author Fang-Chieh Chou
 
+// Unit headers
 #include <protocols/rotamer_sampler/RotamerSizedComb.hh>
+
+// Project headers
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
+
+// Numeric Headers
 #include <numeric/random/random.hh>
 
 static numeric::random::RandomGenerator RG( 250199 );  // Magic number

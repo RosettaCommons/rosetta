@@ -16,11 +16,16 @@
 #ifndef INCLUDED_protocols_rotamer_sampler_RotamerBase_HH
 #define INCLUDED_protocols_rotamer_sampler_RotamerBase_HH
 
+// Unit headers
 #include <protocols/rotamer_sampler/RotamerBase.fwd.hh>
+
+// Project headers
 #include <protocols/moves/Mover.hh>
 #include <core/types.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+// Utility headers
 #include <utility/vector1.fwd.hh>
 
 namespace protocols {

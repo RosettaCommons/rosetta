@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/rotamer_sampler/RotamerSizedAny.hh
-/// @brief Aggregate of multiple rotamer samplers for sampling from any one of them.
+/// @brief Aggregate multiple samplers for sampling from any one of them.
 /// @detailed
 /// @author Fang-Chieh Chou
 
@@ -16,8 +16,10 @@
 #ifndef INCLUDED_protocols_rotamer_sampler_RotamerSizedAny_HH
 #define INCLUDED_protocols_rotamer_sampler_RotamerSizedAny_HH
 
+// Unit headers
 #include <protocols/rotamer_sampler/RotamerSizedAny.fwd.hh>
 
+// Package headers
 #include <protocols/rotamer_sampler/RotamerSized.hh>
 
 namespace protocols {

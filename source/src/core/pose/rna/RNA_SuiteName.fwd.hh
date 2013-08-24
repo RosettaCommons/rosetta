@@ -15,8 +15,6 @@
 #ifndef INCLUDED_core_pose_rna_RNA_SuiteName_fwd_HH
 #define INCLUDED_core_pose_rna_RNA_SuiteName_fwd_HH
 
-// C++
-
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
@@ -24,9 +22,7 @@ namespace pose {
 namespace rna {
 
 class RNA_SuiteAssignment;
-
 class RNA_SuiteName;
-
 class RNA_SuiteInfo;
 typedef utility::pointer::owning_ptr< RNA_SuiteInfo > RNA_SuiteInfoOP;
 

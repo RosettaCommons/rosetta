@@ -15,10 +15,14 @@
 #ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_SugarRotamer_HH
 #define INCLUDED_protocols_rotamer_sampler_rna_RNA_SugarRotamer_HH
 
+// Unit headers
 #include <protocols/rotamer_sampler/rna/RNA_SugarRotamer.fwd.hh>
 
-#include <core/types.hh>
+// Package headers
 #include <protocols/rotamer_sampler/RotamerSized.hh>
+
+// Project headers
+#include <core/types.hh>
 
 namespace protocols {
 namespace rotamer_sampler {

@@ -12,6 +12,7 @@
 /// @detailed
 /// @author Fang-Chieh Chou
 
+#include <utility/pointer/owning_ptr.hh>
 
 #ifndef INCLUDED_protocols_rotamer_sampler_RotamerSized_fwd_HH
 #define INCLUDED_protocols_rotamer_sampler_RotamerSized_fwd_HH

@@ -12,14 +12,16 @@
 /// @detailed
 /// @author Fang-Chieh Chou
 
-//////////////////////////////////
+// Unit headers
 #include <protocols/rotamer_sampler/RotamerOneTorsion.hh>
 
+// Project headers
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <numeric/random/random.hh>
 
+// Numeric Headers
+#include <numeric/random/random.hh>
 
 using namespace core;
 static basic::Tracer TR( "protocols.rotamer_sampler.RotamerOneTorsion" );

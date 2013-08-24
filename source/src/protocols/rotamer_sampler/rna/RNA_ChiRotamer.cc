@@ -12,11 +12,13 @@
 /// @detailed
 /// @author Fang-Chieh Chou
 
-
-//////////////////////////////////
+// Unit headers
 #include <protocols/rotamer_sampler/rna/RNA_ChiRotamer.hh>
 
+// Package headers
 #include <protocols/rotamer_sampler/util.hh>
+
+// Project headers
 #include <core/id/TorsionID.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>

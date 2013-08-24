@@ -12,7 +12,10 @@
 /// @detailed
 /// @author Fang-Chieh Chou
 
+// Unit headers
 #include <protocols/rotamer_sampler/RotamerComb.hh>
+
+// Project headers
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 

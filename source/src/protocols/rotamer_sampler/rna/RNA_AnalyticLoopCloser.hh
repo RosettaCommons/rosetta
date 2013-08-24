@@ -15,16 +15,20 @@
 #ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_AnalyticLoopCloser_HH
 #define INCLUDED_protocols_rotamer_sampler_rna_RNA_AnalyticLoopCloser_HH
 
+// Unit headers
+#include <protocols/rotamer_sampler/rna/RNA_AnalyticLoopCloser.fwd.hh>
+
+// Package headers
+#include <protocols/rotamer_sampler/RotamerSized.hh>
+
+// Project headers
+#include <core/types.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+// Utility headers
 #include <utility/vector1.hh>
-#include <core/types.hh>
-
-//// C++ headers
-#include <string>
-
-// AUTO-REMOVED #include <vector>
 
 namespace protocols {
 namespace rotamer_sampler {

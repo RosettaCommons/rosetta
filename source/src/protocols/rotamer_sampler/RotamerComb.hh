@@ -16,11 +16,15 @@
 #ifndef INCLUDED_protocols_rotamer_sampler_RotamerComb_HH
 #define INCLUDED_protocols_rotamer_sampler_RotamerComb_HH
 
+// Unit headers
 #include <protocols/rotamer_sampler/RotamerComb.fwd.hh>
 
+// Package headers
+#include <protocols/rotamer_sampler/RotamerBase.hh>
+
+// Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/rotamer_sampler/RotamerBase.hh>
 
 namespace protocols {
 namespace rotamer_sampler {

@@ -12,21 +12,25 @@
 
 // Unit headers
 #include <core/pose/rna/RNA_SuiteName.hh>
+
+// Package headers
+#include <core/pose/Pose.hh>
+#include <core/pose/rna/RNA_Util.hh>
+
+// Project headers
+#include <core/chemical/rna/RNA_Util.hh>
+#include <core/conformation/Residue.hh>
+
+// Utility headers
+#include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <core/pose/rna/RNA_Util.hh>
 
 // Numeric Headers
 #include <numeric/angle.functions.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/conversions.hh>
+#include <numeric/constants.hh>
 
-//// C++ headers
-#include <boost/assign/std/vector.hpp>
-#include <string>
+// C++ headers
 #include <cmath>
 
 
@@ -236,13 +240,20 @@ RNA_SuiteName::assign(Pose const & pose, Size const res) const {
 	using namespace chemical::rna;
 	if ( is_rna_chainbreak(pose, res - 1) ) return suite_undefined;
 	utility::vector1 <Real> torsions;
-	torsions.push_back( numeric::principal_angle_degrees( pose.residue(res-1).mainchain_torsion( DELTA ) ) );
-	torsions.push_back( numeric::principal_angle_degrees( pose.residue(res-1).mainchain_torsion( EPSILON ) ) );
-	torsions.push_back( numeric::principal_angle_degrees( pose.residue(res-1).mainchain_torsion( ZETA ) ) );
-	torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( ALPHA ) ) );
-	torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( BETA ) ) );
-	torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( GAMMA ) ) );
-	torsions.push_back( numeric::principal_angle_degrees( pose.residue(res).mainchain_torsion( DELTA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+			pose.residue( res - 1 ).mainchain_torsion( DELTA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+			pose.residue( res - 1 ).mainchain_torsion( EPSILON ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+			pose.residue( res - 1 ).mainchain_torsion( ZETA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+			pose.residue( res ).mainchain_torsion( ALPHA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+			pose.residue( res ).mainchain_torsion( BETA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+			pose.residue( res ).mainchain_torsion( GAMMA ) ) );
+	torsions.push_back( numeric::principal_angle_degrees(
+			pose.residue( res ).mainchain_torsion( DELTA ) ) );
 	return assign(torsions);
 }
 
@@ -337,7 +348,8 @@ RNA_SuiteName::assign(utility::vector1<Real> const & torsions_in)	const {
 	if (dist_7d > 1) return outlier;
 
 
-	Real const suiteness = ( cos(numeric::constants::r::pi * dist_7d) + 1.0 ) * 0.5;
+	Real const suiteness = ( cos( numeric::constants::r::pi
+			* dist_7d ) + 1.0 ) * 0.5;
 	std::string const suitename = all_suites[best_index].name;
 	RNA_SuiteAssignment const best_suite (suitename, suiteness);
 	return best_suite;

@@ -15,11 +15,15 @@
 #ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_ChiRotamer_HH
 #define INCLUDED_protocols_rotamer_sampler_rna_RNA_ChiRotamer_HH
 
+// Unit headers
 #include <protocols/rotamer_sampler/rna/RNA_ChiRotamer.fwd.hh>
 
+// Package headers
+#include <protocols/rotamer_sampler/RotamerOneTorsion.hh>
+
+// Project headers
 #include <core/types.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
-#include <protocols/rotamer_sampler/RotamerOneTorsion.hh>
 
 namespace protocols {
 namespace rotamer_sampler {

@@ -50,7 +50,10 @@ RNA_IdealCoord::RNA_IdealCoord():
 RNA_IdealCoord::~RNA_IdealCoord() {}
 
 /////////////////////////////////////////////////////
-bool RNA_IdealCoord::is_torsion_exists(Pose const & pose, id::TorsionID const & torsion_id) const {
+bool RNA_IdealCoord::is_torsion_exists(
+	Pose const & pose,
+	id::TorsionID const & torsion_id
+) const {
 	using namespace id;
 	Size res_index = torsion_id.rsd();
 	if ( res_index < 1 || res_index > pose.total_residue() ) return false;
@@ -77,18 +80,22 @@ void RNA_IdealCoord::init() {
 
 	//Initialize the reference poses
 	chemical::ResidueTypeSetCAP rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set(chemical::RNA);
-	for (Size i = 1; i <= pdb_file_list.size(); ++i) {
-		Pose ref_pose;
-		io::pdb::build_pose_from_pdb_as_is(ref_pose, *rsd_set, pdb_file_list[i] );
-		ref_pose_list_.push_back(ref_pose);
+	for ( Size i = 1; i <= pdb_file_list.size(); ++i ) {
+		PoseOP ref_pose = new Pose();
+		io::pdb::build_pose_from_pdb_as_is( *ref_pose, *rsd_set, pdb_file_list[i] );
+		ref_pose_list_.push_back( ref_pose );
 	}
 }
 
 /////////////////////////////////////////////////////
 //Apply ideal coords to a residue in pose.
 //pucker_conformations: 0 for maintaining current, 1 for North, 2 for South
-void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, Size pucker, bool const keep_backbone_torsion ) const {
-
+void RNA_IdealCoord::apply(
+	Pose & pose,
+	Size const seqpos,
+	Size pucker,
+	bool const keep_backbone_torsion
+) const {
 	using namespace id;
 	using namespace chemical;
 	using namespace conformation;
@@ -98,9 +105,9 @@ void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, Size pucker, bool co
 	Residue const & res = pose.residue( seqpos );
 	if ( !res.is_RNA() ) return;
 
-	if (pucker == WHATEVER) {
+	if ( pucker == WHATEVER ) {
 		Real const delta  = pose.torsion( TorsionID(seqpos, id::BB, BETA) );
-		if (delta > delta_cutoff_) {
+		if ( delta > delta_cutoff_ ) {
 			pucker = SOUTH;
 		} else {
 			pucker = NORTH;
@@ -127,7 +134,7 @@ void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, Size pucker, bool co
 	//Record the torsions in starting pose
 	utility::vector1 < TorsionID > saved_torsion_id;
 	utility::vector1 < Real > saved_torsions;
-	if (keep_backbone_torsion) {
+	if ( keep_backbone_torsion ) {
 		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  ALPHA   ) );
 		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  BETA    ) );
 		saved_torsion_id.push_back( TorsionID( seqpos,   id::BB,  GAMMA   ) );
@@ -150,8 +157,8 @@ void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, Size pucker, bool co
 	//Apply ideal dofs
 	std::map <Size, Size> res_map;
 	res_map.insert( std::pair <Size, Size> (seqpos, 2) ); //Only the center res (#2) matters in ref_pose
-	Pose const & ref_pose = ref_pose_list_[res_class];
-	copy_dofs_match_atom_names( pose, ref_pose, res_map );
+	PoseOP const ref_pose = ref_pose_list_[res_class];
+	copy_dofs_match_atom_names( pose, *ref_pose, res_map );
 
 	//Copy back the original torsions
 	if ( keep_backbone_torsion ) {
@@ -163,16 +170,23 @@ void RNA_IdealCoord::apply( Pose & pose, Size const seqpos, Size pucker, bool co
 /////////////////////////////////////////////////////
 //Apply ideal coords to whole pose.
 //pucker_conformations: 0 for maintaining current, 1 for North, 2 for South
-void RNA_IdealCoord::apply( Pose & pose, utility::vector1 < Size > const & puckers, bool const keep_backbone_torsion ) const {
+void RNA_IdealCoord::apply(
+	Pose & pose,
+	utility::vector1 < Size > const & puckers,
+	bool const keep_backbone_torsion
+) const {
 	assert ( pose.total_residue() == puckers.size() );
 	for ( Size i = 1; i <= pose.total_residue(); ++i )
-			apply(pose, i, puckers[i], keep_backbone_torsion);
+			apply( pose, i, puckers[i], keep_backbone_torsion );
 }
 /////////////////////////////////////////////////////
 //Apply ideal coords to whole pose, maintain current pucker state.
-void RNA_IdealCoord::apply( Pose & pose, bool const keep_backbone_torsion ) const {
+void RNA_IdealCoord::apply(
+	Pose & pose,
+	bool const keep_backbone_torsion
+) const {
 	for ( Size i = 1; i <= pose.total_residue(); ++i )
-			apply(pose, i, WHATEVER, keep_backbone_torsion);
+			apply( pose, i, WHATEVER, keep_backbone_torsion );
 }
 /////////////////////////////////////////////////
 

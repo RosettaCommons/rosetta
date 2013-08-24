@@ -15,7 +15,10 @@
 #ifndef INCLUDED_protocols_rotamer_sampler_util_HH
 #define INCLUDED_protocols_rotamer_sampler_util_HH
 
+// Project headers
 #include <core/types.hh>
+
+// Utility Headers
 #include <utility/vector1.fwd.hh>
 
 namespace protocols {

@@ -22,15 +22,19 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.hh>
-#include <numeric/random/random.hh>
+#include <basic/Tracer.hh>
+
+// Utility headers
+#include <utility/vector1.hh>
+
+// Numeric headers
 #include <numeric/angle.functions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 #include <numeric/kinematic_closure/bridgeObjects.hh>
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
-#include <utility/vector1.hh>
-#include <basic/Tracer.hh>
+#include <numeric/random/random.hh>
 
 using namespace core;
 using namespace core::pose;

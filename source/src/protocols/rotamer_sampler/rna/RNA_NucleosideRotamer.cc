@@ -13,16 +13,17 @@
 /// @author Fang-Chieh Chou
 
 
-//////////////////////////////////
+// Unit headers
 #include <protocols/rotamer_sampler/rna/RNA_NucleosideRotamer.hh>
 
-#include <core/id/TorsionID.hh>
-#include <core/chemical/rna/RNA_Util.hh>
-
+// Package headers
 #include <protocols/rotamer_sampler/rna/RNA_SugarRotamer.hh>
 #include <protocols/rotamer_sampler/rna/RNA_ChiRotamer.hh>
 #include <protocols/rotamer_sampler/RotamerSizedComb.hh>
 
+// Project headers
+#include <core/id/TorsionID.hh>
+#include <core/chemical/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>
 
 using namespace core;

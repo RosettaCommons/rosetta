@@ -11,25 +11,26 @@
 /// @brief Apply ideal RNA geometry to a residue or a pose
 /// @author Fang-Chieh Chou
 
-
 #ifndef INCLUDED_core_pose_rna_RNA_IdealCoord_HH
 #define INCLUDED_core_pose_rna_RNA_IdealCoord_HH
 
+// Unit headers
 #include <core/pose/rna/RNA_IdealCoord.fwd.hh>
-#include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
+
+// Package headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
+
+// Project headers
+#include <core/conformation/Residue.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
+#include <core/types.hh>
+
+// Utility headers
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-// Utility headers
-
-// ObjexxFCL headers
-
-//// C++ headers
+// C++ headers
 #include <string>
 
 namespace core {
@@ -55,7 +56,7 @@ public:
 private:
 	void init();
 	bool is_torsion_exists(Pose const & pose, id::TorsionID const & torsion_id) const;
-	utility::vector1 < Pose > ref_pose_list_;
+	utility::vector1 < PoseOP > ref_pose_list_;
 	std::string const path_;
 	Real delta_cutoff_;
 };

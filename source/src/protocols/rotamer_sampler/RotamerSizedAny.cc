@@ -8,13 +8,18 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/rotamer_sampler/RotamerSizedAny.cc
-/// @brief Aggregate of multiple rotamer samplers for sampling from any one of them.
+/// @brief Aggregate multiple samplers for sampling from any one of them.
 /// @detailed
 /// @author Fang-Chieh Chou
 
+// Unit headers
 #include <protocols/rotamer_sampler/RotamerSizedAny.hh>
+
+// Project headers
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
+
+// Numeric Headers
 #include <numeric/random/random.hh>
 
 static numeric::random::RandomGenerator RG( 256019 );  // Magic number

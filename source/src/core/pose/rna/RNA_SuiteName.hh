@@ -15,22 +15,21 @@
 #ifndef INCLUDED_core_pose_rna_RNA_SuiteName_HH
 #define INCLUDED_core_pose_rna_RNA_SuiteName_HH
 
+// Unit headers
 #include <core/pose/rna/RNA_SuiteName.fwd.hh>
-#include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
+
+// Package headers
 #include <core/pose/Pose.fwd.hh>
+
+// Project headers
+#include <core/types.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/io/ozstream.fwd.hh>
-
-// ObjexxFCL headers
-
-//// C++ headers
-#include <string>
 #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
+
+// C++ headers
+#include <string>
 
 namespace core {
 namespace pose {

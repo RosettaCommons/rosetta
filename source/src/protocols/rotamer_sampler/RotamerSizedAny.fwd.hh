@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/rotamer_sampler/RotamerSizedAny.fwd.hh
-/// @brief Aggregate of multiple rotamer samplers for sampling from any one of them.
+/// @brief Aggregate multiple samplers for sampling from any one of them.
 /// @detailed
 /// @author Fang-Chieh Chou
 
