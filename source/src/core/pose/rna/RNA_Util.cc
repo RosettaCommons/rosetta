@@ -48,6 +48,7 @@
 // C++
 
 using namespace core::chemical::rna;
+static const RNA_FittedTorsionInfo torsion_info;
 
 namespace core {
 namespace pose {
@@ -384,26 +385,35 @@ apply_ideal_c2endo_sugar_coords(
 	apply_non_main_chain_sugar_coords( _non_main_chain_sugar_coords, pose, pose, i );
 }
 
+////////////////////////////////////////////////////////////////////
+Size
+assign_pucker(
+	Pose const & pose,
+	Size const rsd_id
+) {
+	Real const delta = pose.torsion( id::TorsionID( rsd_id, id::BB,  4 ) );
+	Size const pucker_state = ( delta < torsion_info.delta_cutoff() ) ? NORTH : SOUTH;
+	return pucker_state;
+}
+////////////////////////////////////////////////////////////////////
 void
 apply_pucker(
 	Pose & pose,
 	Size const i,
-	Size const pucker_state,
+	Size pucker_state, //0 for using the current pucker
 	bool const skip_same_state,
 	bool const idealize_coord
 ) {
-	assert (pucker_state == NORTH || pucker_state == SOUTH);
+	assert( pucker_state <= 2 );
 
-	static const RNA_FittedTorsionInfo torsion_info;
 	static const RNA_IdealCoord ideal_coord;
 	Real delta, nu1, nu2;
 
-	if (skip_same_state) {
-		Real const delta_curr = pose.torsion( id::TorsionID( i, id::BB,  4 ) );
-		Size const pucker_state_curr = (delta < torsion_info.delta_cutoff()) ? NORTH : SOUTH;
-		if (pucker_state_curr == pucker_state) return;
-	}
-  
+	Size const curr_pucker = assign_pucker( pose, i );
+	if ( skip_same_state && pucker_state == curr_pucker ) return;
+
+	if ( pucker_state == WHATEVER ) pucker_state = curr_pucker;
+
 	if (idealize_coord) {
 		ideal_coord.apply(pose, i, pucker_state);
 	} else {
@@ -421,6 +431,7 @@ apply_pucker(
 		pose.set_torsion( id::TorsionID( i, id::CHI, 3 ), nu1 );
 	}
 }
+////////////////////////////////////////////////////////////////////
 
 //
 

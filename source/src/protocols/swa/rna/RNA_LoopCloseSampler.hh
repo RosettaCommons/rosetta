@@ -27,7 +27,6 @@
 #include <string>
 #include <map>
 
-using namespace core;
 
 namespace protocols {
 namespace swa {
@@ -39,7 +38,7 @@ class RNA_LoopCloseSampler: public protocols::moves::Mover {
 public:
 
 	//constructor!
-	RNA_LoopCloseSampler ( Size const moving_suite, Size const chainbreak_suite );
+	RNA_LoopCloseSampler ( core::Size const moving_suite, core::Size const chainbreak_suite );
 
 	//destructor -- necessary?
 	~RNA_LoopCloseSampler();
@@ -51,30 +50,30 @@ public:
 	virtual std::string get_name() const {
 		return "RNA_LoopCloseSampler";
 	}
-	utility::vector1< utility::vector1< Real > >  all_torsion_info() {
+	utility::vector1< utility::vector1< core::Real > >  all_torsion_info() {
 		return all_torsion_info_;
 	}
 	Size n_construct() {
 		return n_construct_;
 	}
-	void fill_pose ( pose::Pose & pose, Size construct_number );
+	void fill_pose ( core::pose::Pose & pose, core::Size construct_number );
 	void clear_all();
 
-	void set_bin_size ( Size const setting ) {
+	void set_bin_size ( core::Size const setting ) {
 		bin_size_ = setting;
 	}
 
-	void set_epsilon_range ( Real const setting ) {
+	void set_epsilon_range ( core::Real const setting ) {
 		epsilon_range_ = setting;
 	}
 
-	void set_rep_cutoff ( Real const rep_cutoff ) {
+	void set_rep_cutoff ( core::Real const rep_cutoff ) {
 		rep_cutoff_ = rep_cutoff;
 	}
-	void set_torsion_range ( Real const torsion_range ) {
+	void set_torsion_range ( core::Real const torsion_range ) {
 		torsion_range_ = torsion_range;
 	}
-	void set_torsion_increment ( Real const torsion_increment ) {
+	void set_torsion_increment ( core::Real const torsion_increment ) {
 		torsion_increment_ = torsion_increment;
 	}
 
@@ -97,7 +96,7 @@ public:
 		choose_random_ = setting;
 	}
 
-	void set_rbs_new_pair ( utility::vector1< Real > const & rbs_new_pair ) {
+	void set_rbs_new_pair ( utility::vector1< core::Real > const & rbs_new_pair ) {
 		rbs_new_pair_ = rbs_new_pair;
 	}
 
@@ -108,42 +107,42 @@ public:
 private:
 
 	bool
-	torsion_angles_within_cutoffs ( pose::Pose const & pose,
-	                                Size const moving_suite,
-	                                Size const chainbreak_suite );
+	torsion_angles_within_cutoffs ( core::pose::Pose const & pose,
+	                                core::Size const moving_suite,
+	                                core::Size const chainbreak_suite );
 
 	void initialize_rep_scorefxn();
 
-	Real
-	initialize_fa_rep ( pose::Pose const & pose,
+	core::Real
+	initialize_fa_rep ( core::pose::Pose const & pose,
 	                    utility::vector1< Size > const & moving_suites,
-	                    scoring::ScoreFunctionOP rep_scorefxn );
+	                    core::scoring::ScoreFunctionOP rep_scorefxn );
 
 	bool
-	check_clash ( pose::Pose & pose,
-	              Real const & fa_rep_score_baseline,
-	              Real const & rep_cutoff_,
-	              scoring::ScoreFunctionOP rep_scorefxn );
+	check_clash ( core::pose::Pose & pose,
+	              core::Real const & fa_rep_score_baseline,
+	              core::Real const & rep_cutoff_,
+	              core::scoring::ScoreFunctionOP rep_scorefxn );
 
 	void
 	add_driver_torsion_set(
-												 utility::vector1< utility::vector1< Real > > & driver_torsion_sets,
+												 utility::vector1< utility::vector1< core::Real > > & driver_torsion_sets,
 												 utility::vector1< core::id::TorsionID > const & driver_torsion_IDs,
 												 core::pose::Pose const & pose );
 
 private:
 
-	Size const moving_suite_, chainbreak_suite_;
+	core::Size const moving_suite_, chainbreak_suite_;
 
 	core::scoring::ScoreFunctionOP scorefxn_, rep_scorefxn_;
-	Size bin_size_, n_construct_;
-	Real rep_cutoff_, torsion_range_, torsion_increment_, epsilon_range_;
+	core::Size bin_size_, n_construct_;
+	core::Real rep_cutoff_, torsion_range_, torsion_increment_, epsilon_range_;
 	bool just_output_score_, sample_only_, include_current_, sample_native_torsion_;
 	bool choose_random_; // new 2013
-	utility::vector1< Real > rbs_new_pair_;
+	utility::vector1< core::Real > rbs_new_pair_;
 
-	utility::vector1< Real > torsion_info_;
-	utility::vector1< utility::vector1< Real > > all_torsion_info_;
+	utility::vector1< core::Real > torsion_info_;
+	utility::vector1< utility::vector1< core::Real > > all_torsion_info_;
 };
 
 }

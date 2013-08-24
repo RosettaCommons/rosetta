@@ -205,8 +205,8 @@ get_max_centroid_to_atom_distance( utility::vector1 < core::conformation::Residu
 
 //////////////////////////////////////////Ribose sugar, close_break closures function////////////////////////////
 
-utility::vector1 < core::conformation::ResidueOP >
-setup_residue_at_origin_list( core::pose::Pose const & pose, core::Size const & moving_res, bool const extra_anti_chi_rotamer, bool const extra_syn_chi_rotamer, std::string const pose_name );
+utility::vector1<core::conformation::ResidueOP>
+setup_residue_at_origin_list( core::pose::Pose const & pose, core::Size const & moving_res, bool const extra_chi );
 
 bool
 check_floating_base_chain_closable( core::Size const & reference_res,

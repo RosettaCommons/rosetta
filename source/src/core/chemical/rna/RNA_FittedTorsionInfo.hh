@@ -13,6 +13,9 @@
 #ifndef INCLUDED_core_chemical_rna_RNA_FittedTorsionInfo_HH
 #define INCLUDED_core_chemical_rna_RNA_FittedTorsionInfo_HH
 
+//Unit header
+#include <core/chemical/rna/RNA_FittedTorsionInfo.fwd.hh>
+
 #include <core/types.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 
@@ -28,32 +31,21 @@ namespace rna {
 
 /////////////////////////////////////////
 class GaussianParameter {
-	public:
-		Real amplitude, center, width;
+public:
+	Real amplitude, center, width;
 
-		GaussianParameter ( Real const amplitude_in, Real const center_in, Real const width_in ):
-			amplitude( amplitude_in ),
-			center   ( center_in ),
-			width    ( width_in )
-		{}
-
-		//
-		GaussianParameter &
-		operator=( GaussianParameter const & src )
-		{
-			amplitude = src.amplitude;
-			center = src.center;
-			width = src.width;
-			return *this;
-		}
+	GaussianParameter( Real const amplitude_in, Real const center_in, Real const width_in ):
+		amplitude( amplitude_in ),
+		center   ( center_in ),
+		width    ( width_in )
+	{}
 };
 /////////////////////////////////
 
-typedef utility::vector1< GaussianParameter > GaussianParameterSet;
-
-class RNA_FittedTorsionInfo : public utility::pointer::ReferenceCount  {
+class RNA_FittedTorsionInfo : public utility::pointer::ReferenceCount {
 
 public:
+	typedef utility::vector1< GaussianParameter > GaussianParameterSet;
 
 	RNA_FittedTorsionInfo();
 
@@ -90,8 +82,13 @@ public:
 	Real epsilon_aform() const{ return gaussian_parameter_set_epsilon_north_[1].center; }
 	Real zeta_aform() const{ return gaussian_parameter_set_zeta_alpha_sc_minus_[1].center; }
 
-	Real chi_north() const{ return gaussian_parameter_set_chi_north_[1].center; }
-	Real chi_south() const{ return gaussian_parameter_set_chi_south_[1].center; }
+	Real epsilon_north() const{ return gaussian_parameter_set_epsilon_north_[1].center; }
+	Real epsilon_south() const{ return gaussian_parameter_set_epsilon_south_[1].center; }
+
+	Real chi_north_anti() const{ return gaussian_parameter_set_chi_north_[1].center; }
+	Real chi_north_syn() const{ return gaussian_parameter_set_chi_north_[2].center; }
+	Real chi_south_anti() const{ return gaussian_parameter_set_chi_south_[1].center; }
+	Real chi_south_syn() const{ return gaussian_parameter_set_chi_south_[2].center; }
 
 	Real delta_cutoff() const { return delta_cutoff_; }
 

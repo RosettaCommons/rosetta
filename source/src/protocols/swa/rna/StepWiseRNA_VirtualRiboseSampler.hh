@@ -113,12 +113,10 @@ floating_base_chain_closure_setup( utility::vector1< pose_data_struct2 > const &
 
 void
 floating_base_chain_closure_sampling( utility::vector1< FB_Pose_Data > & pose_data_list,
-	                                   core::pose::Pose & viewer_pose,
 																		 FloatingBaseChainClosureJobParameter const & FB_job_params,
 																	   core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
 													           core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
 																		 StepWiseRNA_VDW_BinScreenerOP const & VDW_bin_screener,
-																	   bool const CCD_grid_index_screen,
 																		 bool const integration_test_mode = false );
 
 

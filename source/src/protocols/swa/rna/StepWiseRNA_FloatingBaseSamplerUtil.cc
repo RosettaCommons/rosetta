@@ -16,16 +16,12 @@
 //////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
-#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
+#include <protocols/rotamer_sampler/rna/RNA_NucleosideRotamer.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
-#include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -37,7 +33,7 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh> 
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
@@ -82,7 +78,7 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	Is_base_stack( core::kinematics::Stub const & moving_res_base, 
+	Is_base_stack( core::kinematics::Stub const & moving_res_base,
 								utility::vector1 < core::kinematics::Stub > const & other_residues_base_list,
 								core::Real const base_axis_CUTOFF,
 								core::Real const base_planarity_CUTOFF ){
@@ -141,7 +137,7 @@ namespace rna {
 	}
 
 	bool
-	Is_base_pair( core::kinematics::Stub const & moving_res_base, 
+	Is_base_pair( core::kinematics::Stub const & moving_res_base,
 							utility::vector1 < core::kinematics::Stub > const & other_residues_base_list,
 					  	 	core::Real const base_axis_CUTOFF,
 		           core::Real const base_planarity_CUTOFF ){
@@ -214,7 +210,7 @@ namespace rna {
 
 		//TR << std::endl;
 
-		return false;			
+		return false;
 	}
 
 	bool
@@ -226,7 +222,7 @@ namespace rna {
 		//TR << "ENTER Is_strong_base_stack " << std::endl;
 
 		return Is_base_stack( moving_res_base, other_residues_base_list, base_axis_CUTOFF, base_planarity_CUTOFF );
-	
+
 	}
 
 	bool
@@ -236,13 +232,13 @@ namespace rna {
 
 		bool base_stack = Is_base_stack( moving_res_base, other_residues_base_list, 0.7070 /*base_axis_CUTOFF*/, 0.7070 /*base_planarity_CUTOFF*/ );
 
-		bool base_pair = Is_base_pair( moving_res_base, other_residues_base_list, 0.5000 /*base_axis_CUTOFF*/, 0.7070 /*base_planarity_CUTOFF*/ ); 
+		bool base_pair = Is_base_pair( moving_res_base, other_residues_base_list, 0.5000 /*base_axis_CUTOFF*/, 0.7070 /*base_planarity_CUTOFF*/ );
 		//value in Base_screener_class is 0.866 Sept 16 2010, Parin S.
 
 		//TR << "EXIT Is_medium_base_stack_and_medium_base_pair" << std::endl;
 
 		return ( base_stack && base_pair );
-	
+
 	}
 
 
@@ -259,7 +255,7 @@ namespace rna {
 			if ( strong_stack_base ) count_data.base_stack_count++;
 
 			bool const medium_base_stack_and_medium_base_pair = Is_medium_base_stack_and_medium_base_pair( moving_res_base, other_residues_base_list );
-			if ( medium_base_stack_and_medium_base_pair ) count_data.base_pairing_count++; 
+			if ( medium_base_stack_and_medium_base_pair ) count_data.base_pairing_count++;
 
 
 			bool strict_base_pair = false;
@@ -280,9 +276,9 @@ namespace rna {
 
 
 				return true;
-			} 
-			
-			return false; 
+			}
+
+			return false;
 
 		} else{ //num_nucleotides==1, implement in Sept 16, 2010 Parin S.
 
@@ -320,7 +316,7 @@ namespace rna {
 
 		if ( verbose ){
 			TR << "Get_ribose_stub function: ";
-			Output_boolean( "Is prepend = ", Is_prepend, TR ); 
+			Output_boolean( "Is prepend = ", Is_prepend, TR );
 			TR << "  center_atom = " << center_atom << "  x_axis_atom = " << x_axis_atom << "  y_axis_atom = " << y_axis_atom << std::endl;
 		}
 
@@ -331,7 +327,7 @@ namespace rna {
 		Vector x, y, z;
 
 		Vector const origin = rsd.xyz( center_atom );
-	
+
 		Vector const x_axis_coord = rsd.xyz( x_axis_atom );
 		x = x_axis_coord - origin;
 		x.normalize();
@@ -359,9 +355,9 @@ namespace rna {
 //		using namespace Bin_size;
 
 		Base_bin base_bin;
-		base_bin.centroid_x = int( centriod[0]/centroid_bin_size ); 
-		base_bin.centroid_y = int( centriod[1]/centroid_bin_size ); 
-		base_bin.centroid_z = int( centriod[2]/centroid_bin_size ); 		
+		base_bin.centroid_x = int( centriod[0]/centroid_bin_size );
+		base_bin.centroid_y = int( centriod[1]/centroid_bin_size );
+		base_bin.centroid_z = int( centriod[2]/centroid_bin_size );
 
 		base_bin.euler_alpha = int( euler_angles.alpha/euler_angle_bin_size );
 		base_bin.euler_gamma = int( euler_angles.gamma/euler_angle_bin_size );
@@ -397,7 +393,7 @@ namespace rna {
 			return base_bin_it->first.euler_gamma;
 		} else{
 			utility_exit_with_message( "Invalid DOF = " + DOF );
-			exit( 1 ); //prevent compiler warning			
+			exit( 1 ); //prevent compiler warning
 		}
 	}
 
@@ -414,13 +410,13 @@ namespace rna {
 			return euler_z_bin_size;
 		} else{
 			utility_exit_with_message( "Invalid DOF = " + DOF );
-			exit( 1 ); //prevent compiler warning			
+			exit( 1 ); //prevent compiler warning
 		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void 
+	void
 	Analyze_base_bin_map( std::map< Base_bin, int, compare_base_bin > const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two, std::string const foldername ){
 
 		std::map< std::pair < int, int >, int, compare_int_pair > count_density_map;
@@ -437,7 +433,7 @@ namespace rna {
 			total_count = total_count + base_bin_it->second;
 
 			std::pair < int, int > const & DOF_pair = std::make_pair( DOF_bin_value( base_bin_it, DOF_one ), DOF_bin_value( base_bin_it, DOF_two ) );
-		
+
 			count_density_it = count_density_map.find( DOF_pair );
 
 			if ( count_density_it == count_density_map.end() ){
@@ -446,16 +442,16 @@ namespace rna {
 				count_density_it->second++;
 			}
 		}
-		
+
 		//////////////////////Output data/////////////////////////////////////////////////////////////////////////////
 		std::ofstream outfile;
 		std::string filename = foldername + "Bin_" + DOF_one + "_" + DOF_two + ".txt";
 		outfile.open( filename.c_str() );
 		Size const spacing = 14;
 
-		outfile << std::setw( spacing ) << DOF_one; 
-		outfile << std::setw( spacing ) << DOF_two;  
-		outfile << std::setw( 30 ) << "occupied_bin_count"; 
+		outfile << std::setw( spacing ) << DOF_one;
+		outfile << std::setw( spacing ) << DOF_two;
+		outfile << std::setw( 30 ) << "occupied_bin_count";
 		outfile << "\n";
 
 		int DOF_one_bin_max = 0;
@@ -473,14 +469,14 @@ namespace rna {
 			if ( DOF_two_bin_value < DOF_two_bin_min ) DOF_two_bin_min = DOF_two_bin_value;
 
 		}
-		
+
 		for ( int DOF_one_bin_value = ( DOF_one_bin_min - 5 ); DOF_one_bin_value < ( DOF_one_bin_max + 5 ); DOF_one_bin_value++ ){
 			for ( int DOF_two_bin_value = ( DOF_two_bin_min - 5 ); DOF_two_bin_value < ( DOF_two_bin_max + 5 ); DOF_two_bin_value++ ){
 
 				Real const DOF_one_value = DOF_one_bin_value*DOF_bin_size( DOF_one );
 				Real const DOF_two_value = DOF_two_bin_value*DOF_bin_size( DOF_two );
-		
-				int occupied_bin_count;	
+
+				int occupied_bin_count;
 				std::pair < int, int > const & DOF_pair = std::make_pair( DOF_one_bin_value, DOF_two_bin_value );
 				count_density_it = count_density_map.find( DOF_pair );
 
@@ -490,14 +486,14 @@ namespace rna {
 					occupied_bin_count = count_density_it->second;
 				}
 
-				outfile << std::setw( spacing ) << DOF_one_value; 
-				outfile << std::setw( spacing ) << DOF_two_value;  
-				outfile << std::setw( spacing ) << occupied_bin_count; 
+				outfile << std::setw( spacing ) << DOF_one_value;
+				outfile << std::setw( spacing ) << DOF_two_value;
+				outfile << std::setw( spacing ) << occupied_bin_count;
 				outfile << "\n";
 			}
 		}
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+
 		TR << std::setw( 50 ) << std::left << "Analysis " + DOF_one + "_" + DOF_two;
 		TR << " tot_count = " << std::setw( 15 ) << std::left << total_count << " tot_occ = " << std::setw( 15 ) << std::left << total_occupied_bin;
 		TR << " tot_count/tot_occ_bin = " << std::setw( 5 ) << std::left << ( double( total_count )/double( total_occupied_bin ) ) << std::endl;
@@ -507,7 +503,7 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void 
+	void
 	Analyze_base_bin_map( std::map< Base_bin, int, compare_base_bin > const & base_bin_map, std::string const foldername ){
 
 		// const Real DEGS_PER_RAD = 180. / numeric::NumericTraits<Real>::pi(); // Unused variable causes warning.
@@ -539,10 +535,10 @@ namespace rna {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	//Actually deleted this function since it was no longer in use......On May 2, copied back a version of this function from a Mar 28 Desktop mini src.
 	Euler_angles
-	Get_euler_angles( numeric::xyzMatrix< core::Real > const & coordinate_matrix ){ 
+	Get_euler_angles( numeric::xyzMatrix< core::Real > const & coordinate_matrix ){
 
 		numeric::xyzMatrix< core::Real > const & M = coordinate_matrix;
                 const Real DEGS_PER_RAD = 180. / numeric::NumericTraits < Real > ::pi();
@@ -559,8 +555,8 @@ namespace rna {
 
 /* Defination of rotation matrix at mathworld is actually the inverse of the rotation matrix....also did not correctly input the coefficient of arctan2
 		euler_angles.alpha = (  - 1 )* atan2( M.zy(), M.zx() ) * DEGS_PER_RAD; //Is this correct?? Ambuiguity with the minus sign...return in the [-Pi, Pi] range. atan2(y-value, x-value)
-		euler_angles.beta  = acos( M.zz() ) * DEGS_PER_RAD;  // rerun in the [0,Pi] range     
-		euler_angles.z = M.zz(); //Use z instead of beta to make space uniform               
+		euler_angles.beta  = acos( M.zz() ) * DEGS_PER_RAD;  // rerun in the [0,Pi] range
+		euler_angles.z = M.zz(); //Use z instead of beta to make space uniform
 		euler_angles.gamma = atan2( M.yz(), M.xz() ) * DEGS_PER_RAD; //return in the [-Pi, Pi] range. atan2(y-value, x-value)
 */
 
@@ -587,8 +583,8 @@ namespace rna {
 		coordinate_matrix.zz( cos( E.beta ) );
 
 		Real determinant = coordinate_matrix.det();
-		//if(determinant>1.00000000000001 || determinant<0.99999999999999){ //Feb 12, 2012 This might lead to server-test error at R47200 
-		if ( determinant > 1.000001 || determinant < 0.999999 ){ //Feb 12, 2012 This might lead to server-test error at R47200 
+		//if(determinant>1.00000000000001 || determinant<0.99999999999999){ //Feb 12, 2012 This might lead to server-test error at R47200
+		if ( determinant > 1.000001 || determinant < 0.999999 ){ //Feb 12, 2012 This might lead to server-test error at R47200
 			utility_exit_with_message( "determinant != 1.00 !!!" );
 		}
 
@@ -631,17 +627,17 @@ namespace rna {
 
 
 		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
-	
+
 			conformation::Residue const & rsd( pose.residue( seq_num ) );
 
 			for ( Size at = 1; at <= rsd.natoms(); at++ ){
-				std::string const & atom_name = rsd.type().atom_name( at );	
-				if ( verbose )	TR << "seq_num = " << seq_num << " atom_name = " << atom_name << std::endl;	
+				std::string const & atom_name = rsd.type().atom_name( at );
+				if ( verbose )	TR << "seq_num = " << seq_num << " atom_name = " << atom_name << std::endl;
 
 				id::AtomID const id( at, seq_num );
 
-				pose.set_xyz( id, pose.xyz( id ) + vector ); 
-				pose.set_xyz( id, matrix * pose.xyz( id ) ); 
+				pose.set_xyz( id, pose.xyz( id ) + vector );
+				pose.set_xyz( id, matrix * pose.xyz( id ) );
 			}
 		}
 	}
@@ -662,19 +658,19 @@ namespace rna {
 
 		conformation::Residue const & rsd( pose.residue( seq_num ) );
 
-		numeric::xyzVector< core::Real > centroid = core::chemical::rna::get_rna_base_centroid( rsd, verbose ); 
+		numeric::xyzVector< core::Real > centroid = core::chemical::rna::get_rna_base_centroid( rsd, verbose );
 
-		numeric::xyzMatrix< core::Real > base_coordinate_matrix = core::chemical::rna::get_rna_base_coordinate_system( rsd, centroid ); 
+		numeric::xyzMatrix< core::Real > base_coordinate_matrix = core::chemical::rna::get_rna_base_coordinate_system( rsd, centroid );
 
 		numeric::xyzMatrix< core::Real > invert_coordinate_matrix = inverse( base_coordinate_matrix );
-	
+
 		// Size count=0; // Unused variable causes warning.
 		for ( Size at = 1; at <= rsd.natoms(); at++ ){
 			// std::string const & atom_name=rsd.type().atom_name(at); // Unused variable causes warning.
-//			TR << "atom_name= " << atom_name << std::endl;	
+//			TR << "atom_name= " << atom_name << std::endl;
 //			AtomID id( j, i )
 			id::AtomID const id( at, seq_num );
-	
+
 //			AtomID & id= AtomID( at, seq_num )
 			pose.set_xyz( id, pose.xyz( id ) - centroid ); //I think the order here does matter. Translate centroid to origin.
 			pose.set_xyz( id, invert_coordinate_matrix * pose.xyz( id ) ); //I think the order here does matter. Rotate coordinate so that it equal to Roseeta internal reference frame
@@ -689,7 +685,7 @@ namespace rna {
 	void
 	get_specific_atom_coordinate( std::string const & atom_name,
  														   numeric::xyzVector< core::Real > & atom_pos,
-										           core::conformation::Residue const & rsd_at_origin, 
+										           core::conformation::Residue const & rsd_at_origin,
 										           core::kinematics::Stub const & moving_res_base_stub ){
 
 		numeric::xyzVector< core::Real > const & new_centroid = moving_res_base_stub.v;
@@ -729,69 +725,45 @@ namespace rna {
 		return max_distance;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	utility::vector1 < core::conformation::ResidueOP >
-	setup_residue_at_origin_list( pose::Pose const & pose, Size const & moving_res, bool const extra_anti_chi_rotamer, bool const extra_syn_chi_rotamer, std::string const pose_name ){
-
-		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
-		using namespace core::id;
-		using namespace core::chemical;
+	setup_residue_at_origin_list( pose::Pose const & pose, Size const & moving_res, bool const extra_chi ){
+		using namespace rotamer_sampler::rna;
 		using namespace core::conformation;
-		using namespace core::scoring::rna;
+		using namespace core::pose;
+		using namespace core::chemical::rna;
 
-		TR << "-------setup_residue_at_origin_list ( various sugar rotamers ) for pose: " << pose_name << "-------" << std::endl;
-		Output_boolean( "extra_anti_chi_rotamer = ", extra_anti_chi_rotamer, TR ); TR << std::endl;
-		Output_boolean( "extra_syn_chi_rotamer = ", extra_syn_chi_rotamer, TR ); TR << std::endl;
-		
-		core::Size base_state = ( core::chemical::rna::is_purine( pose.residue( moving_res ) ) ) ? WHATEVER: ANTI;	
+		//FANG: Why this does not allow syn pyrimidine by option? Does it matter?
+		core::Size base_state =
+				( is_purine( pose.residue( moving_res ) ) ) ? WHATEVER: ANTI;
 
 		core::Size pucker_state = WHATEVER;
-		core::chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 
-		StepWiseRNA_BaseSugarRotamerOP base_sugar_rotamer = new StepWiseRNA_BaseSugarRotamer( base_state, pucker_state, rna_fitted_torsion_info );
-		base_sugar_rotamer->set_extra_anti_chi( extra_anti_chi_rotamer );
-		base_sugar_rotamer->set_extra_syn_chi( extra_syn_chi_rotamer );
+		RNA_NucleosideRotamer sampler( moving_res, pucker_state, base_state );
+		sampler.set_extra_chi( extra_chi );
+		sampler.set_idealize_coord( false ); //TODO enable idealize coord by option
+		sampler.set_skip_same_pucker( false ); //TODO enable idealize coord by option
+		sampler.init();
 
-		utility::vector1< core::conformation::ResidueOP > rsd_at_origin_list;
+		utility::vector1< ResidueOP > rsd_at_origin_list;
 
-		Size count = 0;
+		Pose pose_at_origin( pose );
 
-		while ( base_sugar_rotamer->get_next_rotamer() ){
-			count++;
-	
-			TR << " 	delta1 = " <<  F( 8, 3, base_sugar_rotamer->delta() ) << " 	chi_1 = " <<  F( 8, 3, base_sugar_rotamer->chi() );
-			TR << " 	nu2_1 = " <<  F( 8, 3, base_sugar_rotamer->nu2() )    << " 	nu1_1 = " <<  F( 8, 3, base_sugar_rotamer->nu1() );
-			TR << std::endl;
-
-			pose::Pose pose_at_origin = pose; //This make sure that it is not possible to link different rsd in the generated list to the same pose Apr 10, 2010 Parin
-
-			pose_at_origin.set_torsion( TorsionID( moving_res, id::BB, 4 ), base_sugar_rotamer->delta() );
-			pose_at_origin.set_torsion( TorsionID( moving_res, id::CHI, 1 ), base_sugar_rotamer->chi() );
-			pose_at_origin.set_torsion( TorsionID( moving_res, id::CHI, 2 ), base_sugar_rotamer->nu2() );
-			pose_at_origin.set_torsion( TorsionID( moving_res, id::CHI, 3 ), base_sugar_rotamer->nu1() );
-
-
-//			pose_at_origin.dump_pdb( "before_set_to_origin"+ string_of(count) + ".pdb"  );
-
+		for ( sampler.reset(); sampler.not_end(); ++sampler ) {
+			sampler.apply( pose_at_origin );
 			set_to_origin( pose_at_origin, moving_res, false );
-
 			ResidueOP rsd_at_origin = pose_at_origin.residue( moving_res ).clone();
-
-			rsd_at_origin_list.push_back( rsd_at_origin ); //Does this work?, what I am afraid is that the residue is still linked to the same pose Apr 10, 2010 Parin
-
-//			pose_at_origin.dump_pdb( "res_at_origin"+ string_of(count) + ".pdb"  );
+			rsd_at_origin_list.push_back( rsd_at_origin );
 		}
 
-		TR << "--------------------------------" << std::endl;
 		return rsd_at_origin_list;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	bool
 	check_floating_base_chain_closable( core::Size const & reference_res,
-																 utility::vector1< pose_data_struct2 > pose_data_list, 
-																 utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list, 
+																 utility::vector1< pose_data_struct2 > pose_data_list,
+																 utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
 																 core::kinematics::Stub const & moving_res_base_stub,
 																 bool const Is_prepend,
 																 core::Size const gap_size ){
@@ -802,7 +774,7 @@ namespace rna {
 
 			Residue const & rsd_at_origin = ( *rsd_at_origin_list[n] );
 
-			std::string const moving_atom_name = ( Is_prepend ) ? "O3'" : " C5'"; 
+			std::string const moving_atom_name = ( Is_prepend ) ? "O3'" : " C5'";
 			std::string const reference_atom_name = ( Is_prepend ) ? " C5'" : "O3'";
 
 			numeric::xyzVector< core::Real > atom_coordinate;
@@ -812,7 +784,7 @@ namespace rna {
 			for ( Size sugar_ID = 1; sugar_ID <= pose_data_list.size(); sugar_ID++ ){
 
 				pose::Pose const & pose = ( *pose_data_list[sugar_ID].pose_OP );
-				 
+
 				if ( Check_chain_closable( atom_coordinate, pose.residue( reference_res ).xyz( reference_atom_name ), gap_size ) ) return true;
 
 			}
@@ -829,7 +801,7 @@ namespace rna {
 	//Could make this call the pose_data_list version (right above)
 	bool
 	check_floating_base_chain_closable( core::Size const & reference_res,
-																		 core::pose::Pose const & pose, 
+																		 core::pose::Pose const & pose,
 																		 utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list, //this one correspond to the moving_base
 																		 core::kinematics::Stub const & moving_res_base_stub,
 																		 bool const Is_prepend,
@@ -841,14 +813,14 @@ namespace rna {
 
 			Residue const & rsd_at_origin = ( *rsd_at_origin_list[n] );
 
-			std::string const moving_atom_name = ( Is_prepend ) ? "O3'" : " C5'"; 
+			std::string const moving_atom_name = ( Is_prepend ) ? "O3'" : " C5'";
 			std::string const reference_atom_name = ( Is_prepend ) ? " C5'" : "O3'";
 
 			numeric::xyzVector< core::Real > atom_coordinate;
 
 			get_specific_atom_coordinate( moving_atom_name, atom_coordinate, rsd_at_origin, moving_res_base_stub );
 
-		
+
 			if ( Check_chain_closable( atom_coordinate, pose.residue( reference_res ).xyz( reference_atom_name ), gap_size ) ) return true;
 		}
 
@@ -871,7 +843,7 @@ namespace rna {
 
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 
 		////////////////////////////////////MOD THIS OUT AFTER TESTING TO OPTIMIZE CODE SPEED/////////////////////////////////////////////////////
 		/*
@@ -883,13 +855,13 @@ namespace rna {
 		if ( rsd_at_origin.natoms() != actual_rsd.natoms() ) utility_exit_with_message( "rsd_at_origin.natoms() != actual_rsd.natoms()" );
 
 		for ( Size atomno = 1; atomno <= actual_rsd.natoms(); atomno++ ){
-		
+
 			if ( actual_rsd.type().atom_name( atomno ) != rsd_at_origin.type().atom_name( atomno ) ){
 				print_individual_atom_info( actual_rsd, atomno, "actual_rsd" );
 				print_individual_atom_info( rsd_at_origin, atomno, "rsd_at_origin" );
 				utility_exit_with_message( "actual_rsd.type().atom_name( atomno ) != rsd_at_origin.type().atom_name( atomno )" );
 			}
-			
+
 			if ( actual_rsd.atom_type( atomno ).name() != rsd_at_origin.atom_type( atomno ).name() ){
 				print_individual_atom_info( actual_rsd, atomno, "actual_rsd" );
 				print_individual_atom_info( rsd_at_origin, atomno, "rsd_at_origin" );
@@ -901,11 +873,11 @@ namespace rna {
 				print_individual_atom_info( rsd_at_origin, atomno, "rsd_at_origin" );
 				utility_exit_with_message( "actual_rsd.atom_type( atomno ).element() != rsd_at_origin.atom_type( atomno ).element() " );
 			}
-			
+
 		}
 		*/
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+
 
 
 

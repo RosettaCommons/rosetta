@@ -25,13 +25,13 @@
 #include <protocols/swa/rna/FloatingBaseChainClosureJobParameter.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>     //Feb 02, 2012: Need this to pass rosetta_tools/python_cc_reader/test_all_headers_compile.py
 #include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <protocols/simple_moves/GreenPacker.fwd.hh>
+#include <protocols/rotamer_sampler/rna/RNA_SuiteRotamer.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -155,10 +155,7 @@ namespace rna {
 		set_extra_beta_rotamer( bool const & setting ){ extra_beta_rotamer_ = setting; }
 
 		void
-		set_extra_anti_chi_rotamer( bool const & setting ){ extra_anti_chi_rotamer_ = setting; }
-
-		void
-		set_extra_syn_chi_rotamer( bool const & setting ){ extra_syn_chi_rotamer_ = setting; }
+		set_extra_chi( bool const & setting ){ extra_chi_ = setting; }
 
 		void
 		set_sample_both_sugar_base_rotamer( bool const & setting ){ sample_both_sugar_base_rotamer_ = setting; }
@@ -277,7 +274,7 @@ namespace rna {
 		cluster_pose_data_list( utility::vector1< pose_data_struct2 > & pose_data_list );
 
 		std::string
-		create_tag( std::string const prestring, StepWiseRNA_RotamerGeneratorWrapperOP const & rotamer_generator ) const;
+		create_tag( std::string const & prestring, core::Size const i ) const;
 
 		core::kinematics::Stub
 		get_reference_stub( core::Size const reference_res, core::pose::Pose const & pose ) const;
@@ -309,7 +306,8 @@ namespace rna {
 
 		void output_count_data();
 
-
+		rotamer_sampler::rna::RNA_SuiteRotamerOP
+		setup_rotamer_sampler( core::pose::Pose const & pose ) const;
 	private:
 
 		StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
@@ -363,8 +361,7 @@ namespace rna {
 		bool reinitialize_CCD_torsions_;
 		bool extra_epsilon_rotamer_;
 		bool extra_beta_rotamer_;
-		bool extra_anti_chi_rotamer_;
-		bool extra_syn_chi_rotamer_;
+		bool extra_chi_;
 		bool sample_both_sugar_base_rotamer_;
 		bool include_torsion_value_in_tag_;
 		bool rebuild_bulge_mode_;

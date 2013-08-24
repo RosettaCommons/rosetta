@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file core/pose/rna/RNA_SuiteName.hh
+/// @file core/pose/rna/RNA_SuiteName.fwd.hh
 /// @brief RNA suite assignment ported from suitename program
 /// @author Fang-Chieh Chou
 
@@ -18,23 +18,17 @@
 // C++
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.fwd.hh>
 
 namespace core {
 namespace pose {
 namespace rna {
 
 class RNA_SuiteAssignment;
-typedef utility::pointer::owning_ptr< RNA_SuiteAssignment > RNA_SuiteAssignmentOP;
-typedef utility::pointer::access_ptr< RNA_SuiteAssignment > RNA_SuiteAssignmentAP;
 
 class RNA_SuiteName;
-typedef utility::pointer::owning_ptr< RNA_SuiteName > RNA_SuiteNameOP;
-typedef utility::pointer::access_ptr< RNA_SuiteName > RNA_SuiteNameAP;
 
 class RNA_SuiteInfo;
 typedef utility::pointer::owning_ptr< RNA_SuiteInfo > RNA_SuiteInfoOP;
-typedef utility::pointer::access_ptr< RNA_SuiteInfo > RNA_SuiteInfoAP;
 
 }
 }

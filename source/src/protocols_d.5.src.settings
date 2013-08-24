@@ -33,6 +33,19 @@ sources = {
 		"RNA_SecStructInfo",
 		"RNA_StructureParameters",
 	],
+    "protocols/rotamer_sampler": [
+        "RotamerComb",
+        "RotamerOneTorsion",
+        "RotamerSizedAny",
+        "RotamerSizedComb",
+        "util",
+    ],
+    "protocols/rotamer_sampler/rna": [
+        "RNA_ChiRotamer",
+        "RNA_NucleosideRotamer",
+        "RNA_SugarRotamer",
+        "RNA_SuiteRotamer",
+    ],
 	"protocols/swa": [
 		"InputStreamWithResidueInfo",
 		"PoseFilter_RMSD_Screen",
@@ -75,7 +88,7 @@ sources = {
 
 	"protocols/swa/rna": [
 		"ERRASER_Modeler",
-                "FloatingBaseChainClosureJobParameter",
+        "FloatingBaseChainClosureJobParameter",
 		"StepWiseRNA_Modeler",
 		"StepWiseRNA_BaseCentroidScreener",
 		"StepWiseRNA_BaseSugarRotamer",

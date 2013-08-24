@@ -164,7 +164,7 @@ namespace rna {
 		}
 
 		utility_exit_with_message( "torsion_ids does not contain the desire delta torsion id" );
-		exit ( 1 ); //Prevent compiler warning!
+		return 0; //Prevent compiler warning!
 
 	}
 	////////////////////////////////////////////////////////////////////////
@@ -291,14 +291,8 @@ namespace rna {
 	StepWiseRNA_RotamerGenerator::add_torsion_id( core::id::TorsionID const torsion_id ){
 
 		// Check that the torsion_id is not already in the TorsionID list
-		for ( Size n = 1; n <= torsion_ids_.size(); n++ ){
-			if ( torsion_ids_[n] == torsion_id ){
-				utility_exit_with_message( "Error: torsion_id is already in the torsion_id_list!" );
-			}
-		}
-
+		assert ( ! torsion_ids_.has_value(torsion_id) );
 		torsion_ids_.push_back( torsion_id );
-
 	}
 
 

@@ -15,6 +15,7 @@
 #ifndef INCLUDED_core_pose_rna_RNA_IdealCoord_HH
 #define INCLUDED_core_pose_rna_RNA_IdealCoord_HH
 
+#include <core/pose/rna/RNA_IdealCoord.fwd.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -22,6 +23,7 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <utility/vector1.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 // Utility headers
 
@@ -30,12 +32,11 @@
 //// C++ headers
 #include <string>
 
-
 namespace core {
 namespace pose {
 namespace rna {
 
-class RNA_IdealCoord {
+class RNA_IdealCoord : public utility::pointer::ReferenceCount {
 public:
 
 	RNA_IdealCoord();

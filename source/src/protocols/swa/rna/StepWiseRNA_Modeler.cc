@@ -60,8 +60,7 @@ namespace rna {
 		finer_sampling_at_chain_closure_( false ),
 		PBP_clustering_at_chain_closure_( false ),
 		allow_syn_pyrimidine_( false ),
-		extra_syn_chi_rotamer_( false ),
-		extra_anti_chi_rotamer_( false ),
+		extra_chi_( false ),
 		use_phenix_geo_( false ),
 		centroid_screen_( true ),
 		VDW_atr_rep_screen_( true ),
@@ -139,8 +138,7 @@ namespace rna {
 		stepwise_rna_residue_sampler.set_finer_sampling_at_chain_closure ( finer_sampling_at_chain_closure_ );
 		stepwise_rna_residue_sampler.set_PBP_clustering_at_chain_closure ( PBP_clustering_at_chain_closure_ );
 		stepwise_rna_residue_sampler.set_allow_syn_pyrimidine( allow_syn_pyrimidine_ );
-		stepwise_rna_residue_sampler.set_extra_syn_chi_rotamer ( extra_syn_chi_rotamer_ );
-		stepwise_rna_residue_sampler.set_extra_anti_chi_rotamer ( extra_anti_chi_rotamer_ );
+		stepwise_rna_residue_sampler.set_extra_chi( extra_chi_ );
 		if ( use_phenix_geo_ ) utility_exit_with_message( "use_phenix_geo_ is not in normal SWA yet!" );
 		//		stepwise_rna_residue_sampler.set_use_phenix_geo ( use_phenix_geo_  );
 		stepwise_rna_residue_sampler.set_centroid_screen ( centroid_screen_ );

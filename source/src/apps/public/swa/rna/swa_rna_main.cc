@@ -170,8 +170,7 @@ OPT_KEY( Boolean, minimize_and_score_sugar )
 OPT_KEY( Boolean, debug_epsilon_south_sugar_mode )
 OPT_KEY( Boolean, rebuild_bulge_mode )
 OPT_KEY( Boolean, sampler_include_torsion_value_in_tag )
-OPT_KEY( Boolean, sampler_extra_anti_chi_rotamer )
-OPT_KEY( Boolean, sampler_extra_syn_chi_rotamer )
+OPT_KEY( Boolean, sampler_extra_chi_rotamer )
 OPT_KEY( Boolean, sampler_extra_beta_rotamer )
 OPT_KEY( Boolean, sampler_extra_epsilon_rotamer )
 OPT_KEY( Boolean, sample_both_sugar_base_rotamer )
@@ -1238,8 +1237,7 @@ swa_rna_sample()
 	stepwise_rna_modeler->set_finer_sampling_at_chain_closure ( option[ finer_sampling_at_chain_closure]() );
 	stepwise_rna_modeler->set_PBP_clustering_at_chain_closure ( option[ PBP_clustering_at_chain_closure]() );
 	stepwise_rna_modeler->set_allow_syn_pyrimidine( option[ sampler_allow_syn_pyrimidine ]() );
-	stepwise_rna_modeler->set_extra_syn_chi_rotamer ( option[ sampler_extra_syn_chi_rotamer]() );
-	stepwise_rna_modeler->set_extra_anti_chi_rotamer ( option[ sampler_extra_anti_chi_rotamer]() );
+	stepwise_rna_modeler->set_extra_chi( option[ sampler_extra_chi_rotamer]() );
 	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 	stepwise_rna_modeler->set_centroid_screen ( option[ centroid_screen ]() );
 	stepwise_rna_modeler->set_VDW_atr_rep_screen ( option[ VDW_atr_rep_screen ]() );
@@ -1944,8 +1942,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( debug_epsilon_south_sugar_mode, "Check why when epsilon is roughly -160 and pucker is south, energy is not favorable", false );
 	// FCC: Not doing anythin now... Just for consistency with swa_analytical_closure
 	/////////
-	NEW_OPT( sampler_extra_anti_chi_rotamer, "Samplerer: extra_anti_chi_rotamer", false );
-	NEW_OPT( sampler_extra_syn_chi_rotamer, "Samplerer: extra_syn_chi_rotamer", false );
+	NEW_OPT( sampler_extra_chi_rotamer, "Samplerer: extra_syn_chi_rotamer", false );
 	NEW_OPT( sampler_extra_beta_rotamer, "Samplerer: extra_beta_rotamer", false );
 	NEW_OPT( sampler_extra_epsilon_rotamer, "Samplerer: extra_epsilon_rotamer", true ); //Change this to true on April 9, 2011
 	NEW_OPT( sample_both_sugar_base_rotamer, "Samplerer: Super hacky for SQAURE_RNA", false );

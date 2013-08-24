@@ -89,9 +89,7 @@ namespace rna {
 
 		void set_allow_syn_pyrimidine( bool const & setting ){ allow_syn_pyrimidine_ = setting; }
 
-		void set_extra_syn_chi_rotamer( bool const & setting ){ extra_syn_chi_rotamer_ = setting; }
-
-		void set_extra_anti_chi_rotamer( bool const & setting ){ extra_anti_chi_rotamer_ = setting; }
+		void set_extra_chi( bool const & setting ){ extra_chi_ = setting; }
 
 		void set_use_phenix_geo( bool const & setting ){ use_phenix_geo_ = setting; }
 
@@ -207,8 +205,7 @@ namespace rna {
 		bool finer_sampling_at_chain_closure_;
 		bool PBP_clustering_at_chain_closure_;
 		bool allow_syn_pyrimidine_;
-		bool extra_syn_chi_rotamer_;
-		bool extra_anti_chi_rotamer_;
+		bool extra_chi_;
 		bool use_phenix_geo_;
 		bool centroid_screen_;
 		bool VDW_atr_rep_screen_;
@@ -233,7 +230,7 @@ namespace rna {
 		bool allow_bulge_at_chainbreak_;
 		bool parin_favorite_output_;
 		bool floating_base_;
-		bool include_syn_chi_;
+		bool include_syn_chi_; //TODO remove this option
 		bool reinitialize_CCD_torsions_;
 		bool sampler_extra_epsilon_rotamer_;
 		bool sampler_extra_beta_rotamer_;

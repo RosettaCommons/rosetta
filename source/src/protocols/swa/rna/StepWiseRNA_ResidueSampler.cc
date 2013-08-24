@@ -19,8 +19,6 @@
 #include <protocols/swa/rna/StepWiseRNA_ResidueSampler.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_FloatingBaseSamplerUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
 
@@ -28,6 +26,7 @@
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh> //Sept 26, 2011
 #include <core/chemical/rna/RNA_Util.hh>
+#include <core/pose/rna/RNA_Util.hh>
 
 
 //#include <protocols/swa/rna/StepWiseRNA_Dinucleotide_Sampler_Util.hh>
@@ -74,7 +73,8 @@
 
 //GreenPacker
 #include <protocols/simple_moves/GreenPacker.hh>
-#include <protocols/simple_moves/GreenPacker.fwd.hh>
+
+#include <protocols/rotamer_sampler/rna/RNA_SuiteRotamer.hh>
 
 #include <numeric/NumericTraits.hh>
 
@@ -93,7 +93,6 @@
 
 
 using namespace core;
-using core::Real;
 using io::pdb::dump_pdb;
 
 //////////////////////////////////////////////////////////////////////////
@@ -146,8 +145,7 @@ namespace rna {
 		reinitialize_CCD_torsions_( false ), //New option Aug 15 2010 //Reinitialize_CCD_torsion to zero before every CCD chain closure
 		extra_epsilon_rotamer_( false ), //New option Aug 30, 2010
 		extra_beta_rotamer_( false ), //New option Aug 30, 2010
-		extra_anti_chi_rotamer_( false ), //Split to syn and anti on June 16, 2011
-		extra_syn_chi_rotamer_( false ), //Split to syn and anti on June 16, 2011
+		extra_chi_( false ),
 		sample_both_sugar_base_rotamer_( false ), //New option Nov 12, 2010 (mainly for square_RNA)
 		include_torsion_value_in_tag_( false ), //For checking if the extra rotamer are important
 		rebuild_bulge_mode_( false ),
@@ -670,13 +668,13 @@ namespace rna {
 		///////Setup Residue of moving and reference of various rsd conformation (syn/anti chi, 2' and 3' endo) with base at origin coordinate frame////////////////////
 
 		utility::vector1 < core::conformation::ResidueOP > const moving_rsd_at_origin_list
-																												= setup_residue_at_origin_list( pose, moving_res, extra_anti_chi_rotamer_, extra_syn_chi_rotamer_, "pose" );
+																												= setup_residue_at_origin_list( pose, moving_res, extra_chi_ );
 		//TR.Debug << "Change to Residue const & moving_rsd_at_origin=(*moving_rsd_at_origin_list[5]) " << std::endl;
 		//Residue const & moving_rsd_at_origin=(*moving_rsd_at_origin_list[5]);
 
 		//March 26, 2011.. after move create screening poses and modify pose variant to ABOVE
 		utility::vector1 < core::conformation::ResidueOP > const screening_moving_rsd_at_origin_list
-																												= setup_residue_at_origin_list( screening_pose, moving_res, extra_anti_chi_rotamer_, extra_syn_chi_rotamer_, "screening_pose" );
+																												= setup_residue_at_origin_list( screening_pose, moving_res, extra_chi_ );
 
 		TR.Debug << "Change to Residue const & screening_moving_rsd_at_origin = ( *screening_moving_rsd_at_origin_list[5] ) " << std::endl;
 		Residue const & screening_moving_rsd_at_origin = ( *screening_moving_rsd_at_origin_list[5] );
@@ -685,7 +683,7 @@ namespace rna {
 		//Should calculate rmsd...excluding the sugar to see if this is the case..MAKE SURE IT is not something deeper that needs to be fix...Apr 10,2010
 
 		utility::vector1 < core::conformation::ResidueOP > const ribose_screening_moving_rsd_at_origin_list
-																												= setup_residue_at_origin_list( ribose_screening_pose, moving_res, extra_anti_chi_rotamer_, extra_syn_chi_rotamer_, "ribose_screening_pose" );
+																												= setup_residue_at_origin_list( ribose_screening_pose, moving_res, extra_chi_ );
 
 		if ( moving_rsd_at_origin_list.size() != screening_moving_rsd_at_origin_list.size() ){
 			TR.Debug << "moving_rsd_at_origin_list.size() = " << moving_rsd_at_origin_list.size() << std::endl;
@@ -1384,62 +1382,10 @@ namespace rna {
 		}
 
 
-		////////////////////////////////////Setup RotamerGeneratorWrapper/////////////////////////////////////////
-
-		// Note: Is_prepend should be generalized to include two more possibilities:
-		//   we are creating a dinucleotide from scratch --> sample sugar/chi for both moving_res and
-		bool sample_sugar_and_base1( false ), sample_sugar_and_base2( false );
-		if ( !Is_internal  ) {
-			if ( Is_prepend ) {
-				sample_sugar_and_base1 = true;
-			} else {
-				sample_sugar_and_base2 = true;
-			}
-		}
-
-		if ( build_pose_from_scratch_ ){ //Override and sample both base in this case....
-			sample_sugar_and_base1 = true;
-			sample_sugar_and_base2 = true;
-		}
-
-		if ( sample_both_sugar_base_rotamer_ == true ){
-			if ( Is_dinucleotide == true ){
-				utility_exit_with_message( "sample_both_sugar_base_rotamer_ == true and Is_dinucleotide == true!" );
-			}
-			sample_sugar_and_base1 = true;
-			sample_sugar_and_base2 = true;
-		}
-
-
-		if ( debug_epsilon_south_sugar_mode_ ){ //only sample the sugar next to the epsilon torsion
-			utility_exit_with_message( "Add VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE back to patches.txt before using this option!" );
-			sample_sugar_and_base1 = true;
-			sample_sugar_and_base2 = false;
-			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE", moving_res + 1 );
-			pose::add_variant_type_to_pose_residue( screening_pose, "VIRTUAL_RNA_RESIDUE_EXCLUDE_PHOSPHATE", moving_res + 1 );
-		}
-
-		utility::vector1< core::Size > const working_moving_suite_list(  job_parameters_->working_moving_suite_list() );
-
-
-		StepWiseRNA_RotamerGeneratorWrapperOP rotamer_generator = new StepWiseRNA_RotamerGeneratorWrapper( pose,
-																																																		working_moving_suite_list,
-																																																		sample_sugar_and_base1,
-																																																		sample_sugar_and_base2 );
-		rotamer_generator->set_fast( fast_ );
-		rotamer_generator->set_force_syn_chi_res_list( job_parameters_->working_force_syn_chi_res_list() );
-		rotamer_generator->set_force_north_ribose_list( job_parameters_->working_force_north_ribose_list() );
-		rotamer_generator->set_force_south_ribose_list( job_parameters_->working_force_south_ribose_list() );
-		rotamer_generator->set_include_syn_chi( include_syn_chi_ );
-		rotamer_generator->set_extra_epsilon( extra_epsilon_rotamer_ );
-		rotamer_generator->set_extra_beta( extra_beta_rotamer_ );
-		rotamer_generator->set_extra_anti_chi( extra_anti_chi_rotamer_ );
-		rotamer_generator->set_extra_syn_chi( extra_syn_chi_rotamer_ );
-		rotamer_generator->set_exclude_alpha_beta_gamma_sampling( exclude_alpha_beta_gamma_sampling_ );
-		rotamer_generator->set_allow_syn_pyrimidine( allow_syn_pyrimidine_ );
-		rotamer_generator->set_choose_random( choose_random_ );
-		if ( gap_size == 0 && finer_sampling_at_chain_closure_ == true ) rotamer_generator->set_bin_size( 10 );
-		rotamer_generator->initialize_rotamer_generator_list();
+		/////Get the Rotamer Sampler/////
+		rotamer_sampler::rna::RNA_SuiteRotamerOP
+				sampler_op( setup_rotamer_sampler( pose ) );
+		rotamer_sampler::rna::RNA_SuiteRotamer & sampler( *sampler_op );
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1450,12 +1396,11 @@ namespace rna {
 		Real /*current_score( 0.0 ), */ delta_rep_score( 0.0 ), delta_atr_score( 0.0 );
 		Size ntries( 0 ), max_ntries( 10000 ), num_success( 0 ); // used in choose_random mode.
 
-		while ( rotamer_generator->has_another_rotamer() ){
+		for ( sampler.reset(); sampler.not_end(); ++sampler ) {
+			++ntries;
+			if ( choose_random_ && ntries > max_ntries ) break;
 
-			if ( choose_random_ && ntries++ > max_ntries ) break;
-
-			utility::vector1< Torsion_Info > const current_rotamer = rotamer_generator->get_next_rotamer();
-			apply_rotamer( screening_pose, current_rotamer );
+			sampler.apply( screening_pose );
 			count_data_.tot_rotamer_count++;
 
 			if ( fast_ && count_data_.both_count >= 100 ) break;
@@ -1463,7 +1408,7 @@ namespace rna {
 			if ( integration_test_mode_ && count_data_.full_score_count >= 10 ) native_rmsd_screen_ = true;
 			if ( integration_test_mode_ && count_data_.rmsd_count >= 10 ) break;
 
-			std::string tag = create_tag( "U" + sugar_tag, rotamer_generator );
+			std::string tag = create_tag( "U" + sugar_tag, ntries );
 
 
 			if ( native_rmsd_screen_ && get_native_pose() ){
@@ -1547,8 +1492,8 @@ namespace rna {
 			//////////////////////////////////////////////////////////////////////////////////////////
 			// Almost ready to actually score pose.
 			//////////////////////////////////////////////////////////////////////////////////////////
-			apply_rotamer( pose, current_rotamer );
-			if ( perform_o2star_pack_ ) apply_rotamer( o2star_pack_pose, current_rotamer );
+			sampler.apply( pose );
+			if ( perform_o2star_pack_ ) sampler.apply( o2star_pack_pose );
 
 			//////////////////////////////////////////////////////////////////////////////////////////
 			///////////////Chain_break_screening -- CCD closure /////////////////////////////////////
@@ -1556,7 +1501,7 @@ namespace rna {
 			bool bulge_added( false );
 			if ( gap_size == 0 /*really need to close it!*/ ){
 
-				apply_rotamer( chain_break_screening_pose, current_rotamer );
+				sampler.apply( chain_break_screening_pose );
 				if ( ! Chain_break_screening( chain_break_screening_pose, chainbreak_scorefxn_ ) ) continue;
 
 				// Need to be very careful here -- do CCD torsions ever overlap with pose torsions?
@@ -2451,19 +2396,13 @@ namespace rna {
 	////////////////////////////////////////////////////////////////////////
 
 	std::string
-	StepWiseRNA_ResidueSampler::create_tag( std::string const prestring, StepWiseRNA_RotamerGeneratorWrapperOP const & rotamer_generator ) const {
+	StepWiseRNA_ResidueSampler::create_tag( std::string const & prestring, Size const i ) const {
 
 		using namespace ObjexxFCL;
 
 		std::string tag = prestring;
 
-		for ( Size list_position = rotamer_generator->rotamer_generator_list_size(); list_position >= 2; list_position-- ){ //For dinucleotide
-			tag.append( "_" + lead_zero_string_of( rotamer_generator->group_rotamer( list_position ), 4 ) );
-		}
-
-		tag.append( "_" + lead_zero_string_of( rotamer_generator->group_rotamer( 1 ), 4 ) );
-		tag.append( "_" + lead_zero_string_of( rotamer_generator->subgroup_rotamer( 1 ), 5 ) );
-
+		tag.append( "_" + lead_zero_string_of( i, 9 ) );
 
 		return tag;
 	}
@@ -2587,7 +2526,84 @@ namespace rna {
 	}
 
 	//////////////////////////////////////////////////////////////////
+	rotamer_sampler::rna::RNA_SuiteRotamerOP
+	StepWiseRNA_ResidueSampler::setup_rotamer_sampler( Pose const & pose ) const {
+		using namespace rotamer_sampler::rna;
+		using namespace chemical::rna;
+		using namespace pose::rna;
+		/////Load in constants being used/////
+		bool const Is_prepend( job_parameters_->Is_prepend() );
+		bool const Is_internal( job_parameters_->Is_internal() );
+		Size const gap_size = job_parameters_->gap_size();
+		utility::vector1<Size> const & working_moving_suite_list(
+				job_parameters_->working_moving_suite_list() );
+		utility::vector1<Size> const & syn_chi_res(
+			job_parameters_->working_force_syn_chi_res_list() );
+		utility::vector1<Size> const & north_puckers(
+			job_parameters_->working_force_north_ribose_list() );
+		utility::vector1<Size> const & south_puckers(
+			job_parameters_->working_force_south_ribose_list() );
 
+		Size const n_rsd( working_moving_suite_list.size() );
+		runtime_assert( n_rsd == 1 );
+
+		Size const moving_suite( working_moving_suite_list[1] );
+
+		/////Get the base and pucker state/////
+		utility::vector1<bool> sample_sugar( 2, false );
+		utility::vector1<Size> base_state( 2, WHATEVER );
+		utility::vector1<Size> pucker_state( 2, WHATEVER );
+
+		if ( build_pose_from_scratch_ || sample_both_sugar_base_rotamer_) {
+			sample_sugar[1] = true;
+			sample_sugar[2] = true;
+		} else if ( !Is_internal  ) {
+			if ( Is_prepend ) {
+				sample_sugar[1] = true;
+			} else {
+				sample_sugar[2] = true;
+			}
+		}
+
+		for ( Size i = 1; i <= 2; ++i ) {
+			Size const curr_rsd( moving_suite + i - 1 );
+			if ( sample_sugar[i] ) {
+				bool is_north ( north_puckers.has_value( curr_rsd ) );
+				bool is_south ( south_puckers.has_value( curr_rsd ) );
+				bool is_syn ( syn_chi_res.has_value( curr_rsd ) );
+				runtime_assert( !is_north || !is_south );
+				if ( is_north ) pucker_state[i] = NORTH;
+				if ( is_south ) pucker_state[i] = SOUTH;
+				if ( !allow_syn_pyrimidine_ && !is_purine( pose.residue( curr_rsd ) ) ) {
+					runtime_assert( !is_syn );
+					base_state[i] = ANTI;
+				} else if ( is_syn ) {
+					base_state[i] = SYN;
+				}
+			} else {
+				pucker_state[i] = assign_pucker( pose, curr_rsd );
+				base_state[i] = NONE;
+			}
+		}
+
+		/////Set up the sampler/////
+		RNA_SuiteRotamerOP sampler = new RNA_SuiteRotamer( moving_suite,
+				pucker_state[1], pucker_state[2], base_state[1], base_state[2] );
+		sampler->set_skip_same_pucker( false ); //TODO Should enable this later
+		sampler->set_idealize_coord( false ); //TODO Add and use the ideal-geo flag
+		sampler->set_sample_nucleoside_lower( sample_sugar[1] );
+		sampler->set_sample_nucleoside_upper( sample_sugar[2] );
+		sampler->set_fast( fast_ );
+		sampler->set_extra_epsilon( extra_epsilon_rotamer_ );
+		sampler->set_extra_beta( extra_beta_rotamer_ );
+		sampler->set_extra_chi(	extra_chi_ );
+		sampler->set_random( choose_random_ );
+		if ( gap_size == 0 && finer_sampling_at_chain_closure_ == true )
+				sampler->set_bin_size( 10 );
+		sampler->init();
+
+		return sampler;
+	}
 
 }
 }

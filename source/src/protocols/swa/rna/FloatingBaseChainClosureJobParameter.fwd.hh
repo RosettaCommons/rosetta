@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/swa/rna/FloatingBaseChainClosureJobParameter.fwd.hh
-/// @brief 
+/// @brief
 /// @detailed
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -21,13 +21,13 @@
 namespace protocols {
 namespace swa {
 namespace rna {
-	
+
 	class FloatingBaseChainClosureJobParameter;
 	typedef utility::pointer::owning_ptr< FloatingBaseChainClosureJobParameter > FloatingBaseChainClosureJobParameterOP;
 	typedef utility::pointer::owning_ptr< FloatingBaseChainClosureJobParameter const > FloatingBaseChainClosureJobParameterCOP;
-	
-} //rna 
-} //swa 
-} //protocols 
+
+} //rna
+} //swa
+} //protocols
 
 #endif

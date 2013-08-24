@@ -15,13 +15,15 @@
 #ifndef INCLUDED_core_pose_rna_RNA_SuiteName_HH
 #define INCLUDED_core_pose_rna_RNA_SuiteName_HH
 
+#include <core/pose/rna/RNA_SuiteName.fwd.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/io/ozstream.fwd.hh>
 
 // Utility headers
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/io/ozstream.fwd.hh>
 
 // ObjexxFCL headers
 
@@ -29,8 +31,6 @@
 #include <string>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
-
-typedef std::pair<std::string, core::Real> SuiteAssignment;
 
 namespace core {
 namespace pose {
@@ -65,7 +65,7 @@ public:
 };
 
 ////////////////////////////////////////
-class RNA_SuiteName {
+class RNA_SuiteName : public utility::pointer::ReferenceCount {
 public:
 
 	RNA_SuiteName();
@@ -79,7 +79,7 @@ public:
 	utility::vector1 <RNA_SuiteInfo> all_suites;
 	RNA_SuiteAssignment const outlier, suite_undefined;
 
-	Size const 
+	Size const
 		epsilonmin, epsilonmax,
 		delta3min , delta3max,
 		delta2min , delta2max,
@@ -99,13 +99,13 @@ public:
 private:
 	void init();
 
-	Real distance_4d(utility::vector1<Real> const &torsion1, utility::vector1<Real> const &torsion2, 
+	Real distance_4d(utility::vector1<Real> const &torsion1, utility::vector1<Real> const &torsion2,
 			utility::vector1<Size> const & half_width) const;
 
 	Real distance_7d(utility::vector1<Real> const &torsion1, utility::vector1 <Real> const &torsion2,
 			utility::vector1<Size> const & half_width) const;
 
-	bool is_in_between( utility::vector1<Real> const & target, 
+	bool is_in_between( utility::vector1<Real> const & target,
 			utility::vector1<Real> const & dominant,
 			utility::vector1<Real> const & satellite ) const;
 

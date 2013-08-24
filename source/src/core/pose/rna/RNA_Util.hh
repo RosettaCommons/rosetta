@@ -58,7 +58,7 @@ fix_sugar_coords(
 void
 initialize_atoms_for_which_we_need_new_dofs(
 		utility::vector1< std::string > & atoms_for_which_we_need_new_dofs,
-		Pose const & pose,  
+		Pose const & pose,
 		Size const i );
 
 void
@@ -73,16 +73,21 @@ apply_ideal_c2endo_sugar_coords(
 		Pose & pose,
 		Size const i);
 
+core::Size
+assign_pucker(
+		Pose const & pose,
+		Size const rsd_id );
+
 void
 apply_pucker(
-		Pose & pose, 
-		Size const i, 
-		Size const pucker_state, 
-		bool const skip_same_state=false,
-		bool const idealize_coord=true);
+		Pose & pose,
+		Size const i,
+		Size const pucker_state = 0,
+		bool const skip_same_state = false,
+		bool const idealize_coord = true );
 
 } //ns rna
-} //ns pose 
+} //ns pose
 } //ns core
 
 #endif
