@@ -258,6 +258,8 @@ void FACTSRsdTypeInfo::initialize_intrasolv( chemical::ResidueType const & rsd )
 
 	utility::vector1< Real > const intbb_solv_scale =
 		basic::options::option[ basic::options::OptionKeys::score::facts_intbb_solv_scale ]();
+	utility::vector1< Real > const intbs_solv_scale =
+		basic::options::option[ basic::options::OptionKeys::score::facts_intbs_solv_scale ]();
 	utility::vector1< Real > const intsc_solv_scale =
 		basic::options::option[ basic::options::OptionKeys::score::facts_intsc_solv_scale ]();
 
@@ -279,7 +281,34 @@ void FACTSRsdTypeInfo::initialize_intrasolv( chemical::ResidueType const & rsd )
 					intra_solv_scale_[atm1][atm2] = intbb_solv_scale[3];
 				}
 
-      } else {//if( rsd.atom_is_backbone( atm1 ) || rsd.atom_is_backbone( atm2 ) ){
+      } else if( rsd.atom_is_backbone( atm1 ) || rsd.atom_is_backbone( atm2 ) ){
+				// aa_specific rules
+
+				/*
+				if( rsd.aa() == core::chemical::aa_asp ){
+					if( rsd.path_distance(atm1,atm2) == 3 ){
+						intra_solv_scale_[atm1][atm2] = 0.8;
+					} else if( rsd.path_distance(atm1,atm2) == 4 ){
+						intra_solv_scale_[atm1][atm2] = 0.2;
+					} else {
+						intra_solv_scale_[atm1][atm2] = 0.5;
+					}
+				} else 
+				*/
+
+				if( rsd.path_distance(atm1,atm2) == 3 ){
+					intra_solv_scale_[atm1][atm2] = intbs_solv_scale[1];
+				} else if( rsd.path_distance(atm1,atm2) == 4 ){
+					intra_solv_scale_[atm1][atm2] = intbs_solv_scale[2];
+				} else {
+					intra_solv_scale_[atm1][atm2] = intbs_solv_scale[3];
+				}
+
+      } else {
+				//if( rsd.aa() == core::chemical::aa_asp ) {
+				//	intra_solv_scale_[atm1][atm2] = 1.0;
+				//} else
+
 				if( rsd.path_distance(atm1,atm2) == 3 ){
 					intra_solv_scale_[atm1][atm2] = intsc_solv_scale[1];
 				} else if( rsd.path_distance(atm1,atm2) == 4 ){
@@ -287,12 +316,10 @@ void FACTSRsdTypeInfo::initialize_intrasolv( chemical::ResidueType const & rsd )
 				} else {
 					intra_solv_scale_[atm1][atm2] = intsc_solv_scale[3];
 				}
-				//} else {
-				//intra_solv_scale_[atm1][atm2] = 0.0;
 			}
-    }
-  }
-  
+		}
+	}
+
   // Plane rule overrides 
   for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 ){
     for( Size atm2 = 1; atm2 <= rsd.natoms(); ++atm2 ){
@@ -329,14 +356,16 @@ void FACTSRsdTypeInfo::initialize_intrasolv( chemical::ResidueType const & rsd )
 					}
       }
 
-			/*
       if( plane_to_self && rsd.aa() == core::chemical::aa_his ) {
-				// Add all pairs in D or E position
-				if( ( rsd.atom_name(atm1).compare( 2, 1, "D" ) == 0 || rsd.atom_name(atm1).compare( 2, 1, "E" ) == 0)&&
-						( rsd.atom_name(atm2).compare( 2, 1, "D" ) == 0 || rsd.atom_name(atm2).compare( 2, 1, "E" ) == 0) )
+				// Add all pairs in G or D or E position
+				if( 
+					 (( rsd.atom_name(atm1).compare( 2, 1, "G" ) == 0 || rsd.atom_name(atm1).compare( 2, 1, "D" ) == 0)&&
+						rsd.atom_name(atm1).compare( 2, 1, "E" ) == 0 ) &&
+					 (( rsd.atom_name(atm2).compare( 2, 1, "G" ) == 0 || rsd.atom_name(atm2).compare( 2, 1, "D" ) == 0)&&
+						rsd.atom_name(atm2).compare( 2, 1, "E" ) == 0 )
+						)
 					intra_solv_scale_[atm1][atm2] = 1.0;
       }
-			*/
 
 			if( plane_to_self && rsd.aa() == core::chemical::aa_gln ) {
 				// Add all pairs in E position
@@ -390,6 +419,8 @@ void FACTSRsdTypeInfo::initialize_intraelec( chemical::ResidueType const & rsd )
 
 	utility::vector1< Real > const intbb_elec_scale =
 		basic::options::option[ basic::options::OptionKeys::score::facts_intbb_elec_scale ]();
+	utility::vector1< Real > const intbs_elec_scale =
+		basic::options::option[ basic::options::OptionKeys::score::facts_intbs_elec_scale ]();
 	utility::vector1< Real > const intsc_elec_scale =
 		basic::options::option[ basic::options::OptionKeys::score::facts_intsc_elec_scale ]();
 
@@ -412,7 +443,28 @@ void FACTSRsdTypeInfo::initialize_intraelec( chemical::ResidueType const & rsd )
 					intra_elec_scale_[atm1][atm2] = intbb_elec_scale[3];
 				}
 				
-      } else {//if( rsd.atom_is_backbone( atm1 ) || rsd.atom_is_backbone( atm2 ) ){
+      } else if( rsd.atom_is_backbone( atm1 ) || rsd.atom_is_backbone( atm2 ) ){
+				// aa_specific rules
+				/*
+				if( rsd.aa() == core::chemical::aa_asp ){
+					if( rsd.path_distance(atm1,atm2) == 3 ){
+						intra_elec_scale_[atm1][atm2] = 0.0;
+					} else if( rsd.path_distance(atm1,atm2) == 4 ){
+						intra_elec_scale_[atm1][atm2] = 0.2;
+					} else {
+						intra_elec_scale_[atm1][atm2] = 0.5;
+					}
+				} else
+				*/
+
+				if( rsd.path_distance(atm1,atm2) == 3 ){
+					intra_elec_scale_[atm1][atm2] = intbs_elec_scale[1];
+				} else if( rsd.path_distance(atm1,atm2) == 4 ){
+					intra_elec_scale_[atm1][atm2] = intbs_elec_scale[2];
+				} else {
+					intra_elec_scale_[atm1][atm2] = intbs_elec_scale[3];
+				}
+      } else {
 				if( rsd.path_distance(atm1,atm2) == 3 ){
 					intra_elec_scale_[atm1][atm2] = intsc_elec_scale[1];
 				} else if( rsd.path_distance(atm1,atm2) == 4 ){
@@ -420,60 +472,10 @@ void FACTSRsdTypeInfo::initialize_intraelec( chemical::ResidueType const & rsd )
 				} else {
 					intra_elec_scale_[atm1][atm2] = intsc_elec_scale[3];
 				}
-				//} else {
-				//intra_elec_scale_[atm1][atm2] = 0.0;
 			}
 		}
 
 	}
-
-	/*
-  Real const scale( 0.3 );
-  Real const scaleH( scale );
-  Real const scaleN( scale*0.5 );
-  
-  // Exceptional cases starts...
-  
-  // 1. Prevent Hbonding of HG associated with unfavorable intrares H-HG 
-  // This is not an overlap with fa_dun, since fa_dun has nothing to do with sp3 HG rotation
-  // Not necessary for TYR H-HH as it is sterically impossible
-  if( rsd.aa() == core::chemical::aa_ser && rsd.has( "H" ) ){
-    Size const atmN( rsd.atom_index("N") );
-    Size const atmH( rsd.atom_index("H") );
-    Size const atmHG( rsd.atom_index("HG") );
-    //Real const qN( std::abs(rsd.atomic_charge( atmN )) );
-    //Real const qH( std::abs(rsd.atomic_charge( atmH )) );
-    
-    // Rescale relative strength not to disturb rotamer probability
-    // Relative scale between H and N, 0.5, gives very weak net attraction when HG & N-H dipole are aligned optimally
-    // but this effect can be neglected as much stronger HG - C will also occur
-    // On the other hand, HG ...  H-N interaction will be penalized by > 1.0 kcal/mol when 0.25 weight is used.
-    //Real const scaleN( scale*qH/qN );
-    
-    intra_elec_scale_[atmN][atmHG] = scaleN;
-    intra_elec_scale_[atmHG][atmN] = scaleN;
-    
-    intra_elec_scale_[atmH][atmHG] = scaleH;
-    intra_elec_scale_[atmHG][atmH] = scaleH;
-  }
-  
-  if ( rsd.aa() == core::chemical::aa_thr && rsd.has( "H" ) ){
-    Size const atmN( rsd.atom_index("N") );
-    Size const atmH( rsd.atom_index("H") );
-    Size const atmHG( rsd.atom_index("HG1") );
-    //Real const qN( std::abs(rsd.atomic_charge( atmN )) );
-    //Real const qH( std::abs(rsd.atomic_charge( atmH )) );
-
-    // Rescale relative strength not to disturb rotamer probability
-    intra_elec_scale_[atmN][atmHG] = scaleN;
-    intra_elec_scale_[atmHG][atmN] = scaleN;
-
-    intra_elec_scale_[atmH][atmHG] = scaleH;
-    intra_elec_scale_[atmHG][atmH] = scaleH;
-
-  }
-	*/
-
 }
   
 /// FACTSRsdTypeInfo

@@ -211,8 +211,8 @@ private:
 	inline Real GBPair_cut() const { return GBpair_cut_; };
 	inline Real adjbb_elec_scale( Size const i ) const { return adjbb_elec_scale_[i]; }
 	inline Real adjbb_solv_scale( Size const i ) const { return adjbb_solv_scale_[i]; }
-	inline Real adjsc_elec_scale( Size const i ) const { return adjsc_elec_scale_[i]; }
-	inline Real adjsc_solv_scale( Size const i ) const { return adjsc_solv_scale_[i]; }
+	inline Real adjbs_elec_scale( Size const i ) const { return adjbs_elec_scale_[i]; }
+	inline Real adjbs_solv_scale( Size const i ) const { return adjbs_solv_scale_[i]; }
 
 private: //list of private variables and parameters for the FACTS method common to all atoms
 
@@ -230,8 +230,8 @@ private: //list of private variables and parameters for the FACTS method common 
 
 	utility::vector1< Real > adjbb_elec_scale_;
 	utility::vector1< Real > adjbb_solv_scale_;
-	utility::vector1< Real > adjsc_elec_scale_;
-	utility::vector1< Real > adjsc_solv_scale_;
+	utility::vector1< Real > adjbs_elec_scale_;
+	utility::vector1< Real > adjbs_solv_scale_;
 
 	Real saltbridge_correction_;
 	Real dshift2_;

@@ -724,10 +724,10 @@ option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix 
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
 option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
+option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
-option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
 option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
 option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
 option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
@@ -881,7 +881,7 @@ option.add( basic::options::OptionKeys::score::smooth_fa_elec, "Smooth the disco
 option.add( basic::options::OptionKeys::score::facts_GBpair_cut, "GBpair interaction distance cutoff (same as elec_max_dis)" ).def(10.0);
 option.add( basic::options::OptionKeys::score::facts_kappa, "GBpair interaction screening factor" ).def(12.0);
 option.add( basic::options::OptionKeys::score::facts_apprx, "Use approximated function form for GBpair calculation in FACTS" ).def(false);
-option.add( basic::options::OptionKeys::score::facts_asp_patch, "AtomicSolvationParameter set for nonpolar interaction in FACTS" ).def(1);
+option.add( basic::options::OptionKeys::score::facts_asp_patch, "AtomicSolvationParameter set for nonpolar interaction in FACTS" ).def(3);
 option.add( basic::options::OptionKeys::score::facts_plane_to_self, "Add atoms in same plane to self energy pairs" ).def(true);
 option.add( basic::options::OptionKeys::score::facts_saltbridge_correction, "FACTS Self energy parameter scaling factor for polarH" ).def(1.0);
 option.add( basic::options::OptionKeys::score::facts_dshift, "FACTS pair term denominator distance shift" ).def(1.5);
@@ -889,12 +889,14 @@ option.add( basic::options::OptionKeys::score::facts_dshift_sb, "FACTS pair term
 option.add( basic::options::OptionKeys::score::facts_die, "FACTS dielectric constant" ).def(1.0);
 option.add( basic::options::OptionKeys::score::facts_intbb_elec_scale, "FACTS Coulomb scale for intrares bonded pairs: [1-4, 1-5, >1-5]" ).def(0.7).def(1.0).def(1.0);
 option.add( basic::options::OptionKeys::score::facts_intbb_solv_scale, "FACTS GB scale for intrares bonded pairs: [1-4, 1-5, >1-5]" ).def(1.0).def(1.0).def(1.0);
-option.add( basic::options::OptionKeys::score::facts_intsc_elec_scale, "FACTS Coulomb scale for intrares bonded pairs: [1-4, 1-5, >1-5]" ).def(1.0).def(1.0).def(1.0);
-option.add( basic::options::OptionKeys::score::facts_intsc_solv_scale, "FACTS GB scale for intrares bonded pairs: [1-4, 1-5, >1-5]" ).def(1.0).def(1.0).def(1.0);
-option.add( basic::options::OptionKeys::score::facts_adjbb_elec_scale, "FACTS Coulomb scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.8).def(0.8).def(1.0).def(1.0).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_adjbb_elec_scale, "FACTS Coulomb scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(1.0).def(1.0).def(1.0).def(1.0).def(1.0);
 option.add( basic::options::OptionKeys::score::facts_adjbb_solv_scale, "FACTS GB scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(1.0).def(1.0).def(1.0).def(1.0).def(1.0);
-option.add( basic::options::OptionKeys::score::facts_adjsc_elec_scale, "FACTS Coulomb scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.8).def(0.8).def(1.0).def(1.0).def(1.0);
-option.add( basic::options::OptionKeys::score::facts_adjsc_solv_scale, "FACTS GB scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(1.0).def(1.0).def(1.0).def(1.0).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_intbs_elec_scale, "FACTS Coulomb scale for intrares bb-sc bonded pairs: [1-4, 1-5, >1-5]" ).def(0.0).def(0.2).def(0.6);
+option.add( basic::options::OptionKeys::score::facts_intbs_solv_scale, "FACTS GB scale for intrares bb-sc bonded pairs: [1-4, 1-5, >1-5]" ).def(1.0).def(0.2).def(0.6);
+option.add( basic::options::OptionKeys::score::facts_adjbs_elec_scale, "FACTS Coulomb scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(0.0).def(0.2).def(0.6).def(0.6).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_adjbs_solv_scale, "FACTS GB scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]" ).def(1.0).def(0.2).def(0.6).def(0.6).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_intsc_elec_scale, "FACTS Coulomb scale for intrares sc-sc pairs: [1-4, 1-5, >1-5]" ).def(0.0).def(0.0).def(0.0);
+option.add( basic::options::OptionKeys::score::facts_intsc_solv_scale, "FACTS GB scale for intrares sc-sc pairs: [1-4, 1-5, >1-5]" ).def(1.0).def(0.0).def(0.0);
 option.add( basic::options::OptionKeys::score::facts_charge_dir, "directory where residue topology files for FACTS charge are stored" ).def("scoring/score_functions/facts");
 option.add( basic::options::OptionKeys::score::facts_eff_charge_dir, "directory where residue topology files for FACTS charge are stored" ).def("scoring/score_functions/facts/eff");
 option.add( basic::options::OptionKeys::score::nmer_ref_energies, "nmer ref energies database filename" );
@@ -2170,7 +2172,6 @@ option.add( basic::options::OptionKeys::optE::recover_nat_rot, "With the iterati
 option.add( basic::options::OptionKeys::optE::component_weights, "With the iterative optE driver, weight the individual components according to the input file -- default weight of 1 for all components.  Weight file consists of component-name/weight pairs on separate lines: e.g. prob_native_structure 100.0" );
 option.add( basic::options::OptionKeys::optE::optimize_nat_aa, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer" );
 option.add( basic::options::OptionKeys::optE::optimize_nat_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer in the native context" );
-
 }
 inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optimize_ligand_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer around the ligand" );
 option.add( basic::options::OptionKeys::optE::optimize_pssm, "With the iterative optE driver, optimize weights to maximize the match between a BLAST generated pssm probabillity distribution" );

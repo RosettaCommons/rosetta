@@ -1,7 +1,7 @@
 METHOD_WEIGHTS ref 0.236542 0.0545934 -0.49922 -0.646135 1.13017 -0.335874 0.929098 0.451403 -0.435774 0.197928 -0.165723 -0.75438 -0.631685 -0.742373 -0.86556 -0.259817 -0.18386 0.364444 1.30093 0.855296
 fa_atr 0.8
 fa_rep 0.80
-fa_intra_rep 0.1
+fa_intra_rep 0.05
 facts_elec 0.25
 facts_solv 0.25
 facts_sasa 1.0
@@ -9,8 +9,8 @@ pro_close 1
 dslf_fa13 1.0
 rama 0.20
 omega 1.0
-fa_dun_rot 0.40
-fa_dun_semi 0.40
+fa_dun_rot 0.56
+fa_dun_semi 0.56
 fa_dun_dev 0.25
 ref 1
 cart_bonded 0.8

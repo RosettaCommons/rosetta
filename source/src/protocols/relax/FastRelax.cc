@@ -796,6 +796,12 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				set_constraint_weight( local_scorefxn, full_weights, cmd.param3 );
 			}
 
+			// The fourth paramter is the minimization 
+			if( cmd.nparams >= 4 ){
+				Size const iter_cmd = (Size)(cmd.param4);
+				max_iter( iter_cmd );
+			}
+
 			// decide when to call ramady repair code
 			if( total_repeat_count > 1 && repeat_count > 2 ){
 				if( cmd.param1 < 0.2 ){
@@ -1027,6 +1033,27 @@ void FastRelax::read_script_file( const std::string &script_file, core::Size sta
     filelines.push_back( "ramp_repack_min 1     0.00001  1.0"      );
     filelines.push_back( "accept_to_best"                  );
     filelines.push_back( "endrepeat "                      );
+		/*
+	}else if (script_file == "NO CST RAMPING" && basic::options::option[ basic::options::OptionKeys::relax::dualfaster ]() ){
+    TR << "================== Using faster dualspace script ==================" << std::endl;
+    filelines.push_back( "switch:torsion"                  );
+    filelines.push_back( "repeat 3"                                );
+    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0  50"  );
+    filelines.push_back( "ramp_repack_min 0.250 0.01     1.0  50"  );
+    filelines.push_back( "ramp_repack_min 0.550 0.01     1.0 100"  );
+    filelines.push_back( "ramp_repack_min 1     0.00001  1.0 200"  );
+    filelines.push_back( "accept_to_best"                  );
+    filelines.push_back( "endrepeat "                      );
+
+    filelines.push_back( "switch:cartesian"                  );
+    filelines.push_back( "repeat 2"                                );
+    filelines.push_back( "ramp_repack_min 0.02  0.01     1.0  50"  );
+    filelines.push_back( "ramp_repack_min 0.250 0.01     1.0  50"  );
+    filelines.push_back( "ramp_repack_min 0.550 0.01     1.0 100"  );
+    filelines.push_back( "ramp_repack_min 1     0.00001  1.0 200"  );
+    filelines.push_back( "accept_to_best"                  );
+    filelines.push_back( "endrepeat "                      );
+		*/
 	}else if (script_file == "NO CST RAMPING"){
 		TR << "================== Using default script ==================" << std::endl;
 		filelines.push_back( "repeat " + string_of( standard_repeats )  );

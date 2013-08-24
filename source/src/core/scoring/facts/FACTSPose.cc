@@ -160,6 +160,11 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 	Energies const & energies( pose.energies() );
 	EnergyGraph const & energy_graph( energies.energy_graph() );
 	
+	// use minimization graph instead!
+	
+
+	// Old way - use coordinate
+	/*
 	// First check change in coordinate in residue level
 	for( Size ires = 1; ires <= pose.total_residue(); ++ ires ){
 		
@@ -188,6 +193,7 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 			}
 		}
 	}
+	*/
 
 	// Decide whether to expand enumeration to the second shell:
 	// say A-B-C where A,B,C are residues and A-B < 10 A, B-C < 10 A, A-C > 10 A

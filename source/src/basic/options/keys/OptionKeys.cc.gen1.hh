@@ -1,4 +1,3 @@
-namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
 namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
 namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
 namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pair_jump_file" );  }
@@ -161,12 +160,14 @@ namespace score { RealOptionKey const facts_dshift_sb( "score:facts_dshift_sb" )
 namespace score { RealOptionKey const facts_die( "score:facts_die" );  }
 namespace score { RealVectorOptionKey const facts_intbb_elec_scale( "score:facts_intbb_elec_scale" );  }
 namespace score { RealVectorOptionKey const facts_intbb_solv_scale( "score:facts_intbb_solv_scale" );  }
-namespace score { RealVectorOptionKey const facts_intsc_elec_scale( "score:facts_intsc_elec_scale" );  }
-namespace score { RealVectorOptionKey const facts_intsc_solv_scale( "score:facts_intsc_solv_scale" );  }
 namespace score { RealVectorOptionKey const facts_adjbb_elec_scale( "score:facts_adjbb_elec_scale" );  }
 namespace score { RealVectorOptionKey const facts_adjbb_solv_scale( "score:facts_adjbb_solv_scale" );  }
-namespace score { RealVectorOptionKey const facts_adjsc_elec_scale( "score:facts_adjsc_elec_scale" );  }
-namespace score { RealVectorOptionKey const facts_adjsc_solv_scale( "score:facts_adjsc_solv_scale" );  }
+namespace score { RealVectorOptionKey const facts_intbs_elec_scale( "score:facts_intbs_elec_scale" );  }
+namespace score { RealVectorOptionKey const facts_intbs_solv_scale( "score:facts_intbs_solv_scale" );  }
+namespace score { RealVectorOptionKey const facts_adjbs_elec_scale( "score:facts_adjbs_elec_scale" );  }
+namespace score { RealVectorOptionKey const facts_adjbs_solv_scale( "score:facts_adjbs_solv_scale" );  }
+namespace score { RealVectorOptionKey const facts_intsc_elec_scale( "score:facts_intsc_elec_scale" );  }
+namespace score { RealVectorOptionKey const facts_intsc_solv_scale( "score:facts_intsc_solv_scale" );  }
 namespace score { StringOptionKey const facts_charge_dir( "score:facts_charge_dir" );  }
 namespace score { StringOptionKey const facts_eff_charge_dir( "score:facts_eff_charge_dir" );  }
 namespace score { StringOptionKey const nmer_ref_energies( "score:nmer_ref_energies" );  }
