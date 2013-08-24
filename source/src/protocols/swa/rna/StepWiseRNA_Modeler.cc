@@ -51,8 +51,6 @@ namespace rna {
 		sampler_native_screen_rmsd_cutoff_( 2.0 ),
 		cluster_rmsd_( 0.5 ),
 		native_edensity_score_cutoff_( -1 ),
-		fast_( false ),
-		medium_fast_( false ),
 		sampler_native_rmsd_screen_( false ),
 		o2star_screen_( true ),
 		verbose_( false ),
@@ -81,15 +79,12 @@ namespace rna {
 		allow_bulge_at_chainbreak_( false ),
 		parin_favorite_output_( false ),
 		floating_base_( false ),
-		include_syn_chi_( true ),
 		reinitialize_CCD_torsions_( false ),
 		sampler_extra_epsilon_rotamer_( false ),
 		sampler_extra_beta_rotamer_( false ),
 		sample_both_sugar_base_rotamer_( false ),
 		sampler_include_torsion_value_in_tag_( false ),
 		rebuild_bulge_mode_( false ),
-		debug_epsilon_south_sugar_mode_( false ),
-		exclude_alpha_beta_gamma_sampling_( false ),
 		combine_long_loop_mode_( false ),
 		do_not_sample_multiple_virtual_sugar_( false ),
 		sample_ONLY_multiple_virtual_sugar_( false ),
@@ -127,8 +122,6 @@ namespace rna {
 		stepwise_rna_residue_sampler.set_silent_file ( silent_file_ + "_sampling" );
 		stepwise_rna_residue_sampler.set_scorefxn ( scorefxn_ );
 		stepwise_rna_residue_sampler.set_num_pose_kept ( sampler_num_pose_kept_ );
-		stepwise_rna_residue_sampler.set_fast ( fast_ );
-		stepwise_rna_residue_sampler.set_medium_fast ( medium_fast_ );
 		stepwise_rna_residue_sampler.set_native_rmsd_screen ( sampler_native_rmsd_screen_ );
 		stepwise_rna_residue_sampler.set_native_screen_rmsd_cutoff ( sampler_native_screen_rmsd_cutoff_ );
 		stepwise_rna_residue_sampler.set_perform_o2star_pack ( o2star_screen_ );
@@ -139,8 +132,7 @@ namespace rna {
 		stepwise_rna_residue_sampler.set_PBP_clustering_at_chain_closure ( PBP_clustering_at_chain_closure_ );
 		stepwise_rna_residue_sampler.set_allow_syn_pyrimidine( allow_syn_pyrimidine_ );
 		stepwise_rna_residue_sampler.set_extra_chi( extra_chi_ );
-		if ( use_phenix_geo_ ) utility_exit_with_message( "use_phenix_geo_ is not in normal SWA yet!" );
-		//		stepwise_rna_residue_sampler.set_use_phenix_geo ( use_phenix_geo_  );
+		stepwise_rna_residue_sampler.set_use_phenix_geo ( use_phenix_geo_  );
 		stepwise_rna_residue_sampler.set_centroid_screen ( centroid_screen_ );
 		stepwise_rna_residue_sampler.set_VDW_atr_rep_screen ( VDW_atr_rep_screen_ );
 		stepwise_rna_residue_sampler.set_force_centroid_interaction ( force_centroid_interaction_ );
@@ -150,15 +142,12 @@ namespace rna {
 		stepwise_rna_residue_sampler.set_allow_bulge_at_chainbreak( allow_bulge_at_chainbreak_ );
 		stepwise_rna_residue_sampler.set_parin_favorite_output( parin_favorite_output_ );
 		stepwise_rna_residue_sampler.set_floating_base( floating_base_ );
-		stepwise_rna_residue_sampler.set_include_syn_chi( include_syn_chi_ );
 		stepwise_rna_residue_sampler.set_reinitialize_CCD_torsions( reinitialize_CCD_torsions_ );
 		stepwise_rna_residue_sampler.set_extra_epsilon_rotamer( sampler_extra_epsilon_rotamer_ );
 		stepwise_rna_residue_sampler.set_extra_beta_rotamer( sampler_extra_beta_rotamer_ );
 		stepwise_rna_residue_sampler.set_sample_both_sugar_base_rotamer( sample_both_sugar_base_rotamer_ ); //Nov 12, 2010
 		stepwise_rna_residue_sampler.set_include_torsion_value_in_tag( sampler_include_torsion_value_in_tag_ );
 		stepwise_rna_residue_sampler.set_rebuild_bulge_mode( rebuild_bulge_mode_ );
-		stepwise_rna_residue_sampler.set_debug_epsilon_south_sugar_mode( debug_epsilon_south_sugar_mode_ );
-		stepwise_rna_residue_sampler.set_exclude_alpha_beta_gamma_sampling( exclude_alpha_beta_gamma_sampling_ );
 		stepwise_rna_residue_sampler.set_combine_long_loop_mode( combine_long_loop_mode_ );
 		stepwise_rna_residue_sampler.set_do_not_sample_multiple_virtual_sugar( do_not_sample_multiple_virtual_sugar_ );
 		stepwise_rna_residue_sampler.set_sample_ONLY_multiple_virtual_sugar( sample_ONLY_multiple_virtual_sugar_ );

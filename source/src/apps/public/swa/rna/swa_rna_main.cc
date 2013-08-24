@@ -165,9 +165,7 @@ OPT_KEY( Boolean, filter_for_previous_contact )
 OPT_KEY( Boolean, filter_for_previous_clash )
 OPT_KEY( Boolean, filterer_undercount_ribose_rotamers )
 OPT_KEY( Boolean, combine_helical_silent_file )
-OPT_KEY( Boolean, exclude_alpha_beta_gamma_sampling )
 OPT_KEY( Boolean, minimize_and_score_sugar )
-OPT_KEY( Boolean, debug_epsilon_south_sugar_mode )
 OPT_KEY( Boolean, rebuild_bulge_mode )
 OPT_KEY( Boolean, sampler_include_torsion_value_in_tag )
 OPT_KEY( Boolean, sampler_extra_chi_rotamer )
@@ -190,7 +188,6 @@ OPT_KEY( Integer, clusterer_min_struct )
 OPT_KEY( Boolean, clusterer_write_score_only )
 OPT_KEY( Boolean, add_lead_zero_to_tag )
 OPT_KEY( Boolean, distinguish_pucker )
-OPT_KEY( Boolean, include_syn_chi  )
 OPT_KEY( Boolean, sampler_allow_syn_pyrimidine )
 OPT_KEY( IntegerVector, native_virtual_res  )
 OPT_KEY( Real, whole_struct_cluster_radius )
@@ -219,8 +216,6 @@ OPT_KEY( Boolean, centroid_screen )
 OPT_KEY( Boolean, allow_base_pair_only_centroid_screen )
 OPT_KEY( Boolean, VDW_atr_rep_screen )
 OPT_KEY( Boolean, sampler_perform_o2star_pack )
-OPT_KEY( Boolean, fast )
-OPT_KEY( Boolean, medium_fast )
 OPT_KEY( Boolean, allow_bulge_at_chainbreak )
 OPT_KEY( Boolean, VERBOSE )
 OPT_KEY( Boolean, sampler_native_rmsd_screen )
@@ -1010,6 +1005,7 @@ setup_pose_setup_class( protocols::swa::rna::StepWiseRNA_JobParametersOP & job_p
 	stepwise_rna_pose_setup->set_native_virtual_res( option[ native_virtual_res]() );
 	stepwise_rna_pose_setup->set_rebuild_bulge_mode( option[rebuild_bulge_mode]() );
 	stepwise_rna_pose_setup->set_output_pdb( option[ output_pdb ]() );
+	stepwise_rna_pose_setup->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 
 	return stepwise_rna_pose_setup;
 }
@@ -1082,23 +1078,23 @@ filter_combine_long_loop()
 	}
 
 
-	StepWiseRNA_CombineLongLoopFiltererOP stepwise_combine_long_loop_filterer = new StepWiseRNA_CombineLongLoopFilterer( job_parameters_COP, option[combine_helical_silent_file] );
+	StepWiseRNA_CombineLongLoopFilterer stepwise_combine_long_loop_filterer( job_parameters_COP, option[combine_helical_silent_file] );
 
-	stepwise_combine_long_loop_filterer->set_max_decoys( option[clusterer_num_pose_kept]() ); //Updated on Jan 12, 2012
+	stepwise_combine_long_loop_filterer.set_max_decoys( option[clusterer_num_pose_kept]() ); //Updated on Jan 12, 2012
 
-	stepwise_combine_long_loop_filterer->set_silent_files_in( silent_files_in );
-	stepwise_combine_long_loop_filterer->set_output_filename( output_filename );
+	stepwise_combine_long_loop_filterer.set_silent_files_in( silent_files_in );
+	stepwise_combine_long_loop_filterer.set_output_filename( output_filename );
 
 	//Remove score filtering on Jan 12, 2012
 
-	stepwise_combine_long_loop_filterer->set_filter_for_previous_contact( option[filter_for_previous_contact] );
-	stepwise_combine_long_loop_filterer->set_filter_for_previous_clash( option[filter_for_previous_clash] );
-	stepwise_combine_long_loop_filterer->set_undercount_ribose_rotamers( option[filterer_undercount_ribose_rotamers] );
+	stepwise_combine_long_loop_filterer.set_filter_for_previous_contact( option[filter_for_previous_contact] );
+	stepwise_combine_long_loop_filterer.set_filter_for_previous_clash( option[filter_for_previous_clash] );
+	stepwise_combine_long_loop_filterer.set_undercount_ribose_rotamers( option[filterer_undercount_ribose_rotamers] );
 
 
-	stepwise_combine_long_loop_filterer->set_parin_favorite_output( option[ parin_favorite_output ]() );
+	stepwise_combine_long_loop_filterer.set_parin_favorite_output( option[ parin_favorite_output ]() );
 
-	stepwise_combine_long_loop_filterer->filter();
+	stepwise_combine_long_loop_filterer.filter();
 
 }
 
@@ -1217,81 +1213,72 @@ swa_rna_sample()
 
 	// Most of the following exactly matches ERRASER_Modeler setup in swa_rna_analytical_closure. Get rid of that other file!!
 	Size const working_moving_res = job_parameters_COP->working_moving_res();
-	StepWiseRNA_ModelerOP stepwise_rna_modeler = new StepWiseRNA_Modeler( working_moving_res, scorefxn );
+	StepWiseRNA_Modeler stepwise_rna_modeler( working_moving_res, scorefxn );
 
-	stepwise_rna_modeler->set_job_parameters( job_parameters );
+	stepwise_rna_modeler.set_job_parameters( job_parameters );
 
 	// NOTE: Still need to put in minimize_res & fixed_res !?
-	stepwise_rna_modeler->set_native_pose( native_pose );
-	stepwise_rna_modeler->set_silent_file( option[ out::file::silent  ] );
-	stepwise_rna_modeler->set_sampler_num_pose_kept ( option[ sampler_num_pose_kept ]() );
-	stepwise_rna_modeler->set_fast ( option[ fast ]() );
-	stepwise_rna_modeler->set_medium_fast ( option[ medium_fast ]() );
-	// following should probably be 'reference pose' --> does not have to be native.
-	stepwise_rna_modeler->set_sampler_native_rmsd_screen ( option[ sampler_native_rmsd_screen ]() );
-	stepwise_rna_modeler->set_sampler_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() );
-	stepwise_rna_modeler->set_o2star_screen ( option[ sampler_perform_o2star_pack ]() );
-	stepwise_rna_modeler->set_verbose ( option[ VERBOSE ]() );
-	stepwise_rna_modeler->set_cluster_rmsd (	option[ sampler_cluster_rmsd ]()	);
-	stepwise_rna_modeler->set_distinguish_pucker ( option[ distinguish_pucker]() );
-	stepwise_rna_modeler->set_finer_sampling_at_chain_closure ( option[ finer_sampling_at_chain_closure]() );
-	stepwise_rna_modeler->set_PBP_clustering_at_chain_closure ( option[ PBP_clustering_at_chain_closure]() );
-	stepwise_rna_modeler->set_allow_syn_pyrimidine( option[ sampler_allow_syn_pyrimidine ]() );
-	stepwise_rna_modeler->set_extra_chi( option[ sampler_extra_chi_rotamer]() );
-	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
-	stepwise_rna_modeler->set_centroid_screen ( option[ centroid_screen ]() );
-	stepwise_rna_modeler->set_VDW_atr_rep_screen ( option[ VDW_atr_rep_screen ]() );
-	stepwise_rna_modeler->set_VDW_rep_screen_info ( option[ VDW_rep_screen_info ]() );
-	stepwise_rna_modeler->set_VDW_rep_alignment_RMSD_CUTOFF ( option[ VDW_rep_alignment_RMSD_CUTOFF ]() );
+	stepwise_rna_modeler.set_native_pose( native_pose );
+	stepwise_rna_modeler.set_silent_file( option[ out::file::silent  ] );
+	stepwise_rna_modeler.set_sampler_num_pose_kept ( option[ sampler_num_pose_kept ]() );
+	// following should probably be 'reference pose',  does not have to be native.
+	stepwise_rna_modeler.set_sampler_native_rmsd_screen ( option[ sampler_native_rmsd_screen ]() );
+	stepwise_rna_modeler.set_sampler_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() );
+	stepwise_rna_modeler.set_o2star_screen ( option[ sampler_perform_o2star_pack ]() );
+	stepwise_rna_modeler.set_verbose ( option[ VERBOSE ]() );
+	stepwise_rna_modeler.set_cluster_rmsd (	option[ sampler_cluster_rmsd ]()	);
+	stepwise_rna_modeler.set_distinguish_pucker ( option[ distinguish_pucker]() );
+	stepwise_rna_modeler.set_finer_sampling_at_chain_closure ( option[ finer_sampling_at_chain_closure]() );
+	stepwise_rna_modeler.set_PBP_clustering_at_chain_closure ( option[ PBP_clustering_at_chain_closure]() );
+	stepwise_rna_modeler.set_allow_syn_pyrimidine( option[ sampler_allow_syn_pyrimidine ]() );
+	stepwise_rna_modeler.set_extra_chi( option[ sampler_extra_chi_rotamer]() );
+	stepwise_rna_modeler.set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+	stepwise_rna_modeler.set_centroid_screen ( option[ centroid_screen ]() );
+	stepwise_rna_modeler.set_VDW_atr_rep_screen ( option[ VDW_atr_rep_screen ]() );
+	stepwise_rna_modeler.set_VDW_rep_screen_info ( option[ VDW_rep_screen_info ]() );
+	stepwise_rna_modeler.set_VDW_rep_alignment_RMSD_CUTOFF ( option[ VDW_rep_alignment_RMSD_CUTOFF ]() );
 	// should we have force_centroid_interaction as a swa option? or is it covered by something else?
-	//	stepwise_rna_modeler->set_force_centroid_interaction ( option[force_centroid_interaction]() );
-	stepwise_rna_modeler->set_choose_random( option[ choose_random ]()  );
-	stepwise_rna_modeler->set_num_random_samples( option[ num_random_samples ]() );
-	stepwise_rna_modeler->set_nstruct( option[ out::nstruct ]() );
-	stepwise_rna_modeler->set_skip_sampling( option[ skip_sampling ]() );
-	stepwise_rna_modeler->set_perform_minimize( option[ minimizer_perform_minimize ]() );
-	stepwise_rna_modeler->set_native_edensity_score_cutoff ( option[native_edensity_score_cutoff]() );
-	stepwise_rna_modeler->set_rm_virt_phosphate ( option[rm_virt_phosphate]() );
-	stepwise_rna_modeler->set_minimize_and_score_sugar ( option[ minimize_and_score_sugar ]() );
-	stepwise_rna_modeler->set_minimize_and_score_native_pose ( option[ minimize_and_score_native_pose ]() );
-	if ( option[ num_pose_minimize ].user() ) stepwise_rna_modeler->set_num_pose_minimize( option[ num_pose_minimize ]() );
-	stepwise_rna_modeler->set_output_minimized_pose_data_list( true );
+	//	stepwise_rna_modeler.set_force_centroid_interaction ( option[force_centroid_interaction]() );
+	stepwise_rna_modeler.set_choose_random( option[ choose_random ]()  );
+	stepwise_rna_modeler.set_num_random_samples( option[ num_random_samples ]() );
+	stepwise_rna_modeler.set_nstruct( option[ out::nstruct ]() );
+	stepwise_rna_modeler.set_skip_sampling( option[ skip_sampling ]() );
+	stepwise_rna_modeler.set_perform_minimize( option[ minimizer_perform_minimize ]() );
+	stepwise_rna_modeler.set_native_edensity_score_cutoff ( option[native_edensity_score_cutoff]() );
+	stepwise_rna_modeler.set_rm_virt_phosphate ( option[rm_virt_phosphate]() );
+	stepwise_rna_modeler.set_minimize_and_score_sugar ( option[ minimize_and_score_sugar ]() );
+	stepwise_rna_modeler.set_minimize_and_score_native_pose ( option[ minimize_and_score_native_pose ]() );
+	if ( option[ num_pose_minimize ].user() ) stepwise_rna_modeler.set_num_pose_minimize( option[ num_pose_minimize ]() );
+	stepwise_rna_modeler.set_output_minimized_pose_data_list( true );
 
 	// newer options, not yet shared with ERRASER modeler. I think.
-	stepwise_rna_modeler->set_VDW_rep_delete_matching_res ( option[ VDW_rep_delete_matching_res ]() );
-	stepwise_rna_modeler->set_VDW_rep_screen_physical_pose_clash_dist_cutoff ( option[ VDW_rep_screen_physical_pose_clash_dist_cutoff ]() );
-	stepwise_rna_modeler->set_integration_test_mode( option[ integration_test ]() ); //Should set after setting sampler_native_screen_rmsd_cutoff, fast, medium_fast options.
-	stepwise_rna_modeler->set_allow_bulge_at_chainbreak( option[ allow_bulge_at_chainbreak ]() );
-	stepwise_rna_modeler->set_parin_favorite_output( option[ parin_favorite_output ]() );
-	stepwise_rna_modeler->set_floating_base( option[ floating_base ]() );
-	stepwise_rna_modeler->set_include_syn_chi( option[ include_syn_chi ]() );
-	stepwise_rna_modeler->set_reinitialize_CCD_torsions( option[ reinitialize_CCD_torsions]() );
-	stepwise_rna_modeler->set_sampler_extra_epsilon_rotamer( option[ sampler_extra_epsilon_rotamer]() );
-	stepwise_rna_modeler->set_sampler_extra_beta_rotamer( option[ sampler_extra_beta_rotamer]() );
-	stepwise_rna_modeler->set_sample_both_sugar_base_rotamer( option[ sample_both_sugar_base_rotamer]() ); //Nov 12, 2010
-	stepwise_rna_modeler->set_sampler_include_torsion_value_in_tag( option[ sampler_include_torsion_value_in_tag]() );
-	stepwise_rna_modeler->set_rebuild_bulge_mode( option[ rebuild_bulge_mode ]() );
-	stepwise_rna_modeler->set_debug_epsilon_south_sugar_mode( option[ debug_epsilon_south_sugar_mode ]() );
-	stepwise_rna_modeler->set_exclude_alpha_beta_gamma_sampling( option[ exclude_alpha_beta_gamma_sampling ]() );
-	stepwise_rna_modeler->set_combine_long_loop_mode( option[ combine_long_loop_mode]() );
-	stepwise_rna_modeler->set_do_not_sample_multiple_virtual_sugar( option[ do_not_sample_multiple_virtual_sugar]() );
-	stepwise_rna_modeler->set_sample_ONLY_multiple_virtual_sugar( option[ sample_ONLY_multiple_virtual_sugar]() );
-	stepwise_rna_modeler->set_sampler_assert_no_virt_ribose_sampling( option[ sampler_assert_no_virt_ribose_sampling ]() );
-	stepwise_rna_modeler->set_allow_base_pair_only_centroid_screen( option[ allow_base_pair_only_centroid_screen ]() );
+	stepwise_rna_modeler.set_VDW_rep_delete_matching_res ( option[ VDW_rep_delete_matching_res ]() );
+	stepwise_rna_modeler.set_VDW_rep_screen_physical_pose_clash_dist_cutoff ( option[ VDW_rep_screen_physical_pose_clash_dist_cutoff ]() );
+	stepwise_rna_modeler.set_integration_test_mode( option[ integration_test ]() ); //Should set after setting sampler_native_screen_rmsd_cutoff, fast, medium_fast options.
+	stepwise_rna_modeler.set_allow_bulge_at_chainbreak( option[ allow_bulge_at_chainbreak ]() );
+	stepwise_rna_modeler.set_parin_favorite_output( option[ parin_favorite_output ]() );
+	stepwise_rna_modeler.set_floating_base( option[ floating_base ]() );
+	stepwise_rna_modeler.set_reinitialize_CCD_torsions( option[ reinitialize_CCD_torsions]() );
+	stepwise_rna_modeler.set_sampler_extra_epsilon_rotamer( option[ sampler_extra_epsilon_rotamer]() );
+	stepwise_rna_modeler.set_sampler_extra_beta_rotamer( option[ sampler_extra_beta_rotamer]() );
+	stepwise_rna_modeler.set_sample_both_sugar_base_rotamer( option[ sample_both_sugar_base_rotamer]() ); //Nov 12, 2010
+	stepwise_rna_modeler.set_sampler_include_torsion_value_in_tag( option[ sampler_include_torsion_value_in_tag]() );
+	stepwise_rna_modeler.set_rebuild_bulge_mode( option[ rebuild_bulge_mode ]() );
+	stepwise_rna_modeler.set_combine_long_loop_mode( option[ combine_long_loop_mode]() );
+	stepwise_rna_modeler.set_do_not_sample_multiple_virtual_sugar( option[ do_not_sample_multiple_virtual_sugar]() );
+	stepwise_rna_modeler.set_sample_ONLY_multiple_virtual_sugar( option[ sample_ONLY_multiple_virtual_sugar]() );
+	stepwise_rna_modeler.set_sampler_assert_no_virt_ribose_sampling( option[ sampler_assert_no_virt_ribose_sampling ]() );
+	stepwise_rna_modeler.set_allow_base_pair_only_centroid_screen( option[ allow_base_pair_only_centroid_screen ]() );
 
 	// this is new, not in ERRASER (swa_rna_analytical_closure)
-	stepwise_rna_modeler->set_minimizer_perform_o2star_pack( option[ minimizer_perform_o2star_pack ]() );
-	stepwise_rna_modeler->set_minimizer_output_before_o2star_pack( option[ minimizer_output_before_o2star_pack ]() );
-	stepwise_rna_modeler->set_minimizer_rename_tag( option[ minimizer_rename_tag ]() );
+	stepwise_rna_modeler.set_minimizer_perform_o2star_pack( option[ minimizer_perform_o2star_pack ]() );
+	stepwise_rna_modeler.set_minimizer_output_before_o2star_pack( option[ minimizer_output_before_o2star_pack ]() );
+	stepwise_rna_modeler.set_minimizer_rename_tag( option[ minimizer_rename_tag ]() );
 
 	// currently creates silent file -- instead we should be able to output those silent structs if we want them.
 	// probably should output best scoring pose, not whatever comes out randomly.
-	stepwise_rna_modeler->apply( pose );
-
-
+	stepwise_rna_modeler.apply( pose );
 }
-
-
 ///////////////////////////////////////////////////////////////
 void
 swa_rna_cluster(){
@@ -1938,8 +1925,6 @@ main( int argc, char * argv [] )
 	NEW_OPT( do_not_sample_multiple_virtual_sugar, " Samplerer: do_not_sample_multiple_virtual_sugar ", false );
 	NEW_OPT( sample_ONLY_multiple_virtual_sugar, " Samplerer: sample_ONLY_multiple_virtual_sugar ", false );
 	NEW_OPT( filterer_undercount_ribose_rotamers, "Undercount all ribose_rotamers as 1 count", false ); //July 29, 2011
-	NEW_OPT( exclude_alpha_beta_gamma_sampling, "Speed up the debug epsilon south sugar mode", false );
-	NEW_OPT( debug_epsilon_south_sugar_mode, "Check why when epsilon is roughly -160 and pucker is south, energy is not favorable", false );
 	// FCC: Not doing anythin now... Just for consistency with swa_analytical_closure
 	/////////
 	NEW_OPT( sampler_extra_chi_rotamer, "Samplerer: extra_syn_chi_rotamer", false );
@@ -1950,10 +1935,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( PBP_clustering_at_chain_closure, "Samplerer: PBP_clustering_at_chain_closure", false );
 	NEW_OPT( finer_sampling_at_chain_closure, "Samplerer: finer_sampling_at_chain_closure", false ); //Jun 9, 2010
 	NEW_OPT( sampler_include_torsion_value_in_tag, "Samplerer:include_torsion_value_in_tag", true );
-	NEW_OPT( include_syn_chi, "include_syn_chi", true ); //Change to true on Oct 10, 2010
 	NEW_OPT( sampler_allow_syn_pyrimidine, "sampler_allow_syn_pyrimidine", false ); //Nov 15, 2010
-	NEW_OPT( fast, "quick runthrough for debugging", false );
-	NEW_OPT( medium_fast, "quick runthrough for debugging ( keep more poses and not as fast as fast option )", false );
 	NEW_OPT( sampler_assert_no_virt_ribose_sampling, "sampler_assert_no_virt_ribose_sampling", false ); //July 28, 2011
 	NEW_OPT( centroid_screen, "centroid_screen", true );
 	NEW_OPT( allow_base_pair_only_centroid_screen, "allow_base_pair_only_centroid_screen", false ); //This only effect floating base sampling + dinucleotide.. deprecate option

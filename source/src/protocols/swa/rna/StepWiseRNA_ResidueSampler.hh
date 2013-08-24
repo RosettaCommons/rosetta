@@ -46,340 +46,318 @@ namespace protocols {
 namespace swa {
 namespace rna {
 
-	//	typedef std::map< std::string, core::pose::PoseOP > PoseList;
+class StepWiseRNA_ResidueSampler: public protocols::moves::Mover {
+public:
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  class StepWiseRNA_ResidueSampler: public protocols::moves::Mover {
-  public:
+	//constructor!
+	StepWiseRNA_ResidueSampler( StepWiseRNA_JobParametersCOP & job_parameters_ );
 
-    //constructor!
-		StepWiseRNA_ResidueSampler( StepWiseRNA_JobParametersCOP & job_parameters_ );
+	//destructor -- necessary?
+	~StepWiseRNA_ResidueSampler();
 
-    //destructor -- necessary?
-    ~StepWiseRNA_ResidueSampler();
+	/// @brief Apply the minimizer to one pose
+	virtual void apply( core::pose::Pose & pose_to_visualize );
 
-    /// @brief Apply the minimizer to one pose
-    virtual void apply( core::pose::Pose & pose_to_visualize );
+	virtual std::string get_name() const;
 
-		virtual std::string get_name() const;
+	void
+	set_centroid_screen( bool const setting ){ centroid_screen_ = setting; }
 
-		void
-		set_centroid_screen( bool const setting ){ centroid_screen_ = setting; }
+	void
+	set_allow_base_pair_only_centroid_screen( bool const setting ){ allow_base_pair_only_centroid_screen_ = setting; }
 
-		void
-		set_allow_base_pair_only_centroid_screen( bool const setting ){ allow_base_pair_only_centroid_screen_ = setting; }
+	void
+	set_VDW_atr_rep_screen( bool const setting ){ VDW_atr_rep_screen_ = setting; }
 
-		void
-		set_VDW_atr_rep_screen( bool const setting ){ VDW_atr_rep_screen_ = setting; }
+	void
+	set_silent_file( std::string const & setting );
 
-    void
-		set_silent_file( std::string const & setting );
+	void
+	set_output_filename( std::string const & output_filename );
 
-		void
-		set_output_filename( std::string const & output_filename );
+	void
+	set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
 
-		void
-		set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
+	void
+	set_native_rmsd_screen( bool const & setting );
 
-		void
-		set_fast( bool const & setting );
+	void
+	set_native_screen_rmsd_cutoff( core::Real const & setting );
 
-		void
-		set_medium_fast( bool const & setting );
+	void
+	set_integration_test_mode( bool const & setting );
 
-		void
-		set_native_rmsd_screen( bool const & setting );
+	void
+	set_verbose( bool const & setting );
 
-		void
-		set_native_screen_rmsd_cutoff( core::Real const & setting );
+	void
+	set_perform_o2star_pack( bool const & setting );
 
-		void
-		set_integration_test_mode( bool const & setting );
+	void
+	set_cluster_rmsd( core::Real const & setting );
 
-		void
-		set_verbose( bool const & setting );
+	void
+	set_allow_bulge_at_chainbreak( bool const & setting );
 
-		void
-		set_perform_o2star_pack( bool const & setting );
+	utility::vector1< pose_data_struct2 > &
+	get_pose_data_list();
 
-		void
-		set_cluster_rmsd( core::Real const & setting );
+	core::io::silent::SilentFileDataOP & silent_file_data();
 
-		void
-		set_allow_bulge_at_chainbreak( bool const & setting );
+	void output_pose_data_list( std::string const final_sampler_output_silent_file ) const;
 
-		utility::vector1< pose_data_struct2 > &
-		get_pose_data_list();
+	void set_num_pose_kept( core::Size const & num_pose_kept );
 
-		core::io::silent::SilentFileDataOP & silent_file_data();
+	void
+	set_base_centroid_screener( StepWiseRNA_BaseCentroidScreenerOP & screener );
 
-		void output_pose_data_list( std::string const final_sampler_output_silent_file ) const;
+	void
+	set_parin_favorite_output( bool const & setting ){ parin_favorite_output_ = setting ; }
 
-		void set_num_pose_kept( core::Size const & num_pose_kept );
+	void
+	set_floating_base( bool const & setting ){ floating_base_ = setting ; }
 
-		void
-		set_base_centroid_screener( StepWiseRNA_BaseCentroidScreenerOP & screener );
+	void
+	set_allow_syn_pyrimidine(  bool const & setting ){ allow_syn_pyrimidine_ = setting; }
 
-		void
-		set_parin_favorite_output( bool const & setting ){ parin_favorite_output_ = setting ; }
+	void
+	set_distinguish_pucker( bool const & setting ){ distinguish_pucker_ = setting ; }
 
-		void
-		set_floating_base( bool const & setting ){ floating_base_ = setting ; }
+	void
+	set_finer_sampling_at_chain_closure( bool const & setting ){ finer_sampling_at_chain_closure_ = setting; }
 
-		void
-		set_include_syn_chi( bool const & setting ){ include_syn_chi_ = setting ; }
+	void
+	set_PBP_clustering_at_chain_closure( bool const & setting ){ PBP_clustering_at_chain_closure_ = setting; }
 
-		void
-		set_allow_syn_pyrimidine(  bool const & setting ){ allow_syn_pyrimidine_ = setting; }
+	void
+	set_reinitialize_CCD_torsions( bool const & setting ){ reinitialize_CCD_torsions_ = setting; }
 
-		void
-		set_distinguish_pucker( bool const & setting ){ distinguish_pucker_ = setting ; }
+	void
+	set_user_input_VDW_bin_screener( StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener ){ user_input_VDW_bin_screener_ = user_input_VDW_bin_screener; }
 
-		void
-		set_finer_sampling_at_chain_closure( bool const & setting ){ finer_sampling_at_chain_closure_ = setting; }
+	void
+	set_extra_epsilon_rotamer( bool const & setting ){ extra_epsilon_rotamer_ = setting; }
 
-		void
-		set_PBP_clustering_at_chain_closure( bool const & setting ){ PBP_clustering_at_chain_closure_ = setting; }
+	void
+	set_extra_beta_rotamer( bool const & setting ){ extra_beta_rotamer_ = setting; }
 
-		void
-		set_reinitialize_CCD_torsions( bool const & setting ){ reinitialize_CCD_torsions_ = setting; }
+	void
+	set_extra_chi( bool const & setting ){ extra_chi_ = setting; }
 
-		void
-		set_user_input_VDW_bin_screener( StepWiseRNA_VDW_BinScreenerOP const & user_input_VDW_bin_screener ){ user_input_VDW_bin_screener_ = user_input_VDW_bin_screener; }
+	void
+	set_sample_both_sugar_base_rotamer( bool const & setting ){ sample_both_sugar_base_rotamer_ = setting; }
 
-		void
-		set_extra_epsilon_rotamer( bool const & setting ){ extra_epsilon_rotamer_ = setting; }
+	void
+	set_include_torsion_value_in_tag( bool const & setting ){ include_torsion_value_in_tag_ = setting; }
 
-		void
-		set_extra_beta_rotamer( bool const & setting ){ extra_beta_rotamer_ = setting; }
+	void
+	set_rebuild_bulge_mode( bool const & setting ){ rebuild_bulge_mode_ = setting; }
 
-		void
-		set_extra_chi( bool const & setting ){ extra_chi_ = setting; }
+	void
+	set_combine_long_loop_mode( bool const & setting ){ combine_long_loop_mode_ = setting; }
 
-		void
-		set_sample_both_sugar_base_rotamer( bool const & setting ){ sample_both_sugar_base_rotamer_ = setting; }
+	void
+	set_do_not_sample_multiple_virtual_sugar( bool const & setting ){ do_not_sample_multiple_virtual_sugar_ = setting; }
 
-		void
-		set_include_torsion_value_in_tag( bool const & setting ){ include_torsion_value_in_tag_ = setting; }
+	void
+	set_sample_ONLY_multiple_virtual_sugar( bool const & setting ){ sample_ONLY_multiple_virtual_sugar_ = setting; }
 
-		void
-		set_rebuild_bulge_mode( bool const & setting ){ rebuild_bulge_mode_ = setting; }
+	void
+	set_assert_no_virt_ribose_sampling( bool const & setting ){ assert_no_virt_ribose_sampling_ = setting; }
 
-		void
-		set_debug_epsilon_south_sugar_mode( bool const & setting ){ debug_epsilon_south_sugar_mode_ = setting; }
+	void
+	set_output_pdb( bool const setting ){ output_pdb_ = setting; }
 
-		void
-		set_exclude_alpha_beta_gamma_sampling( bool const & setting ){ exclude_alpha_beta_gamma_sampling_ = setting; }
+	void
+	set_choose_random( bool const & setting ) {	choose_random_ = setting;	}
 
-		void
-		set_combine_long_loop_mode( bool const & setting ){ combine_long_loop_mode_ = setting; }
+	void
+	set_num_random_samples( Size const & setting ){ num_random_samples_ = setting; }
 
-		void
-		set_do_not_sample_multiple_virtual_sugar( bool const & setting ){ do_not_sample_multiple_virtual_sugar_ = setting; }
+	void
+	set_force_centroid_interaction ( bool const & setting ) {		force_centroid_interaction_ = setting;	}
 
-		void
-		set_sample_ONLY_multiple_virtual_sugar( bool const & setting ){ sample_ONLY_multiple_virtual_sugar_ = setting; }
+	void
+	set_use_phenix_geo( bool const & setting ) {	use_phenix_geo_ = setting;	}
 
-		void
-		set_assert_no_virt_ribose_sampling( bool const & setting ){ assert_no_virt_ribose_sampling_ = setting; }
 
-		void
-		set_output_pdb( bool const setting ){ output_pdb_ = setting; }
+private:
 
-		void
-		set_choose_random( bool const & setting ) {	choose_random_ = setting;	}
+	void
+	initialize_scorefunctions();
 
-		void
-		set_num_random_samples( Size const & setting ){ num_random_samples_ = setting; }
+	void
+	Copy_CCD_torsions( core::pose::Pose & pose, core::pose::Pose const & template_pose ) const;
 
-		void
-		set_force_centroid_interaction ( bool const & setting ) {		force_centroid_interaction_ = setting;	}
+	void
+	Copy_CCD_torsions_general( core::pose::Pose & pose, core::pose::Pose const & template_pose, core::Size const five_prime_res, core::Size const three_prime_res ) const;
 
+	bool
+	Chain_break_screening( core::pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & constraint_scorefxn );
 
-  private:
+	bool
+	Chain_break_screening_general( core::pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn, core::Size const five_prime_res );
 
-		void
-		initialize_scorefunctions();
+	void
+	standard_sampling_WRAPPER( core::pose::Pose & pose,
+														FloatingBaseChainClosureJobParameter const & prev_sugar_FB_JP,
+														FloatingBaseChainClosureJobParameter const & curr_sugar_FB_JP,
+														FloatingBaseChainClosureJobParameter const & five_prime_CB_sugar_FB_JP,
+														FloatingBaseChainClosureJobParameter const & three_prime_CB_sugar_FB_JP );
 
-		void
-		Copy_CCD_torsions( core::pose::Pose & pose, core::pose::Pose const & template_pose ) const;
+	void
+	standard_sampling( core::pose::Pose & pose, utility::vector1< pose_data_struct2 > & pose_data_list, std::string const sugar_tag );
 
-		void
-		Copy_CCD_torsions_general( core::pose::Pose & pose, core::pose::Pose const & template_pose, core::Size const five_prime_res, core::Size const three_prime_res ) const;
 
-		bool
-		Chain_break_screening( core::pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & constraint_scorefxn );
+	void
+	floating_base_sampling( core::pose::Pose & pose, FloatingBaseChainClosureJobParameter const & prev_sugar_FB_JP );
 
-		bool
-		Chain_break_screening_general( core::pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & chainbreak_scorefxn, core::Size const five_prime_res );
+	void
+	get_base_atr_rep_score( core::pose::Pose const & pose, core::Real & base_atr_score, core::Real & base_rep_score );
 
-		void
-		standard_sampling_WRAPPER( core::pose::Pose & pose,
-									     			  FloatingBaseChainClosureJobParameter const & prev_sugar_FB_JP,
-															FloatingBaseChainClosureJobParameter const & curr_sugar_FB_JP,
-								   		   			FloatingBaseChainClosureJobParameter const & five_prime_CB_sugar_FB_JP,
-												     	FloatingBaseChainClosureJobParameter const & three_prime_CB_sugar_FB_JP );
+	bool
+	Full_atom_van_der_Waals_screening_REPLICATE(
+																		core::pose::Pose & current_pose_screen,
+																		core::Real const & base_rep_score,
+																		core::Real const &  base_atr_score,
+																		core::Real & delta_rep_score,
+																		core::Real & delta_atr_score,
+																		core::Size const & gap_size,
+																		bool const & Is_internal );
 
-		void
-		standard_sampling( core::pose::Pose & pose, utility::vector1< pose_data_struct2 > & pose_data_list, std::string const sugar_tag );
 
+	bool
+	Full_atom_van_der_Waals_screening(
+																		core::pose::Pose & current_pose_screen,
+																		core::Real const & base_rep_score,
+																		core::Real const &  base_atr_score,
+																		core::Real & delta_rep_score,
+																		core::Real & delta_atr_score,
+																		core::Size const & gap_size,
+																		bool const & Is_internal );
 
-		void
-		floating_base_sampling( core::pose::Pose & pose, FloatingBaseChainClosureJobParameter const & prev_sugar_FB_JP );
+	void
+	initialize_o2star_packer_task( core::pose::Pose const & pose );
 
-	  void
-		get_base_atr_rep_score( core::pose::Pose const & pose, core::Real & base_atr_score, core::Real & base_rep_score );
+	void
+	initialize_o2star_green_packer( core::pose::Pose & pose );
 
-		bool
-		Full_atom_van_der_Waals_screening_REPLICATE(
-																			core::pose::Pose & current_pose_screen,
-																			core::Real const & base_rep_score,
-																			core::Real const &  base_atr_score,
-																			core::Real & delta_rep_score,
-																			core::Real & delta_atr_score,
-																			core::Size const & gap_size,
-																			bool const & Is_internal );
+	void
+	sample_o2star_hydrogen( core::pose::Pose & pose, core::pose::Pose & pose_with_original_HO2star_torsion );
 
+	core::Real
+	Pose_selection_by_full_score( utility::vector1< pose_data_struct2 > & pose_data_list, core::pose::Pose & current_pose, std::string const & tag );
 
-		bool
-		Full_atom_van_der_Waals_screening(
-																			core::pose::Pose & current_pose_screen,
-																			core::Real const & base_rep_score,
-																			core::Real const &  base_atr_score,
-																			core::Real & delta_rep_score,
-																			core::Real & delta_atr_score,
-																			core::Size const & gap_size,
-																			bool const & Is_internal );
+	bool
+	apply_bulge_variant( core::pose::Pose & pose, core::Real const & delta_atr_score );
 
-		void
-		initialize_o2star_packer_task( core::pose::Pose const & pose );
+	void
+	Update_pose_data_list( std::string const & tag, utility::vector1< pose_data_struct2 > & pose_data_list, core::pose::Pose const & current_pose, core::Real const & current_score ) const;
 
-		void
-		initialize_o2star_green_packer( core::pose::Pose & pose );
+	void
+	cluster_pose_data_list( utility::vector1< pose_data_struct2 > & pose_data_list );
 
-		void
-		sample_o2star_hydrogen( core::pose::Pose & pose, core::pose::Pose & pose_with_original_HO2star_torsion );
+	std::string
+	create_tag( std::string const & prestring, core::Size const i ) const;
 
-		core::Real
-		Pose_selection_by_full_score( utility::vector1< pose_data_struct2 > & pose_data_list, core::pose::Pose & current_pose, std::string const & tag );
+	core::kinematics::Stub
+	get_reference_stub( core::Size const reference_res, core::pose::Pose const & pose ) const;
 
-		bool
-		apply_bulge_variant( core::pose::Pose & pose, core::Real const & delta_atr_score );
 
-		void
-		Update_pose_data_list( std::string const & tag, utility::vector1< pose_data_struct2 > & pose_data_list, core::pose::Pose const & current_pose, core::Real const & current_score ) const;
+	std::string //silly function to convert to real to string
+	create_torsion_value_string( core::Real const & torsion_value ) const;
 
-		void
-		cluster_pose_data_list( utility::vector1< pose_data_struct2 > & pose_data_list );
+	std::string
+	create_rotamer_string( core::pose::Pose const & pose ) const;
 
-		std::string
-		create_tag( std::string const & prestring, core::Size const i ) const;
+	/////////////////////////////////////function related to sampling/setup virtual sugar /////////////////////////////////////////////////////////////////
+	bool
+	Is_previous_sugar_virtual( core::pose::Pose const & pose ) const;
 
-		core::kinematics::Stub
-		get_reference_stub( core::Size const reference_res, core::pose::Pose const & pose ) const;
+	bool
+	Is_current_sugar_virtual( core::pose::Pose const & pose ) const;
 
+	bool
+	Is_five_prime_chain_break_sugar_virtual( core::pose::Pose const & pose ) const;
 
-		std::string //silly function to convert to real to string
-		create_torsion_value_string( core::Real const & torsion_value ) const;
+	bool
+	Is_three_prime_chain_break_sugar_virtual( core::pose::Pose const & pose ) const;
 
-		std::string
-		create_rotamer_string( core::pose::Pose const & pose ) const;
+	utility::vector1< pose_data_struct2 >
+	previous_floating_base_chain_closure( core::pose::Pose & viewer_pose, FloatingBaseChainClosureJobParameter const & FB_job_params, std::string const name );
 
-		/////////////////////////////////////function related to sampling/setup virtual sugar /////////////////////////////////////////////////////////////////
-		bool
-		Is_previous_sugar_virtual( core::pose::Pose const & pose ) const;
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		bool
-		Is_current_sugar_virtual( core::pose::Pose const & pose ) const;
+	void output_count_data();
 
-		bool
-		Is_five_prime_chain_break_sugar_virtual( core::pose::Pose const & pose ) const;
+	rotamer_sampler::rna::RNA_SuiteRotamerOP
+	setup_rotamer_sampler( core::pose::Pose const & pose ) const;
+private:
 
-		bool
-		Is_three_prime_chain_break_sugar_virtual( core::pose::Pose const & pose ) const;
+	StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
 
-		utility::vector1< pose_data_struct2 >
-		previous_floating_base_chain_closure( core::pose::Pose & viewer_pose, FloatingBaseChainClosureJobParameter const & FB_job_params, std::string const name );
+	core::io::silent::SilentFileDataOP sfd_;
+	utility::vector1< pose_data_struct2 > pose_data_list_;
 
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	core::scoring::ScoreFunctionOP scorefxn_;
+	core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
+	core::scoring::ScoreFunctionOP chainbreak_scorefxn_;
+	core::scoring::ScoreFunctionOP sampling_scorefxn_;
+	core::scoring::ScoreFunctionOP o2star_pack_scorefxn_;
 
-		void output_count_data();
+	utility::vector1 < core::Size > working_rmsd_res_;
 
-		rotamer_sampler::rna::RNA_SuiteRotamerOP
-		setup_rotamer_sampler( core::pose::Pose const & pose ) const;
-	private:
+	SillyCountStruct count_data_;
+	std::string silent_file_;
+	std::string output_filename_;
+	core::Real const bin_size_; /*ALWAYS 20!!!*/
+	core::Real const rep_cutoff_;
+	core::Size num_pose_kept_;
+	core::Size const multiplier_;
+	core::Real cluster_rmsd_;
+	bool verbose_;
+	bool native_rmsd_screen_;
+	core::Real native_screen_rmsd_cutoff_;
 
-		StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
+	bool perform_o2star_pack_;
+	core::pack::task::PackerTaskOP o2star_pack_task_;
+	protocols::simple_moves::GreenPackerOP o2star_green_packer_;
+	bool const use_green_packer_;
+	bool allow_bulge_at_chainbreak_;
+	bool integration_test_mode_;
+	bool floating_base_;
 
-		core::io::silent::SilentFileDataOP sfd_;
-		utility::vector1< pose_data_struct2 > pose_data_list_;
+	StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
 
-		core::scoring::ScoreFunctionOP scorefxn_;
-		core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
-		core::scoring::ScoreFunctionOP chainbreak_scorefxn_;
-		core::scoring::ScoreFunctionOP sampling_scorefxn_;
-		core::scoring::ScoreFunctionOP o2star_pack_scorefxn_;
+	bool parin_favorite_output_;
+	bool centroid_screen_;
+	bool allow_base_pair_only_centroid_screen_;
+	bool VDW_atr_rep_screen_;
+	bool allow_syn_pyrimidine_;
+	bool distinguish_pucker_;
+	bool build_pose_from_scratch_;
+	core::Real current_score_cutoff_;
+	bool finer_sampling_at_chain_closure_;
+	bool PBP_clustering_at_chain_closure_;
+	bool reinitialize_CCD_torsions_;
+	bool extra_epsilon_rotamer_;
+	bool extra_beta_rotamer_;
+	bool extra_chi_;
+	bool sample_both_sugar_base_rotamer_;
+	bool include_torsion_value_in_tag_;
+	bool rebuild_bulge_mode_;
+	bool combine_long_loop_mode_;
+	bool do_not_sample_multiple_virtual_sugar_;
+	bool sample_ONLY_multiple_virtual_sugar_;
+	bool assert_no_virt_ribose_sampling_;
+	bool output_pdb_;
+	bool choose_random_;
+	Size num_random_samples_;
+	bool force_centroid_interaction_;
+	bool use_phenix_geo_;
 
-		utility::vector1 < core::Size > working_rmsd_res_;
-
-		SillyCountStruct count_data_;
-		std::string silent_file_;
-		std::string output_filename_;
-		core::Real const bin_size_; /*ALWAYS 20!!!*/
-		core::Real const rep_cutoff_;
-		core::Size num_pose_kept_;
-		core::Size const multiplier_;
-		core::Real cluster_rmsd_;
-		bool verbose_;
-		bool native_rmsd_screen_;
-		core::Real native_screen_rmsd_cutoff_;
-
-		bool perform_o2star_pack_;
-		core::pack::task::PackerTaskOP o2star_pack_task_;
-		protocols::simple_moves::GreenPackerOP o2star_green_packer_;
-		bool const use_green_packer_;
-		bool allow_bulge_at_chainbreak_;
-		bool fast_;
-		bool medium_fast_;
-		bool integration_test_mode_;
-		bool floating_base_;
-
-		StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
-
-		bool parin_favorite_output_;
-		bool centroid_screen_;
-		bool allow_base_pair_only_centroid_screen_;
-		bool VDW_atr_rep_screen_;
-		bool include_syn_chi_;
-		bool allow_syn_pyrimidine_;
-		bool distinguish_pucker_;
-		bool build_pose_from_scratch_;
-		core::Real current_score_cutoff_;
-		bool finer_sampling_at_chain_closure_;
-		bool PBP_clustering_at_chain_closure_;
-		bool reinitialize_CCD_torsions_;
-		bool extra_epsilon_rotamer_;
-		bool extra_beta_rotamer_;
-		bool extra_chi_;
-		bool sample_both_sugar_base_rotamer_;
-		bool include_torsion_value_in_tag_;
-		bool rebuild_bulge_mode_;
-		bool debug_epsilon_south_sugar_mode_;
-		bool exclude_alpha_beta_gamma_sampling_;
-		bool combine_long_loop_mode_;
-		bool do_not_sample_multiple_virtual_sugar_;
-		bool sample_ONLY_multiple_virtual_sugar_;
-		bool assert_no_virt_ribose_sampling_;
-		bool output_pdb_;
-		bool choose_random_;
-		Size num_random_samples_;
-		bool force_centroid_interaction_;
-
-		StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
-
-
-  };
+	StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
+};
 
 }
 } //swa

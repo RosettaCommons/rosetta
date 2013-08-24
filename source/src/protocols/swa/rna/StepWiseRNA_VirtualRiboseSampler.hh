@@ -104,20 +104,26 @@ floating_base_chain_break_screening( core::pose::Pose & chain_break_screening_po
 
 
 utility::vector1< FB_Pose_Data >
-floating_base_chain_closure_setup( utility::vector1< pose_data_struct2 > const & input_pose_data_list,
-																	FloatingBaseChainClosureJobParameter const & FB_job_params,
-																	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-																	core::scoring::ScoreFunctionOP const & full_scorefxn,
-																	core::pose::Pose & viewer_pose,
-																	bool const do_minimize );
+floating_base_chain_closure_setup(
+	utility::vector1< pose_data_struct2 > const & input_pose_data_list,
+	FloatingBaseChainClosureJobParameter const & FB_job_params,
+	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
+	core::scoring::ScoreFunctionOP const & full_scorefxn,
+	core::pose::Pose & viewer_pose,
+	bool const do_minimize,
+	bool const use_phenix_geo
+);
 
 void
-floating_base_chain_closure_sampling( utility::vector1< FB_Pose_Data > & pose_data_list,
-																		 FloatingBaseChainClosureJobParameter const & FB_job_params,
-																	   core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
-													           core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-																		 StepWiseRNA_VDW_BinScreenerOP const & VDW_bin_screener,
-																		 bool const integration_test_mode = false );
+floating_base_chain_closure_sampling(
+	utility::vector1< FB_Pose_Data > & pose_data_list,
+	FloatingBaseChainClosureJobParameter const & FB_job_params,
+	core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
+	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
+	StepWiseRNA_VDW_BinScreenerOP const & VDW_bin_screener,
+	bool const integration_test_mode,
+	bool const use_phenix_geo
+);
 
 
 utility::vector1< pose_data_struct2 >
@@ -128,16 +134,19 @@ floating_base_chain_closure_post_process( utility::vector1< FB_Pose_Data > & pos
 																				 bool const rm_chain_break_jump_point = true );
 
 utility::vector1< pose_data_struct2 >
-sample_virtual_ribose_and_bulge_and_close_chain( core::pose::Pose & viewer_pose,
-																								FloatingBaseChainClosureJobParameter const & FB_job_params,
-																								std::string const name,
-																								core::scoring::ScoreFunctionOP const & scorefxn,
-																								core::scoring::ScoreFunctionOP const & sampling_scorefxn,
-																								core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-																								core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
-																								StepWiseRNA_JobParametersCOP & job_parameters,
-																								bool const virtual_ribose_is_from_prior_step = true,
-																								bool const integration_test_mode = false );
+sample_virtual_ribose_and_bulge_and_close_chain(
+	core::pose::Pose & viewer_pose,
+	FloatingBaseChainClosureJobParameter const & FB_job_params,
+	std::string const name,
+	core::scoring::ScoreFunctionOP const & scorefxn,
+	core::scoring::ScoreFunctionOP const & sampling_scorefxn,
+	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
+	core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
+	StepWiseRNA_JobParametersCOP & job_parameters,
+	bool const integration_test_mode,
+	bool const use_phenix_geo,
+	bool const virtual_ribose_is_from_prior_step = true
+);
 
 
 void
@@ -164,10 +173,15 @@ utility::vector1< FloatingBaseChainClosureJobParameter >
 setup_FB_CC_JP_list( core::pose::Pose const & pose, utility::vector1< std::string > const & sample_virtual_ribose_string_list, StepWiseRNA_JobParametersCOP & job_parameters );
 
 void
-sample_user_specified_virtual_riboses( core::pose::Pose & pose, utility::vector1< std::string > const & sample_virtual_ribose_string_list,
-										 						    StepWiseRNA_JobParametersCOP & job_parameters, core::scoring::ScoreFunctionOP const & scorefxn,
-																			std::string const silent_file_out, std::string const input_tag,
-																			bool const integration_test_mode = false );
+sample_user_specified_virtual_riboses(
+	core::pose::Pose & pose,
+	utility::vector1< std::string > const & sample_virtual_ribose_string_list,
+	StepWiseRNA_JobParametersCOP & job_parameters,
+	core::scoring::ScoreFunctionOP const & scorefxn,
+	std::string const silent_file_out,
+	std::string const input_tag,
+	bool const integration_test_mode
+);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

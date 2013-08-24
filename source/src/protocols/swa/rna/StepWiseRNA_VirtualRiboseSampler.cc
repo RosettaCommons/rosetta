@@ -213,7 +213,8 @@ floating_base_chain_closure_setup( utility::vector1< pose_data_struct2 > const &
 																	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
 																	core::scoring::ScoreFunctionOP const & full_scorefxn,
 																	pose::Pose & viewer_pose,
-																	bool const do_minimize ){
+																	bool const do_minimize,
+																	bool const use_phenix_geo ){
 
 	using namespace ObjexxFCL;
 	using namespace ObjexxFCL::fmt;
@@ -242,8 +243,8 @@ floating_base_chain_closure_setup( utility::vector1< pose_data_struct2 > const &
 	RNA_NucleosideRotamer sampler( FB_job_params.moving_res,
 			FB_job_params.moving_res_pucker_state,
 			FB_job_params.moving_res_base_state );
-	sampler.set_idealize_coord( false ); //TODO Add and use the ideal-geo flag
-	sampler.set_skip_same_pucker( false ); //TODO enable idealize coord by option
+	sampler.set_idealize_coord( use_phenix_geo );
+	sampler.set_skip_same_pucker( use_phenix_geo );
 	sampler.init();
 	//July 28th, 2011 Could set extra_chi here, BUT necessary?
 
@@ -463,9 +464,10 @@ void
 floating_base_chain_closure_sampling( utility::vector1< FB_Pose_Data > & pose_data_list,
 																	 FloatingBaseChainClosureJobParameter const & FB_job_params,
 																	 core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
-																		core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
+																	 core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
 																	 StepWiseRNA_VDW_BinScreenerOP const & VDW_bin_screener,
-																		 bool const integration_test_mode ){
+																	 bool const integration_test_mode,
+																	 bool const use_phenix_geo ){
 
 	using namespace core::id;
 	using namespace core::chemical;
@@ -510,8 +512,8 @@ floating_base_chain_closure_sampling( utility::vector1< FB_Pose_Data > & pose_da
 
 	RNA_SuiteRotamer sampler( bulge_suite, pucker_state[1], pucker_state[2],
 			base_state[1], base_state[2] );
-	sampler.set_skip_same_pucker( false ); //TODO enable idealize coord by option
-	sampler.set_idealize_coord( false ); //TODO Add and use the ideal-geo flag
+	sampler.set_skip_same_pucker( use_phenix_geo );
+	sampler.set_idealize_coord( use_phenix_geo );
 	sampler.set_fast( integration_test_mode );
 	sampler.set_extra_epsilon( true ); //Parin's original option. Necessary?
 	sampler.set_sample_nucleoside_lower( sample_sugar[1] );
@@ -877,17 +879,19 @@ sort_pose_data_by_score( pose_data_struct2  pose_data_1, pose_data_struct2 pose_
 //However in Easiest 3. case, there is a problem is problem in that O3i_C5iplus2_distance has determined with fixed i-2 ribose.
 
 utility::vector1< pose_data_struct2 >
-sample_virtual_ribose_and_bulge_and_close_chain( pose::Pose & viewer_pose,
-																						 FloatingBaseChainClosureJobParameter const & FB_job_params,
-																						 std::string const name,
-																						 core::scoring::ScoreFunctionOP const & scorefxn,
-																						 core::scoring::ScoreFunctionOP const & sampling_scorefxn,
-																						 core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
-																						 core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
-																						 StepWiseRNA_JobParametersCOP & job_parameters,
-																								bool const virtual_ribose_is_from_prior_step,
-																								bool const integration_test_mode ){
-
+sample_virtual_ribose_and_bulge_and_close_chain(
+	pose::Pose & viewer_pose,
+	FloatingBaseChainClosureJobParameter const & FB_job_params,
+	std::string const name,
+	core::scoring::ScoreFunctionOP const & scorefxn,
+	core::scoring::ScoreFunctionOP const & sampling_scorefxn,
+	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
+	core::scoring::ScoreFunctionOP const & chainbreak_scorefxn,
+	StepWiseRNA_JobParametersCOP & job_parameters,
+	bool const integration_test_mode,
+	bool const use_phenix_geo,
+	bool const virtual_ribose_is_from_prior_step
+) {
 	using namespace ObjexxFCL;
 	using namespace core::io::silent;
 
@@ -936,7 +940,7 @@ sample_virtual_ribose_and_bulge_and_close_chain( pose::Pose & viewer_pose,
 				already_virtualized_res_list.push_back( seq_num );
 				continue;
 			}
-			pose::add_variant_type_to_pose_residue( input_pose, "VIRTUAL_RNA_RESIDUE", seq_num );
+		pose::add_variant_type_to_pose_residue( input_pose, "VIRTUAL_RNA_RESIDUE", seq_num );
 		}
 
 		if ( job_parameters->gap_size() == 0 ){
@@ -953,7 +957,7 @@ sample_virtual_ribose_and_bulge_and_close_chain( pose::Pose & viewer_pose,
 	//////////////////////////////////////////////////////////////////////create_VDW_screen_bin//////////////////////////////////////////////////////////////////////////////////////////
 
 	core::kinematics::Stub reference_stub;
-	reference_stub.v = core::chemical::rna::get_rna_base_centroid(  input_pose.residue( FB_job_params.reference_res ), true );
+	reference_stub.v = core::chemical::rna::get_rna_base_centroid( input_pose.residue( FB_job_params.reference_res ), true );
 	reference_stub.M = core::chemical::rna::get_rna_base_coordinate_system( input_pose.residue( FB_job_params.reference_res ), reference_stub.v );
 
 
@@ -975,12 +979,18 @@ sample_virtual_ribose_and_bulge_and_close_chain( pose::Pose & viewer_pose,
 	input_pose_data_list.push_back( pose_data );
 
 	bool const do_minimize = !integration_test_mode; // for speed.
-	utility::vector1< FB_Pose_Data > pose_data_list = floating_base_chain_closure_setup( input_pose_data_list, FB_job_params, atr_rep_screening_scorefxn, scorefxn, viewer_pose, do_minimize );
+	utility::vector1< FB_Pose_Data > pose_data_list =
+	floating_base_chain_closure_setup( input_pose_data_list,
+			FB_job_params, atr_rep_screening_scorefxn, scorefxn, viewer_pose,
+			do_minimize, use_phenix_geo );
 
 	bool const chain_closure_sampling = true;
 
 	if ( chain_closure_sampling ){
-		floating_base_chain_closure_sampling( pose_data_list, FB_job_params, chainbreak_scorefxn, atr_rep_screening_scorefxn, prev_floating_base_VDW_bin_screener, integration_test_mode );
+		floating_base_chain_closure_sampling( pose_data_list, FB_job_params,
+				chainbreak_scorefxn, atr_rep_screening_scorefxn,
+				prev_floating_base_VDW_bin_screener, integration_test_mode,
+				use_phenix_geo );
 	} else{
 		for ( Size n = 1; n <= pose_data_list.size(); n++ ) { pose_data_list[n].Is_chain_close = true; }
 	}

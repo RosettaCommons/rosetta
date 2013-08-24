@@ -71,10 +71,6 @@ namespace rna {
 
 		void set_native_edensity_score_cutoff( core::Real const & setting ){ native_edensity_score_cutoff_ = setting; }
 
-		void set_fast( bool const & setting ){ fast_ = setting; }
-
-		void set_medium_fast( bool const & setting ){ medium_fast_ = setting; }
-
 		void set_sampler_native_rmsd_screen( bool const & setting ){ sampler_native_rmsd_screen_ = setting; }
 
 		void set_o2star_screen( bool const & setting ){ o2star_screen_ = setting; }
@@ -138,8 +134,6 @@ namespace rna {
 
 		void set_floating_base( bool const & setting ){ floating_base_ = setting; }
 
-		void set_include_syn_chi( bool const & setting ){ include_syn_chi_ = setting; }
-
 		void set_reinitialize_CCD_torsions( bool const & setting ){ reinitialize_CCD_torsions_ = setting; }
 
 		void set_sampler_extra_epsilon_rotamer( bool const & setting ){ sampler_extra_epsilon_rotamer_ = setting; }
@@ -151,10 +145,6 @@ namespace rna {
 		void set_sampler_include_torsion_value_in_tag( bool const & setting ){ sampler_include_torsion_value_in_tag_ = setting; }
 
 		void set_rebuild_bulge_mode( bool const & setting ){ rebuild_bulge_mode_ = setting; }
-
-		void set_debug_epsilon_south_sugar_mode( bool const & setting ){ debug_epsilon_south_sugar_mode_ = setting; }
-
-		void set_exclude_alpha_beta_gamma_sampling( bool const & setting ){ exclude_alpha_beta_gamma_sampling_ = setting; }
 
 		void set_combine_long_loop_mode( bool const & setting ){ combine_long_loop_mode_ = setting; }
 
@@ -196,8 +186,6 @@ namespace rna {
 		core::Real sampler_native_screen_rmsd_cutoff_;
 		core::Real cluster_rmsd_;
 		core::Real native_edensity_score_cutoff_;
-		bool fast_;
-		bool medium_fast_;
 		bool sampler_native_rmsd_screen_;
 		bool o2star_screen_;
 		bool verbose_;
@@ -230,15 +218,12 @@ namespace rna {
 		bool allow_bulge_at_chainbreak_;
 		bool parin_favorite_output_;
 		bool floating_base_;
-		bool include_syn_chi_; //TODO remove this option
 		bool reinitialize_CCD_torsions_;
 		bool sampler_extra_epsilon_rotamer_;
 		bool sampler_extra_beta_rotamer_;
 		bool sample_both_sugar_base_rotamer_;
 		bool sampler_include_torsion_value_in_tag_;
 		bool rebuild_bulge_mode_;
-		bool debug_epsilon_south_sugar_mode_;
-		bool exclude_alpha_beta_gamma_sampling_;
 		bool combine_long_loop_mode_;
 		bool do_not_sample_multiple_virtual_sugar_;
 		bool sample_ONLY_multiple_virtual_sugar_;
