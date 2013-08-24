@@ -343,7 +343,7 @@ RingConformerSet::conformers_for_ring_size(core::Size ring_size)
 		CONFORMERS->insert(make_pair(ring_size, conformers));
 	}
 
-	return CONFORMERS->at(ring_size);
+	return (*CONFORMERS)[ring_size];
 }
 
 
