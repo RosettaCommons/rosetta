@@ -138,9 +138,11 @@ void place_water_donor(
     
     // e1 points from carbonyl C along point to 0
     // if primary amide guarantees planarity then e2 in that plane
-    core::kinematics::Stub stub( don_xyz, base1_don_xyz, don_xyz, (origin - don_xyz).normalize() );
+    //core::kinematics::Stub stub( don_xyz, base1_don_xyz, don_xyz, (origin - don_xyz).normalize() );
+    core::kinematics::Stub stub( don_xyz, base1_don_xyz, (origin - don_xyz).normalize() );
     
-    numeric::xyzVector< core::Real > wat_O_xyz( -1 * distance, 0, 0);
+    //numeric::xyzVector< core::Real > wat_O_xyz( -1 * distance, 0, 0);
+    numeric::xyzVector< core::Real > wat_O_xyz( 1 * distance, 0, 0);
     
     // get a homo trans
     // numeric::HomogeneousTransform< core::Real > HT_stub_to_wat(zrotmat, wat_O_xyz);
@@ -203,15 +205,15 @@ int main( int argc, char * argv [] ) {
     // wander up to the sidechain carbonyl
     accpt1_it++;
 
-    place_water_acceptor(rsd2, *accpt1_it, 2.5, 30, 0, 0, pose);
-    # place_water_acceptor(rsd2, *accpt1_it, 2.5, 30, 60, 0, pose);
-    place_water_acceptor(rsd2, *accpt1_it, 2.5, 30, 180, 0, pose);
+    place_water_acceptor(rsd2, *accpt1_it, 2.5, 60, 0, 20, pose);
+    // place_water_acceptor(rsd2, *accpt1_it, 2.5, 30, 60, 0, pose);
+    place_water_acceptor(rsd2, *accpt1_it, 2.5, 60, 180, 0, pose);
     
     //core::chemical::AtomIndices::const_iterator don1_it = rsd2.accpt_pos().begin();
     // Why is this different!?
     core::chemical::AtomIndices::const_iterator don1_it = rsd2.Hpos_polar().begin();
     don1_it++;
-    place_water_donor(rsd2, *don1_it, 2.0, 0, pose);
+    place_water_donor(rsd2, *don1_it, 3.0, 30, pose);
     don1_it++;
     place_water_donor(rsd2, *don1_it, 2.0, 0, pose);
     
