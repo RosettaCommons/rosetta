@@ -406,11 +406,12 @@ ParsedProtocol::get_additional_output( )
 bool ParsedProtocol::apply_mover_filter_pair(Pose & pose, mover_filter_pair const & mover_pair)
 {
 	std::string const mover_name( mover_pair.first.first->get_name() );
+    std::string const mover_user_name (mover_pair.first.second);
 
 	mover_pair.first.first->set_native_pose( get_native_pose() );
-	TR<<"=======================BEGIN MOVER "<<mover_name<<"=======================\n{"<<std::endl;
+	TR<<"=======================BEGIN MOVER "<<mover_name<<" - "<<mover_user_name<<"=======================\n{"<<std::endl;
 	mover_pair.first.first->apply( pose );
-	TR<<"\n}\n=======================END MOVER "<<mover_name<<"======================="<<std::endl;
+	TR<<"\n}\n=======================END MOVER "<<mover_name<<" - "<<mover_user_name<<"======================="<<std::endl;
 
 	// Split out filter application in seperate function to allow for reuse in resuming from additional output pose cases.
 	return apply_filter( pose, mover_pair);
