@@ -11,7 +11,14 @@
 /// @file protocols/features/strand_assembly/StrandBundleFeatures.cc
 /// @brief extract beta strand, strand pairs, sandwiches in pdb file, see wiki.rosettacommons.org/index.php/MultiBodyFeaturesReporters#StrandBundleFeatures for detail
 /// @author Doo Nam Kim (based on Tim Jacobs' helix_assembly)
-
+/// @overview
+///		@ task 1: Identify all beta-strands
+///			@ task 1-1: Write beta-strands into database
+///		@ task 2: Identify all beta-sheets with these strands
+///			@ task 2-1: Identify beta-sheets if their strands' two consecutive N-O pairs H-bond to each other
+///			@ task 2-2: Write beta-sheets into database
+///		@ task 3: Identify all beta-sandwiches with these sheets
+///			@ task 3-1: Write beta-sandwiches into database
 
 //Core
 #include <core/types.hh>
@@ -19,7 +26,7 @@
 #include <core/conformation/Atom.hh>
 
 //External
-
+#include <boost/uuid/uuid.hpp>
 
 //Devel
 #include <protocols/features/strand_assembly/StrandBundleFeatures.hh>
@@ -73,15 +80,15 @@ using cppdb::result;
 StrandBundleFeatures::StrandBundleFeatures() :
 min_num_strands_to_deal_(5), // it should be at least 4
 max_num_strands_to_deal_(13), // (in 1LD9 chain A) 16 is too many number of strands, takes too long time
-extract_native_only_(false), //Option('extract_native_only', 'Boolean', desc="if true, extract native full strands only", default='false' ),
+extract_native_only_(false), // if true, extract native full strands only
 min_res_in_strand_(3), // min_res_in_strand_ used to be 4, but 3 would be OK
 max_res_in_strand_(22),
 min_O_N_dis_(2.4), // 1KIT shows (renumbered residues 178-181 and residues 76-81) show that 2.5 A exist!
 max_O_N_dis_(3.1),
 min_sheet_dis_(7.0), // 7 Angstrom may seem OK though
 max_sheet_dis_(15.0), // 15 Angstrom may seem OK though
-min_sheet_torsion_(-50.0), // according to swissmodel.expasy.org/course/text/chapter4.htm, -20 < torsion < -50
-max_sheet_torsion_(-20.0),
+min_sheet_torsion_(-60.0), // although swissmodel.expasy.org/course/text/chapter4.htm mentions that -20 < torsion < -50
+max_sheet_torsion_(-5.0), // [1A5D] have -7.6 and -13.8 sheet torsion angles (measured by strands)
 min_sheet_angle_(30.0), 
 max_sheet_angle_(150.0), // as Doonam observed, even 155 degree comes from same sheet (1ten)!
 min_shortest_dis_sidechain_inter_sheet_(2.0)
@@ -156,7 +163,7 @@ StrandBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 		Column beta_selected_segments_id	("beta_selected_segments_id",	new DbInteger(), false /*not null*/, false /*no autoincrement*/);
 	
 	// unique key of original PDB file
-		Column struct_id             ("struct_id",	new DbUUID(),    false /*not null*/, false /*don't autoincrement*/);
+		Column struct_id             ("struct_id",	new DbBigInt(),    false /*not null*/, false /*don't autoincrement*/);
 
 	// ForeignKey
 		Column residue_begin("residue_begin", new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
@@ -209,7 +216,7 @@ StrandBundleFeatures::write_schema_to_db(utility::sql_database::sessionOP db_ses
 			Column bool_parallel         ("bool_parallel",          new DbInteger(), false /*not null*/, false /*don't autoincrement*/);
 
 		// unique key of original PDB file
-		//	Column struct_id             ("struct_id",              new DbUUID(),    false /*not null*/, false /*don't autoincrement*/);
+		//	Column struct_id             ("struct_id",              new DbBigInt(),    false /*not null*/, false /*don't autoincrement*/);
 
 		// ForeignKey
 			Column beta_select_id_i ("beta_select_id_i",	new DbInteger(), false /*not null*/, false /*don't autoincrement*/);

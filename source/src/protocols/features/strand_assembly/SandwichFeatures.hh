@@ -19,7 +19,7 @@
 #include <protocols/features/strand_assembly/SandwichFeatures.fwd.hh>
 
 //External
-
+#include <boost/uuid/uuid.hpp>
 
 //Protocols
 #include <protocols/features/FeaturesReporter.hh>
@@ -105,6 +105,16 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
+	utility::vector1<SandwichFragment>
+	get_all_strands_in_sheet_i(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size sheet_id);
+
+	utility::vector1<Size>
+	get_list_of_residues_in_sheet_i(
+		utility::vector1<SandwichFragment>	all_strands_in_sheet_i);
+
 	core::Size
 	get_max_sheet_id(
 		StructureID struct_id,
@@ -133,7 +143,7 @@ public:
 		core::Size sheet_id);
 
 	utility::vector1<core::Size>
-	get_distinct_sheet_id(
+	get_distinct_sheet_id_from_sheet_table(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
@@ -230,6 +240,7 @@ public:
 	core::Size round(
 		core::Real x);
 
+	//can this strand represent a terminal (or edge) strand for inter-sheet angle calculation?
 	bool
 	can_this_strand_represent_a_terminal(
 		core::pose::Pose const & pose,
@@ -250,7 +261,7 @@ public:
 		core::Size sheet_i);
 
 	core::Real
-	get_shortest_among_4(
+	get_shortest_among_4_vals(
 		core::Real arr_dis_inter_sheet[]);
 
 	bool
@@ -302,7 +313,7 @@ public:
 		core::Size sheet_id);
 
 	std::vector<Size>
-	get_cen_res_in_this_sheet(
+	get_cen_residues_in_this_sheet(
 		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size sheet_id);
@@ -398,7 +409,7 @@ public:
 		core::Size end_res);
 
 	core::Size
-	delete_this_sw_can_by_sh_id(
+	delete_this_sw_can_by_sh_id_from_sw_by_comp(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id);
@@ -498,6 +509,34 @@ public:
 		core::Size	sw_can_by_sh_id,
 		std::string	tag);
 
+	core::Size
+	add_sw_res_size(
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size sw_can_by_sh_id);
+
+	core::Size
+	mark_sw_which_is_not_connected_with_continuous_atoms(
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size sw_can_by_sh_id,
+		std::string sw_is_not_connected_with_continuous_atoms);
+
+
+	core::Size
+	add_num_edge_strands (
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size	sw_can_by_sh_id);
+
+	core::Size
+	report_hydrophobic_ratio_net_charge (
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size	sw_can_by_sh_id);
+
+
+
 	bool
 	check_whether_this_pdb_should_be_excluded (
 		std::string tag); // I don't know how to correctly extract beta-sandwich from 1W8N for now
@@ -511,7 +550,7 @@ public:
 		core::Size sheet_id);
 
 	core::Real
-	cal_min_dis_between_sheets (
+	cal_min_dis_between_sheets_by_cen_res (
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose & dssp_pose,
@@ -529,7 +568,15 @@ public:
 		core::Size residue_end);
 
 	core::Size
-	report_number_of_inward_pointing_AAs_in_a_pair_of_edge_strands (
+	report_number_of_inward_pointing_charged_AAs_in_a_pair_of_edge_strands (
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size sw_can_by_sh_id,
+		core::Size current_bs_id,
+		core::Size closest_bs_id);
+
+	core::Size
+	report_number_of_inward_pointing_aro_AAs_in_a_pair_of_edge_strands (
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id,
@@ -537,6 +584,52 @@ public:
 		core::Size closest_bs_id);
 
 
+	// used for judge_facing
+	utility::vector1<SandwichFragment>
+	get_start_end_res_num_in_the_longest_strand(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size sheet_id);
+
+
+	bool
+	check_whether_sheets_are_connected_with_near_bb_atoms(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::pose::Pose & dssp_pose,
+		core::Size sw_can_by_sh_id);
+
+	std::string
+	check_whether_sw_is_not_connected_with_continuous_atoms(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::pose::Pose & dssp_pose,
+		core::Size sw_can_by_sh_id);
+
+
+	utility::vector1<core::Size>
+	get_vec_AA_dis_w_direction (
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		std::string heading_direction, // like core_heading, surface_heading
+		std::string strand_location // like edge_strand, core_strand
+		);
+
+
+	utility::vector1<core::Size>
+	get_vec_AA_kind (
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size sw_can_by_sh_id);
+
+		
+	bool
+	check_whether_sw_by_sh_id_still_alive(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size sw_can_by_sh_id);
+
+ 
 private:
 
 	core::Size
@@ -570,10 +663,13 @@ private:
 	max_sheet_dis_;
 
 	core::Real
-	min_sheet_angle_;
+	max_sheet_angle_with_cen_res_in_smaller_sheet_and_two_terminal_res_in_larger_sheet_;
 
 	core::Real
-	max_sheet_angle_;
+	min_sheet_angle_by_four_term_cen_res_;
+
+	core::Real
+	max_sheet_angle_by_four_term_cen_res_;
 
 	core::Real
 	min_sheet_torsion_cen_res_;
@@ -646,6 +742,18 @@ private:
 
 	bool
 	exclude_desinated_pdbs_;
+
+	bool
+	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_;
+
+	core::Real
+	min_N_O_dis_between_two_sheets_;
+
+	core::Real
+	min_N_H_O_angle_between_two_sheets_;
+
+	bool
+	write_AA_dis_files_;
 
 }; // class SandwichFeatures : public protocols::features::FeaturesReporter
 

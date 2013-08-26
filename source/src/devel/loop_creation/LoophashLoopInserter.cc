@@ -93,7 +93,7 @@ LoophashLoopInserterCreator::mover_name()
 LoophashLoopInserter::LoophashLoopInserter():
 	max_closure_deviation_(5.0),
 	num_flanking_residues_to_match_(3),
-	modify_flanking_regions_(false),
+	modify_flanking_regions_(true),
 	lh_initialized_(false)
 {
 	using namespace basic::options;

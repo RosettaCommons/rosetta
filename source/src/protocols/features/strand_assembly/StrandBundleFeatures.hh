@@ -19,7 +19,7 @@
 #include <protocols/features/strand_assembly/StrandBundleFeatures.fwd.hh>
 
 //External
-
+#include <boost/uuid/uuid.hpp>
 
 //Protocols
 #include <protocols/features/FeaturesReporter.hh>
