@@ -101,6 +101,14 @@ RingConformerSet::show(std::ostream & output) const
 
 
 // Accessors/Mutators
+// Return the size of the conformer set.
+core::Size
+RingConformerSet::size() const
+{
+	return nondegenerate_conformers_.size();
+}
+
+
 // Return a list of all nondegenerate conformers in the set.
 utility::vector1<RingConformerCOP>
 RingConformerSet::get_all_nondegenerate_conformers() const

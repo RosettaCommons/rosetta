@@ -80,6 +80,17 @@ public:
 
 
 	// Accessors/Mutators ////////////////////////////////////////////////////////////////////////////////////////////
+	/// @brief  Return the ring size of the conformers in this set.
+	core::Size
+	ring_size() const
+	{
+		return ring_size_;
+	}
+
+	/// @brief  Return the size of the conformer set.
+	core::Size size() const;
+
+
 	/// @brief  Return a list of all nondegenerate conformers in the set.
 	utility::vector1<RingConformerCOP> get_all_nondegenerate_conformers() const;
 

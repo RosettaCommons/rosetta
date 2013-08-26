@@ -53,7 +53,7 @@ public:
 	{
 		TS_TRACE("Testing get_all_nondegenerate_conformers() method of RingConformerSet for 5- and 6-membered rings.");
 		TS_ASSERT_EQUALS(set5_->get_all_nondegenerate_conformers().size(), 20);
-		TS_ASSERT_EQUALS(set6_->get_all_nondegenerate_conformers().size(), 38);
+		TS_ASSERT_EQUALS(set6_->size(), 38);
 	}
 
 	// Confirm that the proper conformers are loaded by get_ideal_conformer_by_name() and

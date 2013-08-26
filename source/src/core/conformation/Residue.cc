@@ -983,8 +983,6 @@ Residue::set_theta( int const chino, Real const setting ) {
 }
 
 
-
-
 /////////////////////////////////////////////////////////////////////////////
 /// @details this assumes that change propagates according to the information from
 /// atom_base array, not from atom tree. So be sure not to get into an

@@ -157,8 +157,6 @@ RingConformationMover::apply(Pose & input_pose)
 	using namespace basic::options;
 	using namespace utility;
 	using namespace conformation;
-	using namespace id;
-	using namespace pose::carbohydrates;
 	using namespace chemical::carbohydrates;
 
 	if (option[OptionKeys::carbohydrates::lock_rings]) {
@@ -191,13 +189,7 @@ RingConformationMover::apply(Pose & input_pose)
 
 	TR << "Making move...." << endl;
 
-	pair<TorsionType, Size> nu_id;
-	Size ring_size = res.carbohydrate_info()->ring_size();
-	for (Size j = 1; j <= ring_size - 2; ++j) {
-		nu_id = res.carbohydrate_info()->nu_id(j);
-		input_pose.set_torsion(TorsionID(res_num, nu_id.first, nu_id.second), conformer->nu_angles[j]);
-		align_virtual_atoms_in_carbohydrate_residue(input_pose, res_num);
-	}
+	input_pose.set_ring_conformation(res_num, *conformer);
 
 	TR << "Move complete." << endl;
 }

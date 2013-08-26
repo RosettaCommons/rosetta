@@ -28,13 +28,9 @@
 #include <core/pose/metrics/PoseMetricContainer.hh>
 
 // Project headers
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/prof.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/carbohydrates/RingConformerSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/signals/XYZEvent.hh>
@@ -48,6 +44,13 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/io/pdb/file_data.hh>
+
+// Basic headers
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/prof.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility headers
 #include <numeric/xyz.functions.hh>
@@ -913,7 +916,7 @@ Pose::epsilon( Size const seqpos ) const{
 	return torsion( id::TorsionID( seqpos, id::BB, 5 ) );
 }
 
-	///
+///
 void
 Pose::set_epsilon( Size const seqpos, Real const setting )
 {
@@ -1002,6 +1005,35 @@ Pose::set_chi( Size const seqpos, Real const setting )
 	conformation_->set_torsion( TorsionID( seqpos, id::CHI, 1 ), setting );
 }
 
+// Set the given residue's ring conformation, if appropriate.
+/// @note  Eventually, I will be moving RingConformer from chemical::carbohydrates to chemical. For now, this relies on
+/// code within CarbohydrateInfo, but it should be made more general for any ring system.
+void
+Pose::set_ring_conformation(uint const seqpos, core::chemical::carbohydrates::RingConformer const & conformer)
+{
+	using namespace std;
+	using namespace id;
+	using namespace core::pose::carbohydrates;
+
+	Residue res = residue(seqpos);
+
+	assert(res.is_carbohydrate());
+	PyAssert((seqpos<=total_residue()),
+			"Pose::set_ring_conformation(uint const seqpos, core::chemical::carbohydrates::RingConformer const &"
+			"conformer): variable seqpos is out of range!");
+	PyAssert((res.is_carbohydrate()),
+			"Pose::set_ring_conformation(uint const seqpos, core::chemical::carbohydrates::RingConformer const &"
+			"conformer): residue seqpos is not part of a carbohydrate!" );
+
+	pair<TorsionType, Size> nu_id;
+
+	Size ring_size = res.carbohydrate_info()->ring_size();
+	for (uint i = 1; i <= ring_size - 2; ++i) {
+		nu_id = res.carbohydrate_info()->nu_id(i);
+		set_torsion(TorsionID(seqpos, nu_id.first, nu_id.second), conformer.nu_angles[i]);
+		align_virtual_atoms_in_carbohydrate_residue(*this, seqpos);
+	}
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // generic torsion-angle access

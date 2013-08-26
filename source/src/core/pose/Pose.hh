@@ -41,6 +41,7 @@
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/carbohydrates/RingConformerSet.fwd.hh>
 #include <core/chemical/AA.hh>
 
 #include <core/conformation/Residue.fwd.hh>
@@ -1128,6 +1129,12 @@ public:
 	///     AtomID
 	kinematics::Jump const &
 	jump( AtomID const & id ) const;
+
+
+
+	/// @brief Set the given residue's ring conformation, if appropriate.
+	void
+	set_ring_conformation(uint const seqpos, core::chemical::carbohydrates::RingConformer const & conformer);
 
 
 	/////////////////////////////////////////////////////////////////////////////
