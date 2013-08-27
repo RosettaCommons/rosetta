@@ -10,6 +10,8 @@
 /// @file
 /// @author Yifan Song
 
+#include <core/init/score_function_corrections.hh>
+
 #include <protocols/hybridization/HybridizeProtocolCreator.hh>
 #include <protocols/hybridization/HybridizeProtocol.hh>
 #include <protocols/hybridization/FoldTreeHybridize.hh>
@@ -84,6 +86,7 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/CartesianMinimizer.hh>
@@ -137,8 +140,10 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh> // strand pairings
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
+#include <basic/options/keys/mistakes.OptionKeys.gen.hh> // check pre talaris
 
 //docking
 #include <protocols/docking/DockingLowRes.hh>
@@ -246,11 +251,50 @@ HybridizeProtocol::init() {
 	// default scorefunction
 	stage1_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(
 		option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage1_patch]() );
+
+	if (!option[mistakes::restore_pre_talaris_2013_behavior]) {
+	  ///////////////////////////////////////////////////////////////////////////////////////
+	  // restore hb term to score12
+	  option[ corrections::score::hb_sp2_chipen ].value( false );
+	  option[ corrections::score::hb_fade_energy ].value( false );
+	  option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( false );
+	  option[ corrections::score::hb_sp2_outer_width ].value( 0.33333 );
+	  // option[ corrections::score::lj_hbond_hdis ].value( 1.95 );
+	  // option[ corrections::score::lj_hbond_OH_donor_dis ].value( 3.0 );
+	  option[ score::hbond_params ].value( "score12_params" );
+	}
+
 	stage2_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(
 		option[cm::hybridize::stage2_weights](), option[cm::hybridize::stage2_patch]() );
 
+	if (!option[mistakes::restore_pre_talaris_2013_behavior]) {
+	  core::scoring::methods::EnergyMethodOptions options2(stage2_scorefxn_->energy_method_options());
+	  core::scoring::hbonds::HBondOptions hbopt;
+	  hbopt.params_database_tag("score12_params");
+	  options2.hbond_options(hbopt);
+	  stage2_scorefxn_->set_energy_method_options(options2);
+
+    ///////////////////////////////////////////////////////////////////////////////////////
+	  // take talaris2013 back
+	  option[ corrections::score::hb_sp2_chipen ].value( true );
+	  option[ corrections::score::hb_fade_energy ].value( true );
+	  option[ corrections::score::hbond_measure_sp3acc_BAH_from_hvy ].value( true );
+	  option[ corrections::score::hb_sp2_outer_width ].value( 0.357 );
+	  // option[ corrections::score::lj_hbond_hdis ].value( 1.75 );
+	  // option[ corrections::score::lj_hbond_OH_donor_dis ].value( 2.6 );
+	  option[ score::hbond_params ].value( "sp2_elec_params" );
+	}
+	
 	fa_scorefxn_ = core::scoring::getScoreFunction();
+
+	core::scoring::methods::EnergyMethodOptions optionsfa(fa_scorefxn_->energy_method_options());
+	core::scoring::hbonds::HBondOptions hboptfa;
+	hboptfa.params_database_tag("sp2_elec_params");
+	optionsfa.hbond_options(hboptfa);
+	fa_scorefxn_->set_energy_method_options(optionsfa);
+
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn_ );
+
 
 	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 		utility::vector1< std::string > cst_files = option[ OptionKeys::constraints::cst_fa_file ]();
