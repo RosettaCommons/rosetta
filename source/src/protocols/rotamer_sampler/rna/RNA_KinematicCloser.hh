@@ -23,7 +23,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/NamedAtomID.hh>
+#include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -71,11 +71,6 @@ public:
 
 	/// @brief Set verbose
 	void set_verbose( bool const setting ) { verbose_ = setting; }
-
-	/// @brief Set reference pose
-	void set_ref_pose( core::pose::PoseOP const pose ) {
-		set_and_reinit( ref_pose_, pose );
-	}
 
 private:
 	void figure_out_dof_ids_and_offsets();

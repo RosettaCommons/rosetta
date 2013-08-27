@@ -33,6 +33,7 @@ namespace rotamer_sampler {
 namespace screener {
 
 RNA_TorsionScreener::RNA_TorsionScreener() :
+	utility::pointer::ReferenceCount(),
 	suitename_( new RNA_SuiteName() )
 {}
 

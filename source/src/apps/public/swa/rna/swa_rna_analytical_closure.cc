@@ -664,6 +664,13 @@ rna_resample_test() {
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
 	if ( option[ constraint_chi ]() ) apply_chi_cst( pose, *job_parameters_COP->working_native_pose() );
 
+	///////////////////////////////////////////////////////////////////////////
+	// Fang: The score term elec_dens_atomwise uses the first pose it scored to
+	// decide the normalization factor. Score before modeler for consistency.
+	Pose pose_test( *native_pose );
+	( *scorefxn )( pose_test );
+	///////////////////////////////////////////////////////////////////////////
+
 	ERRASER_ModelerOP erraser_modeler = new ERRASER_Modeler( option[ sample_res ]()[1], scorefxn );
 	//	erraser_modeler->set_job_parameters( job_parameters_COP ); // later will automatically initialize this inside ERRASER_Modeler
 	erraser_modeler->set_native_pose( native_pose );

@@ -21,7 +21,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/rna/RNA_SuiteName.hh>
+#include <core/pose/rna/RNA_SuiteName.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>

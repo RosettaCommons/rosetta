@@ -113,9 +113,9 @@ private:
 	bool is_in_between( utility::vector1<Real> const & target,
 			utility::vector1<Real> const & dominant,
 			utility::vector1<Real> const & satellite ) const;
-	RNA_SuiteAssignment const outlier, suite_undefined;
 
 	//////////////////////////////////
+	RNA_SuiteAssignment const outlier, suite_undefined;
 	Real const dist_pow;
 	utility::vector1<RNA_SuiteInfo> all_suites;
 	utility::vector1<Size> regular_half_width;
