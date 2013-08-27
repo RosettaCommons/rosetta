@@ -128,6 +128,8 @@ HelixKinkFilter::apply( Pose const & pose ) const
 						}
 							//TR << "Helix " << ii << ", " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", NOT considered" << std::endl;
 	      }
+		} else {
+			check = true; // TL: we always want to check if no residue numbers are specified
 		}
 
 		if (!check ) continue;
