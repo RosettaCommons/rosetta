@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/rotamer_sampler/rna/RNA_AnalyticLoopCloser.hh
-/// @brief Simply close the RNA loop with KIC.
-/// @detailed
-/// @author Rhiju Das, Fang-Chieh Chou
+/// @file protocols/rotamer_sampler/rna/RNA_KinematicCloser.hh
+/// @brief Close a RNA loop with Kinematic Closer (KIC).
+/// @author Rhiju Das
+/// @author Fang-Chieh Chou
 
-#ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_AnalyticLoopCloser_HH
-#define INCLUDED_protocols_rotamer_sampler_rna_RNA_AnalyticLoopCloser_HH
+#ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_KinematicCloser_HH
+#define INCLUDED_protocols_rotamer_sampler_rna_RNA_KinematicCloser_HH
 
 // Unit headers
-#include <protocols/rotamer_sampler/rna/RNA_AnalyticLoopCloser.fwd.hh>
+#include <protocols/rotamer_sampler/rna/RNA_KinematicCloser.fwd.hh>
 
 // Package headers
 #include <protocols/rotamer_sampler/RotamerSized.hh>
@@ -35,21 +35,23 @@ namespace rotamer_sampler {
 namespace rna {
 
 /// @brief The RNA de novo structure modeling protocol
-class RNA_AnalyticLoopCloser: public RotamerSized {
+class RNA_KinematicCloser: public RotamerSized {
 public:
-	/// @brief Construct the protocol object
-	RNA_AnalyticLoopCloser(
-			core::pose::Pose & pose,
-			core::Size const moving_suite,
-			core::Size const chainbreak_suite );
+	RNA_KinematicCloser(
+		core::pose::PoseOP const pose,
+		core::Size const moving_suite,
+		core::Size const chainbreak_suite
+	);
+
+	~RNA_KinematicCloser();
 
 	/// @brief Class name
-	std::string get_name() const { return "RNA_AnalyticLoopCloser"; }
+	std::string get_name() const { return "RNA_KinematicCloser"; }
 
 	/// @brief Initialization
 	void init();
 
-	/// @brief Reset to the first (or random if is_random()) rotamer
+	/// @brief Reset to the first (or random if random()) rotamer
 	void reset();
 
 	/// @brief Move to next rotamer
@@ -67,48 +69,31 @@ public:
 	/// @brief Get the total number of rotamers in sampler
 	core::Size size() const { return nsol_; }
 
-	/// @brief Set the reference pose
+	/// @brief Set verbose
 	void set_verbose( bool const setting ) { verbose_ = setting; }
 
-	/// @brief Set the reference pose
-	void set_ref_pose( core::pose::Pose const & pose ) {
-		ref_pose_ = pose;
-		set_init( false );
+	/// @brief Set reference pose
+	void set_ref_pose( core::pose::PoseOP const pose ) {
+		set_and_reinit( ref_pose_, pose );
 	}
 
 private:
+	void figure_out_dof_ids_and_offsets();
 
-	void
-	figure_out_dof_ids_and_offsets ( core::pose::Pose const & pose,
-	                                 utility::vector1< core::Real > const & dt_ang );
+	void figure_out_offset( core::id::DOF_ID const & dof_id,
+	  core::Real const original_torsion_value );
 
-	void
-	figure_out_offset (
-	  core::pose::Pose const & pose,
-	  core::id::DOF_ID const & dof_id,
-	  core::Real const & original_torsion_value,
-	  utility::vector1< core::Real > & offset_save );
+	void fill_chainTORS();
 
-	void
-	fill_chainTORS (
-	  core::pose::Pose const & pose,
-	  utility::vector1< core::id::NamedAtomID > const & atom_ids,
-	  utility::vector1< utility::vector1< core::Real > > & atoms,
-	  utility::vector1< core::Real > & dt_ang,
-	  utility::vector1< core::Real > & db_ang,
-	  utility::vector1< core::Real > & db_len ) const;
+	void output_chainTORS() const;
 
-	void
-	output_chainTORS (
-		utility::vector1< core::Real > const & dt_ang,
-		utility::vector1< core::Real > const & db_ang,
-		utility::vector1< core::Real > const & db_len ) const;
+	//Disable copy constructor and assignment
+  RNA_KinematicCloser( const RNA_KinematicCloser & );
+  void operator=( const RNA_KinematicCloser & );
 
-private:
-
-	bool const verbose_;
+	core::pose::PoseOP ref_pose_;
 	core::Size const moving_suite_, chainbreak_suite_;
-	core::pose::Pose const & ref_pose_;
+	bool verbose_;
 	core::Size nsol_, id_;
 
 	utility::vector1< core::id::NamedAtomID > atom_ids_;
@@ -116,6 +101,8 @@ private:
 	utility::vector1< core::id::DOF_ID > dof_ids_;
 
 	utility::vector1< utility::vector1< core::Real > > t_ang_, b_ang_, b_len_;
+	utility::vector1< utility::vector1< core::Real > > atoms_;
+	utility::vector1< core::Real > dt_ang_, db_len_, db_ang_;
 };
 
 

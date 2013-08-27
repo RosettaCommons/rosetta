@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/rna/RNA_SuiteRotamer.cc
 /// @brief Generate rotamers for one RNA suite (from residue i to i+1).
-/// @detailed
 /// @author Fang-Chieh Chou
 
 // Unit headers
@@ -102,9 +101,8 @@ void RNA_SuiteRotamer::init_standard() {
 	add_values_from_center( full_torsions, 0, 180, bin_size_ );
 	//Avoid sampling both -180 and 180 deg
 	Real const epsil =  0.001; //Arbitary small number
-	if ( 360 - ( full_torsions.back() - full_torsions.front() ) < epsil ) {
-		full_torsions.pop_back();
-	}
+	if ( 360 - ( full_torsions.back() - full_torsions.front() ) < epsil )
+			full_torsions.pop_back();
 
 	RNA_FittedTorsionInfo const torsion_info;
 	//Setup the rotamer samplers

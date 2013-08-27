@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerSizedComb.fwd.hh
 /// @brief Aggregate of multiple rotamer samplers for sampling combinatorially.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 

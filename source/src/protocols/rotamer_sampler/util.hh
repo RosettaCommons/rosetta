@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/util.hh
 /// @brief Useful functions for rotamer sampler.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 #ifndef INCLUDED_protocols_rotamer_sampler_util_HH

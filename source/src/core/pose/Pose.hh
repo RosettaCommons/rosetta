@@ -1489,7 +1489,7 @@ private:
 			bool is_symmetric = m;
 			ar & is_symmetric;
 			if( is_symmetric ) {
-				ar & * m; 
+				ar & * m;
 				core::scoring::symmetry::SymmetricEnergies * mm = dynamic_cast< core::scoring::symmetry::SymmetricEnergies * >( energies_.get() );
 				ar & *mm;
 			} else {
@@ -1561,7 +1561,7 @@ private:
 				ConstraintSetOP tmp2 = ConstraintIO::get_instance()->read_constraints( tmpss, tmpcstset, *this );
 				constraint_set( tmp2 );
 			}
-			
+
 			bool has_string_map;
 			ar & has_string_map;
 			if( has_string_map) {

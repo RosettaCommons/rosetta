@@ -195,7 +195,7 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 			}
 
 			// save data
-			n_construct_++;
+			++n_construct_;
 			torsion_info_.clear();
 			torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_ , id::BB, EPSILON ) ) );
 			torsion_info_.push_back ( pose.torsion ( TorsionID ( moving_suite_ , id::BB, ZETA ) ) );
@@ -215,7 +215,6 @@ RNA_LoopCloseSampler::apply ( core::pose::Pose & pose ) {
 
 		if ( choose_random_ && all_torsion_info_.size() > 1 ) break; // our work is done!
 	}
-
 }
 
 ///////////////////////////////////////////////////////////////////////

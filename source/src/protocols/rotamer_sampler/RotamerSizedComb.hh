@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerSizedComb.hh
 /// @brief Aggregate of multiple rotamer samplers for sampling combinatorially.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 
@@ -29,16 +28,12 @@ class RotamerSizedComb : public RotamerSized {
 public:
 	RotamerSizedComb();
 
-	RotamerSizedComb( RotamerSizedComb const & other );
-
-	RotamerSizedComb & operator=( RotamerSizedComb const & rhs );
-
 	virtual ~RotamerSizedComb();
 
 	/// @brief Initialization
 	virtual void init();
 
-	/// @brief Reset to the first (or random if is_random()) rotamer
+	/// @brief Reset to the first (or random if random()) rotamer
 	virtual void reset();
 
 	/// @brief Move to next rotamer

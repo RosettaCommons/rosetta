@@ -131,6 +131,12 @@ StepWiseRNA_PoseSetup::apply( core::pose::Pose & pose ) {
 		pose.fold_tree( job_parameters_->fold_tree() );
 	}
 
+	//Fang: apply ideal coord to residue being modeled if use_phenix_geo
+	if ( use_phenix_geo_ ) {
+		Size const moving_res = job_parameters_->working_moving_res();
+		pose::rna::apply_pucker( pose, moving_res );
+	}
+
 	if ( output_pdb_ ) pose.dump_pdb( "test.pdb" );
 
 	//WARNING STILL NEED TO IMPLEMENT harmonic_chainbreak HERE!
@@ -147,12 +153,6 @@ StepWiseRNA_PoseSetup::apply( core::pose::Pose & pose ) {
 	setup_pdb_info_with_working_residue_numbers( pose );
 
 	if ( output_pdb_ ) pose.dump_pdb( "start.pdb" );
-
-	//Fang: apply ideal coord to residue being modeled if use_phenix_geo
-	if ( use_phenix_geo_ ) {
-		Size const moving_res = job_parameters_->working_moving_res();
-		pose::rna::apply_pucker( pose, moving_res );
-	}
 
 	if ( verbose_ ) Output_title_text( "Exit StepWiseRNA_PoseSetup::apply", TR.Debug );
 }

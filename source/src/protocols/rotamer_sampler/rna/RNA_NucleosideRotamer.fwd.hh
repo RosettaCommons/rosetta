@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/rna/RNA_NucleosideRotamer.fwd.hh
 /// @brief Generate rotamers for one RNA nucleoside (pucker + glycosidic chi).
-/// @detailed
 /// @author Fang-Chieh Chou
 
 #ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_NucleosideRotamer_fwd_HH

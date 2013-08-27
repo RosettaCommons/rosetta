@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerSized.hh
 /// @brief Abstract Base Class for Rotamer sampler with finite size.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 
@@ -29,7 +28,7 @@ class RotamerSized: public RotamerBase {
 public:
 	RotamerSized():
 		RotamerBase()
-	{ set_random( false ); }
+	{ RotamerBase::set_random( false ); }
 
 	virtual ~RotamerSized(){}
 

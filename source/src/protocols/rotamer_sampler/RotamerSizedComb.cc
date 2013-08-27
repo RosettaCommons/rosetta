@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerSizedComb.cc
 /// @brief Aggregate of multiple rotamer samplers for sampling combinatorially.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 // Unit headers
@@ -36,28 +35,6 @@ RotamerSizedComb::RotamerSizedComb():
 	id_( 0 )
 {}
 
-RotamerSizedComb::RotamerSizedComb( RotamerSizedComb const & other ):
-	RotamerSized( other ),
-	size_( other.size_ ),
-	id_( other.id_ ),
-	id_list_( other.id_list_ ),
-	size_list_( other.size_list_ ),
-	rotamer_list_( other.rotamer_list_ )
-{}
-
-RotamerSizedComb& RotamerSizedComb::operator=(
-	RotamerSizedComb const & rhs
-) {
-	if ( this == &rhs ) return *this;
-	RotamerSized::operator=( rhs );
-	size_ = rhs.size_;
-	id_ = rhs.id_;
-	id_list_ = rhs.id_list_;
-	size_list_ = rhs.size_list_;
-	rotamer_list_ = rhs.rotamer_list_;
-	return *this;
-}
-
 RotamerSizedComb::~RotamerSizedComb(){}
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedComb::init() {
@@ -82,7 +59,7 @@ void RotamerSizedComb::init() {
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedComb::reset() {
 	runtime_assert( is_init() );
-	if ( is_random() ) {
+	if ( random() ) {
 		++( *this );
 	} else {
 		for ( Size i = 1; i <= id_list_.size(); ++i ) {
@@ -95,7 +72,7 @@ void RotamerSizedComb::reset() {
 void RotamerSizedComb::operator++() {
 	runtime_assert( not_end() );
 
-	if ( is_random() ) {
+	if ( random() ) {
 		id_ = RG.random_range( 1, size() );
 		id_list_ = id2list( id_ );
 	} else {
@@ -112,7 +89,7 @@ void RotamerSizedComb::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 bool RotamerSizedComb::not_end() const {
 	runtime_assert( is_init() );
-	if ( is_random() ) return true;
+	if ( random() ) return true;
 	return id_ <= size();
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -156,7 +133,6 @@ RotamerSizedComb::id2list( core::Size const id ) const {
 			break;
 		}
 	}
-
 	return new_id_list;
 }
 ///////////////////////////////////////////////////////////////////////////

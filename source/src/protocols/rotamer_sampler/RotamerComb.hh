@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerComb.hh
 /// @brief Aggregate of multiple rotamer samplers for sampling combinatorially.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 
@@ -33,16 +32,12 @@ class RotamerComb : public RotamerBase {
 public:
 	RotamerComb();
 
-	RotamerComb( RotamerComb const & other );
-
-	RotamerComb & operator=( RotamerComb const & rhs );
-
 	virtual ~RotamerComb();
 
 	/// @brief Initialization
 	virtual void init() { init_rotamer(); }
 
-	/// @brief Reset to the first (or random if is_random()) rotamer
+	/// @brief Reset to the first (or random if random()) rotamer
 	virtual void reset();
 
 	/// @brief Move to next rotamer

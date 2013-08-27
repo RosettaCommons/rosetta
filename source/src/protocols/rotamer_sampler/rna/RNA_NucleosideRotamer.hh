@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/rna/RNA_NucleosideRotamer.hh
 /// @brief Generate rotamers for one RNA nucleoside (pucker + glycosidic chi).
-/// @detailed
 /// @author Fang-Chieh Chou
 
 #ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_NucleosideRotamer_HH
@@ -41,24 +40,24 @@ public:
 
 	/// Set functions
 	void set_extra_chi( bool const setting ) {
-		set_and_reinit<bool>( extra_chi_, setting );
+		set_and_reinit( extra_chi_, setting );
 	}
 
 	void set_skip_same_pucker( bool const setting ) {
-		set_and_reinit<bool>( skip_same_pucker_, setting );
+		set_and_reinit( skip_same_pucker_, setting );
 	}
 
 	void set_idealize_coord( bool const setting ) {
-		set_and_reinit<bool>( idealize_coord_, setting );
+		set_and_reinit( idealize_coord_, setting );
 	}
 
 	/// @brief Just sample the center chi torsion.
 	void set_fast( bool const setting ) {
-		set_and_reinit<bool>( fast_, setting );
+		set_and_reinit( fast_, setting );
 	}
 
 	void set_bin_size( core::Real const setting ) {
-		set_and_reinit<core::Real>( bin_size_, setting );
+		set_and_reinit( bin_size_, setting );
 	}
 
 	/// @brief Name of the class

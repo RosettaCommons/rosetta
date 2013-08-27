@@ -252,8 +252,8 @@ public: // Assignment
  	inline
  	int
  	index( T const & t ) const {
-		int idx = 1 + std::distance( begin(), std::find(begin(), end(), t) );
-		if (idx > size()) return 0;
+		Size idx = 1 + std::distance( begin(), std::find(begin(), end(), t) );
+		if ( idx > size() ) return 0;
 		return idx;
  	}
 

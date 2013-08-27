@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerOneTorsion.hh
 /// @brief Generate glycosidic chi rotamers for RNA.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 // Unit headers
@@ -50,7 +49,7 @@ RotamerOneTorsion::~RotamerOneTorsion(){}
 ///////////////////////////////////////////////////////////////////////////
 void RotamerOneTorsion::reset() {
 	runtime_assert( is_init() );
-	if ( is_random() ) {
+	if ( random() ) {
 		++( *this );
 	} else {
 		id_ = 1;
@@ -59,7 +58,7 @@ void RotamerOneTorsion::reset() {
 ///////////////////////////////////////////////////////////////////////////
 void RotamerOneTorsion::operator++() {
 	runtime_assert( not_end() );
-	if ( is_random() ) {
+	if ( random() ) {
 		id_ = RG.random_range( 1, size() );
 	} else {
 		++id_;
@@ -68,7 +67,7 @@ void RotamerOneTorsion::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 bool RotamerOneTorsion::not_end() const {
 	runtime_assert( is_init() );
-	if ( is_random() ) return true;
+	if ( random() ) return true;
 	return ( id_ <= size() );
 }
 ///////////////////////////////////////////////////////////////////////////

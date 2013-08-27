@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/rna/RNA_ChiRotamer.cc
 /// @brief Generate glycosidic chi rotamers for RNA.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 // Unit headers

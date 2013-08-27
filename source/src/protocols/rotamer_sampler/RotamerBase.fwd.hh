@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerBase.fwd.hh
 /// @brief Abstract Base Class for Rotamer generator.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 

@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/rna/RNA_SugarRotamer.hh
 /// @brief Generate sugar pucker rotamers for RNA.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 #ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_SugarRotamer_HH
@@ -38,7 +37,7 @@ public:
 	/// @brief Initialization
 	void init();
 
-	/// @brief Reset to the first (or random if is_random()) rotamer.
+	/// @brief Reset to the first (or random if random()) rotamer.
 	void reset();
 
 	/// @brief Move to next rotamer
@@ -54,7 +53,7 @@ public:
 	void apply( core::pose::Pose & pose, core::Size const i );
 
 	/// @brief Get the total number of rotamers in sampler
-	virtual core::Size size() const {
+	 core::Size size() const {
 		runtime_assert( is_init() );
 		return pucker_states_.size();
 	}
@@ -70,15 +69,19 @@ public:
 
 	/// @brief Set the pucker_state (WHATEVER / NORTH / SOUTH)
 	void set_pucker_state( core::Size const setting ) {
-		set_and_reinit<core::Size>( pucker_state_, setting );
+		set_and_reinit( pucker_state_, setting );
 	}
 
 	/// @brief Set if the sampler will skip pucker applying when input pose has
 	//  same pucker assginment as sampler.
-	void set_skip_same_pucker( bool const setting ) { skip_same_pucker_ = setting; }
+	void set_skip_same_pucker( bool const setting ) {
+		skip_same_pucker_ = setting;
+	}
 
 	/// @brief Set if using RNA_IdealCoord to sample puckers
-	void set_idealize_coord( bool const setting ){ idealize_coord_ = setting; }
+	void set_idealize_coord( bool const setting ) {
+		idealize_coord_ = setting;
+	}
 
 	/// @brief Name of the class
 	std::string get_name() const { return "RNA_SugarRotamer"; }

@@ -89,6 +89,8 @@ namespace rna {
 
 		void set_use_phenix_geo( bool const & setting ){ use_phenix_geo_ = setting; }
 
+		void set_kic_sampling( bool const & setting ){ kic_sampling_ = setting; }
+
 		void set_centroid_screen( bool const & setting ){ centroid_screen_ = setting; }
 
 		void set_VDW_atr_rep_screen( bool const & setting ){ VDW_atr_rep_screen_ = setting; }
@@ -195,6 +197,7 @@ namespace rna {
 		bool allow_syn_pyrimidine_;
 		bool extra_chi_;
 		bool use_phenix_geo_;
+		bool kic_sampling_;
 		bool centroid_screen_;
 		bool VDW_atr_rep_screen_;
 		bool force_centroid_interaction_;

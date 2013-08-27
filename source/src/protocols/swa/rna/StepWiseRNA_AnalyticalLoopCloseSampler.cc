@@ -363,6 +363,7 @@ StepWiseRNA_AnalyticalLoopCloseSampler::standard_sampling ( core::pose::Pose & p
 
 
 			while ( base_sugar_rotamer->get_next_rotamer() ){
+				count_data_.tot_rotamer_count++;
 				Real chi = base_sugar_rotamer->chi();
 				screening_pose.set_torsion ( TorsionID ( moving_res, id::CHI, 1 ), chi );
 

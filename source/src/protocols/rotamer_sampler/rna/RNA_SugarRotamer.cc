@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/rna/RNA_SugarRotamer.cc
 /// @brief Generate sugar pucker rotamers for RNA.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 
@@ -52,19 +51,19 @@ RNA_SugarRotamer::RNA_SugarRotamer(
 }
 //////////////////////////////////////////////////////////////////////////
 void RNA_SugarRotamer::init() {
-	set_init( true );
 	if ( pucker_state_ == WHATEVER ) {
 		pucker_states_.push_back( NORTH );
 		pucker_states_.push_back( SOUTH );
 	} else {
 		pucker_states_.push_back( pucker_state_ );
 	}
+	set_init( true );
 	reset();
 }
 //////////////////////////////////////////////////////////////////////////
 void RNA_SugarRotamer::reset() {
 	runtime_assert( is_init() );
-	if ( is_random() ) {
+	if ( random() ) {
 		++( *this );
 	} else {
 		id_ = 1;
@@ -73,7 +72,7 @@ void RNA_SugarRotamer::reset() {
 //////////////////////////////////////////////////////////////////////////
 void RNA_SugarRotamer::operator++() {
 	runtime_assert( not_end() );
-	if ( is_random() ) {
+	if ( random() ) {
 		id_ = RG.random_range( 1, size() );
 	} else {
 		++id_;
@@ -82,7 +81,7 @@ void RNA_SugarRotamer::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 bool RNA_SugarRotamer::not_end() const {
 	runtime_assert( is_init() );
-	if ( is_random() ) return true;
+	if ( random() ) return true;
 	return ( id_ <= size() );
 }
 //////////////////////////////////////////////////////////////////

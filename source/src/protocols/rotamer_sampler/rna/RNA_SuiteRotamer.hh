@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/rna/RNA_SuiteRotamer.hh
 /// @brief Generate rotamers for one RNA suite (from residue i to i+1).
-/// @detailed
 /// @author Fang-Chieh Chou
 
 #ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_SuiteRotamer_HH
@@ -30,7 +29,7 @@ namespace rna {
 
 class RNA_SuiteRotamer : public RotamerSizedAny {
 public:
-	typedef utility::vector1<core::Real> TorsionList;
+	using RotamerBase::TorsionList;
 
 	RNA_SuiteRotamer(
 		core::Size const rsd_id,
@@ -51,40 +50,40 @@ public:
 
 	/// Set functions
 	void set_sample_nucleoside_lower( bool const setting ) {
-		set_and_reinit<bool>( sample_nucleoside_lower_, setting );
+		set_and_reinit( sample_nucleoside_lower_, setting );
 	}
 
 	void set_sample_nucleoside_upper( bool const setting ) {
-		set_and_reinit<bool>( sample_nucleoside_upper_, setting );
+		set_and_reinit( sample_nucleoside_upper_, setting );
 	}
 
 	void set_extra_epsilon( bool const setting ) {
-		set_and_reinit<bool>( extra_epsilon_, setting );
+		set_and_reinit( extra_epsilon_, setting );
 	}
 
 	void set_extra_beta( bool const setting ) {
-		set_and_reinit<bool>( extra_beta_, setting );
+		set_and_reinit( extra_beta_, setting );
 	}
 
 	void set_extra_chi( bool const setting ) {
-		set_and_reinit<bool>( extra_chi_, setting );
+		set_and_reinit( extra_chi_, setting );
 	}
 
 	void set_skip_same_pucker( bool const setting ) {
-		set_and_reinit<bool>( skip_same_pucker_, setting );
+		set_and_reinit( skip_same_pucker_, setting );
 	}
 
 	void set_idealize_coord( bool const setting ) {
-		set_and_reinit<bool>( idealize_coord_, setting );
+		set_and_reinit( idealize_coord_, setting );
 	}
 
 	/// @brief Fast mode: just sample popular center torsions
 	void set_fast( bool const setting ) {
-		set_and_reinit<bool>( fast_, setting );
+		set_and_reinit( fast_, setting );
 	}
 
 	void set_bin_size( core::Real const setting ) {
-		set_and_reinit<core::Real>( bin_size_, setting );
+		set_and_reinit( bin_size_, setting );
 	}
 
 	/// @brief Name of the class

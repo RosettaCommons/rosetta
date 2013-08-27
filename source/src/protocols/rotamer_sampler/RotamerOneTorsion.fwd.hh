@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerOneTorsion.fwd.hh
 /// @brief Generate rotamer for one torsion angle.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 

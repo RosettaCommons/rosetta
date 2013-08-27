@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerSizedAny.hh
 /// @brief Aggregate multiple samplers for sampling from any one of them.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 
@@ -29,16 +28,12 @@ class RotamerSizedAny : public RotamerSized {
 public:
 	RotamerSizedAny();
 
-	RotamerSizedAny( RotamerSizedAny const & other );
-
-	RotamerSizedAny& operator=( RotamerSizedAny const & rhs );
-
 	virtual ~RotamerSizedAny();
 
 	/// @brief Initialization
 	virtual void init();
 
-	/// @brief Reset to the first (or random if is_random()) rotamer
+	/// @brief Reset to the first (or random if random()) rotamer
 	virtual void reset();
 
 	/// @brief Move to next rotamer

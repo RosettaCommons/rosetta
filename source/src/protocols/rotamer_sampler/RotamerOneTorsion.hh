@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerOneTorsion.hh
 /// @brief Generate rotamer for one torsion angle.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 
@@ -32,7 +31,7 @@ namespace rotamer_sampler {
 
 class RotamerOneTorsion : public RotamerSized {
 public:
-	typedef utility::vector1<core::Real> TorsionList;
+	using RotamerBase::TorsionList;
 
 	RotamerOneTorsion();
 
@@ -49,7 +48,7 @@ public:
 		reset();
 	}
 
-	/// @brief Reset to the first (or random if is_random()) rotamer
+	/// @brief Reset to the first (or random if random()) rotamer
 	virtual void reset();
 
 	/// @brief Move to next rotamer
@@ -83,17 +82,15 @@ public:
 	}
 
 	/// @brief Set the allowed torsions in sampler
-	virtual void
-	set_torsions(
-		TorsionList const & setting
-	) {
-		set_and_reinit<TorsionList>( torsions_, setting );
+	virtual void set_torsions( TorsionList const & setting	) {
+		set_and_reinit( torsions_, setting );
 	}
 
 	/// @brief Set the residue id being sampled
 	virtual void set_rsd_id( core::Size const setting ) {
 		torsion_id_ =
-			core::id::TorsionID( setting, torsion_id_.type(), torsion_id_.torsion() );
+			core::id::TorsionID( setting, torsion_id_.type(),
+			torsion_id_.torsion() );
 	}
 
 	/// @brief Set the TorsionID of the sampler

@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerComb.cc
 /// @brief Aggregate of multiple rotamer samplers for sampling combinatorially.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 // Unit headers
@@ -30,20 +29,6 @@ RotamerComb::RotamerComb():
 	RotamerBase()
 {}
 
-RotamerComb::RotamerComb( RotamerComb const & other ):
-	RotamerBase( other ),
-	rotamer_list_( other.rotamer_list_ )
-{}
-
-RotamerComb& RotamerComb::operator=(
-	RotamerComb const & rhs
-) {
-	if ( this == &rhs ) return *this;
-	RotamerBase::operator=( rhs );
-	rotamer_list_ = rhs.rotamer_list_;
-	return *this;
-}
-
 RotamerComb::~RotamerComb(){}
 ///////////////////////////////////////////////////////////////////////////
 void RotamerComb::init_rotamer() {
@@ -51,7 +36,7 @@ void RotamerComb::init_rotamer() {
 	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
 		rotamer_list_[i]->init();
 	}
-	set_random( is_random() );
+	set_random( random() );
 	set_init( true );
 	reset();
 }
@@ -66,7 +51,7 @@ void RotamerComb::reset() {
 void RotamerComb::operator++() {
 	runtime_assert( not_end() );
 
-	if ( is_random() ) {
+	if ( random() ) {
 		for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
 			++( *rotamer_list_[i] );
 		}
@@ -84,7 +69,7 @@ void RotamerComb::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 bool RotamerComb::not_end() const {
 	runtime_assert( is_init() );
-	if ( is_random() ) return true;
+	if ( random() ) return true;
 	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
 		if ( rotamer_list_[i]->not_end() ) return true;
 	}
@@ -102,7 +87,7 @@ void RotamerComb::set_random( bool const setting ) {
 	RotamerBase::set_random( setting );
 	for ( Size i = 1; i <= rotamer_list_.size(); ++i ) {
 		rotamer_list_[i]->set_random( setting );
-		runtime_assert( rotamer_list_[i]->is_random() == setting );
+		runtime_assert( rotamer_list_[i]->random() == setting );
 	}
 }
 ///////////////////////////////////////////////////////////////////////////

@@ -35,8 +35,8 @@
 #include <cstddef>
 
 #ifdef MULTI_THREADED
-// Boost headers 
-#include <boost/detail/atomic_count.hpp> 
+// Boost headers
+#include <boost/detail/atomic_count.hpp>
 #endif
 
 namespace utility {

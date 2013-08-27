@@ -1,5 +1,5 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet:
+//  vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
@@ -7,14 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/rotamer_sampler/rna/RNA_SugarRotamer.fwd.hh
-/// @brief Generate sugar pucker rotamers for RNA.
-/// @detailed
+/// @file protocols/rotamer_sampler/rna/RNA_KinematicCloser.fwd.hh
+/// @brief Close a RNA loop with Kinematic Closer (KIC).
+/// @author Rhiju Das
 /// @author Fang-Chieh Chou
 
-#ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_SugarRotamer_fwd_HH
-#define INCLUDED_protocols_rotamer_sampler_rna_RNA_SugarRotamer_fwd_HH
-
+#ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_KinematicCloser_FWD_HH
+#define INCLUDED_protocols_rotamer_sampler_rna_RNA_KinematicCloser_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -22,11 +21,10 @@ namespace protocols {
 namespace rotamer_sampler {
 namespace rna {
 
-class RNA_SugarRotamer;
-typedef utility::pointer::owning_ptr< RNA_SugarRotamer > RNA_SugarRotamerOP;
+class RNA_KinematicCloser;
+typedef utility::pointer::owning_ptr< RNA_KinematicCloser > RNA_KinematicCloserOP;
 
 }
 }
 }
-
 #endif

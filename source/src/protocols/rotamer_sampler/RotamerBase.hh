@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerBase.hh
 /// @brief Abstract Base Class for Rotamer generator.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 
@@ -33,6 +32,8 @@ namespace rotamer_sampler {
 
 class RotamerBase : public moves::Mover {
 public:
+	typedef utility::vector1<core::Real> TorsionList;
+
 	RotamerBase():
 		moves::Mover(),
 		is_init_( false ),
@@ -44,7 +45,7 @@ public:
 	/// @brief Initialization
 	virtual void init() = 0;
 
-	/// @brief Reset to the first (or random if is_random()) rotamer
+	/// @brief Reset to the first (or random if random()) rotamer
 	virtual void reset() = 0;
 
 	/// @brief Move to next rotamer
@@ -54,7 +55,7 @@ public:
 	virtual bool not_end() const { return true; }
 
 	/// @brief Check if is random sampling
-	virtual bool is_random() const { return random_; }
+	virtual bool random() const { return random_; }
 
 	/// @brief Set the random sampling state
 	virtual void set_random( bool const setting ) { random_ = setting; }
@@ -67,16 +68,16 @@ public:
 
 protected:
 	/// @brief Check if the sampler has been initialized
-	virtual bool is_init() const { return is_init_; }
+	bool is_init() const { return is_init_; }
 
 	/// @brief Set the initialization state
-	virtual void set_init( bool const setting ) { is_init_ = setting; }
+	void set_init( bool const setting ) { is_init_ = setting; }
 
 	/// @brief Set value of a parameter, return to pre-init state
 	template <class T>
-	void set_and_reinit( T & params, T const setting ) {
+	void set_and_reinit( T & params, T const & setting ) {
 		params = setting;
-		set_init( false );
+		is_init_ = false;
 	}
 
 private:

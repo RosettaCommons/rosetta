@@ -7,25 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/rotamer_sampler/rna/RNA_SugarRotamer.fwd.hh
-/// @brief Generate sugar pucker rotamers for RNA.
+/// @file protocols/swa/rna/RNA_TorsionScreener.fwd.hh
+/// @brief Screener checking whether the rna torsions are resonable
 /// @author Fang-Chieh Chou
 
-#ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_SugarRotamer_fwd_HH
-#define INCLUDED_protocols_rotamer_sampler_rna_RNA_SugarRotamer_fwd_HH
-
+#ifndef INCLUDED_protocols_rotamer_sampler_screener_RNA_TorsionScreener_fwd_HH
+#define INCLUDED_protocols_rotamer_sampler_screener_RNA_TorsionScreener_fwd_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace rotamer_sampler {
-namespace rna {
+namespace screener {
 
-class RNA_SugarRotamer;
-typedef utility::pointer::owning_ptr< RNA_SugarRotamer > RNA_SugarRotamerOP;
+class RNA_TorsionScreener;
+typedef utility::pointer::owning_ptr< RNA_TorsionScreener > RNA_TorsionScreenerOP;
 
 }
 }
 }
-
 #endif

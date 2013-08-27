@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerSizedAny.cc
 /// @brief Aggregate multiple samplers for sampling from any one of them.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 // Unit headers
@@ -36,28 +35,6 @@ RotamerSizedAny::RotamerSizedAny():
 	id_( 0 )
 {}
 
-RotamerSizedAny::RotamerSizedAny( RotamerSizedAny const & other ):
-	RotamerSized( other ),
-	size_( other.size_ ),
-	id_( other.id_ ),
-	curr_state_( other.curr_state_ ),
-	size_list_( other.size_list_ ),
-	rotamer_list_( other.rotamer_list_ )
-{}
-
-RotamerSizedAny& RotamerSizedAny::operator=(
-	RotamerSizedAny const &rhs
-) {
-	if ( this == &rhs ) return *this;
-	RotamerSized::operator=( rhs );
-	size_ = rhs.size_;
-	id_ = rhs.id_;
-	curr_state_ = rhs.curr_state_;
-	size_list_ = rhs.size_list_;
-	rotamer_list_ = rhs.rotamer_list_;
-	return *this;
-}
-
 RotamerSizedAny::~RotamerSizedAny(){}
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedAny::init() {
@@ -82,7 +59,7 @@ void RotamerSizedAny::init() {
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedAny::reset() {
 	runtime_assert( is_init() );
-	if ( is_random() ) {
+	if ( random() ) {
 		++( *this );
 	} else {
 		id_ = 1;
@@ -92,7 +69,7 @@ void RotamerSizedAny::reset() {
 ///////////////////////////////////////////////////////////////////////////
 void RotamerSizedAny::operator++() {
 	runtime_assert( not_end() );
-	if ( is_random() ) {
+	if ( random() ) {
 		id_ = RG.random_range( 1, size() );
 		curr_state_ = id2state( id_ );
 	} else {
@@ -107,7 +84,7 @@ void RotamerSizedAny::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 bool RotamerSizedAny::not_end() const {
 	runtime_assert( is_init() );
-	if ( is_random() ) return true;
+	if ( random() ) return true;
 	return id_ <= size();
 }
 ///////////////////////////////////////////////////////////////////////////

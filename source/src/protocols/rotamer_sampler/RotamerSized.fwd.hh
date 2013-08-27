@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/RotamerSized.fwd.hh
 /// @brief Abstract Base Class for Rotamer generator with finite size.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 #include <utility/pointer/owning_ptr.hh>

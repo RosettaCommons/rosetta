@@ -11,6 +11,10 @@
 /// @brief RNA suite assignment ported from suitename program
 /// @author Fang-Chieh Chou
 
+// NOTE: The definition of suite numbering here follows the original
+// definition of the Richardson's. Suite i consists of the delta, epsilon,
+// zeta of residue (i-1) and alpha, beta, gamma, delta of residue i. This is
+// different to the one being used in current SWA codes.
 
 #ifndef INCLUDED_core_pose_rna_RNA_SuiteName_HH
 #define INCLUDED_core_pose_rna_RNA_SuiteName_HH
@@ -45,7 +49,10 @@ public:
 		suiteness( suiteness_in )
 	{}
 
-	RNA_SuiteAssignment () : name( "" ), suiteness( 0 ) {}
+	RNA_SuiteAssignment():
+		name( "" ),
+		suiteness( 0 )
+	{}
 };
 /////////////////////////////////////////
 class RNA_SuiteInfo {
@@ -60,23 +67,24 @@ public:
 		torsion( torsion_in )
 	{}
 
-	RNA_SuiteInfo () : name( "" ), classifier( 0 ) {}
+	RNA_SuiteInfo():
+		name( "" ),
+		classifier( 0 )
+	{}
 };
 
 ////////////////////////////////////////
 class RNA_SuiteName : public utility::pointer::ReferenceCount {
 public:
-
 	RNA_SuiteName();
+
 	~RNA_SuiteName();
 
 	RNA_SuiteInfo name2suite( std::string const name ) const;
+
 	RNA_SuiteAssignment assign(utility::vector1<Real> const & torsions_in) const;
+
 	RNA_SuiteAssignment assign(Pose const & pose, Size const res) const;
-	//////////////////////////////////
-	Real const dist_pow;
-	utility::vector1 <RNA_SuiteInfo> all_suites;
-	RNA_SuiteAssignment const outlier, suite_undefined;
 
 	Size const
 		epsilonmin, epsilonmax,
@@ -89,13 +97,11 @@ public:
 		betamin   , betamax,
 		zetamin   , zetamax;
 
-	utility::vector1<Size> regular_half_width;
-	utility::vector1<std::string> dominant_suites;
-	utility::vector1<std::string> satellite_suites;
-	utility::vector1< utility::vector1<Size> > half_width_sat;
-	utility::vector1< utility::vector1<Size> > half_width_dom;
-
 private:
+	//Disable copy constructor and assignment
+  RNA_SuiteName( const RNA_SuiteName & );
+  void operator=( const RNA_SuiteName & );
+
 	void init();
 
 	Real distance_4d(utility::vector1<Real> const &torsion1, utility::vector1<Real> const &torsion2,
@@ -107,8 +113,16 @@ private:
 	bool is_in_between( utility::vector1<Real> const & target,
 			utility::vector1<Real> const & dominant,
 			utility::vector1<Real> const & satellite ) const;
+	RNA_SuiteAssignment const outlier, suite_undefined;
 
-	///////////////////////////////////////
+	//////////////////////////////////
+	Real const dist_pow;
+	utility::vector1<RNA_SuiteInfo> all_suites;
+	utility::vector1<Size> regular_half_width;
+	utility::vector1<std::string> dominant_suites;
+	utility::vector1<std::string> satellite_suites;
+	utility::vector1< utility::vector1<Size> > half_width_sat;
+	utility::vector1< utility::vector1<Size> > half_width_dom;
 };
 
 }

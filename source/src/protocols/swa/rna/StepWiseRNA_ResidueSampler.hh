@@ -31,7 +31,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <protocols/simple_moves/GreenPacker.fwd.hh>
-#include <protocols/rotamer_sampler/rna/RNA_SuiteRotamer.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerBase.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -178,7 +178,10 @@ public:
 	set_force_centroid_interaction ( bool const & setting ) {		force_centroid_interaction_ = setting;	}
 
 	void
-	set_use_phenix_geo( bool const & setting ) {	use_phenix_geo_ = setting;	}
+	set_use_phenix_geo( bool const & setting ) { use_phenix_geo_ = setting;	}
+
+	void
+	set_kic_sampling( bool const & setting ) { kic_sampling_ = setting;	}
 
 
 private:
@@ -284,14 +287,17 @@ private:
 	Is_three_prime_chain_break_sugar_virtual( core::pose::Pose const & pose ) const;
 
 	utility::vector1< pose_data_struct2 >
-	previous_floating_base_chain_closure( core::pose::Pose & viewer_pose, FloatingBaseChainClosureJobParameter const & FB_job_params, std::string const name );
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	previous_floating_base_chain_closure(
+		core::pose::Pose & viewer_pose,
+		FloatingBaseChainClosureJobParameter const & FB_job_params,
+		std::string const name
+	);
 
 	void output_count_data();
 
-	rotamer_sampler::rna::RNA_SuiteRotamerOP
+	rotamer_sampler::RotamerBaseOP
 	setup_rotamer_sampler( core::pose::Pose const & pose ) const;
+
 private:
 
 	StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
@@ -355,6 +361,7 @@ private:
 	Size num_random_samples_;
 	bool force_centroid_interaction_;
 	bool use_phenix_geo_;
+	bool kic_sampling_;
 
 	StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener_;
 };

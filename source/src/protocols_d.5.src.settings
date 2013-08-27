@@ -41,10 +41,15 @@ sources = {
         "util",
     ],
     "protocols/rotamer_sampler/rna": [
+        "RNA_KicSampler",
+        "RNA_KinematicCloser",
         "RNA_ChiRotamer",
         "RNA_NucleosideRotamer",
         "RNA_SugarRotamer",
         "RNA_SuiteRotamer",
+    ],
+    "protocols/rotamer_sampler/screener": [
+        "RNA_TorsionScreener",
     ],
 	"protocols/swa": [
 		"InputStreamWithResidueInfo",

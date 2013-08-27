@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/rna/RNA_ChiRotamer.hh
 /// @brief Generate glycosidic chi rotamers for RNA.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 #ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_ChiRotamer_HH
@@ -42,27 +41,33 @@ public:
 
 	/// @brief Set the residue id
 	void set_rsd_id( core::Size const setting ) {
-		set_and_reinit<core::Size>( rsd_id_, setting );
+		set_and_reinit( rsd_id_, setting );
 	}
+
+	/// @brief Get the pucker state (NORTH / SOUTH)
+	core::Size pucker_state() { return pucker_state_; }
 
 	/// @brief Set the pucker state (NORTH / SOUTH)
 	void set_pucker_state( core::Size const setting ) {
-		set_and_reinit<core::Size>( pucker_state_, setting );
+		set_and_reinit( pucker_state_, setting );
 	}
+
+	/// @brief Get the base state (WHATEVER / ANTI / SYN)
+	core::Size base_state() { return base_state_; }
 
 	/// @brief Set the base state (WHATEVER / ANTI / SYN)
 	void set_base_state( core::Size const setting ) {
-		set_and_reinit<core::Size>( base_state_, setting );
+		set_and_reinit( base_state_, setting );
 	}
 
 	/// @brief Set the bin_size (default: 20)
 	void set_bin_size( core::Real const setting ) {
-		set_and_reinit<core::Real>( bin_size_, setting );
+		set_and_reinit( bin_size_, setting );
 	}
 
 	/// @brief Set the max_range of sampling (default: +-20)
 	void set_max_range( core::Real const setting ) {
-		set_and_reinit<core::Real>( max_range_, setting );
+		set_and_reinit( max_range_, setting );
 	}
 
 	/// @brief Set use extra chi (+-60)

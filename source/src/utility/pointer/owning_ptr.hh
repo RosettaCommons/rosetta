@@ -39,7 +39,7 @@
 #include <cassert>
 #include <iosfwd>
 
-#include <boost/type_traits/remove_const.hpp> 
+#include <boost/type_traits/remove_const.hpp>
 
 namespace utility {
 namespace pointer {

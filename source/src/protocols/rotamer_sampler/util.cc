@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/util.cc
 /// @brief Useful functions for rotamer generator.
-/// @detailed
 /// @author Fang-Chieh Chou
 
 // Unit headers

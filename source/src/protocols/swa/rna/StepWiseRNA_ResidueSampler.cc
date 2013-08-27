@@ -74,6 +74,7 @@
 //GreenPacker
 #include <protocols/simple_moves/GreenPacker.hh>
 
+#include <protocols/rotamer_sampler/rna/RNA_KicSampler.hh>
 #include <protocols/rotamer_sampler/rna/RNA_SuiteRotamer.hh>
 
 #include <numeric/NumericTraits.hh>
@@ -154,7 +155,8 @@ StepWiseRNA_ResidueSampler::StepWiseRNA_ResidueSampler( StepWiseRNA_JobParameter
 	choose_random_( false ), // Rhiju, Jul 2013
 	num_random_samples_( 1 ),
 	force_centroid_interaction_( false ),  // Rhiju, Jul 2013
-	use_phenix_geo_( false )
+	use_phenix_geo_( false ),
+	kic_sampling_( false )
 {
 	set_native_pose( job_parameters_->working_native_pose() );
 
@@ -193,7 +195,6 @@ sort_criteria( pose_data_struct2  pose_data_1, pose_data_struct2 pose_data_2 ) {
 
 void
 StepWiseRNA_ResidueSampler::apply( core::pose::Pose & pose ) {
-
 	using namespace ObjexxFCL;
 
 	Output_title_text( "Enter StepWiseRNA_ResidueSampler::apply", TR.Debug );
@@ -1327,10 +1328,6 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 		TR.Debug << "Enforcing contact between LAST_APPEND_RES: " << last_append_res << " and LAST_PREPEND_RES: " << last_prepend_res  << std::endl;
 		TR.Debug << "atom_atom_overlap_dist_cutoff " << atom_atom_overlap_dist_cutoff << std::endl;
 	}
-
-
-
-
 	/////////////////////////////// O2star sampling/virtualization //////////////////////////
 	Pose pose_with_virtual_O2star_hydrogen = pose;
 	Add_virtual_O2Star_hydrogen( pose_with_virtual_O2star_hydrogen );
@@ -1380,10 +1377,8 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 
 
 	/////Get the Rotamer Sampler/////
-	rotamer_sampler::rna::RNA_SuiteRotamerOP
-			sampler_op( setup_rotamer_sampler( pose ) );
-	rotamer_sampler::rna::RNA_SuiteRotamer & sampler( *sampler_op );
-
+	rotamer_sampler::RotamerBaseOP
+			sampler( setup_rotamer_sampler( screening_pose ) );
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// MAIN LOOP --> rotamer sampling.
@@ -1393,10 +1388,10 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 	Real /*current_score( 0.0 ), */ delta_rep_score( 0.0 ), delta_atr_score( 0.0 );
 	Size ntries( 0 ), max_ntries( 10000 ), num_success( 0 ); // used in choose_random mode.
 
-	for ( sampler.reset(); sampler.not_end(); ++sampler ) {
+	for ( ; sampler->not_end(); ++( *sampler ) ) {
 		if ( choose_random_ && ++ntries > max_ntries ) break;
 
-		sampler.apply( screening_pose );
+		sampler->apply( screening_pose );
 		count_data_.tot_rotamer_count++;
 
 		if ( integration_test_mode_ && count_data_.both_count >= 100 ) break;
@@ -1404,7 +1399,6 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 		if ( integration_test_mode_ && count_data_.rmsd_count >= 10 ) break;
 
 		std::string tag = create_tag( "U" + sugar_tag, ntries );
-
 
 		if ( native_rmsd_screen_ && get_native_pose() ){
 			//This assumes that screening_pose and native_pose are already superimposed.
@@ -1456,9 +1450,8 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 		//////////////////////////////////////////////////////////////////////////////////////////
 		///////////////Chain_break_screening -- distance cut                     /////////////////
 		//////////////////////////////////////////////////////////////////////////////////////////
-		if ( gap_size <= 1 ){
-
-			if ( gap_size == 0 && finer_sampling_at_chain_closure_ == true ){ //hacky, use strict version of check_chain_closable when using finer_sampling.
+		if ( gap_size == 0 && !kic_sampling_ ){
+			if ( finer_sampling_at_chain_closure_ ){ //hacky, use strict version of check_chain_closable when using finer_sampling.
 				if ( !Check_chain_closable_floating_base( screening_pose, screening_pose, five_prime_chain_break_res, gap_size ) ) continue;
 			} else{
 				if ( !Check_chain_closable( screening_pose, five_prime_chain_break_res, gap_size ) ) continue;
@@ -1487,16 +1480,15 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 		//////////////////////////////////////////////////////////////////////////////////////////
 		// Almost ready to actually score pose.
 		//////////////////////////////////////////////////////////////////////////////////////////
-		sampler.apply( pose );
-		if ( perform_o2star_pack_ ) sampler.apply( o2star_pack_pose );
+		sampler->apply( pose );
+		if ( perform_o2star_pack_ ) sampler->apply( o2star_pack_pose );
 
 		//////////////////////////////////////////////////////////////////////////////////////////
 		///////////////Chain_break_screening -- CCD closure /////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////////////////////
 		bool bulge_added( false );
-		if ( gap_size == 0 /*really need to close it!*/ ){
-
-			sampler.apply( chain_break_screening_pose );
+		if ( gap_size == 0 && !kic_sampling_ ){
+			sampler->apply( chain_break_screening_pose );
 			if ( ! Chain_break_screening( chain_break_screening_pose, chainbreak_scorefxn_ ) ) continue;
 
 			// Need to be very careful here -- do CCD torsions ever overlap with pose torsions?
@@ -1533,7 +1525,7 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 		num_success++;
 		if ( choose_random_ && num_success >= num_random_samples_ ) break;
 
-	} //while( rotamer_generator->has_another_rotamer() )
+	}
 
 	//		if ( choose_random_ ) TR << "Number of tries: " << ntries << std::endl;
 
@@ -2197,7 +2189,13 @@ StepWiseRNA_ResidueSampler::Full_atom_van_der_Waals_screening( pose::Pose & curr
 	}
 
 	Real actual_rep_cutoff = rep_cutoff_; //defualt
-	if ( close_chain ) actual_rep_cutoff = 10; //Parin's old parameter
+	if ( close_chain ) {
+		if ( kic_sampling_ ) {
+			actual_rep_cutoff = 200; // KIC needs a much higher cutoff
+		} else {
+			actual_rep_cutoff = 10; //Parin's old parameter
+		}
+	}
 	if ( Is_internal ) actual_rep_cutoff = 200; //Bigger chunk..easier to crash (before May 4 used to be (close_chain && Is_internal) actual_rep_cutoff=200
 
 	bool pass_rep_screen = false;
@@ -2503,8 +2501,8 @@ StepWiseRNA_ResidueSampler::set_cluster_rmsd( Real const & setting ){
 }
 
 //////////////////////////////////////////////////////////////////
-rotamer_sampler::rna::RNA_SuiteRotamerOP
-StepWiseRNA_ResidueSampler::setup_rotamer_sampler( Pose const & pose ) const {
+rotamer_sampler::RotamerBaseOP
+StepWiseRNA_ResidueSampler::setup_rotamer_sampler( pose::Pose const & pose ) const {
 	using namespace rotamer_sampler::rna;
 	using namespace chemical::rna;
 	using namespace pose::rna;
@@ -2513,7 +2511,7 @@ StepWiseRNA_ResidueSampler::setup_rotamer_sampler( Pose const & pose ) const {
 	bool const Is_internal( job_parameters_->Is_internal() );
 	Size const gap_size = job_parameters_->gap_size();
 	utility::vector1<Size> const & working_moving_suite_list(
-			job_parameters_->working_moving_suite_list() );
+		job_parameters_->working_moving_suite_list() );
 	utility::vector1<Size> const & syn_chi_res(
 		job_parameters_->working_force_syn_chi_res_list() );
 	utility::vector1<Size> const & north_puckers(
@@ -2521,9 +2519,7 @@ StepWiseRNA_ResidueSampler::setup_rotamer_sampler( Pose const & pose ) const {
 	utility::vector1<Size> const & south_puckers(
 		job_parameters_->working_force_south_ribose_list() );
 
-	Size const n_rsd( working_moving_suite_list.size() );
-	runtime_assert( n_rsd == 1 );
-
+	runtime_assert( working_moving_suite_list.size() == 1 );
 	Size const moving_suite( working_moving_suite_list[1] );
 
 	/////Get the base and pucker state/////
@@ -2564,6 +2560,38 @@ StepWiseRNA_ResidueSampler::setup_rotamer_sampler( Pose const & pose ) const {
 	}
 
 	/////Set up the sampler/////
+	if ( kic_sampling_ ) {
+		if ( gap_size != 0 ) utility_exit_with_message(
+				"gap_size != 0 in kic_sampling mode!" );
+		if ( Is_prepend ) utility_exit_with_message(
+				"Is_prepend is not allowd in kic_sampling mode!" );
+
+		utility::vector1<Size> const & cutpoint_closed_list(
+				job_parameters_->cutpoint_closed_list() );
+		runtime_assert( cutpoint_closed_list.size() == 1 );
+		Size const chainbreak_suite( cutpoint_closed_list[1] );
+
+		pose::PoseOP new_pose = new pose::Pose( pose ); //hard copy
+		RNA_KicSamplerOP sampler = new RNA_KicSampler(
+				new_pose, moving_suite, chainbreak_suite );
+		if ( !sample_sugar[2] ) {
+			sampler->set_base_state( NONE );
+			sampler->set_pucker_state( NONE );
+		} else {
+			sampler->set_base_state( base_state[2] );
+			sampler->set_pucker_state( pucker_state[2] );
+		}
+		sampler->set_verbose( verbose_ );
+		sampler->set_skip_same_pucker( use_phenix_geo_ );
+		sampler->set_idealize_coord( use_phenix_geo_ );
+		sampler->set_extra_epsilon( extra_epsilon_rotamer_ );
+		sampler->set_extra_chi(	extra_chi_ );
+		sampler->set_random( choose_random_ );
+		if ( finer_sampling_at_chain_closure_ ) sampler->set_bin_size( 10 );
+		sampler->init();
+		return sampler;
+	}
+
 	RNA_SuiteRotamerOP sampler = new RNA_SuiteRotamer( moving_suite,
 			pucker_state[1], pucker_state[2], base_state[1], base_state[2] );
 	sampler->set_skip_same_pucker( use_phenix_geo_ );
@@ -2575,7 +2603,7 @@ StepWiseRNA_ResidueSampler::setup_rotamer_sampler( Pose const & pose ) const {
 	sampler->set_extra_beta( extra_beta_rotamer_ );
 	sampler->set_extra_chi(	extra_chi_ );
 	sampler->set_random( choose_random_ );
-	if ( gap_size == 0 && finer_sampling_at_chain_closure_ == true )
+	if ( gap_size == 0 && finer_sampling_at_chain_closure_  )
 			sampler->set_bin_size( 10 );
 	sampler->init();
 

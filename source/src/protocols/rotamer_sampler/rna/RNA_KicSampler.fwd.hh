@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/rotamer_sampler/rna/RNA_SugarRotamer.fwd.hh
-/// @brief Generate sugar pucker rotamers for RNA.
+/// @file protocols/rotamer_sampler/rna/RNA_KicSampler.fwd.hh
+/// @brief Sample and torsions and close an RNA loop.
 /// @author Fang-Chieh Chou
 
-#ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_SugarRotamer_fwd_HH
-#define INCLUDED_protocols_rotamer_sampler_rna_RNA_SugarRotamer_fwd_HH
+#ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_KicSampler_fwd_HH
+#define INCLUDED_protocols_rotamer_sampler_rna_RNA_KicSampler_fwd_HH
 
 
 #include <utility/pointer/owning_ptr.hh>
@@ -21,8 +21,8 @@ namespace protocols {
 namespace rotamer_sampler {
 namespace rna {
 
-class RNA_SugarRotamer;
-typedef utility::pointer::owning_ptr< RNA_SugarRotamer > RNA_SugarRotamerOP;
+class RNA_KicSampler;
+typedef utility::pointer::owning_ptr< RNA_KicSampler > RNA_KicSamplerOP;
 
 }
 }

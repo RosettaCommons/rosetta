@@ -9,7 +9,6 @@
 
 /// @file protocols/rotamer_sampler/rna/RNA_SuiteRotamer.fwd.hh
 /// @brief Generate rotamers for one RNA suite (from residue i to i+1).
-/// @detailed
 /// @author Fang-Chieh Chou
 
 #ifndef INCLUDED_protocols_rotamer_sampler_rna_RNA_SuiteRotamer_fwd_HH

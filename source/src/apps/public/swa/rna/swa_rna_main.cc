@@ -189,6 +189,7 @@ OPT_KEY( Boolean, clusterer_write_score_only )
 OPT_KEY( Boolean, add_lead_zero_to_tag )
 OPT_KEY( Boolean, distinguish_pucker )
 OPT_KEY( Boolean, sampler_allow_syn_pyrimidine )
+OPT_KEY( Boolean, erraser )
 OPT_KEY( IntegerVector, native_virtual_res  )
 OPT_KEY( Real, whole_struct_cluster_radius )
 OPT_KEY( Real, suite_cluster_radius )
@@ -581,7 +582,7 @@ create_scorefxn(){
 
 	if ( option[minimize_and_score_sugar]() == false ){
 		std::cout << "WARNING minimize_and_score_sugar is false, SET rna_sugar_close weight to 0.0 " << std::endl;
-    scorefxn->set_weight( rna_sugar_close, 0.000000000000 );
+    scorefxn->set_weight( rna_sugar_close, 0 );
 
 		//Sept 16, 2010. Thought about include a very small weight for rna_sugar_close so that column # will not change. HOWEVER this significant change the minimization results!
 		//scorefxn->set_weight( rna_sugar_close, 0.000000000001 );
@@ -1203,10 +1204,18 @@ swa_rna_sample()
 	stepwise_rna_pose_setup->setup_native_pose( pose ); //NEED pose to align native_pose to pose.
 	PoseCOP native_pose = job_parameters_COP->working_native_pose();
 
+
 	if ( option[ graphic ]() ) protocols::viewer::add_conformation_viewer ( pose.conformation(), get_working_directory(), 400, 400 );
 
 	core::scoring::ScoreFunctionOP scorefxn = create_scorefxn();
 	if ( option[ constraint_chi ]() )  apply_chi_cst( pose, *job_parameters_COP->working_native_pose() );
+
+	///////////////////////////////////////////////////////////////////////////
+	// Fang: The score term elec_dens_atomwise uses the first pose it scored to
+	// decide the normalization factor. Score before modeler for consistency.
+	Pose pose_test( *native_pose );
+	( *scorefxn )( pose_test );
+	///////////////////////////////////////////////////////////////////////////
 
 	// following is temporarily turned off... should be redundant anyway with ensure_directory_for_out_silent_file_exists.
 	//	check_if_silent_file_exists();
@@ -1233,6 +1242,7 @@ swa_rna_sample()
 	stepwise_rna_modeler.set_allow_syn_pyrimidine( option[ sampler_allow_syn_pyrimidine ]() );
 	stepwise_rna_modeler.set_extra_chi( option[ sampler_extra_chi_rotamer]() );
 	stepwise_rna_modeler.set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+	stepwise_rna_modeler.set_kic_sampling( option[ erraser ]() );
 	stepwise_rna_modeler.set_centroid_screen ( option[ centroid_screen ]() );
 	stepwise_rna_modeler.set_VDW_atr_rep_screen ( option[ VDW_atr_rep_screen ]() );
 	stepwise_rna_modeler.set_VDW_rep_screen_info ( option[ VDW_rep_screen_info ]() );
@@ -1942,6 +1952,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( VDW_atr_rep_screen, "classic VDW_atr_rep_screen", true );
 	NEW_OPT( sampler_perform_o2star_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
 	NEW_OPT( allow_bulge_at_chainbreak, "Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", true );
+	NEW_OPT( erraser, "Use KIC sampling", false );
 
 	//////////////Minimizer////////////
 	NEW_OPT( minimize_and_score_native_pose, "minimize_and_score_native_pose ", false ); //Sept 15, 2010
