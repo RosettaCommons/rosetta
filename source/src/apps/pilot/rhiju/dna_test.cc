@@ -49,9 +49,9 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 
-#include <basic/util/basic.hh>
+#include <basic/basic.hh>
 
-#include <core/io/database/open.hh>
+#include <basic/database/open.hh>
 
 #include <devel/init.hh>
 
@@ -80,7 +80,7 @@
 
 //silly using/typedef
 
-#include <basic/util/Tracer.hh>
+#include <basic/Tracer.hh>
 
 // option key includes
 
