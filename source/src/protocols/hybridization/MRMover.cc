@@ -273,8 +273,8 @@ void MRMover::apply( Pose &pose ) {
 		if (fragments_small_trim_) rebuild.add_small_fragments( fragments_small_trim_ );
 		rebuild.set_stage1_scorefxn( cen1_scorefxn_ );
 		rebuild.set_stage2_scorefxn( cen2_scorefxn_ );
-		rebuild.set_stage1_increase_cycles( threaded ? 1.0 : 0.0 );
-		rebuild.set_stage2_increase_cycles( 0.5 );
+		rebuild.set_stage1_increase_cycles( threaded ? 1.0*censcale_ : 0.0 );
+		rebuild.set_stage2_increase_cycles( 0.5*censcale_ );
 		rebuild.set_batch_relax( 0 ); // centroid only
 		rebuild.apply( pose );
 	}

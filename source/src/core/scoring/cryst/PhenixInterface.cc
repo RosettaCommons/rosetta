@@ -302,7 +302,6 @@ void PhenixInterface::fitBfactors (
 	}
 
 	// we need to grab stdout from the python script so set up a redirect here
-	core::Real rwork = 0, rfree = 0;
 	{
 		// buid the input list
 		Size nargs_no_cif = 13 + (has_twin_law?1:0);
@@ -330,7 +329,9 @@ void PhenixInterface::fitBfactors (
 			PyList_SetItem(inlist, nargs_no_cif+i-1, PyString_FromString(cif_file_i.c_str()));
 		}
 
-		PyObject *pValue = PyObject_CallMethodObjArgs( pModule, PyString_FromString("run"), PyString_FromString("phenix.refine"), inlist, NULL);
+		PyObject *cmd = PyString_FromString("run");
+		PyObject *exe = PyString_FromString("phenix.refine");
+		PyObject *pValue = PyObject_CallMethodObjArgs( pModule, cmd, exe, inlist, NULL);
 
 		//PyObject *pValue = PyObject_CallMethod(pModule, "run", "(s[sssssssssssss])",
 		//	"phenix.refine", pdbout, mtzout.c_str(), adp_strategy.c_str(), adp_groupstrat.c_str(), hires_str.c_str(), lowres_str.c_str(),
@@ -345,6 +346,8 @@ void PhenixInterface::fitBfactors (
 		// cleanup
 		Py_DECREF(inlist);
 		Py_DECREF(pValue);
+		Py_DECREF(cmd);
+		Py_DECREF(exe);
 	}
 
 	// cleanup
@@ -605,10 +608,20 @@ void PhenixInterface::updateSolventMask () {
 	if (!target_evaluator_) return;
 
 	PyObject_CallMethod(target_evaluator_, "update_fmask", NULL);
-	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
-	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
-	HANDLE_PYTHON_ERROR("updateSolventMask failed");
-	TR << "After updateSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
+  HANDLE_PYTHON_ERROR("update_fmask failed");
+	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
+	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
+	HANDLE_PYTHON_ERROR("can't extract R-frees");
+	if (r_work_py != NULL) {
+		core::Real rwork = PyFloat_AsDouble(r_work_py);
+		core::Real rfree = PyFloat_AsDouble(r_free_py);
+		TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
+
+		// free memory
+		Py_DECREF(r_work_py);
+		Py_DECREF(r_free_py);
+	}
+
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
 #endif
@@ -625,12 +638,21 @@ void PhenixInterface::updateSolventMask (core::pose::Pose const & pose) {
 	PyObject *pMethod = PyString_FromString("update_sites_1d");
 	PyObject_CallMethodObjArgs(target_evaluator_, pMethod, pCoords, NULL);
 	HANDLE_PYTHON_ERROR("PhenixInterface::getScore() : error updating sites");
+	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
+	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
+	HANDLE_PYTHON_ERROR("can't extract R-frees");
+	if (r_work_py != NULL) {
+		core::Real rwork = PyFloat_AsDouble(r_work_py);
+		core::Real rfree = PyFloat_AsDouble(r_free_py);
+		TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
+		Py_DECREF(r_work_py);
+		Py_DECREF(r_free_py);
+	}
 
-	PyObject_CallMethod(target_evaluator_, "update_fmask", NULL);
-	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
-	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
-	HANDLE_PYTHON_ERROR("updateSolventMask failed");
-	TR << "After updateSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
+	// free memory
+	Py_DECREF(pCoords);
+	Py_DECREF(pMethod);
+
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
 #endif
@@ -642,10 +664,20 @@ void PhenixInterface::optimizeSolventMask () {
 	if (!target_evaluator_) return;
 
 	PyObject_CallMethod(target_evaluator_, "optimize_mask", NULL);
-	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
-	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
-	HANDLE_PYTHON_ERROR("optimizeSolventMask failed");
-	TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
+  HANDLE_PYTHON_ERROR("optimize_mask failed");
+	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
+	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
+	HANDLE_PYTHON_ERROR("can't extract R-frees");
+	if (r_work_py != NULL) {
+		core::Real rwork = PyFloat_AsDouble(r_work_py);
+		core::Real rfree = PyFloat_AsDouble(r_free_py);
+		TR << "After optimizeSolventMask r/rfree = " << rwork << "/" << rfree << std::endl;
+	}
+
+	// free memory
+	Py_DECREF(r_work_py);
+	Py_DECREF(r_free_py);
+
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
 #endif
@@ -659,14 +691,19 @@ void PhenixInterface::optimizeSolvParams () {
 
 	PyObject_CallMethod(target_evaluator_, "update_solvent_and_scale", NULL);
   HANDLE_PYTHON_ERROR("update_solvent_and_scale failed");
-	PyObject *r_work_ = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
-	PyObject *r_free_ = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
+	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
+	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
 	HANDLE_PYTHON_ERROR("can't extract R-frees");
-	if (r_work_ != NULL) {
-		core::Real rwork = PyFloat_AsDouble(r_work_);
-		core::Real rfree = PyFloat_AsDouble(r_free_);
+	if (r_work_py != NULL) {
+		core::Real rwork = PyFloat_AsDouble(r_work_py);
+		core::Real rfree = PyFloat_AsDouble(r_free_py);
 		TR << "After optimizeSolvParams r/rfree = " << rwork << "/" << rfree << std::endl;
 	}
+
+	// free memory
+	Py_DECREF(r_work_py);
+	Py_DECREF(r_free_py);
+
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
 #endif
@@ -817,7 +854,12 @@ std::string PhenixInterface::getInfoLine() {
 
 core::Real PhenixInterface::getR() {
 #ifdef WITH_PYTHON
-	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
+	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
+	core::Real rwork = 0;
+	if (r_work_py != NULL) {
+		rwork = PyFloat_AsDouble(r_work_py);
+		Py_DECREF(r_work_py);
+	}
 	return rwork;
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
@@ -828,7 +870,12 @@ core::Real PhenixInterface::getR() {
 
 core::Real PhenixInterface::getRfree() {
 #ifdef WITH_PYTHON
-	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
+	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
+	core::Real rfree = 0;
+	if (r_free_py != NULL) {
+		rfree = PyFloat_AsDouble(r_free_py);
+		Py_DECREF(r_free_py);
+	}
 	return rfree;
 #else
 	utility_exit_with_message( "ERROR!  To use crystal refinement compile Rosetta with extras=python." );
@@ -847,6 +894,12 @@ void PhenixInterface::initialize_target_evaluator(
 #endif
 {
 #ifdef WITH_PYTHON
+	// nuke the target evaluator if one exists
+	if (target_evaluator_) {
+		Py_DECREF(target_evaluator_);
+		target_evaluator_ = NULL;
+	}
+
 	// obvious error check 1
 	//   check that the crystal refinement flag is specified
 	//   if not, don't die but warn the user
@@ -997,10 +1050,18 @@ void PhenixInterface::initialize_target_evaluator(
 	//
 	Py_DECREF(pModule);
 
-	core::Real rwork = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_work", NULL) );
-	core::Real rfree = PyFloat_AsDouble( PyObject_CallMethod(target_evaluator_, "r_free", NULL) );
+	PyObject *r_work_py = PyObject_CallMethod(target_evaluator_, "r_work", NULL);
+	PyObject *r_free_py = PyObject_CallMethod(target_evaluator_, "r_free", NULL);
+	HANDLE_PYTHON_ERROR("can't extract R-frees");
+	if (r_work_py != NULL) {
+		core::Real rwork = PyFloat_AsDouble(r_work_py);
+		core::Real rfree = PyFloat_AsDouble(r_free_py);
+		TR << "Initialized target evaluator [rwork/rfree = " << rwork << "/" << rfree << "]" << std::endl;
 
-	TR << "Initialized target evaluator [rwork/rfree = " << rwork << "/" << rfree << "]" << std::endl;
+		// free memory
+		Py_DECREF(r_work_py);
+		Py_DECREF(r_free_py);
+	}
 
 	chdir("..");
 #else

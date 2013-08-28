@@ -66,7 +66,7 @@ RNA_SuiteName::RNA_SuiteName():
 	init();
 }
 
-RNA_SuiteName::~RNA_SuiteName() {};
+RNA_SuiteName::~RNA_SuiteName() {}
 ////////////////////////////////////////////////////////
 void RNA_SuiteName::init() {
 	using utility::tools::make_vector1;
