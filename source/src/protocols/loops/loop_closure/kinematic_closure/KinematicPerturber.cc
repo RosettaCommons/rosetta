@@ -77,18 +77,29 @@ namespace protocols {
 				{
 					
 					core::Size start( kinmover_->start_res() );
+					core::Size end( kinmover_->end_res() );
+					core::Size first_atom_index ( (pose.residue(start).is_lower_terminus() ? kinmover_->count_bb_atoms_in_residue(pose, start) + 1 : kinmover_->count_bb_atoms_in_residue(pose, start-1) + 1) );
 					
 					// AS: if any of the (potentially) omega-sampling flags is set, omega needs to be copied from the torsions vector
 					bool also_copy_omega = ( basic::options::option[ basic::options::OptionKeys::loops::sample_omega_at_pre_prolines ]() || basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() ) || ( basic::options::option[ basic::options::OptionKeys::loops::restrict_kic_sampling_to_torsion_string ].user() || basic::options::option[ basic::options::OptionKeys::loops::derive_torsion_string_from_native_pose ]() ) ;
 					
-					for( core::Size res = 0; res < kinmover_->segment_length(); res++ ){
-						
-						pose.set_phi( start + res, torsions[ (3*(res+1)) + 1 ] );
-						pose.set_psi( start + res, torsions[ (3*(res+1)) + 2 ] );
-						if ( also_copy_omega ) pose.set_omega( start + res, torsions[ (3*(res+1)) + 3 ] );
-						
-						
-					}
+					for( core::Size res = start, ia = first_atom_index; res <= end; res++ ){
+						if(kinmover_->is_beta_aminoacid(pose.residue(res))) { //If this is a beta-amino acid, set phi, theta, psi, and possibly omega
+							using namespace core;
+							using namespace core::id;
+
+							for(core::Size i=1; i<=( res<end ? 3 : 2 /*don't set psi if it's the last residue*/); i++) pose.set_torsion( TorsionID( res, id::BB, i ), torsions[ ia++ ] ); //phi, theta, psi
+							if (also_copy_omega && res<end) pose.set_torsion( TorsionID ( res, id::BB, 4 ), torsions[ia] ); //omega
+							ia++; //Increment ia so that it now points to the first atom of the next residue.
+						} else { //Default case -- alpha-amino acid
+							pose.set_phi( res, torsions[ ia++ ] );
+							pose.set_psi( res, torsions[ ia++ ] );
+							if ( also_copy_omega && res<end ) pose.set_omega( res, torsions[ ia ] );
+							ia++; //Increment atom counter in any case; now at first atom of next residue
+						}
+					} //looping through residues of segment
+
+					pose.update_residue_neighbors();
 					
 				} //set_pose_after_closure
 				
@@ -115,44 +126,57 @@ namespace protocols {
 																 ) 
 				{
 					core::kinematics::MoveMapCOP mm(get_movemap());
+
+					//Get the start and end residues:
+					core::Size startres = kinmover_->start_res();
+					core::Size endres = kinmover_->end_res();
+
+					//Get the number of backbone atoms stored for the padding residues:
+					core::Size start_minus_one_bb_atom_count = pose.residue(startres).is_lower_terminus() ? kinmover_->count_bb_atoms_in_residue(pose, startres) : kinmover_->count_bb_atoms_in_residue(pose, startres - 1); //Number of backbone atoms for the first residue in the segment (start_res_ - 1 or the prepended start_res_ if start_res_ is a terminus)
+					core::Size end_plus_one_bb_atom_count = pose.residue(endres).is_upper_terminus() ? kinmover_->count_bb_atoms_in_residue(pose, endres) : kinmover_->count_bb_atoms_in_residue(pose, endres); //Number of backbone atoms for the last residue in the segment (end_res_ + 1 or the appended end_res_ if end_res_ is a terminus)
+
 					
-					if( vary_ca_bond_angles_ ){
-						
-						core::Size pvatom3( (3* (kinmover_->segment_length() + 1)) - 1 );
+					if( vary_ca_bond_angles_ ){ //For now, ONLY CA bond angles of alpha-amino acids will be varied.
+					
+						core::Size pvatom1 = start_minus_one_bb_atom_count + 2; // Second backbone atom of start_res_ (CA if alpha or beta-amino acid).
+						core::Size pvatom3 = bond_ang.size() - end_plus_one_bb_atom_count - kinmover_->count_bb_atoms_in_residue(pose, endres) + 2; // Second backbone atom of end_res_ (CA if alpha or beta-amino acid).
 						
 						core::Real bangle_min( kinmover_->BANGLE_MIN() );
 						core::Real bangle_sd( kinmover_->BANGLE_SD() );
 						
-						//what is this iterating over?
-						for( Size i = 5; i <= pvatom3; i+=3 ) {
-							bond_ang[ i ] = bangle_min + RG.uniform() * bangle_sd;
+						//Looping over all CA angles:
+						for(core::Size ir = startres, curatom = pvatom1; ir<=endres; ++ir) {
+							if( !kinmover_->is_beta_aminoacid(pose.residue(ir)) /*Add checks here as other backbones are added*/ ) bond_ang[curatom] = bangle_min + RG.uniform() * bangle_sd; //Shouldn't this be bangle_avg() + RG.gaussian() * bangle_sd?
+							curatom += kinmover_->count_bb_atoms_in_residue(pose, ir);
 						}
-					}
-					
-					
+					} //if( vary_ca_bond_angles_ )
 					
 					core::Size tor_end = torsions.size() - 3;
 					
-					for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
+					for( core::Size i=start_minus_one_bb_atom_count + 1, cur_res = startres; i<= tor_end; cur_res++ ){
 						//if(mm) TR << "current residue " << cur_res << "mm reports " << mm->get_bb(cur_res) << std::endl;
 						
 						if(!mm || mm->get_bb(cur_res)){ //if movemap is null, or (if not null) if movemap says mobile
 							
-							core::Real rama_phi, rama_psi;
-							
-							rama_.random_phipsi_from_rama(pose.aa(cur_res), rama_phi, rama_psi);
-							
-							torsions[i++]=rama_phi; // phi
-							torsions[i++]=rama_psi; // psi
-							
-							i++; // leave omega alone
+							if(kinmover_->is_beta_aminoacid(pose.residue(cur_res))) { //If this is a beta-amino acid, select backbone dihedral values:
+								//For now, these are set fully randomly.  This will likely change, though:
+								torsions[i++]=RG.uniform() * 360.0; // phi (C-N-CA-CM)
+								torsions[i++]=RG.uniform() * 360.0; //theta (N-CA-CM-C)
+								torsions[i++]=RG.uniform() * 360.0; //psi (CA-CM-C-N)
+								i++; //Leave omega (CM-C-N-CA) alone.
+							} else { //Default case -- if this is an alpha-amino acid:
+								core::Real rama_phi, rama_psi;						
+								rama_.random_phipsi_from_rama(pose.aa(cur_res), rama_phi, rama_psi);							
+								torsions[i++]=rama_phi; // phi
+								torsions[i++]=rama_psi; // psi							
+								i++; // leave omega alone
+							}
 							
 						} else {
-							i += 3; //ensure i indexing increases
+							i += kinmover_->count_bb_atoms_in_residue(pose, cur_res); //ensure i indexing increases
 						}
 						
 					}
-					
 					
 					// sample omegas?
 					// all omegas before prolines are assumed to be fair game. Note that we're not using move-map, which is phi/psi-specific.
@@ -160,16 +184,16 @@ namespace protocols {
 						// old KIC standard: coin flip between cis and trans
 						static const core::Real OMEGA_MEAN( 179.8 );
 						
-						for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
+						for( core::Size i=start_minus_one_bb_atom_count + 1, cur_res = startres; i<= tor_end; cur_res++ ){
 							
-							if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
-								
+							if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro || pose.aa( cur_res+1 ) == core::chemical::aa_dpr ) { //L-proline or D-proline.								
 								i++; //phi
+								if(kinmover_->is_beta_aminoacid(pose.residue(cur_res))) i++; //theta
 								i++; //psi
-								torsions[i++] = ( static_cast<int>( RG.uniform()*2 ) ? OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis)
+								torsions[i++] = ( static_cast<int>( RG.uniform()*2 ) ? (core::chemical::is_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis).  If it's a D-amino acid, it's multiplied by -1.0 if it's a D-Pro.
 								
 							} else {
-								i += 3;
+								i += kinmover_->count_bb_atoms_in_residue(pose, cur_res); //Increment i by the number of torsion angles in this residue.
 							}
 						}
 					} else if ( basic::options::option[ basic::options::OptionKeys::loops::kic_omega_sampling ]() ) {
@@ -179,24 +203,24 @@ namespace protocols {
 
 						// cis or trans? -- cis is much less common than trans, according to data from Matt / top8000, so the current coinflip is probably overestimating cis
 						// as a proxy, using 1/1000 for now
-						static const core::Real cis_prob_threshold = 0.0001;
+						static const core::Real cis_prob_threshold = 0.001; //VKM, 26 Aug 2013: this was 0.0001, but the comment above says 1/1000.  I'm switching this to 0.001, since I think that was the intent...
 
 						for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
 							i++; //phi
+							if(kinmover_->is_beta_aminoacid(pose.residue(cur_res))) i++; //theta
 							i++; //psi
 							core::Real trans_prob = 1;
-							if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
+							if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro || pose.aa( cur_res+1 ) == core::chemical::aa_dpr ) { //L- or D-proline
 								trans_prob = RG.uniform();
 							}
 							if ( trans_prob < cis_prob_threshold ) {
 								torsions[i++] = 0; // there's very little variation -- currently not captured here at all
 							} else { // trans
-								torsions[i++] = OMEGA_MEAN + RG.gaussian() * OMEGA_STDDEV;
+								torsions[i++] = (core::chemical::is_D_aa(pose.residue(cur_res).aa()) ? -1.0 : 1.0 ) * (OMEGA_MEAN + RG.gaussian() * OMEGA_STDDEV); //Multiply by -1 if the current residue is D
 							}
 						}
 					}
-				} //perturb_chain
-				
+				} //perturb_chain		
 				
 				void
 				TorsionSamplingKinematicPerturber::set_pose_after_closure(
@@ -209,43 +233,59 @@ namespace protocols {
 				{
 					
 					//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
-					parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
+					parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful ); //This correctly handles beta-amino acids, now.
+
+					core::Size startres = kinmover_->start_res(); //The first residue in the segment
+					core::Size endres = kinmover_->end_res(); //The last residue in the segment
+					//The index of the first backbone atom of the first residue in the segment (i.e. index in the torsions, bond_ang, and bon_len lists):
+					core::Size starting_atom = (pose.residue(startres).is_lower_terminus() ? kinmover_->count_bb_atoms_in_residue(pose, startres) + 1 : kinmover_->count_bb_atoms_in_residue(pose, startres-1) + 1 ) ;
 					
 					if(!closure_successful || vary_ca_bond_angles_ ){ // if the closure wasn't successful, we may need to overwrite previously idealized angles
 						core::Real offset( 0.0 );
-
 						 
 						// C-N-CA
-						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
-							const core::id::AtomID atomid_N (1, res);
-							const core::id::AtomID atomid_CA(2, res);
-							const core::id::AtomID atomid_C (3, res-1);
+						for (Size res=startres, atom=starting_atom; res<=endres; res++) {
+							if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+								//For now, do nothing for beta-amino acids.
+							} else { //Default case -- alpha-amino acid:
+								const core::id::AtomID atomid_N (1, res);
+								const core::id::AtomID atomid_CA(2, res);
+								const core::id::AtomID atomid_C (3, res-1);
 							
-							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_C, atomid_N, atomid_CA, offset ); // DOFs canoot be set across jumps (segfault)
-							if (pose.has_dof(dof_of_interest))
-								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+								core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_C, atomid_N, atomid_CA, offset ); // DOFs canoot be set across jumps (segfault)
+								if (pose.has_dof(dof_of_interest))
+									pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+							}
+							atom += kinmover_->count_bb_atoms_in_residue(pose, res);
 						}
-
-						
 						
 						// N-CA-C -- these are all within the same residue, so jumps are not an issue
-						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
-							const core::id::AtomID atomid_N (1, res);
-							const core::id::AtomID atomid_CA(2, res);
-							const core::id::AtomID atomid_C (3, res);
-							pose.set_dof(pose.atom_tree().bond_angle_dof_id(atomid_N, atomid_CA, atomid_C, offset ),
-										 numeric::conversions::radians(180 - bond_ang[atom]));
+						for (Size res=startres, atom=starting_atom+1; res<=endres; res++) {
+							if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+								//For now, do nothing for beta-amino acids.
+							} else { //Default case -- alpha-amino acid:
+								const core::id::AtomID atomid_N (1, res);
+								const core::id::AtomID atomid_CA(2, res);
+								const core::id::AtomID atomid_C (3, res);
+								pose.set_dof(pose.atom_tree().bond_angle_dof_id(atomid_N, atomid_CA, atomid_C, offset ),
+											 numeric::conversions::radians(180 - bond_ang[atom]));
+							}
+							atom += kinmover_->count_bb_atoms_in_residue(pose, res);
 						}
 
 						// CA-C-N
-						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
-							const core::id::AtomID atomid_N (1, res+1);
-							const core::id::AtomID atomid_CA(2, res);
-							const core::id::AtomID atomid_C (3, res);
-							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_CA, atomid_C, atomid_N, offset );
-							if (pose.has_dof(dof_of_interest)) {
-								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
+						for (Size res=startres, atom=starting_atom+2; res<=endres; res++) {
+							if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+								//For now, do nothing for beta-amino acids.
+							} else { //Default case -- alpha-amino acid:
+								const core::id::AtomID atomid_N (1, res+1);
+								const core::id::AtomID atomid_CA(2, res);
+								const core::id::AtomID atomid_C (3, res);
+								core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_angle_dof_id(atomid_CA, atomid_C, atomid_N, offset );
+								if (pose.has_dof(dof_of_interest)) //In case this is a terminus
+									pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_ang[atom]));
 							}
+							atom += kinmover_->count_bb_atoms_in_residue(pose, res);
 						}
 
 					}
@@ -254,35 +294,52 @@ namespace protocols {
 					if(!closure_successful) { // if sampling of bond lengths is added, activate this section
 
 						// N-CA
-						for (Size res=kinmover_->start_res(), atom=4; res<= kinmover_->end_res(); res++, atom+=3) {
-							const core::id::AtomID atomid_N (1, res);
-							const core::id::AtomID atomid_CA(2, res);
+						for (Size res=startres, atom=starting_atom; res<=endres; res++) {
+							if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+								//For now, do nothing for beta-amino acids.
+							} else { //Default case -- alpha-amino acid:
+								const core::id::AtomID atomid_N (1, res);
+								const core::id::AtomID atomid_CA(2, res);
 							
-							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ),
-										 numeric::conversions::radians(180 - bond_len[atom]));
+								pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_N, atomid_CA ),
+											 numeric::conversions::radians(180 - bond_len[atom]));
+							}
+							atom += kinmover_->count_bb_atoms_in_residue(pose, res);
 						}
 						
 						// CA-C
-						for (Size res=kinmover_->start_res(), atom=5; res<= kinmover_->end_res(); res++, atom+=3) {
-							const core::id::AtomID atomid_CA(2, res);
-							const core::id::AtomID atomid_C (3, res);
+						for (Size res=startres, atom=starting_atom+1; res<=endres; res++) {
+							if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+								//For now, do nothing for beta-amino acids.
+							} else { //Default case -- alpha-amino acid:
+								const core::id::AtomID atomid_CA(2, res);
+								const core::id::AtomID atomid_C (3, res);
 							
-							pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ),
-										 numeric::conversions::radians(180 - bond_len[atom]));
+								pose.set_dof(pose.atom_tree().bond_length_dof_id(atomid_CA, atomid_C ),
+											 numeric::conversions::radians(180 - bond_len[atom]));
+							}
+							atom += kinmover_->count_bb_atoms_in_residue(pose, res);
 						}
 
 						// C-N
-						for (Size res=kinmover_->start_res(), atom=6; res<= kinmover_->end_res(); res++, atom+=3) {
-							const core::id::AtomID atomid_C (3, res);
-							const core::id::AtomID atomid_N (1, res+1);
+						for (Size res=startres, atom=starting_atom+2; res<=endres; res++) {
+							if(kinmover_->is_beta_aminoacid(pose.residue(res))) {
+								//For now, do nothing for beta-amino acids.
+							} else { //Default case -- alpha-amino acid:
+								const core::id::AtomID atomid_C (3, res);
+								const core::id::AtomID atomid_N (1, res+1);
 							
-							core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_length_dof_id(atomid_C, atomid_N);
-							if (pose.has_dof(dof_of_interest)) {
-								pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_len[atom]));
+								core::id::DOF_ID dof_of_interest = pose.atom_tree().bond_length_dof_id(atomid_C, atomid_N);
+								if (pose.has_dof(dof_of_interest)) {
+									pose.set_dof(dof_of_interest, numeric::conversions::radians(180 - bond_len[atom]));
+								}
 							}
+							atom += kinmover_->count_bb_atoms_in_residue(pose, res);
 						}
 
 					}
+
+					pose.update_residue_neighbors();
 					
 				} //TorsionSamplingKinematicPerturber::set_pose_after_closure(
 				

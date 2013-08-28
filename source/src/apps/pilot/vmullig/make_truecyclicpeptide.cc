@@ -8,6 +8,7 @@
 	File history:
 		--Created 31 May 2013.
 		--Added support for D-amino acids, 20 June 2013.
+		--Added support for random mixes of ALA and VAL, 21 Aug 2013.
 */
 
 #include <basic/options/option.hh>
@@ -80,10 +81,11 @@
 #define CaCN_ANGLE 116.2
 #define OCN_ANGLE 123.01
 
-OPT_KEY( Integer, peptidesize)
-OPT_KEY( Real, energycutoff)
-OPT_KEY( Integer, relaxrnds)
-OPT_KEY( IntegerVector, dpositions)
+OPT_KEY( Integer, peptidesize )
+OPT_KEY( Real, energycutoff )
+OPT_KEY( Integer, relaxrnds )
+OPT_KEY( IntegerVector, dpositions )
+OPT_KEY( Real, valfraction )
 
 void register_options() {
 	using namespace basic::options;
@@ -95,6 +97,7 @@ void register_options() {
 	NEW_OPT( energycutoff, "The energy above which structures are discarded.  Only used if a value is specified by the user.", 1000.0);
 	NEW_OPT( relaxrnds, "The number of rounds of relaxation with the fastrelax mover.  Default 3.", 3);
 	NEW_OPT( dpositions, "The positions at which a D-alanine should be placed.  Default empty list.", emptyintlist);
+	NEW_OPT( valfraction, "The fraction of positions occupied by a valine.  Default 0.  (Range 0 to 1).", 0.0);
 }
 
 /********************************************************************************
@@ -367,6 +370,18 @@ int main(int argc, char *argv[]) {
 		//make a copy of alapose:
 		core::pose::Pose temp_alapose=alapose;
 
+		//If a fraction of residues should be valines, mutate temp_alapose accordingly:
+		if(option[valfraction].user()) {
+			for(core::Size ir=1; ir<=temp_alapose.n_residue(); ir++) {
+				if(RG.uniform() < option[valfraction]()) {
+					string aaname = "VAL";
+					if( core::chemical::is_D_aa( temp_alapose.residue(ir).aa() ) ) aaname="DVAL";
+					protocols::simple_moves::MutateResidue mutres(ir, aaname);
+					mutres.apply(temp_alapose);
+				}
+			}
+		}
+
 		//Randomize backbone:
 		//TODO -- randomly sample cis-pro if there are prolines.
 		for(core::Size ir=1; ir<=4; ir++) {
@@ -375,16 +390,44 @@ int main(int argc, char *argv[]) {
 		}
 		temp_alapose.update_residue_neighbors();
 
-		minimizer.run( temp_alapose, *mm, *sfxn, minoptions );
+		frlx->apply(temp_alapose); //repack and minimize
+		//minimizer.run( temp_alapose, *mm, *sfxn, minoptions );
 
 		//Make a copy of mypose
 		core::pose::Pose temppose = mypose;
+
+		//If a fraction of residues should be valines, mutate accordingly:
+		if(option[valfraction].user()) {
+			for(core::Size ir=1; ir<=temppose.n_residue(); ir++) {
+				if(ir<3 || ir>temppose.n_residue()-2) { //The first two and last two residues must match temp_alapose
+					core::Size ir2=0;
+					if(ir<3) ir2=ir+2;
+					else ir2=ir-temppose.n_residue()+2;
+					if(temp_alapose.residue(ir2).name3()=="DVA") {
+						protocols::simple_moves::MutateResidue mutres(ir, "DVAL");
+						mutres.apply(temppose);
+					} else if (temp_alapose.residue(ir2).name3()=="VAL") {
+						protocols::simple_moves::MutateResidue mutres(ir, "VAL");
+						mutres.apply(temppose);
+					}
+				} else { //The rest of the residues must still be mutated
+					if(RG.uniform() < option[valfraction]()) {
+						string aaname = "VAL";
+						if( core::chemical::is_D_aa( temppose.residue(ir).aa() ) ) aaname="DVAL";
+						protocols::simple_moves::MutateResidue mutres(ir, aaname);
+						mutres.apply(temppose);
+					}
+				}
+			}
+		}
 
 		//Put the first two and last two residues of temppose in the same positions as the corresponding residues in temp_alapose.
 		copyresidueposition(temppose, 1, temp_alapose, 3); //First residue
 		copyresidueposition(temppose, 2, temp_alapose, 4); //Second residue
 		copyresidueposition(temppose, temppose.n_residue(), temp_alapose, 2); //Last residue
 		copyresidueposition(temppose, temppose.n_residue()-1, temp_alapose, 1); //Second-last residue
+
+		//Update residue neighbours:
 		temppose.update_residue_neighbors();
 
 		//Kinematic closure to build the rest of the peptide:

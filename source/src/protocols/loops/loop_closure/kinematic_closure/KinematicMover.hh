@@ -34,6 +34,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/chemical/AA.hh>
+#include <core/conformation/Residue.hh>
 
 
 namespace protocols {
@@ -135,6 +136,12 @@ public:
 	std::string torsion_features_string( core::pose::Pose const & pose ) const;
 	core::Real frequency_in_taboo_map( core::Size const & pos, char const & torsion_bin ) const;
 
+	bool is_beta_aminoacid (const core::conformation::Residue &res) const; //Added by VKM, 23 Aug 2013
+	core::Size count_bb_atoms_in_residue (const core::pose::Pose &pose, const core::Size position) const; //Added by VKM, 23 Aug 2013
+	core::Size count_bb_atoms (const core::pose::Pose &pose, const core::Size start_res, const core::Size end_res) const; //Added by VKM, 23 Aug 2013
+	std::string get_bb_atoms_for_residue (const core::conformation::Residue &res, const core::Size bb_atom_index) const; //Added by VKM, 26 Aug 2013
+	std::string get_bumpcheck_atoms_for_residue (	const core::conformation::Residue &rsd, const core::Size bumpcheck_atom_index) const; //Added by VKM, 27 Aug 2013
+	core::Size get_bumpcheck_atom_count_for_residue ( const core::conformation::Residue &rsd ) const; //Added by VKM, 27 Aug 2013
 	
 private:
 
