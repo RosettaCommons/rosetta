@@ -182,8 +182,7 @@ SmoothCenPairEnergy::finalize_total_energy(
 /// @brief SmoothCenPairEnergy distance cutoff
 Distance
 SmoothCenPairEnergy::atomic_interaction_cutoff() const {
-	//return 6.0;
-	return 7.5;
+	return 7.5;  // extra added to ensure full sigmoid is covered
 }
 
 core::Size

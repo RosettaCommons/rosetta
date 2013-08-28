@@ -134,7 +134,7 @@ MRMover::init(){
 	max_gaplength_to_model_ = 4;
 	cen1_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score3");
 	cen2_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth_cart");
-	fa_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("score12_cart");
+	fa_scorefxn_ = core::scoring::getScoreFunction();
 
 	// default is a relatively short relax
 	relax_max_iter_ = 200;
@@ -155,9 +155,15 @@ MRMover::init(){
 		cen1_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
 		cen2_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
 	}
-	//if (!option[ OptionKeys::constraints::cst_fa_file ].user() && !option[ OptionKeys::constraints::cst_fa_weight ].user()) {
-	//	fa_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.25 );
-	//}
+
+	// we do a nonideal relax so make sure fa scorefunction is setup for that
+	if (   fa_scorefxn_->get_weight( core::scoring::cart_bonded ) == 0
+	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_angle ) == 0
+	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_length ) == 0
+	    && fa_scorefxn_->get_weight( core::scoring::cart_bonded_torsion ) == 0 ) {
+		fa_scorefxn_->set_weight( core::scoring::cart_bonded, 0.5 );
+		fa_scorefxn_->set_weight( core::scoring::pro_close, 0.0 );
+	}
 
 	// use reasonable defaults
 	if (option[ OptionKeys::edensity::mapfile ].user()) {

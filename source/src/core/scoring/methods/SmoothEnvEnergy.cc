@@ -114,6 +114,7 @@ SmoothEnvEnergy::residue_energy(
 
 	potential_.evaluate_env_and_cbeta_scores( pose, rsd, env_score, cb_score6, cb_score12 );
 
+	//fpd  constants match nonsmooth variants
 	env_score *= 2.019;
 	cb_score = 2.667 * ( cb_score6 + cb_score12 ) * 0.3;
 

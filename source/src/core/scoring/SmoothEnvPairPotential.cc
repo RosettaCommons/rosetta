@@ -417,7 +417,7 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 
 			d_env_score  += env_[ rsd2.aa() ].dfunc( cenlist.fcen10(j) ) * (d10*gradx);
 			d_cb_score6  += cbeta6_.dfunc( cenlist.fcen6(j) ) * (d6*gradx);
-			d_cb_score12 += cbeta12_.dfunc( cenlist.fcen12(j) ) * (d12*gradx);
+			d_cb_score12 += cbeta12_.dfunc( cenlist.fcen12(j) ) * ((d12-d6)*gradx);
 		}
 	}
 }

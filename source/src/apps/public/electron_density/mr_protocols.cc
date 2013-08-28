@@ -64,8 +64,8 @@ my_main( void* ) {
 	if ( option[ OptionKeys::MR::disulf ].user() )
 		do_MR->set_disulf( option[ OptionKeys::MR::disulf ]() );
 
-	do_MR->set_disulf( option[ OptionKeys::MR::disulf ]() );
-	do_MR->set_censcale( option[ OptionKeys::MR::censcale ]() );
+	do_MR->set_disulf( option[ OptionKeys::MR::disulf ]() );  // force disulfides
+	do_MR->set_censcale( option[ OptionKeys::MR::censcale ]() );  // scale # centroid cycles
 
 	// fragment files: BACKWARDS COMPATABILITY with -loop options
 	if (option[ OptionKeys::loops::frag_files ].user() ) {
@@ -101,9 +101,9 @@ main( int argc, char * argv [] ) {
     NEW_OPT(MR::cen_dens_wt, "centroid density weight", 4.0);
     NEW_OPT(MR::fa_dens_wt, "fullatom density weight", 1.0);
     NEW_OPT(MR::fast, "fast mode", false);
-    NEW_OPT(MR::censcale, "fast mode", 1.0);
-    NEW_OPT(MR::disulf, "disulf patterning", utility::vector1<std::string>());
-    NEW_OPT(MR::mode, "noop", "X");
+    NEW_OPT(MR::censcale, "scale # of centroid cycles", 1.0);
+    NEW_OPT(MR::disulf, "force a disulfide patterning", utility::vector1<std::string>());
+    NEW_OPT(MR::mode, "legacy flag; unused", "X");
 
 	devel::init( argc, argv );
 
