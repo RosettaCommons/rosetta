@@ -295,6 +295,9 @@ protected:
 	static Real const NEUTRAL_PHI;
 	static Real const NEUTRAL_PSI;
 
+	static Real const MAX_ROT_ENERGY;
+	static Real const MIN_ROT_PROB;
+
 private:
 	//utility::vector1< CentroidRotamerSampleData > all_rots_;
 	ObjexxFCL::FArray2D< utility::vector1< CentroidRotamerSampleData > > all_rots_bb_;

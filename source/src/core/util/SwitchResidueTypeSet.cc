@@ -171,6 +171,7 @@ switch_to_residue_type_set(
 
 			//find the centroid postion based on fa sidechain
 			PointPosition cenrotxyz(0,0,0);
+			PointPosition cbxyz(0,0,0);
 			if (current_type_set_name==chemical::FA_STANDARD) {
 				std::map<std::string, Real> masslst;
 				masslst["C"]=12.0107;
@@ -204,6 +205,15 @@ switch_to_residue_type_set(
 					cenrotxyz = cenrotxyz/mass;
 				}
 			}
+			else if (current_type_set_name==chemical::CENTROID && rsd.name()!="VRT") {
+				//keep the cen position
+				cenrotxyz = rsd.atom("CEN").xyz();
+
+				// preserve CB
+				if ( !(rsd.name3()=="GLY") ) {
+					cbxyz = rsd.atom("CB").xyz();
+				}
+			}
 
 			//replace
 			if ( ! new_rsd ) {
@@ -218,6 +228,14 @@ switch_to_residue_type_set(
 			pose.replace_residue( i, *new_rsd, false );
 			if (current_type_set_name==chemical::FA_STANDARD) {
 				//set centroid_rot xyz
+				pose.set_xyz(id::AtomID(pose.residue(i).atom_index("CEN"), i), cenrotxyz);
+			}
+			else if (current_type_set_name==chemical::CENTROID && new_rsd->name()!="VRT") {
+				// preserve CB
+				if ( !(new_rsd->name3()=="GLY") ) {
+					pose.set_xyz(id::AtomID(pose.residue(i).atom_index("CB"), i), cbxyz);
+				}
+
 				pose.set_xyz(id::AtomID(pose.residue(i).atom_index("CEN"), i), cenrotxyz);
 			}
 			

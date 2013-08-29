@@ -61,6 +61,8 @@ Real const SingleResidueCenrotLibrary::NEUTRAL_PHI = -60;
 Real const SingleResidueCenrotLibrary::NEUTRAL_PSI = 60;
 Size const SingleResidueCenrotLibrary::RSD_PHI_INDEX = 1;
 Size const SingleResidueCenrotLibrary::RSD_PSI_INDEX = 2;
+Real const SingleResidueCenrotLibrary::MAX_ROT_ENERGY = 16;
+Real const SingleResidueCenrotLibrary::MIN_ROT_PROB = 1e-7;
 
 SingleResidueCenrotLibrary::SingleResidueCenrotLibrary(AA const aa)
 :aa_(aa),max_rot_num(0),ref_energy_(0.0){
@@ -186,12 +188,12 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 	 	p +=  factori[nr];
 	}
 
-	if (p<1e-6) return 0.0; //too far away
+	if (p<MIN_ROT_PROB) return MAX_ROT_ENERGY; //too far away
 
 	Real e = -log(p);
 
 	//check meaningless score
-	if (e!=e || e>1e16) {
+	if (e!=e || e>MAX_ROT_ENERGY+4.0) {
 		TR.Error << "Dunbrack term calculation fail!" << std::endl;
 		TR.Error << rsd.seqpos() << " res: " << rsd.name() << std::endl;
 		for (Size nr=1; nr<=max_rot_num; nr++) {
@@ -204,7 +206,7 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 				<< rotamer_sample_data[nr].sd_dih() << std::endl;
 			utility_exit();
 		}
-		return 0.0;
+		return MAX_ROT_ENERGY;
 	}
 
 	if (!eval_deriv) return (e - ref_energy_) ;
@@ -251,12 +253,12 @@ Real SingleResidueCenrotLibrary::eval_rotameric_energy_bb_dof_deriv(
 		p +=  rotamer_sample_data[nr].prob() * factori[nr];
 	}
 
-	if (p<1e-6) return 0.0; //too far away
+	if (p<MIN_ROT_PROB) return MAX_ROT_ENERGY; //too far away
 
 	Real e = -log(p);
 
 	//check meaningless score
-	if (e!=e || e>1e16) {
+	if (e!=e || e>MAX_ROT_ENERGY+4.0) {
 		TR.Error << "Dunbrack term calculation fail!" << std::endl;
 		utility_exit();
 	}
@@ -573,6 +575,8 @@ void CentroidRotamerSampleData::cal_delta_internal_coordinates(
 		const conformation::Residue & rsd,
 		Real & ddis, Real & dang, Real & ddih ) const
 {
+	using namespace numeric::constants::f;
+
 	//get rsd.sidechain coordinates
 	core::kinematics::Stub::Vector const a(rsd.atom("N").xyz());
 	core::kinematics::Stub::Vector const b(rsd.atom("CA").xyz());
@@ -582,7 +586,7 @@ void CentroidRotamerSampleData::cal_delta_internal_coordinates(
 	//get centroid_rot int
 	ddis = (d-c).length() - distance_;
 	dang = numeric::constants::r::pi-numeric::angle_radians(b,c,d) - angle_;
-	ddih = numeric::dihedral_radians(a,b,c,d) - dihedral_;
+	ddih = basic::periodic_range( numeric::dihedral_radians(a,b,c,d) - dihedral_, pi );
 }
 
 Real CentroidRotamerSampleData::cal_distance_squared( const conformation::Residue & rsd ) const
