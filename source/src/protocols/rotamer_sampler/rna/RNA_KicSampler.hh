@@ -31,10 +31,6 @@
 #include <protocols/rotamer_sampler/rna/RNA_ChiRotamer.fwd.hh>
 #include <protocols/rotamer_sampler/screener/RNA_TorsionScreener.fwd.hh>
 
-// Project headers
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-
 namespace protocols {
 namespace rotamer_sampler {
 namespace rna {
@@ -42,7 +38,7 @@ namespace rna {
 class RNA_KicSampler : public RotamerBase {
 public:
 	RNA_KicSampler(
-		core::pose::PoseOP ref_pose,
+		core::pose::PoseOP const & ref_pose,
 		core::Size const moving_suite,
 		core::Size const chainbreak_suite
 	);

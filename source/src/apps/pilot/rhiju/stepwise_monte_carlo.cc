@@ -38,7 +38,7 @@
 
 //////////////////////////////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
-#include <protocols/swa/rna/ERRASER_Modeler.hh>
+#include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/StepWiseUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
@@ -166,9 +166,10 @@ apply_swa_mover( pose::Pose & pose,
 		// we should be able to do this after Fang unifies StepWiseRNA_ResidueSampler and StepWiseRNA_AnalyticCloseSampler
 
 		std::cout << "GOING TO RUN ERRASER " << remodel_res << " in " << pose.annotated_sequence() << std::endl;
-		ERRASER_Modeler erraser_modeler( remodel_res, scorefxn );
-		//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+		StepWiseRNA_Modeler erraser_modeler( remodel_res, scorefxn );
+		erraser_modeler.set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 		erraser_modeler.set_force_centroid_interaction( true );
+		erraser_modeler.set_kic_sampling( true );
 		erraser_modeler.set_choose_random( true );
 		erraser_modeler.set_num_random_samples( option[ num_random_samples ]() );
 		erraser_modeler.set_num_pose_minimize( 1 );

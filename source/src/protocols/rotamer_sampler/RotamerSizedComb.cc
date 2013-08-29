@@ -52,6 +52,7 @@ void RotamerSizedComb::init() {
 		id_list_.push_back( 0 );
 		size_list_.push_back( curr_size );
 		size_ *= curr_size;
+		if ( curr_size == 0 ) TR << "Got a null rotamer sampler!" << std::endl;
 	}
 	set_init( true );
 	reset();
@@ -89,7 +90,6 @@ void RotamerSizedComb::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 bool RotamerSizedComb::not_end() const {
 	runtime_assert( is_init() );
-	if ( random() ) return true;
 	return id_ <= size();
 }
 ///////////////////////////////////////////////////////////////////////////

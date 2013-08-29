@@ -34,6 +34,7 @@ sources = {
 		"RNA_StructureParameters",
 	],
     "protocols/rotamer_sampler": [
+        "RotamerAny",
         "RotamerComb",
         "RotamerOneTorsion",
         "RotamerSizedAny",
@@ -92,11 +93,9 @@ sources = {
 	],
 
 	"protocols/swa/rna": [
-		"ERRASER_Modeler",
         "FloatingBaseChainClosureJobParameter",
 		"StepWiseRNA_Modeler",
 		"StepWiseRNA_BaseCentroidScreener",
-		"StepWiseRNA_BaseSugarRotamer",
 		"StepWiseRNA_Clusterer",
 		"StepWiseRNA_CombineLongLoopFilterer",
 		"StepWiseRNA_FloatingBaseSamplerUtil",
@@ -107,14 +106,10 @@ sources = {
 		"StepWiseRNA_PoseSetup",
 		"StepWiseRNA_ResidueInfo",
 		"StepWiseRNA_ResidueSampler",
-		"StepWiseRNA_RotamerGenerator",
-		"StepWiseRNA_RotamerGeneratorWrapper",
 		"StepWiseRNA_Util",
 		"StepWiseRNA_VDW_BinScreener",
 		"StepWiseRNA_VirtualRiboseSampler",
 		"RNA_AnalyticLoopCloser",
-		"RNA_LoopCloseSampler",
-		"StepWiseRNA_AnalyticalLoopCloseSampler",
 	],
 
 

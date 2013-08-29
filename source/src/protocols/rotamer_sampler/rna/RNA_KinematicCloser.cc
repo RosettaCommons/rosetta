@@ -62,12 +62,12 @@ namespace rotamer_sampler {
 namespace rna {
 
 RNA_KinematicCloser::RNA_KinematicCloser(
-	PoseOP const pose,
+	PoseOP const & ref_pose,
 	Size const moving_suite,
 	Size const chainbreak_suite
 ):
 	RotamerSized(),
-	ref_pose_( pose ),
+	ref_pose_( ref_pose ),
 	moving_suite_( moving_suite ),
 	chainbreak_suite_( chainbreak_suite ),
 	verbose_( false ),
@@ -346,7 +346,6 @@ RNA_KinematicCloser::operator++() {
 bool
 RNA_KinematicCloser::not_end() const {
 	runtime_assert( is_init() );
-	if ( random() ) return true;
 	return ( id_ <= size() );
 }
 ////////////////////////////////////////////////////////////////

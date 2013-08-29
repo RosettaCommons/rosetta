@@ -21,10 +21,6 @@
 // Package headers
 #include <protocols/rotamer_sampler/RotamerBase.hh>
 
-// Project headers
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-
 namespace protocols {
 namespace rotamer_sampler {
 
@@ -35,7 +31,7 @@ public:
 	virtual ~RotamerComb();
 
 	/// @brief Initialization
-	virtual void init() { init_rotamer(); }
+	virtual void init();
 
 	/// @brief Reset to the first (or random if random()) rotamer
 	virtual void reset();
@@ -53,7 +49,7 @@ public:
 	virtual void set_random( bool const setting );
 
 	/// @brief Add one more rotamer sampler to this sampler
-	virtual void add_rotamer( RotamerBaseOP const rotamer ) {
+	virtual void add_rotamer( RotamerBaseOP const & rotamer ) {
 		rotamer_list_.push_back( rotamer );
 		set_init( false );
 	}
@@ -64,13 +60,11 @@ public:
 		set_init( false );
 	}
 
-	/// @brief Initialize all rotamer samplers stored in this sampler
-	virtual void init_rotamer();
-
 	/// @brief Name of the class
 	virtual std::string get_name() const { return "RotamerComb"; }
 
 private:
+	bool is_empty_;
 	utility::vector1<RotamerBaseOP> rotamer_list_;
 };
 

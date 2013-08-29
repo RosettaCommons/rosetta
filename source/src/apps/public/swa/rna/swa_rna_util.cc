@@ -105,10 +105,6 @@
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh>
-#include <protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
 #include <protocols/rna/RNA_LoopCloser.fwd.hh>
 

@@ -174,7 +174,6 @@ sources = {
         "rna_suitename",
 	],
 	"public/swa/rna": [
-		"swa_rna_analytical_closure",
 		"swa_rna_main",
 		"swa_rna_util",
 		"erraser_minimizer",

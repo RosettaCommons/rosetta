@@ -22,9 +22,7 @@
 #include <protocols/rotamer_sampler/RotamerSized.hh>
 
 // Project headers
-#include <core/types.hh>
 #include <core/id/TorsionID.hh>
-#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace rotamer_sampler {
@@ -36,8 +34,8 @@ public:
 	RotamerOneTorsion();
 
 	RotamerOneTorsion(
-		core::id::TorsionID const tor_id,
-		TorsionList const torsions
+		core::id::TorsionID const & tor_id,
+		TorsionList const & torsions
 	);
 
 	virtual ~RotamerOneTorsion();
@@ -94,7 +92,7 @@ public:
 	}
 
 	/// @brief Set the TorsionID of the sampler
-	virtual void set_torsion_id( core::id::TorsionID const setting ) {
+	virtual void set_torsion_id( core::id::TorsionID const & setting ) {
 		torsion_id_ = setting;
 	}
 

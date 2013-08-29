@@ -21,7 +21,6 @@
 #include <protocols/rotamer_sampler/RotamerOneTorsion.hh>
 
 // Project headers
-#include <core/types.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 
 namespace protocols {

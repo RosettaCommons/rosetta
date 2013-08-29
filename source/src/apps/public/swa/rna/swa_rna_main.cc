@@ -1213,8 +1213,14 @@ swa_rna_sample()
 	///////////////////////////////////////////////////////////////////////////
 	// Fang: The score term elec_dens_atomwise uses the first pose it scored to
 	// decide the normalization factor. Score before modeler for consistency.
-	Pose pose_test( *native_pose );
-	( *scorefxn )( pose_test );
+	if ( option[ in::file::native ].user() ){
+		// Use the native pose available
+		Pose pose_test( *native_pose );
+		( *scorefxn )( pose_test );
+	} else {
+		// Use the current pose
+		( *scorefxn )( pose );
+	}
 	///////////////////////////////////////////////////////////////////////////
 
 	// following is temporarily turned off... should be redundant anyway with ensure_directory_for_out_silent_file_exists.

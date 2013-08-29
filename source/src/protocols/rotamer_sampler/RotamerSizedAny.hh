@@ -55,7 +55,7 @@ public:
 	}
 
 	/// @brief Add one more rotamer sampler to this sampler
-	virtual void add_rotamer( RotamerSizedOP const rotamer ) {
+	virtual void add_rotamer( RotamerSizedOP const & rotamer ) {
 		rotamer_list_.push_back( rotamer );
 		set_init( false );
 	}

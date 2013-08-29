@@ -105,7 +105,6 @@ std::string
 StepWiseRNA_Modeler::get_name() const {
 	return "StepWiseRNA_Modeler";
 }
-
 //////////////////////////////////////////////////////////////////////////////
 void
 StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){

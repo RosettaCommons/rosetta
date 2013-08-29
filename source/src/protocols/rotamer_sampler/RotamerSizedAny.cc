@@ -50,9 +50,9 @@ void RotamerSizedAny::init() {
 		Real const curr_size = rotamer_list_[i]->size();
 		size_list_.push_back( curr_size );
 		size_ += curr_size;
+		if ( curr_size == 0 ) TR << "Got a null rotamer sampler!" << std::endl;
 	}
 
-	runtime_assert( size_ != 0 );
 	set_init( true );
 	reset();
 }
@@ -84,7 +84,6 @@ void RotamerSizedAny::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 bool RotamerSizedAny::not_end() const {
 	runtime_assert( is_init() );
-	if ( random() ) return true;
 	return id_ <= size();
 }
 ///////////////////////////////////////////////////////////////////////////

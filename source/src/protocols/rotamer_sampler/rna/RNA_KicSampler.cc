@@ -42,7 +42,7 @@ namespace rotamer_sampler {
 namespace rna {
 
 RNA_KicSampler::RNA_KicSampler(
-		core::pose::PoseOP const ref_pose,
+		core::pose::PoseOP const & ref_pose,
 		core::Size const moving_suite,
 		core::Size const chainbreak_suite
 ):
@@ -186,7 +186,6 @@ void RNA_KicSampler::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 bool RNA_KicSampler::not_end() const {
 	runtime_assert( is_init() );
-	if ( random() ) return true;
 	return bb_rotamer_->not_end();
 }
 ///////////////////////////////////////////////////////////////////////////

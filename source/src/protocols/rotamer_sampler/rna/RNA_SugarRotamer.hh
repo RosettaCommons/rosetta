@@ -20,9 +20,6 @@
 // Package headers
 #include <protocols/rotamer_sampler/RotamerSized.hh>
 
-// Project headers
-#include <core/types.hh>
-
 namespace protocols {
 namespace rotamer_sampler {
 namespace rna {

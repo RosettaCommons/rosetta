@@ -42,7 +42,7 @@
 
 
 //////////////////////////////////////////////////////////
-#include <protocols/swa/rna/ERRASER_Modeler.hh>
+#include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
@@ -191,15 +191,16 @@ erraser_monte_carlo()
 		Size const erraser_res = RG.random_element( sample_res_list );
 		bool const did_mutation = mutate_res_if_allowed( pose, erraser_res );
 
-		ERRASER_Modeler erraser_modeler( erraser_res, scorefxn );
+		StepWiseRNA_Modeler erraser_modeler( erraser_res, scorefxn );
 		erraser_modeler.set_choose_random( true );
 		erraser_modeler.set_force_centroid_interaction( true );
+		erraser_modeler.set_kic_sampling( true );
 		if ( !option[ minimize_single_res ]() )  erraser_modeler.set_minimize_res( sample_res_list );
 		erraser_modeler.set_use_phenix_geo( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 		erraser_modeler.set_num_random_samples( option[ num_random_samples ]() );
 		erraser_modeler.set_num_pose_minimize( 1 );
 
-		erraser_modeler.apply( pose, erraser_res );
+		erraser_modeler.apply( pose );
 		std::string move_type = erraser_modeler.get_num_sampled() ? "erraser" : "erraser_no_op";
 		if ( did_mutation ) move_type += "-mut";
 

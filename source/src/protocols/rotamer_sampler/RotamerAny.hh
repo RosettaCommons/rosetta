@@ -7,28 +7,28 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/rotamer_sampler/RotamerSizedComb.hh
-/// @brief Aggregate of multiple rotamer samplers for sampling combinatorially.
+/// @file protocols/rotamer_sampler/RotamerAny.hh
+/// @brief Aggregate multiple samplers for sampling from any one of them.
 /// @author Fang-Chieh Chou
 
 
-#ifndef INCLUDED_protocols_rotamer_sampler_RotamerSizedComb_HH
-#define INCLUDED_protocols_rotamer_sampler_RotamerSizedComb_HH
+#ifndef INCLUDED_protocols_rotamer_sampler_RotamerAny_HH
+#define INCLUDED_protocols_rotamer_sampler_RotamerAny_HH
 
 // Unit headers
-#include <protocols/rotamer_sampler/RotamerSizedComb.fwd.hh>
+#include <protocols/rotamer_sampler/RotamerAny.fwd.hh>
 
 // Package headers
-#include <protocols/rotamer_sampler/RotamerSized.hh>
+#include <protocols/rotamer_sampler/RotamerBase.hh>
 
 namespace protocols {
 namespace rotamer_sampler {
 
-class RotamerSizedComb : public RotamerSized {
+class RotamerAny : public RotamerBase {
 public:
-	RotamerSizedComb();
+	RotamerAny();
 
-	virtual ~RotamerSizedComb();
+	virtual ~RotamerAny();
 
 	/// @brief Initialization
 	virtual void init();
@@ -45,42 +45,47 @@ public:
 	/// @brief Apply the current rotamer to pose
 	virtual void apply( core::pose::Pose & pose );
 
-	/// @brief Apply the i-th rotamer to pose
-	virtual void apply( core::pose::Pose & pose, Size const id );
+	/// @brief Set the random sampling state
+	virtual void set_random( bool const setting );
 
-	/// @brief Get the total number of rotamers in sampler
-	virtual core::Size size() const {
-		runtime_assert( is_init() );
-		return size_;
+	/// @brief Add one more rotamer sampler to this sampler
+	virtual void add_rotamer( RotamerBaseOP const & rotamer ) {
+		rotamer_list_.push_back( rotamer );
+		set_init( false );
 	}
 
 	/// @brief Add one more rotamer sampler to this sampler
-	virtual void add_rotamer( RotamerSizedOP const & rotamer ) {
+	virtual void add_rotamer(
+		RotamerBaseOP const & rotamer,
+		core::Real const weight
+	) {
 		rotamer_list_.push_back( rotamer );
+		weights_.push_back( weight );
+		set_init( false );
+	}
+
+	/// @brief Set the weights of each rotamer sampler
+	virtual void set_weights( utility::vector1<core::Real> const & weights ) {
+		weights_ = weights;
 		set_init( false );
 	}
 
 	/// @brief Clear all rotamer samplers stored in this sampler
 	virtual void clear_rotamer() {
-		size_list_.clear();
-		id_list_.clear();
 		rotamer_list_.clear();
 		set_init( false );
 	}
 
 	/// @brief Name of the class
-	virtual std::string get_name() const { return "RotamerSizedComb"; }
+	virtual std::string get_name() const { return "RotamerAny"; }
+
 private:
-	/// @brief Convert input id number to the individual id_list for each
-	/// stored rotamer sampler
-	utility::vector1<core::Size> id2list( core::Size const id ) const;
-
-	core::Size size_, id_;
-
-	utility::vector1<core::Size> id_list_, size_list_;
-
-	utility::vector1<RotamerSizedOP> rotamer_list_;
+	core::Size curr_rotamer_;
+	bool is_weighted_, is_empty_, has_empty_;
+	utility::vector1<RotamerBaseOP> rotamer_list_;
+	utility::vector1<core::Real> weights_, cdf_;
 };
+
 }
 }
 

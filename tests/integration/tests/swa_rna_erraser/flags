@@ -1,0 +1,35 @@
+-mute all
+-algorithm rna_sample
+-erraser true
+-out:file:silent test.out
+-sampler_perform_o2star_pack true
+-sampler_extra_chi_rotamer true
+-sampler_extra_epsilon_rotamer true
+-sampler_cluster_rmsd 0.3
+-centroid_screen true
+-minimize_and_score_native_pose false
+-finer_sampling_at_chain_closure false
+-sampler_native_rmsd_screen true
+-sampler_native_screen_rmsd_cutoff 2.0
+-sampler_num_pose_kept 30
+-PBP_clustering_at_chain_closure true
+-allow_chain_boundary_jump_partner_right_at_fixed_BP true
+-add_virt_root true
+-rm_virt_phosphate true
+-sample_res 2
+-cutpoint_closed 2
+-input_res 1 3 4
+-fixed_res 1 3 4
+-jump_point_pairs NOT_ASSERT_IN_FIXED_RES 1-4
+-alignment_res 1-4
+-rmsd_res 2
+-score:rna_torsion_potential RNA11_based_new
+-score:weights rna/rna_hires_elec_dens
+-rna::corrected_geo true
+-edensity:mapfile 1Q9A_map.ccp4
+-edensity:mapreso 2.0
+-edensity:realign no
+-s missing_rebuild_res_native.pdb
+-native native_struct.pdb
+-fasta fasta
+-analytic_etable_evaluation 0

@@ -36,8 +36,8 @@ RotamerOneTorsion::RotamerOneTorsion():
 {}
 
 RotamerOneTorsion::RotamerOneTorsion(
-		core::id::TorsionID const tor_id,
-		TorsionList const allowed_torsions
+		core::id::TorsionID const & tor_id,
+		TorsionList const & allowed_torsions
 ):
 	RotamerSized(),
 	id_( 0 ),
@@ -67,7 +67,6 @@ void RotamerOneTorsion::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 bool RotamerOneTorsion::not_end() const {
 	runtime_assert( is_init() );
-	if ( random() ) return true;
 	return ( id_ <= size() );
 }
 ///////////////////////////////////////////////////////////////////////////

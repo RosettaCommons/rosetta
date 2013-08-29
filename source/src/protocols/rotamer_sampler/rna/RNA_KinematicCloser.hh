@@ -22,10 +22,8 @@
 #include <protocols/rotamer_sampler/RotamerSized.hh>
 
 // Project headers
-#include <core/types.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -38,7 +36,7 @@ namespace rna {
 class RNA_KinematicCloser: public RotamerSized {
 public:
 	RNA_KinematicCloser(
-		core::pose::PoseOP const pose,
+		core::pose::PoseOP const & ref_pose,
 		core::Size const moving_suite,
 		core::Size const chainbreak_suite
 	);
