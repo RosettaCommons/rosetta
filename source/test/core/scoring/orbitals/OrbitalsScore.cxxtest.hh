@@ -62,62 +62,59 @@ using namespace core::scoring::methods;
 class OrbitalsEnergyTests : public CxxTest::TestSuite {
 
 public:
-	core::chemical::ResidueTypeSetOP oribitals_residue_type_set_;
+	core::chemical::ResidueTypeSetOP orbitals_residue_type_set_;
 
 	void setUp() {
-		core_init();
-		basic::options::option[ basic::options::OptionKeys::in::add_orbitals](true);
-		oribitals_residue_type_set_ = new core::chemical::ResidueTypeSet( "ORBITALS_FA_STANDARD", basic::database::full_name("chemical/residue_type_sets/fa_standard/") );
+		core_init_with_additional_options( "-in:add_orbitals -chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer protein_cutpoint_upper protein_cutpoint_lower VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm" );
+		if ( ! orbitals_residue_type_set_ ) {
+			orbitals_residue_type_set_ = new core::chemical::ResidueTypeSet( "ORBITALS_FA_STANDARD", basic::database::full_name("chemical/residue_type_sets/fa_standard/") );
+		}
 	}
 	void tearDown() {
-		basic::options::option[ basic::options::OptionKeys::in::add_orbitals ](false);
-		oribitals_residue_type_set_ = 0;
+		//basic::options::option[ basic::options::OptionKeys::in::add_orbitals ](false);
+		//orbitals_residue_type_set_ = 0;
 	}
 
 
-	void dont_test_orbital_scoring_function_values()
+	void test_orbital_scoring_function_values()
 	{
 		core::pose::Pose pose;
-		core::import_pose::pose_from_pdbstring(pose, trp_cage_ideal(), *oribitals_residue_type_set_, "trp_cage");
+		core::import_pose::pose_from_pdbstring(pose, trp_cage_ideal(), *orbitals_residue_type_set_, "trp_cage");
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_cation_pi, 1 );
 		sfxn.set_weight( pci_pi_pi, 1 );
-		sfxn.set_weight(orbitals_hpol_bb, 1);
-		sfxn.set_weight(pci_salt_bridge, 1);
-		sfxn.set_weight(pci_hbond, 1);
+		sfxn.set_weight( orbitals_hpol_bb, 1);
+		sfxn.set_weight( pci_salt_bridge, 1);
+		sfxn.set_weight( pci_hbond, 1);
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA( -10.0737, start_score, 0.0001 );
-
-
+		TS_ASSERT_DELTA( -6.9183, start_score, 0.0001 );
 
 	}
 
-
-
-	void dont_test_orbital_start_score_start_func_match_w_total_flexibility() //this test never was set up correctly. It was only taken from someones else stuff
+	void test_orbital_start_score_start_func_match_w_total_flexibility()
 	{
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_cation_pi, 1 );
 		sfxn.set_weight( pci_pi_pi, 1 );
-		sfxn.set_weight(orbitals_hpol_bb, 1);
-		sfxn.set_weight(pci_salt_bridge, 1);
-		sfxn.set_weight(pci_hbond, 1);
+		sfxn.set_weight( orbitals_hpol_bb, 1);
+		sfxn.set_weight( pci_salt_bridge, 1);
+		sfxn.set_weight( pci_hbond, 1);
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
-		adv.validate_start_func_matches_start_score( -0.524698508539912, false, 1e-6 );
+		adv.validate_start_func_matches_start_score( -6.9183, false, 1e-4 );
 	}
 
 
-	void dont_test_orbital_deriv_check_w_partial_flexibility()
+	void test_orbital_deriv_check_w_partial_flexibility()
 	{
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_cation_pi, 1 );
 		sfxn.set_weight( pci_pi_pi, 1 );
-		sfxn.set_weight(orbitals_hpol_bb, 1);
-		sfxn.set_weight(pci_salt_bridge, 1);
-		sfxn.set_weight(pci_hbond, 1);
+		sfxn.set_weight( orbitals_hpol_bb, 1);
+		sfxn.set_weight( pci_salt_bridge, 1);
+		sfxn.set_weight( pci_hbond, 1);
 		kinematics::MoveMap movemap( create_trpcage_movemap_to_allow_bb10_freedom() );
 		AtomDerivValidator adv;
 		adv.set_pose( pose );
@@ -127,19 +124,76 @@ public:
 	}
 
 
-	void dont_test_orbital_deriv_check_w_total_flexibility()
+	void test_orbital_deriv_check_w_total_flexibility_all()
 	{
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_cation_pi, 1 );
 		sfxn.set_weight( pci_pi_pi, 1 );
-		sfxn.set_weight(orbitals_hpol_bb, 1);
-		sfxn.set_weight(pci_salt_bridge, 1);
-		sfxn.set_weight(pci_hbond, 1);
+		sfxn.set_weight( orbitals_hpol_bb, 1);
+		sfxn.set_weight( pci_salt_bridge, 1);
+		sfxn.set_weight( pci_hbond, 1);
+		std::cout << "test_orbital_deriv_check_w_total_flexibility_all: " << sfxn(pose) << std::endl;
 		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
 		AtomDerivValidator adv( pose, sfxn, movemap );
 		adv.simple_deriv_check( false, 1e-6 );
 	}
+
+	void test_orbital_deriv_check_w_total_flexibility_pci_cation_pi()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( pci_cation_pi, 1 );
+		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_cation_pi: " << sfxn(pose) << std::endl;
+		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
+		AtomDerivValidator adv( pose, sfxn, movemap );
+		adv.simple_deriv_check( false, 1e-6 );
+	}
+
+	void test_orbital_deriv_check_w_total_flexibility_pci_pi_pi()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( pci_pi_pi, 1 );
+		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_pi_pi: " << sfxn(pose) << std::endl;
+		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
+		AtomDerivValidator adv( pose, sfxn, movemap );
+		adv.simple_deriv_check( false, 1e-6 );
+	}
+
+	void test_orbital_deriv_check_w_total_flexibility_orbitals_hpol_bb()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( orbitals_hpol_bb, 1);
+		std::cout << "test_orbital_deriv_check_w_total_flexibility_orbitals_hpol_bb: " << sfxn(pose) << std::endl;
+		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
+		AtomDerivValidator adv( pose, sfxn, movemap );
+		adv.simple_deriv_check( false, 1e-6 );
+	}
+
+	void test_orbital_deriv_check_w_total_flexibility_pci_salt_bridge()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( pci_salt_bridge, 1);
+		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_salt_bridge: " << sfxn(pose) << std::endl;
+		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
+		AtomDerivValidator adv( pose, sfxn, movemap );
+		adv.simple_deriv_check( false, 1e-6 );
+	}
+
+	void test_orbital_deriv_check_w_total_flexibility_pci_hbond()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight( pci_hbond, 1);
+		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_hbond: " << sfxn(pose) << std::endl;
+		kinematics::MoveMap movemap( create_movemap_to_allow_all_torsions() );
+		AtomDerivValidator adv( pose, sfxn, movemap );
+		adv.simple_deriv_check( false, 1e-6 );
+	}
+
 	void test_make_compiler_happy()
 	{
 		// without a single active test_xxx(), the compilar quits.

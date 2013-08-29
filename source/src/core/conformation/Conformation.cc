@@ -2368,9 +2368,6 @@ Conformation::update_residue_coordinates( Size const seqpos, bool const fire_sig
 	//update orbital coords!
 	this->update_orbital_coords(rsd);
 
-
-
-
 	if ( fire_signal ) {
 		notify_xyz_obs( XYZEvent( this ) );
 	}

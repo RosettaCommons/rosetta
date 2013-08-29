@@ -218,9 +218,9 @@ sources = {
 		"NVlookup",
 		"NVscore",
 	],
-#	"scoring/orbitals" : [
-#		"OrbitalsScore"
-#	],
+	"scoring/orbitals" : [
+		"OrbitalsScore"
+	],
 	"scoring/symmetry" : [
 		"SymmetricScoreTest",
 	],

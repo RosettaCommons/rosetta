@@ -122,6 +122,38 @@ public:
 		 EnergyMap & emap
 	 ) const;
 
+	/// @brief The OrbitalsScore term requires the opportunity to update the Residue's orbital coordinates
+	/// at the beginning of scoring and derivative evaluation.
+	virtual
+	bool
+	requires_a_setup_for_scoring_for_residue_opportunity( pose::Pose const & pose ) const;
+
+	/// @brief Update the orbital coordinates before scores are evaluated
+	virtual
+	void
+	setup_for_scoring_for_residue(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		ResSingleMinimizationData & min_data
+	) const;
+
+	/// @brief The OrbitalsScore term must update the Residue's orbital coordinates before derivative evaluation
+	virtual
+	bool
+	requires_a_setup_for_derivatives_for_residue_opportunity( pose::Pose const & pose ) const;
+
+	/// @brief Update the orbital coordinates before derivatives are evaluated
+	virtual
+	void
+	setup_for_derivatives_for_residue(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const & sfxn,
+		ResSingleMinimizationData & min_data
+	) const;
+
+
 	virtual
 	core::Real atomic_interaction_cutoff() const; //set to default
 
@@ -152,14 +184,17 @@ public:
 
 	void scfxn_rules_for_energy(
 		bool hydrogen_interaction,
+		bool backbone_interaction,
 		core::Size orbtype1,
 		OrbitalsLookup::h_type htype,
 		core::Size orbtype2,
 		core::Real energy,
 		EnergyMap & emap
 	) const;
+
 	core::Real scfxn_rules_for_weight(
 		bool hydrogen_interaction,
+		bool backbone_interaction,
 		core::Size orbtype1,
 		OrbitalsLookup::h_type htype,
 		core::Size orbtype2,
