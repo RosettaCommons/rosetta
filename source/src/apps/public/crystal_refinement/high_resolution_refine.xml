@@ -1,0 +1,61 @@
+<dock_design>
+	<TASKOPERATIONS>
+		<ExtraRotamersGeneric name=extra ex1=1 ex2=1 extrachi_cutoff=0/>
+		<RestrictToRepacking name=restrict/>
+		<IncludeCurrent	  name=keep_curr/>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+		<xtal weights="talaris2013" symmetric=1>  Weight on cryst is autoset by a mover
+			<Reweight scoretype=cart_bonded weight=0.5/>
+			<Reweight scoretype=pro_close weight=0.0/>
+		</xtal>
+
+		<dens weights="talaris2013" symmetric=1>
+			<Reweight scoretype=elec_dens_fast weight=50.0/>
+			<Reweight scoretype=pro_close weight=0.0/>
+		</dens>
+	</SCOREFXNS>
+	<MOVERS>
+		<SetRefinementOptions name=setup_opts prime_and_switch=0/>
+
+		<SetupForSymmetry name=setup_symm definition="%%symmdef%%"/>
+		<ExtractAsymmetricUnit name=extract_asu/>
+
+		<RecomputeDensityMap name=recompute_dens/>
+
+		<FitBfactors name=fit_bs adp_strategy=individual/>
+
+		<TagPoseWithRefinementStats name=tag_i tag=input/>
+		<TagPoseWithRefinementStats name=tag_c tag=cycle/>
+		<TagPoseWithRefinementStats name=tag_f tag=final/>
+
+		<SetCrystWeight	 name=set_cryst_wt_cart weight_scale=0.5 scorefxn=xtal scorefxn_ref=xtal cartesian=1  bb=1 chi=1 jump=ALL/>
+		<SymMinMover name=min_cart_xtal cartesian=1 scorefxn=xtal type=lbfgs_armijo_rescored max_iter=100 tolerance=0.0001 bb=1 chi=1 jump=ALL/>
+		<SymPackRotamersMover name=screpack_dens scorefxn=dens task_operations=extra,restrict,keep_curr />
+
+		<ParsedProtocol name=refine_cycle>
+			<Add mover=recompute_dens/>
+			<Add mover=screpack_dens/>
+			<Add mover=set_cryst_wt_cart/>
+			<Add mover=min_cart_xtal/>
+			<Add mover=fit_bs/>
+		</ParsedProtocol>
+	</MOVERS>
+
+	<PROTOCOLS>
+		<Add mover=setup_opts/>
+		<Add mover=setup_symm/>
+
+		<Add mover=tag_i/>
+		<Add mover=fit_bs/>
+		<Add mover=set_cryst_wt_cart/>
+		<Add mover=min_cart_xtal/>
+		<Add mover=tag_c/>
+		<Add mover=refine_cycle/>
+		<Add mover=tag_c/>
+		<Add mover=refine_cycle/>
+		<Add mover=tag_f/>
+
+		<Add mover=extract_asu/>
+	</PROTOCOLS>
+</dock_design>

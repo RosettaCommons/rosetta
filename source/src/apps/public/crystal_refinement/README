@@ -1,0 +1,13 @@
+This folder contains several default RosettaScripts for crystal refinement.  These scripts are called from the phenix command "phenix.run_rosetta_refine"; see the phenix documentation for more information.
+
+Alternately, they may be run from Rosetta by compiling with "extras=python" and running the following command:
+	phenix.rosetta.run_phenix_interface \
+		$ROSETTA3_SRC/bin/rosetta_scripts.python.macosgccrelease \
+		-parser:protocol $XML_FILE \
+		-parser::script_vars symmdef=$SYMMDEF_FILE \
+		-s $INPDB \
+		-mtzfile $INMTZ \
+		-crystal_refine \
+		-set_weights cart_bonded 0.5 pro_close 0
+
+For more details see the Rosetta documentation and the "crystal_refinement" demo.
