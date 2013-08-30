@@ -130,7 +130,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 		for (int k=(int)j0stop; k<(int)j1start; ++k) {
 			if (pose.fold_tree().is_cutpoint( k )) {
 				segments.push_back( RBResidueRange( prevcut, k ) );
-				//TR << "FC! Add segment: " << prevcut << " , " << k << std::endl;
+				//TR.Debug << "FC! Add segment: " << prevcut << " , " << k << std::endl;
 				prevcut = k+1;
 				found_cuts=true;
 			}
@@ -139,12 +139,12 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 		if (!found_cuts) {
 			core::Size cutpoint = (j0stop+j1start)/2;  // randomize?
 			segments.push_back( RBResidueRange( prevcut, cutpoint-1 ) );
-			//TR << "Add segment: " << prevcut << " , " << cutpoint-1 << std::endl;
+			//TR.Debug << "Add segment: " << prevcut << " , " << cutpoint-1 << std::endl;
 			prevcut = cutpoint;
 		}
 	}
 	segments.push_back( RBResidueRange( prevcut, nres ) );
-	//TR << "F: Add segment: " << prevcut << " , " << nres << std::endl;
+	//TR.Debug << "F: Add segment: " << prevcut << " , " << nres << std::endl;
 
 	core::Size nsegments=segments.size();
 	for (int i=1; i<=(int)nsegments; ++i) {
@@ -178,8 +178,9 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 				for (int k=segments[seg_i].start(); k<=segments[seg_i].end() && remap_start==0; ++k)
 					remap_start = ncs->get_equiv( j,k );
 				if (remap_start==0) continue;  // undefined
-				for (int k=segments[seg_i].end(); k>=remap_start && remap_stop==0; --k)
+				for (int k=segments[seg_i].end(); k>=segments[seg_i].start() && remap_stop==0; --k)
 					remap_stop = ncs->get_equiv( j,k );
+				//TR.Debug << "NCS: Add segment: " << remap_start << " , " << remap_stop << std::endl;
 				ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
 			}
 		}
