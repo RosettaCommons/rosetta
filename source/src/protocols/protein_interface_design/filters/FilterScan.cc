@@ -51,6 +51,7 @@
 #include <protocols/simple_filters/DeltaFilter.hh>
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>
+#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
@@ -220,7 +221,7 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
   allowed_aas[ target_aa ] = true;
   TaskFactoryOP mut_res = new TaskFactory( *task_factory() );
   DesignAroundOperationOP dao = new DesignAroundOperation;///restrict repacking to 8.0A around target res to save time
-  dao->design_shell( 6.0 );
+  dao->design_shell( 0.1 );
   dao->include_residue( resi );
   mut_res->push_back( dao );
   PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
@@ -241,13 +242,14 @@ FilterScanFilter::single_substitution( core::pose::Pose & pose, core::Size const
   pack->apply( pose );
   if( rtmin() ) {
 		// definition/allocation of RTmin mover must flag dependant, as some scoreterms are incompatable with RTmin initilization
-		protocols::simple_moves::RotamerTrialsMinMoverOP rtmin;
 		if( core::pose::symmetry::is_symmetric( pose ) ) {
-			utility_exit_with_message("Cannot currently use FilterScan with rtmin on a symmetric pose!");
+			protocols::simple_moves::symmetry::SymRotamerTrialsMover rt( scorefxn(), *mutate_residue );
+			rt.apply( pose );
 		} else{
+			protocols::simple_moves::RotamerTrialsMinMoverOP rtmin;
 			rtmin = new protocols::simple_moves::RotamerTrialsMinMover( scorefxn(), *mutate_residue );
+			rtmin->apply(pose);
 		}
-		rtmin->apply( pose );
 	}
   TR<<pose.residue( resi ).name3()<<". Now relaxing..."<<std::endl;
 	if ( relax_mover() ) {
@@ -288,7 +290,10 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 	foreach( core::Size const resi, being_designed ){
 		pose = pose_orig;
 		///compute baseline
+// SJF 29Aug13 in the following we try to extract a stable baseline value for the substitution. The repacking steps create large levels of noise where mutations to self appear show high ddG differences. To prevent that, we cheat Rosetta by asking it to replace the residue to self three times in a row and take the baseline after the third computation. If you use ddG, it is recommended to use many repeats (>=5) to lower noise levels further. I think that if mutations to self show noise levels <=0.5R.e.u. the protocol is acceptable.
 		single_substitution( pose, resi, pose.residue( resi ).aa() ); /// mutates to self. This simply activates packing/rtmin/relax at the site. By doing this on a per residue basis we ensure that the baseline is computed in exactly the same way as the mutations
+		single_substitution( pose, resi, pose.residue( resi ).aa() );
+		single_substitution( pose, resi, pose.residue( resi ).aa() );
 //		pose.dump_scored_pdb( "at_baseline.pdb", *scorefxn() );
 		foreach( protocols::simple_filters::DeltaFilterOP const delta_filter, delta_filters_ ){
 			std::string const fname( delta_filter->get_user_defined_name() );
@@ -305,8 +310,9 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
     foreach( ResidueTypeCOP const t, allowed ){
     	allow_temp.push_back( t->aa() );
     }
+		core::pose::Pose const pose_ref( pose );
 		foreach( AA const target_aa, allow_temp ){
-			 pose = pose_orig;
+			 pose = pose_ref; //29Aug13 previously was pose_orig; here
 			 single_substitution( pose, resi, target_aa );
 //				pose.dump_scored_pdb( "after_mut.pdb", *scorefxn() );
 			 bool triage_filter_pass( false );
