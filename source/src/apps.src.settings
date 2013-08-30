@@ -177,6 +177,7 @@ sources = {
 		"swa_rna_main",
 		"swa_rna_util",
 		"erraser_minimizer",
+		"stepwise_monte_carlo",
 	],
 	"public/swa/protein": [
 		"swa_protein_main",

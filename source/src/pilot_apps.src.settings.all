@@ -650,7 +650,6 @@ sources = {
 		#"rna_assemble_test",
                 "add_delete_monte_carlo",
                 "erraser_monte_carlo",
-                "stepwise_monte_carlo",
 		"mg_test",
 		"mg_pdbstats",
                 "rna_features",
