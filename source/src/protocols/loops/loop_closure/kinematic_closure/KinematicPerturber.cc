@@ -115,7 +115,83 @@ namespace protocols {
 				{ set_kinmover( kinmover_in ); }
 				
 				TorsionSamplingKinematicPerturber::~TorsionSamplingKinematicPerturber(){}
-				
+
+				///@details Helper function for TorsionSamplingKinematicPerturber::perturb_beta_residue.  This initializes the list of minima in the Ramachandran cube for beta-3-amino acids.
+				void TorsionSamplingKinematicPerturber::initialize_betaresidue_minima (
+					utility::vector1 < core::Real > &philist, //outputs -- will be cleared by this function
+					utility::vector1 < core::Real > &thetalist, //outputs -- will be cleared by this function
+					utility::vector1 < core::Real > &psilist, //outputs -- will be cleared by this function
+					const core::Size mode //mode 1 initializes for beta-3-amino acids.
+				) const {
+					if(mode==1) {
+						philist.clear(); thetalist.clear(); psilist.clear();
+						//The following minima are taken from Gunther and Hofmann.  (2001.)  Searching for Periodic Structures in Beta-Peptides.  J. Phys. Chem. B 105:5559-67.
+						philist.push_back(-143.7);	thetalist.push_back( -63.8);	psilist.push_back(-144.6); //B1 from Table 2 in the above reference
+						philist.push_back( -71.9);	thetalist.push_back( 144.4);	psilist.push_back( -80.9); //B2
+						philist.push_back(  60.4);	thetalist.push_back(-124.1);	psilist.push_back(  86.7); //B2'
+						philist.push_back( -63.7); 	thetalist.push_back( -45.0);	psilist.push_back( 111.2); //B3
+						philist.push_back(  55.3);	thetalist.push_back(  51.1);	psilist.push_back(-116.0); //B3'
+						philist.push_back(  63.5);	thetalist.push_back(  59.3);	psilist.push_back(-159.0); //B4
+						philist.push_back(-160.6);	thetalist.push_back(  56.0);	psilist.push_back( 102.6); //B5
+						philist.push_back(-111.9);	thetalist.push_back(  60.2);	psilist.push_back(  25.6); //B6
+						philist.push_back( -75.6);	thetalist.push_back( 168.6);	psilist.push_back( 178.6); //B7
+						philist.push_back(  61.7);	thetalist.push_back( 163.5);	psilist.push_back( 150.2); //B8
+						philist.push_back( -91.4);	thetalist.push_back(  49.8);	psilist.push_back(  90.4); //B9
+						philist.push_back(  78.8);	thetalist.push_back( -47.0);	psilist.push_back( -95.3); //B9'
+						philist.push_back(-155.0);	thetalist.push_back(  63.4);	psilist.push_back(-129.3); //B10
+						philist.push_back(-109.4);	thetalist.push_back(  74.1);	psilist.push_back( -90.8); //B11
+						philist.push_back(-159.9);	thetalist.push_back( -68.0);	psilist.push_back(  29.5); //B12
+						//Additional minimia from the same publication corresponding to certain periodic secondary structures (Table 3):
+						//Note that these duplicate some of the minima above, from single-residue conformational sampling, but I don't mind biasing the result towards forming secondary structure, a bit.
+						philist.push_back(-156.0);	thetalist.push_back(  58.0);	psilist.push_back(-119.0); //H14
+						philist.push_back(-144.0);	thetalist.push_back(  87.0);	psilist.push_back( -66.0); //H12
+						philist.push_back(  64.0);	thetalist.push_back(  59.0);	psilist.push_back(  75.0); //H10
+						philist.push_back( -72.0);	thetalist.push_back( 165.0);	psilist.push_back( -87.0); //H8I
+						philist.push_back(-123.0);	thetalist.push_back(  56.0);	psilist.push_back(  21.0); //H8II
+						philist.push_back(  62.0);	thetalist.push_back(  61.0);	psilist.push_back( -87.0); //H8III
+						philist.push_back(-159.0);	thetalist.push_back(  60.0);	psilist.push_back(  75.0); //H6II
+						philist.push_back( -74.0);	thetalist.push_back( 160.0);	psilist.push_back( 161.0); //H_E
+						//TODO -- add additional conformations consistent with various secondary structures.
+					}
+					return;
+				}
+
+				///@details This randomly picks a minimum from the enumerated minimia of the beta-amino acid Ramachandran cube, then chooses phi/theta/psi values randomly in a Gaussian centered in that minimum.  The behaviour depends on beta_residue_type (0=pick everything randomly, 1=pick using beta-3-alanine Ramachandran cube).
+				void TorsionSamplingKinematicPerturber::perturb_beta_residue (
+					core::Real &phi, //output value
+					core::Real &theta, //output value
+					core::Real &psi, //output value
+					const core::Size beta_residue_type //0 = perturb all angles totally randomly; 1 = perturb using Ramachandran cube of beta-3-alanine; other behaviours may be added.
+				) const {
+
+					const core::Real wellwidth = 12.0; //Standard deviation of the width of the well around each minimum, in degrees.  Arbitrarily chosen.
+					utility::vector1 < core::Real > phi_minima;
+					utility::vector1 < core::Real > theta_minima;
+					utility::vector1 < core::Real > psi_minima;
+					initialize_betaresidue_minima(phi_minima, theta_minima, psi_minima, beta_residue_type); //Calling this every time is a bit inefficient...  Still, it's not a lot of data that gets initialized, here.
+					core::Size randindex = 0;
+
+					switch (beta_residue_type) {
+						case 1: //Case 1 -- perturb using the minima of the Ramachandran cube of beta-3-alanine.
+							randindex = RG.random_range(1, phi_minima.size()); //Pick a random minimum.  Note: all minima are treated as being equally probable.
+							phi = phi_minima[randindex] + wellwidth*RG.gaussian();
+							theta = theta_minima[randindex] + wellwidth*RG.gaussian();
+							psi = psi_minima[randindex] + wellwidth*RG.gaussian();
+							break;
+						default: //Case zero -- perturb all angles totally randomly
+							phi = RG.uniform() * 360.0;
+							theta = RG.uniform() * 360.0;
+							psi = RG.uniform() * 360.0;
+							break;
+					}
+
+					if(phi>360.0) phi-=360.0; else if (phi<360.0) phi+=360.0;
+					if(theta>360.0) theta-=360.0; else if (theta<360.0) theta+=360.0;
+					if(psi>360.0) psi-=360.0; else if (psi<360.0) psi+=360.0;
+
+					return;
+				}
+			
 				///@details randomly varies the torsions (and possibly the bond angles) for the loop.  Respects a MoveMap, if present, for torsions.  Does NOT respect the movemap for angles; does NOT cause any sort of interactions between the MoveMap and the KinematicMover's pivot residues.
 				void
 				TorsionSamplingKinematicPerturber::perturb_chain(
@@ -159,11 +235,8 @@ namespace protocols {
 						if(!mm || mm->get_bb(cur_res)){ //if movemap is null, or (if not null) if movemap says mobile
 							
 							if(kinmover_->is_beta_aminoacid(pose.residue(cur_res))) { //If this is a beta-amino acid, select backbone dihedral values:
-								//For now, these are set fully randomly.  This will likely change, though:
-								torsions[i++]=RG.uniform() * 360.0; // phi (C-N-CA-CM)
-								torsions[i++]=RG.uniform() * 360.0; //theta (N-CA-CM-C)
-								torsions[i++]=RG.uniform() * 360.0; //psi (CA-CM-C-N)
-								i++; //Leave omega (CM-C-N-CA) alone.
+								perturb_beta_residue(torsions[i], torsions[i+1], torsions[i+2], 1);
+								i+=4; //Leave omega (CM-C-N-CA) alone and increment i to point at the first torsion of the next residue.
 							} else { //Default case -- if this is an alpha-amino acid:
 								core::Real rama_phi, rama_psi;						
 								rama_.random_phipsi_from_rama(pose.aa(cur_res), rama_phi, rama_psi);							

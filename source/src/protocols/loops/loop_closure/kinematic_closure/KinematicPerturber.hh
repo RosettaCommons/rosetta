@@ -133,6 +133,17 @@ namespace protocols {
 					
 					std::string perturber_type() const {
 						return "TorsionSampleKinematicPerturber"; }
+
+					///@brief Varies torsions of a beta-amino acid residue based on minimia in the beta-amino acid Ramachandran cube.  This randomly picks a minimum, then chooses phi/theta/psi values randomly in a Gaussian centered in that minimum.
+					void perturb_beta_residue (core::Real &phi, core::Real &theta, core::Real &psi, const core::Size beta_residue_type) const;
+
+					///@brief Initialize positions of minima in the beta-amino acid Ramachandran cube.
+					void initialize_betaresidue_minima (
+						utility::vector1 < core::Real > &philist, //outputs -- will be cleared by this function
+						utility::vector1 < core::Real > &thetalist, //outputs -- will be cleared by this function
+						utility::vector1 < core::Real > &psilist, //outputs -- will be cleared by this function
+						const core::Size mode //mode 1 initializes for beta-3-amino acids.
+					) const;
 					
 					///@brief varies torsions always and bond angles sometimes.  Currently torsion varying will respect a movemap if present; angles do NOT look for a movemap.
 					void

@@ -249,8 +249,8 @@ int main( int argc, char * argv [] ) {
 	protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn); //Create the RepackSidechains mover and set the score function.
 
 	core::pose::Pose mypose;
-	//const string sequence = "GA[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]G";
-	const string sequence = "GA[B3A]A[B3A]A[B3A]A[DALA]A[DALA]AG";
+	const string sequence = "GA[B3A]A[B3A]W[B3W]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]G";
+	//const string sequence = "GA[B3A]A[B3A]A[B3A]A[DALA]A[DALA]AG";
 
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
@@ -285,11 +285,12 @@ int main( int argc, char * argv [] ) {
 		}
 	}
 
+	betapeptide_setphi(mypose, 9, 45.0);
 	betapeptide_setphi(mypose, 4, -26.3);
 	betapeptide_settheta(mypose, 6, 58.4);
 	mypose.update_residue_neighbors();
 
-	mypose.dump_scored_pdb("out_0000.pdb", *sfxn); //Pre-KIC pose
+	mypose.dump_scored_pdb("first.pdb", *sfxn); //Pre-KIC pose
 
 	//Kinematic closure mover:
 	protocols::loops::loop_closure::kinematic_closure::KinematicMoverOP kinmover = new protocols::loops::loop_closure::kinematic_closure::KinematicMover;
@@ -297,19 +298,22 @@ int main( int argc, char * argv [] ) {
 	kinmover->set_vary_bondangles( false );
 	kinmover->set_sample_nonpivot_torsions( true ); //true
 	kinmover->set_rama_check( true );
-	kinmover->set_idealize_loop_first(false); //true
+	kinmover->set_idealize_loop_first(true); //true
 	kinmover->set_sfxn(sfxn);
-	kinmover->set_pivots(2, 4, 7);
-
+	kinmover->set_pivots(2, 5, mypose.n_residue()-1);
 
 	for(core::Size i=1; i<=numstructs; i++) {
+		core::pose::Pose temppose=mypose;
 
-		kinmover->apply(mypose);
+		kinmover->apply(temppose);
 
 		char outfilename [256];
 		sprintf(outfilename, "out_%04lu.pdb", i);
+		temppose.dump_scored_pdb(outfilename, *sfxn);
 
-		mypose.dump_scored_pdb(outfilename, *sfxn);
+		frlx.apply(temppose);
+		sprintf(outfilename, "relaxed_%04lu.pdb", i);
+		temppose.dump_scored_pdb(outfilename, *sfxn);
 
 	}
 

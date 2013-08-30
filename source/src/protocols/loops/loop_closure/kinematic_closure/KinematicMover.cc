@@ -87,12 +87,26 @@ KinematicMover::KinematicMover() :
 	seg_len_(3), // dummy value -- was previously uninitialized (!)
 	loop_begin_(2), // AS: start of the full loop -- dummy value
 	loop_end_(4),
+
+	//Ideal alpha-amino acid bond angles:
 	idl_C_N_CA_(121.7),
 	idl_N_CA_C_(111.2),
 	idl_CA_C_N_(116.2),
+	//Ideal alpha-amino acid bond lengths:
 	idl_C_N_(1.32869),
 	idl_N_CA_(1.458),
 	idl_CA_C_(1.52326),
+	//Ideal beta-amino acid bond angles:
+	idl_beta_C_N_CA_(121.7),
+	idl_beta_N_CA_CM_(111.2),
+	idl_beta_CA_CM_C_(111.2),
+	idl_beta_CM_C_N_(116.2),
+	//Ideal beta-amino acid bond lengths:
+	idl_beta_C_N_(1.32869),
+	idl_beta_N_CA_(1.458),
+	idl_beta_CA_CM_(1.52326),
+	idl_beta_CM_C_(1.52326),
+
 	BANGLE_MEAN_(110.86), // from PDB
 	//BANGLE_MEAN=107.0;    // from CHARMM (to coincide with mm_bend potential)
 	BANGLE_SD_(2.48),
@@ -499,15 +513,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	// idealize the loop if requested
 	// NOTE: for now, this only works for alpha-amino acids.  If there are beta-amino acids in the mix, this will return an error.
 	if (idealize_loop_first_) {
-
-		//Check for non-alpha amino acids.
-		//AS ADDITIONAL BACKBONE TYPES ARE ADDED, add checks here!
-		for(core::Size ir=(pose.residue(start_res_).is_lower_terminus() ? start_res_ : start_res_ - 1), stopres=(pose.residue(end_res_).is_upper_terminus() ? end_res_ : end_res_ + 1);
-					ir<=stopres;
-					++ir) {
-			if( is_beta_aminoacid(pose.residue(ir)) ) utility_exit_with_message("The segment submitted for kinematic closure contains one or more beta-amino acids.  Idealize is not currently possible with nonstandard amino acids.  Crashing.");
-		}
-		
+	
 		// save a backbup of the non-ideal residues in case closure fails -- AS_DEBUG: now trying to simply store the entire pose and write it back
 		save_residues.resize(seg_len);
 		for (Size seqpos=start_res_, i=1; seqpos<=end_res_; seqpos++, i++) {
@@ -516,22 +522,46 @@ void KinematicMover::apply( core::pose::Pose & pose )
 		}
 
 		// set all bond lengths, angles, and omegas for closure to ideal values
-
 		// check sizes to prevent memory crashes:
-		for (Size i=1; i<=atoms.size(); i+=3) {
-			if( db_ang.size() >= (i) )   db_ang[i]=idl_C_N_CA_;
-			if( db_ang.size() >= (i+1) ) db_ang[i+1]=idl_N_CA_C_;
-			if( db_ang.size() >= (i+2) ) db_ang[i+2]=idl_CA_C_N_;
-			if( db_len.size() >= (i) )   db_len[i]=idl_N_CA_;
-			if( db_len.size() >= (i+1) ) db_len[i+1]=idl_CA_C_;
-			if( db_len.size() >= (i+2) ) db_len[i+2]=idl_C_N_;
-			if( dt_ang.size() >= (i+2) ) dt_ang[i+2]=OMEGA_MEAN_;
+		for (Size i=1, res=start_res_-1; i<=atoms.size(); res+=1) {
+			//Check for whether this is a beta-amino acid:
+			bool is_beta_residue = false;
+			if(res == start_res_ - 1 && pose.residue(start_res_).is_lower_terminus()) is_beta_residue = is_beta_aminoacid(pose.residue(start_res_));
+			else if(res == end_res_ + 1 && pose.residue(end_res_).is_upper_terminus()) is_beta_residue = is_beta_aminoacid(pose.residue(end_res_));
+			else is_beta_residue = is_beta_aminoacid(pose.residue(res));
+
+			if(is_beta_residue) { //Idealizing a beta-amino acid
+				if( db_ang.size() >= (i) )   db_ang[i]=idl_beta_C_N_CA_;
+				if( db_ang.size() >= (i+1) ) db_ang[i+1]=idl_beta_N_CA_CM_;
+				if( db_ang.size() >= (i+2) ) db_ang[i+2]=idl_beta_CA_CM_C_;
+				if( db_ang.size() >= (i+3) ) db_ang[i+3]=idl_beta_CM_C_N_;
+				if( db_len.size() >= (i) )   db_len[i]=idl_beta_N_CA_;
+				if( db_len.size() >= (i+1) ) db_len[i+1]=idl_beta_CA_CM_;
+				if( db_len.size() >= (i+2) ) db_len[i+2]=idl_beta_CM_C_;
+				if( db_len.size() >= (i+3) ) db_len[i+3]=idl_beta_C_N_;
+				if( dt_ang.size() >= (i+3) ) dt_ang[i+3]=( core::chemical::is_D_aa(pose.residue(res).aa()) ? -1.0 : 1.0 ) * OMEGA_MEAN_;				
+			} else { //Default case: alpha-amino acid residue
+				if( db_ang.size() >= (i) )   db_ang[i]=idl_C_N_CA_;
+				if( db_ang.size() >= (i+1) ) db_ang[i+1]=idl_N_CA_C_;
+				if( db_ang.size() >= (i+2) ) db_ang[i+2]=idl_CA_C_N_;
+				if( db_len.size() >= (i) )   db_len[i]=idl_N_CA_;
+				if( db_len.size() >= (i+1) ) db_len[i+1]=idl_CA_C_;
+				if( db_len.size() >= (i+2) ) db_len[i+2]=idl_C_N_;
+				if( dt_ang.size() >= (i+2) ) dt_ang[i+2]=OMEGA_MEAN_;
+			}
+
+			//Incrementing the atom counter:	
+			if(res == start_res_ - 1) i += start_minus_one_bb_atom_count; //The padding residue at the start
+			else if (res == end_res_ + 1) i += end_plus_one_bb_atom_count; //The padding residue at the end
+			else i += count_bb_atoms_in_residue(pose, res); //The loop residues
 		}
 
 		// setting pose omegas here, don't set them later!
 		for ( Size i= start_res_; i<= end_res_; ++i ) {
 			conformation::idealize_position( i, pose.conformation() ); // this is coupled to above values!
-			pose.set_omega(i, OMEGA_MEAN_); 
+			if( is_beta_aminoacid(pose.residue(i))) pose.conformation().set_torsion( id::TorsionID( i, id::BB, 4 ), OMEGA_MEAN_ ); //set_omega doesn't work properly for beta-amino acids (it sets the third torsion rather than the fourth).
+			else if (core::chemical::is_D_aa(pose.residue(i).aa())) pose.set_omega(i, -1.0*OMEGA_MEAN_);
+			else pose.set_omega(i, OMEGA_MEAN_); //Default case for alpha-amino acids -- set the torsion angle with set_omega.
 		}
 
 	} //if (idealize_loop_first)

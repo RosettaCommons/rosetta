@@ -163,6 +163,17 @@ private:
 	core::Real idl_N_CA_;   // ideal N_CA bond length from Rosetta for idealized kinematic closure
 	core::Real idl_CA_C_; // ideal CA_C bond length from Rosetta for idealized kinematic closure
 
+	//Ideal beta-amino acid bond angles:
+	core::Real idl_beta_C_N_CA_;
+	core::Real idl_beta_N_CA_CM_;
+	core::Real idl_beta_CA_CM_C_;
+	core::Real idl_beta_CM_C_N_;
+	//Ideal beta-amino acid bond lengths:
+	core::Real idl_beta_C_N_;
+	core::Real idl_beta_N_CA_;
+	core::Real idl_beta_CA_CM_;
+	core::Real idl_beta_CM_C_;
+
 	// bond angle sampling
 	core::Real BANGLE_MEAN_; // mean N-CA-C bond angle value from PDB
 	core::Real BANGLE_SD_; // N-CA-C bond angle standard deviation from PDB
