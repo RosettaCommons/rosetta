@@ -1,33 +1,30 @@
--in:file:s inputs/refine_start.pdb
+-in:file:fasta inputs/1bbh.fasta
 -parser:protocol inputs/hybridize.xml
--in:file:centroid_input
 -nstruct 1
+
+# ligand
 -ignore_unrecognized_res
--extra_res inputs/GTP.params 
-# relax options
--relax:cartesian
+-extra_res_fa inputs/HEM.fa.params
+-extra_res_cen inputs/HEM.cen.params
+-extra_improper_file inputs/HEM.fa.tors
+
+# relax
 -relax:minimize_bond_angles
--relax:minimize_bond_lengths
 -relax:jump_move true
 -relax:default_repeats 1
--scale_d 1
--scale_theta 1
--scale_rb 1
--default_max_cycles 10
+-default_max_cycles 15
 -relax:min_type lbfgs_armijo_nonmonotone
--relax:jump_move true
--score:weights inputs/stage2.wts
--use_bicubic_interpolation
+-set_weights cart_bonded 0.5 pro_close 0 elec_dens_fast 5.0
 -hybridize:stage1_probability 1.0
+-hybridize:starting_template 1
+
 # density map options
--edensity:mapfile inputs/GDP_finalmap_b_seg.mrc
+-edensity:mapfile inputs/1bbh_molmap.mrc
 -edensity:score_symm_complex true
 -edensity:mapreso 15.0
 -edensity:grid_spacing 7.0
--edensity:realign no
--icoor_05_2009
 -output_virtual
--mute core.io.pdb.file_data core.conformation.Conformation core.util.switchresiduetypeset
--hybridize:starting_template 1
+-mute core.io.pdb.file_data core.conformation.Conformation core.util.switchresiduetypeset core.scoring.electron_density.xray_scattering
+
 # reduce memory footprint
 -chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer  VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm

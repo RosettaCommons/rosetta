@@ -70,12 +70,19 @@ void generate_fullatom_constraints(
 	utility::vector1 < core::pose::PoseCOP > templates,
 	utility::vector1 < core::Real > template_weights );
 
-void setup_partial_coordinate_constraints( core::pose::Pose &pose, utility::vector1<bool> ignore_res );
+// user-defined coord csts
+void setup_user_coordinate_constraints( core::pose::Pose &pose, utility::vector1<core::Size> reses_to_cst );
 
-void setup_partial_atompair_constraints( core::pose::Pose &pose, utility::vector1<bool> ignore_res );
+// restrict all but interface
+void setup_interface_coordinate_constraints( core::pose::Pose &pose, utility::vector1<bool> ignore_res );
 
+// restrict all but interface
+void setup_interface_atompair_constraints( core::pose::Pose &pose, utility::vector1<bool> ignore_res );
+
+// input strand pairings
 void add_strand_pairs_cst(core::pose::Pose & pose, utility::vector1< std::pair< core::Size, core::Size > > const strand_pairs);
 
+// ligand/DNA
 void add_non_protein_cst(core::pose::Pose & pose, core::Real const self_cst_weight, core::Real const het_prot_cst_weight);
 
 bool discontinued_upper(core::pose::Pose const & pose, core::Size const seqpos);

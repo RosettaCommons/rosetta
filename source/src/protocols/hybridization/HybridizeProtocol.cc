@@ -284,7 +284,7 @@ HybridizeProtocol::init() {
 	  // option[ corrections::score::lj_hbond_OH_donor_dis ].value( 2.6 );
 	  option[ score::hbond_params ].value( "sp2_elec_params" );
 	}
-	
+
 	fa_scorefxn_ = core::scoring::getScoreFunction();
 
 	core::scoring::methods::EnergyMethodOptions optionsfa(fa_scorefxn_->energy_method_options());
@@ -747,16 +747,14 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	//save necessary constraint in pose
   core::scoring::constraints::ConstraintSetOP save_pose_constraint_set = new core::scoring::constraints::ConstraintSet() ;
   if ( keep_pose_constraint_ ) {
-  		save_pose_constraint_set = pose.constraint_set()->clone();
-			core::scoring::constraints::remove_nonbb_constraints(pose);
+		save_pose_constraint_set = pose.constraint_set()->clone();
+		core::scoring::constraints::remove_nonbb_constraints(pose);
 	}
-
 
 	if (pose.is_fullatom()) {
-				protocols::moves::MoverOP tocen = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
-        tocen->apply(pose);
+		protocols::moves::MoverOP tocen = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+		tocen->apply(pose);
 	}
-
 
 	// make fragments if we don't have them at this point
 	check_and_create_fragments( pose );
@@ -884,7 +882,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			//fpd   to get the right rotamer set we need to do this
 			basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].value( "dummy" );
 
-			// xyz copy hetatms -- this makes helical symmetries a little easier to setup
+			// xyz copy hetatms -- this makes certain symmetries a little easier to setup
 			if (add_hetatm_) {
 				for ( Size ihet=1; ihet <= hetatms.size(); ++ihet ) {
 					core::conformation::Residue const &res_in = templates_[initial_template_index]->residue(hetatms[ihet].first);
@@ -898,31 +896,27 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		}
 
 		// set pose for density scoring if a map was input
-		//keep this after symmetry
-		if ( option[ OptionKeys::edensity::mapfile ].user() ) {
+		// >> keep this after symmetry
+		if ( option[ OptionKeys::edensity::mapfile ].user() || user_csts_.size() > 0) {
 			MoverOP dens( new protocols::electron_density::SetupForDensityScoringMover );
 			dens->apply( pose );
 		}
 
 		// initialize template history
-		//keep this after symmetry
+		// >> keep this after symmetry
 		TemplateHistoryOP history = new TemplateHistory(pose);
 		history->setall( initial_template_index_icluster );
 		pose.data().set( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY, history );
 
-    //task operations
     allowed_to_move_.clear();
     allowed_to_move_.resize(pose.total_residue(),true);
 
-    if( task_factory_ ){
-      task_ = task_factory_->create_task_and_apply_taskoperations( pose );
-      for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi ){
-        if( task_->residue_task( resi ).being_designed() || task_->residue_task( resi ).being_packed())
-          allowed_to_move_[resi]=true;
-    		else
-          allowed_to_move_[resi]=false;
-      }
-     }
+		// if a task factory is given, use it to set allowable residues
+		if( task_factory_ ){
+			task_ = task_factory_->create_task_and_apply_taskoperations( pose );
+			for( core::Size resi = 1; resi <= get_num_residues_nonvirt(pose); ++resi )
+				allowed_to_move_[resi] = ( task_->residue_task( resi ).being_designed() || task_->residue_task( resi ).being_packed()) ;
+		}
 
 		// STAGE 1
 		//fpd constraints are handled a little bit weird
@@ -966,9 +960,13 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 				ft_hybridize->set_sheets( sheets_ );
 				ft_hybridize->set_random_sheets( random_sheets_ );
 				ft_hybridize->set_filter_templates( filter_templates_ );
+
+				// other cst stuff
 				ft_hybridize->set_movable_region( allowed_to_move_ );
 				ft_hybridize->set_task_factory( task_factory_ );
+				ft_hybridize->set_user_csts( user_csts_ );
 
+				// finally run stage 1
 				ft_hybridize->apply(pose);
 
 				// get strand pairings if they exist for constraints in later stages
@@ -985,10 +983,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 						mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( true );
 						core::pose::symmetry::make_symmetric_movemap( pose, *mm );
 
-						protocols::simple_moves::symmetry::SymMinMoverOP min_mover = new protocols::simple_moves::symmetry::SymMinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true );
+						protocols::simple_moves::symmetry::SymMinMoverOP min_mover =
+							new protocols::simple_moves::symmetry::SymMinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true );
 						min_mover->apply(pose);
 
-						//TR << "Realigning template domains to docking/minimize pose." << std::endl;
 						core::pose::PoseOP stage1pose = new core::pose::Pose();
 						core::pose::symmetry::extract_asymmetric_unit(pose, *stage1pose);
 						align_by_domain(templates_, domains_, stage1pose);
@@ -998,13 +996,10 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 						docking_lowres_mover->apply(pose);
 
 						core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
-						mm->set_bb( false );
-						mm->set_chi( false );
-						mm->set_jump( rb_move_jump, true );
+						mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( rb_move_jump, true );
 						protocols::simple_moves::MinMoverOP min_mover = new protocols::simple_moves::MinMover( mm, stage1_scorefxn_, "lbfgs_armijo_nonmonotone", 0.01, true );
 						min_mover->apply(pose);
 
-						//TR << "Realigning template domains to docking/minimize pose." << std::endl;
 						core::pose::PoseOP stage1pose = new core::pose::Pose( pose );
 						align_by_domain(templates_, domains_, stage1pose);
 					}
@@ -1036,23 +1031,21 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		// apply constraints
 		if ( stage2_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) != 0 ) {
 			std::string cst_fn = template_cst_fn_[initial_template_index];
-			if (!keep_pose_constraint_ ) {
+			if (!keep_pose_constraint_ )
 					setup_centroid_constraints( pose, templates_, template_weights_, cst_fn );
-			} 
-
-			if (add_hetatm_) {
+			if (add_hetatm_)
 				add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
-			}
-			if (strand_pairs_.size()) {
+			if (strand_pairs_.size())
 				add_strand_pairs_cst(pose, strand_pairs_);
-			}
-			if ( task_factory_ ) {
-				setup_partial_atompair_constraints(pose,allowed_to_move_);
-			}
+			if ( task_factory_ )
+				setup_interface_atompair_constraints(pose,allowed_to_move_);
 		}
 
-		if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
-				setup_partial_coordinate_constraints(pose,allowed_to_move_);
+		if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0) {
+			if ( user_csts_.size() > 0 )
+				setup_user_coordinate_constraints(pose,user_csts_);
+			if ( task_factory_ )
+				setup_interface_coordinate_constraints(pose,allowed_to_move_);
 		}
 
 		if (!option[cm::hybridize::skip_stage2]()) {
@@ -1074,6 +1067,8 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			cart_hybridize->set_seqfrags_only( seqfrags_only_ );
 			cart_hybridize->set_cartfrag_overlap( cartfrag_overlap_ );
 			cart_hybridize->set_movable_region( allowed_to_move_ );
+
+			// finally run stage 2
 			cart_hybridize->apply(pose);
 		}
 
@@ -1111,20 +1106,24 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			(*stage2_scorefxn_)(pose); minimizer.run( pose, *mm, *stage2_scorefxn_, options_lbfgs );
 		}
 
-		// STAGE RELAX
+		// STAGE 3: RELAX
 		if (batch_relax_ > 0) {
-			protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
-			tofa->apply(pose);
 
-			// 	disulfide
+			// set disulfides before going to FA
 			if (disulf_file_.length() > 0) {
+				// manual disulfide
 				TR << " add disulfide: " << std::endl;
 				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].value(disulf_file_);
 				core::pose::initialize_disulfide_bonds(pose);
-				// must to this to avoid possible errors since initialize_disulfide_bonds is used in pose io.
+				// must reset this since initialize_disulfide_bonds is used in pose io
 				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].deactivate();
 				basic::options::option[ basic::options::OptionKeys::in::fix_disulf ].to_default(); // reset to the default value
+			} else {
+				pose.conformation().detect_disulfides();
 			}
+
+			protocols::moves::MoverOP tofa = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
+			tofa->apply(pose);
 
 			// apply fa constraints
 			std::string cst_fn = template_cst_fn_[initial_template_index];
@@ -1141,12 +1140,17 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 					add_strand_pairs_cst(pose, strand_pairs_);
 				}
 				if ( task_factory_ ) {
-			  	setup_partial_atompair_constraints(pose,allowed_to_move_);
+			  	setup_interface_atompair_constraints(pose,allowed_to_move_);
 				}
 			}
 
-			if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
-			  	setup_partial_coordinate_constraints(pose,allowed_to_move_);
+			if ( stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0) {
+				// note that CSTs are updated based on stage 1 movement
+				//   this may or may not be desirable
+				if ( user_csts_.size() > 0 )
+					setup_user_coordinate_constraints(pose,user_csts_);
+				if ( task_factory_ )
+					setup_interface_coordinate_constraints(pose,allowed_to_move_);
 			}
 
 			if (batch_relax_ == 1) {
@@ -1456,6 +1460,19 @@ HybridizeProtocol::parse_my_tag(
 	hcut_ = tag->getOption< core::Real >( "domain_hcut" , 0.18);
 	pcut_ = tag->getOption< core::Real >( "domain_pcut" , 0.81);
 	length_ = tag->getOption< core::Size >( "domain_length" , 38);
+
+	// user constraints
+	if( tag->hasOption( "coord_cst_res" ) ) {
+		user_csts_ = core::pose::get_resnum_list_ordered( tag->getOption<std::string>( "coord_cst_res" ), pose );
+	}
+
+	// if user constraints are defined, make sure coord_csts are defined in at least one stage
+	if (user_csts_.size() > 0) {
+		runtime_assert(
+			stage1_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 ||
+			stage2_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 ||
+			fa_scorefxn_->get_weight( core::scoring::coordinate_constraint ) > 0 );
+	}
 
 	// fragments
 	utility::vector1< utility::tag::TagPtr > const branch_tags( tag->getTags() );

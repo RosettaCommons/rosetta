@@ -189,7 +189,7 @@ FoldTreeHybridize::init() {
 	small_frag_insertion_weight_ = 0.0;
 	big_frag_insertion_weight_ = 0.50;
 	chunk_insertion_weight_ = 5.;
-	
+
 	top_n_big_frag_ = 25;
 	top_n_small_frag_ = 200;
 	domain_assembly_ = false;
@@ -229,7 +229,7 @@ FoldTreeHybridize::normalize_template_wts() {
 }
 
 void FoldTreeHybridize::set_task_factory( core::pack::task::TaskFactoryOP task_factory_in ) {
- 	  task_factory_ = task_factory_in; 
+ 	  task_factory_ = task_factory_in;
 }
 
 void
@@ -618,7 +618,7 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_1mers(
 			min_small_frag_len = frag_libs_small_[i]->max_frag_length();
 		}
 	}
-	
+
   core::Size last_anchor = 0;
   for (core::Size i = 1; i<=jump_anchors.size(); ++i) {
     core::Size anchor_gap = jump_anchors[i]-last_anchor-1;
@@ -690,6 +690,7 @@ FoldTreeHybridize::setup_scorefunctions(
 	score0->reset();
 	score0->set_weight( core::scoring::vdw, 0.1*scorefxn_->get_weight( core::scoring::vdw ) );
 	score0->set_weight( core::scoring::elec_dens_fast, scorefxn_->get_weight( core::scoring::elec_dens_fast ) );
+	score0->set_weight( core::scoring::coordinate_constraint, scorefxn_->get_weight( core::scoring::coordinate_constraint ) );
 
 	score1->reset();
 	score1->set_weight( core::scoring::linear_chainbreak, 0.1*lincb_orig );
@@ -703,6 +704,7 @@ FoldTreeHybridize::setup_scorefunctions(
 	score1->set_weight( core::scoring::ss_pair, 0.3*scorefxn_->get_weight( core::scoring::ss_pair ) );
 	score1->set_weight( core::scoring::sheet, scorefxn_->get_weight( core::scoring::sheet ) );
 	score1->set_weight( core::scoring::elec_dens_fast, scorefxn_->get_weight( core::scoring::elec_dens_fast ) );
+	score1->set_weight( core::scoring::coordinate_constraint, scorefxn_->get_weight( core::scoring::coordinate_constraint ) );
 	//STRAND_STRAND_WEIGHTS 1 11
 	core::scoring::methods::EnergyMethodOptions score1_options(score1->energy_method_options());
 	score1_options.set_strand_strand_weights(1,11);
@@ -725,6 +727,7 @@ FoldTreeHybridize::setup_scorefunctions(
 	score2->set_weight( core::scoring::ss_pair, 0.3*scorefxn_->get_weight( core::scoring::ss_pair ) );
 	score2->set_weight( core::scoring::sheet, scorefxn_->get_weight( core::scoring::sheet ) );
 	score2->set_weight( core::scoring::elec_dens_fast, scorefxn_->get_weight( core::scoring::elec_dens_fast ) );
+	score2->set_weight( core::scoring::coordinate_constraint, scorefxn_->get_weight( core::scoring::coordinate_constraint ) );
 	//STRAND_STRAND_WEIGHTS 1 6
 	core::scoring::methods::EnergyMethodOptions score2_options(score1->energy_method_options());
 	score2_options.set_strand_strand_weights(1,6);
@@ -746,6 +749,7 @@ FoldTreeHybridize::setup_scorefunctions(
 	score5->set_weight( core::scoring::ss_pair, 0.3*scorefxn_->get_weight( core::scoring::ss_pair ) );
 	score5->set_weight( core::scoring::sheet, scorefxn_->get_weight( core::scoring::sheet ) );
 	score5->set_weight( core::scoring::elec_dens_fast, scorefxn_->get_weight( core::scoring::elec_dens_fast ) );
+	score5->set_weight( core::scoring::coordinate_constraint, scorefxn_->get_weight( core::scoring::coordinate_constraint ) );
 	//STRAND_STRAND_WEIGHTS 1 11
 	core::scoring::methods::EnergyMethodOptions score5_options(score1->energy_method_options());
 	score5_options.set_strand_strand_weights(1,11);
@@ -1197,12 +1201,9 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		if (add_hetatm_)
 			add_non_protein_cst(pose, hetatm_self_cst_weight_, hetatm_prot_cst_weight_);
 		if ( task_factory_ )
-      setup_partial_atompair_constraints(pose,allowed_to_move_);
+      setup_interface_atompair_constraints(pose,allowed_to_move_);
 	}
 
-	if ( scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0 && task_factory_ ) {
-     setup_partial_coordinate_constraints(pose,allowed_to_move_);
-	}
 	// Initialize the structure
 	bool use_random_template = false;
 	ChunkTrialMover initialize_chunk_mover(template_poses_, template_chunks_, ss_chunks_pose_, use_random_template, all_chunks);
@@ -1222,7 +1223,24 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		}
 	}
 
+	// ab initio ramping up of weights
+	// set up scorefunctions
+	core::scoring::ScoreFunctionOP score0=scorefxn_->clone(),
+																 score1=scorefxn_->clone(),
+																 score2=scorefxn_->clone(),
+																 score5=scorefxn_->clone(),
+																 score3=scorefxn_->clone();
+	setup_scorefunctions( score0, score1, score2, score5, score3 );
+
 	translate_virt_to_CoM(pose);
+
+	// coord csts _must_ be after the CoM gets moved
+	if ( scorefxn_->get_weight( core::scoring::coordinate_constraint ) != 0) {
+		if ( user_csts_.size() > 0 )
+			setup_user_coordinate_constraints(pose,user_csts_);
+		if ( task_factory_ )
+			setup_interface_coordinate_constraints(pose,allowed_to_move_);
+	}
 
 	use_random_template = true;
 	Size max_registry_shift = max_registry_shift_;
@@ -1238,15 +1256,6 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	utility::vector1< core::Real > residue_weights( get_residue_weights_for_big_frags(pose) );
 
 	utility::vector1< core::Size > jump_anchors = get_jump_anchors();
-
-	// ab initio ramping up of weights
-	// set up scorefunctions
-	core::scoring::ScoreFunctionOP score0=scorefxn_->clone(),
-																 score1=scorefxn_->clone(),
-																 score2=scorefxn_->clone(),
-																 score5=scorefxn_->clone(),
-																 score3=scorefxn_->clone();
-	setup_scorefunctions( score0, score1, score2, score5, score3 );
 
 	// set montecarlo temp
 	core::Real temp = 2.0;
@@ -1474,7 +1483,6 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 		}
 
 		for (int nmacro=1; nmacro<=10; ++nmacro) {
-
 			// ramp chainbreak weight as in KinematicAbinitio
 			Real chbrk_weight_stage_3a = 0;
 			Real chbrk_weight_stage_3b = 0;
@@ -1581,7 +1589,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 			new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID_ROT );
 		tocenrot->apply( pose );
 		// setup score
-		core::scoring::ScoreFunctionOP score_cenrot = 
+		core::scoring::ScoreFunctionOP score_cenrot =
 			core::scoring::ScoreFunctionFactory::create_score_function( option[cm::hybridize::stage1_4_cenrot_score]() );
 		// packer
 		using namespace core::pack::task;
@@ -1666,7 +1674,7 @@ void FoldTreeHybridize::auto_frag_insertion_weight(
 	if (!small_n_frags) small_n_frags = top_n_small_frag_;
 	core::Size big_n_frags = big_frag_trial_mover->get_nr_frags();
 	if (!big_n_frags) big_n_frags = top_n_big_frag_;
-	
+
 	core::Size template_pos_coverage = 0;
 	for (core::Size i = 1; i<=template_chunks_.size(); ++i) {
 		if (strand_pairings_template_indices_.count(i)) continue;
@@ -1679,11 +1687,11 @@ void FoldTreeHybridize::auto_frag_insertion_weight(
 	core::Size big_frag_pos_coverage = big_frag_trial_mover->get_total_frames()*big_n_frags;
 
 	core::Real sum = (core::Real)(frag_1mer_pos_coverage+small_frag_pos_coverage+big_frag_pos_coverage+template_pos_coverage);
-	
+
 	frag_1mer_insertion_weight_ = ((core::Real) frag_1mer_pos_coverage)/sum;
 	small_frag_insertion_weight_ = ((core::Real) small_frag_pos_coverage)/sum;
 	big_frag_insertion_weight_ = ((core::Real) big_frag_pos_coverage)/sum;
-	
+
 	TR.Info << "auto_frag_insertion_weight for 1mer fragments: " << F(7,5,frag_1mer_insertion_weight_) << " " << frag_1mer_pos_coverage << std::endl;
 	TR.Info << "auto_frag_insertion_weight for small fragments: " << F(7,5,small_frag_insertion_weight_) << " " << small_frag_pos_coverage << std::endl;
 	TR.Info << "auto_frag_insertion_weight for big fragments: " << F(7,5,big_frag_insertion_weight_) << " " << big_frag_pos_coverage << std::endl;

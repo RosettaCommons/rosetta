@@ -113,6 +113,7 @@ public:
 private:
 	// parsible options
 	utility::vector1 < core::Size > starting_templates_;
+
 	core::Real stage1_probability_, stage1_increase_cycles_, stage2_increase_cycles_, stage25_increase_cycles_;
 	core::Size stage1_1_cycles_, stage1_2_cycles_, stage1_3_cycles_, stage1_4_cycles_;
 
@@ -182,7 +183,7 @@ private:
 
 	// constraint
 	bool keep_pose_constraint_;
-
+	utility::vector1 < core::Size > user_csts_;
 };
 
 } // hybridization

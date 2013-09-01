@@ -205,7 +205,24 @@ void generate_centroid_constraints(
 }
 
 
-void setup_partial_coordinate_constraints(
+void setup_user_coordinate_constraints(
+    core::pose::Pose &pose,
+    utility::vector1<Size> reses )
+{
+	core::Real COORDDEV = 0.39894;
+
+	for (core::Size i=1; i<=reses.size(); ++i) {
+	  pose.add_constraint(
+			new core::scoring::constraints::CoordinateConstraint(
+				core::id::AtomID(2,reses[i]),
+				core::id::AtomID(2,pose.total_residue()),
+				pose.residue(reses[i]).atom(2).xyz(),
+				new USOGFunc( 0, COORDDEV )
+			) );
+	}
+}
+
+void setup_interface_coordinate_constraints(
     core::pose::Pose &pose,
     utility::vector1<bool> ignore_res )
 {
@@ -222,7 +239,7 @@ void setup_partial_coordinate_constraints(
   core::Real COORDDEV = 0.05;
   core::Real MINDIST_NONMOVEj= 999.0;
 
-	core::Size iatom; 
+	core::Size iatom;
 	core::Real natom = 0.0;
   numeric::xyzVector<core::Real> sum_xyz(0.0);
   numeric::xyzVector<core::Real> anchor_xyz(0.0);
@@ -252,7 +269,7 @@ void setup_partial_coordinate_constraints(
 					}
         } //figure out the maxdist to any interface residues, used for normalizing coordinate constraints
 			}//avoid non-protein residues
-		}//loop through residues in chain 
+		}//loop through residues in chain
 
     if (natom > 1e-3) {
       anchor_xyz = sum_xyz / natom;
@@ -287,7 +304,7 @@ void setup_partial_coordinate_constraints(
 									if ( distjm < MINDIST_NONMOVEj ) MINDIST_NONMOVEj=distjm;
 								}
 							} //closest to nonmovable residues
-		
+
             if (symm_info && !symm_info->bb_is_independent( j ) )
                j = symm_info->bb_follows( j );
 
@@ -305,7 +322,7 @@ void setup_partial_coordinate_constraints(
 	} //loop through each chain
 }
 
-void setup_partial_atompair_constraints(
+void setup_interface_atompair_constraints(
     core::pose::Pose &pose,
     utility::vector1<bool> ignore_res )
 {
@@ -361,12 +378,12 @@ void setup_partial_atompair_constraints(
 
 									core::Size resid_j=j;
 									core::Size resid_k=k;
-                  
+
                    if (symm_info && !symm_info->bb_is_independent( resid_j ) )
                      resid_j = symm_info->bb_follows( resid_j );
                    if (symm_info && !symm_info->bb_is_independent( resid_k ) )
                      resid_k = symm_info->bb_follows( resid_k );
-                 
+
                    pose.add_constraint(
                      new AtomPairConstraint( core::id::AtomID(2,resid_j), core::id::AtomID(2,resid_k),
                        new ScalarWeightedFunc( weighting_factor, new USOGFunc( dist, COORDDEV )  )
@@ -448,7 +465,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::Real const self_cst_weig
 		}
 	}
 	}
-	
+
 	MAXDIST = 12.0;
 	COORDDEV = 1.0;
 

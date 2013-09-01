@@ -131,6 +131,7 @@ public:
 
 	void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 	void set_task_factory( core::pack::task::TaskFactoryOP task_factory_in );
+	void set_user_csts(  utility::vector1< core::Size > user_csts_in ) { user_csts_=user_csts_in; }
 
 	void setup_scorefunctions(
 		core::scoring::ScoreFunctionOP score0,
@@ -182,9 +183,9 @@ private:
 	core::Real small_frag_insertion_weight_;
 	// fragment insertion weight, vs. chunk insertion + small gap fragments
 	core::Real big_frag_insertion_weight_;
-	
+
 	core::Real chunk_insertion_weight_;
-	
+
 	bool add_non_init_chunks_;
 	bool domain_assembly_;
 	bool add_hetatm_;
@@ -230,7 +231,7 @@ private:
 
 	utility::vector1<bool> allowed_to_move_;
 	core::pack::task::TaskFactoryOP task_factory_;
-
+	utility::vector1 < core::Size > user_csts_;
 }; //class FoldTreeHybridize
 
 } // hybridization
