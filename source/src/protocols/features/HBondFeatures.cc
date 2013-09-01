@@ -736,7 +736,8 @@ HBondFeatures::report_features(
 		insert_hbond_row(hbond, struct_id, hbond_id, site_ids, site_partners, db_session);
 		insert_hbond_geom_coords(pose, hbond_set.hbond_options(), hbond, struct_id, hbond_id, db_session);
 		insert_hbond_lennard_jones_row(pose, hbond, struct_id, hbond_id, db_session);
-		insert_hbond_dehydron_row(pose, hbond, struct_id, hbond_id, db_session);
+		if(pose.residue(hbond.don_res()).type().is_protein() && pose.residue(hbond.acc_res()).type().is_protein())
+				insert_hbond_dehydron_row(pose, hbond, struct_id, hbond_id, db_session);
 	}
 	return 0;
 }
