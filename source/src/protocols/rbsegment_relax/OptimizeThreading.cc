@@ -102,6 +102,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	using namespace rbsegment_relax;
 
 	core::Size nres = hybridization::get_num_residues_nonvirt( pose );
+	while (!pose.residue_type(nres).is_protein()) --nres;
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		scorefxn_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_ );
 		scorefxn_sampling_ = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_sampling_ );
@@ -162,7 +163,8 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	// mc loop
 	SequenceShiftMover sshift( pose, RBSegment(), max_shift_ );
 
-	core::Real best_score=99999, acc_score=99999;
+	core::Real best_score=1e30, acc_score=1e30;
+	loops::LoopsOP best_loops = new loops::Loops();
 	core::pose::Pose best_pose=pose, acc_pose;
 	utility::vector1< int > offsets( nres, 0 );
 	for (int i=1; i<=(int)nsteps_; ++i) {
@@ -200,10 +202,6 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 				pose = acc_pose;
 			} else {
 				// accept, not new best
-				//std::ostringstream oss;
-				//oss << "out" << i<< ".pdb";
-				//pose.dump_pdb( oss.str() );
-
 				acc_pose = pose;
 				acc_score = score;
 				sshift.trigger_accept();
@@ -215,24 +213,17 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 			acc_score = score;
 			sshift.trigger_accept();
 			if (score < best_score) {
-				//std::ostringstream oss;
-				//oss << "out" << i<< ".pdb";
-				//pose.dump_pdb( oss.str() );
-
 				TR << "New best!  Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
 				best_pose = pose;
+				best_loops = sshift.get_residues_to_rebuild();
 				best_score = score;
 			} else {
-				//std::ostringstream oss;
-				//oss << "out" << i<< ".pdb";
-				//pose.dump_pdb( oss.str() );
-
 				TR << "Accept!    Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
 			}
 		}
 	}
 
-	loops::LoopsOP loops = sshift.get_residues_to_rebuild();
+	loops::LoopsOP loops = best_loops;
 	TR << "Building:" << std::endl;
 	TR << *loops << std::endl;
 

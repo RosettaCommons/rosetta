@@ -389,37 +389,45 @@ int
 SequenceShiftMover::score() {
 	int score_aln=0;
 
+	utility::vector1< int > offsets_working = offsets_;
+	for (int j=1; j<=segment_.nContinuousSegments(); ++j) {
+		for (int k=(int)segment_[j].start(); k<=(int)segment_[j].end(); ++k) {
+			offsets_working[k] += last_move_;
+		}
+	}
+
 	// # block shifts
 	for (int j=2; j<=(int)offsets_.size(); ++j)
-		score_aln += abs(offsets_[j] - offsets_[j-1]);
+		score_aln += abs(offsets_working[j] - offsets_working[j-1]);
 
-	// penalize "unaligned" residues
-	utility::vector1<bool> residues_to_rebuild (offsets_.size(), false);
-	for (int i=1; i<=offsets_.size(); ++i) {
-
+	// penalize unaligned residues
+	utility::vector1<bool> residues_to_rebuild (offsets_working.size(), false);
+	for (int i=1; i<=offsets_working.size(); ++i) {
 		if (residues_to_rebuild[i]) continue;
-
 		// case 1: alignment passes N- or C- term
-		if (offsets_[i]+i<1 || offsets_[i]+i>offsets_.size()) {
+		if (offsets_working[i]+i<1 || offsets_working[i]+i>offsets_working.size()) {
 			residues_to_rebuild[i]=true;
+			continue;
 		}
 
-		// case 2: residues overlap
-		for (int j=i+1; j<=offsets_.size(); ++j) {
-			if (offsets_[i]+i == offsets_[j]+j) {
-				residues_to_rebuild[i]=residues_to_rebuild[j]=true;
-			}
-		}
-
-		// case 3: alignment crosses cutpoint
+		// case 2: alignment crosses cutpoint
 		int dir = (offsets_[i]>0) ? 1:-1;
-		for (int j=i+dir; j!=i+offsets_[i]+dir && !residues_to_rebuild[i]; j+=dir) {
-			if (ref_pose_.fold_tree().is_cutpoint((dir==1)?j:j+1)) {
+		int step = (offsets_[i]>0) ? 0:-1;
+		for (int j=i; j!=i+offsets_working[i] && !residues_to_rebuild[i]; j+=dir) {
+			if (ref_pose_.fold_tree().is_cutpoint(j+step)) {
 				residues_to_rebuild[i]=true;
 			}
 		}
+		if (residues_to_rebuild[i]) continue;
+
+		// case 3: another residue is mapped here
+		for (int j=i+1; j<=offsets_working.size(); ++j) {
+			if (offsets_working[i]+i == offsets_working[j]+j) {
+				residues_to_rebuild[i]=residues_to_rebuild[j]=true;
+			}
+		}
 	}
-	for (int i=1; i<=offsets_.size(); ++i) {
+	for (int i=1; i<=offsets_working.size(); ++i) {
 		if (residues_to_rebuild[i]) score_aln++;
 	}
 
@@ -436,7 +444,6 @@ SequenceShiftMover::get_residues_to_rebuild() {
 	utility::vector1<bool> residues_to_rebuild (offsets_.size(), false);
 
 	for (int i=1; i<=offsets_.size(); ++i) {
-
 		if (residues_to_rebuild[i]) continue;
 
 		// case 1: alignment passes N- or C- term

@@ -195,8 +195,6 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 			}
 		}
 
-		//ideal_pose.dump_pdb("aligned.pdb");
-
 		// minimize with CSTS
 		core::kinematics::MoveMap mm; mm.set_bb(true); mm.set_jump(true);
 		MinimizerOptions min_options( "lbfgs_armijo", 0.0001, true, false, false );
