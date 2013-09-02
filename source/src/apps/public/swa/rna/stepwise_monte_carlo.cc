@@ -145,7 +145,7 @@ apply_swa_mover( pose::Pose & pose,
 
 	if ( is_at_terminus( pose, remodel_res ) ){
 		swa::rna::StepWiseRNA_Modeler stepwise_rna_modeler( remodel_res, scorefxn );
-		//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+		stepwise_rna_modeler.set_use_phenix_geo( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 		stepwise_rna_modeler.set_force_centroid_interaction( true );
 		stepwise_rna_modeler.set_choose_random( true );
 		stepwise_rna_modeler.set_num_random_samples( option[ num_random_samples ]() );

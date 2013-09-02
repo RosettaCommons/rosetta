@@ -72,6 +72,8 @@
 
 #include <numeric/random/random.hh>
 
+#include <utility/tools/make_vector1.hh>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -3704,6 +3706,7 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 
 		using namespace core::id;
 		using namespace core::scoring::rna;
+		using namespace core::chemical;
 
 		Size const nres = pose.total_residue();
 		runtime_assert( nres == allow_insert.size() );
@@ -3752,12 +3755,46 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 
 				// If there's any atom that is in a moving residue by this torsion, let the torsion move.
 				//  should we handle a special case for cutpoint atoms? I kind of want those all to move.
-				if ( !allow_insert( id1.rsd() ) && !allow_insert( id2.rsd() ) && !allow_insert( id3.rsd() )  && !allow_insert( id4.rsd() ) ) continue;
-				mm.set(  torsion_id, true );
+				utility::vector1< AtomID > torsion_atom_ids = utility::tools::make_vector1( id1, id2, id3, id4 );
+
+				for ( Size k = 1; k <= torsion_atom_ids.size(); k++ ){
+					if ( allow_insert( torsion_atom_ids[k].rsd() ) ) {
+						mm.set(  torsion_id, true );
+						break;
+					}
+				}
+				if ( mm.get( torsion_id ) ) continue;
+
+
+				//
+				// there is a note above from parin 'Should allow torsions at the edges to minimize...'
+				// it appears fixed, except for cutpoints. Has this caused a problem in SWA & ERRASER at closed cutpoints?
+				// Following code introduced by rhiju on aug. 2013:
+				//
+				if ( pose.residue(i).has_variant_type( CUTPOINT_LOWER ) && allow_insert( i+1 ) ){
+					for ( Size k = 1; k <= torsion_atom_ids.size(); k++ ){
+						if ( pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVL1" ||
+								 pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVL2" )  {
+							mm.set(  torsion_id, true );
+							break;
+						}
+					}
+				}
+				if ( mm.get( torsion_id ) ) continue;
+
+				if ( pose.residue(i).has_variant_type( CUTPOINT_UPPER ) && allow_insert( i-1 ) ){
+					for ( Size k = 1; k <= torsion_atom_ids.size(); k++ ){
+						if ( pose.residue_type( torsion_atom_ids[k].rsd() ).atom_name( torsion_atom_ids[k].atomno() ) == "OVU1" ){
+							mm.set(  torsion_id, true );
+							break;
+						}
+					}
+				}
+				if ( mm.get( torsion_id ) ) continue;
 
 			}
-
 		}
+
 
 		// why is this in the internal loop? -- rhiju
 		TR.Debug << "pose.fold_tree().num_jump() = " << pose.fold_tree().num_jump() << std::endl;
