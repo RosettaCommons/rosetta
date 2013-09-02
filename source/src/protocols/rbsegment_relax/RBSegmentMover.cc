@@ -458,7 +458,7 @@ SequenceShiftMover::get_residues_to_rebuild() {
 		for (int j=i; j!=i+offsets_[i] && !residues_to_rebuild[i]; j+=dir) {
 			if (ref_pose_.fold_tree().is_cutpoint(j+step)) {
 				residues_to_rebuild[i]=true;
-				//std::cerr << "at " << i << " cross cut " << j << std::endl;
+				std::cerr << "at " << i << " cross cut " << j << std::endl;
 			}
 		}
 		if (residues_to_rebuild[i]) continue;
@@ -477,12 +477,38 @@ SequenceShiftMover::get_residues_to_rebuild() {
 
 	//A: extend loops by 1 residue if they do not cross a cut
 	utility::vector1<bool> ext_residues_to_rebuild = residues_to_rebuild;
-	for (int i=2; i<=residues_to_rebuild.size()-1; ++i) {
-		if (residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i-1))
+	for (int i=1; i<=residues_to_rebuild.size(); ++i) {
+		if (i>1 && residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i-1))
 			ext_residues_to_rebuild[i-1] = true;
-		if (residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i))
+		if (i<residues_to_rebuild.size() && residues_to_rebuild[i] && !ref_pose_.fold_tree().is_cutpoint(i))
 			ext_residues_to_rebuild[i+1] = true;
 	}
+	//B: remove "singletons"
+	//C: ensure loops are at least 3 residues long
+	for (int i=1; i<=residues_to_rebuild.size(); ++i) {
+		if (i<residues_to_rebuild.size() && ref_pose_.fold_tree().is_cutpoint(i-1) && ext_residues_to_rebuild[i+1]) {
+			ext_residues_to_rebuild[i] = true;
+			if (i+1<residues_to_rebuild.size()) ext_residues_to_rebuild[i+2] = true;
+		}
+		if (i>1 && ref_pose_.fold_tree().is_cutpoint(i) && ext_residues_to_rebuild[i-1]) {
+			ext_residues_to_rebuild[i] = true;
+			if (i>2) ext_residues_to_rebuild[i-2] = true;
+		}
+	}
+
+std::cerr << "....|....1....|....2....|....3....|....4....|....5....|....6....|....7....|....8....|....9....|....0" << std::endl;
+for (int i=1; i<=offsets_.size(); ++i) {
+	if (ext_residues_to_rebuild[i]) {
+		if (ref_pose_.fold_tree().is_cutpoint(i)) std::cerr << "C";
+		else std::cerr << "1";
+	} else {
+		if (ref_pose_.fold_tree().is_cutpoint(i)) std::cerr << "c";
+		else std::cerr << "0";
+	}
+
+	if (i%100==0) std::cerr << std::endl;
+}
+std::cerr << std::endl;
 
 	for (int i=1; i<=ext_residues_to_rebuild.size(); ++i) {
 		if (!inloop && ext_residues_to_rebuild[i]) {
@@ -492,6 +518,10 @@ SequenceShiftMover::get_residues_to_rebuild() {
 			inloop=false;
 			loopstop = i-1;
 			retval->add_loop( loopstart,loopstop, (int)std::floor(0.5*(loopstart+loopstop+1)) );
+		} else if (inloop && i>1 && ref_pose_.fold_tree().is_cutpoint(i-1)) {
+			loopstop = i-1;
+			retval->add_loop( loopstart,loopstop, (int)std::floor(0.5*(loopstart+loopstop+1)) );
+			loopstart = i;
 		}
 	}
 	if (inloop) {
