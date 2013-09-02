@@ -121,6 +121,9 @@ private:
 	/// @brief
 	String string_resnums_;
   bool select_resnums_;
+  bool select_range_;
+	core::Size helix_start_;
+	core::Size helix_end_;
 
 };
 

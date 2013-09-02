@@ -126,7 +126,6 @@ public:
 		return residue_list.size();
 	}
 
-
 	inline double dist(numeric::xyzVector<core::Real> x, numeric::xyzVector<core::Real> y) { return x.distance(y); }
 
 	inline void transform(
@@ -2170,6 +2169,7 @@ public:
 
 		return 0;
 	}
+
 };
 
 }  // namespace hybridization

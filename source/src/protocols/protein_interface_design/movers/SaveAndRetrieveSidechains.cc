@@ -168,6 +168,7 @@ SaveAndRetrieveSidechains::parse_my_tag( TagPtr const tag, DataMap &, protocols:
 	two_step( tag->getOption< bool >( "two_step", false ) );
 	if( !two_step() )
 		init_pose_ = new core::pose::Pose( pose );
+	jumpid_ = tag->getOption<core::Size>( "jumpid", 1 );
 }
 
 protocols::moves::MoverOP

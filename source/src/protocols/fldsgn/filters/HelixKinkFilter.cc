@@ -57,7 +57,10 @@ HelixKinkFilter::HelixKinkFilter():
 	bend_angle_( 20.0 ),
 	secstruct_( "" ),
 	string_resnums_( "" ),
-	select_resnums_( 0 )
+	select_resnums_( 0 ),
+	select_range_( 0 ),
+	helix_start_( 1 ),
+	helix_end_( 1 )
 {}
 
 
@@ -68,7 +71,10 @@ HelixKinkFilter::HelixKinkFilter( HelixKinkFilter const & rval ):
 	bend_angle_( rval.bend_angle_ ),
 	secstruct_( rval.secstruct_ ),
 	string_resnums_( rval.string_resnums_),
-	select_resnums_( rval.select_resnums_)
+	select_resnums_( rval.select_resnums_),
+	select_range_( rval.select_range_),
+	helix_start_( rval.helix_start_),
+	helix_end_( rval.helix_end_)
 {}
 
 
@@ -116,6 +122,22 @@ HelixKinkFilter::apply( Pose const & pose ) const
   	residues_to_check.resize(pose.total_residue(),true);
 	}
 
+
+	//This checks if there is broken helix in the range already
+  if ( select_range_ ) {
+			for( Size ii=1; ii<=helices.size(); ++ii ) {
+					for ( Size it=helices[ ii ]->begin(), ite=helices[ ii ]->end(); it != ite; ++it ) {
+						residues_to_check[it]=false;
+					}
+			}
+
+		for (Size i=helix_start_;i<=helix_end_; ++i)
+				if (residues_to_check[i]==true) {
+				  TR << "In range " << helix_start_ <<"-"<<helix_end_ << " contains broken helix at " << i << " already! Skip Kink" << std::endl;
+					return false;
+			}
+	}
+
 	// check kink
 	for( Size ii=1; ii<=helices.size(); ++ii ) {
 		bool check = false;
@@ -130,6 +152,15 @@ HelixKinkFilter::apply( Pose const & pose ) const
 	      }
 		} else {
 			check = true; // TL: we always want to check if no residue numbers are specified
+		}
+
+   if ( select_range_ ) {
+		//This will check if the select_range_ is not broken into multiple helix
+			if ( helices[ ii ]->begin() <= helix_start_ && helices[ ii ]->end() >= helix_end_ ) {
+		 		TR << "Helix " << ii << ", res " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << "contains specified range: " << helix_start_ <<"-" << helix_end_ << std::endl;
+				check=true;
+			}
+
 		}
 
 		if (!check ) continue;
@@ -180,6 +211,7 @@ HelixKinkFilter::parse_my_tag(
 		protocols::jd2::parser::BluePrint blue( blueprint );
 		secstruct_ = blue.secstruct();
 	}
+
   // residues that need to contained in helix
 	if ( tag->hasOption( "resnums" ) ) {
 		TR << "Only filter helix that contains residues specified in resnums" << std::endl;
@@ -188,6 +220,20 @@ HelixKinkFilter::parse_my_tag(
   } else {
     select_resnums_=false;
   }
+
+  // residues that need to contained in a single helix
+	if ( tag->hasOption( "helix_start" ) && tag->hasOption( "helix_end" ) ) {
+		TR << "Only filter helix that contains range specified by helix_start to helix_end" << std::endl;
+    select_range_=true;
+    helix_start_ = tag->getOption< core::Size >( "helix_start" );
+    helix_end_ = tag->getOption< core::Size >( "helix_end" );
+	  if (helix_start_>=helix_end_)  {
+				utility_exit_with_message("helix_start_ is greater than or equal to helix_end_");
+			}
+  } else {
+    select_range_=false;
+	}
+
 }
 
 protocols::filters::FilterOP

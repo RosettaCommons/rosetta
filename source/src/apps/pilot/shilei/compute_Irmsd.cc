@@ -126,8 +126,9 @@ public:
 	//std::cout<<"seq1: "<<*seq1<<std::endl;
 	//std::cout<<"seq2: "<<*seq2<<std::endl;
 
-	utility::io::izstream stream;
-	utility::file::FileName blosum62( "/work/shilei/fresh/rosetta/rosetta_database/sequence/substitution_matrix/BLOSUM62" );
+	//utility::io::izstream stream;
+	utility::file::FileName blosum62( basic::database::full_name("sequence/substitution_matrix/BLOSUM62"));
+	//utility::file::FileName blosum62( "/work/shilei/fresh/rosetta/rosetta_database/sequence/substitution_matrix/BLOSUM62" );
 	//basic::database::open( stream, "sequence/substitution_matrix/BLOSUM62" );
 	//core::sequence::MatrixScoringScheme matrix_blosum_score;
 	//matrix_blosum_score.read_data(stream);

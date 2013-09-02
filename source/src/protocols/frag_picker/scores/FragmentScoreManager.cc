@@ -39,6 +39,7 @@
 #include <protocols/frag_picker/scores/ProfileScoreSubMatrix.hh>
 #include <protocols/frag_picker/scores/ProfileScoreDistWeight.hh>
 #include <protocols/frag_picker/scores/FragmentCrmsd.hh>
+#include <protocols/frag_picker/scores/FragmentChunkCrms.hh>
 #include <protocols/frag_picker/scores/FragmentAllAtomCrmsd.hh>
 #include <protocols/frag_picker/scores/MidPsiOut.hh>
 #include <protocols/frag_picker/scores/MidPhiOut.hh>
@@ -309,6 +310,7 @@ FragmentScoreManager::FragmentScoreManager() {
 	register_score_maker(new MakePartialSecondarySimilarity());
 	register_score_maker(new MakeTorsionBinSimilarity());
 	register_score_maker(new MakeFragmentCrmsd());
+	register_score_maker(new MakeFragmentChunkCrms());
 	register_score_maker(new MakeMidPhiOut());
 	register_score_maker(new MakeMidPsiOut());
 	register_score_maker(new MakePhiPsiRmsd());
