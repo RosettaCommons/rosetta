@@ -171,23 +171,25 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 		// random segment
 		core::Size seg_i = numeric::random::random_range(1, segments.size() );
 
-		// apply movement & score pose
-		utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[seg_i] );
-		if (ncs) {
-			for (int j=1; j<=ncs->ngroups(); ++j ) {
-				core::Size remap_start = ncs->get_equiv( j, segments[seg_i].start() );
-				core::Size remap_stop = ncs->get_equiv( j, segments[seg_i].end() );
-				for (int k=segments[seg_i].start(); k<=segments[seg_i].end() && remap_start==0; ++k)
-					remap_start = ncs->get_equiv( j,k );
-				if (remap_start==0) continue;  // undefined
-				for (int k=segments[seg_i].end(); k>=segments[seg_i].start() && remap_stop==0; --k)
-					remap_stop = ncs->get_equiv( j,k );
-				//TR.Debug << "NCS: Add segment: " << remap_start << " , " << remap_stop << std::endl;
-				ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
+		if (i>1) {
+			// apply movement & score pose
+			utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[seg_i] );
+			if (ncs) {
+				for (int j=1; j<=ncs->ngroups(); ++j ) {
+					core::Size remap_start = ncs->get_equiv( j, segments[seg_i].start() );
+					core::Size remap_stop = ncs->get_equiv( j, segments[seg_i].end() );
+					for (int k=segments[seg_i].start(); k<=segments[seg_i].end() && remap_start==0; ++k)
+						remap_start = ncs->get_equiv( j,k );
+					if (remap_start==0) continue;  // undefined
+					for (int k=segments[seg_i].end(); k>=segments[seg_i].start() && remap_stop==0; --k)
+						remap_stop = ncs->get_equiv( j,k );
+					//TR.Debug << "NCS: Add segment: " << remap_start << " , " << remap_stop << std::endl;
+					ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
+				}
 			}
+			sshift.set_segment( RBSegment(ncs_segments) );
+			sshift.apply( pose );
 		}
-		sshift.set_segment( RBSegment(ncs_segments) );
-		sshift.apply( pose );
 
 		core::Real score_cst = (*scorefxn_)(pose);
 		core::Real score_aln = sshift.score();
