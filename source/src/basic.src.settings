@@ -15,6 +15,7 @@ sources = {
 		"ComparingTracer",
 		"Emitter",
 		"interpolate",
+		'init',
 		"MemTracer",
 		"MetricValueIO",
 		"prof",

@@ -52,6 +52,8 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <basic/init.hh>
+
 // Utility headers
 #include <numeric/xyz.functions.hh>
 #include <utility/vector1.hh>
@@ -70,6 +72,10 @@ namespace pose {
 /// @details default init function
 void Pose::init(void)
 {
+	#ifdef PYROSETTA
+		// Sanity check: check if core::init was called already and abort otherwise with helpful message...
+		if( !basic::was_init_called() ) utility_exit_with_message("Attempt to initialize Pose object before core::init was called detected… Have you forgot to call core::init?");
+	#endif
 
 	conformation_ = new Conformation();
 

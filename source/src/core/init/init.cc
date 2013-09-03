@@ -270,6 +270,9 @@ using basic::Warning;
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/scoring/ScoringManager.hh>
+
+#include <basic/init.hh>
+
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -950,6 +953,8 @@ init_profiling(){
 /// @brief Init basic core systems: options system, random system.
 void init(int argc, char * argv [])
 {
+	basic::init();
+
 	try{
     //Initialize MPI
     init_mpi(argc, argv);
@@ -1029,4 +1034,3 @@ void init( utility::vector1<std::string> const & args )
 
 } // namespace init
 } // namespace core
-

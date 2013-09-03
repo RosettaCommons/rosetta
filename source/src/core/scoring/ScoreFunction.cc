@@ -63,6 +63,9 @@
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
+
+#include <basic/init.hh>
+
 #include <numeric/random/DistributionSampler.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/io/izstream.hh>
@@ -121,6 +124,11 @@ ScoreFunction::clone() const
 void
 ScoreFunction::reset()
 {
+	#ifdef PYROSETTA
+		// Sanity check: check if core::init was called already and abort otherwise with helpful message...
+		if( !basic::was_init_called() ) utility_exit_with_message("Attempt to initialize ScoreFunction object before core::init was called detected… Have you forgot to call core::init?");
+	#endif
+
 	score_function_info_current_ = true;
 	score_function_info_ = new ScoreFunctionInfo;
 	any_intrares_energies_ = false;
@@ -776,10 +784,10 @@ ScoreFunction::score_components( pose::Pose & pose ) const
 }*/
 
 ///////////////////////////////////////////////////////////////////////////////
-Real 
+Real
 ScoreFunction::score_by_scoretype(
 	pose::Pose & pose,
-	ScoreType const t, 
+	ScoreType const t,
 	bool const weighted
 ) const {
 	(*this)(pose); //make sure scores are set

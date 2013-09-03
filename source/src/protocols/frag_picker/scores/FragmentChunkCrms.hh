@@ -78,7 +78,8 @@ private:
 	void fill_bb_coords(core::pose::Pose const &, FArray2_double &, FArray1D_int &);
 };
 
-void sequencealign(core::sequence::SequenceOP seq1, core::sequence::SequenceOP seq2);
+// Undefined, commenting out to fix PyRosetta build
+// void sequencealign(core::sequence::SequenceOP seq1, core::sequence::SequenceOP seq2);
 
 /// @brief  Maker class that produces a new FragmentChunkCrms object
 class MakeFragmentChunkCrms: public MakeFragmentScoringMethod {
