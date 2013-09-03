@@ -49,7 +49,7 @@ for documentation.
     )
 
     parser.add_option("--extras",
-      default="default",
+      default="",
       dest="extras",
       help="in selecting binaries, which options were specified? (default: default)",
     )
@@ -118,7 +118,8 @@ for documentation.
     else: platform = "_unknown_"
     compiler = options.compiler
     mode = options.mode
-    binext = platform+compiler+mode
+    extras = "" if not options.extras else options.extras + "."
+    binext = extras+platform+compiler+mode
     lsf_queue_name = options.lsf_queue_name
     num_cores = options.num_cores
     output_dir = options.output_dir
