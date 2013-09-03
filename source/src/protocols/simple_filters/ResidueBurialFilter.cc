@@ -24,7 +24,7 @@
 #include <core/pose/selection.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
-
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 
@@ -35,18 +35,19 @@ static basic::Tracer residue_burial_filter_tracer( "protocols.simple_filters.Res
 
 ResidueBurialFilter::ResidueBurialFilter() :
 	Filter( "ResidueBurial" ),
-	target_residue_( 0 ),
+	residue_( "" ),
 	neighbors_( 1 ),
 	distance_threshold_( 8.0 ),
 	task_factory_( NULL ) {}
 
+/*SJF does anyone use this constructor? If so, we need to change target_residue to a string to make it work
 ResidueBurialFilter::ResidueBurialFilter( core::Size const target_residue, core::Size const neighbors, core::Real const distance_threshold ) :
 	    Filter( "ResidueBurial" ),
-			target_residue_( target_residue ),
+			residue_( target_residue ),
 			neighbors_( neighbors ),
 			distance_threshold_( distance_threshold ),
 			task_factory_( NULL ) {}
-
+*/
 protocols::filters::FilterOP
 ResidueBurialFilterCreator::create_filter() const { return new ResidueBurialFilter; }
 
@@ -72,7 +73,10 @@ ResidueBurialFilter::apply( core::pose::Pose const & pose ) const {
 		residue_burial_filter_tracer<<"total target residues: "<<total_designable<<". At least "<<(core::Real)total_designable * (core::Real)residue_fraction_buried()<<" should be buried to pass."<<std::endl;
 		core::Size count_buried( 0 );
 		foreach( core::Size const resi, target_residues ){
-			ResidueBurialFilter const rbf( resi/*target_residue*/, neighbors_, distance_threshold_ );
+			ResidueBurialFilter rbf;
+			rbf.residue( utility::to_string( resi ) );
+			rbf.neighbors( neighbors() );
+			rbf.distance_threshold( distance_threshold() );
 			if( rbf.apply( pose ) ){
 				count_buried++;
 				if( (core::Real ) ( (core::Real) count_buried / (core::Real) total_designable ) >= residue_fraction_buried() )
@@ -84,22 +88,22 @@ ResidueBurialFilter::apply( core::pose::Pose const & pose ) const {
 
 	core::Size const count_neighbors( compute( pose ) );
 
-	residue_burial_filter_tracer<<"Number of interface neighbors of residue "<<pose.residue( target_residue_ ).name3()<<target_residue_<<" is "<<count_neighbors<<std::endl;
+	core::Size const residue_num( core::pose::parse_resnum( residue(), pose ) );
+	residue_burial_filter_tracer<<"Number of interface neighbors of residue "<<pose.residue( residue_num  ).name3()<<residue_num<<" is "<<count_neighbors<<std::endl;
 	return( count_neighbors >= neighbors_ );
 }
 
 void
 ResidueBurialFilter::parse_my_tag( utility::tag::TagPtr const tag, moves::DataMap & data, filters::Filters_map const &, moves::Movers_map const &, core::pose::Pose const & pose )
 {
-	if( tag->hasOption( "res_num" ) || tag->hasOption( "pdb_num" ) )
-		target_residue_ = core::pose::get_resnum( tag, pose );
+	residue( tag->getOption< std::string >( "pdb_num", "" ) );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
 	neighbors_ = tag->getOption<core::Size>( "neighbors", 1 );
 	residue_fraction_buried( tag->getOption< core::Real >( "residue_fraction_buried", 0.0001 ) );
 	if( tag->hasOption( "task_operations" ) )
 		task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 
-	residue_burial_filter_tracer<<"ResidueBurialFilter with distance threshold of "<<distance_threshold_<<" around residue "<<target_residue_<<" residue_fraction_buried "<<residue_fraction_buried()<<" with "<<neighbors_<<" neighbors."<<std::endl;
+	residue_burial_filter_tracer<<"ResidueBurialFilter with distance threshold of "<<distance_threshold_<<" around residue "<<residue()<<" residue_fraction_buried "<<residue_fraction_buried()<<" with "<<neighbors_<<" neighbors."<<std::endl;
 }
 
 void
@@ -107,7 +111,8 @@ ResidueBurialFilter::report( std::ostream & out, core::pose::Pose const & pose )
 	if( !task_factory() ){
 		core::Size const count_neighbors( compute( pose ) );
 
-		out<<"Number of interface neighbors of residue "<<pose.residue( target_residue_ ).name3()<<target_residue_<<" is "<<count_neighbors<<'\n';
+		core::Size const residue_num( core::pose::parse_resnum( residue(), pose ) );
+		out<<"Number of interface neighbors of residue "<<pose.residue( residue_num ).name3()<<residue_num<<" is "<<count_neighbors<<'\n';
 	}
 }
 
@@ -124,16 +129,18 @@ ResidueBurialFilter::report_sm( core::pose::Pose const & pose ) const {
 /// @details counts the number of residues to target_residue_ across all chains in the pose, other than the one containing target_residue_
 core::Size
 ResidueBurialFilter::compute( core::pose::Pose const & pose ) const {
+	core::Size const residue_num( core::pose::parse_resnum( residue(), pose ) );
+	residue_burial_filter_tracer<<"Residue: "<<residue()<<" is serialized to: "<<residue_num<<std::endl;
 	core::Size chain( 1 );
 	for( ; chain <= pose.conformation().num_chains(); ++chain )
-		if( pose.conformation().chain_begin( chain ) <= target_residue_ && pose.conformation().chain_end( chain ) >= target_residue_ ) break;
+		if( pose.conformation().chain_begin( chain ) <= residue_num && pose.conformation().chain_end( chain ) >= residue_num ) break;
 
 	core::Size const chain_begin( pose.conformation().chain_begin( chain ) );
 	core::Size const chain_end( pose.conformation().chain_end( chain ) );
 
-residue_burial_filter_tracer<<"chain span "<<chain_begin<< " "<<chain_end<<std::endl;
+	residue_burial_filter_tracer<<"chain span "<<chain_begin<< " "<<chain_end<<std::endl;
 	core::Size count_neighbors( 0 );
-	core::conformation::Residue const res_target( pose.conformation().residue( target_residue_ ) );
+	core::conformation::Residue const res_target( pose.conformation().residue( residue_num ) );
 	for( core::Size i=1; i<=pose.total_residue(); ++i ){
 		if( i>=chain_begin && i<=chain_end ) continue;
 		core::conformation::Residue const resi( pose.residue( i ) );
@@ -152,7 +159,6 @@ filters::FilterOP
 ResidueBurialFilter::fresh_instance() const{
     return new ResidueBurialFilter();
 }
-
 
 }
 }

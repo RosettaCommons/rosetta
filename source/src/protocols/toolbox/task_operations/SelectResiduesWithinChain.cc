@@ -46,7 +46,9 @@ using namespace core::pack::task::operation;
 
 SelectResiduesWithinChainOperation::SelectResiduesWithinChainOperation() :
 	chain_( 1 ),
-	allow_design_( true )
+	allow_design_( true ),
+	allow_repacking_( true ),
+	modify_unselected_residues_( true )
 {
 	resid_.clear();
 }
@@ -72,12 +74,17 @@ SelectResiduesWithinChainOperation::apply( core::pose::Pose const & pose, core::
 	packing_residues.clear(); prevent_repacking_residues.clear();
 
 	if( allow_design() )
-		TR<<"Residues set to design (all others are prevented from repacking): ";
+		TR<<"Residues set to design ";
 	else
-		TR<<"Residues set to repacking (all others are prevented from repacking): ";
+		TR<<"Residues set to repacking ";
+
+	if( modify_unselected_residues() )
+		TR<<"(all others are prevented from repacking): ";
+	else
+		TR<<"(I'm leaving all other residues as they are, not changing their packing status): ";
 
 	for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-		if( pose.residue( i ).chain() != chain() ){
+		if( pose.residue( i ).chain() != chain() && modify_unselected_residues() ){
 			prevent_repacking_residues.push_back( i );
 			continue;
 		}
@@ -86,9 +93,11 @@ SelectResiduesWithinChainOperation::apply( core::pose::Pose const & pose, core::
 			TR<<i<<',';
 			if( !allow_design() )
 				packing_residues.push_back( i );
+			if( !allow_repacking() )
+				prevent_repacking_residues.push_back( i );
 		}//fi std::find
-		else
-			prevent_repacking_residues.push_back( i );
+		else if( modify_unselected_residues() )
+				prevent_repacking_residues.push_back( i );
 	}//for i
 	TR<<std::endl;
 	OperateOnCertainResidues oocr_repacking, oocr_prevent_repacking;
@@ -110,9 +119,13 @@ SelectResiduesWithinChainOperation::parse_tag( TagPtr tag )
 	chain( tag->getOption< core::Size >( "chain", 1 ) );
 	std::string const res( tag->getOption< std::string >( "resid" ) );
 	allow_design( tag->getOption< bool >( "allow_design", 1 ) );
+	allow_repacking( tag->getOption< bool >( "allow_repacking", 1 ) );
+	modify_unselected_residues( tag->getOption< bool >( "modify_unselected_residues", 1 ) );
+
+	runtime_assert( !( allow_design() && !allow_repacking() ) );
 
 	resid_ = utility::string_split< core::Size >( res, ',', core::Size() );
-	TR<<"chain: "<<chain()<<" allow_design: "<<allow_design()<<" over residues: ";
+	TR<<"chain: "<<chain()<<" allow_design: "<<allow_design()<<" allow_repacking; "<<allow_repacking()<<" modify_unselected_residues: "<<modify_unselected_residues()<<" over residues: ";
 	foreach( core::Size const r, resid() ){
 		TR<<r<<", ";
 	}

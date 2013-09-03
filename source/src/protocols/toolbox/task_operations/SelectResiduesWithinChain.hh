@@ -55,13 +55,20 @@ public:
 	void chain( core::Size const c ){ chain_ = c; }
 	utility::vector1< core::Size > resid() { return resid_; }
 	void add_res( core::Size const resid ){ resid_.push_back( resid ); }
-	void allow_design( bool b ){ allow_design_ = b; }
+	void allow_design( bool const b ){ allow_design_ = b; }
 	bool allow_design() const{ return allow_design_; }
 
+	void allow_repacking( bool const b ){ allow_repacking_ = b; }
+	bool allow_repacking() const{ return allow_repacking_; }
+
+	void modify_unselected_residues( bool const b ){ modify_unselected_residues_ = b; }
+	bool modify_unselected_residues() const { return modify_unselected_residues_; }
 private:
 	core::Size chain_; // dflt 1;
 	utility::vector1< core::Size > resid_; //dflt empty;
 	bool allow_design_; //dflt true; allow design at selected positions. If false, restrict to repacking
+	bool allow_repacking_; //dflt true; allow repacking in selected residues. If false, prevent repacking in these residues
+	bool modify_unselected_residues_; //dflt true; prevent repacking on all residues that are not selected. If false, only affect selected residues; leave unselected residues alone
 };
 
 } //namespace protocols
