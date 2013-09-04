@@ -355,7 +355,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 			}
 			mc->show_scores();
 			mc->show_counters();
-			mc->recover_low( pose );
+			if (recover_low_) mc->recover_low( pose );
 		}
 
 		// restore input ft
@@ -381,7 +381,8 @@ void OptimizeThreadingMover::parse_my_tag(
 		scorefxn_sampling_ = (data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
 
-	nsteps_ = tag->getOption<core::Size>( "nsteps", 1000 );
+	nsteps_ = tag->getOption<core::Size>( "nsteps", 5000 );
+	recover_low_ = tag->getOption<bool>( "recover_low", true );
 	rebuild_cycles_ = tag->getOption<core::Size>( "rebuild_cycles", 200 );
 	weight_ = tag->getOption<core::Real>( "weight", 0.1 );
 	temperature_ = tag->getOption<core::Real>( "temperature", 2.0 );

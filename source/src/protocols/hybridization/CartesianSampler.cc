@@ -167,9 +167,6 @@ CartesianSampler::CartesianSampler(
 
 void
 CartesianSampler::init() {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
 	temp_ = 2.0;
 	rms_cutoff_ = 1.5;
 	overlap_ = 2;
@@ -387,11 +384,12 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		mm_rb.set_jump ( true );
 
 		// scorefunctions
-		if (fa_scorefxn_->get_weight( core::scoring::elec_dens_fast ) == 0)
-			fa_scorefxn_->set_weight( core::scoring::elec_dens_fast , 20 );
+		core::scoring::ScoreFunctionOP nonsymm_fa_scorefxn = new core::scoring::ScoreFunction(*fa_scorefxn_);
+		if (nonsymm_fa_scorefxn->get_weight( core::scoring::elec_dens_fast ) == 0)
+			nonsymm_fa_scorefxn->set_weight( core::scoring::elec_dens_fast , 20 );
 		core::scoring::ScoreFunctionOP densonly = new core::scoring::ScoreFunction();
-		if (bbmove_ && fa_scorefxn_->get_weight( core::scoring::coordinate_constraint ) == 0)
-			fa_scorefxn_->set_weight( core::scoring::coordinate_constraint , 1 );
+		if (bbmove_ && nonsymm_fa_scorefxn->get_weight( core::scoring::coordinate_constraint ) == 0)
+			nonsymm_fa_scorefxn->set_weight( core::scoring::coordinate_constraint , 1 );
 
 		densonly->set_weight( core::scoring::elec_dens_fast, 5.0 );
 
@@ -400,7 +398,7 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		main_task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
 		protocols::simple_moves::PackRotamersMoverOP pack_mover = new protocols::simple_moves::PackRotamersMover;
 		pack_mover->task_factory( main_task_factory );
-		pack_mover->score_function( fa_scorefxn_ );
+		pack_mover->score_function( nonsymm_fa_scorefxn );
 
 		// prepare fragment
 		core::pose::addVirtualResAsRoot(frag);
@@ -430,9 +428,9 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 				core::Real dens_score;
 				if (bbmove_) {
 					apply_csts( working_frag,	pose, start );
-					(*fa_scorefxn_)(working_frag);
-					rbminimizer.run( working_frag, mm_rb, *fa_scorefxn_, options_rb );
-					dens_score = (*fa_scorefxn_) (working_frag);
+					(*nonsymm_fa_scorefxn)(working_frag);
+					rbminimizer.run( working_frag, mm_rb, *nonsymm_fa_scorefxn, options_rb );
+					dens_score = (*nonsymm_fa_scorefxn) (working_frag);
 				} else {
 					(*densonly)(working_frag);
 					rbminimizer.run( working_frag, mm_rb, *densonly, options_rb );
@@ -643,6 +641,22 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 			fragmentProbs[r] = exp( ramaScore / Rtemp );
 			TR << "Prob_dens_rama( " << r << " ) = " << fragmentProbs[r] << " ; rama=" << ramaScore << std::endl;
 		}
+	} else if (fragment_bias_strategy_ == "chainbreak") {
+		for (int r=1; r<(int)nres; ++r) {
+			if (!pose.residue_type(r).is_protein()) continue;
+			if (pose.fold_tree().is_cutpoint(r+1)) continue;
+
+			numeric::xyzVector< core::Real > c0 , n1;
+			c0 = pose.residue(r).atom(" C  ").xyz();
+			n1 = pose.residue(r+1).atom(" N  ").xyz();
+			core::Real d2 = c0.distance( n1 );
+			if ( (d2-1.328685)*(d2-1.328685) > 0.1*0.1 ) {
+				fragmentProbs[r] = 1.0;
+			} else {
+				fragmentProbs[r] = 0.001;
+			}
+			TR << "Prob_dens_cb( " << r << " ) = " << fragmentProbs[r] << std::endl;
+		}
 	} else if (fragment_bias_strategy_ == "user") {
 		// user defined segments to rebuild
 		runtime_assert( user_pos_.size()>0 );
@@ -764,8 +778,10 @@ CartesianSampler::apply( Pose & pose ) {
 	(*scorefxn_)(pose);
 	protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *mc_scorefxn_, temp_ );
 
-scorefxn_->show_line_headers(TR);
-scorefxn_->show_line(TR,pose);
+	if (TR.Debug.visible()) {
+		scorefxn_->show_line_headers(TR);
+		scorefxn_->show_line(TR,pose);
+	}
 
 	for (int n=1; n<=(int)ncycles_; ++n) {
 		bool success=false;
@@ -814,19 +830,21 @@ scorefxn_->show_line(TR,pose);
 
 		// min + MC
 		core::Real scoreinit = (*scorefxn_)(pose);
-scorefxn_->show_line(TR,pose);
-TR << std::endl;
+		if (TR.Debug.visible()) {
+			scorefxn_->show_line(TR,pose);
+			TR << std::endl;
+		}
 		minimizer.run( pose, mm_local, *scorefxn_, options_minilbfgs );
 		core::Real scorefinal = (*scorefxn_)(pose);
-scorefxn_->show_line(TR,pose);
-TR << std::endl;
-(*scorefxn_xray_)(pose);
-TR << core::scoring::cryst::getPhenixInterface().getInfoLine() << std::endl;
+		if (TR.Debug.visible()) {
+			scorefxn_->show_line(TR,pose);
+			TR << std::endl;
+		}
 
 		(*mc_scorefxn_)(pose);
 		bool accept = mc->boltzmann( pose );
 
-mc->show_scores();
+		mc->show_scores();
 		if (accept) {
 			TR << "Insert at " << insert_pos << " accepted!" << std::endl;
 		} else {

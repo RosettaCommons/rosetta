@@ -63,6 +63,7 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_, scorefxn_sampling_;
 	core::Size nsteps_, rebuild_cycles_, max_shift_;
 	core::Real weight_,temperature_;
+	bool recover_low_;
 };
 
 
