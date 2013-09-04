@@ -252,7 +252,7 @@ HybridizeProtocol::init() {
 	stage1_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(
 		option[cm::hybridize::stage1_weights](), option[cm::hybridize::stage1_patch]() );
 
-	if (!option[mistakes::restore_pre_talaris_2013_behavior]) {
+	if (!option[mistakes::restore_pre_talaris_2013_behavior] && !option[corrections::score::cenrot]) {
 	  ///////////////////////////////////////////////////////////////////////////////////////
 	  // restore hb term to score12
 	  option[ corrections::score::hb_sp2_chipen ].value( false );
@@ -267,7 +267,7 @@ HybridizeProtocol::init() {
 	stage2_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function(
 		option[cm::hybridize::stage2_weights](), option[cm::hybridize::stage2_patch]() );
 
-	if (!option[mistakes::restore_pre_talaris_2013_behavior]) {
+	if (!option[mistakes::restore_pre_talaris_2013_behavior] && !option[corrections::score::cenrot]) {
 	  core::scoring::methods::EnergyMethodOptions options2(stage2_scorefxn_->energy_method_options());
 	  core::scoring::hbonds::HBondOptions hbopt;
 	  hbopt.params_database_tag("score12_params");
@@ -287,11 +287,13 @@ HybridizeProtocol::init() {
 
 	fa_scorefxn_ = core::scoring::getScoreFunction();
 
-	core::scoring::methods::EnergyMethodOptions optionsfa(fa_scorefxn_->energy_method_options());
-	core::scoring::hbonds::HBondOptions hboptfa;
-	hboptfa.params_database_tag("sp2_elec_params");
-	optionsfa.hbond_options(hboptfa);
-	fa_scorefxn_->set_energy_method_options(optionsfa);
+	if (!option[mistakes::restore_pre_talaris_2013_behavior] && !option[corrections::score::cenrot]) {
+		core::scoring::methods::EnergyMethodOptions optionsfa(fa_scorefxn_->energy_method_options());
+		core::scoring::hbonds::HBondOptions hboptfa;
+		hboptfa.params_database_tag("sp2_elec_params");
+		optionsfa.hbond_options(hboptfa);
+		fa_scorefxn_->set_energy_method_options(optionsfa);
+	}
 
 	core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *fa_scorefxn_ );
 
