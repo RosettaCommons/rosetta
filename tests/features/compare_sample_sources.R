@@ -89,8 +89,8 @@ initialize_command_line_options <- function() {
 			help="Number of 1k pages of cache to use for database queries.  [Default \"%default\"]"),
 		make_option(c("--add_footer"), action="store_true", type="logical", default=TRUE, dest="add_footer",
 			help="Add footer to plots saying the analysis script and run date."),
-		make_option(c("--generate_website"), action="store_true", type="logical", default=TRUE, dest="generate_website",
-			help="Add footer to plots saying the analysis script and run date. [Default \"%defulat\"]"),
+		make_option(c("--generate_website"), action="store_true", type="logical", default=FALSE, dest="generate_website",
+			help="Add footer to plots saying the analysis script and run date. [Default \"%default\"]"),
 		make_option(c("--config"), action="store", type="character", default=NULL, dest="config_filename",
 			help=". [Default \"%default\"]"),
 		make_option(c("--ncores"), action="store_trye", type="integer", default=1, dest="ncores",
@@ -99,7 +99,7 @@ initialize_command_line_options <- function() {
 	# Density estimation options
 	option_list <- c(option_list, list(
 		make_option(c("--adjust_kernel"), action="store_true", type="integer", default=1, dest="general_kernel_adjust",
-			help="Multiplicative factor in the kernel bandwith for density estimation. [Default \"%defulat\"]")))
+			help="Multiplicative factor in the kernel bandwith for density estimation. [Default \"%default\"]")))
 
 	# Which analysis scripts should be run
 	option_list <- c(option_list, list(

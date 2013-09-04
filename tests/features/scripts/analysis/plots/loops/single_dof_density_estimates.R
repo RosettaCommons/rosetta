@@ -9,13 +9,13 @@
 
 check_setup()
 feature_analyses <- c(feature_analyses, new("FeaturesAnalysis",
-id = "anchor_transform_correlation",
-filename = "scripts/analysis/plots/loops/anchor_transform_correlation.R",
+id = "single_dof_density_estimates",
+filename = "scripts/analysis/plots/loops/single_dof_density_estimates.R",
 author = "Brian D. Weitzner",
 brief_description = "",
 long_description = "
-This features analysis computes the correlation between the six dimensions of a 
-coordinate frame transformation pairwise
+This features analysis computes the density estimate of each degree of freedom
+in a three-dimensional transformation at each segment length.
 ",
 
 feature_reporter_dependencies = c("loop_anchor_features"),
@@ -29,49 +29,26 @@ min_number_of_examples <- 10
 plotmatrix <- function (input_data, mapping = aes(), 
                         columns = names(input_data), colour = "black") 
 {
-  data <- input_data[,columns]
-  grid <- expand.grid(x = 1:ncol(data), y = 1:ncol(data))
-  grid <- subset(grid, x != y)
-  all <- do.call("rbind", lapply(1:nrow(grid), function(i) {
-    xcol <- grid[i, "x"]
-    ycol <- grid[i, "y"]
-    # NOTE: xvar and yvar refer to the position of the panel in the grid
-    # while x and y refer to the data being plotted in that panel.
-    # Becase of this, xvar and x refer to different variables.
-    data.frame(xvar = names(data)[ycol], yvar = names(data)[xcol], 
-               x = data[, xcol], y = data[, ycol], input_data)
+  # reformat the data frame to have columns for 
+  # 1) the degree of freedom of the value (dof)
+  # 2) the value of the observation (x)
+  # 3) the dataset the observation came from (sample_source)
+  densities <- do.call("rbind", lapply(columns, function(i) {  
+    data.frame(dof=rep(i, nrow(input_data)),
+               x=input_data[[i]],
+               sample_source=input_data$sample_source)
   }))
-  all$xvar <- factor(all$xvar, levels = names(data))
-  all$yvar <- factor(all$yvar, levels = names(data))
-
-  densities <- do.call("rbind", lapply(1:ncol(data), function(i) {
-    data.frame(xvar = names(data)[i], yvar = names(data)[i], 
-               x = data[, i], 
-               subset(input_data, select = !(names(input_data) %in% columns)))
-  }))
-
-  faceted_density <- mapply(function(d){
-    stat_density(aes(x = x, 
-                     y = ..scaled.. * diff(range(x))+ min(x)), 
-                 data = d, 
-                 position = "identity", geom = "line")
-  }, dlply(densities, .(xvar, yvar)))
   
-  mapping <- plyr::defaults(mapping, aes_string(x = "x", y = "y"))
-  class(mapping) <- "uneval"
-  
-  p <- ggplot(all, mapping) + facet_grid(xvar ~ yvar, scales="free", 
-                                         labeller=label_parsed) + 
-    stat_bin2d(aes(alpha=..density.. * 50, fill=sample_source), 
-               show_guide = FALSE) + 
-    faceted_density +
-    scale_y_continuous("Degree of freedom") +
-    scale_x_continuous("Degree of freedom") +
-    #coord_equal(ratio=1) +
-    ggtitle(paste("Scatterplot matrix for loop anchor transform", 
-                  "degrees of freedom for", input_data$length, 
+  # plot the densities across 3 columns
+  p <- ggplot(densities, mapping) + facet_wrap(~ dof, ncol=3, scales="free") + 
+    stat_density(aes(x=x, y = ..scaled..,  fill=sample_source), 
+                 position = "identity", alpha=0.7) +
+    scale_x_continuous(expand = c(0, 0)) + 
+    scale_y_continuous(expand = c(0.05, -0.04)) +
+    ggtitle(paste("Density estimates for each loop anchor transform", 
+                  "degree of freedom for", input_data$length, 
                   "residue loops.", sep = " "))
-    
+  
   if(nrow(sample_sources) <= 3){
     p <- p + theme(legend.position="bottom", legend.direction="horizontal")
   }
@@ -88,8 +65,6 @@ f$length <- as.factor(f$residue_end - f$residue_begin + 1)
 # Scale phi to be on the domain [0, 2pi)
 f$phi <- ifelse( f$phi < 0, f$phi + 2*pi, f$phi)
 
-# Split data frame into sub-frames by length of loop
-# Plot the results for each loop length and save the plots to disk
 d_ply(f, .(length), function(df){
   plot_and_save_to_disk <- TRUE
   for (sample_source in sample_sources$sample_source) {
@@ -103,10 +78,12 @@ d_ply(f, .(length), function(df){
     # sample source information
     data_columns <- !(names(df) %in% c("residue_begin","residue_end","length", 
                                        "sample_source"))
+    
     p <- plotmatrix(df, aes(colour=sample_source), subset(names(df), 
                                                           data_columns))
-    save_plots(self, paste("anchor_transform_scatterplot_matrix_for", 
-                          df$length[1], "residue_loops", sep = "_"), 
+    
+    save_plots(self, paste("anchor_transform_dof_density_estimates_for", 
+                           df$length[1], "residue_loops", sep = "_"), 
                sample_sources, output_dir, output_formats)
   }
 })
