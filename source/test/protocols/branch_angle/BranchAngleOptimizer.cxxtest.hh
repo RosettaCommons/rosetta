@@ -14,45 +14,35 @@
 
 // Test headers
 #include <cxxtest/TestSuite.h>
-
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
 
-// Core Headers
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-
-#include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/init/init.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-
-// Protocol Headers
+// Package headers
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
 
-// Core Headers
-#include <core/kinematics/tree/Atom.hh>
-
-// Numeric Headers
-// AUTO-REMOVED #include <numeric/conversions.hh>
-
-//Auto Headers
-#include <core/chemical/AtomType.hh>
+// Project headers
 #include <core/id/AtomID_Mask.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/AtomPointer.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/DomainMap.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
+
+// Numeric Headers
+#include <numeric/BodyPosition.fwd.hh>
+#include <numeric/Quaternion.fwd.hh>
+#include <numeric/all.fwd.hh>
+
+// Utility headers
 #include <utility/vector1.hh>
 #include <utility/io/all.fwd.hh>
 #include <utility/io/icstream.fwd.hh>
 #include <utility/io/ocstream.fwd.hh>
-#include <numeric/BodyPosition.fwd.hh>
-#include <numeric/Quaternion.fwd.hh>
-#include <numeric/all.fwd.hh>
 
 
 using namespace core;
@@ -128,8 +118,6 @@ public:
 		the_pose = new Pose;
 		//the_pose = create_test_in_pdb_poseop(); slightly different chain IDs
 		core::import_pose::pose_from_pdb( *the_pose, "protocols/moves/test_in.pdb" );
-
-		//core::init::init_random_generators(1000, numeric::random::_RND_TestRun_, "ran3");
 	}
 
 	void tearDown() {

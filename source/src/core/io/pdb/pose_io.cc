@@ -119,12 +119,7 @@ dump_pdb(
 						F(8,3,orbital_xyz.z()) <<
 						F(6,2,1.0) << F(6,2,1.0) << '\n';
 				}
-
-
 			}
-
-
-
 		}
 	}
 	out << "ENDMDL\n";
@@ -176,11 +171,7 @@ dump_bfactor_pdb(
 						F(8,3,orbital_xyz.z()) <<
 						F(6,2,1.0) << F(6,2,1.0) << '\n';
 				}
-
-
 			}
-
-
 		} // 	for ( int i=1; i<= nres; ++i )
 	} // 	for ( Size j=1; j<= rsd.natoms(); ++j )
 	if(tag!="NO_MODEL_LINE_IN_OUTPUT") out << "ENDMDL\n";
@@ -222,10 +213,7 @@ dump_pdb_residue(
 					F(8,3,orbital_xyz.z()) <<
 					F(6,2,1.0) << F(6,2,1.0) << '\n';
 			}
-
-
 		}
-
 	}
 }
 
@@ -422,11 +410,9 @@ dump_connect_info(
 				out << "CONECT" << I(5,atom_id_output[ atom_id ]) << I(5,atom_id_output[  nbr_id  ]) << std::endl;
 
 			}
-
-		 }
-	 }
-
- }
+		}
+	}
+}
 
 /////////////////////////////////////////////////////////////////////
 // useful for centroid poses -- spit out "CONECT" information on bonded atoms
@@ -453,12 +439,10 @@ dump_connect_info(
 
 			 count++;
 			 atom_id_output[ id::AtomID(j,i) ] = count;
-
 		 }
 	 }
 
 	 dump_connect_info( pose, out, atom_id_output );
-
 }
 
 } // namespace pdb

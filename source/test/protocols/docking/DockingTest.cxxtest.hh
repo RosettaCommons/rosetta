@@ -15,40 +15,37 @@
 #include <test/UMoverTest.hh>
 #include <test/UTracer.hh>
 
-
 // Unit headers
 #include <protocols/docking/DockFilters.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/docking/DockingHighRes.hh>
+
+// Package headers
 #include <protocols/docking/metrics.hh>
 #include <protocols/docking/util.hh>
-#include <protocols/simple_moves/MinMover.hh>
+
+// Project headers
+#include <core/types.hh>
+#include <core/id/AtomID_Mask.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Edge.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+
 #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/PackRotamersMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/simple_moves/RotamerTrialsMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
-
-// project headers
-#include <core/types.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Edge.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/NoRepackDisulfides.hh>
 
-
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-
-//Auto Headers
-#include <core/id/AtomID_Mask.hh>
+// Utility headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -119,57 +116,44 @@ public:
 		scorefxn_high->show(UT, fullatom_pose);
 
 		UT << "Testing DockingProtocol.setup_foldtree()..."<< std::endl;
-		//docking_protocol->setup_foldtree(fullatom_pose);
 		protocols::docking::setup_foldtree( fullatom_pose, docking_protocol->partners(), docking_protocol->movable_jumps() );
 		UT << fullatom_pose.fold_tree() << std::endl;
 
 		UT << "Testing DockingProtocol.setup_foldtree()for multichain..."<< std::endl;
 		core::import_pose::pose_from_pdb( multichain_pose, "protocols/docking/DockingMultiChain.pdb" );
 		DockingProtocolOP docking_protocol2 = new DockingProtocol();
-		//docking_protocol2->setup_foldtree(multichain_pose, "AB_E");
 		protocols::docking::setup_foldtree( multichain_pose, "AB_E", docking_protocol2->movable_jumps() );
 		UT << multichain_pose.fold_tree() << std::endl;
 
 		UT << "Testing interface-dependant scoring for multichain docking..."<<std::endl;
 		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply(multichain_pose);
-		//scorefxn_low = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" ) ;
 		scorefxn_low->show(UT, multichain_pose);
 
-		//std::cout<<"interaction"<<std::endl;
 		UT << "Testing DockingProtocol.calc_interaction_energy()..."<<std::endl;
-		//core::Real int_energy = docking_protocol->calc_interaction_energy(fullatom_pose);
 		core::Real int_energy = protocols::docking::calc_interaction_energy(fullatom_pose, scorefxn_high, docking_protocol->movable_jumps() );
 
 		UT << int_energy << std::endl;
 
 		UT << "Testing DockingProtocol.recover_sidechains()..."<<std::endl;
 		core::import_pose::pose_from_pdb( decoy_pose, "protocols/docking/DockingDecoy.pdb" );
-		//docking_protocol->setup_foldtree(decoy_pose);
 		protocols::docking::setup_foldtree( decoy_pose, docking_protocol->partners(), docking_protocol->movable_jumps() );
 
-		// Docking protocol uses the ReturnSidechainMover now, so this test is uneccessary
-		//docking_protocol->recover_sidechains(decoy_pose, fullatom_pose);
-
 		UT << "Testing DockingProtocol.calc_Lrmsd()..."<<std::endl;
-		//UT << docking_protocol->calc_Lrmsd(fullatom_pose, decoy_pose) << std::endl;
 
 		UT << protocols::docking::calc_Lrmsd(fullatom_pose, decoy_pose, docking_protocol->movable_jumps() ) << std::endl;
 
 		UT << "Testing DockingProtocol.calc_Irmsd()..."<<std::endl;
-		//UT << docking_protocol->calc_Irmsd(fullatom_pose, decoy_pose) << std::endl;
 
 		UT << protocols::docking::calc_Irmsd(fullatom_pose, decoy_pose, scorefxn_high, docking_protocol->movable_jumps() ) << std::endl;
 
 		UT << "Testing DockingProtocol.calc_Fnat()..."<<std::endl;
-		//UT << docking_protocol->calc_Fnat(fullatom_pose, decoy_pose) << std::endl;
 
 		UT << protocols::docking::calc_Fnat(fullatom_pose, decoy_pose, scorefxn_high, docking_protocol->movable_jumps() ) << std::endl;
 
 		UT << "Testing DockingProtocol.docking_lowres_filter()..."<<std::endl;
 
 		protocols::docking::DockingLowResFilter lowres_filter;
-		//lowres_filter.set_use_constraints( option[ OptionKeys::constraints::cst_file ].user() );
 		UT << lowres_filter.apply( centroid_pose ) << std::endl;
 
 		protocols::docking::DockingHighResFilter highres_filter;
@@ -180,23 +164,15 @@ public:
 		UT << "Testing DockingProtocol.docking_highres_filter()..."<<std::endl;
 		UT << highres_filter.apply( fullatom_pose ) << std::endl;
 		// Note: we really should add logical unit tests for these latter two filters to test the logical cases
-
 	}
 
 	void test_DockingPacking() {
-		//using core::pack::task::operation::RestrictTaskForDocking;
-		//using core::pack::task::operation::RestrictTaskForDockingOP;
-
 		using protocols::simple_moves::PackRotamersMover;
 		using protocols::simple_moves::PackRotamersMoverOP;
 
 		core::scoring::ScoreFunctionOP scorefxn_pack = core::scoring::getScoreFunction();
 		core::scoring::ScoreFunctionOP scorefxn_dockmin = core::scoring::ScoreFunctionFactory::create_score_function("docking", "docking_min");
 		(*scorefxn_pack)(fullatom_pose);
-
-		//RestrictTaskForDockingOP rtfd = new RestrictTaskForDocking( scorefxn_pack, rb_jump, true );
-		//core::pack::task::TaskFactory tf;
-		//tf.push_back( rtfd );
 
 		using namespace core::pack::task;
 		using namespace core::pack::task::operation;
@@ -227,14 +203,12 @@ public:
 		UT.abs_tolerance(0.003);
 		UT << std::endl;
 		fullatom_pose.dump_pdb(UT);
-
 	}
 
 	void test_DockingSlideIntoContact() {
 		using protocols::docking::DockingSlideIntoContact;
 
 		DockingSlideIntoContact slide( rb_jump );
-
 
 		protocols::rigid::RigidBodyTransMoverOP trans_mover = new protocols::rigid::RigidBodyTransMover(centroid_pose, rb_jump);
 		trans_mover->step_size(10.26);
@@ -244,7 +218,6 @@ public:
 		UT.abs_tolerance(0.003);
 		UT << std::endl;
 		centroid_pose.dump_pdb(UT);
-
 	}
 
 	void test_DockingRigidBodyMinimize() {
@@ -271,7 +244,7 @@ public:
 		}
 
 	void test_DockingProtocol_clone(){
-		protocols::docking::DockingProtocolOP dockerprot1 =new protocols::docking::DockingProtocol() ;
+		protocols::docking::DockingProtocolOP dockerprot1 = new protocols::docking::DockingProtocol() ;
 		protocols::docking::DockingProtocolOP dockerprot2 = static_cast< protocols::docking::DockingProtocol * > ( dockerprot1->clone()() );
 		TS_ASSERT( dockerprot1() != dockerprot2() );
 		TS_ASSERT( dockerprot1->to_centroid() != dockerprot2->to_centroid() );
@@ -282,5 +255,3 @@ public:
 		TS_ASSERT( dynamic_cast< protocols::simple_moves::SwitchResidueTypeSetMover const * > ( dockerprot2->to_centroid()() ) );
 	}
 };
-
-

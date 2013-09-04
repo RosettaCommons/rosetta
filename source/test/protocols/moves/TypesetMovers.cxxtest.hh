@@ -17,23 +17,19 @@
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
 
-// Utilities
-#include <core/types.hh>
-
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-
+// Package headers
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
-
-//Auto Headers
+// Project headers
+#include <core/types.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/vector1.hh>
 
+// Utility headers
+#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //
@@ -54,8 +50,6 @@ public:
 	void tearDown() {
 		pose.clear();
 	}
-
-	// ------------- Helper Functions ------------- //
 
 
 	// --------------- Test Cases --------------- //

@@ -21,7 +21,7 @@
 // Unit header
 #include <protocols/rigid/RotateJumpAxisMover.hh>
 
-// project headers
+// Project headers
 #include <core/types.hh>
 
 #include <core/io/pdb/pose_io.hh>
@@ -84,8 +84,6 @@ public:
 	void setUp() { pose = master_pose; }
 
 	void tearDown() { }
-
-	// ------------- Helper Functions ------------- //
 
 
 	// --------------- Test Cases --------------- //
@@ -159,6 +157,5 @@ public:
 		pose.dump_pdb(UT);
 
 	}//end test_RotateJumpAxisMover_single
-
 
 };//end class

@@ -60,12 +60,12 @@ int main(int argc, char *argv[])
 		devel::init(argc, argv);
 
 		// declare variables
-		//Pose pose;
+		Pose pose;
 
 		// import a test pose
 		//pose_from_pdb(pose, "/home/labonte/Workspace/test_input/test.pdb");
 		//pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/test.pdb");
-		//pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/lactose.pdb");
+		pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/lactose.pdb");
 
 		//cout << pose << endl << endl;
 
@@ -85,19 +85,7 @@ int main(int argc, char *argv[])
 
 		//cout << "Final score: " << sf(pose) << endl;
 
-		cout << "woo" << endl;
-
-		vector1<chemical::carbohydrates::RingConformer> conformers =
-				chemical::carbohydrates::read_conformers_from_database_file_for_ring_size(
-						"/home/labonte/Workspace/Rosetta3/Rosetta/main/source/test/core/chemical/carbohydrates/dummy_conformers.data", 8);
-
-		cout << "woo" << endl;
-		cout << conformers.size() << endl;
-		cout << conformers[1].specific_name << endl;
-		cout << conformers[2].general_name << endl;
-		cout << conformers[3].nu_angles.size() << endl;
-
-		//pose.dump_pdb("/home/labonte/Workspace/test_output/modified_sugar.pdb", "");
+		pose.dump_pdb("/home/labonte/Workspace/test_output/modified_sugar.pdb", "");
     } catch ( utility::excn::EXCN_Base const & e ) {
         std::cerr << "caught exception " << e.msg() << std::endl;
     }

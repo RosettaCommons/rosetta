@@ -157,7 +157,7 @@ FileData::append_residue(
 	core::conformation::Residue const & rsd,
 	core::Size & atom_index,
 	core::pose::Pose const & pose, // for pdb numbering and chains, could change to PDBInfo if necessary (but casting here is perhaps best)
-	bool preserve_crystinfo
+	bool /*preserve_crystinfo*/
 )
 {
 	using namespace core;
@@ -229,13 +229,6 @@ FileData::append_residue(
 			ai.altLoc = pdb_info->alt_loc( rsd.seqpos(), j );
 			ai.occupancy = pdb_info->occupancy( rsd.seqpos(), j );
 			ai.temperature = pdb_info->temperature( rsd.seqpos(), j );
-
-			//fpd: element
-			if (preserve_crystinfo) {
-				core::chemical::AtomTypeSet const &ats = rsd.type().atom_type_set();
-				ai.element = ats[atom.type()].element();
-				if (ai.element.length() == 1) ai.element = " "+ai.element;
-			}
 		} else {
 			// residue
 			runtime_assert( rsd.chain() > 0 );
@@ -255,13 +248,19 @@ FileData::append_residue(
 			ai.resSeq = ai.resSeq % 10000;
 		}
 
+		// element
+		// (written by fpd; moved here by Labonte)
+		core::chemical::AtomTypeSet const &ats = rsd.type().atom_type_set();
+		ai.element = ats[atom.type()].element();
+		if (ai.element.length() == 1) ai.element = " "+ai.element;
+
 		// 'chains' is member data
 		if ( chains.size() < Size(rsd.chain() + 1) ) chains.resize( rsd.chain() + 1 );
 		AtomChain & AC(chains[rsd.chain()]);
 		AC.push_back(ai);
-
 	}
 }
+
 /// @details
 /// init FileData structure from pose object.
 /// read atoms/residue information from Pose object and put it in FileData object.
