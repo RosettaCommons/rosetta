@@ -35,48 +35,70 @@ The Constraint_Def will define function by which the constraint is constrained, 
 
 @section constraint_type Constraint Types
 
-Constraints are listed as "Constraint_Type: Constraint_Def". Function types and definitions are defined in the next section. Any text after the function definition is ignored, execpt in the case of Multi and Ambiguous constraints, which accept an arbitrary number of subconstraints.
+Constraint types are all implemented as subclasses of the core::scoring::constraints::Constraint class.
 
-@li @ref AtomPairConstraint "AtomPair":
-<tt>Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Func_Type Func_Def</tt><br>
+@subsection single_constraint_types Single constraints
+
+Single constraints restrain the value of a single metric
+
+@li @ref AtomPairConstraint "AtomPair":<br>
+<tt>AtomPair Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Func_Type Func_Def</tt><br>
 Constrains a distance between Atom1 and Atom2.  AtomPairConstraint is compatible with PDB numbering.
 
-@li @ref AmbiguousNMRDistanceConstraint "AmbiguousNMRDistance":
-<tt>Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Func_Type Func_Def</tt><br>
-Distance between Atom1 and Atom2.  The difference from AtomPairConstraint is that atom names are specially parsed to detect ambiguous hydrogens, which are either experimentally ambiguous or rotationally identical (like methyl hydrogens).  The constraint applies to any hydrogens equivalent to the named hydrogen.  The logic for determining which hydrogens are which is in src/core/scoring/constraints/AmbiguousNMRDistanceConstraints.cc:parse_NMR_name.
-
-@li @ref AngleConstraint "Angle":
-<tt>Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom3_Name Atom3_ResNum Func_Type Func_Def</tt><br>
+@li @ref AngleConstraint "Angle":<br>
+<tt>Angle Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom3_Name Atom3_ResNum Func_Type Func_Def</tt><br>
 Angle between Atom2->Atom1 vector and Atom2->Atom3 vector; the angle (passed as a value to the Func) appears to be measured in radians
 
-@li @ref DihedralConstraint "Dihedral":
-<tt>Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom3_Name Atom3_ResNum Atom4_Name Atom4_ResNum Func_Type Func_Def</tt><br>
+@li @ref DihedralConstraint "Dihedral":<br>
+<tt>Dihedral Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom3_Name Atom3_ResNum Atom4_Name Atom4_ResNum Func_Type Func_Def</tt><br>
 Dihedral angle of Atom1->Atom2->Atom3->Atom4.  Dihedral is measured in radians on -pi -> pi.
 
-@li @ref SiteConstraint "SiteConstraint":
-<tt>Atom1_Name Atom1_ResNum Opposing_chain Func_Type Func_Def</tt><br>
-Constraint that a residue interacts with some other chain - roughly, that it is (or is not) in a binding site.  The atom and resnum identify which atom is being checked for interactions with the opposing chain.  Notice that "Constraint" is irregularly in its tag.
-
-@li @ref CoordinateConstraint "CoordinateConstraint":
+@li @ref CoordinateConstraint "CoordinateConstraint":<br>
 <tt>CoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate Func_Type Func_Def</tt><br>
 Constrain Atom1 to the XYZ position listed.  Atom2 is used as a reference atom to determine when Atom1 has moved (so that Rosetta knows when to rescore it) - pick at atom that Atom1 will move relative to.  CoordinateConstraint is compatible with PDB numbering.
 
-@li @ref LocalCoordinateConstraint "LocalCoordinateConstraint":
-<tt>"LocalCoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom3_Name Atom4_Name Atom234_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate Func_Type Func_Def</tt><br>
+@li @ref LocalCoordinateConstraint "LocalCoordinateConstraint":<br>
+<tt>LocalCoordinateConstraint Atom1_Name Atom1_ResNum Atom2_Name Atom3_Name Atom4_Name Atom234_ResNum Atom1_target_X_coordinate Atom1_target_Y_coordinate Atom1_target_Z_coordinate Func_Type Func_Def</tt><br>
 Constrain Atom1 to the XYZ position listed, relative to the coordinate frame defined by atoms 2/3/4 instead of the origin.  LocalCoordinateConstraint is compatible with PDB numbering.
 
-@li @ref BigBinConstraint "BigBin":
-<tt>ResNum Bin</tt>
+@li @ref AmbiguousNMRDistanceConstraint "AmbiguousNMRDistance":<br>
+<tt>AmbiguousNMRDistance Atom1_Name Atom1_ResNum Atom2_Name Atom2_ResNum Func_Type Func_Def</tt><br>
+Distance between Atom1 and Atom2.  The difference from AtomPairConstraint is that atom names are specially parsed to detect ambiguous hydrogens, which are either experimentally ambiguous or rotationally identical (like methyl hydrogens).  The constraint applies to any hydrogens equivalent to the named hydrogen.  The logic for determining which hydrogens are which is in src/core/scoring/constraints/AmbiguousNMRDistanceConstraints.cc:parse_NMR_name.
 
-@li @ref MultiConstraint "Multi":
-<tt>Constraint_Type1 Constraint_Def1 [Constraint_Type2 Constraint_Def2 [...]]</tt><br>
+@li @ref SiteConstraint "SiteConstraint":<br>
+<tt>SiteConstraint Atom1_Name Atom1_ResNum Opposing_chain Func_Type Func_Def</tt><br>
+Constraint that a residue interacts with some other chain - roughly, that it is (or is not) in a binding site.  The atom and resnum identify which atom is being checked for interactions with the opposing chain.  Notice that "Constraint" is irregularly in its tag.
+
+@li @ref BigBinConstraint "BigBin":<br>
+<tt>BigBin ResNum Bin</tt>
+
+@subsection nested_constraint_types Nested constraints
+
+Nested constraints take as their parameters one or more other constraints, and allow optimization across multiple constraints. Typically in constraint files these are listed across multiple lines, with the name of the constraint opening the block of sub-constraints, and a line starting with "END" or "End" ending the block. 
+
+@li @ref MultiConstraint "MultiConstraint":<br>
+<tt>MultiConstraint<br>
+Constraint_Type1 Constraint_Def1 <br>
+[Constraint_Type2 Constraint_Def2 <br>
+[...]]
+END</tt><br>
 Sum of all specified constraints
 
-@li @ref AmbiguousConstraint "Ambiguous":
-<tt>Constraint_Type1 Constraint_Def1 [Constraint_Type2 Constraint_Def2 [...]]</tt><br>
+@li @ref AmbiguousConstraint "AmbiguousConstraint":<br>
+<tt>AmbiguousConstraint<br>
+Constraint_Type1 Constraint_Def1 <br>
+[Constraint_Type2 Constraint_Def2 <br>
+[...]]
+END</tt><br>
 Lowest of all specified constraints
 
-Constraint types are all implemented as subclasses of the core::scoring::constraints::Constraint class.
+@li @ref KofNConstraint "KofNConstraint":<br>
+<tt>KofNConstraint k<br>
+Constraint_Type1 Constraint_Def1 <br>
+[Constraint_Type2 Constraint_Def2 <br>
+[...]]
+END</tt><br>
+Value is the sum of the "k" lowest energy constraints
 
 @section function_type Function Types
 
