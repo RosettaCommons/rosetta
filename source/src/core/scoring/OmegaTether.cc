@@ -118,7 +118,7 @@ OmegaTether::eval_omega_score_residue(
 	Real const psi_angle
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 	Real const omega_angle
-		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(3)));
+		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(3 + (rsd.has("CM") ? 1 : 0) ))); //Use backbone torsion angle 4 for omega if this is a beta-amino acid.  Test for this by looking for a CM atom.
 
 	if ( rsd.is_upper_terminus() || rsd.is_virtual_residue() ) { // begin or end of chain
 		score = 0.0;
@@ -168,7 +168,7 @@ OmegaTether::eval_omega_score_residue(
 		dscore_domega = weight*2*dangle;
 		dscore_dphi = dscore_dpsi = 0.0;  // stdard form is independent of phi and psi
 	} else {
-		// figure our which table to use
+		// figure out which table to use
 		core::Size table=1;
 		if (aa == core::chemical::aa_gly)
 			table = 2;

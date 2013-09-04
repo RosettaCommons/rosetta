@@ -249,7 +249,7 @@ int main( int argc, char * argv [] ) {
 	protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn); //Create the RepackSidechains mover and set the score function.
 
 	core::pose::Pose mypose;
-	const string sequence = "GA[B3A]A[B3A]W[B3W]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]G";
+	const string sequence = "GA[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]A[B3A]G";
 	//const string sequence = "GA[B3A]A[B3A]A[B3A]A[DALA]A[DALA]AG";
 
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
@@ -306,6 +306,9 @@ int main( int argc, char * argv [] ) {
 		core::pose::Pose temppose=mypose;
 
 		kinmover->apply(temppose);
+
+		betapeptide_setomega(temppose, 7, 100.0);
+		temppose.update_residue_neighbors();
 
 		char outfilename [256];
 		sprintf(outfilename, "out_%04lu.pdb", i);
