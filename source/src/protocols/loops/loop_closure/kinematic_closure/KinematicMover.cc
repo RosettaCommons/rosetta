@@ -893,7 +893,7 @@ std::string KinematicMover::get_bumpcheck_atoms_for_residue (
 	} else { //Default case -- alpha-amino acids
 		switch(bumpcheck_atom_index) {
 			case 1: returnval = "N"; break;
-			case 2: returnval = "H"; break; //Include the backbone hydrogen?
+            //case 2: returnval = "H"; break; //AS Sept 4: Do not include the backbone hydrogen -- hbonding Hs will be closer to their donor/acceptor than the bumpfix allows. This may lead to unsolvable closures, esp. because the NH of the first residue is never modified but is still bumpchecked.
 			case 3: returnval = "CA"; break;
 			case 4: returnval = "C"; break;
 			case 5: returnval = "O"; break;
