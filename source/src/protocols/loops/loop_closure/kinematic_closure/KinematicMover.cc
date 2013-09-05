@@ -387,7 +387,7 @@ void KinematicMover::apply( core::pose::Pose & pose )
 	utility::vector1<Real> dt_ang, db_len, db_ang, save_t_ang, save_b_len, save_b_ang, R0 (3);
 	utility::vector1<conformation::ResidueOP> save_residues;
 
-	Size middle_offset = middle_res_ - start_res_; // is used to set central pivot atom
+	//Size middle_offset = middle_res_ - start_res_; // is used to set central pivot atom
 	Size seg_len = 1 + end_res_ - start_res_; // length of the closure chain
 	//Size detail_sol = 0; // index of the KIC solution accepted for detailed balance, if > 0
 
@@ -882,22 +882,22 @@ std::string KinematicMover::get_bumpcheck_atoms_for_residue (
 	if(is_beta_aminoacid(rsd)) { //Beta-amino acids:
 		switch(bumpcheck_atom_index) {
 			case 1: returnval = "N"; break;
-			case 2: returnval = "H"; break; //Include the backbone hydrogen -- why not?
-			case 3: returnval = "CA"; break;
-			case 4: returnval = "CM"; break;
-			case 5: returnval = "C"; break;
-			case 6: returnval = "O"; break;
-			case 7: returnval = "CB"; break;
+				//case 2: returnval = "H"; break; //Include the backbone hydrogen -- why not? --> Because, as was pointed out, this prevents solutions involving backbone H-bonds.
+			case 2: returnval = "CA"; break;
+			case 3: returnval = "CM"; break;
+			case 4: returnval = "C"; break;
+			case 5: returnval = "O"; break;
+			case 6: returnval = "CB"; break;
 			default: break;
 		}
 	} else { //Default case -- alpha-amino acids
 		switch(bumpcheck_atom_index) {
 			case 1: returnval = "N"; break;
             //case 2: returnval = "H"; break; //AS Sept 4: Do not include the backbone hydrogen -- hbonding Hs will be closer to their donor/acceptor than the bumpfix allows. This may lead to unsolvable closures, esp. because the NH of the first residue is never modified but is still bumpchecked.
-			case 3: returnval = "CA"; break;
-			case 4: returnval = "C"; break;
-			case 5: returnval = "O"; break;
-			case 6: returnval = "CB"; break;
+			case 2: returnval = "CA"; break;
+			case 3: returnval = "C"; break;
+			case 4: returnval = "O"; break;
+			case 5: returnval = "CB"; break;
 			default: break;
 		}
 	}
@@ -908,8 +908,8 @@ std::string KinematicMover::get_bumpcheck_atoms_for_residue (
 //Function to return the number of atoms to use for the bump check.
 core::Size KinematicMover::get_bumpcheck_atom_count_for_residue ( const core::conformation::Residue &rsd ) const
 {
-	if(is_beta_aminoacid( rsd )) return 7; //Beta-amino acids
-	return 6; //Default case -- alpha-amino acids
+	if(is_beta_aminoacid( rsd )) return 6; //Beta-amino acids use N, CA, CM, C, O, CB -- six atoms
+	return 5; //Default case -- alpha-amino acids use N, CA, C, O, CB -- five atoms
 }
 
 
