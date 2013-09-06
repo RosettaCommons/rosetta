@@ -269,6 +269,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 	int dir = (rbseg_RG.random_range(0,1))? -1 : 1;
 	int mag = rbseg_RG.random_range(1,magnitude_);
 	core::Size nres = hybridization::get_num_residues_nonvirt( pose );
+	while (!pose.residue(nres).is_protein()) nres--;
 
 	if (offsets_.size() != nres) {
 		offsets_.clear();
@@ -283,7 +284,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 	for (Size ii=1; ii<=segment_.nContinuousSegments(); ++ii) {
 		// apply to transformation to every atom in this segment
 		int i_start = std::max(segment_[ii].start(), (Size)1);
-		int i_end   = std::min(segment_[ii].end(), pose.total_residue());
+		int i_end   = std::min(segment_[ii].end(), nres);
 
 		int nres_seg  = i_end - i_start + 1;
 

@@ -297,10 +297,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 		for (core::fragment::FrameIterator it = frags3->nonconst_begin(); it != frags3->nonconst_end(); ++it) frames3.push_back( *it );
 
 		// extend + idealize loops
-		for( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
-			protocols::loops::Loop to_idealize( *it );
-			protocols::loops::set_extended_torsions( pose, *it );
-		}
+		protocols::loops::set_extended_torsions_and_idealize_loops( pose, *loops );
 
 		// setup MC
 		core::Size nouterCyc=4, ninnerCyc=rebuild_cycles_;

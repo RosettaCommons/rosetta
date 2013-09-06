@@ -131,9 +131,16 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 		// build ideal pose
 		core::pose::Pose ideal_pose;
 		int len_i = stop_i - start_i + 1;
+		// ideal geometry
 		for (int j=start_i; j<=stop_i; ++j) {
 			ideal_pose.append_residue_by_bond( pose.residue( j ), true );
 		}
+
+		for (int j=start_i; j<=stop_i; ++j) {
+			protocols::loops::set_extended_torsions_and_idealize_loops( ideal_pose, protocols::loops::Loops() );
+		}
+
+		// helical
 		for (int j=start_i; j<=stop_i; ++j) {
 			int resid = j-start_i+1;
 			ideal_pose.set_phi( resid, -57.8 );
@@ -214,14 +221,14 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 		// apply to NCS-symmetric copies
 		if (ncs) {
-			for (int i=1; i<=ncs->ngroups(); ++i ) {
+			for (int n=1; n<=ncs->ngroups(); ++n ) {
 				bool all_are_mapped = true;
 				for ( Size k=start_i; k<=stop_i && all_are_mapped; ++k )
-					all_are_mapped &= (ncs->get_equiv( i,k )!=0);
+					all_are_mapped &= (ncs->get_equiv( n,k )!=0);
 				if (!all_are_mapped) continue;
 
-				core::Size remap_start = ncs->get_equiv( i, start_i );
-				core::Size remap_stop = ncs->get_equiv( i, stop_i );
+				core::Size remap_start = ncs->get_equiv( n, start_i );
+				core::Size remap_stop = ncs->get_equiv( n, stop_i );
 
 				if (remap_stop-remap_start != stop_i-start_i) continue;
 
