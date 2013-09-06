@@ -31,6 +31,8 @@
 #endif
 
 #include <vector>
+#include <unistd.h>
+#include <cstdio>
 
 namespace utility {
 
@@ -99,7 +101,7 @@ exit(
 	int const status
 )
 {
-	#ifdef __native_client__ 
+	#ifdef __native_client__
 	  throw ( std::string( file + ":" + message ) );
 	#endif
 	// Calling all preset exit-callback's
@@ -107,9 +109,11 @@ exit(
 		(*it)();
 	}
 
-  if ( ! message.empty() ) std::cerr << std::endl << "ERROR: " << message << std::endl;
-  std::cerr << "ERROR:: Exit from: " << file << " line: " << line << std::endl;
-  std::cerr.flush();
+	if( isatty(fileno(stdout)) ) std::cerr << "\x1b[0m\x1b[1m\x1b[31m";  // Reseting the terminal state and setting bold-red color
+	if ( ! message.empty() ) std::cerr << std::endl << "ERROR: " << message << std::endl;
+	std::cerr << "ERROR:: Exit from: " << file << " line: " << line << std::endl;
+	if( isatty(fileno(stdout)) ) std::cerr << "\x1b[0m";
+	std::cerr.flush();
 
 	throw EXCN_utility_exit( message, file, line );
 

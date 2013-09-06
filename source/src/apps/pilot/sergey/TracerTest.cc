@@ -18,7 +18,6 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <basic/Tracer.hh>
-#include <devel/init.hh>
 #include <core/types.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -318,4 +317,3 @@ int main( int argc, char * argv [] )
 	}
 
 }
-
