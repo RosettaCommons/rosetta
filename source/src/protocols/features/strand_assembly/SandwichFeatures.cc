@@ -27,7 +27,7 @@
 ///			@ task 3-4: Test canonical sandwich test
 ///				@ task 3-4-1: Canonical sandwiches need to have low number of helix or strand residues in any loop (beta-hairpin-loop or inter-sheet-loop)
 ///				@ task 3-4-2: Canonical sandwiches need to not have same-direction-strands as connecting two beta-sheets
-///				@ task 3-4-3: (plan) Canonical sandwiches should not be beta-barrel obviously (like c.128.0)
+///				@ task 3-4-3: Canonical sandwiches should not be beta-barrel obviously
 ///		@ task 4: Write beta-sandwiches that passed canonical tests into database
 ///				@ task 4-1: Write hairpin_loop and inter-sheet loop
 ///				@ task 4-2: Write starting_loop and endng_loop
@@ -853,14 +853,25 @@ SandwichFeatures::prepare_to_fill_sw_by_components(
 	sessionOP db_session)
 {
 	string select_string =
-	"SELECT sw_sh.sw_can_by_sh_id AS sw_can_by_sh_id, sh.sheet_id AS sheet_id, \n"
-	"	sss.segment_id AS sw_by_components_bs_id, sss.residue_begin AS	residue_begin, \n"
-	"	sss.residue_end AS residue_end \n"
-	"FROM  secondary_structure_segments AS sss, structures AS s, sheet AS sh, sw_can_by_sh AS sw_sh\n"
-	"WHERE (sss.struct_id = ?) AND (sss.struct_id = s.struct_id) AND (sss.struct_id = sh.struct_id) \n"
+	"SELECT \n"
+	"	sw_sh.sw_can_by_sh_id AS sw_can_by_sh_id, \n"
+	"	sh.sheet_id AS sheet_id, \n"
+	"	sss.segment_id AS sw_by_components_bs_id, \n"
+	"	sss.residue_begin AS	residue_begin, \n"
+	"	sss.residue_end AS	residue_end \n"
+	"FROM  \n"
+	"	secondary_structure_segments AS sss, \n"
+	"	structures AS s, \n"
+	"	sheet AS sh, \n"
+	"	sw_can_by_sh AS sw_sh\n"
+	"WHERE \n"
+	"	(sss.struct_id = ?) \n"
+	"	AND (sss.struct_id = s.struct_id) \n"
+	"	AND (sss.struct_id = sh.struct_id) \n"
 	"	AND (sss.struct_id = sw_sh.struct_id) \n"
 	"	AND (sss.dssp = 'E') \n"
-	"	AND (sw_sh.sheet_id = sh.sheet_id) AND (sh.segment_id = sss.segment_id);";
+	"	AND (sw_sh.sheet_id = sh.sheet_id) \n"
+	"	AND (sh.segment_id = sss.segment_id);";
 
 	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
 
@@ -3521,7 +3532,7 @@ SandwichFeatures::delete_this_sw_can_by_sh_id_from_sw_by_comp(
 	sessionOP db_session,
 	Size sw_can_by_sh_id)
 {
-		TR << "delete_this_sw_can_by_sh_id_from_sw_by_comp with shee_id: " << sw_can_by_sh_id << endl;
+		TR << "delete_this_sw_can_by_sh_id_from_sw_by_comp with sheet_id: " << sw_can_by_sh_id << endl;
 	string select_string =
 	"DELETE	\n"
 	"FROM\n"
@@ -4452,7 +4463,7 @@ SandwichFeatures::check_whether_this_sheet_is_surrounded_by_more_than_1_other_sh
 			num_of_sheets_that_surround_sheet_id++;
 		}
 	}
-		TR << "num_of_sheets_that_surround sheet_id (" << sheet_id << ") is " << num_of_sheets_that_surround_sheet_id << endl;
+	TR << "num_of_sheets_that_surround sheet_id (" << sheet_id << ") within " << inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ << " is " << num_of_sheets_that_surround_sheet_id << endl;
 	if (num_of_sheets_that_surround_sheet_id > 1)
 	{
 		return true; // yes, this sheet is surrounded by more than 1 other sheets!
@@ -4853,8 +4864,9 @@ SandwichFeatures::parse_my_tag(
 					//	definition: maximum allowable number of E residues in extracted sandwich loop
 					//	usefulness: If used, it is useful to exclude [1LOQ]
 	exclude_sandwich_that_is_linked_w_same_direction_strand_ = tag->getOption<bool>("exclude_sandwich_that_is_linked_w_same_direction_strand", true);
-					//	definition: if true, exclude_sandwich_that_is_linked with same_direction_strand
-					//	usefulness: If true, it is useful to exclude [1QAC] chain A
+					//	definition: if true, exclude a sandwich that is linked with same_direction_strand
+					//	Rationale of default=true (1)
+						//	If true, it is useful to exclude [1QAC]_chain_A, [2v33]_chain_A which is a canonical sandwich but linked by same direction strands between sheets
 	max_inter_strand_angle_to_not_be_same_direction_strands_ = tag->getOption<Real>("max_inter_strand_angle_to_not_be_same_direction_strands", 120.0);
 					//	usage: 	if (angle_start_res_being_middle > max_inter_strand_angle_to_not_be_same_direction_strands_)
 					//	example: (in 1BQB chain A) 121 is possible (but this should be excluded as same direction strand)
@@ -4883,16 +4895,15 @@ SandwichFeatures::parse_my_tag(
 	inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ = tag->getOption<Real>("inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets", 13.0);
 					//	definition: within this distance, sheets are considered to be near each other
 					//	example: (in 1LOQ) inter-sheet distances are 11.5~14.1
-					//	usefulness: it is useful to exclude [1LOQ] and [1W8O]
-					//	counter_effect: It excludes [3BVT]
+					//	Rationale of default value=13 Angstron
+						//	it is useful to exclude [1LOQ] which is beta-propeller, [3BVT] which is a stacked sandwich
+						//	but it also excludes [2V33] which has two canonical sandwiches near each other, [1W8O] which is a canonical sandwich near a single beta-sheet
 	exclude_desinated_pdbs_ = tag->getOption<bool>("exclude_desinated_pdbs", false);
 					//	definition: if true, exclude certain designated pdbs
 	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_ = tag->getOption<bool>("exclude_sandwich_that_has_near_backbone_atoms_between_sheets", true);
 					//	definition: if true, exclude sandwich_that_has_near_backbone_atoms_between_sheets
 	write_AA_dis_files_ = tag->getOption<bool>("write_AA_dis_files", false);
 					//	definition: if true, write files that have amino acid distributions
-				
-
 }
 
 ///@brief collect all the feature data for the pose
@@ -5738,13 +5749,20 @@ SandwichFeatures::report_features(
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
 
-			AA_kind_file << "Positive	Negative	Polar	Aromatic	Hydrophobic" << endl; // as Jenny's thesis
+			// positive, negative, polar, aromatic, hydrophobic
+			AA_kind_file << "Pos_percent	Neg_percent	Pol_percent	Aro_percent	Hydropho_percent	" ; // as Jenny's thesis
+			AA_kind_file << "Pos_raw_count	Neg_raw_count	Pol_raw_count	Aro_raw_count	Hydropho_raw_count" << endl; // to calculate net_charge
 
 			for (Size i =1; i<=(vec_AA_kind.size()); i++)
 			{
 				Real percent = vec_AA_kind[i]*100/static_cast<Real>(sw_res_size);
 				Size rounded_percent = round(percent);
 				AA_kind_file << rounded_percent << "	" ;
+			}
+
+			for (Size i =1; i<=(vec_AA_kind.size()); i++)
+			{
+				AA_kind_file << vec_AA_kind[i] << "	" ;
 			}
 
 			AA_kind_file.close();
