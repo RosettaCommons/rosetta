@@ -1,0 +1,26 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <cb_talaris2013 weights="talaris2013.wts">
+      <Reweight scoretype=pro_close weight=0.0 />
+      <Reweight scoretype=cart_bonded weight=0.5 />
+    </cb_talaris2013>
+  </SCOREFXNS>
+  <TASKOPERATIONS>
+    <ReadResfile name=mut1 filename=mut1.resfile />
+  </TASKOPERATIONS>
+  <FILTERS>
+  </FILTERS>
+  <MOVERS>
+    PackRotamersMover name=pmut1 scorefxn=cb_talaris2013 task_operations=mut1
+    <FastRelax name=relax scorefxn=cb_talaris2013 repeats=3 min_type=lbfgs_armijo_nonmonotone />
+    <InterfaceAnalyzerMover name=fullanalyze scorefxn=talaris2013 packstat=1 pack_input=1 pack_separated=1 jump=1 tracer=0 use_jobname=1 resfile=0 />
+  </MOVERS>
+  <APPLY_TO_POSE>
+  </APPLY_TO_POSE>
+  <PROTOCOLS>
+    Add mover=pmut1
+    <Add mover=relax/>
+    <Add mover=fullanalyze/>
+  </PROTOCOLS>
+  <OUTPUT scorefxn=cb_talaris2013/>
+</ROSETTASCRIPTS>
