@@ -492,38 +492,42 @@ PDBInfo::show(
 	std::ostream & out
 ) const
 {
-	// counters
-	Size current_res_tot = 0;
-	Size current_atm_tot = 0;
-	Size atm_tot = 0;
-	Size current_start_pose = 0;
-	char icode_start_pdb(' ');
+	// counters - initialize to the first residue
+	Size current_res_tot = 1; // Total residues in this segment
+	Size current_atm_tot = natoms(1); // Total atoms in this segment
+	Size atm_tot = current_atm_tot; // Overall number of atoms
+	Size current_start_pose = 1; // Starting pose number for this segment
 	// first line
 	out << "PDB file name: " << name() << std::endl;
-	out << " Pose Range  Chain    PDB Range  | #Resi        #Atoms\n" << std::endl;
-	for (Size i=1 ; i <= nres() ; i++){
+	out << " Pose Range  Chain    PDB Range  |   #Residues         #Atoms\n" << std::endl;
+	for (Size i=2 ; i <= nres() ; i++){
 		// loop through residue records
-		if ( i<nres() && icode(i)==' ' && (number(i+1)-number(i))==1 && chain(i)==chain(i+1) ){
-			if (current_start_pose<1){	// its empty
-				current_res_tot = 1;
-				current_atm_tot = natoms(i);
-				current_start_pose = i;
-				icode_start_pdb = icode(i);
-			} else {	// its started, update info
-				current_res_tot += 1;
-				current_atm_tot += natoms(i);
-			}
-		} else {	// print it
-		out << I(4,4,current_start_pose) << " -- " << I(4,4,i) << A(5,chain(i)) <<
-			' ' << I(4,4,number(i)-current_res_tot) << icode_start_pdb << " -- " << I(4,4,number(i)) << icode(i) <<
-			" | " << I(6,4,current_res_tot+1) << " residues; " << I(8,5,current_atm_tot) << " atoms\n";
-		// then update/blank data
-		atm_tot += current_atm_tot;
-		current_start_pose = 0;
+		if ( icode(i)==' ' && icode(i-1)==' ' && (number(i)-number(i-1))==1 && chain(i)==chain(i-1) ){
+			// Same block - extend it
+		  current_res_tot += 1;
+			current_atm_tot += natoms(i);
+			atm_tot += natoms(i);
+		} else {
+			// resi i is in new segment - print out old segment (to i-1)
+			out << I(4,4,current_start_pose) << " -- " << I(4,4,i-1) << A(5,chain(i-1)) <<
+					' ' << I(4,4,number(current_start_pose)) << icode(current_start_pose) <<
+					" -- " << I(4,4,number(i-1)) << icode(i-1) <<
+					" | " << I(6,4,current_res_tot) << " residues; " << I(8,5,current_atm_tot) << " atoms" << std::endl;
+			// Reset segment values
+			current_res_tot = 1;
+			current_atm_tot = natoms(i);
+			atm_tot += natoms(i);
+			current_start_pose = i;
 		}
 	}
+	//Print out the last segment
+	out << I(4,4,current_start_pose) << " -- " << I(4,4,nres()) << A(5,chain(nres())) <<
+			' ' << I(4,4,number(current_start_pose)) << icode(current_start_pose) <<
+			" -- " << I(4,4,number(nres())) << icode(nres()) <<
+			" | " << I(6,4,current_res_tot) << " residues; " << I(8,5,current_atm_tot) << " atoms" << std::endl;
+
 	// last line
-	out << "\t\t\t   TOTAL | " << I(6,4,nres()) << " residues; " << I(8,5,atm_tot) << std::endl;
+	out << "                           TOTAL | " << I(6,4,nres()) << " residues; " << I(8,5,atm_tot) << " atoms" << std::endl;
 }
 
 /// @brief set chain/pdb/insertion code for residue simultaneously
@@ -559,9 +563,9 @@ PDBInfo::set_resinfo(
 /// @param[in] res  residue in pose numbering
 /// @param[in] label  string that is the "label"
 void
-PDBInfo::add_reslabel( 
+PDBInfo::add_reslabel(
 	Size const res,
-	std::string const label 
+	std::string const label
 )
 {
 	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::icode( Size const res, ins_code ): res is not in this PDBInfo!" );
@@ -575,7 +579,7 @@ PDBInfo::add_reslabel(
 /// @brief clean all the label(s) associated to a pose resid.
 /// @param[in] res  residue in pose numbering
 void
-PDBInfo::clear_reslabel( 
+PDBInfo::clear_reslabel(
 	Size const res
 )
 {
