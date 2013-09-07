@@ -150,6 +150,9 @@ sources = {
 		"make_rot_lib",
 		"UnfoldedStateEnergyCalculator",
 	],
+	"public/nmr": [
+		"r_noe_assign",
+	],
 	"public/noncanonical_backbones": [
 		"hbs_design",
 		"oop_design",

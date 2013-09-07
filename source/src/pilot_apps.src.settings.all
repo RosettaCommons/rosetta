@@ -565,7 +565,7 @@ sources = {
 		"r_pdb2top",
 		"r_rmsf",
 		#"r_assign_clusters",
-		"r_noe_assign",
+		#"r_noe_assign",
 		#"r_min_check",
 		#"r_convert_frags",
 		"r_broker", # /* Oliver Lange,Documentation Location,Demo Location */

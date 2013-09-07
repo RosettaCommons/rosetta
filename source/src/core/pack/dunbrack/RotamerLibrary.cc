@@ -89,7 +89,7 @@ using basic::T;
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <utility/vector1.hh>
 
-
+#include <sys/stat.h>
 
 using basic::Error;
 using basic::Warning;
@@ -513,7 +513,7 @@ RotamerLibrary::get_rsd_library( chemical::ResidueType const & rsd_type ) const
 		std::string const key( rsd_type.name3() + "@" + chemical::CENTROID_ROT );
 		if ( reslibraries_.find( key ) != reslibraries_.end() ) {
 			return reslibraries_.find( key )->second;
-		} 
+		}
 	}
 
 	std::string const key( rsd_type.name()+"@"+rsd_type.residue_type_set().name() );
@@ -567,6 +567,7 @@ RotamerLibrary::create_fa_dunbrack_libraries()
 }
 
 bool
+
 RotamerLibrary::decide_read_from_binary() const
 {
 	using namespace basic::options;
@@ -578,10 +579,14 @@ RotamerLibrary::decide_read_from_binary() const
 	utility::io::izstream binlib( binary_filename.c_str(), std::ios::in | std::ios::binary );
 
 	if ( ! binlib ) {
-		return false;
+	  TR.Info << "cannot find binary dunbrack library under name " << binary_filename << std::endl;
+	  return false;
 	}
 
-	if ( ! binary_is_up_to_date( binlib ) ) return false;
+	if ( ! binary_is_up_to_date( binlib ) ) {
+	  TR.Info << "dunbrack library is out-dated " << binary_filename << std::endl;
+	  return false;
+	}
 
 	/// Look for specific objections for the 02 or 08 libraries (if any exist!)
 	if ( option[ corrections::score::dun10 ] ) {
@@ -1312,8 +1317,9 @@ RotamerLibrary::write_binary_fa_dunbrack_libraries_02() const
 		binlib.close();
 
 		// Move the temporary file to its permanent location
-		TR << "Moving temporary file to " << binary_filename.c_str() << std::endl;
+		TR << "Moving temporary file " << tempfilename.c_str() << " to " << binary_filename.c_str() << std::endl;
 		rename( tempfilename.c_str(), binary_filename.c_str() );
+		chmod( binary_filename.c_str(), S_IROTH | S_IWUSR | S_IRUSR | S_IRGRP );
 	} else {
 		TR << "Unable to open temporary file in rosetta database for writing the binary version of the Dunbrack02 library." << std::endl;
 	}
@@ -1409,8 +1415,9 @@ RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const
 		binlib.close();
 
 		// Move the temporary file to its permanent location
-		//std::cerr << "Moving temporary file to " << binary_filename.c_str() << std::endl;
+		TR << "Moving temporary file to " << binary_filename.c_str() << std::endl;
 		rename( tempfilename.c_str(), binary_filename.c_str() );
+		chmod( binary_filename.c_str(), S_IROTH | S_IWUSR | S_IRUSR | S_IRGRP );
 	} else {
 		TR << "Unable to open temporary file in rosetta database for writing the binary version of the Dunbrack '10 library." << std::endl;
 	}
@@ -1432,12 +1439,17 @@ RotamerLibrary::random_tempname( std::string const & prefix ) const
 #elif USEMPI
 	// jk change this to mkstemp to prevent race condition
 	// apl -- any reason mkstemp can't become the standard?
-	std::string str_name = option[ in::path::database ](1).name() + "/" + prefix + "XXXXXX";
-	char *tmpname_output = new char [str_name.size()+20]; // Why + 20?  Apparently mkstemp can overflow.
+	//shouldn't write temporary files into the database
+	// database might be read-only if rosetta is installed for multiple users
+	//tempnam is good in finding a suitable directory
+	char * tmpname_output1 = tempnam( option[ in::path::database ](1).name().c_str(), prefix.c_str() );
+	std::string str_name = std::string(tmpname_output1)+"XXXXXX";
+	free( tmpname_output1 );
+	char * tmpname_output = new char [str_name.size()+20]; // Why + 20?  Apparently mkstemp can overflow.
 	strcpy(tmpname_output, str_name.c_str()); // use strcpy to get char* instead of const char*
 	int fid = mkstemp( tmpname_output );
 	if ( fid == -1 ) { // error condition of mkstemp.
-		utility_exit_with_message("Failed to open temporary file with mkstemp" );
+	  utility_exit_with_message("Failed to open temporary file with mkstemp" );
 	}
 	close( fid ); // have to close the file in order to open it again.
 	/// On the web, it says the file descriptor alone returned by mkstemp and not the file name is hacker safe.
