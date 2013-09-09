@@ -334,7 +334,7 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 			for( Size jres = 1; jres <= pose_tmp.total_residue(); ++jres ){
 				char const &SS_j = pose_tmp.secstruct( jres );
 
-				if( abs(ires - jres) < 3 || SS_j == 'L' ) continue;
+				if( std::abs(int(ires - jres)) < 3. || SS_j == 'L' ) continue;
 
 				Vector const &Ocrd = pose_tmp.residue( jres ).xyz( " O  " );
 				Vector const vNO = Ncrd - Ocrd;
@@ -361,7 +361,7 @@ NormalMode::set_harmonic_constant_map( pose::Pose const &pose ){
 				k_[jatm][iatm] = k_uniform_;
 
 			} else {
-				if( abs(ires - jres) <= 1 ){
+				if( abs(int(ires - jres)) <= 1 ){
 					k_[iatm][jatm] = k_short_;
 					k_[jatm][iatm] = k_short_;
 

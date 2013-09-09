@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -390,6 +390,86 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\filters\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._BasicFilterCreators.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._BasicFilters.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._BasicFilters.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._CalculatorFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._CalculatorFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._CalculatorFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._ContingentFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._ContingentFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._ContingentFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._Filter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._Filter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._FilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._FilterFactory.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._FilterFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._HeavyAtomFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._ReplicateFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._ReplicateFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._ReplicateFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._TimeFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\filters\._TimeFilterCreator.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\filters\BasicFilterCreators.hh"
 				>
@@ -795,6 +875,50 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\jd2\archive\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\jd2\archive\._ArchiveBase.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\archive\._ArchiveBase.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\archive\._ArchiveManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\archive\._ArchiveManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\archive\._ArchiveMasterBase.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\archive\._EvaluatedArchive.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\archive\._MPIArchiveJobDistributor.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\archive\._MPIArchiveJobDistributor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\archive\._NormalizedEvaluatedArchive.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\archive\._VarianceStatisticsArchive.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\archive\._VarianceStatisticsArchive.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\jd2\archive\ArchiveBase.cc"
 				>
 				<FileConfiguration
@@ -1082,6 +1206,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\jd2\parser\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._BluePrint.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._BluePrint.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._DataLoader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._DataLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._DataLoaderCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._DataLoaderFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._FragSetLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._FragmentReader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._FragmentReader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._MonteCarloLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._ScoreFunctionLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._StandardLoaderCreators.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\parser\._TaskOperationLoader.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\jd2\parser\BluePrint.cc"
 				>
@@ -1499,6 +1675,30 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\jobdist\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\jobdist\._JobDistributors.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jobdist\._JobDistributors.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jobdist\._Jobs.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jobdist\._Jobs.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jobdist\._not_universal_main.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jobdist\._standard_mains.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\jobdist\JobDistributors.cc"
 				>
 				<FileConfiguration
@@ -1686,6 +1886,274 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\moves\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._BoolMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._CanonicalSamplingMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._CanonicalSamplingMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._ChangeFoldTreeMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._ChangeFoldTreeMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._CompositionMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._CompositionMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._CyclicMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._CyclicMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._DataMap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._DataMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._DataMapObj.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._DsspMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._DsspMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._DsspMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._DualMonteCarlo.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._DualMonteCarlo.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._FilterMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._FilterMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._IfMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._IfMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._IteratedConvergenceMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._IteratedConvergenceMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._IteratedConvergenceMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._JumpOutMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._JumpOutMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MonteCarlo.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MonteCarlo.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MonteCarlo.tmpl.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MonteCarloExceptionConverge.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MonteCarloExceptionConverge.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MonteCarloStatus.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._Mover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._Mover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MoverContainer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MoverContainer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MoverContainerCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MoverFactory.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MoverFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MoverStatistics.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._MoverStatus.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._NullMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._NullMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._OutputMovers.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._OutputMovers.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._PyMolMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._PyMolMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._PyMolMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._RampingMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._RampingMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._RampingMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._RepeatMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._RepeatMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._ReplicaExchangeMC.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._ReplicaExchangeMC.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._ResId.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._ResId.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._StructureRestrictor.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._StructureRestrictor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._TemperatuerController.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._TrialCounter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._TrialMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._TrialMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._WhileMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._WhileMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\moves\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\moves\BoolMover.hh"
 				>
@@ -2639,6 +3107,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\moves\PyMolMoverCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\moves\RampingMover.cc"
 				>
 				<FileConfiguration
@@ -3075,6 +3547,34 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\rosetta_scripts\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\rosetta_scripts\._ParsedProtocol.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rosetta_scripts\._ParsedProtocol.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rosetta_scripts\._ParsedProtocolCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rosetta_scripts\._SavePoseMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rosetta_scripts\._SavePoseMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rosetta_scripts\._SavePoseMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rosetta_scripts\._util.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\rosetta_scripts\ParsedProtocol.cc"
 				>
 				<FileConfiguration
@@ -3227,6 +3727,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\sasa_scores\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\sasa_scores\._sasapack.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\sasa_scores\sasapack.cc"
 				>
 				<FileConfiguration
@@ -3274,6 +3778,46 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\viewer\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\viewer\._ConformationViewer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\viewer\._ConformationViewer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\viewer\._GraphicsState.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\viewer\._SilentObserver.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\viewer\._SilentObserver.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\viewer\._marchingCubes.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\viewer\._triangle.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\viewer\._triangleIterator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\viewer\._viewers.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\viewer\._visualize.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\viewer\ConformationViewer.cc"
 				>
@@ -3559,6 +4103,22 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\checkpoint\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\checkpoint\._CheckPointer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\checkpoint\._CheckPointer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\checkpoint\._Checkpoint.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\checkpoint\._Checkpoint.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\checkpoint\CheckPointer.cc"
 				>
 				<FileConfiguration
@@ -3658,6 +4218,346 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\jd2\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._AtomTreeDiffJobInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._AtomTreeDiffJobInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._AtomTreeDiffJobInputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._AtomTreeDiffJobOutputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._AtomTreeDiffJobOutputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._AtomTreeDiffJobOutputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._BOINCJobDistributor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._BatchJobInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._BatchJobInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._DockDesignParser.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._FileJobOutputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._FileJobOutputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._FileSystemJobDistributor.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._FileSystemJobDistributor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._InnerJob.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._InnerJob.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._InnerMultiThreadingJob.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._InnerMultiThreadingJob.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JD2ResourceManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JD2ResourceManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JD2ResourceManagerCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JD2ResourceManagerInputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JD2ResourceManagerJobInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JD2ResourceManagerJobInputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._Job.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._Job.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobDistributor.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobDistributor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobDistributorFactory.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobDistributorFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobInputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobInputterFactory.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobInputterFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobOutputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobOutputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobOutputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobOutputterFactory.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._JobOutputterFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._LazySilentFileJobInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._LazySilentFileJobInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._LazySilentFileJobInputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MPIFileBufJobDistributor.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MPIFileBufJobDistributor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MPIMultiCommJobDistributor.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MPIMultiCommJobDistributor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MPIWorkPartitionJobDistributor.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MPIWorkPartitionJobDistributor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MPIWorkPoolJobDistributor.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MPIWorkPoolJobDistributor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MpiFileBuffer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MpiFileBuffer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MultiThreadingJob.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._MultiThreadingJob.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._NoOutputJobOutputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._NoOutputJobOutputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._PDBJobInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._PDBJobInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._PDBJobInputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._PDBJobOutputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._PDBJobOutputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._PDBJobOutputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._Parser.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._Parser.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._PoseInputStreamJobInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._PoseInputStreamJobInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._PoseInputStreamJobInputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._ScoreMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._ScoreOnlyJobOutputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._ScoreOnlyJobOutputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._ScoreOnlyJobOutputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._ScreeningJobInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._ScreeningJobInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._ScreeningJobInputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._ShuffleJobDistributor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._SilentFileJobInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._SilentFileJobInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._SilentFileJobInputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._SilentFileJobOutputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._SilentFileJobOutputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._SilentFileJobOutputterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._SingleFileBuffer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._SingleFileBuffer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\jd2\AtomTreeDiffJobInputter.cc"
 				>
@@ -5307,6 +6207,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\protocols\jd2\ScreeningJobInputter.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__ScreeningJobInputter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__ScreeningJobInputter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__ScreeningJobInputter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__ScreeningJobInputter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__ScreeningJobInputter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__ScreeningJobInputter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols.1__protocols__jd2__ScreeningJobInputter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols.1__protocols__jd2__ScreeningJobInputter.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\ScreeningJobInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\ScreeningJobInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\jd2\ScreeningJobInputterCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\jd2\ShuffleJobDistributor.cc"
 				>
 				<FileConfiguration
@@ -5550,6 +6502,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\evaluation\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._AlignEvaluator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._AlignEvaluator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._EvaluatorCreator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._EvaluatorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._EvaluatorFactory.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._EvaluatorFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._PCA.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._PCA.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._PoseEvaluator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._PoseEvaluator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._TimeEvaluator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._TimeEvaluator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\evaluation\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\evaluation\AlignEvaluator.cc"
 				>
@@ -5846,6 +6850,22 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\idealize\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\idealize\._IdealizeMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\idealize\._IdealizeMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\idealize\._IdealizeMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\idealize\._idealize.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\idealize\IdealizeMover.cc"
 				>

@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -390,6 +390,30 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\medal\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\medal\._MedalExchangeMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\medal\._MedalExchangeMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\medal\._MedalMain.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\medal\._MedalMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\medal\._MedalMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\medal\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\medal\MedalExchangeMover.cc"
 				>
@@ -579,6 +603,26 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\star\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\star\._Extender.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\star\._StarAbinitio.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\star\._StarAbinitio.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\star\._StarAbinitioMain.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\star\._util.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\star\Extender.cc"
 				>
 				<FileConfiguration
@@ -763,6 +807,26 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\frag_picker\nonlocal\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\frag_picker\nonlocal\._NonlocalFrags.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\frag_picker\nonlocal\._NonlocalFrags.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\frag_picker\nonlocal\._NonlocalFragsMain.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\frag_picker\nonlocal\._NonlocalPair.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\frag_picker\nonlocal\._NonlocalPair.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\frag_picker\nonlocal\NonlocalFrags.cc"
 				>
 				<FileConfiguration
@@ -866,6 +930,110 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\nonlocal\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._BiasedFragmentMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._BiasedFragmentMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._Chunk.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._Chunk.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._HelixRotate.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._HelixRotate.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._Policy.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._Policy.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._PolicyFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._Region.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._Region.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._SheetTranslate.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._SheetTranslate.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._SimpleTreeBuilder.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._SimpleTreeBuilder.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._SingleFragmentMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._SingleFragmentMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._SingleFragmentMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._SmoothPolicy.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._StarTreeBuilder.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._StarTreeBuilder.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._TreeBuilder.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._TreeBuilder.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._TreeBuilderFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._UniformPolicy.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\nonlocal\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\nonlocal\BiasedFragmentMover.cc"
 				>

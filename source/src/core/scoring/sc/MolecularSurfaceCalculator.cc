@@ -21,13 +21,14 @@
 #define INCLUDED_core_scoring_sc_MolecularSurfaceCalculator_cc
 
 // Project Headers
+#include <core/scoring/sc/MolecularSurfaceCalculator.hh>
+
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/sc/MolecularSurfaceCalculator.fwd.hh>
-#include <core/scoring/sc/MolecularSurfaceCalculator.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator_Private.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/NumericTraits.hh>
@@ -329,8 +330,10 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 	// Pass 2: Add all atoms for the residue
 	int n =0;
 	for(std::vector<Atom>::iterator it = scatoms.begin(); it != scatoms.end(); ++it) {
+#ifndef WIN32
 		if(AddAtom(molecule, *it))
 			++n;
+#endif
 	}
 
 	return n;
@@ -346,7 +349,7 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 /// Returns true on success.
 
 int MolecularSurfaceCalculator::AddAtom(
-		int molecule,
+	int molecule,
 		Atom &atom)
 {
 	if(atom.radius <= 0)
@@ -385,7 +388,7 @@ int MolecularSurfaceCalculator::AssignAtomRadius(Atom &atom)
 				atom.radius = radius->radius;
 				if(TR.Trace.visible()) {
 					char buf[256];
-					snprintf(buf, sizeof(buf),
+					_snprintf(buf, sizeof(buf),
 						"Assigned atom radius to %s:%s at (%8.4f, %8.4f, %8.4f) = %.3f",
 						atom.residue,
 						atom.atom,

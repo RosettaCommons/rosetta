@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -390,6 +390,222 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\swa\rna\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._RNA_AnalyticLoopCloser.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._RNA_AnalyticLoopCloser.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._RNA_LoopCloseSampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_AnalyticalLoopCloseSampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_BaseCentroidScreener.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_BaseCentroidScreener.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_Base_Sugar_Rotamer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_Base_Sugar_Rotamer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_Classes.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_Clusterer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_CombineLongLoopFilterer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_CombineLongLoopFilterer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_FloatingBase_Sampler_Util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_JobParameters.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_JobParameters.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_JobParameters_Setup.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_Minimizer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_OutputData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_PoseSetup.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_PoseSetup.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_ResidueInfo.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_ResidueSampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_RotamerGenerator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_RotamerGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_RotamerGenerator_Wrapper.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_Util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_VDW_Bin_Screener.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_VDW_Bin_Screener.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\._StepWiseRNA_VirtualRiboseSampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\ERRASER_Modeler.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__ERRASER_Modeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__ERRASER_Modeler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__ERRASER_Modeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__ERRASER_Modeler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__ERRASER_Modeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__ERRASER_Modeler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__ERRASER_Modeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__ERRASER_Modeler.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\ERRASER_Modeler.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\ERRASER_Modeler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\FloatingBaseChainClosureJobParameter.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__FloatingBaseChainClosureJobParameter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__FloatingBaseChainClosureJobParameter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__FloatingBaseChainClosureJobParameter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__FloatingBaseChainClosureJobParameter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__FloatingBaseChainClosureJobParameter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__FloatingBaseChainClosureJobParameter.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__FloatingBaseChainClosureJobParameter.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__FloatingBaseChainClosureJobParameter.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\FloatingBaseChainClosureJobParameter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\FloatingBaseChainClosureJobParameter.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\swa\rna\RNA_AnalyticLoopCloser.cc"
 				>
@@ -575,15 +791,15 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_Base_Sugar_Rotamer.cc"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_BaseSugarRotamer.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Base_Sugar_Rotamer.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Base_Sugar_Rotamer.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_BaseSugarRotamer.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_BaseSugarRotamer.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -591,8 +807,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Base_Sugar_Rotamer.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Base_Sugar_Rotamer.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_BaseSugarRotamer.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_BaseSugarRotamer.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -600,8 +816,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Base_Sugar_Rotamer.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Base_Sugar_Rotamer.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_BaseSugarRotamer.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_BaseSugarRotamer.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -609,17 +825,17 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Base_Sugar_Rotamer.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Base_Sugar_Rotamer.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_BaseSugarRotamer.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_BaseSugarRotamer.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_Base_Sugar_Rotamer.fwd.hh"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_BaseSugarRotamer.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_Base_Sugar_Rotamer.hh"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_BaseSugarRotamer.hh"
 				>
 			</File>
 			<File
@@ -719,15 +935,15 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_FloatingBase_Sampler_Util.cc"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_FloatingBaseSamplerUtil.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBase_Sampler_Util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBase_Sampler_Util.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBaseSamplerUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBaseSamplerUtil.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -735,8 +951,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBase_Sampler_Util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBase_Sampler_Util.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBaseSamplerUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBaseSamplerUtil.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -744,8 +960,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBase_Sampler_Util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBase_Sampler_Util.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBaseSamplerUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBaseSamplerUtil.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -753,13 +969,13 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBase_Sampler_Util.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBase_Sampler_Util.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBaseSamplerUtil.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_FloatingBaseSamplerUtil.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_FloatingBase_Sampler_Util.hh"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_FloatingBaseSamplerUtil.hh"
 				>
 			</File>
 			<File
@@ -811,15 +1027,15 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_JobParameters_Setup.cc"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_JobParametersSetup.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParameters_Setup.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParameters_Setup.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParametersSetup.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParametersSetup.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -827,8 +1043,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParameters_Setup.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParameters_Setup.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParametersSetup.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParametersSetup.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -836,8 +1052,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParameters_Setup.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParameters_Setup.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParametersSetup.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParametersSetup.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -845,13 +1061,13 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParameters_Setup.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParameters_Setup.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParametersSetup.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_JobParametersSetup.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_JobParameters_Setup.hh"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_JobParametersSetup.hh"
 				>
 			</File>
 			<File
@@ -896,6 +1112,54 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_Minimizer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_Modeler.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Modeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Modeler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Modeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Modeler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Modeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Modeler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Modeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_Modeler.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_Modeler.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_Modeler.hh"
 				>
 			</File>
 			<File
@@ -1127,15 +1391,15 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_RotamerGenerator_Wrapper.cc"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_RotamerGeneratorWrapper.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGenerator_Wrapper.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGenerator_Wrapper.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGeneratorWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGeneratorWrapper.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1143,8 +1407,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGenerator_Wrapper.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGenerator_Wrapper.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGeneratorWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGeneratorWrapper.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1152,8 +1416,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGenerator_Wrapper.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGenerator_Wrapper.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGeneratorWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGeneratorWrapper.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1161,17 +1425,17 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGenerator_Wrapper.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGenerator_Wrapper.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGeneratorWrapper.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_RotamerGeneratorWrapper.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_RotamerGenerator_Wrapper.fwd.hh"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_RotamerGeneratorWrapper.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_RotamerGenerator_Wrapper.hh"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_RotamerGeneratorWrapper.hh"
 				>
 			</File>
 			<File
@@ -1219,15 +1483,15 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_VDW_Bin_Screener.cc"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_VDW_BinScreener.cc"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_Bin_Screener.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_Bin_Screener.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_BinScreener.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_BinScreener.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1235,8 +1499,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_Bin_Screener.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_Bin_Screener.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_BinScreener.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_BinScreener.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1244,8 +1508,8 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_Bin_Screener.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_Bin_Screener.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_BinScreener.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_BinScreener.xdc"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1253,17 +1517,17 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 					>
 					<Tool
 						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_Bin_Screener.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_Bin_Screener.xdc"
+						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_BinScreener.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__rna__StepWiseRNA_VDW_BinScreener.xdc"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_VDW_Bin_Screener.fwd.hh"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_VDW_BinScreener.fwd.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_VDW_Bin_Screener.hh"
+				RelativePath="..\..\..\src\protocols\swa\rna\StepWiseRNA_VDW_BinScreener.hh"
 				>
 			</File>
 			<File
@@ -1314,6 +1578,22 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\coarse_rna\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\coarse_rna\._CoarseRNA_DeNovoProtocol.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\coarse_rna\._CoarseRNA_Fragments.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\coarse_rna\._CoarseRNA_LoopCloser.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\coarse_rna\._CoarseRNA_LoopCloser.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\coarse_rna\CoarseRNA_DeNovoProtocol.cc"
 				>
@@ -1454,6 +1734,150 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\rna\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._FullAtomRNA_Fragments.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._FullAtomRNA_Fragments.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._MultipleDomainMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._MultipleDomainMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_BasePairClassifier.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_ChunkLibrary.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_ChunkLibrary.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_DataReader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_DataReader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_DeNovoProtocol.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_FragmentMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_FragmentMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_Fragments.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_Fragments.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_FragmentsClasses.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_FragmentsClasses.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_HelixAssembler.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_HelixAssembler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_IdealCoord.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_IdealCoord.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_JumpLibrary.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_JumpLibrary.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_LoopCloser.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_LoopCloser.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_MatchType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_Minimizer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_Minimizer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_ProtocolUtil.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_Relaxer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_Relaxer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_SecStructInfo.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_SecStructInfo.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_StructureParameters.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_StructureParameters.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._RNA_SuiteAssign.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rna\._rna_fragments_classes.fwd.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\rna\FullAtomRNA_Fragments.cc"
 				>
@@ -2323,6 +2747,70 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\swa\protein\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._MainChainTorsionClasses.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._MainChainTorsionSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseBetaAntiParallelJumpSampleGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseBetaAntiParallelUtil.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinCCD_Closer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinFilterer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinFragmentSampleGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinJumpSampleGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinLoopBridger.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinMainChainSampleGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinPacker.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinPoseMinimizer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinPoseSetup.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinResidueSampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinScreener.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\protein\._StepWiseProteinUtil.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\swa\protein\MainChainTorsionClasses.hh"
 				>
 			</File>
@@ -2991,6 +3479,70 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\swa\monte_carlo\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_AddMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_AddMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_AddOrDeleteMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_AddOrDeleteMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_DeleteMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_DeleteMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_O2StarMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_O2StarMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_SWA_MonteCarloMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_SWA_MonteCarloMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_SWA_MonteCarloUtil.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_TorsionMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._RNA_TorsionMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._SubToFullInfo.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._SubToFullInfo.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\monte_carlo\._types.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\swa\monte_carlo\RNA_AddMover.cc"
 				>
 				<FileConfiguration
@@ -3323,54 +3875,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\protocols\swa\monte_carlo\SubToFullInfo.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__monte_carlo__SubToFullInfo.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__monte_carlo__SubToFullInfo.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__monte_carlo__SubToFullInfo.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__monte_carlo__SubToFullInfo.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__monte_carlo__SubToFullInfo.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__monte_carlo__SubToFullInfo.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_d.5__protocols__swa__monte_carlo__SubToFullInfo.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_d.5__protocols__swa__monte_carlo__SubToFullInfo.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\swa\monte_carlo\SubToFullInfo.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\swa\monte_carlo\SubToFullInfo.hh"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\src\protocols\swa\monte_carlo\types.hh"
 				>
 			</File>
@@ -3378,6 +3882,106 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\swa\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._InputStreamWithResidueInfo.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._InputStreamWithResidueInfo.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._MainChainTorsionClasses.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._MainChainTorsionSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._PoseFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._PoseFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._PoseFilter_RMSD_Screen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._RigidBodySampler.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._RigidBodySampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWiseClusterer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWiseClusterer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWiseCombineSampleGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWiseDoNothingSampleGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWiseFilterer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWiseIdentitySampleGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWiseJobParameters.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWiseJobParameters.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWisePoseCombineSampleGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWisePoseSampleGenerator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWisePoseSampleGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWisePoseSetup.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWisePoseSetup.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWiseResidueSampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWiseScreener.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\swa\._StepWiseUtil.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\swa\InputStreamWithResidueInfo.cc"
 				>

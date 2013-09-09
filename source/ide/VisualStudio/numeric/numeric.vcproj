@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_DEBUG;_WINDOWS;NOMINMAX;WIN32_LEAN_AND_MEAN;_LIB;ZLIB_WINAPI"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;WIN32_LEAN_AND_MEAN;_LIB;ZLIB_WINAPI"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;WIN32_LEAN_AND_MEAN;_LIB;ZLIB_WINAPI"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -268,7 +268,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;BOINC;_LIB;ZLIB_WINAPI"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -344,7 +344,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;BOINC;ZLIB_WINAPI;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -393,6 +393,50 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\numeric\interpolation\spline\"
 			>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\._Bicubic_spline.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\._Bicubic_spline.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\._CompoundInterpolator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\._Cubic_spline.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\._Cubic_spline.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\._Interpolator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\._SimpleInterpolator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\._SplineGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\._TricubicSpline.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\._TricubicSpline.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\spline\._spline_functions.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\interpolation\spline\Bicubic_spline.cc"
 				>
@@ -761,6 +805,78 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\numeric\kdtree\"
 			>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._HyperRectangle.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._HyperRectangle.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._KDNode.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._KDNode.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._KDPoint.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._KDPoint.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._KDPointList.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._KDTree.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._KDTree.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._WrappedChar.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._WrappedPrimitive.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._WrappedReal.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._WrappedType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._calc_distance.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._constants.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._construct_kdtree.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._nearest_neighbors.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kdtree\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\kdtree\HyperRectangle.cc"
 				>
@@ -1198,6 +1314,14 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\numeric\expression_parser\"
 			>
 			<File
+				RelativePath="..\..\..\src\numeric\expression_parser\._Arithmetic.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\expression_parser\._Arithmetic.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\numeric\expression_parser\Arithmetic.cc"
 				>
 				<FileConfiguration
@@ -1249,6 +1373,270 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\numeric\"
 			>
+			<File
+				RelativePath="..\..\..\src\numeric\._BodyPosition.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._BodyPosition.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._BodyPosition.io.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._Calculator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._Calculator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._ClusteringTreeNode.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._ClusteringTreeNode.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._EulerAngles.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._EulerAngles.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._HomogeneousTransform.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._HomogeneousTransform.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._IOTraits.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._IntervalSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._IntervalSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._MathMatrix.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._MathMatrix_operations.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._MathTensor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._MathVector.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._MathVector_operations.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._MultiDimensionalHistogram.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._MultiDimensionalHistogram.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._NumericTraits.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._PCA.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._Quaternion.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._Quaternion.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._Quaternion.io.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._agglomerative_hierarchical_clustering.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._angle.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._color_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._constants.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._conversions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._fast_math.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._gmx_functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._interpolate.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._io.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._numeric.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._polynomial.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._polynomial.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._prob_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._roc_curve.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._roc_curve.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._sphericalVector.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._sphericalVector.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._statistics.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._trig.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._types.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyz.functions.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyz.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyz.io.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyz.json.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzMatrix.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzMatrix.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzMatrix.io.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzTransform.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzTransform.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzTransform.io.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzTriple.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzTriple.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzTriple.io.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzVector.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzVector.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzVector.io.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\._xyzVector.string.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\BodyPosition.fwd.hh"
 				>
@@ -1355,6 +1743,14 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\ClusteringTreeNode.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\EulerAngles.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\EulerAngles.hh"
 				>
 			</File>
 			<File
@@ -1950,6 +2346,22 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\numeric\kinematic_closure\"
 			>
 			<File
+				RelativePath="..\..\..\src\numeric\kinematic_closure\._bridgeObjects.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kinematic_closure\._dixon.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kinematic_closure\._kinematic_closure_helpers.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\kinematic_closure\._sturm.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\numeric\kinematic_closure\bridgeObjects.cc"
 				>
 				<FileConfiguration
@@ -2130,6 +2542,30 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\numeric\geometry\hashing\"
 			>
 			<File
+				RelativePath="..\..\..\src\numeric\geometry\hashing\._SixDHasher.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\geometry\hashing\._SixDHasher.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\geometry\hashing\._xyzStripeHash.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\geometry\hashing\._xyzStripeHash.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\geometry\hashing\._xyzStripeHashWithMeta.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\geometry\hashing\._xyzStripeHashWithMeta.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\numeric\geometry\hashing\SixDHasher.cc"
 				>
 				<FileConfiguration
@@ -2178,6 +2614,46 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\numeric\geometry\hashing\xyzStripeHash.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__geometry__hashing__xyzStripeHash.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__geometry__hashing__xyzStripeHash.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__geometry__hashing__xyzStripeHash.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__geometry__hashing__xyzStripeHash.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__geometry__hashing__xyzStripeHash.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__geometry__hashing__xyzStripeHash.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\numeric__numeric__geometry__hashing__xyzStripeHash.obj"
+						XMLDocumentationFileName="$(IntDir)\numeric__numeric__geometry__hashing__xyzStripeHash.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\..\src\numeric\geometry\hashing\xyzStripeHash.fwd.hh"
 				>
 			</File>
@@ -2197,6 +2673,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\numeric\nls\"
 			>
+			<File
+				RelativePath="..\..\..\src\numeric\nls\._lmmin.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\nls\lmmin.cc"
 				>
@@ -2245,6 +2725,50 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\numeric\random\"
 			>
+			<File
+				RelativePath="..\..\..\src\numeric\random\._DistributionSampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\._WeightedReservoirSampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\._WeightedSampler.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\._WeightedSampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\._mt19937.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\._random.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\._random.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\._random_permutation.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\._reservoir_sample.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\._uniform.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\random\._uniform.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\random\DistributionSampler.hh"
 				>
@@ -2373,6 +2897,22 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\numeric\model_quality\"
 			>
+			<File
+				RelativePath="..\..\..\src\numeric\model_quality\._RmsData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\model_quality\._maxsub.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\model_quality\._rms.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\model_quality\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\model_quality\RmsData.cc"
 				>
@@ -2514,6 +3054,26 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\numeric\interpolation\"
 			>
 			<File
+				RelativePath="..\..\..\src\numeric\interpolation\._Histogram.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\._Histogram.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\._all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\._interpolation.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\interpolation\._util.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\numeric\interpolation\Histogram.fwd.hh"
 				>
 			</File>
@@ -2577,6 +3137,18 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\numeric\fourier\"
 			>
+			<File
+				RelativePath="..\..\..\src\numeric\fourier\._FFT.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\fourier\._kiss_fft.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\numeric\fourier\._kiss_fft_state.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\numeric\fourier\FFT.cc"
 				>

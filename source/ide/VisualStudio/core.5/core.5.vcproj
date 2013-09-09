@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				StringPooling="false"
 				MinimalRebuild="true"
@@ -124,7 +124,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -198,7 +198,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -270,7 +270,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -345,7 +345,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -394,64 +394,56 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 	</References>
 	<Files>
 		<Filter
-			Name="\core\"
-			>
-			<File
-				RelativePath="..\..\..\src\core\init.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.5__core__init.obj"
-						XMLDocumentationFileName="$(IntDir)\core.5__core__init.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.5__core__init.obj"
-						XMLDocumentationFileName="$(IntDir)\core.5__core__init.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.5__core__init.obj"
-						XMLDocumentationFileName="$(IntDir)\core.5__core__init.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\core.5__core__init.obj"
-						XMLDocumentationFileName="$(IntDir)\core.5__core__init.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\init.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\svn_version.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\core\types.hh"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="\core\import_pose\pose_stream\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._ExtendedPoseInputStream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._LazySilentFilePoseInputStream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._LazySilentFilePoseInputStream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._MetaPoseInputStream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._PDBPoseInputStream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._PDBPoseInputStream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._PoseInputStream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._PoseInputStream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._PoseOutputStream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._SilentFilePoseInputStream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._SilentFilePoseInputStream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\pose_stream\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\import_pose\pose_stream\ExtendedPoseInputStream.cc"
 				>
@@ -785,6 +777,30 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\core\fragment\picking_old\vall\gen\"
 			>
 			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\gen\._LengthGen.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\gen\._LengthGen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\gen\._SecStructGen.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\gen\._SecStructGen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\gen\._VallFragmentGen.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\gen\._VallFragmentGen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\fragment\picking_old\vall\gen\LengthGen.cc"
 				>
 				<FileConfiguration
@@ -933,6 +949,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\core\import_pose\atom_tree_diffs\"
 			>
 			<File
+				RelativePath="..\..\..\src\core\import_pose\atom_tree_diffs\._atom_tree_diff.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\import_pose\atom_tree_diffs\atom_tree_diff.cc"
 				>
 				<FileConfiguration
@@ -980,6 +1000,46 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\core\fragment\picking_old\vall\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\._VallLibrarian.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\._VallLibrarian.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\._VallLibrary.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\._VallLibrary.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\._VallResidue.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\._VallResidue.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\._VallSection.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\._VallSection.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\._util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\._vall_io.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\fragment\picking_old\vall\VallLibrarian.cc"
 				>
@@ -1184,6 +1244,42 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\core\import_pose\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\._PDBSilentStruct.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\._PDBSilentStructCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\._PoseFromPDBLoader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\._PoseFromPDBLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\._PoseFromPDBLoaderCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\._import_pose.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\._import_pose_options.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\._import_pose_options.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\import_pose\._import_pose_options_creator.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\import_pose\PDBSilentStruct.cc"
 				>
@@ -1425,6 +1521,14 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\core\fragment\picking_old\"
 			>
 			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\._FragmentLibraryManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\._FragmentLibraryManager.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\fragment\picking_old\FragmentLibraryManager.cc"
 				>
 				<FileConfiguration
@@ -1476,6 +1580,38 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\core\fragment\picking_old\vall\eval\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\._ABEGOEval.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\._ABEGOEval.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\._EnergyEval.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\._EnergyEval.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\._IdentityEval.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\._IdentityEval.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\._VallFragmentEval.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\._VallFragmentEval.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\fragment\picking_old\vall\eval\ABEGOEval.cc"
 				>
@@ -1672,6 +1808,198 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\core\fragment\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._BBTorsionAndAnglesSRFD.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._BBTorsionSRFD.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._BBTorsionSRFD.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._BaseCacheUnit.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._ConstantLengthFragSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._ConstantLengthFragSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._ConstantLengthFragSetIterator_.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragCache.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragCache.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragID.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragID.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragID_Iterator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragID_Iterator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragSetCollection.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragSetCollection.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragmentIO.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragmentRmsd.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FragmentRmsd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._Frame.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._Frame.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FrameIterator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FrameIterator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FrameIteratorWorker_.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FrameIteratorWorker_.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FrameList.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FrameList.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._FrameListIterator_.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._IndependentBBTorsionSRFD.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._IndependentBBTorsionSRFD.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._JumpSRFD.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._JumpSRFD.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._JumpingFrame.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._JumpingFrame.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._OrderedFragSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._OrderedFragSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._OrderedFragSetIterator_.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._SRFD_Implementations.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._SecondaryStructure.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._SecondaryStructure.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._SecstructSRFD.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._SingleResidueFragData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._SingleResidueFragData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._TorsionSRFD.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\fragment\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\fragment\BBTorsionAndAnglesSRFD.cc"
 				>
@@ -2702,6 +3030,106 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\core\fragment\util.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="\core\init\"
+			>
+			<File
+				RelativePath="..\..\..\src\core\init\._init.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\init\._score_function_corrections.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\init\init.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__init__init.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__init__init.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__init__init.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__init__init.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__init__init.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__init__init.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__init__init.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__init__init.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\init\init.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\init\score_function_corrections.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__init__score_function_corrections.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__init__score_function_corrections.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__init__score_function_corrections.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__init__score_function_corrections.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__init__score_function_corrections.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__init__score_function_corrections.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.5__core__init__score_function_corrections.obj"
+						XMLDocumentationFileName="$(IntDir)\core.5__core__init__score_function_corrections.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\init\score_function_corrections.hh"
 				>
 			</File>
 		</Filter>

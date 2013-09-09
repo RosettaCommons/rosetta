@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -390,6 +390,70 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\fldsgn\potentials\sspot\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._HSPairPotential.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._HSPairPotential.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._NatbiasHelicesSheetPotential.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._NatbiasHelicesSheetPotential.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._NatbiasHelixPairPotential.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._NatbiasHelixPairPotential.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._NatbiasSecondaryStructureEnergy.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._NatbiasSecondaryStructureEnergy.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._NatbiasSecondaryStructureEnergyCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._NatbiasSheetPotential.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._NatbiasSheetPotential.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._NatbiasStrandPairPotential.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._NatbiasStrandPairPotential.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._SSPairPotential.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._SSPairPotential.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\fldsgn\potentials\sspot\HSPairPotential.cc"
 				>
@@ -739,6 +803,62 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\fldsgn\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._BluePrintBDR.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._BluePrintBDR.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._BluePrintBDRCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._CircularPermutation.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._CircularPermutation.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._CircularPermutationCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._MatchResidues.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._MatchResiduesMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._MatchResiduesMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._MatchResiduesMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._NcontactsCalculator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._SheetConstraintsRCG.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._SheetConstraintsRCG.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\._SheetCstGeneratorCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\fldsgn\BluePrintBDR.cc"
 				>
 				<FileConfiguration
@@ -1039,6 +1159,42 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\fldsgn\potentials\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\._AACompositionEnergy.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\._AACompositionEnergy.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\._AACompositionEnergyCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\._SetAACompositionPotential.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\._SetAACompositionPotential.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\._SetAACompositionPotentialCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\._SetSecStructEnergies.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\._SetSecStructEnergies.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\potentials\._SetSecStructEnergiesCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\fldsgn\potentials\AACompositionEnergy.cc"
 				>
 				<FileConfiguration
@@ -1198,6 +1354,66 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\flxbb\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._DesignTask.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._DesignTask.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._FilterStructs.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._FilterStructs.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._FlxbbDesign.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._FlxbbDesign.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._FlxbbDesignCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._FlxbbDesign_main.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._InterlockAroma.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._InterlockAroma.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._InterlockAromaCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._LayerDesignOperation.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._LayerDesignOperation.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._LayerDesignOperationCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\flxbb\._utility.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\flxbb\DesignTask.cc"
 				>
@@ -1542,6 +1758,126 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\fldsgn\filters\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._CoreDunbrackFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._CoreDunbrackFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._CoreDunbrackFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._FragQualFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._FragQualFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._FragQualFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._HSSTripletFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._HSSTripletFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._HSSTripletFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._HelixKinkFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._HelixKinkFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._HelixKinkFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._HelixPairingFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._HelixPairingFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._HelixPairingFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._InterlockingAromaFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._InterlockingAromaFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._InterlockingAromaFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._NcontactsFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._NcontactsFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._NcontactsFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._ParallelBetaPairingPreferenceFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._ParallelBetaPairingPreferenceFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._ParallelBetaPairingPreferenceFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._SecondaryStructureFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._SecondaryStructureFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._SecondaryStructureFilterCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._SheetTopologyFilter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._SheetTopologyFilter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\filters\._SheetTopologyFilterCreator.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\fldsgn\filters\CoreDunbrackFilter.cc"
 				>
@@ -2067,6 +2403,82 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\fldsgn\topology\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._BB_Pos.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._BB_Pos.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._BetaAlphaBetaMotif.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._BetaAlphaBetaMotif.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._DimerPairing.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._DimerPairing.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._HSSTriplet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._HSSTriplet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._HelixPairing.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._HelixPairing.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._SS_Info2.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._SS_Info2.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._Sheet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._Sheet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._SheetFoldTypeManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._SheetFoldTypeManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._StrandPairing.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._StrandPairing.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\fldsgn\topology\._util.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\fldsgn\topology\BB_Pos.cc"
 				>
 				<FileConfiguration
@@ -2540,62 +2952,6 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\fldsgn\topology\util.hh"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="\protocols\denovo_design\filters\"
-			>
-			<File
-				RelativePath="..\..\..\src\protocols\denovo_design\filters\ExposedHydrophobicsFilter.cc"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_f.5__protocols__denovo_design__filters__ExposedHydrophobicsFilter.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_f.5__protocols__denovo_design__filters__ExposedHydrophobicsFilter.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_f.5__protocols__denovo_design__filters__ExposedHydrophobicsFilter.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_f.5__protocols__denovo_design__filters__ExposedHydrophobicsFilter.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincDebug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_f.5__protocols__denovo_design__filters__ExposedHydrophobicsFilter.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_f.5__protocols__denovo_design__filters__ExposedHydrophobicsFilter.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="BoincRelease|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\protocols_f.5__protocols__denovo_design__filters__ExposedHydrophobicsFilter.obj"
-						XMLDocumentationFileName="$(IntDir)\protocols_f.5__protocols__denovo_design__filters__ExposedHydrophobicsFilter.xdc"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\denovo_design\filters\ExposedHydrophobicsFilter.fwd.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\denovo_design\filters\ExposedHydrophobicsFilter.hh"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\protocols\denovo_design\filters\ExposedHydrophobicsFilterCreator.hh"
 				>
 			</File>
 		</Filter>

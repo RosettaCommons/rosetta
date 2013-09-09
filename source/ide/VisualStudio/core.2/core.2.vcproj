@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				StringPooling="false"
 				MinimalRebuild="true"
@@ -124,7 +124,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -198,7 +198,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -270,7 +270,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -345,7 +345,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\local\include;..\..\..\external\boinc\lib;../../external/boinc/api;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -396,6 +396,90 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\core\conformation\symmetry\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymDof.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymDof.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymSlideInfo.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymSlideInfo.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmDataFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmDataLoader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmDataLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmDataLoaderCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmDataOptions.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmDataOptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmDataOptionsCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmetricConformation.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmetricConformation.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmetryInfo.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._SymmetryInfo.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._VirtualCoordinate.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._VirtualCoordinate.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._VirtualCoordinates.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\symmetry\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\conformation\symmetry\SymDof.cc"
 				>
@@ -805,6 +889,14 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\core\chemical\rna\"
 			>
 			<File
+				RelativePath="..\..\..\src\core\chemical\rna\._RNA_ResidueType.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\rna\._RNA_ResidueType.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\chemical\rna\RNA_ResidueType.cc"
 				>
 				<FileConfiguration
@@ -856,6 +948,26 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\core\kinematics\tree\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\tree\._Atom.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\tree\._Atom.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\tree\._Atom_.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\tree\._BondedAtom.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\tree\._JumpAtom.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\kinematics\tree\Atom.fwd.hh"
 				>
@@ -1000,6 +1112,134 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\core\kinematics\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._AtomPointer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._AtomPointer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._AtomTree.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._AtomTree.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._AtomWithDOFChange.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._AtomWithDOFChange.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._DomainMap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._DomainMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._Edge.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._Edge.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._Exceptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._FoldTree.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._FoldTree.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._Jump.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._Jump.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._MinimizerMapBase.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._MinimizerMapBase.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._MoveMap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._MoveMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._RT.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._RT.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._ResidueCoordinateChangeList.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._ResidueCoordinateChangeList.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._ShortestPathInFoldTree.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._ShortestPathInFoldTree.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._Stub.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._Stub.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._constants.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._types.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\kinematics\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\kinematics\AtomPointer.fwd.hh"
 				>
@@ -1612,6 +1852,258 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\core\chemical\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._AA.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Adduct.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Adduct.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Atom.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Atom.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._AtomICoor.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._AtomICoor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._AtomType.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._AtomType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._AtomTypeDatabaseIO.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._AtomTypeDatabaseIO.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._AtomTypeSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._AtomTypeSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Bond.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Bond.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._CSDAtomType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._CSDAtomTypeSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._CSDAtomTypeSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ChemicalManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ChemicalManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Element.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Element.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ElementSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ElementSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._IdealBondLengthSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._IdealBondLengthSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._MMAtomType.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._MMAtomType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._MMAtomTypeSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._MMAtomTypeSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Orbital.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Orbital.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Patch.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._Patch.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._PatchOperation.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._PatchOperation.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResConnID.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResConnID.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueConnection.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueConnection.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueDatabaseIO.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueDatabaseIO.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueGraphTypes.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueLoader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueLoaderCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueLoaderOptions.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueLoaderOptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueLoaderOptionsCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueSelector.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueSelector.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueSupport.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueType.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueTypeSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._ResidueTypeSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._VariantType.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._VariantType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._adduct_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._automorphism.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._residue_io.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._types.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\chemical\AA.cc"
 				>
@@ -3109,6 +3601,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\core\conformation\orbitals\"
 			>
 			<File
+				RelativePath="..\..\..\src\core\conformation\orbitals\._OrbitalXYZCoords.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\conformation\orbitals\OrbitalXYZCoords.cc"
 				>
 				<FileConfiguration
@@ -3157,6 +3653,18 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\core\chemical\carbohydrates\"
 			>
 			<File
+				RelativePath="..\..\..\src\core\chemical\carbohydrates\._CarbohydrateInfo.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\carbohydrates\._CarbohydrateInfo.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\carbohydrates\._database_io.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\chemical\carbohydrates\CarbohydrateInfo.cc"
 				>
 				<FileConfiguration
@@ -3204,10 +3712,86 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				RelativePath="..\..\..\src\core\chemical\carbohydrates\CarbohydrateInfo.hh"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\carbohydrates\database_io.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__carbohydrates__database_io.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__carbohydrates__database_io.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__carbohydrates__database_io.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__carbohydrates__database_io.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__carbohydrates__database_io.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__carbohydrates__database_io.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\core.2__core__chemical__carbohydrates__database_io.obj"
+						XMLDocumentationFileName="$(IntDir)\core.2__core__chemical__carbohydrates__database_io.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\carbohydrates\database_io.hh"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="\core\chemical\orbitals\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\chemical\orbitals\._AssignOrbitals.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\orbitals\._ICoorOrbitalData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\orbitals\._OrbitalType.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\orbitals\._OrbitalType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\orbitals\._OrbitalTypeMapper.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\orbitals\._OrbitalTypeMapper.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\orbitals\._OrbitalTypeSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\orbitals\._OrbitalTypeSet.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\chemical\orbitals\AssignOrbitals.cc"
 				>
@@ -3444,6 +4028,134 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\core\conformation\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._AbstractRotamerTrie.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._AbstractRotamerTrie.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._Atom.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._Atom.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._AtomGraph.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._AtomGraph.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._AtomGraphData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._AtomGraphData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._Conformation.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._Conformation.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._PointGraph.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._PointGraph.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._PointGraphData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._PointGraphData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._PseudoBond.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._PseudoBond.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._Residue.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._Residue.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._Residue.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._ResidueFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._ResidueKinWriter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._ResidueKinWriter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._ResidueMatcher.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._ResidueMatcher.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._RotamerSetBase.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._RotamerSetBase.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._RotamerSetCacheableDataType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._UltraLightResidue.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._UltraLightResidue.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._find_neighbors.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._find_neighbors.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\conformation\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\conformation\AbstractRotamerTrie.fwd.hh"
 				>
@@ -4057,6 +4769,126 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\core\id\"
 			>
 			<File
+				RelativePath="..\..\..\src\core\id\._AtomID.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._AtomID.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._AtomID_Map.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._AtomID_Map.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._AtomID_Mask.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._AtomID_Mask.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._CacheableAtomID_MapVector.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._CacheableAtomID_MapVector.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._DOF_ID.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._DOF_ID.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._DOF_ID_Map.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._DOF_ID_Map.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._DOF_ID_Mask.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._DOF_ID_Mask.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._DOF_ID_Range.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._DOF_ID_Range.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._Exceptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._JumpID.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._JumpID.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._NamedAtomID.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._NamedAtomID.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._NamedStubID.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._NamedStubID.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._SequenceMapping.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._SequenceMapping.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._TorsionID.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._TorsionID.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._TorsionID_Range.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._TorsionID_Range.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\id\._types.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\core\id\AtomID.cc"
 				>
 				<FileConfiguration
@@ -4540,6 +5372,86 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\core\chemical\sdf\"
 			>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._MolData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._MolData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._ctab_base.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._ctab_base.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._ctab_parser.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._ctab_parser.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._ctab_typer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._ctab_typer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._mol_parser.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._mol_parser.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._mol_util.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._mol_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._mol_writer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._mol_writer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._sdf_parser.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._sdf_parser.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._v2_parser.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._v2_parser.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._v3_parser.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\chemical\sdf\._v3_parser.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\core\chemical\sdf\MolData.cc"
 				>

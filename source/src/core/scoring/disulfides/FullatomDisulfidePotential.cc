@@ -425,7 +425,7 @@ FullatomDisulfidePotential::score_this_disulfide(
 		// z <- (x-location)/scale;
 	  // score <- x^2/2 - Log[Erfc[-((s x)/Sqrt[2])]] + (1/2) (Log[2] + Log[\[Pi]]) + Log[s]
 		core::Real z = (ssdist-params_.d_location)/params_.d_scale;
-		core::Real score_d = z*z/2 - log( errfc( -params_.d_shape*z / sqrt(2) ) + mest_ );
+		core::Real score_d = z*z/2 - log( errfc( -params_.d_shape*z / sqrt(2.) ) + mest_ );
 		score += wt_len_*score_d;
 	}
 
@@ -496,7 +496,7 @@ FullatomDisulfidePotential::get_disulfide_derivatives(
 	  // score <- x^2/2 - Log[Erfc[-((s x)/Sqrt[2])]] + (1/2) (Log[2] + Log[\[Pi]]) + Log[s]
 		core::Real z = (ssdist-params_.d_location)/params_.d_scale;
 		core::Real dscore_d = z/params_.d_scale -
-			( exp( -0.5*z*z*params_.d_shape*params_.d_shape ) * sqrt(2/pi) * params_.d_shape ) / (params_.d_scale * errfc(-params_.d_shape*z / sqrt(2) ) + 1e-12 );
+			( exp( -0.5*z*z*params_.d_shape*params_.d_shape ) * sqrt(2./pi) * params_.d_shape ) / (params_.d_scale * errfc(-params_.d_shape*z / sqrt(2.) ) + 1.e-12 );
 		dscore_d = weights[ dslf_fa13 ]*wt_len_*dscore_d;
 
 		numeric::deriv::distance_f1_f2_deriv( res1.xyz( i_sg1 ), res2.xyz( i_sg2 ), d, f1, f2 );

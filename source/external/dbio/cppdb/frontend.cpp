@@ -692,11 +692,19 @@ namespace cppdb {
 
 	char const *version_string()
 	{
+#ifdef WIN32
+		return "0.3.0";
+#else
 		return CPPDB_VERSION;
+#endif
 	}
 	int version_number()
 	{
+#ifdef WIN32
+		return 300;
+#else
 		return CPPDB_MAJOR * 10000 + CPPDB_MINOR * 100 + CPPDB_PATCH;
+#endif
 	}
 
 }  // cppdb

@@ -917,7 +917,7 @@ RotamerLibrary::create_fa_dunbrack_libraries_from_binary()
 	}
 }
 
-void RotamerLibrary::RotamerLibrary::create_centroid_rotamer_libraries_from_ASCII()
+void RotamerLibrary::create_centroid_rotamer_libraries_from_ASCII()
 {
     using namespace chemical;
     using namespace core::pack::dunbrack::cenrot;

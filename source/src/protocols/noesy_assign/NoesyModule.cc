@@ -217,7 +217,7 @@ void NoesyModule::read_input_files() {
 			if ( res_input_file.good() ) {
 				resonances->read_from_stream( res_input_file );
 				if ( tr.Debug.visible() ) {
-					utility::io::ozstream output_file( "cs_"+ObjexxFCL::string_of( ceil(ifile/2 ))+".dat" );
+					utility::io::ozstream output_file( "cs_"+ObjexxFCL::string_of( ceil(ifile/2. ))+".dat" );
 					resonances->write_to_stream( output_file );
 				}
 			} else {

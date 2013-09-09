@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_DEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -390,6 +390,14 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\basic\gpu\"
 			>
+			<File
+				RelativePath="..\..\..\src\basic\gpu\._GPU.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\gpu\._Timer.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\basic\gpu\GPU.cc"
 				>
@@ -482,6 +490,22 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\basic\database\insert_statement_generator\"
 			>
+			<File
+				RelativePath="..\..\..\src\basic\database\insert_statement_generator\._InsertGenerator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\insert_statement_generator\._InsertGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\insert_statement_generator\._RowData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\insert_statement_generator\._RowData.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\basic\database\insert_statement_generator\InsertGenerator.cc"
 				>
@@ -582,6 +606,42 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\basic\options\"
 			>
+			<File
+				RelativePath="..\..\..\src\basic\options\._PyRosettaFunctions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\._after_opts.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\._all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\._all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\._option.cc.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\._option.cc.include.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\._option.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\._option_macros.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\basic\options\PyRosettaFunctions.cc"
 				>
@@ -782,6 +842,46 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\basic\database\schema_generator\"
 			>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\._Column.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\._Column.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\._Constraint.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\._Constraint.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\._DbDataType.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\._DbDataType.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\._ForeignKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\._Index.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\._PrimaryKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\schema_generator\._Schema.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\basic\database\schema_generator\Column.cc"
 				>
@@ -1107,6 +1207,14 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\basic\svd\"
 			>
 			<File
+				RelativePath="..\..\..\src\basic\svd\._SVD_Solver.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\svd\._SVD_Solver.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\svd\SVD_Solver.cc"
 				>
 				<FileConfiguration
@@ -1158,6 +1266,18 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\basic\resource_manager\fallback_configuration\"
 			>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\fallback_configuration\._NativeFallbackConfiguration.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\fallback_configuration\._NativeFallbackConfiguration.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\fallback_configuration\._NativeFallbackConfigurationCreator.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\basic\resource_manager\fallback_configuration\NativeFallbackConfiguration.cc"
 				>
@@ -1214,6 +1334,62 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\basic\resource_manager\locator\"
 			>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._DatabaseResourceLocator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._DatabaseResourceLocator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._DatabaseResourceLocatorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._FileListResourceLocator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._FileListResourceLocator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._FileListResourceLocatorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._FileSystemResourceLocator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._FileSystemResourceLocator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._FileSystemResourceLocatorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._NullResourceLocator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._NullResourceLocator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._NullResourceLocatorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._StringResourceStream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\locator\._StringResourceStream.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\basic\resource_manager\locator\DatabaseResourceLocator.cc"
 				>
@@ -1475,6 +1651,62 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\basic\datacache\"
 			>
 			<File
+				RelativePath="..\..\..\src\basic\datacache\._BasicDataCache.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._BasicDataCache.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._CacheableData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._CacheableData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._CacheableString.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._CacheableString.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._CacheableStringFloatMap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._CacheableStringFloatMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._CacheableStringMap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._CacheableStringMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._DataCache.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._DataCache.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._DiagnosticData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\datacache\._DiagnosticData.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\datacache\BasicDataCache.cc"
 				>
 				<FileConfiguration
@@ -1572,8 +1804,104 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 		</Filter>
 		<Filter
+			Name="\basic\sampling\orientations\"
+			>
+			<File
+				RelativePath="..\..\..\src\basic\sampling\orientations\._QuaternionGrid.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\sampling\orientations\._QuaternionGrid.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\sampling\orientations\QuaternionGrid.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__sampling__orientations__QuaternionGrid.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__sampling__orientations__QuaternionGrid.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__sampling__orientations__QuaternionGrid.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__sampling__orientations__QuaternionGrid.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__sampling__orientations__QuaternionGrid.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__sampling__orientations__QuaternionGrid.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\basic__basic__sampling__orientations__QuaternionGrid.obj"
+						XMLDocumentationFileName="$(IntDir)\basic__basic__sampling__orientations__QuaternionGrid.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\sampling\orientations\QuaternionGrid.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\sampling\orientations\QuaternionGrid.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="\basic\database\"
 			>
+			<File
+				RelativePath="..\..\..\src\basic\database\._DatabaseSessionFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\._DatabaseSessionLoader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\._DatabaseSessionLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\._DatabaseSessionLoaderCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\._DatabaseSessionOptions.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\._DatabaseSessionOptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\._DatabaseSessionOptionsCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\._open.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\database\._sql_utils.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\basic\database\DatabaseSessionFactory.hh"
 				>
@@ -1774,6 +2102,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\basic\"
 			>
+			<File
+				RelativePath="..\..\..\src\basic\._ComparingTracer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._Emitter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._MemTracer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._MetricValue.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._MetricValue.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._MetricValueIO.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._Tracer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._Tracer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._TracerToFile.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._basic.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._interpolate.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._prof.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\._pymol_chains.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\basic\ComparingTracer.cc"
 				>
@@ -2190,6 +2570,150 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\basic\resource_manager\"
 			>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._FallbackConfiguration.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._FallbackConfiguration.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._FallbackConfigurationCreator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._FallbackConfigurationCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._FallbackConfigurationFactory.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._FallbackConfigurationFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._JobOptions.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._JobOptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._LazyResourceManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._LazyResourceManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLoader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLoaderCreator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLoaderCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLoaderFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLoaderRegistrator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLocator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLocator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLocatorCreator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLocatorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLocatorFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceLocatorRegistrator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceManagerCreator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceManagerCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceManagerFactory.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceManagerFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceOptions.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceOptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceOptionsCreator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceOptionsCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceOptionsFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._ResourceOptionsRegistrator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._types.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\resource_manager\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\basic\resource_manager\FallbackConfiguration.cc"
 				>
@@ -3019,6 +3543,546 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\basic\options\keys\"
 			>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\._AnchoredDesign.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._DenovoProteinDesign.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._DomainAssembly.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._FloppyTail.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._LoopModel.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._MM.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._MonteCarlo.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._OptionKeys.cc.gen0.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._OptionKeys.cc.gen1.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._OptionKeys.cc.gen2.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._OptionKeys.cc.gen3.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._OptionKeys.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._PCS.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._ProQ.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._RBSegmentRelax.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._SSrbrelax.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._abinitio.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._abrelax.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._antibody.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._archive.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._assembly.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._backrub.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._batch_relax.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._bbg.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._blivens.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._boinc.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._broker.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._canonical_sampling.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._carbohydrates.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._casp.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._chemical.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._chemically_conjugated_docking.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._chrisk.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._chunk.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._cluster.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._cm.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._cmiles.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._constraints.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._contactMap.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._corrections.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._cp.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._crossmatch.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._cryst.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._csa.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._cutoutdomain.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._dc.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._ddg.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._dna.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._docking.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._dwkulp.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._edensity.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._els.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._enzdes.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._evaluation.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._evolution.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._fast_loops.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._features.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._filters.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._fingerprint.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._fldsgn.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._flexPepDocking.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._flexpack.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._flxbb.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._fold_and_dock.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._fold_cst.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._fold_from_loops.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._frags.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._gpu.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._helixAssembly.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._holes.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._hotspot.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._in.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._inout.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._james.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._jd2.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._jumps.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._krassk.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._lh.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._loopfcst.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._loops.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._lp.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._match.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._matdes.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._mc.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._membrane.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._mh.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._mike.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._mistakes.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._motifs.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._ms.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._murphp.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._mysql.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._nonlocal.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._optE.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._optimization.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._orbitals.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._out.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._pH.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._packing.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._packstat.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._parser.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._patterson.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._pb_potential.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._pepspec.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._phil.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._pocket_grid.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._pose_metrics.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._qsar.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._rbe.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._rdc.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._relax.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._remodel.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._resample.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._rescore.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._residues.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._rigid.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._rna.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._robert.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._rot_anl.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._rotamerdump.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._run.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._score.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._sewing.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._sicdock.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._smhybrid.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._strand_assembly.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._swa.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._symmetry.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._templates.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._threadsc.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._ufv.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._willmatch.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\._wum.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\AnchoredDesign.OptionKeys.gen.hh"
 				>
 			</File>
@@ -3231,6 +4295,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\ProQ.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\RBSegmentRelax.OptionKeys.gen.hh"
 				>
 			</File>
@@ -3335,6 +4403,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\contactMap.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\corrections.OptionKeys.gen.hh"
 				>
 			</File>
@@ -3352,6 +4424,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\basic\options\keys\csa.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\cutoutdomain.OptionKeys.gen.hh"
 				>
 			</File>
 			<File
@@ -3443,6 +4519,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\full_model.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\gpu.OptionKeys.gen.hh"
 				>
 			</File>
@@ -3515,7 +4595,15 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\mh.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\mike.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\options\keys\mistakes.OptionKeys.gen.hh"
 				>
 			</File>
 			<File
@@ -3655,6 +4743,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\basic\options\keys\sewing.OptionKeys.gen.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\basic\options\keys\sicdock.OptionKeys.gen.hh"
 				>
 			</File>
@@ -3698,6 +4790,30 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\basic\message_listening\"
 			>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\._DbMoverMessageListener.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\._DbMoverMessageListener.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\._MessageListener.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\._MessageListener.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\._MessageListenerFactory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\basic\message_listening\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\basic\message_listening\DbMoverMessageListener.cc"
 				>

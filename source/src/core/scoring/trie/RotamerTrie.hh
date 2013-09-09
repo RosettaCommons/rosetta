@@ -37,6 +37,7 @@
  #include <core/scoring/etable/etrie/CountPairDataGeneric.hh> // WIN32 INCLUDE
  #include <core/scoring/elec/ElecAtom.hh> // WIN32 INCLUDE
  #include <core/scoring/hbonds/hbtrie/HBCPData.hh> // WIN32 INCLUDE
+ #include <core/scoring/vdwaals/VDWTrie.hh>
 #endif
 // Project Headers
 #include <core/scoring/etable/EtableEnergy.fwd.hh>

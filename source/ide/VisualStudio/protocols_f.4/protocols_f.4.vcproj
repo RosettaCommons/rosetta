@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -390,6 +390,62 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\optimize_weights\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._DDGBindOptEData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._DDGBindOptEData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._DGBindOptEData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._DGBindOptEData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._IterativeOptEDriver.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._IterativeOptEDriver.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._NestedEnergyTermOptEData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._NestedEnergyTermOptEData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._OptEData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._OptEData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._OptEMultifunc.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._OptEMultifunc.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._PNatLigPoseOptEData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\optimize_weights\._PNatLigPoseOptEData.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\optimize_weights\DDGBindOptEData.cc"
 				>
@@ -731,6 +787,14 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\RotamerDump\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\RotamerDump\._RotamerDumpMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\RotamerDump\._RotamerDumpMover.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\RotamerDump\RotamerDumpMover.cc"
 				>
 				<FileConfiguration
@@ -782,6 +846,14 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\make_rot_lib\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\make_rot_lib\._MakeRotLib.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\make_rot_lib\._RotData.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\make_rot_lib\MakeRotLib.cc"
 				>
@@ -874,6 +946,22 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\ddg\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\ddg\._ddGData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\ddg\._ddGData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\ddg\._ddGMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\ddg\._ddG_main.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\ddg\ddGData.cc"
 				>
@@ -1015,6 +1103,18 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\contact_map\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\contact_map\._ContactMap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\contact_map\._ContactMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\contact_map\._ContactMapCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\contact_map\ContactMap.cc"
 				>
 				<FileConfiguration
@@ -1070,6 +1170,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\kinmatch\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\kinmatch\._FunGroupTK.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\kinmatch\FunGroupTK.cc"
 				>

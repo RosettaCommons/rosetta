@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -390,6 +390,90 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\forge\remodel\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelAccumulator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelConstraintGenerator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelConstraintGenerator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelDesignMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelEnzdesCstModule.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelEnzdesCstModule.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelGlobalFrame.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelGlobalFrame.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelLoopMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelLoopMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelLoopMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelMoverCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelRotamerLinks.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelRotamerLinks.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelRotamerLinksCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._RemodelWorkingSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._ResidueVicinityCstGeneratorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\remodel\._ResidueVicinityRCG.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\forge\remodel\RemodelAccumulator.cc"
 				>
@@ -919,6 +1003,26 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\forge\methods\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\forge\methods\._chainbreak_eval.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\methods\._fold_tree_functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\methods\._fragment_functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\methods\._pose_mod.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\methods\._util.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\forge\methods\chainbreak_eval.cc"
 				>
 				<FileConfiguration
@@ -1142,6 +1246,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\pockets\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._DarcElectrostatics.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._DarcElectrostatics.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._DarcParticleSwarmMinimizer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._DarcParticleSwarmMinimizer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._Fingerprint.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._Fingerprint.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._FingerprintMultifunc.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._FingerprintMultifunc.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._PocketConstraint.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._PocketConstraint.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._PocketConstraintCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._PocketGrid.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\pockets\._PocketGrid.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\pockets\DarcElectrostatics.cc"
 				>
@@ -1439,6 +1595,62 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\forge\constraints\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._ConstraintFileCstGeneratorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._ConstraintFileRCG.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._ConstraintFileRCG.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._InverseRotamersCstGeneratorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._InverseRotamersRCG.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._InverseRotamersRCG.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._InvrotTreeCstGeneratorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._InvrotTreeRCG.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._InvrotTreeRCG.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._NtoCCstGeneratorCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._NtoC_RCG.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._NtoC_RCG.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._RemoveCsts.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\constraints\._RemoveCstsCreator.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\forge\constraints\ConstraintFileCstGeneratorCreator.hh"
 				>
 			</File>
@@ -1699,6 +1911,30 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\forge\components\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\forge\components\._BDR.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\components\._BDR.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\components\._BDRSegmentInfo.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\components\._BDRSegmentInfo.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\components\._VarLengthBuild.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\components\._VarLengthBuild.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\forge\components\BDR.cc"
 				>
 				<FileConfiguration
@@ -1807,6 +2043,18 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\cluster\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\cluster\._APCluster.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\cluster\._APCluster.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\cluster\._cluster.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\cluster\APCluster.cc"
 				>
 				<FileConfiguration
@@ -1902,6 +2150,102 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\forge\build\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._Bridge.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._Bridge.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._BuildInstruction.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._BuildInstruction.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._BuildManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._BuildManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._ConnectRight.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._ConnectRight.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._GrowLeft.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._GrowLeft.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._GrowRight.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._GrowRight.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._Interval.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._Interval.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._RelativeConnectRight.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._RelativeConnectRight.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._RelativeSequencePosition.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._RelativeSequencePosition.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._SegmentInsert.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._SegmentInsert.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._SegmentRebuild.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._SegmentRebuild.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._SegmentSwap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\forge\build\._SegmentSwap.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\forge\build\Bridge.cc"
 				>
@@ -2402,6 +2746,114 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\loophash\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._BackboneDB.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._Exceptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._FastGapMover.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._FastGapMover.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LocalInserter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LocalInserter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashDiversifier.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashDiversifierCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashLibrary.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashLibrary.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashLibraryLoader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashLibraryLoader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashLibraryLoaderCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashLibraryOptions.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashLibraryOptions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashLibraryOptionsCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashMap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashMoverWrapper.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashMoverWrapperCreator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashRelaxProtocol.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashSampler.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._LoopHashSampler.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._MPI_LoopHashRefine.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._MPI_LoopHashRefine_Emperor.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._MPI_LoopHashRefine_Master.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._Mover_LoopHashRefine.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\loophash\._WorkUnit_LoopHash.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\loophash\BackboneDB.cc"
 				>

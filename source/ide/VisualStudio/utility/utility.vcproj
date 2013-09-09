@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_DEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;NDEBUG;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boost;..\..\..\external\boinc\zip;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -391,6 +391,18 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\utility\libsvm\"
 			>
+			<File
+				RelativePath="..\..\..\src\utility\libsvm\._Svm.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\libsvm\._Svm_rosetta.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\libsvm\._Svm_rosetta.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\utility\libsvm\Svm.cc"
 				>
@@ -488,6 +500,14 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\utility\tag\"
 			>
 			<File
+				RelativePath="..\..\..\src\utility\tag\._Tag.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\tag\._Tag.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\utility\tag\Tag.cc"
 				>
 				<FileConfiguration
@@ -539,6 +559,22 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\utility\lua\"
 			>
+			<File
+				RelativePath="..\..\..\src\utility\lua\._LuaIterator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\lua\._LuaIterator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\lua\._LuaObject.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\lua\._LuaObject.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\utility\lua\LuaIterator.cc"
 				>
@@ -639,6 +675,62 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\utility\pointer\"
 			>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._ReferenceCount.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._ReferenceCount.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._ReferenceCountMI.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._ReferenceCountMI.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._ReferenceCountMI_.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._ReferenceCountMI_.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._access_ptr.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._access_ptr.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._owning_ptr.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._owning_ptr.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._owning_ptr.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\pointer\._pointer.functions.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\utility\pointer\ReferenceCount.cc"
 				>
@@ -779,6 +871,154 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\utility\options\keys\"
 			>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._AnyOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._AnyOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._AnyVectorOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._AnyVectorOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._BooleanOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._BooleanOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._BooleanVectorOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._BooleanVectorOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._FileOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._FileOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._FileVectorOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._FileVectorOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._IntegerOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._IntegerOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._IntegerVectorOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._IntegerVectorOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._OptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._OptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._OptionKeys.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._PathOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._PathOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._PathVectorOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._PathVectorOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._RealOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._RealOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._RealVectorOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._RealVectorOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._ScalarOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._ScalarOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._StringOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._StringOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._StringVectorOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._StringVectorOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._VectorOptionKey.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._VectorOptionKey.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\keys\._all.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\utility\options\keys\AnyOptionKey.fwd.hh"
 				>
@@ -972,6 +1212,14 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\utility\excn\"
 			>
 			<File
+				RelativePath="..\..\..\src\utility\excn\._EXCN_Base.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\excn\._Exceptions.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\utility\excn\EXCN_Base.hh"
 				>
 			</File>
@@ -1023,6 +1271,50 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\utility\json_spirit\"
 			>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\._json_spirit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\._json_spirit_error_position.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\._json_spirit_reader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\._json_spirit_reader_template.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\._json_spirit_stream_reader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\._json_spirit_tools.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\._json_spirit_utils.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\._json_spirit_value.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\._json_spirit_writer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\._json_spirit_writer_options.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\json_spirit\._json_spirit_writer_template.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\utility\json_spirit\json_spirit.h"
 				>
@@ -1231,6 +1523,266 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\utility\"
 			>
+			<File
+				RelativePath="..\..\..\src\utility\._Binary_Util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._BitSet.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._BitSet.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._BitVector.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._BitVector.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._Bound.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._Bound.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._DereferenceIterator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._Factory.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._FixedSizeLexicographicalIterator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._FixedSizeLexicographicalIterator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._FixedSizeLexicographicalIterator.tmpl.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._IndirectSorter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._LexicographicalIterator.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._LexicographicalIterator.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._OrderedTuple.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._OrderedTuple.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._PeriodicSplineReader.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._PeriodicSplineReader.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._PyAssert.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._PyExitCallback.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._PyExitCallback.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._PyHelper.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._Show.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._SimulateMPI.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._SimulateMPI.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._TopScoreSelector.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._TopScoreSelector.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._assert.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._basic_sys_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._curl.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._down_cast.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._exit.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._fix_boinc_read.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._fixedsizearray1.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._fixedsizearray1.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._heap.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._heap.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._in_place_list.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._in_place_list.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._inline_file_provider.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._integer_mapping.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._integer_mapping.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._iter_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._minmax.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._mpi_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._recent_history_queue.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._sort_predicates.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._static_database.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._stream_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._string_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._utility.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._vector0.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._vector0.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._vector0_bool.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._vector1.functions.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._vector1.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._vector1.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._vector1_bool.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._vectorL.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._vectorL.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._vectorL_Selector.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\._vectorL_bool.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\utility\Binary_Util.cc"
 				>
@@ -1557,6 +2109,50 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 			<File
 				RelativePath="..\..\..\src\utility\basic_sys_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\curl.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__curl.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__curl.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__curl.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__curl.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__curl.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__curl.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\utility__utility__curl.obj"
+						XMLDocumentationFileName="$(IntDir)\utility__utility__curl.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\curl.hh"
 				>
 			</File>
 			<File
@@ -2012,6 +2608,186 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\utility\options\"
 			>
 			<File
+				RelativePath="..\..\..\src\utility\options\._AnyOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._AnyOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._AnyVectorOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._AnyVectorOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._BooleanOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._BooleanOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._BooleanVectorOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._BooleanVectorOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._FileOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._FileOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._FileVectorOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._FileVectorOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._IntegerOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._IntegerOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._IntegerVectorOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._IntegerVectorOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._Option.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._Option.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._OptionCollection.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._OptionCollection.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._PathOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._PathOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._PathVectorOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._PathVectorOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._RealOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._RealOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._RealVectorOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._RealVectorOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._ScalarOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._ScalarOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._ScalarOption_T_.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._ScalarOption_T_.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._StringOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._StringOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._StringVectorOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._StringVectorOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._VariantOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._VariantOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._VectorOption.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._VectorOption.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._VectorOption_T_.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._VectorOption_T_.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\options\._mpi_stderr.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\utility\options\AnyOption.fwd.hh"
 				>
 			</File>
@@ -2276,6 +3052,22 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\utility\sql_database\"
 			>
 			<File
+				RelativePath="..\..\..\src\utility\sql_database\._DatabaseSessionManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\sql_database\._DatabaseSessionManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\sql_database\._types.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\sql_database\._util.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\utility\sql_database\DatabaseSessionManager.cc"
 				>
 				<FileConfiguration
@@ -2376,6 +3168,10 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\utility\boinc\"
 			>
 			<File
+				RelativePath="..\..\..\src\utility\boinc\._boinc_util.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\utility\boinc\boinc_util.cc"
 				>
 				<FileConfiguration
@@ -2423,6 +3219,74 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\utility\io\"
 			>
+			<File
+				RelativePath="..\..\..\src\utility\io\._all.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._all.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._icstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._icstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._irstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._irstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._izstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._izstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._mpistream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._ocstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._ocstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._orstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._orstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._ozstream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._ozstream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\io\._zipstream.hpp"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\utility\io\all.fwd.hh"
 				>
@@ -2655,6 +3519,30 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\utility\file\"
 			>
+			<File
+				RelativePath="..\..\..\src\utility\file\._FileName.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\file\._FileName.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\file\._PathName.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\file\._PathName.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\file\._file_sys_util.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\utility\file\._gzip_util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\utility\file\FileName.cc"
 				>

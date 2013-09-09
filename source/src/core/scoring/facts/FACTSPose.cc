@@ -43,7 +43,7 @@
 #include <utility/exit.hh>
 #include <math.h>
 #include <stdio.h>
-#include <sys/time.h>
+//#include <time>
 
 static basic::Tracer TR("core.scoring.FACTSPoseInfo");
 

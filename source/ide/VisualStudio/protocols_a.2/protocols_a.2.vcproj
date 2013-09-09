@@ -47,7 +47,7 @@
 				InlineFunctionExpansion="0"
 				OmitFramePointers="false"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\boost;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -120,7 +120,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -194,7 +194,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\local\include;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="VC_EXTRALEAN;WIN32;_WIN32;_WINDOWS;NOMINMAX;ZLIB_WINAPI;WIN32_LEAN_AND_MEAN;NDEBUG;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -266,7 +266,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;_DEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;OBJEXXFCL_FARRAY_INIT;NOMINMAX;ZLIB_WINAPI;BOINC;_LIB"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -339,7 +339,7 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 				FavorSizeOrSpeed="0"
 				EnableFiberSafeOptimizations="false"
 				WholeProgramOptimization="false"
-AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;"
+AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc;..\..\..\external\boost;..\..\..\external\include;..\..\..\external\boinc;..\..\..\external\boinc\lib;..\..\..\external\boinc\api;..\..\..\external\boinc\zip;..\..\..\external\glut;..\..\..\external;..\..\..\external\dbio;..\..\..\external\dbio;;..\..\..\external\dbio;"
 				PreprocessorDefinitions="WIN32;_WIN32;NDEBUG;_WINDOWS;WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_SECURE_SCL_THROWS=0;NOMINMAX;ZLIB_WINAPI;BOINC;BOINC_GRAPHICS;_LIB"
 				StringPooling="true"
 				MinimalRebuild="false"
@@ -390,6 +390,58 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\elscripts\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._BaseRole.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._BaseRole.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._MPI_Master.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._MPI_Master.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._MPI_Slave.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._MPI_Slave.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._Master.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._Master.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._SingleNode.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._SingleNode.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._Slave.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._Slave.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\elscripts\._util.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\elscripts\BaseRole.cc"
 				>
@@ -727,6 +779,30 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\frags\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\frags\._RMSVallData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\frags\._TorsionFragment.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\frags\._TorsionFragment.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\frags\._VallData.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\frags\._VallData.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\frags\._heap.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\frags\RMSVallData.hh"
 				>
 			</File>
@@ -874,6 +950,46 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\inputter\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\inputter\._FastaInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\inputter\._FastaInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\inputter\._Inputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\inputter\._Inputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\inputter\._InputterStream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\inputter\._InputterStream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\inputter\._PDBInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\inputter\._PDBInputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\inputter\._SilentFileInputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\inputter\._SilentFileInputter.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\inputter\FastaInputter.cc"
 				>
@@ -1118,6 +1234,66 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\wum\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._DatabaseEntryWorkUnit.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._DatabaseEntryWorkUnit.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._DatabaseQueryWorkUnitManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._MPI_Relax.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._MPI_WorkUnitManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._MPI_WorkUnitManager.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._MPI_WorkUnitManager_Slave.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._MoverList.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._SilentStructStore.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._SilentStructStore.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._WorkUnitBase.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._WorkUnitBase.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._WorkUnitList.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._WorkUnitManager.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum\._WorkUnitManager.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\wum\DatabaseEntryWorkUnit.cc"
 				>
@@ -1503,6 +1679,46 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\wum2\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\wum2\._EndPoint.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum2\._EndPoint.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum2\._MPI_EndPoint.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum2\._MPI_EndPoint.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum2\._WUQueue.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum2\._WUQueue.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum2\._WUQueueBuffer.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum2\._WUQueueBuffer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum2\._WorkUnit.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\wum2\._WorkUnit.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\wum2\EndPoint.cc"
 				>
 				<FileConfiguration
@@ -1747,6 +1963,30 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			Name="\protocols\genetic_algorithm\"
 			>
 			<File
+				RelativePath="..\..\..\src\protocols\genetic_algorithm\._Entity.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\genetic_algorithm\._Entity.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\genetic_algorithm\._EntityRandomizer.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\genetic_algorithm\._FitnessFunction.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\genetic_algorithm\._GeneticAlgorithm.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\genetic_algorithm\._GeneticAlgorithm.hh"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\protocols\genetic_algorithm\Entity.cc"
 				>
 				<FileConfiguration
@@ -1892,8 +2132,116 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 			</File>
 		</Filter>
 		<Filter
+			Name="\protocols\sample_stream\"
+			>
+			<File
+				RelativePath="..\..\..\src\protocols\sample_stream\SampleStream.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.2__protocols__sample_stream__SampleStream.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.2__protocols__sample_stream__SampleStream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.2__protocols__sample_stream__SampleStream.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.2__protocols__sample_stream__SampleStream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.2__protocols__sample_stream__SampleStream.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.2__protocols__sample_stream__SampleStream.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.2__protocols__sample_stream__SampleStream.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.2__protocols__sample_stream__SampleStream.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sample_stream\SampleStream.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sample_stream\SampleStream.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sample_stream\StreamModeler.cc"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.2__protocols__sample_stream__StreamModeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.2__protocols__sample_stream__StreamModeler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.2__protocols__sample_stream__StreamModeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.2__protocols__sample_stream__StreamModeler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincDebug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.2__protocols__sample_stream__StreamModeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.2__protocols__sample_stream__StreamModeler.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="BoincRelease|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\protocols_a.2__protocols__sample_stream__StreamModeler.obj"
+						XMLDocumentationFileName="$(IntDir)\protocols_a.2__protocols__sample_stream__StreamModeler.xdc"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sample_stream\StreamModeler.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\sample_stream\StreamModeler.hh"
+				>
+			</File>
+		</Filter>
+		<Filter
 			Name="\protocols\rpc\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\rpc\._rpc.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\rpc\._rpc.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\rpc\rpc.cc"
 				>
@@ -1946,6 +2294,26 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\boinc\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\boinc\._BoincPoseObserver.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\boinc\._BoincPoseObserver.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\boinc\._boinc.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\boinc\._boinc_shmem.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\boinc\._watchdog.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\boinc\BoincPoseObserver.cc"
 				>
@@ -2090,6 +2458,46 @@ AdditionalIncludeDirectories="..\..\..\src;..\..\..\src\platform\windows\32\msvc
 		<Filter
 			Name="\protocols\outputter\"
 			>
+			<File
+				RelativePath="..\..\..\src\protocols\outputter\._FormatStringOutputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\outputter\._FormatStringOutputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\outputter\._Outputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\outputter\._Outputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\outputter\._PDBOutputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\outputter\._PDBOutputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\outputter\._ResFileOutputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\outputter\._ResFileOutputter.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\outputter\._SilentFileOutputter.fwd.hh"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\protocols\outputter\._SilentFileOutputter.hh"
+				>
+			</File>
 			<File
 				RelativePath="..\..\..\src\protocols\outputter\FormatStringOutputter.cc"
 				>

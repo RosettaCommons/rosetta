@@ -31,6 +31,10 @@
 #include <protocols/jumping/DisulfPairingsList.fwd.hh>
 #include <protocols/jumping/DisulfPairingLibrary.hh>
 
+#ifdef WIN32
+#include <protocols/jumping/DisulfPairingsList.hh>
+#endif
+
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/Frame.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>

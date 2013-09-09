@@ -694,8 +694,12 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
         
 		core::Real rmsd( core::scoring::rmsd_no_super_subset( pose, rnl_pose, rms_seqpos, core::scoring::is_protein_sidechain_heavyatom ) );
         // PG 21-05-2013
+#ifdef WIN32
+        if( _isnan(rmsd) ){
+#else
         if( std::isnan(rmsd) ){
             runtime_assert(!std::isnan(rmsd));
+#endif
             utility_exit_with_message( "RMSD is NaN - there is something is wrong with how the interface is defined");
 
         }
