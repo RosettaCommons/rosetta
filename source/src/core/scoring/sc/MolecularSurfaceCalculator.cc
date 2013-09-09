@@ -388,7 +388,11 @@ int MolecularSurfaceCalculator::AssignAtomRadius(Atom &atom)
 				atom.radius = radius->radius;
 				if(TR.Trace.visible()) {
 					char buf[256];
+#ifdef WIN32
 					_snprintf(buf, sizeof(buf),
+#else
+					snprintf(buf, sizeof(buf),
+#endif
 						"Assigned atom radius to %s:%s at (%8.4f, %8.4f, %8.4f) = %.3f",
 						atom.residue,
 						atom.atom,
