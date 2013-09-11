@@ -31,7 +31,11 @@
 #endif
 
 #include <vector>
+
+#ifndef _WIN32
 #include <unistd.h>
+#endif
+
 #include <cstdio>
 
 namespace utility {

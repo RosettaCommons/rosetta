@@ -59,14 +59,23 @@
 #include <basic/Tracer.fwd.hh>
 #include <boost/algorithm/string/erase.hpp>
 
+#ifndef WIN32
 #include <unistd.h>
+#else
+#include <io.h>
+#endif
+
 #include <cstdio>
 
 namespace basic {
 
 CSI_Sequence::CSI_Sequence(std::string sequence_)
 {
+#ifdef WIN32
+	if( _isatty(fileno(stdout)) ) sequence = sequence_;
+#else
 	if( isatty(fileno(stdout)) ) sequence = sequence_;
+#endif
 }
 
 std::ostream *final_channel = &std::cout;

@@ -22,7 +22,13 @@
 #include <protocols/rotamer_sampler/RotamerSized.hh>
 
 // Project headers
+#ifdef WIN32
+#include <core/id/DOF_ID.hh>
+#include <core/id/NamedAtomID.hh>
+#else
 #include <core/id/NamedAtomID.fwd.hh>
+#endif
+
 #include <core/id/DOF_ID.fwd.hh>
 
 // Utility headers

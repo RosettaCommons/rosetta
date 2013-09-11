@@ -66,6 +66,9 @@
 #include <fstream>
 #if defined(WIN32) || defined(__CYGWIN__)
 // AUTO-REMOVED #include <ctime>
+#include <io.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #endif
 
 // Boost Headers
@@ -1319,7 +1322,9 @@ RotamerLibrary::write_binary_fa_dunbrack_libraries_02() const
 		// Move the temporary file to its permanent location
 		TR << "Moving temporary file " << tempfilename.c_str() << " to " << binary_filename.c_str() << std::endl;
 		rename( tempfilename.c_str(), binary_filename.c_str() );
+#ifndef WIN32
 		chmod( binary_filename.c_str(), S_IROTH | S_IWUSR | S_IRUSR | S_IRGRP );
+#endif
 	} else {
 		TR << "Unable to open temporary file in rosetta database for writing the binary version of the Dunbrack02 library." << std::endl;
 	}
@@ -1417,7 +1422,9 @@ RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const
 		// Move the temporary file to its permanent location
 		TR << "Moving temporary file to " << binary_filename.c_str() << std::endl;
 		rename( tempfilename.c_str(), binary_filename.c_str() );
+#ifndef WIN32
 		chmod( binary_filename.c_str(), S_IROTH | S_IWUSR | S_IRUSR | S_IRGRP );
+#endif
 	} else {
 		TR << "Unable to open temporary file in rosetta database for writing the binary version of the Dunbrack '10 library." << std::endl;
 	}
