@@ -38,6 +38,8 @@
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/util.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/import_pose/import_pose.hh>
 
 #include <protocols/rbsegment_relax/util.hh>
 #include <protocols/rbsegment_relax/RBSegmentMover.hh>
@@ -193,6 +195,10 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 
 		core::Real score_cst = (*scorefxn_)(pose);
 		core::Real score_aln = sshift.score();
+
+		if (native_) {
+			score_cst = core::scoring::CA_rmsd( pose, *native_ );
+		}
 
 		// boltzmann
 		core::Real score = score_cst + weight_*score_aln;
@@ -378,7 +384,14 @@ void OptimizeThreadingMover::parse_my_tag(
 		scorefxn_sampling_ = (data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn_name ))->clone();
 	}
 
+	if( tag->hasOption( "native" ) ) {
+		std::string ref_model_pdb = tag->getOption<std::string>( "native" );
+		native_ = new core::pose::Pose;
+		core::import_pose::pose_from_pdb( *native_, ref_model_pdb );
+	}
+
 	nsteps_ = tag->getOption<core::Size>( "nsteps", 5000 );
+	step_penalty_ = tag->getOption<bool>( "step_penalty", false );
 	recover_low_ = tag->getOption<bool>( "recover_low", true );
 	rebuild_cycles_ = tag->getOption<core::Size>( "rebuild_cycles", 200 );
 	weight_ = tag->getOption<core::Real>( "weight", 0.1 );

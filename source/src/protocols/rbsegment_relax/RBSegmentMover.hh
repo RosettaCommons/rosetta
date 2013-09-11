@@ -271,7 +271,7 @@ public:
 
 	/// @brief Return a score: the minimum number of block shifts accumulated
 	int
-	score();
+	score(bool step_fn=false);
 
 
 	/// @brief IF ref_pose is given, get a list of residues to rebuild via fragment insertion

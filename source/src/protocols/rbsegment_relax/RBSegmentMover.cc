@@ -387,7 +387,7 @@ void SequenceShiftMover::trigger_accept() {
 }
 
 int
-SequenceShiftMover::score() {
+SequenceShiftMover::score(bool step_fn/*=false*/) {
 	int score_aln=0;
 
 	utility::vector1< int > offsets_working = offsets_;
@@ -398,8 +398,17 @@ SequenceShiftMover::score() {
 	}
 
 	// # block shifts
-	for (int j=2; j<=(int)offsets_.size(); ++j)
-		score_aln += abs(offsets_working[j] - offsets_working[j-1]);
+	if (step_fn) {
+		for (int j=2; j<=(int)offsets_.size(); ++j)
+			if (offsets_working[j] != offsets_working[j-1]) score_aln++;
+		if (offsets_working[1] != 0)  score_aln++;
+		if (offsets_working[offsets_.size()] != 0)  score_aln++;
+	} else {
+		for (int j=2; j<=(int)offsets_.size(); ++j)
+			score_aln += abs(offsets_working[j] - offsets_working[j-1]);
+		score_aln += abs(offsets_working[1]);
+		score_aln += abs(offsets_working[offsets_.size()]);
+	}
 
 	// penalize unaligned residues
 	utility::vector1<bool> residues_to_rebuild (offsets_working.size(), false);

@@ -33,7 +33,8 @@ namespace rbsegment_relax {
 
 class OptimizeThreadingMover : public moves::Mover {
 public:
-	OptimizeThreadingMover() : Mover(), nsteps_(1000), rebuild_cycles_(200), max_shift_(4), weight_(0.1), temperature_(2.0) {
+	OptimizeThreadingMover() : Mover(),
+			nsteps_(1000), rebuild_cycles_(200), max_shift_(4), weight_(0.1), temperature_(2.0), recover_low_(true), step_penalty_(false), native_(NULL) {
 		scorefxn_ = new core::scoring::ScoreFunction();
 		scorefxn_->set_weight( core::scoring::atom_pair_constraint , 1.0 );
 		scorefxn_sampling_ = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
@@ -63,7 +64,9 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_, scorefxn_sampling_;
 	core::Size nsteps_, rebuild_cycles_, max_shift_;
 	core::Real weight_,temperature_;
-	bool recover_low_;
+	bool recover_low_,step_penalty_;
+
+	core::pose::PoseOP native_; // "cheating" ... optimize RMS to native
 };
 
 
