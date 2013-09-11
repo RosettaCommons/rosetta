@@ -40,8 +40,6 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-static basic::Tracer TR("protocols.rosetta_scripts.util.hh");
-
 utility::vector1< core::pack::task::operation::TaskOperationOP >
 get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data );
 

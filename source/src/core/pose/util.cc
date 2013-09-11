@@ -258,9 +258,10 @@ partition_pose_by_jump(
 
 	create_subpose( src, partner2_pos_list, f2, partner2 );
 
-	src.dump_pdb( "complex.pdb" );
-	partner1.dump_pdb( "partner1.pdb" );
-	partner2.dump_pdb( "partner2.pdb" );
+/// SJF 11Sep13 why dump the poses?
+//	src.dump_pdb( "complex.pdb" );
+//	partner1.dump_pdb( "partner1.pdb" );
+//	partner2.dump_pdb( "partner2.pdb" );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details Crude way to guess secondary structure given a pose. This function

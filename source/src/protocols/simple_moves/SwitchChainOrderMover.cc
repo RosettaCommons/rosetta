@@ -33,6 +33,7 @@ static basic::Tracer TR("protocols.simple_moves.SwitchChainOrderMover");
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 namespace protocols {
 namespace simple_moves {
@@ -58,6 +59,7 @@ SwitchChainOrderMover::SwitchChainOrderMover()
 	: moves::Mover("SwitchChainOrder"),
 	residue_numbers_( NULL )
 {
+	scorefxn( core::scoring::getScoreFunction() );
 }
 
 void
