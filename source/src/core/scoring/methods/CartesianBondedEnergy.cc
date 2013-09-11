@@ -182,8 +182,15 @@ CartesianBondedEnergyCreator::score_types_for_method() const {
 std::string get_restag( core::chemical::ResidueType const & restype ) {
 	using namespace core::chemical;
 
-	if(core::chemical::is_D_aa(restype.aa())) return core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //For D-amino acids, return the L-equivalent.
-	else return restype.name3();
+	if(core::chemical::is_D_aa(restype.aa()))
+		return core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //For D-amino acids, return the L-equivalent.
+	else if (!restype.is_protein())
+		return restype.name3();
+	else {
+		std::string rsdname = restype.name();
+		rsdname = rsdname.substr( 0, rsdname.find("_p:") );
+		return rsdname;
+	}
 }
 
 ResidueCartBondedParameters::ResidueCartBondedParameters() :
@@ -855,7 +862,7 @@ IdealParametersDatabase::lookup_angle(
 	lookup_bondangle_buildideal( restype, atm1idx, atm2idx, atm3idx, Ktheta, theta0 );
 	bondangles_indep_[ tuple ] = new BBIndepCartBondedParameters( theta0, Ktheta );
 	TR << "Adding undefined angle "
-	   << tuple.get<0>() << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << tuple.get<3>() << " to DB with"
+	   << restype.name() << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << tuple.get<3>() << " to DB with"
 	   << " theta0 = " << theta0 << " , Ktheta = " << Ktheta << std::endl;
 
 	return bondangles_indep_[ tuple ];
@@ -915,7 +922,7 @@ IdealParametersDatabase::lookup_length(
 	lookup_bondlength_buildideal( restype, atm1idx, atm2idx, Kd, d0 );
 	bondlengths_indep_[ tuple ] = new BBIndepCartBondedParameters( d0, Kd );
 	TR << "Adding undefined length "
-	   << tuple.get<0>() << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << " to DB with"
+	   << restype.name() << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << " to DB with"
 	   << " d0 = " << d0 << " , Kd = " << Kd << std::endl;
 
 	return bondlengths_indep_[ tuple ];
@@ -1184,31 +1191,27 @@ IdealParametersDatabase::create_parameters_for_restype(
 {
 	ResidueCartBondedParametersOP restype_params = new ResidueCartBondedParameters;
 
-	// Iter over parameters - this would be fast enough as far as parameter size is small enough
 
+	//Get the L-equivalent 3-letter code if this is a D-amnio acid:
+	std::string rsdname = core::chemical::is_D_aa( rsd_type.aa() ) ? core::chemical::name_from_aa( core::chemical::get_L_equivalent(rsd_type.aa()) )  : rsd_type.name();
+	// Skip if residue type is neither wildcard nor given residue type
+	// Is there better way of taking care of patched residues like "Gly_p:XXXX" ?
+	//if( rsdname.compare( 0, 3, tuple.get<0>() ) != 0 ) continue;
+	rsdname = rsdname.substr( 0, rsdname.find("_p:") );
+
+	// Iter over parameters - this would be fast enough as far as parameter size is small enough
 	for( boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it =
 				 torsions_indep_.begin(); b_it != torsions_indep_.end(); ++b_it ){
 
 		atm_name_quad const &tuple( b_it->first );
 
-		//Get the L-equivalent 3-letter code if this is a D-amnio acid:
-		const std::string rsdname = core::chemical::is_D_aa( rsd_type.aa() ) ? core::chemical::name_from_aa( core::chemical::get_L_equivalent(rsd_type.aa()) )  : rsd_type.name();
-
-		// Skip if residue type is neither wildcard nor given residue type
-		// Is there better way of taking care of patched residues like "Gly_p:XXXX" ?
-		//if( !(tuple.get<0>().compare("*") == 0 || rsd_type.name().compare( 0, 3, tuple.get<0>() ) == 0 )) continue;
-		if( rsdname.compare( 0, 3, tuple.get<0>() ) != 0 ) continue;
+		if (rsdname != tuple.get<0>()) continue;
 
 		CartBondedParametersCOP tor_params = b_it->second;
 
 		// Also skip if any atom does not exist
 		if( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
 				!rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
-
-		TR.Debug << "Scan torsion: " << rsd_type.name() << " ";
-		TR.Debug << tuple.get<0>() << " " << tuple.get<1>() << " ";
-		TR.Debug << tuple.get<2>() << " "<< tuple.get<3>() << " "<< tuple.get<4>() << " ";
-		TR.Debug << std::endl;
 
 		ResidueCartBondedParameters::Size4 ids;
 		ids[1] = rsd_type.atom_index( tuple.get<1>() );
