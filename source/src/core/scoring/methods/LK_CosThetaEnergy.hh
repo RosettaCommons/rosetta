@@ -9,8 +9,7 @@
 
 /// @file   core/scoring/methods/LK_CosThetaEnergy.hh
 /// @brief  LK Solvation using hemisphere culling class declaration
-/// @author David Baker
-/// @author Andrew Leaver-Fay
+/// @author Rhiju Das
 
 
 #ifndef INCLUDED_core_scoring_methods_LK_CosThetaEnergy_hh
@@ -23,13 +22,11 @@
 #include <core/conformation/Atom.fwd.hh>
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/etable/Etable.fwd.hh>
+#include <core/scoring/etable/EtableEnergy.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-
-// Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray3D.fwd.hh>
@@ -46,8 +43,8 @@ public:
 
 public:
 
-	LK_CosThetaEnergy( etable::Etable const & etable_in );
-
+	LK_CosThetaEnergy( etable::Etable const & etable_in,
+										 bool const analytic_etable_evaluation );
 
 	/// clone
 	virtual
@@ -161,43 +158,25 @@ private:
 	eval_lk(
 	conformation::Atom const & atom1,
 	conformation::Atom const & atom2,
-	Real const & d2,
 	Real & deriv ) const;
 
 	void
 	distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) const;
 
+	virtual
+	core::Size version() const;
+
 
 /////////////////////////////////////////////////////////////////////////////
 // data
 /////////////////////////////////////////////////////////////////////////////
-
 private:
-	etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
-	//a reference is taken, instead of a smart pointer.  There's the potential for a dangling reference with this.
 
-
-	/// these guys are taken from the etable
-	ObjexxFCL::FArray3D< Real > const & solv1_;
-	ObjexxFCL::FArray3D< Real > const & solv2_;
-
-	ObjexxFCL::FArray3D< Real > const & dsolv1_;
-
+	etable::EtableEvaluatorOP etable_evaluator_;
 	Real const safe_max_dis2_;
-	Real const get_bins_per_A2_;
-
+	Real const max_dis_;
 	bool const verbose_;
 
-	/// Used soley when calculating derivatives
-	/// Could/should be moved into the Pose's cachable data.
-	mutable utility::vector1< utility::vector1< Size > >   nneighbs_;
-	mutable utility::vector1< utility::vector1< Vector > > orientation_vectors_;
-	mutable utility::vector1< utility::vector1< Vector > > base_pseudo_atom_centers_;
-	mutable utility::vector1< utility::vector1< std::pair< Vector, Vector > > > atom_f1_f2s_;
-	mutable utility::vector1< utility::vector1< std::pair< Vector, Vector > > > base_pseudo_atom_f1_f2s_;
-	mutable Real lk_costheta_weight_; // hold this while calculating derivatives.
-virtual
-core::Size version() const;
 };
 
 }

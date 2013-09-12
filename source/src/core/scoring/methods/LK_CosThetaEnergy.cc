@@ -19,6 +19,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
@@ -27,16 +28,10 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-
 #include <ObjexxFCL/format.hh>
-
-// AUTO-REMOVED #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID.hh>
@@ -58,10 +53,8 @@ methods::EnergyMethodOP
 LK_CosThetaEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] || options.analytic_etable_evaluation() ) {
-		utility_exit_with_message("The LK_CosThetaEnergy is currently incompatible with analytic etable evaluation. Please either fix the code or add '-analytic_etable_evaluation 0' to the command line.");
-	}
-	return new LK_CosThetaEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )) );
+	return new LK_CosThetaEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )),
+																options.analytic_etable_evaluation() );
 }
 
 ScoreTypes
@@ -76,29 +69,27 @@ LK_CosThetaEnergyCreator::score_types_for_method() const {
 }
 
 
-
-LK_CosThetaEnergy::LK_CosThetaEnergy( etable::Etable const & etable_in) :
+LK_CosThetaEnergy::LK_CosThetaEnergy( etable::Etable const & etable_in, bool const analytic_etable_evaluation ):
 	parent( new LK_CosThetaEnergyCreator ),
-	etable_(etable_in),
-	solv1_(etable_in.solv1()),
-	solv2_(etable_in.solv2()),
-	dsolv1_( etable_in.dsolv1() ),
 	safe_max_dis2_( etable_in.get_safe_max_dis2() ),
-	get_bins_per_A2_( etable_in.get_bins_per_A2()),
-	verbose_( false ),
-	lk_costheta_weight_()
-{}
-
-
-
-bool
-LK_CosThetaEnergy::defines_intrares_energy( EnergyMap const & weights ) const
+	max_dis_( etable_in.max_dis() ),
+	verbose_( false )
 {
-	bool method_1= (weights[lk_polar_intra_RNA]>0.0 || weights[lk_nonpolar_intra_RNA]>0.0) ? true : false;
-
-	return method_1;
+	if ( analytic_etable_evaluation ) {
+		etable_evaluator_ = new etable::AnalyticEtableEvaluator( etable_in );
+	} else {
+		etable_evaluator_ = new etable::TableLookupEvaluator( etable_in );
+	}
 }
 
+////////////////////////////////////////////////
+LK_CosThetaEnergy::LK_CosThetaEnergy( LK_CosThetaEnergy const & src ):
+	parent( src ),
+	safe_max_dis2_( src.safe_max_dis2_ ),
+	max_dis_( src.max_dis_ ),
+	etable_evaluator_( src.etable_evaluator_ ),
+	verbose_( src.verbose_ )
+{}
 
 
 void
@@ -119,12 +110,19 @@ LK_CosThetaEnergy::eval_intrares_energy(
 
 }
 
+bool
+LK_CosThetaEnergy::defines_intrares_energy( EnergyMap const & weights ) const
+{
+	bool method_1 = ( weights[lk_polar_intra_RNA] > 0.0 || weights[lk_nonpolar_intra_RNA] > 0.0 ) ? true : false;
+
+	return method_1;
+}
 
 
 Distance
 LK_CosThetaEnergy::atomic_interaction_cutoff() const
 {
-	return etable_.max_dis();
+	return max_dis_;
 }
 
 /// clone
@@ -134,25 +132,10 @@ LK_CosThetaEnergy::clone() const
 	return new LK_CosThetaEnergy( *this );
 }
 
-////////////////////////////////////////////////
-LK_CosThetaEnergy::LK_CosThetaEnergy( LK_CosThetaEnergy const & src ):
-	parent( src ),
-	etable_(src.etable_),
-	solv1_( src.solv1_ ),
-	solv2_( src.solv2_ ),
-	dsolv1_( src.dsolv1_ ),
-	safe_max_dis2_( src.safe_max_dis2_ ),
-	get_bins_per_A2_( src.get_bins_per_A2_   ),
-	verbose_( src.verbose_ ),
-	lk_costheta_weight_()
-{}
-
 
 /////////////////////////////////////////////////////////////////////////////
 // scoring
 /////////////////////////////////////////////////////////////////////////////
-
-///
 void
 LK_CosThetaEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
@@ -174,14 +157,13 @@ LK_CosThetaEnergy::residue_pair_energy(
 	emap[ lk_nonpolar ] += lk_nonpolar_score;
 	emap[ lk_costheta ] += lk_costheta_score;
 
-	//	std::cout << "BLAH! " << rsd1.seqpos() << " " << rsd2.seqpos() << " " << lk_polar_score << " " << emap[ lk_polar ] << std::endl;
 }
 
 ////////////////////////////////////////////////
 Vector
 LK_CosThetaEnergy::get_base_vector( conformation::Residue const & rsd1, Size const i, pose::Pose const & pose ) const
 {
-	// Use DB/ALF prescription of looking through bonded neighbors.
+	// Use DB/APL prescription of looking through bonded neighbors.
 	Size non_H_neighbors = 0;
 	Vector  base_pseudo_atom(0);
 	for (Size ii = 1; ii <=rsd1.bonded_neighbor(i).size(); ++ii){
@@ -220,6 +202,7 @@ LK_CosThetaEnergy::get_base_vector( conformation::Residue const & rsd1, Size con
 }
 
 ////////////////////////////////////////////////
+// Why is all this code copied? Argh. -- rhiju
 void
 LK_CosThetaEnergy::get_residue_energy_RNA_intra(
 	conformation::Residue const & rsd,
@@ -242,19 +225,6 @@ LK_CosThetaEnergy::get_residue_energy_RNA_intra(
 	//CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
 	CountPairFunctionOP cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4); //intra_res version!
-
-	/*Comment this out after testing (Updated on Dec 24 ,2011)!////
-		///Testing make sure that this works for intra_res!///
-		for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
-
-			for ( Size j = 1, j_end = rsd2.nheavyatoms(); j <= j_end; ++j ) {
-				Real cp_weight = 1.0;
-				Size path_dist( 0 );
-				std::cout << "cpfxn->count(" << i << " [" << rsd1.atom_name( i)  <<  "] " << ", " << j << " [" <<  rsd2.atom_name( j )  <<  "] " << ")= " << cpfxn->count( i, j, cp_weight, path_dist );
-				std::cout << " cp_weight= " << cp_weight << " path_dist= " << path_dist << std::endl;
-			}
-		}
-	////Comment this out after testing!*/
 
 	for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
 
@@ -284,7 +254,7 @@ LK_CosThetaEnergy::get_residue_energy_RNA_intra(
 
 				Real dotprod( 1.0 );
 				Real dummy_deriv( 0.0 );
-				Real temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), d2, dummy_deriv);
+				Real temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), dummy_deriv);
 
 				Real const START_lk_polar_intra_RNA_score=lk_polar_intra_RNA_score;
 				Real const START_lk_costheta_intra_RNA_score=lk_costheta_intra_RNA_score;
@@ -391,7 +361,7 @@ LK_CosThetaEnergy::get_residue_pair_energy_one_way(
 
 				Real dotprod( 1.0 );
 				Real dummy_deriv( 0.0 );
-				Real temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), d2, dummy_deriv);
+				Real temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), dummy_deriv);
 
 				if ( is_polar ) {
 					lk_polar_score += temp_score;
@@ -437,42 +407,16 @@ Real
 LK_CosThetaEnergy::eval_lk(
 	conformation::Atom const & atom1,
 	conformation::Atom const & atom2,
-	Real const & d2,
 	Real & deriv ) const
 {
 
 	Real temp_score( 0.0 );
 	deriv = 0.0;
-	//Make this an input option for efficiency
 	bool const eval_deriv( true );
 
-	if ( ( d2 < safe_max_dis2_) && ( d2 != Real(0.0) ) ) {
-
-		Real const d2_bin = d2 * get_bins_per_A2_;
-		int	disbin = static_cast< int >( d2_bin ) + 1;
-		Real	frac = d2_bin - ( disbin - 1 );
-
-		// l1 and l2 are FArray LINEAR INDICES for fast lookup:
-		// [ l1 ] == (disbin  ,attype2,attype1)
-		// [ l2 ] == (disbin+1,attype2,attype1)
-
-		int const l1 = solv1_.index( disbin, atom2.type(), atom1.type() );
-		int const l2 = l1 + 1;
-		temp_score = ( (1.-frac)* solv1_[ l1 ] + frac * solv1_[ l2 ]);
-
-
-		if (eval_deriv) {
-			//			int const l1 = dsolv1_.index( disbin, atom2.type(), atom1.type() ),
-			//				l2 = l1 + 1;
-			//			Real e1 = dsolv1_[ l1 ];
-			//			deriv = ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
-			deriv = ( solv1_[ l2 ] - solv1_[ l1 ] ) * get_bins_per_A2_ * std::sqrt( d2 ) * 2;
-		}
-
-	}
+	etable_evaluator_->atom_pair_lk_energy_and_deriv_v( atom1, atom2, temp_score, deriv, eval_deriv );
 
 	return temp_score;
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -518,12 +462,6 @@ LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
 
 	Vector const heavy_atom_i( rsd1.xyz( m ) );
 
-	// cached energies object
-	//Energies const & energies( pose.energies() );
-
-	// the neighbor/energy links
-	//EnergyGraph const & energy_graph( energies.energy_graph() );
-
 	Real deriv( 0.0 );
 	Vector const res1_base_vector_norm = get_base_vector( rsd1, m, pose );
 
@@ -562,7 +500,7 @@ LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
 			Real dotprod_fwd( 1.0 ), dotprod_bkd( 1.0 );
 
 			//Forward direction first.
-			lk_score1 = cp_weight * eval_lk( rsd1.atom(m), rsd2.atom(n), d2, deriv );
+			lk_score1 = cp_weight * eval_lk( rsd1.atom(m), rsd2.atom(n), deriv );
 
 			f2_fwd =   -1.0 * cp_weight * deriv * d_ij_norm;
 			f1_fwd =   1.0 * cross( f2_fwd, heavy_atom_j );
@@ -594,7 +532,7 @@ LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
 			// Backwards
 			Vector d_ji_norm = -d_ij_norm;
 
-			lk_score2 = cp_weight * eval_lk( rsd2.atom(n), rsd1.atom(m),  d2, deriv );
+			lk_score2 = cp_weight * eval_lk( rsd2.atom(n), rsd1.atom(m),  deriv );
 
 			f2_bkd =   -1.0 * deriv * cp_weight * d_ji_norm;
 			f1_bkd =   1.0 * cross( f2_bkd, heavy_atom_i );
@@ -726,7 +664,7 @@ LK_CosThetaEnergy::eval_atom_derivative(
 				Real dotprod_fwd( 1.0 ), dotprod_bkd( 1.0 );
 
 				//Forward direction first.
-				lk_score1 = cp_weight * eval_lk( rsd1.atom(m), rsd2.atom(n), d2, deriv );
+				lk_score1 = cp_weight * eval_lk( rsd1.atom(m), rsd2.atom(n), deriv );
 
 				f2_fwd =   -1.0 * cp_weight * deriv * d_ij_norm;
 				f1_fwd =   1.0 * cross( f2_fwd, heavy_atom_j );
@@ -758,7 +696,7 @@ LK_CosThetaEnergy::eval_atom_derivative(
 				// Backwards
 				Vector d_ji_norm = -d_ij_norm;
 
-				lk_score2 = cp_weight * eval_lk( rsd2.atom(n), rsd1.atom(m),  d2, deriv );
+				lk_score2 = cp_weight * eval_lk( rsd2.atom(n), rsd1.atom(m),  deriv );
 
 				f2_bkd =   -1.0 * deriv * cp_weight * d_ji_norm;
 				f1_bkd =   1.0 * cross( f2_bkd, heavy_atom_i );

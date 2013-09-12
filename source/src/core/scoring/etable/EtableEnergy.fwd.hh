@@ -15,6 +15,9 @@
 #ifndef INCLUDED_core_scoring_etable_EtableEnergy_fwd_hh
 #define INCLUDED_core_scoring_etable_EtableEnergy_fwd_hh
 
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
+
 namespace core {
 namespace scoring {
 namespace etable {
@@ -22,6 +25,10 @@ namespace etable {
 class EtableEvaluator;
 class TableLookupEvaluator;
 class AnalyticEtableEvaluator;
+
+typedef utility::pointer::owning_ptr< EtableEvaluator > EtableEvaluatorOP;
+typedef utility::pointer::owning_ptr< EtableEvaluator const > EtableEvaluatorCOP;
+typedef utility::pointer::access_ptr< EtableEvaluator const > EtableEvaluatorCAP;
 
 } // etable
 } // scoring

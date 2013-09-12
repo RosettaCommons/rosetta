@@ -714,6 +714,8 @@ private:
 	// ((at1-1)*n_atomtypes + (at2-1) + 1 - (at1*(at1-1)/2)
 	utility::vector1< EtableParamsOnePair > analytic_parameters;
 
+	bool slim_;
+
 	// private methods
 
 	// get the AtomType object corresponding to a give type index
@@ -1109,9 +1111,12 @@ Etable::analytic_lk_derivatives(
 	using namespace core::scoring::etable;
 	Real dis2 = at1.xyz().distance_squared( at2.xyz() );
 
-	int const atype1 = at1.type() < at2.type() ? at1.type() : at2.type();
-	int const atype2 = at1.type() < at2.type() ? at2.type() : at1.type();
-	dfasolE1_ddis = dfasolE2_ddis = 0.0; inv_d = 1;
+	bool const inorder = at1.type() < at2.type(); // otherwise, atype1 and atype2 are swapped
+	int const atype1 = inorder ? at1.type() : at2.type();
+	int const atype2 = inorder ? at2.type() : at1.type();
+	Real & dfasol1 = inorder ? dfasolE1_ddis : dfasolE2_ddis;
+	Real & dfasol2 = inorder ? dfasolE2_ddis : dfasolE1_ddis;
+	inv_d = 1;
 
 	//  ctsa - epsilon allows final bin value to be calculated
 	if ( dis2 > max_dis2 + epsilon ) return;
@@ -1125,13 +1130,13 @@ Etable::analytic_lk_derivatives(
 	Real const inv_dis2 = inv_dis * inv_dis;
 
 	if ( dis < p.fasol_spline_close_start ) {
-		dfasolE1_ddis = 0;
-		dfasolE2_ddis = 0;
+		dfasol1 = 0;
+		dfasol2 = 0;
 	} else if ( dis < p.fasol_spline_close_end ) {
-		dfasolE1_ddis = spline_deriv( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline1_close );
-		dfasolE1_ddis *= p.fasol_final_weight;
-		dfasolE2_ddis = spline_deriv( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline2_close );
-		dfasolE2_ddis *= p.fasol_final_weight;
+		dfasol1 = spline_deriv( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline1_close );
+		dfasol1 *= p.fasol_final_weight;
+		dfasol2 = spline_deriv( dis, p.fasol_spline_close_start, p.fasol_spline_close_end, p.fasol_spline2_close );
+		dfasol2 *= p.fasol_final_weight;
 	} else if ( dis < fasol_spline_far_xlo ) {
 		/// exponential evaluation
 		Real const dis_rad1 = dis - lj_radius(atype1);
@@ -1141,19 +1146,19 @@ Etable::analytic_lk_derivatives(
 
 		Real const solvE1 = std::exp(-x1) * p.lk_coeff1 * inv_dis2;
 		Real const solvE2 = std::exp(-x2) * p.lk_coeff2 * inv_dis2;
-		dfasolE1_ddis = -2 * p.fasol_final_weight * ( dis_rad1 * lk_inv_lambda2_(atype1) + inv_dis ) * solvE1;
-		dfasolE2_ddis = -2 * p.fasol_final_weight * ( dis_rad2 * lk_inv_lambda2_(atype2) + inv_dis ) * solvE2;
+		dfasol1 = -2 * p.fasol_final_weight * ( dis_rad1 * lk_inv_lambda2_(atype1) + inv_dis ) * solvE1;
+		dfasol2 = -2 * p.fasol_final_weight * ( dis_rad2 * lk_inv_lambda2_(atype2) + inv_dis ) * solvE2;
 
 	} else if ( dis < fasol_spline_far_xhi ) {
-		dfasolE1_ddis = spline_deriv( dis, fasol_spline_far_xlo, fasol_spline_far_xhi,
+		dfasol1 = spline_deriv( dis, fasol_spline_far_xlo, fasol_spline_far_xhi,
 			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
 			p.fasol_spline1_far ) * p.fasol_final_weight;
-		dfasolE2_ddis = spline_deriv( dis, fasol_spline_far_xlo, fasol_spline_far_xhi,
+		dfasol2 = spline_deriv( dis, fasol_spline_far_xlo, fasol_spline_far_xhi,
 			fasol_spline_far_diff_xhi_xlo, fasol_spline_far_diff_xhi_xlo_inv,
 			p.fasol_spline2_far ) * p.fasol_final_weight;
 	} else {
-		dfasolE1_ddis = 0;
-		dfasolE2_ddis = 0;
+		dfasol1 = 0;
+		dfasol2 = 0;
 	}
 
 }

@@ -124,7 +124,8 @@ Etable::Etable(
 		std::pow( max_dis_ + 2*chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH, 2 ) :
 		std::pow(5.0,2) ),
 	max_non_hydrogen_lj_radius_( 0.0 ),
-	max_hydrogen_lj_radius_( 0.0 )
+	max_hydrogen_lj_radius_( 0.0 ),
+	slim_( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] )
 {
 
 	dimension_etable_arrays();
@@ -140,7 +141,7 @@ void
 Etable::dimension_etable_arrays()
 {
 	// size the arrays
-	if ( ! basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ) {
+	if ( !slim_ ) {
 		ljatr_.dimension(  etable_disbins, n_atomtypes_, n_atomtypes_ );
 		ljrep_.dimension(  etable_disbins, n_atomtypes_, n_atomtypes_ );
 		solv1_.dimension(  etable_disbins, n_atomtypes_, n_atomtypes_ );
@@ -402,13 +403,13 @@ Etable::make_pairenergy_table()
 	Real const dis2_step = 1.0 / bins_per_A2;
 
 
-	int const slim( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] );
+	bool const only_save_one_way = basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ];
 
 	//  ctsa - step through distance**2 bins and calculate potential
 	for ( int atype1 = 1, atype_end = n_atomtypes_; atype1 <= atype_end; ++atype1 ) {
 		//check to make sure that atype1 is not virtual. This is important later
 		bool atype1_virtual(atom_type(atype1).is_virtual());
-		for ( int atype2 = slim ? atype1 : 1 ; atype2 <= atype_end; ++atype2 ) {
+		for ( int atype2 = only_save_one_way ? atype1 : 1 ; atype2 <= atype_end; ++atype2 ) {
 			bool atype2_virtual(atom_type(atype2).is_virtual());
 
 			//  ctsa - normal bins have their lj and lk values
@@ -485,7 +486,7 @@ Etable::make_pairenergy_table()
 				fasol1, fasol2, dfasol, dfasol1 );
 			}
 
-			if ( ! slim ) {
+			if ( ! slim_ ) {
 				assign_parameters_to_full_etables(
 					atype1, atype2,
 					ljatr, dljatr, ljrep, dljrep,
