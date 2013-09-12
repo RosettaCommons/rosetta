@@ -4,4 +4,3 @@
 -dump
 -score:weights rna_hires.wts
 -mute core.io.database
--analytic_etable_evaluation 0

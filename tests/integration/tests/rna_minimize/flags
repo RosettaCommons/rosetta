@@ -1,4 +1,3 @@
 -s chunk002_1lnt_RNA.pdb
 -out:file:silent MINIMIZE.out
 -native chunk002_1lnt_RNA.pdb
--analytic_etable_evaluation 0

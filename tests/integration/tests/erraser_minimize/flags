@@ -9,4 +9,3 @@
 -edensity:realign no
 -scale_d 100
 -scale_theta 10
--analytic_etable_evaluation false # incompatible with LKCosTheta, unfortunately

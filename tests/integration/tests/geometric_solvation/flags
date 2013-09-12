@@ -1,3 +1,2 @@
 -s ./input/1A6M.pdb
 -score:patch occ_Hbond_sol_exact
--analytic_etable_evaluation 0

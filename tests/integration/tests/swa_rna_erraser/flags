@@ -32,4 +32,3 @@
 -s missing_rebuild_res_native.pdb
 -native native_struct.pdb
 -fasta fasta
--analytic_etable_evaluation 0
