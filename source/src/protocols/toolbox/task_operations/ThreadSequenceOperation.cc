@@ -77,7 +77,7 @@ ThreadSequenceOperation::apply( core::pose::Pose const & pose, core::pack::task:
 	for( core::Size resi( 1 ); resi <= pose.total_residue(); ++resi ){
 		if( resi >= start_res() && resi <= start_res() + target_sequence_.length() - 1 ){
 			if( target_sequence_[ resi - start_res() ] == 'x' ) continue; // allows for 'wildcard' residues that can be allowed to design to anything within the threaded sequence
-			if( target_sequence_[ resi - start_res() ] == ' ' ){/// only repack this residue
+			if( target_sequence_[ resi - start_res() ] == ' ' || target_sequence_[ resi - start_res() ] == '_' ){/// only repack this residue
 				rtr.include_residue( resi );
 				activated_rtr = true;
 				continue;
