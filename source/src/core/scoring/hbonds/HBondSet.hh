@@ -168,26 +168,26 @@ public:
 	// PyRosetta friendly version
 	void show(pose::Pose const & pose, bool const print_header=true) const  { show(pose, print_header, std::cout); }
 
-	
+
 	////////////////////////////////////////////////////////////////////////////
 	// Geometry Info
 	//
 	//
-	
+
 	Real
 	get_HAdist(pose::Pose const & pose) const;
-	
+
 	Real
 	get_AHDangle(pose::Pose const & pose) const;
-	
+
 	Real
 	get_BAHangle(pose::Pose const & pose) const;
-	
+
 	Real
 	get_BAtorsion(pose::Pose const & pose) const;
-	
+
 	////////////////////////////////////////////////////////////////////////////
-	
+
 	friend
 	std::ostream &
 	operator<< ( std::ostream & out, const HBond & hbond );
@@ -235,15 +235,15 @@ private:
 
 ///@brief A class that holds Hbond objects and helps setup Hbonds for scoring
 ///
-///@details For general hydrogen bond information, either use the default or option constructor, 
-/// then use the fill methods in hbonds.hh OR use the convenience constructors to detect all Hbonds. 
+///@details For general hydrogen bond information, either use the default or option constructor,
+/// then use the fill methods in hbonds.hh OR use the convenience constructors to detect all Hbonds.
 /// Use the copy constructors to fill HBondSets with the Hydrogen bonds you are interested in.
 ///
 ///
 class HBondSet : public basic::datacache::CacheableData {
 
 	typedef id::AtomID AtomID;
-	
+
 public:
 	HBondSet();
 	~HBondSet();
@@ -252,12 +252,12 @@ public:
 	HBondSet( HBondOptions const & options );
 	HBondSet( HBondOptions const & options, Size const nres);
 
-	
+
 	////////////////////////////////////////////////////////////////////////////
 	// Convenience Constructors - Use fill methods in hbond.hh for more options
 	//
 	//
-	
+
 	///@brief convenience constructor: Find all the hbonds in the pose. BB only default.
 	HBondSet(
 		pose::Pose & pose,
@@ -269,10 +269,10 @@ public:
 		pose::Pose & pose,
 		bool const bb_only = true);
 
-	
-	
+
+
 	////////////////////////////////////////////////////////////////////////////
-	// Copy Constructors 
+	// Copy Constructors
 	//
 	//
 
@@ -296,10 +296,10 @@ public:
 	);
 
 	////////////////////////////////////////////////////////////////////////////
-	// Accessors 
+	// Accessors
 	//
 	//
-	
+
 	///@brief  Access hbond
 	HBond const &
 	hbond( Size const number ) const;
@@ -308,13 +308,13 @@ public:
 	///@details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
 	utility::vector1< HBondCOP > const
 	atom_hbonds( AtomID const & atom, bool include_only_allowed = true ) const;
-	
+
 	///@brief Get a vector of all the hbonds involving this residue
 	///@details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
 	utility::vector1< HBondCOP > const
 	residue_hbonds(Size const seqpos, bool include_only_allowed = true) const;
-	
-	
+
+
 	///@brief  Number of hbonds
 	Size
 	nhbonds() const;
@@ -323,24 +323,24 @@ public:
 	///@details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
 	Size
 	nhbonds(Size const seqpos, bool include_only_allowed = true) const;
-	
+
 	///@brief Number of hbonds involving this atom
 	///@details Excludes 'not allowed' bonds by default.  See hbond_allowed function for more info)
 	Size
 	nhbonds( AtomID const & atom, bool include_only_allowed = true) const;
-	
-	///@brief general function for accessing the number of 10A neighbors of a given position set by setup_for_residue_pair_energies.  
+
+	///@brief general function for accessing the number of 10A neighbors of a given position set by setup_for_residue_pair_energies.
 	int
 	nbrs( Size const seqpos ) const;
 
 	///@brief Read access to the stored hbond options
 	HBondOptions const &
 	hbond_options() const;
-	
-	
+
+
 	///@brief  Is this hbond allowed under the bb-bb exclusion scheme?
 	///@details bb-bb exclusion scheme means that if the query hbond is a sc making a sc-bb hbond with a backbone already involved in a bb-bb hbond, return false
-	/// This has been included by default when assessing pose Hbond energies due to Rosetta designing too many ser/thr bifricated  hbonds in ss structures.  
+	/// This has been included by default when assessing pose Hbond energies due to Rosetta designing too many ser/thr bifricated  hbonds in ss structures.
 	/// Part of the reason is that Rosetta currently does NOT treat bifricated hbonds differently - so both hbonds are counted toward the score.
 	/// Another reason is that the rotamer library itself favors local bb-sc hbonds.
 	/// NOTE: This function is called while evaluating / setting up for energies (get_hbond_energies method in hbonds.hh).
@@ -351,7 +351,7 @@ public:
 	bool
 	allow_hbond( HBond const & hbond ) const;
 
-	
+
 	///@brief is the backbone bone acceptor group in a bb/bb hydrogen bond?
 	bool
 	acc_bbg_in_bb_bb_hbond( Size const residue ) const;
@@ -359,13 +359,13 @@ public:
 	///@brief is the backbone bone donor group in a bb/bb hydrogen bond?
 	bool
 	don_bbg_in_bb_bb_hbond( Size const residue ) const;
-	
-	
+
+
 	////////////////////////////////////////////////////////////////////////////
 	// Mutators
 	//
 	//
-	
+
 	///@brief  Add a new hbond to the list
 	/// updates the "hbchk" array as necessary
 	void
@@ -386,11 +386,11 @@ public:
 
 	void
 	sort_by_weighted_energy();
-	
+
 	///@brief  Delete all the data
 	void
 	clear();
-	
+
 	///@brief Manually set the state of backbone-backbone acceptor. Used for symmetry.
 	void
 	set_backbone_backbone_acceptor( Size const residue, bool state )
@@ -416,13 +416,13 @@ public:
 	void
 	set_nbrs( Size const seqpos, Size value );
 
-	
+
 	////////////////////////////////////////////////////////////////////////////
-	
+
 	/// @brief Clone this object
 	basic::datacache::CacheableDataOP
 	clone() const;
-	
+
 	friend
 	std::ostream &
 	operator<< ( std::ostream & out, const HBondSet & hbond_set );
@@ -431,16 +431,16 @@ public:
 	friend
 	bool
 	operator==(HBondSet const & a, HBondSet const & b);
-	
+
 	////////////////////////////////////////////////////////////////////////////
-	
-	
-	
+
+
+
 	////////////////////////////////////////////////////////////////////////////
 	// Show Methods
 	//
 	//
-	
+
 	///@brief Print just the information stored in each individual
 	/// hbond.
 	void show(std::ostream & out) const;
@@ -482,7 +482,7 @@ private:
 	///@brief  Setup the mapping from atoms to hbonds
 	void
 	setup_atom_map() const;
-	
+
 private:
 	////////
 	// data ---- IF YOU ADD DATA ALSO ADD IT TO THE COPY C-TOR

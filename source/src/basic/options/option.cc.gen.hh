@@ -948,6 +948,7 @@ option.add( basic::options::OptionKeys::corrections::score::fa_elec_co_only, "Us
 option.add( basic::options::OptionKeys::corrections::score::lj_hbond_hdis, "Lennard Jones sigma value for hatms, classically it's been at 1.95 but the average A-H distance for hydrogen bonding is 1.75 from crystal structures. (momeara)" ).def(1.75);
 option.add( basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis, "Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)" ).def(2.6);
 option.add( basic::options::OptionKeys::corrections::score::score12prime, "Restore to score funciton parameters to score12 parameters and have getScoreFuntion return with score12prime.wts. The score12prime.wts differs from standard.wts + score12.wts_patch, in that the reference energies have been optimized with optE for sequence profile recovery" ).def(false);
+option.add( basic::options::OptionKeys::corrections::score::hbond_energy_shift, "The shift upwards (through addition) of the well depth for the hydrogen bond polynomials; this shift is applied before the weights are applied." ).def(0.0);
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_BAH180_rise, "The rise from -0.5 for the BAH=180 value for the additive chi/BAH sp2 potential" ).def(0.75);
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_outer_width, "The width between the peak when CHI=0 and BAH=120 to when the BAH is at a maximum (Units: pi * radians. E.g. 1/3 means the turn off hbonding when BAH < 60, larger values mean a wider potential). Use 0.357 in conjunction with the hb_energy_fade flag." ).def(0.357);
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_chipen, "Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%" ).def(true);
@@ -1448,10 +1449,10 @@ option.add( basic::options::OptionKeys::robert::pcs_dump_cluster, "No descriptio
 option.add( basic::options::OptionKeys::robert::pcs_cluster_coverage, "cluster coverage required" ).def(0.3);
 option.add( basic::options::OptionKeys::robert::pcs_cluster_lowscoring, "cluster lowest 20% against lowest 50%" ).def(true);
 option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
 option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
@@ -2172,6 +2173,7 @@ option.add( basic::options::OptionKeys::optE::recover_nat_rot, "With the iterati
 option.add( basic::options::OptionKeys::optE::component_weights, "With the iterative optE driver, weight the individual components according to the input file -- default weight of 1 for all components.  Weight file consists of component-name/weight pairs on separate lines: e.g. prob_native_structure 100.0" );
 option.add( basic::options::OptionKeys::optE::optimize_nat_aa, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer" );
 option.add( basic::options::OptionKeys::optE::optimize_nat_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer in the native context" );
+
 }
 inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optimize_ligand_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer around the ligand" );
 option.add( basic::options::OptionKeys::optE::optimize_pssm, "With the iterative optE driver, optimize weights to maximize the match between a BLAST generated pssm probabillity distribution" );

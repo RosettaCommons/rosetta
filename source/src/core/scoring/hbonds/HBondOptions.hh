@@ -193,6 +193,9 @@ public:
 	bool fade_energy() const;
 	void fade_energy( bool setting );
 
+	Real hbond_energy_shift() const;
+	void hbond_energy_shift( Real );
+
 	friend
 	bool
 	operator==( HBondOptions const & a, HBondOptions const & b );
@@ -227,6 +230,7 @@ private:
 	bool measure_sp3acc_BAH_from_hvy_;
 	bool fade_energy_;
 	bool Mbhbond_; //pba
+	Real hbond_energy_shift_; // a penalty applied to all hydrogen bonds; raises the well depth without changing the shape of the funnel
 };
 
 

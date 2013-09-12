@@ -47,6 +47,7 @@ namespace corrections { namespace score { extern BooleanOptionKey const fa_elec_
 namespace corrections { namespace score { extern RealOptionKey const lj_hbond_hdis; } }
 namespace corrections { namespace score { extern RealOptionKey const lj_hbond_OH_donor_dis; } }
 namespace corrections { namespace score { extern BooleanOptionKey const score12prime; } }
+namespace corrections { namespace score { extern RealOptionKey const hbond_energy_shift; } }
 namespace corrections { namespace score { extern RealOptionKey const hb_sp2_BAH180_rise; } }
 namespace corrections { namespace score { extern RealOptionKey const hb_sp2_outer_width; } }
 namespace corrections { namespace score { extern BooleanOptionKey const hb_sp2_chipen; } }

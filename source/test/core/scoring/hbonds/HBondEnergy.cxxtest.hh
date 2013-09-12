@@ -25,6 +25,9 @@
 // AUTO-REMOVED #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBondEnergy.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/HBondSet.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
+
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondTypeManager.hh>
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -525,6 +528,53 @@ public:
 		initialize_lj_hbond_sfxn( sfxn );
 
 		verify_hbond_trie_vs_trie_calculation( sfxn );
+	}
+
+	bool hbonds_same( HBond const & a, HBond const & b ) {
+		return (
+			a.don_hatm_is_protein_backbone() == b.don_hatm_is_protein_backbone() &&
+			a.don_res_is_protein()           == b.don_res_is_protein()           &&
+			a.don_res_is_dna()               == b.don_res_is_dna()               &&
+			a.don_hatm_is_backbone()         == b.don_hatm_is_backbone()         &&
+			a.don_res()                      == b.don_res()                      &&
+			a.acc_atm()                      == b.acc_atm()                      &&
+			a.acc_atm_is_protein_backbone()  == b.acc_atm_is_protein_backbone()  &&
+			a.acc_res_is_protein()           == b.acc_res_is_protein()           &&
+			a.acc_res_is_dna()               == b.acc_res_is_dna()               &&
+			a.acc_atm_is_backbone()          == b.acc_atm_is_backbone()          &&
+			a.acc_res()                      == b.acc_res()                      &&
+			a.eval_tuple()                   == b.eval_tuple()                   );
+	}
+
+	void test_hbond_shift_hbond_energy_functionality() {
+		using namespace core::pose;
+		using namespace core::scoring::methods;
+
+		Real const shift( 0.25 );
+		Pose pose = create_trpcage_ideal_pose();
+		ScoreFunction sfxn;
+		EnergyMethodOptionsOP emopts_original( new EnergyMethodOptions( sfxn.energy_method_options() ));
+		EnergyMethodOptionsOP emopts_eshifted( new EnergyMethodOptions( sfxn.energy_method_options() ));
+		emopts_eshifted->hbond_options().hbond_energy_shift( shift );
+
+		HBondSet hb_original( emopts_original->hbond_options(), pose, false );
+		HBondSet hb_eshifted( emopts_eshifted->hbond_options(), pose, false );
+
+		for ( core::Size ii = 1; ii <= hb_original.nhbonds(); ++ii ) {
+			HBond const & ii_hbond = hb_original.hbond( ii );
+			bool found_ii_match = false;
+			for ( core::Size jj = 1; jj <= hb_eshifted.nhbonds(); ++jj ) {
+				HBond const & jj_hbond = hb_eshifted.hbond( jj );
+				if ( hbonds_same( ii_hbond, jj_hbond ) ) {
+					found_ii_match = true;
+					TS_ASSERT_DELTA( ii_hbond.energy() + shift, jj_hbond.energy(), 1e-4 );
+					break;
+				}
+			}
+			if ( ! found_ii_match ) {
+				TS_ASSERT( ii_hbond.energy() > -1 * shift );
+			}
+		}
 	}
 
 };

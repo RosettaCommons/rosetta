@@ -1,3 +1,4 @@
+namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
 namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
 namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }

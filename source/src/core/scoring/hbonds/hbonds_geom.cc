@@ -650,6 +650,7 @@ hbond_compute_energy(
 
 
 	energy = Pr*FxD*FxH + FSr*(PSxD*FxH + FxD*PSxH) + FLr*(PLxD*FxH + FxD*PLxH);
+	energy += hbondoptions.hbond_energy_shift();
 
 	if(
 		hbondoptions.use_sp2_chi_penalty() &&

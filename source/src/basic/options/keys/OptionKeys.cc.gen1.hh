@@ -219,6 +219,7 @@ namespace corrections { namespace score { BooleanOptionKey const fa_elec_co_only
 namespace corrections { namespace score { RealOptionKey const lj_hbond_hdis( "corrections:score:lj_hbond_hdis" );  } }
 namespace corrections { namespace score { RealOptionKey const lj_hbond_OH_donor_dis( "corrections:score:lj_hbond_OH_donor_dis" );  } }
 namespace corrections { namespace score { BooleanOptionKey const score12prime( "corrections:score:score12prime" );  } }
+namespace corrections { namespace score { RealOptionKey const hbond_energy_shift( "corrections:score:hbond_energy_shift" );  } }
 namespace corrections { namespace score { RealOptionKey const hb_sp2_BAH180_rise( "corrections:score:hb_sp2_BAH180_rise" );  } }
 namespace corrections { namespace score { RealOptionKey const hb_sp2_outer_width( "corrections:score:hb_sp2_outer_width" );  } }
 namespace corrections { namespace score { BooleanOptionKey const hb_sp2_chipen( "corrections:score:hb_sp2_chipen" );  } }
@@ -719,4 +720,3 @@ namespace robert { BooleanOptionKey const pcs_dump_cluster( "robert:pcs_dump_clu
 namespace robert { RealOptionKey const pcs_cluster_coverage( "robert:pcs_cluster_coverage" );  }
 namespace robert { BooleanOptionKey const pcs_cluster_lowscoring( "robert:pcs_cluster_lowscoring" );  }
 namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
-namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }

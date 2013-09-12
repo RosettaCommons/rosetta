@@ -61,7 +61,8 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	sp2_outer_width_( 0.357 ),
 	measure_sp3acc_BAH_from_hvy_( false ),
 	fade_energy_( false ),
-	Mbhbond_( false ) //pba
+	Mbhbond_( false ), //pba
+	hbond_energy_shift_( 0.0 )
 {
 	using namespace basic::options;
 	if (option.has(OptionKeys::membrane::Mhbond_depth) &&
@@ -80,6 +81,10 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 
 	measure_sp3acc_BAH_from_hvy_ = option[ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ];
 	fade_energy_ = option[ OptionKeys::corrections::score::hb_fade_energy ];
+
+	if ( option.has( OptionKeys::corrections::score::hbond_energy_shift)) {
+		hbond_energy_shift_ = option[ OptionKeys::corrections::score::hbond_energy_shift ];
+	}
 }
 
 
@@ -100,7 +105,8 @@ HBondOptions::HBondOptions():
 	sp2_outer_width_( 0.357 ),
 	measure_sp3acc_BAH_from_hvy_( false ),
 	fade_energy_( false ),
-	Mbhbond_( false ) //pba
+	Mbhbond_( false ), //pba
+	hbond_energy_shift_( 0.0 )
 {
 	using namespace basic::options;
 	if (option.has(OptionKeys::score::hbond_params) &&
@@ -123,6 +129,10 @@ HBondOptions::HBondOptions():
 
 	measure_sp3acc_BAH_from_hvy_ = option[ OptionKeys::corrections::score::hbond_measure_sp3acc_BAH_from_hvy ];
 	fade_energy_ = option[ OptionKeys::corrections::score::hb_fade_energy ];
+
+	if ( option.has( OptionKeys::corrections::score::hbond_energy_shift)) {
+		hbond_energy_shift_ = option[ OptionKeys::corrections::score::hbond_energy_shift ];
+	}
 }
 
 /// copy constructor
@@ -154,6 +164,7 @@ HBondOptions::operator=( HBondOptions const & src )
 	measure_sp3acc_BAH_from_hvy_ = src.measure_sp3acc_BAH_from_hvy_;
 	fade_energy_ = src.fade_energy_;
 	Mbhbond_ = src.Mbhbond_; //pba
+	hbond_energy_shift_ = src.hbond_energy_shift_;
 	return *this;
 }
 
@@ -414,6 +425,9 @@ void HBondOptions::measure_sp3acc_BAH_from_hvy( bool setting ) { measure_sp3acc_
 bool HBondOptions::fade_energy() const { return fade_energy_; }
 void HBondOptions::fade_energy( bool setting ) { fade_energy_ = setting; }
 
+Real HBondOptions::hbond_energy_shift() const { return hbond_energy_shift_; }
+void HBondOptions::hbond_energy_shift( Real setting ) { hbond_energy_shift_ = setting; }
+
 
 bool
 operator==( HBondOptions const & a, HBondOptions const & b )
@@ -433,7 +447,8 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.sp2_outer_width_ == b.sp2_outer_width_ ) &&
 		( a.measure_sp3acc_BAH_from_hvy_ == b.measure_sp3acc_BAH_from_hvy_ ) &&
 		( a.fade_energy_ == b.fade_energy_ ) &&
-		( a.Mbhbond_ == b.Mbhbond_ ) ); //pba
+		( a.Mbhbond_ == b.Mbhbond_ ) && //pba
+		( a.hbond_energy_shift_ == b.hbond_energy_shift_ ) );
 }
 
 bool
@@ -484,6 +499,7 @@ HBondOptions::show( std::ostream & out ) const
 		<< fade_energy_ << std::endl;
 	out <<"HBondOptions::show: Mbhbond: "
 		<<( Mbhbond_ ? "true" : "false " ) << std::endl; //pba
+	out <<"HBondOptions::show: hbond_energy_shift: " << hbond_energy_shift_ << std::endl;
 }
 
 }

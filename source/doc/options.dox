@@ -4541,6 +4541,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-hbond_energy_shift</b> \<Real\><dt>
+<dd>The shift upwards (through addition) of the well depth for the hydrogen bond polynomials; this shift is applied before the weights are applied.</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
 <dt><b>-hb_sp2_BAH180_rise</b> \<Real\><dt>
 <dd>The rise from -0.5 for the BAH=180 value for the additive chi/BAH sp2 potential</dd><br>
 <dd>Default: 0.75</dd><br>
