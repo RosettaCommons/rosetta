@@ -211,6 +211,7 @@ sources = {
         "devel/splice": [
 		"Splice", #moved to devel due to release embargo
 		"SpliceSegment", #moved to devel due to release embargo
+		"RBOutMover",
 		"DesignInterfacesOperation"
         ],
 	#"devel/ssrbrelax": [

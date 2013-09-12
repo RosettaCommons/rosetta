@@ -53,6 +53,7 @@
 #include <devel/splice/SpliceCreator.hh> //moved into devel due to release embargo
 #include <devel/splice/DesignInterfacesOperationCreator.hh> //moved into devel due to release embargo
 #include <devel/cutoutdomain/CutOutDomainCreator.hh> //moved into devel due to release embargo
+#include <devel/splice/RBOutMoverCreator.hh>
 
 // Filter creators
 #include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
@@ -128,6 +129,7 @@ static protocols::moves::MoverRegistrator< devel::matdes::StoreCombinedStoredTas
 static protocols::moves::MoverRegistrator< devel::matdes::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;
 static protocols::moves::MoverRegistrator< loophash_loopclosure::LoopHashLoopClosureMoverCreator > reg_LoopHashLoopClosureMoverCreator;
 static protocols::moves::MoverRegistrator< devel::splice::SpliceCreator > reg_SpliceCreator; //moved into devel due to release embargo
+static protocols::moves::MoverRegistrator< devel::splice::RBOutMoverCreator > reg_RBOutMoverCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::splice::DesignInterfacesOperationCreator > reg_DesignInterfacesOperationCreator; //moved into devel due to release embargo
 static protocols::moves::MoverRegistrator< devel::cutoutdomain::CutOutDomainCreator > reg_CutOutDomainCreator;
 
