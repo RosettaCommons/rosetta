@@ -149,11 +149,11 @@ SecondaryStructureFilter::parse_my_tag(
 		tr.Error << "Error!,  option of topology is empty." << std::endl;
 		runtime_assert( false );
 	}
-	tr << filtered_ss_ << " is filtred." << std::endl;
+	tr << filtered_ss_ << " is filtered." << std::endl;
 
 	core::util::ABEGOManager abego_manager;
 	if( filtered_abego_.size() >= 1 && use_abego_ ) {
-		tr << abego_manager.get_abego_string( filtered_abego_ ) << " is filtred " << std::endl;
+		tr << abego_manager.get_abego_string( filtered_abego_ ) << " is filtered " << std::endl;
 	}
 }
 

@@ -27,7 +27,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 
 //Basic Headers
-#include <basic/database/sql_utils.hh>
+// #include <basic/database/sql_utils.hh> 09_11_2013, commented by Doonam due to double declaration
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/ForeignKey.hh>
 #include <basic/database/schema_generator/Column.hh>

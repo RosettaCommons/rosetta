@@ -39,7 +39,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
-#include <basic/database/sql_utils.hh>
+// #include <basic/database/sql_utils.hh> 09_11_2013, commented by Doonam due to double declaration
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -47,7 +47,6 @@
 // C++ Headers
 #include <sstream>
 #include <string>
-
 
 namespace protocols{
 namespace features{
@@ -172,39 +171,45 @@ ScoreTypeFeatures::insert_score_type_rows(
 	Size protocol_id,
 	sessionOP db_session
 ) {
-	std::string statement_string;
-
 	switch(db_session->get_db_mode()){
 	case utility::sql_database::DatabaseMode::sqlite3:
-		statement_string = "INSERT OR IGNORE INTO score_types (batch_id, score_type_id, score_type_name) VALUES (?,?,?);";
-		break;
 	case utility::sql_database::DatabaseMode::mysql:
-	case utility::sql_database::DatabaseMode::postgres:
-		statement_string = "INSERT IGNORE INTO score_types (batch_id, score_type_id, score_type_name) VALUES (?,?,?);";
+	case utility::sql_database::DatabaseMode::postgres:{
+		using namespace basic::database;
+
+		string const table_name("score_types");
+
+		std::vector<std::string> column_names;
+		column_names.push_back("batch_id");
+		column_names.push_back("score_type_id");
+		column_names.push_back("score_type_name");
+
+		std::string protocol_id_s = utility::to_string (protocol_id);
+
+		for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id)	{
+
+			std::string score_type_id_s = utility::to_string (score_type_id);
+
+			ScoreType type(static_cast<ScoreType>(score_type_id));
+			string const score_type( ScoreTypeManager::name_from_score_type(type) );
+
+			std::vector<std::string> values;
+			values.push_back(protocol_id_s);
+			values.push_back(score_type_id_s);
+			values.push_back("'" + score_type + "'");
+
+			insert_or_ignore(table_name, column_names,	values,	db_session);
+		}
+	}
 		break;
+
 	default:
 		utility_exit_with_message(
-			"Unrecognized database mode: '" +
-			name_from_database_mode(db_session->get_db_mode()) + "'");
+		  "Unrecognized database mode: '" +
+		  name_from_database_mode(db_session->get_db_mode()) + "'");
 		break;
-	}
-
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-
-	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
-		ScoreType type(static_cast<ScoreType>(score_type_id));
-
-		string const score_type( ScoreTypeManager::name_from_score_type(type) );
-		stmt.bind(1,protocol_id);
-		stmt.bind(2,score_type_id);
-		stmt.bind(3,score_type);
-		basic::database::safely_write_to_database(stmt);
-
-
-	}
-	//transact_guard.commit();
+  }
 }
-
 
 } // namesapce
 } // namespace
