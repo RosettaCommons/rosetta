@@ -49,6 +49,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
@@ -57,7 +58,6 @@
 #include <set>
 
 #include <utility/vector0.hh>
-
 
 using basic::Error;
 using basic::Warning;
@@ -71,7 +71,9 @@ using namespace std;
 
 DesignInterfacesOperation::DesignInterfacesOperation() :
 	design_shell_( 6.0 ),
-	repack_shell_( 8.0 )
+	repack_shell_( 8.0 ),
+	restrict_to_repacking_chain1_( false ),
+	restrict_to_repacking_chain2_( true )
 {
 }
 
@@ -106,30 +108,22 @@ DesignInterfacesOperation::apply( core::pose::Pose const & pose, core::pack::tas
     protocols::simple_moves::SwitchChainOrderMover sco;
     sco.chain_order( "1" );
     core::pose::Pose chain1( pose );
-    sco.apply( chain1 );
+    sco.apply( chain1 ); // remove chain2 from pose
     protocols::protein_interface_design::movers::SetAtomTree sat;
     sat.two_parts_chain1( true );
-    sat.apply( chain1 );
+    sat.apply( chain1 ); // create a fold tree around the cut in chain1
     core::pose::Pose segment1, segment2, combined;
-    core::pose::partition_pose_by_jump( chain1, 1/*jump*/, segment1, segment2 );
+    core::pose::partition_pose_by_jump( chain1, 1/*jump*/, segment1, segment2 ); // partition the pose into two separate chains around teh cut
     combined = segment1;
-    core::pose::append_pose_to_pose(combined, segment2);
-		combined.conformation().detect_disulfides();
-//		core::pose::Pose part1, part2;
-//		part1.clear(); part2.clear();
-//		for (core::Size resj = 1; resj <= cut; ++resj) {
-//			core::conformation::Residue const & rsd( copy_pose.residue( resj) );
-//			part1.append_residue_by_bond( rsd );
-//	}
+    core::pose::append_pose_to_pose(combined, segment2); // concatenate the segments as two separate chains
+		combined.conformation().detect_disulfides(); // otherwise things go awry downstream
 
-
-
-//		core::pose::Pose part1( core::pose::create_subpose( chain1, 1,
-//		core::pose::append_subpose_to_pose( chain
-
-    utility::vector1< core::Size > const two_segment_interface( residue_packer_states( combined, tf, true/*designable*/, true/*packable*/ ) );
+// figure out which residues are at the two interfaces
+		utility::vector1< core::Size > const two_segment_interface( residue_packer_states( combined, tf, true/*designable*/, true/*packable*/ ) );
     utility::vector1< core::Size > const two_chain_interface( residue_packer_states( pose, tf, true, true ) );
-    DesignAroundOperation dao;
+
+// now design around each of those residues
+		DesignAroundOperation dao;
     dao.repack_shell(repack_shell());
     dao.design_shell(design_shell());
     TR<<"residues found in two_segment interface: ";
@@ -144,6 +138,17 @@ DesignInterfacesOperation::apply( core::pose::Pose const & pose, core::pack::tas
     }
     TR<<std::endl<<"total residues: "<<two_segment_interface.size() + two_chain_interface.size()<<std::endl;
     dao.apply( pose, task );
+		RestrictChainToRepackingOperation rctr;
+		if( restrict_to_repacking_chain1() ){
+			TR<<"Restricting chain1 to repacking"<<std::endl;
+			rctr.chain( 1 );
+			rctr.apply( pose, task );
+		}
+		if( restrict_to_repacking_chain2() ){
+			TR<<"Restricting chain2 to repacking"<<std::endl;
+			rctr.chain( 2 );
+			rctr.apply( pose, task );
+		}
 }
 
 void
@@ -159,7 +164,9 @@ DesignInterfacesOperation::parse_tag( TagPtr tag )
 {
     tag->getOption< core::Real >( "design_shell", 6.0 );
     tag->getOption<core::Real >("repack_shell", 8.0);
-		TR<<"design shell: "<<design_shell()<<" repack shell: "<<repack_shell()<<std::endl;
+		tag->getOption< bool >( "restrict_to_repacking_chain1", false );
+		tag->getOption< bool >( "restrict_to_repacking_chain2", true  );
+		TR<<"design shell: "<<design_shell()<<" repack shell: "<<repack_shell()<<" restrict_to_repacking_chain1: "<<restrict_to_repacking_chain1()<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<std::endl;
 }
 } //namespace splice
 } //namespace devel

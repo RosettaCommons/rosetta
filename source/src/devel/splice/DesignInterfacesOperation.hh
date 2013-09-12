@@ -64,8 +64,15 @@ public:
 			design_shell_ = repack_shell;
 	}
 	core::Real repack_shell() const{ return repack_shell_; }
+
+	bool restrict_to_repacking_chain1() const { return restrict_to_repacking_chain1_;}
+	void restrict_to_repacking_chain1( bool const c ){ restrict_to_repacking_chain1_ = c; }
+
+	bool restrict_to_repacking_chain2() const { return restrict_to_repacking_chain2_;}
+	void restrict_to_repacking_chain2( bool const c ){ restrict_to_repacking_chain2_ = c; }
 private:
 	core::Real design_shell_, repack_shell_; //dflt 6 and 8
+	bool restrict_to_repacking_chain1_, restrict_to_repacking_chain2_; //dflt false, true
 };
 
 } //namespace splice
