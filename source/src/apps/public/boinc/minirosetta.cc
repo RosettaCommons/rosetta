@@ -92,10 +92,27 @@ main( int argc, char * argv [] )
 	using utility::vector1;
 
 #ifdef BOINC // BOINC STUFF
+
 	// initialize boinc
 	using namespace protocols::boinc;
 	Boinc boinc_wu = Boinc::instance();
 	boinc_wu.initialize_worker();
+
+	// make sure -use_filters flag is not ambiguous
+	for (int i=0; i<argc; ++i) {
+		if (!strcmp(argv[i], "-use_filters")) {
+			std::cerr << "Fixing ambiguous flag " << argv[i];
+			argv[i] = "-abinitio::use_filters";
+			std::cerr << " to " << argv[i] << std::endl;
+		}
+	}
+	// print command to stderr
+	std::cerr << "command:";
+	for ( int i=0; i< argc; ++i ) {
+		std::cerr << ' ' <<  argv[i];
+	}
+	std::cerr  << std::endl;
+
 #endif
 
 	// has to be called before core::init::init. Which is really stupid.
@@ -264,7 +281,7 @@ main( int argc, char * argv [] )
 		return 1;    // MUST return non-0 - otherwise BOINC does not abort!
 	}
 
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
+	 } catch ( utility::excn::EXCN_Base const & e ) {
 		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 	return 0;
