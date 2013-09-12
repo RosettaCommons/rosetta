@@ -517,7 +517,7 @@ void FlxbbDesign::apply( pose::Pose & pose )
 		}
 		runtime_assert( blueprint_ );
 		runtime_assert( pose.total_residue() == blueprint_->total_residue() );
-		MoveMapOP movemap_ = new core::kinematics::MoveMap;
+		movemap_ = new core::kinematics::MoveMap;
 		blueprint_->set_movemap( movemap_ );
 	}
 
