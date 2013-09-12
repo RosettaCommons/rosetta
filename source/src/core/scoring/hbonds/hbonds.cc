@@ -208,55 +208,28 @@ fill_hbond_set_by_AHdist_threshold(
 	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 
 	// loop over all nbr-pairs
-	for ( Size acc_rsd_num = 1; acc_rsd_num <= pose.total_residue(); ++acc_rsd_num ) {
-		core::conformation::Residue const & acc_rsd( pose.residue( acc_rsd_num ) );
-		int const n_acc_nbrs = tenA_neighbor_graph.get_node( acc_rsd_num )->num_neighbors_counting_self_static();
+	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
+		core::conformation::Residue const & rsd1( pose.residue( res1 ) );
+		int const nb1 = tenA_neighbor_graph.get_node( res1 )->num_neighbors_counting_self_static();
 
 		for ( graph::Graph::EdgeListConstIter
-				iru = energy_graph.get_node(acc_rsd_num)->const_upper_edge_list_begin(),
-				irue = energy_graph.get_node(acc_rsd_num)->const_upper_edge_list_end();
+				iru = energy_graph.get_node(res1)->const_upper_edge_list_begin(),
+				irue = energy_graph.get_node(res1)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
-			int const don_rsd_num( (*iru)->get_second_node_ind() );
-			core::conformation::Residue const & don_rsd(pose.residue(don_rsd_num));
-			int const n_don_nbrs = tenA_neighbor_graph.get_node(don_rsd_num)->num_neighbors_counting_self_static();
+			int const res2( (*iru)->get_second_node_ind() );
+			core::conformation::Residue const & rsd2(pose.residue(res2));
+			int const nb2 = tenA_neighbor_graph.get_node(res2)->num_neighbors_counting_self_static();
 
+				
 			if (hbond_set.hbond_options().exclude_DNA_DNA() &&
-				acc_rsd.is_DNA() && don_rsd.is_DNA() ) continue;
+				rsd1.is_DNA() && rsd2.is_DNA() ) continue;
 
-			foreach(Size const hatm, don_rsd.Hpos_polar()){
-				Size const datm(don_rsd.atom_base(hatm));
-				Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
-				Vector const & datm_xyz(don_rsd.atom(datm).xyz());
-
-				foreach(Size const aatm, acc_rsd.accpt_pos()){
-					if(hatm_xyz.distance( acc_rsd.xyz( aatm )) > AHdist_threshold) continue;
-
-					HBEvalTuple hbe_type(datm, don_rsd, aatm, acc_rsd);
-					int const base ( acc_rsd.atom_base( aatm ) );
-					int const base2( acc_rsd.abase2( aatm ) );
-
-					Real unweighted_energy( 0.0 );
-					hb_energy_deriv(database, hbond_set.hbond_options(),
-						hbe_type, datm_xyz, hatm_xyz,
-						acc_rsd.atom(aatm ).xyz(),
-						acc_rsd.atom(base ).xyz(),
-						acc_rsd.atom(base2).xyz(),
-						unweighted_energy, false, DUMMY_DERIVS);
-
-					Real environmental_weight
-						(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
-							get_environment_dependent_weight(hbe_type, n_don_nbrs, n_acc_nbrs, hbond_set.hbond_options()));
-
-					hbond_set.append_hbond(
-						hatm, don_rsd, aatm, acc_rsd, hbe_type, unweighted_energy, environmental_weight, DUMMY_DERIVS );
-				}
-			}
+			identify_hbonds_1way_AHdist(database, rsd1, rsd2, nb1, nb2, AHdist_threshold, hbond_set);
+			identify_hbonds_1way_AHdist(database, rsd2, rsd1, nb1, nb2, AHdist_threshold, hbond_set);
 		}
 	}
 
 }
-
-
 
 /// @brief  Get the f1 and f2 contributions from all hbonds involving this atom
 /*void
@@ -494,6 +467,47 @@ identify_hbonds_1way(
 
 		} // loop over acceptors
 	} // loop over donors
+}
+
+void
+identify_hbonds_1way_AHdist(
+	HBondDatabase const & database,
+	conformation::Residue const & don_rsd,
+	conformation::Residue const & acc_rsd,
+	Size const don_nb,
+	Size const acc_nb,
+	Real const AHdist_threshold,
+	HBondSet & hbond_set
+)
+{
+	foreach(Size const hatm, don_rsd.Hpos_polar()){
+		Size const datm(don_rsd.atom_base(hatm));
+		Vector const & hatm_xyz(don_rsd.atom(hatm).xyz());
+		Vector const & datm_xyz(don_rsd.atom(datm).xyz());
+
+		foreach(Size const aatm, acc_rsd.accpt_pos()){
+			if(hatm_xyz.distance( acc_rsd.xyz( aatm )) > AHdist_threshold) continue;
+
+			HBEvalTuple hbe_type(datm, don_rsd, aatm, acc_rsd);
+			int const base ( acc_rsd.atom_base( aatm ) );
+			int const base2( acc_rsd.abase2( aatm ) );
+
+			Real unweighted_energy( 0.0 );
+			hb_energy_deriv(database, hbond_set.hbond_options(),
+				hbe_type, datm_xyz, hatm_xyz,
+				acc_rsd.atom(aatm ).xyz(),
+				acc_rsd.atom(base ).xyz(),
+				acc_rsd.atom(base2).xyz(),
+				unweighted_energy, false, DUMMY_DERIVS);
+
+			Real environmental_weight
+				(!hbond_set.hbond_options().use_hb_env_dep() ? 1 :
+					get_environment_dependent_weight(hbe_type, don_nb, acc_nb, hbond_set.hbond_options()));
+
+			hbond_set.append_hbond(
+				hatm, don_rsd, aatm, acc_rsd, hbe_type, unweighted_energy, environmental_weight, DUMMY_DERIVS );
+		}
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

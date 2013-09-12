@@ -103,6 +103,17 @@ identify_hbonds_1way(
 );
 
 void
+identify_hbonds_1way_AHdist(
+	HBondDatabase const & database,
+	conformation::Residue const & don_rsd,
+	conformation::Residue const & acc_rsd,
+	Size const don_nb,
+	Size const acc_nb,
+	Real const AHdist_threshold,
+	HBondSet & hbond_set
+);
+
+void
 identify_intra_res_hbonds(
 	HBondDatabase const & database,
   conformation::Residue const & rsd,
