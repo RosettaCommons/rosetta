@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/RNA_SugarCloseEnergy.cc
-/// @brief  RNA_SugarClose energy method class implementation
-/// @author Rhiju Das
+/// @file   core/scoring/methods/RNA_FullAtomVDW_BasePhosphate
+/// @brief  RNA_FullAtomVDW_BasePhosphate energy method class implementation
+/// @author Parin Sripakdeevong
 
 // Unit Headers
 #include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphate.hh>
@@ -35,6 +35,10 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/NeighborList.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+
 #include <ObjexxFCL/format.hh>
 // C++
 
@@ -101,6 +105,10 @@ RNA_FullAtomVDW_BasePhosphate::RNA_FullAtomVDW_BasePhosphate(
 	//	etable_energy_( *( new etable::BaseEtableEnergy< etable::EtableEnergy >(new etable::EtableEnergyCreator, etable_in, options, fa_atr, fa_rep, fa_sol ) ) ),
 	//	etable_energy_( etable::BaseEtableEnergy< etable::EtableEnergy > (new etable::EtableEnergyCreator, etable_in, options, unfolded, unfolded, unfolded ) )
 	//etable_energy_( etable::EtableEnergyCreator::create_energy_method(options) )
+
+	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ){
+		utility_exit_with_message(  "RNA_LJ_BaseEnergy not compatible with analytic_etable_evaluation yet -- rerun with flag -analytic_etable_evaluation false." );
+	}
 
 }
 

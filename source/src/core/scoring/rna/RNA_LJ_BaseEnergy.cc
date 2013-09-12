@@ -26,13 +26,10 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-
-// AUTO-REMOVED #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
@@ -78,7 +75,12 @@ RNA_LJ_BaseEnergy::RNA_LJ_BaseEnergy( etable::Etable const & etable_in) :
 	safe_max_dis2_( etable_in.get_safe_max_dis2() ),
 	get_bins_per_A2_( etable_in.get_bins_per_A2()),
 	verbose_( false )
-{}
+{
+	if ( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ){
+		utility_exit_with_message(  "RNA_LJ_BaseEnergy not compatible with analytic_etable_evaluation yet -- rerun with flag -analytic_etable_evaluation false." );
+	}
+
+}
 
 Distance
 RNA_LJ_BaseEnergy::atomic_interaction_cutoff() const
