@@ -41,7 +41,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/methods/LK_CosThetaEnergy.hh>
+#include <core/scoring/methods/LK_PolarNonPolarEnergy.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>

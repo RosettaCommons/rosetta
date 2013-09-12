@@ -404,7 +404,7 @@ sources = {
 		"IntermolEnergy",
 		"LinearChainbreakEnergy",
 		"LinearChainbreakEnergyCreator",
-		"LK_CosThetaEnergy",
+		"LK_PolarNonPolarEnergy",
 		"LK_hack",
 		"LK_BallEnergy",
 		"LK_BallInfo",

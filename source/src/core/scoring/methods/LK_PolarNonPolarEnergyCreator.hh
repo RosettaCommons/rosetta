@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/methods/LK_CosThetaEnergyCreator.hh
-/// @brief  Declaration for the class that connects LK_CosThetaEnergy with the ScoringManager
+/// @file   src/core/scoring/methods/LK_PolarNonPolarEnergyCreator.hh
+/// @brief  Declaration for the class that connects LK_PolarNonPolarEnergy with the ScoringManager
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_scoring_methods_LK_CosThetaEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_LK_CosThetaEnergyCreator_hh
+#ifndef INCLUDED_core_scoring_methods_LK_PolarNonPolarEnergyCreator_hh
+#define INCLUDED_core_scoring_methods_LK_PolarNonPolarEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -26,10 +26,10 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class LK_CosThetaEnergyCreator : public EnergyMethodCreator
+class LK_PolarNonPolarEnergyCreator : public EnergyMethodCreator
 {
 public:
-	/// @brief Instantiate a new LK_CosThetaEnergy
+	/// @brief Instantiate a new LK_PolarNonPolarEnergy
 	virtual
 	methods::EnergyMethodOP
 		create_energy_method(

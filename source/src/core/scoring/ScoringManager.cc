@@ -939,7 +939,7 @@ ScoringManager::energy_method(
 	case lk_costheta:
 	case lk_polar:
 	case lk_nonpolar:
-		return new methods::LK_CosThetaEnergy( *etable( options.etable_type() ));
+		return new methods::LK_PolarNonPolarEnergy( *etable( options.etable_type() ));
   case fa_mbenv:  //pba
     return new methods::Fa_MbenvEnergy( *memb_etable( options.etable_type() ));
   case fa_mbsolv: //pba

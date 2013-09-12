@@ -7,23 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/LK_CosThetaEnergy.hh
+/// @file   core/scoring/methods/LK_PolarNonPolarEnergy.hh
 /// @brief  LK Solvation using hemisphere culling class forward declaration
 /// @author David Baker
 /// @author Andrew Leaver-Fay
 
 
-#ifndef INCLUDED_core_scoring_methods_LK_CosThetaEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_LK_CosThetaEnergy_fwd_hh
+#ifndef INCLUDED_core_scoring_methods_LK_PolarNonPolarEnergy_fwd_hh
+#define INCLUDED_core_scoring_methods_LK_PolarNonPolarEnergy_fwd_hh
 
 namespace core {
 namespace scoring {
 namespace methods {
 
-class LK_CosThetaEnergy;
+class LK_PolarNonPolarEnergy;
 
 }
 }
 }
 
-#endif // INCLUDED_core_scoring_methods_LK_CosThetaEnergy_FWD_HH
+#endif // INCLUDED_core_scoring_methods_LK_PolarNonPolarEnergy_FWD_HH

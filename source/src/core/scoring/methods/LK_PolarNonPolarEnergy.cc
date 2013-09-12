@@ -7,15 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/LK_CosThetaEnergy.hh
+/// @file   core/scoring/methods/LK_PolarNonPolarEnergy.hh
 /// @author Rhiju Das
 
 
 // Unit headers
-#include <core/scoring/methods/LK_CosThetaEnergy.hh>
-#include <core/scoring/methods/LK_CosThetaEnergyCreator.hh>
+#include <core/scoring/methods/LK_PolarNonPolarEnergy.hh>
+#include <core/scoring/methods/LK_PolarNonPolarEnergyCreator.hh>
 
 #include <core/scoring/ScoringManager.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/etable/Etable.hh>
@@ -47,18 +48,18 @@ namespace methods {
 
 using namespace ObjexxFCL::fmt;
 
-/// @details This must return a fresh instance of the LK_CosThetaEnergy class,
+/// @details This must return a fresh instance of the LK_PolarNonPolarEnergy class,
 /// never an instance already in use
 methods::EnergyMethodOP
-LK_CosThetaEnergyCreator::create_energy_method(
+LK_PolarNonPolarEnergyCreator::create_energy_method(
 	methods::EnergyMethodOptions const & options
 ) const {
-	return new LK_CosThetaEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )),
+	return new LK_PolarNonPolarEnergy( *( ScoringManager::get_instance()->etable( options.etable_type() )),
 																options.analytic_etable_evaluation() );
 }
 
 ScoreTypes
-LK_CosThetaEnergyCreator::score_types_for_method() const {
+LK_PolarNonPolarEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( lk_costheta );
 	sts.push_back( lk_polar );
@@ -69,8 +70,8 @@ LK_CosThetaEnergyCreator::score_types_for_method() const {
 }
 
 
-LK_CosThetaEnergy::LK_CosThetaEnergy( etable::Etable const & etable_in, bool const analytic_etable_evaluation ):
-	parent( new LK_CosThetaEnergyCreator ),
+LK_PolarNonPolarEnergy::LK_PolarNonPolarEnergy( etable::Etable const & etable_in, bool const analytic_etable_evaluation ):
+	parent( new LK_PolarNonPolarEnergyCreator ),
 	safe_max_dis2_( etable_in.get_safe_max_dis2() ),
 	max_dis_( etable_in.max_dis() ),
 	verbose_( false )
@@ -83,7 +84,7 @@ LK_CosThetaEnergy::LK_CosThetaEnergy( etable::Etable const & etable_in, bool con
 }
 
 ////////////////////////////////////////////////
-LK_CosThetaEnergy::LK_CosThetaEnergy( LK_CosThetaEnergy const & src ):
+LK_PolarNonPolarEnergy::LK_PolarNonPolarEnergy( LK_PolarNonPolarEnergy const & src ):
 	parent( src ),
 	safe_max_dis2_( src.safe_max_dis2_ ),
 	max_dis_( src.max_dis_ ),
@@ -93,25 +94,27 @@ LK_CosThetaEnergy::LK_CosThetaEnergy( LK_CosThetaEnergy const & src ):
 
 
 void
-LK_CosThetaEnergy::eval_intrares_energy(
+LK_PolarNonPolarEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const & ,
+	ScoreFunction const & scorefxn,
 	EnergyMap & emap
 ) const{
 
 	if(rsd.is_RNA()==false) return;
 
 	Real lk_polar_intra_RNA_score, lk_nonpolar_intra_RNA_score, lk_costheta_intra_RNA_score;
+	bool const compute_polar    =  scorefxn.has_nonzero_weight( lk_polar ) || scorefxn.has_nonzero_weight( lk_costheta );
+	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
 
-	get_residue_energy_RNA_intra( rsd, pose, lk_polar_intra_RNA_score, lk_nonpolar_intra_RNA_score, lk_costheta_intra_RNA_score );
+	get_residue_energy_RNA_intra( rsd, pose, lk_polar_intra_RNA_score, lk_nonpolar_intra_RNA_score, lk_costheta_intra_RNA_score, compute_polar, compute_nonpolar );
 	emap[ lk_polar_intra_RNA ]    += lk_polar_intra_RNA_score;
 	emap[ lk_nonpolar_intra_RNA ] += lk_nonpolar_intra_RNA_score;
 
 }
 
 bool
-LK_CosThetaEnergy::defines_intrares_energy( EnergyMap const & weights ) const
+LK_PolarNonPolarEnergy::defines_intrares_energy( EnergyMap const & weights ) const
 {
 	bool method_1 = ( weights[lk_polar_intra_RNA] > 0.0 || weights[lk_nonpolar_intra_RNA] > 0.0 ) ? true : false;
 
@@ -120,16 +123,16 @@ LK_CosThetaEnergy::defines_intrares_energy( EnergyMap const & weights ) const
 
 
 Distance
-LK_CosThetaEnergy::atomic_interaction_cutoff() const
+LK_PolarNonPolarEnergy::atomic_interaction_cutoff() const
 {
 	return max_dis_;
 }
 
 /// clone
 EnergyMethodOP
-LK_CosThetaEnergy::clone() const
+LK_PolarNonPolarEnergy::clone() const
 {
-	return new LK_CosThetaEnergy( *this );
+	return new LK_PolarNonPolarEnergy( *this );
 }
 
 
@@ -137,22 +140,27 @@ LK_CosThetaEnergy::clone() const
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 void
-LK_CosThetaEnergy::residue_pair_energy(
+LK_PolarNonPolarEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
+	ScoreFunction const & scorefxn,
 	EnergyMap & emap
 ) const
 {
 	Real lk_polar_score, lk_nonpolar_score, lk_costheta_score;
 
-	get_residue_pair_energy_one_way( rsd1, rsd2, pose, lk_polar_score, lk_nonpolar_score, lk_costheta_score );
+	bool const compute_polar    =  scorefxn.has_nonzero_weight( lk_polar ) || scorefxn.has_nonzero_weight( lk_costheta );
+	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
+
+	get_residue_pair_energy_one_way( rsd1, rsd2, pose, lk_polar_score, lk_nonpolar_score, lk_costheta_score,
+																	 compute_polar, compute_nonpolar );
 	emap[ lk_polar ]    += lk_polar_score;
 	emap[ lk_nonpolar ] += lk_nonpolar_score;
 	emap[ lk_costheta ] += lk_costheta_score;
 
-	get_residue_pair_energy_one_way( rsd2, rsd1, pose, lk_polar_score, lk_nonpolar_score, lk_costheta_score );
+	get_residue_pair_energy_one_way( rsd2, rsd1, pose, lk_polar_score, lk_nonpolar_score, lk_costheta_score,
+																	 compute_polar, compute_nonpolar );
 	emap[ lk_polar ]    += lk_polar_score;
 	emap[ lk_nonpolar ] += lk_nonpolar_score;
 	emap[ lk_costheta ] += lk_costheta_score;
@@ -161,7 +169,7 @@ LK_CosThetaEnergy::residue_pair_energy(
 
 ////////////////////////////////////////////////
 Vector
-LK_CosThetaEnergy::get_base_vector( conformation::Residue const & rsd1, Size const i, pose::Pose const & pose ) const
+LK_PolarNonPolarEnergy::get_base_vector( conformation::Residue const & rsd1, Size const i, pose::Pose const & pose ) const
 {
 	// Use DB/APL prescription of looking through bonded neighbors.
 	Size non_H_neighbors = 0;
@@ -204,12 +212,14 @@ LK_CosThetaEnergy::get_base_vector( conformation::Residue const & rsd1, Size con
 ////////////////////////////////////////////////
 // Why is all this code copied? Argh. -- rhiju
 void
-LK_CosThetaEnergy::get_residue_energy_RNA_intra(
+LK_PolarNonPolarEnergy::get_residue_energy_RNA_intra(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
 	Real & lk_polar_intra_RNA_score,
 	Real & lk_nonpolar_intra_RNA_score,
-	Real & lk_costheta_intra_RNA_score
+	Real & lk_costheta_intra_RNA_score,
+	bool const compute_polar,
+	bool const compute_nonpolar
 ) const
 {
 
@@ -222,8 +232,6 @@ LK_CosThetaEnergy::get_residue_energy_RNA_intra(
 	conformation::Residue const & rsd1=rsd; //Assume rsd1 contributes polar atoms.
 	conformation::Residue const & rsd2=rsd; //Assume rsd2 contributes occluding atoms.
 
-	//CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
-
 	CountPairFunctionOP cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd, CP_CROSSOVER_4); //intra_res version!
 
 	for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
@@ -234,6 +242,9 @@ LK_CosThetaEnergy::get_residue_energy_RNA_intra(
 		bool is_polar( false );
 		if ( rsd1.atom_type(i).is_acceptor() || rsd1.atom_type(i).is_donor()) is_polar = true;
 
+		if ( is_polar  && !compute_polar    ) continue;
+		if ( !is_polar && !compute_nonpolar ) continue;
+
 		//Need to figure out "direction"...
 		Vector const res1_base_vector_norm = is_polar ? get_base_vector( rsd1, i, pose ) : Vector( 0.0 );
 
@@ -243,7 +254,7 @@ LK_CosThetaEnergy::get_residue_energy_RNA_intra(
 			Size path_dist( 0 );
 			if ( cpfxn->count( i, j, cp_weight, path_dist ) ) {
 
-				if(Is_base_phosphate_atom_pair(rsd1, rsd2, i, j)==false) continue;
+				if( !Is_base_phosphate_atom_pair(rsd1, rsd2, i, j) ) continue;
 
 				Vector const heavy_atom_j( rsd2.xyz( j ) );
 
@@ -255,11 +266,6 @@ LK_CosThetaEnergy::get_residue_energy_RNA_intra(
 				Real dotprod( 1.0 );
 				Real dummy_deriv( 0.0 );
 				Real temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), dummy_deriv);
-
-				Real const START_lk_polar_intra_RNA_score=lk_polar_intra_RNA_score;
-				Real const START_lk_costheta_intra_RNA_score=lk_costheta_intra_RNA_score;
-				Real const START_lk_nonpolar_intra_RNA_score=lk_nonpolar_intra_RNA_score;
-
 
 				if ( is_polar ) {
 					lk_polar_intra_RNA_score += temp_score;
@@ -279,34 +285,6 @@ LK_CosThetaEnergy::get_residue_energy_RNA_intra(
 					lk_nonpolar_intra_RNA_score += temp_score;
 				}
 
-
-				//consistency check!
-				if(rsd.is_virtual(i) || rsd.is_virtual(j)){
-
-					Real const diff_polar     =lk_polar_intra_RNA_score-START_lk_polar_intra_RNA_score;
-					Real const diff_costheta  =lk_costheta_intra_RNA_score-START_lk_costheta_intra_RNA_score;
-					Real const diff_non_polar =lk_nonpolar_intra_RNA_score-START_lk_nonpolar_intra_RNA_score;
-
-					if(diff_polar>0.001 || diff_polar<-0.001){
-						std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
-						std::cout << " but diff_polar= " << diff_polar << " is non-zero!" <<std::endl;
-						utility_exit_with_message("diff_polar>0.001 || diff_polar<-0.001");
-					}
-
-					if(diff_costheta>0.001 || diff_costheta<-0.001){
-						std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
-						std::cout << " but diff_costheta= " << diff_costheta << " is non-zero!" <<std::endl;
-						utility_exit_with_message("diff_costheta>0.001 || diff_costheta<-0.001");
-					}
-
-					if(diff_non_polar>0.001 || diff_non_polar<-0.001){
-						std::cout << "At least one of the atoms in the pair " << i << "," << j << " | res= " << rsd.seqpos() << " is virtual";
-						std::cout << " but diff_non_polar= " << diff_non_polar << " is non-zero!" <<std::endl;
-						utility_exit_with_message("diff_non_polar>0.001 || diff_non_polar<-0.001");
-					}
-				}
-
-
 			} // cp
 
 		} // j
@@ -316,13 +294,15 @@ LK_CosThetaEnergy::get_residue_energy_RNA_intra(
 
 ////////////////////////////////////////////////
 void
-LK_CosThetaEnergy::get_residue_pair_energy_one_way(
+LK_PolarNonPolarEnergy::get_residue_pair_energy_one_way(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	Real & lk_polar_score,
 	Real & lk_nonpolar_score,
-	Real & lk_costheta_score
+	Real & lk_costheta_score,
+	bool const compute_polar,
+	bool const compute_nonpolar
 ) const
 {
 	using namespace etable::count_pair;
@@ -337,11 +317,13 @@ LK_CosThetaEnergy::get_residue_pair_energy_one_way(
 	//Assume rsd2 contributes occluding atoms.
 	for ( Size i = 1, i_end = rsd1.nheavyatoms(); i <= i_end; ++i ) {
 
-		Vector const heavy_atom_i( rsd1.xyz( i ) );
+		Vector const & heavy_atom_i( rsd1.xyz( i ) );
 
 		//Just compute cos(theta) for polars.
-		bool is_polar( false );
-		if ( rsd1.atom_type(i).is_acceptor() || rsd1.atom_type(i).is_donor()) is_polar = true;
+		bool const is_polar = ( rsd1.atom_type(i).is_acceptor() || rsd1.atom_type(i).is_donor());
+
+		if ( is_polar  && !compute_polar    ) continue;
+		if ( !is_polar && !compute_nonpolar ) continue;
 
 		//Need to figure out "direction"...
 		Vector const res1_base_vector_norm = is_polar ? get_base_vector( rsd1, i, pose ) : Vector( 0.0 );
@@ -393,7 +375,7 @@ LK_CosThetaEnergy::get_residue_pair_energy_one_way(
 // derivatives
 /////////////////////////////////////////////////////////////////////////////
 void
-LK_CosThetaEnergy::setup_for_derivatives(
+LK_PolarNonPolarEnergy::setup_for_derivatives(
 																				 pose::Pose & pose,
 																				 ScoreFunction const &
 ) const
@@ -404,7 +386,7 @@ LK_CosThetaEnergy::setup_for_derivatives(
 
 ////////////////////////////////////////////////
 Real
-LK_CosThetaEnergy::eval_lk(
+LK_PolarNonPolarEnergy::eval_lk(
 	conformation::Atom const & atom1,
 	conformation::Atom const & atom2,
 	Real & deriv ) const
@@ -421,7 +403,7 @@ LK_CosThetaEnergy::eval_lk(
 
 //////////////////////////////////////////////////////////////////////////////////////
 void
-LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
+LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & /*domain_map*/,
@@ -450,13 +432,13 @@ LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
 	if ( m > rsd1.nheavyatoms() ) return;
 
 	if(verbose_){
-		std::cout << "Start LK_CosThetaEnergy::eval_atom_derivative, intra_res case, res= " << i << " atomno= " << m << "[" << rsd1.atom_name(m) <<  "]" << std::endl;
+		std::cout << "Start LK_PolarNonPolarEnergy::eval_atom_derivative, intra_res case, res= " << i << " atomno= " << m << "[" << rsd1.atom_name(m) <<  "]" << std::endl;
 	}
 
 	//bool const pos1_fixed( domain_map( i ) != 0 );
 
 	//if( pos1_fixed && domain_map(i) == domain_map(j) ){ //MOD OUT ON July 19th, 2011...THIS MIGHT BE BUGGY!
-		 //std::cout << "LK_CosThetaEnergy::eval_atom_derivative early return since pos1_fixed && domain_map(i=" << i << ") == domain_map(j=" << j << ")" << std::endl;
+		 //std::cout << "LK_PolarNonPolarEnergy::eval_atom_derivative early return since pos1_fixed && domain_map(i=" << i << ") == domain_map(j=" << j << ")" << std::endl;
 	//	 return; //Fixed w.r.t. one another.
 	//}
 
@@ -578,17 +560,17 @@ LK_CosThetaEnergy::eval_atom_derivative_intra_RNA(
   }
 
 	if(verbose_){
-		std::cout << "LK_CosThetaEnergy::eval_atom_derivative, intra_res :";
+		std::cout << "LK_PolarNonPolarEnergy::eval_atom_derivative, intra_res :";
 	 	std::cout << " F1= " << F1[0] << " " << F1[1] << " " << F1[2];
 	 	std::cout << " F2= " << F2[0] << " " << F2[1] << " " << F2[2] << std::endl;
-		std::cout << "Finish LK_CosThetaEnergy::eval_atom_derivative, intra_res case, res= " << i << " atomno= " << m << "[" << rsd1.atom_name(m) <<  "]" << std::endl;
+		std::cout << "Finish LK_PolarNonPolarEnergy::eval_atom_derivative, intra_res case, res= " << i << " atomno= " << m << "[" << rsd1.atom_name(m) <<  "]" << std::endl;
 	}
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
 void
-LK_CosThetaEnergy::eval_atom_derivative(
+LK_PolarNonPolarEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
@@ -747,13 +729,13 @@ LK_CosThetaEnergy::eval_atom_derivative(
 
 ////////////////////////////////////////////////
 void
-LK_CosThetaEnergy::indicate_required_context_graphs(
+LK_PolarNonPolarEnergy::indicate_required_context_graphs(
 	utility::vector1< bool > & /* context_graphs_required */ ) const
 {}
 
 ////////////////////////////////////////////////
 void
-LK_CosThetaEnergy::finalize_total_energy(
+LK_PolarNonPolarEnergy::finalize_total_energy(
 	pose::Pose &,
 	ScoreFunction const &,
 	EnergyMap &
@@ -762,7 +744,7 @@ LK_CosThetaEnergy::finalize_total_energy(
 	if (verbose_)	std::cout << "DONE SCORING" << std::endl;
 }
 core::Size
-LK_CosThetaEnergy::version() const
+LK_PolarNonPolarEnergy::version() const
 {
 	return 1; // Initial versioning
 }

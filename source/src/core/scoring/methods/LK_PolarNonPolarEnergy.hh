@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/LK_CosThetaEnergy.hh
+/// @file   core/scoring/methods/LK_PolarNonPolarEnergy.hh
 /// @brief  LK Solvation using hemisphere culling class declaration
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_core_scoring_methods_LK_CosThetaEnergy_hh
-#define INCLUDED_core_scoring_methods_LK_CosThetaEnergy_hh
+#ifndef INCLUDED_core_scoring_methods_LK_PolarNonPolarEnergy_hh
+#define INCLUDED_core_scoring_methods_LK_PolarNonPolarEnergy_hh
 
 // Unit Headers
-#include <core/scoring/methods/LK_CosThetaEnergy.fwd.hh>
+#include <core/scoring/methods/LK_PolarNonPolarEnergy.fwd.hh>
 
 // Package headers
 #include <core/conformation/Atom.fwd.hh>
@@ -37,13 +37,13 @@ namespace scoring {
 namespace methods {
 
 ///
-class LK_CosThetaEnergy : public ContextIndependentTwoBodyEnergy  {
+class LK_PolarNonPolarEnergy : public ContextIndependentTwoBodyEnergy  {
 public:
 	typedef ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
-	LK_CosThetaEnergy( etable::Etable const & etable_in,
+	LK_PolarNonPolarEnergy( etable::Etable const & etable_in,
 										 bool const analytic_etable_evaluation );
 
 	/// clone
@@ -51,7 +51,7 @@ public:
 	EnergyMethodOP
 	clone() const;
 
-	LK_CosThetaEnergy( LK_CosThetaEnergy const & src );
+	LK_PolarNonPolarEnergy( LK_PolarNonPolarEnergy const & src );
 
 	virtual
  	void
@@ -142,7 +142,9 @@ private:
 		pose::Pose const & pose,
 		Real & lk_polar_intra_RNA_score,
 		Real & lk_nonpolar_intra_RNA_score,
-		Real & lk_costheta_intra_RNA_score
+		Real & lk_costheta_intra_RNA_score,
+		bool const compute_polar,
+		bool const compute_nonpolar
 	) const;
 
 	void
@@ -152,7 +154,10 @@ private:
 		 pose::Pose const & pose,
 		 Real & lk_polar_score,
 		 Real & lk_nonpolar_score,
-		 Real & lk_costheta_score	 ) const;
+		 Real & lk_costheta_score,
+		 bool const compute_polar,
+		 bool const compute_nonpolar
+	 ) const;
 
 	Real
 	eval_lk(
@@ -183,4 +188,4 @@ private:
 }
 }
 
-#endif // INCLUDED_core_scoring_methods_LK_CosThetaEnergy_HH
+#endif // INCLUDED_core_scoring_methods_LK_PolarNonPolarEnergy_HH
