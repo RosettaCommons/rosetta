@@ -26,7 +26,6 @@
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
-
 namespace core {
 namespace scoring {
 namespace geometric_solvation {

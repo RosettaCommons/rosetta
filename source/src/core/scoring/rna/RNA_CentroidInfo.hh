@@ -57,7 +57,7 @@ RNA_CentroidInfo(): calculated_(false) {};
 
 	void
 	update( pose::Pose const & pose );
-
+  
   Size
   size() const {
     return base_centroids_.size();

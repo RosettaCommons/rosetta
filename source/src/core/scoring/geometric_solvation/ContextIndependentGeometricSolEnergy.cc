@@ -17,6 +17,7 @@
 #include <core/scoring/geometric_solvation/ContextIndependentGeometricSolEnergyCreator.hh>
 #include <core/scoring/geometric_solvation/GeometricSolEnergyEvaluator.hh>
 
+
 // Package headers
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
@@ -57,6 +58,7 @@ namespace core {
 namespace scoring {
 namespace geometric_solvation {
 
+  
 /// @details This must return a fresh instance of the GeometricSolEnergy class,
 /// never an instance already in use
 methods::EnergyMethodOP
@@ -71,6 +73,8 @@ ContextIndependentGeometricSolEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( geom_sol_fast );
 	sts.push_back( geom_sol_fast_intra_RNA );
+
+  
 	return sts;
 }
 
@@ -78,7 +82,8 @@ ContextIndependentGeometricSolEnergyCreator::score_types_for_method() const {
 ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( methods::EnergyMethodOptions const & opts) :
 	parent( new ContextIndependentGeometricSolEnergyCreator ),
 	options_( new methods::EnergyMethodOptions( opts ) ),
-	evaluator_( new GeometricSolEnergyEvaluator( opts ) )
+	evaluator_( new GeometricSolEnergyEvaluator( opts ) ),
+  precalculated_bb_bb_energy_(0.0f)
 {
 	if ( options_->hbond_options().use_hb_env_dep() ) {
 		utility_exit_with_message( "Environment dependent hydrogen bonds are not compatible with geom_sol_fast. You can turn off hydrogen-bond environment dependence (e.g., with NO_HB_ENV_DEP in score file), and protein & RNA structure prediction won't get worse! (Or if you insist on using environment dependence, use geom_sol instead of geom_sol_fast.)" );
@@ -89,7 +94,8 @@ ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( meth
 ContextIndependentGeometricSolEnergy::ContextIndependentGeometricSolEnergy( ContextIndependentGeometricSolEnergy const & src ):
 	ContextIndependentTwoBodyEnergy( src ),
 	options_( new methods::EnergyMethodOptions( *src.options_ ) ),
-	evaluator_( src.evaluator_ )
+	evaluator_( src.evaluator_ ),
+  precalculated_bb_bb_energy_(src.precalculated_bb_bb_energy_)
 {
 }
 
@@ -100,6 +106,69 @@ ContextIndependentGeometricSolEnergy::clone() const
 	return new ContextIndependentGeometricSolEnergy( *this );
 }
 
+  
+void
+ContextIndependentGeometricSolEnergy::precalculate_bb_bb_energy_for_design(
+ pose::Pose const & pose
+) const {
+  
+  Size const total_residue = pose.total_residue();
+
+  EnergyGraph const & energy_graph( pose.energies().energy_graph() );
+
+  for (Size i = 1; i <= total_residue; i++ ){
+    
+    conformation::Residue const & res_i( pose.residue( i ) );
+        
+    for( graph::Graph::EdgeListConstIter
+        iter = energy_graph.get_node( i )->const_edge_list_begin();
+        iter != energy_graph.get_node( i )->const_edge_list_end();
+        ++iter ){
+      
+      Size j( (*iter)->get_other_ind( i ) );
+
+      
+      conformation::Residue const & res_j( pose.residue( j ) );
+      
+      //only need to do it one way since will sample the reverse when res_i is at j
+      precalculated_bb_bb_energy_ += evaluator_->geometric_sol_one_way_bb_bb(res_i, res_j, pose);
+    
+
+    }
+    
+  }
+
+}
+
+void
+ContextIndependentGeometricSolEnergy::setup_for_packing(
+  pose::Pose  & pose,
+  utility::vector1< bool > const &,
+  utility::vector1< bool > const & designing_residues
+) const
+{
+  
+  bool might_be_designing = false;
+  
+	for ( Size ii = 1; ii <= designing_residues.size(); ++ii ) {
+		if ( designing_residues[ ii ] ) {
+			might_be_designing = true;
+			break;
+		}
+	}
+  
+  precalculated_bb_bb_energy_ = 0.0f;
+  
+  //if nothing can be designed no reason to precalculate backbone/backbone geom_solv
+  if(!might_be_designing) return;
+
+  precalculate_bb_bb_energy_for_design(pose);
+
+  
+  
+}
+  
+  
 
 /////////////////////////////////////////////////////////////////////////////
 // scoring
@@ -114,14 +183,42 @@ ContextIndependentGeometricSolEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-
-	//	A hack. Hopefully not a big slow down.
-	EnergyMap emap_local;
-	evaluator_->residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap_local );
-	emap[ geom_sol_fast ] += emap_local[ geom_sol ];
+  
+  //if the backbone/backbone energy has already been calculated in setup_for_packing
+  //this is done only if we are doing fix backbone design and the backbone/backbone
+  //energy cannot change (Joseph Yesselman 9/11/13)
+  
+  if(precalculated_bb_bb_energy_ > 0.0f) {
+  
+    emap[ geom_sol_fast ] += evaluator_->geometric_sol_one_way_sc(rsd1, rsd2, pose) +
+                             evaluator_->geometric_sol_one_way_sc(rsd2, rsd1, pose);
+    
+  }
+  
+  
+  else {
+    
+    EnergyMap emap_local;
+    evaluator_->residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap_local );
+    emap[ geom_sol_fast ] += emap_local[ geom_sol ];
+  
+  }
 
 }
+  
+  
+void
+ContextIndependentGeometricSolEnergy::finalize_total_energy(
+  pose::Pose & pose,
+  ScoreFunction const &,
+  EnergyMap & totals
+) const
+{
 
+  totals[ geom_sol_fast ] += precalculated_bb_bb_energy_;
+  
+
+}
 
 void
 ContextIndependentGeometricSolEnergy::eval_atom_derivative(
@@ -139,6 +236,8 @@ ContextIndependentGeometricSolEnergy::eval_atom_derivative(
 	EnergyMap weights_local;
 	weights_local[ geom_sol ]           = weights[ geom_sol_fast ];
 	weights_local[ geom_sol_intra_RNA ] = weights[ geom_sol_fast_intra_RNA ];
+
+
 	evaluator_->eval_atom_derivative( atom_id, pose, domain_map, scorefxn, weights_local, F1, F2 );
 
 }
@@ -190,7 +289,7 @@ ContextIndependentGeometricSolEnergy::version() const
 }
 
 
-} // hbonds
+} // geometric_solvation
 } // scoring
 } // core
 

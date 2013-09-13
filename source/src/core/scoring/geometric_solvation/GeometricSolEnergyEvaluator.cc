@@ -19,6 +19,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/EnergyMap.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
@@ -104,7 +105,6 @@ GeometricSolEnergyEvaluator::~GeometricSolEnergyEvaluator()
 {}
 
 
-
 /////////////////////////////////////////////////////////////////////////////
 // scoring
 /////////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ GeometricSolEnergyEvaluator::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
+	ScoreFunction const & scfxn,
 	EnergyMap & emap ) const
 {
 
@@ -128,12 +128,15 @@ GeometricSolEnergyEvaluator::residue_pair_energy(
 	//  Need to consider when including
 	//  intra terms
 	//////////////////////////////////
-	Real geo_solE =
-		res_res_geometric_sol_one_way( rsd1, rsd2, pose ) +
-		res_res_geometric_sol_one_way( rsd2, rsd1, pose ) ;
+  
+  Real geo_solE =
+    res_res_geometric_sol_one_way( rsd1, rsd2, pose ) +
+    res_res_geometric_sol_one_way( rsd2, rsd1, pose ) ;
 
-	// store the energies
-	emap[ geom_sol ] += geo_solE;
+  // store the energies
+    emap[ geom_sol ] += geo_solE;
+
+  
 
 }
 
@@ -162,8 +165,244 @@ GeometricSolEnergyEvaluator::res_res_geometric_sol_one_way(
 
 	return geo_solE;
 }
+  
+  
+//////////////////////////////////////////////////////////////////////////////////////
+//optimization functions
+//Added by Joseph Yesselman 9/5/2013
+//////////////////////////////////////////////////////////////////////////////////////
+
+  
+Real
+GeometricSolEnergyEvaluator::geometric_sol_one_way_sc(
+                                                         conformation::Residue const & polar_rsd,
+                                                         conformation::Residue const & occ_rsd,
+                                                         pose::Pose const & pose ) const
+{
+  
+  Real geo_solE =
+  donorRes_occludingRes_geometric_sol_one_way_sc( polar_rsd, occ_rsd, pose ) +
+  acceptorRes_occludingRes_geometric_sol_one_way_sc( polar_rsd, occ_rsd, pose );
+  
+  return geo_solE;
+  
+  
+}
+
+  
+inline
+Real
+GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way_sc(
+                                                                                  conformation::Residue const & acc_rsd,
+                                                                                  conformation::Residue const & occ_rsd,
+                                                                                  pose::Pose const & pose) const
+{
+  
+  Real res_solE( 0.0 ), energy( 0.0 );
+  
+  Size const acc_rsd_last_backbone_num = acc_rsd.last_backbone_atom();
+  Size const occ_rsd_last_backbone_num = occ_rsd.last_backbone_atom();
+  
+  
+  for ( chemical::AtomIndices::const_iterator
+       anum  = acc_rsd.accpt_pos().begin(),
+       anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
+    
+    Size const acc_atm( *anum );
+    
+    Size start (1);
+    
+    if(acc_rsd.atom_is_backbone(acc_atm)) { start = occ_rsd.first_sidechain_atom(); }
+  
+    for ( Size occ_atm = start; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
+        
+      //Important NOTE. I originally had the code in the following function
+      // written out inside this loop -- and packing was faster.
+      // Perhaps something to do with inlining or compiler optimization.
+      // I've left it this way for now, because it helps prevent copying too
+      // much of the code shared between  residue pair
+      // scoring and for the derivatives.
+      // However, if speed becomes important, here's a place to start.
+      get_atom_atom_geometric_solvation_for_acceptor( acc_atm, acc_rsd,
+                                                     occ_atm, occ_rsd, pose, energy);
+      res_solE += energy;
+    }
+  }
+  
+  return res_solE;
+  
+}
+
+inline
+Real
+GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way_sc(
+                                                                               conformation::Residue const & don_rsd,
+                                                                               conformation::Residue const & occ_rsd,
+                                                                               pose::Pose const & pose) const
+{
+  
+  Size const don_rsd_last_backbone_num = don_rsd.last_backbone_atom();
+  Size const occ_rsd_last_backbone_num = occ_rsd.last_backbone_atom();
+  
+  Real res_solE( 0.0 ), energy( 0.0 );
+  
+  // Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
+  for ( chemical::AtomIndices::const_iterator
+       hnum  = don_rsd.Hpos_polar().begin(),
+       hnume = don_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+    Size const don_h_atm( *hnum );
+    
+    
+    Size start (1);
+    
+    if(don_rsd.atom_is_backbone(don_h_atm)) { start = occ_rsd.first_sidechain_atom(); }
+    
+    // if(assign_rna_atom_type(don_rsd, don_h_atm) != type_1) continue;
+    
+    for ( Size occ_atm = start; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
+            
+      //Important NOTE. I originally had the code in the following function
+      // written out inside this loop -- and packing was faster.
+      // Perhaps something to do with inlining or compiler optimization.
+      // I've left it this way for now, because it helps prevent copying too
+      // much of the code shared between  residue pair
+      // scoring and for the derivatives.
+      // However, if speed becomes important, here's a place to start.
+      get_atom_atom_geometric_solvation_for_donor( don_h_atm, don_rsd,
+                                                  occ_atm, occ_rsd, pose, energy );
+      res_solE += energy;
+    }
+  }
+  
+  return res_solE;
+}
+
+  
+  
+  
+///////////////////////////////////////////////////////////////////////////////////////
+
+Real
+GeometricSolEnergyEvaluator::geometric_sol_one_way_bb_bb(
+  conformation::Residue const & polar_rsd,
+  conformation::Residue const & occ_rsd,
+  pose::Pose const & pose ) const
+{
+
+  Real geo_solE =
+    donorRes_occludingRes_geometric_sol_one_way_bb_bb( polar_rsd, occ_rsd, pose ) +
+    acceptorRes_occludingRes_geometric_sol_one_way_bb_bb( polar_rsd, occ_rsd, pose );
+  
+	return geo_solE;
+
+  
+}
+  
+  
+Real
+GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way_bb_bb(
+  conformation::Residue const & acc_rsd,
+  conformation::Residue const & occ_rsd,
+  pose::Pose const & pose) const
+{
+  
+  Real res_solE( 0.0 ), energy( 0.0 );
+
+  Size const acc_rsd_last_backbone_num = acc_rsd.last_backbone_atom();
+  Size const occ_rsd_last_backbone_num = occ_rsd.last_backbone_atom();
+
+  
+  for ( chemical::AtomIndices::const_iterator
+       anum  = acc_rsd.accpt_pos().begin(),
+       anume = acc_rsd.accpt_pos().end(); anum != anume; ++anum ) {
+    
+    Size const acc_atm( *anum );
+
+    if(!acc_rsd.atom_is_backbone(acc_atm)) continue;
+
+    
+    //if(acc_atm > acc_rsd_last_backbone_num) continue;
+    
+    for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
+      
+      if(!occ_rsd.atom_is_backbone(occ_atm)) continue;
+
+      //if(occ_atm > occ_rsd_last_backbone_num) continue;
+            
+      //Important NOTE. I originally had the code in the following function
+      // written out inside this loop -- and packing was faster.
+      // Perhaps something to do with inlining or compiler optimization.
+      // I've left it this way for now, because it helps prevent copying too
+      // much of the code shared between  residue pair
+      // scoring and for the derivatives.
+      // However, if speed becomes important, here's a place to start.
+      get_atom_atom_geometric_solvation_for_acceptor( acc_atm, acc_rsd,
+                                                     occ_atm, occ_rsd, pose, energy);
+      res_solE += energy;
+    }
+  }
+  
+  return res_solE;
+  
+}
+  
+
+Real
+GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way_bb_bb(
+  conformation::Residue const & don_rsd,
+  conformation::Residue const & occ_rsd,
+  pose::Pose const & pose) const
+{
+  
+  Size const don_rsd_last_backbone_num = don_rsd.last_backbone_atom();
+  Size const occ_rsd_last_backbone_num = occ_rsd.last_backbone_atom();
+  
+  Real res_solE( 0.0 ), energy( 0.0 );
+  
+  // Here we go -- cycle through polar hydrogens in don_aa, everything heavy in occluding atom.
+  for ( chemical::AtomIndices::const_iterator
+       hnum  = don_rsd.Hpos_polar().begin(),
+       hnume = don_rsd.Hpos_polar().end(); hnum != hnume; ++hnum ) {
+    Size const don_h_atm( *hnum );
+    
+    //if(don_h_atm > don_rsd_last_backbone_num) continue;
+    
+    if(!don_rsd.atom_is_backbone(don_h_atm)) continue;
+
+    
+    for ( Size occ_atm = 1; occ_atm <= occ_rsd.nheavyatoms(); occ_atm++ ) {
+      
+      if(!occ_rsd.atom_is_backbone(occ_atm)) continue;
+      
+      //if(occ_atm > occ_rsd_last_backbone_num) continue;
+      
+      //Important NOTE. I originally had the code in the following function
+      // written out inside this loop -- and packing was faster.
+      // Perhaps something to do with inlining or compiler optimization.
+      // I've left it this way for now, because it helps prevent copying too
+      // much of the code shared between  residue pair
+      // scoring and for the derivatives.
+      // However, if speed becomes important, here's a place to start.
+      get_atom_atom_geometric_solvation_for_donor( don_h_atm, don_rsd,
+                                                  occ_atm, occ_rsd, pose, energy );
+      res_solE += energy;
+    }
+  }
+  
+  return res_solE;
+}
+  
+  
+  
+  
+  
+  
+  
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////
+inline
 Real
 GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way(
 	conformation::Residue const & don_rsd,
@@ -197,6 +436,7 @@ GeometricSolEnergyEvaluator::donorRes_occludingRes_geometric_sol_one_way(
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
+inline
 Real
 GeometricSolEnergyEvaluator::acceptorRes_occludingRes_geometric_sol_one_way(
 	conformation::Residue const & acc_rsd,
@@ -472,8 +712,8 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_donor(
 	// the base atom isn't allowed to occlude solvent
 	// Note: In current implementation, intraresidue pairs aren't checked...
 	if ( ( don_rsd.seqpos() == occ_rsd.seqpos() ) && ( occ_atm == don_base_atm ) ) return;
-	if (occ_rsd.is_virtual(occ_atm)) return;
-	if (don_rsd.is_virtual(don_h_atm)) return;
+	if (occ_rsd.is_protein() && occ_rsd.is_virtual(occ_atm)) return;
+	if (don_rsd.is_protein() && don_rsd.is_virtual(don_h_atm)) return;
 
 	// if a backbone donor participates in a backbone-backbone Hbond,
 	// nothing is allowed to occlude solvent except a backbone acceptor
@@ -602,8 +842,9 @@ GeometricSolEnergyEvaluator::get_atom_atom_geometric_solvation_for_acceptor(
 		( acc_rsd.is_protein() && acc_rsd.atom_is_backbone( acc_atm ) );
 
 	// Virtual atom (e.g., Andrew Leaver-Fay's NV in proline) don't count.
-	if ( occ_rsd.is_virtual(occ_atm) ) return;
-	if ( acc_rsd.is_virtual(acc_atm) ) return;
+  
+	if ( occ_rsd.is_protein() && occ_rsd.is_virtual(occ_atm) ) return;
+	if ( acc_rsd.is_protein() && acc_rsd.is_virtual(acc_atm) ) return;
 
 	// the base atom isn't allowed to occlude solvent
 	// Note: In current implementation, intraresidue pairs aren't checked...

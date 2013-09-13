@@ -55,7 +55,16 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
+  
+  /// attempt to precalculate backbone/backbone energies in advance 
+  virtual
+	void
+	setup_for_packing(
+    pose::Pose & pose,
+    utility::vector1< bool > const &,
+    utility::vector1< bool > const & ) const;
 
+  
 	/// This evaluates everything for now,
 	/// but eventually may want to split this
 	/// based on backbone/backbone vs. others,
@@ -80,6 +89,15 @@ public:
 		 Vector & F2
 	) const;
 	*/
+  
+  
+  
+  void
+  finalize_total_energy(
+    pose::Pose & pose,
+    ScoreFunction const &,
+    EnergyMap & totals
+  ) const;
 
 	/// f1 and f2 are zeroed
 	virtual
@@ -119,6 +137,12 @@ public:
 	virtual
 	void indicate_required_context_graphs(
 		utility::vector1< bool > & context_graphs_required ) const;
+  
+  void
+  precalculate_bb_bb_energy_for_design(
+    pose::Pose const &
+  ) const;
+  
 
 private:
 
@@ -127,8 +151,10 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 	methods::EnergyMethodOptionsOP options_;
 
-	GeometricSolEnergyEvaluatorOP evaluator_;
+  GeometricSolEnergyEvaluatorOP evaluator_;
 
+  mutable Real precalculated_bb_bb_energy_;
+  
 
 };
 

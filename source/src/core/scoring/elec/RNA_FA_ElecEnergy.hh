@@ -9,7 +9,7 @@
 
 /// @file   core/scoring/methods/RNA_FA_ElecEnergy.hh
 /// @brief  Electrostatics for RNA
-/// @author Rhiju Das
+/// @author Joseph Yesselman 
 
 
 #ifndef INCLUDED_core_scoring_elec_RNA_FA_ElecEnergy_hh
@@ -31,11 +31,14 @@
 #include <utility/vector1.hh>
 
 
+enum RNAAtomType { PHOSPHATE=1, SUGAR=2, BASE=3 };
+
 
 namespace core {
 namespace scoring {
 namespace elec {
 
+  
 ///
 class RNA_FA_ElecEnergy : public FA_ElecEnergy  {
 public:
@@ -135,6 +138,17 @@ public:
 		EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 	) const;
+  
+  
+  virtual
+  void
+  backbone_backbone_energy(
+    conformation::Residue const & rsd1,
+    conformation::Residue const & rsd2,
+    pose::Pose const & pose,
+    ScoreFunction const & sfxn,
+    EnergyMap & emap
+  ) const;
 
 
 	//@brief overrides default rotamer/background energy calculation
@@ -172,13 +186,15 @@ public:
 
 public:
 
+  Real
+  rna_fa_elec_one_way(
+    conformation::Residue const &,
+    conformation::Residue const &,
+    RNAAtomType const &,
+    RNAAtomType const &
+    
+  ) const;
 
-	Real
-	residue_pair_energy_RNA(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		EnergyMap & emap
-	) const;
 
 	void
 	eval_atom_derivative_RNA(
@@ -191,7 +207,8 @@ public:
 	) const;
 virtual
 core::Size version() const;
-
+  
+  
 };
 
 

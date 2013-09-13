@@ -119,6 +119,31 @@ StackElecEnergy::clone() const
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
+  
+void
+StackElecEnergy::setup_for_packing(
+  pose::Pose  & pose,
+  utility::vector1< bool > const &,
+  utility::vector1< bool > const & designing_residues
+) const
+{
+ 
+  for ( Size ii = 1; ii <= designing_residues.size(); ++ii ) {
+		if ( designing_residues[ ii ] ) {
+			might_be_designing_ = true;
+			break;
+		}
+	}
+  
+  pose.update_residue_neighbors();
+  
+  rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+  rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+  rna_centroid_info.update( pose );
+
+  
+}
+  
 
 ///
 void
@@ -153,8 +178,7 @@ StackElecEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-
-
+  
 	Real score_base_base1( 0.0 ), score_base_base2( 0.0 );
 	Real score_base_bb1( 0.0 ), score_base_bb2( 0.0 );
 
@@ -193,11 +217,18 @@ StackElecEnergy::residue_pair_energy_one_way(
   rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
   rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
   utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
+  Size const i( rsd1.seqpos() );
+  
+  kinematics::Stub stub_i = base_stubs[i];
 
+  if ( might_be_designing_ ){
+    Vector centroid1 = rna_centroid_info.get_base_centroid( rsd1 );
+		stub_i = rna_centroid_info.get_base_coordinate_system( rsd1, centroid1 );
+  
+  }
+  
   Real score( 0.0 );
 
-  Size const i( rsd1.seqpos() );
-  kinematics::Stub const & stub_i( base_stubs[i] );
   Matrix const M_i ( stub_i.M );
 
   // Loop over base heavy atoms.

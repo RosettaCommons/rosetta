@@ -112,6 +112,15 @@ public:
 		EnergyMap &// totals
 	) const;
 
+  virtual
+  void
+  setup_for_packing(
+    pose::Pose  & pose,
+    utility::vector1< bool > const &,
+    utility::vector1< bool > const & designing_residues
+  ) const;
+  
+  
 	virtual
 	Distance
 	atomic_interaction_cutoff() const;
@@ -180,6 +189,8 @@ private:
 	bool const base_base_only_;
 
 	bool const verbose_;
+  
+  mutable bool might_be_designing_;
 
 };
 

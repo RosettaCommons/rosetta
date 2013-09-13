@@ -1137,6 +1137,13 @@ ScoringManager::energy_method(
 	case fa_elec_rna_sugr_base:
 	case fa_elec_rna_base_base:
 		return new elec::RNA_FA_ElecEnergy( options );
+  case fa_elec_rna_phos_phos2:
+  case fa_elec_rna_phos_sugr2:
+  case fa_elec_rna_phos_base2:
+  case fa_elec_rna_sugr_sugr2:
+  case fa_elec_rna_sugr_base2:
+  case fa_elec_rna_base_base2:
+   return new elec::RNA_FA_ElecEnergy2( options );
 	case dna_bp:
 	case dna_bs:
 		return new DNA_BaseEnergy;

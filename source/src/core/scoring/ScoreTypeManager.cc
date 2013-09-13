@@ -99,7 +99,15 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_elec_rna_sugr_sugr" ] = fa_elec_rna_sugr_sugr;
 	name2score_type_[ "fa_elec_rna_sugr_base" ] = fa_elec_rna_sugr_base;
 	name2score_type_[ "fa_elec_rna_base_base" ] = fa_elec_rna_base_base;
-	name2score_type_[ "fa_elec_aro_aro" ] = fa_elec_aro_aro;
+  
+  name2score_type_[ "fa_elec_rna_phos_phos_fast" ] = fa_elec_rna_phos_phos_fast;
+  name2score_type_[ "fa_elec_rna_phos_sugr_fast" ] = fa_elec_rna_phos_sugr_fast;
+	name2score_type_[ "fa_elec_rna_phos_base_fast" ] = fa_elec_rna_phos_base_fast;
+	name2score_type_[ "fa_elec_rna_sugr_sugr_fast" ] = fa_elec_rna_sugr_sugr_fast;
+	name2score_type_[ "fa_elec_rna_sugr_base_fast" ] = fa_elec_rna_sugr_base_fast;
+	name2score_type_[ "fa_elec_rna_base_base_fast" ] = fa_elec_rna_base_base_fast;
+	
+  name2score_type_[ "fa_elec_aro_aro" ] = fa_elec_aro_aro;
 	name2score_type_[ "fa_elec_aro_all" ] = fa_elec_aro_all;
 	name2score_type_[ "hack_aro" ] = hack_aro;
 	name2score_type_[ "h2o_hbond" ] = h2o_hbond;
@@ -347,7 +355,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "geom_sol_intra_RNA"    ] = geom_sol_intra_RNA;
 	name2score_type_[ "geom_sol_fast"    ] = geom_sol_fast;
 	name2score_type_[ "geom_sol_fast_intra_RNA"    ] = geom_sol_fast_intra_RNA;
-
+  
 	name2score_type_[ "dna_bb_torsion"] = dna_bb_torsion;
 	name2score_type_[ "dna_sugar_close"] = dna_sugar_close;
 	name2score_type_[ "dna_base_distance"] = dna_base_distance;

@@ -37,6 +37,8 @@
 
 using namespace core;
 
+enum RNAAtomType { PHOSPHATE=1, SUGAR=2, BASE=3 };
+
 namespace core {
 namespace scoring {
 namespace geometric_solvation {
@@ -87,6 +89,25 @@ namespace geometric_solvation {
 	Distance
 	atomic_interaction_cutoff() const;
 
+  Real
+  geometric_sol_one_way_bb_bb(
+    conformation::Residue const & polar_rsd,
+    conformation::Residue const & occ_rsd,
+    pose::Pose const & pose ) const;
+    
+  Real
+  geometric_sol_one_way_sc(
+                              conformation::Residue const & polar_rsd,
+                              conformation::Residue const & occ_rsd,
+                              pose::Pose const & pose ) const;
+
+  inline
+  Real
+  res_res_geometric_sol_one_way(
+                                conformation::Residue const & polar_rsd,
+                                conformation::Residue const & occ_rsd,
+                                pose::Pose const & pose ) const;
+  
 	private:
 
 
@@ -104,15 +125,11 @@ namespace geometric_solvation {
 		id::AtomID const & atom_id,
 		pose::Pose const & pose
 	) const;
+    
 
 private:
 
-	inline
-	Real
-	res_res_geometric_sol_one_way(
-		conformation::Residue const & polar_rsd,
-		conformation::Residue const & occ_rsd,
-		pose::Pose const & pose ) const;
+
 
 	inline
 	Real
@@ -127,6 +144,45 @@ private:
 		conformation::Residue const & acc_rsd,
 		conformation::Residue const & occ_rsd,
 		pose::Pose const & pose ) const;
+    
+    
+  //test optimization function
+  //by Joseph Yesselman 9/5/13
+  // should remove!
+  ///////////////////////////////////////////////////////////
+  inline
+  Real
+  donorRes_occludingRes_geometric_sol_one_way_bb_bb(
+    conformation::Residue const & don_rsd,
+    conformation::Residue const & occ_rsd,
+    pose::Pose const & pose ) const;
+    
+  inline
+  Real
+  acceptorRes_occludingRes_geometric_sol_one_way_bb_bb(
+    conformation::Residue const & acc_rsd,
+    conformation::Residue const & occ_rsd,
+    pose::Pose const & pose ) const;
+ 
+    inline
+    Real
+    donorRes_occludingRes_geometric_sol_one_way_sc(
+                                                      conformation::Residue const & don_rsd,
+                                                      conformation::Residue const & occ_rsd,
+                                                      pose::Pose const & pose ) const;
+    
+    inline
+    Real
+    acceptorRes_occludingRes_geometric_sol_one_way_sc(
+                                                         conformation::Residue const & acc_rsd,
+                                                         conformation::Residue const & occ_rsd,
+                                                         pose::Pose const & pose ) const;
+    
+  ///////////////////////////////////////////////////////////
+
+  
+    
+    
 
 	inline
 	Real

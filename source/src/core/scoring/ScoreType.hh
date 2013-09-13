@@ -96,7 +96,14 @@ enum ScoreType {
 	fa_elec_rna_sugr_sugr,
 	fa_elec_rna_sugr_base,
 	fa_elec_rna_base_base,
-
+  
+  fa_elec_rna_phos_phos_fast,
+  fa_elec_rna_phos_sugr_fast,
+	fa_elec_rna_phos_base_fast,
+	fa_elec_rna_sugr_sugr_fast,
+	fa_elec_rna_sugr_base_fast,
+	fa_elec_rna_base_base_fast,
+  
 	fa_elec_aro_aro,
 	fa_elec_aro_all,
 	hack_aro,
@@ -170,6 +177,7 @@ enum ScoreType {
 
 	geom_sol_fast,           //Context independent version. Currently tested only for RNA case.
 	geom_sol_fast_intra_RNA, //RNA specific score term
+  
 
 	fa_cust_pair_dist,  // custom short range 2b
 	custom_atom_pair,

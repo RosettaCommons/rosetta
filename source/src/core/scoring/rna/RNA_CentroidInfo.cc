@@ -104,6 +104,7 @@ RNA_CentroidInfo::update( pose::Pose const & pose )
 {
 	initialize_base_centroids_and_stubs( pose );
 }
+  
 
 
 }
