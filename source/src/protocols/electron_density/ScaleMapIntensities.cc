@@ -58,9 +58,9 @@ ScaleMapIntensities::ScaleMapIntensities() : moves::Mover() {
 }
 
 void ScaleMapIntensities::init() {
-	res_low_=100.0;
+	res_low_=1000.0;
 	res_high_=0.0;
-	nresbins_=20;
+	nresbins_=50;
 	scale_by_fsc_=false;
 	asymm_only_=false;
 	outmap_name_="";

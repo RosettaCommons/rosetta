@@ -1283,14 +1283,21 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core:
 			for (int x=1; x<=(int)density.u1(); ++x) {
 				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
 				Real s_i = sqrt(S2(H,K,L));
-				int bucket_i = 1+(int)std::floor( (s_i-maxreso) / step );
-				if ( bucket_i > (int)nbuckets ) {
-					Fdensity(x,y,z) = 0.0;
+
+				//fpd smooth interpolate
+				Real bucket = 0.5+((s_i-maxreso) / step);
+				int bucket_i = (int)std::floor(bucket);
+				Real bucket_offset0 = bucket-bucket_i;
+				Real bucket_offset1 = 1.0-bucket_offset0;
+
+				if ( bucket_i >= (int)nbuckets ) {
+					Fdensity(x,y,z) *= scale_i[nbuckets];
 				} else if ( bucket_i < 0 ) {
-					Fdensity(x,y,z) = 0.0;
+					Fdensity(x,y,z) *= scale_i[1];
 				} else {
-					Fdensity(x,y,z) *= scale_i[bucket_i];
+					Fdensity(x,y,z) *= bucket_offset1*scale_i[bucket_i] + bucket_offset0*scale_i[bucket_i+1];
 				}
+
 			}
 		}
 	}
