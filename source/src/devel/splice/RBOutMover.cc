@@ -74,15 +74,15 @@ RBOutMover::RBOutMover(): moves::Mover("RBOut"),
 RBOutMover::~RBOutMover()
 {
 }
-    
+
 bool compare(std::pair<core::Size,core::Size> p1, std::pair<core::Size, core::Size> p2) {return p1.first == p2.first;}
 
-/// this finds sequence subsequent disulfides: xxxxxCxxxxCxxxxxCxxC, then the first two are returned as one pair the second as another pair. If the topology of the disulfide bridges is more complicated, this method needs to be revised
+/// find disulfide pairs. Simply look for pairs of SG atoms on residues that are disulfide variants and within 3.0A
 utility::vector1< std::pair< core::Size, core::Size > >
 find_disulfs_in_range( core::pose::Pose const & pose, core::Size const start, core::Size const end ){
     utility::vector1< std::pair< core::Size, core::Size > > disulfs;
     disulfs.clear();
-    
+
     runtime_assert( end <= pose.total_residue() && end >= 1 && start <= end && start >= 1 );
     for( core::Size resi = start; resi < end; ++resi ){
         for( core::Size resj = resi + 1 ; resj <= end; ++resj ){
@@ -98,7 +98,6 @@ find_disulfs_in_range( core::pose::Pose const & pose, core::Size const start, co
     return(disulfs);
 }
 
-    
 void
 RBOutMover::apply( Pose & pose )
 {
@@ -106,7 +105,7 @@ RBOutMover::apply( Pose & pose )
     core::import_pose::pose_from_pdb( template_pose, template_pdb_fname() );
     utility::vector1< std::pair< core::Size, core::Size > > const disulfs_in_template = find_disulfs_in_range( template_pose, 1, template_pose.total_residue() );
     runtime_assert( disulfs_in_template.size() == 2 );
-    
+
     utility::vector1< std::pair< core::Size, core::Size > > const disulfs_in_pose = find_disulfs_in_range( pose, 1, pose.total_residue() );
     runtime_assert( disulfs_in_pose.size() >= 2 );
     utility::vector1< std::pair< core::Size, core::Size > > relevant_disulfs;
@@ -128,14 +127,14 @@ RBOutMover::apply( Pose & pose )
         }
     }
     runtime_assert( relevant_disulfs.size() == 2 );
-    
+
     core::kinematics::FoldTree ft;
     ft.clear();
- 
+
  /// We don't know what order the chains will come in. Is the first disulfide in the template also first on the pose? Not always the case...
     core::Size const first_disulf( std::min( relevant_disulfs[ 1 ].second, relevant_disulfs[ 2 ].second ));
     core::Size const second_disulf( std::max( relevant_disulfs[ 1 ].second, relevant_disulfs[ 2 ].second ));
-    
+
 /// Following is an ugly foldtree just used to define the jump between the 2nd and 1st disulfides in the order they're observed in template pose
     using namespace core::kinematics;
     ft.add_edge( first_disulf, 1, Edge::PEPTIDE );
@@ -155,8 +154,8 @@ RBOutMover::apply( Pose & pose )
 	data.open( jump_dbase_fname().c_str(), std::ios::out );
 	if( !data.good() )
 		utility_exit_with_message( "Unable to open jump dbase file for writing: " + jump_dbase_fname() + "\n" );
-    data<<pose_disulf_jump<<std::endl;
-    TR<<"Wrote jump info: "<<pose_disulf_jump<<std::endl;
+  data<<pose_disulf_jump<<std::endl;
+  TR<<"Wrote jump info: "<<pose_disulf_jump<<std::endl;
 }
 
 std::string
