@@ -322,6 +322,9 @@ RNA_KinematicCloser::output_chainTORS() const {
 void
 RNA_KinematicCloser::apply( Pose & pose, Size const id ) {
 	runtime_assert( is_init() );
+	runtime_assert( id > 0 );
+	runtime_assert( id <= nsol_ );
+
 	Size count ( 0 );
 	for ( Size i = 1; i <= 3; i++ ) {
 		++count;
@@ -346,13 +349,13 @@ RNA_KinematicCloser::operator++() {
 bool
 RNA_KinematicCloser::not_end() const {
 	runtime_assert( is_init() );
-	return ( id_ <= size() );
+	return ( size() > 0 && id_ <= size() );
 }
 ////////////////////////////////////////////////////////////////
 void
 RNA_KinematicCloser::reset() {
 	runtime_assert( is_init() );
-	if ( random() ) {
+	if ( random() && not_end() ) {
 		++( *this );
 	} else {
 		id_ = 1;

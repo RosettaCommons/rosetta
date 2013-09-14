@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/swa/monte_carlo/types.hh>
+#include <protocols/swa/monte_carlo/SWA_Move.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.fwd.hh>
 #include <protocols/swa/monte_carlo/RNA_AddMover.fwd.hh>
 
@@ -37,7 +37,7 @@ class RNA_AddMover: public protocols::moves::Mover {
 public:
 
 
-	RNA_AddMover( core::chemical::ResidueTypeSetCAP rsd_set, core::scoring::ScoreFunctionOP scorefxn );
+	RNA_AddMover( core::scoring::ScoreFunctionOP scorefxn );
 
 	//destructor
 	~RNA_AddMover();
@@ -64,15 +64,15 @@ public:
 
 	void set_start_added_residue_in_aform( Size const setting ){ start_added_residue_in_aform_ = setting; }
 
-	void set_minimize_all_rebuilt_res( Size const setting ){ minimize_all_rebuilt_res_ = setting; }
+	void set_minimize_single_res( Size const setting ){ minimize_single_res_ = setting; }
 
 	void set_num_random_samples( Size const & setting ){ num_random_samples_ = setting; }
 
+	void set_use_phenix_geo( Size const & setting ){ use_phenix_geo_ = setting; };
+
+	void set_erraser( Size const & setting ){ erraser_ = setting; };
+
 private:
-
-	void fix_up_residue_type_variants_after_append( core::pose::Pose & pose, Size const res_to_add ) const;
-
-	void fix_up_residue_type_variants_after_prepend( core::pose::Pose & pose, Size const res_to_add ) const;
 
 	void sample_by_swa( core::pose::Pose & pose, Size const res_to_add  ) const;
 
@@ -84,8 +84,10 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	bool presample_added_residue_;
 	bool presample_by_swa_;
-	bool minimize_all_rebuilt_res_;
+	bool minimize_single_res_;
 	bool start_added_residue_in_aform_;
+	bool use_phenix_geo_;
+	bool erraser_;
 	Size internal_cycles_;
 	RNA_TorsionMoverOP rna_torsion_mover_;
 	core::Real sample_range_small_;

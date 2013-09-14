@@ -358,6 +358,15 @@ core::Size
 make_cut_at_moving_suite( core::kinematics::FoldTree & fold_tree, core::Size const & moving_suite );
 
 void
+get_partition_definition( ObjexxFCL::FArray1D<bool> & partition_definition, core::kinematics::FoldTree const & fold_tree, core::Size const & moving_suite );
+
+void
+get_partition_definition( ObjexxFCL::FArray1D<bool> & partition_definition, core::pose::Pose const & pose , core::Size const & moving_suite );
+
+utility::vector1< bool >
+get_partition_definition( core::pose::Pose const & pose, core::Size const & moving_suite );
+
+void
 apply_rotamer( core::pose::Pose & pose, utility::vector1< Torsion_Info >  const & rotamer_list );
 
 bool

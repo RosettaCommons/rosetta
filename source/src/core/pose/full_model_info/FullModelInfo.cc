@@ -51,42 +51,69 @@ namespace full_model_info {
 FullModelInfo::FullModelInfo() {} // blank. Should not be used?
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FullModelInfo::FullModelInfo( 	utility::vector1< Size > const & sub_to_full,
-																utility::vector1< Size > const & moving_res_list,
-																std::string const full_sequence,
-																utility::vector1< Size > const & cutpoint_open_in_full_model) : //proper constructor
+FullModelInfo::FullModelInfo( 	std::string const full_sequence ):
 	CacheableData(),
-	sub_to_full_( sub_to_full ),
-	moving_res_list_( moving_res_list ),
-	full_sequence_( full_sequence ),
-	cutpoint_open_in_full_model_( cutpoint_open_in_full_model )
+	full_sequence_( full_sequence )
 {
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FullModelInfo::FullModelInfo( pose::Pose const & pose ) :
+FullModelInfo::FullModelInfo( pose::Pose & pose,
+															std::string const & full_sequence,
+															utility::vector1< Size > const & cutpoint_open_in_full_model,
+															utility::vector1< Size > const & res_numbers_in_pose ):
 	CacheableData(),
-	sub_to_full_( get_res_num_from_pdb_info( pose ) ),
-	full_sequence_( get_sequence_with_gaps_filled_with_n( pose ) ),
-	cutpoint_open_in_full_model_( get_cutpoint_open_from_pdb_info( pose ) )
+	full_sequence_( full_sequence ),
+	cutpoint_open_in_full_model_( cutpoint_open_in_full_model ),
+	res_list_( res_numbers_in_pose )
 {
+	for ( Size n = 1; n <= full_sequence.size(); n++ ){
+		if ( res_numbers_in_pose.has( n ) ){
+			fixed_domain_map_.push_back( 1 );
+		} else {
+			fixed_domain_map_.push_back( 0 );
+		}
+	}
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+FullModelInfo::FullModelInfo( pose::Pose & pose ) :
+	CacheableData()
+{
+
+	res_list_ = get_res_num_from_pdb_info( pose );
+	full_sequence_ = get_sequence_with_gaps_filled_with_n( pose );
+	cutpoint_open_in_full_model_ = get_cutpoint_open_from_pdb_info( pose );
+
+	// not sure what's best here -- for now setting that the pose's residues are 'fixed' within the domain map.
+	fixed_domain_map_ = utility::vector1<Size>( full_sequence_.size(), 0 );
+	for ( Size n = 1; n <= res_list_.size(); n++ ) fixed_domain_map_[ res_list_[n] ] = 1;
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details Copy constructors must copy all data, not just some...
 FullModelInfo::FullModelInfo( FullModelInfo const & src ) :
 	CacheableData(),
-	sub_to_full_( src.sub_to_full_ ),
-	moving_res_list_( src.moving_res_list_ ),
 	full_sequence_( src.full_sequence_ ),
-	cutpoint_open_in_full_model_( src.cutpoint_open_in_full_model_ )
+	cutpoint_open_in_full_model_( src.cutpoint_open_in_full_model_ ),
+	fixed_domain_map_( src.fixed_domain_map_ ),
+	res_list_( src.res_list_ )
 {
+	// we have to tell our daughters in the pose tree that its time to get cloned.
+	for ( Size n = 1; n <= src.other_pose_list_.size(); n++ ){
+		other_pose_list_.push_back( src.other_pose_list_[ n ]->clone() );
+	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+FullModelInfo::~FullModelInfo(){}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
-FullModelInfo::get_res_num_from_pdb_info( pose::Pose const & pose ) const{
+FullModelInfo::get_res_num_from_pdb_info( pose::Pose const & pose ) const {
 
 	utility::vector1< Size > resnum;
 
@@ -103,17 +130,18 @@ FullModelInfo::get_res_num_from_pdb_info( pose::Pose const & pose ) const{
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 std::string
-FullModelInfo::get_sequence_with_gaps_filled_with_n( pose::Pose const & pose ) const{
+FullModelInfo::get_sequence_with_gaps_filled_with_n( pose::Pose const & pose ) const {
 
 	// should also be smart about not filling in n's between chains.
 	// anyway. this is a quick hack for now.
+	utility::vector1< Size > const & res_list = res_list_;
 
 	std::string sequence;
 	sequence.push_back( pose.sequence()[ 0 ]  );
 	for ( Size n = 2; n <= pose.total_residue(); n++ ){
 
-		Size const prev_res_num    = sub_to_full_[ n-1 ];
-		Size const current_res_num = sub_to_full_[ n ];
+		Size const prev_res_num    = res_list[ n-1 ];
+		Size const current_res_num = res_list[ n ];
 		for ( Size i = prev_res_num+1; i < current_res_num; i++ ) sequence.push_back( 'n' );
 		sequence.push_back( pose.sequence()[ n-1 ] );
 
@@ -124,7 +152,30 @@ FullModelInfo::get_sequence_with_gaps_filled_with_n( pose::Pose const & pose ) c
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 utility::vector1< Size >
-FullModelInfo::get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const{
+FullModelInfo::chains_in_full_model() const {
+	utility::vector1< Size > chains;
+	Size chain_number( 1 );
+	for ( Size n = 1; n <= full_sequence_.size(); n++ ){
+		chains.push_back( chain_number );
+		if ( cutpoint_open_in_full_model_.has_value( n ) ) chain_number++;
+	}
+	return chains;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+FullModelInfo::moving_res_in_full_model() const {
+	utility::vector1< Size > moving_res;
+	runtime_assert( full_sequence_.size() == fixed_domain_map_.size() );
+	for ( Size n = 1; n <= full_sequence_.size(); n++ ){
+		if ( fixed_domain_map_[n] == 0 ) moving_res.push_back( n );
+	}
+	return moving_res;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+FullModelInfo::get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const {
 
 	PDBInfoCOP pdb_info = pose.pdb_info();
 	utility::vector1< Size > cutpoint_open;
@@ -147,13 +198,97 @@ FullModelInfo::get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const{
 	return cutpoint_open;
 }
 
-/// @details Pose must already contain a full_model_info object or this method will fail.
+
+///////////////////////////////////////////////////////////////////////////////////////
+Size
+FullModelInfo::find_index_in_other_pose_list( pose::Pose const & pose) const {
+
+	for ( Size n = 1; n <= other_pose_list_.size(); n++ ){
+		if ( other_pose_list_[ n ] == & pose ) return n;
+	}
+	return 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////
+// get rid of this.
+// Size
+// FullModelInfo::find_index_in_pose_list_and_update( pose::Pose & pose) {
+
+// 	Size const idx = find_index_in_pose_list( pose );
+// 	if ( idx > 0 ) return idx;
+
+// 	// if we make it here, it probably means that the pose we're looking for
+// 	// has been cloned, and full_model_info has a pointer to an old copy.
+// 	// We could try to update it on the fly... This may lead to potentially
+// 	// horrific behavior.
+// 	PDBInfoOP pdb_info = pose.pdb_info();
+// 	utility::vector1< Size > pdb_info_res_list;
+// 	for ( Size i = 1; i <= pose.total_residue(); i++ ) pdb_info_res_list.push_back( pdb_info->number( i ) );
+
+// 	for ( Size i = 1; i <= pdb_info_res_list.size(); i++ ) std::cout << "PDB_INFO_RES_LIST " << pdb_info_res_list[i] << std::endl;
+
+// 	for ( Size n = 1; n <= res_lists_.size(); n++ ){
+// 		for ( Size i = 1; i <= res_lists_[n].size(); i++ ) std::cout << "RES_LIST"<< n << " " <<res_lists_[n][i] << std::endl;
+// 		if ( res_lists_[n] == pdb_info_res_list ) {
+// 			pose_list_[ n ] = PoseOP( & pose ); // this is apparently dangerous.
+// 			return n;
+// 		}
+// 	}
+
+// 	return 0;
+// }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Size
+FullModelInfo::get_idx_for_other_pose_with_residue( Size const input_res ) const {
+	for ( Size i = 1; i <= other_pose_list_.size(); i++ ){
+		utility::vector1< Size > const & daughter_res_list = const_full_model_info_from_pose( *other_pose_list_[i] ).res_list();
+		if ( daughter_res_list.has_value( input_res ) ) return i;
+	}
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+FullModelInfo::add_other_pose( core::pose::PoseOP & pose )
+{
+	other_pose_list_.push_back( pose );
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+FullModelInfo::set_other_pose_list( utility::vector1< pose::PoseOP > const & setting ){
+	other_pose_list_ = setting;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void
+FullModelInfo::remove_other_pose_at_idx( Size const idx ){
+
+	runtime_assert( idx <= other_pose_list_.size() );
+	utility::vector1< core::pose::PoseOP > other_pose_list_new;
+
+	for ( Size i = 1; i <= other_pose_list_.size(); i++ ) {
+		if ( i == idx ) continue;
+		other_pose_list_new.push_back( other_pose_list_[ i ] );
+	}
+
+	other_pose_list_ = other_pose_list_new;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//// @details Pose must already contain a full_model_info object or this method will fail.
 FullModelInfo const &
 const_full_model_info_from_pose( pose::Pose const & pose )
 {
 	assert( pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) );
 	return *( static_cast< FullModelInfo const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO)() ) );
 }
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details Either returns a non-const reference to the FullModelInfo object already stored
@@ -165,9 +300,10 @@ nonconst_full_model_info_from_pose( pose::Pose & pose )
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) ) {
 		// following takes time -- so we shouldn't call this nonconst function a lot.
-		if ( check_full_model_info_OK( pose ) ){
-			return *( static_cast< FullModelInfo * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO )() ));
-		}
+		//		if ( check_full_model_info_OK( pose ) ){
+		runtime_assert ( check_full_model_info_OK( pose ) ); // later remove this for speed.
+		return *( static_cast< FullModelInfo * >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO )() ));
+			//		}
 	}
 
 	FullModelInfoOP full_model_info = new FullModelInfo( pose );

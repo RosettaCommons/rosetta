@@ -20,7 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/swa/monte_carlo/types.hh>
+#include <protocols/swa/monte_carlo/SWA_Move.hh>
 #include <protocols/swa/monte_carlo/RNA_AddMover.fwd.hh>
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.fwd.hh>
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.fwd.hh>
@@ -42,24 +42,28 @@ public:
 	//destructor -- necessary? -- YES destructors are necessary.
 	~RNA_AddOrDeleteMover();
 	using protocols::moves::Mover::apply;
-  void
+
+	bool
   apply( core::pose::Pose & pose, std::string & move_type );
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
 	virtual std::string get_name() const;
 
-	void set_allow_deletion_of_last_residue( bool const setting ){ allow_deletion_of_last_residue_ = setting; }
+	void set_disallow_deletion_of_last_residue( bool const setting ){ disallow_deletion_of_last_residue_ = setting; }
+
+	void set_skip_deletions( bool const setting ){ skip_deletions_ = setting; }
 
 	void set_sample_res( utility::vector1< Size > const & setting ){ sample_res_ = setting; }
 
-	void set_minimize_all_rebuilt_res( bool const setting );
+	void set_minimize_single_res( bool const setting );
 
 private:
 
 	RNA_AddMoverOP rna_add_mover_;
 	RNA_DeleteMoverOP rna_delete_mover_;
-	bool allow_deletion_of_last_residue_;
+	bool disallow_deletion_of_last_residue_;
+	bool skip_deletions_;
 	utility::vector1< Size > sample_res_;
 };
 

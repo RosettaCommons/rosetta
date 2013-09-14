@@ -57,22 +57,28 @@ sources = {
 		"PoseFilter_RMSD_Screen",
 		"RigidBodySampler",
 		"StepWiseClusterer",
-		"StepWiseCombineSampleGenerator",
-		"StepWiseDoNothingSampleGenerator",
-		"StepWiseIdentitySampleGenerator",
 		"StepWiseJobParameters",
-		"StepWisePoseCombineSampleGenerator",
 		"StepWisePoseSetup",
 		"StepWiseUtil",
+		"TransientCutpointHandler"
 	],
+	"protocols/swa/sample_generators": [
+                "StepWiseCombineSampleGenerator",
+		"StepWiseDoNothingSampleGenerator",
+		"StepWiseIdentitySampleGenerator",
+		"StepWisePoseCombineSampleGenerator",
+		],
 	"protocols/swa/monte_carlo": [
 		"RNA_AddMover",
 		"RNA_DeleteMover",
 		"RNA_AddOrDeleteMover",
 		"RNA_O2StarMover",
-		"RNA_SWA_MonteCarloMover",
+		"RNA_ResampleMover",
+		"RNA_AddDeleteMonteCarlo",
 		"RNA_TorsionMover",
-		"RNA_SWA_MonteCarloUtil",
+		"RNA_StepWiseMonteCarlo",
+		"SWA_MonteCarloUtil",
+		"SWA_Move",
 	],
 	"protocols/swa/protein": [
 		"MainChainTorsionSet",
@@ -93,7 +99,7 @@ sources = {
 	],
 
 	"protocols/swa/rna": [
-        "FloatingBaseChainClosureJobParameter",
+	        "FloatingBaseChainClosureJobParameter",
 		"StepWiseRNA_Modeler",
 		"StepWiseRNA_BaseCentroidScreener",
 		"StepWiseRNA_Clusterer",

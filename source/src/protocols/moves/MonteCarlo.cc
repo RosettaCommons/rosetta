@@ -182,7 +182,7 @@ MonteCarlo::show_state() const
 	    << "  " << last_accept_
 	    << "  " << autotemp_
 	    << "  " << quench_temp_
-	    << "  " << mc_accepted_
+		  << "  " << to_string( mc_accepted_ )
 	    << std::endl;
 	show_counters();
 }
@@ -568,7 +568,7 @@ MonteCarlo::eval_lowest_score_pose(
 	else{
 		score =  pose.energies().total_energy();
 	}
-	
+
 	//Evaluate
 	total_score_of_last_considered_pose_ = score; // save this for the TrialMover so that it may keep statistics.
 	if ( score < lowest_score() ) {
@@ -582,7 +582,7 @@ MonteCarlo::eval_lowest_score_pose(
 			*last_accepted_pose_ = pose;
 			evaluate_convergence_checks( pose, false /*not reject*/, false /*not final*/ );
 		}
-		
+
 		return true;
 	}
 	else{
@@ -625,6 +625,12 @@ MCA
 MonteCarlo::mc_accepted() const
 {
 	return mc_accepted_;
+}
+
+std::string
+MonteCarlo::mc_accepted_string() const
+{
+	return to_string( mc_accepted_ );
 }
 
 

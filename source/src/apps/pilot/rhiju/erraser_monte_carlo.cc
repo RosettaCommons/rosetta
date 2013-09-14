@@ -44,7 +44,8 @@
 //////////////////////////////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
+#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
+#include <protocols/swa/TransientCutpointHandler.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -131,6 +132,7 @@ erraser_monte_carlo()
   using namespace core::io::silent;
   using namespace core::optimization;
   using namespace core::import_pose;
+	using namespace protocols::swa;
 	using namespace protocols::swa::rna;
 	using namespace protocols::swa::monte_carlo;
 	using namespace protocols::moves;
@@ -191,6 +193,11 @@ erraser_monte_carlo()
 		Size const erraser_res = RG.random_element( sample_res_list );
 		bool const did_mutation = mutate_res_if_allowed( pose, erraser_res );
 
+
+		TransientCutpointHandler cutpoint_handler( erraser_res );
+		cutpoint_handler.set_minimize_res( sample_res_list ); // its needed to figure out fold tree.
+		cutpoint_handler.put_in_cutpoints( pose );
+
 		StepWiseRNA_Modeler erraser_modeler( erraser_res, scorefxn );
 		erraser_modeler.set_choose_random( true );
 		erraser_modeler.set_force_centroid_interaction( true );
@@ -203,6 +210,8 @@ erraser_monte_carlo()
 		erraser_modeler.apply( pose );
 		std::string move_type = erraser_modeler.get_num_sampled() ? "erraser" : "erraser_no_op";
 		if ( did_mutation ) move_type += "-mut";
+
+		cutpoint_handler.take_out_cutpoints( pose );
 
 		std::cout << "After ERRASER move and formally remove cutpoint" << std::endl;
 		scorefxn->show( std::cout, pose );

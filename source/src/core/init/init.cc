@@ -51,6 +51,7 @@
 #include <core/scoring/methods/NMerPSSMEnergyCreator.hh>
 #include <core/scoring/methods/NMerSVMEnergyCreator.hh>
 #include <core/scoring/methods/OmegaTetherEnergyCreator.hh>
+#include <core/scoring/methods/OtherPoseEnergyCreator.hh>
 #include <core/scoring/methods/P_AA_EnergyCreator.hh>
 #include <core/scoring/methods/P_AA_pp_EnergyCreator.hh>
 #include <core/scoring/methods/PackStatEnergyCreator.hh>
@@ -308,6 +309,7 @@ static EnergyMethodRegistrator< scoring::methods::IntermolEnergyCreator > Interm
 static EnergyMethodRegistrator< scoring::methods::EnvEnergyCreator > EnvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::EnvSmoothEnergyCreator > EnvSmoothEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::OmegaTetherEnergyCreator > OmegaTetherEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::OtherPoseEnergyCreator > OtherPoseEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::NMerRefEnergyCreator > NMerRefEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::NMerPSSMEnergyCreator > NMerPSSMEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::NMerSVMEnergyCreator > NMerSVMEnergyCreator_registrator;

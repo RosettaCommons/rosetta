@@ -14,6 +14,7 @@
 #ifndef INCLUDED_protocols_moves_MonteCarloStatus_hh
 #define INCLUDED_protocols_moves_MonteCarloStatus_hh
 
+#include <string>
 namespace protocols {
 namespace moves {
 
@@ -28,6 +29,9 @@ typedef enum {
 	MCA_accepted_thermally=1,
 	MCA_rejected=0
 } MCA; // mc_accepted state
+
+std::string
+to_string( MCA const & mc_accepted );
 
 } // simple_moves
 } // protocols

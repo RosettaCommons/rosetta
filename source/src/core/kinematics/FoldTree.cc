@@ -2564,7 +2564,7 @@ FoldTree::count_fixed_residues(
 ) const
 {
 	check_topology();
-	
+
 	//moving the call to setup_edge_counts() from check_topology() to here
 	//after thorough testing, this seems to be the only function that requires up-to-date edge
 	//count data, so moving it here should cut down on unecessary edge count calculations
@@ -2645,12 +2645,12 @@ void FoldTree::reassign_atoms_for_intra_residue_stubs() {
 
 		std::string const upstream_atom_name = ObjexxFCL::strip_whitespace( jump_edge( jump_nr ).upstream_atom() );
 		if ( upstream_atom_name != "" && upstream_atom_name != "N" && upstream_atom_name != "C" && upstream_atom_name != "CA"  ) {
-			std::cout << "UPSTREAM_ATOM_NAME" <<  upstream_atom_name << std::endl;
+			TR.Debug << "UPSTREAM_ATOM_NAME" <<  upstream_atom_name << std::endl;
 			anchor = upstream_atom_name;
 		}
 		std::string const downstream_atom_name = ObjexxFCL::strip_whitespace( jump_edge( jump_nr ).downstream_atom() );
 		if ( downstream_atom_name != "" && downstream_atom_name != "N" && downstream_atom_name != "C" && downstream_atom_name != "CA"  ){
-			std::cout << "DOWNSTREAM_ATOM_NAME" <<  downstream_atom_name << std::endl;
+			TR.Debug << "DOWNSTREAM_ATOM_NAME" <<  downstream_atom_name << std::endl;
 			root = downstream_atom_name;
 		}
 

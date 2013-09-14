@@ -182,6 +182,7 @@ AngleConstraint::score(
 		return func( theta );
 	}
 	std::cout << "AngleConstraint::score: warning: 0-length bonds!" << std::endl;
+	runtime_assert( false ); //die but hopfully get stack trace
 	return 0.0;
 }
 

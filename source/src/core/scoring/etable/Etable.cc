@@ -83,6 +83,10 @@ Etable::~Etable() {}
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
+///  Note from rhiju & andrew leaver-day: we should get rid of command-line option calls here
+///  in favor of setting options from EtableOptions object. Would allow user to have multiple
+///  etables around!
+
 ///  constructor
 Etable::Etable(
 	chemical::AtomTypeSetCAP atom_set_in, // like etable namespace
@@ -120,12 +124,12 @@ Etable::Etable(
 	long_range_damping_length ( 0.5 ),
 	epsilon                   ( 0.0001 ),
 	safe_max_dis2             ( max_dis2 - epsilon ),
-	hydrogen_interaction_cutoff2_( option[ score::fa_Hatr ] ?
+	hydrogen_interaction_cutoff2_( option[ score::fa_Hatr ] ?   // command-line option -- bad form; see note above.
 		std::pow( max_dis_ + 2*chemical::MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH, 2 ) :
 		std::pow(5.0,2) ),
 	max_non_hydrogen_lj_radius_( 0.0 ),
 	max_hydrogen_lj_radius_( 0.0 ),
-	slim_( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] )
+	slim_( basic::options::option[ basic::options::OptionKeys::score::analytic_etable_evaluation ] ) // command-line option -- bad form; see note above.
 {
 
 	dimension_etable_arrays();

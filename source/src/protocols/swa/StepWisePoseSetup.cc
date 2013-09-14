@@ -21,7 +21,6 @@
 #include <protocols/swa/StepWiseJobParameters.hh>
 #include <protocols/swa/StepWiseJobParameters.fwd.hh>
 #include <protocols/swa/protein/StepWiseProteinUtil.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
 
 //////////////////////////////////
 // AUTO-REMOVED #include <core/chemical/util.hh>
@@ -77,7 +76,6 @@
 #include <utility/vector1.hh>
 using namespace core;
 using core::Real;
-using protocols::rna::possible_root; /*not the best place for this...*/
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -118,6 +116,7 @@ namespace swa {
 		remove_cterminus_variant_( false ),
 		cst_file_( "" ),
 		BRIDGE_RES_( 123 ),
+		MOVING_RES_( 999 ),
 		ready_to_align_( false ),
 		add_virt_res_(false),
 		dump_( false )
@@ -183,7 +182,6 @@ return "StepWisePoseSetup";
 		job_parameters_->set_working_superimpose_res(  apply_full_to_sub_mapping( superimpose_res_ ) );
 		job_parameters_->set_working_calc_rms_res(  apply_full_to_sub_mapping( calc_rms_res_ ) );
 		job_parameters_->set_working_bridge_res(  apply_full_to_sub_mapping( bridge_res_ ) );
-
 
 		/////////////////////////////////
 		// More fold tree stuff.
@@ -262,8 +260,8 @@ return "StepWisePoseSetup";
 
 
 		for( Size i = 1; i <= moving_res_list_.size(); i++){
-			if (!is_working_res( moving_res_list_[ i ] ) ) is_working_res( moving_res_list_[i] )= 999;
-			is_moving_res( moving_res_list_[i] ) = 999;
+			if ( !is_working_res( moving_res_list_[ i ] ) ) is_working_res( moving_res_list_[i] ) = MOVING_RES_;
+			is_moving_res( moving_res_list_[i] ) = MOVING_RES_;
 		}
 
 
@@ -865,10 +863,10 @@ return "StepWisePoseSetup";
 		for ( Size n = 1; n <= nres; n++ ) {
 			if( partition_definition( n ) ) {
 				num_partition_1 += 1;
-				if ( possible_root( pose.fold_tree(), n ) ) possible_new_root_residue_in_partition_1 = n;
+				if ( pose.fold_tree().possible_root( n ) ) possible_new_root_residue_in_partition_1 = n;
 			} else {
 				num_partition_0 += 1;
-				if ( possible_root( pose.fold_tree(), n ) ) possible_new_root_residue_in_partition_0 = n;
+				if ( pose.fold_tree().possible_root( n ) ) possible_new_root_residue_in_partition_0 = n;
 			}
 		}
 
@@ -877,7 +875,7 @@ return "StepWisePoseSetup";
 		utility::vector1< core::Size > working_fixed_res( job_parameters_->working_fixed_res() );
 		for(Size i=1; i<=working_fixed_res.size(); i++){
 			Size const seq_num = working_fixed_res[i];
-			if(partition_definition( seq_num ) &&  possible_root( pose.fold_tree(), seq_num ) ){
+			if(partition_definition( seq_num ) &&  pose.fold_tree().possible_root( seq_num ) ){
 				possible_new_root_residue_in_partition_1= seq_num;
 				break;
 			}
@@ -885,7 +883,7 @@ return "StepWisePoseSetup";
 
 		for(Size i=1; i<=working_fixed_res.size(); i++){
 			Size const seq_num = working_fixed_res[i];
-			if( !partition_definition( seq_num ) &&  possible_root( pose.fold_tree(), seq_num ) ){
+			if( !partition_definition( seq_num ) && pose.fold_tree().possible_root( seq_num ) ){
 				possible_new_root_residue_in_partition_0= seq_num;
 				break;
 			}
@@ -1064,13 +1062,7 @@ return "StepWisePoseSetup";
 
 				Size const cutpos = full_to_sub[ cutpoint ];
 
-				// Taken from Parin's code. Need to make sure virtual atoms are correctly positioned
-				// next to OP2, OP1.
-				if ( pose.residue( cutpos ).is_RNA() ) protocols::swa::rna::Correctly_position_cutpoint_phosphate_torsions( pose, cutpos, false /*verbose*/ );
-
-				pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
-				pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos+1 );
-
+				correctly_add_cutpoint_variants( pose, cutpos );
 				std::cout << "Applied cutpoint variants to " << cutpoint << std::endl;
 
 				for (Size i = cutpos; i <= cutpos + 1; i++ ){

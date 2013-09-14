@@ -100,9 +100,9 @@
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_O2StarMover.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
-#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloMover.hh>
-#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
-#include <protocols/swa/monte_carlo/types.hh>
+#include <protocols/swa/monte_carlo/RNA_AddDeleteMonteCarlo.hh>
+#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
+#include <protocols/swa/monte_carlo/SWA_Move.hh>
 
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -270,7 +270,7 @@ OPT_KEY( Boolean, presample_added_residue )
 OPT_KEY( Integer, presample_internal_cycles )
 OPT_KEY( Boolean, start_added_residue_in_aform )
 OPT_KEY( Boolean, skip_delete )
-OPT_KEY( Boolean, allow_deletion_of_last_residue )
+OPT_KEY( Boolean, disallow_deletion_of_last_residue )
 
 using namespace protocols::swa::monte_carlo;
 
@@ -622,15 +622,12 @@ swa_rna_sample()
 	// put this into its own little function?
 	std::string const & full_sequence = job_parameters->full_sequence();
 	utility::vector1< Size > const start_moving_res_list = job_parameters->working_moving_res_list();
-	FullModelInfoOP full_model_info_op =
-		new FullModelInfo(  job_parameters->working_res_list(),
-												start_moving_res_list,
-												full_sequence,
-												option[ cutpoint_open ]() );
+
+	FullModelInfoOP full_model_info_op =	new FullModelInfo( pose, full_sequence, option[ cutpoint_open](), option[ input_res ]()  );
 	pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_op );
 
 	// put this into its own little function?
-	// Set up Movers that go into Main Loop (RNA_SWA_MonteCarloMover). This could also go into RNA_SWA_MonteCarloMover. Hmm.
+	// Set up Movers that go into Main Loop (RNA_AddDeleteMonteCarlo). This could also go into RNA_AddDeleteMonteCarlo. Hmm.
 	Real const kT_ = option[ kT ]();
 	Real const sample_range_small = option[ stddev_small ]();
 	Real const sample_range_large = option[ stddev_large ]();
@@ -639,7 +636,7 @@ swa_rna_sample()
 
 	RNA_DeleteMoverOP rna_delete_mover = new RNA_DeleteMover;
 
-	RNA_AddMoverOP rna_add_mover = new RNA_AddMover( rsd_set, scorefxn );
+	RNA_AddMoverOP rna_add_mover = new RNA_AddMover( scorefxn );
 	rna_add_mover->set_start_added_residue_in_aform( option[ start_added_residue_in_aform ]() );
 	rna_add_mover->set_presample_added_residue(  option[ presample_added_residue ]() );
 	rna_add_mover->set_internal_cycles( option[ presample_internal_cycles ]() );
@@ -648,11 +645,11 @@ swa_rna_sample()
 	rna_add_mover->set_kT( kT_ );
 
 	RNA_AddOrDeleteMoverOP rna_add_or_delete_mover = new RNA_AddOrDeleteMover( rna_add_mover, rna_delete_mover );
-	rna_add_or_delete_mover->set_allow_deletion_of_last_residue( option[ allow_deletion_of_last_residue ]() );
+	rna_add_or_delete_mover->set_disallow_deletion_of_last_residue( option[ disallow_deletion_of_last_residue ]() );
 
 	RNA_O2StarMoverOP rna_o2star_mover = new RNA_O2StarMover( scorefxn, option[ sample_all_o2star ](), sample_range_small, sample_range_large );
 
-	RNA_SWA_MonteCarloMoverOP rna_swa_montecarlo_mover = new RNA_SWA_MonteCarloMover(  rna_add_or_delete_mover, rna_torsion_mover, rna_o2star_mover, scorefxn );
+	RNA_AddDeleteMonteCarloOP rna_swa_montecarlo_mover = new RNA_AddDeleteMonteCarlo(  rna_add_or_delete_mover, rna_torsion_mover, rna_o2star_mover, scorefxn );
 	rna_swa_montecarlo_mover->set_native_pose( stepwise_rna_pose_setup->get_native_pose() );
 	rna_swa_montecarlo_mover->set_silent_file( option[ out::file::silent ]() );
 	rna_swa_montecarlo_mover->set_output_period( option[ output_period ]() );
@@ -816,7 +813,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( presample_added_residue, "when adding a residue, do a little monte carlo to try to get it in place", false );
 	NEW_OPT( presample_internal_cycles, "when adding a residue, number of monte carlo cycles", 100 );
 	NEW_OPT( skip_delete, "normally wipe out all residues before building", false );
-	NEW_OPT( allow_deletion_of_last_residue, "in add/delete allow complete erasure of moving residues during sampling", false );
+	NEW_OPT( disallow_deletion_of_last_residue, "in add/delete allow complete erasure of moving residues during sampling", false );
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

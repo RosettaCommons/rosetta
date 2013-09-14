@@ -15,7 +15,7 @@
 
 //////////////////////////////////
 #include <protocols/swa/protein/StepWiseProteinJumpSampleGenerator.hh>
-#include <protocols/swa/StepWisePoseSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.hh>
 #include <core/types.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>

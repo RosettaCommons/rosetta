@@ -37,6 +37,9 @@ namespace full_model_info {
 	reorder_full_model_info_after_prepend( core::pose::Pose & pose, core::Size const res_to_add );
 
 	void
+	update_res_list_in_full_model_info_and_pdb_info( pose::Pose & pose, utility::vector1< Size > const & res_list_new );
+
+	void
 	update_pdb_info_from_full_model_info( core::pose::Pose & pose );
 
 	utility::vector1< Size >
@@ -45,8 +48,23 @@ namespace full_model_info {
 	void
 	fill_full_model_info_from_command_line( pose::Pose & pose );
 
+	void
+	fill_full_model_info_from_command_line( utility::vector1< pose::PoseOP > pose_list );
+
 	bool
 	check_full_model_info_OK( pose::Pose const & pose );
+
+	utility::vector1< Size > const &
+	get_res_list_from_full_model_info( pose::Pose & pose );
+
+	utility::vector1< Size > const &
+	get_res_list_from_full_model_info_const( pose::Pose const & pose );
+
+	utility::vector1< utility::vector1< Size > >
+	get_moving_chunks_from_full_model_info( pose::Pose & pose );
+
+	utility::vector1< Size >
+	get_moving_res_from_full_model_info( pose::Pose & pose );
 
 }
 }

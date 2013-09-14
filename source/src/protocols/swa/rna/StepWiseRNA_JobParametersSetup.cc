@@ -85,7 +85,8 @@ namespace rna {
 		allow_chain_boundary_jump_partner_right_at_fixed_BP_( false ), //hacky, just to get the Square RNA working..Nov 6, 2010
 		allow_fixed_res_at_moving_res_( false ), //hacky, just to get the Hermann Duplex RNA working..Nov 15, 2010
 		simple_append_map_( false ),
-		skip_complicated_stuff_( false )
+		skip_complicated_stuff_( false ),
+		force_fold_tree_( false )
   {
 		Output_title_text( "Enter StepWiseRNA_JobParametersSetup::constructor", TR.Debug );
 
@@ -143,10 +144,12 @@ namespace rna {
 		setup_additional_cutpoint_closed();
 
 		figure_out_chain_boundaries();
-		figure_out_jump_partners();
-		figure_out_cuts();
 
-		setup_fold_tree();
+		if ( !force_fold_tree_ ){
+			figure_out_jump_partners();
+			figure_out_cuts();
+			setup_fold_tree();
+		}
 
 		////////////////Change the order that these functions are called on May 3, 2010 Parin S./////////////////////////////////////
 		Size root_res( 1 );
@@ -831,6 +834,8 @@ namespace rna {
 		Output_title_text( "", TR.Debug );
 	}
 
+
+
 	///////////////////////////////////////////////////////////////////////////////////
 	void
 	StepWiseRNA_JobParametersSetup::figure_out_jump_partners() {
@@ -848,12 +853,24 @@ namespace rna {
 
 		Size const num_chains( chain_boundaries.size() );
 
+		//  rhiju put this in out of desperation (aug. 2013) -- need to fix this (perhaps use what is in stepwise pose setup!?)
+		if ( force_user_defined_jumps_ ){
+			for ( Size n = 1; n <= jump_point_pair_list_.size(); n++ ){
+				Size const jump_partner1 = jump_point_pair_list_[n].first;
+				if ( !is_working_res[ jump_partner1 ] ) continue;
+				Size const jump_partner2 = jump_point_pair_list_[n].second;
+				if ( !is_working_res[ jump_partner2 ] ) continue;
+				jump_partners_.push_back( std::make_pair( full_to_sub[ jump_partner1 ], full_to_sub[ jump_point_pair_list_[n].second ] ) );
+			}
+			runtime_assert( jump_point_pair_list_.size() == num_chains-1 );
+			return;
+		}
+
 		TR.Debug << "num_chains = " << num_chains << std::endl;
 		for ( Size n = 1 ; n < num_chains; n++ ) {
 
 			Size const jump_partner1 = chain_boundaries[n].second;
 			Size const jump_partner2 = chain_boundaries[n + 1].first;
-
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			bool pass_consecutive_res_jump_partner_test = true;
@@ -868,9 +885,9 @@ namespace rna {
 			}
 
 			if ( jump_partner1 + 1 == jump_partner2 &&
-				cutpoint_closed_list.has_value( jump_partner1 ) == false && //not a cutpoint closed
-				( ( fixed_res_.has_value( jump_partner1 ) && fixed_res_.has_value( jump_partner2 ) )	 ||
-					( allow_chain_boundary_jump_partner_right_at_fixed_BP_ && pass_consecutive_res_jump_partner_test ) ) //Nov 2010, get Square RNA to work
+					 ! cutpoint_closed_list.has_value( jump_partner1 ) && //not a cutpoint closed
+					 ( ( fixed_res_.has_value( jump_partner1 ) && fixed_res_.has_value( jump_partner2 ) )	 ||
+						 ( allow_chain_boundary_jump_partner_right_at_fixed_BP_ && pass_consecutive_res_jump_partner_test ) ) //Nov 2010, get Square RNA to work
 				){
 
  				if ( is_working_res[ jump_partner1 ] == false || is_working_res[ jump_partner2 ] == false ) utility_exit_with_message( "jump_partner should be working res!" );
@@ -963,7 +980,7 @@ namespace rna {
 			jump_point( 1, i ) = jump_partners_[i].first;
 			jump_point( 2, i ) = jump_partners_[i].second;
 			cuts( i ) = cuts_[ i ];
-			//			TR.Debug << " HELLO: " << jump_point( 1, i ) << " " << jump_point( 2, i ) << " " << cuts( i ) << std::endl;
+			TR.Debug << " JUMP POINT: " << jump_point( 1, i ) << " " << jump_point( 2, i ) << " " << cuts( i ) << std::endl;
 		}
 
 		Size const root_res = ( full_to_sub[ moving_res_ ] == 1 ) ? nres : 1;
@@ -1041,8 +1058,7 @@ namespace rna {
 		if ( input_res_vectors[2].has_value( sub_to_full[working_seq_num] ) ) return 2;
 
 		TR.Debug << "working_seq_num = " << working_seq_num << " full_seq_num = " << sub_to_full[working_seq_num] << std::endl;
-		TR.Debug << "ADASDasd" << std::endl;
-		utility_exit_with_message( "seq_num is not part of both input_res_vectors[1] or input_res_vectors[2]" );
+		utility_exit_with_message( "seq_num is not part of either input_res_vectors[1] or input_res_vectors[2]" );
 		return 0; //Just to prevent compiler warning...
 
 	}
@@ -1144,6 +1160,8 @@ namespace rna {
 			Size possible_working_res_2 = 0;
 			Size found_possible_working_res = 0;
 
+			//			TR << "HEY! " <<  input_struct_definition( working_moving_res ) << " " <<  input_struct_definition( working_moving_res + 1 ) << std::endl;
+
 			//Check if this is a suite right between two previously built chunks.
 			if ( working_moving_res_list.size() == 1 ){
 
@@ -1178,7 +1196,7 @@ namespace rna {
 			}
 
 			if ( found_possible_working_res != 1 ){
-				TR.Debug << "found_possible_working_res = " << found_possible_working_res << std::endl;
+				TR << "found_possible_working_res = " << found_possible_working_res << std::endl;
 				utility_exit_with_message( "found_possible_working_res != 1. Cannot figure out use case!" );
 			}
 
@@ -1194,38 +1212,19 @@ namespace rna {
 			TR.Debug << "POSSIBLE_WORKING_RES1 " << possible_working_res_1 << " POSSIBLE_WORKING_RES2 " << possible_working_res_2 << std::endl;
 			while ( fold_tree.is_cutpoint( fake_working_moving_suite ) && fake_working_moving_suite < possible_working_res_2 ) fake_working_moving_suite++;
 
-
 			internal_working_res_params.possible_working_res_1 = possible_working_res_1;
 			internal_working_res_params.possible_working_res_2 = possible_working_res_2;
 		}
 
 		internal_working_res_params.fake_working_moving_suite = fake_working_moving_suite;
+
+
 		///////////////////////////////////////////////////////////////////////////////
-
-		core::kinematics::FoldTree fold_tree_with_cut_at_moving_suite = fold_tree;
-
 		TR.Debug << "FAKE_WORKING_MOVING_SUITE " << fake_working_moving_suite << std::endl;
-
-		Size const jump_at_moving_suite = make_cut_at_moving_suite( fold_tree_with_cut_at_moving_suite, fake_working_moving_suite );
-
-		fold_tree_with_cut_at_moving_suite.partition_by_jump( jump_at_moving_suite, partition_definition );
-
+		fold_tree.partition_by_residue( fake_working_moving_suite, partition_definition );
 		job_parameters_->set_partition_definition( partition_definition ); //this is a useful decomposition.
 
 		return internal_working_res_params;
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	// Apparently can only reroot the tree at a "vertex", i.e. beginning or end of an "edge".
-	bool
-	possible_root( core::kinematics::FoldTree const & f, Size const & n ){
-		if ( n == 1 ) return true;
-		if ( n == f.nres() ) return true;
-		if ( f.is_cutpoint( n ) ) return true;
-		if ( f.is_cutpoint( n - 1 ) ) return true;
-		return false;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1239,7 +1238,7 @@ namespace rna {
 
 		for ( Size i = 1; i <= working_fixed_res.size(); i++ ){
 			Size const n = working_fixed_res[i];
-			if ( possible_root( fold_tree, n )  ){
+			if ( fold_tree.possible_root( n )  ){
 				core::kinematics::FoldTree rerooted_fold_tree = fold_tree;
 				bool reorder_went_OK = rerooted_fold_tree.reorder( n );
 				if ( reorder_went_OK ) {
@@ -1271,10 +1270,10 @@ namespace rna {
 		for ( Size n = 1; n <= nres; n++ ) {
 			if ( partition_definition( n ) ) {
 				num_partition_1 += 1;
-				if ( possible_root( fold_tree, n ) ) possible_new_root_residue_in_partition_1 = n;
+				if ( fold_tree.possible_root( n ) ) possible_new_root_residue_in_partition_1 = n;
 			} else {
 				num_partition_0 += 1;
-				if ( possible_root( fold_tree, n ) ) possible_new_root_residue_in_partition_0 = n;
+				if ( fold_tree.possible_root( n ) ) possible_new_root_residue_in_partition_0 = n;
 			}
 		}
 
@@ -1284,7 +1283,7 @@ namespace rna {
 
 		for ( Size i = 1; i <= working_fixed_res.size(); i++ ){
 			Size const seq_num = working_fixed_res[i];
-			if ( partition_definition( seq_num ) &&  possible_root( fold_tree, seq_num ) ){
+			if ( partition_definition( seq_num ) && fold_tree.possible_root( seq_num ) ){
 				possible_new_root_residue_in_partition_1 = seq_num;
 				break;
 			}
@@ -1292,7 +1291,7 @@ namespace rna {
 
 		for ( Size i = 1; i <= working_fixed_res.size(); i++ ){
 			Size const seq_num = working_fixed_res[i];
-			if ( !partition_definition( seq_num ) &&  possible_root( fold_tree, seq_num ) ){
+			if ( !partition_definition( seq_num ) &&  fold_tree.possible_root( seq_num ) ){
 				possible_new_root_residue_in_partition_0 = seq_num;
 				break;
 			}
@@ -1303,7 +1302,7 @@ namespace rna {
 
 		for ( Size i = 1; i <= working_terminal_res.size(); i++ ){
 			Size const seq_num = working_terminal_res[i];
-				if ( partition_definition( seq_num ) &&  possible_root( fold_tree, seq_num ) ){
+				if ( partition_definition( seq_num ) &&  fold_tree.possible_root( seq_num ) ){
 				possible_new_root_residue_in_partition_1 = seq_num;
 				break;
 			}
@@ -1311,7 +1310,7 @@ namespace rna {
 
 		for ( Size i = 1; i <= working_terminal_res.size(); i++ ){
 			Size const seq_num = working_terminal_res[i];
-			if ( !partition_definition( seq_num ) &&  possible_root( fold_tree, seq_num ) ){
+			if ( !partition_definition( seq_num ) &&  fold_tree.possible_root( seq_num ) ){
 				possible_new_root_residue_in_partition_0 = seq_num;
 				break;
 			}
@@ -1367,6 +1366,7 @@ namespace rna {
 
 		if ( !reorder_went_OK ) utility_exit_with_message( "!reorder_went_OK" );
 
+		if ( force_fold_tree_ ) rerooted_fold_tree = job_parameters_->fold_tree();;
 
 		// moving positions
 		utility::vector1< Size > working_moving_partition_pos;
@@ -1645,7 +1645,8 @@ namespace rna {
 		if ( allow_fixed_res_at_moving_res_ == false ){ //Nov 15, 2010 (the outer if statement)
 			for ( Size n = 1; n <= moving_res_list_.size(); n++ ){
 				if ( fixed_res_.has_value( moving_res_list_[n] ) ){
-					utility_exit_with_message( "moving_res " + string_of( moving_res_list_[n] ) + " should not be in fixed_res_list!" );
+					TR.Debug << "moving_res " + string_of( moving_res_list_[n] ) + " should not be in fixed_res_list!" << std::endl;
+					//utility_exit_with_message( "moving_res " + string_of( moving_res_list_[n] ) + " should not be in fixed_res_list!" );
 				}
 			}
 		}
@@ -1836,6 +1837,14 @@ namespace rna {
 	StepWiseRNA_JobParametersSetup::set_add_virt_res_as_root( bool const setting ){
 
 		job_parameters_->set_add_virt_res_as_root( setting );
+
+	}
+  //////////////////////////////////////////////////////////////////////////
+	void
+	StepWiseRNA_JobParametersSetup::force_fold_tree( core::kinematics::FoldTree const & fold_tree ){
+
+		job_parameters_->set_fold_tree( fold_tree );
+		force_fold_tree_ = true;
 
 	}
   //////////////////////////////////////////////////////////////////////////

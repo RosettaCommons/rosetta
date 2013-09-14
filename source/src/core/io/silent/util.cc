@@ -14,13 +14,16 @@
 
 // C++ Headers
 #include <string>
+#include <map>
 
 // mini headers
 #include <basic/Tracer.hh>
+#include <core/io/silent/SilentFileData.hh>
 
 #include <utility/io/izstream.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/file/gzip_util.hh>
+#include <utility/file/file_sys_util.hh>
 
 // option key includes
 
@@ -59,6 +62,28 @@ gzip() {
 		} // loop over each file
 	} // if ( option[ out::silent_gz ]() )
 } // gzip
+
+
+/////////////////////////////////////////////////////////////////
+std::map< std::string, bool >
+initialize_tag_is_done( std::string const & silent_file ){
+
+	std::map< std::string, bool > tag_is_done;
+
+	utility::vector1< std::string > tags_done;
+
+	SilentFileData silent_file_data;
+	if ( utility::file::file_exists( silent_file ) ) {
+		tags_done = silent_file_data.read_tags_fast( silent_file );
+		for ( utility::vector1< std::string >::const_iterator iter = tags_done.begin(); iter != tags_done.end(); iter++ ) {
+			std::cout << "Already done: " << *iter << std::endl;
+			tag_is_done[ *iter ] = true;
+		}
+	}
+
+	return tag_is_done;
+}
+
 
 } // namespace silent
 } // namespace io

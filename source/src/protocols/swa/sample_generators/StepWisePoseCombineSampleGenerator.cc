@@ -14,7 +14,7 @@
 
 
 //////////////////////////////////
-#include <protocols/swa/StepWisePoseCombineSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseCombineSampleGenerator.hh>
 #include <protocols/swa/StepWisePoseSetup.hh>
 #include <protocols/swa/InputStreamWithResidueInfo.hh>
 #include <core/types.hh>

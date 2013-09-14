@@ -17,6 +17,7 @@
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
+#include <protocols/swa/StepWiseUtil.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -32,6 +33,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
 #include <basic/Tracer.hh>
+#include <utility/string_util.hh>
 
 #include <numeric/random/random.hh>
 
@@ -39,6 +41,7 @@
 
 using namespace core;
 using core::Real;
+using utility::make_tag_with_dashes;
 
 //////////////////////////////////////////////////////////////////////////
 // Removes one residue from a 5' or 3' chain terminus, and appropriately
@@ -56,14 +59,14 @@ namespace monte_carlo {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-	RNA_AddMover::RNA_AddMover( chemical::ResidueTypeSetCAP rsd_set,
-															scoring::ScoreFunctionOP scorefxn ):
-		rsd_set_( rsd_set ),
+	RNA_AddMover::RNA_AddMover( scoring::ScoreFunctionOP scorefxn ):
 		scorefxn_( scorefxn ),
 		presample_added_residue_( true ),
 		presample_by_swa_( false ),
-		minimize_all_rebuilt_res_( true ),
+		minimize_single_res_( false ),
 		start_added_residue_in_aform_( false ),
+		use_phenix_geo_( false ),
+		erraser_( false ),
 		internal_cycles_( 50 ),
 		rna_torsion_mover_( new RNA_TorsionMover ),
 		sample_range_small_( 5.0 ),
@@ -100,98 +103,136 @@ namespace monte_carlo {
 		using namespace core::pose::full_model_info;
 		using namespace protocols::swa::rna;
 
+		runtime_assert( pose.total_residue() > 1 );
+		ResidueTypeSet const & rsd_set = pose.residue_type( 1 ).residue_type_set();
+
 		Size suite_num( 0 ), nucleoside_num( 0 ); // will record which new dofs added.
-
-		//pose.dump_pdb( "before_add.pdb" );
-		FullModelInfo const & full_model_info = nonconst_full_model_info_from_pose( pose );
+		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 		std::string const & full_sequence  = full_model_info.full_sequence();
-		utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
 
+
+		// need to encapsulate the following residue addition & domain addition functions...
 		if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ){
 
-			runtime_assert( res_to_build_off == pose.total_residue() || sub_to_full[ res_to_build_off ] < sub_to_full[ res_to_build_off+1 ] -1 );
-			runtime_assert( sub_to_full[ res_to_build_off ] < full_sequence.size() );
+			runtime_assert( res_to_build_off == pose.total_residue() || res_list[ res_to_build_off ] < res_list[ res_to_build_off+1 ] -1 );
+			runtime_assert( res_list[ res_to_build_off ] < full_sequence.size() );
 
 			Size const res_to_add = res_to_build_off + 1;
+			Size const res_to_add_in_full_model_numbering = res_list[ res_to_build_off ] + 1;
+			Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering );
 
-			char newrestype = full_sequence[ (sub_to_full[ res_to_build_off ] + 1) - 1 ];
-			choose_random_if_unspecified_nucleotide( newrestype );
-			//std::cout << "I want to add: " << newrestype << std::endl;
+			if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
 
-			chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
-			chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set_->aa_map( my_aa ) );
+				Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
 
+				Size const res_to_build_off_in_full_model_numbering = res_list[ res_to_build_off ];
+				merge_in_other_pose( pose, other_pose, res_to_build_off_in_full_model_numbering );
 
-			// iterate over rsd_types, pick one.
-			chemical::ResidueType const & rsd_type = *rsd_type_list[1];
-			core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
+				full_model_info.remove_other_pose_at_idx( other_pose_idx );
 
-			remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS", res_to_build_off ); // got to be safe.
+				suite_num = get_res_list_from_full_model_info( pose ).index( res_to_build_off_in_full_model_numbering );
+				nucleoside_num = 0; // don't sample sugar pucker or side chain -- that will screw up the (fixed) domain structure.
 
-			pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
+			} else { // single residue addition -- can this just be combine with above?
 
-			reorder_full_model_info_after_append( pose, res_to_add );
+				char newrestype = full_sequence[ (res_list[ res_to_build_off ] + 1) - 1 ];
+				choose_random_if_unspecified_nucleotide( newrestype );
 
-			fix_up_residue_type_variants_after_append( pose, res_to_add );
+				chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
+				chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set.aa_map( my_aa ) );
 
-			suite_num = res_to_add - 1;
-			nucleoside_num = res_to_add;
+				// iterate over rsd_types, pick one.
+				chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+				core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
+
+				remove_variant_type_from_pose_residue( pose, "UPPER_TERMINUS", res_to_build_off ); // got to be safe.
+
+				pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
+
+				reorder_full_model_info_after_append( pose, res_to_add );
+
+				suite_num = res_to_add - 1;
+				nucleoside_num = res_to_add;
+
+			}
+
 
 		} else {
 
 			runtime_assert( moving_residue_case == CHAIN_TERMINUS_5PRIME );
 
-			//Size const res_to_add = moving_res_list[1]; // for now, just build off 5' fragment.
 			Size const res_to_add = res_to_build_off;
+			Size const res_to_add_in_full_model_numbering = res_list[ res_to_build_off ] - 1;
+			Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering );
 
-			runtime_assert( sub_to_full[ res_to_add ] > 1 );
+			TR << "About to add onto " << to_string( moving_residue_case ) << " the following residue (in full model numbering) " << res_to_add_in_full_model_numbering << " which may be part of other pose " << other_pose_idx << std::endl;
 
-			char newrestype = full_sequence[ (sub_to_full[ res_to_add ] - 1) - 1 ];
-			choose_random_if_unspecified_nucleotide( newrestype );
+			if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
 
-			TR << "I want to add: " << newrestype << " before " << res_to_build_off << std::endl;
+				Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
 
-			chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
+				Size const res_to_build_off_in_full_model_numbering = res_list[ res_to_build_off ];
+				merge_in_other_pose( pose, other_pose, res_to_build_off_in_full_model_numbering - 1 /*merge_res*/ );
 
-			chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set_->aa_map( my_aa ) );
+				full_model_info.remove_other_pose_at_idx( other_pose_idx );
 
-			// iterate over rsd_types, pick one.
-			chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+				suite_num = get_res_list_from_full_model_info( pose ).index( res_to_add_in_full_model_numbering );
+				nucleoside_num = 0; // don't sample sugar pucker or side chain -- that will screw up the (fixed) domain structure.
 
-			core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
+			} else {  // single residue addition -- can this just be combine with above?
 
-			remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add ); // got to be safe.
-			remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS", res_to_add ); // got to be safe.
+				runtime_assert( res_list[ res_to_add ] > 1 );
 
-			pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
+				char newrestype = full_sequence[ (res_list[ res_to_add ] - 1) - 1 ];
+				choose_random_if_unspecified_nucleotide( newrestype );
 
-			reorder_full_model_info_after_prepend( pose, res_to_add );
+				TR << "I want to add: " << newrestype << " before " << res_to_build_off << std::endl;
 
-			fix_up_residue_type_variants_after_prepend( pose, res_to_add );
+				chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
 
-			// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
-			suite_num = res_to_add;
-			nucleoside_num = res_to_add;
+				chemical::ResidueTypeCOPs const & rsd_type_list( rsd_set.aa_map( my_aa ) );
+
+				// iterate over rsd_types, pick one.
+				chemical::ResidueType const & rsd_type = *rsd_type_list[1];
+
+				core::conformation::ResidueOP new_rsd = conformation::ResidueFactory::create_residue( rsd_type );
+
+				remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add ); // got to be safe.
+				remove_variant_type_from_pose_residue( pose, "LOWER_TERMINUS", res_to_add ); // got to be safe.
+
+				pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
+
+				reorder_full_model_info_after_prepend( pose, res_to_add );
+
+				// initialize with a random torsion... ( how about an A-form + perturbation ... or go to a 'reasonable' rotamer)
+				suite_num = res_to_add;
+				nucleoside_num = res_to_add;
+			}
 
 		}
+
+		fix_up_residue_type_variants( pose );
 
 		if ( start_added_residue_in_aform_ ){
 			rna_torsion_mover_->apply_suite_torsion_Aform( pose, suite_num );
-			rna_torsion_mover_->apply_nucleoside_torsion_Aform( pose, nucleoside_num );
+			if ( nucleoside_num > 0 ) rna_torsion_mover_->apply_nucleoside_torsion_Aform( pose, nucleoside_num );
 		} else {
-			rna_torsion_mover_->apply_random_nucleoside_torsion( pose, nucleoside_num );
 			rna_torsion_mover_->apply_random_suite_torsion( pose, suite_num );
+			if ( nucleoside_num > 0 ) rna_torsion_mover_->apply_random_nucleoside_torsion( pose, nucleoside_num );
 		}
 
 		rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num, sample_range_large_);
-		rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large_);
+		if ( nucleoside_num > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large_);
 
 		///////////////////////////////////
 		// Presampling added residue
 		///////////////////////////////////
 		if ( presample_added_residue_ ){
 			if ( presample_by_swa_ ){
-				sample_by_swa( pose, nucleoside_num );
+				Size swa_sample_res = nucleoside_num;
+				if ( swa_sample_res == 0) swa_sample_res = suite_num; // nucleoside_num = 0 in domain addition.
+				sample_by_swa( pose, swa_sample_res );
 			} else {
 				sample_by_monte_carlo_internal( pose, nucleoside_num, suite_num );
 			}
@@ -202,61 +243,7 @@ namespace monte_carlo {
 
 	////////////////////////////////////////////////////////////////////
 	void
-	RNA_AddMover::fix_up_residue_type_variants_after_append( pose::Pose & pose, Size const res_to_add ) const {
-
-		using namespace core::chemical;
-		using namespace core::pose::full_model_info;
-
-		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
-		utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
-		utility::vector1< Size > const & open_cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
-
-		// Could this be a chainbreak (cutpoint_closed )?
-
-		TR.Debug << "checking for cutpoint after append: " << res_to_add << " " << sub_to_full[ res_to_add ] << " " << sub_to_full[ res_to_add + 1 ] << " " << open_cutpoint_open_in_full_model.size() << std::endl;
-
-		if ( res_to_add < pose.total_residue() &&
-				 sub_to_full[ res_to_add ] + 1 == sub_to_full[ res_to_add + 1 ] &&
-				 ! open_cutpoint_open_in_full_model.has_value( sub_to_full[ res_to_add ]) ){
-
-			add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
-
-			remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res_to_add + 1 );
-			add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
-
-		}
-
-	}
-
-	////////////////////////////////////////////////////////////////////
-	void
-	RNA_AddMover::fix_up_residue_type_variants_after_prepend( pose::Pose & pose, Size const res_to_add ) const {
-
-		using namespace core::chemical;
-		using namespace core::pose::full_model_info;
-
-		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
-		utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
-		utility::vector1< Size > const & open_cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
-
-		// Could this be a chainbreak (cutpoint_closed )?
-
-		TR.Debug << "checking for cutpoint after prepend: " << res_to_add << " " << sub_to_full[ res_to_add ] << " " << sub_to_full[ res_to_add - 1 ] << " " << open_cutpoint_open_in_full_model.size() << std::endl;
-
-		if ( res_to_add > 1 &&
-				 sub_to_full[ res_to_add ] - 1 == sub_to_full[ res_to_add - 1 ] &&
-				 ! open_cutpoint_open_in_full_model.has_value( sub_to_full[ res_to_add - 1 ])  ){
-			add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add - 1  );
-			add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add    );
-		} else {
-			add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_add );
-		}
-	}
-
-
-	////////////////////////////////////////////////////////////////////
-	void
-	RNA_AddMover::sample_by_swa( pose::Pose & pose, Size const res_to_add  ) const{
+	RNA_AddMover::sample_by_swa( pose::Pose & pose, Size const res_to_add ) const{
 
 		using namespace core::pose::full_model_info;
 
@@ -265,14 +252,15 @@ namespace monte_carlo {
 		swa::rna::StepWiseRNA_Modeler stepwise_rna_modeler( res_to_add, scorefxn_ );
 		stepwise_rna_modeler.set_choose_random( true );
 		stepwise_rna_modeler.set_force_centroid_interaction( true );
-		//	stepwise_rna_modeler->set_use_phenix_geo ( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
+		stepwise_rna_modeler.set_use_phenix_geo( use_phenix_geo_ );
+		stepwise_rna_modeler.set_kic_sampling_if_relevant( erraser_ );
 
 		// new -- try multiple 'shots on goal' before minimizing.
-		TR << "Presampling with SWA: " << num_random_samples_ << " samples. " << std::endl;
+		TR.Debug << "Presampling with SWA: " << num_random_samples_ << " samples. " << std::endl;
 		stepwise_rna_modeler.set_num_random_samples( num_random_samples_ );
 		stepwise_rna_modeler.set_num_pose_minimize( 1 );
 
-		if ( minimize_all_rebuilt_res_ ) stepwise_rna_modeler.set_minimize_res( nonconst_full_model_info_from_pose( pose ).moving_res_list() );
+		if ( !minimize_single_res_ ) stepwise_rna_modeler.set_minimize_res( get_moving_res_from_full_model_info( pose ) );
 
 		stepwise_rna_modeler.apply( pose );
 	}
@@ -291,16 +279,15 @@ namespace monte_carlo {
 		for ( Size count_internal = 1; count_internal <= internal_cycles_; count_internal++ ){
 
 			rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num, sample_range_large_);
-			rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large_);
+			if ( nucleoside_num > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_large_);
 			monte_carlo_internal->boltzmann( pose, move_type );
 
 			rna_torsion_mover_->sample_near_suite_torsion( pose, suite_num, sample_range_small_);
-			rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_small_);
+			if ( nucleoside_num > 0 ) rna_torsion_mover_->sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range_small_);
 			monte_carlo_internal->boltzmann( pose, move_type );
 			//std::cout << "During presampling: " << (*scorefxn_)( pose );
 		} // monte carlo cycles
 	}
-
 
 
 }

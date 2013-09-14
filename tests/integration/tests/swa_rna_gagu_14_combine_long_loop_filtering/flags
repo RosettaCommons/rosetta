@@ -18,5 +18,4 @@
 -global_sample_res_list  3 4 5 6 7 8
 -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts
 -integration_test true
--mute all
 -analytic_etable_evaluation 0

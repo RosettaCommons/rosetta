@@ -7,26 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file RNA_SWA_MonteCarloMover.hh
+/// @file RNA_AddDeleteMonteCarlo.hh
 /// @brief
 /// @detailed
 ///
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_monte_carlo_RNA_SWA_MonteCarloMover_hh
-#define INCLUDED_protocols_swa_monte_carlo_RNA_SWA_MonteCarloMover_hh
+#ifndef INCLUDED_protocols_swa_monte_carlo_RNA_AddDeleteMonteCarlo_hh
+#define INCLUDED_protocols_swa_monte_carlo_RNA_AddDeleteMonteCarlo_hh
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloMover.fwd.hh>
+#include <protocols/swa/monte_carlo/RNA_AddDeleteMonteCarlo.fwd.hh>
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.fwd.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.fwd.hh>
 #include <protocols/swa/monte_carlo/RNA_O2StarMover.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <protocols/swa/monte_carlo/types.hh>
+#include <protocols/swa/monte_carlo/SWA_Move.hh>
 
 
 namespace protocols {
@@ -35,17 +35,17 @@ namespace monte_carlo {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
-class RNA_SWA_MonteCarloMover: public protocols::moves::Mover {
+class RNA_AddDeleteMonteCarlo: public protocols::moves::Mover {
 public:
 
 
-RNA_SWA_MonteCarloMover(  RNA_AddOrDeleteMoverOP rna_add_or_delete_mover,
+RNA_AddDeleteMonteCarlo(  RNA_AddOrDeleteMoverOP rna_add_or_delete_mover,
 													RNA_TorsionMoverOP     rna_torsion_mover,
 													RNA_O2StarMoverOP      rna_o2star_mover,
 													core::scoring::ScoreFunctionOP scorefxn );
 
 	//destructor -- necessary? -- YES destructors are necessary.
-	~RNA_SWA_MonteCarloMover();
+	~RNA_AddDeleteMonteCarlo();
 
 	// Undefinded, commenting out to fix PyRosetta build  void apply( core::pose::Pose & pose, Size const res_to_delete, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  );
 

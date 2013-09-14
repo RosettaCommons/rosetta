@@ -14,7 +14,7 @@
 
 
 //////////////////////////////////
-#include <protocols/swa/StepWiseIdentitySampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWiseIdentitySampleGenerator.hh>
 #include <protocols/swa/StepWisePoseSetup.hh>
 #include <protocols/swa/InputStreamWithResidueInfo.hh>
 #include <core/types.hh>

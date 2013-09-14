@@ -68,10 +68,10 @@
 #include <protocols/swa/StepWisePoseSetup.hh>
 #include <protocols/swa/StepWiseJobParameters.hh>
 #include <protocols/swa/StepWiseUtil.hh>
-#include <protocols/swa/StepWiseDoNothingSampleGenerator.hh>
-#include <protocols/swa/StepWiseCombineSampleGenerator.hh>
-#include <protocols/swa/StepWiseIdentitySampleGenerator.hh>
-#include <protocols/swa/StepWisePoseCombineSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWiseDoNothingSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWiseCombineSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWiseIdentitySampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseCombineSampleGenerator.hh>
 #include <protocols/swa/PoseFilter.hh>
 #include <protocols/swa/PoseFilter_RMSD_Screen.hh>
 #include <protocols/swa/protein/StepWiseBetaAntiParallelJumpSampleGenerator.hh>

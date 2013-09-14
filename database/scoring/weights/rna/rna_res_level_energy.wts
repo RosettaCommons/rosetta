@@ -18,3 +18,4 @@ intermol        2.3
 ref             1.0
 rna_loop        1.0
 linear_chainbreak 5.0
+other_pose 1.0

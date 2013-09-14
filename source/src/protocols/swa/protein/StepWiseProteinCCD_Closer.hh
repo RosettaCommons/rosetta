@@ -21,13 +21,13 @@
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/swa/StepWiseJobParameters.fwd.hh>
-// AUTO-REMOVED #include <protocols/swa/StepWisePoseSampleGenerator.hh>
+// AUTO-REMOVED #include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loop.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <protocols/swa/StepWisePoseSampleGenerator.fwd.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.fwd.hh>
 
 namespace protocols {
 namespace swa {

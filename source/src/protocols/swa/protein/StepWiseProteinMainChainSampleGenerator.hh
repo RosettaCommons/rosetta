@@ -18,7 +18,7 @@
 #ifndef INCLUDED_protocols_swa_protein_StepWiseProteinMainChainSampleGenerator_HH
 #define INCLUDED_protocols_swa_protein_StepWiseProteinMainChainSampleGenerator_HH
 
-#include <protocols/swa/StepWisePoseSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>

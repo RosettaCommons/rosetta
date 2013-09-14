@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/swa/monte_carlo/types.hh>
+#include <protocols/swa/monte_carlo/SWA_Move.hh>
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.fwd.hh>
 
 
@@ -43,7 +43,10 @@ public:
 	using protocols::moves::Mover::apply;
 
   void
-	apply( core::pose::Pose & pose, Size const res_to_delete, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  ) const ;
+	apply( core::pose::Pose & pose, Size const res_to_delete ) const;
+
+  void
+  apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete ) const;
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );

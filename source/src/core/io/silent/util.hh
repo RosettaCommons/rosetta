@@ -16,6 +16,9 @@
 #ifndef INCLUDED_core_io_silent_util_hh
 #define INCLUDED_core_io_silent_util_hh
 
+#include <map>
+#include <string>
+
 namespace core {
 namespace io {
 namespace silent {
@@ -23,6 +26,10 @@ namespace silent {
 /// @brief gzip all of the files in -out::file::silent().
 void
 gzip( void );
+
+/////////////////////////////////////////////////////////////////
+std::map< std::string, bool >
+initialize_tag_is_done( std::string const & silent_file );
 
 } // namespace silent
 } // namespace io

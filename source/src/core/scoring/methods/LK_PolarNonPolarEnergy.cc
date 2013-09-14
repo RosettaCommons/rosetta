@@ -37,8 +37,6 @@
 #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 using namespace core::chemical::rna;
 

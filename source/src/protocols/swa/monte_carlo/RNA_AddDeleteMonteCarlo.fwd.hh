@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/swa/RNA_SWA_MonteCarloMover.fwd.hh
+/// @file   protocols/swa/RNA_AddDeleteMonteCarlo.fwd.hh
 /// @brief  Various suite/nucleoside moves.
 /// @author Rhiju Das
 
-#ifndef INCLUDED_protocols_swa_monte_carlo_RNA_SWA_MonteCarloMover_fwd_hh
-#define INCLUDED_protocols_swa_monte_carlo_RNA_SWA_MonteCarloMover_fwd_hh
+#ifndef INCLUDED_protocols_swa_monte_carlo_RNA_AddDeleteMonteCarlo_fwd_hh
+#define INCLUDED_protocols_swa_monte_carlo_RNA_AddDeleteMonteCarlo_fwd_hh
 
 
 #include <utility/pointer/access_ptr.hh>
@@ -25,8 +25,8 @@ namespace protocols {
 namespace swa {
 namespace monte_carlo {
 
-	class RNA_SWA_MonteCarloMover;
-	typedef utility::pointer::owning_ptr< RNA_SWA_MonteCarloMover > RNA_SWA_MonteCarloMoverOP;
+	class RNA_AddDeleteMonteCarlo;
+	typedef utility::pointer::owning_ptr< RNA_AddDeleteMonteCarlo > RNA_AddDeleteMonteCarloOP;
 
 }
 }

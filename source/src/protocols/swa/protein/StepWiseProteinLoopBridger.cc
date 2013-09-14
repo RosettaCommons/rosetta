@@ -51,7 +51,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/swa/StepWisePoseSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.hh>
 #include <utility/vector1.hh>
 
 

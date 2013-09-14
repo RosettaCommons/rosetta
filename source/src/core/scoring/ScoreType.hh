@@ -326,7 +326,7 @@ enum ScoreType {
 	intermol, // cost of instantiating a chain form 1 M std state.
 	special_rot,
 
-	other_subpose, // in preparation for multi-pose stuff.
+	other_pose, // in preparation for multi-pose stuff.
 
 	// PB potential
 	PB_elec,

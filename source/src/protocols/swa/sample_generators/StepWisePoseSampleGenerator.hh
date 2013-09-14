@@ -20,7 +20,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <protocols/swa/StepWisePoseSampleGenerator.fwd.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.fwd.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>

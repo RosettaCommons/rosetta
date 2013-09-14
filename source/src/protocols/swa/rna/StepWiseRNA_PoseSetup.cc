@@ -18,6 +18,7 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
+#include <protocols/swa/StepWiseUtil.hh>
 
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 //////////////////////////////////
@@ -673,7 +674,6 @@ StepWiseRNA_PoseSetup::apply_cutpoint_variants( pose::Pose & pose, pose::Pose & 
 
 	using namespace core::id;
 
-
 	std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
 	utility::vector1< Size > const & cutpoint_closed_list = job_parameters_->cutpoint_closed_list();
 
@@ -689,54 +689,27 @@ StepWiseRNA_PoseSetup::apply_cutpoint_variants( pose::Pose & pose, pose::Pose & 
 
 			Size const cutpos = full_to_sub[ cutpoint_closed];
 
-			// Taken from Parin's code. Need to make sure virtual atoms are correctly positioned
-			// next to OP2, OP1.
-			Correctly_position_cutpoint_phosphate_torsions( pose, cutpos, false /*verbose*/ );
+			correctly_add_cutpoint_variants( pose, cutpos, false /*check fold tree*/);
 
-			pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cutpos   );
-			pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cutpos + 1 );
-
-
-		TR.Debug << "pose ( before copy ): " << std::endl;
-		print_backbone_torsions( pose, cutpos );
-		print_backbone_torsions( pose, cutpos + 1 );
-
-		for ( Size i = cutpos; i <= cutpos + 1; i++ ){
-			for ( Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
-				id::TorsionID torsion_id( i, id::BB, j );
-				pose.set_torsion( torsion_id, pose_without_cutpoints.torsion( torsion_id ) ); //This makes sure that the chain_break torsions have the correct value
-			} // j
-		} // i
-
-		if ( verbose_ ) {
-			TR.Debug << "pose_without_cutpoints " << std::endl;
-			print_backbone_torsions( pose_without_cutpoints, cutpos );
-			print_backbone_torsions( pose_without_cutpoints, cutpos + 1 );
-			TR.Debug << "pose: " << std::endl;
+			TR.Debug << "pose ( before copy ): " << std::endl;
 			print_backbone_torsions( pose, cutpos );
 			print_backbone_torsions( pose, cutpos + 1 );
-		}
 
-/*
-		Size five_prime_res = cutpos;
-		Size three_prime_res = cutpos + 1;
+			for ( Size i = cutpos; i <= cutpos + 1; i++ ){
+				for ( Size j = 1; j <= chemical::rna::NUM_RNA_MAINCHAIN_TORSIONS; j++ ) {
+					id::TorsionID torsion_id( i, id::BB, j );
+					pose.set_torsion( torsion_id, pose_without_cutpoints.torsion( torsion_id ) ); //This makes sure that the chain_break torsions have the correct value
+				} // j
+			} // i
 
-
-		conformation::Residue const & lower_res = pose_copy.residue( five_prime_res );
-		conformation::Residue const & upper_res = pose_copy.residue( three_prime_res );
-
-		//Even through there is the chain_break, these torsions should be defined due to the existence of the upper and lower variant type atoms.
-
-		for ( Size n = 1; n <= 3; n++ ){ //alpha, beta, gamma of upper residue
-			pose.set_torsion( TorsionID( three_prime_res, id::BB,  n ), upper_res.mainchain_torsion( n ) );
-		}
-
-
-		for ( Size n = 5; n <= 6; n++ ){ //epsilon and zeta of lower residue
-			pose.set_torsion( TorsionID( five_prime_res, id::BB,  n ), lower_res.mainchain_torsion( n ) );
-		}
-*/
-
+			if ( verbose_ ) {
+				TR.Debug << "pose_without_cutpoints " << std::endl;
+				print_backbone_torsions( pose_without_cutpoints, cutpos );
+				print_backbone_torsions( pose_without_cutpoints, cutpos + 1 );
+				TR.Debug << "pose: " << std::endl;
+				print_backbone_torsions( pose, cutpos );
+				print_backbone_torsions( pose, cutpos + 1 );
+			}
 
 		} else {
 			utility_exit_with_message( "User provided cutpoint_closed not in working pose?" );

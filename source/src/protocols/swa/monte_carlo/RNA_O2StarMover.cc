@@ -20,7 +20,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/util.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -80,12 +80,13 @@ namespace monte_carlo {
 
 		Size o2star_res( 0 );
 
-		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
-		utility::vector1< Size > moving_res_list = full_model_info.moving_res_list();
+		utility::vector1< Size > moving_res_list = get_moving_res_from_full_model_info( pose );
 
 		if ( sample_all_o2star_ ){
 			o2star_res = get_random_o2star_residue( pose );
 		} else {
+			std::cerr << "O2star sampling is not yet properly worked out for general monte carlo case." << std::endl;
+			runtime_assert( sample_all_o2star_ );
 			// warning -- following might lead to weird 'hysteresis' effects since it picks
 			// o2star to sample based on what's near moving residue.
 			( *scorefxn_ )( pose ); //score it first to get energy graph.

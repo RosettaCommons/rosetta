@@ -15,16 +15,15 @@
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_AddMover.hh>
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
-#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
+#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
 
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
-
 
 using namespace core;
 using core::Real;
@@ -48,7 +47,8 @@ namespace monte_carlo {
 																							RNA_DeleteMoverOP rna_delete_mover ) :
 		rna_add_mover_( rna_add_mover ),
 		rna_delete_mover_( rna_delete_mover ),
-		allow_deletion_of_last_residue_( false )
+		disallow_deletion_of_last_residue_( false ),
+		skip_deletions_( false )
 	{}
 
   //////////////////////////////////////////////////////////////////////////
@@ -63,56 +63,54 @@ namespace monte_carlo {
 	}
 
   //////////////////////////////////////////////////////////////////////////
-  void
+	bool
   RNA_AddOrDeleteMover::apply( core::pose::Pose & pose, std::string & move_type )
 	{
-
-		// should stuff into AddOrDeleteMover
-		Size res_at_terminus;
-		MovingResidueCase moving_residue_case;
-		AddOrDeleteChoice add_or_delete_choice;
-
-		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
-		utility::vector1< Size > const & moving_res_list = full_model_info.moving_res_list();
+		utility::vector1< Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
 
 		//always have something in play!!?? Or permit removal??!! need to check this carefully.
-		bool disallow_delete  = allow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );
+		bool disallow_delete  = disallow_deletion_of_last_residue_ && ( moving_res_list.size() <= 1 );
+		if ( skip_deletions_ ) disallow_delete = true;
 
-		get_random_residue_at_chain_terminus( pose, res_at_terminus,
-																					moving_residue_case, add_or_delete_choice,
-																					disallow_delete, true /*disallow_resample*/,
-																					sample_res_ /* empty means no filter on what residues can be added */ );
+		SWA_Move swa_move;
+		get_random_chunk_at_chain_terminus( pose, swa_move,
+																				disallow_delete, true /*disallow_resample*/,
+																				sample_res_ /* empty means no filter on what residues can be added */ );
 
-		//		TR.Debug << "ADD/DELETE move ==> res: " << res_at_terminus << "  case: " << moving_residue_case << "  add/delete: " << add_or_delete_choice << std::endl;
-		//		TR.Debug << std::endl;
-		TR << "Move: add_or_delete " <<  add_or_delete_choice << " with moving residue case " << moving_residue_case <<  " at " << res_at_terminus << " starting from: " << pose.annotated_sequence() << std::endl;
-
-		if ( add_or_delete_choice == DELETE ) {
-			move_type = "delete";
-			//std::cout << "Before delete: " << (*scorefxn)( pose ) << std::endl;
-			rna_delete_mover_->apply( pose, res_at_terminus, moving_residue_case );
-			TR.Debug << std::cout << pose.annotated_sequence() << std::endl;
-			//std::cout << "After delete: " << (*scorefxn)( pose ) << std::endl << std::endl;
-		} else {
-			runtime_assert( add_or_delete_choice == ADD );
-			// try to add a residue that is supposed to be sampled.
-			move_type = "add";
-			//std::cout << "Before adding onto " << res_at_terminus << " : " << (*scorefxn)( pose ) << std::endl;
-			rna_add_mover_->apply( pose, res_at_terminus, moving_residue_case );
-			TR.Debug << pose.annotated_sequence() << std::endl;
-			// std::cout << "After add: " << (*scorefxn)( pose ) << std::endl << std::endl;
-			//pose.dump_pdb( "after_add.pdb" );
+		if ( swa_move.moving_residue_case() == NO_CASE ) {
+			move_type = "no op";
+			return false;
 		}
 
-		TR << "Move: " <<  add_or_delete_choice << " at " << res_at_terminus << " resulting in : " << pose.annotated_sequence() << std::endl;
+		TR << "Chose move: " << swa_move << std::endl;
+		TR.Debug << "Starting from: " << pose.annotated_sequence() << std::endl;
 
+		if ( swa_move.add_or_delete_choice() == DELETE ) {
+			move_type = "delete";
+			rna_delete_mover_->apply( pose, swa_move.chunk() );
+		} else {
+			runtime_assert( swa_move.add_or_delete_choice() == ADD );
+
+			// res_at_terminus defines the build-off point for the chunk to be added.
+			// it is *not* the chunk to be added [and indeed there could be a whole pose
+			//  with multiple chunks to be merged in... rna_add_mover_ will figure that out.]
+			runtime_assert( swa_move.chunk().size() == 1 );
+			Size const res_at_terminus = swa_move.chunk()[ 1 ];
+
+			// try to add a residue that is supposed to be sampled.
+			move_type = "add";
+			rna_add_mover_->apply( pose, res_at_terminus, swa_move.moving_residue_case() );
+		}
+		TR.Debug << "Ended with: " << pose.annotated_sequence() << std::endl;
+
+		return true;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
 	void
-	RNA_AddOrDeleteMover::set_minimize_all_rebuilt_res( bool const setting ){
-		rna_add_mover_->set_minimize_all_rebuilt_res( setting );
-		rna_delete_mover_->set_minimize_after_delete( setting );
+	RNA_AddOrDeleteMover::set_minimize_single_res( bool const setting ){
+		rna_add_mover_->set_minimize_single_res( setting );
+		rna_delete_mover_->set_minimize_after_delete( !setting );
 	}
 
 

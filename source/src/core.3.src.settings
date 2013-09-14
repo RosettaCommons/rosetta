@@ -425,6 +425,7 @@ sources = {
 		"NMerSVMEnergy",
 		"OmegaTetherEnergy",
 		"OneBodyEnergy",
+		"OtherPoseEnergy",
 		"P_AA_Energy",
 		"P_AA_pp_Energy",
 		"PackStatEnergy",

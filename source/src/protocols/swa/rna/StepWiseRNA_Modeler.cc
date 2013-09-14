@@ -22,10 +22,12 @@
 #include <protocols/swa/StepWiseUtil.hh>
 
 #include <core/chemical/VariantType.hh>
+#include <core/id/TorsionID.hh>
 
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh> // should remove this later.
 
 #include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
@@ -34,6 +36,8 @@
 
 static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_Modeler" );
 
+using utility::tools::make_vector1;
+
 namespace protocols {
 namespace swa {
 namespace rna {
@@ -41,12 +45,11 @@ namespace rna {
 //Constructor
 StepWiseRNA_Modeler::StepWiseRNA_Modeler( core::Size const sample_res,
 																	core::scoring::ScoreFunctionOP scorefxn ) :
-	moving_res_( utility::tools::make_vector1( sample_res ) ),
+	moving_res_( make_vector1( sample_res ) ),
 	scorefxn_( scorefxn ),
 	silent_file_( "" ),
 	sampler_num_pose_kept_( 108 ),
 	num_pose_minimize_( 99999 ),
-	nstruct_( 1 ),
 	num_sampled_( 0 ),
 	sampler_native_screen_rmsd_cutoff_( 2.0 ),
 	cluster_rmsd_( 0.5 ),
@@ -61,6 +64,7 @@ StepWiseRNA_Modeler::StepWiseRNA_Modeler( core::Size const sample_res,
 	extra_chi_( false ),
 	use_phenix_geo_( false ),
 	kic_sampling_( false ),
+	kic_sampling_if_relevant_( false ),
 	centroid_screen_( true ),
 	VDW_atr_rep_screen_( true ),
 	force_centroid_interaction_( false ),
@@ -138,7 +142,6 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 	stepwise_rna_residue_sampler.set_VDW_atr_rep_screen ( VDW_atr_rep_screen_ );
 	stepwise_rna_residue_sampler.set_force_centroid_interaction ( force_centroid_interaction_ );
 
-	// not in ERRASER yet, and currently unique to this file.
 	stepwise_rna_residue_sampler.set_integration_test_mode( integration_test_mode_ ); //Should set after setting sampler_native_screen_rmsd_cutoff, fast, medium_fast options.
 	stepwise_rna_residue_sampler.set_allow_bulge_at_chainbreak( allow_bulge_at_chainbreak_ );
 	stepwise_rna_residue_sampler.set_parin_favorite_output( parin_favorite_output_ );
@@ -155,18 +158,14 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 	stepwise_rna_residue_sampler.set_assert_no_virt_ribose_sampling( sampler_assert_no_virt_ribose_sampling_ );
 	stepwise_rna_residue_sampler.set_allow_base_pair_only_centroid_screen( allow_base_pair_only_centroid_screen_ );
 
-
 	StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener = new StepWiseRNA_BaseCentroidScreener ( pose, job_parameters_ );
 	stepwise_rna_residue_sampler.set_base_centroid_screener ( base_centroid_screener );
 
 	StepWiseRNA_VDW_BinScreenerOP user_input_VDW_bin_screener = new StepWiseRNA_VDW_BinScreener();
 	if ( VDW_rep_screen_info_.size() > 0 ) {
 		user_input_VDW_bin_screener->set_VDW_rep_alignment_RMSD_CUTOFF ( VDW_rep_alignment_RMSD_CUTOFF_ );
-
-		// not in ERRASER yet, and currently unique to this file:
 		user_input_VDW_bin_screener->set_VDW_rep_delete_matching_res( VDW_rep_delete_matching_res_ );
 		user_input_VDW_bin_screener->set_physical_pose_clash_dist_cutoff( VDW_rep_screen_physical_pose_clash_dist_cutoff_ );
-
 		user_input_VDW_bin_screener->setup_using_user_input_VDW_pose( VDW_rep_screen_info_, pose, job_parameters_ );
 		user_input_VDW_bin_screener->set_output_pdb( output_pdb_ );
 	}
@@ -177,23 +176,15 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 		stepwise_rna_residue_sampler.set_num_random_samples( num_random_samples_ );
 		stepwise_rna_residue_sampler.set_cluster_rmsd( 0.0 ); // don't cluster.
 	}
-
-	// unique to this file -- not in ERRASER_Modeler yet.
 	print_JobParameters_info( job_parameters_, "job_parameters_COP", TR.Debug );
 
-	// nstruct is usually 1, unless choose_random is on -- then we need to call several times to
-	// get a bunch of poses back.
-	if ( ! skip_sampling_ ) {
-		for ( Size n = 1; n <= nstruct_; n++ ){
-			stepwise_rna_residue_sampler.apply ( pose );
-		}
-	}
+	if ( ! skip_sampling_ ) stepwise_rna_residue_sampler.apply( pose );
 
 	utility::vector1< pose_data_struct2 > & pose_data_list = stepwise_rna_residue_sampler.get_pose_data_list();
 	num_sampled_ = pose_data_list.size();
 	if ( num_sampled_ == 0 && !skip_sampling_ ){
 		TR << "WARNING! WARNING! WARNING! pose_data_list.size() == 0! " << std::endl;
-		return; // don't do a minimize...
+		if ( !output_minimized_pose_data_list_ ) return; // don't do a minimize...
 	}
 
 	if ( skip_sampling_ /* still want to minimize*/ ){
@@ -217,33 +208,31 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 	if ( verbose_ ) stepwise_rna_residue_sampler.output_pose_data_list ( silent_file_ + "_final_sample" );
 
 	////////////////////////////////////////////////////////////////
-	StepWiseRNA_Minimizer stepwise_rna_minimizer ( stepwise_rna_residue_sampler.get_pose_data_list(), job_parameters_ );
-	stepwise_rna_minimizer.set_silent_file ( silent_file_ );
-	stepwise_rna_minimizer.set_verbose (  verbose_ );
-	stepwise_rna_minimizer.set_scorefxn ( scorefxn_ );
-	stepwise_rna_minimizer.set_centroid_screen (  centroid_screen_ );
-	stepwise_rna_minimizer.set_base_centroid_screener ( base_centroid_screener );
-	stepwise_rna_minimizer.set_perform_minimize(  perform_minimize_ );
-	stepwise_rna_minimizer.set_native_rmsd_screen (  sampler_native_rmsd_screen_ );
-	stepwise_rna_minimizer.set_native_edensity_score_cutoff ( native_edensity_score_cutoff_ );
-	stepwise_rna_minimizer.set_rm_virt_phosphate (  rm_virt_phosphate_ );
-	stepwise_rna_minimizer.set_native_screen_rmsd_cutoff (  sampler_native_screen_rmsd_cutoff_ + 1 ); //+1 for leniency Sept 20, 2010
+	stepwise_rna_minimizer_ = new StepWiseRNA_Minimizer( stepwise_rna_residue_sampler.get_pose_data_list(), job_parameters_ );
+	stepwise_rna_minimizer_->set_silent_file ( silent_file_ );
+	stepwise_rna_minimizer_->set_verbose (  verbose_ );
+	stepwise_rna_minimizer_->set_scorefxn ( scorefxn_ );
+	stepwise_rna_minimizer_->set_centroid_screen (  centroid_screen_ );
+	stepwise_rna_minimizer_->set_base_centroid_screener ( base_centroid_screener );
+	stepwise_rna_minimizer_->set_perform_minimize(  perform_minimize_ );
+	stepwise_rna_minimizer_->set_native_rmsd_screen (  sampler_native_rmsd_screen_ );
+	stepwise_rna_minimizer_->set_native_edensity_score_cutoff ( native_edensity_score_cutoff_ );
+	stepwise_rna_minimizer_->set_rm_virt_phosphate (  rm_virt_phosphate_ );
+	stepwise_rna_minimizer_->set_native_screen_rmsd_cutoff (  sampler_native_screen_rmsd_cutoff_ + 1 ); //+1 for leniency Sept 20, 2010
 
 	if ( integration_test_mode_ ) num_pose_minimize_ = 1;
-	if ( num_pose_minimize_ > 0 ) stepwise_rna_minimizer.set_num_pose_minimize ( num_pose_minimize_ );
-	stepwise_rna_minimizer.set_minimize_and_score_sugar ( minimize_and_score_sugar_ );
-	stepwise_rna_minimizer.set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener );
-	stepwise_rna_minimizer.set_output_minimized_pose_data_list( output_minimized_pose_data_list_ );
+	if ( num_pose_minimize_ > 0 ) stepwise_rna_minimizer_->set_num_pose_minimize ( num_pose_minimize_ );
+	stepwise_rna_minimizer_->set_minimize_and_score_sugar ( minimize_and_score_sugar_ );
+	stepwise_rna_minimizer_->set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener );
+	stepwise_rna_minimizer_->set_output_minimized_pose_data_list( output_minimized_pose_data_list_ );
+	if ( minimize_move_map_ ) stepwise_rna_minimizer_->set_move_map_list( make_vector1( *minimize_move_map_ ) );
+	stepwise_rna_minimizer_->set_perform_o2star_pack(  minimizer_perform_o2star_pack_ );
+	stepwise_rna_minimizer_->set_output_before_o2star_pack( minimizer_output_before_o2star_pack_ );
+	stepwise_rna_minimizer_->set_rename_tag( minimizer_rename_tag_ );
 
-	// this is new, not in ERRASER (swa_rna_analytical_closure)
-	stepwise_rna_minimizer.set_perform_o2star_pack(  minimizer_perform_o2star_pack_ );
-	stepwise_rna_minimizer.set_output_before_o2star_pack( minimizer_output_before_o2star_pack_ );
-	stepwise_rna_minimizer.set_rename_tag( minimizer_rename_tag_ );
-
-	stepwise_rna_minimizer.apply ( pose );
+	stepwise_rna_minimizer_->apply ( pose );
 
 	// Need to make sure that final pose output is the lowest scoring one. Is it?
-
 
 }
 
@@ -252,18 +241,15 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 // This could go into a Util.hh if it ends up being more useful.
 // Briefly, we need to make a StepWiseRNA_JobParameters object that will
 // be fed into various StepWiseRNA movers. Setting this up can be quite complicated...
-// its become a grab bag of residue lists referring to the global pose, the working pose,
+// it has become a grab bag of residue lists referring to the global pose, the working pose,
 // sequence mappings, "Is_Prepend_map", etc.
 //
-// Following is general enough that it can be placed directly into ERRASER workflow as well, I think.
-//
-//
-
 StepWiseRNA_JobParametersOP
 StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > moving_res, core::pose::Pose const & pose ){
 
 	using namespace core::pose;
 	using namespace core::chemical;
+	using namespace core::id;
 	using namespace protocols::swa;
 
 	if ( moving_res.size() != 1 ) utility_exit_with_message( "For now, StepWiseRNA_Modeler requires exactly 1 number in -moving_res unless you feed it a JobParameters object." );
@@ -277,16 +263,18 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		full_sequence = full_sequence.substr( 0, nres - 1 );
 		nres -= 1;
 	}
-	utility::vector1< Size > not_rebuild_res;
-	for ( Size n = 1; n <= nres; n++ ) if ( n != rebuild_res ) not_rebuild_res.push_back( n );
-
-	utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open;
-	input_res1 = not_rebuild_res;
 
 	TR.Debug << pose.fold_tree() << std::endl;
 	TR.Debug << "Rebuild residue: " << rebuild_res << std::endl;
 
+	utility::vector1< Size > not_rebuild_res;
+	for ( Size n = 1; n <= nres; n++ ) if ( n != rebuild_res ) not_rebuild_res.push_back( n );
+	utility::vector1< Size > input_res1, input_res2 /*blank*/, cutpoint_open;
+	input_res1 = not_rebuild_res;
+	utility::vector1< Size > fixed_res_guess = not_rebuild_res; // may be revised below.
+
 	Size cutpoint_closed( 0 );
+	utility::vector1< Size > suites_that_must_be_minimized;
 	// check for cutpoint variant.
 	if ( pose.residue_type( rebuild_res ).has_variant_type( CUTPOINT_UPPER ) ){
 		runtime_assert( pose.residue_type( rebuild_res - 1 ).has_variant_type( CUTPOINT_LOWER  ) );
@@ -303,11 +291,68 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 	} else if ( pose.fold_tree().is_cutpoint( rebuild_res ) ){
 		cutpoint_open.push_back( rebuild_res );
 	} else {
-		utility_exit_with_message( "Unrecognized scenario for StepWiseRNA_Modeler!" );
+		// internal. need to be smart about input_res definitions -- 'domains' that are separated by moving residue.
+		input_res1.clear();
+		input_res2.clear();
+		utility::vector1< bool > partition_definition =	get_partition_definition( pose, rebuild_res );
+		bool found_moving_cutpoint( false );
+		for ( Size n = 1; n <= pose.total_residue(); n++ ){
+			if ( !partition_definition[ n ] ) {
+				input_res1.push_back( n );
+			}	else {
+				input_res2.push_back( n );
+			}
+			// look for cutpoints
+			if ( n == pose.total_residue() ) continue;
+			if ( pose.fold_tree().is_cutpoint( n ) && ( partition_definition[ n ] != partition_definition[ n+1 ] ) ){
+				runtime_assert( !found_moving_cutpoint );
+				found_moving_cutpoint = true;
+				if ( pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ){
+					runtime_assert( pose.residue_type( n + 1 ).has_variant_type( CUTPOINT_UPPER  ) );
+					if ( cutpoint_closed > 0 ) utility_exit_with_message( "Right now, StepWiseRNA Modeler can only handle poses with single movable closable cutpoints!" );
+					cutpoint_closed = n;
+				} else {
+					cutpoint_open.push_back( n );
+				}
+			}
+		}
+		//note that fixed_res_guess, which is really a list of fixed nucleosides,
+		// should now include the 'moving res' [unless re-specified by user down below].
+		fixed_res_guess.push_back( rebuild_res );
+
+		// To specify that the suite move, we actually need to directly address the movemap... see below.
+		suites_that_must_be_minimized.push_back( rebuild_res );
+		if ( cutpoint_closed > 0 ) suites_that_must_be_minimized.push_back( cutpoint_closed );
+
+		// last, but not least, there might be some information in the domain map. Note
+		// that generally we could instead replace fixed_res with an inputted domain map.
+		// that is, get rid of fixed_res_ & minimize_res_ and instead have a local fixed_domain_map,
+		// which can instead be updated by set_fixed_res.
+		using namespace core::pose::full_model_info;
+		// following is dangerous -- what if full_model_info is not set properly?
+		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
+		utility::vector1< Size > const & res_list = full_model_info.res_list();
+		for ( Size n = 1; n < pose.total_residue(); n++ ){
+			if ( !pose.fold_tree().is_cutpoint(n) &&
+					 ( res_list[ n + 1 ]  == res_list[ n ] + 1 ) &&
+					 fixed_res_guess.has_value( n )  && fixed_res_guess.has_value( n+1 )  &&
+					 ( fixed_domain_map[ res_list[ n + 1 ] ] !=  fixed_domain_map[ res_list[ n ] ] ) &&
+					 !suites_that_must_be_minimized.has_value( n ) ){
+				TR.Debug << "ADDING NEW SUITE TO BE MINIMIZED BASED ON LOCATION AT DOMAIN BOUNDARY: " << n << std::endl;
+				suites_that_must_be_minimized.push_back( n );
+			}
+
+		}
+
 	}
 
-	if ( cutpoint_closed > 0 && !pose.fold_tree().is_cutpoint( cutpoint_closed ) ) utility_exit_with_message( "StepWiseRNA requires a chainbreak right at sampled residue" );
-	if ( cutpoint_closed > 0 && ( rebuild_res == 1 || rebuild_res == pose.total_residue() ) ) utility_exit_with_message( "StepWiseRNA requires that residue is not at terminus!" );
+
+	if ( cutpoint_closed > 0 ) {
+		if ( kic_sampling_if_relevant_ ) kic_sampling_ = true;
+		if ( !pose.fold_tree().is_cutpoint( cutpoint_closed ) ) utility_exit_with_message( "StepWiseRNA requires a chainbreak right at sampled residue" );
+		if ( rebuild_res == 1 || rebuild_res == pose.total_residue() ) utility_exit_with_message( "StepWiseRNA requires that residue is not at terminus!");
+	}
 
 	StepWiseRNA_JobParametersSetup stepwise_rna_job_parameters_setup( moving_res,
 																																		 full_sequence,
@@ -316,13 +361,11 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 																																		 cutpoint_open,
 																																		 cutpoint_closed );
 
-	utility::vector1< Size > fixed_res = not_rebuild_res;
-	stepwise_rna_job_parameters_setup.set_fixed_res( fixed_res );
+	stepwise_rna_job_parameters_setup.set_fixed_res( fixed_res_guess );
 
 	utility::vector1< Size > rmsd_res_list;
 	rmsd_res_list.push_back( rebuild_res );
 	stepwise_rna_job_parameters_setup.set_rmsd_res_list( rmsd_res_list );
-
 
 	// not sure about the following -- instead, how about reading jump residues from within pose itself?
 	if ( cutpoint_closed > 0 || cutpoint_open.size() > 0 ){
@@ -332,17 +375,21 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 	}
 
 	utility::vector1< std::string > alignment_res; //why is this a string vector?????
-	for ( Size n = 1; n <= fixed_res.size(); n++ ) alignment_res.push_back( ObjexxFCL::string_of( fixed_res[n] ) );
+	for ( Size n = 1; n <= fixed_res_guess.size(); n++ ) alignment_res.push_back( ObjexxFCL::string_of( fixed_res_guess[ n ] ) );
 	stepwise_rna_job_parameters_setup.set_alignment_res( alignment_res );
-	stepwise_rna_job_parameters_setup.set_native_alignment_res( fixed_res );
+	stepwise_rna_job_parameters_setup.set_native_alignment_res( fixed_res_guess );
 
 	// could use this later to minimize more residues...
 	//stepwise_rna_job_parameters_setup.set_global_sample_res_list( option[ global_sample_res_list ]() ); //March 20, 2011
 
-	// NOT SURE ABOUT THIS. false by deafult, but shows up as true in 'normal' erraser runs.
+	// NOT SURE ABOUT THIS. false by default, but shows up as true in 'normal' erraser runs.
 	stepwise_rna_job_parameters_setup.set_allow_chain_boundary_jump_partner_right_at_fixed_BP ( true );
 
+	// NOT SURE ABOUT THIS...
 	stepwise_rna_job_parameters_setup.set_add_virt_res_as_root( true );
+
+	// ignore fold tree setup which is hopelessly complicated in stepwise_rna_job_parameters_setup.
+	stepwise_rna_job_parameters_setup.force_fold_tree( pose.fold_tree() );
 
 	stepwise_rna_job_parameters_setup.apply();
 
@@ -350,18 +397,31 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 
 	job_parameters->set_working_native_pose( get_native_pose() );
 
-	// should we also set the fold_tree here -- just take the pose's actual fold tree?
-	// that fold_tree is only used in PoseSetup, and in JobParametersSetup, and not downstream
-	// in any modelers...  -- rhiju
-
 	// user input minimize_res...
 	if ( minimize_res_.size() > 0 ) { // specifying more residues which could move during the minimize step.
 		fixed_res_.clear();
 		for ( Size n = 1; n <= nres; n++ ) {
 			if ( !minimize_res_.has_value( n ) )	fixed_res_.push_back( n );
 		}
+	} else {
+		for ( Size n = 1; n <= nres; n++ ) {
+			if ( !fixed_res_guess.has_value( n ) )	minimize_res_.push_back( n );
+		}
 	}
-	if ( fixed_res_.size() > 0 ) 	job_parameters->set_working_fixed_res( fixed_res_ );
+
+	if ( fixed_res_.size() > 0 ) 	job_parameters->set_working_fixed_res( fixed_res_ ); // is this necessary if we just supply movemap?
+
+	minimize_move_map_ = new core::kinematics::MoveMap;
+	figure_out_swa_rna_movemap( *minimize_move_map_, pose, minimize_res_ );
+	for ( Size n = 1; n <= suites_that_must_be_minimized.size(); n++ ){
+		Size const suite_num = suites_that_must_be_minimized[ n ];
+		minimize_move_map_->set( TorsionID( suite_num,   id::BB, 5 ), true ); // epsilon
+		minimize_move_map_->set( TorsionID( suite_num,   id::BB, 6 ), true ); // zeta
+		minimize_move_map_->set( TorsionID( suite_num+1, id::BB, 1 ), true ); // alpha
+		minimize_move_map_->set( TorsionID( suite_num+1, id::BB, 2 ), true ); // beta
+		minimize_move_map_->set( TorsionID( suite_num+1, id::BB, 3 ), true ); // gamma
+	}
+
 
 	return job_parameters;
 }
@@ -378,6 +438,17 @@ StepWiseRNA_Modeler::set_native_pose( core::pose::PoseCOP native_pose ){ native_
 ///////////////////////////////////////////////////////////////////////////////
 core::pose::PoseCOP
 StepWiseRNA_Modeler::get_native_pose(){ return native_pose_; }
+
+
+///////////////////////////////////////////////////////////////////////////////
+void
+StepWiseRNA_Modeler::output_pose(
+																 pose::Pose & pose,
+																 std::string const & out_tag,
+																 std::string const out_silent_file ) const {
+	runtime_assert(  stepwise_rna_minimizer_ != 0 );
+	stepwise_rna_minimizer_->output_pose_data_wrapper( out_tag, pose, out_silent_file );
+}
 
 
 } //rna

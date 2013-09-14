@@ -1201,11 +1201,7 @@ print_internal_coords( core::pose::Pose const & pose ) {
 // Apparently can only reroot the tree at a "vertex", i.e. beginning or end of an "edge".
 bool
 possible_root( core::kinematics::FoldTree const & f, core::Size const & n ){
-	if ( n == 1 ) return true;
-	if ( n == f.nres() ) return true;
-	if ( f.is_cutpoint( n ) ) return true;
-		if ( f.is_cutpoint( n-1 ) ) return true;
-		return false;
+	return f.possible_root( n );
 }
 
 
@@ -1299,7 +1295,7 @@ mutate_position( pose::Pose & pose, Size const i, char const & new_seq ){
 
 	ResidueTypeSet const & rsd_set = pose.residue( i ).residue_type_set();
 
-	ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).exclude_variants().select( rsd_set )[1] );
+	ResidueTypeCOP new_rsd_type( ResidueSelector().set_name1( new_seq ).match_variants( pose.residue(i).type() ).select( rsd_set )[1] );
 	ResidueOP new_rsd( ResidueFactory::create_residue( *new_rsd_type, pose.residue( i ), pose.conformation() ) );
 
 	Real const save_chi = pose.chi(i);

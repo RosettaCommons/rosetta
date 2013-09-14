@@ -23,7 +23,6 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MonteCarloStatus.hh>
 #include <protocols/moves/TrialCounter.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarloExceptionConverge.hh>
 
 // package headers
 #include <core/pose/Pose.fwd.hh>
@@ -31,12 +30,9 @@
 
 // utility headers
 #include <utility/pointer/ReferenceCount.hh>
-// #include "utility/basic_sys_util.h"
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <map>
-// AUTO-REMOVED #include <string>
 
 #include <protocols/moves/MonteCarloExceptionConverge.fwd.hh>
 #include <utility/vector1.hh>
@@ -190,7 +186,7 @@ public:
 		std::string const & move_type = "unk",
 		core::Real const proposal_density_ratio = 1
 	);
-	
+
 
 	/// @brief Sets lowest score pose and last accepted pose to
 	/// the score of  <pose>
@@ -275,9 +271,9 @@ public:
 	///     MonteCarlo.lowest_score_pose
 	void set_lowest_score_pose( Pose const & pose );
 
-	
+
 	/// @brief Compares score of <pose> to the lowest score found.
-	/// If lower, sets the current lowest score pose and lowest score.  
+	/// If lower, sets the current lowest score pose and lowest score.
 	/// Use internal pose energies if score_pose is false.
 	/// Used to evaluate lowest score without boltzmann.
 	/// @note Does not update simulation statistics or last accepts by default.
@@ -295,8 +291,8 @@ public:
 		bool update_stats = false,
 		std::string const & move_type = "unk"
 	);
-	
-	
+
+
 	/// @brief attach observer to last accepted conformation
 	/// @tparam ConformationObserver any class implementing <tt> void attach_to( Conformation & ) </tt>
 	template< typename ConformationObserver >
@@ -494,6 +490,8 @@ public:
 	///     MonteCarlo.show_state
 	MCA mc_accepted() const;
 
+	/// @brief Returns mc_accepted as a human-readable string, informative of the last move applied
+	std::string mc_accepted_string() const;
 
 	/// @brief Removes last accepted pose and lowest score pose
 	///

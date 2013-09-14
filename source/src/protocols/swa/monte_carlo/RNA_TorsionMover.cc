@@ -13,9 +13,9 @@
 /// @author Rhiju Das
 
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
-#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
-#include <protocols/swa/monte_carlo/types.hh>
+#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <protocols/swa/monte_carlo/SWA_Move.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -78,13 +78,8 @@ namespace monte_carlo {
   void
   RNA_TorsionMover::apply( core::pose::Pose & pose, std::string & move_type, Real const & sample_range )
 	{
-
-		using namespace core::pose::full_model_info;
-
-		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
-		utility::vector1< Size > const & moving_res_list = full_model_info.moving_res_list();
+		utility::vector1< Size > const moving_res_list = core::pose::full_model_info::get_moving_res_from_full_model_info( pose );
 		random_torsion_move( pose, moving_res_list, move_type, sample_range );
-
 	}
 
 	//////////////////////////////////////////////////////////////////////

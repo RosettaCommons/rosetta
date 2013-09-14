@@ -699,6 +699,19 @@ public:
 	}
 
 
+	/// @brief Returns true if  <seqpos>  the the root
+	///
+	inline
+	bool
+	possible_root( Size const & seqpos ) const{
+		if ( seqpos == 1 ) return true;
+		if ( seqpos == nres() ) return true;
+		if ( is_cutpoint( seqpos ) ) return true;
+		if ( is_cutpoint( seqpos - 1 ) ) return true;
+		return false;
+	}
+
+
 	/// @brief Returns the root vertex position of the FoldTree
 	///
 	/// example(s):
@@ -881,7 +894,7 @@ private:
 			ar & edge_count;
 			ar & jump_edge_count;
 	}
-	
+
 #endif
 
 	/////////////////////////////////////////////////////////////////////////////

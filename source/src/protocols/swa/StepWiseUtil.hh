@@ -29,6 +29,7 @@
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 
 //Auto Headers
@@ -78,6 +79,16 @@ namespace swa {
 	void
 	pdbslice( pose::Pose & pose,
 						utility::vector1< Size > const & slice_res );
+
+
+	/// @brief  Superimpose mod_pose onto ref_pose using the mapping of residues from
+	/// mod_pose to ref_pose given by res_map
+	Real
+	superimpose_pose(
+									 pose::Pose & mod_pose,
+									 pose::Pose const & ref_pose,
+									 std::map< Size, Size > const & res_map
+									 );
 
 	id::AtomID_Map< id::AtomID >
  	create_alignment_id_map(	pose::Pose const & mod_pose, pose::Pose const & ref_pose,
@@ -174,6 +185,53 @@ namespace swa {
 	bool
 	is_at_terminus( core::pose::Pose const & pose, Size const i );
 
+	void
+	merge_in_other_pose( pose::Pose & pose, pose::Pose const & pose2, Size const & merge_res );
+
+	utility::vector1< Size >
+	merge_two_poses_using_full_model_info( pose::Pose & pose,
+																				 pose::Pose const & pose1,
+																				 pose::Pose const & pose2,
+																				 Size const & merge_res );
+
+	utility::vector1< Size >
+	merge_two_poses( pose::Pose & pose,
+									 pose::Pose const & pose1,
+									 pose::Pose const & pose2,
+									 utility::vector1< Size > const & working_res1,
+									 utility::vector1< Size > const & working_res2,
+									 Size const & merge_res,
+									 bool const fix_first_pose = true );
+
+	void
+	slice( pose::Pose & sliced_out_pose,
+				 pose::Pose const & pose,
+				 utility::vector1< Size > const & slice_res );
+
+	void
+	slice_out_pose( pose::Pose & pose,
+									pose::Pose & sliced_out_pose,
+									utility::vector1< Size > const & residues_to_delete );
+
+	void
+	correctly_add_cutpoint_variants( core::pose::Pose & pose, Size const res_to_add, 	bool const check_fold_tree = true );
+
+
+	void
+	fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const res );
+
+	void
+	fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res );
+
+	void
+	fix_up_residue_type_variants( pose::Pose & pose );
+
+	void
+	switch_focus_to_other_pose( pose::Pose & pose, Size const & focus_pose_idx );
+
+	core::pose::PoseOP
+	get_pdb_and_cleanup( std::string const input_file,
+											 core::chemical::ResidueTypeSetCAP rsd_set );
 
 }
 }

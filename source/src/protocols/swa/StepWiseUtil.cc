@@ -26,12 +26,14 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <core/import_pose/import_pose.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/util.tmpl.hh>
@@ -41,6 +43,9 @@
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/id/SequenceMapping.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/datacache/BasicDataCache.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
@@ -185,7 +190,7 @@ namespace swa {
 		mm.set_chi( false );
 		mm.set_jump( false );
 
-		std::cout << "ALLOWING BB TO MOVE: ";
+		//		std::cout << "ALLOWING BB TO MOVE: ";
 		for  (Size i = 1; i <= nres; i++ )  {
 
 			//std::cout << "ALLOW INSERT " << i << " " << allow_insert(i) << std::endl;
@@ -214,12 +219,12 @@ namespace swa {
 				if ( !allow_insert( id1.rsd() ) && !allow_insert( id2.rsd() ) && !allow_insert( id3.rsd() )  && !allow_insert( id4.rsd() ) ) continue;
 				mm.set(  torsion_id, true );
 
-				if ( n == 1 )	std::cout << ' ' <<  i;
+				//				if ( n == 1 )	std::cout << ' ' <<  i;
 
 			}
 
 		}
-		std::cout << std::endl;
+		//		std::cout << std::endl;
 
 		utility::vector1< Size > chain_index;
 		Size chain_number( 0 );
@@ -236,7 +241,7 @@ namespace swa {
 
 			if ( allow_insert( jump_pos1 ) || allow_insert( jump_pos2 ) ) 	 {
 				mm.set_jump( n, true );
-				std::cout << "allow_insert ALLOWING JUMP " << n << " to move. It connects " << jump_pos1 << " and " << jump_pos2 << "." << std::endl;
+				//				std::cout << "allow_insert ALLOWING JUMP " << n << " to move. It connects " << jump_pos1 << " and " << jump_pos2 << "." << std::endl;
 			}
 
 			if ( move_jumps_between_chains ){
@@ -304,6 +309,18 @@ namespace swa {
 		pdbslice( mini_pose, pose, slice_res );
 		pose = mini_pose;
 
+	}
+
+	/// @brief  Superimpose mod_pose onto ref_pose using the mapping of residues from
+	/// mod_pose to ref_pose given by res_map. Simple wrapper around superimpose_pose using IDs.
+	Real
+	superimpose_pose(
+									 pose::Pose & mod_pose,
+									 pose::Pose const & ref_pose,
+									 std::map< Size, Size > const & res_map )
+	{
+		id::AtomID_Map< id::AtomID > atom_ID_map = create_alignment_id_map( mod_pose, ref_pose, res_map );
+		return scoring::superimpose_pose( mod_pose, ref_pose, atom_ID_map );
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -782,21 +799,21 @@ rotate( pose::Pose & pose, Matrix const M,
 		// first need to slice up native_pose to match residues in actual pose.
 		// define atoms over which to compute RMSD, using rmsd_res.
 		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
-		utility::vector1< Size > const sub_to_full = full_model_info.sub_to_full();
+		utility::vector1< Size > const res_list = get_res_list_from_full_model_info_const( pose );
 		std::string const full_sequence = full_model_info.full_sequence();
 
 		utility::vector1< Size > working_rmsd_res;
 		for ( Size n = 1; n <= pose.total_residue(); n++ ){
-			if ( rmsd_res.has_value( sub_to_full[ n ] ) ) {
+			if ( rmsd_res.has_value( res_list[ n ] ) ) {
 				working_rmsd_res.push_back( n );
 
 				char const pose_nt = pose.sequence()[ n-1 ];
-				if ( full_sequence[ sub_to_full[ n ] - 1 ] == 'n' ){
-					mutate_position( native_pose_local, sub_to_full[ n ], pose_nt );
+				if ( full_sequence[ res_list[ n ] - 1 ] == 'n' ){
+					mutate_position( native_pose_local, res_list[ n ], pose_nt );
 				} else {
-					runtime_assert( full_sequence[ sub_to_full[ n ] - 1 ] == pose_nt);
+					runtime_assert( full_sequence[ res_list[ n ] - 1 ] == pose_nt);
 				}
-				runtime_assert( native_pose_local.sequence()[ sub_to_full[ n ] - 1] == pose_nt );
+				runtime_assert( native_pose_local.sequence()[ res_list[ n ] - 1] == pose_nt );
 			}
 		}
 
@@ -808,7 +825,7 @@ rotate( pose::Pose & pose, Matrix const M,
 			for ( Size q = 1; q <= pose.residue_type( n ).nheavyatoms(); q++ ){
 				add_to_atom_id_map_after_checks( atom_id_map,
 																				 pose.residue_type( n ).atom_name( q ),
-																				 n, sub_to_full[ n ],
+																				 n, res_list[ n ],
 																				 pose, native_pose_local );
 			}
 
@@ -817,10 +834,10 @@ rotate( pose::Pose & pose, Matrix const M,
 					 ( !pose.fold_tree().is_cutpoint( n ) || pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ) ) {
 				// RNA-specific. Would be trivial to expand to proteins.
 				runtime_assert( pose.residue_type( n + 1 ).is_RNA() );
-				add_to_atom_id_map_after_checks( atom_id_map, " P  ", n + 1, sub_to_full[ n + 1 ], pose, native_pose_local );
-				add_to_atom_id_map_after_checks( atom_id_map, " OP1", n + 1, sub_to_full[ n + 1 ], pose, native_pose_local );
-				add_to_atom_id_map_after_checks( atom_id_map, " OP2", n + 1, sub_to_full[ n + 1 ], pose, native_pose_local );
-				add_to_atom_id_map_after_checks( atom_id_map, " O5'", n + 1, sub_to_full[ n + 1 ], pose, native_pose_local );
+				add_to_atom_id_map_after_checks( atom_id_map, " P  ", n + 1, res_list[ n + 1 ], pose, native_pose_local );
+				add_to_atom_id_map_after_checks( atom_id_map, " OP1", n + 1, res_list[ n + 1 ], pose, native_pose_local );
+				add_to_atom_id_map_after_checks( atom_id_map, " OP2", n + 1, res_list[ n + 1 ], pose, native_pose_local );
+				add_to_atom_id_map_after_checks( atom_id_map, " O5'", n + 1, res_list[ n + 1 ], pose, native_pose_local );
 			}
 		}
 
@@ -841,10 +858,10 @@ rotate( pose::Pose & pose, Matrix const M,
 		using namespace core::pose::full_model_info;
 
 		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
-		utility::vector1< Size > const sub_to_full = full_model_info.sub_to_full();
+		utility::vector1< Size > const res_list = get_res_list_from_full_model_info_const( pose );
 		std::string const full_sequence = full_model_info.full_sequence();
 
-		return ( full_sequence.size() - sub_to_full.size() );
+		return ( full_sequence.size() - res_list.size() );
 
 	}
 
@@ -862,6 +879,663 @@ rotate( pose::Pose & pose, Matrix const M,
 		return false;
 	}
 
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	get_jump_partners_from_pose( utility::vector1< Size > & jump_partners1,
+															 utility::vector1< Size > & jump_partners2,
+															 utility::vector1< std::string > & jump_atoms1,
+															 utility::vector1< std::string > & jump_atoms2,
+															 pose::Pose const & pose,
+															 utility::vector1< Size > const & working_res ){
+
+		using namespace core::kinematics;
+
+		FoldTree const & f = pose.fold_tree();
+		for ( Size n = 1; n <= f.num_jump(); n++ ){
+			Size const j1 = f.upstream_jump_residue( n );
+			Size const j2 = f.downstream_jump_residue( n );
+			jump_partners1.push_back(  working_res[ j1 ] );
+			jump_partners2.push_back(  working_res[ j2 ] );
+			jump_atoms1.push_back( f.upstream_atom( n ) );
+			jump_atoms2.push_back( f.downstream_atom( n ) );
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	get_endpoints_from_pose( utility::vector1< Size > & endpoints,
+													 pose::Pose const & pose,
+													 utility::vector1< Size > const & working_res ){
+
+		for (Size i = 1; i < pose.total_residue(); i++ ){
+			if ( pose.fold_tree().is_cutpoint( i ) ){
+				endpoints.push_back( working_res[ i ] );
+			}
+		}
+		endpoints.push_back( working_res[ pose.total_residue() ] );
+
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	map_to_local_numbering( utility::vector1< Size > const & vec,
+													utility::vector1< Size > const & working_res ){
+		utility::vector1< Size > vec_new;
+		for ( Size n = 1; n <= vec.size(); n++ ){
+			vec_new.push_back( working_res.index( vec[n] ) );
+		}
+		return vec_new;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	std::map< Size, Size >
+	get_res_map( utility::vector1< Size > const & working_res,
+							 utility::vector1< Size > const & source_res ){
+
+		std::map< Size, Size > res_map;
+
+		for ( Size n = 1; n <= working_res.size(); n++ ){
+			if ( !source_res.has_value( working_res[n] ) ) continue;
+			res_map[ n ] = source_res.index( working_res[n] );
+		}
+
+		return res_map;
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	merge_disjoint_vectors( utility::vector1< Size > const & res_vector1,
+													utility::vector1< Size > const & res_vector2 ){
+
+		utility::vector1< Size > res_vector = res_vector1;
+
+		for ( Size n = 1; n <= res_vector2.size(); n++ ) {
+			runtime_assert( ! res_vector.has_value( res_vector2[n] ) );
+			res_vector.push_back( res_vector2[ n ] );
+		}
+
+		std::sort( res_vector.begin(), res_vector.end() ); // hope this works.
+
+		return res_vector;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	// this could go into Residue.hh itself
+	void
+	remove_upper_terminus( core::conformation::ResidueOP & rsd ){
+		using namespace chemical;
+		using namespace conformation;
+		if ( rsd->has_variant_type( UPPER_TERMINUS ) ){
+			ResidueTypeSet const & rsd_set( rsd->residue_type_set() );
+			ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( rsd->type(), UPPER_TERMINUS ) );
+			rsd = new Residue( new_rsd_type, true );
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	remove_lower_terminus( core::conformation::ResidueOP & rsd ){
+		using namespace chemical;
+		using namespace conformation;
+		if ( rsd->has_variant_type( LOWER_TERMINUS ) ){
+			ResidueTypeSet const & rsd_set( rsd->residue_type_set() );
+			ResidueType const & new_rsd_type( rsd_set.get_residue_type_with_variant_removed( rsd->type(), LOWER_TERMINUS ) );
+			rsd = new Residue( new_rsd_type, true );
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	Size
+	find_first_root_residue( kinematics::FoldTree const & f,
+													 utility::vector1< Size > const & working_res_subset,
+													 utility::vector1< Size > const & working_res ){
+		runtime_assert( f.nres() == working_res.size() );
+		bool found_root( false );
+		for ( Size n = 1; n <= f.nres(); n++ ){
+			if ( working_res_subset.has_value( working_res[ n ] ) &&
+					 f.possible_root( n ) ){
+				found_root = true;
+				return n;
+			}
+		}
+		runtime_assert( found_root );
+		return 0;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	merge_in_other_pose( pose::Pose & pose, pose::Pose const & pose2, Size const & merge_res ){
+
+		using namespace core::pose::datacache;
+		using namespace core::pose::full_model_info;
+
+		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+
+		core::pose::Pose pose_scratch;
+		utility::vector1< Size > const new_res_list = merge_two_poses_using_full_model_info( pose_scratch, pose, pose2, merge_res );
+		pose.conformation() = pose_scratch.conformation();
+
+		full_model_info.set_res_list( new_res_list );
+		//		pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info );
+		update_pdb_info_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
+
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	merge_two_poses_using_full_model_info( pose::Pose & pose,
+																				 pose::Pose const & pose1,
+																				 pose::Pose const & pose2,
+																				 Size const & merge_res ) {
+
+		using namespace core::pose::full_model_info;
+		using namespace core::pose::datacache;
+		using namespace basic::datacache;
+
+		// following assert may not be absolutely necessary.
+		//		runtime_assert( & const_full_model_info_from_pose( pose1 ) == & const_full_model_info_from_pose( pose2 ) );
+
+		// get working_residue information from each pose
+		utility::vector1< Size > const & working_res1 = get_res_list_from_full_model_info_const( pose1 );
+		utility::vector1< Size > const & working_res2 = get_res_list_from_full_model_info_const( pose2 );
+
+		return merge_two_poses( pose, pose1, pose2, working_res1, working_res2, merge_res );
+
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	// Note that following is really general, and potentially very valuable, for all stepwise approaches
+	//  and even in pose setup for fragment assembly of RNA or proteins.
+	// Consider including in a GeneralPoseSetup class.
+	//
+	// Trying to get correct fold-tree handling, and variants.
+	// Also trying to properly handle sequence reorderings (which can get pretty complicated in general )
+	//
+	utility::vector1< Size >
+	merge_two_poses( pose::Pose & pose,
+									 pose::Pose const & pose1,
+									 pose::Pose const & pose2,
+									 utility::vector1< Size > const & working_res1,
+									 utility::vector1< Size > const & working_res2,
+									 Size const & merge_res,
+									 bool const fix_first_pose /* = true */) {
+
+		using namespace core::kinematics;
+		using namespace core::chemical;
+		using namespace core::conformation;
+
+		if ( working_res1.has_value( merge_res ) ){
+			runtime_assert( working_res2.has_value( merge_res+1 ) );
+		} else {
+			runtime_assert( working_res2.has_value( merge_res   ) );
+			runtime_assert( working_res1.has_value( merge_res+1 ) );
+			TR.Debug << "merge_two_poses: order is switched.  " << std::endl;
+			// order is switched. No problem.
+			return merge_two_poses( pose, pose2, pose1, working_res2, working_res1, merge_res, ! fix_first_pose );
+		}
+
+		// define full working res -- union of the working res of the individual poses.
+		utility::vector1< Size > const working_res = merge_disjoint_vectors( working_res1, working_res2 );
+
+		for ( Size n = 1; n <= working_res.size(); n++ ){
+			Size const k = working_res[ n ];
+			ResidueOP rsd;
+			bool after_cutpoint( false );
+			if ( working_res1.has_value( k ) ) {
+				Size const j = working_res1.index( k );
+				if ( j == 1 || pose1.fold_tree().is_cutpoint( j-1 ) ) after_cutpoint = true;
+				rsd = pose1.residue( j ).clone();
+			} else {
+				runtime_assert( working_res2.has_value( k ) );
+				Size const j = working_res2.index( k );
+				if ( j == 1 || pose2.fold_tree().is_cutpoint( j-1 ) ) after_cutpoint = true;
+				rsd = pose2.residue( j ).clone();
+			}
+
+			if ( k == merge_res ) remove_upper_terminus( rsd );
+			if ( k == ( merge_res + 1)  ) {
+				runtime_assert( after_cutpoint );
+				remove_lower_terminus( rsd );
+				after_cutpoint = false; // we're merging after all.
+			}
+			if ( n == 1 || !after_cutpoint ){
+				pose.append_residue_by_bond( *rsd, true /* build_ideal_geometry */ );
+			} else {
+				pose.append_residue_by_jump( *rsd, pose.total_residue() );
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+		// figure out fold tree for this merged pose --> move this to its own function.
+
+		// figure out jumps
+		utility::vector1< Size > jump_partners1, jump_partners2, endpoints, cuts;
+		utility::vector1< std::string > jump_atoms1, jump_atoms2;
+		get_jump_partners_from_pose( jump_partners1, jump_partners2, jump_atoms1, jump_atoms2, pose1, working_res1 );
+		get_jump_partners_from_pose( jump_partners1, jump_partners2, jump_atoms1, jump_atoms2, pose2, working_res2 );
+		runtime_assert( jump_partners1.size() == jump_partners2.size() );
+
+		// figure out cuts
+		get_endpoints_from_pose( endpoints, pose1, working_res1 );
+		get_endpoints_from_pose( endpoints, pose2, working_res2 );
+		runtime_assert( endpoints.has_value( merge_res ) );
+		Size const last_res = working_res[ working_res.size() ];
+		runtime_assert( endpoints.has_value( last_res ) );
+		for ( Size n = 1; n <= endpoints.size(); n++ ){
+			if ( endpoints[ n ] != merge_res &&
+					 endpoints[ n ] != last_res ) cuts.push_back( endpoints[ n ] );
+		}
+
+		Size num_cuts = cuts.size();
+		runtime_assert( num_cuts == jump_partners1.size() );
+
+		jump_partners1 = map_to_local_numbering( jump_partners1, working_res );
+		jump_partners2 = map_to_local_numbering( jump_partners2, working_res );
+		cuts = map_to_local_numbering( cuts, working_res );
+
+		FoldTree f;
+		ObjexxFCL::FArray2D< int > jump_point_( 2, num_cuts, 0 );
+		ObjexxFCL::FArray1D< int > cuts_( num_cuts, 0 );
+		for ( Size i = 1; i <= num_cuts; i++ ) {
+			jump_point_( 1, i ) = jump_partners1[ i ];
+			jump_point_( 2, i ) = jump_partners2[ i ];
+			cuts_( i ) = cuts[ i ];
+		}
+		f.tree_from_jumps_and_cuts( pose.total_residue(), num_cuts, jump_point_, cuts_ );
+
+		// fix jump atoms.
+		bool const KeepStubInResidue( true );
+		for ( Size i = 1; i <= num_cuts; i++ ){
+			Size const n = f.jump_nr( jump_partners1[ i ], jump_partners2[ i ] );
+			f.set_jump_atoms( n,
+												jump_partners1[ i ], jump_atoms1[ i ],
+												jump_partners2[ i ], jump_atoms2[ i ], KeepStubInResidue );
+		}
+
+		Size root( 0 );
+		if ( fix_first_pose ) {
+			root = find_first_root_residue( f, working_res1, working_res );
+		} else {
+			root = find_first_root_residue( f, working_res2, working_res );
+		}
+		runtime_assert( f.reorder( root ) );
+
+		pose.fold_tree( f );
+
+		// map (internal) coordinates from separate poses into merged one.
+		std::map< Size, Size > res_map1 = get_res_map( working_res, working_res1 );
+		std::map< Size, Size > res_map2 = get_res_map( working_res, working_res2 );
+
+		copy_dofs_match_atom_names( pose, pose1, res_map1, false /*backbone_only*/, false /*ignore_virtual*/ );
+		copy_dofs_match_atom_names( pose, pose2, res_map2, false /*backbone_only*/, false /*ignore_virtual*/ );
+
+		if ( fix_first_pose ){
+			superimpose_pose( pose, pose1, res_map1 );
+		} else {
+			superimpose_pose( pose, pose2, res_map2 );
+		}
+
+		return working_res;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// try to unify all cutpoint addition into this function.
+	void
+	correctly_add_cutpoint_variants( core::pose::Pose & pose,
+																	 Size const res_to_add,
+																	 bool const check_fold_tree /* = true*/){
+
+		using namespace core::chemical;
+
+		runtime_assert( res_to_add < pose.total_residue() );
+		if ( check_fold_tree ) runtime_assert( pose.fold_tree().is_cutpoint( res_to_add ) );
+
+		remove_variant_type_from_pose_residue( pose, UPPER_TERMINUS, res_to_add );
+		remove_variant_type_from_pose_residue( pose, LOWER_TERMINUS, res_to_add + 1 );
+
+		if ( pose.residue_type( res_to_add ).is_RNA() ){
+			// could also keep track of alpha, beta, etc.
+			runtime_assert( pose.residue_type( res_to_add + 1 ).is_RNA() );
+			protocols::swa::rna::Correctly_position_cutpoint_phosphate_torsions( pose, res_to_add, false /*verbose*/ );
+		}
+		add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, res_to_add   );
+		add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, res_to_add + 1 );
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	apply_numbering( utility::vector1< Size > const & res,
+									 utility::vector1< Size > const & numbering ) {
+		utility::vector1< Size > res_renumbered;
+		for ( Size n = 1; n <= res.size(); n++ ) {
+			runtime_assert( res[ n ] > 0 && res[ n ] <= numbering.size() );
+			res_renumbered.push_back( numbering[ res[ n ] ] );
+		}
+		return res_renumbered;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	utility::vector1< Size >
+	get_other_residues( utility::vector1< Size > const & res, Size const & nres ){
+		utility::vector1< Size > other_res;
+		for ( Size n = 1; n <= nres; n++ ){
+			if ( !res.has_value( n ) ) other_res.push_back( n );
+		}
+		return other_res;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	// could/should also make a version slice_out_pose_and_update_full_model_info...
+	void
+	slice_out_pose( pose::Pose & pose,
+									pose::Pose & sliced_out_pose,
+									utility::vector1< Size > const & residues_to_delete ) {
+
+		using namespace core::pose;
+		using namespace core::pose::full_model_info;
+
+		// need this for later.
+		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+		utility::vector1< Size > const original_res_list = full_model_info.res_list();
+
+		// piece sliced out
+		slice( sliced_out_pose, pose, residues_to_delete );
+
+		FullModelInfoOP sliced_out_full_model_info = full_model_info.clone_info();
+		sliced_out_full_model_info->set_res_list( apply_numbering( residues_to_delete, original_res_list ) );
+		sliced_out_pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, sliced_out_full_model_info );
+		update_pdb_info_from_full_model_info( sliced_out_pose ); // for output pdb or silent file -- residue numbering.
+
+		// remainder piece.
+		utility::vector1< Size > const residues_to_retain = get_other_residues( residues_to_delete, pose.total_residue() );
+
+		Pose pose_scratch;
+		slice( pose_scratch, pose, residues_to_retain );
+		pose.conformation() = pose_scratch.conformation();
+
+		full_model_info.set_res_list( apply_numbering( residues_to_retain, original_res_list )  );
+		update_pdb_info_from_full_model_info( pose ); // for output pdb or silent file -- residue numbering.
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////
+	// this may falter if the sliced out pose is not contiguous. That's what the boolean return value is for.
+	// Could also return MovingResidueCase
+	void
+	slice( pose::Pose & sliced_out_pose,
+				 pose::Pose const & pose,
+				 utility::vector1< Size > const & slice_res ){
+
+		using namespace core::kinematics;
+		using namespace core::conformation;
+
+		Size num_five_prime_connections( 0 ), num_three_prime_connections( 0 );
+
+		sliced_out_pose.conformation().clear();
+
+		for ( Size n = 1; n <= slice_res.size(); n++ ){
+
+			Size const j = slice_res[ n ];
+			ResidueOP rsd = pose.residue( j ).clone();
+
+			bool const after_cutpoint = ( j == 1 || pose.fold_tree().is_cutpoint( j - 1 ) );
+			if ( !after_cutpoint && !slice_res.has_value( j - 1 ) ) num_five_prime_connections++;
+			if ( after_cutpoint ) remove_lower_terminus( rsd );
+
+			bool const before_cutpoint = ( j == pose.total_residue() || pose.fold_tree().is_cutpoint( j ) );
+			if ( !before_cutpoint && !slice_res.has_value( j + 1 ) ) num_three_prime_connections++;
+			if ( before_cutpoint ) remove_upper_terminus( rsd );
+
+			if ( n == 1 || !after_cutpoint ){
+				sliced_out_pose.append_residue_by_bond( *rsd, true /* build_ideal_geometry */ );
+			} else {
+				sliced_out_pose.append_residue_by_jump( *rsd, sliced_out_pose.total_residue() );
+			}
+		}
+
+		runtime_assert ( ( num_five_prime_connections == 1  && num_three_prime_connections == 0 ) ||
+										 ( num_three_prime_connections == 1 && num_five_prime_connections == 0 ) );
+
+		// fold tree!
+		// figure out jumps
+		utility::vector1< Size > jump_partners1, jump_partners2, endpoints, cuts;
+		utility::vector1< std::string > jump_atoms1, jump_atoms2;
+		FoldTree const & f = pose.fold_tree();
+		for ( Size n = 1; n <= f.num_jump(); n++ ){
+			Size const j1 = f.upstream_jump_residue( n );
+			Size const j2 = f.downstream_jump_residue( n );
+			if ( slice_res.has_value( j1 ) && slice_res.has_value( j2 ) ){
+				jump_partners1.push_back( slice_res.index( j1 ) );
+				jump_partners2.push_back( slice_res.index( j2 ) );
+				jump_atoms1.push_back( f.upstream_atom( n ) );
+				jump_atoms2.push_back( f.downstream_atom( n ) );
+			}
+		}
+
+		for (Size n = 1; n < slice_res.size(); n++ ){
+			Size const & i = slice_res[ n ];
+			if ( !slice_res.has_value( i+1 ) || // boundary to non-sliced segment.
+					 pose.fold_tree().is_cutpoint( i ) ) {  // cut internal to sliced segment.
+				cuts.push_back( n );
+			}
+		}
+
+		Size const num_cuts = cuts.size();
+		runtime_assert( jump_partners1.size() == jump_partners2.size() );
+		runtime_assert( num_cuts == jump_partners1.size() );
+
+		FoldTree f_slice;
+		ObjexxFCL::FArray2D< int > jump_point_( 2, num_cuts, 0 );
+		ObjexxFCL::FArray1D< int > cuts_( num_cuts, 0 );
+		for ( Size i = 1; i <= num_cuts; i++ ) {
+			jump_point_( 1, i ) = jump_partners1[ i ];
+			jump_point_( 2, i ) = jump_partners2[ i ];
+			cuts_( i ) = cuts[ i ];
+		}
+		f_slice.tree_from_jumps_and_cuts( sliced_out_pose.total_residue(), num_cuts, jump_point_, cuts_ );
+
+		// fix jump atoms.
+		bool const KeepStubInResidue( true );
+		for ( Size i = 1; i <= num_cuts; i++ ){
+			Size const n = f_slice.jump_nr( jump_partners1[ i ], jump_partners2[ i ] );
+			f_slice.set_jump_atoms( n,
+												jump_partners1[ i ], jump_atoms1[ i ],
+												jump_partners2[ i ], jump_atoms2[ i ], KeepStubInResidue );
+		}
+
+		sliced_out_pose.fold_tree( f_slice );
+
+		// map (internal) coordinates from separate poses into merged on.
+		std::map< Size, Size > res_map;
+		for ( Size n = 1; n <= slice_res.size(); n++ ) res_map[ n ] =  slice_res[ n ];
+		copy_dofs_match_atom_names( sliced_out_pose, pose, res_map, false /*backbone_only*/, false /*ignore_virtual*/ );
+		superimpose_pose( sliced_out_pose, pose, res_map );
+
+	}
+
+
+	////////////////////////////////////////////////////////////////////
+	void
+	fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) {
+
+		using namespace core::chemical;
+		using namespace core::pose::full_model_info;
+
+		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+
+		// Could this be a chainbreak (cutpoint_closed )?
+		TR.Debug << "checking for cutpoint after append: " << res << " " << res_list[ res ] << " " << res_list[ res + 1 ] << " " << cutpoint_open_in_full_model.size() << std::endl;
+
+		if ( res < pose.total_residue() &&
+				 res_list[ res ] + 1 == res_list[ res + 1 ] &&
+				 ! cutpoint_open_in_full_model.has_value( res_list[ res ]) ){
+
+			// can happen after additions
+			if ( pose.residue_type( res + 1 ).has_variant_type( VIRTUAL_PHOSPHATE) ) {
+				remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, res + 1 );
+			}
+
+			// can happen after additions
+			correctly_add_cutpoint_variants( pose, res );
+
+		} else{
+
+			// can happen after deletions
+			if ( pose.residue_type( res ).has_variant_type( CUTPOINT_LOWER ) ){
+				remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, res );
+			}
+
+		}
+
+	}
+
+	////////////////////////////////////////////////////////////////////
+	void
+	fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const res ) {
+
+		using namespace core::chemical;
+		using namespace core::pose::full_model_info;
+
+		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
+
+		// Could this be a chainbreak (cutpoint_closed )?
+
+		TR.Debug << "checking for cutpoint after prepend: " << res << " " << res_list[ res ] << " " << res_list[ res - 1 ] << " " << cutpoint_open_in_full_model.size() << std::endl;
+
+		if ( res > 1 &&
+				 res_list[ res ] - 1 == res_list[ res - 1 ] &&
+				 ! cutpoint_open_in_full_model.has_value( res_list[ res - 1 ])  ){
+
+			// can happen after additions
+			correctly_add_cutpoint_variants( pose, res - 1 );
+
+		} else {
+
+			// can happen after additions
+			if ( pose.residue_type( res ).is_RNA() && !pose.residue_type( res ).has_variant_type( "VIRTUAL_PHOSPHATE" ) ) {
+				add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res );
+			}
+
+			// can happen after deletions
+			if ( pose.residue_type( res ).has_variant_type( CUTPOINT_UPPER ) ){
+				remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, res );
+			}
+
+		}
+	}
+
+
+	////////////////////////////////////////////////////////////////////
+	void
+	fix_up_residue_type_variants( pose::Pose & pose ) {
+
+		using namespace core::chemical;
+
+		for ( Size n = 1; n <= pose.total_residue(); n++ ){
+
+			// Are we at a 5' end
+			if ( n == 1 || pose.fold_tree().is_cutpoint( n-1 ) ){
+				fix_up_residue_type_variants_at_strand_beginning( pose, n );
+			} else { // make sure there is nothing crazy here
+				if ( pose.residue_type( n ).has_variant_type( VIRTUAL_PHOSPHATE ) ) remove_variant_type_from_pose_residue( pose, VIRTUAL_PHOSPHATE, n );
+				runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_UPPER ) );
+			}
+
+			// Look for 3' ends
+			if ( n == pose.total_residue() || pose.fold_tree().is_cutpoint( n ) ){
+				fix_up_residue_type_variants_at_strand_end( pose, n );
+			} else {
+				runtime_assert( !pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) );
+			}
+
+		}
+
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////
+	void
+	switch_focus_to_other_pose( pose::Pose & pose, Size const & focus_pose_idx ){
+
+		using namespace core::pose;
+		using namespace core::pose::full_model_info;
+
+		if ( focus_pose_idx == 0 ) return;
+
+		// the original pose (or its clone, actually) is relieved of the
+		// duty of holding information on other poses
+		PoseOP original_pose_clone = pose.clone();
+		utility::vector1< PoseOP > blank_pose_list;
+		nonconst_full_model_info_from_pose( *original_pose_clone ).set_other_pose_list( blank_pose_list );
+
+		// need to shift focus to the other pose. It will now be responsible for holding
+		// pointers to the other poses.
+		PoseCOP other_pose = const_full_model_info_from_pose( pose ).other_pose_list()[ focus_pose_idx ];
+
+		FullModelInfoOP full_model_info_new = const_full_model_info_from_pose( *other_pose ).clone_info();
+		// copy in pose list from original pose.
+		full_model_info_new->set_other_pose_list( const_full_model_info_from_pose( pose ).other_pose_list() );
+		full_model_info_new->remove_other_pose_at_idx( focus_pose_idx );
+		full_model_info_new->add_other_pose( original_pose_clone );
+		// Do we also need to clone the rest of the other_poses? I don't think so.
+
+		// OK, now shift focus! Hope this works.
+		pose = (*other_pose );
+		pose.data().set( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO, full_model_info_new );
+
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// specific for two helix test case. Sort of a unit test. Maybe I should make it a unit test.
+	void
+	test_merge_and_slice_with_two_helix_test_case( 	utility::vector1< core::pose::PoseOP > const & input_poses,
+																									core::scoring::ScoreFunctionOP scorefxn ){
+
+		using namespace core::pose;
+		using namespace core::pose::full_model_info;
+		using namespace protocols::swa;
+
+		scorefxn->show( *( input_poses[ 1 ] ) );
+		scorefxn->show( *( input_poses[ 2 ] ) );
+
+		input_poses[1]->dump_pdb( "input_pose1.pdb" );
+		input_poses[2]->dump_pdb( "input_pose2.pdb" );
+
+		pose::Pose merged_pose;
+		merge_two_poses_using_full_model_info( merged_pose, *(input_poses[ 2 ]), *( input_poses[ 1 ] ), 12 /*merge_res*/ );
+		merged_pose.dump_pdb( "merged_pose.pdb" );
+		scorefxn->show( merged_pose );
+
+		pose::Pose sliced_out_pose;
+		utility::vector1< Size > slice_res = const_full_model_info_from_pose( *(input_poses[2]) ).res_list();
+		slice_out_pose( merged_pose, sliced_out_pose, slice_res );
+		merged_pose.dump_pdb( "pose_after_slice.pdb" );
+		sliced_out_pose.dump_pdb( "sliced_out_pose.pdb" );
+		scorefxn->show( merged_pose );
+		scorefxn->show( sliced_out_pose );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	core::pose::PoseOP
+	get_pdb_and_cleanup( std::string const input_file,
+											 core::chemical::ResidueTypeSetCAP rsd_set )
+	{
+		using namespace core::pose;
+		PoseOP input_pose = new Pose;
+		import_pose::pose_from_pdb( *input_pose, *rsd_set, input_file );
+		protocols::rna::figure_out_reasonable_rna_fold_tree( *input_pose );
+		protocols::rna::virtualize_5prime_phosphates( *input_pose );
+		return input_pose;
+	}
 
 }
 }

@@ -35,6 +35,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/util.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/import_pose/import_pose.hh>
@@ -2534,8 +2535,6 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-
-
 	Size
 	make_cut_at_moving_suite( core::kinematics::FoldTree & fold_tree, Size const & moving_suite ){
 
@@ -2554,7 +2553,6 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 	}
 
 	///////////////////////////////////////////////////////////////////////
-
 	Size
 	make_cut_at_moving_suite( pose::Pose & pose, Size const & moving_suite ){
 
@@ -2567,7 +2565,20 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 		return jump_number;
 
 	}
+	///////////////////////////////////////////////////////////////////////
+	utility::vector1< bool >
+	get_partition_definition( pose::Pose const & pose, Size const & moving_suite ){
 
+		ObjexxFCL::FArray1D<bool> partition_definition( pose.total_residue(), false );
+		pose.fold_tree().partition_by_residue( moving_suite, partition_definition );
+
+		//silly conversion. There may be a faster way to do this actually.
+		utility::vector1< bool > partition_definition_vector1;
+		for ( Size n = 1; n <= pose.total_residue(); n++ )	partition_definition_vector1.push_back( partition_definition(n) );
+
+		return partition_definition_vector1;
+
+	}
 
 
 	////////////////////////////////////////////////////////////////////////
@@ -3846,7 +3857,7 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 		// first need to slice up native_pose to match residues in actual pose.
 		// define atoms over which to compute RMSD, using rmsd_res.
 		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
-		utility::vector1< Size > const sub_to_full = full_model_info.sub_to_full();
+		utility::vector1< Size > const sub_to_full = get_res_list_from_full_model_info( pose );
 		std::string const full_sequence = full_model_info.full_sequence();
 
 		if ( RG.uniform() < mutation_frequency) {

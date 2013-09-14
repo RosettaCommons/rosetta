@@ -15,24 +15,27 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_StepWiseCombineSampleGenerator_HH
-#define INCLUDED_protocols_swa_StepWiseCombineSampleGenerator_HH
+#ifndef INCLUDED_protocols_swa_StepWiseIdentitySampleGenerator_HH
+#define INCLUDED_protocols_swa_StepWiseIdentitySampleGenerator_HH
 
-#include <protocols/swa/StepWisePoseSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.hh>
+#include <protocols/swa/InputStreamWithResidueInfo.fwd.hh>
+#include <protocols/swa/StepWisePoseSetup.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+
+//Auto Headers
 #include <utility/vector1.hh>
 
 namespace protocols {
 namespace swa {
 
-	class StepWiseCombineSampleGenerator: public StepWisePoseSampleGenerator {
+	class StepWiseIdentitySampleGenerator: public StepWisePoseSampleGenerator {
 	public:
 
-		StepWiseCombineSampleGenerator(
-																	 StepWisePoseSampleGeneratorOP first_generator,
-																	 StepWisePoseSampleGeneratorOP second_generator );
+    StepWiseIdentitySampleGenerator( InputStreamWithResidueInfoOP input_stream	);
 
+    StepWiseIdentitySampleGenerator( InputStreamWithResidueInfoOP input_stream	, StepWisePoseSetupOP stepwise_pose_setup );
 
 		void reset();
 
@@ -42,10 +45,13 @@ namespace swa {
 
 		Size size() const;
 
+		void
+		set_stepwise_pose_setup( StepWisePoseSetupOP stepwise_pose_setup );
+
 	private:
 
-		StepWisePoseSampleGeneratorOP first_generator_, second_generator_;
-		bool need_to_initialize_;
+		InputStreamWithResidueInfoOP input_stream_;
+		StepWisePoseSetupOP stepwise_pose_setup_;
 
   };
 

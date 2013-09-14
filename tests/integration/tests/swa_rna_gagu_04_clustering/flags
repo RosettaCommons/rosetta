@@ -19,5 +19,4 @@
 -cutpoint_open 8 
 -score:weights rna/rna_hires_07232011_with_intra_base_phosphate.wts 
 -integration_test true 
--mute all 
 -analytic_etable_evaluation 0

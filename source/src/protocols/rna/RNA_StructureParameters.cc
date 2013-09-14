@@ -891,7 +891,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 		for (Size n = pose.total_residue(); n >= 1; n-- ){ // not sure why I did this backwards...
 			if ( pose.residue(n).is_RNA() &&
 					 allow_insert_->get_domain( named_atom_id_to_atom_id( id::NamedAtomID( " C1'", n ), pose ) ) == 1 /*1 means the first inputted pose*/ &&
-					 possible_root(f,n) ) {
+					 f.possible_root(n) ) {
 				f.reorder( n );
 				break;
 			}

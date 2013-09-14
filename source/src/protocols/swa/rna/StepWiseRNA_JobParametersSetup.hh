@@ -122,6 +122,11 @@ namespace rna {
 		void
 		set_skip_complicated_stuff( bool const setting ){ skip_complicated_stuff_ = setting; }
 
+		void
+		set_force_user_defined_jumps( bool const setting ){ force_user_defined_jumps_ = setting; }
+
+		void
+		force_fold_tree( core::kinematics::FoldTree const & fold_tree );
 
   private:
 
@@ -186,7 +191,6 @@ namespace rna {
 		utility::vector1< core::Size >
 		get_previously_closed_cutpoint_from_imported_silent_file() const;
 
-
 		/////////////////////////////////////////////////////////////////////////////////////
 
 	private:
@@ -214,6 +218,8 @@ namespace rna {
 		bool allow_fixed_res_at_moving_res_;
 		bool simple_append_map_;
 		bool skip_complicated_stuff_;
+		bool force_fold_tree_;
+		bool force_user_defined_jumps_;
 
   };
 

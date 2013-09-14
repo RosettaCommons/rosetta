@@ -186,6 +186,13 @@ Pose::operator=( Pose const & src )
 	return *this;
 }
 
+/// @brief clone the conformation
+PoseOP
+Pose::clone() const
+{
+	return new Pose( *this );
+}
+
 kinematics::FoldTree const &
 Pose::fold_tree() const
 {

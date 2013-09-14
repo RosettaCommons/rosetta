@@ -16,7 +16,7 @@
 //////////////////////////////////
 #include <protocols/swa/protein/StepWiseProteinPacker.hh>
 #include <protocols/swa/protein/StepWiseProteinUtil.hh>
-#include <protocols/swa/StepWisePoseSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.hh>
 #include <protocols/swa/PoseFilter.hh>
 
 //////////////////////////////////

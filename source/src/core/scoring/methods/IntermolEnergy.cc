@@ -18,7 +18,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/EnergyMap.hh>
 
 // Utility headers
@@ -27,7 +27,7 @@
 // C++
 #include <basic/Tracer.hh>
 
-static basic::Tracer tr("core.scoring.methods.InterMolEnergy");
+static basic::Tracer TR("core.scoring.methods.InterMolEnergy");
 
 /////////////////////////////////////////////////////////////////////////////////////
 //
@@ -85,21 +85,9 @@ IntermolEnergy::finalize_total_energy(
 	EnergyMap & totals
 ) const {
 
-
-	utility::vector1< Size > const chains = pose::full_model_info::figure_out_chains_from_full_model_info( pose );
-
-	// now look to see which chains are represented in this pose...
-	utility::vector1< Size > chains_in_pose;
-	for ( Size k = 1; k <= pose.total_residue(); k++ ){
-		if ( !chains_in_pose.has( chains[k] ) ) chains_in_pose.push_back( chains[k] );
-	}
-
-	Size const num_chains = chains_in_pose.size();
-
-	tr.Debug << "Number of chains " <<   num_chains << std::endl;
-
-	Size const num_chains_frozen = (num_chains > 0) ? (num_chains - 1) : 0;
-
+	using namespace core::pose::full_model_info;
+	// following should be pre-calculated whenever full_model_info is setup.
+	Size const num_chains_frozen = nonconst_full_model_info_from_pose( pose ).cutpoint_open_in_full_model().size();
 	totals[ intermol ] = num_chains_frozen;
 
 } // finalize_total_energy

@@ -18,7 +18,7 @@
 #ifndef INCLUDED_protocols_swa_StepWisePoseCombineSampleGenerator_HH
 #define INCLUDED_protocols_swa_StepWisePoseCombineSampleGenerator_HH
 
-#include <protocols/swa/StepWisePoseSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.hh>
 #include <protocols/swa/InputStreamWithResidueInfo.fwd.hh>
 #include <protocols/swa/StepWisePoseSetup.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

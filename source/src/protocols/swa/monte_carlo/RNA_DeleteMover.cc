@@ -13,9 +13,10 @@
 /// @author Rhiju Das
 
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
-#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
+#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
 #include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
+#include <protocols/swa/StepWiseUtil.hh>
 
 // libRosetta headers
 #include <core/types.hh>
@@ -24,12 +25,17 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
+
+#include <utility/tools/make_vector1.hh>
+#include <utility/string_util.hh>
+
 #include <basic/Tracer.hh>
 
 
 using namespace core;
 using namespace core::pose::full_model_info;
 using core::Real;
+using utility::make_tag_with_dashes;
 
 //////////////////////////////////////////////////////////////////////////
 // Removes one residue from a 5' or 3' chain terminus, and appropriately
@@ -61,25 +67,37 @@ namespace monte_carlo {
 		std::cout << "not defined yet" << std::endl;
 	}
 
+
 	//////////////////////////////////////////////////////////////////////
   void
-  RNA_DeleteMover::apply( core::pose::Pose & pose, Size const res_to_delete, MovingResidueCase const moving_residue_case ) const
+  RNA_DeleteMover::apply( core::pose::Pose & pose, Size const res_to_delete ) const
 	{
-
-		remove_cutpoint_variants_at_res_to_delete( pose, res_to_delete );
-
-		pose.delete_polymer_residue( res_to_delete );
-
-		if ( moving_residue_case == CHAIN_TERMINUS_5PRIME )	pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", res_to_delete );
-
-		// important book-keeping.
-		reorder_full_model_info_after_delete( pose, res_to_delete );
-
-		if ( minimize_after_delete_ ) minimize_after_delete( pose );
+		apply( pose, utility::tools::make_vector1( res_to_delete ) );
 	}
 
 
 	//////////////////////////////////////////////////////////////////////
+  void
+  RNA_DeleteMover::apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete ) const
+	{
+		using namespace core::pose;
+
+		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+
+		PoseOP sliced_out_pose_op = new Pose;
+		slice_out_pose( pose, *sliced_out_pose_op, residues_to_delete );
+		if ( sliced_out_pose_op->total_residue() > 1 ) full_model_info.add_other_pose( sliced_out_pose_op );
+
+		fix_up_residue_type_variants( *sliced_out_pose_op ); // now make this include chain terminus!
+		fix_up_residue_type_variants( pose ); // now make this include chain terminus!
+
+		if ( minimize_after_delete_ ) minimize_after_delete( pose );
+
+	}
+
+
+	//////////////////////////////////////////////////////////////////////
+	// following should be deprecated by fix_up_residue_type_variants
   void
   RNA_DeleteMover::remove_cutpoint_variants_at_res_to_delete( core::pose::Pose & pose, Size const & res_to_delete ) const {
 
@@ -113,21 +131,15 @@ namespace monte_carlo {
 	void
 	RNA_DeleteMover::wipe_out_moving_residues( pose::Pose & pose ) {
 
-		utility::vector1< Size >  possible_res;
-		utility::vector1< MovingResidueCase > moving_residue_cases;
-		utility::vector1< AddOrDeleteChoice > add_or_delete_choices;
-
 		// don't do any minimizing -- just get rid of everything...
 		bool const minimize_after_delete_save( minimize_after_delete_ );
 		minimize_after_delete_ = false;
 
-		get_potential_delete_residues( pose,
-																	 possible_res,
-																	 moving_residue_cases,
-																	 add_or_delete_choices );
+		utility::vector1< SWA_Move > swa_moves;
+		get_potential_delete_chunks( pose, swa_moves);
 
-		if ( possible_res.size() > 0 ){ // recursively delete all residues.
-			apply( pose, possible_res[1], moving_residue_cases[1] );
+		if ( swa_moves.size() > 0 ){ // recursively delete all residues.
+			apply( pose, swa_moves[1].chunk() );
 			wipe_out_moving_residues( pose );
 		}
 
@@ -151,22 +163,25 @@ namespace monte_carlo {
 
 		TR << "Minimizing after delete " << std::endl;
 
-		TR << "Initial: " << ( *minimize_scorefxn_) ( pose ) << std::endl;
+		TR.Debug << "Initial: " << ( *minimize_scorefxn_) ( pose ) << std::endl;
+		minimize_scorefxn_->show( TR.Debug, pose );
 
 		// following is a bit of a hack.
 		// however, I wanted to make sure that I use the same minimizer as AddMover.
 
 		// need a 'sampling' residue to send into StepWiseRNA_Modeler. It actually wont be sampled
 		// because of skip_sampling.
-		utility::vector1< Size > possible_res;
-		get_potential_resample_residues( pose, possible_res );
-		if ( possible_res.size() == 0 ) return;
-		Size const some_residue = possible_res[ 1 ];
+		// This is not very transparent -- can we have some kind of default behavior for modeler
+		//  to just recognize residue is 0 and then minimize?
+		utility::vector1< SWA_Move > swa_moves;
+		get_potential_resample_chunks( pose, swa_moves );
+		if ( swa_moves.size() == 0 ) return;
+		TR.Debug << "POSSIBLE CHUNK " << make_tag_with_dashes( swa_moves[ 1 ].chunk() ) << std::endl;
+		Size const some_residue = swa_moves[ 1 ].chunk()[ 1 ];
 
 		swa::rna::StepWiseRNA_Modeler stepwise_rna_modeler( some_residue, minimize_scorefxn_ );
 		stepwise_rna_modeler.set_skip_sampling( true );
-		stepwise_rna_modeler.set_minimize_res( nonconst_full_model_info_from_pose( pose ).moving_res_list() );
-
+		stepwise_rna_modeler.set_minimize_res( get_moving_res_from_full_model_info( pose ) );
 		stepwise_rna_modeler.apply( pose );
 
 		TR << "Final: " << ( *minimize_scorefxn_) ( pose ) << std::endl;

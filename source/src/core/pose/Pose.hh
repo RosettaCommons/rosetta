@@ -213,6 +213,10 @@ public:
 	Pose &
 	operator=( Pose const & src );
 
+	/// @brief clone the conformation
+	PoseOP
+	clone() const;
+
 	////////////////////////////////////////
 	// tree builders / modifiers
 

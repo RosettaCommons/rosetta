@@ -58,6 +58,7 @@
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/util.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 // AUTO-REMOVED #include <protocols/viewer/viewers.hh>
@@ -566,22 +567,7 @@ RNA_DeNovoProtocol::setup_monte_carlo_cycles( core::pose::Pose const & pose ){
 void
 RNA_DeNovoProtocol::initialize_tag_is_done()
 {
-
-	using namespace core::io::silent;
-
-	tag_is_done_.clear();
-
-	utility::vector1< std::string > tags_done;
-
-	SilentFileData silent_file_data;
-	if ( utility::file::file_exists( silent_file_ ) ) {
-		tags_done = silent_file_data.read_tags_fast( silent_file_ );
-		for ( utility::vector1< std::string >::const_iterator iter = tags_done.begin(); iter != tags_done.end(); iter++ ) {
-			std::cout << "Already done: " << *iter << std::endl;
-			tag_is_done_[ *iter ] = true;
-		}
-	}
-
+	tag_is_done_ = core::io::silent::initialize_tag_is_done( silent_file_ );
 }
 
 

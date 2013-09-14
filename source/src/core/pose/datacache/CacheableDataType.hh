@@ -77,7 +77,8 @@ enum Enum {
 	STRUCTURAL_CONSERVATION,
 	SURFACE_PARAMS,
 	PB_LIFETIME_CACHE, // Poisson-boltzmann energy state dependent data (see PoissonBoltzmannEnergy)
-	FULL_MODEL_INFO, // protocols/swa/monte_carlo/SubToFullInfo.cc
+	FULL_MODEL_INFO, // pose/full_model_info/FullModelInfo.cc [map residues/chains to full model, for stepwise buildup]
+	MULTIPLE_POSE_INFO, // pose/multiple_pose_info/MultiplePoseInfo.cc [info on sister poses, for stepwise buildup]
 	NCS_RESIDUE_MAPPING,
 
 	// *** IMPORTANT ***

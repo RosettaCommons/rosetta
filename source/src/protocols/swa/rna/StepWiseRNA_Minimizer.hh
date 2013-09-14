@@ -115,7 +115,15 @@ namespace rna {
 		void
 		set_output_minimized_pose_data_list( bool const setting ){ output_minimized_pose_data_list_ = setting; }
 
+		void
+		output_pose_data_wrapper( std::string const & tag,
+															core::pose::Pose & pose,
+															std::string const & out_silent_file ) const;
+
   private:
+
+		utility::vector1 < core::Size >
+		get_working_moving_res( Size const & nres ) const;
 
 		utility::vector1 < core::kinematics::MoveMap >
 		Get_default_movemap( core::pose::Pose const & pose ) const;

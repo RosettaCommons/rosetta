@@ -7,24 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file RNA_SWA_MonteCarloMover
+/// @file RNA_AddDeleteMonteCarlo
 /// @brief SWA Monte Carlo -- generalization of Monte Carlo to permit addition/deletion of RNA residues
 /// @detailed
 /// @author Rhiju Das
 
-#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloMover.hh>
+#include <protocols/swa/monte_carlo/RNA_AddDeleteMonteCarlo.hh>
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_O2StarMover.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.hh>
-#include <protocols/swa/monte_carlo/RNA_SWA_MonteCarloUtil.hh>
-#include <protocols/swa/monte_carlo/types.hh>
+#include <protocols/swa/monte_carlo/SWA_MonteCarloUtil.hh>
+#include <protocols/swa/monte_carlo/SWA_Move.hh>
 
 // libRosetta headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
-#include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -47,13 +47,14 @@ using namespace core;
 using core::Real;
 
 //////////////////////////////////////////////////////////////////////////
-// SWA Monte Carlo -- framework for sampling RNA through torsion moves,
+// AddDeleteMonteCarlo (a prototype for SWA Monte Carlo) -- framework for
+//  sampling RNA through torsion moves,
 //  and moves that delete or add residues at chain termini.
 //////////////////////////////////////////////////////////////////////////
 
 static numeric::random::RandomGenerator RG(29111);  // <- Magic number, do not change it!
 
-static basic::Tracer TR( "protocols.swa.monte_carlo.rna_swa_monte_carlo_mover" ) ;
+static basic::Tracer TR( "protocols.swa.monte_carlo.RNA_AddDeleteMonteCarlo" ) ;
 
 namespace protocols {
 namespace swa {
@@ -62,7 +63,7 @@ namespace monte_carlo {
 
   //////////////////////////////////////////////////////////////////////////
   //constructor!
-	RNA_SWA_MonteCarloMover::RNA_SWA_MonteCarloMover(  RNA_AddOrDeleteMoverOP rna_add_or_delete_mover,
+	RNA_AddDeleteMonteCarlo::RNA_AddDeleteMonteCarlo(  RNA_AddOrDeleteMoverOP rna_add_or_delete_mover,
 																										 RNA_TorsionMoverOP     rna_torsion_mover,
 																										 RNA_O2StarMoverOP      rna_o2star_mover,
 																										 core::scoring::ScoreFunctionOP scorefxn ):
@@ -84,12 +85,12 @@ namespace monte_carlo {
 
   //////////////////////////////////////////////////////////////////////////
   //destructor
-  RNA_SWA_MonteCarloMover::~RNA_SWA_MonteCarloMover()
+  RNA_AddDeleteMonteCarlo::~RNA_AddDeleteMonteCarlo()
   {}
 
   //////////////////////////////////////////////////////////////////////////
   void
-  RNA_SWA_MonteCarloMover::apply( core::pose::Pose & pose )
+  RNA_AddDeleteMonteCarlo::apply( core::pose::Pose & pose )
 	{
 
 		using namespace protocols::moves;
@@ -106,7 +107,7 @@ namespace monte_carlo {
 
 			move_type = "";
 
-			utility::vector1< Size > moving_res_list = nonconst_full_model_info_from_pose( pose ).moving_res_list();
+			utility::vector1< Size > moving_res_list = get_moving_res_from_full_model_info( pose );
 
 			if ( (random_number < 0.01 && do_add_delete_) || moving_res_list.size() == 0 /*got to add something!*/ ) {
 				rna_add_or_delete_mover_->apply( pose, move_type );
@@ -144,7 +145,7 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	RNA_SWA_MonteCarloMover::initialize_next_suite_atoms(){
+	RNA_AddDeleteMonteCarlo::initialize_next_suite_atoms(){
 		// could initialize this once somewhere else.
 		next_suite_atoms_.clear();
 		next_suite_atoms_.push_back(" P  ");
@@ -156,18 +157,17 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Following assumed that pose is already properly aligned to native pose!
-	// stuff into RNA_SWA_MonteCarloMover.
+	// stuff into RNA_AddDeleteMonteCarlo.
 	void
-	RNA_SWA_MonteCarloMover::output_silent_file( pose::Pose & pose, Size const count ){
+	RNA_AddDeleteMonteCarlo::output_silent_file( pose::Pose & pose, Size const count ){
 
 		using namespace core::io::silent;
 		using namespace core::conformation;
 		using namespace ObjexxFCL;
 		using namespace core::pose::full_model_info;
 
-		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
-		utility::vector1< Size > const & working_res_list = full_model_info.moving_res_list();
-		utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
+		utility::vector1< Size > const & working_res_list = get_moving_res_from_full_model_info( pose );
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 
 		// useful to keep track of what's a working residue and what's not.
 		utility::vector1< bool > is_working_res;
@@ -185,7 +185,7 @@ namespace monte_carlo {
 
 		for ( Size n = 1; n <= working_res_list.size(); n++ ){
 			Size const i      = working_res_list[ n ];
-			Size const i_full = sub_to_full[ i ];
+			Size const i_full = res_list[ i ];
 
 			//		std::cout << "NATIVE CHECK: " <<  i << ' ' << i_full << std::endl;
 
@@ -208,7 +208,7 @@ namespace monte_carlo {
 			// also add in atoms in next suite, if relevant (and won't be covered later in rmsd calc.)
 			if ( i < pose.total_residue() && !is_working_res[ i+1 ] &&  !pose.fold_tree().is_cutpoint(i) ){
 				Size const i_next      = i+1;
-				Size const i_next_full = sub_to_full[ i+1 ];
+				Size const i_next_full = res_list[ i+1 ];
 				runtime_assert( i_next_full == i_full + 1 ); //better be a connection in both the pose & native pose!
 
 				Residue const & rsd_next        = pose.residue( i_next );
@@ -240,7 +240,7 @@ namespace monte_carlo {
 			built_res = "-";
 		} else {
 			built_res += string_of( working_res_list[1] );
-			for ( Size n = 2; n <= working_res_list.size(); n++ ) built_res += "-"+string_of( sub_to_full[ working_res_list[n] ] );
+			for ( Size n = 2; n <= working_res_list.size(); n++ ) built_res += "-"+string_of( res_list[ working_res_list[n] ] );
 		}
 		s.add_string_value( "built_res", built_res);
 
@@ -250,8 +250,8 @@ namespace monte_carlo {
 
 
 	std::string
-	RNA_SWA_MonteCarloMover::get_name() const {
-		return "RNA_SWA_MonteCarloMover";
+	RNA_AddDeleteMonteCarlo::get_name() const {
+		return "RNA_AddDeleteMonteCarlo";
 	}
 
 }

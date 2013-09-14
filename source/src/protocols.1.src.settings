@@ -114,6 +114,7 @@ sources = {
 		"IteratedConvergenceMover",
 		"JumpOutMover",
 		"MonteCarlo",
+		"MonteCarloStatus",
 		"Mover",
 		"MoverContainer",
 		"MoverCreator",

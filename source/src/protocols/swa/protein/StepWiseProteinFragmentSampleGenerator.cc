@@ -16,7 +16,7 @@
 //////////////////////////////////
 #include <protocols/swa/protein/StepWiseProteinFragmentSampleGenerator.hh>
 #include <protocols/swa/protein/StepWiseProteinUtil.hh>
-#include <protocols/swa/StepWisePoseSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/FragSet.hh>

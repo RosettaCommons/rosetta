@@ -14,8 +14,8 @@
 
 
 //////////////////////////////////
-#include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
+#include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
@@ -37,7 +37,7 @@ using basic::T;
 using core::Real;
 using ObjexxFCL::fmt::F;
 
-static basic::Tracer TR( "protocols.swa.rna.base_centroid_screener" );
+static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_BaseCentroidScreener" );
 
 namespace protocols {
 namespace swa {
@@ -105,26 +105,28 @@ namespace rna {
 		//Size const moving_res = job_parameters_ -> moving_res();
 		//bool const moving_partition = partition_definition( moving_res );
 
+		// following seems ridiculous. Should be possible to figure out partitions on the fly from
+		//  root of pose.  -- rhiju, sep. 2013
 		Size const working_moving_res = job_parameters_->working_moving_res();
 		utility::vector1 < core::Size > const & working_moving_partition_pos = job_parameters_->working_moving_partition_pos();
 
 		if ( working_moving_partition_pos.size() == 0 ) utility_exit_with_message( "working_moving_partition_pos.size() == 0!" );
 
-		bool const moving_partition = partition_definition( working_moving_res );
-		bool const moving_partition_check = partition_definition( working_moving_partition_pos[1] );
+		bool const moving_partition_based_on_res = partition_definition( working_moving_res );
+		bool const moving_partition = partition_definition( working_moving_partition_pos[1] );
 
-		if ( moving_partition != moving_partition_check ){
-			TR << "working_moving_res = " << working_moving_res << std::endl;
-			Output_seq_num_list( "working_moving_partition_pos = ", job_parameters_->working_moving_partition_pos(), TR );
-			TR << "moving_partition = " << moving_partition << std::endl;
-			TR << "moving_partition_check = " << moving_partition_check << std::endl;
-			utility_exit_with_message( "moving_partition != moving_partition_check!" );
+		if ( moving_partition_based_on_res != moving_partition ){
+			TR.Debug << "moving_partition_based_on_res != moving_partition" << std::endl;
+			TR.Debug << "working_moving_res = " << working_moving_res << std::endl;
+			Output_seq_num_list( "working_moving_partition_pos = ", job_parameters_->working_moving_partition_pos(), TR.Debug );
+			TR.Debug << "moving_partition_based_on_res = " << moving_partition_based_on_res << std::endl;
+			TR.Debug << "moving_partition = " << moving_partition << std::endl;
+			//			utility_exit_with_message( "moving_partition != moving_partition_check!" );
 		}
 
 		moving_residues_.clear();
 		fixed_residues_.clear();
 		base_stub_list_.clear();
-
 
 		Size const & nres = pose.total_residue();
 		is_moving_res_.dimension( nres, false );
@@ -174,7 +176,6 @@ namespace rna {
 	StepWiseRNA_BaseCentroidScreener::Initialize_terminal_res( pose::Pose const & pose ){
 
 		using namespace ObjexxFCL;
-
 
 		terminal_res_ = job_parameters_->working_terminal_res();
 

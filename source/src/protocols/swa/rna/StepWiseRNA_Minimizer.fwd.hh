@@ -7,26 +7,27 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file types.hh
-/// @brief a couple enum types useful in SWA MonteCarlo applications
+/// @file protocols/swa/rna/StepWiseRNA_Minimizer.fwd.hh
+/// @brief
 /// @detailed
-///
-/// @author Rhiju Das
+/// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_protocols_swa_monte_carlo_types_hh
-#define INCLUDED_protocols_swa_monte_carlo_types_hh
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_Minimizer_FWD_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_Minimizer_FWD_HH
+
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace swa {
-namespace monte_carlo {
+namespace rna {
 
-	enum MovingResidueCase { NO_CASE = 0, CHAIN_TERMINUS_5PRIME, CHAIN_TERMINUS_3PRIME, INTERNAL, FLOATING_BASE };
+	class StepWiseRNA_Minimizer;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_Minimizer > StepWiseRNA_MinimizerOP;
+	typedef utility::pointer::owning_ptr< StepWiseRNA_Minimizer const > StepWiseRNA_MinimizerCOP;
 
-	enum AddOrDeleteChoice{ NO_ADD_OR_DELETE = 0, ADD, DELETE };
-
-} // monte_carlo
-} // swa
-} // protocols
+} //rna
+} //swa
+} //protocols
 
 #endif

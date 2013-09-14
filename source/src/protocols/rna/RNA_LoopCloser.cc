@@ -13,8 +13,6 @@
 /// @author Rhiju Das
 
 #include <protocols/rna/RNA_LoopCloser.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_Minimizer.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_ProtocolUtil.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/id/AtomID_Map.hh>
@@ -35,9 +33,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -54,8 +50,6 @@
 #include <vector>
 #include <string>
 #include <sstream>
-// AUTO-REMOVED #include <fstream>
-// AUTO-REMOVED #include <ctime>
 
 //Auto Headers
 #include <core/chemical/VariantType.hh>
@@ -208,21 +202,31 @@ RNA_LoopCloser::passes_fast_scan( core::pose::Pose & pose, Size const i ) const
 
 ////////////////////////////////////////////////////////////////////////////
 bool
-RNA_LoopCloser::check_closure( core::pose::Pose & pose, Real ccd_tolerance )
+RNA_LoopCloser::check_closure( core::pose::Pose const & pose, core::Size const i, Real ccd_tolerance )
 {
+	if ( ccd_tolerance <= 0.0 ) ccd_tolerance = absolute_ccd_tolerance_;
 
+	runtime_assert( pose.residue( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  );
+	runtime_assert( pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  );
+
+	Real const current_dist_err =  get_dist_err( pose, i );
+	//	TR << "CURRENT_DIST_ERR  " << current_dist_err << " " << ccd_tolerance << std::endl;
+
+	return ( current_dist_err < ccd_tolerance );
+}
+
+////////////////////////////////////////////////////////////////////////////
+bool
+RNA_LoopCloser::check_closure( core::pose::Pose const & pose, Real ccd_tolerance )
+{
 	if ( ccd_tolerance <= 0.0 ) ccd_tolerance = absolute_ccd_tolerance_;
 
 	// Loop through all residues and look for potential chainbreaks to close --
 	// marked by CUTPOINT_LOWER and CUTPOINT_UPPER variants.
 	for (Size i = 1; i < pose.total_residue(); i++ ) {
-
-		if ( !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
-		if ( !pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
-
-		Real const current_dist_err =   get_dist_err( pose, i );
-		if ( current_dist_err > ccd_tolerance )	 return false;
-
+ 	if ( !pose.residue( i   ).has_variant_type( chemical::CUTPOINT_LOWER )  ) continue;
+	if ( !pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER )  ) continue;
+		if ( !check_closure( pose, i, ccd_tolerance ) ) return false;
 	}
 
 	return true;
@@ -435,12 +439,11 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< Size, Si
 }
 
 
-
 ///////////////////////////////////////////////////////////////
 Real
-RNA_LoopCloser::get_dist_err( pose::Pose & pose,
-										Size const cutpoint
-										) const
+RNA_LoopCloser::get_dist_err( pose::Pose const & pose,
+															Size const cutpoint
+															) const
 {
 	utility::vector1< Vector > upstream_xyzs;
 	utility::vector1< Vector > downstream_xyzs;
@@ -449,10 +452,10 @@ RNA_LoopCloser::get_dist_err( pose::Pose & pose,
 
 ///////////////////////////////////////////////////////////////
 Real
-RNA_LoopCloser::get_chainbreak_xyz( pose::Pose & pose,
-										Size const cutpoint,
-										utility::vector1< Vector > & upstream_xyzs,
-										utility::vector1< Vector > & downstream_xyzs
+RNA_LoopCloser::get_chainbreak_xyz( pose::Pose const & pose,
+																		Size const cutpoint,
+																		utility::vector1< Vector > & upstream_xyzs,
+																		utility::vector1< Vector > & downstream_xyzs
 										) const
 {
 	upstream_xyzs.clear();

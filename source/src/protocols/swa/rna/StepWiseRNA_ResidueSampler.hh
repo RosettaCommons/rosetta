@@ -196,6 +196,9 @@ private:
 	Copy_CCD_torsions_general( core::pose::Pose & pose, core::pose::Pose const & template_pose, core::Size const five_prime_res, core::Size const three_prime_res ) const;
 
 	bool
+	check_loop_closed( core::pose::Pose const & pose );
+
+	bool
 	Chain_break_screening( core::pose::Pose & chain_break_screening_pose, core::scoring::ScoreFunctionOP const & constraint_scorefxn );
 
 	bool

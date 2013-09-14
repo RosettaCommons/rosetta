@@ -60,13 +60,14 @@ RNA_KicSampler::RNA_KicSampler(
 	skip_same_pucker_( false ),
 	idealize_coord_( false ),
 	torsion_screen_( true ),
-	closable_( true ),
+	random_chain_closed_( true ),
 	screener_( new RNA_TorsionScreener )
 {
 	RotamerBase::set_random( false );
 }
 
 RNA_KicSampler::~RNA_KicSampler() {}
+
 //////////////////////////////////////////////////////////////////////////
 void RNA_KicSampler::init() {
 	using namespace core::id;
@@ -131,11 +132,13 @@ void RNA_KicSampler::init() {
 	loop_closer_->set_verbose( verbose_ );
 
 	////////// Chi Rotamer //////////
-	chi_rotamer_ = new RNA_ChiRotamer(
-				moving_suite_ + 1, NORTH/*arbitary*/, base_state_	);
-	chi_rotamer_->set_extra_chi( extra_chi_ );
-	chi_rotamer_->set_bin_size( bin_size_ );
-	chi_rotamer_->init();
+	if ( base_state_ != NONE ){
+		chi_rotamer_ = new RNA_ChiRotamer(
+											 moving_suite_ + 1, NORTH/*arbitary*/, base_state_	);
+		chi_rotamer_->set_extra_chi( extra_chi_ );
+		chi_rotamer_->set_bin_size( bin_size_ );
+		chi_rotamer_->init();
+	}
 
 	set_init( true );
 	set_random( random() ); //update chi rotamer and init loop closer
@@ -143,7 +146,7 @@ void RNA_KicSampler::init() {
 //////////////////////////////////////////////////////////////////////////
 void RNA_KicSampler::reset() {
 	runtime_assert( is_init() );
-	if ( random() ) {
+	if ( random() && not_end() ) {
 		++( *this );
 	} else {
 		bb_rotamer_->reset();
@@ -156,12 +159,15 @@ void RNA_KicSampler::reset() {
 void RNA_KicSampler::operator++() {
 	runtime_assert( not_end() );
 	if ( random() ) {
+		random_chain_closed_ = false;
 		for ( Size i = 1; i <= max_tries_; ++i ) {
 			++( *bb_rotamer_ );
 			bb_rotamer_->apply( *ref_pose_ );
+
 			loop_closer_->init();
 			if ( !loop_closer_->not_end() ) continue;
 			++( *loop_closer_ );
+
 			if ( torsion_screen_ ) {
 				loop_closer_->apply( *ref_pose_);
 				if ( !screener_->screen( *ref_pose_, chainbreak_suite_ ) ||
@@ -169,10 +175,10 @@ void RNA_KicSampler::operator++() {
 						continue;
 			}
 			if ( base_state_ != NONE ) ++( *chi_rotamer_ );
+			random_chain_closed_ = true;
 			return;
 		}
-		TR << "Chain not closable after " << max_tries_ << " tries!" << std::endl;
-		closable_ = false;
+		TR.Debug << "Chain not closable after " << max_tries_ << " tries!" << std::endl;
 
 	} else {
 		if ( base_state_ != NONE ) {
@@ -186,6 +192,7 @@ void RNA_KicSampler::operator++() {
 ///////////////////////////////////////////////////////////////////////////
 bool RNA_KicSampler::not_end() const {
 	runtime_assert( is_init() );
+	//	if ( random() ) return random_chain_closed_;
 	return bb_rotamer_->not_end();
 }
 ///////////////////////////////////////////////////////////////////////////
@@ -195,6 +202,10 @@ void RNA_KicSampler::apply() {
 ///////////////////////////////////////////////////////////////////////////
 void RNA_KicSampler::apply( pose::Pose & pose ) {
 	runtime_assert( is_init() );
+	if ( random() && !random_chain_closed_ ) {
+		TR.Debug << "Warning: Chain was not closable! Not doing anything to pose." << std::endl;
+		return;
+	}
 	if ( base_state_ != NONE ) chi_rotamer_->apply( pose );
 	loop_closer_->apply( pose );
 	bb_rotamer_->apply( pose );
@@ -205,7 +216,7 @@ void RNA_KicSampler::set_random( bool const setting ) {
 	if ( is_init() ) {
 		bb_rotamer_->set_random( setting );
 		loop_closer_->set_random( setting );
-		chi_rotamer_->set_random( setting );
+		if ( base_state_ != NONE ) chi_rotamer_->set_random( setting );
 		reset();
 	}
 }
@@ -220,13 +231,15 @@ void RNA_KicSampler::get_next_valid_bb() {
 						continue;
 			}
 
-			Size const pucker_state( assign_pucker(
-					*ref_pose_, moving_suite_ + 1 ) );
-			if ( chi_rotamer_->pucker_state() != pucker_state ) {
-				chi_rotamer_->set_pucker_state( pucker_state );
-				chi_rotamer_->init();
-			} else {
-				chi_rotamer_->reset();
+			if ( base_state_ != NONE ){
+				Size const pucker_state( assign_pucker(
+																							 *ref_pose_, moving_suite_ + 1 ) );
+				if ( chi_rotamer_->pucker_state() != pucker_state ) {
+					chi_rotamer_->set_pucker_state( pucker_state );
+					chi_rotamer_->init();
+				} else {
+					chi_rotamer_->reset();
+				}
 			}
 			return;
 		}

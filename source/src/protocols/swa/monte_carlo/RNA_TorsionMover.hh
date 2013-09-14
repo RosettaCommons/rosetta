@@ -21,7 +21,7 @@
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/swa/monte_carlo/types.hh>
+#include <protocols/swa/monte_carlo/SWA_Move.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.fwd.hh>
 
 using namespace core;

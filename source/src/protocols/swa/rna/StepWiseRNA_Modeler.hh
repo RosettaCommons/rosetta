@@ -19,9 +19,11 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/swa/rna/StepWiseRNA_Modeler.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_Minimizer.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <utility/vector1.hh>
 #include <string>
 
@@ -61,8 +63,6 @@ namespace rna {
 
 		void set_num_pose_minimize( core::Size const & setting ){ num_pose_minimize_ = setting; }
 
-		void set_nstruct( core::Size const & setting ){ nstruct_ = setting; }
-
 		core::Size get_num_sampled(){ return num_sampled_; }
 
 		void set_sampler_native_screen_rmsd_cutoff( core::Real const & setting ){ sampler_native_screen_rmsd_cutoff_ = setting; }
@@ -90,6 +90,8 @@ namespace rna {
 		void set_use_phenix_geo( bool const & setting ){ use_phenix_geo_ = setting; }
 
 		void set_kic_sampling( bool const & setting ){ kic_sampling_ = setting; }
+
+		void set_kic_sampling_if_relevant( bool const & setting ){ kic_sampling_if_relevant_ = setting; }
 
 		void set_centroid_screen( bool const & setting ){ centroid_screen_ = setting; }
 
@@ -171,6 +173,9 @@ namespace rna {
 		StepWiseRNA_JobParametersOP
 		setup_job_parameters_for_swa( utility::vector1< Size > moving_res, core::pose::Pose const & pose );
 
+		void
+		output_pose(core::pose::Pose & pose, std::string const & out_tag, std::string const out_silent_file ) const;
+
 	private:
 
 		StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
@@ -183,7 +188,6 @@ namespace rna {
 		std::string silent_file_;
 		core::Size sampler_num_pose_kept_;
 		core::Size num_pose_minimize_;
-		core::Size nstruct_;
 		core::Size num_sampled_;
 		core::Real sampler_native_screen_rmsd_cutoff_;
 		core::Real cluster_rmsd_;
@@ -198,6 +202,7 @@ namespace rna {
 		bool extra_chi_;
 		bool use_phenix_geo_;
 		bool kic_sampling_;
+		bool kic_sampling_if_relevant_;
 		bool centroid_screen_;
 		bool VDW_atr_rep_screen_;
 		bool force_centroid_interaction_;
@@ -238,6 +243,8 @@ namespace rna {
 		bool minimizer_output_before_o2star_pack_;
 		bool minimizer_rename_tag_;
 
+		StepWiseRNA_MinimizerOP stepwise_rna_minimizer_;
+		core::kinematics::MoveMapOP minimize_move_map_;
 
 	};
 

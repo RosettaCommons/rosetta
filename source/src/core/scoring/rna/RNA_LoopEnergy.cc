@@ -96,8 +96,7 @@ RNA_LoopEnergy::update_rna_loop_atoms_and_lengths( pose::Pose & pose ) const {
 	using namespace core::pose::full_model_info;
 	using namespace core::id;
 
-	FullModelInfo const & full_model_info = nonconst_full_model_info_from_pose( pose );
-	utility::vector1< Size > const & sub_to_full = full_model_info.sub_to_full();
+	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 	utility::vector1< Size > const chains = figure_out_chains_from_full_model_info( pose );
 
 	loop_takeoff_atoms_.clear();
@@ -110,7 +109,7 @@ RNA_LoopEnergy::update_rna_loop_atoms_and_lengths( pose::Pose & pose ) const {
 
 		if ( pose.residue( n ).is_RNA() &&
 				 pose.residue( n+1 ).is_RNA() &&
-				 sub_to_full[ n+1 ] > sub_to_full[ n ] + 1 &&
+				 res_list[ n+1 ] > res_list[ n ] + 1 &&
 				 chains[ n ] == chains[ n+1 ] ){
 
 			// better not be a closed chainbreak!
@@ -119,7 +118,7 @@ RNA_LoopEnergy::update_rna_loop_atoms_and_lengths( pose::Pose & pose ) const {
 
 			/////////////////////////////////////////////////////////////////////
 			// a single residue bulge has two suites
-			Size num_loop_suites = sub_to_full[ n+1 ] - sub_to_full[ n ];
+			Size num_loop_suites = res_list[ n+1 ] - res_list[ n ];
 			runtime_assert( num_loop_suites > 1 );
 
 			rna_loop_lengths_.push_back( num_loop_suites );

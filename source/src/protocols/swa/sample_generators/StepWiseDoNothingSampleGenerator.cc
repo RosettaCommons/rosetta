@@ -14,7 +14,7 @@
 
 
 //////////////////////////////////
-#include <protocols/swa/StepWiseDoNothingSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWiseDoNothingSampleGenerator.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <utility/exit.hh>

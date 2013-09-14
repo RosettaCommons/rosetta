@@ -67,7 +67,7 @@ public:
 	void set_random( bool const setting );
 
 	/// @brief If the chain is closable (random sampling only)
-	bool closable() const { return closable_; }
+	bool closable() const { return random_chain_closed_; }
 
 	/// @brief Name of the class
 	std::string get_name() const { return "RNA_KicSampler"; }
@@ -127,7 +127,7 @@ private:
 	core::Real bin_size_;
 	core::Size max_tries_;
 	bool verbose_, extra_epsilon_, extra_chi_, skip_same_pucker_,
-			idealize_coord_, torsion_screen_, closable_;
+			idealize_coord_, torsion_screen_, random_chain_closed_;
 
 	RotamerSizedCombOP bb_rotamer_;
 	RNA_KinematicCloserOP loop_closer_;

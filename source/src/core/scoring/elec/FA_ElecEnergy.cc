@@ -1062,9 +1062,7 @@ FA_ElecEnergy::get_count_pair_function(
 
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return new CountPairNone;
 
-	if ( rsd1.is_RNA() && rsd2.is_RNA() ) {
-		/// IMPLEMENT THIS!
-	} else if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
+	if ( rsd1.is_bonded( rsd2 ) || rsd1.is_pseudo_bonded( rsd2 ) ) {
 		return CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 	}
 	return new CountPairAll;

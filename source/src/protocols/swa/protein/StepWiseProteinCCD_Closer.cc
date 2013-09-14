@@ -56,7 +56,7 @@
 
 //Auto Headers
 #include <core/chemical/ResidueType.hh>
-#include <protocols/swa/StepWisePoseSampleGenerator.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.hh>
 #include <utility/vector1.hh>
 
 

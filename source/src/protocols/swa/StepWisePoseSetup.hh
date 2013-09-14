@@ -314,6 +314,7 @@ private:
 		core::pose::PoseOP working_native_pose;
 
 		Size const BRIDGE_RES_;
+		Size const MOVING_RES_;
 
 		std::string align_file_;
 		bool ready_to_align_;

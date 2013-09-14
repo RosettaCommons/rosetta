@@ -14,7 +14,6 @@
 /// @author Rhiju Das
 
 //////////////////////////////////
-//Test_comment
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
 #include <protocols/swa/rna/StepWiseRNA_ResidueSampler.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
@@ -27,9 +26,6 @@
 #include <protocols/swa/rna/StepWiseRNA_OutputData.hh> //Sept 26, 2011
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/pose/rna/RNA_Util.hh>
-
-
-//#include <protocols/swa/rna/StepWiseRNA_Dinucleotide_Sampler_Util.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
@@ -1356,7 +1352,6 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 	//Real base_rep_score(-9999999999), base_atr_score(-9999999999); //Feb 02, 2012 This might lead to server-test error at R47200
 	Real base_rep_score(  - 999999 ), base_atr_score(  - 999999 ); //Feb 02, 2012
 
-
 	get_base_atr_rep_score( pose_with_virtual_O2star_hydrogen, base_atr_score, base_rep_score );
 	//////////////////////////////////////////Setup Atr_rep_screening/////////////////////////////////////////////////
 
@@ -1386,9 +1381,12 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	Real /*current_score( 0.0 ), */ delta_rep_score( 0.0 ), delta_atr_score( 0.0 );
-	Size ntries( 0 ), max_ntries( 10000 ), num_success( 0 ); // used in choose_random mode.
+	Size ntries( 0 ), num_success( 0 ); // used in choose_random mode.
+	Size max_ntries = std::max( 10000, 100 * int( num_random_samples_ ) );
+	if ( kic_sampling_ ) max_ntries = num_random_samples_; // some chains just aren't closable.
 
 	for ( ; sampler->not_end(); ++( *sampler ) ) {
+
 		if ( choose_random_ && ++ntries > max_ntries ) break;
 
 		sampler->apply( screening_pose );
@@ -1399,6 +1397,9 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 		if ( integration_test_mode_ && count_data_.rmsd_count >= 10 ) break;
 
 		std::string tag = create_tag( "U" + sugar_tag, ntries );
+
+		// For KIC closure, immediate check that a closed loop solution was actually found.
+		if ( kic_sampling_ && !check_loop_closed( screening_pose ) ) continue;
 
 		if ( native_rmsd_screen_ && get_native_pose() ){
 			//This assumes that screening_pose and native_pose are already superimposed.
@@ -1436,6 +1437,7 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 
 			if ( num_nucleotides > 1 && is_possible_bulge == true ) utility_exit_with_message( "num_nucleotides > 1 but is_possible_bulge == true!" );
 
+
 			if ( ( gap_size > 0 || force_centroid_interaction_ ) && !found_a_centroid_interaction_partner ) continue;
 			//Essential this doesn't screen for centroid interaction at chain_break.
 			//The chain break can be at both a single strand and a double strand. The statement below is stricter and doesn't screen for centroid interaction only if
@@ -1443,6 +1445,7 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 			//	if(!found_a_centroid_interaction_partner && !is_possible_bulge) continue; //This is the new version
 
 			// Note that is does not update base_stub_list. To do that, use Update_base_stub_list_and_Check_that_terminal_res_are_unstacked
+
 			if ( !base_centroid_screener_->Check_that_terminal_res_are_unstacked() ) continue;
 
 		}
@@ -1464,16 +1467,12 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 		//////////////////////////////////////////////////////////////////////////////////////////
 		if ( !Full_atom_van_der_Waals_screening( screening_pose, base_rep_score, base_atr_score, delta_rep_score, delta_atr_score, gap_size, Is_internal ) ) continue;
 
-
 		if ( ( user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose() ) && ( gap_size != 0 ) && ( Is_internal == false ) ){
 			//Does not work for chain_closure move and Is_internal move yet...
 			//Residue at 3' of building region have a phosphate that is NOT VIRTUALIZED. This Residue should not be excluded in VDW_bin_screen_pose! Feb 21, 2011.
 			//Residue at 5' of building region also have O3' atom that is covalently bond to the phosphate atom of loop res next to it. VDW_rep doesn't realize this and this lead to clash. Hence This Residue should not be excluded in the VDW_bin_screen_pose as well. Feb 21, 2011.
 
-			if ( user_input_VDW_bin_screener_->VDW_rep_screen( screening_pose, moving_res ) == false ){
-				//TR.Debug << tag << " pass Full_atom_VDW_screening but fail user_input_VDW_bin_screening! " << std::endl;
-				continue;
-			}
+			if ( user_input_VDW_bin_screener_->VDW_rep_screen( screening_pose, moving_res ) == false ) continue;
 			count_data_.good_bin_rep_count++;
 		}
 
@@ -1487,17 +1486,26 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 		///////////////Chain_break_screening -- CCD closure /////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////////////////////
 		bool bulge_added( false );
-		if ( gap_size == 0 && !kic_sampling_ ){
-			sampler->apply( chain_break_screening_pose );
-			if ( ! Chain_break_screening( chain_break_screening_pose, chainbreak_scorefxn_ ) ) continue;
+		if ( gap_size == 0 ) {
+			if ( kic_sampling_ ){
+				// tolerance appears too fine here -- might be worth talking to fang about this.
+				if ( !check_loop_closed( pose ) ){
+					// pose.dump_pdb( "pose.pdb" );
+					// screening_pose.dump_pdb( "screening_pose.pdb" );
+					// utility_exit_with_message( "KIC problem!" );
+				}
+			} else {
+				sampler->apply( chain_break_screening_pose );
+				if ( ! Chain_break_screening( chain_break_screening_pose, chainbreak_scorefxn_ ) ) continue;
 
-			// Need to be very careful here -- do CCD torsions ever overlap with pose torsions?
-			Copy_CCD_torsions( pose, chain_break_screening_pose );
-			if ( perform_o2star_pack_ ) Copy_CCD_torsions( o2star_pack_pose, chain_break_screening_pose );
+				// Need to be very careful here -- do CCD torsions ever overlap with pose torsions?
+				Copy_CCD_torsions( pose, chain_break_screening_pose );
+				if ( perform_o2star_pack_ ) Copy_CCD_torsions( o2star_pack_pose, chain_break_screening_pose );
 
-			if ( is_possible_bulge ){
-				bulge_added = apply_bulge_variant( pose, delta_atr_score ); /*further cut on atr, inside*/
-				if ( perform_o2star_pack_ ) apply_bulge_variant( o2star_pack_pose, delta_atr_score ); /*further cut on atr, inside*/
+				if ( is_possible_bulge ){
+					bulge_added = apply_bulge_variant( pose, delta_atr_score ); /*further cut on atr, inside*/
+					if ( perform_o2star_pack_ ) apply_bulge_variant( o2star_pack_pose, delta_atr_score ); /*further cut on atr, inside*/
+				}
 			}
 		}
 		////////////////////////////////////////////////////////////////////
@@ -1527,7 +1535,7 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 
 	}
 
-	//		if ( choose_random_ ) TR << "Number of tries: " << ntries << std::endl;
+	if ( choose_random_ ) TR << "Number of tries: " << count_data_.tot_rotamer_count++ << ". Number of successes: " << num_success << std::endl;
 
 	Output_title_text( "Final sort and clustering", TR.Debug );
 	std::sort( pose_data_list.begin(), pose_data_list.end(), sort_criteria );
@@ -1831,6 +1839,14 @@ StepWiseRNA_ResidueSampler::Copy_CCD_torsions_general( pose::Pose & pose, pose::
 	for ( Size n = 5; n <= 6; n++ ){ //epsilon and zeta of 5' res
 		pose.set_torsion( TorsionID( five_prime_res, id::BB,  n ), lower_res.mainchain_torsion( n ) );
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+bool
+StepWiseRNA_ResidueSampler::check_loop_closed( pose::Pose const & pose ){
+	static protocols::rna::RNA_LoopCloser rna_loop_closer;
+	Size const cutpoint = job_parameters_->five_prime_chain_break_res();
+	return ( rna_loop_closer.check_closure( pose, cutpoint ) );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -2536,6 +2552,8 @@ StepWiseRNA_ResidueSampler::setup_rotamer_sampler( pose::Pose const & pose ) con
 		} else {
 			sample_sugar[2] = true;
 		}
+	} else {
+		runtime_assert( Is_internal );
 	}
 
 	for ( Size i = 1; i <= 2; ++i ) {
@@ -2563,8 +2581,8 @@ StepWiseRNA_ResidueSampler::setup_rotamer_sampler( pose::Pose const & pose ) con
 	if ( kic_sampling_ ) {
 		if ( gap_size != 0 ) utility_exit_with_message(
 				"gap_size != 0 in kic_sampling mode!" );
-		if ( Is_prepend ) utility_exit_with_message(
-				"Is_prepend is not allowd in kic_sampling mode!" );
+		//		if ( Is_prepend ) utility_exit_with_message(
+		//				"Is_prepend is not allowed in kic_sampling mode!" );
 
 		utility::vector1<Size> const & cutpoint_closed_list(
 				job_parameters_->cutpoint_closed_list() );

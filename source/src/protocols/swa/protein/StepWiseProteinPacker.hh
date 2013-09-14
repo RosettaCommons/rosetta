@@ -17,7 +17,7 @@
 #ifndef INCLUDED_protocols_swa_protein_StepWiseProteinPacker_HH
 #define INCLUDED_protocols_swa_protein_StepWiseProteinPacker_HH
 
-#include <protocols/swa/StepWisePoseSampleGenerator.fwd.hh>
+#include <protocols/swa/sample_generators/StepWisePoseSampleGenerator.fwd.hh>
 #include <protocols/swa/PoseFilter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>

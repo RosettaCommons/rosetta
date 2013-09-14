@@ -78,7 +78,15 @@ public:
 	//	close_loops_carefully_one_round( core::pose::Pose & pose, core::scoring::ScoreFunctionOP const & scorefxn );
 
 	bool
-	check_closure( core::pose::Pose & pose, core::Real ccd_tolerance = 0.0 /* 0.0 means use absolute_ccd_tolerance_*/ );
+	check_closure( core::pose::Pose const & pose, core::Size const i, core::Real ccd_tolerance = -1.0 /* -1.0 means use absolute_ccd_tolerance_*/ );
+
+	bool
+	check_closure( core::pose::Pose const & pose, core::Real ccd_tolerance = -1.0 /* -1.0 means use absolute_ccd_tolerance_*/ );
+
+	core::Real
+	get_dist_err( core::pose::Pose const & pose,
+								Size const cutpoint
+								) const;
 
 private:
 
@@ -90,12 +98,7 @@ private:
 	rna_ccd_close( core::pose::Pose & pose, std::map< Size, Size > const & connections, Size const & cutpoint ) const;
 
 	core::Real
-	get_dist_err( core::pose::Pose & pose,
-								Size const cutpoint
-								) const;
-
-	core::Real
-	get_chainbreak_xyz( core::pose::Pose & pose,
+	get_chainbreak_xyz( core::pose::Pose const & pose,
 											Size const cutpoint,
 											utility::vector1< core::Vector > & upstream_xyzs,
 											utility::vector1< core::Vector > & downstream_xyzs
