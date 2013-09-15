@@ -62,9 +62,10 @@ SymmetricConformation::SymmetricConformation( Conformation const & conf, Symmetr
 /// @brief copy constructor
 SymmetricConformation::SymmetricConformation( SymmetricConformation const & src ):
 	Conformation( src ),
-	symm_info_( src.symm_info_->clone() ),
-	Tsymm_( src.Tsymm_ )
-{}
+	symm_info_( src.symm_info_->clone() )
+{
+	Tsymm_.clear();  // force recompute
+}
 
 /// @brief operator=
 Conformation &
@@ -73,7 +74,7 @@ SymmetricConformation::operator=( SymmetricConformation const & src )
 	// will this work?
 	Conformation::operator=( src );
 	symm_info_ = src.symm_info_->clone();
-	Tsymm_ = src.Tsymm_;
+	Tsymm_.clear();  // force recompute
 	return *this;
 }
 
@@ -125,14 +126,15 @@ SymmetricConformation::set_dof( DOF_ID const & id, Real const setting )
 		if (id.type() >= id::RB1 && id.type() <= id::RB6) {
 			int parent_jump = symm_info_->jump_follows( fold_tree().get_jump_that_builds_residue( id.rsd() ) );
 			parent_rsd = fold_tree().downstream_jump_residue( parent_jump );
-
-			// clear cached transforms  ... is this necessary??
-			Tsymm_.clear();
 		} else {
 			parent_rsd = symm_info_->bb_follows( id.rsd() ) ;
 		}
 	} else {
 		parent_rsd = id.rsd();
+	}
+
+	if (id.type() >= id::RB1 && id.type() <= id::RB6) {
+		Tsymm_.clear();
 	}
 
 	id::DOF_ID parent_id ( id::AtomID( id.atomno(), parent_rsd ), id.type() );
@@ -467,6 +469,9 @@ SymmetricConformation::replace_residue( Size const seqpos, Residue const & new_r
 			Conformation::replace_residue( *pos, new_rsd, orient_backbone );
 		}
 	}
+
+	//fpd may have implicitly changed a jump
+	Tsymm_.clear();
 }
 
 /// @details symmetry-safe replace residue
@@ -497,6 +502,9 @@ SymmetricConformation::replace_residue( Size const seqpos,
 		}
 		Conformation::replace_residue( *pos, new_new_rsd, false );
 	}
+
+	//fpd may have implicitly changed a jump
+	Tsymm_.clear();
 }
 
 

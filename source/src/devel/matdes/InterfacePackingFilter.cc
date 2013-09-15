@@ -121,7 +121,7 @@ InterfacePackingFilter::apply(core::pose::Pose const & pose ) const
 	if( (packing_score >= lower_threshold_) && (packing_score <= upper_threshold_) ){
 		TR<<"passing."<<std::endl;
 		return true;
-	} 
+	}
 	else {
 		TR<<"failing."<<std::endl;
 		return false;
@@ -133,7 +133,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 
 	using namespace core::pose::symmetry;
 
-	core::pose::Pose sub_pose; 
+	core::pose::Pose sub_pose;
 	core::scoring::packing::HolesParams hp(basic::database::full_name("scoring/rosettaholes/decoy15.params"));
 	core::Real cutoff2 = distance_cutoff_*distance_cutoff_;
 	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
@@ -178,10 +178,10 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 
 			//pose.dump_pdb("pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
 			//sub_pose.dump_pdb("sub_pose_" + protocols::jd2::JobDistributor::get_instance()->current_output_name() + ".pdb");
-	
+
 			core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));
 			TR << "computed_holes" << std::endl;
-	
+
 			Size nres_monomer = 0;
 			bool start = true;
 			for (Size j=1; j<=symm_info->num_independent_residues(); ++j) {
@@ -191,23 +191,23 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 				nres_monomer++;
 			}
 			TR << "nres_monomer: " << nres_monomer << " for sym_dof_name: " << sym_dof_name_list[i] << std::endl;
-	
+
 			for(Size r=1; r<=sub_pose_resis.size(); r++) {
-				if (monomer_lower_bound == sub_pose_resis[r]) { 
+				if (monomer_lower_bound == sub_pose_resis[r]) {
 					base = r;
 					break;
 				}
 				TR.Debug << "r: " << r << " sub_pose_resi: " << sub_pose_resis[r] << std::endl;
 			}
-			TR.Debug << "base residue of monomer: " << base << std::endl; 
-	 
+			TR.Debug << "base residue of monomer: " << base << std::endl;
+
  			for (core::Size sir=base; sir<=base+nres_monomer-1; sir++) {
 				ir = sub_pose_resis[sir];
 				for (core::Size ia = 1; ia<=pose.residue(ir).nheavyatoms(); ia++) {
 					bool contact = false;
 					for (core::Size sjr=1; sjr<=sub_pose_resis.size(); sjr++) {
 						jr = sub_pose_resis[sjr];
-						if ( !is_upstream(jr) ) continue; 
+						if ( !is_upstream(jr) ) continue;
 						for (core::Size ja = 1; ja<=pose.residue(jr).nheavyatoms(); ja++) {
 							if (pose.residue(ir).xyz(ia).distance_squared(pose.residue(jr).xyz(ja)) <= cutoff2)  {
 								contact = true;
@@ -231,7 +231,7 @@ InterfacePackingFilter::compute( core::pose::Pose const & pose ) const{
 			utility::vector1<Size> intra_subs;
 			Size nres_monomer = symm_info->num_independent_residues();
 			for (core::Size i=1; i<=symm_info->subunits(); ++i)
-				if (is_upstream( (i-1)*nres_monomer + 1 )) intra_subs.push_back(i);
+				if (!is_upstream( (i-1)*nres_monomer + 1 )) intra_subs.push_back(i);
 			sub_pose = get_neighbor_subs (pose, intra_subs);
 
 			core::scoring::packing::HolesResult hr(core::scoring::packing::compute_holes_score(sub_pose, hp));

@@ -172,7 +172,7 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 			Size nupstream=0;
 			for (core::Size i=1; i<=pose.total_residue(); ++i) {
 				if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
-				scc_.AddResidue(is_upstream(i)?0:1, pose.residue(i));
+				scc_.AddResidue(is_upstream(i)?1:0, pose.residue(i));
 				if (is_upstream(i)) nupstream++;
 			}
 			// scalefactor

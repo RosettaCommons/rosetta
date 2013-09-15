@@ -336,7 +336,6 @@ SymDockProtocol::apply( pose::Pose & pose )
 	using namespace viewer;
 	add_conformation_viewer( pose.conformation(), "start_pose", 450, 450 );
 
-
 	//initialize docking protocol movers
 	if (!docking_low_) docking_low_ = new SymDockingLowRes( docking_score_low_ );
 	if (!docking_high_) docking_high_ = new SymDockingHiRes( docking_score_high_min_, docking_score_pack_ );
@@ -381,7 +380,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 	for (Size r = 1; r <= max_repeats; r++){
 		pose = starting_pose;
 
-		//MonteCarloOP mc;
+	//MonteCarloOP mc;
 		if ( !local_refine_ ) {
 			docking_scorefxn = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_low_ ) ;
 
@@ -418,8 +417,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 				score_map_["cen_rms"] = cen_rms; //jd1
 				job->add_string_real_pair("cen_rms", cen_rms);
 			}
-
-			}
+		}
 
 		// only do this is full atom is true
 		if ( fullatom_ && passed_lowres_filter_ ) {
@@ -450,11 +448,10 @@ SymDockProtocol::apply( pose::Pose & pose )
 					passed_highres_filter_ = docking_highres_filter( pose );
 				}
 			}
-		if(option[ OptionKeys::docking::kick_relax ].user())
-		{
-			protocols::relax::relax_pose( pose, core::scoring::getScoreFunction(), "s" );
-		}
 
+			if(option[ OptionKeys::docking::kick_relax ].user()) {
+				protocols::relax::relax_pose( pose, core::scoring::getScoreFunction(), "s" );
+			}
 		}
 
 		if ( passed_lowres_filter_ && passed_highres_filter_ ) break; // defaults true. filter methods can set false
@@ -488,6 +485,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 
 	// cache the score map to the pose
 	if( !hurry_ ) pose.data().set(core::pose::datacache::CacheableDataType::SCORE_MAP, new basic::datacache::DiagnosticData(score_map_));
+
 }
 
 bool
@@ -513,29 +511,44 @@ SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 		}
 	}
 
-	if (pose.energies().total_energies()[ interchain_contact ] >= interchain_contact_cutoff ) passed_filter = false;
-	if (pose.energies().total_energies()[ interchain_vdw ] >= interchain_vdw_cutoff ) passed_filter = false;
+	// fpd
+	core::scoring::symmetry::SymmetricScoreFunction icc_sf, icvdw_sf, cst_sf;
+	cst_sf.set_weight( core::scoring::atom_pair_constraint , 1.0 );
+	icc_sf.set_weight( core::scoring::interchain_contact , 1.0 );
+	icvdw_sf.set_weight( core::scoring::interchain_vdw , 1.0 );
 
+	core::Real icc_score, icvdw_score, cst_score;
+	icc_score = icc_sf(pose);
+	icvdw_score = icvdw_sf(pose);
+	cst_score = cst_sf(pose);
 
-	if ( option[ OptionKeys::constraints::cst_file ].user() ){
-		if (pose.energies().total_energies()[ atom_pair_constraint ] >= distance_constraint_cutoff ) passed_filter = false;
-	}
+	if (icc_score >= interchain_contact_cutoff ) passed_filter = false;
+	if (icvdw_score >= interchain_vdw_cutoff ) passed_filter = false;
+	if (cst_score >= distance_constraint_cutoff ) passed_filter = false;
+
+	// OLD
+	//if (pose.energies().total_energies()[ interchain_contact ] >= interchain_contact_cutoff ) passed_filter = false;
+	//if (pose.energies().total_energies()[ interchain_vdw ] >= interchain_vdw_cutoff ) passed_filter = false;
+	//if ( option[ OptionKeys::constraints::cst_file ].user() ){
+	//	if (pose.energies().total_energies()[ atom_pair_constraint ] >= distance_constraint_cutoff ) passed_filter = false;
+	//}
 
 
 	if( ( option[basic::options::OptionKeys::filters::set_saxs_filter ].user() ) &&
 	    ( option[basic::options::OptionKeys::score::saxs::ref_spectrum ].user() ) ) {
-
-	    protocols::simple_filters::SAXSScoreFilterOP saxs_filter = new protocols::simple_filters::SAXSScoreFilter();
-	    if( ! saxs_filter->apply(pose) )
-		passed_filter = false;
-	    core::pose::setPoseExtraScores( pose, "saxs_score", saxs_filter->recent_score());
+		protocols::simple_filters::SAXSScoreFilterOP saxs_filter = new protocols::simple_filters::SAXSScoreFilter();
+    if( ! saxs_filter->apply(pose) )
+			passed_filter = false;
+		core::pose::setPoseExtraScores( pose, "saxs_score", saxs_filter->recent_score());
 	}
 
 
 	if (!passed_filter) {
-		 TR << "STRUCTURE FAILED LOW-RES FILTER" << std::endl;
-		TR << " scores: " << pose.energies().total_energies()[ interchain_contact ] << "  " << pose.energies().total_energies()[ interchain_vdw ]
-		   << "  " << pose.energies().total_energies()[ atom_pair_constraint ] << std::endl;
+		TR << "STRUCTURE FAILED LOW-RES FILTER" << std::endl;
+		//TR << " scores: " << pose.energies().total_energies()[ interchain_contact ] << "  " << pose.energies().total_energies()[ interchain_vdw ]
+		//   << "  " << pose.energies().total_energies()[ atom_pair_constraint ] << std::endl;
+		//TR << " cutoffs: " << interchain_contact_cutoff << "  " << interchain_vdw_cutoff << "  " << distance_constraint_cutoff << std::endl;
+		TR << " scores: " << icc_score << "  " << icvdw_score << "  " << cst_score << std::endl;
 		TR << " cutoffs: " << interchain_contact_cutoff << "  " << interchain_vdw_cutoff << "  " << distance_constraint_cutoff << std::endl;
 	}
 
@@ -602,251 +615,12 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 		}
 }
 
-/*
-void
-SymDockProtocol::apply( pose::Pose & pose )
-{
-	using namespace scoring;
-	using namespace basic::options;
-	using namespace moves;
-	using namespace viewer;
-	using namespace core::pack::task;
-  using namespace core::pack::task::operation;
-	//using core::pose::datacache::CacheableDataType::SCORE_MAP;
-	using utility::file::FileName;
-
-	assert( core::pose::symmetry::is_symmetric( pose ));
-
-	// are we calculating symmetric rms
-	//bool  symmetric_rms ( option[ OptionKeys::symmetry::symmetric_rmsd ].user() );
-	FArray1D_bool superpos_partner ( pose.total_residue(), true );
-
-	core::pose::PoseOP input_pose = new core::pose::Pose();
-	*input_pose = pose;
-	docking_low_->set_input_pose( input_pose );
-	docking_high_->set_input_pose( input_pose );
-	set_input_pose( input_pose );
-
-	// add constraints
-	if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
-		scoring::constraints::add_constraints_from_cmdline(pose, *scorefxn_lowres_ );
-	}
-
-	if ( option[ OptionKeys::constraints::cst_fa_weight ].user() ) {
-		scoring::constraints::add_fa_constraints_from_cmdline(pose, *scorefxn_hires_ );
-	}
-
-	// Residue movers
-	simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
-	simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD );
-
-	core::scoring::ScoreFunctionOP docking_scorefxn;
-
-	basic::prof_reset();
-
-	if ( option[ OptionKeys::run::score_only ]() ) {
-		if ( fullatom_ ) {
-			core::scoring::ScoreFunctionOP high_score = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_hires_ );
-			ScoreMover score_and_exit( high_score ) ;
-//			core::Real rms = symmetric_rms ? calc_symmetric_rms( pose ) : rmsd_no_super_subset( *get_native_pose(), pose, superpos_partner, is_protein_CA );
-			core::Real rms = calc_rms( pose );
-			score_and_exit.insert_rms( rms );
-			score_and_exit.apply( pose );
-		} else {
-			to_centroid.apply( pose );
-			core::scoring::ScoreFunctionOP low_score = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_lowres_ );
-			ScoreMover score_and_exit( low_score );
-//			core::Real rms = symmetric_rms ? calc_symmetric_rms( pose ) : rmsd_no_super_subset( *get_native_pose(), pose, superpos_partner, is_protein_CA );
-			core::Real rms = calc_rms( pose );
-			score_and_exit.insert_rms( rms );
-			score_and_exit.apply( pose );
-		}
-		return;
-	}
-
-	if ( view_ ) add_conformation_viewer( pose.conformation(), "start_pose", 450, 450 );
-
-	// TODO
-	// some set up functions from pose_docking_standard_protocol
-	// nominimize1, nominimize2, chainbreaks, bb_move
-	//
-
-	//temporary fix for docking filters
-	bool passed_filters = false;
-	Size max_repeats = 1000;
-
-	core::pose::Pose starting_pose = pose;
-
-	//start loop of decoy creation until filters are all passed
-	for (Size r = 1; r <= max_repeats; r++){
-		pose = starting_pose;
-
-		MonteCarloOP mc;
-		if ( !local_refine_ ) {
-			docking_scorefxn = new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_lowres_ ) ;
-			// first convert to centroid mode
-
-			to_centroid.apply( pose );
-			// make starting perturbations based on command-line flags
-			SymDockingInitialPerturbation initial( true );
-			initial.apply( pose );
-			TR << "finished initial perturbation" << std::endl;
-
-//			core::Real st_rmsd = symmetric_rms ? calc_symmetric_rms( pose ) : rmsd_no_super_subset( *get_native_pose(), pose, superpos_partner, is_protein_CA );
-			core::Real st_rmsd = calc_rms( pose );
-			score_map_["st_rmsd"] = st_rmsd;
-
-			// low resolution docking
-			docking_low_->set_default_mc( pose );
-			if ( view_ ) {
-				/// uses conformation_viewer instead of monte_carlo_viewer so that each step (accepted or rejected)
-				/// can be seen.  Also pauses every move....only use for debugging!
-				if ( option[ OptionKeys::run::debug ]() ) {
-					add_conformation_viewer( pose.conformation(), "start_pose", 450, 450, true );
-				}
-				mc_ = docking_low_->get_mc();
-				//add_monte_carlo_viewer( *mc_, "", 450, 450 );
-				add_monte_carlo_silent_viewer( *mc_, "", false );
-
-			}
-			TR.Debug << "SymDockingLowRes object created" << std::endl;
-
-			docking_low_->apply( pose );
-
-			//check low res filter to see if it should repeat low res or not
-			passed_filters = docking_lowres_filter( pose );
-
-			// add scores to map for output
-			ScoreMap::nonzero_energies( score_map_, docking_scorefxn, pose );
-//			core::Real cen_rms = symmetric_rms ? calc_symmetric_rms( pose ) : rmsd_no_super_subset( *get_native_pose(), pose, superpos_partner, is_protein_CA );
-			core::Real cen_rms = calc_rms( pose );
-			score_map_["cen_rms"] = cen_rms;
-		} else {
-			passed_filters = true;
-			}
-
-		// only do this is full atom is true
-		if ( fullatom_ && passed_filters ) {
-
-			//(*scorefxn_lowres_)(pose);
-
-			docking_scorefxn =  new core::scoring::symmetry::SymmetricScoreFunction( *scorefxn_hires_ ) ;
-			if (!pose.is_fullatom()) to_all_atom.apply( pose );
-			// to_all_atom.apply( pose );
-
-			//recover sidechains from starting structures
-			protocols::simple_moves::ReturnSidechainMover recover_sidechains( *get_input_pose() );
-			recover_sidechains.apply( pose );
-
-			(*docking_scorefxn)( pose );
-			docking_high_->set_default_mc( pose );
-
-			if ( view_ ) {
-				mc_ = docking_high_->get_mc();
-				//add_monte_carlo_viewer( *mc_, "", 450, 450 );
-				add_monte_carlo_silent_viewer( *mc_, "", true );
-			}
-
-			TR.Debug << "DockingHighRes object created" << std::endl;
-
-			// TODO Add rtmin!!!  Need to check if this has been incorporated into the packer
-			TR << "Doing initial repack of sidechains" << std::endl;
-			(*docking_scorefxn)( pose );
-			/// Now handled automatically.  docking_scorefxn->accumulate_residue_total_energies( pose );
-
-			//  Do initial pack over all residues within 1000A of the interface.
-			//  Equates to repacking all residues, but doing so without RestrictTaskForDocking invalidates -norepack1 and -norepack2 flags
-			TaskFactoryOP tf = new TaskFactory;
-
-		tf->push_back( new OperateOnCertainResidues( new PreventRepackingRLT, new ResidueLacksProperty("PROTEIN") ) );
-		tf->push_back( new InitializeFromCommandline );
-		tf->push_back( new IncludeCurrent );
-		tf->push_back( new RestrictToRepacking );
-		tf->push_back( new NoRepackDisulfides );
-		tf->push_back( new SymRestrictTaskForDocking( docking_scorefxn, true, 1000 ) );
-
-		if( option[OptionKeys::packing::resfile].user() ) tf->push_back( new ReadResfile );
-
-			simple_moves::symmetry::SymPackRotamersMover pack( docking_scorefxn );
-			pack.task_factory( tf );
-			pack.apply( pose );
-			// run high resolution docking
-			docking_high_->apply( pose );
-
-			// add scores to map for output
-			ScoreMap::nonzero_energies( score_map_, docking_scorefxn, pose );
-			calc_interaction_energy( pose );
-
-			// check highres docking filter
-			passed_filters = docking_highres_filter( pose );
-			}
-
-		if ( passed_filters ) break;
-		if (!passed_filters) TR<<"REPEAT STRUCTURE "<< r <<std::endl;
-
-		}//end of repeat decoy creation
-
-	// calculate and store the rms no matter which mode was used
-	//score_map_["rms"] = rmsd_no_super_subset( *get_native_pose(), pose, superpos_partner, is_protein_CA );
-//	core::Real rms = symmetric_rms ? calc_symmetric_rms( pose ) : rmsd_no_super_subset( *get_native_pose(), pose, superpos_partner, is_protein_CA );
-	core::Real rms = calc_rms( pose );
-	score_map_["rms"] = rms;
-	calc_interaction_energy( pose );
-
-	if ( option[ OptionKeys::run::debug ]() ) basic::prof_show();
-
-	// cache the score map to the pose
-	pose.data().set(SCORE_MAP, new basic::datacache::DiagnosticData(score_map_));
-}
-*/
 std::string
 SymDockProtocol::get_name() const {
 	return "SymDockProtocol";
 }
 
-/*
-bool
-SymDockProtocol::docking_lowres_filter( core::pose::Pose & pose){
 
-	using namespace scoring;
-	using namespace basic::options;
-
-	bool passed_filter = true;
-	if ( !option[ OptionKeys::docking::fake_native ]() ){
-		//criterion for failure
-		Real interchain_contact_cutoff	= 10.0;
-		Real interchain_vdw_cutoff = 1.0;
-
-		if( option[ OptionKeys::docking::dock_lowres_filter ].user() ) {
-			utility::vector1< Real > dock_filters = option[ OptionKeys::docking::dock_lowres_filter ]();
-			interchain_contact_cutoff = dock_filters[1];
-			interchain_vdw_cutoff = dock_filters[2];
-			}
-
-		if (pose.energies().total_energies()[ interchain_contact ] >= interchain_contact_cutoff ) passed_filter = false;
-		if (pose.energies().total_energies()[ interchain_vdw ] >= interchain_vdw_cutoff ) passed_filter = false;
-		}
-
-	return passed_filter;
-}
-
-bool
-SymDockProtocol::docking_highres_filter( core::pose::Pose & pose){
-
-	using namespace scoring;
-	using namespace basic::options;
-
-	bool passed_filter = true;
-	if ( option[ OptionKeys::docking::dock_ppk ]() ) return passed_filter;
-
-	Real score_cutoff = option[ OptionKeys::cluster::output_score_filter ]();
-	//criterion for failure
-	if (pose.energies().total_energy() >= score_cutoff) passed_filter = false;
-	if (score_map_["I_sc"] >= 0.0) passed_filter = false;
-
-	return passed_filter;
-}
-*/
 core::Real
 SymDockProtocol::calc_interaction_energy( core::pose::Pose & pose ){
 	using namespace scoring;

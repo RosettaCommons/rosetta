@@ -892,8 +892,8 @@ partition_by_symm_jumps(
 	}
 	assert(pos1>0);
 
-	partner1 = false;
-	partner1( pos1 ) = true;
+	partner1 = true;
+	partner1( pos1 ) = false;
 
 	bool new_member ( true );
 	std::vector< Edge >::const_iterator it_begin( ft.begin() );
@@ -912,12 +912,12 @@ partition_by_symm_jumps(
 				if ( it->is_polymer() ) {
 					// all the residues
 					for ( int i=start; i<= stop; ++i ) {
-						partner1( i ) = true;
+						partner1( i ) = false;
 					}
 				} else {
 					// just the vertices
-					partner1( start ) = true;
-					partner1( stop ) = true;
+					partner1( start ) = false;
+					partner1( stop ) = false;
 				}
 			}
 		}

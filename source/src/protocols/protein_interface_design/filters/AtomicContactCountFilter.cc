@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/protein_interface_design/filters/AtomicContactCountFilter.cc
-/// @brief 
+/// @brief
 /// @author Alex Ford (fordas@uw.edu)
 
 #include <algorithm>
@@ -106,7 +106,7 @@ void AtomicContactCountFilter::initialize_cross_chain(core::pack::task::TaskFact
 	jump_ = 0;
 	sym_dof_name_ = "";
 	normalize_by_sasa_ = normalize_by_sasa;
-	
+
 	filter_mode_ = detect_chains_for_interface ? CROSS_CHAIN_DETECTED : CROSS_CHAIN_ALL;
 }
 
@@ -122,7 +122,7 @@ void AtomicContactCountFilter::parse_my_tag(
 
 	std::string specified_mode = tag->getOption< std::string >( "partition", "none" );
 	std::string specified_normalized_by_sasa = tag->getOption< std::string >( "normalize_by_sasa", "0" );
-	
+
 	if (specified_mode == "none")
 	{
 		initialize_all_atoms(protocols::rosetta_scripts::parse_task_operations( tag, data ));
@@ -178,7 +178,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	{
 		task = core::pack::make_new_symmetric_PackerTask_by_requested_method(pose, task);
 	}
-	
+
 	// Create lookup of target residues
 	utility::vector1<core::Size> target;
 	for (core::Size resi = 1; resi <= pose.n_residue(); resi++)
@@ -191,7 +191,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 	if (TR.Debug.visible())
 	{
-		TR.Debug << "Targets from task: "; 
+		TR.Debug << "Targets from task: ";
 		std::copy(target.begin(), target.end(), std::ostream_iterator<core::Size>(TR.Debug, ","));
 		TR.Debug << std::endl;
 	}
@@ -202,7 +202,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 	if (filter_mode_ == ALL)
 	{
-		TR.Debug << "Partitioning by residue number." << std::endl; 
+		TR.Debug << "Partitioning by residue number." << std::endl;
 		// Each residue is a separate partition
 		for (core::Size i = 1; i <= pose.total_residue(); ++i)
 		{
@@ -211,7 +211,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	}
 	else if ( filter_mode_ == CROSS_CHAIN_DETECTED || filter_mode_ == CROSS_CHAIN_ALL )
 	{
-		TR.Debug << "Partitioning by residue chain." << std::endl; 
+		TR.Debug << "Partitioning by residue chain." << std::endl;
 
 		for (core::Size i = 1; i <= pose.total_residue(); ++i)
 		{
@@ -220,7 +220,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	}
 	else if (filter_mode_ == CROSS_JUMP)
 	{
-		TR.Debug << "Partitioning by jump." << std::endl; 
+		TR.Debug << "Partitioning by jump." << std::endl;
 
 		// Lookup symmetry-aware jump identifier
 		if ( sym_dof_name_ != "" ) {
@@ -251,7 +251,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 	if (TR.Trace.visible())
 	{
-		TR.Trace << "Residue partitions from task: "; 
+		TR.Trace << "Residue partitions from task: ";
 		for (core::Size i = 1; i <= residue_partition.size(); ++i)
 		{
 			TR.Trace << i << ":" << residue_partition[i] << ",";
@@ -262,7 +262,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 	// Count all cross-partition contacts
 	core::Size contact_count = 0;
   utility::vector1<bool>  indy_resis;
-	if ( symmetric ) 
+	if ( symmetric )
 	{
   	core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		indy_resis = symm_info->independent_residues();
@@ -300,7 +300,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 
 						if (residue_i.xyz(atom_i).distance(residue_j.xyz(atom_j)) <= distance_cutoff_)
 						{
-							TR.Debug << "select (resi " << target[i] << " and name " << residue_i.atom_name(atom_i) << ") + (resi " << target[j] << "and name " << residue_j.atom_name(atom_j) << ")" << std::endl; 
+							TR.Debug << "select (resi " << target[i] << " and name " << residue_i.atom_name(atom_i) << ") + (resi " << target[j] << "and name " << residue_j.atom_name(atom_j) << ")" << std::endl;
 							contact_count += 1;
 						}
 					}
@@ -342,11 +342,11 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 					interface_chains.insert(i);
 				}
 			}
-			
+
 			TR.Debug << "Identified interface chains:";
 			std::copy(interface_chains.begin(), interface_chains.end(), std::ostream_iterator<core::Size>(TR.Debug, ","));
 			TR.Debug << std::endl;
-			
+
 			if (interface_chains.size() != pose.conformation().num_chains())
 			{
 				TR.Debug << "Pruning target pose to interface chains.";
@@ -357,7 +357,7 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 				{
 					if (interface_chains.count(i) == 0)
 					{
-						TR.Debug << "Pruning target pose chain: " << i << 
+						TR.Debug << "Pruning target pose chain: " << i <<
 							"[" << interface_pose.conformation().chain_begin( i ) <<
 							"]" << interface_pose.conformation().chain_end( i ) << std::endl;
 
