@@ -157,6 +157,8 @@ RBInMover::init(){
 		TR<<"Randomizing the order in the jump_library"<<std::endl;
 		std::random_shuffle( jump_library_.begin(), jump_library_.end() );
   }
+	current_entry_ = 1;/// this should already be initialized, but just in case
+	checkpoint(); /// first pass should also checkpoint to keep the order of entries
   TR<<"Done making jump library with "<<jump_library_.size()<<std::endl;
 }
 
@@ -170,7 +172,7 @@ RBInMover::apply( Pose & pose )
     sat.apply( pose );
     core::kinematics::FoldTree ft( pose.fold_tree() );
     TR<<"Fold tree before slide jump: "<<ft<<std::endl;
-    ft.slide_jump( 1, disulfs[ 2 ].second, disulfs[ 2 ].second );
+    ft.slide_jump( 1, disulfs[ 2 ].second, disulfs[ 1 ].second );
     TR<<"Fold tree after slide jump: "<<ft<<std::endl;
     pose.fold_tree( ft );
     TR<<"Setting jump now"<<std::endl;
