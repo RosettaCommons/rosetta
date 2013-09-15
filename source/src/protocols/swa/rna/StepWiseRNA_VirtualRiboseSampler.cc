@@ -1170,11 +1170,15 @@ setup_FB_CC_JP_list( pose::Pose const & pose, utility::vector1< std::string > co
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
-sample_user_specified_virtual_riboses( pose::Pose & pose, utility::vector1< std::string > const & sample_virtual_ribose_string_list,
-																		StepWiseRNA_JobParametersCOP & job_parameters, core::scoring::ScoreFunctionOP const & scorefxn,
-																			std::string const silent_file_out, std::string const input_tag, bool const integration_test_mode ){
-
-
+sample_user_specified_virtual_riboses(
+	pose::Pose & pose,
+	utility::vector1< std::string > const & sample_virtual_ribose_string_list,
+	StepWiseRNA_JobParametersCOP & job_parameters,
+	core::scoring::ScoreFunctionOP const & scorefxn,
+	std::string const silent_file_out,
+	std::string const input_tag,
+	bool const integration_test_mode
+) {
 	using namespace ObjexxFCL;
 	using namespace core::io::silent;
 	using namespace core::id;
@@ -1233,9 +1237,13 @@ sample_user_specified_virtual_riboses( pose::Pose & pose, utility::vector1< std:
 
 		curr_FB_JP.set_base_and_pucker_state( pose, job_parameters );
 
-		curr_FB_JP.PDL = sample_virtual_ribose_and_bulge_and_close_chain( pose,  curr_FB_JP, "VIRT_RIBOSE_NUM_" + string_of( n ), //ACTUAL COMPUTATION OCCUR HERE!!
-																																scorefxn, sampling_scorefxn, atr_rep_screening_scorefxn, chainbreak_scorefxn, job_parameters,
-																																	 false /*virtual_ribose_is_from_prior_step*/, integration_test_mode );
+		curr_FB_JP.PDL = sample_virtual_ribose_and_bulge_and_close_chain(
+				pose,  curr_FB_JP, "VIRT_RIBOSE_NUM_" + string_of( n ),	scorefxn,
+				sampling_scorefxn, atr_rep_screening_scorefxn, chainbreak_scorefxn,
+				job_parameters, integration_test_mode, false /*use_phenix_geo*/,
+				false /*virtual_ribose_is_from_prior_step*/ );
+				//ACTUAL COMPUTATION OCCUR HERE!!
+
 
 		std::sort( curr_FB_JP.PDL.begin(), curr_FB_JP.PDL.end(), sort_pose_data_by_score );
 
