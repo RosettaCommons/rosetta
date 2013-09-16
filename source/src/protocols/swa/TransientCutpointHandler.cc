@@ -35,7 +35,14 @@ namespace swa {
 
 	//Constructor
 	TransientCutpointHandler::TransientCutpointHandler( Size const sample_res ):
-		sample_res_( sample_res )
+		sample_res_( sample_res ), //sampled nucleoside
+		cutpoint_res_( sample_res ) // suite at which to make cutpoint
+	{}
+
+	//Constructor
+	TransientCutpointHandler::TransientCutpointHandler( Size const sample_res, Size const cutpoint_res ):
+		sample_res_( sample_res ), //sampled nucleoside
+		cutpoint_res_( cutpoint_res ) // suite at which to make cutpoint
 	{}
 
 	//Destructor
@@ -46,16 +53,14 @@ namespace swa {
 	void
 	TransientCutpointHandler::put_in_cutpoints( core::pose::Pose & pose ){
 
-
 		fold_tree_save_ = pose.fold_tree();
 
 		// create reasonable fold tree
 		prepare_fold_tree_for_erraser( pose );
 
-		correctly_add_cutpoint_variants( pose, sample_res_);
+		correctly_add_cutpoint_variants( pose, cutpoint_res_);
 
 	}
-
 
 	/////////////////////////////////////////////////////////////////////////
 	void
@@ -75,10 +80,10 @@ namespace swa {
 		Size jump_start( sample_res_ - 1);
 		while ( jump_start > 1 && minimize_res_.has_value( jump_start ) && !f.is_cutpoint( jump_start - 1 ) ) jump_start--;
 
-		Size jump_end( sample_res_ + 1);
+		Size jump_end( cutpoint_res_ + 1);
 		while ( jump_end < pose.total_residue() && minimize_res_.has_value( jump_end ) && !f.is_cutpoint( jump_end ) ) jump_end++;
 
-		Size const cutpoint = sample_res_;
+		Size const cutpoint = cutpoint_res_;
 		TR.Debug << "ADDING CUTPOINT TO FOLD_TREE: " << jump_start << " " << jump_end << " " << cutpoint << std::endl;
 		f.new_jump( jump_start, jump_end, cutpoint );
 
@@ -102,8 +107,8 @@ namespace swa {
 		using namespace core::chemical;
 
 		// remove chainbreak variants. along with fold_tree restorer, put into separate function.
-		remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, sample_res_   );
-		remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, sample_res_ + 1 );
+		remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_res_   );
+		remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_res_ + 1 );
 
 		// return to simple fold tree
 		pose.fold_tree( fold_tree_save_ );

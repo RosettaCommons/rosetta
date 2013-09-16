@@ -18,6 +18,8 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/swa/monte_carlo/RNA_ResampleMover.fwd.hh>
+#include <protocols/swa/monte_carlo/SWA_Move.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_Modeler.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -31,7 +33,7 @@ namespace monte_carlo {
 	public:
 
 		//constructor
-		RNA_ResampleMover(	core::scoring::ScoreFunctionOP scorefxn );
+		RNA_ResampleMover( protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
 
 		//destructor
 		~RNA_ResampleMover();
@@ -39,7 +41,17 @@ namespace monte_carlo {
 	public:
 
 		bool
-		apply( core::pose::Pose & pose, std::string & move_type );
+		apply( core::pose::Pose & pose,
+					 std::string & move_type );
+
+		bool
+		apply( core::pose::Pose & pose,
+					 SWA_Move & swa_move );
+
+		bool
+		apply( core::pose::Pose & pose,
+					 SWA_Move const & swa_move,
+					 std::string & move_type );
 
 
 		void set_just_min_after_mutation_frequency( core::Real const & setting ){ just_min_after_mutation_frequency_ = setting; }
@@ -48,29 +60,16 @@ namespace monte_carlo {
 		void set_allow_internal_moves( bool const & setting ){ allow_internal_moves_ = setting; }
 		bool allow_internal_moves() const{ return allow_internal_moves_; }
 
-		void set_num_random_samples( core::Size const & setting ){ num_random_samples_ = setting; }
-		core::Size num_random_samples() const{ return num_random_samples_; }
-
-		void set_use_phenix_geo( bool const & setting ){ use_phenix_geo_ = setting; }
-		bool use_phenix_geo() const{ return use_phenix_geo_; }
-
-		void set_erraser( bool const & setting ){ erraser_ = setting; }
-		bool erraser() const{ return erraser_; }
-
 		void set_minimize_single_res( bool const & setting ){ minimize_single_res_ = setting; }
 		bool minimize_single_res() const{ return minimize_single_res_; }
 
 	private:
 
-		core::scoring::ScoreFunctionOP scorefxn_;
-
 		core::Real just_min_after_mutation_frequency_;
 		bool allow_internal_moves_;
-		core::Size num_random_samples_;
-		bool use_phenix_geo_;
-		bool erraser_;
 		bool minimize_single_res_;
 
+		protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
 	};
 
 } //monte_carlo

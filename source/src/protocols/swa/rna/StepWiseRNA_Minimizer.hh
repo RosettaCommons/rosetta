@@ -48,8 +48,8 @@ namespace rna {
 
     //constructor!
     StepWiseRNA_Minimizer(
-            utility::vector1 < pose_data_struct2 > const & pose_data_list,
-						StepWiseRNA_JobParametersCOP & job_parameters );
+													utility::vector1 < core::pose::PoseOP > const & pose_data_list,
+													StepWiseRNA_JobParametersCOP & job_parameters );
 
     //destructor -- necessary?
     ~StepWiseRNA_Minimizer();
@@ -154,8 +154,8 @@ namespace rna {
 
 	private:
 
-		utility::vector1 < pose_data_struct2 > const pose_data_list_;
-		utility::vector1 < pose_data_struct2 > minimized_pose_data_list_;
+		utility::vector1 < core::pose::PoseOP > const pose_data_list_;
+		utility::vector1 < core::pose::PoseOP > minimized_pose_data_list_;
 		StepWiseRNA_JobParametersCOP job_parameters_;
 
 		core::io::silent::SilentFileDataOP sfd_;

@@ -1722,7 +1722,7 @@ namespace rna {
 
 		using namespace ObjexxFCL;
 
-		Distance const dist_square = ( xyz_1 - xyz_2 ).length_squared();
+		Distance const dist_squared = ( xyz_1 - xyz_2 ).length_squared();
 
 		if ( gap_size > 1 ){ //new option Sept 18, 2010, most useful for long loop mode...
 
@@ -1731,22 +1731,20 @@ namespace rna {
 			//C5I_C5I_PLUS_ONE_MAX_DIST is the right choice and NOT O3I_O3I_PLUS_ONE_MAX_DIST, since we want to go from O3I to C5(I+gapsize+1)
 			//Also C5I_C5I_PLUS_ONE_MAX_DIST is slightly larger than O3I_O3I_PLUS_ONE_MAX_DIST and hence the safe choice
 
-			return( dist_square  < ( dist_cutoff*dist_cutoff ) );
-
+			return( dist_squared  < ( dist_cutoff*dist_cutoff ) );
 
 		} else if ( gap_size == 1 ) {
 
 			//previously used 11.0138 as O3I_C5IPLUS2_MAX_DIS which is slight underestimate...TOO strict;
-
-			return ( dist_square < O3I_C5IPLUS2_MAX_DIST*O3I_C5IPLUS2_MAX_DIST );
+			return ( dist_squared < O3I_C5IPLUS2_MAX_DIST*O3I_C5IPLUS2_MAX_DIST );
 
 		} else if ( gap_size == 0 ){
 
-			static Distance const cutoff_distance_min_square( 2.0*2.0 );
-			static Distance const cutoff_distance_max_square( 4.627*4.627 );
+			static Distance const cutoff_distance_min_squared( 2.0 * 2.0 );
+			static Distance const cutoff_distance_max_squared( 4.627 * 4.627 );
 
 			//basically cannot close chain if the C5_O3_distance is either too short or too long.
-			if ( ( dist_square > cutoff_distance_max_square ) || dist_square < cutoff_distance_min_square ) return false;
+			if ( ( dist_squared > cutoff_distance_max_squared ) || dist_squared < cutoff_distance_min_squared ) return false;
 
 			return true;
 
@@ -2121,10 +2119,10 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 					//4.5 Angstrom interaction dist_cutoff for surrounding O2star- moving_res O2star
 					//3.5 Angstrom interaction dist_cutoff for surround O2star and other atoms of moving_res
 
-					Real const dist_square = ( surrounding_rsd.xyz( surr_at ) - moving_rsd.xyz( moving_at ) ).length_squared();
+					Real const dist_squared = ( surrounding_rsd.xyz( surr_at ) - moving_rsd.xyz( moving_at ) ).length_squared();
 
-					if ( dist_square  < cutoff_dist*cutoff_dist ){
-						if ( verbose ) TR << "res " << seq_num << " is a 1st layer surrounding O2star_hydrogen res, dist_square = " << dist_square << std::endl;
+					if ( dist_squared  < cutoff_dist*cutoff_dist ){
+						if ( verbose ) TR << "res " << seq_num << " is a 1st layer surrounding O2star_hydrogen res, dist_squared = " << dist_squared << std::endl;
 						surrounding_O2star_hydrogen.push_back( seq_num );
 						Is_surrounding_res = true;
 						break;
@@ -2156,10 +2154,10 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 
 					Real const cutoff_dist = 4.5; 					//4.5 Angstrom interaction dist_cutoff for surrounding O2star themselves.
 
-					Real const dist_square = ( rsd_1.xyz( at_1 ) - rsd_2.xyz( at_2 ) ).length_squared();
+					Real const dist_squared = ( rsd_1.xyz( at_1 ) - rsd_2.xyz( at_2 ) ).length_squared();
 
-					if ( dist_square  < cutoff_dist*cutoff_dist ){
-						if ( verbose ) TR << "res " << seq_num << " is layer " << layer_num << " surrounding O2star_hydrogen res, dist_square = " << dist_square << std::endl;
+					if ( dist_squared  < cutoff_dist*cutoff_dist ){
+						if ( verbose ) TR << "res " << seq_num << " is layer " << layer_num << " surrounding O2star_hydrogen res, dist_squared = " << dist_squared << std::endl;
 						surrounding_O2star_hydrogen.push_back( seq_num );
 						add_new_O2star_hydrogen = true;
 						break;

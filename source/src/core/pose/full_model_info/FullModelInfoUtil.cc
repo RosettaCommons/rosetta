@@ -306,39 +306,41 @@ check_full_model_info_OK( pose::Pose const & pose ){
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< utility::vector1< Size > >
-	get_moving_chunks_from_full_model_info( pose::Pose & pose ){
+	get_move_elements_from_full_model_info( pose::Pose & pose ){
 
 
 		FullModelInfo full_model_info = nonconst_full_model_info_from_pose( pose );
 		utility::vector1< Size > const & fixed_domain_map =  full_model_info.fixed_domain_map();
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
 
-		utility::vector1< utility::vector1< Size > > moving_chunks;
-		std::map< Size, utility::vector1< Size > > moving_chunk_map;
+		utility::vector1< utility::vector1< Size > > move_elements;
+		std::map< Size, utility::vector1< Size > > move_element_map;
 
 		for ( Size i = 1; i <= res_list.size(); i++ ) {
-			Size const & domain = fixed_domain_map[ res_list[i] ];
+			Size const i_full = res_list[ i ];
+			Size const & domain = fixed_domain_map[ i_full ];
 			if ( domain == 0 ) {
 				// single residues
-				moving_chunks.push_back( utility::tools::make_vector1( i ) );
+				move_elements.push_back( utility::tools::make_vector1( i_full ) );
 			} else {
 				// domains
-				moving_chunk_map[ domain ].push_back( i );
+				move_element_map[ domain ].push_back( i_full );
 			}
 		}
-		for( std::map< Size, utility::vector1< Size > >::const_iterator iter = moving_chunk_map.begin();
-				 iter != moving_chunk_map.end(); iter++ ){
-			moving_chunks.push_back( iter->second );
+
+		for( std::map< Size, utility::vector1< Size > >::const_iterator iter = move_element_map.begin();
+				 iter != move_element_map.end(); iter++ ){
+			move_elements.push_back( iter->second );
 		}
 
-		return moving_chunks;
+		return move_elements;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< Size >
 	get_moving_res_from_full_model_info( pose::Pose & pose ){
 
-		FullModelInfo full_model_info = nonconst_full_model_info_from_pose( pose );
+		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
 		utility::vector1< Size > const & fixed_domain_map =  full_model_info.fixed_domain_map();
 		utility::vector1< Size > const & res_list = full_model_info.res_list();
 
@@ -468,6 +470,19 @@ dues in sequence" );
 
 	}
 
+	/////////////////////////////////////////////////////////
+	core::Size
+	sub_to_full( core::Size const i, core::pose::Pose & pose ){
+		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+		return full_model_info.res_list()[ i ];
+	}
+
+	/////////////////////////////////////////////////////////
+	core::Size
+	full_to_sub( core::Size const i, core::pose::Pose & pose ){
+		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+		return full_model_info.res_list().index( i );
+	}
 
 
 }

@@ -65,14 +65,11 @@ namespace monte_carlo {
 		presample_by_swa_( false ),
 		minimize_single_res_( false ),
 		start_added_residue_in_aform_( false ),
-		use_phenix_geo_( false ),
-		erraser_( false ),
 		internal_cycles_( 50 ),
 		rna_torsion_mover_( new RNA_TorsionMover ),
 		sample_range_small_( 5.0 ),
 		sample_range_large_( 40.0 ),
-		kT_( 0.5 ),
-		num_random_samples_( 1 )
+		kT_( 0.5 )
 	{}
 
   //////////////////////////////////////////////////////////////////////////
@@ -95,7 +92,7 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////
   void
-  RNA_AddMover::apply( core::pose::Pose & pose, Size const res_to_build_off, MovingResidueCase const moving_residue_case )
+  RNA_AddMover::apply( core::pose::Pose & pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering )
 	{
 
 		using namespace core::chemical;
@@ -111,15 +108,19 @@ namespace monte_carlo {
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 		std::string const & full_sequence  = full_model_info.full_sequence();
 
+		runtime_assert( res_list.has_value( res_to_build_off_in_full_model_numbering ) );
+		runtime_assert( !res_list.has_value( res_to_add_in_full_model_numbering ) );
+
+		Size const res_to_build_off = res_list.index( res_to_build_off_in_full_model_numbering );
 
 		// need to encapsulate the following residue addition & domain addition functions...
-		if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ){
 
+		if ( res_to_add_in_full_model_numbering == (res_to_build_off_in_full_model_numbering + 1) ){
+			// addition to strand ending (append)
 			runtime_assert( res_to_build_off == pose.total_residue() || res_list[ res_to_build_off ] < res_list[ res_to_build_off+1 ] -1 );
 			runtime_assert( res_list[ res_to_build_off ] < full_sequence.size() );
 
 			Size const res_to_add = res_to_build_off + 1;
-			Size const res_to_add_in_full_model_numbering = res_list[ res_to_build_off ] + 1;
 			Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering );
 
 			if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
@@ -136,7 +137,7 @@ namespace monte_carlo {
 
 			} else { // single residue addition -- can this just be combine with above?
 
-				char newrestype = full_sequence[ (res_list[ res_to_build_off ] + 1) - 1 ];
+				char newrestype = full_sequence[ res_to_add_in_full_model_numbering - 1 ];
 				choose_random_if_unspecified_nucleotide( newrestype );
 
 				chemical::AA my_aa = chemical::aa_from_oneletter_code( newrestype );
@@ -154,25 +155,21 @@ namespace monte_carlo {
 
 				suite_num = res_to_add - 1;
 				nucleoside_num = res_to_add;
-
 			}
-
-
 		} else {
 
-			runtime_assert( moving_residue_case == CHAIN_TERMINUS_5PRIME );
+			// addition to strand beginning (prepend)
+			runtime_assert( res_to_add_in_full_model_numbering == (res_to_build_off_in_full_model_numbering - 1) );
 
 			Size const res_to_add = res_to_build_off;
-			Size const res_to_add_in_full_model_numbering = res_list[ res_to_build_off ] - 1;
 			Size const other_pose_idx = full_model_info.get_idx_for_other_pose_with_residue( res_to_add_in_full_model_numbering );
 
-			TR << "About to add onto " << to_string( moving_residue_case ) << " the following residue (in full model numbering) " << res_to_add_in_full_model_numbering << " which may be part of other pose " << other_pose_idx << std::endl;
+			TR << "About to add onto " << res_to_build_off_in_full_model_numbering << " the following residue (in full model numbering) " << res_to_add_in_full_model_numbering << " which may be part of other pose " << other_pose_idx << std::endl;
 
 			if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
 
 				Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
 
-				Size const res_to_build_off_in_full_model_numbering = res_list[ res_to_build_off ];
 				merge_in_other_pose( pose, other_pose, res_to_build_off_in_full_model_numbering - 1 /*merge_res*/ );
 
 				full_model_info.remove_other_pose_at_idx( other_pose_idx );
@@ -184,7 +181,7 @@ namespace monte_carlo {
 
 				runtime_assert( res_list[ res_to_add ] > 1 );
 
-				char newrestype = full_sequence[ (res_list[ res_to_add ] - 1) - 1 ];
+				char newrestype = full_sequence[ res_to_add_in_full_model_numbering - 1 ];
 				choose_random_if_unspecified_nucleotide( newrestype );
 
 				TR << "I want to add: " << newrestype << " before " << res_to_build_off << std::endl;
@@ -247,22 +244,13 @@ namespace monte_carlo {
 
 		using namespace core::pose::full_model_info;
 
+		runtime_assert( stepwise_rna_modeler_ != 0 );
+
 		TR.Debug << "presampling by swa " << res_to_add << std::endl;
+		stepwise_rna_modeler_->set_moving_res_and_reset( res_to_add );
+		if ( !minimize_single_res_ ) stepwise_rna_modeler_->set_minimize_res( get_moving_res_from_full_model_info( pose ) );
+		stepwise_rna_modeler_->apply( pose );
 
-		swa::rna::StepWiseRNA_Modeler stepwise_rna_modeler( res_to_add, scorefxn_ );
-		stepwise_rna_modeler.set_choose_random( true );
-		stepwise_rna_modeler.set_force_centroid_interaction( true );
-		stepwise_rna_modeler.set_use_phenix_geo( use_phenix_geo_ );
-		stepwise_rna_modeler.set_kic_sampling_if_relevant( erraser_ );
-
-		// new -- try multiple 'shots on goal' before minimizing.
-		TR.Debug << "Presampling with SWA: " << num_random_samples_ << " samples. " << std::endl;
-		stepwise_rna_modeler.set_num_random_samples( num_random_samples_ );
-		stepwise_rna_modeler.set_num_pose_minimize( 1 );
-
-		if ( !minimize_single_res_ ) stepwise_rna_modeler.set_minimize_res( get_moving_res_from_full_model_info( pose ) );
-
-		stepwise_rna_modeler.apply( pose );
 	}
 
 
@@ -287,6 +275,12 @@ namespace monte_carlo {
 			monte_carlo_internal->boltzmann( pose, move_type );
 			//std::cout << "During presampling: " << (*scorefxn_)( pose );
 		} // monte carlo cycles
+	}
+
+	///////////////////////////////////////////////////////////////////
+	void
+	RNA_AddMover::set_stepwise_rna_modeler( protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler ){
+		stepwise_rna_modeler_ = stepwise_rna_modeler;
 	}
 
 

@@ -75,6 +75,8 @@ public:
 
 	utility::vector1< Size > const & res_list() const { return res_list_; }
 
+	utility::vector1< Size > full_to_sub( utility::vector1< Size > const & res_in_full_model_numbering ) const;
+
 	void add_other_pose( core::pose::PoseOP & pose );
 
 	// set properties of full model.

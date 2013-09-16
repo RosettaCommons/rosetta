@@ -27,46 +27,61 @@ namespace protocols {
 namespace swa {
 namespace monte_carlo {
 
-	MovingResidueCase
-	get_moving_residue_case( pose::Pose const & pose, Size const i );
-
-	MovingResidueCase
-	get_moving_residue_case( pose::Pose const & pose, utility::vector1< Size > const & moving_chunk );
 
 	void
-	get_potential_delete_chunks( pose::Pose & pose,
+	get_delete_move_elements( pose::Pose & pose,
 															 utility::vector1< SWA_Move > & swa_moves );
 
 	void
-	get_potential_resample_chunks( pose::Pose & pose,
+	get_resample_move_elements( pose::Pose & pose,
 																 utility::vector1< SWA_Move > & swa_moves );
 
 	void
-	get_potential_resample_chunks( pose::Pose & pose,
+	get_resample_move_elements( pose::Pose & pose,
 																 utility::vector1< SWA_Move > & swa_moves );
 
 	void
-	remove_from_consideration_first_multi_residue_chunk( utility::vector1< SWA_Move > & swa_moves,
+	remove_from_consideration_first_multi_residue_move_element( utility::vector1< SWA_Move > & swa_moves,
 																											 bool remove_even_if_not_singlet );
 
 	void
-	get_potential_terminal_chunks( pose::Pose & pose,
-																 utility::vector1< SWA_Move > & swa_moves,
-																 AddOrDeleteChoice const & choice );
+	get_resample_terminal_move_elements( pose::Pose & pose,
+																					utility::vector1< SWA_Move > & swa_moves );
 
 	void
-	get_potential_add_chunks( pose::Pose & pose,
+	get_terminal_move_elements( pose::Pose & pose,
+																 utility::vector1< SWA_Move > & swa_moves,
+																 MoveType const & move_type );
+
+	void
+	get_resample_internal_move_elements( pose::Pose & pose,
+																					utility::vector1< SWA_Move > & swa_moves );
+
+
+	void
+	get_internal_move_elements( pose::Pose & pose,
+																 utility::vector1< SWA_Move > & swa_moves,
+																 MoveType const & move_type );
+
+	Attachments
+	get_attachments( pose::Pose & pose, MoveElement const & move_element );
+
+	Attachments
+	get_attachments( pose::Pose & pose, Size const & moving_res );
+
+	void
+	get_add_move_elements( pose::Pose & pose,
 														utility::vector1< SWA_Move > & swa_moves );
 
 	void
-	get_random_chunk_at_chain_terminus( pose::Pose & pose,
+	get_random_move_element_at_chain_terminus( pose::Pose & pose,
 																			SWA_Move & swa_move,
 																			bool const disallow_delete,
 																			bool const disallow_resample,
 																			utility::vector1< Size > const & sample_res );
 
 	void
-	get_random_chunk_at_chain_terminus( pose::Pose & pose,
+	get_random_move_element_at_chain_terminus( pose::Pose & pose,
 																		  SWA_Move & swa_move,
 																			bool const disallow_delete,
 																			bool const disallow_resample = true );

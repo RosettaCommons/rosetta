@@ -192,12 +192,20 @@ FullModelInfo::get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const 
 		//				 !pose.residue( n+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 		//			cutpoint_open.push_back( n );
 		//		}
-
 	}
 
 	return cutpoint_open;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< Size >
+FullModelInfo::full_to_sub( utility::vector1< Size > const & res_in_full_model_numbering ) const{
+	utility::vector1< Size > res;
+	for ( Size n = 1; n <= res_in_full_model_numbering.size(); n++ ){
+		res.push_back( res_list_.index( res_in_full_model_numbering[ n ] ) );
+	}
+	return res;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 Size
@@ -209,34 +217,6 @@ FullModelInfo::find_index_in_other_pose_list( pose::Pose const & pose) const {
 	return 0;
 }
 
-///////////////////////////////////////////////////////////////////////////////////////
-// get rid of this.
-// Size
-// FullModelInfo::find_index_in_pose_list_and_update( pose::Pose & pose) {
-
-// 	Size const idx = find_index_in_pose_list( pose );
-// 	if ( idx > 0 ) return idx;
-
-// 	// if we make it here, it probably means that the pose we're looking for
-// 	// has been cloned, and full_model_info has a pointer to an old copy.
-// 	// We could try to update it on the fly... This may lead to potentially
-// 	// horrific behavior.
-// 	PDBInfoOP pdb_info = pose.pdb_info();
-// 	utility::vector1< Size > pdb_info_res_list;
-// 	for ( Size i = 1; i <= pose.total_residue(); i++ ) pdb_info_res_list.push_back( pdb_info->number( i ) );
-
-// 	for ( Size i = 1; i <= pdb_info_res_list.size(); i++ ) std::cout << "PDB_INFO_RES_LIST " << pdb_info_res_list[i] << std::endl;
-
-// 	for ( Size n = 1; n <= res_lists_.size(); n++ ){
-// 		for ( Size i = 1; i <= res_lists_[n].size(); i++ ) std::cout << "RES_LIST"<< n << " " <<res_lists_[n][i] << std::endl;
-// 		if ( res_lists_[n] == pdb_info_res_list ) {
-// 			pose_list_[ n ] = PoseOP( & pose ); // this is apparently dangerous.
-// 			return n;
-// 		}
-// 	}
-
-// 	return 0;
-// }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Size
 FullModelInfo::get_idx_for_other_pose_with_residue( Size const input_res ) const {

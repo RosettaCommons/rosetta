@@ -181,14 +181,7 @@ StepWiseRNA_ResidueSampler::get_name() const {
 }
 
 
-//////////////////////////////////////////////////////////////////////////
-bool
-sort_criteria( pose_data_struct2  pose_data_1, pose_data_struct2 pose_data_2 ) {  //This function used to be call sort_criteria2
-	return ( pose_data_1.score < pose_data_2.score );
-}
 ////////////////////////////////////////////////////////////////////////////
-
-
 void
 StepWiseRNA_ResidueSampler::apply( core::pose::Pose & pose ) {
 	using namespace ObjexxFCL;
@@ -242,8 +235,8 @@ StepWiseRNA_ResidueSampler::apply( core::pose::Pose & pose ) {
 	// (2) Current_sugar (rare) :
 	//      The sugar of the current/moving nucleotide. This sugar can
 	//      be virtual in the situation where the current step is a step to
-	//      combine two chunks that were previously built with SWA. It is
-	//      possible that the current nucleotide (in the moving chunk) was
+	//      combine two moving_elements that were previously built with SWA. It is
+	//      possible that the current nucleotide (in the moving moving_element) was
 	//      previously built with a 'floating base' step and therefore will
 	//      contain a virtual sugar.
 	//
@@ -303,7 +296,7 @@ StepWiseRNA_ResidueSampler::apply( core::pose::Pose & pose ) {
 
 	// rd2013 -- Parin, please put in comments explaining these checks. I don't understand what logic guarantees that these assertions are met.
 	if ( Is_curr_sugar_virt ){ //Consistency test.
-		//Right now, the only possiblility for Is_curr_sugar_virt==true is when combining two silent_files chunk at chain-break
+		//Right now, the only possiblility for Is_curr_sugar_virt==true is when combining two silent_files moving_element at chain-break
 		if ( gap_size != 0 ) utility_exit_with_message( "Is_curr_sugar_virt == true but gap_size != 0 !!" );
 		utility::vector1 < core::Size > const & working_moving_partition_pos = job_parameters_->working_moving_partition_pos();
 		if ( working_moving_partition_pos.size() <= 1 ) utility_exit_with_message( "Is_curr_sugar_virt == true but working_moving_partition_pos.size() <= 1" );
@@ -347,7 +340,7 @@ StepWiseRNA_ResidueSampler::apply( core::pose::Pose & pose ) {
 	Size const five_prime_chain_break_res = job_parameters_->five_prime_chain_break_res();
 	Size const three_prime_chain_break_res = five_prime_chain_break_res + 1;
 
-	//utility::vector1< pose_data_struct2 > prev_sugar_PDL, five_prime_CB_sugar_PDL, three_prime_CB_sugar_PDL;
+	//utility::vector1< PoseOP > prev_sugar_PDL, five_prime_CB_sugar_PDL, three_prime_CB_sugar_PDL;
 
 	// These parameters will be used for sampling virtual sugars and associated bulge.
 	FloatingBaseChainClosureJobParameter prev_sugar_FB_JP = FloatingBaseChainClosureJobParameter();
@@ -428,10 +421,10 @@ StepWiseRNA_ResidueSampler::apply( core::pose::Pose & pose ) {
 	}
 
 	/////////////Sort the pose_data_list by score..should be determined according to torsional potential score.	/////////////////////////
-	std::sort( prev_sugar_FB_JP.PDL.begin(), prev_sugar_FB_JP.PDL.end(), sort_criteria );
-	std::sort( curr_sugar_FB_JP.PDL.begin(), curr_sugar_FB_JP.PDL.end(), sort_criteria );
-	std::sort( five_prime_CB_sugar_FB_JP.PDL.begin(),  five_prime_CB_sugar_FB_JP.PDL.end(), sort_criteria );
-	std::sort( three_prime_CB_sugar_FB_JP.PDL.begin(), three_prime_CB_sugar_FB_JP.PDL.end(), sort_criteria );
+	std::sort( prev_sugar_FB_JP.PDL.begin(), prev_sugar_FB_JP.PDL.end(), sort_pose_by_score );
+	std::sort( curr_sugar_FB_JP.PDL.begin(), curr_sugar_FB_JP.PDL.end(), sort_pose_by_score );
+	std::sort( five_prime_CB_sugar_FB_JP.PDL.begin(),  five_prime_CB_sugar_FB_JP.PDL.end(), sort_pose_by_score );
+	std::sort( three_prime_CB_sugar_FB_JP.PDL.begin(), three_prime_CB_sugar_FB_JP.PDL.end(), sort_pose_by_score );
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if ( floating_base_ ){
@@ -449,7 +442,7 @@ StepWiseRNA_ResidueSampler::apply( core::pose::Pose & pose ) {
 	if ( rebuild_bulge_mode_ ){ //Ensure that bulge_res is not virtualized in final output.
 
 		for ( Size n = 1; n <= pose_data_list_.size(); n++ ){
-			if ( ( *pose_data_list_[n].pose_OP ).residue( job_parameters_->working_moving_res() ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
+			if ( ( *pose_data_list_[n] ).residue( job_parameters_->working_moving_res() ).has_variant_type( "VIRTUAL_RNA_RESIDUE" ) ){
 				utility_exit_with_message( "working_moving_res: " + string_of( job_parameters_->working_moving_res() ) + " of pose " + string_of( n ) + " is a virtual res!"  );
 			}
 		}
@@ -809,7 +802,7 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose, FloatingB
 	Size total_screen_bin( 0 );
 
 	Real /*current_score( 0.0 ), */ delta_rep_score( 0.0 ), delta_atr_score( 0.0 );
-	utility::vector1< pose_data_struct2 > pose_data_list;
+	utility::vector1< PoseOP > pose_data_list;
 
  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	Output_title_text( "START FLOATING BASE SAMPLING", TR.Debug );
@@ -946,7 +939,7 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose, FloatingB
 
 				for ( Size prev_sugar_ID = 1; prev_sugar_ID <= prev_sugar_FB_JP.PDL.size(); prev_sugar_ID++ ){
 					if ( !Check_chain_closable( ribose_screening_pose.residue( moving_res ).xyz( moving_atom_name ),
-																	( *prev_sugar_FB_JP.PDL[prev_sugar_ID].pose_OP ).residue( reference_res ).xyz( reference_atom_name ), ( num_nucleotides - 1 ) ) ) continue;
+																	( *prev_sugar_FB_JP.PDL[prev_sugar_ID] ).residue( reference_res ).xyz( reference_atom_name ), ( num_nucleotides - 1 ) ) ) continue;
 					pass_for_loop_screen_1 = true;
 					break;
 				}
@@ -963,25 +956,25 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose, FloatingB
 
 					//Add this statement on Dec 8, 2010//////////////////////
 					if ( !Check_chain_closable( ribose_screening_pose.residue( moving_res ).xyz( moving_atom_name ),
-																	( *prev_sugar_FB_JP.PDL[prev_sugar_ID].pose_OP ).residue( reference_res ).xyz( reference_atom_name ), ( num_nucleotides - 1 ) ) ) continue;
+																	( *prev_sugar_FB_JP.PDL[prev_sugar_ID] ).residue( reference_res ).xyz( reference_atom_name ), ( num_nucleotides - 1 ) ) ) continue;
 					/////////////////////////////////////////////////////////
 
-					copy_bulge_res_and_ribose_torsion( prev_sugar_FB_JP, ribose_screening_pose, ( *prev_sugar_FB_JP.PDL[prev_sugar_ID].pose_OP ) );
+					copy_bulge_res_and_ribose_torsion( prev_sugar_FB_JP, ribose_screening_pose, ( *prev_sugar_FB_JP.PDL[prev_sugar_ID] ) );
 
 					// rd2013 why is this REPLICATE?
 					if ( !Full_atom_van_der_Waals_screening_REPLICATE( ribose_screening_pose, base_rep_score, base_atr_score, delta_rep_score, delta_atr_score, gap_size, Is_internal ) ) continue;
 
 					pose::add_variant_type_to_pose_residue( ribose_screening_pose, "VIRTUAL_RIBOSE", prev_sugar_FB_JP.moving_res ); // copy_bulge_res_and_ribose_torsion removed the variant type
 
-					copy_bulge_res_and_ribose_torsion( prev_sugar_FB_JP, pose, ( *prev_sugar_FB_JP.PDL[prev_sugar_ID].pose_OP ) );
+					copy_bulge_res_and_ribose_torsion( prev_sugar_FB_JP, pose, ( *prev_sugar_FB_JP.PDL[prev_sugar_ID] ) );
 					pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", prev_sugar_FB_JP.moving_res ); // copy_bulge_res_and_ribose_torsion removed the variant type
 
 					if ( perform_o2star_pack_ ){ //Is this really necessary given that these DOF are virtual anyways!
-						copy_bulge_res_and_ribose_torsion( prev_sugar_FB_JP, o2star_pack_pose, ( *prev_sugar_FB_JP.PDL[prev_sugar_ID].pose_OP ) );
+						copy_bulge_res_and_ribose_torsion( prev_sugar_FB_JP, o2star_pack_pose, ( *prev_sugar_FB_JP.PDL[prev_sugar_ID] ) );
 						pose::add_variant_type_to_pose_residue( o2star_pack_pose, "VIRTUAL_RIBOSE", prev_sugar_FB_JP.moving_res ); // copy_bulge_res_and_ribose_torsion removed the variant type
 					}
 
-					tag += prev_sugar_FB_JP.PDL[prev_sugar_ID].tag;
+					tag += tag_from_pose( *prev_sugar_FB_JP.PDL[prev_sugar_ID] );
 					pass_for_loop_screen_2 = true;
 					break;
 				}
@@ -1061,7 +1054,7 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose, FloatingB
 
 	Output_title_text( "Final sort and clustering: BEFORE floating base_chain_closure", TR.Debug );
 
-	std::sort( pose_data_list.begin(), pose_data_list.end(), sort_criteria );
+	std::sort( pose_data_list.begin(), pose_data_list.end(), sort_pose_by_score );
 	cluster_pose_data_list( pose_data_list );
 	if ( pose_data_list.size() > num_pose_kept_ ) pose_data_list.erase( pose_data_list.begin() + num_pose_kept_, pose_data_list.end() );
 	TR.Debug << "after erasing.. pose_data_list = " << pose_data_list.size() << std::endl;
@@ -1113,7 +1106,7 @@ StepWiseRNA_ResidueSampler::standard_sampling_WRAPPER( core::pose::Pose & pose,
 
 	pose::Pose const pose_copy = pose;
 
-	utility::vector1< pose_data_struct2 > pose_data_list;
+	utility::vector1< PoseOP > pose_data_list;
 	if ( pose_data_list_.size() > 0 ) {
 		TR.Debug << "Previous poses exist in sampler: " << pose_data_list_.size() << std::endl;
 		pose_data_list = pose_data_list_;
@@ -1130,7 +1123,7 @@ StepWiseRNA_ResidueSampler::standard_sampling_WRAPPER( core::pose::Pose & pose,
 			utility_exit_with_message( "pose_data_list is empty for all 4 possible virtual sugar!" );
 		}
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		utility::vector1< pose_data_struct2 > starting_pose_data_list;
+		utility::vector1< PoseOP > starting_pose_data_list;
 
 		Size count = 0;
 
@@ -1141,41 +1134,39 @@ StepWiseRNA_ResidueSampler::standard_sampling_WRAPPER( core::pose::Pose & pose,
 
 						count++;
 
-						pose_data_struct2 start_pose_data;
+						PoseOP start_pose_data;
 
-						start_pose_data.pose_OP = new pose::Pose;
-						( *start_pose_data.pose_OP ) = pose_copy;
-						pose::Pose & start_pose = ( *start_pose_data.pose_OP );
-
-						start_pose_data.score = 0;
-						start_pose_data.tag = "";
+						start_pose_data = new pose::Pose;
+						( *start_pose_data ) = pose_copy;
+						pose::Pose & start_pose = ( *start_pose_data );
+						tag_into_pose( start_pose, "" );
 
 						if ( prev_sugar_FB_JP.PDL.size() > 0 ) {
-							start_pose_data.tag += prev_sugar_FB_JP.PDL[prev_sugar_ID].tag;
-							copy_bulge_res_and_ribose_torsion( prev_sugar_FB_JP, start_pose, ( *prev_sugar_FB_JP.PDL[prev_sugar_ID].pose_OP ) );
+							tag_into_pose( start_pose,   tag_from_pose(start_pose) + tag_from_pose( *prev_sugar_FB_JP.PDL[prev_sugar_ID] ) );
+							copy_bulge_res_and_ribose_torsion( prev_sugar_FB_JP, start_pose, ( *prev_sugar_FB_JP.PDL[prev_sugar_ID] ) );
 						} else{
-							start_pose_data.tag += "_null";
+							tag_into_pose( start_pose, tag_from_pose( start_pose ) + "_null" );
 						}
 
 						if ( curr_sugar_FB_JP.PDL.size() > 0 ) {
-							start_pose_data.tag += curr_sugar_FB_JP.PDL[curr_sugar_ID].tag;
-							copy_bulge_res_and_ribose_torsion( curr_sugar_FB_JP, start_pose, ( *curr_sugar_FB_JP.PDL[curr_sugar_ID].pose_OP ) );
+							tag_into_pose( start_pose,   tag_from_pose(start_pose) + tag_from_pose( *curr_sugar_FB_JP.PDL[curr_sugar_ID] ) );
+							copy_bulge_res_and_ribose_torsion( curr_sugar_FB_JP, start_pose, ( *curr_sugar_FB_JP.PDL[curr_sugar_ID] ) );
 						} else{
-							start_pose_data.tag += "_null";
+							tag_into_pose( start_pose, tag_from_pose( start_pose ) + "_null" );
 						}
 
 						if ( five_prime_CB_sugar_FB_JP.PDL.size() > 0 ){
-							start_pose_data.tag += five_prime_CB_sugar_FB_JP.PDL[five_prime_CB_sugar_ID].tag;
-							copy_bulge_res_and_ribose_torsion( five_prime_CB_sugar_FB_JP, start_pose, ( *five_prime_CB_sugar_FB_JP.PDL[five_prime_CB_sugar_ID].pose_OP ) );
+							tag_into_pose( start_pose,   tag_from_pose(start_pose) + tag_from_pose( *five_prime_CB_sugar_FB_JP.PDL[five_prime_CB_sugar_ID] ) );
+							copy_bulge_res_and_ribose_torsion( five_prime_CB_sugar_FB_JP, start_pose, ( *five_prime_CB_sugar_FB_JP.PDL[five_prime_CB_sugar_ID] ) );
 						} else{
-							start_pose_data.tag += "_null";
+							tag_into_pose( start_pose, tag_from_pose( start_pose ) + "_null" );
 						}
 
 						if ( three_prime_CB_sugar_FB_JP.PDL.size() > 0 ){
-							start_pose_data.tag += three_prime_CB_sugar_FB_JP.PDL[three_prime_CB_sugar_ID].tag;
-							copy_bulge_res_and_ribose_torsion( three_prime_CB_sugar_FB_JP, start_pose, ( *three_prime_CB_sugar_FB_JP.PDL[three_prime_CB_sugar_ID].pose_OP ) );
+							tag_into_pose( start_pose,   tag_from_pose(start_pose) + tag_from_pose( *three_prime_CB_sugar_FB_JP.PDL[three_prime_CB_sugar_ID] ) );
+							copy_bulge_res_and_ribose_torsion( three_prime_CB_sugar_FB_JP, start_pose, ( *three_prime_CB_sugar_FB_JP.PDL[three_prime_CB_sugar_ID] ) );
 						} else{
-							start_pose_data.tag += "_null";
+							tag_into_pose( start_pose, tag_from_pose( start_pose ) + "_null" );
 						}
 
 						starting_pose_data_list.push_back( start_pose_data );
@@ -1199,12 +1190,12 @@ StepWiseRNA_ResidueSampler::standard_sampling_WRAPPER( core::pose::Pose & pose,
 
 		SilentFileData silent_file_data;
 		for ( Size n = 1; n <= starting_pose_data_list.size(); n++ ){
-			pose = ( *starting_pose_data_list[n].pose_OP ); //set viewer_pose;
+			pose = ( *starting_pose_data_list[n] ); //set viewer_pose;
 
 			////Debug///////////////////////
 			if ( verbose_ ){ //Umm..rna_sugar_close score adn geom_sol doesn't check for virtual_res?? lead to slight variation...fix this! May 13, 2010
 
-				std::string starting_pose_tag = "starting_pose" + starting_pose_data_list[n].tag;
+				std::string starting_pose_tag = "starting_pose" + tag_from_pose( *starting_pose_data_list[n] );
 
 				utility::vector1 < core::Size > const & working_moving_partition_pos = job_parameters_->working_moving_partition_pos();
 
@@ -1223,7 +1214,7 @@ StepWiseRNA_ResidueSampler::standard_sampling_WRAPPER( core::pose::Pose & pose,
 			}
 			//////////////////////////////////////////////////
 
-			standard_sampling( pose, pose_data_list, starting_pose_data_list[n].tag );
+			standard_sampling( pose, pose_data_list, tag_from_pose( *starting_pose_data_list[n] ) );
 		}
 	}
 
@@ -1236,7 +1227,7 @@ StepWiseRNA_ResidueSampler::standard_sampling_WRAPPER( core::pose::Pose & pose,
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
-StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility::vector1< pose_data_struct2 > & pose_data_list, std::string const sugar_tag ) {
+StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility::vector1< PoseOP > & pose_data_list, std::string const sugar_tag ) {
 
 	using namespace core::scoring;
 	using namespace core::pose;
@@ -1538,7 +1529,7 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 	if ( choose_random_ ) TR << "Number of tries: " << count_data_.tot_rotamer_count++ << ". Number of successes: " << num_success << std::endl;
 
 	Output_title_text( "Final sort and clustering", TR.Debug );
-	std::sort( pose_data_list.begin(), pose_data_list.end(), sort_criteria );
+	std::sort( pose_data_list.begin(), pose_data_list.end(), sort_pose_by_score );
 	cluster_pose_data_list( pose_data_list );
 	if ( pose_data_list.size() > num_pose_kept_ ) pose_data_list.erase( pose_data_list.begin() + num_pose_kept_, pose_data_list.end() );
 	TR.Debug << "after erasing.. pose_data_list = " << pose_data_list.size() << std::endl;
@@ -1549,8 +1540,8 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 		pose::Pose const & native_pose = *get_native_pose();
 
 		for ( Size n = 1; n <= pose_data_list.size(); n++ ){ //align all other pose to first pose
-			pose::Pose & current_pose = ( *pose_data_list[n].pose_OP );
-			std::string const & tag = pose_data_list[n].tag;
+			pose::Pose & current_pose = ( *pose_data_list[n] );
+			std::string const & tag = tag_from_pose( current_pose );
 
 			align_poses( current_pose, tag, native_pose, "native", working_best_alignment );
 		}
@@ -1590,7 +1581,7 @@ StepWiseRNA_ResidueSampler::output_count_data(){
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< pose_data_struct2 >
+utility::vector1< PoseOP >
 StepWiseRNA_ResidueSampler::previous_floating_base_chain_closure( pose::Pose & viewer_pose, FloatingBaseChainClosureJobParameter const & FB_job_params, std::string const name ){
 
 	return sample_virtual_ribose_and_bulge_and_close_chain(
@@ -1641,8 +1632,8 @@ bool
 StepWiseRNA_ResidueSampler::Is_current_sugar_virtual( core::pose::Pose const & pose ) const {
 
 	// Check if curr sugar is virtual. If virtual then need to sample it.
-	// This occur when combining two chunk and the moving_res
-	// in the moving_chunk was built with a dinucleotide move.
+	// This occur when combining two moving_element and the moving_res
+	// in the moving_element was built with a dinucleotide move.
 	bool const Is_prepend( job_parameters_->Is_prepend() );
 	Size const moving_res( job_parameters_->working_moving_res() );
 	Size const virtual_ribose_res = moving_res;
@@ -1794,7 +1785,7 @@ StepWiseRNA_ResidueSampler::initialize_scorefunctions(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-utility::vector1< pose_data_struct2 > &
+utility::vector1< PoseOP > &
 StepWiseRNA_ResidueSampler::get_pose_data_list(){
 	return pose_data_list_;
 }
@@ -1968,7 +1959,7 @@ StepWiseRNA_ResidueSampler::apply_bulge_variant( core::pose::Pose & pose, Real c
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_ResidueSampler::Update_pose_data_list( std::string const & tag, utility::vector1< pose_data_struct2 > & pose_data_list, pose::Pose const & current_pose, Real const & current_score ) const{
+StepWiseRNA_ResidueSampler::Update_pose_data_list( std::string const & tag, utility::vector1< PoseOP > & pose_data_list, pose::Pose const & current_pose, Real const & current_score ) const{
 
 	bool add_pose_to_list = false;
 
@@ -1982,15 +1973,14 @@ StepWiseRNA_ResidueSampler::Update_pose_data_list( std::string const & tag, util
 			TR.Debug << "tag = " << tag << " current_score_cutoff_ " << current_score_cutoff_ << " score = " << current_score;
 		}
 
-		pose_data_struct2 current_pose_data;
-		current_pose_data.pose_OP = new pose::Pose;
-		( *current_pose_data.pose_OP ) = current_pose;
-		current_pose_data.score = current_score;
-		current_pose_data.tag = tag;
+		PoseOP current_pose_data;
+		current_pose_data = new pose::Pose;
+		( *current_pose_data ) = current_pose;
+		tag_into_pose( *current_pose_data, tag );
 
 		//if ( get_native_pose())  { //ACTUALLY DEPRECATED SINCE EARLY 2010!! Comment out on March 16, 2012
-		//	setPoseExtraScores( *current_pose_data.pose_OP, "all_rms",
-		//											core::scoring::rms_at_corresponding_heavy_atoms( *current_pose_data.pose_OP, *get_native_pose() ) );
+		//	setPoseExtraScores( *current_pose_data, "all_rms",
+		//											core::scoring::rms_at_corresponding_heavy_atoms( *current_pose_data, *get_native_pose() ) );
 		//}
 
 		pose_data_list.push_back( current_pose_data );
@@ -2000,7 +1990,7 @@ StepWiseRNA_ResidueSampler::Update_pose_data_list( std::string const & tag, util
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Real
-StepWiseRNA_ResidueSampler::Pose_selection_by_full_score( utility::vector1< pose_data_struct2 > & pose_data_list, pose::Pose & current_pose, std::string const & tag ){
+StepWiseRNA_ResidueSampler::Pose_selection_by_full_score( utility::vector1< PoseOP > & pose_data_list, pose::Pose & current_pose, std::string const & tag ){
 
 	using namespace core::scoring;
 
@@ -2011,7 +2001,7 @@ StepWiseRNA_ResidueSampler::Pose_selection_by_full_score( utility::vector1< pose
 	Update_pose_data_list( tag, pose_data_list, current_pose, current_score );
 
 	if ( ( pose_data_list.size() == num_pose_kept_*multiplier_ ) ){
-		std::sort( pose_data_list.begin(), pose_data_list.end(), sort_criteria );
+		std::sort( pose_data_list.begin(), pose_data_list.end(), sort_pose_by_score );
 		cluster_pose_data_list( pose_data_list );
 		if ( pose_data_list.size() > num_pose_kept_ ){
 			pose_data_list.erase( pose_data_list.begin() + num_pose_kept_, pose_data_list.end() );
@@ -2029,7 +2019,7 @@ StepWiseRNA_ResidueSampler::Pose_selection_by_full_score( utility::vector1< pose
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Dec 18, 2009...took off alot of optimization from this code since it is very fast (not rate limiting) anyways.
 void
-StepWiseRNA_ResidueSampler::cluster_pose_data_list( utility::vector1< pose_data_struct2 > & pose_data_list ){
+StepWiseRNA_ResidueSampler::cluster_pose_data_list( utility::vector1< PoseOP > & pose_data_list ){
 
 
 	//Super hacky...take this out once solve the root atom problem
@@ -2051,20 +2041,20 @@ StepWiseRNA_ResidueSampler::cluster_pose_data_list( utility::vector1< pose_data_
 
 				Real rmsd;
 				if ( PBP_clustering_at_chain_closure_ && job_parameters_->gap_size() == 0 ){ //new option Aug 15, 2010..include both phosphates in rmsd calculation at chain_break
-					rmsd =	 phosphate_base_phosphate_rmsd( ( *pose_data_list[i].pose_OP ), ( *pose_data_list[j].pose_OP ), actually_moving_res,  false /*ignore_virtual_atom*/ );
+					rmsd =	 phosphate_base_phosphate_rmsd( ( *pose_data_list[i] ), ( *pose_data_list[j] ), actually_moving_res,  false /*ignore_virtual_atom*/ );
 				} else{
-					rmsd = suite_rmsd( ( *pose_data_list[i].pose_OP ), ( *pose_data_list[j].pose_OP ), actually_moving_res, Is_prepend, false /*ignore_virtual_atom*/ );
+					rmsd = suite_rmsd( ( *pose_data_list[i] ), ( *pose_data_list[j] ), actually_moving_res, Is_prepend, false /*ignore_virtual_atom*/ );
 				}
 
-				bool const same_pucker = Is_same_ribose_pucker( ( *pose_data_list[i].pose_OP ), ( *pose_data_list[j].pose_OP ), actually_moving_res );
+				bool const same_pucker = Is_same_ribose_pucker( ( *pose_data_list[i] ), ( *pose_data_list[j] ), actually_moving_res );
 
 				if ( rmsd < cluster_rmsd_ && ( same_pucker || !distinguish_pucker_ ) ){
 					pose_state_list[j] = false;
 					if ( verbose_ ) {
-						TR.Debug << "rmsd = " << rmsd << "  pose " << pose_data_list[j].tag << " is a neighbor of pose " << pose_data_list[i].tag;
+						TR.Debug << "rmsd = " << rmsd << "  pose " << tag_from_pose( *pose_data_list[j] ) << " is a neighbor of pose " << tag_from_pose( *pose_data_list[i] );
 						TR.Debug << " same_pucker = "; Output_boolean( same_pucker, TR.Debug );
-						print_ribose_pucker_state( " center_pucker = ", Get_residue_pucker_state( ( *pose_data_list[i].pose_OP ), actually_moving_res ), TR.Debug );
-						print_ribose_pucker_state( " curr_pucker = ", Get_residue_pucker_state( ( *pose_data_list[j].pose_OP ), actually_moving_res ), TR.Debug );
+						print_ribose_pucker_state( " center_pucker = ", Get_residue_pucker_state( ( *pose_data_list[i] ), actually_moving_res ), TR.Debug );
+						print_ribose_pucker_state( " curr_pucker = ", Get_residue_pucker_state( ( *pose_data_list[j] ), actually_moving_res ), TR.Debug );
 						TR.Debug << std::endl;
 					}
 				}
@@ -2073,7 +2063,7 @@ StepWiseRNA_ResidueSampler::cluster_pose_data_list( utility::vector1< pose_data_
 	}
 
 
-	utility::vector1< pose_data_struct2 > clustered_pose_data_list;
+	utility::vector1< PoseOP > clustered_pose_data_list;
 
 	for ( Size i = 1; i <= pose_data_list.size(); i++ ) {
 		if ( pose_state_list[i] == true ){
@@ -2085,7 +2075,7 @@ StepWiseRNA_ResidueSampler::cluster_pose_data_list( utility::vector1< pose_data_
 
 	//check if pose_data_list size is equal to or exceed num_pose_kept_. Important to get score_cutoff here right after clustering.
 	if ( pose_data_list.size() >= num_pose_kept_ ){
-		current_score_cutoff_ = pose_data_list[num_pose_kept_].score;
+		current_score_cutoff_ = total_energy_from_pose( *pose_data_list[num_pose_kept_] );
 	} else{
 		//keep on adding pose to list if there are still not enough clusters
 
@@ -2127,7 +2117,7 @@ StepWiseRNA_ResidueSampler::Full_atom_van_der_Waals_screening_REPLICATE( pose::P
 
 	Real actual_rep_cutoff = rep_cutoff_; //defualt
 	if ( close_chain ) actual_rep_cutoff = 10; //Parin's old parameter
-	if ( close_chain && Is_internal ) actual_rep_cutoff = 200; //Bigger chunk..easier to crash...not using this right now.
+	if ( close_chain && Is_internal ) actual_rep_cutoff = 200; //Bigger moving_element..easier to crash...not using this right now.
 
 	bool pass_rep_screen = false;
 
@@ -2212,7 +2202,7 @@ StepWiseRNA_ResidueSampler::Full_atom_van_der_Waals_screening( pose::Pose & curr
 			actual_rep_cutoff = 10; //Parin's old parameter
 		}
 	}
-	if ( Is_internal ) actual_rep_cutoff = 200; //Bigger chunk..easier to crash (before May 4 used to be (close_chain && Is_internal) actual_rep_cutoff=200
+	if ( Is_internal ) actual_rep_cutoff = 200; //Bigger moving_element..easier to crash (before May 4 used to be (close_chain && Is_internal) actual_rep_cutoff=200
 
 	bool pass_rep_screen = false;
 
@@ -2498,7 +2488,7 @@ StepWiseRNA_ResidueSampler::output_pose_data_list( std::string const final_sampl
 	SilentFileData silent_file_data;
 
 	for ( Size n = 1; n <= pose_data_list_.size(); n++ ) {
-		Output_data( silent_file_data, final_sampler_output_silent_file, pose_data_list_[n].tag, false, *( pose_data_list_[n].pose_OP ), get_native_pose(), job_parameters_ );
+		Output_data( silent_file_data, final_sampler_output_silent_file, tag_from_pose( *pose_data_list_[n] ), false, *( pose_data_list_[n] ), get_native_pose(), job_parameters_ );
 	}
 
 }

@@ -32,6 +32,9 @@ namespace swa {
 	//constructor
 		TransientCutpointHandler( core::Size const sample_res );
 
+		TransientCutpointHandler( core::Size const sample_res,
+															core::Size const cutpoint_res );
+
 	//destructor
 	~TransientCutpointHandler();
 
@@ -47,7 +50,7 @@ namespace swa {
 
 		void prepare_fold_tree_for_erraser( core::pose::Pose & pose );
 
-		core::Size const sample_res_;
+		core::Size const sample_res_, cutpoint_res_;
 		utility::vector1< core::Size > fixed_res_;
 		utility::vector1< core::Size > minimize_res_;
 		core::kinematics::FoldTree fold_tree_save_;

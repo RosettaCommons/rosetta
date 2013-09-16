@@ -38,13 +38,10 @@ namespace swa {
 namespace monte_carlo {
 
 	//Constructor
-	RNA_ResampleMover::RNA_ResampleMover(	core::scoring::ScoreFunctionOP scorefxn ):
-		scorefxn_( scorefxn ),
+	RNA_ResampleMover::RNA_ResampleMover(	protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler ):
+		stepwise_rna_modeler_( stepwise_rna_modeler ),
 		just_min_after_mutation_frequency_( 0.5 ),
 		allow_internal_moves_( false ),
-		num_random_samples_( 20 ),
-		use_phenix_geo_( true ),
-		erraser_( true ),
 		minimize_single_res_( false )
 	{}
 
@@ -54,8 +51,33 @@ namespace monte_carlo {
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// This version randomly chooses the move element.
 	bool
 	RNA_ResampleMover::apply( pose::Pose & pose,
+														std::string & move_type ){
+
+		utility::vector1< SWA_Move > swa_moves;
+		get_resample_terminal_move_elements( pose, swa_moves );
+		if ( allow_internal_moves_ ) get_resample_internal_move_elements( pose, swa_moves );
+
+		if ( swa_moves.size() == 0 ) return false;
+		SWA_Move const & swa_move = RG.random_element( swa_moves );
+
+		return apply( pose, swa_move, move_type );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	RNA_ResampleMover::apply( pose::Pose & pose,
+														SWA_Move & swa_move ){
+		std::string dummy_move_type;
+		return apply( pose, swa_move, dummy_move_type );
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	RNA_ResampleMover::apply( pose::Pose & pose,
+														SWA_Move const & swa_move,
 														std::string & move_type ){
 
 		using namespace protocols::swa;
@@ -63,74 +85,74 @@ namespace monte_carlo {
 		using namespace protocols::swa::monte_carlo;
 		using namespace core::pose::full_model_info;
 
-		Size remodel_res( 0 );
-		utility::vector1< Size > const moving_res = get_moving_res_from_full_model_info( pose );
+		TR << "About to remodel move_element " << swa_move << std::endl;
 
-		bool is_terminal( true );
-		if ( allow_internal_moves_ ){
+		// What needs to be set in StepwiseRNA_Modeler:
+		Size remodel_res( 0 ), cutpoint_res( 0 );
 
-			utility::vector1< utility::vector1< Size > > const moving_chunks = get_moving_chunks_from_full_model_info( pose );
-			if ( moving_chunks.size() == 0 ) return false;
-			utility::vector1< Size > remodel_chunk =	RG.random_element( moving_chunks );
+		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
+		Size const num_attachments = swa_move.attachments().size();
+		bool const is_at_terminus = ( num_attachments == 1 );
+		Size const move_element_size = swa_move.move_element().size();
 
-
-		} else {
-			utility::vector1< SWA_Move > swa_moves;
-			get_potential_resample_chunks( pose, swa_moves );
-			if ( swa_moves.size() == 0 ) return false;
-			SWA_Move const & swa_move = RG.random_element( swa_moves );
-
-			utility::vector1< Size > const & remodel_chunk = swa_move.chunk();
-			MovingResidueCase const & moving_residue_case = swa_move.moving_residue_case();
-			runtime_assert( swa_move.add_or_delete_choice() == NO_ADD_OR_DELETE );
-
-			TR << "Chose move: " << swa_move << std::endl;
-
-			if ( remodel_chunk.size() == 1 ) { //a single residue hanging off the end
-				remodel_res = remodel_chunk[ 1 ];
-			} else { // define the suite of internal residue that will move.
-				if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ){
-					remodel_res = remodel_chunk[ 1 ] - 1;
-				} else{
-					runtime_assert( moving_residue_case == CHAIN_TERMINUS_5PRIME );
-					remodel_res = remodel_chunk[ remodel_chunk.size() ];
+		if ( is_at_terminus ) {
+			if ( move_element_size == 1) {
+				remodel_res = res_list.index( swa_move.moving_res() );
+			} else { // remodel res will be internal... need to supply *suite* number.
+				Attachment const & attachment = swa_move.attachments()[ 1 ];
+				AttachmentType const & attachment_type = attachment.attachment_type();
+				Size const & attachment_res = attachment.attached_res();
+				if ( attachment_type == ATTACHED_TO_PREVIOUS ){
+					remodel_res = res_list.index( attachment_res );
+				} else {
+					runtime_assert( attachment_type == ATTACHED_TO_NEXT );
+					remodel_res = res_list.index( attachment_res ) - 1;
+					runtime_assert( remodel_res == res_list.index( attachment_res - 1 ) );
 				}
 			}
+		} else { // an internal residue or move_element, with two attachments.
+			runtime_assert( num_attachments == 2 );
+			runtime_assert( swa_move.attachments()[1].attachment_type() == ATTACHED_TO_PREVIOUS );
+			runtime_assert( swa_move.attachments()[2].attachment_type() == ATTACHED_TO_NEXT );
+			if ( move_element_size == 1) { // single residue
+				remodel_res   = res_list.index( swa_move.moving_res() );
+				cutpoint_res  = res_list.index( swa_move.moving_res() );
+			} else { // fixed move_element
+				Size const attached_res_prev = swa_move.attachments()[1].attached_res();
+				Size const attached_res_next = swa_move.attachments()[2].attached_res();
+				remodel_res   = res_list.index( attached_res_prev ); // this is now the *suite*
+				cutpoint_res  = res_list.index( attached_res_next ) - 1;
+				runtime_assert( cutpoint_res == res_list.index( attached_res_next - 1 ) );
+			}
 		}
-		TR << "About to remodel residue " << remodel_res << std::endl;
+		runtime_assert( remodel_res > 0 );
 
-		bool const did_mutation = mutate_res_if_allowed( pose, remodel_res ); // based on 'n' in full_model_info.full_sequence
+		bool did_mutation( false );
+		// based on 'n' in full_model_info.full_sequence
+		if ( move_element_size == 1 ) did_mutation = mutate_res_if_allowed( pose, full_to_sub( swa_move.moving_res(), pose ) );
 		bool just_min_after_mutation_ = ( did_mutation && ( RG.uniform() < just_min_after_mutation_frequency_ ) );
 
-		swa::rna::StepWiseRNA_Modeler stepwise_rna_modeler( remodel_res, scorefxn_ );
-		stepwise_rna_modeler.set_use_phenix_geo( use_phenix_geo_ );
-		stepwise_rna_modeler.set_force_centroid_interaction( true );
-		stepwise_rna_modeler.set_choose_random( true );
-		stepwise_rna_modeler.set_num_random_samples( num_random_samples_ );
-		stepwise_rna_modeler.set_num_pose_minimize( 1 );
+		stepwise_rna_modeler_->set_moving_res_and_reset( remodel_res );
+		stepwise_rna_modeler_->set_skip_sampling( just_min_after_mutation_ );
 
-		if ( just_min_after_mutation_ ) stepwise_rna_modeler.set_skip_sampling( true );
-		if ( ! minimize_single_res_ ) stepwise_rna_modeler.set_minimize_res( moving_res );
+		// LATER SHOULD REPLACE THIS WITH FIXED DOMAIN MAP -- NEED TO UPDATE STEPWISE MODELER -- rhiju.
+		utility::vector1< Size > const & moving_res = get_moving_res_from_full_model_info( pose );
+		if ( ! minimize_single_res_ ) stepwise_rna_modeler_->set_minimize_res( moving_res );
 
-		if ( is_at_terminus( pose, remodel_res ) || !allow_internal_moves_ ){
+		if ( is_at_terminus ){
 
-			// need to update is_at_terminus to instead check/assert if *chunk* is at terminus.
-
-			move_type = "swa";
-			stepwise_rna_modeler.apply( pose );
+			move_type = "resample_terminus";
+			stepwise_rna_modeler_->apply( pose );
 
 		} else {
 			runtime_assert( allow_internal_moves_ );
-			move_type = "internal";
+			move_type = "resample_internal_local";
 
-			stepwise_rna_modeler.set_kic_sampling( erraser_  );
-
-			TransientCutpointHandler cutpoint_handler( remodel_res );
+			TransientCutpointHandler cutpoint_handler( remodel_res, cutpoint_res );
 			if ( ! minimize_single_res_ ) cutpoint_handler.set_minimize_res( moving_res );
+
 			cutpoint_handler.put_in_cutpoints( pose );
-
-			stepwise_rna_modeler.apply( pose );
-
+			stepwise_rna_modeler_->apply( pose );
 			cutpoint_handler.take_out_cutpoints( pose );
 		}
 

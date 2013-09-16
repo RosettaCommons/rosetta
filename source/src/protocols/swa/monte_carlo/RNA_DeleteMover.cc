@@ -70,19 +70,20 @@ namespace monte_carlo {
 
 	//////////////////////////////////////////////////////////////////////
   void
-  RNA_DeleteMover::apply( core::pose::Pose & pose, Size const res_to_delete ) const
+  RNA_DeleteMover::apply( core::pose::Pose & pose, Size const res_to_delete_in_full_model_numbering ) const
 	{
-		apply( pose, utility::tools::make_vector1( res_to_delete ) );
+		apply( pose, utility::tools::make_vector1( res_to_delete_in_full_model_numbering ) );
 	}
 
 
 	//////////////////////////////////////////////////////////////////////
   void
-  RNA_DeleteMover::apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete ) const
+  RNA_DeleteMover::apply( core::pose::Pose & pose, utility::vector1< Size > const & residues_to_delete_in_full_model_numbering ) const
 	{
 		using namespace core::pose;
 
 		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+		utility::vector1< Size > const residues_to_delete = full_model_info.full_to_sub( residues_to_delete_in_full_model_numbering );
 
 		PoseOP sliced_out_pose_op = new Pose;
 		slice_out_pose( pose, *sliced_out_pose_op, residues_to_delete );
@@ -136,10 +137,10 @@ namespace monte_carlo {
 		minimize_after_delete_ = false;
 
 		utility::vector1< SWA_Move > swa_moves;
-		get_potential_delete_chunks( pose, swa_moves);
+		get_delete_move_elements( pose, swa_moves);
 
 		if ( swa_moves.size() > 0 ){ // recursively delete all residues.
-			apply( pose, swa_moves[1].chunk() );
+			apply( pose, swa_moves[1].move_element() );
 			wipe_out_moving_residues( pose );
 		}
 
@@ -149,43 +150,21 @@ namespace monte_carlo {
 
 	////////////////////////////////////////////////////////////////////
 	void
-	RNA_DeleteMover::set_minimize_scorefxn( core::scoring::ScoreFunctionOP minimize_scorefxn ){
-		minimize_scorefxn_ = minimize_scorefxn;
-	}
-
-	////////////////////////////////////////////////////////////////////
-	void
 	RNA_DeleteMover::minimize_after_delete( pose::Pose & pose ) const{
 
 		using namespace core::pose::full_model_info;
 
-		runtime_assert( minimize_scorefxn_ != 0 );
-
 		TR << "Minimizing after delete " << std::endl;
+		stepwise_rna_modeler_->set_skip_sampling( true );
+		stepwise_rna_modeler_->set_minimize_res( get_moving_res_from_full_model_info( pose ) );
+		stepwise_rna_modeler_->apply( pose );
 
-		TR.Debug << "Initial: " << ( *minimize_scorefxn_) ( pose ) << std::endl;
-		minimize_scorefxn_->show( TR.Debug, pose );
+	}
 
-		// following is a bit of a hack.
-		// however, I wanted to make sure that I use the same minimizer as AddMover.
-
-		// need a 'sampling' residue to send into StepWiseRNA_Modeler. It actually wont be sampled
-		// because of skip_sampling.
-		// This is not very transparent -- can we have some kind of default behavior for modeler
-		//  to just recognize residue is 0 and then minimize?
-		utility::vector1< SWA_Move > swa_moves;
-		get_potential_resample_chunks( pose, swa_moves );
-		if ( swa_moves.size() == 0 ) return;
-		TR.Debug << "POSSIBLE CHUNK " << make_tag_with_dashes( swa_moves[ 1 ].chunk() ) << std::endl;
-		Size const some_residue = swa_moves[ 1 ].chunk()[ 1 ];
-
-		swa::rna::StepWiseRNA_Modeler stepwise_rna_modeler( some_residue, minimize_scorefxn_ );
-		stepwise_rna_modeler.set_skip_sampling( true );
-		stepwise_rna_modeler.set_minimize_res( get_moving_res_from_full_model_info( pose ) );
-		stepwise_rna_modeler.apply( pose );
-
-		TR << "Final: " << ( *minimize_scorefxn_) ( pose ) << std::endl;
-
+	///////////////////////////////////////////////////////////////////
+	void
+	RNA_DeleteMover::set_stepwise_rna_modeler( protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler ){
+		stepwise_rna_modeler_ = stepwise_rna_modeler;
 	}
 
 	//////////////////////////////////////////////////////////////////////

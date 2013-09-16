@@ -163,7 +163,7 @@ namespace swa {
 
 		hit_score_cutoff_ = false;
 
-		//for loop modeling, little chunk of pose used to calculate rms -- and saved.
+		//for loop modeling, little moving_element of pose used to calculate rms -- and saved.
 		PoseOP pose_op( new Pose );
 		Pose & pose = *pose_op;
 

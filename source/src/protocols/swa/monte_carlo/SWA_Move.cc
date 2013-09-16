@@ -14,6 +14,7 @@
 
 
 #include <protocols/swa/monte_carlo/SWA_Move.hh>
+#include <utility/tools/make_vector1.hh>
 #include <map>
 #include <iostream>
 #include <utility/string_util.hh>
@@ -24,21 +25,43 @@ namespace protocols {
 namespace swa {
 namespace monte_carlo {
 
+
 	//Constructor
-	SWA_Move::SWA_Move( Chunk const & chunk,
-								MovingResidueCase const & moving_residue_case,
-								AddOrDeleteChoice const & add_or_delete_choice ):
+	SWA_Move::SWA_Move( MoveElement const & move_element,
+											utility::vector1< Attachment > const & attachments,
+											MoveType const & move_type ):
 		utility::pointer::ReferenceCount(),
-		chunk_( chunk ),
-		moving_residue_case_( moving_residue_case ),
-		add_or_delete_choice_( add_or_delete_choice )
+		move_element_( move_element ),
+		attachments_( attachments ),
+		move_type_( move_type )
+	{
+	}
+
+	//Constructor
+	SWA_Move::SWA_Move( Size const res,
+											utility::vector1< Attachment > const & attachments,
+											MoveType const & move_type ):
+		utility::pointer::ReferenceCount(),
+		move_element_( utility::tools::make_vector1( res ) ),
+		attachments_( attachments ),
+		move_type_( move_type )
+	{
+	}
+
+	//Constructor
+	SWA_Move::SWA_Move( Size const res,
+											Attachment const & attachment,
+											MoveType const & move_type ):
+		utility::pointer::ReferenceCount(),
+		move_element_( utility::tools::make_vector1( res ) ),
+		attachments_( utility::tools::make_vector1( attachment ) ),
+		move_type_( move_type )
 	{
 	}
 
 	SWA_Move::SWA_Move():
 		utility::pointer::ReferenceCount(),
-		moving_residue_case_( NO_CASE ),
-		add_or_delete_choice_( NO_ADD_OR_DELETE )
+		move_type_( NO_ADD_OR_DELETE )
 	{
 	}
 
@@ -56,54 +79,141 @@ namespace monte_carlo {
 	SWA_Move &
 	SWA_Move::operator=( SWA_Move const & src )
 	{
-		chunk_ = src.chunk_;
-		moving_residue_case_ = src.moving_residue_case_;
-		add_or_delete_choice_ = src.add_or_delete_choice_;
+		move_element_ = src.move_element_;
+		attachments_ = src.attachments_;
+		move_type_ = src.move_type_;
+		return *this;
+	}
+
+	Size
+	SWA_Move::moving_res() const{
+			runtime_assert( move_element_.size() == 1 );
+			return move_element_[ 1 ];
+		}
+
+	Size
+	SWA_Move::attached_res() const{
+		runtime_assert( attachments_.size() == 1 );
+		return attachments_[ 1 ].attached_res();
+	}
+
+
+	///////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////
+
+	//Constructor
+	Attachment::Attachment():
+		utility::pointer::ReferenceCount(),
+		attached_res_( 0 ),
+		attachment_type_( NO_ATTACHMENT )
+	{
+	}
+
+	//Constructor
+	Attachment::Attachment( Size const & attached_res,
+													 AttachmentType const attachment_type ):
+		utility::pointer::ReferenceCount(),
+		attached_res_( attached_res ),
+		attachment_type_( attachment_type )
+	{
+	}
+
+	//Destructor
+	Attachment::~Attachment()
+	{}
+
+	Attachment::Attachment( Attachment const & src ):
+		ReferenceCount( src )
+	{
+		*this = src;
+	}
+
+	Attachment &
+	Attachment::operator=( Attachment const & src )
+	{
+		attached_res_ = src.attached_res_;
+		attachment_type_ = src.attachment_type_;
 		return *this;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////
+	// following will be deprecated after we implement attachments
+	// std::string
+	// to_string( MovingResidueCase const & moving_residue_case ){
+
+	// 	static bool init( false );
+	// 	static std::map< MovingResidueCase, std::string> moving_residue_case_name;
+
+	// 	if ( !init ){
+	// 		moving_residue_case_name[ NO_CASE ] = "NO_CASE";
+	// 		moving_residue_case_name[ CHAIN_TERMINUS_5PRIME ] = "CHAIN_TERMINUS_5PRIME";
+	// 		moving_residue_case_name[ CHAIN_TERMINUS_3PRIME ] = "CHAIN_TERMINUS_3PRIME";
+	// 		moving_residue_case_name[ INTERNAL ] = "INTERNAL";
+	// 		moving_residue_case_name[ FLOATING_BASE ] = "FLOATING_BASE";
+	// 		init = true;
+	// 	}
+
+	// 	return moving_residue_case_name[ moving_residue_case ];
+	// }
+
+	///////////////////////////////////////////////////////////////////////////////////////////
 	std::string
-	to_string( MovingResidueCase const & moving_residue_case ){
+	to_string( MoveType const & move_type ){
 
 		static bool init( false );
-		static std::map< MovingResidueCase, std::string> moving_residue_case_name;
+		static std::map< MoveType, std::string> move_type_name;
 
 		if ( !init ){
-			moving_residue_case_name[ NO_CASE ] = "NO_CASE";
-			moving_residue_case_name[ CHAIN_TERMINUS_5PRIME ] = "CHAIN_TERMINUS_5PRIME";
-			moving_residue_case_name[ CHAIN_TERMINUS_3PRIME ] = "CHAIN_TERMINUS_3PRIME";
-			moving_residue_case_name[ INTERNAL ] = "INTERNAL";
-			moving_residue_case_name[ FLOATING_BASE ] = "FLOATING_BASE";
+			move_type_name[ NO_ADD_OR_DELETE ] = "NO_ADD_OR_DELETE";
+			move_type_name[ ADD ]    = "ADD";
+			move_type_name[ DELETE ] = "DELETE";
+			move_type_name[ RESAMPLE ] = "RESAMPLE";
+			move_type_name[ RESAMPLE_INTERNAL_LOCAL ] = "RESAMPLE_INTERNAL_LOCAL";
 			init = true;
 		}
 
-		return moving_residue_case_name[ moving_residue_case ];
+		return move_type_name[ move_type ];
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////
 	std::string
-	to_string( AddOrDeleteChoice const & add_or_delete_choice ){
+	to_string( AttachmentType const & attachment_type ){
 
 		static bool init( false );
-		static std::map< AddOrDeleteChoice, std::string> add_or_delete_choice_name;
+		static std::map< AttachmentType, std::string> attachment_type_name;
 
 		if ( !init ){
-			add_or_delete_choice_name[ NO_ADD_OR_DELETE ] = "NO_ADD_OR_DELETE";
-			add_or_delete_choice_name[ ADD ]    = "ADD";
-			add_or_delete_choice_name[ DELETE ] = "DELETE";
-			init = true;
+			attachment_type_name[ NO_ATTACHMENT ] = "NO_ATTACHMENT";
+			attachment_type_name[ ATTACHED_TO_PREVIOUS ] = "ATTACHED_TO_PREVIOUS";
+			attachment_type_name[ ATTACHED_TO_NEXT ] = "ATTACHED_TO_NEXT";
+			attachment_type_name[ SKIP_BULGE_TO_PREVIOUS ] = "SKIP_BULGE_TO_PREVIOUS";
+			attachment_type_name[ SKIP_BULGE_TO_NEXT ] = "SKIP_BULGE_TO_NEXT";
 		}
 
-		return add_or_delete_choice_name[ add_or_delete_choice ];
+		return attachment_type_name[ attachment_type ];
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	std::ostream &
-	operator <<( std::ostream & os, SWA_Move const swa_move )
+	operator <<( std::ostream & os, SWA_Move const & swa_move )
 	{
-		os << "Choice " << to_string( swa_move.add_or_delete_choice() )	<< "   Case " << to_string( swa_move.moving_residue_case() ) <<
-			"   Residues " << make_tag_with_dashes( swa_move.chunk() );
+		os << "Choice " << to_string( swa_move.move_type() )	<<
+			" res " << make_tag_with_dashes( swa_move.move_element() );
+		if ( swa_move.attachments().size() == 0 ) {
+			os << " with no attachments";
+		} else {
+			os << " with attachments to";
+			for ( Size n = 1; n <= swa_move.attachments().size(); n++ ) os << " " << swa_move.attachments()[n];
+		}
+		return os;
+	}
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////
+	std::ostream &
+	operator <<( std::ostream & os, Attachment const & attachment )
+	{
+		os << attachment.attached_res() << ":" << to_string( attachment.attachment_type() );
 		return os;
 	}
 

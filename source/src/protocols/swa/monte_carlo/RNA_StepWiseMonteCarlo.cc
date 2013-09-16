@@ -20,6 +20,7 @@
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_AddOrDeleteMover.hh>
 #include <protocols/swa/monte_carlo/RNA_ResampleMover.hh>
+#include <protocols/swa/rna/StepWiseRNA_Modeler.hh>
 #include <protocols/swa/StepWiseUtil.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -119,28 +120,35 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 void
 RNA_StepWiseMonteCarlo::initialize_movers(){
 
+	using namespace protocols::swa::rna;
+
+	// used in all movers.
+	StepWiseRNA_ModelerOP stepwise_rna_modeler = new StepWiseRNA_Modeler( scorefxn_ );
+	stepwise_rna_modeler->set_choose_random( true );
+	stepwise_rna_modeler->set_force_centroid_interaction( true );
+	stepwise_rna_modeler->set_use_phenix_geo( use_phenix_geo_ );
+	stepwise_rna_modeler->set_kic_sampling_if_relevant( erraser_ );
+	stepwise_rna_modeler->set_num_random_samples( num_random_samples_ );
+	stepwise_rna_modeler->set_num_pose_minimize( 1 );
+
 	// maybe RNA_AddMover could just hold a copy of RNA_ResampleMover...
 	rna_add_mover_ = new RNA_AddMover( scorefxn_ );
 	rna_add_mover_->set_start_added_residue_in_aform( false );
 	rna_add_mover_->set_presample_added_residue(  true );
 	rna_add_mover_->set_presample_by_swa(  true );
-	rna_add_mover_->set_num_random_samples( num_random_samples_ );
-	rna_add_mover_->set_use_phenix_geo( use_phenix_geo_ );
-	rna_add_mover_->set_erraser( erraser_ );
+	rna_add_mover_->set_stepwise_rna_modeler( stepwise_rna_modeler->clone_modeler() );
 
 	rna_delete_mover_ = new RNA_DeleteMover;
-	rna_delete_mover_->set_minimize_scorefxn( scorefxn_ );
+	// following will be used to minimize after deletion.
+	rna_delete_mover_->set_stepwise_rna_modeler( stepwise_rna_modeler->clone_modeler() );
 
 	rna_add_or_delete_mover_ = new RNA_AddOrDeleteMover( rna_add_mover_, rna_delete_mover_ );
 	rna_add_or_delete_mover_->set_sample_res( sample_res_ );
 	rna_add_or_delete_mover_->set_skip_deletions( skip_deletions_ ); // for testing only
 
-	rna_resample_mover_ = new RNA_ResampleMover( scorefxn_ );
+	rna_resample_mover_ = new RNA_ResampleMover( stepwise_rna_modeler->clone_modeler() );
 	rna_resample_mover_->set_just_min_after_mutation_frequency( just_min_after_mutation_frequency_ );
 	rna_resample_mover_->set_allow_internal_moves( allow_internal_moves_ );
-	rna_resample_mover_->set_num_random_samples( num_random_samples_ );
-	rna_resample_mover_->set_use_phenix_geo( use_phenix_geo_ );
-	rna_resample_mover_->set_erraser( erraser_ );
 
 }
 

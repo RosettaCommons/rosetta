@@ -189,7 +189,7 @@ std::map< std::string, std::string > get_all_comments(
 
 /// @brief Dumps a pdb with comments at end of file
 
-	
+
 /// @brief Sets a PDB-style REMARK entry in the Pose.
 /// @detailed This is different from a comment in its interpretation by the
 /// silent-file output machinery. A REMARK is written on its own separate line
@@ -428,15 +428,18 @@ named_stub_id_to_stub_id(
 std::string tag_from_pose( core::pose::Pose const & pose );
 void tag_into_pose( core::pose::Pose & pose, std::string const & tag );
 
+// criterion for sorting.
+bool sort_pose_by_score( core::pose::PoseOP const & pose1, core::pose::PoseOP const & pose2 );
+
 core::Real energy_from_pose(
-	core::pose::Pose & pose, core::scoring::ScoreType const & sc_type
+	core::pose::Pose const & pose, core::scoring::ScoreType const & sc_type
 );
 
 core::Real energy_from_pose(
-	core::pose::Pose & pose, std::string const & sc_type
+	core::pose::Pose const & pose, std::string const & sc_type
 );
 
-core::Real total_energy_from_pose( core::pose::Pose & pose );
+core::Real total_energy_from_pose( core::pose::Pose const & pose );
 
 void
 transfer_phi_psi( const core::pose::Pose& srcpose, core::pose::Pose& tgtpose, core::Size ir, core::Size jr );

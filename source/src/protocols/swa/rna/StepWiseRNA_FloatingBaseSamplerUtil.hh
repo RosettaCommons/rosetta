@@ -223,11 +223,11 @@ check_floating_base_chain_closable( core::Size const & reference_res,
 
 bool
 check_floating_base_chain_closable( core::Size const & reference_res,
-																 utility::vector1< pose_data_struct2 >,
-																 utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
-																 core::kinematics::Stub const & moving_res_base_stub,
-																 bool const Is_prepend,
-																 core::Size const gap_size );
+																		utility::vector1< core::pose::PoseOP >,
+																		utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
+																		core::kinematics::Stub const & moving_res_base_stub,
+																		bool const Is_prepend,
+																		core::Size const gap_size );
 
 
 void

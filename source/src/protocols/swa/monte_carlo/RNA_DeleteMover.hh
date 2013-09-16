@@ -23,7 +23,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/swa/monte_carlo/SWA_Move.hh>
 #include <protocols/swa/monte_carlo/RNA_DeleteMover.fwd.hh>
-
+#include <protocols/swa/rna/StepWiseRNA_Modeler.fwd.hh>
 
 namespace protocols {
 namespace swa {
@@ -60,16 +60,16 @@ public:
 
 	void set_minimize_after_delete( bool const setting ){ minimize_after_delete_ = setting; }
 
-	void set_minimize_scorefxn( core::scoring::ScoreFunctionOP minimize_scorefxn );
+	void set_stepwise_rna_modeler( protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
 
 private:
 
   void
 	remove_cutpoint_variants_at_res_to_delete( core::pose::Pose & pose, Size const & res_to_delete ) const;
 
-	core::scoring::ScoreFunctionOP minimize_scorefxn_;
-
 	bool minimize_after_delete_;
+
+	protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
 
 };
 

@@ -208,7 +208,7 @@ floating_base_chain_break_screening( core::pose::Pose & chain_break_screening_po
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 utility::vector1< FB_Pose_Data >
-floating_base_chain_closure_setup( utility::vector1< pose_data_struct2 > const & input_pose_data_list,
+floating_base_chain_closure_setup( utility::vector1< PoseOP > const & input_pose_data_list,
 																	FloatingBaseChainClosureJobParameter const & FB_job_params,
 																	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
 																	core::scoring::ScoreFunctionOP const & full_scorefxn,
@@ -252,7 +252,7 @@ floating_base_chain_closure_setup( utility::vector1< pose_data_struct2 > const &
 	for ( Size n = 1; n <= input_pose_data_list.size(); n++ ) {
 		bool input_pose_data_pass_screen = false;
 
-		pose_data_struct2 input_pose_data = input_pose_data_list[n];
+		PoseOP input_pose_data = input_pose_data_list[n];
 		Size count = 0;
 
 		for ( sampler.reset(); sampler.not_end(); ++sampler ) {
@@ -260,13 +260,13 @@ floating_base_chain_closure_setup( utility::vector1< pose_data_struct2 > const &
 			bool verbose = true;
 
 			FB_Pose_Data pose_data;
-			pose_data.base_tag = input_pose_data.tag;
+			pose_data.base_tag = tag_from_pose( *input_pose_data);
 			std::stringstream ss;
-			ss << input_pose_data.tag << '_' << count;
-			pose_data.tag = ss.str() ;
+			ss << tag_from_pose( *input_pose_data) << '_' << count;
+			pose_data.tag = ss.str();
 			pose_data.score = 0.0;
 
-			pose::Pose pose_with_ribose = ( *input_pose_data.pose_OP );//Hard copy
+			pose::Pose pose_with_ribose = ( *input_pose_data );//Hard copy
 			pose_data.starting_fold_tree = pose_with_ribose.fold_tree();
 			pose_data.starting_cst_set_OP =
 					pose_with_ribose.constraint_set()->clone();
@@ -563,9 +563,9 @@ floating_base_chain_closure_sampling( utility::vector1< FB_Pose_Data > & pose_da
 					count_data, true ) ) continue;
 
 			if ( !floating_base_chain_break_screening( current_pose,
-					chainbreak_scorefxn, count_data,
-					FB_job_params.five_prime_chain_break,
-					pose_data.tag, true ) ) continue;
+																								 chainbreak_scorefxn, count_data,
+																								 FB_job_params.five_prime_chain_break,
+																								 pose_data.tag, true ) ) continue;
 
 			pose_data.Is_chain_close = true;
 			num_closed_chain_pose++;
@@ -585,7 +585,7 @@ floating_base_chain_closure_sampling( utility::vector1< FB_Pose_Data > & pose_da
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-utility::vector1< pose_data_struct2 >
+utility::vector1< PoseOP >
 floating_base_chain_closure_post_process( utility::vector1< FB_Pose_Data > & pose_data_list,
 																				 core::pose::Pose & viewer_pose,
 																			 core::scoring::ScoreFunctionOP const & sampling_scorefxn,
@@ -603,7 +603,7 @@ floating_base_chain_closure_post_process( utility::vector1< FB_Pose_Data > & pos
 		Output_title_text( "Floating_base_chain_closure POST_PROCESSING", TR );
 		//clock_t const time_start_post_processing( clock() );
 
-		utility::vector1< pose_data_struct2 > output_pose_data_list;
+		utility::vector1< PoseOP > output_pose_data_list;
 
 		if ( pose_data_list.size() == 0 ) { return output_pose_data_list; } //return empty list
 
@@ -672,13 +672,7 @@ floating_base_chain_closure_post_process( utility::vector1< FB_Pose_Data > & pos
 			( *pose_data_list[n].pose_OP ) = viewer_pose;
 
 			//////////////////////////////////////////
-			//Warning data_data_list and output_pose_data_list doesn't have the same underlying structure!! Apr 20, 2010
-			pose_data_struct2 pose_data;
-			pose_data.pose_OP = pose_data_list[n].pose_OP;
-			pose_data.score = pose_data_list[n].score;
-			pose_data.tag = pose_data_list[n].tag;
-
-			output_pose_data_list.push_back( pose_data );
+			output_pose_data_list.push_back( pose_data_list[ n ].pose_OP );
 		}
 
 
@@ -694,7 +688,7 @@ floating_base_chain_closure_post_process( utility::vector1< FB_Pose_Data > & pos
 void
 minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 																		utility::vector1< FloatingBaseChainClosureJobParameter > const & FB_JP_list,
-																		utility::vector1< pose_data_struct2 > & pose_data_list,
+																		utility::vector1< PoseOP > & pose_data_list,
 																		core::scoring::ScoreFunctionOP const & sampling_scorefxn,
 																		StepWiseRNA_JobParametersCOP const & job_parameters,
 																		bool const virtual_ribose_is_from_prior_step ){
@@ -749,7 +743,7 @@ minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 
 	for ( Size n = 1; n <= pose_data_list.size(); n++ ){
 
-		viewer_pose = ( *pose_data_list[n].pose_OP );
+		viewer_pose = ( *pose_data_list[n] );
 
 		utility::vector1 < core::Size > const & working_moving_partition_pos = job_parameters->working_moving_partition_pos();
 		utility::vector1 < core::Size > already_virtualized_res_list;
@@ -789,7 +783,7 @@ minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 		}
 
 
-		( *pose_data_list[n].pose_OP ) = viewer_pose;
+		( *pose_data_list[n] ) = viewer_pose;
 	}
 
 	viewer_pose = viewer_pose_copy;
@@ -857,13 +851,6 @@ copy_bulge_res_and_ribose_torsion( FloatingBaseChainClosureJobParameter const & 
 
 }
 
-//////////////////////////////////////////////////////////////////////////
-bool
-sort_pose_data_by_score( pose_data_struct2  pose_data_1, pose_data_struct2 pose_data_2 ) {  //Duplicate!
-	return ( pose_data_1.score < pose_data_2.score );
-}
-
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////July 21, 2011 Move from StepWiseRNA_ResidueSampler.cc ////////////////////////////////////////////////
 ////////Code used to be part of the function StepWiseRNA_ResidueSampler::previous_floating_base_chain_closure();
@@ -878,7 +865,7 @@ sort_pose_data_by_score( pose_data_struct2  pose_data_1, pose_data_struct2 pose_
 //Easiest 3. Just set chain_closure_sampling to false in this function. This will just keep all possible bulge conformation in pose_data_list that pass O3i_C5iplus2_distance>O3I_C5IPLUS2_MAX_DIST (in setup)
 //However in Easiest 3. case, there is a problem is problem in that O3i_C5iplus2_distance has determined with fixed i-2 ribose.
 
-utility::vector1< pose_data_struct2 >
+utility::vector1< PoseOP >
 sample_virtual_ribose_and_bulge_and_close_chain(
 	pose::Pose & viewer_pose,
 	FloatingBaseChainClosureJobParameter const & FB_job_params,
@@ -905,13 +892,12 @@ sample_virtual_ribose_and_bulge_and_close_chain(
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	///Switch order so that virtualize before creating VDW_bin_screener July 18, 2010
 
-	pose_data_struct2 pose_data;
-	pose_data.pose_OP = new pose::Pose;
-	( *pose_data.pose_OP ) = viewer_pose;
-	pose_data.score = 0.0;
-	pose_data.tag = "";
+	PoseOP pose_data;
+	pose_data = new pose::Pose;
+	( *pose_data ) = viewer_pose;
+	tag_into_pose( *pose_data, "" );
 
-	pose::Pose & input_pose = ( *pose_data.pose_OP );
+	pose::Pose & input_pose = ( *pose_data );
 
 	utility::vector1 < core::Size > other_partition_pos; //June 13, 2011..Before used to just use moving_partition_pos here since bulge_res was always in the root_partition!
 	utility::vector1 < core::Size > already_virtualized_res_list;
@@ -975,7 +961,7 @@ sample_virtual_ribose_and_bulge_and_close_chain(
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	utility::vector1< pose_data_struct2 > input_pose_data_list; //Singleton list.
+	utility::vector1< PoseOP > input_pose_data_list; //Singleton list.
 	input_pose_data_list.push_back( pose_data );
 
 	bool const do_minimize = !integration_test_mode; // for speed.
@@ -997,14 +983,14 @@ sample_virtual_ribose_and_bulge_and_close_chain(
 
 	bool const rm_CB_JP_during_post_process = true;
 
-	utility::vector1< pose_data_struct2 > final_pose_data_list = floating_base_chain_closure_post_process( pose_data_list, viewer_pose, sampling_scorefxn, FB_job_params, rm_CB_JP_during_post_process );
+	utility::vector1< PoseOP > final_pose_data_list = floating_base_chain_closure_post_process( pose_data_list, viewer_pose, sampling_scorefxn, FB_job_params, rm_CB_JP_during_post_process );
 
 	SilentFileData silent_file_data;
 
 	for ( Size n = 1; n <= final_pose_data_list.size(); n++ ){
-		pose::Pose & current_pose = ( *final_pose_data_list[n].pose_OP );
+		pose::Pose & current_pose = ( *final_pose_data_list[n] );
 
-		if ( false ) Output_data( silent_file_data, "post_process_" + name + ".out", name + final_pose_data_list[n].tag, false, current_pose, job_parameters->working_native_pose(), job_parameters );
+		if ( false ) Output_data( silent_file_data, "post_process_" + name + ".out", name + tag_from_pose( *final_pose_data_list[n] ), false, current_pose, job_parameters->working_native_pose(), job_parameters );
 		////////////////////////////////////////////////////////////
 		if ( virtual_ribose_is_from_prior_step ){ //Virtualize the other partition since it doesn't exist in prior step!
 
@@ -1033,7 +1019,7 @@ sample_virtual_ribose_and_bulge_and_close_chain(
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-enumerate_starting_pose_data_list( utility::vector1< pose_data_struct2 > & starting_pose_data_list,
+enumerate_starting_pose_data_list( utility::vector1< PoseOP > & starting_pose_data_list,
 																utility::vector1< FloatingBaseChainClosureJobParameter > const & FB_CC_JP_list,
 																core::pose::Pose const & pose ){
 
@@ -1043,22 +1029,19 @@ enumerate_starting_pose_data_list( utility::vector1< pose_data_struct2 > & start
 
 	while ( true ){
 
-		pose_data_struct2 start_pose_data;
+		PoseOP start_pose_data;
 
-		start_pose_data.pose_OP = new pose::Pose;
-		( *start_pose_data.pose_OP ) = pose_copy;
-		pose::Pose & start_pose = ( *start_pose_data.pose_OP );
-
-		start_pose_data.score = 0;
-		start_pose_data.tag = "";
+		start_pose_data = new pose::Pose;
+		( *start_pose_data ) = pose_copy;
+		pose::Pose & start_pose = ( *start_pose_data );
 
 		for ( Size n = 1; n <= FB_CC_JP_list.size(); n++ ){
 
 			FloatingBaseChainClosureJobParameter const & curr_FB_JP = FB_CC_JP_list[n];
 			Size const sugar_ID = sugar_ID_counter_list[n];
 
-			start_pose_data.tag += curr_FB_JP.PDL[sugar_ID].tag;
-			copy_bulge_res_and_ribose_torsion( curr_FB_JP, start_pose, ( *curr_FB_JP.PDL[sugar_ID].pose_OP ) );
+			tag_into_pose( start_pose, tag_from_pose( start_pose ) + tag_from_pose( *curr_FB_JP.PDL[sugar_ID] ) );
+			copy_bulge_res_and_ribose_torsion( curr_FB_JP, start_pose, ( *curr_FB_JP.PDL[sugar_ID] ) );
 
 		}
 
@@ -1245,8 +1228,7 @@ sample_user_specified_virtual_riboses(
 				//ACTUAL COMPUTATION OCCUR HERE!!
 
 
-		std::sort( curr_FB_JP.PDL.begin(), curr_FB_JP.PDL.end(), sort_pose_data_by_score );
-
+		std::sort( curr_FB_JP.PDL.begin(), curr_FB_JP.PDL.end(), sort_pose_by_score );
 
 		if ( curr_FB_JP.PDL.size() == 0 ){
 			TR << "Case n = " << n << " Is_sugar_virt == True but curr_FB_JP.PDL.size() == 0. EARLY RETURN!" << std::endl;
@@ -1261,7 +1243,7 @@ sample_user_specified_virtual_riboses(
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< pose_data_struct2 > starting_pose_data_list;
+	utility::vector1< PoseOP > starting_pose_data_list;
 
 	enumerate_starting_pose_data_list( starting_pose_data_list, FB_CC_JP_list, pose );
 
@@ -1271,9 +1253,9 @@ sample_user_specified_virtual_riboses(
 
 	SilentFileData silent_file_data;
 	for ( Size n = 1; n <= starting_pose_data_list.size(); n++ ){
-		pose = ( *starting_pose_data_list[n].pose_OP ); //set viewer_pose;
+		pose = ( *starting_pose_data_list[n] ); //set viewer_pose;
 
-		std::string starting_pose_tag = input_tag + "_sample_ribose" + starting_pose_data_list[n].tag;
+		std::string starting_pose_tag = input_tag + "_sample_ribose" + tag_from_pose( *starting_pose_data_list[n]);
 
 		if ( job_parameters->gap_size() == 0 ) utility_exit_with_message( "job_parameters_->gap_size() == 0" );
 

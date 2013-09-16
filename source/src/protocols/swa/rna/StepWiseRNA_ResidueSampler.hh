@@ -99,7 +99,7 @@ public:
 	void
 	set_allow_bulge_at_chainbreak( bool const & setting );
 
-	utility::vector1< pose_data_struct2 > &
+	utility::vector1< PoseOP > &
 	get_pose_data_list();
 
 	core::io::silent::SilentFileDataOP & silent_file_data();
@@ -212,7 +212,7 @@ private:
 														FloatingBaseChainClosureJobParameter const & three_prime_CB_sugar_FB_JP );
 
 	void
-	standard_sampling( core::pose::Pose & pose, utility::vector1< pose_data_struct2 > & pose_data_list, std::string const sugar_tag );
+	standard_sampling( core::pose::Pose & pose, utility::vector1< PoseOP > & pose_data_list, std::string const sugar_tag );
 
 
 	void
@@ -252,16 +252,16 @@ private:
 	sample_o2star_hydrogen( core::pose::Pose & pose, core::pose::Pose & pose_with_original_HO2star_torsion );
 
 	core::Real
-	Pose_selection_by_full_score( utility::vector1< pose_data_struct2 > & pose_data_list, core::pose::Pose & current_pose, std::string const & tag );
+	Pose_selection_by_full_score( utility::vector1< PoseOP > & pose_data_list, core::pose::Pose & current_pose, std::string const & tag );
 
 	bool
 	apply_bulge_variant( core::pose::Pose & pose, core::Real const & delta_atr_score );
 
 	void
-	Update_pose_data_list( std::string const & tag, utility::vector1< pose_data_struct2 > & pose_data_list, core::pose::Pose const & current_pose, core::Real const & current_score ) const;
+	Update_pose_data_list( std::string const & tag, utility::vector1< PoseOP > & pose_data_list, core::pose::Pose const & current_pose, core::Real const & current_score ) const;
 
 	void
-	cluster_pose_data_list( utility::vector1< pose_data_struct2 > & pose_data_list );
+	cluster_pose_data_list( utility::vector1< PoseOP > & pose_data_list );
 
 	std::string
 	create_tag( std::string const & prestring, core::Size const i ) const;
@@ -289,7 +289,7 @@ private:
 	bool
 	Is_three_prime_chain_break_sugar_virtual( core::pose::Pose const & pose ) const;
 
-	utility::vector1< pose_data_struct2 >
+	utility::vector1< PoseOP >
 	previous_floating_base_chain_closure(
 		core::pose::Pose & viewer_pose,
 		FloatingBaseChainClosureJobParameter const & FB_job_params,
@@ -306,7 +306,7 @@ private:
 	StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
 
 	core::io::silent::SilentFileDataOP sfd_;
-	utility::vector1< pose_data_struct2 > pose_data_list_;
+	utility::vector1< PoseOP > pose_data_list_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;

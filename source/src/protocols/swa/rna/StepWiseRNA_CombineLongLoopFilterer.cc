@@ -71,8 +71,8 @@ using core::Real;
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 // Add class description here!
-// 
-// 
+//
+//
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ namespace rna {
 	StepWiseRNA_CombineLongLoopFilterer::StepWiseRNA_CombineLongLoopFilterer( StepWiseRNA_JobParametersCOP const & job_parameters, bool const combine_helical_silent_file ):
 		rsd_set_( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA ) ),
 		job_parameters_( job_parameters ),
-		verbose_( true ), //Parin Mar 22, 2010		
+		verbose_( true ), //Parin Mar 22, 2010
 		filter_for_previous_contact_( false ),
 		filter_for_previous_clash_( false ),
 		undercount_ribose_rotamers_( false ), //July 29, 2011
@@ -104,7 +104,7 @@ namespace rna {
 		worst_combine_score_(  - 999999.99 ), //Feb 02, 2012;
 		//score_diff_cut_(1000000.0), //Remove all score filtering on Jan 12, 2012
 		contact_dist_cutoff_(  - 1.0 ), //two atoms are considered in contact if their VDW radius edge is within 1.0 Angstrom of each other
-		clash_dist_cutoff_( 0.8 ),    //two atoms are considered clash if their VDW radius edge overlap by 0.8 Angstrom. 
+		clash_dist_cutoff_( 0.8 ),    //two atoms are considered clash if their VDW radius edge overlap by 0.8 Angstrom.
 															 //0.8 is appropriate for VDW clash screen, although value about 1.2 would be more appropriate if we consider minimum H-bond distance
 															 //See StepWiseRNA_VDW_BinScreener.cc for details.
 //		num_contact_cutoff_(9), //num of contact between the two sides before discarding pose (Used to be 1 before Nov 18, 2010)
@@ -177,7 +177,7 @@ namespace rna {
 				common_res_list.push_back( seq_num );
 			}
 
-		}		
+		}
 
 		utility::vector1< core::Size > full_pose_appended_res_list;
 		input_pose_ONE_appended_res_list_.clear();
@@ -185,7 +185,7 @@ namespace rna {
 		for ( Size n = 1; n <= input_res_vectors[1].size(); n++ ){
 			Size const seq_num = input_res_vectors[1][n];
 			if ( common_res_list.has_value( seq_num ) == false ){
-			 
+
 				full_pose_appended_res_list.push_back( seq_num );
 				input_pose_ONE_appended_res_list_.push_back( full_to_input_res_map_ONE_.find( seq_num )->second );
 
@@ -206,13 +206,13 @@ namespace rna {
 			}
 		}
 
-		Output_seq_num_list( "full_pose_appended_res:", full_pose_appended_res_list, TR ); 
-		Output_seq_num_list( "full_pose_prepended_res:", full_pose_prepended_res_list, TR ); 
+		Output_seq_num_list( "full_pose_appended_res:", full_pose_appended_res_list, TR );
+		Output_seq_num_list( "full_pose_prepended_res:", full_pose_prepended_res_list, TR );
 
-		Output_seq_num_list( "input_ONE_appended_res:", input_pose_ONE_appended_res_list_, TR ); 
-		Output_seq_num_list( "input_TWO_prepended_res:", input_pose_TWO_prepended_res_list_, TR ); 
+		Output_seq_num_list( "input_ONE_appended_res:", input_pose_ONE_appended_res_list_, TR );
+		Output_seq_num_list( "input_TWO_prepended_res:", input_pose_TWO_prepended_res_list_, TR );
 
-		
+
 	}
 
 
@@ -223,9 +223,9 @@ namespace rna {
 		utility::vector1< utility::vector1< Size > > const & input_res_vectors = job_parameters_->input_res_vectors();
 
 		//////////////////////////////////////////////////////////////////
-		
+
 		input_pose_ONE_last_appended_res_ = 0;
-	
+
 		if ( input_pose_ONE_appended_res_list_.size() == 0 ) utility_exit_with_message( "input_pose_ONE_appended_res_list_.size() == 0" );
 
 		for ( Size n = 1; n <= input_pose_ONE_appended_res_list_.size(); n++ ){
@@ -234,11 +234,11 @@ namespace rna {
 				input_pose_ONE_last_appended_res_ = input_pose_ONE_appended_res_list_[n];
 
 			}
-		}	
+		}
 
 		//////////////////////////////////////////////////////////////////
 
-		//input_pose_TWO_last_prepended_res_=9999999; //Feb 02, 2012: This might lead to server-test error at R47200 
+		//input_pose_TWO_last_prepended_res_=9999999; //Feb 02, 2012: This might lead to server-test error at R47200
 		input_pose_TWO_last_prepended_res_ = 999999;  //Feb 02, 2012
 
 		if ( input_pose_TWO_prepended_res_list_.size() == 0 ) utility_exit_with_message( "input_pose_TWO_prepended_res_list_.size() == 0" );
@@ -249,7 +249,7 @@ namespace rna {
 				input_pose_TWO_last_prepended_res_ = input_pose_TWO_prepended_res_list_[n];
 
 			}
-		}			
+		}
 
 		//////////////////////////////////////////////////////////////////
 
@@ -259,30 +259,30 @@ namespace rna {
 
 		TR << "full_pose_last_appended_res_ = " << full_last_appended_res << " input_pose_ONE_last_appended_res_ = " << input_pose_ONE_last_appended_res_;
 		TR << " full_pose_last_prepended_res_ = " << full_last_prepended_res << " input_pose_TWO_last_prepended_res_ = " << input_pose_TWO_last_prepended_res_ << std::endl;
-	
+
 
 /*
 		using namespace ObjexxFCL;
 
-		bool const Is_prepend(  job_parameters_->Is_prepend() ); 
+		bool const Is_prepend(  job_parameters_->Is_prepend() );
 
 		std::map< core::Size, core::Size > const & sub_to_full = job_parameters_->const_sub_to_full(); //make these const
-	
+
 		Size const moving_res(  job_parameters_->working_moving_res() ); // Might not corresponds to user input.
 		Size const reference_res( job_parameters_->working_reference_res() ); //the last static_residues that this attach to the moving residues
-	
+
 
 
 		Size working_last_prepended_res, working_last_appended_res;
 
 		if ( Is_prepend ){
 			working_last_prepended_res = reference_res;
-			working_last_appended_res = moving_res - 1; 
+			working_last_appended_res = moving_res - 1;
 		} else{
 			working_last_prepended_res = reference_res;
 			working_last_appended_res = moving_res + 1;
 		}
-	
+
 
 		if ( sub_to_full.count( working_last_prepended_res ) == 0 ) utility_exit_with_message( "sub_to_full.count( working_last_prepended_res ) == 0, working_last_prepended_res = " + string_of( working_last_prepended_res ) );
 		if ( sub_to_full.count( working_last_appended_res ) == 0 ) utility_exit_with_message( "sub_to_full.count( working_last_appended_res ) == 0, working_last_appended_res = " + string_of( working_last_appended_res ) );
@@ -298,31 +298,16 @@ namespace rna {
 		input_pose_TWO_last_prepended_res_ = full_to_input_res_map_TWO_.find( full_last_prepended_res )->second;
 */
 
-	
+
 	}
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-	utility::vector1< pose_data_struct2 >
+	utility::vector1< PoseOP >
 	StepWiseRNA_CombineLongLoopFilterer::convert_silent_file_to_pose_data_list( core::import_pose::pose_stream::SilentFilePoseInputStreamOP & silent_file_stream, Size const pose_list_id ){
 
 		using namespace core::pose;
 		using namespace ObjexxFCL;
-
-//		Output_title_text("Enter StepWiseRNA_CombineLongLoopFilterer::convert_silent_file_to_pose_data_list (" + path_basename(silent_file) +  ")", TR );
-
-
-		utility::vector1< pose_data_struct2 > pose_data_list;
-
-
-
-/*
-		core::io::silent::SilentFileData silent_file_data;
-		silent_file_data.read_file( silent_file );
-		for ( core::io::silent::SilentFileData::iterator iter = silent_file_data.begin(), end = silent_file_data.end(); iter != end; ++iter ) {
-
-		//iter->fill_pose(  *pose_op, *(rsd_set_) ); 
-
-*/
+		utility::vector1< PoseOP > pose_data_list;
 
 		Size min_pose_ID = ( ( pose_list_id - 1 )*( max_pose_data_list_size_ ) ) + 1;
 		Size max_pose_ID = ( ( pose_list_id )*( max_pose_data_list_size_ ) );
@@ -341,26 +326,21 @@ namespace rna {
 			if ( ( pose_ID < min_pose_ID ) || ( pose_ID > max_pose_ID ) ) continue;
 
 			num_struct_in_range++;
-	
+
 			PoseOP pose_op( new Pose );
 
-			silent_struct->fill_pose( *pose_op, *( rsd_set_ )  ); 
+			silent_struct->fill_pose( *pose_op, *( rsd_set_ )  );
 
 			Real score( 0.0 );
 			getPoseExtraScores( *pose_op, "score", score );
 
 			std::string const & tag( silent_struct->decoy_tag() );
 
-			if ( protocols::swa::rna::check_for_messed_up_structure( (*pose_op), tag ) ) {
+			if ( protocols::swa::rna::check_for_messed_up_structure( ( *pose_op), tag ) ) {
 				utility_exit_with_message( "tag = " + tag  + " is messed up!" );
 			}
-
-			pose_data_struct2 pose_data;
-			pose_data.pose_OP = pose_op;
-			pose_data.score = score;
-			pose_data.tag = tag;
-
-			pose_data_list.push_back( pose_data );
+			tag_into_pose( *pose_op, tag );
+			pose_data_list.push_back( pose_op );
 
 
 		}
@@ -378,8 +358,8 @@ namespace rna {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 	void
-	StepWiseRNA_CombineLongLoopFilterer::align_all_pose(	utility::vector1< pose_data_struct2 > const & side_ONE_pose_data_list, 
-																									  utility::vector1< pose_data_struct2 > const & side_TWO_pose_data_list ){
+	StepWiseRNA_CombineLongLoopFilterer::align_all_pose(	utility::vector1< PoseOP > const & side_ONE_pose_data_list,
+																									  utility::vector1< PoseOP > const & side_TWO_pose_data_list ){
  		using namespace chemical;
 
 		Output_title_text( "Enter StepWiseRNA_CombineLongLoopFilterer::align_all_pose ", TR );
@@ -388,40 +368,40 @@ namespace rna {
 		if ( side_TWO_pose_data_list.size() == 0 ) utility_exit_with_message( "side_TWO_pose_data_list.size() == 0" );
 
 
-		core::pose::Pose const alignment_pose = ( *side_ONE_pose_data_list[1].pose_OP );
+		core::pose::Pose const alignment_pose = ( *side_ONE_pose_data_list[1] );
 
 
 		for ( Size n = 1; n <= side_ONE_pose_data_list.size(); n++ ){
 
-			core::pose::Pose & side_ONE_pose = ( *side_ONE_pose_data_list[n].pose_OP );
+			core::pose::Pose & side_ONE_pose = ( *side_ONE_pose_data_list[n] );
 
 			id::AtomID_Map < id::AtomID > atom_ID_map; //Align the first and last residues of the two pose (which should be the same residue)
-			pose::initialize_atomid_map( atom_ID_map, side_ONE_pose, id::BOGUS_ATOM_ID ); 
+			pose::initialize_atomid_map( atom_ID_map, side_ONE_pose, id::BOGUS_ATOM_ID );
 
 			setup_suite_atom_id_map( side_ONE_pose.residue( 1 ),                             alignment_pose.residue( 1 ),                               atom_ID_map );
 			setup_suite_atom_id_map( side_ONE_pose.residue( side_ONE_pose.total_residue() ), alignment_pose.residue( alignment_pose.total_residue() ),  atom_ID_map );
-	
+
 			core::scoring::superimpose_pose( side_ONE_pose, alignment_pose, atom_ID_map );
 
 			//if(n==1) side_ONE_pose.dump_pdb( "Filterer_side_ONE_pose_"+ side_ONE_pose_data_list[n].tag +".pdb" );
-			
+
 		}
 
-		
+
 		for ( Size n = 1; n <= side_TWO_pose_data_list.size(); n++ ){
 
-			core::pose::Pose & side_TWO_pose = ( *side_TWO_pose_data_list[n].pose_OP );
+			core::pose::Pose & side_TWO_pose = ( *side_TWO_pose_data_list[n] );
 
 			id::AtomID_Map < id::AtomID > atom_ID_map; //Align the first and last residues of the two pose (which should be the same residue)
 			pose::initialize_atomid_map( atom_ID_map, side_TWO_pose, id::BOGUS_ATOM_ID );
-	
+
 			setup_suite_atom_id_map( side_TWO_pose.residue( 1 ), 														alignment_pose.residue( 1 ), 															atom_ID_map );
 			setup_suite_atom_id_map( side_TWO_pose.residue( side_TWO_pose.total_residue() ), alignment_pose.residue( alignment_pose.total_residue() ),  atom_ID_map );
 
-			core::scoring::superimpose_pose( side_TWO_pose, alignment_pose, atom_ID_map );		
+			core::scoring::superimpose_pose( side_TWO_pose, alignment_pose, atom_ID_map );
 
 			//if(n==1) side_TWO_pose.dump_pdb( "Filterer_side_TWO_pose_" + side_TWO_pose_data_list[n].tag + ".pdb" );
-			
+
 
 		}
 
@@ -437,17 +417,17 @@ namespace rna {
 
 
 	bool
-	StepWiseRNA_CombineLongLoopFilterer::previously_builded_res_VDW_filter( pose_data_struct2 const & side_ONE_pose_data, 
-																																		 pose_data_struct2 const & side_TWO_pose_data, 
-																																		 core::Real const overlap_dist_cutoff, 
+	StepWiseRNA_CombineLongLoopFilterer::previously_builded_res_VDW_filter( PoseOP const & side_ONE_pose_data,
+																																		 PoseOP const & side_TWO_pose_data,
+																																		 core::Real const overlap_dist_cutoff,
 																																		 core::Size const num_atom_contacts_cutoff ){
 
-		core::pose::Pose const & side_ONE_pose = ( *side_ONE_pose_data.pose_OP );
-		core::pose::Pose const & side_TWO_pose = ( *side_TWO_pose_data.pose_OP );
+		core::pose::Pose const & side_ONE_pose = ( *side_ONE_pose_data );
+		core::pose::Pose const & side_TWO_pose = ( *side_TWO_pose_data );
 
 		for ( Size i = 1; i <= input_pose_ONE_appended_res_list_.size(); i++ ){
 			for ( Size j = 1; j <= input_pose_TWO_prepended_res_list_.size(); j++ ){
-	
+
 				Size const input_pose_ONE_appended_res = input_pose_ONE_appended_res_list_[i];
 				Size const input_pose_TWO_prepended_res = input_pose_TWO_prepended_res_list_[j];
 
@@ -457,7 +437,7 @@ namespace rna {
 
 			}
 		}
-	
+
 		return true;
 
 	}
@@ -466,12 +446,12 @@ namespace rna {
 
 
 /*
-		core::pose::Pose const & side_ONE_pose = ( *side_ONE_pose_data.pose_OP );
-		core::pose::Pose const & side_TWO_pose = ( *side_TWO_pose_data.pose_OP );
+		core::pose::Pose const & side_ONE_pose = ( *side_ONE_pose_data );
+		core::pose::Pose const & side_TWO_pose = ( *side_TWO_pose_data );
 
 		for ( Size i = 1; i <= input_pose_ONE_appended_res_list_.size(); i++ ){
 			for ( Size j = 1; j <= input_pose_TWO_prepended_res_list_.size(); j++ ){
-	
+
 				Size const input_pose_ONE_appended_res = input_pose_ONE_appended_res_list_[i];
 				Size const input_pose_TWO_prepended_res = input_pose_TWO_prepended_res_list_[j];
 
@@ -508,7 +488,7 @@ namespace rna {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_CombineLongLoopFilterer::previously_builded_res_contact_filter( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data ){
+	StepWiseRNA_CombineLongLoopFilterer::previously_builded_res_contact_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data ){
 
 		return ( previously_builded_res_VDW_filter( side_ONE_pose_data, side_TWO_pose_data, contact_dist_cutoff_, num_contact_cutoff_ ) );
 
@@ -516,21 +496,21 @@ namespace rna {
 
  	/////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_CombineLongLoopFilterer::previously_builded_res_clash_filter( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data ){
+	StepWiseRNA_CombineLongLoopFilterer::previously_builded_res_clash_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data ){
 
 		return ( previously_builded_res_VDW_filter( side_ONE_pose_data, side_TWO_pose_data, clash_dist_cutoff_, num_clash_cutoff_ ) );
 
 	}
   /////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_CombineLongLoopFilterer::moving_res_contact_filter( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data ){
+	StepWiseRNA_CombineLongLoopFilterer::moving_res_contact_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data ){
 
 
-		bool const Is_prepend(  job_parameters_->Is_prepend() ); 
+		bool const Is_prepend(  job_parameters_->Is_prepend() );
 
 
-		core::pose::Pose const & side_ONE_pose = ( *side_ONE_pose_data.pose_OP );
-		core::pose::Pose const & side_TWO_pose = ( *side_TWO_pose_data.pose_OP );
+		core::pose::Pose const & side_ONE_pose = ( *side_ONE_pose_data );
+		core::pose::Pose const & side_TWO_pose = ( *side_TWO_pose_data );
 
 
 		core::conformation::Residue const & last_append_rsd = side_ONE_pose.residue( input_pose_ONE_last_appended_res_ );
@@ -540,7 +520,7 @@ namespace rna {
 
 		core::conformation::Residue const & enforce_contact_rsd = ( Is_prepend ) ? last_append_rsd : last_prepend_rsd;
 
-		if ( enforce_contact_rsd.type().atom_name( enforce_contact_rsd.first_sidechain_atom() ) != " O2'" ){ 
+		if ( enforce_contact_rsd.type().atom_name( enforce_contact_rsd.first_sidechain_atom() ) != " O2'" ){
 			utility_exit_with_message( "enforce_contact_rsd.type().atom_name( enforce_contact_rsd.first_sidechain_atom() ) != \" O2'\" " );
 		}
 
@@ -562,7 +542,7 @@ namespace rna {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 	bool
-	StepWiseRNA_CombineLongLoopFilterer::pass_all_filters( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data ){
+	StepWiseRNA_CombineLongLoopFilterer::pass_all_filters( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data ){
 
 		using namespace ObjexxFCL;
 
@@ -578,25 +558,25 @@ namespace rna {
 		///////////////////////////////////////////////////////////////////////////
 
 
-		core::pose::Pose const & side_ONE_pose = ( *side_ONE_pose_data.pose_OP );
-		core::pose::Pose const & side_TWO_pose = ( *side_TWO_pose_data.pose_OP );
+		core::pose::Pose const & side_ONE_pose = ( *side_ONE_pose_data );
+		core::pose::Pose const & side_TWO_pose = ( *side_TWO_pose_data );
 
-		Real const curr_combine_score = side_ONE_pose_data.score + side_TWO_pose_data.score;
+		Real const curr_combine_score = total_energy_from_pose( *side_ONE_pose_data ) + total_energy_from_pose( *side_TWO_pose_data );
 
 		filterer_count_.total_count++;
 
 		//if(curr_combine_score > (best_combine_score_ + score_diff_cut_) ) return false;
- 
+
 		filterer_count_.score_cut_count++;
 
 
-		if ( ( filter_for_chain_closable_ == true ) ){ 
+		if ( ( filter_for_chain_closable_ == true ) ){
 
 			//OK STILL HAVE TO WRITE CODE FOR THE DINUCLEOTIDE case....
 			//July 19th, 2011..This assumes that the 5' and 3' ribose is already built (not virtual!) but this might not be the case!
 
 			if ( Check_chain_closable( side_TWO_pose.residue( input_pose_TWO_last_prepended_res_ ).xyz( "C5'" ), side_ONE_pose.residue( input_pose_ONE_last_appended_res_ ).xyz( "O3'" ), previous_step_gap_size ) == false ) return false;
-			
+
 			filterer_count_.chain_closable_screen++;
 
 		}
@@ -618,7 +598,7 @@ namespace rna {
 
 
 		//DON'T include this screen to determine best_combine_score since it can lead to an artificially bad best_combine_score (still need to verify this!)
-		if ( ( previous_step_gap_size != 1 ) && ( filter_for_moving_res_contact_ == true ) ){ 
+		if ( ( previous_step_gap_size != 1 ) && ( filter_for_moving_res_contact_ == true ) ){
 
 			//INCLUDE the dinucleotide Chainbreak code since if dinucleotide...moving_res (the floating base) cannot be bulge and need to make contact.
 			if ( moving_res_contact_filter( side_ONE_pose_data, side_TWO_pose_data ) == false ) return false;
@@ -644,11 +624,11 @@ namespace rna {
 		Output_title_text( "Enter StepWiseRNA_CombineLongLoopFilterer::do_some_filtering for side_ONE_pose_list_id_ = " + string_of( side_ONE_pose_list_id_ ) + "/" + string_of( side_ONE_NUM_pose_list_ ) + " side_ONE_pose_list_id_ = " + string_of( side_TWO_pose_list_id_ ) + "/" + string_of( side_TWO_NUM_pose_list_ ), TR );
 
 
-//		std::ofstream outfile; 
+//		std::ofstream outfile;
 //		outfile.open(output_filename_.c_str(), std::ios_base::out | std::ios_base::app); //This does not delete existing content
-		
-		utility::vector1< pose_data_struct2 > const side_ONE_pose_data_list = convert_silent_file_to_pose_data_list( silent_file_stream_ONE_, side_ONE_pose_list_id_ ); //assume this is the one build loop by append from 5' side
-		utility::vector1< pose_data_struct2 > const side_TWO_pose_data_list = convert_silent_file_to_pose_data_list( silent_file_stream_TWO_, side_TWO_pose_list_id_ ); //assume this is the one build loop by prepend from 3' side
+
+		utility::vector1< PoseOP > const side_ONE_pose_data_list = convert_silent_file_to_pose_data_list( silent_file_stream_ONE_, side_ONE_pose_list_id_ ); //assume this is the one build loop by append from 5' side
+		utility::vector1< PoseOP > const side_TWO_pose_data_list = convert_silent_file_to_pose_data_list( silent_file_stream_TWO_, side_TWO_pose_list_id_ ); //assume this is the one build loop by prepend from 3' side
 
 		if ( side_ONE_pose_data_list.size() == 0 ) return;
 		if ( side_TWO_pose_data_list.size() == 0 ) return;
@@ -663,39 +643,39 @@ namespace rna {
 
 				total_input_struct_pair_++;
 
-				pose_data_struct2 const & side_ONE_pose_data = side_ONE_pose_data_list[i];
-				pose_data_struct2 const & side_TWO_pose_data = side_TWO_pose_data_list[j];
+				PoseOP const & side_ONE_pose_data = side_ONE_pose_data_list[i];
+				PoseOP const & side_TWO_pose_data = side_TWO_pose_data_list[j];
 
-				if ( combine_helical_silent_file_ == false ){ 
+				if ( combine_helical_silent_file_ == false ){
 					if ( pass_all_filters( side_ONE_pose_data, side_TWO_pose_data ) == false ) continue;
 				} else{ //Nov 27 2010
 
-					Real const curr_combine_score = side_ONE_pose_data.score + side_TWO_pose_data.score;
+					Real const curr_combine_score = total_energy_from_pose( *side_ONE_pose_data ) + total_energy_from_pose( *side_TWO_pose_data );
 
 					filterer_count_.total_count++;
 
 					//if(curr_combine_score > (best_combine_score_ + score_diff_cut_) ) continue;
-			 
+
 					filterer_count_.score_cut_count++;
 
 					if ( best_combine_score_ > curr_combine_score ) best_combine_score_ = curr_combine_score; //best_combine_score that still PASS the screen..
 
 				}
-	
+
 				pass_screen_struct_pair_++;
 
-				//ok will print to file after finish debugging 
-				TR << "struct pair: ( " <<  side_ONE_pose_data.tag  << ", " <<  side_TWO_pose_data.tag << " ) pass screening test. ";
+				//ok will print to file after finish debugging
+				TR << "struct pair: ( " <<  tag_from_pose( *side_ONE_pose_data)  << ", " <<  tag_from_pose( *side_TWO_pose_data) << " ) pass screening test. ";
 				TR << pass_screen_struct_pair_ << " out of " << total_input_struct_pair_ << " passed screen so far" << std::endl;
 
 
 				Combine_Tags_Info combine_tag_info;
-				combine_tag_info.side_one_tag = side_ONE_pose_data.tag;
-				combine_tag_info.side_two_tag = side_TWO_pose_data.tag;
-				combine_tag_info.combine_score = side_ONE_pose_data.score + side_TWO_pose_data.score;
+				combine_tag_info.side_one_tag = tag_from_pose( *side_ONE_pose_data);
+				combine_tag_info.side_two_tag = tag_from_pose( *side_TWO_pose_data);
+				combine_tag_info.combine_score = total_energy_from_pose( *side_ONE_pose_data) + total_energy_from_pose( *side_TWO_pose_data);
 
 				filterered_combine_tag_info_list_.push_back( combine_tag_info );
-			
+
 			}
 		}
 
@@ -704,7 +684,7 @@ namespace rna {
 
 		Output_title_text( "Exit StepWiseRNA_CombineLongLoopFilterer::do_some_filtering", TR );
 
-		 	
+
 
 	}
 
@@ -787,12 +767,12 @@ namespace rna {
 
 			if ( silent_struct->has_parent_remark( "SOURCE" ) == false ){
 				//utility_exit_with_message("silent_struct->has_parent_remark(\"SOURCE\")==false for tag: " + tag);
-				tag_to_source_map_ONE_[tag] = "MISSING";	
+				tag_to_source_map_ONE_[tag] = "MISSING";
 
 			} else{
 
 				std::string const source_file = silent_struct->get_parent_remark( "SOURCE" );
-				tag_to_source_map_ONE_[tag] = source_file;	
+				tag_to_source_map_ONE_[tag] = source_file;
 
 			}
 
@@ -810,12 +790,12 @@ namespace rna {
 
 			if ( silent_struct->has_parent_remark( "SOURCE" ) == false ){
 				//utility_exit_with_message("silent_struct->has_parent_remark(\"SOURCE\")==false for tag: " + tag);
-				tag_to_source_map_TWO_[tag] = "MISSING";	
+				tag_to_source_map_TWO_[tag] = "MISSING";
 
 			} else{
 
 				std::string const source_file = silent_struct->get_parent_remark( "SOURCE" );
-				tag_to_source_map_TWO_[tag] = source_file;	
+				tag_to_source_map_TWO_[tag] = source_file;
 
 			}
 
@@ -841,7 +821,7 @@ namespace rna {
 		using namespace ObjexxFCL;
 
 		if ( silent_files_in_.size() != 2 ) utility_exit_with_message( "silent_files_in_.size() != 2!, silent_files_in_.size() = " + string_of( silent_files_in_.size() ) );
-	
+
 		silent_file_stream_ONE_ = new core::import_pose::pose_stream::SilentFilePoseInputStream();
 		silent_file_stream_ONE_->set_order_by_energy( true );
 		silent_file_stream_ONE_->set_record_source( false ); //change to false on July 29, 2011
@@ -853,7 +833,7 @@ namespace rna {
 
 		silent_file_stream_TWO_ = new core::import_pose::pose_stream::SilentFilePoseInputStream();
 		silent_file_stream_TWO_->set_order_by_energy( true );
-		silent_file_stream_TWO_->set_record_source( false ); //change to false on July 29, 2011 
+		silent_file_stream_TWO_->set_record_source( false ); //change to false on July 29, 2011
 
 		utility::vector1< std::string > singleton_list_TWO;
 		singleton_list_TWO.push_back( silent_files_in_[2] );
@@ -889,7 +869,7 @@ namespace rna {
 	bool
 	StepWiseRNA_CombineLongLoopFilterer::Is_virt_sample_ribose_tag( std::string const & tag, utility::vector1< std::string > const & tag_token ) const {
 
-		
+
 		if ( tag_token.size() >= 5 ){ //VIRT_RIBOSE_SAMPLED tag
 
 			//consistency check!
@@ -904,14 +884,14 @@ namespace rna {
 		}
 
 		utility_exit_with_message( "tag_token.size() != 5 and tag_token.size() != 2 for tag = " + tag );
-		return false; //PREVENT COMPILER COMPLAINT!	
+		return false; //PREVENT COMPILER COMPLAINT!
 
 	}
 
 
 	bool
-	StepWiseRNA_CombineLongLoopFilterer::Is_sibling_ribose_rotamer_pose( std::string const & curr_tag, 
-																																	 std::string const & prev_tag, 
+	StepWiseRNA_CombineLongLoopFilterer::Is_sibling_ribose_rotamer_pose( std::string const & curr_tag,
+																																	 std::string const & prev_tag,
 																																	 std::map< std::string, std::string > const & tag_to_source_map ) const{
 
 
@@ -962,7 +942,7 @@ namespace rna {
 
 		using namespace ObjexxFCL;
 
-		clock_t const time_start( clock() ); 
+		clock_t const time_start( clock() );
 
 		Output_title_text( "Enter StepWiseRNA_CombineLongLoopFilterer:apply", TR );
 
@@ -988,7 +968,7 @@ namespace rna {
 		filterered_combine_tag_info_list_.clear();
 
 		while ( side_ONE_pose_list_id_ <= side_ONE_NUM_pose_list_ ){
-	
+
 			do_some_filtering();
 
 			side_TWO_pose_list_id_++;
@@ -1012,9 +992,7 @@ namespace rna {
 		TR << " filter_for_moving_res_contact = " << filterer_count_.filter_for_moving_res_contact;
 		TR << std::endl;
 
-			
-
-		TR << "StepWiseRNA_CombineLongLoopFilterer::apply: " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR << "Time taken: " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 		if ( ( filterered_combine_tag_info_list_.size() ) != pass_screen_struct_pair_ ){
 			utility_exit_with_message( " ( filterered_combine_tag_info_list_.size() ) != pass_screen_struct_pair_" );
@@ -1032,10 +1010,10 @@ namespace rna {
 		//OK have to sort the filtererer_combine_tag_info_list.
 		sort_Combine_Tags_Info( filterered_combine_tag_info_list_ ); //Oct 19,2010
 
-		clock_t const time_start_FINAL_output( clock() ); 
+		clock_t const time_start_FINAL_output( clock() );
 
 		for ( Size n = 1; n <= filterered_combine_tag_info_list_.size(); n++ ){
-		
+
 			Combine_Tags_Info const combine_tag_info = filterered_combine_tag_info_list_[n];
 
 			//if( (combine_tag_info.combine_score) > (best_combine_score_ + score_diff_cut_) ) continue;
@@ -1052,7 +1030,7 @@ namespace rna {
 
 					if ( Is_sibling_ribose_rotamer_pose( combine_tag_info.side_two_tag, prev_combine_tag_info.side_two_tag, tag_to_source_map_TWO_ ) == false ) continue;
 
-					TR << "tag_pair: ";	
+					TR << "tag_pair: ";
 					TR << "( " << std::setw( 28 ) << std::left << combine_tag_info.side_one_tag       << ", ";
 					TR <<         std::setw( 28 ) << std::left << combine_tag_info.side_two_tag       << " )" ;
 					TR << " is a sibling of prev_tag_pair: ";
@@ -1062,13 +1040,13 @@ namespace rna {
 
 					match_existing_pair = true;
 
-					break;					
+					break;
 
-				} 
+				}
 
 
 				if ( match_existing_pair == false ) pass_screen_struct_pair_undercount_ribose_rotamers++;
-				
+
 			}
 
 			pass_screen_struct_pair_ACT++;
@@ -1078,7 +1056,7 @@ namespace rna {
 			outfile << std::setw( 40 ) << std::left << combine_tag_info.side_two_tag; //40 spacing just to be safe!
 			outfile << std::setw( 15 ) << std::left << combine_tag_info.combine_score;
 			outfile << std::setw( 15 ) << std::left << pass_screen_struct_pair_ACT;
-			outfile << "\n"; 
+			outfile << "\n";
 
 			bool max_decoys_reached = false;
 

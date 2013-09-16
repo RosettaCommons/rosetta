@@ -1886,19 +1886,28 @@ void tag_into_pose( core::pose::Pose & pose, std::string const & tag ) {
 }
 
 core::Real energy_from_pose(
-	core::pose::Pose & pose, core::scoring::ScoreType const & sc_type
+	core::pose::Pose const & pose, core::scoring::ScoreType const & sc_type
 ) {
 	return pose.energies().total_energies()[ sc_type ];
 }
 
 core::Real energy_from_pose(
-	core::pose::Pose & pose, std::string const & sc_type
+	core::pose::Pose const & pose, std::string const & sc_type
 ) {
 	return pose.energies().total_energies()[ core::scoring::score_type_from_name( sc_type ) ];
 }
 
-core::Real total_energy_from_pose( core::pose::Pose & pose ) {
-	return pose.energies().total_energy();
+core::Real total_energy_from_pose( core::pose::Pose const & pose ) {
+	Real total_energy = pose.energies().total_energy();
+	// when initiatied form a silent struct, total energy lives in "extra data".
+	if ( total_energy == Real( 0.0 ) ) getPoseExtraScores( pose, "score", total_energy );
+	return total_energy;
+}
+
+// criterion for sorting.
+bool
+sort_pose_by_score( core::pose::PoseOP const & pose1, core::pose::PoseOP const & pose2 ) {
+	return ( total_energy_from_pose( *pose1 ) < total_energy_from_pose( *pose2 ) );
 }
 
 void

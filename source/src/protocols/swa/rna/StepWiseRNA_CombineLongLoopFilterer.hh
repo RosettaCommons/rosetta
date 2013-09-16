@@ -32,12 +32,12 @@
 #include <string>
 #include <map>
 
+using namespace core::pose;
 
 namespace protocols {
 namespace swa {
 namespace rna {
 
-	//	typedef std::map< std::string, core::pose::PoseOP > PoseList;
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,35 +137,35 @@ namespace rna {
 		figure_out_last_appended_and_last_prepended_res();
 
 
-		utility::vector1< pose_data_struct2 >
+		utility::vector1< PoseOP >
 		convert_silent_file_to_pose_data_list( core::import_pose::pose_stream::SilentFilePoseInputStreamOP & silent_file_stream, core::Size const pose_list_id );
 
 
 		bool
-		previously_builded_res_VDW_filter( pose_data_struct2 const & side_ONE_pose_data,
-																		pose_data_struct2 const & side_TWO_pose_data,
+		previously_builded_res_VDW_filter( PoseOP const & side_ONE_pose_data,
+																		PoseOP const & side_TWO_pose_data,
 																		core::Real const overlap_dist_cutoff,
 																		core::Size const num_atom_contacts_cutoff );
 
 		bool
-		previously_builded_res_contact_filter( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data );
+		previously_builded_res_contact_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
 
 		bool
-		previously_builded_res_clash_filter( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data );
+		previously_builded_res_clash_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
 
 		bool
-		moving_res_contact_filter( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data );
+		moving_res_contact_filter( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
 
 		void
-		align_all_pose( utility::vector1< pose_data_struct2 > const & side_ONE_pose_data_list,
-									 utility::vector1< pose_data_struct2 > const & side_TWO_pose_data_list );
+		align_all_pose( utility::vector1< PoseOP > const & side_ONE_pose_data_list,
+									 utility::vector1< PoseOP > const & side_TWO_pose_data_list );
 
 
 		void
 		do_some_filtering();
 
 		bool
-		pass_all_filters( pose_data_struct2 const & side_ONE_pose_data, pose_data_struct2 const & side_TWO_pose_data );
+		pass_all_filters( PoseOP const & side_ONE_pose_data, PoseOP const & side_TWO_pose_data );
 
 		void
 		setup_silent_file_stream();

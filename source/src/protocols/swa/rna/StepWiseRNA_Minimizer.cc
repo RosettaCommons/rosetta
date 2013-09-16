@@ -92,7 +92,7 @@ namespace rna {
 //////////////////////////////////////////////////////////////////////////
 //constructor!
 StepWiseRNA_Minimizer::StepWiseRNA_Minimizer(
-																						 utility::vector1 < pose_data_struct2 > const & pose_data_list,
+																						 utility::vector1 < core::pose::PoseOP > const & pose_data_list,
 																						 StepWiseRNA_JobParametersCOP & job_parameters ):
 	pose_data_list_( pose_data_list ),
 	job_parameters_( job_parameters ),
@@ -127,14 +127,6 @@ StepWiseRNA_Minimizer::get_name() const {
 	return "StepWiseRNA_Minimizer";
 }
 
-//////////////////////////////////////////////////////////////////////////
-bool
-minimizer_sort_criteria( pose_data_struct2 pose_data_1, pose_data_struct2 pose_data_2 ) {
-	return ( pose_data_1.score < pose_data_2.score );
-}
-//////////////////////////////////////////////////////////////////////////
-
-
 void
 StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
@@ -157,7 +149,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	Output_boolean( " output_before_o2star_pack_ = ", output_before_o2star_pack_, TR.Debug ); TR.Debug << std::endl;
 	TR.Debug << " ( Upper_limit ) num_pose_minimize_ = " << num_pose_minimize_ << " pose_data_list.size() = " << pose_data_list_.size() <<  std::endl;
 	Output_boolean( " minimize_and_score_sugar_ = ", minimize_and_score_sugar_, TR.Debug ); TR.Debug << std::endl;
-	Output_boolean( " user_inputted_VDW_bin_screener_ = ", user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose(), TR.Debug ); TR.Debug << std::endl;
+	if (user_input_VDW_bin_screener_) Output_boolean( " user_inputted_VDW_bin_screener_ = ", user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose(), TR.Debug ); TR.Debug << std::endl;
 	Output_seq_num_list( " working_global_sample_res_list = ", job_parameters_->working_global_sample_res_list(), TR.Debug );
 	Output_boolean( " perform_minimize_ = ", perform_minimize_, TR.Debug ); TR.Debug << std::endl;
 	Output_boolean( " rename_tag_ = ", rename_tag_, TR.Debug ); TR.Debug << std::endl;
@@ -165,7 +157,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	clock_t const time_start( clock() );
 
 	Size const gap_size(  job_parameters_->gap_size() );
-
+	bool const close_chainbreak = gap_size == 0 && ( job_parameters_->moving_res() > 0 );
 	RNA_LoopCloser rna_loop_closer;
 
 	SilentFileData silent_file_data;
@@ -183,7 +175,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 		return;
 	}
 
-	pose::Pose dummy_pose = ( *pose_data_list_[1].pose_OP );
+	pose::Pose dummy_pose = ( *pose_data_list_[1] );
 	Size const nres =  dummy_pose.total_residue();
 	bool o2star_pack_verbose( verbose_ );
 	utility::vector1< Size > const working_moving_res = get_working_moving_res( nres ); // will be used for o2star packing.
@@ -217,8 +209,8 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
 		TR.Debug << "Minimizing pose_ID = " << pose_ID << std::endl;
 
-		std::string tag = pose_data_list_[pose_ID].tag;
-		pose = ( *pose_data_list_[pose_ID].pose_OP ); //This actually creates a hard copy.....need this to get the graphic working..
+		std::string tag = tag_from_pose( *pose_data_list_[pose_ID] );
+		pose = ( *pose_data_list_[pose_ID] ); //This actually creates a hard copy.....need this to get the graphic working..
 
 		Size const five_prime_chain_break_res = figure_out_actual_five_prime_chain_break_res( pose );
 
@@ -237,7 +229,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 		if ( verbose_ && !output_before_o2star_pack_ ) output_pose_data_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_minimize" );
 
 		///////Minimization/////////////////////////////////////////////////////////////////////////////
-		if ( gap_size == 0 ){
+		if ( close_chainbreak ){
 			rna_loop_closer.apply( pose, five_prime_chain_break_res ); //This doesn't do anything if rna_loop_closer was already applied during sampling stage...May 10,2010
 
 			if ( verbose_ ) output_pose_data_wrapper( tag, 'C', pose, silent_file_data, silent_file_ + "_after_loop_closure_before_minimize" );
@@ -249,7 +241,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 			if ( perform_minimize_ ) minimizer.run( pose, mm, *( scorefxn_ ), options );
 			if ( perform_o2star_pack_ ) o2star_minimize( pose, scorefxn_, get_surrounding_O2star_hydrogen( pose, working_moving_res, o2star_pack_verbose ) );
 
-			if ( gap_size == 0 ){
+			if ( close_chainbreak ){
 				Real mean_dist_err = rna_loop_closer.apply( pose, five_prime_chain_break_res );
 				TR.Debug << "mean_dist_err ( round = " << round << " ) = " <<  mean_dist_err << std::endl;
 
@@ -264,12 +256,8 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 		if ( ! pass_all_pose_screens( pose, tag, silent_file_data ) ) continue;
 
 		//////////////////////////////////////////////////////////////////////////////////////////////
-		pose_data_struct2 pose_data;
-		pose_data.tag = tag;
-		pose_data.score = ( *scorefxn_ )( pose );
-		pose_data.pose_OP = new pose::Pose;
-		( *pose_data.pose_OP ) = pose;
-		minimized_pose_data_list_.push_back( pose_data );
+		tag_into_pose( pose, tag );
+		minimized_pose_data_list_.push_back( pose.clone() );
 
 		TR.Debug << "SO FAR: pose_ID = " << pose_ID  << " | minimized_pose_data_list_.size() = " << minimized_pose_data_list_.size();
 		TR.Debug << " | time taken = " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
@@ -285,12 +273,12 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 		output_empty_minimizer_silent_file();
 	}
 
-	std::sort( minimized_pose_data_list_.begin(), minimized_pose_data_list_.end(), minimizer_sort_criteria );
+	std::sort( minimized_pose_data_list_.begin(), minimized_pose_data_list_.end(), sort_pose_by_score );
 
 	if ( output_minimized_pose_data_list_ ) output_minimized_pose_data_list();
 
 	// output best scoring pose.
-	if ( minimized_pose_data_list_.size() > 0 ) pose = *( minimized_pose_data_list_[1].pose_OP );
+	if ( minimized_pose_data_list_.size() > 0 ) pose = *( minimized_pose_data_list_[1] );
 
 	TR.Debug << "--------------------------------------------------------------------" << std::endl;
 	TR.Debug << "Total time in StepWiseRNA_Minimizer: " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
@@ -436,7 +424,7 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 		bool const Is_prepend(  job_parameters_->Is_prepend() );
 		Size const moving_res(  job_parameters_->working_moving_res() );
 
-		if ( gap_size == 0 ){
+		if ( gap_size == 0 && five_prime_chain_break_res > 0 ){
 			//Sept 19, 2010 screen for weird delta/sugar conformation. Sometime at the chain closure step, minimization will severely screw up the pose sugar
 			//if the chain is not a closable position. These pose will have very bad score and will be discarded anyway. The problem is that the clusterer check
 			//for weird delta/sugar conformation and call utility_exit_with_message() if one is found (purpose being to detect bad silent file conversion)
@@ -523,7 +511,7 @@ StepWiseRNA_Minimizer::pass_all_pose_screens( core::pose::Pose & pose, std::stri
 	//In Both standard and floating base sampling, user_input_VDW_bin_screener_ is not used for gap_size==0 or internal case.
 	//This code is buggy for gap_size==0 case IF VDW_screener_pose contains the residue right at 3' or 5' of the building_res
 	//Internal case should be OK.
-	if ( user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose() ){
+	if ( user_input_VDW_bin_screener_ && user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose() ){
 
 		//Convert to using physical_pose instead of bin for screening (as default) on June 04, 2011
 		utility::vector1 < core::Size > const & working_global_sample_res_list = job_parameters_->working_global_sample_res_list();
@@ -581,7 +569,7 @@ StepWiseRNA_Minimizer::get_working_moving_res( Size const & nres ) const {
 			working_moving_res.push_back( seq_num );
 		}
 	}
-	Output_seq_num_list( "working_moving_res", working_moving_res );
+	//	Output_seq_num_list( "working_moving_res", working_moving_res );
 	return working_moving_res;
 }
 
@@ -628,16 +616,18 @@ StepWiseRNA_Minimizer::output_minimized_pose_data_list(){
 	io::silent::SilentFileData silent_file_data;
 
 	for ( Size pose_ID = 1; pose_ID <= minimized_pose_data_list_.size(); pose_ID++ ){
-		pose_data_struct2 & pose_data = minimized_pose_data_list_[pose_ID];
-		pose::Pose & pose = ( *pose_data.pose_OP );
+		core::pose::PoseOP & pose_data = minimized_pose_data_list_[pose_ID];
+		pose::Pose & pose = ( *pose_data );
 
+		std::string tag;
 		if ( rename_tag_ ){
-			pose_data.tag = "S_" + ObjexxFCL::lead_zero_string_of( pose_ID /* start with zero */, 6 );
+			tag = "S_" + ObjexxFCL::lead_zero_string_of( pose_ID /* start with zero */, 6 );
 		} else{
-			pose_data.tag[0] = 'M';  //M for minimized, these are the poses that will be clustered by master node.
+			tag = tag_from_pose( pose );
+			tag[0] = 'M';  //M for minimized, these are the poses that will be clustered by master node.
 		}
 
-		output_pose_data_wrapper( pose_data.tag, pose_data.tag[0], pose, silent_file_data, silent_file_ );
+		output_pose_data_wrapper( tag, tag[0], pose, silent_file_data, silent_file_ );
 	}
 }
 

@@ -73,33 +73,25 @@ namespace monte_carlo {
 		if ( skip_deletions_ ) disallow_delete = true;
 
 		SWA_Move swa_move;
-		get_random_chunk_at_chain_terminus( pose, swa_move,
+		get_random_move_element_at_chain_terminus( pose, swa_move,
 																				disallow_delete, true /*disallow_resample*/,
 																				sample_res_ /* empty means no filter on what residues can be added */ );
 
-		if ( swa_move.moving_residue_case() == NO_CASE ) {
-			move_type = "no op";
+		if ( swa_move.move_type() == NO_ADD_OR_DELETE ) {
+			move_type = "no move";
 			return false;
 		}
 
-		TR << "Chose move: " << swa_move << std::endl;
+		TR << swa_move << std::endl;
 		TR.Debug << "Starting from: " << pose.annotated_sequence() << std::endl;
 
-		if ( swa_move.add_or_delete_choice() == DELETE ) {
+		if ( swa_move.move_type() == DELETE ) {
 			move_type = "delete";
-			rna_delete_mover_->apply( pose, swa_move.chunk() );
+			rna_delete_mover_->apply( pose, swa_move.move_element() );
 		} else {
-			runtime_assert( swa_move.add_or_delete_choice() == ADD );
-
-			// res_at_terminus defines the build-off point for the chunk to be added.
-			// it is *not* the chunk to be added [and indeed there could be a whole pose
-			//  with multiple chunks to be merged in... rna_add_mover_ will figure that out.]
-			runtime_assert( swa_move.chunk().size() == 1 );
-			Size const res_at_terminus = swa_move.chunk()[ 1 ];
-
-			// try to add a residue that is supposed to be sampled.
+			runtime_assert( swa_move.move_type() == ADD );
 			move_type = "add";
-			rna_add_mover_->apply( pose, res_at_terminus, swa_move.moving_residue_case() );
+			rna_add_mover_->apply( pose, swa_move.moving_res(), swa_move.attached_res() );
 		}
 		TR.Debug << "Ended with: " << pose.annotated_sequence() << std::endl;
 

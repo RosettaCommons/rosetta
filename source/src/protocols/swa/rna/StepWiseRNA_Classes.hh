@@ -72,45 +72,11 @@ class Jump_point{
 
 };
 
-// Why don't we just keep this in a "regular" kinematics::Stub?
-/*
-struct base_stub{
-  numeric::xyzVector< core::Real > centroid;
-  Matrix base_coordinate_matrix;
-};
-*/
-
-
-struct pose_data_struct2{
-	core::Real score;
-	core::pose::PoseOP pose_OP;
-	std::string tag;
-};
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 struct Torsion_Info{
 	core::id::TorsionID id;
 	core::Real value;
 };
-
-/*
-class Torsion_Info{
-	public:
-	 Torsion_Info():
-			value( 0.0 )
-		{
-		}
-
-		~Torsion_Info(){};
-
-	core::id::TorsionID id;
-	core::Real value;
-
-};
-*/
-
-
 
 struct output_data_struct {
 

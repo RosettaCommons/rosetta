@@ -29,16 +29,53 @@ namespace protocols {
 namespace swa {
 namespace monte_carlo {
 
-	typedef  utility::vector1< Size >  Chunk; // move to fwd file?
+	typedef utility::vector1< core::Size >  MoveElement;
+	typedef utility::vector1< Attachment> Attachments;
 
-	enum MovingResidueCase { NO_CASE = 0, CHAIN_TERMINUS_5PRIME, CHAIN_TERMINUS_3PRIME, INTERNAL, FLOATING_BASE, LAST_MOVING_RESIDUE_CASE };
+	enum AttachmentType{ NO_ATTACHMENT = 0, ATTACHED_TO_PREVIOUS, ATTACHED_TO_NEXT,
+											 SKIP_BULGE_TO_PREVIOUS, SKIP_BULGE_TO_NEXT, LAST_ATTACHMENT_TYPE };
 
-	enum AddOrDeleteChoice{ NO_ADD_OR_DELETE = 0, ADD, DELETE, LAST_ADD_OR_DELETE_CHOICE };
+	enum MoveType{ NO_ADD_OR_DELETE = 0, ADD, DELETE, RESAMPLE, RESAMPLE_INTERNAL_LOCAL, LAST_ADD_OR_DELETE_CHOICE };
 
-	std::string to_string( MovingResidueCase const & moving_residue_case );
+	std::string to_string( AttachmentType const & attachment_type );
 
-	std::string to_string( AddOrDeleteChoice const & add_or_delete_choice_name );
+	std::string to_string( MoveType const & move_type_name );
 
+	/////////////////////////////////////////////////////////////////////
+	class Attachment: public utility::pointer::ReferenceCount {
+
+	public:
+
+		//constructor
+		Attachment();
+
+		Attachment( Size const & attachment_res,
+								AttachmentType const attachment_type );
+
+		Attachment( Attachment const & src );
+
+		Attachment &
+		operator=( Attachment const & src );
+
+		//destructor
+		~Attachment();
+
+	public:
+
+		void set_attached_res( Size const & setting ){ attached_res_ = setting; }
+		Size attached_res() const { return attached_res_; }
+
+		void set_attachment_type( AttachmentType const & setting ){ attachment_type_ = setting; }
+		AttachmentType attachment_type() const{ return attachment_type_; }
+
+	private:
+
+		Size attached_res_;
+		AttachmentType attachment_type_;
+
+	};
+
+	/////////////////////////////////////////////////////////////////////
 	class SWA_Move: public utility::pointer::ReferenceCount {
 
 	public:
@@ -46,9 +83,17 @@ namespace monte_carlo {
 		//constructor
 		SWA_Move();
 
-		SWA_Move( Chunk const & chunk,
-									MovingResidueCase const & moving_residue_case,
-									AddOrDeleteChoice const & add_or_delete_choice );
+		SWA_Move( MoveElement const & move_element,
+							Attachments const & attachments,
+							MoveType const & move_type );
+
+		SWA_Move( Size const moving_res,
+							Attachments const & attachments,
+							MoveType const & move_type );
+
+		SWA_Move( Size const moving_res,
+							Attachment const & attachments,
+							MoveType const & move_type );
 
 		SWA_Move( SWA_Move const & src );
 
@@ -60,27 +105,32 @@ namespace monte_carlo {
 
 	public:
 
-		void set_chunk( Chunk const & setting ){ chunk_ = setting; }
-		Chunk chunk() const{ return chunk_; }
+		void set_move_element( MoveElement const & setting ){ move_element_ = setting; }
+		MoveElement move_element() const{ return move_element_; }
 
-		void set_moving_residue_case( MovingResidueCase const & setting ){ moving_residue_case_ = setting; }
-		MovingResidueCase moving_residue_case() const{ return moving_residue_case_; }
+		Size moving_res() const;
 
-		void set_add_or_delete_choice( AddOrDeleteChoice const & setting ){ add_or_delete_choice_ = setting; }
-		AddOrDeleteChoice add_or_delete_choice() const{ return add_or_delete_choice_; }
+		Size attached_res() const;
+
+		void set_attachments( Attachments const & setting ){ attachments_ = setting; }
+		Attachments attachments() const{ return attachments_; }
+
+		void set_move_type( MoveType const & setting ){ move_type_ = setting; }
+		MoveType move_type() const{ return move_type_; }
 
 	private:
 
-		Chunk chunk_;
-		// later may want to add information on residues that are attached at 3' or 5' ends -- following wouldn't be a single Case
-		// but instead some kind of a map or list.
-		MovingResidueCase moving_residue_case_;
-		AddOrDeleteChoice add_or_delete_choice_;
+		MoveElement move_element_;
+		Attachments attachments_;
+		MoveType move_type_;
 
 	};
 
 	std::ostream &
-	operator <<( std::ostream & os, SWA_Move const swa_move );
+	operator <<( std::ostream & os, SWA_Move const & swa_move );
+
+	std::ostream &
+	operator <<( std::ostream & os, Attachment const & attachment );
 
 } //monte_carlo
 } //swa

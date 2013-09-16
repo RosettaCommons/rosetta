@@ -119,7 +119,7 @@ StackElecEnergy::clone() const
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 
-  
+
 void
 StackElecEnergy::setup_for_packing(
   pose::Pose  & pose,
@@ -127,23 +127,23 @@ StackElecEnergy::setup_for_packing(
   utility::vector1< bool > const & designing_residues
 ) const
 {
- 
+
   for ( Size ii = 1; ii <= designing_residues.size(); ++ii ) {
 		if ( designing_residues[ ii ] ) {
 			might_be_designing_ = true;
 			break;
 		}
 	}
-  
+
   pose.update_residue_neighbors();
-  
+
   rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
   rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
   rna_centroid_info.update( pose );
 
-  
+
 }
-  
+
 
 ///
 void
@@ -178,7 +178,7 @@ StackElecEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-  
+
 	Real score_base_base1( 0.0 ), score_base_base2( 0.0 );
 	Real score_base_bb1( 0.0 ), score_base_bb2( 0.0 );
 
@@ -218,54 +218,56 @@ StackElecEnergy::residue_pair_energy_one_way(
   rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
   utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
   Size const i( rsd1.seqpos() );
-  
+
   kinematics::Stub stub_i = base_stubs[i];
 
   if ( might_be_designing_ ){
     Vector centroid1 = rna_centroid_info.get_base_centroid( rsd1 );
 		stub_i = rna_centroid_info.get_base_coordinate_system( rsd1, centroid1 );
-  
   }
-  
+
   Real score( 0.0 );
 
   Matrix const M_i ( stub_i.M );
 
-  // Loop over base heavy atoms.
+  // Loop over base atoms.
   // If I want to generalize this to proteins, maybe could loop over "aromatic" atoms.
-  for ( Size m = 1; m <= rsd1.natoms(); ++m )  {
+	utility::vector1< Size > rsd1_base_atoms, rsd2_base_atoms;
+	get_rsd_base_atoms( rsd1, rsd1_base_atoms );
+	get_rsd_base_atoms( rsd2, rsd2_base_atoms );
 
-		// following contains virtual check.
-		if ( !is_rna_base( rsd1, m ) ) continue;
+  for ( Size q = 1; q <= rsd1_base_atoms.size(); q++ ){
 
-		Real const i_charge( rsd1.atomic_charge(m) );
-		if ( i_charge == 0.0 ) continue;
+		Size const & m = rsd1_base_atoms[ q ];
+		Real const & i_charge( rsd1.atomic_charge(m) );
+		if ( i_charge == Real(0.0) ) continue;
 
-    Vector const atom_i( rsd1.xyz( m ) );
+    Vector const & atom_i( rsd1.xyz( m ) );
 
     for ( Size n = 1; n <= rsd2.natoms(); ++n ) {
 
+			bool const base_base = rsd2_base_atoms.has_value( n );
+
+			if ( base_base_only_ && !base_base ) continue;
 			if ( rsd2.is_virtual( n ) ) continue;
-			if ( base_base_only_ && !is_rna_base( rsd2, n ) ) continue;
 
-			Real const j_charge( rsd2.atomic_charge(n) );
-			if ( j_charge == 0.0 ) continue;
-
-      Vector const atom_j( rsd2.xyz( n ) );
+			Real const & j_charge( rsd2.atomic_charge(n) );
+			if ( j_charge == Real(0.0) ) continue;
+      Vector const & atom_j( rsd2.xyz( n ) );
 
 			Real cos_kappa2( 0.0 ); // useful for output...
 			Real const stack_elec_score = get_stack_elec_score( atom_i, atom_j, i_charge, j_charge, M_i, cos_kappa2 );
 
 			score += stack_elec_score;
 
-			if ( is_rna_base( rsd2, n) ) {
+			if ( base_base ) {
 				score_base_base += stack_elec_score;
 			} else {
 				score_base_bb   += stack_elec_score;
 			}
 
 			//DEBUG
-			if ( std::abs( stack_elec_score ) > 0.1 && verbose_ ){
+			if ( verbose_ && std::abs( stack_elec_score ) > 0.1 ){
 				tr << rsd1.name1() << I( 2, rsd1.seqpos() ) ;
 				tr << " " << rsd1.type().atom_name(m) << " " << A( 4, rsd1.atom_type(m).name() );
 				tr << " [" << F(8, 3, i_charge) << "]";
@@ -302,6 +304,21 @@ StackElecEnergy::is_rna_base(
 	return ( m > rsd.first_sidechain_atom() && m <= rsd.nheavyatoms() );
 
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////
+void
+StackElecEnergy::get_rsd_base_atoms( core::conformation::Residue const & rsd,
+																		 utility::vector1< Size > & rsd_base_atoms ) const {
+	if ( !rsd.is_RNA() ) return;
+	for ( Size m = rsd.first_sidechain_atom() + 1; m <= rsd.nheavyatoms(); ++m )  {
+		if ( rsd.is_virtual( m ) ) continue;
+		rsd_base_atoms.push_back( m );
+	}
+	for ( Size m = rsd.first_sidechain_hydrogen(); m <= rsd.natoms(); ++m )  {
+		if ( is_rna_base( rsd, m ) ) rsd_base_atoms.push_back( m );
+	}
+}
+
 
 ////////////////////////////////////////////////////////////////////////////// (Need to condition this? Parin Sep 2, 2009)
 void

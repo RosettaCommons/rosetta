@@ -119,8 +119,8 @@ public:
     utility::vector1< bool > const &,
     utility::vector1< bool > const & designing_residues
   ) const;
-  
-  
+
+
 	virtual
 	Distance
 	atomic_interaction_cutoff() const;
@@ -154,13 +154,14 @@ private:
 
 
 
-	Vector
+Vector
 	get_stack_elec_deriv( Vector const & r_i,
 												Vector const & r_j,
 												Real const & i_charge,
 												Real const & j_charge,
 												Matrix const & M_i ) const;
 
+	inline
 	Real
 	residue_pair_energy_one_way(
 															conformation::Residue const & rsd1,
@@ -176,6 +177,10 @@ private:
 		 conformation::Residue const & rsd2,
 		 Size const & m, Size const & n ) const;
 
+	void
+	get_rsd_base_atoms( core::conformation::Residue const & rsd,
+											utility::vector1< Size > & rsd_base_atoms ) const;
+
 	bool
 	is_rna_base(
 							conformation::Residue const & rsd1,
@@ -189,7 +194,7 @@ private:
 	bool const base_base_only_;
 
 	bool const verbose_;
-  
+
   mutable bool might_be_designing_;
 
 };

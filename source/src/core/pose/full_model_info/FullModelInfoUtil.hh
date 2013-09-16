@@ -61,10 +61,16 @@ namespace full_model_info {
 	get_res_list_from_full_model_info_const( pose::Pose const & pose );
 
 	utility::vector1< utility::vector1< Size > >
-	get_moving_chunks_from_full_model_info( pose::Pose & pose );
+	get_move_elements_from_full_model_info( pose::Pose & pose );
 
 	utility::vector1< Size >
 	get_moving_res_from_full_model_info( pose::Pose & pose );
+
+	core::Size
+	sub_to_full( core::Size const i, core::pose::Pose & pose );
+
+	core::Size
+	full_to_sub( core::Size const i, core::pose::Pose & pose );
 
 }
 }

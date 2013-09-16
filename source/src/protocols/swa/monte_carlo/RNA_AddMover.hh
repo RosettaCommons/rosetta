@@ -25,6 +25,7 @@
 #include <protocols/swa/monte_carlo/SWA_Move.hh>
 #include <protocols/swa/monte_carlo/RNA_TorsionMover.fwd.hh>
 #include <protocols/swa/monte_carlo/RNA_AddMover.fwd.hh>
+#include <protocols/swa/rna/StepWiseRNA_Modeler.fwd.hh>
 
 
 namespace protocols {
@@ -43,8 +44,9 @@ public:
 	~RNA_AddMover();
 
 	using protocols::moves::Mover::apply;
+
   void
-	apply( core::pose::Pose & pose, Size const res_to_add, protocols::swa::monte_carlo::MovingResidueCase const moving_residue_case  );
+	apply( core::pose::Pose & pose, Size const res_to_add_in_full_model_numbering, Size const res_to_build_off_in_full_model_numbering );
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
@@ -66,11 +68,7 @@ public:
 
 	void set_minimize_single_res( Size const setting ){ minimize_single_res_ = setting; }
 
-	void set_num_random_samples( Size const & setting ){ num_random_samples_ = setting; }
-
-	void set_use_phenix_geo( Size const & setting ){ use_phenix_geo_ = setting; };
-
-	void set_erraser( Size const & setting ){ erraser_ = setting; };
+	void set_stepwise_rna_modeler( protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler );
 
 private:
 
@@ -86,14 +84,15 @@ private:
 	bool presample_by_swa_;
 	bool minimize_single_res_;
 	bool start_added_residue_in_aform_;
-	bool use_phenix_geo_;
-	bool erraser_;
 	Size internal_cycles_;
+
 	RNA_TorsionMoverOP rna_torsion_mover_;
 	core::Real sample_range_small_;
 	core::Real sample_range_large_;
 	core::Real kT_;
-	Size num_random_samples_;
+
+	protocols::swa::rna::StepWiseRNA_ModelerOP stepwise_rna_modeler_;
+
 };
 
 } // monte_carlo

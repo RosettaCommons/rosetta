@@ -640,7 +640,6 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 
 	string const input_score_prefix( option[ in::file::silent_score_prefix ]() );
 
-
 	std::set< string > wanted_scores;
 	if ( option[ in::file::silent_scores_wanted ].user() ) {
 		vector1< string > wanted = option[ in::file::silent_scores_wanted ]();

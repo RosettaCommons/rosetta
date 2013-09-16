@@ -139,6 +139,7 @@ stepwise_monte_carlo()
   using namespace core::pose::full_model_info;
   using namespace protocols::swa;
   using namespace protocols::swa::monte_carlo;
+	using namespace basic::options::OptionKeys::rna;
 
 	// Following could be generalized to fa_standard, after recent unification, but
 	// probably should wait for on-the-fly residue type generation.
@@ -170,7 +171,6 @@ stepwise_monte_carlo()
 
 	RNA_StepWiseMonteCarlo stepwise_rna_monte_carlo( scorefxn );
 	stepwise_rna_monte_carlo.set_verbose_scores( option[ verbose_scores ]() );
-	stepwise_rna_monte_carlo.set_use_phenix_geo( option[ basic::options::OptionKeys::rna::corrected_geo ]() );
 	stepwise_rna_monte_carlo.set_skip_deletions( option[ skip_deletions ]() );
 	stepwise_rna_monte_carlo.set_num_random_samples( option[ num_random_samples ]() );
 	stepwise_rna_monte_carlo.set_erraser( option[ erraser ]() );
@@ -180,6 +180,9 @@ stepwise_monte_carlo()
 	stepwise_rna_monte_carlo.set_switch_focus_frequency( option[ switch_focus_frequency ]() );
 	stepwise_rna_monte_carlo.set_sample_res( option[ sample_res ]() );
 	stepwise_rna_monte_carlo.set_just_min_after_mutation_frequency( option[ just_min_after_mutation_frequency ]() );
+
+	// following can be simplified if we make corrected_geo default to true from command-line.
+	stepwise_rna_monte_carlo.set_use_phenix_geo(  option[ corrected_geo ].user()  ? option[corrected_geo ]() : true );
 
 	// main loop
 	std::string out_tag;

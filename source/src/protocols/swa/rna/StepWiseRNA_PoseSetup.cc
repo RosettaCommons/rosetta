@@ -415,7 +415,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 		//NOTES: June 16, 2011
 		//Should LOWER_TERMINUS and UPPER_TERMINUS be removed as well? LOWER_TERMINUS does determine the position of  OP2 and OP1?
 		//Also should then check that pose.residue_type(i).variant_types() is the empty?
-		//Alternatively could convert to FARFAR way and use the NEW_copy_dof that match atom names (MORE ROBUST!). This way doesn't need to remove any variant type from the chunk_pose?
+		//Alternatively could convert to FARFAR way and use the NEW_copy_dof that match atom names (MORE ROBUST!). This way doesn't need to remove any variant type from the moving_element_pose?
 
 		utility::vector1< std::string > variant_type_list;
 		variant_type_list.push_back( "VIRTUAL_PHOSPHATE" );

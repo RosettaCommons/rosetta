@@ -1162,7 +1162,7 @@ namespace rna {
 
 			//			TR << "HEY! " <<  input_struct_definition( working_moving_res ) << " " <<  input_struct_definition( working_moving_res + 1 ) << std::endl;
 
-			//Check if this is a suite right between two previously built chunks.
+			//Check if this is a suite right between two previously built moving_elements.
 			if ( working_moving_res_list.size() == 1 ){
 
 				if ( working_moving_res < nres ){

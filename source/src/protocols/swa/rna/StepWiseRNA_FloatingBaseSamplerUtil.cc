@@ -767,11 +767,11 @@ setup_residue_at_origin_list(
 
 bool
 check_floating_base_chain_closable( core::Size const & reference_res,
-															 utility::vector1< pose_data_struct2 > pose_data_list,
-															 utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
-															 core::kinematics::Stub const & moving_res_base_stub,
-															 bool const Is_prepend,
-															 core::Size const gap_size ){
+																		utility::vector1< core::pose::PoseOP > pose_data_list,
+																		utility::vector1 < core::conformation::ResidueOP > const & rsd_at_origin_list,
+																		core::kinematics::Stub const & moving_res_base_stub,
+																		bool const Is_prepend,
+																		core::Size const gap_size ){
 
 	using namespace core::conformation;
 
@@ -788,7 +788,7 @@ check_floating_base_chain_closable( core::Size const & reference_res,
 
 		for ( Size sugar_ID = 1; sugar_ID <= pose_data_list.size(); sugar_ID++ ){
 
-			pose::Pose const & pose = ( *pose_data_list[sugar_ID].pose_OP );
+			pose::Pose const & pose = ( *pose_data_list[sugar_ID] );
 
 			if ( Check_chain_closable( atom_coordinate, pose.residue( reference_res ).xyz( reference_atom_name ), gap_size ) ) return true;
 

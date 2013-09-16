@@ -92,16 +92,20 @@ namespace monte_carlo {
 		Size const random_idx = int( RG.uniform() * moving_res_list.size() ) + 1;
 		Size const i = moving_res_list[ random_idx ];
 
-		MovingResidueCase moving_residue_case = get_moving_residue_case( pose, i );
+		Attachments attachments = get_attachments( pose, pose::full_model_info::sub_to_full( i, pose ) );
 
-		if ( moving_residue_case == CHAIN_TERMINUS_3PRIME  || moving_residue_case == CHAIN_TERMINUS_5PRIME ){
+		runtime_assert( attachments.size() > 0 );
+
+		if ( attachments.size() == 1 ){
+
+			Attachment const & attachment = attachments[ 1 ];
 
 			// an edge residue -- change both its nucleoside & suite -- can go crazy.
 			Size const nucleoside_num = i;
 			sample_near_nucleoside_torsion( pose, nucleoside_num, sample_range);
 
 			Size suite_num( 0 );
-			if ( moving_residue_case == CHAIN_TERMINUS_3PRIME ) suite_num = i-1;
+			if ( attachment.attachment_type() == ATTACHED_TO_PREVIOUS ) suite_num = i - 1;
 			else suite_num = i;
 
 			if ( RG.uniform() < 0.5) {
@@ -113,7 +117,9 @@ namespace monte_carlo {
 			}
 
 		} else {
-			runtime_assert( moving_residue_case == INTERNAL ); // cannot handle floating base yet.
+
+			// internal.
+			runtime_assert( attachments.size() == 2 );
 
 			// don't do anything super-crazy -- either do previous suite, current nucleoside, or next suite.
 			Real const random_number = RG.uniform();

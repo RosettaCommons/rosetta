@@ -1326,26 +1326,26 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 
 			//if(score > best_score + score_diff_cut_) break; //Comment out on Dec 11, 2011.
 
-			PoseOP native_pose_OP = new Pose;
-			( *native_pose_OP ) = ( *job_parameters_->working_native_pose() ); //Hard copy...
+			PoseOP native = new Pose;
+			( *native ) = ( *job_parameters_->working_native_pose() ); //Hard copy...
 
-			align_poses( ( *native_pose_OP ), "native", pose, tag, working_best_alignment, align_only_over_base_atoms_ );
+			align_poses( ( *native ), "native", pose, tag, working_best_alignment, align_only_over_base_atoms_ );
 
 
-			s->add_energy( "NEW_all_rms", rms_at_corresponding_heavy_atoms( pose, *native_pose_OP ) );
-			s->add_energy( "NEW_loop_rmsd", rmsd_over_residue_list( pose, *native_pose_OP, rmsd_res_list, full_to_sub, Is_prepend_map, false, false ) );
+			s->add_energy( "NEW_all_rms", rms_at_corresponding_heavy_atoms( pose, *native ) );
+			s->add_energy( "NEW_loop_rmsd", rmsd_over_residue_list( pose, *native, rmsd_res_list, full_to_sub, Is_prepend_map, false, false ) );
 
 			///////////////////////////////////////////////////////////////////////////////////////////////
 
 			if ( working_native_alignment.size() != 0 ){ //user specify which residue to align with native.
-				align_poses( ( *native_pose_OP ), "native", pose, tag, working_native_alignment, align_only_over_base_atoms_ );
+				align_poses( ( *native ), "native", pose, tag, working_native_alignment, align_only_over_base_atoms_ );
 			} else{ //default
-				align_poses( ( *native_pose_OP ), "native", pose, tag, working_best_alignment, align_only_over_base_atoms_ ); //REDUNDANT
+				align_poses( ( *native ), "native", pose, tag, working_best_alignment, align_only_over_base_atoms_ ); //REDUNDANT
 			}
-			s->add_energy( "NEW_O_loop_rmsd", rmsd_over_residue_list( pose, *native_pose_OP, rmsd_res_list, full_to_sub, Is_prepend_map, false, false ) );
+			s->add_energy( "NEW_O_loop_rmsd", rmsd_over_residue_list( pose, *native, rmsd_res_list, full_to_sub, Is_prepend_map, false, false ) );
 
 			if ( Is_full_length_pose ){
-				s->add_energy( "NEW_Full_L_rmsd", full_length_rmsd_over_residue_list( pose, *native_pose_OP, rmsd_res_list, full_sequence, false, false ) );
+				s->add_energy( "NEW_Full_L_rmsd", full_length_rmsd_over_residue_list( pose, *native, rmsd_res_list, full_sequence, false, false ) );
 			}
 
 			////////Simple loop RMSD exclude only virtual atoms in native_pdb (mostly just the native virtual_res)//////////////
@@ -1353,18 +1353,18 @@ SlicedPoseJobParameters::~SlicedPoseJobParameters() {}
 			remove_all_variant_types( curr_pose_no_variants ); //This remove all virtual_atoms!
 
 			if ( working_native_alignment.size() != 0 ){ //user specify which residue to align with native.
-				align_poses( ( *native_pose_OP ), "native", curr_pose_no_variants, tag + "_no_variants", working_native_alignment, align_only_over_base_atoms_ );
+				align_poses( ( *native ), "native", curr_pose_no_variants, tag + "_no_variants", working_native_alignment, align_only_over_base_atoms_ );
 			} else{ //default
-				align_poses( ( *native_pose_OP ), "native", curr_pose_no_variants, tag + "_no_variants", working_best_alignment, align_only_over_base_atoms_ );
+				align_poses( ( *native ), "native", curr_pose_no_variants, tag + "_no_variants", working_best_alignment, align_only_over_base_atoms_ );
 			}
 
-			s->add_energy( "NEW_NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants, *native_pose_OP, rmsd_res_list, full_to_sub, Is_prepend_map, false /*verbose*/, true /*ignore_virtual_atom*/ ) );
+			s->add_energy( "NEW_NAT_rmsd", rmsd_over_residue_list( curr_pose_no_variants, *native, rmsd_res_list, full_to_sub, Is_prepend_map, false /*verbose*/, true /*ignore_virtual_atom*/ ) );
 
 			////March 7, 2011....Output BASE-PAIRS STATISTIC///////////////////////////////
 			//utility::vector1< core::Size > const working_rmsd_res_list=apply_full_to_sub_mapping(rmsd_res_list, job_parameters_);
 
 			//Nov 01, 2011 WARNING THIS currently does not work if there is protonated Adenosine!
-			//add_base_pair_stats( s, pose, *native_pose_OP, working_rmsd_res_list);
+			//add_base_pair_stats( s, pose, *native, working_rmsd_res_list);
 
 
 			if ( rename_tags_ ){

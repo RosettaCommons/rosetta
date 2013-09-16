@@ -35,17 +35,24 @@ namespace rna {
 
 	public:
 
-	//constructor
-		StepWiseRNA_Modeler( core::Size const sample_res, core::scoring::ScoreFunctionOP scorefxn );
+		//constructor
+		StepWiseRNA_Modeler( core::scoring::ScoreFunctionOP scorefxn );
 
-		// should also make the following as an overloaded constructor.
-		//StepWiseRNA_Modeler( utility::vector1< core::Size > const moving_res,
-		//										 core::scoring::ScoreFunctionOP scorefxn );
+		//constructor
+		StepWiseRNA_Modeler( core::Size const sample_res, core::scoring::ScoreFunctionOP scorefxn );
 
 		//destructor
 		~StepWiseRNA_Modeler();
 
+		StepWiseRNA_Modeler( StepWiseRNA_Modeler const & src );
+
+		StepWiseRNA_ModelerOP clone_modeler() const;
+
+		StepWiseRNA_Modeler & operator=( StepWiseRNA_Modeler const & src );
+
 	public:
+
+		void set_moving_res_and_reset( core::Size const moving_res );
 
 		virtual void apply( core::pose::Pose & pose );
 
@@ -167,9 +174,6 @@ namespace rna {
 
 		void set_minimizer_rename_tag( bool const & setting ){ minimizer_rename_tag_ = setting; }
 
-
-	public:
-
 		StepWiseRNA_JobParametersOP
 		setup_job_parameters_for_swa( utility::vector1< Size > moving_res, core::pose::Pose const & pose );
 
@@ -178,10 +182,18 @@ namespace rna {
 
 	private:
 
-		StepWiseRNA_JobParametersCOP job_parameters_; //need to use the full_to_sub map...should convert to const style.. Parin Feb 28, 2010
+		void initialize_variables();
+
+		void
+		add_to_pose_list( utility::vector1< core::pose::PoseOP > & pose_data_list, core::pose::Pose const & pose, std::string const pose_tag ) const;
+
+	private:
+
+		StepWiseRNA_JobParametersCOP job_parameters_;
 		core::pose::PoseCOP native_pose_;
 
-		utility::vector1< core::Size > const moving_res_;
+		utility::vector1< core::Size > moving_res_list_;
+
 		utility::vector1< core::Size > fixed_res_;
 		utility::vector1< core::Size > minimize_res_;
 		core::scoring::ScoreFunctionOP scorefxn_;

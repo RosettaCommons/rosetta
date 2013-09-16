@@ -1298,7 +1298,7 @@ rotate( pose::Pose & pose, Matrix const M,
 			}
 		}
 
-		runtime_assert ( ( num_five_prime_connections == 1  && num_three_prime_connections == 0 ) ||
+		runtime_assert ( ( num_five_prime_connections  == 1 && num_three_prime_connections == 0 ) ||
 										 ( num_three_prime_connections == 1 && num_five_prime_connections == 0 ) );
 
 		// fold tree!

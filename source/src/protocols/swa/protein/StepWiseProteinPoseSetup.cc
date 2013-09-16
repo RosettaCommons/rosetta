@@ -145,7 +145,7 @@ namespace protein {
 
 		if ( verbose_ )		pose.dump_pdb( "START2x.pdb" );
 
-		// Later this will become more sophisticated, allowing for several pose chunks to be read in,
+		// Later this will become more sophisticated, allowing for several pose moving_elements to be read in,
 		//  aligned to a sequence alignment, and in-between residues samples (stored in "moving_residues_" ).
 
 		utility::vector1< Size > start_res_all, end_res_all;

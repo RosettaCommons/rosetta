@@ -45,6 +45,8 @@
 #include <core/pose/Pose.hh> //June 02, 2011
 
 
+using namespace core::pose;
+
 namespace protocols {
 namespace swa {
 namespace rna {
@@ -105,7 +107,7 @@ floating_base_chain_break_screening( core::pose::Pose & chain_break_screening_po
 
 utility::vector1< FB_Pose_Data >
 floating_base_chain_closure_setup(
-	utility::vector1< pose_data_struct2 > const & input_pose_data_list,
+	utility::vector1< PoseOP > const & input_pose_data_list,
 	FloatingBaseChainClosureJobParameter const & FB_job_params,
 	core::scoring::ScoreFunctionOP const & atr_rep_screening_scorefxn,
 	core::scoring::ScoreFunctionOP const & full_scorefxn,
@@ -126,14 +128,14 @@ floating_base_chain_closure_sampling(
 );
 
 
-utility::vector1< pose_data_struct2 >
+utility::vector1< PoseOP >
 floating_base_chain_closure_post_process( utility::vector1< FB_Pose_Data > & pose_data_list,
 	                                       core::pose::Pose & viewer_pose,
 																				 core::scoring::ScoreFunctionOP const & sampling_scorefxn,
 																		 		 FloatingBaseChainClosureJobParameter const & FB_job_params,
 																				 bool const rm_chain_break_jump_point = true );
 
-utility::vector1< pose_data_struct2 >
+utility::vector1< PoseOP >
 sample_virtual_ribose_and_bulge_and_close_chain(
 	core::pose::Pose & viewer_pose,
 	FloatingBaseChainClosureJobParameter const & FB_job_params,
@@ -152,7 +154,7 @@ sample_virtual_ribose_and_bulge_and_close_chain(
 void
 minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 																		utility::vector1< FloatingBaseChainClosureJobParameter > const & FB_JP_list,
-																		utility::vector1< pose_data_struct2 > & pose_data_list,
+																		utility::vector1< PoseOP > & pose_data_list,
 																		core::scoring::ScoreFunctionOP const & sampling_scorefxn,
 																		StepWiseRNA_JobParametersCOP const & job_parameters,
 																		bool const virtual_ribose_is_from_prior_step = true );
@@ -164,7 +166,7 @@ void
 copy_bulge_res_and_ribose_torsion( FloatingBaseChainClosureJobParameter const & FB_job_params, core::pose::Pose & pose, core::pose::Pose const & template_pose );
 
 void
-enumerate_starting_pose_data_list( utility::vector1< pose_data_struct2 > & starting_pose_data_list,
+enumerate_starting_pose_data_list( utility::vector1< PoseOP > & starting_pose_data_list,
 																utility::vector1< FloatingBaseChainClosureJobParameter > const & FB_CC_JP_list,
 																core::pose::Pose const & pose );
 
