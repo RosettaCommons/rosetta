@@ -24,6 +24,7 @@ namespace OptionKeys {
 namespace in { extern BooleanOptionKey const in; }
 namespace in { extern StringOptionKey const Ntermini; }
 namespace in { extern StringOptionKey const Ctermini; }
+namespace in { extern BooleanOptionKey const use_truncated_termini; }
 namespace in { extern BooleanOptionKey const ignore_unrecognized_res; }
 namespace in { extern BooleanOptionKey const ignore_waters; }
 namespace in { extern BooleanOptionKey const add_orbitals; }
@@ -32,13 +33,12 @@ namespace in { extern BooleanOptionKey const include_surfaces; }
 namespace in { extern BooleanOptionKey const enable_branching; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_res; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_water; }
+namespace in { extern BooleanOptionKey const preserve_crystinfo; }
 namespace in { extern BooleanOptionKey const detect_oops; }
 namespace in { extern BooleanOptionKey const detect_disulf; }
 namespace in { extern RealOptionKey const detect_disulf_tolerance; }
 namespace in { extern FileOptionKey const fix_disulf; }
 namespace in { extern BooleanOptionKey const missing_density_to_jump; }
-namespace in { extern BooleanOptionKey const preserve_crystinfo; }
-namespace in { extern BooleanOptionKey const use_truncated_termini; }
 namespace in { extern BooleanOptionKey const use_stupid_foldtree_format; }
 namespace in { extern IntegerVectorOptionKey const target_residues; }
 namespace in { extern IntegerVectorOptionKey const replonly_residues; }

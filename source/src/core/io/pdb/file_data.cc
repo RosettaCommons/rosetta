@@ -9,8 +9,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/file_data.cc
-/// @brief
+/// @brief  Method definitions for FileData and related classes.
 /// @author Sergey Lyskov
+
+// Note: AVOID ACCESSING THE OPTIONS SYSTEM DIRECTLY IN THIS FILE, ESPECIALLY FOR PDB INPUT!
+// Doing so will mean the Resource Manager may not work properly.
+// Instead, modify FileDataOptions to include the option.
+
 
 // Unit headers
 #include <core/io/pdb/Field.hh>
@@ -27,15 +32,15 @@
 // Project headers
 #include <core/types.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/Patch.hh>
-#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/Patch.hh>
+#include <core/chemical/AA.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/PDBInfo.hh>
@@ -58,7 +63,6 @@
 #include <numeric/random/random.hh>
 
 // Utility headers
-
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <utility/io/ozstream.hh>
@@ -146,132 +150,18 @@ ResidueInformation::operator!=(
 }
 
 
-/////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+FileData::FileData() :
+	remarks(new pose::Remarks),
+	header(0)
+{}
 
 FileData::~FileData()
-{
-}
-
-void
-FileData::append_residue(
-	core::conformation::Residue const & rsd,
-	core::Size & atom_index,
-	core::pose::Pose const & pose, // for pdb numbering and chains, could change to PDBInfo if necessary (but casting here is perhaps best)
-	bool /*preserve_crystinfo*/
-)
-{
-	using namespace core;
-
-	//extract PDBInfo pointer
-	pose::PDBInfoCOP pdb_info = pose.pdb_info();
-
-	bool use_PDB(false);
-	if (
-			pdb_info
-			&& !(pdb_info->obsolete())
-			&& !(basic::options::option[ basic::options::OptionKeys::out::file::renumber_pdb ].value()) ) {
-		use_PDB = true;
-	}
-
-	bool renumber_chains(false);
-	if ( basic::options::option[ basic::options::OptionKeys::out::file::per_chain_renumbering ].value() ) {
-		renumber_chains = true;
-	}
+{}
 
 
-	for ( Size j=1; j<= rsd.natoms(); ++j ) {
-		conformation::Atom const & atom( rsd.atom(j) );
-
-		//skip outputting virtual atom unless specified
-		if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&
-				rsd.atom_type(j).is_virtual() ) continue;
-
-		//fpd optionally don't output centroids
-		if ( basic::options::option[ basic::options::OptionKeys::out::file::no_output_cen ]() &&
-				rsd.atom_name(j) == " CEN" ) continue;
-
-		// skip outputting zero occupancy atoms if specified
-		if ( use_PDB && basic::options::option[ basic::options::OptionKeys::out::file::suppress_zero_occ_pdb_output ]() &&
-			( rsd.seqpos() <= pdb_info->nres() ) ) {
-			if ( pdb_info->occupancy( rsd.seqpos(), j ) < 0.0001 ) continue;
-		}
-
-		++atom_index;
-
-		AtomInformation ai;
-		AtomInformation orb;//have to initialize this out here.
-
-		ai.isHet = (!rsd.is_polymer() || rsd.is_ligand());
-		ai.serial = atom_index;
-		ai.name = rsd.atom_name(j);
-		ai.resName = rsd.name3();
-		ai.x = atom.xyz()(1);
-		ai.y = atom.xyz()(2);
-		ai.z = atom.xyz()(3);
-		ai.occupancy = 1.0; // dummy occupancy, can be overridden by PDBInfo
-
-		// output with pdb specific info if possible
-		if ( use_PDB && rsd.seqpos() <= pdb_info->nres() ) {
-			// residue
-			ai.chainID = pdb_info->chain( rsd.seqpos() );
-			if ( ai.chainID == pose::PDBInfo::empty_record() ) { // safety
-				TR.Warning << "PDBInfo chain id was left as character '" << pose::PDBInfo::empty_record()
-					<< "' denoting empty record, for convenience replacing with space" << std::endl;
-				ai.chainID = ' ';
-			}
-			ai.resSeq = pdb_info->number( rsd.seqpos() );
-			ai.iCode = pdb_info->icode( rsd.seqpos() );
-
-			// atom
-			if ( pdb_info->is_het( rsd.seqpos(), j ) ) { // override standard het only if .is_het() is true
-				ai.isHet = true;
-			}
-			ai.altLoc = pdb_info->alt_loc( rsd.seqpos(), j );
-			ai.occupancy = pdb_info->occupancy( rsd.seqpos(), j );
-			ai.temperature = pdb_info->temperature( rsd.seqpos(), j );
-		} else {
-			// residue
-			runtime_assert( rsd.chain() > 0 );
-			ai.chainID = chr_chains[ ( rsd.chain() - 1 ) % chr_chains.size() ];
-			ai.resSeq = rsd.seqpos();
-
-			// if option is specified, renumber per-chain
-			if ( renumber_chains ) {
-				utility::vector1< Size > const &chn_ends = pose.conformation().chain_endings();
-				//for(int i=1; i<=chn_ends.size(); ++i) {
-				for ( Size i=1; i<=chn_ends.size(); ++i ) {
-					if (chn_ends[i] < rsd.seqpos()) ai.resSeq = rsd.seqpos() - chn_ends[i];
-				}
-			}
-
-			// fix for >10k residues
-			ai.resSeq = ai.resSeq % 10000;
-		}
-
-		// element
-		// (written by fpd; moved here by Labonte)
-		core::chemical::AtomTypeSet const &ats = rsd.type().atom_type_set();
-		ai.element = ats[atom.type()].element();
-		if (ai.element.length() == 1) ai.element = " "+ai.element;
-
-		// 'chains' is member data
-		if ( chains.size() < Size(rsd.chain() + 1) ) chains.resize( rsd.chain() + 1 );
-		AtomChain & AC(chains[rsd.chain()]);
-		AC.push_back(ai);
-	}
-}
-
-/// @details
-/// init FileData structure from pose object.
-/// read atoms/residue information from Pose object and put it in FileData object.
-void FileData::init_from_pose(core::pose::Pose const & pose)
-{
-	FileDataOptions options;
-	init_from_pose( pose, options );
-}
-
-
-///@details prepare the HeaderInformation data structure;
+// Header Information methods /////////////////////////////////////////////////
+/// @details prepare the HeaderInformation data structure;
 void
 FileData::initialize_header_information() {
 	header = new HeaderInformation();
@@ -282,15 +172,15 @@ FileData::header_information() const {
 	return header;
 }
 
-///@details Store information in the header record into the HeaderInformation
-///@remarks HeaderInformation must be created explicitly before it can be filled!
+/// @details Store information in the header record into the HeaderInformation
+/// @remarks HeaderInformation must be created explicitly before it can be filled!
 void
 FileData::store_header_record(Record & R) {
 	header->store_record(R);
 }
 
-///@details Populate the header records from the data in the HeaderInformation
-///@remarks HeaderInformation must be created explicitly before it can be filled!
+/// @details Populate the header records from the data in the HeaderInformation
+/// @remarks HeaderInformation must be created explicitly before it can be filled!
 void
 FileData::fill_header_records(
 	std::vector<Record> & VR
@@ -298,16 +188,16 @@ FileData::fill_header_records(
 	header->fill_records(VR);
 }
 
-///@details finalize storing records from the data in the HeaderInformation
-///@remarks HeaderInformation must be created explicitly before it can be filled!
+/// @details finalize storing records from the data in the HeaderInformation
+/// @remarks HeaderInformation must be created explicitly before it can be filled!
 void
 FileData::finalize_header_information() {
 	header->finalize_parse();
-
 }
 
 
-// Store (non-standard) polymer linkages in a map.
+// Store (non-standard) polymer linkages in a map. ////////////////////////////
+/// @author Labonte
 void
 FileData::store_link_record(Record & record)
 {
@@ -340,11 +230,13 @@ FileData::store_link_record(Record & record)
 }
 
 
+// Heterogen Information methods //////////////////////////////////////////////
 // Store heterogen name information in map.
 /// @remarks  heterogen "names" for carbohydrates (from "Rosetta-ready" PDB files) instead have the name field parsed
 /// to extract the base (non-variant) ResidueType needed for a particular residue.
+/// @author   Labonte
 void
-FileData::store_heterogen_names(std::string const & hetID, std::string const & text)
+FileData::store_heterogen_names(std::string const & hetID, std::string & text)
 {
 	using namespace std;
 	using namespace core::chemical::carbohydrates;
@@ -358,20 +250,27 @@ FileData::store_heterogen_names(std::string const & hetID, std::string const & t
 		return;
 	}
 
-	string name;
-	if (heterogen_names.count(hetID)) {
-		name = heterogen_names[hetID];
-		name.append(rstripped_whitespace(text));
-	} else {
-		name = text;
-		strip_whitespace(name);
-	}
-
 	// If the hetID is found in the map of Rosetta-allowed carbohydrate 3-letter codes....
 	if (CarbohydrateInfo::code_to_root_map().count(hetID)) {
-		parse_heterogen_name_for_carbohydrate_residues(name);
+		strip_whitespace(text);
+		parse_heterogen_name_for_carbohydrate_residues(text);
 	} else {
-		heterogen_names[hetID] = name;  // Non-carbohydrate heterogen names are simply stored in the standard PDB way.
+		// Search through current list of HETNAM records: append or create records as needed.
+		bool record_found = false;
+		Size const n_heterogen_names = heterogen_names.size();
+		for (uint i = 1; i <= n_heterogen_names; ++i) {
+			// If a record already exists with this hetID, this is a continuation line; append.
+			if (hetID == heterogen_names[i].first) {
+				heterogen_names[i].second.append(rstripped_whitespace(text));
+				record_found = true;
+				break;
+			}
+		}
+		if (!record_found) {
+			// Non-carbohydrate heterogen names are simply stored in the standard PDB way.
+			strip_whitespace(text);
+			heterogen_names.push_back(make_pair(hetID, text));
+		}
 	}
 }
 
@@ -385,6 +284,7 @@ FileData::store_heterogen_names(std::string const & hetID, std::string const & t
 /// use, e.g., ->4)-alpha-D-glucopyranosyl or ->6)-alpha-D-glucopyranosyl or ->4)-alpha-D-glucofuranosyl, etc.  This
 /// function fills that map from a "Rosetta-ready" HETNAM text field, which includes the resID information (in the
 /// same order as in an ATOM or HETATOM record) followed by a space and the base (non-variant) ResidueType.
+/// @author Labonte
 void
 FileData::parse_heterogen_name_for_carbohydrate_residues(std::string const & text)
 {
@@ -401,19 +301,171 @@ FileData::parse_heterogen_name_for_carbohydrate_residues(std::string const & tex
 }
 
 
-/// @details
-/// init FileData structure from pose object.
-/// read atoms/residue information from Pose object and put it in FileData object using options defined in FileDataOptions.
-void FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & options)
+// Pose to FileData methods ///////////////////////////////////////////////////
+// Append pdb information to FileData for a single residue.
+void
+FileData::append_residue(
+	core::conformation::Residue const & rsd,
+	core::Size & atom_index,
+	// for pdb numbering and chains, could change to PDBInfo if necessary (but casting here is perhaps best)
+	core::pose::Pose const & pose,
+	bool /*preserve_crystinfo*/
+)
 {
 	using namespace core;
-	core::Size const nres( pose.total_residue() );
-	core::Size atom_index(0);
+	using namespace basic::options;
+	using namespace utility;
 
-	//get OP to PDBInfo object for remarks header
+	// Extract PDBInfo pointer.
+	pose::PDBInfoCOP pdb_info = pose.pdb_info();
+
+	// Setup options.
+	bool use_PDB(false);
+	if (
+			pdb_info
+			&& !(pdb_info->obsolete())
+			&& rsd.seqpos() <= pdb_info->nres()
+			&& !(option[ OptionKeys::out::file::renumber_pdb ].value()) ) {
+		use_PDB = true;
+	}
+
+	bool renumber_chains(false);
+	if ( option[ OptionKeys::out::file::per_chain_renumbering ].value() ) {
+		renumber_chains = true;
+	}
+
+
+	// Determine residue identifier information.
+	char chain;  // chain ID
+	int number;  // sequence position
+	char i_code; // insertion code
+
+	// Use PDB-specific information?
+	if (use_PDB) {
+		chain = pdb_info->chain(rsd.seqpos());
+		if ( chain == pose::PDBInfo::empty_record() ) {  // safety
+			TR.Warning << "PDBInfo chain id was left as character '" << pose::PDBInfo::empty_record()
+					<< "', denoting an empty record; for convenience, replacing with space." << std::endl;
+			chain = ' ';
+		}
+		number = pdb_info->number(rsd.seqpos());
+		i_code = pdb_info->icode(rsd.seqpos());
+
+	// ...or not?
+	} else {
+		runtime_assert(rsd.chain() > 0);
+
+		chain = chr_chains[(rsd.chain() - 1) % chr_chains.size()];
+		number = rsd.seqpos();
+		i_code = ' ';
+
+		// If option is specified, renumber per-chain.
+		if (renumber_chains) {
+			vector1<uint> const & chn_ends = pose.conformation().chain_endings();
+			for (uint i = 1; i <= chn_ends.size(); ++i) {
+				if (chn_ends[i] < rsd.seqpos()) {
+					number = rsd.seqpos() - chn_ends[i];
+				}
+			}
+		}
+
+		// Fix for >10k residues.
+		number %= 10000;
+	}
+
+
+	// Generate HETNAM data, if applicable.
+	// TODO: For now, only output HETNAM records for saccharide residues, but in the future, outputting HETNAM records
+	// for any HETATM residues could be done.
+	if (rsd.is_carbohydrate()) {
+		string const & hetID = rsd.name3();
+		string resnum = print_i("%4d", number);
+		resnum.resize(4);
+		string const resID = string(1, chain) + resnum + string(1, i_code);
+
+		string const text = resID + " " + residue_type_base_name(rsd.type());
+
+		heterogen_names.push_back(make_pair(hetID, text));
+	}
+
+
+	// Loop through each atom in the residue and generate ATOM or HETATM data.
+	for ( Size j = 1; j <= rsd.natoms(); ++j ) {
+		//skip outputting virtual atom unless specified
+		if ( !option[ OptionKeys::out::file::output_virtual ]() &&
+				rsd.atom_type(j).is_virtual() ) continue;
+
+		//fpd optionally don't output centroids
+		if ( option[ OptionKeys::out::file::no_output_cen ]() &&
+				rsd.atom_name(j) == " CEN" ) continue;
+
+		// skip outputting zero occupancy atoms if specified
+		if ( use_PDB && option[ OptionKeys::out::file::suppress_zero_occ_pdb_output ]() &&
+				( rsd.seqpos() <= pdb_info->nres() ) ) {
+			if ( pdb_info->occupancy( rsd.seqpos(), j ) < 0.0001 ) continue;
+		}
+
+		conformation::Atom const & atom( rsd.atom(j) );
+
+		++atom_index;
+
+		AtomInformation ai;
+		AtomInformation orb;  //have to initialize this out here.
+
+		ai.isHet = (!rsd.is_polymer() || rsd.is_ligand());
+		ai.chainID = chain;
+		ai.resSeq = number;
+		ai.iCode = i_code;
+		ai.serial = atom_index;
+		ai.name = rsd.atom_name(j);
+		ai.resName = rsd.name3();
+		ai.x = atom.xyz()(1);
+		ai.y = atom.xyz()(2);
+		ai.z = atom.xyz()(3);
+		ai.occupancy = 1.0; // dummy occupancy, can be overridden by PDBInfo
+
+		// Output with pdb-specific info if possible.
+		if ( use_PDB ) {
+			if ( pdb_info->is_het( rsd.seqpos(), j ) ) { // override standard het only if .is_het() is true
+				ai.isHet = true;
+			}
+			ai.altLoc = pdb_info->alt_loc( rsd.seqpos(), j );
+			ai.occupancy = pdb_info->occupancy( rsd.seqpos(), j );
+			ai.temperature = pdb_info->temperature( rsd.seqpos(), j );
+		}
+
+		// Element
+		// (written by fpd; moved here by Labonte)
+		core::chemical::AtomTypeSet const &ats = rsd.type().atom_type_set();
+		ai.element = ats[atom.type()].element();
+		if (ai.element.length() == 1) ai.element = " "+ai.element;
+
+		// 'chains' is member data
+		if ( chains.size() < Size(rsd.chain() + 1) ) chains.resize( rsd.chain() + 1 );
+		AtomChain & AC(chains[rsd.chain()]);
+		AC.push_back(ai);
+	}
+}
+
+/// @details Read atoms/residue information from Pose object and put it in FileData object.
+void
+FileData::init_from_pose(core::pose::Pose const & pose)
+{
+	FileDataOptions options;
+	init_from_pose( pose, options );
+}
+
+/// @details Read atoms/residue information from Pose object and put it in FileData object using options defined in
+/// FileDataOptions.
+void
+FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & options)
+{
+	using namespace core;
 	using core::pose::PDBInfo;
+
+	// Get Title Section information.
 	if( (options.preserve_header() == true || options.preserve_crystinfo() == true ) && pose.pdb_info() ) {
-		*remarks = pose.pdb_info()->remarks();
+		*remarks = pose.pdb_info()->remarks();  // Get OP to PDBInfo object for remarks.
 		if(pose.pdb_info()->header_information()){
 			header = new HeaderInformation(*(pose.pdb_info()->header_information()));
 		} else {
@@ -421,10 +473,19 @@ void FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions con
 		}
 	}
 
-	chains.resize(0);
+	// Get Connectivity Annotation Section information.
+	// TODO
+
+	// Get Crystallographic and Coordinate Transformation Section information.
 	if ( options.preserve_crystinfo() && pose.pdb_info() ) {
 		crystinfo = pose.pdb_info()->crystinfo();
 	}
+
+	// Get Coordinate Section information, as well as Heterogen Section information.
+	Size const nres( pose.total_residue() );
+	Size atom_index(0);
+
+	chains.resize(0);
 
 	for ( Size i=1; i<= nres; ++i ) {
 		conformation::Residue const & rsd( pose.residue(i) );
@@ -432,17 +493,17 @@ void FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions con
 	}
 }
 
-/// @details
-/// a lightweight, direct way of limiting pose pdb output to a subset of residues
-/// the alternative of constructing new subposes for output only would be unnecessary/less efficient (?)
-void FileData::init_from_pose(
+/// @details A lightweight, direct way of limiting pose pdb output to a subset of residues.
+/// @note The alternative of constructing new subposes for output only would be unnecessary/less efficient (?)
+void
+FileData::init_from_pose(
 	core::pose::Pose const & pose,
 	utility::vector1< core::Size > const & residue_indices
 )
 {
 	using namespace core;
-	core::Size const nres( pose.total_residue() );
-	core::Size atom_index(0);
+	Size const nres( pose.total_residue() );
+	Size atom_index(0);
 
 	chains.resize(0); // 'chains' is member data
 	for ( utility::vector1< Size >::const_iterator index( residue_indices.begin() ),
@@ -454,7 +515,8 @@ void FileData::init_from_pose(
 
 
 /// @details Convert given Pose object in to PDB format and send it to the given stream.
-void FileData::dump_pdb(
+void
+FileData::dump_pdb(
 	core::pose::Pose const & pose,
 	std::ostream & out,
 	string const & /* tag */,
@@ -471,9 +533,10 @@ void FileData::dump_pdb(
 	write_additional_pdb_data( out, pose, fd, write_fold_tree );
 }
 
-/// @details Convert given Pose object in to PDB format and save it to 'file_name' file.
-/// return: true if operation was completed without error, false other wise.
-bool FileData::dump_pdb(
+/// @details Convert given Pose object into PDB format and save it to 'file_name' file.
+/// @return true if operation was completed without error, false otherwise.
+bool
+FileData::dump_pdb(
 	core::pose::Pose const & pose,
 	string const & file_name,
 	string const & tag,
@@ -491,7 +554,7 @@ bool FileData::dump_pdb(
 	return true;
 }
 
-/// @details Convert given Pose object in to PDB format and send it to the given stream.
+/// @details Convert given Pose object into PDB format and send it to the given stream.
 /// only the residues corresponding to indices in 'residue_indices' will be output
 void
 FileData::dump_pdb(
@@ -504,22 +567,19 @@ FileData::dump_pdb(
 	FileData fd;
 	string data;
 	fd.init_from_pose( pose, residue_indices );
-//	data = "MODEL     " + tag + "\n";
-//	out.write( data.c_str(), data.size() );
 
 	data = PDB_DReader::createPDBData(fd);
 	out.write( data.c_str(), data.size() );
-
-//	data = "ENDMDL\n";
-//	out.write( data.c_str(), data.size() );
 
 	write_additional_pdb_data( out, pose, fd );
 }
 
 
+
 /// @details Debug/Info function.
 /// Output FileData object to TR like stream in human redable format.
-std::ostream& operator <<(std::ostream &os, FileData const & fd)
+std::ostream&
+operator <<(std::ostream &os, FileData const & fd)
 {
 	os << "<FileData>{";
 	for(Size i=0; i<fd.chains.size(); i++) {
@@ -533,10 +593,12 @@ std::ostream& operator <<(std::ostream &os, FileData const & fd)
 }
 
 
+
 /// @details Convert FileData in to set of residues, sequences, coordinates.
 /// this is a convenience function, no magic done here.
 /// Well, maybe a little.
-void FileData::create_working_data(
+void
+FileData::create_working_data(
 	utility::vector1< ResidueInformation > & rinfo
 )
 {
@@ -544,17 +606,16 @@ void FileData::create_working_data(
 	create_working_data( rinfo, options );
 }
 
+
 /// @details Convert FileData in to set of residues, sequences, coordinates.
 /// this is a convenience function, no magic done here.
 /// Well, maybe a little.
-void FileData::create_working_data(
+void
+FileData::create_working_data(
 	utility::vector1< ResidueInformation > & rinfo,
 	FileDataOptions const & options
 )
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-
 	rinfo.clear();
 	std::string buf;  buf.resize(1024);
 
@@ -590,11 +651,10 @@ void FileData::create_working_data(
 	}
 
 	convert_nucleic_acid_residue_info_to_standard( rinfo );
-
 }
 
 
-// @brief what to do if occupancy is 0.0?
+// what to do if occupancy is 0.0?
 //chu modify the logic how atoms are treated with zero or negative occupancy field.
 bool
 FileData::update_atom_information_based_on_occupancy( AtomInformation & ai, FileDataOptions const & options, std::string const & resid ) const {
@@ -619,9 +679,11 @@ FileData::update_atom_information_based_on_occupancy( AtomInformation & ai, File
 }
 
 
-// Helper Functions
+
+// Helper Functions ///////////////////////////////////////////////////////////
 /// @details Remove spaces from given string.
-inline std::string local_strip_whitespace( std::string const & name )
+inline std::string
+local_strip_whitespace( std::string const & name )
 {
 	std::string trimmed_name( name );
 	left_justify( trimmed_name ); trim( trimmed_name ); // simpler way to dothis?
@@ -629,12 +691,13 @@ inline std::string local_strip_whitespace( std::string const & name )
 }
 
 
-/// @brief The missing density regions in the input pdb should have 0.000 in the placeholders
+/// @details The missing density regions in the input pdb should have 0.000 in the placeholders
 /// this routine puts random coordinates wherever there is 0.000 for mainchain atoms.
 /// tex - that's a stupid way of defining missing density, as atoms can be at the origin for other
 /// reasons. This has been updated to check for occupancy to define missing density rather than atoms
 /// located at the origin.
-void FileData::randomize_missing_coords( AtomInformation & ai ) const {
+void
+FileData::randomize_missing_coords( AtomInformation & ai ) const {
 	//	if( ai.resSeq == 1 && ai.name == " N  ") return;//ignore first atom. Rosetta pdbs start with 0.000
 	if ( ai.x == 0.000 && ai.y == 0.000 && ai.z == 0.000 && ai.occupancy <= 0.0 ){
 		TR << "Randomized: " << ai.name << " " << ai.resName << "  " << ai.resSeq << std::endl;
@@ -648,7 +711,8 @@ void FileData::randomize_missing_coords( AtomInformation & ai ) const {
 	return;
 }
 
-/// @brief Writes
+
+// Adds data to the end of a pdb that are not a standard part of the pdb format.
 void
 write_additional_pdb_data(
 	std::ostream & out,
@@ -657,13 +721,16 @@ write_additional_pdb_data(
 	bool write_fold_tree
 )
 {
-
 	using namespace basic::options;
 
 	// added by rhiju --> "CONECT" lines. Useful for coarse-grained/centroid poses, so that
 	//  rasmol/pymol draws bonds between atoms 'bonded' in Rosetta that are far apart.
 	//  perhaps turn on with a flag?
-	if ( (pose.total_residue() >= 1 && pose.residue(1).is_coarse()) || option[ OptionKeys::inout::dump_connect_info]() )  dump_connect_info( pose, out );
+	// CONECT reading and writing should really be handled by FileData. ~Labonte
+	if ( (pose.total_residue() >= 1 && pose.residue(1).is_coarse()) ||
+			option[ OptionKeys::inout::dump_connect_info]() ) {
+		dump_connect_info( pose, out );
+	}
 
 	if ( write_fold_tree || option[ OptionKeys::inout::fold_tree_io ].user() ) {
 		out << "REMARK " << pose.fold_tree();
@@ -675,17 +742,17 @@ write_additional_pdb_data(
 			out << "REMARK PARENT    " << value.substr(0,5) << std::endl;
 		}
 	}
-		if ( basic::options::option[ OptionKeys::out::file::pdb_comments]() ) {
-	 	                        out << "##Begin comments##" << std::endl;
-	 	                        using namespace std;
-	 	                        map< string, string > const comments = core::pose::get_all_comments(pose);
-	 	                        for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
-	 	                                out << i->first<<" "<<i->second << std::endl;
-	 	                        }
-	 	                        out << "##End comments##" << std::endl;
-	 }
+	if ( basic::options::option[ OptionKeys::out::file::pdb_comments]() ) {
+		out << "##Begin comments##" << std::endl;
+		using namespace std;
+		map< string, string > const comments = core::pose::get_all_comments(pose);
+		for( std::map< string, string >::const_iterator i = comments.begin(); i != comments.end(); ++i ){
+			out << i->first<<" "<<i->second << std::endl;
+		}
+		out << "##End comments##" << std::endl;
+	}
 
-	if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals]){
+	if (basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals]){
 		static std::string const chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890" );
 		for(core::Size i=1; i <=pose.n_residue(); ++i){
 			core::conformation::Residue rsd(pose.residue(i));
@@ -727,10 +794,10 @@ write_additional_pdb_data(
 		}
 	}
 	
-	//Added by Daniel-Adriano Silva, used to write the PDBInfoLabels to the REMARK
-	//First test that the pdb_info() is not empty
+	// Added by Daniel-Adriano Silva, used to write the PDBInfoLabels to the REMARK
+	// First test that the pdb_info() is not empty
 	if ( pose.pdb_info() ){
-		//The output the labels
+		// Then output the labels
 		for (core::Size i=1; i<=pose.n_residue(); ++i) {
 			utility::vector1 < std::string > tmp_v_reslabels =  pose.pdb_info()->get_reslabels(i);
 			core::Size numLables=tmp_v_reslabels.size();
@@ -746,6 +813,9 @@ write_additional_pdb_data(
 	}
 	
 }
+
+
+// FileData to Pose ///////////////////////////////////////////////////////////
 
 void
 build_pose_from_pdb_as_is(
@@ -1093,7 +1163,7 @@ build_pose_as_is1(
 		}
 		// A new chain because this is a lower terminus (see logic above for designation)
 		// and if we're not checking it then it's a different chain from the previous
-		else if ( ( is_lower_terminus && check_Ntermini_for_this_chain || !same_chain_prev )
+		else if ( ( (is_lower_terminus && check_Ntermini_for_this_chain) || !same_chain_prev )
 						|| is_branch_lower_terminus ||
 						!new_rsd->is_polymer() ||
 						!pose.residue_type(old_nres).is_polymer() ||
@@ -1296,6 +1366,7 @@ build_pose_as_is1(
 	core::pose::initialize_disulfide_bonds(pose);
 
 	//kdrew: if detect_oops flag is set, initialize oops
+	// This option should probably be moved to FileDataOptions. ~Labonte
 	if ( basic::options::option[ basic::options::OptionKeys::in::detect_oops ].user() )
 	{
 		core::pose::ncbb::initialize_oops(pose);
@@ -1362,6 +1433,7 @@ build_pose_as_is1(
 	}
 }
 
+
 ///@details The input rsd_type_list are all the residue types that have
 ///the same 3 letter code as pdb_name. Return true if the list is
 ///non-empty and false otherwise.  If no residue types match, then
@@ -1372,7 +1444,8 @@ build_pose_as_is1(
 /// -in:ignore_unrecognized_res
 /// -in:remember_unrecognized_waters
 /// -in:remember_unrecognized_res
-bool is_residue_type_recognized(
+bool
+is_residue_type_recognized(
 	Size const pdb_residue_index,
 	std::string const & pdb_name,
 	core::chemical::ResidueTypeCOPs const & rsd_type_list,
@@ -1385,8 +1458,10 @@ bool is_residue_type_recognized(
 	utility::vector1<core::Real> & UA_temps){
 
 	FileDataOptions options;
-	return is_residue_type_recognized( pdb_residue_index, pdb_name, rsd_type_list, xyz, rtemp, UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options );
+	return is_residue_type_recognized( pdb_residue_index, pdb_name, rsd_type_list, xyz, rtemp,
+			UA_res_nums, UA_res_names, UA_atom_names, UA_coords, UA_temps, options );
 }
+
 
 ///@details The input rsd_type_list are all the residue types that have
 ///the same 3 letter code as pdb_name. Return true if the list is
@@ -1398,7 +1473,8 @@ bool is_residue_type_recognized(
 /// -ignore_unrecognized_res
 /// -remember_unrecognized_waters
 /// -remember_unrecognized_res
-bool is_residue_type_recognized(
+bool
+is_residue_type_recognized(
 	Size const pdb_residue_index,
 	std::string const & pdb_name,
 	core::chemical::ResidueTypeCOPs const & rsd_type_list,
@@ -1447,6 +1523,8 @@ bool is_residue_type_recognized(
 	return false;
 }
 
+
+
 void
 pose_from_pose(
 	pose::Pose & new_pose,
@@ -1456,6 +1534,7 @@ pose_from_pose(
 	FileDataOptions options;
 	pose_from_pose( new_pose, old_pose, residue_indices, options );
 }
+
 
 void
 pose_from_pose(
@@ -1471,6 +1550,7 @@ pose_from_pose(
 	pose_from_pose( new_pose, old_pose, *residue_set,  residue_indices, options);
 }
 
+
 void
 pose_from_pose(
 	pose::Pose & new_pose,
@@ -1481,6 +1561,7 @@ pose_from_pose(
 	FileDataOptions options;
 	pose_from_pose( new_pose, old_pose, residue_set, residue_indices, options );
 }
+
 
 void
 pose_from_pose(

@@ -9,49 +9,46 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/pose_io.cc
-/// @brief
+/// @brief  method definitions for input/output functions for use with Pose
 /// @author
 
 // Unit headers
 #include <core/io/pdb/pose_io.hh>
 
+// Project headers
 #include <core/types.hh>
-
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/tree/Atom.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
-#include <ObjexxFCL/format.hh>
-
+// Basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-
-// option key includes
-
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/io/ozstream.hh>
-
 #include <utility/vector1.hh>
+
+// External headers
+#include <ObjexxFCL/format.hh>
 #include <boost/foreach.hpp>
 
-//Auto Headers
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/tree/Atom.hh>
 
 #define foreach BOOST_FOREACH
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+
+//namespace ObjexxFCL { namespace fmt { } }
+
+using namespace ObjexxFCL::fmt; // AUTO USING NS
 
 
 // A temporary copy of the pose_from_pdb code from the demo directory.
@@ -217,6 +214,7 @@ dump_pdb_residue(
 	}
 }
 
+/// @note Python compatible wrapper avoiding reference parameter
 void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
@@ -252,7 +250,7 @@ dump_pdb(
 }
 
 
-/// @brief dump_pdb depending on visibility of tracer
+// dump_pdb depending on visibility of tracer
 /// @param[in] tr   output performed if tracer is visible or if passed dummy
 ///  tracer core::io::pdb::TR_dump_pdb_dummy
 void
@@ -273,7 +271,7 @@ traced_dump_pdb(
 }
 
 
-/// @brief dump_pdb depending on visibility of tracer
+// dump_pdb depending on visibility of tracer
 /// @param[in] tr   output performed if tracer is visible or if passed dummy
 ///   tracer core::io::pdb::TR_dump_pdb_dummy
 void

@@ -2,95 +2,6 @@
 @page full_options_list
 Mini rosetta command line option descriptions. <i>(This is automatically generated file, do not edit!)</i>
 <ul>
-<li><h2>rigid</h2>
-<dl>
-<dt><b>-rigid</b> \<Boolean\><dt>
-<dd>rigid option group</dd><br>
-</dl>
-<dl>
-<dt><b>-chainbreak_bias</b> \<Real\><dt>
-<dd>Strength of bias applied to the translation component of rigid body moves to close chainbreak</dd><br>
-<dd>Default: 0.00</dd><br>
-</dl>
-<dl>
-<dt><b>-close_loops</b> \<Boolean\><dt>
-<dd>Perform loop closure at the end of medal</dd><br>
-<dd>Default: true</dd><br>
-</dl>
-<dl>
-<dt><b>-fragment_cycles</b> \<Integer\><dt>
-<dd>Number of fragment insertion/rigid body cycles</dd><br>
-<dd>Default: 10000</dd><br>
-</dl>
-<dl>
-<dt><b>-log_accepted_moves</b> \<Boolean\><dt>
-<dd>Write accepted moves to silent file output</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-max_ca_ca_dist</b> \<Real\><dt>
-<dd>Maximum distance between consecutive CA atoms before chunk partitioning occurs</dd><br>
-<dd>Default: 5.0</dd><br>
-</dl>
-<dl>
-<dt><b>-medium_range_seqsep</b> \<Integer\><dt>
-<dd>Constraints with sequence separation less than x are scored</dd><br>
-<dd>Default: 30</dd><br>
-</dl>
-<dl>
-<dt><b>-patch</b> \<File\><dt>
-<dd>Patch file containing energy terms and their respective weights</dd><br>
-</dl>
-<dl>
-<dt><b>-residues_backbone_move</b> \<Integer\><dt>
-<dd>Number of residues perturbed by a backbone move</dd><br>
-<dd>Default: 5</dd><br>
-</dl>
-<dl>
-<dt><b>-rotation</b> \<Real\><dt>
-<dd>Rotation magnitude</dd><br>
-<dd>Default: 2.5</dd><br>
-</dl>
-<dl>
-<dt><b>-sampling_prob</b> \<File\><dt>
-<dd>Normalized, per-residue sampling probabilities</dd><br>
-</dl>
-<dl>
-<dt><b>-score</b> \<String\><dt>
-<dd>Centroid-level score function</dd><br>
-<dd>Default: "score3"</dd><br>
-</dl>
-<dl>
-<dt><b>-sequence_separation</b> \<Integer\><dt>
-<dd>Maximum sequence separation for scoring chainbreaks</dd><br>
-<dd>Default: 20</dd><br>
-</dl>
-<dl>
-<dt><b>-short_range_seqsep</b> \<Integer\><dt>
-<dd>Constraints with sequence separation less than x are scored</dd><br>
-<dd>Default: 15</dd><br>
-</dl>
-<dl>
-<dt><b>-small_cycles</b> \<Integer\><dt>
-<dd>Number of small/shear cycles</dd><br>
-<dd>Default: 8000</dd><br>
-</dl>
-<dl>
-<dt><b>-stages</b> \<Integer\><dt>
-<dd>Number of stages over which to interpolate ramped values</dd><br>
-<dd>Default: 4</dd><br>
-</dl>
-<dl>
-<dt><b>-temperature</b> \<Real\><dt>
-<dd>Monte Carlo temperature</dd><br>
-<dd>Default: 2.0</dd><br>
-</dl>
-<dl>
-<dt><b>-translation</b> \<Real\><dt>
-<dd>Translation magnitude</dd><br>
-<dd>Default: 0.5</dd><br>
-</dl>
- </li>
 <li><h2>in</h2>
 <dl>
 <dt><b>-in</b> \<Boolean\><dt>
@@ -105,6 +16,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-Ctermini</b> \<String\><dt>
 <dd>Put full C termini on pose</dd><br>
 <dd>Default: "ALL"</dd><br>
+</dl>
+<dl>
+<dt><b>-use_truncated_termini</b> \<Boolean\><dt>
+<dd>Will not add extra OXT/Hs at termini if not in input structure</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-ignore_unrecognized_res</b> \<Boolean\><dt>
@@ -147,13 +63,18 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-preserve_crystinfo</b> \<Boolean\><dt>
+<dd>Preserve information important for crystal refinement (B factors +CRYST1 line)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-detect_oops</b> \<Boolean\><dt>
 <dd>Detect oligooxopiperazines (oops) and add required constraints</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-detect_disulf</b> \<Boolean\><dt>
-<dd>Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides. Setting `-detect_disulf true` will force aggressive disulfide detection in centroid poses based on CB distance. Setting `-detect_disulf false` disables all detection, even in full atom poses. Note that disabling disulfides causes severe clashes for native disulfides.</dd><br>
+<dd>Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides.  Setting '-detect_disulf true' will force aggressive disulfide detection in centroid poses based on CB distance.  Setting '-detect_disulf false' disables all detection, even in full atom poses.  Note that disabling disulfides causes severe clashes for native disulfides.</dd><br>
 </dl>
 <dl>
 <dt><b>-detect_disulf_tolerance</b> \<Real\><dt>
@@ -162,21 +83,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-fix_disulf</b> \<File\><dt>
-<dd>Specify disulfide connectivity via a file. Disulfides are specified as two whitespace-seperated residue indicies per line. This option replaces the old '-run:fix_disulf' option.</dd><br>
+<dd>Specify disulfide connectivity via a file.  Disulfides are specified as two whitespace-seperated residue indices per line.  This option replaces the old '-run:fix_disulf' option.</dd><br>
 </dl>
 <dl>
 <dt><b>-missing_density_to_jump</b> \<Boolean\><dt>
 <dd>If missing density is found in input pdbs, replace with a jump</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-preserve_crystinfo</b> \<Boolean\><dt>
-<dd>Preserve information important for crystal refinement (B factors +CRYST1 line)</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-use_truncated_termini</b> \<Boolean\><dt>
-<dd>Will not add extra OXT/Hs at termini if not in input structure</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -492,22 +403,22 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-silent_select_range_start</b> \<Integer\><dt>
-<dd>Select a ranged subset of decoys from every silent-file read. start at this decoy.</dd><br>
+<dd>Select a ranged subset of decoys from every silent-file read.  Start at this decoy.</dd><br>
 <dd>Default: -1</dd><br>
 </dl>
 <dl>
 <dt><b>-silent_select_range_mul</b> \<Integer\><dt>
-<dd>Select a blocksize multiplier. This param pasically multiplies -silent_select_range_start. E.g. when set to, say, 5, -silent_select_range_start 0,1,2,3,4 will result in decoys being read starting from 0,5,10,15,20</dd><br>
+<dd>Select a blocksize multiplier.  This param pasically multiplies -silent_select_range_start.  E.g. when set to, say, 5, -silent_select_range_start 0,1,2,3,4 will result in decoys being read starting from 0,5,10,15,20</dd><br>
 <dd>Default: 1</dd><br>
 </dl>
 <dl>
 <dt><b>-silent_select_range_len</b> \<Integer\><dt>
-<dd>Select a ranged subset of decoys from every silent-file read. start at this decoy.</dd><br>
+<dd>Select a ranged subset of decoys from every silent-file read.  Start at this decoy.</dd><br>
 <dd>Default: 1</dd><br>
 </dl>
 <dl>
 <dt><b>-skip_failed_simulations</b> \<Boolean\><dt>
-<dd>Ignore failed simulations (prefixed by W_) during silent file input. Existing behavior is preserved by default.</dd><br>
+<dd>Ignore failed simulations (prefixed by W_) during silent file input.  Existing behavior is preserved by default.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -565,7 +476,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-repair_sidechains</b> \<Boolean\><dt>
-<dd>attempt a repack/minmize to repair sidechain problems, such as proline geometry and his tautomerization</dd><br>
+<dd>Attempt a repack/minmize to repair sidechain problems, such as proline geometry and His tautomerization</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -685,6 +596,511 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
  </li>
+<li><h2>inout</h2>
+<dl>
+<dt><b>-inout</b> \<Boolean\><dt>
+<dd>Ouput option group</dd><br>
+</dl>
+<dl>
+<dt><b>-fold_tree_io</b> \<Boolean\><dt>
+<dd>Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)</dd><br>
+</dl>
+<dl>
+<dt><b>-dump_connect_info</b> \<Boolean\><dt>
+<dd>Output CONECT info between bonded atoms that are beyond 3.0 A apart; useful for coarse-grained representations.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
+<li><h2>inout:dbms</h2>
+<dl>
+<dt><b>-dbms</b> \<Boolean\><dt>
+<dd>database option group</dd><br>
+</dl>
+<dl>
+<dt><b>-mode</b> \<String\><dt>
+<dd>Which backend to use by default for database access.  Note, usage of 'mysql' requires building with 'extras=mysql' and usage of 'postgres' requires building with 'extras=postgres'</dd><br>
+<dd>Default: "sqlite3"</dd><br>
+</dl>
+<dl>
+<dt><b>-database_name</b> \<String\><dt>
+<dd>name of the database.  For sqlite3 databases this is a path in the file system usually with the '.db3' extension.</dd><br>
+</dl>
+<dl>
+<dt><b>-pq_schema</b> \<String\><dt>
+<dd>For posgres databases, specify the default schema with the database.  For PostgreSQL database, schemas are like namespaces.</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-host</b> \<String\><dt>
+<dd>default hostname of database server</dd><br>
+</dl>
+<dl>
+<dt><b>-user</b> \<String\><dt>
+<dd>default username for database server access</dd><br>
+</dl>
+<dl>
+<dt><b>-password</b> \<String\><dt>
+<dd>default password for database server access</dd><br>
+</dl>
+<dl>
+<dt><b>-port</b> \<Integer\><dt>
+<dd>default port for database server access</dd><br>
+</dl>
+<dl>
+<dt><b>-readonly</b> \<Boolean\><dt>
+<dd>open sqlite3 database in read-only mode by default</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-separate_db_per_mpi_process</b> \<Boolean\><dt>
+<dd>In MPI mode, open a separate sqlite3 database for each process with extension _<mpi_rank> and write partitioned schema to that database.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-database_partition</b> \<Integer\><dt>
+<dd>Open a sepearte sqlite3 database with the extension _<partition> and write a partitioned schema to that database.</dd><br>
+<dd>Default: -1</dd><br>
+</dl>
+<dl>
+<dt><b>-use_compact_residue_schema</b> \<Boolean\><dt>
+<dd>Store all the atoms for a residue in a binary silent file style blob.  Sacrifices analyzability for scalability.  If you don't know if you want this you probably don't.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
+<li><h2>out</h2>
+<dl>
+<dt><b>-out</b> \<Boolean\><dt>
+<dd>Ouput option group</dd><br>
+</dl>
+<dl>
+<dt><b>-overwrite</b> \<Boolean\><dt>
+<dd>Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)</dd><br>
+</dl>
+<dl>
+<dt><b>-nstruct</b> \<Integer\><dt>
+<dd>Number of times to process each input PDB</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-shuffle_nstruct</b> \<Integer\><dt>
+<dd>total number of decoys to produce</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-prefix</b> \<String\><dt>
+<dd>Prefix for output structure names, like old -series code</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-suffix</b> \<String\><dt>
+<dd>Suffix for output structure names</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-force_output_name</b> \<String\><dt>
+<dd>Force output name to be this.  Needed for some cluster environments.</dd><br>
+</dl>
+<dl>
+<dt><b>-no_nstruct_label</b> \<Boolean\><dt>
+<dd>Do not tag the first output structure with _0001</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-pdb_gz</b> \<Boolean\><dt>
+<dd>Compress (gzip) output pdbs</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-pdb</b> \<Boolean\><dt>
+<dd>Output PDBs</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-silent_gz</b> \<Boolean\><dt>
+<dd>Use gzipped compressed output (silent run level)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-use_database</b> \<Boolean\><dt>
+<dd>Write out structures to database.  Specify database via -inout:dbms:database_name and wanted structures with -in:file:tags</dd><br>
+</dl>
+<dl>
+<dt><b>-database_protocol_id</b> \<Integer\><dt>
+<dd>Manually specify a protocol ID for database output.  MPI-distributed jobs are the only time when you will want to use this.  It is a temporary workaround to a limitation of the MPI distributor</dd><br>
+</dl>
+<dl>
+<dt><b>-database_filter</b> \<StringVector\><dt>
+<dd>Filter to use with database output.  Arguments for filter follow filter name</dd><br>
+</dl>
+<dl>
+<dt><b>-resume_batch</b> \<IntegerVector\><dt>
+<dd>Specify 1 or more batch ids to finish an incomplete protocol.  Only works with the DatabaseJobOutputter.  The new jobs will be generated under a new protocol and batch ID</dd><br>
+</dl>
+<dl>
+<dt><b>-nooutput</b> \<Boolean\><dt>
+<dd>Surpress outputfiles</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-output</b> \<Boolean\><dt>
+<dd>Force outputfiles</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-scorecut</b> \<Real\><dt>
+<dd>Only output lowest energy fraction of structures - default 1.0, i.e. output all </dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-show_accessed_options</b> \<Boolean\><dt>
+<dd>In the end of the run show options that has been accessed.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-sf</b> \<File\><dt>
+<dd>filename for score output</dd><br>
+<dd>Default: "score.fsc"</dd><br>
+</dl>
+<dl>
+<dt><b>-mute</b> \<StringVector\><dt>
+<dd>Mute specified Tracer channels; specify 'all' to mute all channels.</dd><br>
+</dl>
+<dl>
+<dt><b>-unmute</b> \<StringVector\><dt>
+<dd>UnMute specified Tracer channels; specify 'all' to unmute all channels.</dd><br>
+</dl>
+<dl>
+<dt><b>-level</b> \<Integer\><dt>
+<dd>Level of Tracer output, any level above will be muted.  Availible levels: 0 - fatal, 100 - error, 200 - warning, 300 - info, 400 - debug, 500 - trace. For additional info please see: src/basic/Tracer.hh and doc page 'Tracer, tool for debug IO'. Default output level is 'info': 300</dd><br>
+<dd>Default: 300</dd><br>
+</dl>
+<dl>
+<dt><b>-levels</b> \<StringVector\><dt>
+<dd>Specified hierarchical mute levels for individual channels in following format: -levels all:300 core.pose:500.  Numeric values could be substituted with mute level names like: debug, info, error etc.  Please note that all:<num> is synonymous to -level:<num></dd><br>
+</dl>
+<dl>
+<dt><b>-std_IO_exit_error_code</b> \<Integer\><dt>
+<dd>Specify error code that will be used to exit if std::IO error detected.  This is useful if you want to detect situations like: Rosetta output was redirected to a file but the disk got full, etc.  Default value is 0 which means that error detection code is turned off.</dd><br>
+<dd>Default: 0</dd><br>
+</dl>
+<dl>
+<dt><b>-chname</b> \<Boolean\><dt>
+<dd>Add Tracer chanel names to output</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-chtimestamp</b> \<Boolean\><dt>
+<dd>Add timestamp to tracer channel name</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-dry_run</b> \<Boolean\><dt>
+<dd>If set ComparingTracer will not generate any asserts, and save all Tracer output to a file</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-mpi_tracer_to_file</b> \<String\><dt>
+<dd>MPI ONLY: Redirect all tracer output to this file with '_<mpi_rank>' appened as a suffix</dd><br>
+<dd>Default: "tracer.out"</dd><br>
+</dl>
+<dl>
+<dt><b>-user_tag</b> \<String\><dt>
+<dd>add this tag to structure tags: e.g., a process id</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-output_tag</b> \<String\><dt>
+<dd>Prefix output files with this tag, if code checks for it</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+ </li>
+<li><h2>out:file</h2>
+<dl>
+<dt><b>-file</b> \<Boolean\><dt>
+<dd>Output file option group</dd><br>
+</dl>
+<dl>
+<dt><b>-o</b> \<String\><dt>
+<dd>Name of output file</dd><br>
+</dl>
+<dl>
+<dt><b>-design_contrast</b> \<File\><dt>
+<dd>output list comparing design sequence to native sequence</dd><br>
+<dd>Default: "redesign"</dd><br>
+</dl>
+<dl>
+<dt><b>-residue_type_set</b> \<String\><dt>
+<dd>ResidueTypeSet for output files</dd><br>
+<dd>Default: "fa_standard"</dd><br>
+</dl>
+<dl>
+<dt><b>-atom_tree_diff</b> \<String\><dt>
+<dd>Use atom_tree_diff file output, use filename after this flag</dd><br>
+<dd>Default: "default.out"</dd><br>
+</dl>
+<dl>
+<dt><b>-atom_tree_diff_bb</b> \<Integer\><dt>
+<dd>For atom_tree_diff output, how many digits of precision to use for backbone dihedrals</dd><br>
+<dd>Default: 6</dd><br>
+</dl>
+<dl>
+<dt><b>-atom_tree_diff_sc</b> \<Integer\><dt>
+<dd>For atom_tree_diff output, how many digits of precision to use for sidechain dihedrals</dd><br>
+<dd>Default: 4</dd><br>
+</dl>
+<dl>
+<dt><b>-atom_tree_diff_bl</b> \<Integer\><dt>
+<dd>For atom_tree_diff output, how many digits of precision to use for bond lengths</dd><br>
+<dd>Default: 2</dd><br>
+</dl>
+<dl>
+<dt><b>-alignment</b> \<String\><dt>
+<dd>Output file for sequence alignment</dd><br>
+<dd>Default: "out.align"</dd><br>
+</dl>
+<dl>
+<dt><b>-score_only</b> \<String\><dt>
+<dd>Only output scores, no silent files or pdb files</dd><br>
+<dd>Default: "default.sc"</dd><br>
+</dl>
+<dl>
+<dt><b>-scorefile</b> \<String\><dt>
+<dd>Write a scorefile to the provided filename</dd><br>
+<dd>Default: "default.sc"</dd><br>
+</dl>
+<dl>
+<dt><b>-silent</b> \<String\><dt>
+<dd>Use silent file output, use filename after this flag</dd><br>
+<dd>Default: "default.out"</dd><br>
+</dl>
+<dl>
+<dt><b>-silent_struct_type</b> \<String\><dt>
+<dd>Type of SilentStruct object to use in silent-file output</dd><br>
+<dd>Default: "protein"</dd><br>
+</dl>
+<dl>
+<dt><b>-silent_print_all_score_headers</b> \<Boolean\><dt>
+<dd>Print a SCORE header for every SilentStruct in a silent-file</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-silent_decoytime</b> \<Boolean\><dt>
+<dd>Add time since last silent structure was written to score line</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-silent_comment_bound</b> \<Integer\><dt>
+<dd>String data longer than this ends up as remark rather than in score line</dd><br>
+<dd>Default: 15</dd><br>
+</dl>
+<dl>
+<dt><b>-raw</b> \<Boolean\><dt>
+<dd>Use silent-type file output</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-weight_silent_scores</b> \<Boolean\><dt>
+<dd>Weight scores in silent-file output.</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-silent_preserve_H</b> \<Boolean\><dt>
+<dd>Preserve hydrogrens in PDB silent-file format.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-fullatom</b> \<Boolean\><dt>
+<dd>Enable full-atom output of PDB or centroid structures</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-suppress_zero_occ_pdb_output</b> \<Boolean\><dt>
+<dd>Suppress output of atoms with zero (or negative) occupancy</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-output_virtual</b> \<Boolean\><dt>
+<dd>Output virtual atoms in output of PDB</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-no_output_cen</b> \<Boolean\><dt>
+<dd>Omit outputting centroids</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-output_orbitals</b> \<Boolean\><dt>
+<dd>Output all orbitals into PDB.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-renumber_pdb</b> \<Boolean\><dt>
+<dd>Use Rosetta residue numbering and arbitrary chain labels in pdb output.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-pdb_parents</b> \<Boolean\><dt>
+<dd>If the pose contains a comment named template, print this as a REMARK in the pdb file</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-per_chain_renumbering</b> \<Boolean\><dt>
+<dd>When used in conjunction with renumber_pdb, restarts residue numbering at each chain.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-output_torsions</b> \<Boolean\><dt>
+<dd>Output phi, psi, and omega torsions in the PDB output if the pose is ideal.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-pdb_comments</b> \<Boolean\><dt>
+<dd>If the pose contains any comment print it as a COMMENT in the pdb file.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-force_nonideal_structure</b> \<Boolean\><dt>
+<dd>Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-write_pdb_link_records</b> \<Boolean\><dt>
+<dd>Sets whether or not the LINK records in PDB files are written.  The default value is false.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-dont_rewrite_dunbrack_database</b> \<Boolean\><dt>
+<dd>Disables the default behavior of rewriting the Dunrack library in binary format if a binary version is not found</dd><br>
+</dl>
+<dl>
+<dt><b>-frag_prefix</b> \<String\><dt>
+<dd>Prefix for fragment output</dd><br>
+<dd>Default: "default.frags"</dd><br>
+</dl>
+ </li>
+<li><h2>out:path</h2>
+<dl>
+<dt><b>-all</b> \<Path\><dt>
+<dd>Default file output path</dd><br>
+<dd>Default: "."</dd><br>
+</dl>
+<dl>
+<dt><b>-path</b> \<Path\><dt>
+<dd>Default file output path</dd><br>
+<dd>Default: "."</dd><br>
+</dl>
+<dl>
+<dt><b>-pdb</b> \<Path\><dt>
+<dd>PDB file output path</dd><br>
+</dl>
+<dl>
+<dt><b>-score</b> \<Path\><dt>
+<dd>Score file output path</dd><br>
+</dl>
+<dl>
+<dt><b>-movie</b> \<Path\><dt>
+<dd>Movie file output path</dd><br>
+</dl>
+<dl>
+<dt><b>-scratch</b> \<Path\><dt>
+<dd>use this path as scratch drive</dd><br>
+<dd>Default: ['"/scratch/USERS/"']</dd><br>
+</dl>
+<dl>
+<dt><b>-mpi_rank_dir</b> \<Boolean\><dt>
+<dd>Put silent-output files in individual directory as determined by mpi-rank</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+ </li>
+<li><h2>rigid</h2>
+<dl>
+<dt><b>-rigid</b> \<Boolean\><dt>
+<dd>rigid option group</dd><br>
+</dl>
+<dl>
+<dt><b>-chainbreak_bias</b> \<Real\><dt>
+<dd>Strength of bias applied to the translation component of rigid body moves to close chainbreak</dd><br>
+<dd>Default: 0.00</dd><br>
+</dl>
+<dl>
+<dt><b>-close_loops</b> \<Boolean\><dt>
+<dd>Perform loop closure at the end of medal</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-fragment_cycles</b> \<Integer\><dt>
+<dd>Number of fragment insertion/rigid body cycles</dd><br>
+<dd>Default: 10000</dd><br>
+</dl>
+<dl>
+<dt><b>-log_accepted_moves</b> \<Boolean\><dt>
+<dd>Write accepted moves to silent file output</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-max_ca_ca_dist</b> \<Real\><dt>
+<dd>Maximum distance between consecutive CA atoms before chunk partitioning occurs</dd><br>
+<dd>Default: 5.0</dd><br>
+</dl>
+<dl>
+<dt><b>-medium_range_seqsep</b> \<Integer\><dt>
+<dd>Constraints with sequence separation less than x are scored</dd><br>
+<dd>Default: 30</dd><br>
+</dl>
+<dl>
+<dt><b>-patch</b> \<File\><dt>
+<dd>Patch file containing energy terms and their respective weights</dd><br>
+</dl>
+<dl>
+<dt><b>-residues_backbone_move</b> \<Integer\><dt>
+<dd>Number of residues perturbed by a backbone move</dd><br>
+<dd>Default: 5</dd><br>
+</dl>
+<dl>
+<dt><b>-rotation</b> \<Real\><dt>
+<dd>Rotation magnitude</dd><br>
+<dd>Default: 2.5</dd><br>
+</dl>
+<dl>
+<dt><b>-sampling_prob</b> \<File\><dt>
+<dd>Normalized, per-residue sampling probabilities</dd><br>
+</dl>
+<dl>
+<dt><b>-score</b> \<String\><dt>
+<dd>Centroid-level score function</dd><br>
+<dd>Default: "score3"</dd><br>
+</dl>
+<dl>
+<dt><b>-sequence_separation</b> \<Integer\><dt>
+<dd>Maximum sequence separation for scoring chainbreaks</dd><br>
+<dd>Default: 20</dd><br>
+</dl>
+<dl>
+<dt><b>-short_range_seqsep</b> \<Integer\><dt>
+<dd>Constraints with sequence separation less than x are scored</dd><br>
+<dd>Default: 15</dd><br>
+</dl>
+<dl>
+<dt><b>-small_cycles</b> \<Integer\><dt>
+<dd>Number of small/shear cycles</dd><br>
+<dd>Default: 8000</dd><br>
+</dl>
+<dl>
+<dt><b>-stages</b> \<Integer\><dt>
+<dd>Number of stages over which to interpolate ramped values</dd><br>
+<dd>Default: 4</dd><br>
+</dl>
+<dl>
+<dt><b>-temperature</b> \<Real\><dt>
+<dd>Monte Carlo temperature</dd><br>
+<dd>Default: 2.0</dd><br>
+</dl>
+<dl>
+<dt><b>-translation</b> \<Real\><dt>
+<dd>Translation magnitude</dd><br>
+<dd>Default: 0.5</dd><br>
+</dl>
+ </li>
 <li><h2>MM</h2>
 <dl>
 <dt><b>-MM</b> \<Boolean\><dt>
@@ -737,417 +1153,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-normalization_id</b> \<Integer\><dt>
 <dd>Normalize individual data set. The integer identify the normalization method to be used</dd><br>
-</dl>
- </li>
-<li><h2>inout</h2>
-<dl>
-<dt><b>-inout</b> \<Boolean\><dt>
-<dd>Ouput option group</dd><br>
-</dl>
-<dl>
-<dt><b>-fold_tree_io</b> \<Boolean\><dt>
-<dd>Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)</dd><br>
-</dl>
-<dl>
-<dt><b>-dump_connect_info</b> \<Boolean\><dt>
-<dd>Output CONECT info between bonded atoms that are beyond 3.0 A apart; useful for coarse-grained representations.</dd><br>
-<dd>Default: false</dd><br>
-</dl>
- </li>
-<li><h2>inout:dbms</h2>
-<dl>
-<dt><b>-dbms</b> \<Boolean\><dt>
-<dd>database option group</dd><br>
-</dl>
-<dl>
-<dt><b>-mode</b> \<String\><dt>
-<dd>Which backend to use by default for database access. Note, usage of 'mysql' requires building with extras=mysql and usage of 'postgres' requires building with extras=postgres'</dd><br>
-<dd>Default: "sqlite3"</dd><br>
-</dl>
-<dl>
-<dt><b>-database_name</b> \<String\><dt>
-<dd>name of the database. For sqlite3 databases this is a path in the file system usually with the '.db3' extension.</dd><br>
-</dl>
-<dl>
-<dt><b>-pq_schema</b> \<String\><dt>
-<dd>For posgres databases, specify the default schema with the database. For PostgreSQL database, schemas are like namespaces.</dd><br>
-<dd>Default: ""</dd><br>
-</dl>
-<dl>
-<dt><b>-host</b> \<String\><dt>
-<dd>default hostname of database server</dd><br>
-</dl>
-<dl>
-<dt><b>-user</b> \<String\><dt>
-<dd>default username for database server access</dd><br>
-</dl>
-<dl>
-<dt><b>-password</b> \<String\><dt>
-<dd>default password for database server access</dd><br>
-</dl>
-<dl>
-<dt><b>-port</b> \<Integer\><dt>
-<dd>default port for database server access</dd><br>
-</dl>
-<dl>
-<dt><b>-readonly</b> \<Boolean\><dt>
-<dd>open sqlite3 database in read-only mode by default</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-separate_db_per_mpi_process</b> \<Boolean\><dt>
-<dd>In MPI mode, open a separate sqlite3 database for each process with extension _<mpi_rank> and write partitioned schema to that database.</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-database_partition</b> \<Integer\><dt>
-<dd>Open a sepearte sqlite3 database with the extension _<partition> and write a partitioned schema to that database.</dd><br>
-<dd>Default: -1</dd><br>
-</dl>
-<dl>
-<dt><b>-use_compact_residue_schema</b> \<Boolean\><dt>
-<dd>Store all the atoms for a residue in a binary silent file style blob.  Sacrifices analyzability for scalability. If you don't know if you want this you probably don't</dd><br>
-<dd>Default: false</dd><br>
-</dl>
- </li>
-<li><h2>out</h2>
-<dl>
-<dt><b>-out</b> \<Boolean\><dt>
-<dd>Ouput option group</dd><br>
-</dl>
-<dl>
-<dt><b>-overwrite</b> \<Boolean\><dt>
-<dd>Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)</dd><br>
-</dl>
-<dl>
-<dt><b>-nstruct</b> \<Integer\><dt>
-<dd>Number of times to process each input PDB</dd><br>
-<dd>Default: 1</dd><br>
-</dl>
-<dl>
-<dt><b>-shuffle_nstruct</b> \<Integer\><dt>
-<dd>total number of decoys to produce</dd><br>
-<dd>Default: 1</dd><br>
-</dl>
-<dl>
-<dt><b>-prefix</b> \<String\><dt>
-<dd>Prefix for output structure names, like old -series code</dd><br>
-<dd>Default: ""</dd><br>
-</dl>
-<dl>
-<dt><b>-suffix</b> \<String\><dt>
-<dd>Suffix for output structure names</dd><br>
-<dd>Default: ""</dd><br>
-</dl>
-<dl>
-<dt><b>-force_output_name</b> \<String\><dt>
-<dd>Force output name to be this. Needed for some cluster environments.</dd><br>
-</dl>
-<dl>
-<dt><b>-no_nstruct_label</b> \<Boolean\><dt>
-<dd>Do not tag the first output structure with _0001</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-pdb_gz</b> \<Boolean\><dt>
-<dd>Compress (gzip) output pdbs</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-pdb</b> \<Boolean\><dt>
-<dd>Output PDBs</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-silent_gz</b> \<Boolean\><dt>
-<dd>Use gzipped compressed output (silent run level)</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-use_database</b> \<Boolean\><dt>
-<dd>Write out structures to database.  Specify database via -inout:dbms:database_name and wanted structures with -in:file:tags</dd><br>
-</dl>
-<dl>
-<dt><b>-database_protocol_id</b> \<Integer\><dt>
-<dd>Manually specify a protocol ID for database output. MPI distributed jobs are the only time when you will want to use this. It is a temporary workaround to a limitation of the MPI distributor</dd><br>
-</dl>
-<dl>
-<dt><b>-database_filter</b> \<StringVector\><dt>
-<dd>filter to use with database output. arguments for filter follow filter name</dd><br>
-</dl>
-<dl>
-<dt><b>-resume_batch</b> \<IntegerVector\><dt>
-<dd>specify 1 or more batch ids to finish an incomplete protocol.  Only works with the DatabaseJobOutputter.  The new jobs will be generated under a new protocol and batch ID</dd><br>
-</dl>
-<dl>
-<dt><b>-nooutput</b> \<Boolean\><dt>
-<dd>Surpress outputfiles</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-output</b> \<Boolean\><dt>
-<dd>Force outputfiles</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-scorecut</b> \<Real\><dt>
-<dd>Only output lowest energy fraction of structures - default 1.0, i.e. output all </dd><br>
-<dd>Default: 1.0</dd><br>
-</dl>
-<dl>
-<dt><b>-show_accessed_options</b> \<Boolean\><dt>
-<dd>In the end of the run show options that has been accessed.</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-sf</b> \<File\><dt>
-<dd>filename for score output</dd><br>
-<dd>Default: "score.fsc"</dd><br>
-</dl>
-<dl>
-<dt><b>-mute</b> \<StringVector\><dt>
-<dd>Mute specified Tracer chanels, specify 'all' to mute all chanels</dd><br>
-</dl>
-<dl>
-<dt><b>-unmute</b> \<StringVector\><dt>
-<dd>UnMute specified Tracer chanels, specify 'all' to mute all chanels</dd><br>
-</dl>
-<dl>
-<dt><b>-level</b> \<Integer\><dt>
-<dd>Level of Tracer output, any level above will be muted. Availible levels: 0 - fatal, 100 - error, 200 - warning, 300 - info, 400 - debug, 500 - trace. For additional info please see: src/basic/Tracer.hh and doc page 'Tracer, tool for debug IO'. Default output level is 'info': 300</dd><br>
-<dd>Default: 300</dd><br>
-</dl>
-<dl>
-<dt><b>-levels</b> \<StringVector\><dt>
-<dd>Specified hierarchical mute levels for individual channels in following format: -levels all:300 core.pose:500. Numeric values could be substituted with mute level names like: debug, info, error etc. Please note that all:<num> is synonymous to -level:<num></dd><br>
-</dl>
-<dl>
-<dt><b>-std_IO_exit_error_code</b> \<Integer\><dt>
-<dd>Specify error code that will be used to exit if std::IO error detected.This is useful if you want to detect situations like: Rosetta output wasredirected to a file but disk got full etc. Default value is 0 which mean that error detection code is turned off.</dd><br>
-<dd>Default: 0</dd><br>
-</dl>
-<dl>
-<dt><b>-chname</b> \<Boolean\><dt>
-<dd>Add Tracer chanel names to output</dd><br>
-<dd>Default: true</dd><br>
-</dl>
-<dl>
-<dt><b>-chtimestamp</b> \<Boolean\><dt>
-<dd>Add timestamp to tracer channel name</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-dry_run</b> \<Boolean\><dt>
-<dd>If set ComparingTracer will not generate any asserts, and save all Tracer output to a file</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-mpi_tracer_to_file</b> \<String\><dt>
-<dd>MPI ONLY: Redirect all tracer output to this file with '_<mpi_rank>' appened as a suffix</dd><br>
-<dd>Default: "tracer.out"</dd><br>
-</dl>
-<dl>
-<dt><b>-user_tag</b> \<String\><dt>
-<dd>add this tag to structure tags: e.g., a process id</dd><br>
-<dd>Default: ""</dd><br>
-</dl>
-<dl>
-<dt><b>-output_tag</b> \<String\><dt>
-<dd>Prefix output files with this tag, if code checks for it</dd><br>
-<dd>Default: ""</dd><br>
-</dl>
- </li>
-<li><h2>out:file</h2>
-<dl>
-<dt><b>-file</b> \<Boolean\><dt>
-<dd>Output file option group</dd><br>
-</dl>
-<dl>
-<dt><b>-o</b> \<String\><dt>
-<dd>Name of output file</dd><br>
-</dl>
-<dl>
-<dt><b>-silent</b> \<String\><dt>
-<dd>Use silent file output, use filename after this flag</dd><br>
-<dd>Default: "default.out"</dd><br>
-</dl>
-<dl>
-<dt><b>-score_only</b> \<String\><dt>
-<dd>Only output scores, no silent files or pdb files</dd><br>
-<dd>Default: "default.sc"</dd><br>
-</dl>
-<dl>
-<dt><b>-atom_tree_diff</b> \<String\><dt>
-<dd>Use atom_tree_diff file output, use filename after this flag</dd><br>
-<dd>Default: "default.out"</dd><br>
-</dl>
-<dl>
-<dt><b>-atom_tree_diff_bb</b> \<Integer\><dt>
-<dd>For atom_tree_diff output, how many digits of precision to use for backbone dihedrals</dd><br>
-<dd>Default: 6</dd><br>
-</dl>
-<dl>
-<dt><b>-atom_tree_diff_sc</b> \<Integer\><dt>
-<dd>For atom_tree_diff output, how many digits of precision to use for sidechain dihedrals</dd><br>
-<dd>Default: 4</dd><br>
-</dl>
-<dl>
-<dt><b>-atom_tree_diff_bl</b> \<Integer\><dt>
-<dd>For atom_tree_diff output, how many digits of precision to use for bond lengths</dd><br>
-<dd>Default: 2</dd><br>
-</dl>
-<dl>
-<dt><b>-alignment</b> \<String\><dt>
-<dd>Output file for sequence alignment</dd><br>
-<dd>Default: "out.align"</dd><br>
-</dl>
-<dl>
-<dt><b>-scorefile</b> \<String\><dt>
-<dd>Write a scorefile to the provided filename</dd><br>
-<dd>Default: "default.sc"</dd><br>
-</dl>
-<dl>
-<dt><b>-silent_struct_type</b> \<String\><dt>
-<dd>Type of SilentStruct object to use in silent-file output</dd><br>
-<dd>Default: "protein"</dd><br>
-</dl>
-<dl>
-<dt><b>-silent_preserve_H</b> \<Boolean\><dt>
-<dd>Preserve hydrogrens in PDB silent-file format.</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-silent_print_all_score_headers</b> \<Boolean\><dt>
-<dd>Print a SCORE header for every SilentStruct in a silent-file</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-silent_decoytime</b> \<Boolean\><dt>
-<dd>Add time since last silent structure was written to score line</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-silent_comment_bound</b> \<Integer\><dt>
-<dd>String data longer than this ends up as remark rather than in score line</dd><br>
-<dd>Default: 15</dd><br>
-</dl>
-<dl>
-<dt><b>-raw</b> \<Boolean\><dt>
-<dd>Use silent-type file output</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-fullatom</b> \<Boolean\><dt>
-<dd>Enable full-atom output of PDB or centroid structures</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-suppress_zero_occ_pdb_output</b> \<Boolean\><dt>
-<dd>Suppress output of atoms with zero (or negative) occupancy</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-output_virtual</b> \<Boolean\><dt>
-<dd>Output virtual atoms in output of PDB</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-no_output_cen</b> \<Boolean\><dt>
-<dd>Omit outputting centroids</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-output_orbitals</b> \<Boolean\><dt>
-<dd>Output all orbitals into PDB</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-weight_silent_scores</b> \<Boolean\><dt>
-<dd>weight scores in silent-file output.</dd><br>
-<dd>Default: true</dd><br>
-</dl>
-<dl>
-<dt><b>-design_contrast</b> \<File\><dt>
-<dd>output list comparing design sequence to native sequence</dd><br>
-<dd>Default: "redesign"</dd><br>
-</dl>
-<dl>
-<dt><b>-dont_rewrite_dunbrack_database</b> \<Boolean\><dt>
-<dd>disables the default behavior of rewriting the dunrack library in binary format if a binary version is not found</dd><br>
-</dl>
-<dl>
-<dt><b>-renumber_pdb</b> \<Boolean\><dt>
-<dd>use Rosetta residue numbering and arbitrary chain labels in pdb output</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-pdb_parents</b> \<Boolean\><dt>
-<dd>If the pose contains a comment named template print this as a REMARK in the pdb file</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-per_chain_renumbering</b> \<Boolean\><dt>
-<dd>when used in conjunction with renumber_pdb, restarts residue numbering at each chain</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-residue_type_set</b> \<String\><dt>
-<dd>ResidueTypeSet for output files</dd><br>
-<dd>Default: "fa_standard"</dd><br>
-</dl>
-<dl>
-<dt><b>-frag_prefix</b> \<String\><dt>
-<dd>Prefix for fragment output</dd><br>
-<dd>Default: "default.frags"</dd><br>
-</dl>
-<dl>
-<dt><b>-output_torsions</b> \<Boolean\><dt>
-<dd>Output phi psi and omega torsions in the PDB output if the pose is ideal</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-pdb_comments</b> \<Boolean\><dt>
-<dd>If the pose contains any comment print it as a COMMENT in the pdb file</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-force_nonideal_structure</b> \<Boolean\><dt>
-<dd>Force ResidueConformationFeatures to treat the structure as nonideal.  If you know all your structures are non-ideal this decreases pose output time</dd><br>
-<dd>Default: true</dd><br>
-</dl>
- </li>
-<li><h2>out:path</h2>
-<dl>
-<dt><b>-all</b> \<Path\><dt>
-<dd>Default file output path</dd><br>
-<dd>Default: "."</dd><br>
-</dl>
-<dl>
-<dt><b>-path</b> \<Path\><dt>
-<dd>Default file output path</dd><br>
-<dd>Default: "."</dd><br>
-</dl>
-<dl>
-<dt><b>-pdb</b> \<Path\><dt>
-<dd>PDB file output path</dd><br>
-</dl>
-<dl>
-<dt><b>-score</b> \<Path\><dt>
-<dd>Score file output path</dd><br>
-</dl>
-<dl>
-<dt><b>-movie</b> \<Path\><dt>
-<dd>Movie file output path</dd><br>
-</dl>
-<dl>
-<dt><b>-scratch</b> \<Path\><dt>
-<dd>use this path as scratch drive</dd><br>
-<dd>Default: ['"/scratch/USERS/"']</dd><br>
-</dl>
-<dl>
-<dt><b>-mpi_rank_dir</b> \<Boolean\><dt>
-<dd>put silent-output files in individual directory as determined by mpi-rank</dd><br>
-<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>pocket_grid</h2>

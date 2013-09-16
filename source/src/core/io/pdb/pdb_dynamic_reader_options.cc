@@ -9,8 +9,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/pdb_dynamic_reader_options.cc
-///
-/// @brief
+/// @brief  Definitions for PDB_DReaderOptions.
 /// @author Brian D. Weitzner brian.weitzner@gmail.com
 
 // Unit headers
@@ -19,11 +18,11 @@
 // Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
 
-// C++ headers
 
 namespace core {
 namespace io {
@@ -39,6 +38,8 @@ void PDB_DReaderOptions::parse_my_tag( utility::tag::TagPtr tag )
 	
 	set_new_chain_order(  tag->getOption< bool >( "new_chain_order", 0 ));
 	set_obey_ENDMDL(  tag->getOption< bool >( "obey_ENDMDL", 0 ));
+	set_read_pdb_header( tag->getOption< bool >( "preserve_header", 0 ));
+	set_read_link_records( tag->getOption< bool >( "read_pdb_link_records", 0 ));
 }
 
 std::string PDB_DReaderOptions::type() const { return "pdb_dynamic_reader_options"; }
@@ -46,11 +47,14 @@ std::string PDB_DReaderOptions::type() const { return "pdb_dynamic_reader_option
 // accessors
 bool PDB_DReaderOptions::new_chain_order() const { return new_chain_order_; }
 bool PDB_DReaderOptions::obey_ENDMDL() const { return obey_ENDMDL_; }
+bool PDB_DReaderOptions::read_pdb_header() const { return read_pdb_header_; }
+bool PDB_DReaderOptions::read_link_records() const { return read_link_records_; }
 
 // mutators
-void PDB_DReaderOptions::set_new_chain_order( bool new_chain_order ) { new_chain_order_ = new_chain_order; }
-void PDB_DReaderOptions::set_obey_ENDMDL( bool obey_ENDMDL ) { obey_ENDMDL_ = obey_ENDMDL; }
-
+void PDB_DReaderOptions::set_new_chain_order( bool setting ) { new_chain_order_ = setting; }
+void PDB_DReaderOptions::set_obey_ENDMDL( bool setting ) { obey_ENDMDL_ = setting; }
+void PDB_DReaderOptions::set_read_pdb_header( bool setting ) { read_pdb_header_ = setting; }
+void PDB_DReaderOptions::set_read_link_records( bool setting ) { read_link_records_ = setting; }
 
 void PDB_DReaderOptions::init_from_options()
 {
@@ -58,7 +62,9 @@ void PDB_DReaderOptions::init_from_options()
 	using namespace basic::options::OptionKeys;
 	
 	set_new_chain_order( option[ in::file::new_chain_order ]() );
-	set_obey_ENDMDL( option[ in::file::obey_ENDMDL ].value() );	
+	set_obey_ENDMDL( option[ in::file::obey_ENDMDL ].value() );
+	set_read_pdb_header( option[ run::preserve_header ]() );
+	set_read_link_records( option[ in::file::read_pdb_link_records ]() );
 }
 
 } // namespace pdb

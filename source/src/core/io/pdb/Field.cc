@@ -9,7 +9,6 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/Field.cc
-///
 /// @brief Each line of a PDB file is a Record which is divided into Fields
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
@@ -165,14 +164,14 @@ RecordRef & Field::getRecordCollection()
 
 			"CRYST1", utility::tools::make_map<string, Field>(
 				"type",       Field( 1,  6),
-				"a",          Field( 7, 15), /// Real(9.3)
-				"b",          Field(16, 24), /// Real(9.3)
-				"c",          Field(25, 33), /// Real(9.3)
-				"alpha",      Field(34, 40), /// Real(7.2)
-				"beta",       Field(41, 47), /// Real(7.2)
-				"gamma",      Field(48, 54), /// Real(7.2)
-				"spacegroup", Field(56, 66), /// LString
-				"z",          Field(67, 70)  /// Integer
+				"a",          Field( 7, 15), // Real(9.3)
+				"b",          Field(16, 24), // Real(9.3)
+				"c",          Field(25, 33), // Real(9.3)
+				"alpha",      Field(34, 40), // Real(7.2)
+				"beta",       Field(41, 47), // Real(7.2)
+				"gamma",      Field(48, 54), // Real(7.2)
+				"spacegroup", Field(56, 66), // LString
+				"z",          Field(67, 70)  // Integer
 				),
 			"ATOM  ", utility::tools::make_map<string, Field>(
 				"type",       Field( 1,  6),

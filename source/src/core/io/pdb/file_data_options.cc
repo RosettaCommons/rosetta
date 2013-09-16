@@ -9,8 +9,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/file_data_options.cc
-///
-/// @brief
+/// @brief  Definitions for FileDataOptions.
 /// @author Brian D. Weitzner brian.weitzner@gmail.com
 
 // Unit headers
@@ -75,10 +74,10 @@ bool FileDataOptions::remember_unrecognized_water() const { return remember_unre
 std::string const & FileDataOptions::chains_whose_residues_are_separate_chemical_entities() const { return chains_whose_residues_are_separate_chemical_entities_; }
 
 // mutators
-//void FileDataOptions::set_check_if_residues_are_termini( std::string check_if_residues_are_termini )
-//{ check_if_residues_are_termini_ = check_if_residues_are_termini; }
+
 void FileDataOptions::set_check_if_residues_are_Ntermini( std::string check_if_residues_are_Ntermini )
 { check_if_residues_are_Ntermini_ = check_if_residues_are_Ntermini; }
+
 void FileDataOptions::set_check_if_residues_are_Ctermini( std::string check_if_residues_are_Ctermini )
 { check_if_residues_are_Ctermini_ = check_if_residues_are_Ctermini; }
 
@@ -124,7 +123,6 @@ void FileDataOptions::init_from_options()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	//set_check_if_residues_are_termini( option[ in::termini ].value());
 	set_check_if_residues_are_Ntermini( option[ in::Ntermini ].value());
 	set_check_if_residues_are_Ctermini( option[ in::Ctermini ].value());
 	set_exit_if_missing_heavy_atoms( option[ run::exit_if_missing_heavy_atoms ].value());
@@ -140,7 +138,6 @@ void FileDataOptions::init_from_options()
 	set_remember_unrecognized_water( option[ in::remember_unrecognized_water ]());
 	set_chains_whose_residues_are_separate_chemical_entities( option[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
 }
-
 
 } // namespace pdb
 } // namespace io

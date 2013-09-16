@@ -9,8 +9,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/pdb_dynamic_reader_options.hh
-///
-/// @brief
+/// @brief  Declarations for PDB_DReaderOptions.
 /// @author Brian D. Weitzner brian.weitzner@gmail.com
 
 #ifndef INCLUDED_core_io_pdb_pdb_dynamic_reader_options_HH
@@ -45,10 +44,14 @@ public:
 	// accessors
 	bool new_chain_order() const;
 	bool obey_ENDMDL() const;
+	bool read_pdb_header() const;
+	bool read_link_records() const;
 	
 	// mutators
-	void set_new_chain_order( bool new_chain_order );
-	void set_obey_ENDMDL( bool obey_ENDMDL );
+	void set_new_chain_order( bool setting );
+	void set_obey_ENDMDL( bool setting );
+	void set_read_pdb_header( bool setting );
+	void set_read_link_records( bool setting );
 
 private:
 	/// @brief Assigns user specified values to primitive members using command line options
@@ -57,6 +60,8 @@ private:
 private:
 	bool new_chain_order_;
 	bool obey_ENDMDL_;
+	bool read_pdb_header_;
+	bool read_link_records_;
 };
 
 } // namespace pdb

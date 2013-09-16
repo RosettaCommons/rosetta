@@ -8,37 +8,33 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-///
-/// @brief
+/// @file   core/io/pdb/pose_io.hh
+/// @brief  method declarations for input/output functions for use with Pose
 /// @author
 
 #ifndef INCLUDED_core_io_pdb_pose_io_hh
 #define INCLUDED_core_io_pdb_pose_io_hh
 
-
+// Project headers
 #include <core/types.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/id/AtomID_Mask.fwd.hh>
-
+// Basic headers
 #include <basic/Tracer.fwd.hh>
 
 // Utility headers
 #include <utility/io/ozstream.fwd.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <iosfwd>
-
-#include <utility/vector1.hh>
 
 
 namespace core {
 namespace io {
 namespace pdb {
-
 
 /// @brief special Tracer instance acting as special param for all traced_dump_pdb functions
 extern basic::Tracer TR_dump_pdb_dummy;
@@ -52,8 +48,6 @@ dump_pdb_residue(
 );
 
 /// @brief Writes pdb data for the given residue, beginning from the given atom number
-/// 
-/// @note Python compatible wrapper avoiding reference parameter
 void
 dump_pdb_residue(
 	conformation::Residue const & rsd,
@@ -104,8 +98,6 @@ dump_pdb(
 
 
 /// @brief dump_pdb depending on visibility of tracer
-/// @param[in] tr   output performed if tracer is visible or if passed dummy
-///  tracer core::io::pdb::TR_dump_pdb_dummy
 void
 traced_dump_pdb(
 	basic::Tracer const & tr,
@@ -116,8 +108,6 @@ traced_dump_pdb(
 
 
 /// @brief dump_pdb depending on visibility of tracer
-/// @param[in] tr   output performed if tracer is visible or if passed dummy
-///  tracer core::io::pdb::TR_dump_pdb_dummy
 void
 traced_dump_pdb(
 	basic::Tracer const & tr,
@@ -134,7 +124,8 @@ void extract_scores(
 );
 
 
-/// @brief dump_connect_info  Figure out CONECT  fields for PDB output -- atoms that are bonded in Rosetta but won't look that way to RASMOL or Pymol because of distance -- useful for centroid poses.
+/// @brief dump_connect_info  Figure out CONECT  fields for PDB output -- atoms that are bonded in Rosetta but won't
+/// look that way to RASMOL or Pymol because of distance -- useful for centroid poses.
 void
 dump_connect_info(
 	pose::Pose const & pose,
@@ -143,6 +134,5 @@ dump_connect_info(
 } // namespace pdb
 } // namespace io
 } // namespace core
-
 
 #endif // INCLUDED_core_io_pdb_pdb_file_data_HH

@@ -9,9 +9,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/pdb_dynamic_reader.hh
-///
-/// @brief
+/// @brief  Declarations for PDB Dynamic reader.
 /// @author Sergey Lyskov (Sergey.Lyskov@jhu.edu)
+
+// Note: DO NOT ACCESS THE OPTIONS SYSTEM DIRECTLY IN THIS FILE!
+// Doing so will mean the Resource Manager will not work properly.
+// Instead, modify PDB_DReaderOptions to include the option
+
 
 #ifndef INCLUDED_core_io_pdb_pdb_dynamic_reader_hh
 #define INCLUDED_core_io_pdb_pdb_dynamic_reader_hh
@@ -21,13 +25,14 @@
 #include <core/io/pdb/file_data.fwd.hh>
 #include <core/io/pdb/pdb_dynamic_reader_options.fwd.hh>
 
-// Utility headers
+// Project headers
 #include <core/io/pdb/Field.hh>
+
+// Utility headers
 #include <utility/Show.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 // C++ headers
-//#include <cstdlib>
 #ifdef WIN32
 #include <string>
 #endif
@@ -36,18 +41,15 @@
 #include <vector>
 #include <iostream>
 
-#include <utility/vector1.fwd.hh>
-
 
 namespace core {
 namespace io {
 namespace pdb {
 
 
-/// Record type, represent one line in pdb file
 typedef std::string String;
 
-/// @brief PDB Reader it self, D - for dynamic approch of type handling
+/// @brief PDB Reader itself, D - for dynamic approach of type handling
 class PDB_DReader
 {
 public:
@@ -87,9 +89,14 @@ public:
 
 };
 
+/// @brief print int with format to string
+std::string print_i(const char *format, int I);
+
+/// @brief print double with format to string
+std::string print_d(const char *format, double d);
+
 } // namespace pdb
 } // namespace io
 } // namespace core
-
 
 #endif // INCLUDED_core_io_pdb_pdb_dynamic_reader_HH

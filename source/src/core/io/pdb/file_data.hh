@@ -9,9 +9,13 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/file_data.hh
-///
-/// @brief
+/// @brief  Declarations for FileData and related classes.
 /// @author Sergey Lyskov
+
+// Note: AVOID ACCESSING THE OPTIONS SYSTEM DIRECTLY IN THIS FILE, ESPECIALLY FOR PDB INPUT!
+// Doing so will mean the Resource Manager may not work properly.
+// Instead, modify FileDataOptions to include the option.
+
 
 #ifndef INCLUDED_core_io_pdb_file_data_hh
 #define INCLUDED_core_io_pdb_file_data_hh
@@ -27,23 +31,23 @@
 #include <core/io/pdb/pdb_dynamic_reader_options.fwd.hh>
 
 // Project headers
+#include <core/types.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
-#include <core/pose/Remarks.hh>
-#include <core/pose/CrystInfo.hh>
-
-#include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Remarks.hh>
+#include <core/pose/CrystInfo.hh>
+#include <core/pose/Pose.fwd.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/owning_ptr.hh>
-
-
-#include <utility/vector1.hh>
+// Numeric headers
 #include <numeric/xyzVector.hh>
 
-#include <core/types.hh>
+// Utility headers
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.hh>
+
 
 // C++ headers
 #include <iostream>
@@ -138,7 +142,8 @@ public:
 };  // class ResidueInformation
 
 
-/// @brief A structure for storing information from PDB LINK records.
+/// @brief  A structure for storing information from PDB LINK records.
+/// @author Labonte
 struct LinkInformation {
 	std::string name1_;  // 1st atom name
 	std::string resName1_;
@@ -154,57 +159,96 @@ struct LinkInformation {
 class FileData
 {
 public:
-	FileData() :
-		remarks(new pose::Remarks),
-		header(0)
-	{}
+	// Intermediate representation of data for ease of creating Pose object.
+	typedef std::map< std::string, double > ResidueTemps;
+	typedef std::map< std::string, ResidueTemps > Temps;
+	typedef std::map< std::string, Vector > ResidueCoords;
+	typedef std::map< std::string, ResidueCoords > Coords;
+	typedef utility::vector1< std::string > Strings;
+
+public:
+	FileData();
 
 	/// @brief empty destructor in C++ file to reduce number of necessary includes.
 	~FileData();
 
-	// only one data member, that should not preserve any 'state' - so it is public.
-	std::vector< AtomChain > chains;
-	//std::vector< RemarkInfo > remarks;
-	pose::RemarksOP remarks;
-	HeaderInformationOP header;
+public:  // An instance of FileData should not preserve any 'state', so its data and methods are public.
 	std::string filename;
 	std::string modeltag;
 
-	//fpd:  CRYST1 line
-	pose::CrystInfo crystinfo;
+	// PDB Title Section //////////////////////////////////////////////////////
+	// "header" is a misnomer, as it actually stores HEADER, TITLE, EXPDTA, KEYWDS, and COMPND records.
+	HeaderInformationOP header;
+	// Data for OBSLTE, SPLT, CAVEAT, NUMMDL, MDLTYP, AUTHOR, REVDAT, SPRSDE, and/or JRNL records should be declared
+	// here if ever implemented.
+	pose::RemarksOP remarks;
+
+
+	// PDB Primary Structure Section //////////////////////////////////////////
+	// Data for DBREF, SEQADV, SEQRES, and/or MODRES records should be declared here if ever implemented.
+
+
+	// PDB Heterogen Section //////////////////////////////////////////////////
+	// Data for HET and/or FORMULA records should be declared here if ever implemented.
+
+	// list for storing HETNAM records:
+	//  first value of the pair is hetID
+	//  second value of the pair is the chemical name field
+	utility::vector1<std::pair<std::string, std::string> > heterogen_names;
+
+	// map for storing carbohydrate ResidueType base (non-variant) names; parsed from HETNAM records:
+	// key is 6-character resID
+	std::map<std::string, std::string> carbohydrate_residue_type_base_names;
+
+	// Data for HETSYN records should be declared here if ever implemented.
+
+
+	// PDB Secondary Structure Section ////////////////////////////////////////
+	// Data for HELIX and/or SHEET records should be declared here if ever implemented.
+
+
+	// PDB Connectivity Annotation Section ////////////////////////////////////
+	// Data for SSBOND records should be declared here if ever implemented.
 
 	// map for storing LINK records:
 	// key is 6-character resID of 1st residue in link
 	// (A vector is needed because a single saccharide residue can have multiple branches.)
 	std::map<std::string, utility::vector1<LinkInformation> > link_map;
 
-	// map for storing (non-sugar) HETNAM records:
-	// key is hetID
-	std::map<std::string, std::string> heterogen_names;
+	// Data for CISPEP records should be declared here if ever implemented.
 
-	// map for storing carbohydrate ResidueType base (non-variant) names; parsed from HETNAM records:
-	// key is 6-character resID
-	std::map<std::string, std::string> carbohydrate_residue_type_base_names;
 
-	void
-	initialize_header_information();
+	// PDB Miscellaneous Features Section /////////////////////////////////////
+	// Data for SITE records should be declared here if ever implemented.
 
-	HeaderInformationOP
-	header_information() const;
 
-	void
-	store_header_record(Record & R);
+	// PDB Crystallographic and Coordinate Transformation Section /////////////
+	pose::CrystInfo crystinfo;  //fpd:  CRYST1 line
+	// Data for MTRIX, ORIGX, and/or SCALE records should be declared here if ever implemented.
+
+
+	// PDB Coordinate Section /////////////////////////////////////////////////
+	std::vector< AtomChain > chains;
+
+
+	// PDB Connectivity Section ///////////////////////////////////////////////
+	// Data for CONECT records should be declared here for consistency.
+
+public:
+	void initialize_header_information();
+
+	HeaderInformationOP	header_information() const;
+
+	void store_header_record(Record & R);
 
 	/// @brief The header records can span multiple lines while the
 	/// pdb_dynamic_parser is done line-wise. Finalizing the header
 	/// information ensures that all the information is fully processed.
- 	void
-	finalize_header_information();
+ 	void finalize_header_information();
 
 	/// @brief Make sure to call finalize_header_information before
 	/// calling this.
-	void
-	fill_header_records(std::vector< Record > & VR) const;
+	void fill_header_records(std::vector< Record > & VR) const;
 
 
 	/// @brief Store (non-standard) polymer linkages in a map.
@@ -212,36 +256,33 @@ public:
 
 
 	/// @brief Store heterogen name information in a map.
-	void store_heterogen_names(std::string const & hetID, std::string const & text);
+	void store_heterogen_names(std::string const & hetID, std::string & text);
 
 	/// @brief Parse heterogen name data for a given carbohydrate and save the particular base (non-variant)
 	/// ResidueType needed in a map.
 	void parse_heterogen_name_for_carbohydrate_residues(std::string const & text);
 
 
-	/// @brief Fill FileData structure using information from given pose object.
+	///@brief Append pdb information to FileData for a single residue.
+	void append_residue(
+		core::conformation::Residue const & rsd,
+		core::Size & atom_index,
+		core::pose::Pose const & pose,
+		bool preserve_crystinfo = false
+	);
+
+	/// @brief Fill FileData object using information from given Pose object.
 	void init_from_pose(core::pose::Pose const & pose);
 
-	/// @brief Fill FileData structure using information from given pose object and a set of options.
+	/// @brief Fill FileData object  using information from given Pose object and a set of options.
 	void init_from_pose(core::pose::Pose const & pose, FileDataOptions const & options);
 
-	/// @brief Fill FileData structure using information from given pose object,
+	/// @brief Fill FileData object using information from given Pose object,
 	/// for a specified subset of residues
-	void
-	init_from_pose( core::pose::Pose const & pose, utility::vector1< core::Size > const & residue_indices );
-
-	bool
-	update_atom_information_based_on_occupancy( AtomInformation & ai, FileDataOptions const & options, std::string const & resid ) const;
-
-	///@brief randomize missing density
-	void randomize_missing_coords( AtomInformation & ai ) const;
-
-	/// @brief Debug printing
-	friend std::ostream& operator <<(std::ostream &os, FileData const &);
+	void init_from_pose( core::pose::Pose const & pose, utility::vector1< core::Size > const & residue_indices );
 
 	/// @brief Writes  <pose>  to a given stream in PDB file format
-	static
-	void dump_pdb(
+	static void dump_pdb(
 		core::pose::Pose const & pose,
 		std::ostream & out,
 		std::string const & tag="",
@@ -249,29 +290,30 @@ public:
 	);
 
 	/// @brief Writes  <pose>  to a PDB file, returns false if an error occurs
-	static
-	bool dump_pdb(
+	static bool dump_pdb(
 		core::pose::Pose const & pose,
 		std::string const & file_name,
 		std::string const & tag="",
 		bool write_fold_tree = false
 	);
 
-	static
-	void
-	dump_pdb(
+	static void dump_pdb(
 		core::pose::Pose const & pose,
 		std::ostream & out,
 		utility::vector1< core::Size > const & residue_indices,
 		std::string const & tag=""
 	);
 
-	// Intermediate representation of date for easy of creating Pose object.
-	typedef std::map< std::string, double > ResidueTemps;
-	typedef std::map< std::string, ResidueTemps > Temps;
-	typedef std::map< std::string, Vector > ResidueCoords;
-	typedef std::map< std::string, ResidueCoords > Coords;
-	typedef utility::vector1< std::string > Strings;
+
+	bool update_atom_information_based_on_occupancy( AtomInformation & ai, FileDataOptions const & options,
+			std::string const & resid ) const;
+
+	///@brief randomize missing density
+	void randomize_missing_coords( AtomInformation & ai ) const;
+
+	/// @brief Debug printing
+	friend std::ostream& operator <<(std::ostream &os, FileData const &);
+
 
 	/// @brief Convert FileData into set of residues, sequences, coordinates etc.
 	void create_working_data(
@@ -283,20 +325,10 @@ public:
 		utility::vector1< ResidueInformation > & rinfo,
 		FileDataOptions const & options
 	);
-
-	///@brief appends pdb information for a single residue
-	void append_residue(
-		core::conformation::Residue const & rsd,
-		core::Size & atom_index,
-		core::pose::Pose const & pose,
-		bool preserve_crystinfo = false
-	);
-
-
 };  // class FileData
 
-void
-write_additional_pdb_data(
+/// @brief Adds data to the end of a pdb that are not a standard part of the pdb format.
+void write_additional_pdb_data(
 	std::ostream & out,
 	pose::Pose const & pose,
 	io::pdb::FileData const & fd,
@@ -304,47 +336,35 @@ write_additional_pdb_data(
 );
 
 /// @brief Builds a pose into  <pose>, without repacking or optimizing
-/// hydrogens; using the fullatom ResidueTypeSet
-void
-build_pose_from_pdb_as_is(
+/// hydrogens; using the full-atom ResidueTypeSet
+void build_pose_from_pdb_as_is(
 	pose::Pose & pose,
 	std::string const & filename
 );
 
 /// @brief Builds a pose into  <pose>, without repacking or optimizing
-/// hydrogens; using the fullatom ResidueTypeSet and a set of options.
-void
-build_pose_from_pdb_as_is(
+/// hydrogens; using the full-atom ResidueTypeSet and a set of options.
+void build_pose_from_pdb_as_is(
 	pose::Pose & pose,
 	std::string const & filename,
 	PDB_DReaderOptions const & pdr_options
 );
 
-void
-build_pose_from_pdb_as_is(
+void build_pose_from_pdb_as_is(
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename
 );
 
-void
-build_pose_from_pdb_as_is(
+void build_pose_from_pdb_as_is(
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
 	std::string const & filename,
 	PDB_DReaderOptions const & pdr_options
 );
 
-//void
-//build_pose_as_is1(
-//	io::pdb::FileData & fd,
-//	pose::Pose & pose,
-//	chemical::ResidueTypeSet const & residue_set,
-//	id::AtomID_Mask & missing
-//);
 
-void
-build_pose_as_is1(
+void build_pose_as_is1(
 	io::pdb::FileData & fd,
 	pose::Pose & pose,
 	chemical::ResidueTypeSet const & residue_set,
@@ -352,8 +372,7 @@ build_pose_as_is1(
 	FileDataOptions const & options
 );
 
-bool
-is_residue_type_recognized(
+bool is_residue_type_recognized(
 	Size const pdb_residue_index,
 	std::string const & pdb_name,
 	core::chemical::ResidueTypeCOPs const & rsd_type_list,
@@ -365,8 +384,7 @@ is_residue_type_recognized(
 	utility::vector1<numeric::xyzVector<Real> > & UA_coords,
 	utility::vector1<core::Real> & UA_temps);
 
-bool
-is_residue_type_recognized(
+bool is_residue_type_recognized(
 	Size const pdb_residue_index,
 	std::string const & pdb_name,
 	core::chemical::ResidueTypeCOPs const & rsd_type_list,
@@ -380,43 +398,36 @@ is_residue_type_recognized(
 	FileDataOptions const & options);
 
 
-void
-pose_from_pose(
+void pose_from_pose(
 	pose::Pose & new_pose,
 	pose::Pose const & old_pose,
 	utility::vector1< core::Size > const & residue_indices
 );
 
-void
-pose_from_pose(
+void pose_from_pose(
 	pose::Pose & new_pose,
 	pose::Pose const & old_pose,
 	utility::vector1< core::Size > const & residue_indices,
 	FileDataOptions const & options
 );
 
-void
-pose_from_pose(
+void pose_from_pose(
 	pose::Pose & new_pose,
 	pose::Pose const & old_pose,
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< core::Size > const & residue_indices
 );
 
-void
-pose_from_pose(
+void pose_from_pose(
 	pose::Pose & new_pose,
 	pose::Pose const & old_pose,
 	chemical::ResidueTypeSet const & residue_set,
 	utility::vector1< core::Size > const & residue_indices,
 	FileDataOptions const & options
 );
-
-
 
 } // namespace pdb
 } // namespace io
 } // namespace core
-
 
 #endif // INCLUDED_core_io_pdb_file_data_HH

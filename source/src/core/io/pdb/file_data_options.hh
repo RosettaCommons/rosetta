@@ -9,8 +9,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/io/pdb/file_data_options.hh
-///
-/// @brief
+/// @brief  Declarations for FileDataOptions.
 /// @author Brian D. Weitzner brian.weitzner@gmail.com
 
 #ifndef INCLUDED_core_io_pdb_file_data_options_HH
@@ -83,7 +82,6 @@ private:
 	void init_from_options();
 
 private:
-	//std::string check_if_residues_are_termini_; // DEFAULT "ALL" chains. String of 1-letter chains to apply termini to
 	std::string check_if_residues_are_Ntermini_; // DEFAULT "ALL" chains. String of 1-letter chains to apply termini to
 	std::string check_if_residues_are_Ctermini_; // DEFAULT "ALL" chains. String of 1-letter chains to apply termini to
 	bool exit_if_missing_heavy_atoms_;

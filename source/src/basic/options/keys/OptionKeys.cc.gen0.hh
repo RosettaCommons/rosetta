@@ -1,24 +1,7 @@
-namespace rigid { BooleanOptionKey const rigid( "rigid" );  }
-namespace rigid { RealOptionKey const chainbreak_bias( "rigid:chainbreak_bias" );  }
-namespace rigid { BooleanOptionKey const close_loops( "rigid:close_loops" );  }
-namespace rigid { IntegerOptionKey const fragment_cycles( "rigid:fragment_cycles" );  }
-namespace rigid { BooleanOptionKey const log_accepted_moves( "rigid:log_accepted_moves" );  }
-namespace rigid { RealOptionKey const max_ca_ca_dist( "rigid:max_ca_ca_dist" );  }
-namespace rigid { IntegerOptionKey const medium_range_seqsep( "rigid:medium_range_seqsep" );  }
-namespace rigid { FileOptionKey const patch( "rigid:patch" );  }
-namespace rigid { IntegerOptionKey const residues_backbone_move( "rigid:residues_backbone_move" );  }
-namespace rigid { RealOptionKey const rotation( "rigid:rotation" );  }
-namespace rigid { FileOptionKey const sampling_prob( "rigid:sampling_prob" );  }
-namespace rigid { StringOptionKey const score( "rigid:score" );  }
-namespace rigid { IntegerOptionKey const sequence_separation( "rigid:sequence_separation" );  }
-namespace rigid { IntegerOptionKey const short_range_seqsep( "rigid:short_range_seqsep" );  }
-namespace rigid { IntegerOptionKey const small_cycles( "rigid:small_cycles" );  }
-namespace rigid { IntegerOptionKey const stages( "rigid:stages" );  }
-namespace rigid { RealOptionKey const temperature( "rigid:temperature" );  }
-namespace rigid { RealOptionKey const translation( "rigid:translation" );  }
 namespace in { BooleanOptionKey const in( "in" );  }
 namespace in { StringOptionKey const Ntermini( "in:Ntermini" );  }
 namespace in { StringOptionKey const Ctermini( "in:Ctermini" );  }
+namespace in { BooleanOptionKey const use_truncated_termini( "in:use_truncated_termini" );  }
 namespace in { BooleanOptionKey const ignore_unrecognized_res( "in:ignore_unrecognized_res" );  }
 namespace in { BooleanOptionKey const ignore_waters( "in:ignore_waters" );  }
 namespace in { BooleanOptionKey const add_orbitals( "in:add_orbitals" );  }
@@ -27,13 +10,12 @@ namespace in { BooleanOptionKey const include_surfaces( "in:include_surfaces" );
 namespace in { BooleanOptionKey const enable_branching( "in:enable_branching" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_res( "in:remember_unrecognized_res" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_water( "in:remember_unrecognized_water" );  }
+namespace in { BooleanOptionKey const preserve_crystinfo( "in:preserve_crystinfo" );  }
 namespace in { BooleanOptionKey const detect_oops( "in:detect_oops" );  }
 namespace in { BooleanOptionKey const detect_disulf( "in:detect_disulf" );  }
 namespace in { RealOptionKey const detect_disulf_tolerance( "in:detect_disulf_tolerance" );  }
 namespace in { FileOptionKey const fix_disulf( "in:fix_disulf" );  }
 namespace in { BooleanOptionKey const missing_density_to_jump( "in:missing_density_to_jump" );  }
-namespace in { BooleanOptionKey const preserve_crystinfo( "in:preserve_crystinfo" );  }
-namespace in { BooleanOptionKey const use_truncated_termini( "in:use_truncated_termini" );  }
 namespace in { BooleanOptionKey const use_stupid_foldtree_format( "in:use_stupid_foldtree_format" );  }
 namespace in { IntegerVectorOptionKey const target_residues( "in:target_residues" );  }
 namespace in { IntegerVectorOptionKey const replonly_residues( "in:replonly_residues" );  }
@@ -147,17 +129,6 @@ namespace in { namespace file { BooleanOptionKey const read_pdb_link_records( "i
 namespace in { namespace file { FileOptionKey const native_contacts( "in:file:native_contacts" );  } }
 namespace in { namespace rdf { BooleanOptionKey const rdf( "in:rdf" );  } }
 namespace in { namespace rdf { BooleanOptionKey const sep_bb_ss( "in:rdf:sep_bb_ss" );  } }
-namespace MM { BooleanOptionKey const MM( "MM" );  }
-namespace MM { BooleanOptionKey const ignore_missing_bondangle_params( "MM:ignore_missing_bondangle_params" );  }
-namespace qsar { BooleanOptionKey const qsar( "qsar" );  }
-namespace qsar { StringOptionKey const weights( "qsar:weights" );  }
-namespace qsar { StringOptionKey const grid_dir( "qsar:grid_dir" );  }
-namespace qsar { IntegerOptionKey const max_grid_cache_size( "qsar:max_grid_cache_size" );  }
-namespace residues { BooleanOptionKey const residues( "residues" );  }
-namespace residues { StringVectorOptionKey const patch_selectors( "residues:patch_selectors" );  }
-namespace PCS { BooleanOptionKey const PCS( "PCS" );  }
-namespace PCS { FileOptionKey const write_extra( "PCS:write_extra" );  }
-namespace PCS { IntegerOptionKey const normalization_id( "PCS:normalization_id" );  }
 namespace inout { BooleanOptionKey const inout( "inout" );  }
 namespace inout { BooleanOptionKey const fold_tree_io( "inout:fold_tree_io" );  }
 namespace inout { BooleanOptionKey const dump_connect_info( "inout:dump_connect_info" );  }
@@ -206,36 +177,37 @@ namespace out { StringOptionKey const user_tag( "out:user_tag" );  }
 namespace out { StringOptionKey const output_tag( "out:output_tag" );  }
 namespace out { namespace file { BooleanOptionKey const file( "out:file" );  } }
 namespace out { namespace file { StringOptionKey const o( "out:file:o" );  } }
-namespace out { namespace file { StringOptionKey const silent( "out:file:silent" );  } }
-namespace out { namespace file { StringOptionKey const score_only( "out:file:score_only" );  } }
+namespace out { namespace file { FileOptionKey const design_contrast( "out:file:design_contrast" );  } }
+namespace out { namespace file { StringOptionKey const residue_type_set( "out:file:residue_type_set" );  } }
 namespace out { namespace file { StringOptionKey const atom_tree_diff( "out:file:atom_tree_diff" );  } }
 namespace out { namespace file { IntegerOptionKey const atom_tree_diff_bb( "out:file:atom_tree_diff_bb" );  } }
 namespace out { namespace file { IntegerOptionKey const atom_tree_diff_sc( "out:file:atom_tree_diff_sc" );  } }
 namespace out { namespace file { IntegerOptionKey const atom_tree_diff_bl( "out:file:atom_tree_diff_bl" );  } }
 namespace out { namespace file { StringOptionKey const alignment( "out:file:alignment" );  } }
+namespace out { namespace file { StringOptionKey const score_only( "out:file:score_only" );  } }
 namespace out { namespace file { StringOptionKey const scorefile( "out:file:scorefile" );  } }
+namespace out { namespace file { StringOptionKey const silent( "out:file:silent" );  } }
 namespace out { namespace file { StringOptionKey const silent_struct_type( "out:file:silent_struct_type" );  } }
-namespace out { namespace file { BooleanOptionKey const silent_preserve_H( "out:file:silent_preserve_H" );  } }
 namespace out { namespace file { BooleanOptionKey const silent_print_all_score_headers( "out:file:silent_print_all_score_headers" );  } }
 namespace out { namespace file { BooleanOptionKey const silent_decoytime( "out:file:silent_decoytime" );  } }
 namespace out { namespace file { IntegerOptionKey const silent_comment_bound( "out:file:silent_comment_bound" );  } }
 namespace out { namespace file { BooleanOptionKey const raw( "out:file:raw" );  } }
+namespace out { namespace file { BooleanOptionKey const weight_silent_scores( "out:file:weight_silent_scores" );  } }
+namespace out { namespace file { BooleanOptionKey const silent_preserve_H( "out:file:silent_preserve_H" );  } }
 namespace out { namespace file { BooleanOptionKey const fullatom( "out:file:fullatom" );  } }
 namespace out { namespace file { BooleanOptionKey const suppress_zero_occ_pdb_output( "out:file:suppress_zero_occ_pdb_output" );  } }
 namespace out { namespace file { BooleanOptionKey const output_virtual( "out:file:output_virtual" );  } }
 namespace out { namespace file { BooleanOptionKey const no_output_cen( "out:file:no_output_cen" );  } }
 namespace out { namespace file { BooleanOptionKey const output_orbitals( "out:file:output_orbitals" );  } }
-namespace out { namespace file { BooleanOptionKey const weight_silent_scores( "out:file:weight_silent_scores" );  } }
-namespace out { namespace file { FileOptionKey const design_contrast( "out:file:design_contrast" );  } }
-namespace out { namespace file { BooleanOptionKey const dont_rewrite_dunbrack_database( "out:file:dont_rewrite_dunbrack_database" );  } }
 namespace out { namespace file { BooleanOptionKey const renumber_pdb( "out:file:renumber_pdb" );  } }
 namespace out { namespace file { BooleanOptionKey const pdb_parents( "out:file:pdb_parents" );  } }
 namespace out { namespace file { BooleanOptionKey const per_chain_renumbering( "out:file:per_chain_renumbering" );  } }
-namespace out { namespace file { StringOptionKey const residue_type_set( "out:file:residue_type_set" );  } }
-namespace out { namespace file { StringOptionKey const frag_prefix( "out:file:frag_prefix" );  } }
 namespace out { namespace file { BooleanOptionKey const output_torsions( "out:file:output_torsions" );  } }
 namespace out { namespace file { BooleanOptionKey const pdb_comments( "out:file:pdb_comments" );  } }
 namespace out { namespace file { BooleanOptionKey const force_nonideal_structure( "out:file:force_nonideal_structure" );  } }
+namespace out { namespace file { BooleanOptionKey const write_pdb_link_records( "out:file:write_pdb_link_records" );  } }
+namespace out { namespace file { BooleanOptionKey const dont_rewrite_dunbrack_database( "out:file:dont_rewrite_dunbrack_database" );  } }
+namespace out { namespace file { StringOptionKey const frag_prefix( "out:file:frag_prefix" );  } }
 namespace out { namespace path { PathOptionKey const all( "out:path:all" );  } }
 namespace out { namespace path { PathOptionKey const path( "out:path" );  } }
 namespace out { namespace path { PathOptionKey const pdb( "out:path:pdb" );  } }
@@ -243,6 +215,35 @@ namespace out { namespace path { PathOptionKey const score( "out:path:score" ); 
 namespace out { namespace path { PathOptionKey const movie( "out:path:movie" );  } }
 namespace out { namespace path { PathOptionKey const scratch( "out:path:scratch" );  } }
 namespace out { namespace path { BooleanOptionKey const mpi_rank_dir( "out:path:mpi_rank_dir" );  } }
+namespace rigid { BooleanOptionKey const rigid( "rigid" );  }
+namespace rigid { RealOptionKey const chainbreak_bias( "rigid:chainbreak_bias" );  }
+namespace rigid { BooleanOptionKey const close_loops( "rigid:close_loops" );  }
+namespace rigid { IntegerOptionKey const fragment_cycles( "rigid:fragment_cycles" );  }
+namespace rigid { BooleanOptionKey const log_accepted_moves( "rigid:log_accepted_moves" );  }
+namespace rigid { RealOptionKey const max_ca_ca_dist( "rigid:max_ca_ca_dist" );  }
+namespace rigid { IntegerOptionKey const medium_range_seqsep( "rigid:medium_range_seqsep" );  }
+namespace rigid { FileOptionKey const patch( "rigid:patch" );  }
+namespace rigid { IntegerOptionKey const residues_backbone_move( "rigid:residues_backbone_move" );  }
+namespace rigid { RealOptionKey const rotation( "rigid:rotation" );  }
+namespace rigid { FileOptionKey const sampling_prob( "rigid:sampling_prob" );  }
+namespace rigid { StringOptionKey const score( "rigid:score" );  }
+namespace rigid { IntegerOptionKey const sequence_separation( "rigid:sequence_separation" );  }
+namespace rigid { IntegerOptionKey const short_range_seqsep( "rigid:short_range_seqsep" );  }
+namespace rigid { IntegerOptionKey const small_cycles( "rigid:small_cycles" );  }
+namespace rigid { IntegerOptionKey const stages( "rigid:stages" );  }
+namespace rigid { RealOptionKey const temperature( "rigid:temperature" );  }
+namespace rigid { RealOptionKey const translation( "rigid:translation" );  }
+namespace MM { BooleanOptionKey const MM( "MM" );  }
+namespace MM { BooleanOptionKey const ignore_missing_bondangle_params( "MM:ignore_missing_bondangle_params" );  }
+namespace qsar { BooleanOptionKey const qsar( "qsar" );  }
+namespace qsar { StringOptionKey const weights( "qsar:weights" );  }
+namespace qsar { StringOptionKey const grid_dir( "qsar:grid_dir" );  }
+namespace qsar { IntegerOptionKey const max_grid_cache_size( "qsar:max_grid_cache_size" );  }
+namespace residues { BooleanOptionKey const residues( "residues" );  }
+namespace residues { StringVectorOptionKey const patch_selectors( "residues:patch_selectors" );  }
+namespace PCS { BooleanOptionKey const PCS( "PCS" );  }
+namespace PCS { FileOptionKey const write_extra( "PCS:write_extra" );  }
+namespace PCS { IntegerOptionKey const normalization_id( "PCS:normalization_id" );  }
 namespace pocket_grid { BooleanOptionKey const pocket_grid( "pocket_grid" );  }
 namespace pocket_grid { RealOptionKey const pocket_grid_size( "pocket_grid:pocket_grid_size" );  }
 namespace pocket_grid { RealOptionKey const pocket_grid_size_x( "pocket_grid:pocket_grid_size_x" );  }
@@ -719,4 +720,3 @@ namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" 
 namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
 namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
 namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
-namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
