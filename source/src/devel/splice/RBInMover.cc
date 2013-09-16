@@ -14,24 +14,21 @@
 #include <devel/splice/RBInMover.hh>
 #include <devel/splice/RBOutMover.hh>
 #include <devel/splice/RBInMoverCreator.hh>
-#include <protocols/moves/DataMapObj.hh>
 #include <protocols/moves/DataMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/util.hh>
-#include <core/import_pose/import_pose.hh>
 using basic::T;
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("protocols.simple_moves.RBInMover");
+static basic::Tracer TR("devel.splice.RBInMover");
 #include <utility/tag/Tag.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
-#include <fstream>
 #include <string>
 #include <algorithm>
 #include <utility/io/izstream.hh>
