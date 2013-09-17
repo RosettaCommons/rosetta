@@ -47,7 +47,7 @@ public:
 private:
 	core::Real res_low_, res_high_;
 	core::Size nresbins_;
-	bool scale_by_fsc_, asymm_only_;
+	bool scale_by_fsc_, asymm_only_, ignore_bs_;
 	std::string outmap_name_;
 };
 

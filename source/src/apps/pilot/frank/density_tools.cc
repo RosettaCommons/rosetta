@@ -343,7 +343,7 @@ main( int argc, char * argv [] )
 	NEW_OPT(denstools::lowres, "lowres", 500.0);
 	NEW_OPT(denstools::hires, "hires", 0.0);
 	NEW_OPT(edensity::alt_mapfile, "alt mapfile", "");
-	NEW_OPT(denstools::nresbins, "#resolution bins for statistics", 20);
+	NEW_OPT(denstools::nresbins, "#resolution bins for statistics", 50);
 	NEW_OPT(denstools::rescale_map, "scale map I == model I?", false);
 	NEW_OPT(denstools::dump_map_and_mask, "dump_map_and_mask", false);
 	NEW_OPT(denstools::nomask, "nomask", false);

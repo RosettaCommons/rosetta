@@ -407,16 +407,32 @@ make_symmetric_pdb_info(
 			pdb_info_target->temperature( res, atm, b_atm );
 		}
 
+		// scoring subunit may not be the first
 		int clonecounter=1;
+		Size res_master = res;
+		if (!symm_info->bb_is_independent(res)) {
+			res_master = symm_info->bb_follows(res);
+
+			int clone_res( res_master );
+			pdb_info_target->number( clone_res, res_id );
+			pdb_info_target->icode( clone_res, icode );
+
+			int newchn_idx = chn_idx;
+			pdb_info_target->chain( clone_res, basic::get_pymol_chain(newchn_idx) );
+			for ( Size atm=1; atm <= pdb_info_src->natoms(res) ; ++atm) {
+				pdb_info_target->temperature( clone_res, atm, pdb_info_src->temperature( res, atm ) );
+			}
+		}
+
 		for ( std::vector< Size>::const_iterator
-				clone     = symm_info->bb_clones( res ).begin(),
-				clone_end = symm_info->bb_clones( res ).end();
+				clone     = symm_info->bb_clones( res_master ).begin(),
+				clone_end = symm_info->bb_clones( res_master ).end();
 				clone != clone_end; ++clone ) {
 			int clone_res( *clone );
 			pdb_info_target->number( clone_res, res_id );
 			pdb_info_target->icode( clone_res, icode );
 
-			int newchn_idx = chn_idx + (clonecounter++)*(lastchnid);
+			int newchn_idx = chn_idx + (clonecounter++)*(lastchnid);  //fpd this logic could be improved
 			pdb_info_target->chain( clone_res, basic::get_pymol_chain(newchn_idx) );
 
 			// symmetrize B's

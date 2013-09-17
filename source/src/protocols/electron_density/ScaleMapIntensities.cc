@@ -59,10 +59,11 @@ ScaleMapIntensities::ScaleMapIntensities() : moves::Mover() {
 
 void ScaleMapIntensities::init() {
 	res_low_=1000.0;
-	res_high_=0.0;
+	res_high_=1e-6;
 	nresbins_=50;
 	scale_by_fsc_=false;
 	asymm_only_=false;
+	ignore_bs_=false;
 	outmap_name_="";
 }
 
@@ -89,7 +90,11 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 
 			poseCoord coord_j;
 			coord_j.x_ = rsd_i.xyz( j );
-			coord_j.B_ = pose.pdb_info()->temperature( i, j );
+			if (ignore_bs_) {
+				coord_j.B_ = 0.0;
+			} else {
+				coord_j.B_ = pose.pdb_info()->temperature( i, j );
+			}
 			coord_j.elt_ = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
 
 			litePose.push_back( coord_j );
@@ -107,9 +112,10 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		modelmapFSC = core::scoring::electron_density::getDensityMap().getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
 
 	utility::vector1< core::Real > rescale_factor(nresbins_,0.0);
-	for (Size i=1; i<=nresbins_; ++i)
-		if (mapI[i] != 0)
+	for (Size i=1; i<=nresbins_; ++i) {
+		if (mapI[i] > 0 && modelmapFSC[i]*modelI[i] >= 0 )
 			rescale_factor[i] = sqrt(modelmapFSC[i]*modelI[i] / mapI[i]);
+	}
 
 	TR.Debug << "SCALING MAP:" << std::endl;
 	TR.Debug << "resbin   model   map" << std::endl;
@@ -145,6 +151,9 @@ ScaleMapIntensities::parse_my_tag(
 	}
 	if ( tag->hasOption("asymm_only") ) {
 		asymm_only_ = tag->getOption<bool>("asymm_only");
+	}
+	if ( tag->hasOption("ignore_bs") ) {
+		ignore_bs_ = tag->getOption<bool>("ignore_bs");
 	}
 	if ( tag->hasOption("outmap") ) {
 		outmap_name_ = tag->getOption<std::string>("outmap");

@@ -98,13 +98,20 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	core::Real fsc1=0.0, fsc2=0.0;
 
 	// train map
-	modelmap1FSC = core::scoring::electron_density::getDensityMap().getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
+	modelmap1FSC = core::scoring::electron_density::getDensityMap().getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
 
 	for (Size i=1; i<=modelmap1FSC.size(); ++i) fsc1+=modelmap1FSC[i];
 	fsc1 /= modelmap1FSC.size();
 
+	//std::cerr << "1/res  FSC_map1_model" << std::endl;
+	//utility::vector1< core::Real > resobins = core::scoring::electron_density::getDensityMap().getResolutionBins(nresbins_,1.0/res_low_, 1.0/res_high_);
+	//for (Size i=1; i<=resobins.size(); ++i) {
+	//	std::cerr << resobins[i] << " " << modelmap1FSC[i] << std::endl;
+	//}
+
+
 	if (testmap_ && testmap_->isMapLoaded()) {
-		modelmap2FSC = testmap_->getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
+		modelmap2FSC = testmap_->getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
 		for (Size i=1; i<=modelmap2FSC.size(); ++i) fsc2+=modelmap2FSC[i];
 		fsc2 /= modelmap2FSC.size();
 	}
