@@ -30,12 +30,17 @@ def getPlatformID():
 
 def main(args):
     database="-database ~/minirosetta_database"
-    cl=""
+
+    # The flags that you must have in order for the performance benchmark to work.
+    # Here we currently have the flags required for the ligand docking benchmark to work.
+    required_flags = "-in:file:extra_res_path extra_params"
+
+    cl=required_flags
     if len(args) <= 1:
         print "No database path supplied... usign defaut one."
     else:
         database = " ".join(args[1:])
-        cl = "-mute core protocols -in:file:extra_res_path extra_params " + database
+        cl += " -mute core protocols " + database
     print "Comand line arguments:", cl
 
     #platform = getPlatformID()
