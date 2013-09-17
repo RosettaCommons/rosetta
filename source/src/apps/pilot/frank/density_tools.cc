@@ -182,7 +182,7 @@ densityTools()
 
 	// outputs
 	Size nresobins = option[ denstools::nresbins ]();
-	utility::vector1< core::Real > resobins, mapI, mapIprime, modelI, solvI, modelSum, modelmapFSC;
+	utility::vector1< core::Real > resobins, mapI, mapIprime, modelI, modelSum, modelmapFSC;
 	utility::vector1< core::Real > mapAltI, mapmapFSC;
 	utility::vector1< core::Real > perResCC;
 	Real rscc, fsc=0, mm_rscc, mm_fsc=0;
@@ -221,7 +221,7 @@ densityTools()
 		std::string mapfile = option[ edensity::alt_mapfile ];
 		core::Real mapreso = option[ edensity::mapreso ]();
 		core::Real mapsampling = option[ edensity::grid_spacing ]();
-		std::cerr << "Loading alternate density map" << mapfile << std::endl;
+		std::cerr << "Loading alternate density map " << mapfile << std::endl;
 		mapAlt.readMRCandResize( mapfile , mapreso , mapsampling );
 
 		if (userpose && !option[ denstools::nomask ]() ) {
@@ -264,7 +264,7 @@ densityTools()
 			}
 		}
 
-		core::scoring::electron_density::getDensityMap().getIntensities( pose, nresobins, lowres, hires, modelI, solvI );
+		core::scoring::electron_density::getDensityMap().getIntensities( pose, nresobins, lowres, hires, modelI );
 		modelmapFSC = core::scoring::electron_density::getDensityMap().getFSC( pose, nresobins, lowres, hires );
 		rscc = core::scoring::electron_density::getDensityMap().getRSCC( pose );
 		for (Size i=1; i<=resobins.size(); ++i)

@@ -9,8 +9,8 @@
 
 /// @file
 
-#include <protocols/electron_density/ScaleMapIntensities.hh>
-#include <protocols/electron_density/ScaleMapIntensitiesCreator.hh>
+#include <protocols/electron_density/ReportFSC.hh>
+#include <protocols/electron_density/ReportFSCCreator.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -38,13 +38,14 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 #include <ObjexxFCL/format.hh>
 
-static basic::Tracer TR( "protocols.electron_density.ScaleMapIntensities" );
+static basic::Tracer TR( "protocols.electron_density.ReportFSC" );
 
 namespace protocols {
 namespace electron_density {
@@ -53,22 +54,19 @@ using core::scoring::electron_density::poseCoords;
 using core::scoring::electron_density::poseCoord;
 
 
-ScaleMapIntensities::ScaleMapIntensities() : moves::Mover() {
+ReportFSC::ReportFSC() : moves::Mover() {
 	init();
 }
 
-void ScaleMapIntensities::init() {
+void ReportFSC::init() {
 	res_low_=1000.0;
 	res_high_=0.0;
 	nresbins_=50;
-	scale_by_fsc_=false;
 	asymm_only_=false;
-	outmap_name_="";
+	testmap_ = NULL;
 }
 
-void ScaleMapIntensities::apply(core::pose::Pose & pose) {
-	utility::vector1< core::Real > mapI, modelI;
-
+void ReportFSC::apply(core::pose::Pose & pose) {
 	// pose->poseCoords
 	poseCoords litePose;
 	core::conformation::symmetry::SymmetryInfoOP symm_info;
@@ -96,34 +94,36 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		}
 	}
 
-	core::scoring::electron_density::getDensityMap().getIntensities( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelI );
+	utility::vector1< core::Real > modelmap1FSC(nresbins_,1.0), modelmap2FSC(nresbins_,1.0);
+	core::Real fsc1=0.0, fsc2=0.0;
 
-	// TODO: make masking optional
-	mapI = core::scoring::electron_density::getDensityMap().getIntensitiesMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_);
+	// train map
+	modelmap1FSC = core::scoring::electron_density::getDensityMap().getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
 
-	utility::vector1< core::Real > modelmapFSC(nresbins_,1.0);
-	if (scale_by_fsc_)
-		// TODO: make masking optional
-		modelmapFSC = core::scoring::electron_density::getDensityMap().getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
+	for (Size i=1; i<=modelmap1FSC.size(); ++i) fsc1+=modelmap1FSC[i];
+	fsc1 /= modelmap1FSC.size();
 
-	utility::vector1< core::Real > rescale_factor(nresbins_,0.0);
-	for (Size i=1; i<=nresbins_; ++i)
-		if (mapI[i] != 0)
-			rescale_factor[i] = sqrt(modelmapFSC[i]*modelI[i] / mapI[i]);
+	if (testmap_ && testmap_->isMapLoaded()) {
+		modelmap2FSC = testmap_->getFSC( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
+		for (Size i=1; i<=modelmap2FSC.size(); ++i) fsc2+=modelmap2FSC[i];
+		fsc2 /= modelmap2FSC.size();
+	}
 
-	TR.Debug << "SCALING MAP:" << std::endl;
-	TR.Debug << "resbin   model   map" << std::endl;
-	for (Size i=1; i<=nresbins_; ++i)
-		TR.Debug << i << "  " << modelI[i] << " " << mapI[i] << std::endl;
+	// tag
+	core::pose::RemarkInfo remark;
+	std::ostringstream oss;
+	oss << "FSC(" << res_low_ << ":" << res_high_ << ") = " << fsc1;
+	if (testmap_ && testmap_->isMapLoaded())
+		oss << " / " << fsc2;
 
-	core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, 1.0/res_low_, 1.0/res_high_ );
-	if (outmap_name_.length()>0)
-		core::scoring::electron_density::getDensityMap().writeMRC( outmap_name_ );
+	TR << oss.str() << std::endl;
+	remark.num = 1;	remark.value = oss.str();
+	pose.pdb_info()->remarks().push_back( remark );
 }
 
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
-ScaleMapIntensities::parse_my_tag(
+ReportFSC::parse_my_tag(
 								   TagPtr const tag,
 								   moves::DataMap & datamap,
 								   Filters_map const & filters,
@@ -131,6 +131,9 @@ ScaleMapIntensities::parse_my_tag(
 								   Pose const & pose
 							   )
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	if ( tag->hasOption("res_low") ) {
 		res_low_ = tag->getOption<core::Real>("res_low");
 	}
@@ -140,32 +143,34 @@ ScaleMapIntensities::parse_my_tag(
 	if ( tag->hasOption("nresbins") ) {
 		nresbins_ = tag->getOption<core::Size>("nresbins");
 	}
-	if ( tag->hasOption("scale_by_fsc") ) {
-		scale_by_fsc_ = tag->getOption<bool>("scale_by_fsc");
-	}
 	if ( tag->hasOption("asymm_only") ) {
 		asymm_only_ = tag->getOption<bool>("asymm_only");
 	}
-	if ( tag->hasOption("outmap") ) {
-		outmap_name_ = tag->getOption<std::string>("outmap");
+	if ( tag->hasOption("testmap") ) {
+		std::string mapfile = tag->getOption<std::string>("testmap");
+		core::Real mapreso = option[ edensity::mapreso ]();
+		core::Real mapsampling = option[ edensity::grid_spacing ]();
+		std::cerr << "Loading alternate density map " << mapfile << std::endl;
+		testmap_ = new core::scoring::electron_density::ElectronDensity();
+		testmap_->readMRCandResize( mapfile , mapreso , mapsampling );
 	}
 }
 
 protocols::moves::MoverOP
-ScaleMapIntensitiesCreator::create_mover() const {
-	return new ScaleMapIntensities;
+ReportFSCCreator::create_mover() const {
+	return new ReportFSC;
 }
 
 std::string
-ScaleMapIntensitiesCreator::keyname() const
+ReportFSCCreator::keyname() const
 {
-	return ScaleMapIntensitiesCreator::mover_name();
+	return ReportFSCCreator::mover_name();
 }
 
 std::string
-ScaleMapIntensitiesCreator::mover_name()
+ReportFSCCreator::mover_name()
 {
-	return "ScaleMapIntensities";
+	return "ReportFSC";
 }
 
 }

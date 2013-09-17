@@ -68,6 +68,7 @@ static MoverRegistrator< electron_density::SetupForDensityScoringMoverCreator > 
 static MoverRegistrator< electron_density::BfactorFittingMoverCreator > reg_BfactorFittingMoverCreator;
 static MoverRegistrator< electron_density::DensityMorphingMoverCreator > reg_DensityMorphingMoverCreator;
 static MoverRegistrator< electron_density::ScaleMapIntensitiesCreator > reg_ScaleMapIntensitiesCreator;
+static MoverRegistrator< electron_density::ReportFSCCreator > reg_ReportFSCCreator;
 
 static MoverRegistrator< enzdes::AddOrRemoveMatchCstsCreator > reg_AddOrRemoveMatchCstsCreator;
 static MoverRegistrator< enzdes::BackboneSamplerCreator > reg_BackboneSamplerCreator;

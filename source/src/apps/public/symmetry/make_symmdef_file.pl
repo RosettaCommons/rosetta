@@ -1240,11 +1240,19 @@ if ($helix_mode == 1) {
 	my @helical_chain_split = split( ':', $helical_chain );
 	$helical_chain = $helical_chain_split[0];
 	my $force_symm_order = 0;
+	my $force_rise = 0;
+	my $force_axis = 'A';
 
 	# optionally ... allow input to 'force' a symmetric order
 	#    NOTE THAT THIS MAY RESULT IS A SYSTEM QUITE FAR FROM THE INPUT SYSTEM
 	if ($#helical_chain_split > 0) {
 		$force_symm_order = $helical_chain_split[1];
+	}
+	if ($#helical_chain_split > 1) {
+		$force_rise = $helical_chain_split[2];
+	}
+	if ($#helical_chain_split > 2) {
+		$force_axis = $helical_chain_split[3];
 	}
 
 	## make sure chains exist & are the same length
@@ -1288,6 +1296,15 @@ if ($helix_mode == 1) {
 			$W = cos( PI/$force_symm_order );
 		}
 
+		# force axis
+		if ( $force_axis eq 'X' ) {
+			$X=1; $Y=0; $Z=0;
+		} elsif ( $force_axis eq 'Y' ) {
+			$X=0; $Y=1; $Z=0;
+		} elsif ( $force_axis eq 'Z' ) {
+			$X=0; $Y=0; $Z=1;
+		}
+
 		# if we have 2D lattice symmetry only allow 1 or 2 subunits per turn
 		if ( $perp_chain ne '' ) {
 			my $omega = acos($W);
@@ -1319,6 +1336,11 @@ if ($helix_mode == 1) {
 	normalize( $helical_axis );
 	my $del_COM_inplane    = vsub( $del_COM , vscale(dot($del_COM,$helical_axis),$helical_axis) );
 	my $del_COM_alonghelix = vsub( $del_COM , $del_COM_inplane );
+
+	if ($force_rise > 0) {
+		my $rise = vnorm($del_COM_alonghelix);
+		$del_COM_alonghelix = vscale( $force_rise/$rise , $del_COM_alonghelix );
+	}
 
 	# helix handedness
 	my $right_handed = 1;

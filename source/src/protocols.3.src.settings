@@ -74,6 +74,7 @@ sources = {
 		"BfactorFittingMover",
 		"DensityMorphingMover",
 		"ScaleMapIntensities",
+		"ReportFSC",
 		"SetupForDensityScoringMover",
 		"util",
 	],

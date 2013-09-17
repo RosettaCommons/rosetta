@@ -144,18 +144,25 @@ public:
  	utility::vector1< core::Real >
 	getResolutionBins( core::Size nbuckets, core::Real maxreso, core::Real minreso );
 
-	/// @brief Compute intensities
+	/// @brief Compute map intensities
 	utility::vector1< core::Real >
 	getIntensities( core::Size nbuckets, core::Real maxreso, core::Real minreso );
 
-	/// @brief Compute intensities
+	/// @brief Compute map intensities, masked by a pose
+	utility::vector1< core::Real >
+	getIntensitiesMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso );
+
+	/// @brief Compute intensities from a pose
 	void
-	getIntensities( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso,
-		utility::vector1< core::Real > &Imodel, utility::vector1< core::Real > &Isol);
+	getIntensities( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso, utility::vector1< core::Real > &Imodel);
 
 	/// @brief Compute model-map FSC
 	utility::vector1< core::Real >
 	getFSC( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso );
+
+	/// @brief Compute model-map FSC, masked by the pose
+	utility::vector1< core::Real >
+	getFSCMasked( poseCoords const &pose, core::Size nbuckets, core::Real maxreso, core::Real minreso );
 
 	/// @brief Compute map-map FSC
 	utility::vector1< core::Real >
@@ -176,8 +183,11 @@ public:
 	void
 	calcRhoC( poseCoords const &pose );
 
+	// for now use masking to handle solvent
+	/*
 	void
 	calcRhoCandSolvent( poseCoords const &pose );
+	*/
 
 	core::Real
 	maxNominalRes();
