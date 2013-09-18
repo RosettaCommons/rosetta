@@ -1160,7 +1160,8 @@ sample_user_specified_virtual_riboses(
 	core::scoring::ScoreFunctionOP const & scorefxn,
 	std::string const silent_file_out,
 	std::string const input_tag,
-	bool const integration_test_mode
+	bool const integration_test_mode,
+	bool const use_phenix_geo
 ) {
 	using namespace ObjexxFCL;
 	using namespace core::io::silent;
@@ -1223,7 +1224,7 @@ sample_user_specified_virtual_riboses(
 		curr_FB_JP.PDL = sample_virtual_ribose_and_bulge_and_close_chain(
 				pose,  curr_FB_JP, "VIRT_RIBOSE_NUM_" + string_of( n ),	scorefxn,
 				sampling_scorefxn, atr_rep_screening_scorefxn, chainbreak_scorefxn,
-				job_parameters, integration_test_mode, false /*use_phenix_geo*/,
+				job_parameters, integration_test_mode, use_phenix_geo,
 				false /*virtual_ribose_is_from_prior_step*/ );
 				//ACTUAL COMPUTATION OCCUR HERE!!
 

@@ -182,7 +182,8 @@ sample_user_specified_virtual_riboses(
 	core::scoring::ScoreFunctionOP const & scorefxn,
 	std::string const silent_file_out,
 	std::string const input_tag,
-	bool const integration_test_mode
+	bool const integration_test_mode,
+	bool const use_phenix_geo
 );
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
