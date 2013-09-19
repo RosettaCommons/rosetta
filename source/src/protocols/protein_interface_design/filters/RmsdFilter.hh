@@ -44,6 +44,10 @@ public:
 		return new RmsdFilter();
 	}
 	void report( std::ostream & out, core::pose::Pose const & pose ) const;
+    void reference_pose( core::pose::PoseOP ref ) { reference_pose_ = ref; }
+    void selection( std::list< core::Size > const & sele ) { selection_ = sele; }
+    void superimpose( bool s ) { superimpose_ = s; }
+    bool superimpose( ) const { return superimpose_; }
 	core::Real report_sm( core::pose::Pose const & pose ) const;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	virtual ~RmsdFilter();

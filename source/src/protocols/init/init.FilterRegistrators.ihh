@@ -25,6 +25,7 @@ static FilterRegistrator< protocols::enzdes::LigBurialFilterCreator > reg_LigBur
 static FilterRegistrator< protocols::enzdes::LigDSasaFilterCreator > reg_LigDSasaFilterCreator;
 static FilterRegistrator< protocols::enzdes::LigInterfaceEnergyFilterCreator > reg_LigInterfaceEnergyFilterCreator;
 static FilterRegistrator< protocols::enzdes::RepackWithoutLigandFilterCreator > reg_RepackWithoutLigandFilterCreator;
+static FilterRegistrator< protocols::enzdes::RemoveLigandFilterCreator > reg_RemoveLigandFilterCreator;
 
 static FilterRegistrator< protocols::filters::CalculatorFilterCreator > reg_CalculatorFilterCreator;
 static FilterRegistrator< protocols::filters::CombinedFilterCreator > reg_CombinedFilterCreator;
@@ -39,7 +40,7 @@ static FilterRegistrator< protocols::filters::TimeFilterCreator > reg_TimeFilter
 static FilterRegistrator< protocols::simple_filters::RelativePoseFilterCreator > reg_RelativePoseFilterCreator;
 
 static FilterRegistrator< protocols::fldsgn::filters::CoreDunbrackFilterCreator > reg_CoreDunbrackFilterCreator;
-static FilterRegistrator< protocols::fldsgn::filters::FragQualFilterCreator > reg_FragQualFilterCreator;
+static FilterRegistrator< protocols:: fldsgn::filters::FragQualFilterCreator > reg_FragQualFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::HelixKinkFilterCreator > reg_HelixKinkFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::HelixPairingFilterCreator > reg_HelixPairingFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::HSSTripletFilterCreator > reg_HSSTripletFilterCreator;

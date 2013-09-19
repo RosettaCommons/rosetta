@@ -15,6 +15,7 @@
 #include <protocols/filters/FilterFactory.hh>
 
 #include <protocols/enzdes/EnzFilterCreators.hh>
+#include <protocols/enzdes/RemoveLigandFilterCreator.hh>
 
 #include <protocols/filters/BasicFilterCreators.hh>
 #include <protocols/filters/CalculatorFilterCreator.hh>

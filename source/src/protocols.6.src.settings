@@ -76,6 +76,7 @@ sources = {
 		"ModifyStoredLigandRBConfsMovers",
 		"PackRotamersMoverPartGreedy",
 		"SecondaryMatchProtocol",
+		"RemoveLigandFilter",
 	],
 	"protocols/hotspot_hashing": [
 		"HotspotStub",
