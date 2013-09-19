@@ -52,7 +52,7 @@ FoldTree::~FoldTree() {}
 
 ///////////////////////////////////////////////////////////////////////
 // ensure that stored data depending on the topology are up-to-date
-// modifications by add_edge, delete_edge, reorder, etcetc
+// modifications by add_edge, delete_edge, reorder, etc, etc
 // are indicated by setting new_topology and/or new_order to true
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -77,13 +77,13 @@ bool operator!=(const FoldTree& a, const FoldTree& b) {
 	return !(a == b);
 }
 
-// @details Computes a fixed-length, hash-based identifier for this FoldTree,
-// permitting efficient comparison of a pair of FoldTrees. The need for this
-// functionality arose from a desire to reuse an object that was unaware of
-// changes to the FoldTree. Rather than perform a costly deep comparison by
-// evaluating edge lists, we wanted a simple method for quickly testing
-// whether the naive object should be reinstantiated. This method is most
-// useful in situations where there are many edges in the FoldTree.
+/// @details Computes a fixed-length, hash-based identifier for this FoldTree,
+/// permitting efficient comparison of a pair of FoldTrees. The need for this
+/// functionality arose from a desire to reuse an object that was unaware of
+/// changes to the FoldTree. Rather than perform a costly deep comparison by
+/// evaluating edge lists, we wanted a simple method for quickly testing
+/// whether the naive object should be reinstantiated. This method is most
+/// useful in situations where there are many edges in the FoldTree.
 size_t FoldTree::hash_value() const {
   using std::string;
   using std::stringstream;
@@ -99,7 +99,6 @@ size_t FoldTree::hash_value() const {
 }
 
 /// @details  Delete self-edges in the foldtree, allowing the edge 1->1 for a single residue tree
-
 void
 FoldTree::delete_self_edges()
 {
@@ -122,8 +121,6 @@ FoldTree::delete_self_edges()
 
 /// @details  Delete a sequence position from a foldtree. If the residue is a jump point or the root of the tree,
 /// we will have to rearrange the topology.
-
-
 void
 FoldTree::delete_seqpos( int const seqpos )
 {
@@ -270,8 +267,6 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 ///      2. choose the next residue in the first outgoing polymer edge
 /// II.  if there's an incoming edge, choose the start of this edge
 /// III. (non-polymer root residue) choose stop of first edge in foldtree
-///
-
 void
 FoldTree::delete_jump_seqpos( int const seqpos )
 {
@@ -380,7 +375,6 @@ FoldTree::get_jump_that_builds_residue( int const seqpos ) const
 /// @details  Delete a sequence position from a foldtree. This will not work
 /// at positions that are jump points, ie start or stop vertices for jump edges. (or the root of the tree!)
 /// So basically only works for polymer residues.
-
 void
 FoldTree::delete_seqpos_simple( int const seqpos )
 {
@@ -448,7 +442,6 @@ FoldTree::apply_sequence_mapping( id::SequenceMapping const & old2new )
 /// this case.
 ///
 /// @note  seqpos may be greater than current nres, ie we may be "inserting" at end
-///
 void
 FoldTree::insert_polymer_residue(
 	int const seqpos,
@@ -513,8 +506,6 @@ FoldTree::insert_polymer_residue(
 /// the residue at position seqpos moves to position seqpos+1
 ///
 /// vertices remapped, only question is cutpoint at seqpos-1, should it move to seqpos?
-///
-
 void
 FoldTree::insert_residue_by_jump(
 	int const seqpos,
@@ -554,7 +545,6 @@ FoldTree::insert_residue_by_jump(
 /// Note that insert_seqpos could be equal to nres()+1, ie subtree is being appended at the end.
 /// The jump anchoring subtree runs from the residue currently numbered "anchor_pos" to the residue
 /// insert_seqpos + subtree.root() - 1, and has label/number anchor_jump_number
-///
 void
 FoldTree::insert_fold_tree_by_jump(
  FoldTree const & subtree,
@@ -715,8 +705,9 @@ FoldTree::add_edge(
 	new_topology = true; // book-keeping
 	edge_list_.push_back( Edge( start, stop, label ) );
 }
-//@details This 'add_edge' calls the edge constructor with the same args and is
-//used to form chemical edges.
+
+/// @details This 'add_edge' calls the edge constructor with the same args and is
+/// used to form chemical edges.
 void
 FoldTree::add_edge(
 	int const start,
@@ -862,12 +853,10 @@ FoldTree::delete_segment(
 	edge_list_ = new_edge_list_;
 }
 
-
-//////////////////////////////////////////////////////////////////
-/// @details  this is an internal function, used for testing if an edge is separating
-///
 // should this set new_topology TRUE???
 //
+//////////////////////////////////////////////////////////////////
+/// @details  this is an internal function, used for testing if an edge is separating
 void
 FoldTree::update_edge_label(
 	int const start,
@@ -896,12 +885,10 @@ FoldTree::update_edge_label(
 }
 
 
-
-//////////////////////////////////////////////////////////////////
-/// @details  this is an internal function, used for testing if an edge is separating
-///
 // should this set new_topology TRUE???
 //
+//////////////////////////////////////////////////////////////////
+/// @details  this is an internal function, used for testing if an edge is separating
 int
 FoldTree::edge_label(
 	int const start,
@@ -1025,15 +1012,13 @@ FoldTree::upstream_jump_residue( int const jump_number ) const
 	return 0;
 }
 
-
+// will this be too slow? creates a new edge_list_ object,
+// then at the end copies it into edge_list_; To
 ///////////////////////////////////////////////////////
 /// @details  Reorder the tree so that start_residue is the new root.
 /// returns false if no re-ordering allowed! To reorder
 /// successfully, start_residue needs to be a vertex in the
 /// original fold tree.
-
-// will this be too slow? creates a new edge_list_ object,
-// then at the end copies it into edge_list_; To
 bool
 FoldTree::reorder( int const start_residue )
 {
@@ -1135,8 +1120,6 @@ FoldTree::is_simple_tree() const {
 //////////////////////////////////////////////////////////////////////////////
 /// @details  After this call you're guaranteed that v is a vertex of the tree, ie not contained in the
 /// interior of a peptide edge
-///
-
 void
 FoldTree::add_vertex( int const v )
 {
@@ -1160,7 +1143,6 @@ FoldTree::add_vertex( int const v )
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details  Add a new jump to an existing fold tree, returns the jump_number of the new jump.
-
 int
 FoldTree::new_jump(
 	int const jump_pos1,
@@ -1352,7 +1334,6 @@ FoldTree::tree_from_jumps_and_cuts(
 ///  keep this behavior inactive by default --  other routines used by
 ///  protein jumpers (get_residue_edge?) appear to stumble if jumps start
 ///  at the root residue.
-///
 bool FoldTree::random_tree_from_jump_points(
 	int const nres_in,
 	int const num_jump_in,
@@ -1539,7 +1520,6 @@ FoldTree::cutpoints() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// private:
 /// @details
 ///
 /// this routine assigns labels to the edges of a graph based
@@ -1559,7 +1539,6 @@ FoldTree::cutpoints() const
 /// also, there shouldn't be any 0's before this is called
 /// 0's are for communicating between this function and
 /// the logical function connected_graph(g)
-
 void
 FoldTree::update_edge_labels()
 {
@@ -1682,7 +1661,6 @@ FoldTree::connected() const
 /// Uses the following routine to figure out which vertices should be in each tree.
 ///
 /// @note The N-terminal vertex of jump "jump_number" goes to tree f1
-///
 void
 FoldTree::partition_by_jump(
 	int const jump_number,
@@ -1925,7 +1903,6 @@ FoldTree::jump_point(
 /// complex. Chooses the first cutpoint with the desired property, starting at the N-terminus.
 /// Will be unique eg if the jump is the intra-template jump used to support a single loop
 /// region during loop modeling.
-///
 int
 FoldTree::cutpoint_by_jump(
 	int const jump_number
@@ -1960,9 +1937,7 @@ FoldTree::cutpoint_by_jump(
 /// @note edge_count(cutpoint+1) doesn't really make sense
 ///         currently set to 0 but routines should avoid looking at this
 ///         value (see eg refold_reorder(...) )
-
 /// @note Not checked out for chemical links
-///
 void
 FoldTree::setup_edge_counts() const
 {
@@ -2037,46 +2012,6 @@ FoldTree::setup_edge_counts() const
 	for ( int i=1; i<= num_jump_; ++i ) assert( jump_edge_count[ i ] >= 1 );
 
 } // FoldTree::setup_edge_counts(...)
-
-/*
-Commenting this out (pb), since it doesn't really handle the case of chemical edges properly...
-Anyhow, going to see if we can do without this, replace with the get_residue_edge routine...
-
-///////////////////////////////////////////////////////////////////////
-/// @details  Returns the folding direction of a given residue. If the residue
-/// is in a peptide edge this is the direction in which that edge is traveled if
-/// we traverse the tree starting at the root.
-///
-/// the direction of a residue could be either n2c(1) or c2n(-1) or dir_jump(0).
-/// for the root residue or a residue as the stopping residue of a jump, its direction
-/// is dir_jump; for a residue within a peptide edge(including the edge end),
-/// its direction is the same as the direction of the edge, i.e.,
-/// if edge.start < edge.stop, it is n2c direction.
-int
-FoldTree::get_residue_direction( int const seqpos ) const
-{
-	// the root residue is special
-	if ( seqpos == begin()->start() ) return dir_jump;
-
-	for ( const_iterator it = begin(), it_end = end(); it != it_end; ++it ) {
-		if ( !it->is_polymer() ) {
-			// jump edge
-			if ( seqpos == it->stop() ) {
-				return dir_jump;
-			}
-		} else {
-			// peptide edge
-			if ( seqpos > it->start() && seqpos <= it->stop() ) {
-				return 1; // forward
-			} else if ( seqpos < it->start() && seqpos >= it->stop() ) {
-				return -1; // backward
-			}
-		}
-	}
-	utility_exit_with_message( "no edge found that contains seqpos!" );
-	return 0;
-}
-*/
 
 
 Edge const &
@@ -2156,7 +2091,6 @@ FoldTree::get_polymer_residue_direction( int const seqpos ) const
 
 ///////////////////////////////////////////////////////////////////////
 /// @details  Internal routine for updating data that is derived from the edge list (which is the only primary data).
-
 void
 FoldTree::update_cutpoints() const
 {
@@ -2204,7 +2138,6 @@ FoldTree::update_cutpoints() const
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details  Internal routine for updating data that is derived from the edge list (which is the only primary data).
-
 void
 FoldTree::update_nres() const
 {
@@ -2222,7 +2155,6 @@ FoldTree::update_nres() const
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details  Internal routine for updating data that is derived from the edge list (which is the only primary data).
-
 void
 FoldTree::update_num_jump() const
 {
@@ -2254,7 +2186,6 @@ FoldTree::update_num_jump() const
 ///////////////////////////////////////////////////////////////////////////////
 /// @details  Internal routine for updating data that is derived from the edge list (which is the only primary data).
 /// fills is_jump_point, jump_point
-//
 void
 FoldTree::update_jump_points() const
 {
@@ -2297,8 +2228,6 @@ FoldTree::update_jump_points() const
 /// so it's updated in check_order()
 ///
 /// Internal routine for updating data that is derived from the edge list (which is the only primary data).
-//
-
 void
 FoldTree::update_jump_edge() const
 {
@@ -2334,10 +2263,10 @@ FoldTree::show(std::ostream & out) const
 	out << std::endl;
 }
 
+
+// TODO: 03/23/05 -- make single-line I/O
 ///////////////////////////////////////////////////////////////////////////////
 /// @details  Foldtree output to stream
-//
-// 03/23/05 -- make single-line I/O
 std::ostream &
 operator <<( std::ostream & os, FoldTree const & t )
 {
@@ -2347,7 +2276,8 @@ operator <<( std::ostream & os, FoldTree const & t )
 		os << *it;
 	}
 	os << std::endl;
-	// OL: this is not only super counter-intuitive but also makes silent-io impossible where one wants to end each line with the tag
+	// OL: this is not only super counter-intuitive but also makes silent-io impossible where one wants to end each
+	// line with the tag
 	//  the usual behaviour of objects is not to line-feed
 	//  standard call: std::cout << f << std::endl;   --- would produce two endlines!
 	return os;
@@ -2356,7 +2286,6 @@ operator <<( std::ostream & os, FoldTree const & t )
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details  Foldtree input from stream
-
 std::istream &
 operator >>( std::istream & is, FoldTree & t )
 {
@@ -2458,8 +2387,6 @@ FoldTree::check_edges_for_atom_info() const
 ///////////////////////////////////////////////////////////////////////////////
 /// @details  Set connection atoms for a jump. This is not used by the foldtree, only to communicate to the
 /// AtomTree during construction of an atomtree from a foldtree.
-///
-
 void
 FoldTree::set_jump_atoms(
 	int const jump_number,
@@ -2479,7 +2406,6 @@ FoldTree::set_jump_atoms(
 
 
 //version of above but makes it permutation safe!
-//
 void
 FoldTree::set_jump_atoms(
 	int const jump_number,
@@ -2517,7 +2443,6 @@ FoldTree::set_jump_atoms(
 /// @details  Get the upstream connection resid (connection atom # at the "start" vertex)
 /// If it hasn't been set return 0.
 /// Also see set_jump_atoms, which sets this data.
-//
 std::string
 FoldTree::upstream_atom( int const jump_number ) const
 {
@@ -2534,8 +2459,6 @@ FoldTree::upstream_atom( int const jump_number ) const
 /// @details  Get the downstream connection atomno (connection atom # at the "stop" vertex)
 /// If it hasn't been set return 0.
 /// Also see set_jump_atoms, which sets this data.
-
-
 std::string
 FoldTree::downstream_atom( int const jump_number ) const
 {

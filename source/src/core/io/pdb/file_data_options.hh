@@ -58,6 +58,7 @@ public:
 	bool randomize_missing_coords() const;
 	bool remember_unrecognized_res() const;
 	bool remember_unrecognized_water() const;
+	bool write_pdb_link_records() const;
 	std::string const & chains_whose_residues_are_separate_chemical_entities() const;
 
 	// mutators
@@ -75,6 +76,7 @@ public:
 	void set_randomize_missing_coords( bool randomize_missing_coords );
 	void set_remember_unrecognized_res( bool remember_unrecognized_res );
 	void set_remember_unrecognized_water( bool remember_unrecognized_water );
+	void set_write_pdb_link_records(bool setting);
 	void set_chains_whose_residues_are_separate_chemical_entities( std::string const & setting );
 
 private:
@@ -95,6 +97,7 @@ private:
 	bool randomize_missing_coords_;
 	bool remember_unrecognized_res_;
 	bool remember_unrecognized_water_;
+	bool write_pdb_link_records_;
 
 	std::string chains_whose_residues_are_separate_chemical_entities_; //treat_residues_in_these_chains_as_separate_chemical_entities
 };

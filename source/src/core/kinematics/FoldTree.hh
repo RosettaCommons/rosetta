@@ -73,10 +73,6 @@ public:
 	typedef EdgeList::iterator iterator;
 	typedef EdgeList::const_iterator const_iterator;
 
-	// MOVED TO CLASS Edge
-	//static int const PEPTIDE = -1; // must be negative, see Edge::is_jump()
-	//static int const CHEMICAL = -2; // for fold-tree edges that connect two chemically-bound residues
-
 	/// @brief constructor
 	FoldTree():
 		ReferenceCount(),
@@ -518,8 +514,6 @@ public:
 		 FoldTree. Data is stored in the Edge corresponding to this Jump.
 		 If not specified, residue-specific defaults will be used.
 	 */
-
-
 	void
 	set_jump_atoms(
 			int const jump_number,
@@ -529,7 +523,6 @@ public:
 	);
 
 	//version of above but makes it permutation safe!
-	//
 	void
 	set_jump_atoms(
 			int const jump_number,
@@ -562,8 +555,8 @@ public:
 	///////////////////////////// derived data //////////////////////
 	// routines for retrieving derived data, typically fast
 
-	// @brief computes a fixed-length, hash-based identifier for this FoldTree,
-	// permitting efficient comparison between a pair of FoldTrees
+	/// @brief computes a fixed-length, hash-based identifier for this FoldTree,
+	/// permitting efficient comparison between a pair of FoldTrees
 	size_t hash_value() const;
 
 	/// @brief Returns the number of residues in the FoldTree
@@ -660,7 +653,6 @@ public:
 
 	/// @brief get the jump_nr connected to jump upstream->downstream, returns 0 if not found
 	inline core::Size jump_nr( core::Size upstream_res, core::Size downstream_res  ) const;
-
 
 
 	/// @brief Returns true if the FoldTree is empty
@@ -840,19 +832,26 @@ private:
 	// maintain things that depend on both topology and/or order
 	/// @brief update fold tree topology (when edges are changed) if necessary
 	inline bool check_topology() const;
+
 	/// @brief update fold tree order (when edges are same but the order in the edge_list is changed) if necessary
 	inline bool check_order() const;
+
 	// private methods for updating derived data
 	/// @brief update total number residues in the fold tree
 	void update_nres() const;
+
 	/// @brief update number of jumps in the fold tree
 	void update_num_jump() const;
+
 	/// @brief update jump residues list
 	void update_jump_points() const;
+
 	/// @brief update the index of jump edges in the edge list
 	void update_jump_edge() const;
+
 	/// @brief update cutpoints info in the fold tree
 	void update_cutpoints() const;
+
 	/// @brief update edge counts info
 	void setup_edge_counts() const;
 
@@ -904,8 +903,8 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 
 
-	/// the list of edges.
-	///@note vector for fast traversal, but re-ordering, deleting are slow.
+	// the list of edges.
+	/// @note vector for fast traversal, but re-ordering, deleting are slow.
 	EdgeList edge_list_;
 
 	// book-keeping, so we know when to update derived data
@@ -920,39 +919,47 @@ private:
 	// accessed by get_XXX where XXX is the data name
 	// note that these are MUTABLE so they can be synced with the
 	// edge_list_ on the fly inside "const" access methods
-	//
 
 	/// @brief just the largest vertex in edge_list_
 	mutable int nres_;
+
 	/// @brief number of jump edges (edges in edge_list_ with label>0)
 	mutable int num_jump_;
+
 	/// @brief number of cutpoints in the fold tree.
 	/// @note number_cutpoint_ == num_jump_ (if a connected tree)
 	mutable int num_cutpoint_;
+
 	/// @brief jump number to jump residue number. dimensioned as (2,num_jump_)
 	mutable utility::vector1< std::pair< int, int > > jump_point_;
+
 	/// @brief whehter a residue is a jump_point, dimensioned as nres_
 	mutable utility::vector1<bool> is_jump_point_;
+
 	/// @brief cutpoint number to cutpoint residue number, dimesioned as num_cutpoint_.
 	mutable utility::vector1<int> cutpoint_;
+
 	/// @brief residue number of cutpoint number, 0 if it is not a cutpoint. dimensioned as nres_.
 	mutable utility::vector1<int> cutpoint_map_;
+
 	/// @brief whether a residue is a cutpoint, dimensioned as nres_
 	mutable ObjexxFCL::FArray1D_bool is_cutpoint_; // nres
+
 	/// @brief jump number to edge index number in the edge_list_, dimensioned as num_jump_.
 	mutable utility::vector1<int> jump_edge_;
+
 	/// @brief dimensioned as nres_, see setup_edge_counts for more info
 	mutable utility::vector1<int> edge_count;
+
 	/// @brief the minimum number in edge_count and jump_edge_count.
 	mutable int min_edge_count;
+
 	/// @brief dimensioned as num_jump, see setup_edge_counts for more info
 	mutable utility::vector1<int> jump_edge_count;
-	//mutable std::map< int, std::pair< int, int > > jump_atoms;
 
-	// @brief computes fixed-size identifier for a string input
+	/// @brief computes fixed-size identifier for a string input
 	boost::hash<std::string> hasher;
 }; // FoldTree
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -962,8 +969,6 @@ private:
 /// methods ) should call check_topology() or check_order() at the beginning.
 /// @note also, any method function that changes the tree topology or order should set
 /// the private data members new_topology and/or new_topology to true.
-///
-
 inline
 bool
 FoldTree::check_topology() const
@@ -983,7 +988,7 @@ FoldTree::check_topology() const
 	return true;
 }
 
-// returns true if order has changed
+/// @brief returns true if order has changed
 /// see details for check_topology
 inline
 bool
@@ -1005,8 +1010,7 @@ FoldTree::check_order() const
 ///////////////////////////////////////////////////////////////////////////////
 ///@brief  routines for retrieving the derived data
 /// will call check_topology and/or check_order first
-
-inline
+ inline
 Size
 FoldTree::nres() const
 {
@@ -1025,7 +1029,7 @@ FoldTree::num_jump() const
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// is seqpos a jump-point?
+/// @brief is seqpos a jump-point?
 inline
 bool
 FoldTree::is_jump_point( int const seqpos ) const
@@ -1072,7 +1076,6 @@ FoldTree::jump_nr( core::Size const pos1, core::Size const pos2 ) const
 /// sequence position that is a cutpoint to the cutpoint number
 /// associated with that cutpoint (cutpoints are numbered in increasing
 /// residue number from the beginning of the chain)
-
 inline
 int
 FoldTree::cutpoint_map( int const seqpos ) const
@@ -1105,6 +1108,5 @@ FoldTree::is_cutpoint( int const seqpos ) const
 
 } // namespace kinematics
 } // namespace core
-
 
 #endif // INCLUDED_core_kinematics_FoldTree_HH

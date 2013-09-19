@@ -31,6 +31,7 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/id/AtomID.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomType.hh>
@@ -41,6 +42,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/PDBInfo.hh>
@@ -208,23 +210,23 @@ FileData::store_link_record(Record & record)
 	vector1<LinkInformation> links;
 
 	// Extract values from record fields.
-	link.name1_ = record["name1"].value;  // 1st atom name
-	link.resName1_ = record["resName1"].value;
-	link.resID1_ = record["resSeq1"].value + record["iCode1"].value + record["chainID1"].value;
+	link.name1 = record["name1"].value;  // 1st atom name
+	link.resName1 = record["resName1"].value;
+	link.resID1 = record["resSeq1"].value + record["iCode1"].value + record["chainID1"].value;
 
-	link.name2_ = record["name2"].value;  // 2nd atom name
-	link.resName2_ = record["resName2"].value;
-	link.resID2_ = record["resSeq2"].value + record["iCode2"].value + record["chainID2"].value;
+	link.name2 = record["name2"].value;  // 2nd atom name
+	link.resName2 = record["resName2"].value;
+	link.resID2 = record["resSeq2"].value + record["iCode2"].value + record["chainID2"].value;
 
-	link.length_ = atof(record["length"].value.c_str());  // bond length
+	link.length = atof(record["length"].value.c_str());  // bond length
 
 	// If key is found in the links map, add this new linkage information to the links already keyed to this residue.
-	if (link_map.count(link.resID1_)) {
-		links = link_map[link.resID1_];
+	if (link_map.count(link.resID1)) {
+		links = link_map[link.resID1];
 	}
 	links.push_back(link);
 
-	link_map[link.resID1_] = links;
+	link_map[link.resID1] = links;
 
 	TR.Debug << "LINK record information stored successfully." << std::endl;
 }
@@ -301,6 +303,65 @@ FileData::parse_heterogen_name_for_carbohydrate_residues(std::string const & tex
 }
 
 
+// Return the PDB resName, chainID, resSeq, and iCode for the given Rosetta sequence position.
+ResidueInformation
+FileData::get_residue_information(core::pose::Pose const & pose, core::uint const seqpos,
+		bool use_PDB, bool renumber_chains) const
+{
+	using namespace std;
+	using namespace utility;
+	using namespace core;
+	using namespace core::pose;
+
+	ResidueInformation res_info;
+
+	res_info.resName = pose.residue(seqpos).name3();
+
+	// Use PDB-specific information?
+	if (use_PDB) {
+		PDBInfoCOP pdb_info = pose.pdb_info();
+
+		res_info.chainID = pdb_info->chain(seqpos);
+		if ( res_info.chainID == PDBInfo::empty_record() ) {  // safety
+			TR.Warning << "PDBInfo chain ID was left as character '" << PDBInfo::empty_record()
+					<< "', denoting an empty record; for convenience, replacing with space." << endl;
+			res_info.chainID = ' ';
+		}
+		res_info.resSeq = pdb_info->number(seqpos);
+		res_info.iCode = pdb_info->icode(seqpos);
+
+	// ...or not?
+	} else {
+		uint chain_num = pose.chain(seqpos);
+		runtime_assert(chain_num > 0);
+
+		res_info.chainID = chr_chains[(chain_num - 1) % chr_chains.size()];
+		res_info.resSeq = seqpos;
+		res_info.iCode = ' ';
+
+		// If option is specified, renumber per-chain.
+		if (renumber_chains) {
+			vector1<uint> const & chn_ends = pose.conformation().chain_endings();
+			for (uint i = 1; i <= chn_ends.size(); ++i) {
+				if (chn_ends[i] < seqpos) {
+					res_info.resSeq = seqpos - chn_ends[i];
+				}
+			}
+		}
+
+		// Fix for >10k residues.
+		res_info.resSeq %= 10000;
+	}
+
+	string buf;
+	buf.resize(1024);
+	sprintf(&buf[0], "%4d%c%c", res_info.resSeq, res_info.iCode, res_info.chainID);
+	res_info.resid = string(buf);
+	res_info.resid.resize(6);
+
+	return res_info;
+}
+
 // Pose to FileData methods ///////////////////////////////////////////////////
 // Append pdb information to FileData for a single residue.
 void
@@ -336,52 +397,16 @@ FileData::append_residue(
 
 
 	// Determine residue identifier information.
-	char chain;  // chain ID
-	int number;  // sequence position
-	char i_code; // insertion code
-
-	// Use PDB-specific information?
-	if (use_PDB) {
-		chain = pdb_info->chain(rsd.seqpos());
-		if ( chain == pose::PDBInfo::empty_record() ) {  // safety
-			TR.Warning << "PDBInfo chain id was left as character '" << pose::PDBInfo::empty_record()
-					<< "', denoting an empty record; for convenience, replacing with space." << std::endl;
-			chain = ' ';
-		}
-		number = pdb_info->number(rsd.seqpos());
-		i_code = pdb_info->icode(rsd.seqpos());
-
-	// ...or not?
-	} else {
-		runtime_assert(rsd.chain() > 0);
-
-		chain = chr_chains[(rsd.chain() - 1) % chr_chains.size()];
-		number = rsd.seqpos();
-		i_code = ' ';
-
-		// If option is specified, renumber per-chain.
-		if (renumber_chains) {
-			vector1<uint> const & chn_ends = pose.conformation().chain_endings();
-			for (uint i = 1; i <= chn_ends.size(); ++i) {
-				if (chn_ends[i] < rsd.seqpos()) {
-					number = rsd.seqpos() - chn_ends[i];
-				}
-			}
-		}
-
-		// Fix for >10k residues.
-		number %= 10000;
-	}
-
+	ResidueInformation res_info = get_residue_information(pose, rsd.seqpos(), use_PDB, renumber_chains);
 
 	// Generate HETNAM data, if applicable.
 	// TODO: For now, only output HETNAM records for saccharide residues, but in the future, outputting HETNAM records
 	// for any HETATM residues could be done.
 	if (rsd.is_carbohydrate()) {
 		string const & hetID = rsd.name3();
-		string resnum = print_i("%4d", number);
-		resnum.resize(4);
-		string const resID = string(1, chain) + resnum + string(1, i_code);
+		string resSeq = print_i("%4d", res_info.resSeq);
+		resSeq.resize(4);
+		string const resID = string(1, res_info.chainID) + resSeq + string(1, res_info.iCode);
 
 		string const text = resID + " " + residue_type_base_name(rsd.type());
 
@@ -413,9 +438,9 @@ FileData::append_residue(
 		AtomInformation orb;  //have to initialize this out here.
 
 		ai.isHet = (!rsd.is_polymer() || rsd.is_ligand());
-		ai.chainID = chain;
-		ai.resSeq = number;
-		ai.iCode = i_code;
+		ai.chainID = res_info.chainID;
+		ai.resSeq = res_info.resSeq;
+		ai.iCode = res_info.iCode;
 		ai.serial = atom_index;
 		ai.name = rsd.atom_name(j);
 		ai.resName = rsd.name3();
@@ -474,7 +499,62 @@ FileData::init_from_pose(core::pose::Pose const & pose, FileDataOptions const & 
 	}
 
 	// Get Connectivity Annotation Section information.
-	// TODO
+	if (options.write_pdb_link_records()) {
+		using namespace utility;
+		using namespace id;
+		using namespace kinematics;
+		using namespace conformation;
+
+		FoldTree const & ft = pose.fold_tree();
+
+		FoldTree::const_iterator end_of_tree = ft.end();
+		for (FoldTree::const_iterator edge = ft.begin(); edge != end_of_tree; ++edge) {
+			if (edge->is_chemical_bond()) {
+				string const & start_atom = edge->start_atom();
+				string const & stop_atom = edge->stop_atom();
+				uint const start_num = edge->start();
+				uint const stop_num = edge->stop();
+
+				// TODO: Don't assume use of PDBInfo.
+				ResidueInformation start_res = get_residue_information(pose, start_num);
+				ResidueInformation stop_res = get_residue_information(pose, stop_num);
+
+				// Fill LinkInformation
+				LinkInformation link;
+				vector1<LinkInformation> links;
+
+				link.name1 = start_atom;
+				link.resName1 = start_res.resName;
+				link.chainID1 = start_res.chainID;
+				link.resSeq1 = start_res.resSeq;
+				link.iCode1 = start_res.iCode;
+				link.resID1 = start_res.resid;
+
+				link.name2 = stop_atom;
+				link.resName2 = stop_res.resName;
+				link.chainID2 = stop_res.chainID;
+				link.resSeq2 = stop_res.resSeq;
+				link.iCode2 = stop_res.iCode;
+				link.resID2 = stop_res.resid;
+
+				// Calculate bond distance.
+				uint start_atom_index = pose.residue(start_num).atom_index(start_atom);
+				uint stop_atom_index = pose.residue(stop_num).atom_index(stop_atom);
+				link.length = pose.conformation().bond_length(
+						AtomID(start_atom_index, start_num),
+						AtomID(stop_atom_index, stop_num));
+
+				// If key is found in the links map, add this new linkage information to the links already keyed to
+				// this residue.
+				if (link_map.count(link.resID1)) {
+					links = link_map[link.resID1];
+				}
+				links.push_back(link);
+
+				link_map[link.resID1] = links;
+			}
+		}
+	}
 
 	// Get Crystallographic and Coordinate Transformation Section information.
 	if ( options.preserve_crystinfo() && pose.pdb_info() ) {
@@ -619,8 +699,8 @@ FileData::create_working_data(
 	rinfo.clear();
 	std::string buf;  buf.resize(1024);
 
-	for(Size ch=0; ch<chains.size(); ch++) {
-		for(Size i=0; i<chains[ch].size(); i++) {
+	for(Size ch=0; ch<chains.size(); ++ch) {
+		for(Size i=0; i<chains[ch].size(); ++i) {
 			AtomInformation & ai( chains[ch][i] );
 			// we should make a copy instead of taking a reference if "fixing" the names causes problems
 			std::string const  res_name( convert_res_name( ai.resName ) );
@@ -958,8 +1038,8 @@ build_pose_as_is1(
 			//     associated 1st residue of all branches off this residue (determines branch lower termini)
 			//     positions of branch points
 			for (Size branch = 1, n_branches = fd.link_map[resid].size(); branch <= n_branches; ++branch) {
-				branch_lower_termini.push_back(fd.link_map[resid][branch].resID2_);
-				branch_points_on_this_residue.push_back(fd.link_map[resid][branch].name1_);
+				branch_lower_termini.push_back(fd.link_map[resid][branch].resID2);
+				branch_points_on_this_residue.push_back(fd.link_map[resid][branch].name1);
 			}
 		}
 		bool const is_branch_lower_terminus = branch_lower_termini.contains(resid);

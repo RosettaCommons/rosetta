@@ -130,7 +130,7 @@ public:
 	bool operator!=(ResidueInformation const & that) const;
 
 	/// For now, all member names have the same names as fields in PDB standard.
-	String resid; //< 6-character (partial) identifier used by reader
+	String resid;  // 6-character (partial) identifier used by reader
 	String resName;
 	char chainID;
 	int resSeq;
@@ -145,13 +145,19 @@ public:
 /// @brief  A structure for storing information from PDB LINK records.
 /// @author Labonte
 struct LinkInformation {
-	std::string name1_;  // 1st atom name
-	std::string resName1_;
-	std::string resID1_;  // a 6-character resID, as defined elsewhere in FileData
-	std::string name2_;  // 2nd atom name
-	std::string resName2_;
-	std::string resID2_;
-	core::Distance length_;
+	std::string name1;  // 1st atom name
+	std::string resName1;
+	char chainID1;
+	int resSeq1;
+	char iCode1;
+	std::string resID1;  // a 6-character resID, as defined elsewhere in FileData (not from the PDB)
+	std::string name2;  // 2nd atom name
+	std::string resName2;
+	char chainID2;
+	int resSeq2;
+	char iCode2;
+	std::string resID2;
+	core::Distance length;
 };  // struct LinkInformation
 
 
@@ -262,13 +268,16 @@ public:
 	/// ResidueType needed in a map.
 	void parse_heterogen_name_for_carbohydrate_residues(std::string const & text);
 
+	/// @brief Return the PDB resName, chainID, resSeq, and iCode for the given Rosetta sequence position.
+	ResidueInformation get_residue_information(core::pose::Pose const & pose, core::uint const seqpos,
+			bool use_PDB=true, bool renumber_chains=false) const;
 
 	///@brief Append pdb information to FileData for a single residue.
 	void append_residue(
-		core::conformation::Residue const & rsd,
-		core::Size & atom_index,
-		core::pose::Pose const & pose,
-		bool preserve_crystinfo = false
+			core::conformation::Residue const & rsd,
+			core::Size & atom_index,
+			core::pose::Pose const & pose,
+			bool preserve_crystinfo = false
 	);
 
 	/// @brief Fill FileData object using information from given Pose object.

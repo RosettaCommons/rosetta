@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 		// import a test pose
 		//pose_from_pdb(pose, "/home/labonte/Workspace/test_input/test.pdb");
 		//pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/test.pdb");
-		pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/lactose.pdb");
+		pose_from_pdb(pose, "/home/labonte/Workspace/Carbohydrates/N-linked_14-mer_glycan.pdb");
 
 		//cout << pose << endl << endl;
 

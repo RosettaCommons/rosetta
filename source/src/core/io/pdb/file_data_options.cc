@@ -19,6 +19,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 
 // Utility headers
@@ -48,6 +49,7 @@ void FileDataOptions::parse_my_tag( utility::tag::TagPtr tag )
 	set_randomize_missing_coords( tag->getOption< bool >( "randomize_missing_coords", 0 ));
 	set_remember_unrecognized_res( tag->getOption< bool >( "remember_unrecognized_res", 0 ));
 	set_remember_unrecognized_water( tag->getOption< bool >( "remember_unrecognized_water", 0 ));
+	set_write_pdb_link_records(tag->getOption<bool>("write_pdb_link_records", 0));
 
 	set_chains_whose_residues_are_separate_chemical_entities(
 		tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ));
@@ -71,6 +73,7 @@ bool FileDataOptions::missing_dens_as_jump() const { return missing_dens_as_jump
 bool FileDataOptions::randomize_missing_coords() const { return randomize_missing_coords_; }
 bool FileDataOptions::remember_unrecognized_res() const { return remember_unrecognized_res_; }
 bool FileDataOptions::remember_unrecognized_water() const { return remember_unrecognized_water_; }
+bool FileDataOptions::write_pdb_link_records() const {return write_pdb_link_records_;}
 std::string const & FileDataOptions::chains_whose_residues_are_separate_chemical_entities() const { return chains_whose_residues_are_separate_chemical_entities_; }
 
 // mutators
@@ -114,6 +117,11 @@ void FileDataOptions::set_remember_unrecognized_res( bool remember_unrecognized_
 void FileDataOptions::set_remember_unrecognized_water( bool remember_unrecognized_water )
 { remember_unrecognized_water_ = remember_unrecognized_water; }
 
+void FileDataOptions::set_write_pdb_link_records(bool setting)
+{
+	write_pdb_link_records_ = setting;
+}
+
 void FileDataOptions::set_chains_whose_residues_are_separate_chemical_entities( std::string const & chains_whose_residues_are_separate_chemical_entities )
 { chains_whose_residues_are_separate_chemical_entities_ = chains_whose_residues_are_separate_chemical_entities; }
 
@@ -136,6 +144,7 @@ void FileDataOptions::init_from_options()
 	set_randomize_missing_coords( option[ run::randomize_missing_coords ]());
 	set_remember_unrecognized_res( option[ in::remember_unrecognized_res ]());
 	set_remember_unrecognized_water( option[ in::remember_unrecognized_water ]());
+	set_write_pdb_link_records(option[out::file::write_pdb_link_records]());
 	set_chains_whose_residues_are_separate_chemical_entities( option[ in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or(""));
 }
 

@@ -376,8 +376,8 @@ print_d(const char *format, double d)
 	return buf;
 }
 
-/// @details Create vector of Record from given FileData object.
-//  Used in PDB writing support.
+
+/// @details Create vector of Record from given FileData object.  Used in PDB writing support.
 std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 {
 	std::vector<Record> VR;
@@ -397,16 +397,37 @@ std::vector<Record> PDB_DReader::createRecords(FileData const & fd)
 	}
 
 	R = Field::getRecordCollection()["HETNAM"];
-	//std::pair<std::string, std::string> const het_names = fd.heterogen_names;
-	//std::map<std::string, std::string>::const_iterator het_name;
-	//for (het_name = het_names.begin(); het_name != het_names.end(); het_name++) {
 	Size n_het_names = fd.heterogen_names.size();
 	for (uint i = 1; i <= n_het_names; ++i) {
 		R["type"].value = "HETNAM";
 		R["continuation"].value = "  ";  // TODO: Wrap long text fields.
-		R["hetID"].value = fd.heterogen_names[i].first; // het_name->first;
-		R["text"].value = fd.heterogen_names[i].second; // het_name->second;
+		R["hetID"].value = fd.heterogen_names[i].first;
+		R["text"].value = fd.heterogen_names[i].second;
 		VR.push_back(R);
+	}
+
+	R = Field::getRecordCollection()["LINK  "];
+	std::map<std::string, utility::vector1<LinkInformation> >::const_iterator last_branch_point = fd.link_map.end();
+	for (std::map<std::string, utility::vector1<LinkInformation> >::const_iterator branch_point = fd.link_map.begin();
+			branch_point != last_branch_point; ++branch_point) {
+		utility::vector1<LinkInformation> links = branch_point->second;
+		Size n_links = links.size();
+		for (uint i = 1; i <= n_links; ++i) {
+			LinkInformation link = links[i];
+			R["type"].value = "LINK  ";
+			R["name1"].value = link.name1;
+			R["resName1"].value = link.resName1;
+			R["chainID1"].value = std::string(1, link.chainID1);
+			R["resSeq1"].value = print_i("%4d", link.resSeq1);
+			R["iCode1"].value = std::string(1, link.iCode1);
+			R["name2"].value = link.name2;
+			R["resName2"].value = link.resName2;
+			R["chainID2"].value = std::string(1, link.chainID2);
+			R["resSeq2"].value = print_i("%4d", link.resSeq2);
+			R["iCode2"].value = std::string(1, link.iCode2);
+			R["length"].value = print_d("%5.2f", link.length);
+			VR.push_back(R);
+		}
 	}
 
 	R = Field::getRecordCollection()["CRYST1"];
