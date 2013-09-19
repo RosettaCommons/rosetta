@@ -229,7 +229,6 @@ ReportToDB::ReportToDB( ReportToDB const & src):
 	features_reporters_(src.features_reporters_),
 	initialized(src.initialized)
 {
-	TR << "ReportToDB constructor called" << std::endl;
 }
 
 ReportToDB::~ReportToDB(){}

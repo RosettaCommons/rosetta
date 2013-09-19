@@ -42,11 +42,6 @@
 #include <string>
 #include <math.h> // for round
 
-/*
-#include <iostream> // for precision
-#include <iomanip> // for precision
-*/
-
 //External Headers
 #include <cppdb/frontend.h>
 

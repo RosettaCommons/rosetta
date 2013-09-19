@@ -33,7 +33,7 @@
 // for string return
 #include <string>
 
-// for get_sw_can_by_sh_id, get_two_central_residues
+// for get_sw_can_by_sh_id, get_central_residues_in_each_of_two_edge_strands
 #include <vector>
 
 
@@ -240,12 +240,15 @@ public:
 	core::Size round(
 		core::Real x);
 
-	//can this strand represent a terminal (or edge) strand for inter-sheet angle calculation?
-	bool
-	can_this_strand_represent_a_terminal(
+	// See whether this strand is an edge strand without 'sheet_antiparallel' info
+	std::string
+	is_this_strand_at_edge	(
 		core::pose::Pose const & pose,
-		utility::vector1<SandwichFragment> strands_from_sheet_i,
-		core::Size current_strand_id_as_i);
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size sheet_id,
+		core::Size residue_begin,
+		core::Size residue_end);
 
 	bool
 	check_whether_this_sheet_is_too_short(
@@ -254,7 +257,7 @@ public:
 		core::Size sheet_i);
 
 	std::pair<core::Size, core::Size>
-	get_two_central_residues(
+	get_central_residues_in_each_of_two_edge_strands(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose,
@@ -295,15 +298,7 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
-	std::string
-	see_whether_strand_is_at_edge	(
-		core::pose::Pose const & pose,
-		StructureID struct_id,
-		utility::sql_database::sessionOP db_session,
-		core::Size sheet_id,
-		std::string sheet_antiparallel,
-		core::Size residue_begin,
-		core::Size residue_end);
+
 
 	std::vector<Size>
 	get_cen_res_in_other_sheet(
@@ -386,7 +381,7 @@ public:
 		core::Size former_ending_res);
 
 	core::Size
-	update_sheet_con(
+	update_sheet_connectivity(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose,
@@ -583,6 +578,11 @@ public:
 		core::Size current_bs_id,
 		core::Size closest_bs_id);
 
+	core::Size
+	identify_sheet_id_by_residue_end(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size residue_end);
 
 	// used for judge_facing
 	utility::vector1<SandwichFragment>
@@ -751,6 +751,9 @@ private:
 
 	core::Real
 	min_N_H_O_angle_between_two_sheets_;
+
+	bool
+	write_AA_kind_files_;
 
 	bool
 	write_AA_dis_files_;
