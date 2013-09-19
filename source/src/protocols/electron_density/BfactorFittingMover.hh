@@ -97,9 +97,15 @@ private:
 	core::Real rmax_;        // max radius (def 5)
 	core::Size radius_exp_;  // weigh neighbors by 1/r^thisval (def 1)
 	core::Size max_iter_;    // minimizer iterations
-	std::string minimizer_;    // minimizer iterations
-	bool init_;    // minimizer iterations
+	std::string minimizer_;
+	bool init_;
 	bool exact_;
+
+	bool opt_to_fsc_;
+	core::Real res_low_,res_high_;
+	core::Size nresbins_;
+
+	utility::vector1< core::Real > weights_to_scan_;
 };
 
 } // moves

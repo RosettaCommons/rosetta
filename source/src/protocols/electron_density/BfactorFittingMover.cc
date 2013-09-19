@@ -53,6 +53,8 @@ static basic::Tracer TR( "protocols.electron_density.BfactorFittingMover" );
 namespace protocols {
 namespace electron_density {
 
+using core::scoring::electron_density::poseCoords;
+using core::scoring::electron_density::poseCoord;
 
 /// helper function
 void
@@ -388,6 +390,21 @@ void BfactorFittingMover::init() {
 	minimizer_ = "dfpmin_armijo";
 	init_ = true;
 	exact_ = false;
+	opt_to_fsc_ = false;
+
+	weights_to_scan_.clear();
+	weights_to_scan_.push_back(10);
+	weights_to_scan_.push_back(20);
+	weights_to_scan_.push_back(40);
+	weights_to_scan_.push_back(60);
+	weights_to_scan_.push_back(80);
+	weights_to_scan_.push_back(100);
+	weights_to_scan_.push_back(120);
+	weights_to_scan_.push_back(140);
+	weights_to_scan_.push_back(160);
+	weights_to_scan_.push_back(180);
+	weights_to_scan_.push_back(200);
+	weights_to_scan_.push_back(300);
 }
 
 void BfactorFittingMover::apply(core::pose::Pose & pose) {
@@ -421,23 +438,61 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 	core::scoring::electron_density::getDensityMap().rescale_fastscoring_temp_bins( pose, init_ );
 
 	// optionally grid search for best starting value
-	if (init_) {
-		core::Real values[] = {10,20,30,40,50,60,70,80,90,100,120,140,160,180,200,300,400};
-		core::Real bestVal, bestScore;
-		for (core::Size j=0; j<17; ++j) {
-			for (int i=1; i<=y.size(); ++i) y[i] = values[j];
-			core::Real thisScore = f_b(y);
-			std::cerr << "B=" << values[j] << ": score=" << thisScore << std::endl;
-			if (thisScore<bestScore || j==0) {
+	core::Size nvalues = weights_to_scan_.size();
+	core::Real bestVal, bestScore;
+
+	if (opt_to_fsc_) {
+		// pose->poseCoords
+		poseCoords litePose;
+		for (int i=1; i<=pose.total_residue(); ++i) {
+			core::conformation::Residue const & rsd_i ( pose.residue(i) );
+			if ( rsd_i.aa() == core::chemical::aa_vrt ) continue;
+			core::Size natoms = rsd_i.nheavyatoms();
+			for (int j=1; j<=natoms; ++j) {
+				core::conformation::Atom const &atom_j( rsd_i.atom(j) );
+				core::chemical::AtomTypeSet const & atom_type_set( rsd_i.atom_type_set() );
+				poseCoord coord_j;
+				coord_j.x_ = rsd_i.xyz( j );
+				coord_j.elt_ = atom_type_set[ rsd_i.atom_type_index( j ) ].element();
+				litePose.push_back( coord_j );
+			}
+		}
+
+		for (core::Size j=1; j<=nvalues; ++j) {
+			for (int i=1; i<=litePose.size(); ++i) litePose[i].B_ = weights_to_scan_[j];
+
+			utility::vector1< core::Real > modelmapFSC(nresbins_,1.0);
+			modelmapFSC = core::scoring::electron_density::getDensityMap().getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
+			core::Real thisScore = 0;
+			for (Size i=1; i<=modelmapFSC.size(); ++i) thisScore+=modelmapFSC[i];
+			thisScore /= modelmapFSC.size();
+
+			TR << "B=" << weights_to_scan_[j] << ": FSC=" << thisScore << std::endl;
+
+			if (thisScore>bestScore || j==1) {
 				bestScore = thisScore;
-				bestVal = values[j];
+				bestVal = weights_to_scan_[j];
+			}
+		}
+
+		for (int i=1; i<=y.size(); ++i) y[i] = bestVal;
+	} else if (init_) {
+		for (core::Size j=1; j<=nvalues; ++j) {
+			for (int i=1; i<=y.size(); ++i) y[i] = weights_to_scan_[j];
+			core::Real thisScore = f_b(y);
+			TR << "B=" << weights_to_scan_[j] << ": score=" << thisScore << std::endl;
+			if (thisScore<bestScore || j==1) {
+				bestScore = thisScore;
+				bestVal = weights_to_scan_[j];
 			}
 		}
 		for (int i=1; i<=y.size(); ++i) y[i] = bestVal;
 	}
 
+	if (!opt_to_fsc_) {
+		minimizer.run( y );
+	}
 
-	minimizer.run( y );
 	f_b.multivec2poseBfacts( y, pose );
 	core::scoring::cryst::fix_bfactorsH( pose ); // fix hydrogen B's to riding atoms
 	symmetrizeBfactors( pose );
@@ -479,6 +534,28 @@ BfactorFittingMover::parse_my_tag(
 	}
 	if ( tag->hasOption("exact") ) {
 		exact_ = tag->getOption<bool>("exact");
+	}
+
+	//
+	if ( tag->hasOption("opt_to_fsc") ) {
+		opt_to_fsc_ = tag->getOption<bool>("opt_to_fsc");
+	}
+	if ( tag->hasOption("res_low") ) {
+		res_low_ = tag->getOption<core::Real>("res_low");
+	}
+	if ( tag->hasOption("res_high") ) {
+		res_high_ = tag->getOption<core::Real>("res_high");
+	}
+	if ( tag->hasOption("nresbins") ) {
+		nresbins_ = tag->getOption<core::Size>("nresbins");
+	}
+
+	if ( tag->hasOption("weights_to_scan") ) {
+		std::string weight_string = tag->getOption<std::string>("weights_to_scan");
+		utility::vector1< std::string > tokens ( utility::string_split( weight_string, ',' ) );
+		weights_to_scan_.clear();
+		for (int j=1; j<=tokens.size(); ++j)
+			weights_to_scan_.push_back( atof(tokens[j].c_str()) );
 	}
 }
 

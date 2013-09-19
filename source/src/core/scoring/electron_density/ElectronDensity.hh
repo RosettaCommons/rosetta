@@ -380,6 +380,8 @@ public:
 	inline numeric::xyzVector<core::Real> getEffOrigin() const { return efforigin; }
 	inline utility::vector1< core::kinematics::RT > getsymmOps() const { return symmOps; }
 
+	inline core::Real getAtomMask( ) const { return ATOM_MASK; }
+
 	void maskResidues( int scoring_mask ) {
 		scoring_mask_[ scoring_mask ] = 1;
 	}
@@ -471,6 +473,9 @@ private:
 	void
 	density_change_trigger();
 
+	// smooth an intensity spectrum
+	void
+	smooth_intensities(utility::vector1< core::Real > &) const;
 
 	// helper functions for map statistics
 	void computeGradients();

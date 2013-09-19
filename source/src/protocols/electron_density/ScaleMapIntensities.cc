@@ -117,10 +117,10 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 			rescale_factor[i] = sqrt(modelmapFSC[i]*modelI[i] / mapI[i]);
 	}
 
-	TR.Debug << "SCALING MAP:" << std::endl;
-	TR.Debug << "resbin   model   map" << std::endl;
+	TR << "SCALING MAP:" << std::endl;
+	TR << "resbin   model   map   rescale" << std::endl;
 	for (Size i=1; i<=nresbins_; ++i)
-		TR.Debug << i << "  " << modelI[i] << " " << mapI[i] << std::endl;
+		TR << i << "  " << modelI[i] << " " << mapI[i] << " " << rescale_factor[i] << std::endl;
 
 	core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, 1.0/res_low_, 1.0/res_high_ );
 	if (outmap_name_.length()>0)

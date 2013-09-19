@@ -193,8 +193,8 @@ ElectronDensity& getDensityMap_legacy(std::string filename, bool force_reload) {
 				map_loaded = theDensityMap.readMRCandResize( mapfile , mapreso , mapsampling );
 			} else {
 				mapfile = filename;
-				core::Real mapreso = 0.0;
-				core::Real mapsampling = 0.0;
+				core::Real mapreso = basic::options::option[ basic::options::OptionKeys::edensity::mapreso ]();
+				core::Real mapsampling = basic::options::option[ basic::options::OptionKeys::edensity::grid_spacing ]();
 
 				TR << "Loading density map" << mapfile << std::endl;
 				map_loaded = theDensityMap.readMRCandResize( mapfile , mapreso , mapsampling );
@@ -1239,6 +1239,7 @@ ElectronDensity::getIntensities( core::Size nbuckets, core::Real maxreso, core::
 		sum_I2[i] /= counts[i];
 	}
 
+	smooth_intensities(sum_I2);
 	return sum_I2;
 }
 
@@ -1335,6 +1336,10 @@ ElectronDensity::getIntensitiesMasked( poseCoords const &pose, core::Size nbucke
 		sum_I2[i] /= counts[i];
 	}
 
+	// clear Fdensity since it's masked
+	Fdensity.clear();
+
+	smooth_intensities(sum_I2);
 	return sum_I2;
 }
 
@@ -1388,7 +1393,23 @@ ElectronDensity::getIntensities(
 	for (Size i=1; i<=nbuckets; ++i) {
 		Imodel[i] /= counts[i];
 	}
+
+	smooth_intensities(Imodel);
 }
+
+void
+ElectronDensity::smooth_intensities(utility::vector1< core::Real > &Is) const {
+	utility::vector1< core::Real > Is_in = Is;
+
+	Is[1] = 0.65*Is_in[1]+0.23*Is_in[2]+0.12*Is_in[3];
+	Is[2] = 0.3*Is_in[2]+0.35*Is_in[1]+0.23*Is_in[3]+0.12*Is_in[4];
+	for (int i=2; i<=Is.size()-2; ++i) {
+		Is[i] = 0.3*Is_in[i]+0.23*Is_in[i-1]+0.23*Is_in[i+1]+0.12*Is_in[i-2]+0.12*Is_in[i+2];
+	}
+	Is[Is.size()-1] = 0.3*Is_in[Is.size()-1]+0.23*Is_in[Is.size()]+0.23*Is_in[Is.size()-2]+0.12*Is_in[Is.size()-3];
+	Is[Is.size()] = 0.3*Is_in[Is.size()]+0.23*Is_in[Is.size()-1]+0.12*Is_in[Is.size()-2];
+}
+
 
 void
 ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core::Real maxreso, core::Real minreso ) {
@@ -1418,7 +1439,7 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core:
 				L = (x < (int)density.u1()/2) ? x-1 : x-density.u1()-1;
 				Real s_i = sqrt(S2(H,K,L));
 
-				//fpd smooth interpolate
+				//fpd smooth interpolate between buckets
 				Real bucket = 0.5+((s_i-maxreso) / step);
 				int bucket_i = (int)std::floor(bucket);
 				Real bucket_offset0 = bucket-bucket_i;
@@ -1648,6 +1669,9 @@ ElectronDensity::getFSCMasked( poseCoords const &pose, core::Size nbuckets, core
 			}
 		}
 	}
+
+	// clear Fdensity since it's masked
+	Fdensity.clear();
 
 	for (Size i=1; i<=nbuckets; ++i) {
 		num[i] /= sqrt(denom1[i]*denom2[i]);
@@ -2189,17 +2213,22 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 		// normalization
 		//    [0.5% -- 99.5%] in min temp bin
 		if (kbin == nkbins_) {
-			std::vector<core::Real> scores_i( &fastdens_score_i[0], &fastdens_score_i[0]+density.u1()*density.u2()*density.u3() );
-			std::sort (scores_i.begin(), scores_i.end());
+			std::vector<core::Real> scores_i( density.u1()*density.u2()*density.u3(),0.0 );
+			for (int i=0; i<density.u1()*density.u2()*density.u3(); ++i)
+				scores_i[i] = fastdens_score_i[i];
+
+
 			//core::Size low_cut = (core::Size) std::floor( 0.005 * density.u1()*density.u2()*density.u3() );
 			//core::Size high_cut = (core::Size) std::ceil( 0.995 * density.u1()*density.u2()*density.u3() );
 
 			//fpd  the percentage based normalization (above) fails when the map is almost empty
 			//fpd  instead we revert to old formulation where absolute max/min is used for normalization
-			core::Size low_cut = 4;
-			core::Size high_cut = density.u1()*density.u2()*density.u3()-5;
-			min_val = scores_i[low_cut];
-			max_val = scores_i[high_cut];
+
+			core::Size cutat = 5;
+			std::nth_element (scores_i.begin(), scores_i.begin()+cutat-1, scores_i.end());
+			std::nth_element (scores_i.begin(), scores_i.end()-cutat, scores_i.end());
+			min_val = scores_i[cutat-1];
+			max_val = scores_i[scores_i.size()-cutat];
 		}
 
 		if (basic::options::option[ basic::options::OptionKeys::edensity::debug ]()) {
@@ -2232,6 +2261,8 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 void ElectronDensity::rescale_fastscoring_temp_bins(core::pose::Pose const &pose, bool initBs) {
 	if ( fastdens_score.u1()*fastdens_score.u2()*fastdens_score.u3()*fastdens_score.u4() == 0 )
 		setup_fastscoring_first_time(pose);
+
+	if (nkbins_ == 1) return;
 
 	// pose->poseCoords
 	poseCoords litePose;

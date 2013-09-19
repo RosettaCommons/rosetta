@@ -109,7 +109,6 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	//	std::cerr << resobins[i] << " " << modelmap1FSC[i] << std::endl;
 	//}
 
-
 	if (testmap_ && testmap_->isMapLoaded()) {
 		modelmap2FSC = testmap_->getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
 		for (Size i=1; i<=modelmap2FSC.size(); ++i) fsc2+=modelmap2FSC[i];
@@ -119,7 +118,8 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 	// tag
 	core::pose::RemarkInfo remark;
 	std::ostringstream oss;
-	oss << "FSC(" << res_low_ << ":" << res_high_ << ") = " << fsc1;
+	core::Real mask =  core::scoring::electron_density::getDensityMap().getAtomMask();
+	oss << "FSC[mask=" << mask << "](" << res_low_ << ":" << res_high_ << ") = " << fsc1;
 	if (testmap_ && testmap_->isMapLoaded())
 		oss << " / " << fsc2;
 
