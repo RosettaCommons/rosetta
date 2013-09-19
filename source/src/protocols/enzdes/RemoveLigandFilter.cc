@@ -68,6 +68,7 @@ RemoveLigandFilterCreator::create_filter() const
 
 
 RemoveLigandFilter::RemoveLigandFilter( ):
+		Filter( "RemoveLigandFilter" ),
     threshold_( 99.99 ),
     mover_( new MinMover ),
     filter_( new RmsdFilter )
@@ -84,12 +85,14 @@ RemoveLigandFilter::RemoveLigandFilter( ):
  
     
 RemoveLigandFilter::RemoveLigandFilter( Real threshold ):
+		Filter( "RemoveLigandFilter" ),
     threshold_( threshold ),
     mover_( new MinMover ),
     filter_( new RmsdFilter )
 { }
  
 RemoveLigandFilter::RemoveLigandFilter( RemoveLigandFilter const & rval ):
+		Filter( "RemoveLigandFilter" ),
     threshold_( rval.threshold_ ),
     mover_( rval.mover_ ),
     filter_( rval.filter_ )

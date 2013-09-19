@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_protein_interface_design_filters_RmsdFilter_hh
 
 
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.fwd.hh>
