@@ -1,6 +1,3 @@
-namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
-namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
-namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
 namespace james { BooleanOptionKey const james( "james" );  }
@@ -720,3 +717,8 @@ namespace optE { BooleanOptionKey const recover_nat_rot( "optE:recover_nat_rot" 
 namespace optE { FileOptionKey const component_weights( "optE:component_weights" );  }
 namespace optE { BooleanOptionKey const optimize_nat_aa( "optE:optimize_nat_aa" );  }
 namespace optE { BooleanOptionKey const optimize_nat_rot( "optE:optimize_nat_rot" );  }
+namespace optE { FileOptionKey const optimize_ligand_rot( "optE:optimize_ligand_rot" );  }
+namespace optE { BooleanOptionKey const optimize_pssm( "optE:optimize_pssm" );  }
+namespace optE { FileOptionKey const optimize_dGbinding( "optE:optimize_dGbinding" );  }
+namespace optE { FileOptionKey const optimize_ddG_bind_correlation( "optE:optimize_ddG_bind_correlation" );  }
+namespace optE { FileOptionKey const optimize_ddGmutation( "optE:optimize_ddGmutation" );  }

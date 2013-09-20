@@ -14066,5 +14066,51 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Calculate energy?</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+ </li>
+<li><h2>bunsat_calc2</h2>
+<dl>
+<dt><b>-bunsat_calc2</b> \<Boolean\><dt>
+<dd>bunsat_calc2 option group</dd><br>
+</dl>
+<dl>
+<dt><b>-layered_sasa</b> \<Boolean\><dt>
+<dd>Use the variable solvent distance SASA calculator for finding buried unsats</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-generous_hbonds</b> \<Boolean\><dt>
+<dd>Use generous hbond criteria</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-sasa_burial_cutoff</b> \<Real\><dt>
+<dd>Minimum SASA to be considered exposed</dd><br>
+<dd>Default: 0.01</dd><br>
+</dl>
+<dl>
+<dt><b>-AHD_cutoff</b> \<Real\><dt>
+<dd>Minimum AHD angle for secondary geometry based h-bond detection</dd><br>
+<dd>Default: 120</dd><br>
+</dl>
+<dl>
+<dt><b>-dist_cutoff</b> \<Real\><dt>
+<dd>max dist</dd><br>
+<dd>Default: 3.0</dd><br>
+</dl>
+<dl>
+<dt><b>-hxl_dist_cutoff</b> \<Real\><dt>
+<dd>hxl max dist</dd><br>
+<dd>Default: 3.5</dd><br>
+</dl>
+<dl>
+<dt><b>-sulph_dist_cutoff</b> \<Real\><dt>
+<dd>max sulph dist</dd><br>
+<dd>Default: 3.3</dd><br>
+</dl>
+<dl>
+<dt><b>-metal_dist_cutoff</b> \<Real\><dt>
+<dd>max metal dist</dd><br>
+<dd>Default: 2.7</dd><br>
+</dl>
 </ul>
  */

@@ -44,6 +44,7 @@
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 #include <basic/options/keys/membrane.OptionKeys.gen.hh>
 #include <basic/options/keys/loopfcst.OptionKeys.gen.hh>
+#include <basic/options/keys/bunsat_calc2.OptionKeys.gen.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/DomainAssembly.OptionKeys.gen.hh>

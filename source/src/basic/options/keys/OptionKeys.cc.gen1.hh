@@ -1,5 +1,3 @@
-namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
-namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
 namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
 namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pair_jump_file" );  }
 namespace jumps { IntegerVectorOptionKey const sheets( "jumps:sheets" );  }
@@ -721,3 +719,6 @@ namespace robert { BooleanOptionKey const pcs_dump_cluster( "robert:pcs_dump_clu
 namespace robert { RealOptionKey const pcs_cluster_coverage( "robert:pcs_cluster_coverage" );  }
 namespace robert { BooleanOptionKey const pcs_cluster_lowscoring( "robert:pcs_cluster_lowscoring" );  }
 namespace cmiles { BooleanOptionKey const cmiles( "cmiles" );  }
+namespace cmiles { namespace kcluster { BooleanOptionKey const kcluster( "cmiles:kcluster" );  } }
+namespace cmiles { namespace kcluster { IntegerOptionKey const num_clusters( "cmiles:kcluster:num_clusters" );  } }
+namespace cmiles { namespace jumping { BooleanOptionKey const jumping( "cmiles:jumping" );  } }

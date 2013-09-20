@@ -725,11 +725,11 @@ option.add( basic::options::OptionKeys::jumps::fix_chainbreak, "minimize to fix 
 option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def("");
 option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
+option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
+option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
-option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
-option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
 option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
 option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
 option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with topology info ( PairingStats )" ).def("");
@@ -1450,12 +1450,12 @@ option.add( basic::options::OptionKeys::robert::pcs_dump_cluster, "No descriptio
 option.add( basic::options::OptionKeys::robert::pcs_cluster_coverage, "cluster coverage required" ).def(0.3);
 option.add( basic::options::OptionKeys::robert::pcs_cluster_lowscoring, "cluster lowest 20% against lowest 50%" ).def(true);
 option.add( basic::options::OptionKeys::cmiles::cmiles, "cmiles option group" ).legal(true).def(true);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
 option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
 option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
@@ -2174,14 +2174,14 @@ option.add( basic::options::OptionKeys::optE::recover_nat_rot, "With the iterati
 option.add( basic::options::OptionKeys::optE::component_weights, "With the iterative optE driver, weight the individual components according to the input file -- default weight of 1 for all components.  Weight file consists of component-name/weight pairs on separate lines: e.g. prob_native_structure 100.0" );
 option.add( basic::options::OptionKeys::optE::optimize_nat_aa, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer" );
 option.add( basic::options::OptionKeys::optE::optimize_nat_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer in the native context" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optimize_ligand_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer around the ligand" );
+option.add( basic::options::OptionKeys::optE::optimize_ligand_rot, "With the iterative optE driver, optimize weights to maximize the probability of the native rotamer around the ligand" );
 option.add( basic::options::OptionKeys::optE::optimize_pssm, "With the iterative optE driver, optimize weights to maximize the match between a BLAST generated pssm probabillity distribution" );
 option.add( basic::options::OptionKeys::optE::optimize_dGbinding, "With the iterative optE driver, optimize weights to minimize squared error between the predicted dG of binding and the experimental dG; provide a file listing 1. bound PDB structure, 2. unbound PDB structure, and 3. measured dG" );
 option.add( basic::options::OptionKeys::optE::optimize_ddG_bind_correlation, "With the iterative optE driver, optimize weights to minimize squared error between the predicted ddG of binding for a mutation to the experimental ddG; provide a file listing 1. list file containing wt complexes, 2. list file containing mut complexes, 3. list file containing wt unbounds structures, 4. list file containing mut unbounds structures, and 5. measured ddG of binding" );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation, "With the iterative optE driver, optimize weights to minimize the predicted ddG of mutation and the measured ddG; provide a file listing 1. repacked wt pdb list, 2. repacked mut pdb list, and 3. measured ddG triples" );
-option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_straight_mean, "With the iterative optE driver, predict the the ddGmut to be the difference between the straight mean (1/n Sum(E_i)) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_straight_mean, "With the iterative optE driver, predict the the ddGmut to be the difference between the straight mean (1/n Sum(E_i)) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_boltzman_average, "With the iterative optE driver, predict the the ddGmut to be the difference between the boltzman average energies ( Sum( E_i * e**-E_i/kT)/Sum( e**-E_i/kT) ) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
 option.add( basic::options::OptionKeys::optE::exclude_badrep_ddGs, "With the iterative optE driver, consider only ddG data where the unweighted repulsive energy delta mut-wt < given value" );
 option.add( basic::options::OptionKeys::optE::pretend_no_ddG_repulsion, "With the iterative optE driver, set all repulsive scores to zero when looking for ddG correlations" );
@@ -2895,6 +2895,15 @@ option.add( basic::options::OptionKeys::pb_potential::potential_cap, "Cap for PB
 option.add( basic::options::OptionKeys::pb_potential::epsilon, "Tolerance in A.  When a charged atom moves byond this tolerance, the PDE is resolved." ).def(2.0);
 option.add( basic::options::OptionKeys::pb_potential::apbs_debug, "APBS debug level [0-6]" ).def(2);
 option.add( basic::options::OptionKeys::pb_potential::calcenergy, "Calculate energy?" ).def(false);
+option.add( basic::options::OptionKeys::bunsat_calc2::bunsat_calc2, "bunsat_calc2 option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::bunsat_calc2::layered_sasa, "Use the variable solvent distance SASA calculator for finding buried unsats" ).def(true);
+option.add( basic::options::OptionKeys::bunsat_calc2::generous_hbonds, "Use generous hbond criteria" ).def(true);
+option.add( basic::options::OptionKeys::bunsat_calc2::sasa_burial_cutoff, "Minimum SASA to be considered exposed" ).def(0.01);
+option.add( basic::options::OptionKeys::bunsat_calc2::AHD_cutoff, "Minimum AHD angle for secondary geometry based h-bond detection" ).def(120);
+option.add( basic::options::OptionKeys::bunsat_calc2::dist_cutoff, "max dist" ).def(3.0);
+option.add( basic::options::OptionKeys::bunsat_calc2::hxl_dist_cutoff, "hxl max dist" ).def(3.5);
+option.add( basic::options::OptionKeys::bunsat_calc2::sulph_dist_cutoff, "max sulph dist" ).def(3.3);
+option.add( basic::options::OptionKeys::bunsat_calc2::metal_dist_cutoff, "max metal dist" ).def(2.7);
 
 }
 

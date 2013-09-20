@@ -1,8 +1,3 @@
-namespace optE { FileOptionKey const optimize_ligand_rot( "optE:optimize_ligand_rot" );  }
-namespace optE { BooleanOptionKey const optimize_pssm( "optE:optimize_pssm" );  }
-namespace optE { FileOptionKey const optimize_dGbinding( "optE:optimize_dGbinding" );  }
-namespace optE { FileOptionKey const optimize_ddG_bind_correlation( "optE:optimize_ddG_bind_correlation" );  }
-namespace optE { FileOptionKey const optimize_ddGmutation( "optE:optimize_ddGmutation" );  }
 namespace optE { BooleanOptionKey const optimize_ddGmutation_straight_mean( "optE:optimize_ddGmutation_straight_mean" );  }
 namespace optE { BooleanOptionKey const optimize_ddGmutation_boltzman_average( "optE:optimize_ddGmutation_boltzman_average" );  }
 namespace optE { RealOptionKey const exclude_badrep_ddGs( "optE:exclude_badrep_ddGs" );  }
@@ -717,3 +712,12 @@ namespace pb_potential { RealOptionKey const potential_cap( "pb_potential:potent
 namespace pb_potential { RealOptionKey const epsilon( "pb_potential:epsilon" );  }
 namespace pb_potential { IntegerOptionKey const apbs_debug( "pb_potential:apbs_debug" );  }
 namespace pb_potential { BooleanOptionKey const calcenergy( "pb_potential:calcenergy" );  }
+namespace bunsat_calc2 { BooleanOptionKey const bunsat_calc2( "bunsat_calc2" );  }
+namespace bunsat_calc2 { BooleanOptionKey const layered_sasa( "bunsat_calc2:layered_sasa" );  }
+namespace bunsat_calc2 { BooleanOptionKey const generous_hbonds( "bunsat_calc2:generous_hbonds" );  }
+namespace bunsat_calc2 { RealOptionKey const sasa_burial_cutoff( "bunsat_calc2:sasa_burial_cutoff" );  }
+namespace bunsat_calc2 { RealOptionKey const AHD_cutoff( "bunsat_calc2:AHD_cutoff" );  }
+namespace bunsat_calc2 { RealOptionKey const dist_cutoff( "bunsat_calc2:dist_cutoff" );  }
+namespace bunsat_calc2 { RealOptionKey const hxl_dist_cutoff( "bunsat_calc2:hxl_dist_cutoff" );  }
+namespace bunsat_calc2 { RealOptionKey const sulph_dist_cutoff( "bunsat_calc2:sulph_dist_cutoff" );  }
+namespace bunsat_calc2 { RealOptionKey const metal_dist_cutoff( "bunsat_calc2:metal_dist_cutoff" );  }

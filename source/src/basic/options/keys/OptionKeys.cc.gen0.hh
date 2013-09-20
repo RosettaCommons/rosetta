@@ -720,3 +720,5 @@ namespace jumps { BooleanOptionKey const fix_chainbreak( "jumps:fix_chainbreak" 
 namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
 namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
 namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
+namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
+namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }

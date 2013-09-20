@@ -157,7 +157,8 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 			return 0;
 		foreach( core::Size const sr, selected_residues ){
 //			buried_unsat_hbond_filter_tracer<<sr<<": "<<(bound_tmp[ sr-1 ])<<" "<<(unbound_tmp[ sr-1 ])<<" "<<(bound_tmp[ sr-1 ]) - (unbound_tmp[ sr-1 ])<<std::endl;
-			total_in_selected_residues += std::max( (bound_tmp[ sr-1 ]) - (unbound_tmp[ sr-1 ]), 0 );
+			if ( jump_num_ ) total_in_selected_residues += std::max( (bound_tmp[ sr-1 ]) - (unbound_tmp[ sr-1 ]), 0 );
+			else total_in_selected_residues += std::max( (bound_tmp[ sr-1 ]) - '0', 0 );
 		}
 		return( total_in_selected_residues );
 	}
