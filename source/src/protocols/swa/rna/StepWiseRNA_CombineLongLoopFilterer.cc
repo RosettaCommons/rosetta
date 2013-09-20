@@ -1084,7 +1084,7 @@ namespace rna {
 		TR << "pass_screen_struct_pair_ACT = " << pass_screen_struct_pair_ACT << std::endl;
 		TR << "pass_screen_struct_pair_undercount_ribose_rotamers = " << pass_screen_struct_pair_undercount_ribose_rotamers << std::endl;
 		TR << "StepWiseRNA_CombineLongLoopFilterer::final_output: " << static_cast< Real > ( clock() - time_start_FINAL_output ) / CLOCKS_PER_SEC << std::endl;
-		TR << "StepWiseRNA_CombineLongLoopFilterer::apply: " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
+		TR.Debug << "StepWiseRNA_CombineLongLoopFilterer::apply: " << static_cast< Real > ( clock() - time_start ) / CLOCKS_PER_SEC << std::endl;
 
 
 		Output_title_text( "Exit StepWiseRNA_CombineLongLoopFilterer:apply", TR );
