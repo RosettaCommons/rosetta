@@ -99,7 +99,7 @@ MutateResidue::MutateResidue( Size const target, string const new_res ) :
 	res_name_(new_res)
 {}
 
-MutateResidue::MutateResidue( Size const target, char const new_res ) :
+MutateResidue::MutateResidue( Size const target, int const new_res ) :
 	parent(),
 	rb_jump_(1),
 	target_(target),

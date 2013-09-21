@@ -49,19 +49,19 @@ public:
     RemoveLigandFilter( );
     // value constructor
     RemoveLigandFilter( core::Real threshold );
-    
+
     RemoveLigandFilter( RemoveLigandFilter const & rval );
-    
+
     bool apply( Pose const & pose ) const;
-    
-    void set_min_mover( MoverOP min_mover );
-    
-    core::Real compute( Pose const & pose ) const;
-    
+
+    // Undefined, commenting out to fix PyRosetta build  void set_min_mover( MoverOP min_mover );
+
+    // Undefined, commenting out to fix PyRosetta build  core::Real compute( Pose const & pose ) const;
+
     core::Real report_sm( Pose const & pose ) const;
-    
+
     void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-    
+
     FilterOP clone() const { return new RemoveLigandFilter( *this ); }
     FilterOP fresh_instance() const { return new RemoveLigandFilter; }
 private:
@@ -74,4 +74,3 @@ private:
 
 
 #endif /*INCLUDED_protocols_enzdes_RemoveLigandFilter_HH*/
-

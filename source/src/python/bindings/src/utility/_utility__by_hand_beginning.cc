@@ -584,33 +584,33 @@ struct istream : private streambuf_capsule, streambuf::istream
 
 struct python_ostream_wrapper
 {
-  typedef ostream wt; 
+  typedef ostream wt;
 
   static void
   wrap()
-  {   
+  {
     using namespace boost::python;
     class_<std::ostream, boost::noncopyable>("std_ostream", no_init);
     class_<wt, boost::noncopyable, bases<std::ostream> >("ostream", "Buffered ostream wrapper for file objects. Buffer is flushed on deletion of the wrapper object.", no_init)
       .def( init<object&>(args("file"), "Initialize an ostream wrapper with the default buffer size."))
       .def( init<object&, std::size_t>(args("file", "buffer_size"), "Initialize an ostream wrapper with the given buffer size in bytes."));
-  }   
-};  
+  }
+};
 
 struct python_istream_wrapper
 {
-  typedef istream wt; 
+  typedef istream wt;
 
   static void
   wrap()
-  {   
+  {
     using namespace boost::python;
     class_<std::istream, boost::noncopyable>("std_istream", no_init);
     class_<wt, boost::noncopyable, bases<std::istream> >("istream", "Buffered istream wrapper for file objects. Buffer is flushed on deletion of the wrapper object.", no_init)
       .def( init<object&>(args("file"), "Initialize an istream wrapper with the default buffer size."))
       .def( init<object&, std::size_t>(args("file", "buffer_size"), "Initialize an istream wrapper with the given buffer size in bytes."));
-  }   
-};  
+  }
+};
 
 
 
@@ -670,8 +670,8 @@ template< class T1, class T2 >
 void wrap_std_pair(std::string name)
 {
     bp::class_< std::pair< T1, T2 > >(name.c_str())
-			.def( bp::init< T1 const &, T2 const & >(( bp::arg("__a"), 
-bp::arg("__b") ))) 
+			.def( bp::init< T1 const &, T2 const & >(( bp::arg("__a"),
+bp::arg("__b") )))
 			.def_readwrite( "first", &std::pair< T1, T2 >::first)
 			.def_readwrite( "second", &std::pair< T1, T2 >::second)
       .def("__str__", &pair_repr<T1, T2> );
@@ -909,6 +909,18 @@ void set_pyexit_callback(void)
 }
 
 
+// Python Char/String arguments overload demo ------------------------------------------------------
+void _test_char_string_args_(int c)
+{
+    std::cout << "_test_char_string_args_::char_version: c = " << c << std::endl;
+}
+
+void _test_char_string_args_(std::string s)
+{
+    std::cout << "_test_char_string_args_::string_version: s = " << s << std::endl;
+}
+
+
 // Python Derived class demo -----------------------------------------------------------------------
 // An abstract base class...
 class DemoBase //: public boost::noncopyable
@@ -1089,7 +1101,7 @@ struct array_scalar_converter
     // dimensionality 0
     // See:
     // http://docs.scipy.org/doc/numpy/reference/arrays.scalars.html
-    // and 
+    // and
     // http://docs.scipy.org/doc/numpy/reference/c-api.array.html#general-check-of-python-type
     //
     // Convert to an array scalar to perform C-type conversion check.
@@ -1132,12 +1144,12 @@ void expose_number_type(std::string name)
 #endif
 
     bp::converter::registry::push_back(
-        array_scalar_converter<T>::check_array_scalar, 
+        array_scalar_converter<T>::check_array_scalar,
         array_scalar_converter<T>::convert_array_scalar,
         bp::type_id<T>());
 
     bp::converter::registry::push_back(
-        array_scalar_converter<T>::check_zero_dim_array, 
+        array_scalar_converter<T>::check_zero_dim_array,
         array_scalar_converter<T>::convert_zero_dim_array,
         bp::type_id<T>());
 #endif
@@ -1278,11 +1290,17 @@ void __utility_by_hand_beginning__()
     wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool_");
 
 
+	// Some wrapping test funtions/demos -----------------------------------------
+    typedef void ( * _test_char_string_args_int_)(int);
+    typedef void ( * _test_char_string_args_string_)(string);
+    bp::def("Q_test_char_string_args_", _test_char_string_args_int_( &_test_char_string_args_) );
+    bp::def("Q_test_char_string_args_", _test_char_string_args_string_( &_test_char_string_args_) );
+
+
     boost::python::class_<OOO> my_obj("OOO");
     //boost::python::object my_obj;
 
     boost::python::scope within(my_obj);
     bp::def("Q_Test_CI1B", Q_Test_CI1B);
     bp::def("Q_Test_EnergyMethodCreator", Q_Test_EnergyMethodCreator);
-
 }

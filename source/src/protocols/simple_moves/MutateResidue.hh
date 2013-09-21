@@ -52,7 +52,7 @@ public:
 	MutateResidue(MutateResidue const& dm);
 	///@brief Mutate a single residue to a new amino acid
 	MutateResidue( core::Size const target, std::string const new_res );
-	MutateResidue( core::Size const target, char const new_res/*one letter code*/);
+	MutateResidue( core::Size const target, int const new_res/*one letter code*/);  // Changing char --> int so PyRosetta could use overloaded function
 	virtual ~MutateResidue() {};
 
 	virtual void apply( core::pose::Pose & pose );
@@ -84,4 +84,3 @@ private:
 } // protocols
 
 #endif //INCLUDED_protocols_simple_moves_MutateResidue_HH_
-

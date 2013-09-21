@@ -357,11 +357,13 @@ make_cut_at_moving_suite( core::pose::Pose & pose, core::Size const & moving_sui
 core::Size
 make_cut_at_moving_suite( core::kinematics::FoldTree & fold_tree, core::Size const & moving_suite );
 
-void
-get_partition_definition( ObjexxFCL::FArray1D<bool> & partition_definition, core::kinematics::FoldTree const & fold_tree, core::Size const & moving_suite );
+// Undefined, commenting out to fix PyRosetta build
+// void
+// get_partition_definition( ObjexxFCL::FArray1D<bool> & partition_definition, core::kinematics::FoldTree const & fold_tree, core::Size const & moving_suite );
 
-void
-get_partition_definition( ObjexxFCL::FArray1D<bool> & partition_definition, core::pose::Pose const & pose , core::Size const & moving_suite );
+// Undefined, commenting out to fix PyRosetta build
+// void
+// get_partition_definition( ObjexxFCL::FArray1D<bool> & partition_definition, core::pose::Pose const & pose , core::Size const & moving_suite );
 
 utility::vector1< bool >
 get_partition_definition( core::pose::Pose const & pose, core::Size const & moving_suite );

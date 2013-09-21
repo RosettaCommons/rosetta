@@ -29,24 +29,17 @@ namespace monte_carlo {
 
 
 	void
-	get_delete_move_elements( pose::Pose & pose,
-															 utility::vector1< SWA_Move > & swa_moves );
+	get_delete_move_elements( pose::Pose & pose, utility::vector1< SWA_Move > & swa_moves );
+
+	// Undefined, commenting out to fix PyRosetta build
+	// void
+	// get_resample_move_elements( pose::Pose & pose, utility::vector1< SWA_Move > & swa_moves );
 
 	void
-	get_resample_move_elements( pose::Pose & pose,
-																 utility::vector1< SWA_Move > & swa_moves );
+	remove_from_consideration_first_multi_residue_move_element( utility::vector1< SWA_Move > & swa_moves, bool remove_even_if_not_singlet );
 
 	void
-	get_resample_move_elements( pose::Pose & pose,
-																 utility::vector1< SWA_Move > & swa_moves );
-
-	void
-	remove_from_consideration_first_multi_residue_move_element( utility::vector1< SWA_Move > & swa_moves,
-																											 bool remove_even_if_not_singlet );
-
-	void
-	get_resample_terminal_move_elements( pose::Pose & pose,
-																					utility::vector1< SWA_Move > & swa_moves );
+	get_resample_terminal_move_elements( pose::Pose & pose, utility::vector1< SWA_Move > & swa_moves );
 
 	void
 	get_terminal_move_elements( pose::Pose & pose,
