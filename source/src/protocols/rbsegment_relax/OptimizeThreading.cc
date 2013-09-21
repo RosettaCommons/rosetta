@@ -231,18 +231,18 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 		}
 	}
 
-	loops::LoopsOP loops = best_loops;
+	*loops_ = *best_loops;
 	TR << "Building:" << std::endl;
-	TR << *loops << std::endl;
+	TR << *loops_ << std::endl;
 
 	pose = best_pose;
 	if (rebuild_cycles_>0)
-		rebuild_unaligned( pose, loops );
+		rebuild_unaligned( pose );
 }
 
 void
-OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP loops) {
-	if (loops->size() != 0) {
+OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
+	if (loops_->size() != 0) {
 		// see if the pose has NCS
 		simple_moves::symmetry::NCSResMappingOP ncs;
 		if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
@@ -252,7 +252,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 		core::kinematics::FoldTree f_in=pose.fold_tree(), f_new;
 
 		// set foldtree + variants
-		for( protocols::loops::Loops::iterator it=loops->v_begin(), it_end=loops->v_end(); it!=it_end; ++it ) {
+		for( protocols::loops::Loops::iterator it=loops_->v_begin(), it_end=loops_->v_end(); it!=it_end; ++it ) {
 			// if loop crosses a cut maintain that cut
 			bool crosses_cut=false;
 			Size i = 0;
@@ -267,7 +267,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 			// to do? what if we cross two cuts?
 		}
 
-		protocols::loops::fold_tree_from_loops( pose, *loops, f_new);
+		protocols::loops::fold_tree_from_loops( pose, *loops_, f_new);
 		std::cerr << f_new << std::endl;
 
 		pose.fold_tree( f_new );
@@ -275,7 +275,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 
 		// set movemap
 		core::kinematics::MoveMapOP mm_loop = new core::kinematics::MoveMap();
-		for( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
+		for( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it!=it_end; ++it ) {
 			for( Size i=it->start(); i<=it->stop(); ++i ) {
 				mm_loop->set_bb(i, true);
 				mm_loop->set_chi(i, true);
@@ -285,7 +285,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 		// pick 3mers only in unaligned regions
 		std::string tgt_seq = pose.sequence();
 		core::fragment::FragSetOP frags3 = new core::fragment::ConstantLengthFragSet( 3 );
-		for( protocols::loops::Loops::const_iterator it=loops->begin(), it_end=loops->end(); it!=it_end; ++it ) {
+		for( protocols::loops::Loops::const_iterator it=loops_->begin(), it_end=loops_->end(); it!=it_end; ++it ) {
 			for( Size i=it->start(); i+2<=it->stop(); ++i ) {
 				core::fragment::FrameOP frame = new core::fragment::Frame( i, 3 );
 				frame->add_fragment(
@@ -303,7 +303,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 		for (core::fragment::FrameIterator it = frags3->nonconst_begin(); it != frags3->nonconst_end(); ++it) frames3.push_back( *it );
 
 		// extend + idealize loops
-		protocols::loops::set_extended_torsions_and_idealize_loops( pose, *loops );
+		protocols::loops::set_extended_torsions_and_idealize_loops( pose, *loops_ );
 
 		// setup MC
 		core::Size nouterCyc=4, ninnerCyc=rebuild_cycles_;
@@ -329,7 +329,7 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP
 					for (int j=1; j<=ncs->ngroups(); ++j ) {
 						bool all_are_mapped = true;
 						for ( Size k=frame_i->start(); k<=frame_i->stop() && all_are_mapped; ++k )
-							all_are_mapped &= (ncs->get_equiv( j,k )!=0 && loops->is_loop_residue(ncs->get_equiv( j,k )) );
+							all_are_mapped &= (ncs->get_equiv( j,k )!=0 && loops_->is_loop_residue(ncs->get_equiv( j,k )) );
 						if (!all_are_mapped) continue;
 						core::Size remap_start = ncs->get_equiv( j, frame_i->start() );
 						core::Size remap_stop = ncs->get_equiv( j, frame_i->stop() );
@@ -397,6 +397,12 @@ void OptimizeThreadingMover::parse_my_tag(
 	weight_ = tag->getOption<core::Real>( "weight", 0.1 );
 	temperature_ = tag->getOption<core::Real>( "temperature", 2.0 );
 	max_shift_ = tag->getOption<core::Size>( "max_shift", 4 );
+
+	// add loopsOP to the DataMap
+	if (tag->hasOption( "loops_out" )) {
+		std::string looptag = tag->getOption<std::string>( "loops_out" );
+		data.add( "loops", looptag, loops_ );
+	}
 }
 
 }

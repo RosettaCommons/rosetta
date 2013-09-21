@@ -109,7 +109,8 @@ protected:
 	// transform fragment
 	void apply_transform( core::pose::Pose &frag, core::Vector const &preT, core::Vector const &postT, numeric::xyzMatrix< core::Real > const &R);
 
-	void apply_csts( core::pose::Pose &working_frag,	core::pose::Pose const &pose, core::Size start );
+	// apply endpoint constraints to fragment
+	void apply_fragcsts( core::pose::Pose &working_frag,	core::pose::Pose const &pose, core::Size start );
 
 private:
 	// parameters
@@ -131,8 +132,10 @@ private:
 
 	// reference model
 	core::pose::Pose ref_model_;
+	core::Real ref_cst_weight_;
 	bool input_as_ref_;
 	bool fullatom_,bbmove_;
+	LoopsOP loops_;
 
 	// scorefunctions
 	core::scoring::ScoreFunctionOP scorefxn_, fa_scorefxn_, mc_scorefxn_;  // mc_scorefxn allows us to minimize and eval with different scorefxns

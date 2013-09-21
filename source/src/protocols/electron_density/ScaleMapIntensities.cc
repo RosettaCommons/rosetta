@@ -59,7 +59,7 @@ ScaleMapIntensities::ScaleMapIntensities() : moves::Mover() {
 
 void ScaleMapIntensities::init() {
 	res_low_=1000.0;
-	res_high_=1e-6;
+	res_high_= res_fade_= 0;
 	nresbins_=50;
 	scale_by_fsc_=false;
 	asymm_only_=false;
@@ -101,26 +101,36 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 		}
 	}
 
-	core::scoring::electron_density::getDensityMap().getIntensities( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelI );
+
+	utility::vector1< core::Real > resobins = core::scoring::electron_density::getDensityMap().getResolutionBins(nresbins_, 1.0/res_low_, 1.0/res_high_);
+	core::Real resobins_step = resobins[2]-resobins[1];
 
 	// TODO: make masking optional
+	core::scoring::electron_density::getDensityMap().getIntensities( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_, modelI );
 	mapI = core::scoring::electron_density::getDensityMap().getIntensitiesMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_);
 
-	utility::vector1< core::Real > modelmapFSC(nresbins_,1.0);
-	if (scale_by_fsc_)
-		// TODO: make masking optional
-		modelmapFSC = core::scoring::electron_density::getDensityMap().getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
+	utility::vector1< core::Real > fade(nresbins_,1.0);
+	if (scale_by_fsc_) {
+		fade = core::scoring::electron_density::getDensityMap().getFSCMasked( litePose, nresbins_, 1.0/res_low_, 1.0/res_high_ );
+	} else if (res_fade_ > 0) {
+		// fade over ~10 buckets
+		core::Real sigma = (1/resobins_step);
+		core::Real inv_fade = (1.0/res_fade_);
+		for (Size i=1; i<=nresbins_; ++i) {
+			fade[i] = 1/(1+exp(sigma*(resobins[i]-inv_fade)) );
+		}
+	}
 
 	utility::vector1< core::Real > rescale_factor(nresbins_,0.0);
 	for (Size i=1; i<=nresbins_; ++i) {
-		if (mapI[i] > 0 && modelmapFSC[i]*modelI[i] >= 0 )
-			rescale_factor[i] = sqrt(modelmapFSC[i]*modelI[i] / mapI[i]);
+		if (mapI[i] > 0 && fade[i]*modelI[i] >= 0 )
+			rescale_factor[i] = sqrt(fade[i]*modelI[i] / mapI[i]);
 	}
 
 	TR << "SCALING MAP:" << std::endl;
-	TR << "resbin   model   map   rescale" << std::endl;
+	TR << "resbin   fade   model   map   rescale" << std::endl;
 	for (Size i=1; i<=nresbins_; ++i)
-		TR << i << "  " << modelI[i] << " " << mapI[i] << " " << rescale_factor[i] << std::endl;
+		TR << resobins[i] << "  " << fade[i] << "  " << modelI[i] << " " << mapI[i] << " " << rescale_factor[i] << std::endl;
 
 	core::scoring::electron_density::getDensityMap().scaleIntensities( rescale_factor, 1.0/res_low_, 1.0/res_high_ );
 	if (outmap_name_.length()>0)
@@ -142,6 +152,9 @@ ScaleMapIntensities::parse_my_tag(
 	}
 	if ( tag->hasOption("res_high") ) {
 		res_high_ = tag->getOption<core::Real>("res_high");
+	}
+	if ( tag->hasOption("res_fade") ) {
+		res_fade_ = tag->getOption<core::Real>("res_fade");
 	}
 	if ( tag->hasOption("nresbins") ) {
 		nresbins_ = tag->getOption<core::Size>("nresbins");

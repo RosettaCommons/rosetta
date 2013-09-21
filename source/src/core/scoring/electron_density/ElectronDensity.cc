@@ -1448,9 +1448,8 @@ ElectronDensity::scaleIntensities( utility::vector1< core::Real > scale_i, core:
 				if ( bucket_i > (int)nbuckets ) {
 					Fdensity(x,y,z) = 0.0;
 				} else if ( bucket_i == (int)nbuckets ) {
-					// sigmoid decay
-					core::Real sigmoid_sc = 1/(1+exp(16*(bucket_offset0-0.5)));
-					Fdensity(x,y,z) *= sigmoid_sc*scale_i[nbuckets];
+					// linear decay in last bin
+					Fdensity(x,y,z) *= bucket_offset1*scale_i[nbuckets];
 				} else if ( bucket_i < 0 ) {
 					Fdensity(x,y,z) *= scale_i[1];
 				} else {

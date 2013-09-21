@@ -43,6 +43,7 @@ public:
 		if (scorefxn_sampling_->get_weight(core::scoring::dihedral_constraint) == 0)
 			scorefxn_sampling_->set_weight( core::scoring::dihedral_constraint , 1.0 );
 
+		loops_ = new protocols::loops::Loops;
 	}
 
 	virtual std::string get_name() const { return OptimizeThreadingMoverCreator::mover_name(); }
@@ -59,12 +60,14 @@ public:
 
 private:
 	// helper function
-	void rebuild_unaligned(core::pose::Pose &pose, loops::LoopsOP loops);
+	void rebuild_unaligned(core::pose::Pose &pose);
 
 	core::scoring::ScoreFunctionOP scorefxn_, scorefxn_sampling_;
 	core::Size nsteps_, rebuild_cycles_, max_shift_;
 	core::Real weight_,temperature_;
 	bool recover_low_,step_penalty_;
+
+	protocols::loops::LoopsOP loops_;
 
 	core::pose::PoseOP native_; // "cheating" ... optimize RMS to native
 };

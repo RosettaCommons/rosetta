@@ -172,6 +172,7 @@ CartesianSampler::init() {
 	overlap_ = 2;
 	ncycles_ = 250;
 	nminsteps_ = 10;
+	ref_cst_weight_ = 1.0;
 	input_as_ref_ = false;
 	fullatom_ = false;
 	bbmove_ = false;
@@ -275,7 +276,7 @@ CartesianSampler::get_transform(
 
 // apply csts to frag
 void
-CartesianSampler::apply_csts( core::pose::Pose &working_frag,	core::pose::Pose const &pose, core::Size startpos ) {
+CartesianSampler::apply_fragcsts( core::pose::Pose &working_frag,	core::pose::Pose const &pose, core::Size startpos ) {
 	using namespace core::scoring::constraints;
 
 	working_frag.remove_constraints();
@@ -427,7 +428,7 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 
 				core::Real dens_score;
 				if (bbmove_) {
-					apply_csts( working_frag,	pose, start );
+					apply_fragcsts( working_frag,	pose, start );
 					(*nonsymm_fa_scorefxn)(working_frag);
 					rbminimizer.run( working_frag, mm_rb, *nonsymm_fa_scorefxn, options_rb );
 					dens_score = (*nonsymm_fa_scorefxn) (working_frag);
@@ -502,6 +503,8 @@ CartesianSampler::apply_constraints( core::pose::Pose &pose )
 	core::Size GAPBUFFER = 3;
 	core::Real COORDDEV = 0.39894;
 
+	bool user_rebuild = (fragment_bias_strategy_ == "user");
+
 	core::Size nres_tgt = get_num_residues_nonvirt( pose );
 
 	utility::vector1< utility::vector1< core::Real > > tgt_dists(nres_tgt);
@@ -510,9 +513,15 @@ CartesianSampler::apply_constraints( core::pose::Pose &pose )
 	for (core::Size j=1; j < ref_model_.total_residue(); ++j ) {
 		if (!ref_model_.residue_type(j).is_protein()) continue;
 
+		if (user_rebuild && user_pos_.find(j) != user_pos_.end() ) continue;
+		if (user_rebuild && loops_ && loops_->is_loop_residue(j) ) continue;
+
 		for (core::Size k=j+1; k < ref_model_.total_residue(); ++k ) {
 			if (!ref_model_.residue_type(k).is_protein()) continue;
 			if (ref_model_.pdb_info()->number(k) - ref_model_.pdb_info()->number(j) < (int)MINSEQSEP) continue;
+
+			if (user_rebuild && user_pos_.find(k) != user_pos_.end() ) continue;
+			if (user_rebuild && loops_ && loops_->is_loop_residue(k) ) continue;
 
 			core::Real dist = ref_model_.residue(j).xyz(2).distance( ref_model_.residue(k).xyz(2) );
 
@@ -534,7 +543,7 @@ CartesianSampler::apply_constraints( core::pose::Pose &pose )
 
 				pose.add_constraint(
 						new AtomPairConstraint( core::id::AtomID(2,tgt_resid_j), core::id::AtomID(2,tgt_resid_k),
-							new USOGFunc( dist, COORDDEV )
+							new ScalarWeightedFunc( ref_cst_weight_, new USOGFunc( dist, COORDDEV ) )
 						)
 					);
 			}
@@ -659,11 +668,12 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		}
 	} else if (fragment_bias_strategy_ == "user") {
 		// user defined segments to rebuild
-		runtime_assert( user_pos_.size()>0 );
+		runtime_assert( user_pos_.size()>0 || (loops_ && !loops_->empty()) );
 
 		for (int r=1; r<=(int)nres; ++r) {
 			fragmentProbs[r] = 0.0;
 			if ( user_pos_.find(r) != user_pos_.end() ) fragmentProbs[r] = 1.0;
+			if ( loops_ && loops_->is_loop_residue(r) ) fragmentProbs[r] = 1.0;
 			TR << "Prob_dens_user( " << r << " ) = " << fragmentProbs[r] << std::endl;
 		}
 	} else {
@@ -933,9 +943,19 @@ CartesianSampler::parse_my_tag(
 		else
 			input_as_ref_ = true;
 	}
+	if( tag->hasOption( "reference_cst_wt" ) ) {
+		ref_cst_weight_ = tag->getOption<core::Real  >( "reference_cst_wt" );
+	}
 
+	// user-specified residues
+	runtime_assert( !( tag->hasOption( "residues" ) && tag->hasOption( "loops_in" ) ));  // one or the other
 	if( tag->hasOption( "residues" ) ) {
 		user_pos_ = core::pose::get_resnum_list(	tag->getOption<std::string>( "residues" ), pose );
+	}
+	if (tag->hasOption( "loops_in" ) ) {
+		std::string looptag = tag->getOption<std::string>( "loops_in" );
+		runtime_assert( data.has( "loops", looptag ) );
+		loops_ = data.get< protocols::loops::Loops * >( "loops", looptag );
 	}
 
 	// fragments
