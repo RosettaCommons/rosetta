@@ -168,7 +168,7 @@ class FullControlWindow():
 	self.label_Phi = Label(self.main, text="Phi")
 	self.label_Psi = Label(self.main, text="Psi")
 	self.label_Ome = Label(self.main, text="Omega")
-	self.button_Delta = Button(self.main, text = "Change Dihedrals", command=lambda: self.pose.assign(protocol_tools.bbMover(self.pose, int(self.resnum.get()), self.chain.get(), float(self.PhiVar.get()), float(self.PsiVar.get()), float(self.OmeVar.get()))))
+	self.button_Delta = Button(self.main, text = "Change Dihedrals", command=lambda: self.pose.assign(protocol_tools.bbMover(self.pose, int(self.resnum.get()), self.chain.get(), float(self.PhiVar.get()), float(self.PsiVar.get()), float(self.OmeVar.get()), self.score_object.score)))
 	self.label_rotamer_probability = Label(self.main, text = "Aprox Rotamer Probability")
 	self.label_rotamer_energy = Label(self.main, text = "Rotamer Energy")
 	self.entry_rotamer_probability = Label(self.main, textvariable=self.rotamer_probabilty, justify=CENTER, relief=SUNKEN)

@@ -67,7 +67,7 @@ class main_window:
       self._tk_ = Tk()
       self.pose = Pose()
       self.native_pose = Pose()
-      self.current_directory = global_variables.current_directory = self.location()[0]
+      self.current_directory = global_variables.current_directory = getcwd()
       self.toolkit_home = self.location()[0]
       self.DesignDic = dict()
       

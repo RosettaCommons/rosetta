@@ -45,14 +45,12 @@ def toFA(start, p):
     return p
 
 
-def bbMover(p, res, chain, phi, psi, omega, score=False):
+def bbMover(p, res, chain, phi, psi, omega, score):
     """
     Moves individual Phi and Psi angles
     """
     
     res = p.pdb_info().pdb2pose(chain, res)
-    if not score:
-        score= create_score_function_ws_patch('standard', 'score12')
     p.set_phi(res, phi)
     print score(p)
     p.set_psi(res, psi)
