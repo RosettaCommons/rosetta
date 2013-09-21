@@ -29,7 +29,6 @@
 #include <core/chemical/rna/RNA_Util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/types.hh>
-#include <core/init/init.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/util.hh>
@@ -39,6 +38,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/import_pose/import_pose.hh>
+#include <devel/init.hh>
 
 
 //////////////////////////////////////////////////////////
@@ -277,7 +277,7 @@ main( int argc, char * argv [] )
   ////////////////////////////////////////////////////////////////////////////
   // setup
   ////////////////////////////////////////////////////////////////////////////
-  core::init::init(argc, argv);
+  devel::init(argc, argv);
 
 
   ////////////////////////////////////////////////////////////////////////////

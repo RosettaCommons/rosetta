@@ -718,7 +718,7 @@ rmsfitca2(
 		return;
 
 	}
-	handedness = numeric::sign_transfered(1.0,det);
+	handedness = numeric::sign_transfered(det, 1.0);
 //  // weird but documented fortran "feature" of sign(a,b) (but not SIGN) is that if fails if a < 0
 
 //  //  multiply cross moments by itself
@@ -788,7 +788,6 @@ rmsfitca2(
 //   // fortunatley, and curiously, the optimal non-inverted rotation matrix
 //   // will have the similar eigen values.
 //   // we just have to make a slight change in how we handle things depending on determinant
-
 
 	rms_ctx = std::sqrt(std::abs(ev(1))) + std::sqrt(std::abs(ev(2))) +
 	 handedness*std::sqrt(std::abs(ev(3)));
