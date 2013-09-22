@@ -848,13 +848,6 @@ StrandBundleFeatures::round(
 	return rounded;
 } //round
 
-/* //	warning: converting to `core::Size' from `double'
-Size 
-StrandBundleFeatures::round(Real x)
-{
-	return floor(x+.5);
-} //round
-*/	
 
 Size
 StrandBundleFeatures::get_nearest_res_from_strand(

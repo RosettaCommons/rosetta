@@ -1502,6 +1502,10 @@ SandwichFeatures::see_whether_sheet_is_antiparallel(
 		}
 		//<end> search the nearest strand from the current strand
 
+		if (	res_index_nearest_strand == 999)
+		{
+			return "undetermined"; // this sheet may be consisted with very short strands only like sheet_id=7 in 1MSP
+		}
 
 		SandwichFragment nearest_strand_from_the_current_strand(strands_from_i[res_index_nearest_strand+1].get_start(), strands_from_i[res_index_nearest_strand+1].get_end());
 		Size return_of_find_sheet = find_sheet (pose, current_strand, nearest_strand_from_the_current_strand, true);
@@ -2559,9 +2563,6 @@ SandwichFeatures::count_AA_w_direction(
 		for (Size jj = 0;	jj	<vector_of_cen_residues.size();	jj++)
 		{
 			Real distance = pose.residue(cen_resnum_ii).atom("CA").xyz().distance(pose.residue(vector_of_cen_residues[jj]).atom("CA").xyz());
-				//TR << "vector_of_cen_residues[jj]: " << vector_of_cen_residues[jj] << endl;
-				//TR << "distance: " << distance << endl;
-				//TR << "shortest_dis_between_AA_and_other_sheet: " << shortest_dis_between_AA_and_other_sheet << endl;
 				
 			if (distance < shortest_dis_between_AA_and_other_sheet)
 			{
@@ -4317,11 +4318,8 @@ SandwichFeatures::cal_min_dis_between_sheets_by_cen_res (
 	sessionOP db_session,
 	Pose & dssp_pose,
 	Size sheet_id_1,
-	Size sheet_id_2)
-{
-//		TR << "sheet_id_1: " << sheet_id_1 << endl;
-//		TR << "sheet_id_2: " << sheet_id_2 << endl;
-
+	Size sheet_id_2){
+	
 	vector<Size>	vector_of_cen_residues_in_sheet_1;
 	vector_of_cen_residues_in_sheet_1.clear();	// Removes all elements from the vector (which are destroyed)
 	vector_of_cen_residues_in_sheet_1	=	get_cen_residues_in_this_sheet(struct_id, db_session,	sheet_id_1);
@@ -4332,17 +4330,11 @@ SandwichFeatures::cal_min_dis_between_sheets_by_cen_res (
 
 	Real min_dis = 9999;
 
-	for (Size ii=0;	ii<vector_of_cen_residues_in_sheet_1.size();	ii++)
-	{
-		for (Size	jj=0;	jj<vector_of_cen_residues_in_sheet_2.size();	jj++)
-		{
-			//	TR << "vector_of_cen_residues_in_sheet_1[ii]: " << vector_of_cen_residues_in_sheet_1[ii] << endl;
-			//	TR << "vector_of_cen_residues_in_sheet_2[jj]: " << vector_of_cen_residues_in_sheet_2[jj] << endl;
+	for (Size ii=0;	ii<vector_of_cen_residues_in_sheet_1.size();	ii++){
+		for (Size	jj=0;	jj<vector_of_cen_residues_in_sheet_2.size();	jj++){
 			Real distance = dssp_pose.residue(vector_of_cen_residues_in_sheet_1[ii]).atom("CA").xyz().distance(dssp_pose.residue(vector_of_cen_residues_in_sheet_2[jj]).atom("CA").xyz());
-			//	TR << "distance: " << distance << endl;
-			//	TR << "min_dis: " << min_dis << endl;
-			if (distance < min_dis)
-			{
+
+			if (distance < min_dis){
 				min_dis = distance;
 			}
 		}
@@ -4357,37 +4349,29 @@ SandwichFeatures::check_whether_this_sheet_is_surrounded_by_more_than_1_other_sh
 	sessionOP db_session,
 	Pose & dssp_pose,
 	utility::vector1<Size>	all_distinct_sheet_ids,
-	Size sheet_id)
-{
+	Size sheet_id){
 	Size num_of_sheets_that_surround_sheet_id = 0;
-	for(Size i=1; i <= all_distinct_sheet_ids.size(); i++) // now I check all possible combinations
-	{
-		if (all_distinct_sheet_ids[i] == 99999) //all_strands[i].get_size() < min_res_in_strand_
-		{
+	for(Size i=1; i <= all_distinct_sheet_ids.size(); i++) { // now I check all possible combinations
+		if (all_distinct_sheet_ids[i] == 99999) { //all_strands[i].get_size() < min_res_in_strand_
 			continue;
 		}
-		if (all_distinct_sheet_ids[i] == sheet_id) 
-		{
+		if (all_distinct_sheet_ids[i] == sheet_id) {
 			continue;
 		}
 		
 		Size num_strands_i = get_num_strands_in_this_sheet(struct_id, db_session, all_distinct_sheet_ids[i]); // struct_id, db_session, sheet_id
 			
-		if (num_strands_i < min_num_strands_in_sheet_)
-		{
+		if (num_strands_i < min_num_strands_in_sheet_){
 			continue;
 		}
 		
 		Real min_dis_between_sheets	=	cal_min_dis_between_sheets_by_cen_res(struct_id,	db_session,	dssp_pose,	sheet_id,	all_distinct_sheet_ids[i]);
-		if (min_dis_between_sheets < inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_)
-		{
-				//TR << all_distinct_sheet_ids[i_to_identify_sheet_id] << " and " << all_distinct_sheet_ids[i] << " are close within " << inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ << endl;
+		if (min_dis_between_sheets < inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_){
 			num_of_sheets_that_surround_sheet_id++;
 		}
 	}
-	TR << "num_of_sheets_that_surround sheet_id (" << sheet_id << ") within " << inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ << " is " << num_of_sheets_that_surround_sheet_id << endl;
-	if (num_of_sheets_that_surround_sheet_id > 1)
-	{
+	TR << "num_of_sheets_that_surround sheet_id (" << sheet_id << ") within " << inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ << " Angstrom is " << num_of_sheets_that_surround_sheet_id << endl;
+	if (num_of_sheets_that_surround_sheet_id > 1){
 		return true; // yes, this sheet is surrounded by more than 1 other sheets!
 	}
 	return false;	// no, this sheet is NOT surrounded by more than 1 other sheets, so we can use these sheets to extract sandwich
@@ -4511,9 +4495,11 @@ SandwichFeatures::check_whether_sw_is_not_connected_with_continuous_atoms(
 	}
 	// <end> get starting_res_num/ending_res_num
 
-	for(Size ii=starting_res_num; ii<ending_res_num; ii++){
+	for(Size ii=starting_res_num; ii<ending_res_num; ii++)
+	{
 		Real distance = dssp_pose.residue(ii).atom("CA").xyz().distance(dssp_pose.residue(ii+1).atom("CA").xyz());
-		if (distance > 5.0){
+		if (distance > 5.0)
+		{
 //				TR << "ii: " << ii << endl;
 //				TR << "distance: " << distance << endl;
 			return "multimer_suspected";
@@ -4843,7 +4829,7 @@ SandwichFeatures::parse_my_tag(
 	count_AA_with_direction_ = tag->getOption<bool>("count_AA_with_direction_", true);
 					//	definition:	if true, count AA considering direction too!
 	inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ = tag->getOption<Real>("inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets", 13.0);
-					//	definition: within this distance, sheets are considered to be near each other
+					//	definition: within this distance, sheets are considered to be too near each other
 					//	example: (in 1LOQ) inter-sheet distances are 11.5~14.1
 					//	Rationale of default value=13 Angstron
 						//	it is useful to exclude [1LOQ] which is beta-propeller and [3BVT] which is a stacked sandwich
@@ -5272,7 +5258,6 @@ SandwichFeatures::report_features(
 		
 		if (!found_sandwich_w_these_2_sheets)
 		{
-//				TR.Info << "sheet " << all_distinct_sheet_ids[i] << " and sheet " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << " are not in the ideal distance range so these cannot constitute a sandwich" << endl;
 			continue;
 		}
 		
@@ -5309,7 +5294,7 @@ SandwichFeatures::report_features(
 
 	if (bs_of_sw_can_by_sh.size() == 0)
 	{
-			TR.Info << "no beta segment in sandwich_by_sheet (maybe these are too distant sheets or a beta barrel) " << endl;
+			TR.Info << "no beta segment in sandwich_by_sheet (maybe these are too distant sheets or a beta barrel or \"non-canonical\" like 1MSP"") " << endl;
 			TR.Info << "<Exit-Done> for this pdb including extraction of sandwich" << endl;
 		return 0;
 	}
