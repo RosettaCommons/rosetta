@@ -87,7 +87,7 @@ using io::pdb::dump_pdb;
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
-static numeric::random::RandomGenerator RG(2391021);  // <- Magic number, do not change it!
+static numeric::random::RandomGenerator RG(239105221);  // <- Magic number, do not change it!
 
 OPT_KEY( IntegerVector, sample_res )
 OPT_KEY( IntegerVector, design_res )
