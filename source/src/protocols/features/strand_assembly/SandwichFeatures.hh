@@ -267,7 +267,7 @@ public:
 	get_shortest_among_4_vals(
 		core::Real arr_dis_inter_sheet[]);
 
-	bool
+	core::Size
 	judge_facing(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,

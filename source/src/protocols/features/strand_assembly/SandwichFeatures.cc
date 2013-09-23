@@ -1851,7 +1851,7 @@ SandwichFeatures::get_central_residues_in_each_of_two_edge_strands(
 	Size sheet_i){
 	utility::vector1<SandwichFragment> strands_from_sheet_i = get_full_strands_from_sheet(struct_id, db_session, sheet_i);
 
-	// get central residue numbers
+	// get central residue numbers in edge strands
 	vector<Size> vector_of_central_residues_in_sheet_i;
 	for(Size i=1; i<=strands_from_sheet_i.size(); ++i){
 		if (strands_from_sheet_i[i].get_size() <= 2){
@@ -1875,7 +1875,11 @@ SandwichFeatures::get_central_residues_in_each_of_two_edge_strands(
 	}
 	Size array_size = vector_of_central_residues_in_sheet_i.size();
 
-
+	if (array_size == 0) // this sheet maybe beta-barrel like sheet_id = 1 in 1N8O
+	{
+		return std::make_pair(-99, -99);
+	}
+	
 	// <begin> get sum of distances
 	vector<Real> sum_dis_array_i;
 	for(Size i=0; i<=array_size-1; ++i){
@@ -2015,7 +2019,7 @@ SandwichFeatures::get_start_end_res_num_in_the_longest_strand(
 } //get_start_end_res_num_in_the_longest_strand
 
 
-bool
+Size
 SandwichFeatures::judge_facing(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -2131,6 +2135,11 @@ SandwichFeatures::judge_facing(
 	Size i_ter_cen_1 = two_central_residues_in_two_edge_strands.first;
 	Size i_ter_cen_2 = two_central_residues_in_two_edge_strands.second;
 
+	if (i_ter_cen_1 == -99 || i_ter_cen_2 == -99)
+	{
+		return -99;
+	}
+
 	two_central_residues_in_two_edge_strands =	get_central_residues_in_each_of_two_edge_strands(
 		struct_id,
 		db_session,
@@ -2139,7 +2148,13 @@ SandwichFeatures::judge_facing(
 		
 	Size j_ter_cen_1 = two_central_residues_in_two_edge_strands.first;
 	Size j_ter_cen_2 = two_central_residues_in_two_edge_strands.second;
-		
+
+	if (j_ter_cen_1 == -99 || j_ter_cen_2 == -99)
+	{
+		return -99;
+	}
+
+
 	Real arr_dis_inter_sheet [4];
 	arr_dis_inter_sheet[0] = pose.residue(i_ter_cen_1).atom("CA").xyz().distance(pose.residue(j_ter_cen_1).atom("CA").xyz());
 	arr_dis_inter_sheet[1] = pose.residue(i_ter_cen_1).atom("CA").xyz().distance(pose.residue(j_ter_cen_2).atom("CA").xyz());
@@ -5261,7 +5276,7 @@ SandwichFeatures::report_features(
 			continue;
 		}
 		
-		bool facing = judge_facing(struct_id, db_session, pose, all_distinct_sheet_ids[i], sheet_j_that_will_be_used_for_pairing_with_sheet_i);
+		Size facing = judge_facing(struct_id, db_session, pose, all_distinct_sheet_ids[i], sheet_j_that_will_be_used_for_pairing_with_sheet_i);
 		// if false, these two strand_pairs are linear to each other or do not face properly to each other
 		
 		if (!facing)
@@ -5269,7 +5284,13 @@ SandwichFeatures::report_features(
 			//	TR.Info << "sheet " << all_distinct_sheet_ids[i] << " and sheet " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << " do not face each other" << endl;
 			continue;
 		}
-		
+
+		else if (facing == -99)
+		{
+			TR.Info << "at least one sheet (either " << all_distinct_sheet_ids[i] << " or " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << ")  maybe a beta-barrel like sheet_id = 1 in 1N8O" << endl;
+			continue;
+		}
+
 //			TR.Info << "! writing into 'sandwich candidate by sheet' !" << endl;
 		
 		write_to_sw_can_by_sh (struct_id, db_session, sw_can_by_sh_PK_id_counter, tag, sw_can_by_sh_id_counter, all_distinct_sheet_ids[i], strands_from_sheet_i.size());
