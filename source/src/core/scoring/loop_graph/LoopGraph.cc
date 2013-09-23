@@ -37,10 +37,6 @@ namespace core {
 namespace scoring {
 namespace loop_graph {
 
-LoopScoreInfoOP
-LoopGraph::loop_score_info( Size const n ) const
-{ return current_pose_loop_score_info_[ n ]; }
-
 	//Constructor
 	LoopGraph::LoopGraph():
 		rna_gaussian_variance_per_residue_( 5.0 * 5.0 ), // in Angstroms^2
@@ -380,6 +376,12 @@ LoopGraph::loop_score_info( Size const n ) const
 		}
 
 	}
+
+	LoopScoreInfoOP
+	LoopGraph::loop_score_info( Size const n ) const {
+		return current_pose_loop_score_info_[ n ];
+	}
+
 
 } //loop_graph
 } //scoring
