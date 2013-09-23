@@ -214,8 +214,8 @@ std::string Sequence::to_string() const {
 	Size const id_width( 20 );
 	Size const start_width( 8 );
 
-	retval += ObjexxFCL::fmt::A( id_width, id() );
-	retval += ObjexxFCL::fmt::I( start_width, start() );
+	retval += ObjexxFCL::format::A( id_width, id() );
+	retval += ObjexxFCL::format::I( start_width, start() );
 	retval += ' ' + sequence();
 	return retval;
 }

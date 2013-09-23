@@ -54,7 +54,7 @@ public:
 
 	void use_coordinate_constraints( bool const setting ){ use_coordinate_constraints_ = setting; }
 
-	void skip_o2star_trials( bool const setting ){ skip_o2star_trials_ = setting; }
+	void skip_o2prime_trials( bool const setting ){ skip_o2prime_trials_ = setting; }
 
 	void set_perform_minimizer_run( bool const setting ){ perform_minimizer_run_ = setting; }
 
@@ -90,7 +90,7 @@ private:
 
 	// Make this a Mover?
 	void
-	o2star_trials( core::pose::Pose & pose, core::scoring::ScoreFunctionOP const & scorefxn ) const;
+	o2prime_trials( core::pose::Pose & pose, core::scoring::ScoreFunctionOP const & scorefxn ) const;
 
 	void
 	setup_movemap( core::kinematics::MoveMap & mm, core::pose::Pose & pose );
@@ -104,7 +104,7 @@ private:
 	core::Real const coord_sdev_;
 	core::Real const coord_cst_weight_;
 	core::Size const rounds_;
-	bool skip_o2star_trials_;
+	bool skip_o2prime_trials_;
 	bool perform_minimizer_run_;
 	bool vary_bond_geometry_;
 	bool include_default_linear_chainbreak_;

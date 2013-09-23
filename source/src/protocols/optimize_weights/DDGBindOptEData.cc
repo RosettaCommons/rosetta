@@ -32,7 +32,7 @@
 
 using namespace core;
 using namespace core::scoring;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace optimize_weights {

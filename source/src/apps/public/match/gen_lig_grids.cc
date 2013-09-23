@@ -69,7 +69,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::scoring::packstat;
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using namespace numeric;
 using namespace utility;
 

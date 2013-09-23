@@ -16,7 +16,6 @@
 #include <core/io/pdb/file_data_fixup.hh>
 #include <core/io/pdb/file_data.hh>
 
-
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ResidueType.hh>
@@ -32,6 +31,9 @@
 #include <core/pose/util.hh>
 
 // Basic headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -50,6 +52,9 @@
 #include <cstdlib>
 #include <cstdio>
 #include <utility>
+
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
 // Tracer instance for this file
 static basic::Tracer TR("core.io.pdb.file_data_fixup");
@@ -108,6 +113,12 @@ convert_atom_name( std::string const & res_name, std::string atom_name )
 void
 convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInformation > & all_rinfo ){
 
+	// following is to show warnings or cap number.
+	static Size nfix( 0 );
+	static Size const max_fix( 2 );
+	static bool const show_all_fixup( option[ in::show_all_fixes ]() );
+	static bool showed_warning( false );
+
 	for ( Size n = 1; n <= all_rinfo.size(); n++ ){
 
 		ResidueInformation & rinfo  = all_rinfo[ n ];
@@ -117,13 +128,13 @@ convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInforma
 		// first establish if this is DNA or RNA (or something else)
 		if ( is_potential_old_DNA( rinfo.resName ) && missing_O2prime( rinfo.atoms ) ) 	{
 			rinfo.resName.replace( 1, 1, "D" ); // A --> dA
-			TR << "Converting residue name " <<  original_name <<  " to " << rinfo.resName << std::endl;
+			if ( ++nfix <= max_fix || show_all_fixup ) TR << "Converting residue name " <<  original_name <<  " to " << rinfo.resName << std::endl;
 			for ( Size n = 1 ; n <= rinfo.atoms.size(); n++ ) rinfo.atoms[ n ].resName = rinfo.resName;
 		}
 
 		if ( is_old_RNA( rinfo.resName ) ){
 			rinfo.resName.replace( 1, 1, " " ); // rA --> A
-			TR << "Converting residue name " <<  original_name <<  " to " << rinfo.resName << std::endl;
+			if ( ++nfix <= max_fix || show_all_fixup ) TR << "Converting residue name " <<  original_name <<  " to " << rinfo.resName << std::endl;
 			for ( Size n = 1 ; n <= rinfo.atoms.size(); n++ ) rinfo.atoms[ n ].resName = rinfo.resName;
 		}
 
@@ -131,6 +142,12 @@ convert_nucleic_acid_residue_info_to_standard( 	utility::vector1< ResidueInforma
 		if ( is_NA( rinfo.resName ) )	convert_nucleic_acid_atom_names_to_standard( rinfo );
 
 	}
+
+	if ( nfix > max_fix && !show_all_fixup && !showed_warning ){
+		TR << "Number of nucleic acid residue fixups exceeds output limit. Rerun with -show_all_fixes to show everything." << std::endl;
+		showed_warning = true;
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -182,6 +199,12 @@ missing_O2prime( utility::vector1< AtomInformation > const & atoms ){
 void
 convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo ){
 
+	// following is to show warnings or cap number.
+	static Size nfix( 0 );
+	static Size const max_fix( 2 );
+	static bool const show_all_fixup( option[ in::show_all_fixes ]() );
+	static bool showed_warning( false );
+
 	utility::vector1< AtomInformation > & all_atom_info = rinfo.atoms;
 
 	for ( Size n = 1 ; n <= all_atom_info.size(); n++ ) {
@@ -194,7 +217,7 @@ convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo ){
 
 		std::string const new_atom_name = atom_info.name;
 		if ( original_name != new_atom_name ){
-			TR << "Converted atom name " << original_name << " --> " << new_atom_name << std::endl;
+			if ( ++nfix <= max_fix || show_all_fixup ) TR << "Converting atom name    " << original_name << " to " << new_atom_name << std::endl;
 
 			rinfo.xyz[ new_atom_name ]   = rinfo.xyz[ original_name ];
 			rinfo.xyz.erase( original_name );
@@ -204,6 +227,12 @@ convert_nucleic_acid_atom_names_to_standard( ResidueInformation & rinfo ){
 		}
 
 	}
+
+	if ( nfix > max_fix && !show_all_fixup && !showed_warning ){
+		TR << "Number of atom_name fixups exceeds output limit. Rerun with -show_all_fixes to show everything." << std::endl;
+		showed_warning = true;
+	}
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -342,10 +371,23 @@ void
 flip_atom_xyz( core::conformation::ResidueOP & rsd,
 							 std::string const & sister1_name,
 							 std::string const & sister2_name ) {
-	TR << "Flipping atom xyz for " << sister1_name << " and " << sister2_name << " for residue " << rsd->name3() <<  std::endl;
+	// following is to show warnings or cap number.
+	static Size nfix( 0 );
+	static Size const max_fix( 2 );
+	static bool const show_all_fixup( option[ in::show_all_fixes ]() );
+	static bool showed_warning( false );
+
+	if ( ++nfix <= max_fix || show_all_fixup )	{
+		TR << "Flipping atom xyz for " << sister1_name << " and " << sister2_name << " for residue " << rsd->name3() <<  std::endl;
+	}
 	Vector const temp_xyz = rsd->xyz( sister1_name );
 	rsd->set_xyz( sister1_name, rsd->xyz( sister2_name ) );
 	rsd->set_xyz( sister2_name, temp_xyz );
+
+	if ( nfix > max_fix && !show_all_fixup && !showed_warning ){
+		TR << "Number of flip-atom fixups exceeds output limit. Rerun with -show_all_fixes to show everything." << std::endl;
+		showed_warning = true;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////

@@ -56,7 +56,7 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 using basic::T;
 using basic::Warning;

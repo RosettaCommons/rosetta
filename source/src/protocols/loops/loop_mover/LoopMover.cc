@@ -66,7 +66,7 @@
 // Auto-header: duplicate removed #include <utility/vector1.hh>
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -80,7 +80,7 @@ namespace loop_mover {
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 LoopMover::LoopMover() :
 	Mover(),

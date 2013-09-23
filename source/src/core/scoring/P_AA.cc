@@ -135,7 +135,7 @@ P_AA::read_P_AA()
 	P_AA_.resize( num_canonical_aas );
 
 	while ( stream ) {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		stream >> bite( 3, id ) >> skip( 1 ) >> bite( 9, probability ) >> skip;
 		if ( stream ) {
 			assert( ( probability >= Probability( 0.0 ) ) && ( probability <= Probability( 1.0 ) ) );
@@ -172,7 +172,7 @@ P_AA::read_P_AA_n()
 	for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) P_AA_n_[ ii ].resize( 14 );
 
 	while ( stream ) {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		stream >> bite( 3, id ) >> skip( 1 ) >> bite( 2, n ) >> skip( 1 ) >> bite( 9, probability ) >> skip;
 		if ( stream ) {
 			assert( ( n >= 1 ) && ( n <= 14 ) ); // Support n in [1,14]
@@ -233,7 +233,7 @@ P_AA::read_P_AA_pp()
 	}
 
 	while ( stream ) {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		stream >> bite( 4, phi ) >> skip( 1 ) >> bite( 4, psi ) >> skip( 1 )
 		>> bite( 3, id ) >> skip( 17 ) >> bite( 7, probability ) >> skip;

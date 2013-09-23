@@ -478,6 +478,15 @@ CA_gdtmm(
 );
 
 /// @brief  Superimpose mod_pose onto ref_pose using the mapping of atoms from
+/// mod_pose to ref_pose given by map< AtomID, AtomID >
+Real
+superimpose_pose(
+	pose::Pose & mod_pose,
+	pose::Pose const & ref_pose,
+	std::map< id::AtomID, id::AtomID > const & atom_map // from mod_pose to ref_pose
+);
+
+/// @brief  Superimpose mod_pose onto ref_pose using the mapping of atoms from
 /// mod_pose to ref_pose given by atom_map
 Real
 superimpose_pose(

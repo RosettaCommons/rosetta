@@ -162,16 +162,16 @@ private:
 	Real const scale_dna_torsion_sd_;
 
 	// Ribose closure
-	Distance const c2star_c3star_bond_length_;
-	Distance const c2star_c3star_sd_;
-	constraints::HarmonicFuncOP c2star_c3star_dist_harm_func_;
+	Distance const c2prime_c3prime_bond_length_;
+	Distance const c2prime_c3prime_sd_;
+	constraints::HarmonicFuncOP c2prime_c3prime_dist_harm_func_;
 
-	Real const c4star_c3star_c2star_bond_angle_;
-	constraints::HarmonicFuncOP c4star_c3star_c2star_angle_harm_func_;
-	Real const o3star_c3star_c2star_bond_angle_;
-	constraints::HarmonicFuncOP o3star_c3star_c2star_angle_harm_func_;
-	Real const c3star_c2star_c1star_bond_angle_;
-	constraints::HarmonicFuncOP c3star_c2star_c1star_angle_harm_func_;
+	Real const c4prime_c3prime_c2prime_bond_angle_;
+	constraints::HarmonicFuncOP c4prime_c3prime_c2prime_angle_harm_func_;
+	Real const o3prime_c3prime_c2prime_bond_angle_;
+	constraints::HarmonicFuncOP o3prime_c3prime_c2prime_angle_harm_func_;
+	Real const c3prime_c2prime_c1prime_bond_angle_;
+	constraints::HarmonicFuncOP c3prime_c2prime_c1prime_angle_harm_func_;
 
 	bool const verbose_;
 

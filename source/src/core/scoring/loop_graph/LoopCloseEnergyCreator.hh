@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/rna/RNA_LoopEnergyCreator.hh
-/// @brief  Declaration for the class that connects RNA_LoopEnergy with the ScoringManager
+/// @file   src/core/scoring/loop_graph/LoopCloseEnergyCreator.hh
+/// @brief  Declaration for the class that connects LoopCloseEnergy with the ScoringManager
 /// @author Rhiju Das (rhiju@stanford.edu)
 
-#ifndef INCLUDED_core_scoring_rna_RNA_LoopEnergyCreator_hh
-#define INCLUDED_core_scoring_rna_RNA_LoopEnergyCreator_hh
+#ifndef INCLUDED_core_scoring_loop_graph_LoopCloseEnergyCreator_hh
+#define INCLUDED_core_scoring_loop_graph_LoopCloseEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -24,12 +24,12 @@
 
 namespace core {
 namespace scoring {
-namespace rna {
+namespace loop_graph {
 
-class RNA_LoopEnergyCreator : public methods::EnergyMethodCreator
+class LoopCloseEnergyCreator : public methods::EnergyMethodCreator
 {
 public:
-	/// @brief Instantiate a new RNA_LoopEnergy
+	/// @brief Instantiate a new LoopCloseEnergy
 	virtual
 	methods::EnergyMethodOP
 		create_energy_method(

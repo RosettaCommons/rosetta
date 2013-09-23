@@ -141,7 +141,7 @@ ScoreFunctionFingerprintMover::apply( pose::Pose & pose )
 			if ( sfxn_->has_nonzero_weight( ScoreType(jj) ) && pose.energies().onebody_energies( ii )[ ScoreType(jj) ] != 0.0 ) {
 				std::string newline = "1b " + utility::to_string( ii ) +
 					" " + ScoreTypeManager::name_from_score_type( ScoreType(jj) ) +
-					" " + ObjexxFCL::fmt::F( 9, 3, pose.energies().onebody_energies( ii )[ ScoreType(jj) ] ) + "\n";
+					" " + ObjexxFCL::format::F( 9, 3, pose.energies().onebody_energies( ii )[ ScoreType(jj) ] ) + "\n";
 				lines.push_back( newline );
 			}
 		} 
@@ -162,7 +162,7 @@ ScoreFunctionFingerprintMover::apply( pose::Pose & pose )
 					std::string newline = "2b_sr " + utility::to_string( ii ) +
 						" " + utility::to_string( jj ) +
 						" " + ScoreTypeManager::name_from_score_type( ScoreType(kk) ) +
-						" " + ObjexxFCL::fmt::F( 9, 3,  emap[ ScoreType(kk) ] ) + "\n";
+						" " + ObjexxFCL::format::F( 9, 3,  emap[ ScoreType(kk) ] ) + "\n";
 					lines.push_back( newline );
 				}
 			}
@@ -193,7 +193,7 @@ ScoreFunctionFingerprintMover::apply( pose::Pose & pose )
 						std::string newline = "2b_lr " + utility::to_string( ii ) +
 							" " + utility::to_string( jj ) +
 							" " + ScoreTypeManager::name_from_score_type( kkst ) +
-							" " + ObjexxFCL::fmt::F( 9, 3,  emap[ kkst ] ) + "\n";
+							" " + ObjexxFCL::format::F( 9, 3,  emap[ kkst ] ) + "\n";
 						lines.push_back( newline );
 					}
 				}
@@ -204,7 +204,7 @@ ScoreFunctionFingerprintMover::apply( pose::Pose & pose )
 	for ( Size ii = 1; ii <= scoring::n_score_types; ++ii ) {
 		if ( sfxn_->has_nonzero_weight( ScoreType(ii) ) && pose.energies().total_energies()[ ScoreType(ii) ] != 0.0 ) {
 			std::string newline = "total " + ScoreTypeManager::name_from_score_type( ScoreType(ii) ) +
-				" " + ObjexxFCL::fmt::F( 9, 3,  pose.energies().total_energies()[ ScoreType(ii) ] ) + "\n";
+				" " + ObjexxFCL::format::F( 9, 3,  pose.energies().total_energies()[ ScoreType(ii) ] ) + "\n";
 			lines.push_back( newline );
 		}
 	}

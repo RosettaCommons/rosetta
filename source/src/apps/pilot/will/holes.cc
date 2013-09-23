@@ -65,7 +65,7 @@ using utility::vector1;
 using core::id::AtomID;
 using numeric::xyzVector;
 using namespace core::scoring::packing;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // HolesParamsRes params("/Users/sheffler/project/holes/holes_params.txt");
 

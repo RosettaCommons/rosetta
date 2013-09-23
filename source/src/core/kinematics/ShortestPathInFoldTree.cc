@@ -46,10 +46,10 @@
 
 //Auto using namespaces
 namespace ObjexxFCL {
-namespace fmt {
+namespace format {
 }
 }
-using namespace ObjexxFCL::fmt; // AUTO USING NS
+using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -274,7 +274,7 @@ ShortestPathInFoldTree::compute_dist_map( FoldTree const& f ) {
 void
 ShortestPathInFoldTree::build_peptide_table( core::kinematics::FoldTree const& f ) {
   using namespace core::kinematics;
-  using namespace  ObjexxFCL::fmt;
+  using namespace  ObjexxFCL::format;
   res2jumps_.dimension( f.nres(), 5, -1 );   //5 entries per residue.
 	utility::vector1< int > leaves;
   // go thru edges and fill res2jump array accordingly

@@ -192,9 +192,9 @@ main( int argc, char * argv [] )
 		}
 	}
 
-	using ObjexxFCL::fmt::I;
-	using ObjexxFCL::fmt::F;
-	using ObjexxFCL::fmt::RJ;
+	using ObjexxFCL::format::I;
+	using ObjexxFCL::format::F;
+	using ObjexxFCL::format::RJ;
 
 	output_ << " RES" << " ";
 	for( Size i=1; i<=20; i++ ) {

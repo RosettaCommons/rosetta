@@ -40,7 +40,7 @@ RNA_Mg_KnowledgeBasedPotential::RNA_Mg_KnowledgeBasedPotential():
 	gaussian_parameter_phosphate_oxygen_(-5.93, 2.22, 0.55 ), // amplitude, center, width
 	gaussian_parameter_imine_           (-3.41, 2.40, 0.33 ),
 	gaussian_parameter_exocyclic_oxygen_(-4.20, 2.33, 0.43 ), // Reduced this from 5.2 to 3.4 after seeing too many close interactions.
-	gaussian_parameter_o2star_          (-3.88, 2.54, 0.34 ),
+	gaussian_parameter_o2prime_          (-3.88, 2.54, 0.34 ),
 	gaussian_parameter_phosphate_p_     ( 5.00, 2.00, 0.25 ), //this is a penalty!
 	gaussian_parameter_polar_H_         ( 5.00, 2.25, 0.50 ), //this is a penalty!
 	gaussian_parameter_nonpolar_H_      ( 5.00, 2.00, 0.50 ), //this is a penalty!
@@ -49,19 +49,19 @@ RNA_Mg_KnowledgeBasedPotential::RNA_Mg_KnowledgeBasedPotential():
 	gaussian_parameter_phosphate_oxygen_indirect_(-1.96, 4.07, 0.51 ), // longer-range, water-mediated interactions
 	gaussian_parameter_imine_indirect_           (-1.24, 4.18, 0.28 ),
 	gaussian_parameter_exocyclic_oxygen_indirect_(-1.93, 4.08, 0.45 ),
-	gaussian_parameter_o2star_indirect_          (-1.28, 4.10, 0.37 ),
+	gaussian_parameter_o2prime_indirect_          (-1.28, 4.10, 0.37 ),
 
 	gaussian_parameter_costheta_phosphate_oxygen_( 1.00, -0.91, 0.49 ), // amplitude, center, width of angular 'form factor'
 	gaussian_parameter_costheta_imine_           ( 1.00, -0.97, 0.18 ), // note how sharp this is!
 	gaussian_parameter_costheta_exocyclic_oxygen_( 1.00, -0.79, 0.34 ),
-	gaussian_parameter_costheta_o2star_          ( 1.00, -0.91, 0.49 ), // not enough stats, copy from phosphate_oxygen
+	gaussian_parameter_costheta_o2prime_          ( 1.00, -0.91, 0.49 ), // not enough stats, copy from phosphate_oxygen
 	gaussian_parameter_costheta_polar_H_         ( 1.00, -1.00, 0.25 ), //guess
 	gaussian_parameter_costheta_nonpolar_H_      ( 1.00, -1.00, 0.25 ), //guess
 
 	gaussian_parameter_costheta_phosphate_oxygen_indirect_( 1.00, -0.74, 0.55 ), // amplitude, center, width of angular 'form factor'
 	gaussian_parameter_costheta_imine_indirect_           ( 1.00, -0.94, 0.46 ),
 	gaussian_parameter_costheta_exocyclic_oxygen_indirect_( 1.00, -0.56, 0.61 ),
-	gaussian_parameter_costheta_o2star_indirect_          ( 1.00, -0.74, 0.55 ) // not enough stats, copy from phosphate_oxygen
+	gaussian_parameter_costheta_o2prime_indirect_          ( 1.00, -0.74, 0.55 ) // not enough stats, copy from phosphate_oxygen
 
 {
 }
@@ -98,7 +98,7 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_gaussian_parameter( core::confo
 		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 			return gaussian_parameter_exocyclic_oxygen_;
 		} else if ( rsd.atom_name( j ) == " O2'" ){
-			return gaussian_parameter_o2star_;
+			return gaussian_parameter_o2prime_;
 		} else if ( rsd.atom_name(j) == " P  " ){
 			return gaussian_parameter_phosphate_p_;
 		} else if ( atom_type_name == "Hpol" ){
@@ -128,7 +128,7 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_indirect_gaussian_parameter( co
 		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 			return gaussian_parameter_exocyclic_oxygen_indirect_;
 		} else if ( rsd.atom_name( j ) == " O2'" ){
-			return gaussian_parameter_o2star_indirect_;
+			return gaussian_parameter_o2prime_indirect_;
 		}
 	}
 
@@ -152,7 +152,7 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_gaussian_parameter( co
 		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 			return gaussian_parameter_costheta_exocyclic_oxygen_;
 		} else if ( rsd.atom_name( j ) == " O2'" ){
-			return gaussian_parameter_costheta_o2star_;
+			return gaussian_parameter_costheta_o2prime_;
 		} else if ( atom_type_name == "Hpol" ){
 			return gaussian_parameter_costheta_polar_H_;
 		} else if ( atom_type_name == "Hapo" ) { //|| atom_type_name == "Haro" ){
@@ -179,7 +179,7 @@ RNA_Mg_KnowledgeBasedPotential::get_mg_potential_costheta_indirect_gaussian_para
 		} else if ( atom_type_name == "OCbb" ) { // exocyclic oxygens
 			return gaussian_parameter_costheta_exocyclic_oxygen_indirect_;
 		} else if ( rsd.atom_name( j ) == " O2'" ){
-			return gaussian_parameter_costheta_o2star_indirect_;
+			return gaussian_parameter_costheta_o2prime_indirect_;
 		}
 	}
 

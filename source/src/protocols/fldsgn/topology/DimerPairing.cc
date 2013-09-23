@@ -86,9 +86,9 @@ DimerPairing::is_parallel( Real const phi, Real const theta )
 
 std::ostream& operator<<( std::ostream & out, const DimerPairing & dp )
 {
-  using ObjexxFCL::fmt::I;
-  using ObjexxFCL::fmt::F;
-  using ObjexxFCL::fmt::A;
+  using ObjexxFCL::format::I;
+  using ObjexxFCL::format::F;
+  using ObjexxFCL::format::A;
 	out << I( 4, dp.res1() )     << ' ' << I( 4, dp.res2() )     << ' '
 			<< F( 9, 3, dp.dist() )  << ' ' << F( 9, 3, dp.sigma() ) << ' '
 			<< F( 9, 3, dp.phi() )   << ' ' << F( 9, 3, dp.theta() ) << ' ' << F( 9, 3, dp.dp() )       << ' '
@@ -153,9 +153,9 @@ DimerPairings::finalize( SS_Info2 const & ss_info )
 
 std::ostream& operator<<( std::ostream & out, const DimerPairings &dps )
 {
-  using ObjexxFCL::fmt::I;
-  using ObjexxFCL::fmt::LJ;
-  using ObjexxFCL::fmt::RJ;
+  using ObjexxFCL::format::I;
+  using ObjexxFCL::format::LJ;
+  using ObjexxFCL::format::RJ;
 	out  << LJ(4, "#" ) << ' '
 			 << LJ(4, "res1" ) << ' ' << LJ(4, "res2"  ) << ' '
 			 << RJ(9, "dist" ) << ' ' << RJ(9, "sigma" ) << ' '

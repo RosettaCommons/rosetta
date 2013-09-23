@@ -65,8 +65,8 @@ using numeric::statistics::mean;
 using numeric::statistics::std_dev_with_provided_mean;
 
 using ObjexxFCL::string_of;
-using ObjexxFCL::fmt::A;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::A;
+using ObjexxFCL::format::F;
 
 namespace protocols {
 namespace rotamer_recovery {

@@ -87,7 +87,7 @@ using namespace pack;
 	using namespace task;
 using namespace scoring;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using namespace protocols::toolbox::pose_metric_calculators;
 
 #include <basic/options/option_macros.hh>

@@ -36,7 +36,7 @@
 #include <utility/vector1.hh>
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -115,7 +115,7 @@ AtomVDW::setup_approximate_vdw_radii(
 	chemical::AtomTypeSet const & atom_type_set
 )
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	Size const natoms_full( atom_vdw_.size() );
 	Size const natoms( atom_type_index.size() ); // # atoms in the db file

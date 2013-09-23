@@ -107,33 +107,33 @@ namespace rna {
 
 	bool Is_P_atom( std::string const & atom_name ){				return ( atom_name == " P  " ); }
 
-	bool Is_O2star_atom( std::string const & atom_name ){  return ( atom_name == " O2'" ); }
+	bool Is_O2prime_atom( std::string const & atom_name ){  return ( atom_name == " O2'" ); }
 
-	bool Is_O3star_atom( std::string const & atom_name ){  return ( atom_name == " O3'" ); }
+	bool Is_O3prime_atom( std::string const & atom_name ){  return ( atom_name == " O3'" ); }
 
-	bool Is_O4star_atom( std::string const & atom_name ){  return ( atom_name == " O4'" ); }
+	bool Is_O4prime_atom( std::string const & atom_name ){  return ( atom_name == " O4'" ); }
 
-	bool Is_O5star_atom( std::string const & atom_name ){	return ( atom_name == " O5'" ); }
+	bool Is_O5prime_atom( std::string const & atom_name ){	return ( atom_name == " O5'" ); }
 
-	bool Is_C2star_atom( std::string const & atom_name ){  return ( atom_name == " C2'" ); }
+	bool Is_C2prime_atom( std::string const & atom_name ){  return ( atom_name == " C2'" ); }
 
-	bool Is_C3star_atom( std::string const & atom_name ){  return ( atom_name == " C3'" ); }
+	bool Is_C3prime_atom( std::string const & atom_name ){  return ( atom_name == " C3'" ); }
 
-	bool Is_C4star_atom( std::string const & atom_name ){  return ( atom_name == " C4'" ); }
+	bool Is_C4prime_atom( std::string const & atom_name ){  return ( atom_name == " C4'" ); }
 
-	bool Is_C5star_atom( std::string const & atom_name ){  return ( atom_name == " C5'" ); }
+	bool Is_C5prime_atom( std::string const & atom_name ){  return ( atom_name == " C5'" ); }
 
-	bool Is_1H5star_atom( std::string const & atom_name ){ return ( atom_name == " H5'" ); }
+	bool Is_1H5prime_atom( std::string const & atom_name ){ return ( atom_name == " H5'" ); }
 
-	bool Is_2H5star_atom( std::string const & atom_name ){ return ( atom_name == "H5''" ); }
+	bool Is_2H5prime_atom( std::string const & atom_name ){ return ( atom_name == "H5''" ); }
 
-	bool Is_H3star_atom( std::string const & atom_name ){  return ( atom_name == " H3'" ); }
+	bool Is_H3prime_atom( std::string const & atom_name ){  return ( atom_name == " H3'" ); }
 
-	bool Is_H4star_atom( std::string const & atom_name ){  return ( atom_name == " H4'" ); }
+	bool Is_H4prime_atom( std::string const & atom_name ){  return ( atom_name == " H4'" ); }
 
-	bool Is_three_prime_phosphate_atom( std::string const & atom_name ){ return ( Is_O3star_atom( atom_name ) ); }
+	bool Is_three_prime_phosphate_atom( std::string const & atom_name ){ return ( Is_O3prime_atom( atom_name ) ); }
 
-	bool Is_five_prime_phosphate_atom( std::string const & atom_name ){ return ( Is_O5star_atom( atom_name ) || Is_OP2_atom( atom_name ) || Is_OP1_atom( atom_name ) || Is_P_atom( atom_name ) ) ; }
+	bool Is_five_prime_phosphate_atom( std::string const & atom_name ){ return ( Is_O5prime_atom( atom_name ) || Is_OP2_atom( atom_name ) || Is_OP1_atom( atom_name ) || Is_P_atom( atom_name ) ) ; }
 
 	bool Is_phosphate_atom( std::string const & atom_name ){ return ( Is_three_prime_phosphate_atom( atom_name ) || Is_five_prime_phosphate_atom( atom_name ) ); }
 
@@ -597,7 +597,7 @@ namespace rna {
 		}
 
 		Size non_virtual_atom_count = 0;
-  	for ( Size atomno = rsd.first_sidechain_atom() + 1; atomno <= rsd.nheavyatoms(); ++atomno ) { //iterate over base atoms....+1 to exclude the O2star oxygen
+  	for ( Size atomno = rsd.first_sidechain_atom() + 1; atomno <= rsd.nheavyatoms(); ++atomno ) { //iterate over base atoms....+1 to exclude the O2prime oxygen
 			if ( rsd.atom_type( atomno ).name() != "VIRT" ){
 				non_virtual_atom_count++;
 			}
@@ -643,7 +643,7 @@ namespace rna {
  			utility_exit_with_message( "rsd_1.aa() != rsd_2.aa(). res_num_1 = " + string_of( res_num_1 ) + " name_from_aa( rsd_1.aa() ) = " + name_from_aa( rsd_1.aa() ) + " res_num_2 = " +  string_of( res_num_2 ) + " name_from_aa( rsd_2.aa() ) = " + name_from_aa( rsd_2.aa() ) );
  		}
 
-		Size const first_atom = ( base_only ) ? rsd_1.first_sidechain_atom() + 1 : 1; //+1 to exclude the O2star oxygen
+		Size const first_atom = ( base_only ) ? rsd_1.first_sidechain_atom() + 1 : 1; //+1 to exclude the O2prime oxygen
 
 	  	for ( Size atomno_1 = first_atom; atomno_1 <= rsd_1.nheavyatoms(); ++atomno_1 ) {
 
@@ -805,7 +805,7 @@ namespace rna {
 	Output_seq_num_list( std::string const tag, utility::vector1< core::Size > const & seq_num_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
 
 		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		outstream <<  std::setw( spacing ) << tag;
 
@@ -849,7 +849,7 @@ namespace rna {
 	void Output_is_prepend_map( std::string const tag, std::map< core::Size, bool > const & my_map, core::Size const max_seq_num, std::ostream & outstream /* = std::cout */, core::Size const tag_spacing ){
 
 		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		outstream << std::setw( tag_spacing ) << tag;
 
@@ -882,7 +882,7 @@ namespace rna {
 	Output_bool_list( std::string const tag, utility::vector1< bool > const & bool_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
 
 		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		outstream <<  std::setw( spacing ) << tag;
 
@@ -896,7 +896,7 @@ namespace rna {
 	Output_size_list( std::string const tag, utility::vector1< Size > const & size_list, std::ostream & outstream /* = std::cout */, core::Size const spacing ){
 
 		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		outstream <<  std::setw( spacing ) << tag;
 
@@ -1122,7 +1122,7 @@ namespace rna {
 			if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ){
 				if ( !pose.residue( i ).is_RNA() ) continue;
 			}
-			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i );
+			pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", i );
 	  }
 	}
 
@@ -1136,8 +1136,8 @@ namespace rna {
 			if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ){
 				if ( !pose.residue( i ).is_RNA() ) continue;
 			}
-			if ( pose.residue_type( i ).has_variant_type( "VIRTUAL_O2STAR_HYDROGEN" ) ){
-				pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i );
+			if ( pose.residue_type( i ).has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) ){
+				pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", i );
 			}
 		}
 		return true;
@@ -1459,8 +1459,8 @@ namespace rna {
 		if ( verbose ) TR << " MOVING_RES_1: " << moving_res_1 << " MOVING_RES_2: " << moving_res_2 << std::endl;
 
   		//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
-		//the virtaul O2star hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
-  		for ( Size n = 1; n <= num_side_chain_atom; n++ ){ //This INCLUDE the O2star oxygen
+		//the virtaul O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
+  		for ( Size n = 1; n <= num_side_chain_atom; n++ ){ //This INCLUDE the O2prime oxygen
 
 			Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
 			Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
@@ -1468,8 +1468,8 @@ namespace rna {
 			conformation::Residue const & rsd_1 = pose1.residue( moving_res_1 );
 			conformation::Residue const & rsd_2 = pose2.residue( moving_res_2 );
 
-			if ( rsd_1.type().atom_name( atomno_1 ) == " O2'" ) continue; //Exclude the O2star oxygen
-			if ( rsd_2.type().atom_name( atomno_2 ) == " O2'" ) continue; //Exclude the O2star oxygen
+			if ( rsd_1.type().atom_name( atomno_1 ) == " O2'" ) continue; //Exclude the O2prime oxygen
+			if ( rsd_2.type().atom_name( atomno_2 ) == " O2'" ) continue; //Exclude the O2prime oxygen
 
 			if ( ignore_virtual_atom ){
 				if ( rsd_1.atom_type( atomno_1 ).name() == "VIRT"  || rsd_2.atom_type( atomno_2 ).name() == "VIRT" ) continue;
@@ -1576,8 +1576,8 @@ namespace rna {
 		}
 
   		//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
-		//the virtaul O2star hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
-  		for ( Size n = 1; n <= num_side_chain_atom; n++ ){ //INCLUDE the O2star oxygen
+		//the virtaul O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
+  		for ( Size n = 1; n <= num_side_chain_atom; n++ ){ //INCLUDE the O2prime oxygen
 
 			Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
 			Size const atomno_2 = ( n - 1 ) + first_sidechain_atom2;
@@ -1656,8 +1656,8 @@ namespace rna {
 		}
 
   		//Need to use num_side_chain_atom from pose1 since a silly bug in Rosetta miscalculate num_heavy_atom by considering
-			//the virtaul O2star hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
-  		for ( Size n = 1; n <= num_side_chain_atom; n++ ){ //INCLUDE the O2star oxygen
+			//the virtaul O2prime hydrogen to be heavy_atom when it is set to virtual in the current_pose_screen
+  		for ( Size n = 1; n <= num_side_chain_atom; n++ ){ //INCLUDE the O2prime oxygen
 
 
 			Size const atomno_1 = ( n - 1 ) + first_sidechain_atom1;
@@ -1929,7 +1929,7 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 	Output_boolean( std::string const & tag, bool boolean, std::ostream & outstream /* = std::cout */ ){
 
 		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		outstream << tag;
 
 		if ( boolean == true ){
@@ -1944,7 +1944,7 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 	Output_boolean( bool boolean, std::ostream & outstream /* = std::cout */ ){
 
 		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		if ( boolean == true ){
 			outstream << A( 4, "T" );
@@ -1958,7 +1958,7 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 	Output_movemap( kinematics::MoveMap const & mm, core::pose::Pose const & pose, std::ostream & outstream /* = std::cout */ ){
 
 		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		using namespace core::id;
 		using namespace core::kinematics;
 
@@ -2015,7 +2015,7 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	utility::vector1< core::Size >
-	get_surrounding_O2star_hydrogen( pose::Pose const & pose, utility::vector1< core::Size > const & moving_res, bool verbose ){
+	get_surrounding_O2prime_hydrogen( pose::Pose const & pose, utility::vector1< core::Size > const & moving_res, bool verbose ){
 
 		using namespace core::chemical;
 		using namespace core::scoring;
@@ -2042,13 +2042,13 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 			}
 		}
 
-		utility::vector1< bool > Is_O2star_hydrogen_virtual_list;
+		utility::vector1< bool > Is_O2prime_hydrogen_virtual_list;
 
 		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
 
 			if ( pose.residue( seq_num ).aa() == core::chemical::aa_vrt ){
 				if ( verbose ) TR << "res " << seq_num << " is core::chemical::aa_vrt! " << std::endl;
-				Is_O2star_hydrogen_virtual_list.push_back( false ); //false since not virtual O2star_hydrogen
+				Is_O2prime_hydrogen_virtual_list.push_back( false ); //false since not virtual O2prime_hydrogen
 				continue;
 			}
 
@@ -2056,7 +2056,7 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 			if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ){
 				if ( !pose.residue( seq_num ).is_RNA() ){
 					if ( verbose ) TR << "res " << seq_num << " is not RNA " << std::endl;
-					Is_O2star_hydrogen_virtual_list.push_back( false ); //false since not virtual O2star_hydrogen
+					Is_O2prime_hydrogen_virtual_list.push_back( false ); //false since not virtual O2prime_hydrogen
 					continue;
 				}
 			}
@@ -2065,45 +2065,45 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 			Size at = rsd.atom_index( "HO2'" );
 
 			if ( rsd.atom_type( at ).name() == "VIRT" ){
-				if ( verbose ) TR << "res " << seq_num << " has a virtual o2star hydrogen! " << std::endl;
-				Is_O2star_hydrogen_virtual_list.push_back( true );
+				if ( verbose ) TR << "res " << seq_num << " has a virtual o2prime hydrogen! " << std::endl;
+				Is_O2prime_hydrogen_virtual_list.push_back( true );
 			} else{
-				Is_O2star_hydrogen_virtual_list.push_back( false );
+				Is_O2prime_hydrogen_virtual_list.push_back( false );
 			}
 		}
 
 		//March 17, 2012 extra precation.
-		if ( Is_O2star_hydrogen_virtual_list.size() != pose.total_residue() ) utility_exit_with_message( "Is_O2star_hydrogen_virtual_list.size() != pose.total_residue()" );
+		if ( Is_O2prime_hydrogen_virtual_list.size() != pose.total_residue() ) utility_exit_with_message( "Is_O2prime_hydrogen_virtual_list.size() != pose.total_residue()" );
 
-		utility::vector1< core::Size > surrounding_O2star_hydrogen;
+		utility::vector1< core::Size > surrounding_O2prime_hydrogen;
 
-		Size num_o2star_moving_res = 0;
+		Size num_o2prime_moving_res = 0;
 		for ( Size n = 1; n <= moving_res.size(); n++ ){
 			Size const seq_num = moving_res[n];
 
 			if ( pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-			if ( Is_O2star_hydrogen_virtual_list[seq_num] ) continue;
+			if ( Is_O2prime_hydrogen_virtual_list[seq_num] ) continue;
 
 			//if(verbose) TR << "res " << seq_num << " is a working_moving_res" << std::endl;
-			surrounding_O2star_hydrogen.push_back( seq_num );
-			num_o2star_moving_res++;
+			surrounding_O2prime_hydrogen.push_back( seq_num );
+			num_o2prime_moving_res++;
 		}
 
 
-		//1st layer, interaction between surrounding O2star and moving_res
+		//1st layer, interaction between surrounding O2prime and moving_res
 		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
 
 			if ( pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-			if ( surrounding_O2star_hydrogen.has_value( seq_num ) ) continue;
+			if ( surrounding_O2prime_hydrogen.has_value( seq_num ) ) continue;
 
 			bool Is_surrounding_res = false;
 
 			core::conformation::Residue const & surrounding_rsd = pose.residue( seq_num );
 			Size const surr_at = surrounding_rsd.first_sidechain_atom();
 
-			if ( Is_O2star_hydrogen_virtual_list[seq_num] ) continue;
+			if ( Is_O2prime_hydrogen_virtual_list[seq_num] ) continue;
 
-			//3.5 Angstrom for O2star-normal
+			//3.5 Angstrom for O2prime-normal
 
 			for ( Size ii = 1; ii <= moving_res.size(); ii++ ){
 				if ( Is_surrounding_res == true ) break;
@@ -2116,14 +2116,14 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 
 					Real const cutoff_dist = ( moving_at == moving_rsd.first_sidechain_atom() ) ? 4.5: 3.5 ;
 
-					//4.5 Angstrom interaction dist_cutoff for surrounding O2star- moving_res O2star
-					//3.5 Angstrom interaction dist_cutoff for surround O2star and other atoms of moving_res
+					//4.5 Angstrom interaction dist_cutoff for surrounding O2prime- moving_res O2prime
+					//3.5 Angstrom interaction dist_cutoff for surround O2prime and other atoms of moving_res
 
 					Real const dist_squared = ( surrounding_rsd.xyz( surr_at ) - moving_rsd.xyz( moving_at ) ).length_squared();
 
 					if ( dist_squared  < cutoff_dist*cutoff_dist ){
-						if ( verbose ) TR << "res " << seq_num << " is a 1st layer surrounding O2star_hydrogen res, dist_squared = " << dist_squared << std::endl;
-						surrounding_O2star_hydrogen.push_back( seq_num );
+						if ( verbose ) TR << "res " << seq_num << " is a 1st layer surrounding O2prime_hydrogen res, dist_squared = " << dist_squared << std::endl;
+						surrounding_O2prime_hydrogen.push_back( seq_num );
 						Is_surrounding_res = true;
 						break;
 					}
@@ -2132,84 +2132,84 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 		}
 
 
-		//layer 2+, interaction between surrounding O2star hydrogen themselves
+		//layer 2+, interaction between surrounding O2prime hydrogen themselves
 		Size layer_num = 2;
 		while ( true ){
-			bool add_new_O2star_hydrogen = false;
+			bool add_new_O2prime_hydrogen = false;
 
 			for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
 
 				if ( pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-				if ( surrounding_O2star_hydrogen.has_value( seq_num ) ) continue;
+				if ( surrounding_O2prime_hydrogen.has_value( seq_num ) ) continue;
 
 				core::conformation::Residue const & rsd_1 = pose.residue( seq_num );
 				Size const at_1 = rsd_1.first_sidechain_atom();
 
-				if ( Is_O2star_hydrogen_virtual_list[seq_num] ) continue;
+				if ( Is_O2prime_hydrogen_virtual_list[seq_num] ) continue;
 
-				for ( Size ii = 1; ii <= surrounding_O2star_hydrogen.size(); ii++ ){
+				for ( Size ii = 1; ii <= surrounding_O2prime_hydrogen.size(); ii++ ){
 
-					core::conformation::Residue const & rsd_2 = pose.residue( surrounding_O2star_hydrogen[ii] );
+					core::conformation::Residue const & rsd_2 = pose.residue( surrounding_O2prime_hydrogen[ii] );
 					Size const at_2 = rsd_2.first_sidechain_atom();
 
-					Real const cutoff_dist = 4.5; 					//4.5 Angstrom interaction dist_cutoff for surrounding O2star themselves.
+					Real const cutoff_dist = 4.5; 					//4.5 Angstrom interaction dist_cutoff for surrounding O2prime themselves.
 
 					Real const dist_squared = ( rsd_1.xyz( at_1 ) - rsd_2.xyz( at_2 ) ).length_squared();
 
 					if ( dist_squared  < cutoff_dist*cutoff_dist ){
-						if ( verbose ) TR << "res " << seq_num << " is layer " << layer_num << " surrounding O2star_hydrogen res, dist_squared = " << dist_squared << std::endl;
-						surrounding_O2star_hydrogen.push_back( seq_num );
-						add_new_O2star_hydrogen = true;
+						if ( verbose ) TR << "res " << seq_num << " is layer " << layer_num << " surrounding O2prime_hydrogen res, dist_squared = " << dist_squared << std::endl;
+						surrounding_O2prime_hydrogen.push_back( seq_num );
+						add_new_O2prime_hydrogen = true;
 						break;
 					}
 				}
 			}
 
 			layer_num++;
-			if ( add_new_O2star_hydrogen == false ) break;
+			if ( add_new_O2prime_hydrogen == false ) break;
 		}
 
 		//consistency_check..
-		for ( Size ii = 1; ii <= surrounding_O2star_hydrogen.size(); ii++ ){
+		for ( Size ii = 1; ii <= surrounding_O2prime_hydrogen.size(); ii++ ){
 
-			Size const seq_num = surrounding_O2star_hydrogen[ii];
+			Size const seq_num = surrounding_O2prime_hydrogen[ii];
 
-			if ( Is_O2star_hydrogen_virtual_list[seq_num] ){
-				std::string const exit_message = "surrounding_O2star_hydrogen res " + string_of( seq_num ) + " has a virtual o2star hydrogen!! ";
+			if ( Is_O2prime_hydrogen_virtual_list[seq_num] ){
+				std::string const exit_message = "surrounding_O2prime_hydrogen res " + string_of( seq_num ) + " has a virtual o2prime hydrogen!! ";
 				utility_exit_with_message( exit_message );
 			}
 		}
 
 		if ( verbose ){
-			TR << "num_o2star_moving_res = " << num_o2star_moving_res << "  surrounding_O2star_hydrogen.size() = " << surrounding_O2star_hydrogen.size() << std::endl;
+			TR << "num_o2prime_moving_res = " << num_o2prime_moving_res << "  surrounding_O2prime_hydrogen.size() = " << surrounding_O2prime_hydrogen.size() << std::endl;
 		}
 
-		return surrounding_O2star_hydrogen;
+		return surrounding_O2prime_hydrogen;
 
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	void
-	o2star_minimize( pose::Pose& pose, core::scoring::ScoreFunctionOP const & packer_scorefxn ){ //O2star pack every position..
+	o2prime_minimize( pose::Pose& pose, core::scoring::ScoreFunctionOP const & packer_scorefxn ){ //O2prime pack every position..
 
-		 utility::vector1< core::Size > O2star_pack_seq_num;
+		 utility::vector1< core::Size > O2prime_pack_seq_num;
 
 		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
 			if ( pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-			O2star_pack_seq_num.push_back( seq_num );
+			O2prime_pack_seq_num.push_back( seq_num );
 		}
 
-		o2star_minimize( pose, packer_scorefxn, O2star_pack_seq_num );
+		o2prime_minimize( pose, packer_scorefxn, O2prime_pack_seq_num );
 
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
 	void
-	o2star_minimize( pose::Pose& pose, core::scoring::ScoreFunctionOP const & packer_scorefxn, utility::vector1< core::Size > const & O2star_pack_seq_num ){
+	o2prime_minimize( pose::Pose& pose, core::scoring::ScoreFunctionOP const & packer_scorefxn, utility::vector1< core::Size > const & O2prime_pack_seq_num ){
 
-		Output_seq_num_list( "O2star_pack_seq_num = ", O2star_pack_seq_num, TR );
+		Output_seq_num_list( "O2prime_pack_seq_num = ", O2prime_pack_seq_num, TR );
 
-		pack::task::PackerTaskOP task = create_standard_o2star_pack_task( pose, O2star_pack_seq_num );
+		pack::task::PackerTaskOP task = create_standard_o2prime_pack_task( pose, O2prime_pack_seq_num );
 		task->initialize_from_command_line();
 
 		pack::rotamer_trials( pose, *packer_scorefxn, task );
@@ -2217,21 +2217,21 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////
-	//Created on Jan 20, 2012: Meant as the standard function to setup o2star_pack_task to be called by both StepWiseRNA_ResidueSampler and StepWiseRNA_Minimizer...and in the future also FARFAR_minimizer.
+	//Created on Jan 20, 2012: Meant as the standard function to setup o2prime_pack_task to be called by both StepWiseRNA_ResidueSampler and StepWiseRNA_Minimizer...and in the future also FARFAR_minimizer.
 	pack::task::PackerTaskOP
-	create_standard_o2star_pack_task( pose::Pose const & pose, utility::vector1< core::Size > const & O2star_pack_seq_num ){
+	create_standard_o2prime_pack_task( pose::Pose const & pose, utility::vector1< core::Size > const & O2prime_pack_seq_num ){
 
-		pack::task::PackerTaskOP o2star_pack_task = pack::task::TaskFactory::create_packer_task( pose );
+		pack::task::PackerTaskOP o2prime_pack_task = pack::task::TaskFactory::create_packer_task( pose );
 
 		//Commented out the initialize_from_command_line() call below  on Jan 20, 2012: REASONS:
 		/////1. The line is actually missing in the StepWiseRNA_ResidueSampler version (see below) which now calls this function.
 		/////2. This is potentially dangerous since behavior can be influence by command_line flags (for example from command_line could turn on ex1 (base sampling) and etc which is not what we want!
-		//o2star_pack_task->initialize_from_command_line(); //Found only in original version packer_setup in StepWiseRNA_Util.cc BUT not the one in StepWiseRNA_ResidueSampler version.
+		//o2prime_pack_task->initialize_from_command_line(); //Found only in original version packer_setup in StepWiseRNA_Util.cc BUT not the one in StepWiseRNA_ResidueSampler version.
 
 		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
 
 			if ( pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue; //Fang's electron density code
-			if ( O2star_pack_seq_num.has_value( seq_num ) && pose.residue( seq_num ).is_RNA() ){ //pack this residue!
+			if ( O2prime_pack_seq_num.has_value( seq_num ) && pose.residue( seq_num ).is_RNA() ){ //pack this residue!
 
 				/*
 				NOTE: the ex4 option allows sampling of extra torsion angles ( "ex" ) at
@@ -2239,34 +2239,34 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 				add "ex1"; it should not happen! If you see bases getting repacked,
 				that is a bug, and please let me know. ( From Rhiju email response )
 
-				ex4 ( HO2star ) is "on" by default | ex1 ( base chi ) is "off" by default
+				ex4 ( HO2prime ) is "on" by default | ex1 ( base chi ) is "off" by default
 				*/
 
-				o2star_pack_task->nonconst_residue_task( seq_num ).and_extrachi_cutoff( 0 );
-				o2star_pack_task->nonconst_residue_task( seq_num ).or_ex4( true ); //extra O2star sampling
-				o2star_pack_task->nonconst_residue_task( seq_num ).or_include_current( true ); //Jan 21, 2012: umm this might be set to true inside call to rotamer_trials() BUT even so, doesn't hurt so have it here as well!
+				o2prime_pack_task->nonconst_residue_task( seq_num ).and_extrachi_cutoff( 0 );
+				o2prime_pack_task->nonconst_residue_task( seq_num ).or_ex4( true ); //extra O2prime sampling
+				o2prime_pack_task->nonconst_residue_task( seq_num ).or_include_current( true ); //Jan 21, 2012: umm this might be set to true inside call to rotamer_trials() BUT even so, doesn't hurt so have it here as well!
 				// How about bump check?
 			} else{
-				o2star_pack_task->nonconst_residue_task( seq_num ).prevent_repacking();
+				o2prime_pack_task->nonconst_residue_task( seq_num ).prevent_repacking();
 			}
 		}
 
-		return o2star_pack_task;
+		return o2prime_pack_task;
 
-		/* ////Below is the version originally found in StepWiseRNA_ResidueSampler::initialize_o2star_packer_task(). ////
+		/* ////Below is the version originally found in StepWiseRNA_ResidueSampler::initialize_o2prime_packer_task(). ////
 		///////Integrated with this with the StepWsieRNA_Util.cc version on Jan 20, 2012/////////////////////////////////
-		o2star_pack_task_ =  pack::task::TaskFactory::create_packer_task( pose );
+		o2prime_pack_task_ =  pack::task::TaskFactory::create_packer_task( pose );
 
 		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
 
-			if ( O2star_pack_seq_num.has_value( seq_num ) && pose.residue( seq_num ).is_RNA() ){ //pack this residue!
+			if ( O2prime_pack_seq_num.has_value( seq_num ) && pose.residue( seq_num ).is_RNA() ){ //pack this residue!
 
-				o2star_pack_task_->nonconst_residue_task( seq_num ).and_extrachi_cutoff( 0 );
-				o2star_pack_task_->nonconst_residue_task( seq_num ).or_ex4( true ); //extra O2star sampling
-				o2star_pack_task_->nonconst_residue_task( seq_num ).or_include_current( true );
+				o2prime_pack_task_->nonconst_residue_task( seq_num ).and_extrachi_cutoff( 0 );
+				o2prime_pack_task_->nonconst_residue_task( seq_num ).or_ex4( true ); //extra O2prime sampling
+				o2prime_pack_task_->nonconst_residue_task( seq_num ).or_include_current( true );
 				// How about bump check?
 			} else{
-				o2star_pack_task_->nonconst_residue_task( seq_num ).prevent_repacking();
+				o2prime_pack_task_->nonconst_residue_task( seq_num ).prevent_repacking();
 			}
 		}
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2439,7 +2439,7 @@ dot_min = 0.950000  dot_max = 1.000000  C4_C3_dist_min = 4.570000  C4_C3_dist_ma
 				pose.set_torsion( TorsionID( seq_num, id::CHI, 1 ), template_pose.residue( seq_num ).chi( 1 ) ); /*CHI*/
 				pose.set_torsion( TorsionID( seq_num, id::CHI, 2 ), template_pose.residue( seq_num ).chi( 2 ) ); /*NU2*/
 				pose.set_torsion( TorsionID( seq_num, id::CHI, 3 ), template_pose.residue( seq_num ).chi( 3 ) ); /*NU1*/
-				pose.set_torsion( TorsionID( seq_num, id::CHI, 4 ), template_pose.residue( seq_num ).chi( 4 ) ); /*chi_O2star*/
+				pose.set_torsion( TorsionID( seq_num, id::CHI, 4 ), template_pose.residue( seq_num ).chi( 4 ) ); /*chi_O2prime*/
 
 			}
 
@@ -3523,7 +3523,7 @@ principal_angle_degrees( T const & angle )
 													 	core::scoring::ScoreFunctionOP & sampling_scorefxn_,
 													 	core::scoring::ScoreFunctionOP & atr_rep_screening_scorefxn_,
 													 	core::scoring::ScoreFunctionOP & chainbreak_scorefxn_,
-													 	core::scoring::ScoreFunctionOP & o2star_pack_scorefxn_ ){
+													 	core::scoring::ScoreFunctionOP & o2prime_pack_scorefxn_ ){
 
 
 		using namespace core::scoring;
@@ -3564,42 +3564,42 @@ principal_angle_degrees( T const & angle )
 		// Note that: rna_torsion, rna_sugar_close, fa_stack not optimized -- also irrelevant for 2'-OH sampling.
 		//just a comparison. This is extremely slow. Would need to implement trie
 		// for geom_sol, lk_nonpolar, and elec... Not too hard, but I don't feel like doing it now. (Rhiju)
-		//o2star_pack_scorefxn_ = sampling_scorefxn_->clone();
+		//o2prime_pack_scorefxn_ = sampling_scorefxn_->clone();
 		/*
 		//Parin July 21, 2011
-		o2star_pack_scorefxn_ = new ScoreFunction;
+		o2prime_pack_scorefxn_ = new ScoreFunction;
 		// Each of the following terms have been pretty optimized for the packer (trie, etc.)
-		o2star_pack_scorefxn_->set_weight( fa_atr, sampling_scorefxn_->get_weight( fa_atr ) );
-		o2star_pack_scorefxn_->set_weight( fa_rep, sampling_scorefxn_->get_weight( fa_rep ) );
-		o2star_pack_scorefxn_->set_weight( hbond_lr_bb_sc, sampling_scorefxn_->get_weight( hbond_lr_bb_sc ) );
-		o2star_pack_scorefxn_->set_weight( hbond_sr_bb_sc, sampling_scorefxn_->get_weight( hbond_sr_bb_sc ) );
-		o2star_pack_scorefxn_->set_weight( hbond_sc, sampling_scorefxn_->get_weight( hbond_sc ) );
-		o2star_pack_scorefxn_->set_energy_method_options( sampling_scorefxn_->energy_method_options() );
-		o2star_pack_scorefxn_->set_weight( lk_nonpolar, sampling_scorefxn_->get_weight( lk_nonpolar ) ); //FIX THIS ON JULY 21, 2011. TOO EXPENSIVE!
-		o2star_pack_scorefxn_->set_weight( lk_polar, sampling_scorefxn_->get_weight( geom_sol ) ); //FIX THIS ON JULY 21, 2011. TOO EXPENSIVE!
+		o2prime_pack_scorefxn_->set_weight( fa_atr, sampling_scorefxn_->get_weight( fa_atr ) );
+		o2prime_pack_scorefxn_->set_weight( fa_rep, sampling_scorefxn_->get_weight( fa_rep ) );
+		o2prime_pack_scorefxn_->set_weight( hbond_lr_bb_sc, sampling_scorefxn_->get_weight( hbond_lr_bb_sc ) );
+		o2prime_pack_scorefxn_->set_weight( hbond_sr_bb_sc, sampling_scorefxn_->get_weight( hbond_sr_bb_sc ) );
+		o2prime_pack_scorefxn_->set_weight( hbond_sc, sampling_scorefxn_->get_weight( hbond_sc ) );
+		o2prime_pack_scorefxn_->set_energy_method_options( sampling_scorefxn_->energy_method_options() );
+		o2prime_pack_scorefxn_->set_weight( lk_nonpolar, sampling_scorefxn_->get_weight( lk_nonpolar ) ); //FIX THIS ON JULY 21, 2011. TOO EXPENSIVE!
+		o2prime_pack_scorefxn_->set_weight( lk_polar, sampling_scorefxn_->get_weight( geom_sol ) ); //FIX THIS ON JULY 21, 2011. TOO EXPENSIVE!
 		// note that geom_sol is not optimized well --> replace with lk_sol for now.
 		*/
 		//////////////////////////////////////////////////////////////////////////////////////////////////////
 		//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-		o2star_pack_scorefxn_ = new ScoreFunction;
+		o2prime_pack_scorefxn_ = new ScoreFunction;
 		// Each of the following terms have been pretty optimized for the packer (trie, etc.)
-		o2star_pack_scorefxn_->set_weight( fa_atr, sampling_scorefxn_->get_weight( fa_atr ) );
-		o2star_pack_scorefxn_->set_weight( fa_rep, sampling_scorefxn_->get_weight( fa_rep ) );
-		o2star_pack_scorefxn_->set_weight( hbond_lr_bb_sc, sampling_scorefxn_->get_weight( hbond_lr_bb_sc ) );
-		o2star_pack_scorefxn_->set_weight( hbond_sr_bb_sc, sampling_scorefxn_->get_weight( hbond_sr_bb_sc ) );
-		o2star_pack_scorefxn_->set_weight( hbond_sc, sampling_scorefxn_->get_weight( hbond_sc ) );
+		o2prime_pack_scorefxn_->set_weight( fa_atr, sampling_scorefxn_->get_weight( fa_atr ) );
+		o2prime_pack_scorefxn_->set_weight( fa_rep, sampling_scorefxn_->get_weight( fa_rep ) );
+		o2prime_pack_scorefxn_->set_weight( hbond_lr_bb_sc, sampling_scorefxn_->get_weight( hbond_lr_bb_sc ) );
+		o2prime_pack_scorefxn_->set_weight( hbond_sr_bb_sc, sampling_scorefxn_->get_weight( hbond_sr_bb_sc ) );
+		o2prime_pack_scorefxn_->set_weight( hbond_sc, sampling_scorefxn_->get_weight( hbond_sc ) );
 		///Warning, don't include hbond_intra, since hbond_intra HAVE NOT been been optimized for packing!
 
-		o2star_pack_scorefxn_->set_weight( fa_sol, sampling_scorefxn_->get_weight( lk_nonpolar ) ); //// note that geom_sol is not optimized well --> replace with lk_sol for now. //IS THIS A MISTAKE???
+		o2prime_pack_scorefxn_->set_weight( fa_sol, sampling_scorefxn_->get_weight( lk_nonpolar ) ); //// note that geom_sol is not optimized well --> replace with lk_sol for now. //IS THIS A MISTAKE???
 
-		o2star_pack_scorefxn_->set_energy_method_options( sampling_scorefxn_->energy_method_options() ); //This set NO_HB_ENV_DEP, INCLUDE_INTRA_RES_RNA_HB and etcs.
+		o2prime_pack_scorefxn_->set_energy_method_options( sampling_scorefxn_->energy_method_options() ); //This set NO_HB_ENV_DEP, INCLUDE_INTRA_RES_RNA_HB and etcs.
 
 	}
 
 	void
-	copy_all_o2star_torsions( core::pose::Pose & mod_pose, core::pose::Pose const & template_pose ){
+	copy_all_o2prime_torsions( core::pose::Pose & mod_pose, core::pose::Pose const & template_pose ){
 
 		using namespace core::id;
 		using namespace core::conformation;
@@ -3613,7 +3613,7 @@ principal_angle_degrees( T const & angle )
 		for ( Size seq_num = 1; seq_num <= template_pose.total_residue(); seq_num++ ){
 			if ( template_pose.residue( seq_num ).aa() == core::chemical::aa_vrt ) continue;	//Fang's electron density code
 			if ( std::abs( template_pose.torsion( TorsionID( seq_num, id::CHI, 4 ) ) - mod_pose.torsion( TorsionID( seq_num, id::CHI, 4 ) ) ) > 0.001 ){
-				//the two o2star torsions are not the same! Basically don't want to trigger refolding if need not to.
+				//the two o2prime torsions are not the same! Basically don't want to trigger refolding if need not to.
 				do_update_list[seq_num] = true;
 			}
 		}
@@ -3669,7 +3669,7 @@ void
 show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std::string const title ){
 
 	using namespace core::scoring;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	TR << "----------------" << title << "----------------" << std::endl;
 
@@ -3854,7 +3854,7 @@ show_scorefxn_weight_lines( core::scoring::ScoreFunctionOP const & scorefxn, std
 
 		// first need to slice up native_pose to match residues in actual pose.
 		// define atoms over which to compute RMSD, using rmsd_res.
-		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const sub_to_full = get_res_list_from_full_model_info( pose );
 		std::string const full_sequence = full_model_info.full_sequence();
 

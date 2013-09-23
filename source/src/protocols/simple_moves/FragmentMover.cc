@@ -557,7 +557,7 @@ LoggedFragmentMover::apply_fragment(
 
 void
 LoggedFragmentMover::show( std::ostream& out ) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	for ( Storage::const_iterator it=logs_.begin(), eit=logs_.end(); it!=eit; ++it) {
 		out << RJ(5, it->frame_pos) << ' ' << RJ(5, it->frag_num) << std::endl;
 	}

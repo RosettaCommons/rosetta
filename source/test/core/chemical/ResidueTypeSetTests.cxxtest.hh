@@ -55,7 +55,7 @@ public:
 
 	void test_residue_type_sets() {
 		using namespace core::chemical;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		int width = 15;
 		TR << A(width,"ResidueTypeSet") << A(width,"NumResTypes") << endl;
@@ -102,7 +102,7 @@ public:
 
 	void test_extra_params() {
 		using namespace core::chemical;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		std::vector< std::string > extra_params_files( 1, "core/chemical/1pqc.params");
 		std::vector< std::string > extra_patch_files( 1, "core/chemical/1pqc_test.patch");

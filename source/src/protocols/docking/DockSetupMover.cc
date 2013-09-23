@@ -119,7 +119,7 @@ DockSetupMover::apply( pose::Pose & pose ) {
 /// @details  Show the complete setup of the docking protocol
 void
 DockSetupMover::show( std::ostream & out ) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 // All output will be 80 characters - 80 is a nice number, don't you think?
 	std::string line_marker = "///";
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;

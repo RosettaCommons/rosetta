@@ -96,14 +96,14 @@ enum ScoreType {
 	fa_elec_rna_sugr_sugr,
 	fa_elec_rna_sugr_base,
 	fa_elec_rna_base_base,
-  
+
   fa_elec_rna_phos_phos_fast,
   fa_elec_rna_phos_sugr_fast,
 	fa_elec_rna_phos_base_fast,
 	fa_elec_rna_sugr_sugr_fast,
 	fa_elec_rna_sugr_base_fast,
 	fa_elec_rna_base_base_fast,
-  
+
 	fa_elec_aro_aro,
 	fa_elec_aro_all,
 	hack_aro,
@@ -177,7 +177,7 @@ enum ScoreType {
 
 	geom_sol_fast,           //Context independent version. Currently tested only for RNA case.
 	geom_sol_fast_intra_RNA, //RNA specific score term
-  
+
 
 	fa_cust_pair_dist,  // custom short range 2b
 	custom_atom_pair,
@@ -249,10 +249,7 @@ enum ScoreType {
 	rna_rg,           // Radius of gyration for RNA
 
 	// nucleotide resolution thermodynamics
-	rna_loop,  // RNA loop closure terms -- attempting model full RNA folding free energy
-	rna_loop_fixed,
-	rna_loop_logN,
-	rna_loop_harmonic,
+	loop_close,  // Loop closure terms -- attempting model full RNA folding free energy
 
 	//  FACTS solvation model
 	facts_elec,
@@ -321,8 +318,8 @@ enum ScoreType {
 	e_pH,
 	rna_bulge,
   mg_ref,  // chemical potential for mg(2+) ('reference weight' in Rosetta lingo)
-	free_P, // bonus for virtualizing RNA phosphate
-	free_2HOstar, // bonus for virtualizing RNA 2'-OH
+	free_suite, // bonus for virtualizing RNA suite
+	free_2HOprime, // bonus for virtualizing RNA 2'-OH
 	intermol, // cost of instantiating a chain form 1 M std state.
 	special_rot,
 

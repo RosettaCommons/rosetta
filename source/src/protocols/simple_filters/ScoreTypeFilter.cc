@@ -51,7 +51,7 @@ namespace simple_filters {
 
 using namespace core;
 using namespace core::scoring;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 static basic::Tracer score_type_filter_tracer( "protocols.simple_filters.ScoreTypeFilter" );
 

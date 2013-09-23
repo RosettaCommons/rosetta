@@ -35,7 +35,7 @@ static numeric::random::RandomGenerator my_RG(6172108); // <- Magic number, do n
 namespace protocols {
 namespace pockets {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // note: f_fitness is not used, rather we hard-code the objective function here to enable parellization across particles (for GPU)
 //void DarcParticleSwarmMinimizer::score_all_particles(core::optimization::Multifunc & f_fitness, core::optimization::ParticleOPs & particles) {

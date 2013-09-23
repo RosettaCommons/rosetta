@@ -58,7 +58,7 @@
 static basic::Tracer TR("core.scoring.sasa");
 //#endif
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace core {
 namespace scoring {
@@ -756,8 +756,8 @@ calc_per_atom_sasa(
 			Real const area_exposed = ( 1.0f - fraction_ones ) * total_sa; //ronj ones must indicate buried area if we're subtracting from 1.0
 
 #ifdef FILE_DEBUG
-			std::cout << "atom: " << rsd.atom_name( iia ) << ", rad: " << ObjexxFCL::fmt::F(4,2,radii[ rsd.atom(iia).type() ])
-				<< ", covered: " << ObjexxFCL::fmt::I(3,ctr) << ", counts: "; // use std::cout NOT the TR
+			std::cout << "atom: " << rsd.atom_name( iia ) << ", rad: " << ObjexxFCL::format::F(4,2,radii[ rsd.atom(iia).type() ])
+				<< ", covered: " << ObjexxFCL::format::I(3,ctr) << ", counts: "; // use std::cout NOT the TR
 			print_dot_bit_string( atom_masks[ id ] );
 #endif
 			atom_sasa[ id ] = area_exposed;

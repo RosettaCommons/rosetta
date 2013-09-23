@@ -124,7 +124,7 @@ using namespace protocols;
 using namespace core::options::OptionKeys;
 using core::util::Error;
 using core::util::Warning;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::F;
 using utility::vector1;
 using io::pdb::dump_pdb;
 

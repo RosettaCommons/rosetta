@@ -1414,7 +1414,7 @@ Real HPatchNode< V, E, G >::consider_alternate_state() {
 
 	// self_and_bg_dots_for_states has the RotamerDots object for a state, with the overlap counts set for all BG nodes
 	// that overlap with that state
-	//runtime_assert_msg( alt_state_dots_matches_current_state_dots_, "alt_state_dots and current_state_dots do not match for FC node " + ObjexxFCL::fmt::I( 3, parent::get_node_index() ) ); // causes crash in pmut_scan run
+	//runtime_assert_msg( alt_state_dots_matches_current_state_dots_, "alt_state_dots and current_state_dots do not match for FC node " + ObjexxFCL::format::I( 3, parent::get_node_index() ) ); // causes crash in pmut_scan run
 	assert( alt_state_dots_matches_current_state_dots_ );
 	alt_state_dots_matches_current_state_dots_ = false;
 
@@ -1536,7 +1536,7 @@ Real HPatchNode< V, E, G >::update_state_for_neighbors_substitution (
 #endif
 
 	// everything has to start from the current state. then we'll update the alt state to be correct.
-	//runtime_assert_msg( alt_state_dots_matches_current_state_dots_, "alt_state_dots and current_state_dots do not match for FC node " + ObjexxFCL::fmt::I( 3, parent::get_node_index() ) ); // causes crash in pmut_scan run
+	//runtime_assert_msg( alt_state_dots_matches_current_state_dots_, "alt_state_dots and current_state_dots do not match for FC node " + ObjexxFCL::format::I( 3, parent::get_node_index() ) ); // causes crash in pmut_scan run
 	assert( alt_state_dots_matches_current_state_dots_ );
 	/// APL -- this should be unnecessary
 	/// APL TEMP alt_state_rotamer_dots_ = current_state_rotamer_dots_;
@@ -3672,7 +3672,7 @@ void HPatchInteractionGraph< V, E, G >::update_internal_energy_totals_hpatch() {
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::verify_sasas_correct() {
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	utility::vector1< Real > node_sasas( parent::get_num_nodes(), 0.0 );
 	utility::vector1< Real > bgnode_sasas( parent::get_num_background_nodes(), 0.0 );

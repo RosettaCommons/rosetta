@@ -98,8 +98,8 @@ void read_disulf_pairing_list( std::istream& disulf_pairing_stream, DisulfPairin
 } // read_disulf_pairings
 
 std::ostream& operator<< ( std::ostream& out, DisulfPairing const& p) {
-	out << fmt::RJ(5, p.pos1 ) << fmt::RJ(5, p.pos2 ) << " "
-		  << fmt::RJ(5, p.seq_sep) << fmt::RJ(5, p.ss_type );
+	out << format::RJ(5, p.pos1 ) << format::RJ(5, p.pos2 ) << " "
+		  << format::RJ(5, p.seq_sep) << format::RJ(5, p.ss_type );
 	return out;
 }
 

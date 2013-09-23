@@ -75,7 +75,7 @@ MultiTemperatureTrialCounter::_write_to_stream( std::ostream& os, std::string co
 	assert( tempering_ );
 	for ( Size i=1; i<=counters_.size(); ++i ) {
 		std::ostringstream line_header;
-		line_header << "level " << fmt::I( 4, i) << " temperature " << fmt::F( 4, 2, tempering_->temperature( i ) );
+		line_header << "level " << format::I( 4, i) << " temperature " << format::F( 4, 2, tempering_->temperature( i ) );
 		counters_[ i ].show( os, line_header.str(), false );
 		os << " " << tag << std::endl;
 	}

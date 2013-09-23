@@ -24,7 +24,7 @@
 
 
 namespace ObjexxFCL {
-namespace fmt {
+namespace format {
 
 
 // Formatted Input
@@ -702,5 +702,5 @@ general( std::ios_base & base )
 }
 
 
-} // namespace fmt
+} // namespace format
 } // namespace ObjexxFCL

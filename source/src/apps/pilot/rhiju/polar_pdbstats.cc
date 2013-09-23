@@ -73,7 +73,7 @@
 #include <numeric/xyz.functions.hh>
 
 using namespace core;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using namespace basic::options::OptionKeys;
 
 using utility::vector1;

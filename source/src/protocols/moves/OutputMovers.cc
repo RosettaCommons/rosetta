@@ -113,7 +113,7 @@ MCShowMover::~MCShowMover() {}
 
 void MCShowMover::apply( core::pose::Pose & pose )
 {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		mc_->show_scores();
 		mc_->score_function()( pose );
 		/// Now handled automatically.  mc_->score_function().accumulate_residue_total_energies( pose );

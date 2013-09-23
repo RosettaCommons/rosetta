@@ -29,6 +29,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedStubID.fwd.hh>
@@ -722,6 +723,9 @@ core::Size noncanonical_atom_count(core::pose::Pose const & pose);
 
 /// @brief count the number of non-canonical chi angles in the pose
 core::Size noncanonical_chi_count(core::pose::Pose const & pose);
+
+id::AtomID_Map< id::AtomID >
+convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map, core::pose::Pose const & pose );
 
 } // pose
 } // core

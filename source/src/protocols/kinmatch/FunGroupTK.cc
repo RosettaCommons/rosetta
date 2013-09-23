@@ -70,8 +70,8 @@ using numeric::max;
 using numeric::constants::d::pi;
 using numeric::conversions::degrees;
 using utility::io::ozstream;
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 
 typedef utility::vector1<core::Real> Reals;
 typedef utility::vector1<core::Size> Sizes;

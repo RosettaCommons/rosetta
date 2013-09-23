@@ -24,9 +24,9 @@
 	#endif
 	using std::string;
 	using utility::vector1;
-	using ObjexxFCL::fmt::I;
-	using ObjexxFCL::fmt::F;
-	using ObjexxFCL::fmt::RJ;
+	using ObjexxFCL::format::I;
+	using ObjexxFCL::format::F;
+	using ObjexxFCL::format::RJ;
 	using ObjexxFCL::string_of;
 	using numeric::min;
 	using numeric::max;

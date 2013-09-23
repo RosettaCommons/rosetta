@@ -65,7 +65,7 @@ private: //data
 	GaussianParameter const gaussian_parameter_phosphate_oxygen_;
 	GaussianParameter const gaussian_parameter_imine_           ;
 	GaussianParameter const gaussian_parameter_exocyclic_oxygen_;
-	GaussianParameter const gaussian_parameter_o2star_          ;
+	GaussianParameter const gaussian_parameter_o2prime_          ;
 
 	GaussianParameter const gaussian_parameter_phosphate_p_     ;
 	GaussianParameter const gaussian_parameter_polar_H_         ;
@@ -74,19 +74,19 @@ private: //data
 	GaussianParameter const gaussian_parameter_phosphate_oxygen_indirect_;
 	GaussianParameter const gaussian_parameter_imine_indirect_           ;
 	GaussianParameter const gaussian_parameter_exocyclic_oxygen_indirect_;
-	GaussianParameter const gaussian_parameter_o2star_indirect_          ;
+	GaussianParameter const gaussian_parameter_o2prime_indirect_          ;
 
 	GaussianParameter const gaussian_parameter_costheta_phosphate_oxygen_;
 	GaussianParameter const gaussian_parameter_costheta_imine_           ;
 	GaussianParameter const gaussian_parameter_costheta_exocyclic_oxygen_;
-	GaussianParameter const gaussian_parameter_costheta_o2star_          ;
+	GaussianParameter const gaussian_parameter_costheta_o2prime_          ;
 	GaussianParameter const gaussian_parameter_costheta_polar_H_          ;
 	GaussianParameter const gaussian_parameter_costheta_nonpolar_H_          ;
 
 	GaussianParameter const gaussian_parameter_costheta_phosphate_oxygen_indirect_;
 	GaussianParameter const gaussian_parameter_costheta_imine_indirect_           ;
 	GaussianParameter const gaussian_parameter_costheta_exocyclic_oxygen_indirect_;
-	GaussianParameter const gaussian_parameter_costheta_o2star_indirect_          ;
+	GaussianParameter const gaussian_parameter_costheta_o2prime_indirect_          ;
 
 	};
 

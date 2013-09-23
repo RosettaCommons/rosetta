@@ -76,7 +76,7 @@
 
 using namespace core;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using basic::T;
 
 static basic::Tracer TR( "protocols.rna.rna_protocol_util" ) ;
@@ -698,9 +698,9 @@ setup_base_pair_constraints(
 	FuncOP const distance_func( new HarmonicFunc( WC_distance, distance_stddev ) );
 
 	// Need to force base pairing -- not base stacking!
- 	Real const C1star_distance( 10.5 );
- 	Real const C1star_distance_stddev( 1.0 / suppress_factor ); //Hmm. Maybe try linear instead?
-	FuncOP const C1star_distance_func( new HarmonicFunc( C1star_distance, C1star_distance_stddev ) );
+ 	Real const C1prime_distance( 10.5 );
+ 	Real const C1prime_distance_stddev( 1.0 / suppress_factor ); //Hmm. Maybe try linear instead?
+	FuncOP const C1prime_distance_func( new HarmonicFunc( C1prime_distance, C1prime_distance_stddev ) );
 
 	for ( Size n = 1; n <= pairings.size(); n++ ) {
 
@@ -717,7 +717,7 @@ setup_base_pair_constraints(
 			pose.add_constraint( new AtomPairConstraint(
 																									id::AtomID(atom1,i),
 																									id::AtomID(atom2,j),
-																									C1star_distance_func ) );
+																									C1prime_distance_func ) );
 
 			utility::vector1< std::string > atom_ids1, atom_ids2;
 			get_watson_crick_base_pair_atoms( pose.residue(i).aa(), pose.residue(j).aa(), atom_ids1, atom_ids2 );

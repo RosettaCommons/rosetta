@@ -38,7 +38,7 @@ std::ostream &
 operator <<( std::ostream& os, NamedAtomID const & a )
 {
 	//	os << " atom= " << a.atom() << " rsd= " << a.rsd() << ' ';
-	os << ObjexxFCL::fmt::A(4,a.atom()) << " " << ObjexxFCL::fmt::RJ(4,a.rsd());
+	os << ObjexxFCL::format::A(4,a.atom()) << " " << ObjexxFCL::format::RJ(4,a.rsd());
 	return os;
 }
 

@@ -42,7 +42,7 @@ static basic::Tracer TR("protocols.moves.TrialMover");
 //MY_TRACERS("protocols.moves.TrialMover")
 
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace moves {

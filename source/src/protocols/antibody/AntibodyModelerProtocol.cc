@@ -69,7 +69,7 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 
 using basic::T;
@@ -585,7 +585,7 @@ void AntibodyModelerProtocol::show( std::ostream & out ) const {
 }
 
 std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_m ) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	// All output will be 80 characters - 80 is a nice number, don't you think?
 	std::string line_marker = "///";

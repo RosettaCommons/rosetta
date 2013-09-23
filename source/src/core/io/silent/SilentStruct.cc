@@ -210,7 +210,7 @@ void SilentStruct::print_score_header( std::ostream & out ) const {
 	out << scoreline_prefix();
 	using utility::vector1;
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	typedef vector1< SilentEnergy >::const_iterator iter;
 	for ( iter it = silent_energies_.begin(), end = silent_energies_.end();
 			it != end; ++it
@@ -237,7 +237,7 @@ SilentStruct::print_scores( std::ostream & out ) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	//int precision = 3; // number of digits after decimal place
 
 	out << scoreline_prefix();

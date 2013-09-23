@@ -30,14 +30,14 @@ static numeric::random::RandomGenerator my_RG(6172008); // <- Magic number, do n
 namespace core {
 namespace optimization {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 /// @brief stream output operator for Particle types
 std::ostream &
 operator<< ( std::ostream & os, Particle const & p ) {
-	os << " best fitness: " << ObjexxFCL::fmt::F( 9,5,-1.0 * p.fitness_pbest() )
-			<< ", current fitness: " << ObjexxFCL::fmt::F( 9,6,-1.0 * p.fitness_ ) << ", current dofs: [";
-	for ( core::Size i=1; i <= p.p_.size(); ++i ) { os << ObjexxFCL::fmt::F( 8,4,p.p_[i] ) << ", "; }
+	os << " best fitness: " << ObjexxFCL::format::F( 9,5,-1.0 * p.fitness_pbest() )
+			<< ", current fitness: " << ObjexxFCL::format::F( 9,6,-1.0 * p.fitness_ ) << ", current dofs: [";
+	for ( core::Size i=1; i <= p.p_.size(); ++i ) { os << ObjexxFCL::format::F( 8,4,p.p_[i] ) << ", "; }
 	os << " ]";
 	return os;
 }

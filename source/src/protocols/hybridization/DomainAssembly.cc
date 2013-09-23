@@ -67,7 +67,7 @@ bool TMalign_poses(core::pose::Pose & aligned_pose,
 	tm_align.alignment2strings(seq_pose, seq_ref, aligned);
 	core::Real TMscore = tm_align.TMscore(normalize_length);
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	TR << "Align domain with TMscore of " << F(8,3,TMscore) << std::endl;
 	TR << seq_pose << std::endl;
 	TR << aligned << std::endl;
@@ -304,7 +304,7 @@ DomainAssembly::run()
 				tm_align.alignment2strings(seq_pose, seq_ref, aligned);
 				core::Real TMscore = tm_align.TMscore(normalize_length);
 
-				using namespace ObjexxFCL::fmt;
+				using namespace ObjexxFCL::format;
 				TR << "Align domain with TMscore of " << F(8,3,TMscore) << std::endl;
 				TR << seq_pose << std::endl;
 				TR << aligned << std::endl;
@@ -331,7 +331,7 @@ DomainAssembly::run()
 
 		// if not overlap, use docking to align to the largest non-overlapped region
 		if (!align_success) {
-			using namespace ObjexxFCL::fmt;
+			using namespace ObjexxFCL::format;
 			// construct a pose for domain assembly
 			core::pose::PoseOP full_length_pose;
 			//Size first_domain_end;

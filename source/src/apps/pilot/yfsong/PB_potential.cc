@@ -102,7 +102,7 @@ void write_APBS_config(core::pose::Pose & pose, std::ostream & config_file, std:
 		}
 	}
 	
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	config_file << "#" << std::endl;
 	config_file << "# Note that most of the comments here were taken from sample" << std::endl;
 	config_file << "# input files that came with APBS.  You can find APBS at" << std::endl;

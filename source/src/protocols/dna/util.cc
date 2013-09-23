@@ -80,7 +80,7 @@ using namespace basic::options;
 using namespace pack;
 using namespace rotamer_set;
 using namespace scoring;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 static basic::Tracer TR( "protocols.dna.util", basic::t_info );
 

@@ -59,7 +59,7 @@ using namespace protocols;
 //using namespace pose;
 using namespace protocols::toolbox;
 using namespace ObjexxFCL; //Farray
-//using namespace ObjexxFCL::fmt;
+//using namespace ObjexxFCL::format;
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

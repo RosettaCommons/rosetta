@@ -167,7 +167,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options::OptionKeys;
 	using namespace core::pack::task;
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	// setup random numbers and options
 	devel::init(argc, argv);

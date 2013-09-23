@@ -85,7 +85,7 @@
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -100,7 +100,7 @@ using io::pdb::dump_pdb;
 // these will be available in the top-level OptionKey namespace:
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
-OPT_KEY( Boolean, disable_o2star_rotamers )
+OPT_KEY( Boolean, disable_o2prime_rotamers )
 OPT_KEY( Boolean, disable_include_current )
 OPT_KEY( Boolean, sample_chi )
 OPT_KEY( Boolean, ss_ds_ts_assign )
@@ -221,7 +221,7 @@ rna_design_test()
 		//Hmmm, extras.
 		task->nonconst_residue_task( ii ).and_extrachi_cutoff( 0 );
 
-		if ( option[ disable_o2star_rotamers ]() ) task->nonconst_residue_task(ii).sample_proton_chi( false );
+		if ( option[ disable_o2prime_rotamers ]() ) task->nonconst_residue_task(ii).sample_proton_chi( false );
 
 		if ( option[ sample_chi ]() ) task->nonconst_residue_task(ii).sample_rna_chi( true );
 
@@ -330,7 +330,7 @@ main( int argc, char * argv [] )
 	std::cout << std::endl << " Type -help for full slate of options." << std::endl << std::endl;
 
 	//Uh, options? MOVE THESE TO OPTIONS NAMESPACE INSIDE CORE/OPTIONS.
-	NEW_OPT( disable_o2star_rotamers, "In designing, don't sample 2'-OH",false);
+	NEW_OPT( disable_o2prime_rotamers, "In designing, don't sample 2'-OH",false);
 	NEW_OPT( disable_include_current, "In designing, don't include current",false);
 	NEW_OPT( sample_chi,  "In designing RNA, chi torsion sample",false);
 	NEW_OPT( ss_ds_ts_assign, "Figure out assignment of residues to single-stranded, double-stranded, tertiary contact categories",false);

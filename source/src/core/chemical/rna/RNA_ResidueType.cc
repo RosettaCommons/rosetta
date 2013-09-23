@@ -41,25 +41,25 @@ static basic::Tracer tr("core.chemical.rna.RNA_ResidueType");
 //Problem is that there is not analogous function for the backbone atoms! Parin S. June 25, 2011.
 //Can get main_chain atoms from mainchain_atoms_?
 //I think: mainchain_atoms_[1] is p_atom_index_
-//         mainchain_atoms_[2] is o5star_atom_index_
-//         mainchain_atoms_[3] is c5star_atom_index_
-//         mainchain_atoms_[4] is c4star_atom_index_
-//         mainchain_atoms_[5] is o3star_atom_index_
-//         mainchain_atoms_[6] is o4star_atom_index_
+//         mainchain_atoms_[2] is o5prime_atom_index_
+//         mainchain_atoms_[3] is c5prime_atom_index_
+//         mainchain_atoms_[4] is c4prime_atom_index_
+//         mainchain_atoms_[5] is o3prime_atom_index_
+//         mainchain_atoms_[6] is o4prime_atom_index_
 
 ////////////////////////////////////////////////////////////////////////
 RNA_ResidueType::RNA_ResidueType():
-	o2star_index_( 0 ),
-	ho2star_index_( 0 ),
+	o2prime_index_( 0 ),
+	ho2prime_index_( 0 ),
 	p_atom_index_( 0 ),
 	o1p_atom_index_( 0 ),
 	o2p_atom_index_( 0 ),
-	o5star_index_( 0 ),
-	o3star_index_( 0 ),
-	o4star_index_( 0 ),
-	c1star_index_( 0 ),
-	c2star_index_( 0 ),
-	c4star_index_( 0 )
+	o5prime_index_( 0 ),
+	o3prime_index_( 0 ),
+	o4prime_index_( 0 ),
+	c1prime_index_( 0 ),
+	c2prime_index_( 0 ),
+	c4prime_index_( 0 )
 {
 	base_atom_list_.clear();
 	Is_RNA_base_atom_list_.clear();
@@ -94,19 +94,19 @@ RNA_ResidueType::update_derived_rna_data(ResidueTypeCOP const residue_type_in){
 	if(Is_virtual_atom_list_.size()!=residue_type_->natoms()) utility_exit_with_message("Is_virtual_atom_list_.size()!=residue_type_->natoms()");
 
 
-	o2star_index_=residue_type_->atom_index( " O2'" );
-	ho2star_index_=residue_type_->atom_index( "HO2'" );
+	o2prime_index_=residue_type_->atom_index( " O2'" );
+	ho2prime_index_=residue_type_->atom_index( "HO2'" );
 
 	p_atom_index_  =residue_type_->atom_index( " P  " );
 	o1p_atom_index_=residue_type_->atom_index( " OP2" );
 	o2p_atom_index_=residue_type_->atom_index( " OP1" );
-	o5star_index_  =residue_type_->atom_index( " O5'" );
-	o3star_index_  =residue_type_->atom_index( " O3'" );
+	o5prime_index_  =residue_type_->atom_index( " O5'" );
+	o3prime_index_  =residue_type_->atom_index( " O3'" );
 
-	o4star_index_=residue_type_->atom_index( " O4'" );
-	c1star_index_=residue_type_->atom_index( " C1'" );
-	c2star_index_=residue_type_->atom_index( " C2'" );
-	c4star_index_=residue_type_->atom_index( " C4'" );
+	o4prime_index_=residue_type_->atom_index( " O4'" );
+	c1prime_index_=residue_type_->atom_index( " C1'" );
+	c2prime_index_=residue_type_->atom_index( " C2'" );
+	c4prime_index_=residue_type_->atom_index( " C4'" );
 
 	base_atom_list_.clear(); 
 
@@ -126,8 +126,8 @@ RNA_ResidueType::update_derived_rna_data(ResidueTypeCOP const residue_type_in){
 		if(i == p_atom_index_  ) Is_phosphate_atom=true;
 		if(i == o1p_atom_index_) Is_phosphate_atom=true;
 		if(i == o2p_atom_index_) Is_phosphate_atom=true;
-		if(i == o5star_index_  ) Is_phosphate_atom=true;
-		if(i == o3star_index_  ) Is_phosphate_atom=true;
+		if(i == o5prime_index_  ) Is_phosphate_atom=true;
+		if(i == o3prime_index_  ) Is_phosphate_atom=true;
 
 		Is_phosphate_atom_list_.push_back(Is_phosphate_atom);
 
@@ -352,35 +352,35 @@ RNA_ResidueType::RNA_base_atoms() const
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::ho2star_index() const
+RNA_ResidueType::ho2prime_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(ho2star_index_==atom_index( "HO2'" )); //remove after testing!
+	//if(rna_check_) runtime_assert(ho2prime_index_==atom_index( "HO2'" )); //remove after testing!
 
-	return ho2star_index_;
+	return ho2prime_index_;
 }
 
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::o2star_index() const
+RNA_ResidueType::o2prime_index() const
 {
 
 	//////////////////////////////
 	//residue_type_->require_final();
-	//runtime_assert(o2star_index_==residue_type_->atom_index( " O2'" )); //remove after testing!
+	//runtime_assert(o2prime_index_==residue_type_->atom_index( " O2'" )); //remove after testing!
 	//	std::cout << "--------------------------------------" << std::endl;
-	//	std::cout << "Inside RNA_ResidueType::o2star_index()" << std::endl;
+	//	std::cout << "Inside RNA_ResidueType::o2prime_index()" << std::endl;
 	//	std::cout << "name_from_aa(residue_type_->aa())=" << name_from_aa(residue_type_->aa())<< std::endl;
-	//	std::cout << "o2star_index_=" << o2star_index_ << std::endl;
-	//	std::cout << "residue_type_->atom_name(o2star_index_)=" << residue_type_->atom_name(o2star_index_) << std::endl;
+	//	std::cout << "o2prime_index_=" << o2prime_index_ << std::endl;
+	//	std::cout << "residue_type_->atom_name(o2prime_index_)=" << residue_type_->atom_name(o2prime_index_) << std::endl;
 	//	std::cout << "residue_type_->first_sidechain_atom() =" << residue_type_->first_sidechain_atom()  << std::endl;
 	//	std::cout << "residue_type_->atom_name(residue_type_->first_sidechain_atom())=" << residue_type_->atom_name(residue_type_->first_sidechain_atom()) << std::endl;
 	//	std::cout << "--------------------------------------" << std::endl;
 	//////////////////////////////
 
-	return o2star_index_;
+	return o2prime_index_;
 }
 
 
@@ -418,59 +418,59 @@ RNA_ResidueType::o2p_atom_index() const
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::o5star_atom_index() const
+RNA_ResidueType::o5prime_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(o5star_index_==atom_index( " O5'" )); //remove after testing!
-	return o5star_index_;
+	//if(rna_check_) runtime_assert(o5prime_index_==atom_index( " O5'" )); //remove after testing!
+	return o5prime_index_;
 }
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::o3star_atom_index() const
+RNA_ResidueType::o3prime_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ ) ;
-	//if(rna_check_) runtime_assert(o3star_index_==atom_index( " O3'" )); //remove after testing!
-	return o3star_index_;
+	//if(rna_check_) runtime_assert(o3prime_index_==atom_index( " O3'" )); //remove after testing!
+	return o3prime_index_;
 }
 
 //For fast lookup! Parin Sripakdeevong, June 25th, 2011
 Size
-RNA_ResidueType::o4star_atom_index() const
+RNA_ResidueType::o4prime_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(o4star_index_==atom_index( " O4'" )); //remove after testing!
-	return o4star_index_;
+	//if(rna_check_) runtime_assert(o4prime_index_==atom_index( " O4'" )); //remove after testing!
+	return o4prime_index_;
 }
 
 Size
-RNA_ResidueType::c1star_atom_index() const
+RNA_ResidueType::c1prime_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(c1star_index_==atom_index( " C1'" )); //remove after testing!
-	return c1star_index_;
+	//if(rna_check_) runtime_assert(c1prime_index_==atom_index( " C1'" )); //remove after testing!
+	return c1prime_index_;
 }
 
 Size
-RNA_ResidueType::c2star_atom_index() const
+RNA_ResidueType::c2prime_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(c2star_index_==atom_index( " C2'" )); //remove after testing!
-	return c2star_index_;
+	//if(rna_check_) runtime_assert(c2prime_index_==atom_index( " C2'" )); //remove after testing!
+	return c2prime_index_;
 }
 
 Size
-RNA_ResidueType::c4star_atom_index() const
+RNA_ResidueType::c4prime_atom_index() const
 {
 	//if(is_RNA_==false) utility_exit_with_message("is_RNA_==false");
 	//runtime_assert( finalized_ );
-	//if(rna_check_) runtime_assert(c4star_index_==atom_index( " C4'" )); //remove after testing!
-	return c4star_index_;
+	//if(rna_check_) runtime_assert(c4prime_index_==atom_index( " C4'" )); //remove after testing!
+	return c4prime_index_;
 }
 ////////////////////////////////RNA specific stuff...maybe move function into its own class?///////////
 

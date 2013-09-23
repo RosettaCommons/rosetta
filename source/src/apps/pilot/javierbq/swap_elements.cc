@@ -437,7 +437,7 @@ public:
 	virtual void apply(Pose & pose) {
 		using protocols::moves::MS_SUCCESS;
 		using protocols::moves::FAIL_DO_NOT_RETRY;
-		using namespace ObjexxFCL::fmt;	
+		using namespace ObjexxFCL::format;	
 		// pick up the fragments for the junction
 		utility::vector1< std::string > abego;
 		std::string ss = pose.secstruct();

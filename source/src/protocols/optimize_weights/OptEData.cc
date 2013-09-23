@@ -66,7 +66,7 @@ using basic::Warning;
 
 using namespace core;
 using namespace scoring;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace optimize_weights {
@@ -3312,8 +3312,8 @@ DDGMutationOptEData::get_score(
 		dE_dvars[ num_energy_dofs + wt_aa_  ] -= 2 * component_weights[ ddG_mutation_correlation ] * ddG_diff;
 	}
 
-	//TR << "DDGMutationOptEData::get_score(): predicted: " << ObjexxFCL::fmt::F(4,2,predicted_ddG)
-	//	<< ", experimental: " << experimental_ddG_ << ", ddG_diff^2: " << ObjexxFCL::fmt::F(6,3,ddG_diff * ddG_diff)
+	//TR << "DDGMutationOptEData::get_score(): predicted: " << ObjexxFCL::format::F(4,2,predicted_ddG)
+	//	<< ", experimental: " << experimental_ddG_ << ", ddG_diff^2: " << ObjexxFCL::format::F(6,3,ddG_diff * ddG_diff)
 	//	<< ", tag: " << tag() << std::endl;
 	return component_weights[ ddG_mutation_correlation ] * ddG_diff * ddG_diff;
 }*/

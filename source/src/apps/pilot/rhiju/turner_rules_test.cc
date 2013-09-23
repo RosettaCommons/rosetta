@@ -113,9 +113,9 @@ using core::util::T;
 using namespace core;
 using namespace protocols;
 using namespace options::OptionKeys;
-using ObjexxFCL::fmt::A;
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::A;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
 using io::pdb::dump_pdb;
@@ -156,7 +156,7 @@ OPT_KEY( Boolean, south1 )
 OPT_KEY( Boolean, south2 )
 OPT_KEY( Boolean, syn_chi1 )
 OPT_KEY( Boolean, syn_chi2 )
-OPT_KEY( Boolean, o2star_trials )
+OPT_KEY( Boolean, o2prime_trials )
 OPT_KEY( Boolean, all_new_pair_states )
 OPT_KEY( Boolean, only_positive_Z )
 OPT_KEY( Boolean, cycle_axes )
@@ -185,7 +185,7 @@ OPT_KEY( Boolean, just_output_score )
 OPT_KEY( Boolean, force_antiparallel_bases )
 OPT_KEY( Boolean, force_parallel_bases )
 OPT_KEY( Boolean, center_around_native )
-OPT_KEY( Boolean, ignore_o2star_hbonds_in_filter )
+OPT_KEY( Boolean, ignore_o2prime_hbonds_in_filter )
 OPT_KEY( Boolean, assign_WC_edges )
 OPT_KEY( Boolean, reverse_doublet )
 OPT_KEY( Real, x_min )
@@ -386,8 +386,8 @@ initialize_base_pair( pose::Pose & pose,
 		add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
 		add_variant_type_to_pose_residue( pose, "VIRTUAL_PHOSPHATE", 2 );
 	} else {
-		add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1STAR", 1 );
-		add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1STAR", 2 );
+		add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1PRIME", 1 );
+		add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1PRIME", 2 );
 	}
 	//	pose.dump_pdb( "virtualize.pdb" );
 
@@ -493,13 +493,13 @@ initialize_rigid_body_sampler( utility::vector1< Size > const & moving_res1,
 	}
 
 	rigid_body_sampler->set_min_hbonds( option[ min_hbonds ]() );
-	rigid_body_sampler->set_ignore_o2star_hbonds_in_filter( option[ ignore_o2star_hbonds_in_filter ]() );
+	rigid_body_sampler->set_ignore_o2prime_hbonds_in_filter( option[ ignore_o2prime_hbonds_in_filter ]() );
 	rigid_body_sampler->set_assign_WC_edges( option[ assign_WC_edges ]() );
 	rigid_body_sampler->set_fa_rep_cutoff( option[ fa_rep_cutoff ]() );
 
 	ScoreFunctionOP scorefxn = getScoreFunction();
 	rigid_body_sampler->set_score_function( scorefxn );
-	rigid_body_sampler->set_o2star_trials( option[ o2star_trials ]() );
+	rigid_body_sampler->set_o2prime_trials( option[ o2prime_trials ]() );
 
 	SilentFileDataOP sfd;
 	if ( option[ out::file::silent ].user() ){
@@ -3030,23 +3030,23 @@ dinucleotide_test(){
 	Real const fa_rep_score_baseline = initialize_fa_rep( pose, make_vector1( moving_suite ), rep_scorefxn );
 	Real const rep_cutoff_ = option[ rep_cutoff ]();
 
-	// initialize for o2star rotamer trials. Probably should stuff this into an initialization function.
-	PackerTaskOP o2star_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
+	// initialize for o2prime rotamer trials. Probably should stuff this into an initialization function.
+	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
 	for (Size i = 1; i <= pose.total_residue(); i++) {
-		o2star_pack_task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
-		o2star_pack_task->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
-		o2star_pack_task->nonconst_residue_task(i).or_include_current( true );
+		o2prime_pack_task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
+		o2prime_pack_task->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
+		o2prime_pack_task->nonconst_residue_task(i).or_include_current( true );
 	}
-	ScoreFunctionOP o2star_pack_scorefxn = new ScoreFunction;
+	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
 	// Each of the following terms have been pretty optimized for the packer (trie, etc.)
-	o2star_pack_scorefxn->set_weight( fa_atr, scorefxn->get_weight( fa_atr ) );
-	o2star_pack_scorefxn->set_weight( fa_rep, scorefxn->get_weight( fa_rep ) );
-	o2star_pack_scorefxn->set_weight( hbond_lr_bb_sc, scorefxn->get_weight( hbond_lr_bb_sc ) );
-	o2star_pack_scorefxn->set_weight( hbond_sr_bb_sc, scorefxn->get_weight( hbond_sr_bb_sc ) );
-	o2star_pack_scorefxn->set_weight( hbond_sc, scorefxn->get_weight( hbond_sc ) );
-	o2star_pack_scorefxn->set_energy_method_options( scorefxn->energy_method_options() );
+	o2prime_pack_scorefxn->set_weight( fa_atr, scorefxn->get_weight( fa_atr ) );
+	o2prime_pack_scorefxn->set_weight( fa_rep, scorefxn->get_weight( fa_rep ) );
+	o2prime_pack_scorefxn->set_weight( hbond_lr_bb_sc, scorefxn->get_weight( hbond_lr_bb_sc ) );
+	o2prime_pack_scorefxn->set_weight( hbond_sr_bb_sc, scorefxn->get_weight( hbond_sr_bb_sc ) );
+	o2prime_pack_scorefxn->set_weight( hbond_sc, scorefxn->get_weight( hbond_sc ) );
+	o2prime_pack_scorefxn->set_energy_method_options( scorefxn->energy_method_options() );
 	// note that geom_sol is not optimized well --> replace with lk_sol for now.
-	o2star_pack_scorefxn->set_weight( fa_sol, scorefxn->get_weight( lk_nonpolar ) );
+	o2prime_pack_scorefxn->set_weight( fa_sol, scorefxn->get_weight( lk_nonpolar ) );
 
 
 	// Get ready for main loop.
@@ -3067,7 +3067,7 @@ dinucleotide_test(){
 		// Disallow steric clashes.
 		if ( !check_clash( pose, fa_rep_score_baseline, rep_cutoff_, rep_scorefxn  ) ) continue;
 
-		if ( option[ o2star_trials ]() ) pack::rotamer_trials( pose, *o2star_pack_scorefxn, o2star_pack_task );
+		if ( option[ o2prime_trials ]() ) pack::rotamer_trials( pose, *o2prime_pack_scorefxn, o2prime_pack_task );
 
 		Real const score = (*scorefxn)( pose );
 		save_torsions( pose, moving_suite, torsion_list );
@@ -3158,9 +3158,9 @@ delta_chi_correction_test(){
 		scorefxn->show( std::cout, pose );
 
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", 1 );
-		add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1STAR", 1 );
+		add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1PRIME", 1 );
 
-		std::cout << "------- VIRTUAL_BACKBONE_EXCEPT_C1STAR ADDED -------" << std::endl;
+		std::cout << "------- VIRTUAL_BACKBONE_EXCEPT_C1PRIME ADDED -------" << std::endl;
 		Real const end_score = (*scorefxn)( pose );
 		scorefxn->show( std::cout, pose );
 
@@ -3171,12 +3171,12 @@ delta_chi_correction_test(){
 			<< ' ' << start_score << ' ' << end_score << ' ' << diff_score << std::endl;
 
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE_AND_", 1 );
-		add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1STAR", 1 );
-		std::cout << "------- VIRTUAL_BACKBONE_EXCEPT_C1STAR ADDED -------" << std::endl;
+		add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1PRIME", 1 );
+		std::cout << "------- VIRTUAL_BACKBONE_EXCEPT_C1PRIME ADDED -------" << std::endl;
 		(*scorefxn)( pose );
 		scorefxn->show( std::cout, pose );
 
-		remove_variant_type_from_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1STAR", 1 );
+		remove_variant_type_from_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1PRIME", 1 );
 		add_variant_type_to_pose_residue( pose, "VIRTUAL_RNA_RESIDUE", 1 );
 
 		std::cout << "------- VIRTUAL RNA RESIDUE -------" << std::endl;
@@ -3309,7 +3309,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( fixed_pair_state_number, "from reference file, which rigid body setting to use", 1 );
 	NEW_OPT( new_pair_state_number, "from reference file, which rigid body setting to use", 1 );
 	NEW_OPT( only_positive_Z, "only allow positive contributions to partition function", false );
-	NEW_OPT( o2star_trials, "in dinucleotide test, do rotamer trials", false );
+	NEW_OPT( o2prime_trials, "in dinucleotide test, do rotamer trials", false );
 	NEW_OPT( cycle_axes, "different coordinate system", false );
 	NEW_OPT( do_not_rotate_base2, "consistency test -- leave base 2 in arbitrary rotation", false );
 	NEW_OPT( cluster_poses, "Cluster after sampling", false );
@@ -3338,7 +3338,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( force_antiparallel_bases, "force antiparallel bases", false );
 	NEW_OPT( force_parallel_bases, "force parallel bases", false );
 	NEW_OPT( center_around_native, "center around native", false );
-	NEW_OPT( ignore_o2star_hbonds_in_filter, "Ignore O2' hbonds in cutoff of rigid body sampler", false );
+	NEW_OPT( ignore_o2prime_hbonds_in_filter, "Ignore O2' hbonds in cutoff of rigid body sampler", false );
 	NEW_OPT( assign_WC_edges, "Ignore O2' hbonds in cutoff of rigid body sampler", false );
 	NEW_OPT( virtualize_phosphate,   "virtualize phosphate instead of backbone", false );
 	NEW_OPT( superimpose_over_all_res,   "during clustering, calculate rms over all residues", false );

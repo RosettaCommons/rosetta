@@ -80,7 +80,7 @@
 #include <numeric/xyz.functions.hh>
 
 using namespace core;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using ObjexxFCL::FArray3D;
 using namespace basic::options::OptionKeys;
 

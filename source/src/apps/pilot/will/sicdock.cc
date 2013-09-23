@@ -61,8 +61,8 @@ using core::id::AtomID;
 	using numeric::z_rotation_matrix;
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
-	using ObjexxFCL::fmt::F;
-	using ObjexxFCL::fmt::I;
+	using ObjexxFCL::format::F;
+	using ObjexxFCL::format::I;
 	using ObjexxFCL::string_of;
 	using std::cerr;
 	using std::cout;
@@ -412,7 +412,7 @@ dock(
 				Hit h(-1,rigidsfxn->score(x1,x2),syms.front());
 				h.x1 = x1;
 				h.x2 = x2;
-				cout << "| " << ObjexxFCL::fmt::LJ(40,"NATIVE") <<' '<< I(3,h.sym) <<' '<< I(7,h.iqg) <<' '<< I(7,qgrid->num_samples())  << "      0 " << F(9,3,h.rscore) << "   0.000   0.000";
+				cout << "| " << ObjexxFCL::format::LJ(40,"NATIVE") <<' '<< I(3,h.sym) <<' '<< I(7,h.iqg) <<' '<< I(7,qgrid->num_samples())  << "      0 " << F(9,3,h.rscore) << "   0.000   0.000";
 				rigidsfxn->show(cout,h.x1,h.x2);
 				Pose tmp1(init_pose),tmp2(init_pose);
 				protocols::sic_dock::xform_pose(tmp1,h.x1);
@@ -453,7 +453,7 @@ dock(
 				std::string tag = utility::file_basename(fn);
 				if(tag.substr(tag.size()-3)==".gz" ) tag = tag.substr(0,tag.size()-3);
 				if(tag.substr(tag.size()-4)==".pdb") tag = tag.substr(0,tag.size()-4);
-				tag += "_C"+ObjexxFCL::string_of(h.sym)+"_"+ObjexxFCL::fmt::I(4,4,nout+1);
+				tag += "_C"+ObjexxFCL::string_of(h.sym)+"_"+ObjexxFCL::format::I(4,4,nout+1);
 				Pose olig(init_pose);
 				protocols::sic_dock::xform_pose(olig,h.x1);
 				protocols::sic_dock::make_Cx(olig,h.sym);
@@ -486,7 +486,7 @@ dock(
 					// utility_exit_with_message("rastrast");
 				}
 
-				cout << "| " << ObjexxFCL::fmt::LJ(25,tag) <<' ';
+				cout << "| " << ObjexxFCL::format::LJ(25,tag) <<' ';
 				cout << I(3,h.sym) <<' ';
 				cout << I(7,h.iqg) <<' ';
 				cout << F(7,3,h.dang) <<' ';

@@ -220,7 +220,7 @@ int main( int argc, char** argv ) {
 					}
 				}
 
-				using ObjexxFCL::fmt::F;
+				using ObjexxFCL::format::F;
 				tr.Info << ref_model << " vs. " << model << "  Positives: " << F( 5, 2, positives*1.0/ref_pl.size() ) << "  " << "FalsePositives: " << F( 5, 2, false_positives*1.0/pl.size() )
 								<< " StrandPositives: " << F( 5,2, strand_positives*1.0/ref_sp.size() ) << " " << " StrandFalsePositives " << F( 5,2, strand_false_positives*1.0/(sp.size()-ignored_strands) ) << std::endl;
 			}

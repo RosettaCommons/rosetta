@@ -359,10 +359,10 @@ void ResonanceList::write_talos_format( std::ostream& os, bool backbone_only ) c
 			if ( atom=="2HA" ) atom="HA2";
 			if ( atom=="3HA" ) atom="HA1";
 			AA aa( aa_from_resid( it->second->resid() ) );
-			os << ObjexxFCL::fmt::RJ( 5, it->second->resid() ) << " ";
+			os << ObjexxFCL::format::RJ( 5, it->second->resid() ) << " ";
 			os << oneletter_code_from_aa( aa ) << " ";
-			os << ObjexxFCL::fmt::RJ( 3, atom=="H" ? "HN" : atom ) << " ";
-			os << ObjexxFCL::fmt::F( 7, 3, it->second->freq() ) << std::endl;
+			os << ObjexxFCL::format::RJ( 3, atom=="H" ? "HN" : atom ) << " ";
+			os << ObjexxFCL::format::F( 7, 3, it->second->freq() ) << std::endl;
 		}
 	}
 	os << std::endl;

@@ -127,19 +127,24 @@ namespace monte_carlo {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	get_resample_internal_move_elements( pose::Pose & pose,
-																					utility::vector1< SWA_Move > & swa_moves ) {
+																			 utility::vector1< SWA_Move > & swa_moves ) {
 
-		get_internal_move_elements( pose, swa_moves, RESAMPLE_INTERNAL_LOCAL );
+		utility::vector1< SWA_Move > swa_moves_internal;
+		get_internal_move_elements( pose, swa_moves_internal, RESAMPLE_INTERNAL_LOCAL );
 
 		// don't delete a multi_residue_move_element if its the only one!
-		remove_from_consideration_first_multi_residue_move_element( swa_moves, false /*remove_even_if_not_singlet*/ );
+		remove_from_consideration_first_multi_residue_move_element( swa_moves_internal, false /*remove_even_if_not_singlet*/ );
+
+		for ( Size n = 1; n <= swa_moves_internal.size(); n++ ) swa_moves.push_back( swa_moves_internal[ n ] );
+
+
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void
 	get_internal_move_elements( pose::Pose & pose,
-																 utility::vector1< SWA_Move > & swa_moves,
-																 MoveType const & move_type ) {
+															utility::vector1< SWA_Move > & swa_moves,
+															MoveType const & move_type ) {
 
 		using namespace core::pose::full_model_info;
 
@@ -214,7 +219,7 @@ namespace monte_carlo {
 		Size const & nres( pose.total_residue() );
 		kinematics::FoldTree const & fold_tree( pose.fold_tree() );
 
-		FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+		FullModelInfo const & full_model_info = const_full_model_info( pose );
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 		utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 		Size nres_full = full_model_info.full_sequence().size();

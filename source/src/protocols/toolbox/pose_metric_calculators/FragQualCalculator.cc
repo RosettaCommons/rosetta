@@ -178,8 +178,8 @@ FragQualCalculator::print( String const & key ) const
 void
 FragQualCalculator::recompute( Pose const & pose )
 {
-	using ObjexxFCL::fmt::RJ;
-	using ObjexxFCL::fmt::F;
+	using ObjexxFCL::format::RJ;
+	using ObjexxFCL::format::F;
 	using core::scoring::CA_rmsd;
 	using core::fragment::ConstFrameIterator;
 

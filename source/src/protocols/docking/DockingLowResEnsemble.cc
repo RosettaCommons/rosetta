@@ -118,7 +118,7 @@ void DockingLowResEnsemble::show( std::ostream & out ) const
 {
     DockingLowRes::show( out );
     
-    using namespace ObjexxFCL::fmt;
+    using namespace ObjexxFCL::format;
     std::string line_marker = "///";
     out << line_marker << " Ensemble 1: " << ( ( ensemble1_mover_ ) ? ( "on" ) : ( "off " ) );
     out << space( 59 ) << line_marker << std::endl;

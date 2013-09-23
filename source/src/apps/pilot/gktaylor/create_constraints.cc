@@ -66,7 +66,7 @@
 
 
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 utility::vector1< int > calculate_burial(
 	core::pose::Pose mypose

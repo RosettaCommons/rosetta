@@ -187,7 +187,7 @@ sidechain_sample( pose::Pose & pose,
 	using namespace core::scoring::dunbrack;
 	using namespace core::io::silent;
 	using namespace core::pose;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	static core::scoring::dunbrack::RotamerLibrary rotamer_library_(core::scoring::ScoringManager::get_instance()->get_RotamerLibrary());
 

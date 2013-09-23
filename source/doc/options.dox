@@ -38,6 +38,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-show_all_fixes</b> \<Boolean\><dt>
+<dd>Show all residue & atom name fixes</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-include_sugars</b> \<Boolean\><dt>
 <dd>Sets whether or not carbohydrate residues will beloaded into Rosetta.  The default value is false.</dd><br>
 <dd>Default: false</dd><br>
@@ -8440,7 +8445,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
-<dt><b>-skip_o2star_trials</b> \<Boolean\><dt>
+<dt><b>-skip_o2prime_trials</b> \<Boolean\><dt>
 <dd>No O2* packing in minimizer</dd><br>
 <dd>Default: false</dd><br>
 </dl>
@@ -12902,6 +12907,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-cutpoint_open</b> \<IntegerVector\><dt>
 <dd>open cutpoints in full model</dd><br>
+</dl>
+<dl>
+<dt><b>-other_poses</b> \<StringVector\><dt>
+<dd>list of PDB files containing other poses</dd><br>
 </dl>
  </li>
 <li><h2>ufv</h2>

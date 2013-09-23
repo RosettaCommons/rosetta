@@ -205,7 +205,7 @@ HSPairPotential::score(
 void
 HSPairPotential::load_phi_theta_bins(	String const & hs_filename )
 {
-	using ObjexxFCL::fmt::skip;
+	using ObjexxFCL::format::skip;
 	typedef ObjexxFCL::FArray3D< Real > FArray3D_real;
 	FArray3D_real pts_HS( 36, 36, 3 );
 

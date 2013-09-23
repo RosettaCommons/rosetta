@@ -55,7 +55,7 @@
 #include <core/scoring/EnergyMap.hh>
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -65,7 +65,7 @@ namespace protocols {
 namespace scoring {
 namespace methods {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using namespace core::scoring;
 
 /// @details This must return a fresh instance of the ResidualDipolarCouplingEnergyRigidSegments class,

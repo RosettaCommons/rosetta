@@ -69,7 +69,7 @@ RotamerSets::dump_pdb( pose::Pose const & pose, std::string const & filename ) c
 {
 	// model 0 -- just the non-moving residues
 	// model N -- Nth rotamer from each set
-	using ObjexxFCL::fmt::I;
+	using ObjexxFCL::format::I;
 
 	// open file
 	std::ofstream out( filename.c_str() );

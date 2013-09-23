@@ -327,7 +327,7 @@ auto_trim_floppy_termini(core::pose::Pose & pose, Real const ttrim_cut, Size con
 }
 
 void dump_points_pdb(vector1<Vec> const & p, std::string fn) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	utility::io::ozstream o(fn.c_str());
 	for(Size i = 1; i <= p.size(); ++i) {
 		std::string rn = "VIZ";
@@ -336,7 +336,7 @@ void dump_points_pdb(vector1<Vec> const & p, std::string fn) {
 	o.close();
 }
 void dump_points_pdb(vector1<Vec> const & p, Vec t, std::string fn) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	utility::io::ozstream o(fn.c_str());
 	for(Size i = 1; i <= p.size(); ++i) {
 		std::string rn = "VIZ";

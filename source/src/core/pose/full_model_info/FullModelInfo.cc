@@ -217,11 +217,17 @@ FullModelInfo::find_index_in_other_pose_list( pose::Pose const & pose) const {
 	return 0;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
+void
+FullModelInfo::clear_other_pose_list() {
+	other_pose_list_.clear();
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Size
 FullModelInfo::get_idx_for_other_pose_with_residue( Size const input_res ) const {
 	for ( Size i = 1; i <= other_pose_list_.size(); i++ ){
-		utility::vector1< Size > const & daughter_res_list = const_full_model_info_from_pose( *other_pose_list_[i] ).res_list();
+		utility::vector1< Size > const & daughter_res_list = const_full_model_info( *other_pose_list_[i] ).res_list();
 		if ( daughter_res_list.has_value( input_res ) ) return i;
 	}
 	return 0;
@@ -262,7 +268,7 @@ FullModelInfo::remove_other_pose_at_idx( Size const idx ){
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //// @details Pose must already contain a full_model_info object or this method will fail.
 FullModelInfo const &
-const_full_model_info_from_pose( pose::Pose const & pose )
+const_full_model_info( pose::Pose const & pose )
 {
 	assert( pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) );
 	return *( static_cast< FullModelInfo const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO)() ) );
@@ -275,7 +281,7 @@ const_full_model_info_from_pose( pose::Pose const & pose )
 /// in the pose, or creates a new FullModelInfo object, places it in the pose, and returns
 /// a non-const reference to it.
 FullModelInfo &
-nonconst_full_model_info_from_pose( pose::Pose & pose )
+nonconst_full_model_info( pose::Pose & pose )
 {
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FULL_MODEL_INFO ) ) {

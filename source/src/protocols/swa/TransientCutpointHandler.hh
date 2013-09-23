@@ -32,8 +32,8 @@ namespace swa {
 	//constructor
 		TransientCutpointHandler( core::Size const sample_res );
 
-		TransientCutpointHandler( core::Size const sample_res,
-															core::Size const cutpoint_res );
+		TransientCutpointHandler( core::Size const sample_suite,
+															core::Size const cutpoint_suite );
 
 	//destructor
 	~TransientCutpointHandler();
@@ -46,11 +46,17 @@ namespace swa {
 
 		void set_minimize_res( utility::vector1< Size > const & setting ){ minimize_res_ = setting; }
 
+		void set_move_jump_points_away( bool const & setting ){ move_jump_points_away_ = setting; }
+		bool move_jump_points_away() const{ return move_jump_points_away_; }
+
+
 	private:
 
 		void prepare_fold_tree_for_erraser( core::pose::Pose & pose );
 
-		core::Size const sample_res_, cutpoint_res_;
+		core::Size const sample_suite_, cutpoint_suite_;
+		bool move_jump_points_away_;
+
 		utility::vector1< core::Size > fixed_res_;
 		utility::vector1< core::Size > minimize_res_;
 		core::kinematics::FoldTree fold_tree_save_;

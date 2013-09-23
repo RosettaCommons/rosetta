@@ -99,9 +99,9 @@ using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
-using ObjexxFCL::fmt::A;
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::A;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
@@ -313,8 +313,8 @@ define_states_test(){
 	pose.dump_pdb( "start.pdb" );
 
 	// Virtualize backbone
-	add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1STAR", 1 );
-	add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1STAR", 2 );
+	add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1PRIME", 1 );
+	add_variant_type_to_pose_residue( pose, "VIRTUAL_BACKBONE_EXCEPT_C1PRIME", 2 );
 	pose.dump_pdb( "virtualize.pdb" );
 
 	// Align second residue to first. Dump it to check.

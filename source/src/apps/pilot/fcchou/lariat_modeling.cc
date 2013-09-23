@@ -201,13 +201,13 @@ lariat_modeling ()
 	}
 
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
-	Size const atm_indexO2star = pose.residue(total_res).atom_index ( "O2'" );
+	Size const atm_indexO2prime = pose.residue(total_res).atom_index ( "O2'" );
 	Vector const coord_P = pose.residue(total_res - 2).xyz("P");
-	Vector const coord_O3star = pose.residue(total_res - 3).xyz("O3'");
-	Vector const PO3_bond_norm = (coord_O3star - coord_P).normalize();
-	Vector const coord_O2star = coord_P - PO3_bond_norm * 3.7;
-	cst_set->add_constraint( new CoordinateConstraint( AtomID(atm_indexO2star, total_res), 
-																						AtomID(1, 1), coord_O2star,
+	Vector const coord_O3prime = pose.residue(total_res - 3).xyz("O3'");
+	Vector const PO3_bond_norm = (coord_O3prime - coord_P).normalize();
+	Vector const coord_O2prime = coord_P - PO3_bond_norm * 3.7;
+	cst_set->add_constraint( new CoordinateConstraint( AtomID(atm_indexO2prime, total_res), 
+																						AtomID(1, 1), coord_O2prime,
 																						new HarmonicFunc( 0.0, 0.5 ) ) );
 	pose.constraint_set ( cst_set );
 

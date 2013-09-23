@@ -1139,7 +1139,7 @@ main( int argc, char * argv [] )
 	using namespace moves;
 	using namespace simple_moves::symmetry;
 	using namespace core::pack::task;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace id;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

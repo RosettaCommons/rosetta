@@ -58,7 +58,7 @@ static basic::Tracer tr("protocols.abinitio.Templates");
 using namespace core;
 using namespace basic;
 using namespace basic::options;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 void protocols::abinitio::Template::register_options() {
 	using namespace basic::options;

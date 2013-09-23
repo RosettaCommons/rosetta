@@ -163,6 +163,14 @@ Real RNA_LoopCloser::apply( core::pose::Pose & pose, Size const & cutpoint	)
 	return rna_ccd_close( pose, connections, cutpoint );
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+void
+RNA_LoopCloser::apply( core::pose::Pose & pose, utility::vector1< Size > const & cutpoints	)
+{
+	for ( Size n = 1; n <= cutpoints.size(); n++ ){
+		apply( pose, cutpoints[ n ] );
+	}
+}
 
 ////////////////////////////////////////////////////////////////////
 // returns false if failure.

@@ -61,7 +61,7 @@
 static basic::Tracer tr( "core.scoring.geometric_solvation.GeometricSolEnergyEvaluator" );
 
 using namespace core::scoring::hbonds;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////

@@ -41,7 +41,7 @@ public:
 
 RNA_AddDeleteMonteCarlo(  RNA_AddOrDeleteMoverOP rna_add_or_delete_mover,
 													RNA_TorsionMoverOP     rna_torsion_mover,
-													RNA_O2StarMoverOP      rna_o2star_mover,
+													RNA_O2StarMoverOP      rna_o2prime_mover,
 													core::scoring::ScoreFunctionOP scorefxn );
 
 	//destructor -- necessary? -- YES destructors are necessary.
@@ -79,7 +79,7 @@ private:
 
 	RNA_AddOrDeleteMoverOP rna_add_or_delete_mover_;
 	RNA_TorsionMoverOP rna_torsion_mover_;
-	RNA_O2StarMoverOP rna_o2star_mover_;
+	RNA_O2StarMoverOP rna_o2prime_mover_;
 
 	core::scoring::ScoreFunctionOP scorefxn_;
 

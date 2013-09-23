@@ -179,7 +179,7 @@ main( int argc, char* argv [] )
 	using namespace basic::options::OptionKeys;
 	using namespace core::id;
 	using namespace core::io::silent;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	devel::init( argc, argv );
 

@@ -240,7 +240,7 @@ bool ImplicitFastClashCheck::clash_check_trimer(Pose const & pose, Size refrsd) 
 }
 
 void ImplicitFastClashCheck::dump_debug_pdb( utility::io::ozstream & out, core::kinematics::Stub const & stub, char chain ) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	for(Size i = 1; i <= points_.size(); ++i) {
 		numeric::xyzVector<Real> p = stub.global2local(points_[i]);
 		std::string rname = pose_->residue(resno_[i]).name3();

@@ -36,7 +36,7 @@ using namespace std;
 using namespace utility;
 using namespace numeric;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 CavityBall::CavityBall( int const id, int const sphere,
 		numeric::xyzVector<PackstatReal> const xyz, PackstatReal const r ) :

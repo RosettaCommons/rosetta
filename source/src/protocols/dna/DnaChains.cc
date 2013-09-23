@@ -26,7 +26,7 @@ using utility::vector1;
 namespace protocols {
 namespace dna {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using namespace core;
 
 DnaChains::DnaChains() : utility::pointer::ReferenceCount() {}

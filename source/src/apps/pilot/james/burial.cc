@@ -57,7 +57,7 @@
 
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 ///////////////////////////////////////////////////////////////////////////////
 

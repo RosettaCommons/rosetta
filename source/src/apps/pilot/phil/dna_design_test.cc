@@ -91,7 +91,7 @@ using std::string;
 using std::cout;
 using std::endl;
 using io::pdb::dump_pdb;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 basic::Tracer tt( "demo.phil.dna_design_test", basic::t_info );
 
@@ -373,7 +373,7 @@ design_test()
 			for ( Size i=1; i<= nres; ++i ) {
 				if ( task->pack_residue( i ) && !task->design_residue( i ) ) {
 					using namespace pack::dunbrack;
-					using namespace ObjexxFCL::fmt;
+					using namespace ObjexxFCL::format;
 					Residue const &       rsd(       pose.residue(i) );
 					Residue const & start_rsd( start_pose.residue(i) );
 					assert( rsd.is_protein() );

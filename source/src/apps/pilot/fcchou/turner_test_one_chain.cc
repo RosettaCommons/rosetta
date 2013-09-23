@@ -100,9 +100,9 @@ using namespace core;
 using namespace protocols;
 using namespace basic::options::OptionKeys;
 using namespace basic::options;
-using ObjexxFCL::fmt::A;
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::A;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 using numeric::conversions::radians;
 using numeric::conversions::degrees;
 using utility::vector1;
@@ -119,7 +119,7 @@ OPT_KEY( Integer, n_sample )
 //OPT_KEY( Boolean, output_binary )
 //OPT_KEY( String, output_binary_prefix )
 OPT_KEY( Boolean, check_clash )
-OPT_KEY( Boolean, o2star_trials )
+OPT_KEY( Boolean, o2prime_trials )
 OPT_KEY( Boolean, sample_3_prime_end )
 OPT_KEY( Boolean, add_virt_res )
 OPT_KEY( Boolean, rmsd_vs_energy )
@@ -285,10 +285,10 @@ setup_one_chain_pose ( pose::Pose & pose, bool is_virtualize = true ) {
 }
 //////////////////////////////////
 void
-initialize_o2star_pack( pose::Pose const & pose, 
+initialize_o2prime_pack( pose::Pose const & pose, 
 												scoring::ScoreFunctionOP const scorefxn,
-												scoring::ScoreFunctionOP o2star_pack_scorefxn,
-												pack::task::PackerTaskOP o2star_pack_task ) {
+												scoring::ScoreFunctionOP o2prime_pack_scorefxn,
+												pack::task::PackerTaskOP o2prime_pack_task ) {
 
 	using namespace pack;
 	using namespace pack::task;
@@ -296,19 +296,19 @@ initialize_o2star_pack( pose::Pose const & pose,
 	using namespace chemical::rna;
 
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
-		o2star_pack_task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
-		o2star_pack_task->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
-		o2star_pack_task->nonconst_residue_task(i).or_include_current( true );
+		o2prime_pack_task->nonconst_residue_task(i).and_extrachi_cutoff( 0 );
+		o2prime_pack_task->nonconst_residue_task(i).or_ex4( true ); //extra rotamers?? Parin S. Jan 28, 2010
+		o2prime_pack_task->nonconst_residue_task(i).or_include_current( true );
 	}
 	// Each of the following terms have been pretty optimized for the packer (trie, etc.)
-	o2star_pack_scorefxn->set_weight( fa_atr, scorefxn->get_weight( fa_atr ) );
-	o2star_pack_scorefxn->set_weight( fa_rep, scorefxn->get_weight( fa_rep ) );
-	o2star_pack_scorefxn->set_weight( hbond_lr_bb_sc, scorefxn->get_weight( hbond_lr_bb_sc ) );
-	o2star_pack_scorefxn->set_weight( hbond_sr_bb_sc, scorefxn->get_weight( hbond_sr_bb_sc ) );
-	o2star_pack_scorefxn->set_weight( hbond_sc, scorefxn->get_weight( hbond_sc ) );
-	o2star_pack_scorefxn->set_energy_method_options( scorefxn->energy_method_options() );
+	o2prime_pack_scorefxn->set_weight( fa_atr, scorefxn->get_weight( fa_atr ) );
+	o2prime_pack_scorefxn->set_weight( fa_rep, scorefxn->get_weight( fa_rep ) );
+	o2prime_pack_scorefxn->set_weight( hbond_lr_bb_sc, scorefxn->get_weight( hbond_lr_bb_sc ) );
+	o2prime_pack_scorefxn->set_weight( hbond_sr_bb_sc, scorefxn->get_weight( hbond_sr_bb_sc ) );
+	o2prime_pack_scorefxn->set_weight( hbond_sc, scorefxn->get_weight( hbond_sc ) );
+	o2prime_pack_scorefxn->set_energy_method_options( scorefxn->energy_method_options() );
 	// note that geom_sol is not optimized well --> replace with lk_sol for now.
-	o2star_pack_scorefxn->set_weight( fa_sol, scorefxn->get_weight( lk_nonpolar ) );
+	o2prime_pack_scorefxn->set_weight( fa_sol, scorefxn->get_weight( lk_nonpolar ) );
 }
 //////////////////////////////////
 Real
@@ -490,11 +490,11 @@ one_chain_MC_sampling(){
 		sample_range = kT_sys * 24.0 / double(n_residue);
 	}
 
-	// initialize for o2star rotamer trials. 	
-	PackerTaskOP o2star_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
-	ScoreFunctionOP o2star_pack_scorefxn = new ScoreFunction;
-	if ( option[ o2star_trials ]() ) {
-		initialize_o2star_pack(pose, scorefxn, o2star_pack_scorefxn, o2star_pack_task );
+	// initialize for o2prime rotamer trials. 	
+	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
+	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
+	if ( option[ o2prime_trials ]() ) {
+		initialize_o2prime_pack(pose, scorefxn, o2prime_pack_scorefxn, o2prime_pack_task );
 	}
 
 	// Get ready for main loop.
@@ -567,7 +567,7 @@ one_chain_MC_sampling(){
 		}
 
 
-//		if ( option[ o2star_trials ]() ) pack::rotamer_trials( pose, *o2star_pack_scorefxn, o2star_pack_task );
+//		if ( option[ o2prime_trials ]() ) pack::rotamer_trials( pose, *o2prime_pack_scorefxn, o2prime_pack_task );
 
 		Real const rep_score = (*rep_scorefxn)( pose_full );
 		Real score_new;
@@ -725,11 +725,11 @@ one_chain_ST_MC () {
 		first_res = 1;
 	}
 
-	// initialize for o2star rotamer trials. 	
-	PackerTaskOP o2star_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
-	ScoreFunctionOP o2star_pack_scorefxn = new ScoreFunction;
-	if ( option[ o2star_trials ]() ) {
-		initialize_o2star_pack(pose, scorefxn, o2star_pack_scorefxn, o2star_pack_task );
+	// initialize for o2prime rotamer trials. 	
+	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
+	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
+	if ( option[ o2prime_trials ]() ) {
+		initialize_o2prime_pack(pose, scorefxn, o2prime_pack_scorefxn, o2prime_pack_task );
 	}
 
 	// Get ready for main loop.
@@ -793,7 +793,7 @@ one_chain_ST_MC () {
 		}
 
 
-//		if ( option[ o2star_trials ]() ) pack::rotamer_trials( pose, *o2star_pack_scorefxn, o2star_pack_task );
+//		if ( option[ o2prime_trials ]() ) pack::rotamer_trials( pose, *o2prime_pack_scorefxn, o2prime_pack_task );
 
 		rep_score = (*rep_scorefxn)( pose_full );
 		if (is_check_clash && rep_score > rep_score_cutoff) {
@@ -957,11 +957,11 @@ one_chain_SWA_cluster(){
 		sample_range = kT_sys * 24.0 / double(n_residue);
 	}
 
-	// initialize for o2star rotamer trials. 	
-	PackerTaskOP o2star_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
-	ScoreFunctionOP o2star_pack_scorefxn = new ScoreFunction;
-	if ( option[ o2star_trials ]() ) {
-		initialize_o2star_pack(pose, scorefxn, o2star_pack_scorefxn, o2star_pack_task );
+	// initialize for o2prime rotamer trials. 	
+	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
+	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
+	if ( option[ o2prime_trials ]() ) {
+		initialize_o2prime_pack(pose, scorefxn, o2prime_pack_scorefxn, o2prime_pack_task );
 	}
 
 	// Get ready for main loop.
@@ -1016,7 +1016,7 @@ one_chain_SWA_cluster(){
 		}
 
 
-//		if ( option[ o2star_trials ]() ) pack::rotamer_trials( pose, *o2star_pack_scorefxn, o2star_pack_task );
+//		if ( option[ o2prime_trials ]() ) pack::rotamer_trials( pose, *o2prime_pack_scorefxn, o2prime_pack_task );
 
 		Real const rep_score = (*rep_scorefxn)( pose_full );
 		Real score_new;
@@ -1356,11 +1356,11 @@ one_chain_torsion_cluster(){
 		sample_range = kT_sys * 24.0 / double(n_residue);
 	}
 
-	// initialize for o2star rotamer trials. 	
-	PackerTaskOP o2star_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
-	ScoreFunctionOP o2star_pack_scorefxn = new ScoreFunction;
-	if ( option[ o2star_trials ]() ) {
-		initialize_o2star_pack(pose, scorefxn, o2star_pack_scorefxn, o2star_pack_task );
+	// initialize for o2prime rotamer trials. 	
+	PackerTaskOP o2prime_pack_task =  pack::task::TaskFactory::create_packer_task( pose );
+	ScoreFunctionOP o2prime_pack_scorefxn = new ScoreFunction;
+	if ( option[ o2prime_trials ]() ) {
+		initialize_o2prime_pack(pose, scorefxn, o2prime_pack_scorefxn, o2prime_pack_task );
 	}
 
 	// Get ready for main loop.
@@ -1415,7 +1415,7 @@ one_chain_torsion_cluster(){
 		}
 
 
-//		if ( option[ o2star_trials ]() ) pack::rotamer_trials( pose, *o2star_pack_scorefxn, o2star_pack_task );
+//		if ( option[ o2prime_trials ]() ) pack::rotamer_trials( pose, *o2prime_pack_scorefxn, o2prime_pack_task );
 
 		Real const rep_score = (*rep_scorefxn)( pose_full );
 		Real score_new;
@@ -1641,7 +1641,7 @@ main( int argc, char * argv [] ) {
 	//NEW_OPT( output_binary_prefix, "", "" );
 	NEW_OPT( rmsd_vs_energy, "", true );
 	NEW_OPT( add_virt_res, "Append a virtual residue", false );
-	NEW_OPT( o2star_trials, "do rotamer trials", false );
+	NEW_OPT( o2prime_trials, "do rotamer trials", false );
 	NEW_OPT( kT_list, "list of kT for ST", blank_size_vector_real );
 	NEW_OPT( ST_weight_list, "list of ST weights", blank_size_vector_real );
 	NEW_OPT( torsion_list, "list of torsions", blank_size_vector_real );

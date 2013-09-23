@@ -58,7 +58,7 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 class ChainbreakDistFunc : public core::scoring::constraints::Func {
 public:

@@ -62,8 +62,8 @@ std::ostream & operator<< ( std::ostream & out, Vec3 v ){
 }
 
 
-void RigidScore::show(std::ostream & out                                      , int width) const { out << ObjexxFCL::fmt::RJ(width,type()); }
-void RigidScore::show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width) const { out << ObjexxFCL::fmt::F(width,3,score(x1,x2)); }
+void RigidScore::show(std::ostream & out                                      , int width) const { out << ObjexxFCL::format::RJ(width,type()); }
+void RigidScore::show(std::ostream & out, Xforms const & x1, Xforms const & x2, int width) const { out << ObjexxFCL::format::F(width,3,score(x1,x2)); }
 
 
 CBScore::CBScore(

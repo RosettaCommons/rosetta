@@ -99,14 +99,14 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_elec_rna_sugr_sugr" ] = fa_elec_rna_sugr_sugr;
 	name2score_type_[ "fa_elec_rna_sugr_base" ] = fa_elec_rna_sugr_base;
 	name2score_type_[ "fa_elec_rna_base_base" ] = fa_elec_rna_base_base;
-  
+
   name2score_type_[ "fa_elec_rna_phos_phos_fast" ] = fa_elec_rna_phos_phos_fast;
   name2score_type_[ "fa_elec_rna_phos_sugr_fast" ] = fa_elec_rna_phos_sugr_fast;
 	name2score_type_[ "fa_elec_rna_phos_base_fast" ] = fa_elec_rna_phos_base_fast;
 	name2score_type_[ "fa_elec_rna_sugr_sugr_fast" ] = fa_elec_rna_sugr_sugr_fast;
 	name2score_type_[ "fa_elec_rna_sugr_base_fast" ] = fa_elec_rna_sugr_base_fast;
 	name2score_type_[ "fa_elec_rna_base_base_fast" ] = fa_elec_rna_base_base_fast;
-	
+
   name2score_type_[ "fa_elec_aro_aro" ] = fa_elec_aro_aro;
 	name2score_type_[ "fa_elec_aro_all" ] = fa_elec_aro_all;
 	name2score_type_[ "hack_aro" ] = hack_aro;
@@ -229,8 +229,8 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "envsmooth" ] = envsmooth;
 	name2score_type_[ "e_pH" ] = e_pH;
 	name2score_type_[ "rna_bulge"] = rna_bulge;
-	name2score_type_[ "free_P"] = free_P;
-	name2score_type_[ "free_2HOstar"] = free_2HOstar;
+	name2score_type_[ "free_suite"] = free_suite;
+	name2score_type_[ "free_2HOprime"] = free_2HOprime;
 	name2score_type_[ "intermol"] = intermol;
 	name2score_type_[ "mg_ref"] = mg_ref;
 	// Variant type to flag rotamers for alternative scoring with varying weight
@@ -334,10 +334,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "stack_elec_base_base"] = stack_elec_base_base;
 	name2score_type_[ "stack_elec_base_bb"] = stack_elec_base_bb;
 
-	name2score_type_[ "rna_loop"] = rna_loop;
-	name2score_type_[ "rna_loop_fixed"] = rna_loop_fixed;
-	name2score_type_[ "rna_loop_logN"] = rna_loop_logN;
-	name2score_type_[ "rna_loop_harmonic"] = rna_loop_harmonic;
+	name2score_type_[ "loop_close"] = loop_close;
 
 	name2score_type_[ "rna_torsion"] = rna_torsion;
 	name2score_type_[ "rna_sugar_close"] = rna_sugar_close;
@@ -355,7 +352,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "geom_sol_intra_RNA"    ] = geom_sol_intra_RNA;
 	name2score_type_[ "geom_sol_fast"    ] = geom_sol_fast;
 	name2score_type_[ "geom_sol_fast_intra_RNA"    ] = geom_sol_fast_intra_RNA;
-  
+
 	name2score_type_[ "dna_bb_torsion"] = dna_bb_torsion;
 	name2score_type_[ "dna_sugar_close"] = dna_sugar_close;
 	name2score_type_[ "dna_base_distance"] = dna_base_distance;

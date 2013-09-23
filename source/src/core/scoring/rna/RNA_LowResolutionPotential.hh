@@ -359,7 +359,7 @@ private: // data
 	Size const num_RNA_backbone_oxygen_atoms_;
 	Size const num_RNA_res_types_;
 
-	Size o2star_index_within_special_backbone_atoms_;
+	Size o2prime_index_within_special_backbone_atoms_;
 	Size o2p_index_within_special_backbone_atoms_;
 
 	bool const interpolate_;

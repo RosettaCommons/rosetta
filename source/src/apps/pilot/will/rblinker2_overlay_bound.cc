@@ -147,7 +147,7 @@ std::string bin2string(unsigned long bin, Size nres) {
 }
 
 unsigned long pose2bin(core::pose::Pose const & pose) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	unsigned long bin = 0;
 	for(int i = 0; i < min( 16, (int)pose.n_residue() ); ++i) {		
 		Real phid = pose.phi(i+1);
@@ -322,7 +322,7 @@ void* doit(void*) {
 	using namespace pose;
 	using namespace protocols;
 	using namespace moves;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using numeric::random::uniform;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

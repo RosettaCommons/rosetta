@@ -121,7 +121,7 @@ bool BBTorsionSRFD::is_applicable( kinematics::MoveMap const& move_map, Size seq
 }
 
 void BBTorsionSRFD::show( std::ostream &out ) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	Parent::show( out );
 	runtime_assert( nbb() == torsions_.size() );
 

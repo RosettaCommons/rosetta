@@ -22,6 +22,7 @@
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_VDW_BinScreener.hh>
+#include <protocols/swa/StepWiseUtil.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
@@ -104,8 +105,8 @@ StepWiseRNA_Minimizer::StepWiseRNA_Minimizer(
 	rm_virt_phosphate_( false ),
 	native_edensity_score_cutoff_(  - 1.0 ),
 	centroid_screen_( true ),
-	perform_o2star_pack_( true ),
-	output_before_o2star_pack_( false ),
+	perform_o2prime_pack_( true ),
+	output_before_o2prime_pack_( false ),
 	perform_minimize_( true ),
 	num_pose_minimize_( 999999 ), //Feb 02, 2012
 	minimize_and_score_sugar_( true ),
@@ -133,8 +134,9 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	using namespace core::scoring;
 	using namespace core::pose;
 	using namespace core::io::silent;
-	using namespace protocols::rna;
 	using namespace core::optimization;
+	using namespace protocols::rna;
+	using namespace protocols::swa;
 
 	Output_title_text( "Enter StepWiseRNA_Minimizer::apply", TR.Debug );
 
@@ -145,8 +147,8 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 	Output_boolean( " rm_virt_phosphate_ = ", rm_virt_phosphate_, TR.Debug ); TR.Debug << std::endl;
 	TR.Debug << " native_edensity_score_cutoff_ = " << native_edensity_score_cutoff_ << std::endl;
 	Output_boolean( " centroid_screen_ = ", centroid_screen_, TR.Debug ); TR.Debug << std::endl;
-	Output_boolean( " perform_o2star_pack_ = ", perform_o2star_pack_, TR.Debug ); TR.Debug << std::endl;
-	Output_boolean( " output_before_o2star_pack_ = ", output_before_o2star_pack_, TR.Debug ); TR.Debug << std::endl;
+	Output_boolean( " perform_o2prime_pack_ = ", perform_o2prime_pack_, TR.Debug ); TR.Debug << std::endl;
+	Output_boolean( " output_before_o2prime_pack_ = ", output_before_o2prime_pack_, TR.Debug ); TR.Debug << std::endl;
 	TR.Debug << " ( Upper_limit ) num_pose_minimize_ = " << num_pose_minimize_ << " pose_data_list.size() = " << pose_data_list_.size() <<  std::endl;
 	Output_boolean( " minimize_and_score_sugar_ = ", minimize_and_score_sugar_, TR.Debug ); TR.Debug << std::endl;
 	if (user_input_VDW_bin_screener_) Output_boolean( " user_inputted_VDW_bin_screener_ = ", user_input_VDW_bin_screener_->user_inputted_VDW_screen_pose(), TR.Debug ); TR.Debug << std::endl;
@@ -177,8 +179,8 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 
 	pose::Pose dummy_pose = ( *pose_data_list_[1] );
 	Size const nres =  dummy_pose.total_residue();
-	bool o2star_pack_verbose( verbose_ );
-	utility::vector1< Size > const working_moving_res = get_working_moving_res( nres ); // will be used for o2star packing.
+	bool o2prime_pack_verbose( verbose_ );
+	utility::vector1< Size > const working_moving_res = get_working_moving_res( nres ); // will be used for o2prime packing.
 
 	//Check scorefxn
 	TR.Debug << "check scorefxn" << std::endl;
@@ -212,40 +214,39 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 		std::string tag = tag_from_pose( *pose_data_list_[pose_ID] );
 		pose = ( *pose_data_list_[pose_ID] ); //This actually creates a hard copy.....need this to get the graphic working..
 
-		Size const five_prime_chain_break_res = figure_out_actual_five_prime_chain_break_res( pose );
-
 		if ( rm_virt_phosphate_ ){ //Fang's electron density code
 			for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 				pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", ii );
 			}
 		}
 
-		if ( verbose_ && output_before_o2star_pack_ ) output_pose_data_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_o2star_pack" );
+		if ( verbose_ && output_before_o2prime_pack_ ) output_pose_data_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_o2prime_pack" );
 
 		Remove_virtual_O2Star_hydrogen( pose );
 
-		if ( perform_o2star_pack_ ) o2star_minimize( pose, scorefxn_, get_surrounding_O2star_hydrogen( pose, working_moving_res, o2star_pack_verbose ) );
+		if ( perform_o2prime_pack_ ) o2prime_minimize( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
 
-		if ( verbose_ && !output_before_o2star_pack_ ) output_pose_data_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_minimize" );
+		if ( verbose_ && !output_before_o2prime_pack_ ) output_pose_data_wrapper( tag, 'B', pose, silent_file_data, silent_file_ + "_before_minimize" );
+
+		utility::vector1< Size > moving_chainbreaks = figure_out_moving_chain_break_res( pose, move_map_list_[ 1 ] );
 
 		///////Minimization/////////////////////////////////////////////////////////////////////////////
 		if ( close_chainbreak ){
-			rna_loop_closer.apply( pose, five_prime_chain_break_res ); //This doesn't do anything if rna_loop_closer was already applied during sampling stage...May 10,2010
-
+			rna_loop_closer.apply( pose, moving_chainbreaks ); //This doesn't do anything if rna_loop_closer was already applied during sampling stage...May 10,2010
 			if ( verbose_ ) output_pose_data_wrapper( tag, 'C', pose, silent_file_data, silent_file_ + "_after_loop_closure_before_minimize" );
 		}
 
 		for ( Size round = 1; round <= move_map_list_.size(); round++ ){
 			core::kinematics::MoveMap mm = move_map_list_[round];
 
+			moving_chainbreaks = figure_out_moving_chain_break_res( pose, mm );
+
 			if ( perform_minimize_ ) minimizer.run( pose, mm, *( scorefxn_ ), options );
-			if ( perform_o2star_pack_ ) o2star_minimize( pose, scorefxn_, get_surrounding_O2star_hydrogen( pose, working_moving_res, o2star_pack_verbose ) );
+			if ( perform_o2prime_pack_ ) o2prime_minimize( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
 
 			if ( close_chainbreak ){
-				Real mean_dist_err = rna_loop_closer.apply( pose, five_prime_chain_break_res );
-				TR.Debug << "mean_dist_err ( round = " << round << " ) = " <<  mean_dist_err << std::endl;
-
-				if ( perform_o2star_pack_ ) o2star_minimize( pose, scorefxn_, get_surrounding_O2star_hydrogen( pose, working_moving_res, o2star_pack_verbose ) );
+				rna_loop_closer.apply( pose, moving_chainbreaks );
+				if ( perform_o2prime_pack_ ) o2prime_minimize( pose, scorefxn_, get_surrounding_O2prime_hydrogen( pose, working_moving_res, o2prime_pack_verbose ) );
 				if ( perform_minimize_ ) minimizer.run( pose, mm, *( scorefxn_ ), options );
 
 			}
@@ -289,6 +290,7 @@ StepWiseRNA_Minimizer::apply( core::pose::Pose & pose ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+// following is deprecated -- delete after testing figure_out_moving_chainbreak_res
 core::Size
 StepWiseRNA_Minimizer::figure_out_actual_five_prime_chain_break_res( pose::Pose const & pose ) const{
 

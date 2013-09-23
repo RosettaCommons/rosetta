@@ -74,28 +74,28 @@ AtomicDistanceFilter::compute( core::pose::Pose const & pose ) const
 	Residue const& res1( pose.residue( residue1_ ) );
 	Residue const& res2( pose.residue( residue2_ ) );
 
-	core::Size a1start(1), a1end(res1.natoms());
+	core::Size a1primet(1), a1end(res1.natoms());
 	if ( ! astype1_ ) { // If given by name, look only at the single atom
 		if ( ! res1.type().has(atomdesg1_) ) {
 			TR << "WARNING! Residue "<<residue1_<<" of type "<<res1.type().name()<<" does not have atom with name "<<atomdesg1_<<std::endl;
 			return nearest_distance;
 		}
-		a1start = a1end = res1.atom_index(atomdesg1_);
+		a1primet = a1end = res1.atom_index(atomdesg1_);
 	}
-	core::Size a2start(1), a2end(res2.natoms());
+	core::Size a2primet(1), a2end(res2.natoms());
 	if ( ! astype2_ ) { // If given by name, look only at the single atom
 		if ( ! res2.type().has(atomdesg2_) ) {
 			TR << "WARNING! Residue "<<residue2_<<" of type "<<res2.type().name()<<" does not have atom with name "<<atomdesg2_<<std::endl;
 			return nearest_distance;
 		}
-		a2start = a2end = res2.atom_index(atomdesg2_);
+		a2primet = a2end = res2.atom_index(atomdesg2_);
 	}
 
 	bool found1(false), found2(false);
-	for ( core::Size ii(a1start); ii <= a1end; ++ii) {
+	for ( core::Size ii(a1primet); ii <= a1end; ++ii) {
 		if ( !astype1_ || res1.atom_type(ii).name() == atomdesg1_ ) {
 			found1 = true;
-			for ( core::Size jj(a2start); jj <= a2end; ++jj) {
+			for ( core::Size jj(a2primet); jj <= a2end; ++jj) {
 				if ( !astype2_ || res2.atom_type(jj).name() == atomdesg2_ ) {
 					found2 = true;
 					core::Real const dist( res1.atom(ii).xyz().distance( res2.atom(jj).xyz() ) );

@@ -80,7 +80,7 @@ namespace rna {
 
 		void set_sampler_native_rmsd_screen( bool const & setting ){ sampler_native_rmsd_screen_ = setting; }
 
-		void set_o2star_screen( bool const & setting ){ o2star_screen_ = setting; }
+		void set_o2prime_screen( bool const & setting ){ o2prime_screen_ = setting; }
 
 		void set_verbose( bool const & setting ){ verbose_ = setting; }
 
@@ -168,9 +168,9 @@ namespace rna {
 		void set_allow_base_pair_only_centroid_screen( bool const & setting ){ allow_base_pair_only_centroid_screen_ = setting; }
 
 		// this is new, not in ERRASER (swa_rna_analytical_closure)
-		void set_minimizer_perform_o2star_pack( bool const & setting ){ minimizer_perform_o2star_pack_ = setting; }
+		void set_minimizer_perform_o2prime_pack( bool const & setting ){ minimizer_perform_o2prime_pack_ = setting; }
 
-		void set_minimizer_output_before_o2star_pack( bool const & setting ){ minimizer_output_before_o2star_pack_ = setting; }
+		void set_minimizer_output_before_o2prime_pack( bool const & setting ){ minimizer_output_before_o2prime_pack_ = setting; }
 
 		void set_minimizer_rename_tag( bool const & setting ){ minimizer_rename_tag_ = setting; }
 
@@ -205,7 +205,7 @@ namespace rna {
 		core::Real cluster_rmsd_;
 		core::Real native_edensity_score_cutoff_;
 		bool sampler_native_rmsd_screen_;
-		bool o2star_screen_;
+		bool o2prime_screen_;
 		bool verbose_;
 		bool distinguish_pucker_;
 		bool finer_sampling_at_chain_closure_;
@@ -251,8 +251,8 @@ namespace rna {
 		bool allow_base_pair_only_centroid_screen_;
 
 		// this is new, not in ERRASER (swa_rna_analytical_closure)
-		bool minimizer_perform_o2star_pack_;
-		bool minimizer_output_before_o2star_pack_;
+		bool minimizer_perform_o2prime_pack_;
+		bool minimizer_output_before_o2prime_pack_;
 		bool minimizer_rename_tag_;
 
 		StepWiseRNA_MinimizerOP stepwise_rna_minimizer_;

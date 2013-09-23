@@ -353,21 +353,21 @@ void CoupledSidechainProtocol::observe_rotamers( core::Size ct, std::string cons
 	std::string filename( traj_file_tag+".rotamers");
 	if (rotamer_stream_.filename() != filename) rotamer_stream_.open( filename );
 
-	//fmt::F output
+	//format::F output
 	Size const w( 8 );
 	Size const d( 4 );
 	for ( core::Size resi=1; resi<=chi_vectors_.size(); ++resi ) {
-		rotamer_stream_ << fmt::I( w, resi ) << " ";
+		rotamer_stream_ << format::I( w, resi ) << " ";
 		for ( core::Size i=1; i<=4; ++i ) {
-			if ( i<=chi_vectors_[ resi ].size() ) rotamer_stream_ << fmt::F( w, d, chi_vectors_[ resi ][i] ) << " ";
-			else rotamer_stream_<< fmt::F( w, d, 0.0 ) << " ";
+			if ( i<=chi_vectors_[ resi ].size() ) rotamer_stream_ << format::F( w, d, chi_vectors_[ resi ][i] ) << " ";
+			else rotamer_stream_<< format::F( w, d, 0.0 ) << " ";
 		}
 		for ( core::Size i=1; i<=4; ++i ) {
-			if ( i<=rot_vectors_[ resi ].size() ) rotamer_stream_ << fmt::I( w, rot_vectors_[ resi ][i] ) << " ";
-			else rotamer_stream_<< fmt::I( w, 0.0 ) << " ";
+			if ( i<=rot_vectors_[ resi ].size() ) rotamer_stream_ << format::I( w, rot_vectors_[ resi ][i] ) << " ";
+			else rotamer_stream_<< format::I( w, 0.0 ) << " ";
 		}
-		rotamer_stream_ << fmt::I( w, ct );
-		if ( tempering_ ) rotamer_stream_ << " " << fmt::F( w, d, tempering_->temperature() );
+		rotamer_stream_ << format::I( w, ct );
+		if ( tempering_ ) rotamer_stream_ << " " << format::F( w, d, tempering_->temperature() );
 		rotamer_stream_	<< std::endl;
 	}
 }

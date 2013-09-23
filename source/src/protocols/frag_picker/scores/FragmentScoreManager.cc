@@ -177,7 +177,7 @@ void FragmentScoreManager::describe_fragments(utility::vector1<std::pair<
 		FragmentCandidateOP, FragmentScoreMapOP> > const& pairs,
 		std::ostream& out) {
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	if ( pairs.size() == 0 ) return;
 	bool if_quota = false;
 	if( pairs[1].second->get_quota_score() < 999.98 ) if_quota = true;

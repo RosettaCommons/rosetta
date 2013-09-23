@@ -87,9 +87,9 @@ core::Real Resonance::_pmatch( core::Real peakfreq, core::Real error, FoldResona
 }
 
 void Resonance::_write_to_stream( std::ostream& os ) const {
-  os << ObjexxFCL::fmt::RJ( 10, label_ ) << " ";
-  os << ObjexxFCL::fmt::F( 10, 3, freq_ ) << " " << ObjexxFCL::fmt::F( 10, 3, error_ ) << " ";
-  os << ObjexxFCL::fmt::RJ( 5, atom_.atom() ) << " " << ObjexxFCL::fmt::RJ( 8, atom_.rsd() );
+  os << ObjexxFCL::format::RJ( 10, label_ ) << " ";
+  os << ObjexxFCL::format::F( 10, 3, freq_ ) << " " << ObjexxFCL::format::F( 10, 3, error_ ) << " ";
+  os << ObjexxFCL::format::RJ( 5, atom_.atom() ) << " " << ObjexxFCL::format::RJ( 8, atom_.rsd() );
 }
 
 void Resonance::write_to_stream( std::ostream& os ) const {

@@ -37,7 +37,7 @@
 
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -90,7 +90,7 @@ bool SecstructSRFD::is_applicable( kinematics::MoveMap const&, Size) const {
 }
 
 void SecstructSRFD::show( std::ostream &out ) const {
-  using namespace ObjexxFCL::fmt;
+  using namespace ObjexxFCL::format;
 	Parent::show( out );
   out << sequence() << ' ' << secstruct() << ' ';
 }

@@ -92,12 +92,12 @@ TopologyBrokerMover::apply( pose::Pose & pose )
 	//separate the two chains
   core::pose::Pose pose1 = pose;
   core::pose::Pose pose2 = pose;
-  Size chain1start(pose.conformation().chain_begin( 1 ));
+  Size chain1primet(pose.conformation().chain_begin( 1 ));
   Size chain1end(pose.conformation().chain_end( 1 ) );
-  Size chain2start(pose.conformation().chain_begin( 2 ));
+  Size chain2primet(pose.conformation().chain_begin( 2 ));
   Size chain2end(pose.conformation().chain_end( 2 ) );
-  pose1.conformation().delete_residue_range_slow( chain2start, chain2end);
-  pose2.conformation().delete_residue_range_slow( chain1start, chain1end);
+  pose1.conformation().delete_residue_range_slow( chain2primet, chain2end);
+  pose2.conformation().delete_residue_range_slow( chain1primet, chain1end);
   core::pose::Pose ref_pose = pose2;
 
 	protocols::protein_interface_design::movers::SaveAndRetrieveSidechainsOP srsc = new protocols::protein_interface_design::movers::SaveAndRetrieveSidechains(ref_pose, true, false, 0);

@@ -49,7 +49,7 @@
 
 using namespace core;
 using namespace core::scoring;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace optimize_weights {
@@ -1011,8 +1011,8 @@ NestedEnergyTermDDGMutationOptEData::process_score(
 			<< ", raw unfE: " << wt_unweighted_unfolded_energy << ", " << mut_unweighted_unfolded_energy
 			<< "; unfE: " << wt_weighted_unfolded_energy << ", "  << mut_weighted_unfolded_energy
 			<< "; totalE: " << best_wt_energy << ", " << best_mut_energy
-			<< "; pred: " << ObjexxFCL::fmt::F(4,2,predicted_ddG)
-			<< ", exp'tal: " << experimental_ddG_ << ", ddG_diff^2: " << ObjexxFCL::fmt::F(6,3,ddG_diff * ddG_diff)
+			<< "; pred: " << ObjexxFCL::format::F(4,2,predicted_ddG)
+			<< ", exp'tal: " << experimental_ddG_ << ", ddG_diff^2: " << ObjexxFCL::format::F(6,3,ddG_diff * ddG_diff)
 			<< ", tag: " << tag() << std::endl;
 
 	} else {

@@ -72,8 +72,8 @@ using basic::options::option;
 using numeric::min;
 using numeric::max;
 using utility::io::ozstream;
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 
 typedef utility::vector1<core::Real> Reals;
 typedef utility::vector1<core::Size> Sizes;

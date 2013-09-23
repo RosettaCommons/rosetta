@@ -163,9 +163,9 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
-using ObjexxFCL::fmt::A;
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::A;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 
 using io::pdb::dump_pdb;
 
@@ -184,9 +184,9 @@ OPT_KEY( Boolean, fullatom_score_test )
 OPT_KEY( Boolean, fullatom_minimize )
 OPT_KEY( Boolean, fullatom_multiscore )
 OPT_KEY( Boolean, fullatom_minimize_silent)
-OPT_KEY( Boolean, o2star_test )
+OPT_KEY( Boolean, o2prime_test )
 OPT_KEY( Boolean, deriv_check )
-OPT_KEY( Boolean, skip_o2star_pack )
+OPT_KEY( Boolean, skip_o2prime_pack )
 OPT_KEY( Boolean, lores_score )
 OPT_KEY( Boolean, lores_score_silent )
 OPT_KEY( Boolean, env_test )
@@ -218,7 +218,7 @@ OPT_KEY( Boolean, output_lores_silent_file )
 OPT_KEY( Boolean, heat )
 OPT_KEY( Boolean, dump )
 OPT_KEY( Boolean, convert_to_native )
-OPT_KEY( Boolean, disable_o2star_rotamers )
+OPT_KEY( Boolean, disable_o2prime_rotamers )
 OPT_KEY( Boolean, disable_include_current )
 OPT_KEY( Boolean, sample_chi )
 OPT_KEY( Boolean, pymol_struct_type )
@@ -609,7 +609,7 @@ add_coordinate_constraints( pose::Pose & pose ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-pack_o2star( core::pose::Pose & pose, core::scoring::ScoreFunction const & scorefxn ) {
+pack_o2prime( core::pose::Pose & pose, core::scoring::ScoreFunction const & scorefxn ) {
 
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
@@ -865,7 +865,7 @@ rna_fullatom_minimize_test()
 
 		rna_minimizer.deriv_check( option[ deriv_check ] );
 		rna_minimizer.use_coordinate_constraints( !option[ skip_coord_constraints]() );
-		//    rna_minimizer.skip_o2star_pack( option[ skip_o2star_pack] );
+		//    rna_minimizer.skip_o2prime_pack( option[ skip_o2prime_pack] );
 		//		rna_minimizer.use_lores_plus_hires_scorefxn( option[ sum_lores_plus_hires ] );
 		rna_minimizer.vary_bond_geometry( option[ vary_geometry ] );
 
@@ -1102,7 +1102,7 @@ rna_fullatom_minimize_silent_test()
 }
 ///////////////////////////////////////////////////////////////////////////////
 void
-rna_o2star_test()
+rna_o2prime_test()
 {
 
 	using namespace basic::options;
@@ -1145,7 +1145,7 @@ rna_o2star_test()
 		}
 
 		//2'-OH rotamer trials?!
-		pack_o2star( pose, *scorefxn );
+		pack_o2prime( pose, *scorefxn );
 
 		scorefxn->show( std::cout, pose );
 
@@ -5066,8 +5066,8 @@ my_main( void* )
 		print_internal_coord_test();
 	} else if ( option[ fullatom_score_test ] ){
 	  rna_fullatom_score_test();
-	} else if ( option[ o2star_test ] ){
-	  rna_o2star_test();
+	} else if ( option[ o2prime_test ] ){
+	  rna_o2prime_test();
 	} else if ( option[ fullatom_minimize ] ){
 	  rna_fullatom_minimize_test();
 	} else if ( option[ fullatom_multiscore ] ){
@@ -5166,9 +5166,9 @@ main( int argc, char * argv [] )
 	NEW_OPT( fullatom_minimize, "Test RNA full minimize", false );
 	NEW_OPT( fullatom_multiscore, "Test RNA fullatom scoring speed", false );
 	NEW_OPT( fullatom_minimize_silent, "Test RNA full minimize on silent file", false );
-	NEW_OPT( o2star_test, "Test RNA 2'-OH rotamer trials", false );
+	NEW_OPT( o2prime_test, "Test RNA 2'-OH rotamer trials", false );
 	NEW_OPT( deriv_check, "Check derivatives!", false );
-	NEW_OPT( skip_o2star_pack, "Turn off RNA 2'-OH packing during minimize", false );
+	NEW_OPT( skip_o2prime_pack, "Turn off RNA 2'-OH packing during minimize", false );
 	NEW_OPT( lores_score, "Test RNA low resolution score", false );
 	NEW_OPT( lores_score_silent, "Test RNA low resolution score on silent file", false );
 	NEW_OPT( env_test, "environment", false );
@@ -5208,7 +5208,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( dump, "Dump pdb", false );
 	NEW_OPT( pymol_struct_type, "struct type", false );
 	NEW_OPT( convert_to_native, "Convert input pdb to rosetta-ordered native",false);
-	NEW_OPT( disable_o2star_rotamers, "In designing, don't sample 2'-OH",false);
+	NEW_OPT( disable_o2prime_rotamers, "In designing, don't sample 2'-OH",false);
 	NEW_OPT( disable_include_current, "In designing, don't include current",false);
 	NEW_OPT( sample_chi, "In designing RNA, chi torsion sample",false);
 	NEW_OPT( print_hbonds, "Read in PDB output H-BONDS",false);

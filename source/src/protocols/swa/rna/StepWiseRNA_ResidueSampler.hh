@@ -91,7 +91,7 @@ public:
 	set_verbose( bool const & setting );
 
 	void
-	set_perform_o2star_pack( bool const & setting );
+	set_perform_o2prime_pack( bool const & setting );
 
 	void
 	set_cluster_rmsd( core::Real const & setting );
@@ -243,13 +243,13 @@ private:
 																		bool const & Is_internal );
 
 	void
-	initialize_o2star_packer_task( core::pose::Pose const & pose );
+	initialize_o2prime_packer_task( core::pose::Pose const & pose );
 
 	void
-	initialize_o2star_green_packer( core::pose::Pose & pose );
+	initialize_o2prime_green_packer( core::pose::Pose & pose );
 
 	void
-	sample_o2star_hydrogen( core::pose::Pose & pose, core::pose::Pose & pose_with_original_HO2star_torsion );
+	sample_o2prime_hydrogen( core::pose::Pose & pose, core::pose::Pose & pose_with_original_HO2prime_torsion );
 
 	core::Real
 	Pose_selection_by_full_score( utility::vector1< PoseOP > & pose_data_list, core::pose::Pose & current_pose, std::string const & tag );
@@ -312,7 +312,7 @@ private:
 	core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn_;
 	core::scoring::ScoreFunctionOP chainbreak_scorefxn_;
 	core::scoring::ScoreFunctionOP sampling_scorefxn_;
-	core::scoring::ScoreFunctionOP o2star_pack_scorefxn_;
+	core::scoring::ScoreFunctionOP o2prime_pack_scorefxn_;
 
 	utility::vector1 < core::Size > working_rmsd_res_;
 
@@ -328,9 +328,9 @@ private:
 	bool native_rmsd_screen_;
 	core::Real native_screen_rmsd_cutoff_;
 
-	bool perform_o2star_pack_;
-	core::pack::task::PackerTaskOP o2star_pack_task_;
-	protocols::simple_moves::GreenPackerOP o2star_green_packer_;
+	bool perform_o2prime_pack_;
+	core::pack::task::PackerTaskOP o2prime_pack_task_;
+	protocols::simple_moves::GreenPackerOP o2prime_green_packer_;
 	bool const use_green_packer_;
 	bool allow_bulge_at_chainbreak_;
 	bool integration_test_mode_;

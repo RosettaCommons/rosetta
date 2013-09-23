@@ -138,7 +138,7 @@ namespace rna {
 		numeric::xyzVector< core::Real > const reference_xyz = core::chemical::rna::get_rna_base_centroid( const_working_pose.residue( reference_res ), false /*verbose*/ );
 
 
-		pose::Pose working_pose = const_working_pose; //Feb 20, 2011..just to make sure that the o2star hydrogens are virtualized. Since this hydrogen can vary during sampling.
+		pose::Pose working_pose = const_working_pose; //Feb 20, 2011..just to make sure that the o2prime hydrogens are virtualized. Since this hydrogen can vary during sampling.
 		Add_virtual_O2Star_hydrogen( working_pose );
 
 		create_VDW_screen_bin( working_pose, job_parameters->working_moving_res_list(), job_parameters->Is_prepend(), reference_xyz, verbose );
@@ -519,8 +519,8 @@ namespace rna {
 		protocols::rna::make_phosphate_nomenclature_matches_mini( VDW_rep_screen_pose );
 		///////////////////////////////////////////////////////////////////////////
 
-		//Virtualize O2star...o2star hydrogen position can change ..particularly important for long loop mode.
-		//Important since by virtualizing...the o2star hydrogen will be ignored when creating the VDW_screen_bin.
+		//Virtualize O2prime...o2prime hydrogen position can change ..particularly important for long loop mode.
+		//Important since by virtualizing...the o2prime hydrogen will be ignored when creating the VDW_screen_bin.
 		Add_virtual_O2Star_hydrogen( VDW_rep_screen_pose );
 
 		utility::vector1< core::Size > const & VDW_rep_screen_align_res = VDW_rep_screen_info.VDW_align_res;
@@ -592,8 +592,8 @@ namespace rna {
 			///////////////////////////////////////////////////////////////////////////
 			pose::Pose working_pose = const_working_pose;
 			Add_virtual_O2Star_hydrogen( working_pose );
-			//Virtualize O2star...o2star hydrogen position can change ..particularly important for long loop mode.
-			//Important since by virtualizing...the o2star hydrogen will be ignored when creating the VDW_screen_bin.
+			//Virtualize O2prime...o2prime hydrogen position can change ..particularly important for long loop mode.
+			//Important since by virtualizing...the o2prime hydrogen will be ignored when creating the VDW_screen_bin.
 
 			std::map< core::Size, core::Size > full_to_sub;
 			full_to_sub.clear();
@@ -697,8 +697,8 @@ namespace rna {
 			//////////////////////////////////////////////////////////////////
 			pose::Pose working_pose = const_working_pose;
 			Add_virtual_O2Star_hydrogen( working_pose );
-			//Virtualize O2star...o2star hydrogen position can change ..particularly important for long loop mode.
-			//Important since by virtualizing...the o2star hydrogen will be ignored when creating the VDW_screen_bin.
+			//Virtualize O2prime...o2prime hydrogen position can change ..particularly important for long loop mode.
+			//Important since by virtualizing...the o2prime hydrogen will be ignored when creating the VDW_screen_bin.
 
 			std::map< core::Size, core::Size > const const_full_to_sub = job_parameters->const_full_to_sub();
 			std::map< core::Size, core::Size > full_to_sub = const_full_to_sub;

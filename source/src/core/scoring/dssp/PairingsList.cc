@@ -63,7 +63,7 @@ Pairing::reverse() {
 		} else if ( pleating_ == 2 ) {
 			pleating_ = 1;
 		} else {
-			std::cout << "unrecognized pleating:" << fmt::SS( pleating_ ) << std::endl;
+			std::cout << "unrecognized pleating:" << format::SS( pleating_ ) << std::endl;
 			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 		}
 	}
@@ -127,7 +127,7 @@ void read_pairing_list( std::istream& pairing_stream, PairingsList& pairings) {
 		if ( ( a < 1 || b < 1 ) || ( a == b ) || ( c != 1 && c != 2 && c != 0 ) ||
 				( d != 1 && d != 2 && d != 0 ) ) {
 			std::cout << "bad pairing:" <<
-				fmt::SS( a ) << fmt::SS( b ) << fmt::SS( c ) << fmt::SS( d ) << std::endl;
+				format::SS( a ) << format::SS( b ) << format::SS( c ) << format::SS( d ) << std::endl;
 			utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
 		}
 
@@ -138,7 +138,7 @@ void read_pairing_list( std::istream& pairing_stream, PairingsList& pairings) {
 } // read_pairings
 
 std::ostream& operator<< ( std::ostream& out, Pairing const& p) {
-	out << fmt::RJ(5, p.Pos1() ) << fmt::RJ(5, p.Pos2() ) << " "
+	out << format::RJ(5, p.Pos1() ) << format::RJ(5, p.Pos2() ) << " "
 			<< ( p.Orientation() ? ( p.is_parallel() ? "P" : "A") : "X" ) << " "
 			<< ( p.Pleating() ? ( p.is_inwards() ? "I" : "O" ) : "X" );
 	return out;

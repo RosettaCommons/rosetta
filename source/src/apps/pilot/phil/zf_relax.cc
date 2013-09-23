@@ -644,7 +644,7 @@ zf_relax_test()
 		core::Real const final_rms( scoring::all_atom_rmsd( pose, start_pose ) );
 		core::Real const final_score( (*scorefxn)(pose) );
 		{
-			using namespace ObjexxFCL::fmt;
+			using namespace ObjexxFCL::format;
 			std::cout << "final_rmsd_and_score: " << outfilename << F(9,3,aftermin_rms) << F(9,3,final_rms) <<
 				F(9,3,start_score) << F(9,3,aftermin_score) << F(9,3,final_score) << std::endl;
 		}

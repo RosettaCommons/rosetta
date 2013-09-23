@@ -81,7 +81,7 @@ using namespace core;
 using namespace protocols;
 using namespace core::options::OptionKeys;
 using utility::vector1;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::F;
 using io::pdb::dump_pdb;
 
 

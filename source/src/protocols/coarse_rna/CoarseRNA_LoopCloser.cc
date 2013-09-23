@@ -50,8 +50,8 @@ using namespace core;
 
 static basic::Tracer TR( "protocols.coarse_rna.coarse_rna_loop_closer" ) ;
 static numeric::random::RandomGenerator RG(2289440);  // <- Magic number, do not change it!
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 using core::id::AtomID;
 using core::id::NamedAtomID;
 using core::id::DOF_ID;

@@ -1243,8 +1243,8 @@ build_donor_donor_waters(
 		if ( energy2 > hbond_energy_threshold ) return;
 
 		tt << "hbenergies: dd step= " << step << " nstep= " << nstep <<
-			" E1= " << ObjexxFCL::fmt::F(9,3,energy1) << " E2= " << ObjexxFCL::fmt::F(9,3,energy2) <<
-			" o12_distance= " << ObjexxFCL::fmt::F(9,3,std::sqrt( o12_dis2 )) << '\n';
+			" E1= " << ObjexxFCL::format::F(9,3,energy1) << " E2= " << ObjexxFCL::format::F(9,3,energy2) <<
+			" o12_distance= " << ObjexxFCL::format::F(9,3,std::sqrt( o12_dis2 )) << '\n';
 
 
 		// accept this rotamer
@@ -1321,8 +1321,8 @@ build_donor_acceptor_waters(
 			if ( energy2 > hbond_energy_threshold ) continue;
 
 			tt << "hbenergies: da step= " << step << " nstep= " << nstep <<
-				" E1= " << ObjexxFCL::fmt::F(9,3,energy1) << " E2= " << ObjexxFCL::fmt::F(9,3,energy2) <<
-				" o12_distance= " << ObjexxFCL::fmt::F(9,3,std::sqrt( o12_dis2 )) << '\n';
+				" E1= " << ObjexxFCL::format::F(9,3,energy1) << " E2= " << ObjexxFCL::format::F(9,3,energy2) <<
+				" o12_distance= " << ObjexxFCL::format::F(9,3,std::sqrt( o12_dis2 )) << '\n';
 
 
 
@@ -1332,7 +1332,7 @@ build_donor_acceptor_waters(
 																													 "EP1", "H2", tp5 ) );
 // 			{
 // 				using namespace ObjexxFCL;
-// 				using namespace ObjexxFCL::fmt;
+// 				using namespace ObjexxFCL::format;
 
 // 				std::string const filename( "donor_acceptor_test_"+lead_zero_string_of(counter,4)+"_"+
 // 																		lead_zero_string_of(step,4)+".pdb" );
@@ -1428,8 +1428,8 @@ build_acceptor_acceptor_waters(
 				if ( energy2 > hbond_energy_threshold ) continue;
 
 				tt << "hbenergies: aa step= " << step << " nstep= " << nstep <<
-					" E1= " << ObjexxFCL::fmt::F(9,3,energy1) << " E2= " << ObjexxFCL::fmt::F(9,3,energy2) <<
-					" o12_distance= " << ObjexxFCL::fmt::F(9,3,std::sqrt( o12_dis2 )) << '\n';
+					" E1= " << ObjexxFCL::format::F(9,3,energy1) << " E2= " << ObjexxFCL::format::F(9,3,energy2) <<
+					" o12_distance= " << ObjexxFCL::format::F(9,3,std::sqrt( o12_dis2 )) << '\n';
 
 
 

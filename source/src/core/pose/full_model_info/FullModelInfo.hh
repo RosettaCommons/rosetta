@@ -71,6 +71,8 @@ public:
 
 	utility::vector1< Size > const & fixed_domain_map() const { return fixed_domain_map_;}
 
+	void clear_other_pose_list();
+
 	utility::vector1< core::pose::PoseOP > const & other_pose_list() const { return other_pose_list_; }
 
 	utility::vector1< Size > const & res_list() const { return res_list_; }
@@ -137,10 +139,10 @@ private:
 };
 
 FullModelInfo const &
-const_full_model_info_from_pose( pose::Pose const & pose );
+const_full_model_info( pose::Pose const & pose );
 
 FullModelInfo &
-nonconst_full_model_info_from_pose( core::pose::Pose & pose );
+nonconst_full_model_info( core::pose::Pose & pose );
 
 
 }

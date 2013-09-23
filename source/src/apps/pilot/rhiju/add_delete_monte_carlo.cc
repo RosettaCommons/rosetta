@@ -225,7 +225,7 @@ OPT_KEY( IntegerVector, rmsd_res )
 OPT_KEY( Boolean, centroid_screen )
 OPT_KEY( Boolean, allow_base_pair_only_centroid_screen )
 OPT_KEY( Boolean, VDW_atr_rep_screen )
-OPT_KEY( Boolean, sampler_perform_o2star_pack )
+OPT_KEY( Boolean, sampler_perform_o2prime_pack )
 OPT_KEY( Boolean, fast )
 OPT_KEY( Boolean, medium_fast )
 OPT_KEY( Boolean, allow_bulge_at_chainbreak )
@@ -264,7 +264,7 @@ OPT_KEY( Real, unfolded_weight )
 OPT_KEY( Integer, n_sample )
 OPT_KEY( Integer, output_period )
 OPT_KEY( Boolean, skip_randomize )
-OPT_KEY( Boolean, sample_all_o2star )
+OPT_KEY( Boolean, sample_all_o2prime )
 OPT_KEY( Boolean, do_add_delete )
 OPT_KEY( Boolean, presample_added_residue )
 OPT_KEY( Integer, presample_internal_cycles )
@@ -647,9 +647,9 @@ swa_rna_sample()
 	RNA_AddOrDeleteMoverOP rna_add_or_delete_mover = new RNA_AddOrDeleteMover( rna_add_mover, rna_delete_mover );
 	rna_add_or_delete_mover->set_disallow_deletion_of_last_residue( option[ disallow_deletion_of_last_residue ]() );
 
-	RNA_O2StarMoverOP rna_o2star_mover = new RNA_O2StarMover( scorefxn, option[ sample_all_o2star ](), sample_range_small, sample_range_large );
+	RNA_O2StarMoverOP rna_o2prime_mover = new RNA_O2StarMover( scorefxn, option[ sample_all_o2prime ](), sample_range_small, sample_range_large );
 
-	RNA_AddDeleteMonteCarloOP rna_swa_montecarlo_mover = new RNA_AddDeleteMonteCarlo(  rna_add_or_delete_mover, rna_torsion_mover, rna_o2star_mover, scorefxn );
+	RNA_AddDeleteMonteCarloOP rna_swa_montecarlo_mover = new RNA_AddDeleteMonteCarlo(  rna_add_or_delete_mover, rna_torsion_mover, rna_o2prime_mover, scorefxn );
 	rna_swa_montecarlo_mover->set_native_pose( stepwise_rna_pose_setup->get_native_pose() );
 	rna_swa_montecarlo_mover->set_silent_file( option[ out::file::silent ]() );
 	rna_swa_montecarlo_mover->set_output_period( option[ output_period ]() );
@@ -795,7 +795,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( medium_fast, "quick runthrough for debugging (keep more poses and not as fast as fast option)", false );
 	NEW_OPT( centroid_screen, "centroid_screen", true);
 	NEW_OPT( allow_base_pair_only_centroid_screen, "allow_base_pair_only_centroid_screen", false); //This only effect floating base sampling + dinucleotide.. deprecate option
-	NEW_OPT( sampler_perform_o2star_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
+	NEW_OPT( sampler_perform_o2prime_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
 	NEW_OPT( allow_bulge_at_chainbreak, "Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", true );
 
 	NEW_OPT( add_lead_zero_to_tag, "Add lead zero to clusterer output tag ", false);
@@ -807,7 +807,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( kT, "kT of simulation in RU", 2.0 );
 	NEW_OPT( unfolded_weight, "weight on unfolded term", 1.0 );
 	NEW_OPT( skip_randomize, "do not randomize...", false );
-	NEW_OPT( sample_all_o2star, "do not focus o2star sampling at residue of interest...", false );
+	NEW_OPT( sample_all_o2prime, "do not focus o2prime sampling at residue of interest...", false );
 	NEW_OPT( start_added_residue_in_aform, "on add move, take starting configuration to be A-form, not random", false );
 	NEW_OPT( do_add_delete, "try add & delete moves...", false );
 	NEW_OPT( presample_added_residue, "when adding a residue, do a little monte carlo to try to get it in place", false );

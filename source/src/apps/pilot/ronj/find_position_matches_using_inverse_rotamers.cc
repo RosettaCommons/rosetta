@@ -643,7 +643,7 @@ main( int argc, char * argv [] ) {
 								<< ")" << std::endl;
 						}
 
-						TR << "scaffold position " << scaffold_resnum << " has rmsd: " << ObjexxFCL::fmt::F( 4,2,rmsd ) << " to inverse rotamer: " << ir << ". checking for glycan clashes." << std::endl;
+						TR << "scaffold position " << scaffold_resnum << " has rmsd: " << ObjexxFCL::format::F( 4,2,rmsd ) << " to inverse rotamer: " << ir << ". checking for glycan clashes." << std::endl;
 
 						// also scan the hit for glycan clashes
 						Size number_glycan_clashes = 0;
@@ -663,7 +663,7 @@ main( int argc, char * argv [] ) {
 #ifdef FILE_DEBUG
 											TR << "scaffold residue '" << scaffold_res_index << "' atom '" << scaffold_res.atom_name( scaffold_atom_index ) 
 												<< "' comes within 4.0 Ang of glycan residue '" << reference_structure_glycan_residues[ glycan_res_index ]
-												<< "' atom '" << glycan_res.atom_name( scaffold_atom_index ) << "'. dist_sq: " << ObjexxFCL::fmt::F( 4,2,dist_sq ) << std::endl;
+												<< "' atom '" << glycan_res.atom_name( scaffold_atom_index ) << "'. dist_sq: " << ObjexxFCL::format::F( 4,2,dist_sq ) << std::endl;
 #endif
 											number_glycan_clashes++;
 										}
@@ -772,7 +772,7 @@ main( int argc, char * argv [] ) {
 					} else {
 						TR << "scaffold position " << scaffold_resnum << " inverse rotamer: " << ir << " failed rmsd check. ca_diff.length_squared: "
 							<< ca_diff.length_squared() << ", cb_diff.length_squared(): " << cb_diff.length_squared() 
-							<< ", rmsd: " << ObjexxFCL::fmt::F( 4,2,rmsd )
+							<< ", rmsd: " << ObjexxFCL::format::F( 4,2,rmsd )
 							<< ", cutoff: " << option[ find_position_matches_using_inverse_rotamers::ir_rmsd ] << std::endl;
 #endif
 					}

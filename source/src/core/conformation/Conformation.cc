@@ -2446,7 +2446,7 @@ Conformation::update_orbital_coords( Residue & rsd) const{
 void
 Conformation::debug_residue_torsions( bool verbose ) const
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using basic::subtract_degree_angles;
 
 	update_residue_coordinates();

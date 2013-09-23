@@ -336,7 +336,7 @@ void* doit(void*) {
 	using namespace pose;
 	using namespace protocols;
 	using namespace moves;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using numeric::random::uniform;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

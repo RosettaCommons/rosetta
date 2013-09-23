@@ -63,9 +63,9 @@
 
 
 
-using ObjexxFCL::fmt::A;
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::A;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 using namespace core;
 using namespace core::scoring;
 

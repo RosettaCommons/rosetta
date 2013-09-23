@@ -53,7 +53,7 @@
 
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -222,7 +222,7 @@ SameStrand::read_from_file( std::string fn ) {
  #endif
 ///@detail write to stream ( opposite from read_from_file )
 void SameStrand::show( std::ostream& out ) const {
-	using namespace fmt;
+	using namespace format;
 	for ( Size i = 1; i<=total_residue_; i++ ) {
 		for ( Size j = 1; j<=total_residue_; j++ ) {
 			out << ( eval(i,j) ? "E" : "." );

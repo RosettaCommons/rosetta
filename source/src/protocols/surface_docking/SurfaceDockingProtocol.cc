@@ -90,7 +90,7 @@ using basic::Warning;
 using namespace protocols::surface_docking;
 using namespace protocols;
 using namespace protocols::moves;
-//using namespace ObjexxFCL::fmt;
+//using namespace ObjexxFCL::format;
 
 //using core::pose::datacache::CacheableDataType::SURFACE_PARAMS;
 static basic::Tracer TR("protocols.SurfaceDocking.SurfaceDockingProtocol");

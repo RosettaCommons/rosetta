@@ -679,10 +679,10 @@ main( int argc, char* argv[] ) {
 
 			//now dump the pdbs (all 4 of them for each run)
 			//first set up naming system...
-			std::string wt_complex_filename = pdb_file_name.base() + "_complex_wt_" + mut_string_output + "_" + ObjexxFCL::fmt::I( 3, 3, ii ) + ".pdb";
-			std::string mut_complex_filename = pdb_file_name.base() + "_complex_mut_" + mut_string_output + "_" + ObjexxFCL::fmt::I( 3, 3, ii ) + ".pdb";
-			std::string wt_split_filename = pdb_file_name.base() + "_separate_wt_" + mut_string_output+ "_" + ObjexxFCL::fmt::I( 3, 3, ii ) + ".pdb";
-			std::string mut_split_filename = pdb_file_name.base() + "_separate_mut_" + mut_string_output+ "_" + ObjexxFCL::fmt::I( 3, 3, ii ) + ".pdb";
+			std::string wt_complex_filename = pdb_file_name.base() + "_complex_wt_" + mut_string_output + "_" + ObjexxFCL::format::I( 3, 3, ii ) + ".pdb";
+			std::string mut_complex_filename = pdb_file_name.base() + "_complex_mut_" + mut_string_output + "_" + ObjexxFCL::format::I( 3, 3, ii ) + ".pdb";
+			std::string wt_split_filename = pdb_file_name.base() + "_separate_wt_" + mut_string_output+ "_" + ObjexxFCL::format::I( 3, 3, ii ) + ".pdb";
+			std::string mut_split_filename = pdb_file_name.base() + "_separate_mut_" + mut_string_output+ "_" + ObjexxFCL::format::I( 3, 3, ii ) + ".pdb";
 
 			packed_wt_complex_poses[ ii ].dump_scored_pdb( wt_complex_filename, *(scorefxn()) );
 			packed_mut_complex_poses[ ii ].dump_scored_pdb( mut_complex_filename, *(scorefxn()) );

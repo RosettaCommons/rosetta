@@ -207,7 +207,7 @@ main( int argc, char * argv [] )
 	using namespace pose;
 	using namespace protocols;
 	using namespace moves;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 	using numeric::random::uniform;

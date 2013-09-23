@@ -1137,7 +1137,7 @@ output_local_minima(
 		}
 		pose.replace_residue( res1_index, *(iter->res1_conformation ), false );
 
-		std::string out_fname = acc3let + "_" + don3let + "_minima_" + ObjexxFCL::fmt::I( max_digits, max_digits, ++count ) + ".pdb";
+		std::string out_fname = acc3let + "_" + don3let + "_minima_" + ObjexxFCL::format::I( max_digits, max_digits, ++count ) + ".pdb";
 		std::ofstream out( out_fname.c_str() );
 		core::io::pdb::dump_bfactor_pdb( pose, bfactors, out, "model_" + utility::to_string(count));
 	}

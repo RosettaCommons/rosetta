@@ -70,7 +70,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace toolbox;
 using namespace ObjexxFCL;
-//using namespace ObjexxFCL::fmt;
+//using namespace ObjexxFCL::format;
 
 OPT_KEY( Real, wRMSD )
 OPT_KEY( Real, tolerance )

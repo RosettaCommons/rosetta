@@ -533,12 +533,12 @@ Real BinaryRNASilentStruct::get_debug_rmsd() {
 	// build temp_pose from coordinates
 	fill_pose( temp_pose );
 
-	Size const c4star_index = temp_pose.residue(1).atom_index( " C4'" );
+	Size const c4prime_index = temp_pose.residue(1).atom_index( " C4'" );
 
 	for ( Size i = 1; i <= temp_pose.total_residue(); ++i ) {
 		for ( Size k = 1; k <= 3; ++k ) { // k = X, Y and Z
 			rebuilt_coords (k,i) = temp_pose.residue(i).xyz( " C4'" )[k-1];
-			original_coords(k,i) = atm_coords_[i][c4star_index][k-1];
+			original_coords(k,i) = atm_coords_[i][c4prime_index][k-1];
 		}
 	}
 

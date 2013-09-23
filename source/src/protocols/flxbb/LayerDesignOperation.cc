@@ -448,7 +448,7 @@ LayerDesignOperation::apply( Pose const & input_pose, PackerTask & task ) const
 		char ss( secstruct[i] );
 		TR << "Residue " << i << std::endl;
 		TR << "    ss=" << ss << " "
-			 << "    Sasa=" << ObjexxFCL::fmt::F( 6, 2, srbl_->rsd_sasa( i ) ) << std::endl;
+			 << "    Sasa=" << ObjexxFCL::format::F( 6, 2, srbl_->rsd_sasa( i ) ) << std::endl;
 		TR << "    basic layer = " << srbl_layer << std::endl;
 
 		// If there are no active layers and the working layer is designable
@@ -754,7 +754,7 @@ LayerDesignOperation::parse_tag( TagPtr tag )
 	BOOST_FOREACH( Layer const &  layer, layer_residues_) {
 		TR << "Layer " << layer.first << std::endl;
 		BOOST_FOREACH( LayerDefinition const & layer_def, layer.second ) {
-			TR << "\t" << ObjexxFCL::fmt::LJ(15,layer_def.first) << "aa = " << layer_def.second << std::endl;
+			TR << "\t" << ObjexxFCL::format::LJ(15,layer_def.first) << "aa = " << layer_def.second << std::endl;
 		}
 		TR << std::endl;
 	}

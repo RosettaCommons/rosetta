@@ -16,6 +16,7 @@
 #include <core/scoring/methods/FreeMoietyEnergyCreator.hh>
 
 // Package Headers
+#include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 
@@ -24,6 +25,7 @@
 
 #include <utility/vector1.hh>
 
+using namespace core::pose::full_model_info;
 
 namespace core {
 namespace scoring {
@@ -42,16 +44,16 @@ FreeMoietyEnergyCreator::create_energy_method(
 ScoreTypes
 FreeMoietyEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
-	sts.push_back( free_P );
-	sts.push_back( free_2HOstar );
+	sts.push_back( free_suite );
+	sts.push_back( free_2HOprime );
 	return sts;
 }
 
-
-
 /// ctor
 FreeMoietyEnergy::FreeMoietyEnergy() :
-	parent( new FreeMoietyEnergyCreator )
+	parent( new FreeMoietyEnergyCreator ),
+	free_suite_bonus_( -1.0 ), // this is ad hoc for now.
+	free_2HOprime_bonus_( -1.0 ) // this is ad hoc for now.
 {}
 
 FreeMoietyEnergy::~FreeMoietyEnergy() {}
@@ -67,18 +69,32 @@ FreeMoietyEnergy::clone() const
 // methods for ContextIndependentOneBodyEnergies
 /////////////////////////////////////////////////////////////////////////////
 
+void
+FreeMoietyEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const{
+	nonconst_full_model_info( pose ); // does the setup.
+}
+
 /// @details Allocate the scratch space object on the stack to
 /// alieviate thread-safety concerns.  Scratch does not use new.
 void
 FreeMoietyEnergy::residue_energy(
 	conformation::Residue const & rsd,
-	pose::Pose const &,
+	pose::Pose const & pose,
 	EnergyMap & emap
 ) const
 {
 
-	if ( rsd.has_variant_type( "VIRTUAL_PHOSPHATE" ) )	      emap[ free_P ] += -1.0;
-	if ( rsd.has_variant_type( "VIRTUAL_O2STAR_HYDROGEN" ) )	emap[ free_2HOstar ] += -1.0;
+	utility::vector1< Size > const & cutpoint_open_in_full_model = const_full_model_info( pose ).cutpoint_open_in_full_model();
+	utility::vector1< Size > const & res_list = const_full_model_info( pose ).res_list();
+
+	if ( rsd.has_variant_type( "VIRTUAL_PHOSPHATE" ) ){
+		Size const seqpos_in_full_model = res_list[ rsd.seqpos() ];
+		if ( seqpos_in_full_model > 1 && !cutpoint_open_in_full_model.has_value( seqpos_in_full_model - 1 ) ){
+			emap[ free_suite ] += free_suite_bonus_;
+		}
+	}
+
+	if ( rsd.has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) )	emap[ free_2HOprime ] += free_2HOprime_bonus_;
 
 }
 

@@ -63,7 +63,7 @@ show_residue_hbonds(
 )
 {
 	using namespace scoring::hbonds;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	HBondSet hbond_set;
 	fill_hbond_set( pose, false, hbond_set );
 

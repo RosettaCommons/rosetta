@@ -364,7 +364,7 @@ CapriTwoBodyEnergy::residue_pair_energy(
 
 		Vector const & xyz_o1p   ( rna_rsd.xyz("OP2" ) );
 		Vector const & xyz_o2p   ( rna_rsd.xyz("OP1" ) );
-		Vector const & xyz_o2star( rna_rsd.xyz("O2'") );
+		Vector const & xyz_o2prime( rna_rsd.xyz("O2'") );
 
 		// protein centroid (protein nbr-atom) contacts to rna
 		Real centroid_score( 0.0 );
@@ -381,14 +381,14 @@ CapriTwoBodyEnergy::residue_pair_energy(
 				// polar
 				Real const dis2_a(    xyz_o1p.distance_squared( protein_rsd.nbr_atom_xyz() ) );
 				Real const dis2_b(    xyz_o2p.distance_squared( protein_rsd.nbr_atom_xyz() ) );
-				Real const dis2_c( xyz_o2star.distance_squared( protein_rsd.nbr_atom_xyz() ) );
+				Real const dis2_c( xyz_o2prime.distance_squared( protein_rsd.nbr_atom_xyz() ) );
 				if ( dis2_a > min_centroid_dis2 && dis2_a < polar_dis2_threshold ) centroid_score += polar_bonus;
 				if ( dis2_b > min_centroid_dis2 && dis2_b < polar_dis2_threshold ) centroid_score += polar_bonus;
 				if ( dis2_c > min_centroid_dis2 && dis2_c < polar_dis2_threshold ) centroid_score += polar_bonus;
 
 			} else if ( aa == aa_asp || aa == aa_glu ) {
 				// neg charged
-				Real const dis2_a( xyz_o2star.distance_squared( protein_rsd.nbr_atom_xyz() ) );
+				Real const dis2_a( xyz_o2prime.distance_squared( protein_rsd.nbr_atom_xyz() ) );
 				if ( dis2_a > min_centroid_dis2 && dis2_a < asp_glu_dis2_threshold ) centroid_score += asp_glu_bonus;
 			}
 		}
@@ -396,7 +396,7 @@ CapriTwoBodyEnergy::residue_pair_energy(
 		// protein backbone contacts to rna
 		Real backbone_score( 0.0 );
 		{
-			Real const dis2_a( protein_rsd.xyz( "O" ).distance_squared( xyz_o2star ) );
+			Real const dis2_a( protein_rsd.xyz( "O" ).distance_squared( xyz_o2prime ) );
 			Real const dis2_b( protein_rsd.xyz( "N" ).distance_squared( xyz_o1p ) );
 			Real const dis2_c( protein_rsd.xyz( "N" ).distance_squared( xyz_o2p ) );
 			if ( dis2_a > min_backbone_dis2 && dis2_a < backbone_dis2_threshold ) backbone_score += backbone_O_bonus;

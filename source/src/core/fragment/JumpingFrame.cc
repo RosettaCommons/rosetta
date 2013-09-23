@@ -39,7 +39,7 @@
 namespace core {
 namespace fragment {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // FragDataOP generate_fragdata( SingleResidueFragDataOP frag_res_type, SingleResidueFragDataOP jump_frag_type  ) {
 //   if ( nr_frags() ) return frag_data_.front()->clone();
@@ -77,7 +77,7 @@ NonContinuousFrame::align( core::id::SequenceMapping const& map ) {
 }
 
 void NonContinuousFrame::show( std::ostream &out ) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	out << type() << " ";
 	show_pos( out );
 	out << std::endl;
@@ -85,7 +85,7 @@ void NonContinuousFrame::show( std::ostream &out ) const {
 }
 
 void NonContinuousFrame::read( std::istream &in ) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	Size pos;
 	pos_.clear();
 	std::string line;

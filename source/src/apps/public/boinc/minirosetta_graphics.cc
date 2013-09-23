@@ -571,7 +571,7 @@ writeStrokeString( const std::string & text_string, GLfloat *col, float xpos, fl
 void display_text() {
 	using namespace graphics;
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	///////////////////////////////////////////////////////////////
 	// START LEFT COLUMN
 

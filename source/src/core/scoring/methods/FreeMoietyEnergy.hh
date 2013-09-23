@@ -51,6 +51,11 @@ public:
 	core::scoring::methods::EnergyMethodOP
 	clone() const;
 
+	///
+	virtual
+	void
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
 	/////////////////////////////////////////////////////////////////////////////
@@ -76,6 +81,9 @@ public:
 
 	// data
 private:
+
+	core::Real const free_suite_bonus_;
+	core::Real const free_2HOprime_bonus_;
 
 };
 

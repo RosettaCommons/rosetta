@@ -61,7 +61,7 @@ namespace protocols {
 namespace jumping {
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using namespace core;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -383,7 +383,7 @@ SheetBuilder::builder_loop( core::scoring::dssp::PairingsList& jump_pairings ) c
     if ( !success ) {
 			failed_once=tries1;
 			tr.Info << "redo same_strand: too many tries with this one!" <<
-      				fmt::SS( tries1 ) << std::endl;
+      				format::SS( tries1 ) << std::endl;
       // makes stochastic decisions about strand boundaries:
       // some decisions may not be compatible with the desired pairings
       // and our logic for choosing sheets

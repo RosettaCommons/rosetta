@@ -95,7 +95,7 @@ operator <<( std::ostream & stream, FArray1< T > const & a )
 }
 
 
-namespace fmt {
+namespace format {
 
 
 /// @brief Standard Width Format: FArray1
@@ -108,13 +108,13 @@ SW( FArray1< T > const & a )
 	std::string s;
 	s.reserve( n * static_cast< std::size_t >( TypeTraits< T >::standard_width() ) );
 	for ( std::size_t i = 0; i < n; ++i ) {
-		s.append( fmt::SW( a[ i ] ) );
+		s.append( format::SW( a[ i ] ) );
 	}
 	return s;
 }
 
 
-} // namespace fmt
+} // namespace format
 
 
 } // namespace ObjexxFCL

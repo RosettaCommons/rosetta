@@ -84,7 +84,7 @@ DumpStatsSS::DumpStatsSS(DumpStatsSS const &rval):
 DumpStatsSS::~DumpStatsSS() {}
 
 void DumpStatsSS::apply( core::pose::Pose & pose ) {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
   //Keep file open. & dump to it.
 	  core::Real current_time = clock();
 		core::Real time = (current_time-start_time_)/core::Real(CLOCKS_PER_SEC);

@@ -124,7 +124,7 @@ namespace hashing {
 	}
 
 	bool xyzStripeHash::sanity_check() const {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		for(int ix = 0; ix < xdim_; ++ix) {
 			for(int iy = 0; iy < ydim_; ++iy) {
 				for(int iz = 0; iz < zdim_; ++iz) {

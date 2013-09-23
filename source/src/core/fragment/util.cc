@@ -76,7 +76,7 @@ namespace fragment {
 static basic::Tracer tr("core.fragment");
 static numeric::random::RandomGenerator RG(125923489);  // <- Magic number, do not change it!
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 void retain_top(core::Size k, FragSetOP fragments) {
 	for (FrameIterator i = fragments->nonconst_begin(); i != fragments->nonconst_end(); ++i) {

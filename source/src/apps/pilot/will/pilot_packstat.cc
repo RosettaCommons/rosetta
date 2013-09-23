@@ -244,7 +244,7 @@ void output_packstat_pdb( std::string fname, utility::vector1<core::Real> const 
   using namespace std;
 	using namespace core;
 	using namespace basic::options;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace numeric;
 	using namespace utility;
 
@@ -351,7 +351,7 @@ void output_packstat( std::string fname ) {
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace numeric;
 	using namespace utility;
 
@@ -452,7 +452,7 @@ int main (int argc, char *argv[])
 // 	using namespace core::scoring::packstat;
 //   using namespace std;
 // 	using namespace core;
-// 	using namespace ObjexxFCL::fmt;
+// 	using namespace ObjexxFCL::format;
 // 	using namespace numeric;
 // 	using namespace utility;
 //
@@ -487,7 +487,7 @@ int main (int argc, char *argv[])
 // 	using namespace core::scoring::packstat;
 //   using namespace std;
 // 	using namespace core;
-// 	using namespace ObjexxFCL::fmt;
+// 	using namespace ObjexxFCL::format;
 // 	using namespace numeric;
 // 	using namespace utility;
 //

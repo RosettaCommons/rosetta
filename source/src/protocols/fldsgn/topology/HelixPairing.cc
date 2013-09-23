@@ -129,8 +129,8 @@ HelixPairingOP HelixPairing::clone()
 /// @brief return name
 std::ostream & operator<<(std::ostream & out, const HelixPairing &hp )
 {
-  using ObjexxFCL::fmt::F;
-  using ObjexxFCL::fmt::A;
+  using ObjexxFCL::format::F;
+  using ObjexxFCL::format::A;
 	out << A( 7, hp.name() ) << " "
 			<< F( 8, 3, hp.dist() ) << F( 8, 3, hp.cross_angle() ) << F( 8, 3, hp.align_angle() );
 	//out << A( 7, hp.name() ) << " "

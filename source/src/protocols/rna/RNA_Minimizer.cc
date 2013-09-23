@@ -103,7 +103,7 @@ RNA_Minimizer::RNA_Minimizer():
     coord_sdev_( 10.0 * std::sqrt(10.0) ), // awkward, but matches an old setting.
     coord_cst_weight_( 1.0 ),
     rounds_( basic::options::option[ basic::options::OptionKeys::rna::minimize_rounds ] ),
-    skip_o2star_trials_( false ),
+    skip_o2prime_trials_( false ),
     perform_minimizer_run_( true ),
     vary_bond_geometry_( false ),
     include_default_linear_chainbreak_( true ),
@@ -137,7 +137,7 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 		TR << "min_type_=" << min_type_ << std::endl;
 		protocols::swa::rna::Output_boolean("deriv_check_: ", deriv_check_, TR ); std::cout << std::endl;
 		protocols::swa::rna::Output_boolean("use_coordinate_constraints_: ", use_coordinate_constraints_, TR ); std::cout << std::endl;
-		protocols::swa::rna::Output_boolean("skip_o2star_trials_: ", skip_o2star_trials_, TR ); std::cout << std::endl;
+		protocols::swa::rna::Output_boolean("skip_o2prime_trials_: ", skip_o2prime_trials_, TR ); std::cout << std::endl;
 		protocols::swa::rna::Output_boolean("perform_minimizer_run_: ", perform_minimizer_run_, TR ); std::cout << std::endl;
 		protocols::swa::rna::Output_boolean("vary_bond_geometry_: ", vary_bond_geometry_, TR ); std::cout << std::endl;
 		protocols::swa::rna::Output_boolean("include_default_linear_chainbreak_: ", include_default_linear_chainbreak_, TR ); std::cout << std::endl;
@@ -189,11 +189,11 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 		Real const suppress = static_cast<Real>(r)/rounds_;
 		minimize_scorefxn_->set_weight( fa_rep, fa_rep_final * suppress  );
 
-		if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_round_" + ObjexxFCL::string_of(r) + "_before_o2star_trials.pdb" );
+		if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_round_" + ObjexxFCL::string_of(r) + "_before_o2prime_trials.pdb" );
 
-		if (!skip_o2star_trials_) o2star_trials( pose, minimize_scorefxn_ );
+		if (!skip_o2prime_trials_) o2prime_trials( pose, minimize_scorefxn_ );
 
-		if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_round_" + ObjexxFCL::string_of(r) +"_after_o2star_trials.pdb" );
+		if(do_dump_pdb_) pose.dump_pdb( "RNA_Minimizer_round_" + ObjexxFCL::string_of(r) +"_after_o2prime_trials.pdb" );
 
 		//Prevent explosions on first minimize.
 		// this is silly. in first round, just make sure coordinate_constraint is one, and use constraints 'supplemented' with coordinate constraints.
@@ -245,7 +245,7 @@ RNA_Minimizer::show(std::ostream & output) const
 {
 	Mover::show(output);
 	output <<   "Deriv check:              " << (deriv_check_ ? "True" : "False")  <<
-				"\nSkip o2star trials:       " << (skip_o2star_trials_ ? "True" : "False") <<
+				"\nSkip o2prime trials:       " << (skip_o2prime_trials_ ? "True" : "False") <<
 				"\nPerform minimizer run:    " << (perform_minimizer_run_ ? "True" : "False") <<
 				"\nVary bond geometry:       " << (vary_bond_geometry_ ? "True" : "False") <<
 				"\nSet verbose:              " << (verbose_ ? "True" : "False") <<
@@ -262,7 +262,7 @@ RNA_Minimizer::show(std::ostream & output) const
 ///////////////////////////////////////////////////////////////////////////////
 // Make this its own Mover?
 void
-RNA_Minimizer::o2star_trials(
+RNA_Minimizer::o2prime_trials(
   core::pose::Pose & pose,
 	core::scoring::ScoreFunctionOP const & packer_scorefxn_ ) const
 {

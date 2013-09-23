@@ -59,7 +59,7 @@ using utility::vector1;
 using core::id::AtomID;
 using numeric::xyzVector;
 using numeric::min;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;

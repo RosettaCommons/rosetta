@@ -86,7 +86,7 @@ Size const TOL_LABEL( 3 );
 
 void PeakFileFormat::write_peak( std::ostream& os, Size ct, CrossPeak const& cp ) const {
 	std::ostringstream line_end;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	line_end << " | ";
 	line_end << F( 5, 2, cp.cumulative_peak_volume() ) << " "
 					 << F( 5, 2, cp.probability() ) << " "
@@ -97,7 +97,7 @@ void PeakFileFormat::write_peak( std::ostream& os, Size ct, CrossPeak const& cp 
 	line_end << " #d " << cp.distance_bound();
 	if ( cp.eliminated( false /*recompute*/, true /*do_not_compute*/) ) line_end << " #eliminated: " << cp.elimination_reason();
 
-  os << ObjexxFCL::fmt::RJ( 6, ct ) << " ";
+  os << ObjexxFCL::format::RJ( 6, ct ) << " ";
   // cp.write_to_stream( os );
   write_resonances( os, cp );
 	os << " 1 U ";
@@ -159,7 +159,7 @@ void PeakFileFormat::write_header( std::ostream& os ) {
   os << "#CYANAFORMAT " << cyana_str << std::endl;
   os << "#TOLERANCE ";
   for ( Size ct = 1; ct <= tolerances.size(); ct++ ) {
-    os << ObjexxFCL::fmt::RJ( 8, tolerances[ ct ] );
+    os << ObjexxFCL::format::RJ( 8, tolerances[ ct ] );
   }
   os << std::endl;
 }
@@ -492,7 +492,7 @@ void PeakFileFormat::write_resonances( std::ostream& os, CrossPeak const& cp ) c
       runtime_assert( cp.has_label( iproton ) );
       val = cp.label( iproton ).freq();
     }
-    os << ObjexxFCL::fmt::F( 8, 3, val ) << " ";
+    os << ObjexxFCL::format::F( 8, 3, val ) << " ";
   }
 }
 
@@ -505,7 +505,7 @@ void PeakFileFormat::read_strength( std::istream& is, CrossPeak& cp ) const {
 }
 
 void PeakFileFormat::write_strength( std::ostream& os, CrossPeak const& cp ) const {
-  os << ObjexxFCL::fmt::E( 10, 3, cp.volume() ) << " " << ObjexxFCL::fmt::E( 10, 3, 0.0 ) << " ";
+  os << ObjexxFCL::format::E( 10, 3, cp.volume() ) << " " << ObjexxFCL::format::E( 10, 3, 0.0 ) << " ";
 }
 
 
@@ -634,14 +634,14 @@ void PeakFileFormat::write_assignment( std::ostream& os, PeakAssignment const& p
 			if ( !is_label ) os << pa.atom( iproton ) << "   ";
 			else os << pa.label_atom( iproton )  << "   ";
 		} else {
-			os << ObjexxFCL::fmt::RJ( 6, val ) << " ";
+			os << ObjexxFCL::format::RJ( 6, val ) << " ";
 		}
 	}
 }
 
 void PeakFileFormat::write_assignment_stats( std::ostream& os, PeakAssignment& pa ) const {
 	Real val( pa.normalized_peak_volume() );
-	os << "#VC " << ObjexxFCL::fmt::F( 5, 3, val );
+	os << "#VC " << ObjexxFCL::format::F( 5, 3, val );
 	os << " #W ";
 	pa.dump_weights( os );
 }

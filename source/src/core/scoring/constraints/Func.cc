@@ -54,7 +54,7 @@ Real Func::estimate_dfunc( Real const r, Real const h ) const {
 }
 
 void Func::show( std::ostream& out ) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	Real start = 2;
 	Real end   = 20;

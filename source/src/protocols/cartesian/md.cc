@@ -64,7 +64,7 @@
 
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace cartesian {

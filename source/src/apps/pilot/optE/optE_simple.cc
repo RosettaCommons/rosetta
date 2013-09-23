@@ -124,7 +124,7 @@ using namespace core;
 using namespace scoring;
 using namespace pack;
 using namespace optimization;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 using utility::vector1;
 

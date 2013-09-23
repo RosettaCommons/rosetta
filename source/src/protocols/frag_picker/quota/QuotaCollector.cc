@@ -90,7 +90,7 @@ void QuotaCollector::print_report(
 	scores::FragmentScoreManagerOP //scoring
 ) const {
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	output<<"QuotaCollector contains the following number of fragments at each position:\n";
 	for(Size i=1;i<=storage_.size();++i) {

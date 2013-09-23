@@ -79,7 +79,7 @@ using utility::file::trytry_ofstream_open;
 using utility::file::file_exists;
 
 using namespace core;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // make the "surface-exposed" cut-off a variable
 core::Size SURFACE_EXPOSED_CUTOFF = 20;

@@ -199,7 +199,7 @@ public:
 	// neighbor_iterator const & neighbor_end() const { return neighbor_end_; }
 
 	bool sanity_check() const {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		for(int ix = 0; ix < xdim_; ++ix) {
 			for(int iy = 0; iy < ydim_; ++iy) {
 				for(int iz = 0; iz < zdim_; ++iz) {
@@ -394,7 +394,7 @@ private:
 	// 		++(*this);
 	// 	}
 	// 	neighbor_iterator & operator++() { 
-	// 		using ObjexxFCL::fmt::I;
+	// 		using ObjexxFCL::format::I;
 	// 		while(iy < iyu){
 	// 			if(iz >= izu){
 	// 				++iy;

@@ -23,6 +23,7 @@ namespace OptionKeys {
 
 namespace full_model { extern BooleanOptionKey const full_model; }
 namespace full_model { extern IntegerVectorOptionKey const cutpoint_open; }
+namespace full_model { extern StringVectorOptionKey const other_poses; }
 
 } // namespace OptionKeys
 } // namespace options

@@ -1997,7 +1997,7 @@ void AntibodyInfo::show( std::ostream & out ) {
 
 std::ostream & operator<<(std::ostream& out, const AntibodyInfo & ab_info )  {
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	std::string line_marker = "///";
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	out << line_marker << A( 47, "Rosetta Antibody Info" ) << space( 27 ) << line_marker << std::endl;

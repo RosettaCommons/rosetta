@@ -66,7 +66,7 @@ char get_edge_from_num( Size const num ) {
   if (num == WATSON_CRICK) return 'W';
   if (num == HOOGSTEEN)    return 'H';
   if (num == SUGAR)        return 'S';
-  if (num == O2STAR)       return '2';
+  if (num == O2PRIME)       return '2';
   if (num == PHOSPHATE)    return 'P';
   return 'X';
 }
@@ -77,7 +77,7 @@ get_full_edge_from_num( Size const num ) {
   if (num == WATSON_CRICK) return "WC";
   if (num == HOOGSTEEN)    return "HOOG";
   if (num == SUGAR)        return "SUGAR";
-  if (num == O2STAR)       return "O2STAR";
+  if (num == O2PRIME)       return "O2PRIME";
   if (num == PHOSPHATE)    return "PHOS";
 
 	std::cout << "Invalid edge num= " << num << std::endl;
@@ -312,13 +312,13 @@ get_rna_base_centroid( conformation::Residue const & rsd , bool verbose){
 	//if(rsd.type().atom_name(rsd.first_sidechain_atom()) !=" O2'") utility_exit_with_message( "rsd.type().atom_name(rsd.first_sidechain_atom()) !=\" O2'\" " );
 	//if(rsd.atom_name( rsd.first_sidechain_atom() )!=" O2'") utility_exit_with_message("rsd.atom_name( rsd.first_sidechain_atom() )!=\" O2'\"");
 
-	if( rsd.RNA_type().o2star_index()!=rsd.first_sidechain_atom() ){
-		utility_exit_with_message( "rsd.RNA_info().o2star_index()!=rsd.first_sidechain_atom()");
+	if( rsd.RNA_type().o2prime_index()!=rsd.first_sidechain_atom() ){
+		utility_exit_with_message( "rsd.RNA_info().o2prime_index()!=rsd.first_sidechain_atom()");
 	}
 
 	if(verbose)  std::cout << "Base atoms" << std::endl;
 
-	for ( Size i=rsd.first_sidechain_atom()+1; i<= rsd.nheavyatoms(); ++i ) { //rsd.first_sidechain_atom()+1 to not include the O2star oxygen.
+	for ( Size i=rsd.first_sidechain_atom()+1; i<= rsd.nheavyatoms(); ++i ) { //rsd.first_sidechain_atom()+1 to not include the O2prime oxygen.
 
 		if(verbose) std::cout << "atom " << i  << " " << 	"name= " << rsd.type().atom_name(i) << " type= " << rsd.atom_type(i).name()  << " " << rsd.atom_type_index(i) << " " << rsd.atomic_charge(i);
 

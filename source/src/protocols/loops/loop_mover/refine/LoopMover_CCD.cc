@@ -76,7 +76,7 @@
 #include <ObjexxFCL/format.hh>
 #include <fstream>
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace loops {

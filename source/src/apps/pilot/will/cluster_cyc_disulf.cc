@@ -24,7 +24,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <ObjexxFCL/format.hh>
 
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::F;
 using namespace protocols::cluster;
 
 

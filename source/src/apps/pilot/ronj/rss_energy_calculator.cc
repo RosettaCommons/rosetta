@@ -77,7 +77,7 @@ using namespace core;
 using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // application specific options
 namespace rss_energy_calculator {
@@ -507,7 +507,7 @@ main( int argc, char * argv [] ) {
 				case scoring::fa_dun:
 				case scoring::p_aa_pp:
 				case scoring::pro_close:
-					energiesOutFile << ObjexxFCL::fmt::F(7,5,mi->second[ jj ].second[ scoring::ScoreType(kk) ]) << " ";
+					energiesOutFile << ObjexxFCL::format::F(7,5,mi->second[ jj ].second[ scoring::ScoreType(kk) ]) << " ";
 					break;
 				default:
 					break;

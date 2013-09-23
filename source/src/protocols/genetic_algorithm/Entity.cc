@@ -301,7 +301,7 @@ void Entity::show( std::ostream & os ) const
 			it != end; ++it ) {
 		os << " " << (*it)->to_string();
 	}
-	os << " and fitness " << fmt::F(6,3,this->fitness());
+	os << " and fitness " << format::F(6,3,this->fitness());
 }
 
 void

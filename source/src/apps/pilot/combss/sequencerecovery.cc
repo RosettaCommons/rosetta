@@ -84,7 +84,7 @@ using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace sequence_recovery {
 	FileOptionKey const native_pdb_list( "sequence_recovery::native_pdb_list" );

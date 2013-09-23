@@ -85,7 +85,7 @@ using namespace pack;
 		using namespace operation;
 using namespace scoring;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 void
 add_dna_states(

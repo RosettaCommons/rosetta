@@ -56,7 +56,7 @@ main( int argc, char * argv [] )
 {
 	try {
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	// initialize option and random number system
 	devel::init( argc, argv );

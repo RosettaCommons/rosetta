@@ -812,7 +812,7 @@ const
 				membrane_embed.calculated()=true;
 			}
 
-			using namespace ObjexxFCL::fmt;
+			using namespace ObjexxFCL::format;
 			TR << "MembraneCenter " << F(8,3,best_center.x())<< F(8,3,best_center.y())<< F(8,3,best_center.z()) << std::endl;
 			TR << "MembraneNormal " << F(8,3,best_normal.x())<< F(8,3,best_normal.y())<< F(8,3,best_normal.z()) << std::endl;
 			TR << "ATOM   9999  X   MEM A 999    " << F(8,3,best_center.x())<< F(8,3,best_center.y())<< F(8,3,best_center.z()) << std::endl;

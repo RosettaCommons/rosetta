@@ -380,7 +380,7 @@
 
 
 //using namespace ObjexxFCL;
-//using namespace ObjexxFCL::fmt;
+//using namespace ObjexxFCL::format;
 
 // option key includes
 namespace core {
@@ -388,7 +388,7 @@ namespace io {
 namespace silent {
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 static basic::Tracer pss_tr("core.io.silent");
 
 //explciit instantiation

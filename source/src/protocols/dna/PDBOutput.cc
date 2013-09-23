@@ -67,7 +67,7 @@ using namespace core::conformation;
 using namespace core::scoring;
 using namespace core::pack;
 using namespace basic::options;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 using basic::t_info;
 using basic::t_debug;

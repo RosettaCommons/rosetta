@@ -299,13 +299,13 @@ return "StepWiseProteinLoopBridger";
 		for (Size i = 1; i <= ( dt_ang.size()/3) ; i++) {
 
 			std::cout << "TORSIONS: ";
-			for (Size j = 1; j <= 3; j++) std::cout << ObjexxFCL::fmt::F(8,3,dt_ang[ 3*(i-1)+ j ]) << " ";
+			for (Size j = 1; j <= 3; j++) std::cout << ObjexxFCL::format::F(8,3,dt_ang[ 3*(i-1)+ j ]) << " ";
 
 			std::cout << "   BOND_ANGLES: ";
-			for (Size j = 1; j <= 3; j++) std::cout << ObjexxFCL::fmt::F(8,3,db_ang[ 3*(i-1)+ j ]) << " ";
+			for (Size j = 1; j <= 3; j++) std::cout << ObjexxFCL::format::F(8,3,db_ang[ 3*(i-1)+ j ]) << " ";
 
 			std::cout << "   BOND_LENGTHS: ";
-			for (Size j = 1; j <= 3; j++) std::cout << ObjexxFCL::fmt::F(8,3,db_len[ 3*(i-1)+ j ]) << " ";
+			for (Size j = 1; j <= 3; j++) std::cout << ObjexxFCL::format::F(8,3,db_len[ 3*(i-1)+ j ]) << " ";
 
 			std::cout << std::endl;
 

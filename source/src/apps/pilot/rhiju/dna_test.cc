@@ -96,9 +96,9 @@ using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
-using ObjexxFCL::fmt::A;
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::A;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 
 using io::pdb::dump_pdb;
 

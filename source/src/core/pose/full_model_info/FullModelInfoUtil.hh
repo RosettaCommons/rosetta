@@ -18,6 +18,7 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 
 namespace core {
@@ -49,7 +50,13 @@ namespace full_model_info {
 	fill_full_model_info_from_command_line( pose::Pose & pose );
 
 	void
-	fill_full_model_info_from_command_line( utility::vector1< pose::PoseOP > pose_list );
+	fill_full_model_info_from_command_line( utility::vector1< pose::PoseOP > & pose_ops );
+
+	void
+	fill_full_model_info_from_command_line( pose::Pose & pose, utility::vector1< PoseOP > & other_pose_ops );
+
+	void
+	fill_full_model_info_from_command_line( utility::vector1< pose::Pose * > & pose_pointers );
 
 	bool
 	check_full_model_info_OK( pose::Pose const & pose );
@@ -71,6 +78,17 @@ namespace full_model_info {
 
 	core::Size
 	full_to_sub( core::Size const i, core::pose::Pose & pose );
+
+	Size
+	full_model_size( pose::Pose & pose );
+
+	utility::vector1< Size >
+	figure_out_pose_domain_map( core::pose::Pose & pose );
+
+	core::conformation::Residue const &
+	get_residue( Size const seqpos_in_full_model,
+							 pose::Pose const & pose );
+
 
 }
 }

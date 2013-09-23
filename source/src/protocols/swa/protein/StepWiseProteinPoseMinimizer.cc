@@ -48,7 +48,7 @@
 #include <utility/vector1.hh>
 using namespace core;
 using core::Real;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::F;
 
 namespace protocols {
 namespace swa {

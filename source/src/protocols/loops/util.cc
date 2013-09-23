@@ -81,7 +81,7 @@
 #include <boost/foreach.hpp>
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 
 static basic::Tracer TR("protocols.loops.util");
 

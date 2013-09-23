@@ -71,7 +71,7 @@ core::Size CountViolFunc::show_violations(
 
 void
 CountViolFunc::show_definition( std::ostream &out ) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	out << "COUNTVIOLFUNC" << RJ( 7, count_viols_ ) << " ";
 	func_to_weight_->show_definition( out );
 }

@@ -36,9 +36,7 @@
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
-
-//RNA stuff.
-#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/swa/StepWiseUtil.hh>
 
 // C++ headers
 #include <iostream>
@@ -68,6 +66,8 @@ rna_score_test()
 	using namespace core::kinematics;
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
+	using namespace core::pose::full_model_info;
+	using namespace protocols::swa;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -77,9 +77,9 @@ rna_score_test()
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::tags ].user() ) {
 			input = new SilentFilePoseInputStream(
-                                                  option[ in::file::silent ](),
-                                                  option[ in::file::tags ]()
-                                                  );
+																						option[ in::file::silent ](),
+																						option[ in::file::tags ]()
+																						);
 		} else {
 			input = new SilentFilePoseInputStream( option[ in::file::silent ]() );
 		}
@@ -93,7 +93,7 @@ rna_score_test()
 	if ( option[ in::file::native ].user() ) {
 		std::string native_pdb_file  = option[ in::file::native ];
 		core::import_pose::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
-		protocols::rna::ensure_phosphate_nomenclature_matches_mini( native_pose );
+		cleanup( native_pose );
 		native_exists = true;
 	}
 
@@ -110,6 +110,10 @@ rna_score_test()
 	std::string const silent_file = option[ out::file::silent  ]();
 	SilentFileData silent_file_data;
 
+	// other poses -- for scoring collections of poses connected by (virtual) loops, using full_model_info.
+	utility::vector1< pose::PoseOP > other_poses;
+	if ( option[ full_model::other_poses ].user() ) get_other_poses( other_poses, option[ full_model::other_poses ](), rsd_set );
+
 	pose::Pose pose,start_pose;
 
 	Size i( 0 );
@@ -119,10 +123,8 @@ rna_score_test()
 		input->fill_pose( pose, *rsd_set );
 		i++;
 
-		protocols::rna::ensure_phosphate_nomenclature_matches_mini( pose );
-		core::pose::full_model_info::fill_full_model_info_from_command_line( pose ); // only does something if -in:file:fasta specified.
-		protocols::rna::figure_out_reasonable_rna_fold_tree( pose );
-		protocols::rna::virtualize_5prime_phosphates( pose ); // should we have this on by deafult?
+		cleanup( pose );
+		fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 
 		// graphics viewer.
 		if ( i == 1 ) protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );

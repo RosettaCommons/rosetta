@@ -102,7 +102,7 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 
 static basic::Tracer TR("core.scoring.rna.RNA_TorsionPotential", basic::t_info );
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using namespace core::chemical::rna;
 using numeric::conversions::radians;
 
@@ -668,7 +668,7 @@ RNA_TorsionPotential::~RNA_TorsionPotential() {}
 	RNA_TorsionPotential::Output_boolean(std::string const & tag, bool boolean) const {
 
 		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		TR << tag;
 
 		if(boolean==true){

@@ -25,7 +25,7 @@
 #include <utility/vector1.hh>
 
 #include <ObjexxFCL/format.hh>
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::F;
 
 
 namespace protocols {

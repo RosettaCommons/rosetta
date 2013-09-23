@@ -29,7 +29,7 @@
 #include <core/chemical/AtomType.hh>
 #include <ObjexxFCL/format.hh>
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // Utility headers
 
@@ -91,7 +91,8 @@ StackElecEnergy::StackElecEnergy( methods::EnergyMethodOptions const & options )
 	parent( new StackElecEnergyCreator ),
 	coulomb_( options ),
 	base_base_only_( false ), //true will be faster computation but appears less accurate (and less physically consistent)
-	verbose_( false )
+	verbose_( false ),
+	might_be_designing_( false )
 {
 	coulomb_.initialize();
 }
@@ -101,7 +102,8 @@ StackElecEnergy::StackElecEnergy( StackElecEnergy const & src ):
 	parent( src ),
 	coulomb_( src.coulomb() ),
 	base_base_only_( src.base_base_only_ ),
-	verbose_( src.verbose_ )
+	verbose_( src.verbose_ ),
+	might_be_designing_( src.might_be_designing_ )
 {
 	coulomb_.initialize();
 }

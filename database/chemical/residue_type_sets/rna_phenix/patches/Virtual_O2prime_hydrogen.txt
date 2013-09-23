@@ -1,7 +1,7 @@
 ## this patch turns all protein residue backbone atoms (N,H,C,O, [1H, 2H, OXT]) into virtual atoms
 ## can be useful if you want sidechain-only energy terms, while still allowing residue repacking
-NAME Virtual_O2star_hydrogen
-TYPES  VIRTUAL_O2STAR_HYDROGEN
+NAME Virtual_O2prime_hydrogen
+TYPES  VIRTUAL_O2PRIME_HYDROGEN
 
 BEGIN_SELECTOR
 PROPERTY RNA

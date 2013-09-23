@@ -89,7 +89,7 @@ Options = Option_Group( '',
 	# Input options ---------------------------------------------------------------------------------------------------
 	Option_Group( 'in',
 		Option( 'in', 'Boolean', desc="Input option group", legal='true', default='true' ),
-		
+
 		# Termini options -----------------------------------------------------
 		#Option( 'termini', 'String', default = 'ALL', desc="Put full N and C termini on input structures"),
 		Option( 'Ntermini', 'String', default = 'ALL', desc="Put full N termini on pose", oldName='Nterminus' ),
@@ -97,7 +97,7 @@ Options = Option_Group( '',
 		Option( 'use_truncated_termini', 'Boolean',
 				desc = 'Will not add extra OXT/Hs at termini if not in input structure',
 				default = 'false'),
-		
+
 		# Non-inclusion options -----------------------------------------------
 		Option( 'ignore_unrecognized_res', 'Boolean',
 				desc="Do not abort if unknown residues are found in PDB file;  instead, ignore them. "
@@ -106,18 +106,21 @@ Options = Option_Group( '',
 		Option( 'ignore_waters', 'Boolean',
 				desc="Do not abort if HOH water residues are found in PDB file;  instead, ignore them.",
 				default='false' ),
-		
+
 		# Inclusion options
 		Option( 'add_orbitals', 'Boolean',
 				desc="Will add orbitals to residues only. Does not include orbitals to ligands. "
 						"Done through params file reading.",
 				default='false'),
+		Option( 'show_all_fixes', 'Boolean',
+						desc="Show all residue & atom name fixes",
+						default='false' ),
 		Option("include_sugars", "Boolean",
 				desc='Sets whether or not carbohydrate residues will be'
 						'loaded into Rosetta.  The default value is false.',
 				short="Load carbohydrate residues into memory?",
 				legal=["true", "false"],
-				default="false"),	
+				default="false"),
 		Option("include_surfaces", "Boolean",
 				desc='Sets whether or not mineral surface residues will be'
 						'loaded into Rosetta.  The default value is false.',
@@ -130,7 +133,7 @@ Options = Option_Group( '',
 				short="Allow polymer branching?",
 				legal=["true", "false"],
 				default="false"),
-		
+
 		# PDB data-preservation options ---------------------------------------
 		Option( 'remember_unrecognized_res'  , 'Boolean',
 				desc="Ignore unrecognized residues, but remember them in PDBInfo.",
@@ -141,7 +144,7 @@ Options = Option_Group( '',
 		Option( 'preserve_crystinfo', 'Boolean',
 				desc = 'Preserve information important for crystal refinement (B factors +CRYST1 line)',
 				default = 'false'),
-		
+
 		# Auto-detection options ----------------------------------------------
 		Option( 'detect_oops', 'Boolean',
 				desc="Detect oligooxopiperazines (oops) and add required constraints",
@@ -155,16 +158,16 @@ Options = Option_Group( '',
 						"disulfides causes severe clashes for native disulfides.",
 				legal=['true','false'], ),
 		Option( 'detect_disulf_tolerance', 'Real', desc='disulf tolerance', default="0.5" ),
-		
+
 		# Other input options -------------------------------------------------
 		Option( 'fix_disulf', 'File',
 				desc="Specify disulfide connectivity via a file.  Disulfides are specified as two whitespace-seperated "
 						"residue indices per line.  This option replaces the old '-run:fix_disulf' option.", ),
-		
+
 		Option( 'missing_density_to_jump', 'Boolean',
 				desc='If missing density is found in input pdbs, replace with a jump',
 				default = 'false'),
-		
+
 		Option( 'use_stupid_foldtree_format', 'Boolean',
 				desc="use the fold-tree format that existed for one week after revision 21447", default='false' ),
 		Option( 'target_residues', 'IntegerVector', desc = 'which residue numbers to pass for getDistConstraints' ),
@@ -173,7 +176,7 @@ Options = Option_Group( '',
 		Option( 'use_database', 'Boolean',
 				desc="Read in structures from database.  Specify database via -inout:dbms:database_name and wanted "
 						"structures with -in:file:tags or select_structures_from_database"),
-		
+
 		# Database options
 		Option_Group( 'dbms',
 			Option( 'struct_ids', 'StringVector',
@@ -189,11 +192,11 @@ Options = Option_Group( '',
 					default="." ),
 			Option( 'fragments', 'PathVector', desc="Fragment file input search paths", oldName='frag_dir' ),
 			Option( 'pdb', 'PathVector', desc="PDB file input search paths" ),
-			Option( 'database', 'PathVector', 
+			Option( 'database', 'PathVector',
 					desc="Database file input search paths.  If the database is not found the ROSETTA3_DB environment "
 							"variable is tried.")
 		),
-		
+
 		# File options --------------------------------------------------------
 		Option_Group( 'file',
 			Option( 'file', 'Boolean', desc="Input file option group", legal='true', default='true' ),
@@ -381,7 +384,7 @@ Options = Option_Group( '',
 			Option( 'native_contacts', 'File',
 					desc='native contacts pair list for fnat/fnon-nat calculation in Docking'),
 		), # file
-		
+
 		# RDF options ---------------------------------------------------------
 		Option_Group( 'rdf',
 			Option( 'sep_bb_ss', 'Boolean',
@@ -454,7 +457,7 @@ Options = Option_Group( '',
 		Option( 'silent_gz', 'Boolean', desc="Use gzipped compressed output (silent run level)",
 				default="false",
 				oldName="output_silent_gz" ),
-		
+
 		# Database options ----------------------------------------------------
 		Option( 'use_database', 'Boolean',
 				desc="Write out structures to database.  Specify database via -inout:dbms:database_name and wanted "
@@ -465,7 +468,7 @@ Options = Option_Group( '',
 						"It is a temporary workaround to a limitation of the MPI distributor"),
 		Option( 'database_filter', 'StringVector',
 				desc="Filter to use with database output.  Arguments for filter follow filter name"),
-		
+
 		Option( 'resume_batch','IntegerVector',
 				desc="Specify 1 or more batch ids to finish an incomplete protocol.  "
 						"Only works with the DatabaseJobOutputter.  "
@@ -518,7 +521,7 @@ Options = Option_Group( '',
 			Option( 'design_contrast', 'File', desc='output list comparing design sequence to native sequence',
 					default='redesign'),
 			Option( 'residue_type_set', 'String', desc='ResidueTypeSet for output files', default='fa_standard' ),
-			
+
 			# Atom_tree_diff file options -------------------------------------
 			Option( 'atom_tree_diff', 'String', desc="Use atom_tree_diff file output, use filename after this flag",
 					default="default.out" ),
@@ -531,15 +534,15 @@ Options = Option_Group( '',
 			Option( 'atom_tree_diff_bl', 'Integer',
 					desc="For atom_tree_diff output, how many digits of precision to use for bond lengths",
 					default="2" ),
-			
+
 			# Alignment file options -----------------------------------------
 			Option( 'alignment', 'String', desc='Output file for sequence alignment', default='out.align' ),
-			
+
 			# Score file options -----------------------------------------------
 			Option('score_only', 'String', desc="Only output scores, no silent files or pdb files",
 					default="default.sc"),
 			Option( 'scorefile', 'String', desc="Write a scorefile to the provided filename", default="default.sc" ),
-			
+
 			# Silent file options ----------------------------------------------
 			Option( 'silent', 'String',
 					desc="Use silent file output, use filename after this flag",
@@ -560,7 +563,7 @@ Options = Option_Group( '',
 					default = '15' ),
 			Option( 'raw', 'Boolean', desc="Use silent-type file output", default="false" ),
 			Option( 'weight_silent_scores', 'Boolean', desc='Weight scores in silent-file output.', default='true' ),
-			
+
 			# PDB file options -----------------------------------------------
 			Option( 'silent_preserve_H', 'Boolean',
 					desc='Preserve hydrogrens in PDB silent-file format.',
@@ -592,12 +595,12 @@ Options = Option_Group( '',
 					short='Write LINK records?',
 					legal=['true', 'false'],
 					default='false'),
-			
+
 			# Dunbrack library options
 			Option( 'dont_rewrite_dunbrack_database', 'Boolean',
 					desc='Disables the default behavior of rewriting the Dunrack library in binary format if a binary '
 							'version is not found' ),
-			
+
 			# Fragment file options -------------------------------------------
 			Option( 'frag_prefix', 'String', desc='Prefix for fragment output', default='default.frags' ),
 		), # file
@@ -3710,7 +3713,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 		Option( 'corrected_geo', 'Boolean', desc="Use PHENIX-based RNA sugar close energy and params files", default='false'),
 		Option( 'vary_geometry','Boolean', desc='Let bond lengths and angles vary from ideal in minimizer', default='false' ),
 		Option( 'skip_coord_constraints', 'Boolean', desc='Skip first stage of minimize with coordinate constraints',default='false' ),
-		Option( 'skip_o2star_trials', 'Boolean', desc='No O2* packing in minimizer',default='false' ),
+		Option( 'skip_o2prime_trials', 'Boolean', desc='No O2* packing in minimizer',default='false' ),
 		Option( 'vall_torsions', 'String', desc='Torsions file containing information on fragments from RNA models', default='rna.torsions' ),
 	  Option( 'jump_database', 'String', desc='Generate a database of jumps extracted from base pairings from a big RNA file', default='rna_jumps.txt' ),
 		Option( 'rna_prot_erraser', 'Boolean', desc='Allows rna_prot_erraser residue type set, featuring both RNA and protein (for ERRASER purposes).  You must also use -rna:corrected_geo.', default='false' ),
@@ -5437,6 +5440,7 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
 	# full_model_info --> may replace swa stuff above.
 	Option_Group( 'full_model',
 		Option( 'cutpoint_open', 'IntegerVector',desc='open cutpoints in full model'),
+		Option( 'other_poses', 'StringVector',desc='list of PDB files containing other poses'),
 	),
 
 	###############################################################################

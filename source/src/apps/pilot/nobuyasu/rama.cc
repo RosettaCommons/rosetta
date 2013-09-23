@@ -82,7 +82,7 @@ main( int argc, char * argv [] )
 
 	utility::vector1< std::string > abego_ = core::util::get_abego( pose, option[ abego ]() );
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	out << "# resn aa ss abego phi psi omega" << std::endl;
 	for ( core::Size ii=1; ii<=pose.total_residue(); ii++ ) {
 		out << I( 5, pose.pdb_info()->number( ii ) ) << " " << oneletter_code_from_aa( pose.aa( ii ) ) << " " << pose.secstruct( ii ) << " " << abego_[ ii ] << " "

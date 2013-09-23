@@ -208,7 +208,7 @@ public:
 		for ( Size jj = 1; jj <= nmodels; ++jj ) {
 			data_output << pose_tags_[jj];
 			for ( Size ii = 1; ii <= nres; ++ii ) {
-				data_output << " " << ObjexxFCL::fmt::F( 8, 3, deviations_[ii][jj] );
+				data_output << " " << ObjexxFCL::format::F( 8, 3, deviations_[ii][jj] );
 			}
 			data_output << std::endl;
 		}

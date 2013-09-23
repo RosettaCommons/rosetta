@@ -95,7 +95,7 @@ ScoreMap::print(
 	std::ostream & out
 )
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	std::map< std::string, Real >::const_iterator pair;
 	Size width (8), precision (3);

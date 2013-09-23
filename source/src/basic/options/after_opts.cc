@@ -240,7 +240,7 @@ realafteroption(
 	double & rnum
 )
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	if ( option[ key ].user() ) {
 		rnum = option.option< RealOption >( key );
 		std::cout << "[REAL OPT]New value for [-" << key.id() << "] " << SS( rnum ) << std::endl;
@@ -273,7 +273,7 @@ real2afteroption(
 	double & rnum2
 )
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	if ( option[ key ].user() ) {
 		RealVectorOption const & opt( option.option< RealVectorOption >( key ) );
 		if ( opt.size() < 2 ) {
@@ -317,7 +317,7 @@ real3afteroption(
 	double & rnum3
 )
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	if ( option[ key ].user() ) {
 		RealVectorOption const & opt( option.option< RealVectorOption >( key ) );
 		if ( opt.size() < 3 ) {
@@ -382,7 +382,7 @@ intafteroption(
 	int & inum
 )
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	if ( option[ key ].user() ) {
 		inum = option.option< IntegerOption >( key );
 		std::cout << "[INT OPT]New value for [-" << key.id() << "] " << SS( inum ) << std::endl;
@@ -411,7 +411,7 @@ optional_positive_intafteroption(
 	int & inum
 )
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	if ( option[ key ].user() ) {
 		IntegerVectorOption const & opt( option.option< IntegerVectorOption >( key ) );
 		if ( opt.size() >= 1 ) {
@@ -450,7 +450,7 @@ int2afteroption(
 	int & inum2
 )
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	if ( option[ key ].user() ) {
 		IntegerVectorOption const & opt( option.option< IntegerVectorOption >( key ) );
 		if ( opt.size() < 2 ) {

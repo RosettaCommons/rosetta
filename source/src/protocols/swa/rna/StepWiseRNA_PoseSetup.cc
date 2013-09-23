@@ -419,7 +419,7 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 
 		utility::vector1< std::string > variant_type_list;
 		variant_type_list.push_back( "VIRTUAL_PHOSPHATE" );
-		variant_type_list.push_back( "VIRTUAL_O2STAR_HYDROGEN" );
+		variant_type_list.push_back( "VIRTUAL_O2PRIME_HYDROGEN" );
 		variant_type_list.push_back( "CUTPOINT_LOWER" );
 		variant_type_list.push_back( "CUTPOINT_UPPER" );
 		variant_type_list.push_back( "VIRTUAL_RNA_RESIDUE" );
@@ -530,29 +530,29 @@ StepWiseRNA_PoseSetup::read_input_pose_and_copy_dofs( pose::Pose & pose )
 
 	protocols::rna::assert_phosphate_nomenclature_matches_mini( pose ); //Just to be safe, Jun 11, 2010
 
-	correctly_copy_HO2star_positions( pose, start_pose_list );
+	correctly_copy_HO2prime_positions( pose, start_pose_list );
 
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_PoseSetup::correctly_copy_HO2star_positions( pose::Pose & working_pose, utility::vector1< pose::Pose > const & start_pose_list ){
+StepWiseRNA_PoseSetup::correctly_copy_HO2prime_positions( pose::Pose & working_pose, utility::vector1< pose::Pose > const & start_pose_list ){
 
 	using namespace ObjexxFCL;
 	using namespace core::conformation;
 	using namespace core::id;
 
-	if ( verbose_ ) Output_title_text( "Enter StepWiseRNA_PoseSetup::correctly_copy_HO2star_position", TR.Debug );
+	if ( verbose_ ) Output_title_text( "Enter StepWiseRNA_PoseSetup::correctly_copy_HO2prime_position", TR.Debug );
 
-	if ( output_pdb_ ) working_pose.dump_pdb( "copy_dof_pose_BEFORE_correctly_copy_HO2star_positions.pdb" );
+	if ( output_pdb_ ) working_pose.dump_pdb( "copy_dof_pose_BEFORE_correctly_copy_HO2prime_positions.pdb" );
 
 	std::map< core::Size, core::Size > & full_to_sub( job_parameters_->full_to_sub() );
 
 
 	//Problem aside in the long_loop mode, where we combine two silent_file pose. The two pose both contain the fixed background residues
 	//In current implementation of COPY_DOFS, the positioning of the background residues in SECOND silent file is used.
-	//However, some background HO2star interacts with the first pose and hence need to correctly copys these HO2star position.
+	//However, some background HO2prime interacts with the first pose and hence need to correctly copys these HO2prime position.
 	//When we implemenet protien/RNA interactions, will extend this to include all "packed" side chains.
 
 	utility::vector1< utility::vector1< Size > > const & input_res_vectors = job_parameters_->input_res_vectors();
@@ -580,7 +580,7 @@ StepWiseRNA_PoseSetup::correctly_copy_HO2star_positions( pose::Pose & working_po
 	}
 
 	if ( common_res_list.size() == 0 ) {
-		if ( verbose_ ) Output_title_text( "Exit StepWiseRNA_PoseSetup::correctly_copy_HO2star_position", TR.Debug );
+		if ( verbose_ ) Output_title_text( "Exit StepWiseRNA_PoseSetup::correctly_copy_HO2prime_position", TR.Debug );
 		return; //No common/background residues...
 	}
 
@@ -589,7 +589,7 @@ StepWiseRNA_PoseSetup::correctly_copy_HO2star_positions( pose::Pose & working_po
 		Size const working_seq_num = full_to_sub[full_seq_num];
 
 		Size const input_ONE_seq_num = full_to_input_res_map_ONE.find( full_seq_num )->second;
-		Real const nearest_dist_ONE = get_nearest_dist_to_O2star( input_ONE_seq_num, start_pose_list[1], input_res_vectors[1], common_res_list );
+		Real const nearest_dist_ONE = get_nearest_dist_to_O2prime( input_ONE_seq_num, start_pose_list[1], input_res_vectors[1], common_res_list );
 
 		//SML PHENIX conference cleanup
 		if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ){
@@ -597,7 +597,7 @@ StepWiseRNA_PoseSetup::correctly_copy_HO2star_positions( pose::Pose & working_po
 		}
 
 		Size const input_TWO_seq_num = full_to_input_res_map_TWO.find( full_seq_num )->second;
-		Real const nearest_dist_TWO = get_nearest_dist_to_O2star( input_TWO_seq_num, start_pose_list[2], input_res_vectors[2], common_res_list );
+		Real const nearest_dist_TWO = get_nearest_dist_to_O2prime( input_TWO_seq_num, start_pose_list[2], input_res_vectors[2], common_res_list );
 
 		//SML PHENIX conference cleanup
 		if ( basic::options::option[basic::options::OptionKeys::rna::rna_prot_erraser].value() ){
@@ -621,14 +621,14 @@ StepWiseRNA_PoseSetup::correctly_copy_HO2star_positions( pose::Pose & working_po
 
 	}
 
-	if ( output_pdb_ ) working_pose.dump_pdb( "copy_dof_pose_AFTER_correctly_copy_HO2star_positions.pdb" );
-	if ( verbose_ ) Output_title_text( "Exit StepWiseRNA_PoseSetup::correctly_copy_HO2star_position", TR.Debug );
+	if ( output_pdb_ ) working_pose.dump_pdb( "copy_dof_pose_AFTER_correctly_copy_HO2prime_positions.pdb" );
+	if ( verbose_ ) Output_title_text( "Exit StepWiseRNA_PoseSetup::correctly_copy_HO2prime_position", TR.Debug );
 
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 core::Real
-StepWiseRNA_PoseSetup::get_nearest_dist_to_O2star( Size const O2star_seq_num, pose::Pose const & input_pose, utility::vector1< Size > const input_res_list, utility::vector1< Size > const & common_res_list ){
+StepWiseRNA_PoseSetup::get_nearest_dist_to_O2prime( Size const O2prime_seq_num, pose::Pose const & input_pose, utility::vector1< Size > const input_res_list, utility::vector1< Size > const & common_res_list ){
 
 	using namespace core::conformation;
 	using namespace ObjexxFCL;
@@ -637,11 +637,11 @@ StepWiseRNA_PoseSetup::get_nearest_dist_to_O2star( Size const O2star_seq_num, po
 	//Real nearest_dist_SQ=9999999999999.99; //Feb 12, 2012 This might lead to server-test error at R47200
 	Real nearest_dist_SQ = 99999999.9; //Feb 12, 2012
 
-	conformation::Residue const & input_pose_O2star_rsd = input_pose.residue( O2star_seq_num );
+	conformation::Residue const & input_pose_O2prime_rsd = input_pose.residue( O2prime_seq_num );
 
-	if ( !input_pose_O2star_rsd.has( " O2'" ) ) utility_exit_with_message( "rsd at input_seq_num = " + string_of( O2star_seq_num ) + " doesn't have O2' atom! " );
+	if ( !input_pose_O2prime_rsd.has( " O2'" ) ) utility_exit_with_message( "rsd at input_seq_num = " + string_of( O2prime_seq_num ) + " doesn't have O2' atom! " );
 
-	numeric::xyzVector< core::Real > const O2star_xyz = input_pose_O2star_rsd.xyz( input_pose_O2star_rsd.atom_index( " O2'" ) );
+	numeric::xyzVector< core::Real > const O2prime_xyz = input_pose_O2prime_rsd.xyz( input_pose_O2prime_rsd.atom_index( " O2'" ) );
 
 
 	for ( Size input_pose_seq_num = 1; input_pose_seq_num <= input_res_list.size(); input_pose_seq_num++ ){
@@ -653,8 +653,8 @@ StepWiseRNA_PoseSetup::get_nearest_dist_to_O2star( Size const O2star_seq_num, po
 
 		for ( Size at = 1; at <= input_pose_rsd.natoms(); at++ ){
 
-			Real const dist_to_o2star_SQ = ( input_pose_rsd.xyz( at ) - O2star_xyz ).length_squared();
-			if ( dist_to_o2star_SQ < nearest_dist_SQ ) nearest_dist_SQ = dist_to_o2star_SQ;
+			Real const dist_to_o2prime_SQ = ( input_pose_rsd.xyz( at ) - O2prime_xyz ).length_squared();
+			if ( dist_to_o2prime_SQ < nearest_dist_SQ ) nearest_dist_SQ = dist_to_o2prime_SQ;
 
 		}
 

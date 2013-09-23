@@ -409,7 +409,7 @@ void DecoySetEvaluation::compute_distance_matrix( ObjexxFCL::FArray2D_double& di
 				Real const percent_done ( 200.0 * static_cast< Real > ( count ) / ( (n_decoys() - 1) * n_decoys() ) );
 				tr.Info << count
 								<< "/" << ( n_decoys() - 1 )*( n_decoys() )/2
-								<< " ( " << ObjexxFCL::fmt::F(8,1,percent_done) << "% )"
+								<< " ( " << ObjexxFCL::format::F(8,1,percent_done) << "% )"
 								<< std::endl;
 			}
 		}
@@ -594,7 +594,7 @@ using namespace basic::options::OptionKeys;
 		}
 		char buf[300];
 		sprintf( buf, "%8.3f%8.3f%8.3f",xyz_av.x(),xyz_av.y(),xyz_av.z() );
-		std::cout << "ATOM  " << ObjexxFCL::fmt::RJ( 5, pos) << "  CA " << " ALA A " << ObjexxFCL::fmt::RJ( 3, pos) << "    " << std::setw( 3) <<
+		std::cout << "ATOM  " << ObjexxFCL::format::RJ( 5, pos) << "  CA " << " ALA A " << ObjexxFCL::format::RJ( 3, pos) << "    " << std::setw( 3) <<
 			buf << std::endl;
 
 

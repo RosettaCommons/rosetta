@@ -57,7 +57,7 @@
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 #include <protocols/antibody_legacy/Ubiquitin_E2C_Modeler.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>

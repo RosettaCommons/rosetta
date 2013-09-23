@@ -97,7 +97,7 @@ namespace ssrbrelax {
 
 	using namespace core;
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using io::pdb::dump_pdb;
 
 	typedef numeric::xyzVector < Real > Vector;

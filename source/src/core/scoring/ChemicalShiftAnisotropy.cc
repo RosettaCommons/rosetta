@@ -96,7 +96,7 @@ void ChemicalShiftAnisotropy::show(std::ostream& out) const {
 }
 
 void CSA::show(std::ostream& out) const {
-  using namespace ObjexxFCL::fmt;
+  using namespace ObjexxFCL::format;
   out << RJ(4, res1_) << RJ(5, CSAval_);
 }
 

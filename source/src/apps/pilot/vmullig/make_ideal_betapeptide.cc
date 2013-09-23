@@ -53,7 +53,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::F;
 using namespace protocols::cluster;
 
 

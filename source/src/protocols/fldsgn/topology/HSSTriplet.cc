@@ -220,7 +220,7 @@ HSSTriplet::calc_geometry( SS_Info2_COP const ssinfo )
 
 	geometry_is_initialized_ = true;
 
-//	using namespace ObjexxFCL::fmt;
+//	using namespace ObjexxFCL::format;
 //	Size number( 0 );
 //	for( int ii=1; ii<=25; ii++ ) {
 //		for( int jj=1; jj<=25; jj++ ) {

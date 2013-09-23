@@ -97,7 +97,7 @@ using std::string;
 using std::iostream;
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // Tracer instance for this file
 static basic::Tracer TR("core.io.pdb.file_data");

@@ -124,7 +124,7 @@ slow_nbget( protocols::sic_dock::xyzStripeHashPose const & xyzhash, float DIST, 
 }
 
 void dump_points_pdb(utility::vector1<Vec> & p, std::string fn) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	std::ofstream o(fn.c_str());
 	for(Size i = 1; i <= p.size(); ++i) {
 		std::string rn = "VIZ";
@@ -216,7 +216,7 @@ int main(int argc, char *argv[]) {
 	// utility_exit_with_message("FOO");
 
 	if(basic::options::option[basic::options::OptionKeys::dump_hash]()) {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		std::cout << xyzhash.grid_size() << std::endl;
 		std::cout << xyzhash.natom() << std::endl;
 		std::cout << xyzhash.xdim() << " " << xyzhash.ydim() << " " << xyzhash.zdim() << std::endl;
@@ -323,23 +323,23 @@ int main(int argc, char *argv[]) {
 					for(utility::vector1<Vec>::const_iterator j = ref.begin(); j != ref.end(); ++j){
 						if( i->distance_squared(*j) < 0.0001 ) i_in = true;
 					}
-					if(!i_in) std::cout << "TST NOT IN REF: " << ObjexxFCL::fmt::F(20,18,i->distance(rv+xyzhash.translation())) << " " << (*i) << std::endl;
+					if(!i_in) std::cout << "TST NOT IN REF: " << ObjexxFCL::format::F(20,18,i->distance(rv+xyzhash.translation())) << " " << (*i) << std::endl;
 				}
 				for(utility::vector1<Vec>::const_iterator i = ref.begin(); i != ref.end(); ++i){
 					bool i_in = false;
 					for(utility::vector1<Vec>::const_iterator j = tst.begin(); j != tst.end(); ++j){
 						if( i->distance_squared(*j) < 0.0001 ) i_in = true;
 					}
-					if(!i_in) std::cout << "REF NOT IN TST: " << ObjexxFCL::fmt::F(20,18,i->distance(rv+xyzhash.translation())) << " " << (*i) << std::endl;
+					if(!i_in) std::cout << "REF NOT IN TST: " << ObjexxFCL::format::F(20,18,i->distance(rv+xyzhash.translation())) << " " << (*i) << std::endl;
 				}
 
 
 
 
-				utility_exit_with_message("FAIL after "+ObjexxFCL::fmt::I(10,iter)+"!!!");
+				utility_exit_with_message("FAIL after "+ObjexxFCL::format::I(10,iter)+"!!!");
 			}
 	}
-	std::cout << ObjexxFCL::fmt::I(10,basic::options::option[basic::options::OptionKeys::out::nstruct]())+" nb counts of random points match. Woot! " << tot << std::endl;
+	std::cout << ObjexxFCL::format::I(10,basic::options::option[basic::options::OptionKeys::out::nstruct]())+" nb counts of random points match. Woot! " << tot << std::endl;
 	std::cout << "hash speedup over N^2 count: " << ts  /th << std::endl;
 	std::cout << "hash speedup over IFC count: " << tifc/th << std::endl;
 

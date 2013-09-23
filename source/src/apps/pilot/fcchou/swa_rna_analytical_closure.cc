@@ -191,7 +191,7 @@ OPT_KEY ( IntegerVector, rmsd_res )
 OPT_KEY ( Boolean, prepend )
 OPT_KEY ( Boolean, centroid_screen )
 OPT_KEY ( Boolean, VDW_atr_rep_screen )
-OPT_KEY ( Boolean, sampler_perform_o2star_pack )
+OPT_KEY ( Boolean, sampler_perform_o2prime_pack )
 OPT_KEY ( Boolean, fast )
 OPT_KEY ( Boolean, medium_fast )
 OPT_KEY ( Boolean, VERBOSE )
@@ -650,7 +650,7 @@ rna_resample_test() {
 	stepwise_rna_residue_sampler.set_medium_fast ( option[ medium_fast ]() );
 	stepwise_rna_residue_sampler.set_native_rmsd_screen ( option[ sampler_native_rmsd_screen ]() );
 	stepwise_rna_residue_sampler.set_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() );
-	stepwise_rna_residue_sampler.set_o2star_screen ( option[ sampler_perform_o2star_pack ]() );
+	stepwise_rna_residue_sampler.set_o2prime_screen ( option[ sampler_perform_o2prime_pack ]() );
 	stepwise_rna_residue_sampler.set_verbose ( option[ VERBOSE ]() );
 	stepwise_rna_residue_sampler.set_cluster_rmsd (	option[ sampler_cluster_rmsd ]()	);
 	stepwise_rna_residue_sampler.set_distinguish_pucker ( option[ distinguish_pucker]() );
@@ -769,7 +769,7 @@ main ( int argc, char * argv [] ) {
 	NEW_OPT ( bulge_res, "optional: residues to be turned into a bulge variant", blank_size_vector );
 	NEW_OPT ( centroid_screen, "centroid_screen", true );
 	NEW_OPT ( VDW_atr_rep_screen, "classic VDW_atr_rep_screen", true );
-	NEW_OPT ( sampler_perform_o2star_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
+	NEW_OPT ( sampler_perform_o2prime_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
 	NEW_OPT ( fast, "quick runthrough for debugging", false );
 	NEW_OPT ( medium_fast, "quick runthrough for debugging (keep more poses and not as fast as fast option)", false );
 	NEW_OPT ( VERBOSE, "VERBOSE", false );

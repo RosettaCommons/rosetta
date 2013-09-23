@@ -38,7 +38,7 @@ using basic::T;
 
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -75,7 +75,7 @@ PackStatMover::apply( pose::Pose & pose )
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace numeric;
 	using namespace utility;
 

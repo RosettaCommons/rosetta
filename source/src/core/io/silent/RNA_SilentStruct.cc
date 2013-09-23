@@ -66,7 +66,7 @@ namespace io {
 namespace silent {
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 static basic::Tracer tr("core.io.silent");
 

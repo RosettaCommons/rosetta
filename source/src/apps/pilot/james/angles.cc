@@ -76,7 +76,7 @@ int main( int argc, char* argv [] ) {
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring::constraints;
 	using namespace core::pack::dunbrack;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using core::Size;
 	using core::Real;
 	using std::string;

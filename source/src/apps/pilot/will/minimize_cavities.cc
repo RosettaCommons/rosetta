@@ -110,7 +110,7 @@ using scoring::constraints::ConstraintOP;
 using scoring::constraints::FuncOP;
 using scoring::constraints::ConstraintSetOP;
 using core::Real;
-// using namespace ObjexxFCL::fmt;
+// using namespace ObjexxFCL::format;
 
 void
 test_suck_res( std::string fname ) {

@@ -76,7 +76,7 @@
 
 using namespace core;
 using namespace core::scoring;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 static numeric::random::RandomGenerator RG( 140845 ); // <- Magic number, do not change it!!!
 

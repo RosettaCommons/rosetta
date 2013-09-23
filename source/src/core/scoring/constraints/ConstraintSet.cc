@@ -523,16 +523,16 @@ ConstraintSet::add_constraint( ConstraintCOP cst )
 
 	if ( pos_list.size() == 1 ) {
 		// intra-res
-		tr.Trace << "add intra-res constraint " << std::endl;
+		//		tr.Trace << "add intra-res constraint " << std::endl;
 		add_constraint_to_residue_constraints( pos_list[1], cst, intra_residue_constraints_ );
 	} else if ( pos_list.size() == 2 ) {
 		// rsd-pai
-		tr.Trace << "add res constraint " << std::endl;
+		//		tr.Trace << "add res constraint " << std::endl;
 		add_residue_pair_constraint( pos_list[1], pos_list[2], cst );
 		add_residue_pair_constraint( pos_list[2], pos_list[1], cst );
 	} else {
 		// 3+ body
-		tr.Trace << "add 3+body constraint " << std::endl;
+		//		tr.Trace << "add 3+body constraint " << std::endl;
 		non_residue_pair_constraints_.add_constraint( cst );
 	}
 }

@@ -104,7 +104,7 @@ namespace monte_carlo {
 		ResidueTypeSet const & rsd_set = pose.residue_type( 1 ).residue_type_set();
 
 		Size suite_num( 0 ), nucleoside_num( 0 ); // will record which new dofs added.
-		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info( pose );
 		std::string const & full_sequence  = full_model_info.full_sequence();
 
@@ -126,11 +126,10 @@ namespace monte_carlo {
 			if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
 
 				Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
-
 				Size const res_to_build_off_in_full_model_numbering = res_list[ res_to_build_off ];
 				merge_in_other_pose( pose, other_pose, res_to_build_off_in_full_model_numbering );
 
-				full_model_info.remove_other_pose_at_idx( other_pose_idx );
+				nonconst_full_model_info( pose ).remove_other_pose_at_idx( other_pose_idx );
 
 				suite_num = get_res_list_from_full_model_info( pose ).index( res_to_build_off_in_full_model_numbering );
 				nucleoside_num = 0; // don't sample sugar pucker or side chain -- that will screw up the (fixed) domain structure.
@@ -169,10 +168,9 @@ namespace monte_carlo {
 			if ( other_pose_idx ){ // addition of a domain (a whole sister pose)
 
 				Pose & other_pose = *(full_model_info.other_pose_list()[ other_pose_idx ]);
-
 				merge_in_other_pose( pose, other_pose, res_to_build_off_in_full_model_numbering - 1 /*merge_res*/ );
 
-				full_model_info.remove_other_pose_at_idx( other_pose_idx );
+				nonconst_full_model_info( pose ).remove_other_pose_at_idx( other_pose_idx );
 
 				suite_num = get_res_list_from_full_model_info( pose ).index( res_to_add_in_full_model_numbering );
 				nucleoside_num = 0; // don't sample sugar pucker or side chain -- that will screw up the (fixed) domain structure.

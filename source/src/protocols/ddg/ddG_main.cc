@@ -109,7 +109,7 @@ print_ddgs(std::string ddg_out,
   //    ddg_output << scorefxn_header[i] << " ";
   //  }
 	if(label.compare("") != 0){
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		ddg_output << "ddG: " << label << " " << F(9,3,total_ddgs) << " ";
 		for(Size m=1;m<=delta_e_components.size();m++){
 			ddg_output << F(9,3,delta_e_components[m]) << " ";

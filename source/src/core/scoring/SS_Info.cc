@@ -212,7 +212,7 @@ Strands::operator =( Strands const & s )
 std::ostream &
 operator<< ( std::ostream & out, Strands const & s )
 {
-	using ObjexxFCL::fmt::I;
+	using ObjexxFCL::format::I;
 	out << "Strands: " << s.total_strands << " strands, " << s.total_SS_dimer << " dimers.\n";
 	for ( int i=1; i<= s.total_SS_dimer; ++i ) {
 		out << "Strands: " << I(4,i) << I(4,s.SS_strand(i)) << I(4,s.SS_resnum(i)) << I(4,s.SS_dimer(s.SS_resnum(i))) <<
@@ -268,7 +268,7 @@ Helices::operator =( Helices const & h )
 std::ostream &
 operator<< ( std::ostream & out, Helices const & s )
 {
-	using ObjexxFCL::fmt::I;
+	using ObjexxFCL::format::I;
 	out << "Helices: " << s.total_HH_dimer << " dimers.\n";
 	for ( int i=1; i<= s.total_HH_dimer; ++i ) {
 		out << "Helices: " << I(4,i) << I(4,s.HH_resnum(i)) << I(4,s.HH_helix_end(1,i)+1) << "-" <<

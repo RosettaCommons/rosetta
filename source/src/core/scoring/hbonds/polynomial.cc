@@ -36,7 +36,7 @@
 #include <string>
 #include <cmath>
 
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt;
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format;
 
 namespace core {
 namespace scoring {

@@ -36,7 +36,7 @@
 #include <basic/database/open.hh>
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 // C++
@@ -206,7 +206,7 @@ MembraneEnvSmoothEnergy::residue_energy(
 
 	Real countN    =  0.0;
 	// iterate across neighbors within 12 angstroms
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	//TR << I(4,rsd.seqpos()) << std::endl;
 	for ( graph::Graph::EdgeListConstIter
 			ir  = graph.get_node( rsd.seqpos() )->const_edge_list_begin(),

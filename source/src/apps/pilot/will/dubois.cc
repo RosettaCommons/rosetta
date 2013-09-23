@@ -521,7 +521,7 @@ main( int argc, char * argv [] )
 	using namespace pose;
 	using namespace protocols;
 	using namespace moves;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using numeric::random::uniform;
 
 	devel::init(argc,argv);

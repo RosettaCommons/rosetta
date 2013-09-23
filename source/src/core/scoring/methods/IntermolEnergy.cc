@@ -87,7 +87,7 @@ IntermolEnergy::finalize_total_energy(
 
 	using namespace core::pose::full_model_info;
 	// following should be pre-calculated whenever full_model_info is setup.
-	Size const num_chains_frozen = nonconst_full_model_info_from_pose( pose ).cutpoint_open_in_full_model().size();
+	Size const num_chains_frozen = nonconst_full_model_info( pose ).cutpoint_open_in_full_model().size();
 	totals[ intermol ] = num_chains_frozen;
 
 } // finalize_total_energy

@@ -49,7 +49,7 @@
 #include <core/fragment/FrameIterator.hh>
 #include <utility/vector1.hh>
 
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt;
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format;
 
 namespace core {
 namespace fragment {
@@ -122,7 +122,7 @@ void ConstantLengthFragSet::read_fragment_file( std::string filename, Size top25
 
 void ConstantLengthFragSet::read_fragment_stream( utility::io::izstream & data, Size top25, Size ncopies, bool bAnnotation ) {
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using std::endl;
 	using std::istringstream;
 	using std::string;

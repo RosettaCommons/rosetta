@@ -80,7 +80,7 @@
 static basic::Tracer tr("core.scoring");
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace core {
 namespace scoring {

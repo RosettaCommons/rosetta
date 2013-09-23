@@ -281,7 +281,7 @@
 
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 int
 main( int argc, char * argv [] ) {

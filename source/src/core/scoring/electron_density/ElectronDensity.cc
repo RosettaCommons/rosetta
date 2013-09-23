@@ -3492,7 +3492,7 @@ void ElectronDensity::compute_rho(core::pose::Pose const & pose,
 		atm_idx_ij[1] = pos_mod (fracX[1]*grid[1] - origin[1] + 1 , (double)grid[1]);
 		atm_idx_ij[2] = pos_mod (fracX[2]*grid[2] - origin[2] + 1 , (double)grid[2]);
 
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		for (int z=1; z<=calculated_density.u3(); ++z) {
 			atm_j[2] = z;
 			del_ij[2] = (atm_idx_ij[2] - atm_j[2]) / grid[2];
@@ -3566,7 +3566,7 @@ numeric::xyzVector< double > ElectronDensity::match_fragment(
 							  ObjexxFCL::FArray3D< double > const & mask,
 							  ObjexxFCL::FArray3D< double > const & rho_obs,
 							  core::Real radius /* = 6.0 */) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	numeric::xyzVector<core::Real> box_cartX(radius, radius, radius);
 	numeric::xyzVector<core::Real> box_fracX(c2f*box_cartX);

@@ -46,7 +46,7 @@ EMapVector::show_if_nonzero_weight( std::ostream & out, EMapVector const & weigh
 	for ( int ii = 1; ii <= n_score_types; ++ii ) {
 		if ( weights[ ScoreType(ii) ] != 0.0 ) {
 			Real const val( operator[]( ScoreType(ii) ) );
-			out << ' ' << ScoreType(ii) << ": " << ObjexxFCL::fmt::F(9,3,val);
+			out << ' ' << ScoreType(ii) << ": " << ObjexxFCL::format::F(9,3,val);
 		}
 	}
 }
@@ -59,7 +59,7 @@ EMapVector::show_weighted( std::ostream & out, EMapVector const & weights ) cons
 		Real const weight( weights[ ScoreType(ii) ] );
 		if ( weight  != 0.0 ) {
 			Real const val( operator[]( ScoreType(ii) ) );
-			out << ' ' << ScoreType(ii) << ": " << ObjexxFCL::fmt::F(9,3, weight * val );
+			out << ' ' << ScoreType(ii) << ": " << ObjexxFCL::format::F(9,3, weight * val );
 		}
 	}
 }

@@ -208,7 +208,7 @@ void Boinc::update_pct_complete() {
 		std::cout << utility::timestamp() << " :: BOINC" <<
 					" :: cpu_time_pref: " << project_pref_max_cpu_run_time_ <<
 					" :: cpu_time: " << cpu_time_ <<
-					" :: fraction_done: " << ObjexxFCL::fmt::F( 7, 2, fraction_done_ ) << std::endl;
+					" :: fraction_done: " << ObjexxFCL::format::F( 7, 2, fraction_done_ ) << std::endl;
 */
 	}
 }
@@ -355,7 +355,7 @@ void Boinc::worker_shutdown() {
 
 // the validator requires this format printed to stderr upon job completion
 void Boinc::worker_finish_summary( const int & num_decoys, const int & attempted_decoys, const int & starting_structs ) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	// job distributor iterates decoy count before ending so decrement it for the
 	// actual count
 	int decoy_cnt = (num_decoys > 0) ? num_decoys-1 : num_decoys;

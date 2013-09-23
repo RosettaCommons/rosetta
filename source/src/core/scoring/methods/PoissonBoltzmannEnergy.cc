@@ -353,7 +353,7 @@ PoissonBoltzmannEnergy::revamp_weight_by_burial(
 		}
 	}
 	if (neighbor_count > 0) weight = 1./neighbor_count;
-	//using namespace ObjexxFCL::fmt;
+	//using namespace ObjexxFCL::format;
 	//TR << "PB_weight:" << I(4,rsd.seqpos()) << F(8, 3, weight) << std::endl;
 	return weight;
 }

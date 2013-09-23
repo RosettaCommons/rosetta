@@ -144,13 +144,13 @@ FrozenSidechainsMover::apply(pose::Pose& pose){
     std::ofstream dumpchi;
     dumpchi.open( name2.c_str() );
     for ( core::Size pos = 1; pos <= pose.total_residue(); pos++ ) {
-      dumpchi << fmt::I( 3, pos) << " " << ( frozen[pos] ? "FROZEN " : "ALLOWED" );
+      dumpchi << format::I( 3, pos) << " " << ( frozen[pos] ? "FROZEN " : "ALLOWED" );
       for ( core::Size chino = 1; chino <= 4; chino++ ) {
-	dumpchi << " " << fmt::RJ( 10, chino <=pose.residue_type(pos).nchi() ? pose.chi( chino, pos ) : 0.0 );
+	dumpchi << " " << format::RJ( 10, chino <=pose.residue_type(pos).nchi() ? pose.chi( chino, pos ) : 0.0 );
       }
       dumpchi << " | ";
       for ( core::Size chino = 1; chino <= 4; chino++ ) {
-	dumpchi << " " << fmt::RJ( 10, chino <=recover_sidechains_pose_.residue_type(pos).nchi() ? recover_sidechains_pose_.chi( chino, pos ) : 0.0 );
+	dumpchi << " " << format::RJ( 10, chino <=recover_sidechains_pose_.residue_type(pos).nchi() ? recover_sidechains_pose_.chi( chino, pos ) : 0.0 );
       }
       dumpchi << std::endl;
     }

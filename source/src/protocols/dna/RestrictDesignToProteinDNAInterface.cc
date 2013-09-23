@@ -46,7 +46,7 @@ using utility::string_split;
 #include <utility/vector0.hh>
 
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace dna {

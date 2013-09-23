@@ -129,7 +129,7 @@ Atom_::show() const
 void
 Atom_::show(int const & n_level) const
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	TR << "ATOM: " << atom_id_ << std::endl;
 	TR << "POSITION: " << F(8,3,x()) << F(8,3,y()) << F(8,3,z()) << std::endl;
 	TR << "   PARENT: ";

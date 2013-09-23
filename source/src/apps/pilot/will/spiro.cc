@@ -82,7 +82,7 @@
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -591,7 +591,7 @@ main( int argc, char * argv [] )
 	using namespace pose;
 	using namespace protocols;
 	using namespace moves;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using numeric::random::uniform;
 
 	devel::init(argc,argv);

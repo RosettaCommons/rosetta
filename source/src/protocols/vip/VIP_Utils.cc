@@ -51,7 +51,7 @@ core::Real output_packstat( core::pose::Pose & pose ) {
 	using namespace basic;
 	using namespace options;
 	using namespace OptionKeys;
-//	using namespace ObjexxFCL::fmt;
+//	using namespace ObjexxFCL::format;
 	using namespace numeric;
 	using namespace utility;
 /*

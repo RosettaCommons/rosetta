@@ -42,7 +42,7 @@
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 #include <ObjexxFCL/format.hh>
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 #include <basic/Tracer.hh>
 

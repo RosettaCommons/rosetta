@@ -23,7 +23,7 @@
 
 #include <basic/Tracer.hh>
 
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 
 
 namespace core{
@@ -33,7 +33,7 @@ namespace orbitals{
 basic::Tracer TR("core::chemical::orbitals::AssignOrbitals");
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 inline
 std::string

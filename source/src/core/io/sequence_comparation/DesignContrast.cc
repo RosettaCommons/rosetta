@@ -74,7 +74,7 @@ using namespace core::pose;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 using basic::T;
 using basic::Error;

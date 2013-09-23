@@ -744,7 +744,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose::datacache;
 	using namespace core::io::silent;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	//save necessary constraint in pose
   core::scoring::constraints::ConstraintSetOP save_pose_constraint_set = new core::scoring::constraints::ConstraintSet() ;
@@ -1078,7 +1078,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 		if (native_ && native_->total_residue()) {
 			gdtmm = get_gdtmm(*native_, pose, native_aln);
 			core::pose::setPoseExtraScores( pose, "GDTMM_after_stage2", gdtmm);
-			TR << "GDTMM_after_stage2" << ObjexxFCL::fmt::F(8,3,gdtmm) << std::endl;
+			TR << "GDTMM_after_stage2" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 		}
 		// get fragment history
 		runtime_assert( pose.data().has( CacheableDataType::TEMPLATE_HYBRIDIZATION_HISTORY ) );
@@ -1204,7 +1204,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 	if (native_ && native_->total_residue()) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
 		core::pose::setPoseExtraScores( pose, "GDTMM_final", gdtmm);
-		TR << "GDTMM_final" << ObjexxFCL::fmt::F(8,3,gdtmm) << std::endl;
+		TR << "GDTMM_final" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 	}
 }
 
@@ -1314,7 +1314,7 @@ HybridizeProtocol::align_by_domain(core::pose::Pose & pose, core::pose::Pose con
 			tm_align.alignment2AtomMap(pose, ref_pose, residue_list, ref_residue_list, n_mapped_residues, atom_map);
 			tm_align.alignment2strings(seq_pose, seq_ref, aligned);
 
-			using namespace ObjexxFCL::fmt;
+			using namespace ObjexxFCL::format;
 			Size norm_length = residue_list.size() < ref_residue_list.size() ? residue_list.size():ref_residue_list.size();
 			TR << "Align domain with TMscore of " << F(8,3,tm_align.TMscore(norm_length)) << std::endl;
 			TR << seq_pose << std::endl;

@@ -72,7 +72,7 @@ static basic::Tracer TR("test.core.pack.interactiongraph.hig");
 using namespace core;
 using namespace core::pack;
 using namespace core::scoring;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 
 // --------------- Test Class --------------- //

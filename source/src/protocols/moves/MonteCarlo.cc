@@ -55,7 +55,7 @@ namespace protocols {
 namespace moves {
 
 using namespace core;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 /// @details The copy constructor does not copy the OPs, but rather creates new objects using the copy
 /// constructors or the clone() methods of the objects being pointed at.  This is important, since otherwise,

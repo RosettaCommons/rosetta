@@ -363,7 +363,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		std::ofstream scorefile;
 		scorefile.open( score_log_file().c_str(), std::ios::out );
 
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		for( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ){
 			core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
 			scorefile

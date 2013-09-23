@@ -41,7 +41,7 @@ void PValuedFragmentScoreManager::describe_fragments(utility::vector1<std::pair<
 		FragmentCandidateOP, scores::FragmentScoreMapOP> > const& pairs,
 		std::ostream& out) {
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
         out << "#" << RJ(10, "query_pos ");
         out << RJ(10, "vall_pos ");

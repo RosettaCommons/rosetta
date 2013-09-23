@@ -68,7 +68,7 @@
 #include <ObjexxFCL/format.hh>
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -119,7 +119,7 @@ void RNA_Relaxer::apply( core::pose::Pose & pose	)
 
 	//COMMENT THIS OUT!!!
 	//	rna_minimizer_->use_coordinate_constraints( false );
-	//rna_minimizer_->skip_o2star_trials( true );
+	//rna_minimizer_->skip_o2prime_trials( true );
 
 	time_t pdb_start_time = time(NULL);
 

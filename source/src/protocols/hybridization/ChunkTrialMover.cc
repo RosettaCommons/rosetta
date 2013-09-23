@@ -141,7 +141,7 @@ ChunkTrialMover::get_alignment_from_chunk_mapping(std::map <core::Size, core::Si
 		Size respos_mid_template = (template_ss_chunks[j_chunk_template].start() + template_ss_chunks[j_chunk_template].stop()) / 2;
 		int offset = respos_mid_template - respos_mid_pose;
 
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		if (target_ss_chunks[i_chunk_pose].length() <= template_ss_chunks[j_chunk_template].length()) {
 			max_registry_shift_[i_chunk_pose] = max_registry_shift_input_ + template_ss_chunks[j_chunk_template].length() - target_ss_chunks[i_chunk_pose].length();
 			for (Size ires=target_ss_chunks[i_chunk_pose].start(); ires<=target_ss_chunks[i_chunk_pose].stop(); ++ires) {

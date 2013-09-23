@@ -82,7 +82,7 @@ using namespace core;
 using namespace conformation;
 using namespace chemical;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // file-scope -- prob bad
 static basic::Tracer tt( "devel.dna.protocols", basic::t_info );
@@ -319,7 +319,7 @@ packing_specificity_test_fast(
 			packed_seq += pose.residue( motif_positions[i] ).name1();
 		}
 
-		tt << "packed_score: " << packed_seq << ' ' << nat_seq << ' ' << ObjexxFCL::fmt::F(9,3,pack_score);
+		tt << "packed_score: " << packed_seq << ' ' << nat_seq << ' ' << ObjexxFCL::format::F(9,3,pack_score);
 
 		// calculate frequency correct at each position
 		Real total_correct(0.0);
@@ -329,12 +329,12 @@ packing_specificity_test_fast(
 				correct += ( results[n].second[ motif_positions[i]-1 ] == nat_seq[i-1] );
 			}
 			correct /= results.size();
-			tt << ObjexxFCL::fmt::F(6,3,correct);
+			tt << ObjexxFCL::format::F(6,3,correct);
 			total_correct += correct;
 		}
 		total_correct /= motif_positions.size();
 
-		tt << " total_correct= " << ObjexxFCL::fmt::F(6,3,total_correct) << ' ' << output_tag << std::endl <<
+		tt << " total_correct= " << ObjexxFCL::format::F(6,3,total_correct) << ' ' << output_tag << std::endl <<
 			"packed_terms: " << output_tag << ' ' << pose.energies().total_energies().show_nonzero() << std::endl;
 
 		if ( dump_pdbs ) io::pdb::dump_pdb( pose, output_tag+"_"+packed_seq+"_"+nat_seq+".pdb" );

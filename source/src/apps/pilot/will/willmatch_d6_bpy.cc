@@ -560,7 +560,7 @@ void run() {
     TR << "matching res, size " << scanres.size() << std::endl;
     //#pragma omp parallel for
     for ( Size ii = 1; ii <= scanres.size(); ++ii ) {
-      if(count%10==0) TR << ObjexxFCL::fmt::I(4,ii) << "/" << scanres.size() << std::endl;
+      if(count%10==0) TR << ObjexxFCL::format::I(4,ii) << "/" << scanres.size() << std::endl;
       vector1<Vec> foundcenbg,foundori1bg,foundori2bg,foundori3bg,foundori4bg,foundori5bg,foundori6bg;
       vector1<Vec> foundcensg,foundori1sg,foundori2sg,foundori3sg,foundori4sg,foundori5sg,foundori6sg;
       //Size brsd = *biter;
@@ -1006,9 +1006,9 @@ void run() {
                                   sfd.write_silent_struct( *ss_out_all, option[out::file::o]()+"/"+option[ out::file::silent ]() );
 
                                   utility::io::ozstream otmp(option[out::file::o]()+"/"+outfname);
-                                  otmp << "REMARK 666 MATCH TEMPLATE A BPY "+ObjexxFCL::fmt::I(4,brsd)+" MATCH MOTIF A HIS "+ObjexxFCL::fmt::I(4,irsd)+"  1  1" << std::endl;
-                                  otmp << "REMARK 666 MATCH TEMPLATE A BPY "+ObjexxFCL::fmt::I(4,brsd)+" MATCH MOTIF A HIS "+ObjexxFCL::fmt::I(4,jrsd)+"  2  1" << std::endl;
-                                  otmp << "REMARK 666 MATCH TEMPLATE A BPY "+ObjexxFCL::fmt::I(4,brsd)+" MATCH MOTIF A GLU "+ObjexxFCL::fmt::I(4,ersd)+"  3  1" << std::endl;
+                                  otmp << "REMARK 666 MATCH TEMPLATE A BPY "+ObjexxFCL::format::I(4,brsd)+" MATCH MOTIF A HIS "+ObjexxFCL::format::I(4,irsd)+"  1  1" << std::endl;
+                                  otmp << "REMARK 666 MATCH TEMPLATE A BPY "+ObjexxFCL::format::I(4,brsd)+" MATCH MOTIF A HIS "+ObjexxFCL::format::I(4,jrsd)+"  2  1" << std::endl;
+                                  otmp << "REMARK 666 MATCH TEMPLATE A BPY "+ObjexxFCL::format::I(4,brsd)+" MATCH MOTIF A GLU "+ObjexxFCL::format::I(4,ersd)+"  3  1" << std::endl;
                                   opose.dump_pdb(otmp);
                                   otmp.close();
 

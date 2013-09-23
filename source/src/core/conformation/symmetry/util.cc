@@ -588,7 +588,7 @@ set_fold_tree_from_symm_data(
 		using std::string;
 		using std::pair;
 		using std::make_pair;
-		using ObjexxFCL::fmt::I;
+		using ObjexxFCL::format::I;
 
 		Size num_jumps_subunit( f_orig.num_jump() + 1 - symmdata.get_num_components() );
 
@@ -1092,7 +1092,7 @@ show_foldtree(
 	}
 
 	// for(Size i = 1; i <= symm_conf.fold_tree().num_jump(); ++i){
-	// 	using ObjexxFCL::fmt::I;
+	// 	using ObjexxFCL::format::I;
 	// 	Size up = symm_conf.fold_tree().upstream_jump_residue(i);
 	// 	Size dn = symm_conf.fold_tree().downstream_jump_residue(i);
 	// 	TR << "JUMP " << I(3,i) << " " << I(4,up) << " -> " << I(4,dn)

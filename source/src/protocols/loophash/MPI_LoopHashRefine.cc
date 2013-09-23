@@ -66,7 +66,7 @@
 #include <utility/vector1.hh>
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace loophash {

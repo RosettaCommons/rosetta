@@ -67,14 +67,14 @@ using namespace core;
 
 void PeakFileFormat_xpk::write_peak( std::ostream& os, Size ct, CrossPeak const& cp ) const {
   std::ostringstream line_end;
-  line_end << " #d " << ObjexxFCL::fmt::F( 6, 3, cp.distance_bound() );
+  line_end << " #d " << ObjexxFCL::format::F( 6, 3, cp.distance_bound() );
   if ( cp.eliminated( false /*recompute*/, true /*do_not_compute*/) ) line_end << " #eliminated: " << cp.elimination_reason();
 
 
   // cp.write_to_stream( os );
   write_assignments( os, cp, "" );
   write_resonances( os, cp );
-  os << "# Peak " << ObjexxFCL::fmt::RJ( 6, ct ) << " ";
+  os << "# Peak " << ObjexxFCL::format::RJ( 6, ct ) << " ";
   //  write_strength( os, cp );
 
   os << line_end.str();
@@ -126,13 +126,13 @@ void PeakFileFormat_xpk::write_header( std::ostream& ) {}
 //       runtime_assert( cp.has_label( iproton ) );
 //       val = cp.label( iproton ).freq();
 //     }
-//     os << ObjexxFCL::fmt::F( 8, 3, val ) << " ";
+//     os << ObjexxFCL::format::F( 8, 3, val ) << " ";
 //   }
 // }
 
 
 // void PeakFileFormat_xpk::write_strength( std::ostream& os, CrossPeak const& cp ) const {
-//   os << ObjexxFCL::fmt::E( 10, 3, cp.volume() ) << " " << ObjexxFCL::fmt::E( 10, 3, 0.0 ) << " ";
+//   os << ObjexxFCL::format::E( 10, 3, cp.volume() ) << " " << ObjexxFCL::format::E( 10, 3, 0.0 ) << " ";
 // }
 
 void PeakFileFormat_xpk::write_assignment_indent( std::ostream& os, CrossPeak const&) const {
@@ -141,7 +141,7 @@ void PeakFileFormat_xpk::write_assignment_indent( std::ostream& os, CrossPeak co
 }
 
 void PeakFileFormat_xpk::write_nil_assignment( std::ostream& os ) const {
-  os << ObjexxFCL::fmt::RJ( 25, "?-?-?" ) << " ";
+  os << ObjexxFCL::format::RJ( 25, "?-?-?" ) << " ";
 }
 
 void PeakFileFormat_xpk::write_assignment( std::ostream& os, PeakAssignment const& pa ) const {
@@ -166,11 +166,11 @@ void PeakFileFormat_xpk::write_assignment( std::ostream& os, PeakAssignment cons
       else {
 	val = pa.label_resonance_id( iproton );
       }
-      buf << ObjexxFCL::fmt::RJ( 6, val );
+      buf << ObjexxFCL::format::RJ( 6, val );
     }
     if ( icol < ncol() ) buf << "-";
   }
-  os << ObjexxFCL::fmt::RJ( 25, buf.str() ) << " ";
+  os << ObjexxFCL::format::RJ( 25, buf.str() ) << " ";
 }
 
 

@@ -45,7 +45,7 @@ static basic::Tracer TR("protocols.optimize_weights.OptEData");
 
 using namespace core;
 using namespace scoring;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace optimize_weights {

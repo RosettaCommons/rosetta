@@ -30,7 +30,7 @@ namespace chemical {
 namespace rna{
 
 ///////////////////////////////////////////////////////////////////////////////
-enum __BaseEdge__ {X, WATSON_CRICK, HOOGSTEEN, SUGAR, O2STAR, PHOSPHATE };
+enum __BaseEdge__ {X, WATSON_CRICK, HOOGSTEEN, SUGAR, O2PRIME, PHOSPHATE };
 enum __RNA_Torsion__ {WHATEVER, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU2, NU1, O2H};
 enum __ChiState__ {ANTI=1, SYN, NONE}; //ChiState and PuckerState shares the WHATEVER enum with Torsion
 enum __PuckerState__ {NORTH=1, SOUTH};

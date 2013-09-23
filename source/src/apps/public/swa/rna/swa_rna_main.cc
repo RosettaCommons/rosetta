@@ -217,7 +217,7 @@ OPT_KEY( IntegerVector, rmsd_res )
 OPT_KEY( Boolean, centroid_screen )
 OPT_KEY( Boolean, allow_base_pair_only_centroid_screen )
 OPT_KEY( Boolean, VDW_atr_rep_screen )
-OPT_KEY( Boolean, sampler_perform_o2star_pack )
+OPT_KEY( Boolean, sampler_perform_o2prime_pack )
 OPT_KEY( Boolean, allow_bulge_at_chainbreak )
 OPT_KEY( Boolean, VERBOSE )
 OPT_KEY( Boolean, sampler_native_rmsd_screen )
@@ -234,8 +234,8 @@ OPT_KEY( Boolean, allow_chain_boundary_jump_partner_right_at_fixed_BP )
 OPT_KEY( Boolean, allow_fixed_res_at_moving_res )
 OPT_KEY( Boolean, clusterer_rename_tags )
 OPT_KEY( Boolean, simple_append_map )
-OPT_KEY( Boolean, minimizer_perform_o2star_pack )
-OPT_KEY( Boolean, minimizer_output_before_o2star_pack )
+OPT_KEY( Boolean, minimizer_perform_o2prime_pack )
+OPT_KEY( Boolean, minimizer_output_before_o2prime_pack )
 OPT_KEY( Boolean, minimizer_rename_tag )
 OPT_KEY( Boolean, minimizer_perform_minimize )
 OPT_KEY( StringVector, 	VDW_rep_delete_matching_res )
@@ -1292,7 +1292,7 @@ swa_rna_sample()
 		// following should probably be 'reference pose',  does not have to be native.
 		stepwise_rna_modeler.set_sampler_native_rmsd_screen ( option[ sampler_native_rmsd_screen ]() );
 		stepwise_rna_modeler.set_sampler_native_screen_rmsd_cutoff ( option[ sampler_native_screen_rmsd_cutoff ]() );
-		stepwise_rna_modeler.set_o2star_screen ( option[ sampler_perform_o2star_pack ]() );
+		stepwise_rna_modeler.set_o2prime_screen ( option[ sampler_perform_o2prime_pack ]() );
 		stepwise_rna_modeler.set_verbose ( option[ VERBOSE ]() );
 		stepwise_rna_modeler.set_cluster_rmsd (	option[ sampler_cluster_rmsd ]()	);
 		stepwise_rna_modeler.set_distinguish_pucker ( option[ distinguish_pucker]() );
@@ -1336,8 +1336,8 @@ swa_rna_sample()
 		stepwise_rna_modeler.set_sampler_assert_no_virt_ribose_sampling( option[ sampler_assert_no_virt_ribose_sampling ]() );
 		stepwise_rna_modeler.set_allow_base_pair_only_centroid_screen( option[ allow_base_pair_only_centroid_screen ]() );
 
-		stepwise_rna_modeler.set_minimizer_perform_o2star_pack( option[ minimizer_perform_o2star_pack ]() );
-		stepwise_rna_modeler.set_minimizer_output_before_o2star_pack( option[ minimizer_output_before_o2star_pack ]() );
+		stepwise_rna_modeler.set_minimizer_perform_o2prime_pack( option[ minimizer_perform_o2prime_pack ]() );
+		stepwise_rna_modeler.set_minimizer_output_before_o2prime_pack( option[ minimizer_output_before_o2prime_pack ]() );
 		stepwise_rna_modeler.set_minimizer_rename_tag( option[ minimizer_rename_tag ]() );
 
 		// in traditional swa, this creates silent file
@@ -2010,7 +2010,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( centroid_screen, "centroid_screen", true );
 	NEW_OPT( allow_base_pair_only_centroid_screen, "allow_base_pair_only_centroid_screen", false ); //This only effect floating base sampling + dinucleotide.. deprecate option
 	NEW_OPT( VDW_atr_rep_screen, "classic VDW_atr_rep_screen", true );
-	NEW_OPT( sampler_perform_o2star_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
+	NEW_OPT( sampler_perform_o2prime_pack, "perform O2' hydrogen packing inside StepWiseRNA_ResidueSampler", true );
 	NEW_OPT( allow_bulge_at_chainbreak, "Allow sampler to replace chainbreak res with virtual_rna_variant if it looks have bad fa_atr score.", true );
 	NEW_OPT( erraser, "Use KIC sampling", false );
 
@@ -2018,8 +2018,8 @@ main( int argc, char * argv [] )
 	NEW_OPT( minimize_and_score_native_pose, "minimize_and_score_native_pose ", false ); //Sept 15, 2010
 	NEW_OPT( minimize_and_score_sugar, "minimize and sugar torsion + angle? and include the rna_sugar_close_score_term ", true ); //Sept 15, 2010
 	NEW_OPT( minimizer_perform_minimize, "minimizer_perform_minimize", true );
-	NEW_OPT( minimizer_output_before_o2star_pack, "minimizer_output_before_o2star_pack", false );
-	NEW_OPT( minimizer_perform_o2star_pack, "perform O2' hydrogen packing inside StepWiseRNA_Minimizer", true ); //Jan 19, 2012
+	NEW_OPT( minimizer_output_before_o2prime_pack, "minimizer_output_before_o2prime_pack", false );
+	NEW_OPT( minimizer_perform_o2prime_pack, "perform O2' hydrogen packing inside StepWiseRNA_Minimizer", true ); //Jan 19, 2012
 	NEW_OPT( minimizer_rename_tag, "Reorder and rename the tag by the energy_score", true ); //March 15, 2012
 	NEW_OPT( native_edensity_score_cutoff, "native_edensity_score_cutoff", -1.0 ); //Fang's electron density code
 

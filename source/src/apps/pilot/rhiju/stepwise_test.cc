@@ -258,7 +258,7 @@ sample_rama_test()
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::io::silent;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace core::options;
 	using namespace core::options::OptionKeys;
 	using namespace protocols::swa::protein;

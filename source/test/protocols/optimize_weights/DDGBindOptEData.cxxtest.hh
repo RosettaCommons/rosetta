@@ -184,7 +184,7 @@ public:
 		}
 
 		TR << "vars: ";
-		for ( core::Size ii = 1; ii <= dofs.size(); ++ii) { TR << ObjexxFCL::fmt::F( 6,3,dofs[ii] ) << ", "; }
+		for ( core::Size ii = 1; ii <= dofs.size(); ++ii) { TR << ObjexxFCL::format::F( 6,3,dofs[ii] ) << ", "; }
 		TR << "]" << std::endl;
 
 		TR << "making component weights file" << std::endl;

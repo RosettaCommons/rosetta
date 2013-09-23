@@ -84,7 +84,7 @@ public:
     
 		
 		using protocols::toolbox::task_operations::RestrictToCDRH3Loop;
-		//using namespace ObjexxFCL::fmt;
+		//using namespace ObjexxFCL::format;
 
 		TR << "Running test_RestrictNonSurfaceToRepackingOperation..." << std::endl;
 

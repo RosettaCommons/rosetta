@@ -39,7 +39,7 @@
 #include <iostream>
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 static basic::Tracer TR("core.kinematics.FoldTree");
 

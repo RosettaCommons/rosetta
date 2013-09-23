@@ -1615,7 +1615,7 @@ SecondaryStructurePotential::load_phi_theta_bins(
 	std::string const & ss_filename
 )
 {
-	using ObjexxFCL::fmt::skip;
+	using ObjexxFCL::format::skip;
 
 	// local
 	int isep,iph,itheta,idot;

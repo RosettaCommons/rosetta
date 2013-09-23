@@ -44,7 +44,7 @@ namespace simple_filters {
 
 using namespace core;
 using namespace core::scoring;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 static basic::Tracer TR( "protocols.simple_filters.ResidueSetChainEnergyFilter" );
 

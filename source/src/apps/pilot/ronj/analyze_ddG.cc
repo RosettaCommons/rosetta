@@ -76,7 +76,7 @@ using namespace core;
 using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // application specific options
 namespace analyze_ddG_stability {
@@ -143,7 +143,7 @@ void print_energies( scoring::EnergyMap e, scoring::ScoreFunctionOP scorefxn ) {
 		case scoring::p_aa_pp:
 		case scoring::ref:
 		case scoring::hpatch:
-			std::cout << scoring::ScoreType(jj) << ": " << ObjexxFCL::fmt::F(7,2, weight * e[ scoring::ScoreType(jj) ] ) << ", ";
+			std::cout << scoring::ScoreType(jj) << ": " << ObjexxFCL::format::F(7,2, weight * e[ scoring::ScoreType(jj) ] ) << ", ";
 			break;
 		default:
 			break;

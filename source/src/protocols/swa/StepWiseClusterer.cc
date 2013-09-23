@@ -334,7 +334,7 @@ namespace swa {
 		for ( Size n = 1 ; n <= silent_struct_output_list_.size(); n++ ) {
 
 			SilentStructOP & s( silent_struct_output_list_[ n ] );
-			s->add_string_value( "nclust", ObjexxFCL::fmt::I(8,num_pose_in_cluster_[ n ]) );
+			s->add_string_value( "nclust", ObjexxFCL::format::I(8,num_pose_in_cluster_[ n ]) );
 
 			if ( rename_tags_ ){
 				s->add_comment( "PARENT_TAG", s->decoy_tag() );

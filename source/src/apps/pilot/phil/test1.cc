@@ -168,7 +168,7 @@ using namespace optimization;
 using utility::vector1;
 using std::string;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using core::import_pose::pose_from_pdb;
 using io::pdb::dump_pdb; // deprecated though
 basic::Tracer tt( "demo.phil.test1", basic::t_trace );

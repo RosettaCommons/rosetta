@@ -194,13 +194,13 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 		if(  !lrec->empty() ) active_lr_e.push_back( lrec );
 	}
 
-	ostr << "\nResResE " <<  ObjexxFCL::fmt::A( field_width, "Res1" ) << " " << ObjexxFCL::fmt::A(field_width, "Res2") << " ";
-	for( core::Size i =1; i <= active_st.size(); ++i) ostr << ObjexxFCL::fmt::A( field_width , name_from_score_type( active_st[i] ) ) << " ";
-	ostr << ObjexxFCL::fmt::A( field_width , "total" )<< " \n";
+	ostr << "\nResResE " <<  ObjexxFCL::format::A( field_width, "Res1" ) << " " << ObjexxFCL::format::A(field_width, "Res2") << " ";
+	for( core::Size i =1; i <= active_st.size(); ++i) ostr << ObjexxFCL::format::A( field_width , name_from_score_type( active_st[i] ) ) << " ";
+	ostr << ObjexxFCL::format::A( field_width , "total" )<< " \n";
 
-	ostr << "ResResE " << ObjexxFCL::fmt::A( field_width, "nonzero" ) << " " << ObjexxFCL::fmt::A( field_width, "weights" ) << " ";
-	for( core::Size i =1; i <= active_st.size(); ++i) ostr << ObjexxFCL::fmt::F( field_width, 2, weights[ active_st[ i ] ] ) << " ";
-	ostr << ObjexxFCL::fmt::A( field_width , "NA" ) << "\n";
+	ostr << "ResResE " << ObjexxFCL::format::A( field_width, "nonzero" ) << " " << ObjexxFCL::format::A( field_width, "weights" ) << " ";
+	for( core::Size i =1; i <= active_st.size(); ++i) ostr << ObjexxFCL::format::F( field_width, 2, weights[ active_st[ i ] ] ) << " ";
+	ostr << ObjexxFCL::format::A( field_width , "NA" ) << "\n";
 
 	EnergyGraph const & egraph( pose.energies().energy_graph() );
 
@@ -238,14 +238,14 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 			core::Size res2 = map_it->first;
 			EnergyMap const & this_emap( map_it->second );
 			std::string res2name( pose.residue_type( res2 ).name1() + utility::to_string( res2 ) );
-			ostr << "ResResE " << ObjexxFCL::fmt::A( field_width, res1name ) << " " << ObjexxFCL::fmt::A( field_width, res2name ) << " ";
+			ostr << "ResResE " << ObjexxFCL::format::A( field_width, res1name ) << " " << ObjexxFCL::format::A( field_width, res2name ) << " ";
 			core::Real totscore(0.0);
 			for( core::Size i =1; i <=  active_st.size(); ++i){
 				core::Real score(  weights[ active_st[i] ] * this_emap[ active_st[i] ] );
 				totscore += score;
-				ostr << ObjexxFCL::fmt::F( field_width, 2, score) << " ";
+				ostr << ObjexxFCL::format::F( field_width, 2, score) << " ";
 			}
-			ostr << ObjexxFCL::fmt::F( field_width, 2, totscore) << "\n";
+			ostr << ObjexxFCL::format::F( field_width, 2, totscore) << "\n";
 		}
 	} //loop over all residues
 

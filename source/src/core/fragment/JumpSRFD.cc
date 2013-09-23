@@ -48,7 +48,7 @@
 namespace core {
 namespace fragment {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 static basic::Tracer tr("core.fragment.JumpSRFD");
 using namespace core::id;

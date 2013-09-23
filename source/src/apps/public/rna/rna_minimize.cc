@@ -37,6 +37,7 @@
 //RNA stuff.
 #include <protocols/rna/RNA_Minimizer.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/swa/StepWiseUtil.hh> // for other_pose.
 #include <protocols/toolbox/AllowInsert.hh>
 
 // C++ headers
@@ -47,6 +48,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 
 #include <utility/excn/Exceptions.hh>
 
@@ -73,8 +75,10 @@ rna_fullatom_minimize_test()
 	using namespace core::kinematics;
 	using namespace core::io::silent;
 	using namespace core::import_pose::pose_stream;
+	using namespace core::pose::full_model_info;
 	using namespace protocols::toolbox;
 	using namespace protocols::rna;
+	using namespace protocols::swa;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
@@ -100,7 +104,7 @@ rna_fullatom_minimize_test()
 	if ( option[ in::file::native ].user() ) {
 		std::string native_pdb_file  = option[ in::file::native ];
 		core::import_pose::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
-		protocols::rna::ensure_phosphate_nomenclature_matches_mini( native_pose );
+		cleanup( native_pose );
 		native_exists = true;
 	}
 
@@ -108,12 +112,16 @@ rna_fullatom_minimize_test()
 	protocols::rna::RNA_Minimizer rna_minimizer;
 	rna_minimizer.deriv_check( option[ OptionKeys::rna::deriv_check ]() );
 	rna_minimizer.use_coordinate_constraints( !option[ OptionKeys::rna::skip_coord_constraints]() );
-	rna_minimizer.skip_o2star_trials( option[ OptionKeys::rna::skip_o2star_trials] );
+	rna_minimizer.skip_o2prime_trials( option[ OptionKeys::rna::skip_o2prime_trials] );
 	rna_minimizer.vary_bond_geometry( option[ OptionKeys::rna::vary_geometry ] );
 
 	// Silent file output setup
 	std::string const silent_file = option[ out::file::silent  ]();
 	SilentFileData silent_file_data;
+
+	// other poses -- for scoring collections of poses connected by (virtual) loops, using full_model_info.
+	utility::vector1< pose::PoseOP > other_poses;
+	if ( option[ full_model::other_poses ].user() ) get_other_poses( other_poses, option[ full_model::other_poses ](), rsd_set );
 
 	pose::Pose pose,start_pose;
 
@@ -124,10 +132,8 @@ rna_fullatom_minimize_test()
 		input->fill_pose( pose, *rsd_set );
 		i++;
 
-		ensure_phosphate_nomenclature_matches_mini( pose );
-		core::pose::full_model_info::fill_full_model_info_from_command_line( pose ); // only does something if -in:file:fasta specified.
-		figure_out_reasonable_rna_fold_tree( pose );
-		virtualize_5prime_phosphates( pose );
+		cleanup( pose );
+		fill_full_model_info_from_command_line( pose, other_poses ); // only does something if -in:file:fasta specified.
 
 		std::cout << pose.fold_tree() << std::endl;
 
@@ -201,7 +207,7 @@ try {
 
 	option.add_relevant( OptionKeys::rna::vary_geometry );
 	option.add_relevant( OptionKeys::rna::skip_coord_constraints );
-	option.add_relevant( OptionKeys::rna::skip_o2star_trials );
+	option.add_relevant( OptionKeys::rna::skip_o2prime_trials );
 	option.add_relevant( OptionKeys::rna::deriv_check );
 	option.add_relevant( in::file::minimize_res );
 

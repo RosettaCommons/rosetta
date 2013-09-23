@@ -94,8 +94,8 @@ static std::string const chr_chains("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$&.<
 	using numeric::rotation_matrix_degrees;
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
-	using ObjexxFCL::fmt::F;
-	using ObjexxFCL::fmt::I;
+	using ObjexxFCL::format::F;
+	using ObjexxFCL::format::I;
 	using ObjexxFCL::string_of;
 	using std::cerr;
 	using std::cout;
@@ -316,7 +316,7 @@ struct HelixHit{
 	}
 };
 ostream & operator<<(ostream & out, HelixHit const & h){
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	out<<h.pdb<<" "
 	   <<h.pdbchain<<" "
 	   <<I(5,h.pdbres)<<" "

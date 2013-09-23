@@ -69,7 +69,7 @@ PairEPotential::PairEPotential() :
 	int aa1, aa2, e1, e2, r12_bin;
 	TableProbability pair_probability;
 	while ( stream ) {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		stream
 			>> bite( 2, aa1 ) >> skip( 1 )
 			>> bite( 2, aa2 ) >> skip( 1 )

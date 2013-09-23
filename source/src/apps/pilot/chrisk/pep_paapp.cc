@@ -164,7 +164,7 @@
 using namespace core;
 using namespace protocols;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 //using namespace protocols;
 
 using utility::vector1;
@@ -317,7 +317,7 @@ has_clash(
 	using namespace scoring;
 	using namespace chemical;
 
-	using namespace ObjexxFCL::fmt; // I and F
+	using namespace ObjexxFCL::format; // I and F
 
 	bool is_clash( false );
 	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){

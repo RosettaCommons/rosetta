@@ -160,7 +160,7 @@ void IAMover::assign_IA_mover(devel::anchored_design::InterfaceAnalyzerMoverOP &
 ///begin apply
 void IAMover::apply( core::pose::Pose & pose ) {
 	using namespace std;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
   //get filename and some info
   utility::file::FileName filename = pose.pdb_info()->name();
 	string pdbname( filename.base() );

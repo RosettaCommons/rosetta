@@ -201,7 +201,7 @@ PB::load_potential(const double grid_meta[],
 	int icol=0;
 	int u;
 	int lines = 0;
-	//using namespace ObjexxFCL::fmt;
+	//using namespace ObjexxFCL::format;
 	//std::ofstream ofs(dx_filename_.c_str());
 	//ofs << "object 1 class gridpositions counts " << nx << " " << ny << " " << nz << std::endl;
 	//ofs << "origin " << lower_bound_[0] << " " << lower_bound_[1] << " " << lower_bound_[2] << std::endl;
@@ -401,7 +401,7 @@ PB::write_pqr( core::pose::Pose const & pose,
 			char const chain( chr_chains[ (rsd.chain()-1)%chr_chains.size() ] );
 			//			char const chain( chains[ rsd.chain() ] );
 			if (residue_charged) {
-				using namespace ObjexxFCL::fmt;
+				using namespace ObjexxFCL::format;
 				pqr_ostr << "ATOM  " << I(5,number) << ' ' << rsd.atom_name(j) << ' ' <<
 				rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
 				F(8,3,atom.xyz()(1)) <<
@@ -411,7 +411,7 @@ PB::write_pqr( core::pose::Pose const & pose,
 				F(8,3,rsd.atom_type(j).lj_radius()) << '\n';
 			}
 			else {
-				using namespace ObjexxFCL::fmt;
+				using namespace ObjexxFCL::format;
 				pqr_ostr << "ATOM  " << I(5,number) << ' ' << rsd.atom_name(j) << ' ' <<
 				rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
 				F(8,3,atom.xyz()(1)) <<
@@ -463,7 +463,7 @@ PB::write_config (core::pose::Pose const & pose) const {
 	numeric::xyzVector <core::Real> dimension_coarse = length * cfac;
 	numeric::xyzVector <core::Size> n_grid = static_cast< numeric::xyzVector <core::Size> > (dimension_fine / space + numeric::xyzVector <core::Real> (1.,1.,1.));
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	config_ostr << "#" << std::endl;
 	config_ostr << "# Note that most of the comments here were taken from sample" << std::endl;
 	config_ostr << "# input files that came with APBS.  You can find APBS at" << std::endl;

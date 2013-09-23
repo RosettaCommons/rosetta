@@ -174,7 +174,7 @@ main (int argc, char *argv[])
     vector1<Size> subs(6,0);
     for(vector1<Size>::iterator i = resis.begin(); i != resis.end(); ++i) {
       ++subs[ (*i-1)/nsub+1 ];
-      out << ObjexxFCL::fmt::I(4,(*i-1)%nsub+1) << " A PIKAA " << p.residue(*i).name1() << std::endl;
+      out << ObjexxFCL::format::I(4,(*i-1)%nsub+1) << " A PIKAA " << p.residue(*i).name1() << std::endl;
     }
     out.close();
 

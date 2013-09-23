@@ -62,7 +62,7 @@ namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -1287,7 +1287,7 @@ void output_packstat_pdb( core::pose::Pose & pose, std::ostream & out ) {
  	using namespace std;
 	using namespace core;
 	using namespace basic::options;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace numeric;
 	using namespace utility;
 

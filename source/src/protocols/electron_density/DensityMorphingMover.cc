@@ -181,7 +181,7 @@ void DensityMorphingMover::apply(core::pose::Pose & pose) {
 			numeric::xyzVector < double > cst_pos (pose.residue(ires).xyz(iatom)+best_pos);
 			using namespace core::scoring::constraints;
 			using core::id::AtomID;
-			using namespace ObjexxFCL::fmt;
+			using namespace ObjexxFCL::format;
 
 			pose.add_constraint( new CoordinateConstraint(
 														  AtomID(iatom,ires), best_anchor, pose.residue(ires).xyz(iatom),

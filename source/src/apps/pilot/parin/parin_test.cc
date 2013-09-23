@@ -553,7 +553,7 @@ remove_all_variant_types(pose::Pose & pose){
 
 	for ( Size n = 1; n <= pose.total_residue(); n++  ) {
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_PHOSPHATE", n );
-		remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", n );
+		remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", n );
 		remove_variant_type_from_pose_residue( pose, "CUTPOINT_LOWER", n );
 		remove_variant_type_from_pose_residue( pose, "CUTPOINT_UPPER", n );
 		remove_variant_type_from_pose_residue( pose, "VIRTUAL_RNA_RESIDUE", n );
@@ -1025,7 +1025,7 @@ hermann_phase_two_minimize(){
 
 			for ( Size n = 1; n <= full_pose.total_residue(); n++  ) {
 				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_PHOSPHATE", n );
-				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_O2STAR_HYDROGEN", n );
+				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_O2PRIME_HYDROGEN", n );
 				remove_variant_type_from_pose_residue( full_pose, "CUTPOINT_LOWER", n );
 				remove_variant_type_from_pose_residue( full_pose, "CUTPOINT_UPPER", n );
 				remove_variant_type_from_pose_residue( full_pose, "VIRTUAL_RNA_RESIDUE", n );
@@ -1134,7 +1134,7 @@ hermann_phase_two_minimize(){
 					minimizer.run( full_pose, mm, *(scorefxn_list[round_ID]), options );		
 				//}
 
-				o2star_minimize(full_pose, scorefxn_list[round_ID], get_surrounding_O2star_hydrogen(full_pose, minimize_res_list, verbose) );
+				o2prime_minimize(full_pose, scorefxn_list[round_ID], get_surrounding_O2prime_hydrogen(full_pose, minimize_res_list, verbose) );
 
 				for(Size cc_ID=1; cc_ID<=cutpoint_closed_list.size(); cc_ID++){
 
@@ -1144,7 +1144,7 @@ hermann_phase_two_minimize(){
 					std::cout << "mean_dist_err for cutpoint_closed ("<< cutpoint_closed <<", round_ID= " << round_ID << " ) = " <<  mean_dist_err << std::endl;
 				}
 
-				o2star_minimize(full_pose, scorefxn_list[round_ID], get_surrounding_O2star_hydrogen(full_pose, minimize_res_list, verbose) ); 
+				o2prime_minimize(full_pose, scorefxn_list[round_ID], get_surrounding_O2prime_hydrogen(full_pose, minimize_res_list, verbose) ); 
 				minimizer.run( full_pose, mm, *(scorefxn_list[round_ID]), options );
 
 			}			
@@ -2064,17 +2064,17 @@ extract_hydrogen_bonds_statistic(){
 
 		if(hbond_type=="BASE-BASE" || hbond_type=="BASE-BASE" ) hbond_count.base_base++;
 		
-		if(hbond_type=="BASE-2*OH" || hbond_type=="2*OH-BASE" ) hbond_count.base_O2star++;
+		if(hbond_type=="BASE-2*OH" || hbond_type=="2*OH-BASE" ) hbond_count.base_O2prime++;
 
-		if(hbond_type=="BASE-O4'*" || hbond_type=="O4'*-BASE" ) hbond_count.base_O4star++;
+		if(hbond_type=="BASE-O4'*" || hbond_type=="O4'*-BASE" ) hbond_count.base_O4prime++;
 
 		if(hbond_type=="BASE-PHOS" || hbond_type=="PHOS-BASE" ) hbond_count.base_phos++;
 
-		if(hbond_type=="2*OH-2*OH" || hbond_type=="2*OH-2*OH" ) hbond_count.O2star_O2star++;
+		if(hbond_type=="2*OH-2*OH" || hbond_type=="2*OH-2*OH" ) hbond_count.O2prime_O2prime++;
 
-		if(hbond_type=="2*OH-O4'*" || hbond_type=="O4'*-2*OH" ) hbond_count.O2star_O4star++;
+		if(hbond_type=="2*OH-O4'*" || hbond_type=="O4'*-2*OH" ) hbond_count.O2prime_O4prime++;
 
-		if(hbond_type=="2*OH-PHOS" || hbond_type=="PHOS-2*OH" ) hbond_count.O2star_phos++;
+		if(hbond_type=="2*OH-PHOS" || hbond_type=="PHOS-2*OH" ) hbond_count.O2prime_phos++;
 
 
 		if(std::abs(int(hbond.acceptor_res-hbond.donor_res))==1) hbond.comment+="I and I+1 case, ";
@@ -2088,8 +2088,8 @@ extract_hydrogen_bonds_statistic(){
 
 	std::cout << "--------------------------Total_hbonds= " << hydrogen_bond_info_list.size() << "--------------------------" << std::endl;
 
-	if(( hbond_count.base_base			+	hbond_count.base_O2star 		+ hbond_count.base_O4star		+ hbond_count.base_phos+
-			 hbond_count.O2star_O2star	+	hbond_count.O2star_O4star  +	hbond_count.O2star_phos )!= hydrogen_bond_info_list.size()){
+	if(( hbond_count.base_base			+	hbond_count.base_O2prime 		+ hbond_count.base_O4prime		+ hbond_count.base_phos+
+			 hbond_count.O2prime_O2prime	+	hbond_count.O2prime_O4prime  +	hbond_count.O2prime_phos )!= hydrogen_bond_info_list.size()){
 
 		utility_exit_with_message("hbond_count INCONSISTENCY!");
 
@@ -2097,13 +2097,13 @@ extract_hydrogen_bonds_statistic(){
 
 
 	std::cout << "hbond_count.base_base= "     << hbond_count.base_base << std::endl;
-	std::cout << "hbond_count.base_O2star= "   << hbond_count.base_O2star << std::endl;
-	std::cout << "hbond_count.base_O4star= "   << hbond_count.base_O4star << std::endl;
+	std::cout << "hbond_count.base_O2prime= "   << hbond_count.base_O2prime << std::endl;
+	std::cout << "hbond_count.base_O4prime= "   << hbond_count.base_O4prime << std::endl;
 	std::cout << "hbond_count.base_phos= "     << hbond_count.base_phos << std::endl;
 
-	std::cout << "hbond_count.O2star_O2star= " << hbond_count.O2star_O2star << std::endl;
-	std::cout << "hbond_count.O2star_O4star= " << hbond_count.O2star_O4star << std::endl;
-	std::cout << "hbond_count.O2star_phos= "   << hbond_count.O2star_phos << std::endl;
+	std::cout << "hbond_count.O2prime_O2prime= " << hbond_count.O2prime_O2prime << std::endl;
+	std::cout << "hbond_count.O2prime_O4prime= " << hbond_count.O2prime_O4prime << std::endl;
+	std::cout << "hbond_count.O2prime_phos= "   << hbond_count.O2prime_phos << std::endl;
 
 
 
@@ -2477,7 +2477,7 @@ get_residue_xyz_list(pose::Pose const & pose, Size const sample_res, bool const 
 		}
 
 		//Basically want the Base atoms at the top of the list since these atoms will are furthest from anchor and hence largest variation.
-		for ( Size atomno=base_rsd.first_sidechain_atom()+1; atomno<= base_rsd.nheavyatoms(); atomno++ ) { //rsd.first_sidechain_atom()+1 to not include the O2star oxygen.
+		for ( Size atomno=base_rsd.first_sidechain_atom()+1; atomno<= base_rsd.nheavyatoms(); atomno++ ) { //rsd.first_sidechain_atom()+1 to not include the O2prime oxygen.
 
 			if(base_rsd.atom_type(atomno).name()=="VIRT"){
 				std::cout << "base_rsd.atom_type(atomno).name()==\"VIRT\"!, atomno= " << atomno << std::endl;
@@ -2490,7 +2490,7 @@ get_residue_xyz_list(pose::Pose const & pose, Size const sample_res, bool const 
 		}
 
 
-		for ( Size atomno=1; atomno<= base_rsd.first_sidechain_atom(); atomno++ ){ //rsd.first_sidechain_atom() is the O2star oxygen.
+		for ( Size atomno=1; atomno<= base_rsd.first_sidechain_atom(); atomno++ ){ //rsd.first_sidechain_atom() is the O2prime oxygen.
 
 			if(Is_prepend && (atomno<=4) ){
 
@@ -2686,15 +2686,15 @@ Is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1,
 
 
 
-	if(Is_O3star_atom(atom_name_1)){
+	if(Is_O3prime_atom(atom_name_1)){
 
 		if(seq_num_1==seq_num_2){ 
 
-			//Take care of this outside...basically O3star is considered as part of the sugar as well.
+			//Take care of this outside...basically O3prime is considered as part of the sugar as well.
 
 		}else if(seq_num_1==(seq_num_2-1)){
 
-			if(Is_C5star_atom(atom_name_2)) return true; //3 bond
+			if(Is_C5prime_atom(atom_name_2)) return true; //3 bond
 
 		}
 	}
@@ -2704,23 +2704,23 @@ Is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1,
 
 		if(seq_num_1==(seq_num_2+1)){ 
 
-			if(Is_C3star_atom(atom_name_2)) return true; //2 bond
+			if(Is_C3prime_atom(atom_name_2)) return true; //2 bond
 
-			if(Is_H3star_atom(atom_name_2)) return true; //3 bond
+			if(Is_H3prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_C4star_atom(atom_name_2)) return true; //3 bond
+			if(Is_C4prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_C2star_atom(atom_name_2)) return true; //3 bond
+			if(Is_C2prime_atom(atom_name_2)) return true; //3 bond
 
 		}else if(seq_num_1==seq_num_2){ 
 
-			if(Is_C5star_atom(atom_name_2)) return true; //2 bond
+			if(Is_C5prime_atom(atom_name_2)) return true; //2 bond
 
-			if(Is_1H5star_atom(atom_name_2)) return true; //3 bond
+			if(Is_1H5prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_2H5star_atom(atom_name_2)) return true; //3 bond
+			if(Is_2H5prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_C4star_atom(atom_name_2)) return true; //3 bond
+			if(Is_C4prime_atom(atom_name_2)) return true; //3 bond
 
 		}
 	}
@@ -2730,36 +2730,36 @@ Is_bonded_neighbor_atoms_at_phosphate_interface(std::string const & atom_name_1,
 
 		if(seq_num_1==(seq_num_2+1)){ 
 
-			if(Is_C3star_atom(atom_name_2)) return true; //3 bond
+			if(Is_C3prime_atom(atom_name_2)) return true; //3 bond
 
 		}else if(seq_num_1==seq_num_2){ 
 
-			if(Is_C5star_atom(atom_name_2)) return true; //3 bond
+			if(Is_C5prime_atom(atom_name_2)) return true; //3 bond
 
 		}
 	}
 
-	if(Is_O5star_atom(atom_name_1)){
+	if(Is_O5prime_atom(atom_name_1)){
 
 		if(seq_num_1==(seq_num_2+1)){ 
 
-			if(Is_C3star_atom(atom_name_2)) return true; //3 bond
+			if(Is_C3prime_atom(atom_name_2)) return true; //3 bond
 
 		}else if(seq_num_1==seq_num_2){ 
 
-			if(Is_C5star_atom(atom_name_2)) return true; //1 bond
+			if(Is_C5prime_atom(atom_name_2)) return true; //1 bond
 
-			if(Is_1H5star_atom(atom_name_2)) return true; //2 bond
+			if(Is_1H5prime_atom(atom_name_2)) return true; //2 bond
 
-			if(Is_2H5star_atom(atom_name_2)) return true; //2 bond
+			if(Is_2H5prime_atom(atom_name_2)) return true; //2 bond
 
-			if(Is_C4star_atom(atom_name_2)) return true; //2 bond
+			if(Is_C4prime_atom(atom_name_2)) return true; //2 bond
 
-			if(Is_H4star_atom(atom_name_2)) return true; //3 bond
+			if(Is_H4prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_C3star_atom(atom_name_2)) return true; //3 bond
+			if(Is_C3prime_atom(atom_name_2)) return true; //3 bond
 
-			if(Is_O4star_atom(atom_name_2)) return true; //3 bond
+			if(Is_O4prime_atom(atom_name_2)) return true; //3 bond
 
 		}
 	}
@@ -3024,7 +3024,7 @@ cluster_rotamers(bool const second_stage,
 	using namespace core::id;
 	using namespace core::kinematics;
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	clock_t const time_start( clock() );
 

@@ -267,7 +267,7 @@ score_and_minimize( pose::Pose & pose, pose::Pose const & native_pose,
 
 	static SilentFileData silent_file_data;
 	static protocols::rna::RNA_Minimizer rna_minimizer;
-	rna_minimizer.skip_o2star_trials( true );
+	rna_minimizer.skip_o2prime_trials( true );
 	//	rna_minimizer.set_allow_insert( rna_chunk_library.allow_insert() );
 
 	if ( option[ minimize ]() ) {

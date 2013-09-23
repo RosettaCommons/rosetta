@@ -16,14 +16,14 @@
 
 
 namespace ObjexxFCL {
-namespace fmt {
-} // namespace fmt
+namespace format {
+} // namespace format
 } // namespace ObjexxFCL
 
 
 // Using
 //using namespace ObjexxFCL; - causes compiling problem
-//using namespace ObjexxFCL::fmt;
+//using namespace ObjexxFCL::format;
 
 
 #endif // INCLUDED_ObjexxFCL_ObjexxFCL_Project_HH

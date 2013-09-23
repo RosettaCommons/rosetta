@@ -36,7 +36,7 @@ using basic::t_trace;
 static basic::Tracer TR("protocols.multistate_design.MultiStatePacker",t_info);
 
 #include <ObjexxFCL/format.hh>
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 #include <boost/functional/hash.hpp>
 

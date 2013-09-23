@@ -91,10 +91,10 @@ class RNA_ResidueType : public utility::pointer::ReferenceCount {
 	RNA_base_atoms() const;
 
 	Size
-	ho2star_index() const;
+	ho2prime_index() const;
 
 	Size
-	o2star_index() const;
+	o2prime_index() const;
 
 	Size
 	p_atom_index() const;
@@ -106,43 +106,43 @@ class RNA_ResidueType : public utility::pointer::ReferenceCount {
 	o2p_atom_index() const;
 
 	Size
-	o5star_atom_index() const;
+	o5prime_atom_index() const;
 
 	Size
-	o3star_atom_index() const;
+	o3prime_atom_index() const;
 
 	Size
-	o4star_atom_index() const;
+	o4prime_atom_index() const;
 
 	Size
-	c1star_atom_index() const;
+	c1prime_atom_index() const;
 
 	Size
-	c2star_atom_index() const;
+	c2prime_atom_index() const;
 
 	Size
-	c4star_atom_index() const;
+	c4prime_atom_index() const;
 
 	///////////////////////////////////////////////////////////////////////////////////////
 
 	public:
 
-	//o2star atom
-	core::Size o2star_index_;
-	core::Size ho2star_index_;
+	//o2prime atom
+	core::Size o2prime_index_;
+	core::Size ho2prime_index_;
 
 	//Phosphate atoms
 	core::Size p_atom_index_;
 	core::Size o1p_atom_index_;
 	core::Size o2p_atom_index_;
-	core::Size o5star_index_;
-	core::Size o3star_index_;
+	core::Size o5prime_index_;
+	core::Size o3prime_index_;
 
 	//Ribose atoms
-	core::Size o4star_index_;
-	core::Size c1star_index_;
-	core::Size c2star_index_;
-	core::Size c4star_index_;
+	core::Size o4prime_index_;
+	core::Size c1prime_index_;
+	core::Size c2prime_index_;
+	core::Size c4prime_index_;
 
 	AtomIndices base_atom_list_;
 

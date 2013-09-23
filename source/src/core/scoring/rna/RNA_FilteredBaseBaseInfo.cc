@@ -49,7 +49,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 RNA_FilteredBaseBaseInfo::RNA_FilteredBaseBaseInfo():
 	total_base_pair_score_ ( 0.0 ),

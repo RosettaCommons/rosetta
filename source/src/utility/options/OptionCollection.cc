@@ -568,7 +568,7 @@ void OptionCollection::load_option_from_file(
 			bool const bShowGrp ( opt_group != group ); // New group
 			group = opt_group;
 
-			using namespace ObjexxFCL::fmt;
+			using namespace ObjexxFCL::format;
 
 			std::ostringstream empty_separator;
 			empty_separator << RJ( COL1-3, "" )<<" " << RJ( 3, "" ) << "| " << A( COL2, "" ) << " | " << A(3,"") << "|";
@@ -626,7 +626,7 @@ void OptionCollection::load_option_from_file(
 	{
 		using std::string;
 		typedef  std::string::size_type  size_type;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		stream << "\nOptions:   [Specify on command line or in @file]\n";
 		string group; // Previous option group name
 		if( relevant_.size() > 0 ) {

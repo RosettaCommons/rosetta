@@ -50,6 +50,12 @@ namespace swa {
 	make_cut_at_moving_suite( pose::Pose & pose, Size const & moving_suite );
 
 	bool
+	is_cutpoint_closed( pose::Pose const & pose, Size const seq_num );
+
+	utility::vector1< Size >
+	get_cutpoint_closed( pose::Pose const & pose );
+
+	bool
 	Is_close_chain_break(pose::Pose const & pose);
 
 	// Undefined, commenting out to fix PyRosetta build  bool Contain_seq_num(Size const & seq_num, utility::vector1< Size > const & residue_list);
@@ -177,10 +183,10 @@ namespace swa {
 																	 pose::Pose const & pose1, pose::Pose const & pose2 );
 
 	Real
-	get_all_atom_rmsd( pose::Pose const & pose, pose::Pose const & native_pose, utility::vector1< Size > const & rmsd_res );
+	superimpose_at_fixed_res_and_get_all_atom_rmsd( pose::Pose & pose, pose::Pose const & native_pose );
 
 	Size
-	get_number_missing_residues( pose::Pose const & pose );
+	get_number_missing_residue_connections( pose::Pose & pose );
 
 	bool
 	is_at_terminus( core::pose::Pose const & pose, Size const i );
@@ -232,6 +238,18 @@ namespace swa {
 	core::pose::PoseOP
 	get_pdb_and_cleanup( std::string const input_file,
 											 core::chemical::ResidueTypeSetCAP rsd_set );
+
+	void
+	cleanup( pose::Pose & pose );
+
+	void
+	get_other_poses( 	utility::vector1< pose::PoseOP > & other_poses,
+										utility::vector1< std::string > const & other_files,
+										core::chemical::ResidueTypeSetCAP rsd_set );
+
+	utility::vector1< Size >
+	figure_out_moving_chain_break_res( pose::Pose const & pose, kinematics::MoveMap const & mm );
+
 
 }
 }

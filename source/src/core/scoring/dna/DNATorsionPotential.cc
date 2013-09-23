@@ -46,7 +46,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray4D.hh>
-//#include <ObjexxFCL/fmt/formatted.o.hh>
+//#include <ObjexxFCL/format/formatted.o.hh>
 
 #include <basic/Tracer.hh>
 #include <numeric/conversions.hh>
@@ -70,21 +70,21 @@ DNATorsionPotential::DNATorsionPotential():
 	////////////////////////////////////////////////////////////////////////////
 	// Ribose closure weights
 	////////////////////////////////////////////////////////////////////////////
-	c2star_c3star_bond_length_( 1.526 ),
-	c2star_c3star_sd_( 1.0/ sqrt( 310.0 ) ), // 310.0 is the value of k
-	c2star_c3star_dist_harm_func_( new constraints::HarmonicFunc( c2star_c3star_bond_length_, scale_dna_torsion_sd_ * c2star_c3star_sd_ )),
+	c2prime_c3prime_bond_length_( 1.526 ),
+	c2prime_c3prime_sd_( 1.0/ sqrt( 310.0 ) ), // 310.0 is the value of k
+	c2prime_c3prime_dist_harm_func_( new constraints::HarmonicFunc( c2prime_c3prime_bond_length_, scale_dna_torsion_sd_ * c2prime_c3prime_sd_ )),
 
-	c4star_c3star_c2star_bond_angle_( numeric::conversions::radians( 109.50 ) ),
-	c4star_c3star_c2star_angle_harm_func_(
-		new constraints::HarmonicFunc( c4star_c3star_c2star_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ),
+	c4prime_c3prime_c2prime_bond_angle_( numeric::conversions::radians( 109.50 ) ),
+	c4prime_c3prime_c2prime_angle_harm_func_(
+		new constraints::HarmonicFunc( c4prime_c3prime_c2prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ),
 
-	o3star_c3star_c2star_bond_angle_( numeric::conversions::radians( 109.50 ) ),
-	o3star_c3star_c2star_angle_harm_func_(
-		new constraints::HarmonicFunc( o3star_c3star_c2star_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 50.0 ) ) ) ),
+	o3prime_c3prime_c2prime_bond_angle_( numeric::conversions::radians( 109.50 ) ),
+	o3prime_c3prime_c2prime_angle_harm_func_(
+		new constraints::HarmonicFunc( o3prime_c3prime_c2prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 50.0 ) ) ) ),
 
-	c3star_c2star_c1star_bond_angle_( numeric::conversions::radians( 109.50 ) ),
-	c3star_c2star_c1star_angle_harm_func_(
-		new constraints::HarmonicFunc( c3star_c2star_c1star_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ),
+	c3prime_c2prime_c1prime_bond_angle_( numeric::conversions::radians( 109.50 ) ),
+	c3prime_c2prime_c1prime_angle_harm_func_(
+		new constraints::HarmonicFunc( c3prime_c2prime_c1prime_bond_angle_, scale_dna_torsion_sd_ * 1.0/sqrt( numeric::conversions::radians( 40.0 ) ) ) ),
 
 	// Might also be good to have additional angle or torsional potentials
 	// to preserve sugar geometry.
@@ -108,7 +108,7 @@ DNATorsionPotential::setup_constraints(
 	//Constraints are atom-pair, angle, dihedral...
 	dna_sugar_close_constraints = constraints::ConstraintSetOP( new constraints::ConstraintSet );
 	add_sugar_ring_closure_constraints( pose, *dna_sugar_close_constraints );
-	//	add_o2star_torsion_constraints(     pose, *dna_torsion_constraints );
+	//	add_o2prime_torsion_constraints(     pose, *dna_torsion_constraints );
 
 	// Why can't these terms be "constraints", in dna_torsion_constraints above? Because
 	//  some involve atoms that change types when residues are switched in and out (during design!).
@@ -135,35 +135,35 @@ DNATorsionPotential::add_sugar_ring_closure_constraints( conformation::Residue c
 
 	Size const & i( rsd.seqpos() );
 
-	Size const c1star_index = rsd.atom_index( "C1'" );
-	Size const c2star_index = rsd.atom_index( "C2'" );
-	Size const c3star_index = rsd.atom_index( "C3'" );
-	Size const o3star_index = rsd.atom_index( "O3'" );
-	Size const c4star_index = rsd.atom_index( "C4'" );
+	Size const c1prime_index = rsd.atom_index( "C1'" );
+	Size const c2prime_index = rsd.atom_index( "C2'" );
+	Size const c3prime_index = rsd.atom_index( "C3'" );
+	Size const o3prime_index = rsd.atom_index( "O3'" );
+	Size const c4prime_index = rsd.atom_index( "C4'" );
 
-	cst_set.add_constraint( new constraints::AtomPairConstraint( id::AtomID( c2star_index, i),
-																															 id::AtomID( c3star_index, i),
-																															 c2star_c3star_dist_harm_func_,
+	cst_set.add_constraint( new constraints::AtomPairConstraint( id::AtomID( c2prime_index, i),
+																															 id::AtomID( c3prime_index, i),
+																															 c2prime_c3prime_dist_harm_func_,
 																															 dna_sugar_close ) );
 
-	constraints::ConstraintOP angle1 = new constraints::AngleConstraint( id::AtomID( c4star_index, i),
-																																			 id::AtomID( c3star_index, i),
-																																			 id::AtomID( c2star_index, i),
-																																			 c4star_c3star_c2star_angle_harm_func_,
+	constraints::ConstraintOP angle1 = new constraints::AngleConstraint( id::AtomID( c4prime_index, i),
+																																			 id::AtomID( c3prime_index, i),
+																																			 id::AtomID( c2prime_index, i),
+																																			 c4prime_c3prime_c2prime_angle_harm_func_,
 																																			 dna_sugar_close );
 	cst_set.add_constraint( angle1 );
 
-	constraints::ConstraintOP angle2 = new constraints::AngleConstraint( id::AtomID( o3star_index, i),
-																																			 id::AtomID( c3star_index, i),
-																																			 id::AtomID( c2star_index, i),
-																																			 o3star_c3star_c2star_angle_harm_func_,
+	constraints::ConstraintOP angle2 = new constraints::AngleConstraint( id::AtomID( o3prime_index, i),
+																																			 id::AtomID( c3prime_index, i),
+																																			 id::AtomID( c2prime_index, i),
+																																			 o3prime_c3prime_c2prime_angle_harm_func_,
 																																			 dna_sugar_close );
 	cst_set.add_constraint( angle2 );
 
-	constraints::ConstraintOP angle3 = new constraints::AngleConstraint( id::AtomID( c3star_index, i),
-																																			 id::AtomID( c2star_index, i),
-																																			 id::AtomID( c1star_index, i),
-																																			 c3star_c2star_c1star_angle_harm_func_,
+	constraints::ConstraintOP angle3 = new constraints::AngleConstraint( id::AtomID( c3prime_index, i),
+																																			 id::AtomID( c2prime_index, i),
+																																			 id::AtomID( c1prime_index, i),
+																																			 c3prime_c2prime_c1prime_angle_harm_func_,
 																																			 dna_sugar_close );
 	cst_set.add_constraint( angle3 );
 
@@ -185,8 +185,8 @@ DNATorsionPotential::add_dna_base_distance_constraints(
 		conformation::Residue const & next_rsd( pose.residue( i + 1 ) );
 		if( !rsd.is_DNA() || !next_rsd.is_DNA() || rsd.is_upper_terminus() ) continue; //job undone: need to add conditions when the rsd is not basepaired
 
-		Size const H2star_index = pose.residue( i ).atom_index( "H21*" );
-		Size const H1star_index = pose.residue( i ).atom_index( " H2'" );
+		Size const H2prime_index = pose.residue( i ).atom_index( "H21*" );
+		Size const H1prime_index = pose.residue( i ).atom_index( " H2'" );
 		Size H68_index, next_H68_index;
 		if( rsd.type().aa() == na_ade || rsd.type().aa() == na_gua )
 			H68_index = pose.residue( i ).atom_index( "H8" );
@@ -201,14 +201,14 @@ DNATorsionPotential::add_dna_base_distance_constraints(
 		Real angle_diff ( rsd.mainchain_torsion(5) - rsd.mainchain_torsion(6) );
 		Real dist_1H = 0.0041 * angle_diff + 2.7092;
 		constraints::HarmonicFuncOP H1_harm_func(	new constraints::HarmonicFunc( dist_1H, 0.307 ) );
-		cst_set.add_constraint( new constraints::AtomPairConstraint( id::AtomID( H1star_index, i),
+		cst_set.add_constraint( new constraints::AtomPairConstraint( id::AtomID( H1prime_index, i),
 																															 id::AtomID( next_H68_index, i + 1),
 																															 H1_harm_func,
 																															 dna_base_distance ) );
 
 		Real dist_2H = 0.0081 * angle_diff + 4.0213;
 		constraints::HarmonicFuncOP H2_harm_func(	new constraints::HarmonicFunc( dist_2H, 0.381 ) );
-		cst_set.add_constraint( new constraints::AtomPairConstraint( id::AtomID( H2star_index, i),
+		cst_set.add_constraint( new constraints::AtomPairConstraint( id::AtomID( H2prime_index, i),
 																															 id::AtomID( next_H68_index, i + 1),
 																															 H2_harm_func,
 																															 dna_base_distance ) );

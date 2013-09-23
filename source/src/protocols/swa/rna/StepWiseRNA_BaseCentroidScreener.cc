@@ -35,7 +35,7 @@
 using namespace core;
 using basic::T;
 using core::Real;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::F;
 
 static basic::Tracer TR( "protocols.swa.rna.StepWiseRNA_BaseCentroidScreener" );
 

@@ -28,6 +28,7 @@ namespace in { extern BooleanOptionKey const use_truncated_termini; }
 namespace in { extern BooleanOptionKey const ignore_unrecognized_res; }
 namespace in { extern BooleanOptionKey const ignore_waters; }
 namespace in { extern BooleanOptionKey const add_orbitals; }
+namespace in { extern BooleanOptionKey const show_all_fixes; }
 namespace in { extern BooleanOptionKey const include_sugars; }
 namespace in { extern BooleanOptionKey const include_surfaces; }
 namespace in { extern BooleanOptionKey const enable_branching; }

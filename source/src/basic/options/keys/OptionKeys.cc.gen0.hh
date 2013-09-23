@@ -5,6 +5,7 @@ namespace in { BooleanOptionKey const use_truncated_termini( "in:use_truncated_t
 namespace in { BooleanOptionKey const ignore_unrecognized_res( "in:ignore_unrecognized_res" );  }
 namespace in { BooleanOptionKey const ignore_waters( "in:ignore_waters" );  }
 namespace in { BooleanOptionKey const add_orbitals( "in:add_orbitals" );  }
+namespace in { BooleanOptionKey const show_all_fixes( "in:show_all_fixes" );  }
 namespace in { BooleanOptionKey const include_sugars( "in:include_sugars" );  }
 namespace in { BooleanOptionKey const include_surfaces( "in:include_surfaces" );  }
 namespace in { BooleanOptionKey const enable_branching( "in:enable_branching" );  }

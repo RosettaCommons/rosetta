@@ -235,7 +235,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 //	{
 		for ( Size i=1; i<=num_of_first_cycle_; ++i ) {
 			dock_mcm_->apply( pose );
-			jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::fmt::I(1, i ) );
+			jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::format::I(1, i ) );
 		}
 
 //		filter_->set_score_margin( 5.0 );
@@ -247,7 +247,7 @@ void DockMCMProtocol::apply( core::pose::Pose& pose )
 //		{
 			for ( Size i=1; i<=num_of_second_cycle_; ++i ) {
 				dock_mcm_->apply( pose );
-				jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::fmt::I(1, i+4 ) );
+				jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::format::I(1, i+4 ) );
 			}
 //		}
 //	}

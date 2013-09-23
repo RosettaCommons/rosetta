@@ -181,7 +181,7 @@ int main(int argc, char *argv[]) {
 				int exhb=0,inhb=0,inhbsc=0;
 				get_hb_info(pose,ir,jr,exhb,inhb,inhbsc); //Get some stats about the residues in the loop.
 
-				using namespace ObjexxFCL::fmt;
+				using namespace ObjexxFCL::format;
 				//Indicate a hit, and write out some stats:
 				cout << "HIT " << " " << I(4,ir) << " " << I(4,jr) << " " << I(4,exhb) << " " << I(4,inhb) << " " << I(4,inhbsc) << " " << outfile << endl;
 				//tmp.dump_pdb(outfile); //Write out the "tmp" pose containing just the loop.

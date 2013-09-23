@@ -227,7 +227,7 @@ namespace random {
 inline static void lshift128(w128_t *out, const w128_t *in, int shift);
 inline static uint32_t ini_func1(uint32_t x);
 inline static uint32_t ini_func2(uint32_t x);
-inline static int sfmt_idxof(int i);
+inline static int sformat_idxof(int i);
 
 
 /**
@@ -240,11 +240,11 @@ inline static int sfmt_idxof(int i);
 //#if (defined(__BIG_ENDIAN__) || defined(BIG_ENDIAN)) && !defined(__amd64)
 
 #if (defined(__BIG_ENDIAN__) || defined(BIG_ENDIAN))
-inline static int sfmt_idxof(int i) {
+inline static int sformat_idxof(int i) {
 		return i ^ 1;
 }
 #else
-inline static int sfmt_idxof(int i) {
+inline static int sformat_idxof(int i) {
 		return i;
 }
 #endif
@@ -319,8 +319,8 @@ public:
 
 	mt19937_RG() : uniform_RG()
 	{
-		psfmt64 = &sfmt[0].d[0];
-		is_sfmt_initialized = 0;
+		psformat64 = &sformat[0].d[0];
+		is_sformat_initialized = 0;
 	}
 	virtual ~mt19937_RG() {}
 
@@ -329,19 +329,19 @@ public:
 	{
 		uint32_t seed = (uint32_t) iseed;
 		int i;
-		uint32_t *psfmt;
+		uint32_t *psformat;
 
-		psfmt = &sfmt[0].u32[0];
-		psfmt[sfmt_idxof(0)] = seed;
+		psformat = &sformat[0].u32[0];
+		psformat[sformat_idxof(0)] = seed;
 		for (i = 1; i < (DSFMT_N + 1) * 4; i++) {
-				psfmt[sfmt_idxof(i)] = 1812433253UL
-			* (psfmt[sfmt_idxof(i - 1)]
-				 ^ (psfmt[sfmt_idxof(i - 1)] >> 30)) + i;
+				psformat[sformat_idxof(i)] = 1812433253UL
+			* (psformat[sformat_idxof(i - 1)]
+				 ^ (psformat[sformat_idxof(i - 1)] >> 30)) + i;
 		}
 		initial_mask();
 		period_certification();
-		sfmt_idx = DSFMT_N64;
-		is_sfmt_initialized = 1;
+		sformat_idx = DSFMT_N64;
+		is_sformat_initialized = 1;
 	}
 
 	/// @brief Set seed and state
@@ -358,37 +358,37 @@ public:
 
 		double r;
 
-		assert(is_sfmt_initialized);
+		assert(is_sformat_initialized);
 
-		if (sfmt_idx >= DSFMT_N * 2) {
+		if (sformat_idx >= DSFMT_N * 2) {
 			gen_rand_all();
-			sfmt_idx = 0;
+			sformat_idx = 0;
 		}
-		r = psfmt64[sfmt_idx++];
+		r = psformat64[sformat_idx++];
 		return r - 1.0; // to be on [0,1)
 	}
 
 	///@brief Serializes generator state to stream losslessly.
 	virtual void saveState(std::ostream & out)
 	{
-		out << " " << is_sfmt_initialized;
-		out << " " << sfmt_idx;
-		// psfmt64 is a pointer to a memory location and is never modified
+		out << " " << is_sformat_initialized;
+		out << " " << sformat_idx;
+		// psformat64 is a pointer to a memory location and is never modified
 		// it should NOT be serialized or restored
 		for(int i = 0; i < DSFMT_N+1; ++i) {
-			out << " " << sfmt[i].u[0] << " " << sfmt[i].u[1];
+			out << " " << sformat[i].u[0] << " " << sformat[i].u[1];
 		}
 	}
 
 	///@brief Deserializes generator state from stream losslessly.
 	virtual void restoreState(std::istream & in)
 	{
-		in >> is_sfmt_initialized;
-		in >> sfmt_idx;
-		// psfmt64 is a pointer to a memory location and is never modified
+		in >> is_sformat_initialized;
+		in >> sformat_idx;
+		// psformat64 is a pointer to a memory location and is never modified
 		// it should NOT be serialized or restored
 		for(int i = 0; i < DSFMT_N+1; ++i) {
-			in >> sfmt[i].u[0] >> sfmt[i].u[1];
+			in >> sformat[i].u[0] >> sformat[i].u[1];
 		}
 	}
 
@@ -399,11 +399,11 @@ protected:
 	 */
 	void initial_mask(void) {
 			int i;
-			uint64_t *psfmt;
+			uint64_t *psformat;
 
-			psfmt = &sfmt[0].u[0];
+			psformat = &sformat[0].u[0];
 			for (i = 0; i < (DSFMT_N + 1) * 2; i++) {
-					psfmt[i] = (psfmt[i] & DSFMT_LOW_MASK) | DSFMT_HIGH_CONST;
+					psformat[i] = (psformat[i] & DSFMT_LOW_MASK) | DSFMT_HIGH_CONST;
 			}
 	}
 
@@ -423,8 +423,8 @@ protected:
 			fix[1] = (((DSFMT_HIGH_CONST >> DSFMT_SR1) & DSFMT_MSK1)
 					^ (DSFMT_HIGH_CONST >> DSFMT_SR2)) | DSFMT_HIGH_CONST;
 			fix[0] = fix[0] ^ (DSFMT_HIGH_CONST >> (64 - 8 * DSFMT_SL2));
-			new_lung[0] = sfmt[DSFMT_N].u[0] ^ fix[0];
-			new_lung[1] = sfmt[DSFMT_N].u[1] ^ fix[1];
+			new_lung[0] = sformat[DSFMT_N].u[0] ^ fix[0];
+			new_lung[1] = sformat[DSFMT_N].u[1] ^ fix[1];
 			inner = new_lung[0] & pcv[0];
 			inner ^= new_lung[1] & pcv[1];
 			for (i = 32; i > 0; i >>= 1) {
@@ -440,7 +440,7 @@ protected:
 		work = 1;
 		for (j = 0; j < 52; j++) {
 				if ((work & pcv[i]) != 0) {
-			sfmt[DSFMT_N].u[i] ^= work;
+			sformat[DSFMT_N].u[i] ^= work;
 			return;
 				}
 				work = work << 1;
@@ -457,7 +457,7 @@ protected:
 	void init_by_array(uint32_t init_key[], int key_length) {
 			int i, j, count;
 			uint32_t r;
-			uint32_t *psfmt32;
+			uint32_t *psformat32;
 			int lag;
 			int mid;
 			int size = (DSFMT_N + 1) * 4;	/* pulmonary */
@@ -474,55 +474,55 @@ protected:
 			}
 			mid = (size - lag) / 2;
 
-			psfmt32 = &sfmt[0].u32[0];
-			memset(sfmt, 0x8b, sizeof(sfmt));
+			psformat32 = &sformat[0].u32[0];
+			memset(sformat, 0x8b, sizeof(sformat));
 			if (key_length + 1 > size) {
 		count = key_length + 1;
 			} else {
 		count = size;
 			}
-			r = ini_func1(psfmt32[sfmt_idxof(0)] ^ psfmt32[sfmt_idxof(mid % size)]
-				^ psfmt32[sfmt_idxof((size - 1) % size)]);
-			psfmt32[sfmt_idxof(mid % size)] += r;
+			r = ini_func1(psformat32[sformat_idxof(0)] ^ psformat32[sformat_idxof(mid % size)]
+				^ psformat32[sformat_idxof((size - 1) % size)]);
+			psformat32[sformat_idxof(mid % size)] += r;
 			r += key_length;
-			psfmt32[sfmt_idxof((mid + lag) % size)] += r;
-			psfmt32[sfmt_idxof(0)] = r;
+			psformat32[sformat_idxof((mid + lag) % size)] += r;
+			psformat32[sformat_idxof(0)] = r;
 			i = 1;
 			count--;
 			for (i = 1, j = 0; (j < count) && (j < key_length); j++) {
-		r = ini_func1(psfmt32[sfmt_idxof(i)]
-						^ psfmt32[sfmt_idxof((i + mid) % size)]
-						^ psfmt32[sfmt_idxof((i + size - 1) % size)]);
-		psfmt32[sfmt_idxof((i + mid) % size)] += r;
+		r = ini_func1(psformat32[sformat_idxof(i)]
+						^ psformat32[sformat_idxof((i + mid) % size)]
+						^ psformat32[sformat_idxof((i + size - 1) % size)]);
+		psformat32[sformat_idxof((i + mid) % size)] += r;
 		r += init_key[j] + i;
-		psfmt32[sfmt_idxof((i + mid + lag) % size)] += r;
-		psfmt32[sfmt_idxof(i)] = r;
+		psformat32[sformat_idxof((i + mid + lag) % size)] += r;
+		psformat32[sformat_idxof(i)] = r;
 		i = (i + 1) % size;
 			}
 			for (; j < count; j++) {
-		r = ini_func1(psfmt32[sfmt_idxof(i)]
-						^ psfmt32[sfmt_idxof((i + mid) % size)]
-						^ psfmt32[sfmt_idxof((i + size - 1) % size)]);
-		psfmt32[sfmt_idxof((i + mid) % size)] += r;
+		r = ini_func1(psformat32[sformat_idxof(i)]
+						^ psformat32[sformat_idxof((i + mid) % size)]
+						^ psformat32[sformat_idxof((i + size - 1) % size)]);
+		psformat32[sformat_idxof((i + mid) % size)] += r;
 		r += i;
-		psfmt32[sfmt_idxof((i + mid + lag) % size)] += r;
-		psfmt32[sfmt_idxof(i)] = r;
+		psformat32[sformat_idxof((i + mid + lag) % size)] += r;
+		psformat32[sformat_idxof(i)] = r;
 		i = (i + 1) % size;
 			}
 			for (j = 0; j < size; j++) {
-		r = ini_func2(psfmt32[sfmt_idxof(i)]
-						+ psfmt32[sfmt_idxof((i + mid) % size)]
-						+ psfmt32[sfmt_idxof((i + size - 1) % size)]);
-		psfmt32[sfmt_idxof((i + mid) % size)] ^= r;
+		r = ini_func2(psformat32[sformat_idxof(i)]
+						+ psformat32[sformat_idxof((i + mid) % size)]
+						+ psformat32[sformat_idxof((i + size - 1) % size)]);
+		psformat32[sformat_idxof((i + mid) % size)] ^= r;
 		r -= i;
-		psfmt32[sfmt_idxof((i + mid + lag) % size)] ^= r;
-		psfmt32[sfmt_idxof(i)] = r;
+		psformat32[sformat_idxof((i + mid + lag) % size)] ^= r;
+		psformat32[sformat_idxof(i)] = r;
 		i = (i + 1) % size;
 			}
 			initial_mask();
 			period_certification();
-			sfmt_idx = DSFMT_N64;
-			is_sfmt_initialized = 1;
+			sformat_idx = DSFMT_N64;
+			is_sformat_initialized = 1;
 	}
 
 	/**
@@ -533,29 +533,29 @@ protected:
 			int i;
 			w128_t lung;
 
-			lung = sfmt[DSFMT_N];
-			do_recursion(&sfmt[0], &sfmt[0], &sfmt[DSFMT_POS1], &sfmt[DSFMT_N -1], &lung);
+			lung = sformat[DSFMT_N];
+			do_recursion(&sformat[0], &sformat[0], &sformat[DSFMT_POS1], &sformat[DSFMT_N -1], &lung);
 			for (i = 1; i < DSFMT_N - DSFMT_POS1; i++) {
-		do_recursion(&sfmt[i], &sfmt[i], &sfmt[i + DSFMT_POS1], &sfmt[i - 1],
+		do_recursion(&sformat[i], &sformat[i], &sformat[i + DSFMT_POS1], &sformat[i - 1],
 					 &lung);
 			}
 			for (; i < DSFMT_N; i++) {
-		do_recursion(&sfmt[i], &sfmt[i], &sfmt[i + DSFMT_POS1 - DSFMT_N],
-					 &sfmt[i - 1], &lung);
+		do_recursion(&sformat[i], &sformat[i], &sformat[i + DSFMT_POS1 - DSFMT_N],
+					 &sformat[i - 1], &lung);
 			}
-			sfmt[DSFMT_N] = lung;
+			sformat[DSFMT_N] = lung;
 	}
 
 private:
 	/** the 128-bit internal state array */
-	w128_t sfmt[DSFMT_N + 1];
+	w128_t sformat[DSFMT_N + 1];
 	/** the double pointer to the 128-bit internal state array */
-	double *psfmt64;// = &sfmt[0].d[0];
+	double *psformat64;// = &sformat[0].d[0];
 	/** index counter to the internal state array as double */
-	int sfmt_idx;
+	int sformat_idx;
 	/** a flag: it is 0 if and only if the internal state is not yet
 	* initialized. */
-	int is_sfmt_initialized;// = 0;
+	int is_sformat_initialized;// = 0;
 
 }; // mt19937_RG
 

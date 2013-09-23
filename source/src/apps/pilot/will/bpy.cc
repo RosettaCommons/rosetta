@@ -492,7 +492,7 @@ ScoreFunctionOP flxbb_nobu(PoseWrap & pw) {
 
 void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Real censcore ) {
 	using namespace core;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	core::pose::Pose & pose(pw.pose);
 	Size nres_mono = pw.nres;//(pose.n_residue()-4)/4;
 	std::string tag = string_of(uniform());
@@ -593,7 +593,7 @@ main( int argc, char * argv [] )
 	using namespace pose;
 	using namespace protocols;
 	using namespace moves;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using numeric::random::uniform;
 
 	devel::init(argc,argv);

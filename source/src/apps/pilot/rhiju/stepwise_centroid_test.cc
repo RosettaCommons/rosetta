@@ -128,7 +128,7 @@
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 
-#include <ObjexxFCL/fmt/formatted.o.hh>
+#include <ObjexxFCL/format/formatted.o.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 //RNA stuff.

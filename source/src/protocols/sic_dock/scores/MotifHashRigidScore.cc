@@ -274,21 +274,21 @@ MotifHashRigidScore::show(
 	Pose pose1,pose2;
 	Stats stats;
 	mh_->stat_matching_motifs(pose1,pose2,stats);
-	out << " " << ObjexxFCL::fmt::RJ(width,"MH_RAW");
-	out << " " << ObjexxFCL::fmt::RJ(width,"MH_SPREAD");
-	out << " " << ObjexxFCL::fmt::RJ(width,"MH_RES");
-	// out << " " << ObjexxFCL::fmt::RJ(width,"MH_SSPAIR");
-	out << " " << ObjexxFCL::fmt::RJ(2,"EE");
-	out << " " << ObjexxFCL::fmt::RJ(width,"MH_COVER");
-	out << " " << ObjexxFCL::fmt::RJ(4,"NRES");
-	out << " " << ObjexxFCL::fmt::RJ(3,"NH"  );
-	out << " " << ObjexxFCL::fmt::RJ(3,"NE"  );
-	out << " " << ObjexxFCL::fmt::RJ(3,"NL"  );
-	out << " " << ObjexxFCL::fmt::RJ(5,"P_EE"  );
-	out << " " << ObjexxFCL::fmt::RJ(5,"P_EH"  );
-	out << " " << ObjexxFCL::fmt::RJ(5,"P_HH"  );
+	out << " " << ObjexxFCL::format::RJ(width,"MH_RAW");
+	out << " " << ObjexxFCL::format::RJ(width,"MH_SPREAD");
+	out << " " << ObjexxFCL::format::RJ(width,"MH_RES");
+	// out << " " << ObjexxFCL::format::RJ(width,"MH_SSPAIR");
+	out << " " << ObjexxFCL::format::RJ(2,"EE");
+	out << " " << ObjexxFCL::format::RJ(width,"MH_COVER");
+	out << " " << ObjexxFCL::format::RJ(4,"NRES");
+	out << " " << ObjexxFCL::format::RJ(3,"NH"  );
+	out << " " << ObjexxFCL::format::RJ(3,"NE"  );
+	out << " " << ObjexxFCL::format::RJ(3,"NL"  );
+	out << " " << ObjexxFCL::format::RJ(5,"P_EE"  );
+	out << " " << ObjexxFCL::format::RJ(5,"P_EH"  );
+	out << " " << ObjexxFCL::format::RJ(5,"P_HH"  );
 	BOOST_FOREACH(Stats::value_type val,stats){
-		out << " " << ObjexxFCL::fmt::RJ(width,val.first);
+		out << " " << ObjexxFCL::format::RJ(width,val.first);
 	}
 
 }
@@ -305,19 +305,19 @@ MotifHashRigidScore::show(
 	Real rawscore,ssscore,coverage,res_score,sheetsc;
 	int nsheetres,nres,Nhh,Nee,Neh,Nh,Ne,Nl;
 	score_meta(x1s,x2s,nsheetres,rawscore,ssscore,coverage,res_score,sheetsc,nres,Nhh,Nee,Neh,Nh,Ne,Nl);
-	out << " " << ObjexxFCL::fmt::F(width,4,rawscore);
-	out << " " << ObjexxFCL::fmt::F(width,4,ssscore);
-	out << " " << ObjexxFCL::fmt::F(width,4,res_score);
-	// out << " " << ObjexxFCL::fmt::F(width,4,sheetsc);
-	out << " " << ObjexxFCL::fmt::I(2,nsheetres);
-	out << " " << ObjexxFCL::fmt::F(width,4,coverage);
-	out << " " << ObjexxFCL::fmt::I(4,nres);
-	out << " " << ObjexxFCL::fmt::I(3,Nh);
-	out << " " << ObjexxFCL::fmt::I(3,Ne);
-	out << " " << ObjexxFCL::fmt::I(3,Nl);
-	out << " " << ObjexxFCL::fmt::F(5,3,Real(Nee)/Real(Nee+Neh+Nhh));
-	out << " " << ObjexxFCL::fmt::F(5,3,Real(Neh)/Real(Nee+Neh+Nhh));
-	out << " " << ObjexxFCL::fmt::F(5,3,Real(Nhh)/Real(Nee+Neh+Nhh));
+	out << " " << ObjexxFCL::format::F(width,4,rawscore);
+	out << " " << ObjexxFCL::format::F(width,4,ssscore);
+	out << " " << ObjexxFCL::format::F(width,4,res_score);
+	// out << " " << ObjexxFCL::format::F(width,4,sheetsc);
+	out << " " << ObjexxFCL::format::I(2,nsheetres);
+	out << " " << ObjexxFCL::format::F(width,4,coverage);
+	out << " " << ObjexxFCL::format::I(4,nres);
+	out << " " << ObjexxFCL::format::I(3,Nh);
+	out << " " << ObjexxFCL::format::I(3,Ne);
+	out << " " << ObjexxFCL::format::I(3,Nl);
+	out << " " << ObjexxFCL::format::F(5,3,Real(Nee)/Real(Nee+Neh+Nhh));
+	out << " " << ObjexxFCL::format::F(5,3,Real(Neh)/Real(Nee+Neh+Nhh));
+	out << " " << ObjexxFCL::format::F(5,3,Real(Nhh)/Real(Nee+Neh+Nhh));
 
 	Stats stats;
 	BOOST_FOREACH(Xform const & x1,x1s){
@@ -340,7 +340,7 @@ MotifHashRigidScore::show(
 	// stats["M_SSPAIR"] = stats["M_SSPAIR"]/stats["M_NUM"];
 
 	BOOST_FOREACH(Stats::value_type val,stats){
-		out << " " << ObjexxFCL::fmt::F(width,5,val.second);
+		out << " " << ObjexxFCL::format::F(width,5,val.second);
 	}
 }
 void

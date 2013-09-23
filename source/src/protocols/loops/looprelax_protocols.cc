@@ -368,7 +368,7 @@ bool LoopRebuild::build_random_loops(	core::pose::Pose & pose ) {
 		int time_end = time(NULL);
 		time_per_build = float(time_end - time_start) / float(nfail);
 
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		TR  << "Loopstat: "
 		    << "  " << I(3,def_loop_begin)
 		    << "  " << I(3,def_loop_end    )

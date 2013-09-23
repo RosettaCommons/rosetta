@@ -26,7 +26,7 @@ namespace protocols {
 namespace moves {
 
 using namespace core;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 /////////////////////////////////////////////////////////////////////////////
 void

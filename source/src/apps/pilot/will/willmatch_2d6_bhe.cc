@@ -592,8 +592,8 @@ void run() {
 
 
 																	utility::io::ozstream otmp(option[out::file::o]()+"/"+outfname);
-																	otmp << "REMARK 666 MATCH TEMPLATE A BPY "+ObjexxFCL::fmt::I(4,brsd)+" MATCH MOTIF A HIS "+ObjexxFCL::fmt::I(4,irsd)+"  1  1" << std::endl;
-																	otmp << "REMARK 666 MATCH TEMPLATE A BPY "+ObjexxFCL::fmt::I(4,brsd)+" MATCH MOTIF A GLU "+ObjexxFCL::fmt::I(4,ersd)+"  2  1" << std::endl;
+																	otmp << "REMARK 666 MATCH TEMPLATE A BPY "+ObjexxFCL::format::I(4,brsd)+" MATCH MOTIF A HIS "+ObjexxFCL::format::I(4,irsd)+"  1  1" << std::endl;
+																	otmp << "REMARK 666 MATCH TEMPLATE A BPY "+ObjexxFCL::format::I(4,brsd)+" MATCH MOTIF A GLU "+ObjexxFCL::format::I(4,ersd)+"  2  1" << std::endl;
 																	opose.dump_pdb(otmp);
 																	otmp.close();
 

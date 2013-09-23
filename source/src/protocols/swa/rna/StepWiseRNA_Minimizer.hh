@@ -83,10 +83,10 @@ namespace rna {
 		set_centroid_screen( bool const setting ){ centroid_screen_ = setting; } //For testing purposes.
 
 		void
-		set_perform_o2star_pack( bool const setting ){ perform_o2star_pack_ = setting; } //For testing purposes.
+		set_perform_o2prime_pack( bool const setting ){ perform_o2prime_pack_ = setting; } //For testing purposes.
 
 		void
-		set_output_before_o2star_pack( bool const setting ){ output_before_o2star_pack_ = setting; } //For testing purposes.
+		set_output_before_o2prime_pack( bool const setting ){ output_before_o2prime_pack_ = setting; } //For testing purposes.
 
 		void
 		set_rm_virt_phosphate( bool const setting ){ rm_virt_phosphate_ = setting; }
@@ -172,8 +172,8 @@ namespace rna {
 
 		bool centroid_screen_; //for testing purposes
 
-		bool perform_o2star_pack_; //Jan 19, 2012
-		bool output_before_o2star_pack_; //for testing purposes
+		bool perform_o2prime_pack_; //Jan 19, 2012
+		bool output_before_o2prime_pack_; //for testing purposes
 
 		bool perform_minimize_; //Parin Mar 12, 2012
 

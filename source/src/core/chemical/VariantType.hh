@@ -38,7 +38,7 @@ extern VariantType const DEPROTONATED;
 extern VariantType const SPECIAL_ROT;
 extern VariantType const VIRTUAL_PHOSPHATE;
 extern VariantType const VIRTUAL_RNA_RESIDUE;
-extern VariantType const VIRTUAL_O2STAR_HYDROGEN;
+extern VariantType const VIRTUAL_O2PRIME_HYDROGEN;
 
 // The following are added by Andy M. Chen in July 2009 to be used for PTM patches/variants
 extern VariantType const PHOSPHORYLATION;

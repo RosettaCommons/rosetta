@@ -157,7 +157,7 @@ revert_loops_to_original(core::pose::Pose & pose, Loops loops)
 
 void add_gap_constraints_to_pose(core::pose::Pose & pose, Size seq_distance_to_gap, Loops const & chunks, Real stdev=1.) {
 	basic::Tracer TR("pilot.yfsong.util");
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	// add constraints
 	Real boundary(999.);
@@ -306,7 +306,7 @@ translate_virt_to_CoM(core::pose::Pose & pose) {
 	numeric::xyzVector<Real> translation = CoM - curr_pos;
 
 	basic::Tracer TR("pilot.yfsong.util");
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	TR.Debug << F(8,3,translation.x()) << F(8,3,translation.y()) << F(8,3,translation.z()) << std::endl;
 	
 	// apply transformation
@@ -365,7 +365,7 @@ apply(core::pose::Pose & pose) {
 	
 	basic::Tracer TR("pilot.yfsong.util");
 	for (Size ires=1; ires<=pose.total_residue(); ++ires) {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		TR.Debug << "Trial counter:" << I(4,ires) << I(8, random_align_mover->trial_counter(ires)) << std::endl;
 	}
 }

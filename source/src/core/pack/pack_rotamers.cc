@@ -144,7 +144,7 @@ pack_rotamers_loop(
 	utility::vector1< pose::PoseOP > & pose_list
 )
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace interaction_graph;
 	using namespace rotamer_set;
 
@@ -292,7 +292,7 @@ pack_rotamers_run(
 	utility::vector0< int > rot_to_pack // defaults to an empty vector (no effect)
 )
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	FArray1D_int bestrotamer_at_seqpos( pose.total_residue() );
 	core::PackerEnergy bestenergy( 0.0 );
@@ -462,7 +462,7 @@ symmetric_pack_rotamers_run(
 	utility::vector0< int > rot_to_pack // defaults to an empty vector (no effect)
 )
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace annealer;
 
 	// too many parameters for annealer's constructor! should replace with a task only;

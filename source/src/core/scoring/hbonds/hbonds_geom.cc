@@ -69,7 +69,7 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt;
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format;
 
 namespace core {
 namespace scoring {
@@ -567,7 +567,7 @@ hbond_compute_energy(
 	if ( std::abs(xD) > 1.0 || std::abs(xH) > 1.0 ) {
 		if ( true )
 			tr << "WARNING:: invalid angle value in hbond_compute_energy:"
-				<< " xH = " << ObjexxFCL::fmt::SS( xH ) << " xD = " << ObjexxFCL::fmt::SS( xD ) << std::endl;
+				<< " xH = " << ObjexxFCL::format::SS( xH ) << " xD = " << ObjexxFCL::format::SS( xD ) << std::endl;
 		return;
 	}
 	//std::cout << " hb: " << AHdis << " " << xH << " " << xD << std::endl;

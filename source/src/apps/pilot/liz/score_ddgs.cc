@@ -298,7 +298,7 @@ print_ddgs(utility::vector1<double> ddg,
 					 std::ostream & out){
 	//check to see that all sequences match across ensembles
 	std::string sequence_check="";
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	//mjo commenting out 'width' and 'precision' because they are unused and cause warnings
 	//Size width (8), precision (3);
 	for(unsigned int i =1; i <= mut.size(); i++){
@@ -409,7 +409,7 @@ print_verbose_ddgs(utility::vector1<pose::Pose> mut,
 		for( int i = 1; i <= avg_score_components.u1(); i++){
 			outfile << curr_mut_info << ' ' << i << ' ' /**<< avg_res_total_E_diff[i] << ' ' **/;
 			for( int j = 1; j <= avg_score_components.u2(); j++){
-				outfile << ObjexxFCL::fmt::F(width,precision,avg_score_components(i,j)) << ' ';
+				outfile << ObjexxFCL::format::F(width,precision,avg_score_components(i,j)) << ' ';
 			}
 			outfile << '\n';
 		}
@@ -440,7 +440,7 @@ print_verbose_ddgs(utility::vector1<pose::Pose> mut,
 			EnergyMap w(wt[min_wt_ind].energies().residue_total_energies(resn));
 			outfile <<curr_mut_info << ' ' << resn << ' ';
 			for(unsigned int s = 1; s <= nonzero_weights.size(); s++){
-				outfile << ObjexxFCL::fmt::F(width, precision, (m[core::scoring::score_type_from_name(nonzero_weights[s])] -
+				outfile << ObjexxFCL::format::F(width, precision, (m[core::scoring::score_type_from_name(nonzero_weights[s])] -
 																												w[core::scoring::score_type_from_name(nonzero_weights[s])])*wts[s]) << ' ' ;
 			}
 			outfile << '\n';

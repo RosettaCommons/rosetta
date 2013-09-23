@@ -59,6 +59,9 @@ public:
 	/// @brief Apply the loop-rebuild protocol to the input pose
 	core::Real apply( core::pose::Pose & pose, Size const & cutpoint );
 
+	/// @brief Apply the loop-rebuild protocol to the input pose
+	void apply( core::pose::Pose & pose, utility::vector1< Size > const & cutpoints );
+
 	//Need get/set functions for options.
 
   void fast_scan( bool const & setting ) { fast_scan_ = setting; }

@@ -235,7 +235,7 @@ void FragData::show( std::ostream &os, Frame const& frame ) const {
 	Size i = 1;
 	if ( is_valid() ) {
 		for ( SRFD_List::const_iterator it= data_.begin(), eit=data_.end(); it!=eit; ++it ) {
-			os << ObjexxFCL::fmt::RJ( 10, frame.seqpos( i++ ) ) << " " << ObjexxFCL::fmt::RJ( 5, pdbpos() ) << " " << pdbid() <<" ";
+			os << ObjexxFCL::format::RJ( 10, frame.seqpos( i++ ) ) << " " << ObjexxFCL::format::RJ( 5, pdbpos() ) << " " << pdbid() <<" ";
 			//			std::cerr << "FragData::show " << i-1 << std::endl;
 			(*it)->show( os );
 			os << std::endl;
@@ -250,7 +250,7 @@ void FragData::show( std::ostream &os ) const {
 	Size i = 1;
 	if ( is_valid() ) {
 		for ( SRFD_List::const_iterator it= data_.begin(), eit=data_.end(); it!=eit; ++it ) {
-			os << ObjexxFCL::fmt::RJ( 10, i++ ) << " " << ObjexxFCL::fmt::RJ( 5, pdbpos() ) << " " << pdbid() << " " ;
+			os << ObjexxFCL::format::RJ( 10, i++ ) << " " << ObjexxFCL::format::RJ( 5, pdbpos() ) << " " << pdbid() << " " ;
 			(*it)->show( os );
 			os << std::endl;
 		}

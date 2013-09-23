@@ -402,7 +402,7 @@ std::ostream & operator<<( std::ostream & out, const SequenceProfile & p ) {
 	out << p.to_string() << std::endl;
 	for ( Size i = 1; i <= p.length(); ++i ) {
 		for ( Size j = 1; j <= p.width(); ++j ) {
-			out << ObjexxFCL::fmt::F( width, precision, p.prof_row(i)[j] );
+			out << ObjexxFCL::format::F( width, precision, p.prof_row(i)[j] );
 		}
 		out << std::endl;
 	}

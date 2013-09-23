@@ -308,7 +308,7 @@ inline
 std::string
 lss( T const & t, int i )
 {
-  return ObjexxFCL::fmt::RJ(i,ObjexxFCL::string_of(t));
+  return ObjexxFCL::format::RJ(i,ObjexxFCL::string_of(t));
 }
 
 template< typename T >
@@ -316,7 +316,7 @@ inline
 std::string
 tss( T const & t, int i )
 {
-  return ObjexxFCL::fmt::LJ(i,ObjexxFCL::string_of(t));
+  return ObjexxFCL::format::LJ(i,ObjexxFCL::string_of(t));
 }
 
 template< typename T >

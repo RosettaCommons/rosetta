@@ -112,7 +112,7 @@ void ClashCountCalculator::recompute( Pose const& pose ) {
 						if ( clash > 0.0 ) {
 							core::Real score( clash*clash/bump_dsq*vdw_scale_factor_ );
 							if ( score > clash_threshold_ )  {
-								using namespace ObjexxFCL::fmt;
+								using namespace ObjexxFCL::format;
 								std::string const TAG( ( i <= 4 && j <= 4 ) ? "BB BUMP: " : "   BUMP: ");
 								tr.Info << TAG << I(4,rsd1.seqpos() ) << I(4,rsd2.seqpos() )
 													<<' ' << rsd1.atom_name(i) << ' ' << rsd2.atom_name(j) << ' '

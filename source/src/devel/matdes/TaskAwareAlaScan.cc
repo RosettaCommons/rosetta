@@ -332,7 +332,7 @@ TaskAwareAlaScan::report( std::ostream & out, core::pose::Pose const & const_pos
 			// Output to pdb file
 			if ( write2pdb() ) { write_to_pdb( resi, res_type, output_ddG ); }
 			// Output to tracer
-			out<<" "<<res_type<<" "<<resi<<" "<<chain<<" : "<< ObjexxFCL::fmt::F (9,4,output_ddG)<<std::endl;
+			out<<" "<<res_type<<" "<<resi<<" "<<chain<<" : "<< ObjexxFCL::format::F (9,4,output_ddG)<<std::endl;
 		}
 	}
 	out<<std::endl;
@@ -346,7 +346,7 @@ void TaskAwareAlaScan::write_to_pdb( core::Size const & residue, std::string con
   std::string user_name = this->get_user_defined_name();
 	std::string mut_name = "ALA";
 	if ( exempt_identities_.find( residue_name ) != exempt_identities_.end() ) { mut_name = residue_name; }
-  std::string output_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(residue) + mut_name + " = " + ObjexxFCL::fmt::F (9,4,ddG);
+  std::string output_string = filter_name + " " + user_name + ": " + residue_name + ObjexxFCL::string_of(residue) + mut_name + " = " + ObjexxFCL::format::F (9,4,ddG);
   job->add_string(output_string);
 
 }

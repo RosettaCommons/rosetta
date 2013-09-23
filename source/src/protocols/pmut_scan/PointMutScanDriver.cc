@@ -90,7 +90,7 @@ using namespace core::pack::task::operation;
 using namespace core::pack::task;
 
 using namespace protocols;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using namespace utility;
 
 

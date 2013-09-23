@@ -55,7 +55,7 @@ public:
 
 	void test_number_of_residue_types() {
 		using namespace core::chemical;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		int width = 15;
 		TR << A(width,"ResidueTypeSet") << A(width,"NumResTypes") << endl;

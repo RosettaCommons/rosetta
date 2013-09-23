@@ -57,7 +57,7 @@
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
 
 
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::F;
 using namespace protocols::cluster;
 
 

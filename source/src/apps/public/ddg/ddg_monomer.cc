@@ -120,9 +120,9 @@ print_ddgs(std::string ddg_out,
     ddg_output << "\n";
   }
   if(label.compare("") != 0){
-    ddg_output << "ddG: " << label << " " << ObjexxFCL::fmt::F(9,3,total_ddgs) << " ";
+    ddg_output << "ddG: " << label << " " << ObjexxFCL::format::F(9,3,total_ddgs) << " ";
     for(Size m=1;m<=delta_e_components.size();m++){
-      ddg_output << ObjexxFCL::fmt::F(9,3,delta_e_components[m]) << " ";
+      ddg_output << ObjexxFCL::format::F(9,3,delta_e_components[m]) << " ";
     }
     ddg_output << "\n";
   }

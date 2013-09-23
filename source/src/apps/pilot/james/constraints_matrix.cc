@@ -91,7 +91,7 @@ using basic::Error;
 #include <utility/excn/Exceptions.hh>
 
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // usage: constraints_matrix [-in::file::fullatom] -in::file::native pdbfile -constraints::cst_file cstfile
 

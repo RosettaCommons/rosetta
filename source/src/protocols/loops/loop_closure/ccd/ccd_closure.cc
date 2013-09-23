@@ -46,7 +46,7 @@
 
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace loops {
@@ -737,10 +737,10 @@ fast_ccd_loop_closure(
 
 						if ( local_verbose )
 							tccd.Warning << "pos: " << I( 3, pos ) << I( 3, torsion) <<
-								" alpha-orig: " << fmt::F( 7, 3, alpha_orig ) <<
-								" alpha: " << fmt::F( 7, 3, alpha ) <<
-								" dev1: " << fmt::F( 13, 9, dev ) <<
-								" dev2: " << fmt::F( 13, 9, tmp_dev ) << std::endl;
+								" alpha-orig: " << format::F( 7, 3, alpha_orig ) <<
+								" alpha: " << format::F( 7, 3, alpha ) <<
+								" dev1: " << format::F( 13, 9, dev ) <<
+								" dev2: " << format::F( 13, 9, tmp_dev ) << std::endl;
 
 					} // if ( local_debug ) ///////////////////////////////////
 				} // torsion = 1,nbb

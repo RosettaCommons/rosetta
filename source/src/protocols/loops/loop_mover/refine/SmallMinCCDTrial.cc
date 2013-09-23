@@ -287,7 +287,7 @@ void SmallMinCCDTrial::debug_zero( Pose & pose )
 	if ( debug() ) {
 		TR << "chutmp-debug small_move-0: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-0: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::fmt::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
 		pose.dump_pdb("small_move-0.pdb");
 	}
 
@@ -298,7 +298,7 @@ void SmallMinCCDTrial::debug_one( Pose & pose )
 	if ( debug() ) {
 		TR << "chutmp-debug small_move-1: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-1: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::fmt::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
 		pose.dump_pdb("small_move-1.pdb");
 		std::ofstream out("score.small_move_1");
 		out << "scoring of input_pose " << (*scorefxn())(pose) << std::endl;
@@ -312,7 +312,7 @@ void SmallMinCCDTrial::debug_two( Pose & pose )
 	if ( debug() ) {
 		TR << "chutmp-debug small_move-2: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-2: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::fmt::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
 		pose.dump_pdb("small_move-2.pdb");
 		std::ofstream out("score.small_move_2");
 		out << "scoring of input_pose " << (*scorefxn())(pose) << std::endl;
@@ -326,7 +326,7 @@ void SmallMinCCDTrial::debug_three( Pose & pose )
 	if ( debug() ) {
 		TR << "chutmp-debug small_move-3: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-3: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::fmt::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
 		pose.dump_pdb("small_move-3.pdb");
 	}
 }
@@ -336,7 +336,7 @@ void SmallMinCCDTrial::debug_four( Pose & pose )
 	if ( debug() ) {
 		TR << "chutmp-debug small_move-4: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-4: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::fmt::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
 		pose.dump_pdb("small_move-4.pdb");
 	}
 }
@@ -346,7 +346,7 @@ void SmallMinCCDTrial::debug_five( Pose & pose )
 	if ( debug() ) {
 		TR << "chutmp-debug small_move-5: " << "  " << (*scorefxn())(pose) << std::endl;
 		TR << "small_move-5: " << pose.energies().total_energies().weighted_string_of( scorefxn()->weights() )
-		<< " rmsd: " << ObjexxFCL::fmt::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
+		<< " rmsd: " << ObjexxFCL::format::F(9,3,loop_rmsd( pose, *get_native_pose(), *loop_mover()->loops() )) << std::endl;
 		pose.dump_pdb("small_move-5.pdb");
 	}
 }

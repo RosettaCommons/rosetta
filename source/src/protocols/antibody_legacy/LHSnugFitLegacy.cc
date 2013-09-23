@@ -49,7 +49,7 @@
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>

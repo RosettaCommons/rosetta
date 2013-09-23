@@ -202,7 +202,7 @@
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 
 static basic::Tracer tr("protocols.abinitio.AbrelaxApplication");
 static numeric::random::RandomGenerator RG(423464);  // <- Magic number, do not change it!

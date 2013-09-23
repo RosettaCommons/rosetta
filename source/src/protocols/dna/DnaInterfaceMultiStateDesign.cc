@@ -69,7 +69,7 @@ using namespace core;
 			using namespace operation;
 	using namespace scoring;
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 using namespace multistate_design;
 using namespace genetic_algorithm;

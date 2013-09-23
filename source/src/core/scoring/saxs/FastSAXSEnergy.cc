@@ -287,7 +287,7 @@ void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 			out.open_append( filename );
 			Size const width( 12 );
 			using namespace core::pose::datacache;
-			using namespace ObjexxFCL::fmt;
+			using namespace ObjexxFCL::format;
 
 			std::string tag( core::pose::tag_from_pose(pose) );
 			out << A( 6, "TAG ")   << tag << std::endl;

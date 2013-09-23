@@ -294,7 +294,7 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // }
 // 
 // BINTYPE pose2bin(core::pose::Pose const & pose) {
-// 	using namespace ObjexxFCL::fmt;
+// 	using namespace ObjexxFCL::format;
 // 	BINTYPE bin = 0;
 // 	for(int i = 0; i < (int)pose.n_residue(); ++i) {		
 // 		// Real phid = pose.phi(i+1);
@@ -342,7 +342,7 @@ void cyclic_superimpose(Pose & move, Pose const & ref) {
 // }
 // 
 // BINTYPE pose2bin(core::pose::Pose const & pose) {
-// 	using namespace ObjexxFCL::fmt;
+// 	using namespace ObjexxFCL::format;
 // 	BINTYPE bin = 0;
 // 	for(int i = 0; i < (int)pose.n_residue(); ++i) {		
 // 		// Real phid = pose.phi(i+1);

@@ -1,0 +1,11 @@
+-fasta twoparthelix.fasta
+-s helix_NEW.pdb helix_NEW.pdb
+-input_res  13-16 1-4  5-12
+-cutpoint_open 8
+-num_random_samples 20
+-cycles 3
+-nstruct 1
+-rna:corrected_geo
+-erraser
+-native twoparthelix_reference.pdb
+-out:file:silent swm_rebuild.out

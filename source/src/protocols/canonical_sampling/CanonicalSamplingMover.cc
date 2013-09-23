@@ -438,7 +438,7 @@ void CanonicalSamplingMover::dump_decoy_or_score(
 
 void
 CanonicalSamplingMover::apply(Pose & pose){
-  using namespace ObjexxFCL::fmt;
+  using namespace ObjexxFCL::format;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 

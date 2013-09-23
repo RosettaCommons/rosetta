@@ -325,7 +325,7 @@ void Transform::change_conformer(core::conformation::UltraLightResidue & residue
 
 void Transform::dump_conformer(core::conformation::UltraLightResidue & residue, utility::io::ozstream & output)
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	for(core::Size atom_index = 1; atom_index <= residue.natoms();++atom_index)
 	{
 		core::PointPosition coords = residue[atom_index];

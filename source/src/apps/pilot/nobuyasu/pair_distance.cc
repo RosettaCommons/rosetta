@@ -163,7 +163,7 @@ public: // apply
 	void
 	apply( core::pose::Pose & pose )
 	{
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		using namespace protocols::jd2;
 		JobOP job_me( JobDistributor::get_instance()->current_job() );
 		String me( JobDistributor::get_instance()->job_outputter()->output_name( job_me ) );

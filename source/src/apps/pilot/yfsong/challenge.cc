@@ -337,7 +337,7 @@ void align_backbone_by_chunk(core::pose::Pose & pose, core::Size const residue_s
 					int const registry_shift=0,
 					core::Size MAX_TRIAL = 100)
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	TR << "aligning the chunk: " << I(4,residue_seq_start) << I(4,residue_seq_end) << std::endl;
 
 	std::list < Size > residue_list;
@@ -386,7 +386,7 @@ void align_backbone_by_chunk(core::pose::Pose & pose, core::Size const residue_s
 			++atom_map_count;
 
 
-			using namespace ObjexxFCL::fmt;
+			using namespace ObjexxFCL::format;
 			TR << "atom mapping " << I(4, atom_map_count) << id1 << id2 << std::endl;
 		}
 
@@ -394,7 +394,7 @@ void align_backbone_by_chunk(core::pose::Pose & pose, core::Size const residue_s
 		//pose.dump_pdb("before_superimpose.pdb");
 		superimpose_pose_transform(pose, residue_list, ref_pose, atom_map);
 		//pose.dump_pdb("after_superimpose.pdb");
-		//using namespace ObjexxFCL::fmt;
+		//using namespace ObjexxFCL::format;
 		//TR << "after  superimposing model " << I(4,atom_map.size()) << I(4,atom_map_count) << F(8,3,rms) << std::endl;
 //		if (rms > 5.0) {
 //			utility_exit_with_message("Large RMSD");
@@ -525,10 +525,10 @@ initialize_template_structures() {
 	for (core::Size i_template=1; i_template<=template_structures_.size(); ++i_template) {
 		// utility::vector1< SecondaryStructureChunk > ss_chunks;
 		// split_pdb_into_ss_chunks(template_structures_[i_template], ss_chunks);
-		//using namespace ObjexxFCL::fmt;
+		//using namespace ObjexxFCL::format;
 		//TR << I(4,ss_chunks.size()) << std::endl;
 		//for (core::Size i_chunk=1; i_chunk<=ss_chunks.size(); ++i_chunk) {
-		//	using namespace ObjexxFCL::fmt;
+		//	using namespace ObjexxFCL::format;
 		//	TR << I(4, i_chunk) << I(4,ss_chunks[i_chunk].start_seqpos()) << I(4,ss_chunks[i_chunk].end_seqpos()) << I(4,ss_chunks[i_chunk].length()) << " " << ss_chunks[i_chunk].sequence() << std::endl;
 		//}
 		//TR.flush();
@@ -561,7 +561,7 @@ count_alignment(core::pose::Pose & mod_pose, utility::vector1 < std::map <core::
 			++num_aligned;
 		}
 		alignment_counts.push_back((core::Real)num_aligned/(core::Real)seqpos_alignments.size());
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		TR << I(4,ires) << F(8,3, (core::Real)num_aligned/(core::Real)seqpos_alignments.size()) << std::endl;
 		TR.flush();
 	}
@@ -705,10 +705,10 @@ void initialize_pose(core::pose::Pose & pose)
 		utility_exit_with_message("Error in reading psipred_ss2 file, is the -in:file:psipred_ss2 flag set correctly?");
 	}
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	TR << I(4,ss_chunks_target_.size()) << std::endl;
 	for (core::Size i_chunk=1; i_chunk<=ss_chunks_target_.size(); ++i_chunk) {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		TR << I(4, i_chunk) << I(4,ss_chunks_target_[i_chunk].start()) << I(4,ss_chunks_target_[i_chunk].stop()) << I(4,ss_chunks_target_[i_chunk].length()) << std::endl;
 	}
 	TR.flush();
@@ -721,7 +721,7 @@ void initialize_pose(core::pose::Pose & pose)
 		i_template = pick_random_template();
 	}
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	TR << pose.fold_tree() << std::endl;
 	TR << "template " << I(4, i_template) << std::endl;
 
@@ -740,7 +740,7 @@ void realign(core::pose::Pose & pose) {
 	while (!i_template) {
 		i_template = pick_random_template();
 	}
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	TR << "template " << I(4, i_template) << std::endl;
 
 	core::Size jump_number = RG.random_range(1, pose.num_jump());

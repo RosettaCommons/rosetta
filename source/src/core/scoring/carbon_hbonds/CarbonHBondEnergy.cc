@@ -60,7 +60,7 @@ namespace core {
 namespace scoring {
 namespace carbon_hbonds {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 /// @details This must return a fresh instance of the CarbonHBondEnergy class,
 /// never an instance already in use

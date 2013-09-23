@@ -202,7 +202,7 @@ namespace monte_carlo {
 		if ( swa_move.attachments().size() == 0 ) {
 			os << " with no attachments";
 		} else {
-			os << " with attachments to";
+			os << " with attachments ";
 			for ( Size n = 1; n <= swa_move.attachments().size(); n++ ) os << " " << swa_move.attachments()[n];
 		}
 		return os;
@@ -213,7 +213,7 @@ namespace monte_carlo {
 	std::ostream &
 	operator <<( std::ostream & os, Attachment const & attachment )
 	{
-		os << attachment.attached_res() << ":" << to_string( attachment.attachment_type() );
+		os << to_string( attachment.attachment_type() ) << ":" << attachment.attached_res();
 		return os;
 	}
 

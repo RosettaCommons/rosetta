@@ -109,7 +109,7 @@ public:
 	}
 
 	void pdb_from_level(int level, std::string fname) {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		utility::io::ozstream out(fname);
 		int count = 0;
 		for(core::Size i = 1; i <= num_sample(level); ++i) {

@@ -307,7 +307,7 @@ void HamiltonianExchange::setup_exchange_schedule() {
 void
 HamiltonianExchange::find_exchange_partner( int& partner, bool& is_master ) {
 #ifdef USEMPI
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	//	tr.Trace<< "find exchange partner... " << std::endl;
 	int sendbuf = current_temp();
@@ -356,7 +356,7 @@ HamiltonianExchange::temperature_move( core::Real ) {
 
 core::Real
 HamiltonianExchange::temperature_move( pose::Pose& MPI_ONLY( pose ), core::Real MPI_ONLY( score ) ) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	check_temp_consistency();
 	if ( !time_for_temp_move() ) return temperature();
 	next_exchange_schedule();
@@ -647,7 +647,7 @@ void HamiltonianExchange::set_mpi_comm( MPI_Comm const& mpi_comm ) {
 #endif
 
 void HamiltonianExchange::show( std::ostream& os ) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	// All osput will be 80 characters - 80 is a nice number, don't you think?
 	std::string line_marker = "///";
 	os << "////////////////////////////////////////////////////////////////////////////////" << std::endl;

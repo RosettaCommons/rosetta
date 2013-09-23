@@ -120,7 +120,7 @@ int main( int argc, char* argv [] ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring::constraints;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::chemical;
 	using core::Size;

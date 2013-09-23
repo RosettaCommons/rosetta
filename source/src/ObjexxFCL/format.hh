@@ -34,7 +34,7 @@
 
 
 namespace ObjexxFCL {
-namespace fmt {
+namespace format {
 
 
 // Constants
@@ -992,7 +992,7 @@ nl_if( int const i, int const n )
 }
 
 
-} // namespace fmt
+} // namespace format
 } // namespace ObjexxFCL
 
 

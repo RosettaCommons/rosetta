@@ -74,8 +74,8 @@ namespace motif_hash {
 	using numeric::rotation_matrix_degrees;
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
-	using ObjexxFCL::fmt::F;
-	using ObjexxFCL::fmt::I;
+	using ObjexxFCL::format::F;
+	using ObjexxFCL::format::I;
 	using ObjexxFCL::string_of;
 	using std::cerr;
 	using std::cout;

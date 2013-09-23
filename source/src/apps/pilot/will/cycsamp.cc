@@ -306,7 +306,7 @@ std::string bin2string(BINTYPE bin, Size nres) {
 
 
 BINTYPE pose2bin(core::pose::Pose const & pose) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	int nres = min(pose.n_residue(),MAXRES);
 	BINTYPE bin = 0;
 	for(int i = 0; i < nres; ++i) {		
@@ -530,14 +530,14 @@ void* doit(void*) {
 
 		}
 		if( ITER % option[cyclic::log_interval]() == 0) {
-			TR << ObjexxFCL::fmt::I(10, ITER                ) << " ITERs " 
-			   << ObjexxFCL::fmt::I(10, trial->num_accepts()) << " accpets " 
-			   << ObjexxFCL::fmt::I(10, ntransitions        ) << " transitions " 
-			   << ObjexxFCL::fmt::I(10, bincount.size()     ) << " bins sampled " 
-			   << ObjexxFCL::fmt::I(10, posebins.size()     ) << " bins filled " 
-			   << ObjexxFCL::fmt::F(7,3, sffastd->score(pose) ) << " score " 
-			   << ObjexxFCL::fmt::F(7,3, core::scoring::CA_rmsd(pose,start_pose) ) << " rms " 
-			   << ObjexxFCL::fmt::F(7,3,   sqrt(pose.energies().total_energies()[core::scoring::atom_pair_constraint]/3.0)/5.0) << " mean apc violation " 
+			TR << ObjexxFCL::format::I(10, ITER                ) << " ITERs " 
+			   << ObjexxFCL::format::I(10, trial->num_accepts()) << " accpets " 
+			   << ObjexxFCL::format::I(10, ntransitions        ) << " transitions " 
+			   << ObjexxFCL::format::I(10, bincount.size()     ) << " bins sampled " 
+			   << ObjexxFCL::format::I(10, posebins.size()     ) << " bins filled " 
+			   << ObjexxFCL::format::F(7,3, sffastd->score(pose) ) << " score " 
+			   << ObjexxFCL::format::F(7,3, core::scoring::CA_rmsd(pose,start_pose) ) << " rms " 
+			   << ObjexxFCL::format::F(7,3,   sqrt(pose.energies().total_energies()[core::scoring::atom_pair_constraint]/3.0)/5.0) << " mean apc violation " 
 				<< Real(clock()-prevt) / 100.0 << " time "
 			   << std::endl;
 			prevt = clock();

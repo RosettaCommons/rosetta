@@ -86,8 +86,8 @@ namespace swa {
 		reference_axes_( Matrix::identity() ),
 		reference_centroid_( Vector( 0.0, 0.0, 0.0 ) ),
 		scorefxn_( core::scoring::getScoreFunction() ),
-		o2star_trials_( false ),
-		ignore_o2star_hbonds_in_filter_( false ),
+		o2prime_trials_( false ),
+		ignore_o2prime_hbonds_in_filter_( false ),
 		assign_WC_edges_( false ),
 		reference_energy_( 0.0 ),
 		min_hbonds_( 0 ),
@@ -207,10 +207,10 @@ RigidBodySampler::~RigidBodySampler() {}
 
 	/////////////////////////////////////////////////////////////
 	void
-	virtualize_o2star( pose::Pose & pose ){
+	virtualize_o2prime( pose::Pose & pose ){
 		using namespace core::chemical;
 		for( Size i = 1; i <= pose.total_residue(); i++ ){
-		pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", i );
+		pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", i );
 		}
 	}
 
@@ -235,11 +235,11 @@ RigidBodySampler::~RigidBodySampler() {}
 		setup_heavy_atoms( pose_to_translate, moving_atoms, moving_res_ );
 		setup_heavy_atoms( pose_to_translate, fixed_atoms, fixed_res_  );
 
-		// virual o2star pose -- needed for fa_rep checks.
-		Pose pose_to_translate_virtual_o2star = pose_to_translate;
-		Pose pose_virtual_o2star = pose;
-		virtualize_o2star( pose_to_translate_virtual_o2star );
-		virtualize_o2star( pose_virtual_o2star );
+		// virual o2prime pose -- needed for fa_rep checks.
+		Pose pose_to_translate_virtual_o2prime = pose_to_translate;
+		Pose pose_virtual_o2prime = pose;
+		virtualize_o2prime( pose_to_translate_virtual_o2prime );
+		virtualize_o2prime( pose_virtual_o2prime );
 
 		//		std::cout << "X " << x_min_ << ' ' << x_max_ << ' ' << x_increment_ << std::endl;
 		//		std::cout << "Y " << y_min_ << ' ' << y_max_ << ' ' << y_increment_ << std::endl;
@@ -267,14 +267,14 @@ RigidBodySampler::~RigidBodySampler() {}
 					////////////////////////////////////////////////////////////////////
 
 					if ( fa_rep_cutoff_ > 0.0 ){
-						translate( pose_virtual_o2star, translation, pose_to_translate_virtual_o2star, moving_res_ );
-						if ( !check_fa_rep( pose_virtual_o2star ) ) continue;
+						translate( pose_virtual_o2prime, translation, pose_to_translate_virtual_o2prime, moving_res_ );
+						if ( !check_fa_rep( pose_virtual_o2prime ) ) continue;
 					}
 
 					translate( pose, translation, pose_to_translate, moving_res_ );
 
-					if ( ignore_o2star_hbonds_in_filter_ && min_hbonds_ > 0 && !check_num_hbonds( pose ) ) continue;
-					if ( o2star_trials_ && check_o2star_needs_optimization( pose ) ) protocols::swa::rna::o2star_minimize( pose, o2star_pack_scorefxn_ );
+					if ( ignore_o2prime_hbonds_in_filter_ && min_hbonds_ > 0 && !check_num_hbonds( pose ) ) continue;
+					if ( o2prime_trials_ && check_o2prime_needs_optimization( pose ) ) protocols::swa::rna::o2prime_minimize( pose, o2prime_pack_scorefxn_ );
 					if ( min_hbonds_ > 0 && !check_num_hbonds( pose ) ) continue;
 
 					count_good_++;
@@ -463,22 +463,22 @@ RigidBodySampler::~RigidBodySampler() {}
 
 	///////////////////////////////////////////////////////////////////////
 	void
-	RigidBodySampler::set_o2star_trials(  bool const setting ){
+	RigidBodySampler::set_o2prime_trials(  bool const setting ){
 
 		using namespace core::scoring;
 
-		o2star_trials_ = setting;
+		o2prime_trials_ = setting;
 
-		if ( o2star_trials_ ){
-			o2star_pack_scorefxn_ = new ScoreFunction;
-			o2star_pack_scorefxn_->set_weight( fa_atr, scorefxn_->get_weight( fa_atr ) );
-			o2star_pack_scorefxn_->set_weight( fa_rep, scorefxn_->get_weight( fa_rep ) );
-			o2star_pack_scorefxn_->set_weight( hbond_lr_bb_sc, scorefxn_->get_weight( hbond_lr_bb_sc ) );
-			o2star_pack_scorefxn_->set_weight( hbond_sr_bb_sc, scorefxn_->get_weight( hbond_sr_bb_sc ) );
-			o2star_pack_scorefxn_->set_weight( hbond_sc, scorefxn_->get_weight( hbond_sc ) );
-			o2star_pack_scorefxn_->set_energy_method_options( scorefxn_->energy_method_options() );
+		if ( o2prime_trials_ ){
+			o2prime_pack_scorefxn_ = new ScoreFunction;
+			o2prime_pack_scorefxn_->set_weight( fa_atr, scorefxn_->get_weight( fa_atr ) );
+			o2prime_pack_scorefxn_->set_weight( fa_rep, scorefxn_->get_weight( fa_rep ) );
+			o2prime_pack_scorefxn_->set_weight( hbond_lr_bb_sc, scorefxn_->get_weight( hbond_lr_bb_sc ) );
+			o2prime_pack_scorefxn_->set_weight( hbond_sr_bb_sc, scorefxn_->get_weight( hbond_sr_bb_sc ) );
+			o2prime_pack_scorefxn_->set_weight( hbond_sc, scorefxn_->get_weight( hbond_sc ) );
+			o2prime_pack_scorefxn_->set_energy_method_options( scorefxn_->energy_method_options() );
 			// note that geom_sol is not optimized well --> replace with lk_sol for now.
-			o2star_pack_scorefxn_->set_weight( fa_sol, scorefxn_->get_weight( lk_nonpolar ) );
+			o2prime_pack_scorefxn_->set_weight( fa_sol, scorefxn_->get_weight( lk_nonpolar ) );
 		}
 	}
 
@@ -573,8 +573,8 @@ RigidBodySampler::~RigidBodySampler() {}
 			if ( !( ( in_vector( don_res_num, moving_res_ ) && in_vector( acc_res_num, fixed_res_ ) ) ||
 							( in_vector( acc_res_num, moving_res_ ) && in_vector( don_res_num, fixed_res_ ) ) ) ) continue;
 
-			if ( ignore_o2star_hbonds_in_filter_ && ( pose.residue_type( don_res_num ).atom_name( don_hatm ) == "HO2'" ) ) continue;
-			if ( ignore_o2star_hbonds_in_filter_ && ( pose.residue_type( acc_res_num ).atom_name( acc_atm  ) == " O2'" ) ) continue;
+			if ( ignore_o2prime_hbonds_in_filter_ && ( pose.residue_type( don_res_num ).atom_name( don_hatm ) == "HO2'" ) ) continue;
+			if ( ignore_o2prime_hbonds_in_filter_ && ( pose.residue_type( acc_res_num ).atom_name( acc_atm  ) == " O2'" ) ) continue;
 
 			num_cross_hbonds++;
 
@@ -588,23 +588,23 @@ RigidBodySampler::~RigidBodySampler() {}
 
 	/////////////////////////////////////////////////////////////
 	bool
-	RigidBodySampler::check_o2star_needs_optimization( pose::Pose const & pose ){
+	RigidBodySampler::check_o2prime_needs_optimization( pose::Pose const & pose ){
 		Real const DIST_CUTOFF = 4.0;
 
 		for ( Size n = 1; n <= moving_res_.size(); n++ ){
-			Vector const & o2star_xyz = pose.residue( moving_res_[n] ).xyz( " O2'" );
+			Vector const & o2prime_xyz = pose.residue( moving_res_[n] ).xyz( " O2'" );
 			for ( Size m = 1; m <= fixed_res_.size(); m++ ){
 				for ( Size k = 1; k <= pose.residue_type( fixed_res_[m] ).nheavyatoms(); k++ ) {
-					if ( ( o2star_xyz - pose.residue( fixed_res_[m] ).xyz( k ) ).length() < DIST_CUTOFF )	return true;
+					if ( ( o2prime_xyz - pose.residue( fixed_res_[m] ).xyz( k ) ).length() < DIST_CUTOFF )	return true;
 				}
 			}
 		}
 
 		for ( Size n = 1; n <= fixed_res_.size(); n++ ){
-			Vector const & o2star_xyz = pose.residue( fixed_res_[n] ).xyz( " O2'" );
+			Vector const & o2prime_xyz = pose.residue( fixed_res_[n] ).xyz( " O2'" );
 			for ( Size m = 1; m <= moving_res_.size(); m++ ){
 				for ( Size k = 1; k <= pose.residue_type( moving_res_[m] ).nheavyatoms(); k++ ) {
-					if ( ( o2star_xyz - pose.residue( moving_res_[m]).xyz( k ) ).length() < DIST_CUTOFF )	return true;
+					if ( ( o2prime_xyz - pose.residue( moving_res_[m]).xyz( k ) ).length() < DIST_CUTOFF )	return true;
 				}
 			}
 		}

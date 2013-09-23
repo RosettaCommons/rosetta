@@ -893,9 +893,9 @@ struct HubDenovo {
 		TR << "RESIDUE NUMBER MAPPING" << endl;
 		for(std::map<string,Sizes>::const_iterator i = cfg.ssmap.begin(); i != cfg.ssmap.end(); ++i){
 			if( (i->second.front())==ERROR_UINT ) continue;
-			TR << ObjexxFCL::fmt::LJ(4,i->first);
+			TR << ObjexxFCL::format::LJ(4,i->first);
 			for(Sizes::const_iterator j = i->second.begin(); j != i->second.end(); ++j){
-				TR << " " << ObjexxFCL::fmt::I(3,*j);
+				TR << " " << ObjexxFCL::format::I(3,*j);
 			}
 			TR << endl;
 		}

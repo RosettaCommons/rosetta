@@ -61,7 +61,7 @@ static numeric::random::RandomGenerator RG(47537); // <- Magic number, do not ch
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 IndependentLoopMover::IndependentLoopMover() :
 	LoopMover()

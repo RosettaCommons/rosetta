@@ -137,7 +137,7 @@ public:
 
 	/// @brief prints how many candidates have been collected for each position and how good they are
 	void print_report(std::ostream& out, scores::FragmentScoreManagerOP scoring) const {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		out
 				<< "\n pos  count   best     worst  | pos  count   best    worst   | pos  count    best    worst  |\n";
 		Size cnt = 0;

@@ -273,7 +273,7 @@ main( int argc, char * argv [] ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::sequence;
-  using namespace ObjexxFCL::fmt;
+  using namespace ObjexxFCL::format;
 	using protocols::comparative_modeling::gather_coords;
 	using namespace protocols::comparative_modeling;
 	Real THRESHOLD_FOR_E_VAL = 1e-30;

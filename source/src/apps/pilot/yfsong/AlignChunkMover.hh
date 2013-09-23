@@ -230,7 +230,7 @@ void set_reset_torsion_unaligned(bool reset_torsion_unaligned) {
 	
 void steal_torsion_from_template(core::pose::Pose & pose) {
 	basic::Tracer TR("pilot.yfsong.util");
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	for (Size ires_pose=seqpos_start_; ires_pose<=seqpos_stop_; ++ires_pose) {
 		if (reset_torsion_unaligned_) {
 			pose.set_omega(ires_pose, 180);
@@ -454,7 +454,7 @@ get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk
 		Size respos_mid_template = (template_ss_chunks[j_chunk_template].start() + template_ss_chunks[j_chunk_template].stop()) / 2;
 		int offset = respos_mid_template - respos_mid_pose;
 		
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		if (target_ss_chunks[i_chunk_pose].length() <= template_ss_chunks[j_chunk_template].length()) {
 			max_registry_shift_[i_chunk_pose] = max_registry_shift_input_ + template_ss_chunks[j_chunk_template].length() - target_ss_chunks[i_chunk_pose].length();
 			for (Size ires=target_ss_chunks[i_chunk_pose].start(); ires<=target_ss_chunks[i_chunk_pose].stop(); ++ires) {
@@ -693,7 +693,7 @@ public:
 		numeric::xyzVector<core::Real> helix_center = pose.residue(ires).xyz("CA") + center_vect * 2.3;
 		return helix_center;
 		
-		//using namespace ObjexxFCL::fmt;
+		//using namespace ObjexxFCL::format;
 		//std::cout << "ATOM   9999  X   DUM A 999    " << F(8,3,helix_center.x())<< F(8,3,helix_center.y())<< F(8,3,helix_center.z()) << std::endl;
 	}
 	

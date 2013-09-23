@@ -148,7 +148,7 @@ basic_idealize(
 	using namespace optimization;
 	using namespace optimization::symmetry;
 	using namespace id;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using scoring::all_atom_rmsd;
 
 	Size const window_width( 3 ); // window:  from pos-window_width to pos+window_width

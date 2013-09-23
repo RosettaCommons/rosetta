@@ -35,14 +35,16 @@ namespace swa {
 
 	//Constructor
 	TransientCutpointHandler::TransientCutpointHandler( Size const sample_res ):
-		sample_res_( sample_res ), //sampled nucleoside
-		cutpoint_res_( sample_res ) // suite at which to make cutpoint
+		sample_suite_  ( sample_res - 1 ), //sampled nucleoside
+		cutpoint_suite_( sample_res ), // suite at which to make cutpoint
+		move_jump_points_away_( false )
 	{}
 
 	//Constructor
-	TransientCutpointHandler::TransientCutpointHandler( Size const sample_res, Size const cutpoint_res ):
-		sample_res_( sample_res ), //sampled nucleoside
-		cutpoint_res_( cutpoint_res ) // suite at which to make cutpoint
+	TransientCutpointHandler::TransientCutpointHandler( Size const sample_suite, Size const cutpoint_suite ):
+		sample_suite_( sample_suite ), //sampled nucleoside
+		cutpoint_suite_( cutpoint_suite ), // suite at which to make cutpoint
+		move_jump_points_away_( false )
 	{}
 
 	//Destructor
@@ -58,7 +60,7 @@ namespace swa {
 		// create reasonable fold tree
 		prepare_fold_tree_for_erraser( pose );
 
-		correctly_add_cutpoint_variants( pose, cutpoint_res_);
+		correctly_add_cutpoint_variants( pose, cutpoint_suite_ );
 
 	}
 
@@ -69,22 +71,21 @@ namespace swa {
 		using namespace core::kinematics;
 		using namespace core::chemical::rna;
 
-		TR.Debug << "GETTING FOLD TREE " << std::endl;
-
 		FoldTree f = pose.fold_tree();
 
 		//update_fixed_res_and_minimize_res( pose );
 		utility::vector1< Size > sample_res_list = minimize_res_;
 
 		// figure out jump points that bracket the cut.
-		Size jump_start( sample_res_ - 1);
-		while ( jump_start > 1 && minimize_res_.has_value( jump_start ) && !f.is_cutpoint( jump_start - 1 ) ) jump_start--;
+		Size jump_start( sample_suite_    );
+		Size jump_end( cutpoint_suite_ + 1);
 
-		Size jump_end( cutpoint_res_ + 1);
-		while ( jump_end < pose.total_residue() && minimize_res_.has_value( jump_end ) && !f.is_cutpoint( jump_end ) ) jump_end++;
+		if ( move_jump_points_away_ ){
+			while ( jump_start > 1 && minimize_res_.has_value( jump_start ) && !f.is_cutpoint( jump_start - 1 ) )          jump_start--;
+			while ( jump_end < pose.total_residue() && minimize_res_.has_value( jump_end ) && !f.is_cutpoint( jump_end ) ) jump_end++;
+		}
 
-		Size const cutpoint = cutpoint_res_;
-		TR.Debug << "ADDING CUTPOINT TO FOLD_TREE: " << jump_start << " " << jump_end << " " << cutpoint << std::endl;
+		Size const cutpoint = cutpoint_suite_;
 		f.new_jump( jump_start, jump_end, cutpoint );
 
 		Size const which_jump = f.jump_nr( jump_start, jump_end );
@@ -95,7 +96,6 @@ namespace swa {
 											default_jump_atom( pose.residue( jump_end   ) ) );
 
 		pose.fold_tree( f );
-		TR.Debug << "NEW FOLD TREE " << pose.fold_tree() << std::endl;
 
 	}
 
@@ -107,8 +107,8 @@ namespace swa {
 		using namespace core::chemical;
 
 		// remove chainbreak variants. along with fold_tree restorer, put into separate function.
-		remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_res_   );
-		remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_res_ + 1 );
+		remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, cutpoint_suite_   );
+		remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, cutpoint_suite_ + 1 );
 
 		// return to simple fold tree
 		pose.fold_tree( fold_tree_save_ );

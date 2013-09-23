@@ -204,7 +204,7 @@ VDW_Energy::residue_pair_energy(
 	emap[ vdw ] += score * vdw_scale_factor_; // vdw prefactor!
 
 // 	if ( score*0.8 > 0.001 && rsd1.seqpos() <= rsd2.seqpos() ) {
-// 		using namespace ObjexxFCL::fmt;
+// 		using namespace ObjexxFCL::format;
 // 		std::cout << "vdw_ij: " << I(4,rsd1.seqpos() ) << I(4,rsd2.seqpos() ) << F(9,3,score*0.8) << std::endl;
 // 	}
 }

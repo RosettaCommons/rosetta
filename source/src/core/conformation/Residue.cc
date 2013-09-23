@@ -349,14 +349,13 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 							this_connid,
 							src_rsd.connect_map( ii ).resid(),
 							src_rsd.connect_map( ii ).connid() );
-#ifndef BOINC
 						if ( this_connid != ii ) {
-							TR.Error << "WARNING: Residue connection id changed when creating a new residue at seqpos " << seqpos() <<
+							TR.Debug << "WARNING: Residue connection id changed when creating a new residue at seqpos " << seqpos() <<
 								std::endl;
-							TR.Error << "WARNING: ResConnID info stored on residue " << src_rsd.connect_map( ii ).resid();
-							TR.Error << " is now out of date!" << std::endl;
+							TR.Debug << "WARNING: ResConnID info stored on residue " << src_rsd.connect_map( ii ).resid();
+							TR.Debug << " is now out of date!" << std::endl;
+							TR.Debug << "Connection atom name (in src): " << src_rsd.atom_name( ii_connatom ) << std::endl;
 						}
-#endif
 					}
 				} else {
 					/// Preserve residue connections in their input order.
@@ -451,7 +450,7 @@ Residue::orient_onto_residue(
 	if( atom_pairs.size() != 3 ){
 		utility_exit_with_message( "Three atom pairs must be provided in Residue::orient_onto_residue.");
 	}
-	
+
 	orient_onto_residue(
 			src,
 			atom_index( atom_pairs[1].second ),
@@ -472,7 +471,7 @@ void Residue::orient_onto_residue(
 	//NOTE: the implementation of this function might change in the future
 	//from strictly superimposing on three atoms to superposition along the lines
 	//of what is in numeric::model_quality::findUU()
-	
+
 	// explanation for taking the midpoint...?
 	Vector const
 		rot_midpoint ( 0.5 * (     atom(     nbr1 ).xyz() +     atom(     nbr2 ).xyz() ) ),
@@ -622,7 +621,7 @@ Residue::fill_missing_atoms(
 						break;
 					}
 				}
-				
+
 				if ( !stub_atoms_missing ) {
 					// no stub atoms missing: build our ideal coordinates
 					missing[i] = false;
@@ -975,7 +974,7 @@ Residue::set_theta( int const chino, Real const setting ) {
 	// apply the transform to all "downstream" atoms
 	apply_transform_downstream( chi_atoms[baseatom], R, v );
 
-	ASSERT_ONLY(Real const new_th(numeric::angle_degrees( 
+	ASSERT_ONLY(Real const new_th(numeric::angle_degrees(
 	              atom( chi_atoms[baseatom-1] ).xyz(), atom( chi_atoms[baseatom] ).xyz(), atom( chi_atoms[baseatom+1] ).xyz() )); )
 	assert( std::abs( basic::subtract_degree_angles( new_th, setting ) ) < 1e-2 );
 
@@ -1161,12 +1160,12 @@ void add_cloned_ligand_rotamer_library( core::chemical::ResidueType & new_res, c
 	SingleLigandRotamerLibraryOP new_lrots = new SingleLigandRotamerLibrary;
 	SingleLigandRotamerLibraryCAP old_lrots(
 		static_cast< SingleLigandRotamerLibrary const * >
-		( RotamerLibrary::get_instance().get_rsd_library( base_res )() )); 
+		( RotamerLibrary::get_instance().get_rsd_library( base_res )() ));
 	if( old_lrots != 0 ) {
 		utility::vector1< ResidueOP > new_rotamers;
-		utility::vector1< ResidueOP > const old_rotamers = old_lrots->get_rotamers(); 
+		utility::vector1< ResidueOP > const old_rotamers = old_lrots->get_rotamers();
 		for( utility::vector1< ResidueOP>::const_iterator oldrot_it = old_rotamers.begin(); oldrot_it != old_rotamers.end(); ++oldrot_it){
-			ResidueOP new_rot_res = new Residue( new_res, true); 
+			ResidueOP new_rot_res = new Residue( new_res, true);
 			for( core::Size at_ct = 1; at_ct <= new_rot_res->natoms(); at_ct++){
 				if( !(*oldrot_it)->has( new_rot_res->atom_name( at_ct ) ) ){
 					std::cerr << "Unexpected ERROR: when regenerating ligand rotamer library (for covalent constraints), one atom wasn't found in a template rotamer." << std::endl;

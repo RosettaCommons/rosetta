@@ -61,7 +61,7 @@ namespace fragment {
 SecondaryStructure::~SecondaryStructure() {}
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 void SecondaryStructure::compute_fractions( core::fragment::FragSet const& frags, bool bJustCenterResidue /*default false */ ) {
 	using namespace core::fragment;
@@ -236,7 +236,7 @@ SecondaryStructure::SecondaryStructure( utility::vector1<SecondaryStructureOP> &
 
 ///@detail write to stream ( opposite from read_from_file )
 void SecondaryStructure::show( std::ostream& os ) const {
-	using namespace fmt;
+	using namespace format;
 	int const width( 10 );
 	os << A( width, "pos") << A( width, "E" ) << A( width, "H" ) << A( width, "L" ) << I( width, 4, total_residue() ) << std::endl;
 	for ( Size i = 1; i<= total_residue(); i++ ) {

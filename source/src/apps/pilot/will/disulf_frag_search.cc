@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
 				get_hb_info(pose,ir,jr,exhb,inhb,inhbsc);
 
 
-				using namespace ObjexxFCL::fmt;
+				using namespace ObjexxFCL::format;
 				cout << "HIT " << " " << I(4,ir) << " " << I(4,jr) << " " << I(4,exhb) << " " << I(4,inhb) << " " << I(4,inhbsc) << " " << outfile << endl;
 				tmp.dump_pdb(outfile);
 			}

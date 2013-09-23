@@ -82,7 +82,7 @@ namespace monte_carlo {
 	{
 		using namespace core::pose;
 
-		FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+		FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 		utility::vector1< Size > const residues_to_delete = full_model_info.full_to_sub( residues_to_delete_in_full_model_numbering );
 
 		PoseOP sliced_out_pose_op = new Pose;
@@ -154,7 +154,7 @@ namespace monte_carlo {
 
 		using namespace core::pose::full_model_info;
 
-		TR << "Minimizing after delete " << std::endl;
+		stepwise_rna_modeler_->set_moving_res_and_reset( 0 );
 		stepwise_rna_modeler_->set_skip_sampling( true );
 		stepwise_rna_modeler_->set_minimize_res( get_moving_res_from_full_model_info( pose ) );
 		stepwise_rna_modeler_->apply( pose );

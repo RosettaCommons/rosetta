@@ -180,7 +180,7 @@ void* doit(void* /*x = NULL*/) {
 	using namespace pose;
 	using namespace protocols;
 	using namespace moves;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using numeric::random::uniform;
 
 

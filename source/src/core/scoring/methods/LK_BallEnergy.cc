@@ -1595,7 +1595,7 @@ apply_lk_ball_fraction_weight_for_hbonds(
 
 	if ( acc_fraction < 0.99 || don_fraction < 0.99 ) {
 		// debugging
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 // 		std::cout << "apply_lk_ball_fraction_weight_for_hbonds: " <<
 // 			F(9,3,don_fraction) << I(4,don_rsd.seqpos()) << ' ' << don_rsd.name1() << ' '<< don_rsd.atom_name( hatm ) <<
 // 			F(9,3,acc_fraction) << I(4,acc_rsd.seqpos()) << ' ' << acc_rsd.name1() << ' '<< acc_rsd.atom_name( aatm ) <<

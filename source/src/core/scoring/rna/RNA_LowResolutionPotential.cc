@@ -68,7 +68,7 @@ core::Real RNA_LowResolutionPotential::dummy_deriv = 0.0;
 typedef  numeric::xyzMatrix< Real > Matrix;
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // Hey should we define a copy constructor and a clone()?
 
@@ -120,7 +120,7 @@ RNA_LowResolutionPotential::RNA_LowResolutionPotential():
 	num_RNA_base_pair_orientations_( 2 ), /*parallel/anti*/
 	num_RNA_backbone_oxygen_atoms_( 6 ), /*backbone oxygens*/
 	num_RNA_res_types_( 4 ),/*a/c/g/u*/
-	o2star_index_within_special_backbone_atoms_( 6 ),
+	o2prime_index_within_special_backbone_atoms_( 6 ),
 	o2p_index_within_special_backbone_atoms_( 2 ),
 	interpolate_( true ), //Turn this off to match Rosetta++, up to bug fixes; turn it on to allow correct derivative calculation.
 	fade_( true ), //Turn this off to match Rosetta++; needed to prevent hard boundaries in base pairing + stacking potentials.
@@ -242,7 +242,7 @@ RNA_LowResolutionPotential::initialize_RNA_backbone_oxygen_atoms(){
 
 	//Useful for preventing string lookups:
 	o2p_index_within_special_backbone_atoms_    =  2;
-	o2star_index_within_special_backbone_atoms_ =  6;
+	o2prime_index_within_special_backbone_atoms_ =  6;
 
 
 }
@@ -1698,7 +1698,7 @@ RNA_LowResolutionPotential::rna_backbone_backbone_pair_energy_one_way(
 	//	ObjexxFCL::FArray2D< Size > const &
 	//		atom_numbers_for_backbone_score_calculations = rna_scoring_info.atom_numbers_for_backbone_score_calculations();
 
-	Size const atom_num_i = atom_numbers_for_backbone_score_calculations_[ o2star_index_within_special_backbone_atoms_ ];
+	Size const atom_num_i = atom_numbers_for_backbone_score_calculations_[ o2prime_index_within_special_backbone_atoms_ ];
 	Vector const & heavy_atom_i = rsd1.xyz( atom_num_i );
 
 	// Go over sugar and phosphate oxygen atoms!
@@ -1814,11 +1814,11 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_backbone_backbone(
 	//		atom_numbers_for_backbone_score_calculations = rna_scoring_info.atom_numbers_for_backbone_score_calculations();
 
 	// FIRST WAY, check if this atom is OP1, cycle over other oxygen atoms.
-	Size const atom_num_o2star = atom_numbers_for_backbone_score_calculations_[  o2star_index_within_special_backbone_atoms_ ];
+	Size const atom_num_o2prime = atom_numbers_for_backbone_score_calculations_[  o2prime_index_within_special_backbone_atoms_ ];
 
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-	if ( atom_num_i == atom_num_o2star ) {
+	if ( atom_num_i == atom_num_o2prime ) {
 		// FIRST WAY, check if this atom is 2'-OH, cycle over other oxygen atoms.
 
 		Vector const & heavy_atom_i = rsd1.xyz( atom_num_i );
@@ -1884,7 +1884,7 @@ RNA_LowResolutionPotential::eval_atom_derivative_rna_backbone_backbone(
 				conformation::Residue const & rsd2( pose.residue( j ) );
 
 				// Go over 2'-OH atoms.
-				Size const m = o2star_index_within_special_backbone_atoms_;
+				Size const m = o2prime_index_within_special_backbone_atoms_;
 				Size const atom_num_j = atom_numbers_for_backbone_score_calculations_[ m ];
 
 				Vector const & heavy_atom_j = rsd2.xyz( atom_num_j );

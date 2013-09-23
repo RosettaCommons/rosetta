@@ -45,8 +45,8 @@ using core::Real;
 using core::pose::Pose;
 using utility::vector1;
 using namespace numeric;
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 
 typedef xyzVector<core::Real> Vec;
 typedef xyzMatrix<core::Real> Mat;

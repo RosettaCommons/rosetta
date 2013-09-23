@@ -90,9 +90,9 @@ using core::Real;
 using core::pose::Pose;
 using std::string;
 using utility::vector1;
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
-using ObjexxFCL::fmt::RJ;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
+using ObjexxFCL::format::RJ;
 using numeric::min;
 using numeric::max;
 using std::cout;
@@ -229,7 +229,7 @@ inline Real sigmoid( Real const & sqdist, Real const & start, Real const & stop 
 }
 
 void dump_points_pdb(utility::vector1<Vecf> const & p, std::string fn) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	std::ofstream o(fn.c_str());
 	for(Size i = 1; i <= p.size(); ++i) {
 		std::string rn = "VIZ";
@@ -238,7 +238,7 @@ void dump_points_pdb(utility::vector1<Vecf> const & p, std::string fn) {
 	o.close();
 }
 void dump_points_pdb(utility::vector1<Vecf> const & p, Vec t, std::string fn) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	std::ofstream o(fn.c_str());
 	for(Size i = 1; i <= p.size(); ++i) {
 		std::string rn = "VIZ";
@@ -247,7 +247,7 @@ void dump_points_pdb(utility::vector1<Vecf> const & p, Vec t, std::string fn) {
 	o.close();
 }
 // void dump_points_pdb(numeric::geometry::hashing::xyzStripeHashWithMeta<Real>::float4 const *p, int n, Vec t, std::string fn) {
-// 	using namespace ObjexxFCL::fmt;
+// 	using namespace ObjexxFCL::format;
 // 	std::ofstream o(fn.c_str());
 // 	for(Size i = 0; i < n; ++i) {
 // 		std::string rn = "VIZ";
@@ -256,7 +256,7 @@ void dump_points_pdb(utility::vector1<Vecf> const & p, Vec t, std::string fn) {
 // 	o.close();
 // }
 // void dump_points_pdb(numeric::geometry::hashing::xyzStripeHashWithMeta<Real>::float4 const *p, int n, std::string fn) {
-// 	using namespace ObjexxFCL::fmt;
+// 	using namespace ObjexxFCL::format;
 // 	std::ofstream o(fn.c_str());
 // 	for(Size i = 0; i < n; ++i) {
 // 		std::string rn = "VIZ";
@@ -1499,7 +1499,7 @@ struct TCDock {
 			get_best_sub1_contact_delta_rotations(h.icmp1,dcmp1,h.icmp2,dcmp2,da1,da2);
 
 			string fn = cmp1name_+"_"+cmp2name_+"_"+symtype_+(option[tcdock::reverse]()?"R":"F")+"_"+ObjexxFCL::string_of(ilm);
-			cout << "| " << ObjexxFCL::fmt::LJ(npad+3,fn) << " "
+			cout << "| " << ObjexxFCL::format::LJ(npad+3,fn) << " "
                  << F(8,3,score) << " "
 			     << F(6,2,2*max(fabs(dcmp1)+(dcmp1>0?cmp1diapos_:cmp1dianeg_),fabs(dcmp2)+(dcmp2>0?cmp2diapos_:cmp2dianeg_))) << " "
 			     << F(6,2, min_termini_dis(dcmp1,h.icmp1,dcmp2,h.icmp2) ) << " "

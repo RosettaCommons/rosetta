@@ -363,8 +363,8 @@ EnvPairPotential::evaluate_env_and_cbeta_scores(
 	Real & cb_score12
 ) const
 {
-	//using ObjexxFCL::fmt::F; // debugging
-	//using ObjexxFCL::fmt::I;
+	//using ObjexxFCL::format::F; // debugging
+	//using ObjexxFCL::format::I;
 	//	basic::ProfileThis doit( basic::ENERGY_ENVPAIR_POTENTIAL );
 
 	CenListInfo const & cenlist( cenlist_from_pose( pose ));

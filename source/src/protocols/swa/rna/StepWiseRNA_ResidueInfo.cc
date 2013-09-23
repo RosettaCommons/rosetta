@@ -121,7 +121,7 @@ namespace rna {
 	Output_residue_struct( Residue_info const & residue ){
 
 		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		TR << Get_one_letter_name( residue.name );
 		TR << lead_zero_string_of( residue.seq_num, 2 );
@@ -167,7 +167,7 @@ namespace rna {
 	output_res_map( std::map< core::Size, core::Size > const & my_map, Size const max_seq_num ){
 
 		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		using namespace std;
 		Size spacing = 4;
 		TR << std::setw( 30 ) << "full_pose_seq_num:";
@@ -193,7 +193,7 @@ namespace rna {
 	void
 	Output_residue_list( utility::vector1< Residue_info > residue_list ){
 		using namespace ObjexxFCL;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 
 		sort_residue_list( residue_list ); //maybe sure the list is sorted

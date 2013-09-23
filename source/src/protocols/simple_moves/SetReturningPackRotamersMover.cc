@@ -150,7 +150,7 @@ SetReturningPackRotamersMover::output_repacked_poses( std::string filename_prefi
 
 	for ( Size ii=1; ii <= repacked_poses_.size(); ++ii ) {
 		// output repacked structure with the vector index in the name
-		std::string filename = filename_prefix + "." + ObjexxFCL::fmt::I( 3, 3, ii ) + ".pdb";
+		std::string filename = filename_prefix + "." + ObjexxFCL::format::I( 3, 3, ii ) + ".pdb";
 		repacked_poses_[ ii ].dump_scored_pdb( filename, *(score_function()) );
 	}
 

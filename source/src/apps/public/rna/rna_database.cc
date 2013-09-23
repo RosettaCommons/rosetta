@@ -63,7 +63,7 @@
 
 #include <utility/excn/Exceptions.hh>
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 using namespace core;
@@ -174,7 +174,7 @@ check_for_contacts( pose::Pose & pose, Size const i,
 
 /////////////////////////////////////////////////////////////////////////////////
 void
-check_for_contacts_and_output_jump_o2star( pose::Pose & pose, Size const i, Size const j,
+check_for_contacts_and_output_jump_o2prime( pose::Pose & pose, Size const i, Size const j,
 																					 utility::io::ozstream & dataout ){
 
 	char edge_i, orientation;
@@ -360,7 +360,7 @@ create_bp_jump_database_test( ){
 
 			//			EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 
-			check_for_contacts_and_output_jump_o2star( pose, i, j, dataout );
+			check_for_contacts_and_output_jump_o2prime( pose, i, j, dataout );
 
 			if ( j > 1  )	check_for_contacts_and_output_jump_phosphate( pose, i, j, dataout );
 

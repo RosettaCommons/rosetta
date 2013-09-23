@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
 	protocols::sic_dock::xyzStripeHashPoseWithMeta xyzhash(DIST,p,protocols::sic_dock::ALL);
 	xyzhash.sanity_check();
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	std::cout << xyzhash.grid_size() << std::endl;
 	std::cout << xyzhash.natom() << std::endl;
 	std::cout << xyzhash.xdim() << " " << xyzhash.ydim() << " " << xyzhash.zdim() << std::endl;

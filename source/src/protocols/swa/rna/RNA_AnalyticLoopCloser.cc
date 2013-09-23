@@ -45,8 +45,8 @@
 using namespace core;
 
 static numeric::random::RandomGenerator RG ( 26640 ); // <- Magic number, do not change it!
-using ObjexxFCL::fmt::I;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::I;
+using ObjexxFCL::format::F;
 using core::id::AtomID;
 using core::id::NamedAtomID;
 using core::id::DOF_ID;
@@ -142,35 +142,35 @@ RNA_AnalyticLoopCloser::close_at_cutpoint ( core::pose::Pose & pose ) {
 	// This looks a bit weird, because of a hack.
 	Size cutpos_ = chainbreak_suite_;
 	////////////////////////////////////////////////////////////////////////////////////
-	Real const d_O3star_nextP = ( pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ) -
+	Real const d_O3prime_nextP = ( pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ) -
 	                              pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ) ).length();
-	db_len[ 8 ] = d_O3star_nextP;
+	db_len[ 8 ] = d_O3prime_nextP;
 	////////////////////////////////////////////////////////////////////////////////////
-	Real const theta_C3star_O3star_nextP = degrees ( angle_radians ( pose.xyz ( NamedAtomID ( " C3'", cutpos_ ) ),
+	Real const theta_C3prime_O3prime_nextP = degrees ( angle_radians ( pose.xyz ( NamedAtomID ( " C3'", cutpos_ ) ),
 	                                       pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
 	                                       pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ) ) );
-	db_ang[ 8 ] = theta_C3star_O3star_nextP;
-	Real const theta_O3star_nextP_nextO5star = degrees ( angle_radians ( pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
+	db_ang[ 8 ] = theta_C3prime_O3prime_nextP;
+	Real const theta_O3prime_nextP_nextO5prime = degrees ( angle_radians ( pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
 	    pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ),
 	    pose.xyz ( NamedAtomID ( "OVL2", cutpos_ ) ) ) );
-	db_ang[ 9 ] = theta_O3star_nextP_nextO5star;
+	db_ang[ 9 ] = theta_O3prime_nextP_nextO5prime;
 	////////////////////////////////////////////////////////////////////////////////////
-	Real const phi_C4star_C3star_O3star_nextP = degrees ( dihedral_radians ( pose.xyz ( NamedAtomID ( " C4'", moving_suite_ + 1 ) ),
+	Real const phi_C4prime_C3prime_O3prime_nextP = degrees ( dihedral_radians ( pose.xyz ( NamedAtomID ( " C4'", moving_suite_ + 1 ) ),
 	    pose.xyz ( NamedAtomID ( " C3'", cutpos_ ) ),
 	    pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
 	    pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ) ) );
-	dt_ang[ 7 ] =  phi_C4star_C3star_O3star_nextP;
-	Real const phi_C3star_O3star_nextP_nextO5star = degrees ( dihedral_radians (
+	dt_ang[ 7 ] =  phi_C4prime_C3prime_O3prime_nextP;
+	Real const phi_C3prime_O3prime_nextP_nextO5prime = degrees ( dihedral_radians (
 	      pose.xyz ( NamedAtomID ( " C3'", cutpos_ ) ),
 	      pose.xyz ( NamedAtomID ( " O3'", cutpos_ ) ),
 	      pose.xyz ( NamedAtomID ( "OVL1", cutpos_ ) ),
 	      pose.xyz ( NamedAtomID ( "OVL2", cutpos_ ) ) ) );
-	dt_ang[ 8 ] =  phi_C3star_O3star_nextP_nextO5star;
-	Real const phi_O3star_nextP_nextO5star_nextC5star = degrees ( dihedral_radians ( pose.xyz ( NamedAtomID ( "OVU1", cutpos_ + 1 ) ),
+	dt_ang[ 8 ] =  phi_C3prime_O3prime_nextP_nextO5prime;
+	Real const phi_O3prime_nextP_nextO5prime_nextC5prime = degrees ( dihedral_radians ( pose.xyz ( NamedAtomID ( "OVU1", cutpos_ + 1 ) ),
 	    pose.xyz ( NamedAtomID ( " P  ", cutpos_ + 1 ) ),
 	    pose.xyz ( NamedAtomID ( " O5'", cutpos_ + 1 ) ),
 	    pose.xyz ( NamedAtomID ( " C5'", cutpos_ + 1 ) ) ) );
-	dt_ang[ 9 ] =  phi_O3star_nextP_nextO5star_nextC5star;
+	dt_ang[ 9 ] =  phi_O3prime_nextP_nextO5prime_nextC5prime;
 
 	if ( verbose_ ) {
 		TR <<  "after chainbreak geometry fix" << std::endl;

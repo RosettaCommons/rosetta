@@ -379,7 +379,7 @@ NatbiasStrandPairPotential::score(	Pose const & pose, SS_Info2 const & ss_info, 
 void
 NatbiasStrandPairPotential::load_phi_theta_bins(	String const & ss_filename )
 {
-	using ObjexxFCL::fmt::skip;
+	using ObjexxFCL::format::skip;
 	typedef ObjexxFCL::FArray3D< Real > FArray3D_real;
 	FArray3D_real pts_SS( 36, 36, 3 );
 

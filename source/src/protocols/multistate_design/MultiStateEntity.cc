@@ -50,7 +50,7 @@ MultiStateEntity::clone() const { return new MultiStateEntity(*this); }
 
 void MultiStateEntity::show( std::ostream & os ) const
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	os << "MultiStateEntity with traits:";
 	genetic_algorithm::EntityElements const & seq( this->traits() );

@@ -44,7 +44,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::pose::metrics;
 using namespace utility;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols{
 namespace toolbox {

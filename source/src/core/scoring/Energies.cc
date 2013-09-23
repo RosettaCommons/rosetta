@@ -65,7 +65,7 @@
 
 static basic::Tracer tr("core.scoring.Energies");
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace core {
 namespace scoring {

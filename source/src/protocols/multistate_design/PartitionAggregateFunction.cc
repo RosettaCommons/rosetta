@@ -70,7 +70,7 @@ PartitionAggregateFunction::evaluate(
 	MultiStateFitnessFunction & fitness_function
 ) const
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	utility::vector1<SingleStateCOP> single_states(fitness_function.const_states());
   runtime_assert(single_state_fitnesses.size() == single_states.size());
@@ -117,7 +117,7 @@ PartitionAggregateFunction::evaluate(
 	// flip sign on the Boltzmann probability for proper ranking elsewhere (more negative is better)
 	core::Real const prob_target( numer/denom );
 	TR(basic::t_debug) << "Boltzmann prob. for target state(s) vs. competitor(s): "
-		<< ObjexxFCL::fmt::F(5,2,prob_target) << std::endl;
+		<< ObjexxFCL::format::F(5,2,prob_target) << std::endl;
 
 	return -1.*prob_target; // in genetic algorithm, better fitnesses are more negative
 }
@@ -129,7 +129,7 @@ PartitionAggregateFunction::evaluate(
 	MultiStateFitnessFunction & fitness_function
 ) const
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	utility::vector1< SingleStateCOP > single_states(fitness_function.const_states());
 	runtime_assert(single_state_fitnesses.size() == single_states.size());

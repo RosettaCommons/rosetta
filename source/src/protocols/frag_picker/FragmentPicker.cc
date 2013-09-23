@@ -287,7 +287,7 @@ void FragmentPicker::fragment_contacts( Size const fragment_size, utility::vecto
 							// output all row
 							if (output_all)
 								output_all_contacts << q_pos_i << " " << q_pos_j << " " << contact_name(*it) << " " <<
-										fmt::F(5, 2, sqrt(distance_squared)) << " " << fmt::F(5, 2, sqrt(cutoff_dist_squared)) << " " << qPosi << " "<< fi << std::endl;
+										format::F(5, 2, sqrt(distance_squared)) << " " << format::F(5, 2, sqrt(cutoff_dist_squared)) << " " << qPosi << " "<< fi << std::endl;
 
 							// sorry for the copy and paste code below
 							if (*it == CEN) {
@@ -813,7 +813,7 @@ void FragmentPicker::nonlocal_pairs( Size const fragment_size, utility::vector1<
 				if (output_all)
 					// i j type dist frag_i_pos frag_j_pos frag_i_rank frag_j_rank
 					contacts_output_all << contacts[i]->i() << " " << contacts[i]->j() << " " << contacts[i]->type_name() << " " <<
-							fmt::F(5, 2, contacts[i]->dist()) << " " << qPosi << " " << qPosj << " " <<
+							format::F(5, 2, contacts[i]->dist()) << " " << qPosi << " " << qPosj << " " <<
 							thread_pairs[j][k]->get_candidate_i_rank() << " " << thread_pairs[j][k]->get_candidate_j_rank() << std::endl;
 
 				// iterate contact counts

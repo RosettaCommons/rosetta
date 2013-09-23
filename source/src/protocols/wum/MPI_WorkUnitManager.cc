@@ -51,7 +51,7 @@
 	#include <ctime>
 #endif
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace wum {

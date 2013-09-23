@@ -74,7 +74,7 @@ main( int argc, char* argv [] ) {
 	using namespace core::id;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace numeric::kdtree;
 	using namespace core::sequence;
 

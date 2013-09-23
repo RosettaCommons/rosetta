@@ -51,18 +51,18 @@ namespace rna {
 bool Is_OP2_atom( std::string const & atom_name );
 bool Is_OP1_atom( std::string const & atom_name );
 bool Is_P_atom( std::string const & atom_name );
-bool Is_O2star_atom( std::string const & atom_name );
-bool Is_O3star_atom( std::string const & atom_name );
-bool Is_O4star_atom( std::string const & atom_name );
-bool Is_O5star_atom( std::string const & atom_name );
-bool Is_C2star_atom( std::string const & atom_name );
-bool Is_C3star_atom( std::string const & atom_name );
-bool Is_C4star_atom( std::string const & atom_name );
-bool Is_C5star_atom( std::string const & atom_name );
-bool Is_1H5star_atom( std::string const & atom_name );
-bool Is_2H5star_atom( std::string const & atom_name );
-bool Is_H3star_atom( std::string const & atom_name );
-bool Is_H4star_atom( std::string const & atom_name );
+bool Is_O2prime_atom( std::string const & atom_name );
+bool Is_O3prime_atom( std::string const & atom_name );
+bool Is_O4prime_atom( std::string const & atom_name );
+bool Is_O5prime_atom( std::string const & atom_name );
+bool Is_C2prime_atom( std::string const & atom_name );
+bool Is_C3prime_atom( std::string const & atom_name );
+bool Is_C4prime_atom( std::string const & atom_name );
+bool Is_C5prime_atom( std::string const & atom_name );
+bool Is_1H5prime_atom( std::string const & atom_name );
+bool Is_2H5prime_atom( std::string const & atom_name );
+bool Is_H3prime_atom( std::string const & atom_name );
+bool Is_H4prime_atom( std::string const & atom_name );
 bool Is_three_prime_phosphate_atom( std::string const & atom_name );
 bool Is_five_prime_phosphate_atom( std::string const & atom_name );
 bool Is_phosphate_atom( std::string const & atom_name );
@@ -322,16 +322,16 @@ void
 Output_movemap( core::kinematics::MoveMap const & mm, core::pose::Pose const & pose, std::ostream & outstream = std::cout );
 
 utility::vector1< core::Size >
-get_surrounding_O2star_hydrogen( core::pose::Pose const & pose, utility::vector1< core::Size > const & moving_res, bool verbose = false );
+get_surrounding_O2prime_hydrogen( core::pose::Pose const & pose, utility::vector1< core::Size > const & moving_res, bool verbose = false );
 
 void
-o2star_minimize( core::pose::Pose& pose, core::scoring::ScoreFunctionOP const & packer_scorefxn );
+o2prime_minimize( core::pose::Pose& pose, core::scoring::ScoreFunctionOP const & packer_scorefxn );
 
 void
-o2star_minimize( core::pose::Pose& pose, core::scoring::ScoreFunctionOP const & packer_scorefxn, utility::vector1< core::Size > const & O2star_seq_num_list );
+o2prime_minimize( core::pose::Pose& pose, core::scoring::ScoreFunctionOP const & packer_scorefxn, utility::vector1< core::Size > const & O2prime_seq_num_list );
 
 core::pack::task::PackerTaskOP
-create_standard_o2star_pack_task( core::pose::Pose const & pose, utility::vector1< core::Size > const & O2star_pack_seq_num );
+create_standard_o2prime_pack_task( core::pose::Pose const & pose, utility::vector1< core::Size > const & O2prime_pack_seq_num );
 
 void
 print_backbone_torsions( core::pose::Pose const & pose, core::Size five_prime_chainbreak );
@@ -483,11 +483,11 @@ initialize_common_scorefxns(
     core::scoring::ScoreFunctionOP & sampling_scorefxn,
     core::scoring::ScoreFunctionOP & atr_rep_screening_scorefxn,
     core::scoring::ScoreFunctionOP & chainbreak_scorefxn,
-    core::scoring::ScoreFunctionOP & o2star_pack_scorefxn );
+    core::scoring::ScoreFunctionOP & o2prime_pack_scorefxn );
 
 
 void
-copy_all_o2star_torsions( core::pose::Pose & mod_pose, core::pose::Pose const & template_pose );
+copy_all_o2prime_torsions( core::pose::Pose & mod_pose, core::pose::Pose const & template_pose );
 
 core::scoring::ScoreFunctionOP
 rescale_scorefxn( core::scoring::ScoreFunctionOP const & starting_scorefxn, core::Real const scaling_factor );

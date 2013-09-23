@@ -62,7 +62,7 @@
 #include <sstream>
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -101,7 +101,7 @@ using namespace core;
 	using namespace scoring;
 
 using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 using basic::t_warning;
 using basic::t_info;

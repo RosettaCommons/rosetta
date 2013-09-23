@@ -97,8 +97,8 @@ namespace motif_hash {
 	using numeric::rotation_matrix_degrees;
 	using numeric::conversions::radians;
 	using numeric::conversions::degrees;
-	using ObjexxFCL::fmt::F;
-	using ObjexxFCL::fmt::I;
+	using ObjexxFCL::format::F;
+	using ObjexxFCL::format::I;
 	using ObjexxFCL::string_of;
 	using std::cerr;
 	using std::cout;
@@ -2010,7 +2010,7 @@ namespace motif_hash {
 	void harvest_motifs(){
 		using namespace basic::options::OptionKeys;
 		using namespace core::scoring;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		if(64!=sizeof(ResPairMotif)) utility_exit_with_message("ResPairMotif should be 64 bytes in size!!!!!!");
 		if(12!=sizeof(Xfres)) utility_exit_with_message("Xfres should be 12 bytes in size!!!!!!");

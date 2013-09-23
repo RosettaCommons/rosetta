@@ -100,7 +100,7 @@
 #include <ObjexxFCL/format.hh>
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
@@ -1089,9 +1089,9 @@ RNA_DeNovoProtocol::add_number_base_pairs( pose::Pose const & pose, io::silent::
 		}
 	}
 
- 	s.add_string_value( "N_WC",  ObjexxFCL::fmt::I( 9, N_WC) );
-	s.add_string_value( "N_NWC", ObjexxFCL::fmt::I( 9, N_NWC ) );
-	s.add_string_value( "N_BS",  ObjexxFCL::fmt::I( 9, get_number_base_stacks( pose ) ) );
+ 	s.add_string_value( "N_WC",  ObjexxFCL::format::I( 9, N_WC) );
+	s.add_string_value( "N_NWC", ObjexxFCL::format::I( 9, N_NWC ) );
+	s.add_string_value( "N_BS",  ObjexxFCL::format::I( 9, get_number_base_stacks( pose ) ) );
 
  	//s.add_energy( "N_WC",  N_WC );
 	//	s.add_energy( "N_NWC", N_NWC );
@@ -1161,7 +1161,7 @@ RNA_DeNovoProtocol::add_number_native_base_pairs(pose::Pose & pose, io::silent::
 	//	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
 	//	Energy_base_pair_list const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
 
-	//	RNA_ScoringInfo const & rna_scoring_info_native( rna_scoring_info_from_pose( native_pose ) );
+	//	RNA_ScoringInfo const & rna_scoring_info_native( rna_scoring_info( native_pose ) );
 	//	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info_native( rna_scoring_info_native.rna_filtered_base_base_info() );
 	//	Energy_base_pair_list const & scored_base_pair_list_native( rna_filtered_base_base_info_native.scored_base_pair_list() );
 

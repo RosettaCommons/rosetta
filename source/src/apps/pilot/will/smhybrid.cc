@@ -1160,7 +1160,7 @@ struct PoseWrap : public ReferenceCount {
 	// 	return cuts_.size()+1;
 	// }
 	void dump_pdb(string fname, bool fullsymm=false) {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		core::pose::Pose out_pose;
 		if( fullsymm ) {
@@ -3378,7 +3378,7 @@ core::scoring::ScoreFunctionOP
 fa_refine_and_design(PoseWrap & pw, Size NCYCLE) {
 	using namespace core;
 	using namespace scoring;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	core::pose::Pose & pose(pw.pose);
 	ScoreFunctionOP sf1,sf2,sf3,sf4;
 	sf1 = core::scoring::getScoreFunction();
@@ -3702,7 +3702,7 @@ find_clashes( PoseWrap & pw ) {
 
 void report( PoseWrap & pw, ScoreFunctionOP sf_fa, std::ostringstream & oss, Real censcore ) {
 	using namespace core;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	core::pose::Pose & pose(pw.pose);
 	Size nres_mono = pw.nres;//(pose.n_residue()-4)/4;
 	string tag = string_of(uniform());
@@ -3895,7 +3895,7 @@ void* doit(void* /*x = NULL*/) {
 	using namespace pose;
 	using namespace protocols;
 	using namespace moves;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using numeric::random::uniform;
 
 	PoseWrap pw = posewrap_from_command_line();
@@ -3962,7 +3962,7 @@ void* doit_refine(void* /*x = NULL*/) {
 	using namespace pose;
 	using namespace protocols;
 	using namespace moves;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using numeric::random::uniform;
 
 	PoseWrap pw = posewrap_from_command_line();

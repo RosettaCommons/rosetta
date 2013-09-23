@@ -306,7 +306,7 @@ void test_kc() {
 		numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,atm_out);
 		utility::io::ozstream out("test_"+ObjexxFCL::string_of(isol)+".pdb");
 		for(Size i = 1; i <= atm_out.size(); ++i) {
-			using namespace ObjexxFCL::fmt;
+			using namespace ObjexxFCL::format;
 			out<<"HETATM"<<I(5,i)<<' '<<"VIZ "<<' '<<"VIZ"<<' '<<"A"<<I(4,i)<<"    "<<F(8,3,atm_out[i][1])<<F(8,3,atm_out[i][2])<<F(8,3,atm_out[i][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 		}
 		out.close();
@@ -346,7 +346,7 @@ void test_kc2() {
 	}	
 	// {
 	// 	utility::io::ozstream out("start.pdb");
-	// 	using namespace ObjexxFCL::fmt;
+	// 	using namespace ObjexxFCL::format;
 	// 	for(int i = 0; i < 8; ++i) {
 	// 		out<<"ATOM  "<<I(5,3*i+1)<<' '<<"  N "<<' '<<"ALA"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,atoms[3*i+1].x())<<F(8,3,atoms[3*i+1].y())<<F(8,3,atoms[3*i+1].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 	// 		out<<"ATOM  "<<I(5,3*i+2)<<' '<<" CA "<<' '<<"ALA"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,atoms[3*i+2].x())<<F(8,3,atoms[3*i+2].y())<<F(8,3,atoms[3*i+2].z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
@@ -368,7 +368,7 @@ void test_kc2() {
 		utility::vector1<utility::vector1<core::Real> > atm_out;
 		numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,atm_out);
 		utility::io::ozstream out("test2_"+ObjexxFCL::string_of(isol)+".pdb");
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		for(int i = 0; i < 8; ++i) {
 			out<<"ATOM  "<<I(5,3*i+1)<<' '<<"  N "<<' '<<"ALA"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,atm_out[3*i+1][1])<<F(8,3,atm_out[3*i+1][2])<<F(8,3,atm_out[3*i+1][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
 			out<<"ATOM  "<<I(5,3*i+2)<<' '<<" CA "<<' '<<"ALA"<<' '<<"A"<<I(4,i+1)<<"    "<<F(8,3,atm_out[3*i+2][1])<<F(8,3,atm_out[3*i+2][2])<<F(8,3,atm_out[3*i+2][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';

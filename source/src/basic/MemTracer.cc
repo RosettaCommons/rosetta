@@ -118,7 +118,7 @@ void get_usage_from_procfilesystem( std::ostream& mem_report ) {
 		if (fscanf(pf, "%u %u %u %u %u %u", &size, &resident, &share, &text, &lib, &data ) == EOF){
 			mem_report << "WARNING! End of file reached without assignments from fscanf!";
 		}
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		mem_report << std::setprecision(4) << "Virt/Res/Share/Exe/Data "
 							 << I( width, (int) size*4/1024 ) << "  "
 							 << I( width, (int) resident*page_sz/1024)  << " "
@@ -128,7 +128,7 @@ void get_usage_from_procfilesystem( std::ostream& mem_report ) {
 		fclose(pf);
 	} else {
 		rusage usage;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		getrusage( RUSAGE_SELF, &usage );
 		mem_report << std::setprecision(4) << "Res/ixrss/rdrss/isrss/swap "
 

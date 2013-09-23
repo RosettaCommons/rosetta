@@ -26,7 +26,7 @@ regexs = [
  ( re.compile( r'([^A-Za-z0-9_:]|^)FArray([1-6])Dp([<_ ]|\.fwd\.hh|\.hh)' ), r'\1FArray\2P\3' ),
  ( re.compile( r'([^A-Za-z0-9_:]|^)FArray([1-6])D(\.io\.hh)' ), r'\1FArray\2\3' ),
  ( re.compile( r'ObjexxFCL/internal' ), r'ObjexxFCL' ),
- ( re.compile( r'ObjexxFCL(/fmt|)/formatted\.(i|o|io)\.hh' ), r'ObjexxFCL/format.hh' ),
+ ( re.compile( r'ObjexxFCL(/format|)/formatted\.(i|o|io)\.hh' ), r'ObjexxFCL/format.hh' ),
  ( re.compile( r'ObjexxFCL/FArray\.fwd\.hh' ), r'ObjexxFCL/FArray.all.fwd.hh' ),
  ( re.compile( r'ObjexxFCL/FArray([1-6])Ds(\.fwd\.hh|\.hh)' ), r'ObjexxFCL/FArray\1.all\2' ),
 ]

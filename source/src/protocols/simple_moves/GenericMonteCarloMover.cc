@@ -73,7 +73,7 @@ using namespace core;
 namespace protocols {
 namespace simple_moves {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 std::string
 GenericMonteCarloMoverCreator::keyname() const

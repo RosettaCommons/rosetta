@@ -44,7 +44,7 @@ namespace core {
 namespace io {
 namespace raw_data {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 DecoyStruct::DecoyStruct(
 	core::pose::Pose const & pose,

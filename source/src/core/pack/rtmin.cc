@@ -81,14 +81,14 @@
 #include <utility/vector0.hh>
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 //Auto using namespaces end
 
 
 namespace core {
 namespace pack {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 static numeric::random::RandomGenerator rtmin_RG(206025); // <- Magic number, do not change it!!!
 

@@ -68,12 +68,14 @@ OtherPoseEnergy::finalize_total_energy(
 	using namespace pose;
 	using namespace pose::full_model_info;
 
-	FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	utility::vector1< PoseOP > const & other_pose_list = full_model_info.other_pose_list();
+	if ( other_pose_list.size() == 0 ) return; // no op.
 
 	// watch out for double-counting -- some score terms look at full model, including other poses, already.
 	ScoreFunctionOP other_pose_scorefxn = scorefxn.clone();
 	other_pose_scorefxn->set_weight( intermol, 0.0 );
+	other_pose_scorefxn->set_weight( loop_close, 0.0 );
 
 	totals[ other_pose ] = 0.0;
 

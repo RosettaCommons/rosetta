@@ -64,7 +64,7 @@ using namespace optimization;
 namespace protocols {
 namespace optimize_weights {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using basic::T;
 using basic::Error;
 using basic::Warning;

@@ -786,17 +786,17 @@ Size CrossPeak4D::assign_spin( Size iproton, Size res_id[] ) {
 
 
 // void CrossPeak::write_to_stream( std::ostream& os ) const {
-//   os << ObjexxFCL::fmt::F( 8, 3, proton1_.freq() ) << " ";
+//   os << ObjexxFCL::format::F( 8, 3, proton1_.freq() ) << " ";
 //   if ( has_label( 1 ) ) {
-//     os << ObjexxFCL::fmt::F( 8, 3, label( 1 ).freq() ) << " ";
+//     os << ObjexxFCL::format::F( 8, 3, label( 1 ).freq() ) << " ";
 //   }
 
-//   os << ObjexxFCL::fmt::F( 8, 3, proton2_.freq() ) << " ";
+//   os << ObjexxFCL::format::F( 8, 3, proton2_.freq() ) << " ";
 //   if ( has_label( 2 ) ) {
-//     os << ObjexxFCL::fmt::F( 8, 3, label( 2 ).freq() ) << " ";
+//     os << ObjexxFCL::format::F( 8, 3, label( 2 ).freq() ) << " ";
 //   }
 
-//   os << ObjexxFCL::fmt::E( 10, 3, strength_ ) << " " << ObjexxFCL::fmt::E( 10, 3, 0.0 ) << " ";
+//   os << ObjexxFCL::format::E( 10, 3, strength_ ) << " " << ObjexxFCL::format::E( 10, 3, 0.0 ) << " ";
 
 //   Size assignments_written( 0 );
 //   //  while ( assignments_written < proton1_.n_assigned() ) {
@@ -804,9 +804,9 @@ Size CrossPeak4D::assign_spin( Size iproton, Size res_id[] ) {
 //     ++assignments_written;
 //     if ( assignments_written > 1 ) os << std::endl << "                                            ";
 //     for ( Size i=1; i<=2; i++ ) {
-//       os << ObjexxFCL::fmt::RJ( 6, (*it)->resonance_id( i ) ) << " ";
+//       os << ObjexxFCL::format::RJ( 6, (*it)->resonance_id( i ) ) << " ";
 //       if ( has_label( i ) ) {
-// 	os << ObjexxFCL::fmt::RJ( 6, (*it)->label_resonance_id( i ) << " ";
+// 	os << ObjexxFCL::format::RJ( 6, (*it)->label_resonance_id( i ) << " ";
 //       }
 //     }
 //   }

@@ -2713,5 +2713,17 @@ void lregister_util( lua_State * lstate ) {
 }
 #endif
 
+// silly conversion from std::map< AtomID, AtomID> to rosetta's silly AtomID_Map class.
+id::AtomID_Map< id::AtomID >
+convert_from_std_map( std::map< id::AtomID, id::AtomID > const & atom_map,
+											core::pose::Pose const & pose ){
+	id::AtomID_Map< id::AtomID > atom_ID_map;
+	initialize_atomid_map( atom_ID_map, pose, id::BOGUS_ATOM_ID );
+	for ( std::map< id::AtomID, id::AtomID >::const_iterator it = atom_map.begin(); it != atom_map.end(); it++ ){
+		atom_ID_map.set( it->first, it->second );
+	}
+	return atom_ID_map;
+}
+
 } // pose
 } // core

@@ -37,7 +37,7 @@
 
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace core {
 namespace kinematics {

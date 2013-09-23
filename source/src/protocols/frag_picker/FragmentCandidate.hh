@@ -37,8 +37,8 @@ namespace frag_picker {
 using namespace core;
 using namespace core::fragment;
 
-using ObjexxFCL::fmt::F;
-using ObjexxFCL::fmt::I;
+using ObjexxFCL::format::F;
+using ObjexxFCL::format::I;
 
 utility::vector1<FragmentCandidateOP> read_fragment_candidates(std::string,
 		VallProviderOP, Size max_nfrags_per_pos = 900000000);

@@ -30,7 +30,7 @@
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/format.hh>
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using std::string;
 using utility::vector1;
 using core::Real;

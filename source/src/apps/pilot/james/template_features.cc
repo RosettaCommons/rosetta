@@ -111,7 +111,7 @@ main( int argc, char* argv [] ) {
 
 	//Size min_seqsep = option[ james::min_seqsep ]();
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	map< string, Pose > poses = protocols::comparative_modeling::poses_from_cmd_line( option[ in::file::template_pdb ]() );
 

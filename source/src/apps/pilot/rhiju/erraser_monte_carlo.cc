@@ -108,7 +108,7 @@ setup_design_res( pose::Pose & pose ){
 
 	using namespace core::pose::full_model_info;
 	utility::vector1< Size > design_res_ = option[ design_res ]();
-	FullModelInfo & full_model_info = nonconst_full_model_info_from_pose( pose );
+	FullModelInfo & full_model_info = nonconst_full_model_info( pose );
 	std::string full_sequence = full_model_info.full_sequence();
 
 	for ( Size i = 1; i <= design_res_.size(); i++ ){
@@ -116,7 +116,7 @@ setup_design_res( pose::Pose & pose ){
 	}
 
 	full_model_info.set_full_sequence( full_sequence );
-	//	std::cout << "NEW SEQUENCE: " << const_full_model_info_from_pose( pose ).full_sequence();
+	//	std::cout << "NEW SEQUENCE: " << const_full_model_info( pose ).full_sequence();
 
 }
 

@@ -156,7 +156,7 @@ namespace constraints {
 	} // dfunc_component
 
 	void MixtureFunc::show( std::ostream& out ) const {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 
 		float start = 2;
 		float end   = 20;

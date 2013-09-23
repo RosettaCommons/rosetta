@@ -74,9 +74,9 @@
 	using core::pose::Pose;
 	using std::string;
 	using utility::vector1;
-	using ObjexxFCL::fmt::I;
-	using ObjexxFCL::fmt::F;
-	using ObjexxFCL::fmt::RJ;
+	using ObjexxFCL::format::I;
+	using ObjexxFCL::format::F;
+	using ObjexxFCL::format::RJ;
 	using numeric::min;
 	using numeric::max;
 	using std::cout;
@@ -2062,7 +2062,7 @@ struct TCDock {
 			string fn = cmp1name_+"_"+cmp2name_+"_"+arch().name()+(h.reverse?"R":"F")+"_"+ObjexxFCL::string_of(ilm);
 			cout << "| " ;
 			cout << I(3,nout+1) << " ";
-			cout << ObjexxFCL::fmt::LJ(npad+7,fn) << " ";
+			cout << ObjexxFCL::format::LJ(npad+7,fn) << " ";
 			cout << F(7,3,rscore) << " " << F(7,4,rscore/ncontacts) <<" "<< F(7,4,rscore/nweighted) << " ";
             cout << F(7,3, rscore ) <<" "<< I(4,nresiface )<<" "<<I(4,ncontacts )<<" "<<F(7,3,nweighted )<<" ";
             Real tmp = option[tcdock::intra]()*(option[tcdock::intra1]()*cmp1cbc + option[tcdock::intra2]()*cmp2cbc);

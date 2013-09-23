@@ -31,7 +31,7 @@
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-using ObjexxFCL::fmt::I;
+using ObjexxFCL::format::I;
 
 // C++ headers
 #include <map>

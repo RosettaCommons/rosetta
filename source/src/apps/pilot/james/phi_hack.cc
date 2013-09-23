@@ -82,7 +82,7 @@ main( int argc, char* argv [] ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	using numeric::random::uniform;
 	using numeric::random::random_range;

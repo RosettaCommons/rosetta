@@ -121,7 +121,7 @@ StepWiseRNA_ResidueSampler::StepWiseRNA_ResidueSampler( StepWiseRNA_JobParameter
 	verbose_( false ),
 	native_rmsd_screen_( false ),
 	native_screen_rmsd_cutoff_( 2.0 ),
-	perform_o2star_pack_( true ),
+	perform_o2prime_pack_( true ),
 	use_green_packer_( false ),
 	allow_bulge_at_chainbreak_( false ),
 	integration_test_mode_( false ), //March 16, 2012
@@ -195,7 +195,7 @@ StepWiseRNA_ResidueSampler::apply( core::pose::Pose & pose ) {
 	Output_boolean( "integration_test_mode_ = ", integration_test_mode_, TR.Debug ); TR.Debug << std::endl;
 	Output_boolean( "native_rmsd_screen = ", native_rmsd_screen_, TR.Debug ); TR.Debug << std::endl;
 	TR.Debug << "native_screen_rmsd_cutoff = " << native_screen_rmsd_cutoff_ << std::endl;
-	Output_boolean( "perform_o2star_pack = ", perform_o2star_pack_, TR.Debug ); TR.Debug << std::endl;
+	Output_boolean( "perform_o2prime_pack = ", perform_o2prime_pack_, TR.Debug ); TR.Debug << std::endl;
 	Output_seq_num_list( "working_moving_partition_pos = ", job_parameters_->working_moving_partition_pos(), TR.Debug );
 	Output_boolean( "centroid_screen = ", centroid_screen_, TR.Debug ); TR.Debug << std::endl;
 	Output_boolean( "allow_base_pair_only_centroid_screen = ", allow_base_pair_only_centroid_screen_, TR.Debug ); TR.Debug << std::endl;
@@ -611,15 +611,15 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose, FloatingB
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	pose::Pose pose_with_original_HO2star_torsion;
-	pose::Pose o2star_pack_pose;
-	if ( perform_o2star_pack_ ) {
-		pose_with_original_HO2star_torsion = pose;
+	pose::Pose pose_with_original_HO2prime_torsion;
+	pose::Pose o2prime_pack_pose;
+	if ( perform_o2prime_pack_ ) {
+		pose_with_original_HO2prime_torsion = pose;
 
 		if ( use_green_packer_ ) utility_exit_with_message( "green packer mode have not been tested for floating base sampling!" );
 
 		//need to un-virtualize the hydrogen (except for the moving base hydrogen, since set_base_coordinate_frame() requires the atom numbering to be consistent
-		//ACTUALLY COULD ALSO UN-VIRTUALIZE THE MOVING_BASE O2STAR_HYDROGEN PROVIDED THAT WE CREATE A SEPERATE moving_rsd_at_origin.
+		//ACTUALLY COULD ALSO UN-VIRTUALIZE THE MOVING_BASE O2PRIME_HYDROGEN PROVIDED THAT WE CREATE A SEPERATE moving_rsd_at_origin.
 		//BUT NO POINT IN DURING SO, SINCE THE FULL RIBOSE IS VIRTUAL ANYWAYS!
 
 		for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
@@ -632,18 +632,18 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose, FloatingB
 
 			if ( seq_num == moving_res ) continue; //moving_res is actually the working_moving_res
 
-			if ( pose.residue_type( seq_num ).has_variant_type( "VIRTUAL_O2STAR_HYDROGEN" ) ){
-				pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2STAR_HYDROGEN", seq_num );
+			if ( pose.residue_type( seq_num ).has_variant_type( "VIRTUAL_O2PRIME_HYDROGEN" ) ){
+				pose::remove_variant_type_from_pose_residue( pose, "VIRTUAL_O2PRIME_HYDROGEN", seq_num );
 			}
 		}
 
-		o2star_pack_pose = pose; //NEED THE VARIANT TYPE OF CB_screening_pose and pose to be the same!
+		o2prime_pack_pose = pose; //NEED THE VARIANT TYPE OF CB_screening_pose and pose to be the same!
 
 	}
 
 	pose::Pose CB_screening_pose = pose; //NEED THE VARIANT TYPE OF CB_screening_pose and pose to be the same!
 
-	print_atom_info( pose, moving_res, "pose after remove o2star variant type" );
+	print_atom_info( pose, moving_res, "pose after remove o2prime variant type" );
 
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -969,9 +969,9 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose, FloatingB
 					copy_bulge_res_and_ribose_torsion( prev_sugar_FB_JP, pose, ( *prev_sugar_FB_JP.PDL[prev_sugar_ID] ) );
 					pose::add_variant_type_to_pose_residue( pose, "VIRTUAL_RIBOSE", prev_sugar_FB_JP.moving_res ); // copy_bulge_res_and_ribose_torsion removed the variant type
 
-					if ( perform_o2star_pack_ ){ //Is this really necessary given that these DOF are virtual anyways!
-						copy_bulge_res_and_ribose_torsion( prev_sugar_FB_JP, o2star_pack_pose, ( *prev_sugar_FB_JP.PDL[prev_sugar_ID] ) );
-						pose::add_variant_type_to_pose_residue( o2star_pack_pose, "VIRTUAL_RIBOSE", prev_sugar_FB_JP.moving_res ); // copy_bulge_res_and_ribose_torsion removed the variant type
+					if ( perform_o2prime_pack_ ){ //Is this really necessary given that these DOF are virtual anyways!
+						copy_bulge_res_and_ribose_torsion( prev_sugar_FB_JP, o2prime_pack_pose, ( *prev_sugar_FB_JP.PDL[prev_sugar_ID] ) );
+						pose::add_variant_type_to_pose_residue( o2prime_pack_pose, "VIRTUAL_RIBOSE", prev_sugar_FB_JP.moving_res ); // copy_bulge_res_and_ribose_torsion removed the variant type
 					}
 
 					tag += tag_from_pose( *prev_sugar_FB_JP.PDL[prev_sugar_ID] );
@@ -996,7 +996,7 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose, FloatingB
 
 			set_base_coordinate_frame( pose, moving_res, ( *moving_rsd_at_origin_list[n] ), moving_res_base_stub );
 
-			if ( perform_o2star_pack_ ) set_base_coordinate_frame( o2star_pack_pose, moving_res, ( *moving_rsd_at_origin_list[n] ), moving_res_base_stub );
+			if ( perform_o2prime_pack_ ) set_base_coordinate_frame( o2prime_pack_pose, moving_res, ( *moving_rsd_at_origin_list[n] ), moving_res_base_stub );
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1004,7 +1004,7 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose, FloatingB
 				if ( !Chain_break_screening( pose, chainbreak_scorefxn_ ) ) continue;
 
 				Copy_CCD_torsions( pose, CB_screening_pose );
-				if ( perform_o2star_pack_ ) Copy_CCD_torsions( o2star_pack_pose, CB_screening_pose );
+				if ( perform_o2prime_pack_ ) Copy_CCD_torsions( o2prime_pack_pose, CB_screening_pose );
 			}
 
 			if ( num_nucleotides == 1 ){
@@ -1012,13 +1012,13 @@ StepWiseRNA_ResidueSampler::floating_base_sampling( pose::Pose & pose, FloatingB
 				if ( !Chain_break_screening_general( CB_screening_pose, chainbreak_scorefxn_, floating_base_five_prime_chain_break ) ) continue;
 
 				Copy_CCD_torsions_general( pose, CB_screening_pose, floating_base_five_prime_chain_break, floating_base_five_prime_chain_break + 1 );
-				if ( perform_o2star_pack_ ) Copy_CCD_torsions_general( o2star_pack_pose, CB_screening_pose, floating_base_five_prime_chain_break, floating_base_five_prime_chain_break + 1 );
+				if ( perform_o2prime_pack_ ) Copy_CCD_torsions_general( o2prime_pack_pose, CB_screening_pose, floating_base_five_prime_chain_break, floating_base_five_prime_chain_break + 1 );
 			}
 			////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-			if ( perform_o2star_pack_ ){
-				sample_o2star_hydrogen( o2star_pack_pose, pose_with_original_HO2star_torsion );
-				copy_all_o2star_torsions( pose, o2star_pack_pose ); //Copy the o2star torsions from the o2star_pack_pose to the pose!
+			if ( perform_o2prime_pack_ ){
+				sample_o2prime_hydrogen( o2prime_pack_pose, pose_with_original_HO2prime_torsion );
+				copy_all_o2prime_torsions( pose, o2prime_pack_pose ); //Copy the o2prime torsions from the o2prime_pack_pose to the pose!
 			}
 
 
@@ -1315,38 +1315,38 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 		TR.Debug << "Enforcing contact between LAST_APPEND_RES: " << last_append_res << " and LAST_PREPEND_RES: " << last_prepend_res  << std::endl;
 		TR.Debug << "atom_atom_overlap_dist_cutoff " << atom_atom_overlap_dist_cutoff << std::endl;
 	}
-	/////////////////////////////// O2star sampling/virtualization //////////////////////////
-	Pose pose_with_virtual_O2star_hydrogen = pose;
-	Add_virtual_O2Star_hydrogen( pose_with_virtual_O2star_hydrogen );
+	/////////////////////////////// O2prime sampling/virtualization //////////////////////////
+	Pose pose_with_virtual_O2prime_hydrogen = pose;
+	Add_virtual_O2Star_hydrogen( pose_with_virtual_O2prime_hydrogen );
 
 
 	//	pose.set_torsion( TorsionID( moving_res, id::CHI, 4 ), 0 );  //This torsion is not sampled. Arbitary set to zero to prevent randomness
-	//	Mod out on Apr 3, 2010 Important so that pose can remember the o2star torsion from previous minimization step.
+	//	Mod out on Apr 3, 2010 Important so that pose can remember the o2prime torsion from previous minimization step.
 	//This is true only in the INTERNAL CASE!...May 31, 2010
 
-	//if perform_o2star_pack, pose 2'-OH torsion will be sampled!
-	pose::Pose pose_with_original_HO2star_torsion;
-	pose::Pose o2star_pack_pose;
-	if ( perform_o2star_pack_ ) {
-		pose_with_original_HO2star_torsion = pose;
-		o2star_pack_pose = pose;
+	//if perform_o2prime_pack, pose 2'-OH torsion will be sampled!
+	pose::Pose pose_with_original_HO2prime_torsion;
+	pose::Pose o2prime_pack_pose;
+	if ( perform_o2prime_pack_ ) {
+		pose_with_original_HO2prime_torsion = pose;
+		o2prime_pack_pose = pose;
 		if ( use_green_packer_ ){
-			initialize_o2star_green_packer( o2star_pack_pose );
+			initialize_o2prime_green_packer( o2prime_pack_pose );
 		} else {
-			initialize_o2star_packer_task( o2star_pack_pose );
+			initialize_o2prime_packer_task( o2prime_pack_pose );
 		}
 	} else {
 		// Otherwise, virtualize the 2-OH.
-		pose = pose_with_virtual_O2star_hydrogen;
+		pose = pose_with_virtual_O2prime_hydrogen;
 	}
 
 	//Real base_rep_score(-9999999999), base_atr_score(-9999999999); //Feb 02, 2012 This might lead to server-test error at R47200
 	Real base_rep_score(  - 999999 ), base_atr_score(  - 999999 ); //Feb 02, 2012
 
-	get_base_atr_rep_score( pose_with_virtual_O2star_hydrogen, base_atr_score, base_rep_score );
+	get_base_atr_rep_score( pose_with_virtual_O2prime_hydrogen, base_atr_score, base_rep_score );
 	//////////////////////////////////////////Setup Atr_rep_screening/////////////////////////////////////////////////
 
-	pose::Pose screening_pose = pose_with_virtual_O2star_hydrogen; //Hard copy
+	pose::Pose screening_pose = pose_with_virtual_O2prime_hydrogen; //Hard copy
 
 	//Necessary for the case where gap_size == 0. In this case, Pose_setup does not automatically create a VIRTUAL_PHOSPHATE.///
 	//However since screening_pose is scored before the CCD corrrectly position the chain_break phosphate atoms, ///////////////
@@ -1354,7 +1354,7 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 	if ( gap_size == 0 ) pose::add_variant_type_to_pose_residue( screening_pose, "VIRTUAL_PHOSPHATE", five_prime_chain_break_res + 1 );
 
 	///////////////////////////////////////Setup chainbreak_screening//////////////////////////////////////////////////////
-	pose::Pose chain_break_screening_pose = pose_with_virtual_O2star_hydrogen; //Hard copy
+	pose::Pose chain_break_screening_pose = pose_with_virtual_O2prime_hydrogen; //Hard copy
 
 	if ( gap_size == 0 )	{ //harmonic angle and distnace constraints are used ONLY by chainbreak_screening
 		TR.Debug << "five_prime_chain_break_res = " << five_prime_chain_break_res << std::endl;
@@ -1471,7 +1471,7 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 		// Almost ready to actually score pose.
 		//////////////////////////////////////////////////////////////////////////////////////////
 		sampler->apply( pose );
-		if ( perform_o2star_pack_ ) sampler->apply( o2star_pack_pose );
+		if ( perform_o2prime_pack_ ) sampler->apply( o2prime_pack_pose );
 
 		//////////////////////////////////////////////////////////////////////////////////////////
 		///////////////Chain_break_screening -- CCD closure /////////////////////////////////////
@@ -1491,20 +1491,20 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 
 				// Need to be very careful here -- do CCD torsions ever overlap with pose torsions?
 				Copy_CCD_torsions( pose, chain_break_screening_pose );
-				if ( perform_o2star_pack_ ) Copy_CCD_torsions( o2star_pack_pose, chain_break_screening_pose );
+				if ( perform_o2prime_pack_ ) Copy_CCD_torsions( o2prime_pack_pose, chain_break_screening_pose );
 
 				if ( is_possible_bulge ){
 					bulge_added = apply_bulge_variant( pose, delta_atr_score ); /*further cut on atr, inside*/
-					if ( perform_o2star_pack_ ) apply_bulge_variant( o2star_pack_pose, delta_atr_score ); /*further cut on atr, inside*/
+					if ( perform_o2prime_pack_ ) apply_bulge_variant( o2prime_pack_pose, delta_atr_score ); /*further cut on atr, inside*/
 				}
 			}
 		}
 		////////////////////////////////////////////////////////////////////
 
 		///////Add pose to pose_data_list if pose have good score///////////
-		if ( perform_o2star_pack_ ){
-			sample_o2star_hydrogen( o2star_pack_pose, pose_with_original_HO2star_torsion );
-			copy_all_o2star_torsions( pose, o2star_pack_pose ); //Copy the o2star torsions from the o2star_pack_pose to the pose!
+		if ( perform_o2prime_pack_ ){
+			sample_o2prime_hydrogen( o2prime_pack_pose, pose_with_original_HO2prime_torsion );
+			copy_all_o2prime_torsions( pose, o2prime_pack_pose ); //Copy the o2prime torsions from the o2prime_pack_pose to the pose!
 		}
 
 		if ( include_torsion_value_in_tag_ ) tag += create_rotamer_string( pose );
@@ -1518,7 +1518,7 @@ StepWiseRNA_ResidueSampler::standard_sampling( core::pose::Pose & pose, utility:
 
 		if ( bulge_added ){
 			remove_virtual_rna_residue_variant_type( pose, job_parameters_->working_moving_res() );
-			if ( perform_o2star_pack_ ) remove_virtual_rna_residue_variant_type( o2star_pack_pose, job_parameters_->working_moving_res() );
+			if ( perform_o2prime_pack_ ) remove_virtual_rna_residue_variant_type( o2prime_pack_pose, job_parameters_->working_moving_res() );
 		}
 
 		num_success++;
@@ -1780,7 +1780,7 @@ StepWiseRNA_ResidueSampler::get_base_atr_rep_score( core::pose::Pose const & pos
 void
 StepWiseRNA_ResidueSampler::initialize_scorefunctions(){
 
-	initialize_common_scorefxns( scorefxn_, sampling_scorefxn_, atr_rep_screening_scorefxn_, chainbreak_scorefxn_, o2star_pack_scorefxn_ );
+	initialize_common_scorefxns( scorefxn_, sampling_scorefxn_, atr_rep_screening_scorefxn_, chainbreak_scorefxn_, o2prime_pack_scorefxn_ );
 
 }
 
@@ -2247,26 +2247,26 @@ StepWiseRNA_ResidueSampler::Full_atom_van_der_Waals_screening( pose::Pose & curr
 
 ////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_ResidueSampler::initialize_o2star_packer_task( core::pose::Pose const & pose ){
+StepWiseRNA_ResidueSampler::initialize_o2prime_packer_task( core::pose::Pose const & pose ){
 
 	utility::vector1 < core::Size > const & working_moving_partition_pos = job_parameters_->working_moving_partition_pos();
 
-	utility::vector1< core::Size > const O2star_pack_seq_num = get_surrounding_O2star_hydrogen( pose, working_moving_partition_pos, false /*verbose*/ );
+	utility::vector1< core::Size > const O2prime_pack_seq_num = get_surrounding_O2prime_hydrogen( pose, working_moving_partition_pos, false /*verbose*/ );
 
-	o2star_pack_task_ = create_standard_o2star_pack_task( pose, O2star_pack_seq_num );
+	o2prime_pack_task_ = create_standard_o2prime_pack_task( pose, O2prime_pack_seq_num );
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_ResidueSampler::initialize_o2star_green_packer( core::pose::Pose & pose )
+StepWiseRNA_ResidueSampler::initialize_o2prime_green_packer( core::pose::Pose & pose )
 {
 	using namespace protocols::simple_moves;
 	using namespace core::pack;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 
-	o2star_green_packer_ = new protocols::simple_moves::GreenPacker;
+	o2prime_green_packer_ = new protocols::simple_moves::GreenPacker;
 
 	ObjexxFCL::FArray1D < bool > const & partition_definition = job_parameters_->partition_definition();
 	bool const root_partition = partition_definition( pose.fold_tree().root() );
@@ -2290,8 +2290,8 @@ StepWiseRNA_ResidueSampler::initialize_o2star_green_packer( core::pose::Pose & p
 	}
 
 	user_defined_group_discriminator->set_group_ids( group_ids );
-	o2star_green_packer_->set_scorefunction( *o2star_pack_scorefxn_ );
-	o2star_green_packer_->set_group_discriminator( user_defined_group_discriminator );
+	o2prime_green_packer_->set_scorefunction( *o2prime_pack_scorefxn_ );
+	o2prime_green_packer_->set_group_discriminator( user_defined_group_discriminator );
 
 	TaskFactoryOP task_factory( new TaskFactory );
 	task_factory->push_back( new InitializeFromCommandline );
@@ -2303,35 +2303,35 @@ StepWiseRNA_ResidueSampler::initialize_o2star_green_packer( core::pose::Pose & p
 		task_factory->push_back( new ExtraRotamers( i, 4 /*ex4*/ ) );
 	}
 
-	o2star_green_packer_->set_task_factory( task_factory );
-	o2star_green_packer_->set_reference_round_task_factory( task_factory );
+	o2prime_green_packer_->set_task_factory( task_factory );
+	o2prime_green_packer_->set_reference_round_task_factory( task_factory );
 
 	// This should also initialize rotamers, etc...
-	o2star_green_packer_->apply( pose );
+	o2prime_green_packer_->apply( pose );
 }
 
 
 
 ////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_ResidueSampler::sample_o2star_hydrogen( core::pose::Pose & pose, core::pose::Pose & pose_with_original_HO2star_torsion ){
+StepWiseRNA_ResidueSampler::sample_o2prime_hydrogen( core::pose::Pose & pose, core::pose::Pose & pose_with_original_HO2prime_torsion ){
 
 	using namespace core::id;
 	using namespace core::conformation;
 
 
-	//reset the HO2star torsion to its starting value as to prevent randomness due to conformations sampling order...
-	copy_all_o2star_torsions( pose, pose_with_original_HO2star_torsion );
+	//reset the HO2prime torsion to its primeting value as to prevent randomness due to conformations sampling order...
+	copy_all_o2prime_torsions( pose, pose_with_original_HO2prime_torsion );
 
 	//TR.Debug << "Packing 2'-OH ... ";
 	if ( use_green_packer_ ) {
-		o2star_green_packer_->apply( pose );
+		o2prime_green_packer_->apply( pose );
 	} else {
 
-		//problem with bulge variant -- need to initialize_o2star_packer_task each time.
-		initialize_o2star_packer_task( pose );
+		//problem with bulge variant -- need to initialize_o2prime_packer_task each time.
+		initialize_o2prime_packer_task( pose );
 
-		pack::rotamer_trials( pose, *o2star_pack_scorefxn_, o2star_pack_task_ );
+		pack::rotamer_trials( pose, *o2prime_pack_scorefxn_, o2prime_pack_task_ );
 
 	}
 
@@ -2445,8 +2445,8 @@ StepWiseRNA_ResidueSampler::set_verbose( bool const & setting ){
 }
 //////////////////////////////////////////////////////////////////////////
 void
-StepWiseRNA_ResidueSampler::set_perform_o2star_pack( bool const & setting ){
-	perform_o2star_pack_ = setting;
+StepWiseRNA_ResidueSampler::set_perform_o2prime_pack( bool const & setting ){
+	perform_o2prime_pack_ = setting;
 }
 
 

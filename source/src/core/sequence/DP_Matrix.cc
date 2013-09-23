@@ -29,8 +29,8 @@ using core::Real;
 using core::Size;
 using std::string;
 using utility::vector1;
-using ObjexxFCL::fmt::A;
-using ObjexxFCL::fmt::F;
+using ObjexxFCL::format::A;
+using ObjexxFCL::format::F;
 
 Cell::~Cell() {}
 

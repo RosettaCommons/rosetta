@@ -54,7 +54,7 @@ using utility::vector1;
 typedef utility::vector1< Real > Reals;
 
 using namespace std;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 class Poly {
 public:

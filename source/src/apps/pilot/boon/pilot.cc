@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 	protocols::rna::RNA_Minimizer rna_minimizer;
 	rna_minimizer.deriv_check( true );
 	rna_minimizer.use_coordinate_constraints( false );
-	rna_minimizer.skip_o2star_trials( true );
+	rna_minimizer.skip_o2prime_trials( true );
 	rna_minimizer.vary_bond_geometry( true );
 	std::cout << "\nPrint RNA_Minimizer:" << std::endl;
 	std::cout << rna_minimizer << std::endl;

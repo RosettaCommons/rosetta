@@ -1,5 +1,3 @@
-namespace optE { BooleanOptionKey const optimize_ddGmutation_straight_mean( "optE:optimize_ddGmutation_straight_mean" );  }
-namespace optE { BooleanOptionKey const optimize_ddGmutation_boltzman_average( "optE:optimize_ddGmutation_boltzman_average" );  }
 namespace optE { RealOptionKey const exclude_badrep_ddGs( "optE:exclude_badrep_ddGs" );  }
 namespace optE { BooleanOptionKey const pretend_no_ddG_repulsion( "optE:pretend_no_ddG_repulsion" );  }
 namespace optE { FileOptionKey const optimize_decoy_discrimination( "optE:optimize_decoy_discrimination" );  }
@@ -472,6 +470,7 @@ namespace swa { BooleanOptionKey const backbone_only1( "swa:backbone_only1" );  
 namespace swa { BooleanOptionKey const backbone_only2( "swa:backbone_only2" );  }
 namespace full_model { BooleanOptionKey const full_model( "full_model" );  }
 namespace full_model { IntegerVectorOptionKey const cutpoint_open( "full_model:cutpoint_open" );  }
+namespace full_model { StringVectorOptionKey const other_poses( "full_model:other_poses" );  }
 namespace ufv { BooleanOptionKey const ufv( "ufv" );  }
 namespace ufv { IntegerOptionKey const left( "ufv:left" );  }
 namespace ufv { IntegerOptionKey const right( "ufv:right" );  }

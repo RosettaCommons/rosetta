@@ -44,7 +44,7 @@ namespace scoring {
 namespace dna {
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 typedef numeric::xyzMatrix< Real > Matrix;
 	//using kinematics::Stub::Matrix;
@@ -439,7 +439,7 @@ show_base_pair_params_with_z_scores(
 {
 	DNA_BasePotential const & potential( ScoringManager::get_instance()->get_DNA_BasePotential() );
 
-	using namespace fmt;
+	using namespace format;
 	Params params(6);
 	get_base_pair_params(rsd1,rsd2,params);
 	utility::vector1< Real > z_scores(6,0.0);
@@ -468,7 +468,7 @@ show_base_pair_params(
 {
 	//DNA_BasePotential const & potential( ScoringManager::get_instance()->get_DNA_BasePotential() );
 
-	using namespace fmt;
+	using namespace format;
 	Params params(6);
 	get_base_pair_params(rsd1,rsd2,params);
 	out << "BP_PARAMS " << I(4,rsd1.seqpos()) << I(4,rsd2.seqpos()) << ' ' << rsd1.name1() << rsd2.name1() <<
@@ -763,7 +763,7 @@ show_base_step_params(
 )
 {
 
-	using namespace fmt;
+	using namespace format;
 	Params params(6);
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
@@ -798,7 +798,7 @@ show_new_base_step_params(
 {
 	DNA_BasePotential const & potential( ScoringManager::get_instance()->get_DNA_BasePotential() );
 
-	using namespace fmt;
+	using namespace format;
 	Params params(6);
 	get_base_step_params(rsd1,rsd2,params);
 	utility::vector1< Real > z_scores(6,0.0);

@@ -2836,7 +2836,7 @@ bool RemodelLoopMover::check_closure_criteria(
 	using namespace basic::options;
 	using namespace OptionKeys::remodel;
 
-	boost::format fmt( "%|5t|%1% %|5t|%2% %|5t|%3% %|8t|%4%" );
+	boost::format format( "%|5t|%1% %|5t|%2% %|5t|%3% %|8t|%4%" );
 
 	//breakout case if we don't care if the loops are closed
 	if(option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
@@ -2854,7 +2854,7 @@ bool RemodelLoopMover::check_closure_criteria(
 				}
 
 				if ( show_in_tracer ) {
-					TR << fmt % l->start() % l->stop() % l->cut() % cbreak << std::endl;
+					TR << format % l->start() % l->stop() % l->cut() % cbreak << std::endl;
 				}
 			}
 			return all_loops_pass;
@@ -2867,7 +2867,7 @@ bool RemodelLoopMover::check_closure_criteria(
 	// boost::format here does not appear to be doing what I want it to do...
 	// The format string is probably borked.
 	if ( show_in_tracer ) {
-		TR << fmt % "start" % "stop" % "cut" % "cbreak" << std::endl;
+		TR << format % "start" % "stop" % "cut" % "cbreak" << std::endl;
 	}
 
 	bool all_loops_pass = true;
@@ -2880,7 +2880,7 @@ bool RemodelLoopMover::check_closure_criteria(
 		}
 
 		if ( show_in_tracer ) {
-			TR << fmt % l->start() % l->stop() % l->cut() % cbreak << std::endl;
+			TR << format % l->start() % l->stop() % l->cut() % cbreak << std::endl;
 		}
 	}
 

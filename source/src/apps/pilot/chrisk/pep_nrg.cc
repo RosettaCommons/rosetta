@@ -149,7 +149,7 @@
 using namespace core;
 using namespace protocols;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 //using namespace protocols;
 
 using utility::vector1;

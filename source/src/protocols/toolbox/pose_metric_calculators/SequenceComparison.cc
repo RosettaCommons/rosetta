@@ -98,7 +98,7 @@ using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 
 

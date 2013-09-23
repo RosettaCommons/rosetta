@@ -35,7 +35,7 @@
 
 #include <ObjexxFCL/format.hh>
 
-using ObjexxFCL::fmt::I;
+using ObjexxFCL::format::I;
 
 static basic::Tracer tr("core.scoring.rna.RNA_VDW_Energy");
 

@@ -94,7 +94,7 @@ using namespace core;
 using utility::vector1;
 using core::id::AtomID;
 using namespace core::scoring::packing;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using core::scoring::ScoreFunctionOP;
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;

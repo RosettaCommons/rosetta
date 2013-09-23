@@ -345,7 +345,7 @@ void PoseBalls::compute_smooth_nb() {
 void
 PoseBalls::output_pdb( std::ostream & out ) const {
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	for( Size i = 1; i <= nballs(); i++ ) {
 

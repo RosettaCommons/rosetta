@@ -1583,7 +1583,7 @@ namespace rna {
 				TR.Debug << " partition_definition( root_res ) = " << partition_definition( root_res ) << std::endl;
 				Output_boolean( "should_be_prepend = ", should_be_prepend, TR.Debug );
 				Output_boolean( " job_parameters_->Is_prepend() = ", job_parameters_->Is_prepend(), TR.Debug ); TR.Debug << std::endl;
-				utility_exit_with_message( "Possible problem with prepend/append assignment!!" );
+				//				utility_exit_with_message( "Possible problem with prepend/append assignment!!" );
 			}
 		}
 	}

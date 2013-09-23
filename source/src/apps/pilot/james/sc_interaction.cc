@@ -113,7 +113,7 @@ public:
 		using namespace core::chemical;
 		using namespace core::optimization;
 		using core::id::AtomID;
-		using ObjexxFCL::fmt::F;
+		using ObjexxFCL::format::F;
 
 		ScoreFunctionOP scorefxn( getScoreFunction() );
 		scorefxn->set_weight( atom_pair_constraint, 1.0 );

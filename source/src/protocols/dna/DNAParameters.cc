@@ -24,7 +24,7 @@
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/dna/base_geometry.hh>
 
-//#include <ObjexxFCL/fmt/formatted.o.hh> // I()
+//#include <ObjexxFCL/format/formatted.o.hh> // I()
 
 #include <utility/vector1.hh>
 

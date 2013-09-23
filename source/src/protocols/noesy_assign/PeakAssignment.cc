@@ -76,7 +76,7 @@ ResonanceList const& PeakAssignment::resonances() const {
 
 void PeakAssignment::dump_weights( std::ostream& os ) const {
 	PeakAssignmentParameters const& params( *PeakAssignmentParameters::get_instance() );
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	os << F( 5, 2, chemshift_overlap_ ) << " "
 		 << F( 5, 2, std::max( symmetry_compliance_*params.symmetry_compliance_weight_, 1.0 ) ) << " "
 		 << F( 5, 2, covalent_compliance_ ? params.covalent_compliance_weight_ : 1.0 ) << " "

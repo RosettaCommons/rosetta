@@ -378,8 +378,8 @@ void
 ddG::report_ddG( std::ostream & out ) const
 {
 
-	using ObjexxFCL::fmt::F;
-	using ObjexxFCL::fmt::LJ;
+	using ObjexxFCL::format::F;
+	using ObjexxFCL::format::LJ;
 	out << "-----------------------------------------\n";
 	out << " Scores                       Wghtd.Score\n";
 	out << "-----------------------------------------\n";

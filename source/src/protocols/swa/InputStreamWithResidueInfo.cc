@@ -294,7 +294,7 @@ namespace swa {
 		// No virtual anything!
 		utility::vector1< std::string > remove_variants;
 		remove_variants.push_back( "VIRTUAL_PHOSPHATE" );
-		remove_variants.push_back( "VIRTUAL_O2STAR_HYDROGEN" );
+		remove_variants.push_back( "VIRTUAL_O2PRIME_HYDROGEN" );
 		remove_variants.push_back( "CUTPOINT_LOWER" );
 		remove_variants.push_back( "CUTPOINT_UPPER" );
 		// Also remove VIRTUAL_RESIDUE variant?

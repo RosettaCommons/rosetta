@@ -116,8 +116,8 @@ namespace swa {
 		void		set_steric_dist_cutoff( Real const setting );
 		void		set_min_hbonds( Size const value ){ min_hbonds_ = value;}
 		void		set_fa_rep_cutoff( Real const value ){ fa_rep_cutoff_ = value;}
-		void	  set_o2star_trials( bool const setting );
-		void	  set_ignore_o2star_hbonds_in_filter( bool const setting ){ ignore_o2star_hbonds_in_filter_ = setting;}
+		void	  set_o2prime_trials( bool const setting );
+		void	  set_ignore_o2prime_hbonds_in_filter( bool const setting ){ ignore_o2prime_hbonds_in_filter_ = setting;}
 		void	  set_assign_WC_edges( bool const setting ){ assign_WC_edges_ = setting;}
 
 
@@ -171,7 +171,7 @@ namespace swa {
 													);
 
 		bool
-		check_o2star_needs_optimization( pose::Pose const & pose );
+		check_o2prime_needs_optimization( pose::Pose const & pose );
 
 		bool
 		check_num_hbonds( pose::Pose & pose );
@@ -194,8 +194,8 @@ namespace swa {
 
 		core::io::silent::SilentFileDataOP sfd_;
 
-		core::scoring::ScoreFunctionOP scorefxn_, o2star_pack_scorefxn_;
-		bool o2star_trials_, ignore_o2star_hbonds_in_filter_, assign_WC_edges_;
+		core::scoring::ScoreFunctionOP scorefxn_, o2prime_pack_scorefxn_;
+		bool o2prime_trials_, ignore_o2prime_hbonds_in_filter_, assign_WC_edges_;
 
 		Real alpha_, beta_, gamma_, delx_, dely_, delz_;
 

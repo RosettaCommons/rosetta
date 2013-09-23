@@ -129,7 +129,7 @@ main( int argc, char * argv [] )
 		}
 	}
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	if ( option[ torsion ]() ) {
 		output << "## TORSION ANGLES" << std::endl;
 		for ( Size ii=1; ii<=pose.total_residue(); ii++ ) {

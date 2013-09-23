@@ -271,7 +271,7 @@ setup_water_builders_for_residue_type(
 		/// now add all the waters
 		char const chain = 'A';
 		for ( Size i=1; i<= all_waters.size(); ++i ) {
-			using namespace ObjexxFCL::fmt;
+			using namespace ObjexxFCL::format;
 			++atom_number;
 			std::string const atom_name( "W" + ObjexxFCL::lead_zero_string_of( i, 3 ) );
 			out << "ATOM  " << I(5,atom_number) << ' ' << atom_name << ' ' <<
@@ -351,7 +351,7 @@ LKB_ResidueInfo::setup_atom_weights(
 			atom_wts[i][2] = rsd_type.atom_type(i).extra_parameter( atom_wt_index );
 			if ( !rsd_water_builders[i].empty() ) {
 				TR.Trace << "lk_ball_wtd atom_wts: " <<
-					ObjexxFCL::fmt::F(9,3,atom_wts[i][1]) << ObjexxFCL::fmt::F(9,3,atom_wts[i][2]) << ' ' <<
+					ObjexxFCL::format::F(9,3,atom_wts[i][1]) << ObjexxFCL::format::F(9,3,atom_wts[i][2]) << ' ' <<
 					rsd_type.atom_name(i) << ' ' << rsd_type.name() << std::endl;
 			}
 		}
@@ -445,11 +445,11 @@ LKB_ResidueInfo::setup_atom_weights(
 				if ( at.is_donor() ) atom_wts[i][2] = donwt; // aniso wt, DONOR GOES LAST ==> SP3 uses donor weight
 			}
 			TR.Trace << "lk_ball_wtd atom_weight: " << rsd_type.name1() << ' ' <<
-				ObjexxFCL::fmt::A(6,atomname) <<
-				ObjexxFCL::fmt::A(6,atomtypename) <<
+				ObjexxFCL::format::A(6,atomname) <<
+				ObjexxFCL::format::A(6,atomtypename) <<
 				" nwaters: " << nwaters <<
-				" iso_wt: " << ObjexxFCL::fmt::F(9,3,atom_wts[i][1] ) <<
-				" aniso_wt: " << ObjexxFCL::fmt::F(9,3,atom_wts[i][2] ) <<
+				" iso_wt: " << ObjexxFCL::format::F(9,3,atom_wts[i][1] ) <<
+				" aniso_wt: " << ObjexxFCL::format::F(9,3,atom_wts[i][2] ) <<
 				' ' << rsd_type.name() << std::endl;
 		}
 	}

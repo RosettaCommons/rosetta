@@ -42,7 +42,7 @@
 //Auto Headers
 #include <core/conformation/signals/ConnectionEvent.hh>
 //using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 
 namespace core {

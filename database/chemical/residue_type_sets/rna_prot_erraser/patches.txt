@@ -3,13 +3,13 @@
 ../rna_phenix/patches/rna_cutpoint_lower_phenix.txt
 ../rna_phenix/patches/rna_cutpoint_upper_phenix.txt
 ../rna_phenix/patches/Virtual_Phosphate.txt
-../rna_phenix/patches/Virtual_O2star_hydrogen.txt
+../rna_phenix/patches/Virtual_O2prime_hydrogen.txt
 ../rna_phenix/patches/BulgeRNA.txt
 ../rna_phenix/patches/Virtual_RNA_Residue.txt
 ../rna_phenix/patches/Virtual_RNA_Residue_Upper.txt
 ../rna_phenix/patches/Virtual_Ribose.txt
 ../rna_phenix/patches/Protonated_H1_Adenosine.txt
-../rna_phenix/patches/Virtual_Backbone_Except_C1star.txt
+../rna_phenix/patches/Virtual_Backbone_Except_C1prime.txt
 ../rna_phenix/patches/3prime_end_OH.txt
 ../rna_phenix/patches/5prime_end_OH.txt
 ../rna_phenix/patches/5prime_end_phosphate.txt

@@ -1034,6 +1034,18 @@ superimpose_pose(
 Real
 superimpose_pose(
 	pose::Pose & mod_pose,
+	pose::Pose const & ref_pose,
+	std::map< id::AtomID, id::AtomID > const & atom_map // from mod_pose to ref_pose
+)
+{
+	id::AtomID_Map< id::AtomID > const atom_id_map = convert_from_std_map( atom_map, mod_pose );
+	pose::MiniPose mini_ref_pose( ref_pose );  //minipose is a lightweight pose with just xyz positions (& fold tree)
+	return superimpose_pose(mod_pose, mini_ref_pose, atom_id_map );
+}
+
+Real
+superimpose_pose(
+	pose::Pose & mod_pose,
 	pose::MiniPose const & ref_pose,
 	id::AtomID_Map< id::AtomID > const & atom_map // from mod_pose to ref_pose
 )
@@ -1245,7 +1257,6 @@ rms_at_corresponding_atoms(
 						 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) );
 
 		if ( !is_calc_rms[ (iter->first).rsd() ] ) continue;
-		if ( !is_calc_rms[ (iter->second).rsd() ] ) continue;
 
 		Vector const & p1(  mod_pose.xyz( iter->first ));
 		Vector const & p2(  ref_pose.xyz( iter->second ));
@@ -1263,20 +1274,20 @@ rms_at_all_corresponding_atoms(
         std::map< core::id::AtomID, core::id::AtomID > atom_id_map
 )
 {
-        utility::vector1< Vector > p1_coords, p2_coords;
+	utility::vector1< Vector > p1_coords, p2_coords;
 
-        for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin();
-                                iter != atom_id_map.end(); iter++ ) {
+	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin();
+				iter != atom_id_map.end(); iter++ ) {
 
-                assert ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) ==
-                                                 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) );
+		runtime_assert ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) ==
+										 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) );
 
-                Vector const & p1(  mod_pose.xyz( iter->first ));
-                Vector const & p2(  ref_pose.xyz( iter->second ));
-                p1_coords.push_back(  p1 );
-                p2_coords.push_back(  p2 );
-        }
-        return numeric::model_quality::calc_rms( p1_coords, p2_coords );
+		Vector const & p1(  mod_pose.xyz( iter->first ));
+		Vector const & p2(  ref_pose.xyz( iter->second ));
+		p1_coords.push_back(  p1 );
+		p2_coords.push_back(  p2 );
+	}
+	return numeric::model_quality::calc_rms( p1_coords, p2_coords );
 }
 
 Real
@@ -1311,7 +1322,6 @@ rms_at_corresponding_atoms_no_super(
 						 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) );
 
 		if ( !is_calc_rms[ (iter->first).rsd() ] ) continue;
-		if ( !is_calc_rms[ (iter->second).rsd() ] ) continue;
 
 		Vector const & p1(  mod_pose.xyz( iter->first ));
 		Vector const & p2(  ref_pose.xyz( iter->second ));

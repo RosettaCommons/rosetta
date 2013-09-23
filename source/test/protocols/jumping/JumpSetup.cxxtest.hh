@@ -155,7 +155,7 @@ apply_ss_jumps( pose::Pose &pose, JumpSetup jump_def, std::string tag ) {
 	mm.set_bb( true );
 	mm.set_jump( true );
 
-	using namespace fmt;
+	using namespace format;
 	FrameList jump_geometries;
 
 	jump.steal_orientation_and_pleating( pose );
@@ -284,7 +284,7 @@ void JumpingTest::test_save_and_restore_silentio_with_jumps()
 void JumpingTest::test_strand_fraction() {
 	using namespace protocols::jumping;
 	using namespace core::fragment;
-	using namespace fmt;
+	using namespace format;
 
 	SecondaryStructure ss( fragset3mer_ );
 	for ( Size i = 1; i<= ss.total_residue(); i++ ) {
@@ -322,7 +322,7 @@ void JumpingTest::test_strand_fraction() {
 void JumpingTest::test_SheetBuilder() {
 	using namespace protocols::jumping;
 	using namespace core::fragment;
-	using namespace fmt;
+	using namespace format;
 
 	SecondaryStructureOP ss( new SecondaryStructure( fragset3mer_ ) );
 

@@ -70,7 +70,7 @@
 #include <numeric/random/random_permutation.hh>
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace loophash {

@@ -86,7 +86,7 @@ using namespace chemical;
 using namespace scoring;
 using namespace pack;
 using namespace rotamer_set;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace devel {
 namespace dna {

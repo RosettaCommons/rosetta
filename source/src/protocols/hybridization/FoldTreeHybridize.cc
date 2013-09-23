@@ -310,7 +310,7 @@ FoldTreeHybridize::gap_distance(Size Seq_gap)
 }
 
 void FoldTreeHybridize::add_gap_constraints_to_pose(core::pose::Pose & pose, Loops const & chunks, int gap_edge_shift, Real stdev) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	for (Size i=1; i<chunks.num_loop(); ++i) {
 		int gap_start = chunks[i].stop()	+ gap_edge_shift;
 		int gap_stop  = chunks[i+1].start() - gap_edge_shift;
@@ -503,7 +503,7 @@ FoldTreeHybridize::translate_virt_to_CoM(core::pose::Pose & pose) {
 	numeric::xyzVector<Real> curr_pos = pose.residue(pose.total_residue()).xyz(1);
 	numeric::xyzVector<Real> translation = CoM - curr_pos;
 
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	TR.Debug << F(8,3,translation.x()) << F(8,3,translation.y()) << F(8,3,translation.z()) << std::endl;
 
 	// apply transformation
@@ -519,7 +519,7 @@ FoldTreeHybridize::translate_virt_to_CoM(core::pose::Pose & pose) {
 
 
 utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_big_frags(core::pose::Pose & pose) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	core::Size num_residues_nonvirt = get_num_residues_nonvirt(pose);
 	utility::vector1< core::Real > residue_weights(num_residues_nonvirt, 0.0);
 	TR.Debug << "Fragment insertion positions and weights:" << std::endl;
@@ -606,7 +606,7 @@ utility::vector1< core::Size > FoldTreeHybridize::get_jump_anchors() {
 }
 
 utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_1mers(core::pose::Pose & pose) {
-  using namespace ObjexxFCL::fmt;
+  using namespace ObjexxFCL::format;
 	core::Size num_residues_nonvirt = get_num_residues_nonvirt(pose);
   utility::vector1< core::Real > residue_weights( get_residue_weights_for_big_frags(pose) );
   utility::vector1< core::Real > residue_weights_new( num_residues_nonvirt, 0.0 );
@@ -641,7 +641,7 @@ utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_1mers(
 }
 
 utility::vector1< core::Real > FoldTreeHybridize::get_residue_weights_for_small_frags(core::pose::Pose & pose) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	core::Size num_residues_nonvirt = get_num_residues_nonvirt(pose);
 	utility::vector1< core::Real > residue_weights( get_residue_weights_for_big_frags(pose) );
 	utility::vector1< core::Real > residue_weights_new( num_residues_nonvirt, 0.0 );
@@ -957,7 +957,7 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 					}
 					if (template_resi || template_resj) {
 						core::Real rms = core::scoring::superimpose_pose( *template_poses_[*pairings_iter], *template_poses_[initial_template_index_], atom_map );
-						TR << "rms: " << ObjexxFCL::fmt::F(8,3,rms) << std::endl;
+						TR << "rms: " << ObjexxFCL::format::F(8,3,rms) << std::endl;
 						continue;
 					}
 				}
@@ -982,7 +982,7 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 								}
 								TR << "Superimpose strand pair " << *pairings_iter << " at " << it->start() << " to pair " << *pairings_iteri << std::endl;
 								core::Real rms = core::scoring::superimpose_pose( *template_poses_[*pairings_iter], *template_poses_[*pairings_iteri], atom_map );
-								TR << "rms: " << ObjexxFCL::fmt::F(8,3,rms) << std::endl;
+								TR << "rms: " << ObjexxFCL::format::F(8,3,rms) << std::endl;
 								do_continue = true;
 							}
 						}
@@ -1030,7 +1030,7 @@ void FoldTreeHybridize::superimpose_strand_pairings_to_templates(core::pose::Pos
 						if (template_resi || template_resj) {
 							TR << "Superimpose strand pair " << *pairings_iter << " to random template " << *it << std::endl;
 							core::Real rms = core::scoring::superimpose_pose( *template_poses_[*pairings_iter], *template_poses_[*it], atom_map );
-							TR << "rms: " << ObjexxFCL::fmt::F(8,3,rms) << std::endl;
+							TR << "rms: " << ObjexxFCL::format::F(8,3,rms) << std::endl;
 							do_continue = true;
 							break;
 						}
@@ -1382,7 +1382,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
     TR.Info <<  "\n===================================================================\n";
     TR.Info <<  "   Stage 1                                                         \n";
     TR.Info <<  "   Folding with score0 for max of " << stage1_max_cycles << std::endl;
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		AllResiduesChanged done( pose, residue_weights, jump_anchors );
 		protocols::moves::MonteCarloOP mc1 = new protocols::moves::MonteCarlo( pose, *score0, temp );
 		mc1->set_autotemp( false, temp );
@@ -1414,7 +1414,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	if (native_ && native_->total_residue()) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
 		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1_1", gdtmm);
-		TR << "GDTMM_after_stage1_1" << ObjexxFCL::fmt::F(8,3,gdtmm) << std::endl;
+		TR << "GDTMM_after_stage1_1" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 	}
 
 	// stage 2
@@ -1451,7 +1451,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	if (native_ && native_->total_residue()) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
 		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1_2", gdtmm);
-		TR << "GDTMM_after_stage1_2" << ObjexxFCL::fmt::F(8,3,gdtmm) << std::endl;
+		TR << "GDTMM_after_stage1_2" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 	}
 
 	// stage 3
@@ -1536,7 +1536,7 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	if (native_ && native_->total_residue()) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
 		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1_3", gdtmm);
-		TR << "GDTMM_after_stage1_3" << ObjexxFCL::fmt::F(8,3,gdtmm) << std::endl;
+		TR << "GDTMM_after_stage1_3" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 	}
 
 	using namespace basic::options;
@@ -1649,14 +1649,14 @@ FoldTreeHybridize::apply(core::pose::Pose & pose) {
 	if (native_ && native_->total_residue()) {
 		gdtmm = get_gdtmm(*native_, pose, native_aln);
 		core::pose::setPoseExtraScores( pose, "GDTMM_after_stage1_4", gdtmm);
-		TR << "GDTMM_after_stage1_4" << ObjexxFCL::fmt::F(8,3,gdtmm) << std::endl;
+		TR << "GDTMM_after_stage1_4" << ObjexxFCL::format::F(8,3,gdtmm) << std::endl;
 	}
 
 	pose.remove_constraints();
 	restore_original_foldtree(pose);
 
 	for (Size ires=1; ires<=pose.total_residue(); ++ires) {
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		TR.Debug << "Chunk trial counter:" << I(4,ires) << I(8, random_sample_chunk_mover->trial_counter(ires)) << std::endl;
 	}
 }
@@ -1666,7 +1666,7 @@ void FoldTreeHybridize::auto_frag_insertion_weight(
 		WeightedFragmentTrialMoverOP & small_frag_trial_mover,
 		WeightedFragmentTrialMoverOP & big_frag_trial_mover
 ) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	if (!auto_frag_insertion_weight_) return;
 	core::Size frag_1mer_n_frags = frag_1mer_trial_mover->get_nr_frags();
 	if (!frag_1mer_n_frags) frag_1mer_n_frags = top_n_small_frag_;

@@ -68,7 +68,7 @@ core::Size SkipViolFunc::show_violations(
 
 void
 SkipViolFunc::show_definition( std::ostream &out ) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	out << "SKIPVIOLFUNC" << RJ( 7, count_viols_ ) << " ";
 	func_to_weight_->show_definition( out );
 }

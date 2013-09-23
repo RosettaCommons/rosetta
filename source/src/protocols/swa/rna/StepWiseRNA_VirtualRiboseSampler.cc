@@ -217,7 +217,7 @@ floating_base_chain_closure_setup( utility::vector1< PoseOP > const & input_pose
 																	bool const use_phenix_geo ){
 
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace core::id;
 	using namespace core::chemical;
 	using namespace core::conformation;
@@ -766,7 +766,7 @@ minimize_all_sampled_floating_bases( core::pose::Pose & viewer_pose,
 
 		TR << "minimize_all_sampled_floating_bases pose # " << n << " out of " << pose_data_list.size() << " " << std::endl;;
 		minimizer.run( viewer_pose, mm, ( *sampling_scorefxn ), options );
-//			o2star_minimize(viwer_pose, sampling_scorefxn)
+//			o2prime_minimize(viwer_pose, sampling_scorefxn)
 //			minimizer.run( viewer_pose, mm, (*sampling_scorefxn), options );
 
 		if ( virtual_ribose_is_from_prior_step ){ //Virtualize the other partition since it doesn't exist in prior step!
@@ -1194,9 +1194,9 @@ sample_user_specified_virtual_riboses(
 
 
 
-	core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn, chainbreak_scorefxn, sampling_scorefxn, o2star_pack_scorefxn;
+	core::scoring::ScoreFunctionOP atr_rep_screening_scorefxn, chainbreak_scorefxn, sampling_scorefxn, o2prime_pack_scorefxn;
 
-	initialize_common_scorefxns( scorefxn, sampling_scorefxn, atr_rep_screening_scorefxn, chainbreak_scorefxn, o2star_pack_scorefxn );
+	initialize_common_scorefxns( scorefxn, sampling_scorefxn, atr_rep_screening_scorefxn, chainbreak_scorefxn, o2prime_pack_scorefxn );
 
 	utility::vector1< FloatingBaseChainClosureJobParameter > FB_CC_JP_list = setup_FB_CC_JP_list( pose, sample_virtual_ribose_string_list, job_parameters );
 

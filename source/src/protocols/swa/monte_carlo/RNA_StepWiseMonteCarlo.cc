@@ -83,11 +83,12 @@ RNA_StepWiseMonteCarlo::apply( core::pose::Pose & pose ) {
 
 	while (  k <= cycles_ ){
 
-		if ( success ) TR << std::endl << TR.Blue << "Embarking on cycle " << k << " of " << cycles_ << TR.Reset << std::endl;
-
-		if ( RG.uniform() < switch_focus_frequency_ ) {
-			if ( switch_focus_among_poses_randomly( pose ) ) show_scores( pose, "After focus switch:" );
+		if ( success ) {
+			TR << std::endl << TR.Blue << "Embarking on cycle " << k << " of " << cycles_ << TR.Reset << std::endl;
+			show_scores( pose, "Before-move score:" );
 		}
+
+		if ( RG.uniform() < switch_focus_frequency_ ) switch_focus_among_poses_randomly( pose );
 
 		bool const minimize_single_res = ( RG.uniform() <= minimize_single_res_frequency_ );
 		if ( RG.uniform() < add_delete_frequency_ ){
@@ -161,12 +162,17 @@ RNA_StepWiseMonteCarlo::switch_focus_among_poses_randomly( pose::Pose & pose ) c
 	using namespace core::pose::full_model_info;
 	using namespace protocols::swa;
 
-	Size const num_other_poses = const_full_model_info_from_pose( pose ).other_pose_list().size();
+	Size const num_other_poses = const_full_model_info( pose ).other_pose_list().size();
 	Size const focus_pose_idx = RG.random_range( 0, num_other_poses );
 	if ( focus_pose_idx == 0 ) return false;
 
+	Real const score_before_switch_focus = (*scorefxn_)( pose );
 	TR.Debug << "SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! SWITCHING FOCUS! to: " << focus_pose_idx << std::endl;
 	switch_focus_to_other_pose( pose, focus_pose_idx );
+	Real const score_after_switch_focus = (*scorefxn_)( pose );
+
+	runtime_assert( std::abs( score_before_switch_focus - score_after_switch_focus ) < 1e-3 );
+
 	return true;
 }
 
@@ -174,11 +180,10 @@ RNA_StepWiseMonteCarlo::switch_focus_among_poses_randomly( pose::Pose & pose ) c
 void
 RNA_StepWiseMonteCarlo::show_scores( core::pose::Pose & pose,
 																		 std::string const tag ){
+
+	TR << tag << " " << ( *scorefxn_ )( pose ) << std::endl;
 	if ( verbose_scores_ ) {
-		TR << tag << std::endl;
 		scorefxn_->show( TR, pose );
-	}	else {
-		TR << tag << " " << ( *scorefxn_ )( pose ) << std::endl;
 	}
 }
 

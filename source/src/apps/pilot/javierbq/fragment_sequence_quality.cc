@@ -128,7 +128,7 @@ using namespace protocols::toolbox;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 void ThisApplication::register_options() {
 	using namespace basic::options;

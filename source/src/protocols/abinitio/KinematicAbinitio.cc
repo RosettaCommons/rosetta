@@ -289,7 +289,7 @@ KinematicAbinitio::dump_jump_log( core::pose::Pose& pose, std::string const& fil
     evaluate_pose( pose, "jump_log", pss );
 
     utility::io::ozstream out( filename , std::ios_base::out | std::ios_base::app );
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
     out << get_current_tag() << " "
 				<< RJ(10, pss.get_energy ( "rms" ) ) << " "
 			//				<< RJ(10, pss.get_energy ( "rms_native" ) ) << " "

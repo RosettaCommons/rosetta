@@ -105,7 +105,7 @@ JumpSetup::read_file( std::string fname ) {
 		//		if ( in ) {
 		//			tr.Warning << "Ignore remaining line: " << line << std::endl;
 		//		}
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		tr.Debug << "read Jumps: " << RJ(4, jump.start_) << RJ( 4, jump.end_ ) << RJ( 4, cuts.start_ ) << RJ( 4, cuts.end_ )<< std::endl;
 		add_jump( jump, cuts );
 	}
@@ -154,7 +154,7 @@ JumpSelector::read_file( std::string fname ) {
 			jump.start_ = jump.end_;
 			jump.end_ = dum;
 		};
-		using namespace ObjexxFCL::fmt;
+		using namespace ObjexxFCL::format;
 		tr.Debug << "read Jumps: " << RJ(7, jump.start_) << RJ( 7, jump.end_ ) << RJ( 7, weight ) <<std::endl;
 		add_jump( jump, weight );
 	}

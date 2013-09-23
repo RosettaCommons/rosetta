@@ -232,17 +232,17 @@ void RotamerRecovery::get_rotamer_recovery(core::pose::Pose & native, utility::v
 
 		output << "# total = " << ObjexxFCL::string_of(total) << std::endl;
 		output
-			<< ObjexxFCL::fmt::A( width, "resi_idx" )
-			<< ObjexxFCL::fmt::A( width, "nat_bb_bin" )
-			<< ObjexxFCL::fmt::A( width, "pct_bb" )
-			<< ObjexxFCL::fmt::A( width, "nat_rot1" )
-			<< ObjexxFCL::fmt::A( width, "pct_rot1" )
-			<< ObjexxFCL::fmt::A( width, "nat_rot2" )
-			<< ObjexxFCL::fmt::A( width, "pct_rot2" )
-			<< ObjexxFCL::fmt::A( width, "nat_rot3" )
-			<< ObjexxFCL::fmt::A( width, "pct_rot3" )
-			<< ObjexxFCL::fmt::A( width, "nat_rot4" )
-			<< ObjexxFCL::fmt::A( width, "pct_rot4" )
+			<< ObjexxFCL::format::A( width, "resi_idx" )
+			<< ObjexxFCL::format::A( width, "nat_bb_bin" )
+			<< ObjexxFCL::format::A( width, "pct_bb" )
+			<< ObjexxFCL::format::A( width, "nat_rot1" )
+			<< ObjexxFCL::format::A( width, "pct_rot1" )
+			<< ObjexxFCL::format::A( width, "nat_rot2" )
+			<< ObjexxFCL::format::A( width, "pct_rot2" )
+			<< ObjexxFCL::format::A( width, "nat_rot3" )
+			<< ObjexxFCL::format::A( width, "pct_rot3" )
+			<< ObjexxFCL::format::A( width, "nat_rot4" )
+			<< ObjexxFCL::format::A( width, "pct_rot4" )
 			<< std::endl;
 
 		for ( core::Size ii = 1; ii <= native.total_residue(); ++ii ) {
@@ -279,17 +279,17 @@ void RotamerRecovery::get_rotamer_recovery(core::pose::Pose & native, utility::v
 			//	<< nat_rots[ii].size() << std::endl;
 
 			output
-				<< ObjexxFCL::fmt::A( width, ObjexxFCL::string_of(ii) )
-				<< ObjexxFCL::fmt::A( width, nat_bb_bins[ii] )
-				<< ObjexxFCL::fmt::F( width, prec, pct_bb )
-				<< ObjexxFCL::fmt::A( width, ObjexxFCL::string_of(out_nat_rots[1]) )
-				<< ObjexxFCL::fmt::F( width, prec, pct_natrots[1] )
-				<< ObjexxFCL::fmt::A( width, ObjexxFCL::string_of(out_nat_rots[2]) )
-				<< ObjexxFCL::fmt::F( width, prec, pct_natrots[2] )
-				<< ObjexxFCL::fmt::A( width, ObjexxFCL::string_of(out_nat_rots[3]) )
-				<< ObjexxFCL::fmt::F( width, prec, pct_natrots[3] )
-				<< ObjexxFCL::fmt::A( width, ObjexxFCL::string_of(out_nat_rots[4]) )
-				<< ObjexxFCL::fmt::F( width, prec, pct_natrots[4] )
+				<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(ii) )
+				<< ObjexxFCL::format::A( width, nat_bb_bins[ii] )
+				<< ObjexxFCL::format::F( width, prec, pct_bb )
+				<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[1]) )
+				<< ObjexxFCL::format::F( width, prec, pct_natrots[1] )
+				<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[2]) )
+				<< ObjexxFCL::format::F( width, prec, pct_natrots[2] )
+				<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[3]) )
+				<< ObjexxFCL::format::F( width, prec, pct_natrots[3] )
+				<< ObjexxFCL::format::A( width, ObjexxFCL::string_of(out_nat_rots[4]) )
+				<< ObjexxFCL::format::F( width, prec, pct_natrots[4] )
 				<< std::endl;
 		}
 
@@ -309,7 +309,7 @@ main( int argc, char* argv [] ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring::constraints;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	using namespace core::import_pose::pose_stream;
 	using namespace core::chemical;
 	using namespace core::pack::dunbrack;

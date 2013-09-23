@@ -152,7 +152,7 @@
 using namespace core;
 using namespace protocols;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 ////////////////////////////////////////////////
 // danger USING ////////////////////////////////
@@ -478,7 +478,7 @@ show_pairing_info(
 									Size const seqpos
 									)
 {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	using namespace scoring;
 	using namespace scoring::dna;

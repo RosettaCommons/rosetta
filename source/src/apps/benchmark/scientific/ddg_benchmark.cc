@@ -85,7 +85,7 @@ using namespace core;
 using namespace basic;
 using namespace scoring;
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 typedef std::vector<Real> ddGs;
 static basic::Tracer TR("apps.pilot.yiliu.ddg");

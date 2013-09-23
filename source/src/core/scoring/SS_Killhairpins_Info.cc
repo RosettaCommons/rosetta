@@ -90,7 +90,7 @@ Hairpin::operator =( Hairpin const & s )
 std::ostream &
 operator<< ( std::ostream & out, Hairpin const & s )
 {
-	using ObjexxFCL::fmt::I;
+	using ObjexxFCL::format::I;
 	out << "Hairpin - Strand1: " << I(5,s.s1_start()) << "-" << I(5,s.s1_end()) << "  Strand2: "
 			<< I(5,s.s2_start()) << "-" << I(5,s.s2_end()) << "\n";
 	return out;
@@ -151,7 +151,7 @@ Hairpins::size() const
 std::ostream &
 operator<< ( std::ostream & out, Hairpins const & s )
 {
- 	using ObjexxFCL::fmt::I;
+ 	using ObjexxFCL::format::I;
 
 	utility::vector1< Hairpin > temp_list( s.list() );
 	core::Size count(0);

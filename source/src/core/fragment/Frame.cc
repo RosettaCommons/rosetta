@@ -428,7 +428,7 @@ bool Frame::add_fragment( FragDataCOPs new_frag ) {
 }
 
 void Frame::show_classic( std::ostream &out ) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	Size position = start();
 	out << "position: " << RJ( 10, position) << " neighbors: " << RJ( 10, nr_frags() ) << std::endl << std::endl;
 	for ( Size nr = 1; nr <= nr_frags(); nr ++ ) {
@@ -438,14 +438,14 @@ void Frame::show_classic( std::ostream &out ) const {
 }
 
 void Frame::show( std::ostream &out ) const {
-// 	using namespace ObjexxFCL::fmt;
+// 	using namespace ObjexxFCL::format;
 // 	out << "FRAME " << " " << RJ( 10, start() ) << RJ( 10, end() ) << std::endl;
 	show_header( out );
 	show_fragments( out );
 }
 
 void Frame::show_header( std::ostream &out ) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	out << "FRAME " << " " << RJ( 3, start() ) << " " << RJ( 3, end() ) << std::endl;
 }
 

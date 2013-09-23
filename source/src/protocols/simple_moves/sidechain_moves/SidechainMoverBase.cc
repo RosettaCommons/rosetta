@@ -241,14 +241,14 @@ SidechainMoverBase::make_move( conformation::ResidueOP old_res )
 	new_chi.resize( nchi );
 
 	make_chi_move( *old_res, old_chi, new_chi );
-	tr << "chi1 (old/new): " << fmt::F(8,4,old_chi[ 1 ]) << " " << fmt::F( 8,4,new_chi[ 1 ]) << std::endl;
+	tr << "chi1 (old/new): " << format::F(8,4,old_chi[ 1 ]) << " " << format::F( 8,4,new_chi[ 1 ]) << std::endl;
 	Real proposal_density_reverse(1);
 	Real proposal_density_forward(1);
 
 	if (preserve_detailed_balance_) {
 		proposal_density_reverse = compute_proposal_density(*old_res, resnum, *new_res_type, new_chi);
 	}
-	tr << "chi1 (old/new): " << fmt::F(8,4,old_chi[ 1 ]) << " " << fmt::F( 8,4,new_chi[ 1 ]) << std::endl;
+	tr << "chi1 (old/new): " << format::F(8,4,old_chi[ 1 ]) << " " << format::F( 8,4,new_chi[ 1 ]) << std::endl;
 	/// set the chi
 	conformation::ResidueOP new_residue = old_res;
 	conformation::ResidueOP previous_residue = old_res;
@@ -268,12 +268,12 @@ SidechainMoverBase::make_move( conformation::ResidueOP old_res )
 			new_residue->set_chi( i, new_chi[ i ] );
 		}
 	}
-	tr << "chi1 (old/new): " << fmt::F(8,4,old_chi[ 1 ]) << " " << fmt::F( 8,4,new_chi[ 1 ]) << std::endl;
+	tr << "chi1 (old/new): " << format::F(8,4,old_chi[ 1 ]) << " " << format::F( 8,4,new_chi[ 1 ]) << std::endl;
 	if ( preserve_detailed_balance_ ) {
 		proposal_density_forward = compute_proposal_density(*new_residue, resnum, old_res_type, old_chi);
 	}
 
-	tr << "chi1 (old/new): " << fmt::F(8,4,old_chi[ 1 ]) << " " << fmt::F( 8,4,new_chi[ 1 ]) << " reverse/forward" << fmt::E( 10,5, proposal_density_reverse) << " " << fmt::E(10,5,proposal_density_forward ) << std::endl;
+	tr << "chi1 (old/new): " << format::F(8,4,old_chi[ 1 ]) << " " << format::F( 8,4,new_chi[ 1 ]) << " reverse/forward" << format::E( 10,5, proposal_density_reverse) << " " << format::E(10,5,proposal_density_forward ) << std::endl;
 	last_proposal_density_ratio_ = proposal_density_reverse / proposal_density_forward;
 	return new_residue;
 

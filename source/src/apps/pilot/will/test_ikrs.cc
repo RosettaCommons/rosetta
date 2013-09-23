@@ -104,7 +104,7 @@
 // namespaces
 	namespace std { } using namespace std; // AUTO USING NS
 	namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-	namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+	namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 	//Auto using namespaces end
 
 
@@ -121,8 +121,8 @@
 	using numeric::min;
 	using numeric::max;
 	using utility::io::ozstream;
-	using ObjexxFCL::fmt::I;
-	using ObjexxFCL::fmt::F;
+	using ObjexxFCL::format::I;
+	using ObjexxFCL::format::F;
 
 	typedef utility::vector1<core::Real> Reals;
 	typedef utility::vector1<core::Size> Sizes;

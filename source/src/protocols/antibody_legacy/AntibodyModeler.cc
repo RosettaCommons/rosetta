@@ -59,7 +59,7 @@
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 #include <protocols/jd2/ScoreMap.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>

@@ -80,7 +80,7 @@ VariantType const SPECIAL_ROT( "SPECIAL_ROT" );
 
 VariantType const VIRTUAL_PHOSPHATE( "VIRTUAL_PHOSPHATE" );
 VariantType const VIRTUAL_RNA_RESIDUE( "VIRTUAL_RNA_RESIDUE" );
-VariantType const VIRTUAL_O2STAR_HYDROGEN( "VIRTUAL_O2STAR_HYDROGEN" );
+VariantType const VIRTUAL_O2PRIME_HYDROGEN( "VIRTUAL_O2PRIME_HYDROGEN" );
 
 // The following are added by Andy M. Chen in July 2009 to be used for PTM patches/variants
 VariantType const PHOSPHORYLATION( "PHOSPHORYLATION" );

@@ -121,10 +121,10 @@ private:
 	apply_virtual_res_variant( core::pose::Pose & pose ) const;
 
 	void
-	correctly_copy_HO2star_positions( core::pose::Pose & full_pose, utility::vector1< core::pose::Pose > const & start_pose_list );
+	correctly_copy_HO2prime_positions( core::pose::Pose & full_pose, utility::vector1< core::pose::Pose > const & primet_pose_list );
 
 	core::Real
-	get_nearest_dist_to_O2star( core::Size const O2star_seq_num, core::pose::Pose const & input_pose, utility::vector1< core::Size > const input_res_list, utility::vector1< core::Size > const & common_res_list );
+	get_nearest_dist_to_O2prime( core::Size const O2prime_seq_num, core::pose::Pose const & input_pose, utility::vector1< core::Size > const input_res_list, utility::vector1< core::Size > const & common_res_list );
 
 	//void
 	//ensure_idealize_bond_length_bond_angle_at_cutpoint( core::pose::Pose & working_pose);

@@ -28,7 +28,7 @@ namespace protocols {
 namespace toolbox {
 
 using namespace ObjexxFCL;
-using namespace fmt;
+using namespace format;
 
 static basic::Tracer tr("protocols.cluster",basic::t_info);
 

@@ -49,7 +49,7 @@
 
 using namespace core;
 using namespace core::io::silent;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 namespace devel {
 namespace enzdes {

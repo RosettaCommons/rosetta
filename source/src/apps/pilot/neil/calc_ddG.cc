@@ -91,7 +91,7 @@ using ObjexxFCL::string_of;
 using namespace core;
 using utility::vector1;
 using core::id::AtomID;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using core::scoring::ScoreFunctionOP;
 using core::pose::Pose;
 typedef vector1<Size> Sizes;

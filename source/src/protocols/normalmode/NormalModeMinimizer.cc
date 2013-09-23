@@ -48,7 +48,7 @@
 
 #define foreach BOOST_FOREACH
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using namespace core;
 using namespace kinematics;
 using namespace optimization;

@@ -97,7 +97,7 @@ using namespace protocols::moves;
 using namespace protocols::viewer;
 using namespace basic::options;
 using namespace rna;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 //using namespace basic::options::OptionKeys;
 using namespace chemical;
 

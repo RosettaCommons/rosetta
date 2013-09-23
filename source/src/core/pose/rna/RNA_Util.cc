@@ -83,10 +83,10 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 
 	//A little inefficient, since atom indices for these backbone
 	// atoms should be the same for all RNA residue types. I think.
-	Size atom_O3star = current_rsd.atom_index( " O3'" );
+	Size atom_O3prime = current_rsd.atom_index( " O3'" );
 	Size atom_P      =    next_rsd.atom_index( " P  " );
 	Real const dist2 =
-		( current_rsd.atom( atom_O3star ).xyz() - next_rsd.atom( atom_P ).xyz() ).length_squared();
+		( current_rsd.atom( atom_O3prime ).xyz() - next_rsd.atom( atom_P ).xyz() ).length_squared();
 
 	if ( dist2 > CHAINBREAK_CUTOFF2 ) {
 		//std::cout << "Found chainbreak at residue "<< i << " .  O3'-P distance: " << sqrt( dist2 ) << std::endl;
@@ -95,6 +95,7 @@ is_rna_chainbreak( Pose const & pose, Size const i ) {
 
 	if ( pose.pdb_info() ){
 		if ( pose.pdb_info()->number( i ) + 1 != pose.pdb_info()->number( i+1 ) ) return true;
+		if ( pose.pdb_info()->chain( i ) != pose.pdb_info()->chain( i+1 ) ) return true;
 	}
 
 	return false;
@@ -185,8 +186,8 @@ prepare_scratch_residue(
 		scratch_rsd->set_xyz( j, v2 );
 	}
 
-	Size const o2star_index( scratch_rsd->atom_index( " O2'" ) );
-	scratch_rsd->set_xyz( o2star_index, scratch_rsd->build_atom_ideal( o2star_index, pose.conformation() ) );
+	Size const o2prime_index( scratch_rsd->atom_index( " O2'" ) );
+	scratch_rsd->set_xyz( o2prime_index, scratch_rsd->build_atom_ideal( o2prime_index, pose.conformation() ) );
 
 }
 
@@ -279,11 +280,11 @@ initialize_atoms_for_which_we_need_new_dofs(
 	//
 	conformation::Residue const & rsd( pose.residue( i ) );
 
- 	kinematics::tree::AtomCOP c1star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C1'" ), i ) ) );
- 	kinematics::tree::AtomCOP o2star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " O2'" ), i ) ) );
- 	kinematics::tree::AtomCOP c2star_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C2'" ), i ) ) );
+ 	kinematics::tree::AtomCOP c1prime_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C1'" ), i ) ) );
+ 	kinematics::tree::AtomCOP o2prime_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " O2'" ), i ) ) );
+ 	kinematics::tree::AtomCOP c2prime_atom ( & pose.atom_tree().atom( AtomID( rsd.atom_index( " C2'" ), i ) ) );
 
-	if ( (c1star_atom->parent()->id()).atomno() == first_base_atom_index( rsd ) ) {
+	if ( (c1prime_atom->parent()->id()).atomno() == first_base_atom_index( rsd ) ) {
 		// There's a jump to this residue.
 		//std::cout << "RESIDUE WITH JUMP CONNECTIVITY : " <<  i << std::endl;
 		atoms_for_which_we_need_new_dofs.push_back( " C2'" );
@@ -293,7 +294,7 @@ initialize_atoms_for_which_we_need_new_dofs(
 		atoms_for_which_we_need_new_dofs.push_back( " C5'" );
 		atoms_for_which_we_need_new_dofs.push_back( " O3'" );
 
-	} else if ( (c2star_atom->parent()->id()).atomno() ==  (o2star_atom->id()).atomno() ) {
+	} else if ( (c2prime_atom->parent()->id()).atomno() ==  (o2prime_atom->id()).atomno() ) {
 
 		atoms_for_which_we_need_new_dofs.push_back( " C1'" );
 		atoms_for_which_we_need_new_dofs.push_back( " C3'" );

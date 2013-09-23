@@ -41,8 +41,9 @@ template <class T>
 std::ostream & operator <<( std::ostream & os, std::vector<T> const & v)
 {
 	os << "[";
-	for(size_t i=0; i<v.size(); i++) {
-		os << v[i] << ", ";
+	for(size_t i = 0; i < v.size(); i++) {
+		os << v[i];
+		if ( i < v.size()-1 ) os << ", ";
 	}
 	os << "]";
 	return os;
@@ -54,7 +55,8 @@ template <class T>
 std::ostream & operator <<(std::ostream & os, utility::vector1<T> const & v) {
 	os << "[";
 	for(size_t i=1; i<=v.size(); i++) {
-		os << v[i] << ", ";
+		os << v[i];
+		if ( i < v.size() ) os << ", ";
 	}
 	os << "]";
 	return os;

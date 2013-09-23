@@ -65,11 +65,11 @@ namespace monte_carlo {
   //constructor!
 	RNA_AddDeleteMonteCarlo::RNA_AddDeleteMonteCarlo(  RNA_AddOrDeleteMoverOP rna_add_or_delete_mover,
 																										 RNA_TorsionMoverOP     rna_torsion_mover,
-																										 RNA_O2StarMoverOP      rna_o2star_mover,
+																										 RNA_O2StarMoverOP      rna_o2prime_mover,
 																										 core::scoring::ScoreFunctionOP scorefxn ):
 		rna_add_or_delete_mover_( rna_add_or_delete_mover ),
 		rna_torsion_mover_( rna_torsion_mover ),
-		rna_o2star_mover_( rna_o2star_mover ),
+		rna_o2prime_mover_( rna_o2prime_mover ),
 		scorefxn_( scorefxn ),
 		num_cycles_( 50000 ),
 		output_period_( 5000 ),
@@ -124,7 +124,7 @@ namespace monte_carlo {
 					rna_torsion_mover_->apply( pose, move_type, sample_range_large_ );
 				}
 			} else{
-				rna_o2star_mover_->apply( pose, move_type );
+				rna_o2prime_mover_->apply( pose, move_type );
 			}
 
 			/*accepted =*/ monte_carlo->boltzmann( pose, move_type );
@@ -233,7 +233,7 @@ namespace monte_carlo {
 		if ( natoms > 0 ) rmsd = std::sqrt( dev / static_cast<Real>( natoms ) );
 
 		s.add_energy( "rms",rmsd );
-		s.add_string_value( "count", ObjexxFCL::fmt::I(9,count) );
+		s.add_string_value( "count", ObjexxFCL::format::I(9,count) );
 
 		std::string built_res = "";
 		if ( working_res_list.size() == 0 ) {

@@ -610,7 +610,7 @@ struct TreeVizBuilder {
 
 	utility::vector1<std::string>
 	get_res_nodenames( std::map<Size,std::string> node_labels_partial ){
-		using ObjexxFCL::fmt::I;
+		using ObjexxFCL::format::I;
 		int npad = 1;
 		if( ft.nres() >    9 ) npad = 2;
 		if( ft.nres() >   99 ) npad = 3;

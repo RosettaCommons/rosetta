@@ -152,7 +152,7 @@ OPT_KEY( String, 	algorithm )
 OPT_KEY( Real, surrounding_radius )
 OPT_KEY( IntegerVector, sample_res )
 OPT_KEY( String, rebuild_sequence )
-OPT_KEY( Boolean, reset_o2star_torsion )
+OPT_KEY( Boolean, reset_o2prime_torsion )
 OPT_KEY( StringVector, rmsd_res_pairs )
 OPT_KEY( StringVector, alignment_res_pairs )
 OPT_KEY( Real, alignment_RMSD_CUTOFF )
@@ -172,7 +172,7 @@ OPT_KEY( StringVector, input_tag_list )
 OPT_KEY( Boolean, graphic )
 OPT_KEY( Boolean, minimizer_deriv_check )
 OPT_KEY( String,  minimizer_min_type )
-OPT_KEY( Boolean, minimizer_skip_o2star_trials )
+OPT_KEY( Boolean, minimizer_skip_o2prime_trials )
 OPT_KEY( Boolean, minimizer_perform_minimizer_run )
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -739,7 +739,7 @@ import_and_dump_pdb(){
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void
-o2star_packer(){
+o2prime_packer(){
 
 //	using namespace core::io::silent;
 //	using namespace core::scoring;
@@ -768,16 +768,16 @@ o2star_packer(){
 		pose::Pose pose;
 		import_pose::pose_from_pdb( pose, *rsd_set, pose_name );
 
-		if ( option[reset_o2star_torsion]() ){
+		if ( option[reset_o2prime_torsion]() ){
 			for ( Size seq_num = 1; seq_num <= pose.total_residue(); seq_num++ ){
 				pose.set_torsion( TorsionID( seq_num, id::CHI, 4 ), 0.0 );
 			}
-			dump_pdb( pose, "RESETTED_BEFORE_o2star_pack_" + pose_name );
+			dump_pdb( pose, "RESETTED_BEFORE_o2prime_pack_" + pose_name );
 		}
 
 
 
-		o2star_minimize( pose, scorefxn ); //replace this on Jun 11, 2010
+		o2prime_minimize( pose, scorefxn ); //replace this on Jun 11, 2010
 
 /*
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ) );
@@ -793,7 +793,7 @@ o2star_packer(){
 
 		pack::rotamer_trials( pose, *scorefxn, task );
 */
-		dump_pdb( pose, "o2star_pack_" + pose_name );
+		dump_pdb( pose, "o2prime_pack_" + pose_name );
 	}
 
 
@@ -1104,9 +1104,9 @@ slice_ellipsoid_envelope(){
 
 
 
-	pose::Pose no_loop_output_pose = output_pose; //copy before perform o2star minimize with loop as part of struct.
+	pose::Pose no_loop_output_pose = output_pose; //copy before perform o2prime minimize with loop as part of struct.
 
-	o2star_minimize( output_pose, scorefxn );
+	o2prime_minimize( output_pose, scorefxn );
 	dump_pdb( output_pose, "ellipsoid_expand_radius_" + string_of( int_expand_radius ) + "_" + pose_name );
 
 
@@ -1121,15 +1121,15 @@ slice_ellipsoid_envelope(){
 	}
 
 
-	//Reset o2star torsion....Dec 7, 2010///////////////////////////////////
+	//Reset o2prime torsion....Dec 7, 2010///////////////////////////////////
 	for ( Size seq_num = 1; seq_num <= no_loop_output_pose.total_residue(); seq_num++ ){
 		no_loop_output_pose.set_torsion( TorsionID( seq_num, id::CHI, 4 ), 0.0 );
 	}
-	dump_pdb( no_loop_output_pose, "RESETTED_o2star_no_loop_ellipsoid_expand_radius_" + string_of( int_expand_radius )  + "_" + pose_name );
+	dump_pdb( no_loop_output_pose, "RESETTED_o2prime_no_loop_ellipsoid_expand_radius_" + string_of( int_expand_radius )  + "_" + pose_name );
 	///////////////////////////////////////////////////////////////////////
 
 
-	o2star_minimize( no_loop_output_pose, scorefxn );
+	o2prime_minimize( no_loop_output_pose, scorefxn );
 	dump_pdb( no_loop_output_pose, "no_loop_ellipsoid_expand_radius_" + string_of( int_expand_radius )  + "_" + pose_name );
 
 	std::cout << "Sliced out " << output_pose.total_residue() << " out of " << pose.total_residue()  << " nucleotides" << std::endl;
@@ -1181,7 +1181,7 @@ slice_sample_res_and_surrounding(){
 	sort_seq_num_list( input_sample_res_list );
 	utility::vector1< core::Size > const sample_res_list = input_sample_res_list;
 
-//	get_surrounding_O2star_hydrogen(pose, sample_res_list, true);
+//	get_surrounding_O2prime_hydrogen(pose, sample_res_list, true);
 
 
 	utility::vector1< core::Size > sample_res_final_seq_num = sample_res_list;
@@ -1291,9 +1291,9 @@ slice_sample_res_and_surrounding(){
 
 
 
-	pose::Pose no_loop_output_pose = output_pose; //copy before perform o2star minimize with loop as part of struct.
+	pose::Pose no_loop_output_pose = output_pose; //copy before perform o2prime minimize with loop as part of struct.
 
-	o2star_minimize( output_pose, scorefxn );
+	o2prime_minimize( output_pose, scorefxn );
 	dump_pdb( output_pose, "expand_radius_" + string_of( int_expand_radius ) + "_" + pose_name );
 
 
@@ -1308,15 +1308,15 @@ slice_sample_res_and_surrounding(){
 	}
 
 
-	//Reset o2star torsion....Dec 7, 2010///////////////////////////////////
+	//Reset o2prime torsion....Dec 7, 2010///////////////////////////////////
 	for ( Size seq_num = 1; seq_num <= no_loop_output_pose.total_residue(); seq_num++ ){
 		no_loop_output_pose.set_torsion( TorsionID( seq_num, id::CHI, 4 ), 0.0 );
 	}
-	dump_pdb( no_loop_output_pose, "RESETTED_o2star_no_loop_expand_radius_" + string_of( int_expand_radius )  + "_" + pose_name );
+	dump_pdb( no_loop_output_pose, "RESETTED_o2prime_no_loop_expand_radius_" + string_of( int_expand_radius )  + "_" + pose_name );
 	///////////////////////////////////////////////////////////////////////
 
 
-	o2star_minimize( no_loop_output_pose, scorefxn );
+	o2prime_minimize( no_loop_output_pose, scorefxn );
 	dump_pdb( no_loop_output_pose, "no_loop_expand_radius_" + string_of( int_expand_radius )  + "_" + pose_name );
 
 
@@ -1509,7 +1509,7 @@ rna_fullatom_minimize_test()
 	rna_minimizer.use_coordinate_constraints( false );
 	rna_minimizer.set_verbose( true );
 	rna_minimizer.vary_bond_geometry( false );
-	rna_minimizer.skip_o2star_trials( option[ minimizer_skip_o2star_trials ] );
+	rna_minimizer.skip_o2prime_trials( option[ minimizer_skip_o2prime_trials ] );
 	rna_minimizer.set_perform_minimizer_run( option[ minimizer_perform_minimizer_run ] );
 
 	rna_minimizer.set_do_dump_pdb( true );
@@ -1553,8 +1553,8 @@ my_main( void* )
 		align_pdbs();
 	} else if ( algorithm_input == "calculate_pairwise_RMSD" ){
 		calculate_pairwise_RMSD();
-	} else if ( algorithm_input == "o2star_packer" ){
-		o2star_packer();
+	} else if ( algorithm_input == "o2prime_packer" ){
+		o2prime_packer();
 	} else if ( algorithm_input == "import_and_dump_pdb" ){
 		import_and_dump_pdb();
 	} else if ( algorithm_input == "mutate_residues" ){
@@ -1591,7 +1591,7 @@ try {
 	NEW_OPT( surrounding_radius, "expand_radius for slice_sample_res_and_surrounding function", 10.0 );
 	NEW_OPT( sample_res, "sample_res", blank_size_vector );
 	NEW_OPT( rebuild_sequence, "Specify the rebuild nucleotides in the order you want to rebuild the", "" );
-	NEW_OPT( reset_o2star_torsion, "use in the o2star_packer function ", false );
+	NEW_OPT( reset_o2prime_torsion, "use in the o2prime_packer function ", false );
 	NEW_OPT( rmsd_res_pairs, "rmsd_res_pairs", blank_string_vector );  //1-3 4-5,res 1 of static to res 3 of moving...res 4 of static to res 5 of moving.
 	NEW_OPT( alignment_res_pairs, "alignment_res_pairs", blank_string_vector );  //1-3 4-5,res 1 of static to res 3 of moving...res 4 of static to res 5 of moving.
 	NEW_OPT( alignment_RMSD_CUTOFF, "alignment_RMSD_CUTOFF", 0.0 );
@@ -1610,7 +1610,7 @@ try {
 	NEW_OPT( input_tag_list, "input_tag_list", blank_string_vector );
 	NEW_OPT( minimizer_deriv_check, "deriv_check", true );
 	NEW_OPT( minimizer_min_type, "minimizer_min_type", "" );
-	NEW_OPT( minimizer_skip_o2star_trials, "minimizer_skip_o2star_trials", true );        //Parin Jan 08, 2012 (Avoid randomness)
+	NEW_OPT( minimizer_skip_o2prime_trials, "minimizer_skip_o2prime_trials", true );        //Parin Jan 08, 2012 (Avoid randomness)
 	NEW_OPT( minimizer_perform_minimizer_run, "minimizer_perform_minimizer_run", true );  //Parin Jan 20, 2012 (for testing purposes)
 
 

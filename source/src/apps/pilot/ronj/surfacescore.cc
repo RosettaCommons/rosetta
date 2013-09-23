@@ -68,7 +68,7 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core::pack::task::operation;
 using namespace core::pack::task;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 // application specific options
 namespace surface_app {
@@ -197,7 +197,7 @@ void print_energies( pose::Pose & pose, scoring::ScoreFunctionOP scorefxn ) {
 			case scoring::surface:
 				if ( weight != 0.0 ) {
 					Real const val = unweighted_scores[ scoring::ScoreType(jj) ];
-					std::cout << ObjexxFCL::fmt::F(8,3, weight * val ) << "  ";
+					std::cout << ObjexxFCL::format::F(8,3, weight * val ) << "  ";
 				}
 				break;
 			default:

@@ -1,4 +1,3 @@
-namespace cmiles { namespace jumping { IntegerOptionKey const resi( "cmiles:jumping:resi" );  } }
 namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
 namespace james { BooleanOptionKey const james( "james" );  }
 namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
@@ -285,7 +284,7 @@ namespace rna { IntegerOptionKey const minimize_rounds( "rna:minimize_rounds" );
 namespace rna { BooleanOptionKey const corrected_geo( "rna:corrected_geo" );  }
 namespace rna { BooleanOptionKey const vary_geometry( "rna:vary_geometry" );  }
 namespace rna { BooleanOptionKey const skip_coord_constraints( "rna:skip_coord_constraints" );  }
-namespace rna { BooleanOptionKey const skip_o2star_trials( "rna:skip_o2star_trials" );  }
+namespace rna { BooleanOptionKey const skip_o2prime_trials( "rna:skip_o2prime_trials" );  }
 namespace rna { StringOptionKey const vall_torsions( "rna:vall_torsions" );  }
 namespace rna { StringOptionKey const jump_database( "rna:jump_database" );  }
 namespace rna { BooleanOptionKey const rna_prot_erraser( "rna:rna_prot_erraser" );  }
@@ -722,3 +721,5 @@ namespace optE { BooleanOptionKey const optimize_pssm( "optE:optimize_pssm" );  
 namespace optE { FileOptionKey const optimize_dGbinding( "optE:optimize_dGbinding" );  }
 namespace optE { FileOptionKey const optimize_ddG_bind_correlation( "optE:optimize_ddG_bind_correlation" );  }
 namespace optE { FileOptionKey const optimize_ddGmutation( "optE:optimize_ddGmutation" );  }
+namespace optE { BooleanOptionKey const optimize_ddGmutation_straight_mean( "optE:optimize_ddGmutation_straight_mean" );  }
+namespace optE { BooleanOptionKey const optimize_ddGmutation_boltzman_average( "optE:optimize_ddGmutation_boltzman_average" );  }

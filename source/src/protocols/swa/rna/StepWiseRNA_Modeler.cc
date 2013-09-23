@@ -70,7 +70,7 @@ StepWiseRNA_Modeler::initialize_variables(){
 	cluster_rmsd_ = 0.5;
 	native_edensity_score_cutoff_ = -1;
 	sampler_native_rmsd_screen_ = false;
-	o2star_screen_ = true;
+	o2prime_screen_ = true;
 	verbose_ = false;
 	distinguish_pucker_ = true;
 	finer_sampling_at_chain_closure_ = false;
@@ -109,8 +109,8 @@ StepWiseRNA_Modeler::initialize_variables(){
 	sample_ONLY_multiple_virtual_sugar_ = false;
 	sampler_assert_no_virt_ribose_sampling_ = false;
 	allow_base_pair_only_centroid_screen_ = false;
-	minimizer_perform_o2star_pack_ = false;
-	minimizer_output_before_o2star_pack_ = false;
+	minimizer_perform_o2prime_pack_ = false;
+	minimizer_output_before_o2prime_pack_ = false;
 	minimizer_rename_tag_ = false;
 }
 
@@ -148,7 +148,7 @@ StepWiseRNA_Modeler::operator=( StepWiseRNA_Modeler const & src )
 	cluster_rmsd_ = src.cluster_rmsd_;
 	native_edensity_score_cutoff_ = src.native_edensity_score_cutoff_;
 	sampler_native_rmsd_screen_ = src.sampler_native_rmsd_screen_;
-	o2star_screen_ = src.o2star_screen_;
+	o2prime_screen_ = src.o2prime_screen_;
 	verbose_ = src.verbose_;
 	distinguish_pucker_ = src.distinguish_pucker_;
 	finer_sampling_at_chain_closure_ = src.finer_sampling_at_chain_closure_;
@@ -187,8 +187,8 @@ StepWiseRNA_Modeler::operator=( StepWiseRNA_Modeler const & src )
 	sample_ONLY_multiple_virtual_sugar_ = src.sample_ONLY_multiple_virtual_sugar_;
 	sampler_assert_no_virt_ribose_sampling_ = src.sampler_assert_no_virt_ribose_sampling_;
 	allow_base_pair_only_centroid_screen_ = src.allow_base_pair_only_centroid_screen_;
-	minimizer_perform_o2star_pack_ = src.minimizer_perform_o2star_pack_;
-	minimizer_output_before_o2star_pack_ = src.minimizer_output_before_o2star_pack_;
+	minimizer_perform_o2prime_pack_ = src.minimizer_perform_o2prime_pack_;
+	minimizer_output_before_o2prime_pack_ = src.minimizer_output_before_o2prime_pack_;
 	minimizer_rename_tag_ = src.minimizer_rename_tag_;
 	stepwise_rna_minimizer_ = src.stepwise_rna_minimizer_;
 	minimize_move_map_ = src.minimize_move_map_;
@@ -236,7 +236,7 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 		stepwise_rna_residue_sampler.set_num_pose_kept ( sampler_num_pose_kept_ );
 		stepwise_rna_residue_sampler.set_native_rmsd_screen ( sampler_native_rmsd_screen_ );
 		stepwise_rna_residue_sampler.set_native_screen_rmsd_cutoff ( sampler_native_screen_rmsd_cutoff_ );
-		stepwise_rna_residue_sampler.set_perform_o2star_pack ( o2star_screen_ );
+		stepwise_rna_residue_sampler.set_perform_o2prime_pack ( o2prime_screen_ );
 		stepwise_rna_residue_sampler.set_verbose ( verbose_ );
 		stepwise_rna_residue_sampler.set_cluster_rmsd (	cluster_rmsd_	);
 		stepwise_rna_residue_sampler.set_distinguish_pucker ( distinguish_pucker_ );
@@ -327,13 +327,15 @@ StepWiseRNA_Modeler::apply( core::pose::Pose & pose ){
 	stepwise_rna_minimizer_->set_user_input_VDW_bin_screener ( user_input_VDW_bin_screener );
 	stepwise_rna_minimizer_->set_output_minimized_pose_data_list( output_minimized_pose_data_list_ );
 	if ( minimize_move_map_ ) stepwise_rna_minimizer_->set_move_map_list( make_vector1( *minimize_move_map_ ) );
-	stepwise_rna_minimizer_->set_perform_o2star_pack(  minimizer_perform_o2star_pack_ );
-	stepwise_rna_minimizer_->set_output_before_o2star_pack( minimizer_output_before_o2star_pack_ );
+	stepwise_rna_minimizer_->set_perform_o2prime_pack(  minimizer_perform_o2prime_pack_ );
+	stepwise_rna_minimizer_->set_output_before_o2prime_pack( minimizer_output_before_o2prime_pack_ );
 	stepwise_rna_minimizer_->set_rename_tag( minimizer_rename_tag_ );
 
 	stepwise_rna_minimizer_->apply ( pose );
 
 	// Need to make sure that final pose output is the lowest scoring one. Is it?
+
+	job_parameters_ = NULL; // Important: make sure that the next time this is used, job parameters is set explicitly -- or it will be reset.
 
 }
 
@@ -508,12 +510,14 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 	// which can instead be updated by set_fixed_res.
 	using namespace core::pose::full_model_info;
 	// following is dangerous -- what if full_model_info is not set properly?
-	FullModelInfo const & full_model_info = const_full_model_info_from_pose( pose );
+	// how to tell Modeler to *not* minimize additional suites?
+	FullModelInfo const & full_model_info = const_full_model_info( pose );
 	utility::vector1< Size > const & fixed_domain_map = full_model_info.fixed_domain_map();
+	utility::vector1< Size > const & cutpoint_open_in_full_model = full_model_info.cutpoint_open_in_full_model();
 	utility::vector1< Size > const & res_list = full_model_info.res_list();
 	for ( Size n = 1; n < pose.total_residue(); n++ ){
-		if ( !pose.fold_tree().is_cutpoint(n) &&
-				 ( res_list[ n + 1 ]  == res_list[ n ] + 1 ) &&
+		if ( !cutpoint_open_in_full_model.has_value( res_list[ n ] ) &&
+				( res_list[ n + 1 ]  == res_list[ n ] + 1 ) &&
 				 !minimize_res_.has_value( n )  && !minimize_res_.has_value( n+1 )  &&
 				 ( fixed_domain_map[ res_list[ n + 1 ] ] !=  fixed_domain_map[ res_list[ n ] ] ) &&
 				 !suites_that_must_be_minimized.has_value( n ) ){
@@ -521,6 +525,7 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 			suites_that_must_be_minimized.push_back( n );
 		}
 	}
+	TR.Debug << "SUITES_THAT_MUST_BE_MINIMIZED " << suites_that_must_be_minimized << std::endl;
 
 	for ( Size n = 1; n <= suites_that_must_be_minimized.size(); n++ ){
 		Size const suite_num = suites_that_must_be_minimized[ n ];

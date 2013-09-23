@@ -44,7 +44,7 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 /// @details This must return a fresh instance of the LK_PolarNonPolarEnergy class,
 /// never an instance already in use

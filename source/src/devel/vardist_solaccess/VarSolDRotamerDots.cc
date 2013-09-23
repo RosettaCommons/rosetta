@@ -67,7 +67,7 @@ static basic::Tracer TR("devel.vardist_solaccess");
 //static basic::Tracer TR_RDRD("core.pack.interaction_graph.RotamerDots.RotamerDotsRadiusData");
 
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using namespace core;
 
 namespace devel {
@@ -1187,7 +1187,7 @@ VarSolDRotamerDots::overlap_atoms(
 //	os << "dots: " << rotamer_->name3() << rotamer_->seqpos() << std::endl;
 //	for ( Size ii=1; ii <= num_atoms_; ++ii ) {
 //		os << "atom " << rotamer_->atom_name( ii ) << ", rad: " << get_atom_radius( ii )
-//			<< ", covered: " << ObjexxFCL::fmt::I(3,atom_counts_[ii].get_num_covered()) << ", counts: ";
+//			<< ", covered: " << ObjexxFCL::format::I(3,atom_counts_[ii].get_num_covered()) << ", counts: ";
 //		atom_counts_[ ii ].print( os );
 //	}
 //	os << "num_covered: " << get_num_covered_total() << ", sasa_is_current_: " << sasa_is_current_ << ", sasa: " << get_sasa() << std::endl;

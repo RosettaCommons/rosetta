@@ -126,41 +126,41 @@ void RNA_KinematicCloser::init() {
 	// This looks a bit weird, because of a hack.
 	Size const cutpos = chainbreak_suite_;
 	////////////////////////////////////////////////////////////////
-	Real const d_O3star_nextP = (
+	Real const d_O3prime_nextP = (
 			pose.xyz( NamedAtomID ( " O3'", cutpos ) ) -
 	    pose.xyz( NamedAtomID ( "OVL1", cutpos ) ) ).length();
-	db_len_[ 8 ] = d_O3star_nextP;
+	db_len_[ 8 ] = d_O3prime_nextP;
 	////////////////////////////////////////////////////////////////
-	Real const theta_C3star_O3star_nextP = degrees( angle_radians(
+	Real const theta_C3prime_O3prime_nextP = degrees( angle_radians(
 			pose.xyz( NamedAtomID ( " C3'", cutpos ) ),
 			pose.xyz( NamedAtomID ( " O3'", cutpos ) ),
 			pose.xyz( NamedAtomID ( "OVL1", cutpos ) ) ) );
-	db_ang_[ 8 ] = theta_C3star_O3star_nextP;
-	Real const theta_O3star_nextP_nextO5star = degrees( angle_radians(
+	db_ang_[ 8 ] = theta_C3prime_O3prime_nextP;
+	Real const theta_O3prime_nextP_nextO5prime = degrees( angle_radians(
 			pose.xyz( NamedAtomID ( " O3'", cutpos ) ),
 	    pose.xyz( NamedAtomID( "OVL1", cutpos ) ),
 	    pose.xyz( NamedAtomID( "OVL2", cutpos ) ) ) );
-	db_ang_[ 9 ] = theta_O3star_nextP_nextO5star;
+	db_ang_[ 9 ] = theta_O3prime_nextP_nextO5prime;
 	////////////////////////////////////////////////////////////////
-	Real const phi_C4star_C3star_O3star_nextP = degrees( dihedral_radians(
+	Real const phi_C4prime_C3prime_O3prime_nextP = degrees( dihedral_radians(
 			pose.xyz( NamedAtomID ( " C4'", moving_suite_ + 1 ) ),
 	    pose.xyz( NamedAtomID( " C3'", cutpos ) ),
 	    pose.xyz( NamedAtomID( " O3'", cutpos ) ),
 	    pose.xyz( NamedAtomID( "OVL1", cutpos ) ) ) );
-	dt_ang_[ 7 ] =  phi_C4star_C3star_O3star_nextP;
-	Real const phi_C3star_O3star_nextP_nextO5star = degrees( dihedral_radians(
+	dt_ang_[ 7 ] =  phi_C4prime_C3prime_O3prime_nextP;
+	Real const phi_C3prime_O3prime_nextP_nextO5prime = degrees( dihedral_radians(
 	      pose.xyz( NamedAtomID ( " C3'", cutpos ) ),
 	      pose.xyz( NamedAtomID ( " O3'", cutpos ) ),
 	      pose.xyz( NamedAtomID ( "OVL1", cutpos ) ),
 	      pose.xyz( NamedAtomID ( "OVL2", cutpos ) ) ) );
-	dt_ang_[ 8 ] =  phi_C3star_O3star_nextP_nextO5star;
-	Real const phi_O3star_nextP_nextO5star_nextC5star =
+	dt_ang_[ 8 ] =  phi_C3prime_O3prime_nextP_nextO5prime;
+	Real const phi_O3prime_nextP_nextO5prime_nextC5prime =
 			degrees( dihedral_radians(
 			pose.xyz( NamedAtomID( "OVU1", cutpos + 1 ) ),
 	    pose.xyz( NamedAtomID( " P  ", cutpos + 1 ) ),
 	    pose.xyz( NamedAtomID( " O5'", cutpos + 1 ) ),
 	    pose.xyz( NamedAtomID( " C5'", cutpos + 1 ) ) ) );
-	dt_ang_[ 9 ] =  phi_O3star_nextP_nextO5star_nextC5star;
+	dt_ang_[ 9 ] =  phi_O3prime_nextP_nextO5prime_nextC5prime;
 	if ( verbose_ ) {
 		TR <<  "after chainbreak geometry fix" << std::endl;
 		output_chainTORS();
@@ -305,7 +305,7 @@ RNA_KinematicCloser::fill_chainTORS() {
 ////////////////////////////////////////////////////////////////
 void
 RNA_KinematicCloser::output_chainTORS() const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	TR << "------  chainTORS output ---- " << std::endl;
 	for ( Size i = 1; i <= dt_ang_.size(); i++ ) {
 		TR << I( 3, i ) << " ";

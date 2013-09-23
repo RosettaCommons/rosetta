@@ -342,7 +342,7 @@ BINTYPE cyclic_unique_bin(BINTYPE bin, Size nres) {
 }
 
 BINTYPE pose2bin(core::pose::Pose const & pose) {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	BINTYPE bin = 0;
 	for(int i = 0; i < (int)pose.n_residue(); ++i) {		
 		// Real phid = pose.phi(i+1);
@@ -788,15 +788,15 @@ int main( int argc, char * argv [] ) {
 			// }
 		}
 		if( ITER % option[cyclic::log_interval]() == 0) {
-			TR << ObjexxFCL::fmt::I(10, ITER                ) << " ITERs " 
-			   << ObjexxFCL::fmt::I(10, trial->num_accepts()) << " accpets " 
-			   << ObjexxFCL::fmt::I(10, ntransitions        ) << " transitions " 
-			   << ObjexxFCL::fmt::I(10, bincount.size()     ) << " bins sampled " 
-			   << ObjexxFCL::fmt::I(10, posebins.size()     ) << " bins filled " 
-			   // << ObjexxFCL::fmt::F(7,3, cyclic_all_atom_rmsd(pose,start_pose) ) << " cyc_rms " 
-			   << ObjexxFCL::fmt::F(7,3, core::scoring::CA_rmsd(pose,targets_in[1]) ) << " rms " 
-			   // << ObjexxFCL::fmt::F(7,3, core::scoring::all_atom_rmsd(pose,start_pose) ) << " rms " 
-			   << ObjexxFCL::fmt::F(7,3,  pose.energies().total_energies()[core::scoring::atom_pair_constraint]) << " cst " 
+			TR << ObjexxFCL::format::I(10, ITER                ) << " ITERs " 
+			   << ObjexxFCL::format::I(10, trial->num_accepts()) << " accpets " 
+			   << ObjexxFCL::format::I(10, ntransitions        ) << " transitions " 
+			   << ObjexxFCL::format::I(10, bincount.size()     ) << " bins sampled " 
+			   << ObjexxFCL::format::I(10, posebins.size()     ) << " bins filled " 
+			   // << ObjexxFCL::format::F(7,3, cyclic_all_atom_rmsd(pose,start_pose) ) << " cyc_rms " 
+			   << ObjexxFCL::format::F(7,3, core::scoring::CA_rmsd(pose,targets_in[1]) ) << " rms " 
+			   // << ObjexxFCL::format::F(7,3, core::scoring::all_atom_rmsd(pose,start_pose) ) << " rms " 
+			   << ObjexxFCL::format::F(7,3,  pose.energies().total_energies()[core::scoring::atom_pair_constraint]) << " cst " 
 				<< Real(clock()-prevt) / 100.0 << " time "
 			   << std::endl;
 			prevt = clock();

@@ -172,7 +172,7 @@
 #include <core/scoring/rna/RNA_FullAtomVDW_BasePhosphateCreator.hh>
 #include <core/scoring/rna/StackElecEnergyCreator.hh>
 #include <core/scoring/rna/chemical_shift/RNA_ChemicalShiftEnergyCreator.hh>
-#include <core/scoring/rna/RNA_LoopEnergyCreator.hh>
+#include <core/scoring/loop_graph/LoopCloseEnergyCreator.hh>
 #include <core/scoring/sym_e/symECreator.hh>
 #include <core/scoring/saxs/FastSAXSEnergyCreator.hh>
 #include <core/scoring/saxs/SAXSEnergyCreator.hh>
@@ -369,6 +369,7 @@ static EnergyMethodRegistrator< scoring::elec::FA_ElecEnergyAroAllCreator > FA_E
 static EnergyMethodRegistrator< scoring::hackaro::HackAroEnergyCreator > HackAroEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::dna::DNAChiEnergyCreator > DNAChiEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::dna::DNATorsionEnergyCreator > DNATorsionEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::loop_graph::LoopCloseEnergyCreator > LoopCloseEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DNA_BaseEnergyCreator > DNA_BaseEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DirectReadoutEnergyCreator > DirectReadoutEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DistanceChainbreakEnergyCreator > DistanceChainbreakEnergyCreator_registrator;
@@ -428,7 +429,6 @@ static EnergyMethodRegistrator< scoring::rna::RNA_VDW_EnergyCreator > RNA_VDW_En
 static EnergyMethodRegistrator< scoring::rna::RNA_Mg_EnergyCreator > RNA_Mg_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomVDW_BasePhosphateCreator > RNA_FullAtomVDW_BasePhosphateCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::StackElecEnergyCreator > StackElecEnergyCreator_registrator;
-static EnergyMethodRegistrator< scoring::rna::RNA_LoopEnergyCreator > RNA_LoopEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::chemical_shift::RNA_ChemicalShiftEnergyCreator > NA_ChemicalShiftEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::sym_e::symECreator > symECreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PoissonBoltzmannEnergyCreator > PoissonBoltzmannEnergyCreator_registrator;

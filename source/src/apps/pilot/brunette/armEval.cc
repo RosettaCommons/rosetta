@@ -68,7 +68,7 @@
 #include <iostream>
 #include <ObjexxFCL/format.hh>
 
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 using utility::vector1;
 using core::Size;
 using core::Real;

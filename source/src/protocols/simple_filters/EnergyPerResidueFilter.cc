@@ -300,18 +300,18 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
 		interface_obj.calculate( in_pose );
 		(*scorefxn_)( in_pose );
 
-		out<<ObjexxFCL::fmt::A(9, "chain")<<
-			ObjexxFCL::fmt::A( 9, "res")<<
-			ObjexxFCL::fmt::A( 9, "AA")<<
-			ObjexxFCL::fmt::A( 9, "total")<<
-			ObjexxFCL::fmt::A( 9, "contact")<<
-			ObjexxFCL::fmt::A( 9, "fa_atr")<<
-			ObjexxFCL::fmt::A( 9, "fa_rep")<<
-			ObjexxFCL::fmt::A( 9, "hb_bb_sc")<<
-			ObjexxFCL::fmt::A( 9, "hb_sc")<<
-			ObjexxFCL::fmt::A( 9, "fa_sol")<<
-			ObjexxFCL::fmt::A( 9, "fa_dun")<<
-			ObjexxFCL::fmt::A( 9, "fa_pair")<<std::endl;
+		out<<ObjexxFCL::format::A(9, "chain")<<
+			ObjexxFCL::format::A( 9, "res")<<
+			ObjexxFCL::format::A( 9, "AA")<<
+			ObjexxFCL::format::A( 9, "total")<<
+			ObjexxFCL::format::A( 9, "contact")<<
+			ObjexxFCL::format::A( 9, "fa_atr")<<
+			ObjexxFCL::format::A( 9, "fa_rep")<<
+			ObjexxFCL::format::A( 9, "hb_bb_sc")<<
+			ObjexxFCL::format::A( 9, "hb_sc")<<
+			ObjexxFCL::format::A( 9, "fa_sol")<<
+			ObjexxFCL::format::A( 9, "fa_dun")<<
+			ObjexxFCL::format::A( 9, "fa_pair")<<std::endl;
 		for ( core::Size resid = 1; resid <= pose.total_residue(); ++resid) {
 			if ( !in_pose.residue(resid).is_protein() ) continue;
 			if( interface_obj.is_interface( resid ) ) { // in interface
@@ -328,18 +328,18 @@ EnergyPerResidueFilter::report( std::ostream & out, core::pose::Pose const & pos
 				core::Real weighted_fa_pair=( (*scorefxn_)[ ScoreType( fa_pair ) ] ) * ( in_pose.energies().residue_total_energies( resid )[ ScoreType( fa_pair ) ]);
 
 				out<<
-					ObjexxFCL::fmt::A (9 , in_pose.pdb_info()->chain( resid) )<<
-					ObjexxFCL::fmt::I(9,0, in_pose.pdb_info()->number(resid))<<
-					ObjexxFCL::fmt::A (9,in_pose.residue( resid).name3())
-					<<ObjexxFCL::fmt::F (9 , 3, total) <<" "
-					<<ObjexxFCL::fmt::F (9 , 3, weighted_contact_score)<<" "
-					<<ObjexxFCL::fmt::F (9 , 3, weighted_fa_atr) <<" "
-					<<ObjexxFCL::fmt::F (9 , 3, weighted_fa_rep) <<" "
-					<<ObjexxFCL::fmt::F (9 , 3, weighted_hbond_bb_sc )<<" "
-					<<ObjexxFCL::fmt::F (9 , 3, weighted_hbond_sc )<<" "
-					<<ObjexxFCL::fmt::F (9 , 3, weighted_fa_sol )<<" "
-					<<ObjexxFCL::fmt::F (9 , 3, weighted_fa_dun )<<" "
-					<<ObjexxFCL::fmt::F (9 , 3, weighted_fa_pair )<<std::endl;
+					ObjexxFCL::format::A (9 , in_pose.pdb_info()->chain( resid) )<<
+					ObjexxFCL::format::I(9,0, in_pose.pdb_info()->number(resid))<<
+					ObjexxFCL::format::A (9,in_pose.residue( resid).name3())
+					<<ObjexxFCL::format::F (9 , 3, total) <<" "
+					<<ObjexxFCL::format::F (9 , 3, weighted_contact_score)<<" "
+					<<ObjexxFCL::format::F (9 , 3, weighted_fa_atr) <<" "
+					<<ObjexxFCL::format::F (9 , 3, weighted_fa_rep) <<" "
+					<<ObjexxFCL::format::F (9 , 3, weighted_hbond_bb_sc )<<" "
+					<<ObjexxFCL::format::F (9 , 3, weighted_hbond_sc )<<" "
+					<<ObjexxFCL::format::F (9 , 3, weighted_fa_sol )<<" "
+					<<ObjexxFCL::format::F (9 , 3, weighted_fa_dun )<<" "
+					<<ObjexxFCL::format::F (9 , 3, weighted_fa_pair )<<std::endl;
 
 			}
 		}

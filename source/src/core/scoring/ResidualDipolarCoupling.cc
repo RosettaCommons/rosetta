@@ -107,7 +107,7 @@ void ResidualDipolarCoupling::show(std::ostream& out) const {
 }
 
 void RDC::show(std::ostream& out) const {
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	out << RJ(4, res1_) << RJ(3, atom1_) << " " << RJ(4, res2_)
 			<< RJ(3, atom2_) << " " << RJ(5, Jdipolar_);
 }
@@ -715,7 +715,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 	if ( option[ OptionKeys::rdc::print_rdc_values ].user() ) {
 		std::string filename( option[ OptionKeys::rdc::print_rdc_values ]() );
 		utility::io::ozstream out;
@@ -1304,7 +1304,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 //print the rdc values
 	if ( option[ OptionKeys::rdc::print_rdc_values ].user() ) {
@@ -1636,7 +1636,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 //print the rdc values
 	if ( option[ OptionKeys::rdc::print_rdc_values ].user() ) {
@@ -1966,7 +1966,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 //print the rdc values
 	if ( option[ OptionKeys::rdc::print_rdc_values ].user() ) {
@@ -2301,7 +2301,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 //print the rdc values
 	if ( option[ OptionKeys::rdc::print_rdc_values ].user() ) {
@@ -2325,7 +2325,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 
 void ResidualDipolarCoupling::show_tensor_stats( std::ostream& out, Size ex ) const {
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
   Real Aa = EV_[ex][0]/2;
   Real Ar = (EV_[ex][2]-EV_[ex][1])/3;
@@ -2341,7 +2341,7 @@ void ResidualDipolarCoupling::show_tensor_stats( std::ostream& out, Size ex ) co
 
 void ResidualDipolarCoupling::show_tensor_stats_nls( std::ostream& out, Size, const double *par) const {
   using namespace ObjexxFCL;
-  using namespace ObjexxFCL::fmt;
+  using namespace ObjexxFCL::format;
 
   Real Ax = par[0];
   Real Ay = par[1];
@@ -2354,7 +2354,7 @@ void ResidualDipolarCoupling::show_tensor_stats_nls( std::ostream& out, Size, co
 
 void ResidualDipolarCoupling::show_tensor_matrix( std::ostream& out, Size ex ) const {
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	Size const width( 8 );
 	//mjo comment out width_large because it is unused and causes a warning
@@ -2368,7 +2368,7 @@ void ResidualDipolarCoupling::show_tensor_matrix( std::ostream& out, Size ex ) c
 
 void ResidualDipolarCoupling::show_rdc_values( std::ostream& out, Size ex ) const {
 	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::format;
 
 	Size const width( 8 );
 	//mjo comment out width_large because it is unused and causes a warning

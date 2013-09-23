@@ -40,6 +40,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
+#include <basic/options/keys/full_model.OptionKeys.gen.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option_macros.hh>
 
@@ -108,7 +109,7 @@ get_out_tag( std::string & out_tag,
 void
 output_to_silent_file( std::string const & out_tag,
 											 std::string const & silent_file,
-											 pose::Pose const & pose,
+											 pose::Pose & pose,
 											 pose::PoseOP & native_pose ){
 
   using namespace core::io::silent;
@@ -118,13 +119,12 @@ output_to_silent_file( std::string const & out_tag,
 	// output silent file.
 	static SilentFileData const silent_file_data;
 
-	//setup rmsd res as everything to be sampled.
-	utility::vector1< Size > rmsd_res_list = option[ rmsd_res ]();
-	if ( rmsd_res_list.size() == 0 ) rmsd_res_list = const_full_model_info_from_pose( pose ).moving_res_in_full_model();
+	Real rms( 0.0 );
+	if ( native_pose ) rms = superimpose_at_fixed_res_and_get_all_atom_rmsd( pose, *native_pose );
 
 	BinaryRNASilentStruct s( pose, out_tag );
-	s.add_energy( "missing", get_number_missing_residues( pose ) );
-	if ( native_pose ) 	s.add_energy( "rms", get_all_atom_rmsd( pose, *native_pose, rmsd_res_list ) );
+	s.add_string_value( "missing", ObjexxFCL::string_of( get_number_missing_residue_connections( pose ) ) );
+	if ( native_pose ) 	s.add_energy( "rms", rms );
 	silent_file_data.write_silent_struct( s, silent_file, false /*score_only*/ );
 
 }
@@ -152,8 +152,11 @@ stepwise_monte_carlo()
 	// Following could go to a FullModelSetup class.
 	// read starting pose(s) from disk
 	utility::vector1< std::string > const & input_files = option[ in::file::s ]();
-	utility::vector1< PoseOP > input_poses;
+
+	utility::vector1< pose::PoseOP > input_poses;
 	for ( Size n = 1; n <= input_files.size(); n++ ) 	input_poses.push_back( get_pdb_and_cleanup( input_files[ n ], rsd_set ) );
+	if ( option[ full_model::other_poses ].user() ) get_other_poses( input_poses, option[ full_model::other_poses ](), rsd_set );
+
 	//FullModelInfo (minimal object needed for add/delete)
 	fill_full_model_info_from_command_line( input_poses );
 
@@ -180,6 +183,8 @@ stepwise_monte_carlo()
 	stepwise_rna_monte_carlo.set_switch_focus_frequency( option[ switch_focus_frequency ]() );
 	stepwise_rna_monte_carlo.set_sample_res( option[ sample_res ]() );
 	stepwise_rna_monte_carlo.set_just_min_after_mutation_frequency( option[ just_min_after_mutation_frequency ]() );
+	stepwise_rna_monte_carlo.set_allow_internal_moves( option[ allow_internal_moves ]() );
+	stepwise_rna_monte_carlo.set_temperature( option[ temperature ]() );
 
 	// following can be simplified if we make corrected_geo default to true from command-line.
 	stepwise_rna_monte_carlo.set_use_phenix_geo(  option[ corrected_geo ].user()  ? option[corrected_geo ]() : true );

@@ -7,19 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/RNA_LoopEnergy.hh
-/// @brief  Radius of gyration score for RNA, to match Rosetta++
+/// @file   core/scoring/methods/LoopCloseEnergy.hh
+/// @brief  Loop closure energy, currently defined for RNA.
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_core_scoring_rna_RNA_LoopEnergy_hh
-#define INCLUDED_core_scoring_rna_RNA_LoopEnergy_hh
+#ifndef INCLUDED_core_scoring_loop_graph_LoopCloseEnergy_hh
+#define INCLUDED_core_scoring_loop_graph_LoopCloseEnergy_hh
 
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/loop_graph/LoopGraph.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -33,17 +34,17 @@
 
 namespace core {
 namespace scoring {
-namespace rna {
+namespace loop_graph {
 
 
-class RNA_LoopEnergy : public methods::WholeStructureEnergy  {
+class LoopCloseEnergy : public methods::WholeStructureEnergy  {
 public:
 	typedef methods::WholeStructureEnergy  parent;
 
 public:
 
 	/// @brief Defines a loop closure energy based on FullModelInfo and pose geometry.
-	RNA_LoopEnergy();
+	LoopCloseEnergy();
 
 	/// clone
 	virtual
@@ -88,7 +89,7 @@ public:
 private:
 
 	void
-	update_rna_loop_atoms_and_lengths( pose::Pose & pose ) const;
+	update_loop_atoms_and_lengths( pose::Pose & pose ) const;
 
 	Real
 	get_loop_distance2( Vector const & v_takeoff,  Vector const & v_landing ) const;
@@ -99,14 +100,7 @@ private:
 	virtual
 	core::Size version() const;
 
-	Real const rna_loop_fixed_cost_;
-	Real const persistence_length2_;
-	Real const kB_T_;
-
-	// might be better to cache the following inside the pose...
-	mutable utility::vector1< Size > rna_loop_lengths_;
-	mutable utility::vector1< core::id::AtomID > loop_takeoff_atoms_;
-	mutable utility::vector1< core::id::AtomID > loop_landing_atoms_;
+	mutable core::scoring::loop_graph::LoopGraphOP loop_graph_;
 
 };
 
@@ -115,4 +109,4 @@ private:
 }
 }
 
-#endif // INCLUDED_core_scoring_methods_RNA_LoopEnergy_HH
+#endif // INCLUDED_core_scoring_methods_LoopCloseEnergy_HH

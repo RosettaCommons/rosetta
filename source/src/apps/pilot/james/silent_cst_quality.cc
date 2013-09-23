@@ -68,7 +68,7 @@ using utility::vector1;
 
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::fmt;
+using namespace ObjexxFCL::format;
 
 class ConstraintStatsMover;
 typedef utility::pointer::owning_ptr< ConstraintStatsMover > ConstraintStatsMoverOP;

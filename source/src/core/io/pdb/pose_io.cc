@@ -45,11 +45,7 @@
 
 #define foreach BOOST_FOREACH
 
-
-//namespace ObjexxFCL { namespace fmt { } }
-
-using namespace ObjexxFCL::fmt; // AUTO USING NS
-
+using namespace ObjexxFCL::format; // AUTO USING NS
 
 // A temporary copy of the pose_from_pdb code from the demo directory.
 // Will be phased out in favor of file_data routines soon.
