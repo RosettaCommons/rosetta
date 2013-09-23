@@ -92,7 +92,7 @@ LoopCloseEnergy::update_loop_atoms_and_lengths( pose::Pose & pose ) const {
 ///////////////////////////////////////////////////////////////////////////////
 void
 LoopCloseEnergy::finalize_total_energy(
-	pose::Pose & pose,
+	pose::Pose &,
 	ScoreFunction const &,
 	EnergyMap & totals
 ) const {

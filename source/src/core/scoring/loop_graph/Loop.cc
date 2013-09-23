@@ -29,6 +29,14 @@ namespace loop_graph {
 		landing_domain_( landing_domain )
 	{}
 
+	//Constructor
+	Loop::Loop():
+		takeoff_pos_( 0 ),
+		landing_pos_( 0 ),
+		takeoff_domain_( 0 ),
+		landing_domain_( 0 )
+	{}
+
 
 	//Destructor
 	Loop::~Loop()

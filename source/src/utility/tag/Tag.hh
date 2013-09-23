@@ -78,7 +78,7 @@ public:
 			return t_default;
 		}
 		accessed_options_[key]= i->second;
-		T t = t_default;
+		//		T t = t_default; // not used?
 		try{
 			return boost::lexical_cast<T>(i->second);
 		} catch(boost::bad_lexical_cast &) {

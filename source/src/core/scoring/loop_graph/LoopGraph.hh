@@ -49,9 +49,9 @@ namespace loop_graph {
 
 		LoopScoreInfoOP loop_score_info( Size const n ) const;
 
-		Size const num_loops() const{ return current_pose_loop_score_info_.size(); }
+		Size num_loops() const{ return current_pose_loop_score_info_.size(); }
 
-		Real const total_energy() const{ return total_energy_; }
+		Real total_energy() const{ return total_energy_; }
 
 	private:
 
@@ -85,8 +85,7 @@ namespace loop_graph {
 														 utility::vector1< Size > const & cutpoint_open );
 
 		void
-		check_for_unexpected_cutpoints( pose::Pose const & pose,
-																							 utility::vector1< Size > const & cutpoint_open ) const;
+		check_for_unexpected_cutpoints( pose::Pose const & pose ) const;
 
 	private:
 

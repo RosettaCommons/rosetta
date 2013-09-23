@@ -66,7 +66,7 @@ namespace loop_graph {
 
 		current_pose_loop_score_info_.clear();
 		total_energy_ = 0.0;
-		check_for_unexpected_cutpoints( pose, cutpoint_open );
+		check_for_unexpected_cutpoints( pose );
 
 		for ( Size k = 1; k <= loop_cycles_.size(); k++ ){
 
@@ -91,7 +91,7 @@ namespace loop_graph {
 			}
 
 			// go into each 'domain' and get list of distances. Also figure out if any of the domains are the current pose, and keep track of AtomID info.
-			Size pose_idx( 0 ), current_pose_idx_in_cycle( 0 );
+			Size current_pose_idx_in_cycle( 0 );
 			AtomID takeoff_atom_id, landing_atom_id, current_pose_takeoff_atom_id, current_pose_landing_atom_id;
 			Vector takeoff_xyz, landing_xyz;
 			utility::vector1< Real > all_distances, other_distances;
@@ -296,9 +296,12 @@ namespace loop_graph {
 					std::cerr << "Cycle2: " << std::endl;
 					std::cerr << loop_cycle2 << std::endl;
 					utility_exit_with_message( "Cannot handle multiloops beyond simple cycles!" );
+					return false;
 				}
 			}
 		}
+
+		return true;
 	}
 
 
@@ -362,8 +365,7 @@ namespace loop_graph {
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// just a consistency check.
 	void
-	LoopGraph::check_for_unexpected_cutpoints( pose::Pose const & pose,
-																						 utility::vector1< Size > const & cutpoint_open ) const {
+	LoopGraph::check_for_unexpected_cutpoints( pose::Pose const & pose ) const {
 		using namespace core::pose::full_model_info;
 
 		utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
