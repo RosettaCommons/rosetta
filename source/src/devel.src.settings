@@ -213,8 +213,8 @@ sources = {
 		"option",
 	],
         "devel/splice": [
-		"Splice", #moved to devel due to release embargo
-		"SpliceSegment", #moved to devel due to release embargo
+		"Splice",
+		"SpliceSegment",
 		"RBOutMover",
 		"DesignInterfacesOperation"
         ],

@@ -46,7 +46,6 @@ public:
 
 	void design_shell( core::Real const radius );
 	core::Real design_shell() const{ return design_shell_; }
-	void include_residue( core::Size const resid );
 
 	virtual ~DesignInterfacesOperation();
 

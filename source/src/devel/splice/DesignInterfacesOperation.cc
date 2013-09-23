@@ -144,7 +144,7 @@ DesignInterfacesOperation::apply( core::pose::Pose const & pose, core::pack::tas
 			rctr.chain( 1 );
 			rctr.apply( pose, task );
 		}
-		if( restrict_to_repacking_chain2() ){
+		if( restrict_to_repacking_chain2() && pose.conformation().num_chains()>1 ){
 			TR<<"Restricting chain2 to repacking"<<std::endl;
 			rctr.chain( 2 );
 			rctr.apply( pose, task );

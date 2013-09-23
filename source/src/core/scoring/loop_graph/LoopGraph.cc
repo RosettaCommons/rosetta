@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
-#include <core/pose/full_model_info/FullModelInfoUtil.hh>core
+#include <core/pose/full_model_info/FullModelInfoUtil.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/Func.hh>
 #include <core/scoring/constraints/GaussianChainFunc.hh>
@@ -36,6 +36,10 @@ static basic::Tracer TR("core.scoring.loop_graph.LoopGraph");
 namespace core {
 namespace scoring {
 namespace loop_graph {
+
+LoopScoreInfoOP
+LoopGraph::loop_score_info( Size const n ) const
+{ return current_pose_loop_score_info_[ n ]; }
 
 	//Constructor
 	LoopGraph::LoopGraph():
