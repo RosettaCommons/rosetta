@@ -35,7 +35,7 @@ namespace loop_graph {
 					Size const landing_domain );
 
 		//constructor
-		Loop();
+		// Undefined, commenting out to fix PyRosetta build  Loop();
 
 		//destructor
 		~Loop();
