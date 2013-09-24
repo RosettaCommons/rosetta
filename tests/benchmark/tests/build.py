@@ -12,16 +12,18 @@
 ## @brief  Rosetta/PyRosetta build tests
 ## @author Sergey Lyskov
 
-import os, commands
+import os, json, commands
 
 class BenchmarkBuildError(Exception): pass
 
 
 tests = dict(
-    debug   = './scons.py bin -j{jobs}',
-    release = './scons.py bin mode=release -j{jobs}',
+    debug   = './scons.py bin cxx={compiler} -j{jobs}',
+    release = './scons.py bin cxx={compiler} mode=release -j{jobs}',
+    static  = './scons.py bin cxx={compiler} mode=release extras=static -j{jobs}',
 )
 
+_TestSuite_ = False  # Set to True for TestSuite-like tests (Unit, Integration, Sfxn_fingerprint) and False other wise
 
 def set_up():
     pass
@@ -39,12 +41,17 @@ def get_tests():
     return tests.keys()
 
 
-def run_test(test, rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=False):
+
+def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False):
+    ''' Run single test.
+        Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
+    '''
+
     TR = Tracer(verbose)
 
-    TR('Running test: "{test}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir} jobs={jobs}, hpc_driver={hpc_driver}...'.format( **vars() ) )
+    TR('Running test: "{test}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].format(jobs=jobs)), return_='tuple')
+    res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].format(compiler=platform['compiler'], jobs=jobs)), return_='tuple')
 
     file(working_dir+'/build-log.txt', 'w').write(output)
 
@@ -53,10 +60,21 @@ def run_test(test, rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=Fa
     #if res: return _Failed_,   output  # We do not use '_BuildFailed_' because build failed for us actually mean test failure
     #else:   return _Finished_, output
 
-    return {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+    r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+
+    # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+    json.dump({_ResultsKey_:r[_ResultsKey_], _StateKey_:r[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+
+    return r
 
 
+def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False):
+    TR = Tracer(verbose)
+    TR('Build script does not support TestSuite-like run!')
+    raise BenchmarkBuildError()
 
+
+'''
 def run_test_suite(rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=False):
     TR = Tracer(verbose)
 
@@ -70,7 +88,7 @@ def run_test_suite(rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=Fa
         results[t] = run_test(test=t, rosetta_dir=rosetta_dir, working_dir=test_working_dir, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose)
 
     return results
-
+'''
 
 
 # Standard funtions and constants below ---------------------------------------------------------------------------------

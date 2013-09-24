@@ -17,7 +17,9 @@ import os, commands
 class BenchmarkIntegrationError(Exception): pass
 
 
-tests = ['i']
+#tests = ['i']
+
+_TestSuite_ = True  # Set to True for TestSuite-like tests (Unit, Integration, Sfxn_fingerprint) and False other wise
 
 
 def set_up():
@@ -38,53 +40,65 @@ def get_tests():
     raise BenchmarkIntegrationError()
 
 
-def run_test(test, rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=False):
+def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False):
     TR = Tracer(verbose)
-
     TR('Integration Test script does not support run_test! Use run_test_suite instead!')
     raise BenchmarkIntegrationError()
 
 
-def run_test_suite(rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=False):
+def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False):
+    ''' Run TestSuite.
+        Platform is a dict-like object, mandatory fields: {os='Mac', compiler='gcc'}
+    '''
+
     TR = Tracer(verbose)
     full_log = ''
 
-    TR('Running test_suite: "{}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir} jobs={jobs}, hpc_driver={hpc_driver}...'.format(__name__, **vars() ) )
+    TR('Running test_suite: "{}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, hpc_driver={hpc_driver}...'.format(__name__, **vars() ) )
 
     results = {}
 
     TR('Compiling...')
-    #res, output = execute('Compiling...', 'cd {}/source && ./scons.py bin mode=release -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
-    res, output = 0, 'debug... compiling...\n'
+    res, output = execute('Compiling...', 'cd {}/source && ./scons.py bin mode=release -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
+    #res, output = 0, 'debug... compiling...\n'
 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
     if res:
-        results['suite_result'] = _BuildFailed_
-        results['suite_log']    = full_log
+        results[_StateKey_] = _BuildFailed_
+        results[_LogKey_]   = full_log
         return results
 
     else:
+        ref_files_location = rosetta_dir+'/tests/integration/ref/'
+        if not os.path.isdir(ref_files_location): TR('No {} found, creating a dummy one...'.format(ref_files_location));  os.mkdir(ref_files_location)
+
+        files_location = rosetta_dir+'/tests/integration/new/'
+        #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
+
         TR('Running integration script...')
-        #res, output = execute('Running integration script...', 'cd {}/tests/integration && ./integration.py -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
-        res, output = 0, 'debug... integration.py...\n'
+        res, output = execute('Running integration script...', 'cd {}/tests/integration && ./integration.py --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
+        #res, output = 0, 'debug... integration.py...\n'
         full_log += output
 
         if res:
-            results['suite_result'] = _ScriptFailed_
-            results['suite_log']    = full_log
+            results[_StateKey_] = _ScriptFailed_
+            results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
             return results
 
-        files_location = rosetta_dir+'/tests/integration/new/'
         for root, dirs, _ in os.walk(files_location):
             if root == files_location:  # we only want to iterate over first layer
                 for d in dirs:
                     #print 'linking: %s <-- %s' % (root + d, working_dir + d)
                     os.symlink(root + '/' + d, working_dir + '/' + d)
+                    command_sh = working_dir + '/' + d + '/command.sh '
+                    if os.isfile(command_sh): os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
 
-        results['suite_result'] = _Finished_
-        results['suite_log']    = full_log
+
+        results[_StateKey_] = _Finished_
+        results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
         return results
+
 
 
 # do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
@@ -92,6 +106,10 @@ _Finished_     = '_Finished_'
 _Failed_       = '_Failed_'
 _BuildFailed_  = '_BuildFailed_'
 _ScriptFailed_ = '_ScriptFailed_'
+
+_StateKey_    = 'state'
+_ResultsKey_  = 'results'
+_LogKey_      = 'log'
 
 
 def Tracer(verbose=False):
