@@ -29,6 +29,7 @@ namespace loop_graph {
 
 	public:
 
+		Loop();
 		Loop( Size const takeoff_pos,
 					Size const landing_pos,
 					Size const takeoff_domain,
