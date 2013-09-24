@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0450"
+   LastUpgradeVersion = "0500"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3B946503148CBE0C00C2FBE5"
-               BuildableName = "libprotocols_c.5.a"
+               BuildableName = "protocols_c.5.dylib"
                BlueprintName = "protocols_c.5"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0450"
+   LastUpgradeVersion = "0500"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3D5BA0AC1492D97300524FBB"
-               BuildableName = "libprotocols_h.4.a"
+               BuildableName = "protocols_h.4.dylib"
                BlueprintName = "protocols_h.4"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>

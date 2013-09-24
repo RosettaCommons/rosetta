@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0450"
+   LastUpgradeVersion = "0500"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D1120FFF136B62F3000B9DB5"
-               BuildableName = "libexternal.a"
+               BuildableName = "external.dylib"
                BlueprintName = "external"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0450"
+   LastUpgradeVersion = "0500"
    version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D139BC3213687E200030829C"
-               BuildableName = "libcore.5.a"
+               BuildableName = "core.5.dylib"
                BlueprintName = "core.5"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>
