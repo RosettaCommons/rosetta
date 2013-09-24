@@ -29,11 +29,19 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief The %ResourceLocatorFactory instantiates ResourceLocator objects given their corresponding
+/// locator-type strings.  It uses the load-time factory registration scheme, meaning that it is a
+/// singleton and takes an instance of a Creator object (a ResourceLocatorCreator) in its
+/// "factory_register" method.  Templated instances of the ResourceLocatorRegistrator classes should
+/// be placed in the library init.cc files  (e.g. core/init/init.cc or
+/// protocols/init/init.ResourceLocatorRegistrators.ihh)
 class ResourceLocatorFactory
 {
 public:
-	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
+	/// @brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~ResourceLocatorFactory();
+
+	/// @brief Create a ResourceLocator given its locator_type, giving the newly created instance the name locator_tag
 	ResourceLocatorOP
 	create_resource_locator(
 		std::string const & locator_type,
@@ -41,10 +49,13 @@ public:
 		utility::tag::TagPtr tags
 	) const;
 
+	/// @brief Singleton access method; return the single instance of the object
 	static
 	ResourceLocatorFactory *
 	get_instance();
 
+	/// @brief This function is called on the singleton instance to give a ResourceLocatorCreator to the
+	/// factory, usually through the constructor of a ResourceLocatorRegistrator class.
 	void
 	factory_register( ResourceLocatorCreatorOP creator );
 
@@ -56,7 +67,7 @@ public:
 
 private:
 
-	/// singleton has a private constructor
+	/// @brief Singleton has a private constructor
 	ResourceLocatorFactory();
 
 private:

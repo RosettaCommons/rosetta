@@ -28,6 +28,12 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief The %ResourceLocatorRegistrator gives an instance of a ResourceLocatorCreator to the
+/// ResourceLocatorFactory in its constructor, calling the ResourceLocatorFactory's factory_register()
+/// method.  This call is actually accomplished by the WidgetRegistrator parent class.  A single
+/// (templated) instance of this class for each ResourceLocatorCreator should be placed in the
+/// appropriate init.cc file (i.e. ResourceLocatorCreators that live in the protocols library
+/// should be put in src/protocols/init/init.ResourceLocatorRegistrators.ihh).
 template < class T >
 class ResourceLocatorRegistrator : public utility::factory::WidgetRegistrator< ResourceLocatorFactory, T >
 {

@@ -33,6 +33,8 @@ namespace basic {
 namespace resource_manager {
 namespace locator {
 
+/// @brief The %NullStream acts as an empty stream object that may be
+/// returned by the NullResourceLocator.  It does not open any files.
 class NullStream : public basic::resource_manager::ResourceStream
 {
 public:
@@ -53,7 +55,10 @@ private: // members
 };
 
 
-
+/// @brief The %NullResourceLocator is meant for cases where a resource can
+/// be created without reading from an input file.  It goes through the motions
+/// of returning a ResourceStream (an empty NullStream) as is required of all
+/// ResourceLocators, but the stream that it creates will not be used.
 class NullResourceLocator : public basic::resource_manager::ResourceLocator
 {
 public:
@@ -63,23 +68,26 @@ public:
 
 	virtual ~NullResourceLocator();
 
+	/// @brief Describe this instance to the given output stream; since there is no
+	/// data in this class, merely print the name of this class.
 	virtual
 	void
 	show(
 		std::ostream & out) const;
 
+	/// @brief Return the name of this class: "NullResourceLocator"
 	virtual
 	std::string
 	type() const;
 
-	/// @brief Create a ResourceStream object from the given resource
-	/// source, so that its stream can be passed to the ResourceLoader
+	/// @brief Create an empty NullResource object that will not be used
 	virtual
 	ResourceStreamOP
 	locate_resource_stream(
 		std::string const & locator_tag
 	) const;
 
+	/// @brief Noop, since there is no data in this class.
 	virtual
 	void
 	parse_my_tag(

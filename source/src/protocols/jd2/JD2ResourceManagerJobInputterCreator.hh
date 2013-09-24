@@ -19,9 +19,16 @@
 namespace protocols {
 namespace jd2 {
 
+/// @brief the %JD2ResourceManagerJobInputterCreator is responsible for instantiating
+/// the JD2ResourceManagerJobInputter for the JobDistributorFactory
 class JD2ResourceManagerJobInputterCreator : public protocols::jd2::JobInputterCreator {
 public:
+
+	/// @brief Create the JD2ResourceManagerJobInputter
 	virtual JobInputterOP create_JobInputter() const;
+
+	/// @brief Return the name of the JobInputter this class instantiates:
+	/// "JD2ResourceManagerJobInputter"
 	virtual std::string keyname() const;
 
 };

@@ -31,6 +31,10 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief Each derived %ResourceOptionsCreator class is responsible for instantiating
+/// a (specific) derived ResourceOptions class, and for telling the
+/// ResourceOptionsFactory the string which identifies that class.  There should
+/// be one derived ResourceOptionsCreator class for each ResourceOptions class.
 class ResourceOptionsCreator : public utility::pointer::ReferenceCount
 {
 public:

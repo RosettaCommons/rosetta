@@ -12,16 +12,16 @@
 /// @author Tim Jacobs
 
 
-//unit headers
+// unit headers
 #include <protocols/loophash/LoopHashLibraryOptions.hh>
 #include <protocols/loophash/LoopHashLibraryOptionsCreator.hh>
 
-//utility headers
+// utility headers
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 
-//C++ headers
+// C++ headers
 
 namespace protocols {
 namespace loophash {
@@ -31,11 +31,13 @@ LoopHashLibraryOptionsCreator::LoopHashLibraryOptionsCreator() {}
 
 LoopHashLibraryOptionsCreator::~LoopHashLibraryOptionsCreator() {}
 
+/// @details Return an owning pointer to a newly constructed default instance of LoopHashLibraryOptions.
 basic::resource_manager::ResourceOptionsOP
 LoopHashLibraryOptionsCreator::create_options() const {
 	return new LoopHashLibraryOptions;
 }
 
+/// @details Return a string specifying the type of %ResourceOptions to create (LoopHashLibraryOptions).
 std::string
 LoopHashLibraryOptionsCreator::options_type() const {
 	return "LoopHashLibraryOptions";
@@ -45,18 +47,9 @@ LoopHashLibraryOptionsCreator::options_type() const {
 LoopHashLibraryOptions::LoopHashLibraryOptions() {}
 LoopHashLibraryOptions::~LoopHashLibraryOptions() {}
 
-utility::vector1<core::Size>
-LoopHashLibraryOptions::loop_sizes() const{
-	return loop_sizes_;
-}
-
-void
-LoopHashLibraryOptions::loop_sizes(
-	utility::vector1<core::Size> loop_sizes
-){
-	loop_sizes_=loop_sizes;
-}
-
+/// @details Read the resource definitions file's tag and parse the loop_sizes option to generate a vector of valid
+/// loops lenths that will be used to generate a LoopHashLibrary. If this option is omitted execution is halted and a
+/// helpful error message is displayed to the user.
 void
 LoopHashLibraryOptions::parse_my_tag(
 	utility::tag::TagPtr tag
@@ -76,10 +69,24 @@ LoopHashLibraryOptions::parse_my_tag(
 	}
 }
 
+/// @details Return the string value for the name of this class (LoopHashLibraryOptions).
 std::string
 LoopHashLibraryOptions::type() const
 {
 	return "LoopHashLibraryOptions";
+}
+
+// No details necessary - the @brief's for these methods (in the header) are sufficient.
+utility::vector1<core::Size>
+LoopHashLibraryOptions::loop_sizes() const{
+	return loop_sizes_;
+}
+
+void
+LoopHashLibraryOptions::loop_sizes(
+	utility::vector1<core::Size> loop_sizes
+){
+	loop_sizes_=loop_sizes;
 }
 
 } // namespace loophash

@@ -33,11 +33,14 @@ namespace basic {
 namespace resource_manager {
 namespace locator {
 
+/// @brief %FileStream is a wrapper class for a utility::io::izstream object that
+/// derives from ResourceStream.
 class FileStream : public basic::resource_manager::ResourceStream
 {
 public:
 	FileStream();
 
+	/// @brief Constructor that initializes both the name for the file and its openmode.
 	FileStream(
 		std::string const & filename,
 		std::ios_base::openmode open_mode = std::ios_base::in
@@ -53,13 +56,15 @@ public:
 	virtual
 	~FileStream();
 
+	/// @brief Open a particular file; must be called if the default constructor is used.
 	void
 	open(
 		std::string const & filename,
 		std::ios_base::openmode open_mode = std::ios_base::in
 	);
 
-
+	/// @brief Return non-const access to the internal stream so that it can be
+	/// used to construct a resource.
 	virtual
 	std::istream &
 	stream();
@@ -70,7 +75,10 @@ private: // members
 };
 
 
-
+/// @brief The %FileSystemResourceLocator is responsible for opening a file from the
+/// file system given its name (as the "locator tag" in the locate_resource_stream
+/// method ) and returning a FileStream object that wraps this file.  This FileStream
+/// can then be used to construct a resource.
 class FileSystemResourceLocator : public basic::resource_manager::ResourceLocator
 {
 public:
@@ -87,16 +95,9 @@ public:
 	show(
 		std::ostream & out) const;
 
-	//friend
-	//std::ostream &
-	//operator<<(
-	//	std::ostream & out,
-	//	const FileSystemResourceLocator & file_system_resource_locator);
-
 	virtual
 	std::string
 	type() const;
-
 
 	void
 	set_open_mode(
@@ -105,14 +106,15 @@ public:
 	std::ios_base::openmode
 	get_open_mode() const;
 
-	/// @brief Create a ResourceStream object from the given resource
-	/// source, so that its stream can be passed to the ResourceLoader
+	/// @brief Construct a FileStream object given a file's name (its locator_tag)
 	virtual
 	ResourceStreamOP
 	locate_resource_stream(
 		std::string const & locator_tag
 	) const;
 
+	/// @brief Noop method; the only data that could be initialized in this method is the openmode
+	/// for the files that this data is not initialized here.
 	virtual
 	void
 	parse_my_tag(

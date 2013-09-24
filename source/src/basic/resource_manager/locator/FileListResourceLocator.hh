@@ -23,6 +23,8 @@ namespace basic {
 namespace resource_manager {
 namespace locator {
 
+/// @brief The %FileListResourceLocator concatenates a set of listed files; e.g. useful
+/// for constructing a pose from two separate PDB files.
 class FileListResourceLocator : public basic::resource_manager::ResourceLocator
 {
 public:
@@ -33,29 +35,28 @@ public:
 
 	virtual ~FileListResourceLocator();
 
+	/// @brief Describe the %FileListResourceLocator to the output stringstream; since
+	/// this class has no data, merely prints the name of the class.
 	virtual
 	void
 	show(
 		std::ostream & out) const;
 
-	//friend
-	//std::ostream &
-	//operator<<(
-	//	std::ostream & out,
-	//	const FileSystemResourceLocator & file_system_resource_locator);
-
+	/// @brief Return the name for this class: "FileListResourceLocator"
 	virtual
 	std::string
 	type() const;
 
-	/// @brief Create a ResourceStream object from the given resource
-	/// source, so that its stream can be passed to the ResourceLoader
+	/// @brief Take the input locator tag and split it by whitespace, interpret each substring
+	/// as the name of a file, and concatenate each file into a single stringstream to be
+	/// returned.
 	virtual
 	ResourceStreamOP
 	locate_resource_stream(
 		std::string const & locator_tag
 	) const;
 
+	/// @brief Do nothing, since there is no data that the %FileListResourceLocator needs.
 	virtual
 	void
 	parse_my_tag(

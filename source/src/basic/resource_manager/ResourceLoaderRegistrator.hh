@@ -8,8 +8,10 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   basic/resource_manager/ResourceLoaderRegistrator.hh
-/// @brief  
-/// @author 
+/// @brief  Declaration of class ResourceLoaderRegistrator
+/// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
+///         Brian Weitzner (brian.weitzner@gmail.com)
+///         Matthew O'Meara (mattjomeara@gmail.com)
 
 #ifndef INCLUDED_basic_resource_manager_ResourceLoaderRegistrator_hh
 #define INCLUDED_basic_resource_manager_ResourceLoaderRegistrator_hh
@@ -28,6 +30,13 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief The %ResourceLoaderRegistrator class is a simple templated registration class
+/// that will, at construction, create a ResourceLoader and register it with the
+/// ResouceLoaderFactory
+///
+/// Instances of the %ResourceLoaderRegistrator class should be added to the "init.cc" files
+/// of the libraries they belong to so that they will be constructed along the init(argv,argc)
+/// calling pathway at the very beginning of program execution.
 template < class T >
 class ResourceLoaderRegistrator : public utility::factory::WidgetRegistrator< ResourceLoaderFactory, T >
 {

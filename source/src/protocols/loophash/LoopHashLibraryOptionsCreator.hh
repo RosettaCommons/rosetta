@@ -28,16 +28,21 @@
 namespace protocols {
 namespace loophash {
 
+/// @brief %LoopHashLibraryOptionsCreator allows the ResourceLoaderFactory to create a LoopHashLibraryOptions instance.
+/// @details The LoopHashLibraryOptions class can be constructed from the string "LoopHashLibraryOptions", which enables
+/// a user to configure a LoopHashLibrary %resource in his/her resource definitions file.
 class LoopHashLibraryOptionsCreator : public basic::resource_manager::ResourceOptionsCreator
 {
 public:
 	LoopHashLibraryOptionsCreator();
 	~LoopHashLibraryOptionsCreator();
 
+	/// @brief Return the string identifier for the associated ResourceOptions (LoopHashLibraryOptions).
 	virtual
 	std::string
 	options_type() const;
 
+	/// @brief Return a up-casted owning pointer (ResourceOptionsOP) to the resource options.
 	virtual
 	basic::resource_manager::ResourceOptionsOP
 	create_options() const;

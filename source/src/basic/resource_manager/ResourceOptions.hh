@@ -28,12 +28,18 @@
 namespace basic {
 namespace resource_manager {
 
-/// @brief This class is responsible for describing the data requried
-/// for instanting a particular resource, except for the data stream
-/// (i.e. the file) that contains the data for the resource.  For example,
-/// when reading in a PDB file, there are 30 different options for
-/// how that PDB file should be turned into a Pose.  That data is held in
-/// a ImportPoseOptions object.
+/// @brief The %ResourceOptions class is responsible for describing all
+/// the data requried for instanting a particular resource, except for the
+/// data stream (i.e. the file) that contains the data for the resource.
+/// For example, when reading in a PDB file, there are 30 different options
+/// for how that PDB file should be turned into a Pose.  That data is now
+/// held in an ImportPoseOptions object.  The purpose of the %ResourceOptions
+/// class is to allow different jobs to load resources in different ways, or
+/// for one job to load two different resources of the same type in different
+/// ways. For example, a protocol may need both a centroid pose and a
+/// fullatom pose to be loaded in from disk; however, if the logic for
+/// loading a pose in from disk is controlled by the options system alone,
+/// this becomes impossible.
 class ResourceOptions : public utility::pointer::ReferenceCount
 {
 public:
@@ -47,11 +53,13 @@ public:
 
 	virtual ~ResourceOptions();
 
+	/// @brief Describe this instance to a given output stream
 	virtual
 	void
 	show(
 		std::ostream & out) const;
 
+	/// @brief Friend output-operator function that invokes the show() function
 	friend
 	std::ostream &
 	operator<< (
@@ -66,7 +74,7 @@ public:
 		utility::tag::TagPtr tag
 	) = 0;
 
-	/// @brief The class name for a particular ResourceOptions instance.
+	/// @brief The class name (its type) for a particular ResourceOptions instance.
 	/// This function allows for better error message delivery.
 	virtual
 	std::string
@@ -77,7 +85,7 @@ public:
 	std::string
 	name() const;
 
-	/// @brief Set the name for a given ResourceOption object
+	/// @brief Set the name for this %ResoureOptions instance.
 	void name( std::string const & setting );
 
 private:

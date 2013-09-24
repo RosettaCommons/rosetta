@@ -27,19 +27,22 @@
 namespace protocols {
 namespace loophash {
 
-//// LoopHashLibraryLoaderCreator ////
+/// @details Return an owning pointer to a newly constructed default instance of LoopHashLibraryLoader.
 basic::resource_manager::ResourceLoaderOP
 LoopHashLibraryLoaderCreator::create_resource_loader() const
 {
 	return new LoopHashLibraryLoader();
 }
 
+/// @details Return a string specifying the type of %ResourceLoader to create (LoopHashLibrary).
 std::string LoopHashLibraryLoaderCreator::loader_type() const
 {
 	return "LoopHashLibrary";
 }
 
-//// LoopHashLibraryLoader ////
+/// @details Ensure the %ResourceOptions is a LoopHashLibraryOptions instance and construct a new LoopHashLibrary from
+/// it.  The locator_id and istream are not used.
+/// @throws utility::excn::EXCN_Msg_Exception
 basic::resource_manager::ResourceOP
 LoopHashLibraryLoader::create_resource(
 	basic::resource_manager::ResourceOptions const & options,

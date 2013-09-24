@@ -47,10 +47,10 @@
 namespace basic {
 namespace resource_manager {
 
-/// @brief The ResourceManager is a singleton class responsible for holding and eventually
-/// deallocating resources which may be shared between multiple jobs.  A protocol
-/// may communicate directly with the ResourceManager, requesting resources, but remaining
-/// unaware of where those resources came from, or whether the same resource is
+/// @brief The ResourceManager is a singleton class responsible for holding, distributing,
+/// and eventually deallocating resources which may be shared between multiple jobs.  A
+/// protocol may communicate directly with the ResourceManager, requesting resources, but
+/// remaining unaware of where those resources came from, or whether the same resource is
 /// being used in multiple contexts.
 ///
 /// A protocol should request a resource using a "resource description" (a string), which
@@ -60,7 +60,9 @@ namespace resource_manager {
 /// the "native" is requested, it is requested in some context (e.g. in a protocol running
 /// under JD2) and the ResourceManager serves as a backbone in which to deliever
 /// context-specific data to the protocol, while keeping the protocol ignorant and
-/// independent of the surrounding context.
+/// independent of the surrounding context.  That way protocols can run in JD2 just as
+/// effectively as the could run in some other job-management environment, without
+/// having to assume responsibility for instantiating resources themselves.
 ///
 /// NOTE: Because the logic for deciding which of the derived ResourceManager classes
 /// should be instantiated depends on the options system, the ResourceManager should
@@ -133,9 +135,7 @@ public: // Protocol interface
 		ResourceDescription const & resource_description) = 0;
 
 
-	/// @brief Called by the protocol, returns the resource appropriate for the
-	/// context in which it is requested (which the protocol should remain
-	/// ignorant of).
+	/// @brief Returns the resource with the given resource_description.
 	virtual
 	ResourceOP
 	get_resource(
@@ -146,61 +146,73 @@ public: // Options interface
 	/// The following 12 functions allow protocols to request options that
 	/// may have been set for the context in which the protocol is being run.
 
+	/// @brief Retrieve the boolean value represented by the given option key
 	virtual
 	bool
 	get_option(
 		utility::options::BooleanOptionKey key ) const = 0;
 
+	/// @brief Retrieve the vector of boolean values represented by the given option key
 	virtual
 	utility::vector1< bool >  const &
 	get_option(
 		utility::options::BooleanVectorOptionKey key ) const = 0;
 
+	/// @brief Retrieve the FileName value represented by the given option key
 	virtual
 	utility::file::FileName  const &
 	get_option(
 		utility::options::FileOptionKey key ) const = 0;
 
+	/// @brief Retrieve the vector of FileName values represented by the given option key
 	virtual
 	utility::vector1< utility::file::FileName >  const &
 	get_option(
 		utility::options::FileVectorOptionKey key ) const = 0;
 
+	/// @brief Retrieve the integer value represented by the given option key
 	virtual
 	int
 	get_option(
 		utility::options::IntegerOptionKey key ) const = 0;
 
+	/// @brief Retrieve the vector of integer values represented by the given option key
 	virtual
 	utility::vector1< int >  const &
 	get_option(
 		utility::options::IntegerVectorOptionKey key ) const = 0;
 
+	/// @brief Retrieve the PathName value represented by the given option key
 	virtual
 	utility::file::PathName  const &
 	get_option(
 		utility::options::PathOptionKey key ) const = 0;
 
+	/// @brief Retrieve the vector of PathName values represented by the given option key
 	virtual
 	utility::vector1< utility::file::PathName >  const &
 	get_option(
 		utility::options::PathVectorOptionKey key ) const = 0;
 
+	/// @brief Retrieve the Real value represented by the given option key
 	virtual
 	platform::Real
 	get_option(
 		utility::options::RealOptionKey key ) const = 0;
 
+	/// @brief Retrieve the vector of Real values represented by the given option key
 	virtual
 	utility::vector1< platform::Real >  const &
 	get_option(
 		utility::options::RealVectorOptionKey key ) const = 0;
 
+	/// @brief Retrieve the string value represented by the given option key
 	virtual
 	std::string  const &
 	get_option(
 		utility::options::StringOptionKey key ) const = 0;
 
+	/// @brief Retrieve the vector of string values represented by the given option key
 	virtual
 	utility::vector1< std::string > const &
 	get_option(
@@ -209,61 +221,85 @@ public: // Options interface
 	/// The following 12 functions allow protocols to request if a particular
 	/// option has been set (e.g. on the command line or for the current job).
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(
 		utility::options::BooleanOptionKey key ) const = 0;
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(
 		utility::options::BooleanVectorOptionKey key ) const = 0;
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(
 		utility::options::FileOptionKey key ) const = 0;
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(
 		utility::options::FileVectorOptionKey key ) const = 0;
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(
 		utility::options::IntegerOptionKey key ) const = 0;
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(
 		utility::options::IntegerVectorOptionKey key ) const = 0;
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(
 		utility::options::PathOptionKey key ) const = 0;
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(
 		utility::options::PathVectorOptionKey key ) const = 0;
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(
 		utility::options::RealOptionKey key ) const = 0;
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(
 		utility::options::RealVectorOptionKey key ) const = 0;
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(
 		utility::options::StringOptionKey key ) const = 0;
 
+	/// @brief Return whether or not a value has been provided for the given option key either
+	/// on the command line or through for the current job.
 	virtual
 	bool
 	has_option(

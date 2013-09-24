@@ -53,37 +53,51 @@ static numeric::random::RandomGenerator RG(1337);
 LoopsFileFallbackConfiguration::LoopsFileFallbackConfiguration()
 {}
 
+/// @details Return true if the user has set the "-loops:loop_file" flag and false otherwise.
 bool
 LoopsFileFallbackConfiguration::fallback_specified( ResourceDescription const & ) const
 {
 	return basic::options::option[ basic::options::OptionKeys::loops::loop_file ].user();
 }
 
+/// @details The return value is "loops_file" to indicate that a LoopsFileLoader is required.
 basic::resource_manager::LoaderType
 LoopsFileFallbackConfiguration::get_resource_loader( ResourceDescription const & ) const
 {
 	return "LoopsFile";
 }
 
+/// @details The %locator_id for the fallback configuration is set by the options system.  The
+/// get_loops_filename_from_options() helper method is used to handle complex cases.
 basic::resource_manager::LocatorID
 LoopsFileFallbackConfiguration::get_locator_id( ResourceDescription const & ) const
 {
 	return get_loops_filename_from_options();
 }
 
+/// @details Return a NULL pointer to trigger the creation of a default LoopsFileOptions later in the %resource creation
+/// process.
 basic::resource_manager::ResourceOptionsOP
 LoopsFileFallbackConfiguration::get_resource_options( ResourceDescription const & ) const
 {
 	// use the default loops file options.
-	return 0;
+	return NULL;
 }
 
+/// @details Return a string that provides a helpful message to the user so s/he can determine how to correctly use the
+/// loops_file resource.
 std::string
 LoopsFileFallbackConfiguration::could_not_create_resource_error_message( ResourceDescription const & ) const
 {
 	return "The LoopsFileFallbackConfiguration requires that the flag '-loops:loop_file' be set on the command line.";
 }
 
+/// @details There are three options system scenarios this method can handle.  Each scenario and the corresponding
+///behavior is outlined below:
+/// @li A single filename is specified - return the filename as a string
+/// @li Several filenames are specified - return one of the filenames, chosen at random, as a string
+/// @li No filename is specified - throw an exception requesting that the user double check his/her flags.
+/// @throws EXCN_Msg_Exception
 basic::resource_manager::LocatorID
 LoopsFileFallbackConfiguration::get_loops_filename_from_options() const
 {
@@ -97,16 +111,18 @@ LoopsFileFallbackConfiguration::get_loops_filename_from_options() const
 	return loops_files[ which_loops_file ];
 }
 
+/// @details Return an owning pointer to a newly constructed default instance of FallbackConfiguration.
 basic::resource_manager::FallbackConfigurationOP
 LoopsFileFallbackConfigurationCreator::create_fallback_configuration() const
 {
 	return new LoopsFileFallbackConfiguration;
 }
 
+/// @details Return a string specifying the type of %FallbackConfiguration to create (loops_file).
 std::string
 LoopsFileFallbackConfigurationCreator::resource_description() const
 {
-	return "LoopsFile";
+	return "loops_file";
 }
 
 } // namespace loops

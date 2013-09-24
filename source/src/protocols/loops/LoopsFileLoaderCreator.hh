@@ -27,13 +27,19 @@
 namespace protocols {
 namespace loops {
 
+/// @brief %LoopsFileLoaderCreator allows the ResourceLoaderFactory to create a LoopsFileLoader instance.
+/// @details The LoopsFileLoader class can be constructed from the string "LoopsFile", which enables a user to specify
+/// that this type of %resource is required for a particular %job in their XML input file.
 class LoopsFileLoaderCreator : public basic::resource_manager::ResourceLoaderCreator
 {
 public:
+
+	/// @brief Return a up-casted owning pointer (ResourceLoaderOP) to the resource loader.
 	virtual
 	basic::resource_manager::ResourceLoaderOP
 	create_resource_loader() const;
 
+	/// @brief Return the string identifier for the associated ResourceLoader (LoopsFile).
 	virtual
 	std::string loader_type() const;
 

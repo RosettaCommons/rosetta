@@ -62,6 +62,7 @@ namespace jd2 {
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+
 /// @details All the convoluted logic combining compile-time decisions and
 /// run-time decisions for which job distributor to use lives here.
 /// As of right now, this logic isn't all that convoluted.
@@ -78,22 +79,22 @@ JobDistributorFactory::create_job_distributor() {
 		if ( n_rank_ > 2 && option[ OptionKeys::run::n_replica ]() > 1 ) {
 			return new MPIMultiCommJobDistributor( option[ OptionKeys::run::n_replica ]() );
 		}
-		///NOTE: MPIFileBufJobDistributor has not been tested with PDB-Outputter. No idea if this works.
-		/// according to wishes of the community the check in the lines below is turned off.
-		/// if you see that MPI and PDB output is not working: you have a couple of options:
-		///    1) change to silent-output it is better
-		///    2) change to silent-output it is way better
-		///    3) dude: change to silent-output
-		///    4) debug PDBOutputter to make it work with MPIFileBufJobDistributor --- and remove this note
-		///    5) uncomment the test for -out:file:silent below
-		///   OL 6/9/09
+		//NOTE: MPIFileBufJobDistributor has not been tested with PDB-Outputter. No idea if this works.
+		// according to wishes of the community the check in the lines below is turned off.
+		// if you see that MPI and PDB output is not working: you have a couple of options:
+		//    1) change to silent-output it is better
+		//    2) change to silent-output it is way better
+		//    3) dude: change to silent-output
+		//    4) debug PDBOutputter to make it work with MPIFileBufJobDistributor --- and remove this note
+		//    5) uncomment the test for -out:file:silent below
+		//   OL 6/9/09
 
-		///NOTE: PDB output does not work with MPIFileBufJobDistributor as of 6/15/09 (SML)
-		///Someone should debug MPIFileBufJobDistributor to follow the parent classes and work with all
-		///JobInputters and JobOutputters.  The silent check below can then be removed, since it's dangerous overloading
-		///to hack around a bug...
+		//NOTE: PDB output does not work with MPIFileBufJobDistributor as of 6/15/09 (SML)
+		//Someone should debug MPIFileBufJobDistributor to follow the parent classes and work with all
+		//JobInputters and JobOutputters.  The silent check below can then be removed, since it's dangerous overloading
+		//to hack around a bug...
 
-		///NOTE: the option jd2:mpi_filebuf_jobdistributor is now true by default, according to exchange on minirosetta list Nov 2010. (OL)
+		//NOTE: the option jd2:mpi_filebuf_jobdistributor is now true by default, according to exchange on minirosetta list Nov 2010. (OL)
 		if ( n_rank_ > 2 && option[ out::file::silent ].user() &&
 			( option[ OptionKeys::jd2::mpi_file_buf_job_distributor ].value() == true
 				|| option[ OptionKeys::jd2::mpi_filebuf_jobdistributor ].value() == true ) ) {

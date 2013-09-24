@@ -33,6 +33,9 @@ namespace loops {
 LoopsFileLoader::LoopsFileLoader() {}
 LoopsFileLoader::~LoopsFileLoader() {}
 
+/// @details Ensure the %ResourceOptions is a LoopsFileOptions instance and construct a new LoopsFileData from the
+/// istream and the options.  The locator_id is used solely for reporting accurate error messages.
+/// @throws utility::excn::EXCN_Msg_Exception
 utility::pointer::ReferenceCountOP
 LoopsFileLoader::create_resource(
 	basic::resource_manager::ResourceOptions const & options,
@@ -50,17 +53,20 @@ LoopsFileLoader::create_resource(
 	return lfd;
 }
 
+/// @details Return an owning pointer to a newly constructed default instance of LoopsFileOptions.
 basic::resource_manager::ResourceOptionsOP
 LoopsFileLoader::default_options() const
 {
 	return new LoopsFileOptions;
 }
 
+/// @details Return an owning pointer to a newly constructed default instance of LoopsFileLoader.
 basic::resource_manager::ResourceLoaderOP LoopsFileLoaderCreator::create_resource_loader() const
 {
 	return new LoopsFileLoader();
 }
 
+/// @details Return a string specifying the type of %ResourceLoader to create (LoopsFile).
 std::string LoopsFileLoaderCreator::loader_type() const
 {
 	return "LoopsFile";

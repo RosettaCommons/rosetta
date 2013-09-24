@@ -114,6 +114,32 @@ JD2ResourceManager::~JD2ResourceManager() {}
 /// @details instantiate all the resource locators given in the input tags, and
 /// put them into the base class.  Make sure no two resource locators share a common
 /// name.
+///
+/// The file format should be
+/// \verbatim
+/* (<--- please ignore this; it is merely an artifact of writing doxygen)
+
+The surrounding tag "ResourceLocators" will not be read by this function but
+instead wil be read the by function that will call this function.  It is
+listed here simply for context.
+<ResourceLocators>
+
+	 declare one or more resource locators
+   <LocatorType tag=name_for_this_instance >
+	    * where LocatorType is one of the several locator_types that have been
+      implemented; the string must match the locator_type given by some
+      ResourceLocatorCreator. E.g. "DatabaseResourceLocator". And,
+      * where the "tag" (the name) for the declared instance must be unique
+      among the set of all resource locators declared.
+      <...\>
+         provide any subtags that are required to instantiate a
+         ResourceLocator of the indicated type
+   <\LocatorType>
+
+<\ResourceLocators>
+/ \endverbatim
+*/
+///
 void JD2ResourceManager::read_resource_locators_tags( TagPtr tags )
 {
 	using basic::resource_manager::ResourceLocatorFactory;
@@ -128,7 +154,7 @@ void JD2ResourceManager::read_resource_locators_tags( TagPtr tags )
 			tag_iter != tag_iter_end; ++tag_iter ) {
 		std::string const & locator_type = (*tag_iter)->getName();
 
-		/// 1. Make sure the resource locator has been given a tag.
+		// 1. Make sure the resource locator has been given a tag.
 		if ( ! (*tag_iter)->hasOption( "tag" ) ) {
 			std::ostringstream err;
 			err << "Unable to find a 'tag' for a ResourceLocator of type '" << locator_type << "'\n";
@@ -146,8 +172,8 @@ void JD2ResourceManager::read_resource_locators_tags( TagPtr tags )
 			throw MsgException( err.str() );
 		}
 
-		/// 3. Try to create this ResourceLocator object; the factory may throw.  Catch any thrown MsgException and
-		/// append to its message the locator_type and locator_tag for the ResourceLocator being read.
+		// 3. Try to create this ResourceLocator object; the factory may throw.  Catch any thrown MsgException and
+		// append to its message the locator_type and locator_tag for the ResourceLocator being read.
 		ResourceLocatorOP resource_locator;
 		try {
 			resource_locator = ResourceLocatorFactory::get_instance()->create_resource_locator( locator_type, locator_tag, *tag_iter );
@@ -166,6 +192,44 @@ void JD2ResourceManager::read_resource_locators_tags( TagPtr tags )
 
 /// @details instantiate all the resource options and put them in the base class.
 /// Make sure no two resource options are given the same name.
+///
+/// The file format should be
+/// \verbatim
+/* (<--- please ignore this; it is merely an artifact of writing doxygen)
+
+The surrounding tag "ResourceOptions" will not be read by this function but
+instead wil be read the by function that will call this function.  It is
+listed here simply for context.
+<ResourceOptions>
+
+	 declare one or more resource options objects
+   <OptionsType tag=name_for_this_instance >
+	    * where OptionsType is one of the several option_types that have been
+      implemented; the string must match the option_type given by some
+      ResourceOptionsCreator. E.g. "ImportPoseOptions". And,
+      * where the "tag" (the name) for the declared instance must be unique
+      among the set of all resource options declared.
+      <...\>
+         provide any subtags that are required to instantiate a
+         ResourceOptions object of the indicated type
+   <\OptionsType>
+
+   or provide an SQL query to retrieve the ResourceOptions defined in
+   a database
+   <OptionsTable sql_command=command database_resource=dbresource/>
+      * where command is a string representing an SQL query, and
+      * where dbresource is the name for a previously-declared database-connection resource
+		  Each row of the resource options table should have the following format
+		      resource_options_tag, resource_options_type, resource_option_key, resource_option_value
+		   * The table should 'ORDER BY resource_options_tag', to have data for a
+         specific resource-options object adjacent in the table
+		   * resource_option_{key, value}: Each resource options takes set of key value pairs (string -> string)
+         for example, for PoseFromPDBOptions, has the key 'exit_if_missing_heavy_atoms' and takes '1' for true or '0' for false.;
+
+<\ResourceOptions>
+\endverbatim
+*/
+///For an example of a ResourceOptions object, see ImportPoseOptions.
 void JD2ResourceManager::read_resource_options_tags( TagPtr tags )
 {
 	using utility::tag::Tag;
@@ -185,6 +249,7 @@ void JD2ResourceManager::read_resource_options_tags( TagPtr tags )
 		}
 	}
 }
+
 
 void
 JD2ResourceManager::read_resource_options_table_tag(
@@ -216,8 +281,8 @@ JD2ResourceManager::read_resource_options_table_tag(
 		"\n"
 		"    resource_options_tag, resource_options_type, resource_option_key, resource_option_value\n"
 		"\n"
-		" * The table should 'ORDER BY job_name', to have data for a\n"
-    "   specific job adjacent in the table\n"
+		" * The table should 'ORDER BY resource_options_tag', to have data for a\n"
+    "   specific resource-options ojbect adjacent in the table\n"
 		"\n"
 		" * resource_option_{key, value}: Each resource options takes set of key value pairs (string -> string)\n"
     "   for example, for PoseFromPDBOptions, has the key 'exit_if_missing_heavy_atoms' and takes '1' for true or '0' for false.\n";
@@ -278,7 +343,7 @@ JD2ResourceManager::read_resource_option_item(
 
 	std::string const & tagname = tag->getName();
 
-	/// 1. Make sure this resource_options object has been declared.
+	// 1. Make sure this resource_options object has been declared.
 	if ( ! tag->hasOption( "tag" ) ) {
 		std::ostringstream err;
 		err << "Unable to find a 'tag' for a ResourceOption of type '" << tagname << "'\n";
@@ -296,8 +361,8 @@ JD2ResourceManager::read_resource_option_item(
 		throw MsgException( err.str() );
 	}
 
-	/// 3. Try to create this ResourceOptions object; the factory may throw.  Catch any thrown MsgException and
-	/// append to its message the tagname and options_tag for the ResourceOptions being read.
+	// 3. Try to create this ResourceOptions object; the factory may throw.  Catch any thrown MsgException and
+	// append to its message the tagname and options_tag for the ResourceOptions being read.
 	ResourceOptionsOP resource_options;
 	try {
 		resource_options = ResourceOptionsFactory::get_instance()->create_resource_options( tagname, tag );
@@ -321,7 +386,7 @@ JD2ResourceManager::check_resource_loader_type(
 ) {
 	typedef utility::excn::EXCN_Msg_Exception MsgException;
 
-	/// 1. Make sure this is an allowed resource type / loader type
+	// 1. Make sure this is an allowed resource type / loader type
 	if ( ! ResourceLoaderFactory::get_instance()->has_resource_loader( loader_type ) ) {
 		std::ostringstream err;
 		err << "ResourceLoader type '" << loader_type << "' requested in JD2ResourceManager::read_resources_tags has not been registered with the ResourceLoaderFactory.  Available types include:.\n";
@@ -344,8 +409,8 @@ JD2ResourceManager::read_resource_tag_item(
 ) {
 	typedef utility::excn::EXCN_Msg_Exception MsgException;
 
-	/// 2. Set the resource tag to be the locator id unless it has been
-	/// explcitely provided.
+	// 2. Set the resource tag to be the locator id unless it has been
+	// explcitely provided.
 	ResourceTag resource_tag;
 	if ( ! tag->hasOption( "tag" ) ) {
 		resource_tag = locator_id;
@@ -377,7 +442,7 @@ JD2ResourceManager::read_resource_locator_items(
 ) {
 	typedef utility::excn::EXCN_Msg_Exception MsgException;
 
-	/// 4. Verify that, if it's been given a locator, that the ResourceLocator has previously been declared
+	// 4. Verify that, if it's been given a locator, that the ResourceLocator has previously been declared
 	LocatorTag locator_tag;
 	if ( tag->hasOption( "locator" ) ) {
 		locator_tag = tag->getOption< LocatorTag >( "locator" );
@@ -445,8 +510,8 @@ JD2ResourceManager::read_resource_options_tag_item(
 ) {
 	typedef utility::excn::EXCN_Msg_Exception MsgException;
 
-	/// 5. Verify that, if it's been given a resource options, that the
-	/// ResourceOptions has been previously declared
+	// 5. Verify that, if it's been given a resource options, that the
+	// ResourceOptions has been previously declared
 	ResourceOptionsTag resource_options_tag;
 	if ( tag->hasOption( "options" ) ) {
 		resource_options_tag = tag->getOption< ResourceOptionsTag >( "options" );
@@ -462,7 +527,56 @@ JD2ResourceManager::read_resource_options_tag_item(
 
 /// @details read through all the resources, and put them into the base class
 /// for later instantiation.  Make sure each resource is named, that it is the
-/// only resource that has been declared with this name, and that
+/// only resource that has been declared with that name.
+///
+/// The file format should be
+/// \verbatim
+/* (<--- please ignore this; it is merely an artifact of writing doxygen)
+
+The surrounding tag "Resources" will not be read by this function but
+instead wil be read the by function that will call this function.  It is
+listed here simply for context.
+<Resources>
+
+	 declare one or more resource objects
+   <ResourceLoaderType tag=name_for_this_instance locator=locatorname locatorID=locid options=optname \>
+	    * where ResourceLoaderType is one of the several loader_types that have been
+      implemented; the string must match the loader_type given by some
+      ResourceLoaderCreator. E.g. "LoopsFile" which is given by the
+      LoopsFileLoaderCreator. And,
+      * where the (required) "name_for_this_instance" (the tag) for the declared instance
+      must be unique among the set of all resources declared,
+      * where the (optional) "locatorname" must refer to a previously-declared resource locator,
+      if a locator is not given, the FileSystemResourceLocator is used
+      * where the (required) "locid" provides the locatorID that the resource locator uses
+      to create the input stream needed to read in the resource (e.g. the file name), and
+      * where the (optional) "optname" string refers to a previously-declared ResourceOptions object
+      that will be used by the indicated ResourceLoader (if not given, then the ResourceLoader
+      will use the default ResourceOptions object).
+   <\ResourceLoaderType>
+   or
+   <ResourceLoaderType tag=name_for_this_instance file=filename locator=locatorname options=optname >
+	    * where ResourceLoaderType is the same as above,
+      * where the (required) "name_for_this_instance" is the same as above,
+      * where the (optional) "locatorname" must refer to a previously defined FileSystemResourceLocator
+      * where the (required) "filename" is the path to the file used to create the resource
+      * where the (optional) "optsname" is the same as above
+   <\ResourceLoaderType>
+   or provide an SQL query to retrieve the Resources defined in a database
+   <ResourceTable sql_command=command database_resource=dbresource/>
+      * where command is a string representing an SQL query, and
+      * where dbresource is the name for a previously-declared database-connection resource
+			The ResourceTable tag requires a 'sql_command' tag that
+			is an SQL SELECT statement that returns the following columns:
+			   resource_tag
+			   locator_tag
+			   locator_id
+			   loader_type
+			   resource_options_tag
+
+<\Resources>
+\endverbatim
+*/
 void JD2ResourceManager::read_resources_tags( TagPtr tags )
 {
 
@@ -634,7 +748,7 @@ JD2ResourceManager::has_resource_with_description(
 		return true;
 	}
 
-	/// check, have we already created a fallback resource description?
+	// check, have we already created a fallback resource description?
 	if ( fallback_resource_descriptions_created_.find( resource_description )
 			!= fallback_resource_descriptions_created_.end() ) {
 		return true;
@@ -1009,7 +1123,7 @@ JD2ResourceManager::create_resource_from_fallback(
 {
 	using namespace basic::resource_manager;
 
-	/// APL: Fix this.  For now, always use the FileSystemResourceLocator
+	// APL: Fix this.  For now, always use the FileSystemResourceLocator
 	ResourceLocatorOP locator(find_resource_locator(""));
 
 	ResourceStreamOP stream( locator->locate_resource_stream(

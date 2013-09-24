@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   basic/resource_manager/FallbackConfigurationCreator.hh
-/// @brief  
+/// @brief  Declaration of the FallbackConfigurationCreator class
 /// @author Brian D. Weitzner brian.weitzner@gmail.com
 
 #ifndef INCLUDED_basic_resource_manager_fallback_configuration_creator_HH
@@ -29,12 +29,23 @@
 namespace basic {
 namespace resource_manager {
 
-/// @brief Each class derived from this class will instantiate a single
-/// FallbackConfiguration and act to pair a string, a resource description,
-/// with that FallbackConfiguration.  For example "LoopFile" as a resource
-/// description will be paired by the LoopFileFallbackConfigurationCreator
-/// with the LoopFileFallbackConfiguration.  Multiple resource descriptions
-/// can be paired with a single FallbackConfiguration.
+/// @brief The %FallbackConfigurationCreator plays the role in the
+/// ResourceManager framework of gluing a "resource_description" string
+/// and a FallbackConfiguration together.
+
+/// @details The ResourceManager looks to a FallbackConfiguration when a resource is
+/// requested by a resource description string but no resource definition file
+/// has been provided.  In such a case, the FallbackConfiguration will provide
+/// the information the ResourceManager needs to create the resource.  It's the
+/// %FallbackConfigurationCreator's job to inform the ResourceManager which
+/// FallbackConfiguration to talk to.
+///
+/// Each class derived from the %FallbackConfigurationCreator will
+/// instantiate a single FallbackConfiguration and act to pair a string,
+/// a "resource description," with that FallbackConfiguration.  For example
+/// "LoopFile" as a resource description will be paired by the
+/// LoopFileFallbackConfigurationCreator with the LoopFileFallbackConfiguration.
+/// Multiple resource descriptions can be paired with a single FallbackConfiguration.
 class FallbackConfigurationCreator : public utility::pointer::ReferenceCount
 {
 public:

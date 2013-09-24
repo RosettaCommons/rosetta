@@ -127,7 +127,8 @@ JD2ResourceManagerJobInputter::pose_from_job(
 			JD2ResourceManager::get_jd2_resource_manager_instance());
 		ResourceOP resource;
 
-		//Check to see if we have a Residue resource, if so load it into the chemical manager if it hasn't already been loaded
+		// Check to see if we have a Residue resource, if so load it into the chemical manager if it hasn't already been loaded
+		// APL: Sam, is there anywhere else this code could live?
 		if(jd2_resource_manager->has_resource_tag_by_job_tag("residue", input_tag))
 		{
 			ResourceOP residue_resource(jd2_resource_manager->get_resource_by_job_tag("residue",input_tag));

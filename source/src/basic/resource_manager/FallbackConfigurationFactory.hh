@@ -31,18 +31,18 @@
 namespace basic {
 namespace resource_manager {
 
-/// @brief The FallbackConfigurationFactory is a singleton factory with which
-/// FallbackConfigurationCreators may (should) be registered.  This factory
+/// @brief The %FallbackConfigurationFactory is a singleton factory with which
+/// FallbackConfigurationCreator objects should be registered.  The "fallback" system
 /// serves as a mechanism for preserving command-line functionality even
-/// while switching more protocols from requesting Resources from the
+/// while switching more protocols from requesting resources from the
 /// ResourceManager rather than reading directly from the command line.
 ///
 /// When a resource with a particular resource-description string is requested
-/// from the ResourceManager, and the ResourceManager ddoes not have any instructions
+/// from the ResourceManager, and the ResourceManager does not have any instructions
 /// on how to load a resource matching that description, then the ResourceManager
 /// will then ask the FallbackConfigurationFactory for help.  The
 /// FallbackConfigurationFactory can first answer "does this resource description
-/// match any resource descriptions for which you have a registered 
+/// match any resource descriptions for which you have a registered
 /// FallbackConfigurationCreator?" and if the answer is "yes", then the
 /// ResourceManager can request that FallbackConfigurationCreator and ask,
 /// first, if it is able to construct a resource (FallbackConfigurations
@@ -62,13 +62,13 @@ public:
 
 	void
 	factory_register( FallbackConfigurationCreatorOP creator );
-	
+
 	bool
 	has_fallback_for_resource( std::string const & desc ) const;
 
 	/// @brief Only useful for unit testing.  Since factory registration happens (sometimes) at
 	/// load time, there may be no one to catch a thrown exception in the event of a name collision
-	/// two FallbackConfigurationCreators that register for the same 
+	/// two FallbackConfigurationCreators that register for the same
 	void
 	set_throw_on_double_registration();
 
@@ -81,6 +81,13 @@ private:
 
 };
 
+/// @brief The %FallbackConfigurationRegistrator class is a simple templated registration class
+/// that will, at construction, create a FallbackConfiguration and register it with the
+/// FallbackConfigurationFactory
+///
+/// Instances of the %FallbackConfigurationRegistrator class should be added to the "init.cc" files
+/// of the libraries they belong to so that they will be constructed along the init(argv,argc)
+/// calling pathway at the very beginning of program execution.
 template < class T >
 class FallbackConfigurationRegistrator : public utility::factory::WidgetRegistrator< FallbackConfigurationFactory, T >
 {

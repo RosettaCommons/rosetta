@@ -26,13 +26,18 @@
 namespace protocols {
 namespace loops {
 
+/// @brief %LoopsFileFallbackConfigurationCreator allows the ResourceManager to create a LoopsFileIO instance.
+/// @details The LoopsFileIO class can be constructed from the string "loops_file", which provides backwards
+/// compatibility with the options system.
 class LoopsFileFallbackConfigurationCreator : public basic::resource_manager::FallbackConfigurationCreator
 {
 public:
+	/// @brief Return a up-casted owning pointer (FallbackConfigurationOP) to the resource.
 	virtual
 	basic::resource_manager::FallbackConfigurationOP
 	create_fallback_configuration() const;
 
+	/// @brief Return the string identifier for the associated Resource (loops_file).
 	virtual
 	std::string resource_description() const;
 

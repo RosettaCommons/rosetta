@@ -31,6 +31,9 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief The %ResourceLocatorCreator class serves to link the name of
+/// a locator type and the (derived) ResourceLocator class that's responsible
+/// for retrieving data from a data store.
 class ResourceLocatorCreator : public utility::pointer::ReferenceCount
 {
 public:

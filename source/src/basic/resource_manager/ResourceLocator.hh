@@ -30,59 +30,87 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief The %ResourceStream represents an abstract class for packaging
+/// up a standard istream so that data that the ResourceLocator needs to
+/// deliver to a ResourceLoader can come from arbitrary sources (e.g.
+/// from either a file or from a database).
 class ResourceStream : public utility::pointer::ReferenceCount
 {
 public:
 	virtual
 	~ResourceStream();
 
+	/// @brief Return an istream reference so that the ResourceLoader can access arbitrary data
+	/// returned by the %ResourceLocator
 	virtual
 	std::istream &
 	stream() = 0;
+
 };
 
+/// @brief %ResourceLocator classes are responsible for retrieving data
+/// from a data store that will be used to construct a Resource.  This
+/// data store could be a file system or a database or any other
+/// place where data is stored.
+///
+/// The ResourceManager asks the ResourceLocator to produce a
+/// ResourceStream object when given a "locator_id."  A "locator_id"
+/// is what's needed to identify a data source from a data store:
+/// for example, for the FileSystemResourceLocator, the locator id
+/// is a file name; for the DatabaseResourceLocator, it would be
+/// a database query.
 class ResourceLocator : public utility::pointer::ReferenceCount
 {
 public:
+	/// @brief Construct a %ResourceLocator and initialize its name
+	/// (its locator_tag) to the empty string.
 	ResourceLocator();
 
+	/// @brief Construct a %ResourceLocator while setting its name to the input
+	/// locater_tag
 	ResourceLocator(
 		std::string const & locator_tag);
 
+	/// @brief Copy construct a %ResourceLocator from an example locator
 	ResourceLocator( ResourceLocator const & src );
 
 	virtual ~ResourceLocator();
 
 
-	/// @brief Create a ResourceStream object from the given resource
-	/// source, so that its stream can be passed to the ResourceLoader
+	/// @brief Create and return a ResourceStream object from the given locator_id
+	/// so that its stream can be passed to the ResourceLoader
 	virtual
 	ResourceStreamOP
 	locate_resource_stream(
-		std::string const & input_tag
+		std::string const & locator_id
 	) const = 0;
 
+	/// @brief Initialize the parameters for this %ResourceLocator from the contents of
+	/// an XML file.
 	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagPtr tag
 	) = 0;
 
+	/// @brief Set the name for this %ResourceLocator
 	virtual
 	void
 	locator_tag( std::string const & locator_tag );
 
+	/// @brief Return the name for this %ResourceLocator
 	virtual
 	std::string
 	locator_tag() const;
 
+	/// @brief Write a description of this %ResourceLocator to an out stream
 	virtual
 	void
 	show(
 		std::ostream & out
 	) const = 0;
 
-	/// @brief The class name for a particular ResourceLocator instance.
+	/// @brief Return the class name for this %ResourceLocator instance.
 	/// This function allows for better error message delivery.
 	virtual
 	std::string

@@ -34,12 +34,33 @@ namespace basic {
 namespace resource_manager {
 namespace locator {
 
-
+/// @brief The %DatabaseResourceLocator class is responsible for retreiving data
+/// from a Database so that that data can then be used to construct a Resource.
+///
+/// @details  Upon construction or in its parse_my_tag method, the
+/// %DatabaseResourceLocator needs to be given the name of the database-session
+/// resource that it will use to communicate with the database and a partially
+/// formatted SQL command (a SELECT statement) that will be used to query the
+/// database for the resource that it will be pulling from the database.  This
+/// SQL command should have a single question mark ("?") for the variable that
+/// will be replaced by the locator_id that will be given to the
+/// %DatabaseResourceLocator when its locate_resource_stream method is invoked.
+/// In that method, the %DatabaseResourceLocator will ask the ResourceManager
+/// for the database session object and then bind the input "locator_id" to the
+/// previously provided SQL command, and finally will query the database with that
+/// statement.  The resulting output is packaged in a string stream and returned
+/// to the code that called locate_resource_stream  (e.g. the ResourceManager)
+/// and then can be used to construct a resource.
 class DatabaseResourceLocator : public basic::resource_manager::ResourceLocator
 {
 public:
+	/// @brief The default constructor sets empty strings for both the database session
+	/// and for the SQL command; using this constructor requires initializing those two
+	/// pieces of data using the parse-my-tag method.
 	DatabaseResourceLocator();
 
+	/// @brief Constructor that takes in both the name of the database session resource
+	/// as well as the SQL command
 	DatabaseResourceLocator(
 		std::string const & database_session_resource_tag,
 		std::string const & sql_command);
@@ -49,23 +70,32 @@ public:
 
 	virtual ~DatabaseResourceLocator();
 
+	/// @brief Describe the %DatabaseResourceLocator instance to the given output stream
 	virtual
 	void
 	show(
 		std::ostream & out) const;
 
+	/// @brief Return the typename for this class: "DatabaseResourceLocator"
 	virtual
 	std::string
 	type() const;
 
 	/// @brief Create a ResourceStream object from the given resource
 	/// source, so that its stream can be passed to the ResourceLoader
+	/// using the input "locator_tag" which is bound to the partially formed
+	/// SQL select statement that was provided at construction or in
+	/// parse_my_tag
 	virtual
 	ResourceStreamOP
 	locate_resource_stream(
 		std::string const & locator_tag
 	) const;
 
+	/// @brief Initialize the %DatabaseResourceLoader from the input set of tags
+	/// which should contain both the name of the database session resource that
+	/// will be used to talk to the database, and the partially formed SQL
+	/// select statement that will be used to query the database.
 	virtual
 	void
 	parse_my_tag(

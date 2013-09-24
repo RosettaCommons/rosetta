@@ -29,33 +29,44 @@
 namespace protocols {
 namespace loops {
 
+/// @brief %LoopsFileOptions ecapsulates the options associated with LoopsFile %resources.
+/// @details These options are read in from a resource definition file and each loops_file resource has a corresponding
+/// %LoopsFileOptions instance.
 class LoopsFileOptions : public basic::resource_manager::ResourceOptions
 {
 public:
+	/// @brief Construct the %LoopsFileOptions.
 	LoopsFileOptions();
+
+	/// @brief Destructor.
 	virtual ~LoopsFileOptions();
 
+	/// @brief Read the configuration of the LoopsFile %resource from the tag generated from the resource definition
+	/// file.
 	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagPtr tag
 	);
 
+	/// @brief Return the name of this class (LoopsFileOptions).
 	virtual
 	std::string
 	type() const;
 
+	/// @brief Return the value of the prohibit_single_residue_loops property.
 	bool prohibit_single_residue_loops() const;
+
+	/// @brief Set the value of the prohibit_single_residue_loops property.
 	void prohibit_single_residue_loops( bool setting );
 
 private:
+	/// @brief Boolean that stores the state of the prohibit_single_residue_loops property.
 	bool prohibit_single_residue_loops_;
 
 };
 
 } // namespace loops
 } // namespace protocols
-
-
 
 #endif //INCLUDED_protocols_loops_LoopsFileOptions_hh

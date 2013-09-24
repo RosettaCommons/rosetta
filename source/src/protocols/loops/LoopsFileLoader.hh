@@ -32,15 +32,20 @@
 namespace protocols {
 namespace loops {
 
+/// @brief %LoopsFileLoader constructs a LoopsFileData instance from data provided by the %ResourceManager.
+/// @details The %LoopsFileLoader is given an istream containing the information in a %LoopsFile from the
+/// ResourceManager.  This information is then processed by an instance of LoopsFileIO to produce a LoopsFileDataOP to
+/// return to the protocol.
 class LoopsFileLoader : public basic::resource_manager::ResourceLoader
 {
 public:
+	/// @brief Construct the %LoopsFileLoader.
 	LoopsFileLoader();
+
+	/// @brief Destructor.
 	virtual ~LoopsFileLoader();
 
-	/// @brief Returns a pointer to a WrappedPrimative< LoopsFileData > object
-	/// which is constructed from the given input stream (istream) which in tern
-	/// originates from a particular data source (given by the name input_tag)
+	/// @brief Return a LoopsFileDataOP constructed from the given input stream (istream).
 	virtual
 	utility::pointer::ReferenceCountOP
 	create_resource(
@@ -49,6 +54,7 @@ public:
 		std::istream & istream
 	) const;
 
+	/// @brief Return a ResourceOptionsOP with the default set of options.
 	virtual
 	basic::resource_manager::ResourceOptionsOP
 	default_options() const;
@@ -57,7 +63,5 @@ public:
 
 } // namespace loops
 } // namespace protocols
-
-
 
 #endif //INCLUDED_protocols_loops_LoopsFileLoader_HH

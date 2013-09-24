@@ -31,6 +31,52 @@
 namespace protocols {
 namespace jd2 {
 
+
+/// @brief The %JD2ResourceManager is the ResourceManager that should be used when
+/// running protocols under the jd2 JobDistributor.
+///
+/// @details The purpose of the ResourceManager is to disentangle the process of
+/// feeding protocols with Resources they need from the job distribution system in
+/// which they run.  When protocols request a resource under the ResourceManager,
+/// they do so without knowing what kind of ResourceManager they are communicating
+/// with.  Protocols that are designed to run under JD2 could conceivably be run
+/// under any other job management scheme (e.g. a complicated MPI protocol).  It's
+/// the job of the %JD2ResourceManager to determine the right resource to deliver
+/// to a protocol, and the context that the %JD2ResourceManager uses to make that
+/// decision is the job.  E.g., when a protocol asks for the "native" (the Pose of
+/// the native structure), the %JD2ResourceManager looks up what job is currently
+/// running and then delivers the (single) native Pose for that job.
+///
+/// The %JD2ResourceManager is meant to work with the JD2ResourceManagerJobInputter.
+/// Jobs are defined in an input XML file and for each of the jobs that are defined,
+/// resources can be mapped to them.  Resources are also declared in an XML file
+/// and may be declared in the same XML file as the Jobs or in a different XML file.
+/// The format of this XML file is specified in full between the documentation
+/// in the JD2ResourceManagerJobInputter class and three functions that are
+/// documented and implemented in this class.
+///
+/// The %JD2ResourceManager keeps track of which resources are used by which jobs
+/// and keeps track of what jobs have completed.  It allocates a Resource the first
+/// time that resource is requested by a protoocol, and it deallocates that Resource
+/// when all jobs that require that resource have finished.  Thus a protocol that
+/// needs an expensive-to-create resource (e.g. a set of 9-mers) can load that
+/// resource once and then have that resource shared between all of the jobs that
+/// require that resource (e.g. 10K abinitio trajectories) *without having to do
+/// any legwork itself.*  If you have 100K abinitio trajectories for 10 different
+/// targets, they could all be run in a single job. (Note: as of 9/2013, abinitio
+/// does not work with the jd2 or the ResourceManager but it should!)
+///
+/// The main consequence of relying on the ResourceManager to hand resources to jobs
+/// is that jobs which require different resources (usually specified on the command
+/// line, and therefore requiring that each job run in a separate process) now can
+/// be run together in a single process.  For MPI jobs, this is a major improvement,
+/// especially in constructing benchmarks, where many separate, (possibly short)
+/// jobs need to be run.
+///
+/// (Because Resources are not constructed until they are requested, resources can
+/// be declared and never used; you can give a resource file that describes every
+/// resource you use in every job, and a job declaration file that only uses one
+/// of those resources.)
 class JD2ResourceManager : public basic::resource_manager::LazyResourceManager
 {
 public:
@@ -61,6 +107,7 @@ public:
 	has_resource_with_description(
 		basic::resource_manager::ResourceDescription const & resource_description);
 
+	/// @brief Read the portion of an XML file that declares ResourceLocator objects
 	void
 	read_resource_locators_tags(
 		utility::tag::TagPtr tags );

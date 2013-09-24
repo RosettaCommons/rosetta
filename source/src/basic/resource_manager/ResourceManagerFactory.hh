@@ -58,6 +58,9 @@ private:
 
 };
 
+/// @brief The %ResourceManagerRegistrator creates an instantiate of the templated ResourceManagerCreator
+/// class and gives it to the ResourceManagerFactory.  A single instance for each ResourceManagerCreator
+/// should be put in the appropriate init.cc file.
 template < class T >
 class ResourceManagerRegistrator : public utility::factory::WidgetRegistrator< ResourceManagerFactory, T >
 {

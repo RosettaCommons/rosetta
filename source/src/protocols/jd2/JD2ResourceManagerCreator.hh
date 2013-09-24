@@ -30,6 +30,8 @@
 namespace protocols {
 namespace jd2 {
 
+/// @brief The %JD2ResourceManagerCreator is responsible for instantiating the JD2ResourceManager
+/// for the ResourceManagerFactory
 class JD2ResourceManagerCreator : public basic::resource_manager::ResourceManagerCreator
 {
 public:

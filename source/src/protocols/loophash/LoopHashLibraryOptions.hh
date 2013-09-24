@@ -14,51 +14,63 @@
 #ifndef INCLUDED_protocols_loophash_LoopHashLibraryOptions_hh
 #define INCLUDED_protocols_loophash_LoopHashLibraryOptions_hh
 
-//unit headers
+// unit headers
 #include <protocols/loophash/LoopHashLibraryOptions.fwd.hh>
 
-//core headers
+// core headers
 #include <core/types.hh>
 
-//project headers
+// project headers
 #include <basic/resource_manager/ResourceOptions.hh>
 
-//utility headers
+// utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-//C++ headers
+// C++ headers
 
 namespace protocols {
 namespace loophash {
 
+/// @brief %LoopHashLibraryOptions ecapsulates the options associated with LoopHashLibrary %resources.
+/// @details These options are read in from a resource definition file and each LoopHashLibrary resource has a
+/// corresponding %LoopHashLibraryOptions instance.
 class LoopHashLibraryOptions : public basic::resource_manager::ResourceOptions
 {
 public:
+	/// @brief Construct the %LoopHashLibraryOptions.
 	LoopHashLibraryOptions();
+
+	/// @brief Destructor.
 	virtual ~LoopHashLibraryOptions();
 
+	/// @brief Read the configuration of the LoopHashLibrary %resource from the tag generated from the resource definition
+	/// file.
 	virtual
 	void
 	parse_my_tag(
 		utility::tag::TagPtr tag
 	);
 
+	/// @brief Return the name of this class (LoopHashLibraryOptions).
 	virtual
 	std::string
 	type() const;
 
+	/// @brief Return a %vector of loop sizes that will be used to construct a LoopHashLibrary.
 	utility::vector1<core::Size>
 	loop_sizes() const;
 
+	/// @brief Set the loop sizes that will be used to construct a LoopHashLibrary to a %vector of loop lengths.
 	void
 	loop_sizes(
 		utility::vector1<core::Size> loop_sizes
 	);
 
 private:
-		utility::vector1<core::Size> loop_sizes_;
+	/// @brief %Vector of %Sizes that stores the loop lengths that will be used to construct a LoopHashLibrary.
+	utility::vector1<core::Size> loop_sizes_;
 };
 
 } // namespace loophash

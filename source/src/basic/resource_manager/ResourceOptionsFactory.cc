@@ -90,6 +90,11 @@ ResourceOptionsFactory::factory_register( ResourceOptionsCreatorOP creator )
 	creator_map_[ options_type ] = creator;
 }
 
+/// @details Only useful for unit testing.  Since factory registration can happen any time between
+/// load time and the call to devel::init, there may be no one to catch a thrown exception in the
+/// event of a name collision between two ResourceOptionsCreators that register for the same name,
+/// and so the default behavior is to call utility_exit_with_message.  For the sake of unit testing, however,
+/// it is useful to change the default behavior so that exceptions can be thrown and then caught.
 void
 ResourceOptionsFactory::set_throw_on_double_registration() { throw_on_double_registration_ = true; }
 

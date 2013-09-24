@@ -182,8 +182,7 @@ FileSystemResourceLocator::get_open_mode() const {
 
 FileSystemResourceLocator::~FileSystemResourceLocator() {}
 
-/// @brief Create a ResourceStream object from the given resource
-/// source, so that its stream can be passed to the ResourceLoader
+/// @brief 
 ResourceStreamOP
 FileSystemResourceLocator::locate_resource_stream(
 	string const & locator_tag

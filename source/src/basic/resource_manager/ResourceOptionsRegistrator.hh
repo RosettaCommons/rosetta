@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   basic/resource_manager/ResourceLoader.hh
-/// @brief  
-/// @author 
+/// @brief
+/// @author
 
 #ifndef INCLUDED_basic_resource_manager_ResourceOptionsRegistrator_hh
 #define INCLUDED_basic_resource_manager_ResourceOptionsRegistrator_hh
@@ -27,6 +27,10 @@
 namespace basic {
 namespace resource_manager {
 
+/// @brief The %ResourceOptionsRegistrator class is responsible for creating an instance of the (templated)
+/// ResourceOptionsCreator class and giving it to the ResourceOptionsFactory in its construtor.  Instances
+/// of this class placed in the init.cc files (e.g. core/init/init.cc) ensure that the ResourceOptionsFactory
+/// is fully populated with the ResourceOptionsCreators by the time that the call to devel::init() completes.
 template < class T >
 class ResourceOptionsRegistrator : public utility::factory::WidgetRegistrator< ResourceOptionsFactory, T >
 {

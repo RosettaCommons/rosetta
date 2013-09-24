@@ -31,6 +31,10 @@ namespace basic {
 namespace resource_manager {
 namespace locator {
 
+/// @brief The %StringResourceStream is a wrapper class for a std::stringstream
+/// that can be used to construct a resource.  Useful when reading the resource
+/// stream in to memory (e.g. from a database or from multiple files) before
+/// trying to construct the resource.
 class StringResourceStream : public basic::resource_manager::ResourceStream
 {
 public:
@@ -40,6 +44,7 @@ public:
 		std::string const & contents
 	);
 
+	/// @brief Append a piece of data to the internal stringstream
 	template< class InputSource >
 	StringResourceStream(
 		InputSource & in_stream
@@ -57,11 +62,13 @@ public:
 	virtual
 	~StringResourceStream();
 
+	/// @brief Construct the stringstream from the given input string.
 	virtual
 	void
 	fill(
 		std::string const & contents);
 
+	/// @brief Give non-const access to the internal stringstream so that it can be used to construct a resource.
 	virtual
 	std::istream &
 	stream();

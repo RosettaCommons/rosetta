@@ -33,11 +33,19 @@
 namespace protocols {
 namespace loophash {
 
+/// @brief %LoopHashLibraryLoader constructs a LoopHashLibrary instance from data provided by the %ResourceManager.
+/// @details The %LoopHashLibraryLoader is given a LoopHashLibraryOptions containing a %vector of loop lengths from the
+/// ResourceManager.  This information is then used to produce a LoopHashLibraryOP to return to the protocol.
 class LoopHashLibraryLoader : public basic::resource_manager::ResourceLoader
 {
 public:
+	/// @brief Construct the %LoopHashLibraryLoader.
+	LoopHashLibraryLoader();
+
+	/// @brief Destructor.
 	virtual ~LoopHashLibraryLoader() {}
 
+	/// @brief Return a LoopHashLibraryOP constructed from the given ResourceOptions.
 	virtual
 	basic::resource_manager::ResourceOP
 	create_resource(
@@ -46,6 +54,7 @@ public:
 		std::istream &
 	) const;
 
+	/// @brief Return a ResourceOptionsOP with the default set of options.
 	virtual
 	basic::resource_manager::ResourceOptionsOP
 	default_options() const { return new LoopHashLibraryOptions();}
