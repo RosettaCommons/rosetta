@@ -40,6 +40,9 @@ std::string LoopHashLibraryLoaderCreator::loader_type() const
 	return "LoopHashLibrary";
 }
 
+
+LoopHashLibraryLoader::LoopHashLibraryLoader() {}
+
 /// @details Ensure the %ResourceOptions is a LoopHashLibraryOptions instance and construct a new LoopHashLibrary from
 /// it.  The locator_id and istream are not used.
 /// @throws utility::excn::EXCN_Msg_Exception

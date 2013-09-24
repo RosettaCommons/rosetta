@@ -33,7 +33,7 @@
 namespace protocols {
 namespace loophash {
 
-/// @brief %LoopHashLibraryOptions ecapsulates the options associated with LoopHashLibrary %resources.
+/// @brief %LoopHashLibraryOptions encapsulates the options associated with LoopHashLibrary %resources.
 /// @details These options are read in from a resource definition file and each LoopHashLibrary resource has a
 /// corresponding %LoopHashLibraryOptions instance.
 class LoopHashLibraryOptions : public basic::resource_manager::ResourceOptions
