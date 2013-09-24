@@ -617,7 +617,7 @@ namespace rna {
 		//                 C1-N2-N3-N4-N5-N6-N7-G8
 		//
 		//       Suppose C1 and G8 is a jump-point pair. We want to keep the
-		//       relative coordinates of C1 and C8 fixed.
+		//       relative coordinates of C1 and G8 fixed.
 		//
 		//       The function setup_additional_cutpoint_closed() will check to see if
 		//       any of the residues N2 to N7 are non_fixed_res (movable during
@@ -1727,9 +1727,11 @@ namespace rna {
 
 			std::pair < core::Size, core::Size > jump_point_pair = std::make_pair( string_to_int( JP_pair_string[1] ), string_to_int( JP_pair_string[2] ) );
 
-			if ( jump_point_pair.first >= jump_point_pair.second ){
+			if ( jump_point_pair.first > jump_point_pair.second ){
+				jump_point_pair = std::make_pair( string_to_int( JP_pair_string[2] ), string_to_int( JP_pair_string[1] ) );
+			} else if ( jump_point_pair.first == jump_point_pair.second ){
 				output_pair_size( jump_point_pair, TR.Debug );
-				utility_exit_with_message( "jump_point_pair.first >= jump_point_pair.second!" );
+				utility_exit_with_message( "jump_point_pair.first == jump_point_pair.second!" );
 			}
 
 			jump_point_pair_list_.push_back( jump_point_pair );

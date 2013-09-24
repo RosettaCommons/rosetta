@@ -192,7 +192,8 @@ void FixbbSimAnnealer::run()
 
 			if (rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
 
-			core::PackerEnergy previous_energy_for_node, delta_energy;
+			// initializing to zero but should be updated below.
+			core::PackerEnergy previous_energy_for_node( 0.0 ), delta_energy( 0.0 );
 
 			ig_->consider_substitution( moltenres_id, rotamer_state_on_moltenres,
 				delta_energy, previous_energy_for_node);

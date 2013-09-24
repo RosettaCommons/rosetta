@@ -157,6 +157,7 @@ namespace monte_carlo {
 			runtime_assert( allow_internal_moves_ );
 			move_type = "resample_internal_local";
 
+			TR << "Going to set up TRANSIENT_CUTPOINT_HANDLER with " << remodel_suite << " " << cutpoint_suite << std::endl;
 			TransientCutpointHandler cutpoint_handler( remodel_suite, cutpoint_suite );
 			if ( ! minimize_single_res_ ) cutpoint_handler.set_minimize_res( moving_res );
 

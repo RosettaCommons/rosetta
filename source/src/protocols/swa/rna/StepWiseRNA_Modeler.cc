@@ -31,6 +31,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh> // should remove this later.
 
 #include <utility/tools/make_vector1.hh>
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/string.functions.hh>
@@ -385,57 +386,52 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		input_res1 = not_rebuild_res;
 
 		Size cutpoint_closed( 0 );
-		// check for cutpoint variant.
-		if ( pose.residue_type( rebuild_res ).has_variant_type( CUTPOINT_UPPER ) ){
-			runtime_assert( pose.residue_type( rebuild_res - 1 ).has_variant_type( CUTPOINT_LOWER  ) );
-			cutpoint_closed = rebuild_res - 1;
-		} else if (  pose.residue_type( rebuild_res ).has_variant_type( CUTPOINT_LOWER ) ){
-			runtime_assert( pose.residue_type( rebuild_res + 1 ).has_variant_type( CUTPOINT_UPPER  ) );
-			cutpoint_closed = rebuild_res;
-		} else if ( rebuild_res == 1  ){
-			/*must be a prepend!*/;
-		} else if ( rebuild_res == nres  ){
-			/*must be an append!*/;
-		} else if ( pose.fold_tree().is_cutpoint( rebuild_res - 1 ) ){
-			cutpoint_open.push_back( rebuild_res - 1 );
-		} else if ( pose.fold_tree().is_cutpoint( rebuild_res ) ){
-			cutpoint_open.push_back( rebuild_res );
-		} else {
-			// internal. need to be smart about input_res definitions -- 'domains' that are separated by moving residue.
-			input_res1.clear();
-			input_res2.clear();
-			utility::vector1< bool > partition_definition =	get_partition_definition( pose, rebuild_res );
-			bool found_moving_cutpoint( false );
-			for ( Size n = 1; n <= pose.total_residue(); n++ ){
-				if ( !partition_definition[ n ] ) {
-					input_res1.push_back( n );
-				}	else {
-					input_res2.push_back( n );
-				}
-				// look for cutpoints
-				if ( n == pose.total_residue() ) continue;
-				if ( pose.fold_tree().is_cutpoint( n ) && ( partition_definition[ n ] != partition_definition[ n+1 ] ) ){
-					runtime_assert( !found_moving_cutpoint );
-					found_moving_cutpoint = true;
-					if ( pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ){
-						runtime_assert( pose.residue_type( n + 1 ).has_variant_type( CUTPOINT_UPPER  ) );
-						if ( cutpoint_closed > 0 ) utility_exit_with_message( "Right now, StepWiseRNA Modeler can only handle poses with single movable closable cutpoints!" );
-						cutpoint_closed = n;
-					} else {
-						cutpoint_open.push_back( n );
-					}
-				}
-			}
+		Size rebuild_suite = rebuild_res;
 
-			//note that fixed_res_guess, which is really a list of fixed nucleosides,
-			// should now include the 'moving res' [unless re-specified by user down below].
-			fixed_res_guess.push_back( rebuild_res );
-
-			// To specify that the suite move, we actually need to directly address the movemap... see below.
-			suites_that_must_be_minimized.push_back( rebuild_res );
-			if ( cutpoint_closed > 0 ) suites_that_must_be_minimized.push_back( cutpoint_closed );
+		// special case: residue is at strand end -- there isn't even a suite to build.
+		if ( pose.fold_tree().is_cutpoint( rebuild_res ) ){
+			rebuild_suite = rebuild_res - 1;
 		}
 
+		// internal. need to be smart about input_res definitions -- 'domains' that are separated by moving residue.
+		input_res1.clear();
+		input_res2.clear();
+		utility::vector1< bool > partition_definition =	get_partition_definition( pose, rebuild_suite );
+		bool found_moving_cutpoint( false );
+		for ( Size n = 1; n <= pose.total_residue(); n++ ){
+			if ( !partition_definition[ n ] ) {
+				input_res1.push_back( n );
+			}	else {
+				input_res2.push_back( n );
+			}
+			// look for cutpoints
+			if ( n == pose.total_residue() ) continue;
+			if ( pose.fold_tree().is_cutpoint( n ) && ( partition_definition[ n ] != partition_definition[ n+1 ] ) ){
+				runtime_assert( !found_moving_cutpoint );
+				found_moving_cutpoint = true;
+				if ( pose.residue_type( n ).has_variant_type( CUTPOINT_LOWER ) ){
+					runtime_assert( pose.residue_type( n + 1 ).has_variant_type( CUTPOINT_UPPER  ) );
+					if ( cutpoint_closed > 0 ) utility_exit_with_message( "Right now, StepWiseRNA Modeler can only handle poses with single movable closable cutpoints!" );
+					cutpoint_closed = n;
+				} else {
+					cutpoint_open.push_back( n );
+				}
+			}
+		}
+
+		// if there's really just a single nucleotide being rebuilt, its nucleoside is not fixed.
+		// but if there's a whole chunk of stuff.
+
+		//note that fixed_res_guess, which is really a list of fixed nucleosides,
+		// should now include the 'moving res' [unless re-specified by user down below].
+		TR << "INPUT_RES1 " << make_tag_with_dashes(input_res1) << " INPUT_RES2 " << make_tag_with_dashes(input_res2) << " REBUILD_RES " << rebuild_res << " REBUILD_SUITE " <<  rebuild_suite << " CUTPOINT_CLOSED " << cutpoint_closed << std::endl;
+
+		// check if this is an 'internal' move.
+		if ( input_res1.size() > 1 && input_res2.size() > 1 ) fixed_res_guess.push_back( rebuild_res );
+
+		// To specify that the suite move, we actually need to directly address the movemap... see below.
+		suites_that_must_be_minimized.push_back( rebuild_suite );
+		if ( cutpoint_closed > 0 ) suites_that_must_be_minimized.push_back( cutpoint_closed );
 
 		if ( cutpoint_closed > 0 ) {
 			if ( kic_sampling_if_relevant_ ) kic_sampling_ = true;
@@ -456,12 +452,13 @@ StepWiseRNA_Modeler::setup_job_parameters_for_swa( utility::vector1< Size > movi
 		rmsd_res_list.push_back( rebuild_res );
 		stepwise_rna_job_parameters_setup.set_rmsd_res_list( rmsd_res_list );
 
-		// not sure about the following -- instead, how about reading jump residues from within pose itself?
-		if ( cutpoint_closed > 0 || cutpoint_open.size() > 0 ){
-			utility::vector1< std::string > jump_point_pair_list;
-			jump_point_pair_list.push_back( ObjexxFCL::string_of( rebuild_res - 1 ) + "-" + ObjexxFCL::string_of( rebuild_res + 1 ) );
-			stepwise_rna_job_parameters_setup.set_jump_point_pair_list( jump_point_pair_list ); //Important!: Needs to be called after set_fixed_res
+		utility::vector1< std::string > jump_point_pair_list;
+		core::kinematics::FoldTree const & f = pose.fold_tree();
+		for ( Size n = 1; n <= f.num_jump(); n++ ){
+			jump_point_pair_list.push_back( ObjexxFCL::string_of( f.upstream_jump_residue( n ) ) + "-" +
+																			ObjexxFCL::string_of( f.downstream_jump_residue( n ) ) );
 		}
+		stepwise_rna_job_parameters_setup.set_jump_point_pair_list( jump_point_pair_list ); //Important!: Needs to be called after set_fixed_res
 
 		utility::vector1< std::string > alignment_res; //why is this a string vector?????
 		for ( Size n = 1; n <= fixed_res_guess.size(); n++ ) alignment_res.push_back( ObjexxFCL::string_of( fixed_res_guess[ n ] ) );

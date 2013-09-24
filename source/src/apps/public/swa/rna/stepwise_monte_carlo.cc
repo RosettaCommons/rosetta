@@ -196,6 +196,7 @@ stepwise_monte_carlo()
 	for ( Size n = 1; n <= option[ out::nstruct ](); n++ ) {
 
 		if ( !get_out_tag( out_tag, n, silent_file ) ) continue;
+		TR << std::endl << TR.Green << "Embarking on structure " << n << " of " << option[ out::nstruct ]() << TR.Reset << std::endl;
 
 		pose = start_pose;
 		stepwise_rna_monte_carlo.apply( pose );

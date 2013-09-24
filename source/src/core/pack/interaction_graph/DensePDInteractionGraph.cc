@@ -375,6 +375,7 @@ DensePDEdge::DensePDEdge
 		get_dpd_node(0)->get_num_states(),
 		0.0f
 	),
+	curr_state_energy_( core::PackerEnergy( 0.0 ) ),
 	energies_updated_since_last_prep_for_simA_( true )
 {
 }

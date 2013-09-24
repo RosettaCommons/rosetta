@@ -840,7 +840,9 @@ display_residues_wireframe(
 			Vector const xyz2(      rsd.xyz( atom2 ) - center );
 
 			Vector const bond( xyz2 - xyz1 );
-			if (bond.length_squared() <= graphics::BOND_LENGTH_CUTOFF2 )  {
+			if ( !prev_rsd.is_virtual( atom1 ) &&
+					 !rsd.is_virtual( atom2 ) &&
+					 bond.length_squared() <= graphics::BOND_LENGTH_CUTOFF2 )  {
 
 				Vector width( cross( bond, z ) );
 				if ( width.length_squared() ) width.normalize();
@@ -1517,7 +1519,6 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 
 				Vector const bond( xyz2 - xyz1 );
 
-				// check for chainbreaks
 				if (bond.length_squared() > graphics::BOND_LENGTH_CUTOFF2 ) break;
 
 				Vector width( cross( bond, z ) );

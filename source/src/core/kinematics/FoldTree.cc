@@ -91,7 +91,7 @@ size_t FoldTree::hash_value() const {
   // obtain a string representation of the FoldTree
   string repr;
   stringstream ss;
-  ss << this;
+  ss << *this;
   repr = ss.str();
 
   // compute hash(repr)

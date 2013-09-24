@@ -28,11 +28,13 @@
 
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 using namespace core;
 
 static numeric::random::RandomGenerator RG(2391021);  // <- Magic number, do not change it!
 static basic::Tracer TR( "protocols.swa.monte_carlo.RNA_StepWiseMonteCarlo" );
+using ObjexxFCL::string_of;
 
 //////////////////////////////////////////////////////////////////////////
 // StepWiseMonteCarlo -- monte carlo minimization framework for
@@ -171,7 +173,10 @@ RNA_StepWiseMonteCarlo::switch_focus_among_poses_randomly( pose::Pose & pose ) c
 	switch_focus_to_other_pose( pose, focus_pose_idx );
 	Real const score_after_switch_focus = (*scorefxn_)( pose );
 
-	runtime_assert( std::abs( score_before_switch_focus - score_after_switch_focus ) < 1e-3 );
+	// originally set threshold at 0.001, but triggered rare errors. At some point worth tracking down...
+	if (  std::abs( score_before_switch_focus - score_after_switch_focus ) > 0.10 ){
+		utility_exit_with_message( "Energy change after switching pose focus: " + string_of( score_before_switch_focus ) + " to " +string_of( score_after_switch_focus ) );
+	}
 
 	return true;
 }

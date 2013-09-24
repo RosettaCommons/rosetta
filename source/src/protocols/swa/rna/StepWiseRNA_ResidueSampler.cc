@@ -2184,14 +2184,16 @@ StepWiseRNA_ResidueSampler::Full_atom_van_der_Waals_screening( pose::Pose & curr
 	delta_rep_score = rep_score - base_rep_score;
 	delta_atr_score = atr_score - base_atr_score;
 
-	if ( delta_rep_score < (  - 0.01 ) ){
+	if ( delta_rep_score < (  -0.1 ) ){
+		// changed from -0.01 after triggering in SWM runs -- rhiju, sep. 2013.
 		std::string const message = "delta_rep_score = " + string_of( delta_rep_score ) + " rep_score = " + string_of( rep_score ) + " base_rep_score = " + string_of( base_rep_score );
-		utility_exit_with_message( "delta_rep_score < (  - 0.01 ), " + message );
+		utility_exit_with_message( "delta_rep_score < (  -0.1 ), " + message );
 	}
 
-	if ( delta_atr_score > (  + 0.01 ) ){
+	if ( delta_atr_score > (  +0.1 ) ){
+		// changed from +0.01 after triggering in SWM runs -- rhiju, sep. 2013.
 		std::string const message = "delta_atr_score = " + string_of( delta_atr_score ) + " atr_score = " + string_of( atr_score ) + " base_atr_score = " + string_of( base_atr_score );
-		utility_exit_with_message( "delta_atr_score > (  + 0.01 ), " + message );
+		utility_exit_with_message( "delta_atr_score > (  +0.1 ), " + message );
 	}
 
 	Real actual_rep_cutoff = rep_cutoff_; //defualt

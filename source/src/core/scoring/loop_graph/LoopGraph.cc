@@ -314,9 +314,9 @@ namespace loop_graph {
 		Size takeoff_pos( 0 ), takeoff_domain( 0 ), landing_pos( 0 ), landing_domain( 0 );
 		Size nres = pose_domain_map.size();
 
-		TR.Debug << "DOMAIN_MAP";
-		for ( Size k = 1; k <= pose_domain_map.size(); k++ ) TR.Debug << " " << pose_domain_map[ k ];
-		TR.Debug << std::endl;
+		//		TR.Debug << "DOMAIN_MAP";
+		//		for ( Size k = 1; k <= pose_domain_map.size(); k++ ) TR.Debug << " " << pose_domain_map[ k ];
+		//		TR.Debug << std::endl;
 
 		for ( Size n = 1; n <= nres; n++ ){
 
@@ -354,12 +354,12 @@ namespace loop_graph {
 		}
 
 		for ( Size k = 1; k <= loops_.size(); k++ ){
-			TR.Debug << loops_[ k ] << std::endl;
+			//			TR.Debug << loops_[ k ] << std::endl;
 			Size const & takeoff_domain = loops_[ k ].takeoff_domain();
 			if ( takeoff_domain == 0 ) continue;
 			loops_from_domain_[ takeoff_domain ].push_back( k );
 		}
-		TR.Debug << "NUM_DOMAINS " << num_domains << " " << loops_from_domain_.size() << std::endl;
+		//		TR.Debug << "NUM_DOMAINS " << num_domains << " " << loops_from_domain_.size() << std::endl;
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
