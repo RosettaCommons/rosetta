@@ -51,11 +51,14 @@ public:
     bool skip_best_check = false,
     bool rtmin = false,
     bool shuffle_order = false,
+    bool diversify = false,
+    bool incl_nonopt = false,
 		protocols::filters::FilterOP stopping_condition = protocols::filters::FilterOP( NULL )
 	);
 
 	bool pose_coords_are_same( core::pose::Pose const & pose1, core::pose::Pose const & pose2 );
 	void filter_seqpos_pareto_opt_ptmuts();
+	void filter_pareto_opt_poses();
 	void clear_cached_data();
 	void calc_pfront_poses_filter_ranks();
 	void dump_scoring_table( std::string filename, core::pose::Pose const & ref_pose ) const;
@@ -101,6 +104,10 @@ public:
   void rtmin( bool const b );
   bool shuffle_order() const;
   void shuffle_order( bool const b );
+  bool diversify() const;
+  void diversify( bool const b );
+  bool incl_nonopt() const;
+  void incl_nonopt( bool const b );
 
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
@@ -127,6 +134,8 @@ private:
 	core::Real design_shell_;//dflt -1 to only allow pointmutations, higher allows suroundings to be designed as well
 	core::Real repack_shell_;
 	bool shuffle_order_; //randomize the order that mutations are attempted?
+	bool diversify_; //randomize the order that mutations are attempted?
+	bool incl_nonopt_; //randomize the order that mutations are attempted?
 };
 
 

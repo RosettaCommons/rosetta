@@ -18,6 +18,7 @@
 
 // Project headers
 #include <core/pose/annotated_sequence.hh>
+#include <core/sequence/util.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 #include <protocols/loops/Loops.hh>
@@ -32,6 +33,10 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+// Option Headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
@@ -93,10 +98,12 @@ void ExtendedPoseMover::parse_my_tag(const utility::tag::TagPtr tag,
                                      const protocols::moves::Movers_map&,
                                      const core::pose::Pose&) {
   // required options
-  if (!tag->hasOption("sequence"))
-    throw utility::excn::EXCN_RosettaScriptsOption("Failed to specify required option `sequence`");
-
-  sequence(tag->getOption<string>("sequence"));
+  if (tag->hasOption("sequence")) sequence(tag->getOption<string>("sequence")); 
+  else if (tag->getOption<bool>("use_fasta", false )){
+    sequence( core::sequence::read_fasta_file_return_str(
+        basic::options::option[ basic::options::OptionKeys::in::file::fasta ]()[1] ) );
+  }
+  else throw utility::excn::EXCN_RosettaScriptsOption("Failed to specify required option `sequence` or fasta file");
 
   // additional options
   if (tag->hasOption("residue_type_set"))

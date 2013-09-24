@@ -92,12 +92,22 @@ public:
 	/// context graphs are required
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
-
+	
+	core::Real
+	get_residue_energy_by_svm(
+		core::pose::Pose const &,
+		core::Size const &,
+		core::Real &,
+		utility::vector1< core::Real > &
+	) const;
 	void read_nmer_svm_list( std::string const );
 	void read_nmer_svm( std::string const );
+	core::Size n_svms() const; 
 	void read_aa_encoding_matrix( std::string const );
 	void nmer_length( core::Size const );
+	core::Size nmer_length() const;
 	void term_length( core::Size const );
+	core::Size term_length() const;
 	void use_pssm_features( bool const );
 	void gate_svm_scores( bool const );
 	void nmer_svm_scorecut( core::Real const );

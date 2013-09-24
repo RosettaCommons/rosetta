@@ -101,6 +101,7 @@ static FilterRegistrator< protocols::simple_filters::InterfaceBindingEnergyDensi
 static FilterRegistrator< protocols::simple_filters::NeighborTypeFilterCreator > reg_NeighborTypeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::NetChargeFilterCreator > reg_NetChargeFilterCreator;
 static FilterRegistrator< protocols::simple_filters::NMerPSSMEnergyFilterCreator > reg_NMerPSSMEnergyFilterCreator;
+static FilterRegistrator< protocols::simple_filters::NMerSVMEnergyFilterCreator > reg_NMerSVMEnergyFilterCreator;
 static FilterRegistrator< protocols::simple_filters::OperatorFilterCreator > reg_OperatorFilterCreator;
 static FilterRegistrator< protocols::simple_filters::PackStatFilterCreator > reg_PackStatFilterCreator;
 static FilterRegistrator< protocols::simple_filters::PoseInfoFilterCreator > reg_PoseInfoFilterCreator;

@@ -88,6 +88,7 @@
 #include <protocols/simple_filters/NeighborTypeFilterCreator.hh>
 #include <protocols/simple_filters/NetChargeFilterCreator.hh>
 #include <protocols/simple_filters/NMerPSSMEnergyFilterCreator.hh>
+#include <protocols/simple_filters/NMerSVMEnergyFilterCreator.hh>
 #include <protocols/simple_filters/PackStatFilterCreator.hh>
 #include <protocols/simple_filters/PoseInfoFilterCreator.hh>
 #include <protocols/simple_filters/RangeFilterCreator.hh>

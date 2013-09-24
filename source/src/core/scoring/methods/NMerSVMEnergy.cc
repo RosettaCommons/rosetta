@@ -61,7 +61,6 @@ ScoreTypes
 NMerSVMEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( nmer_svm );
-//	sts.push_back( ref_nc );
 	return sts;
 }
 
@@ -72,9 +71,27 @@ NMerSVMEnergy::nmer_length( Size const nmer_length ){
 	nmer_cterm_ = nmer_length_ - 1 ;
 }
 
+Size
+NMerSVMEnergy::n_svms() const
+{
+	return all_nmer_svms_.size();
+}
+
+Size
+NMerSVMEnergy::nmer_length() const
+{
+	return nmer_length_;
+}
+
 void
 NMerSVMEnergy::term_length( Size const term_length ){
 	term_length_ = term_length;
+}
+
+Size
+NMerSVMEnergy::term_length() const
+{
+	return term_length_;
 }
 
 void
@@ -338,18 +355,15 @@ NMerSVMEnergy::add_pssm_features( std::string const seq, Size const isvm, vector
 	}
 }
 
-void
-NMerSVMEnergy::residue_energy(
-	conformation::Residue const & rsd,
+Real
+NMerSVMEnergy::get_residue_energy_by_svm(
 	pose::Pose const & pose,
-	EnergyMap & emap
+	Size const & seqpos,
+	Real & rsd_energy_avg,
+	vector1< Real > & rsd_svm_energies
 ) const
 {
-	using namespace chemical;
-
-	if( all_nmer_svms_.empty() ) return;
-	Size const seqpos( rsd.seqpos() );
-
+	assert( rsd_svm_energies.size() == n_svms() );
 	//for now, just assign all of the p1=seqpos frame's nmer_svm energy to this residue
 	//TODO: distribute frame's nmer_svm energy evenly across the nmer
 	//TODO: avoid wasting calc time by storing nmer_value, nmer_val_out_of_date in pose cacheable data
@@ -359,35 +373,45 @@ NMerSVMEnergy::residue_energy(
 	//TODO: how deal w/ sequences shorter than nmer_length_?
 	// this matters at both termini… maybe take max of all overlapping frames w/ missing res as 'X'?
 	// go ahead and bail if we fall off the end of the chain
-	if( p1_seqpos + nmer_length_ - 1 > pose.conformation().chain_end( pose.chain( p1_seqpos ) ) ) return;
-	//need p1 position in this chain's sequence, offset with index of first res
-	Size chain_p1_seqpos( p1_seqpos - pose.conformation().chain_begin( pose.chain( p1_seqpos ) ) + 1 );
-	std::string chain_sequence( pose.chain_sequence( pose.chain( p1_seqpos ) ) );
+	if( p1_seqpos + nmer_length_ - 1 <= pose.conformation().chain_end( pose.chain( p1_seqpos ) ) ){
+		//need p1 position in this chain's sequence, offset with index of first res
+		Size chain_p1_seqpos( p1_seqpos - pose.conformation().chain_begin( pose.chain( p1_seqpos ) ) + 1 );
+		std::string chain_sequence( pose.chain_sequence( pose.chain( p1_seqpos ) ) );
 
-	//over each svm
-	Size const n_svms( all_nmer_svms_.size() );
-	for( Size isvm = 1; isvm <= n_svms; ++isvm ){
+		rsd_energy_avg = 0.;
 		//encode nmer string --> feature(Svm_node) vector
-		vector1< Svm_node_rosettaOP > p1_seqpos_nmer_features(
-				get_svm_nodes( encode_nmer( chain_sequence, chain_p1_seqpos, isvm ) ) );
-		//get this svm model
-		Svm_rosettaOP nmer_svm_model( all_nmer_svms_[ isvm ] );
-		Real rsd_energy( 0.0 );
-		//Svm_rosetta funxn to wrap svm_predict, see Svm_rosetta::predict_probability for template, 
-		Real frame_energy( nmer_svm_model->predict( p1_seqpos_nmer_features ) );
-//		TR << "svm_seqpos_9mer_score: " << " " << isvm << " " << p1_seqpos << " " << chain_sequence.substr( chain_p1_seqpos - 1, 9 ) << " " << frame_energy << " " << std::endl; //debug
-		rsd_energy = frame_energy;
-		//gate energy at svm_scorecut, thus ignoring low-scoring nmers
-		if( gate_svm_scores_ && rsd_energy < nmer_svm_scorecut_ ) rsd_energy = nmer_svm_scorecut_;
-		//add sum of all frames' rsd energies into emap
-		emap[ nmer_svm ] += rsd_energy;
+		for( Size isvm = 1; isvm <= n_svms(); ++isvm ){
+			vector1< Svm_node_rosettaOP > p1_seqpos_nmer_features(
+					get_svm_nodes( encode_nmer( chain_sequence, chain_p1_seqpos, isvm ) ) );
+			//get this svm model
+			Svm_rosettaOP nmer_svm_model( all_nmer_svms_[ isvm ] );
+			//Svm_rosetta funxn to wrap svm_predict, see Svm_rosetta::predict_probability for template, 
+			Real rsd_svm_energy( nmer_svm_model->predict( p1_seqpos_nmer_features ) );
+			//gate energy at svm_scorecut, thus ignoring low-scoring nmers
+			if( gate_svm_scores_ && rsd_svm_energy < nmer_svm_scorecut_ ) rsd_svm_energy = nmer_svm_scorecut_;
+			//store this svms rsd energy
+			rsd_svm_energies[ isvm ] = rsd_svm_energy;
+			//normalize energy by number of svms used
+			//otherwise avg scores would become huge if we use lots of svms instead of just 1
+			rsd_energy_avg += ( rsd_svm_energy / n_svms() );
+		}
 	}
+}
 
-	//normalize energy by number of svms used
-	//otherwise avg scores would become huge if we use lots of svms instead of just 1
+void
+NMerSVMEnergy::residue_energy(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	EnergyMap & emap
+) const
+{
+	if( all_nmer_svms_.empty() ) return;
+	Size const seqpos( rsd.seqpos() );
 
-	emap[ nmer_svm ] /= n_svms;
-	return;
+	Real rsd_energy( 0. );
+	vector1< Real > rsd_svm_energies( n_svms(), Real( 0. ) );
+	get_residue_energy_by_svm( pose, seqpos, rsd_energy, rsd_svm_energies );
+	emap[ nmer_svm ] += rsd_energy;
 }
 
 

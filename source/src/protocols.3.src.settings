@@ -368,6 +368,7 @@ sources = {
 		"NetChargeFilter",
 		"NonSequentialNeighborsFilter",
 		"NMerPSSMEnergyFilter",
+		"NMerSVMEnergyFilter",
 		"PackerNeighborGraphFilter",
 		"PackStatFilter",
 		"PalesEvaluator",

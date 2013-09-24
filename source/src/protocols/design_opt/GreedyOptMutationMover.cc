@@ -83,7 +83,9 @@ GreedyOptMutationMover::GreedyOptMutationMover() :
 	stop_before_condition_( false ),
 	skip_best_check_( false ),
 	rtmin_( false ),
-	shuffle_order_( false )
+	shuffle_order_( false ),
+	diversify_( false ),
+	incl_nonopt_( false )
 {}
 
 //full ctor
@@ -101,6 +103,8 @@ GreedyOptMutationMover::GreedyOptMutationMover(
   bool skip_best_check,
   bool rtmin,
   bool shuffle_order,
+  bool diversify,
+  bool incl_nonopt,
 	protocols::filters::FilterOP stopping_condition
 ) :
 	Mover( GreedyOptMutationMoverCreator::mover_name() )
@@ -117,6 +121,8 @@ GreedyOptMutationMover::GreedyOptMutationMover(
   skip_best_check_ = skip_best_check;
   rtmin_ = rtmin;
   shuffle_order_ = shuffle_order;
+  diversify_ = diversify;
+  incl_nonopt_ = incl_nonopt;
 	stopping_condition_ = stopping_condition;
 	nstruct_iter_ = 1;
 }
@@ -245,6 +251,22 @@ GreedyOptMutationMover::shuffle_order( bool const b ){
 
 bool
 GreedyOptMutationMover::shuffle_order() const{ return shuffle_order_; }
+
+void
+GreedyOptMutationMover::diversify( bool const b ){
+  diversify_ = b;
+}
+
+bool
+GreedyOptMutationMover::diversify() const{ return diversify_; }
+
+void
+GreedyOptMutationMover::incl_nonopt( bool const b ){
+  incl_nonopt_ = b;
+}
+
+bool
+GreedyOptMutationMover::incl_nonopt() const{ return incl_nonopt_; }
 
 utility::vector1< protocols::simple_filters::DeltaFilterOP > 
 GreedyOptMutationMover::delta_filters() const { 
@@ -379,21 +401,78 @@ GreedyOptMutationMover::calc_pfront_poses_filter_ranks(){
 	}
 }
 
+void
+calc_pareto_front_nbrs(
+	vector1< vector1< Real > > coords,
+	vector1< bool > const & is_pfront,
+	vector1< bool > & is_pfront_nbr,
+	vector1< Real > const & nbr_dist
+){
+	assert( coords.size() == is_pfront.size() );
+	//n coords, d dimensions
+	Size n( coords.size() );
+	Size d( coords[ 1 ].size() );
+	assert( nbr_dist.size() == d );
+	//for non pfront points
+	for( Size inp = 1; inp <= n; ++inp ){
+		//init possible nbr to false
+		is_pfront_nbr[ inp ] = false;
+		//skip front pts
+		if( is_pfront[ inp ] ) continue;
+		//over pfront pts
+		for( Size ip = 1; ip <= n; ++ip ){
+			if( ip == inp ) continue;
+			//skip non-front pts
+			if( !is_pfront[ ip ] ) continue;
+			//now see if ip pfront pt is in inp's nbr box
+			//init true, reset to false if fails any dimension
+			bool this_is_nbr( true );
+			for( Size k = 1; k <= d; ++k ){
+				if( std::abs( coords[ ip ][ k ] - coords[ inp ][ k ] ) > nbr_dist[ k ] ){
+					this_is_nbr = false;
+					break;
+				}
+			}	
+			if( this_is_nbr ){
+				is_pfront_nbr[ inp ] = true;		
+				break;
+			}
+		}
+	}
+}
+
 //Yes, I'm aware this is the slowest and simplest implementation of pareto front
 // identification, but this needs to be finished 2 days ago
 // and this calc is hardly the rate limiting step with a bunch of repacking and filter evals
 //calc_single_pos_pareto_front
 //takes a set (vec1) of coords
 //populates boolean vector w/ is_pareto?
+/*
+instead of just jiggling all the points, we really want to return is_pareto? and is_pareto_nbr( filter_delta )
+maybe just another loop over each pareto point to find all pts w/in delta that re not already pareto
+then later, have an option for incl_nbrs at each call to clc_pareto_front; e.g. for pfront poses can say no nbrs to still get one lowest pose after trying multiple muts per position
+*/
 void
 calc_pareto_front(
-	vector1< vector1< Real > > const & coords,
-	vector1< bool > & is_pfront
+	vector1< vector1< Real > > coords,
+	vector1< bool > & is_pfront,
+	vector1< Real > const & coord_perts,
+	bool const div,
+	bool const incl_nbrs
 ){
 	assert( coords.size() == is_pfront.size() );
 	//n coords, d dimensions
 	Size n( coords.size() );
 	Size d( coords[ 1 ].size() );
+	assert( coord_perts.size() == d );
+	//randomly offset values by jiggle-factors defined in filter_deltas?
+	if( div ){
+		for( Size i = 1; i <= n; ++i ){
+			for( Size k = 1; k <= d; ++k ){
+				coords[ i ][ k ] += ( ( RG.uniform() - 0.5 ) * coord_perts[ k ] );
+			}	
+		}
+	}
 	//for each point
 	for( Size i = 1; i <= n; ++i ){
 		bool is_dom( false );
@@ -417,10 +496,18 @@ calc_pareto_front(
 		if( is_dom ) is_pfront[ i ] = false;
 		else is_pfront[ i ] = true;
 	}
+	if( incl_nbrs ){
+		//now get pfront nbrs based on filter_deltas
+		vector1< bool > is_pfront_nbr( is_pfront.size(), false );
+		calc_pareto_front_nbrs( coords, is_pfront, is_pfront_nbr, coord_perts );
+		//reset is_pfront to incl nbrs
+		for( Size ip = 1; ip <= is_pfront.size(); ip++ ){
+			if( !is_pfront[ ip ] && is_pfront_nbr[ ip ] ) is_pfront[ ip ]  = true;
+		}
+	}
 }
 
 //removes seqpos aa/vals from set that are not pareto optimal
-//TODO: keep nonpareto points that are within filter_delta of nearest pareto point
 void
 GreedyOptMutationMover::filter_seqpos_pareto_opt_ptmuts(){
 	for( Size iseq = 1; iseq <= seqpos_aa_vals_vec_.size(); ++iseq ){
@@ -431,14 +518,12 @@ GreedyOptMutationMover::filter_seqpos_pareto_opt_ptmuts(){
 			vals.push_back( seqpos_aa_vals_vec_[ iseq ].second[ i ].second );
 		}
 		//get is_pareto bool vec
-		calc_pareto_front( vals, is_pfront );
-		//find points within filter_delta of pareto points
-		
-		vector1< bool > is_pfront_nbr( seqpos_aa_vals_vec_[ iseq ].second.size(), false );
-		//replace aa/vals vector with pareto opt only
+		calc_pareto_front( vals, is_pfront, filter_deltas_, diversify_, incl_nonopt_ );
+	 	//replace aa/vals vector with pareto opt only
 		vector1< pair< AA, vector1< Real > > > pfront_aa_vals;
 		for( Size iaa = 1; iaa <= seqpos_aa_vals_vec_[ iseq ].second.size(); ++iaa ){
 			if( is_pfront[ iaa ] ) pfront_aa_vals.push_back( seqpos_aa_vals_vec_[ iseq ].second[ iaa ] );
+//			else if( is_pfront_nbr[ iaa ] ) pfront_aa_vals.push_back( seqpos_aa_vals_vec_[ iseq ].second[ iaa ] );
 		}
 		seqpos_aa_vals_vec_[ iseq ].second = pfront_aa_vals;
 	}
@@ -446,24 +531,24 @@ GreedyOptMutationMover::filter_seqpos_pareto_opt_ptmuts(){
 
 //filters a pose vec for pareto opt only
 void
-filter_pareto_opt_poses(
-	vector1< pose::Pose > & poses,
-	vector1< vector1< Real > > & vals
-){
+GreedyOptMutationMover::filter_pareto_opt_poses(){
 	//get is_pareto bool vec
-	vector1< bool > is_pfront( poses.size(), false );
-	calc_pareto_front( vals, is_pfront );
+	vector1< bool > is_pfront( pfront_poses_.size(), false );
+	//TODO: this implementation reverts to near-deterministic behavior even when filter_delta is set >0, 
+	// add bool option deversify/perturb vals? 
+	vector1< Real > null_filter_deltas( filter_deltas_.size(), Real( 0. ) );
+	calc_pareto_front( pfront_poses_filter_vals_, is_pfront, filter_deltas_, diversify_, false );
 	//remove entries that are not pareto
-	vector1< pose::Pose > pfront_poses;
-	vector1< vector1< Real > > pfront_vals;
-	for( Size ipose = 1; ipose <= poses.size(); ++ipose ){
+	vector1< pose::Pose > new_pfront_poses;
+	vector1< vector1< Real > > new_pfront_poses_filter_vals;
+	for( Size ipose = 1; ipose <= pfront_poses_.size(); ++ipose ){
 		if( is_pfront[ ipose ] ){
-			pfront_poses.push_back( poses[ ipose ] );
-			pfront_vals.push_back( vals[ ipose ] );
+			new_pfront_poses.push_back( pfront_poses_[ ipose ] );
+			new_pfront_poses_filter_vals.push_back( pfront_poses_filter_vals_[ ipose ] );
 		}
 	}
-	poses = pfront_poses;
-	vals = pfront_vals;
+	pfront_poses_ = new_pfront_poses;
+	pfront_poses_filter_vals_ = new_pfront_poses_filter_vals;
 }
 
 //this should be in PointMutCalc
@@ -569,6 +654,7 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 			AA target_aa( seqpos_aa_vals_vec_[ iseq_init ].second[ iaa ].first );
 			pose::Pose new_pose( start_pose );
 			ptmut_calc->mutate_and_relax( new_pose, resi_init, target_aa );
+			//this is where the pose gets saved
 			pfront_poses_.push_back( new_pose );
 			vector1< Real > vals;
 			bool filter_pass;
@@ -600,6 +686,7 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 					//only check this guy for pareto if passes
 					if( !filter_pass ) continue;
 
+				//this is where the pose gets saved
 					new_poses.push_back( new_pose );
 					new_poses_filter_vals.push_back( vals );
 				}
@@ -643,7 +730,7 @@ GreedyOptMutationMover::apply( core::pose::Pose & pose )
 
       //filter new_poses for the pareto opt set
 			assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
-      filter_pareto_opt_poses( pfront_poses_, pfront_poses_filter_vals_ );
+      filter_pareto_opt_poses();
 			assert( pfront_poses_.size() == pfront_poses_filter_vals_.size() );
 
 			//break out if we've reached our stopping condition
@@ -778,7 +865,8 @@ GreedyOptMutationMover::parse_my_tag( utility::tag::TagPtr const tag,
   rtmin( tag->getOption< bool >( "rtmin", false ) );
   //load shuffle_order
   shuffle_order( tag->getOption< bool >( "shuffle_order", false ) );
-
+  diversify( tag->getOption< bool >( "diversify", true ) );
+  incl_nonopt( tag->getOption< bool >( "incl_nonopt", false ) );
 
 }
 
