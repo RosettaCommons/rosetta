@@ -162,21 +162,21 @@ Splice::Splice() :
 			dbase_iterate_( false ),
 			first_pass_( true ),
 			locked_res_( NULL ),
-			locked_res_id_( ' ' ),
-			checkpointing_file_ ( "" ),
-			loop_dbase_file_name_( "" ),
-			loop_pdb_source_( "" ),
-			mover_tag_( NULL ),
-			splice_filter_( NULL ),
-			use_sequence_profiles_( false ),
-			segment_type_( "" ),
-			profile_weight_away_from_interface_( 1.0 ),
-			restrict_to_repacking_chain2_( true ),
-			design_shell_(6.0),
-			repack_shell_(8.0),
-			scorefxn_(NULL),
-			Pdb4LetName_("")
+			locked_res_id_( ' ' )
 {
+    loop_pdb_source_="";
+    repack_shell_=8.0;
+    scorefxn_=NULL;
+    Pdb4LetName_="";
+    loop_dbase_file_name_="";
+    checkpointing_file_="";
+    splice_filter(NULL);
+    mover_tag_=NULL;
+    restrict_to_repacking_chain2_ = true;
+    use_sequence_profiles_=false;
+    design_shell_=6.0;
+    segment_type_ = "";
+    profile_weight_away_from_interface_ = 1.0;
 	add_sequence_constraints_only_ = false;
 	torsion_database_.clear();
 	delta_lengths_.clear();
@@ -185,12 +185,8 @@ Splice::Splice() :
 	pdb_segments_.clear();
 	end_dbase_subset_ = new protocols::moves::DataMapObj< bool >;
 	end_dbase_subset_->obj = false;
-	basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value(true);
+	basic::options::option[ basic::options::OptionKeys::out::file::pdb_comments ].value(true);//Tell the JD to output comments
 }
-
-//Tell the JD to output comments
-
-
 
 utility::vector1< std::string > segment_names_ordered_;//This vector will hold the segment names by order so when the segments are concatented into a single profile it is done by user defined order
 std::string dofs_pdb_name; //This variable hold the name of the pdb in the torsion db

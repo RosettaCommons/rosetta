@@ -162,10 +162,10 @@ DesignInterfacesOperation::design_shell( core::Real const radius )
 void
 DesignInterfacesOperation::parse_tag( TagPtr tag )
 {
-    tag->getOption< core::Real >( "design_shell", 6.0 );
-    tag->getOption<core::Real >("repack_shell", 8.0);
-		tag->getOption< bool >( "restrict_to_repacking_chain1", false );
-		tag->getOption< bool >( "restrict_to_repacking_chain2", true  );
+    design_shell( tag->getOption< core::Real >( "design_shell", 6.0 ) );
+    repack_shell( tag->getOption<core::Real >("repack_shell", 8.0) );
+		restrict_to_repacking_chain1( tag->getOption< bool >( "restrict_to_repacking_chain1", false ) );
+		restrict_to_repacking_chain2( tag->getOption< bool >( "restrict_to_repacking_chain2", true  ) );
 		TR<<"design shell: "<<design_shell()<<" repack shell: "<<repack_shell()<<" restrict_to_repacking_chain1: "<<restrict_to_repacking_chain1()<<" restrict_to_repacking_chain2: "<<restrict_to_repacking_chain2()<<std::endl;
 }
 } //namespace splice
