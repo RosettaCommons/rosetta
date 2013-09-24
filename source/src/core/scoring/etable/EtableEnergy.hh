@@ -112,7 +112,17 @@ public:
 		Real & dsolE1,
 		bool const eval_deriv = false
 		) const = 0;
-
+    
+    virtual
+    void
+    atom_pair_lk_energy_and_deriv_v_efficient(
+        conformation::Atom const & atom1,
+        conformation::Atom const & atom2,
+        Real & solE1,
+        Real & solE2,
+        Real & dsolE1,
+        bool const eval_deriv
+    ) const;
 
 private:
 
@@ -236,6 +246,18 @@ public:
 		Real & solE1,
 		Real & dsolE1,
 		bool const eval_deriv = false ) const;
+    
+    virtual
+    void
+    atom_pair_lk_energy_and_deriv_v_efficient(
+        conformation::Atom const & atom1,
+        conformation::Atom const & atom2,
+        Real & solE1,
+        Real & solE2,
+        Real & dsolE1,
+        bool const eval_deriv
+    ) const;
+
 
 	inline
 	void
@@ -421,6 +443,17 @@ public:
 		Real & solE1,
 		Real & dsolE1,
 		bool const eval_deriv = false ) const;
+    
+    virtual
+    void
+    atom_pair_lk_energy_and_deriv_v_efficient(
+                                              conformation::Atom const & atom1,
+                                              conformation::Atom const & atom2,
+                                              Real & solE1,
+                                              Real & solE2,
+                                              Real & dsolE1,
+                                              bool const eval_deriv
+                                              ) const;
 
 	inline
 	void
@@ -890,41 +923,6 @@ TableLookupEvaluator::atom_pair_energy(
 }
 
 
-inline
-void
-TableLookupEvaluator::atom_pair_lk_energy_and_deriv_v(
- conformation::Atom const & atom1,
- conformation::Atom const & atom2,
- Real & solv1,
- Real & dsolv1,
- bool const eval_deriv /* = false */
-) const
-{
-
-	int disbin;
-	Real frac, d2;
-
-	if (interpolate_bins(atom1,atom2,d2,disbin,frac)) {
-
-		int const l1 = solv1_.index( disbin, atom2.type(), atom1.type()),
-				l2 = l1 + 1;
-
-		Real const e1 = solv1_[ l1 ];
-		solv1 = ( e1 + frac * ( solv1_[ l2 ] - e1 ) );
-
-		if ( eval_deriv ){
-			// Following (commented out) is used in dE_dR_over_R below,
-			//  but its a mistake, I think -- rhiju.
-			//			Real e1 = dsolv1_[ l1 ];
-			//			deriv = ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
-			dsolv1 = ( solv1_[ l2 ] - solv1_[ l1 ] ) * etable_bins_per_A2_ * std::sqrt( d2 ) * 2;
-		}
-
-	} //if within cutoff
-
-}
-
-
 
 inline
 void
@@ -964,6 +962,90 @@ TableLookupEvaluator::pair_energy_H(
 	}
 }
 
+inline
+void
+TableLookupEvaluator::atom_pair_lk_energy_and_deriv_v(
+                                                      conformation::Atom const & atom1,
+                                                      conformation::Atom const & atom2,
+                                                      Real & solv1,
+                                                      Real & dsolv1,
+                                                      bool const eval_deriv /* = false */
+                                                      ) const
+{
+
+    int disbin;
+    Real frac, d2;
+
+    if (interpolate_bins(atom1,atom2,d2,disbin,frac)) {
+
+        int const l1 = solv1_.index( disbin, atom2.type(), atom1.type()),
+        l2 = l1 + 1;
+
+        Real const e1 = solv1_[ l1 ];
+        solv1 = ( e1 + frac * ( solv1_[ l2 ] - e1 ) );
+
+        if ( eval_deriv ){
+            // Following (commented out) is used in dE_dR_over_R below,
+            //  but its a mistake, I think -- rhiju.
+            //			Real e1 = dsolv1_[ l1 ];
+            //			deriv = ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
+            dsolv1 = ( solv1_[ l2 ] - solv1_[ l1 ] ) * etable_bins_per_A2_ * std::sqrt( d2 ) * 2;
+        }
+        
+    } //if within cutoff
+    
+}
+
+inline
+void
+TableLookupEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(
+                                                          conformation::Atom const & atom1,
+                                                          conformation::Atom const & atom2,
+                                                          Real & solv1,
+                                                          Real & solv2,
+                                                          Real & dsolv1,
+                                                          bool const eval_deriv /* = false */
+                                                          ) const
+{
+    
+    int disbin;
+    Real frac, d2;
+    
+    if (interpolate_bins(atom1,atom2,d2,disbin,frac)) {
+        
+        int const l1 = solv1_.index( disbin, atom2.type(), atom1.type()),
+        l2 = l1 + 1;
+        
+        Real const e1 = solv1_[ l1 ];
+        solv1 = ( e1 + frac * ( solv1_[ l2 ] - e1 ) );
+        
+        if ( eval_deriv ){
+            // Following (commented out) is used in dE_dR_over_R below,
+            //  but its a mistake, I think -- rhiju.
+            //			Real e1 = dsolv1_[ l1 ];
+            //			deriv = ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
+            dsolv1 = ( solv1_[ l2 ] - solv1_[ l1 ] ) * etable_bins_per_A2_ * std::sqrt( d2 ) * 2;
+        }
+        
+    } //if within cutoff
+    
+}
+
+    inline
+    void
+    EtableEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(
+                                                                    conformation::Atom const & atom1,
+                                                                    conformation::Atom const & atom2,
+                                                                    Real & solv1,
+                                                                    Real & solv2,
+                                                                    Real & dsolv1,
+                                                                    bool const eval_deriv /* = false */
+                                                                    ) const
+    {
+        //AnalyticEtableEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(atom1, atom2, solv1, solv2, dsolv1, eval_deriv);
+        return;
+    }
+    
 Real
 TableLookupEvaluator::eval_dE_dR_over_r(
  conformation::Atom const & atom1,

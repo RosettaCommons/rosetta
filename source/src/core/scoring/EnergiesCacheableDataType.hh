@@ -26,6 +26,8 @@ namespace EnergiesCacheableDataType {
 enum Enum {
 	ETABLE_NBLIST = 1, // for indexing into vector1
 	ELEC_NBLIST,
+    GEOM_SOLV_NBLIST,
+    LK_POLARNONPOLAR_NBLIST,
 	MM_LJ_INTER_NBLIST,
 	MM_LJ_INTRA_NBLIST,
 	HBOND_SET,

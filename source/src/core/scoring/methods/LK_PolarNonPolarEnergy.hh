@@ -24,6 +24,12 @@
 #include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/EtableEnergy.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFactory.hh>
+#include <core/scoring/etable/count_pair/CountPairNone.hh>
+#include <core/scoring/etable/count_pair/CountPairAll.hh>
+#include <core/scoring/etable/count_pair/types.hh>
+
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -60,7 +66,79 @@ public:
 		ScoreFunction const & scfxn
 	) const;
 
+    virtual
+    void
+    setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
+    
+    virtual
+    void
+    setup_for_minimizing(
+        pose::Pose & pose,
+        ScoreFunction const & sfxn,
+        kinematics::MinimizerMapBase const & min_map
+    ) const;
+    
+    virtual
+    bool
+    defines_score_for_residue_pair(
+        conformation::Residue const & rsd1,
+        conformation::Residue const & rsd2,
+        bool res_moving_wrt_eachother
+    ) const;
+    
+    virtual
+    etable::count_pair::CountPairFunctionCOP
+    get_count_pair_function(
+        Size const res1,
+        Size const res2,
+        pose::Pose const & pose,
+        ScoreFunction const &
+    ) const;
+    
+    virtual
+    etable::count_pair::CountPairFunctionCOP
+    get_count_pair_function(
+        conformation::Residue const & rsd1,
+        conformation::Residue const & rsd2
+    ) const;
+    
+    virtual
+    etable::count_pair::CountPairFunctionCOP
+    get_intrares_countpair(
+        conformation::Residue const & rsd1,
+        pose::Pose const &,
+        ScoreFunction const &
+    ) const;
+    
+    virtual
+    bool
+    use_extended_residue_pair_energy_interface() const;
+    
+    virtual
+    void
+    setup_for_minimizing_for_residue_pair(
+        conformation::Residue const & rsd1,
+        conformation::Residue const & rsd2,
+        pose::Pose const & pose,
+        ScoreFunction const &,
+        kinematics::MinimizerMapBase const &,
+        ResSingleMinimizationData const &,
+        ResSingleMinimizationData const &,
+        ResPairMinimizationData & pair_data
+    ) const;
+    
+    virtual
+    void
+    residue_pair_energy_ext(
+        conformation::Residue const & rsd1,
+        conformation::Residue const & rsd2,
+        ResPairMinimizationData const & min_data,
+        pose::Pose const & pose,
+        ScoreFunction const & scorefxn,
+        EnergyMap & emap
+    ) const;
 
+    
 	void
 	eval_atom_derivative_intra_RNA( //Called by eval_atom_derivative, specific case for RNA intra_res. Parin Sripakdeevong June 27, 2011.
 		id::AtomID const & atom_id,
@@ -163,7 +241,17 @@ private:
 	eval_lk(
 	conformation::Atom const & atom1,
 	conformation::Atom const & atom2,
-	Real & deriv ) const;
+	Real & deriv,
+    bool const & eval_deriv
+    ) const;
+    
+    std::pair<Real,Real>
+    eval_lk_efficient(
+        conformation::Atom const & atom1,
+        conformation::Atom const & atom2,
+        Real & deriv,
+        bool const & eval_deriv
+    ) const;
 
 	void
 	distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) const;

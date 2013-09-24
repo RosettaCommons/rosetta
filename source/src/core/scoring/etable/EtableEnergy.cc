@@ -111,6 +111,7 @@ TableLookupEtableEnergy::setup_for_scoring_( pose::Pose const &pose, scoring::Sc
 	}
 }
 
+
 bool
 TableLookupEtableEnergy::defines_intrares_energy(
 	EnergyMap const & weights
@@ -145,7 +146,6 @@ TableLookupEtableEnergy::eval_intrares_energy(
 	emap[ intrares_evaluator_.st_rep() ] = tbemap[ intrares_evaluator_.st_rep() ];
 	emap[ intrares_evaluator_.st_sol() ] = tbemap[ intrares_evaluator_.st_sol() ];
 }
-
 
 /// @details
 /// Version 2: apl - 2012/06/14 -- Etable smoothing change for LK sol.  Placing the
@@ -309,6 +309,39 @@ TableLookupEvaluator::residue_atom_pair_energy_sidechain_whole(
 	cp.residue_atom_pair_energy_sidechain_whole( rsd1, rsd2, *this, emap );
 }
 
+//    void
+//    TableLookupEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(
+//                                                                    conformation::Atom const & atom1,
+//                                                                    conformation::Atom const & atom2,
+//                                                                    Real & solv1,
+//                                                                    Real & dsolv1,
+//                                                                    bool const eval_deriv /* = false */
+//                                                                    ) const
+//    {
+//        
+//        int disbin;
+//        Real frac, d2;
+//        
+//        if (interpolate_bins(atom1,atom2,d2,disbin,frac)) {
+//            
+//            int const l1 = solv1_.index( disbin, atom2.type(), atom1.type()),
+//            l2 = l1 + 1;
+//            
+//            Real const e1 = solv1_[ l1 ];
+//            solv1 = ( e1 + frac * ( solv1_[ l2 ] - e1 ) );
+//            
+//            if ( eval_deriv ){
+//                // Following (commented out) is used in dE_dR_over_R below,
+//                //  but its a mistake, I think -- rhiju.
+//                //			Real e1 = dsolv1_[ l1 ];
+//                //			deriv = ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
+//                dsolv1 = ( solv1_[ l2 ] - solv1_[ l1 ] ) * etable_bins_per_A2_ * std::sqrt( d2 ) * 2;
+//            }
+//            
+//        } //if within cutoff
+//        
+//    }
+
 
 /// @details atom-pair-energy inline type resolution function
 void
@@ -333,7 +366,7 @@ TableLookupEvaluator::residue_atom_pair_energy_sidechain_sidechain(
 {
 	cp.residue_atom_pair_energy_sidechain_sidechain( rsd1, rsd2, *this, emap );
 }
-
+    
 
 /// @details first level polymorphic type resolution function
 void
@@ -348,6 +381,7 @@ TableLookupEvaluator::trie_vs_trie(
 	trie1.trie_vs_trie( trie2, cp, *this, pair_energy_table, temp_table );
 }
 
+    
 /// @details first level polymorphic type resolution function
 void
 TableLookupEvaluator::trie_vs_path(
@@ -360,6 +394,8 @@ TableLookupEvaluator::trie_vs_path(
 {
 	trie1.trie_vs_path( trie2, cp, *this, pair_energy_vector, temp_vector );
 }
+    
+
 
 AnalyticEtableEvaluator::AnalyticEtableEvaluator( Etable const & etable ) :
 	EtableEvaluator( etable ),
@@ -477,6 +513,26 @@ AnalyticEtableEvaluator::atom_pair_lk_energy_and_deriv_v(
 		Real dsolE2, inv_d;
 		etable_.analytic_lk_derivatives( atom1, atom2, dsolE1, dsolE2, inv_d );
 	}
+}
+ 
+void
+AnalyticEtableEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(
+    conformation::Atom const & atom1,
+    conformation::Atom const & atom2,
+    Real & solE1,
+    Real & solE2,
+    Real & dsolE1,
+    bool const eval_deriv
+) const
+{
+    // could save time by not computing solE2.
+    etable_.analytic_lk_energy( atom1, atom2, solE1, solE2 );
+    
+    if ( eval_deriv ) {
+        // could save time by not computing dsolE2.
+        Real dsolE2, inv_d;
+        etable_.analytic_lk_derivatives( atom1, atom2, dsolE1, dsolE2, inv_d );
+    }
 }
 
 

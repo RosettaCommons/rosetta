@@ -107,18 +107,51 @@ namespace geometric_solvation {
                                 conformation::Residue const & polar_rsd,
                                 conformation::Residue const & occ_rsd,
                                 pose::Pose const & pose ) const;
-  
+        
+    bool
+    atom_is_donor_h( conformation::Residue const & rsd, Size const atm ) const;
+    
+    bool
+    atom_is_acceptor( conformation::Residue const & rsd, Size const atm ) const;
+    
+    bool
+    atom_is_heavy( conformation::Residue const & rsd, Size const atm ) const;
+    
+    
+    void
+    get_atom_atom_geometric_solvation_for_donor(
+                                                Size const & don_h_atm,
+                                                conformation::Residue const & don_rsd,
+                                                Size const & occ_atm,
+                                                conformation::Residue const & occ_rsd,
+                                                pose::Pose const & pose,
+                                                Real & energy,
+                                                bool const update_deriv = false,
+                                                hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
+                                                ) const;
+    
+    void
+    get_atom_atom_geometric_solvation_for_acceptor(
+                                                   Size const & acc_atm,
+                                                   conformation::Residue const & acc_rsd,
+                                                   Size const & occ_atm,
+                                                   conformation::Residue const & occ_rsd,
+                                                   pose::Pose const & pose,
+                                                   Real & energy,
+                                                   bool const update_deriv = false,
+                                                   hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
+                                                   ) const;
+        
+    void
+    eval_atom_derivative_intra_RNA(
+        id::AtomID const & atom_id,
+        pose::Pose const & pose,
+        EnergyMap const & weights,
+        Vector & F1,
+        Vector & F2
+    ) const;
+
 	private:
-
-
-	void
-	eval_atom_derivative_intra_RNA(
-		 id::AtomID const & atom_id,
-		 pose::Pose const & pose,
-		 EnergyMap const & weights,
-		 Vector & F1,
-		 Vector & F2
-	) const;
 
 	Real
 	eval_atom_energy(
@@ -217,40 +250,6 @@ private:
 
 	bool
 	atom_is_donor( conformation::Residue const & rsd, Size const atm ) const;
-
-	bool
-	atom_is_donor_h( conformation::Residue const & rsd, Size const atm ) const;
-
-	bool
-	atom_is_acceptor( conformation::Residue const & rsd, Size const atm ) const;
-
-	bool
-	atom_is_heavy( conformation::Residue const & rsd, Size const atm ) const;
-
-
-	void
-	get_atom_atom_geometric_solvation_for_donor(
-		Size const & don_h_atm,
-		conformation::Residue const & don_rsd,
-		Size const & occ_atm,
-		conformation::Residue const & occ_rsd,
-		pose::Pose const & pose,
-		Real & energy,
-		bool const update_deriv = false,
-		hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
-	) const;
-
-	void
-	get_atom_atom_geometric_solvation_for_acceptor(
-	  Size const & acc_atm,
-		conformation::Residue const & acc_rsd,
-		Size const & occ_atm,
-		conformation::Residue const & occ_rsd,
-		pose::Pose const & pose,
-		Real & energy,
-		bool const update_deriv = false,
-		hbonds::HBondDerivs & deriv = hbonds::DUMMY_DERIVS
-	) const;
 
 	Real
 	donorRes_occludingRes_geometric_sol_RNA_intra(
