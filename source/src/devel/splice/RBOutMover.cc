@@ -110,7 +110,7 @@ RBOutMover::apply( Pose & pose )
     runtime_assert( disulfs_in_pose.size() >= 2 );
     utility::vector1< std::pair< core::Size, core::Size > > relevant_disulfs;
     relevant_disulfs.clear();
-    core::Real const max_allowed_distance( 3.0 );
+    core::Real const max_allowed_distance( 5.0 );
 
     for( utility::vector1< std::pair< core::Size, core::Size > >::const_iterator disulf_templ_it = disulfs_in_template.begin(); disulf_templ_it != disulfs_in_template.end(); ++disulf_templ_it ){
         for( utility::vector1< std::pair< core::Size, core::Size > >::const_iterator disulf_pose_it = disulfs_in_pose.begin(); disulf_pose_it != disulfs_in_pose.end(); ++disulf_pose_it ){
@@ -137,14 +137,14 @@ RBOutMover::apply( Pose & pose )
 
 /// Following is an ugly foldtree just used to define the jump between the 2nd and 1st disulfides in the order they're observed in template pose
     using namespace core::kinematics;
-    ft.add_edge( first_disulf, 1, Edge::PEPTIDE );
+    ft.add_edge( 1, first_disulf, Edge::PEPTIDE );
     ft.add_edge( second_disulf, pose.total_residue(), Edge::PEPTIDE );
-    ft.add_edge( relevant_disulfs[ 2 ].second, relevant_disulfs[ 1 ].second, 1 );
-    if( relevant_disulfs[ 2 ].second > relevant_disulfs[ 1 ].second )
-        ft.add_edge( relevant_disulfs[ 2 ].second, relevant_disulfs[ 1 ].second + 1, Edge::PEPTIDE );
+    ft.add_edge( relevant_disulfs[ 1 ].second, relevant_disulfs[ 2 ].second, 1 );
+    if( relevant_disulfs[ 1 ].second > relevant_disulfs[ 2 ].second )
+        ft.add_edge( relevant_disulfs[ 1 ].second, relevant_disulfs[ 2 ].second - 1, Edge::PEPTIDE );
     else
-        ft.add_edge( relevant_disulfs[ 1 ].second, relevant_disulfs[ 2 ].second + 1, Edge::PEPTIDE );
-    ft.reorder(second_disulf);
+        ft.add_edge( relevant_disulfs[ 2 ].second, relevant_disulfs[ 1 ].second + 1, Edge::PEPTIDE );
+    ft.reorder(1);
     TR<<"New foldtree:" << ft <<std::endl;
     pose.fold_tree( ft );
     core::kinematics::Jump const pose_disulf_jump( pose.jump( 1 ) );

@@ -216,6 +216,7 @@ sources = {
 		"Splice",
 		"SpliceSegment",
 		"RBOutMover",
+		"RBInMover",
 		"DesignInterfacesOperation"
         ],
 	#"devel/ssrbrelax": [

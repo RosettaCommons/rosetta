@@ -97,7 +97,7 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 	set< core::Size > const res_vec( core::pose::get_resnum_list( string_resnums_, pose ) );
 	focus_residues.insert( res_vec.begin(), res_vec.end() );
 
-		utility::vector1< core::Size > packing_residues, prevent_repacking_residues;
+	utility::vector1< core::Size > packing_residues, prevent_repacking_residues;
 	packing_residues.clear(); prevent_repacking_residues.clear();
 	for( core::Size i=1; i<=pose.total_residue(); ++i ){
 		bool allow_design_res( false );
@@ -162,7 +162,7 @@ void
 DesignAroundOperation::parse_tag( TagPtr tag )
 {
 	string_resnums_ = tag->getOption< std::string >( "resnums" );// these are kept in memory until the pose is available (at apply time)
-  design_shell( tag->getOption< core::Real >( "design_shell", 8.0 ) );
+    design_shell( tag->getOption< core::Real >( "design_shell", 8.0 ) );
 	allow_design( tag->getOption< bool >( "allow_design", 1 ) );
 	resnums_allow_design( tag->getOption< bool >( "resnums_allow_design", 1 ) );
 	repack_shell( tag->getOption< core::Real >( "repack_shell", 8.0 ));

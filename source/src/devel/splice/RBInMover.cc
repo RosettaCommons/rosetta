@@ -98,70 +98,69 @@ RBInMover::checkpoint() const{
 
 bool
 RBInMover::checkpoint_recovery(){
-	if( checkpointing_file_ == "" )
-		return false;
-
-  utility::io::izstream data( checkpointing_file_ );
-	if( !data ){
-		TR<<"Checkpointing file not yet written. Not recovering."<<std::endl;
-		return false;
-	}
-	TR<<"Checkpointing file found. Recovering."<<std::endl;
-	runtime_assert( jump_library_.size() == 0 ); /// if it's not 0, someone has already initialized the library and that doesn't make too much sense...
-	std::string line;
-	getline( data, line );
-	std::istringstream data_stream( line );
-	data_stream >> current_entry_;
-	TR<<"Recovered entry: "<<current_entry_<<std::endl;
-  while( getline( data, line ) ) {
-    TR<<"pushing jump into library: "<<line<<std::endl;
-    core::kinematics::Jump jump;
-		std::istringstream jump_stream( line );
-    jump_stream >> jump;
-    jump_library_.push_back( jump );
-  }
-	TR<<"Read "<<jump_library_.size()<<" jumps into library"<<std::endl;
-	return true;
-}
+    if( checkpointing_file_ == "" )
+        return false;
+    
+    utility::io::izstream data( checkpointing_file_ );
+    if( !data ){
+        TR<<"Checkpointing file not yet written. Not recovering."<<std::endl;
+        return false;
+    }
+    TR<<"Checkpointing file found. Recovering."<<std::endl;
+    runtime_assert( jump_library_.size() == 0 ); /// if it's not 0, someone has already initialized the library and that doesn't make too much sense...
+    std::string line;
+    getline( data, line );
+    std::istringstream data_stream( line );
+    data_stream >> current_entry_;
+    TR<<"Recovered entry: "<<current_entry_<<std::endl;
+    while( getline( data, line ) ) {
+        TR<<"pushing jump into library: "<<line<<std::endl;
+        core::kinematics::Jump jump;
+        std::istringstream jump_stream( line );
+        jump_stream >> jump;
+        jump_library_.push_back( jump );
+    }
+    TR<<"Read "<<jump_library_.size()<<" jumps into library"<<std::endl;
+    return true;
+    }
 
 void
 RBInMover::init(){
-	bool const checkpoint_recover( checkpoint_recovery() );
-	if( checkpoint_recover )
-		return;
-	bool const first_pass( jump_library_.size() == 0 );
-  if( !first_pass )// already initialized; don't repeat
-		return;
-
-	TR<<"Initializing rigid-body jump library"<<std::endl;
-  utility::io::izstream data( RB_dbase_ );
-  if ( !data ) {
-    TR << "cannot open rigid-body database " << RB_dbase_ << std::endl;
-    utility_exit();
-  }
-  std::string line;
-	core::Size count = 0;
-  while( getline( data, line ) ) {
-    TR<<"pushing jump into library: "<<line<<std::endl;
-    core::kinematics::Jump jump;
-    std::istringstream data_stream( line );
-    data_stream >> jump;
-		count++;
-		if( count <= to_entry() && count >= from_entry() )
-    	jump_library_.push_back( jump );
-  }
-  if( randomize() ){
-		TR<<"Randomizing the order in the jump_library"<<std::endl;
-		std::random_shuffle( jump_library_.begin(), jump_library_.end() );
-  }
-	current_entry_ = 1;/// this should already be initialized, but just in case
-	checkpoint(); /// first pass should also checkpoint to keep the order of entries
-  TR<<"Done making jump library with "<<jump_library_.size()<<std::endl;
+    bool const checkpoint_recover( checkpoint_recovery() );
+    if( checkpoint_recover )
+        return;
+    bool const first_pass( jump_library_.size() == 0 );
+    if( !first_pass )// already initialized; don't repeat
+        return;
+    
+    TR<<"Initializing rigid-body jump library"<<std::endl;
+    utility::io::izstream data( RB_dbase_ );
+    if ( !data ) {
+        TR << "cannot open rigid-body database " << RB_dbase_ << std::endl;
+        utility_exit();
+    }
+    std::string line;
+    core::Size count = 0;
+    while( getline( data, line ) ) {
+        TR<<"pushing jump into library: "<<line<<std::endl;
+        core::kinematics::Jump jump;
+        std::istringstream data_stream( line );
+        data_stream >> jump;
+        count++;
+        if( count <= to_entry() && count >= from_entry() )
+            jump_library_.push_back( jump );
+    }
+    if( randomize() ){
+        TR<<"Randomizing the order in the jump_library"<<std::endl;
+        std::random_shuffle( jump_library_.begin(), jump_library_.end() );
+    }
+    current_entry_ = 1;/// this should already be initialized, but just in case
+    checkpoint(); /// first pass should also checkpoint to keep the order of entries
+    TR<<"Done making jump library with "<<jump_library_.size()<<std::endl;
 }
 
 void
-RBInMover::apply( Pose & pose )
-{
+RBInMover::apply( Pose & pose ){
     init();
     utility::vector1< std::pair< core::Size, core::Size > > const disulfs( find_disulfs_in_range( pose, 1, pose.conformation().chain_end( 1 ) ) );
     protocols::protein_interface_design::movers::SetAtomTree sat;
@@ -169,13 +168,14 @@ RBInMover::apply( Pose & pose )
     sat.apply( pose );
     core::kinematics::FoldTree ft( pose.fold_tree() );
     TR<<"Fold tree before slide jump: "<<ft<<std::endl;
-    ft.slide_jump( 1, disulfs[ 2 ].second, disulfs[ 1 ].second );
+    TR<<"Setting slide jump from: "<<disulfs[ 1 ].second<<" to "<<disulfs[ 2 ].second<<std::endl;
+    ft.slide_jump( 1, disulfs[ 1 ].second, disulfs[ 2 ].second );
     TR<<"Fold tree after slide jump: "<<ft<<std::endl;
     pose.fold_tree( ft );
     TR<<"Setting jump now"<<std::endl;
     pose.set_jump( 1, jump_library_[ current_entry_ ] );
     ++current_entry_;
-		checkpoint();
+	checkpoint();
 }
 
 std::string
