@@ -33,6 +33,7 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/symmetry/util.hh>
@@ -71,6 +72,7 @@ AtomicContactCountFilter::AtomicContactCountFilter( AtomicContactCountFilter con
 	filter_mode_(src.filter_mode_),
 	normalize_by_sasa_(src.normalize_by_sasa_),
 	jump_(src.jump_),
+	ss_only_(src.ss_only_),
 	sym_dof_name_(src.sym_dof_name_)
 {
 }
@@ -86,6 +88,7 @@ void AtomicContactCountFilter::initialize_all_atoms(core::pack::task::TaskFactor
 	jump_ = 0;
 	sym_dof_name_ = "";
 	normalize_by_sasa_ = false;
+	ss_only_ = false;
 
 	filter_mode_ = ALL;
 }
@@ -122,6 +125,8 @@ void AtomicContactCountFilter::parse_my_tag(
 
 	std::string specified_mode = tag->getOption< std::string >( "partition", "none" );
 	std::string specified_normalized_by_sasa = tag->getOption< std::string >( "normalize_by_sasa", "0" );
+
+	ss_only_ = tag->getOption< bool >( "ss_only", false );
 
 	if (specified_mode == "none")
 	{
@@ -268,6 +273,13 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 		indy_resis = symm_info->independent_residues();
 	}
 
+	std::string pose_ss;
+	if (ss_only_) {
+		// get secstruct
+		core::scoring::dssp::Dssp dssp( pose );
+		pose_ss = dssp.get_dssp_reduced_IG_as_L_secstruct();
+	}
+
 	for (core::Size i = 1; i <= target.size(); i++)
 	{
 		if ( symmetric && (filter_mode_ == CROSS_JUMP) )
@@ -279,6 +291,9 @@ core::Real AtomicContactCountFilter::compute(core::pose::Pose const & pose) cons
 		}
 		for (core::Size j = i+1; j <= target.size(); j++)
 		{
+			//fpd ss filter
+			if (ss_only_ && (pose_ss[i-1] == 'L' || pose_ss[j-1] == 'L') ) continue;
+
 			if (residue_partition[target[i]] != residue_partition[target[j]])
 			{
 				core::conformation::Residue const & residue_i = pose.residue(target[i]);

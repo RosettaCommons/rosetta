@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file protocols/protein_interface_design/filters/AtomicContactCountFilter.hh
-/// @brief 
+/// @brief
 /// @author Alex Ford (fordas@uw.edu)
 
 #ifndef INCLUDED_protocols_protein_interface_design_filters_AtomicContactCountFilter_hh
@@ -54,7 +54,7 @@ class AtomicContactCountFilter : public protocols::filters::Filter
 		void initialize_cross_chain(core::pack::task::TaskFactoryOP task_factory = NULL, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false);
 
     void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
-	
+
 		/// @brief Returns true if the given pose passes the filter, false otherwise.
 		virtual bool apply( core::pose::Pose const & /*pose*/ ) const { return true; }
 
@@ -63,7 +63,7 @@ class AtomicContactCountFilter : public protocols::filters::Filter
 		virtual core::Real report_sm( core::pose::Pose const & pose ) const { return compute(pose); }
 
 		core::Real compute( core::pose::Pose const &) const;
-		
+
 	private:
 		//TODO Alex Ford Add support for specified chain mode, need to add chain-id resolution to tag parsing.
 		//TODO Alex Ford Likely even better to abstract chain detection & jump code into an interface sasa calculator
@@ -74,7 +74,7 @@ class AtomicContactCountFilter : public protocols::filters::Filter
 		core::Real distance_cutoff_;
 
 		Mode filter_mode_;
-		bool normalize_by_sasa_;
+		bool normalize_by_sasa_, ss_only_;
 
 		core::Size jump_;
 		std::string sym_dof_name_;
