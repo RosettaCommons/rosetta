@@ -249,7 +249,8 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 		// edge strand
 		// core strand
 
-	Column num_edge_strands	("num_edge_strands",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column num_strands_in_each_sw	("num_strands_in_each_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column num_edge_strands_in_each_sw	("num_edge_strands_in_each_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 	
 	Column intra_sheet_con_id	("intra_sheet_con_id",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 	Column inter_sheet_con_id	("inter_sheet_con_id",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
@@ -390,7 +391,8 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(sheet_antiparallel);
 	sw_by_components.add_column(sw_by_components_bs_id);
 	sw_by_components.add_column(strand_edge);
-	sw_by_components.add_column(num_edge_strands);
+	sw_by_components.add_column(num_strands_in_each_sw);
+	sw_by_components.add_column(num_edge_strands_in_each_sw);
 
 	sw_by_components.add_column(intra_sheet_con_id);
 	sw_by_components.add_column(inter_sheet_con_id);
@@ -1711,14 +1713,16 @@ SandwichFeatures::is_this_strand_at_edge	(
 	Size residue_begin,
 	Size residue_end)
 {
-	if (residue_end - residue_begin + 1 < 3){
+	if (residue_end - residue_begin + 1 < 3)
+	{
 		return "short_edge"; // Like res_num: 78-79 in [1ten], 2 residues long strand is better to be classified as 'short edge'
 	}
 
 	// <begin> see whether this sheet is consisted with two strands only
 	utility::vector1<SandwichFragment> strands_from_sheet_i = get_full_strands_from_sheet(struct_id, db_session, sheet_id);
 
-	if (strands_from_sheet_i.size() < 3){
+	if (strands_from_sheet_i.size() < 3)
+	{
 		return "edge"; // Since this sheet is constituted with two strands, both are edge!
 	}
 	// <end> see whether this sheet is consisted with two strands only
@@ -1726,19 +1730,22 @@ SandwichFeatures::is_this_strand_at_edge	(
 
 	SandwichFragment current_strand(residue_begin, residue_end);
 	vector<Real> vec_inter_strand_avg_dis;
-	for(Size i=1; i<=strands_from_sheet_i.size(); ++i){
+	for(Size i=1; i<=strands_from_sheet_i.size(); ++i)
+	{
 		SandwichFragment temporary_strand(strands_from_sheet_i[i].get_start(), strands_from_sheet_i[i].get_end());
 		Real inter_strand_avg_dis = get_avg_dis_strands (pose, current_strand, temporary_strand);
 		vec_inter_strand_avg_dis.push_back(inter_strand_avg_dis);
 	}
 	
-	Size array_size = vec_inter_strand_avg_dis.size();
+	Size size_of_vec_inter_strand_avg_dis = vec_inter_strand_avg_dis.size();
 	
 	// <begin> exclude self-strand
 	Real min_inter_strand_avg_dis = 9999;
 	Size index_having_self_strand = 0;
-	for(Size i=0; i<=array_size-1; ++i){
-		if (min_inter_strand_avg_dis > vec_inter_strand_avg_dis[i]){
+	for(Size i=0; i<=size_of_vec_inter_strand_avg_dis-1; ++i)
+	{
+		if (min_inter_strand_avg_dis > vec_inter_strand_avg_dis[i])
+		{
 			min_inter_strand_avg_dis = vec_inter_strand_avg_dis[i];
 			index_having_self_strand = i+1; // index of vec_inter_strand_avg_dis starts with '0'
 											// while index of strands_from_sheet_i starts with '1'
@@ -1749,10 +1756,12 @@ SandwichFeatures::is_this_strand_at_edge	(
 	// <begin> find the closest strand from current_strand
 	min_inter_strand_avg_dis = 9999;
 	Size index_having_min_dis = 0;
-	for(Size i=0; i<=array_size-1; ++i){
+	for(Size i=0; i<=size_of_vec_inter_strand_avg_dis-1; ++i)
+	{
 		if (i != index_having_self_strand-1
 			&& (min_inter_strand_avg_dis > vec_inter_strand_avg_dis[i])
-			&& strands_from_sheet_i[i+1].get_size() > 2){
+			&& strands_from_sheet_i[i+1].get_size() > 2)
+		{
 			min_inter_strand_avg_dis = vec_inter_strand_avg_dis[i];
 			index_having_min_dis = i+1; // index of vec_inter_strand_avg_dis starts with 0 while index of strands_from_sheet_i starts with 1
 		}
@@ -1771,9 +1780,11 @@ SandwichFeatures::is_this_strand_at_edge	(
 	
 	for(Size strand_i_res = residue_begin;
 		strand_i_res <= residue_end;
-		strand_i_res++){
+		strand_i_res++)
+	{
 		Real dis_CA_CA = pose.residue(strand_i_res).atom("CA").xyz().distance(pose.residue(cen_resnum_of_the_closest_strand).atom("CA").xyz());
-		if (min_inter_strand_dis > dis_CA_CA){
+		if (min_inter_strand_dis > dis_CA_CA)
+		{
 			min_inter_strand_dis = dis_CA_CA;
 		}
 	}
@@ -1781,15 +1792,20 @@ SandwichFeatures::is_this_strand_at_edge	(
 
 		//TR << "min_inter_strand_dis with the closest strand: " << min_inter_strand_dis << endl;
 
-	if (min_inter_strand_dis > min_CA_CA_dis_ && min_inter_strand_dis < max_CA_CA_dis_){
+	if (min_inter_strand_dis > min_CA_CA_dis_ && min_inter_strand_dis < max_CA_CA_dis_)
+	{
 		// <begin> find the 2nd closest strand from current_strand
 		min_inter_strand_avg_dis = 9999;
 		Size index_having_second_min_dis = 0;
-		for(Size i=0; i<=array_size-1; ++i){
+		for(Size i=0; i<=size_of_vec_inter_strand_avg_dis-1; ++i)
+		{
 			if (i != index_having_self_strand-1
 				&& i != index_having_min_dis-1
-				&& (min_inter_strand_avg_dis > vec_inter_strand_avg_dis[i])
-				&& strands_from_sheet_i[i+1].get_size() > 2){
+				&& (min_inter_strand_avg_dis > vec_inter_strand_avg_dis[i]))
+				// && strands_from_sheet_i[i+1].get_size() > 2) disabled as of 09/25/2013 to debug a crash of 9CGT
+				// so from now on, a beta-strand is 'core' if it is next to short_edge_strand and within core region and within specified distance.
+				//	Still it classifies a beta-strand as "edge" if it is not within specified distance like '1TEN')
+			{
 				min_inter_strand_avg_dis = vec_inter_strand_avg_dis[i];
 				index_having_second_min_dis = i+1; // index of vec_inter_strand_avg_dis starts with 0 while index of strands_from_sheet_i starts with 1
 			}
@@ -1801,21 +1817,24 @@ SandwichFeatures::is_this_strand_at_edge	(
 
 		// <begin> calculate minimum distance between strands
 		to_be_rounded_i = (strands_from_sheet_i[index_having_second_min_dis].get_start() + strands_from_sheet_i[index_having_second_min_dis].get_end())/(2.0);
-		cen_resnum_of_the_closest_strand = round(to_be_rounded_i);
+		Size cental_resnum_of_the_2nd_closest_strand = round(to_be_rounded_i);
 
 		min_inter_strand_dis = 9999;
 		
 		for(Size strand_i_res = residue_begin;
 			strand_i_res <= residue_end;
-			strand_i_res++){
-			Real dis_CA_CA = pose.residue(strand_i_res).atom("CA").xyz().distance(pose.residue(cen_resnum_of_the_closest_strand).atom("CA").xyz());
-			if (min_inter_strand_dis > dis_CA_CA){
+			strand_i_res++)
+		{
+			Real dis_CA_CA = pose.residue(strand_i_res).atom("CA").xyz().distance(pose.residue(cental_resnum_of_the_2nd_closest_strand).atom("CA").xyz());
+			if (min_inter_strand_dis > dis_CA_CA)
+			{
 				min_inter_strand_dis = dis_CA_CA;
 			}
 		}
 		// <end> calculate minimum distance between strands
 
-		if (min_inter_strand_dis > min_CA_CA_dis_ && min_inter_strand_dis < max_CA_CA_dis_){
+		if (min_inter_strand_dis > min_CA_CA_dis_ && min_inter_strand_dis < max_CA_CA_dis_)
+		{
 			return "core";
 		}
 	}
@@ -2019,7 +2038,7 @@ SandwichFeatures::get_start_end_res_num_in_the_longest_strand(
 } //get_start_end_res_num_in_the_longest_strand
 
 
-Size
+int
 SandwichFeatures::judge_facing(
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
@@ -2035,7 +2054,7 @@ SandwichFeatures::judge_facing(
 
 	if (this_strand_is_too_short)
 	{
-		return false; // I can't choose two central residues since this sheet is constituted with 2 residues long strands only
+		return 0; // I can't choose two central residues since this sheet is constituted with 2 residues long strands only
 	}
 
 	this_strand_is_too_short = check_whether_this_sheet_is_too_short(
@@ -2045,7 +2064,7 @@ SandwichFeatures::judge_facing(
 
 	if (this_strand_is_too_short)
 	{
-		return false; // I can't choose two central residues since this sheet is constituted with 2 residues long strands only
+		return 0; // I can't choose two central residues since this sheet is constituted with 2 residues long strands only
 	}
 	// <end> check_whether_this_sheet_is_too_short
 
@@ -2120,7 +2139,7 @@ SandwichFeatures::judge_facing(
 
 	if (angle_with_cen_res > max_sheet_angle_with_cen_res_in_smaller_sheet_and_two_terminal_res_in_larger_sheet_)
 	{
-		return false; // these two sheets are linear or do not face to each other properly!
+		return 0; // these two sheets are linear or do not face to each other properly!
 	}
 
 
@@ -2132,8 +2151,8 @@ SandwichFeatures::judge_facing(
 		pose,
 		sheet_i);
 		
-	Size i_ter_cen_1 = two_central_residues_in_two_edge_strands.first;
-	Size i_ter_cen_2 = two_central_residues_in_two_edge_strands.second;
+	int i_ter_cen_1 = two_central_residues_in_two_edge_strands.first;
+	int i_ter_cen_2 = two_central_residues_in_two_edge_strands.second;
 
 	if (i_ter_cen_1 == -99 || i_ter_cen_2 == -99)
 	{
@@ -2146,8 +2165,8 @@ SandwichFeatures::judge_facing(
 		pose,
 		sheet_j);
 		
-	Size j_ter_cen_1 = two_central_residues_in_two_edge_strands.first;
-	Size j_ter_cen_2 = two_central_residues_in_two_edge_strands.second;
+	int j_ter_cen_1 = two_central_residues_in_two_edge_strands.first;
+	int j_ter_cen_2 = two_central_residues_in_two_edge_strands.second;
 
 	if (j_ter_cen_1 == -99 || j_ter_cen_2 == -99)
 	{
@@ -2264,12 +2283,12 @@ SandwichFeatures::judge_facing(
 		(torsion_i_j > min_sheet_torsion_cen_res_)
 		&& (torsion_i_j < max_sheet_torsion_cen_res_))
 	{
-		return true; // these two strand_pairs face to each other properly, so constitute a sandwich
+		return 1; // these two strand_pairs face to each other properly, so constitute a sandwich
 	}
 
 	else
 	{
-		return false; // these two strand_pairs are linear or do not face to each other properly!
+		return 0; // these two strand_pairs are linear or do not face to each other properly!
 	}
 
 } //SandwichFeatures::judge_facing
@@ -4263,7 +4282,52 @@ SandwichFeatures::mark_sw_which_is_not_connected_with_continuous_atoms (
 
 
 Size
-SandwichFeatures::add_num_edge_strands (
+SandwichFeatures::add_num_strands_in_each_sw // it includes even 'short_edge_strands'
+	(StructureID struct_id,
+	sessionOP db_session,
+	Size sw_can_by_sh_id)
+{
+	string select_string =
+	"SELECT\n"
+	"	count(*) \n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	strand_edge is not null \n"
+	"	AND sw_can_by_sh_id = ? \n"
+	"	AND struct_id = ? ;";
+	
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,	sw_can_by_sh_id);
+	select_statement.bind(2,	struct_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+
+	Size num_strands_in_each_sw;
+	while(res.next())
+	{
+		res >> num_strands_in_each_sw;
+	}
+
+	string update =
+	"UPDATE sw_by_components set num_strands_in_each_sw = ?	"
+	"WHERE\n"
+	"	sw_can_by_sh_id = ? \n"
+	"	AND struct_id = ?;";
+
+	statement update_statement(basic::database::safely_prepare_statement(update,	db_session));
+
+	update_statement.bind(1,	num_strands_in_each_sw);
+	update_statement.bind(2,	sw_can_by_sh_id);
+	update_statement.bind(3,	struct_id);
+
+	basic::database::safely_write_to_database(update_statement);
+
+	return 0;
+} // add_num_strands_in_each_sw
+
+
+Size
+SandwichFeatures::add_num_edge_strands_in_each_sw (
 	StructureID struct_id,
 	sessionOP db_session,
 	Size sw_can_by_sh_id)
@@ -4283,28 +4347,28 @@ SandwichFeatures::add_num_edge_strands (
 	select_statement.bind(2,	struct_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size num_edge_strands;
+	Size num_edge_strands_in_each_sw;
 	while(res.next())
 	{
-		res >> num_edge_strands;
+		res >> num_edge_strands_in_each_sw;
 	}
 
 	string update =
-	"UPDATE sw_by_components set num_edge_strands = ?	"
+	"UPDATE sw_by_components set num_edge_strands_in_each_sw = ?	"
 	"WHERE\n"
 	"	sw_can_by_sh_id = ? \n"
 	"	AND struct_id = ?;";
 
 	statement update_statement(basic::database::safely_prepare_statement(update,	db_session));
 
-	update_statement.bind(1,num_edge_strands);
+	update_statement.bind(1,	num_edge_strands_in_each_sw);
 	update_statement.bind(2,	sw_can_by_sh_id);
-	update_statement.bind(3,struct_id);
+	update_statement.bind(3,	struct_id);
 
 	basic::database::safely_write_to_database(update_statement);
 
 	return 0;
-} // add_num_edge_strands
+} // add_num_edge_strands_in_each_sw
 
 
 bool
@@ -5276,20 +5340,20 @@ SandwichFeatures::report_features(
 			continue;
 		}
 		
-		Size facing = judge_facing(struct_id, db_session, pose, all_distinct_sheet_ids[i], sheet_j_that_will_be_used_for_pairing_with_sheet_i);
+		int facing = judge_facing(struct_id, db_session, pose, all_distinct_sheet_ids[i], sheet_j_that_will_be_used_for_pairing_with_sheet_i);
 		// if false, these two strand_pairs are linear to each other or do not face properly to each other
 		
-		if (!facing)
+		if	(facing == 0)
 		{
 			//	TR.Info << "sheet " << all_distinct_sheet_ids[i] << " and sheet " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << " do not face each other" << endl;
 			continue;
 		}
-
-		else if (facing == -99)
+		else	if (facing == -99)
 		{
-			TR.Info << "at least one sheet (either " << all_distinct_sheet_ids[i] << " or " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << ")  maybe a beta-barrel like sheet_id = 1 in 1N8O" << endl;
+				TR.Info << "at least one sheet (either " << all_distinct_sheet_ids[i] << " or " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << ")  may be a beta-barrel like sheet_id = 1 in 1N8O" << endl;
 			continue;
 		}
+		else
 
 //			TR.Info << "! writing into 'sandwich candidate by sheet' !" << endl;
 		
@@ -5652,15 +5716,22 @@ SandwichFeatures::report_features(
 			Size	sw_res_size	=	add_sw_res_size(struct_id,	db_session,
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
-			add_num_edge_strands(struct_id,	db_session,
+
+			add_num_strands_in_each_sw(struct_id,	db_session,
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
+
+			add_num_edge_strands_in_each_sw(struct_id,	db_session,
+				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+				);
+				
 			report_hydrophobic_ratio_net_charge(struct_id,	db_session,
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
 
 
-			if (write_AA_kind_files_){
+			if (write_AA_kind_files_)
+			{
 				// <begin> write AA_kind to a file
 				Size tag_len = tag.length();
 				string pdb_file_name = tag.substr(0, tag_len-5);

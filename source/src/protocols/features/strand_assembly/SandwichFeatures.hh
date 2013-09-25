@@ -267,7 +267,7 @@ public:
 	get_shortest_among_4_vals(
 		core::Real arr_dis_inter_sheet[]);
 
-	core::Size
+	int
 	judge_facing(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
@@ -519,7 +519,13 @@ public:
 
 
 	core::Size
-	add_num_edge_strands (
+	add_num_strands_in_each_sw (
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size	sw_can_by_sh_id);
+
+	core::Size
+	add_num_edge_strands_in_each_sw (
 		StructureID struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size	sw_can_by_sh_id);
