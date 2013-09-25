@@ -10,7 +10,7 @@
 -dock_design_loop_num 1
 -score:weights mm_std 
 -packing:linmem_ig 10 
-<<<<<<< HEAD
-=======
+#<<<<<<< HEAD
+#=======
 -in:detect_oops true
->>>>>>> 1ce2a73e8e484d60a59552aa23905ef117b279f8
+#>>>>>>> 1ce2a73e8e484d60a59552aa23905ef117b279f8

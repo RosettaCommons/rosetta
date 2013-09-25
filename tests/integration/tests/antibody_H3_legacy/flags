@@ -4,10 +4,10 @@
 -restore_pre_talaris_2013_behavior
 -antibody::extend_h3_before_modeling true
 -antibody::idealize_h3_stems_before_modeling false
-<<<<<<< HEAD
--score:weights score12_w_corrections.wts
--out:no_nstruct_label
-=======
+#<<<<<<< HEAD
+#-score:weights score12_w_corrections.wts
+#-out:no_nstruct_label
+#=======
 
 # special flags for benchmarking -- keep the run short and failproof
 -overwrite
@@ -17,4 +17,4 @@
 -docking:dock_mcm_first_cycles 1
 -docking:dock_mcm_second_cycles 3
 
->>>>>>> fbdb0cdf7a3f55bb2da4410a6772e8832b69a12b
+#>>>>>>> fbdb0cdf7a3f55bb2da4410a6772e8832b69a12b
