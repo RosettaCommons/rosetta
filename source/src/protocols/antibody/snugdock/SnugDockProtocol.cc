@@ -156,6 +156,7 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 	    loop_refinement_method_,
 	    low_res_loop_refinement_scorefxn
 	);
+	low_res_refine_cdr_h2_->set_h3_filter( false );
 
 	low_res_refine_cdr_h3_ = new RefineOneCDRLoop(
 	    antibody_info_,
@@ -163,6 +164,8 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 	    loop_refinement_method_,
 	    low_res_loop_refinement_scorefxn
 	);
+	low_res_refine_cdr_h3_->set_h3_filter( h3_filter_ );
+	low_res_refine_cdr_h3_->set_num_filter_tries( h3_filter_tolerance_ );
 }
 
 void SnugDockProtocol::init() {
@@ -175,6 +178,17 @@ void SnugDockProtocol::init() {
 		loop_refinement_method_  = option[ basic::options::OptionKeys::antibody::centroid_refine ]() ;
 	} else {
 		loop_refinement_method_ = "refine_kic";
+	}
+	/// Allow h3_filter to be turned off to speed up loop modeling
+	if ( option[ basic::options::OptionKeys::antibody::h3_filter ].user() ) {
+		h3_filter_  = option[ basic::options::OptionKeys::antibody::h3_filter ]() ;
+	} else {
+		h3_filter_ = true;
+	}
+	if ( option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ].user() ) {
+		h3_filter_tolerance_  = option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ]() ;
+	} else {
+		h3_filter_tolerance_ = 20;
 	}
 }
 

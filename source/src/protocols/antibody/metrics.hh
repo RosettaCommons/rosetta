@@ -17,6 +17,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <utility/vector1.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
 
@@ -27,8 +28,8 @@ using namespace core;
 using namespace protocols::antibody;
 
 /// @brief calculate the VH_VL packing angle from 2 sheet definitions on each antibody chain
-core::Real
-vl_vh_packing_angle ( const core::pose::Pose & pose_in, const protocols::antibody::AntibodyInfo & ab_info );
+utility::vector1< core::Real >
+vl_vh_orientation_coords ( const core::pose::Pose & pose_in, const protocols::antibody::AntibodyInfo & ab_info );
 
 
 ///// kink measures /////
@@ -51,7 +52,7 @@ std::pair<core::Real,core::Real>
 kink_dihedral( const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & abinfo, bool debug=false);
 
 
-/// @brief calculate the SASA of the antibody peritope
+/// @brief calculate the SASA of the antibody paratope
 
 std::pair<core::Real,core::Real>
 paratope_sasa( const core::pose::Pose & pose, const protocols::antibody::AntibodyInfo & ab_info );

@@ -37,6 +37,9 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.io.hh>
 
+// Utility Headers
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("antibody.metrics");
 using namespace core;
@@ -45,8 +48,8 @@ namespace protocols {
 namespace antibody {
 
 
-Real
-vl_vh_packing_angle ( const pose::Pose & pose_in, const protocols::antibody::AntibodyInfo & ab_info ) {
+vector1< Real >
+vl_vh_orientation_coords ( const pose::Pose & pose_in, const protocols::antibody::AntibodyInfo & ab_info ) {
 
 	vector1< Size > vl_vh_residues = ab_info.get_PackingAngleResidues();
 
@@ -77,18 +80,45 @@ vl_vh_packing_angle ( const pose::Pose & pose_in, const protocols::antibody::Ant
 	numeric::xyzVector< Real > vl_first_principal_component = numeric::first_principal_component( vl_coord_set );
 	numeric::xyzVector< Real > vh_first_principal_component = numeric::first_principal_component( vh_coord_set );
 
-	vl_first_principal_component += vl_centroid;
-	vh_first_principal_component += vh_centroid;
-
-	Real packing_angle = numeric::dihedral_degrees( vl_first_principal_component, vl_centroid, vh_centroid, vh_first_principal_component );
-
-	if ( packing_angle > 0 ) {
-		packing_angle -= 180;
+	numeric::xyzVector< Real > point_one = vl_centroid + vl_first_principal_component;
+	numeric::xyzVector< Real > point_one_prime = vl_centroid - vl_first_principal_component;
+	numeric::xyzVector< Real > point_four = vh_centroid + vh_first_principal_component;
+	numeric::xyzVector< Real > point_four_prime = vh_centroid - vh_first_principal_component;
+	
+	numeric::xyzVector< Real > top_point_one;
+	numeric::xyzVector< Real > top_point_four;
+	
+	if ( point_one.distance( vl_coord_set[1] ) > point_one_prime.distance( vl_coord_set[1] ) ) {
+		top_point_one = point_one_prime;
+	} else {
+		top_point_one = point_one;
 	}
+	
+	if ( point_four.distance( vh_coord_set[1] ) > point_four_prime.distance( vh_coord_set[1] ) ) {
+		top_point_four = point_four_prime;
+	} else {
+		top_point_four = point_four;
+	}
+	
+	//TR << "Point 1: " << top_point_one << std::endl;
+	//TR << "Point 2: " << vl_centroid << std::endl;
+	//TR << "Point 3: " << vh_centroid << std::endl;
+	//TR << "Point 4: " << top_point_four << std::endl;
+	
+	Real packing_angle = numeric::dihedral_degrees( top_point_one, vl_centroid, vh_centroid, top_point_four );
+	Real opening_angle = numeric::angle_degrees( vl_centroid, vh_centroid, top_point_four );
+	Real opposite_angle = numeric::angle_degrees( top_point_one, vl_centroid, vh_centroid );
+	Real vl_vh_distance = vl_centroid.distance( vh_centroid );
+	
+	vector1< Real > angle_set;
+	angle_set.push_back( vl_vh_distance );
+	angle_set.push_back( opening_angle );
+	angle_set.push_back( opposite_angle );
+	angle_set.push_back( packing_angle );
 
-	return packing_angle;
+	return angle_set;
 }
-
+	
 
 ////////////////// Kink Measures ////////////////
 

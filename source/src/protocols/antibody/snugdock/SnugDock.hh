@@ -99,6 +99,10 @@ private: // data
 	moves::RandomMoverOP high_resolution_step_;
 	std::string loop_refinement_method_;
 	antibody::CDRsMinPackMinOP pre_minimization_;
+	
+	// H3 filter options
+	bool h3_filter_;
+	Size h3_filter_tolerance_;
 
 private:
 	Size number_of_high_resolution_cycles_;

@@ -521,7 +521,10 @@ void AntibodyModelerProtocol::echo_metrics_to_jd2(core::pose::Pose & pose, proto
 	}
 	
 	//job->add_string_real_pair("AP_constraint", atom_pair_constraint_score);
-	job->add_string_real_pair("VL_VH_angle", vl_vh_packing_angle( pose, *ab_info_ ));
+	job->add_string_real_pair("VL_VH_distance", vl_vh_orientation_coords( pose, *ab_info_ )[1]);
+	job->add_string_real_pair("VL_VH_opening_angle", vl_vh_orientation_coords( pose, *ab_info_ )[2]);
+	job->add_string_real_pair("VL_VH_opposite_opening_angle", vl_vh_orientation_coords( pose, *ab_info_ )[3]);
+	job->add_string_real_pair("VL_VH_packing_angle", vl_vh_orientation_coords( pose, *ab_info_ )[4]);
 
 	//kink metrics
 	job->add_string_real_pair( "kink_RD_HB", kink_RD_Hbond( pose, *ab_info_ ));

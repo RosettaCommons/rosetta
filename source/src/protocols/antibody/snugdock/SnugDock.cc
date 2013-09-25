@@ -216,9 +216,12 @@ void SnugDock::setup_objects( Pose const & pose ) {
 	high_res_loop_refinement_scorefxn->set_weight( scoring::atom_pair_constraint, 100 );
 
 	RefineOneCDRLoopOP refine_cdr_h2_base = new RefineOneCDRLoop( antibody_info_, h2, loop_refinement_method_, high_res_loop_refinement_scorefxn );
+	refine_cdr_h2_base->set_h3_filter( false );
 	TrialMoverOP refine_cdr_h2 = new TrialMover( refine_cdr_h2_base, mc_ );
 
 	RefineOneCDRLoopOP refine_cdr_h3_base = new RefineOneCDRLoop( antibody_info_, h3, loop_refinement_method_, high_res_loop_refinement_scorefxn );
+	refine_cdr_h3_base->set_h3_filter( h3_filter_ );
+	refine_cdr_h3_base->set_num_filter_tries( h3_filter_tolerance_ );
 	TrialMoverOP refine_cdr_h3 = new TrialMover( refine_cdr_h3_base, mc_ );
 
 
@@ -243,6 +246,17 @@ void SnugDock::init() {
 	} else {
 		loop_refinement_method_ = "refine_kic";
 	}
+	/// Allow h3_filter to be turned off to speed up loop modeling
+	if ( option[ basic::options::OptionKeys::antibody::h3_filter ].user() ) {
+		h3_filter_  = option[ basic::options::OptionKeys::antibody::h3_filter ]() ;
+	} else {
+		h3_filter_ = true;
+	}
+	if ( option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ].user() ) {
+		h3_filter_tolerance_  = option[ basic::options::OptionKeys::antibody::h3_filter_tolerance ]() ;
+	} else {
+		h3_filter_tolerance_ = 20;
+	}
 
 
 	number_of_high_resolution_cycles( 50 );
@@ -258,6 +272,10 @@ void SnugDock::init_for_equal_operator_and_copy_constructor(SnugDock & lhs, Snug
 	// Movers
 	lhs.high_resolution_step_ = rhs.high_resolution_step_;
 	lhs.loop_refinement_method_ = rhs.loop_refinement_method_;
+	
+	// H3 filter options
+	lhs.h3_filter_ = rhs.h3_filter_;
+	lhs.h3_filter_tolerance_ = rhs.h3_filter_tolerance_;
 
 	lhs.number_of_high_resolution_cycles_ = rhs.number_of_high_resolution_cycles_;
 }

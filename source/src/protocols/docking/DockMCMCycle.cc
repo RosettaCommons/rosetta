@@ -143,9 +143,19 @@ void DockMCMCycle::set_default()
 
   using namespace basic::options; //quick hack by rhiju
   using namespace basic::options::OptionKeys::docking; // quick hack by rhiju -- later feed this in through dockingprotocol
-
-	trans_magnitude_ = 0.1;
-	rot_magnitude_ = 5.0;
+	
+	// set translation & rotation move magnitudes
+	if ( option[ OptionKeys::docking::dock_mcm_trans_magnitude ].user() ) {
+		trans_magnitude_ = option[ OptionKeys::docking::dock_mcm_trans_magnitude ]();
+	} else {
+		trans_magnitude_ = 0.1;
+	}
+	
+	if ( option[ OptionKeys::docking::dock_mcm_rot_magnitude ].user() ) {
+		rot_magnitude_ = option[ OptionKeys::docking::dock_mcm_rot_magnitude ]();
+	} else {
+		rot_magnitude_ = 5.0;
+	}
 
     rtmin_ = false;
     scmin_ = false;

@@ -30,6 +30,7 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/moves/Mover.hh>
+#include <utility/vector1.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -61,9 +62,12 @@ virtual void apply( pose::Pose & pose_in )
 	antibody::AntibodyInfoCOP ab_info_ = new AntibodyInfo( pose_in );
 	PoseCOP new_pose = new Pose( pose_in );
 	
-	Real packing_angle_ = vl_vh_packing_angle( *new_pose , *ab_info_ );
+	vector1< Real > orientation_coords_ = vl_vh_orientation_coords( *new_pose , *ab_info_ );
 
-	job->add_string_real_pair( "VL_VH_angle", packing_angle_ );
+	job->add_string_real_pair( "VL_VH_distance", orientation_coords_[1] );
+	job->add_string_real_pair( "VL_VH_opening_angle", orientation_coords_[2] );
+	job->add_string_real_pair( "VL_VH_opposite_opening_angle", orientation_coords_[3] );
+	job->add_string_real_pair( "VL_VH_packing_angle", orientation_coords_[4] );
 	job->add_string_real_pair( "H1_length", ab_info_->get_CDR_length( h1 ) );
 	job->add_string_real_pair( "H2_length", ab_info_->get_CDR_length( h2 ) );
 	job->add_string_real_pair( "H3_length", ab_info_->get_CDR_length( h3 ) );
