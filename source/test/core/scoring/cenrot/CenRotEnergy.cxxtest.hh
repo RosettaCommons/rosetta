@@ -125,7 +125,9 @@ public:
 		ScoreFunction sfxn;
 		sfxn.set_weight( cen_rot_dun, 1.0 );
 		Real start_score = sfxn(pose);
-		TS_ASSERT_DELTA(start_score, 26.4134299633991, 1e-12);
+		std::cout.precision(15);
+		std::cout << start_score << std::endl;
+		TS_ASSERT_DELTA(start_score, 38.630002145584, 1e-12);
 	}
 
 	void test_cen_rot_repack()
