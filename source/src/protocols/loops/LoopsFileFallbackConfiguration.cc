@@ -122,7 +122,7 @@ LoopsFileFallbackConfigurationCreator::create_fallback_configuration() const
 std::string
 LoopsFileFallbackConfigurationCreator::resource_description() const
 {
-	return "loops_file";
+	return "LoopsFile";
 }
 
 } // namespace loops
