@@ -19,7 +19,8 @@ import os, commands, re, subprocess, time
 from os import path
 from optparse import OptionParser
 
-import yaml
+#import yaml
+import json
 
 UnitTestExecutable = ["protocols.test", "core.test", "basic.test", "ObjexxFCL.test", "numeric.test", "utility.test", "apps.test", "devel.test"]
 #UnitTestExecutable = ["numeric.test", "utility.test"]
@@ -303,13 +304,14 @@ class Tester:
                 yaml_data = {}
                 for l, suite in self.all_test_suites_by_lib[lib]:
                     log_file_h.write( file(self.testpath + '/' + lib + '.' + suite + '.log').read() )
-                    data = yaml.load( file(self.testpath + '/' + lib + '.' + suite + '.yaml').read() )
+                    print 'trying: ', self.testpath + '/' + lib + '.' + suite + '.yaml'
+                    data = json.loads( file(self.testpath + '/' + lib + '.' + suite + '.yaml').read() )
                     for k in data:
                         if k in yaml_data: yaml_data[k] = list( set(yaml_data[k] + data[k]) )
                         else: yaml_data[k] = data[k]
 
 
-                yaml_file_h.write( yaml.dump(yaml_data) )
+                yaml_file_h.write( json.dumps(yaml_data) )
 
                 log_file_h.close()
                 yaml_file_h.close()
@@ -323,7 +325,7 @@ class Tester:
                 logs_yamls[lib] = (log_file, yaml_file)
 
             #print 'All_yaml:', all_yaml
-            f = file('.unit_test_results.yaml', 'w');  f.write( yaml.dump(all_yaml) );  f.close()
+            f = file('.unit_test_results.yaml', 'w');  f.write( json.dumps(all_yaml) );  f.close()
 
 
         '''

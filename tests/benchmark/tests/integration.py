@@ -76,6 +76,8 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
         files_location = rosetta_dir+'/tests/integration/new/'
         #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
 
+        #output_json = working_dir + '/output.json'  , output_json=output_json   --yaml={output_json}
+
         TR('Running integration script...')
         res, output = execute('Running integration script...', 'cd {}/tests/integration && ./integration.py --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
         #res, output = 0, 'debug... integration.py...\n'

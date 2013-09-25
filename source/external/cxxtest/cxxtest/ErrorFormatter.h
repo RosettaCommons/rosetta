@@ -49,35 +49,46 @@ namespace CxxTest
 
         int run()
         {
-        	std::string file_name;
-        	if( run_type == _OneSuite_ ) {
-        	    file_name = std::string(real_command_line_argv[0]) + '.' + std::string(real_command_line_argv[1]) + ".yaml";
-        	    writeYAML(file_name, getAllTestsNames(), getAllSuiteNames( std::string(real_command_line_argv[1]) ));
-		}
-		else {
-		    file_name = std::string(real_command_line_argv[0]) + ".yaml";
-		    writeYAML(file_name, getAllTestsNames(), getAllTestsNames());
-		}
+	    // Initially we write json report and mark tests as failed and later owerwrite it with real results. This is needed for cases when test terminate with hard exceptions
+	    std::string file_name;
+	    if( run_type == _OneSuite_ ) {
+		file_name = std::string(real_command_line_argv[0]) + '.' + std::string(real_command_line_argv[1]) + ".yaml";
+		write_json(file_name, getAllTestsNames(), getAllSuiteNames( std::string(real_command_line_argv[1]) ));
+	    }
+	    else {
+		file_name = std::string(real_command_line_argv[0]) + ".yaml";
+		write_json(file_name, getAllTestsNames(), getAllTestsNames());
+	    }
 
-            TestRunner::runAllTests( *this );
-			writeYAML(file_name, getAllTestsNames(), failed_tests_);
+	    TestRunner::runAllTests( *this );
+	    write_json(file_name, getAllTestsNames(), failed_tests_);
 
             return tracker().failedTests();
         }
 
-		void writeYAML(std::string file_name,
+		void write_json(std::string file_name,
 					   std::vector< std::string > const & all_tests,
 					   std::vector< std::string > const & failed_tests)
 		{
 			std::fstream f( file_name.c_str(), std::fstream::out);
 
-			f << "ALL_TESTS : [";
-			for(unsigned int i=0; i<all_tests.size(); i++) f << all_tests[i] << ", ";
-			f << "]" <<std::endl;
+			f << "{" << std::endl;
+			f << "  \"ALL_TESTS\" : [";
+			std::string delim = "";
+			for(unsigned int i=0; i<all_tests.size(); i++) {
+			    f << delim;  delim = ", ";
+			    f << all_tests[i];
+			}
+			f << "]," <<std::endl;
 
-			f << "FAILED_TESTS : [";
-			for(unsigned int i=0; i<failed_tests.size(); i++) f << failed_tests[i] << ", ";
+			f << "  \"FAILED_TESTS\" : [";
+			delim = "";
+			for(unsigned int i=0; i<failed_tests.size(); i++) {
+			    f << delim;  delim = ", ";
+			    f << failed_tests[i];
+			}
 			f << "]" << std::endl;
+			f << "}" << std::endl;
 			f.close();
 		}
 
@@ -87,7 +98,7 @@ namespace CxxTest
 			RealWorldDescription wd;
 			for( SuiteDescription *sd = wd.firstSuite(); sd; sd = sd->next() ) {
 				for( TestDescription *td = sd->firstTest(); td; td = td->next() ) {
-					res.push_back( std::string("'") + sd->suiteName() + ":" + td->testName()+"'" );
+					res.push_back( std::string("\"") + sd->suiteName() + ":" + td->testName()+"\"" );
 				}
 			}
 			return res;
@@ -100,7 +111,7 @@ namespace CxxTest
 			for( SuiteDescription *sd = wd.firstSuite(); sd; sd = sd->next() ) {
 				if( sd->suiteName() == suite ) {
 				    for( TestDescription *td = sd->firstTest(); td; td = td->next() ) {
-				    	res.push_back( std::string("'") + sd->suiteName() + ":" + td->testName()+"'" );
+				    	res.push_back( std::string("\"") + sd->suiteName() + ":" + td->testName()+"\"" );
 				    }
 				}
 			}
@@ -155,7 +166,7 @@ namespace CxxTest
 			else {
                 (*_o) << "CXXTEST_ERROR: " << desc.testName() << " Failed!" << endl;
 				_o->flush();
-				failed_tests_.push_back( std::string("'") + desc.suiteName() +":"+desc.testName() + std::string("'"));
+				failed_tests_.push_back( std::string("\"") + desc.suiteName() +":"+desc.testName() + std::string("\""));
 			}
         }
 

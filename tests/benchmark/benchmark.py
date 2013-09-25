@@ -47,7 +47,7 @@ elif sys.platform == "cygwin" :      Platform['os'] = 'Cygwin'
 elif sys.platform == "win32" :       Platform['os'] = 'Windows'
 else:                                Platform['os'] = '_unknown_'
 
-Platform['arch'] = platform.architecture()[0][:2]  # PlatformBits
+#Platform['arch'] = platform.architecture()[0][:2]  # PlatformBits
 Platform['compiler'] = 'gcc'
 
 
