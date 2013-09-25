@@ -83,7 +83,9 @@ public:
 			for(chemical::ResidueTypeCOPs::const_iterator iter=begin; iter != end; ++iter) {
 				chemical::ResidueTypeCOP res_type = *iter;
 				chemical::ResidueTypeOP copy = res_type->clone(); // Tests the copy constructor
-				//if(! copy->is_protein() ) continue; // Water (TP5) was tripping up here...
+
+				if ( copy->is_RNA() ) continue; // RNA ResidueType can't run finalize after certain atoms are deleted
+
 				for(Size i=copy->natoms(); i >= 1; --i){ // start at the end...
 				//while(copy->natoms() > 4){ // residue must have 3 atoms
 					//Size const last_index = copy->natoms();
