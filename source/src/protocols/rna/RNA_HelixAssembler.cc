@@ -222,6 +222,7 @@ RNA_HelixAssembler::build_helix( core::pose::Pose & pose, std::string const & fu
 		if ( dump_ ) pose.dump_pdb( "helix_extend" + string_of(n) + ".pdb" );
 
 		put_constraints_on_base_step( pose, n );
+        //TR << "Finished adding constraints..." << std::endl;
 
 		minimize_base_step( pose, n, scorefxn_ );
 

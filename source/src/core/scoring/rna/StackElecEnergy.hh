@@ -262,6 +262,8 @@ private:
 	bool const verbose_;
   
   mutable bool might_be_designing_;
+	
+	mutable bool using_extended_method_;
 
 };
 

@@ -103,7 +103,7 @@ StackElecEnergy::StackElecEnergy( methods::EnergyMethodOptions const & options )
 	coulomb_( options ),
 	base_base_only_( false ), //true will be faster computation but appears less accurate (and less physically consistent)
 	verbose_( false ),
-	might_be_designing_( false )
+	using_extended_method_( false )
 {
 	coulomb_.initialize();
 }
@@ -114,7 +114,7 @@ StackElecEnergy::StackElecEnergy( StackElecEnergy const & src ):
 	coulomb_( src.coulomb() ),
 	base_base_only_( src.base_base_only_ ),
 	verbose_( src.verbose_ ),
-	might_be_designing_( src.might_be_designing_ )
+	using_extended_method_( src.using_extended_method_ )
 {
 	coulomb_.initialize();
 }
@@ -167,10 +167,10 @@ StackElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scf
   rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
   rna_centroid_info.update( pose );
     
-  if ( pose.energies().use_nblist() ) {
-    NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
-    nblist.prepare_for_scoring( pose, scfxn, *this );
-  }
+//  if ( pose.energies().use_nblist() ) {
+//    NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
+//    nblist.prepare_for_scoring( pose, scfxn, *this );
+//  }
 
 }
 
@@ -199,7 +199,8 @@ StackElecEnergy::setup_for_minimizing(
     
     //set_nres_mono(pose);
     
-    if ( pose.energies().use_nblist() ) {
+    //if ( pose.energies().use_nblist() ) {
+	if ( true ) {
         // stash our nblist inside the pose's energies object
         Energies & energies( pose.energies() );
         
@@ -310,7 +311,7 @@ StackElecEnergy::setup_for_minimizing_for_residue_pair(
 {
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
-    if ( pose.energies().use_nblist_auto_update() ) return;
+    //if ( pose.energies().use_nblist_auto_update() ) return;
         
     etable::count_pair::CountPairFunctionCOP count_pair =
         get_count_pair_function( rsd1, rsd2 );
@@ -340,12 +341,14 @@ StackElecEnergy::residue_pair_energy_ext(
     EnergyMap & emap
 ) const
 {
-    //assert( rsd1.seqpos() < rsd2.seqpos() );
-    if ( pose.energies().use_nblist_auto_update() ) return;
+    using_extended_method_ = true;
+	return;
+	//assert( rsd1.seqpos() < rsd2.seqpos() );
+    //if ( pose.energies().use_nblist_auto_update() ) return;
     Real score( 0.0 ), score_base_base( 0.0 ), score_base_bb( 0.0 );
     
     if ( rsd1.is_RNA() && rsd2.is_RNA() ) {
-        assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
+        //assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
         ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
         utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
         
@@ -423,21 +426,19 @@ StackElecEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-    //if ( use_extended_residue_pair_energy_interface() ) return;
-    if ( pose.energies().use_nblist() ) return;
+    using_extended_method_ = false;
+	//if ( use_extended_residue_pair_energy_interface() ) return;
+    //if ( pose.energies().use_nblist() ) return;
 	Real score_base_base1( 0.0 ), score_base_base2( 0.0 );
 	Real score_base_bb1( 0.0 ), score_base_bb2( 0.0 );
 
 	Real const score = residue_pair_energy_one_way( rsd1, rsd2, pose, score_base_base1, score_base_bb1 ) +
 		residue_pair_energy_one_way( rsd2, rsd1, pose, score_base_base2, score_base_bb2 ) ;
 
-  emap[ stack_elec ]           += score;
+  	emap[ stack_elec ]           += score;
 	emap[ stack_elec_base_base ] += score_base_base1 + score_base_base2;
 	emap[ stack_elec_base_bb ]   += score_base_bb1   + score_base_bb2;
 
-	if ( verbose_ && std::abs( score ) > 0.01 ) {
-		tr.Info << "respair " << rsd1.name3()  << rsd1.seqpos() << " --- " << rsd2.name3() << rsd2.seqpos() << ": " << F( 8, 3,score) << std::endl;
-	}
 
 }
 
@@ -511,17 +512,6 @@ StackElecEnergy::residue_pair_energy_one_way(
 			}
 
 			//DEBUG
-			if ( std::abs( stack_elec_score ) > 0.1 && verbose_ ){
-				tr << rsd1.name1() << I( 2, rsd1.seqpos() ) ;
-				tr << " " << rsd1.type().atom_name(m) << " " << A( 4, rsd1.atom_type(m).name() );
-				tr << " [" << F(8, 3, i_charge) << "]";
-				tr << " ---  ";
-				tr << rsd2.name1() << I( 2, rsd2.seqpos() );
-				tr << " " << rsd2.type().atom_name(n) << " " << A( 4, rsd2.atom_type(n).name() );
-				tr << " [" << F(8, 3, j_charge) << "]";
-				tr << ": " << F(8, 3, stack_elec_score);
-				tr <<  " [ coskappa2 " << F(8, 3, cos_kappa2 ) << "]" << std::endl;
-			}
 
     }
   }
@@ -581,7 +571,7 @@ StackElecEnergy::eval_atom_derivative(
     kinematics::Stub stub_i = base_stubs[i];
     Matrix const M_i ( stub_i.M );
     
-    assert( pose.energies().use_nblist() );
+    //assert( pose.energies().use_nblist() );
 	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
 	AtomNeighbors const & nbrs( nblist.atom_neighbors(i,m) );
     
@@ -797,8 +787,8 @@ StackElecEnergy::finalize_total_energy(
     rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
     rna_centroid_info.calculated() = false;
     
-    if ( use_extended_residue_pair_energy_interface() ) {
-        if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
+    if ( using_extended_method_ ) {
+        //if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
         //if ( !rsd1.is_RNA() || !rsd2.is_RNA() ) return;
         
         utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );    

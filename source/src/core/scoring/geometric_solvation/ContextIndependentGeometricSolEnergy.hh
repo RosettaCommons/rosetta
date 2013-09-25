@@ -23,6 +23,15 @@
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFactory.hh>
+#include <core/scoring/etable/count_pair/CountPairNone.hh>
+#include <core/scoring/etable/count_pair/CountPairAll.hh>
+#include <core/scoring/NeighborList.tmpl.hh>
+#include <core/scoring/ResidueNeighborList.hh>
+#include <core/scoring/MinimizationData.hh>
+#include <core/kinematics/MinimizerMapBase.hh>
+
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -63,8 +72,75 @@ public:
     pose::Pose & pose,
     utility::vector1< bool > const &,
     utility::vector1< bool > const & ) const;
+	
+	virtual
+	void
+	setup_for_minimizing(
+		pose::Pose & pose,
+		ScoreFunction const & sfxn,
+		kinematics::MinimizerMapBase const & min_map
+	) const;
+	
+	virtual
+	bool
+	defines_score_for_residue_pair(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		bool res_moving_wrt_eachother
+		) const;
 
-  
+	virtual
+	etable::count_pair::CountPairFunctionCOP
+	get_count_pair_function(
+		Size const res1,
+		Size const res2,
+		pose::Pose const & pose,
+		ScoreFunction const &
+	) const;
+	
+	virtual
+	etable::count_pair::CountPairFunctionCOP
+	get_count_pair_function(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2
+	) const;
+
+	virtual
+	etable::count_pair::CountPairFunctionCOP
+	get_intrares_countpair(
+		conformation::Residue const &,
+		pose::Pose const &,
+		ScoreFunction const &
+	) const;
+
+	virtual
+	bool
+	use_extended_residue_pair_energy_interface() const;
+
+	virtual
+	void
+	setup_for_minimizing_for_residue_pair(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		kinematics::MinimizerMapBase const &,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData & pair_data
+	) const;
+
+	virtual
+	void
+	residue_pair_energy_ext(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		EnergyMap & emap
+	) const;
+	
 	/// This evaluates everything for now,
 	/// but eventually may want to split this
 	/// based on backbone/backbone vs. others,
@@ -154,6 +230,8 @@ private:
   GeometricSolEnergyEvaluatorOP evaluator_;
 
   mutable Real precalculated_bb_bb_energy_;
+	
+  mutable bool using_extended_method_;
   
 
 };

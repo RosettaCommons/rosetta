@@ -86,7 +86,8 @@ GeometricSolEnergy::GeometricSolEnergy( methods::EnergyMethodOptions const & opt
 ) :
 	parent( new GeometricSolEnergyCreator ),
 	options_( new methods::EnergyMethodOptions( opts ) ),
-	evaluator_( new GeometricSolEnergyEvaluator( opts ) )
+	evaluator_( new GeometricSolEnergyEvaluator( opts ) ),
+	using_extended_method_( false )
 {
 }
 
@@ -94,7 +95,8 @@ GeometricSolEnergy::GeometricSolEnergy( methods::EnergyMethodOptions const & opt
 GeometricSolEnergy::GeometricSolEnergy( GeometricSolEnergy const & src ):
 	ContextDependentTwoBodyEnergy( src ),
 	options_( new methods::EnergyMethodOptions( *src.options_ ) ),
-	evaluator_( src.evaluator_ )
+	evaluator_( src.evaluator_ ),
+	using_extended_method_( src.using_extended_method_ )
 {}
 
 /// clone
@@ -159,7 +161,8 @@ GeometricSolEnergy::setup_for_minimizing(
     
     //set_nres_mono(pose);
     
-    if ( pose.energies().use_nblist() ) {
+    //if ( pose.energies().use_nblist() ) {
+	if ( true ) {
         // stash our nblist inside the pose's energies object
         Energies & energies( pose.energies() );
         
@@ -261,7 +264,7 @@ GeometricSolEnergy::setup_for_minimizing_for_residue_pair(
 {
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
-    if ( pose.energies().use_nblist_auto_update() ) return;
+    //if ( pose.energies().use_nblist_auto_update() ) return;
     
     etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
     //assert( rsd1.seqpos() < rsd2.seqpos() );
@@ -290,13 +293,15 @@ GeometricSolEnergy::residue_pair_energy_ext(
     EnergyMap & emap
 ) const
 {
-    if ( pose.energies().use_nblist_auto_update() ) return;
+    using_extended_method_ = true;
+	return;
+	//if ( pose.energies().use_nblist_auto_update() ) return;
     Real score( 0.0 );
     Real energy( 0.0 );
     
     //assert( rsd1.seqpos() < rsd2.seqpos() );
     
-    assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( geom_solv_pair_nblist )() ));
+    //assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( geom_solv_pair_nblist )() ));
     ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( geom_solv_pair_nblist ) ) );
     utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
     Size m = 0;
@@ -341,7 +346,8 @@ GeometricSolEnergy::residue_pair_energy(
 	ScoreFunction const & scorefxn,
 	EnergyMap & emap ) const
 {
-	if ( pose.energies().use_nblist() ) return;
+	using_extended_method_ = false;
+	//if ( pose.energies().use_nblist() ) return;
     evaluator_->residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap );
 }
     
@@ -351,8 +357,8 @@ GeometricSolEnergy::finalize_total_energy(
     ScoreFunction const &,
     EnergyMap & totals ) const
 {
-    if ( !use_extended_residue_pair_energy_interface() ) return;
-    if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
+    if ( !using_extended_method_ ) return;
+    //if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
     NeighborList const & nblist
         ( pose.energies().nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST ) );
     nblist.check_domain_map( pose.energies().domain_map() );
@@ -434,7 +440,7 @@ GeometricSolEnergy::eval_atom_derivative(
     
 	//	Size const nres = pose.total_residue();
 	static bool const update_deriv( true );
-    assert( pose.energies().use_nblist() );
+    //assert( pose.energies().use_nblist() );
 	NeighborList const & nblist
         ( pose.energies().nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST ) );
 	AtomNeighbors const & nbrs( nblist.atom_neighbors(i,ii) );

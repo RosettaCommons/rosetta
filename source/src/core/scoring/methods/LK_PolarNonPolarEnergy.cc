@@ -157,6 +157,7 @@ LK_PolarNonPolarEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
+    //TR << "residue_pair_energy() was called..." << std::endl;
 	//if ( pose.energies().use_nblist() ) return;
     Real lk_polar_score, lk_nonpolar_score, lk_costheta_score;
 
@@ -390,7 +391,8 @@ LK_PolarNonPolarEnergy::setup_for_derivatives(
 																				 ScoreFunction const &
 ) const
 {
-	pose.update_residue_neighbors();
+	//TR << "setup_for_derivatives() was called..." << std::endl;
+    pose.update_residue_neighbors();
 }
  
 ///////
@@ -404,6 +406,8 @@ LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction cons
     // Since this is probably being computed elsewhere, might make sense
     // to have a "calculated" flag.
     // But, anyway, the geometric sol calcs take way longer than this.
+    //std::cout<<"test";
+    //TR << "setup_for_scoring() was called..." << std::endl;
     pose.update_residue_neighbors();
     
     //hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_->hbond_options() ) );
@@ -423,8 +427,12 @@ LK_PolarNonPolarEnergy::setup_for_minimizing(
     using namespace basic::options::OptionKeys;
     
     //set_nres_mono(pose);
+    //TR << "setup_for_minimizing() was called..." << std::endl;
     
-    if ( pose.energies().use_nblist() ) {
+//    if ( pose.energies().use_nblist() ) {
+//        TR << "Using neighborlist..." << std::endl;
+//    }
+    if ( true ) {
         // stash our nblist inside the pose's energies object
         Energies & energies( pose.energies() );
         
@@ -434,6 +442,7 @@ LK_PolarNonPolarEnergy::setup_for_minimizing(
         Real const XX = max_dis_ + 2 * tolerated_motion;
         nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
         if ( pose.energies().use_nblist_auto_update() ) {
+            //TR << "Using neighborlist auto-update..." << std::endl;
             nblist->set_auto_update( tolerated_motion );
         }
         // this partially becomes the EtableEnergy classes's responsibility
@@ -527,6 +536,7 @@ LK_PolarNonPolarEnergy::setup_for_minimizing_for_residue_pair(
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
     //if ( pose.energies().use_nblist_auto_update() ) return;
+    //TR << "setup_for_minimizing_for_residue_pair() was called..." << std::endl;
     
     etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
     //assert( rsd1.seqpos() < rsd2.seqpos() );
@@ -556,6 +566,7 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 ) const
 {
     //if ( pose.energies().use_nblist_auto_update() ) return;
+    //TR << "residue_pair_energy_ext() was called..." << std::endl;
     
     using namespace etable::count_pair;
 	CountPairFunctionOP cpfxn =
@@ -569,7 +580,7 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 
     //assert( rsd1.seqpos() < rsd2.seqpos() );
     
-    assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( lk_PolarNonPolar_pair_nblist )() ));
+    //assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( lk_PolarNonPolar_pair_nblist )() ));
     ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( lk_PolarNonPolar_pair_nblist ) ) );
     utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
     
@@ -593,7 +604,7 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
         bool const is_polar_m = ( rsd1.atom_type(m).is_acceptor() || rsd1.atom_type(m).is_donor());
         bool const is_polar_n = ( rsd2.atom_type(n).is_acceptor() || rsd2.atom_type(n).is_donor());
         if ( !compute_polar && is_polar_m && is_polar_n ) continue;
-		if ( !is_polar_m && !is_polar_n && !compute_nonpolar ) continue;
+		if ( !compute_nonpolar && !is_polar_m && !is_polar_n ) continue;
         //Real const d2 = d_ij.length_squared();
         //if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
         
@@ -855,6 +866,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 	Vector & F2
 ) const
 {
+    //TR << "eval_atom_derivative() was called..." << std::endl;
     if ( defines_intrares_energy( weights ) ) {
         eval_atom_derivative_intra_RNA(atom_id, pose, domain_map, weights, F1, F2);
     }
@@ -869,9 +881,10 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
     
 	//	Size const nres = pose.total_residue();
 	//static bool const update_deriv( true );
-    assert( pose.energies().use_nblist() );
+    //assert( pose.energies().use_nblist() );
 	NeighborList const & nblist
         ( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
+    //TR << "checkpoint..." << std::endl;
 	AtomNeighbors const & nbrs( nblist.atom_neighbors(i,m) );
     
     using namespace etable::count_pair;
@@ -915,7 +928,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
         f2 = -1.0 * cp_weight * deriv * d_ij_norm;
         f1 = cross( f2, heavy_atom_n );
         
-        if ( is_polar_m && compute_polar ) {
+        if ( compute_polar && is_polar_m ) {
             Real const d = d_ij.length();
             F1 += weights[ lk_polar ] * f1;
             F2 += weights[ lk_polar ] * f2;
@@ -935,7 +948,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
         f2 = cp_weight * deriv * d_ij_norm;
         f1 = cross( f2, heavy_atom_m );
         
-        if ( is_polar_n && compute_polar ) {
+        if ( compute_polar && is_polar_n ) {
             Real const d = d_ij.length();
             F1 -= weights[ lk_polar ] * f1;
             F2 -= weights[ lk_polar ] * f2;
@@ -967,6 +980,8 @@ LK_PolarNonPolarEnergy::finalize_total_energy(
 	EnergyMap & totals
 ) const
 {
+    //TR << "finalize_total_energy() was called..." << std::endl;
+    //TR << pose.energies().use_nblist() << std::endl;
     if ( use_extended_residue_pair_energy_interface() ) return;
     if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
     NeighborList const & nblist

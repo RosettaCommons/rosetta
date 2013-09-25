@@ -1007,7 +1007,6 @@ TableLookupEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(
                                                           bool const eval_deriv /* = false */
                                                           ) const
 {
-    
     int disbin;
     Real frac, d2;
     
@@ -1028,7 +1027,28 @@ TableLookupEvaluator::atom_pair_lk_energy_and_deriv_v_efficient(
         }
         
     } //if within cutoff
-    
+	
+	disbin = 0;
+	frac = 0.0;
+	d2 = 0.0;
+	
+	if (interpolate_bins(atom2,atom1,d2,disbin,frac)) {
+        
+        int const l1 = solv1_.index( disbin, atom1.type(), atom2.type()),
+        l2 = l1 + 1;
+        
+        Real const e1 = solv1_[ l1 ];
+        solv2 = ( e1 + frac * ( solv1_[ l2 ] - e1 ) );
+        
+        if ( eval_deriv ){
+            // Following (commented out) is used in dE_dR_over_R below,
+            //  but its a mistake, I think -- rhiju.
+            //			Real e1 = dsolv1_[ l1 ];
+            //			deriv = ( e1 + frac * ( dsolv1_[ l2 ] - e1 ) );
+            dsolv1 = ( solv1_[ l2 ] - solv1_[ l1 ] ) * etable_bins_per_A2_ * std::sqrt( d2 ) * 2;
+        }
+        
+    } //if within cutoff
 }
 
     inline

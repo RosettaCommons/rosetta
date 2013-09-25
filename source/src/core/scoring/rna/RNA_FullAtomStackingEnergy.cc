@@ -29,6 +29,7 @@
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
+#include <core/kinematics/MinimizerMapBase.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -98,7 +99,35 @@ RNA_FullAtomStackingEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 // scoring
 /////////////////////////////////////////////////////////////////////////////
-
+void
+RNA_FullAtomStackingEnergy::setup_for_minimizing(
+    pose::Pose & pose,
+    ScoreFunction const & sfxn,
+    kinematics::MinimizerMapBase const & min_map
+) const
+{
+    using namespace basic::options;
+    using namespace basic::options::OptionKeys;
+    
+    //set_nres_mono(pose);
+    
+    if ( pose.energies().use_nblist() ) {
+        // stash our nblist inside the pose's energies object
+        Energies & energies( pose.energies() );
+        
+        // setup the atom-atom nblist
+        NeighborListOP nblist;
+        Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
+        Real const XX = dist_cutoff_ + 2 * tolerated_motion;
+        nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
+        if ( pose.energies().use_nblist_auto_update() ) {
+            nblist->set_auto_update( tolerated_motion );
+        }
+        // this partially becomes the EtableEnergy classes's responsibility
+        nblist->setup( pose, sfxn, *this);
+        energies.set_nblist( EnergiesCacheableDataType::FA_STACK_NBLIST, nblist );
+    }
+}
 
 ///
 void
@@ -112,7 +141,7 @@ RNA_FullAtomStackingEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction 
 
 	pose.update_residue_neighbors();
 	if ( pose.energies().use_nblist() ) {
-		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
+		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::FA_STACK_NBLIST ) );
 		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
 }

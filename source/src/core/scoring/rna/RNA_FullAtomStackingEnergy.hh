@@ -62,6 +62,13 @@ public:
 	virtual
 	void
 	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const;
+    
+    void
+    setup_for_minimizing(
+        pose::Pose & pose,
+        ScoreFunction const & sfxn,
+        kinematics::MinimizerMapBase const & min_map
+    ) const;
 
 	virtual
 	void

@@ -239,6 +239,8 @@ private:
 	methods::EnergyMethodOptionsOP options_;
 
 	GeometricSolEnergyEvaluatorOP evaluator_;
+	
+	mutable bool using_extended_method_;
 
 };
 
