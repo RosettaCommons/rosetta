@@ -16,11 +16,11 @@
 #include <protocols/floppy_tail/FloppyTail_publication.hh>
 
 // Project Headers
-//#include <core/conformation/Conformation.hh>
-
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
+
+#include <core/conformation/Conformation.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 
@@ -128,7 +128,7 @@ FloppyTailMover::FloppyTailMover() :
         centroid_scorefunction_->set_weight( hbond_lr_bb, 1.0 );
         centroid_scorefunction_->set_weight( hbond_sr_bb, 1.0 );
     }
-    
+
 	core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn( *centroid_scorefunction_ ); //protected if(option) internally
 	TR << "Using centroid scorefunction\n" << *centroid_scorefunction_;
 
@@ -264,6 +264,41 @@ void FloppyTailMover::init_on_new_input(core::pose::Pose const & pose) {
 	if( basic::options::option[ FloppyTail::C_root].value() ) {
 		foldtree_->reorder(pose.total_residue());
 		TR << "C-rooted tree: " << *foldtree_ << std::endl;
+	}
+
+	//SPECIAL BEN STRANGES CODE
+	//useful for putting a dimerization domain at the C-term of two proteins
+	//!currently hardcoded for chains 7 and 8!!!!!!!!!!!!!!!
+	if(false){
+		//linearized fold tree for proper domain-moves-with-domain
+		foldtree_ = new core::kinematics::FoldTree(core::kinematics::linearize_fold_tree(*foldtree_));
+		//std::cout << "linearized foldtree " << *foldtree_ << std::endl;
+
+		//re-root fold_tree in one dimerization domain
+		foldtree_->reorder(1); //reorder on N terminus
+		//std::cout << "post reordered foldtree " << *foldtree_ << std::endl;
+
+		//get chain endings and beginnings, check some assumptions
+		//A is the N-terminal part of the C-terminal-dimerization-domain-containing chain pair
+		//B is the C-terminal
+		core::Size const chainAend(pose.conformation().chain_end(7));
+		//core::Size const chainAbegin(pose.conformation().chain_begin(7));
+		core::Size const chainBend(pose.conformation().chain_end(8));
+		core::Size const chainBbegin(pose.conformation().chain_begin(8));
+		runtime_assert(chainBend == pose.total_residue());
+		runtime_assert(chainAend+1 == chainBbegin);
+
+		//re-order A to B chain jump to be cterm to cterm
+		core::Size const jump_replace_number(foldtree_->jump_nr(chainAend, chainBbegin));
+		runtime_assert(jump_replace_number); //if it's zero, bang we're dead edge not found
+		//delete the jump between Cterm of chain A to Nterm of B; replace with Cterm to Cterm
+		foldtree_->delete_unordered_edge(chainAend, chainBbegin, jump_replace_number); //delete edge
+		foldtree_->add_edge(core::kinematics::Edge(chainAend, chainBend, jump_replace_number)); //replace edge
+		//delete the chain B peptide edge, and re-add in reverse polarity (fold from C terminus
+		foldtree_->delete_unordered_edge(chainBbegin, chainBend, -1); //delete edge
+		foldtree_->add_edge(core::kinematics::Edge(chainBend, chainBbegin, -1)); //replace edge
+		//std::cout << "remade foldtree " << *foldtree_ << std::endl;
+		runtime_assert(foldtree_->check_fold_tree());
 	}
 
 	//setup of TaskFactory
