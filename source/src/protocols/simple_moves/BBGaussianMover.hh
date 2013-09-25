@@ -144,7 +144,7 @@ protected:
 class BBG8T3AMover : public BBGaussianMover
 {
 public:
-
+	virtual protocols::moves::MoverOP clone() const;
 
 public:
 	BBG8T3AMover();
@@ -158,6 +158,14 @@ public:
 	void factorA( core::Real const fA );
 	void factorB( core::Real const fB );
 	//Real get_last_delta_square();
+	
+	//interface for rosetta_scripts
+	virtual void parse_my_tag(
+		TagPtr const,
+		protocols::moves::DataMap &,
+		Filters_map const &,
+		protocols::moves::Movers_map const &,
+		Pose const & );
 
 protected:
 	void get_VdRdPhi(Pose const &);

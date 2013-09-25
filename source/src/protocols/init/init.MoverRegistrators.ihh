@@ -145,6 +145,7 @@ static MoverRegistrator< loops::loop_mover::refine::SmallMinCCDTrialCreator > re
 static MoverRegistrator< match::MatcherMoverCreator > reg_MatcherMoverCreator;
 
 static MoverRegistrator< md::CartesianMDCreator > reg_CartesianMDCreator;
+static MoverRegistrator< simple_moves::BBGaussianMoverCreator > reg_BBGaussianMoverCreator;
 
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;
 

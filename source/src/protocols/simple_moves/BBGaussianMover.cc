@@ -13,10 +13,10 @@
 /// @author Yuan Liu (wendao@u.washington.edu)
 
 #include <protocols/simple_moves/BBGaussianMover.hh>
+#include <protocols/simple_moves/BBGaussianMoverCreator.hh>
+
 //core
 #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <basic/basic.hh>
@@ -24,20 +24,19 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/bbg.OptionKeys.gen.hh>
+
+//Rosetta Scripts
+#include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 //util
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
-// AUTO-REMOVED #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/internal/RowVectors.hh>
 
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
 #include <sstream>
 
 #include <utility/vector1.hh>
@@ -57,7 +56,24 @@ static numeric::random::RandomGenerator RG(6233); //Magic Number
 namespace protocols {
 namespace simple_moves {
 
+std::string
+BBGaussianMoverCreator::keyname() const
+{
+	return BBGaussianMoverCreator::mover_name();
+}
 
+protocols::moves::MoverOP
+BBGaussianMoverCreator::create_mover() const {
+	return new BBG8T3AMover;
+}
+
+std::string
+BBGaussianMoverCreator::mover_name()
+{
+	return "BBG8T3AMover";
+}
+
+///////////////////////////////////////////////////
 BBGaussianMover::BBGaussianMover( Size n_end_atom, Size n_dof_angle, Size n_pert_res)
         :Mover(),
         n_end_atom_(n_end_atom),
@@ -299,6 +315,16 @@ void BBG8T3AMover::register_options() {
 	OPT( bbg::factorB );
 }
 */
+
+protocols::moves::MoverOP
+BBG8T3AMover::clone() const {
+		protocols::simple_moves::BBG8T3AMoverOP mp = new BBG8T3AMover();
+		mp->factorA(factorA_);
+		mp->factorB(factorB_);
+		mp->movemap(movemap_);
+		return static_cast< protocols::moves::MoverOP >(mp);
+}
+
 void
 BBG8T3AMover::factorA( core::Real const fA ){
 	factorA_ = fA;
@@ -664,6 +690,22 @@ void BBG8T3AMover::apply(Pose &pose)
     Real W_new = get_L_prime();
 
     last_proposal_density_ratio_ = W_new / W_old;
+}
+
+void BBG8T3AMover::parse_my_tag(
+	TagPtr const tag,
+	protocols::moves::DataMap & data,
+	Filters_map const &,
+	protocols::moves::Movers_map const &,
+	Pose const & pose )
+{
+		factorA_ = tag->getOption< Real >("factorA", 1.0);
+		factorB_ = tag->getOption< Real >("factorB", 10.0);
+
+		core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+		mm->set_bb(true);
+		protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false );
+		movemap(mm);
 }
 
 }//namespace simple_moves

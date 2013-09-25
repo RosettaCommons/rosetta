@@ -132,6 +132,7 @@
 
 #include <protocols/match/MatcherMoverCreator.hh>
 #include <protocols/md/CartesianMDCreator.hh>
+#include <protocols/simple_moves/BBGaussianMoverCreator.hh>
 
 #include <protocols/motifs/MotifDnaPackerCreator.hh>
 

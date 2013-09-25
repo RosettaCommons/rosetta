@@ -93,6 +93,8 @@ OPT_KEY(Real, pair_bin_width)
 OPT_KEY(Integer, env_bin_number)
 OPT_KEY(Integer, sequence_seperation)
 
+OPT_KEY(Boolean, anisovdw)
+
 int main( int argc, char * argv [] )
 {
 	NEW_OPT(restype_rot_dependent, 
@@ -108,6 +110,8 @@ int main( int argc, char * argv [] )
 		"bin number of environment", 40);
 	NEW_OPT(sequence_seperation,
 		"sequence distance exlusion cutoff", 9);
+	NEW_OPT(anisovdw, 
+		"output anisovdw parameter", false);
 
 	devel::init(argc, argv);
 	my_main();
@@ -146,38 +150,43 @@ Size get_best_rotamer_index(Pose &p, Size ndx)
 
 	Size closest_rot;
 	Real closest_dis;
-	CentroidRotamerSampleData const &sampledata (
-		residue_cenrot_library->get_closest_rotamer(
-		p.residue(ndx), closest_rot, closest_dis));
+	//CentroidRotamerSampleData const &sampledata ( residue_cenrot_library->get_closest_rotamer( p.residue(ndx), closest_rot, closest_dis));
+	residue_cenrot_library->get_closest_rotamer( p.residue(ndx), closest_rot, closest_dis);
 	return closest_rot;
 }
 
 Size get_rotamer_type_index(std::string const & aa, Size nrot, Size nenv=0)
 {
-	std::stringstream rot_type;
+		std::stringstream rot_type;
+		std::string aastr = aa.substr(0,3);
+		if (aa.compare(0,3,"CYD")==0) aastr="CYS";
 
-	if (option[restype_rot_dependent]) {
-		rot_type << aa.substr(0,3) << nrot;
-	}
-	else {
-		rot_type << aa.substr(0,3);
-	}
+		//TR.Debug << "|" << aa.substr(0,3) << "| -->" << aastr << std::endl;
 
-	if (option[env_dependent_pair].user()) {
-		rot_type << " " << nenv;
-	}
-	
-	Size i;
-	for(i=1; i<=rot_type_list.size(); i++) {
-		if (rot_type_list[i]==rot_type.str()) break;
-	}
+		if (option[restype_rot_dependent]) {
+				rot_type << aastr << nrot;
+		}
+		else {
+				rot_type << aastr;
+		}
 
-	if (i>rot_type_list.size()) {
-		rot_type_list.push_back(rot_type.str());
-		rot_list_num.push_back(0);
-	}
-	
-	return i;
+		if (option[env_dependent_pair].user()) {
+				rot_type << " " << nenv;
+		}
+
+		Size i;
+		for(i=1; i<=rot_type_list.size(); i++) {
+				if (rot_type_list[i]==rot_type.str()) break;
+				//TR.Debug << "rot_list " << i << ": " << rot_type_list[i] << std::endl;
+		}
+
+		if (i>rot_type_list.size()) {
+				//TR.Debug << "Adding new type: " << rot_type.str() << std::endl;
+				rot_type_list.push_back(rot_type.str());
+				rot_list_num.push_back(0);
+		}
+
+		return i;
 }
 
 void fill_1D_vector(utility::vector1<Size> &t1, Size nx)
@@ -254,7 +263,7 @@ void my_main()
 
 	Real wbin = option[pair_bin_width];
 	Size nbin_pair = option[pair_bin_number];
-	Real Lbin = wbin * nbin_pair;
+	//Real Lbin = wbin * nbin_pair;
 	Size nbin_env = option[env_bin_number]; //max neighbour number
 	Size nrottype = option[restype_rot_dependent]?79:20; //magic number
 	Size nenv_pair = get_env_bin_number(nbin_env);
@@ -263,7 +272,7 @@ void my_main()
 	}
 	Size nbin_ang = 16;
 	Size nbin_dih = 18;
-	Real ang0 = -1;
+	Real cos_ang0 = -1;
 	Real d_ang = 2.0/16;
 	Real dih0 = -180.0;
 	Real d_dih = 20.0;
@@ -318,19 +327,19 @@ void my_main()
 
 			//save its type index
 			Size res_index = get_rotamer_type_index(
-				p.residue(i).name(),
-				get_best_rotamer_index(p,i),
-				get_env_bin_number(nbr_within_ten));
+							p.residue(i).name(),
+							get_best_rotamer_index(p,i),
+							get_env_bin_number(nbr_within_ten));
 			rotliblst.push_back( res_index );
 			rot_list_num[res_index]++; //save number of each type
+
+			//TR.Debug << rotliblst[i] << ": nbr= " <<  nbr_within_ten << std::endl;
 
 			//add to env_table
 			if (nbr_within_ten>=1 && nbr_within_ten<=option[env_bin_number])
 			{
-				env_table[rotliblst[i]][nbr_within_ten]++;
+					env_table[rotliblst[i]][nbr_within_ten]++;
 			}
-
-
 		}
 
 		/// for each res-pair, cal dist
@@ -349,6 +358,8 @@ void my_main()
 			// but scince our cutoff is 12, it's fine, i guess
 
 			conformation::Residue const & rsd1 ( p.residue(i) );
+		  if (rsd1.name3()=="CYD") continue;
+
 			for ( graph::Graph::EdgeListConstIter
 					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
 					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
@@ -358,9 +369,10 @@ void my_main()
 				Size const j( edge->get_second_node_ind() );
 
 				//check the sequence seperation, skip local interaction
-				if (j-i<option[sequence_seperation]) continue;
+				if ((j-i)<option[sequence_seperation]) continue;
 
 				conformation::Residue const & rsd2 ( p.residue(j) );
+		    if (rsd2.name3()=="CYD") continue;
 
 				//save r
 				Real d = rsd1.atom("CEN").xyz().distance(rsd2.atom("CEN").xyz());
@@ -379,16 +391,32 @@ void my_main()
 					rc = rsd2.atom("CEN").xyz();
 					rd = rsd2.atom("CB").xyz();
 
-					Real ang1 = cos(numeric::angle_radians(ra,rb,rc));
-					Real ang2 = cos(numeric::angle_radians(rb,rc,rd));
+					Real ang1 = numeric::angle_radians(ra,rb,rc);
+					Real cos_ang1 = cos(ang1);
+					Real ang2 = numeric::angle_radians(rb,rc,rd);
+					Real cos_ang2 = cos(ang2);
 					Real dih = numeric::dihedral_degrees(ra,rb,rc,rd);
-					Size bin_ang1 = int((ang1-ang0)/d_ang)+1;
-					Size bin_ang2 = int((ang2-ang0)/d_ang)+1;
+					Size bin_ang1 = int((cos_ang1-cos_ang0)/d_ang)+1;
+					Size bin_ang2 = int((cos_ang2-cos_ang0)/d_ang)+1;
 					Size bin_dih = int((dih-dih0)/d_dih)+1;
 
 					th1_table[rotliblst[i]][rotliblst[j]][bin_r][bin_ang1]++;
 					th2_table[rotliblst[i]][rotliblst[j]][bin_r][bin_ang2]++;
 					dih_table[rotliblst[i]][rotliblst[j]][bin_r][bin_dih]++;
+
+					//test aniso-vdw parameter
+					if (option[anisovdw] && bin_r<=nbin_pair/2) {
+							//close enough
+							core::kinematics::Stub::Vector rCA1, rCA2;
+							rCA1 = rsd1.atom("CA").xyz();
+							rCA2 = rsd2.atom("CA").xyz();
+							Real dih1 = numeric::dihedral_degrees(rc,rb,ra,rCA1);
+							Real dih2 = numeric::dihedral_degrees(rb,rc,rd,rCA2);
+							std::cout << "#: " << rsd1.name3() << " " << rsd2.name3() << " " << d << " " 
+									<< ang1*numeric::constants::r::radians_to_degrees << " " << dih1 << std::endl;
+							std::cout << "#: " << rsd2.name3() << " " << rsd1.name3() << " " << d << " " 
+									<< ang2*numeric::constants::r::radians_to_degrees << " " << dih2 << std::endl;
+					}
 				}
 			}
 		}

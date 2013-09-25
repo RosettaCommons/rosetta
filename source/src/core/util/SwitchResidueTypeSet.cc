@@ -88,6 +88,8 @@ switch_to_residue_type_set(
 		for ( core::Size i=1; i<= pose.total_residue(); ++i ) {
 			//get the residue
 			Residue const & rsd( pose.residue(i) );
+			if( (rsd.aa()==aa_unk) || (rsd.aa()==aa_vrt) ) continue; //skip invalid residue
+
 			//check current restype
 			std::string const & current_type_set_name ( rsd.type().residue_type_set().name() );
 			if ( current_type_set_name == chemical::CENTROID_ROT ) {
@@ -112,19 +114,20 @@ switch_to_residue_type_set(
 
 			//gen new residue
 			core::conformation::ResidueOP new_rsd( 0 );
-			if( ( rsd.aa() == aa_unk ) ){
+			if( (rsd.aa()==aa_unk) || (rsd.aa()==aa_vrt) ){
 				//skip
+				continue;
 			}
-			else if ( rsd.name().substr(0,3)=="CYD" ) {
-				core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( "CYS" ) );
-				for (core::Size j=1; j<=rsd_types.size(); ++j ) {
-					core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
-					if ( new_rsd_type.name3()=="CYS" ) {
-						new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
-						break;
-					}
-				}
-			}
+			//else if ( rsd.name().substr(0,3)=="CYD" ) {
+			//	core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( "CYS" ) );
+			//	for (core::Size j=1; j<=rsd_types.size(); ++j ) {
+			//		core::chemical::ResidueType const & new_rsd_type( *rsd_types[j] );
+			//		if ( new_rsd_type.name3()=="CYS" ) {
+			//			new_rsd = core::conformation::ResidueFactory::create_residue( new_rsd_type, rsd, pose.conformation() );
+			//			break;
+			//		}
+			//	}
+			//}
 			else if ( rsd.name().substr(0,5)=="HIS_D" ) {
 				core::chemical::ResidueTypeCOPs const & rsd_types( rsd_set->name3_map( rsd.name3() ) );
 				for (core::Size j=1; j<=rsd_types.size(); ++j ) {

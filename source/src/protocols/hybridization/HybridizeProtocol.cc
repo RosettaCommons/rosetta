@@ -235,6 +235,7 @@ HybridizeProtocol::init() {
 	cartfrag_overlap_ = 2;
 	seqfrags_only_ = false;
 	nofragbias_ = false;
+	skip_long_min_ = false;
 
 	jump_move_ = false;
 	jump_move_repeat_ = 1;
@@ -1069,6 +1070,7 @@ void HybridizeProtocol::apply( core::pose::Pose & pose )
 			cart_hybridize->set_seqfrags_only( seqfrags_only_ );
 			cart_hybridize->set_cartfrag_overlap( cartfrag_overlap_ );
 			cart_hybridize->set_movable_region( allowed_to_move_ );
+			cart_hybridize->set_skip_long_min( skip_long_min_ );
 
 			// finally run stage 2
 			cart_hybridize->apply(pose);
@@ -1442,6 +1444,8 @@ HybridizeProtocol::parse_my_tag(
 		seqfrags_only_ = tag->getOption< core::Size >( "seqfrags_only" );
 	if( tag->hasOption( "nofragbias" ) )
 		nofragbias_ = tag->getOption< core::Size >( "nofragbias" );
+	if( tag->hasOption( "skip_long_min" ) )
+		skip_long_min_ = tag->getOption< core::Size >( "skip_long_min" );
 
 
 	// scorefxns

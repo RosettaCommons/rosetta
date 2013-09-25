@@ -140,6 +140,9 @@ sources = {
 	"scoring/carbon_hbonds" : [
 		"CarbonHBondEnergy",
 	],
+	"scoring/cenrot" : [
+		"CenRotEnergy",
+	],
 	"scoring/constraints" : [
 		"AngleConstraint",
 		"AtomPairConstraint",

@@ -204,6 +204,7 @@ CartesianHybridize::init() {
 	cartfrag_overlap_ = 2;
 	seqfrags_only_ = false;
 	nofragbias_ = false;
+	skip_long_min_ = false;
 
 	// default scorefunction
 	set_scorefunction ( core::scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" ) );
@@ -730,10 +731,12 @@ sampler:
 
 	// final minimization
 	try {
-		(*min_scorefxn_)(pose); minimizer.run( pose, mm, *min_scorefxn_, options_lbfgs );
-		(*nocst_scorefxn_)(pose); minimizer.run( pose, mm, *nocst_scorefxn_, options_lbfgs );
-		(*bonds_scorefxn_)(pose); minimizer.run( pose, mm, *bonds_scorefxn_, options_lbfgs );
-		(*nocst_scorefxn_)(pose); minimizer.run( pose, mm, *nocst_scorefxn_, options_lbfgs );
+		if (!skip_long_min_) {
+				(*min_scorefxn_)(pose); minimizer.run( pose, mm, *min_scorefxn_, options_lbfgs );
+				(*nocst_scorefxn_)(pose); minimizer.run( pose, mm, *nocst_scorefxn_, options_lbfgs );
+				(*bonds_scorefxn_)(pose); minimizer.run( pose, mm, *bonds_scorefxn_, options_lbfgs );
+				(*nocst_scorefxn_)(pose); minimizer.run( pose, mm, *nocst_scorefxn_, options_lbfgs );
+		}
 	} catch( utility::excn::EXCN_Base& excn ) {
 		//fpd hbond fail? start over
 		pose = pose_in;

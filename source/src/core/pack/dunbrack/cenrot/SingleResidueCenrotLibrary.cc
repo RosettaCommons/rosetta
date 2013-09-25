@@ -586,7 +586,7 @@ void CentroidRotamerSampleData::cal_delta_internal_coordinates(
 	//get centroid_rot int
 	ddis = (d-c).length() - distance_;
 	dang = numeric::constants::r::pi-numeric::angle_radians(b,c,d) - angle_;
-	ddih = basic::periodic_range( numeric::dihedral_radians(a,b,c,d) - dihedral_, pi );
+	ddih = basic::periodic_range( numeric::dihedral_radians(a,b,c,d) - dihedral_, pi_2 );
 }
 
 Real CentroidRotamerSampleData::cal_distance_squared( const conformation::Residue & rsd ) const

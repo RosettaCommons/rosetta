@@ -81,6 +81,7 @@ public:
   void set_movable_region( utility::vector1< bool > allowed_to_move_in ) { allowed_to_move_ = allowed_to_move_in; }
 	void set_seqfrags_only(bool seqfrags_only_in) { seqfrags_only_=seqfrags_only_in; }
 	void set_nofragbias(bool nofragbias_in) { nofragbias_=nofragbias_in; }
+	void set_skip_long_min(bool skip_long_min_in) { skip_long_min_=skip_long_min_in; }
 
 	//
 	std::string	get_name() const { return "CartesianHybridize"; }
@@ -98,6 +99,7 @@ private:
 	core::Size ncycles_, cartfrag_overlap_;
 	bool no_global_frame_, linmin_only_;
 	bool seqfrags_only_, nofragbias_;
+	bool skip_long_min_;
 
 	// fragments
 	utility::vector1 < core::pose::PoseOP > templates_;

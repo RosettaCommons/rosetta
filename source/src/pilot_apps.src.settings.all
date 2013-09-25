@@ -747,6 +747,7 @@ sources = {
 		#"test_bbmc",
 		#"test_cen_rot",
 		#"fa_to_cenrot_score",
+        #"cenrot_jd2",
  		#"general_pair_counting",
 		#"params_opt",
 		#"cenrot_bbsc_demo",
