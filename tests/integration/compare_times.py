@@ -27,6 +27,10 @@ def write_and_print(file_, string, verbose):
 def compare_times(verbose=True):
     new, ref = load_files()
 
+    if not (new and ref):
+        if verbose: print 'No previous results found, skipping time comparison...'
+        return
+
     runtimes_compare = open('runtime_diffs.txt', 'w')
     format_string = '%39s %7.2f %7.2f %7.2f %7.2f\n'
     write_and_print(runtimes_compare, '%39s %7s %7s %7s %7s\n' % ("TEST", "NEW", "REF", "DIFF", "D/R"), verbose)

@@ -77,9 +77,9 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
         #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
 
         #output_json = working_dir + '/output.json'  , output_json=output_json   --yaml={output_json}
-
-        TR('Running integration script...')
-        res, output = execute('Running integration script...', 'cd {}/tests/integration && ./integration.py --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
+        command_line = 'cd {}/tests/integration && ./integration.py --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs)
+        TR( 'Running integration script: {}'.format(command_line) )
+        res, output = execute('Running integration script...', command_line, return_='tuple')
         #res, output = 0, 'debug... integration.py...\n'
         full_log += output
 
@@ -88,14 +88,12 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
             results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
             return results
 
-        for root, dirs, _ in os.walk(files_location):
-            if root == files_location:  # we only want to iterate over first layer
-                for d in dirs:
-                    #print 'linking: %s <-- %s' % (root + d, working_dir + d)
-                    os.symlink(root + '/' + d, working_dir + '/' + d)
-                    command_sh = working_dir + '/' + d + '/command.sh '
-                    if os.isfile(command_sh): os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
-
+    for d in os.listdir(files_location):
+        if os.path.isdir(files_location + '/' + d):
+            #print 'linking: %s <-- %s' % (root + d, working_dir + d)
+            os.symlink(files_location + '/' + d, working_dir + '/' + d)
+            command_sh = working_dir + '/' + d + '/command.sh '
+            if os.path.isfile(command_sh): os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
 
         results[_StateKey_] = _Finished_
         results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
