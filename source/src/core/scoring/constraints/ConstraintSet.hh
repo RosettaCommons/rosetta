@@ -338,6 +338,10 @@ public:
 	void
 	add_constraints( ConstraintCOPs cst_list );
 
+	///@brief add another constraint set to this constraint set
+	void
+	add_constraints( ConstraintSetCOP const cst_set );
+
 	/// @brief Returns true if the constraint was successfully found and removed.
 	/// if object comparison is set to true, the constraint to be removed is found
 	/// through the Constraint::== operator and not through pointer comparison

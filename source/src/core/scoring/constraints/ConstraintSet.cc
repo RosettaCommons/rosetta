@@ -512,6 +512,13 @@ ConstraintSet::add_constraints( ConstraintCOPs cst_list ) {
 	}
 }
 
+///@details copy another constraint set into this one
+void
+ConstraintSet::add_constraints( ConstraintSetCOP const cst_set ) {
+	add_constraints(cst_set->get_all_constraints());
+	return;
+}
+
 ///
 void
 ConstraintSet::add_constraint( ConstraintCOP cst )

@@ -10,6 +10,7 @@
 /// @file src/core/scoring/constraints/util.hh
 /// @brief utility functions for constraints. Maybe better placed in src/numeric?
 /// @author James Thompson
+/// @author Steven Lewis smlewi@gmail.com (merge_constraints_from_cmdline...)
 
 #ifndef INCLUDED_core_scoring_constraints_util_hh
 #define INCLUDED_core_scoring_constraints_util_hh
@@ -33,6 +34,8 @@
 namespace core {
 namespace scoring {
 namespace constraints {
+
+//////////////////MATH///////////////////////////////////
 
 /// @brief Returns the log of the weighted value of a Gaussian distribution
 /// evaluated with the given mean, sd, and x values. Returns zero if the
@@ -85,7 +88,9 @@ cull_violators(
 	core::Real threshold = 1.0
 );
 
-////////// Centroid constraints
+///////////////COMMAND LINE/////////////////////////////
+
+////////// Centroid constraints (add and replace)
 
 std::string get_cst_file_option();
 //// @brief 	add constraints if specified by user.
@@ -99,7 +104,7 @@ void add_constraints_from_cmdline(
 	core::pose::Pose & pose, core::scoring::ScoreFunction & scorefxn_
 );
 
-////////// FA constraints
+////////// FA constraints (add and replace)
 
 std::string get_cst_fa_file_option();
 
@@ -116,6 +121,39 @@ void add_fa_constraints_from_cmdline(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunction & scorefxn_
 );
+
+
+////////// Centroid constraints (merge mode)
+
+///@brief merge cmdline constraints to pre-existing constraints
+void merge_constraints_from_cmdline_to_pose( core::pose::Pose & pose );
+
+///@brief merge cmdline constraints to pre-existing constraints - only adds to ZERO weights; previously nonzero constraint weights are unmodified and a warning is issued
+void merge_constraints_from_cmdline_to_scorefxn(
+	core::scoring::ScoreFunction & scorefxn_
+);
+///@brief merge cmdline constraints to pre-existing constraints
+void merge_constraints_from_cmdline(
+	core::pose::Pose & pose, core::scoring::ScoreFunction & scorefxn_
+);
+
+////////// FA constraints (merge mode)
+///@brief merge cmdline constraints to pre-existing constraints
+void merge_fa_constraints_from_cmdline_to_pose( core::pose::Pose & pose );
+
+///@brief merge cmdline constraints to pre-existing constraints - only adds to ZERO weights; previously nonzero constraint weights are unmodified and a warning is issued
+void merge_fa_constraints_from_cmdline_to_scorefxn(
+	core::scoring::ScoreFunction & scorefxn_
+);
+
+///@brief merge cmdline constraints to pre-existing constraints
+void merge_fa_constraints_from_cmdline(
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunction & scorefxn_
+);
+
+
+/////////////////MISCELLANEOUS
 
 /// @brief	handy function for tethering pose to starting coordinates.
 void
