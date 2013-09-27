@@ -139,6 +139,7 @@ static protocols::moves::MoverRegistrator< devel::cutoutdomain::CutOutDomainCrea
 static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignByResidueCentralityOperationCreator > reg_DesignByResidueCentralityOperationCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignCatalyticResiduesOperationCreator > reg_DesignCatalyticResiduesOperationCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignByCavityProximityOperationCreator > reg_DesignByCavityProximityOperationCreator;
+static core::pack::task::operation::TaskOperationRegistrator< devel::denovo_design::task_operations::DesignRandomRegionOperationCreator > reg_DesignRandomRegionOperationCreator;
 core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnCoordinationResiduesTaskOpCreator > reg_DisableZnCoordinationResiduesTaskOpCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::BuildingBlockInterfaceOperationCreator > BuildingBlockInterfaceOperationCreator_registrator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::matdes::RestrictToNonzeroSASAOperationCreator > RestrictToNonzeroSASAOperationCreator_registrator;

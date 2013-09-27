@@ -386,6 +386,17 @@ DesignByPackStatOperation::get_residues_to_design( core::pose::Pose const & pose
 /// DesignRandomRegion
 ////////////////////////////////////////////////////////////////////////////////
 
+/// @brief creator functions
+core::pack::task::operation::TaskOperationOP
+DesignRandomRegionOperationCreator::create_task_operation() const {
+	return new DesignRandomRegionOperation;
+}
+
+std::string
+DesignRandomRegionOperationCreator::keyname() const {
+	return "DesignRandomRegion";
+}
+
 /// @brief default constructor
 DesignRandomRegionOperation::DesignRandomRegionOperation() :
 	HighestEnergyRegionOperation()
