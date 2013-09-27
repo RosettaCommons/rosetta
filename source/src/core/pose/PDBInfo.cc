@@ -412,9 +412,9 @@ PDBInfo::pose2pdb( Size const res ) const
 {
 	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::pose2pdb( Size const res ): res is not in this PDBInfo!" );
 	std::stringstream pdb_num, pdb_chain;
-	pdb_num << residue_rec_[res].chainID;
-	pdb_chain << residue_rec_[res].resSeq;
-	return pdb_chain.str() + " " + pdb_num.str() + " ";
+	pdb_chain << residue_rec_[res].chainID;
+	pdb_num << residue_rec_[res].resSeq;
+	return pdb_num.str() + " " + pdb_chain.str() + " ";
 }
 
 /// @brief returns for pose( resnumber) the label associated to the residue
