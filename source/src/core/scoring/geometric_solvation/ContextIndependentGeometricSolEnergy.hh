@@ -73,13 +73,22 @@ public:
     utility::vector1< bool > const &,
     utility::vector1< bool > const & ) const;
 	
+//	virtual
+//	void
+//	setup_for_minimizing(
+//		pose::Pose & pose,
+//		ScoreFunction const & sfxn,
+//		kinematics::MinimizerMapBase const & min_map
+//	) const;
+	
+//	virtual
+//	void
+//	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn
+//	) const;
+	
 	virtual
 	void
-	setup_for_minimizing(
-		pose::Pose & pose,
-		ScoreFunction const & sfxn,
-		kinematics::MinimizerMapBase const & min_map
-	) const;
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const;
 	
 	virtual
 	bool
@@ -129,6 +138,44 @@ public:
 		ResSingleMinimizationData const &,
 		ResPairMinimizationData & pair_data
 	) const;
+	
+	virtual
+	void
+	eval_residue_pair_derivatives(
+		conformation::Residue const & ires,
+		conformation::Residue const & jres,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const & pose, // provides context
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	) const;
+	
+	virtual
+	void
+	eval_intrares_derivatives(
+		conformation::Residue const & rsd,
+		ResSingleMinimizationData const &,
+		pose::Pose const & pose,
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & atom_derivs
+	) const;
+	
+	virtual
+	bool
+	requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & ) const;
+	
+	virtual
+	void
+	setup_for_minimizing_for_residue(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		ScoreFunction const &,
+		kinematics::MinimizerMapBase const &,
+		ResSingleMinimizationData & res_data_cache
+	) const;
 
 	virtual
 	void
@@ -154,6 +201,10 @@ public:
 		ScoreFunction const &,
 		EnergyMap & emap
 	) const;
+	
+	virtual
+	bool
+	minimize_in_whole_structure_context( pose::Pose const & pose ) const;
 
 	// Undefined, commenting out to fix PyRosetta build
 	/* void
@@ -176,17 +227,17 @@ public:
   ) const;
 
 	/// f1 and f2 are zeroed
-	virtual
-	void
-	eval_atom_derivative(
-		id::AtomID const & atom_id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const &,
-		ScoreFunction const &,
-		EnergyMap const & weights,
-		Vector & F1,
-		Vector & F2
-	) const;
+//	virtual
+//	void
+//	eval_atom_derivative(
+//		id::AtomID const & atom_id,
+//		pose::Pose const & pose,
+//		kinematics::DomainMap const &,
+//		ScoreFunction const &,
+//		EnergyMap const & weights,
+//		Vector & F1,
+//		Vector & F2
+//	) const;
 
 
 	virtual

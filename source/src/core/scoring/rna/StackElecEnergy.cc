@@ -167,10 +167,10 @@ StackElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scf
   rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
   rna_centroid_info.update( pose );
     
-//  if ( pose.energies().use_nblist() ) {
-//    NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
-//    nblist.prepare_for_scoring( pose, scfxn, *this );
-//  }
+  if ( pose.energies().use_nblist() ) {
+    NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::ELEC_NBLIST ) );
+    nblist.prepare_for_scoring( pose, scfxn, *this );
+  }
 
 }
 
@@ -199,8 +199,8 @@ StackElecEnergy::setup_for_minimizing(
     
     //set_nres_mono(pose);
     
-    //if ( pose.energies().use_nblist() ) {
-	if ( true ) {
+    if ( pose.energies().use_nblist() ) {
+	//if ( true ) {
         // stash our nblist inside the pose's energies object
         Energies & energies( pose.energies() );
         
@@ -311,7 +311,7 @@ StackElecEnergy::setup_for_minimizing_for_residue_pair(
 {
     using namespace basic::options;
     using namespace basic::options::OptionKeys;
-    //if ( pose.energies().use_nblist_auto_update() ) return;
+    if ( pose.energies().use_nblist_auto_update() ) return;
         
     etable::count_pair::CountPairFunctionCOP count_pair =
         get_count_pair_function( rsd1, rsd2 );
@@ -342,9 +342,9 @@ StackElecEnergy::residue_pair_energy_ext(
 ) const
 {
     using_extended_method_ = true;
-	return;
+	//return;
 	//assert( rsd1.seqpos() < rsd2.seqpos() );
-    //if ( pose.energies().use_nblist_auto_update() ) return;
+    if ( pose.energies().use_nblist_auto_update() ) return;
     Real score( 0.0 ), score_base_base( 0.0 ), score_base_bb( 0.0 );
     
     if ( rsd1.is_RNA() && rsd2.is_RNA() ) {
@@ -428,7 +428,7 @@ StackElecEnergy::residue_pair_energy(
 {
     using_extended_method_ = false;
 	//if ( use_extended_residue_pair_energy_interface() ) return;
-    //if ( pose.energies().use_nblist() ) return;
+    if ( pose.energies().use_nblist() ) return;
 	Real score_base_base1( 0.0 ), score_base_base2( 0.0 );
 	Real score_base_bb1( 0.0 ), score_base_bb2( 0.0 );
 
@@ -551,7 +551,7 @@ StackElecEnergy::eval_atom_derivative(
  		Vector & F2
  	) const
 {
-
+	if ( ! pose.energies().use_nblist_auto_update() ) return;
 	Size const i( atom_id.rsd() );
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
@@ -787,8 +787,9 @@ StackElecEnergy::finalize_total_energy(
     rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
     rna_centroid_info.calculated() = false;
     
-    if ( using_extended_method_ ) {
-        //if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
+    //if ( using_extended_method_ ) {
+	if ( true ) {
+        if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
         //if ( !rsd1.is_RNA() || !rsd2.is_RNA() ) return;
         
         utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );    

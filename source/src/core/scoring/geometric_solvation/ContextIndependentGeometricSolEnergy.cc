@@ -178,34 +178,54 @@ ContextIndependentGeometricSolEnergy::setup_for_packing(
   
 }
 	
+//void
+//ContextIndependentGeometricSolEnergy::setup_for_minimizing(
+//										 pose::Pose & pose,
+//										 ScoreFunction const & sfxn,
+//										 kinematics::MinimizerMapBase const & min_map
+//										 ) const
+//{
+//	using namespace basic::options;
+//	using namespace basic::options::OptionKeys;
+//	
+//	//set_nres_mono(pose);
+//	
+//	if ( pose.energies().use_nblist() ) {
+//	//if ( true ) {
+//		// stash our nblist inside the pose's energies object
+//		Energies & energies( pose.energies() );
+//		
+//		// setup the atom-atom nblist
+//		NeighborListOP nblist;
+//		Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
+//		Real const XX = 5.2 + 2 * tolerated_motion;
+//		nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
+//		if ( pose.energies().use_nblist_auto_update() ) {
+//		//if ( true ) {
+//			nblist->set_auto_update( tolerated_motion );
+//		}
+//		// this partially becomes the EtableEnergy classes's responsibility
+//		nblist->setup( pose, sfxn, *this);
+//		energies.set_nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST, nblist );
+//	}
+//}
+	
+/////////////////////////////////////////////////////////////////////////////////
+//void
+//ContextIndependentGeometricSolEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const
+//{
+//	pose.update_residue_neighbors();
+//}
+	
+///
 void
-ContextIndependentGeometricSolEnergy::setup_for_minimizing(
-										 pose::Pose & pose,
-										 ScoreFunction const & sfxn,
-										 kinematics::MinimizerMapBase const & min_map
-										 ) const
+ContextIndependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	
-	//set_nres_mono(pose);
-	
+	pose.update_residue_neighbors();
+	if ( false ) {
 	//if ( pose.energies().use_nblist() ) {
-	if ( true ) {
-		// stash our nblist inside the pose's energies object
-		Energies & energies( pose.energies() );
-		
-		// setup the atom-atom nblist
-		NeighborListOP nblist;
-		Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
-		Real const XX = 5.2 + 2 * tolerated_motion;
-		nblist = new NeighborList( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
-		if ( pose.energies().use_nblist_auto_update() ) {
-			nblist->set_auto_update( tolerated_motion );
-		}
-		// this partially becomes the EtableEnergy classes's responsibility
-		nblist->setup( pose, sfxn, *this);
-		energies.set_nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST, nblist );
+		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST ) );
+		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
 }
   
@@ -263,12 +283,13 @@ ContextIndependentGeometricSolEnergy::get_count_pair_function(
 ///////////////////////////////////////////////////////////////////////////////
 etable::count_pair::CountPairFunctionCOP
 ContextIndependentGeometricSolEnergy::get_intrares_countpair(
-										   conformation::Residue const &,
+										   conformation::Residue const & res,
 										   pose::Pose const &,
 										   ScoreFunction const &
 										   ) const
 {
-	return new etable::count_pair::CountPairAll;
+	using namespace etable::count_pair;
+	return CountPairFactory::create_intrares_count_pair_function( res, CP_CROSSOVER_3 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -277,19 +298,33 @@ ContextIndependentGeometricSolEnergy::use_extended_residue_pair_energy_interface
 {
 	return true;
 }
+	
+///////////////////////////
+void
+ContextIndependentGeometricSolEnergy::setup_for_minimizing_for_residue(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	kinematics::MinimizerMapBase const &,
+	ResSingleMinimizationData & res_data_cache
+) const
+{
+	
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 void
 ContextIndependentGeometricSolEnergy::setup_for_minimizing_for_residue_pair(
-														  conformation::Residue const & rsd1,
-														  conformation::Residue const & rsd2,
-														  pose::Pose const & pose,
-														  ScoreFunction const &,
-														  kinematics::MinimizerMapBase const &,
-														  ResSingleMinimizationData const &,
-														  ResSingleMinimizationData const &,
-														  ResPairMinimizationData & pair_data
-														  ) const
+	conformation::Residue const & rsd1,
+	conformation::Residue const & rsd2,
+	pose::Pose const & pose,
+	ScoreFunction const &,
+	kinematics::MinimizerMapBase const &,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData & pair_data
+) const
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -310,6 +345,104 @@ ContextIndependentGeometricSolEnergy::setup_for_minimizing_for_residue_pair(
 	
 	pair_data.set_data( geom_solv_pair_nblist, nblist );
 }
+	
+/////////////
+bool
+ContextIndependentGeometricSolEnergy::requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose::Pose const & ) const
+{
+	return false;
+}
+	
+////////////////////
+void
+ContextIndependentGeometricSolEnergy::eval_intrares_derivatives(
+	conformation::Residue const & rsd,
+	ResSingleMinimizationData const &,
+	pose::Pose const & pose,
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & atom_derivs
+) const
+{
+	if ( !defines_intrares_energy( weights ) ) {
+		return;
+	}
+	
+	for ( Size ii=1, ii_end=rsd.natoms(); ii<= ii_end; ++ii ) {
+		Vector F1( 0.0 );
+		Vector F2( 0.0 );
+		id::AtomID atom_id( ii, rsd.seqpos() );
+		evaluator_->eval_atom_derivative_intra_RNA(atom_id, pose, weights, F1, F2);
+		atom_derivs[ ii ].f1() += F1;
+		atom_derivs[ ii ].f2() += F2;
+    }
+}
+
+	
+////////////////////////////////////////////////////
+void
+ContextIndependentGeometricSolEnergy::eval_residue_pair_derivatives(
+	conformation::Residue const & ires,
+	conformation::Residue const & jres,
+	ResSingleMinimizationData const &,
+	ResSingleMinimizationData const &,
+	ResPairMinimizationData const & min_data,
+	pose::Pose const & pose, // provides context
+	EnergyMap const & weights,
+	utility::vector1< DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< DerivVectorPair > & r2_atom_derivs
+) const
+{
+	//if ( pose.energies().use_nblist_auto_update() ) return;
+	
+	//assert( rsd1.seqpos() < rsd2.seqpos() );
+	//assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
+	
+	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( geom_solv_pair_nblist ) ) );
+	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
+	
+	Real energy( 0.0 );
+	Vector F1;
+	Vector F2;
+	hbonds::HBondDerivs deriv;
+	Size ii;
+	Size jj;
+	static bool const update_deriv( true );
+	
+	for ( Size k = 1, kend = neighbs.size(); k <= kend; ++k ) {
+		ii = neighbs[ k ].atomno1();
+		jj = neighbs[ k ].atomno2();
+		F1 = 0.0;
+		F2 = 0.0;
+
+		if ( evaluator_->atom_is_heavy( jres, jj ) ) {
+            if ( evaluator_->atom_is_donor_h( ires, ii ) ) {
+                evaluator_->get_atom_atom_geometric_solvation_for_donor( ii, ires, jj, jres, pose, energy, update_deriv, deriv );
+                F1 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+                F2 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+            } else if ( evaluator_->atom_is_acceptor( ires, ii ) ) {
+                evaluator_->get_atom_atom_geometric_solvation_for_acceptor( ii, ires, jj, jres, pose, energy, update_deriv, deriv );
+                F1 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+                F2 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+            }
+        }
+        if ( evaluator_->atom_is_heavy ( ires, ii ) ) {
+            if ( evaluator_->atom_is_donor_h( jres, jj ) ) {
+                evaluator_->get_atom_atom_geometric_solvation_for_donor( jj, jres, ii, ires, pose, energy, update_deriv, deriv );
+                F1 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+                F2 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+            } else if ( evaluator_->atom_is_acceptor( jres, jj ) ) {
+                evaluator_->get_atom_atom_geometric_solvation_for_acceptor( jj, jres, ii, ires, pose, energy, update_deriv, deriv );
+                F1 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+                F2 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+            }
+        }
+		
+		r1_atom_derivs[ ii ].f1() += F1;
+		r1_atom_derivs[ ii ].f2() += F2;
+		r2_atom_derivs[ jj ].f1() -= F1;
+		r2_atom_derivs[ jj ].f2() -= F2;
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void
@@ -323,7 +456,7 @@ ContextIndependentGeometricSolEnergy::residue_pair_energy_ext(
 											) const
 {
 	using_extended_method_ = true;
-	return;
+	//return;
 	//if ( pose.energies().use_nblist_auto_update() ) return;
 	Real score( 0.0 );
 	Real energy( 0.0 );
@@ -374,7 +507,8 @@ ContextIndependentGeometricSolEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const
 {
-  
+  using_extended_method_ = false;
+  //if ( pose.energies().use_nblist() ) return;
   //if the backbone/backbone energy has already been calculated in setup_for_packing
   //this is done only if we are doing fix backbone design and the backbone/backbone
   //energy cannot change (Joseph Yesselman 9/11/13)
@@ -395,10 +529,14 @@ ContextIndependentGeometricSolEnergy::residue_pair_energy(
   
   }
 	
-  using_extended_method_ = false;
-
 }
   
+bool
+ContextIndependentGeometricSolEnergy::minimize_in_whole_structure_context( pose::Pose const & pose ) const
+{
+	//return pose.energies().use_nblist_auto_update();
+	return false;
+}
   
 void
 ContextIndependentGeometricSolEnergy::finalize_total_energy(
@@ -407,12 +545,13 @@ ContextIndependentGeometricSolEnergy::finalize_total_energy(
   EnergyMap & totals
 ) const
 {
-
-  	if ( !using_extended_method_ ) {
+	//if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) {
+	if ( !using_extended_method_ ) {
   		totals[ geom_sol_fast ] += precalculated_bb_bb_energy_;
 		return;
   	}
 	
+	return;
 	NeighborList const & nblist
 		( pose.energies().nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST ) );
 	nblist.check_domain_map( pose.energies().domain_map() );
@@ -464,78 +603,77 @@ ContextIndependentGeometricSolEnergy::finalize_total_energy(
 
 	totals[ geom_sol_fast ] += score;
 
-
 }
 
-void
-ContextIndependentGeometricSolEnergy::eval_atom_derivative(
-		 id::AtomID const & atom_id,
-		 pose::Pose const & pose,
-		 kinematics::DomainMap const & domain_map,
-		 ScoreFunction const & scorefxn,
-		 EnergyMap const & weights,
-		 Vector & F1,
-		 Vector & F2
-) const
-{
-
-//	//	A hack. Hopefully not a big slow down.
-//	EnergyMap weights_local;
-//	weights_local[ geom_sol ]           = weights[ geom_sol_fast ];
-//	weights_local[ geom_sol_intra_RNA ] = weights[ geom_sol_fast_intra_RNA ];
-//
-//
-//	evaluator_->eval_atom_derivative( atom_id, pose, domain_map, scorefxn, weights_local, F1, F2 );
-    Real energy( 0.0 );
-	hbonds::HBondDerivs deriv;
-    
-    if ( defines_intrares_energy( weights ) ) {
-        evaluator_->eval_atom_derivative_intra_RNA(atom_id, pose, weights, F1, F2);
-    }
-    
-    Size const i( atom_id.rsd() );
-	conformation::Residue const & ires( pose.residue( i ) );
-	Size const ii( atom_id.atomno() );
-    
-	//	Size const nres = pose.total_residue();
-	static bool const update_deriv( true );
-    //assert( pose.energies().use_nblist() );
-	NeighborList const & nblist
-		( pose.energies().nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST ) );
-	AtomNeighbors const & nbrs( nblist.atom_neighbors(i,ii) );
-    
-    for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(),
-         it2e=nbrs.end(); it2 != it2e; ++it2 ) {
-		scoring::AtomNeighbor const & nbr( *it2 );
-		Size const j( nbr.rsd() );
-        if (i == j) continue;
-		Size const jj( nbr.atomno() );
-		conformation::Residue const & jres( pose.residue( j ) );
-        
-        if ( evaluator_->atom_is_heavy( jres, jj ) ) {
-            if ( evaluator_->atom_is_donor_h( ires, ii ) ) {
-                evaluator_->get_atom_atom_geometric_solvation_for_donor( ii, ires, jj, jres, pose, energy, update_deriv, deriv );
-                F1 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
-                F2 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
-            } else if ( evaluator_->atom_is_acceptor( ires, ii ) ) {
-                evaluator_->get_atom_atom_geometric_solvation_for_acceptor( ii, ires, jj, jres, pose, energy, update_deriv, deriv );
-                F1 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
-                F2 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
-            }
-        }
-        if ( evaluator_->atom_is_heavy ( ires, ii ) ) {
-            if ( evaluator_->atom_is_donor_h( jres, jj ) ) {
-                evaluator_->get_atom_atom_geometric_solvation_for_donor( jj, jres, ii, ires, pose, energy, update_deriv, deriv );
-                F1 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
-                F2 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
-            } else if ( evaluator_->atom_is_acceptor( jres, jj ) ) {
-                evaluator_->get_atom_atom_geometric_solvation_for_acceptor( jj, jres, ii, ires, pose, energy, update_deriv, deriv );
-                F1 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
-                F2 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
-            }
-        }
-    }
-}
+//void
+//ContextIndependentGeometricSolEnergy::eval_atom_derivative(
+//		 id::AtomID const & atom_id,
+//		 pose::Pose const & pose,
+//		 kinematics::DomainMap const & domain_map,
+//		 ScoreFunction const & scorefxn,
+//		 EnergyMap const & weights,
+//		 Vector & F1,
+//		 Vector & F2
+//) const
+//{
+//	if ( ! pose.energies().use_nblist_auto_update() ) return;
+////	//	A hack. Hopefully not a big slow down.
+////	EnergyMap weights_local;
+////	weights_local[ geom_sol ]           = weights[ geom_sol_fast ];
+////	weights_local[ geom_sol_intra_RNA ] = weights[ geom_sol_fast_intra_RNA ];
+////
+////
+////	evaluator_->eval_atom_derivative( atom_id, pose, domain_map, scorefxn, weights_local, F1, F2 );
+//    Real energy( 0.0 );
+//	hbonds::HBondDerivs deriv;
+//    
+//    if ( defines_intrares_energy( weights ) ) {
+//        evaluator_->eval_atom_derivative_intra_RNA(atom_id, pose, weights, F1, F2);
+//    }
+//    
+//    Size const i( atom_id.rsd() );
+//	conformation::Residue const & ires( pose.residue( i ) );
+//	Size const ii( atom_id.atomno() );
+//    
+//	//	Size const nres = pose.total_residue();
+//	static bool const update_deriv( true );
+//    //assert( pose.energies().use_nblist() );
+//	NeighborList const & nblist
+//		( pose.energies().nblist( EnergiesCacheableDataType::GEOM_SOLV_NBLIST ) );
+//	AtomNeighbors const & nbrs( nblist.atom_neighbors(i,ii) );
+//    
+//    for ( scoring::AtomNeighbors::const_iterator it2=nbrs.begin(),
+//         it2e=nbrs.end(); it2 != it2e; ++it2 ) {
+//		scoring::AtomNeighbor const & nbr( *it2 );
+//		Size const j( nbr.rsd() );
+//        if (i == j) continue;
+//		Size const jj( nbr.atomno() );
+//		conformation::Residue const & jres( pose.residue( j ) );
+//        
+//        if ( evaluator_->atom_is_heavy( jres, jj ) ) {
+//            if ( evaluator_->atom_is_donor_h( ires, ii ) ) {
+//                evaluator_->get_atom_atom_geometric_solvation_for_donor( ii, ires, jj, jres, pose, energy, update_deriv, deriv );
+//                F1 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+//                F2 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+//            } else if ( evaluator_->atom_is_acceptor( ires, ii ) ) {
+//                evaluator_->get_atom_atom_geometric_solvation_for_acceptor( ii, ires, jj, jres, pose, energy, update_deriv, deriv );
+//                F1 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+//                F2 += weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+//            }
+//        }
+//        if ( evaluator_->atom_is_heavy ( ires, ii ) ) {
+//            if ( evaluator_->atom_is_donor_h( jres, jj ) ) {
+//                evaluator_->get_atom_atom_geometric_solvation_for_donor( jj, jres, ii, ires, pose, energy, update_deriv, deriv );
+//                F1 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+//                F2 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+//            } else if ( evaluator_->atom_is_acceptor( jres, jj ) ) {
+//                evaluator_->get_atom_atom_geometric_solvation_for_acceptor( jj, jres, ii, ires, pose, energy, update_deriv, deriv );
+//                F1 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f1() +  deriv.don_deriv.f1() );
+//                F2 -= weights[ geom_sol_fast ] * ( deriv.h_deriv.f2() +  deriv.don_deriv.f2() );
+//            }
+//        }
+//    }
+//}
 
 Distance
 ContextIndependentGeometricSolEnergy::atomic_interaction_cutoff() const

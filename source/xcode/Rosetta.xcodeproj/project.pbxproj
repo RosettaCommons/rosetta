@@ -58,7 +58,6 @@
 		055844D00AEE161063716726 /* RRReporterSQLite.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3104429B56099CCDC809D275 /* RRReporterSQLite.cc */; };
 		056F18E99094AD6ACC3D9303 /* SequenceCoupling.cc in Sources */ = {isa = PBXBuildFile; fileRef = 475B1DEC65B1CE866BB907D6 /* SequenceCoupling.cc */; };
 		057111ADD9B22BB5992878E1 /* RdcSelectEvaluatorCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = DC3A2502CB787A9037F0BB5D /* RdcSelectEvaluatorCreator.cc */; };
-		059A2578F7E70789F44B0FD1 /* StepWiseRNA_RotamerGenerator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5B7EF47C412E6679A9A738CE /* StepWiseRNA_RotamerGenerator.cc */; };
 		05A2FC6B8107E2D4F0AB1A61 /* VarianceStatisticsArchive.cc in Sources */ = {isa = PBXBuildFile; fileRef = E030B487F83A51213928D43D /* VarianceStatisticsArchive.cc */; };
 		05AAEE4B3434D6F4B7B04441 /* RNA_FA_ElecEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 605309A6B23DB8E303CEA145 /* RNA_FA_ElecEnergy.cc */; };
 		05CDE7A513CAB6DF9B8A9C8A /* ConsensusDesignMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = B1E47376F1D237DC51546B6E /* ConsensusDesignMover.cc */; };
@@ -285,10 +284,10 @@
 		1EA3FB8BBF30E77E242E255A /* FilterFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = 86F00C6ECB52ECB40904CF1A /* FilterFactory.cc */; };
 		1EFD62ADC7D41F6E493E19FD /* Mover.cc in Sources */ = {isa = PBXBuildFile; fileRef = E44FD7991363AE3558CDF4F7 /* Mover.cc */; };
 		1F12616737AD5160C2F4900D /* CustomScoreSelector.cc in Sources */ = {isa = PBXBuildFile; fileRef = F764B2105872FA7CFC29175D /* CustomScoreSelector.cc */; };
-		1F2434E1175FF04A003A3016 /* libprotocols_b.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */; };
-		1F2434E2175FF04A003A3016 /* libprotocols_d.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */; };
-		1F2434E3175FF04A003A3016 /* libprotocols_g.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */; };
-		1F2434E4175FF04A003A3016 /* libprotocols_h.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */; };
+		1F2434E1175FF04A003A3016 /* protocols_b.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */; };
+		1F2434E2175FF04A003A3016 /* protocols_d.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */; };
+		1F2434E3175FF04A003A3016 /* protocols_g.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */; };
+		1F2434E4175FF04A003A3016 /* protocols_h.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */; };
 		1F2434E5175FF04A003A3016 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9466CA148CCD8600C2FBE5 /* libz.dylib */; };
 		1F2434E6175FF04A003A3016 /* basic.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07713EE143D00772777 /* basic.dylib */; };
 		1F2434E7175FF04A003A3016 /* core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07813EE143D00772777 /* core.1.dylib */; };
@@ -322,11 +321,10 @@
 		1F6B67071746E544009D933A /* antibody_H3.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1F6B67061746E544009D933A /* antibody_H3.cc */; };
 		1F726B56D770EB7ED3F77707 /* WorkUnit_LoopHash.cc in Sources */ = {isa = PBXBuildFile; fileRef = F41C134437F53F462EAA3890 /* WorkUnit_LoopHash.cc */; };
 		1F96B118EE9CB9C1D71249A2 /* SidechainMCMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = B7484293F3CE3BC9E99AC156 /* SidechainMCMover.cc */; };
-		1FA232D7175FEB890031A701 /* antibody_metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1FA232D6175FEB890031A701 /* antibody_metrics.cc */; };
-		1FA2CDE117455DCF00A5B666 /* libprotocols_b.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */; };
-		1FA2CDE217455DCF00A5B666 /* libprotocols_d.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */; };
-		1FA2CDE317455DCF00A5B666 /* libprotocols_g.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */; };
-		1FA2CDE417455DCF00A5B666 /* libprotocols_h.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */; };
+		1FA2CDE117455DCF00A5B666 /* protocols_b.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */; };
+		1FA2CDE217455DCF00A5B666 /* protocols_d.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */; };
+		1FA2CDE317455DCF00A5B666 /* protocols_g.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */; };
+		1FA2CDE417455DCF00A5B666 /* protocols_h.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */; };
 		1FA2CDE517455DCF00A5B666 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9466CA148CCD8600C2FBE5 /* libz.dylib */; };
 		1FA2CDE617455DCF00A5B666 /* basic.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07713EE143D00772777 /* basic.dylib */; };
 		1FA2CDE717455DCF00A5B666 /* core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07813EE143D00772777 /* core.1.dylib */; };
@@ -391,10 +389,10 @@
 		1FAFE8E84A04678ECC09C9A7 /* SS_Killhairpins_Info.cc in Sources */ = {isa = PBXBuildFile; fileRef = D4FDEB64A24048650D8A4616 /* SS_Killhairpins_Info.cc */; };
 		1FE26A8F1758DAAB6F6C9E67 /* relax_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 54D6D40BE28EECCECFE0B606 /* relax_main.cc */; };
 		1FE96ADFBE8B9438896CDDAB /* RNA_CS_Parameters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3E5A2761072456D0FEFF745F /* RNA_CS_Parameters.cc */; };
-		1FF1C106176AADD000940913 /* libprotocols_b.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */; };
-		1FF1C107176AADD000940913 /* libprotocols_d.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */; };
-		1FF1C108176AADD000940913 /* libprotocols_g.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */; };
-		1FF1C109176AADD000940913 /* libprotocols_h.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */; };
+		1FF1C106176AADD000940913 /* protocols_b.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */; };
+		1FF1C107176AADD000940913 /* protocols_d.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */; };
+		1FF1C108176AADD000940913 /* protocols_g.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */; };
+		1FF1C109176AADD000940913 /* protocols_h.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */; };
 		1FF1C10A176AADD000940913 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9466CA148CCD8600C2FBE5 /* libz.dylib */; };
 		1FF1C10B176AADD000940913 /* basic.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07713EE143D00772777 /* basic.dylib */; };
 		1FF1C10C176AADD000940913 /* core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07813EE143D00772777 /* core.1.dylib */; };
@@ -478,7 +476,6 @@
 		2490646AA0454E2C036E014E /* Patch.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5F06467F8137639E001CD3BA /* Patch.cc */; };
 		24A8E7EE0425ED6A51A70F34 /* MembEtable.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4516F79E2654C6058CA3352A /* MembEtable.cc */; };
 		24E530D157F16F3946F672B0 /* LoopRefineInnerCycleFactory.cc in Sources */ = {isa = PBXBuildFile; fileRef = A10063F3FC37F6B03AEDC86A /* LoopRefineInnerCycleFactory.cc */; };
-		24EA52B3D89A12A66BB0CB37 /* RNA_LoopCloseSampler.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8403137DADA23CC493A99ADC /* RNA_LoopCloseSampler.cc */; };
 		24FCEDE29D937E75F324060F /* CompositeScoringScheme.cc in Sources */ = {isa = PBXBuildFile; fileRef = 058CA8A7A5A15DBE4DF78579 /* CompositeScoringScheme.cc */; };
 		250775E34C4326496B577B54 /* FragmentLibraryManager.cc in Sources */ = {isa = PBXBuildFile; fileRef = FA32C9ABCA32422E7326C892 /* FragmentLibraryManager.cc */; };
 		2517929235A3B1A22792498A /* non_scorefxn_exact_model.cc in Sources */ = {isa = PBXBuildFile; fileRef = 11ABD58B805C0A2AD777F384 /* non_scorefxn_exact_model.cc */; };
@@ -495,7 +492,6 @@
 		262979B3C43A6DDA0478D074 /* NormalModeMultiFunc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 863338A40FC4A7763E1AE5D6 /* NormalModeMultiFunc.cc */; };
 		263DBAA3217689EA9ED726C2 /* StepWiseRNA_CombineLongLoopFilterer.cc in Sources */ = {isa = PBXBuildFile; fileRef = BF239E1214EFB3A272CF817E /* StepWiseRNA_CombineLongLoopFilterer.cc */; };
 		2647BB269E488E49CC159ECE /* MotifDnaPacker.cc in Sources */ = {isa = PBXBuildFile; fileRef = BCF6CBD678B76E92028D57F5 /* MotifDnaPacker.cc */; };
-		2649B32CD67444B448FA5C28 /* StepWiseIdentitySampleGenerator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B18D8834721858AC4629314 /* StepWiseIdentitySampleGenerator.cc */; };
 		26576706B45B2F912DF63B1F /* EnsembleEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = F02B0D21852FC6120415283B /* EnsembleEnergy.cc */; };
 		265C2CCA715257BCFB4CF304 /* AtomTypesFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = B0B5020D1DA3BD9C26781C20 /* AtomTypesFeaturesCreator.cc */; };
 		26A55D09AD92F2FD4A3BFDA0 /* AtomTree.cc in Sources */ = {isa = PBXBuildFile; fileRef = 900260BD2A83A19D47353FE8 /* AtomTree.cc */; };
@@ -711,7 +707,6 @@
 		3A229FD63256774503122245 /* LoopsDatabaseDefinerCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 792770BA63824EB3E4EC4C0B /* LoopsDatabaseDefinerCreator.cc */; };
 		3A3A5B4E19E6CFECF87A8B4A /* RigidSearchMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2439C139039E421C6213F04C /* RigidSearchMover.cc */; };
 		3A66FD1A36AACD99F36000CD /* OccupiedSpaceHash.cc in Sources */ = {isa = PBXBuildFile; fileRef = CC250440EAA2536EEDD50DB2 /* OccupiedSpaceHash.cc */; };
-		3AE43B5B267CB1E686AEF2CB /* ERRASER_Modeler.cc in Sources */ = {isa = PBXBuildFile; fileRef = E273A0F6104A3D4E6D5D20C3 /* ERRASER_Modeler.cc */; };
 		3B0AEBE5151A94C400BFC937 /* (null) in Headers */ = {isa = PBXBuildFile; };
 		3B0AEBE7151A94C400BFC937 /* (null) in Headers */ = {isa = PBXBuildFile; };
 		3B0AEBE8151A94C400BFC937 /* (null) in Headers */ = {isa = PBXBuildFile; };
@@ -840,17 +835,17 @@
 		3D6484AF14CDE9970038C383 /* protocols.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94619A148CA62A00C2FBE5 /* protocols.3.dylib */; };
 		3D6484B014CDE9970038C383 /* protocols.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946624148CBFBF00C2FBE5 /* protocols.7.dylib */; };
 		3D6484B114CDE9970038C383 /* utility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07513EE143D00772777 /* utility.dylib */; };
-		3D7B2CC817F235F00010D5F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D822CA717F21713009A94E8 /* libz.dylib */; };
-		3D7B2CC917F236B20010D5F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D822CA717F21713009A94E8 /* libz.dylib */; };
-		3D7B2CCA17F236E40010D5F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D822CA717F21713009A94E8 /* libz.dylib */; };
-		3D7B2CCB17F2370A0010D5F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D822CA717F21713009A94E8 /* libz.dylib */; };
-		3D7B2CCC17F237430010D5F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D822CA717F21713009A94E8 /* libz.dylib */; };
-		3D7B2CCD17F237A40010D5F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D822CA717F21713009A94E8 /* libz.dylib */; };
-		3D7B2CCE17F237F10010D5F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D822CA717F21713009A94E8 /* libz.dylib */; };
-		3D7B2CCF17F238090010D5F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D822CA717F21713009A94E8 /* libz.dylib */; };
-		3D7B2CD017F238440010D5F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D822CA717F21713009A94E8 /* libz.dylib */; };
-		3D7B2CD117F238C30010D5F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D822CA717F21713009A94E8 /* libz.dylib */; };
-		3D7B2CD217F239260010D5F5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D822CA717F21713009A94E8 /* libz.dylib */; };
+		3D7B2CC817F235F00010D5F5 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		3D7B2CC917F236B20010D5F5 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		3D7B2CCA17F236E40010D5F5 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		3D7B2CCB17F2370A0010D5F5 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		3D7B2CCC17F237430010D5F5 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		3D7B2CCD17F237A40010D5F5 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		3D7B2CCE17F237F10010D5F5 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		3D7B2CCF17F238090010D5F5 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		3D7B2CD017F238440010D5F5 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		3D7B2CD117F238C30010D5F5 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		3D7B2CD217F239260010D5F5 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		3D7C38C017F22435006F1532 /* basic.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07713EE143D00772777 /* basic.dylib */; };
 		3D7C38C117F22435006F1532 /* core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07813EE143D00772777 /* core.1.dylib */; };
 		3D7C38C217F22435006F1532 /* core.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07913EE143D00772777 /* core.2.dylib */; };
@@ -899,14 +894,14 @@
 		3D7D9A4315D9A5B600564DDB /* snugdock.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3D7D9A4215D9A5B600564DDB /* snugdock.cc */; };
 		3D899CDC6BDD59D1A33863B4 /* Checkpoint.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4F8CAED2B29269298E0E0FFC /* Checkpoint.cc */; };
 		3D8BB5F603E8E7698570B974 /* DbMoverMessageListener.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6957E53026C4E22E997A3CD1 /* DbMoverMessageListener.cc */; };
-		3D9A15EC1492E496004F3648 /* libprotocols_b.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */; };
-		3D9A15ED1492E496004F3648 /* libprotocols_d.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */; };
-		3D9A15EE1492E496004F3648 /* libprotocols_g.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */; };
-		3D9A15EF1492E496004F3648 /* libprotocols_h.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */; };
-		3D9A15F01492E4A1004F3648 /* libprotocols_b.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */; };
-		3D9A15F11492E4A1004F3648 /* libprotocols_d.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */; };
-		3D9A15F21492E4A1004F3648 /* libprotocols_g.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */; };
-		3D9A15F31492E4A1004F3648 /* libprotocols_h.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */; };
+		3D9A15EC1492E496004F3648 /* protocols_b.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */; };
+		3D9A15ED1492E496004F3648 /* protocols_d.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */; };
+		3D9A15EE1492E496004F3648 /* protocols_g.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */; };
+		3D9A15EF1492E496004F3648 /* protocols_h.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */; };
+		3D9A15F01492E4A1004F3648 /* protocols_b.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */; };
+		3D9A15F11492E4A1004F3648 /* protocols_d.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */; };
+		3D9A15F21492E4A1004F3648 /* protocols_g.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */; };
+		3D9A15F31492E4A1004F3648 /* protocols_h.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */; };
 		3DAB03D2858F831655E024D9 /* PDBInfo.cc in Sources */ = {isa = PBXBuildFile; fileRef = A50BBE37825CD2120F4E7092 /* PDBInfo.cc */; };
 		3DBF3E7575809903037E0ED2 /* PartialSecondarySimilarity.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5E61FAD35F7A0F187FE36F84 /* PartialSecondarySimilarity.cc */; };
 		3DC749F2C25D57A168459255 /* NullMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6311AC8D46DD4610A0612C81 /* NullMover.cc */; };
@@ -923,7 +918,6 @@
 		3EA571C95EE07AD0D73F192A /* MidPsiOut.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8012A087CBA572982912B99E /* MidPsiOut.cc */; };
 		3EA931D0B70AF774FD5527BD /* JumpSample.cc in Sources */ = {isa = PBXBuildFile; fileRef = A9AFC8306FD5366455A01BFC /* JumpSample.cc */; };
 		3EBAFD1DFD5426FDAE7695B8 /* AtomType.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1A2AB229478FDB0CB95EE67B /* AtomType.cc */; };
-		3EDD6B0DE91C42BC7AFD06B2 /* StepWiseRNA_AnalyticalLoopCloseSampler.cc in Sources */ = {isa = PBXBuildFile; fileRef = A5D98AA34CEBA193177DD035 /* StepWiseRNA_AnalyticalLoopCloseSampler.cc */; };
 		3F000EAA2061873D03D90DEA /* MatchFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = A62B70F710889BBB35BE2746 /* MatchFilter.cc */; };
 		3F71B5EE19B1FDFBD8E7C648 /* SymmZnMoversAndTaskOps.cc in Sources */ = {isa = PBXBuildFile; fileRef = 320394621593509EBB4A443F /* SymmZnMoversAndTaskOps.cc */; };
 		3F7695E2A722E0EBFDB8B155 /* StrandConstraints.cc in Sources */ = {isa = PBXBuildFile; fileRef = CB9A36CBE9B2AF5E7F9A4F67 /* StrandConstraints.cc */; };
@@ -1142,7 +1136,6 @@
 		5395A32432B00862F40F9E05 /* minimalCstRelaxUtil.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0118DF2E2F20EB515987227F /* minimalCstRelaxUtil.cc */; };
 		53A16E963CF08D068FF8F44A /* InterfaceAnalyzerMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1C46D6E168A4D77462CB1EE1 /* InterfaceAnalyzerMover.cc */; };
 		53F1B94C82AA1F463C57B98C /* Svm.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1A6EB1B994212C5990C023B1 /* Svm.cc */; };
-		53F3077026300218EB06FF5F /* RNA_SWA_MonteCarloUtil.cc in Sources */ = {isa = PBXBuildFile; fileRef = BCEF238B6C31E7027B691F24 /* RNA_SWA_MonteCarloUtil.cc */; };
 		54274F4511A07B6D41F41EBA /* ThermodynamicObserver.cc in Sources */ = {isa = PBXBuildFile; fileRef = E60FE4F4D6D00CD4301E3528 /* ThermodynamicObserver.cc */; };
 		5428399DF8DB8827709E43AA /* HierarchicalLevel.cc in Sources */ = {isa = PBXBuildFile; fileRef = 17A52C520412F28A56B98C8D /* HierarchicalLevel.cc */; };
 		54401424FEE35997BC0019C8 /* PsiPredInterface.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8A7D4192861859A864E96A12 /* PsiPredInterface.cc */; };
@@ -1185,7 +1178,6 @@
 		57C34AA35696CFFC95D88A79 /* Entity.cc in Sources */ = {isa = PBXBuildFile; fileRef = 49672C214667BA5959137DD8 /* Entity.cc */; };
 		57C3FA7EF0F5D4A8558274C2 /* HighestEnergyRegion.cc in Sources */ = {isa = PBXBuildFile; fileRef = 92144794C66512DF61837633 /* HighestEnergyRegion.cc */; };
 		57D64FC194B3ABE2B66C08BF /* MatchSet.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4BE1CF1F9A8FC3DE02C5F715 /* MatchSet.cc */; };
-		5803C492B6E504C99500A920 /* LK_CosThetaEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = A6D2266CBF5B97FE54FEAB72 /* LK_CosThetaEnergy.cc */; };
 		58170711062E073DC796095F /* RemodelMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1CD09BB08B596EDAEBC2B824 /* RemodelMover.cc */; };
 		582618C1E03B47DFB59CDE1F /* StepWiseProteinLoopBridger.cc in Sources */ = {isa = PBXBuildFile; fileRef = 912D8949BE5C6C309D59BCE7 /* StepWiseProteinLoopBridger.cc */; };
 		5832D92C4F21B5DBCE12A274 /* qsarMap.cc in Sources */ = {isa = PBXBuildFile; fileRef = 248054ADF9105E9DFC911DEE /* qsarMap.cc */; };
@@ -1339,7 +1331,6 @@
 		6566DCB0D68956F87112296D /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = CBEAF04DB55E0A23CA399423 /* util.cc */; };
 		65F46350192C609C905ED4E5 /* basic.cc in Sources */ = {isa = PBXBuildFile; fileRef = FDF000E16CC31224AA5F5305 /* basic.cc */; };
 		661589A7FE0D800964F2633D /* WriteUpstreamCoordinateKineamge.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4AC1AA57377FF60943F8191E /* WriteUpstreamCoordinateKineamge.cc */; };
-		661806170D13902CB16FD6AB /* StepWiseRNA_BaseSugarRotamer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8085CB89FD472350214DC333 /* StepWiseRNA_BaseSugarRotamer.cc */; };
 		667838E836D2ECA6352E4850 /* rigid_body_moves.cc in Sources */ = {isa = PBXBuildFile; fileRef = C2BF926B8BAD4157A7BBB46A /* rigid_body_moves.cc */; };
 		669A57AA4BDEC9C2FF2AF5B4 /* Schema.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3516844CFCD618304FCE73DF /* Schema.cc */; };
 		66C10BA29E0560DE269EBFB1 /* LoopInserter.cc in Sources */ = {isa = PBXBuildFile; fileRef = DF01176AE65B1961AA753C9D /* LoopInserter.cc */; };
@@ -1418,7 +1409,6 @@
 		6DCB906A890A7F8977E8965C /* LoopsExplicitDefinerCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 50F680E8A9816DA7A57FA067 /* LoopsExplicitDefinerCreator.cc */; };
 		6DD08297C54A6576F6EFCAD0 /* SurfaceParameters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9F55BC9FEC1E91327F069A4B /* SurfaceParameters.cc */; };
 		6DDFFC7697BB1AF7C03822F1 /* MPIPool_ConvergenceCheck.cc in Sources */ = {isa = PBXBuildFile; fileRef = 95C11F2AA2C954D66E8BDC8B /* MPIPool_ConvergenceCheck.cc */; };
-		6DE26E0631725AD9D7AE4F36 /* RNA_SWA_MonteCarloMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1B48119EF55E6CDA51BD22A5 /* RNA_SWA_MonteCarloMover.cc */; };
 		6DF11D8B7CEA36CB697E26EE /* LineMinimizer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 452F1DED7CBDDCB9C84CAAFE /* LineMinimizer.cc */; };
 		6E0653F217BBE6812358A960 /* KDPointList.cc in Sources */ = {isa = PBXBuildFile; fileRef = 2B6F058259116F38CFF6C22A /* KDPointList.cc */; };
 		6E06D7B907E9173B33AEECE4 /* ResidueBurialFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9BC106AE6CAEEFDCE3AC49C1 /* ResidueBurialFeatures.cc */; };
@@ -1435,7 +1425,6 @@
 		6F05A86AE14056BA0E56C1CB /* VallFragmentEval.cc in Sources */ = {isa = PBXBuildFile; fileRef = 30754DEF65D87F3ED8E88A3A /* VallFragmentEval.cc */; };
 		6F29D363B2B45F09A6E8C12D /* VariantType.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0742A94A6534D5D3B8E6F931 /* VariantType.cc */; };
 		6F2B47A682C80DA1FE2B2799 /* ReferenceCount.cc in Sources */ = {isa = PBXBuildFile; fileRef = ADDDAF9F28E6F17AC9B58FF7 /* ReferenceCount.cc */; };
-		6F3559EB371B995F0B471DFA /* StepWiseDoNothingSampleGenerator.cc in Sources */ = {isa = PBXBuildFile; fileRef = FCAB7E9BEC15C929115706D9 /* StepWiseDoNothingSampleGenerator.cc */; };
 		6F4D1FB71975166908335B2A /* pack_rotamers.cc in Sources */ = {isa = PBXBuildFile; fileRef = A6F1852234097DA2DE251A0C /* pack_rotamers.cc */; };
 		6F4E9ADA13029FCCD269BA2F /* JobDataFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 29864871A8244F0721424BB2 /* JobDataFeaturesCreator.cc */; };
 		6F6DA5977C8170EFE9FC211C /* PairConstelFilters.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1897C2BA4A969F3B9A699AE5 /* PairConstelFilters.cc */; };
@@ -1925,45 +1914,45 @@
 		9CF00DF13F8797E9C9C60A29 /* DockAndRetrieveSidechains.cc in Sources */ = {isa = PBXBuildFile; fileRef = DAD74261B01933EA2DF60010 /* DockAndRetrieveSidechains.cc */; };
 		9D39F7CF943735CDAA752031 /* LigandMotifSearch.cc in Sources */ = {isa = PBXBuildFile; fileRef = 61948EA8DEE83DBD8162BB95 /* LigandMotifSearch.cc */; };
 		9D57D2610B4B519CB4E49F39 /* AngleConstraint.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9144D1075305D9AD3789D6A5 /* AngleConstraint.cc */; };
-		9DB963E217F0E4E2005480E4 /* libprotocols_b.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */; };
-		9DB963E317F0E4E2005480E4 /* libprotocols_d.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */; };
-		9DB963E417F0E4E2005480E4 /* libprotocols_g.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */; };
-		9DB963E517F0E4E2005480E4 /* libprotocols_h.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */; };
+		9DB963E217F0E4E2005480E4 /* protocols_b.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */; };
+		9DB963E317F0E4E2005480E4 /* protocols_d.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */; };
+		9DB963E417F0E4E2005480E4 /* protocols_g.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */; };
+		9DB963E517F0E4E2005480E4 /* protocols_h.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */; };
 		9DB963E617F0E4E2005480E4 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9466CA148CCD8600C2FBE5 /* libz.dylib */; };
-		9DB963E717F0E4E2005480E4 /* libbasic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07713EE143D00772777 /* libbasic.a */; };
-		9DB963E817F0E4E2005480E4 /* libcore.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07813EE143D00772777 /* libcore.1.a */; };
-		9DB963E917F0E4E2005480E4 /* libcore.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07913EE143D00772777 /* libcore.2.a */; };
-		9DB963EA17F0E4E2005480E4 /* libcore.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07A13EE143E00772777 /* libcore.3.a */; };
-		9DB963EB17F0E4E2005480E4 /* libcore.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07B13EE143E00772777 /* libcore.4.a */; };
-		9DB963EC17F0E4E2005480E4 /* libcore.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07C13EE143E00772777 /* libcore.5.a */; };
-		9DB963ED17F0E4E2005480E4 /* libdevel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DDF66C313EE13B800401374 /* libdevel.a */; };
-		9DB963EE17F0E4E2005480E4 /* libexternal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07313EE143D00772777 /* libexternal.a */; };
-		9DB963EF17F0E4E2005480E4 /* libnumeric.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07613EE143D00772777 /* libnumeric.a */; };
-		9DB963F017F0E4E2005480E4 /* libObjecxxFCL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07413EE143D00772777 /* libObjecxxFCL.a */; };
-		9DB963F117F0E4E2005480E4 /* libprotocols_a.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9462FA148CB2B700C2FBE5 /* libprotocols_a.4.a */; };
-		9DB963F217F0E4E2005480E4 /* libprotocols_a.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9464BA148CBD9D00C2FBE5 /* libprotocols_a.5.a */; };
-		9DB963F317F0E4E2005480E4 /* libprotocols_e.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946578148CBF6800C2FBE5 /* libprotocols_e.5.a */; };
-		9DB963F417F0E4E2005480E4 /* libprotocols_b.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946358148CBAD200C2FBE5 /* libprotocols_b.4.a */; };
-		9DB963F517F0E4E2005480E4 /* libprotocols_b.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946502148CBE0A00C2FBE5 /* libprotocols_b.5.a */; };
-		9DB963F617F0E4E2005480E4 /* libprotocols_f.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9465AA148CBF6E00C2FBE5 /* libprotocols_f.5.a */; };
-		9DB963F717F0E4E2005480E4 /* libprotocols_c.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9463A3148CBAD400C2FBE5 /* libprotocols_c.4.a */; };
-		9DB963F817F0E4E2005480E4 /* libprotocols_c.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94653D148CBE0C00C2FBE5 /* libprotocols_c.5.a */; };
-		9DB963F917F0E4E2005480E4 /* libprotocols.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9465DB148CBF7000C2FBE5 /* libprotocols.6.a */; };
-		9DB963FA17F0E4E2005480E4 /* libprotocols_d.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9463ED148CBAD600C2FBE5 /* libprotocols_d.4.a */; };
-		9DB963FB17F0E4E2005480E4 /* libprotocols_e.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946437148CBB3F00C2FBE5 /* libprotocols_e.4.a */; };
-		9DB963FC17F0E4E2005480E4 /* libprotocols_f.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946481148CBB4200C2FBE5 /* libprotocols_f.4.a */; };
-		9DB963FD17F0E4E2005480E4 /* libprotocols.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D1FD03730E2851B800B3C702 /* libprotocols.1.a */; };
-		9DB963FE17F0E4E2005480E4 /* libprotocols_a.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94610F148C9D5200C2FBE5 /* libprotocols_a.2.a */; };
-		9DB963FF17F0E4E2005480E4 /* libprotocols.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94619A148CA62A00C2FBE5 /* libprotocols.3.a */; };
-		9DB9640017F0E4E2005480E4 /* libprotocols.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946624148CBFBF00C2FBE5 /* libprotocols.7.a */; };
-		9DB9640117F0E4E2005480E4 /* libutility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07513EE143D00772777 /* libutility.a */; };
+		9DB963E717F0E4E2005480E4 /* basic.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07713EE143D00772777 /* basic.dylib */; };
+		9DB963E817F0E4E2005480E4 /* core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07813EE143D00772777 /* core.1.dylib */; };
+		9DB963E917F0E4E2005480E4 /* core.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07913EE143D00772777 /* core.2.dylib */; };
+		9DB963EA17F0E4E2005480E4 /* core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07A13EE143E00772777 /* core.3.dylib */; };
+		9DB963EB17F0E4E2005480E4 /* core.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07B13EE143E00772777 /* core.4.dylib */; };
+		9DB963EC17F0E4E2005480E4 /* core.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07C13EE143E00772777 /* core.5.dylib */; };
+		9DB963ED17F0E4E2005480E4 /* devel.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DDF66C313EE13B800401374 /* devel.dylib */; };
+		9DB963EE17F0E4E2005480E4 /* external.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07313EE143D00772777 /* external.dylib */; };
+		9DB963EF17F0E4E2005480E4 /* numeric.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07613EE143D00772777 /* numeric.dylib */; };
+		9DB963F017F0E4E2005480E4 /* ObjecxxFCL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07413EE143D00772777 /* ObjecxxFCL.dylib */; };
+		9DB963F117F0E4E2005480E4 /* protocols_a.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9462FA148CB2B700C2FBE5 /* protocols_a.4.dylib */; };
+		9DB963F217F0E4E2005480E4 /* protocols_a.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9464BA148CBD9D00C2FBE5 /* protocols_a.5.dylib */; };
+		9DB963F317F0E4E2005480E4 /* protocols_e.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946578148CBF6800C2FBE5 /* protocols_e.5.dylib */; };
+		9DB963F417F0E4E2005480E4 /* protocols_b.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946358148CBAD200C2FBE5 /* protocols_b.4.dylib */; };
+		9DB963F517F0E4E2005480E4 /* protocols_b.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946502148CBE0A00C2FBE5 /* protocols_b.5.dylib */; };
+		9DB963F617F0E4E2005480E4 /* protocols_f.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9465AA148CBF6E00C2FBE5 /* protocols_f.5.dylib */; };
+		9DB963F717F0E4E2005480E4 /* protocols_c.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9463A3148CBAD400C2FBE5 /* protocols_c.4.dylib */; };
+		9DB963F817F0E4E2005480E4 /* protocols_c.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94653D148CBE0C00C2FBE5 /* protocols_c.5.dylib */; };
+		9DB963F917F0E4E2005480E4 /* protocols.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9465DB148CBF7000C2FBE5 /* protocols.6.dylib */; };
+		9DB963FA17F0E4E2005480E4 /* protocols_d.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9463ED148CBAD600C2FBE5 /* protocols_d.4.dylib */; };
+		9DB963FB17F0E4E2005480E4 /* protocols_e.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946437148CBB3F00C2FBE5 /* protocols_e.4.dylib */; };
+		9DB963FC17F0E4E2005480E4 /* protocols_f.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946481148CBB4200C2FBE5 /* protocols_f.4.dylib */; };
+		9DB963FD17F0E4E2005480E4 /* protocols.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D1FD03730E2851B800B3C702 /* protocols.1.dylib */; };
+		9DB963FE17F0E4E2005480E4 /* protocols_a.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94610F148C9D5200C2FBE5 /* protocols_a.2.dylib */; };
+		9DB963FF17F0E4E2005480E4 /* protocols.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94619A148CA62A00C2FBE5 /* protocols.3.dylib */; };
+		9DB9640017F0E4E2005480E4 /* protocols.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946624148CBFBF00C2FBE5 /* protocols.7.dylib */; };
+		9DB9640117F0E4E2005480E4 /* utility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07513EE143D00772777 /* utility.dylib */; };
 		9DB9640917F0E60D005480E4 /* docking_protocol.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3DE2B08113EE15BC00772777 /* docking_protocol.cc */; };
 		9DBD5890DD99DC4FEE326DA4 /* PredictedBurialEvaluator.cc in Sources */ = {isa = PBXBuildFile; fileRef = F7DCF9CA05C65BFB9D386664 /* PredictedBurialEvaluator.cc */; };
 		9DC88B996EA8B1CDEA1AE597 /* LoopMover_KIC.cc in Sources */ = {isa = PBXBuildFile; fileRef = 64590095EFB8F196497DC29F /* LoopMover_KIC.cc */; };
-		9DD3B11C179D9CFD00B8FA3B /* libprotocols_b.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */; };
-		9DD3B11D179D9CFD00B8FA3B /* libprotocols_d.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */; };
-		9DD3B11E179D9CFD00B8FA3B /* libprotocols_g.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */; };
-		9DD3B11F179D9CFD00B8FA3B /* libprotocols_h.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */; };
+		9DD3B11C179D9CFD00B8FA3B /* protocols_b.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */; };
+		9DD3B11D179D9CFD00B8FA3B /* protocols_d.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */; };
+		9DD3B11E179D9CFD00B8FA3B /* protocols_g.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */; };
+		9DD3B11F179D9CFD00B8FA3B /* protocols_h.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */; };
 		9DD3B120179D9CFD00B8FA3B /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9466CA148CCD8600C2FBE5 /* libz.dylib */; };
 		9DD3B121179D9CFD00B8FA3B /* basic.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07713EE143D00772777 /* basic.dylib */; };
 		9DD3B122179D9CFD00B8FA3B /* core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07813EE143D00772777 /* core.1.dylib */; };
@@ -2078,6 +2067,11 @@
 		A4070B43078C40E9AD50EBAB /* PeakCalibrator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8C75594DA89F0B53C8B3108D /* PeakCalibrator.cc */; };
 		A40846C29E1F9EF883AF65A1 /* RMS_Energy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6AD6B86670E6EEAB9DD606F5 /* RMS_Energy.cc */; };
 		A43B7262CA50015D7E8CB4BC /* SecondaryMatchProtocol.cc in Sources */ = {isa = PBXBuildFile; fileRef = 45A10F7DD859464176FE7360 /* SecondaryMatchProtocol.cc */; };
+		A45A0CDE17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = A45A0CDA17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.cc */; };
+		A45A0CDF17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.fwd.hh in Headers */ = {isa = PBXBuildFile; fileRef = A45A0CDB17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.fwd.hh */; };
+		A45A0CE017F4AFE100E972F3 /* LK_PolarNonPolarEnergy.hh in Headers */ = {isa = PBXBuildFile; fileRef = A45A0CDC17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.hh */; };
+		A45A0CE117F4AFE100E972F3 /* LK_PolarNonPolarEnergyCreator.hh in Headers */ = {isa = PBXBuildFile; fileRef = A45A0CDD17F4AFE100E972F3 /* LK_PolarNonPolarEnergyCreator.hh */; };
+		A45A0CE317F54FAB00E972F3 /* RNA_StepWiseMonteCarlo.cc in Sources */ = {isa = PBXBuildFile; fileRef = A45A0CE217F54FAB00E972F3 /* RNA_StepWiseMonteCarlo.cc */; };
 		A46E5F080234E7A5EFA6CC79 /* NoesyModule.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7DDC0F008A98E302FD0DB800 /* NoesyModule.cc */; };
 		A4B1A22235FB0FDC6F4ED484 /* StructuralSimilarityEvaluator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 99A76F2C6EA64766DCA82824 /* StructuralSimilarityEvaluator.cc */; };
 		A4CE5B2ABBA1B9C5727EBB10 /* RotamerRecoveryMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = ED1BED5511D6A43BED3A45B2 /* RotamerRecoveryMover.cc */; };
@@ -2104,7 +2098,6 @@
 		A6B6C09F3EB8ED71E27719B0 /* EtableAtom.cc in Sources */ = {isa = PBXBuildFile; fileRef = AE940D3DC55DFC5B5B2837FB /* EtableAtom.cc */; };
 		A6BBDDAC8920ECD74EAE7CFD /* Loop.cc in Sources */ = {isa = PBXBuildFile; fileRef = B24AED784757B7649E3FB2BD /* Loop.cc */; };
 		A6E1D56E3C1D04786E650BB8 /* PDBInputter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0C09933BE472BFE6A7714DB0 /* PDBInputter.cc */; };
-		A706F551C4710D497A04C00E /* StepWiseCombineSampleGenerator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 15CFB9A6DC813AE668935B52 /* StepWiseCombineSampleGenerator.cc */; };
 		A7071B0CE425776D8926E31B /* ShearMinCCDTrial.cc in Sources */ = {isa = PBXBuildFile; fileRef = D7D90965833F415B04FF65C9 /* ShearMinCCDTrial.cc */; };
 		A72223E97D91260F865B2DD8 /* FragQualFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = F458BA88E97344C149750980 /* FragQualFilter.cc */; };
 		A7303D127520B2C8452455A1 /* SymmLinMemInteractionGraph.cc in Sources */ = {isa = PBXBuildFile; fileRef = EE2E4EE479E29DE84F9D6626 /* SymmLinMemInteractionGraph.cc */; };
@@ -2227,7 +2220,6 @@
 		B28AAE4EDA729D8AF97A3A15 /* ResidueNeighborList.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7D80051A1072EED3C20B8FFF /* ResidueNeighborList.cc */; };
 		B296BD678E80CA52B78171D9 /* SecondaryStructureEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 62F60C58BD024426103AC3DB /* SecondaryStructureEnergy.cc */; };
 		B299D112BE3E04648C2D8E81 /* SegmentHybridizer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 74D5C595A1302BEB7D003A00 /* SegmentHybridizer.cc */; };
-		B29CFCC5C074829B8F17D29D /* StepWiseRNA_RotamerGeneratorWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 0C5671DD7534A77A515B8761 /* StepWiseRNA_RotamerGeneratorWrapper.cc */; };
 		B2CE36505240E67EEEC29A06 /* StepWiseBetaAntiParallelJumpSampleGenerator.cc in Sources */ = {isa = PBXBuildFile; fileRef = DDE941B6E74E1371541E94E3 /* StepWiseBetaAntiParallelJumpSampleGenerator.cc */; };
 		B2F489159C7DDC97F87E4D21 /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = DB0039633C50A3CD7A314BDE /* util.cc */; };
 		B2FAE2199E322D6D3D59AB97 /* SmoothCenPairEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = E9F7ECAD57230195CDD2CF02 /* SmoothCenPairEnergy.cc */; };
@@ -2271,7 +2263,6 @@
 		B5B82030B57288D491D20860 /* FormatStringOutputter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 793F40C0384E790F4EDB2482 /* FormatStringOutputter.cc */; };
 		B5BF7E682EF6C990CFD12EF8 /* polynomial.cc in Sources */ = {isa = PBXBuildFile; fileRef = BF293E7B3447CE94EC668729 /* polynomial.cc */; };
 		B5D56D0B4690F3D5A1695805 /* BuildingBlockInterfaceOperation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 039A75AC79745761DF61EB87 /* BuildingBlockInterfaceOperation.cc */; };
-		B5E559376F9C79BB885DA16C /* StepWisePoseCombineSampleGenerator.cc in Sources */ = {isa = PBXBuildFile; fileRef = E1CF5F3263018257CD7B3947 /* StepWisePoseCombineSampleGenerator.cc */; };
 		B61A1F88F901DDFFCECCA4B8 /* MMLJEnergyTable.cc in Sources */ = {isa = PBXBuildFile; fileRef = FA1FE8A3C2A6E9D695AEF255 /* MMLJEnergyTable.cc */; };
 		B65A500BE8ED2A34FC5C3283 /* ArchiveManager.cc in Sources */ = {isa = PBXBuildFile; fileRef = C4410B3F827966609D31E1CF /* ArchiveManager.cc */; };
 		B6DD1171C4525899C3670E53 /* PoseMetricContainer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 530F66349CC8D74D380FC71F /* PoseMetricContainer.cc */; };
@@ -2398,7 +2389,6 @@
 		C20ECCE2EE734C277DDC1431 /* SameRotamerComboGrouper.cc in Sources */ = {isa = PBXBuildFile; fileRef = C60C9F66A232F674B6EEED35 /* SameRotamerComboGrouper.cc */; };
 		C23E86116726D668452FFA7D /* Conformation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5C4F94D3FB80388885C11CF1 /* Conformation.cc */; };
 		C240B2595FB991E2D404E8C0 /* ProteinBackboneTorsionAngleFeaturesCreator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 418993F9D094C19AF5F7FC7D /* ProteinBackboneTorsionAngleFeaturesCreator.cc */; };
-		C2412802CA3F043ED1E0DFEB /* RNA_LoopEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = F1686F9047DADEF1D1ED441D /* RNA_LoopEnergy.cc */; };
 		C243D48EC98BC2221A286035 /* StepWiseRNA_BaseCentroidScreener.cc in Sources */ = {isa = PBXBuildFile; fileRef = D89B202DAC985DF6153CF4B2 /* StepWiseRNA_BaseCentroidScreener.cc */; };
 		C2448D16C78702C66BB2EA4B /* Energies.cc in Sources */ = {isa = PBXBuildFile; fileRef = 50DA96FF073659AE618E72D1 /* Energies.cc */; };
 		C245FE19F985EE1B565306D9 /* SasaCalculator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5DA46431EAD05C23AA922693 /* SasaCalculator.cc */; };
@@ -2863,38 +2853,38 @@
 		EC54D5473FA13300D875A169 /* SpecialRotamerEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5085C459EE5A1A6AAED6B488 /* SpecialRotamerEnergy.cc */; };
 		EC571746BA2392DC877B454B /* PostDockAssemblyScorer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9083A1263BCAF2D0A46975ED /* PostDockAssemblyScorer.cc */; };
 		EC58193A2302A30BF92116B4 /* PcsInputCenter.cc in Sources */ = {isa = PBXBuildFile; fileRef = F447616EAB22DB5FC47EE7B3 /* PcsInputCenter.cc */; };
-		EC5D95CD15D6C9F700EAE42D /* libprotocols_b.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */; };
-		EC5D95CE15D6C9F700EAE42D /* libprotocols_d.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */; };
-		EC5D95CF15D6C9F700EAE42D /* libprotocols_g.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */; };
-		EC5D95D015D6C9F700EAE42D /* libprotocols_h.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */; };
+		EC5D95CD15D6C9F700EAE42D /* protocols_b.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */; };
+		EC5D95CE15D6C9F700EAE42D /* protocols_d.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */; };
+		EC5D95CF15D6C9F700EAE42D /* protocols_g.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */; };
+		EC5D95D015D6C9F700EAE42D /* protocols_h.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */; };
 		EC5D95D115D6C9F700EAE42D /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9466CA148CCD8600C2FBE5 /* libz.dylib */; };
-		EC5D95D215D6C9F700EAE42D /* libbasic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07713EE143D00772777 /* libbasic.a */; };
-		EC5D95D315D6C9F700EAE42D /* libcore.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07813EE143D00772777 /* libcore.1.a */; };
-		EC5D95D415D6C9F700EAE42D /* libcore.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07913EE143D00772777 /* libcore.2.a */; };
-		EC5D95D515D6C9F700EAE42D /* libcore.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07A13EE143E00772777 /* libcore.3.a */; };
-		EC5D95D615D6C9F700EAE42D /* libcore.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07B13EE143E00772777 /* libcore.4.a */; };
-		EC5D95D715D6C9F700EAE42D /* libcore.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07C13EE143E00772777 /* libcore.5.a */; };
-		EC5D95D815D6C9F700EAE42D /* libdevel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DDF66C313EE13B800401374 /* libdevel.a */; };
-		EC5D95D915D6C9F700EAE42D /* libexternal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07313EE143D00772777 /* libexternal.a */; };
-		EC5D95DA15D6C9F700EAE42D /* libnumeric.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07613EE143D00772777 /* libnumeric.a */; };
-		EC5D95DB15D6C9F700EAE42D /* libObjecxxFCL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07413EE143D00772777 /* libObjecxxFCL.a */; };
-		EC5D95DC15D6C9F700EAE42D /* libprotocols_a.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9462FA148CB2B700C2FBE5 /* libprotocols_a.4.a */; };
-		EC5D95DD15D6C9F700EAE42D /* libprotocols_a.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9464BA148CBD9D00C2FBE5 /* libprotocols_a.5.a */; };
-		EC5D95DE15D6C9F700EAE42D /* libprotocols_e.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946578148CBF6800C2FBE5 /* libprotocols_e.5.a */; };
-		EC5D95DF15D6C9F700EAE42D /* libprotocols_b.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946358148CBAD200C2FBE5 /* libprotocols_b.4.a */; };
-		EC5D95E015D6C9F700EAE42D /* libprotocols_b.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946502148CBE0A00C2FBE5 /* libprotocols_b.5.a */; };
-		EC5D95E115D6C9F700EAE42D /* libprotocols_f.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9465AA148CBF6E00C2FBE5 /* libprotocols_f.5.a */; };
-		EC5D95E215D6C9F700EAE42D /* libprotocols_c.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9463A3148CBAD400C2FBE5 /* libprotocols_c.4.a */; };
-		EC5D95E315D6C9F700EAE42D /* libprotocols_c.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94653D148CBE0C00C2FBE5 /* libprotocols_c.5.a */; };
-		EC5D95E415D6C9F700EAE42D /* libprotocols.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9465DB148CBF7000C2FBE5 /* libprotocols.6.a */; };
-		EC5D95E515D6C9F700EAE42D /* libprotocols_d.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9463ED148CBAD600C2FBE5 /* libprotocols_d.4.a */; };
-		EC5D95E615D6C9F700EAE42D /* libprotocols_e.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946437148CBB3F00C2FBE5 /* libprotocols_e.4.a */; };
-		EC5D95E715D6C9F700EAE42D /* libprotocols_f.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946481148CBB4200C2FBE5 /* libprotocols_f.4.a */; };
-		EC5D95E815D6C9F700EAE42D /* libprotocols.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D1FD03730E2851B800B3C702 /* libprotocols.1.a */; };
-		EC5D95E915D6C9F700EAE42D /* libprotocols_a.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94610F148C9D5200C2FBE5 /* libprotocols_a.2.a */; };
-		EC5D95EA15D6C9F700EAE42D /* libprotocols.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94619A148CA62A00C2FBE5 /* libprotocols.3.a */; };
-		EC5D95EB15D6C9F700EAE42D /* libprotocols.7.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946624148CBFBF00C2FBE5 /* libprotocols.7.a */; };
-		EC5D95EC15D6C9F700EAE42D /* libutility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07513EE143D00772777 /* libutility.a */; };
+		EC5D95D215D6C9F700EAE42D /* basic.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07713EE143D00772777 /* basic.dylib */; };
+		EC5D95D315D6C9F700EAE42D /* core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07813EE143D00772777 /* core.1.dylib */; };
+		EC5D95D415D6C9F700EAE42D /* core.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07913EE143D00772777 /* core.2.dylib */; };
+		EC5D95D515D6C9F700EAE42D /* core.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07A13EE143E00772777 /* core.3.dylib */; };
+		EC5D95D615D6C9F700EAE42D /* core.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07B13EE143E00772777 /* core.4.dylib */; };
+		EC5D95D715D6C9F700EAE42D /* core.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07C13EE143E00772777 /* core.5.dylib */; };
+		EC5D95D815D6C9F700EAE42D /* devel.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DDF66C313EE13B800401374 /* devel.dylib */; };
+		EC5D95D915D6C9F700EAE42D /* external.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07313EE143D00772777 /* external.dylib */; };
+		EC5D95DA15D6C9F700EAE42D /* numeric.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07613EE143D00772777 /* numeric.dylib */; };
+		EC5D95DB15D6C9F700EAE42D /* ObjecxxFCL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07413EE143D00772777 /* ObjecxxFCL.dylib */; };
+		EC5D95DC15D6C9F700EAE42D /* protocols_a.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9462FA148CB2B700C2FBE5 /* protocols_a.4.dylib */; };
+		EC5D95DD15D6C9F700EAE42D /* protocols_a.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9464BA148CBD9D00C2FBE5 /* protocols_a.5.dylib */; };
+		EC5D95DE15D6C9F700EAE42D /* protocols_e.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946578148CBF6800C2FBE5 /* protocols_e.5.dylib */; };
+		EC5D95DF15D6C9F700EAE42D /* protocols_b.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946358148CBAD200C2FBE5 /* protocols_b.4.dylib */; };
+		EC5D95E015D6C9F700EAE42D /* protocols_b.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946502148CBE0A00C2FBE5 /* protocols_b.5.dylib */; };
+		EC5D95E115D6C9F700EAE42D /* protocols_f.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9465AA148CBF6E00C2FBE5 /* protocols_f.5.dylib */; };
+		EC5D95E215D6C9F700EAE42D /* protocols_c.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9463A3148CBAD400C2FBE5 /* protocols_c.4.dylib */; };
+		EC5D95E315D6C9F700EAE42D /* protocols_c.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94653D148CBE0C00C2FBE5 /* protocols_c.5.dylib */; };
+		EC5D95E415D6C9F700EAE42D /* protocols.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9465DB148CBF7000C2FBE5 /* protocols.6.dylib */; };
+		EC5D95E515D6C9F700EAE42D /* protocols_d.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9463ED148CBAD600C2FBE5 /* protocols_d.4.dylib */; };
+		EC5D95E615D6C9F700EAE42D /* protocols_e.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946437148CBB3F00C2FBE5 /* protocols_e.4.dylib */; };
+		EC5D95E715D6C9F700EAE42D /* protocols_f.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946481148CBB4200C2FBE5 /* protocols_f.4.dylib */; };
+		EC5D95E815D6C9F700EAE42D /* protocols.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = D1FD03730E2851B800B3C702 /* protocols.1.dylib */; };
+		EC5D95E915D6C9F700EAE42D /* protocols_a.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94610F148C9D5200C2FBE5 /* protocols_a.2.dylib */; };
+		EC5D95EA15D6C9F700EAE42D /* protocols.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B94619A148CA62A00C2FBE5 /* protocols.3.dylib */; };
+		EC5D95EB15D6C9F700EAE42D /* protocols.7.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B946624148CBFBF00C2FBE5 /* protocols.7.dylib */; };
+		EC5D95EC15D6C9F700EAE42D /* utility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07513EE143D00772777 /* utility.dylib */; };
 		EC6147534E04E877A367E7EE /* FragmentLoopInserter.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6AB5C022DC3D7EC2027119B6 /* FragmentLoopInserter.cc */; };
 		EC89807ABF48FA619A4E9DCB /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = D38F2F2E587A2A67ACAEDE1F /* util.cc */; };
 		EC8E450C1BE5F85428511D88 /* Rose.cc in Sources */ = {isa = PBXBuildFile; fileRef = EC0ECD95E58814C3490936C7 /* Rose.cc */; };
@@ -3007,10 +2997,10 @@
 		F9064963A214119A0598D863 /* TwoBodyEnergy.cc in Sources */ = {isa = PBXBuildFile; fileRef = B0D7143F2F7B117182184AF6 /* TwoBodyEnergy.cc */; };
 		F9099F6A607EEF3A2B3EC25A /* file_data_options.cc in Sources */ = {isa = PBXBuildFile; fileRef = 70565FECE119C72E79379B63 /* file_data_options.cc */; };
 		F919EAA256C053DD9EE2FFC9 /* TemperingBase.cc in Sources */ = {isa = PBXBuildFile; fileRef = C8C24B138C680DA271482E90 /* TemperingBase.cc */; };
-		F938B41C1774C1EF00156D08 /* libprotocols_b.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */; };
-		F938B41D1774C1EF00156D08 /* libprotocols_d.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */; };
-		F938B41E1774C1EF00156D08 /* libprotocols_g.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */; };
-		F938B41F1774C1EF00156D08 /* libprotocols_h.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */; };
+		F938B41C1774C1EF00156D08 /* protocols_b.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */; };
+		F938B41D1774C1EF00156D08 /* protocols_d.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */; };
+		F938B41E1774C1EF00156D08 /* protocols_g.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */; };
+		F938B41F1774C1EF00156D08 /* protocols_h.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */; };
 		F938B4201774C1EF00156D08 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9466CA148CCD8600C2FBE5 /* libz.dylib */; };
 		F938B4211774C1EF00156D08 /* basic.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07713EE143D00772777 /* basic.dylib */; };
 		F938B4221774C1EF00156D08 /* core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07813EE143D00772777 /* core.1.dylib */; };
@@ -3042,11 +3032,10 @@
 		F938B4431774C21B00156D08 /* fixbb.cc in Sources */ = {isa = PBXBuildFile; fileRef = F938B4411774C21600156D08 /* fixbb.cc */; };
 		F93E121D57AA7EFA1A9B6FC4 /* metrics.cc in Sources */ = {isa = PBXBuildFile; fileRef = 33DFD33372AA91C09EF74670 /* metrics.cc */; };
 		F943693980C7D018644CC256 /* FlexPacker.cc in Sources */ = {isa = PBXBuildFile; fileRef = A87C054E8D4DA2CF8F55E446 /* FlexPacker.cc */; };
-		F947B3EA177345FA003D9847 /* supercharge.cc in Sources */ = {isa = PBXBuildFile; fileRef = F947B3E9177345FA003D9847 /* supercharge.cc */; };
-		F947B42D1773460D003D9847 /* libprotocols_b.2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */; };
-		F947B42E1773460D003D9847 /* libprotocols_d.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */; };
-		F947B42F1773460D003D9847 /* libprotocols_g.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */; };
-		F947B4301773460D003D9847 /* libprotocols_h.4.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */; };
+		F947B42D1773460D003D9847 /* protocols_b.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */; };
+		F947B42E1773460D003D9847 /* protocols_d.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */; };
+		F947B42F1773460D003D9847 /* protocols_g.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */; };
+		F947B4301773460D003D9847 /* protocols_h.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */; };
 		F947B4311773460D003D9847 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B9466CA148CCD8600C2FBE5 /* libz.dylib */; };
 		F947B4321773460D003D9847 /* basic.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07713EE143D00772777 /* basic.dylib */; };
 		F947B4331773460D003D9847 /* core.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DE2B07813EE143D00772777 /* core.1.dylib */; };
@@ -9903,7 +9892,6 @@
 		0393061D7848A419D67DB02D /* RestrictInterGroupVectorOperation.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RestrictInterGroupVectorOperation.fwd.hh; path = ../src/protocols/toolbox/task_operations/RestrictInterGroupVectorOperation.fwd.hh; sourceTree = SOURCE_ROOT; };
 		039A75AC79745761DF61EB87 /* BuildingBlockInterfaceOperation.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BuildingBlockInterfaceOperation.cc; path = ../src/devel/matdes/BuildingBlockInterfaceOperation.cc; sourceTree = SOURCE_ROOT; };
 		03A5E62B8BAC196F2FA23B28 /* RotamerSet.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RotamerSet.cc; path = ../src/core/pack/rotamer_set/RotamerSet.cc; sourceTree = SOURCE_ROOT; };
-		03A8CD4E26A7519ED7F07EDC /* StepWiseRNA_RotamerGeneratorWrapper.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_RotamerGeneratorWrapper.hh; path = ../src/protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.hh; sourceTree = SOURCE_ROOT; };
 		03AA6CA761F21934983B01BE /* FNatFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FNatFilterCreator.hh; path = ../src/protocols/protein_interface_design/filters/FNatFilterCreator.hh; sourceTree = SOURCE_ROOT; };
 		03BEAFAED597DE96C31D9C69 /* make_loops.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = make_loops.hh; path = ../src/protocols/loops/make_loops.hh; sourceTree = SOURCE_ROOT; };
 		03C8093F005DBD4DFA1D4B5B /* SymDockProtocol.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SymDockProtocol.hh; path = ../src/protocols/symmetric_docking/SymDockProtocol.hh; sourceTree = SOURCE_ROOT; };
@@ -10046,7 +10034,6 @@
 		07AD27BA9F464EAD8CFCF89E /* RBSegmentRelax_main.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RBSegmentRelax_main.cc; path = ../src/protocols/rbsegment_relax/RBSegmentRelax_main.cc; sourceTree = SOURCE_ROOT; };
 		07BB7204159DB0DD94735787 /* GunnCost.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = GunnCost.hh; path = ../src/protocols/simple_moves/GunnCost.hh; sourceTree = SOURCE_ROOT; };
 		07BD98BFD0CEDC155177950C /* DFIRE_EnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DFIRE_EnergyCreator.hh; path = ../src/core/scoring/methods/dfire/DFIRE_EnergyCreator.hh; sourceTree = SOURCE_ROOT; };
-		07C2719E83A0E19E52D48209 /* ERRASER_Modeler.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ERRASER_Modeler.hh; path = ../src/protocols/swa/rna/ERRASER_Modeler.hh; sourceTree = SOURCE_ROOT; };
 		07C3EC1050E55C4164175C02 /* OccludedHbondSolEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OccludedHbondSolEnergy.hh; path = ../src/core/scoring/geometric_solvation/OccludedHbondSolEnergy.hh; sourceTree = SOURCE_ROOT; };
 		07CB80D2473876855B102178 /* KeyFArray4D.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = KeyFArray4D.hh; path = "../src/ObjexxFCL//KeyFArray4D.hh"; sourceTree = SOURCE_ROOT; };
 		07CCDD478B7520A63BC7F071 /* DefineMovableLoops.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DefineMovableLoops.hh; path = ../src/protocols/seeded_abinitio/DefineMovableLoops.hh; sourceTree = SOURCE_ROOT; };
@@ -10189,7 +10176,6 @@
 		0C27DEA383D63310FB14459B /* ddG_main.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ddG_main.hh; path = ../src/protocols/ddg/ddG_main.hh; sourceTree = SOURCE_ROOT; };
 		0C4522F2755A78C31FBC7775 /* types.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = types.hh; path = ../src/protocols/sic_dock/types.hh; sourceTree = SOURCE_ROOT; };
 		0C4742184CF2059E3B8510EC /* StartStructClaimer.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StartStructClaimer.fwd.hh; path = ../src/protocols/topology_broker/StartStructClaimer.fwd.hh; sourceTree = SOURCE_ROOT; };
-		0C5671DD7534A77A515B8761 /* StepWiseRNA_RotamerGeneratorWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_RotamerGeneratorWrapper.cc; path = ../src/protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.cc; sourceTree = SOURCE_ROOT; };
 		0C5E64055179A41A50F11812 /* ZnHash.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ZnHash.hh; path = ../src/devel/znhash/ZnHash.hh; sourceTree = SOURCE_ROOT; };
 		0C624E5D0C0961CC471B3F51 /* AtomPairConstraintsScore.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AtomPairConstraintsScore.cc; path = ../src/protocols/frag_picker/scores/AtomPairConstraintsScore.cc; sourceTree = SOURCE_ROOT; };
 		0C67AC9720963C923B0AB833 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/core/scoring/util.hh; sourceTree = SOURCE_ROOT; };
@@ -10359,7 +10345,6 @@
 		11D37A8C6B1C56C204EB1735 /* CountPairData_1_2.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CountPairData_1_2.hh; path = ../src/core/scoring/etable/etrie/CountPairData_1_2.hh; sourceTree = SOURCE_ROOT; };
 		11D3C6776F596BC2294033FC /* CustomAtomPairEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CustomAtomPairEnergy.hh; path = ../src/core/scoring/methods/CustomAtomPairEnergy.hh; sourceTree = SOURCE_ROOT; };
 		11D43C0295699CA005648F9E /* RNA_ScoringInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_ScoringInfo.hh; path = ../src/core/scoring/rna/RNA_ScoringInfo.hh; sourceTree = SOURCE_ROOT; };
-		11D843A93AC5A863C0564447 /* ERRASER_Modeler.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ERRASER_Modeler.fwd.hh; path = ../src/protocols/swa/rna/ERRASER_Modeler.fwd.hh; sourceTree = SOURCE_ROOT; };
 		11E14954F1483046D0E23D1C /* BasicDataCache.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BasicDataCache.hh; path = ../src/basic/datacache/BasicDataCache.hh; sourceTree = SOURCE_ROOT; };
 		11E3CBD7188CA0E43E2BCA69 /* SSPredictionFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SSPredictionFilter.hh; path = ../src/devel/denovo_design/filters/SSPredictionFilter.hh; sourceTree = SOURCE_ROOT; };
 		11E49F7CF5D2C2C4FAD3154E /* VirtualRootMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = VirtualRootMover.cc; path = ../src/protocols/simple_moves/VirtualRootMover.cc; sourceTree = SOURCE_ROOT; };
@@ -10604,7 +10589,6 @@
 		19034406891C701CEC5F8EDA /* rotamerdump.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = rotamerdump.OptionKeys.gen.hh; path = ../src/basic/options/keys/rotamerdump.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		190706699B26C99A04FFA39B /* RemodelLoopMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RemodelLoopMover.fwd.hh; path = ../src/protocols/forge/remodel/RemodelLoopMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		1909EE310193C37832B10D75 /* RealOption.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RealOption.hh; path = ../src/utility/options/RealOption.hh; sourceTree = SOURCE_ROOT; };
-		1918D0AE95A32758554CF12C /* StepWiseRNA_BaseSugarRotamer.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_BaseSugarRotamer.fwd.hh; path = ../src/protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.fwd.hh; sourceTree = SOURCE_ROOT; };
 		191C97D23D3588B68A8B54E8 /* MPI_LoopHashRefine.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MPI_LoopHashRefine.cc; path = ../src/protocols/loophash/MPI_LoopHashRefine.cc; sourceTree = SOURCE_ROOT; };
 		192327657F7F39DE2BBBD6B2 /* SetupForSymmetryMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SetupForSymmetryMover.cc; path = ../src/protocols/simple_moves/symmetry/SetupForSymmetryMover.cc; sourceTree = SOURCE_ROOT; };
 		1924FDCE3A1085196C797E52 /* ABEGOEval.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ABEGOEval.hh; path = ../src/core/fragment/picking_old/vall/eval/ABEGOEval.hh; sourceTree = SOURCE_ROOT; };
@@ -10949,7 +10933,6 @@
 		23770AFC04DE3B7C002AFADB /* IdealizeMoverCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = IdealizeMoverCreator.hh; path = ../src/protocols/idealize/IdealizeMoverCreator.hh; sourceTree = SOURCE_ROOT; };
 		237C65B969939D26E331293E /* ConcurrencyTest.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ConcurrencyTest.cc; path = ../src/protocols/features/helixAssembly/ConcurrencyTest.cc; sourceTree = SOURCE_ROOT; };
 		23887E3779C52EBAF660AA06 /* PlaceFragmentsCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PlaceFragmentsCreator.hh; path = ../src/protocols/seeded_abinitio/PlaceFragmentsCreator.hh; sourceTree = SOURCE_ROOT; };
-		23909A25C0271B9E3695791C /* StepWiseRNA_RotamerGenerator.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_RotamerGenerator.fwd.hh; path = ../src/protocols/swa/rna/StepWiseRNA_RotamerGenerator.fwd.hh; sourceTree = SOURCE_ROOT; };
 		239C19F5CF1F2F5FFD7D7BE7 /* HbondsToResidueFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HbondsToResidueFilterCreator.hh; path = ../src/protocols/protein_interface_design/filters/HbondsToResidueFilterCreator.hh; sourceTree = SOURCE_ROOT; };
 		239D009E7C70DB6AB935F764 /* RealVectorOptionKey.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RealVectorOptionKey.hh; path = ../src/utility/options/keys/RealVectorOptionKey.hh; sourceTree = SOURCE_ROOT; };
 		23A18C1263CCAF53EA3859D0 /* ModifyStoredLigandRBConfsMovers.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ModifyStoredLigandRBConfsMovers.cc; path = ../src/protocols/enzdes/ModifyStoredLigandRBConfsMovers.cc; sourceTree = SOURCE_ROOT; };
@@ -11664,7 +11647,6 @@
 		38450ABA0C5A67B917014000 /* PathName.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PathName.hh; path = ../src/utility/file/PathName.hh; sourceTree = SOURCE_ROOT; };
 		3846ADD5E153AC373CD20E78 /* RefineOneCDRLoop.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RefineOneCDRLoop.cc; path = ../src/protocols/antibody/RefineOneCDRLoop.cc; sourceTree = SOURCE_ROOT; };
 		3854CF4BD80442A100163A75 /* HelixPairing.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = HelixPairing.hh; path = ../src/protocols/fldsgn/topology/HelixPairing.hh; sourceTree = SOURCE_ROOT; };
-		3860472AF6391DE7D6767727 /* StepWiseRNA_RotamerGeneratorWrapper.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_RotamerGeneratorWrapper.fwd.hh; path = ../src/protocols/swa/rna/StepWiseRNA_RotamerGeneratorWrapper.fwd.hh; sourceTree = SOURCE_ROOT; };
 		38620C20FFCE4B0B28B962A9 /* LoopMover.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LoopMover.cc; path = ../src/protocols/loops/loop_mover/LoopMover.cc; sourceTree = SOURCE_ROOT; };
 		3866FAE74902792576B9C3DE /* LoopMover_CCDCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = LoopMover_CCDCreator.hh; path = ../src/protocols/loops/loop_mover/perturb/LoopMover_CCDCreator.hh; sourceTree = SOURCE_ROOT; };
 		38683F054856A638C622B6F8 /* EnzdesLoopsFile.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = EnzdesLoopsFile.hh; path = ../src/protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh; sourceTree = SOURCE_ROOT; };
@@ -11774,7 +11756,7 @@
 		3B70060495884012060E6DD0 /* PairEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PairEnergy.cc; path = ../src/core/scoring/methods/PairEnergy.cc; sourceTree = SOURCE_ROOT; };
 		3B73FBCEC8102E50FF67D0BF /* PositionDdGInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PositionDdGInfo.cc; path = ../src/core/io/ddg/PositionDdGInfo.cc; sourceTree = SOURCE_ROOT; };
 		3B76338ED0866D375BA97F78 /* ResidueCoordinateChangeList.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ResidueCoordinateChangeList.cc; path = ../src/core/kinematics/ResidueCoordinateChangeList.cc; sourceTree = SOURCE_ROOT; };
-		3B7A001314977BC300905864 /* librosetta_static.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = librosetta_static.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B7A001314977BC300905864 /* rosetta_static.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = rosetta_static.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B7A0083149782E500905864 /* rosetta_scripts_static */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rosetta_scripts_static; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B7AE0BFCE94B805992BC4CE /* WaterPackingInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = WaterPackingInfo.cc; path = ../src/core/pack/rotamer_set/WaterPackingInfo.cc; sourceTree = SOURCE_ROOT; };
 		3B7F1A707644B25B4EA447F8 /* adduct_util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = adduct_util.cc; path = ../src/core/chemical/adduct_util.cc; sourceTree = SOURCE_ROOT; };
@@ -11782,21 +11764,21 @@
 		3B845E5615AE1BCBDA2E29C4 /* Timer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Timer.cc; path = ../src/basic/gpu/Timer.cc; sourceTree = SOURCE_ROOT; };
 		3B8BABD560CD96F67C265633 /* JobInputterCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JobInputterCreator.cc; path = ../src/protocols/jd2/JobInputterCreator.cc; sourceTree = SOURCE_ROOT; };
 		3B8BFFB37F0C7945EA4CE110 /* CenHBPotential.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CenHBPotential.cc; path = ../src/core/scoring/CenHBPotential.cc; sourceTree = SOURCE_ROOT; };
-		3B94610F148C9D5200C2FBE5 /* libprotocols_a.2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_a.2.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B94619A148CA62A00C2FBE5 /* libprotocols.3.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols.3.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B9462FA148CB2B700C2FBE5 /* libprotocols_a.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_a.4.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B946358148CBAD200C2FBE5 /* libprotocols_b.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_b.4.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B9463A3148CBAD400C2FBE5 /* libprotocols_c.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_c.4.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B9463ED148CBAD600C2FBE5 /* libprotocols_d.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_d.4.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B946437148CBB3F00C2FBE5 /* libprotocols_e.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_e.4.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B946481148CBB4200C2FBE5 /* libprotocols_f.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_f.4.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B9464BA148CBD9D00C2FBE5 /* libprotocols_a.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_a.5.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B946502148CBE0A00C2FBE5 /* libprotocols_b.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_b.5.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B94653D148CBE0C00C2FBE5 /* libprotocols_c.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_c.5.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B946578148CBF6800C2FBE5 /* libprotocols_e.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_e.5.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B9465AA148CBF6E00C2FBE5 /* libprotocols_f.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_f.5.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B9465DB148CBF7000C2FBE5 /* libprotocols.6.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols.6.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B946624148CBFBF00C2FBE5 /* libprotocols.7.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols.7.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B94610F148C9D5200C2FBE5 /* protocols_a.2.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_a.2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B94619A148CA62A00C2FBE5 /* protocols.3.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols.3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B9462FA148CB2B700C2FBE5 /* protocols_a.4.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_a.4.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B946358148CBAD200C2FBE5 /* protocols_b.4.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_b.4.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B9463A3148CBAD400C2FBE5 /* protocols_c.4.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_c.4.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B9463ED148CBAD600C2FBE5 /* protocols_d.4.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_d.4.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B946437148CBB3F00C2FBE5 /* protocols_e.4.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_e.4.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B946481148CBB4200C2FBE5 /* protocols_f.4.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_f.4.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B9464BA148CBD9D00C2FBE5 /* protocols_a.5.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_a.5.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B946502148CBE0A00C2FBE5 /* protocols_b.5.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_b.5.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B94653D148CBE0C00C2FBE5 /* protocols_c.5.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_c.5.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B946578148CBF6800C2FBE5 /* protocols_e.5.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_e.5.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B9465AA148CBF6E00C2FBE5 /* protocols_f.5.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_f.5.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B9465DB148CBF7000C2FBE5 /* protocols.6.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols.6.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B946624148CBFBF00C2FBE5 /* protocols.7.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols.7.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B9466AB148CC98F00C2FBE5 /* rosetta_scripts */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rosetta_scripts; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B9466CA148CCD8600C2FBE5 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = SDKs/MacOSX10.7.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
 		3B9D7D4F75F95FDEF26F835D /* MatchOutputter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = MatchOutputter.hh; path = ../src/protocols/match/output/MatchOutputter.hh; sourceTree = SOURCE_ROOT; };
@@ -11852,10 +11834,10 @@
 		3D3FD5229FB91EEFEE53690C /* DihedralConstraintsScore.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DihedralConstraintsScore.cc; path = ../src/protocols/frag_picker/scores/DihedralConstraintsScore.cc; sourceTree = SOURCE_ROOT; };
 		3D43C5B11087F816B6FD08F7 /* pose_metrics.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = pose_metrics.OptionKeys.gen.hh; path = ../src/basic/options/keys/pose_metrics.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		3D4F8DF6946396E70C60288E /* CDRClusterEnumManager.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CDRClusterEnumManager.hh; path = ../src/protocols/antibody/CDRClusterEnumManager.hh; sourceTree = SOURCE_ROOT; };
-		3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_d.5.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_b.2.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_g.4.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols_h.4.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_d.5.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_b.2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_g.4.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols_h.4.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D6484B614CDE9970038C383 /* Andrew's App */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Andrew's App"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D7066B3A5F1EF4D85147AF9 /* ResourceLocatorFactory.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResourceLocatorFactory.hh; path = ../src/basic/resource_manager/ResourceLocatorFactory.hh; sourceTree = SOURCE_ROOT; };
 		3D7D9A3F15D9A54300564DDB /* SnugDock */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SnugDock; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -11869,17 +11851,17 @@
 		3DD72B14AEE1EDFEFFA12460 /* Motif.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Motif.fwd.hh; path = ../src/protocols/motifs/Motif.fwd.hh; sourceTree = SOURCE_ROOT; };
 		3DDA39B730A3B5A3CE2162C8 /* GaussianOverlapEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = GaussianOverlapEnergy.cc; path = ../src/core/scoring/methods/GaussianOverlapEnergy.cc; sourceTree = SOURCE_ROOT; };
 		3DDBEC569B68BBF43FC1B9E6 /* MMBondLengthScore.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MMBondLengthScore.cc; path = ../src/core/scoring/mm/MMBondLengthScore.cc; sourceTree = SOURCE_ROOT; };
-		3DDF66C313EE13B800401374 /* libdevel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdevel.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DE2B07313EE143D00772777 /* libexternal.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libexternal.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DE2B07413EE143D00772777 /* libObjecxxFCL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjecxxFCL.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DE2B07513EE143D00772777 /* libutility.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libutility.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DE2B07613EE143D00772777 /* libnumeric.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libnumeric.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DE2B07713EE143D00772777 /* libbasic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libbasic.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DE2B07813EE143D00772777 /* libcore.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcore.1.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DE2B07913EE143D00772777 /* libcore.2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcore.2.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DE2B07A13EE143E00772777 /* libcore.3.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcore.3.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DE2B07B13EE143E00772777 /* libcore.4.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcore.4.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3DE2B07C13EE143E00772777 /* libcore.5.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcore.5.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DDF66C313EE13B800401374 /* devel.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = devel.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DE2B07313EE143D00772777 /* external.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = external.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DE2B07413EE143D00772777 /* ObjecxxFCL.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = ObjecxxFCL.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DE2B07513EE143D00772777 /* utility.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = utility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DE2B07613EE143D00772777 /* numeric.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = numeric.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DE2B07713EE143D00772777 /* basic.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = basic.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DE2B07813EE143D00772777 /* core.1.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = core.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DE2B07913EE143D00772777 /* core.2.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = core.2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DE2B07A13EE143E00772777 /* core.3.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = core.3.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DE2B07B13EE143E00772777 /* core.4.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = core.4.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3DE2B07C13EE143E00772777 /* core.5.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = core.5.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DE2B08113EE15BC00772777 /* docking_protocol.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = docking_protocol.cc; path = ../src/apps/public/docking/docking_protocol.cc; sourceTree = "<group>"; };
 		3DEC3A5A46EBA46D268B3112 /* NtoCCstGeneratorCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NtoCCstGeneratorCreator.hh; path = ../src/protocols/forge/constraints/NtoCCstGeneratorCreator.hh; sourceTree = SOURCE_ROOT; };
 		3DECCBD498502BAA85C23DAA /* SquareWell2Func.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SquareWell2Func.fwd.hh; path = ../src/core/scoring/constraints/SquareWell2Func.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -12818,7 +12800,6 @@
 		5B6331A98E3BA394A6600878 /* RemodelRotamerLinks.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RemodelRotamerLinks.cc; path = ../src/protocols/forge/remodel/RemodelRotamerLinks.cc; sourceTree = SOURCE_ROOT; };
 		5B7292432EEB27D6FE5FA82B /* UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh; path = ../src/protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh; sourceTree = SOURCE_ROOT; };
 		5B778C3A4DDBCD494251FCA5 /* Fmath.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Fmath.hh; path = "../src/ObjexxFCL//Fmath.hh"; sourceTree = SOURCE_ROOT; };
-		5B7EF47C412E6679A9A738CE /* StepWiseRNA_RotamerGenerator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_RotamerGenerator.cc; path = ../src/protocols/swa/rna/StepWiseRNA_RotamerGenerator.cc; sourceTree = SOURCE_ROOT; };
 		5B8368E708AEC789F96A51BB /* RenderGridsToKinemage.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RenderGridsToKinemage.hh; path = ../src/protocols/qsar/RenderGridsToKinemage.hh; sourceTree = SOURCE_ROOT; };
 		5B8872162546FA283AE868AF /* NMerPSSMEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NMerPSSMEnergy.cc; path = ../src/core/scoring/methods/NMerPSSMEnergy.cc; sourceTree = SOURCE_ROOT; };
 		5B88FCC4AAF4BEC303C0A9CD /* SecondaryStructureEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SecondaryStructureEnergy.fwd.hh; path = ../src/core/scoring/methods/SecondaryStructureEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -14074,7 +14055,6 @@
 		807A7D38F7F2710B594DEC66 /* PairScoringScheme.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PairScoringScheme.cc; path = ../src/core/sequence/PairScoringScheme.cc; sourceTree = SOURCE_ROOT; };
 		807CCF805984ACBDD8890543 /* RNA_DeleteMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_DeleteMover.fwd.hh; path = ../src/protocols/swa/monte_carlo/RNA_DeleteMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		807E1FEBD8A035AAD3DC2704 /* OptionKeys.cc.gen3.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OptionKeys.cc.gen3.hh; path = ../src/basic/options/keys/OptionKeys.cc.gen3.hh; sourceTree = SOURCE_ROOT; };
-		8085CB89FD472350214DC333 /* StepWiseRNA_BaseSugarRotamer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_BaseSugarRotamer.cc; path = ../src/protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.cc; sourceTree = SOURCE_ROOT; };
 		8087444DBE50898B873C5DC4 /* BBTorsionSRFD.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BBTorsionSRFD.cc; path = ../src/core/fragment/BBTorsionSRFD.cc; sourceTree = SOURCE_ROOT; };
 		80878C691E4067EDA8661DF2 /* AntibodyEnumManager.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AntibodyEnumManager.fwd.hh; path = ../src/protocols/antibody/AntibodyEnumManager.fwd.hh; sourceTree = SOURCE_ROOT; };
 		8094AD60FB3C85F5C6C1865E /* NativeRotamerFileLoader.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NativeRotamerFileLoader.hh; path = ../src/devel/sewing/NativeRotamerFileLoader.hh; sourceTree = SOURCE_ROOT; };
@@ -14171,7 +14151,6 @@
 		83ED5EA92AB15239FD6F1D2B /* SpecificResiduesNearInterfaceFilter.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SpecificResiduesNearInterfaceFilter.hh; path = ../src/protocols/protein_interface_design/filters/SpecificResiduesNearInterfaceFilter.hh; sourceTree = SOURCE_ROOT; };
 		83F2DF9D3AA218FEE55B5E14 /* Align_RmsdEvaluator.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Align_RmsdEvaluator.fwd.hh; path = ../src/protocols/comparative_modeling/Align_RmsdEvaluator.fwd.hh; sourceTree = SOURCE_ROOT; };
 		83F96C1271FCB54B373F81DA /* ChemicalShiftSequence.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ChemicalShiftSequence.hh; path = ../src/core/sequence/ChemicalShiftSequence.hh; sourceTree = SOURCE_ROOT; };
-		8403137DADA23CC493A99ADC /* RNA_LoopCloseSampler.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_LoopCloseSampler.cc; path = ../src/protocols/swa/rna/RNA_LoopCloseSampler.cc; sourceTree = SOURCE_ROOT; };
 		841A2D541473967A1A61748E /* BestTotalScoreSelector.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BestTotalScoreSelector.hh; path = ../src/protocols/frag_picker/BestTotalScoreSelector.hh; sourceTree = SOURCE_ROOT; };
 		841B7AD9DAD4F4B7B5A5C788 /* ParsedProtocol.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ParsedProtocol.hh; path = ../src/protocols/rosetta_scripts/ParsedProtocol.hh; sourceTree = SOURCE_ROOT; };
 		842720D1B6A50BB152B7CF38 /* ResidualDipolarCouplingRigidSegments.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ResidualDipolarCouplingRigidSegments.hh; path = ../src/protocols/scoring/ResidualDipolarCouplingRigidSegments.hh; sourceTree = SOURCE_ROOT; };
@@ -15260,6 +15239,11 @@
 		A44F58EF57054A943CD6752E /* RotamerSets.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RotamerSets.hh; path = ../src/core/pack/rotamer_set/RotamerSets.hh; sourceTree = SOURCE_ROOT; };
 		A455CE992CC192220C16B604 /* DisulfideMatchingPotential.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DisulfideMatchingPotential.cc; path = ../src/core/scoring/disulfides/DisulfideMatchingPotential.cc; sourceTree = SOURCE_ROOT; };
 		A45957159F2BFD1CCB38640B /* TricubicSpline.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TricubicSpline.hh; path = ../src/numeric/interpolation/spline/TricubicSpline.hh; sourceTree = SOURCE_ROOT; };
+		A45A0CDA17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LK_PolarNonPolarEnergy.cc; sourceTree = "<group>"; };
+		A45A0CDB17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LK_PolarNonPolarEnergy.fwd.hh; sourceTree = "<group>"; };
+		A45A0CDC17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LK_PolarNonPolarEnergy.hh; sourceTree = "<group>"; };
+		A45A0CDD17F4AFE100E972F3 /* LK_PolarNonPolarEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LK_PolarNonPolarEnergyCreator.hh; sourceTree = "<group>"; };
+		A45A0CE217F54FAB00E972F3 /* RNA_StepWiseMonteCarlo.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RNA_StepWiseMonteCarlo.cc; sourceTree = "<group>"; };
 		A45A245F62ACA89D4C7A3139 /* StepWiseProteinPoseMinimizer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseProteinPoseMinimizer.hh; path = ../src/protocols/swa/protein/StepWiseProteinPoseMinimizer.hh; sourceTree = SOURCE_ROOT; };
 		A45DC2FDEB7CC2D027696B1B /* CartesianMultifunc.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CartesianMultifunc.cc; path = ../src/core/optimization/CartesianMultifunc.cc; sourceTree = SOURCE_ROOT; };
 		A45E195155F34412A1F8C841 /* SCMinMinimizerMap.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SCMinMinimizerMap.fwd.hh; path = ../src/core/pack/scmin/SCMinMinimizerMap.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -15307,7 +15291,6 @@
 		A5CF5A2A03E5E2913AFB94F9 /* SymmetricConformation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SymmetricConformation.hh; path = ../src/core/conformation/symmetry/SymmetricConformation.hh; sourceTree = SOURCE_ROOT; };
 		A5D1475522712B8195CEBF64 /* PathVectorOptionKey.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PathVectorOptionKey.hh; path = ../src/utility/options/keys/PathVectorOptionKey.hh; sourceTree = SOURCE_ROOT; };
 		A5D47C9BF1F300D458E4BBAF /* ParticleSwarmMinimizer.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ParticleSwarmMinimizer.fwd.hh; path = ../src/core/optimization/ParticleSwarmMinimizer.fwd.hh; sourceTree = SOURCE_ROOT; };
-		A5D98AA34CEBA193177DD035 /* StepWiseRNA_AnalyticalLoopCloseSampler.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseRNA_AnalyticalLoopCloseSampler.cc; path = ../src/protocols/swa/rna/StepWiseRNA_AnalyticalLoopCloseSampler.cc; sourceTree = SOURCE_ROOT; };
 		A5DB76D3108BA46D486A373C /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/utility/sql_database/util.hh; sourceTree = SOURCE_ROOT; };
 		A5EE8153B09DAE5BD332CDA3 /* RNA_FragmentMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FragmentMover.hh; path = ../src/protocols/rna/RNA_FragmentMover.hh; sourceTree = SOURCE_ROOT; };
 		A5EEA39C3B787692A929E8BE /* TotalSasaFilter.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TotalSasaFilter.fwd.hh; path = ../src/protocols/simple_filters/TotalSasaFilter.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -15933,7 +15916,6 @@
 		B857B33891F06D515C787D98 /* SmallMinCCDTrial.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SmallMinCCDTrial.cc; path = ../src/protocols/loops/loop_mover/refine/SmallMinCCDTrial.cc; sourceTree = SOURCE_ROOT; };
 		B86438FC3063C916AA0576DF /* BDR.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BDR.fwd.hh; path = ../src/protocols/forge/components/BDR.fwd.hh; sourceTree = SOURCE_ROOT; };
 		B8653AADD56DB0FC59694FF4 /* AmbiguousConstraint.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = AmbiguousConstraint.fwd.hh; path = ../src/core/scoring/constraints/AmbiguousConstraint.fwd.hh; sourceTree = SOURCE_ROOT; };
-		B8673F9BFD4AB56CF112F2A0 /* StepWiseRNA_BaseSugarRotamer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_BaseSugarRotamer.hh; path = ../src/protocols/swa/rna/StepWiseRNA_BaseSugarRotamer.hh; sourceTree = SOURCE_ROOT; };
 		B869A02D96514E7B2E632E60 /* VallLibrary.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = VallLibrary.hh; path = ../src/core/fragment/picking_old/vall/VallLibrary.hh; sourceTree = SOURCE_ROOT; };
 		B87F2AEAA7BCFA2D8999C386 /* HedgeArchive.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = HedgeArchive.cc; path = ../src/protocols/abinitio/HedgeArchive.cc; sourceTree = SOURCE_ROOT; };
 		B883A91090CF529861FB6309 /* FragmentSequenceMover.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = FragmentSequenceMover.hh; path = ../src/devel/denovo_protein_design/FragmentSequenceMover.hh; sourceTree = SOURCE_ROOT; };
@@ -16467,7 +16449,6 @@
 		C7B1BAF7F375095174EF8963 /* ScreeningJobInputterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScreeningJobInputterCreator.hh; path = ../src/protocols/jd2/ScreeningJobInputterCreator.hh; sourceTree = SOURCE_ROOT; };
 		C7B71F0B457B0BEAA71A6AC0 /* PDDFEnergyCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PDDFEnergyCreator.hh; path = ../src/protocols/scoring/methods/saxs/PDDFEnergyCreator.hh; sourceTree = SOURCE_ROOT; };
 		C7BD2AA5F93EA33F3864717A /* Frame.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Frame.fwd.hh; path = ../src/core/fragment/Frame.fwd.hh; sourceTree = SOURCE_ROOT; };
-		C7BFF431FA197F888A15367B /* StepWiseRNA_RotamerGenerator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_RotamerGenerator.hh; path = ../src/protocols/swa/rna/StepWiseRNA_RotamerGenerator.hh; sourceTree = SOURCE_ROOT; };
 		C7C04D2A1A462B739CF67F94 /* cluster.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = cluster.cc; path = ../src/protocols/cluster/cluster.cc; sourceTree = SOURCE_ROOT; };
 		C7C1FB7D8EB8FC6931FFD6BA /* PreventChainFromRepackingOperationCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PreventChainFromRepackingOperationCreator.hh; path = ../src/protocols/toolbox/task_operations/PreventChainFromRepackingOperationCreator.hh; sourceTree = SOURCE_ROOT; };
 		C7C45B495BE3B0FD65D98086 /* OccludedHbondSolEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = OccludedHbondSolEnergy.fwd.hh; path = ../src/core/scoring/geometric_solvation/OccludedHbondSolEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -16578,7 +16559,6 @@
 		CB7B1E3884EAE51899328ACB /* FixbbLinkingRotamerSimAnnealer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = FixbbLinkingRotamerSimAnnealer.cc; path = ../src/core/pack/annealer/FixbbLinkingRotamerSimAnnealer.cc; sourceTree = SOURCE_ROOT; };
 		CB8282DA9E87345EF360DC09 /* RampingMover.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RampingMover.fwd.hh; path = ../src/protocols/moves/RampingMover.fwd.hh; sourceTree = SOURCE_ROOT; };
 		CB85171C34C918E7924D245E /* NWAligner.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NWAligner.cc; path = ../src/core/sequence/NWAligner.cc; sourceTree = SOURCE_ROOT; };
-		CB890DF1BBFB1220EF51BDC9 /* RNA_LoopCloseSampler.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_LoopCloseSampler.hh; path = ../src/protocols/swa/rna/RNA_LoopCloseSampler.hh; sourceTree = SOURCE_ROOT; };
 		CB8E4F70273CF8AC19288919 /* EvaluatedArchive.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = EvaluatedArchive.cc; path = ../src/protocols/jd2/archive/EvaluatedArchive.cc; sourceTree = SOURCE_ROOT; };
 		CB9A36CBE9B2AF5E7F9A4F67 /* StrandConstraints.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StrandConstraints.cc; path = ../src/protocols/abinitio/StrandConstraints.cc; sourceTree = SOURCE_ROOT; };
 		CBA03B3793211B73E631733E /* curl.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = curl.cc; path = "../src/utility//curl.cc"; sourceTree = SOURCE_ROOT; };
@@ -16807,7 +16787,7 @@
 		D1F808F54DECEBE467885305 /* UpstreamCollisionFilter.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = UpstreamCollisionFilter.cc; path = ../src/protocols/match/output/UpstreamCollisionFilter.cc; sourceTree = SOURCE_ROOT; };
 		D1FA562BBE9EAF45DB0CCB72 /* ScreeningDocker.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ScreeningDocker.fwd.hh; path = ../src/protocols/ligand_docking/ScreeningDocker.fwd.hh; sourceTree = SOURCE_ROOT; };
 		D1FB68CDC431F0DAAE7822F4 /* OptionKeys0.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = OptionKeys0.cc; path = ../src/basic/options/keys/OptionKeys0.cc; sourceTree = SOURCE_ROOT; };
-		D1FD03730E2851B800B3C702 /* libprotocols.1.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprotocols.1.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D1FD03730E2851B800B3C702 /* protocols.1.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = protocols.1.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2191F7F6412F365D6C30E2B /* DnaDesignDef.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DnaDesignDef.fwd.hh; path = ../src/protocols/dna/DnaDesignDef.fwd.hh; sourceTree = SOURCE_ROOT; };
 		D220F3D10B6FC13EAA896BA5 /* BitVector.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BitVector.fwd.hh; path = "../src/utility//BitVector.fwd.hh"; sourceTree = SOURCE_ROOT; };
 		D22EDF5CFB3728EA1D8B58A5 /* RT.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RT.hh; path = ../src/core/kinematics/RT.hh; sourceTree = SOURCE_ROOT; };
@@ -17349,7 +17329,6 @@
 		E25EA8E66AFA1BD47CDBCAB3 /* RNA_Fragments.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_Fragments.hh; path = ../src/protocols/rna/RNA_Fragments.hh; sourceTree = SOURCE_ROOT; };
 		E26DCC6185EE854E3A031233 /* StepWiseProteinPoseMinimizer.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StepWiseProteinPoseMinimizer.cc; path = ../src/protocols/swa/protein/StepWiseProteinPoseMinimizer.cc; sourceTree = SOURCE_ROOT; };
 		E2737BE7F40DEFB845810052 /* NatbiasHelixPairPotential.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NatbiasHelixPairPotential.cc; path = ../src/protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.cc; sourceTree = SOURCE_ROOT; };
-		E273A0F6104A3D4E6D5D20C3 /* ERRASER_Modeler.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ERRASER_Modeler.cc; path = ../src/protocols/swa/rna/ERRASER_Modeler.cc; sourceTree = SOURCE_ROOT; };
 		E27456D16A1374B6EF882361 /* types.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = types.hh; path = ../src/core/scoring/types.hh; sourceTree = SOURCE_ROOT; };
 		E2748B34E38ECC81ADEC0BE8 /* CoreDunbrackFilterCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = CoreDunbrackFilterCreator.hh; path = ../src/protocols/fldsgn/filters/CoreDunbrackFilterCreator.hh; sourceTree = SOURCE_ROOT; };
 		E276ECF35C4EB8A0640AB139 /* RotamerRecoveryCreator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RotamerRecoveryCreator.cc; path = ../src/protocols/rotamer_recovery/RotamerRecoveryCreator.cc; sourceTree = SOURCE_ROOT; };
@@ -17779,7 +17758,6 @@
 		EEF63D3B0EF0A71D5F5A9CE4 /* LongRangeTwoBodyEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LongRangeTwoBodyEnergy.cc; path = ../src/core/scoring/methods/LongRangeTwoBodyEnergy.cc; sourceTree = SOURCE_ROOT; };
 		EF03E0EF52EFB488E7A1CCED /* Etable.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Etable.fwd.hh; path = ../src/core/scoring/etable/Etable.fwd.hh; sourceTree = SOURCE_ROOT; };
 		EF0DDC98EE79F82D8E753B1F /* ABEGO_SS_Score.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ABEGO_SS_Score.cc; path = ../src/protocols/frag_picker/scores/ABEGO_SS_Score.cc; sourceTree = SOURCE_ROOT; };
-		EF10F3597ACE15904DF61BDE /* StepWiseRNA_AnalyticalLoopCloseSampler.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseRNA_AnalyticalLoopCloseSampler.hh; path = ../src/protocols/swa/rna/StepWiseRNA_AnalyticalLoopCloseSampler.hh; sourceTree = SOURCE_ROOT; };
 		EF23CEBC80FB6EB3A54785F9 /* StepWiseProteinFilterer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StepWiseProteinFilterer.hh; path = ../src/protocols/swa/protein/StepWiseProteinFilterer.hh; sourceTree = SOURCE_ROOT; };
 		EF3536007170117254270E7C /* JumpClaim.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = JumpClaim.hh; path = ../src/protocols/topology_broker/claims/JumpClaim.hh; sourceTree = SOURCE_ROOT; };
 		EF40C6C9C5D15F2771854412 /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/devel/sewing/util.cc; sourceTree = SOURCE_ROOT; };
@@ -18476,37 +18454,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D8010D217F2293F0046FF59 /* basic.dylib in Frameworks */,
-				3D8010D317F2293F0046FF59 /* core.1.dylib in Frameworks */,
-				3D8010D417F2293F0046FF59 /* core.2.dylib in Frameworks */,
-				3D8010D517F2293F0046FF59 /* core.3.dylib in Frameworks */,
-				3D8010D617F2293F0046FF59 /* core.4.dylib in Frameworks */,
-				3D8010D717F2293F0046FF59 /* core.5.dylib in Frameworks */,
-				3D8010D817F2293F0046FF59 /* devel.dylib in Frameworks */,
-				3D8010D917F2293F0046FF59 /* external.dylib in Frameworks */,
-				3D8010DA17F2293F0046FF59 /* numeric.dylib in Frameworks */,
-				3D8010DB17F2293F0046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D8010DC17F2293F0046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D8010DD17F2293F0046FF59 /* protocols_a.4.dylib in Frameworks */,
-				3D8010DE17F2293F0046FF59 /* protocols_a.5.dylib in Frameworks */,
-				3D8010DF17F2293F0046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D8010E017F2293F0046FF59 /* protocols_b.4.dylib in Frameworks */,
-				3D8010E117F2293F0046FF59 /* protocols_b.5.dylib in Frameworks */,
-				3D8010E217F2293F0046FF59 /* protocols_c.4.dylib in Frameworks */,
-				3D8010E317F2293F0046FF59 /* protocols_c.5.dylib in Frameworks */,
-				3D8010E417F2293F0046FF59 /* protocols_d.4.dylib in Frameworks */,
-				3D8010E517F2293F0046FF59 /* protocols_d.5.dylib in Frameworks */,
-				3D8010E617F2293F0046FF59 /* protocols_e.4.dylib in Frameworks */,
-				3D8010E717F2293F0046FF59 /* protocols_e.5.dylib in Frameworks */,
-				3D8010E817F2293F0046FF59 /* protocols_f.4.dylib in Frameworks */,
-				3D8010E917F2293F0046FF59 /* protocols_f.5.dylib in Frameworks */,
-				3D8010EA17F2293F0046FF59 /* protocols_g.4.dylib in Frameworks */,
-				3D8010EB17F2293F0046FF59 /* protocols_h.4.dylib in Frameworks */,
-				3D8010EC17F2293F0046FF59 /* protocols.1.dylib in Frameworks */,
-				3D8010ED17F2293F0046FF59 /* protocols.3.dylib in Frameworks */,
-				3D8010EE17F2293F0046FF59 /* protocols.6.dylib in Frameworks */,
-				3D8010EF17F2293F0046FF59 /* protocols.7.dylib in Frameworks */,
-				3D8010F017F2293F0046FF59 /* utility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18523,18 +18470,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D822CE817F21C65009A94E8 /* external.dylib in Frameworks */,
-				3D822CEA17F21C65009A94E8 /* ObjecxxFCL.dylib in Frameworks */,
-				3D822CEB17F21C65009A94E8 /* utility.dylib in Frameworks */,
-				3D822CE917F21C65009A94E8 /* numeric.dylib in Frameworks */,
-				3D822CE117F21C65009A94E8 /* basic.dylib in Frameworks */,
-				3D822CE217F21C65009A94E8 /* core.1.dylib in Frameworks */,
-				3D822CE317F21C65009A94E8 /* core.2.dylib in Frameworks */,
-				3D822CE417F21C65009A94E8 /* core.3.dylib in Frameworks */,
-				3D822CE517F21C65009A94E8 /* core.4.dylib in Frameworks */,
-				3D822CE617F21C65009A94E8 /* core.5.dylib in Frameworks */,
-				3D8F110417F2204600FD5FF1 /* protocols.1.dylib in Frameworks */,
-				3D822CEC17F21C71009A94E8 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18555,7 +18490,6 @@
 				3D7C38CB17F22435006F1532 /* protocols.1.dylib in Frameworks */,
 				3D7C38C917F22435006F1532 /* protocols_a.2.dylib in Frameworks */,
 				3D7C38CA17F22435006F1532 /* protocols_b.2.dylib in Frameworks */,
-				3D8010F117F22EA90046FF59 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18563,21 +18497,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3DE380DC17F225060078AFD8 /* external.dylib in Frameworks */,
-				3DE380DE17F225060078AFD8 /* ObjecxxFCL.dylib in Frameworks */,
-				3DE380E217F225060078AFD8 /* utility.dylib in Frameworks */,
-				3DE380DD17F225060078AFD8 /* numeric.dylib in Frameworks */,
-				3DE380D617F225060078AFD8 /* basic.dylib in Frameworks */,
-				3DE380D717F225060078AFD8 /* core.1.dylib in Frameworks */,
-				3DE380D817F225060078AFD8 /* core.2.dylib in Frameworks */,
-				3DE380D917F225060078AFD8 /* core.3.dylib in Frameworks */,
-				3DE380DA17F225060078AFD8 /* core.4.dylib in Frameworks */,
-				3DE380DB17F225060078AFD8 /* core.5.dylib in Frameworks */,
-				3DE380E017F225060078AFD8 /* protocols.1.dylib in Frameworks */,
-				3DE380DF17F225060078AFD8 /* protocols_a.2.dylib in Frameworks */,
-				3D30959017F22597004C946D /* protocols_b.2.dylib in Frameworks */,
-				3DE380E117F225060078AFD8 /* protocols.3.dylib in Frameworks */,
-				3D8AA3BC17F22F9C009DE1A3 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18585,21 +18504,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7B2CC817F235F00010D5F5 /* libz.dylib in Frameworks */,
-				3D800F8F17F227240046FF59 /* basic.dylib in Frameworks */,
-				3D800F9017F227240046FF59 /* core.1.dylib in Frameworks */,
-				3D800F9117F227240046FF59 /* core.2.dylib in Frameworks */,
-				3D800F9217F227240046FF59 /* core.3.dylib in Frameworks */,
-				3D800F9317F227240046FF59 /* core.4.dylib in Frameworks */,
-				3D800F9417F227240046FF59 /* core.5.dylib in Frameworks */,
-				3D800F9617F227240046FF59 /* external.dylib in Frameworks */,
-				3D800F9717F227240046FF59 /* numeric.dylib in Frameworks */,
-				3D800F9817F227240046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D800F9917F227240046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D800F9A17F227240046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D800F9B17F227240046FF59 /* protocols.1.dylib in Frameworks */,
-				3D800F9C17F227240046FF59 /* protocols.3.dylib in Frameworks */,
-				3D800F9D17F227240046FF59 /* utility.dylib in Frameworks */,
+				3D7B2CC817F235F00010D5F5 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18607,21 +18512,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7B2CC917F236B20010D5F5 /* libz.dylib in Frameworks */,
-				3D800F9E17F2273E0046FF59 /* basic.dylib in Frameworks */,
-				3D800F9F17F2273E0046FF59 /* core.1.dylib in Frameworks */,
-				3D800FA017F2273E0046FF59 /* core.2.dylib in Frameworks */,
-				3D800FA117F2273E0046FF59 /* core.3.dylib in Frameworks */,
-				3D800FA217F2273E0046FF59 /* core.4.dylib in Frameworks */,
-				3D800FA317F2273E0046FF59 /* core.5.dylib in Frameworks */,
-				3D800FA517F2273E0046FF59 /* external.dylib in Frameworks */,
-				3D800FA617F2273E0046FF59 /* numeric.dylib in Frameworks */,
-				3D800FA717F2273E0046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D800FA817F2273E0046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D800FA917F2273E0046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D800FAA17F2273E0046FF59 /* protocols.1.dylib in Frameworks */,
-				3D800FAB17F2273E0046FF59 /* protocols.3.dylib in Frameworks */,
-				3D800FAC17F2273E0046FF59 /* utility.dylib in Frameworks */,
+				3D7B2CC917F236B20010D5F5 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18629,20 +18520,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D800FAD17F227520046FF59 /* basic.dylib in Frameworks */,
-				3D800FAE17F227520046FF59 /* core.1.dylib in Frameworks */,
-				3D800FAF17F227520046FF59 /* core.2.dylib in Frameworks */,
-				3D800FB017F227520046FF59 /* core.3.dylib in Frameworks */,
-				3D800FB117F227520046FF59 /* core.4.dylib in Frameworks */,
-				3D800FB217F227520046FF59 /* core.5.dylib in Frameworks */,
-				3D800FB417F227520046FF59 /* external.dylib in Frameworks */,
-				3D800FB517F227520046FF59 /* numeric.dylib in Frameworks */,
-				3D800FB617F227520046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D800FB717F227520046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D800FB817F227520046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D800FB917F227520046FF59 /* protocols.1.dylib in Frameworks */,
-				3D800FBA17F227520046FF59 /* protocols.3.dylib in Frameworks */,
-				3D800FBB17F227520046FF59 /* utility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18650,20 +18527,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D800FBC17F227620046FF59 /* basic.dylib in Frameworks */,
-				3D800FBD17F227620046FF59 /* core.1.dylib in Frameworks */,
-				3D800FBE17F227620046FF59 /* core.2.dylib in Frameworks */,
-				3D800FBF17F227620046FF59 /* core.3.dylib in Frameworks */,
-				3D800FC017F227620046FF59 /* core.4.dylib in Frameworks */,
-				3D800FC117F227620046FF59 /* core.5.dylib in Frameworks */,
-				3D800FC317F227620046FF59 /* external.dylib in Frameworks */,
-				3D800FC417F227620046FF59 /* numeric.dylib in Frameworks */,
-				3D800FC517F227620046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D800FC617F227620046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D800FC717F227620046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D800FC817F227620046FF59 /* protocols.1.dylib in Frameworks */,
-				3D800FC917F227620046FF59 /* protocols.3.dylib in Frameworks */,
-				3D800FCA17F227620046FF59 /* utility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18671,21 +18534,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7B2CCA17F236E40010D5F5 /* libz.dylib in Frameworks */,
-				3D800FCB17F2278A0046FF59 /* basic.dylib in Frameworks */,
-				3D800FCC17F2278A0046FF59 /* core.1.dylib in Frameworks */,
-				3D800FCD17F2278A0046FF59 /* core.2.dylib in Frameworks */,
-				3D800FCE17F2278A0046FF59 /* core.3.dylib in Frameworks */,
-				3D800FCF17F2278A0046FF59 /* core.4.dylib in Frameworks */,
-				3D800FD017F2278A0046FF59 /* core.5.dylib in Frameworks */,
-				3D800FD217F2278A0046FF59 /* external.dylib in Frameworks */,
-				3D800FD317F2278A0046FF59 /* numeric.dylib in Frameworks */,
-				3D800FD417F2278A0046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D800FD517F2278A0046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D800FD617F2278A0046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D800FD717F2278A0046FF59 /* protocols.1.dylib in Frameworks */,
-				3D800FD817F2278A0046FF59 /* protocols.3.dylib in Frameworks */,
-				3D800FD917F2278A0046FF59 /* utility.dylib in Frameworks */,
+				3D7B2CCA17F236E40010D5F5 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18693,28 +18542,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D800FF617F2285D0046FF59 /* basic.dylib in Frameworks */,
-				3D800FF717F2285D0046FF59 /* core.1.dylib in Frameworks */,
-				3D800FF817F2285D0046FF59 /* core.2.dylib in Frameworks */,
-				3D800FF917F2285D0046FF59 /* core.3.dylib in Frameworks */,
-				3D800FFA17F2285D0046FF59 /* core.4.dylib in Frameworks */,
-				3D800FFB17F2285D0046FF59 /* core.5.dylib in Frameworks */,
-				3D800FFC17F2285D0046FF59 /* external.dylib in Frameworks */,
-				3D800FFD17F2285D0046FF59 /* numeric.dylib in Frameworks */,
-				3D800FFE17F2285D0046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D800FFF17F2285D0046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D80100017F2285D0046FF59 /* protocols_a.4.dylib in Frameworks */,
-				3D80100117F2285D0046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D80100217F2285D0046FF59 /* protocols_b.4.dylib in Frameworks */,
-				3D80100317F2285D0046FF59 /* protocols_c.4.dylib in Frameworks */,
-				3D80100417F2285D0046FF59 /* protocols_d.4.dylib in Frameworks */,
-				3D80100517F2285D0046FF59 /* protocols_e.4.dylib in Frameworks */,
-				3D80100617F2285D0046FF59 /* protocols_f.4.dylib in Frameworks */,
-				3D80100717F2285D0046FF59 /* protocols_g.4.dylib in Frameworks */,
-				3D80100817F2285D0046FF59 /* protocols_h.4.dylib in Frameworks */,
-				3D80100917F2285D0046FF59 /* protocols.1.dylib in Frameworks */,
-				3D80100A17F2285D0046FF59 /* protocols.3.dylib in Frameworks */,
-				3D80100B17F2285D0046FF59 /* utility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18722,29 +18549,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7B2CCD17F237A40010D5F5 /* libz.dylib in Frameworks */,
-				3D80100C17F2288E0046FF59 /* basic.dylib in Frameworks */,
-				3D80100D17F2288E0046FF59 /* core.1.dylib in Frameworks */,
-				3D80100E17F2288E0046FF59 /* core.2.dylib in Frameworks */,
-				3D80100F17F2288E0046FF59 /* core.3.dylib in Frameworks */,
-				3D80101017F2288E0046FF59 /* core.4.dylib in Frameworks */,
-				3D80101117F2288E0046FF59 /* core.5.dylib in Frameworks */,
-				3D80101317F2288E0046FF59 /* external.dylib in Frameworks */,
-				3D80101417F2288E0046FF59 /* numeric.dylib in Frameworks */,
-				3D80101517F2288E0046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D80101617F2288E0046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D80101717F2288E0046FF59 /* protocols_a.4.dylib in Frameworks */,
-				3D80101817F2288E0046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D80101917F2288E0046FF59 /* protocols_b.4.dylib in Frameworks */,
-				3D80101A17F2288E0046FF59 /* protocols_c.4.dylib in Frameworks */,
-				3D80101B17F2288E0046FF59 /* protocols_d.4.dylib in Frameworks */,
-				3D80101C17F2288E0046FF59 /* protocols_e.4.dylib in Frameworks */,
-				3D80101D17F2288E0046FF59 /* protocols_f.4.dylib in Frameworks */,
-				3D80101E17F2288E0046FF59 /* protocols_g.4.dylib in Frameworks */,
-				3D80101F17F2288E0046FF59 /* protocols_h.4.dylib in Frameworks */,
-				3D80102017F2288E0046FF59 /* protocols.1.dylib in Frameworks */,
-				3D80102117F2288E0046FF59 /* protocols.3.dylib in Frameworks */,
-				3D80102217F2288E0046FF59 /* utility.dylib in Frameworks */,
+				3D7B2CCD17F237A40010D5F5 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18752,29 +18557,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7B2CCE17F237F10010D5F5 /* libz.dylib in Frameworks */,
-				3D80102317F228A70046FF59 /* basic.dylib in Frameworks */,
-				3D80102417F228A70046FF59 /* core.1.dylib in Frameworks */,
-				3D80102517F228A70046FF59 /* core.2.dylib in Frameworks */,
-				3D80102617F228A70046FF59 /* core.3.dylib in Frameworks */,
-				3D80102717F228A70046FF59 /* core.4.dylib in Frameworks */,
-				3D80102817F228A70046FF59 /* core.5.dylib in Frameworks */,
-				3D80102917F228A70046FF59 /* external.dylib in Frameworks */,
-				3D80102A17F228A70046FF59 /* numeric.dylib in Frameworks */,
-				3D80102B17F228A70046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D80102C17F228A70046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D80102D17F228A70046FF59 /* protocols_a.4.dylib in Frameworks */,
-				3D80102E17F228A70046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D80102F17F228A70046FF59 /* protocols_b.4.dylib in Frameworks */,
-				3D80103017F228A70046FF59 /* protocols_c.4.dylib in Frameworks */,
-				3D80103117F228A70046FF59 /* protocols_d.4.dylib in Frameworks */,
-				3D80103217F228A70046FF59 /* protocols_e.4.dylib in Frameworks */,
-				3D80103317F228A70046FF59 /* protocols_f.4.dylib in Frameworks */,
-				3D80103417F228A70046FF59 /* protocols_g.4.dylib in Frameworks */,
-				3D80103517F228A70046FF59 /* protocols_h.4.dylib in Frameworks */,
-				3D80103617F228A70046FF59 /* protocols.1.dylib in Frameworks */,
-				3D80103717F228A70046FF59 /* protocols.3.dylib in Frameworks */,
-				3D80103817F228A70046FF59 /* utility.dylib in Frameworks */,
+				3D7B2CCE17F237F10010D5F5 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18782,28 +18565,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D80104F17F228E00046FF59 /* basic.dylib in Frameworks */,
-				3D80105017F228E00046FF59 /* core.1.dylib in Frameworks */,
-				3D80105117F228E00046FF59 /* core.2.dylib in Frameworks */,
-				3D80105217F228E00046FF59 /* core.3.dylib in Frameworks */,
-				3D80105317F228E00046FF59 /* core.4.dylib in Frameworks */,
-				3D80105417F228E00046FF59 /* core.5.dylib in Frameworks */,
-				3D80105517F228E00046FF59 /* external.dylib in Frameworks */,
-				3D80105617F228E00046FF59 /* numeric.dylib in Frameworks */,
-				3D80105717F228E00046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D80105817F228E00046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D80105917F228E00046FF59 /* protocols_a.4.dylib in Frameworks */,
-				3D80105A17F228E00046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D80105B17F228E00046FF59 /* protocols_b.4.dylib in Frameworks */,
-				3D80105C17F228E00046FF59 /* protocols_c.4.dylib in Frameworks */,
-				3D80105D17F228E00046FF59 /* protocols_d.4.dylib in Frameworks */,
-				3D80105E17F228E00046FF59 /* protocols_e.4.dylib in Frameworks */,
-				3D80105F17F228E00046FF59 /* protocols_f.4.dylib in Frameworks */,
-				3D80106017F228E00046FF59 /* protocols_g.4.dylib in Frameworks */,
-				3D80106117F228E00046FF59 /* protocols_h.4.dylib in Frameworks */,
-				3D80106217F228E00046FF59 /* protocols.1.dylib in Frameworks */,
-				3D80106317F228E00046FF59 /* protocols.3.dylib in Frameworks */,
-				3D80106417F228E00046FF59 /* utility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18811,29 +18572,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7B2CD017F238440010D5F5 /* libz.dylib in Frameworks */,
-				3D80106517F228FA0046FF59 /* basic.dylib in Frameworks */,
-				3D80106617F228FA0046FF59 /* core.1.dylib in Frameworks */,
-				3D80106717F228FA0046FF59 /* core.2.dylib in Frameworks */,
-				3D80106817F228FA0046FF59 /* core.3.dylib in Frameworks */,
-				3D80106917F228FA0046FF59 /* core.4.dylib in Frameworks */,
-				3D80106A17F228FA0046FF59 /* core.5.dylib in Frameworks */,
-				3D80106B17F228FA0046FF59 /* external.dylib in Frameworks */,
-				3D80106C17F228FA0046FF59 /* numeric.dylib in Frameworks */,
-				3D80106D17F228FA0046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D80106E17F228FA0046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D80106F17F228FA0046FF59 /* protocols_a.4.dylib in Frameworks */,
-				3D80107017F228FA0046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D80107117F228FA0046FF59 /* protocols_b.4.dylib in Frameworks */,
-				3D80107217F228FA0046FF59 /* protocols_c.4.dylib in Frameworks */,
-				3D80107317F228FA0046FF59 /* protocols_d.4.dylib in Frameworks */,
-				3D80107417F228FA0046FF59 /* protocols_e.4.dylib in Frameworks */,
-				3D80107517F228FA0046FF59 /* protocols_f.4.dylib in Frameworks */,
-				3D80107617F228FA0046FF59 /* protocols_g.4.dylib in Frameworks */,
-				3D80107717F228FA0046FF59 /* protocols_h.4.dylib in Frameworks */,
-				3D80107817F228FA0046FF59 /* protocols.1.dylib in Frameworks */,
-				3D80107917F228FA0046FF59 /* protocols.3.dylib in Frameworks */,
-				3D80107A17F228FA0046FF59 /* utility.dylib in Frameworks */,
+				3D7B2CD017F238440010D5F5 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18841,35 +18580,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7B2CD117F238C30010D5F5 /* libz.dylib in Frameworks */,
-				3D80107B17F2290C0046FF59 /* basic.dylib in Frameworks */,
-				3D80107C17F2290C0046FF59 /* core.1.dylib in Frameworks */,
-				3D80107D17F2290C0046FF59 /* core.2.dylib in Frameworks */,
-				3D80107E17F2290C0046FF59 /* core.3.dylib in Frameworks */,
-				3D80107F17F2290C0046FF59 /* core.4.dylib in Frameworks */,
-				3D80108017F2290C0046FF59 /* core.5.dylib in Frameworks */,
-				3D80108117F2290C0046FF59 /* external.dylib in Frameworks */,
-				3D80108217F2290C0046FF59 /* numeric.dylib in Frameworks */,
-				3D80108317F2290C0046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D80108417F2290C0046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D80108517F2290C0046FF59 /* protocols_a.4.dylib in Frameworks */,
-				3D80108617F2290C0046FF59 /* protocols_a.5.dylib in Frameworks */,
-				3D80108717F2290C0046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D80108817F2290C0046FF59 /* protocols_b.4.dylib in Frameworks */,
-				3D80108917F2290C0046FF59 /* protocols_b.5.dylib in Frameworks */,
-				3D80108A17F2290C0046FF59 /* protocols_c.4.dylib in Frameworks */,
-				3D80108B17F2290C0046FF59 /* protocols_c.5.dylib in Frameworks */,
-				3D80108C17F2290C0046FF59 /* protocols_d.4.dylib in Frameworks */,
-				3D80108D17F2290C0046FF59 /* protocols_d.5.dylib in Frameworks */,
-				3D80108E17F2290C0046FF59 /* protocols_e.4.dylib in Frameworks */,
-				3D80108F17F2290C0046FF59 /* protocols_e.5.dylib in Frameworks */,
-				3D80109017F2290C0046FF59 /* protocols_f.4.dylib in Frameworks */,
-				3D80109117F2290C0046FF59 /* protocols_f.5.dylib in Frameworks */,
-				3D80109217F2290C0046FF59 /* protocols_g.4.dylib in Frameworks */,
-				3D80109317F2290C0046FF59 /* protocols_h.4.dylib in Frameworks */,
-				3D80109417F2290C0046FF59 /* protocols.1.dylib in Frameworks */,
-				3D80109517F2290C0046FF59 /* protocols.3.dylib in Frameworks */,
-				3D80109617F2290C0046FF59 /* utility.dylib in Frameworks */,
+				3D7B2CD117F238C30010D5F5 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18877,35 +18588,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D80109717F2291A0046FF59 /* basic.dylib in Frameworks */,
-				3D80109817F2291A0046FF59 /* core.1.dylib in Frameworks */,
-				3D80109917F2291A0046FF59 /* core.2.dylib in Frameworks */,
-				3D80109A17F2291A0046FF59 /* core.3.dylib in Frameworks */,
-				3D80109B17F2291A0046FF59 /* core.4.dylib in Frameworks */,
-				3D80109C17F2291A0046FF59 /* core.5.dylib in Frameworks */,
-				3D80109D17F2291A0046FF59 /* external.dylib in Frameworks */,
-				3D80109E17F2291A0046FF59 /* numeric.dylib in Frameworks */,
-				3D80109F17F2291A0046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D8010A017F2291A0046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D8010A117F2291A0046FF59 /* protocols_a.4.dylib in Frameworks */,
-				3D8010A217F2291A0046FF59 /* protocols_a.5.dylib in Frameworks */,
-				3D8010A317F2291A0046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D8010A417F2291A0046FF59 /* protocols_b.4.dylib in Frameworks */,
-				3D8010A517F2291A0046FF59 /* protocols_b.5.dylib in Frameworks */,
-				3D8010A617F2291A0046FF59 /* protocols_c.4.dylib in Frameworks */,
-				3D8010A717F2291A0046FF59 /* protocols_c.5.dylib in Frameworks */,
-				3D8010A817F2291A0046FF59 /* protocols_d.4.dylib in Frameworks */,
-				3D8010A917F2291A0046FF59 /* protocols_d.5.dylib in Frameworks */,
-				3D8010AA17F2291A0046FF59 /* protocols_e.4.dylib in Frameworks */,
-				3D8010AB17F2291A0046FF59 /* protocols_e.5.dylib in Frameworks */,
-				3D8010AC17F2291A0046FF59 /* protocols_f.4.dylib in Frameworks */,
-				3D8010AD17F2291A0046FF59 /* protocols_f.5.dylib in Frameworks */,
-				3D8010AE17F2291A0046FF59 /* protocols_g.4.dylib in Frameworks */,
-				3D8010AF17F2291A0046FF59 /* protocols_h.4.dylib in Frameworks */,
-				3D8010B017F2291A0046FF59 /* protocols.1.dylib in Frameworks */,
-				3D8010B117F2291A0046FF59 /* protocols.3.dylib in Frameworks */,
-				3D8010B217F2291A0046FF59 /* protocols.6.dylib in Frameworks */,
-				3D8010B317F2291A0046FF59 /* utility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18952,29 +18634,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7B2CCF17F238090010D5F5 /* libz.dylib in Frameworks */,
-				3D80103917F228C70046FF59 /* basic.dylib in Frameworks */,
-				3D80103A17F228C70046FF59 /* core.1.dylib in Frameworks */,
-				3D80103B17F228C70046FF59 /* core.2.dylib in Frameworks */,
-				3D80103C17F228C70046FF59 /* core.3.dylib in Frameworks */,
-				3D80103D17F228C70046FF59 /* core.4.dylib in Frameworks */,
-				3D80103E17F228C70046FF59 /* core.5.dylib in Frameworks */,
-				3D80103F17F228C70046FF59 /* external.dylib in Frameworks */,
-				3D80104017F228C70046FF59 /* numeric.dylib in Frameworks */,
-				3D80104117F228C70046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D80104217F228C70046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D80104317F228C70046FF59 /* protocols_a.4.dylib in Frameworks */,
-				3D80104417F228C70046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D80104517F228C70046FF59 /* protocols_b.4.dylib in Frameworks */,
-				3D80104617F228C70046FF59 /* protocols_c.4.dylib in Frameworks */,
-				3D80104717F228C70046FF59 /* protocols_d.4.dylib in Frameworks */,
-				3D80104817F228C70046FF59 /* protocols_e.4.dylib in Frameworks */,
-				3D80104917F228C70046FF59 /* protocols_f.4.dylib in Frameworks */,
-				3D80104A17F228C70046FF59 /* protocols_g.4.dylib in Frameworks */,
-				3D80104B17F228C70046FF59 /* protocols_h.4.dylib in Frameworks */,
-				3D80104C17F228C70046FF59 /* protocols.1.dylib in Frameworks */,
-				3D80104D17F228C70046FF59 /* protocols.3.dylib in Frameworks */,
-				3D80104E17F228C70046FF59 /* utility.dylib in Frameworks */,
+				3D7B2CCF17F238090010D5F5 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -18982,17 +18642,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D9C15B117F2231400D6ECAB /* external.dylib in Frameworks */,
-				3D9C15B017F2230E00D6ECAB /* ObjecxxFCL.dylib in Frameworks */,
-				3D9C15A717F222D400D6ECAB /* utility.dylib in Frameworks */,
-				3D9C15AF17F2230900D6ECAB /* numeric.dylib in Frameworks */,
-				3D9C15AE17F2230100D6ECAB /* basic.dylib in Frameworks */,
-				3D9C15AD17F222FB00D6ECAB /* core.1.dylib in Frameworks */,
-				3D9C15AC17F222F600D6ECAB /* core.2.dylib in Frameworks */,
-				3D9C15AB17F222F100D6ECAB /* core.3.dylib in Frameworks */,
-				3D9C15AA17F222EC00D6ECAB /* core.4.dylib in Frameworks */,
-				3D9C15A917F222E700D6ECAB /* core.5.dylib in Frameworks */,
-				3D9C15A817F222DC00D6ECAB /* protocols.1.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19000,21 +18649,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7B2CCB17F2370A0010D5F5 /* libz.dylib in Frameworks */,
-				3D800FDA17F227CA0046FF59 /* basic.dylib in Frameworks */,
-				3D800FDB17F227CA0046FF59 /* core.1.dylib in Frameworks */,
-				3D800FDC17F227CA0046FF59 /* core.2.dylib in Frameworks */,
-				3D800FDD17F227CA0046FF59 /* core.3.dylib in Frameworks */,
-				3D800FDE17F227CA0046FF59 /* core.4.dylib in Frameworks */,
-				3D800FDF17F227CA0046FF59 /* core.5.dylib in Frameworks */,
-				3D800FE017F227CA0046FF59 /* external.dylib in Frameworks */,
-				3D800FE117F227CA0046FF59 /* numeric.dylib in Frameworks */,
-				3D800FE217F227CA0046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D800FE317F227CA0046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D800FE417F227CA0046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D800FE517F227CA0046FF59 /* protocols.1.dylib in Frameworks */,
-				3D800FE617F227CA0046FF59 /* protocols.3.dylib in Frameworks */,
-				3D800FE717F227CA0046FF59 /* utility.dylib in Frameworks */,
+				3D7B2CCB17F2370A0010D5F5 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19022,21 +18657,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7B2CCC17F237430010D5F5 /* libz.dylib in Frameworks */,
-				3D800FE817F228430046FF59 /* basic.dylib in Frameworks */,
-				3D800FE917F228430046FF59 /* core.1.dylib in Frameworks */,
-				3D800FEA17F228430046FF59 /* core.2.dylib in Frameworks */,
-				3D800FEB17F228430046FF59 /* core.3.dylib in Frameworks */,
-				3D800FEC17F228430046FF59 /* core.4.dylib in Frameworks */,
-				3D800FED17F228430046FF59 /* core.5.dylib in Frameworks */,
-				3D800FEE17F228430046FF59 /* external.dylib in Frameworks */,
-				3D800FEF17F228430046FF59 /* numeric.dylib in Frameworks */,
-				3D800FF017F228430046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D800FF117F228430046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D800FF217F228430046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D800FF317F228430046FF59 /* protocols.1.dylib in Frameworks */,
-				3D800FF417F228430046FF59 /* protocols.3.dylib in Frameworks */,
-				3D800FF517F228430046FF59 /* utility.dylib in Frameworks */,
+				3D7B2CCC17F237430010D5F5 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19122,37 +18743,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D7B2CD217F239260010D5F5 /* libz.dylib in Frameworks */,
-				3D8010B417F229260046FF59 /* basic.dylib in Frameworks */,
-				3D8010B517F229260046FF59 /* core.1.dylib in Frameworks */,
-				3D8010B617F229260046FF59 /* core.2.dylib in Frameworks */,
-				3D8010B717F229260046FF59 /* core.3.dylib in Frameworks */,
-				3D8010B817F229260046FF59 /* core.4.dylib in Frameworks */,
-				3D8010B917F229260046FF59 /* core.5.dylib in Frameworks */,
-				3D8010BA17F229260046FF59 /* external.dylib in Frameworks */,
-				3D8010BB17F229260046FF59 /* numeric.dylib in Frameworks */,
-				3D8010BC17F229260046FF59 /* ObjecxxFCL.dylib in Frameworks */,
-				3D8010BD17F229260046FF59 /* protocols_a.2.dylib in Frameworks */,
-				3D8010BE17F229260046FF59 /* protocols_a.4.dylib in Frameworks */,
-				3D8010BF17F229260046FF59 /* protocols_a.5.dylib in Frameworks */,
-				3D8010C017F229260046FF59 /* protocols_b.2.dylib in Frameworks */,
-				3D8010C117F229260046FF59 /* protocols_b.4.dylib in Frameworks */,
-				3D8010C217F229260046FF59 /* protocols_b.5.dylib in Frameworks */,
-				3D8010C317F229260046FF59 /* protocols_c.4.dylib in Frameworks */,
-				3D8010C417F229260046FF59 /* protocols_c.5.dylib in Frameworks */,
-				3D8010C517F229260046FF59 /* protocols_d.4.dylib in Frameworks */,
-				3D8010C617F229260046FF59 /* protocols_d.5.dylib in Frameworks */,
-				3D8010C717F229260046FF59 /* protocols_e.4.dylib in Frameworks */,
-				3D8010C817F229260046FF59 /* protocols_e.5.dylib in Frameworks */,
-				3D8010C917F229260046FF59 /* protocols_f.4.dylib in Frameworks */,
-				3D8010CA17F229260046FF59 /* protocols_f.5.dylib in Frameworks */,
-				3D8010CB17F229260046FF59 /* protocols_g.4.dylib in Frameworks */,
-				3D8010CC17F229260046FF59 /* protocols_h.4.dylib in Frameworks */,
-				3D8010CD17F229260046FF59 /* protocols.1.dylib in Frameworks */,
-				3D8010CE17F229260046FF59 /* protocols.3.dylib in Frameworks */,
-				3D8010CF17F229260046FF59 /* protocols.6.dylib in Frameworks */,
-				3D8010D017F229260046FF59 /* protocols.7.dylib in Frameworks */,
-				3D8010D117F229260046FF59 /* utility.dylib in Frameworks */,
+				3D7B2CD217F239260010D5F5 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19199,38 +18790,38 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DB963E217F0E4E2005480E4 /* libprotocols_b.2.a in Frameworks */,
-				9DB963E317F0E4E2005480E4 /* libprotocols_d.5.a in Frameworks */,
-				9DB963E417F0E4E2005480E4 /* libprotocols_g.4.a in Frameworks */,
-				9DB963E517F0E4E2005480E4 /* libprotocols_h.4.a in Frameworks */,
+				9DB963E217F0E4E2005480E4 /* protocols_b.2.dylib in Frameworks */,
+				9DB963E317F0E4E2005480E4 /* protocols_d.5.dylib in Frameworks */,
+				9DB963E417F0E4E2005480E4 /* protocols_g.4.dylib in Frameworks */,
+				9DB963E517F0E4E2005480E4 /* protocols_h.4.dylib in Frameworks */,
 				9DB963E617F0E4E2005480E4 /* libz.dylib in Frameworks */,
-				9DB963E717F0E4E2005480E4 /* libbasic.a in Frameworks */,
-				9DB963E817F0E4E2005480E4 /* libcore.1.a in Frameworks */,
-				9DB963E917F0E4E2005480E4 /* libcore.2.a in Frameworks */,
-				9DB963EA17F0E4E2005480E4 /* libcore.3.a in Frameworks */,
-				9DB963EB17F0E4E2005480E4 /* libcore.4.a in Frameworks */,
-				9DB963EC17F0E4E2005480E4 /* libcore.5.a in Frameworks */,
-				9DB963ED17F0E4E2005480E4 /* libdevel.a in Frameworks */,
-				9DB963EE17F0E4E2005480E4 /* libexternal.a in Frameworks */,
-				9DB963EF17F0E4E2005480E4 /* libnumeric.a in Frameworks */,
-				9DB963F017F0E4E2005480E4 /* libObjecxxFCL.a in Frameworks */,
-				9DB963F117F0E4E2005480E4 /* libprotocols_a.4.a in Frameworks */,
-				9DB963F217F0E4E2005480E4 /* libprotocols_a.5.a in Frameworks */,
-				9DB963F317F0E4E2005480E4 /* libprotocols_e.5.a in Frameworks */,
-				9DB963F417F0E4E2005480E4 /* libprotocols_b.4.a in Frameworks */,
-				9DB963F517F0E4E2005480E4 /* libprotocols_b.5.a in Frameworks */,
-				9DB963F617F0E4E2005480E4 /* libprotocols_f.5.a in Frameworks */,
-				9DB963F717F0E4E2005480E4 /* libprotocols_c.4.a in Frameworks */,
-				9DB963F817F0E4E2005480E4 /* libprotocols_c.5.a in Frameworks */,
-				9DB963F917F0E4E2005480E4 /* libprotocols.6.a in Frameworks */,
-				9DB963FA17F0E4E2005480E4 /* libprotocols_d.4.a in Frameworks */,
-				9DB963FB17F0E4E2005480E4 /* libprotocols_e.4.a in Frameworks */,
-				9DB963FC17F0E4E2005480E4 /* libprotocols_f.4.a in Frameworks */,
-				9DB963FD17F0E4E2005480E4 /* libprotocols.1.a in Frameworks */,
-				9DB963FE17F0E4E2005480E4 /* libprotocols_a.2.a in Frameworks */,
-				9DB963FF17F0E4E2005480E4 /* libprotocols.3.a in Frameworks */,
-				9DB9640017F0E4E2005480E4 /* libprotocols.7.a in Frameworks */,
-				9DB9640117F0E4E2005480E4 /* libutility.a in Frameworks */,
+				9DB963E717F0E4E2005480E4 /* basic.dylib in Frameworks */,
+				9DB963E817F0E4E2005480E4 /* core.1.dylib in Frameworks */,
+				9DB963E917F0E4E2005480E4 /* core.2.dylib in Frameworks */,
+				9DB963EA17F0E4E2005480E4 /* core.3.dylib in Frameworks */,
+				9DB963EB17F0E4E2005480E4 /* core.4.dylib in Frameworks */,
+				9DB963EC17F0E4E2005480E4 /* core.5.dylib in Frameworks */,
+				9DB963ED17F0E4E2005480E4 /* devel.dylib in Frameworks */,
+				9DB963EE17F0E4E2005480E4 /* external.dylib in Frameworks */,
+				9DB963EF17F0E4E2005480E4 /* numeric.dylib in Frameworks */,
+				9DB963F017F0E4E2005480E4 /* ObjecxxFCL.dylib in Frameworks */,
+				9DB963F117F0E4E2005480E4 /* protocols_a.4.dylib in Frameworks */,
+				9DB963F217F0E4E2005480E4 /* protocols_a.5.dylib in Frameworks */,
+				9DB963F317F0E4E2005480E4 /* protocols_e.5.dylib in Frameworks */,
+				9DB963F417F0E4E2005480E4 /* protocols_b.4.dylib in Frameworks */,
+				9DB963F517F0E4E2005480E4 /* protocols_b.5.dylib in Frameworks */,
+				9DB963F617F0E4E2005480E4 /* protocols_f.5.dylib in Frameworks */,
+				9DB963F717F0E4E2005480E4 /* protocols_c.4.dylib in Frameworks */,
+				9DB963F817F0E4E2005480E4 /* protocols_c.5.dylib in Frameworks */,
+				9DB963F917F0E4E2005480E4 /* protocols.6.dylib in Frameworks */,
+				9DB963FA17F0E4E2005480E4 /* protocols_d.4.dylib in Frameworks */,
+				9DB963FB17F0E4E2005480E4 /* protocols_e.4.dylib in Frameworks */,
+				9DB963FC17F0E4E2005480E4 /* protocols_f.4.dylib in Frameworks */,
+				9DB963FD17F0E4E2005480E4 /* protocols.1.dylib in Frameworks */,
+				9DB963FE17F0E4E2005480E4 /* protocols_a.2.dylib in Frameworks */,
+				9DB963FF17F0E4E2005480E4 /* protocols.3.dylib in Frameworks */,
+				9DB9640017F0E4E2005480E4 /* protocols.7.dylib in Frameworks */,
+				9DB9640117F0E4E2005480E4 /* utility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19323,9 +18914,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D822CA517F216DE009A94E8 /* external.dylib in Frameworks */,
-				3D822CA617F216DE009A94E8 /* ObjecxxFCL.dylib in Frameworks */,
-				3D822CA817F21713009A94E8 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19333,8 +18921,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D822CB117F21A84009A94E8 /* utility.dylib in Frameworks */,
-				3D822CB017F21A64009A94E8 /* ObjecxxFCL.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19342,9 +18928,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D822CA917F21945009A94E8 /* ObjecxxFCL.dylib in Frameworks */,
-				3D822CAA17F2198D009A94E8 /* utility.dylib in Frameworks */,
-				3D822CAB17F219AA009A94E8 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19359,13 +18942,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D822CB717F21B49009A94E8 /* external.dylib in Frameworks */,
-				3D822CB617F21B07009A94E8 /* ObjecxxFCL.dylib in Frameworks */,
-				3D822CB517F21AE6009A94E8 /* utility.dylib in Frameworks */,
-				3D822CB417F21AE0009A94E8 /* numeric.dylib in Frameworks */,
-				3D822CB217F21AB7009A94E8 /* basic.dylib in Frameworks */,
-				3D822CB317F21ABD009A94E8 /* core.1.dylib in Frameworks */,
-				3D822CB817F21B50009A94E8 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19373,14 +18949,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D822CBC17F21B7C009A94E8 /* external.dylib in Frameworks */,
-				3D822CBE17F21B7C009A94E8 /* ObjecxxFCL.dylib in Frameworks */,
-				3D822CBF17F21B7C009A94E8 /* utility.dylib in Frameworks */,
-				3D822CBD17F21B7C009A94E8 /* numeric.dylib in Frameworks */,
-				3D822CB917F21B7C009A94E8 /* basic.dylib in Frameworks */,
-				3D822CBA17F21B7C009A94E8 /* core.1.dylib in Frameworks */,
-				3D822CBB17F21B7C009A94E8 /* core.2.dylib in Frameworks */,
-				3D822CC017F21B7C009A94E8 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19388,15 +18956,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D822CC517F21BD6009A94E8 /* external.dylib in Frameworks */,
-				3D822CC717F21BD6009A94E8 /* ObjecxxFCL.dylib in Frameworks */,
-				3D822CC817F21BD6009A94E8 /* utility.dylib in Frameworks */,
-				3D822CC617F21BD6009A94E8 /* numeric.dylib in Frameworks */,
-				3D822CC117F21BD6009A94E8 /* basic.dylib in Frameworks */,
-				3D822CC217F21BD6009A94E8 /* core.1.dylib in Frameworks */,
-				3D822CC417F21BD6009A94E8 /* core.3.dylib in Frameworks */,
-				3D822CC317F21BD6009A94E8 /* core.2.dylib in Frameworks */,
-				3D822CC917F21BE2009A94E8 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19404,16 +18963,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D822CD017F21BF3009A94E8 /* external.dylib in Frameworks */,
-				3D822CD217F21BF3009A94E8 /* ObjecxxFCL.dylib in Frameworks */,
-				3D822CD317F21BF3009A94E8 /* utility.dylib in Frameworks */,
-				3D822CD117F21BF3009A94E8 /* numeric.dylib in Frameworks */,
-				3D822CCA17F21BF3009A94E8 /* basic.dylib in Frameworks */,
-				3D822CCB17F21BF3009A94E8 /* core.1.dylib in Frameworks */,
-				3D822CCC17F21BF3009A94E8 /* core.2.dylib in Frameworks */,
-				3D822CCD17F21BF3009A94E8 /* core.3.dylib in Frameworks */,
-				3D822CCE17F21BF3009A94E8 /* core.4.dylib in Frameworks */,
-				3D822CD417F21BFC009A94E8 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19421,10 +18970,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D822CAC17F219DF009A94E8 /* external.dylib in Frameworks */,
-				3D822CAE17F219FA009A94E8 /* utility.dylib in Frameworks */,
-				3D822CAD17F219ED009A94E8 /* numeric.dylib in Frameworks */,
-				3D822CAF17F21A23009A94E8 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -19432,17 +18977,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D822CDC17F21C19009A94E8 /* external.dylib in Frameworks */,
-				3D822CDE17F21C19009A94E8 /* ObjecxxFCL.dylib in Frameworks */,
-				3D822CDF17F21C19009A94E8 /* utility.dylib in Frameworks */,
-				3D822CDD17F21C19009A94E8 /* numeric.dylib in Frameworks */,
-				3D822CD517F21C19009A94E8 /* basic.dylib in Frameworks */,
-				3D822CD617F21C19009A94E8 /* core.1.dylib in Frameworks */,
-				3D822CD717F21C19009A94E8 /* core.2.dylib in Frameworks */,
-				3D822CD817F21C19009A94E8 /* core.3.dylib in Frameworks */,
-				3D822CD917F21C19009A94E8 /* core.4.dylib in Frameworks */,
-				3D822CDA17F21C19009A94E8 /* core.5.dylib in Frameworks */,
-				3D822CE017F21C27009A94E8 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21836,21 +21370,6 @@
 				8725321C85FE90AF099F32DF /* FuncFactory.cc */,
 				C6A262CF0172E94D00FAB35F /* FuncFactory.fwd.hh */,
 				B9585703342274C825FC0E5C /* FuncFactory.hh */,
-				8989D52CC643A36FE66F1BD3 /* GaussianChainDoubleFunc.cc */,
-				87B4547B4B7F0CD644DDB32E /* GaussianChainDoubleFunc.fwd.hh */,
-				E8AF77A65EDF4BE546CA81B6 /* GaussianChainDoubleFunc.hh */,
-				54C5118DF45588B7DF05D298 /* GaussianChainFunc.cc */,
-				40CA97D143FAC4A5B868CD7C /* GaussianChainFunc.fwd.hh */,
-				091AB88FCCBD7C43144C0FA9 /* GaussianChainFunc.hh */,
-				A0D2C1428E601A999BDCE9B0 /* GaussianChainQuadrupleFunc.cc */,
-				00071ADC3E7D97ECEA262E5F /* GaussianChainQuadrupleFunc.fwd.hh */,
-				133227B240E3C2B6535CDD8F /* GaussianChainQuadrupleFunc.hh */,
-				93ACEB3C71EB4CC51C360F33 /* GaussianChainSingleFunc.cc */,
-				355BE8296C752F0F0F04BD1F /* GaussianChainSingleFunc.fwd.hh */,
-				DB6F6E3073C0D7BEF6F5C014 /* GaussianChainSingleFunc.hh */,
-				B33BE06049E2A9719C117F77 /* GaussianChainTripleFunc.cc */,
-				526297DF20A600F8C1648FAA /* GaussianChainTripleFunc.fwd.hh */,
-				C45B0DFCFC2D4CFD5FE66D51 /* GaussianChainTripleFunc.hh */,
 				7300430B286FB6D3C97C61AD /* GaussianFunc.cc */,
 				B11D9959976B54D18B870416 /* GaussianFunc.fwd.hh */,
 				92196CD9C8A264A573542CE3 /* GaussianFunc.hh */,
@@ -23055,6 +22574,7 @@
 				6D599DD32F44AAA5F2400EBF /* RNA_O2StarMover.cc */,
 				04AC3798C82F68F067E5DD54 /* RNA_O2StarMover.fwd.hh */,
 				8E6232D3F1C71B908D1A071E /* RNA_O2StarMover.hh */,
+				A45A0CE217F54FAB00E972F3 /* RNA_StepWiseMonteCarlo.cc */,
 				1B48119EF55E6CDA51BD22A5 /* RNA_SWA_MonteCarloMover.cc */,
 				66751399B4F3C15BC68C5405 /* RNA_SWA_MonteCarloMover.fwd.hh */,
 				B92B5C434981A97BFEC28F89 /* RNA_SWA_MonteCarloMover.hh */,
@@ -24385,7 +23905,6 @@
 				BE26C6BD5C8DA9FF6D0E72E3 /* MonteCarlo.tmpl.hh */,
 				AD67EF1D7114D3309814C862 /* MonteCarloExceptionConverge.fwd.hh */,
 				BAC3EE636721110AE1C12FB8 /* MonteCarloExceptionConverge.hh */,
-				639089FAD8549707BBBB84BB /* MonteCarloStatus.cc */,
 				D78470AAFE2698F35BEED477 /* MonteCarloStatus.hh */,
 				E44FD7991363AE3558CDF4F7 /* Mover.cc */,
 				A97E47F91AFE32CA83F0F9B3 /* Mover.fwd.hh */,
@@ -28063,7 +27582,6 @@
 				BCC94857D0AC519B7EE9A568 /* StepWiseRNA_JobParametersSetup.cc */,
 				52DF7E0AD2B9CB01EC728769 /* StepWiseRNA_JobParametersSetup.hh */,
 				90BABEAE9867BA1D439E1F43 /* StepWiseRNA_Minimizer.cc */,
-				7738866C50BF13CE85CE2135 /* StepWiseRNA_Minimizer.fwd.hh */,
 				FC2ADA24CC0D411AE38DF8A5 /* StepWiseRNA_Minimizer.hh */,
 				201A1C868C67782EC875EB1C /* StepWiseRNA_Modeler.cc */,
 				C9ED749C1A89461D70512E79 /* StepWiseRNA_Modeler.fwd.hh */,
@@ -28245,40 +27763,40 @@
 		BE8A16FF0CA8352500D67A6F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D1FD03730E2851B800B3C702 /* libprotocols.1.a */,
-				3DDF66C313EE13B800401374 /* libdevel.a */,
-				3DE2B07313EE143D00772777 /* libexternal.a */,
-				3DE2B07413EE143D00772777 /* libObjecxxFCL.a */,
-				3DE2B07513EE143D00772777 /* libutility.a */,
-				3DE2B07613EE143D00772777 /* libnumeric.a */,
-				3DE2B07713EE143D00772777 /* libbasic.a */,
-				3DE2B07813EE143D00772777 /* libcore.1.a */,
-				3DE2B07913EE143D00772777 /* libcore.2.a */,
-				3DE2B07A13EE143E00772777 /* libcore.3.a */,
-				3DE2B07B13EE143E00772777 /* libcore.4.a */,
-				3DE2B07C13EE143E00772777 /* libcore.5.a */,
+				D1FD03730E2851B800B3C702 /* protocols.1.dylib */,
+				3DDF66C313EE13B800401374 /* devel.dylib */,
+				3DE2B07313EE143D00772777 /* external.dylib */,
+				3DE2B07413EE143D00772777 /* ObjecxxFCL.dylib */,
+				3DE2B07513EE143D00772777 /* utility.dylib */,
+				3DE2B07613EE143D00772777 /* numeric.dylib */,
+				3DE2B07713EE143D00772777 /* basic.dylib */,
+				3DE2B07813EE143D00772777 /* core.1.dylib */,
+				3DE2B07913EE143D00772777 /* core.2.dylib */,
+				3DE2B07A13EE143E00772777 /* core.3.dylib */,
+				3DE2B07B13EE143E00772777 /* core.4.dylib */,
+				3DE2B07C13EE143E00772777 /* core.5.dylib */,
 				3DFB7AA01405746F00EA18CE /* docking_protocol */,
-				3B94610F148C9D5200C2FBE5 /* libprotocols_a.2.a */,
-				3B94619A148CA62A00C2FBE5 /* libprotocols.3.a */,
-				3B9462FA148CB2B700C2FBE5 /* libprotocols_a.4.a */,
-				3B946358148CBAD200C2FBE5 /* libprotocols_b.4.a */,
-				3B9463A3148CBAD400C2FBE5 /* libprotocols_c.4.a */,
-				3B9463ED148CBAD600C2FBE5 /* libprotocols_d.4.a */,
-				3B946437148CBB3F00C2FBE5 /* libprotocols_e.4.a */,
-				3B946481148CBB4200C2FBE5 /* libprotocols_f.4.a */,
-				3B9464BA148CBD9D00C2FBE5 /* libprotocols_a.5.a */,
-				3B946502148CBE0A00C2FBE5 /* libprotocols_b.5.a */,
-				3B94653D148CBE0C00C2FBE5 /* libprotocols_c.5.a */,
-				3B946578148CBF6800C2FBE5 /* libprotocols_e.5.a */,
-				3B9465AA148CBF6E00C2FBE5 /* libprotocols_f.5.a */,
-				3B9465DB148CBF7000C2FBE5 /* libprotocols.6.a */,
-				3B946624148CBFBF00C2FBE5 /* libprotocols.7.a */,
+				3B94610F148C9D5200C2FBE5 /* protocols_a.2.dylib */,
+				3B94619A148CA62A00C2FBE5 /* protocols.3.dylib */,
+				3B9462FA148CB2B700C2FBE5 /* protocols_a.4.dylib */,
+				3B946358148CBAD200C2FBE5 /* protocols_b.4.dylib */,
+				3B9463A3148CBAD400C2FBE5 /* protocols_c.4.dylib */,
+				3B9463ED148CBAD600C2FBE5 /* protocols_d.4.dylib */,
+				3B946437148CBB3F00C2FBE5 /* protocols_e.4.dylib */,
+				3B946481148CBB4200C2FBE5 /* protocols_f.4.dylib */,
+				3B9464BA148CBD9D00C2FBE5 /* protocols_a.5.dylib */,
+				3B946502148CBE0A00C2FBE5 /* protocols_b.5.dylib */,
+				3B94653D148CBE0C00C2FBE5 /* protocols_c.5.dylib */,
+				3B946578148CBF6800C2FBE5 /* protocols_e.5.dylib */,
+				3B9465AA148CBF6E00C2FBE5 /* protocols_f.5.dylib */,
+				3B9465DB148CBF7000C2FBE5 /* protocols.6.dylib */,
+				3B946624148CBFBF00C2FBE5 /* protocols.7.dylib */,
 				3B9466AB148CC98F00C2FBE5 /* rosetta_scripts */,
-				3D5BA06F1492D94500524FBB /* libprotocols_d.5.a */,
-				3D5BA08B1492D95800524FBB /* libprotocols_b.2.a */,
-				3D5BA0AB1492D96800524FBB /* libprotocols_g.4.a */,
-				3D5BA0CB1492D97300524FBB /* libprotocols_h.4.a */,
-				3B7A001314977BC300905864 /* librosetta_static.a */,
+				3D5BA06F1492D94500524FBB /* protocols_d.5.dylib */,
+				3D5BA08B1492D95800524FBB /* protocols_b.2.dylib */,
+				3D5BA0AB1492D96800524FBB /* protocols_g.4.dylib */,
+				3D5BA0CB1492D97300524FBB /* protocols_h.4.dylib */,
+				3B7A001314977BC300905864 /* rosetta_static.dylib */,
 				3B7A0083149782E500905864 /* rosetta_scripts_static */,
 				3D6484B614CDE9970038C383 /* Andrew's App */,
 				EC5D95F115D6C9F700EAE42D /* antibody_H3 */,
@@ -29789,10 +29307,6 @@
 				E7DBAA473E8A745CEC074618 /* PackRotamersMoverPartGreedy.hh */,
 				19F05725F6A4CE7D542310BF /* PackRotamersMoverPartGreedyCreator.hh */,
 				D9B796231326EA185CB8FF34 /* ProteinLigandInterfaceUpweighterOperationCreator.hh */,
-				D9B79CC7C14B5534EEFEE3C0 /* RemoveLigandFilter.cc */,
-				36913F36DCDFACDD739C9A6F /* RemoveLigandFilter.fwd.hh */,
-				7417E9DE01C3BD285826032B /* RemoveLigandFilter.hh */,
-				ACA94C7ACB1B2D98194751B4 /* RemoveLigandFilterCreator.hh */,
 				45A10F7DD859464176FE7360 /* SecondaryMatchProtocol.cc */,
 				6567CD526CB3D481BD147820 /* SecondaryMatchProtocol.hh */,
 				9812807A21B088C4D060719D /* SetCatalyticResPackBehaviorCreator.hh */,
@@ -30039,6 +29553,10 @@
 				81C631521985C37794188873 /* DistanceChainbreakEnergy.cc */,
 				54B0B41C42E378EEBF331EEE /* DistanceChainbreakEnergy.fwd.hh */,
 				718C929D8762201539823586 /* DistanceChainbreakEnergy.hh */,
+				A45A0CDA17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.cc */,
+				A45A0CDB17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.fwd.hh */,
+				A45A0CDC17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.hh */,
+				A45A0CDD17F4AFE100E972F3 /* LK_PolarNonPolarEnergyCreator.hh */,
 				8938C70E1742E62E5201C01D /* DistanceChainbreakEnergyCreator.hh */,
 				E52373367A5DFADF80D36585 /* EnergyMethod.cc */,
 				A844D0027AF5A95823D750DD /* EnergyMethod.fwd.hh */,
@@ -31566,15 +31084,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1121032136B63E4000B9DB5 /* atomic_counter.h in Headers */,
+				A45A0CDF17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.fwd.hh in Headers */,
 				D1121034136B63E4000B9DB5 /* backend.h in Headers */,
 				D1121036136B63E4000B9DB5 /* conn_manager.h in Headers */,
 				D1121037136B63E4000B9DB5 /* defs.h in Headers */,
 				D1121039136B63E4000B9DB5 /* driver_manager.h in Headers */,
+				A45A0CE017F4AFE100E972F3 /* LK_PolarNonPolarEnergy.hh in Headers */,
 				D112103A136B63E4000B9DB5 /* errors.h in Headers */,
 				D112103C136B63E4000B9DB5 /* frontend.h in Headers */,
 				D112103E136B63E4000B9DB5 /* mutex.h in Headers */,
 				D112103F136B63E4000B9DB5 /* numeric_util.h in Headers */,
 				D1121041136B63E4000B9DB5 /* pool.h in Headers */,
+				A45A0CE117F4AFE100E972F3 /* LK_PolarNonPolarEnergyCreator.hh in Headers */,
 				D1121042136B63E4000B9DB5 /* ref_ptr.h in Headers */,
 				D1121044136B63E4000B9DB5 /* shared_object.h in Headers */,
 				D1121046136B63E4000B9DB5 /* template_header.h in Headers */,
@@ -33636,7 +33157,6 @@
 				4AB1A0E0D81EBB279604683B /* PointMutationCalculator.cc in Sources */,
 				54D20E0AA122F22680B50F8F /* BfactorFittingMover.cc in Sources */,
 				CBB28B65A34BACF718C2E1B7 /* DensityMorphingMover.cc in Sources */,
-				52658A11B720B34EC54EB632 /* ReportFSC.cc in Sources */,
 				94C3669EA75565FBC6783849 /* ScaleMapIntensities.cc in Sources */,
 				B35604B0D4F5257051705EF8 /* SetupForDensityScoringMover.cc in Sources */,
 				224121FCE2C72E79BAC8E4C1 /* util.cc in Sources */,
@@ -33682,7 +33202,6 @@
 				6E1C6BF3C7C5B0203DF27590 /* DisulfideIdentity.cc in Sources */,
 				6B15C7C7179837F07DD6D00B /* FourAtomsConstraintData.cc in Sources */,
 				26AF2C202288CE8ABFABE44D /* FragmentAllAtomCrmsd.cc in Sources */,
-				EC040BB3C7682D6C114612CE /* FragmentChunkCrms.cc in Sources */,
 				271C4FC6A5AB634B6BC36BC9 /* FragmentCrmsd.cc in Sources */,
 				4CA55A8D8D7B31806CC75385 /* FragmentCrmsdResDepth.cc in Sources */,
 				06D93589CE3121E53F5040CD /* FragmentDME.cc in Sources */,
@@ -33882,7 +33401,6 @@
 				0CD404B96851593D0CDAAA6E /* JumpEvaluator.cc in Sources */,
 				F61D86558A7303EA1CEFC939 /* JumpNrEvaluatorCreator.cc in Sources */,
 				9B16987D85E2C85664AC8F18 /* NMerPSSMEnergyFilter.cc in Sources */,
-				DD67EE44826D91606FD1F752 /* NMerSVMEnergyFilter.cc in Sources */,
 				E9477A41CB9D82E7A601B574 /* NativeEvaluatorCreator.cc in Sources */,
 				32CD9E368C2EACD42463A210 /* NeighborTypeFilter.cc in Sources */,
 				84770B9281606926262CD353 /* NetChargeFilter.cc in Sources */,
@@ -34716,7 +34234,6 @@
 				C3DDAC03DAE16125219F55F5 /* EnzdesTaskOperations.cc in Sources */,
 				25D6EE5A7D43E6D9562EE05D /* ModifyStoredLigandRBConfsMovers.cc in Sources */,
 				2CF299973FCC6DB9175F7DCA /* PackRotamersMoverPartGreedy.cc in Sources */,
-				FD7ED5F99DB541443701A37A /* RemoveLigandFilter.cc in Sources */,
 				A43B7262CA50015D7E8CB4BC /* SecondaryMatchProtocol.cc in Sources */,
 				574EB601D9890200BABF39CA /* enzdes_util.cc in Sources */,
 				2766EEE2504F38B884F389EE /* HotspotStub.cc in Sources */,
@@ -34910,19 +34427,6 @@
 				87294AD1DA0E3931054E6787 /* RNA_Relaxer.cc in Sources */,
 				FC161395541C1262DCC443F5 /* RNA_SecStructInfo.cc in Sources */,
 				944C24ECE63C6D9BF13A7343 /* RNA_StructureParameters.cc in Sources */,
-				6211F702ADC6DE4AD5655772 /* RotamerAny.cc in Sources */,
-				BF2417AB5B16D6B127F03D55 /* RotamerComb.cc in Sources */,
-				4000D040A5C7221E8230E69A /* RotamerOneTorsion.cc in Sources */,
-				950806526ED5B7081FFC9D0E /* RotamerSizedAny.cc in Sources */,
-				C9FA5F047F56527FFE8ABFA4 /* RotamerSizedComb.cc in Sources */,
-				A4A8F812AFADC2F5328B7659 /* util.cc in Sources */,
-				D9E2656E7125798771C43C0F /* RNA_ChiRotamer.cc in Sources */,
-				8E82A1B15C24C124542BD0C0 /* RNA_KicSampler.cc in Sources */,
-				3C573155C649F9B9EB3117B3 /* RNA_KinematicCloser.cc in Sources */,
-				B5CC43D03E5AD1AC2421D016 /* RNA_NucleosideRotamer.cc in Sources */,
-				E8B5D6BFF9464530C035B156 /* RNA_SugarRotamer.cc in Sources */,
-				4EE40067422DE96D3E671D43 /* RNA_SuiteRotamer.cc in Sources */,
-				685604465EA454EA78D9F7E3 /* RNA_TorsionScreener.cc in Sources */,
 				32A3FFCBF00FE02AD8DB5314 /* InputStreamWithResidueInfo.cc in Sources */,
 				33CA5AA166D72DBFFBC8C824 /* PoseFilter_RMSD_Screen.cc in Sources */,
 				5E195821E9737EBF115E68E1 /* RigidBodySampler.cc in Sources */,
@@ -34930,17 +34434,11 @@
 				5C40FD3C00615C1ABE585349 /* StepWiseJobParameters.cc in Sources */,
 				930D372DB9B4582F287555D7 /* StepWisePoseSetup.cc in Sources */,
 				ED1D0CCD4E18833D69EF4444 /* StepWiseUtil.cc in Sources */,
-				44117BC5BD900C3C917C0785 /* TransientCutpointHandler.cc in Sources */,
-				7787625DE50872B611CB8C1E /* RNA_AddDeleteMonteCarlo.cc in Sources */,
 				9A041CF7DC7872C236C8A4DA /* RNA_AddMover.cc in Sources */,
 				FFE14449DF6D733C871274AB /* RNA_AddOrDeleteMover.cc in Sources */,
 				00BE128754E9F1965F6104C7 /* RNA_DeleteMover.cc in Sources */,
 				CAAEF297745E89553F315C04 /* RNA_O2StarMover.cc in Sources */,
-				E41C031F863ED7B64F3CD2BA /* RNA_ResampleMover.cc in Sources */,
-				A8ED51068E43ED4F7838B474 /* RNA_StepWiseMonteCarlo.cc in Sources */,
 				1ACC7BBF8C20BD7701C3FCA0 /* RNA_TorsionMover.cc in Sources */,
-				64926E4E09459D67AD0633C8 /* SWA_MonteCarloUtil.cc in Sources */,
-				30F863352D57047EFF009534 /* SWA_Move.cc in Sources */,
 				903514AB9ADF5C67ACBB3E63 /* MainChainTorsionSet.cc in Sources */,
 				B2CE36505240E67EEEC29A06 /* StepWiseBetaAntiParallelJumpSampleGenerator.cc in Sources */,
 				DCCA994A0FD066B86C90403C /* StepWiseBetaAntiParallelUtil.cc in Sources */,
@@ -34973,10 +34471,6 @@
 				6B4131551FC9FFEEB5AD4B83 /* StepWiseRNA_Util.cc in Sources */,
 				78FD9CF5D3D664DDEEF57FA0 /* StepWiseRNA_VDW_BinScreener.cc in Sources */,
 				E816A65C95C9C46961FECB61 /* StepWiseRNA_VirtualRiboseSampler.cc in Sources */,
-				F261060A053EBB60B6CA9565 /* StepWiseCombineSampleGenerator.cc in Sources */,
-				0541531C259564F26A655021 /* StepWiseDoNothingSampleGenerator.cc in Sources */,
-				4B28932E3081315017E7F414 /* StepWiseIdentitySampleGenerator.cc in Sources */,
-				888EAFD454EE2AC9F587D4C1 /* StepWisePoseCombineSampleGenerator.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -35130,8 +34624,6 @@
 			files = (
 				A1DAEA6000953DDCF8C8B8B2 /* init.cc in Sources */,
 				6DCB5ADA8CC8DA98BD79AE5D /* svn_version.cc in Sources */,
-				AC0E8228F39C017109D1D41D /* BuriedUnsatHbondFilter2.cc in Sources */,
-				B64E34215588ECCF074868AA /* BuriedUnsatisfiedPolarsCalculator2.cc in Sources */,
 				B782291240ECAEEFDD35C5B1 /* CartesianFragment.cc in Sources */,
 				44A8DD1A19A685E65E360672 /* DNA_FragLib.cc in Sources */,
 				429395131E3191CBB7315F16 /* SafeID.cc in Sources */,
@@ -35256,9 +34748,6 @@
 				25F2A398B33347123C9EFD28 /* ThreeHelixRepeatGraph.cc in Sources */,
 				D572460B350498E3AB70EAFB /* util.cc in Sources */,
 				CC3338EB08FAF2AB730B7523 /* option.cc in Sources */,
-				EAAF92AAE7F8D4E074C107AC /* DesignInterfacesOperation.cc in Sources */,
-				18052B6AAC823A6B735AAFA0 /* RBInMover.cc in Sources */,
-				044414A5EFBA0AD82E4F5F6A /* RBOutMover.cc in Sources */,
 				BC95E3CFC4D43560A7E67A3D /* Splice.cc in Sources */,
 				FCAD03CC605F6C19ECF3218F /* SpliceSegment.cc in Sources */,
 				E6CD608F99B75203921FAE6B /* VarSolDRotamerDots.cc in Sources */,
@@ -35437,6 +34926,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D1121002136B62F3000B9DB5 /* Cstring.cc in Sources */,
+				A45A0CE317F54FAB00E972F3 /* RNA_StepWiseMonteCarlo.cc in Sources */,
 				D1121003136B62F3000B9DB5 /* Dimension.cc in Sources */,
 				D1121004136B62F3000B9DB5 /* DimensionExpression.cc in Sources */,
 				D1121005136B62F3000B9DB5 /* DimensionExpressionRef.cc in Sources */,
@@ -35444,6 +34934,7 @@
 				D1121007136B62F3000B9DB5 /* Fstring.cc in Sources */,
 				D1121008136B62F3000B9DB5 /* IndexRange.cc in Sources */,
 				D1121009136B62F3000B9DB5 /* Observer.cc in Sources */,
+				A45A0CDE17F4AFE100E972F3 /* LK_PolarNonPolarEnergy.cc in Sources */,
 				D112100A136B62F3000B9DB5 /* ObserverGraph.cc in Sources */,
 				D112100B136B62F3000B9DB5 /* ObserverMediator.cc in Sources */,
 				D112100C136B62F3000B9DB5 /* ObserverMulti.cc in Sources */,
@@ -35723,11 +35214,6 @@
 				BF6012E506C401285543E056 /* FourPointsFunc.cc in Sources */,
 				0C77063F9902838D27737852 /* Func.cc in Sources */,
 				4880453A6D58C94607194B05 /* FuncFactory.cc in Sources */,
-				C384232A611DDA84D76E1518 /* GaussianChainDoubleFunc.cc in Sources */,
-				5A603D2387A4DC08EAD7942C /* GaussianChainFunc.cc in Sources */,
-				6A5A7690C1FCD9FBE3E57B70 /* GaussianChainQuadrupleFunc.cc in Sources */,
-				9068A83C318CA6EA46D45D27 /* GaussianChainSingleFunc.cc in Sources */,
-				3B2C6406A01D2ECC74B55FC1 /* GaussianChainTripleFunc.cc in Sources */,
 				E923C68063A75391326C378E /* GaussianFunc.cc in Sources */,
 				EA098216FA5BC1E0B2B6944B /* HarmonicFunc.cc in Sources */,
 				C7A8ACE7B68FD8A09B25A252 /* IdentityFunc.cc in Sources */,
@@ -35862,11 +35348,6 @@
 				CF607588BCCC21515945D4BD /* HBCountPairFunction.cc in Sources */,
 				242160DFFD7E86A448814505 /* DDPlookup.cc in Sources */,
 				17216F14F89B0784262C7F1A /* DDPscore.cc in Sources */,
-				36B00055938E6EBA3C1CF322 /* Loop.cc in Sources */,
-				6DD143362A75DFBC462DA48F /* LoopCloseEnergy.cc in Sources */,
-				A99D35E4000C898F9CEA22D5 /* LoopCycle.cc in Sources */,
-				09FFBC79CF8108AA178D49B1 /* LoopGraph.cc in Sources */,
-				682019978D3CC10CD60CE7DC /* LoopScoreInfo.cc in Sources */,
 				24A8E7EE0425ED6A51A70F34 /* MembEtable.cc in Sources */,
 				C47BA803D83903B43E6CCC90 /* BurialEnergy.cc in Sources */,
 				27FF9EB8E443EDDFEE57FBAC /* CartesianBondedEnergy.cc in Sources */,
@@ -35902,7 +35383,6 @@
 				9117279ED1117F5ABBAA345E /* IntermolEnergy.cc in Sources */,
 				79DA7822689E043AE0AFDE99 /* LK_BallEnergy.cc in Sources */,
 				97D74CBB293B0D463441EB42 /* LK_BallInfo.cc in Sources */,
-				1397A1CB86A86990265A816B /* LK_PolarNonPolarEnergy.cc in Sources */,
 				304DA124F3F19335F025F86D /* LK_hack.cc in Sources */,
 				DA5CB42AEAB8A0E14C328547 /* LinearChainbreakEnergy.cc in Sources */,
 				836BA01F30B927E0AE0FC7A8 /* LinearChainbreakEnergyCreator.cc in Sources */,
@@ -35923,7 +35403,6 @@
 				00CF96D3F4E7ED05964AF0A7 /* NMerSVMEnergy.cc in Sources */,
 				8870B6BF7958B0AA3665F246 /* OmegaTetherEnergy.cc in Sources */,
 				5E17F04A56F482CD80F9AC50 /* OneBodyEnergy.cc in Sources */,
-				B627DB022B4463748FB6E49C /* OtherPoseEnergy.cc in Sources */,
 				A75403FF55B419700F5B50EC /* P_AA_Energy.cc in Sources */,
 				88EF4EE3F1EB97AFD2F6B65F /* P_AA_pp_Energy.cc in Sources */,
 				ABC825C4DF48E3AFB28382DE /* PackStatEnergy.cc in Sources */,
@@ -36268,7 +35747,6 @@
 				03DDFDE3A3E944E9467BE411 /* Tracer.cc in Sources */,
 				4E911C9B6769BA11A5B88EB5 /* TracerToFile.cc in Sources */,
 				65F46350192C609C905ED4E5 /* basic.cc in Sources */,
-				49E6C3E60131BCB2B8BEF1B1 /* init.cc in Sources */,
 				A8843C15FB06F715A842B89D /* interpolate.cc in Sources */,
 				B0793E33FA2A65509B7FB28A /* prof.cc in Sources */,
 				1117AE00710C6FC1C2265210 /* DatabaseSessionLoader.cc in Sources */,
@@ -36417,7 +35895,6 @@
 				7934E7811BAF8DED27A3C4E7 /* IteratedConvergenceMover.cc in Sources */,
 				F45960F3E19CB53A47CCE32D /* JumpOutMover.cc in Sources */,
 				8A61778090A3561CFCA3F770 /* MonteCarlo.cc in Sources */,
-				3BF3813DA0DB3517D13D85C6 /* MonteCarloStatus.cc in Sources */,
 				1EFD62ADC7D41F6E493E19FD /* Mover.cc in Sources */,
 				7938C445F4DBF7997594BEE3 /* MoverContainer.cc in Sources */,
 				A003BC9BE2A17C3AA32428DB /* MoverCreator.cc in Sources */,

@@ -397,7 +397,7 @@ LK_PolarNonPolarEnergy::setup_for_derivatives(
  
 ///////
 void
-LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const
 {
     //using core::scoring::EnergiesCacheableDataType::HBOND_SET;
     
@@ -409,6 +409,11 @@ LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction cons
     //std::cout<<"test";
     //TR << "setup_for_scoring() was called..." << std::endl;
     pose.update_residue_neighbors();
+	
+	if ( pose.energies().use_nblist() ) {
+		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
+		nblist.prepare_for_scoring( pose, scfxn, *this );
+	}
     
     //hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_->hbond_options() ) );
     //hbond_set->setup_for_residue_pair_energies( pose );
@@ -432,7 +437,7 @@ LK_PolarNonPolarEnergy::setup_for_minimizing(
 //    if ( pose.energies().use_nblist() ) {
 //        TR << "Using neighborlist..." << std::endl;
 //    }
-    if ( true ) {
+    if ( pose.energies().use_nblist() ) {
         // stash our nblist inside the pose's energies object
         Energies & energies( pose.energies() );
         
@@ -866,6 +871,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 	Vector & F2
 ) const
 {
+	if ( ! pose.energies().use_nblist_auto_update() ) return;
     //TR << "eval_atom_derivative() was called..." << std::endl;
     if ( defines_intrares_energy( weights ) ) {
         eval_atom_derivative_intra_RNA(atom_id, pose, domain_map, weights, F1, F2);
@@ -982,7 +988,7 @@ LK_PolarNonPolarEnergy::finalize_total_energy(
 {
     //TR << "finalize_total_energy() was called..." << std::endl;
     //TR << pose.energies().use_nblist() << std::endl;
-    if ( use_extended_residue_pair_energy_interface() ) return;
+    return;
     if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
     NeighborList const & nblist
         ( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );

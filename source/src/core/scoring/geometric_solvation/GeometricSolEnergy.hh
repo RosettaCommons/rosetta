@@ -82,6 +82,24 @@ public:
         conformation::Residue const & rsd2,
         bool res_moving_wrt_eachother
     ) const;
+	
+	virtual
+	bool
+	minimize_in_whole_structure_context( pose::Pose const & pose ) const;
+	
+	virtual
+	void
+	eval_residue_pair_derivatives(
+		conformation::Residue const & ires,
+		conformation::Residue const & jres,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const & pose, // provides context
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	) const;
 
     virtual
     etable::count_pair::CountPairFunctionCOP
