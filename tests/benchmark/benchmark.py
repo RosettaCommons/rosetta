@@ -98,7 +98,10 @@ def main(args):
             res = test_suite.run_test_suite(rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True)
 
             if res[_StateKey_] not in _ResultCodes_.values(): print 'Warning!!! TestSuite {} failed with unknow result code: {}'.format(t, res[_StateKey_])
-            else: print 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2))
+            else:
+                js = json.dumps(res, sort_keys=True, indent=2)
+                file( working_dir + '/.results.json', 'w').write(js)
+                print 'Test {} finished with output:\n{}\n[This output is saved in to {}/.results.json]'.format(test, js, working_dir)
 
         '''
         # Running as individual test... may be later...

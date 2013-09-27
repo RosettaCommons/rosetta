@@ -8,11 +8,11 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-## @file   integration.py
-## @brief  Rosetta/PyRosetta integrtion tests
+## @file   unit.py
+## @brief  Rosetta/PyRosetta unit tests
 ## @author Sergey Lyskov
 
-import os, commands
+import os, json, commands
 
 class BenchmarkIntegrationError(Exception): pass
 
@@ -22,25 +22,21 @@ class BenchmarkIntegrationError(Exception): pass
 _TestSuite_ = True  # Set to True for TestSuite-like tests (Unit, Integration, Sfxn_fingerprint) and False other wise
 
 
-def set_up(): pass
+def set_up():  pass
 
 
 def tear_down(): pass
 
 
-#def rollover():
-#    a_commands.getoutput("cd main/tests/integration && ./accept-changes.sh" )
-
-
 def get_tests():
     TR = Tracer(verbose=True)
-    TR('Integration Test script does not support get_tests! Use run_test_suite instead!')
+    TR('Unit Test script does not support get_tests! Use run_test_suite instead!')
     raise BenchmarkIntegrationError()
 
 
 def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, verbose=False):
     TR = Tracer(verbose)
-    TR('Integration Test script does not support run_test! Use run_test_suite instead!')
+    TR('Unit Test script does not support run_test! Use run_test_suite instead!')
     raise BenchmarkIntegrationError()
 
 
@@ -57,7 +53,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     results = {}
 
     TR('Compiling...')
-    res, output = execute('Compiling...', 'cd {}/source && ./scons.py bin mode=release -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
+    res, output = execute('Compiling...', 'cd {}/source && ./scons.py -j{jobs} && ./scons.py cat=test -j{jobs}'.format(rosetta_dir, jobs=jobs), return_='tuple')
     #res, output = 0, 'debug... compiling...\n'
 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
@@ -68,17 +64,12 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
         return results
 
     else:
-        ref_files_location = rosetta_dir+'/tests/integration/ref/'
-        if not os.path.isdir(ref_files_location): TR('No {} found, creating a dummy one...'.format(ref_files_location));  os.mkdir(ref_files_location)
+        json_results_file = rosetta_dir+'/source/.unit_test_results.yaml'
+        if os.path.isfile(json_results_file): os.remove(json_results_file)
 
-        files_location = rosetta_dir+'/tests/integration/new/'
-        #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
-
-        #output_json = working_dir + '/output.json'  , output_json=output_json   --yaml={output_json}
-        command_line = 'cd {}/tests/integration && ./integration.py --timeout=480 -j{jobs}'.format(rosetta_dir, jobs=jobs)
-        TR( 'Running integration script: {}'.format(command_line) )
-        res, output = execute('Running integration script...', command_line, return_='tuple')
-        #res, output = 0, 'debug... integration.py...\n'
+        command_line = 'cd {}/source && test/run.py -j{jobs}'.format(rosetta_dir, jobs=jobs)
+        TR( 'Running unit test script: {}'.format(command_line) )
+        res, output = execute('Running unit test script...', command_line, return_='tuple')
         full_log += output
 
         if res:
@@ -86,15 +77,16 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
             results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
             return results
 
-    for d in os.listdir(files_location):
-        if os.path.isdir(files_location + '/' + d):
-            #print 'linking: %s <-- %s' % (root + d, working_dir + d)
-            os.symlink(files_location + '/' + d, working_dir + '/' + d)
-            command_sh = working_dir + '/' + d + '/command.sh '
-            if os.path.isfile(command_sh): os.remove(command_sh)  # deleting non-tempalte command.sh files to avoid stroing absolute paths in database
+    json_results = json.load( file(json_results_file) )
+    r = {}
 
-    results[_StateKey_] = _Finished_
-    results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
+    for lib in json_results:
+        key = lib[:-5]  # core.test → core
+        for t in json_results[lib]['ALL_TESTS']: r[ key + '.' + t.replace(':', '.')] = _Failed_ if t in json_results[lib]['FAILED_TESTS'] else _Finished_
+
+    results[_StateKey_]   = reduce(lambda a, b: _Finished_ if a==_Finished_ and b==_Finished_ else _Failed_, r.values())
+    results[_LogKey_]     = output  # ommiting compilation log and only including integration.py output
+    results[_ResultsKey_] = r
     return results
 
 
@@ -113,6 +105,7 @@ _LogKey_      = 'log'
 def Tracer(verbose=False):
     def print_(x): print x
     return print_ if verbose else lambda x: None
+
 
 
 def execute(message, commandline, return_=False, untilSuccesses=False):
