@@ -111,11 +111,14 @@ bool SheetTopologyFilter::apply( Pose const & pose ) const
 		tr << "Structure does not include strands." << std::endl;
 		return false;
 	}
+
 	//tr << "ss of input pose=" << pose.secstruct() << std::endl;
-	//tr << spairset_filter.name() << std::endl;
+	//tr << "ssinfo_ " << *ssinfo_ << std::endl;
 
 	StrandPairingSet spairset = protocols::fldsgn::topology::calc_strand_pairing_set( pose, ssinfo_ );
+	tr << "spairset: "<< spairset.name() << std::endl;
 	StrandPairingSet spairset_filter( filtered_sheet_topology_ );
+	tr << "spairset_filter: "<< spairset_filter.name() << std::endl;
 
 	for( Size ii=1; ii<=spairset_filter.size(); ++ii ) {
 
@@ -123,6 +126,16 @@ bool SheetTopologyFilter::apply( Pose const & pose ) const
 		for( Size jj=1; jj<=spairset.size(); jj++ ) {
 			if( spairset.strand_pairing( jj )->s1() == spairset_filter.strand_pairing( ii )->s1() &&
 			    spairset.strand_pairing( jj )->s2() == spairset_filter.strand_pairing( ii )->s2() ) {
+		    //tr << "ii: " << ii  << std::endl;
+		    //tr << "jj: " << jj  << std::endl;
+		    //tr << "spairset.strand_pairing( jj )->s1(): " << spairset.strand_pairing( jj )->s1() << std::endl;
+		    //tr << "spairset_filter.strand_pairing( ii )->s1(): " << spairset_filter.strand_pairing( ii )->s1()  << std::endl;
+		    //tr << " spairset.strand_pairing( jj )->s2(): " <<  spairset.strand_pairing( jj )->s2() << std::endl;
+		    //tr << "spairset_filter.strand_pairing( ii )->s2(): " << spairset_filter.strand_pairing( ii )->s2() << std::endl;
+		    //tr << "spairset.strand_pairing( jj )->orient(): " << spairset.strand_pairing( jj )->orient() << std::endl;
+		    //tr << "spairset_filter.strand_pairing( ii )->orient(): " << spairset_filter.strand_pairing( ii )->orient() << std::endl;
+		    //tr << "spairset.strand_pairing( jj )->rgstr_shift(): " << spairset.strand_pairing( jj )->rgstr_shift() << std::endl;
+		    //tr << "spairset_filter.strand_pairing( ii )->rgstr_shift(): " << spairset_filter.strand_pairing( ii )->rgstr_shift() << std::endl;
 				if( spairset.strand_pairing( jj )->orient() == spairset_filter.strand_pairing( ii )->orient() ) {
 					if( spairset_filter.strand_pairing( ii )->rgstr_shift() != 99 ) {
 						if( spairset.strand_pairing( jj )->rgstr_shift() == spairset_filter.strand_pairing( ii )->rgstr_shift() ) {

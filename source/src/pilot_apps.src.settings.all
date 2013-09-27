@@ -553,6 +553,7 @@ sources = {
 		#"local_rmsd", # /* Nobuyasu,Documentation Location,Demo Location */
 		#"ncontact", # /* Nobuyasu,Documentation Location,Demo Location */
 		"make_blueprint", # /* Nobuyasu,Documentation Location,Demo Location */
+		"rama", # /* Nobuyasu,Documentation Location,Demo Location */
 	],
 
 	# O ######################################################################

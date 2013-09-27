@@ -76,11 +76,15 @@ static basic::Tracer TR("tmalign_cluster");
 
 void do_tmscore( core::pose::Pose const &pose1, core::pose::Pose const &pose2, core::Real &tmscore) {
 	protocols::hybridization::TMalign tm_align;
-	int reval = tm_align.apply(pose1,pose2);
-        if (reval == 0) {
-        	tmscore=tm_align.TMscore(std::min(pose1.total_residue(),pose2.total_residue()));
-	} else {
+	if (pose1.total_residue()==0 && pose2.total_residue()==0) 
 		tmscore=0;
+	else {
+		int reval = tm_align.apply(pose1,pose2);
+                if (reval == 0) {
+                	tmscore=tm_align.TMscore(std::min(pose1.total_residue(),pose2.total_residue()));
+		} else {
+			tmscore=0;
+		}
 	}
 }
 

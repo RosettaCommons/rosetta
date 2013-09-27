@@ -411,7 +411,7 @@ FlxbbDesign::build_design_taskset( Pose const & pose )
 		tf->push_back(new InitializeFromCommandline);
 		tf->push_back(new RestrictToRepacking );
 		tf->push_back( new LimitAromaChi2Operation );
-		tf->push_back( new RestrictToMoveMapChiOperation(movemap_) );
+		if (movemap_) tf->push_back( new RestrictToMoveMapChiOperation(movemap_) );
 		rlx_mover->set_task_factory( tf );
 	}
 

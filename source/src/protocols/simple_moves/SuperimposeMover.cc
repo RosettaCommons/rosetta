@@ -128,6 +128,55 @@ SuperimposeMover::superimpose(
 	return core::scoring::superimpose_pose( mod_pose, ref_pose, atom_map );
 }
 
+/// @details copied and modified from calpha_superimpose_pose
+core::Real
+SuperimposeMover::superimposebb(
+        core::pose::Pose & mod_pose,
+        core::pose::Pose const & ref_pose,
+        Size ref_start,
+        Size ref_end,
+        Size target_start,
+        Size /*target_end*/
+)
+{
+        core::id::AtomID_Map< core::id::AtomID > atom_map;
+        std::map< core::id::AtomID, core::id::AtomID> atom_id_map;
+        core::pose::initialize_atomid_map( atom_map, mod_pose, core::id::BOGUS_ATOM_ID );
+        for ( Size i_target = target_start, i_ref = ref_start; i_ref <= ref_end; ++i_ref, ++i_target ) {
+
+                if ( ! mod_pose.residue(i_target).has("N") ) continue;
+                if ( ! ref_pose.residue(i_ref).has("N") ) continue;
+                core::id::AtomID const id1( mod_pose.residue(i_target).atom_index("N"), i_target );
+                core::id::AtomID const id2( ref_pose.residue(i_ref).atom_index("N"), i_ref );
+                atom_map.set( id1, id2 );
+                atom_id_map.insert( std::make_pair(id1, id2) );
+
+                if ( ! mod_pose.residue(i_target).has("CA") ) continue;
+                if ( ! ref_pose.residue(i_ref).has("CA") ) continue;
+                core::id::AtomID const id3( mod_pose.residue(i_target).atom_index("CA"), i_target );
+                core::id::AtomID const id4( ref_pose.residue(i_ref).atom_index("CA"), i_ref );
+                atom_map.set( id3, id4 );
+                atom_id_map.insert( std::make_pair(id3, id4) );
+
+                if ( ! mod_pose.residue(i_target).has("C") ) continue;
+                if ( ! ref_pose.residue(i_ref).has("C") ) continue;
+                core::id::AtomID const id5( mod_pose.residue(i_target).atom_index("C"), i_target );
+                core::id::AtomID const id6( ref_pose.residue(i_ref).atom_index("C"), i_ref );
+                atom_map.set( id5, id6 );
+                atom_id_map.insert( std::make_pair(id5, id6) );
+
+                if ( ! mod_pose.residue(i_target).has("O") ) continue;
+                if ( ! ref_pose.residue(i_ref).has("O") ) continue;
+                core::id::AtomID const id7( mod_pose.residue(i_target).atom_index("O"), i_target );
+                core::id::AtomID const id8( ref_pose.residue(i_ref).atom_index("O"), i_ref );
+                atom_map.set( id7, id8 );
+                atom_id_map.insert( std::make_pair(id7, id8) );
+
+        }
+        return core::scoring::superimpose_pose( mod_pose, ref_pose, atom_map );
+}
+
+
 void
 SuperimposeMover::apply( Pose & pose ) {
 	using namespace basic::options;
@@ -147,10 +196,15 @@ SuperimposeMover::apply( Pose & pose ) {
 	runtime_assert(ref_start > 0 && ref_start < ref_end && ref_end <= pose.total_residue()); 
 	runtime_assert_msg(ref_end - ref_start == target_end - target_start, "segments to superimpose have different lengths!");
 
-	if ( ref_pose_->total_residue() == pose.total_residue() ) {
+	//if ( ref_pose_->total_residue() == pose.total_residue() ) {
+	if ( CA_only_ ) {
 		core::Real rms  = superimpose( pose, *ref_pose_, ref_start, ref_end, target_start, target_end );
-		TR << "Rms to reference: " << rms << std::endl;
+		TR << "CA RMS to reference: " << rms << std::endl;
+	} else {
+		core::Real rms  = superimposebb( pose, *ref_pose_, ref_start, ref_end, target_start, target_end );
+		TR << "Backbone RMS to reference: " << rms << std::endl;
 	}
+	//}
 }
 
 std::string
@@ -169,6 +223,7 @@ SuperimposeMover::parse_my_tag( utility::tag::TagPtr const tag,
 	ref_end_ = tag->getOption< Size >("ref_end",0);
 	target_start_ = tag->getOption< Size >("target_start",1);
 	target_end_ = tag->getOption< Size >("target_end",0);
+	CA_only_ = tag->getOption< bool >("CA_only",1);
 	if( tag->hasOption("ref_pose") ) ref_pose_ = core::import_pose::pose_from_pdb(tag->getOption< std::string >("ref_pose"));
 }
 

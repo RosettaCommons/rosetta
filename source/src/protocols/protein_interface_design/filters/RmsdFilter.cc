@@ -26,6 +26,7 @@
 
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
+#include <numeric/model_quality/rms.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
 #include <basic/options/option.hh>
@@ -35,7 +36,9 @@
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/id/NamedAtomID.hh>
 #include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray2D.hh>
 
 #include <algorithm>
 #include <list>
@@ -48,6 +51,8 @@ namespace protocols {
 namespace protein_interface_design {
 namespace filters {
 
+using namespace ObjexxFCL;
+
 RmsdFilter::RmsdFilter() :
 	protocols::filters::Filter( "Rmsd" ),
 	superimpose_( true ),
@@ -55,7 +60,13 @@ RmsdFilter::RmsdFilter() :
 	threshold_( 5.0 ),
 	reference_pose_( NULL ),
 	selection_from_segment_cache_(false),
-	superimpose_on_all_( false )
+	superimpose_on_all_( false ),
+  specify_both_spans_( false ),
+  CA_only_ ( true ),
+  begin_native_ (0),
+  end_native_ (0),
+  begin_pose_ (0),
+  end_pose_ ( 0 )
 {
 	selection_.clear();
 }
@@ -70,7 +81,13 @@ RmsdFilter::RmsdFilter(
 		superimpose_(superimpose),
 		threshold_(threshold),
 		reference_pose_(reference_pose),
-		selection_from_segment_cache_(false)
+		selection_from_segment_cache_(false),
+    specify_both_spans_( false ),
+    CA_only_ ( true ),
+    begin_native_ (0),
+    end_native_ (0),
+    begin_pose_ (0),
+    end_pose_ ( 0 )
 {}
 
 
@@ -90,6 +107,51 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
 	core::pose::Pose copy_pose = pose;
 	core::pose::Pose native = *reference_pose_;
 	core::Real rmsd( 0.0 );
+  if ( specify_both_spans_ ) {
+		if (CA_only_) {
+			std::map<core::Size, core::Size> correspondence;
+			core::Size i=0;
+	    for (core::Size i=0; i<end_native_-begin_native_; ++i)
+				correspondence[begin_native_+i]=begin_pose_+i;
+			rmsd=core::scoring::CA_rmsd( native, copy_pose, correspondence);
+	} else {
+      FArray2D_double pose_coordinates_;
+      FArray2D_double ref_coordinates_;
+      pose_coordinates_.redimension(3, 4*(end_native_-begin_native_), 0.0);
+      ref_coordinates_.redimension(3, 4*(end_native_-begin_native_), 0.0);
+  
+      core::Size n_at = 1;
+      for (core::Size i = 0; i < end_native_-begin_native_; ++i) {
+  
+        for (core::Size d = 1; d <= 3; ++d) {
+          pose_coordinates_(d, n_at) = copy_pose.xyz(core::id::NamedAtomID("N", begin_pose_+i))[d - 1];
+          ref_coordinates_(d, n_at) = native.xyz(core::id::NamedAtomID("N", begin_native_+i))[d - 1];
+        }
+        n_at++;
+  
+        for (core::Size d = 1; d <= 3; ++d) {
+          pose_coordinates_(d, n_at) = copy_pose.xyz(core::id::NamedAtomID("CA", begin_pose_+i))[d - 1];
+          ref_coordinates_(d, n_at) = native.xyz(core::id::NamedAtomID("CA", begin_native_+i))[d - 1];
+        }
+        n_at++;
+  
+        for (core::Size d = 1; d <= 3; ++d) {
+          pose_coordinates_(d, n_at) = copy_pose.xyz(core::id::NamedAtomID("C", begin_pose_+i))[d - 1];
+          ref_coordinates_(d, n_at) = native.xyz(core::id::NamedAtomID("C", begin_native_+i))[d - 1];
+        }
+        n_at++;
+  
+        for (core::Size d = 1; d <= 3; ++d) {
+          pose_coordinates_(d, n_at) = copy_pose.xyz(core::id::NamedAtomID("O", begin_pose_+i))[d - 1];
+          ref_coordinates_(d, n_at) = native.xyz(core::id::NamedAtomID("O", begin_native_+i))[d - 1];
+        }
+        n_at++;
+      }
+ 		 rmsd = numeric::model_quality::rms_wrapper(4*(end_native_-begin_native_), pose_coordinates_, ref_coordinates_);
+  }
+
+		return rmsd;
+	}
 
 	if ( !symmetry_ )
 		runtime_assert_msg( copy_pose.total_residue() == native.total_residue(), "the reference pose must be the same size as the working pose" );
@@ -206,6 +268,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::Data
 			core::Size const resnum( core::pose::get_resnum( rmsd_tag, *reference_pose_ ) );
 			selection_.push_back( resnum );
 		}
+
 		if( rmsd_tag->getName() == "span" ) {
 			core::Size const begin( core::pose::get_resnum( rmsd_tag, *reference_pose_, "begin_" ) );
 			core::Size const end( core::pose::get_resnum( rmsd_tag, *reference_pose_, "end_" ) );
@@ -213,6 +276,20 @@ RmsdFilter::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::Data
 			runtime_assert( begin>=1);
 			runtime_assert( end<=reference_pose_->total_residue() );
 			for( core::Size i=begin; i<=end; ++i ) selection_.push_back( i );
+		}
+
+		if( rmsd_tag->getName() == "span_two" ) {
+			specify_both_spans_=true;
+		  begin_native_ = rmsd_tag->getOption<core::Size>( "begin_native", 0 );
+		  end_native_ = rmsd_tag->getOption<core::Size>( "end_native", 0 );
+		  begin_pose_ = rmsd_tag->getOption<core::Size>( "begin_pose", 0 );
+		  end_pose_ = rmsd_tag->getOption<core::Size>( "end_pose", 0 );
+		  CA_only_ = rmsd_tag->getOption<bool>( "CA_only", true );
+			runtime_assert( end_pose_ > begin_pose_ );
+			runtime_assert( begin_pose_>=1);
+			runtime_assert( end_native_ > begin_native_ );
+			runtime_assert( begin_native_>=1);
+			runtime_assert( end_native_ - begin_native_ == end_pose_ - begin_pose_ );
 		}
 	}
 

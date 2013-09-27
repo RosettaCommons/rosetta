@@ -62,6 +62,12 @@ private:
 
 	bool selection_from_segment_cache_;
 	bool superimpose_on_all_; // dflt false; if segments are defined, are those to be used for superimposing or only to measure rmsd?
+	bool specify_both_spans_;
+	bool CA_only_;
+	core::Size begin_native_;
+	core::Size end_native_;
+	core::Size begin_pose_;
+	core::Size end_pose_;
 
 };
 

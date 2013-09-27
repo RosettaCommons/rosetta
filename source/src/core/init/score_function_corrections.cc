@@ -485,7 +485,7 @@ check_score_function_sanity(
 				<< "To use the '" << scorefxn_key << "' score function" << std::endl
 				<< "please using the " << std::endl
 				<< std::endl
-				<< "        -resore_pre_talaris_2013_behavior" << std::endl
+				<< "        -restore_pre_talaris_2013_behavior" << std::endl
 				<< std::endl
 				<< "flag on the command line." << std::endl
 				<< "**********************************************" << std::endl;
@@ -500,7 +500,7 @@ check_score_function_sanity(
 				<< "To use the '" << scorefxn_key << "' score function" << std::endl
 				<< "please don't using the " << std::endl
 				<< std::endl
-				<< "        -resore_pre_talaris_2013_behavior" << std::endl
+				<< "        -restore_pre_talaris_2013_behavior" << std::endl
 				<< std::endl
 				<< "flag on the command line." << std::endl
 				<< "**********************************************" << std::endl;

@@ -50,12 +50,14 @@ public:
 
 private:
 	core::Real superimpose( core::pose::Pose & mod_pose, core::pose::Pose const & ref_pose, Size ref_start, Size ref_end, Size target_start, Size target_end);
+	core::Real superimposebb( core::pose::Pose & mod_pose, core::pose::Pose const & ref_pose, Size ref_start, Size ref_end, Size target_start, Size target_end);
 
 private:
 
 	core::pose::PoseOP ref_pose_;
 	core::Size ref_start_, ref_end_;
 	core::Size target_start_, target_end_;
+        bool CA_only_;
 
 };
 
