@@ -110,7 +110,6 @@ RmsdFilter::compute( core::pose::Pose const & pose ) const
   if ( specify_both_spans_ ) {
 		if (CA_only_) {
 			std::map<core::Size, core::Size> correspondence;
-			core::Size i=0;
 	    for (core::Size i=0; i<end_native_-begin_native_; ++i)
 				correspondence[begin_native_+i]=begin_pose_+i;
 			rmsd=core::scoring::CA_rmsd( native, copy_pose, correspondence);
