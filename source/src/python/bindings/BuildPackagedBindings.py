@@ -715,7 +715,7 @@ def prepareBoostLibs(bindings_path):
         execute("Copying boost lib: %s" % boost_lib, "cp -P %s %s" % (boost_lib, bindings_path) )
 
     # Append boost include path to Options.I
-    boost_include_path = os.path.join(Options.boost_path, "include/boost")
+    boost_include_path = os.path.join(Options.boost_path, "include")
     logging.info("prepareBoostLibs using boost include path: %s", boost_include_path)
     Options.I.append(boost_include_path)
 
@@ -1245,7 +1245,7 @@ class ModuleBuilder:
                 #all_at_once_N_obj = self.all_at_once_obj+'%s.o' % i
 
                 # -fPIC
-                comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external/include  -I../external/dbio %(include_paths)s "
+                comiler_cmd = "%(compiler)s %(fname)s -o %(obj_name)s -c %(add_option)s %(cpp_defines)s -I../external/include -I../external/boost_1_46_1 -I../external/dbio %(include_paths)s "
                 comiler_dict = dict(
                         add_option=self.add_option,
                         fname=all_at_once_N_cpp,
