@@ -243,6 +243,7 @@ private:
 	utility::pointer::owning_ptr< protocols::moves::DataMapObj< std::string > > mover_tag_; /// dflt NULL; to communicate the current Splice mover's loop origin to the GenericMC
 	protocols::filters::FilterOP splice_filter_;
 	std::string Pdb4LetName_;
+	
 
 
 ///sequence profiles
