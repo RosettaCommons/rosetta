@@ -51,7 +51,7 @@ void instantiate_numeric_functions(std::string type_name)
         "rotation_matrix"
         , function_type(&rotation_matrix)
         , ( bp::arg("axis"), bp::arg("theta") )
-        , bp::return_value_policy< bp::return_by_value >() 
+        , bp::return_value_policy< bp::return_by_value >()
         , docstring);
   }
 
@@ -63,14 +63,14 @@ void instantiate_numeric_functions(std::string type_name)
         ("rotation_matrix_degrees_" + type_name).c_str()
         , function_type( &rotation_matrix_degrees )
         , ( bp::arg("axis"), bp::arg("theta") )
-        , bp::return_value_policy< bp::return_by_value >() 
+        , bp::return_value_policy< bp::return_by_value >()
         , docstring);
 
     bp::def(
         "rotation_matrix_degrees"
         , function_type( &rotation_matrix_degrees )
         , ( bp::arg("axis"), bp::arg("theta") )
-        , bp::return_value_policy< bp::return_by_value >() 
+        , bp::return_value_policy< bp::return_by_value >()
         , docstring);
   }
 
@@ -653,7 +653,7 @@ void instantiate_numeric_functions(std::string type_name)
 
   }
 
-  { // ::numeric::EulerAngles<T> 
+  { // ::numeric::EulerAngles<T>
     utility::wrap_access_pointer< ::numeric::EulerAngles<T> >(("EulerAngles_" + type_name).c_str());
     typedef boost::python::class_< ::numeric::EulerAngles<T>, boost::python::bases< ::numeric::xyzVector<T> > > EulerAngles_typename_exposer_type;
     EulerAngles_typename_exposer_type EulerAngles_typename_exposer(("EulerAngles_" + type_name).c_str(), "Euler angles 3-D orientation representation\n@remarks\nThe three euler angles (in radians) that describing a rotation operation\nof a Z axis rotation by the angle phi (position 1), followed by\nan X axis rotation by the angle theta (position 3), followed by another\nZ axis rotation by the angle psi (position 2).\nthis->code is a modified version of Alex Z's code from r++.\n@details\nThe range of phi is [ -pi, pi ];\nThe range of psi is [ -pi, pi ];\nThe range of theta is [ 0, pi ];\n", boost::python::init <  >() );
@@ -661,206 +661,206 @@ void instantiate_numeric_functions(std::string type_name)
     EulerAngles_typename_exposer.def( boost::python::init< ::numeric::xyzVector<T> const & > ( (boost::python::arg("v")) , "Copy constructor\n" ) );
     EulerAngles_typename_exposer.def( boost::python::init< T const &, T const &, T const & > ( (boost::python::arg("phi"), boost::python::arg("psi"), boost::python::arg("theta")) , "Triple value constructor\n" ) );
     EulerAngles_typename_exposer.def( boost::python::init< ::numeric::xyzMatrix<T> > ( (boost::python::arg("rotation_matrix")) , "Construct from rotation matrix.\n" ) );
-  
+
     { // ::numeric::EulerAngles<T>::from_rotation_matrix
       typedef void ( ::numeric::EulerAngles<T>:: * from_rotation_matrix_function_type)(::numeric::xyzMatrix<T> __a0) ;
-    
+
       EulerAngles_typename_exposer.def("from_rotation_matrix"
         , from_rotation_matrix_function_type( &::numeric::EulerAngles<T>::from_rotation_matrix )
         , ( boost::python::arg("matrix") )
         , "The equivalent rotation matrix representation of the euler angles would be:\nFIGURE 1:\nR = [\n      cos(psi)cos(phi)-cos(theta)sin(phi)sin(psi)        cos(psi)sin(phi)+cos(theta)cos(phi)sin(psi)      sin(psi)sin(theta)\n     -sin(psi)cos(phi)-cos(theta)sin(phi)cos(psi)       -sin(psi)sin(phi)+cos(theta)cos(phi)cos(psi)      cos(psi)sin(theta)\n                  sin(theta)sin(phi)                                 -sin(theta)cos(phi)                        cos(theta)\n]\nThe zz_ coordinate gives away theta.\nTheta may be computed as acos( zz_ ), or, as Alex does it, asin( sqrt( 1 - zz^2))\nSince there is redundancy in theta, this->function chooses a theta with a positive\nsin(theta): i.e. quadrants I and II.  Assuming we have a positive sin theta\npushes phi and psi into conforming angles.\nNOTE on theta: asin returns a value in the range [ -pi/2, pi/2 ], and we have artificially\ncreated a positive sin(theta), so we will get a asin( pos_sin_theta ), we have a value\nin the range [ 0, pi/2 ].  To convert this->into the actual angle theta, we examine the zz sign.\nIf zz is negative, we chose the quadrant II theta.\nThat is, asin( pos_sin_theta) returned an angle, call it theta'.  Now, if cos( theta ) is negative,\nthen we want to choose the positive x-axis rotation that's equivalent to -theta'.  To do so,\nwe reflect q through the y axis (See figure 2 below) to get p and then measure theta as pi - theta'.\nFIGURE 2:\n II        |         I\n           |\n   p.      |      .q (cos(-theta'), abs(sin(theta')))\n      .    |    .\ntheta'( .  |  .  )  theta' = asin( abs(sin(theta))\n-----------------------\n           |\n           |\n           |\n III       |        IV\n           |\n The angle between the positive x axis and p is pi - theta'.\nSince zx and zy contain only phi terms and a constant sin( theta ) term,\nphi is given by atan2( sin_phi, cos_phi ) = atan2( c*sin_phi, c*cos_phi ) = atan2( zx, -zy )\nfor c positive and non-zero.  If sin_theta is zero, or very close to zero, we're at gimbal lock.\nMoreover, since xz and yz contain only psi terms, psi may also be deduced using atan2.\nThere are 2 degenerate cases (gimbal lock)\n1. theta close to 0  (North Pole singularity), or\n2. theta close to pi (South Pole singularity)\nFor these, we take: phi=acos(xx), theta = 0 (resp. Pi/2), psi = 0\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::to_rotation_matrix
       typedef ::numeric::xyzMatrix<T> ( ::numeric::EulerAngles<T>:: * to_rotation_matrix_function_type)() ;
-    
+
       EulerAngles_typename_exposer.def("to_rotation_matrix"
         , to_rotation_matrix_function_type( &::numeric::EulerAngles<T>::to_rotation_matrix )
         , "Construct rotation matrix from three euler angles that describe the frame.\nSee the description for from_rotation_matrix to understand\nthe Z-X-Z transformation convention.\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::phi
       typedef T & ( ::numeric::EulerAngles<T>:: * phi_function_type)() ;
-    
+
       EulerAngles_typename_exposer.def("phi"
         , phi_function_type( &::numeric::EulerAngles<T>::phi )
         , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
         , "Value phi in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::phi
       typedef void ( ::numeric::EulerAngles<T>:: * phi_function_type)(T const & __a0) ;
-    
+
       EulerAngles_typename_exposer.def("phi"
         , phi_function_type( &::numeric::EulerAngles<T>::phi )
         , ( boost::python::arg("value") )
         , "Set value phi in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::phi_radians
       typedef T & ( ::numeric::EulerAngles<T>:: * phi_radians_function_type)() ;
-    
+
       EulerAngles_typename_exposer.def("phi_radians"
         , phi_radians_function_type( &::numeric::EulerAngles<T>::phi_radians )
         , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
         , "Value phi in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::phi_radians
       typedef void ( ::numeric::EulerAngles<T>:: * phi_radians_function_type)(T const & __a0) ;
-    
+
       EulerAngles_typename_exposer.def("phi_radians"
         , phi_radians_function_type( &::numeric::EulerAngles<T>::phi_radians )
         , ( boost::python::arg("value") )
         , "Set value phi in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::phi_degrees
       typedef T ( ::numeric::EulerAngles<T>:: * phi_degrees_function_type)() ;
-    
+
       EulerAngles_typename_exposer.def("phi_degrees"
         , phi_degrees_function_type( &::numeric::EulerAngles<T>::phi_degrees )
         , "Value phi in degrees\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::phi_degrees
       typedef void ( ::numeric::EulerAngles<T>:: * phi_degrees_function_type)(T const & __a0) ;
-    
+
       EulerAngles_typename_exposer.def("phi_degrees"
         , phi_degrees_function_type( &::numeric::EulerAngles<T>::phi_degrees )
         , ( boost::python::arg("value") )
         , "Set value phi in degrees\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::psi
       typedef T & ( ::numeric::EulerAngles<T>:: * psi_function_type)() ;
-    
+
       EulerAngles_typename_exposer.def("psi"
         , psi_function_type( &::numeric::EulerAngles<T>::psi )
         , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
         , "Value psi in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::psi
       typedef void ( ::numeric::EulerAngles<T>:: * psi_function_type)(T const & __a0) ;
-    
+
       EulerAngles_typename_exposer.def("psi"
         , psi_function_type( &::numeric::EulerAngles<T>::psi )
         , ( boost::python::arg("value") )
         , "Set value psi in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::psi_radians
       typedef T & ( ::numeric::EulerAngles<T>:: * psi_radians_function_type)() ;
-    
+
       EulerAngles_typename_exposer.def("psi_radians"
         , psi_radians_function_type( &::numeric::EulerAngles<T>::psi_radians )
         , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
         , "Value psi in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::psi_radians
       typedef void ( ::numeric::EulerAngles<T>:: * psi_radians_function_type)(T const & __a0) ;
-    
+
       EulerAngles_typename_exposer.def("psi_radians"
         , psi_radians_function_type( &::numeric::EulerAngles<T>::psi_radians )
         , ( boost::python::arg("value") )
         , "Set value psi in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::psi_degrees
       typedef T ( ::numeric::EulerAngles<T>:: * psi_degrees_function_type)() ;
-    
+
       EulerAngles_typename_exposer.def("psi_degrees"
         , psi_degrees_function_type( &::numeric::EulerAngles<T>::psi_degrees )
         , "Value psi in degrees\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::psi_degrees
       typedef void ( ::numeric::EulerAngles<T>:: * psi_degrees_function_type)(T const & __a0) ;
-    
+
       EulerAngles_typename_exposer.def("psi_degrees"
         , psi_degrees_function_type( &::numeric::EulerAngles<T>::psi_degrees )
         , ( boost::python::arg("value") )
         , "Set value psi in degrees\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::theta
       typedef T & ( ::numeric::EulerAngles<T>:: * theta_function_type)() ;
-    
+
       EulerAngles_typename_exposer.def("theta"
         , theta_function_type( &::numeric::EulerAngles<T>::theta )
         , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
         , "Value theta in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::theta
       typedef void ( ::numeric::EulerAngles<T>:: * theta_function_type)(T const & __a0) ;
-    
+
       EulerAngles_typename_exposer.def("theta"
         , theta_function_type( &::numeric::EulerAngles<T>::theta )
         , ( boost::python::arg("value") )
         , "Set value theta in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::theta_radians
       typedef T & ( ::numeric::EulerAngles<T>:: * theta_radians_function_type)() ;
-    
+
       EulerAngles_typename_exposer.def("theta_radians"
         , theta_radians_function_type( &::numeric::EulerAngles<T>::theta_radians )
         , boost::python::return_value_policy< boost::python::copy_non_const_reference>()
         , "Value theta in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::theta_radians
       typedef void ( ::numeric::EulerAngles<T>:: * theta_radians_function_type)(T const & __a0) ;
-    
+
       EulerAngles_typename_exposer.def("theta_radians"
         , theta_radians_function_type( &::numeric::EulerAngles<T>::theta_radians )
         , ( boost::python::arg("value") )
         , "Set value theta in radians\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::theta_degrees
       typedef T ( ::numeric::EulerAngles<T>:: * theta_degrees_function_type)() ;
-    
+
       EulerAngles_typename_exposer.def("theta_degrees"
         , theta_degrees_function_type( &::numeric::EulerAngles<T>::theta_degrees )
         , "Value theta in degrees\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::theta_degrees
       typedef void ( ::numeric::EulerAngles<T>:: * theta_degrees_function_type)(T const & __a0) ;
-    
+
       EulerAngles_typename_exposer.def("theta_degrees"
         , theta_degrees_function_type( &::numeric::EulerAngles<T>::theta_degrees )
         , ( boost::python::arg("value") )
         , "Set value theta in degrees\n" );
     }
-    
-  
+
+
     { // ::numeric::EulerAngles<T>::from_degrees
       typedef ::numeric::EulerAngles<T> ( * from_degrees_function_type)(T __phi, T __psi, T __theta);
-    
+
       EulerAngles_typename_exposer.def("from_degrees"
         , from_degrees_function_type( &::numeric::EulerAngles<T>::from_degrees )
         , ( boost::python::arg("phi"), boost::python::arg("psi"), boost::python::arg("theta") )
@@ -869,7 +869,7 @@ void instantiate_numeric_functions(std::string type_name)
 
     { // ::numeric::EulerAngles<T>::from_degrees
       typedef ::numeric::EulerAngles<T> ( * from_degrees_function_type)(xyzVector<T> __vector);
-    
+
       EulerAngles_typename_exposer.def("from_degrees"
         , from_degrees_function_type( &::numeric::EulerAngles<T>::from_degrees )
         , boost::python::arg("vector")
@@ -880,7 +880,7 @@ void instantiate_numeric_functions(std::string type_name)
 
     { // ::numeric::EulerAngles<T>::from_radians
       typedef ::numeric::EulerAngles<T> ( * from_radians_function_type)(T __phi, T __psi, T __theta);
-    
+
       EulerAngles_typename_exposer.def("from_radians"
         , from_radians_function_type( &::numeric::EulerAngles<T>::from_radians )
         , ( boost::python::arg("phi"), boost::python::arg("psi"), boost::python::arg("theta") )
@@ -889,7 +889,7 @@ void instantiate_numeric_functions(std::string type_name)
 
     { // ::numeric::EulerAngles<T>::from_radians
       typedef ::numeric::EulerAngles<T> ( * from_radians_function_type)(xyzVector<T> __vector);
-    
+
       EulerAngles_typename_exposer.def("from_radians"
         , from_radians_function_type( &::numeric::EulerAngles<T>::from_radians )
         , boost::python::arg("vector")
@@ -900,7 +900,7 @@ void instantiate_numeric_functions(std::string type_name)
 
     { // ::numeric::EulerAngles<T>::angular_distance_between
       typedef T ( * angular_distance_between_function_type)(::numeric::EulerAngles<T> __a0, ::numeric::EulerAngles<T> __a1);
-    
+
       EulerAngles_typename_exposer.def("angular_distance_between"
         , angular_distance_between_function_type( &::numeric::EulerAngles<T>::angular_distance_between )
         , ( boost::python::arg("a1"), boost::python::arg("a2") )
@@ -1250,6 +1250,17 @@ void instantiate_numeric_containers(std::string type_name)
               , bp::return_value_policy< bp::return_by_value >() );
 
       }
+      { //::numeric::xyzMatrix< T >::inverse
+
+          typedef numeric::xyzMatrix< T > exported_class_t;
+          typedef ::numeric::xyzMatrix< T > & ( exported_class_t::*inverse_function_type )(  ) ;
+
+          xyzMatrix_typename_exposer.def(
+              "inverse"
+              , inverse_function_type( &::numeric::xyzMatrix< T >::inverse )
+              , bp::return_value_policy< bp::return_by_value >() );
+
+      }
       { //::numeric::xyzMatrix< T >::xx
 
           typedef numeric::xyzMatrix< T > exported_class_t;
@@ -1583,6 +1594,21 @@ void instantiate_numeric_containers(std::string type_name)
                   , bp::return_value_policy< bp::return_by_value >() )  );
 
       }
+
+      { //property "inverted"[fget=::numeric::xyzMatrix< T >::inverted]
+
+          typedef numeric::xyzMatrix< T > fget_class_t;
+
+          typedef ::numeric::xyzMatrix< T > ( fget_class_t::*fget )(  ) const;
+
+          xyzMatrix_typename_exposer.add_property(
+              "inverted"
+              , bp::make_function(
+                    fget( &::numeric::xyzMatrix< T >::inverse )
+                  , bp::return_value_policy< bp::return_by_value >() )  );
+
+      }
+
       xyzMatrix_typename_exposer.def( bp::other<  T  >() != bp::self );
       xyzMatrix_typename_exposer.def( bp::self != bp::other<  T  >() );
       xyzMatrix_typename_exposer.def( bp::self != bp::self );
@@ -1612,7 +1638,8 @@ void instantiate_numeric_containers(std::string type_name)
       xyzMatrix_typename_exposer.def( bp::other<  T  >() >= bp::self );
       xyzMatrix_typename_exposer.def( bp::self >= bp::other<  T  >() );
       xyzMatrix_typename_exposer.def( bp::self >= bp::self );
-	    xyzMatrix_typename_exposer.def( bp::self_ns::str( bp::self ) );
+
+	  xyzMatrix_typename_exposer.def( bp::self_ns::str( bp::self ) );
   }
 
   bp::implicitly_convertible<  T  const &, numeric::xyzMatrix< T > >();
@@ -3258,15 +3285,16 @@ void instantiate_numeric_containers(std::string type_name)
   bp::implicitly_convertible<  T  const &, numeric::xyzVector< T > >();
 }
 
-void __numeric_by_hand_beginning__() {
+void __numeric_by_hand_ending__()
+{
+	// instantiate template classes at the end of numeric bindings so they act as default classes for Python for temaplte bindings (some of them might get binded automatically due to temaplate specifications)
+	instantiate_numeric_containers<double>("double");
+	instantiate_numeric_containers<float>("float");
+	instantiate_numeric_containers<numeric::Real>("Real");
+	instantiate_numeric_containers<numeric::Size>("Size");
+	instantiate_numeric_containers<numeric::SSize>("SSize");
 
-  instantiate_numeric_containers<double>("double");
-  instantiate_numeric_containers<float>("float");
-  instantiate_numeric_containers<numeric::Real>("Real");
-  instantiate_numeric_containers<numeric::Size>("Size");
-  instantiate_numeric_containers<numeric::SSize>("SSize");
-
-  instantiate_numeric_functions<double>("double");
-  instantiate_numeric_functions<float>("float");
-  instantiate_numeric_functions<numeric::Real>("Real");
+	instantiate_numeric_functions<double>("double");
+	instantiate_numeric_functions<float>("float");
+	instantiate_numeric_functions<numeric::Real>("Real");
 }

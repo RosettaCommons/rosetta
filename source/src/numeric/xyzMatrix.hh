@@ -1799,7 +1799,6 @@ public: // Properties: calculated
 			xz_ * ( ( yx_ * zy_ ) - ( zx_ * yy_ ) );
 	}
 
-
 	/// @brief Trace
 	inline
 	Value
@@ -1821,6 +1820,18 @@ public: // Properties: calculated
 		);
 	}
 
+	// Adding member version so we can use M.inverse in PyRosetta
+	inline
+	xyzMatrix < T >
+	inverse() const {
+		xyzMatrix const & a(*this);
+		T D = a.det();
+		return xyzMatrix< T >(
+			(a.yy_*a.zz_-a.yz_*a.zy_)/D, -(a.xy_*a.zz_-a.xz_*a.zy_)/D,  (a.xy_*a.yz_-a.xz_*a.yy_)/D,
+			-(a.yx_*a.zz_-a.zx_*a.yz_)/D,  (a.xx_*a.zz_-a.xz_*a.zx_)/D, -(a.xx_*a.yz_-a.xz_*a.yx_)/D,
+			(a.yx_*a.zy_-a.zx_*a.yy_)/D, -(a.xx_*a.zy_-a.xy_*a.zx_)/D,  (a.xx_*a.yy_-a.xy_*a.yx_)/D
+							  );
+	}
 
 public: // Comparison
 
