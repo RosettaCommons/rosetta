@@ -91,7 +91,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
 
 
-# do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
+# ⚔ do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
 # Copied from benchmark-model, standard state code's for tests results.
 _S_Draft_         = 'draft'
 _S_Queued_        = 'queued'

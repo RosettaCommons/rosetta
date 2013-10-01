@@ -21,6 +21,7 @@ tests = dict(
     debug   = './scons.py bin cxx={compiler} -j{jobs}',
     release = './scons.py bin cxx={compiler} mode=release -j{jobs}',
     static  = './scons.py bin cxx={compiler} mode=release extras=static -j{jobs}',
+    header  = 'cd src && python ./../../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}',
 )
 
 _TestSuite_ = False  # Set to True for TestSuite-like tests (Unit, Integration, Sfxn_fingerprint) and False other wise
@@ -51,7 +52,9 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     TR('Running test: "{test}" at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, tests[test].format(compiler=platform['compiler'], jobs=jobs)), return_='tuple')
+    res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir,
+                                                                      tests[test].format(compiler=platform['compiler'], jobs=jobs)),
+                          return_='tuple')
 
     file(working_dir+'/build-log.txt', 'w').write(output)
 
@@ -92,7 +95,7 @@ def run_test_suite(rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=Fa
 
 
 # Standard funtions and constants below ---------------------------------------------------------------------------------
-# Do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
+# ⚔ Do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
 # Copied from benchmark-model, standard state code's for tests results.
 _S_Draft_         = 'draft'
 _S_Queued_        = 'queued'
