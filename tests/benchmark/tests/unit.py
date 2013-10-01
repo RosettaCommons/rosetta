@@ -59,7 +59,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
     full_log += output  #file(working_dir+'/build-log.txt', 'w').write(output)
 
     if res:
-        results[_StateKey_] = _BuildFailed_
+        results[_StateKey_] = _S_BuildFailed_
         results[_LogKey_]   = full_log
         return results
 
@@ -73,7 +73,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
         full_log += output
 
         if res:
-            results[_StateKey_] = _ScriptFailed_
+            results[_StateKey_] = _S_ScriptFailed_
             results[_LogKey_]   = output  # ommiting compilation log and only including integration.py output
             return results
 
@@ -82,9 +82,9 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     for lib in json_results:
         key = lib[:-5]  # core.test → core
-        for t in json_results[lib]['ALL_TESTS']: r[ key + '.' + t.replace(':', '.')] = _Failed_ if t in json_results[lib]['FAILED_TESTS'] else _Finished_
+        for t in json_results[lib]['ALL_TESTS']: r[ key + '.' + t.replace(':', '.')] = _S_Failed_ if t in json_results[lib]['FAILED_TESTS'] else _S_Finished_
 
-    results[_StateKey_]   = reduce(lambda a, b: _Finished_ if a==_Finished_ and b==_Finished_ else _Failed_, r.values())
+    results[_StateKey_]   = reduce(lambda a, b: _S_Finished_ if a==_S_Finished_ and b==_S_Finished_ else _S_Failed_, r.values())
     results[_LogKey_]     = output  # ommiting compilation log and only including integration.py output
     results[_ResultsKey_] = r
     return results
@@ -92,10 +92,16 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
 
 # do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
-_Finished_     = '_Finished_'
-_Failed_       = '_Failed_'
-_BuildFailed_  = '_BuildFailed_'
-_ScriptFailed_ = '_ScriptFailed_'
+# Copied from benchmark-model, standard state code's for tests results.
+_S_Draft_         = 'draft'
+_S_Queued_        = 'queued'
+_S_Running_       = 'running'
+_S_Finished_      = 'finished'
+_S_Failed_        = 'failed'
+_S_BuildFailed_   = 'build failed'
+_S_ScriptFailed_  = 'script failed'
+
+_S_Values_ = [_S_Draft_, _S_Queued_, _S_Running_, _S_Finished_, _S_Failed_, _S_BuildFailed_, _S_ScriptFailed_]
 
 _StateKey_    = 'state'
 _ResultsKey_  = 'results'

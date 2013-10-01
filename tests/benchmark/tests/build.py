@@ -55,7 +55,7 @@ def run_test(test, rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
     file(working_dir+'/build-log.txt', 'w').write(output)
 
-    res_code = _Failed_ if res else _Finished_
+    res_code = _S_Failed_ if res else _S_Finished_
 
     #if res: return _Failed_,   output  # We do not use '_BuildFailed_' because build failed for us actually mean test failure
     #else:   return _Finished_, output
@@ -93,10 +93,16 @@ def run_test_suite(rosetta_dir, working_dir, jobs=1, hpc_driver=None, verbose=Fa
 
 # Standard funtions and constants below ---------------------------------------------------------------------------------
 # Do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
-_Finished_     = '_Finished_'
-_Failed_       = '_Failed_'
-_BuildFailed_  = '_BuildFailed_'
-_ScriptFailed_ = '_ScriptFailed_'
+# Copied from benchmark-model, standard state code's for tests results.
+_S_Draft_         = 'draft'
+_S_Queued_        = 'queued'
+_S_Running_       = 'running'
+_S_Finished_      = 'finished'
+_S_Failed_        = 'failed'
+_S_BuildFailed_   = 'build failed'
+_S_ScriptFailed_  = 'script failed'
+
+_S_Values_ = [_S_Draft_, _S_Queued_, _S_Running_, _S_Finished_, _S_Failed_, _S_BuildFailed_, _S_ScriptFailed_]
 
 _StateKey_    = 'state'
 _ResultsKey_  = 'results'

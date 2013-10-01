@@ -17,13 +17,17 @@ import os, sys, imp, shutil, json, platform
 
 import argparse
 
-# do not change this wording, they have to stay in sync with upstream (up to benchmark-model).
-_ResultCodes_ = dict(
-    _Finished_     = '_Finished_',
-    _Failed_       = '_Failed_',
-    _BuildFailed_  = '_BuildFailed_',
-    _ScriptFailed_ = '_ScriptFailed_'
-    )
+# ⚔ do not change wording below, it have to stay in sync with upstream (up to benchmark-model).
+# Copied from benchmark-model, standard state code's for tests results.
+_S_Draft_         = 'draft'
+_S_Queued_        = 'queued'
+_S_Running_       = 'running'
+_S_Finished_      = 'finished'
+_S_Failed_        = 'failed'
+_S_BuildFailed_   = 'build failed'
+_S_ScriptFailed_  = 'script failed'
+
+_S_Values_ = [_S_Draft_, _S_Queued_, _S_Running_, _S_Finished_, _S_Failed_, _S_BuildFailed_, _S_ScriptFailed_]
 
 _StateKey_    = 'state'
 _ResultsKey_  = 'results'
@@ -49,6 +53,7 @@ else:                                Platform['os'] = '_unknown_'
 
 #Platform['arch'] = platform.architecture()[0][:2]  # PlatformBits
 Platform['compiler'] = 'gcc'
+
 
 
 def main(args):
@@ -81,7 +86,7 @@ def main(args):
 
             res = test_suite.run_test(test=test_name, rosetta_dir=os.path.abspath('../..'), working_dir=working_dir, platform=dict(Platform), jobs=Options.jobs, verbose=True)
 
-            if res[_StateKey_] not in _ResultCodes_.values(): print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_])
+            if res[_StateKey_] not in _S_Values_: print 'Warning!!! Test {} failed with unknow result code: {}'.format(t, res[_StateKey_])
             else: print 'Test {} finished with output:\n{}'.format(test, json.dumps(res, sort_keys=True, indent=2))
 
 
