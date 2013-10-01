@@ -70,6 +70,7 @@ public:
 	virtual void add_parents_from_current_generation();
 	virtual void propagate_best_from_previous_generation( core::Size size = 1, bool unique = true );
 	virtual void fill_with_random_entities( core::Size size = 0 );
+	virtual void fill_with_perturbations_of_existing_entities( core::Size size = 0 );
 	virtual void fill_by_crossover( core::Size size = 0 );
 	virtual void fill_by_mutation( core::Size size = 0 );
 	virtual void evaluate_fitnesses();

@@ -85,6 +85,7 @@
 OPT_1GRP_KEY( String, msd, entity_resfile )
 OPT_1GRP_KEY( String, msd, fitness_file )
 OPT_1GRP_KEY( StringVector, msd, seed_sequences )
+OPT_1GRP_KEY( Boolean, msd, fill_gen1_from_seed_sequences )
 OPT_1GRP_KEY( Integer, msd, double_lazy_ig_mem_limit )
 OPT_1GRP_KEY( Boolean, msd, dont_score_bbhbonds )
 OPT_1GRP_KEY( Boolean, msd, exclude_background_energies )
@@ -147,7 +148,7 @@ public:
 				entity.set_entity_element( ii, choices()[ ii ][ new_element_ind ] );
 			}
 		} else {
-			Size pos_to_mutate = static_cast< Size > ( entity.traits().size() * numeric::random::uniform() ) + 1;		
+			Size pos_to_mutate = static_cast< Size > ( entity.traits().size() * numeric::random::uniform() ) + 1;
 			core::Size const n_mutation_choices( choices()[ pos_to_mutate ].size() );
 			Size new_element_ind = static_cast< core::Size >( numeric::random::uniform() * n_mutation_choices ) + 1;
 			entity.set_entity_element( pos_to_mutate, choices()[ pos_to_mutate ][ new_element_ind ] );
@@ -206,7 +207,7 @@ read_native_sequence_for_entity_elements( core::Size n_designed_positions )
 		Size ii_entity = ec->entity_for_residue( ii );
 		if ( ii_entity  == 0 ) continue;
 		if ( aa_for_design_position.find( ii_entity ) != aa_for_design_position.end() ) {
-			utility_exit_with_message( "Repeat entity element for native pdb: " + pdb_name + " with correspondence file " + 
+			utility_exit_with_message( "Repeat entity element for native pdb: " + pdb_name + " with correspondence file " +
 				correspondence_file_name + ".  Entity correspondence file should only include each residue once");
 		}
 		aa_for_design_position[ ii_entity ] = pose.residue_type( ii ).aa();
@@ -221,7 +222,7 @@ read_native_sequence_for_entity_elements( core::Size n_designed_positions )
 	}
 	return aa_string;
 
-	
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -231,10 +232,10 @@ read_native_sequence_for_entity_elements( core::Size n_designed_positions )
 class HPatchNPDCalculator : public protocols::pack_daemon::NPDPropCalculator
 {
 public:
-	
+
 	virtual
 	core::Real
-	calculate( core::pose::Pose const & p ) { 
+	calculate( core::pose::Pose const & p ) {
 		return core::pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_hpatch_score( p );
 	}
 
@@ -280,7 +281,7 @@ public:
 
 	virtual
 	core::Real
-	calculate( core::pose::Pose const & p ) { 
+	calculate( core::pose::Pose const & p ) {
 		// MJO COMMENTING OUT BECAUSE IT IS UNUSED:
 		// Size chain_offset = 0;
 		for ( core::Size ii = 1; ii <= p.total_residue(); ++ii ) {
@@ -347,11 +348,11 @@ public:
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator( "unsat", unsat_calculator );
 		}
 
-	}	
+	}
 
 	virtual
 	core::Real
-	calculate( core::pose::Pose const & p ) { 
+	calculate( core::pose::Pose const & p ) {
 		for ( core::Size ii = 1; ii <= pose_->total_residue(); ++ii ) {
 			if ( ! task_->being_packed( ii ) ) continue;
 			pose_->replace_residue( ii, p.residue( ii ), false );
@@ -406,6 +407,7 @@ int main( int argc, char ** argv )
 	NEW_OPT( msd::dont_score_bbhbonds, "Disable the default activation of the decompose_bb_hb_into_pair_energies flag for hbonds", false );
 	NEW_OPT( msd::exclude_background_energies, "Disable the default activation of the inclusion of background one-body and background/background two-body interaction energies in the state energies (which until now held only the packer energies)", false );
 	NEW_OPT( msd::seed_sequences, "Seed the GA's population with the given input sequences", "" );
+	NEW_OPT( msd::fill_gen1_from_seed_sequences, "Fill the entirety of the first generation from perturbations off the seed sequences that were provided", false );
 	NEW_OPT( msd::seed_sequence_from_input_pdb, "Seed the GA's population with the given input sequences using the sequence already present in a given pdb file; requires the use of the msd::seed_sequence_using_correspondence_file flag ", "" );
 	NEW_OPT( msd::seed_sequence_using_correspondence_file, "The name of the correspondence file to guide the seeding of the GA's population with the sequence from a particular pdb", "" );
 
@@ -468,7 +470,7 @@ int main( int argc, char ** argv )
 		protocols::pack_daemon::MPIMultistateFitnessFunctionOP func = new protocols::pack_daemon::MPIMultistateFitnessFunction;
 		protocols::pack_daemon::DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
 		daf->set_num_entity_elements( ds->entity_task()->total_residue() );
-		daf->set_score_function( *sfxn ); // assume one score function for the entire 
+		daf->set_score_function( *sfxn ); // assume one score function for the entire
 		utility::io::izstream daf_file( daf_filename );
 		try {
 			daf->initialize_from_input_file( ds, daf_file );
@@ -525,7 +527,11 @@ int main( int argc, char ** argv )
 			ga.add_entity( entity_elements_from_1letterstring( seq ) );
 		}
 
-		ga.fill_with_random_entities();
+		if ( option[ msd::fill_gen1_from_seed_sequences ] && option[ msd::seed_sequences ].user() ) {
+			ga.fill_with_perturbations_of_existing_entities();
+		} else {
+			ga.fill_with_random_entities();
+		}
 		// clear parents for the next generation
 		// ga.clear_parents(); // do I need this?
 		// loop over generations
@@ -608,7 +614,7 @@ int main( int argc, char ** argv )
 	MPI_Finalize();
 #endif
 
-	 } catch ( utility::excn::EXCN_Base const & e ) { 
+	 } catch ( utility::excn::EXCN_Base const & e ) {
 		 std::cout << "caught exception " << e.msg() << std::endl;
 	}
 	return 0;

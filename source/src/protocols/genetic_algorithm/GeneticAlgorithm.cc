@@ -204,6 +204,29 @@ GeneticAlgorithm::fill_with_random_entities( core::Size size /* = 0 */ )
 	}
 }
 
+void
+GeneticAlgorithm::fill_with_perturbations_of_existing_entities( core::Size size /* = 0 */ )
+{
+	core::Size start_size = generations_[ current_generation_ ].size();
+	for ( core::Size ii = 1; ii <= start_size; ++ii ) {
+		TR << "fill_with_perturbations_of_existing_entities " << ii;
+		generations_[ current_generation_ ][ ii ]->show( TR );
+		TR << std::endl;
+	}
+	if ( size == 0 ) size = max_population_size_;
+	TR << "creating an additional " << size - generations_[ current_generation_ ].size() << " sequences" << std::endl;
+
+	while ( generations_[ current_generation_ ].size() < size ) {
+		core::Size seed_sequence = numeric::random::uniform() * start_size + 1;
+		EntityOP child = generations_[ current_generation_ ][ seed_sequence ]->clone();
+		entity_randomizer_->mutate( *child );
+		TR << "fill_with_perturbations_of_existing_entities ";
+		child->show( TR );
+		TR << std::endl;
+		add_entity( child );
+	}
+}
+
 ///@brief add entities that are recombinants of fit parents
 void
 GeneticAlgorithm::fill_by_crossover( core::Size size /* = 0 */ )
