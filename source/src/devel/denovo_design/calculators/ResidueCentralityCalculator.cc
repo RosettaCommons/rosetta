@@ -42,23 +42,10 @@ namespace calculators {
 
 /// @brief default constructor
 ResidueCentralityCalculator::ResidueCentralityCalculator() :
-	core::pose::metrics::StructureDependentCalculator(),
-	last_pose_( NULL )
+	core::pose::metrics::StructureDependentCalculator()
 {
 	centralities_.clear();
 	excluded_residues_.clear();
-}
-
-/// @brief copy constructor
-ResidueCentralityCalculator::ResidueCentralityCalculator( ResidueCentralityCalculator const & rval ) :
-	core::pose::metrics::StructureDependentCalculator( rval ),
-	last_pose_( NULL ),
-	centralities_( rval.centralities_ ),
-	excluded_residues_( rval.excluded_residues_ )
-{
-	if ( rval.last_pose_ ) {
-		last_pose_ = new core::pose::Pose( *(rval.last_pose_) );
-	}
 }
 
 /// @brief destructor
@@ -107,125 +94,111 @@ ResidueCentralityCalculator::print( std::string const & key ) const
 	return result;
 } // apply
 
-void Dijkstras(utility::vector1<NodeOP> &nodes, utility::vector1<EdgeOP> const & edges)
+void Dijkstras( std::list< NodeOP > & nodes )
 {
-	while (nodes.size() > 0) {
-		NodeOP smallest = ExtractSmallest(nodes);
-		utility::vector1<NodeOP> const & adjacentNodes( AdjacentRemainingNodes(nodes, edges, smallest) );
-		core::Size const size = adjacentNodes.size();
-		for (core::Size i=1; i<=size; ++i) {
-			int distance = Distance(edges, smallest, adjacentNodes[i] ) +
-				smallest->distanceFromStart;
-			if (distance < adjacentNodes[i]->distanceFromStart)	{
-				adjacentNodes[i]->distanceFromStart = distance;
-				adjacentNodes[i]->previous = smallest;
+	while ( nodes.size() > 0 ) {
+		NodeOP smallest = ExtractSmallest( nodes );
+		TR.Debug << "smallest has distance=" << smallest->distanceFromStart << " and neighbors=" << smallest->neighbors.size() << std::endl;
+		if ( smallest->distanceFromStart > 10000 ) {
+			TR.Debug << "Dump of node table and shortest distances:";
+			for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
+				TR.Debug << (*it)->resi << " " << (*it)->distanceFromStart << std::endl;
+			}
+			utility_exit();
+		}
+		std::list< NodeOP > const & adjacentNodes( AdjacentRemainingNodes( nodes, smallest ) );
+		TR << "Nodes adjacent to " << smallest->resi << ": ";
+		for ( std::list< NodeOP >::const_iterator it = adjacentNodes.begin(); it != adjacentNodes.end(); ++it ) {
+			TR.Debug << " " << (*it)->resi;
+			int distance = smallest->distanceFromStart + 1;
+			if ( distance < (*it)->distanceFromStart ) {
+				(*it)->distanceFromStart = distance;
 			}
 		}
+		TR.Debug << std::endl;
 	}
 }
 
 // Find the node with the smallest distance,
 // remove it, and return it.
 NodeOP
-ExtractSmallest(utility::vector1<NodeOP>& nodes)
+ExtractSmallest( std::list< NodeOP > & nodes )
 {
-	core::Size const size = nodes.size();
-	if (size == 0) return NULL;
-	core::Size smallestPosition = 1;
-	NodeOP smallest = nodes.at(1);
-	for (core::Size i=2; i<=size; ++i) {
-		NodeOP current = nodes.at(i);
-		if (current->distanceFromStart <
-				smallest->distanceFromStart) {
+	if ( nodes.size() == 0 ) return NULL;
+	std::list< NodeOP >::iterator smallest( nodes.begin() );
+	for ( std::list< NodeOP >::iterator current = ++(nodes.begin()); current != nodes.end(); ++current ) {
+		if ( (*current)->distanceFromStart < (*smallest)->distanceFromStart ) {
 			smallest = current;
-			smallestPosition = i;
 		}
 	}
-	nodes.erase(nodes.begin() + smallestPosition - 1);
-	return smallest;
+	NodeOP retval( *smallest );
+	nodes.erase( smallest );
+	retval->in_list = false;
+	return retval;
 }
 
 // Return all nodes adjacent to 'node' which are still
 // in the 'nodes' collection.
-utility::vector1<NodeOP>
-AdjacentRemainingNodes(utility::vector1<NodeOP> const & nodes, utility::vector1<EdgeOP> const & edges, NodeOP node)
+std::list< NodeOP >
+AdjacentRemainingNodes( std::list< NodeOP > const & nodes, NodeOP node )
 {
-	utility::vector1<NodeOP> adjacentNodes;
-	core::Size const size = edges.size();
-	for(core::Size i=1; i<=size; ++i) {
-		EdgeOP edge = edges.at(i);
-		NodeOP adjacent = NULL;
-		if (edge->node1 == node) {
-			adjacent = edge->node2;
-		}
-		else if (edge->node2 == node) {
-			adjacent = edge->node1;
-		}
-		if (adjacent && Contains(nodes, adjacent)) {
-			adjacentNodes.push_back(adjacent);
+	assert( ! node->in_list );
+	std::list< NodeOP > adjacentNodes;
+	for ( std::list< NodeOP >::const_iterator cur_neighbor = node->neighbors.begin();
+				cur_neighbor != node->neighbors.end();
+				++cur_neighbor ) {
+		if ( (*cur_neighbor)->in_list ) {
+			//if ( Contains( nodes, *cur_neighbor ) ) {
+			adjacentNodes.push_back( *cur_neighbor );
 		}
 	}
 	return adjacentNodes;
 }
 
-// Return distance between two connected nodes
-int
-Distance(utility::vector1<EdgeOP> const & edges, NodeOP node1, NodeOP node2)
-{
-	core::Size const size = edges.size();
-	for(core::Size i=1; i<=size; ++i)
-		{
-			EdgeOP edge = edges.at(i);
-			if (edge->Connects(node1, node2))
-				{
-					return edge->distance;
-				}
-		}
-	return -1; // should never happen
-}
-
 // Does the 'nodes' vector contain 'node'
 bool
-Contains(utility::vector1<NodeOP> const & nodes, NodeOP node)
+Contains( std::list< NodeOP > const & nodes, NodeCOP node)
 {
-	core::Size const size = nodes.size();
-	for(core::Size i=1; i<=size; ++i)
-		{
-			if (node == nodes.at(i))
-				{
-					return true;
-				}
-		}
+	for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
+		if ( node == *it )
+			return true;
+	}
 	return false;
 }
 
-utility::vector1< utility::vector1< bool > >
-neighbors( core::pose::Pose const & pose )
+void
+find_neighbors( core::pose::Pose const & pose,
+								std::list< NodeOP > const & nodes )
 {
+	for ( std::list< NodeOP >::const_iterator res_it_1 = nodes.begin(); res_it_1 != nodes.end(); ++res_it_1 ) {
+		(*res_it_1)->neighbors.clear();
+	}
+
 	// Residues are in contact if >=1 atom from each residue is less far than this
 	core::Real const distance_threshold( 5.0 );
 	core::Real const max_possible_dist( 12.5 + distance_threshold );
 
-	utility::vector1<bool> vecn( pose.total_residue(), false );
-	utility::vector1< utility::vector1< bool > > vec( pose.total_residue(), vecn );
+	for ( std::list< NodeOP >::const_iterator res_it_1 = nodes.begin(); res_it_1 != nodes.end(); ++res_it_1 ) {
+		core::conformation::Residue const & res_target( pose.residue( (*res_it_1)->resi ) );
 
-	for ( core::Size resi=1; resi<=pose.total_residue()-1; ++resi ) {
-		core::conformation::Residue const & res_target( pose.residue( resi ) );
-
-		core::Size resi_neighbors( 0 );
-		for ( core::Size i=resi+1; i<=pose.total_residue(); ++i ) {
-			core::conformation::Residue const & resj( pose.residue( i ) );
-			core::Real closest( -1 );
-
+		std::list< NodeOP >::const_iterator res_it_start = res_it_1;
+		for ( std::list< NodeOP >::const_iterator res_it_2 = (++res_it_start); res_it_2 != nodes.end(); ++res_it_2 ) {
+			core::conformation::Residue const & resj( pose.residue( (*res_it_2)->resi ) );
+			core::Real closest( -1.0 );
 			// if the distance is less than the maximum possible interaction distance (arg side chain + arg side chain ~= 12.5 A)
 			// then we compute distances for each atom
-			if ( res_target.xyz( res_target.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) <= max_possible_dist ) {
+			core::Real nbr_dist( res_target.xyz( res_target.nbr_atom() ).distance( resj.xyz( resj.nbr_atom() ) ) );
+			if ( nbr_dist <= distance_threshold ) {
+				(*res_it_1)->neighbors.push_back( *res_it_2 );
+				(*res_it_2)->neighbors.push_back( *res_it_1 );
+				TR.Debug<<"Adding residue "<<(*res_it_2)->resi<<" as a neighbor of "<<(*res_it_1)->resi<<" by nbr. -- Count = "<<(*res_it_1)->neighbors.size()<<","<<(*res_it_2)->neighbors.size()<<std::endl;
+			} else if ( nbr_dist <= max_possible_dist ) {
 				core::conformation::Atoms const & atoms1( res_target.atoms() );
 				core::conformation::Atoms const & atoms2( resj.atoms() );
 				for ( core::Size a1=1; a1<=atoms1.size(); ++a1 ) {
 					for ( core::Size a2=1; a2<=atoms2.size(); ++a2 ) {
 						core::Real const distance( atoms1[a1].xyz().distance( atoms2[a2].xyz() ) );
-						TR.Debug << "r1=" << resi << ", a1=" << atoms1[a1] << ", r2=" << i << ", a2=" << atoms2[a2] << ", dist=" << distance << std::endl;
+						TR.Debug << "r1=" << (*res_it_1)->resi << ", a1=" << atoms1[a1] << ", r2=" << (*res_it_2)->resi << ", a2=" << atoms2[a2] << ", dist=" << distance << std::endl;
 						if ( closest <= 0 || closest > distance ) {
 							closest = distance;
 						}
@@ -239,80 +212,58 @@ neighbors( core::pose::Pose const & pose )
 					}
 				}
 				if( closest <= distance_threshold ){
-					vec[resi][i] = true;
-					vec[i][resi] = true;
-					++resi_neighbors;
-					TR.Debug<<"Adding residue "<<i<<" as a neighbor of "<<resi<<" -- Count = "<<resi_neighbors<<std::endl;
+				(*res_it_1)->neighbors.push_back( *res_it_2 );
+				(*res_it_2)->neighbors.push_back( *res_it_1 );
+				TR.Debug<<"Adding residue "<<(*res_it_2)->resi<<" as a neighbor of "<<(*res_it_1)->resi<<" -- Count = "<<(*res_it_1)->neighbors.size()<<","<<(*res_it_2)->neighbors.size()<<std::endl;
 				}
 			}
 		}
 	}
-	return vec;
 }
 
-utility::vector1<NodeOP>
+std::list< NodeOP >
 generate_nodes( core::pose::Pose const & pose )
 {
-	utility::vector1<NodeOP> nodes;
+	std::list<NodeOP> nodes;
+
 	// populate lists of nodes and edges
 	for ( core::Size i=1; i<=pose.total_residue(); i++ ){
 		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );
 		TR.Debug << "Adding node " << resname << std::endl;
-		NodeOP newnode = new Node( resname, i );
-		nodes.push_back( newnode );
+		nodes.push_back( new Node( resname, i ) );
 	} // for each residue
-	TR << "nodes size=" << nodes.size() << ", computing edges..." << std::endl;
+
+	TR << "nodes size=" << nodes.size() << ", computing edges..."; TR.flush();
+
+	// find neighbors
+	find_neighbors( pose, nodes );
+
+	TR << "done." << std::endl;
+
 	return nodes;
 }
 
-utility::vector1<EdgeOP>
-generate_edges( core::pose::Pose const & pose, utility::vector1<NodeOP> const & nodes )
-{
-	runtime_assert( pose.total_residue() == nodes.size() );
-	utility::vector1<EdgeOP> edges;
-
-	// get neighbor list
-	utility::vector1< utility::vector1< bool > > const & n_vec( neighbors( pose ) );
-	runtime_assert( n_vec.size() == pose.total_residue() );
-	runtime_assert( n_vec[1].size() == pose.total_residue() );
-
-	// populate lists of nodes and edges
-	for ( core::Size i=1; i<=pose.total_residue()-1; ++i ){
-		NodeOP newnode = nodes[i];
-		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );
-
-		for ( core::Size j=i+1; j<=pose.total_residue(); ++j ){
-			if ( n_vec[i][j] ){
-				TR.Debug << "Adding edge from " << nodes[j]->id << " to " << newnode->id << std::endl;
-				edges.push_back( new Edge( nodes[j], newnode, 1 ) );
-			}
-		} // for neighbors
-	} // for each residue
-	TR << "edges size=" << edges.size() << " and total residues in pose=" << pose.total_residue() << std::endl;
-	return edges;
-}
-
 core::Real
-ResidueCentralityCalculator::connectivity_index( utility::vector1< NodeOP> const & nodes,
-																								 utility::vector1< EdgeOP> const & edges,
+ResidueCentralityCalculator::connectivity_index( std::list< NodeOP > const & nodes,
 																								 core::Size const resi ) const {
 	// reset nodes
-	for ( core::Size i=1; i<= nodes.size(); ++i ) {
-		if ( i == resi ) {
-			nodes[i]->distanceFromStart = 0;
+	for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
+		(*it)->in_list = true;
+		if ( (*it)->resi == resi ) {
+			(*it)->distanceFromStart = 0;
 		} else {
-			nodes[i]->distanceFromStart = INT_MAX;
+			(*it)->distanceFromStart = INT_MAX;
 		}
-
 	}
+
 	// run dijkstra's algorithm
-	utility::vector1<NodeOP> nodecopy(nodes);
-	Dijkstras( nodecopy, edges );
+	std::list< NodeOP > nodecopy(nodes);
+	Dijkstras( nodecopy );
 
 	core::Real running_sum = 0.0;
-	for ( core::Size i=1; i<=nodes.size(); i++ ) {
-		core::Size shortest_path = nodes[i]->distanceFromStart;
-		TR.Debug << "Shortest path from " << resi << " to " << i << " is " << shortest_path << std::endl;
+	for ( std::list< NodeOP >::const_iterator it = nodes.begin(); it != nodes.end(); ++it ) {
+		core::Size shortest_path = (*it)->distanceFromStart;
+		TR.Debug << "Shortest path from " << resi << " to " << (*it)->resi << " is " << shortest_path << std::endl;
 		running_sum += shortest_path;
 	} // for each residue
 	return ( nodes.size() - 1 ) / running_sum;
@@ -323,19 +274,18 @@ void
 ResidueCentralityCalculator::recompute( core::pose::Pose const & pose )
 {
 	// convert to centroid and compare to saved pose; if it is the same, don't do anything.
-
-	last_pose_ = new core::pose::Pose( pose );
 	centralities_.clear();
+	excluded_residues_.clear();
+
 	// generate lists of nodes/edges
-	utility::vector1<NodeOP> const & nodes( generate_nodes( pose ) );
-	utility::vector1<EdgeOP> const & edges( generate_edges( pose , nodes ) );
+	std::list< NodeOP > const & nodes( generate_nodes( pose ) );
 	for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
 		// if this residue is ala or gly, flag it by scoring it as -1
 		if ( pose.residue( i ).name3() == "GLY" || pose.residue( i ).name3() == "ALA" ) {
 			centralities_.push_back( -1 );
 			excluded_residues_.push_back( i );
 		} else {
-			centralities_.push_back( connectivity_index( nodes, edges, i ) );
+			centralities_.push_back( connectivity_index( nodes, i ) );
 		}
 	}
 	// compute mean for standardization
@@ -345,6 +295,7 @@ ResidueCentralityCalculator::recompute( core::pose::Pose const & pose )
 			mean += centralities_[i];
 		}
 	}
+	TR.Info << "Centralities size = " << centralities_.size() << "; excluded_residues size = " << excluded_residues_.size() << std::endl;
 	mean /= ( centralities_.size() - excluded_residues_.size() );
 
 	// compute std dev

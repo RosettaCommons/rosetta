@@ -27,6 +27,7 @@
 #include <utility/vector1.hh>
 
 //// C++ headers
+#include <list>
 
 // Parser headers
 #include <protocols/moves/DataMap.fwd.hh>
@@ -41,66 +42,41 @@ namespace calculators {
 class Node;
 class Edge;
 typedef utility::pointer::owning_ptr< Node > NodeOP;
+typedef utility::pointer::owning_ptr< Node const > NodeCOP;
 typedef utility::pointer::owning_ptr< Edge > EdgeOP;
+typedef utility::pointer::owning_ptr< Edge const > EdgeCOP;
 
 // Nodes and edges for dijkstra's algorithm
 class Node : public utility::pointer::ReferenceCount
 {
 public:
-	Node(std::string const id, core::Size const resi)
-		: resi(resi), id(id), previous(NULL),
+	Node( std::string const id, core::Size const resi)
+		: resi(resi), id(id),
 			distanceFromStart(9999),
-			index( -1 ), lowlink( -1 )
+			in_list( false )
 	{
+		neighbors.clear();
 	}
 
 public:
 	core::Size resi;
 	std::string id;
-	NodeOP previous;
+	std::list< NodeOP > neighbors;
 	int distanceFromStart;
-	int index;
-	int lowlink;
-};
-
-class Edge : public utility::pointer::ReferenceCount
-{
-public:
-	Edge(NodeOP node1, NodeOP node2, int distance)
-		: node1(node1), node2(node2), distance(distance)
-	{
-	}
-
-	bool Connects(NodeOP node1, NodeOP node2)
-	{
-		return ( ( node1 == this->node1 && node2 == this->node2 ) ||
-						 ( node1 == this->node2 && node2 == this->node1 ) );
-	}
-
-	bool contains( NodeOP node ) {
-		return ( ( this->node1 == node ) || ( this->node2 == node ) );
-	}
-
-public:
-	NodeOP node1;
-	NodeOP node2;
-	int distance;
+	bool in_list;
 };
 
 NodeOP
-ExtractSmallest(utility::vector1<NodeOP>& nodes);
+ExtractSmallest( std::list< NodeOP > & nodes);
 
-utility::vector1<NodeOP>
-AdjacentRemainingNodes(utility::vector1<NodeOP> const & nodes, utility::vector1<EdgeOP> const & edges, NodeOP node);
-
-int
-Distance(utility::vector1<EdgeOP> const & edges, NodeOP node1, NodeOP node2);
+std::list< NodeOP >
+AdjacentRemainingNodes( std::list< NodeOP > const & nodes, NodeOP node);
 
 bool
-Contains(utility::vector1<NodeOP> const & nodes, NodeOP node);
+Contains( std::list< NodeOP > const & nodes, NodeCOP node );
 
-utility::vector1< utility::vector1<bool> >
-neighbors( core::pose::Pose const & pose );
+void
+find_neighbors( core::pose::Pose const & pose, std::list< NodeOP > const & nodes );
 
 
 class ResidueCentralityCalculator : public core::pose::metrics::StructureDependentCalculator {
@@ -108,9 +84,6 @@ public:// constructor/destructor
 
 	/// @brief default constructor
 	ResidueCentralityCalculator();
-
-	/// @brief copy constructor
-	ResidueCentralityCalculator( ResidueCentralityCalculator const & rval );
 
 	/// @brief destructor
 	virtual ~ResidueCentralityCalculator();
@@ -130,15 +103,10 @@ protected:
 private:// private functions
 	/// @brief determine the connectivity index of a residue
 	core::Real
-	connectivity_index( utility::vector1< NodeOP > const & nodes,
-											utility::vector1< EdgeOP > const & edges,
+	connectivity_index( std::list< NodeOP > const & nodes,
 											core::Size const resi ) const;
 
 private:// member variables
-
-	/// @brief the pose that recompute() was last called on
-	core::pose::PoseOP last_pose_;
-
 	/// @brief the computed list of centrality indices, by residue
 	utility::vector1< core::Real > centralities_;
 
