@@ -164,6 +164,7 @@ sources = {
 		"convert_to_centroid",
 		"extended_chain",
 		"strand_pairings",
+		"decoy_features",
 	],
 	"pilot/delucasl" : [
 		#"roc_test",
