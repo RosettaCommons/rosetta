@@ -187,11 +187,10 @@ chemical::ResidueTypeCOPs residue_types_from_sequence(
 /// default.\n
 /// Stereochemical indication: "L-" or "D-" specifies whether residue n is an L- or D-sugar.  The default is "D-".\n
 /// 3-Letter code: A three letter code (in sentence case) MUST be supplied next.  This specifies the "base sugar name",
-/// e.g., Glc is for glucose.  (A list of all recognized 3-letter codes for sugars can be found in
-/// src/core/chemical/carbohydrates/CarbohydrateInfo.cc.)\n
+/// e.g., Glc is for glucose.  (A list of all recognized 3-letter codes for sugars can be found in the database.)\n
 /// 1-Letter suffix: If no suffix follows, residue n will be linear.  If a letter is present, it indicates the ring
-/// size, where "f" is furanose, "p" is puranose, and "s" is septanose.
-/// @remarks   At present time, param files only exist for two variations of glucopyranose! ~ Labonte
+/// size, where "f" is furanose, "p" is pyranose, and "s" is septanose.
+/// @remarks   At present time, param files only exist for a few saccharide residues! ~ Labonte
 chemical::ResidueTypeCOPs
 residue_types_from_saccharide_sequence(std::string const & sequence,
 		chemical::ResidueTypeSet const & residue_set)
