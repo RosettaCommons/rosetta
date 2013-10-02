@@ -64,11 +64,13 @@ RestrictToNonzeroSASAOperation::apply( core::pose::Pose const & pose, core::pack
 
   // Get the SASA for each residue in the monomeric state
 	core::conformation::symmetry::SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
-	core::Size res_count = 0;	
+	core::Size res_count = 0;
 
+	core::pose::Pose pose_asu;
+	core::pose::symmetry::extract_asymmetric_unit(pose, pose_asu);
 	for (core::Size i = 1; i <= ncomp_; i++) {
 		std::string select_buried_pos("select buried_pos, resi ");
-		core::pose::PoseOP mono = pose.split_by_chain(i); // Extract monomer from each component
+		core::pose::PoseOP mono = pose_asu.split_by_chain(i); // Extract monomer from each component
   	utility::vector1<Real> sc_sasa = devel::matdes::sidechain_sasa(*mono, probe_radius_);
 		//mono.dump_pdb("mono.pdb");
 		// If the residue is totally buried, prevent_repacking
@@ -76,7 +78,7 @@ RestrictToNonzeroSASAOperation::apply( core::pose::Pose const & pose, core::pack
 			if( !mono->residue( ir ).is_protein() ) continue;
 			res_count++;
 			if (sc_sasa[ir] <= 0.0) {
-				select_buried_pos.append(ObjexxFCL::string_of(res_count) + "+");   
+				select_buried_pos.append(ObjexxFCL::string_of(res_count) + "+");
 				TR.Debug << "resi " << res_count << " will not be repacked because it is buried." << std::endl;
 				task.nonconst_residue_task(res_count).prevent_repacking();
 			}
@@ -91,7 +93,7 @@ RestrictToNonzeroSASAOperation::parse_tag( TagPtr tag )
 
   probe_radius_ = tag->getOption<core::Real>("probe_radius", 2.2);
   ncomp_ = tag->getOption<core::Size>("ncomp", 1);
-	
+
 }
 
 void
