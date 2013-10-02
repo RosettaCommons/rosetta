@@ -69,7 +69,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies=" oldnames.lib libcmtd.lib libcpmtd.lib kernel32.lib z.lib delayimp.lib boinc_zip.lib odbc32.lib odbccp32.lib utility.lib basic.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib core.1.lib core.2.lib core.3.lib core.4.lib core.5.lib numeric.lib ObjexxFCL.lib protocols.1.lib protocols.3.lib protocols.6.lib protocols.7.lib protocols_a.2.lib protocols_a.4.lib protocols_a.5.lib protocols_b.2.lib protocols_b.4.lib protocols_b.5.lib protocols_c.4.lib protocols_c.5.lib protocols_d.4.lib protocols_d.5.lib protocols_e.4.lib protocols_e.5.lib protocols_f.4.lib protocols_f.5.lib protocols_g.4.lib protocols_h.4.lib"
+				AdditionalDependencies=" oldnames.lib libcmtd.lib libcpmtd.lib kernel32.lib z.lib delayimp.lib boinc_zip.lib odbc32.lib odbccp32.lib utility.lib basic.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib core.1.lib core.2.lib core.3.lib core.4.lib core.5.lib numeric.lib ObjexxFCL.lib protocols.1.lib protocols.3.lib protocols.6.lib protocols.7.lib protocols_a.2.lib protocols_a.4.lib protocols_a.5.lib protocols_b.2.lib protocols_b.4.lib protocols_b.5.lib protocols_c.4.lib protocols_c.5.lib protocols_d.4.lib protocols_d.5.lib protocols_e.4.lib protocols_e.5.lib protocols_f.4.lib protocols_f.5.lib protocols_g.4.lib protocols_h.4.lib"
 				OutputFile="$(OutDir)\minirosettadebug_1.06_windows_intelx86.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -167,7 +167,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="oldnames.lib libcmt.lib libcpmt.lib kernel32.lib z.lib delayimp.lib boinc_zip.lib odbc32.lib odbccp32.lib utility.lib basic.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib core.1.lib core.2.lib core.3.lib core.4.lib core.5.lib numeric.lib ObjexxFCL.lib protocols.1.lib protocols.3.lib protocols.6.lib protocols.7.lib protocols_a.2.lib protocols_a.4.lib protocols_a.5.lib protocols_b.2.lib protocols_b.4.lib protocols_b.5.lib protocols_c.4.lib protocols_c.5.lib protocols_d.4.lib protocols_d.5.lib protocols_e.4.lib protocols_e.5.lib protocols_f.4.lib protocols_f.5.lib protocols_g.4.lib protocols_h.4.lib Ws2_32.lib"
+				AdditionalDependencies="oldnames.lib libcmt.lib libcpmt.lib kernel32.lib z.lib delayimp.lib boinc_zip.lib odbc32.lib odbccp32.lib utility.lib basic.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib core.1.lib core.2.lib core.3.lib core.4.lib core.5.lib numeric.lib ObjexxFCL.lib protocols.1.lib protocols.3.lib protocols.6.lib protocols.7.lib protocols_a.2.lib protocols_a.4.lib protocols_a.5.lib protocols_b.2.lib protocols_b.4.lib protocols_b.5.lib protocols_c.4.lib protocols_c.5.lib protocols_d.4.lib protocols_d.5.lib protocols_e.4.lib protocols_e.5.lib protocols_f.4.lib protocols_f.5.lib protocols_g.4.lib protocols_h.4.lib Ws2_32.lib"
 				OutputFile="$(OutDir)\minirosetta_beta_3.14_windows_intelx86.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -270,7 +270,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="z.lib delayimp.lib odbc32.lib odbccp32.lib utility.lib basic.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib core.1.lib core.2.lib core.3.lib core.4.lib core.5.lib numeric.lib ObjexxFCL.lib protocols.1.lib protocols.3.lib protocols.6.lib protocols.7.lib protocols_a.2.lib protocols_a.4.lib protocols_a.5.lib protocols_b.2.lib protocols_b.4.lib protocols_b.5.lib protocols_c.4.lib protocols_c.5.lib protocols_d.4.lib protocols_d.5.lib protocols_e.4.lib protocols_e.5.lib protocols_f.4.lib protocols_f.5.lib protocols_g.4.lib protocols_h.4.lib"
+				AdditionalDependencies="z.lib delayimp.lib odbc32.lib odbccp32.lib utility.lib basic.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib core.1.lib core.2.lib core.3.lib core.4.lib core.5.lib numeric.lib ObjexxFCL.lib protocols.1.lib protocols.3.lib protocols.6.lib protocols.7.lib protocols_a.2.lib protocols_a.4.lib protocols_a.5.lib protocols_b.2.lib protocols_b.4.lib protocols_b.5.lib protocols_c.4.lib protocols_c.5.lib protocols_d.4.lib protocols_d.5.lib protocols_e.4.lib protocols_e.5.lib protocols_f.4.lib protocols_f.5.lib protocols_g.4.lib protocols_h.4.lib"
 				OutputFile="$(OutDir)/minirosettadebug.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -365,7 +365,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="z.lib delayimp.lib odbc32.lib odbccp32.lib utility.lib basic.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib core.1.lib core.2.lib core.3.lib core.4.lib core.5.lib numeric.lib ObjexxFCL.lib protocols.1.lib protocols.3.lib protocols.6.lib protocols.7.lib protocols_a.2.lib protocols_a.4.lib protocols_a.5.lib protocols_b.2.lib protocols_b.4.lib protocols_b.5.lib protocols_c.4.lib protocols_c.5.lib protocols_d.4.lib protocols_d.5.lib protocols_e.4.lib protocols_e.5.lib protocols_f.4.lib protocols_f.5.lib protocols_g.4.lib protocols_h.4.lib libcmt.lib libcpmt.lib"
+				AdditionalDependencies="z.lib delayimp.lib odbc32.lib odbccp32.lib utility.lib basic.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib sqlite3.lib cppdb.lib core.1.lib core.2.lib core.3.lib core.4.lib core.5.lib numeric.lib ObjexxFCL.lib protocols.1.lib protocols.3.lib protocols.6.lib protocols.7.lib protocols_a.2.lib protocols_a.4.lib protocols_a.5.lib protocols_b.2.lib protocols_b.4.lib protocols_b.5.lib protocols_c.4.lib protocols_c.5.lib protocols_d.4.lib protocols_d.5.lib protocols_e.4.lib protocols_e.5.lib protocols_f.4.lib protocols_f.5.lib protocols_g.4.lib protocols_h.4.lib libcmt.lib libcpmt.lib"
 				OutputFile="$(OutDir)/minirosetta.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir);..\..\..\external\lib;"

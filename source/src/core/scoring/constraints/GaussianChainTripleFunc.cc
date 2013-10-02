@@ -21,6 +21,9 @@
 // C++ Headers
 #include <iostream>
 #include <cmath>
+#ifdef WIN32
+#include <boost/math/special_functions/erf.hpp>
+#endif
 
 // See GaussianChainFunc.cc for more information, including link to mathematical derivation.
 
@@ -69,11 +72,17 @@ GaussianChainTripleFunc::func( Real const z ) const
 	Real const s = sqrt( 2 * gaussian_variance_ );
 
 	// yea, error functions! How crazy is that.
+#ifdef WIN32
+	Real const term0 = boost::math::erf( ( D1 + D2 + D3 )/ s );
+	Real const term1 = boost::math::erf( (-D1 + D2 + D3 )/ s );
+	Real const term2 = boost::math::erf( ( D1 - D2 + D3 )/ s );
+	Real const term3 = boost::math::erf( ( D1 + D2 - D3 )/ s );
+#else
 	Real const term0 = erf( ( D1 + D2 + D3 )/ s );
 	Real const term1 = erf( (-D1 + D2 + D3 )/ s );
 	Real const term2 = erf( ( D1 - D2 + D3 )/ s );
 	Real const term3 = erf( ( D1 + D2 - D3 )/ s );
-
+#endif
 	Real const loop_energy = -kB_T_ * log( ( -term0 + term1 + term2 + term3 ) / (D1 * D2 * D3));
 
 	return ( loop_fixed_cost_total_ + loop_energy );
@@ -92,11 +101,17 @@ GaussianChainTripleFunc::dfunc( Real const z ) const
 
 	Real const s = sqrt( 2 * gaussian_variance_ );
 
+#ifdef WIN32
+	Real const term0 = boost::math::erf( ( D1 + D2 + D3 )/ s );
+	Real const term1 = boost::math::erf( (-D1 + D2 + D3 )/ s );
+	Real const term2 = boost::math::erf( ( D1 - D2 + D3 )/ s );
+	Real const term3 = boost::math::erf( ( D1 + D2 - D3 )/ s );
+#else
 	Real const term0 = erf( ( D1 + D2 + D3 )/ s );
 	Real const term1 = erf( (-D1 + D2 + D3 )/ s );
 	Real const term2 = erf( ( D1 - D2 + D3 )/ s );
 	Real const term3 = erf( ( D1 + D2 - D3 )/ s );
-
+#endif
 	Real const deriv_term0 = exp( -1.0 * pow( ( D1 + D2 + D3 )/ s, 2 ) );
 	Real const deriv_term1 = exp( -1.0 * pow( (-D1 + D2 + D3 )/ s, 2 ) );
 	Real const deriv_term2 = exp( -1.0 * pow( ( D1 - D2 + D3 )/ s, 2 ) );

@@ -18,6 +18,9 @@
 #include <core/types.hh>
 
 // Project headers
+#ifdef WIN32
+#include <core/pose/Pose.hh>
+#endif
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 #include <basic/datacache/CacheableData.hh>

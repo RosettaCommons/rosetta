@@ -13,6 +13,8 @@
 /// @details
 /// @author Jianqing Xu ( xubest@gmail.com )
 
+
+#include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi and mac boinc build (fails if not first for some odd reason) -dek
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DiagnosticData.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
@@ -63,7 +65,6 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/ScoreMap.hh>
-#include <protocols/jobdist/JobDistributors.hh> // SJF Keep first for mpi
 #include <protocols/loops/loops_main.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/ReturnSidechainMover.hh>

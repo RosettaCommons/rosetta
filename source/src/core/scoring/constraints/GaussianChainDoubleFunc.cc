@@ -54,8 +54,8 @@ GaussianChainDoubleFunc::initialize_parameters(){
 void
 GaussianChainDoubleFunc::recompute_parameters(){
 	// this is a 'prefactor' in the probability.
-	loop_fixed_cost_total_ = loop_fixed_cost_ + 1.5 * kB_T_ * log( 2 * pi );
-	loop_fixed_cost_total_ += kB_T_ * log( 2 );
+	loop_fixed_cost_total_ = loop_fixed_cost_ + 1.5 * kB_T_ * log( Real(2.0 * pi) );
+	loop_fixed_cost_total_ += kB_T_ * log( 2.0 );
 	loop_fixed_cost_total_ += 0.5 * kB_T_ * log( gaussian_variance_ );
 	// further normalization factor is put into func itself.
 }

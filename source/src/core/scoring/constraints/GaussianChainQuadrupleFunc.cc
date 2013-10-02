@@ -21,6 +21,9 @@
 // C++ Headers
 #include <iostream>
 #include <cmath>
+#ifdef WIN32
+#include <boost/math/special_functions/erf.hpp>
+#endif
 
 // See GaussianChainFunc.cc for more information, including link to mathematical derivation.
 
@@ -69,7 +72,11 @@ L( Real const & x ){
 	// note that this is the integral of erf( x ).
 	// up to a sqrt( pi ) factor.
 	// that's the key to a general expression.
+#ifdef WIN32
+	return (sqrt( pi ) * x * boost::math::erf( x )) + exp( -1.0 * x * x);
+#else
 	return (sqrt( pi ) * x * erf( x )) + exp( -1.0 * x * x);
+#endif
 }
 
 Real
@@ -120,7 +127,11 @@ GaussianChainQuadrupleFunc::dfunc( Real const z ) const
 				D_sum /= s;
 				int sgn = -1 * sgn2 * sgn3 * sgn4;
 				L_sum += sgn * L( D_sum );
+#ifdef WIN32
+				deriv_sum += sgn * sqrt( pi ) * boost::math::erf( D_sum );
+#else
 				deriv_sum += sgn * sqrt( pi ) * erf( D_sum );
+#endif
 			}
 		}
 	}

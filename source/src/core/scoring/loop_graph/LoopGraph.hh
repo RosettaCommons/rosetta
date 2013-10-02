@@ -19,6 +19,10 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/scoring/loop_graph/LoopGraph.fwd.hh>
 #include <core/scoring/loop_graph/Loop.fwd.hh>
+#ifdef WIN32
+#include <core/scoring/loop_graph/Loop.hh>
+#include <core/scoring/loop_graph/LoopCycle.hh>
+#endif
 #include <core/scoring/loop_graph/LoopCycle.fwd.hh>
 #include <core/scoring/loop_graph/LoopScoreInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

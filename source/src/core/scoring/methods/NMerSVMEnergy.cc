@@ -396,6 +396,7 @@ NMerSVMEnergy::get_residue_energy_by_svm(
 			rsd_energy_avg += ( rsd_svm_energy / n_svms() );
 		}
 	}
+	return rsd_energy_avg;
 }
 
 void
