@@ -47,7 +47,7 @@ public:
 	StubScoreLoopsFilter();
 
 	virtual ~StubScoreLoopsFilter();
-	
+
 	virtual protocols::filters::FilterOP clone() const;
 	virtual protocols::filters::FilterOP fresh_instance() const;
 
@@ -60,6 +60,8 @@ private:
 	hotspot_hashing::HotspotStubSetOP stub_set_;
 	std::string resfile_;
 	core::Real cb_force_;
+	core::Size loop_start_;
+	core::Size loop_stop_;
 };
 
 } // filters

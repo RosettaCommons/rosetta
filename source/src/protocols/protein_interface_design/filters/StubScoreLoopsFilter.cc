@@ -61,7 +61,17 @@ StubScoreLoopsFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	runtime_assert( cb_force_ > 0.00001 );
 	stub_set_ = new hotspot_hashing::HotspotStubSet;
 	stub_set_->read_data( tag->getOption< std::string >("stubfile") );
+	loop_start_ = tag->getOption<Size>("start", 0 );
+	loop_stop_ = tag->getOption<Size>("stop", 0 );
+	if (loop_start_ <= 0) {
+		utility_exit_with_message( "please provide loop-start with 'start' option" );
+	}
+	if ( loop_stop_ <= loop_start_ ) {
+		utility_exit_with_message( "loop-stop has to be larger than loop-start. assign with 'stop'" );
+	}
 	protein_interface_design::movers::SetupHotspotConstraintsLoopsMover hspmover( stub_set_ );
+	hspmover.set_loop_start( loop_start_ );
+	hspmover.set_loop_stop( loop_stop_ );
 	resfile_ = tag->getOption< std::string >("resfile","NONE");
 	if ( resfile_ != "NONE" ) hspmover.set_resfile( resfile_ );
 	core::scoring::constraints::ConstraintCOPs constraints;

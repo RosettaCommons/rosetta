@@ -164,7 +164,9 @@ SetupHotspotConstraintsLoopsMover::SetupHotspotConstraintsLoopsMover() :
 	bump_cutoff_( 4.0 ),
 	apply_ambiguous_constraints_( true ),
 	colonyE_( false ),
-	resfile_( "NONE" )
+	resfile_( "NONE" ),
+	loop_start_( 0 ),
+	loop_stop_( 0 )
 	{}
 
 protocols::moves::MoverOP
@@ -195,7 +197,9 @@ SetupHotspotConstraintsLoopsMover::SetupHotspotConstraintsLoopsMover(
 	bump_cutoff_( 4.0 ),
 	apply_ambiguous_constraints_( true ),
 	colonyE_( false ),
-	resfile_( "NONE" )
+	resfile_( "NONE" ),
+	loop_start_( 0 ),
+	loop_stop_( 0 )
 
 // 	chain_to_design_(chain_to_design),
 // 	CB_force_constant_(CB_force_constant),
@@ -219,7 +223,9 @@ SetupHotspotConstraintsLoopsMover::SetupHotspotConstraintsLoopsMover( SetupHotsp
 	bump_cutoff_(init.bump_cutoff_),
 	apply_ambiguous_constraints_(init.apply_ambiguous_constraints_),
 	colonyE_( init.colonyE_ ),
-	resfile_( init.resfile_ )
+	resfile_( init.resfile_ ),
+	loop_start_( init.loop_start_ ),
+	loop_stop_( init.loop_stop_ )
 {
 	hotspot_stub_set_ = new protocols::hotspot_hashing::HotspotStubSet( *init.hotspot_stub_set_ );
 }
@@ -249,12 +255,14 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 	} else if ( resfile_ != "NONE" ) {
 		core::pack::task::parse_resfile(pose, *task, resfile_ );
 	}
+	tr.Debug << "finished reading resfile " << std::endl;
+	task->show( tr.Trace );
 	// *****associate the stub set with the unbound pose
 	// *****associate the stub set with the unbound pose
 	// *****hotspot_stub_set_->pair_with_scaffold( pose, partner );
 
 	protocols::filters::FilterCOP true_filter( new protocols::filters::TrueFilter );
-	for ( core::Size resnum=55; resnum <= 71; ++resnum ) {
+	for ( core::Size resnum=loop_start_; resnum <= loop_stop_; ++resnum ) {
 		//		if ( task->pack_residue(resnum) )	{
 		hotspot_stub_set_->pair_with_scaffold( pose, pose.chain( resnum ), true_filter );
 		break;
@@ -264,8 +272,8 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 	tr.Info << "Making hotspot constraints..." << std::endl;
 	//Size scaffold_seqpos(0);
 	Size ct_cst( 0 );
-	for ( core::Size resnum=55; resnum <= 71; ++resnum ) {
-
+	for ( core::Size resnum=loop_start_; resnum <= loop_stop_; ++resnum ) {
+		tr.Debug << "make constraints for position " << resnum << " ..." << std::endl;
 		// Check that this position is allowed to be used for stub constraints
 		//		if ( ! task->pack_residue(resnum) ) continue;
 
@@ -278,25 +286,27 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 		std::list< core::chemical::ResidueTypeCOP > allowed_aas = task->residue_task( resnum ).allowed_residue_types();
 		for (std::list< core::chemical::ResidueTypeCOP >::const_iterator restype = allowed_aas.begin();
 				 restype != allowed_aas.end(); ++restype) {
-
+			tr.Debug << "looking for suitable hotspots for " << (*restype)->name3() << " at pos " << resnum << std::endl;
 			// Loop over all stubs with this restype
 			hotspot_hashing::HotspotStubSet::Hotspots res_stub_set( hotspot_stub_set_->retrieve( (*restype )->name3() ) );
+			tr.Debug << "found " << res_stub_set.size() << " suitable hotspots" << std::endl;
 			for (std::multimap<core::Real,hotspot_hashing::HotspotStubOP >::iterator hs_stub = res_stub_set.begin();
 					 hs_stub != res_stub_set.end(); ++hs_stub) {
 
 				// prevent Gly/Pro constraints
 				if ( (hs_stub->second->residue()->aa() == core::chemical::aa_gly) || (hs_stub->second->residue()->aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline] ) ) {
-					tr.Info << "ERROR - Gly/Pro stubs cannot be used for constraints." << std::endl;
+					tr.Info << "WARNING - Gly/Pro stubs cannot be used for constraints." << std::endl;
 					continue;
 				}
 
 				// prevent Gly/Pro constraints
 				if ( (pose.residue(resnum).aa() == core::chemical::aa_gly) || (pose.residue(resnum).aa() == core::chemical::aa_pro && !basic::options::option[basic::options::OptionKeys::hotspot::allow_proline]) ) {
-					tr.Debug << "ERROR - Position " << resnum << " is currently Gly/Pro and cannot be used for stub constraints." << std::endl;
+					tr.Debug << "WARNING - Position " << resnum << " is currently Gly/Pro and cannot be used for stub constraints." << std::endl;
 					continue;
 				}
 
 				core::Real stub_bonus_value = hs_stub->second->bonus_value();
+				tr.Trace << "stub_bonus: " << stub_bonus_value << std::endl;
 				if ( stub_bonus_value < worst_allowed_stub_bonus ) {
 					hs_stub->second->set_scaffold_status( resnum, protocols::hotspot_hashing::accept );
 					//tr.Info << " SuccSelfEnergy=" << stub_bonus_value << std::endl;
@@ -309,6 +319,7 @@ SetupHotspotConstraintsLoopsMover::generate_csts(
 						ct_cst++;
 						ambig_csts.push_back( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) );
 					} else {
+						ct_cst++;
 						// Apply it directly
 						constraints.push_back( new core::scoring::constraints::BackboneStubConstraint( pose, resnum, fixed_atom, *(hs_stub->second->residue()), stub_bonus_value, CB_force_constant_ ) );
 					}
@@ -360,7 +371,15 @@ SetupHotspotConstraintsLoopsMover::parse_my_tag( TagPtr const tag, DataMap & dat
   bump_cutoff_ = tag->getOption<Real>( "apply_stub_bump_cutoff", 10. );
   apply_ambiguous_constraints_ = tag->getOption<bool>( "pick_best_energy_constraint", 1 );
 	// core::Real const bb_stub_cst_weight( tag->getOption< core::Real >( "backbone_stub_constraint_weight", 1.0 ) );  // Unused variable causes warning.
-
+	loop_start_ = tag->getOption<Size>("start", 0 );
+	loop_stop_ = tag->getOption<Size>("stop", 0 );
+	if (loop_start_ <= 0) {
+		utility_exit_with_message( "please provide loop-start with 'start' option" );
+	}
+	if ( loop_stop_ <= loop_start_ ) {
+		utility_exit_with_message( "loop-stop has to be larger than loop-start. assign with 'stop'" );
+	}
+	tr.Debug << "setup hotspots for loop " << loop_start_ << " to " << loop_stop_ << std::endl;
   colonyE_ = tag->getOption<bool>( "colonyE", 0 );
 
   hotspot_stub_set_ = new hotspot_hashing::HotspotStubSet;

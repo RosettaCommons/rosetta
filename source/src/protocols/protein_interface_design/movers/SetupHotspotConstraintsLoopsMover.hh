@@ -62,6 +62,15 @@ public:
 		resfile_ = setting;
 	}
 
+	void set_loop_start( core::Size setting ) {
+		loop_start_ = setting;
+	}
+
+	void set_loop_stop( core::Size setting ) {
+		loop_stop_ = setting;
+	}
+
+
 private:
 	protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_set_;
 	core::Size chain_to_design_;
@@ -72,6 +81,8 @@ private:
 	bool apply_ambiguous_constraints_;
 	bool colonyE_;
 	std::string resfile_;
+	core::Size loop_start_;
+	core::Size loop_stop_;
 };
 
 } // movers
