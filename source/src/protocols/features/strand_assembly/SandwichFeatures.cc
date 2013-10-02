@@ -2572,124 +2572,182 @@ SandwichFeatures::count_AA_w_direction(
 	using core::id::NamedAtomID;
 	using numeric::xyzVector;
 	
+		TR << "residue_begin: " << residue_begin << endl;
+		TR << "residue_end: " << residue_end << endl;
+
 	for (Size ii = residue_begin; ii <= residue_end; ii++ )
 	{
-		xyzVector<Real> vector_sidechain;
+			TR << "resnum: " << ii << endl;
+		bool core_heading;
 
-		if (pose.residue_type(ii).name3() != "GLY")
+		/////////// <begin> determine core_heading/surface_heading by a comparison between a distance between CA and 0,0,0 and a distance between CB and 0,0,0
+		pose::Pose pose_w_center_000 = pose; // followed Ubi_E1_modeller 	pose::Pose complex_pose = pose_in;
+		pose_w_center_000.center();
+
+		xyzVector< core::Real > center_point(0,0,0);
+
+		Real distance_between_CA_and_center;
+		Real distance_between_CB_and_center;
+
+		if (pose_w_center_000.residue_type(ii).name3() != "GLY")
 		{
-			vector_sidechain	=	pose.xyz(NamedAtomID("CB", ii)) - pose.xyz(NamedAtomID("CA", ii));
+			distance_between_CA_and_center = pose_w_center_000.residue(ii).atom("CA").xyz().distance(center_point);
+			distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("CB").xyz().distance(center_point);
 		}
 		else
 		{	
-			vector_sidechain	=	pose.xyz(NamedAtomID("2HA", ii)) - pose.xyz(NamedAtomID("CA", ii));
+			distance_between_CA_and_center = pose_w_center_000.residue(ii).atom("CA").xyz().distance(center_point);
+			distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("2HA").xyz().distance(center_point);
 		}
 
-		Real to_be_rounded_ii = (residue_begin + residue_end)/(2.0);
-		Size cen_resnum_ii = round(to_be_rounded_ii);
+			TR << "distance_between_CA_and_center : " << distance_between_CA_and_center << endl;
+			TR << "distance_between_CB_and_center : " << distance_between_CB_and_center << endl;
+		/////////// <end> determine core_heading/surface_heading by a comparison between a distance between CA and 0,0,0 and a distance between CB and 0,0,0
 
-		vector<Size>	vector_of_cen_residues;
-		vector_of_cen_residues.clear();	// Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
-		vector_of_cen_residues	=	get_cen_res_in_other_sheet(struct_id, db_session, sw_can_by_sh_id,	sheet_id);
-
-		Real shortest_dis_between_AA_and_other_sheet = 9999;
-		Size jj_w_shorest_dis =	0 ; // initial value=0 just to avoid build warning at rosetta trunk
-		for (Size jj = 0;	jj	<vector_of_cen_residues.size();	jj++)
+		if (distance_between_CA_and_center - distance_between_CB_and_center > 1)
 		{
-			Real distance = pose.residue(cen_resnum_ii).atom("CA").xyz().distance(pose.residue(vector_of_cen_residues[jj]).atom("CA").xyz());
-				
-			if (distance < shortest_dis_between_AA_and_other_sheet)
+			core_heading = true; 			// core heading
+		}
+		else if(distance_between_CA_and_center - distance_between_CB_and_center < -1)
+		{
+			core_heading = false;			// surface heading
+		}
+
+		else
+		{
+			/////////// <begin> determine core_heading/surface_heading by a vector between CA-CB of a residue and CA of the closest residue of the other sheet
+
+			xyzVector<Real> vector_sidechain;
+
+			if (pose.residue_type(ii).name3() != "GLY")
 			{
-				shortest_dis_between_AA_and_other_sheet = distance;
-				jj_w_shorest_dis = jj;
+				vector_sidechain	=	pose.xyz(NamedAtomID("CB", ii)) - pose.xyz(NamedAtomID("CA", ii));
+			}
+			else
+			{	
+				vector_sidechain	=	pose.xyz(NamedAtomID("2HA", ii)) - pose.xyz(NamedAtomID("CA", ii));
+			}
+
+			Real to_be_rounded_ii = (residue_begin + residue_end)/(2.0);
+			Size cen_resnum_ii = round(to_be_rounded_ii);
+
+			vector<Size>	vector_of_cen_residues;
+			vector_of_cen_residues.clear();	// Removes all elements from the vector (which are destroyed), leaving the container with a size of 0.
+			vector_of_cen_residues	=	get_cen_res_in_other_sheet(struct_id, db_session, sw_can_by_sh_id,	sheet_id);
+
+			Real shortest_dis_between_AA_and_other_sheet = 9999;
+			Size jj_w_shorest_dis =	0 ; // initial value=0 just to avoid build warning at rosetta trunk
+			for (Size jj = 0;	jj	<vector_of_cen_residues.size();	jj++)
+			{
+				Real distance = pose.residue(cen_resnum_ii).atom("CA").xyz().distance(pose.residue(vector_of_cen_residues[jj]).atom("CA").xyz());
+					
+				if (distance < shortest_dis_between_AA_and_other_sheet)
+				{
+					shortest_dis_between_AA_and_other_sheet = distance;
+					jj_w_shorest_dis = jj;
+				}
+			}
+
+			xyzVector<Real> vector_between_AA_and_other_sheet	=	pose.xyz(NamedAtomID("CA", vector_of_cen_residues[jj_w_shorest_dis])) - pose.xyz(NamedAtomID("CA", cen_resnum_ii));
+
+			Real	dot_product_of_vectors = dot_product( vector_sidechain, vector_between_AA_and_other_sheet );
+			Real	cosine_theta = dot_product_of_vectors / (absolute_vec(vector_sidechain))*(absolute_vec(vector_between_AA_and_other_sheet));
+
+				TR << "cosine_theta: " << cosine_theta << endl;
+
+			if (cosine_theta > 0)
+			{
+				core_heading = true;
+			}
+			else
+			{
+				core_heading = false;
 			}
 		}
+		/////////// <end> determine core_heading/surface_heading by a vector between CA-CB of a residue and CA of the closest residue of the other sheet
 
-		xyzVector<Real> vector_between_AA_and_other_sheet	=	pose.xyz(NamedAtomID("CA", vector_of_cen_residues[jj_w_shorest_dis])) - pose.xyz(NamedAtomID("CA", cen_resnum_ii));
-
-		Real	dot_product_of_vectors = dot_product( vector_sidechain, vector_between_AA_and_other_sheet );
-		Real	cosine_theta = dot_product_of_vectors / (absolute_vec(vector_sidechain))*(absolute_vec(vector_between_AA_and_other_sheet));
-
+		
 		if (pose.residue_type(ii).name3() == "ARG"){
-			if (cosine_theta > 0)	{	AA_w_direction[0] = AA_w_direction[0] + 1;				}	//R_heading_core_num++;
-			else	{	AA_w_direction[1] = AA_w_direction[1] + 1; 				}	//R_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[0] = AA_w_direction[0] + 1;				}	//R_heading_core_num++;
+			else				{	AA_w_direction[1] = AA_w_direction[1] + 1; 				}	//R_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "HIS"){
-			if (cosine_theta > 0)	{	AA_w_direction[2] = AA_w_direction[2] + 1;				}	//H_heading_core_num++;
-			else	{	AA_w_direction[3] = AA_w_direction[3] + 1; 				}	//H_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[2] = AA_w_direction[2] + 1;				}	//H_heading_core_num++;
+			else				{	AA_w_direction[3] = AA_w_direction[3] + 1; 				}	//H_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "LYS"){
-			if (cosine_theta > 0)	{	AA_w_direction[4] = AA_w_direction[4] + 1;				}	//K_heading_core_num++;
-			else	{	AA_w_direction[5] = AA_w_direction[5] + 1; 				}	//K_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[4] = AA_w_direction[4] + 1;				}	//K_heading_core_num++;
+			else				{	AA_w_direction[5] = AA_w_direction[5] + 1; 				}	//K_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "ASP"){
-			if (cosine_theta > 0)	{	AA_w_direction[6] = AA_w_direction[6] + 1;				}	//D_heading_core_num++;
-			else	{	AA_w_direction[7] = AA_w_direction[7] + 1; 				}	//D_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[6] = AA_w_direction[6] + 1;				}	//D_heading_core_num++;
+			else				{	AA_w_direction[7] = AA_w_direction[7] + 1; 				}	//D_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "GLU"){
-			if (cosine_theta > 0)	{	AA_w_direction[8] = AA_w_direction[8] + 1;				}	//E_heading_core_num++;
-			else	{	AA_w_direction[9] = AA_w_direction[9] + 1; 				}	//E_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[8] = AA_w_direction[8] + 1;				}	//E_heading_core_num++;
+			else				{	AA_w_direction[9] = AA_w_direction[9] + 1; 				}	//E_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "SER"){
-			if (cosine_theta > 0)	{	AA_w_direction[10] = AA_w_direction[10] + 1;				}	//S_heading_core_num++;
-			else	{	AA_w_direction[11] = AA_w_direction[11] + 1; 				}	//S_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[10] = AA_w_direction[10] + 1;				}	//S_heading_core_num++;
+			else				{	AA_w_direction[11] = AA_w_direction[11] + 1; 				}	//S_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "THR"){
-			if (cosine_theta > 0)	{	AA_w_direction[12] = AA_w_direction[12] + 1;				}	//T_heading_core_num++;
-			else	{	AA_w_direction[13] = AA_w_direction[13] + 1; 				}	//T_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[12] = AA_w_direction[12] + 1;				}	//T_heading_core_num++;
+			else				{	AA_w_direction[13] = AA_w_direction[13] + 1; 				}	//T_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "ASN"){
-			if (cosine_theta > 0)	{	AA_w_direction[14] = AA_w_direction[14] + 1;				}	//N_heading_core_num++;
-			else	{	AA_w_direction[15] = AA_w_direction[15] + 1; 				}	//N_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[14] = AA_w_direction[14] + 1;				}	//N_heading_core_num++;
+			else				{	AA_w_direction[15] = AA_w_direction[15] + 1; 				}	//N_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "GLN"){
-			if (cosine_theta > 0)	{	AA_w_direction[16] = AA_w_direction[16] + 1;				}	//Q_heading_core_num++;
-			else	{	AA_w_direction[17] = AA_w_direction[17] + 1; 				}	//Q_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[16] = AA_w_direction[16] + 1;				}	//Q_heading_core_num++;
+			else				{	AA_w_direction[17] = AA_w_direction[17] + 1; 				}	//Q_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "CYS"){
-			if (cosine_theta > 0)	{	AA_w_direction[18] = AA_w_direction[18] + 1;				}	//C_heading_core_num++;
-			else	{	AA_w_direction[19] = AA_w_direction[19] + 1; 				}	//C_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[18] = AA_w_direction[18] + 1;				}	//C_heading_core_num++;
+			else				{	AA_w_direction[19] = AA_w_direction[19] + 1; 				}	//C_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "GLY"){
-			if (cosine_theta > 0)	{	AA_w_direction[20] = AA_w_direction[20] + 1;				}	//G_heading_core_num++;
-			else	{	AA_w_direction[21] = AA_w_direction[21] + 1; 				}	//G_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[20] = AA_w_direction[20] + 1;				}	//G_heading_core_num++;
+			else				{	AA_w_direction[21] = AA_w_direction[21] + 1; 				}	//G_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "PRO"){
-			if (cosine_theta > 0)	{	AA_w_direction[22] = AA_w_direction[22] + 1;				}	//P_heading_core_num++;
-			else	{	AA_w_direction[23] = AA_w_direction[23] + 1; 				}	//P_heading_surface_num++;
+			if (core_heading)	{	AA_w_direction[22] = AA_w_direction[22] + 1;				}	//P_heading_core_num++;
+			else				{	AA_w_direction[23] = AA_w_direction[23] + 1; 				}	//P_heading_surface_num++;
 		}
 		else	if (pose.residue_type(ii).name3() == "ALA"){
-			if (cosine_theta > 0)	{	AA_w_direction[24] = AA_w_direction[24] + 1;				}
-			else	{	AA_w_direction[25] = AA_w_direction[25] + 1; 				}
+			if (core_heading)	{	AA_w_direction[24] = AA_w_direction[24] + 1;				}
+			else				{	AA_w_direction[25] = AA_w_direction[25] + 1; 				}
 		}
 		else	if (pose.residue_type(ii).name3() == "VAL"){
-			if (cosine_theta > 0)	{	AA_w_direction[26] = AA_w_direction[26] + 1;				}
-			else	{	AA_w_direction[27] = AA_w_direction[27] + 1; 				}
+			if (core_heading)	{	AA_w_direction[26] = AA_w_direction[26] + 1;				}
+			else				{	AA_w_direction[27] = AA_w_direction[27] + 1; 				}
 		}
 		else	if (pose.residue_type(ii).name3() == "ILE"){
-			if (cosine_theta > 0)	{	AA_w_direction[28] = AA_w_direction[28] + 1;				}
-			else	{	AA_w_direction[29] = AA_w_direction[29] + 1; 				}
+			if (core_heading)	{	AA_w_direction[28] = AA_w_direction[28] + 1;				}
+			else				{	AA_w_direction[29] = AA_w_direction[29] + 1; 				}
 		}
 		else	if (pose.residue_type(ii).name3() == "LEU"){
-			if (cosine_theta > 0)	{	AA_w_direction[30] = AA_w_direction[30] + 1;				}
-			else	{	AA_w_direction[31] = AA_w_direction[31] + 1; 				}
+			if (core_heading)	{	AA_w_direction[30] = AA_w_direction[30] + 1;				}
+			else				{	AA_w_direction[31] = AA_w_direction[31] + 1; 				}
 		}
 		else	if (pose.residue_type(ii).name3() == "MET"){
-			if (cosine_theta > 0)	{	AA_w_direction[32] = AA_w_direction[32] + 1;				}
-			else	{	AA_w_direction[33] = AA_w_direction[33] + 1; 				}
+			if (core_heading)	{	AA_w_direction[32] = AA_w_direction[32] + 1;				}
+			else				{	AA_w_direction[33] = AA_w_direction[33] + 1; 				}
 		}
 		else	if (pose.residue_type(ii).name3() == "PHE"){
-			if (cosine_theta > 0)	{	AA_w_direction[34] = AA_w_direction[34] + 1;				}
-			else	{	AA_w_direction[35] = AA_w_direction[35] + 1; 				}
+			if (core_heading)	{	AA_w_direction[34] = AA_w_direction[34] + 1;				}
+			else				{	AA_w_direction[35] = AA_w_direction[35] + 1; 				}
 		}
 		else	if (pose.residue_type(ii).name3() == "TYR"){
-			if (cosine_theta > 0)	{	AA_w_direction[36] = AA_w_direction[36] + 1;				}
-			else	{	AA_w_direction[37] = AA_w_direction[37] + 1; 				}
+			if (core_heading)	{	AA_w_direction[36] = AA_w_direction[36] + 1;				}
+			else				{	AA_w_direction[37] = AA_w_direction[37] + 1; 				}
 		}
 		else	if (pose.residue_type(ii).name3() == "TRP"){
-			if (cosine_theta > 0)	{	AA_w_direction[38] = AA_w_direction[38] + 1;				}
-			else	{	AA_w_direction[39] = AA_w_direction[39] + 1; 				}
+			if (core_heading)	{	AA_w_direction[38] = AA_w_direction[38] + 1;				}
+			else				{	AA_w_direction[39] = AA_w_direction[39] + 1; 				}
 		}
+
 	}
 	return AA_w_direction;
 } //count_AA_w_direction
@@ -2938,7 +2996,7 @@ SandwichFeatures::get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 	// <end> retrieve other edge_strands in different sheet
 
 
-	// <begin> see which other edge_strand is closest in different sheet
+	// <begin> see which other edge_strand in different sheet is closest to a current strand
 	SandwichFragment temp_strand_i(residue_begin, residue_end);
 	Real temp_shortest = 999;
 	Size residue_begin_of_nearest_strand = 0; // just initial value to avoid warning
@@ -2976,7 +3034,7 @@ SandwichFeatures::get_current_bs_id_and_closest_edge_bs_id_in_different_sheet (
 		}
 		// <end> retrieve the closest sw_by_components_bs_id
 
-	// <end> see which other edge_strand is closest in different sheet
+	// <end> see which other edge_strand in different sheet is closest to a current strand
 
 	return std::make_pair(current_sw_by_components_bs_id, closest_sw_by_components_bs_id);
 	
@@ -3151,7 +3209,7 @@ SandwichFeatures::report_hydrophobic_ratio_net_charge	(
 	insert_stmt.bind(1,	number_of_hydrophobic_res);
 	insert_stmt.bind(2,	number_of_hydrophilic_res);
 	insert_stmt.bind(3,	number_of_CGP);
-	Real ratio_hydrophobic_philic_in_percent = (number_of_hydrophobic_res*100)/number_of_hydrophilic_res;
+	Real ratio_hydrophobic_philic_in_percent = (number_of_hydrophobic_res*100)/(number_of_hydrophobic_res+number_of_hydrophilic_res);
 	insert_stmt.bind(4,	ratio_hydrophobic_philic_in_percent);
 	insert_stmt.bind(5,	number_of_RK);
 	insert_stmt.bind(6,	number_of_DE);
@@ -5346,25 +5404,25 @@ SandwichFeatures::report_features(
 		if	(facing == 0)
 		{
 			//	TR.Info << "sheet " << all_distinct_sheet_ids[i] << " and sheet " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << " do not face each other" << endl;
-			continue;
+			continue; // skip this sheet
 		}
-		else	if (facing == -99)
+		else if (facing == -99)
 		{
 				TR.Info << "at least one sheet (either " << all_distinct_sheet_ids[i] << " or " << sheet_j_that_will_be_used_for_pairing_with_sheet_i << ")  may be a beta-barrel like sheet_id = 1 in 1N8O" << endl;
-			continue;
+			continue; // skip this sheet
 		}
 		else
 
-//			TR.Info << "! writing into 'sandwich candidate by sheet' !" << endl;
+				//	TR.Info << "! writing into 'sandwich candidate by sheet' !" << endl;
 		
-		write_to_sw_can_by_sh (struct_id, db_session, sw_can_by_sh_PK_id_counter, tag, sw_can_by_sh_id_counter, all_distinct_sheet_ids[i], strands_from_sheet_i.size());
-		sw_can_by_sh_PK_id_counter++;
-		
-		write_to_sw_can_by_sh (struct_id, db_session, sw_can_by_sh_PK_id_counter, tag, sw_can_by_sh_id_counter, sheet_j_that_will_be_used_for_pairing_with_sheet_i, strands_from_sheet_j.size());
-		sw_can_by_sh_PK_id_counter++;
-		
-		sw_can_by_sh_id_counter++;
+			write_to_sw_can_by_sh (struct_id, db_session, sw_can_by_sh_PK_id_counter, tag, sw_can_by_sh_id_counter, all_distinct_sheet_ids[i], strands_from_sheet_i.size());
+			sw_can_by_sh_PK_id_counter++;
 			
+			write_to_sw_can_by_sh (struct_id, db_session, sw_can_by_sh_PK_id_counter, tag, sw_can_by_sh_id_counter, sheet_j_that_will_be_used_for_pairing_with_sheet_i, strands_from_sheet_j.size());
+			sw_can_by_sh_PK_id_counter++;
+			
+			sw_can_by_sh_id_counter++;
+
 	} // for(Size i=1; i<all_distinct_sheet_ids.size(); ++i)
 /////////////////// <end> assignment of sheet into sw_can_by_sh
 
