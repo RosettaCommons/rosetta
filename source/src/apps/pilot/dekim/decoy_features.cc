@@ -39,6 +39,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 
 // option key includes
 
@@ -235,12 +236,20 @@ typedef utility::pointer::owning_ptr< JDmover > JDmoverOP;
 int
 main( int argc, char * argv [] )
 {
+	try {
 
 	core::init::init(argc, argv);
 
 	JDmoverOP jd_mover(new JDmover);
 
-	protocols::jd2::JobDistributor::get_instance()->go(jd_mover);
+	try {
+		protocols::jd2::JobDistributor::get_instance()->go(jd_mover);
+	} catch ( utility::excn::EXCN_Base& excn ) {
+		std::cerr << "Exception: " << std::endl;
+		excn.show( std::cerr );
+		std::cout << "Exception: " << std::endl;
+		excn.show( std::cout ); //so its also seen in a >LOG file
+	}
 
 	if (option[in::file::native].user()) {
     core::pose::PoseOP nativePose = new core::pose::Pose;
@@ -286,5 +295,10 @@ main( int argc, char * argv [] )
 	jd_mover->print_features();
 
 	TR << "*********************successful completion**************************" << std::endl;
+
+	} catch ( utility::excn::EXCN_Base const & e ) {
+		std::cout << "caught exception " << e.msg() << std::endl;
+	}
+
 }
 
