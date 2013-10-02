@@ -2,31 +2,31 @@ NAME ->5)-beta-D-Psip     # ->5)-beta-D-psicopyranosyl
 IO_STRING Psi Z           # Note lower case!
 TYPE POLYMER
 AA UNK
-ATOM  C2  CH1   X   0.43   # anomeric carbon
-ATOM  C3  CH1   X   0.20
-ATOM  C4  CH1   X   0.20
-ATOM  C5  CH1   X   0.13
-ATOM  O5  OH    X   -0.36
+ATOM  C2  CH1   CT1 0.43   # anomeric carbon; needs better atom type matches
+ATOM  C3  CH1   CT1 0.20
+ATOM  C4  CH1   CT1 0.20
+ATOM  C5  CH1   CT1 0.13
+ATOM  O5  OH    OH1 -0.36
 ATOM  HO5 VIRT VIRT 0.00   # to next residue; allows for consistent chi angles
-ATOM  C6  CH2   X   0.08
-ATOM  O6  OOC   X   -0.36
+ATOM  C6  CH2   CT2 0.08
+ATOM  O6  OH    OS  -0.36  # needs better atom type matches; DS suggests OS, but that's for eSters
 ATOM  VO6 VIRT VIRT 0.0
-ATOM  C1  CH2   X   0.15
-ATOM  O1  OH    X   -0.65
+ATOM  C1  CH2   CT2 0.15
+ATOM  O1  OH    OH1 -0.65
 ATOM  O2  VIRT VIRT 0.0   # for internal res, virtual to previous residue; allows for consistent chi angles; replaced with real atoms by patch for lower terminus
-ATOM  O3  OH    X   -0.65
-ATOM  O4  OH    X   -0.65
-ATOM 1H1  Hapo  X   0.05
-ATOM 2H1  Hapo  X   0.05
-ATOM  HO1 Hpol  X   0.40
+ATOM  O3  OH    OH1 -0.65
+ATOM  O4  OH    OH1 -0.65
+ATOM 1H1  Hapo  HA  0.05
+ATOM 2H1  Hapo  HA  0.05
+ATOM  HO1 Hpol  H   0.40
 ATOM  HO2 VIRT VIRT 0.0   # for internal res, virtual; allows for consistent chi angles; replaced with real atoms by patch for lower terminus
-ATOM  H3  Hapo  X   0.05
-ATOM  HO3 Hpol  X   0.40
-ATOM  H4  Hapo  X   0.05
-ATOM  HO4 Hpol  X   0.40
-ATOM  H5  Hapo  X   0.05
-ATOM 1H6  Hapo  X   0.05
-ATOM 2H6  Hapo  X   0.05
+ATOM  H3  Hapo  HA  0.05
+ATOM  HO3 Hpol  H   0.40
+ATOM  H4  Hapo  HA  0.05
+ATOM  HO4 Hpol  H   0.40
+ATOM  H5  Hapo  HA  0.05
+ATOM 1H6  Hapo  HA  0.05
+ATOM 2H6  Hapo  HA  0.05
 UPPER_CONNECT O5
 LOWER_CONNECT C2
 BOND  C2   VO6            # cyclic bond
@@ -55,26 +55,41 @@ BOND  C5   H5
 BOND  C6  1H6
 BOND  C6  2H6
 CHI 1  C2   C1   O1   HO1
-CHI_ROTAMERS 1 60 15
-CHI_ROTAMERS 1 -60 15
-CHI_ROTAMERS 1 180 15
+CHI_ROTAMERS 1 0 0
+CHI_ROTAMERS 1 60 0
+CHI_ROTAMERS 1 120 0
+CHI_ROTAMERS 1 180 0
+CHI_ROTAMERS 1 240 0
+CHI_ROTAMERS 1 300 0
 CHI 2  VO6  C2   O2   HO2  # cannot use O6 to define torsion, since atom tree doesn't treat it as connected; chi(O6-C2-O2-H) -- chi(2) is ambiguous
-CHI_ROTAMERS 2 60 15
-CHI_ROTAMERS 2 -60 15
-CHI_ROTAMERS 2 180 15
+CHI_ROTAMERS 2 0 0
+CHI_ROTAMERS 2 60 0
+CHI_ROTAMERS 2 120 0
+CHI_ROTAMERS 2 180 0
+CHI_ROTAMERS 2 240 0
+CHI_ROTAMERS 2 300 0
 CHI 3  C2   C3   O3   HO3
-CHI_ROTAMERS 3 60 15
-CHI_ROTAMERS 3 -60 15
-CHI_ROTAMERS 3 180 15
+CHI_ROTAMERS 3 0 0
+CHI_ROTAMERS 3 60 0
+CHI_ROTAMERS 3 120 0
+CHI_ROTAMERS 3 180 0
+CHI_ROTAMERS 3 240 0
+CHI_ROTAMERS 3 300 0
 CHI 4  C3   C4   O4   HO4
-CHI_ROTAMERS 4 60 15
-CHI_ROTAMERS 4 -60 15
-CHI_ROTAMERS 4 180 15
+CHI_ROTAMERS 4 0 0
+CHI_ROTAMERS 4 60 0
+CHI_ROTAMERS 4 120 0
+CHI_ROTAMERS 4 180 0
+CHI_ROTAMERS 4 240 0
+CHI_ROTAMERS 4 300 0
 CHI 5  C4   C5   O5   HO5  # duplicates BB 4
 CHI 6  VO6  C2   C1   O1   # chi(O6-C2-C1-O1) -- chi(2) is ambiguous
-CHI_ROTAMERS 6 60 15
-CHI_ROTAMERS 6 -60 15
-CHI_ROTAMERS 6 180 15
+CHI_ROTAMERS 6 0 0
+CHI_ROTAMERS 6 60 0
+CHI_ROTAMERS 6 120 0
+CHI_ROTAMERS 6 180 0
+CHI_ROTAMERS 6 240 0
+CHI_ROTAMERS 6 300 0
 CHI 7  VO6  C2   C3   C4   # nu(2); duplicates BB 1, but defined differently
 CHI 8  C2   C3   C4   C5   # nu(3); duplicates BB 2
 CHI 9  C3   C4   C5   C6   # nu(4); duplicates BB 3, but defined differently

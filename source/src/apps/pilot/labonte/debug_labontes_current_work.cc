@@ -76,8 +76,9 @@ int main(int argc, char *argv[])
 		}*/
 
 		//ScoreFunction sf = *getScoreFunction();
+		ScoreFunction sf = *ScoreFunctionFactory::create_score_function("mm_std");
 
-		//cout << "Initial score: " << sf(pose) << endl;
+		cout << "Initial score: " << sf(pose) << endl;
 
 		//PackerTaskOP task = TaskFactory::create_packer_task(pose);
 		//PackRotamersMoverOP packer = new PackRotamersMover(&sf, task);
