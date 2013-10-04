@@ -23,6 +23,7 @@ END_SELECTOR
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 SET_IO_STRING MLY K
+SET_INTERCHANGEABILITY_GROUP MLY
 ## these are the operations involved
 DELETE_ATOM 2HZ ## This amine hydrogen is now a carbon atom
 DELETE_ATOM 3HZ ## This amine hydrogen is now also a carbon atom

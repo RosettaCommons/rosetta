@@ -1065,7 +1065,10 @@ EX::residue_action(
 }
 
 ////////////////////////////////////////////////////////////////////
-///@brief NC allows a noncanonical residue; use one NC command per noncanonical
+///@brief NC allows a noncanonical residue; use one NC command per noncanonical.
+/// The "nc_to_include_" string should match the interchangeability_group of
+/// your desired residue type, and the residue type(s) in that group with
+/// matching variants will be added to the PackerTask.
 void
 NC::initialize_from_tokens(
 	utility::vector1< std::string > const & tokens,
@@ -1085,13 +1088,12 @@ NC::residue_action(
 	Size resid
 ) const
 {
-
 	core::chemical::ResidueTypeSet const & residue_set = task.residue_task( resid ).get_original_residue_set();
-	if ( residue_set.has_name( nc_to_include_ )){
+	if ( residue_set.interchangeability_group_map( nc_to_include_ ).size() != 0 ){
 		task.nonconst_residue_task(resid).allow_noncanonical_aa( nc_to_include_ );
 	}	else {
 		std::stringstream err_msg;
-		err_msg  << "Unable to add non-canonical amino acid " << nc_to_include_ << " because it is not in the ResidueTypeSet for residue " << resid << ".";
+		err_msg  << "Unable to add non-canonical amino acid(s) with interchangeability group " << nc_to_include_ << " because there are no ResidueTypes with that interchangeability group in the ResidueTypeSet for residue " << resid << ".";
 		onError(err_msg.str());
 	}
 }//end NC

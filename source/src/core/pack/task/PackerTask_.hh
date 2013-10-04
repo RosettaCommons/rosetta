@@ -227,7 +227,7 @@ public:
 
 	///@brief explicitly allow a NCAA
 	virtual void allow_noncanonical_aa(
-		std::string const & aaname,
+		std::string const & interchangeability_group,
 		chemical::ResidueTypeSet const & residue_set
 	);
 

@@ -131,62 +131,35 @@ public:
 		utility::vector1< Adduct >::const_iterator work_iter
 	);
 
-	/// @brief query ResidueTypes by their 3-letter name
-	///
-	/// @details 3-letter name is not unique to each ResidueType
-	/// for example, 3-letter name "HIS" matches both his tautomers,
-	/// HIS and HIS_D. Return an empty list if no match is found.
+	/// @brief query ResidueTypes by their interchangeability-group name
 	ResidueTypeCOPs const &
-	name3_map( std::string const & name ) const
-	{
-		assert( name.size() == 3 );
-		if ( name3_map_.find( name ) == name3_map_.end() ) {
-			return empty_residue_list_;
-		}
-		return name3_map_.find( name )->second;
-	}
+	interchangeability_group_map( std::string const & name ) const;
+
+	/// @brief query ResidueTypes by their 3-letter name
+	ResidueTypeCOPs const &
+	name3_map( std::string const & name ) const;
 
 	/// @brief query ResidueType by its unique residue id.
 	///
 	/// @details since residue id is unique, it only returns
 	/// one residue type or exit without match.
 	ResidueType const &
-	name_map( std::string const & name ) const
-	{
-		if ( name_map_.find( name ) == name_map_.end() ) {
-			utility_exit_with_message( "unrecognized residue name '"+name+"'" );
-		}
-		return *( name_map_.find( name )->second );
-	}
+	name_map( std::string const & name ) const;
 
-	/// @brief query ResidueType by its unique residue id.
-	///
-	/// @details since residue id is unique, it only returns
-	/// one residue type or exit without match.
-	ResidueType &
-	nonconst_name_map( std::string const & name )
-	{
-		if ( nonconst_name_map_.find( name ) == nonconst_name_map_.end() ) {
-			utility_exit_with_message( "unrecognized residue name" );
-		}
-		return *( nonconst_name_map_.find( name )->second );
-	}
+	// IF YOU COMMENT THIS BACK IN, TELL ME WHY BY EMAIL: aleaverfay@gmail.com
+	///// @brief query ResidueType by its unique residue id returning a non-const reference to that ResidueType
+	///// (Is this really a good idea?  Who is using this functionality?  ResidueTypes are supposed
+	///// to be constant once deposited inside a ResidueTypeSet or lots of downstream assumptions
+	///// are invalidated!)
+	//ResidueType &
+	//nonconst_name_map( std::string const & name );
 
-	/// @brief query if a ResidueType of the unique residue id is present.
-	///
-	///
+	/// @brief query if a ResidueType of the unique residue id (name) is present.
+	bool has_name( std::string const & name ) const;
+
+	/// @brief query if any ResidueTypes in the set have a "name3" tat matches the input name3
 	bool
-	has_name( std::string const & name ) const
-	{
-		return ( name_map_.find( name ) != name_map_.end() );
-	}
-
-	/// @brief query if a ResidueType of a certain 3letter name is present.
-	bool
-	has_name3( std::string const & name3 ) const
-	{
-		return ( name3_map_.find( name3 ) != name3_map_.end() );
-	}
+	has_name3( std::string const & name3 ) const;
 
 	/// @brief query a variant ResidueType by its base ResidueType and VariantType
 	///
@@ -209,13 +182,7 @@ public:
 	/// @details similar to name3_map, return all matched residue types
 	/// or an empty list.
 	ResidueTypeCOPs const &
-	aa_map( AA const & aa ) const
-	{
-		if ( aa_map_.find( aa ) == aa_map_.end() ) {
-			return empty_residue_list_;
-		}
-		return aa_map_.find( aa )->second;
-	}
+	aa_map( AA const & aa ) const;
 
 	/// @brief select a set of ResidueTypes give certain criteria
 	void
@@ -280,14 +247,6 @@ private:
 	// data
 private:
 
-	//chemical::AtomTypeSet const & atom_types_;
-
-// 	/// @brief the atom-types
-// 	chemical::AtomTypeSetCAP atom_types_;
-
-// 	/// @brief the MMatom-types
-// 	chemical::MMAtomTypeSetCAP mm_atom_types_;
-
 	/// What does the ChemicalManager call this ResidueTypeSet?
 	std::string name_;
 
@@ -305,6 +264,9 @@ private:
 	/// @brief map to ResidueType pointers by AA enum
 	std::map< AA, ResidueTypeCOPs > aa_map_;
 
+	/// @brief map between ResidueType's interchangeability group string and a vector of ResidueTypeCOPs
+	std::map< std::string, ResidueTypeCOPs > interchangeability_group_map_;
+
 	/// @brief map to ResidueType pointers by 3-letter string name
 	std::map< std::string, ResidueTypeCOPs > name3_map_;
 
@@ -316,13 +278,6 @@ private:
 
 	/// @brief list of AA types defined
 	std::list< AA > aas_defined_;
-
-	//XRW_B_T1
-	/*
-	/// @brief the coarsify translator in case this a coarse residue set
-	coarse::TranslatorSetCOP coarsifier_;
-	*/
-	//XRW_E_T1
 
 	/// @brief the database directory of the generating files ---> allows to use cached dunbrack libs
 	const std::string database_directory_;

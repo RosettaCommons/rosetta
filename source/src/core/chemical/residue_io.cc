@@ -123,10 +123,249 @@ read_topology_file(
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details	 construct a ResidueType from a file. Example files are currently in
-///	 rosetta_database/chemical/residue_type_sets/fa_standard/residue_types/???.params
-///  These files contain information
-///	 about each basic ResidueType which can be patched to created various
-///	 variant types.
+///	 main/database/chemical/residue_type_sets/fa_standard/residue_types/l-caa/ directory
+///  These files contain information about each basic ResidueType which can be
+///  patched to created various variant types.
+///
+/// The topolgoy file (.params file) is formatted as follows.
+/// The file may contain any number of lines.  Blank lines and lines beginning with "#"
+/// are ignored. Each non-ignored line must begin with a string, a "tag", which
+/// describes a peice of data for the ResidueType.  The tags may be given in any order,
+/// though they will be processed so that ATOM tag lines are read first.
+///
+/// Valid tags are:
+/// AA:
+/// Give the element of the AA enumeration (src/core/chemical/AA.hh) that
+/// is appropriate for this residue type.  This information is used by
+/// the knowledge-based potentials which already encode information
+/// specifically for proteins or nucleic acids, and is also used by
+/// the RotamerLibrary to retireve the appropriate rotamer library.
+/// Provide "aa_unk" here for "unknown" if not dealing with a canonical
+/// amino- or nucleic acid.  E.g. "AA SER" from SER.params
+///
+/// ACT_COORD_ATOMS:
+/// List the atoms that define the "action coordinate" which is used
+/// by the fa_pair potential followed by the "END" token. E.g.
+/// "ACT_COORD_ATOMS OG END" from SER.params.
+///
+/// ADDUCT:
+/// Define an accuct as part of this residue type giving: a) the name, b)
+/// the adduct atom name, c) the adduct atom type, d) the adduct mm type,
+/// e) the adduct partial charge, and the f) the distance, g) improper bond
+/// angle, and h) dihedral that describe how to build the adduct from the
+/// i) parent, i) grandparent, and j) great grandparent atoms. E.g.
+/// "ADDUCT  DNA_MAJOR_GROOVE_WATER  WN6 HOH H 0.0   -6.000000  44.000000     2.990000   N6    C6    C5"
+/// from ADE.params.
+///
+/// ATOM:
+/// Declare a new atom by name and list several of its properties.
+/// This line is column formatted.  The atom's name must be in columns
+/// 6-9 so that "ATOM CA  ..." declares a different atom from
+/// "ATOM  CA ...".  This is for PDB formatting. All atom names
+/// must be distinct, and all atom names must be distinct when ignoring
+/// whitespace ("CA  " and " CA " could not coexist). After the atom name
+/// is read, the rest of the line is simply whitespace delimited.
+/// Next, the (rosetta) atom type name is given (which must have
+/// been defined in the input AtomTypeSet), and then the mm atom type
+/// name is given (which must have been defined in the input
+/// MMAtomTypeSet).  Finally, the charge for this atom is given, either
+/// as the next input, or (ignoring the next input) the one after,
+/// if the "parse_charge" flag is on (whatever that is).
+/// E.g. "ATOM  CB  CH3  CT3  -0.27   0.000" from ALA.params.
+///
+/// BOND:
+/// Declare a bond between two atoms giving their names. This line is
+/// whitespace delimited.  E.g. "BOND  N    CA" from ALA.params.
+///
+/// BOND_TYPE:
+/// Declare a bond betwen two atoms, giving their names, and also
+/// describing the chemical nature of the bond.  See the "BondName"
+/// enumeration for acceptible bond types.
+///
+/// CHI:
+/// Declare a sidechain dihedral, its index, and the four atoms that define it.
+/// E.g. "CHI 2  CA   CB   CG   CD1" from PHE.params.
+///
+/// CHI_ROTAMERS:
+/// List the chi mean/standard-deviation pairs that define how to build
+/// rotamer samples.  This is useful for residue types which do not
+/// come with their own rotamer libraries.  E.g. "CHI_ROTAMERS 2 180 15"
+/// from carbohydrates/to5-beta-D-Psip.params
+///
+/// CONNECT:
+/// Declare that an inter-residue chemical bond exists from a given
+/// atom.  E.g. "CONNECT SG" from CYD.params.  NOTE: Connection order
+/// is assumed to be preserved between residue types: connection #2 on
+/// one residue type is assumed to be "the same" as connection #2
+/// on another residue type, if the two residue types are going
+/// to be exchanged in the packer (as ALA might be swapped out
+/// for ARG).  CONNECT tags are processed in the order they are
+/// listed in the input file.  For polymeric residue types
+/// (e.g. proteins, DNA, RNA) "LOWER_CONNECT" and "UPPER_CONNECT"
+/// should be listed before any additional CONNECT records.
+///
+/// CUT_BOND:
+/// Declare a previously-declared bond to be off-limits to the
+/// basic atom-tree construction logic (user-defined atom trees
+/// can be created which defy this declaration, if desired).
+/// This is useful in cases where the chemical graph contains
+/// cycles.  E.g. "CUT_BOND O4' C1'" from URA.params.
+///
+/// FIRST_SIDECHAIN_ATOM:
+/// Give the name of the first sidechain atom.  All heavy atoms that were
+/// declared before the first sidechain atom in the topology file
+/// are considered backbone atoms.  All heavy atoms after the first
+/// sidechain atom are considered sidechain atoms. Hydrogen atoms
+/// are either sidechain or backbone depending on the heavy atom to
+/// which they are bound. E.g. "FIRST_SIDECHAIN_ATOM CB" from SER.params.
+///
+/// IO_STRING:
+/// Give the three-letter and one-letter codes that are used to read and
+/// write this residue type from and to PDB files, and to FASTA files.
+/// This tag is column formatted.  Columns 11-13 are for the three-letter
+/// code. Column 15 is for the 1-letter code.  E.g.
+///
+/// INTERCHANGEABILITY_GROUP:
+/// Give the name for the group of ResidueType objects that are functionally
+/// interchangable (but which may have different variant types).  This
+/// information is used by the packer to discern what ResidueType to put
+/// at a particular position.  If this tag is not given in the topology file,
+/// the three-letter code given by the IO_STRING tag is used instead.
+///
+/// ICOOR_INTERNAL:
+/// Describe the geometry of the residue type from internal coordinates
+/// giving a) the atom, b) the torsion, phi, in degrees c) the improper bond angle
+/// that is (180-bond angle) in degrees, theta, d) the bond length, d, in Angstroms
+/// e) the parent atom, f) the grand-parent, and g) the great-grandparent.
+/// The first three atoms in the file have a peculiar structure where:
+/// 1) at1 lists itself as its own parent, at2 as its grand parent, and at3 as its great-grandparent,
+/// 2) at2 lists at1 as its parent, itself as its grand parent, and at3 as its great-grandparent, and
+/// 3) at3 list at2 as its parent, at1 as its grand parent, and itself as its great-grandparent.
+/// The atoms "LOWER" and "UPPER" are given for polymeric residues to describe the
+/// ideal coordinate of the previous and next residues. For non-polymeric inter-residue
+/// connections, atoms "CONN#" should be given (e.g. CONN3 for the disulfide connection in CYD).
+/// The number for an inter-residue connection comes from the order in which the connection is
+/// declared in the file, and includes the LOWER_CONNECT and UPPER_CONNECT connections in this
+/// count (e.g. for CYD, there is a LOWER_CONNECT, and UPPER_CONNECT, and only a single
+/// CONNECT declaration, so the disulfide connection is the third connection). The order in which
+/// internal coordinate data for atoms are given, excepting the first three, must define a "tree"
+/// in that atom geometry must only be specified in terms of atoms whose geometry has already been
+/// specified.  Improper dihedrals may be specified, where the great grandparent is not the parent atom
+/// of the grandparent but in these cases, the great grandparent does need to be a
+/// childe of the grandparent. E.g.
+/// "ICOOR_INTERNAL    CB  -122.000000   69.862976    1.516263   CA    N     C" from SER.params.
+///
+/// LOWER_CONNECT:
+/// For a polymer residue, declare which atom forms the "lower" inter-residue
+/// connection (chemical bond) i.e., the bond to residue i-1.  E.g.
+/// "LOWER_CONNECT N" from SER.params.
+///
+/// NAME:
+/// Give the name for this ResidueType.  The name for each ResidueType
+/// must be unique within a ResidueTypeSet.  E.g. "NAME SER" from SER.params.
+///
+/// NBR_ATOM:
+/// Declare the name of the atom which will be used to define the
+/// center of the residue for neighbor calculations.  The coordinate
+/// of this atom is used along side the radius given in in the
+/// NBR_RADIUS tag.  This atom should be chosen to not move
+/// during packing so that neighbor relationships can be discerned
+/// for an entire set of rotamers from the backbone coordinates from
+/// the existing residue.  E.g. "NBR_ATOM CB" from SER.params.
+///
+/// NBR_RADIUS:
+/// Declare a radius that defines a sphere which, when centered
+/// on the NBR_ATOM, is guaranteed to contain all heavy atoms
+/// under all possible dihedral angle assignments (but where
+/// bond angles and lengths are considered ideal).  This is
+/// used to determine which residues are close enough that they
+/// might interact.  Only the interactions of those such residues
+/// are ever evaluated by the scoring machinery.  E.g.
+/// "NBR_RADIUS 3.4473" from SER.params.
+///
+/// NCAA_ROTLIB_PATH:
+/// Give the path to the rotamer library file to use for a non-canonical
+/// amino acid. E.g. "NCAA_ROTLIB_PATH E35.rotlib" from
+/// d-ncaa/d-5-fluoro-tryptophan.params
+///
+/// NCAA_ROTLIB_NUM_ROTAMER_BINS:
+/// List the number of rotamers and the number of bins for each rotamer.
+/// E.g. "NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 2" from
+/// d-ncaa/d-5-fluoro-tryptophan.params
+///
+/// NUMERIC_PROPERTY:
+/// Store an arbitrary float value that goes along with an arbitrary
+/// string key in a ResidueType.  No examples can be currently
+/// found in the database (10/13).  E.g. "NUMERIC_PROPERTY twelve 12.0"
+/// would be a way to store the number "12.0" with the key "twelve".
+///
+/// ORIENT_ATOM:
+/// Describe how to orient rotamers onto an existing residue either
+/// by orienting onto the NBR_ATOM atom, or by using the more
+/// complicated (default) logic in ResidueType::select_orient_atoms.
+/// There are two options here: "ORIENT_ATOM NBR" (orient onto NBR_ATOM) and
+/// "ORIENT_ATOM DEFAULT". If this tag is not given in the topology
+/// file, then the default behavior is used.  E.g. "SET_ORIENT_ATOM NBR" from
+/// SC_Fragment.txt
+///
+/// PDB_ROTAMERS:
+/// Give the file name that describes entire-residue rotamers which
+/// can be used in the packer to consider alternate conformations for
+/// a residue.  This is commonly used for small molecules.  See also
+/// the CHI_ROTAMERS and NCAA_ROTLIB_PATH tags for alternate ways to
+/// provide rotamers.
+///
+/// PROPERTIES:
+/// Add a given set of property strings to a residue type. E.g.
+/// "PROPERTIES PROTEIN AROMATIC SC_ORBITALS" from TYR.params.
+///
+/// PROTON_CHI:
+/// Declare a previously-declared chi angle to be a "proton chi"
+/// and describe how this dihedral should be sampled by code
+/// that takes discrete sampling of sidechain conformations.
+/// The structure of these samples is as follows:
+/// First the word "SAMPLES" is given.  Next the number of samples
+/// should be given.  Next a list of dihedral angles, in degrees, should
+/// be given.  Next, the word "EXTRA" is given.  Next the number
+/// of extra samples is given.  Finally, a list of perturbations
+/// angles, in degrees, is given.  In cases where extra rotamers
+/// are requested (e.g. with the -ex2 flag), then the listed samples
+/// are are perturbed +/- the listed perturbations.  E.g.
+/// "PROTON_CHI 2 SAMPLES 18 0 20 40 60 80 100 120 140 160 180 200 220 240 260 280 300 320 340 EXTRA 0"
+/// from SER.params.
+///
+/// ROTAMER_AA:
+/// Set the "rotamer_aa" for a particular residue, which can be used
+/// to describe to the RotamerLibrary what amino acid to mimic for the
+/// sake of building rotamers.  E.g. "ROTAMER_AA SER" No examples
+/// currently found in the database (10/13).
+///
+/// STRING_PROPERTY:
+/// Store an arbitrary string value with a given string key.
+/// No example can be currently found in the database (10/13).
+/// A valid case would be "STRING_PROPERTY count twelve" which
+/// could store the string "twelve" for the key "count".
+///
+/// TYPE:
+/// State whether this is a polymeric or ligand residue type.
+/// E.g. "TYPE POLYMER" or "TYPE LIGAND" which adds either
+/// "POLYMER" or "LIGAND" properties to this residue type.
+///
+/// UPPER_CONNECT:
+/// For a polymer residue, declare which atom forms the "upper" inter-residue
+/// connection (chemical bond) i.e., the bond to residue i+1.  E.g.
+/// "UPPER_CONNECT C" from SER.params.
+///
+/// VARIANT:
+/// Declare this residue type to have a particular variant type.
+/// Variant types are used by the packer to determine which
+/// ResidueTypes are compatible with a given starting residue.
+/// Variants are similar to properties, except that the packer
+/// does not restrict itself to residue types that have the
+/// same set of properties.  Variant information is also
+/// used by the residue-type-patching system to avoid applying
+/// patches to certain residue types.  E.g. "VARIANT DISULFIDE"
+/// from CYD.params.
 ResidueTypeOP
 read_topology_file(
 	utility::io::izstream & data,
@@ -276,6 +515,7 @@ read_topology_file(
 
 		}else if ( tag == "BOND_TYPE" ) {
 			l >> atom1 >> atom2 >> bond_type;
+			// apl Note: this cast could easily fail and there's no error checking
 			rsd->add_bond(atom1,atom2,static_cast<core::chemical::BondName>(bond_type));
 		}else if ( tag == "CUT_BOND" ) {
 			l >> atom1 >> atom2;
@@ -344,11 +584,11 @@ read_topology_file(
 			core::Real value = 0.0;
 			l >> tag >> value;
 			rsd->add_numeric_property(tag,value);
-		
+
 		}else if (tag == "STRING_PROPERTY" ) {
 			std::string value;
 			l >> tag >> value;
-			
+
 		}else if ( tag == "VARIANT" ) {
 			l >> tag;
 			while ( !l.fail() ) {
@@ -375,8 +615,16 @@ read_topology_file(
 							one_letter_code( line.substr(14,1) );
 			rsd->name3( three_letter_code );
 			rsd->name1( one_letter_code[0] );
-
-		} else if ( tag == "AA" ) {
+			// Default behavior for interchangeability_group is to take name3
+			if ( rsd->interchangeability_group() == "" ) {
+				rsd->interchangeability_group( three_letter_code );
+			}
+		} else if ( tag == "INTERCHANGEABILITY_GROUP" ) {
+			// The INTERCHANGEABILITY_GROUP tag is not required; the name3 from the IO_STRING will be
+			// used instead.
+			l >> tag;
+			rsd->interchangeability_group( tag );
+		}else if ( tag == "AA" ) {
 			l >> tag;
 			rsd->aa( tag );
 			found_AA_record = true;

@@ -1354,7 +1354,9 @@ public:
 	}
 
 
-	/// @brief get our 3letter code
+	/// @brief get our 3letter code.  This is set in the
+	/// ResidueType .params file through the IO_STRING
+	/// tag along with the name1 string
 	std::string const &
 	name3() const
 	{
@@ -1369,7 +1371,9 @@ public:
 	}
 
 
-	/// @brief get our 1letter code
+	/// @brief get our 1letter code.  This is set in the
+	/// ResidueType .params file through the IO_STRING
+	/// tag along with the name3 string.
 	char
 	name1() const
 	{
@@ -1384,6 +1388,24 @@ public:
 		name1_ = code;
 	}
 
+	/// @brief get our interchangeability-group id.  Used to
+	/// determine if two residue types are equivalent, except
+	/// for their variant status.  E.g. ResidueTypes ALA and
+	/// ALA_Nterm would be part of the same interchangeability
+	/// group.  This has a degree of subjectivity; are TYR and
+	/// pTYR in the same interchangeability group?  Probably not.
+	/// This data can be specified in the ResidueTypes .params
+	/// file with the INTERCHANGEABILITY_GROUP tag.
+	std::string
+	interchangeability_group() const {
+		return interchangeability_group_;
+	}
+
+	/// @brief set our interchangeability-group id
+	void
+	interchangeability_group( std::string setting ) {
+		interchangeability_group_ = setting;
+	}
 
 	///@brief set the MolData object
 	void set_mol_data(sdf::MolData const & mol_data)
@@ -1397,7 +1419,7 @@ public:
 	}
 
 
-	/// our traditional residue type, if any
+	/// @brief our traditional residue type, if any
 	/**
 		 Used for knowledge-based scores, dunbrack, etc.
 		 could be "aa_unk"
@@ -1417,37 +1439,12 @@ public:
 		return rotamer_aa_;
 	}
 
-
-
-
-//	/// @brief get csd atom name by index
-//	std::string const &
-//	csd_atom_name( Size const index ) const
-//	{
-//		return csd_atom_name_[ index ];
-//	}
-
-
-
 	void set_RotamerLibraryName( std::string const & filename );
 
 	/// @brief A residue parameter file can refer to a set of "pdb rotamers" that can be
 	/// superimposed onto a starting position for use in the packer.  These rotamers
 	/// are loaded into the pack::dunbrack::RotamerLibrary at the time of their first use.
 	std::string get_RotamerLibraryName() const;
-
-	//pack::dunbrack::SingleResidueRotamerLibraryCAP get_RotamerLibrary() const;
-	//void set_RotamerLibrary(pack::dunbrack::SingleResidueRotamerLibraryCOP rotlib);
-
-	//XRW_B_T1
-	/*
-	void set_translator(coarse::TranslatorCAP map) const {
-		translator_ = map;
-	}
-	*/
-	//XRW_E_T1
-	//
-
 
 	////////////////////////////////////////////////////////////////////////////
 	/// dihedral methods
@@ -1968,6 +1965,15 @@ private:
 
 	/// pdb-file id, need not be unique
 	std::string name3_;
+
+	/// interchangeability group lets a ResidueType claim to be functionally
+	/// interchangeable with any other ResidueType in the same group.  This
+	/// is used by the packer to decide which ResidueType from a desired group
+	/// has the right set of variants to be placed at a particular position.
+	/// E.g. if the interchangeability group is "ALA" and the packer is building
+	/// rotamers for residue 1, (the N-terminal residue) then, the packer will
+	/// select the "ALA:NTermProteinFull" ResidueType and build rotamers for it.
+	std::string interchangeability_group_;
 
 	/// one-letter code, also not necessarily unique
 	char name1_;

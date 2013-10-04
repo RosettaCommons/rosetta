@@ -190,13 +190,13 @@ public:
 	///@brief
 	virtual chemical::AA const & get_original_residue() const = 0;
 
-	// expand (or) the list of available aa's for non-cannonicals
+	///@brief expand (or) the list of available residue types for non-cannonicals
 	virtual void allow_noncanonical_aa(
-		std::string const & aaname,
-		chemical::ResidueTypeSet const & residue_set // who gives this reference to the rlt?; maybe rlt holds a rts
+		std::string const & interchangeability_group,
+		chemical::ResidueTypeSet const & residue_set // who gives this reference to the rlt?; maybe rlt holds a rts (what is an rlt?)
 	) = 0;
 
-	//assumes same restypeset as original residue
+	/// @brief expand (or) the list of available residue types for non-cannonicals.  Assumes same restypeset as original residue
 	virtual void allow_noncanonical_aa(	std::string const & aaname ) = 0;
 
 	///@brief explicitly allow a NCAA; assumes same ResidueTypeSet as original_residue_type_

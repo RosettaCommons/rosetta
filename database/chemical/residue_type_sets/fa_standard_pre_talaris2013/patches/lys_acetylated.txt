@@ -23,6 +23,7 @@ END_SELECTOR
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 SET_IO_STRING ALY K
+SET_INTERCHANGEABILITY_GROUP ALY
 ## these are the operations involved
 DELETE_ATOM 2HZ ## One of the amine hydrogens is now a carbon atom
 DELETE_ATOM 3HZ ## Positive charge removed with deprotonation

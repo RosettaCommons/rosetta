@@ -25,6 +25,7 @@ BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 
 SET_IO_STRING M3L K
+SET_INTERCHANGEABILITY_GROUP M3L
 
 ## these are the operations involved
 DELETE_ATOM 1HZ ## This amine hydrogen is now a carbon atom

@@ -19,6 +19,7 @@ END_SELECTOR
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 SET_IO_STRING HYP P
+SET_INTERCHANGEABILITY_GROUP HYP
 ## these are the operations involved
 DELETE_ATOM 2HG ## The H bonded to the gamma oxygen is now an oxygen atom
 

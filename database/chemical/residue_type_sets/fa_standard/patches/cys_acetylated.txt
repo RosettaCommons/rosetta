@@ -23,6 +23,7 @@ END_SELECTOR
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 SET_IO_STRING SCY C
+SET_INTERCHANGEABILITY_GROUP SCY
 ## these are the operations involved
 #DELETE_ATOM  HG
 SET_ATOM_TYPE  HG  VIRT

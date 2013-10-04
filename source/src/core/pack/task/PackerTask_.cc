@@ -840,8 +840,8 @@ ResidueLevelTask_::restrict_to_repacking()
 bool ResidueLevelTask_::is_original_type( chemical::ResidueTypeCOP type ) const
 {
 	if ( original_residue_type_->aa() == chemical::aa_unk ) {
-		// unknown aa != equivalent type
-		return ( type->name3() == original_residue_type_->name3() );
+		// unknown aa; go with interchangeability_group
+		return ( type->interchangeability_group() == original_residue_type_->interchangeability_group() );
 	} else if ( fix_his_tautomer_ && (original_residue_type_->aa() == chemical::aa_his) ) {
 		// the only way to distinguish HIS and HIS_D is by their full name
 		// this will still fail for cases where variants mismatch but the tautomer does not
@@ -859,42 +859,48 @@ chemical::AA const & ResidueLevelTask_::get_original_residue() const {
 	return original_residue_type_->aa();
 }
 
-// expand (or) the list of available aa's for non-cannonicals
+/// @details expand (or) the list of available aa's for non-cannonicals
+/// looking for ResidueTypes that share the input "interchangeability_group" id
 void ResidueLevelTask_::allow_noncanonical_aa(
-	std::string const & aaname,
+	std::string const & interchangeability_group,
 	chemical::ResidueTypeSet const & residue_set
 )
 {
 	if ( disabled_ || design_disabled_ ) return;
 
 	// get ResidueTypeCOPs vector
-	chemical::ResidueTypeCOPs const & aas( residue_set.residue_types() );
+	chemical::ResidueTypeCOPs const & aas( residue_set.interchangeability_group_map( interchangeability_group ) );
 
 	for ( chemical::ResidueTypeCOPs::const_iterator	aas_iter = aas.begin(), aas_end = aas.end(); aas_iter != aas_end; ++aas_iter ) {
-	    if ( original_residue_type_->variants_match( **aas_iter ) &&
-			std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==	allowed_residue_types_.end() && /* haven't already added it */
-			aaname ==	(**aas_iter).name3() )
-	    {
+		if ( original_residue_type_->variants_match( **aas_iter ) &&
+				 (*aas_iter)->aa() >= chemical::num_canonical_aas && // cannot be used to add canonical amino acids
+				std::find( allowed_residue_types_.begin(), allowed_residue_types_.end(), *aas_iter ) ==	allowed_residue_types_.end() /* haven't already added it */)
+		{
 			allowed_residue_types_.push_back( *aas_iter );
 		}
 	}
 
 	mode_tokens_.push_back("NC");
-	mode_tokens_.push_back(aaname);
+	mode_tokens_.push_back( interchangeability_group );
 
 	determine_if_designing();
 	determine_if_repacking();
 }
 
-///@details assumes same ResidueTypeSet as original_residue_type_ and calls other overloaded allow_noncanonical_aas
-void ResidueLevelTask_::allow_noncanonical_aa( std::string const & aaname )
+/// @details Calls the overloaded allow_noncanonical_aas method using the same ResidueTypeSet as original_residue_type_
+void ResidueLevelTask_::allow_noncanonical_aa( std::string const & interchangeability_group )
 {
-	allow_noncanonical_aa( aaname, original_residue_type_->residue_type_set() );
+	allow_noncanonical_aa( interchangeability_group, original_residue_type_->residue_type_set() );
 }
 
-///@details assumes same ResidueTypeSet as original_residue_type_ and calls overloaded allow_noncanonical_aas
+/// @details Calls the overloaded allow_noncanonical_aas method using the same ResidueTypeSet as original_residue_type_
+/// taking as the interchangeability group what is returned by the "name_from_aa" function.
 void ResidueLevelTask_::allow_noncanonical_aa( chemical::AA aa )
 {
+	if ( aa <= chemical::num_canonical_aas ) {
+		T.Warning << "Canonical amino acid, " << aa << ", given in a call to allow_noncanonical_aa has no effect." << std::endl;
+		return;
+	}
 	allow_noncanonical_aa( name_from_aa(aa) );
 }
 

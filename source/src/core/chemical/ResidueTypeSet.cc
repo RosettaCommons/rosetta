@@ -119,7 +119,7 @@ ResidueTypeSet::ResidueTypeSet(
 					(line.substr(0, 27) == "residue_types/carbohydrates")) {
 				continue;
 			}
-			
+
 			//Skip mineral surface ResidueTypes unless included with surface_mode flag.
 			if ((!option[OptionKeys::in::include_surfaces]) &&
 				 (line.substr(0, 29) == "residue_types/mineral_surface"))
@@ -252,14 +252,6 @@ ResidueTypeSet::ResidueTypeSet(
 //		residue_types_[ii]->debug_dump_icoor();
 //	}
 
-//XRW_B_T1
-/*
-	if ( coarsify_rule_set ) {
-		coarsifier_ = new coarse::TranslatorSet(*coarsify_rule_set, fine_res_set, this);
-	}
-*/
-//XRW_E_T1
-
 	tr << "Finished initializing " << name << " residue type set.  Created " << residue_types_.size() << " residue types" << std::endl;
 }
 
@@ -349,6 +341,81 @@ ResidueTypeSet::apply_patches(
 
 }
 
+ResidueTypeCOPs const &
+ResidueTypeSet::interchangeability_group_map( std::string const & name ) const
+{
+	std::map< std::string, ResidueTypeCOPs >::const_iterator iter = interchangeability_group_map_.find( name );
+	if ( iter == interchangeability_group_map_.end() ) {
+		return empty_residue_list_;
+	}
+	return iter->second;
+}
+
+
+/// @details 3-letter name is not unique to each ResidueType
+/// for example, 3-letter name "HIS" matches both his tautomers,
+/// HIS and HIS_D. Return an empty list if no match is found.
+ResidueTypeCOPs const &
+ResidueTypeSet::name3_map( std::string const & name ) const
+{
+	assert( name.size() == 3 );
+	std::map< std::string, ResidueTypeCOPs >::const_iterator iter = name3_map_.find( name );
+	if ( iter == name3_map_.end() ) {
+		return empty_residue_list_;
+	}
+	return iter->second;
+}
+
+/// @details since residue id is unique, it only returns
+/// one residue type or exit without match.
+ResidueType const &
+ResidueTypeSet::name_map( std::string const & name ) const
+{
+	if ( name_map_.find( name ) == name_map_.end() ) {
+		utility_exit_with_message( "unrecognized residue name '"+name+"'" );
+	}
+	return *( name_map_.find( name )->second );
+}
+
+// IF YOU COMMENT THIS BACK IN, TELL ME WHY BY EMAIL:
+// aleaverfay@gmail.com
+///// @details since residue id is unique, it only returns
+///// one residue type or exit without match.
+//ResidueType &
+//ResidueTypeSet::nonconst_name_map( std::string const & name )
+//{
+//	std::cerr << "WARNING WARNING WARNING: Invoking ResidueTypeSet::nonconst_name_map violates a core principle of the ResidueTypeSet!" << std::endl;
+//	if ( nonconst_name_map_.find( name ) == nonconst_name_map_.end() ) {
+//		utility_exit_with_message( "unrecognized residue name" );
+//	}
+//	return *( nonconst_name_map_.find( name )->second );
+//}
+
+bool ResidueTypeSet::has_name( std::string const & name ) const
+{
+	return ( name_map_.find( name ) != name_map_.end() );
+}
+
+bool
+ResidueTypeSet::has_name3( std::string const & name3 ) const
+{
+	return ( name3_map_.find( name3 ) != name3_map_.end() );
+}
+
+/// @details similar to name3_map, return all matched residue types
+/// or an empty list.
+ResidueTypeCOPs const &
+ResidueTypeSet::aa_map( AA const & aa ) const
+{
+	if ( aa_map_.find( aa ) == aa_map_.end() ) {
+		return empty_residue_list_;
+	}
+	return aa_map_.find( aa )->second;
+}
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //private
 /// @brief clear residue  maps
@@ -414,6 +481,9 @@ ResidueTypeSet::add_residue_type_to_maps( ResidueTypeOP rsd_ptr )
 	// map by pdb string
 	name3_map_[ rsd_ptr->name3() ].push_back( rsd_ptr() );
 
+	// map by interchangeability group
+	interchangeability_group_map_[ rsd_ptr->interchangeability_group() ].push_back( rsd_ptr() );
+
 	// For specialty amino acids, add them to the name three maps both with their PDB strings and
 	// with their specialty string -- the first three letters of the residue name.
 	// E.g., CYD will appear in both lists for name3_map_[ "CYS" ] and name3_map_[ "CYD" ]
@@ -424,7 +494,7 @@ ResidueTypeSet::add_residue_type_to_maps( ResidueTypeOP rsd_ptr )
 }
 
 void
-ResidueTypeSet::remove_residue_type_from_maps(ResidueTypeOP rsd)
+ResidueTypeSet::remove_residue_type_from_maps( ResidueTypeOP rsd )
 {
 	//Assert rather than utility exit, because this should have been called by remove residue, which utility exits
 	assert(has_name(rsd->name()));
@@ -433,24 +503,51 @@ ResidueTypeSet::remove_residue_type_from_maps(ResidueTypeOP rsd)
 
 	name_map_.erase(rsd->name());
 	nonconst_name_map_.erase(rsd->name());
-	if(rsd->aa() != aa_unk)
-	{
+
+	// clear this residue type from the aa_map_
+	if(rsd->aa() != aa_unk) {
 		ResidueTypeCOPs::iterator aa_it(std::find(aa_map_[rsd->aa()].begin(),aa_map_[rsd->aa()].end(),rsd));
 		aa_map_[rsd->aa()].erase(aa_it);
 		if(aa_map_[rsd->aa()].size() == 0)
 		{
 			aa_map_.erase(rsd->aa());
+
+			// only clear the aa type from the aas_defined_ list if it was the last aa of this type in the aa_map_
+			// special case for aa_unk ahead
+			std::list<AA>::iterator aa_it(std::find(aas_defined_.begin(),aas_defined_.end(),rsd->aa()));
+			aas_defined_.erase(aa_it);
+		}
+	} else {
+		// if this was the only residue type in the ResidueTypeSet with an aa() of aa_unk, then
+		// remove aa_unk from the aas_defined_ list.
+		bool only_aa_unk = true;
+		for ( ResidueTypeOPs::const_iterator iter = residue_types_.begin(); iter != residue_types_.end(); ++iter ) {
+			if ( (*iter)->aa() == aa_unk ) {
+				only_aa_unk = false;
+				break;
+			}
+		}
+		if ( only_aa_unk ) {
+			aas_defined_.erase( std::find( aas_defined_.begin(), aas_defined_.end(), aa_unk ) );
 		}
 	}
 
-	std::list<AA>::iterator aa_it(std::find(aas_defined_.begin(),aas_defined_.end(),rsd->aa()));
-	aas_defined_.erase(aa_it);
-
+	// clear this residue type from the name3_map_
 	ResidueTypeCOPs::iterator name3_it(std::find(name3_map_[rsd->name3()].begin(),name3_map_[rsd->name3()].end(),rsd));
 	name3_map_[rsd->name3()].erase(name3_it);
 	if(name3_map_[rsd->name3()].size() == 0)
 	{
 		name3_map_.erase(rsd->name3());
+	}
+
+	// clear this residue type from the interchangeability_group_map_
+	ResidueTypeCOPs::iterator intgrp_it( std::find(
+		interchangeability_group_map_[ rsd->interchangeability_group() ].begin(),
+		interchangeability_group_map_[ rsd->interchangeability_group() ].end(),
+		rsd ));
+	interchangeability_group_map_[ rsd->interchangeability_group() ].erase( intgrp_it );
+	if ( interchangeability_group_map_[ rsd->interchangeability_group() ].size() ) {
+		interchangeability_group_map_.erase( rsd->interchangeability_group() );
 	}
 
 	if(rsd->name3() != rsd->name().substr(0,3))
@@ -644,8 +741,9 @@ void ResidueTypeSet::remove_residue_type(std::string const & name)
 		utility_exit_with_message("ResidueTypeSet does not have a residue called "+name+ " so it cannot be deleted.");
 	}
 
-	//See, this is why using vectors everywhere is annoying
-	ResidueTypeOP type_to_remove(nonconst_name_map(name));
+	//See, this is why using vectors everywhere is annoying.
+	// What annoying thing am I looking for here?
+	ResidueTypeOP type_to_remove( nonconst_name_map_[ name ] );
 
 	ResidueTypeOPs::iterator res_it(std::find(residue_types_.begin(),residue_types_.end(),type_to_remove));
 	residue_types_.erase(res_it);

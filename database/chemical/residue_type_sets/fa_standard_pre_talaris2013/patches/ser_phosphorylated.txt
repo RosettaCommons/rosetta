@@ -18,6 +18,7 @@ END_SELECTOR
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 SET_IO_STRING SEP S
+SET_INTERCHANGEABILITY_GROUP SEP
 ## these are the operations involved
 ADD_ATOM  P   Phos P    1.50  ## Best guess from the small molecule ligand params file generator molfile_to_params.py
 ADD_ATOM  O1P OOC  ON3  -0.78 ## The charge is taken from the free oxygen atoms of the phosphate backbone in DNA residues

@@ -25,6 +25,7 @@ END_SELECTOR
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 SET_IO_STRING HIC H
+SET_INTERCHANGEABILITY_GROUP HIC
 ## these are the operations involved
 DELETE_ATOM  HE2
 ADD_ATOM  CZ  CH3  CT3  0.12

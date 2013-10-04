@@ -21,6 +21,7 @@ END_SELECTOR
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 SET_IO_STRING TYS Y
+SET_INTERCHANGEABILITY_GROUP TYS
 ## these are the operations involved
 ADD_ATOM  S   S    S    -0.16 ## Best guess from the small molecule docking script molfile_to_params.py
 ADD_ATOM  O1  OOC  OC   -0.33 ## Best guess for a -1 charge over 3 oxygen atoms

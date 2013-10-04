@@ -7,35 +7,30 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
+/// @file   core/chemical/PatchOperation.hh
+/// @brief  Polymorphic classes representing the contents of a residue-type patch file
 /// @author Phil Bradley
-/// see patch.cc to understand whats going on
 
 #ifndef INCLUDED_core_chemical_PatchOperation_hh
 #define INCLUDED_core_chemical_PatchOperation_hh
 
 
-// // Unit headers
+// Unit headers
 #include <core/chemical/PatchOperation.fwd.hh>
 
 // // Package headers
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 //Tracer header
 #include <basic/Tracer.hh>
 
-// ObjexxFCL headers
-#include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-
-
 
 
 namespace core {
 namespace chemical {
 
-static basic::Tracer TR_PatchOperations("core.chemical.PatchOperations.hh");
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +41,7 @@ public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~PatchOperation();
 
-	/// @brief  Returns TR_PatchOperationsUE to signal failure
+	/// @brief Returns true to signal failure, false to indicate success.
 	virtual
 	bool
 	apply( ResidueType & rsd ) const = 0;
@@ -58,24 +53,11 @@ class DeleteAtom : public PatchOperation {
 public:
 
 	/// @brief constructor
-	DeleteAtom( std::string const & atom_name_in ) :
-		atom_name_( atom_name_in )
-	{}
+	DeleteAtom( std::string const & atom_name_in );
 
 	/// @brief delete an atom from ResidueType rsd
 	bool
-	apply( ResidueType & rsd ) const
-	{
-
-		if ( !rsd.has( atom_name_ )  ) {
-			TR_PatchOperations.Debug << "DeleteAtom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ << std::endl;
-			return true; // failure
-		} else {
-			//std::cout << "DeleteAtom::apply: deleting: " << atom_name_ << std::endl;
-			rsd.delete_atom( atom_name_ );
-		}
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// name of the atom to be deleted
@@ -87,24 +69,11 @@ private:
 class SetBackboneHeavyatom : public PatchOperation {
 public:
 	/// @brief constructor
-	SetBackboneHeavyatom( std::string const & atom_name_in ) :
-		atom_name_( atom_name_in )
-	{}
+	SetBackboneHeavyatom( std::string const & atom_name_in );
 
 	/// set an atom in ResidueType rsd as backbone heavy atom
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( !rsd.has( atom_name_ ) ) {
-			TR_PatchOperations.Debug << "SetBackboneHeavyatom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ <<
-				std::endl;
-			return true; // failure
-		} else {
-			//std::cout << "SetBackboneHeavyatom::apply: " << atom_name_ << std::endl;
-			rsd.set_backbone_heavyatom( atom_name_ );
-		}
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	// name of the atom to be set
@@ -117,37 +86,11 @@ class SetPolymerConnectAtom : public PatchOperation {
 public:
 
 	/// @brief constructor the type of connection is "LOWER" or "UPPER"
-	SetPolymerConnectAtom( std::string const & atom_name_in, std::string const & upper_lower_in ) :
-		atom_name_( atom_name_in )
-	{
-		if ( upper_lower_in == "LOWER" ) {
-			upper_lower_ = -1;
-		} else if ( upper_lower_in == "UPPER" ) {
-			upper_lower_ = 1;
-		} else {
-			utility_exit_with_message( "SetPolymerConnectAtom: unrecognized switch "+upper_lower_in );
-		}
-	}
+	SetPolymerConnectAtom( std::string const & atom_name_in, std::string const & upper_lower_in );
 
 	/// @brief set an atom in ResidueType rsd as a polymer connection atom
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( atom_name_ == "NONE" || rsd.has( atom_name_ ) ) {
-			//std::cout << "SetPolymerConnectAtom::apply: " << atom_name_ << ' ' << upper_lower_ << std::endl;
-			if ( upper_lower_ == -1 ) {
-				rsd.set_lower_connect_atom( atom_name_ );
-			} else {
-				assert( upper_lower_ == 1 );
-				rsd.set_upper_connect_atom( atom_name_ );
-			}
-		} else {
-			TR_PatchOperations.Debug << "SetPolymerConnectAtom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ <<
-				std::endl;
-			return true; // failure
-		}
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// "NONE" to delete the connection by setting its atomno to ZERO
@@ -162,32 +105,15 @@ public:
 
 	// c-tor
 	AddConnect( std::string const & connect_atom,
-							Real const phi, Real const theta, Real const d,
-							std::string const & parent_atom,
-							std::string const & angle_atom,
-							std::string const & torsion_atom
-							):
-		connect_atom_( connect_atom ),
-		phi_( phi ), theta_( theta ), d_( d ),
-		parent_atom_ (  parent_atom ),
-		angle_atom_  (   angle_atom ),
-		torsion_atom_( torsion_atom )
-	{}
-
+		Real const phi, Real const theta, Real const d,
+		std::string const & parent_atom,
+		std::string const & angle_atom,
+		std::string const & torsion_atom
+	);
 
 	/// add a property
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( !rsd.has( connect_atom_ ) ||
-				 !rsd.has(  parent_atom_ ) ||
-				 !rsd.has(   angle_atom_ ) ||
-				 !rsd.has( torsion_atom_ ) ) return true; // failure!
-
-		Size const connid( rsd.add_residue_connection( connect_atom_ ) );
-		rsd.set_icoor( "CONN"+ObjexxFCL::string_of( connid ), phi_, theta_, d_, parent_atom_, angle_atom_, torsion_atom_ );
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	std::string const connect_atom_;
@@ -198,8 +124,6 @@ private:
 	std::string const   angle_atom_;
 	std::string const torsion_atom_;
 
-
-
 };
 
 
@@ -209,18 +133,11 @@ class AddProperty : public PatchOperation {
 public:
 
 	/// constructor
-	AddProperty( std::string const & property_in ):
-		property_( property_in )
-	{}
+	AddProperty( std::string const & property_in );
 
 	/// add a property
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		rsd.add_property( property_ );
-		//TR_PatchOperations.Debug << "AddProperty::apply: " << property_ << std::endl;
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// property to be added
@@ -236,18 +153,11 @@ class DeleteProperty : public PatchOperation {
 public:
 
 	/// constructor
-	DeleteProperty( std::string const & property_in ):
-		property_( property_in )
-	{}
+	DeleteProperty( std::string const & property_in );
 
 	/// add a property
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		rsd.delete_property( property_ );
-		//std::cout << "DeleteProperty::apply: " << property_ << std::endl;
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// property to be added
@@ -265,33 +175,16 @@ public:
 
 	/// constructor
 	AddChi(
-		Size const & chino_in, std::string const & atom1_in, std::string const & atom2_in,
-		std::string const & atom3_in, std::string const & atom4_in
-	):
-		chino_( chino_in ), atom1_( atom1_in ), atom2_( atom2_in ), atom3_( atom3_in ), atom4_( atom4_in )
-	{}
+		Size const & chino_in,
+		std::string const & atom1_in,
+		std::string const & atom2_in,
+		std::string const & atom3_in,
+		std::string const & atom4_in
+	);
 
 	/// add a chi angle
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( !rsd.has( atom1_ ) || !rsd.has( atom2_ ) || !rsd.has( atom3_ ) || !rsd.has( atom4_ ) )
-		{
-			TR_PatchOperations.Debug << "AddChi::apply failed: " << rsd.name() << " is missing atom(s) " << atom1_ << ' '
-				<< rsd.has( atom1_ ) << ' ' << atom2_ << ' ' << rsd.has( atom2_ ) << atom3_ << ' '
-				<< rsd.has( atom3_ ) << atom4_ << ' ' << rsd.has( atom4_ ) << std::endl;
-			return true; // failure
-		}
-		else
-		{
-			rsd.add_chi( chino_, atom1_ , atom2_, atom3_, atom4_ );
-			//std::cout << "AddChi::apply: " << atom1_ << ' ' << atom2_
-			//	<< ' ' << atom3_ << ' ' << atom4_ << std::endl;
-			return false;
-		}
-		return false;
-	}
-
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// atoms between which a chi angle is added
@@ -307,18 +200,14 @@ public:
 
 	/// constructor
 	AddProtonChi(
-		Size const & chino_in, utility::vector1<core::Real> const & samples, utility::vector1<core::Real> const & extrasamples
-	):
-		chino_( chino_in ), samples_(samples), extrasamples_(extrasamples)
-	{}
+		Size const & chino_in,
+		utility::vector1<core::Real> const & samples,
+		utility::vector1<core::Real> const & extrasamples
+	);
 
 	/// add a proton chi angle
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		rsd.set_proton_chi( chino_, samples_, extrasamples_ );
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// atoms between which a chi angle is added
@@ -338,33 +227,16 @@ public:
 
 	/// constructor
 	RedefineChi(
-		Size const & chino_in, std::string const & atom1_in, std::string const & atom2_in,
-		std::string const & atom3_in, std::string const & atom4_in
-	):
-		chino_( chino_in ), atom1_( atom1_in ), atom2_( atom2_in ), atom3_( atom3_in ), atom4_( atom4_in )
-	{}
+		Size const & chino_in,
+		std::string const & atom1_in,
+		std::string const & atom2_in,
+		std::string const & atom3_in,
+		std::string const & atom4_in
+	);
 
 	/// redefine a chi angle
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( !rsd.has( atom1_ ) || !rsd.has( atom2_ ) || !rsd.has( atom3_ ) || !rsd.has( atom4_ ) )
-		{
-			TR_PatchOperations.Debug << "RedefineChi::apply failed: " << rsd.name() << " is missing atom(s) " << atom1_ << ' '
-				<< rsd.has( atom1_ ) << ' ' << atom2_ << ' ' << rsd.has( atom2_ ) << atom3_ << ' '
-				<< rsd.has( atom3_ ) << atom4_ << ' ' << rsd.has( atom4_ ) << std::endl;
-			return true; // failure
-		}
-		else
-		{
-			rsd.redefine_chi( chino_, atom1_ , atom2_, atom3_, atom4_ );
-			//std::cout << "RedefineChi::apply: " << atom1_ << ' ' << atom2_
-			//	<< ' ' << atom3_ << ' ' << atom4_ << std::endl;
-			return false;
-		}
-		return false;
-	}
-
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// atoms between which a chi angle is added
@@ -387,20 +259,11 @@ public:
 	/// constructor
 	AddChiRotamer(
 		Size const & chino_in, Real const & mean_in, Real const & sdev_in
-	):
-		chino_( chino_in ), mean_( mean_in ), sdev_( sdev_in )
-	{}
+	);
 
 	/// add a rotamer sample
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		rsd.add_chi_rotamer( chino_, mean_ , sdev_ );
-		//std::cout << "AddChiRotamer::apply: " << chino_ << ' ' << mean_
-		//	<< ' ' << sdev_ << std::endl;
-		return false;
-	}
-
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// atoms between which a chi angle is added
@@ -421,22 +284,11 @@ public:
 		std::string const & atom_type_name_in,
 		std::string const & mm_atom_type_name_in,
 		Real const charge
-	):
-		atom_name_( atom_name_in ),
-		atom_type_name_( atom_type_name_in ),
-		mm_atom_type_name_( mm_atom_type_name_in ),
-		charge_( charge )
-	{}
+	);
 
 	/// add an atom
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		rsd.add_atom( atom_name_, atom_type_name_, mm_atom_type_name_, charge_ );
-		//std::cout << "AddAtom::apply: " << atom_name_ << ' ' << atom_type_name_ << ' ' << mm_atom_type_name_ << ' ' <<
-		//	charge_ << std::endl;
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	std::string atom_name_;
@@ -454,25 +306,11 @@ public:
 	AddBond(
 		std::string const & atom1_in,
 		std::string const & atom2_in
-	):
-		atom1_( atom1_in ),
-		atom2_( atom2_in )
-	{}
+	);
 
 	/// add a bond
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( !rsd.has( atom1_ ) || !rsd.has( atom2_ ) ) {
-			TR_PatchOperations.Debug << "AddBond::apply failed: " << rsd.name() << " is missing atom(s) " << atom1_ << ' ' <<
-				rsd.has( atom1_ ) << ' ' << atom2_ << ' ' << rsd.has( atom2_ ) << std::endl;
-			return true; // failure
-		} else {
-			//TR_PatchOperations.Debug << "AddBond::apply: " << atom1_ << ' ' << atom2_ << std::endl;
-			rsd.add_bond( atom1_, atom2_ );
-		}
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// atoms between which a bond is added
@@ -490,10 +328,7 @@ public:
 	SetAtomicCharge(
 		std::string const & atom_name_in,
 		Real const charge_in
-	):
-		atom_name_( atom_name_in ),
-		charge_( charge_in )
-	{}
+	);
 
 	/// set an atom's charge
 	bool
@@ -515,24 +350,11 @@ public:
 	SetAtomType(
 		std::string const & atom_name_in,
 		std::string const & atom_type_name_in
-	):
-		atom_name_( atom_name_in ),
-		atom_type_name_( atom_type_name_in )
-	{}
+	);
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( !rsd.has( atom_name_ ) ) {
-			TR_PatchOperations.Debug << "SetAtomType::apply failed: " << rsd.name() << " is missing atom: " << atom_name_ << std::endl;
-			return true; // failure
-		} else {
-			//std::cout << "SetAtomType::apply: " << atom_name_ << ' ' << atom_type_name_ << std::endl;
-			rsd.set_atom_type( atom_name_, atom_type_name_ );
-		}
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// atom's name
@@ -549,23 +371,47 @@ public:
 	SetIO_String(
 		std::string const & name3,
 		char const name1
-	):
-		name3_( name3 ),
-		name1_( name1 )
-	{}
+	);
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		rsd.name3( name3_ );
-		rsd.name1( name1_ );
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	std::string const name3_;
 	char const name1_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief set the interchangeability_group string for a ResidueType
+class SetInterchangeabilityGroup_String : public PatchOperation {
+public:
+	/// constructor
+	SetInterchangeabilityGroup_String(
+		std::string const & intgrp
+	);
+
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	std::string const intgrp_;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Append a string to the existing interchangeability_group string for a ResidueType
+class AppendInterchangeabilityGroup_String : public PatchOperation {
+public:
+	/// constructor
+	AppendInterchangeabilityGroup_String(
+		std::string const & intgrp_addendum
+	);
+
+	bool
+	apply( ResidueType & rsd ) const;
+
+private:
+	std::string const intgrp_addendum_;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -576,24 +422,11 @@ public:
 	SetMMAtomType(
 		std::string const & atom_name_in,
 		std::string const & mm_atom_type_name_in
-	):
-		atom_name_( atom_name_in ),
-		mm_atom_type_name_( mm_atom_type_name_in )
-	{}
+	);
 
 	/// set atom's chemical type
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( !rsd.has( atom_name_ ) ) {
-			TR_PatchOperations.Debug << "SetAtomType::apply failed: " << rsd.name() << " is missing atom: " << atom_name_ << std::endl;
-			return true; // failure
-		} else {
-			//std::cout << "SetAtomType::apply: " << atom_name_ << ' ' << mm_atom_type_name_ << std::endl;
-			rsd.set_mm_atom_type( atom_name_, mm_atom_type_name_ );
-		}
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	/// atom's name
@@ -615,15 +448,7 @@ public:
 		std::string const & stub1_in,
 		std::string const & stub2_in,
 		std::string const & stub3_in
-	):
-		atom_( atom_in ),
-		phi_( phi_in ),
-		theta_( theta_in ),
-		d_( d_in ),
-		stub1_( stub1_in ),
-		stub2_( stub2_in ),
-		stub3_( stub3_in )
-	{}
+	);
 
 	/// set an atom's AtomICoord
 	bool
@@ -646,28 +471,11 @@ private:
 class PrependMainchainAtom : public PatchOperation {
 public:
 	/// @brief constructor
-	PrependMainchainAtom( std::string const & atom_name_in ) :
-		atom_name_( atom_name_in )
-	{}
+	PrependMainchainAtom( std::string const & atom_name_in );
 
 	/// @brief set an atom to be the first mainchain atom
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( !rsd.has( atom_name_ ) ) {
-			TR_PatchOperations.Debug << "PrependMainchainAtom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ <<	std::endl;
-			return true; // failure
-		} else {
-			AtomIndices const & old_mainchain_atoms( rsd.mainchain_atoms() );
-			AtomIndices new_mainchain_atoms;
-			new_mainchain_atoms.push_back( rsd.atom_index( atom_name_ ) );
-			for ( Size i = 1; i <= old_mainchain_atoms.size(); ++i ) {
-				new_mainchain_atoms.push_back( old_mainchain_atoms[i] );
-			}
-			rsd.set_mainchain_atoms( new_mainchain_atoms );
-		}
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	std::string atom_name_;
@@ -678,24 +486,11 @@ private:
 class AppendMainchainAtom : public PatchOperation {
 public:
 	/// @brief constructor
-	AppendMainchainAtom( std::string const & atom_name_in ) :
-		atom_name_( atom_name_in )
-	{}
+	AppendMainchainAtom( std::string const & atom_name_in );
 
 	/// @brief set an atom to be the last mainchain atom
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( !rsd.has( atom_name_ ) ) {
-			TR_PatchOperations.Debug << "AppendMainchainAtom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ <<	std::endl;
-			return true; // failure
-		} else {
-			AtomIndices new_mainchain_atoms( rsd.mainchain_atoms() );
-			new_mainchain_atoms.push_back( rsd.atom_index( atom_name_ ) );
-			rsd.set_mainchain_atoms( new_mainchain_atoms );
-		}
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	std::string atom_name_;
@@ -706,22 +501,11 @@ private:
 class SetNbrAtom : public PatchOperation {
 public:
 	/// @brief constructor
-	SetNbrAtom( std::string const & atom_name_in ) :
-		atom_name_( atom_name_in )
-	{}
+	SetNbrAtom( std::string const & atom_name_in );
 
 	/// @brief set the residue neighbor atom
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		if ( !rsd.has( atom_name_ ) ) {
-			TR_PatchOperations.Debug << "SetNbrAtom::apply failed: " << rsd.name() << " is missing atom " << atom_name_ <<	std::endl;
-			return true; // failure
-		} else {
-			rsd.nbr_atom( atom_name_ );
-		}
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	std::string atom_name_;
@@ -732,17 +516,11 @@ private:
 class SetNbrRadius : public PatchOperation {
 public:
 	/// @brief constructor
-	SetNbrRadius( Real const & radius ) :
-		radius_( radius )
-	{}
+	SetNbrRadius( Real const & radius );
 
 	/// @brief set the residue neighbor atom
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		rsd.nbr_radius( radius_ );
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	Real radius_;
@@ -751,20 +529,14 @@ private:
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Set orient atom selection mode.
 class SetOrientAtom : public PatchOperation {
-	public:
-		SetOrientAtom(bool force_nbr_atom_orient):
-			force_nbr_atom_orient_(force_nbr_atom_orient)
-		{}
+public:
+	SetOrientAtom(bool force_nbr_atom_orient);
 
-		bool
-		apply( ResidueType & rsd ) const
-		{
-			rsd.force_nbr_atom_orient( force_nbr_atom_orient_ );
-			return false;
-		}
+	bool
+	apply( ResidueType & rsd ) const;
 
-	private:
-		bool force_nbr_atom_orient_;
+private:
+	bool force_nbr_atom_orient_;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -772,18 +544,11 @@ class SetOrientAtom : public PatchOperation {
 class NCAARotLibPath : public PatchOperation {
 public:
 	/// @brief constructor
-	NCAARotLibPath( std::string const & path_in ) :
-		path_( path_in )
-	{}
+	NCAARotLibPath( std::string const & path_in );
 
 	/// @brief set the NCAA rotamer library path in the residue type
 	bool
-	apply( ResidueType & rsd ) const
-	{
-		rsd.set_ncaa_rotlib_path( path_ );
-		rsd.set_use_ncaa_rotlib( true );
-		return false;
-	}
+	apply( ResidueType & rsd ) const;
 
 private:
 	std::string path_;

@@ -22,6 +22,7 @@ END_SELECTOR
 BEGIN_CASE ### THE GENERAL CASE ##########################################
 
 SET_IO_STRING TYI Y
+SET_INTERCHANGEABILITY_GROUP TYI
 ## these are the operations involved
 ADD_ATOM  I1  I    X    -0.090  #Best guess according to the small-molecule params file generator molfile_to_params.py
 ADD_ATOM  I2  I    X    -0.090
