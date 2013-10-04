@@ -264,7 +264,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 
 	Column LR	("LR",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column cano_LR	("cano_LR",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	Column canonical_LR	("canonical_LR",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 	// T, -> true, canonical chiral
 	// F, -> false, non-canonical chiral
 	// U, -> uncertain, this loop-size with this condition has no definite canonical chiral reference in the first place!
@@ -365,12 +365,13 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column number_of_hydrophilic_res	("number_of_hydrophilic_res",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column number_of_CGP	("number_of_CGP",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column ratio_hydrophobic_philic_in_percent	("ratio_hydrophobic_philic_in_percent",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
+	Column ratio_hydrophobic_philic_of_sw_in_percent	("ratio_hydrophobic_philic_of_sw_in_percent",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 
-	Column number_of_RK	("number_of_RK",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column number_of_DE	("number_of_DE",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
-	Column net_charge	("net_charge",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_RK_in_sw	("number_of_RK_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_DE_in_sw	("number_of_DE_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column net_charge_of_sw	("net_charge_of_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
+	Column number_of_inward_pointing_W_in_sw	("number_of_inward_pointing_W_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 	Column sw_res_size	("sw_res_size",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column multimer_is_suspected	("multimer_is_suspected",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
@@ -398,7 +399,7 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(inter_sheet_con_id);
 	sw_by_components.add_column(loop_kind); // better to be located right after intra_sheet_con_id/inter_sheet_con_id for better readability
 	sw_by_components.add_column(LR);
-	sw_by_components.add_column(cano_LR);
+	sw_by_components.add_column(canonical_LR);
 	sw_by_components.add_column(PA_by_preceding_E);
 	sw_by_components.add_column(PA_by_following_E);
 	sw_by_components.add_column(cano_PA);
@@ -480,12 +481,12 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(number_of_hydrophobic_res);	//	A,V,I,L,M,F,Y,W
 	sw_by_components.add_column(number_of_hydrophilic_res);	//	R,H,K,D,E,S,T,N,Q
 	sw_by_components.add_column(number_of_CGP);	//	C,G,P
-	sw_by_components.add_column(ratio_hydrophobic_philic_in_percent);	//	(no_hydrophobic/no_hydrophilic)*100
+	sw_by_components.add_column(ratio_hydrophobic_philic_of_sw_in_percent);	//	(no_hydrophobic/no_hydrophilic)*100
 
-	sw_by_components.add_column(number_of_RK);	//	R,K
-	sw_by_components.add_column(number_of_DE);	//	D,E
-	sw_by_components.add_column(net_charge);
-
+	sw_by_components.add_column(number_of_RK_in_sw);	//	R,K
+	sw_by_components.add_column(number_of_DE_in_sw);	//	D,E
+	sw_by_components.add_column(net_charge_of_sw);
+	sw_by_components.add_column(number_of_inward_pointing_W_in_sw);
 	sw_by_components.add_column(sw_res_size);
 	sw_by_components.add_column(multimer_is_suspected);
 
@@ -2589,30 +2590,34 @@ SandwichFeatures::count_AA_w_direction(
 		Real distance_between_CA_and_center;
 		Real distance_between_CB_and_center;
 
-		if (pose_w_center_000.residue_type(ii).name3() != "GLY")
+		if (pose_w_center_000.residue_type(ii).name3() == "GLY")
+		{
+			distance_between_CA_and_center = pose_w_center_000.residue(ii).atom("CA").xyz().distance(center_point);
+			distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("2HA").xyz().distance(center_point);
+		}
+		else if (pose_w_center_000.residue_type(ii).name3() == "ALA" || pose_w_center_000.residue_type(ii).name3() == "VAL" || pose_w_center_000.residue_type(ii).name3() == "ILE" || pose_w_center_000.residue_type(ii).name3() == "SER" || pose_w_center_000.residue_type(ii).name3() == "THR" || pose_w_center_000.residue_type(ii).name3() == "CYS")
 		{
 			distance_between_CA_and_center = pose_w_center_000.residue(ii).atom("CA").xyz().distance(center_point);
 			distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("CB").xyz().distance(center_point);
 		}
 		else
-		{	
+		{
 			distance_between_CA_and_center = pose_w_center_000.residue(ii).atom("CA").xyz().distance(center_point);
-			distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("2HA").xyz().distance(center_point);
+			distance_between_CB_and_center = pose_w_center_000.residue(ii).atom("CG").xyz().distance(center_point);
 		}
-
-			TR << "distance_between_CA_and_center : " << distance_between_CA_and_center << endl;
-			TR << "distance_between_CB_and_center : " << distance_between_CB_and_center << endl;
+		
+			TR << "A distance between CA and center of pose: " << distance_between_CA_and_center << endl;
+			TR << "A distance between CG (or CB) and center of pose: " << distance_between_CB_and_center << endl;
 		/////////// <end> determine core_heading/surface_heading by a comparison between a distance between CA and 0,0,0 and a distance between CB and 0,0,0
 
-		if (distance_between_CA_and_center - distance_between_CB_and_center > 1)
+		if (distance_between_CA_and_center - distance_between_CB_and_center > 0.9)
 		{
 			core_heading = true; 			// core heading
 		}
-		else if(distance_between_CA_and_center - distance_between_CB_and_center < -1)
+		else if(distance_between_CA_and_center - distance_between_CB_and_center < -0.9)
 		{
 			core_heading = false;			// surface heading
 		}
-
 		else
 		{
 			/////////// <begin> determine core_heading/surface_heading by a vector between CA-CB of a residue and CA of the closest residue of the other sheet
@@ -3052,7 +3057,7 @@ SandwichFeatures::report_number_of_inward_pointing_charged_AAs_in_a_pair_of_edge
 	// <begin> sum numbers of inward-pointing-AAs in current_bs_id and closest_bs_id
 	string select_string =
 	"SELECT\n"
-	"	sum(K_core_heading + R_core_heading + E_core_heading + D_core_heading + H_core_heading) \n"
+	"	sum(R_core_heading + H_core_heading + K_core_heading + D_core_heading + E_core_heading ) \n"
 	"FROM\n"
 	"	sw_by_components\n"
 	"WHERE\n"
@@ -3182,10 +3187,10 @@ SandwichFeatures::report_hydrophobic_ratio_net_charge	(
 	select_statement.bind(2,sw_can_by_sh_id);
 	result res(basic::database::safely_read_from_database(select_statement));
 
-	Size number_of_hydrophobic_res,	number_of_hydrophilic_res,	number_of_CGP,	number_of_RK,	number_of_DE;
+	Size number_of_hydrophobic_res,	number_of_hydrophilic_res,	number_of_CGP,	number_of_RK_in_sw,	number_of_DE_in_sw;
 	while(res.next())
 	{
-		res >> number_of_hydrophobic_res >> number_of_hydrophilic_res >> number_of_CGP >> number_of_RK >> number_of_DE;
+		res >> number_of_hydrophobic_res >> number_of_hydrophilic_res >> number_of_CGP >> number_of_RK_in_sw >> number_of_DE_in_sw;
 	}
 	// <end> sum number_of_AA
 
@@ -3196,10 +3201,10 @@ SandwichFeatures::report_hydrophobic_ratio_net_charge	(
 	"	number_of_hydrophobic_res = ?	,	\n"
 	"	number_of_hydrophilic_res = ?	,	\n"
 	"	number_of_CGP = ?	,	\n"
-	"	ratio_hydrophobic_philic_in_percent = ?	,	\n"
-	"	number_of_RK = ?	,	\n"
-	"	number_of_DE = ?	,	\n"
-	"	net_charge = ?	\n"
+	"	ratio_hydrophobic_philic_of_sw_in_percent = ?	,	\n"
+	"	number_of_RK_in_sw = ?	,	\n"
+	"	number_of_DE_in_sw = ?	,	\n"
+	"	net_charge_of_sw = ?	\n"
 	"WHERE\n"
 	"	(sw_can_by_sh_id = ?) \n"
 	"	AND	(struct_id = ?) ;";
@@ -3209,11 +3214,11 @@ SandwichFeatures::report_hydrophobic_ratio_net_charge	(
 	insert_stmt.bind(1,	number_of_hydrophobic_res);
 	insert_stmt.bind(2,	number_of_hydrophilic_res);
 	insert_stmt.bind(3,	number_of_CGP);
-	Real ratio_hydrophobic_philic_in_percent = (number_of_hydrophobic_res*100)/(number_of_hydrophobic_res+number_of_hydrophilic_res);
-	insert_stmt.bind(4,	ratio_hydrophobic_philic_in_percent);
-	insert_stmt.bind(5,	number_of_RK);
-	insert_stmt.bind(6,	number_of_DE);
-	int net_charge_int = number_of_RK - number_of_DE; // for unknown reason, Size net_charge may return like '18446744073709551612', so I don't use Size here
+	Real ratio_hydrophobic_philic_of_sw_in_percent = (number_of_hydrophobic_res*100)/(number_of_hydrophobic_res+number_of_hydrophilic_res);
+	insert_stmt.bind(4,	ratio_hydrophobic_philic_of_sw_in_percent);
+	insert_stmt.bind(5,	number_of_RK_in_sw);
+	insert_stmt.bind(6,	number_of_DE_in_sw);
+	int net_charge_int = number_of_RK_in_sw - number_of_DE_in_sw; // for unknown reason, Size net_charge may return like '18446744073709551612', so I don't use Size here
 	//	TR << "net_charge_int: " << net_charge_int << endl;
 	insert_stmt.bind(7,	net_charge_int); // Net charge of His at pH 7.4 is just '+0.11' according to http://www.bmolchem.wisc.edu/courses/spring503/503-sec1/503-1a.htm
 	insert_stmt.bind(8,	sw_can_by_sh_id);
@@ -3451,7 +3456,7 @@ SandwichFeatures::update_sheet_connectivity(
 	Size intra_sheet_con_id,
 	Size inter_sheet_con_id,
 	string LR,
-	string cano_LR,
+	string canonical_LR,
 	string PA_by_preceding_E,
 	string PA_by_following_E,
 	string cano_PA,
@@ -3475,7 +3480,7 @@ SandwichFeatures::update_sheet_connectivity(
 														start_res-1); // residue_end of preceding strand
 
 		insert =
-		"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, cano_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, intra_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
+		"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, canonical_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, intra_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
 		loop_kind = "hairpin_loop____";
 		con_id = intra_sheet_con_id;
 	}
@@ -3483,7 +3488,7 @@ SandwichFeatures::update_sheet_connectivity(
 	else // this loop connects by a inter_sheet way
 	{
 		insert =
-		"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, cano_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, inter_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
+		"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, canonical_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, inter_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
 		loop_kind = "inter_sheet_loop";
 		con_id = inter_sheet_con_id;
 	}
@@ -3495,7 +3500,7 @@ SandwichFeatures::update_sheet_connectivity(
 	insert_stmt.bind(4,	sw_can_by_sh_id);
 	insert_stmt.bind(5,	sheet_id);
 	insert_stmt.bind(6,	LR);
-	insert_stmt.bind(7,	cano_LR);
+	insert_stmt.bind(7,	canonical_LR);
 	insert_stmt.bind(8,	PA_by_preceding_E);
 	insert_stmt.bind(9,	PA_by_following_E);
 	insert_stmt.bind(10,	cano_PA);
@@ -3647,59 +3652,59 @@ SandwichFeatures::check_canonicalness_of_LR(
 
 	//check_canonicalness_of_LR is same whether canocheck_canonicalness_cutoff_ is 80% or 75%
 
-	if (loop_size == 2)
+	if (loop_size == 2)  // can be applied for both hairpin and inter-sheet loop
 	{
-		if (LR=="L" || LR=="BL" )	{return "T";}
-		else	{return "F";}
+		if (LR=="L" || LR=="BL" )	{return "T_LR";}
+		else	{return "F_LR";}
 	}
 	if (loop_size == 3)
 	{
 		if (intra_sheet)
 		{
-			if (LR=="L" || LR=="BL" ) {return "T";}
-			else	{return "F";}
+			if (LR=="L" || LR=="BL" ) {return "T_LR";}
+			else	{return "F_LR";}
 		}
-		else {return "U";}
+		else {return "U_LR";}
 	}
-	if (loop_size == 4)
-	{
-		if (intra_sheet)	{return "U";}
-		else
-		{
-			if (LR=="L" || LR=="BL" )	{return "T";}
-			else	{return "F";}
-		}
-	}
+//	if (loop_size == 4)
+//	{
+//		if (intra_sheet)	{return "U_LR";}
+//		else
+//		{
+//			if (LR=="L" || LR=="BL" )	{return "T_LR";}
+//			else	{return "F_LR";}
+//		}
+//	}
 	if (loop_size == 5)
 	{
 		if (intra_sheet)
 		{
-			if (LR=="L" || LR=="BL" ) {return "F";}
-			else	{return "T";}
+			if (LR=="L" || LR=="BL" ) {return "F_LR";}
+			else	{return "T_LR";}
 		}
-		else {return "U";}
+		else {return "U_LR";}
 	}
-	if (loop_size == 6)
-	{
-		if (intra_sheet)
-		{
-			if (LR=="L" || LR=="BL" ) {return "F";}
-			else	{return "T";}
-		}
-		else	{return "U";}
-	}
-	if (loop_size == 11)
-	{
-		if (intra_sheet)	{return "U";}
-		else
-		{
-			if (LR=="L" || LR=="BL" )	{return "T";}
-			else	{return "F";}
-		}
-	}
+//	if (loop_size == 6)
+//	{
+//		if (intra_sheet)
+//		{
+//			if (LR=="L" || LR=="BL" ) {return "F_LR";}
+//			else	{return "T_LR";}
+//		}
+//		else	{return "U_LR";}
+//	}
+//	if (loop_size == 11)
+//	{
+//		if (intra_sheet)	{return "U_LR";}
+//		else
+//		{
+//			if (LR=="L" || LR=="BL" )	{return "T_LR";}
+//			else	{return "F_LR";}
+//		}
+//	}
 	else // all else loop sizes
 	{
-		return "U";
+		return "U_LR";
 	}
 } //check_canonicalness_of_LR
 
@@ -4269,6 +4274,52 @@ SandwichFeatures::add_ending_loop (
 
 
 Size	
+SandwichFeatures::add_number_of_inward_pointing_W_in_sw (
+	StructureID struct_id,
+	sessionOP db_session,
+	Size sw_can_by_sh_id)
+{
+	string select_string =
+	"SELECT\n"
+	"	sum(W_core_heading) \n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	struct_id = ? \n"
+	"	AND (sw_can_by_sh_id = ?);";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,	struct_id);
+	select_statement.bind(2,	sw_can_by_sh_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+
+	Size number_of_inward_pointing_W_in_sw;
+	while(res.next())
+	{
+		res >> number_of_inward_pointing_W_in_sw;
+	}
+
+	string update =
+	"UPDATE sw_by_components set number_of_inward_pointing_W_in_sw = ?	"
+	"WHERE\n"
+	"	struct_id = ? \n"
+	"	AND (sw_can_by_sh_id = ?);";
+
+	statement update_statement(basic::database::safely_prepare_statement(update,	db_session));
+
+	update_statement.bind(1,	number_of_inward_pointing_W_in_sw);
+	update_statement.bind(2,	struct_id);
+	update_statement.bind(3,	sw_can_by_sh_id);
+	
+	basic::database::safely_write_to_database(update_statement);
+
+	return number_of_inward_pointing_W_in_sw;
+} // add_number_of_inward_pointing_W_in_sw
+
+
+
+
+Size	
 SandwichFeatures::add_sw_res_size (
 	StructureID struct_id,
 	sessionOP db_session,
@@ -4304,8 +4355,8 @@ SandwichFeatures::add_sw_res_size (
 
 	statement update_statement(basic::database::safely_prepare_statement(update,	db_session));
 
-	update_statement.bind(1,sw_res_size);
-	update_statement.bind(2,struct_id);
+	update_statement.bind(1,	sw_res_size);
+	update_statement.bind(2,	struct_id);
 	update_statement.bind(3,	sw_can_by_sh_id);
 	
 	basic::database::safely_write_to_database(update_statement);
@@ -4977,7 +5028,7 @@ SandwichFeatures::parse_my_tag(
 					//	definition: if true, exclude sandwich_that_has_near_backbone_atoms_between_sheets
 	write_AA_kind_files_ = tag->getOption<bool>("write_AA_kind_files", false);
 					//	definition: if true, write files that have amino acid kinds
-	write_AA_dis_files_ = tag->getOption<bool>("write_AA_dis_files", false);
+	write_AA_distribution_files_ = tag->getOption<bool>("write_AA_distribution_files", false);
 					//	definition: if true, write files that have amino acid distributions
 }
 
@@ -5655,7 +5706,7 @@ SandwichFeatures::report_features(
 			if (sheet_id_of_start_res == sheet_id_of_next_start_res)
 				// this loop is a beta-hairpin loop (that connects sheets as intra-sheet way)
 			{
-				string cano_LR = check_canonicalness_of_LR(loop_size, true, LR); // loop_size, intra_sheet bool, LR
+				string canonical_LR = check_canonicalness_of_LR(loop_size, true, LR); // loop_size, intra_sheet bool, LR
 				string cano_PA = check_canonicalness_of_PA(loop_size, true, PA_by_preceding_E, PA_by_following_E, check_canonicalness_cutoff_); // loop_size, intra_sheet bool, 2 PAs
 				string cano_parallel_EE = check_canonicalness_of_parallel_EE(loop_size, true, parallel_EE); // loop_size, intra_sheet bool, parallel_EE
 				update_sheet_connectivity(
@@ -5669,7 +5720,7 @@ SandwichFeatures::report_features(
 					intra_sheet_con_id_counter,
 					inter_sheet_con_id_counter,
 					LR,
-					cano_LR,
+					canonical_LR,
 					PA_by_preceding_E,
 					PA_by_following_E,
 					cano_PA,
@@ -5699,7 +5750,7 @@ SandwichFeatures::report_features(
 						break; // break jj 'for' loop
 					}
 				}
-				string cano_LR = check_canonicalness_of_LR(loop_size, false, LR);	// loop_size, intra_sheet bool, LR
+				string canonical_LR = check_canonicalness_of_LR(loop_size, false, LR);	// loop_size, intra_sheet bool, LR
 				string cano_PA = check_canonicalness_of_PA(loop_size, false, PA_by_preceding_E, PA_by_following_E, check_canonicalness_cutoff_);
 														  // loop_size,	intra_sheet bool, PA_ref_1, PA_ref_2, cutoff
 				string cano_parallel_EE = check_canonicalness_of_parallel_EE(loop_size, false, parallel_EE);
@@ -5715,7 +5766,7 @@ SandwichFeatures::report_features(
 					intra_sheet_con_id_counter,
 					inter_sheet_con_id_counter,
 					LR,
-					cano_LR,
+					canonical_LR,
 					PA_by_preceding_E,
 					PA_by_following_E,
 					cano_PA,
@@ -5750,7 +5801,8 @@ SandwichFeatures::report_features(
 
 			TR.Info << "chance_of_being_canonical_sw: " << chance_of_being_canonical_sw << endl;
 
-		if (chance_of_being_canonical_sw){
+		if (chance_of_being_canonical_sw)
+		{
 			canonical_sw_extracted_from_this_pdb_file = true;
 
 			add_starting_loop(struct_id,	db_session,	dssp_pose,	sw_by_components_PK_id_counter,	vec_sw_can_by_sh_id[ii],	tag);
@@ -5770,6 +5822,12 @@ SandwichFeatures::report_features(
 				vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id
 				sw_is_not_connected_with_continuous_atoms);
 			// <end> mark beta-sandwiches that is not connected like 1A78
+
+
+
+			add_number_of_inward_pointing_W_in_sw(struct_id,	db_session,
+				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+				);
 
 			Size	sw_res_size	=	add_sw_res_size(struct_id,	db_session,
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
@@ -5805,7 +5863,7 @@ SandwichFeatures::report_features(
 
 					// positive, negative, polar, aromatic, hydrophobic
 				AA_kind_file << "Pos_percent	Neg_percent	Pol_percent	Aro_percent	Hydropho_percent	" ; // as Jenny's thesis
-				AA_kind_file << "Pos_raw_count	Neg_raw_count	Pol_raw_count	Aro_raw_count	Hydropho_raw_count" << endl; // to calculate net_charge
+				AA_kind_file << "Pos_raw_count	Neg_raw_count	Pol_raw_count	Aro_raw_count	Hydropho_raw_count" << endl; // to calculate net_charge_of_sw
 
 				for (Size i =1; i<=(vec_AA_kind.size()); i++)
 				{
@@ -5861,11 +5919,11 @@ SandwichFeatures::report_features(
 
 
 	// <begin> write AA_dis to a file
-	if (write_AA_dis_files_ && canonical_sw_extracted_from_this_pdb_file)
+	if (write_AA_distribution_files_ && canonical_sw_extracted_from_this_pdb_file)
 	{
 		Size tag_len = tag.length();
 		string pdb_file_name = tag.substr(0, tag_len-5);
-		string AA_dis_file_name = pdb_file_name + "_AA_dis.txt";
+		string AA_dis_file_name = pdb_file_name + "_AA_distribution.txt";
 		ofstream AA_dis_file;
 		
 		AA_dis_file.open(AA_dis_file_name.c_str());	
@@ -5885,7 +5943,7 @@ SandwichFeatures::report_features(
 
 		AA_dis_file.close();
 
-	} //write_AA_dis_files
+	} //write_AA_distribution_files
 	// <end> write AA_dis to a file
 
 	

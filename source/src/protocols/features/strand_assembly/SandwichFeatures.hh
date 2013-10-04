@@ -505,6 +505,13 @@ public:
 		std::string	tag);
 
 	core::Size
+	add_number_of_inward_pointing_W_in_sw(
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size sw_can_by_sh_id);
+
+
+	core::Size
 	add_sw_res_size(
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
@@ -762,7 +769,7 @@ private:
 	write_AA_kind_files_;
 
 	bool
-	write_AA_dis_files_;
+	write_AA_distribution_files_;
 
 }; // class SandwichFeatures : public protocols::features::FeaturesReporter
 
