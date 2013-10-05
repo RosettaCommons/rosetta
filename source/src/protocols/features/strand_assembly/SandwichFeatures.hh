@@ -724,7 +724,10 @@ private:
 	max_abs_inter_strand_dihedral_to_not_be_same_direction_strands_;
 
 	bool	
-	write_phi_psi_;
+	write_phi_psi_of_all_;
+
+	bool
+	write_phi_psi_of_E_;
 
 	core::Size
 	max_starting_loop_size_;

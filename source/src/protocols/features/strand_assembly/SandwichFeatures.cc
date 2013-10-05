@@ -2582,7 +2582,7 @@ SandwichFeatures::count_AA_w_direction(
 		bool core_heading;
 
 		/////////// <begin> determine core_heading/surface_heading by a comparison between a distance between CA and 0,0,0 and a distance between CB and 0,0,0
-		pose::Pose pose_w_center_000 = pose; // followed Ubi_E1_modeller 	pose::Pose complex_pose = pose_in;
+		pose::Pose pose_w_center_000 = pose;
 		pose_w_center_000.center();
 
 		xyzVector< core::Real > center_point(0,0,0);
@@ -5000,7 +5000,9 @@ SandwichFeatures::parse_my_tag(
 					//	example: (in 1U3J chain A) 105 is possible for 4-7-11-13 dihedral angle (but this should be excluded as same direction strand)
 					//	example: (in 1QAC chain A) 128.5 is possible for 4-7-10-13 dihedral angle (but this should be excluded as same direction strand)
 					//	example: (in 1A3R chain L) 130 is possible for 4-7-10-14 dihedral angle (but this should be excluded as same direction strand)
-	write_phi_psi_ = tag->getOption<bool>("write_phi_psi", false);
+	write_phi_psi_of_all_ = tag->getOption<bool>("write_phi_psi_of_all", false);
+					//	definition: if true, write phi_psi_file
+	write_phi_psi_of_E_ = tag->getOption<bool>("write_phi_psi_of_E", false);
 					//	definition: if true, write phi_psi_file
 	max_starting_loop_size_ = tag->getOption<Size>("max_starting_loop_size", 6);
 					//	definition: maximum starting loop size to extract
@@ -5493,14 +5495,14 @@ SandwichFeatures::report_features(
 		return 0;
 	}
 
-	if (write_phi_psi_)
+	if (write_phi_psi_of_E_)
 	{
 		Size tag_len = tag.length();
 		string pdb_file_name = tag.substr(0, tag_len-5);
 		string phi_psi_file_name = pdb_file_name + "_phi_psi_of_strand_res.txt";
 		ofstream phi_psi_file;
 		phi_psi_file.open(phi_psi_file_name.c_str());	
-		phi_psi_file << "tag	res_num	res_AA	res_at_terminal	sheet_is_antiparallel	strand_is_at_edge	phi	psi" << endl;
+		phi_psi_file << "tag	res_num	res_type	res_at_terminal	sheet_is_antiparallel	strand_is_at_edge	phi	psi" << endl;
 		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii)
 		{
 			if (bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_)
@@ -5532,17 +5534,31 @@ SandwichFeatures::report_features(
 					res_at_terminal = 0;	
 				}
 				Real phi = pose.phi(res_num);
-				phi_psi_file << tag << "	" << res_num << "	" << pose.residue_type(res_num).name3() << "	" << res_at_terminal << "	" <<	sheet_antiparallel << "	" << strand_is_at_edge << "	" << phi << "	";
-				
 				Real psi = pose.psi(res_num);
-				phi_psi_file << psi << endl;
+				phi_psi_file << tag << "	" << res_num << "	" << pose.residue_type(res_num).name3() << "	" << res_at_terminal << "	" <<	sheet_antiparallel << "	" << strand_is_at_edge << "	" << phi << "	" << psi << endl;
 			}
 		}
 		phi_psi_file.close();
-	} //write_phi_psi_
-	
-	else //!write_phi_psi_
+	} //write_phi_psi_of_E_
+
+	else
 	{
+		if (write_phi_psi_of_all_)
+		{
+			Size tag_len = tag.length();
+			string pdb_file_name = tag.substr(0, tag_len-5);
+			string phi_psi_file_name = pdb_file_name + "_phi_psi_of_all_res.txt";
+			ofstream phi_psi_file;
+			phi_psi_file.open(phi_psi_file_name.c_str());	
+			phi_psi_file << "tag	res_num	res_type	dssp	phi	psi" << endl;
+			for(core::Size ii=1; ii<=dssp_pose.total_residue(); ii++ )
+			{
+				char res_ss( dssp_pose.secstruct( ii ) ) ;
+				Real phi = pose.phi(ii);
+				Real psi = pose.psi(ii);
+				phi_psi_file << tag << "	" << ii << "	" << pose.residue_type(ii).name3() << "	" << res_ss	<< "	" << phi << "	" << psi << endl;
+			}
+		}
 		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii)
 		{
 			if (bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_)
@@ -5563,12 +5579,13 @@ SandwichFeatures::report_features(
 			fill_sw_by_components (struct_id, db_session, pose, sw_by_components_PK_id_counter, tag, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(), bs_of_sw_can_by_sh[ii].get_sheet_id(), sheet_antiparallel, bs_of_sw_can_by_sh[ii].get_strand_id(), strand_is_at_edge, component_size,	bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
 			sw_by_components_PK_id_counter++;			
 		}
-	}	//!write_phi_psi_
+	}	//!write_phi_psi_of_E_
 
 	if (count_AA_with_direction_)	{
 		//// <begin> count AA with direction
 		for(Size ii=1; ii<=bs_of_sw_can_by_sh.size(); ++ii){
-			if (bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_){
+			if (bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id() > max_num_sw_per_pdb_)
+			{
 				break;
 			}
 			update_sw_by_components_by_AA_w_direction (struct_id, db_session, pose, bs_of_sw_can_by_sh[ii].get_sw_can_by_sh_id(),	bs_of_sw_can_by_sh[ii].get_sheet_id(), bs_of_sw_can_by_sh[ii].get_start(), bs_of_sw_can_by_sh[ii].get_end());
@@ -5862,8 +5879,10 @@ SandwichFeatures::report_features(
 					);
 
 					// positive, negative, polar, aromatic, hydrophobic
-				AA_kind_file << "Pos_percent	Neg_percent	Pol_percent	Aro_percent	Hydropho_percent	" ; // as Jenny's thesis
+				AA_kind_file << "pdb_name	Pos_percent	Neg_percent	Pol_percent	Aro_percent	Hydropho_percent	" ; // as Jenny's thesis
 				AA_kind_file << "Pos_raw_count	Neg_raw_count	Pol_raw_count	Aro_raw_count	Hydropho_raw_count" << endl; // to calculate net_charge_of_sw
+
+				AA_kind_file << pdb_file_name << "	" ;
 
 				for (Size i =1; i<=(vec_AA_kind.size()); i++)
 				{
@@ -5877,6 +5896,8 @@ SandwichFeatures::report_features(
 					AA_kind_file << vec_AA_kind[i] << "	" ;
 				}
 
+				AA_kind_file << endl; // to marshal
+				
 				AA_kind_file.close();
 				// <end> write AA_kind to a file
 			}
