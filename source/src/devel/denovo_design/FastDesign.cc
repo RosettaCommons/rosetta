@@ -22,6 +22,7 @@
 //Core Headers
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
@@ -31,8 +32,12 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 
 //Basic Headers
+#include <basic/options/keys/relax.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 //Utility Headers
@@ -135,6 +140,36 @@ FastDesign::parse_my_tag(
 	protocols::moves::Movers_map const & movers,
 	core::pose::Pose const & pose
 ) {
+	// make sure we create a task factory before parsing FastRelax::parse_my_tag
+	// otherwise no design will occur
+	core::pack::task::TaskFactoryOP local_tf = new core::pack::task::TaskFactory();
+	if ( get_task_factory() ){
+		local_tf = get_task_factory()->clone();
+	}
+	else{
+		local_tf->push_back(new core::pack::task::operation::InitializeFromCommandline());
+		if ( basic::options::option[ basic::options::OptionKeys::relax::respect_resfile]() &&
+				 basic::options::option[ basic::options::OptionKeys::packing::resfile].user() ) {
+			local_tf->push_back(new core::pack::task::operation::ReadResfile());
+			TR << "Using Resfile for packing step. " <<std::endl;
+		}
+		else {
+			core::pack::task::operation::PreventRepackingOP turn_off_packing = new core::pack::task::operation::PreventRepacking();
+			for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
+				if (! get_movemap()->get_chi(pos) ){
+					turn_off_packing->include_residue(pos);
+				}
+			}
+			local_tf->push_back(turn_off_packing);
+		}
+	}
+	//Include current rotamer by default - as before.
+	local_tf->push_back(new core::pack::task::operation::IncludeCurrent());
+
+	if( limit_aroma_chi2() ) {
+		local_tf->push_back(new protocols::toolbox::task_operations::LimitAromaChi2Operation());
+	}
+	set_task_factory( local_tf );
 	FastRelax::parse_my_tag( tag, data, filters, movers, pose );
 
 	allow_design_ = tag->getOption< bool >( "allow_design", allow_design_ );
