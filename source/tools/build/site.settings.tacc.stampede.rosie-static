@@ -1,0 +1,53 @@
+# -*- mode:python;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+#
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+# To use this file, symlink tools/build/site.settings to this file (or copy this file to that location)
+
+# Settings here are added to the combined build settings, after all basic
+# settings, to allow you to override anything you need to.  They can in turn
+# be overriden by user settings and project settings respectively.
+#
+# Typically you want to prepend to one of the settings listed to expand your
+# paths, but you can also append, override, or remove settings.
+
+# JJG 3/1/2013:
+# These are settings for the stampede cluster at stampede.tacc.utexas.edu.
+# These settings are for compiling with intel, the compiler loaded by default
+
+# Sergey Lyskov 7/10/2013:
+# To compile static build we need install zlib (http://zlib.net/zlib-1.2.8.tar.gz) locally because it is absent on Stampede. 
+# To do so see list of commands below. However this does not fully help since there is no static libm on stampede. 
+# So Instead we link libz and linkm dynamically.   
+# $ wget http://zlib.net/zlib-1.2.8.tar.gz
+# $ tar -xivf zlib-1.2.8.tar.gz
+# $ cd zlib-1.2.8/
+# $ ./configure --prefix=$HOME/prefix/zlib
+# $ make && make install 
+
+import os
+settings = {
+    "site" : {
+        "prepends" : {
+            "program_path" : os.environ["PATH"].split(":"),
+           #"include_path" : os.environ["INCLUDE"].split(":"),
+#            "library_path" : [os.environ["HOME"]+"/prefix/zlib/lib"],  # +os.environ["LD_LIBRARY_PATH"].split(":"),
+            "library_path" : os.environ["LD_LIBRARY_PATH"].split(":"),
+        },
+        "appends" : {
+            "flags" : {
+#                "warn" : [ "wd1684", "wd592" ]
+		"link" : [ "Wl,-Bdynamic -lz -static" ],
+            },
+        },
+        "overrides" : {
+#            "cxx" : "mpicxx",
+        },
+        "removes" : {
+        },
+    },
+}
