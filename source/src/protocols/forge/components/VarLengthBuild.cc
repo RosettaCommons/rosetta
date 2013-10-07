@@ -852,6 +852,7 @@ VarLengthBuild::MoverOP VarLengthBuild::loop_mover_instance(
 
 	if ( loop_mover_str_ == "RemodelLoopMover" ) { // use RemodelLoopMover
 		RemodelLoopMoverOP loop_mover = new RemodelLoopMover( loops );
+		loop_mover->remodelData(remodel_data_);
 		loop_mover->scorefunction( *sfx_ );
 
 		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {

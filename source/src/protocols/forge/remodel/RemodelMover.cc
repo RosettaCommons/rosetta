@@ -510,6 +510,8 @@ void RemodelMover::apply( Pose & pose ) {
 		Size max_pdb_index = remodel_data_.blueprint.size()*2;
 		while (pose.total_residue() >= max_pdb_index){
 			pose.conformation().delete_residue_slow(pose.total_residue());
+			pose.pdb_info()->obsolete(true); //note the previous line was having issues with the pymol observer. You may also want to add -show_simulation_in_pymol 0 to your flags.
+
 		}
 
 		if ( pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
@@ -519,6 +521,7 @@ void RemodelMover::apply( Pose & pose ) {
 				core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
 				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
 				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+				pose.pdb_info()->obsolete(true);
 				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
 				pose.set_omega(pose.total_residue()-1,180);
 			}

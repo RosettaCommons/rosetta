@@ -1,4 +1,3 @@
-namespace optE { RealOptionKey const exclude_badrep_ddGs( "optE:exclude_badrep_ddGs" );  }
 namespace optE { BooleanOptionKey const pretend_no_ddG_repulsion( "optE:pretend_no_ddG_repulsion" );  }
 namespace optE { FileOptionKey const optimize_decoy_discrimination( "optE:optimize_decoy_discrimination" );  }
 namespace optE { StringOptionKey const normalize_decoy_score_spread( "optE:normalize_decoy_score_spread" );  }
@@ -144,10 +143,13 @@ namespace remodel { RealOptionKey const COM_sd( "remodel:COM_sd" );  }
 namespace remodel { RealOptionKey const COM_tolerance( "remodel:COM_tolerance" );  }
 namespace remodel { namespace staged_sampling { BooleanOptionKey const staged_sampling( "remodel:staged_sampling" );  } }
 namespace remodel { namespace staged_sampling { FileOptionKey const residues_to_sample( "remodel:staged_sampling:residues_to_sample" );  } }
-namespace remodel { namespace staged_sampling { BooleanOptionKey const use_fragment_sequence( "remodel:staged_sampling:use_fragment_sequence" );  } }
 namespace remodel { namespace staged_sampling { StringOptionKey const starting_sequence( "remodel:staged_sampling:starting_sequence" );  } }
 namespace remodel { namespace staged_sampling { FileOptionKey const starting_pdb( "remodel:staged_sampling:starting_pdb" );  } }
 namespace remodel { namespace staged_sampling { BooleanOptionKey const require_frags_match_blueprint( "remodel:staged_sampling:require_frags_match_blueprint" );  } }
+namespace remodel { namespace staged_sampling { BooleanOptionKey const start_w_ideal_helices( "remodel:staged_sampling:start_w_ideal_helices" );  } }
+namespace remodel { namespace staged_sampling { BooleanOptionKey const sample_over_loops( "remodel:staged_sampling:sample_over_loops" );  } }
+namespace remodel { namespace staged_sampling { BooleanOptionKey const small_moves( "remodel:staged_sampling:small_moves" );  } }
+namespace remodel { namespace staged_sampling { BooleanOptionKey const fa_relax_moves( "remodel:staged_sampling:fa_relax_moves" );  } }
 namespace remodel { namespace domainFusion { BooleanOptionKey const domainFusion( "remodel:domainFusion" );  } }
 namespace remodel { namespace domainFusion { FileOptionKey const insert_segment_from_pdb( "remodel:domainFusion:insert_segment_from_pdb" );  } }
 namespace remodel { RealOptionKey const vdw( "remodel:vdw" );  }

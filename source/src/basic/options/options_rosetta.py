@@ -1692,6 +1692,10 @@ Options = Option_Group( '',
                 Option( 'output_all', 'Boolean', desc = 'output all contacts', default = 'false' ),
         ),
 
+        Option_Group( 'ABEGO',
+                Option( 'phi_psi_range_A' , 'Real', desc = 'Further filter phi&psi during frag picking process in design', default = '999.0'),
+
+               ),
   ),
 ## --------------------------  END OF fragment picking --------------
 
@@ -4733,10 +4737,13 @@ Option('translate_by', 'Integer', desc='specify the distance in Angstrom that ta
         Option_Group( 'staged_sampling',
 		    Option(  'staged_sampling', 'Boolean', desc = 'sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure', default = 'false'),
 		    Option(  'residues_to_sample', 'File', desc = 'residues to allow sampling (format:1,3,5)', default = ''),
-	    	Option(  'use_fragment_sequence', 'Boolean', desc = 'swaps both backbone and residue type', default = 'false'),
 	    	Option(  'starting_sequence', 'String', desc = 'AA sequence to start', default = ''),
             Option(  'starting_pdb', 'File', desc = 'pdb to start', default = ''),
             Option(  'require_frags_match_blueprint', 'Boolean', desc = 'makes sure the frags match the definition in the blueprint', default = 'true'),
+            Option( 'start_w_ideal_helices', 'Boolean', desc = 'begins with all helices set to -63.8 phi and -41.1 for psi.', default = 'false'),
+            Option( 'sample_over_loops', 'Boolean', desc = 'sample residues defined as loops in the blueprint', default = 'false'),
+            Option( 'small_moves', 'Boolean', desc = 'add a stage of small moves', default = 'false'),
+            Option( 'fa_relax_moves', 'Boolean', desc = 'Adds a stage of fa relax', default = 'false'),
             ),
 		Option_Group( 'domainFusion',
 				Option(  'insert_segment_from_pdb', 'File', desc='segment pdb file to be inserted [insert pdb file name].', default=''),

@@ -315,7 +315,7 @@ private: // static methods
 	/// @remarks This is necessary for sscanf; wrong type can give wrong
 	///  input.
 	static String format_string();
-
+  static String format_string_2011();
 
 private: // data
 
@@ -383,6 +383,7 @@ private: // static data
 
 	/// @brief formatting string for fill_from_string()
 	static String format_;
+	static String format_2011_;
 
 
 };

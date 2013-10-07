@@ -14,6 +14,7 @@
 /// @author Possu Huang (possu@u.washington.edu)
 
 // unit headers
+#include <protocols/forge/remodel/RemodelData.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/forge/remodel/RemodelGlobalFrame.hh>
 
@@ -25,6 +26,7 @@
 // project headers
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/util.hh>
 #include <core/io/pdb/file_data.hh>
 #include <core/id/TorsionID.hh>
 #include <core/fragment/FragData.hh>
@@ -38,6 +40,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
+#include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/simple_moves/symmetry/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <core/scoring/Energies.hh>
@@ -50,16 +53,18 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/util/ABEGOManager.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
+#include <protocols/relax/FastRelax.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/simple_moves/ResTypeFragmentMover.hh>
-#include <protocols/simple_moves/ResTypeFragmentMover.fwd.hh>
+#include <protocols/simple_moves/GunnCost.hh>
+#include <protocols/simple_moves/SmoothFragmentMover.hh>
 #include <protocols/loops/loop_closure/ccd/ccd_closure.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
-//#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
+#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -248,6 +253,10 @@ RemodelLoopMover::ScoreFunction const & RemodelLoopMover::scorefunction() const 
 void RemodelLoopMover::scorefunction( ScoreFunction const & sfx ) {
 	//sfx_ = new ScoreFunction( sfx );
 	sfx_ =  sfx.clone();
+}
+
+void RemodelLoopMover::remodelData(protocols::forge::remodel::RemodelData const remodel_data){
+		remodel_data_ = remodel_data;
 }
 
 void
@@ -1015,40 +1024,69 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	sfxOP->set_weight( scoring::linear_chainbreak, 0.0 );
 	if(option[OptionKeys::remodel::staged_sampling::staged_sampling].user()){
 		//initialize options
+			
 		if(option[OptionKeys::remodel::staged_sampling::starting_sequence].user())
 			set_starting_sequence(pose);
+		if(option[OptionKeys::remodel::staged_sampling::start_w_ideal_helices].user())
+				set_ideal_helices(pose);
 		if(option[OptionKeys::remodel::staged_sampling::starting_pdb].user())
 			set_starting_pdb(pose);
-		bool useFragSequence =option[OptionKeys::remodel::staged_sampling::use_fragment_sequence].user();
+		assert(!((option[OptionKeys::remodel::staged_sampling::starting_pdb].user()) && (option[OptionKeys::remodel::staged_sampling::start_w_ideal_helices].user()))); // starting pdb not compatible with ideal helices
+
+	
 		//setup score functions and movemap and where to sample--------------
 		MoveMap movemap;
+		MoveMap movemapAll;
+		std::string ss = remodel_data_.ss;;
+		Size singleRepeat = (pose.total_residue()/2);
 		for ( Size i = 1; i <= pose.total_residue(); ++i ) {
 			movemap.set_bb( i, true );
 			movemap.set_chi( i, true );
+			movemapAll.set_bb(i, true);
+			movemapAll.set_chi(i, true);
+		  if(option[OptionKeys::remodel::staged_sampling::sample_over_loops].user()){
+				Size ssIndex = i-1;
+				if(ssIndex>=singleRepeat)
+						ssIndex = i-singleRepeat-1;
+				if(ss[ssIndex] == 'H' || ss[ssIndex] == 'E'){
+						movemap.set_bb(i,false);
+						movemap.set_chi(i,false);
+						}
+				}
 		}
-		ScoreFunctionOP sfxStaged_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
-		ScoreFunctionOP sfxStage0_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "score0" ) );
+		ScoreFunctionOP sfxStage0_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
+		ScoreFunctionOP sfxStage1_OP =  ( core::scoring::ScoreFunctionFactory::create_score_function( "abinitio_remodel_cen" ) );
+		sfxStage0_OP->set_weight(scoring::atom_pair_constraint, 0.0);
+		sfxStage1_OP->set_weight(scoring::atom_pair_constraint, 1.0);
+		if(option[OptionKeys::remodel::repeat_structure].user()){
+			sfxStage1_OP->set_weight(scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure]);
 
-		sfxStaged_OP->set_weight(scoring::atom_pair_constraint, 1.0);
-		if(option[OptionKeys::remodel::repeat_structure].user())
-			sfxStaged_OP->set_weight(scoring::atom_pair_constraint, 1.0 *option[OptionKeys::remodel::repeat_structure]);
-		sfxStaged_OP->show_pretty(TR);
+		}
+		sfxStage1_OP->show_pretty(TR);
 		//setup fragments so they sample correctly-----------
 		Real fragScoreThreshold = 0.99999;  //1.00XX indicates 1 ABEGO or HLE mismatch.  I chose to use the numbers for future finer control
 		if(!option[OptionKeys::remodel::staged_sampling::require_frags_match_blueprint])
 				fragScoreThreshold = 999.0;
 		//setup locations to sample--------------------------
-		std::set<Size> sampleAllResidues = generate_residues_to_sample(false,pose);
-		std::set<Size> sampleSubsetResidues = generate_residues_to_sample(true,pose);
+		std::set<Size> sampleAllResidues = generate_residues_to_sample(false,pose,9);
+		std::set<Size> sampleSubsetResidues = generate_residues_to_sample(true,pose,9);
 		//Initialize with any full length fragments-------------------------------
 		if(option[OptionKeys::remodel::use_same_length_fragments])
 				//999 allows for frags > 9 resiudes
-				abinitio_stage( pose,999, movemap,sfxStaged_OP,1,100,sampleAllResidues,true,"full_length_frags",useFragSequence,fragScoreThreshold);
+				abinitio_stage( pose,999, movemap,sfxStage1_OP,1,100,sampleAllResidues,true,"full_length_frags",false,fragScoreThreshold);
 		//Sample with 9mers in all positions------------------------------
 		//This should be read in from staging file.
-		abinitio_stage( pose, 9, movemap,sfxStage0_OP ,1,500,sampleAllResidues,false,"9mers_allPos",useFragSequence,fragScoreThreshold);
-		abinitio_stage( pose, 9, movemap,sfxStaged_OP,3,500,sampleSubsetResidues,true,"9mers_subsetPos",useFragSequence,fragScoreThreshold);
-		abinitio_stage( pose, 3, movemap,sfxStaged_OP,3,500,sampleSubsetResidues,true,"3mers_subsetPos",useFragSequence,fragScoreThreshold);
+		abinitio_stage( pose, 9, movemap,sfxStage0_OP,3,500,sampleSubsetResidues ,false,"9mers_allPos",false,fragScoreThreshold);
+		abinitio_stage( pose, 3, movemap,sfxStage1_OP,3,500,sampleSubsetResidues ,false,"9mers_allPos",false,fragScoreThreshold);
+		abinitio_stage( pose, 9, movemapAll,sfxStage1_OP,3,500,sampleSubsetResidues,false,"9mers_allPos",true,fragScoreThreshold);
+		if(option[OptionKeys::remodel::staged_sampling::small_moves].user()){
+				pose.dump_pdb("pre_small.pdb");
+				small_move_stage(pose,movemap,sfxStage1_OP,3,500,true,0,0,5.0);
+				pose.dump_pdb("post_small.pdb");
+		}
+		if(option[OptionKeys::remodel::staged_sampling::fa_relax_moves].user()){
+				fa_relax_stage(pose);
+		}
 		//cleanup to integrate with Possu------------------------------------
 		PoseOP pose_prime = new Pose( pose );
 		pose_prime->fold_tree( sealed_ft );
@@ -1064,7 +1102,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			(*sfxOP)( *pose_prime );
 			accumulator.insert( std::make_pair( pose_prime->energies().total_energy(), pose_prime ) );
 		}
-  }
+	}
 	else {
 		// setup parameters -- linearly scale the chainbreak weight
 		Real const final_standard_cbreak_weight = 5.0;
@@ -1907,7 +1945,7 @@ void RemodelLoopMover::abinitio_stage(
 	std::set<Size> const & disallowedPos,
 	bool const recover_low,
 	std::string stage_name,
-	bool const swapResType,
+	bool const smoothMoves,
 	Real const fragScoreThreshold
 	)
 {
@@ -1935,7 +1973,7 @@ void RemodelLoopMover::abinitio_stage(
 		mc.reset(pose);
 	}
 
-	FragmentMoverOPs frag_movers = create_fragment_movers_limit_size(movemap, fragmentSize,disallowedPos,swapResType,fragScoreThreshold);
+	FragmentMoverOPs frag_movers = create_fragment_movers_limit_size(movemap, fragmentSize,disallowedPos,smoothMoves,fragScoreThreshold);
 	assert( !frag_movers.empty() );
 
 	// set appropriate topology
@@ -1977,10 +2015,6 @@ void RemodelLoopMover::abinitio_stage(
 				pose.set_psi(res,mc.lowest_score_pose().psi(res));
 				pose.set_omega(res,mc.lowest_score_pose().omega(res));
 				pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
-				if(swapResType){
-					ResidueType const & rsd_type(mc.lowest_score_pose().residue_type(res));
-					replace_pose_residue_copying_existing_coordinates(pose,res,rsd_type);
-				}
 			}
 		}else{
 			pose = mc.lowest_score_pose();
@@ -2020,10 +2054,6 @@ void RemodelLoopMover::abinitio_stage(
 					pose.set_psi(res,mc.lowest_score_pose().psi(res));
 					pose.set_omega(res,mc.lowest_score_pose().omega(res));
 					pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
-					if(swapResType){
-						ResidueType const & rsd_type(mc.lowest_score_pose().residue_type(res));
-						replace_pose_residue_copying_existing_coordinates(pose,res,rsd_type);
-					}
 				}
 			}
 			else{
@@ -2043,15 +2073,240 @@ void RemodelLoopMover::abinitio_stage(
 						pose.set_psi(res,repeat_pose_.psi(res));
 						pose.set_omega(res,repeat_pose_.omega(res));
 						pose.set_secstruct(res,repeat_pose_.secstruct(res));
-						if(swapResType){
-							ResidueType const & rsd_type(repeat_pose_.residue_type(res));
-							replace_pose_residue_copying_existing_coordinates(pose,res,rsd_type);
-						}
 					}
 				}
 		}
 	}
 }
+
+/// @brief abinitio stage 
+ void RemodelLoopMover::fa_relax_stage(
+				 Pose & pose
+				 ){
+				using namespace basic::options;
+				using namespace core;
+				using namespace chemical;
+				using namespace core::scoring;
+				using namespace core::pose::symmetry;
+				core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(TALARIS_2013 ));
+				//scorefxn->set_weight(core::scoring::dihedral_constraint, 10.0 );
+				//scorefxn->set_weight(core::scoring::coordinate_constraint, 5.0);
+				Pose fa_pose = pose;
+				if (option[OptionKeys::remodel::repeat_structure].user() ) {
+						repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
+						fa_pose = repeat_pose_;
+						//protocols::simple_moves::symmetry::SetupNCSMover setup_ncs = generate_ncs_csts(pose);
+						//setup_ncs.apply(fa_pose);
+				}
+				core::util::switch_to_residue_type_set( fa_pose, core::chemical::FA_STANDARD);
+				protocols::relax::FastRelax frelax(scorefxn,1);//only 1 stage
+				fa_pose.dump_pdb("before_relax.pdb");
+				TR << "Relaxing pose" << std::endl;
+				frelax.apply(fa_pose);
+				TR << "Finished relaxing" << std::endl;
+				fa_pose.dump_pdb("after_relax.pdb");
+				core::util::switch_to_residue_type_set( fa_pose, core::chemical::CENTROID);
+				fa_pose.dump_pdb("centroid.pdb");
+				//copy fa_pose to original_pose
+				if (option[OptionKeys::remodel::repeat_structure].user() ) {
+						Size copy_size =0;
+						if (option[OptionKeys::remodel::repeat_structure] == 1 ) {
+								copy_size = pose.total_residue()-1;
+						} else {
+								copy_size = pose.total_residue();
+						}
+						for (Size res = 1; res<=copy_size; res++){
+								pose.set_phi(res,fa_pose.phi(res));
+								pose.set_psi(res,fa_pose.psi(res));
+								pose.set_omega(res,fa_pose.omega(res));
+								pose.set_secstruct(res,fa_pose.secstruct(res));
+						}
+				}
+				else{//non repeat case			
+						pose = fa_pose;
+				}
+				pose.dump_pdb("finalRelaxStagePdb.pdb");
+ }
+
+protocols::simple_moves::symmetry::SetupNCSMover RemodelLoopMover::generate_ncs_csts(Pose & pose){
+		using namespace basic::options;
+		using namespace core;
+		using namespace core::pose::symmetry;
+		using namespace protocols;
+		protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
+		Size asym_length = pose.total_residue();
+		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+		Size segment_length = asym_length/2;
+		for ( Size rep = 1; rep < repeat_number-1; rep++ ) { // from 1 since first segment don't need self-linking
+			std::stringstream templateRangeSS;
+			templateRangeSS << "2-" << segment_length+1; // offset by one to work around the termini
+			std::stringstream targetSS;
+			targetSS << 1+(segment_length*rep)+1 << "-" << segment_length + (segment_length*rep)+1;
+			TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+			setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+		}
+
+		for (Size rep = 1; rep < repeat_number-1; rep++){ // from 1 since first segment don't need self-linking
+			std::stringstream templateRangeSS;
+			templateRangeSS << "3-" << segment_length+2; // offset by one to work around the termini
+			std::stringstream targetSS;
+			targetSS << 1+(segment_length*rep)+2 << "-" << segment_length + (segment_length*rep)+2;
+			TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+			setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+		}
+
+		std::stringstream templateRangeSS;
+		// take care of the terminal repeat, since the numbers are offset.
+		templateRangeSS << "2-" << segment_length-1; // offset by one to work around the termini
+		std::stringstream targetSS;
+		targetSS << 1+(segment_length*(repeat_number-1))+1 << "-" << segment_length + (segment_length*(repeat_number-1))-1;
+		TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+		setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+		return(setup_ncs);
+}
+
+
+/// @brief small_move_stage::Assumes no loops need to be closed.
+void RemodelLoopMover::small_move_stage(
+		Pose & pose,
+		MoveMap const movemap,
+		ScoreFunctionOP sfxOP,
+		Size const max_outer_cycles,
+		Size const max_inner_cycles,
+		bool const recover_low,
+		Real const h_range,
+		Real const e_range,
+		Real const l_range)
+{
+	using namespace basic::options;
+	using namespace core;
+	using core::kinematics::FoldTree;
+	using namespace chemical;
+	using namespace OptionKeys::remodel;
+	using numeric::random::random_permutation;
+
+	using protocols::loops::add_cutpoint_variants;
+	using protocols::loops::remove_cutpoint_variants;
+
+	TR << "** small_move_stage_" << std::endl;
+
+	Real temp = temperature_;
+	MonteCarlo mc( *sfxOP, temp ); // init without pose
+	if (option[OptionKeys::remodel::repeat_structure].user() ) {
+		repeat_propagation(pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
+		(*sfxOP)(repeat_pose_);
+		mc.reset(repeat_pose_);
+	}
+	else {
+		mc.reset(pose);
+	}
+
+	// add cutpoint variants
+	if (pose.num_jump() >0){
+		add_cutpoint_variants( pose );
+	}
+	if (option[OptionKeys::remodel::repeat_structure].user() ) {
+		repeat_propagation( pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure] );
+			if (repeat_pose_.num_jump()>0){
+				add_cutpoint_variants( repeat_pose_ );
+			}
+		mc.reset(repeat_pose_);
+	} else {
+		mc.reset( pose );
+	}
+
+	// reset counters
+	mc.reset_counters();
+
+		Size nmoves = 1;
+
+		core::kinematics::MoveMapOP mm_temp( new core::kinematics::MoveMap( movemap ) );
+simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm_temp, temp, nmoves) );
+		small_mover->angle_max( 'H', h_range );
+		small_mover->angle_max( 'E', e_range );
+		small_mover->angle_max( 'L', l_range );
+
+	
+	for ( Size outer = 1; outer <= max_outer_cycles; ++outer ) {
+		// increment the chainbreak weight
+		ScoreFunctionOP sfxOP = mc.score_function().clone();
+		mc.score_function( *sfxOP );
+		// recover low
+		if (option[OptionKeys::remodel::repeat_structure].user() ) {
+			Size copy_size =0;
+			if (option[OptionKeys::remodel::repeat_structure] == 1 ) {
+				copy_size = pose.total_residue()-1;
+			} else {
+				copy_size = pose.total_residue();
+			}
+
+			for (Size res = 1; res<=copy_size; res++){
+				pose.set_phi(res,mc.lowest_score_pose().phi(res));
+				pose.set_psi(res,mc.lowest_score_pose().psi(res));
+				pose.set_omega(res,mc.lowest_score_pose().omega(res));
+				pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
+			}
+		}else{
+			pose = mc.lowest_score_pose();
+		}
+		if(option[OptionKeys::remodel::repeat_structure].user()){
+			repeat_propagation( pose, repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
+		}
+		for ( Size inner = 1; inner <= max_inner_cycles; ++inner ) {
+			// fragments
+				if(option[OptionKeys::remodel::repeat_structure].user()){
+					small_mover->apply( repeat_pose_ );
+					repeat_sync( repeat_pose_,option[OptionKeys::remodel::repeat_structure]);
+					mc.boltzmann( repeat_pose_, "small_moves" );
+				}else {
+					small_mover->apply( pose );
+					mc.boltzmann( pose, "small_moves" );
+				}
+			}
+		}
+		mc.show_state();
+		TR<< "showing constraints on repeat pose" << std::endl;
+		repeat_pose_.constraint_set()->show_definition(TR, repeat_pose_);
+		mc.score_function().show( TR, repeat_pose_ );
+		// recover low
+		if(recover_low){
+			if(option[OptionKeys::remodel::repeat_structure].user()){
+				Size copy_size =0;
+				if(option[OptionKeys::remodel::repeat_structure] == 1){
+					copy_size = pose.total_residue() - repeat_tail_length_;
+				} else {
+					copy_size = pose.total_residue();
+				}
+				for (Size res = 1; res<=copy_size; res++){
+					pose.set_phi(res,mc.lowest_score_pose().phi(res));
+					pose.set_psi(res,mc.lowest_score_pose().psi(res));
+					pose.set_omega(res,mc.lowest_score_pose().omega(res));
+					pose.set_secstruct(res,mc.lowest_score_pose().secstruct(res));
+				}
+			}
+			else{
+				pose = mc.lowest_score_pose();
+			}
+		}
+		else{
+				if(option[OptionKeys::remodel::repeat_structure].user()){
+					Size copy_size =0;
+					if(option[OptionKeys::remodel::repeat_structure] == 1){
+						copy_size = pose.total_residue() - repeat_tail_length_;
+					} else {
+						copy_size = pose.total_residue();
+					}
+					for (Size res = 1; res<=copy_size; res++){
+						pose.set_phi(res,repeat_pose_.phi(res));
+						pose.set_psi(res,repeat_pose_.psi(res));
+						pose.set_omega(res,repeat_pose_.omega(res));
+						pose.set_secstruct(res,repeat_pose_.secstruct(res));
+					}
+				}
+		}
+}
+
+
 
 /// @brief simultaneous stage: multiple loop movement prior to MC accept/reject
 void RemodelLoopMover::simultaneous_stage(
@@ -2924,13 +3179,11 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 	MoveMap const & movemap,
 	Size const frag_size,
 	std::set<Size> const & allowedPos,
-	bool const swapResType,
+	bool const smoothMoves,
 	Real fragScoreThreshold
 	)
 {
-	using protocols::simple_moves::ClassicFragmentMover;
-	using protocols::simple_moves::ResTypeFragmentMover;
-	using protocols::simple_moves::ResTypeFragmentMoverOP;
+	using namespace protocols::simple_moves;
 	using namespace core::fragment;
 	FragmentMoverOPs frag_movers;
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(); f != fragsets_.end(); ++f ) {
@@ -2951,8 +3204,8 @@ RemodelLoopMover::create_fragment_movers_limit_size(
 					}
 			}
 			ClassicFragmentMoverOP cfm;
-			if(swapResType)
-				cfm = new ResTypeFragmentMover( *f, movemap.clone() );
+			if(smoothMoves)
+				cfm = new SmoothFragmentMover( *f, movemap.clone(), new GunnCost );
 			else
 				cfm = new ClassicFragmentMover( *f, movemap.clone() );
 			cfm->set_check_ss( false );
@@ -3105,7 +3358,28 @@ void RemodelLoopMover::set_starting_pdb(Pose & pose){
 		pose.set_psi(1,inputPose->psi(repeatRes));
 		pose.set_omega(1,inputPose->omega(repeatRes));
 		pose.set_secstruct(1,inputPose->secstruct(repeatRes));
-		pose.dump_pdb("try.pdb");
+}
+
+///@brief sets helices to there ideal value before any sampling begins.
+void RemodelLoopMover::set_ideal_helices(Pose & pose){
+		using namespace basic::options;
+		using namespace OptionKeys::remodel;
+		using core::Size;
+		//At this point the pose is 2x. So we need to copy the helical residues twice.
+		std::string ss = remodel_data_.ss;
+		Size repeatRes = (pose.total_residue()/2)+1;
+		for(Size ii=1; ii<=ss.size(); ++ii){
+				if(ss[ii-1] == 'H'){
+						pose.set_phi(ii,-63.8);
+						pose.set_phi(ii+repeatRes,-63.8);
+						pose.set_psi(ii,-41.1);
+						pose.set_psi(ii+repeatRes,-41.1);
+						pose.set_omega(ii,180);
+						pose.set_omega(ii+repeatRes,180);
+						pose.set_secstruct(ii,'H');
+						pose.set_secstruct(ii+repeatRes,'H');
+				}	
+		}
 }
 
 void RemodelLoopMover::set_starting_sequence(Pose & pose){
@@ -3129,23 +3403,41 @@ void RemodelLoopMover::set_starting_sequence(Pose & pose){
 		}
 }
 
-std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose){
+std::set<core::Size> RemodelLoopMover::generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose,Size fragmentSize){
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		using core::Size;
 		std::set<Size> allowedRes;
-		if(!chooseSubsetResidues || !option[OptionKeys::remodel::staged_sampling::residues_to_sample].user()){
+		if(!chooseSubsetResidues || !option[OptionKeys::remodel::staged_sampling::residues_to_sample].user() || !option[OptionKeys::remodel::staged_sampling::sample_over_loops].user()){
 			for(Size ii=1; ii<=pose.total_residue(); ++ii){
 				allowedRes.insert(ii);
 			}
 		}
 		else{
-			std::string const & allowedRes_str =option[OptionKeys::remodel::staged_sampling::residues_to_sample];
-			utility::vector1< std::string > const res_keys( utility::string_split( allowedRes_str , ',' ) );
-			foreach( std::string const key, res_keys ){
-				Size const res( utility::string2int( key ) );
-				allowedRes.insert(res);
-			}
+				if(option[OptionKeys::remodel::staged_sampling::residues_to_sample].user()){ 
+						std::string const & allowedRes_str =option[OptionKeys::remodel::staged_sampling::residues_to_sample];
+				utility::vector1< std::string > const res_keys( utility::string_split( allowedRes_str , ',' ) );
+				foreach( std::string const key, res_keys ){
+						Size const res( utility::string2int( key ) );
+						allowedRes.insert(res);
+						}
+				}
+				if(option[OptionKeys::remodel::staged_sampling::sample_over_loops].user()){
+				std::string ss = remodel_data_.ss;
+				Size repeatRes = (pose.total_residue()/2)+1;
+				char lastRes = ss[0];
+				for(Size ii=1; ii<=ss.size(); ++ii){
+						if((ss[ii-1] == 'H' || ss[ii-1] == 'E')&&(lastRes == 'L')){ 
+								if(ii-(fragmentSize-1) > 0)
+										allowedRes.insert(ii-(fragmentSize-1));
+										allowedRes.insert(ii-(fragmentSize-1)+repeatRes);
+					}
+				}
+				//edge case
+				if(((ss[ss.size()-1]=='H')||(ss[ss.size()-1]=='E'))&&(ss[0] == 'L')){
+						allowedRes.insert(ss.size());
+				}
+				}	
 		}
 		return(allowedRes);
 }

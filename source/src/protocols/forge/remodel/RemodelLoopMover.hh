@@ -17,6 +17,7 @@
 #define INCLUDED_protocols_forge_remodel_RemodelLoopMover_hh
 
 // unit headers
+#include <protocols/forge/remodel/RemodelData.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.fwd.hh>
 #include <protocols/forge/remodel/RemodelGlobalFrame.hh>
 
@@ -27,6 +28,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
+#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>   
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
@@ -238,6 +240,8 @@ public: // mutators
 	/// @brief the ScoreFunction to use during modeling
 	void scorefunction( ScoreFunction const & sfx );
 
+	/// @brief adds the remodel data to thei remodelLoopMover object
+  void remodelData( protocols::forge::remodel::RemodelData const remodel_data);
 
 	/// @brief set the false movemap to use
 	/// @remarks All movemaps are generated with respect to this movemap.
@@ -398,9 +402,29 @@ protected: // loop modeling stages
 		std::set<Size> const & disallowedPos,
 		bool const recover_low,
 		std::string stage_name,
-		bool const swapResTypes,
+		bool const smoothMoves,
 		Real const fragScoreThreshold
 		);
+	/// @brief quick trip to FA to push parts of the molecular apart to a reasonable distance. I'm noticing an overcollapse in centroid
+	void fa_relax_stage(
+					Pose & pose
+					);
+
+	///@ brief sets up ncs constraints
+	protocols::simple_moves::symmetry::SetupNCSMover generate_ncs_csts(Pose & pose);
+
+	/// @brief small_move stage: only small moves
+	void small_move_stage(
+		Pose & pose,
+		MoveMap const movemap,
+		ScoreFunctionOP sfxOP,
+		Size const max_outer_cycles,
+		Size const max_inner_cycles,
+		bool const recover_low,
+		Real const h_range,
+		Real const e_range,
+		Real const l_range);
+
 
 	/// @brief simultaneous stage: multiple loop movement prior to MC accept/reject
 	void simultaneous_stage(
@@ -463,7 +487,7 @@ protected: // fragments
 		MoveMap const & movemap,
 		Size const frag_size,
 		std::set<Size> const & disallowedPos,
-		bool const swapResType,
+		bool const smoothMoves,
 		Real const fragScoreThreshold = 999.0
 		);
 
@@ -536,15 +560,21 @@ private:
 
 	/// @brief initializes pose with starting sequence
 	void set_starting_sequence(Pose & pose);
+		
+	/// @brief initializes pose with ideal helices.
+	void set_ideal_helices(Pose & pose);
 
 	/// @setup allowed positions per stage
-  std::set<core::Size> generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose);
+  std::set<core::Size> generate_residues_to_sample(bool chooseSubsetResidues, Pose & pose, Size fragmentSize);
 
 private: // data
 
 	/// @brief the score function to use
 	ScoreFunctionOP sfx_;
 
+ 	/// @remodelData, used when constraints are defined through Remodel
+	//So you can get at everything in the blueprint data
+	protocols::forge::remodel::RemodelData remodel_data_;
 
 	/// @brief the false movemap to use
 	/// @remarks All movemaps are generated with respect to this movemap.

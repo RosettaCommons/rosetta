@@ -27,7 +27,8 @@
 #include <core/fragment/picking_old/concepts/Extent.hh>
 #include <utility/vector1.hh>
 
-
+#include <basic/options/keys/frags.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
 namespace core {
 namespace fragment {
@@ -109,18 +110,33 @@ bool ABEGOEval::eval_impl(
 	VallFragmentScore & fs
 )
 {
-	// no runtime_asserts here, will slow down Librarian operation
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		
+		// no runtime_asserts here, will slow down Librarian operation
 	assert( extent.distance() == abego_.size() );
-
+		
 	Size pos = 0;
+  Real default_A_phi = -63.8;
+  Real default_A_psi = -41.1;
+
 	for ( VallResidueConstIterator i = extent.begin; i != extent.end; ++i, ++pos ) {
 		String::size_type index = abego_[ pos+1 ].find( "X" );
 		if( index == String::npos ) {
 			bool flag( false );
 			for( Size ii=0; ii<abego_[ pos+1 ].length(); ++ii ) {
 				if ( am_->check_rama( abego_[ pos+1 ].at( ii ), i->phi(), i->psi(), i->omega() ) ){
-					flag = true;
-					break;
+						if((abego_[pos+1].at(ii) != 'A') || (!(option[OptionKeys::frags::ABEGO::phi_psi_range_A].user()))){
+								flag = true;
+								break;
+						}
+						else{
+								Real range = option[OptionKeys::frags::ABEGO::phi_psi_range_A]();
+								if((i->phi() > default_A_phi-range) && (i->phi() < default_A_phi+range) && (i->psi() > default_A_psi - range) && (i->psi() < default_A_psi + range)){
+												flag = true;
+												break;
+										}
+						}
 				}
 				if (abego_[ pos+1 ].at( ii ) == 'D'){
 						flag = true;

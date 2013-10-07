@@ -605,6 +605,8 @@ option.add( basic::options::OptionKeys::frags::contacts::centroid_distance_scale
 option.add( basic::options::OptionKeys::frags::contacts::type, "Atom considered for contacts" ).legal("ca").legal("cb").legal("cen").def(utility::vector1<std::string>(1,"ca"));
 option.add( basic::options::OptionKeys::frags::contacts::neighbors, "number of adjacent residues to a contact for finding neighboring contacts" ).def(0);
 option.add( basic::options::OptionKeys::frags::contacts::output_all, "output all contacts" ).def(false);
+option.add( basic::options::OptionKeys::frags::ABEGO::ABEGO, "ABEGO option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::frags::ABEGO::phi_psi_range_A, "Further filter phi&psi during frag picking process in design" ).def(999.0);
 option.add( basic::options::OptionKeys::broker::broker, "broker option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::broker::setup, "setup file for topology-broker" ).def("NO_SETUP_FILE");
 option.add( basic::options::OptionKeys::chunk::chunk, "chunk option group" ).legal(true).def(true);
@@ -727,10 +729,10 @@ option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def
 option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
-option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
+option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
 option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
 option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
 option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with topology info ( PairingStats )" ).def("");
@@ -2182,10 +2184,10 @@ option.add( basic::options::OptionKeys::optE::optimize_ddG_bind_correlation, "Wi
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation, "With the iterative optE driver, optimize weights to minimize the predicted ddG of mutation and the measured ddG; provide a file listing 1. repacked wt pdb list, 2. repacked mut pdb list, and 3. measured ddG triples" );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_straight_mean, "With the iterative optE driver, predict the the ddGmut to be the difference between the straight mean (1/n Sum(E_i)) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_boltzman_average, "With the iterative optE driver, predict the the ddGmut to be the difference between the boltzman average energies ( Sum( E_i * e**-E_i/kT)/Sum( e**-E_i/kT) ) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
+option.add( basic::options::OptionKeys::optE::exclude_badrep_ddGs, "With the iterative optE driver, consider only ddG data where the unweighted repulsive energy delta mut-wt < given value" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::exclude_badrep_ddGs, "With the iterative optE driver, consider only ddG data where the unweighted repulsive energy delta mut-wt < given value" );
-option.add( basic::options::OptionKeys::optE::pretend_no_ddG_repulsion, "With the iterative optE driver, set all repulsive scores to zero when looking for ddG correlations" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::pretend_no_ddG_repulsion, "With the iterative optE driver, set all repulsive scores to zero when looking for ddG correlations" );
 option.add( basic::options::OptionKeys::optE::optimize_decoy_discrimination, "With the iterative optE driver, optimize weights to maximize the partition between relaxed natives and low-scoring decoys.  File is a list of file-list pairs and a single pdb file < native_pdb_list, decoy_pdb_list, crystal_native_pdb >." );
 option.add( basic::options::OptionKeys::optE::normalize_decoy_score_spread, "In decoy discrimination optimization, normalize both the native and decoy energies generated by a set of weights by sigma_curr /sigma_start where sigma_start is computed as the standard deviation of the decoy energies given an input weight set" );
 option.add( basic::options::OptionKeys::optE::ramp_nativeness, "In decoy discrimination optimization, give structures in the range between max_rms_from_native and min_decoy_rms_to_native a nativeness score (which ramps linearly from 1 to 0 in that range) and include scores from structures in the numerator of the partition." );
@@ -2330,10 +2332,13 @@ option.add( basic::options::OptionKeys::remodel::COM_sd, "center of mass coordin
 option.add( basic::options::OptionKeys::remodel::COM_tolerance, "center of mass coordinate constraint tolerance value" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::staged_sampling::staged_sampling, "sampling first with 9mers then 3mers. Staged energies. For rebuilding entire structure not loop closure" ).def(false);
 option.add( basic::options::OptionKeys::remodel::staged_sampling::residues_to_sample, "residues to allow sampling (format:1,3,5)" ).def("");
-option.add( basic::options::OptionKeys::remodel::staged_sampling::use_fragment_sequence, "swaps both backbone and residue type" ).def(false);
 option.add( basic::options::OptionKeys::remodel::staged_sampling::starting_sequence, "AA sequence to start" ).def("");
 option.add( basic::options::OptionKeys::remodel::staged_sampling::starting_pdb, "pdb to start" ).def("");
 option.add( basic::options::OptionKeys::remodel::staged_sampling::require_frags_match_blueprint, "makes sure the frags match the definition in the blueprint" ).def(true);
+option.add( basic::options::OptionKeys::remodel::staged_sampling::start_w_ideal_helices, "begins with all helices set to -63.8 phi and -41.1 for psi." ).def(false);
+option.add( basic::options::OptionKeys::remodel::staged_sampling::sample_over_loops, "sample residues defined as loops in the blueprint" ).def(false);
+option.add( basic::options::OptionKeys::remodel::staged_sampling::small_moves, "add a stage of small moves" ).def(false);
+option.add( basic::options::OptionKeys::remodel::staged_sampling::fa_relax_moves, "Adds a stage of fa relax" ).def(false);
 option.add( basic::options::OptionKeys::remodel::domainFusion::domainFusion, "domainFusion option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::domainFusion::insert_segment_from_pdb, "segment pdb file to be inserted [insert pdb file name]." ).def("");
 option.add( basic::options::OptionKeys::remodel::vdw, "set vdw weight" ).def(1.0);

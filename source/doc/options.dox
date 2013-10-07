@@ -2873,6 +2873,17 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
  </li>
+<li><h2>frags:ABEGO</h2>
+<dl>
+<dt><b>-ABEGO</b> \<Boolean\><dt>
+<dd>ABEGO option group</dd><br>
+</dl>
+<dl>
+<dt><b>-phi_psi_range_A</b> \<Real\><dt>
+<dd>Further filter phi&psi during frag picking process in design</dd><br>
+<dd>Default: 999.0</dd><br>
+</dl>
+ </li>
 <li><h2>broker</h2>
 <dl>
 <dt><b>-broker</b> \<Boolean\><dt>
@@ -11294,11 +11305,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: ""</dd><br>
 </dl>
 <dl>
-<dt><b>-use_fragment_sequence</b> \<Boolean\><dt>
-<dd>swaps both backbone and residue type</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
 <dt><b>-starting_sequence</b> \<String\><dt>
 <dd>AA sequence to start</dd><br>
 <dd>Default: ""</dd><br>
@@ -11312,6 +11318,26 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-require_frags_match_blueprint</b> \<Boolean\><dt>
 <dd>makes sure the frags match the definition in the blueprint</dd><br>
 <dd>Default: true</dd><br>
+</dl>
+<dl>
+<dt><b>-start_w_ideal_helices</b> \<Boolean\><dt>
+<dd>begins with all helices set to -63.8 phi and -41.1 for psi.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-sample_over_loops</b> \<Boolean\><dt>
+<dd>sample residues defined as loops in the blueprint</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-small_moves</b> \<Boolean\><dt>
+<dd>add a stage of small moves</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-fa_relax_moves</b> \<Boolean\><dt>
+<dd>Adds a stage of fa relax</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>remodel:domainFusion</h2>

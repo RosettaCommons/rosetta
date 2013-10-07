@@ -44,7 +44,7 @@ namespace vall {
 // static initialization
 utility::vector1< core::chemical::AA > VallResidue::order_ = order_vector();
 VallResidue::String VallResidue::format_ = format_string();
-
+VallResidue::String VallResidue::format_2011_ = format_string_2011();
 
 /// @brief default constructor
 VallResidue::VallResidue() :
@@ -141,7 +141,10 @@ void VallResidue::fill_from_string( String const & line ) {
 
 	// Use sscanf here; Vall is huge and istringstream is way too slow.
 	// *One* sscanf call per line, multiple calls decreases performance!
-	std::sscanf(
+  //2006 Vall line is ~224 units char long
+	//2011 Vall line is ~396 units long
+	if(line.size() < 230){
+		std::sscanf(
 		line.c_str(),
 		format_.c_str(),
 		&id, &aa_, &ss_, &resi_,
@@ -168,7 +171,71 @@ void VallResidue::fill_from_string( String const & line ) {
 		&profile_[ order_[ 19 ] ],
 		&profile_[ order_[ 20 ] ]
 	);
-
+	}
+	if(line.size() > 300){
+			Real bfactor;//all definded here are unused
+		  Real cb_x;
+			Real cb_y;
+		  Real cb_z;
+			Real cen_x;
+		  Real cen_y;
+			Real cen_z;
+			Real dssp_phi;
+			Real dssp_psi;
+			Real dssp_sa; 
+			Real n_ali; 
+			utility::vector1< Real > profile_s(20);
+			std::sscanf(
+				line.c_str(),
+				format_2011_.c_str(),
+				&id,&aa_, &ss_, &resi_,&bfactor,
+				&x_,&y_,&z_,
+				&cb_x,&cb_y,&cb_z,
+				&cen_x,&cen_y,&cen_z,
+				&phi_, &psi_, &omega_,
+				&dssp_phi, &dssp_psi, &dssp_sa, &n_ali,
+				&profile_[ order_[ 1 ] ],
+				&profile_[ order_[ 2 ] ],
+				&profile_[ order_[ 3 ] ],
+				&profile_[ order_[ 4 ] ],
+				&profile_[ order_[ 5 ] ],
+				&profile_[ order_[ 6 ] ],
+				&profile_[ order_[ 7 ] ],
+				&profile_[ order_[ 8 ] ],
+				&profile_[ order_[ 9 ] ],
+				&profile_[ order_[ 10 ] ],
+				&profile_[ order_[ 11 ] ],
+				&profile_[ order_[ 12 ] ],
+				&profile_[ order_[ 13 ] ],
+				&profile_[ order_[ 14 ] ],
+				&profile_[ order_[ 15 ] ],
+				&profile_[ order_[ 16 ] ],
+				&profile_[ order_[ 17 ] ],
+				&profile_[ order_[ 18 ] ],
+				&profile_[ order_[ 19 ] ],
+				&profile_[ order_[ 20 ] ],
+				&profile_s[ order_[ 1 ] ],
+				&profile_s[ order_[ 2 ] ],
+				&profile_s[ order_[ 3 ] ],
+				&profile_s[ order_[ 4 ] ],
+				&profile_s[ order_[ 5 ] ],
+				&profile_s[ order_[ 6 ] ],
+				&profile_s[ order_[ 7 ] ],
+				&profile_s[ order_[ 8 ] ],
+				&profile_s[ order_[ 9 ] ],
+				&profile_s[ order_[ 10 ] ],
+				&profile_s[ order_[ 11 ] ],
+				&profile_s[ order_[ 12 ] ],
+				&profile_s[ order_[ 13 ] ],
+				&profile_s[ order_[ 14 ] ],
+				&profile_s[ order_[ 15 ] ],
+				&profile_s[ order_[ 16 ] ],
+				&profile_s[ order_[ 17 ] ],
+				&profile_s[ order_[ 18 ] ],
+				&profile_s[ order_[ 19 ] ],
+				&profile_s[ order_[ 20 ] ]
+		);
+	}
 	id_ = id;
 
 }
@@ -240,7 +307,46 @@ VallResidue::String VallResidue::format_string() {
 
 	return s.str();
 }
+/// @brief return a formatting string for fill_from_string() dependent
+///  upon actual type of core::Real and core::Size 
+//   This version is compatible with 2011 vall
+/// @remarks This is necessary for sscanf; wrong type can give wrong
+///  input.
+VallResidue::String VallResidue::format_string_2011() {
+	using boost::is_same;
 
+	// resolve types
+	bool const is_ulong = is_same< Size, unsigned long >::value;
+	bool const is_double = is_same< Real, double >::value;
+	// format w/ the following order:
+	std::ostringstream s;
+	s << "%s" << " "; // (string) id
+	s << "%c" << " "; // (char)   aa
+	s << "%c" << " "; // (char)   ss
+	s << ( is_ulong ? "%lu" : "%u" ) << " "; // (int)    resi
+  s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   bfactor
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   ca_x
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   ca_y
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   ca_z
+  s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   cb_x
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   cb_y
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   cb_z
+  s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   cen_x
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   cen_y
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   cen_z
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   phi
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   psi
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   omega
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   dssp_phi
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   dssp_psi
+	s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   dssp_sa
+  s << ( is_double ? "%lf" : "%f" ) << " "; // (real)   n_ali
+	// (real)   (aa profile_info, 20 columns)
+	for ( Size i = 0; i < 40; ++i ) {
+		s << " " << ( is_double ? "%lf" : "%f" );
+	}
+	return s.str();
+}
 
 } // vall
 } // picking_old

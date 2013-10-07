@@ -1,3 +1,4 @@
+namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
 namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
 namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pair_jump_file" );  }
 namespace jumps { IntegerVectorOptionKey const sheets( "jumps:sheets" );  }

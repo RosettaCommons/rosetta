@@ -83,6 +83,8 @@ namespace frags { namespace contacts { extern RealOptionKey const centroid_dista
 namespace frags { namespace contacts { extern StringVectorOptionKey const type; } }
 namespace frags { namespace contacts { extern IntegerOptionKey const neighbors; } }
 namespace frags { namespace contacts { extern BooleanOptionKey const output_all; } }
+namespace frags { namespace ABEGO { extern BooleanOptionKey const ABEGO; } }
+namespace frags { namespace ABEGO { extern RealOptionKey const phi_psi_range_A; } }
 
 } // namespace OptionKeys
 } // namespace options

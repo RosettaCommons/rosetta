@@ -600,6 +600,8 @@ namespace frags { namespace contacts { RealOptionKey const centroid_distance_sca
 namespace frags { namespace contacts { StringVectorOptionKey const type( "frags:contacts:type" );  } }
 namespace frags { namespace contacts { IntegerOptionKey const neighbors( "frags:contacts:neighbors" );  } }
 namespace frags { namespace contacts { BooleanOptionKey const output_all( "frags:contacts:output_all" );  } }
+namespace frags { namespace ABEGO { BooleanOptionKey const ABEGO( "frags:ABEGO" );  } }
+namespace frags { namespace ABEGO { RealOptionKey const phi_psi_range_A( "frags:ABEGO:phi_psi_range_A" );  } }
 namespace broker { BooleanOptionKey const broker( "broker" );  }
 namespace broker { FileVectorOptionKey const setup( "broker:setup" );  }
 namespace chunk { BooleanOptionKey const chunk( "chunk" );  }
@@ -722,4 +724,3 @@ namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
 namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
 namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
 namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
-namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
