@@ -122,6 +122,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	protocols::loops::Loops SSEs = protocols::loops::extract_secondary_structure_chunks( pose, "HE", 3, 6, 3, 4);
 	SSEs.sequential_order();
 
+	// split at chainbreaks
 	utility::vector1< RBResidueRange > segments;
 	core::Size prevcut = 1;
 	for (int j=2; j<=(int)SSEs.num_loop(); ++j) {
@@ -149,6 +150,7 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	segments.push_back( RBResidueRange( prevcut, nres ) );
 	//TR.Debug << "F: Add segment: " << prevcut << " , " << nres << std::endl;
 
+	// combine segments
 	core::Size nsegments=segments.size();
 	for (int i=1; i<=(int)nsegments; ++i) {
 		for (int j=i+1; j<=(int)nsegments; ++j) {

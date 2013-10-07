@@ -43,6 +43,8 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 
+#include <numeric/random/random.hh>
+
 #include <protocols/hybridization/util.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/moves/DsspMover.hh>
@@ -71,6 +73,7 @@ namespace protocols {
 namespace rbsegment_relax {
 
 static basic::Tracer TR("protocols.rbsegment_relax.IdealizeHelices");
+static numeric::random::RandomGenerator RG(8411111);
 
 using namespace protocols;
 using namespace core;
@@ -124,9 +127,27 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 		tocen->apply( pose );
 	}
 
-	// for each res range
+	// prolines
+	utility::vector1< std::pair<int,int> > corrected_helices;
 	for (int i=1; i<= helices_.size(); ++i) {
 		int start_i=helices_[i].first, stop_i=helices_[i].second;
+
+		for (int j=start_i+2; j<=stop_i-2; ++j) {
+			if (pose.residue(j).aa() == core::chemical::aa_pro) {
+				if (RG.uniform() <= 0.5) {
+					if (start_i < j-10) corrected_helices.push_back( std::make_pair( start_i, j-6 ) );
+					start_i = j-2;
+				}
+			}
+		}
+		if (start_i < stop_i-4) corrected_helices.push_back( std::make_pair( start_i, stop_i ) );
+
+	}
+
+
+	// for each res range
+	for (int i=1; i<= corrected_helices.size(); ++i) {
+		int start_i=corrected_helices[i].first, stop_i=corrected_helices[i].second;
 
 		// build ideal pose
 		core::pose::Pose ideal_pose;
