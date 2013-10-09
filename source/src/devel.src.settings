@@ -217,7 +217,8 @@ sources = {
 		"SpliceSegment",
 		"RBOutMover",
 		"RBInMover",
-		"DesignInterfacesOperation"
+		"DesignInterfacesOperation",
+		"FindEndpointsOperation"
         ],
 	#"devel/ssrbrelax": [
 	#	"SSRbClass",

@@ -50,9 +50,10 @@
 #include <devel/matdes/StoreCombinedStoredTasksMoverCreator.hh>
 #include <devel/matdes/StoreCompoundTaskMoverCreator.hh>
 #include <devel/loophash_loopclosure/LoopHashLoopClosureMoverCreator.hh>
-#include <devel/splice/SpliceCreator.hh> //moved into devel due to release embargo
-#include <devel/splice/DesignInterfacesOperationCreator.hh> //moved into devel due to release embargo
-#include <devel/cutoutdomain/CutOutDomainCreator.hh> //moved into devel due to release embargo
+#include <devel/splice/SpliceCreator.hh>
+#include <devel/splice/DesignInterfacesOperationCreator.hh>
+#include <devel/splice/FindEndpointsOperationCreator.hh>
+#include <devel/cutoutdomain/CutOutDomainCreator.hh>
 #include <devel/splice/RBOutMoverCreator.hh>
 #include <devel/splice/RBInMoverCreator.hh>
 
@@ -129,10 +130,11 @@ static protocols::moves::MoverRegistrator< replica_docking::TempWeightedMetropol
 static protocols::moves::MoverRegistrator< devel::matdes::StoreCombinedStoredTasksMoverCreator > reg_StoreCombinedStoredTasksMoverCreator;
 static protocols::moves::MoverRegistrator< devel::matdes::StoreCompoundTaskMoverCreator > reg_StoreCompoundTaskMoverCreator;
 static protocols::moves::MoverRegistrator< loophash_loopclosure::LoopHashLoopClosureMoverCreator > reg_LoopHashLoopClosureMoverCreator;
-static protocols::moves::MoverRegistrator< devel::splice::SpliceCreator > reg_SpliceCreator; //moved into devel due to release embargo
+static protocols::moves::MoverRegistrator< devel::splice::SpliceCreator > reg_SpliceCreator;
 static protocols::moves::MoverRegistrator< devel::splice::RBOutMoverCreator > reg_RBOutMoverCreator;
 static protocols::moves::MoverRegistrator< devel::splice::RBInMoverCreator > reg_RBInMoverCreator;
-static core::pack::task::operation::TaskOperationRegistrator< devel::splice::DesignInterfacesOperationCreator > reg_DesignInterfacesOperationCreator; //moved into devel due to release embargo
+static core::pack::task::operation::TaskOperationRegistrator< devel::splice::DesignInterfacesOperationCreator > reg_DesignInterfacesOperationCreator;
+static core::pack::task::operation::TaskOperationRegistrator< devel::splice::FindEndpointsOperationCreator > reg_FindEndpointsOperationCreator;
 static protocols::moves::MoverRegistrator< devel::cutoutdomain::CutOutDomainCreator > reg_CutOutDomainCreator;
 
 // Task creators
