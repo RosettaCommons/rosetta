@@ -53,7 +53,7 @@ public:
 	/// @brief Assigns default values to members
 	void setup_defaults();
 
-	/// @biref Instantiates and configures movers used by DockingPrepackProtocol
+	/// @brief Instantiates and configures movers used by DockingPrepackProtocol
 	void setup_pack_operation_movers();
 
 
@@ -61,7 +61,7 @@ public:
 
 	virtual std::string get_name() const;
 
-	/// @biref Scores and outputs the pose - jd2 compatible.
+	/// @brief Scores and outputs the pose - jd2 compatible.
 	void score_and_output(std::string filename,core::pose::Pose &);
 	void set_dock_ppk(bool dock_ppk);
 

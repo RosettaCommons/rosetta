@@ -8,51 +8,58 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   numeric/random/mt19937.hh
-///
 /// @brief  Mersenne Twister 19937 random number generator
 /// @author Ian W. Davis
-/// @details
-/// Implementation of the Mersenne Twister random number generator with "19937" parameters.
-/// Copied and pasted into wrapper class from the inventor's C code available from
+///
+/// @details Implementation of the Mersenne Twister random number generator
+/// with "19937" parameters.  Copied and pasted into wrapper class from the
+/// inventor's C code available from:
+///
 /// http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html
-/// It's BSD licensed so we can incorporate and redistribute it freely.
-/// I choose the "dSFMT" code, which is oriented toward generating doubles instead of ints
-/// and is highly optimized for modern processors, although I omitted the specializations
-/// for SSE2 and Altivec that are present in the original for ease of compilation.
-/// (On my machine it's still 7% faster than ran3, although
-/// random number generation is NOT the slow step in Rosetta!)
+///
+/// It's BSD licensed so we can incorporate and redistribute it freely.  I
+/// choose the "dSFMT" code, which is oriented toward generating doubles
+/// instead of ints and is highly optimized for modern processors, although I
+/// omitted the specializations for SSE2 and Altivec that are present in the
+/// original for ease of compilation.  (On my machine it's still 7% faster than
+/// ran3, although random number generation is NOT the slow step in Rosetta!)
 /// This is dSFMT version 1.2.1, the most current as of Nov 2007.
 ///
 /// The Mersenne Twister is a fairly high quality, fairly fast, and widely used
 /// pseudo-random number generator.  It has many parameter sets, which differ
-/// in the amount of storage they require for their state, but 19937 is the most used.
+/// in the amount of storage they require for their state, but 19937 is the
+/// most used.
 ///
-/// The major advantage over ran3 is that mt19937 can be seeded from any 32-bit value,
-/// so up to ~4 billion unique simulation trajectories are possible.
-/// (In fact, it can be seeded from an array of values instead, leading to even more possibilities.)
-/// Although I can't find documentation, I understand from David Baker that ran3 can only
-/// accept seeds in the range from approx. -1 million to -4 million, meaning that
-/// only ~3 million unique simulations are possible.  This sometimes causes problems
-/// for jobs running on BOINC, where jobs are distributed over many, many processors.
-/// Also, ran3 has a period length of (2**55)-1, whereas mt19937 has a period of (2**19937)-1,
-/// although I kind of doubt we're ever really running up against that limitation.
+/// The major advantage over ran3 is that mt19937 can be seeded from any 32-bit
+/// value, so up to ~4 billion unique simulation trajectories are possible.
+/// (In fact, it can be seeded from an array of values instead, leading to even
+/// more possibilities.) Although I can't find documentation, I understand from
+/// David Baker that ran3 can only accept seeds in the range from approx. -1
+/// million to -4 million, meaning that only ~3 million unique simulations are
+/// possible.  This sometimes causes problems for jobs running on BOINC, where
+/// jobs are distributed over many, many processors.  Also, ran3 has a period
+/// length of (2**55)-1, whereas mt19937 has a period of (2**19937)-1, although
+/// I kind of doubt we're ever really running up against that limitation.
 ///
 /// Boost.Random has an implementation also, and says this about it:
+///
 /// cycle length: (2**19937) - 1
 /// good uniform distribution in up to 623 dimensions
 /// It is recommended as the default random number generator.
 ///
 /// The GNU Scientific Library has an implementation also, and says this about it:
-/// The MT19937 generator of Makoto Matsumoto and Takuji Nishimura is a variant of
-/// the twisted generalized feedback shift-register algorithm, and is known as the
-/// “Mersenne Twister” generator. It has a Mersenne prime period of 2^19937 - 1
-/// (about 10^6000) and is equi-distributed in 623 dimensions. It has passed the
-/// DIEHARD statistical tests. It uses 624 words of state per generator and
-/// is comparable in speed to the other generators.
 ///
-/// See Makoto Matsumoto and Takuji Nishimura, “Mersenne Twister: A 623-dimensionally
-/// equidistributed uniform pseudorandom number generator”. ACM Transactions on
-/// Modeling and Computer Simulation, Vol. 8, No. 1 (Jan. 1998), Pages 3–30
+/// The MT19937 generator of Makoto Matsumoto and Takuji Nishimura is a variant
+/// of the twisted generalized feedback shift-register algorithm, and is known
+/// as the Mersenne Twister generator. It has a Mersenne prime period of
+/// 2^19937 - 1 (about 10^6000) and is equi-distributed in 623 dimensions. It
+/// has passed the DIEHARD statistical tests. It uses 624 words of state per
+/// generator and is comparable in speed to the other generators.
+///
+/// See Makoto Matsumoto and Takuji Nishimura, Mersenne Twister: A
+/// 623-dimensionally equidistributed uniform pseudorandom number
+/// generator. ACM Transactions on Modeling and Computer Simulation, Vol.
+/// 8, No. 1 (Jan. 1998), Pages 3-30
 
 
 #ifndef INCLUDED_numeric_random_mt19937_hh
