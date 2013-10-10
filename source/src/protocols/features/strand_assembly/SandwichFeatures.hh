@@ -120,10 +120,11 @@ public:
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
 
-	utility::vector1<SandwichFragment>
+	utility::vector1<core::Size>
 	get_chain_B_resNum(
 		StructureID struct_id,
-		utility::sql_database::sessionOP db_session);
+		utility::sql_database::sessionOP db_session,
+		core::Size	sw_can_by_sh_id);
 
 	std::string
 	get_tag(
@@ -226,6 +227,12 @@ public:
 		SandwichFragment strand_j);
 
 	core::Real
+	get_closest_distance_between_strands(
+		core::pose::Pose const & pose,
+		SandwichFragment strand_i,
+		SandwichFragment strand_j);
+
+	core::Real
 	get_avg_dis_CA_CA(
 		core::pose::Pose const & pose,
 		core::Size i_resnum,
@@ -240,6 +247,15 @@ public:
 	core::Size round(
 		core::Real x);
 
+	core::Real round_to_real(
+		core::Real x);
+
+	core::Real calculate_dihedral_w_4_resnums(
+		core::pose::Pose const & pose,
+		core::Size res1_sheet_i,		core::Size res2_sheet_i,		core::Size res1_sheet_j,		core::Size res2_sheet_j);
+
+
+
 	// See whether this strand is an edge strand without 'sheet_antiparallel' info
 	std::string
 	is_this_strand_at_edge	(
@@ -249,6 +265,13 @@ public:
 		core::Size sheet_id,
 		core::Size residue_begin,
 		core::Size residue_end);
+
+	std::string
+	is_this_strand_at_edge_by_looking_db(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size residue_begin);
+
 
 	bool
 	check_whether_this_sheet_is_too_short(
@@ -359,6 +382,13 @@ public:
 	get_vec_sw_can_by_sh_id(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session);
+
+	utility::vector1<Size>
+	get_vec_distinct_sheet_id(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size	sw_can_by_sh_id);
+
 
 	core::Size
 	get_size_sw_by_components_PK_id(
@@ -505,6 +535,13 @@ public:
 		std::string	tag);
 
 	core::Size
+	add_dssp_ratio_in_sw(
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose & dssp_pose,
+		core::Size sw_can_by_sh_id);
+
+	core::Size
 	add_number_of_inward_pointing_W_in_sw(
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
@@ -543,6 +580,12 @@ public:
 		utility::sql_database::sessionOP	db_session,
 		core::Size	sw_can_by_sh_id);
 
+	core::Size
+	report_dihedral_angle_between_core_strands_across_facing_sheets (
+		StructureID struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::pose::Pose const & pose,
+		core::Size	sw_can_by_sh_id);
 
 
 	bool
