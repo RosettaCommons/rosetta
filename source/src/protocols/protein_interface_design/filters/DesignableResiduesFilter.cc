@@ -38,6 +38,7 @@ namespace protein_interface_design{
 namespace filters {
 
 static basic::Tracer TR( "protocols.protein_interface_design.filters.DesignableResiduesFilter" );
+static basic::Tracer TR_pymol( "protocols.protein_interface_design.filters.DesignableResiduesFilter_pymol" );
 
 ///@brief default ctor
 DesignableResiduesFilter::DesignableResiduesFilter() :
@@ -108,7 +109,7 @@ DesignableResiduesFilter::apply(core::pose::Pose const & pose ) const
 	if( (design_pos >= lower_threshold_) && (design_pos <= upper_threshold_) ){
 		TR<<"passing."<<std::endl;
 		return true;
-	} 
+	}
 	else {
 		TR<<"failing."<<std::endl;
 		return false;
@@ -121,25 +122,29 @@ DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
 	runtime_assert( packable() || designable() );
 	core::pack::task::PackerTaskCOP packer_task( task_factory()->create_task_and_apply_taskoperations( pose ) );
 	core::Size total_residue;
-	if(core::pose::symmetry::is_symmetric( pose )) { 
+	if(core::pose::symmetry::is_symmetric( pose )) {
 		core::conformation::symmetry::SymmetryInfoCOP symm_info = core::pose::symmetry::symmetry_info(pose);
 		total_residue = symm_info->num_independent_residues();
 	} else {
-		total_residue = pose.total_residue(); 
+		total_residue = pose.total_residue();
 	}
 	core::Size design_pos = 0;
 	if( designable() ){
 		std::string select_design_pos("select design_positions, resi ");
 		TR<<"Designable residues:"<<std::endl;
+		bool first_pass( true );
 		for( core::Size resi=1; resi<=total_residue; ++resi ){
 			if( packer_task->being_designed( resi ) ) {
+				if( !first_pass )
+					select_design_pos.append( "+" );
 				TR<<pose.residue( resi ).name3()<<" "<< pose.pdb_info()->number( resi )<<pose.pdb_info()->chain( resi )<<std::endl;
 				design_pos++;
-				select_design_pos.append(ObjexxFCL::string_of(resi) + "+");   
+				select_design_pos.append(ObjexxFCL::string_of(resi));
+				first_pass = false;
 			}
 		}
 		TR<<"Number of design positions: "<<design_pos<<std::endl;
-		TR<<select_design_pos<<std::endl;
+		TR_pymol<<select_design_pos<<std::endl;
 	}
 	core::Size packable_pos = 0;
 	if( packable() ){
@@ -149,7 +154,7 @@ DesignableResiduesFilter::compute( core::pose::Pose const & pose ) const{
 			if( packer_task->being_packed( resi ) ) {
 				TR<<pose.residue( resi ).name3()<<" "<<pose.pdb_info()->number( resi )<<std::endl;
 				packable_pos++;
-				select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");   
+				select_packable_pos.append(ObjexxFCL::string_of(resi) + "+");
 			}
 		}
 		TR<<"Number of repackable positions: "<<packable_pos<<std::endl;

@@ -66,6 +66,22 @@ core::pack::task::operation::TaskOperationOP FindEndpointsOperation::clone() con
 	return new FindEndpointsOperation( *this );
 }
 
+///@brief compute the number of residue neighbours target_res has within neighbours vector
+core::Size
+neighbors_in_vector( core::pose::Pose const & pose, core::Size const target_res, utility::vector1< core::Size > const & neighbors, core::Real const dist_threshold ){
+
+    core::Size neighbor_count( 0 );
+    for(utility::vector1<core::Size>::const_iterator res_jt = neighbors.begin(); res_jt != neighbors.end(); ++res_jt){
+        if( target_res == *res_jt )
+            continue;
+        core::Real const distance(pose.residue( target_res ).xyz( "CA" ).distance( pose.residue( *res_jt ).xyz("CA") ) );
+
+        if( distance<=dist_threshold )
+            ++neighbor_count;
+    }
+    return( neighbor_count );
+}
+
 ///@brief restricts to repacking all residues outside of design_shell_ around each residue
 void
 FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
@@ -78,8 +94,8 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
     utility::vector1< core::Size > strand_positions;
     strand_positions.clear();
     TR<<"DSSP: ";
-    for( core::Size i = 1; i <= pose.total_residue(); ++i ){
-        if( dssp.get_dssp_secstruct( i ) == 'E' )
+    for( core::Size i = 1; i <= pose.total_residue() - 2; ++i ){
+        if( dssp.get_dssp_secstruct( i ) == 'E' && dssp.get_dssp_secstruct( i + 1) == 'E' && dssp.get_dssp_secstruct( i + 2 ) == 'E' )
             strand_positions.push_back( i );
         TR<<dssp.get_dssp_secstruct(i);
     }
@@ -95,15 +111,7 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
     utility::vector1< core::Size > ntermini_w_neighbors;
     ntermini_w_neighbors.clear();
     for( utility::vector1< core::Size >::const_iterator res_it = strand_ntermini.begin(); res_it!=strand_ntermini.end();++res_it){
-        core::Size resi_neighbors( 0 );
-        for(utility::vector1<core::Size>::const_iterator res_jt = strand_ntermini.begin(); res_jt != strand_ntermini.end(); ++res_jt){
-            if( *res_it == *res_jt )
-                continue;
-            core::Real const distance(pose.residue( *res_it ).xyz( "CA" ).distance( pose.residue( *res_jt ).xyz("CA") ) );
-
-            if( distance<= distance_cutoff() )
-                ++resi_neighbors;
-        }
+        core::Size const resi_neighbors( neighbors_in_vector( pose, *res_it, strand_ntermini, distance_cutoff() ));
         if( resi_neighbors >= neighbors() ){
             ntermini_w_neighbors.push_back( *res_it );
             TR<<*res_it<<" has "<<resi_neighbors<<" neighbors"<<std::endl;
@@ -113,17 +121,14 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
     utility::vector1< core::Size > ntermini_w_close_neighbors;
     ntermini_w_close_neighbors.clear();
     for( utility::vector1< core::Size >::const_iterator res_it = ntermini_w_neighbors.begin(); res_it!=ntermini_w_neighbors.end();++res_it){
-        core::Size close_neighbors( 0 );
-        for(utility::vector1<core::Size>::const_iterator res_jt = ntermini_w_neighbors.begin(); res_jt != ntermini_w_neighbors.end(); ++res_jt){
-            if( *res_it == *res_jt )
-                continue;
-            core::Real const distance(pose.residue( *res_it ).xyz( "CA" ).distance( pose.residue( *res_jt ).xyz("CA") ) );
-
-            if( distance<=10.0 )
-                ++close_neighbors;
-        }
+        core::Size const close_neighbors( neighbors_in_vector( pose, *res_it, strand_ntermini, 10.0 ));
         if( close_neighbors >= 2 )
             ntermini_w_close_neighbors.push_back( *res_it );
+        else{
+            core::Size const close_neighbors_one_down( neighbors_in_vector( pose, *res_it+1, strand_ntermini, 10.0 ));
+            if( close_neighbors_one_down >= 2 )
+                ntermini_w_close_neighbors.push_back( *res_it + 1);
+        }
         TR<<*res_it<<" has "<<close_neighbors<<" close neighbors"<<std::endl;
     }
 
@@ -144,7 +149,7 @@ FindEndpointsOperation::apply( core::pose::Pose const & pose, core::pack::task::
         core::Real const Ca_dist( pose.residue( resi ).xyz("CA").distance(radius));
         core::Real const Cb_dist( pose.residue( resi ).xyz("CB").distance(radius));
         TR<<"Ca_dist/Cb_dist: "<<Ca_dist<<'/'<<Cb_dist<<std::endl;
-        if( Ca_dist <= Cb_dist ){
+        if( Ca_dist + 0.5 <= Cb_dist ){
             TR<<"Residue "<<resi<<" pointing out from barrel. Choosing instead ";
             if( pose.residue( res ).name3() == "GLY" ){
                 TR<<resi-1<<std::endl;
