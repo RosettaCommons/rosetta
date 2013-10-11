@@ -53,6 +53,7 @@
 #include <devel/splice/SpliceCreator.hh>
 #include <devel/splice/DesignInterfacesOperationCreator.hh>
 #include <devel/splice/FindEndpointsOperationCreator.hh>
+#include <devel/splice/AlignEndsMoverCreator.hh>
 #include <devel/cutoutdomain/CutOutDomainCreator.hh>
 #include <devel/splice/RBOutMoverCreator.hh>
 #include <devel/splice/RBInMoverCreator.hh>
@@ -136,6 +137,7 @@ static protocols::moves::MoverRegistrator< devel::splice::RBOutMoverCreator > re
 static protocols::moves::MoverRegistrator< devel::splice::RBInMoverCreator > reg_RBInMoverCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::splice::DesignInterfacesOperationCreator > reg_DesignInterfacesOperationCreator;
 static core::pack::task::operation::TaskOperationRegistrator< devel::splice::FindEndpointsOperationCreator > reg_FindEndpointsOperationCreator;
+static protocols::moves::MoverRegistrator< devel::splice::AlignEndsMoverCreator > reg_AlignEndsMoverCreator;
 static protocols::moves::MoverRegistrator< devel::cutoutdomain::CutOutDomainCreator > reg_CutOutDomainCreator;
 
 // Task creators

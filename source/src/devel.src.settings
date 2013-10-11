@@ -213,6 +213,7 @@ sources = {
 		"option",
 	],
         "devel/splice": [
+				"AlignEndsMover",
 		"Splice",
 		"SpliceSegment",
 		"RBOutMover",

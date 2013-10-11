@@ -21,6 +21,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <core/scoring/dssp/Dssp.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -74,6 +75,8 @@ private:
 
     bool point_inside_; //dflt true; select residues that point into the barrel
 };
+
+core::Size neighbors_in_vector( core::pose::Pose const & pose, core::Size const target_res, utility::vector1< core::Size > const & neighbors, core::Real const dist_threshold, core::scoring::dssp::Dssp & dssp );
 
 } //namespace splice
 } //namespace devel
