@@ -524,13 +524,13 @@ setup_dof_to_torsion_map(
 	);
 
 
-/// @brief convert from allow-bb,allow-chi MoveMap to simple DOF_ID boolean mask needed by the minimizer
+/// @brief convert from allow-bb/allow-chi MoveMap to simple DOF_ID boolean mask needed by the minimizer
 void
 setup_dof_mask_from_move_map(
-	core::kinematics::MoveMap const & mm,
-	pose::Pose const & pose,
-	id::DOF_ID_Mask & dof_mask
-	);
+		core::kinematics::MoveMap const & mm,
+		pose::Pose const & pose,
+		id::DOF_ID_Mask & dof_mask
+);
 
 bool
 has_chain(std::string const & chain, core::pose::Pose const & pose);

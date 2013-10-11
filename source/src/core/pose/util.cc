@@ -12,41 +12,28 @@
 /// @author Phil Bradley
 /// @author Modified by Sergey Lyskov, Rhiju Das, Steven Lewis
 
-// Unit headers
+
+// Unit header
 #include <core/pose/util.hh>
 
-// C/C++ headers
-#include <cmath>
-#include <iostream>
-// Utility headers
-#include <basic/Tracer.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
-#include <basic/datacache/CacheableStringFloatMap.hh>
-#include <basic/datacache/CacheableStringMap.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.string.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <utility/io/izstream.hh>
-#include <utility/exit.hh>
-#include <utility/string_util.hh>
-#include <utility/excn/Exceptions.hh>
+// Package headers
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/MiniPose.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/datacache/PositionConservedResiduesStore.hh>
+#include <core/pose/util.tmpl.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 #include <core/id/DOF_ID_Map.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Mask.hh>
 #include <core/id/Exceptions.hh>
 #include <core/id/NamedStubID.hh>
 #include <core/id/NamedAtomID.hh>
@@ -55,30 +42,46 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/MiniPose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/datacache/PositionConservedResiduesStore.hh>
 #include <core/scoring/ScoreType.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/CacheableString.hh>
+#include <basic/datacache/CacheableStringFloatMap.hh>
+#include <basic/datacache/CacheableStringMap.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+
+// Numeric headers
+#include <numeric/constants.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyzVector.string.hh>
+
+// Utility headers
+#include <utility/io/izstream.hh>
+#include <utility/exit.hh>
+#include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 
+// C/C++ headers
+#include <cmath>
+#include <iostream>
+
+// External headers
+#include <ObjexxFCL/string.functions.hh>
+#include <boost/functional/hash.hpp>
 #include <boost/foreach.hpp>
+
+
 #define foreach BOOST_FOREACH
 
-//Auto Headers
-#include <core/pose/util.tmpl.hh>
-
-//Boost headers
-
-#include <boost/functional/hash.hpp>
 
 namespace core {
 namespace pose {
@@ -227,6 +230,7 @@ create_subpose(
 	pose.fold_tree(f);
 
 }
+
 ////////////////////////////////////////////////////////////////////////////
 void
 partition_pose_by_jump(
@@ -263,6 +267,7 @@ partition_pose_by_jump(
 //	partner1.dump_pdb( "partner1.pdb" );
 //	partner2.dump_pdb( "partner2.pdb" );
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @details Crude way to guess secondary structure given a pose. This function
 /// sets the sec_struct array of pose.conformation_ to the result of the
@@ -445,6 +450,7 @@ void addVirtualResAsRoot( core::pose::Pose & pose ) {
 	massSum /= nAtms;
 	return addVirtualResAsRoot(massSum, pose);
 }
+
 /// @brief  Reads the comments from the pdb file and adds it into comments
 void
 read_comment_pdb(
@@ -471,6 +477,7 @@ read_comment_pdb(
 	}
 }
 }
+
 void
 dump_comment_pdb(
 	std::string const &file_name,
@@ -1023,7 +1030,10 @@ bool is_ideal_position(
 		seqpos,	pose.conformation()	);
 }
 
-///@brief this function removes all residues from the pose which are not protein residues.  This removal includes, but is not limited to, metals, DNA, RNA, and ligands.  It will NOT remove ligands which are canonical residues (for example, if a protein binds an alanine monomer, the monomer will be untouched).
+/// @brief this function removes all residues from the pose which are not protein residues.
+/// @details This removal includes, but is not limited to, metals, DNA, RNA, and ligands.
+/// It will NOT remove ligands which are canonical residues (for example, if a protein binds an alanine monomer,
+/// the monomer will be untouched).
 void remove_nonprotein_residues( core::pose::Pose & pose )
 {
 	core::Size i(1);
@@ -1033,7 +1043,8 @@ void remove_nonprotein_residues( core::pose::Pose & pose )
 	}
 }
 
-///@brief this function removes all residues with both UPPER and LOWER terminus types.  This is intended for removing ligands that are canonical residues.
+/// @brief this function removes all residues with both UPPER and LOWER terminus types.
+/// This is intended for removing ligands that are canonical residues.
 void remove_ligand_canonical_residues( core::pose::Pose & pose )
 {
 	if(pose.total_residue() == 1) { //if we have only one residue, it cannot be removed, and this is going to crash
@@ -1049,7 +1060,16 @@ void remove_ligand_canonical_residues( core::pose::Pose & pose )
 }
 
 
-///@details this function compares the 3-d coordinates of two poses.  Along the way it is forced to check for certain other (in)equalities to prevent vector overrruns, etc.  These include: pose length, ResidueType, and # atoms in residue.  Inequalities other than 3-d coordinates result in a warning message (you shouldn't have been comparing those poses!)  This is NOT a complete equality operator for a pose, but I think it does a good job with the coordinates.  Note that it performs floating-point coordinate comparisons by floor(X*10^n_dec_places) - this may cause failures if your pose is a billion angstroms from 0,0,0.  This comparison is preferred to an epsilon comparison std::abs( a.x - b.x ) < epsilon because it can run into situations where a == b and b == c, but a != c (thanks to APL for pointing this out).  The last argument, n_dec_places, is the number of decimal places of precision when comparing.
+/// @details this function compares the 3-d coordinates of two poses.
+/// Along the way it is forced to check for certain other (in)equalities to prevent vector overrruns, etc.
+/// These include: pose length, ResidueType, and # atoms in residue.
+/// Inequalities other than 3-d coordinates result in a warning message (you shouldn't have been comparing those poses!)
+/// This is NOT a complete equality operator for a pose, but I think it does a good job with the coordinates.
+/// Note that it performs floating-point coordinate comparisons by floor(X*10^n_dec_places) -
+/// this may cause failures if your pose is a billion angstroms from 0,0,0.
+/// This comparison is preferred to an epsilon comparison std::abs( a.x - b.x ) < epsilon because it can run into
+/// situations where a == b and b == c, but a != c (thanks to APL for pointing this out).
+/// The last argument, n_dec_places, is the number of decimal places of precision when comparing.
 bool compare_atom_coordinates(core::pose::Pose const & lhs, core::pose::Pose const & rhs, core::Size const n_dec_places){
 
 	//number of decimal places of precision - 3 (1000) is equivalent to PDB precision.
@@ -1113,10 +1133,10 @@ compare_binary_protein_silent_struct(
 ///////////////////////////////////////////////
 ///////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-///@brief A very useful function that copies degrees of freedom from one pose to another. res_map defines how to map residue numbers from the large pose to the smaller "scratch" pose.
-///  -- rhiju, 2009.
+/// @brief A very useful function that copies degrees of freedom from one pose to another.
+/// @details res_map defines how to map residue numbers from the large pose to the smaller "scratch" pose.
+/// @author rhiju, 2009.
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-
 void
 copy_dofs(
 					pose::Pose & pose,
@@ -1785,7 +1805,7 @@ atom_id_to_named_atom_id(
 	return core::id::NamedAtomID( rsd.atom_name( atom_id.atomno() ), atom_id.rsd() );
 }
 
-///@detail returns an AtomID corresponding to your NamedAtomID
+///@details returns an AtomID corresponding to your NamedAtomID
 /// check for a valid AtomID after this.
 /// following conditions return invalid ID :
 /// rsd > total_residue
@@ -2164,103 +2184,104 @@ setup_dof_to_torsion_map(
 
 
 ///////////////////////////////////////////////////////////////////////////////
-///
+// convert from allow-bb/allow-chi MoveMap to simple DOF_ID boolean mask needed by the minimizer
 void
 setup_dof_mask_from_move_map(
-	kinematics::MoveMap const & mm,
-	pose::Pose const & pose,
-	id::DOF_ID_Mask & dof_mask
+		kinematics::MoveMap const & mm,
+		pose::Pose const & pose,
+		id::DOF_ID_Mask & dof_mask
 )
 {
-	Size const n_res( pose.n_residue() );
+	using namespace id;
 
-	// Set DOF mask size and initialize to false
-	core::pose::initialize_dof_id_map( dof_mask, pose, false );
+	bool const PHI_default( mm.get( PHI ) );
+
+	// Set DOF mask size and initialize to false.
+	initialize_dof_id_map( dof_mask, pose, false );
 
 	// DOF_Type defaults
 	// could/should do this with a loop over types?
-	// currently ignoring rb types, set these individually
-	// of by jump number
-	dof_mask.set( id::PHI  , mm.get( id::PHI   ) );
-	dof_mask.set( id::THETA, mm.get( id::THETA ) );
-	dof_mask.set( id::D    , mm.get( id::D     ) );
+	// currently ignoring rb types, set these individually by jump number
+	dof_mask.set( PHI  , mm.get( PHI   ) );
+	dof_mask.set( THETA, mm.get( THETA ) );
+	dof_mask.set( D    , mm.get( D     ) );
 
-	// bb & chi
-	bool const PHI_default( mm.get( id::PHI ) );
-	//bool const vary_omega( mm.vary_omega() );
-
+	// Torsion angles
+	Size const n_res( pose.n_residue() );
 	for ( Size i = 1; i <= n_res; ++i ) {
+		// PHIL note the Residue-based helper functions you need for this
+		// PHIL also note the pose.conformation() interface
+
 		conformation::Residue const & rsd( pose.residue(i));
+		Size const n_bb_torsions( rsd.mainchain_atoms().size() );
+		Size n_cyclic_torsions = 0;  // By default, a residue is acyclic.
+		if (rsd.is_carbohydrate()) {
+			// This currently assumes that all saccharide residues are rings.
+			// TODO: Make this more generic for any rings and remove reliance on CarbohydrateInfo; see below.
+
+			if (rsd.carbohydrate_info()->has_exocyclic_linkage()) {
+				n_cyclic_torsions = n_bb_torsions - 3;  // minus PHI, PSI, & OMEGA, the actual BB torsions
+			} else /* doesn't have an omega angle */ {
+				n_cyclic_torsions = n_bb_torsions - 2;  // minus PHI & PSI, the actual BB torsions
+			}
+		}
 
 		// first the backbone torsion angles
-		//bool const bb_move( mm.get_bb(i) );
-		//if ( bb_move && !PHI_default ) {
-		{
-			// PHIL note the Residue-based helper functions you need for this
-			// PHIL also note the pose.conformation() interface
-			int const n_torsions( rsd.mainchain_atoms().size() );
-			for ( int j=1; j<= n_torsions; ++j ) {
-				bool const mm_setting( mm.get( id::TorsionID(i,id::BB,j) ) );
-				if ( mm_setting == PHI_default ) continue;
-				id::DOF_ID const & id
-				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(i,id::BB,j)));
-				if ( id.valid() ) {
-					//if ( rsd.is_protein() ) {
-					//	assert( n_torsions == 3 );
-					//	if ( j == 3 && !vary_omega ) continue; // MAGIC NUMBER
-					//}
-					dof_mask[ id ] = mm_setting;
-				} else {
-					// probably just a terminal/chainbreak torsion
-					//std::cout << "WARNING: Unable to find atom_tree atom for this " <<
-					//" Rosetta torsion angle: " << i << ' ' << j << std::endl;
-				}
-			} // j=1,bb-torsions
-		} // if ( bb_move )
+		for ( uint j=1; j<= n_bb_torsions; ++j ) {
+			bool mm_setting;
+			if (j <= n_cyclic_torsions) {
+				mm_setting = false;  // Do not move "backbone" torsions that are part of a ring.
+			} else {
+				mm_setting = mm.get(TorsionID(i, BB, j));
+			}
+			if ( mm_setting == PHI_default ) continue;
+			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id(TorsionID(i, BB, j)));
+			if ( id.valid() ) {  // If not valid, it's probably just a terminal/chainbreak torsion.
+				dof_mask[ id ] = mm_setting;
+			}
+		} // j=1, bb-torsions
 
-		//bool const chi_move( mm.get_chi(i) );
-		//if ( chi_move && !PHI_default ) {
-		{
-			// PHIL note the Residue-based helper functions you need for this
-			// PHIL also note the pose.conformation() interface
-			int const n_torsions( rsd.nchi() );
-			for ( int j=1; j<= n_torsions; ++j ) {
-				bool const mm_setting( mm.get( id::TorsionID(i,id::CHI,j) ) );
-				if ( mm_setting == PHI_default ) continue;
-				id::DOF_ID const & id
-				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(i,id::CHI,j)));
-				if ( id.valid() ) {
-					dof_mask[ id ] = mm_setting;
-				} else {
-					TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
-					" Rosetta chi angle: " << i << ' ' << j << std::endl;
-				}
-			} // j=1,chi-torsions
-		} // if ( chi_move )
+		// then the side chain torsions
+		Size const n_chi_torsions( rsd.nchi() );
+		Size const n_actual_chi_torsions = n_chi_torsions - n_cyclic_torsions;
+		for ( uint j=1; j<= n_chi_torsions; ++j ) {
+			bool mm_setting;
+			if (j > n_actual_chi_torsions) {
+				mm_setting = false;  // Do not move CHI torsions that are actually nu torsions.
+			} else {
+				mm_setting = mm.get(TorsionID(i, CHI, j));
+			}
+			if ( mm_setting == PHI_default ) continue;
+			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id(TorsionID(i, CHI, j)));
+			if ( id.valid() ) {
+				dof_mask[ id ] = mm_setting;
+			} else {
+				TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
+							"Rosetta chi angle: residue " << i << ' chi ' << j << std::endl;
+			}
+		} // j=1,chi-torsions
 
+		// TODO: If I end up adding cyclic torsions as a separate DOF type, add similar code here. ~Labonte
+	} // i=1, n_res
 
-	} // i=1,n_res
-
-	for ( core::Size i=1; i<= pose.num_jump(); ++i ) {
+	// Jumps.
+	for ( Size i=1; i<= pose.num_jump(); ++i ) {
 		if ( mm.get_jump(i) ) {
 			for ( int j=1; j<= 6; ++j ) {
-				id::DOF_ID const & id
-				( pose.conformation().dof_id_from_torsion_id(id::TorsionID(i,id::JUMP,j)));
+				DOF_ID const & id( pose.conformation().dof_id_from_torsion_id(TorsionID(i, JUMP, j)));
 				dof_mask[ id ] = true;
 			}
 		}
-	} // i=1.num_jump
-
+	} // i=1, num_jump
 
 	/////////////////////////
-	// DOF's set individually
+	// DOFs set individually
 	for ( kinematics::MoveMap::DOF_ID_Map::const_iterator it=mm.dof_id_begin(), it_end=mm.dof_id_end();
-		 it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		dof_mask[ it->first ] = it->second;
 	}
-
-
 } // setup_dof_mask_from_move_map
+
 
 bool
 has_chain(std::string const & chain, core::pose::Pose const & pose){
