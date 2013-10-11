@@ -591,6 +591,8 @@ hbond_compute_energy(
 	database.cosBAH_fade_lookup( hbe )->value_deriv(xH, FxH, dFxH);
 	database.cosAHD_fade_lookup( hbe )->value_deriv(xD, FxD, dFxD);
 
+	double const acc_don_scale = database.acc_strength( hbt.acc_type() ) * database.don_strength( hbt.don_type() );
+
 	if ( FSr == Real(0.0) && FLr == Real(0.0) ) {
 		// is dAHdis out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
 		if ( dAHdis < database.AHdist_poly_lookup( hbe )->xmin() ||
@@ -650,6 +652,7 @@ hbond_compute_energy(
 
 
 	energy = Pr*FxD*FxH + FSr*(PSxD*FxH + FxD*PSxH) + FLr*(PLxD*FxH + FxD*PLxH);
+	energy *= acc_don_scale;
 	energy += hbondoptions.hbond_energy_shift();
 
 	if(
@@ -669,6 +672,8 @@ hbond_compute_energy(
 		bah_chi_compute_energy_sp3(xH, chi, energy, dE_dBAH, dE_dchi);
 		apply_chi_torsion_penalty = true;
 	}
+	dE_dBAH *= acc_don_scale;
+	dE_dchi *= acc_don_scale;
 
 	// NOTE: if any deriv parameter omitted, we don't compute derivatives.
 	if (&dE_dxH == &DUMMY_DERIV) {
@@ -679,6 +684,7 @@ hbond_compute_energy(
 	}
 
 	dE_dr =  dPr*FxD*FxH + dFSr*(PSxD*FxH + FxD*PSxH) + dFLr*(PLxD*FxH + FxD*PLxH);
+	dE_dr *= acc_don_scale;
 
 	if(use_cosAHD){
 		dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH) + FxH*(FSr*dPSxD + FLr*dPLxD);
@@ -688,8 +694,10 @@ hbond_compute_energy(
 		/// the polynomial's derivatives, on the other hand, is already in units of dE/dAHD
 		dE_dxD = dFxD*(Pr*FxH + FLr*PLxH + FSr*PSxH)*sin(AHD) + FxH*(FSr*dPSxD + FLr*dPLxD);
 	}
+	dE_dxD *= acc_don_scale;
 
 	dE_dxH = dFxH*(Pr*FxD + FLr*PLxD + FSr*PSxD) + FxD*(FSr*dPSxH + FLr*dPLxH);
+	dE_dxH *= acc_don_scale;
 
 	if(hbondoptions.fade_energy()){
 		fade_energy(energy, dE_dr, dE_dxD, dE_dxH, dE_dBAH, dE_dchi);
