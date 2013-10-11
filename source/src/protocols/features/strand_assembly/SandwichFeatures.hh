@@ -126,6 +126,13 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size	sw_can_by_sh_id);
 
+	core::Size
+	get_num_of_sheets_that_surround_this_sheet(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size	sheet_id);
+
+
 	std::string
 	get_tag(
 		StructureID struct_id,
@@ -181,7 +188,14 @@ public:
 		core::Size new_sheet_id,
 		core::Size old_sheet_id);
 
-	void	
+	void
+	update_num_of_sheets_that_surround_this_sheet(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::Size sheet_id,
+		core::Size num_of_sheets_that_surround_this_sheet);
+
+	void
 	update_sheet_antiparallel(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
@@ -592,8 +606,8 @@ public:
 	check_whether_this_pdb_should_be_excluded (
 		std::string tag); // I don't know how to correctly extract beta-sandwich from 1W8N for now
 
-	bool
-	check_whether_this_sheet_is_surrounded_by_more_than_1_other_sheet (
+	core::Size
+	cal_num_of_sheets_that_surround_this_sheet (
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::pose::Pose & dssp_pose,
