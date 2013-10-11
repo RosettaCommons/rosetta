@@ -33,6 +33,7 @@ static basic::Tracer TR("devel.splice.AlignEndsMover");
 #include <protocols/toolbox/superimpose.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <numeric/xyzVector.hh>
+#include <algorithm>
 
 namespace devel {
 namespace splice {
@@ -62,7 +63,8 @@ AlignEndsMover::AlignEndsMover(): moves::Mover("AlignEnds"),
 	N_terminal_count_( 3 ),
 	odd_( true ),
 	even_( true ),
-	template_pose_( NULL )
+	template_pose_( NULL ),
+	stagger_( 0 )
 {
 }
 
@@ -161,9 +163,10 @@ AlignEndsMover::apply( Pose & pose ){
 
 	utility::vector1< numeric::xyzVector< core::Real > > init_coords( Ca_coords( pose, pose_positions ) ), ref_coords( Ca_coords( *template_pose(), template_positions ) );
 
-
 	numeric::xyzMatrix< core::Real > rotation;
 	numeric::xyzVector< core::Real > to_init_center, to_fit_center;
+
+	std::rotate( init_coords.begin(), init_coords.begin() + ( N_terminal_count() * stagger()), init_coords.end());
 
 	superposition_transform( init_coords, ref_coords, rotation, to_init_center, to_fit_center );
 
@@ -202,8 +205,9 @@ AlignEndsMover::parse_my_tag(
 	even( tag->getOption< bool >( "even", true ) );
 	std::string const template_fname( tag->getOption< std::string >( "template_pose" ) );
 	template_pose( core::import_pose::pose_from_pdb( template_fname ) );
+	stagger( tag->getOption< core::Size >( "stagger", 0 ) );
 
-	TR<<"distance_threshold: "<<distance_threshold()<<" neighbors: "<<neighbors()<<" N_terminal_count: "<<N_terminal_count()<<" odd: "<<odd()<<" even: "<<even()<<" template_pose: "<<template_fname<<std::endl;
+	TR<<"distance_threshold: "<<distance_threshold()<<" neighbors: "<<neighbors()<<" N_terminal_count: "<<N_terminal_count()<<" odd: "<<odd()<<" even: "<<even()<<" template_pose: "<<template_fname<<" stagger: "<<stagger()<<std::endl;
 }
 } // simple_moves
 } // protocols

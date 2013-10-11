@@ -59,12 +59,16 @@ public:
 
 		core::pose::PoseOP template_pose() const;
 		void template_pose( core::pose::PoseOP p );
+
+		core::Size stagger() const{ return stagger_; }
+		void stagger( core::Size const s ){ stagger_ = s; }
 private:
   utility::vector1< core::Size > reference_positions( core::pose::Pose const & p ) const;
 	core::Real distance_threshold_; // dflt 16;
 	core::Size neighbors_, N_terminal_count_; //dflt 6, 3
 	bool odd_, even_; // dflt true, true
 	core::pose::PoseOP template_pose_; //dflt NULL
+	core::Size stagger_; // dflt 0;
 };
 
 
