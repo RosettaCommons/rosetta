@@ -268,12 +268,24 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 	// pick a direction at random
 	int dir = (rbseg_RG.random_range(0,1))? -1 : 1;
 	int mag = rbseg_RG.random_range(1,magnitude_);
+
+	apply( pose, dir*mag);
+}
+
+void SequenceShiftMover::apply( core::pose::Pose & pose, int shift ) {
+	int dir = (shift>0) ? 1 : -1;
+	int mag = std::abs(shift);
+
 	core::Size nres = hybridization::get_num_residues_nonvirt( pose );
 	while (!pose.residue(nres).is_protein()) nres--;
 
 	if (offsets_.size() != nres) {
 		offsets_.clear();
 		offsets_.resize(nres,0);
+	}
+	if (penalty_res_.size() != nres) {
+		penalty_res_.clear();
+		penalty_res_.resize(nres,false);
 	}
 
 	TR.Debug << "SequenceShiftMover::apply() [" << dir*mag << "]" << std::endl;
@@ -323,6 +335,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 				atm_ids.push_back( id );
 				atm_xyzs.push_back( newX );
 			}
+if (verbose_) { TR << "align " << r_i << "->" << r_j << std::endl; }
 		}
 
 		// final 'mag+1' residues
@@ -333,12 +346,14 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 			int r_j = r_i + dir*mag + offsets_[r_i];
 
 			bool crosses_cut = (ref_pose_.total_residue() == 0);
-			for (int k = 0; k<=i && !crosses_cut; ++k) {
-				Size r_k = (dir==1)? i_end-k : i_start+k;
-				Size r_l = r_k + dir*mag + offsets_[r_k];
-				if (r_l>nres || r_l < 1) continue;
-				crosses_cut |= ref_pose_.fold_tree().is_cutpoint((dir==1)?r_l:r_l+1);
-				//if (crosses_cut) std::cerr << "CROSS CUT: " << i << " " << r_k << " -> " << r_l << std::endl;
+			if (!crosses_cut) {
+				if (r_j>r_i) {
+					for (int k = r_i; k<r_j && !crosses_cut; ++k)
+						crosses_cut |= ref_pose_.fold_tree().is_cutpoint(k);
+				} else {
+					for (int k = r_i; k>r_j && !crosses_cut; --k)
+						crosses_cut |= ref_pose_.fold_tree().is_cutpoint(k-1);
+				}
 			}
 
 			if ( r_j<=nres && r_j >= 1 && !crosses_cut) {
@@ -352,6 +367,8 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 				// get rotation from (i+dir) to i
 				R1 = numeric::alignVectorSets( C1,N1, C2,N2 );
 
+if (verbose_) { TR << "align " << r_i << "->" << r_j << "using template" << std::endl; }
+
 				// apply transformation to every atom in this res
 				for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
 					id::AtomID id( a_i, r_i );
@@ -362,6 +379,7 @@ void SequenceShiftMover::apply( core::pose::Pose & pose ) {
 					atm_xyzs.push_back( newX );
 				}
 			} else {
+if (verbose_) { TR << "align " << r_i << "->" << r_j << "using prev xform" << std::endl; }
 				for ( Size a_i = 1; a_i<=pose.residue(r_i).natoms(); ++a_i ) {
 					id::AtomID id( a_i, r_i );
 					numeric::xyzVector< Real > newX = R * (pose.xyz(id) - CA1) + CA2;
@@ -399,15 +417,29 @@ SequenceShiftMover::score(bool step_fn/*=false*/) {
 
 	// # block shifts
 	if (step_fn) {
-		for (int j=2; j<=(int)offsets_.size(); ++j)
-			if (offsets_working[j] != offsets_working[j-1]) score_aln++;
 		if (offsets_working[1] != 0)  score_aln++;
 		if (offsets_working[offsets_.size()] != 0)  score_aln++;
+		for (int j=2; j<=(int)offsets_.size(); ++j) {
+			if (offsets_working[j] != offsets_working[j-1]) {
+				core::Real sc_scale = 1.0;
+				int newj0 = j+offsets_working[j];
+				int newj1 = j-1+offsets_working[j-1];
+				if (newj0>0 && newj1>0 && newj0<=offsets_.size() && newj1<=offsets_.size() && penalty_res_[newj0] && penalty_res_[newj1]) sc_scale = 100.0;
+				score_aln += sc_scale;
+			}
+		}
 	} else {
-		for (int j=2; j<=(int)offsets_.size(); ++j)
-			score_aln += abs(offsets_working[j] - offsets_working[j-1]);
 		score_aln += abs(offsets_working[1]);
 		score_aln += abs(offsets_working[offsets_.size()]);
+		for (int j=2; j<=(int)offsets_.size(); ++j) {
+			if (offsets_working[j] != offsets_working[j-1]) {
+				core::Real sc_scale = 1.0;
+				int newj0 = j+offsets_working[j];
+				int newj1 = j-1+offsets_working[j-1];
+				if (newj0>0 && newj1>0 && newj0<=offsets_.size() && newj1<=offsets_.size() && penalty_res_[newj0] && penalty_res_[newj1]) sc_scale = 100.0;
+				score_aln += sc_scale * abs(offsets_working[j] - offsets_working[j-1]);
+			}
+		}
 	}
 
 	// penalize unaligned residues
@@ -506,19 +538,42 @@ SequenceShiftMover::get_residues_to_rebuild() {
 		}
 	}
 
-std::cerr << "....|....1....|....2....|....3....|....4....|....5....|....6....|....7....|....8....|....9....|....0" << std::endl;
-for (int i=1; i<=offsets_.size(); ++i) {
-	if (ext_residues_to_rebuild[i]) {
-		if (ref_pose_.fold_tree().is_cutpoint(i)) std::cerr << "C";
-		else std::cerr << "1";
-	} else {
-		if (ref_pose_.fold_tree().is_cutpoint(i)) std::cerr << "c";
-		else std::cerr << "0";
+	std::cerr << "....|....1....|....2....|....3....|....4....|....5....|....6....|....7....|....8....|....9....|....0" << std::endl;
+	for (int i=1; i<=penalty_res_.size(); ++i) {
+		if (penalty_res_[i]) {
+			std::cerr << "1";
+		} else {
+			std::cerr << "0";
+		}
+		if (i%100==0) std::cerr << std::endl;
 	}
+	std::cerr << std::endl;
+	std::cerr << "---" << std::endl;
+	for (int i=1; i<=offsets_.size(); ++i) {
+		if (ext_residues_to_rebuild[i]) {
+			if (ref_pose_.fold_tree().is_cutpoint(i)) std::cerr << "C";
+			else std::cerr << "1";
+		} else {
+			if (ref_pose_.fold_tree().is_cutpoint(i)) std::cerr << "c";
+			else std::cerr << "0";
+		}
 
-	if (i%100==0) std::cerr << std::endl;
-}
-std::cerr << std::endl;
+		if (i%100==0) std::cerr << std::endl;
+	}
+	std::cerr << std::endl;
+	std::cerr << "---" << std::endl;
+	for (int i=1; i<=offsets_.size(); ++i) {
+		int off_mag = std::abs(offsets_[i]);
+		if (off_mag!=offsets_[i]) std::cerr << "\x1b[31m";
+		else std::cerr << "\x1b[32m";
+		if (off_mag <=9)
+			std::cerr << off_mag;
+		else
+			std::cerr << (char)(off_mag-10+'A');
+		if (i%100==0) std::cerr << std::endl;
+	}
+	std::cerr << "\x1b[39m";
+	std::cerr << std::endl;
 
 	for (int i=1; i<=ext_residues_to_rebuild.size(); ++i) {
 		if (!inloop && ext_residues_to_rebuild[i]) {

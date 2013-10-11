@@ -381,7 +381,7 @@ CartesianSampler::apply_frame( core::pose::Pose & pose, core::fragment::Frame &f
 		options_rb.max_iter(20);
 		core::kinematics::MoveMap mm_rb;
 		mm_rb.set_bb ( bbmove_ );
-		mm_rb.set_chi ( false );
+		mm_rb.set_chi ( false );  //?
 		mm_rb.set_jump ( true );
 
 		// scorefunctions
@@ -607,10 +607,10 @@ CartesianSampler::compute_fragment_bias(Pose & pose) {
 		for (int r=1; r<=(int)nres; ++r) {
 			if (per_resCC[r]<0.6)
 				fragmentProbs[r] = 1.0;
-			else if (per_resCC[r]<0.75)
+			else if (per_resCC[r]<0.8)
 				fragmentProbs[r] = 0.25;
 			else
-				fragmentProbs[r] = 0.05;
+				fragmentProbs[r] = 0.01;
 			TR << "residue " << r << ": " << " rscc=" << per_resCC[r] << " weight=" <<fragmentProbs[r] << std::endl;
 		}
 	} else if (fragment_bias_strategy_ == "bfactors") {
@@ -717,7 +717,7 @@ CartesianSampler::apply( Pose & pose ) {
 
 	// autogenerate fragments if they are not loaded yet
 	if (fragments_.size() == 0) {
-		fragments_.push_back( create_fragment_set(pose, 9, 25) );
+		fragments_.push_back( create_fragment_set_no_ssbias(pose, 9, 25) );
 		update_fragment_library_pointers();
 	}
 
@@ -974,7 +974,7 @@ CartesianSampler::parse_my_tag(
 	if( tag->hasOption( "fraglens" ) ) {
 		utility::vector1<std::string> fraglens = utility::string_split( tag->getOption< std::string >( "fraglens" ), ',' );
 		for (core::Size i=1; i<=fraglens.size(); ++i) {
-			fragments_.push_back( create_fragment_set(pose, atoi(fraglens[i].c_str()), nfrags) );
+			fragments_.push_back( create_fragment_set_no_ssbias(pose, atoi(fraglens[i].c_str()), nfrags) );
 		}
 	}
 	update_fragment_library_pointers();

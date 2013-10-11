@@ -225,7 +225,8 @@ public:
 	SequenceShiftMover(RBSegment const & seg, core::Size magnitude=4) :
 		RBSegmentMover(seg),
 		magnitude_(magnitude),
-		last_move_(0)
+		last_move_(0),
+		verbose_(false)
 	{}
 
 	/// @brief constructor
@@ -233,7 +234,8 @@ public:
 		RBSegmentMover(seg),
 		magnitude_(magnitude),
 		last_move_(0),
-		ref_pose_(pose_in)
+		ref_pose_(pose_in),
+		verbose_(false)
 	{
 		core::Size nres = hybridization::get_num_residues_nonvirt( pose_in );
 		offsets_.resize(nres,0);
@@ -243,13 +245,15 @@ public:
 	SequenceShiftMover(RBResidueRange const &rb, core::Size magnitude=4) :
 		RBSegmentMover(RBSegment(rb)),
 		magnitude_(magnitude),
-		last_move_(0)
+		last_move_(0),
+		verbose_(false)
 	{}
 
 	SequenceShiftMover() :
 		RBSegmentMover(),
 		magnitude_(4),
-		last_move_(0)
+		last_move_(0),
+		verbose_(false)
 	{}
 
 	/// @brief clone this object
@@ -264,15 +268,24 @@ public:
 	void
 	apply( core::pose::Pose & pose );
 
+	/// @brief Apply a + or - residue "shift" to this helix
+	void
+	apply( core::pose::Pose & pose, int shift );
+
+	///@brief  Set an extra block-shift penalty at certain residues
+	void
+	set_extra_penalty( utility::vector1< bool > const & penalty_res ) { penalty_res_ = penalty_res; }
+
 	/// @brief Last move accepted; update offsets_
 	void
 	trigger_accept();
-
 
 	/// @brief Return a score: the minimum number of block shifts accumulated
 	int
 	score(bool step_fn=false);
 
+	void
+	set_verbose(bool inval) { verbose_ = inval; }
 
 	/// @brief IF ref_pose is given, get a list of residues to rebuild via fragment insertion
 	loops::LoopsOP
@@ -284,6 +297,9 @@ private:
 
 	core::pose::Pose ref_pose_;
 	utility::vector1< int > offsets_;
+	utility::vector1< bool > penalty_res_;
+
+	bool verbose_;
 
 	virtual std::string get_name() const;
 };

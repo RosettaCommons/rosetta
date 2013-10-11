@@ -122,7 +122,15 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 	protocols::loops::Loops SSEs = protocols::loops::extract_secondary_structure_chunks( pose, "HE", 3, 6, 3, 4);
 	SSEs.sequential_order();
 
-	// split at chainbreaks
+	// penalize insertions/deletions in the middle of SSEs
+	utility::vector1< bool > sse_core(nres,false);
+	for (int j=1; j<=(int)SSEs.num_loop(); ++j) {
+		int jstart=SSEs[j].start(), jstop=SSEs[j].stop();
+		for (int k=jstart+4; k<=jstop-4; ++k) {
+			sse_core[ k ] = true;
+		}
+	}
+
 	utility::vector1< RBResidueRange > segments;
 	core::Size prevcut = 1;
 	for (int j=2; j<=(int)SSEs.num_loop(); ++j) {
@@ -134,21 +142,21 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 		for (int k=(int)j0stop; k<(int)j1start; ++k) {
 			if (pose.fold_tree().is_cutpoint( k )) {
 				segments.push_back( RBResidueRange( prevcut, k ) );
-				//TR.Debug << "FC! Add segment: " << prevcut << " , " << k << std::endl;
+				TR << "Add segment: " << prevcut << " , " << k << std::endl;
 				prevcut = k+1;
 				found_cuts=true;
 			}
 		}
 
 		if (!found_cuts) {
-			core::Size cutpoint = (j0stop+j1start)/2;  // randomize?
+			core::Size cutpoint = numeric::random::random_range(j0stop,j1start-1);
 			segments.push_back( RBResidueRange( prevcut, cutpoint-1 ) );
-			//TR.Debug << "Add segment: " << prevcut << " , " << cutpoint-1 << std::endl;
+			TR << "Add segment: " << prevcut << " , " << cutpoint-1 << std::endl;
 			prevcut = cutpoint;
 		}
 	}
 	segments.push_back( RBResidueRange( prevcut, nres ) );
-	//TR.Debug << "F: Add segment: " << prevcut << " , " << nres << std::endl;
+	TR << "Add segment: " << prevcut << " , " << nres << std::endl;
 
 	// combine segments
 	core::Size nsegments=segments.size();
@@ -159,92 +167,178 @@ void OptimizeThreadingMover::apply( core::pose::Pose & pose ) {
 			for (int k=i; k<j && !crosses_cut; ++k)
 				crosses_cut = pose.fold_tree().is_cutpoint( segments[k].end() );
 
-			if (!crosses_cut)
+			if (!crosses_cut) {
 				segments.push_back( RBResidueRange( segments[i].start(), segments[j].end() ) );
+				TR << "Add segment: " << segments[i].start() << " , " << segments[j].end() << std::endl;
+			}
 		}
 	}
 
 	// mc loop
 	SequenceShiftMover sshift( pose, RBSegment(), max_shift_ );
+	sshift.set_extra_penalty( sse_core );
 
 	core::Real best_score=1e30, acc_score=1e30;
 	loops::LoopsOP best_loops = new loops::Loops();
 	core::pose::Pose best_pose=pose, acc_pose;
 	utility::vector1< int > offsets( nres, 0 );
-	for (int i=1; i<=(int)nsteps_; ++i) {
-		// random segment
-		core::Size seg_i = numeric::random::random_range(1, segments.size() );
 
-		if (i>1) {
-			// apply movement & score pose
-			utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[seg_i] );
-			if (ncs) {
-				for (int j=1; j<=ncs->ngroups(); ++j ) {
-					core::Size remap_start = ncs->get_equiv( j, segments[seg_i].start() );
-					core::Size remap_stop = ncs->get_equiv( j, segments[seg_i].end() );
-					for (int k=segments[seg_i].start(); k<=segments[seg_i].end() && remap_start==0; ++k)
-						remap_start = ncs->get_equiv( j,k );
-					if (remap_start==0) continue;  // undefined
-					for (int k=segments[seg_i].end(); k>=segments[seg_i].start() && remap_stop==0; --k)
-						remap_stop = ncs->get_equiv( j,k );
-					//TR.Debug << "NCS: Add segment: " << remap_start << " , " << remap_stop << std::endl;
-					ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
+	if (greedy_) {
+		///
+		/// greedy
+		///
+		Size steps_eff = nsteps_; //std::ceil( nsteps_ / (2.0*max_shift_*segments.size()));
+		TR << "Greedy search for " << steps_eff << " steps" << std::endl;
+		for (int i=1; i<=(int)steps_eff; ++i) {
+			acc_pose = pose;
+			core::Real score_cst = (*scorefxn_)(pose);
+			core::Real score_aln = sshift.score();
+			best_score = score_cst + weight_*score_aln;
+
+			int bestSeg=1, bestK=0;
+			for (core::Size seg_i = 1; seg_i<=segments.size(); ++seg_i ) {
+				utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[seg_i] );
+				if (ncs) {
+					for (int j=1; j<=ncs->ngroups(); ++j ) {
+						core::Size remap_start = ncs->get_equiv( j, segments[seg_i].start() );
+						core::Size remap_stop = ncs->get_equiv( j, segments[seg_i].end() );
+						for (int k=segments[seg_i].start(); k<=segments[seg_i].end() && remap_start==0; ++k)
+							remap_start = ncs->get_equiv( j,k );
+						if (remap_start==0) continue;  // undefined
+						for (int k=segments[seg_i].end(); k>=segments[seg_i].start() && remap_stop==0; --k)
+							remap_stop = ncs->get_equiv( j,k );
+						//TR.Debug << "NCS: Add segment: " << remap_start << " , " << remap_stop << std::endl;
+						ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
+					}
+				}
+				sshift.set_segment( RBSegment(ncs_segments) );
+
+				int k_start = -1*(int)max_shift_;
+				for (int k=k_start; k<=(int)max_shift_; ++k) {
+					pose = acc_pose;
+					if (k!=0) {
+						sshift.apply( pose, k );
+						score_cst = (*scorefxn_)(pose);
+						score_aln = sshift.score();
+
+						// boltzmann
+						core::Real score = score_cst + weight_*score_aln;
+						if (score < best_score) {
+							TR << "New best!  Step " << i << "." << seg_i << "[" << segments[seg_i].start() << "-" << segments[seg_i].end()
+							   << "]." << k << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
+							best_score = score;
+							bestK=k;
+							bestSeg=seg_i;
+						}
+					}
 				}
 			}
-			sshift.set_segment( RBSegment(ncs_segments) );
-			sshift.apply( pose );
-		}
 
-		core::Real score_cst = (*scorefxn_)(pose);
-		core::Real score_aln = sshift.score();
+			// apply best shift we found
+			{
+				utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[bestSeg] );
+				if (ncs) {
+					for (int j=1; j<=ncs->ngroups(); ++j ) {
+						core::Size remap_start = ncs->get_equiv( j, segments[bestSeg].start() ), remap_stop = ncs->get_equiv( j, segments[bestSeg].end() );
+						for (int k=segments[bestSeg].start(); k<=segments[bestSeg].end() && remap_start==0; ++k) remap_start = ncs->get_equiv( j,k );
+						if (remap_start==0) continue;
+						for (int k=segments[bestSeg].end(); k>=segments[bestSeg].start() && remap_stop==0; --k) remap_stop = ncs->get_equiv( j,k );
+						ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
+					}
+				}
+				if (bestK==0) break;  // no move accepted last cycle
 
-		if (native_) {
-			score_cst = core::scoring::CA_rmsd( pose, *native_ );
-		}
 
-		// boltzmann
-		core::Real score = score_cst + weight_*score_aln;
-		core::Real boltz_factor = ( acc_score - score ) / temperature_;
-		core::Real probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
-		if ( probability < 1 ) {
-			if ( numeric::random::uniform() >= probability ) {
-				// reject
 				pose = acc_pose;
+				sshift.set_segment( RBSegment(ncs_segments) );
+				sshift.apply( pose, bestK );
+				sshift.trigger_accept();
+			}
+		}
+		best_loops = sshift.get_residues_to_rebuild();
+		*loops_ = *best_loops;
+	} else {
+		///
+		/// non-greedy
+		///
+		for (int i=1; i<=(int)nsteps_; ++i) {
+			// random segment
+			core::Size seg_i = numeric::random::random_range(1, segments.size() );
+
+			if (i>1) {
+				// apply movement & score pose
+				utility::vector1 < RBResidueRange > ncs_segments ( 1, segments[seg_i] );
+				if (ncs) {
+					for (int j=1; j<=ncs->ngroups(); ++j ) {
+						core::Size remap_start = ncs->get_equiv( j, segments[seg_i].start() );
+						core::Size remap_stop = ncs->get_equiv( j, segments[seg_i].end() );
+						for (int k=segments[seg_i].start(); k<=segments[seg_i].end() && remap_start==0; ++k)
+							remap_start = ncs->get_equiv( j,k );
+						if (remap_start==0) continue;  // undefined
+						for (int k=segments[seg_i].end(); k>=segments[seg_i].start() && remap_stop==0; --k)
+							remap_stop = ncs->get_equiv( j,k );
+						//TR.Debug << "NCS: Add segment: " << remap_start << " , " << remap_stop << std::endl;
+						ncs_segments.push_back( RBResidueRange(remap_start,remap_stop) );
+					}
+				}
+				sshift.set_segment( RBSegment(ncs_segments) );
+				sshift.apply( pose );
+			}
+
+			core::Real score_cst = (*scorefxn_)(pose);
+			core::Real score_aln = sshift.score();
+
+			if (native_) {
+				score_cst = core::scoring::CA_rmsd( pose, *native_ );
+			}
+
+			// boltzmann
+			core::Real score = score_cst + weight_*score_aln;
+			core::Real boltz_factor = ( acc_score - score ) / temperature_;
+			core::Real probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) );
+			if ( probability < 1 ) {
+				if ( numeric::random::uniform() >= probability ) {
+					// reject
+					pose = acc_pose;
+				} else {
+					// accept, not new best
+					acc_pose = pose;
+					acc_score = score;
+					sshift.trigger_accept();
+					if (!recover_low_) best_loops = sshift.get_residues_to_rebuild();
+					TR << "Accept!    Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
+				}
 			} else {
-				// accept, not new best
+				// new best
 				acc_pose = pose;
 				acc_score = score;
 				sshift.trigger_accept();
-				TR << "Accept!    Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
+				if (score < best_score) {
+					TR << "New best!  Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
+					best_pose = pose;
+					best_loops = sshift.get_residues_to_rebuild();
+					best_score = score;
+				} else {
+					TR << "Accept!    Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
+					if (!recover_low_) best_loops = sshift.get_residues_to_rebuild();
+				}
 			}
-		} else {
-			// new best
-			acc_pose = pose;
-			acc_score = score;
-			sshift.trigger_accept();
-			if (score < best_score) {
-				TR << "New best!  Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
-				best_pose = pose;
-				best_loops = sshift.get_residues_to_rebuild();
-				best_score = score;
-			} else {
-				TR << "Accept!    Step " << i << " score = " << score_cst << " + " << weight_ << " * " << score_aln << " = " << score << std::endl;
+			*loops_ = *best_loops;
+			if (recover_low_) {
+				pose = best_pose;
 			}
 		}
 	}
 
-	*loops_ = *best_loops;
 	TR << "Building:" << std::endl;
 	TR << *loops_ << std::endl;
 
-	pose = best_pose;
-	if (rebuild_cycles_>0)
-		rebuild_unaligned( pose );
+	rebuild_unaligned( pose );
 }
 
 void
 OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
-	if (loops_->size() != 0) {
+	if (loops_->size() != 0 && rebuild_cycles_!=0) {
 		// see if the pose has NCS
 		simple_moves::symmetry::NCSResMappingOP ncs;
 		if ( pose.data().has( core::pose::datacache::CacheableDataType::NCS_RESIDUE_MAPPING ) ) {
@@ -284,6 +378,9 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 			}
 		}
 
+		// extend + idealize loops
+		protocols::loops::set_extended_torsions_and_idealize_loops( pose, *loops_ );
+
 		// pick 3mers only in unaligned regions
 		std::string tgt_seq = pose.sequence();
 		core::fragment::FragSetOP frags3 = new core::fragment::ConstantLengthFragSet( 3 );
@@ -303,9 +400,6 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 		utility::vector1< core::fragment::FrameOP > frames1, frames3;
 		for (core::fragment::FrameIterator it = frags1->nonconst_begin(); it != frags1->nonconst_end(); ++it) frames1.push_back( *it );
 		for (core::fragment::FrameIterator it = frags3->nonconst_begin(); it != frags3->nonconst_end(); ++it) frames3.push_back( *it );
-
-		// extend + idealize loops
-		protocols::loops::set_extended_torsions_and_idealize_loops( pose, *loops_ );
 
 		// setup MC
 		core::Size nouterCyc=4, ninnerCyc=rebuild_cycles_;
@@ -395,10 +489,14 @@ void OptimizeThreadingMover::parse_my_tag(
 	nsteps_ = tag->getOption<core::Size>( "nsteps", 5000 );
 	step_penalty_ = tag->getOption<bool>( "step_penalty", false );
 	recover_low_ = tag->getOption<bool>( "recover_low", true );
+	greedy_ = tag->getOption<bool>( "greedy", false );
 	rebuild_cycles_ = tag->getOption<core::Size>( "rebuild_cycles", 200 );
 	weight_ = tag->getOption<core::Real>( "weight", 0.1 );
 	temperature_ = tag->getOption<core::Real>( "temperature", 2.0 );
 	max_shift_ = tag->getOption<core::Size>( "max_shift", 4 );
+
+	// different nstep default for greedy
+	if (greedy_ && !tag->hasOption("nsteps") ) nsteps_=2;
 
 	// add loopsOP to the DataMap
 	if (tag->hasOption( "loops_out" )) {
