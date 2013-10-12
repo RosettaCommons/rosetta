@@ -8,13 +8,13 @@ ATOM  N   Nbb  NH1  -0.47  -0.350
 ATOM  CA  CAbb CT1   0.07   0.100
 ATOM  C   CObb C     0.51   0.550
 ATOM  O   OCbb O    -0.51  -0.550
-ATOM  CB  CH2  CT2  -0.14   0.000
+ATOM  CB  CH2  CT2  -0.18   0.000
 ATOM  CG  CNH2 CC    0.55   0.550
 ATOM  OD1 ONH2 O    -0.55  -0.550
-ATOM  ND2 NH2O NH2  -0.76  -0.780
+ATOM  ND2 NH2O NH2  -0.62  -0.780
 ATOM  H   HNbb H     0.31   0.250
-ATOM 1HD2 Hpol H     0.38   0.390
-ATOM 2HD2 Hpol H     0.38   0.390
+ATOM 1HD2 Hpol H     0.32   0.390
+ATOM 2HD2 Hpol H     0.3    0.390
 ATOM  HA  Hapo HB    0.09   0.000
 ATOM 1HB  Hapo HA    0.09   0.000
 ATOM 2HB  Hapo HA    0.09   0.000

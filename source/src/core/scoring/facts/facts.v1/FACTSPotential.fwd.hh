@@ -7,25 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-// @file:   core/scoring/facts/FACTSPotential.fwd.hh
+// @file:   apps/pilot/khorvash/FACTSPotential.fwd.h
 // @brief:  This file only creats some easy to use aliases
-// @author: Hahnbeom Park
+// @author: Massih Khorvash (massih.khorvash@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_facts_FACTSPotential_FWD_HH
-#define INCLUDED_core_scoring_facts_FACTSPotential_FWD_HH
+//#ifndef INCLUDED_apps_pilot_khorvash_FACTSPotential_FWD_HH
+//#define INCLUDED_apps_pilot_khorvash_FACTSPotential_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
-#include <core/chemical/ResidueType.hh>
 
 namespace core {
 namespace scoring {
-
-  //Declaring a class of type FACTSResidueInfo
-  class FACTSRsdTypeInfo;
-	//Creating an alias for a pointer of type FACTSResidueInfo
-  typedef utility::pointer::owning_ptr< FACTSRsdTypeInfo > FACTSRsdTypeInfoOP;
-  typedef utility::pointer::owning_ptr< FACTSRsdTypeInfo const > FACTSRsdTypeInfoCOP;
 
   //Declaring a class of type FACTSResidueInfo
   class FACTSResidueInfo;
@@ -45,9 +38,8 @@ namespace scoring {
 	//Creating an alias for a pointer of type FACTSResidueInfo
   typedef utility::pointer::owning_ptr< FACTSPotential > FACTSPotentialOP;
 
-	typedef std::map< chemical::ResidueType const *, FACTSRsdTypeInfoCOP > FACTSRsdTypeMap;
-
+	//struct xyz_coordinates;
 } // scoring
 } // core
 
-#endif
+//#endif

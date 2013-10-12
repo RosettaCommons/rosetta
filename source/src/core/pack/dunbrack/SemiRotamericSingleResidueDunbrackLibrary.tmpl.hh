@@ -497,9 +497,15 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbdep(
 		std::cerr << "NaN in SemiRot: " << rsd.seqpos() << " " << rsd.name() << std::endl;
 	}
 
+	// Corrections for Shanon Entropy
+	if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ){
+		nrchi_score  += scratch.entropy();
+	}
+
 	scratch.fa_dun_tot() = chidevpen_score + nrchi_score;
 	scratch.fa_dun_rot() = 0;
 	scratch.fa_dun_semi() = nrchi_score;
+
 	//scratch.fa_dun_dev() = chidevpensum; // keep original chidev score...
 
 	//std::cout << "SRSRDL bbdep score: " << rsd.name() << " " <<
@@ -529,12 +535,17 @@ SemiRotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv_bbdep(
 		dE_dbb[ i ] = d_multiplier*scratch.dchidevpen_dbb()[ i ];
 		dE_dbb_dev[ i ] = d_multiplier*scratch.dchidevpen_dbb()[ i ];
 		//dE_dbb_rot[ i ] = scratch.dneglnrotprob_dbb()[ i ];
+
+		// Correction for entropy
+		if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ){
+			dE_dbb[ i ]      += d_multiplier * scratch.dentropy_dbb()[ i ];
+			dE_dbb_semi[ i ] += d_multiplier * scratch.dentropy_dbb()[ i ];
+		}
 	}
 	dE_dbb[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] += d_multiplier*dnrchiscore_dphi;
 	dE_dbb[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] += d_multiplier*dnrchiscore_dpsi;
 	dE_dbb_semi[ RotamerLibraryScratchSpace::AA_PHI_INDEX ] = d_multiplier*dnrchiscore_dphi;
 	dE_dbb_semi[ RotamerLibraryScratchSpace::AA_PSI_INDEX ] = d_multiplier*dnrchiscore_dpsi;
-
 
 	for ( Size i=1; i <= T; ++i ) {
 		dE_dchi[ i ] = d_multiplier*scratch.dchidevpen_dchi()[ i ];

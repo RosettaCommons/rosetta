@@ -40,6 +40,9 @@ class NormalModeMultifunc : public Multifunc
 {
 public: // Creation
 
+	/// @brief Destructor
+	virtual ~NormalModeMultifunc();
+
 	// c-tor
 	NormalModeMultifunc(
 		pose::Pose & pose_in,
@@ -50,9 +53,6 @@ public: // Creation
 		bool const deriv_check_in = false,
 		bool const deriv_check_verbose_in = false
 	);
-
-	/// @brief Destructor
-	virtual ~NormalModeMultifunc();
 
 public: // Methods
 

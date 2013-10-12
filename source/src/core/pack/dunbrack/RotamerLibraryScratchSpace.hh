@@ -113,6 +113,11 @@ public:
 	Real & fa_dun_semi() { return fa_dun_semi_; }
 	Real & fa_dun_dev() { return fa_dun_dev_; }
 
+	// Entropy correction
+	Real    entropy() const { return entropy_; }
+	Real3   dentropy_dbb() const { return dentropy_dbb_; }
+	Real  & entropy() { return entropy_; }
+	Real3 & dentropy_dbb() { return dentropy_dbb_; }
 
 private:
 
@@ -144,12 +149,15 @@ private:
 	//Real4 dE_dphi_rot_;
 	Real4 dE_dpsi_dev_;
 	//Real4 dE_dpsi_rot_;
-	
 
 	Real fa_dun_tot_;
 	Real fa_dun_rot_;
 	Real fa_dun_semi_;
 	Real fa_dun_dev_;
+
+	// Entropic correction
+	Real entropy_;
+	Real3 dentropy_dbb_;
 
 };
 

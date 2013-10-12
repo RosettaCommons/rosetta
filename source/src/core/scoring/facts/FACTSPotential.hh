@@ -164,6 +164,7 @@ private:
 											 ) const;
 
 	void atompair_scale( FACTSRsdTypeInfoCOP factstype1, 
+											 FACTSRsdTypeInfoCOP , //factstype2,
 											 scoring::etable::count_pair::CountPairFunctionCOP cpfxn14,
 											 conformation::Residue const &rsd1,
 											 conformation::Residue const &rsd2,
@@ -189,6 +190,12 @@ private:
 													FACTSResidueInfo & facts2
 													) const;
 
+	void calculate_GBpair_v1trunk(
+													Residue const & rsd1,
+													Residue const & rsd2,
+													FACTSResidueInfo & facts1,
+													FACTSResidueInfo & facts2
+													) const;
 
 	void atom_atom_context_derivative( FACTSResidueInfo & facts1,
 																		 FACTSResidueInfo & facts2,
@@ -227,6 +234,8 @@ private: //list of private variables and parameters for the FACTS method common 
 	Real Kappa_;
 	Real GBpair_cut_;
 	bool do_apprx_;
+	std::string eq_type_;
+	bool intrascale_by_level_;
 
 	utility::vector1< Real > adjbb_elec_scale_;
 	utility::vector1< Real > adjbb_solv_scale_;
@@ -234,7 +243,9 @@ private: //list of private variables and parameters for the FACTS method common 
 	utility::vector1< Real > adjbs_solv_scale_;
 
 	Real saltbridge_correction_;
-	Real dshift2_;
+	Real dshift2_bb_;
+	Real dshift2_bs_;
+	Real dshift2_sc_;
 	Real dshift2_saltbridge_;
 
 	// Deprecated

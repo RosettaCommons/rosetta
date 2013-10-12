@@ -153,6 +153,9 @@ CartesianMD::init()
 	report_scorecomp_ = false;
 	native_given_ = false;
 	constrained_ = false;
+
+	// Trajectory
+	trj_.resize( 0 );
 }
 
 CartesianMD::~CartesianMD(){}
@@ -163,7 +166,7 @@ CartesianMD::clone() const {
 }
 
 void CartesianMD::set_movemap(
-								 core::pose::Pose const & pose,
+								 core::pose::Pose const &,
 								 core::kinematics::MoveMapCOP movemap )
 {
 	movemap_ = movemap->clone();
@@ -229,7 +232,7 @@ void CartesianMD::do_initialize( core::pose::Pose &pose,
 	core::chemical::ResidueTypeSetCAP rsdtype_set
 		( core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
-	for( Size iatm = 1; iatm <= min_map.natoms(); ++iatm ){
+	for( Size iatm = 1; iatm <= (Size)(min_map.natoms()); ++iatm ){
 		id::AtomID AtomID = min_map.get_atom( iatm );
 		Size resno = AtomID.rsd();
 		Size atmno = AtomID.atomno();
@@ -318,17 +321,17 @@ void CartesianMD::do_minimize( core::pose::Pose &pose,
 															 bool const &show_energy )
 {
 	CartesianMinimizer minimizer;
-	Real score_before, score_after;
 
 	if( show_energy ){ 
-		score_before = scorefxn_->score( pose ); 
-	}
+		Real score_before = scorefxn_->score( pose ); 
 
-	minimizer.run( pose, *movemap(), *scorefxn_, options );
+		minimizer.run( pose, *movemap(), *scorefxn_, options );
 
-	if( show_energy ){ 
-		score_after = scorefxn_->score( pose ); 
+		Real score_after = scorefxn_->score( pose ); 
 		TR << "Energy before/after Min: " << score_before << " " << score_after << std::endl;
+
+	} else {
+		minimizer.run( pose, *movemap(), *scorefxn_, options );
 	}
 }
 
@@ -453,11 +456,9 @@ void CartesianMD::report_MD( core::pose::Pose &pose )
 {
 	core::Real const rmsd( core::scoring::CA_rmsd( pose0_, pose ));
 
-	/*
 	core::scoring::constraints::ConstraintSetCOP cstset( pose.constraint_set() );
-	TR << "Is there CST? " << std::endl;
-	cstset->show_numbers( TR );
-	*/
+	//TR << "Is there CST? " << std::endl;
+	//cstset->show_numbers( TR );
 
 	timeval currtime;
 #ifndef WIN32
@@ -496,6 +497,17 @@ void CartesianMD::report_MD( core::pose::Pose &pose )
 		TR << "Updating minimum objective score value / pose at time " << cummulative_time() << std::endl;
 	}
 
+	// Store trj
+	// Can't we just make min_map as local variable?
+	if( store_trj() ){
+		CartesianMinimizerMap min_map;
+		Multivec xyz;
+
+		min_map.setup( pose, *movemap() );
+		min_map.copy_dofs_from_pose( pose, xyz );
+		trj_.push_back( xyz );
+	}
+
 	/*
 	std::stringstream ss;
 	Size timesize( (int)(cummulative_time()*1000.0) );
@@ -523,6 +535,29 @@ void CartesianMD::report_MD( core::pose::Pose &pose )
 		std::cout << std::endl;
 	}
 	*/
+}
+
+// pose_ref should have exactly same molecule as stored in trj
+utility::vector1< pose::Pose > 
+CartesianMD::dump_poses( pose::Pose const &pose_ref ) const {
+
+	utility::vector1< pose::Pose > poses;
+
+	// Don't know why min_map doesn't support const pose,
+	// so let's just copy for now
+	pose::Pose pose_tmp( pose_ref );
+
+	// note that min_map is not const function
+	CartesianMinimizerMap min_map;
+	min_map.setup( pose_tmp, *movemap() );
+
+	pose::Pose pose;
+	for( Size i_trj = 1; i_trj <= trj_.size(); ++i_trj ){
+		min_map.copy_dofs_to_pose( pose, trj_[i_trj] );
+		poses.push_back( pose );
+	}
+
+	return poses;
 }
 
 void  CartesianMD::parse_my_tag(

@@ -55,7 +55,7 @@ rescale( Multivec &vel, Real const& dt, Multivec const &mass ){
   Real delta  = (temp0_/Boltzmann)/curr_temperature;
   Real lambda = std::sqrt(1.0 + dt/tau_*(delta-1.0));
   
-  for( int i_dof = 1; i_dof <= vel.size(); ++i_dof ){
+  for( Size i_dof = 1; i_dof <= vel.size(); ++i_dof ){
     vel[i_dof] *= lambda;
   }
 }
@@ -65,7 +65,7 @@ get_temperature( Multivec const &vel, Multivec const &mass)
 {
   Real temperature = 0.0;
 
-  for(int i_dof = 1; i_dof<=vel.size(); ++i_dof){
+  for(Size i_dof = 1; i_dof<=vel.size(); ++i_dof){
     int i_atm = (i_dof+2)/3;
     // pass Virtual atoms
     if ( mass[i_atm] < 1e-3 ) continue;

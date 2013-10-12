@@ -69,6 +69,7 @@ public:
   
   //inline bool selfpair( Size const atm1, Size atm2 ) const { return selfpair_[atm1][atm2]; }
   inline bool is_chargedH( Size const atm1 ) const { return is_chargedH_[atm1]; }
+  inline bool is_freedof( Size const atm1 ) const { return is_freedof_[atm1]; }
   
   inline Real intra_solv_scale( Size const atm1, Size const atm2 ) const { return intra_solv_scale_[atm1][atm2]; }
   inline Real intra_elec_scale( Size const atm1, Size const atm2 ) const { return intra_elec_scale_[atm1][atm2]; }
@@ -76,8 +77,7 @@ public:
 private:
   //This function initializes the vector q to charges of each atom
   void initialize_parameters( chemical::ResidueType const & rsd );
-  void initialize_intrasolv( chemical::ResidueType const & rsd );
-  void initialize_intraelec( chemical::ResidueType const & rsd );
+  void initialize_intrascale( chemical::ResidueType const & rsd );
   
 private:
   Size natoms_;
@@ -110,6 +110,9 @@ private:
   utility::vector1< utility::vector1<Real> > intra_elec_scale_;
   utility::vector1< bool > is_chargedH_;
   utility::vector1< bool > charged_;
+
+	// Free dof atoms
+	utility::vector1< bool > is_freedof_;
 
 };
 

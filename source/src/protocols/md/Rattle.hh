@@ -48,10 +48,11 @@ Rattle(){}
 
 Rattle( pose::Pose const &pose,
 	CartesianMinimizerMap const & min_map )
-  : sor_( 1.25 ),  maxiter_( 100 )
 {
   Size const &natm( min_map.natoms() );
 
+	sor_ = 1.25;
+	maxiter_ = 100;
   moved_ = utility::vector1< bool >( natm, false );
   update_ = utility::vector1< bool >( natm, false );
   use_ = utility::vector1< bool >( natm, false );
@@ -335,7 +336,7 @@ setup_constraint( pose::Pose const & pose,
 
   cst_.resize( 0 );
 
-  for( Size iatm = 1; iatm <= min_map.natoms(); ++iatm ){
+  for( Size iatm = 1; iatm <= (Size)(min_map.natoms()); ++iatm ){
     use_[iatm] = true;
 
     id::AtomID AtomID = min_map.get_atom( iatm );

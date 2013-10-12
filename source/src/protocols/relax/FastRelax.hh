@@ -157,6 +157,14 @@ protected:
 	set_constraint_weight( core::scoring::ScoreFunctionOP local_scorefxn,
 												 core::scoring::EnergyMap const & full_weights,
 												 core::Real const weight ) const;
+  void do_md(
+    core::pose::Pose &pose,
+		core::Real nstep,
+		core::Real temp0,
+		core::kinematics::MoveMapOP local_movemap,
+		core::scoring::ScoreFunctionOP local_scorefxn
+  );
+
 private:
 
 	void read_script_file( const std::string &script_file, core::Size standard_repeats = 5  );

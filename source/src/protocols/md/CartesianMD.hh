@@ -58,10 +58,10 @@ public:
 
 	// From MDbase
 	virtual void set_movemap(
-		core::pose::Pose const & pose,
+		core::pose::Pose const &,
 		core::kinematics::MoveMapCOP movemap);
 
-	virtual core::kinematics::MoveMapOP movemap() { return movemap_; }
+	virtual core::kinematics::MoveMapOP movemap() const { return movemap_; }
 
 	void use_rattle( bool const value ){
 		use_rattle_ = value;
@@ -95,6 +95,9 @@ public:
   	//Filters_map const &,
   	//protocols::moves::Movers_map const &,
   	Pose const & pose );
+
+	utility::vector1< pose::Pose > 
+	dump_poses( pose::Pose const &pose_ref ) const;
 
 private:
 	void get_native_info( pose::Pose const &pose );

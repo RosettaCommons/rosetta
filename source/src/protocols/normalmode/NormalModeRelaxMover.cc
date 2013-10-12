@@ -55,10 +55,11 @@
 //#include <sys/time.h>
 
 static basic::Tracer TR("protocols.normalmode.NormalModeRelaxMover");
-static numeric::random::RandomGenerator RG( 151234 ); //Magic number??
 
 namespace protocols{
 namespace normalmode{
+
+static numeric::random::RandomGenerator RG( 151234 ); //Magic number??
 
 void 
 NormalModeRelaxMover::set_harmonic_constants( Real const k_uniform )
@@ -152,6 +153,37 @@ NormalModeRelaxMover::set_harmonic_constants( Real const k_connected,
 ///////////
 //Cartesian
 ///////////
+// Simple constructor
+CartesianNormalModeMover::CartesianNormalModeMover( 
+		 core::pose::Pose const &, //pose
+		 core::scoring::ScoreFunctionCOP sfxn, 
+		 std::string const relaxmode )
+{
+  NM_ = NormalMode( "CA", 10.0 );
+  moving_distance_ = 1.0; // Move by 1.0 Angstrom
+  refresh_normalmode_ = true;
+	direction_ = 1.0;
+	cst_sdev_= 1.0;
+	relaxmode_ = relaxmode;
+	cartesian_minimize_ = true;
+
+	//set_movemap( pose, mm );
+	set_default_minoption( );
+
+	// Scorefunction
+  sfxn_ = sfxn->clone();
+	sfxn_cen_ = scoring::ScoreFunctionFactory::create_score_function( "score4_smooth_cart" );
+
+	sfxn_->set_weight( core::scoring::coordinate_constraint, 1.0 );
+	sfxn_cen_->set_weight( core::scoring::coordinate_constraint, 1.0 );
+
+  // Default: Use mode 1 with 100% contribution
+  utility::vector1< Size > mode1( 1, 1 );
+  utility::vector1< Real > scale1( 1, 1.0 );
+  set_mode( mode1, scale1 );
+}
+
+// Advanced constructor
 CartesianNormalModeMover::CartesianNormalModeMover( 
      core::pose::Pose const & pose,
 		 core::scoring::ScoreFunctionCOP sfxn, 
@@ -207,7 +239,7 @@ CartesianNormalModeMover::apply( pose::Pose &pose )
 
 	// Set extrapolation coordinate/ Coordinate constraint
 	utility::vector1< Vector > excrd = extrapolate_mode( pose );
-	gen_coord_constraint( pose, pose, excrd );
+	gen_coord_constraint( pose, excrd );
 
 	// Relax setup
 	if( relaxmode_.compare("relax") == 0 ){
@@ -303,7 +335,6 @@ CartesianNormalModeMover::extrapolate_mode( pose::Pose const &pose )
 // Gen Coordinate Constraint
 void
 CartesianNormalModeMover::gen_coord_constraint( pose::Pose &pose,
- 						  pose::Pose const &,
 				      utility::vector1< Vector > const &excrd )
 {
 	// make sure there is no other constraint
@@ -335,6 +366,40 @@ CartesianNormalModeMover::get_RMSD( utility::vector1< Vector > const excrd,
 ///////////
 //Torsion
 ///////////
+// Simple constructor
+TorsionNormalModeMover::TorsionNormalModeMover( 
+		 core::pose::Pose const &, //pose
+		 core::scoring::ScoreFunctionCOP sfxn, 
+		 std::string const relaxmode )
+
+{
+  NM_ = NormalMode( "CA", 10.0 );
+	NM_.torsion( true );
+
+  moving_distance_ = 1.0; // Move by 1.0 Angstrom
+  refresh_normalmode_ = true;
+	direction_ = 1.0;
+	cst_sdev_ = 1.0; // in Angstrom
+	relaxmode_ = relaxmode;
+	cartesian_minimize_ = false;
+
+	//set_movemap( pose, mm );
+	set_default_minoption( );
+
+	// Scorefunction
+  sfxn_ = sfxn->clone();
+	sfxn_cen_ = scoring::ScoreFunctionFactory::create_score_function( "score4_smooth" );
+
+	sfxn_->set_weight( core::scoring::coordinate_constraint, 1.0 );
+	sfxn_cen_->set_weight( core::scoring::coordinate_constraint, 1.0 );
+
+  // Default: Use mode 1 with 100% contribution
+  utility::vector1< Size > mode1( 1, 1 );
+  utility::vector1< Real > scale1( 1, 1.0 );
+  set_mode( mode1, scale1 ); 
+}
+
+// Advanced constructor
 TorsionNormalModeMover::TorsionNormalModeMover( 
      core::pose::Pose const & pose,
 		 core::scoring::ScoreFunctionCOP sfxn, 
@@ -413,13 +478,13 @@ TorsionNormalModeMover::apply( pose::Pose &pose )
 		relax_prot.set_movemap( mm_ );
 		relax_prot.min_type("lbfgs_armijo_nonmonotone");
 
-		gen_coord_constraint( pose, expose, dummy );
+		gen_coord_constraint( pose, dummy );
 
 		relax_prot.apply( pose );
 
 	} else if ( relaxmode_.compare("min") == 0 ){
 		pose = expose; // Start from perturbed
-		gen_coord_constraint( pose, expose, dummy );
+		gen_coord_constraint( pose, dummy );
 
 		core::scoring::ScoreFunction sfxn_loc;
 		// Pick proper scorefunction
@@ -458,7 +523,6 @@ TorsionNormalModeMover::apply( pose::Pose &pose )
 // Gen Coordinate Constraint 
 void
 TorsionNormalModeMover::gen_coord_constraint( pose::Pose &pose,
-					pose::Pose const &expose,
 					utility::vector1< Vector > const & )
 {
 	// make sure there is no other constraint

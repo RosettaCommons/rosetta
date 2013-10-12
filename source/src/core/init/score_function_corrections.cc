@@ -279,11 +279,14 @@ init_facts_correction() {
  		if ( ! option[score::facts_GBpair_cut].user() )
 			option[score::facts_GBpair_cut].value(10.0);
 
- 		if ( ! option[score::facts_dshift].user() )
-			option[score::facts_dshift].value(1.5);
-
- 		if ( ! option[score::facts_dshift_sb].user() )
- 		option[score::facts_dshift_sb].value(2.0);
+ 		if ( ! option[score::facts_dshift].user() ){
+			utility::vector1< Real > params;
+			params.push_back( 0.0 );
+			params.push_back( 1.5 );
+			params.push_back( 1.5 );
+			params.push_back( 1.5 );
+			option[score::facts_dshift].value( params );
+		}
 
  		if ( ! option[score::facts_die].user() )
 			option[score::facts_die].value(1.0);

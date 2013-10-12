@@ -4236,11 +4236,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 12.0</dd><br>
 </dl>
 <dl>
-<dt><b>-facts_apprx</b> \<Boolean\><dt>
-<dd>Use approximated function form for GBpair calculation in FACTS</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
 <dt><b>-facts_asp_patch</b> \<Integer\><dt>
 <dd>AtomicSolvationParameter set for nonpolar interaction in FACTS</dd><br>
 <dd>Default: 3</dd><br>
@@ -4256,14 +4251,9 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1.0</dd><br>
 </dl>
 <dl>
-<dt><b>-facts_dshift</b> \<Real\><dt>
-<dd>FACTS pair term denominator distance shift</dd><br>
-<dd>Default: 1.5</dd><br>
-</dl>
-<dl>
-<dt><b>-facts_dshift_sb</b> \<Real\><dt>
-<dd>FACTS pair term denominator distance shift for salt-bridging sidechains</dd><br>
-<dd>Default: 2.0</dd><br>
+<dt><b>-facts_dshift</b> \<RealVector\><dt>
+<dd>FACTS pair term denominator distance shift[bb/bbsc/scsc/saltbridge]</dd><br>
+<dd>Default: ['0.0', '1.5', '1.5', '1.5']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_die</b> \<Real\><dt>
@@ -4271,44 +4261,49 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1.0</dd><br>
 </dl>
 <dl>
+<dt><b>-facts_intrascale_by_level</b> \<Boolean\><dt>
+<dd>Apply internal scaling by path_dist to CA? (definition below becomes G/D/E/Z/>Z</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-facts_intbb_elec_scale</b> \<RealVector\><dt>
 <dd>FACTS Coulomb scale for intrares bonded pairs: [1-4, 1-5, >1-5]</dd><br>
-<dd>Default: ['0.7', '1.0', '1.0']</dd><br>
+<dd>Default: ['0.0', '0.2', '0.0']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_intbb_solv_scale</b> \<RealVector\><dt>
-<dd>FACTS GB scale for intrares bonded pairs: [1-4, 1-5, >1-5]</dd><br>
-<dd>Default: ['1.0', '1.0', '1.0']</dd><br>
+<dd>FACTS GB scale for intrares bb-bb bonded pairs: [1-4, 1-5, >1-5]</dd><br>
+<dd>Default: ['0.4', '0.4', '0.0']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_adjbb_elec_scale</b> \<RealVector\><dt>
-<dd>FACTS Coulomb scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
-<dd>Default: ['1.0', '1.0', '1.0', '1.0', '1.0']</dd><br>
+<dd>FACTS Coulomb scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 2res-coupled, 1res-decoupled]</dd><br>
+<dd>Default: ['0.0', '0.2', '1.0', '0.5', '0.5']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_adjbb_solv_scale</b> \<RealVector\><dt>
-<dd>FACTS GB scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
-<dd>Default: ['1.0', '1.0', '1.0', '1.0', '1.0']</dd><br>
+<dd>FACTS GB scale for adjacent bb-bb bonded pairs: [1-4, 1-5, 1-6, 2res-coupled, 1res-decoupled]</dd><br>
+<dd>Default: ['0.0', '0.2', '1.0', '0.5', '0.5']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_intbs_elec_scale</b> \<RealVector\><dt>
-<dd>FACTS Coulomb scale for intrares bb-sc bonded pairs: [1-4, 1-5, >1-5]</dd><br>
-<dd>Default: ['0.0', '0.2', '0.6']</dd><br>
+<dd>FACTS Coulomb scale for intrares bb-sc bonded pairs: [1-4, 1-5, 1-6, >1-6, dumm]</dd><br>
+<dd>Default: ['0.2', '0.2', '0.2', '0.2', '0.0']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_intbs_solv_scale</b> \<RealVector\><dt>
-<dd>FACTS GB scale for intrares bb-sc bonded pairs: [1-4, 1-5, >1-5]</dd><br>
-<dd>Default: ['1.0', '0.2', '0.6']</dd><br>
+<dd>FACTS GB scale for intrares bb-sc bonded pairs: [1-4, 1-5, 1-6, >1-6, dumm]</dd><br>
+<dd>Default: ['1.0', '0.6', '0.6', '0.6', '0.0']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_adjbs_elec_scale</b> \<RealVector\><dt>
 <dd>FACTS Coulomb scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
-<dd>Default: ['0.0', '0.2', '0.6', '0.6', '1.0']</dd><br>
+<dd>Default: ['0.0', '0.2', '0.2', '0.2', '0.2']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_adjbs_solv_scale</b> \<RealVector\><dt>
 <dd>FACTS GB scale for adjacent bb-sc bonded pairs: [1-4, 1-5, 1-6, 1-7, >1-7]</dd><br>
-<dd>Default: ['1.0', '0.2', '0.6', '0.6', '1.0']</dd><br>
+<dd>Default: ['1.0', '0.6', '0.6', '0.6', '0.6']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_intsc_elec_scale</b> \<RealVector\><dt>
@@ -4329,6 +4324,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-facts_eff_charge_dir</b> \<String\><dt>
 <dd>directory where residue topology files for FACTS charge are stored</dd><br>
 <dd>Default: "scoring/score_functions/facts/eff"</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_plane_aa</b> \<StringVector\><dt>
+<dd>AAs to apply plane rule</dd><br>
+<dd>Default: ['arg']</dd><br>
+</dl>
+<dl>
+<dt><b>-facts_eq_type</b> \<String\><dt>
+<dd>FACTS equation type</dd><br>
+<dd>Default: "exact"</dd><br>
 </dl>
 <dl>
 <dt><b>-nmer_ref_energies</b> \<String\><dt>
@@ -4599,6 +4604,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-dun_normsd</b> \<Boolean\><dt>
 <dd>Use height-normalized guassian distributions to model p(chi|phi,psi) instead of height-unnormalized gaussians</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-dun_entropy_correction</b> \<Boolean\><dt>
+<dd>Add Shanon entropy correction to rotamer energy: E = -logP + S</dd><br>
 <dd>Default: false</dd><br>
 </dl>
  </li>

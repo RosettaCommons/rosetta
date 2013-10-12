@@ -55,6 +55,7 @@ namespace corrections { namespace score { extern BooleanOptionKey const hbond_me
 namespace corrections { namespace score { extern BooleanOptionKey const hb_fade_energy; } }
 namespace corrections { namespace score { extern BooleanOptionKey const use_bicubic_interpolation; } }
 namespace corrections { namespace score { extern BooleanOptionKey const dun_normsd; } }
+namespace corrections { namespace score { extern BooleanOptionKey const dun_entropy_correction; } }
 namespace corrections { namespace chemical { extern BooleanOptionKey const chemical; } }
 namespace corrections { namespace chemical { extern BooleanOptionKey const icoor_05_2009; } }
 namespace corrections { namespace chemical { extern BooleanOptionKey const parse_charge; } }

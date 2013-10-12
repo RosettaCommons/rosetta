@@ -151,13 +151,12 @@ namespace score { BooleanOptionKey const elec_r_option( "score:elec_r_option" );
 namespace score { BooleanOptionKey const smooth_fa_elec( "score:smooth_fa_elec" );  }
 namespace score { RealOptionKey const facts_GBpair_cut( "score:facts_GBpair_cut" );  }
 namespace score { RealOptionKey const facts_kappa( "score:facts_kappa" );  }
-namespace score { BooleanOptionKey const facts_apprx( "score:facts_apprx" );  }
 namespace score { IntegerOptionKey const facts_asp_patch( "score:facts_asp_patch" );  }
 namespace score { BooleanOptionKey const facts_plane_to_self( "score:facts_plane_to_self" );  }
 namespace score { RealOptionKey const facts_saltbridge_correction( "score:facts_saltbridge_correction" );  }
-namespace score { RealOptionKey const facts_dshift( "score:facts_dshift" );  }
-namespace score { RealOptionKey const facts_dshift_sb( "score:facts_dshift_sb" );  }
+namespace score { RealVectorOptionKey const facts_dshift( "score:facts_dshift" );  }
 namespace score { RealOptionKey const facts_die( "score:facts_die" );  }
+namespace score { BooleanOptionKey const facts_intrascale_by_level( "score:facts_intrascale_by_level" );  }
 namespace score { RealVectorOptionKey const facts_intbb_elec_scale( "score:facts_intbb_elec_scale" );  }
 namespace score { RealVectorOptionKey const facts_intbb_solv_scale( "score:facts_intbb_solv_scale" );  }
 namespace score { RealVectorOptionKey const facts_adjbb_elec_scale( "score:facts_adjbb_elec_scale" );  }
@@ -170,6 +169,8 @@ namespace score { RealVectorOptionKey const facts_intsc_elec_scale( "score:facts
 namespace score { RealVectorOptionKey const facts_intsc_solv_scale( "score:facts_intsc_solv_scale" );  }
 namespace score { StringOptionKey const facts_charge_dir( "score:facts_charge_dir" );  }
 namespace score { StringOptionKey const facts_eff_charge_dir( "score:facts_eff_charge_dir" );  }
+namespace score { StringVectorOptionKey const facts_plane_aa( "score:facts_plane_aa" );  }
+namespace score { StringOptionKey const facts_eq_type( "score:facts_eq_type" );  }
 namespace score { StringOptionKey const nmer_ref_energies( "score:nmer_ref_energies" );  }
 namespace score { StringOptionKey const nmer_ref_energies_list( "score:nmer_ref_energies_list" );  }
 namespace score { StringOptionKey const nmer_pssm( "score:nmer_pssm" );  }
@@ -227,6 +228,7 @@ namespace corrections { namespace score { BooleanOptionKey const hbond_measure_s
 namespace corrections { namespace score { BooleanOptionKey const hb_fade_energy( "corrections:score:hb_fade_energy" );  } }
 namespace corrections { namespace score { BooleanOptionKey const use_bicubic_interpolation( "corrections:score:use_bicubic_interpolation" );  } }
 namespace corrections { namespace score { BooleanOptionKey const dun_normsd( "corrections:score:dun_normsd" );  } }
+namespace corrections { namespace score { BooleanOptionKey const dun_entropy_correction( "corrections:score:dun_entropy_correction" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const chemical( "corrections:chemical" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const icoor_05_2009( "corrections:chemical:icoor_05_2009" );  } }
 namespace corrections { namespace chemical { BooleanOptionKey const parse_charge( "corrections:chemical:parse_charge" );  } }

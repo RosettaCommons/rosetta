@@ -76,8 +76,7 @@ void FACTSRsdTypeInfo::create_info( chemical::ResidueType const & rsd )
 
 {
   initialize_parameters( rsd );
-  initialize_intrasolv( rsd );
-  initialize_intraelec( rsd );
+  initialize_intrascale( rsd );
 }
 
 // This function initializes native parameters that are used for empirical function calculations
@@ -135,11 +134,11 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
   not_using_.resize( natoms() );
   charged_.resize( natoms(), true );
   is_chargedH_.resize( natoms() );
+	is_freedof_.resize( natoms(), false );
 
 	// Read new charge set specified by "score::facts_charge_dir"
-	bool const do_apprx( option[ score::facts_apprx ]() );
 	std::string filename;
-	if( do_apprx ){ // Call neutral aliphatic charge set
+	if( option[ score::facts_eq_type ]().compare("apprx") == 0 ){ // Call neutral aliphatic charge set
 		filename = option[ in::path::database ](1).name() + "/" 
 			+ option[ score::facts_eff_charge_dir ]() + "/"
 			+ rsd.name() + ".params";
@@ -163,16 +162,19 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 		rsd_for_charge = rsd.clone();
 	}
 
+
 	// Assign parameters
   for(Size i = 1; i <= natoms(); ++i){
     core::chemical::AtomType const &type = rsd.atom_type(i);
 
     // Partial charge
     q_[i] = rsd_for_charge->atom(i).charge();
+
     if( std::abs(q_[i]) < 1.0e-3 ) charged_[i] = false;
 
     // Residue polarity
     string atmname( type.atom_type_name() );
+    string rsdatomname( rsd.atom_name( i ) );
     bool is_chargedH( atmname.compare( 0, 4, "Hpol" ) == 0 &&
 		      (	rsd.aa() == core::chemical::aa_arg ||
 			rsd.aa() == core::chemical::aa_lys ||
@@ -233,8 +235,29 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
       c3_[i] = type.extra_parameter( FACTS_C3_INDEX );
     }
     volume_[i] = (4.0/3.0) * Math_PI * vdw_radius * vdw_radius * vdw_radius;
-  }
-  
+
+		// Free DOF atoms
+		if( rsd.is_lower_terminus() &&
+				(	rsdatomname.compare( "1H  " ) == 0 ||
+					rsdatomname.compare( "2H  " ) == 0 ||
+					rsdatomname.compare( "3H  " ) == 0 )
+				){
+			is_freedof_[i] = true;
+		} else if( rsd.is_upper_terminus() &&
+							 (	rsdatomname.compare( " O  " ) == 0 ||
+									rsdatomname.compare( " OXT" ) == 0 )
+							 ){
+			is_freedof_[i] = true;
+		}
+		else if( rsd.aa() == chemical::aa_ser &&
+							 rsdatomname.compare( " HG " ) == 0 ){
+			is_freedof_[i] = true;
+		} else if( rsd.aa() == chemical::aa_thr &&
+							 rsdatomname.compare( " HG1" ) == 0 ){
+			is_freedof_[i] = true;
+		}
+	}
+
   // Reduce Born radii for charged polarH: sidechain Hpol of ARG/LYS/HIS
   /*
     for(Size i = 1; i <= natoms(); ++i){
@@ -248,12 +271,27 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
   
 }
 
-void FACTSRsdTypeInfo::initialize_intrasolv( chemical::ResidueType const & rsd )
+void FACTSRsdTypeInfo::initialize_intrascale( chemical::ResidueType const & rsd )
 {
-  intra_solv_scale_.resize( rsd.natoms() );
-  for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 )
-    intra_solv_scale_[atm1].resize( rsd.natoms(), 0.0 );
 
+	// initialize
+  intra_solv_scale_.resize( rsd.natoms() );
+  intra_elec_scale_.resize( rsd.natoms() );
+  for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 ){
+    intra_solv_scale_[atm1].resize( rsd.natoms(), 0.0 );
+		intra_elec_scale_[atm1].resize( rsd.natoms(), 0.0 );
+	}
+
+	// If is not amino acid, turn on full scale
+	if( !rsd.is_protein() ){
+		for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 ){
+			for( Size atm2 = 2; atm2 <= rsd.natoms(); ++atm2 )
+				intra_solv_scale_[atm1][atm2] = 1.0;
+		}
+		return;
+	}
+
+	// Start here if amino acid
   bool const plane_to_self( basic::options::option[ basic::options::OptionKeys::score::facts_plane_to_self ]() );
 
 	utility::vector1< Real > const intbb_solv_scale =
@@ -262,63 +300,112 @@ void FACTSRsdTypeInfo::initialize_intrasolv( chemical::ResidueType const & rsd )
 		basic::options::option[ basic::options::OptionKeys::score::facts_intbs_solv_scale ]();
 	utility::vector1< Real > const intsc_solv_scale =
 		basic::options::option[ basic::options::OptionKeys::score::facts_intsc_solv_scale ]();
+	utility::vector1< Real > const intbb_elec_scale =
+		basic::options::option[ basic::options::OptionKeys::score::facts_intbb_elec_scale ]();
+	utility::vector1< Real > const intbs_elec_scale =
+		basic::options::option[ basic::options::OptionKeys::score::facts_intbs_elec_scale ]();
+	utility::vector1< Real > const intsc_elec_scale =
+		basic::options::option[ basic::options::OptionKeys::score::facts_intsc_elec_scale ]();
+
+	utility::vector1< std::string > plane_aa;
+	if( basic::options::option[ basic::options::OptionKeys::score::facts_plane_aa ].user() ){
+		plane_aa = basic::options::option[ basic::options::OptionKeys::score::facts_plane_aa ]();
+	}
+
+	assert( intbb_elec_scale.size() == 3 );
+	assert( intbb_solv_scale.size() == 3 );
+	assert( intsc_elec_scale.size() == 3 );
+	assert( intsc_solv_scale.size() == 3 );
+	assert( intbs_elec_scale.size() == 5 );
+	assert( intbs_solv_scale.size() == 5 );
+
+	bool const intrascale_by_level = 
+		basic::options::option[ basic::options::OptionKeys::score::facts_intrascale_by_level ]();
 
   // 1-4 is important for solvation free energy of ASN/GLN/SER/THR
   // backbone rule is important to give reasonable "distinct" bb solvation for ALA/VAL/ILE/LEU
   // >= 1-6 is turned off; this is important to get rid of artifacts from ASP OD-O & GLU OE-O at exposed
+
   for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 ){
-
     for( Size atm2 = 1; atm2 <= rsd.natoms(); ++atm2 ){
-			if( rsd.path_distance(atm1,atm2) <= 2 ){
-				intra_solv_scale_[atm1][atm2] = 1.0;
 
-			} else if( rsd.atom_is_backbone( atm1 ) && rsd.atom_is_backbone( atm2 ) ){
-				if( rsd.path_distance(atm1,atm2) == 3 ){
+			Size path_dist( rsd.path_distance(atm1,atm2) );
+
+			bool const is_atm1_bb( rsd.atom_is_backbone( atm1 ) );
+			bool const is_atm2_bb( rsd.atom_is_backbone( atm2 ) );
+
+			// Turn full strength for <= 1-3
+			if( path_dist <= 2 ){
+				intra_solv_scale_[atm1][atm2] = 1.0;
+				intra_elec_scale_[atm1][atm2] = 0.0;
+
+			} else if( is_atm1_bb && is_atm2_bb ){ //bb-bb
+				if( path_dist == 3 ){
 					intra_solv_scale_[atm1][atm2] = intbb_solv_scale[1];
-				} else if( rsd.path_distance(atm1,atm2) == 4 ){
+					intra_elec_scale_[atm1][atm2] = intbb_elec_scale[1];
+				} else if( path_dist == 4 ){
 					intra_solv_scale_[atm1][atm2] = intbb_solv_scale[2];
+					intra_elec_scale_[atm1][atm2] = intbb_elec_scale[2];
 				} else {
 					intra_solv_scale_[atm1][atm2] = intbb_solv_scale[3];
+					intra_elec_scale_[atm1][atm2] = intbb_elec_scale[3];
 				}
 
-      } else if( rsd.atom_is_backbone( atm1 ) || rsd.atom_is_backbone( atm2 ) ){
-				// aa_specific rules
-
+      } else if( is_atm1_bb || is_atm2_bb ){ // bb-sc
+				// Terminus correction: turn full strength since fa_dun won't work here
 				/*
-				if( rsd.aa() == core::chemical::aa_asp ){
-					if( rsd.path_distance(atm1,atm2) == 3 ){
-						intra_solv_scale_[atm1][atm2] = 0.8;
-					} else if( rsd.path_distance(atm1,atm2) == 4 ){
-						intra_solv_scale_[atm1][atm2] = 0.2;
-					} else {
-						intra_solv_scale_[atm1][atm2] = 0.5;
-					}
+				if( rsd.is_terminus() ){
+					intra_solv_scale_[atm1][atm2] = 1.0;
+					intra_elec_scale_[atm1][atm2] = 1.0;
+
+				// aa_specific rules
 				} else 
 				*/
+				if(( rsd.aa() == core::chemical::aa_ser || rsd.aa() == core::chemical::aa_thr )
+					 && path_dist == 3 ){
+					intra_solv_scale_[atm1][atm2] = 1.0;
 
-				if( rsd.path_distance(atm1,atm2) == 3 ){
-					intra_solv_scale_[atm1][atm2] = intbs_solv_scale[1];
-				} else if( rsd.path_distance(atm1,atm2) == 4 ){
-					intra_solv_scale_[atm1][atm2] = intbs_solv_scale[2];
 				} else {
-					intra_solv_scale_[atm1][atm2] = intbs_solv_scale[3];
+					// Override definition for path_dist if intrascale_by_level
+					if( intrascale_by_level && rsd.has( "CA" ) ){
+						Size const i_CA = rsd.atom_index("CA");
+						if( is_atm1_bb ){
+							path_dist = rsd.path_distance( i_CA, atm2 );
+						} else if ( is_atm2_bb ){
+							path_dist = rsd.path_distance( i_CA, atm1 );
+						}
+						path_dist ++; // To convert indexing start from Gamma
+					}
+
+					if( path_dist <= 5 ){
+						intra_solv_scale_[atm1][atm2] = intbs_solv_scale[ path_dist - 2 ];
+						intra_elec_scale_[atm1][atm2] = intbs_elec_scale[ path_dist - 2 ];
+					} else {
+						intra_solv_scale_[atm1][atm2] = intbs_solv_scale[4];
+						intra_elec_scale_[atm1][atm2] = intbs_elec_scale[4];
+					}
 				}
 
-      } else {
-				//if( rsd.aa() == core::chemical::aa_asp ) {
-				//	intra_solv_scale_[atm1][atm2] = 1.0;
-				//} else
-
-				if( rsd.path_distance(atm1,atm2) == 3 ){
+      } else { // sc-sc
+				if( path_dist == 3 ){
 					intra_solv_scale_[atm1][atm2] = intsc_solv_scale[1];
-				} else if( rsd.path_distance(atm1,atm2) == 4 ){
+					intra_elec_scale_[atm1][atm2] = intsc_elec_scale[2];
+				} else if( path_dist == 4 ){
 					intra_solv_scale_[atm1][atm2] = intsc_solv_scale[2];
+					intra_elec_scale_[atm1][atm2] = intsc_elec_scale[2];
 				} else {
 					intra_solv_scale_[atm1][atm2] = intsc_solv_scale[3];
+					intra_elec_scale_[atm1][atm2] = intsc_elec_scale[3];
 				}
 			}
-		}
-	}
+
+			// Override special rule for freeDOF atoms - removed
+			//if( path_dist >= 4 && ( is_freedof( atm1 ) || is_freedof( atm2 ) )){
+			//	intra_elec_scale_[atm1][atm2] = intra_solv_scale_[atm1][atm2];
+			//}
+		} // atm2
+	} // atm1
+
 
   // Plane rule overrides 
   for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 ){
@@ -334,150 +421,72 @@ void FACTSRsdTypeInfo::initialize_intrasolv( chemical::ResidueType const & rsd )
 					intra_solv_scale_[atm1][atm2] = 1.0;
       }
 
-      // TYR OH-HEX
-      if( plane_to_self && rsd.aa() == core::chemical::aa_tyr ) {
-				// Add OH-aromatic ring pairs
-				if( ( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name().compare( "aroC" ) == 0 ) ||
-						( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name().compare( "aroC" ) == 0 ) || 
-						( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name().compare( "Haro" ) == 0 ) ||
-						( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name().compare( "Haro" ) == 0 )
-						)
-					intra_solv_scale_[atm1][atm2] = 1.0;
-      }
-
-      // TRP dipole - ring
-      if( plane_to_self && rsd.aa() == core::chemical::aa_trp ) {
-				// Add OH-aromatic ring pairs
-				if( ( atm1 == rsd.atom_index("NE1") || atm1 == rsd.atom_index("HE1") ) &&
-						( rsd.atom_type(atm2).atom_type_name().compare( "aroC" ) == 0 || rsd.atom_type(atm2).atom_type_name().compare( "Haro" ) == 0 ) )
-					{
-						intra_solv_scale_[atm1][atm2] = 1.0;
-						intra_solv_scale_[atm2][atm1] = 1.0;
-					}
-      }
-
-      if( plane_to_self && rsd.aa() == core::chemical::aa_his ) {
+      if( plane_to_self && rsd.aa() == core::chemical::aa_his && plane_aa.has_value( "his" ) ) {
 				// Add all pairs in G or D or E position
 				if( 
 					 (( rsd.atom_name(atm1).compare( 2, 1, "G" ) == 0 || rsd.atom_name(atm1).compare( 2, 1, "D" ) == 0)&&
 						rsd.atom_name(atm1).compare( 2, 1, "E" ) == 0 ) &&
 					 (( rsd.atom_name(atm2).compare( 2, 1, "G" ) == 0 || rsd.atom_name(atm2).compare( 2, 1, "D" ) == 0)&&
 						rsd.atom_name(atm2).compare( 2, 1, "E" ) == 0 )
-						)
+						){
+					/*
+					std::cout << rsd.name() << " " << rsd.atom_name(atm1) << " " << rsd.atom_name(atm2);
+					std::cout << " " << intra_solv_scale_[atm1][atm2];
+					std::cout << std::endl;
+					*/
 					intra_solv_scale_[atm1][atm2] = 1.0;
+				}
       }
 
-			if( plane_to_self && rsd.aa() == core::chemical::aa_gln ) {
+      // TYR OH-HEX
+      if( plane_to_self && rsd.aa() == core::chemical::aa_tyr && plane_aa.has_value( "tyr" ) ) {
+				// Add OH-aromatic ring pairs
+				if( ( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name().compare( "aroC" ) == 0 ) ||
+						( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name().compare( "aroC" ) == 0 ) || 
+						( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name().compare( "Haro" ) == 0 ) ||
+						( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name().compare( "Haro" ) == 0 )
+						){
+					/*
+					std::cout << rsd.name() << " " << rsd.atom_name(atm1) << " " << rsd.atom_name(atm2);
+					std::cout << " " << intra_solv_scale_[atm1][atm2];
+					std::cout << std::endl;
+					*/
+					intra_solv_scale_[atm1][atm2] = 1.0;
+				}
+      }
+
+      // TRP dipole - ring
+      if( plane_to_self && rsd.aa() == core::chemical::aa_trp && plane_aa.has_value( "trp" ) ) {
+				// Add OH-aromatic ring pairs
+				if( ( atm1 == rsd.atom_index("NE1") || atm1 == rsd.atom_index("HE1") ) &&
+						( rsd.atom_type(atm2).atom_type_name().compare( "aroC" ) == 0 || rsd.atom_type(atm2).atom_type_name().compare( "Haro" ) == 0 ) )
+					{
+						/*
+						std::cout << rsd.name() << " " << rsd.atom_name(atm1) << " " << rsd.atom_name(atm2);
+						std::cout << " " << intra_solv_scale_[atm1][atm2];
+						std::cout << std::endl;
+						*/
+						intra_solv_scale_[atm1][atm2] = 1.0;
+						intra_solv_scale_[atm2][atm1] = 1.0;
+					}
+      }
+
+			if( plane_to_self && rsd.aa() == core::chemical::aa_gln && plane_aa.has_value( "gln" ) ) {
 				// Add all pairs in E position
 				if( rsd.atom_name(atm1).compare( 2, 1, "E" ) == 0 && rsd.atom_name(atm2).compare( 2, 1, "E" ) == 0 )
 					intra_solv_scale_[atm1][atm2] = 1.0;
 
-			} else if( plane_to_self && rsd.aa() == core::chemical::aa_asn ) {
+			} else if( plane_to_self && rsd.aa() == core::chemical::aa_asn && plane_aa.has_value( "asn" ) ) {
 				// Add all pairs in D position
 				if( rsd.atom_name(atm1).compare( 2, 1, "D" ) == 0 && rsd.atom_name(atm2).compare( 2, 1, "D" ) == 0 )
 					intra_solv_scale_[atm1][atm2] = 1.0;
 			}
-	/*
-	} else if( plane_to_self && rsd.aa() == core::chemical::aa_arg ) {
-	// Add xHHx - NHx / xHHx - xHHx / xHHx - NE / xHHx - HE / NHx - HE
-	// or in other words, add all pairs in H or E position
-	if( ( rsd.atom_name(atm1).compare( 2, 1, "H" ) == 0 || rsd.atom_name(atm1).compare( 2, 1, "E" ) == 0) &&
-	(	rsd.atom_name(atm2).compare( 2, 1, "H" ) == 0 || rsd.atom_name(atm2).compare( 2, 1, "E" ) == 0) )
-	intra_solv_scale_[atm1][atm2] = 1.0;
-	
-	} else if( plane_to_self && rsd.aa() == core::chemical::aa_tyr ) {
-	// Add OH-aromatic ring pairs
-	if( ( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name().compare( "aroC" ) == 0 ) ||
-	( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name().compare( "aroC" ) == 0 ) || 
-	( atm1 == rsd.atom_index("OH") && rsd.atom_type(atm2).atom_type_name().compare( "Haro" ) == 0 ) ||
-	( atm2 == rsd.atom_index("OH") && rsd.atom_type(atm1).atom_type_name().compare( "Haro" ) == 0 )
-	)
-	intra_solv_scale_[atm1][atm2] = 1.0;
-	}
-      */
-      
-      // Turn on all aromatic pairs - lets turn-off for now
-      /*
-	if( plane_to_self && 
-	(rsd.aa() == core::chemical::aa_tyr || rsd.aa() == core::chemical::aa_phe || rsd.aa() == core::chemical::aa_trp ) ){
-	
-	if( ( rsd.atom_type(atm1).atom_type_name().compare( "aroC" ) == 0 && rsd.atom_type(atm2).atom_type_name().compare( "aroC" ) == 0 ) ||
-	( rsd.atom_type(atm1).atom_type_name().compare( "aroC" ) == 0 && rsd.atom_type(atm2).atom_type_name().compare( "Haro" ) == 0 ) ||
-	( rsd.atom_type(atm1).atom_type_name().compare( "Haro" ) == 0 && rsd.atom_type(atm2).atom_type_name().compare( "aroC" ) == 0 ) ||
-	( rsd.atom_type(atm1).atom_type_name().compare( "Haro" ) == 0 && rsd.atom_type(atm2).atom_type_name().compare( "Haro" ) == 0 ) )
-	//std::cout << rsd.aa() << " " << rsd.atom_name(atm1) << " " << rsd.atom_name(atm2) << std::endl;
-	intra_solv_scale_[atm1][atm2] == 1.0;
-	}
-      */
+
     } //atm2
-  }
-} // END void initialize_selfpair
-  
-// Set exceptional cases when intra electrostatics is allowed
-void FACTSRsdTypeInfo::initialize_intraelec( chemical::ResidueType const & rsd )
-{
+  } //atm1
 
-	utility::vector1< Real > const intbb_elec_scale =
-		basic::options::option[ basic::options::OptionKeys::score::facts_intbb_elec_scale ]();
-	utility::vector1< Real > const intbs_elec_scale =
-		basic::options::option[ basic::options::OptionKeys::score::facts_intbs_elec_scale ]();
-	utility::vector1< Real > const intsc_elec_scale =
-		basic::options::option[ basic::options::OptionKeys::score::facts_intsc_elec_scale ]();
+} // END void initialize_intrascale
 
-  intra_elec_scale_.resize( rsd.natoms() );
-  for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 )
-    intra_elec_scale_[atm1].resize( rsd.natoms() );
-
-  for( Size atm1 = 1; atm1 <= rsd.natoms(); ++atm1 ){
-
-		for( Size atm2 = 1; atm2 <= rsd.natoms(); ++atm2 ){
-			if( rsd.path_distance(atm1,atm2) <= 2 ){
-				intra_elec_scale_[atm1][atm2] = 0.0;
-
-			} else if( rsd.atom_is_backbone( atm1 ) && rsd.atom_is_backbone( atm2 ) ){
-				if( rsd.path_distance(atm1,atm2) == 3 ){
-					intra_elec_scale_[atm1][atm2] = intbb_elec_scale[1];
-				} else if( rsd.path_distance(atm1,atm2) == 4 ){
-					intra_elec_scale_[atm1][atm2] = intbb_elec_scale[2];
-				} else {
-					intra_elec_scale_[atm1][atm2] = intbb_elec_scale[3];
-				}
-				
-      } else if( rsd.atom_is_backbone( atm1 ) || rsd.atom_is_backbone( atm2 ) ){
-				// aa_specific rules
-				/*
-				if( rsd.aa() == core::chemical::aa_asp ){
-					if( rsd.path_distance(atm1,atm2) == 3 ){
-						intra_elec_scale_[atm1][atm2] = 0.0;
-					} else if( rsd.path_distance(atm1,atm2) == 4 ){
-						intra_elec_scale_[atm1][atm2] = 0.2;
-					} else {
-						intra_elec_scale_[atm1][atm2] = 0.5;
-					}
-				} else
-				*/
-
-				if( rsd.path_distance(atm1,atm2) == 3 ){
-					intra_elec_scale_[atm1][atm2] = intbs_elec_scale[1];
-				} else if( rsd.path_distance(atm1,atm2) == 4 ){
-					intra_elec_scale_[atm1][atm2] = intbs_elec_scale[2];
-				} else {
-					intra_elec_scale_[atm1][atm2] = intbs_elec_scale[3];
-				}
-      } else {
-				if( rsd.path_distance(atm1,atm2) == 3 ){
-					intra_elec_scale_[atm1][atm2] = intsc_elec_scale[1];
-				} else if( rsd.path_distance(atm1,atm2) == 4 ){
-					intra_elec_scale_[atm1][atm2] = intsc_elec_scale[2];
-				} else {
-					intra_elec_scale_[atm1][atm2] = intsc_elec_scale[3];
-				}
-			}
-		}
-
-	}
-}
-  
 /// FACTSRsdTypeInfo
 
 /**************************************************************************************************/

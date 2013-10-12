@@ -53,6 +53,8 @@ namespace normalmode {
 using namespace core;
 using namespace core::optimization;
 
+NormalModeMultifunc::~NormalModeMultifunc() {}
+
 NormalModeMultifunc::NormalModeMultifunc(
 	pose::Pose & pose_in,
 	MinimizerMap & min_map_in,
@@ -85,8 +87,6 @@ NormalModeMultifunc::NormalModeMultifunc(
 	get_dofs_map( );
 	get_dofs_for_pose0( );
 }
-
-NormalModeMultifunc::~NormalModeMultifunc() {}
 
 Real
 NormalModeMultifunc::operator ()( Multivec const & vars ) const {

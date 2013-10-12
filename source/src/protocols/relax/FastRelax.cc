@@ -175,6 +175,7 @@ endrepeat
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/md/CartesianMD.hh>
 
 //Basic Headers
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -523,6 +524,23 @@ void FastRelax::do_minimize(
   min_mover->apply( pose );
 }
 
+void FastRelax::do_md(
+  core::pose::Pose &pose,
+	core::Real nstep,
+  core::Real temp0,
+  core::kinematics::MoveMapOP movemap_in,
+	core::scoring::ScoreFunctionOP local_scorefxn
+){
+
+  core::kinematics::MoveMapOP local_movemap = movemap_in;
+
+  protocols::md::CartesianMD MD_mover( pose, local_scorefxn, local_movemap );
+
+	MD_mover.set_nstep( (Size)(nstep) );
+	MD_mover.set_temperature( temp0 );
+
+  MD_mover.apply( pose );
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void FastRelax::apply( core::pose::Pose & pose ){
@@ -748,6 +766,19 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				dump_counter++;
 				}
 		}	else
+		if( cmd.command == "md" ){
+			if( cmd.nparams < 2 ){ utility_exit_with_message( "ERROR: Syntax " + cmd.command + " <mdstep> <temperature> " ); }
+
+			chk_counter++;
+			std::string checkpoint_id = "chk" + string_of( chk_counter );
+			if (!checkpoints_.recover_checkpoint( pose, get_current_tag(), checkpoint_id, true, true )){
+				// param1: nstep; param2: temperature
+				//if ( input_csts ) pose.constraint_set( input_csts );
+				do_md( pose, cmd.param1, cmd.param2, local_movemap, local_scorefxn );
+				checkpoints_.checkpoint( pose, get_current_tag(), checkpoint_id,  true );
+			}
+
+		}	else
 
 		if( cmd.command.substr(0,5) == "scale" ){
 			// no input validation as of now, relax will just die
@@ -831,7 +862,6 @@ void FastRelax::apply( core::pose::Pose & pose ){
 				dump_counter++;
 			}
 		}	else
-
 
 		if( cmd.command == "accept_to_best" ){
 			// grab the score and remember the pose if the score is better then ever before.
@@ -1332,9 +1362,7 @@ void FastRelax::batch_apply(
 				relax_decoys[index].current_score = score;
 				relax_decoys[index].current_struct->fill_struct( pose );
 			}
-
 		}	else
-
 
         if( cmd.command.substr(0,5) == "scale" ){
             // no input validation as of now, relax will just die

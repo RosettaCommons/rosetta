@@ -80,7 +80,7 @@ public:
 		core::kinematics::MoveMapCOP movemap) = 0;
 
 	virtual
-	core::kinematics::MoveMapOP movemap() = 0;
+	core::kinematics::MoveMapOP movemap() const = 0;
 
 	// Accessors
 	Real dt(){ return dt_; }
@@ -104,7 +104,10 @@ public:
 	void set_constraint( Real const sdev );
 	void cst_on_pose( pose::Pose &pose );
 
-public: // other private variables
+	void set_store_trj( bool const value ){ store_trj_ = value; }
+	bool store_trj() const { return store_trj_; }
+	
+protected:
 	// The movemap
 	core::kinematics::MoveMapOP movemap_;
 
@@ -150,6 +153,10 @@ public: // other private variables
   Multivec xyz_;
   Multivec vel_;
   Multivec acc_;
+
+	bool store_trj_;
+	utility::vector1< Multivec > trj_;
+
 };
 
 }

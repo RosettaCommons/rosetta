@@ -107,13 +107,12 @@ namespace score { extern BooleanOptionKey const elec_r_option; }
 namespace score { extern BooleanOptionKey const smooth_fa_elec; }
 namespace score { extern RealOptionKey const facts_GBpair_cut; }
 namespace score { extern RealOptionKey const facts_kappa; }
-namespace score { extern BooleanOptionKey const facts_apprx; }
 namespace score { extern IntegerOptionKey const facts_asp_patch; }
 namespace score { extern BooleanOptionKey const facts_plane_to_self; }
 namespace score { extern RealOptionKey const facts_saltbridge_correction; }
-namespace score { extern RealOptionKey const facts_dshift; }
-namespace score { extern RealOptionKey const facts_dshift_sb; }
+namespace score { extern RealVectorOptionKey const facts_dshift; }
 namespace score { extern RealOptionKey const facts_die; }
+namespace score { extern BooleanOptionKey const facts_intrascale_by_level; }
 namespace score { extern RealVectorOptionKey const facts_intbb_elec_scale; }
 namespace score { extern RealVectorOptionKey const facts_intbb_solv_scale; }
 namespace score { extern RealVectorOptionKey const facts_adjbb_elec_scale; }
@@ -126,6 +125,8 @@ namespace score { extern RealVectorOptionKey const facts_intsc_elec_scale; }
 namespace score { extern RealVectorOptionKey const facts_intsc_solv_scale; }
 namespace score { extern StringOptionKey const facts_charge_dir; }
 namespace score { extern StringOptionKey const facts_eff_charge_dir; }
+namespace score { extern StringVectorOptionKey const facts_plane_aa; }
+namespace score { extern StringOptionKey const facts_eq_type; }
 namespace score { extern StringOptionKey const nmer_ref_energies; }
 namespace score { extern StringOptionKey const nmer_ref_energies_list; }
 namespace score { extern StringOptionKey const nmer_pssm; }

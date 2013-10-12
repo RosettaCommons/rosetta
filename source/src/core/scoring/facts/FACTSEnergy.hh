@@ -193,7 +193,7 @@ public:
  	atomic_interaction_cutoff() const;
 
 	virtual
-	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const {}
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const {}
 
 	virtual
 	bool

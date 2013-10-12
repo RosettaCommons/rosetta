@@ -483,10 +483,17 @@ RotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv(
 			dE_dbb[ i ] = d_multiplier * ( scratch.dneglnrotprob_dbb()[ i ] + scratch.dchidevpen_dbb()[ i ] );
 			dE_dbb_dev[ i ] = d_multiplier * scratch.dchidevpen_dbb()[ i ];
 			dE_dbb_rot[ i ] = d_multiplier * scratch.dneglnrotprob_dbb()[ i ];
+
 		} else {
 			dE_dbb[ i ] = d_multiplier * ( invp * scratch.drotprob_dbb()[ i ] + scratch.dchidevpen_dbb()[ i ] );
 			dE_dbb_dev[ i ] = d_multiplier * scratch.dchidevpen_dbb()[ i ];
 			dE_dbb_rot[ i ] = d_multiplier * invp * scratch.drotprob_dbb()[ i ]; 
+		}
+
+		// Correction for entropy
+		if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ){
+			dE_dbb[ i ]     += d_multiplier * scratch.dentropy_dbb()[ i ];
+			dE_dbb_rot[ i ] += d_multiplier * scratch.dentropy_dbb()[ i ];
 		}
 	}
 
@@ -617,12 +624,19 @@ RotamericSingleResidueDunbrackLibrary< T >::eval_rotameric_energy_deriv(
 		scratch.fa_dun_tot() = scratch.negln_rotprob() + chidevpensum;
 		scratch.fa_dun_rot() = scratch.negln_rotprob();
 		scratch.fa_dun_dev() = chidevpensum;
+
 	} else {
 		scratch.fa_dun_rot() = -std::log(scratch.rotprob());
 		scratch.fa_dun_tot() = scratch.fa_dun_rot() + chidevpensum;
 		scratch.fa_dun_dev() = chidevpensum;
+
 	}
 
+	// Corrections for Shanon Entropy
+	if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ) {
+		scratch.fa_dun_rot() += scratch.entropy();
+		scratch.fa_dun_tot() += scratch.entropy();
+	}
 
 	Real const score( scratch.fa_dun_tot() );
 
@@ -964,6 +978,19 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 		phibin_next, psibin_next,phi_alpha, psi_alpha,
 		interpolated_rotamer );
 
+	Size const &i0 = phibin;
+	Size const &j0 = psibin;
+	Size const &i1 = phibin_next;
+	Size const &j1 = psibin_next;
+
+	/*
+	std::cout << "AA/phi/psi/S00/S01/S10/S11/Sinter: " << aa(); 
+	printf(" %8.1f %8.1f %8.4f %8.4f %8.4f %8.4f %8.4f\n", 
+				 phi, psi,
+				 ShanonEntropy_(i0,j0), ShanonEntropy_(i0,j1), ShanonEntropy_(i1,j0), ShanonEntropy_(i1,j1),
+				 scratch.entropy());
+	*/
+
 	/// TEMP!
 	/*Real delta = 1e-12;
 	RotamerLibraryScratchSpace tmpscratch;
@@ -1046,8 +1073,30 @@ RotamericSingleResidueDunbrackLibrary< T >::interpolate_rotamers(
 			scratch.dneglnrotprob_dbb()[ RotamerLibraryScratchSpace::AA_PSI_INDEX ]
 		);
 		interpolated_rotamer.rotamer_probability() = std::exp( -scratch.negln_rotprob() );
+
+
 	} else {
 		interpolated_rotamer.rotamer_probability() = scratch.rotprob();
+	}
+
+	// Entropy correction
+	if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] ){
+		Size const &i0 = phibin;
+		Size const &j0 = psibin;
+		Size const &i1 = phibin_next;
+		Size const &j1 = psibin_next;
+
+		bicubic_interpolation(
+			ShanonEntropy_(i0,j0), S_dsecophi_(i0,j0), S_dsecopsi_(i0,j0), S_dsecophipsi_(i0,j0),
+			ShanonEntropy_(i0,j1), S_dsecophi_(i0,j1), S_dsecopsi_(i0,j1), S_dsecophipsi_(i0,j1),
+			ShanonEntropy_(i1,j1), S_dsecophi_(i1,j0), S_dsecopsi_(i1,j0), S_dsecophipsi_(i1,j0),
+			ShanonEntropy_(i1,j1), S_dsecophi_(i1,j1), S_dsecopsi_(i1,j0), S_dsecophipsi_(i1,j1),
+			phi_alpha, psi_alpha,
+			PHIPSI_BINRANGE, PHIPSI_BINRANGE,
+			scratch.entropy(),
+			scratch.dentropy_dbb()[ RotamerLibraryScratchSpace::AA_PHI_INDEX ],
+			scratch.dentropy_dbb()[ RotamerLibraryScratchSpace::AA_PSI_INDEX ]
+	    );
 	}
 
 	for ( Size ii = 1; ii <= T; ++ii ) {
@@ -1697,6 +1746,7 @@ RotamericSingleResidueDunbrackLibrary< T >::read_from_binary( utility::io::izstr
 	Size const ntotalrot = N_PHIPSI_BINS * N_PHIPSI_BINS * parent::n_packed_rots();
 	Size const ntotalchi = ntotalrot * T;
 	rotamers_.dimension( N_PHIPSI_BINS, N_PHIPSI_BINS, parent::n_packed_rots() );
+
 	///a. means
 	DunbrackReal * rotamer_means = new DunbrackReal[ ntotalchi ];
 	// b. standard deviations
@@ -1724,6 +1774,7 @@ RotamericSingleResidueDunbrackLibrary< T >::read_from_binary( utility::io::izstr
 	for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii ) {
 		for ( Size jj = 1; jj <= N_PHIPSI_BINS; ++jj ) {
 			for ( Size kk = 1; kk <= N_PHIPSI_BINS; ++kk ) {
+
 				for ( Size ll = 1; ll <= T; ++ll ) {
 					rotamers_( kk, jj, ii ).chi_mean( ll ) = rotamer_means[ count_chi ];
 					rotamers_( kk, jj, ii ).chi_sd(  ll ) = rotamer_stdvs[ count_chi ];
@@ -1735,10 +1786,13 @@ RotamericSingleResidueDunbrackLibrary< T >::read_from_binary( utility::io::izstr
 				rotamers_( kk, jj, ii ).rotE_dsecopsi()       = rotamer_neglnprob_d2dpsi2[ count_rots ];
 				rotamers_( kk, jj, ii ).rotE_dsecophipsi()    = rotamer_neglnprob_d4dphi2psi2[ count_rots ];
 				rotamers_( kk, jj, ii ).packed_rotno()        = ( Size ) packed_rotnos[ count_rots ];
+
+
 				++count_rots;
 			}
 		}
 	}
+
 	delete [] rotamer_means;
 	delete [] rotamer_stdvs;
 	delete [] rotamer_probs;
@@ -1766,6 +1820,98 @@ RotamericSingleResidueDunbrackLibrary< T >::read_from_binary( utility::io::izstr
 	}
 	delete [] packed_rotno_2_sorted_rotno;
 	}
+
+	/// Entropy setup once reading is finished
+	if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] )
+		setup_entropy_correction();
+}
+
+// Entropy
+template < Size T >
+void
+RotamericSingleResidueDunbrackLibrary< T >::setup_entropy_correction()
+{
+
+	Size ntotalbin( N_PHIPSI_BINS*N_PHIPSI_BINS );
+
+	// Iter again in order to reference ShanonEntropy
+	ShanonEntropy_.dimension( N_PHIPSI_BINS, N_PHIPSI_BINS );
+	S_dsecophi_.dimension(  N_PHIPSI_BINS, N_PHIPSI_BINS );
+	S_dsecopsi_.dimension(  N_PHIPSI_BINS, N_PHIPSI_BINS );
+	S_dsecophipsi_.dimension(  N_PHIPSI_BINS, N_PHIPSI_BINS );
+
+	// Get entropy values first
+	for ( Size jj = 1; jj <= N_PHIPSI_BINS; ++jj ) {
+		for ( Size kk = 1; kk <= N_PHIPSI_BINS; ++kk ) {
+			// Initialize
+			ShanonEntropy_( jj, kk ) = 0.0;
+			S_dsecophi_( jj, kk ) = 0.0;
+			S_dsecopsi_( jj, kk ) = 0.0;
+			S_dsecophipsi_( jj, kk ) = 0.0;
+
+			// Divide probability by psum in order to make probability normalized
+			// especially for semi-rotameric amino acids
+			Real psum( 0.0 );
+			for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii )
+				psum += rotamers_(jj,kk,ii).rotamer_probability();
+
+			// The values actually stored are positive sign ( == negative entropy )
+			// which corresponds to Free energy contribution by Entropy
+			for ( Size ii = 1; ii <= parent::n_packed_rots(); ++ii )
+				ShanonEntropy_( jj, kk ) += -rotamers_(jj,kk,ii).rotE() * rotamers_(jj,kk,ii).rotamer_probability() / psum;
+		}
+	}
+
+	/*
+	std::cout << std::setw(3) << "AA";
+	std::cout << " " << std::setw(6) << "Phi" << " " << std::setw(6) << "Psi";
+	std::cout << " " << std::setw(8) << "Prot1" << " " << std::setw(8) << "Prot2" << " " << std::setw(8) << "Prot3";
+	std::cout << " " << std::setw(8) << "S" << " " << std::setw(8) << "d2Sdphi2";
+	std::cout << " " << std::setw(8) << "d2Sdpsi2" << " " << std::setw(8) << "d4Sdp2p2";
+	std::cout << std::endl;
+	*/
+ 
+	// Derivatives
+	for ( Size jj = 1; jj <= N_PHIPSI_BINS; ++jj ) {
+		for ( Size kk = 1; kk <= N_PHIPSI_BINS; ++kk ) {
+			//  derivatives
+			// Let's do this later...
+			Real const dphi2( 4.0 * PHIPSI_BINRANGE * PHIPSI_BINRANGE );
+			Real const dpsi2( 4.0 * PHIPSI_BINRANGE * PHIPSI_BINRANGE );
+
+			Size jj_prv  = jj - 1;
+			Size jj_next = jj + 1;
+			Size kk_prv  = kk - 1;
+			Size kk_next = kk + 1;
+			if( jj == 1 )             jj_prv  = N_PHIPSI_BINS;
+			if( jj == N_PHIPSI_BINS ) jj_next = 1;
+			if( kk == 1 )             kk_prv  = N_PHIPSI_BINS;
+			if( kk == N_PHIPSI_BINS ) kk_next = 1;
+
+			S_dsecophi_( jj, kk ) = ( ShanonEntropy_(jj_next,kk) - ShanonEntropy_(jj_prv,kk) ) / dphi2;
+			S_dsecopsi_( jj, kk ) = ( ShanonEntropy_(jj,kk_next) - ShanonEntropy_(jj,kk_prv) ) / dpsi2;
+			S_dsecophipsi_( jj, kk ) = S_dsecophi_( jj, kk ) * S_dsecopsi_( jj, kk );
+
+			/*
+			// Just for print out
+			Real const phi = jj*PHIPSI_BINRANGE;
+			Real const psi = kk*PHIPSI_BINRANGE;
+
+			//if( ShanonEntropy_( jj, kk ) > 0.0 ){
+			std::cout << aa();
+			printf(" %6.1f %6.1f %8.5f %8.5f %8.5f %8.5f %8.5f %8.5f %8.5f\n",
+						 phi, psi, 
+						 rotamers_(jj,kk,1).rotamer_probability(),
+						 rotamers_(jj,kk,2).rotamer_probability(),
+						 rotamers_(jj,kk,3).rotamer_probability(),
+						 ShanonEntropy_( jj, kk ),
+						 S_dsecophi_( jj, kk ), S_dsecopsi_( jj, kk ),
+						 S_dsecophipsi_( jj, kk ) );
+			//}
+			*/
+		}
+	}
+	
 }
 
 /// @details Returns the three letter string of the next amino acid specified in the
@@ -1825,7 +1971,12 @@ RotamericSingleResidueDunbrackLibrary< T >::read_from_file(
 			infile >> three_letter_code;
 			if ( three_letter_code != my_name ) {
 				next_name = three_letter_code;
+
 				initialize_bicubic_splines();
+				/// Entropy setup once reading is finished
+				if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] )
+					setup_entropy_correction();
+
 				return next_name;
 			}/// else, we're still reading data for the intended amino acid, so let's continue...
 		}
@@ -1925,6 +2076,11 @@ RotamericSingleResidueDunbrackLibrary< T >::read_from_file(
 		}
 	}
 	initialize_bicubic_splines();
+
+	/// Entropy setup once reading is finished
+	if( basic::options::option[ basic::options::OptionKeys::corrections::score::dun_entropy_correction ] )
+		setup_entropy_correction();
+
 	return next_name; // if we arived here, we got to the end of the file, so return the empty string.
 }
 

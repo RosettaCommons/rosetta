@@ -28,6 +28,7 @@
 
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
 #include <utility/vector1.hh>
@@ -53,9 +54,9 @@ public:
 		return rotamer_;
 	}
 
+
 private:
 	DunbrackRotamer< T, Real > rotamer_;
-
 };
 
 template < Size T >
@@ -443,6 +444,9 @@ protected:
 		RotamerVector & rotamers
 	) const;
 
+	void setup_entropy_correction();
+	void setup_entropy_correction() const;
+
 private:
 
 	/// The (chi_mean, chi_sd, packed_rotno, and prob) data for the chi dihedrals
@@ -455,6 +459,11 @@ private:
 	/// given a phi/psi.  Indexed by (phi, psi, packed_rotno ).
 	ObjexxFCL::FArray3D< Size > packed_rotno_2_sorted_rotno_;
 
+	// Entropy correction
+	ObjexxFCL::FArray2D< Real > ShanonEntropy_;
+	ObjexxFCL::FArray2D< Real > S_dsecophi_;
+	ObjexxFCL::FArray2D< Real > S_dsecopsi_;
+	ObjexxFCL::FArray2D< Real > S_dsecophipsi_;
 
 	/// Maximum probability of any rotamer, stored by phi,psi bin.
 	/// Could be derived from rotset_ but stored here for easy lookup.

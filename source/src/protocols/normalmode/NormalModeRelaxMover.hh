@@ -56,7 +56,6 @@ public:
 	/// Pure virtual functions inside NMmover
 	virtual
 	void gen_coord_constraint( pose::Pose &pose,
-														 pose::Pose const &expose,
 														 utility::vector1< Vector > const &excrd ) = 0;
 
 	virtual 
@@ -125,12 +124,17 @@ class CartesianNormalModeMover : public protocols::normalmode::NormalModeRelaxMo
 {
 public:
 
+	CartesianNormalModeMover( core::pose::Pose const &, //pose
+														core::scoring::ScoreFunctionCOP sfxn, 
+														std::string const relaxmode );
+
 	CartesianNormalModeMover( core::pose::Pose const & pose,
 														core::scoring::ScoreFunctionCOP sfxn,
 														core::kinematics::MoveMapCOP mm,
 														std::string const mode = "CA",	
 														Real const distcut = 10.0,
 														std::string const relaxmode = "min" );
+
 	~CartesianNormalModeMover();
 
 	virtual
@@ -145,7 +149,6 @@ public:
 
 	virtual
 	void gen_coord_constraint( pose::Pose &pose,
-														 pose::Pose const &,
 														 utility::vector1< Vector > const &excrd );
 
 	virtual 
@@ -164,6 +167,10 @@ private:
 class TorsionNormalModeMover : public protocols::normalmode::NormalModeRelaxMover
 {
 public:
+
+	TorsionNormalModeMover( core::pose::Pose const &, //pose
+													core::scoring::ScoreFunctionCOP sfxn,
+													std::string const relaxmode );
 
 	TorsionNormalModeMover( core::pose::Pose const & pose,
 													core::scoring::ScoreFunctionCOP sfxn, 
@@ -186,7 +193,6 @@ public:
 
 	virtual
 	void gen_coord_constraint( pose::Pose &pose,
-														 pose::Pose const &expose,
 														 utility::vector1< Vector > const & );
 
 	virtual 
