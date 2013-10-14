@@ -107,7 +107,6 @@ public:
 	void get_pose( core::pose::Pose& ) const;
 
 	core::Size nstruct_index() const;
-
 	///@brief
 	core::Size nstruct_max() const;
 
@@ -144,11 +143,11 @@ public:
 
 	//there are no functions for deleting output info.  This is on purpose - use copy_without_output instead
 
-	Strings get_strings() { return long_strings_; }
+	Strings get_strings() const { return long_strings_; }
 
-	StringStringPairs get_string_string_pairs() { return string_string_pairs_; };
+	StringStringPairs get_string_string_pairs() const { return string_string_pairs_; };
 
-	StringRealPairs get_string_real_pairs() { return string_real_pairs_; };
+	StringRealPairs get_string_real_pairs() const { return string_real_pairs_; };
 
 	void set_status_prefix( std::string prefix ) {
 		status_prefix_ = prefix;

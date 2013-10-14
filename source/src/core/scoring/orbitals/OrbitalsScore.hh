@@ -304,6 +304,16 @@ public:
 private:
 	virtual core::Size version() const;
 
+	void compute_orb_orb_E(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::Size res1_orb,
+		core::Size res2_orb,
+		core::Size res1_atomno,
+		core::Size res2_atomno,
+		EnergyMap & emap
+	) const;
+
 private:
 	OrbitalsLookup const & lookup_table_;
 	core::Real const max_orbital_dist_squared_;//defaault 4A or 16A squared. based on statistics

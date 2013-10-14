@@ -45,6 +45,7 @@ public:
 private:
 	std::string chain_;
 	std::string directory_;
+    std::string prefix_;
 	bool hash_file_names_;
 };
 

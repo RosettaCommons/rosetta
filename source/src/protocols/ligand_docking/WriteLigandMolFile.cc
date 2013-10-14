@@ -11,6 +11,11 @@
 /// @brief  Ligand MolFile writer
 /// @author Sam DeLuca
 
+// MPI headers
+#ifdef USEMPI
+#include <mpi.h> //keep this first
+#endif
+
 #include <protocols/ligand_docking/WriteLigandMolFile.hh>
 #include <protocols/ligand_docking/WriteLigandMolFileCreator.hh>
 #include <utility/excn/Exceptions.hh>
@@ -21,6 +26,7 @@
 #include <protocols/jd2/Job.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
+#include <utility/io/ozstream.hh>
 #include <core/chemical/sdf/mol_writer.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
@@ -51,7 +57,7 @@ WriteLigandMolFileCreator::mover_name()
 }
 
 WriteLigandMolFile::WriteLigandMolFile() :
-	Mover("WriteLigandMolFile"), chain_(""),directory_(""),hash_file_names_(false)
+	Mover("WriteLigandMolFile"), chain_(""),directory_(""),prefix_(""),hash_file_names_(false)
 {
 
 }
@@ -61,7 +67,10 @@ WriteLigandMolFile::~WriteLigandMolFile()
 }
 
 WriteLigandMolFile::WriteLigandMolFile(WriteLigandMolFile const & that) :
-	Mover("WriteLigandMolFile"),chain_(that.chain_), directory_(that.directory_),hash_file_names_(that.hash_file_names_)
+	Mover("WriteLigandMolFile"),chain_(that.chain_),
+    directory_(that.directory_),
+    prefix_(that.prefix_),
+    hash_file_names_(that.hash_file_names_)
 {
 
 }
@@ -98,6 +107,10 @@ void WriteLigandMolFile::parse_my_tag(
 	{
 		throw utility::excn::EXCN_RosettaScriptsOption("'WriteLigandMolFile' requires the option 'directory'");
 	}
+    if(!tag->hasOption("prefix"))
+    {
+        throw utility::excn::EXCN_RosettaScriptsOption("'WriteLigandMolFile' requires the option 'prefix'");
+    }
 
 	std::string hash_status = tag->getOption<std::string>("hash_file_names","false");
 	if(hash_status == "true")
@@ -110,54 +123,57 @@ void WriteLigandMolFile::parse_my_tag(
 
 	chain_ = tag->getOption<std::string>("chain");
 	directory_ = tag->getOption<std::string>("directory");
+    prefix_ = tag->getOption<std::string>("prefix");
 
 }
 
 void WriteLigandMolFile::apply(core::pose::Pose & pose)
 {
+
+    
 	jd2::JobDistributor* job_dist(jd2::JobDistributor::get_instance());
 	jd2::JobOP current_job(job_dist->current_job());
 
-	std::string job_tag(job_dist->job_outputter()->output_name(current_job));
-	current_job->add_string_string_pair("job_tag",job_tag);
-	std::string tag_hash(utility::string_to_sha1(job_tag));
-	std::string subdir(tag_hash.substr(0,2));
-
-	utility::file::create_directory(directory_+"/"+subdir);
-	std::string output_path;
-	if(hash_file_names_)
-	{
-		output_path = directory_+"/"+subdir+"/"+tag_hash+".mol";
-	}else
-	{
-		output_path = directory_+"/"+subdir+"/"+job_tag+".mol";
-	}
-
-	core::chemical::sdf::MolWriter mol_writer("V2000");
-
+    core::chemical::sdf::MolWriter mol_writer("V2000");
+    
 	jd2::Job::StringStringPairs string_string_data(job_dist->current_job()->get_string_string_pairs());
 	jd2::Job::StringRealPairs string_real_data(job_dist->current_job()->get_string_real_pairs());
-
+    
 	std::map<std::string,std::string> job_data;
-
+    
 	for(jd2::Job::StringStringPairs::const_iterator it = string_string_data.begin(); it != string_string_data.end();++it )
 	{
 		job_data.insert(std::make_pair(it->first,it->second));
 	}
-
+    
 	for(jd2::Job::StringRealPairs::const_iterator it = string_real_data.begin(); it != string_real_data.end();++it )
 	{
 		job_data.insert(std::make_pair(it->first,utility::to_string(it->second)));
 	}
-
+    
 	mol_writer.set_job_data(job_data);
-
+    
 	core::Size chain_id = core::pose::get_chain_id_from_chain(chain_,pose);
 	core::Size residue_index = pose.conformation().chain_begin(chain_id);
 	core::conformation::ResidueCOP ligand_residue(pose.conformation().residue(residue_index));
-	write_ligand_tracer << "Writing ligand to " << output_path <<std::endl;
-	mol_writer.output_residue(output_path,ligand_residue);
-
+    
+    utility::file::create_directory(directory_);
+    
+#ifdef USEMPI
+	int mpi_rank;
+	MPI_Comm_rank (MPI_COMM_WORLD, &mpi_rank);/* get current process id */
+    std::string mpi_rank_string(utility::to_string(mpi_rank));
+    std::string output_file = directory_+"/"+prefix_+"_"+mpi_rank_string+".sdf.gz";
+#else
+    std::string output_file = directory_+"/"+prefix_+".sdf.gz";
+#endif
+    utility::io::ozstream output;
+    std::stringstream header;
+    output.open_append_if_existed( output_file, header);
+    
+    write_ligand_tracer << "Writing ligand to " << output_file <<std::endl;
+	mol_writer.output_residue(output,ligand_residue);
+    
 }
 
 }

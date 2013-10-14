@@ -157,6 +157,13 @@ InterfaceScoreCalculator::parse_my_tag(
 
 void InterfaceScoreCalculator::apply(core::pose::Pose & pose) {
 	protocols::jd2::JobOP job( protocols::jd2::JobDistributor::get_instance()->current_job() );
+	protocols::jd2::Job::StringStringPairs string_string_pairs(job->get_string_string_pairs());
+	if(string_string_pairs.find("native_path") != string_string_pairs.end())
+	{
+		std::string native_string(string_string_pairs.find("native_path")->second);
+		native_ = new core::pose::Pose;
+		core::import_pose::pose_from_pdb(*native_,native_string);
+	}
 	add_scores_to_job(pose, job);
 	append_ligand_docking_scores(pose, job);
 }

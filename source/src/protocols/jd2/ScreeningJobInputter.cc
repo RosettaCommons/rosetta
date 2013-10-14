@@ -13,15 +13,21 @@
 /// The ScreeningJobInputter takes in a JSON file using the -in:file:screening_job_file option
 /// This file is in the following format:
 /// {
-///		[
-///			{
-///				"group_name" : "group_name_a",
-///				"proteins" :
-///					["protein_a.pdb", "protein_b.pdb"],
-///				"ligands" :
-///					["ligand_a.pdb", "ligand_b.pdb"]
-///			}
-///		]
+///		"jobs" :
+///			[
+///				{
+///					"group_name" : "group_name_a",
+///					"proteins" :
+///						["protein_a.pdb", "protein_b.pdb"],
+///					"ligands" :
+///						["ligand_a.pdb", "ligand_b.pdb"]
+///				}
+///			]
+///		"params :
+///			[
+///			 	 "aaa.param",
+///			 	 "aab.param"
+//			 ]
 ///	}
 /// In this scheme, jobs will be created for all combinations of rpoteins and ligands, and the job will be tagged with
 /// "group_name" using a job string/real pair, in the form "input_group_name group_name_a"
@@ -32,13 +38,16 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <utility/io/izstream.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+
 #include <utility/json_spirit/json_spirit_reader.h>
+#include <utility/io/izstream.hh>
 
 #include <basic/Tracer.hh>
 
@@ -95,16 +104,48 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 	core::Size const nstruct( get_nstruct() );
 
 	utility::json_spirit::mValue job_json_data;
-	utility::json_spirit::mArray job_group_data;
+	utility::json_spirit::mObject job_object_data;
 	try
 	{
 		utility::json_spirit::read(data,job_json_data);
-		job_group_data = job_json_data.get_array();
+		job_object_data = job_json_data.get_obj();
 	}catch(std::runtime_error &)
 	{
 		throw utility::excn::EXCN_BadInput(
 			"screening file " + file_name + "is incorrectly formatted. "
-			"it must be a list of dicts. each dict should contain keys 'group_name', 'proteins' and 'ligands'");
+			"it must be a dict with two keys: 'params' containing a list of needed params, and "
+			"'jobs' which must be a list of dicts. each dict should contain keys 'group_name', 'proteins' and 'ligands'");
+	}
+
+
+	utility::json_spirit::mArray param_group_data;
+	try
+	{
+		param_group_data = job_object_data["params"].get_array();
+	}catch(std::runtime_error &)
+	{
+		throw utility::excn::EXCN_BadInput("the screening file " + file_name + " does not contain a 'params' section");
+	}
+
+	//parse params files and insert them into the chemical manager
+	if(param_group_data.size() > 0 )
+	{
+		for(core::Size i = 0; i < param_group_data.size(); ++i)
+		{
+			std::string param_name = param_group_data[i].get_str();
+			core::chemical::ChemicalManager::get_instance()->
+				nonconst_residue_type_set(core::chemical::FA_STANDARD).add_residue_type(core::chemical::FA_STANDARD,param_name);
+
+		}
+	}
+
+	utility::json_spirit::mArray job_group_data;
+	try
+	{
+		job_group_data = job_object_data["jobs"].get_array();
+	}catch(std::runtime_error & )
+	{
+		throw utility::excn::EXCN_BadInput("the screening file " + file_name + " does not contain a 'jobs' section");
 	}
 	for(core::Size i = 0; i < job_group_data.size();++i)
 	{
@@ -128,7 +169,7 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 			protein_path_data = group_map["proteins"].get_array();
 		}catch(std::runtime_error &)
 		{
-			throw utility::excn::EXCN_BadInput("a group in screening file " + file_name + " does not contain the element 'proteins' or is misformatted");
+			throw utility::excn::EXCN_BadInput("the group " + group_name +" in screening file " + file_name + " does not contain the element 'proteins' or is misformatted");
 		}
 
 		try
@@ -136,9 +177,17 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 			ligand_path_data = group_map["ligands"].get_array();
 		}catch(std::runtime_error &)
 		{
-			throw utility::excn::EXCN_BadInput("a group in screening file " + file_name + " does not contain the element 'ligands' or is misformatted");
+			throw utility::excn::EXCN_BadInput("the group " + group_name +" in screening file " + file_name + " does not contain the element 'ligands' or is misformatted");
 		}
 
+		//If we specify a native structure, store it
+		bool native_present = false;
+		std::string native_string;
+		if(group_map.find("native") != group_map.end())
+		{
+			native_string = group_map["native"].get_str();
+			native_present = true;
+		}
 		//Make a job for each combination of a protein and a ligand defined in the group
 		for(core::Size protein_path_index = 0; protein_path_index < protein_path_data.size();++protein_path_index)
 		{
@@ -155,6 +204,13 @@ void ScreeningJobInputter::fill_jobs(Jobs & jobs)
 					JobOP current_job = new Job(ijob,index);
 					//Tag the current job with the group name so that we can keep track of what is is
 					current_job->add_string_string_pair("input_group_name",group_name);
+					//Add the path to the native structure so that we can compute RMS values later
+					//This has to be explicitly supported at the protocol level.  It is not equivilent
+					//to -in:file:native
+					if(native_present)
+					{
+						current_job->add_string_string_pair("native_path",native_string);
+					}
 					jobs.push_back( current_job );
 					TR << "pushing " << input_tag << " nstruct index " << index << std::endl;
 				}//loop over nstruct

@@ -118,6 +118,9 @@ public:
 	void
 	add_residue_type( ResidueTypeOP new_type );
 
+	void
+	add_residue_type(std::string const & tag, std::string const &  filename);
+
 	/// @brief delete a residue type from the set (Use with care)
 	void
 	remove_residue_type(std::string const & name);

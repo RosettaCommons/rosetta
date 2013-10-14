@@ -416,6 +416,39 @@ OrbitalsScore::setup_for_derivatives_for_residue(
 }
 
 
+void OrbitalsScore::compute_orb_orb_E(
+	core::conformation::Residue const & res1,
+	core::conformation::Residue const & res2,
+	core::Size res1_orb,
+	core::Size res2_orb,
+	core::Size res1_atomno,
+	core::Size res2_atomno,
+	EnergyMap & emap
+) const
+{
+	core::Real orb_orb_E(0.0);
+	numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(res1_orb) );
+	numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(res2_orb) );
+	core::Real const orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
+	if(orb1_orb2_dist < 9){
+		core::Size const & orbital_type1(res1.orbital_type_index(res1_orb));
+		core::Size const & orbital_type2(res2.orbital_type_index(res2_orb));
+		core::Real const dist(std::sqrt(orb1_orb2_dist));
+		numeric::xyzVector< core::Real > const & Axyz(res1.xyz(res1_atomno));
+		numeric::xyzVector< core::Real > const & Dxyz(res2.xyz(res2_atomno));
+		core::Real const cosAOD(cos_of(Axyz, res1_Orbxyz, Dxyz));
+		core::Real const cosDOA(cos_of(Dxyz, res2_Orbxyz, Axyz));
+		core::Real d_deriv(0.0);
+		core::Real a_deriv(0.0);
+		lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, false);
+		scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E, emap ); //dummy value for htype given
+		orb_orb_E=0.0;
+		lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, false);
+		scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E,  emap ); //dummy value for htype given
+		orb_orb_E=0.0;
+	}
+}
+
 //TODO This function duplicates code from the one directly below it.  The function below could
 // Just call this function, provided that the extra function call, AtomID construction and
 // if statement evaluation don't cause measurable slow down.  It would improve the maintainability of the code.
@@ -430,8 +463,8 @@ void OrbitalsScore::get_orb_orb_E(
 	core::conformation::Residue const & res1(pose.conformation().residue(atom1.rsd()));
 	core::conformation::Residue const & res2(pose.conformation().residue(atom2.rsd()));
 	if(
-		res1.type().atom_is_backbone(atom1.atomno()) &&
-		res2.type().atom_is_backbone(atom2.atomno()) &&
+		!res1.type().atom_is_backbone(atom1.atomno()) &&
+		!res2.type().atom_is_backbone(atom2.atomno()) &&
 		res1.type().atom_type(atom1.atomno()).atom_has_orbital() &&
 		res2.type().atom_type(atom2.atomno()).atom_has_orbital() &&
 		orb_orb_rules(res1.atom_type_index(atom1.atomno()), res2.atom_type_index(atom2.atomno()))
@@ -452,26 +485,8 @@ void OrbitalsScore::get_orb_orb_E(
 					res2_orb_end = res2_orbs.end();
 					res2_orb != res2_orb_end; ++res2_orb
 			){
-				numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(*res1_orb) );
-				numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
-				core::Real const orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
-				if(orb1_orb2_dist < 16){
-					core::Size const & orbital_type1(res1.orbital_type_index(*res1_orb));
-					core::Size const & orbital_type2(res2.orbital_type_index(*res2_orb));
-					core::Real const dist(std::sqrt(orb1_orb2_dist));
-					numeric::xyzVector< core::Real > const & Axyz(res1.xyz(atom1.atomno()));
-					numeric::xyzVector< core::Real > const & Dxyz(res2.xyz(atom2.atomno()));
-					core::Real const cosAOD(cos_of(Axyz, res1_Orbxyz, Dxyz));
-					core::Real const cosDOA(cos_of(Dxyz, res2_Orbxyz, Axyz));
-					core::Real d_deriv(0.0);
-					core::Real a_deriv(0.0);
-					lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, false);
-					scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E, emap ); //dummy value for htype given
-					orb_orb_E=0.0;
-					lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, false);
-					scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E,  emap ); //dummy value for htype given
-					orb_orb_E=0.0;
-				}
+
+				compute_orb_orb_E(res1,res2,*res1_orb,*res2_orb,atom1.atomno(),atom2.atomno(),emap);
 			}
 		}
 	}
@@ -601,26 +616,7 @@ void OrbitalsScore::get_orb_orb_E(
 									res2_orb_end = res2_orbs.end();
 									res2_orb != res2_orb_end; ++res2_orb
 							){
-								numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(*res1_orb) );
-								numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
-								core::Real const orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
-								if(orb1_orb2_dist < 9){
-									core::Size const & orbital_type1(res1.orbital_type_index(*res1_orb));
-									core::Size const & orbital_type2(res2.orbital_type_index(*res2_orb));
-									core::Real const dist(std::sqrt(orb1_orb2_dist));
-									numeric::xyzVector< core::Real > const & Axyz(res1.xyz(*Aindex));
-									numeric::xyzVector< core::Real > const & Dxyz(res2.xyz(*Dindex));
-									core::Real const cosAOD(cos_of(Axyz, res1_Orbxyz, Dxyz));
-									core::Real const cosDOA(cos_of(Dxyz, res2_Orbxyz, Axyz));
-									core::Real d_deriv(0.0);
-									core::Real a_deriv(0.0);
-									lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, false);
-									scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E, emap ); //dummy value for htype given
-									orb_orb_E=0.0;
-									lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, false);
-									scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E,  emap ); //dummy value for htype given
-									orb_orb_E=0.0;
-								}
+								compute_orb_orb_E(res1,res2,*res1_orb,*res2_orb,*Aindex,*Dindex,emap);
 							}
 						}
 					}

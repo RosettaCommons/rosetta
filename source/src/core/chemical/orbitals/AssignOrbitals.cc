@@ -59,10 +59,6 @@ void AssignOrbitals::assign_orbitals( )
 		if(restype_->actcoord_atoms().size() != 0){
 
 			utility::vector1<Size> act_atoms =restype_->actcoord_atoms();
-					for(Size x=1; x<= restype_->actcoord_atoms().size(); ++x){
-
-			//std::cout << restype_->name3() << " " << restype_->atom_name(restype_->actcoord_atoms()[x]) << std::endl;
-		}
 			Aindex_ = restype_->actcoord_atoms()[2];
 			core::chemical::AtomType const & atmtype(restype_->atom_type(Aindex_));
 			if(!atmtype.is_virtual()){
@@ -172,9 +168,7 @@ void AssignOrbitals::assign_orbitals( )
 			if(atmtype.name() == "Nhis" && AObondedatoms_.size() < 2)
 			{
 				TR <<"WARNING: residue " << restype_->name() << " has an Nhis typed atom with < 2 bonds.  It is probably a C#N or something similar for which Rosetta has no reasonable atomtype.  This atom is not being assigned orbitals." <<std::endl;
-			}
-
-			if(atmtype.name() == "Nhis" && AObondedatoms_.size() > 1) {
+			}else if(atmtype.name() == "Nhis" && AObondedatoms_.size() > 1) {
 				core::Size atm_index2(AObondedatoms_[2]);//atom index of the only bonded neighbor.
 				//get the atom indices of the bonded neighbors of atm_index2.
 				utility::vector1<core::Size> neighbor_bonded_atms2(restype_->bonded_neighbor(atm_index2));
@@ -195,33 +189,39 @@ void AssignOrbitals::assign_orbitals( )
 				numeric::xyzVector<core::Real> vector_a(restype_->atom(Aindex_).ideal_xyz() - restype_->atom(atm_index2).ideal_xyz()   );
 				numeric::xyzVector<core::Real> vector_b( restype_->atom(Aindex_).ideal_xyz() - restype_->atom(atm_index3).ideal_xyz() );
 				numeric::xyzVector<core::Real> vector_ab_norm = vector_a.normalized()+vector_b.normalized();
+				//If this if statment evaluates false, Aindex_ represents the central atom in an azide.
+				//Currently, we don't assign orbitals, but we can fix this
+				if (vector_ab_norm != 0.0)
+				{
+					utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vectors;
+					orbital_xyz_vectors.push_back((vector_ab_norm.normalized()*AOdist_)+restype_->atom(Aindex_).ideal_xyz());
 
-				utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vectors;
-				orbital_xyz_vectors.push_back((vector_ab_norm.normalized()*AOdist_)+restype_->atom(Aindex_).ideal_xyz());
+					//utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vectors = cross_product_helper(Aindex_,atm_index2,atm_index3,AOdist_);
+					//add_orbitals_to_restype(atm_index2, atm_index3, /*orbital_info,*/ atmtype, "p", orbital_xyz_vectors);
 
-				//utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vectors = cross_product_helper(Aindex_,atm_index2,atm_index3,AOdist_);
-				//add_orbitals_to_restype(atm_index2, atm_index3, /*orbital_info,*/ atmtype, "p", orbital_xyz_vectors);
+					core::Real const phi(numeric::conversions::radians(180.0));
+					core::Real const theta(numeric::conversions::radians(54.365));
 
-				core::Real const phi(numeric::conversions::radians(180.0));
-				core::Real const theta(numeric::conversions::radians(54.365));
+					//core::Real const phi_De(numeric::conversions::radians(180.0));
+					//core::Real const theta_De(numeric::conversions::radians(70.0));
 
-				//core::Real const phi_De(numeric::conversions::radians(180.0));
-				//core::Real const theta_De(numeric::conversions::radians(70.0));
+					std::string orbital_type_full_name(make_orbital_type_name(atmtype, "p",AOhybridization_) );
+					std::string const orbital_element_name( make_orbital_element_name() );
 
-				std::string orbital_type_full_name(make_orbital_type_name(atmtype, "p",AOhybridization_) );
-				std::string const orbital_element_name( make_orbital_element_name() );
-
-				set_orbital_type_and_bond(Aindex_, orbital_element_name, orbital_type_full_name);
-				//set_orbital_type_and_bond(atm_index, orbital_element_name3, orbital_type_full_name);
-
-
-				std::string const stub1(strip_whitespace(restype_->atom_name(Aindex_)));
-				std::string const stub2(strip_whitespace(restype_->atom_name(atm_index2)));
-				std::string const stub3(strip_whitespace(restype_->atom_name(atm_index3)));
+					set_orbital_type_and_bond(Aindex_, orbital_element_name, orbital_type_full_name);
+					//set_orbital_type_and_bond(atm_index, orbital_element_name3, orbital_type_full_name);
 
 
-				restype_->set_orbital_icoor_id( orbital_element_name,phi,theta,AOdist_,stub1,stub2,stub3);
+					std::string const stub1(strip_whitespace(restype_->atom_name(Aindex_)));
+					std::string const stub2(strip_whitespace(restype_->atom_name(atm_index2)));
+					std::string const stub3(strip_whitespace(restype_->atom_name(atm_index3)));
 
+
+					restype_->set_orbital_icoor_id( orbital_element_name,phi,theta,AOdist_,stub1,stub2,stub3);
+				}else
+				{
+					TR <<"WARNING: residue " << restype_->name() << " has an Nhis typed atom that is the central N in an azide. It is not being assigned orbitals." <<std::endl;
+				}
 
 
 			}

@@ -175,6 +175,7 @@ sources = {
 		"roc_optimizer",
 		#"RotamerDump",
 		#"process_mdl",
+        "params_tester",
 		"generate_ligand_start_position_file",
 		"ligands_to_database",
 		#"map_testing"

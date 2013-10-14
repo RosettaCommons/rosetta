@@ -271,6 +271,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	is_adduct_( residue_type.is_adduct_ ),
 	variant_types_( residue_type.variant_types_ ),
 	numeric_properties_(residue_type.numeric_properties_),
+	string_properties_(residue_type.string_properties_),
 	aa_( residue_type.aa_ ),
 	rotamer_aa_( residue_type.rotamer_aa_ ),
 	name_( residue_type.name_),

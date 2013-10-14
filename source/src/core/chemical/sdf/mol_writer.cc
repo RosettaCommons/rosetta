@@ -209,6 +209,11 @@ std::list<std::string> MolWriter::compose_atoms(core::conformation::ResidueCOP r
 		core::chemical::AtomType const atom_type = residue->atom_type(index);
 		core::chemical::ResidueTypeCOP residue_type = & residue->type();
 		std::string element = atom_type.element();
+		//Rosetta stores elements as allcaps for whatever reason, this will turn CL -> Cl
+		if(element.size() == 2)
+		{
+			element[1] = tolower(element[1]);
+		}
 		core::Real charge = residue_type->atom(index).charge();
 		std::string atom_string;
 		core::Size hydrogen_count = 0;
@@ -293,7 +298,7 @@ std::list<std::string> MolWriter::compose_bonds(core::conformation::ResidueCOP r
 			{
 				continue;
 			}
-			std::cout << bond.lower << " " <<  bond.upper <<" " <<bond.bondType << std::endl;
+			//std::cout << bond.lower << " " <<  bond.upper <<" " <<bond.bondType << std::endl;
 			bond_data_set.push_back(bond);
 		}
 	}

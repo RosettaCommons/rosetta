@@ -1049,7 +1049,7 @@ def write_param_file(f, molfile, name, frag_id, base_confs, max_confs, amino_aci
         f.write("ICOOR_INTERNAL    O   -180.000000   59.200005    1.231015   C     CA  UPPER\n")
         f.write("ICOOR_INTERNAL  LOWER -150.000000   58.300003    1.328685   N     CA    C  \n")
         f.write("ICOOR_INTERNAL    H   -180.000000   60.849998    1.010000   N     CA  LOWER\n")
-    if write_pdb_rotamers:
+    if write_pdb_rotamers and os.path.exists("%s_conformers.pdb" % full_name):
         f.write("PDB_ROTAMERS %s_conformers.pdb\n" % full_name)
     #
     # XXX-FIXME:  still might need PROPERTIES, FIRST_SIDECHAIN_ATOM, ACT_COORD_ATOMS
@@ -1114,28 +1114,7 @@ def write_fragment_mol2(f, molfile, frag_id): #{{{
 #}}}
 def write_all_files(m, molfiles, num_frags, options, suffix=""): #{{{
     '''Returns 0 for success, non-zero error code for fatal error'''
-    if not options.no_param:
-        for i in range(num_frags):
-            if num_frags == 1: param_file = "%s%s.params" % (options.pdb, suffix)
-            else: param_file = "%s%i%s.params" % (options.pdb, i+1, suffix)
-            if not options.clobber and os.path.exists(param_file):
-                print "File %s already exists -- aborting!" % param_file
-                print "Use --clobber to overwrite existing files."
-                return 2
-            else:
-                write_param_file(param_file, m, options.name, i+1, len(molfiles), options.max_confs, options.amino_acid, long_names=options.long_names, write_pdb_rotamers=options.conformers_in_one_file)
-                print "Wrote params file %s" % param_file
-    if options.kinemage is not None:
-        kin_file = options.kinemage
-        dot = kin_file.rfind(".")
-        if dot != -1: kin_file = kin_file[:dot] + suffix + kin_file[dot:]
-        if not options.clobber and os.path.exists(kin_file):
-            print "File %s already exists -- aborting!" % kin_file
-            print "Use --clobber to overwrite existing files."
-            return 3
-        else:
-            write_ligand_kinemage(kin_file, m)
-            print "Wrote kinemage file %s" % kin_file
+    
     if not options.no_pdb:
         if options.conformers_in_one_file:
             pdb_file = "%s%s.pdb" % (options.pdb,suffix)
@@ -1167,6 +1146,32 @@ def write_all_files(m, molfiles, num_frags, options, suffix=""): #{{{
                         else:
                             sys.exit(e)   
                     print "Wrote PDB file %s" % pdb_file
+    if not options.no_param:
+        for i in range(num_frags):
+            if num_frags == 1: param_file = "%s%s.params" % (options.pdb, suffix)
+            else: param_file = "%s%i%s.params" % (options.pdb, i+1, suffix)
+            if not options.clobber and os.path.exists(param_file):
+                print "File %s already exists -- aborting!" % param_file
+                print "Use --clobber to overwrite existing files."
+                return 2
+            else:
+                if len(molfiles) > 1:
+                    write_param_file(param_file, m, options.name, i+1, len(molfiles), options.max_confs, options.amino_acid, long_names=options.long_names, write_pdb_rotamers=options.conformers_in_one_file)
+                else:
+                    write_param_file(param_file, m, options.name, i+1, len(molfiles), options.max_confs, options.amino_acid, long_names=options.long_names, write_pdb_rotamers=False)
+                print "Wrote params file %s" % param_file
+    if options.kinemage is not None:
+        kin_file = options.kinemage
+        dot = kin_file.rfind(".")
+        if dot != -1: kin_file = kin_file[:dot] + suffix + kin_file[dot:]
+        if not options.clobber and os.path.exists(kin_file):
+            print "File %s already exists -- aborting!" % kin_file
+            print "Use --clobber to overwrite existing files."
+            return 3
+        else:
+            write_ligand_kinemage(kin_file, m)
+            print "Wrote kinemage file %s" % kin_file
+
     if num_frags > 1:
         for i in range(num_frags):
             mol2_file = "%s%i%s.mol2" % (options.pdb, i+1, suffix)

@@ -733,6 +733,23 @@ ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
 	aas_defined_.unique();
 }
 
+void ResidueTypeSet::add_residue_type(std::string const & tag, std::string const & filename)
+{
+	AtomTypeSetCAP atom_types;
+	ElementSetCAP elements;
+	MMAtomTypeSetCAP mm_atom_types;
+	orbitals::OrbitalTypeSetCAP orbital_types;
+
+	atom_types = ChemicalManager::get_instance()->atom_type_set( tag );
+	elements = ChemicalManager::get_instance()->element_set( tag );
+	mm_atom_types = ChemicalManager::get_instance()->mm_atom_type_set( tag );
+	orbital_types = ChemicalManager::get_instance()->orbital_type_set(tag);
+
+	ResidueTypeOP rsd_type( read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_types, this ) );
+	add_residue_type(rsd_type);
+
+}
+
 void ResidueTypeSet::remove_residue_type(std::string const & name)
 {
 

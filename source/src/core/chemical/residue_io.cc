@@ -588,7 +588,8 @@ read_topology_file(
 		}else if (tag == "STRING_PROPERTY" ) {
 			std::string value;
 			l >> tag >> value;
-
+			rsd->add_string_property(tag,value);
+			
 		}else if ( tag == "VARIANT" ) {
 			l >> tag;
 			while ( !l.fail() ) {
