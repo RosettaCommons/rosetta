@@ -141,7 +141,7 @@ public:
 
 	void test_orbital_deriv_check_w_total_flexibility_pci_cation_pi()
 	{
-		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::pose::Pose pose = create_test_in_pdb_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_cation_pi, 1 );
 		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_cation_pi: " << sfxn(pose) << std::endl;
@@ -152,7 +152,7 @@ public:
 
 	void test_orbital_deriv_check_w_total_flexibility_pci_pi_pi()
 	{
-		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::pose::Pose pose = create_test_in_pdb_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_pi_pi, 1 );
 		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_pi_pi: " << sfxn(pose) << std::endl;
@@ -163,7 +163,7 @@ public:
 
 	void test_orbital_deriv_check_w_total_flexibility_orbitals_hpol_bb()
 	{
-		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::pose::Pose pose = create_test_in_pdb_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( orbitals_hpol_bb, 1);
 		std::cout << "test_orbital_deriv_check_w_total_flexibility_orbitals_hpol_bb: " << sfxn(pose) << std::endl;
@@ -174,7 +174,7 @@ public:
 
 	void test_orbital_deriv_check_w_total_flexibility_pci_salt_bridge()
 	{
-		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::pose::Pose pose = create_test_in_pdb_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_salt_bridge, 1);
 		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_salt_bridge: " << sfxn(pose) << std::endl;
@@ -185,7 +185,7 @@ public:
 
 	void test_orbital_deriv_check_w_total_flexibility_pci_hbond()
 	{
-		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::pose::Pose pose = create_test_in_pdb_pose();
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( pci_hbond, 1);
 		std::cout << "test_orbital_deriv_check_w_total_flexibility_pci_hbond: " << sfxn(pose) << std::endl;

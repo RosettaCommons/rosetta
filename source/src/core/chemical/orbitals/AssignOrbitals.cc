@@ -59,10 +59,10 @@ void AssignOrbitals::assign_orbitals( )
 		if(restype_->actcoord_atoms().size() != 0){
 
 			utility::vector1<Size> act_atoms =restype_->actcoord_atoms();
-			/*		for(Size x=1; x<= restype_->actcoord_atoms().size(); ++x){
+					for(Size x=1; x<= restype_->actcoord_atoms().size(); ++x){
 
-			std::cout << restype_->name3() << " " << restype_->atom_name(restype_->actcoord_atoms()[x]) << std::endl;
-		}*/
+			//std::cout << restype_->name3() << " " << restype_->atom_name(restype_->actcoord_atoms()[x]) << std::endl;
+		}
 			Aindex_ = restype_->actcoord_atoms()[2];
 			core::chemical::AtomType const & atmtype(restype_->atom_type(Aindex_));
 			if(!atmtype.is_virtual()){

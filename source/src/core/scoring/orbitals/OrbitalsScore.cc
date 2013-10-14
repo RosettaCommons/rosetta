@@ -477,6 +477,93 @@ void OrbitalsScore::get_orb_orb_E(
 	}
 }
 
+
+/*
+void OrbitalsScore::cycle_through_orb_orb_interactions(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		EnergyMap & emap
+){
+
+	for (
+			chemical::AtomIndices::const_iterator
+			Aindex = res1.atoms_with_orb_index().begin(),
+			Aindex_end = res1.atoms_with_orb_index().end();
+			Aindex != Aindex_end; ++Aindex
+	){
+		if ( !res1.atom_is_backbone(*Aindex) ) {
+			for (
+					chemical::AtomIndices::const_iterator
+					Dindex = res2.atoms_with_orb_index().begin(),
+					Dindex_end = res2.atoms_with_orb_index().end();
+					Dindex != Dindex_end; ++Dindex
+			)
+			{
+				if(!res2.atom_is_backbone(*Dindex)){
+					if(orb_orb_rules(res1.atom_type_index(*Aindex),res2.atom_type_index(*Dindex) )){
+						utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(*Aindex));
+						for(
+								utility::vector1< core::Size >::const_iterator
+								res1_orb = res1_orbs.begin(),
+								res1_orb_end = res1_orbs.end();
+								res1_orb != res1_orb_end; ++res1_orb
+						){
+							utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
+							for(
+									utility::vector1< core::Size >::const_iterator
+									res2_orb = res2_orbs.begin(),
+									res2_orb_end = res2_orbs.end();
+									res2_orb != res2_orb_end; ++res2_orb
+							){
+								numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(*res1_orb) );
+								numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
+								core::Real const orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
+								if(orb1_orb2_dist < 16){
+									calculate_orb_orb_info_for_E(res1, res2, *res1_orb, *res2_orb, *Aindex, *Dindex, orb1_orb2_dist, emap);
+
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+void OrbitalsScore::calculate_orb_orb_info_for_E(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::Size const & res1_orb,
+		core::Size const & res2_orb,
+		core::Size const & Aindex,
+		core::Size const & Dindex,
+		core::Real const & dist_squared,
+		EnergyMap & emap
+){
+	numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(res1_orb) );
+	numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(res2_orb) );
+	core::Size const & orbital_type1(res1.orbital_type_index(res1_orb));
+	core::Size const & orbital_type2(res2.orbital_type_index(res2_orb));
+	core::Real const dist(std::sqrt(dist_squared));
+	numeric::xyzVector< core::Real > const & Axyz(res1.xyz(Aindex));
+	numeric::xyzVector< core::Real > const & Dxyz(res2.xyz(Dindex));
+	core::Real const cosAOD(cos_of(Axyz, res1_Orbxyz, Dxyz));
+	core::Real const cosDOA(cos_of(Dxyz, res2_Orbxyz, Axyz));
+	core::Real d_deriv(0.0);
+	core::Real a_deriv(0.0);
+	lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, false);
+	scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E, emap ); //dummy value for htype given
+	orb_orb_E=0.0;
+	lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, false);
+	scfxn_rules_for_energy(false, false, orbital_type1, lookup_table_.Hpol_scOrbH, orbital_type2, orb_orb_E,  emap ); //dummy value for htype given
+	orb_orb_E=0.0;
+
+}
+*/
+
+
 void OrbitalsScore::get_orb_orb_E(
 	core::conformation::Residue const & res1,
 	core::conformation::Residue const & res2,
@@ -517,7 +604,7 @@ void OrbitalsScore::get_orb_orb_E(
 								numeric::xyzVector< core::Real > const & res1_Orbxyz(res1.orbital_xyz(*res1_orb) );
 								numeric::xyzVector< core::Real > const & res2_Orbxyz(res2.orbital_xyz(*res2_orb) );
 								core::Real const orb1_orb2_dist= res1_Orbxyz.distance_squared(res2_Orbxyz);
-								if(orb1_orb2_dist < 16){
+								if(orb1_orb2_dist < 9){
 									core::Size const & orbital_type1(res1.orbital_type_index(*res1_orb));
 									core::Size const & orbital_type2(res2.orbital_type_index(*res2_orb));
 									core::Real const dist(std::sqrt(orb1_orb2_dist));
@@ -760,7 +847,7 @@ void OrbitalsScore::get_orb_H_distance_and_energy(
 				//then we need to check if the orbital we are looking at is the action center orbital. If it is, then we use a separate
 				//energy than if it were not. This is done because the action center orbital has a different angle associated with the acceptor
 				//orbital hydrogen angle. why? because there is no index for action centers, thefore the Acceptor is the first action center atom
-				bool const working_with_action_center_orbital(
+				bool const working_with_action_center_orbital = false;(
 					(( res1.aa() == chemical::aa_tyr || res1.aa() == chemical::aa_phe || res1.aa() == chemical::aa_trp ) && *orbital_index <= 2 ));
 				lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_type, dist, cosAOH, sc_energy, d_deriv, a_deriv, false, working_with_action_center_orbital );
 				scfxn_rules_for_energy(true, bb_h_flag, orbital_type, htype, 0, sc_energy, emap);
@@ -994,8 +1081,6 @@ OrbitalsScore::assign_orb_orb_derivs(
 			Aindex != Aindex_end; ++Aindex
 	){
 		if ( !res1.atom_is_backbone(*Aindex) ) {
-			numeric::xyzVector< core::Real > const pA(res1.xyz(*Aindex)); // the xyz of the acceptor
-			utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(*Aindex));
 			for (
 					chemical::AtomIndices::const_iterator
 					Dindex = res2.atoms_with_orb_index().begin(),
@@ -1004,30 +1089,33 @@ OrbitalsScore::assign_orb_orb_derivs(
 			)
 			{
 				if(!res2.atom_is_backbone(*Dindex)){
-					numeric::xyzVector< core::Real > const pD(res2.xyz(*Dindex)); // the xyz of the donor
-					utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
-					for(
-							utility::vector1< core::Size >::const_iterator
-							res1_orb = res1_orbs.begin(),
-							res1_orb_end = res1_orbs.end();
-							res1_orb != res1_orb_end; ++res1_orb
-					){
-						numeric::xyzVector< core::Real > const pAO(res1.orbital_xyz(*res1_orb) ); // the xyz of the acceptor orbital
-						core::Size orbital_type1 = res1.orbital_type_index(*res1_orb);
-						core::Size const orbital1_surrogate_atom = surrogate_atom_for_orbital( res1, *Aindex, chemical::orbitals::orbital_type_enum( orbital_type1 ) );
+					if(orb_orb_rules(res1.atom_type_index(*Aindex),res2.atom_type_index(*Dindex))  ){
+						utility::vector1< core::Size > const & res1_orbs(res1.bonded_orbitals(*Aindex));
 						for(
 								utility::vector1< core::Size >::const_iterator
-								res2_orb = res2_orbs.begin(),
-								res2_orb_end = res2_orbs.end();
-								res2_orb != res2_orb_end; ++res2_orb
+								res1_orb = res1_orbs.begin(),
+								res1_orb_end = res1_orbs.end();
+								res1_orb != res1_orb_end; ++res1_orb
 						){
+							utility::vector1< core::Size > const & res2_orbs(res2.bonded_orbitals(*Dindex));
+							for(
+									utility::vector1< core::Size >::const_iterator
+									res2_orb = res2_orbs.begin(),
+									res2_orb_end = res2_orbs.end();
+									res2_orb != res2_orb_end; ++res2_orb
+							){
+								numeric::xyzVector< core::Real > const pD(res2.xyz(*Dindex)); // the xyz of the donor
+								numeric::xyzVector< core::Real > const pA(res1.xyz(*Aindex)); // the xyz of the acceptor
+								numeric::xyzVector< core::Real > const pAO(res1.orbital_xyz(*res1_orb) ); // the xyz of the acceptor orbital
+								core::Size orbital_type1 = res1.orbital_type_index(*res1_orb);
+								core::Size const orbital1_surrogate_atom = surrogate_atom_for_orbital( res1, *Aindex, chemical::orbitals::orbital_type_enum( orbital_type1 ) );
 
-							if(res1.atom_type_index(*Aindex),res2.atom_type_index(*Dindex)  ){
+
 								numeric::xyzVector< core::Real > const pDO(res2.orbital_xyz(*res2_orb) ); // the xyz of the donor orbital
 								core::Size orbital_type2 = res2.orbital_type_index(*res2_orb);
 								core::Size const orbital2_surrogate_atom = surrogate_atom_for_orbital( res2, *Dindex, chemical::orbitals::orbital_type_enum( orbital_type2 ) );
 								core::Real const orb1_orb2_dist= pAO.distance_squared(pDO);
-								if(orb1_orb2_dist < 16){
+								if(orb1_orb2_dist < 9){
 									core::Real const dist(std::sqrt(orb1_orb2_dist));
 
 									core::Real const cosAOD(cos_of(pA, pAO, pD));
@@ -1037,81 +1125,82 @@ OrbitalsScore::assign_orb_orb_derivs(
 
 									{ // scope
 
-									/// first evaluate the derivative for the pAO-pDO distance and the "D--DO--A" angle
-									Real d_deriv=0;
-									Real a_deriv=0;
-									lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, true);
+										/// first evaluate the derivative for the pAO-pDO distance and the "D--DO--A" angle
+										Real d_deriv=0;
+										Real a_deriv=0;
+										lookup_table_.OrbOrbDist_cosDOA_energy(orbital_type1, orbital_type2, dist, cosDOA, orb_orb_E, d_deriv, a_deriv, true);
 
-									Vector f1ad(0),f2ad(0);
-									Vector f1ao(0),f2ao(0);
-									Vector f1aa(0),f2aa(0);
-									core::Real tau(0.0);
-									numeric::deriv::angle_p1_deriv( pD, pDO, pA, tau, f1ad, f2ad  );
-									numeric::deriv::angle_p2_deriv( pD, pDO, pA, tau, f1ao, f2ao  );
-									numeric::deriv::angle_p1_deriv( pA, pDO, pD, tau, f1aa, f2aa  );
+										Vector f1ad(0),f2ad(0);
+										Vector f1ao(0),f2ao(0);
+										Vector f1aa(0),f2aa(0);
+										core::Real tau(0.0);
+										numeric::deriv::angle_p1_deriv( pD, pDO, pA, tau, f1ad, f2ad  );
+										numeric::deriv::angle_p2_deriv( pD, pDO, pA, tau, f1ao, f2ao  );
+										numeric::deriv::angle_p1_deriv( pA, pDO, pD, tau, f1aa, f2aa  );
 
-									Real const neg_sine_tau = -sin( tau ); // d cos(theta) / d theta;
+										Real const neg_sine_tau = -sin( tau ); // d cos(theta) / d theta;
 
-									r2_atom_derivs[ *Dindex ].f1() += weight * neg_sine_tau * a_deriv * f1ad;
-									r2_atom_derivs[ *Dindex ].f2() += weight * neg_sine_tau * a_deriv * f2ad;
+										r2_atom_derivs[ *Dindex ].f1() += weight * neg_sine_tau * a_deriv * f1ad;
+										r2_atom_derivs[ *Dindex ].f2() += weight * neg_sine_tau * a_deriv * f2ad;
 
-									r2_atom_derivs[ orbital2_surrogate_atom ].f1() += weight * neg_sine_tau * a_deriv * f1ao;
-									r2_atom_derivs[ orbital2_surrogate_atom ].f2() += weight * neg_sine_tau * a_deriv * f2ao;
+										r2_atom_derivs[ orbital2_surrogate_atom ].f1() += weight * neg_sine_tau * a_deriv * f1ao;
+										r2_atom_derivs[ orbital2_surrogate_atom ].f2() += weight * neg_sine_tau * a_deriv * f2ao;
 
-									r1_atom_derivs[ *Aindex ].f1() += weight * neg_sine_tau * a_deriv * f1aa;
-									r1_atom_derivs[ *Aindex ].f2() += weight * neg_sine_tau * a_deriv * f2aa;
+										r1_atom_derivs[ *Aindex ].f1() += weight * neg_sine_tau * a_deriv * f1aa;
+										r1_atom_derivs[ *Aindex ].f2() += weight * neg_sine_tau * a_deriv * f2aa;
 
-									Vector f1ddo(0),f2ddo(0);
-									Real dis(0.0);
-									numeric::deriv::distance_f1_f2_deriv( pDO, pAO, dis, f1ddo, f2ddo );
+										Vector f1ddo(0),f2ddo(0);
+										Real dis(0.0);
+										numeric::deriv::distance_f1_f2_deriv( pDO, pAO, dis, f1ddo, f2ddo );
 
-									r2_atom_derivs[ orbital2_surrogate_atom ].f1() += weight * d_deriv * f1ddo;
-									r2_atom_derivs[ orbital2_surrogate_atom ].f2() += weight * d_deriv * f2ddo;
+										r2_atom_derivs[ orbital2_surrogate_atom ].f1() += weight * d_deriv * f1ddo;
+										r2_atom_derivs[ orbital2_surrogate_atom ].f2() += weight * d_deriv * f2ddo;
 
-									r1_atom_derivs[ orbital1_surrogate_atom ].f1() -= weight * d_deriv * f1ddo;
-									r1_atom_derivs[ orbital1_surrogate_atom ].f2() -= weight * d_deriv * f2ddo;
+										r1_atom_derivs[ orbital1_surrogate_atom ].f1() -= weight * d_deriv * f1ddo;
+										r1_atom_derivs[ orbital1_surrogate_atom ].f2() -= weight * d_deriv * f2ddo;
 									}
 
 									{ // scope
 
-									/////////
-									//this starts the AOH derivative calculation
+										/////////
+										//this starts the AOH derivative calculation
 
-									Real d_deriv=0;
-									Real a_deriv=0;
-									lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, true);
+										Real d_deriv=0;
+										Real a_deriv=0;
+										lookup_table_.OrbOrbDist_cosAOD_energy(orbital_type1, orbital_type2, dist, cosAOD, orb_orb_E, d_deriv, a_deriv, true);
 
-									Vector f1ad(0),f2ad(0);
-									Vector f1ao(0),f2ao(0);
-									Vector f1aa(0),f2aa(0);
-									Real tau=0;
-									numeric::deriv::angle_p1_deriv( pA, pAO, pD, tau, f1aa, f2aa  );
-									numeric::deriv::angle_p2_deriv( pA, pAO, pD, tau, f1ao, f2ao  );
-									numeric::deriv::angle_p1_deriv( pD, pAO, pA, tau, f1ad, f2ad  );
+										Vector f1ad(0),f2ad(0);
+										Vector f1ao(0),f2ao(0);
+										Vector f1aa(0),f2aa(0);
+										Real tau=0;
+										numeric::deriv::angle_p1_deriv( pA, pAO, pD, tau, f1aa, f2aa  );
+										numeric::deriv::angle_p2_deriv( pA, pAO, pD, tau, f1ao, f2ao  );
+										numeric::deriv::angle_p1_deriv( pD, pAO, pA, tau, f1ad, f2ad  );
 
-									Real const neg_sine_tau = -sin( tau ); // d cos(theta) / d theta;core::Size orbital_surrogate_atom_index = atom_index;
+										Real const neg_sine_tau = -sin( tau ); // d cos(theta) / d theta;core::Size orbital_surrogate_atom_index = atom_index;
 
-									r1_atom_derivs[ *Aindex ].f1() += weight * neg_sine_tau * a_deriv * f1aa;
-									r1_atom_derivs[ *Aindex ].f2() += weight * neg_sine_tau * a_deriv * f2aa;
+										r1_atom_derivs[ *Aindex ].f1() += weight * neg_sine_tau * a_deriv * f1aa;
+										r1_atom_derivs[ *Aindex ].f2() += weight * neg_sine_tau * a_deriv * f2aa;
 
-									r1_atom_derivs[ orbital1_surrogate_atom ].f1() += weight * neg_sine_tau * a_deriv * f1ao;
-									r1_atom_derivs[ orbital1_surrogate_atom ].f2() += weight * neg_sine_tau * a_deriv * f2ao;
+										r1_atom_derivs[ orbital1_surrogate_atom ].f1() += weight * neg_sine_tau * a_deriv * f1ao;
+										r1_atom_derivs[ orbital1_surrogate_atom ].f2() += weight * neg_sine_tau * a_deriv * f2ao;
 
-									r2_atom_derivs[ *Dindex ].f1() += weight * neg_sine_tau * a_deriv * f1ad;
-									r2_atom_derivs[ *Dindex ].f2() += weight * neg_sine_tau * a_deriv * f2ad;
+										r2_atom_derivs[ *Dindex ].f1() += weight * neg_sine_tau * a_deriv * f1ad;
+										r2_atom_derivs[ *Dindex ].f2() += weight * neg_sine_tau * a_deriv * f2ad;
 
-									Vector f1dao(0), f2dao(0);
-									Real dis= 0.0;
-									numeric::deriv::distance_f1_f2_deriv( pAO, pDO, dis, f1dao, f2dao );
+										Vector f1dao(0), f2dao(0);
+										Real dis= 0.0;
+										numeric::deriv::distance_f1_f2_deriv( pAO, pDO, dis, f1dao, f2dao );
 
-									r1_atom_derivs[ orbital1_surrogate_atom ].f1() += weight * d_deriv * f1dao;
-									r1_atom_derivs[ orbital1_surrogate_atom ].f2() += weight * d_deriv * f2dao;
+										r1_atom_derivs[ orbital1_surrogate_atom ].f1() += weight * d_deriv * f1dao;
+										r1_atom_derivs[ orbital1_surrogate_atom ].f2() += weight * d_deriv * f2dao;
 
-									r2_atom_derivs[ orbital2_surrogate_atom ].f1() -= weight * d_deriv * f1dao;
-									r2_atom_derivs[ orbital2_surrogate_atom ].f2() -= weight * d_deriv * f2dao;
+										r2_atom_derivs[ orbital2_surrogate_atom ].f1() -= weight * d_deriv * f1dao;
+										r2_atom_derivs[ orbital2_surrogate_atom ].f2() -= weight * d_deriv * f2dao;
+									}
+
 								}
 
-								}
 							}
 						}
 					}
@@ -1224,7 +1313,7 @@ void OrbitalsScore::assign_orb_H_derivs(
 			//energy than if it were not. This is done because the action center orbital has a different angle associated with the acceptor
 			//orbital hydrogen angle. why? because there is no index for action centers, thefore the Acceptor is the first action center atom
 
-			bool const working_with_action_center_orbital(
+			bool const working_with_action_center_orbital = (
 				(( res1.aa() == chemical::aa_tyr || res1.aa() == chemical::aa_phe || res1.aa() == chemical::aa_trp ) && *orbital_index <= 2 ));
 			lookup_table_.OrbHdist_cosAOH_energy(htype, orbital_lookup_type, OrbHdist, cosAOH, energy, d_deriv, a_deriv, true, working_with_action_center_orbital );
 			//std::cout << "AOH: " << res1.seqpos() << " " << res2.seqpos() << " " << weight << " " << energy << " " << d_deriv << " " << a_deriv << std::endl;
