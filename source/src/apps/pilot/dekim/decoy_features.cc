@@ -11,9 +11,6 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-
-#include <basic/options/option.hh>
-
 #include <core/init/init.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
@@ -38,6 +35,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/contactMap.OptionKeys.gen.hh>
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -150,7 +148,7 @@ public:
 				} else {
 					distance = pose.residue(i).xyz("CB").distance( pose.residue(j).xyz("CB") );
 				}
-				if ( distance > 8.0 ) continue;
+				if ( distance > option[contactMap::distance_cutoff] ) continue;
 
 				std::pair<Size,Size> contact(i,j);
 				contact_counts_[contact]++;
@@ -285,7 +283,7 @@ main( int argc, char * argv [] )
 				} else {
 					distance = nativePose->residue(i).xyz("CB").distance( nativePose->residue(j).xyz("CB") );
 				}
-				if ( distance > 8.0 ) continue;
+				if ( distance > option[contactMap::distance_cutoff] ) continue;
 				std::cout << "NC " << i << " " << j << std::endl;
       } //  for ( unsigned int j = 1; j <= pose.total_residue(); ++j )
     }   // for ( unsigned int i = 1; i <= pose.total_residue(); ++i )

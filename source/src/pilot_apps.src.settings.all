@@ -99,7 +99,7 @@ sources = {
 	],
 	"pilot/brunette" : [
 		#"abego_predict",
-        #"aln_to_disulf",
+        "aln_to_disulf",
         #"armEval",
         #"calcFractionFolded",
         #"dumpPhiPsiStats",
