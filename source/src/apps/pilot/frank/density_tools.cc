@@ -36,6 +36,7 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
+#include <numeric/constants.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <core/kinematics/Jump.hh>
@@ -185,7 +186,7 @@ densityTools()
 	utility::vector1< core::Real > resobins, mapI, mapIprime, modelI, modelSum, modelmapFSC;
 	utility::vector1< core::Real > mapAltI, mapmapFSC;
 	utility::vector1< core::Real > perResCC;
-	Real rscc, fsc=0, mm_rscc, mm_fsc=0;
+	Real rscc, fsc=0, mm_rscc, mm_fsc=0, estErr=0;
 
 	// resolution limits for analysis
 	core::Real hires = option[ denstools::hires ]();
@@ -270,6 +271,26 @@ densityTools()
 		for (Size i=1; i<=resobins.size(); ++i)
 			fsc+=modelmapFSC[i];
 		fsc /= resobins.size();
+
+		// estimated model error
+		// linear fit ln(sqrt(fsc)) versus S^2 in each bin
+		{
+			using numeric::constants::d::pi;
+			core::Real sumXX=0.0, sumXY=0.0;
+			for (Size i=1; i<=resobins.size(); ++i) {
+				if (modelmapFSC[i] < 1e-8) continue;
+				sumXX += resobins[i]*resobins[i];
+				sumXY += log((modelmapFSC[i]))*resobins[i];
+			}
+
+			if (sumXX == 0) {
+				std::cerr << "ERROR! fsc negitive over all resolution range!" << std::endl;
+			} else {
+				// TO DO!  automatically choose a reasonable resolution range
+				Real linest = sumXY/sumXX;
+				estErr = sqrt( -linest / (8/3*pi*pi));
+			}
+		}
 	}
 
 	// [5] optionally: rescale maps to target intensity
@@ -323,8 +344,9 @@ densityTools()
 	}
 
 	// compact
+	std::cerr << "------" << std::endl;
 	if (userpose) {
-		std::cerr << pdbfile << " " << fsc << " " << rscc << std::endl;
+		std::cerr << pdbfile << " fsc:" << fsc << " rscc:" << rscc  << " estErr:" << estErr << std::endl;
 	}
 	if (usermap) {
 		std::cerr << option[ edensity::alt_mapfile ]() << " " << mm_fsc << " " << mm_rscc << std::endl;
