@@ -363,30 +363,6 @@ SymmetricConformation::set_jump( int const jump_number, kinematics::Jump const &
 	}
 }
 
-void
-SymmetricConformation::set_jump_now( int const jump_number, kinematics::Jump const & new_jump )
-{
-	typedef SymmetryInfo::AtomIDs AtomIDs;
-	typedef SymmetryInfo::Clones Clones;
-
-	TR.Trace << "SymmetricConformation: set_jump jump_number: " << jump_number << std::endl;
-
-	// clear cached transforms
-	Tsymm_.clear();
-
-	Conformation::set_jump_now( jump_number, new_jump );
-
-	if ( !symm_info_->jump_is_independent( jump_number ) ) {
-		TR.Warning << "SymmetricConformation:: directly setting a dependent ATOM!" << std::endl;
-	} else {
-		for ( Clones::const_iterator pos= symm_info_->jump_clones( jump_number ).begin(),
-		      epos=symm_info_->jump_clones( jump_number ).end(); pos != epos; ++pos ) {
-			id::AtomID const id_clone( Conformation::jump_atom_id( *pos ) );
-			Conformation::set_jump( id_clone, new_jump );
-		}
-	}
-}
-
 // This doesn't work with
 void
 SymmetricConformation::set_jump( id::AtomID const & id, kinematics::Jump const & new_jump )

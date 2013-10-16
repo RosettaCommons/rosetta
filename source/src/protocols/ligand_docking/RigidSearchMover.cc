@@ -106,7 +106,7 @@ void RigidSearchMover::apply(core::pose::Pose & pose)
 		Stub downstream_stub = pose.conformation().downstream_jump_stub( jump_id_ );
 		curr_jump.set_rb_center( 1 /*n2c*/, downstream_stub, rot_center );
 		curr_jump.gaussian_move( 1 /*n2c*/, translate_Ang_, rotate_deg_ );
-		pose.set_jump_now( jump_id_, curr_jump );
+		pose.set_jump( jump_id_, curr_jump );
 		// score and do Boltzmann test
 		Real const curr_score = (*scorefxn_)( pose );
 		Real const deltaE = last_accepted_score - curr_score;
@@ -114,7 +114,7 @@ void RigidSearchMover::apply(core::pose::Pose & pose)
 			// copied from MonteCarlo::boltzmann()
 			Real const boltz = std::max(-40.0, deltaE / temperature_);
 			if( mc_RG.uniform() >= std::exp(boltz) ) { // rejected!
-				pose.set_jump_now( jump_id_, last_accepted_jump );
+				pose.set_jump( jump_id_, last_accepted_jump );
 				continue;
 			}
 		}
@@ -129,7 +129,7 @@ void RigidSearchMover::apply(core::pose::Pose & pose)
 		}
 	}
 	// recover lowest energy pose
-	if( recover_low_ ) pose.set_jump_now( jump_id_, best_jump_so_far );
+	if( recover_low_ ) pose.set_jump( jump_id_, best_jump_so_far );
 	TR << "Best score " << best_score_so_far << ", end score " << (*scorefxn_)( pose ) << std::endl; // should be same!
 	clock_t end_time = clock();
 	TR << "Speed: " << num_trials_ / (double(end_time - start_time) / CLOCKS_PER_SEC) << " cycles per second" << std::endl;

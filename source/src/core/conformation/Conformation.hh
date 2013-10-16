@@ -614,20 +614,6 @@ public:
 	//	set_dof_moved( id );
 	//}
 
-	/// @brief Sets a jump and forces immediate calculation of affected XYZ coords
-	virtual
-	void
-	set_jump_now(
-		int const jump_number,
-		Jump const & new_jump
-	);
-	//{
-	//	AtomID const id( jump_atom_id( jump_number ) );
-	//	assert( new_jump.ortho_check() );
-	//	atom_tree_.set_jump_now( id, new_jump );
-	//	set_dof_moved( id );
-	//}
-
 	/// @brief access a jump
 	const Jump &
 	jump( AtomID const & id ) const;

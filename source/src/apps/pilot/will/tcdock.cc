@@ -1400,7 +1400,7 @@ struct TCDock {
 				 	if( t.length() > 0.0001 ){
 					 	Vec newt = Vec(0,-dcmp2,0);
 					 	j.set_translation(newt);
-					 	symm.set_jump_now(it->first,j);
+					 	symm.set_jump(it->first,j);
 					 	Vec delta = p2.xyz(core::id::AtomID(1,1))-symm.xyz(core::id::AtomID(1,p1.n_residue()+1));
 					 	trans_pose(symm, delta ,p1.n_residue()+1,p1.n_residue()+p2.n_residue());
 					 	// cout << "trans jump! " << j << " " << it->first << " " << dcmp1 << " " << dcmp2 << " " << newt-t << " " << delta << endl;

@@ -1080,16 +1080,6 @@ Pose::set_jump(
 }
 
 ///
-void
-Pose::set_jump_now(
-	int const jump_number,
-	const kinematics::Jump & new_jump
-)
-{
-	conformation_->set_jump_now( jump_number, new_jump );
-}
-
-///
 kinematics::Jump const &
 Pose::jump( int const jump_number ) const
 {

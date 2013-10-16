@@ -188,7 +188,7 @@ TryRotamers::apply ( pose::Pose & pose )
 		if( jump_num_ > 0 ) { // Let 0 indicate no jumps
 		core::kinematics::Jump const saved_jump( pose.jump( jump_num_ ) );
 		pose.replace_residue ( resnum_, **rotamer_it_, false/*orient bb*/ );
-			pose.set_jump_now( jump_num_, saved_jump );
+			pose.set_jump( jump_num_, saved_jump );
 		}
 		else { // no jumps to save
 			pose.replace_residue ( resnum_, **rotamer_it_, false/*orient bb*/ );

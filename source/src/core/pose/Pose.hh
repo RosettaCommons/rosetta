@@ -579,7 +579,6 @@ public:
 	///     Pose
 	///     Pose.jump
 	///     Pose.set_jump
-	///     Pose.set_jump_now
 	///     FoldTree
 	///     Jump
 	Size
@@ -1061,30 +1060,11 @@ public:
 	///     Pose
 	///     Pose.fold_tree
 	///     Pose.jump
-	///     Pose.set_jump_now
 	///     FoldTree
 	///     FoldTree.jump_edge
 	///     Jump
 	void
 	set_jump(
-		int const jump_number,
-		const kinematics::Jump & new_jump
-	);
-
-	/// @brief Sets the pose FoldTree Jump  <jump_number>  to  <new_jump>
-	///
-	/// example(s):
-	///     pose.set_jump_now(2,jump2)
-	/// See also:
-	///     Pose
-	///     Pose.fold_tree
-	///     Pose.jump
-	///     Pose.set_jump
-	///     FoldTree
-	///     FoldTree.jump_edge
-	///     Jump
-	void
-	set_jump_now(
 		int const jump_number,
 		const kinematics::Jump & new_jump
 	);

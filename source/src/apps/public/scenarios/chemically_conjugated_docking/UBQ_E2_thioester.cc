@@ -331,7 +331,7 @@ public:
 			//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), ubq2_lys_pos_in_complex_), oldposC);
 
 			//reapply the properly-calculated jump
-			complex.conformation().set_jump_now(1, newjump);
+			complex.conformation().set_jump(1, newjump);
 		}
 
 		////////////////////////////extra bodies/////////////////////////////////////////////////

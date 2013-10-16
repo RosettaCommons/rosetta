@@ -94,14 +94,6 @@ public:
     Jump const & new_jump
   );
 
-  /// @brief set a jump and force immediate calculation of affected XYZ coords
-  virtual
-  void
-  set_jump_now(
-    int const jump_number,
-    Jump const & new_jump
-  );
-
 	/// @brief set a jump
   virtual
   void

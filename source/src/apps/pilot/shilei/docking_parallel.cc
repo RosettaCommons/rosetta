@@ -201,7 +201,7 @@ void change_docking_pose(core::pose::Pose & to_change_pose, utility::vector1< do
         core::kinematics::Jump tmpJump=to_change_pose.jump(1);
         tmpJump.set_rotation(rotation_matrix);
         tmpJump.set_translation(translation_vector);
-        to_change_pose.conformation().set_jump_now(1,tmpJump);
+        to_change_pose.conformation().set_jump(1,tmpJump);
 
 	Real tmp;
 

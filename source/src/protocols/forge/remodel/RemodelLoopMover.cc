@@ -491,7 +491,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 								Jump tempJump = repeat_pose.jump(i);
 								tempJump.set_rotation( Rot );
 								tempJump.set_translation( Trx );
-								repeat_pose.conformation().set_jump_now( i, tempJump );
+								repeat_pose.conformation().set_jump( i, tempJump );
 				}
 			}
 

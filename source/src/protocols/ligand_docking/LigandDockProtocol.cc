@@ -614,7 +614,7 @@ LigandDockProtocol::optimize_orientation3(
 		// comments for set_rb_center() explain which stub to use when!
 		flexible_jump.set_rb_center( 1 /* n2c -- isn't defd in any .hh file :( */, downstream_stub, rot_center );
 		flexible_jump.rotation_by_matrix( upstream_stub, rot_center, protocols::geometry::random_reorientation_matrix() );
-		pose.set_jump_now( jump_id, flexible_jump );
+		pose.set_jump( jump_id, flexible_jump );
 
 		grid_rotamer_trials_atr_rep(*grid, pose, lig_id);
 		int curr_rep(0), curr_atr(0); // dummy initial values for compiler

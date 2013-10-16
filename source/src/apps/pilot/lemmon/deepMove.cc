@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
 		jump.fold_in_rb_deltas();// adjusts the center accordingly
 	}
 	pose.set_jump(jump_num, jump);
-	// pose.set_jump_now(jumpNum, jump); // this form updates xyz coords of downstream atoms
+	// pose.set_jump(jumpNum, jump); // this form updates xyz coords of downstream atoms
 	{
 		const std::string output("output.pdb");
 		pose.dump_pdb(output);

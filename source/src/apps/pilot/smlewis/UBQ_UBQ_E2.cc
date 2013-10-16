@@ -310,7 +310,7 @@ public:
 		complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("NZ"), complexlength+48), oldpos);
 		//	complex.set_xyz(core::id::AtomID(lys_rsd_type.atom_index("CE"), complexlength+48), oldposC);
 
-		complex.conformation().set_jump_now(1, newjump);
+		complex.conformation().set_jump(1, newjump);
 
 		starting_pose_ = complex;
 		starting_pose_.dump_pdb("starting_complex.pdb");

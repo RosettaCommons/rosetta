@@ -162,7 +162,7 @@ copy_hotspot_to_pose( core::pose::Pose const & src, core::pose::Pose & dest, cor
 //	core::pose::add_lower_terminus_type_to_pose_residue( dest, src_resi-1 );
 	dest.conformation().update_polymeric_connection( src_resi );
 //	dest.conformation().update_polymeric_connection( src_resi-1 );
-	dest.set_jump_now( jump, saved_jump );
+	dest.set_jump( jump, saved_jump );
 	dest.update_residue_neighbors();
 }
 

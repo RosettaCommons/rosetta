@@ -304,7 +304,7 @@ SymDofMover::apply(Pose & pose) {
 			 	Vec newt = Vec(0,-radial_disps[2],0);
 			 	j.set_translation(newt);
 			 	Vec origt = pose.xyz(core::id::AtomID(1,pose.conformation().chain_begin(2)));
-			 	pose.set_jump_now(it->first,j);
+			 	pose.set_jump(it->first,j);
 			 	Vec delta = origt - pose.xyz(core::id::AtomID(1,pose.conformation().chain_begin(2)));
 			 	trans_pose(pose,delta,pose.conformation().chain_begin(2),pose.conformation().chain_end(2));
 			 	// cout << "trans jump! " << j << " " << it->first << " " << dcmp1 << " " << dcmp2 << " " << newt-t << " " << delta << endl;

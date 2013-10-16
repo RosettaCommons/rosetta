@@ -270,7 +270,7 @@ void MultipleDomainMover::try_to_slide_into_contact( pose::Pose & pose ) {
 		if (verbose_) std::cout << ' ' << stub.M.col_x()[0]<< ' ' << stub.M.col_x()[1]<< ' ' << stub.M.col_x()[2] << std::endl;
 		Vector new_translation = j.get_translation() + sign_jump * stub.M.transposed() * diff;
 		j.set_translation( new_translation );//+ Vector( 50.0, 0.0, 0.0 ) );
-		pose.set_jump_now( jumpno, j );
+		pose.set_jump( jumpno, j );
 		if (verbose_) std::cout << "NEW JUMP  " << pose.jump( jumpno ) << std::endl;
 		Vector diff2 = pose.residue( cutpoint_closed ).xyz( "OVL1" ) - pose.residue( cutpoint_closed+1 ).xyz( " P  " );
 		if (verbose_) std::cout << "NEW VEC " <<  diff2.length() << std::endl << std::endl;
