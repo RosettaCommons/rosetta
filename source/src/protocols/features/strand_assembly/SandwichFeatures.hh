@@ -432,7 +432,7 @@ public:
 		core::Size sw_by_components_PK_id_counter,
 		std::string tag,
 		core::Size sw_can_by_sh_id,
-		bool intra_sheet_con, // if false, then inter_sheet_con
+		std::string loop_kind,
 		core::Size intra_sheet_con_id,
 		core::Size inter_sheet_con_id,
 		std::string LR,
@@ -511,10 +511,17 @@ public:
 		std::string parallel_EE);
 
 	bool
-	check_whether_sheets_are_connected_by_same_direction_strand(
+	check_whether_same_direction_strands_connect_two_sheets_or_a_loop(
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose,
+		core::Size start_res,
+		core::Size next_start_res);
+
+	bool
+	check_whether_hairpin_connects_short_strand(
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
 		core::Size start_res,
 		core::Size next_start_res);
 
@@ -555,13 +562,18 @@ public:
 		core::pose::Pose & dssp_pose,
 		core::Size sw_can_by_sh_id);
 
-	core::Size
+	void
 	add_number_of_inward_pointing_W_in_sw(
 		StructureID	struct_id,
 		utility::sql_database::sessionOP	db_session,
 		core::Size sw_can_by_sh_id);
 
-
+	void
+	add_number_of_inward_pointing_LWY_in_core_strands_in_sw(
+		StructureID	struct_id,
+		utility::sql_database::sessionOP	db_session,
+		core::Size sw_can_by_sh_id);
+		
 	core::Size
 	add_sw_res_size(
 		StructureID	struct_id,

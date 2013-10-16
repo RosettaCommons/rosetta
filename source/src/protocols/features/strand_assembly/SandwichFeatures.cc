@@ -388,6 +388,9 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	Column net_charge_of_sw	("net_charge_of_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column number_of_inward_pointing_W_in_sw	("number_of_inward_pointing_W_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_inward_pointing_L_in_core_strands_in_sw	("number_of_inward_pointing_L_in_core_strands_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_inward_pointing_W_in_core_strands_in_sw	("number_of_inward_pointing_W_in_core_strands_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
+	Column number_of_inward_pointing_Y_in_core_strands_in_sw	("number_of_inward_pointing_Y_in_core_strands_in_sw",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 	Column avg_dihedral_angle_between_core_strands_across_facing_sheets	("avg_dihedral_angle_between_core_strands_across_facing_sheets",	new DbReal(), true /* could be null*/, false /*no autoincrement*/);
 	Column sw_res_size	("sw_res_size",	new DbInteger(), true /* could be null*/, false /*no autoincrement*/);
 
@@ -506,6 +509,9 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(number_of_DE_in_sw);	//	D,E
 	sw_by_components.add_column(net_charge_of_sw);
 	sw_by_components.add_column(number_of_inward_pointing_W_in_sw);
+	sw_by_components.add_column(number_of_inward_pointing_L_in_core_strands_in_sw);
+	sw_by_components.add_column(number_of_inward_pointing_W_in_core_strands_in_sw);
+	sw_by_components.add_column(number_of_inward_pointing_Y_in_core_strands_in_sw);
 	sw_by_components.add_column(avg_dihedral_angle_between_core_strands_across_facing_sheets);
 	sw_by_components.add_column(sw_res_size);
 	sw_by_components.add_column(multimer_is_suspected);
@@ -1654,7 +1660,7 @@ SandwichFeatures::check_strand_too_closeness(
 			}
 		}
 	}
-	return false; // OK, these two strand_pairs are farther enough
+	return false; // OK, these two strand_pairs are distant to each other enough
 } //SandwichFeatures::check_strand_too_closeness
 
 
@@ -2825,9 +2831,9 @@ SandwichFeatures::count_AA_w_direction(
 	Size residue_begin,
 	Size residue_end)
 {
-		TR << "count_AA_w_direction" << endl;
+	//	TR << "count_AA_w_direction" << endl;
 		
-	time_t start_time = time(NULL);
+//	time_t start_time = time(NULL);
 
 	Size arr[] = {0,0,0,0,0,	0,0,0,0,0,	0,0,0,0,0,	0,0,0,0,0,	0,0,0,0,0,	0,0,0,0,0,	0,0,0,0,0,	0,0,0,0,0};
 	vector<Size> AA_w_direction (arr, arr+sizeof(arr)/sizeof(arr[0]));
@@ -3012,8 +3018,8 @@ SandwichFeatures::count_AA_w_direction(
 			else				{	AA_w_direction[39] = AA_w_direction[39] + 1; 				}
 		}
 	}
-	time_t end_time = time(NULL);
-		TR.Info << "Finished in " << (end_time - start_time) << " seconds." << endl;
+//	time_t end_time = time(NULL);
+//		TR.Info << "Finished in " << (end_time - start_time) << " seconds." << endl;
 
 	return AA_w_direction;
 } //count_AA_w_direction
@@ -3393,11 +3399,11 @@ SandwichFeatures::report_dihedral_angle_between_core_strands_across_facing_sheet
 				if (edge == "core" && all_strands_in_sheet_j[j].get_size() > 3)
 				{
 					Real dihedral = calculate_dihedral_w_4_resnums(pose, all_strands_in_sheet_i[i].get_start(),	all_strands_in_sheet_i[i].get_end(),		all_strands_in_sheet_j[j].get_start(),		all_strands_in_sheet_j[j].get_end());
-						TR << "all_strands_in_sheet_i[i].get_start(): " << all_strands_in_sheet_i[i].get_start() << endl;
-						TR << "all_strands_in_sheet_i[i].get_end(): " << all_strands_in_sheet_i[i].get_end() << endl;
-						TR << "all_strands_in_sheet_j[j].get_start(): " << all_strands_in_sheet_j[j].get_start() << endl;
-						TR << "all_strands_in_sheet_j[j].get_end(): " << all_strands_in_sheet_j[j].get_end() << endl;
-						TR << "dihedral: " << dihedral << endl;
+//						TR << "all_strands_in_sheet_i[i].get_start(): " << all_strands_in_sheet_i[i].get_start() << endl;
+//						TR << "all_strands_in_sheet_i[i].get_end(): " << all_strands_in_sheet_i[i].get_end() << endl;
+//						TR << "all_strands_in_sheet_j[j].get_start(): " << all_strands_in_sheet_j[j].get_start() << endl;
+//						TR << "all_strands_in_sheet_j[j].get_end(): " << all_strands_in_sheet_j[j].get_end() << endl;
+//						TR << "dihedral: " << dihedral << endl;
 					total_dihedral_angle_between_core_strands_across_facing_sheets = total_dihedral_angle_between_core_strands_across_facing_sheets + dihedral;
 					count_dihedral_angle_between_core_strands_across_facing_sheets++;
 				}
@@ -3788,7 +3794,7 @@ SandwichFeatures::update_sheet_connectivity(
 	Size sw_by_components_PK_id_counter,
 	string tag,
 	Size sw_can_by_sh_id,
-	bool intra_sheet_con, // if false, then inter_sheet_con
+	string loop_kind, 
 	Size intra_sheet_con_id,
 	Size inter_sheet_con_id,
 	string LR,
@@ -3804,11 +3810,19 @@ SandwichFeatures::update_sheet_connectivity(
 	Size end_res)
 {
 	string insert;
-	string loop_kind;
+	//string loop_kind_db;
 	Size con_id;
 	Size sheet_id = 0;
 
-	if (intra_sheet_con) // // this loop connects by a intra_sheet way
+	if (loop_kind == "inter_sheet") // this loop connects by a inter_sheet way
+	{
+		insert =
+		"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, canonical_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, inter_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
+//		loop_kind_db = "inter_sheet_loop";
+		con_id = inter_sheet_con_id;
+	}
+
+	else // // this loop connects by a intra_sheet way
 	{
 
 		sheet_id =	identify_sheet_id_by_residue_end(struct_id,
@@ -3817,17 +3831,17 @@ SandwichFeatures::update_sheet_connectivity(
 
 		insert =
 		"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, canonical_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, intra_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
-		loop_kind = "hairpin_loop____";
+//		if (loop_kind == "hairpin") // // this loop connects by a intra_sheet way
+//		{
+//			loop_kind_db = "hairpin_loop____";
+//		}
+//		else
+//		{
+//			loop_kind_db = loop_kind;
+//		}
 		con_id = intra_sheet_con_id;
 	}
-	
-	else // this loop connects by a inter_sheet way
-	{
-		insert =
-		"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, canonical_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, inter_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
-		loop_kind = "inter_sheet_loop";
-		con_id = inter_sheet_con_id;
-	}
+
 	
 	statement insert_stmt(basic::database::safely_prepare_statement(insert,	db_session));
 	insert_stmt.bind(1,	struct_id);
@@ -4023,8 +4037,12 @@ SandwichFeatures::check_canonicalness_of_LR(
 
 	if (loop_size == 2)  // can be applied for both hairpin and inter-sheet loop
 	{
-		if (LR=="L" || LR=="BL" )	{return "T_LR";}
-		else	{return "F_LR";}
+		if (intra_sheet)
+		{
+			if (LR=="L" || LR=="BL" ) {return "T_LR";}
+			else	{return "F_LR";}
+		}
+		else {return "U_LR";}
 	}
 	if (loop_size == 3)
 	{
@@ -4286,9 +4304,9 @@ SandwichFeatures::check_canonicalness_of_parallel_EE(
 } //check_canonicalness_of_parallel_EE
 
 
-//check_whether_sheets_are_connected_by_same_direction_strand
+//check_whether_same_direction_strands_connect_two_sheets_or_a_loop
 bool
-SandwichFeatures::check_whether_sheets_are_connected_by_same_direction_strand(
+SandwichFeatures::check_whether_same_direction_strands_connect_two_sheets_or_a_loop(
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
@@ -4419,7 +4437,72 @@ SandwichFeatures::check_whether_sheets_are_connected_by_same_direction_strand(
 	}
 
 	return false; // use this sandwich
-} //check_whether_sheets_are_connected_by_same_direction_strand
+} //check_whether_same_direction_strands_connect_two_sheets_or_a_loop
+
+
+
+//check_whether_hairpin_connects_short_strand
+bool
+SandwichFeatures::check_whether_hairpin_connects_short_strand(
+	StructureID struct_id,
+	sessionOP db_session,
+	Size start_res,
+	Size next_start_res)
+{
+	string	select_string =
+	"SELECT\n"
+	"	component_size	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?)\n"
+	"	AND (residue_begin = ?);";
+	
+	statement select_statement(basic::database::safely_prepare_statement(select_string,	db_session));
+	select_statement.bind(1,	struct_id);
+	select_statement.bind(2,	start_res);
+	result res(basic::database::safely_read_from_database(select_statement));
+	
+	Size component_size_1;
+	while(res.next())
+	{
+		res >> component_size_1;
+	}
+
+	if (component_size_1 < 3)
+	{
+		return true; // don't use this hairpin for LR/PA
+	}
+
+	string	select_string_2 =
+	"SELECT\n"
+	"	component_size	\n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	(struct_id = ?)\n"
+	"	AND (residue_begin = ?);";
+	
+	statement select_statement_2(basic::database::safely_prepare_statement(select_string_2,	db_session));
+	select_statement_2.bind(1,	struct_id);
+	select_statement_2.bind(2,	next_start_res);
+	result res_2(basic::database::safely_read_from_database(select_statement_2));
+	
+	Size component_size_2;
+	while(res_2.next())
+	{
+		res_2 >> component_size_2;
+	}
+
+	if (component_size_2 < 3)
+	{
+		return true; // don't use this hairpin for LR/PA
+	}
+
+	return false; // use this hairpin for LR/PA
+} //check_whether_hairpin_connects_short_strand
+
+
 
 
 void
@@ -4438,11 +4521,11 @@ SandwichFeatures::add_AA_to_terminal_loops (
 	
 	if (starting_loop)
 	{
-		loop_kind = "starting_loop____";
+		loop_kind = "starting_loop";
 	}
 	else // ending_loop
 	{
-		loop_kind = "ending_loop______";
+		loop_kind = "ending_loop";
 	}
 
 	string insert =	"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, loop_kind, component_size,	residue_begin, residue_end, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
@@ -4684,7 +4767,7 @@ SandwichFeatures::add_dssp_ratio_in_sw (
 } // add_dssp_ratio_in_sw
 
 
-Size
+void
 SandwichFeatures::add_number_of_inward_pointing_W_in_sw (
 	StructureID struct_id,
 	sessionOP db_session,
@@ -4724,8 +4807,61 @@ SandwichFeatures::add_number_of_inward_pointing_W_in_sw (
 	
 	basic::database::safely_write_to_database(update_statement);
 
-	return number_of_inward_pointing_W_in_sw;
+	//return number_of_inward_pointing_W_in_sw;
 } // add_number_of_inward_pointing_W_in_sw
+
+
+
+void
+SandwichFeatures::add_number_of_inward_pointing_LWY_in_core_strands_in_sw (
+	StructureID struct_id,
+	sessionOP db_session,
+	Size sw_can_by_sh_id)
+{
+	string select_string =
+	"SELECT\n"
+	"	sum(L_core_heading),	sum(W_core_heading),	sum(Y_core_heading) \n"
+	"FROM\n"
+	"	sw_by_components \n"
+	"WHERE\n"
+	"	struct_id = ? \n"
+	"	AND (strand_edge = 'core') \n"
+	"	AND (sw_can_by_sh_id = ?);";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,	struct_id);
+	select_statement.bind(2,	sw_can_by_sh_id);
+	result res(basic::database::safely_read_from_database(select_statement));
+
+	Size number_of_inward_pointing_L_in_core_strands_in_sw;
+	Size number_of_inward_pointing_W_in_core_strands_in_sw;
+	Size number_of_inward_pointing_Y_in_core_strands_in_sw;
+	while(res.next())
+	{
+		res >> number_of_inward_pointing_L_in_core_strands_in_sw	>> number_of_inward_pointing_W_in_core_strands_in_sw	>> number_of_inward_pointing_Y_in_core_strands_in_sw;
+	}
+
+	string update =
+	"UPDATE sw_by_components set\n"
+	"	number_of_inward_pointing_L_in_core_strands_in_sw = ?	,\n"
+	"	number_of_inward_pointing_W_in_core_strands_in_sw = ?	,\n"
+	" 	number_of_inward_pointing_Y_in_core_strands_in_sw = ?	\n"
+	"WHERE\n"
+	"	struct_id = ? \n"
+	"	AND (sw_can_by_sh_id = ?);";
+
+	statement update_statement(basic::database::safely_prepare_statement(update,	db_session));
+
+	update_statement.bind(1,	number_of_inward_pointing_L_in_core_strands_in_sw);
+	update_statement.bind(2,	number_of_inward_pointing_W_in_core_strands_in_sw);
+	update_statement.bind(3,	number_of_inward_pointing_Y_in_core_strands_in_sw);
+	update_statement.bind(4,	struct_id);
+	update_statement.bind(5,	sw_can_by_sh_id);
+	
+	basic::database::safely_write_to_database(update_statement);
+
+	//return number_of_inward_pointing_W_in_core_strands_in_sw;
+} // add_number_of_inward_pointing_LWY_in_core_strands_in_sw
 
 
 
@@ -5391,21 +5527,8 @@ SandwichFeatures::parse_my_tag(
 					//	example:	(in 1A64_chain_A) shortest_avg_dis_inter_sheet between sheet 1 and 2 = 25 A (and these sheets should not be a sandwich)
 					//	example:	(in 1A1M) the average distance between sheet 1 and 4 > 20 A (but these sheets should be a sandwich)
 					//	example:	(in 1ASQ) the average distance between sheet 1 and 4 > 20 A (and these sheets should not be a sandwich)
-	extract_sandwich_ = tag->getOption<bool>("extract_sandwich", true);
-	write_chain_B_resnum_ = tag->getOption<bool>("write_chain_B_resnum", false);
-					// if true, write chain_B_resnum file for InterfaceAnalyzer
-	no_helix_in_pdb_ = tag->getOption<bool>("no_helix_in_pdb", false);
-					// if true, ignore any pdb that has helix
-	max_H_in_extracted_sw_loop_ = tag->getOption<Size>("max_H_in_extracted_sw_loop", 10);
-					//	definition: maximum allowable number of helix residues in extracted sandwich loop
-					//	example: 0 would be ideal, but then only ~10% of sandwiches will be extracted among CATH classified sandwiches instead even when same_direction_strand linking sw is allowed!
-	max_E_in_extracted_sw_loop_ = tag->getOption<Size>("max_E_in_extracted_sw_loop", 10);
-					//	definition: maximum allowable number of E residues in extracted sandwich loop
-					//	usefulness: If used, it is useful to exclude [1LOQ] which is a beta-propeller
-	exclude_sandwich_that_is_linked_w_same_direction_strand_ = tag->getOption<bool>("exclude_sandwich_that_is_linked_w_same_direction_strand", true);
-					//	definition: if true, exclude a sandwich that is linked with same_direction_strand
-					//	Rationale of default=true (1)
-						//	If true, it is useful to exclude [1QAC]_chain_A, [2v33]_chain_A which is a canonical sandwich but linked by same direction strands between sheets
+
+
 	max_inter_strand_angle_to_not_be_same_direction_strands_ = tag->getOption<Real>("max_inter_strand_angle_to_not_be_same_direction_strands", 120.0);
 					//	usage: 	if (angle_start_res_being_middle > max_inter_strand_angle_to_not_be_same_direction_strands_)
 					//	example: (in 1BQB chain A) 121 is possible (but this should be excluded as same direction strand)
@@ -5415,25 +5538,41 @@ SandwichFeatures::parse_my_tag(
 					//	example: (in 1U3J chain A) 105 is possible for 4-7-11-13 dihedral angle (but this should be excluded as same direction strand)
 					//	example: (in 1QAC chain A) 128.5 is possible for 4-7-10-13 dihedral angle (but this should be excluded as same direction strand)
 					//	example: (in 1A3R chain L) 130 is possible for 4-7-10-14 dihedral angle (but this should be excluded as same direction strand)
-	write_phi_psi_of_all_ = tag->getOption<bool>("write_phi_psi_of_all", false);
-					//	definition: if true, write phi_psi_file
-	write_phi_psi_of_E_ = tag->getOption<bool>("write_phi_psi_of_E", false);
-					//	definition: if true, write phi_psi_file
-	max_starting_loop_size_ = tag->getOption<Size>("max_starting_loop_size", 6);
-					//	definition: maximum starting loop size to extract
-	max_ending_loop_size_ = tag->getOption<Size>("max_ending_loop_size", 6);
-					//	definition: maximum ending loop size to extract
 	max_num_sw_per_pdb_ = tag->getOption<Size>("max_num_sw_per_pdb", 100);
 					//	definition: maximum number of sandwiches to be extracted per a pdb file
 	check_N_to_C_direction_by_ = tag->getOption<string>("check_N_to_C_direction_by", "PE");
 					//	definition: check N->C going direction by option
-	do_not_connect_sheets_by_loops_ = tag->getOption<bool>("do_not_connect_sheets_by_loops", false);
-					//	definition: if true, don't connect sheets by loops
 	check_canonicalness_cutoff_ = tag->getOption<Real>("check_canonicalness_cutoff", 80.0);
 					//	definition:	cutoff to determine canonicalness of L/R, P/A and directionality
-	count_AA_with_direction_ = tag->getOption<bool>("count_AA_with_direction_", false);
+	count_AA_with_direction_ = tag->getOption<bool>("count_AA_with_direction", false);
 					//	definition:	if true, count AA considering direction too!
 					//	<note> if true, it takes more time, but ~50 sandwiches this can be used within ~ minutes.
+
+
+
+	///////// strictness options ///////
+	exclude_desinated_pdbs_ = tag->getOption<bool>("exclude_desinated_pdbs", false);
+					//	definition: if true, exclude certain designated pdbs
+	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_ = tag->getOption<bool>("exclude_sandwich_that_has_near_backbone_atoms_between_sheets", true);
+					//	definition: if true, exclude sandwich_that_has_near_backbone_atoms_between_sheets
+
+	max_starting_loop_size_ = tag->getOption<Size>("max_starting_loop_size", 6);
+					//	definition: maximum starting loop size to extract
+	max_ending_loop_size_ = tag->getOption<Size>("max_ending_loop_size", 6);
+					//	definition: maximum ending loop size to extract
+	no_helix_in_pdb_ = tag->getOption<bool>("no_helix_in_pdb", false);
+					// if true, ignore any pdb that has helix
+	max_E_in_extracted_sw_loop_ = tag->getOption<Size>("max_E_in_extracted_sw_loop", 10);
+					//	definition: maximum allowable number of E residues in extracted sandwich loop
+					//	usefulness: If used, it is useful to exclude [1LOQ] which is a beta-propeller
+
+	max_H_in_extracted_sw_loop_ = tag->getOption<Size>("max_H_in_extracted_sw_loop", 10);
+					//	definition: maximum allowable number of helix residues in extracted sandwich loop
+					//	example: 0 would be ideal, but then only ~10% of sandwiches will be extracted among CATH classified sandwiches instead even when same_direction_strand linking sw is allowed!
+	exclude_sandwich_that_is_linked_w_same_direction_strand_ = tag->getOption<bool>("exclude_sandwich_that_is_linked_w_same_direction_strand", true);
+					//	definition: if true, exclude a sandwich that is linked with same_direction_strand
+					//	Rationale of default=true (1)
+						//	If true, it is useful to exclude [1QAC]_chain_A, [2v33]_chain_A which is a canonical sandwich but linked by same direction strands between sheets
 
 	inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets_ = tag->getOption<Real>("inter_sheet_distance_to_see_whether_a_sheet_is_surrounded_by_other_sheets", 13.0);
 					//	definition: within this distance, sheets are considered to be too near each other
@@ -5441,15 +5580,30 @@ SandwichFeatures::parse_my_tag(
 					//	Rationale of default value=13 Angstron
 						//	it is useful to exclude [1LOQ] which is beta-propeller and [3BVT] which is a stacked sandwich
 						//	but it also excludes [2V33] which has two canonical sandwiches near each other and [1W8O] which is a canonical sandwich near a single beta-sheet
-	exclude_desinated_pdbs_ = tag->getOption<bool>("exclude_desinated_pdbs", false);
-					//	definition: if true, exclude certain designated pdbs
-	exclude_sandwich_that_has_near_backbone_atoms_between_sheets_ = tag->getOption<bool>("exclude_sandwich_that_has_near_backbone_atoms_between_sheets", true);
-					//	definition: if true, exclude sandwich_that_has_near_backbone_atoms_between_sheets
 
+
+
+
+	///////// development options ///////
+	do_not_connect_sheets_by_loops_ = tag->getOption<bool>("do_not_connect_sheets_by_loops", false);
+					//	definition: if true, don't connect sheets by loops
+	extract_sandwich_ = tag->getOption<bool>("extract_sandwich", true);
+
+
+
+
+	///////// writing options ///////
 	write_AA_kind_files_ = tag->getOption<bool>("write_AA_kind_files", false);
 					//	definition: if true, write files that have amino acid kinds
 	write_AA_distribution_files_ = tag->getOption<bool>("write_AA_distribution_files", false);
 					//	definition: if true, write files that have amino acid distributions
+	write_chain_B_resnum_ = tag->getOption<bool>("write_chain_B_resnum", false);
+			// if true, write chain_B_resnum file for InterfaceAnalyzer
+	write_phi_psi_of_all_ = tag->getOption<bool>("write_phi_psi_of_all", false);
+					//	definition: if true, write phi_psi_file
+	write_phi_psi_of_E_ = tag->getOption<bool>("write_phi_psi_of_E", false);
+					//	definition: if true, write phi_psi_file
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -5731,6 +5885,7 @@ SandwichFeatures::report_features(
 		Real avg_dis_between_sheets;
 
 		// <begin> identify sheet_j that_will_be_used_for_pairing_with_sheet_i to be a sandwich
+		// I need to iterate all 'j' for loop to find the closest sheet from sheet_id (i)
 		for(Size j=i+1; j<=all_distinct_sheet_ids.size(); j++)
 		{
 				//TR << "all_distinct_sheet_ids[j]: " << all_distinct_sheet_ids[j] << endl;
@@ -5772,7 +5927,7 @@ SandwichFeatures::report_features(
 			// <begin> check whether strands are too distant to each other
 			bool these_2_sheets_are_too_distant = false; // temporary 'false' designation
 			avg_dis_between_sheets = 0;
-			for(Size ii=1; ii<=strands_from_sheet_i.size(); ++ii)
+			for(Size ii=1; ii<=strands_from_sheet_i.size() && !these_2_sheets_are_too_distant; ++ii) // this '&& !these_2_sheets_are_too_distant' is needed for better performance
 			{
 				vector<Real> array_avg_dis_sheet_i_j;
 				for(Size jj=1; jj<=strands_from_sheet_j.size(); ++jj)
@@ -5850,7 +6005,7 @@ SandwichFeatures::report_features(
 
 			
 		} // for(Size j=i+1; j<=all_distinct_sheet_ids.size(); ++j)
-		// I need to iterate all 'j' for loop to find the closest sheet from sheet_id (i)
+		
 		// <end> identify sheet_j_that_will_be_used_for_pairing_with_sheet_i to be a sandwich
 
 
@@ -6167,7 +6322,7 @@ SandwichFeatures::report_features(
 
 			if (heading_direction == "except")
 			{
-					TR.Info << "Exit-Exception:: check_N_to_C_direction_by should either PF or FE!!!" << endl;
+					TR.Info << "Exit-Exception:: check_N_to_C_direction_by should be either PF or FE !" << endl;
 				return 0;
 			}
 
@@ -6185,9 +6340,33 @@ SandwichFeatures::report_features(
 			if (sheet_id_of_start_res == sheet_id_of_next_start_res)
 				// this loop is a beta-hairpin loop (that connects sheets as intra-sheet way)
 			{
-				string canonical_LR = check_canonicalness_of_LR(loop_size, true, LR); // loop_size, intra_sheet bool, LR
-				string cano_PA = check_canonicalness_of_PA(loop_size, true, PA_by_preceding_E, PA_by_following_E, check_canonicalness_cutoff_); // loop_size, intra_sheet bool, 2 PAs
-				string cano_parallel_EE = check_canonicalness_of_parallel_EE(loop_size, true, parallel_EE); // loop_size, intra_sheet bool, parallel_EE
+//					TR << "start_res: " << start_res << endl;
+//					TR << "next_start_res: " << next_start_res << endl;	
+				bool loop_is_surrounded_by_same_direction_strands = check_whether_same_direction_strands_connect_two_sheets_or_a_loop(struct_id,	db_session,	pose,	start_res,	next_start_res);
+					//TR.Info << "loop_is_surrounded_by_same_direction_strands: " << loop_is_surrounded_by_same_direction_strands << endl;
+
+				string canonical_LR = "-";
+				string cano_PA =  "-";
+				string cano_parallel_EE =  "-";
+				string loop_kind =  "loop_connecting_same_direction_strands_within_same_sheet";
+
+				if (!loop_is_surrounded_by_same_direction_strands)
+				{
+					canonical_LR = check_canonicalness_of_LR(loop_size, true, LR); // loop_size, intra_sheet bool, LR
+					cano_PA = check_canonicalness_of_PA(loop_size, true, PA_by_preceding_E, PA_by_following_E, check_canonicalness_cutoff_); // loop_size, intra_sheet bool, 2 PAs
+					cano_parallel_EE = check_canonicalness_of_parallel_EE(loop_size, true, parallel_EE); // loop_size, intra_sheet bool, parallel_EE
+					bool hairpin_connects_short_strand = check_whether_hairpin_connects_short_strand(struct_id,	db_session,	start_res,	next_start_res);
+					if (hairpin_connects_short_strand) // so it is not recommended for LR/PA analysis
+					{
+						loop_kind =  "hairpin_connecting_short_strand";
+					}
+					else
+					{
+						loop_kind =  "hairpin";
+					}
+
+				}
+
 				update_sheet_connectivity(
 					struct_id,
 					db_session,
@@ -6195,7 +6374,7 @@ SandwichFeatures::report_features(
 					sw_by_components_PK_id_counter,
 					tag,
 					vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
-					true,  //bool intra_sheet_con
+					loop_kind, // "hairpin" or "a_loop_that_connects_same_direction_strands_within_same_sheet"
 					intra_sheet_con_id_counter,
 					inter_sheet_con_id_counter,
 					LR,
@@ -6218,9 +6397,10 @@ SandwichFeatures::report_features(
 			{
 				if (exclude_sandwich_that_is_linked_w_same_direction_strand_)
 				{
-					bool sheets_are_connected_by_same_direction_strand = check_whether_sheets_are_connected_by_same_direction_strand(struct_id,	db_session,	pose,	start_res,	next_start_res);
-						TR.Info << "sheets_are_connected_by_same_direction_strand: " << sheets_are_connected_by_same_direction_strand << endl;
-					if (sheets_are_connected_by_same_direction_strand){
+					bool sheets_are_connected_by_same_direction_strand = check_whether_same_direction_strands_connect_two_sheets_or_a_loop(struct_id,	db_session,	pose,	start_res,	next_start_res);
+					if (sheets_are_connected_by_same_direction_strand)
+					{
+							TR.Info << "sheets_are_connected_by_same_direction_strand, so delete " << vec_sw_can_by_sh_id[ii] << "sw_can_by_sh_id" << endl;
 						delete_this_sw_can_by_sh_id_from_sw_by_comp(
 							struct_id,
 							db_session,
@@ -6242,7 +6422,7 @@ SandwichFeatures::report_features(
 					sw_by_components_PK_id_counter,
 					tag,
 					vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
-					false, //bool intra_sheet_con
+					"loop_connecting_two_sheets",
 					intra_sheet_con_id_counter,
 					inter_sheet_con_id_counter,
 					LR,
@@ -6271,9 +6451,9 @@ SandwichFeatures::report_features(
 			bool sheets_are_connected_with_near_bb_atoms = check_whether_sheets_are_connected_with_near_bb_atoms(struct_id,	db_session,	dssp_pose,
 					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 					);
-				TR.Info << "sheets_are_connected_with_near_bb_atoms: " << sheets_are_connected_with_near_bb_atoms << endl;
 			if (sheets_are_connected_with_near_bb_atoms)
 			{
+					TR.Info << "sheets are connected with near bb atoms, so delete " << vec_sw_can_by_sh_id[ii] << " sw_can_by_sh_id" << endl;
 				delete_this_sw_can_by_sh_id_from_sw_by_comp(
 					struct_id,
 					db_session,
@@ -6317,7 +6497,9 @@ SandwichFeatures::report_features(
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
 
-
+			add_number_of_inward_pointing_LWY_in_core_strands_in_sw(struct_id,	db_session,
+				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+				);
 			Size	sw_res_size	=	add_sw_res_size(struct_id,	db_session,
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
