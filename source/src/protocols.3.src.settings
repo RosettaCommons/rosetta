@@ -537,6 +537,7 @@ sources = {
 		"IGEdgeReweighters",
 		"InteratomicVarianceMatrix",
 		"KCluster",
+		"NetworkAlgorithms",
 		"SelectResiduesByLayer",
 		"superimpose",
 	],
