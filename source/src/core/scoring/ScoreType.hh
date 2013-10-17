@@ -256,6 +256,11 @@ enum ScoreType {
 	facts_solv,
 	facts_sasa,
 
+	// Goap
+	goap,
+	goap_dist,
+	goap_angle,
+
 	// centroid interchain 1b (docking) scores
 	interchain_pair,
 	interchain_vdw,

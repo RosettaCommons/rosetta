@@ -412,6 +412,7 @@ sources = {
 		"FreeMoietyEnergy",
 		"GaussianOverlapEnergy",
 		"GenBornEnergy",
+		"GoapEnergy",
 		"HybridVDW_Energy",
 		"IntermolEnergy",
 		"LinearChainbreakEnergy",

@@ -1,0 +1,64 @@
+#ATOM
+CYS  6 N CA C O CB SG 
+MET  8 N CA C O CB CG  SD  CE 
+PHE 11 N CA C O CB CG  CD1 CD2 CE1 CE2 CZ 
+ILE  8 N CA C O CB CG1 CG2 CD1
+LEU  8 N CA C O CB CG  CD1 CD2
+VAL  7 N CA C O CB CG1 CG2
+TRP 14 N CA C O CB CG  CD1 CD2 NE1 CE2 CE3 CZ2 CZ3 CH2
+TYR 12 N CA C O CB CG  CD1 CD2 CE1 CE2 CZ OH 
+ALA  5 N CA C O CB 
+GLY  4 N CA C O  
+THR  7 N CA C O CB OG1 CG2
+SER  6 N CA C O CB OG 
+GLN  9 N CA C O CB CG  CD  OE1 NE2
+ASN  8 N CA C O CB CG  OD1 ND2
+GLU  9 N CA C O CB CG  CD  OE1 OE2
+ASP  8 N CA C O CB CG  OD1 OD2
+HIS 10 N CA C O CB CG  ND1 CD2 CE1 NE2
+ARG 11 N CA C O CB CG  CD  NE  CZ  NH1 NH2
+LYS  9 N CA C O CB CG  CD  CE  NZ  
+PRO  7 N CA C O CB CG CD 
+#BOND
+CYS  2  2  5
+MET  4  2  5  6  7
+PHE  7  2  5  6  7  8  9 10
+ILE  4  2  5  5  6
+LEU  4  2  5  6  6
+VAL  3  2  5  5
+TRP 10  2  5  6  7  8  9 10 11 12 13
+TYR  8  2  5  6  7  8  9 10 11
+ALA  1  2
+GLY  0
+THR  3  2  5  5
+SER  2  2  5
+GLN  5  2  5  6  7  7
+ASN  4  2  5  6  6
+GLU  5  2  5  6  7  7
+ASP  4  2  5  6  6
+HIS  6  2  5  6  7  8  9
+ARG  7  2  5  6  7  8  9  9
+LYS  5  2  5  6  7  8
+PRO  3  2  5  6
+#ANGLE
+CYS  2  1  2
+MET  4  1  2  5  6
+PHE  7  1  2  5  6  7  8  9
+ILE  4  1  2  6  5
+LEU  4  1  2  5  7
+VAL  3  1  2  6
+TRP 10  1  2  5  6  7  8  9 10 11 12
+TYR  8  1  2  5  6  7  8  9 10
+ALA  1  1
+GLY  0
+THR  3  1  2  6
+SER  2  1  2
+GLN  5  1  2  5  6  8
+ASN  4  1  2  5  7
+GLU  5  1  2  5  6  8
+ASP  4  1  2  5  7
+HIS  6  1  2  5  6  7  8
+ARG  7  1  2  5  6  7  8 10
+LYS  5  1  2  5  6  7
+PRO  3  1  2  5
+#END

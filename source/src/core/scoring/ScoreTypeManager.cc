@@ -121,6 +121,9 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "hybrid_vdw" ] = hybrid_vdw;
 	name2score_type_[ "fa_cust_pair_dist" ] = fa_cust_pair_dist;
 	name2score_type_[ "gauss" ] = gauss;
+	name2score_type_[ "goap" ] = goap;
+	name2score_type_[ "goap_dist" ] = goap_dist;
+	name2score_type_[ "goap_angle" ] = goap_angle;
 
 
 	// PyRosetta score types

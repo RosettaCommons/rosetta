@@ -73,6 +73,7 @@
 #include <core/scoring/methods/SecondaryStructureEnergyCreator.hh>
 #include <core/scoring/methods/dfire/DFIRE_EnergyCreator.hh>
 #include <core/scoring/vdwaals/VDW_EnergyCreator.hh>
+#include <core/scoring/methods/GoapEnergyCreator.hh>
 
 #include <core/pack/dunbrack/DunbrackEnergyCreator.hh>
 #include <core/pack/dunbrack/cenrot/CenRotDunEnergyCreator.hh>
@@ -334,6 +335,7 @@ static EnergyMethodRegistrator< scoring::methods::ReferenceEnergyNoncanonicalCre
 static EnergyMethodRegistrator< scoring::methods::SecondaryStructureEnergyCreator > SecondaryStructureEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::dfire::DFIRE_EnergyCreator > DFIRE_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::vdwaals::VDW_EnergyCreator > VDW_EnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::GoapEnergyCreator > GoapEnergyCreator_registrator;
 
 static EnergyMethodRegistrator< pack::dunbrack::DunbrackEnergyCreator > DunbrackEnergyCreator_registrator;
 static EnergyMethodRegistrator< pack::dunbrack::cenrot::CenRotDunEnergyCreator > CenRotDunEnergyCreator_registrator;
