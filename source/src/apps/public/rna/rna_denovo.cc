@@ -103,6 +103,7 @@ OPT_KEY( Boolean, output_filters )
 OPT_KEY( Boolean, autofilter )
 OPT_KEY( Real, filter_chain_closure_distance )
 OPT_KEY( Boolean, filter_chain_closure_halfway )
+OPT_KEY( IntegerVector, output_res_num )
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,7 +133,6 @@ rna_denovo_test()
 
 	std::string const in_path = option[ in::path::path ]()[1];
 
-
 	bool native_exists = false;
 	//Read in native if it exists.
 	if ( option[ in::file::native ].user() ) {
@@ -149,6 +149,7 @@ rna_denovo_test()
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( in_path + fasta_file )[1];
 	core::pose::make_pose_from_sequence( extended_pose,	fasta_sequence->sequence(),	*rsd_set );
+	set_output_res_num( extended_pose, option[ output_res_num ]() );
 
 	//	dump_pdb( extended_pose, "extended.pdb");
 
@@ -259,7 +260,6 @@ rna_denovo_test()
 
 	//	protocols::moves::AddPyMolObserver( pose, false, 0.01);
 
-
 	rna_de_novo_protocol.apply( pose );
 
 }
@@ -327,6 +327,8 @@ try {
     NEW_OPT( suppress_bp_constraint, "Factor by which to lower base pair constraint weight. ", 1.0 );
     NEW_OPT( output_filters, "output lores scores at early stage (round  2 of 10) and at end -- could be useable for early termination of unpromising early starts", false );
     NEW_OPT( autofilter, "Automatically skip output/minimize if lores score is worse than 20th percentile, updated on the fly.", false );
+    NEW_OPT( output_res_num, "Numbering of residues in output PDB or silent file", blank_size_vector  );
+
 	option.add_relevant( basic::options::OptionKeys::rna::vary_geometry );
 	option.add_relevant( basic::options::OptionKeys::rna::vall_torsions );
 	//	option.add_relevant( basic::options::OptionKeys::rna::jump_database );

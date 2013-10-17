@@ -264,6 +264,7 @@ check_full_model_info_OK( pose::Pose const & pose ){
 	using namespace core::pose::full_model_info;
 
 	FullModelInfo const & full_model_info = const_full_model_info( pose );
+	utility::vector1< Size > const & conventional_numbering = full_model_info.conventional_numbering();
 	utility::vector1< Size > const & res_list = get_res_list_from_full_model_info_const( pose );
 	std::string const & sequence = full_model_info.full_sequence();
 
@@ -272,16 +273,26 @@ check_full_model_info_OK( pose::Pose const & pose ){
 		return false;
 	}
 
+	if ( sequence.size() != conventional_numbering.size() ) {
+		TR << "sequence.size() != conventional_numbering.size()" << std::endl;
+		return false;
+	}
+
+
 	if ( sequence.size() < pose.total_residue() ) {
 		TR << "sequence.size() << pose.total_residue()" << std::endl;
 		return false;
 	}
 
 	for ( Size n = 1; n <= res_list.size(); n++ ){
-		char sequence_char = sequence[ res_list[ n ] - 1 ];
+
+		Size const & res_num = res_list[ n ];
+		runtime_assert( conventional_numbering.has_value( res_num ) );
+		char sequence_char = sequence[ conventional_numbering.index( res_num )  - 1 ];
+
 		if ( sequence_char == 'n' ) continue; // any nucleotide
 		if ( sequence_char != pose.residue_type( n ).name1() ) {
-			TR << "no match at " << n << " " << sequence_char << ' ' <<  pose.residue_type( n ).name1() << std::endl;
+			TR << "no match at " << n << " conventional numbering: " << res_num << "  sequence: " << sequence_char << " pose sequence: " <<  pose.residue_type( n ).name1() << std::endl;
 			return false;
 		}
 	}

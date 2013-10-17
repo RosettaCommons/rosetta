@@ -36,6 +36,7 @@
 
 
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
@@ -1303,6 +1304,19 @@ mutate_position( pose::Pose & pose, Size const i, char const & new_seq ){
 	pose.set_chi( i, save_chi );
 
 	return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+set_output_res_num( pose::Pose & extended_pose,
+										utility::vector1< Size > const & output_res_num ){
+	using namespace pose;
+	if ( output_res_num.size() == 0 ) return;
+	runtime_assert( output_res_num.size() == extended_pose.total_residue() );
+
+	PDBInfoOP pdb_info = new PDBInfo( extended_pose );
+	pdb_info->set_numbering( output_res_num );
+	extended_pose.pdb_info( pdb_info );
 }
 
 } // namespace rna

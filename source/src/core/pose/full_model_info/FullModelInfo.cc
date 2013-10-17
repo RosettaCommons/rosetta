@@ -51,12 +51,14 @@ namespace full_model_info {
 FullModelInfo::FullModelInfo() {} // blank. Should not be used?
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-FullModelInfo::FullModelInfo( 	std::string const full_sequence ):
+FullModelInfo::FullModelInfo( std::string const full_sequence ):
 	CacheableData(),
 	full_sequence_( full_sequence )
 {
+	for ( Size n = 1; n <= full_sequence.size(); n++ ) 		conventional_numbering_.push_back( n );
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 FullModelInfo::FullModelInfo( pose::Pose & pose,
 															std::string const & full_sequence,
 															utility::vector1< Size > const & cutpoint_open_in_full_model,
@@ -72,6 +74,7 @@ FullModelInfo::FullModelInfo( pose::Pose & pose,
 		} else {
 			fixed_domain_map_.push_back( 0 );
 		}
+		conventional_numbering_.push_back( n );
 	}
 }
 
@@ -83,12 +86,18 @@ FullModelInfo::FullModelInfo( pose::Pose & pose ) :
 {
 
 	res_list_ = get_res_num_from_pdb_info( pose );
-	full_sequence_ = get_sequence_with_gaps_filled_with_n( pose );
+
+	get_sequence_with_gaps_filled_with_n( pose, full_sequence_, conventional_numbering_ );
 	cutpoint_open_in_full_model_ = get_cutpoint_open_from_pdb_info( pose );
 
 	// not sure what's best here -- for now setting that the pose's residues are 'fixed' within the domain map.
 	fixed_domain_map_ = utility::vector1<Size>( full_sequence_.size(), 0 );
-	for ( Size n = 1; n <= res_list_.size(); n++ ) fixed_domain_map_[ res_list_[n] ] = 1;
+
+	for ( Size n = 1; n <= res_list_.size(); n++ ) {
+		Size const & res_num = res_list_[ n ];
+		runtime_assert( conventional_numbering_.has_value( res_num ) );
+		fixed_domain_map_[ conventional_numbering_.index( res_num ) ] = 1;
+	}
 
 }
 
@@ -99,6 +108,7 @@ FullModelInfo::FullModelInfo( FullModelInfo const & src ) :
 	full_sequence_( src.full_sequence_ ),
 	cutpoint_open_in_full_model_( src.cutpoint_open_in_full_model_ ),
 	fixed_domain_map_( src.fixed_domain_map_ ),
+	conventional_numbering_( src.conventional_numbering_ ),
 	res_list_( src.res_list_ )
 {
 	// we have to tell our daughters in the pose tree that its time to get cloned.
@@ -129,25 +139,33 @@ FullModelInfo::get_res_num_from_pdb_info( pose::Pose const & pose ) const {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-std::string
-FullModelInfo::get_sequence_with_gaps_filled_with_n( pose::Pose const & pose ) const {
+void
+FullModelInfo::get_sequence_with_gaps_filled_with_n( pose::Pose const & pose,
+																										 std::string & sequence,
+																										 utility::vector1< Size > & full_numbering ) const {
 
 	// should also be smart about not filling in n's between chains.
 	// anyway. this is a quick hack for now.
 	utility::vector1< Size > const & res_list = res_list_;
 
-	std::string sequence;
+	sequence = "";
+	full_numbering.clear();
+
 	sequence.push_back( pose.sequence()[ 0 ]  );
+	full_numbering.push_back( res_list[ 1 ] );
+
 	for ( Size n = 2; n <= pose.total_residue(); n++ ){
 
 		Size const prev_res_num    = res_list[ n-1 ];
 		Size const current_res_num = res_list[ n ];
-		for ( Size i = prev_res_num+1; i < current_res_num; i++ ) sequence.push_back( 'n' );
+		for ( Size i = prev_res_num+1; i < current_res_num; i++ ) {
+			sequence.push_back( 'n' );
+			full_numbering.push_back( i );
+		}
 		sequence.push_back( pose.sequence()[ n-1 ] );
-
+		full_numbering.push_back( current_res_num );
 	}
 
-	return sequence;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

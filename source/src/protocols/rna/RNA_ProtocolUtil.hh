@@ -160,6 +160,10 @@ involved_in_phosphate_torsion( std::string atomname );
 bool
 mutate_position( core::pose::Pose & pose, core::Size const i, char const & new_seq );
 
+void
+set_output_res_num( core::pose::Pose & extended_pose,
+										utility::vector1< core::Size > const & output_res_num );
+
 
 } //rna
 } // protocols

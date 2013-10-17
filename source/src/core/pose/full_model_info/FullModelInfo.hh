@@ -74,6 +74,8 @@ public:
 
 	utility::vector1< Size > const & fixed_domain_map() const { return fixed_domain_map_;}
 
+	utility::vector1< Size > const & conventional_numbering() const { return conventional_numbering_;}
+
 	void clear_other_pose_list();
 
 	utility::vector1< core::pose::PoseOP > const & other_pose_list() const { return other_pose_list_; }
@@ -90,6 +92,8 @@ public:
 	void set_cutpoint_open_in_full_model( utility::vector1< Size > const & setting ){ cutpoint_open_in_full_model_ = setting;}
 
 	void set_fixed_domain_map( utility::vector1< Size > const & setting ){ fixed_domain_map_ = setting;}
+
+	void set_conventional_numbering( utility::vector1< Size > const & setting ){ conventional_numbering_ = setting;}
 
 	void set_other_pose_list( utility::vector1< pose::PoseOP > const & setting );
 
@@ -115,8 +119,10 @@ private:
 	utility::vector1< Size >
 	get_cutpoint_open_from_pdb_info( pose::Pose const & pose ) const;
 
-	std::string
-	get_sequence_with_gaps_filled_with_n( pose::Pose const & pose ) const;
+	void
+	get_sequence_with_gaps_filled_with_n( pose::Pose const & pose,
+																				std::string & sequence,
+																				utility::vector1< Size > & full_numbering ) const;
 
 private:
 
@@ -124,6 +130,7 @@ private:
 	std::string full_sequence_;
 	utility::vector1< Size > cutpoint_open_in_full_model_;
 	utility::vector1< Size > fixed_domain_map_; //in case model involves several fixed regions.
+	utility::vector1< Size > conventional_numbering_; // permits user to start numbering without beginning at 1.
 
 	// residues that go with pose. In principle, this is redundant with PDBInfo,
 	// but not in eventual case where user has favorite numbering/chain scheme.
