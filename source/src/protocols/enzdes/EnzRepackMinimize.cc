@@ -14,7 +14,7 @@
 // Unit headers
 #include <protocols/enzdes/EnzRepackMinimize.hh>
 #include <protocols/enzdes/EnzRepackMinimizeCreator.hh>
-
+#include <utility/string_util.hh>
 //package headers
 #include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
@@ -118,6 +118,7 @@ EnzRepackMinimize::apply( pose::Pose & pose )
 	protocols::enzdes::EnzdesBaseProtocolOP enzprot = new protocols::enzdes::EnzdesBaseProtocol();
   enzprot->set_fix_cataa( fix_catalytic_ );
   enzprot->set_minimize_options(min_sc_, min_bb_,min_rb_,min_lig_);
+	enzprot->rb_min_jumps( rb_min_jumps() ); /// override the min_rb_ option, if multiple jumps were set
 
   for (core::Size i=1;i<=n_cycles_;++i){
 		(*scorefxn_repack_)(pose);
@@ -255,7 +256,9 @@ EnzRepackMinimize::parse_my_tag( utility::tag::TagPtr const tag, protocols::move
 	scorefxn_repack_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_repack", data )->clone();
 	scorefxn_minimize_ = protocols::rosetta_scripts::parse_score_function( tag, "scorefxn_minimize", data )->clone();
 
-
+	rb_min_jumps( utility::string_split< core::Size >( tag->getOption< std::string >( "rb_min_jumps", "" ), ',', core::Size() ) );
+	if( rb_min_jumps().size() > 0 )
+		TR<<"rb_min_jumps set to "<<tag->getOption< std::string >( "rb_min_jumps" )<<" superseding the minimize_rb option"<<std::endl;
 	if (design_ && repack_) utility_exit_with_message("Can't both Design and Repack_Only. Check xml file");
 	if (minimize_in_stages_ && (!min_bb_) )utility_exit_with_message( "EnzRepackMinimize cant minimize in stages without minimize_bb set to 1. Check xml file." );
 
@@ -293,6 +296,15 @@ void
 EnzRepackMinimize::task_factory( core::pack::task::TaskFactoryOP p ) {
   task_factory_ = p;
 }
+
+utility::vector1< core::Size >
+EnzRepackMinimize::rb_min_jumps() const{ return rb_min_jumps_; }
+
+void
+EnzRepackMinimize::rb_min_jumps( utility::vector1< core::Size > const v ){
+	rb_min_jumps_ = v; }
+
+
 
 } //enzdes
 } //protocols

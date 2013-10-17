@@ -28,7 +28,8 @@
 #include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/enzdes/ModifyStoredLigandRBConfsMovers.hh>
 #include <protocols/ligand_docking/ligand_functions.hh> //for minimizing ligand torsions
-
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 //project headers
 #include <core/chemical/ChemicalManager.hh>
@@ -94,7 +95,7 @@ EnzdesBaseProtocol::EnzdesBaseProtocol():
 	rb_min_(true),
 	exclude_protein_protein_fa_elec_(true)
 {
-
+		rb_min_jumps_.clear();
 		Mover::type( "EnzdesFixBBProtocol" );
 		restype_set_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) ;
 		//cst_io_ = new toolbox::match_enzdes_util::EnzConstraintIO(restype_set_);
@@ -392,7 +393,14 @@ EnzdesBaseProtocol::create_enzdes_movemap(
 		}
 	}
 
- if (rb_min_) {
+ if( rb_min_jumps().size() > 0 ){
+	 tr<<"rb_min_jumps was set. setting the following rb dofs to true: ";
+	 foreach( core::Size const rb, rb_min_jumps() ){
+		 tr<<rb<<',';
+		 movemap->set_jump( rb, true );
+	 }
+ }
+ else if (rb_min_) {
     for (core::Size i = 1;i<=pose.num_jump();++i){
 			if (min_all_jumps) movemap->set_jump( i, true );
 			else {
@@ -946,6 +954,13 @@ EnzdesBaseProtocol::set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn ){
 	scorefxn_ = scorefxn->clone();
 
 }
+
+utility::vector1< core::Size >
+EnzdesBaseProtocol::rb_min_jumps() const{ return rb_min_jumps_; }
+
+void
+EnzdesBaseProtocol::rb_min_jumps( utility::vector1< core::Size > const v ){
+	rb_min_jumps_ = v; }
 
 }//namespace enzdes
 }//namespace protocols

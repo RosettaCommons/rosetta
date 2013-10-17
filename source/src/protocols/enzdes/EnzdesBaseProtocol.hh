@@ -54,6 +54,9 @@ public:
 	utility::vector1<Size> catalytic_res( core::pose::Pose const & pose) const;
 
 	std::set< Size > const & design_targets( core::pose::Pose const & pose ) const;
+	utility::vector1< core::Size > rb_min_jumps() const;
+	void rb_min_jumps( utility::vector1< core::Size > const );
+
 
 	bool
 	is_catalytic_position( core::pose::Pose const & pose, core::Size const seqpos ) const;
@@ -189,6 +192,7 @@ protected:
 
 	bool include_all_design_targets_in_design_interface_;
 
+
 private:
 
 	void
@@ -214,7 +218,7 @@ private:
 	core::Real lig_min_stddev_;
 
 	bool exclude_protein_protein_fa_elec_, fix_catalytic_aa_;
-
+	utility::vector1< core::Size > rb_min_jumps_; //dflt empty vector; this supersedes rb_min_ above if it is defined, allowing the user to handpick which jumps to minimize. SJF 15Oct13
 }; //class EnzdesBaseProtocol
 
 

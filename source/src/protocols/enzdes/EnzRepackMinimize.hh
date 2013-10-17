@@ -66,6 +66,10 @@ public:
 	protocols::moves::MoverOP fresh_instance() const;
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
+	utility::vector1< core::Size > rb_min_jumps() const;
+	void rb_min_jumps( utility::vector1< core::Size > const );
+
+
 	//managing minimization options
 	void set_min_rb( bool const min_rb ) { min_rb_ = min_rb; }
 	bool get_min_rb() const { return min_rb_; }
@@ -100,6 +104,7 @@ private:
 	core::pack::task::PackerTaskOP task_;
 	core::pack::task::TaskFactoryOP task_factory_; // sequence positions and residue-level tasks to apply when setup_packer_task is done
 	core::Size n_cycles_;
+	utility::vector1< core::Size > rb_min_jumps_; //dflt empty vector; this supersedes rb_min_ above if it is defined, allowing the user to handpick which jumps to minimize. SJF 15Oct13
 };
 
 } // enzdes
