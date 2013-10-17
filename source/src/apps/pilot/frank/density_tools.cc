@@ -274,21 +274,26 @@ densityTools()
 
 		// estimated model error
 		// linear fit ln(sqrt(fsc)) versus S^2 in each bin
-		{
+		if (usermap) {
 			using numeric::constants::d::pi;
+
 			core::Real sumXX=0.0, sumXY=0.0;
 			for (Size i=1; i<=resobins.size(); ++i) {
-				if (modelmapFSC[i] < 1e-8) continue;
-				sumXX += resobins[i]*resobins[i];
-				sumXY += log((modelmapFSC[i]))*resobins[i];
+				if (resobins[i]<0.1) continue;   // ignore hires
+				if (mapmapFSC[i]<0.0) continue;  //
+
+				if (modelmapFSC[i] > 0)
+					sumXX += modelmapFSC[i]*mapmapFSC[i];
+				sumXY += mapmapFSC[i];
 			}
 
 			if (sumXX == 0) {
-				std::cerr << "ERROR! fsc negitive over all resolution range!" << std::endl;
+				std::cerr << "ERROR! No valid data for error estimate!" << std::endl;
 			} else {
 				// TO DO!  automatically choose a reasonable resolution range
-				Real linest = sumXY/sumXX;
-				estErr = sqrt( -linest / (8/3*pi*pi));
+				Real linest = sumXX/sumXY;
+				//estErr = sqrt( -linest / (8/3*pi*pi));
+				estErr = linest;
 			}
 		}
 	}
@@ -346,7 +351,7 @@ densityTools()
 	// compact
 	std::cerr << "------" << std::endl;
 	if (userpose) {
-		std::cerr << pdbfile << " fsc:" << fsc << " rscc:" << rscc  << " estErr:" << estErr << std::endl;
+		std::cerr << pdbfile << " fsc:" << fsc << " rscc:" << rscc  << " normFSC:" << estErr << std::endl;
 	}
 	if (usermap) {
 		std::cerr << option[ edensity::alt_mapfile ]() << " " << mm_fsc << " " << mm_rscc << std::endl;
