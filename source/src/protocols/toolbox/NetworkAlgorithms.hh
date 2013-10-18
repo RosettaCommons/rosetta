@@ -87,8 +87,9 @@ public:
 class CovalentResidueNetwork : public ResidueNetwork
 {
 public:
-	virtual void
-	generate_edges( core::pose::Pose const & pose );
+	// Undefined, commenting out to fix PyRosetta build
+	//virtual void
+	//generate_edges( core::pose::Pose const & pose );
 };
 
 // Helper functions
