@@ -112,6 +112,7 @@ namespace score { extern BooleanOptionKey const facts_plane_to_self; }
 namespace score { extern RealOptionKey const facts_saltbridge_correction; }
 namespace score { extern RealVectorOptionKey const facts_dshift; }
 namespace score { extern RealOptionKey const facts_die; }
+namespace score { extern BooleanOptionKey const facts_binding_affinity; }
 namespace score { extern BooleanOptionKey const facts_intrascale_by_level; }
 namespace score { extern RealVectorOptionKey const facts_intbb_elec_scale; }
 namespace score { extern RealVectorOptionKey const facts_intbb_solv_scale; }

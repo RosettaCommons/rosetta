@@ -609,15 +609,15 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
       if( path_dist <= 4 ){
 				scale_solv = adjbb_solv_scale( path_dist - 2 );
 				scale_elec = adjbb_elec_scale( path_dist - 2 );
-
+	
       } else if( is_atm1_CO || is_atm2_NH ){ // path_dist > 4 but coupled by peptide bond
 				scale_solv = adjbb_solv_scale( 3 );
 				scale_elec = adjbb_elec_scale( 3 );
-
+	
       } else if( path_dist == 6 ){ // Decoupled case ( spanned by more than phi+psi )
 				scale_solv = adjbb_solv_scale( 5 );
 				scale_elec = adjbb_elec_scale( 5 );
-
+	
       } else {
 				scale_solv = 1.0;
 				scale_elec = 1.0;
@@ -644,7 +644,6 @@ void FACTSPotential::atompair_scale( FACTSRsdTypeInfoCOP factstype1,
 					path_dist ++; // To convert indexing start from Gamma
 				}
 
-				// option2. otherwise just pat_dist b/w atm1 & atm2
 				if( path_dist <= 5 ){
 					scale_solv = adjbs_solv_scale( path_dist - 2 );
 					scale_elec = adjbs_elec_scale( path_dist - 2 );

@@ -148,6 +148,9 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
 			+ rsd.name() + ".params";
 	}
 
+ 	// Option for binding affinity calculation
+ 	bool const binding_affinity( option[ score::facts_binding_affinity ]() );
+
 	chemical::ResidueTypeOP	rsd_for_charge;
 
 	if( utility::file::file_exists( filename ) ) {
@@ -204,14 +207,19 @@ void FACTSRsdTypeInfo::initialize_parameters( chemical::ResidueType const & rsd 
       d1_[i] = -0.811741e+4; d2_[i] = -0.217625e+1;
       a0_[i] = -0.858924e+2; a1_[i] = 0.858904e+2; a2_[i] = 0.196363e-2; a3_[i] = 0.900140e+3;
       c0_[i] = 0.168481e+3; c1_[i] = -0.168287e+3; c2_[i] = 0.113765e-2; c3_[i] = -0.672543e+4;
-      
+
+ 			// 3. weaken OOC solvation energy - this is useful for binding affinity calculation 
+ 			// if there is uncertainty of interacting explicit water
+		} else if( binding_affinity && atmname == "OOC" ){
+ 			a0_[i] = -0.095500e+3; a1_[i] = 0.095000e+3; a2_[i] = 0.180000e-2; a3_[i] = 0.850000e+3;
+
       // Otherwise just use default
     } else {
       vdw_radius = type.extra_parameter( FACTS_RADIUS_INDEX );
       if ( vdw_radius <= 1.0e-6 ){
-	not_using_[i] = true;
+				not_using_[i] = true;
       } else {
-	not_using_[i] = false;
+				not_using_[i] = false;
       }
       
       alpha_[i] = type.extra_parameter( FACTS_ALPHA_INDEX );

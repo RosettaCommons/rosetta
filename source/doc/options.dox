@@ -4261,6 +4261,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 1.0</dd><br>
 </dl>
 <dl>
+<dt><b>-facts_binding_affinity</b> \<Boolean\><dt>
+<dd>Activate FACTS options for binding affinity calculation</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-facts_intrascale_by_level</b> \<Boolean\><dt>
 <dd>Apply internal scaling by path_dist to CA? (definition below becomes G/D/E/Z/>Z</dd><br>
 <dd>Default: false</dd><br>
@@ -4328,7 +4333,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-facts_plane_aa</b> \<StringVector\><dt>
 <dd>AAs to apply plane rule</dd><br>
-<dd>Default: ['arg']</dd><br>
 </dl>
 <dl>
 <dt><b>-facts_eq_type</b> \<String\><dt>

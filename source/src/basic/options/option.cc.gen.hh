@@ -889,6 +889,7 @@ option.add( basic::options::OptionKeys::score::facts_plane_to_self, "Add atoms i
 option.add( basic::options::OptionKeys::score::facts_saltbridge_correction, "FACTS Self energy parameter scaling factor for polarH" ).def(1.0);
 option.add( basic::options::OptionKeys::score::facts_dshift, "FACTS pair term denominator distance shift[bb/bbsc/scsc/saltbridge]" ).def(0.0).def(1.5).def(1.5).def(1.5);
 option.add( basic::options::OptionKeys::score::facts_die, "FACTS dielectric constant" ).def(1.0);
+option.add( basic::options::OptionKeys::score::facts_binding_affinity, "Activate FACTS options for binding affinity calculation" ).def(false);
 option.add( basic::options::OptionKeys::score::facts_intrascale_by_level, "Apply internal scaling by path_dist to CA? (definition below becomes G/D/E/Z/>Z" ).def(false);
 option.add( basic::options::OptionKeys::score::facts_intbb_elec_scale, "FACTS Coulomb scale for intrares bonded pairs: [1-4, 1-5, >1-5]" ).def(0.0).def(0.2).def(0.0);
 option.add( basic::options::OptionKeys::score::facts_intbb_solv_scale, "FACTS GB scale for intrares bb-bb bonded pairs: [1-4, 1-5, >1-5]" ).def(0.4).def(0.4).def(0.0);

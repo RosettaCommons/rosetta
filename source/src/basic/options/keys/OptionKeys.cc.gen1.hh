@@ -156,6 +156,7 @@ namespace score { BooleanOptionKey const facts_plane_to_self( "score:facts_plane
 namespace score { RealOptionKey const facts_saltbridge_correction( "score:facts_saltbridge_correction" );  }
 namespace score { RealVectorOptionKey const facts_dshift( "score:facts_dshift" );  }
 namespace score { RealOptionKey const facts_die( "score:facts_die" );  }
+namespace score { BooleanOptionKey const facts_binding_affinity( "score:facts_binding_affinity" );  }
 namespace score { BooleanOptionKey const facts_intrascale_by_level( "score:facts_intrascale_by_level" );  }
 namespace score { RealVectorOptionKey const facts_intbb_elec_scale( "score:facts_intbb_elec_scale" );  }
 namespace score { RealVectorOptionKey const facts_intbb_solv_scale( "score:facts_intbb_solv_scale" );  }

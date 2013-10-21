@@ -346,6 +346,7 @@ void CartesianMD::do_MD( core::pose::Pose & pose,
 	}
 
 	// Set dof variables
+
 	CartesianMinimizerMap min_map;
 	min_map.setup( pose, *movemap() );
 	min_map.copy_dofs_from_pose( pose, xyz_ );
@@ -504,6 +505,7 @@ void CartesianMD::report_MD( core::pose::Pose &pose )
 		Multivec xyz;
 
 		min_map.setup( pose, *movemap() );
+		xyz.resize( min_map.ndofs() );
 		min_map.copy_dofs_from_pose( pose, xyz );
 		trj_.push_back( xyz );
 	}
