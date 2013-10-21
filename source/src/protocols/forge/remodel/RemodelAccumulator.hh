@@ -78,7 +78,11 @@ public:
 	void cluster_pose();
 	void cluster_loop();
 
+	virtual void apply( Pose & pose, core::Real & score );
 	virtual void apply( Pose & pose);
+	virtual Pose pop();
+	virtual void clear();
+	virtual core::Size size();
 	virtual std::string get_name() const;
 
 

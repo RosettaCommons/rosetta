@@ -94,36 +94,89 @@ RemodelAccumulator::MoverOP RemodelAccumulator::fresh_instance() const {
 	return new RemodelAccumulator();
 }
 
-void RemodelAccumulator::apply( Pose & pose ){
-	using namespace core::scoring;
-	using namespace protocols::simple_filters;
-	using namespace basic::options;
+
+//overloaded version of apply so that you can provide your own score.
+//the cluster code here is duplicated with the original RemodelAccumulator::apply();
+//in the future this can be split off into its own function
+void RemodelAccumulator::apply( Pose & pose, core::Real & score ){
+    using namespace core::scoring;
+    using namespace protocols::simple_filters;
+    using namespace basic::options;
 
 //make the object's own collection of poses
-	core::pose::PoseOP pose_pt = new core::pose::Pose( pose );
+    core::pose::PoseOP pose_pt = new core::pose::Pose( pose );
 
-	ScoreFunctionOP scorefxn( getScoreFunction());
-	sfxn_ = scorefxn;
+    pose_store_.insert(std::pair<core::Real, core::pose::PoseOP>(score, pose_pt));
+    keep_top_pose(option[OptionKeys::remodel::save_top] );
 
-	ScoreTypeFilter const  pose_total_score( scorefxn, total_score, 100 );
-	core::Real score(pose_total_score.compute( *pose_pt ));
-	pose_store_.insert(std::pair<core::Real, core::pose::PoseOP>(score, pose_pt));
-	keep_top_pose(option[OptionKeys::remodel::save_top] );
+    if (cluster_switch_){
+        if(option[OptionKeys::remodel::cluster_on_entire_pose]){
+            cluster_pose();
+        } else { //default uses only loops -- otherwise large structures averages out changes
+            cluster_loop();
+        }
 
-	if (cluster_switch_){
-		if(option[OptionKeys::remodel::cluster_on_entire_pose]){
-			cluster_pose();
-		} else { //default uses only loops -- otherwise large structures averages out changes
-			cluster_loop();
-		}
+        cluster_->sort_each_group_by_energy();
+        cluster_->sort_groups_by_energy();
 
-		cluster_->sort_each_group_by_energy();
-		cluster_->sort_groups_by_energy();
+        // take the lowest energy in clusters and refine it.
+        //std::vector< core::pose::Pose > results = cluster_->get_pose_list();
+    }
 
-		// take the lowest energy in clusters and refine it.
-		//std::vector< core::pose::Pose > results = cluster_->get_pose_list();
-	}
+}
 
+void RemodelAccumulator::apply( Pose & pose ){
+    using namespace core::scoring;
+    using namespace protocols::simple_filters;
+    using namespace basic::options;
+
+//make the object's own collection of poses
+    core::pose::PoseOP pose_pt = new core::pose::Pose( pose );
+
+    ScoreFunctionOP scorefxn( getScoreFunction());
+    sfxn_ = scorefxn;
+
+    ScoreTypeFilter const  pose_total_score( scorefxn, total_score, 100 );
+    core::Real score(pose_total_score.compute( *pose_pt ));
+
+    apply(pose, score);
+
+    /*
+    pose_store_.insert(std::pair<core::Real, core::pose::PoseOP>(score, pose_pt));
+    keep_top_pose(option[OptionKeys::remodel::save_top] );
+
+    if (cluster_switch_){
+        if(option[OptionKeys::remodel::cluster_on_entire_pose]){
+            cluster_pose();
+        } else { //default uses only loops -- otherwise large structures averages out changes
+            cluster_loop();
+        }
+
+        cluster_->sort_each_group_by_energy();
+        cluster_->sort_groups_by_energy();
+
+        // take the lowest energy in clusters and refine it.
+        //std::vector< core::pose::Pose > results = cluster_->get_pose_list();
+    }
+    */
+
+}
+
+//return the best pose in the pose_store_ and then remove it
+core::pose::Pose RemodelAccumulator::pop() {
+    core::pose::Pose pose = *(pose_store_.begin()->second);
+    pose_store_.erase(pose_store_.begin());
+    return pose;
+}
+
+//delete all currently stored poses
+void RemodelAccumulator::clear() {
+    pose_store_.clear();
+}
+
+core::Size RemodelAccumulator::size() {
+    core::Size out = pose_store_.size();
+    return out;
 }
 
 std::string

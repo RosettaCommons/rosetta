@@ -11,6 +11,7 @@
 /// @brief
 /// @author Possu Huang (possu@u.washington.edu)
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
+/// @author Gabriel Rocklin (grocklin@gmail.com) (disulfides)
 
 // unit headers
 #include <protocols/forge/remodel/RemodelMover.hh>
@@ -103,6 +104,7 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/simple_filters/AveragePathLengthFilter.hh>
 #include <protocols/simple_moves/PackRotamersMover.fwd.hh>
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/symmetry/SetupNCSMover.hh> // dihedral constraint
@@ -190,6 +192,18 @@ RemodelMover::RemodelMover() :
 		TR << "SWITCHING FULLATOM FUNCITON TO SOFT_REP_DESIGN" << std::endl;
 		fullatom_sfx_ = ScoreFunctionFactory::create_score_function( SOFT_REP_DESIGN_WTS );
 	}
+
+	blueprint_ = "";
+	rosetta_scripts_quick_and_dirty_ = false;
+	rosetta_scripts_build_disulfide_ = false;
+	rosetta_scripts_fast_disulfide_ = false;
+	rosetta_scripts_bypass_fragments_ = false;
+	rosetta_scripts_match_rt_limit_ = 1;
+	rosetta_scripts_min_disulfides_ = 1;
+	rosetta_scripts_max_disulfides_ = 1;
+	last_input_pose_ = NULL;
+	rosetta_scripts_ = false;
+
 }
 
 ///
@@ -213,7 +227,23 @@ RemodelMover::RemodelMover( RemodelMover const & rval )
 	dr_cycles_( rval.dr_cycles_ ),
 	centroid_sfx_( rval.centroid_sfx_->clone() ),
 	fullatom_sfx_( rval.fullatom_sfx_->clone() ),
-	blueprint_( rval.blueprint_ )
+	blueprint_( rval.blueprint_ ),
+	rosetta_scripts_quick_and_dirty_( rval.rosetta_scripts_quick_and_dirty_),
+	rosetta_scripts_build_disulfide_( rval.rosetta_scripts_build_disulfide_),
+	rosetta_scripts_fast_disulfide_( rval.rosetta_scripts_fast_disulfide_),
+	rosetta_scripts_bypass_fragments_( rval.rosetta_scripts_bypass_fragments_),
+	rosetta_scripts_match_rt_limit_( rval.rosetta_scripts_match_rt_limit_),
+	rosetta_scripts_min_disulfides_( rval.rosetta_scripts_min_disulfides_),
+	rosetta_scripts_max_disulfides_( rval.rosetta_scripts_max_disulfides_),
+	rosetta_scripts_( rval.rosetta_scripts_),
+	last_input_pose_(rval.last_input_pose_),
+	accumulator_(rval.accumulator_)
+
+
+
+
+
+
 {
 	if ( rval.vlb_.get() ) {
 		vlb_ = new VarLengthBuild( *rval.vlb_ );
@@ -348,6 +378,62 @@ void RemodelMover::fullatom_scorefunction( ScoreFunctionOP const & sfx ) {
 	fullatom_sfx_ = sfx->clone();
 }
 
+///Function for recursively creating multiple disulfides
+utility::vector1< utility::vector1< std::pair<Size,Size> > > recursive_multiple_disulfide_former (
+				utility::vector1< std::pair<Size,Size> >  & disulfides_formed,
+				utility::vector1< std::pair<Size,Size> >  & disulfides_possible,
+				Size const & max_disulfides) {
+
+	utility::vector1< utility::vector1< std::pair<Size,Size> > > final_configurations;
+	
+	if (disulfides_formed.size() < max_disulfides) {
+
+		//select one primary new disulfide to be added
+		for (utility::vector1< std::pair< Size, Size > >::iterator new_disulfide = disulfides_possible.begin(); 
+																   new_disulfide != disulfides_possible.end();
+																   ++new_disulfide) {
+			
+			//add the configuration with the new disulfide
+			utility::vector1< std::pair<Size,Size> > new_disulfides_formed = disulfides_formed;
+			new_disulfides_formed.push_back(*new_disulfide);
+			final_configurations.push_back(new_disulfides_formed);
+
+			//storage for possible disulfides which do not clash with the new one we have chosen
+			utility::vector1< std::pair<Size,Size> >  disulfides_to_be_added;
+
+			//identify new secondary disulfides which do not clash with the primary
+			utility::vector1< std::pair< Size, Size > >::iterator potential_further_disulfide = new_disulfide;
+			for (potential_further_disulfide++; potential_further_disulfide != disulfides_possible.end(); 
+				 ++potential_further_disulfide) {
+
+				if ((*potential_further_disulfide).first != (*new_disulfide).first &&
+					(*potential_further_disulfide).second != (*new_disulfide).first &&
+					(*potential_further_disulfide).first != (*new_disulfide).second &&
+					(*potential_further_disulfide).second != (*new_disulfide).second) {
+
+					disulfides_to_be_added.push_back(*potential_further_disulfide);
+				}
+
+			} //end identification of possible secondary disulfides
+
+			if (disulfides_to_be_added.size() > 0) { //Add new disulfides if new ones can be added
+
+				utility::vector1< utility::vector1< std::pair<Size,Size> > > new_disulfide_configurations =
+					recursive_multiple_disulfide_former(new_disulfides_formed, disulfides_to_be_added, max_disulfides);
+
+				for (utility::vector1< utility::vector1< std::pair<Size,Size> > >::iterator new_configuration = new_disulfide_configurations.begin();
+																				 			new_configuration != new_disulfide_configurations.end();
+																				 			++new_configuration) {
+					final_configurations.push_back(*new_configuration);
+
+				} 
+			} //end adding new disulfides recursively AFTER the first selected new one
+		} //end addition of primary disulfide + all secondary possibilities 
+	}	else {
+		//final_configurations.push_back(disulfides_formed); //store the current configuration if we have reached max length
+	}
+	return final_configurations;
+}
 
 ///
 /// @begin RemodelMover::apply
@@ -369,6 +455,27 @@ void RemodelMover::fullatom_scorefunction( ScoreFunctionOP const & sfx ) {
 /// -run::show_simulation_in_pymol
 ///
 ///
+
+bool RemodelMover::SamePose( Pose const & pose1, Pose const & pose2) {
+	if (pose1.total_residue() != pose2.total_residue()) {
+		return false;
+	}
+
+	for (core::Size i = 1; i <= pose1.total_residue(); ++i) {
+		if (std::abs(pose1.phi(i) - pose2.phi(i)) > 0.0001) {
+			return false;
+		}
+		if (std::abs(pose1.psi(i) - pose2.psi(i)) > 0.0001) {
+			return false;
+		}
+		if (std::abs(pose1.omega(i) - pose2.omega(i)) > 0.0001) {
+			return false;
+		}
+	}
+	return true;
+}
+
+
 void RemodelMover::apply( Pose & pose ) {
 
 	using namespace basic::options;
@@ -387,427 +494,484 @@ void RemodelMover::apply( Pose & pose ) {
 #if defined GL_GRAPHICS
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "Remodel" );
 #endif
-
-	TR << "apply(): entered RemodelMover apply(). pose.total_residue(): " << pose.total_residue() << std::endl;
-
-	// store the starting pose for KIC confirmation RMSD calculation
-	native_pose_ = pose;
-	// assign secondary structure
-	scoring::dssp::Dssp dssp( pose );
-
-
-	forge::remodel::RemodelData remodel_data;
-	forge::remodel::RemodelWorkingSet working_model;
-
-	// read blueprint file
-	TR << "apply(): reading blueprint file " << std::endl;
-
-	//TR << "blueprint value 0 is " << blueprint_ << std::endl;
-
-	if (blueprint_ == "") {
-		//TR << "blueprint value 1 is " << blueprint_ << std::endl;
-		blueprint_ =option[OptionKeys::remodel::blueprint]();
-		//TR << "blueprint value 2 is " << blueprint_ << std::endl;
-	}
-
-	remodel_data.getLoopsToBuildFromFile(blueprint_);
-
-	TR << pose.total_residue() << std::endl;
-
-	ObjexxFCL::FArray1D_char dsspSS( pose.total_residue() );
-	dssp.dssp_reduced(dsspSS);
-
-	TR << "apply(): input PDB dssp assignment: (based on start structure)" << std::endl;
-	for ( Size i = 1; i <= pose.total_residue(); i++ ) {
-		TR << dsspSS(i);
-	}
-	TR << std::endl;
-
-	remodel_data.updateWithDsspAssignment( dsspSS );
-	//dssp.insert_ss_into_pose( pose ); This put the assigned sec structure into the pose, as opposed to the actual SS of the pose. Thus eliminated 
-	// process domain insertion option
-	if (option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user() ) {
-		TR << "apply(): INSERT SEGMENT FROM PDB" << std::endl;
-		remodel_data.collectInsertionPose();
-		// remodel_data will have several class member variables updated with the insertion information at this point
-	}
-
-	// create a scorefunction and score the pose first
-	scoring::ScoreFunctionOP sfx = scoring::getScoreFunction();
-	(*sfx)( pose );
-
-	working_model.workingSetGen( pose, remodel_data );
-
-	remodel_data_ = remodel_data; // will use the movemap for natro definition later
-	working_model_ = working_model;
-
-	// test PyMol viewer
-	if (option[OptionKeys::run::show_simulation_in_pymol] ) {
-		moves::AddPyMolObserver( pose, false, core::Real( 0.50 ) );
-	}
+	if (!last_input_pose_  || !SamePose(*last_input_pose_, pose) || accumulator_.size() == 0) {
+		last_input_pose_ = new core::pose::Pose(pose);
 
 
 
-	/*
-	// DEBUG
-	std::set<core::Size> up = working_model.manager.undefined_positions();
-	for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++) {
-		TR << *i << std::endl;
-	}
-	std::set<core::Size> uup = working_model.manager.union_of_intervals_containing_undefined_positions();
-	for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
-		TR << *i <<  " UUP" <<  std::endl;
-	}
-	*/
+		TR << "apply(): entered RemodelMover apply(). pose.total_residue(): " << pose.total_residue() << std::endl;
 
-	if(option[OptionKeys::remodel::repeat_structure].user()) {
-		//for cases involve jxn, need to make pose longer so manager won't complain
-		//about missing residues
-
-		//this is pre modify, so simply extend to 2x blueprint length,
-		//with extensions, the pose will go beyond the correct length.  need to fix
-		//that after modify. Residues beyond first copy+ jxn doesn't really matter
-		if (pose.total_residue() < 2*remodel_data.sequence.length()){ //just making sure it's shorter before grow, input pose can be longer
-			Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
-			// append a tail of the same length
-			for (Size i = 1; i<= len_diff; ++i){
-				core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
-				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
-				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-				pose.set_omega(pose.total_residue()-1,180);
-			}
-		}
-	}
-
-
-	//
-	//	Pose testArc;
-	//	testArc = pose;
-	if (working_model.manager.size()!= 0){
-		if (!option[OptionKeys::remodel::bypass_fragments]){
-			working_model.manager.modify(pose);
-			}else{
-			working_model.manager.dummy_modify(pose.total_residue());
-		}	
-
+		// store the starting pose for KIC confirmation RMSD calculation
+		native_pose_ = pose;
+		// assign secondary structure
 		scoring::dssp::Dssp dssp( pose );
-		dssp.insert_ss_into_pose( pose ); 
-		//	protocols::forge::methods::restore_residues(working_model.manager.original2modified(), testArc, pose);
-		//	pose.dump_pdb("testArcRestore.pdb");
-		//testArc=pose;
-		manager_ = working_model.manager;
-		core::pose::renumber_pdbinfo_based_on_conf_chains(
-			pose,
-			true ,  // fix chain
-			true, // start_from_existing_numbering
-			false, // keep_insertion_code
-			false // rotate_chain_id
-		);
-	}
-	//finally recheck length to ensure blueprint compliance
-	if(option[OptionKeys::remodel::repeat_structure].user()) {
-		Size max_pdb_index = remodel_data_.blueprint.size()*2;
-		while (pose.total_residue() >= max_pdb_index){
-			pose.conformation().delete_residue_slow(pose.total_residue());
-			pose.pdb_info()->obsolete(true); //note the previous line was having issues with the pymol observer. You may also want to add -show_simulation_in_pymol 0 to your flags.
 
+		TR << pose.total_residue() << std::endl;
+		ObjexxFCL::FArray1D_char dsspSS( pose.total_residue() );
+		dssp.dssp_reduced(dsspSS);
+
+		TR << "apply(): input PDB dssp assignment: (based on start structure)" << std::endl;
+		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
+			TR << dsspSS(i);
 		}
+		TR << std::endl;
 
-		if ( pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
-			Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
-			// append a tail of the same length
-			for (Size i = 1; i<= len_diff; ++i){
-				core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
-				core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
-				pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
-				pose.pdb_info()->obsolete(true);
-				pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
-				pose.set_omega(pose.total_residue()-1,180);
+		forge::remodel::RemodelData remodel_data;
+		forge::remodel::RemodelWorkingSet working_model;
+
+		// read blueprint file
+		// logic: if provided at command line, use that.
+		//        if not at command line but given in rosetta scripts, use that.
+		//        if not given at command line or rosetta scripts, make ad hoc blueprint.
+		TR << "apply(): reading blueprint file " << std::endl;
+		if (option[OptionKeys::remodel::blueprint].user()) {
+			blueprint_ =option[OptionKeys::remodel::blueprint]();			
+			remodel_data.getLoopsToBuildFromFile(blueprint_);
+		}	else {
+			if (blueprint_ != "") {
+				remodel_data.getLoopsToBuildFromFile(blueprint_);
+			} else {
+				//generate blueprint on the fly for disulfide remodeling
+				TR << "Generating ad hoc blueprint" << std::endl;
+				std::stringstream ad_hoc_blueprint;
+				//ad_hoc_blueprint = "";
+				for ( Size i = 1; i <= pose.total_residue(); ++i) {
+					//number
+					ad_hoc_blueprint << i;
+					//residue
+					ad_hoc_blueprint << "  V";
+					//helix
+					ad_hoc_blueprint << "   " << dsspSS(i) << std::endl;
+				}
+				TR << ad_hoc_blueprint.str() << std::endl;
+				remodel_data.getLoopsToBuildFromBlueprint(ad_hoc_blueprint.str());
 			}
 		}
 
-	}
-
-
-	/*
-	up = working_model.manager.undefined_positions();
-	for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++ ) {
-		TR << *i << std::endl;
-	}
-	uup = working_model.manager.union_of_intervals_containing_undefined_positions();
-	for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
-		TR << *i <<  " UUP2" <<  std::endl;
-	}
-	*/
-
-	//manager_.dummy_modify(testArc.n_residue());
-	//core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true);
-	//core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, true);
-	//protocols::forge::methods::restore_residues(manager_.original2modified(), testArc, pose);
-	//pose.dump_pdb("testArcRestore2.pdb");
-	//protocols::forge::methods::restore_residues(manager_.original2modified(), testArc, pose);
-	//pose.update_residue_neighbors();
-	//pose.dump_pdb("testArcRestore3.pdb");
-	//testArc.dump_pdb("testArcRestoreSrc3.pdb");
-	//protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD);
-	//protocols::simple_moves::ReturnSidechainMover recover_sidechains( testArc);
-	//to_all_atom.apply(pose);
-	//recover_sidechains.apply(pose);
-	//pose.dump_pdb("MoverREstore.pdb");
-
-	// initialize symmetry
-
-	// only symmetrize here if not in the repeat structure mode. for repeats, stay monomer until repeat generation.
-	if (option[OptionKeys::symmetry::symmetry_definition].user() && !option[OptionKeys::remodel::repeat_structure] )  {
-		simple_moves::symmetry::SetupForSymmetryMover pre_mover;
-		pre_mover.apply( pose );
-		// Remodel assumes chain ID is ' '
-		//pose::PDBInfoOP pdb_info ( pose.pdb_info() );
-		//for ( Size i=1; i<= pdb_info->nres(); ++i ){
-		//	pdb_info->chain(i,' ');
-		//}
-		//pose.pdb_info( pdb_info );
-	}
-
-
-	Size i =option[OptionKeys::remodel::num_trajectory];
-	Size num_traj = i; // need this for checkpointing math
-	Size prev_checkpoint = 0;
-
-	forge::remodel::RemodelAccumulator accumulator( working_model );
-
-	if (option[OptionKeys::remodel::checkpoint] ) {
-		prev_checkpoint = accumulator.recover_checkpoint();
-		if ( prev_checkpoint >= i ) {
-			i = 0;
-		} else {
-			i = i - prev_checkpoint;
-		}
-	}
-
-	if ( working_model.manager.size() != 0 ) {
-		// setup calculators
-		pose::metrics::CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
-		pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_name(),
-			new toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) );
-	}
-
-	/*
-	up = working_model.manager.undefined_positions();
-	for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++){
-		TR << *i << std::endl;
-	}
-	uup = working_model.manager.union_of_intervals_containing_undefined_positions();
-	for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
-		TR << *i <<  " UUP2" <<  std::endl;
-	}
-	*/
-
-	if (option[OptionKeys::remodel::repeat_structure].user() ) {
-
-		// turning on the res_type_linking constraint weight for designs
-		fullatom_sfx_->set_weight( scoring::atom_pair_constraint, 1.0 );
-		fullatom_sfx_->set_weight( scoring::coordinate_constraint, 1.0 );
-		fullatom_sfx_->set_weight( scoring::res_type_linking_constraint, 0.3 );
-		fullatom_sfx_->set_weight( scoring::res_type_constraint, 1.0 );
-
-		//fullatom_sfx_->set_weight( core::scoring::fa_dun, 0 );
-		//fullatom_sfx_->set_weight( core::scoring::fa_sol, 0 );
-		//fullatom_sfx_->set_weight( core::scoring::fa_pair, 0 );
-		//fullatom_sfx_->set_weight( core::scoring::hbond_sc, 0 );
-		//fullatom_sfx_->set_weight( core::scoring::hbond_sc, 0 );
-		//fullatom_sfx_->set_weight( core::scoring::fa_intra_rep, 0 );
-		//fullatom_sfx_->set_weight( core::scoring::rama, 0 );
-		//fullatom_sfx_->set_weight( core::scoring::hbond_bb_sc, 0 );
-		//fullatom_sfx_->set_weight( core::scoring::p_aa_pp, 0 );
-		//fullatom_sfx_->set_weight( core::scoring::ref, 10 );
-	}
-
-	// initializes a RemodelDesignMover which will be used in the loop below
-	forge::remodel::RemodelDesignMover designMover( remodel_data, working_model, fullatom_sfx_ );
-
-	Size no_attempts_at_centroid_build = 0;
-	//Size no_attempts_to_make_at_centroid_build = 10;
-
-	//bool quick_mode =option[OptionKeys::remodel::quick_and_dirty].user();
-
-	Size repeat_number =option[OptionKeys::remodel::repeat_structure];
-	//rerooting tree
-	if(option[OptionKeys::remodel::repeat_structure].user() && pose.total_residue() == remodel_data.blueprint.size()*repeat_number) {
-		core::kinematics::FoldTree f = pose.fold_tree();
-		f.reorder(working_model.safe_root_);
-		pose.fold_tree(f);
-		TR << "rerooting tree: " << pose.fold_tree() << std::endl;
-	}
-
-	while ( i > 0 ) {
-
-		// cache the modified pose first for REPEAT
-		Pose cached_modified_pose( pose );
-
-		// do centroid build
-		TR << std::endl << "apply(): BUILD CYCLE REMAINING " << i << std::endl;
-		kinematics::FoldTree originalTree = pose.fold_tree();
-		TR << "ORIGINAL TREE: " << pose.fold_tree() << std::endl;
-		if ( working_model.manager.size() != 0 ) {
-			if ( !centroid_build( pose, working_model.manager ) ) { // build failed
-				no_attempts_at_centroid_build++;
-				TR << "apply(): number of attempts at loop closure made: " << no_attempts_at_centroid_build << std::endl;
-				set_last_move_status( FAIL_RETRY );
-
-				/*if ( !quick_mode ) {
-					continue;
-				} else {
-					if ( no_attempts_at_centroid_build >= no_attempts_to_make_at_centroid_build ) {
-						TR << "apply(): number of attempts at loop closure exceeded limit of " << no_attempts_to_make_at_centroid_build << ". quitting." << std::endl;
-						set_last_move_status( FAIL_DO_NOT_RETRY );
-						return;
-					} else {
-						// try again. omitting this continue causes the protocol to give up after one failed iteration.
-						continue;
-					}
-				}*/
-				i--;
-				continue;
-				//return;
-			}
-		}
-		if (option[OptionKeys::remodel::repeat_structure].user() ) {
-			// should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
-			add_lower_terminus_type_to_pose_residue(pose,1);
-			for ( Size res = 1; res <= cached_modified_pose.n_residue(); res++ ) {
-				cached_modified_pose.set_phi( res, pose.phi(res) );
-				cached_modified_pose.set_psi( res, pose.psi(res) );
-				cached_modified_pose.set_omega( res, pose.omega(res) );
-				cached_modified_pose.set_secstruct(res, pose.secstruct(res));
-				ResidueType const & rsd_type(pose.residue_type(res));
-				replace_pose_residue_copying_existing_coordinates(cached_modified_pose,res,rsd_type);
-			}
+		remodel_data.updateWithDsspAssignment( dsspSS );
+		//dssp.insert_ss_into_pose( pose ); This put the assigned sec structure into the pose, as opposed to the actual SS of the pose. Thus eliminated 
+		// process domain insertion option
+		if (option[OptionKeys::remodel::domainFusion::insert_segment_from_pdb].user() ) {
+			TR << "apply(): INSERT SEGMENT FROM PDB" << std::endl;
+			remodel_data.collectInsertionPose();
+			// remodel_data will have several class member variables updated with the insertion information at this point
 		}
 
-		core::pose::renumber_pdbinfo_based_on_conf_chains(
-				pose,
-		    true ,  // fix chain
-			  true, // start_from_existing_numbering
-			  false, // keep_insertion_code
-		    false // rotate_chain_id
-		 );
+		// create a scorefunction and score the pose first
+		scoring::ScoreFunctionOP sfx = scoring::getScoreFunction();
+		(*sfx)( pose );
 
-		//test
-		//pose.dump_pdb("check.pdb");
+		working_model.workingSetGen( pose, remodel_data );
+
+		remodel_data_ = remodel_data; // will use the movemap for natro definition later
+		working_model_ = working_model;
+
+		//TR << "After working_model_" << std::endl;
+
+		// test PyMol viewer
+		if (option[OptionKeys::run::show_simulation_in_pymol] ) {
+			moves::AddPyMolObserver( pose, false, core::Real( 0.50 ) );
+		}
+
+
+
 		/*
-		//extract the constraint currently in Pose for later Recycling
-		ConstraintSetOP cst_set_post_built;
-		if (option[OptionKeys::remodel::repeat_structure].user() ) {
-
-			// at this stage it should hold generic cstfile and res_type_linking
-			// constraints
-			cst_set_post_built = new ConstraintSet( *pose.constraint_set());
+		// DEBUG
+		std::set<core::Size> up = working_model.manager.undefined_positions();
+		for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++) {
+			TR << *i << std::endl;
+		}
+		std::set<core::Size> uup = working_model.manager.union_of_intervals_containing_undefined_positions();
+		for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
+			TR << *i <<  " UUP" <<  std::endl;
 		}
 		*/
 
-		designMover.set_state("stage");
+		if(option[OptionKeys::remodel::repeat_structure].user()) {
+			//for cases involve jxn, need to make pose longer so manager won't complain
+			//about missing residues
 
-		// handle constraints as soon as centroid is done.  If applying sidechain
-		// constraints, replace residue to the right AA right away.
-		if (option[OptionKeys::enzdes::cstfile].user() ) {
-			TR << "apply(): constraint file found on command line. updating score functions to include constraint terms." << std::endl;
-
-			forge::remodel::RemodelEnzdesCstModuleOP cstOP = new forge::remodel::RemodelEnzdesCstModule(remodel_data);
-
-			// RemodelEnzdesCstModule cst(remodel_data);
-			//safety
-			pose.remove_constraints();
-			//wipe out cst_cache
-			toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_cst_cache( NULL );
-			//wipe out observer too
-			pose.observer_cache().set( pose::datacache::CacheableObserverType::ENZDES_OBSERVER, NULL , false);
-
-			//cstOP->remove_constraints_from_pose(pose,true /*keep covalent*/, false /*fail if missing*/);
-
-			cstOP->use_all_blocks();
-			TR << "apply(): calling RemodelEnzdesCstModule apply function." << std::endl;
-			cstOP->apply(pose);
-			cstOP->enable_constraint_scoreterms(fullatom_sfx_);
-			designMover.scorefunction(fullatom_sfx_);
-		}
-		if(option[OptionKeys::constraints::cst_file].user()){
-				//safety
-				pose.remove_constraints();
-
-				protocols::simple_moves::ConstraintSetMoverOP constraint = new protocols::simple_moves::ConstraintSetMover();
-				constraint->apply( pose );
-
-				fullatom_sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);
-				fullatom_sfx_->set_weight(core::scoring::coordinate_constraint, 1.0);
-				fullatom_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0);
-				designMover.scorefunction(fullatom_sfx_);
+			//this is pre modify, so simply extend to 2x blueprint length,
+			//with extensions, the pose will go beyond the correct length.  need to fix
+			//that after modify. Residues beyond first copy+ jxn doesn't really matter
+			if (pose.total_residue() < 2*remodel_data.sequence.length()){ //just making sure it's shorter before grow, input pose can be longer
+				Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
+				// append a tail of the same length
+				for (Size i = 1; i<= len_diff; ++i){
+					core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
+					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+					pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+					pose.set_omega(pose.total_residue()-1,180);
+				}
+			}
 		}
 
-		if(option[OptionKeys::remodel::build_disulf].user()){
-			TR << "apply(): build_disfulf option set. finding disulfides." << std::endl;
-			utility::vector1<std::pair <Size, Size> > disulf_partners;
-			bool disulfPass = false;
-			disulfPass = designMover.find_disulfides_in_the_neighborhood( pose, disulf_partners );
-			if ( disulfPass != true ) {
-				i--; //for now control disulf with num_trajectory flag, too.
-				continue;
+		//
+		//	Pose testArc;
+		//	testArc = pose;
+		if (working_model.manager.size()!= 0){
+			if (!option[OptionKeys::remodel::bypass_fragments] && !rosetta_scripts_bypass_fragments_ && !rosetta_scripts_fast_disulfide_){
+				working_model.manager.modify(pose);
+				}else{
+				working_model.manager.dummy_modify(pose.total_residue());
+
+			}	
+
+			scoring::dssp::Dssp dssp( pose );
+			dssp.insert_ss_into_pose( pose ); 
+			//	protocols::forge::methods::restore_residues(working_model.manager.original2modified(), testArc, pose);
+			//	pose.dump_pdb("testArcRestore.pdb");
+			//testArc=pose;
+			manager_ = working_model.manager;
+			core::pose::renumber_pdbinfo_based_on_conf_chains(
+				pose,
+				true ,  // fix chain
+				true, // start_from_existing_numbering
+				false, // keep_insertion_code
+				false // rotate_chain_id
+			);
+		}
+
+		//finally recheck length to ensure blueprint compliance
+		if(option[OptionKeys::remodel::repeat_structure].user()) {
+			Size max_pdb_index = remodel_data_.blueprint.size()*2;
+			while (pose.total_residue() >= max_pdb_index){
+				pose.conformation().delete_residue_slow(pose.total_residue());
+				pose.pdb_info()->obsolete(true); //note the previous line was having issues with the pymol observer. You may also want to add -show_simulation_in_pymol 0 to your flags.
 			}
 
-			for ( utility::vector1< std::pair< Size, Size > >::iterator itr = disulf_partners.begin(); itr != disulf_partners.end(); itr++ ) {
-				Pose disulf_copy_pose = pose;
-				utility::vector1< std::pair< Size, Size > > single_disulf;
-				single_disulf.push_back(*itr);
+			if ( pose.total_residue() < (remodel_data_.sequence.length()*2) ) {
+				Size len_diff = (2*remodel_data_.sequence.length()) - pose.total_residue();
+				// append a tail of the same length
+				for (Size i = 1; i<= len_diff; ++i){
+					core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
+					core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+					pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+					pose.pdb_info()->obsolete(true);
+					pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+					pose.set_omega(pose.total_residue()-1,180);
+				}
+			}
 
-				kinematics::MoveMapOP combined_mm = new kinematics::MoveMap;
+		}
 
-				combined_mm->import( remodel_data_.natro_movemap_ );
-				combined_mm->import( manager_.movemap() );
 
-				designMover.make_disulfide( disulf_copy_pose, single_disulf, combined_mm );
-				designMover.apply( disulf_copy_pose );
+		/*
+		up = working_model.manager.undefined_positions();
+		for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++ ) {
+			TR << *i << std::endl;
+		}
+		uup = working_model.manager.union_of_intervals_containing_undefined_positions();
+		for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
+			TR << *i <<  " UUP2" <<  std::endl;
+		}
+		*/
 
-				// for now, accept all disulf build, as it is hard enough to do already.  Accept instead of cst filter?
-				// accumulator.apply(disulf_copy_pose);
-				if (option[OptionKeys::enzdes::cstfile].user() ) {
-					simple_filters::ScoreTypeFilter const pose_constraint( fullatom_sfx_, atom_pair_constraint, 10 );
-					bool CScore(pose_constraint.apply( disulf_copy_pose ));
-					if (!CScore){  // if didn't pass, rebuild
+		//manager_.dummy_modify(testArc.n_residue());
+		//core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true);
+		//core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, true);
+		//protocols::forge::methods::restore_residues(manager_.original2modified(), testArc, pose);
+		//pose.dump_pdb("testArcRestore2.pdb");
+		//protocols::forge::methods::restore_residues(manager_.original2modified(), testArc, pose);
+		//pose.update_residue_neighbors();
+		//pose.dump_pdb("testArcRestore3.pdb");
+		//testArc.dump_pdb("testArcRestoreSrc3.pdb");
+		//protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD);
+		//protocols::simple_moves::ReturnSidechainMover recover_sidechains( testArc);
+		//to_all_atom.apply(pose);
+		//recover_sidechains.apply(pose);
+		//pose.dump_pdb("MoverREstore.pdb");
+
+		// initialize symmetry
+
+		// only symmetrize here if not in the repeat structure mode. for repeats, stay monomer until repeat generation.
+		if (option[OptionKeys::symmetry::symmetry_definition].user() && !option[OptionKeys::remodel::repeat_structure] )  {
+			simple_moves::symmetry::SetupForSymmetryMover pre_mover;
+			pre_mover.apply( pose );
+			// Remodel assumes chain ID is ' '
+			//pose::PDBInfoOP pdb_info ( pose.pdb_info() );
+			//for ( Size i=1; i<= pdb_info->nres(); ++i ){
+			//	pdb_info->chain(i,' ');
+			//
+			//pose.pdb_info( pdb_info );
+		}
+
+
+		Size i =option[OptionKeys::remodel::num_trajectory];
+		//if invoked from rosetta_scripts and num_trajectories not specified, change default to 1
+		if (!option[OptionKeys::remodel::num_trajectory].user() && rosetta_scripts_) {
+			i = 1;
+		}
+		Size num_traj = i; // need this for checkpointing math
+		Size prev_checkpoint = 0;
+
+		//accumulator_ is now owned by RemodelMover and not by apply()
+		//forge::remodel::RemodelAccumulator accumulator_( working_model );
+
+		if (option[OptionKeys::remodel::checkpoint] ) {
+			prev_checkpoint = accumulator_.recover_checkpoint();
+			if ( prev_checkpoint >= i ) {
+				i = 0;
+			} else {
+				i = i - prev_checkpoint;
+			}
+		}
+
+		if ( working_model.manager.size() != 0 ) {
+			// setup calculators
+			pose::metrics::CalculatorFactory::Instance().remove_calculator( neighborhood_calc_name() );
+			pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc_name(),
+				new toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() ) );
+		}
+
+		/*
+		up = working_model.manager.undefined_positions();
+		for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++){
+			TR << *i << std::endl;
+		}
+		uup = working_model.manager.union_of_intervals_containing_undefined_positions();
+		for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
+			TR << *i <<  " UUP2" <<  std::endl;
+		}
+		*/
+
+		if (option[OptionKeys::remodel::repeat_structure].user() ) {
+
+			// turning on the res_type_linking constraint weight for designs
+			fullatom_sfx_->set_weight( scoring::atom_pair_constraint, 1.0 );
+			fullatom_sfx_->set_weight( scoring::coordinate_constraint, 1.0 );
+			fullatom_sfx_->set_weight( scoring::res_type_linking_constraint, 0.3 );
+			fullatom_sfx_->set_weight( scoring::res_type_constraint, 1.0 );
+
+			//fullatom_sfx_->set_weight( core::scoring::fa_dun, 0 );
+			//fullatom_sfx_->set_weight( core::scoring::fa_sol, 0 );
+			//fullatom_sfx_->set_weight( core::scoring::fa_pair, 0 );
+			//fullatom_sfx_->set_weight( core::scoring::hbond_sc, 0 );
+			//fullatom_sfx_->set_weight( core::scoring::hbond_sc, 0 );
+			//fullatom_sfx_->set_weight( core::scoring::fa_intra_rep, 0 );
+			//fullatom_sfx_->set_weight( core::scoring::rama, 0 );
+			//fullatom_sfx_->set_weight( core::scoring::hbond_bb_sc, 0 );
+			//fullatom_sfx_->set_weight( core::scoring::p_aa_pp, 0 );
+			//fullatom_sfx_->set_weight( core::scoring::ref, 10 );
+		}
+
+		// initializes a RemodelDesignMover which will be used in the loop below
+		forge::remodel::RemodelDesignMover designMover( remodel_data, working_model, fullatom_sfx_ );
+
+		Size no_attempts_at_centroid_build = 0;
+		//Size no_attempts_to_make_at_centroid_build = 10;
+
+		//bool quick_mode =option[OptionKeys::remodel::quick_and_dirty].user();
+
+		Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+		//rerooting tree
+		if(option[OptionKeys::remodel::repeat_structure].user() && pose.total_residue() == remodel_data.blueprint.size()*repeat_number) {
+			core::kinematics::FoldTree f = pose.fold_tree();
+			f.reorder(working_model.safe_root_);
+			pose.fold_tree(f);
+			TR << "rerooting tree: " << pose.fold_tree() << std::endl;
+		}
+
+		while ( i > 0 ) {
+
+			// cache the modified pose first for REPEAT
+			Pose cached_modified_pose( pose );
+
+			// do centroid build
+			TR << std::endl << "apply(): BUILD CYCLE REMAINING " << i << std::endl;
+			kinematics::FoldTree originalTree = pose.fold_tree();
+			TR << "ORIGINAL TREE: " << pose.fold_tree() << std::endl;
+			if ( working_model.manager.size() != 0 ) {
+				if ( !centroid_build( pose, working_model.manager ) ) { // build failed
+					no_attempts_at_centroid_build++;
+					TR << "apply(): number of attempts at loop closure made: " << no_attempts_at_centroid_build << std::endl;
+					set_last_move_status( FAIL_RETRY );
+
+					/*if ( !quick_mode ) {
 						continue;
 					} else {
-						accumulator.apply(disulf_copy_pose);
-					}
-
-				} else {
-					accumulator.apply(disulf_copy_pose);
+						if ( no_attempts_at_centroid_build >= no_attempts_to_make_at_centroid_build ) {
+							TR << "apply(): number of attempts at loop closure exceeded limit of " << no_attempts_to_make_at_centroid_build << ". quitting." << std::endl;
+							set_last_move_status( FAIL_DO_NOT_RETRY );
+							return;
+						} else {
+							// try again. omitting this continue causes the protocol to give up after one failed iteration.
+							continue;
+						}
+					}*/
+					i--;
+					continue;
+					//return;
+				}
+			}
+			if (option[OptionKeys::remodel::repeat_structure].user() ) {
+				// should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
+				add_lower_terminus_type_to_pose_residue(pose,1);
+				for ( Size res = 1; res <= cached_modified_pose.n_residue(); res++ ) {
+					cached_modified_pose.set_phi( res, pose.phi(res) );
+					cached_modified_pose.set_psi( res, pose.psi(res) );
+					cached_modified_pose.set_omega( res, pose.omega(res) );
+					cached_modified_pose.set_secstruct(res, pose.secstruct(res));
+					ResidueType const & rsd_type(pose.residue_type(res));
+					replace_pose_residue_copying_existing_coordinates(cached_modified_pose,res,rsd_type);
 				}
 			}
 
-		} else {
-			// option build_disulf not specified...
-			//if (option[OptionKeys::remodel::repeat_structure].user() ||option[OptionKeys::remodel::cen_minimize] ) {
-			if(option[OptionKeys::remodel::cen_minimize]) {
+			core::pose::renumber_pdbinfo_based_on_conf_chains(
+					pose,
+			    true ,  // fix chain
+				  true, // start_from_existing_numbering
+				  false, // keep_insertion_code
+			    false // rotate_chain_id
+			 );
 
-				//cache current foldTree;
-				kinematics::FoldTree cenFT = pose.fold_tree();
-				pose.fold_tree(originalTree);
+			//test
+			//pose.dump_pdb("check.pdb");
+			/*
+			//extract the constraint currently in Pose for later Recycling
+			ConstraintSetOP cst_set_post_built;
+			if (option[OptionKeys::remodel::repeat_structure].user() ) {
 
-				kinematics::MoveMapOP cmmop = new kinematics::MoveMap;
-				//pose.dump_pdb("pretest.pdb");
+				// at this stage it should hold generic cstfile and res_type_linking
+				// constraints
+				cst_set_post_built = new ConstraintSet( *pose.constraint_set());
+			}
+			*/
 
-				cmmop->import( remodel_data_.natro_movemap_ );
-				cmmop->import( manager_.movemap() );
+			designMover.set_state("stage");
 
-				for (Size i = 1; i<= pose.total_residue(); ++i){
-					std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
+			// handle constraints as soon as centroid is done.  If applying sidechain
+			// constraints, replace residue to the right AA right away.
+			if (option[OptionKeys::enzdes::cstfile].user() ) {
+				TR << "apply(): constraint file found on command line. updating score functions to include constraint terms." << std::endl;
+
+				forge::remodel::RemodelEnzdesCstModuleOP cstOP = new forge::remodel::RemodelEnzdesCstModule(remodel_data);
+
+				// RemodelEnzdesCstModule cst(remodel_data);
+				//safety
+				pose.remove_constraints();
+				//wipe out cst_cache
+				toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_cst_cache( NULL );
+				//wipe out observer too
+				pose.observer_cache().set( pose::datacache::CacheableObserverType::ENZDES_OBSERVER, NULL , false);
+
+				//cstOP->remove_constraints_from_pose(pose,true /*keep covalent*/, false /*fail if missing*/);
+
+				cstOP->use_all_blocks();
+				TR << "apply(): calling RemodelEnzdesCstModule apply function." << std::endl;
+				cstOP->apply(pose);
+				cstOP->enable_constraint_scoreterms(fullatom_sfx_);
+				designMover.scorefunction(fullatom_sfx_);
+			}
+			if(option[OptionKeys::constraints::cst_file].user()){
+					//safety
+					pose.remove_constraints();
+
+					protocols::simple_moves::ConstraintSetMoverOP constraint = new protocols::simple_moves::ConstraintSetMover();
+					constraint->apply( pose );
+
+					fullatom_sfx_->set_weight(core::scoring::atom_pair_constraint, 1.0);
+					fullatom_sfx_->set_weight(core::scoring::coordinate_constraint, 1.0);
+					fullatom_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0);
+					designMover.scorefunction(fullatom_sfx_);
+			}
+
+			if(option[OptionKeys::remodel::build_disulf].user() || rosetta_scripts_build_disulfide_ || rosetta_scripts_fast_disulfide_){
+
+				utility::vector1<std::pair <Size, Size> > disulf_partners;
+				bool disulfPass = false;
+
+				core::Energy match_rt_limit = rosetta_scripts_match_rt_limit_;
+				if(option[OptionKeys::remodel::build_disulf].user()) {
+					match_rt_limit = option[OptionKeys::remodel::match_rt_limit];
 				}
 
-				//adding angles and bonds dof
-				//	cmmop->set(core::id::THETA, true);
-				//	cmmop->set(core::id::D, true);
+				disulfPass = designMover.find_disulfides_in_the_neighborhood( pose, disulf_partners, match_rt_limit );
+				if ( disulfPass != true ) {
+					i--; //for now control disulf with num_trajectory flag, too.
+					continue;
+				}
 
-				 for(Size i = 1; i <= pose.n_residue(); i++) {
+				//Use the recursive multiple disulfide former
+				utility::vector1< std::pair<Size,Size> > empty_disulfide_list;
+				utility::vector1< utility::vector1< std::pair<Size,Size> > > disulfide_configurations =
+					recursive_multiple_disulfide_former(empty_disulfide_list, disulf_partners, rosetta_scripts_max_disulfides_);
+
+				//iterate over disulfide configurations instead of over possible disulfides
+				for (utility::vector1< utility::vector1< std::pair<Size,Size> > >::iterator ds_config = disulfide_configurations.begin();
+																							ds_config != disulfide_configurations.end();
+																							++ds_config) {
+					if ( (*ds_config).size() >= rosetta_scripts_min_disulfides_ && (*ds_config).size() <= rosetta_scripts_max_disulfides_ ) {
+
+						//form all the disulfides in the disulfide configuration
+						TR << "Building disulfide configuration ";
+						for (utility::vector1< std::pair<Size,Size> >::iterator my_ds = (*ds_config).begin(); my_ds != (*ds_config).end(); ++my_ds) {
+							TR << (*my_ds).first << "-" << (*my_ds).second << " ";
+						}
+						TR << std::endl;
+
+		                Pose disulf_copy_pose = pose;
+
+						kinematics::MoveMapOP combined_mm = new kinematics::MoveMap;
+
+						combined_mm->import( remodel_data_.natro_movemap_ );
+						combined_mm->import( manager_.movemap() );
+
+						if (!rosetta_scripts_fast_disulfide_) {
+							//original way of doing things, design is included through designMover.apply
+							designMover.make_disulfide( disulf_copy_pose, *ds_config, combined_mm );
+							designMover.apply( disulf_copy_pose );
+						} else {
+							//fast way of doing things, assumes design later in a rosetta script, no need to do any now.
+							//designMover.apply is not called.
+							//kinematics::MoveMapOP freeze_bb_combined_mm = new kinematics::MoveMap(*combined_mm);
+							//(*freeze_bb_combined_mm).set_bb(false);
+							designMover.make_disulfide_fast( disulf_copy_pose, *ds_config);//, freeze_bb_combined_mm );
+							//designMover.apply( disulf_copy_pose );
+						}
+
+						// for now, accept all disulf build, as it is hard enough to do already.  Accept instead of cst filter?
+						// accumulator_.apply(disulf_copy_pose);
+						if (option[OptionKeys::enzdes::cstfile].user() ) {
+							simple_filters::ScoreTypeFilter const pose_constraint( fullatom_sfx_, atom_pair_constraint, 10 );
+							bool CScore(pose_constraint.apply( disulf_copy_pose ));
+							if (!CScore){  // if didn't pass, rebuild
+								continue;
+							} else {
+								accumulator_.apply(disulf_copy_pose);
+							}
+
+						} else {
+							accumulator_.apply(disulf_copy_pose);
+						}
+					}
+				}
+
+			} else {
+				// option build_disulf not specified...
+				//if (option[OptionKeys::remodel::repeat_structure].user() ||option[OptionKeys::remodel::cen_minimize] ) {
+				if(option[OptionKeys::remodel::cen_minimize]) {
+
+					//cache current foldTree;
+					kinematics::FoldTree cenFT = pose.fold_tree();
+					pose.fold_tree(originalTree);
+
+					kinematics::MoveMapOP cmmop = new kinematics::MoveMap;
+					//pose.dump_pdb("pretest.pdb");
+
+					cmmop->import( remodel_data_.natro_movemap_ );
+					cmmop->import( manager_.movemap() );
+
+					for (Size i = 1; i<= pose.total_residue(); ++i){
+						std::cout << "bb at " << i << " " << cmmop->get_bb(i) << std::endl;
+					}
+
+					//adding angles and bonds dof
+					//	cmmop->set(core::id::THETA, true);
+					//	cmmop->set(core::id::D, true);
+
+					 for(Size i = 1; i <= pose.n_residue(); i++) {
 						for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
 							if (cmmop->get_bb(i) == 1){
 								cmmop->set(core::id::DOF_ID(core::id::AtomID(j,i),core::id::THETA),true);
@@ -817,247 +981,282 @@ void RemodelMover::apply( Pose & pose ) {
 					}
 
 
-				//scoring::ScoreFunctionOP cen_min_sfxn = scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
+					//scoring::ScoreFunctionOP cen_min_sfxn = scoring::ScoreFunctionFactory::create_score_function("score4_smooth");
 
-				TR << "centroid minimizing" << std::endl;
-				pose::Pose archived_pose = pose;
+					TR << "centroid minimizing" << std::endl;
+					pose::Pose archived_pose = pose;
 
-				// flip residue type set for centroid minimize
-				util::switch_to_residue_type_set( pose, chemical::CENTROID, true );
+					// flip residue type set for centroid minimize
+					util::switch_to_residue_type_set( pose, chemical::CENTROID, true );
 
-				protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
+					protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
 
-				if(option[OptionKeys::remodel::repeat_structure].user()){
-							//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
+					if(option[OptionKeys::remodel::repeat_structure].user()){
+								//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
 
-							Size repeat_number =option[OptionKeys::remodel::repeat_structure];
-							Size segment_length = (pose.n_residue())/repeat_number;
+								Size repeat_number =option[OptionKeys::remodel::repeat_structure];
+								Size segment_length = (pose.n_residue())/repeat_number;
 
+
+								for (Size rep = 1; rep < repeat_number-1; rep++){ // from 1 since first segment don't need self-linking
+									std::stringstream templateRangeSS;
+									templateRangeSS << "2-" << segment_length+1; // offset by one to work around the termini
+									std::stringstream targetSS;
+									targetSS << 1+(segment_length*rep)+1 << "-" << segment_length + (segment_length*rep)+1;
+									TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+									setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+								}
 
 							for (Size rep = 1; rep < repeat_number-1; rep++){ // from 1 since first segment don't need self-linking
+									std::stringstream templateRangeSS;
+									templateRangeSS << "3-" << segment_length+2; // offset by one to work around the termini
+									std::stringstream targetSS;
+									targetSS << 1+(segment_length*rep)+2 << "-" << segment_length + (segment_length*rep)+2;
+									TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+									setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+								}
+
+
 								std::stringstream templateRangeSS;
-								templateRangeSS << "2-" << segment_length+1; // offset by one to work around the termini
+								//take care of the terminal repeat, since the numbers are offset.
+								templateRangeSS << "2-" << segment_length-1; // offset by one to work around the termini
 								std::stringstream targetSS;
-								targetSS << 1+(segment_length*rep)+1 << "-" << segment_length + (segment_length*rep)+1;
+								targetSS << 1+(segment_length*(repeat_number-1))+1 << "-" << segment_length + (segment_length*(repeat_number-1))-1;
 								TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
 								setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
-							}
+								setup_ncs.apply(pose);
 
-						for (Size rep = 1; rep < repeat_number-1; rep++){ // from 1 since first segment don't need self-linking
-								std::stringstream templateRangeSS;
-								templateRangeSS << "3-" << segment_length+2; // offset by one to work around the termini
-								std::stringstream targetSS;
-								targetSS << 1+(segment_length*rep)+2 << "-" << segment_length + (segment_length*rep)+2;
-								TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
-								setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
-							}
-
-
-							std::stringstream templateRangeSS;
-							//take care of the terminal repeat, since the numbers are offset.
-							templateRangeSS << "2-" << segment_length-1; // offset by one to work around the termini
-							std::stringstream targetSS;
-							targetSS << 1+(segment_length*(repeat_number-1))+1 << "-" << segment_length + (segment_length*(repeat_number-1))-1;
-							TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
-							setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
-							setup_ncs.apply(pose);
-
-				}
-
-				//sfx->show(TR, pose);
-				//TR << std::endl;
-
-				centroid_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
-				centroid_sfx_->set_weight( core::scoring::coordinate_constraint, 1.0);
-				centroid_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0 );
-				//enable cartesian bond terms
-				centroid_sfx_->set_weight(core::scoring::cart_bonded_angle,  0.1 );
-				centroid_sfx_->set_weight(core::scoring::cart_bonded_length,  0.1 );
-				centroid_sfx_->set_weight(core::scoring::cart_bonded_torsion,  0.1 );
-				centroid_sfx_->set_weight(core::scoring::omega, 0.2 );
-
-				//only use smooth hb if either of the term is used in centroid build level
-				if (centroid_sfx_->get_weight(core::scoring::hbond_lr_bb) > 0 || centroid_sfx_->get_weight(core::scoring::hbond_sr_bb) > 0 ){
-					centroid_sfx_->set_weight( core::scoring::cen_hb, 2.0);
-				}
-				/*
-				if (centroid_sfx_->get_weight(core::scoring::env) > 0 ){
-					centroid_sfx_->set_weight( core::scoring::cen_env_smooth, centroid_sfx_->get_weight(core::scoring::env));
-					centroid_sfx_->set_weight( core::scoring::env, 0.0);
-				}*/
-
-				//simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "dfpmin_armijo", 0.01, true);
-				simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "lbfgs_armijo", 0.01, true);
-				TR << "cen_minimize pose foldtree: " << pose.fold_tree() << std::endl;
-				minMover->apply(pose);
-
-				//reset cen_hb to 0
-				centroid_sfx_->set_weight( core::scoring::cen_hb, 0.0);
-				//switch back the foldtree
-				//pose.fold_tree(cenFT);
-
-				// flip residue type set back, for repeat builds, currently don't do
-				// restore_sidechain, as they should all be redesigned.  MAY NEED TO
-				// CHANGE
-				util::switch_to_residue_type_set( pose, chemical::FA_STANDARD, true );
-				//forge::methods::restore_residues( manager_.original2modified(), archived_pose , pose );
-				//pose.dump_pdb("test.pdb");
-
-			}
-
-			TR << "apply(): calling RemodelDesignMover apply function." << std::endl;
-
-			//****Previously this loop didn't maintain the pose correctly which resulted in a difficult to track down seg fault.  Fixed, but it's questionable weather you would want to filter poses based on constraints.
-			if (option[OptionKeys::enzdes::cstfile].user() ||
-					option[OptionKeys::constraints::cst_file].user()
-					 ){
-				simple_filters::ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint,option[OptionKeys::remodel::cstfilter] );
-				bool CScore(pose_constraint.apply( pose ));
-				if (!CScore){  // if didn't pass, rebuild
-					TR << "built model did not pass constraints test." << std::endl;
-					if (option[OptionKeys::remodel::repeat_structure].user() ) {
-						//reset the pose to monomer
-						pose = cached_modified_pose;
-					} else {
-						pose.fold_tree(originalTree);
 					}
-					continue;
+
+					//sfx->show(TR, pose);
+					//TR << std::endl;
+
+					centroid_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
+					centroid_sfx_->set_weight( core::scoring::coordinate_constraint, 1.0);
+					centroid_sfx_->set_weight(core::scoring::dihedral_constraint, 10.0 );
+					//enable cartesian bond terms
+					centroid_sfx_->set_weight(core::scoring::cart_bonded_angle,  0.1 );
+					centroid_sfx_->set_weight(core::scoring::cart_bonded_length,  0.1 );
+					centroid_sfx_->set_weight(core::scoring::cart_bonded_torsion,  0.1 );
+					centroid_sfx_->set_weight(core::scoring::omega, 0.2 );
+
+					//only use smooth hb if either of the term is used in centroid build level
+					if (centroid_sfx_->get_weight(core::scoring::hbond_lr_bb) > 0 || centroid_sfx_->get_weight(core::scoring::hbond_sr_bb) > 0 ){
+						centroid_sfx_->set_weight( core::scoring::cen_hb, 2.0);
+					}
+					/*
+					if (centroid_sfx_->get_weight(core::scoring::env) > 0 ){
+						centroid_sfx_->set_weight( core::scoring::cen_env_smooth, centroid_sfx_->get_weight(core::scoring::env));
+						centroid_sfx_->set_weight( core::scoring::env, 0.0);
+					}*/
+
+					//simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "dfpmin_armijo", 0.01, true);
+					simple_moves::MinMoverOP minMover = new simple_moves::MinMover( cmmop , centroid_sfx_, "lbfgs_armijo", 0.01, true);
+					TR << "cen_minimize pose foldtree: " << pose.fold_tree() << std::endl;
+					minMover->apply(pose);
+
+					//reset cen_hb to 0
+					centroid_sfx_->set_weight( core::scoring::cen_hb, 0.0);
+					//switch back the foldtree
+					//pose.fold_tree(cenFT);
+
+					// flip residue type set back, for repeat builds, currently don't do
+					// restore_sidechain, as they should all be redesigned.  MAY NEED TO
+					// CHANGE
+					util::switch_to_residue_type_set( pose, chemical::FA_STANDARD, true );
+					//forge::methods::restore_residues( manager_.original2modified(), archived_pose , pose );
+					//pose.dump_pdb("test.pdb");
+
 				}
-				else {
-					designMover.apply(pose);
-					accumulator.apply(pose);
-				}
-			} else {
-				designMover.apply(pose);
-				accumulator.apply(pose);
-			}
-			//*****
-		}
-		if (option[OptionKeys::remodel::checkpoint] ) {
-			// debug:
-			TR << "writing chkpnt at step " << num_traj-i+prev_checkpoint << std::endl;
-			accumulator.write_checkpoint(num_traj-i-prev_checkpoint);
-		}
-		// restore foldtree
-		if(i > 1) {//messes up rosetta_scripts if done on last loop.
-			if (option[OptionKeys::remodel::repeat_structure].user() ) {
-				//reset the pose to monomer
-				pose = cached_modified_pose;
-			} else {
-				pose.fold_tree(originalTree);
-			}
-		}
-		i--; // 'i' is the number of remaining trajectories
 
-	}
-	/* DONT USE THIS FOR NOW...
-	if (get_last_move_status() == FAIL_RETRY){
-		return;
-	}
-*/
-	// take the lowest member and the cluster center
-	// accumulator.shrink_cluster();
-	std::vector< pose::PoseOP > results;
-	if ( accumulator.cluster_switch() ) {
-		results = accumulator.clustered_best_poses();
-		//results = accumulator.clustered_top_poses(op_remodel_collect_clustered_top_);
-	} else {
-		results = accumulator.contents_in_pose_store();
-	}
+				TR << "apply(): calling RemodelDesignMover apply function." << std::endl;
 
-	// seriously refine the poses
-	Size filecount = 1;
-	core::Real current_score = 100000;
-
-	TR << "clustered poses count: " << results.size() << std::endl;
-	for ( std::vector< pose::PoseOP >::iterator it = results.begin(), end= results.end(); it!= end; it++ ) {
-		bool bypass_refinement =option[OptionKeys::remodel::quick_and_dirty].user();
-
-		if ( working_model.manager.size() == 0 )
-			bypass_refinement = true;
-
-		if ( !bypass_refinement ) {
-
-			//std::stringstream SS1;
-			//SS1 << "pre-ref_" << filecount << ".pdb";
-			//(*(*it)).dump_scored_pdb(SS1.str(), *fullatom_sfx_);
-
-			TR << "aggressively refine" << std::endl;
-			if (option[OptionKeys::remodel::use_pose_relax] ) {
-				if ( !design_refine_seq_relax( *(*it), designMover ) ) {
-					TR << "WARNING: DESIGN REFINE SEQ RELAX FAILED!! (one should never see this)" << std::endl;
-					continue;
-				}
-			}
-			else if(option[OptionKeys::remodel::use_cart_relax]){
-				if (!design_refine_cart_relax(*(*it), designMover)){
-					TR << "WARNING: CARTESIAN MIN FAILED!! (one should never see this)" << std::endl;
-					continue;
-				}
-			} else {
-				if (! design_refine(*(*it), designMover)){
-					TR << "WARNING: DESIGN REFINE FAILED TO CLOSE STRUCTURE!!" << std::endl;
-					continue;
-				}
-			}
-		} else // simple design
-		{
-			if(option[OptionKeys::remodel::check_scored_centroid].user()){
-					std::stringstream SS;
-					std::string prefix = option[OptionKeys::out::prefix];
-					if (!prefix.empty()){
-						SS << prefix << "_" << filecount << "_cen.pdb";
+				//****Previously this loop didn't maintain the pose correctly which resulted in a difficult to track down seg fault.  Fixed, but it's questionable weather you would want to filter poses based on constraints.
+				if (option[OptionKeys::enzdes::cstfile].user() ||
+						option[OptionKeys::constraints::cst_file].user()
+						 ){
+					simple_filters::ScoreTypeFilter const  pose_constraint( fullatom_sfx_, atom_pair_constraint,option[OptionKeys::remodel::cstfilter] );
+					bool CScore(pose_constraint.apply( pose ));
+					if (!CScore){  // if didn't pass, rebuild
+						TR << "built model did not pass constraints test." << std::endl;
+						if (option[OptionKeys::remodel::repeat_structure].user() ) {
+							//reset the pose to monomer
+							pose = cached_modified_pose;
+						} else {
+							pose.fold_tree(originalTree);
+						}
+						continue;
 					}
 					else {
-						SS << filecount << "_cen.pdb";
+						designMover.apply(pose);
+						accumulator_.apply(pose);
 					}
-					core::util::switch_to_residue_type_set( *(*it), core::chemical::CENTROID, true);
-					(*(*it)).dump_scored_pdb(SS.str(), *centroid_sfx_);
+				} else {
+					designMover.apply(pose);
+					accumulator_.apply(pose);
+				}
+				//*****
+			}
+			if (option[OptionKeys::remodel::checkpoint] ) {
+				// debug:
+				TR << "writing chkpnt at step " << num_traj-i+prev_checkpoint << std::endl;
+				accumulator_.write_checkpoint(num_traj-i-prev_checkpoint);
+			}
+			// restore foldtree
+			if(i > 1) {//messes up rosetta_scripts if done on last loop.
+				if (option[OptionKeys::remodel::repeat_structure].user() ) {
+					//reset the pose to monomer
+					pose = cached_modified_pose;
+				} else {
+					pose.fold_tree(originalTree);
+				}
+			}
+			i--; // 'i' is the number of remaining trajectories
+
+		}
+		/* DONT USE THIS FOR NOW...
+		if (get_last_move_status() == FAIL_RETRY){
+			return;
+		}
+	*/
+		// take the lowest member and the cluster center
+		// accumulator_.shrink_cluster();
+
+		//move the accumulator results into results
+		std::vector< pose::PoseOP > results;
+
+		if ( accumulator_.cluster_switch() ) {
+			results = accumulator_.clustered_best_poses();
+			//results = accumulator_.clustered_top_poses(op_remodel_collect_clustered_top_);
+		} else {
+			results = accumulator_.contents_in_pose_store();
+		}
+
+		//reset the accumulator
+		accumulator_.clear();
+
+		// seriously refine the poses
+		Size filecount = 1;
+		core::Real current_score = 100000;
+
+		TR << "clustered poses count: " << results.size() << std::endl;
+
+		for ( std::vector< pose::PoseOP >::iterator it = results.begin(), end= results.end(); it!= end; it++ ) {
+
+			bool bypass_refinement = option[OptionKeys::remodel::quick_and_dirty].user();
+			if (rosetta_scripts_quick_and_dirty_ || rosetta_scripts_fast_disulfide_) {
+				bypass_refinement = true;
 			}
 
-			designMover.set_state("finish");
-			designMover.apply(*(*it));
+			if ( working_model.manager.size() == 0 )
+				bypass_refinement = true;
 
-		}
+			if ( !bypass_refinement ) {
 
-		if (option[OptionKeys::remodel::run_confirmation].user() ) {
-			if ( !confirm_sequence(*(*it)) ) {
-				TR << "WARNING: STRUCTURE DID NOT PASS KIC CONFIRMATION!!" << std::endl;
-				continue;
+				//std::stringstream SS1;
+				//SS1 << "pre-ref_" << filecount << ".pdb";
+				//(*(*it)).dump_scored_pdb(SS1.str(), *fullatom_sfx_);
+
+				TR << "aggressively refine" << std::endl;
+				if (option[OptionKeys::remodel::use_pose_relax] ) {
+					if ( !design_refine_seq_relax( *(*it), designMover ) ) {
+						TR << "WARNING: DESIGN REFINE SEQ RELAX FAILED!! (one should never see this)" << std::endl;
+						continue;
+					}
+				}
+				else if(option[OptionKeys::remodel::use_cart_relax]){
+					if (!design_refine_cart_relax(*(*it), designMover)){
+						TR << "WARNING: CARTESIAN MIN FAILED!! (one should never see this)" << std::endl;
+						continue;
+					}
+				} else {
+					if (! design_refine(*(*it), designMover)){
+						TR << "WARNING: DESIGN REFINE FAILED TO CLOSE STRUCTURE!!" << std::endl;
+						continue;
+					}
+				}
+			} else // simple design
+			{
+				if(option[OptionKeys::remodel::check_scored_centroid].user()){
+						std::stringstream SS;
+						std::string prefix = option[OptionKeys::out::prefix];
+						if (!prefix.empty()){
+							SS << prefix << "_" << filecount << "_cen.pdb";
+						}
+						else {
+							SS << filecount << "_cen.pdb";
+						}
+						core::util::switch_to_residue_type_set( *(*it), core::chemical::CENTROID, true);
+						(*(*it)).dump_scored_pdb(SS.str(), *centroid_sfx_);
+				}
+
+				designMover.set_state("finish");
+				if (!rosetta_scripts_fast_disulfide_) {
+					designMover.apply(*(*it));
+				}
+
+
 			}
+
+			if (option[OptionKeys::remodel::run_confirmation].user() ) {
+				if ( !confirm_sequence(*(*it)) ) {
+					TR << "WARNING: STRUCTURE DID NOT PASS KIC CONFIRMATION!!" << std::endl;
+					continue;
+				}
+			}
+
+			std::stringstream SS;
+			std::string prefix = option[OptionKeys::out::prefix];
+			if (!prefix.empty()){
+				SS << prefix << "_" << filecount << ".pdb";
+			}
+			else {
+				SS << filecount << ".pdb";
+			}
+			// this is to make sure that the final scoring is done with SCORE12
+			scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
+
+		    if(option[OptionKeys::remodel::repeat_structure].user()) {
+							//Experiment with RemodelGlobalFrame
+							RemodelGlobalFrame RGF(remodel_data, working_model, scorefxn);
+							RGF.align_segment(*(*it));
+							RGF.apply(*(*it));
+
+			}
+
+			//save structure, unless doing fast_disulfide.
+			//with fast disulfide, structures are being passed along in rosetta scripts, so no need to output a second PDB.
+			if (!rosetta_scripts_fast_disulfide_) {
+				(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);				
+			}
+
+
+
+			Real score = 0.0;
+			
+			//rank poses by score, unless we are doing fast_disulfide, in which case we want to rank by path length.
+			if (rosetta_scripts_fast_disulfide_) {
+				simple_filters::AveragePathLengthFilterOP average_path_length=new simple_filters::AveragePathLengthFilter();
+				score = average_path_length->compute( *(*it) );
+			}	else {
+				simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100 );
+				score = pose_total_score.compute( *(*it) );
+			}
+
+			//reload the pose into the new accumulator
+			accumulator_.apply(*(*it), score);
+
+			filecount++;
 		}
 
-		std::stringstream SS;
-		std::string prefix = option[OptionKeys::out::prefix];
-		if (!prefix.empty()){
-			SS << prefix << "_" << filecount << ".pdb";
-		}
-		else {
-			SS << filecount << ".pdb";
-		}
-		// this is to make sure that the final scoring is done with SCORE12
-		scoring::ScoreFunctionOP scorefxn = scoring::getScoreFunction();
-
-	  if(option[OptionKeys::remodel::repeat_structure].user()) {
-						//Experiment with RemodelGlobalFrame
-						RemodelGlobalFrame RGF(remodel_data, working_model, scorefxn);
-						RGF.align_segment(*(*it));
-						RGF.apply(*(*it));
-
-		}
-
-		(*(*it)).dump_scored_pdb(SS.str(), *scorefxn);
-
-		simple_filters::ScoreTypeFilter const pose_total_score( scorefxn, total_score, 100 );
-		Real score( pose_total_score.compute( *(*it) ) );
-		if ( score <= current_score ) {
-			current_score = score ;
-			pose = *(*it) ;
-		}
-
-		filecount++;
+	}
+	//set the pose to the best pose in the accumulator and remove that pose.
+	if (accumulator_.size() > 0) {
+		pose = accumulator_.pop();		
 	}
 
+
+	TR << "Remodel poses remaining from original run: " << accumulator_.size() << std::endl;
 	// update PDBinfo
 	pose.pdb_info( new core::pose::PDBInfo( pose ));
 
@@ -1113,7 +1312,7 @@ std::string RemodelMover::get_name() const {
 bool RemodelMover::centroid_build( Pose & pose, protocols::forge::build::BuildManager & manager ) {
 
 	manager_ = manager;
-	if (option[OptionKeys::remodel::bypass_fragments] ) {
+	if (option[OptionKeys::remodel::bypass_fragments] || rosetta_scripts_bypass_fragments_ || rosetta_scripts_fast_disulfide_) {
 		TR << "-=BYPASSING FRAGMENT BUILD (REFINE ONLY) =-" << std::endl;
 		return true;
 	}
@@ -2086,10 +2285,76 @@ RemodelMover::parse_my_tag(
 	Filters_map const & /*filters*/,
 	Movers_map const & /*movers*/,
 	Pose const & /*pose*/ )
+
 {
+	//note that we are being invoked from rosetta scripts
+	rosetta_scripts_ = true;
+	
 	if( tag->hasOption("blueprint") ) {
 		blueprint_ = tag->getOption<std::string>( "blueprint" );
+	}	else {
+		TR << "Skipping blueprint" << std::endl;
+		blueprint_ = "";
 	}
+
+	if( tag->hasOption("build_disulf") ) {
+		rosetta_scripts_build_disulfide_ = tag->getOption< bool >( "build_disulf", false );
+		if (rosetta_scripts_build_disulfide_) {
+			TR << "Setting build_disulfide to true" << std::endl;	
+		}
+	}	else {
+		rosetta_scripts_build_disulfide_ = false;
+	}
+
+	if ( tag->hasOption("fast_disulf") ) {
+		rosetta_scripts_fast_disulfide_ = tag->getOption< bool >( "fast_disulf", false );
+		if (rosetta_scripts_fast_disulfide_) {
+			TR << "Setting fast_disulfide to true" << std::endl;	
+		}
+	}	else {
+		rosetta_scripts_fast_disulfide_ = false;
+	}
+
+	if( tag->hasOption("quick_and_dirty") ) {
+		rosetta_scripts_quick_and_dirty_ = tag->getOption< bool >( "quick_and_dirty", false );
+		if (rosetta_scripts_quick_and_dirty_) {
+			TR << "Setting quick_and_dirty to true" << std::endl;
+		}
+	}	else {
+		rosetta_scripts_quick_and_dirty_ = false;
+	}
+
+	if( tag->hasOption("bypass_fragments") ) {
+		rosetta_scripts_bypass_fragments_ = tag->getOption< bool >( "bypass_fragments", false ); 
+		if (rosetta_scripts_bypass_fragments_) {
+			TR << "Setting bypass_fragments to true" << std::endl;	
+		}
+	}	else {
+		rosetta_scripts_bypass_fragments_ = false;
+	}
+
+	if( tag->hasOption("match_rt_limit") ) {
+		rosetta_scripts_match_rt_limit_ = tag->getOption< core::Real >( "match_rt_limit", 1.0 ); 
+	}	else {
+		rosetta_scripts_match_rt_limit_ = 1.0;
+	}
+	TR << "Setting match_rt_limit " << rosetta_scripts_match_rt_limit_ << std::endl;
+
+	if( tag->hasOption("min_disulfides") ) {
+		rosetta_scripts_min_disulfides_ = tag->getOption< core::Real >( "min_disulfides", 1 ); 
+	}	else {
+		rosetta_scripts_min_disulfides_ = 1;
+	}
+	TR << "Setting min_disulfides " << rosetta_scripts_min_disulfides_ << std::endl;
+
+	if( tag->hasOption("max_disulfides") ) {
+		rosetta_scripts_max_disulfides_ = tag->getOption< core::Real >( "max_disulfides", 1 ); 
+	}	else {
+		rosetta_scripts_max_disulfides_ = 1;
+	}
+	TR << "Setting max_disulfides " << rosetta_scripts_max_disulfides_ << std::endl;
+
+
 }
 
 

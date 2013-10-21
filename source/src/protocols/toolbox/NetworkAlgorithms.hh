@@ -54,6 +54,10 @@ public:
 	virtual void
 	generate_edges( core::pose::Pose const & pose ) = 0;
 
+	/// @brief empties edges
+	void
+	clear_edges();
+
 	/// @brief run Dijkstra's shortest path algorithm on the given list of nodes
 	/// after execution, the "distanceFromStart" variable of each node will contain the distance from residue resi
 	void
@@ -62,6 +66,10 @@ public:
 	/// @brief calculates the connectivity index of residue resi in the context of the network
 	core::Real
 	connectivity_index( core::Size const resi ) const;
+
+	/// @brief calculates the average shortest path length of the network
+	core::Real
+	average_shortest_path_length() const;
 
 	// accessors
 public:
@@ -87,9 +95,8 @@ public:
 class CovalentResidueNetwork : public ResidueNetwork
 {
 public:
-	// Undefined, commenting out to fix PyRosetta build
-	//virtual void
-	//generate_edges( core::pose::Pose const & pose );
+	virtual void
+	generate_edges( core::pose::Pose const & pose );
 };
 
 // Helper functions

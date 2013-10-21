@@ -19,6 +19,7 @@
 #include <protocols/forge/remodel/RemodelData.hh>
 #include <protocols/forge/remodel/RemodelWorkingSet.hh>
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
+#include <protocols/forge/remodel/RemodelAccumulator.hh>
 
 // type headers
 #include <core/types.hh>
@@ -340,6 +341,8 @@ public: // virtual main methods
 
 
 private: // protocol methods
+	bool SamePose(Pose const & pose1, Pose const & pose2);
+
 	void register_user_options();
 
 	bool centroid_build(
@@ -471,6 +474,21 @@ private: // data
 
 	//blueprint
 	String blueprint_; 
+
+
+    //For parsing rosetta scripts input
+    bool rosetta_scripts_quick_and_dirty_ ;
+    bool rosetta_scripts_build_disulfide_ ;
+    bool rosetta_scripts_fast_disulfide_ ;
+    bool rosetta_scripts_bypass_fragments_ ;
+    core::Real rosetta_scripts_match_rt_limit_ ;
+    Size rosetta_scripts_min_disulfides_ ;
+	Size rosetta_scripts_max_disulfides_ ;
+	bool rosetta_scripts_ ;
+
+	//for saving results from multiple runs
+	core::pose::PoseOP last_input_pose_; 
+	forge::remodel::RemodelAccumulator accumulator_;
 
 
 

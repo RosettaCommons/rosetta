@@ -567,7 +567,7 @@ void RemodelDesignMover::reduce_task( Pose & pose, core::pack::task::PackerTaskO
 }
 
 
-bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utility::vector1<std::pair<Size,Size> > & disulf_partners){
+bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utility::vector1<std::pair<Size,Size> > & disulf_partners, const core::Energy & match_rt_limit) {
 
 	using core::scoring::disulfides::DisulfideMatchingPotential;
 	using namespace core::chemical;
@@ -587,13 +587,13 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	if (remodel_data_.disulfLandingRange.size() != 0){
 		landingRangeStart = remodel_data_.disulfLandingRange[0];
 		landingRangeStop = remodel_data_.disulfLandingRange[1];
-		TR << "Assignging Landing Range by Blueprint: " << landingRangeStart << " to " << landingRangeStop << std::endl;
+		TR << "Assigning Landing Range by Blueprint: " << landingRangeStart << " to " << landingRangeStop << std::endl;
 	}
 
 	if(option[OptionKeys::remodel::disulf_landing_range].user()){ //overwrite ranges if existed
 		landingRangeStart =option[OptionKeys::remodel::disulf_landing_range][1];
 		landingRangeStop =option[OptionKeys::remodel::disulf_landing_range][2];
-		TR << "Assignging Landing Range by Arguments: " << landingRangeStart << " to " << landingRangeStop << std::endl;
+		TR << "Assigning Landing Range by Arguments: " << landingRangeStart << " to " << landingRangeStop << std::endl;
 	}
 
 
@@ -672,33 +672,38 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 
 	for ( utility::vector1<Size>::iterator itr = cen_res.begin(), end=cen_res.end(); itr!=end; itr++ ) {
 		for ( utility::vector1<Size>::iterator itr2 = nbr_res.begin(), end2=nbr_res.end(); itr2!=end2 ; itr2++ ) {
-			TR << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
-			// distance check
-			if ( pose.residue(*itr).aa() != aa_gly && pose.residue(*itr2).aa() != aa_gly ) {
-				//TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
+			if (nbr_res != cen_res || *itr2 > *itr) {
+				TR << "DISULF trying disulfide between " << *itr << " and " << *itr2 << std::endl;
+				// distance check
+				if ( pose.residue(*itr).aa() != aa_gly && pose.residue(*itr2).aa() != aa_gly ) {
+					//TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
 
-				Real dist_squared = pose.residue(*itr).xyz("CB").distance_squared(pose.residue(*itr2).xyz("CB"));
-				if ( dist_squared > 25 ) {
-					TR << "DISULF \tTOO FAR. CB-CB distance squared: " << dist_squared << std::endl;
+					Real dist_squared = pose.residue(*itr).xyz("CB").distance_squared(pose.residue(*itr2).xyz("CB"));
+					if ( dist_squared > 25 ) {
+						TR << "DISULF \tTOO FAR. CB-CB distance squared: " << dist_squared << std::endl;
 
-				} else {
-					disulfPot.score_disulfide( pose.residue(*itr), pose.residue(*itr2), match_t, match_r, match_rt );
-					TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
-					int seqGap = (int)*itr2 - (int)*itr;
-					if ( match_rt <option[OptionKeys::remodel::match_rt_limit] && std::abs( seqGap ) > 1 && (*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
-						TR << "DISULF possible " << dist_squared << std::endl;
-						TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
-						TR << "match_rt " << match_rt << std::endl;
-						std::pair< Size, Size > temp_pair;
-						temp_pair = std::make_pair( *itr, *itr2 );
-						disulf_partners.push_back( temp_pair );
-						pass = 1;
 					} else {
-						TR << "DISULF \tFailed match_rt_limit check." << std::endl;
+						disulfPot.score_disulfide( pose.residue(*itr), pose.residue(*itr2), match_t, match_r, match_rt );
+						TR << "DISULF \tmatch_t: " << match_t << ", match_r: " << match_r << ", match_rt: " << match_rt << std::endl;
+						int seqGap = (int)*itr2 - (int)*itr;
+						//if ( match_rt < option[OptionKeys::remodel::match_rt_limit] && std::abs( seqGap ) > 1 && (*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
+						if ( match_rt < match_rt_limit && std::abs( seqGap ) > 1 && (*itr2) <= landingRangeStop && (*itr2) >= landingRangeStart ) {
+							TR << "DISULF possible " << dist_squared << std::endl;
+							TR << "DISULF " <<  *itr << "x" << *itr2 << std::endl;
+							TR << "match_rt " << match_rt << std::endl;
+							std::pair< Size, Size > temp_pair;
+							temp_pair = std::make_pair( *itr, *itr2 );
+
+							disulf_partners.push_back( temp_pair );
+
+							pass = 1;
+						} else {
+							TR << "DISULF \tFailed match_rt_limit check." << std::endl;
+						}
 					}
+				} else {
+					TR << "DISULF \tFailed glycine check. Cysteines cannot replace glycine positions in the native pose." << std::endl;
 				}
-			} else {
-				TR << "DISULF \tFailed glycine check. Cysteines cannot replace glycine positions in the native pose." << std::endl;
 			}
 		}
 	}
@@ -712,12 +717,18 @@ void RemodelDesignMover::make_disulfide(Pose & pose, utility::vector1<std::pair<
 	for (utility::vector1<std::pair<Size,Size> >::iterator itr = disulf_partners.begin(); itr != disulf_partners.end(); itr++){
 		core::conformation::form_disulfide(pose.conformation(), (*itr).first, (*itr).second);
 		core::util:: rebuild_disulfide(pose, (*itr).first,(*itr).second, NULL /*task*/, NULL /*scfxn*/, mm, NULL /*min scfxn*/);
-	TR << "build_disulf between " << (*itr).first << " and " << (*itr).second << std::endl;
+		TR << "build_disulf between " << (*itr).first << " and " << (*itr).second << std::endl;
 	//	pose.dump_pdb("disulf.pdb");
 		}
 }
 
-
+void RemodelDesignMover::make_disulfide_fast(Pose & pose, utility::vector1<std::pair<Size, Size> > & disulf_partners){
+	//utility::vector1<std::pair<Size,Size>> dummy_vector;
+	for (utility::vector1<std::pair<Size,Size> >::iterator itr = disulf_partners.begin(); itr != disulf_partners.end(); itr++){
+		core::conformation::form_disulfide(pose.conformation(), (*itr).first, (*itr).second);
+		TR << "build_disulf between " << (*itr).first << " and " << (*itr).second << std::endl;
+		}
+}
 
 /// these are split up for convenience reasons, so one can bypass blueprint setting if needed be
 void RemodelDesignMover::mode1_packertask(Pose & pose){ // auto loop only

@@ -83,26 +83,16 @@ void RemodelData::splitString( std::string str, std::string delim, std::vector< 
 	}
 }
 
-
-///
-/// @begin RemodelData::getLoopsToBuildFromFile
-///
 /// @brief
-/// Reads in the blueprint file. 
-///
-void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
+/// Parses the blueprint text
+void RemodelData::getLoopsToBuildFromBlueprint( std::string text_blueprint ) {
   using namespace ObjexxFCL;  
-	if ( filename == "" ) {
-		TR_REMODEL << "No blueprint file given!" << std::endl;
+	if ( text_blueprint == "" ) {
+		TR_REMODEL << "No blueprint data given!" << std::endl;
 		utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
 	}
 
-	utility::io::izstream data( filename.c_str() );
-	if (!data) {
-		TR_REMODEL << "Can't open blueprint file " << filename << std::endl;
-		utility::exit(EXIT_FAILURE, __FILE__, __LINE__);
-	}
-
+	std::stringstream data(text_blueprint);
 	std::string line;
 
 	// extension management
@@ -122,7 +112,8 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 
 	// reset file and counter
 	data.clear();
-	data.seek_beg();
+	//data.seek_beg();
+	data.seekg(0,std::ios::beg);
 	index = 1;
 
 	bool mark_start = false;
@@ -372,6 +363,31 @@ void RemodelData::getLoopsToBuildFromFile( std::string filename ) {
 	TR_REMODEL << " ss (based on blueprint): " << std::endl << " " << ss << std::endl;
 	TR_REMODEL << " ABEGOtype: " << std::endl << abego << std::endl;
 
+}
+
+///
+/// @brief Reads in the blueprint file and passes the text data to the blueprint file parser
+void RemodelData::getLoopsToBuildFromFile( std::string filename) {
+	using namespace ObjexxFCL;  
+		if ( filename == "" ) {
+			TR_REMODEL << "No blueprint file given!" << std::endl;
+			utility::exit( EXIT_FAILURE, __FILE__, __LINE__ );
+		}
+
+		std::stringstream data;
+		std::string line;
+
+		utility::io::izstream file_data( filename.c_str() );
+		while ( getline( file_data, line ) ) {
+			data << line << std::endl;
+		}
+
+		if (!data) {
+			TR_REMODEL << "Can't open blueprint file " << filename << std::endl;
+			utility::exit(EXIT_FAILURE, __FILE__, __LINE__);
+		}
+
+		getLoopsToBuildFromBlueprint(data.str());
 }
 
 

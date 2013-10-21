@@ -52,8 +52,10 @@ public:
 	//constructor
 	RemodelData();
 
+	void getLoopsToBuildFromBlueprint( std::string text_blueprint );
+
 	void getLoopsToBuildFromFile( std::string filename );
-	
+
 	void splitString( std::string str, std::string delim, std::vector< std::string > & results );
 	
 	void updateWithDsspAssignment( ObjexxFCL::FArray1D_char & dsspSS );

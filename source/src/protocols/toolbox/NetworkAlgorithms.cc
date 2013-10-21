@@ -62,6 +62,29 @@ ResidueNetwork::connectivity_index( core::Size const resi ) const
 	return ( nodes_.size() - 1 ) / running_sum;
 }
 
+/// @brief calculates the average shortest path length of the network
+core::Real
+ResidueNetwork::average_shortest_path_length() const
+{
+	runtime_assert( nodes_.size() > 0 );
+
+	core::Real total_path_length = 0.0;
+
+	//iterate over all starting notes
+	for ( std::list< NodeOP >::const_iterator it = nodes_.begin(); it != nodes_.end(); ++it) {
+		dijkstras ((*it)->resi);
+
+		//add the paths from resi it to all other residues
+		for ( std::list< NodeOP >::const_iterator it2 = nodes_.begin(); it2 != nodes_.end(); ++it2 ) {
+			core::Size shortest_path = (*it2)->distanceFromStart;
+			total_path_length += shortest_path;
+		}
+	}
+
+	total_path_length = ((total_path_length / nodes_.size()) / (nodes_.size()-1));
+	TR << "AveragePathLength " << total_path_length << std::endl;
+	return total_path_length;
+}
 
 /// @brief run Dijkstra's shortest path algorithm on the given list of nodes
 /// after execution, the "distanceFromStart" variable of each node will contain the distance from residue resi
@@ -91,7 +114,7 @@ ResidueNetwork::dijkstras( core::Size const resi ) const
 			utility_exit();
 		}
 		std::list< NodeOP > const & adjacentNodes( AdjacentRemainingNodes( smallest ) );
-		TR << "Nodes adjacent to " << smallest->resi << ": ";
+		TR.Debug << "Nodes adjacent to " << smallest->resi << ": ";
 		for ( std::list< NodeOP >::const_iterator it = adjacentNodes.begin(); it != adjacentNodes.end(); ++it ) {
 			TR.Debug << " " << (*it)->resi;
 			int distance = smallest->distanceFromStart + 1;
@@ -171,12 +194,19 @@ Contains( std::list< NodeOP > const & nodes, NodeCOP node)
 	return false;
 }
 
+///@brief empties edges
 void
-DistanceResidueNetwork::generate_edges( core::pose::Pose const & pose ) 
+ResidueNetwork::clear_edges()
 {
 	for ( std::list< NodeOP >::const_iterator res_it_1 = nodes().begin(); res_it_1 != nodes().end(); ++res_it_1 ) {
 		(*res_it_1)->neighbors.clear();
 	}
+}
+
+void
+DistanceResidueNetwork::generate_edges( core::pose::Pose const & pose ) 
+{
+	clear_edges();
 
 	// Residues are in contact if >=1 atom from each residue is less far than this
 	core::Real const distance_threshold( 5.0 );
@@ -224,6 +254,32 @@ DistanceResidueNetwork::generate_edges( core::pose::Pose const & pose )
 		}
 	}
 }
+
+void
+CovalentResidueNetwork::generate_edges( core::pose::Pose const & pose ) 
+{
+	clear_edges();
+
+	//identify covalent bonds between residues
+	std::list< NodeOP >::const_iterator res_it_1 = nodes().begin();
+	for ( core::Size i=1; i != pose.total_residue(); ++i) {
+		std::list< NodeOP >::const_iterator res_it_2 = nodes().begin();
+		std::advance(res_it_2,i);
+		for ( core::Size j=i + 1; j != pose.total_residue() + 1; ++j) {
+			if (pose.residue(i).is_bonded(pose.residue(j)) ){
+				//TR << "bond found " << i << " " << j << std::endl;
+				if (j > i + 1) {
+					TR << "Non-peptide bond found (probably disulfide) " << i << "-" << j << std::endl;					
+				}
+				(*res_it_1)->neighbors.push_back(*(res_it_2));
+				(*res_it_2)->neighbors.push_back(*(res_it_1));	
+			}
+			++res_it_2;
+		}
+		++res_it_1;
+	}
+}
+
 
 } // toolbox
 } // protocols

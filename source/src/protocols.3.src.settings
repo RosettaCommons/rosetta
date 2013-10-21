@@ -336,6 +336,7 @@ sources = {
 	"protocols/simple_filters": [
 		"AbinitioBaseFilter",
 		"AlaScan",
+        "AveragePathLengthFilter",
 		"AtomicContactFilter",
 		"AtomicDistanceFilter",
 		"BatchNrEvaluator",
