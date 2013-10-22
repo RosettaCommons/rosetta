@@ -170,6 +170,7 @@ RBInMover::apply( Pose & pose ){
     TR<<"Fold tree before slide jump: "<<ft<<std::endl;
     TR<<"Setting slide jump from: "<<disulfs[ 1 ].second<<" to "<<disulfs[ 2 ].second<<std::endl;
     ft.slide_jump( 1, disulfs[ 1 ].second, disulfs[ 2 ].second );
+    ft.reorder(1);
     TR<<"Fold tree after slide jump: "<<ft<<std::endl;
     pose.fold_tree( ft );
     TR<<"Setting jump now"<<std::endl;
