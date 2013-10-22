@@ -1883,6 +1883,13 @@ Matcher::check_non_upstream_only_hit_incompatibility(
 /// @brief very similar to above function, the difference being
 /// that in checks whether all the downstream builders agree that
 /// their hits are compatible with each other
+/// flo sep'13 there was a problem with this in that for secondary
+/// downstream matching the mather doesn't have downstream builders
+/// i.e., compatibility can't be checked.
+/// bugfix is to also as the downstream algorithm for its dsbuilder
+/// another potential fix could be to set the dsbuilders in the matcher
+/// itself when the algorithms are created, but i'm not sure if this would
+/// interfere with other things?
 bool
 Matcher::check_downstream_hit_incompatibility(
 	match const & m,
@@ -1891,12 +1898,16 @@ Matcher::check_downstream_hit_incompatibility(
 {
 	for ( Size ii = 2; ii <= n_geometric_constraints_; ++ii ) {
 		if ( geomcst_is_upstream_only_[ ii ] ) continue; // ignore upstream-only hits
-		if( downstream_builders_[ii].size() == 0 ) continue; // can't check compatibility if there are no downstream builders
+
+		downstream::DownstreamBuilderCOP ii_dsbuilder( downstream_builders_[ii].size() == 0 ? representative_downstream_algorithm_[ ii ]->get_dsbuilder() : *(downstream_builders_[ii].begin()) );
+		if( !ii_dsbuilder) continue; // can't check compatibility if there are no downstream builders
 
 		for ( Size jj = 1; jj < ii; ++jj ) {
 			if ( geomcst_is_upstream_only_[ jj ] ) continue; // ignore upstream-only hits
-			if( downstream_builders_[jj].size() == 0 ) continue; // can't check compatibility if there are no downstream builders
-			if( ! (*(downstream_builders_[ii].begin()))->compatible( m[ii], **(downstream_builders_[jj].begin()),m[jj] ) ){
+			downstream::DownstreamBuilderCOP jj_dsbuilder( downstream_builders_[jj].size() == 0 ? representative_downstream_algorithm_[ jj ]->get_dsbuilder() : *(downstream_builders_[jj].begin()) );
+			if( !jj_dsbuilder) continue; // can't check compatibility if there are no downstream builders
+
+			if( ! ii_dsbuilder->compatible( m[ii], *jj_dsbuilder ,m[jj] ) ){
 				lex.continue_at_dimension( ii );
 				return true;
 			}

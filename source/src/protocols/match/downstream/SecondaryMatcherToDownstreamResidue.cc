@@ -267,7 +267,9 @@ SecondaryMatcherToDownstreamResidue::build(
 						hit.first()[ 1 ] = scaffold_build_point_id;
 						hit.first()[ 2 ] = upstream_conf_id;
 						hit.first()[ 3 ] = eval_iter->second;
-						hit.first()[ 4 ] = 1; // do not store the downstream rotamer id or the focused_geomcst_id_; we never try to recover this placement
+						hit.first()[ 4 ] = (target_downstream_coords_->hit(1,ii)).downstream_conf_id();
+						//flo sep '13 the below line is probably a bug, was old line, above is better
+						//hit.first()[ 4 ] = 1; // do not store the downstream rotamer id or the focused_geomcst_id_; we never try to recover this placement
 						hit.second()     = target_downstream_coords_->hit( 1, ii ).second(); // downstream coordinate from previous round
 						hits.push_back( hit );
 					}
