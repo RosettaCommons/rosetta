@@ -182,8 +182,12 @@ CartesianBondedEnergyCreator::score_types_for_method() const {
 std::string get_restag( core::chemical::ResidueType const & restype ) {
 	using namespace core::chemical;
 
-	if(core::chemical::is_D_aa(restype.aa()))
-		return core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //For D-amino acids, return the L-equivalent.
+	if(core::chemical::is_D_aa(restype.aa())) {
+		std::string rsdname = restype.name();
+		if(rsdname.substr(0, rsdname.find("_p:")) == "DHIS_D") rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
+		else rsdname=core::chemical::name_from_aa( core::chemical::get_L_equivalent( restype.aa() ) ); //Otherwise, for D-amino acids, return the L-equivalent.
+		return rsdname;
+	}
 	else if (!restype.is_protein())
 		return restype.name3();
 	else {
@@ -1191,13 +1195,17 @@ IdealParametersDatabase::create_parameters_for_restype(
 {
 	ResidueCartBondedParametersOP restype_params = new ResidueCartBondedParameters;
 
-
-	//Get the L-equivalent 3-letter code if this is a D-amnio acid:
-	std::string rsdname = core::chemical::is_D_aa( rsd_type.aa() ) ? core::chemical::name_from_aa( core::chemical::get_L_equivalent(rsd_type.aa()) )  : rsd_type.name();
+	std::string rsdname = rsd_type.name();
+ 	if (core::chemical::is_D_aa( rsd_type.aa() ) ) { 	//Get the L-equivalent name if this is a D-amnio acid:
+		if(rsdname.substr(0, rsdname.find("_p:")) == "DHIS_D") rsdname="HIS_D"; //If this is a DHIS_D, return HIS_D.
+		else rsdname = core::chemical::name_from_aa( core::chemical::get_L_equivalent(rsd_type.aa()) );
+	}
+	else { //Otherwise just get the name, up to "_p:".
+		rsdname = rsdname.substr( 0, rsdname.find("_p:") );
+	}
 	// Skip if residue type is neither wildcard nor given residue type
 	// Is there better way of taking care of patched residues like "Gly_p:XXXX" ?
 	//if( rsdname.compare( 0, 3, tuple.get<0>() ) != 0 ) continue;
-	rsdname = rsdname.substr( 0, rsdname.find("_p:") );
 
 	// Iter over parameters - this would be fast enough as far as parameter size is small enough
 	for( boost::unordered_map<atm_name_quad,CartBondedParametersOP>::iterator b_it =

@@ -43,7 +43,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <stdio.h>
-//#include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
 #include <protocols/relax/FastRelax.fwd.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -122,7 +122,8 @@ int main(int argc, char *argv[]) {
 	//Movers:
 	protocols::relax::FastRelax frlx(sfxn, 5);
 	protocols::simple_moves::RepackSidechainsMover repack_sc(sfxn);
-	core::optimization::MinimizerOptions minoptions("dfpmin_armijo_nonmonotone", 0.000000001, true, false, false);
+	//core::optimization::MinimizerOptions minoptions("dfpmin_armijo_nonmonotone", 0.000000001, true, false, false);
+	core::optimization::MinimizerOptions minoptions("dfpmin", 0.000000001, true, false, false);
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
 	mm->set_bb(true); //Allow backbone motion
 	mm->set_chi(true); //Allow side-chain motion
@@ -158,10 +159,21 @@ int main(int argc, char *argv[]) {
 	//Repack:
 	repack_sc.apply(Lpose);
 
+	//Fast relax:
+	frlx.apply(Lpose);
+	
+	//Replace His8 with HIS_D:
+	protocols::simple_moves::MutateResidue mutres(8, "HIS_D");
+   mutres.apply(Lpose);
+
 	//Score:
 	//sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
 	(*sfxn)(Lpose);
 	printf("The L-peptide's energy is %.4f\n", Lpose.energies().total_energy());
+	sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
+	(*sfxn)(Lpose);
+	printf("The L-peptide's energy with cart_bonded is %.4f\n", Lpose.energies().total_energy());
+	sfxn->set_weight(cart_bonded, 0.0); //Turn off cart_bonded.
 
 	//Output:
 	Lpose.dump_scored_pdb("Lpeptide.pdb", *sfxn);
@@ -172,10 +184,10 @@ int main(int argc, char *argv[]) {
 	//Minimize:
 	printf("Attempting minimization.\n");
 	//minimizer.run( Lpose, *mm, *sfxn, minoptions );
-	//sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
-	//cminimizer.run( Lpose, *mm, *sfxn, minoptions);
-	//sfxn->set_weight(cart_bonded, 0.0); //Turn on cart_bonded.
-	frlx.apply(Lpose);
+	sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
+	cminimizer.run( Lpose, *mm, *sfxn, minoptions);
+	sfxn->set_weight(cart_bonded, 0.0); //Turn on cart_bonded.
+	//frlx.apply(Lpose);
 	(*sfxn)(Lpose);
 	printf("The L-peptide's energy after minimization is %.4f\n", Lpose.energies().total_energy());
 
@@ -189,6 +201,9 @@ int main(int argc, char *argv[]) {
 	core::pose::make_pose_from_sequence(Dpose, sequence2, *standard_residues, false);
 	core::pose::add_lower_terminus_type_to_pose_residue(Dpose, 1);
 	core::pose::add_upper_terminus_type_to_pose_residue(Dpose, Dpose.n_residue());
+	//Replace DHis8 with DHIS_D:
+	protocols::simple_moves::MutateResidue mutres2(8, "DHIS_D");
+   mutres2.apply(Dpose);
 
 /*	//Set backbone dihedrals:
 	printf("Setting backbone dihedrals for D-peptide.\n");
@@ -251,6 +266,11 @@ int main(int argc, char *argv[]) {
 	//sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
 	(*sfxn)(Dpose);
 	printf("The D-peptide's energy is %.4f\n", Dpose.energies().total_energy());
+	sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
+	(*sfxn)(Dpose);
+	printf("The D-peptide's energy with cart_bonded is %.4f\n", Dpose.energies().total_energy());
+	sfxn->set_weight(cart_bonded, 0.0); //Turn off cart_bonded.
+
 
 	//Output:
 	Dpose.dump_scored_pdb("Dpeptide.pdb", *sfxn);
@@ -258,10 +278,10 @@ int main(int argc, char *argv[]) {
 	//Minimize:
 	printf("Attempting minimization.\n");
 	//minimizer.run( Dpose, *mm, *sfxn, minoptions );
-	//sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
-	//cminimizer.run( Dpose, *mm, *sfxn, minoptions);
-	//sfxn->set_weight(cart_bonded, 0.0); //Turn on cart_bonded.
-	frlx.apply(Dpose);
+	sfxn->set_weight(cart_bonded, 1.0); //Turn on cart_bonded.
+	cminimizer.run( Dpose, *mm, *sfxn, minoptions);
+	sfxn->set_weight(cart_bonded, 0.0); //Turn off cart_bonded.
+	//frlx.apply(Dpose);
 	(*sfxn)(Dpose);
 	printf("The D-peptide's energy after minimization is %.4f\n", Dpose.energies().total_energy());
 	
@@ -269,6 +289,11 @@ int main(int argc, char *argv[]) {
 	Dpose.dump_scored_pdb("Dpeptide_min.pdb", *sfxn);
 	//sfxn->set_weight(cart_bonded, 0.0); //Turn on cart_bonded.
 
+	printf("\nSequence\nL-peptide\tD-peptide\n");
+	for(core::Size ir=1, nres=Dpose.n_residue(); ir<=nres; ir++) {
+		printf("%s\t%s\n", Lpose.residue(ir).name().c_str(), Dpose.residue(ir).name().c_str());
+	}
+	printf("\n");
 
 	printf("***JOB COMPLETED.***\n");
 	return 0;
