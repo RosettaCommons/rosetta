@@ -270,6 +270,17 @@ ElectronDensity::ElectronDensity( utility::vector1< core::pose::PoseOP > poses, 
 	TR << "    celldim: " << cellDimensions[0] << " x " << cellDimensions[1] << " x " << cellDimensions[2] << std::endl;
 	TR << " cellangles: " << cellAngles[0] << " x " << cellAngles[1] << " x " << cellAngles[2] << std::endl;
 
+
+	// figure out effective B
+	core::Real max_del_grid = std::max( real_apix[0] , real_apix[1] );
+	max_del_grid = std::max( max_del_grid , real_apix[2] );
+	if (reso == 0) max_del_grid *= 1.5;
+	else max_del_grid = std::max( max_del_grid, reso/2 );
+
+	TR << "Effective resolution = " << 2*max_del_grid << std::endl;
+	effectiveB = 16*max_del_grid*max_del_grid;
+	TR << "Effective B factor = " << effectiveB << std::endl;
+
 	// find the origin
 	numeric::xyzVector< core::Real > frac_dmin = c2f*(d_min - FLUFF);
 	origin[0] = std::floor(frac_dmin[0]*grid[0]);

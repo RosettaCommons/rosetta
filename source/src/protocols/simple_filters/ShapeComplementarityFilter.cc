@@ -169,14 +169,14 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 
 			// partition & fill residueX_ vectors
 			core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
-			Size nupstream=0;
+			Size ndownstream=0;
 			for (core::Size i=1; i<=pose.total_residue(); ++i) {
 				if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
 				scc_.AddResidue(is_upstream(i)?1:0, pose.residue(i));
-				if (is_upstream(i)) nupstream++;
+				if (!is_upstream(i)) ndownstream++;
 			}
 			// scalefactor
-			nsubs_scalefactor = (Real)( nupstream / core::pose::symmetry::symmetry_info(pose)->get_nres_subunit() );
+			nsubs_scalefactor = (Real)( ndownstream / core::pose::symmetry::symmetry_info(pose)->get_nres_subunit() );
 
 			if(!scc_.Calc())
 				return 0;
@@ -258,13 +258,13 @@ core::Real ShapeComplementarityFilter::report_sm( Pose const & pose ) const
 						for (Size j = 1; j <= nslidedofs; j++) sym_aware_jump_ids.push_back( core::pose::symmetry::get_sym_aware_jump_num(pose, j ) );
 					}
 					core::pose::symmetry::partition_by_symm_jumps( sym_aware_jump_ids, pose.fold_tree(), core::pose::symmetry::symmetry_info(pose), is_upstream );
-					Size nupstream=0;
+					Size ndownstream=0;
 					for (Size i=1; i<=pose.total_residue(); ++i) {
-						if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
-						if (is_upstream(i)) nupstream++;
+									if (pose.residue(i).aa() == core::chemical::aa_vrt) continue;
+									if (!is_upstream(i)) ndownstream++;
 					}
-					int_area /= (Real)( nupstream / core::pose::symmetry::symmetry_info(pose)->get_nres_subunit() );
-				}
+					int_area /= (Real)( ndownstream / core::pose::symmetry::symmetry_info(pose)->get_nres_subunit() );
+ 				}
 			}
 			job->add_string_real_pair(column_header, int_area );
 		}
