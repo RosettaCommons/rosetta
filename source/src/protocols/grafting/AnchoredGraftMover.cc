@@ -102,6 +102,16 @@ AnchoredGraftMover::set_scaffold_flexibility(const Size Nter_scaffold_flexibilit
     Cter_scaffold_flexibility_=Cter_scaffold_flexibility;
 }
 
+Size
+AnchoredGraftMover::get_nterm_scaffold_flexibility(){
+	return Nter_scaffold_flexibility_;
+}
+
+Size
+AnchoredGraftMover::get_cterm_scaffold_flexibility(){
+	return Cter_scaffold_flexibility_;
+}
+
 void
 AnchoredGraftMover::set_insert_flexibility(Size Nter_insert_flexibility, Size Cter_insert_flexibility)
 {

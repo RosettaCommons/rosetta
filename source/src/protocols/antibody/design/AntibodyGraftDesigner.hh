@@ -53,6 +53,8 @@ namespace design{
 		bool stay_native_cluster; //Only sample within the native cluster?
 		bool cluster_centers_only;//Only use the center clusters for sampling?
 		bool min_neighbor_sc; //Minimize neighbor sidechains during chosen minimization if possible
+		bool min_rb; // Minimize rigid body antigen-antibody interface during chosen minimization if possible
+		
 		MinTypeEnum mintype; //What to do after graft?
 		std::map< Size,  bool > cluster_types; //Only sample within cluster types (Cluster types 1,2,3)
 		vector1< std::string > leave_out_pdb_ids;
@@ -147,6 +149,16 @@ public:
 	void
 	set_mintype_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, MinTypeEnum mintype);
 	
+	
+	///@brief  Use rigid body optimization during minimization of the CDR (Minimize jump bt antigen and antibody)?
+	///@details dock_chains is LH_antigen.  Does nothing if repacking the cdr.  Default False.
+	void
+	set_min_rb(CDRNameEnum const cdr_name, bool const setting);
+	
+	void
+	set_min_rb_range(CDRNameEnum const cdr_start, CDRNameEnum const cdr_end, bool const setting);
+	
+	
 	///@brief Use Neighbor sidechains during minimization of this CDR post-graft?  
 	void
 	set_min_neighbor_sc(CDRNameEnum const cdr_name, bool const setting);
@@ -160,9 +172,16 @@ public:
 	void
 	set_dock_post_graft(bool dock_post_graft);
 	
+	void
+	set_dock_rounds(core::Size dock_rounds);
+	
 	///@brief Set the algorithm to run a packing step with neighbor detection post graft.  Before any minimization or docking.  
 	void
 	set_pack_post_graft(bool pack_post_graft);
+	
+	///@brief Set the algorithm to run a final rigid-body minimization of antigen/antibody interface post graft.  Useful if not docking - quicker, but less reliable then full dock.
+	void
+	set_rb_min_post_graft(bool rb_min_post_graft);
 	
 	///@brief Sets the protocol to keep a specific number of top designs.  Default is 10
 	void
@@ -307,7 +326,8 @@ private:
 	check_for_top_designs(pose::Pose & pose);
 	
 	///@brief Grafts a single CDR. Index is the vector index of CDRSet/CDRClusterMap
-	void
+	///@details Return success or failure
+	bool
 	graft_cdr(pose::Pose & pose, CDRNameEnum cdr, core::Size index);
 	
 	
@@ -322,17 +342,28 @@ private:
 	//
 	//
 	
-	///@brief.  If rounds >= number of possible combinations - Try them all. Recursive function due to variable number of cdrs to design.
+	///@brief.  If rounds >= number of possible combinations - Try them all. 
+	///@details Grafts CDRs on the input structure, in a random order.  
 	void
-	run_deterministic_graft_algorithm(pose::Pose & pose, vector1< CDRNameEnum > & cdrs_to_design, core::Size recurse_num);
+	run_deterministic_graft_algorithm(pose::Pose & pose);
 	
-	///@brief Main algorithm used by mover
+	///@brief Basic mc algorithm that randomly samples from the cdr set.
 	void
-	run_random_graft_algorithm(pose::Pose & pose, vector1< CDRNameEnum> & cdrs_to_design);
+	run_basic_mc_algorithm(pose::Pose & pose, vector1<CDRNameEnum>& cdrs_to_design);
+	
+	//void
+	//run_non_repeating_mc_algorithm(pose::Pose & pose, vector1< CDRNameEnum> & cdrs_to_design);
 	
 	///@brief Fix PDB info as somehow the code for pdbinfo changed and my other method no longer works.  No idea why.
 	void
 	fix_pdb_info(pose::Pose pose, CDRNameEnum cdr, CDRClusterEnum cluster, core::Size original_start, core::Size original_pdb_end);
+	
+	void
+	set_default_graft_settings();
+	
+	///@brief Gets a list of vectors whose indexes correspond to CDRNameEnum, and whose values correspond to the cdr_set index.  If the value is 0, it means no cdr in set.
+	vector1< vector1< Size > >
+	get_cdr_set_index_list();
 	
 	//void
 	//run_stochastic_graft_algorithm(pose::Pose & pose, vector1< CDRNameEnum > & cdrs_to_design);
@@ -357,7 +388,7 @@ private:
 	
 	core::Size overhang_;
 	core::Size graft_rounds_;
-	
+	core::Size dock_rounds_;
 	core::Size num_top_designs_; //Number of top designs to keep.
 	
 	//Can be a struct.  Just not now.
@@ -369,6 +400,10 @@ private:
 	//Overall Booleans
 	bool dock_post_graft_; //Run a low-resolution docking step after the graft?
 	bool pack_post_graft_; //Run a packing step with neighbor detection after the graft.  
+	bool rb_min_post_graft_; //Run an rb_min step post graft.  Useful if not using docking.
+	bool initial_perturb_; //Run DockingInitialPerturber post graft
+	bool use_deterministic_algorithm_;
+	core::Real max_linear_chainbreak_;  //Sometimes the graft completely fails unfortunately.  May edit the graft code itself soon.
 };
 }
 }

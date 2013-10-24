@@ -1,17 +1,20 @@
 
 #These flags are meant for a very quick run, as turning all of the modeling on during the design protocol will result in a very long integration test.
 
--restore_pre_talaris_2013_behavior #Speed
 
--in:file:s 2j88.pdb
+-restore_pre_talaris_2013_behavior #Speed
+-ignore_unrecognized_res
+
+-pdb_comments
+-in:file:s mis_start.pdb
 -run:debug
 -mute core.util.prof # dont show timing info
 -mute core.io.database
 -antibody:design:instructions design_instructions.txt
 -antibody:design:antibody_database /sampling/antibodies/ab_db_for_tests.db
 
-#-antibody:design:do_post_design_modeling true
--antibody:design:do_post_graft_design_modeling true
+-antibody:design:do_post_design_modeling false
+-antibody:design:do_post_graft_design_modeling false
 
 -antibody:design:dock_post_graft true
 -antibody:design:top_graft_designs 2

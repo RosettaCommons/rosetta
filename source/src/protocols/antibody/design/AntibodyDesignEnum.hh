@@ -33,6 +33,7 @@ enum MinTypeEnum{
 enum DesignTypeEnum{
 	
 	relaxed_design = 1,
+	docked_design,
 	fixbb,
 	flxbb,
 	DesignTypeEnum_total = flxbb

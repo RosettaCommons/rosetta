@@ -275,7 +275,7 @@ public:
 	/// @brief Compares score of <pose> to the lowest score found.
 	/// If lower, sets the current lowest score pose and lowest score.
 	/// Use internal pose energies if score_pose is false.
-	/// Used to evaluate lowest score without boltzmann.
+	/// Used to evaluate lowest score without boltzmann. Does not change pose structure.
 	/// @note Does not update simulation statistics or last accepts by default.
 	///
 	/// example(s):

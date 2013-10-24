@@ -33,12 +33,15 @@ std::string
 get_string_for_IN(core::Size const n);
 
 ///@brief Gets all possible graft permutations.
+///@details all_permutations is a list of vectors corresponding to cdrs_to_design vector.  Essentially, each inner index describes a position in the cdr_set.
+/// Indexes correspond to CDRNameEnum, and whose values correspond to the cdr_set index.  If the value is 0, it means no cdr in set.
+/// Example: <1, 0, 1, 1, 1, 1>.  This is a possible combination to try graft, the second CDR, H2 is not part of the combination.
 void
 get_all_graft_permutations(
 	vector1<core::Size > & total_cdr_set,
 	vector1<vector1< core::Size > > & all_permutations,
 	vector1< core::Size >current_index,
-	core::Size const recurse_index);
+	core::Size const cdr_num);
 
 DesignTypeEnum
 design_type_from_string(std::string const design_type);

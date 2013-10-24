@@ -70,6 +70,9 @@ public:
 	set_scorefxn(ScoreFunctionOP scorefxn);
 	
 	void
+	set_design_scorefxn(ScoreFunctionOP design_scorefxn);
+	
+	void
 	set_ab_info(AntibodyInfoOP ab_info);
 
 	
@@ -102,7 +105,11 @@ public:
 	virtual void 
 	apply( core::pose::Pose & pose );
 	
+	
 private:
+	
+	///@brief Set constraint and chainbreak score on scorefunction if not already set.
+	void setup_scorefxn(ScoreFunctionOP scorefxn);
 	
 	///@brief Post-graft step modeling.  If no graft step, no need to do post-graft modeling.  Default false.
 	void model_post_graft(core::pose::Pose & pose);
@@ -113,7 +120,13 @@ private:
 	void read_options();
 	
 	void init_on_new_input( core::pose::Pose const & pose );
-
+	
+	///@brief Used to output ongoing current ensembles during the protocol.  Specify a range in the vector to output
+	void output_ensemble( vector1< core::pose::PoseOP > ensemble, Size range_start, Size range_end, std::string prefix);
+	
+	///@brief add cluster info to the pose.  Will go in antibody/util soon.
+	void add_cluster_comments_to_pose(core::pose::Pose & pose);
+	
 	AntibodyDatabaseManagerOP cdr_db_parser_;
 	
 	AntibodyGraftDesignerOP graft_designer_;
@@ -123,12 +136,13 @@ private:
 	AntibodyInfoOP ab_info_;
 	
 	ScoreFunctionOP scorefxn_;
+	ScoreFunctionOP design_scorefxn_;
 	
 	bool run_graft_designer_;
 	bool run_sequence_designer_;
 	bool run_post_graft_modeling_;
 	bool run_post_design_modeling_;
-	
+	bool post_graft_ensemble_output_;
 };
 } //design
 } //antibody

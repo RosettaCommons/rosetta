@@ -67,6 +67,12 @@ public:
 	void 
     set_scaffold_flexibility(Size const Nter_scaffold_flexibility, Size const Cter_scaffold_flexibility);
 
+	Size
+	get_nterm_scaffold_flexibility();
+	
+	Size
+	get_cterm_scaffold_flexibility();
+	
 	///@brief Sets insert flexibility on either end of insert
 	void 
     set_insert_flexibility(Size const Nter_insert_flexibility, Size const Cter_insert_flexibility);

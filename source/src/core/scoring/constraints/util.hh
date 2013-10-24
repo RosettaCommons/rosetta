@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/core/scoring/constraints/util.hh
-/// @brief utility functions for constraints. Maybe better placed in src/numeric?
+/// @brief Utility functions for defining and using constraints.
 /// @author James Thompson
 /// @author Steven Lewis smlewi@gmail.com (merge_constraints_from_cmdline...)
 
@@ -153,14 +153,30 @@ void merge_fa_constraints_from_cmdline(
 );
 
 
-/////////////////MISCELLANEOUS
+/////////////////Coordinate Constraints
 
 /// @brief	handy function for tethering pose to starting coordinates.
 void
-add_coordinate_constraints( core::pose::Pose & pose, core::Real const coord_sdev = 10.0 );
+add_coordinate_constraints( core::pose::Pose & pose, core::Real const coord_sdev = 10.0, bool include_sc = true);
+
+/// @brief Add coordinate constraints for starting coordinates, start:end residues, inclusive.
+void
+add_coordinate_constraints( core::pose::Pose & pose, core::Size const start_res, core::Size const end_res, core::Real const coord_sdev = 10.0, bool include_sc = true);
+
+
+////////// Constraint removal
 
 ///@brief Remove all constraints of a given type from a pose.
-void remove_constraints_of_type(core::pose::Pose & pose, std::string const type);
+void
+remove_constraints_of_type(core::pose::Pose & pose, std::string const type);
+
+///@brief Remove all constraints of a given type from a pose that involve start_res to end_res.  Useful for coordinate/dihedral constraints
+void
+remove_constraints_of_type(core::pose::Pose & pose, std::string const type, core::Size const start_res, core::Size const end_res);
+
+void
+remove_nonbb_constraints( pose::Pose & pose) ;
+
 
 /// @brief call this on your constraints if you have MultiConstraints before running Abinitio -- already done by broker-type application
 void choose_effective_sequence_separation( core::kinematics::ShortestPathInFoldTree const& sp, ConstraintCOPs& in );
@@ -176,7 +192,7 @@ void combine_constraints(
 ///@brief have at most one constraint per residue pair...
 void skip_redundant_constraints( ConstraintCOPs& in, core::Size total_residue, core::Size influence_width = 1 );
 void drop_constraints( ConstraintCOPs& in, core::Real drop_rate );
-void remove_nonbb_constraints( pose::Pose & pose) ;
+
 
 
 

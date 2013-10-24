@@ -52,6 +52,14 @@ simple_fold_tree(
     core::Size cutpoint,
     core::Size jumppoint2);
 
+///@brief Setup LH_A foldtree.  Return dock_chains string.
+std::string
+setup_LH_A_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose);
+
+///@brief Setup A_LH foldtree. Return dock_chains string.
+std::string
+setup_A_LH_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose);
+
 
 /// @brief Very specific packertask,
 /// @details Ubound rotamer options, repack only, protein only, no disulfides.
@@ -99,7 +107,6 @@ core::Real
 cutpoint_separation(core::pose::Pose & pose_in, Size cutpoint);
 
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CDR Clusters
 //
@@ -127,11 +134,6 @@ add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, pose::Pose & pose, CDRC
 bool
 add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, pose::Pose & pose, CDRClusterEnum const cluster, utility::vector1< core::scoring::constraints::ConstraintCOP > constraints);
 
-/// @brief Uses ConstraintSetMover to set a constraint.  Through cstmover, only 1 constraint can be set a t a time.
-/// @details Currently requires Modified_AHO numbering.  Returns True or False depending on success.
-bool
-set_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, pose::Pose & pose, CDRClusterEnum const cluster);
-
 
 /// @brief Gets the cluster constraint name.  Returns NA if not found.
 std::string
@@ -142,8 +144,6 @@ get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum
 ///@details If any of these anchor residues that are checked are missing, it will return false.
 bool
 check_if_pose_renumbered_for_clusters(pose::Pose const & pose);
-	
-
 
 } //namespace antibody
 } //namespace protocols

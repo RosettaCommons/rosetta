@@ -240,10 +240,10 @@ ResidueProbDesignOperation::apply(core::pose::Pose const & pose, core::pack::tas
 			allowed_aminos[task.nonconst_residue_task(i).get_original_residue()] = true;	
 		}
 		
-		for (Size picks = 1; picks <= picking_rounds_; ++i){
+		for (Size picks = 1; picks <= picking_rounds_; ++picks){
 			
 			core::Size aa_num = sampler.random_sample(RG);
-			allowed_aminos[aa_num] = true;	
+			allowed_aminos[aa_num] = true;
 		}
 		
 		if (keep_task_allowed_aa_){

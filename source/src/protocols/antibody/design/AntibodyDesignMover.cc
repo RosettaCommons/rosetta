@@ -25,6 +25,7 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -66,6 +67,7 @@ AntibodyDesignMover::AntibodyDesignMover() : protocols::moves::Mover(),
 	cdr_db_parser_ = new AntibodyDatabaseManager();
 	protocols::moves::Mover::type( "AntibodyDesign" );
 	read_options();
+	set_scorefxn(getScoreFunction());
 	
 }
 
@@ -88,8 +90,28 @@ AntibodyDesignMover::read_options(){
 	set_use_sequence_designer(option [OptionKeys::antibody::design::do_sequence_design]());
 	set_do_post_graft_design_modeling(option [OptionKeys::antibody::design::do_post_graft_design_modeling]());
 	set_do_post_design_modeling(option [OptionKeys::antibody::design::do_post_design_modeling]());
+	post_graft_ensemble_output_ = option [OptionKeys::antibody::design::dump_post_graft_designs]();
+	
+	
+	if (option [OptionKeys::antibody::design::design_scorefxn].user()){
+		set_design_scorefxn(core::scoring::ScoreFunctionFactory::create_score_function(option [OptionKeys::antibody::design::design_scorefxn]()));
+	}
+	else{
+		set_design_scorefxn(getScoreFunction());
+	}
+	
 }
 
+void
+AntibodyDesignMover::setup_scorefxn(ScoreFunctionOP scorefxn){
+	if (scorefxn->get_weight(dihedral_constraint) == 0.0){
+		scorefxn->set_weight(dihedral_constraint, 1.0);
+	}
+	
+	if (scorefxn->get_weight(chainbreak) == 0.0){
+		scorefxn->set_weight(chainbreak, 100);
+	}
+}
 
 void
 AntibodyDesignMover::set_use_graft_designer(bool setting){
@@ -117,7 +139,6 @@ AntibodyDesignMover::set_graft_designer(AntibodyGraftDesignerOP graft_designer){
 }
 
 
-
 void
 AntibodyDesignMover::set_sequence_designer(AntibodyCDRDesignerOP seq_designer){
 	seq_designer_ = seq_designer;
@@ -139,11 +160,12 @@ AntibodyDesignMover::set_scorefxn(ScoreFunctionOP scorefxn){
 }
 
 void
+AntibodyDesignMover::set_design_scorefxn(ScoreFunctionOP design_scorefxn){
+	design_scorefxn_ = design_scorefxn;
+}
+
+void
 AntibodyDesignMover::model_post_graft(core::pose::Pose & pose){
-	//Only use lowest energy. Needs to happen for each ensemble.
-	//Snugdock here would be wonderful.  Till then, dock interfaces. Time should permit for low resolution.  What about high resolution? 
-	
-	//If no constraints are set - add constraints to pose CDRs.
 	
 	protocols::moves::MonteCarlo mc = protocols::moves::MonteCarlo(pose, *scorefxn_, .8);
 	
@@ -184,6 +206,30 @@ AntibodyDesignMover::model_post_design(core::pose::Pose& pose){
 }
 
 void
+AntibodyDesignMover::output_ensemble(vector1<core::pose::PoseOP> ensemble, core::Size range_start, core::Size range_end, std::string prefix){
+	
+	protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job());
+	for (core::Size i = range_start; i <= range_end; ++i){
+		//Filter here
+		std::string tag = prefix+"_"+utility::to_string(i)+"_";	
+		TR << "Outputting ensemble " << i << ", "<< tag << std::endl;
+		protocols::jd2::JobDistributor::get_instance()->job_outputter()->other_pose(current_job, *(ensemble[i]), tag);
+	}
+}
+
+void
+AntibodyDesignMover::add_cluster_comments_to_pose(core::pose::Pose& pose){
+	
+	for (core::SSize i = 1; i <= 6; ++i){
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		std::pair<CDRClusterEnum, core::Real> result = ab_info_->get_CDR_cluster(cdr);
+		std::string output = "CLUSTER "+ ab_info_->get_cluster_name(result.first) +" "+utility::to_string(result.second);
+		core::pose::add_comment(pose, "REMARK "+ab_info_->get_CDR_Name(cdr), output);
+		
+	}
+}
+
+void
 AntibodyDesignMover::apply(core::pose::Pose& pose){
 	
 	///Setup Objects///
@@ -203,14 +249,8 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 		utility_exit_with_message("Antibody Design Protocol requires the Modified AHO numbering scheme");
 	}
 	
-	
-	if (! scorefxn_ ){
-		scorefxn_ = getScoreFunction();
-	}
-	
-	if (scorefxn_->get_weight(dihedral_constraint) == 0.0){
-		scorefxn_->set_weight(dihedral_constraint, 1.8);
-	}
+	setup_scorefxn(scorefxn_);
+	setup_scorefxn(design_scorefxn_);
 	
 	if (!modeler_ ){
 		modeler_ = new AntibodyDesignModeler(ab_info_);
@@ -225,7 +265,7 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 	
 	if (! seq_designer_ ){
 		seq_designer_ = new AntibodyCDRDesigner(ab_info_);
-		seq_designer_->set_scorefxn(scorefxn_);
+		seq_designer_->set_scorefxn(design_scorefxn_);
 	}
         
 	(*scorefxn_)(pose);
@@ -243,16 +283,15 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 	
 	vector1<core::pose::PoseOP> pose_ensemble;
 	vector1<core::pose::PoseOP> final_pose_ensemble;
-	std::map< CDRNameEnum, bool > current_constraint_result;
 	if (run_graft_designer_){
 		TR <<"Running Graft Design" <<std::endl;
 		graft_designer_->apply(pose);
 		pose_ensemble = graft_designer_->get_top_designs();
 		
 		for (core::Size i = 1; i <= pose_ensemble.size(); ++i){
-			ab_info_->setup_CDR_clusters(*pose_ensemble[i]);
-			bool removed = pose_ensemble[i]->remove_constraints(); //Should we outright remove all of them?
-			current_constraint_result = protocols::antibody::add_harmonic_cluster_constraints(ab_info_, *pose_ensemble[i]);
+			//ab_info_->setup_CDR_clusters(*pose_ensemble[i]);
+			//bool removed = pose_ensemble[i]->remove_constraints(); //Should we outright remove all of them?
+			//current_constraint_result = protocols::antibody::add_harmonic_cluster_constraints(ab_info_, *pose_ensemble[i]);
 			if (run_post_graft_modeling_){
 				TR << "Modeling post graft design: ensemble "<< i << std::endl;
 				model_post_graft(*pose_ensemble[i]);
@@ -264,15 +303,21 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 		}
 	}
 	else{
-		ab_info_->setup_CDR_clusters(pose);
-		current_constraint_result = protocols::antibody::add_harmonic_cluster_constraints(ab_info_, pose);
+		//ab_info_->setup_CDR_clusters(pose);
+		//current_constraint_result = protocols::antibody::add_harmonic_cluster_constraints(ab_info_, pose);
 		final_pose_ensemble.push_back( new Pose());
 		*(final_pose_ensemble[1]) = pose;
 	}
 	
+	//Optionally output mid-protocol ensembles:
+	if (post_graft_ensemble_output_ && run_graft_designer_){
+		output_ensemble(final_pose_ensemble, 1, final_pose_ensemble.size(), "mid_ensemble");
+	}
 	if (run_sequence_designer_){
-		TR << "Running sequence designer on top ensembles." << std::endl;
+		TR << "Running sequence designer on pose/ensemble" << std::endl;
 		for (core::Size i = 1; i <= final_pose_ensemble.size(); ++i){
+			
+			//Quick non-elagent fix so I can run some jobs on the cluster correctly today.
 			TR << "Designing ensemble "<< i << "  " << (*scorefxn_)(*final_pose_ensemble[i])<< std::endl;
 			seq_designer_->apply(*final_pose_ensemble[i]);
 			if (run_post_design_modeling_){
@@ -281,26 +326,27 @@ AntibodyDesignMover::apply(core::pose::Pose& pose){
 			}
 			TR << "Designed ensemble " << i << std::endl;
 			scorefxn_->show(*final_pose_ensemble[i]);
+			pose = *final_pose_ensemble[i];
 		}
 	}
 	
 	//Any post-design modeling? Any filters?
+	//Reorder pose ensemble before output
 	
-	protocols::jd2::JobOP current_job( protocols::jd2::JobDistributor::get_instance()->current_job());
-	
+	ab_info_->setup_CDR_clusters(pose);
+	add_cluster_comments_to_pose(pose);
 	for (core::Size i = 1; i <= final_pose_ensemble.size(); ++i){
-		TR << "Top Ensemble " << i << ": " << (*scorefxn_)(*final_pose_ensemble[i]) << std::endl;
+		TR << "Pose " << i << ": " << (*scorefxn_)(*final_pose_ensemble[i]) << std::endl;
+		ab_info_->setup_CDR_clusters(*final_pose_ensemble[i]);
+		add_cluster_comments_to_pose(*final_pose_ensemble[i]);
 	}
 	
-	//Output ensembles.
-	for (core::Size i = 2; i <= final_pose_ensemble.size(); ++i){
-		//Filter here
-		std::string tag = "final_ensemble_"+utility::to_string(i)+"_";	
-		TR << "Outputting final ensemble " << i << std::endl;
-		protocols::jd2::JobDistributor::get_instance()->job_outputter()->other_pose(current_job, *(final_pose_ensemble[i]), tag);
-	}
+	//Output final ensembles.
 	
+	output_ensemble(final_pose_ensemble, 2, final_pose_ensemble.size(), "ensemble");
+	TR << "Added pose comments for cluster info.  Use -pdb_comments option to have it output to pdb file." << std::endl;
 	TR << "Complete." << std::endl;
+	
 }
     
     

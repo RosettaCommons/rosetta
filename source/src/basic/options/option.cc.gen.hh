@@ -729,12 +729,12 @@ option.add( basic::options::OptionKeys::jumps::fix_jumps, "read jump_file" ).def
 option.add( basic::options::OptionKeys::jumps::jump_lib, "read jump_library_file for automatic jumps" ).def("");
 option.add( basic::options::OptionKeys::jumps::loop_definition_from_file, "use ss-def from this file" ).def("");
 option.add( basic::options::OptionKeys::jumps::no_chainbreak_in_relax, "dont penalize chainbreak in relax" ).def(false);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
+option.add( basic::options::OptionKeys::jumps::pairing_file, "file with pairings" ).def("");
 option.add( basic::options::OptionKeys::jumps::random_sheets, "random sheet topology--> replaces -sheet1 -sheet2 ... select randomly up to N sheets with up to -sheet_i pairgins for sheet i" ).def(1);
 option.add( basic::options::OptionKeys::jumps::residue_pair_jump_file, "a file to define residue pair jump" ).def("");
-option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::jumps::sheets, "sheet topology--> replaces -sheet1 -sheet2 ... -sheetN" ).def(1);
 option.add( basic::options::OptionKeys::jumps::topology_file, "read a file with topology info ( PairingStats )" ).def("");
 option.add( basic::options::OptionKeys::jumps::bb_moves, "Apply bb_moves ( wobble, small, shear) during stage3 and stage 4." ).def(false);
 option.add( basic::options::OptionKeys::jumps::no_wobble, "Don t apply the useless wobble during stage3 and stage 4." ).def(false);
@@ -1460,13 +1460,13 @@ option.add( basic::options::OptionKeys::cmiles::kcluster::kcluster, "kcluster op
 option.add( basic::options::OptionKeys::cmiles::kcluster::num_clusters, "Number of clusters to use during k clustering" );
 option.add( basic::options::OptionKeys::cmiles::jumping::jumping, "jumping option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::cmiles::jumping::resi, "Residue i" );
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
+option.add( basic::options::OptionKeys::cmiles::jumping::resj, "Residue j" );
 option.add( basic::options::OptionKeys::james::james, "james option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::james::min_seqsep, "No description" ).def(0);
 option.add( basic::options::OptionKeys::james::atom_names, "No description" ).def(utility::vector1<std::string>());
-option.add( basic::options::OptionKeys::james::dist_thresholds, "No description" ).def(utility::vector1<float>(1, 1.0));
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::james::dist_thresholds, "No description" ).def(utility::vector1<float>(1, 1.0));
 option.add( basic::options::OptionKeys::james::torsion_thresholds, "No description" ).def(utility::vector1<float>(1, 30.0));
 option.add( basic::options::OptionKeys::james::sog_cutoff, "No description" ).def(5.0);
 option.add( basic::options::OptionKeys::james::shift_sog_func, "No description" ).def(true);
@@ -2188,16 +2188,16 @@ option.add( basic::options::OptionKeys::optE::optimize_ddGmutation, "With the it
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_straight_mean, "With the iterative optE driver, predict the the ddGmut to be the difference between the straight mean (1/n Sum(E_i)) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
 option.add( basic::options::OptionKeys::optE::optimize_ddGmutation_boltzman_average, "With the iterative optE driver, predict the the ddGmut to be the difference between the boltzman average energies ( Sum( E_i * e**-E_i/kT)/Sum( e**-E_i/kT) ) of the WT and MUT structures provided.  Requires the -optimize_ddGmutation flag be set." );
 option.add( basic::options::OptionKeys::optE::exclude_badrep_ddGs, "With the iterative optE driver, consider only ddG data where the unweighted repulsive energy delta mut-wt < given value" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::pretend_no_ddG_repulsion, "With the iterative optE driver, set all repulsive scores to zero when looking for ddG correlations" );
+option.add( basic::options::OptionKeys::optE::pretend_no_ddG_repulsion, "With the iterative optE driver, set all repulsive scores to zero when looking for ddG correlations" );
 option.add( basic::options::OptionKeys::optE::optimize_decoy_discrimination, "With the iterative optE driver, optimize weights to maximize the partition between relaxed natives and low-scoring decoys.  File is a list of file-list pairs and a single pdb file < native_pdb_list, decoy_pdb_list, crystal_native_pdb >." );
 option.add( basic::options::OptionKeys::optE::normalize_decoy_score_spread, "In decoy discrimination optimization, normalize both the native and decoy energies generated by a set of weights by sigma_curr /sigma_start where sigma_start is computed as the standard deviation of the decoy energies given an input weight set" );
 option.add( basic::options::OptionKeys::optE::ramp_nativeness, "In decoy discrimination optimization, give structures in the range between max_rms_from_native and min_decoy_rms_to_native a nativeness score (which ramps linearly from 1 to 0 in that range) and include scores from structures in the numerator of the partition." );
 option.add( basic::options::OptionKeys::optE::n_top_natives_to_optimize, "For use with the -optimize_decoy_discrimination flag.  Objective function considers top N natives in partition function" ).def(1);
 option.add( basic::options::OptionKeys::optE::approximate_decoy_entropy, "Alpha expansion of conformation space size as a function of nres: size ~ alpha ^ nres; entropy ~ nres ln alpha." );
 option.add( basic::options::OptionKeys::optE::repack_and_minimize_decoys, "Generate new structures in each round of iterative optE by repacking and minimizing the input decoys & natives using the weights obtained in the last round" );
-option.add( basic::options::OptionKeys::optE::repack_and_minimize_input_structures, "Minimizing the input decoys & natives using the starting weights -- allows structures a chance to see the energy function before decoy discrimination begins without the memory overhead of the repack_and_minimize_decoys flag" );
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::optE::repack_and_minimize_input_structures, "Minimizing the input decoys & natives using the starting weights -- allows structures a chance to see the energy function before decoy discrimination begins without the memory overhead of the repack_and_minimize_decoys flag" );
 option.add( basic::options::OptionKeys::optE::output_top_n_new_decoys, "For use with repack_and_minimize_decoys flag: Write out the top N decoys generated each round in this iterative refinement" ).def(0);
 option.add( basic::options::OptionKeys::optE::optimize_ligand_discrimination, "With the iterative optE driver, optimize weights to maximize the partition between relaxed natives and low-scoring decoys.  File is a list of file-list pairs and a single pdb file < native_pdb_list, decoy_pdb_list, crystal_native_pdb >." );
 option.add( basic::options::OptionKeys::optE::no_design, "Don't bother loading pdbs and doing design; just optimize weights for decoy-discrim and or native rotamer recovery" );
@@ -2552,17 +2552,25 @@ option.add( basic::options::OptionKeys::antibody::design::do_post_graft_design_m
 option.add( basic::options::OptionKeys::antibody::design::do_sequence_design, "Run the CDRDesign step for high-resolution cluster-based CDR sequence design. Overrides instruction file." ).def(true);
 option.add( basic::options::OptionKeys::antibody::design::do_post_design_modeling, "Run dock/min modeling step after the sequence design step if run" ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::graft_rounds, "Rounds for graft_design.  Each round is one CDR graft from set" ).def(1000);
-option.add( basic::options::OptionKeys::antibody::design::top_graft_designs, "Number of top graft designs to keep (ensemble).  These will be written to a PDB and move onto the next step in the protocol." ).def(10);
-option.add( basic::options::OptionKeys::antibody::design::dump_post_graft_designs, "Write the top ensembles to file after the graft-design step." ).def(false);
+option.add( basic::options::OptionKeys::antibody::design::top_graft_designs, "Number of top graft designs to keep (ensemble).  These will be written to a PDB and each move onto the next step in the protocol." ).def(10);
+option.add( basic::options::OptionKeys::antibody::design::initial_perturb, "Run the docking perturber post graft.  Controlled by command-line flags.  See docking manual.  It will at least slide into contact." ).def(false);
+option.add( basic::options::OptionKeys::antibody::design::use_deterministic, "Use the deterministic algorithm if graft rounds is <= number of possible permutations.  This involves multiple grafts per permutation in random CDR order, but always starts with the starting structure.  You only try each full permutation once, but no monte carlo boltzmann propagation of good models or designs occur.  Will still, however, keep the top x best structures found after each graft round has completed." ).def(false);
+option.add( basic::options::OptionKeys::antibody::design::dump_post_graft_designs, "Write the top ensembles to file directly after the graft-design step and after any optional modeling." ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::interface_dis, "Interface distance cutoff.  Used for repacking of interface, etc." ).def(4.0);
 option.add( basic::options::OptionKeys::antibody::design::neighbor_dis, "Neighbor distance cutoff.  Used for repacking after graft, minimization, etc." ).def(3.5);
-option.add( basic::options::OptionKeys::antibody::design::dock_post_graft, "Run a short lowres docking step after each graft and before any minimization." ).def(false);
+option.add( basic::options::OptionKeys::antibody::design::dock_post_graft, "Run a short lowres + highres docking step after each graft and before any minimization. Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options." ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::pack_post_graft, "Pack CDR and neighbors after each graft.  Before any docking or minimization." ).def(true);
-option.add( basic::options::OptionKeys::antibody::design::design_method, "Design method to use." ).legal("fixbb").legal("flxbb").legal("relaxed_design").def("relaxed_design");
-option.add( basic::options::OptionKeys::antibody::design::design_rounds, "Number of CDRDesign rounds" ).def(5);
+option.add( basic::options::OptionKeys::antibody::design::rb_min_post_graft, "Minimize the ab-ag interface post graft and any docking/cdr min by minimizing the jump" ).def(false);
+option.add( basic::options::OptionKeys::antibody::design::design_post_graft, "Design during any time the packer is called post graft.  This includes relax, high-res docking, etc.  Used to increasing sampling of potential designs." ).def(false);
+option.add( basic::options::OptionKeys::antibody::design::dock_rounds, "Number of rounds for post_graft docking.  If you are seeing badly docked structures, increase this value." ).def(1);
+option.add( basic::options::OptionKeys::antibody::design::ab_dock_chains, "Override the antibody dock chains.  Used for if your creating a bivalent antibody where only L or H is docking antigen.  Also used if you are creating an antibody where you are only interested in L or H primarily being the binding site.  Changing the default is not recommended for general use." ).def("LH");
+option.add( basic::options::OptionKeys::antibody::design::design_method, "Design method to use." ).legal("fixbb").legal("flxbb").legal("relaxed_design").def("fixbb");
+option.add( basic::options::OptionKeys::antibody::design::design_rounds, "Number of CDRDesign rounds" ).def(3);
+option.add( basic::options::OptionKeys::antibody::design::design_scorefxn, "Scorefunction to use during design.  Orbitals_talaris2013_softrep works well for fixedbb, orbitals_talaris2013 works well for relaxed design. If not set will use the main scorefunction set." );
 option.add( basic::options::OptionKeys::antibody::design::benchmark_basic_design, "Used to benchmark basic design vs probabilistic vs conservative.  Not for general use." ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::use_filters, "Use filters after graft step and design step.  Defaults false for now to optimize sensitivity" ).def(false);
 option.add( basic::options::OptionKeys::antibody::design::stats_cutoff, "Value for probabilistic -> conservative design switch.  If number of total sequences used for probabilistic design for a particular cdr cluster being designed is less than this value, conservative design will occur.  This is why the default graft settings are type 1 clusters.  More data = better predictability." ).def(10);
+option.add( basic::options::OptionKeys::antibody::design::sample_zero_probs_at, "Value for probabilstic design.  Probability that a normally zero prob will be chosen as a potential residue each time packer task is called.  Increase to increase variablility of positions.  Use with caution." ).def(0);
 option.add( basic::options::OptionKeys::antibody::design::conservative_h3_design, "Use a conservative strategy for H3 design. Instructions file overwrites this setting" ).def(true);
 option.add( basic::options::OptionKeys::antibody::design::turn_conservation, "try to conserve turn structure using known turn-based conservative mutations during conservative design." ).def(true);
 option.add( basic::options::OptionKeys::flexPepDocking::flexPepDocking, "flexPepDocking option group" ).legal(true).def(true);

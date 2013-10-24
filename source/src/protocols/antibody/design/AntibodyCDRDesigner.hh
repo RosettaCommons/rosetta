@@ -82,6 +82,14 @@ public:
 	
 	void
 	set_scorefxn(core::scoring::ScoreFunctionCOP scorefxn);
+
+	////////////////////////////////////////////////////////////////////////////
+	// Accessors
+	//
+	//
+	
+	//core::pack::task::TaskFactoryOP
+	//get_task_factory();
 	
 	////////////////////////////////////////////////////////////////////////////
 	// Tweaking Settings
@@ -164,6 +172,15 @@ private:
 	//disable_packing_cdr(CDRNameEnum cdr, core::pack::task::TaskFactoryOP tf);
 	
 private:
+	
+	///@brief Set cluster-based harmonic dihedral constraints if known cluster or set coordinate constraints.
+	void
+	setup_constraints(core::pose::Pose & pose);
+	
+	///@Does The CDR have constraints of this type.  A bit hacky.  Used for going form graftdesigner to this, without regenerating the 'wrong' constraints.
+	///@details probably only works 'correctly' for dihedral/coordinate constraints.  THe function assumes that constraints were set for the whole CDR.
+	bool
+	cdr_has_constraints(core::pose::Pose const & pose, CDRNameEnum const cdr, std::string const constraint_type);
 	
 	void
 	read_command_line_options();

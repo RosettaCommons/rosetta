@@ -89,6 +89,7 @@ ConservativeDesignOperation::use_pose_sequence_as_native(core::pose::Pose const 
 
 void
 ConservativeDesignOperation::load_data_from_db() {
+	TR << "Loading conservative mutational data " <<  std::endl;
 	std::string default_path = basic::database::full_name("/sequence/resinfo.db");
 	utility::sql_database::sessionOP session = basic::database::get_db_session(default_path);
 	
@@ -112,7 +113,6 @@ ConservativeDesignOperation::load_data_from_db() {
 		
 		for (core::Size i = 1; i <= conserved_char.size(); ++i){
 			core::chemical::AA amino = core::chemical::aa_from_oneletter_code(conserved_char[i]);
-			allowed_aminos[amino] = true;
 		}
 		conserved_mutations_[aa_index] = allowed_aminos;
 		
@@ -127,19 +127,24 @@ ConservativeDesignOperation::apply(core::pose::Pose const & pose, core::pack::ta
 		
 		
 		//If its not a design position or the residue doesn't exist in set positions, keep going
-		std::string seq = pose_sequence_; 
+		std::string seq = pose_sequence_; //dangerous.
 		if (pose_sequence_.empty()){
 			seq = pose.sequence();
 		}
 		
 		if (! design_positions[i] || (! positions_.empty() && std::find(positions_.begin(), positions_.end(), i) == positions_.end() ) ){continue;}
 		
+		//Skip any unrecognized residues
+		if (! core::chemical::oneletter_code_specifies_aa(seq[i-1])){ continue; };
+		
 		//task.nonconst_residue_task(i).get_original_residue()
-		TR << "Using conservative mutations for position: " << i << std::endl;
-		vector1<bool> allowed_aminos = conserved_mutations_[seq[i-1]];
+		//TR << "Using conservative mutations for position: " << i << std::endl;
+		core::chemical::AA native_amino = core::chemical::aa_from_oneletter_code(seq[i-1]);
+		
+		vector1<bool> allowed_aminos = conserved_mutations_[native_amino];
 		
 		if (include_native_aa_){
-			allowed_aminos[seq[i-1]] = true;	
+			allowed_aminos[native_amino] = true;	
 		}
 		
 		//Add the residues to the allowed list in task, or replace it.

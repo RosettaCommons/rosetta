@@ -72,6 +72,15 @@ public:
 	set_neighbor_detection_dis(core::Real neighbor_distance);
 	
 	
+	///@brief Override the command line default of LH to L or H or something strange.  Used primarily for bivalent antibody design, or if you are designing an antibody
+	/// to primarily bind light or heavy chain.  This is only used by docking and rigid-body jump minimization functions.
+	void
+	set_ab_dock_chains(std::string ab_dock_chains);
+	
+	///@brief Get the ab_dock_chains string, set via command line.
+	std::string
+	get_ab_dock_chains();
+	
 	///////////////////////////////////////////////////////////////////////////////////////
 	// Minimization
 	//
@@ -81,19 +90,24 @@ public:
 	///@details Cluster Constraints should already be set. Optionally use start_coordinate constraints.  
 	/// All coordinate constraints on the pose will then be removed.
 	void
-	relax_cdrs(Pose & pose, bool centroid_mode, bool starting_coordinate_constraints = false) const;
+	relax_cdrs(Pose & pose, bool centroid_mode, bool starting_coordinate_constraints = false, bool min_interface = false, std::string dock_chains = "L_H") const;
 	
 	void
-	relax_cdrs_and_neighbor_sc(Pose & pose, bool starting_coordinate_constraints = false) const;
+	relax_cdrs_and_neighbor_sc(Pose & pose, bool starting_coordinate_constraints = false, bool min_interface = false, std::string dock_chains = "L_H") const;
+	
+	void
+	relax_interface(Pose & pose, std::string dock_chains, bool min_interface_sc = true) const;
 	
 	
 	///@brief Vanilla minimizer using dfpmin_armijo_nonmonotone at .01 tolerance.
 	void
-	minimize_cdrs(Pose & pose) const;
+	minimize_cdrs(Pose & pose, bool min_interface = false, std::string dock_chains = "L_H") const;
 	
 	void
-	minimize_cdrs_and_neighbor_sc(Pose & pose) const;
+	minimize_cdrs_and_neighbor_sc(Pose & pose, bool min_interface = false, std::string dock_chains = "L_H") const;
 
+	void
+	minimize_interface(Pose & pose, std::string dock_chains, bool min_interface_sc = true) const;
 	
 	///@brief Repack the interface between Antibody and Antigen.  Foldtree for docking (LH_A/etc.) must be set.
 	void
@@ -170,6 +184,14 @@ protected:
 	void
 	apply_LH_A_foldtree(core::pose::Pose & pose) const;
 	
+	///@brief Main High-res docker
+	void
+	dock_high_res(core::pose::Pose & pose, std::string dock_chains, int first_cycle=4, int second_cycle=45) const;
+	
+	///@brief Main Low-res docker
+	void
+	dock_low_res(core::pose::Pose & pose, std::string dock_chains, bool pack_interface = false) const;
+	
 	///@brief AntibodyInfo has this function.  Need to refactor more to get single loop on the fly
 	protocols::loops::LoopsOP
 	get_cdr_loops(Pose & pose) const;
@@ -191,6 +213,7 @@ protected:
 	core::Real interface_dis_;
 	core::Real neighbor_dis_;
 	
+	std::string ab_dock_chains_; //Usually LH but can set modeler to only care about L or H.  Useful for bivalent antibody design.
 	vector1 <bool> cdrs_; //These cdrs are cdr's to work on.  Whether copying, refining, designing, etc.etc.
 
             

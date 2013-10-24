@@ -99,6 +99,7 @@ void
 AntibodyDesignModeler::read_command_line_options(){
 	set_interface_detection_dis(basic::options::option [basic::options::OptionKeys::antibody::design::interface_dis]());
 	set_neighbor_detection_dis(basic::options::option [basic::options::OptionKeys::antibody::design::neighbor_dis]());
+	set_ab_dock_chains(basic::options::option [basic::options::OptionKeys::antibody::design::ab_dock_chains]());
 }
 
 protocols::loops::LoopsOP
@@ -149,9 +150,20 @@ AntibodyDesignModeler::set_cdr_only(CDRNameEnum cdr, bool setting){
 		set_cdr(cdr, false);
 	}
 }
+
 void
 AntibodyDesignModeler::set_cdr(CDRNameEnum const cdr, bool setting){
 	cdrs_[cdr]=setting;
+}
+
+void
+AntibodyDesignModeler::set_ab_dock_chains(std::string ab_dock_chains){
+	ab_dock_chains_ = ab_dock_chains;
+}
+
+std::string
+AntibodyDesignModeler::get_ab_dock_chains(){
+	return ab_dock_chains_;
 }
 
 void
@@ -170,7 +182,7 @@ AntibodyDesignModeler::set_neighbor_detection_dis(core::Real neighbor_distance){
 }
 
 void
-AntibodyDesignModeler::relax_cdrs(Pose & pose, bool centroid_mode, bool starting_coordinate_constraints /*false*/ ) const {
+AntibodyDesignModeler::relax_cdrs(Pose & pose, bool centroid_mode, bool starting_coordinate_constraints /*false*/, bool min_interface /* false */, std::string dock_chains /* L_H*/ ) const {
 
 	TR << "Relaxing CDR(s)" << std::endl;
 	ScoreFunctionOP local_scorefxn = scorefxn_->clone();
@@ -178,13 +190,29 @@ AntibodyDesignModeler::relax_cdrs(Pose & pose, bool centroid_mode, bool starting
 	MoveMapOP mm = new MoveMap();
 	local_scorefxn->set_weight(chainbreak, 100.00); //First PyRosetta Toolkit lesson.
 	TR << "start: "<<(*local_scorefxn)(pose) << std::endl;
+	core::kinematics::FoldTree original_ft = pose.fold_tree();
+	if (min_interface){
+		TR << "Including RB interface min" <<std::endl;
+		vector1< int > movable_jumps(1, 1);
+		protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
+	}
 	for (core::Size i=1; i<=CDRNameEnum_total; ++i){
 		if (cdrs_[i]){
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 			ab_info_->add_CDR_to_MoveMap(pose, mm, cdr);
 		}
 	}
-
+	protocols::loops::LoopsOP cdr_loops = get_cdr_loops(pose);
+	loops_operation_->set_design_loop(false);
+	loops_operation_->set_include_neighbors(false);
+	loops_operation_->set_loops(cdr_loops);
+	loops_operation_->set_cutoff_distance(neighbor_dis_);
+	
+	tf_->clear();
+	tf_->push_back(cmd_line_operation_ );
+	tf_->push_back( restrict_design_operation_ );
+	tf_->push_back(loops_operation_);
+	
 	if (centroid_mode){
 		protocols::relax::CentroidRelaxOP rel = new protocols::relax::CentroidRelax(mm);
 		if (starting_coordinate_constraints){
@@ -196,6 +224,7 @@ AntibodyDesignModeler::relax_cdrs(Pose & pose, bool centroid_mode, bool starting
 		
 		protocols::relax::FastRelaxOP rel = new protocols::relax::FastRelax(local_scorefxn);//Stack construction failed to compile.
 		rel->set_movemap(mm);
+		rel->set_task_factory(tf_);
 		if (starting_coordinate_constraints){
 			rel->constrain_relax_to_start_coords(true);
 		}
@@ -206,13 +235,23 @@ AntibodyDesignModeler::relax_cdrs(Pose & pose, bool centroid_mode, bool starting
 	if (starting_coordinate_constraints){
 		core::scoring::constraints::remove_constraints_of_type(pose, "CoordinateConstraint");
 	}
+	pose.fold_tree(original_ft);
 }
 
 void
-AntibodyDesignModeler::relax_cdrs_and_neighbor_sc(Pose & pose, bool starting_coordinate_constraints /*false*/ ) const {
+AntibodyDesignModeler::relax_cdrs_and_neighbor_sc(Pose & pose, bool starting_coordinate_constraints /*false*/, bool min_interface /* false */, std::string dock_chains /* L_H*/ ) const {
+	
 	TR << "Relaxing CDR(s) and Neighbor Sidechains" << std::endl;
 	ScoreFunctionOP local_scorefxn = scorefxn_->clone();
 	local_scorefxn->set_weight(chainbreak, 100.00); //First PyRosetta Toolkit lesson.
+	
+	core::kinematics::FoldTree original_ft = pose.fold_tree();
+	if (min_interface){
+		TR << "Including RB interface min" <<std::endl;
+		vector1< int > movable_jumps(1, 1);
+		protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
+	}
+	
 	TR << "start: "<<(*local_scorefxn)(pose) << std::endl;
 	MoveMapOP mm = new MoveMap();
 	for (core::Size i=1; i<=CDRNameEnum_total; ++i){
@@ -221,9 +260,20 @@ AntibodyDesignModeler::relax_cdrs_and_neighbor_sc(Pose & pose, bool starting_coo
 			ab_info_->add_CDR_to_MoveMap(pose, mm, cdr, false, true, neighbor_dis_);
 		}
 	}
-
+	protocols::loops::LoopsOP cdr_loops = get_cdr_loops(pose);
+	loops_operation_->set_design_loop(false);
+	loops_operation_->set_include_neighbors(true);
+	loops_operation_->set_loops(cdr_loops);
+	loops_operation_->set_cutoff_distance(neighbor_dis_);
+	
+	tf_->clear();
+	tf_->push_back(cmd_line_operation_ );
+	tf_->push_back( restrict_design_operation_ );
+	tf_->push_back(loops_operation_);
+	
 	protocols::relax::FastRelaxOP rel = new protocols::relax::FastRelax(local_scorefxn);//Stack construction failed to compile.
 	rel->set_movemap(mm);
+	rel->set_task_factory(tf_);
 	if (starting_coordinate_constraints){
 		rel->constrain_relax_to_start_coords(true);
 	}
@@ -233,10 +283,69 @@ AntibodyDesignModeler::relax_cdrs_and_neighbor_sc(Pose & pose, bool starting_coo
 	if (starting_coordinate_constraints){
 		core::scoring::constraints::remove_constraints_of_type(pose, "CoordinateConstraint");
 	}
+	
+	pose.fold_tree(original_ft);
 }
 
 void
-AntibodyDesignModeler::minimize_cdrs(Pose & pose) const {
+AntibodyDesignModeler::relax_interface(Pose & pose, std::string dock_chains, bool min_interface_sc /* true */) const {
+	
+	TR << "Relaxing Interface: " << dock_chains << std::endl;
+	ScoreFunctionOP local_scorefxn = scorefxn_->clone();
+	vector1< int > movable_jumps(1, 1);
+	core::kinematics::FoldTree original_ft = pose.fold_tree();
+	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
+	
+	MoveMapOP mm = new MoveMap();
+	mm->set_jump(true); //Should be only one jump
+	core::pack::task::TaskFactoryOP tf = antigen_interface_tf_->clone();
+	core::pack::task::PackerTaskOP task = antigen_interface_tf_->create_task_and_apply_taskoperations(pose);
+	protocols::relax::FastRelaxOP rel = new protocols::relax::FastRelax(local_scorefxn);
+	
+	//Add residues to movemap, so that they minimize during minimization, while repacking will happen via tf. Maybe should not have any chi packing.
+	if (min_interface_sc){
+		for (core::Size i = 1; i<=pose.total_residue(); i++){
+			if (task->pack_residue(i)){
+				mm->set_chi(i, true);
+			}
+		}
+	}
+	
+	rel->set_movemap(mm);
+	rel->set_task_factory(tf);
+	rel->apply(pose);
+	pose.fold_tree(original_ft);
+}
+
+void
+AntibodyDesignModeler::minimize_interface(Pose& pose, std::string dock_chains, bool min_interface_sc /* true */) const {
+	
+	TR << "Minimizing Interface: " << dock_chains << std::endl;
+	vector1< int > movable_jumps(1, 1);
+	core::kinematics::FoldTree original_ft = pose.fold_tree();
+	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
+	
+	MoveMapOP mm = new MoveMap();
+	mm->set_jump(true); //Should be only one jump
+	
+	core::pack::task::PackerTaskOP task = antigen_interface_tf_->create_task_and_apply_taskoperations(pose);
+	if (min_interface_sc){
+		for (core::Size i = 1; i<=pose.total_residue(); i++){
+			if (task->pack_residue(i)){
+				mm->set_chi(i, true);
+			}
+		}
+	}
+	ScoreFunctionOP local_scorefxn = scorefxn_->clone();
+	protocols::simple_moves::MinMover min_mover(mm, local_scorefxn, "dfpmin_armijo_nonmonotone", 0.01, false /*use_nblist*/ );
+	min_mover.apply(pose);
+	
+	
+	pose.fold_tree(original_ft);
+}
+
+void
+AntibodyDesignModeler::minimize_cdrs(Pose & pose, bool min_interface /* false */, std::string dock_chains /* L_H*/ ) const {
 	
 	TR << "Minimizing CDR(s)" << std::endl;
 	MoveMapOP mm = new MoveMap();
@@ -244,6 +353,12 @@ AntibodyDesignModeler::minimize_cdrs(Pose & pose) const {
 	local_scorefxn->set_weight(chainbreak, 100.00); 
 	TR << "start: "<<(*local_scorefxn)(pose) << std::endl;
 	
+	core::kinematics::FoldTree original_ft = pose.fold_tree();
+	if (min_interface){
+		TR << "Including RB interface min" <<std::endl;
+		vector1< int > movable_jumps(1, 1);
+		protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
+	}
 	for (core::Size i = 1; i<=CDRNameEnum_total; ++i){
 		if (cdrs_[i]){
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -253,11 +368,12 @@ AntibodyDesignModeler::minimize_cdrs(Pose & pose) const {
 
 	protocols::simple_moves::MinMover min_mover(mm, local_scorefxn, "dfpmin_armijo_nonmonotone", 0.01, false /*use_nblist*/ );
 	min_mover.apply(pose);
+	pose.fold_tree(original_ft);
 	TR << "end: "<<(*local_scorefxn)(pose) << std::endl;
 }
 
 void
-AntibodyDesignModeler::minimize_cdrs_and_neighbor_sc(Pose& pose) const {
+AntibodyDesignModeler::minimize_cdrs_and_neighbor_sc(Pose& pose, bool min_interface /* false */, std::string dock_chains /* L_H*/ ) const {
 	
 	TR << "Minimizing CDR(s) and neighbor Sidechains" << std::endl;
 	MoveMapOP mm = new MoveMap();
@@ -265,6 +381,12 @@ AntibodyDesignModeler::minimize_cdrs_and_neighbor_sc(Pose& pose) const {
 	local_scorefxn->set_weight(chainbreak, 100.00);
 	TR << "start: "<<(*local_scorefxn)(pose) << std::endl;
 	
+	core::kinematics::FoldTree original_ft = pose.fold_tree();
+	if (min_interface){
+		TR << "Including RB interface min" <<std::endl;
+		vector1< int > movable_jumps(1, 1);
+		protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
+	}
 	for (core::Size i = 1; i<=CDRNameEnum_total; ++i){
 		if (cdrs_[i]){
 			CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
@@ -274,6 +396,7 @@ AntibodyDesignModeler::minimize_cdrs_and_neighbor_sc(Pose& pose) const {
 
 	protocols::simple_moves::MinMover min_mover(mm, local_scorefxn, "dfpmin_armijo_nonmonotone", 0.01, false /*use_nblist*/ );
 	min_mover.apply(pose);
+	pose.fold_tree(original_ft);
 	TR << "end: "<<(*local_scorefxn)(pose) << std::endl;
 }
 
@@ -407,30 +530,13 @@ AntibodyDesignModeler::dock_LH_A_low_res(Pose& pose, bool pack_interface /*false
 		return;
 	}
 	
-	TR << "Docking LH-A low res " << std::endl;
+	
 	std::string antigen(antigen_chains.begin(), antigen_chains.end());
-	std::string dock_chains = "LH_"+antigen;
+	std::string dock_chains = ab_dock_chains_+"_"+antigen;
+	TR << "Docking " <<dock_chains << " low res " << std::endl;
 	TR.Debug << "dock_chains: "<< dock_chains << std::endl;
 	
-	vector1< int > movable_jumps(1, 1);
-	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
-	
-	TR << "start: "<<(*scorefxn_)(pose) << std::endl;
-	protocols::docking::DockingLowResOP docker = new protocols::docking::DockingLowRes();
-	protocols::simple_moves::SwitchResidueTypeSetMover cen_switch = protocols::simple_moves::SwitchResidueTypeSetMover("centroid");
-	protocols::simple_moves::ReturnSidechainMover return_sc = protocols::simple_moves::ReturnSidechainMover(pose);
-	
-	cen_switch.apply(pose);
-	docker->apply(pose);
-	return_sc.apply(pose);
-	
-	pose.fold_tree(original_ft);
-	
-	if (pack_interface){
-		repack_antigen_ab_interface(pose);
-	}
-	TR << "end: "<<(*scorefxn_)(pose) << std::endl;
+	dock_low_res(pose, dock_chains, pack_interface);
 }
 
 void
@@ -442,22 +548,10 @@ AntibodyDesignModeler::dock_LH_A_high_res(Pose & pose, int first_cycle /* 4 */, 
 		return;
 	}
 	
-	TR << "Docking LH-A high res" << std::endl;
 	std::string antigen(antigen_chains.begin(), antigen_chains.end());
-	std::string dock_chains = "LH_"+antigen;
-	
-	vector1< int > movable_jumps(1, 1);
-	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
-	TR << "start: "<<(*scorefxn_)(pose) << std::endl;
-	protocols::docking::DockMCMProtocolOP docker = new protocols::docking::DockMCMProtocol(1, docking_scorefxn_high_, scorefxn_);
-	
-	docker->set_first_cycle(first_cycle);
-	docker->set_second_cycle(second_cycle);
-	
-	docker->apply(pose);
-	TR << "end: "<<(*scorefxn_)(pose) << std::endl;
-	pose.fold_tree(original_ft);
+	std::string dock_chains = ab_dock_chains_+"_"+antigen;
+	TR << "Docking " <<dock_chains << " high res " << std::endl;
+	dock_high_res(pose, dock_chains, first_cycle, second_cycle);
 		
 }
 
@@ -469,29 +563,10 @@ AntibodyDesignModeler::dock_A_LH_low_res(Pose& pose, bool pack_interface /*false
 		return;
 	}
 	
-	TR << "Docking A-LH low res " << std::endl;
 	std::string antigen(antigen_chains.begin(), antigen_chains.end());
-	std::string dock_chains = antigen+"_LH";
-	
-	vector1< int > movable_jumps(1, 1);
-	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
-	
-	protocols::docking::DockingLowResOP docker =  new protocols::docking::DockingLowRes();
-	TR << "start: "<<(*scorefxn_)(pose) << std::endl;
-	protocols::simple_moves::SwitchResidueTypeSetMover cen_switch = protocols::simple_moves::SwitchResidueTypeSetMover("centroid");
-	protocols::simple_moves::ReturnSidechainMover return_sc = protocols::simple_moves::ReturnSidechainMover(pose);
-	
-	cen_switch.apply(pose);
-	docker->apply(pose);
-	return_sc.apply(pose);
-	
-	pose.fold_tree(original_ft);
-	
-	if (pack_interface){
-		repack_antigen_ab_interface(pose);
-	}
-	TR << "end: "<<(*scorefxn_)(pose) << std::endl;
+	std::string dock_chains = antigen+"_"+ab_dock_chains_;
+	TR << "Docking " <<dock_chains << " low res " << std::endl;
+	dock_low_res(pose, dock_chains, pack_interface);
 }
 
 void
@@ -503,22 +578,10 @@ AntibodyDesignModeler::dock_A_LH_high_res(Pose & pose, int first_cycle /* 4 */, 
 		return;
 	}
 	
-	TR << "Docking A-LH high res" << std::endl;
 	std::string antigen(antigen_chains.begin(), antigen_chains.end());
-	std::string dock_chains = antigen+"_LH";
-	
-	vector1< int > movable_jumps(1, 1);
-	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
-	TR << "start: "<<(*scorefxn_)(pose) << std::endl;
-	protocols::docking::DockMCMProtocolOP docker = new protocols::docking::DockMCMProtocol(1, docking_scorefxn_high_, scorefxn_);
-	
-	docker->set_first_cycle(first_cycle);
-	docker->set_second_cycle(second_cycle);
-	
-	docker->apply(pose);
-	TR << "end: "<<(*scorefxn_)(pose) << std::endl;
-	pose.fold_tree(original_ft);
+	std::string dock_chains = antigen+"_"+ab_dock_chains_;
+	TR << "Docking " <<dock_chains << " high res " << std::endl;
+	dock_high_res(pose, dock_chains, first_cycle, second_cycle);
 		
 }
 
@@ -526,28 +589,9 @@ void
 AntibodyDesignModeler::dock_L_H_low_res(Pose& pose, bool pack_interface /*false*/) const {
 
 	TR << "Docking L-H low res" << std::endl;
-
 	std::string dock_chains = "L_H";
 	
-	vector1< int > movable_jumps(1, 1);
-	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
-	
-	protocols::docking::DockingLowResOP docker = new protocols::docking::DockingLowRes();
-	TR << "start: "<<(*scorefxn_)(pose) << std::endl;
-	protocols::simple_moves::SwitchResidueTypeSetMover cen_switch = protocols::simple_moves::SwitchResidueTypeSetMover("centroid");
-	protocols::simple_moves::ReturnSidechainMover return_sc = protocols::simple_moves::ReturnSidechainMover(pose);
-	
-	cen_switch.apply(pose);
-	docker->apply(pose);
-	return_sc.apply(pose);
-	
-	pose.fold_tree(original_ft);
-	
-	if (pack_interface){
-		repack_antigen_ab_interface(pose);
-	}
-	TR << "end: "<<(*scorefxn_)(pose) << std::endl;
+	dock_low_res(pose, dock_chains, pack_interface);
 }
 
 void
@@ -556,6 +600,33 @@ AntibodyDesignModeler::dock_L_H_high_res(Pose & pose, int first_cycle /* 4 */, i
 	TR << "Docking L-H high res " << std::endl;
 	std::string dock_chains = "L_H";
 	
+	dock_high_res(pose, dock_chains, first_cycle, second_cycle);
+		
+}
+
+void
+AntibodyDesignModeler::dock_H_L_low_res(Pose& pose, bool pack_interface /*false*/) const {
+	
+	TR << "Docking H-L low res" << std::endl;
+	std::string dock_chains = "H_L";
+	
+	dock_low_res(pose, dock_chains, pack_interface);
+}
+
+void
+AntibodyDesignModeler::dock_H_L_high_res(Pose & pose, int first_cycle /* 4 */, int second_cycle /* 45 */) const {
+
+	TR << "Docking H-L high res" << std::endl;
+	std::string dock_chains = "H_L";
+	
+	dock_high_res(pose, dock_chains, first_cycle, second_cycle);
+		
+}
+
+void
+AntibodyDesignModeler::dock_high_res(Pose & pose, std::string dock_chains, int first_cycle /* 4 */, int second_cycle /* 45 */) const {
+
+	
 	vector1< int > movable_jumps(1, 1);
 	core::kinematics::FoldTree original_ft = pose.fold_tree();
 	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
@@ -568,21 +639,17 @@ AntibodyDesignModeler::dock_L_H_high_res(Pose & pose, int first_cycle /* 4 */, i
 	docker->apply(pose);
 	TR << "end: "<<(*scorefxn_)(pose) << std::endl;
 	pose.fold_tree(original_ft);
-		
 }
 
 void
-AntibodyDesignModeler::dock_H_L_low_res(Pose& pose, bool pack_interface /*false*/) const {
-	TR << "Docking H-L low res" << std::endl;
+AntibodyDesignModeler::dock_low_res(core::pose::Pose& pose, std::string dock_chains, bool pack_interface /* false */) const {
 
-	std::string dock_chains = "H_L";
-	
 	vector1< int > movable_jumps(1, 1);
 	core::kinematics::FoldTree original_ft = pose.fold_tree();
 	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
 	
-	protocols::docking::DockingLowResOP docker = new protocols::docking::DockingLowRes();
 	TR << "start: "<<(*scorefxn_)(pose) << std::endl;
+	protocols::docking::DockingLowResOP docker = new protocols::docking::DockingLowRes();
 	protocols::simple_moves::SwitchResidueTypeSetMover cen_switch = protocols::simple_moves::SwitchResidueTypeSetMover("centroid");
 	protocols::simple_moves::ReturnSidechainMover return_sc = protocols::simple_moves::ReturnSidechainMover(pose);
 	
@@ -598,26 +665,6 @@ AntibodyDesignModeler::dock_H_L_low_res(Pose& pose, bool pack_interface /*false*
 	TR << "end: "<<(*scorefxn_)(pose) << std::endl;
 }
 
-void
-AntibodyDesignModeler::dock_H_L_high_res(Pose & pose, int first_cycle /* 4 */, int second_cycle /* 45 */) const {
-
-	TR << "Docking H-L high res" << std::endl;
-	std::string dock_chains = "H_L";
-	
-	vector1< int > movable_jumps(1, 1);
-	core::kinematics::FoldTree original_ft = pose.fold_tree();
-	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
-	TR << "start: "<<(*scorefxn_)(pose) << std::endl;
-	protocols::docking::DockMCMProtocolOP docker = new protocols::docking::DockMCMProtocol(1, docking_scorefxn_high_, scorefxn_);
-	
-	docker->set_first_cycle(first_cycle);
-	docker->set_second_cycle(second_cycle);
-	
-	docker->apply(pose);
-	TR << "end: "<<(*scorefxn_)(pose) << std::endl;
-	pose.fold_tree(original_ft);
-		
-}
 
 }//design
 }//antibody

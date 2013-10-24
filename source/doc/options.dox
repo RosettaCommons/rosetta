@@ -12395,12 +12395,22 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-top_graft_designs</b> \<Integer\><dt>
-<dd>Number of top graft designs to keep (ensemble).  These will be written to a PDB and move onto the next step in the protocol.</dd><br>
+<dd>Number of top graft designs to keep (ensemble).  These will be written to a PDB and each move onto the next step in the protocol.</dd><br>
 <dd>Default: 10</dd><br>
 </dl>
 <dl>
+<dt><b>-initial_perturb</b> \<Boolean\><dt>
+<dd>Run the docking perturber post graft.  Controlled by command-line flags.  See docking manual.  It will at least slide into contact.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-use_deterministic</b> \<Boolean\><dt>
+<dd>Use the deterministic algorithm if graft rounds is <= number of possible permutations.  This involves multiple grafts per permutation in random CDR order, but always starts with the starting structure.  You only try each full permutation once, but no monte carlo boltzmann propagation of good models or designs occur.  Will still, however, keep the top x best structures found after each graft round has completed.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-dump_post_graft_designs</b> \<Boolean\><dt>
-<dd>Write the top ensembles to file after the graft-design step.</dd><br>
+<dd>Write the top ensembles to file directly after the graft-design step and after any optional modeling.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -12415,7 +12425,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-dock_post_graft</b> \<Boolean\><dt>
-<dd>Run a short lowres docking step after each graft and before any minimization.</dd><br>
+<dd>Run a short lowres + highres docking step after each graft and before any minimization. Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -12424,14 +12434,38 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-rb_min_post_graft</b> \<Boolean\><dt>
+<dd>Minimize the ab-ag interface post graft and any docking/cdr min by minimizing the jump</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-design_post_graft</b> \<Boolean\><dt>
+<dd>Design during any time the packer is called post graft.  This includes relax, high-res docking, etc.  Used to increasing sampling of potential designs.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-dock_rounds</b> \<Integer\><dt>
+<dd>Number of rounds for post_graft docking.  If you are seeing badly docked structures, increase this value.</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
+<dt><b>-ab_dock_chains</b> \<String\><dt>
+<dd>Override the antibody dock chains.  Used for if your creating a bivalent antibody where only L or H is docking antigen.  Also used if you are creating an antibody where you are only interested in L or H primarily being the binding site.  Changing the default is not recommended for general use.</dd><br>
+<dd>Default: "LH"</dd><br>
+</dl>
+<dl>
 <dt><b>-design_method</b> \<String\><dt>
 <dd>Design method to use.</dd><br>
-<dd>Default: "relaxed_design"</dd><br>
+<dd>Default: "fixbb"</dd><br>
 </dl>
 <dl>
 <dt><b>-design_rounds</b> \<Integer\><dt>
 <dd>Number of CDRDesign rounds</dd><br>
-<dd>Default: 5</dd><br>
+<dd>Default: 3</dd><br>
+</dl>
+<dl>
+<dt><b>-design_scorefxn</b> \<String\><dt>
+<dd>Scorefunction to use during design.  Orbitals_talaris2013_softrep works well for fixedbb, orbitals_talaris2013 works well for relaxed design. If not set will use the main scorefunction set.</dd><br>
 </dl>
 <dl>
 <dt><b>-benchmark_basic_design</b> \<Boolean\><dt>
@@ -12447,6 +12481,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-stats_cutoff</b> \<Integer\><dt>
 <dd>Value for probabilistic -> conservative design switch.  If number of total sequences used for probabilistic design for a particular cdr cluster being designed is less than this value, conservative design will occur.  This is why the default graft settings are type 1 clusters.  More data = better predictability.</dd><br>
 <dd>Default: 10</dd><br>
+</dl>
+<dl>
+<dt><b>-sample_zero_probs_at</b> \<Integer\><dt>
+<dd>Value for probabilstic design.  Probability that a normally zero prob will be chosen as a potential residue each time packer task is called.  Increase to increase variablility of positions.  Use with caution.</dd><br>
+<dd>Default: 0</dd><br>
 </dl>
 <dl>
 <dt><b>-conservative_h3_design</b> \<Boolean\><dt>

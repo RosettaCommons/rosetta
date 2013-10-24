@@ -16,6 +16,7 @@
 #include <boost/algorithm/string.hpp>
 #include <string>
 #include <utility/exit.hh>
+#include <iostream>
 
 namespace protocols {
 namespace antibody {
@@ -42,26 +43,35 @@ get_string_for_IN(core::Size const n){
 
 void
 get_all_graft_permutations(
-		vector1<core::Size > & total_cdr_set,
+		vector1<core::Size > & cdr_set_totals,
 		vector1< vector1< core::Size> > & all_permutations,
 		vector1<core::Size>current_index,
-		core::Size const recurse_index
+		core::Size const cdr_num
 )
 {
 	//Current index is what is being worked on. 
-	if (recurse_index>total_cdr_set.size()){return;}
-	if (total_cdr_set[recurse_index]==0){
-		current_index[recurse_index]=0;
-		get_all_graft_permutations(total_cdr_set, all_permutations, current_index, recurse_index+1);
+	
+	if (cdr_num > cdr_set_totals.size()){return;}
+	
+	//No CDR in CDR set.  Set index 0, move on to next CDR
+	if (cdr_set_totals[cdr_num]==0){
+		current_index[cdr_num]=0;
+		//Inner most loop, add current_index and return;
+		if (cdr_num==cdr_set_totals.size()){
+			all_permutations.push_back(current_index);
+			return;
+		}
+		get_all_graft_permutations(cdr_set_totals, all_permutations, current_index, cdr_num+1);
 	}
 	else{
-		for(core::Size i = 1; i<=total_cdr_set[recurse_index]; ++i){
-			current_index[recurse_index]=i;
-			if (recurse_index==total_cdr_set.size()){
+		for(core::Size i = 1; i<=cdr_set_totals[cdr_num]; ++i){
+			current_index[cdr_num]=i;
+			//Inner most loop, add current_index and return;
+			if (cdr_num==cdr_set_totals.size()){
 				all_permutations.push_back(current_index);
-				continue;
+				return;
 			}
-			get_all_graft_permutations(total_cdr_set, all_permutations, current_index, recurse_index+1);
+			get_all_graft_permutations(cdr_set_totals, all_permutations, current_index, cdr_num+1);
 		
 		}
 	}

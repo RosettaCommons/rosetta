@@ -124,7 +124,7 @@ DesignInstructionsParser::parse_cdr_graft_type_options(GraftInstructions& instru
 	boost::to_upper(type);
 	boost::to_upper(includes);
 	
-	if (type == "CLUSTERS") {
+	if (type == "CLUSTERS" || type == "CLUSTER") {
 		if (includes == "EXCLUDE"){
 			for (core::Size i=4; i<=lineSP.size(); ++i){
 				//utility::PyAssert((cluster_manager_->cdr_cluster_is_present(lineSP[i])), "Cluster not found:"+lineSP[i]);
@@ -188,12 +188,21 @@ DesignInstructionsParser::parse_cdr_graft_mintype(GraftInstructions & instructio
 	boost::to_upper(setting);
 	boost::to_upper(mintype);
 	
+	///Need to setup a mintype enum manager to simplify this.
 	if (setting == "MINTYPE"){
 		if (mintype == "RELAX"){
 			instructions[cdr].mintype = relax;
 		}
+		else if (mintype == "RELAX_W_RB"){
+			instructions[cdr].mintype = relax;
+			instructions[cdr].min_rb = true;
+		}
 		else if (mintype == "MIN" || mintype == "MINIMIZE" || mintype == "MINIMIZER"){
 			instructions[cdr].mintype = minimize;
+		}
+		else if (mintype == "MIN_W_RB" || mintype == "MINIMIZE_W_RB" || mintype == "MINIMIZER_W_RB"){
+			instructions[cdr].mintype = minimize;
+			instructions[cdr].min_rb = true;
 		}
 		else if (mintype == "REPACK"){
 			instructions[cdr].mintype = repack;
@@ -201,10 +210,14 @@ DesignInstructionsParser::parse_cdr_graft_mintype(GraftInstructions & instructio
 		else if (mintype == "CENTROIDRELAX" || mintype == "CENTROID_RELAX" || mintype == "CENRELAX" || mintype == "CEN_RELAX"){
 			instructions[cdr].mintype = centroid_relax;
 		}
+		else if (mintype == "CENTROIDRELAX_W_RB" || mintype == "CENTROID_RELAX_W_RB" || mintype=="CENRELAX_W_RB" || mintype == "CEN_RELAX_W_RB"){
+			instructions[cdr].mintype = centroid_relax;
+			instructions[cdr].min_rb = true;
+		}
 		else if (mintype == "NONE"){
 			instructions[cdr].mintype = no_min;
 		}
-		else{utility_exit_with_message("Unrecognized mintype option: "+lineSP[3]);}
+		else{utility_exit_with_message("Unrecognized mintype option: "+mintype);}
 	}
 	else if (setting == "INCLUDE_NEIGHBOR_SC"){
 		if (mintype=="TRUE"  || mintype == "T"){

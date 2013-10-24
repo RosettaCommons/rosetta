@@ -9,7 +9,7 @@ L3 TYPES INCLUDEONLY 1 2
 H1 TYPES INCLUDEONLY 1
 H2 TYPES INCLUDEONLY 1
 
-#Minimization
+#Minimization - Options: min, relax, centroidrelax, repack, none
 L1 MINTYPE minimizer
 L2 MINTYPE minimizer
 L3 MINTYPE minimizer
@@ -34,6 +34,7 @@ H3 LENGTH MAX 16
 #L3 FIX GRAFT #Fix for low-res Graft step
 #L2 FIX DESIGN #Fix for high-res Design step
 
+
 #L1 STAY_NATIVE_CLUSTER #Only sample in the identified cluster of the CDR.
 
 #L1 CENTER_CLUSTERS_ONLY #Only sample on the center cluster members.
@@ -41,6 +42,7 @@ H3 LENGTH MAX 16
 #L3 DESIGN CONSERVATIVE #Use basic conservative design for this CDR during high-res Design step:
 
 #Exclude or include only these PDBids for graft-design.
-#L3 EXCLUDE 2J88
+#L3 PDBIDS EXCLUDE 2J88
 #H1 PDBIDS INCLUDEONLY 1HIL 2J88
+#L1 CLUSTERS INCLUDEONLY L1-11-1
 

@@ -62,7 +62,7 @@ public:
         
 	///@brief Load data needed for GraftDesigner - CDR structures + their corresponding cluster.
 	std::pair< CDRSet, CDRClusterMap >
-	load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftInstructions & instructions, PDBMap & pdbmap);
+	load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftInstructions & instructions, PDBMap & pdbmap, core::Size overhang=3);
 	
 	///@brief Load probability data for CDR Design.  Returns CDRs where data could not be loaded. Cutoff indicates number of total sequences needed to use the data.
 	vector1< CDRNameEnum >

@@ -102,6 +102,7 @@ AntibodyDatabaseManager::load_cdr_design_data(AntibodyInfoCOP ab_info, core::pos
 		utility_exit_with_message("Cluster information must be set in AntibodyInfo to load the design probabilities");
 	}
 	
+	TR << "Loading CDR cluster statistics " << std::endl;
 	vector1<CDRNameEnum> cdrs_with_no_data;
 	
 	for (core::Size i = 1; i<=CDRNameEnum_total; ++i){
@@ -140,7 +141,7 @@ AntibodyDatabaseManager::load_cdr_design_data(AntibodyInfoCOP ab_info, core::pos
 		cppdb::result prob_result(basic::database::safely_read_from_database(select_statement));
 		
 
-		
+		core::Size total_seq;
 		while(prob_result.next()){
 			
 			if (prob_result.empty()) {
@@ -151,18 +152,21 @@ AntibodyDatabaseManager::load_cdr_design_data(AntibodyInfoCOP ab_info, core::pos
 			core::Size position;
 			core::Real probability;
 			std::string amino;
-			core::Size total_seq;
 			prob_result >> position >> probability >> amino >> total_seq;
+			
 			
 			if (  total_seq < cutoff){
 				cdrs_with_no_data.push_back(cdr);
-				TR << " The total number of CDR sequences of the cluster is lower than the set cutoff value..  Using conservative mutations instead." << std::endl;
+				TR << " Total data points for " << ab_info->get_cluster_name(cluster)<<" at "<< total_seq << " is lower than the set cutoff value of "<< cutoff << std::endl;
+				TR << " Using conservative mutations instead." << std::endl;
 				break;
 			}
 			
-			core::Size rosetta_resnum = ab_info->get_CDR_end(cdr, pose) + position - 1;
+			
+			core::Size rosetta_resnum = ab_info->get_CDR_start(cdr, pose) + position - 1;
 			prob_set[rosetta_resnum][core::chemical::aa_from_oneletter_code(amino[0])] = probability;
 		}
+		TR << "Loaded "<< ab_info->get_cluster_name(cluster) << " with " << total_seq << " datapoints. " << std::endl;
 	}
 	return cdrs_with_no_data;
 }
@@ -201,7 +205,7 @@ AntibodyDatabaseManager::check_for_graft_instruction_inconsistencies(AntibodyInf
 }
 
 std::pair<CDRSet, CDRClusterMap>
-AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftInstructions& instructions, PDBMap & pdbmap){
+AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftInstructions& instructions, PDBMap & pdbmap, core::Size overhang /* 3 */){
 	
 	
 	//Check to make sure everything is kosher
@@ -317,13 +321,13 @@ AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftIn
 		if (instructions[cdr].include_only_clusters.size() >= 1){
 			for (core::Size j = 1; j <= instructions[cdr].include_only_clusters.size(); ++j){
 				col += 1;
-				select_statement.bind(col, instructions[cdr].include_only_clusters[j]);
+				select_statement.bind(col, ab_info->get_cluster_name(instructions[cdr].include_only_clusters[j]));
 			}
 		}
 		if (instructions[cdr].leave_out_clusters.size() >= 1){
 			for (core::Size j = 1; j <= instructions[cdr].leave_out_clusters.size(); ++j){
 				col += 1;
-				select_statement.bind(col, instructions[cdr].leave_out_clusters[j]);
+				select_statement.bind(col, ab_info->get_cluster_name(instructions[cdr].leave_out_clusters[j]));
 			}
 		}
 		if (instructions[cdr].include_only_pdb_ids.size() >= 1){
@@ -393,6 +397,11 @@ AntibodyDatabaseManager::load_cdrs_for_grafting(AntibodyInfoCOP ab_info, GraftIn
 				core::pose::PoseOP pose = new core::pose::Pose();
 				reporter.load_pose(db_session_, struct_id, *pose);
 				pose->conformation().detect_disulfides();
+				
+				if (pose->total_residue() != ab_info->get_cluster_length(clusters[k])+ overhang*2 ) {
+					TR << "Leaving out bad structure:  "<< tags[k] << " num residues in pose do not match cluster cdr length with overhang. " <<std::endl;
+					continue;
+				}
 				cdr_set[cdr].push_back(pose);
 				cdr_cluster_map[cdr].push_back(clusters[k]);
 				pdbmap[cdr].push_back(tag);

@@ -43,6 +43,7 @@
 
 // Protocol Headers
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/docking/util.hh>
 #include <protocols/simple_moves/ConstraintSetMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -150,6 +151,27 @@ void simple_fold_tree(
 
 	return;
 } // simple_fold_tree
+
+std::string
+setup_LH_A_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
+	vector1< int > movable_jumps(1, 1);
+	vector1< char > antigen_chains = ab_info->get_antigen_chains();
+	std::string antigen(antigen_chains.begin(), antigen_chains.end());
+	std::string dock_chains = "LH_"+antigen;
+	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
+	return dock_chains;
+	
+}
+
+std::string
+setup_A_LH_foldtree(AntibodyInfoCOP ab_info, core::pose::Pose & pose){
+	vector1< int > movable_jumps(1, 1);
+	vector1< char > antigen_chains = ab_info->get_antigen_chains();
+	std::string antigen(antigen_chains.begin(), antigen_chains.end());
+	std::string dock_chains = antigen+"_LH";
+	protocols::docking::setup_foldtree(pose, dock_chains, movable_jumps);
+	return dock_chains;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -681,8 +703,6 @@ add_harmonic_cluster_constraints(AntibodyInfoOP ab_info, core::pose::Pose & pose
 	return result;
 }
 
-
-
 bool
 add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRClusterEnum const cluster){
 
@@ -691,10 +711,17 @@ add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose
 	
 	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
 	if (fname=="NA"){return false;}
-	ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, new ConstraintSet, pose);
+	try {
+		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, new ConstraintSet, pose);
 
-	pose.add_constraints(cst->get_all_constraints());
-	return true;
+		pose.add_constraints(cst->get_all_constraints());
+		return true;	
+	}
+	catch(utility::excn::EXCN_Exception &excn){
+		TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
+		return false;
+	}
+
 }
 
 bool
@@ -706,28 +733,21 @@ add_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose
 	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
 	if (fname=="NA"){return false;}
 	
-	ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, new ConstraintSet, pose);
+	try {
+		ConstraintSetOP cst = ConstraintIO::get_instance()->read_constraints(fname, new ConstraintSet, pose);
 
-	vector1< ConstraintCOP > local_csts = cst->get_all_constraints();
-	pose.add_constraints(local_csts);
+		vector1< ConstraintCOP > local_csts = cst->get_all_constraints();
+		pose.add_constraints(local_csts);
 
-	constraints.insert(constraints.end(), local_csts.begin(), local_csts.end());
-	return true;
+		constraints.insert(constraints.end(), local_csts.begin(), local_csts.end());
+		return true;
+	} catch (utility::excn::EXCN_Exception &excn){
+		TR<< "Problem adding dihedral constraints for CDR cluster." <<std::endl;
+		return false;
+	}
+	
 }
 
-bool
-set_harmonic_cluster_constraint(AntibodyInfoCOP ab_info, core::pose::Pose & pose, CDRClusterEnum const cluster) {
-
-	using namespace protocols::simple_moves;
-
-
-	std::string fname = get_harmonic_cluster_constraint_filename(ab_info, cluster);
-	if (fname=="NA"){return false;}
-	ConstraintSetMoverOP cst_mover = new ConstraintSetMover();
-	cst_mover->constraint_file(fname);
-	cst_mover->apply(pose);
-	return true;
-}
 
 std::string
 get_harmonic_cluster_constraint_filename(AntibodyInfoCOP ab_info, CDRClusterEnum const cluster ){

@@ -1,7 +1,3 @@
-namespace cmiles { namespace jumping { IntegerOptionKey const resj( "cmiles:jumping:resj" );  } }
-namespace james { BooleanOptionKey const james( "james" );  }
-namespace james { IntegerOptionKey const min_seqsep( "james:min_seqsep" );  }
-namespace james { StringVectorOptionKey const atom_names( "james:atom_names" );  }
 namespace james { RealVectorOptionKey const dist_thresholds( "james:dist_thresholds" );  }
 namespace james { RealVectorOptionKey const torsion_thresholds( "james:torsion_thresholds" );  }
 namespace james { RealOptionKey const sog_cutoff( "james:sog_cutoff" );  }
@@ -724,3 +720,10 @@ namespace optE { FileOptionKey const optimize_ddGmutation( "optE:optimize_ddGmut
 namespace optE { BooleanOptionKey const optimize_ddGmutation_straight_mean( "optE:optimize_ddGmutation_straight_mean" );  }
 namespace optE { BooleanOptionKey const optimize_ddGmutation_boltzman_average( "optE:optimize_ddGmutation_boltzman_average" );  }
 namespace optE { RealOptionKey const exclude_badrep_ddGs( "optE:exclude_badrep_ddGs" );  }
+namespace optE { BooleanOptionKey const pretend_no_ddG_repulsion( "optE:pretend_no_ddG_repulsion" );  }
+namespace optE { FileOptionKey const optimize_decoy_discrimination( "optE:optimize_decoy_discrimination" );  }
+namespace optE { StringOptionKey const normalize_decoy_score_spread( "optE:normalize_decoy_score_spread" );  }
+namespace optE { BooleanOptionKey const ramp_nativeness( "optE:ramp_nativeness" );  }
+namespace optE { IntegerOptionKey const n_top_natives_to_optimize( "optE:n_top_natives_to_optimize" );  }
+namespace optE { RealOptionKey const approximate_decoy_entropy( "optE:approximate_decoy_entropy" );  }
+namespace optE { BooleanOptionKey const repack_and_minimize_decoys( "optE:repack_and_minimize_decoys" );  }

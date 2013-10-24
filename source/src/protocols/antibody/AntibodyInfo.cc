@@ -51,6 +51,7 @@
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/vector1.hh>
+#include <utility/vector1.functions.hh>
 
 //Options
 #include <basic/options/option.hh>
@@ -983,8 +984,8 @@ AntibodyInfo::set_cdr_cluster(pose::Pose const & pose, CDRNameEnum const & cdr_n
 	string const path = "sampling/antibodies/cluster_center_dihedrals.txt";
 
 
-	Size cdr_length = get_CDR_length(cdr_name);
-	loops::Loop loop = get_CDR_loop(cdr_name);
+	Size cdr_length = get_CDR_length(cdr_name, pose);
+	loops::Loop loop = get_CDR_loop(cdr_name, pose);
 	Size start = loop.start();
 
 	//Get current cdr phi, psi, omega Once.
@@ -1059,13 +1060,9 @@ AntibodyInfo::set_cdr_cluster(pose::Pose const & pose, CDRNameEnum const & cdr_n
 		cdr_cluster_distances_[cdr_name] = 1000;
 		return;
 	} else {
+		
 		//Get minimum and set cluster.
-		Real d = k_distances[1];
-		for (Size i=2; i<k_distances.size(); i++) {
-			if (k_distances[i]<d) {
-				d = k_distances[i];
-			}
-		}
+		Real d = utility::min(k_distances);
 		string found_cluster = k_distances_to_cluster[d];
 		TR << get_CDR_Name(cdr_name) <<" cluster found as " << found_cluster << " at k_distance: " << d <<std::endl;
 		//TR <<"Setting this as closest cluster, as no cutoff is yet set. PLEASE manually compare structures.  " <<std::endl;
@@ -1084,8 +1081,15 @@ AntibodyInfo::get_CDR_Name(CDRNameEnum const & cdr_name) const {
 Size
 AntibodyInfo::get_CDR_length(CDRNameEnum const & cdr_name) const {
 	loops::Loop cdr_loop = get_CDR_loop(cdr_name);
-	Size l = cdr_loop.stop()-cdr_loop.start()+1;
-	return l;
+	Size len = cdr_loop.stop()-cdr_loop.start()+1;
+	return len;
+}
+
+Size
+AntibodyInfo::get_CDR_length(CDRNameEnum const & cdr_name, core::pose::Pose const & pose){
+	loops::Loop cdr_loop = get_CDR_loop(cdr_name, pose);
+	Size len = cdr_loop.stop() - cdr_loop.start()+1;
+	return len;
 }
 
 std::string

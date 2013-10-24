@@ -724,3 +724,6 @@ namespace jumps { FileOptionKey const fix_jumps( "jumps:fix_jumps" );  }
 namespace jumps { FileOptionKey const jump_lib( "jumps:jump_lib" );  }
 namespace jumps { FileOptionKey const loop_definition_from_file( "jumps:loop_definition_from_file" );  }
 namespace jumps { BooleanOptionKey const no_chainbreak_in_relax( "jumps:no_chainbreak_in_relax" );  }
+namespace jumps { FileOptionKey const pairing_file( "jumps:pairing_file" );  }
+namespace jumps { IntegerVectorOptionKey const random_sheets( "jumps:random_sheets" );  }
+namespace jumps { FileOptionKey const residue_pair_jump_file( "jumps:residue_pair_jump_file" );  }

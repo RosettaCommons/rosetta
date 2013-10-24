@@ -27,6 +27,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/constraints/util.hh>
 
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
@@ -95,6 +96,8 @@ AntibodyCDRDesigner::read_command_line_options(){
 	set_design_method(design_type_from_string(option [OptionKeys::antibody::design::design_method]()));
 	set_rounds(option [OptionKeys::antibody::design::design_rounds]());
 	instruction_path_ = basic::options::option [basic::options::OptionKeys::antibody::design::instructions]();
+	zero_prob_weight_ = basic::options::option [basic::options::OptionKeys::antibody::design::sample_zero_probs_at]();
+	
 	
 }
 
@@ -214,6 +217,7 @@ AntibodyCDRDesigner::remove_conservative_design_residues_from_prob_set(vector1<c
 		std::map< core::Size, std::map<core::chemical::AA, core::Real > >::iterator it = prob_set.find(positions[i]);
 		if ( it != prob_set.end()){
 			prob_set.erase(it);
+			TR << "Removing "<<i << "  from probabilistic design" <<std::endl;
 		}
 	}
 }
@@ -223,7 +227,7 @@ AntibodyCDRDesigner::get_conservative_design_residues(core::pose::Pose& pose){
 	
 	vector1<core::Size> conservative_positions;
 	
-	for (core::Size i = 1; i <= CDRNameEnum_total; ++i){
+	for (core::SSize i = CDRNameEnum_start; i <= CDRNameEnum_total; ++i){
 		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
 		if (! instructions_[cdr].conservative_design) continue;
 		
@@ -232,6 +236,7 @@ AntibodyCDRDesigner::get_conservative_design_residues(core::pose::Pose& pose){
 		
 		for (core::Size res = start; res <= end; ++res){
 			conservative_positions.push_back(res);
+			//TR << "Treating "<< res << " as conservative " << std::endl;
 		}
 	}
 	return conservative_positions;
@@ -277,7 +282,7 @@ AntibodyCDRDesigner::setup_task_factory(core::pose::Pose & pose){
 	
 	//Setup Basic TaskOP
 	tf->push_back(new InitializeFromCommandline());
-	tf->push_back(new RestrictToRepacking());
+	//tf->push_back(new RestrictToRepacking());
 	
 	//Setup Loops TaskOp + Turn on design for CDRs
 	RestrictToLoopsAndNeighborsOP loop_task = new RestrictToLoopsAndNeighbors();
@@ -297,6 +302,7 @@ AntibodyCDRDesigner::setup_task_factory(core::pose::Pose & pose){
 	}
 	
 	//Setup Prob TaskOp.
+	TR << "Adding ResidueProbDesignOp " << std::endl;
 	ResidueProbDesignOperationOP prob_task = new ResidueProbDesignOperation();
 	std::map< core::Size, std::map< core::chemical::AA, core::Real > > prob_set = setup_probability_data(pose);
 	vector1<core::Size> conservative_positions = get_conservative_design_residues(pose);
@@ -306,12 +312,13 @@ AntibodyCDRDesigner::setup_task_factory(core::pose::Pose & pose){
 	prob_task->set_aa_probability_set(prob_set);
 	prob_task->set_keep_task_allowed_aas(false);
 	prob_task->set_include_native_restype(true);
-	
+	prob_task->set_sample_zero_probs_at(zero_prob_weight_); //Control by cmd line flag. We do want to have some variability that isn't known.;
 	tf->push_back(prob_task);
 	
 	//Use conservative mutations for non-cluster positions + Optionally H3.
 	
 	if (!conservative_positions.empty()){
+		TR << "Adding ConservativeDesignOp "<<std::endl;
 		ConservativeDesignOperationOP cons_task = new ConservativeDesignOperation();
 		cons_task->limit_to_positions(conservative_positions);
 		cons_task->include_native_aa(true);
@@ -321,6 +328,60 @@ AntibodyCDRDesigner::setup_task_factory(core::pose::Pose & pose){
 	
 	return tf;
 }
+
+bool
+AntibodyCDRDesigner::cdr_has_constraints(core::pose::Pose const & pose, CDRNameEnum const cdr, std::string const constraint_type){
+	using namespace core::scoring::constraints;
+	
+	core::Size start_res = ab_info_->get_CDR_start(cdr, pose);
+	core::Size end_res = ab_info_->get_CDR_end(cdr, pose);
+	
+	std::map< core::Size, bool> cst_found;
+	
+	//Initialize our map of whether the CDR residue has constraints.  
+	for (core::Size i = start_res; i <= end_res; ++i){
+		cst_found[i] = false;
+	}
+	utility::vector1< ConstraintCOP > csts = pose.constraint_set()->get_all_constraints();
+	for (core::Size i = 1; i <= csts.size(); ++i){
+		if (csts[i]->type() != constraint_type){ continue; }
+		
+		utility::vector1< core::Size > residues = csts[i]->residues();
+		for (core::Size x = 1; x <= residues.size(); ++x){
+			cst_found[residues[x]] = true;
+		}
+	}
+	
+	//Check that all residues have constraints of the particular type:
+	for (core::Size i = start_res ; i <= end_res; ++i){
+		if (! cst_found[i]){ return false; }
+	}
+	
+	return true;
+}
+
+void
+AntibodyCDRDesigner::setup_constraints(core::pose::Pose & pose){
+	
+	//We only add dihedral or coordinate constraints if they are not present for the pose at hand in each CDR.
+	for (core::SSize i = 1; i<= CDRNameEnum_total; ++i){
+		CDRNameEnum cdr = static_cast<CDRNameEnum>(i);
+		bool constraint_result;
+		
+		if (! cdr_has_constraints(pose, cdr, "DihedralConstraint")){
+			constraint_result = protocols::antibody::add_harmonic_cluster_constraint(ab_info_, pose, ab_info_->get_CDR_cluster(cdr).first);
+		}
+		if (! constraint_result && ! cdr_has_constraints(pose, cdr, "CoordinateConstraint")){
+			core::Size start_res = ab_info_->get_CDR_start(cdr, pose);
+			core::Size end_res = ab_info_->get_CDR_end(cdr, pose);
+			//This needs to change to dihedral constraints - but what will the standard deviation be?
+			
+			TR << "Adding coordinate constraints for " << ab_info_->get_CDR_Name(cdr) << std::endl;
+			core::scoring::constraints::add_coordinate_constraints(pose, start_res, end_res, .5, false /* include_sc */);
+		}
+	}
+}
+
 
 void
 AntibodyCDRDesigner::apply(core::pose::Pose& pose){
@@ -343,13 +404,14 @@ AntibodyCDRDesigner::apply(core::pose::Pose& pose){
 		packer.task_factory(tf);
 		
 		//////////Setup//////////////////////////
-		//Set constraints. If no constraints could be set, we need to do something in the future.
 		if (scorefxn_->get_weight(dihedral_constraint) == 0.0){
 			scorefxn_->set_weight(dihedral_constraint, 1.0);
 		}
 		
-		protocols::antibody::add_harmonic_cluster_constraints(ab_info_, pose);
 		scorefxn_->set_weight(chainbreak, 100);
+		
+		setup_constraints(pose);
+		
 		scorefxn_->show(pose);
 		
 		//Setup the movemap.  Allow SC minimization with neighbors.
@@ -407,6 +469,9 @@ AntibodyCDRDesigner::apply(core::pose::Pose& pose){
 				mc->boltzmann(pose);
 			}
 			
+		}
+		else if ( design_method_ == docked_design){
+			TR << "Docked design not currently implemented. " << std::endl;
 		}
 		else{
 			utility_exit_with_message("Antibody Design method not recognized. ");

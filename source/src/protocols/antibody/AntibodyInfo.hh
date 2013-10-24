@@ -69,7 +69,10 @@ public:
 	/// @brief get the length of the cdr
 	Size
 	get_CDR_length(CDRNameEnum const & cdr_name) const;
-
+	
+	Size
+	get_CDR_length(CDRNameEnum const & cdr_name, pose::Pose const & pose);
+	
 	std::string
 	get_CDR_Name(CDRNameEnum const & cdr_name) const;
 

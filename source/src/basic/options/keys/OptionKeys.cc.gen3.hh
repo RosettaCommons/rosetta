@@ -1,10 +1,3 @@
-namespace optE { BooleanOptionKey const pretend_no_ddG_repulsion( "optE:pretend_no_ddG_repulsion" );  }
-namespace optE { FileOptionKey const optimize_decoy_discrimination( "optE:optimize_decoy_discrimination" );  }
-namespace optE { StringOptionKey const normalize_decoy_score_spread( "optE:normalize_decoy_score_spread" );  }
-namespace optE { BooleanOptionKey const ramp_nativeness( "optE:ramp_nativeness" );  }
-namespace optE { IntegerOptionKey const n_top_natives_to_optimize( "optE:n_top_natives_to_optimize" );  }
-namespace optE { RealOptionKey const approximate_decoy_entropy( "optE:approximate_decoy_entropy" );  }
-namespace optE { BooleanOptionKey const repack_and_minimize_decoys( "optE:repack_and_minimize_decoys" );  }
 namespace optE { BooleanOptionKey const repack_and_minimize_input_structures( "optE:repack_and_minimize_input_structures" );  }
 namespace optE { IntegerOptionKey const output_top_n_new_decoys( "optE:output_top_n_new_decoys" );  }
 namespace optE { FileOptionKey const optimize_ligand_discrimination( "optE:optimize_ligand_discrimination" );  }
@@ -361,16 +354,24 @@ namespace antibody { namespace design { BooleanOptionKey const do_sequence_desig
 namespace antibody { namespace design { BooleanOptionKey const do_post_design_modeling( "antibody:design:do_post_design_modeling" );  } }
 namespace antibody { namespace design { IntegerOptionKey const graft_rounds( "antibody:design:graft_rounds" );  } }
 namespace antibody { namespace design { IntegerOptionKey const top_graft_designs( "antibody:design:top_graft_designs" );  } }
+namespace antibody { namespace design { BooleanOptionKey const initial_perturb( "antibody:design:initial_perturb" );  } }
+namespace antibody { namespace design { BooleanOptionKey const use_deterministic( "antibody:design:use_deterministic" );  } }
 namespace antibody { namespace design { BooleanOptionKey const dump_post_graft_designs( "antibody:design:dump_post_graft_designs" );  } }
 namespace antibody { namespace design { RealOptionKey const interface_dis( "antibody:design:interface_dis" );  } }
 namespace antibody { namespace design { RealOptionKey const neighbor_dis( "antibody:design:neighbor_dis" );  } }
 namespace antibody { namespace design { BooleanOptionKey const dock_post_graft( "antibody:design:dock_post_graft" );  } }
 namespace antibody { namespace design { BooleanOptionKey const pack_post_graft( "antibody:design:pack_post_graft" );  } }
+namespace antibody { namespace design { BooleanOptionKey const rb_min_post_graft( "antibody:design:rb_min_post_graft" );  } }
+namespace antibody { namespace design { BooleanOptionKey const design_post_graft( "antibody:design:design_post_graft" );  } }
+namespace antibody { namespace design { IntegerOptionKey const dock_rounds( "antibody:design:dock_rounds" );  } }
+namespace antibody { namespace design { StringOptionKey const ab_dock_chains( "antibody:design:ab_dock_chains" );  } }
 namespace antibody { namespace design { StringOptionKey const design_method( "antibody:design:design_method" );  } }
 namespace antibody { namespace design { IntegerOptionKey const design_rounds( "antibody:design:design_rounds" );  } }
+namespace antibody { namespace design { StringOptionKey const design_scorefxn( "antibody:design:design_scorefxn" );  } }
 namespace antibody { namespace design { BooleanOptionKey const benchmark_basic_design( "antibody:design:benchmark_basic_design" );  } }
 namespace antibody { namespace design { BooleanOptionKey const use_filters( "antibody:design:use_filters" );  } }
 namespace antibody { namespace design { IntegerOptionKey const stats_cutoff( "antibody:design:stats_cutoff" );  } }
+namespace antibody { namespace design { IntegerOptionKey const sample_zero_probs_at( "antibody:design:sample_zero_probs_at" );  } }
 namespace antibody { namespace design { BooleanOptionKey const conservative_h3_design( "antibody:design:conservative_h3_design" );  } }
 namespace antibody { namespace design { BooleanOptionKey const turn_conservation( "antibody:design:turn_conservation" );  } }
 namespace flexPepDocking { BooleanOptionKey const flexPepDocking( "flexPepDocking" );  }

@@ -62,7 +62,7 @@ public:
 		
 		TS_ASSERT_EQUALS("L1-11-1", ab_info->get_cluster_name(ab_info->get_CDR_cluster(l1).first));
 		TS_ASSERT_EQUALS("L2-8-1", ab_info->get_cluster_name(ab_info->get_CDR_cluster(l2).first));
-		TS_ASSERT_EQUALS("L3-8-2", ab_info->get_cluster_name(ab_info->get_CDR_cluster(l3).first));
+		TS_ASSERT_EQUALS("L3-8-1", ab_info->get_cluster_name(ab_info->get_CDR_cluster(l3).first));
 	}
 	
 	void test_basic_cluster_functions(){
@@ -90,7 +90,7 @@ public:
 		
 		ab_pose.remove_constraints();
 		
-		bool one_constraint_result = set_harmonic_cluster_constraint(ab_info, ab_pose, L1_11_1);
+		bool one_constraint_result = add_harmonic_cluster_constraint(ab_info, ab_pose, L1_11_1);
 		TS_ASSERT(one_constraint_result);
 		
 	}

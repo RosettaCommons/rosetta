@@ -8,13 +8,14 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file src/core/scoring/constraints/util.cc
-/// @brief utility functions for defining constraints. Maybe better placed in src/numeric?
+/// @brief utility functions for defining and using constraints.
 /// @author James Thompson
 
 #include <core/scoring/constraints/util.hh>
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <basic/options/option.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/util.hh>
@@ -360,13 +361,13 @@ void merge_fa_constraints_from_cmdline(
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void
-add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 */ ) {
+add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 */, bool include_sc /* true */) {
 
 	using namespace core::id;
 	using namespace core::conformation;
 	using namespace core::scoring::constraints;
 
-	Size const my_anchor( 1 ); //anchor atom on first residue?
+	Size const my_anchor( pose.fold_tree().root() ); //Change to use the root of the current foldtree as done by Rocco in AtomCoordinateCstMover - JAB.
 
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
 
@@ -374,8 +375,12 @@ add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 *
 	for ( Size i=1; i<= nres;  ++i ) {
 
 		Residue const & i_rsd( pose.residue(i) );
-
-		for ( Size ii = 1; ii<= i_rsd.nheavyatoms(); ++ii ) {
+		
+		core::Size last_atom = i_rsd.last_backbone_atom();
+		if ( include_sc ){
+			last_atom = i_rsd.nheavyatoms();
+		}
+		for ( Size ii = 1; ii <= last_atom; ++ii ) {
 
 			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii),
 																												 new HarmonicFunc( 0.0, coord_sdev ) ) );
@@ -386,6 +391,81 @@ add_coordinate_constraints( pose::Pose & pose, Real const coord_sdev /* = 10.0 *
 
 }
 
+void
+add_coordinate_constraints( pose::Pose & pose, core::Size const start_res, core::Size const end_res, Real const coord_sdev /* = 10.0 */, bool include_sc /* true*/) {
+	using namespace core::id;
+	using namespace core::conformation;
+	using namespace core::scoring::constraints;
+
+	Size const my_anchor( pose.fold_tree().root() ); //Change to use the root of the current foldtree as done by Rocco in AtomCoordinateCstMover - JAB.
+
+	ConstraintSetOP cst_set = pose.constraint_set()->clone();
+
+	for ( Size i=start_res; i<= end_res;  ++i ) {
+
+		Residue const & i_rsd( pose.residue(i) );
+		
+		core::Size last_atom = i_rsd.last_backbone_atom();
+		if ( include_sc ){
+			last_atom = i_rsd.nheavyatoms();
+		}
+		for ( Size ii = 1; ii<= last_atom; ++ii ) {
+
+			cst_set->add_constraint( new CoordinateConstraint( AtomID(ii,i), AtomID(1,my_anchor), i_rsd.xyz(ii),
+																												 new HarmonicFunc( 0.0, coord_sdev ) ) );
+		}
+	}
+
+	pose.constraint_set( cst_set );
+}
+
+
+void
+remove_constraints_of_type(core::pose::Pose & pose, std::string const type) {
+	utility::vector1< ConstraintCOP > all_csts = pose.constraint_set()->get_all_constraints();
+	for (core::Size i=1; i<=all_csts.size(); ++i){
+		if (all_csts[i]->type() == type){
+			pose.remove_constraint(all_csts[i], true);
+		}
+	}
+}
+
+void
+remove_constraints_of_type(core::pose::Pose & pose, std::string const type, core::Size const start_res, core::Size const end_res){
+	utility::vector1< ConstraintCOP > all_csts = pose.constraint_set()->get_all_constraints();
+	for (core::Size i=1; i<=all_csts.size(); ++i){
+		if (all_csts[i]->type() == type){
+			utility::vector1< core::Size > residues = all_csts[i]->residues();
+			
+			for (core::Size x = 1; x <= residues.size(); ++i){
+				if (start_res <= residues[x] >= end_res){
+					pose.remove_constraint(all_csts[i], true);
+					break;
+				}
+			}
+		}
+	}
+}
+
+
+void
+remove_nonbb_constraints( pose::Pose & pose) {
+
+  using namespace core::id;
+  using namespace core::conformation;
+  using namespace core::scoring::constraints;
+
+  utility::vector1<ConstraintCOP> cst_set = pose.constraint_set()->get_all_constraints();
+
+	for ( ConstraintCOPs::const_iterator it = cst_set.begin(), eit = cst_set.end(); it!=eit; ++it ) {
+		for (core::Size i=1; i<=(*it)->natoms(); i++) {
+				if (	!pose.residue((*it)->atom(i).rsd()).atom_is_backbone((*it)->atom(i).atomno()) ) {
+							pose.remove_constraint(*it, false);
+							break;
+				} //remove non-backbone constraint
+	  }//loop through residues in constraints
+	}//loop through constraint
+}
 bool combinable( Constraint const& cst, utility::vector1< Size > exclude_res ) {
 	if ( exclude_res.size() == 0 ) return true;
 	utility::vector1< Size > pos_list( cst.residues() );
@@ -601,35 +681,6 @@ void drop_constraints( ConstraintCOPs& in, core::Real drop_rate ) {
 		}
 	}
 	in = out;
-}
-
-void remove_constraints_of_type(core::pose::Pose & pose, std::string const type) {
-	utility::vector1< ConstraintCOP > all_csts = pose.constraint_set()->get_all_constraints();
-	for (core::Size i=1; i<=all_csts.size(); ++i){
-		if (all_csts[i]->type() == type){
-			pose.remove_constraint(all_csts[i], true);
-		}
-	}
-}
-
-
-void
-remove_nonbb_constraints( pose::Pose & pose) {
-
-  using namespace core::id;
-  using namespace core::conformation;
-  using namespace core::scoring::constraints;
-
-  utility::vector1<ConstraintCOP> cst_set = pose.constraint_set()->get_all_constraints();
-
-	for ( ConstraintCOPs::const_iterator it = cst_set.begin(), eit = cst_set.end(); it!=eit; ++it ) {
-		for (core::Size i=1; i<=(*it)->natoms(); i++) {
-				if (	!pose.residue((*it)->atom(i).rsd()).atom_is_backbone((*it)->atom(i).atomno()) ) {
-							pose.remove_constraint(*it, false);
-							break;
-				} //remove non-backbone constraint
-	  }//loop through residues in constraints
-	}//loop through constraint
 }
 
 
