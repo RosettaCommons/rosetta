@@ -203,6 +203,14 @@ public:
 		TS_ASSERT_EQUALS( rsd.attached_H_end( rsd.atom_index("CB")), (core::Size) 10);
 		TS_ASSERT_EQUALS( rsd.number_bonded_hydrogens( rsd.atom_index("N")), (core::Size) 1);
 		TS_ASSERT_EQUALS( rsd.number_bonded_hydrogens( rsd.atom_index("CB")), (core::Size) 3);
+		TS_ASSERT_EQUALS( rsd.attached_H_end().size(), (core::Size) 5);
+		TS_ASSERT_EQUALS( rsd.attached_H_begin().size(), (core::Size) 5);
+        utility::vector1<core::Size> H_begin(rsd.attached_H_begin());
+        TS_ASSERT_EQUALS(rsd.atom_name(H_begin[1]), " H  ");
+        TS_ASSERT_EQUALS(rsd.atom_name(H_begin[4]), "1HB ");
+        utility::vector1<core::Size> H_end(rsd.attached_H_end());
+        TS_ASSERT_EQUALS(rsd.atom_name(H_end[1]), " H  ");
+        TS_ASSERT_EQUALS(rsd.atom_name(H_end[2]), " HA ");
 		TS_ASSERT_EQUALS( rsd.bonded_neighbor( rsd.atom_index("N")).size(), (core::Size) 2);
 		TS_ASSERT_EQUALS( rsd.bonded_neighbor( rsd.atom_index("CA")).size(), (core::Size) 4);
 		TS_ASSERT_EQUALS( rsd.bonded_neighbor( rsd.atom_index("O")).size(), (core::Size) 1);
@@ -223,10 +231,48 @@ public:
 		TS_ASSERT_EQUALS(rsd.Hpos_polar_sc().size(), (core::Size) 1);
 		TS_ASSERT_EQUALS(rsd.accpt_pos_sc().size(), (core::Size) 1);
 		
+
+		//core::chemical::AtomICoor old_icoor(rsd.icoor(rsd.atom_index("CA")));
+		//std::cout << "dist: " << old_icoor.d() << " phi: " << old_icoor.phi() << " theta: " << old_icoor.theta() << std::endl;
+		//rsd.assign_internal_coordinates();
+		//core::chemical::AtomICoor new_icoor(rsd.icoor(rsd.atom_index("CA")));
+		//std::cout << "dist: " << new_icoor.d() << " phi: " << new_icoor.phi() << " theta: " << new_icoor.theta() << std::endl;
 		//ResidueTypeOP rsd_copy(rsd.clone());
 		//ResidueType rsd_copy2(rsd);
 		//TS_ASSERT_EQUALS(rsd_copy, rsd);
 		//TS_ASSERT_EQUALS(rsd_copy2, rsd);
+
+
+    	core::Size center=0;
+    	core::Size nbr1=0;
+    	core::Size nbr=0;
+    	rsd.select_orient_atoms(center, nbr1, nbr);
+
+    	//std::cout << "orient_atoms: " << center << " " << nbr1 << " " << nbr << std::endl;
+    	TS_ASSERT_EQUALS(center, (core::Size) 5);
+    	TS_ASSERT_EQUALS(nbr1, (core::Size) 2);
+    	TS_ASSERT_EQUALS(nbr, (core::Size) 10);
+        //rsd.add_cut_bond(rsd.atom_name(1), rsd.atom_name(2));
+        //rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(3));
+        //rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(4));
+       // utility::vector1<core::Size> neigh(rsd.cut_bond_neighbor(1));
+        //TS_ASSERT_EQUALS(rsd.atom_name(neigh[1]), " CA ");
+
+/*
+        std::cout << "start cut bond neighbor" << std::endl;
+        for(core::Size x=1; x<=rsd.natoms(); ++x){
+            utility::vector1<core::Size> neigh(rsd.cut_bond_neighbor(x));
+            for(core::Size z=1; z<= neigh.size();++z){
+                std::cout << "atom: " << rsd.atom_name(x) << " cut_bond_neighbor: " << rsd.atom_name(neigh[z]) << std::endl;
+            }
+        }
+*/
+
+
+
+    	//rsd.select_orient_atoms(center, nbr1, nbr);
+    	//std::cout << "orient_atoms: " << center << " " << nbr1 << " " << nbr << std::endl;
+
 
 		rsd.delete_atom("3HB");
 		rsd.delete_atom("2HB");
