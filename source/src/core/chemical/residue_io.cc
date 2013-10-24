@@ -7,16 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   residue_io.cc
-/// @brief
+/// @file   src/core/chemical/residue_io.cc
+/// @brief  helper methods for ResidueType input/output
 /// @author Phil Bradley
 
 // Unit header
 #include <core/chemical/residue_io.hh>
 
-// Rosetta headers
-#include <platform/types.hh>
-
+// Package headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueType.hh>
@@ -25,6 +23,9 @@
 #include <core/chemical/Atom.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/MMAtomType.hh>
+
+// Project headers
+#include <platform/types.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.fwd.hh>
@@ -36,14 +37,10 @@
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <boost/foreach.hpp>
 
-// ObjexxFCL headers
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/Dimension.hh>
-#include <ObjexxFCL/DynamicIndexRange.hh>
-#include <ObjexxFCL/FArray.hh>
-#include <ObjexxFCL/FArray2D.hh>
+// Numeric headers
+#include <numeric/conversions.hh>
+#include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/file/FileName.hh>
@@ -54,17 +51,19 @@
 #include <utility/keys/AutoKey.hh>
 #include <utility/keys/SmallKeyVector.hh>
 
-// Numeric headers
-#include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
+// External headers
+#include <boost/foreach.hpp>
+#include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/Dimension.hh>
+#include <ObjexxFCL/DynamicIndexRange.hh>
+#include <ObjexxFCL/FArray.hh>
+#include <ObjexxFCL/FArray2D.hh>
 
 
-//Auto Headers
 #define foreach BOOST_FOREACH
 
-//Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
+
 
 namespace core {
 namespace chemical {
@@ -73,8 +72,7 @@ static basic::Tracer tr("core.chemical");
 
 
 ///////////////////////////////////////////////////////////////////////////////
-/// helper fxn
-
+/// @brief helper fxn
 id::AtomID
 atom_id_from_icoor_line(
 	std::string const name,
@@ -122,38 +120,39 @@ read_topology_file(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @details	 construct a ResidueType from a file. Example files are currently in
-///	 main/database/chemical/residue_type_sets/fa_standard/residue_types/l-caa/ directory
+/// @details Construct a ResidueType from a file. Example files are currently in
+///  main/database/chemical/residue_type_sets/fa_standard/residue_types/l-caa/ directory
 ///  These files contain information about each basic ResidueType which can be
 ///  patched to created various variant types.
 ///
-/// The topolgoy file (.params file) is formatted as follows.
+/// The topology file (.params file) is formatted as follows:
+///
 /// The file may contain any number of lines.  Blank lines and lines beginning with "#"
 /// are ignored. Each non-ignored line must begin with a string, a "tag", which
-/// describes a peice of data for the ResidueType.  The tags may be given in any order,
+/// describes a piece of data for the ResidueType.  The tags may be given in any order,
 /// though they will be processed so that ATOM tag lines are read first.
 ///
 /// Valid tags are:
 /// AA:
-/// Give the element of the AA enumeration (src/core/chemical/AA.hh) that
+/// Gives the element of the AA enumeration (src/core/chemical/AA.hh) that
 /// is appropriate for this residue type.  This information is used by
 /// the knowledge-based potentials which already encode information
 /// specifically for proteins or nucleic acids, and is also used by
-/// the RotamerLibrary to retireve the appropriate rotamer library.
+/// the RotamerLibrary to retrieve the appropriate rotamer library.
 /// Provide "aa_unk" here for "unknown" if not dealing with a canonical
-/// amino- or nucleic acid.  E.g. "AA SER" from SER.params
+/// amino or nucleic acid.  E.g., "AA SER" from SER.params
 ///
 /// ACT_COORD_ATOMS:
-/// List the atoms that define the "action coordinate" which is used
-/// by the fa_pair potential followed by the "END" token. E.g.
+/// Lists the atoms that define the "action coordinate" which is used
+/// by the fa_pair potential followed by the "END" token. E.g.,
 /// "ACT_COORD_ATOMS OG END" from SER.params.
 ///
 /// ADDUCT:
-/// Define an accuct as part of this residue type giving: a) the name, b)
+/// Defines an adduct as part of this residue type giving: a) the name, b)
 /// the adduct atom name, c) the adduct atom type, d) the adduct mm type,
 /// e) the adduct partial charge, and the f) the distance, g) improper bond
 /// angle, and h) dihedral that describe how to build the adduct from the
-/// i) parent, i) grandparent, and j) great grandparent atoms. E.g.
+/// i) parent, i) grandparent, and j) great grandparent atoms. E.g.,
 /// "ADDUCT  DNA_MAJOR_GROOVE_WATER  WN6 HOH H 0.0   -6.000000  44.000000     2.990000   N6    C6    C5"
 /// from ADE.params.
 ///
@@ -161,39 +160,39 @@ read_topology_file(
 /// Declare a new atom by name and list several of its properties.
 /// This line is column formatted.  The atom's name must be in columns
 /// 6-9 so that "ATOM CA  ..." declares a different atom from
-/// "ATOM  CA ...".  This is for PDB formatting. All atom names
+/// "ATOM  CA ...".  This is for PDB formatting.  All atom names
 /// must be distinct, and all atom names must be distinct when ignoring
 /// whitespace ("CA  " and " CA " could not coexist). After the atom name
 /// is read, the rest of the line is simply whitespace delimited.
-/// Next, the (rosetta) atom type name is given (which must have
+/// Next, the (Rosetta) atom type name is given (which must have
 /// been defined in the input AtomTypeSet), and then the mm atom type
 /// name is given (which must have been defined in the input
 /// MMAtomTypeSet).  Finally, the charge for this atom is given, either
-/// as the next input, or (ignoring the next input) the one after,
+/// as the next input or (ignoring the next input) the one after,
 /// if the "parse_charge" flag is on (whatever that is).
-/// E.g. "ATOM  CB  CH3  CT3  -0.27   0.000" from ALA.params.
+/// E.g., "ATOM  CB  CH3  CT3  -0.27   0.000" from ALA.params.
 ///
 /// BOND:
-/// Declare a bond between two atoms giving their names. This line is
-/// whitespace delimited.  E.g. "BOND  N    CA" from ALA.params.
+/// Declares a bond between two atoms giving their names. This line is
+/// whitespace delimited.  E.g., "BOND  N    CA" from ALA.params.
 ///
 /// BOND_TYPE:
-/// Declare a bond betwen two atoms, giving their names, and also
+/// Declares a bond between two atoms, giving their names, and also
 /// describing the chemical nature of the bond.  See the "BondName"
-/// enumeration for acceptible bond types.
+/// enumeration for acceptable bond types.
 ///
 /// CHI:
-/// Declare a sidechain dihedral, its index, and the four atoms that define it.
-/// E.g. "CHI 2  CA   CB   CG   CD1" from PHE.params.
+/// A misnomer for non-amino acids, declares a side-chain dihedral, its index, and the four atoms that define it.
+/// E.g., "CHI 2  CA   CB   CG   CD1" from PHE.params.
 ///
 /// CHI_ROTAMERS:
-/// List the chi mean/standard-deviation pairs that define how to build
+/// Lists the chi mean/standard-deviation pairs that define how to build
 /// rotamer samples.  This is useful for residue types which do not
-/// come with their own rotamer libraries.  E.g. "CHI_ROTAMERS 2 180 15"
-/// from carbohydrates/to5-beta-D-Psip.params
+/// come with their own rotamer libraries.  E.g., "CHI_ROTAMERS 2 180 15"
+/// from carbohydrates/to5-beta-D-Psip.params.
 ///
 /// CONNECT:
-/// Declare that an inter-residue chemical bond exists from a given
+/// Declares that an inter-residue chemical bond exists from a given
 /// atom.  E.g. "CONNECT SG" from CYD.params.  NOTE: Connection order
 /// is assumed to be preserved between residue types: connection #2 on
 /// one residue type is assumed to be "the same" as connection #2
@@ -201,39 +200,39 @@ read_topology_file(
 /// to be exchanged in the packer (as ALA might be swapped out
 /// for ARG).  CONNECT tags are processed in the order they are
 /// listed in the input file.  For polymeric residue types
-/// (e.g. proteins, DNA, RNA) "LOWER_CONNECT" and "UPPER_CONNECT"
+/// (e.g., proteins, DNA, RNA, saccharides) "LOWER_CONNECT" and "UPPER_CONNECT"
 /// should be listed before any additional CONNECT records.
 ///
 /// CUT_BOND:
-/// Declare a previously-declared bond to be off-limits to the
+/// Declares a previously-declared bond to be off-limits to the
 /// basic atom-tree construction logic (user-defined atom trees
 /// can be created which defy this declaration, if desired).
 /// This is useful in cases where the chemical graph contains
 /// cycles.  E.g. "CUT_BOND O4' C1'" from URA.params.
 ///
 /// FIRST_SIDECHAIN_ATOM:
-/// Give the name of the first sidechain atom.  All heavy atoms that were
-/// declared before the first sidechain atom in the topology file
+/// Gives the name of the first side-chain atom.  All heavy atoms that were
+/// declared before the first side-chain atom in the topology file
 /// are considered backbone atoms.  All heavy atoms after the first
-/// sidechain atom are considered sidechain atoms. Hydrogen atoms
-/// are either sidechain or backbone depending on the heavy atom to
-/// which they are bound. E.g. "FIRST_SIDECHAIN_ATOM CB" from SER.params.
+/// side-chain atom are considered side-chain atoms. Hydrogen atoms
+/// are either side-chain or backbone depending on the heavy atom to
+/// which they are bound. E.g., "FIRST_SIDECHAIN_ATOM CB" from SER.params.
 ///
 /// IO_STRING:
-/// Give the three-letter and one-letter codes that are used to read and
+/// Gives the three-letter and one-letter codes that are used to read and
 /// write this residue type from and to PDB files, and to FASTA files.
 /// This tag is column formatted.  Columns 11-13 are for the three-letter
-/// code. Column 15 is for the 1-letter code.  E.g.
+/// code. Column 15 is for the 1-letter code.  E.g., "IO_STRING Glc Z".
 ///
 /// INTERCHANGEABILITY_GROUP:
-/// Give the name for the group of ResidueType objects that are functionally
-/// interchangable (but which may have different variant types).  This
+/// Gives the name for the group of ResidueType objects that are functionally
+/// Interchangeable (but which may have different variant types).  This
 /// information is used by the packer to discern what ResidueType to put
 /// at a particular position.  If this tag is not given in the topology file,
 /// the three-letter code given by the IO_STRING tag is used instead.
 ///
 /// ICOOR_INTERNAL:
-/// Describe the geometry of the residue type from internal coordinates
+/// Describes the geometry of the residue type from internal coordinates
 /// giving a) the atom, b) the torsion, phi, in degrees c) the improper bond angle
 /// that is (180-bond angle) in degrees, theta, d) the bond length, d, in Angstroms
 /// e) the parent atom, f) the grand-parent, and g) the great-grandparent.
@@ -252,129 +251,134 @@ read_topology_file(
 /// in that atom geometry must only be specified in terms of atoms whose geometry has already been
 /// specified.  Improper dihedrals may be specified, where the great grandparent is not the parent atom
 /// of the grandparent but in these cases, the great grandparent does need to be a
-/// childe of the grandparent. E.g.
+/// child of the grandparent. E.g.,
 /// "ICOOR_INTERNAL    CB  -122.000000   69.862976    1.516263   CA    N     C" from SER.params.
 ///
 /// LOWER_CONNECT:
-/// For a polymer residue, declare which atom forms the "lower" inter-residue
-/// connection (chemical bond) i.e., the bond to residue i-1.  E.g.
+/// For a polymer residue, declares which atom forms the "lower" inter-residue
+/// connection (chemical bond), i.e., the bond to residue i-1.  E.g.,
 /// "LOWER_CONNECT N" from SER.params.
 ///
 /// NAME:
-/// Give the name for this ResidueType.  The name for each ResidueType
-/// must be unique within a ResidueTypeSet.  E.g. "NAME SER" from SER.params.
+/// Gives the name for this ResidueType.  The name for each ResidueType
+/// must be unique within a ResidueTypeSet.  It is not limited to three latters.
+/// E.g., "NAME SER" from SER.params.
 ///
 /// NBR_ATOM:
-/// Declare the name of the atom which will be used to define the
+/// Declares the name of the atom which will be used to define the
 /// center of the residue for neighbor calculations.  The coordinate
 /// of this atom is used along side the radius given in in the
 /// NBR_RADIUS tag.  This atom should be chosen to not move
 /// during packing so that neighbor relationships can be discerned
 /// for an entire set of rotamers from the backbone coordinates from
-/// the existing residue.  E.g. "NBR_ATOM CB" from SER.params.
+/// the existing residue.  E.g., "NBR_ATOM CB" from SER.params.
 ///
 /// NBR_RADIUS:
-/// Declare a radius that defines a sphere which, when centered
+/// Declares a radius that defines a sphere which, when centered
 /// on the NBR_ATOM, is guaranteed to contain all heavy atoms
 /// under all possible dihedral angle assignments (but where
 /// bond angles and lengths are considered ideal).  This is
 /// used to determine which residues are close enough that they
 /// might interact.  Only the interactions of those such residues
-/// are ever evaluated by the scoring machinery.  E.g.
+/// are ever evaluated by the scoring machinery.  E.g.,
 /// "NBR_RADIUS 3.4473" from SER.params.
 ///
 /// NCAA_ROTLIB_PATH:
-/// Give the path to the rotamer library file to use for a non-canonical
-/// amino acid. E.g. "NCAA_ROTLIB_PATH E35.rotlib" from
+/// Gives the path to the rotamer library file to use for a non-canonical
+/// amino acid.  E.g., "NCAA_ROTLIB_PATH E35.rotlib" from
 /// d-ncaa/d-5-fluoro-tryptophan.params
 ///
 /// NCAA_ROTLIB_NUM_ROTAMER_BINS:
-/// List the number of rotamers and the number of bins for each rotamer.
-/// E.g. "NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 2" from
+/// Lists the number of rotamers and the number of bins for each rotamer.
+/// E.g., "NCAA_ROTLIB_NUM_ROTAMER_BINS 2 3 2" from
 /// d-ncaa/d-5-fluoro-tryptophan.params
 ///
+/// NU:
+/// Declares an internal ring dihedral, its index, and the four atoms that define it.
+/// E.g., "NU 2  C1   C2   C3   C4 ".
+///
 /// NUMERIC_PROPERTY:
-/// Store an arbitrary float value that goes along with an arbitrary
+/// Stores an arbitrary float value that goes along with an arbitrary
 /// string key in a ResidueType.  No examples can be currently
-/// found in the database (10/13).  E.g. "NUMERIC_PROPERTY twelve 12.0"
+/// found in the database (10/13).  E.g., "NUMERIC_PROPERTY twelve 12.0"
 /// would be a way to store the number "12.0" with the key "twelve".
 ///
 /// ORIENT_ATOM:
-/// Describe how to orient rotamers onto an existing residue either
+/// Describes how to orient rotamers onto an existing residue either
 /// by orienting onto the NBR_ATOM atom, or by using the more
 /// complicated (default) logic in ResidueType::select_orient_atoms.
 /// There are two options here: "ORIENT_ATOM NBR" (orient onto NBR_ATOM) and
 /// "ORIENT_ATOM DEFAULT". If this tag is not given in the topology
-/// file, then the default behavior is used.  E.g. "SET_ORIENT_ATOM NBR" from
+/// file, then the default behavior is used.  E.g., "SET_ORIENT_ATOM NBR" from
 /// SC_Fragment.txt
 ///
 /// PDB_ROTAMERS:
-/// Give the file name that describes entire-residue rotamers which
+/// Gives the file name that describes entire-residue rotamers which
 /// can be used in the packer to consider alternate conformations for
 /// a residue.  This is commonly used for small molecules.  See also
 /// the CHI_ROTAMERS and NCAA_ROTLIB_PATH tags for alternate ways to
 /// provide rotamers.
 ///
 /// PROPERTIES:
-/// Add a given set of property strings to a residue type. E.g.
+/// Adds a given set of property strings to a residue type.  E.g.,
 /// "PROPERTIES PROTEIN AROMATIC SC_ORBITALS" from TYR.params.
 ///
 /// PROTON_CHI:
-/// Declare a previously-declared chi angle to be a "proton chi"
+/// Declares a previously-declared chi angle to be a "proton chi"
 /// and describe how this dihedral should be sampled by code
-/// that takes discrete sampling of sidechain conformations.
+/// that takes discrete sampling of side-chain conformations.
 /// The structure of these samples is as follows:
 /// First the word "SAMPLES" is given.  Next the number of samples
 /// should be given.  Next a list of dihedral angles, in degrees, should
 /// be given.  Next, the word "EXTRA" is given.  Next the number
 /// of extra samples is given.  Finally, a list of perturbations
 /// angles, in degrees, is given.  In cases where extra rotamers
-/// are requested (e.g. with the -ex2 flag), then the listed samples
-/// are are perturbed +/- the listed perturbations.  E.g.
+/// are requested (e.g., with the -ex2 flag), then the listed samples
+/// are are perturbed +/- the listed perturbations.  E.g.,
 /// "PROTON_CHI 2 SAMPLES 18 0 20 40 60 80 100 120 140 160 180 200 220 240 260 280 300 320 340 EXTRA 0"
 /// from SER.params.
 ///
 /// ROTAMER_AA:
-/// Set the "rotamer_aa" for a particular residue, which can be used
+/// Sets the "rotamer_aa" for a particular residue, which can be used
 /// to describe to the RotamerLibrary what amino acid to mimic for the
-/// sake of building rotamers.  E.g. "ROTAMER_AA SER" No examples
+/// sake of building rotamers.  E.g., "ROTAMER_AA SER" No examples
 /// currently found in the database (10/13).
 ///
 /// STRING_PROPERTY:
-/// Store an arbitrary string value with a given string key.
+/// Stores an arbitrary string value with a given string key.
 /// No example can be currently found in the database (10/13).
 /// A valid case would be "STRING_PROPERTY count twelve" which
 /// could store the string "twelve" for the key "count".
 ///
 /// TYPE:
-/// State whether this is a polymeric or ligand residue type.
-/// E.g. "TYPE POLYMER" or "TYPE LIGAND" which adds either
+/// States whether this is a polymeric or ligand residue type.
+/// E.g., "TYPE POLYMER" or "TYPE LIGAND" which adds either
 /// "POLYMER" or "LIGAND" properties to this residue type.
 ///
 /// UPPER_CONNECT:
-/// For a polymer residue, declare which atom forms the "upper" inter-residue
-/// connection (chemical bond) i.e., the bond to residue i+1.  E.g.
+/// For a polymer residue, declares which atom forms the "upper" inter-residue
+/// connection (chemical bond), i.e., the bond to residue i+1.  E.g.,
 /// "UPPER_CONNECT C" from SER.params.
 ///
 /// VARIANT:
-/// Declare this residue type to have a particular variant type.
+/// Declares this residue type to have a particular variant type.
 /// Variant types are used by the packer to determine which
 /// ResidueTypes are compatible with a given starting residue.
 /// Variants are similar to properties, except that the packer
 /// does not restrict itself to residue types that have the
 /// same set of properties.  Variant information is also
 /// used by the residue-type-patching system to avoid applying
-/// patches to certain residue types.  E.g. "VARIANT DISULFIDE"
+/// patches to certain residue types.  E.g., "VARIANT DISULFIDE".
 /// from CYD.params.
 ResidueTypeOP
 read_topology_file(
-	utility::io::izstream & data,
-	chemical::AtomTypeSetCAP atom_types,
-	chemical::ElementSetCAP elements,
-	chemical::MMAtomTypeSetCAP mm_atom_types,
-	chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
-	//chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out until they have been fully implemented
-	chemical::ResidueTypeSetCAP rsd_type_set
+		utility::io::izstream & data,
+		chemical::AtomTypeSetCAP atom_types,
+		chemical::ElementSetCAP elements,
+		chemical::MMAtomTypeSetCAP mm_atom_types,
+		chemical::orbitals::OrbitalTypeSetCAP orbital_atom_types,
+		//chemical::CSDAtomTypeSetCAP csd_atom_types kwk commenting out until they have been fully implemented
+		chemical::ResidueTypeSetCAP rsd_type_set
 )
 {
 	using id::AtomID;
@@ -385,52 +389,50 @@ read_topology_file(
 	using namespace basic;
 
 	std::string filename = data.filename();
+
 	// read the file
     std::string line;
 	utility::vector1< std::string > lines;
-	{
-		//utility::io::izstream data( filename );
-		while ( getline( data, line ) ) {
-			std::istringstream l( line );
-			//if ( line.size() < 1 || line[0] == '#' ) continue;
-			if ( line.size() < 1 ) continue;
-			std::string::size_type pound= line.find('#', 0);
-			if( pound == std::string::npos ) lines.push_back( line );
-			else{
-				std::string no_comment_line= line.substr(0, pound);
-				lines.push_back(no_comment_line);
-			}
+
+	while ( getline( data, line ) ) {
+		std::istringstream l( line );
+		//if ( line.size() < 1 || line[0] == '#' ) continue;
+		if ( line.size() < 1 ) continue;
+		std::string::size_type pound = line.find('#', 0);
+		if( pound == std::string::npos ) {
+			lines.push_back( line );
+		} else {
+			std::string no_comment_line= line.substr(0, pound);
+			lines.push_back(no_comment_line);
 		}
-		tr.Debug << "Read " << lines.size() << " lines from file: " <<
-			filename << std::endl;
-		data.close();
 	}
+	tr.Debug << "Read " << lines.size() << " lines from file: " << filename << std::endl;
+	data.close();
 
 
-	// decide what type of Residue to instantiate
+	// Decide what type of Residue to instantiate.
 	// would scan through for the TYPE line, to see if polymer or ligand...
 	//
-	// Residue needs a pointer to the AtomTypeSet object for setting up
-	// atom-type dependent data
+	// Residue needs a pointer to the AtomTypeSet object for setting up atom-type dependent data.
 	//
 	// You may be asking yourself, at least I was, why the hell do we scan this file more than once?
 	// The problem is that while reading the params (topology file), we need to assign private member variable
-	// data in ResidueType. We want to make sure that we get the correct number of atoms assigned
-	// before we start adding bonds, icoor, etc. This allows to provide checks to make sure certain
-	// things are being assigned correctly, ie adding bonds correctly, setting icoor values with correct placement
-	// of stub atoms, etc etc.
+	// data in ResidueType.  We want to make sure that we get the correct number of atoms assigned
+	// before we start adding bonds, icoor, etc.  This allows to provide checks to make sure certain
+	// things are being assigned correctly, i.e., adding bonds correctly, setting icoor values with correct placement
+	// of stub atoms, etc., etc.
 
 	ResidueTypeOP rsd( new ResidueType( atom_types, elements, mm_atom_types, orbital_atom_types ) ); //kwk commenting out until atom types are fully implemented , csd_atom_types ) );
-	rsd->residue_type_set( rsd_type_set ); // give this rsd_type a backpointer to its set
+	rsd->residue_type_set( rsd_type_set );  // Give this rsd_type a backpointer to its set.
 
-	// add the atoms
+	// Add the atoms.
 	Size const nlines( lines.size() );
 	Size natoms(0);//, norbitals(0);
-	for (Size i=1; i<= nlines; ++i ) {
+	for (Size i=1; i<= nlines; ++i) {
 		std::string line( lines[i] );
 		if (line.size() > 0) {
 			while (line.substr(line.size()-1) == " ") {
-				line = line.substr(0,line.size()-1);
+				line = line.substr(0, line.size()-1);
 				if (line.size() == 0) break;
 			}
 		}
@@ -439,7 +441,7 @@ read_topology_file(
 		std::string tag;
 
 		l >> tag;
-		//		if ( line.size() < 5 || line.substr(0,5) != "ATOM " ) continue;
+		// if ( line.size() < 5 || line.substr(0,5) != "ATOM " ) continue;
 		if ( tag != "ATOM" ) continue;
 
 		// the atom name for this atom
@@ -474,17 +476,18 @@ read_topology_file(
 		++natoms;
 	}
 
-	// No ATOM lines probably means an invalid file. Perhaps someone made a mistake with an -extra_res_fa flag.
+	// No ATOM lines probably means an invalid file.  Perhaps someone made a mistake with an -extra_res_fa flag.
 	// Fail gracefully now, versus a segfault later.
-	if(natoms == 0) {
+	if (natoms == 0) {
 		utility_exit_with_message("Residue topology file '" + filename + "' does not contain valid ATOM records.");
 	}
 
-	// add the bonds, parse rest of file
+	// Add the bonds; parse the rest of file.
 	bool found_AA_record = false;
 	bool found_PDB_ROTAMERS_record = false;
 	std::string pdb_rotamers_filename = "";
-	for (Size i=1; i<= nlines; ++i ) {
+
+	for (Size i=1; i<= nlines; ++i) {
 		std::string const & line( lines[i] );
 		std::istringstream l( line );
 		std::string tag,atom1,atom2,atom3,atom4, rotate, orbitals_tag, orbital;
@@ -513,11 +516,11 @@ read_topology_file(
 			l >> atom1 >> atom2;
 			rsd->add_bond( atom1, atom2 );
 
-		}else if ( tag == "BOND_TYPE" ) {
+		} else if ( tag == "BOND_TYPE" ) {
 			l >> atom1 >> atom2 >> bond_type;
 			// apl Note: this cast could easily fail and there's no error checking
-			rsd->add_bond(atom1,atom2,static_cast<core::chemical::BondName>(bond_type));
-		}else if ( tag == "CUT_BOND" ) {
+			rsd->add_bond(atom1, atom2, static_cast<core::chemical::BondName>(bond_type));
+		} else if ( tag == "CUT_BOND" ) {
 			l >> atom1 >> atom2;
 			rsd->add_cut_bond( atom1, atom2 );
 
@@ -525,6 +528,10 @@ read_topology_file(
 			Size chino;
 			l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
 			rsd->add_chi( chino, atom1, atom2, atom3, atom4 );
+		} else if ( tag == "NU" ) {
+			uint nu_num;
+			l >> nu_num >> atom1 >> atom2 >> atom3 >> atom4;
+			rsd->add_nu(nu_num, atom1, atom2, atom3, atom4);
 		} else if ( tag == "PROTON_CHI") {
 			Size chino, nsamples, nextra_samples;
 			std::string dummy;
@@ -580,17 +587,17 @@ read_topology_file(
 				l >> tag;
 			}
 
-		}else if (tag == "NUMERIC_PROPERTY"){
+		} else if (tag == "NUMERIC_PROPERTY"){
 			core::Real value = 0.0;
 			l >> tag >> value;
 			rsd->add_numeric_property(tag,value);
 
-		}else if (tag == "STRING_PROPERTY" ) {
+		} else if (tag == "STRING_PROPERTY" ) {
 			std::string value;
 			l >> tag >> value;
 			rsd->add_string_property(tag,value);
-			
-		}else if ( tag == "VARIANT" ) {
+
+		} else if ( tag == "VARIANT" ) {
 			l >> tag;
 			while ( !l.fail() ) {
 				rsd->add_variant_type( tag );
@@ -625,7 +632,7 @@ read_topology_file(
 			// used instead.
 			l >> tag;
 			rsd->interchangeability_group( tag );
-		}else if ( tag == "AA" ) {
+		} else if ( tag == "AA" ) {
 			l >> tag;
 			rsd->aa( tag );
 			found_AA_record = true;
@@ -650,8 +657,7 @@ read_topology_file(
 		} else if ( tag == "PDB_ROTAMERS" ) {
 			found_PDB_ROTAMERS_record = true;
 			l >> pdb_rotamers_filename;
-		} else if ( tag == "ACT_COORD_ATOMS" )
-		{
+		} else if ( tag == "ACT_COORD_ATOMS" ) {
 			while ( l ) {
 				l >> atom1;
 				if ( atom1 == "END") break;
@@ -729,7 +735,8 @@ read_topology_file(
 
 
 	if ( !found_AA_record ) {
-		basic::Warning() << "No AA record found for " << rsd->name() << "; assuming " << name_from_aa( rsd->aa() ) << std::endl;
+		basic::Warning() << "No AA record found for " << rsd->name()
+				<< "; assuming " << name_from_aa( rsd->aa() ) << std::endl;
 	}
 
 
@@ -773,7 +780,8 @@ read_topology_file(
 						assert( rsd_xyz.count( angle_atom ) ); // third atom
 						torsion_xyz = Vector( 1.0, 1.0, 0.0 );
 					} else {
-						assert( rsd_xyz.count( parent_atom ) && rsd_xyz.count( angle_atom ) && rsd_xyz.count( torsion_atom ) );
+						assert( rsd_xyz.count( parent_atom ) && rsd_xyz.count( angle_atom ) &&
+								rsd_xyz.count( torsion_atom ) );
 						torsion_xyz = rsd_xyz[ torsion_atom ];
 					}
 					kinematics::Stub const stub( rsd_xyz[ parent_atom ], rsd_xyz[ angle_atom ], torsion_xyz );
@@ -910,30 +918,30 @@ write_topology_file(
 	out << "#version ??? \n";
 	out << "#This automatically generated file is not really formatted, but should work, excpet that enums for connection types \n# are given in numbers and not strings. \n";
 
-	//first write out all the general tags
+	// first write out all the general tags
 	out << "NAME " << rsd.name() << " \n";
 	out << "IO_STRING " << rsd.name3() << " " << rsd.name1() << " \n";
-	if( rsd.is_polymer() ) { out << "TYPE POLYMER \n"; }
+	if ( rsd.is_polymer() ) { out << "TYPE POLYMER \n"; }
 	else if ( rsd.is_ligand() ) { out << "TYPE LIGAND \n"; }
-  else if ( rsd.is_surface() ) { out << "TYPE SURFACE \n"; }
+	else if ( rsd.is_surface() ) { out << "TYPE SURFACE \n"; }
 	out << "AA " << rsd.aa() << " \n";
 
-	//then write out the atoms
-	for(Size i=1; i <= rsd.natoms(); i++){
+	// then write out the atoms
+	for (Size i=1; i <= rsd.natoms(); ++i){
 
 		std::string atom_out = "ATOM " + rsd.atom_name( i ) + " " + rsd.atom_type( i ).name() + "  ";
 		atom_out = atom_out + rsd.mm_atom_type(i).name();
 		out << atom_out << " " << rsd.atom(i).charge() << " \n";
 
-	} //atom write out
+	} // atom write out
 
-	if( rsd.is_polymer() ) {
-		if( !rsd.is_lower_terminus() ) { out << "LOWER_CONNECT " << rsd.atom_name( rsd.lower_connect().atomno() ) << " \n"; }
-		if( !rsd.is_upper_terminus() ) { out << "UPPER_CONNECT " << rsd.atom_name( rsd.upper_connect().atomno() ) << " \n";}
+	if ( rsd.is_polymer() ) {
+		if ( !rsd.is_lower_terminus() ) { out << "LOWER_CONNECT " << rsd.atom_name( rsd.lower_connect().atomno() ) << " \n"; }
+		if ( !rsd.is_upper_terminus() ) { out << "UPPER_CONNECT " << rsd.atom_name( rsd.upper_connect().atomno() ) << " \n";}
 	}
 
-	//then all the bonds
-	for(Size i=1; i <= rsd.natoms(); i++){
+	// then all the bonds
+	for (Size i=1; i <= rsd.natoms(); ++i){
 		foreach(Size atom_index, rsd.nbrs(i)){// bond_this_atom
 			if( atom_index > i ) {  //don't write out bonds more than once
 				out << "BOND  " << rsd.atom_name( i ) << "    " << rsd.atom_name( atom_index ) << " \n";
@@ -942,17 +950,17 @@ write_topology_file(
 	} // bond write out
 
 
-	//now the chis
-	for(Size i=1; i <= rsd.nchi(); i++){
+	// now the chis
+	for (Size i=1; i <= rsd.nchi(); ++i){
 		out << "CHI " << i ;
 		AtomIndices atoms_this_chi = rsd.chi_atoms( i );
-		for(AtomIndices::iterator at_it = atoms_this_chi.begin(); at_it != atoms_this_chi.end(); at_it++ ){
+		for (AtomIndices::iterator at_it = atoms_this_chi.begin(); at_it != atoms_this_chi.end(); ++at_it){
 			out << "   " << rsd.atom_name( *at_it );
 		}
 		out << " \n";
 	} //chi write out
 
-	//and now the proton chis
+	// and now the proton chis
 	Size n_proton_chi(0);
 	for(Size i=1; i <= rsd.nchi(); i++){
 		if( rsd.is_proton_chi( i ) ){
@@ -962,33 +970,43 @@ write_topology_file(
 			utility::vector1< Real > pchi_samples = rsd.proton_chi_samples( n_proton_chi );
 			utility::vector1< Real > pchi_extra = rsd.proton_chi_extra_samples( n_proton_chi );
 			out << pchi_samples.size() ;
-			for( Size j = 1; j <= pchi_samples.size(); j++){ out << " " << pchi_samples[j]; }
+			for( Size j = 1; j <= pchi_samples.size(); j++) { out << " " << pchi_samples[j]; }
 			out << " EXTRA " << pchi_extra.size();
-			for( Size j = 1; j <= pchi_extra.size(); j++){ out << " " << pchi_extra[j]; }
+			for( Size j = 1; j <= pchi_extra.size(); j++) { out << " " << pchi_extra[j]; }
 			out << " \n";
 
 		}
 	}//proton chi write out
 
-	//now all the properties
+	// Now the nus...
+	for (Size i = 1, n_nus = rsd.n_nus(); i <= n_nus; ++i){
+		out << "NU " << i;
+		AtomIndices atoms_for_this_nu = rsd.nu_atoms(i);
+		for (AtomIndices::iterator at_it = atoms_for_this_nu.begin(); at_it != atoms_for_this_nu.end(); ++at_it) {
+			out << "   " << rsd.atom_name(*at_it);
+		}
+		out << std::endl;
+	}
+
+	// now all the properties
 	out << "PROPERTIES";
-	if(rsd.is_protein() ) { out << " PROTEIN"; }
-	if(rsd.is_DNA() ) { out << " DNA"; }
-	if(rsd.is_RNA() ) { out << " RNA"; }
-	if(rsd.is_polar() ) { out << " POLAR"; }
-	if(rsd.is_charged() ) { out << " CHARGED"; }
-	if(rsd.is_aromatic() ) { out << " AROMATIC"; }
-	if(rsd.is_lower_terminus() ) { out << " LOWER_TERMINUS"; }
-	if(rsd.is_upper_terminus() ) { out << " UPPER_TERMINUS"; }
-	if(rsd.is_terminus() ) { out << " TERMINUS"; }
+	if (rsd.is_protein() ) { out << " PROTEIN"; }
+	if (rsd.is_DNA() ) { out << " DNA"; }
+	if (rsd.is_RNA() ) { out << " RNA"; }
+	if (rsd.is_polar() ) { out << " POLAR"; }
+	if (rsd.is_charged() ) { out << " CHARGED"; }
+	if (rsd.is_aromatic() ) { out << " AROMATIC"; }
+	if (rsd.is_lower_terminus() ) { out << " LOWER_TERMINUS"; }
+	if (rsd.is_upper_terminus() ) { out << " UPPER_TERMINUS"; }
+	if (rsd.is_terminus() ) { out << " TERMINUS"; }
 	out << " \n";
 
 	out << "NBR_ATOM " << rsd.atom_name( rsd.nbr_atom() ) << " \n";
 	out << "NBR_RADIUS " << rsd.nbr_radius() << " \n";
 	if (rsd.force_nbr_atom_orient()) { out << "ORIENT_ATOM NBR\n"; }
 
-	//actcoord atoms
-	if( rsd.actcoord_atoms().size() > 0 ){
+	// actcoord atoms
+	if ( rsd.actcoord_atoms().size() > 0 ){
 		out << "ACT_COORD_ATOMS ";
 		AtomIndices act_atoms = rsd.actcoord_atoms();
 		for(AtomIndices::iterator at_it = act_atoms.begin(); at_it != act_atoms.end(); at_it++ ){
@@ -998,8 +1016,8 @@ write_topology_file(
 	}
 
 
-	//last but not least the internal coordinates
-	for(Size i=1; i <= rsd.natoms(); i++){
+	// last but not least the internal coordinates
+	for (Size i=1; i <= rsd.natoms(); i++){
 		AtomICoor cur_icoor = rsd.icoor( i );
 		out << "ICOOR_INTERNAL   " << rsd.atom_name( i ) << "  " << degrees( cur_icoor.phi() ) << "  ";
 		out << degrees( cur_icoor.theta() ) << "  " << cur_icoor.d();
@@ -1022,13 +1040,11 @@ write_topology_file(
 
 	} //atom icoor write out
 
-	//now write out icoors for connections (polymer, other)
-
-	//TO DO
+	// TODO: now write out icoors for connections (polymer, other)
 
 	out.close();
 
-} //write_topology_file
+} // write_topology_file
 
 } // chemical
 } // core

@@ -7,9 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file    RingConformationMover.hh
+/// @file    protocols/simple_moves/carbohydrates/RingConformationMover.hh
 /// @brief   Declarations and simple accessor/mutator definitions for RingConformationMover.
-/// @author  labonte
+/// @author  Labonte
 
 #ifndef INCLUDED_protocols_simple_moves_carbohydrates_RingConformationMover_HH
 #define INCLUDED_protocols_simple_moves_carbohydrates_RingConformationMover_HH
@@ -30,13 +30,14 @@
 #include <string>
 #include <iostream>
 
+
+// TODO: Move to simple_moves.
 namespace protocols {
 namespace simple_moves {
 namespace carbohydrates {
 
 /// @details  Based on a given MoveMap, this mover selects movable carbohydrate residues and flips their rings to an
-/// idealized energy minimum ring conformer.  Six-membered rings sample chair and twist-boat conformations; five-
-/// membered rings sample envelope and half-chair.  The sampling is biased towards ideally lower-energy conformers.
+/// idealized ring conformer.
 /// @remarks  This class is a work in progress....
 class RingConformationMover: public moves::Mover {
 public:

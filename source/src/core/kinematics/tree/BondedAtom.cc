@@ -17,12 +17,13 @@
 
 // Package headers
 #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Mask.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 
 // Project headers
 #include <core/id/AtomID_Map.hh>
+#include <core/id/DOF_ID_Map.hh>
+#include <core/kinematics/types.hh>
 #include <core/types.hh>
 
 // Numeric headers
@@ -33,16 +34,9 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
-//#include <ObjexxFCL/string.functions.hh>
-
 // C++ headers
 #include <cassert>
 #include <iostream>
-
-#include <core/id/DOF_ID_Map.hh>
-#include <core/kinematics/types.hh>
-
 
 
 namespace core {
@@ -155,7 +149,7 @@ BondedAtom::update_xyz_coords(
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details starting from the input stub, calculate the internal coordinates d_, theta_ and
-/// phi_ for this atom. If recusrvie is true, obtain the new stub centered at
+/// phi_ for this atom. If recursive is true, obtain the new stub centered at
 /// this atom and pass the new stub to all its children atoms to update their
 /// internal coordinates recursively.
 /// @note stub passed in is modified by rotating phi_ around x in the stub frame
@@ -177,7 +171,7 @@ BondedAtom::update_internal_coords(
 
 	bool flip_stub( false );
 	if ( d_ < 1e-2 ) {
-		// phi, theta dont make much sense
+		// phi, theta don't make much sense
 		//	std::cerr << "WARNING:: very small d= " << d_ << ' ' << id() << std::endl;
 		phi_ = 0.0;
 		theta_ = 0.0;
@@ -208,17 +202,16 @@ BondedAtom::update_internal_coords(
 			phi_ = 0.0;
 		} else {
 			theta_ = std::acos( x ); // DANGER
-			if ( theta_ < 1e-2 || pi - theta_ < 1e-2 ) {
+			//if ( theta_ < 1e-2 || pi - theta_ < 1e-2 ) {
 				// less than 0.57 degrees
 				//std::cout << "WARNING:: small theta but we are calculating phi: " <<
 				//	theta_ << std::endl;
-			}
+			//}
 			phi_  = std::atan2( z, y );
 		} // small theta
 	} // small d
 
 	stub.M *= x_rotation_matrix_radians( phi_ );
-
 
 
 	if ( recursive ) {
@@ -255,11 +248,11 @@ BondedAtom::set_dof(
 	Real const value
 )
 {
-	if ( type == PHI ) {
+	if ( type == id::PHI ) {
 		phi_ = value;
-	} else if ( type == THETA ) {
+	} else if ( type == id::THETA ) {
 		theta_ = value;
-	} else if ( type == D ) {
+	} else if ( type == id::D ) {
 		d_ = value;
 	} else {
 		std::cout << "bad torsion type for Atom: " << type << std::endl;
@@ -277,7 +270,7 @@ BondedAtom::set_dof(
 {
 	BondedAtom::set_dof( type, value );
 	Atom_::note_dof_change( set );
-	dof_change_propagates_to_younger_siblings_ |= ( type == PHI );
+	dof_change_propagates_to_younger_siblings_ |= ( type == id::PHI );
 }
 
 
@@ -483,6 +476,6 @@ BondedAtom::copy_coords( Atom const & src )
 ///
 Jump BOGUS_JUMP;
 
-}
+} // tree
 } // namespace kinematics
 } // namespace core

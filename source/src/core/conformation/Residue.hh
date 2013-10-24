@@ -8,6 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   Residue.hh
+/// @brief  Method declarations and simple accessor definitions for the Residue class
 /// @author Phil Bradley
 
 
@@ -68,26 +69,24 @@ void add_cloned_ligand_rotamer_library( core::chemical::ResidueType & new_res, c
 
 ///@brief  Instance Residue class, used for placed residues and rotamers
 /**
-	This class is designed to be lightweight. It holds a const-reference ("rsd_type_")
+	@details This class is designed to be lightweight.  It holds a const-reference ("rsd_type_")
 	to a ResidueType object for access to information common to all instances
-	of a single type, eg. Alanine or Thymine. Residue stores any data unique
+	of a single type, e.g., Alanine or Thymine.  Residue stores any data unique
 	to a placed residue or rotamer, currently:
 
-	- a vector1 of Atoms which hold the positions (and also the atom-types for
+	- a vector1 of Atoms, which holds the positions (and also the atom-types for
 		fast access during scoring);
 
 	- the sequence position and chain, both integers
 
-	- the backbone and sidechain torsion angles (of course backbone torsions are
+	- the backbone, side-chain, and internal ring (if applicable) torsion angles (of course backbone torsions are
 		not unique to a rotamer, and the chi angles are derivable from the coordinates,
 		but storing them in the residue is convenient for scoring purposes).
 
-	- the coordinates of an interaction center or centroid, used eg. in the
-		knowledge-based fullatom pair term ("actcoord_"). Maybe this will also
+	- the coordinates of an interaction center or centroid, used e.g., in the
+		knowledge-based full-atom pair term ("actcoord_").  Maybe this will also
 		hold the centroid position for centroid-mode scoring??
-
  **/
-
 class Residue : public utility::pointer::ReferenceCount {
 
 public:
@@ -98,10 +97,9 @@ public:
 public:
 
 	/// @brief constructors
-	/// Residue( Residue const & ); // user defined copy ctor to avoid #including PseudoBond.hh
-	/// Residue const & operator = ( Residue const & ) // user defined assignment operator for same reason
 	Residue( ResidueType const & rsd_type_in, bool const dummy_arg );
-// this is for boost serialize
+
+	// this is for boost serialize
 	Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/, bool const /*dummy_arg2*/ ) :
 		utility::pointer::ReferenceCount(), rsd_type_(rsd_type_in) {}
 
@@ -480,9 +478,9 @@ public:
 		return atoms_[ atm_index ];
 	}
 
-
 	/// @brief Returns this residue's Atom with name  <atm_name>  (const)
-	/// @note: Atom object is xyz and atom_type, slower but safer than hard-coding an integer index in code where you need a specific atom
+	/// @note: Atom object is xyz and atom_type, slower but safer than hard-coding an integer index in code where you
+	/// need a specific atom
 	///
 	/// example(s):
 	///     residue.atom(3)
@@ -497,7 +495,8 @@ public:
 	}
 
 	/// @brief Returns this residue's Atom with name  <atm_name>  (non-const)
-	/// @note: Atom object is xyz and atom_type, slower but safer than hard-coding an integer index in code where you need a specific atom
+	/// @note: Atom object is xyz and atom_type, slower but safer than hard-coding an integer index in code where you
+	/// need a specific atom
 	///
 	/// example(s):
 	///     residue.atom(3)
@@ -839,21 +838,6 @@ public:
 	bonded_neighbor( int const atm ) const
 	{
 		return rsd_type_.bonded_neighbor( atm );
-	}
-
-	/// @brief Returns the number of chi angles this residue has
-	///
-	/// example(s):
-	///     residue.nchi()
-	/// See also:
-	///     Residue
-	///     Pose
-	///     Pose.chi
-	///     Pose.set_chi
-	Size
-	nchi() const
-	{
-		return rsd_type_.nchi();
 	}
 
 
@@ -1266,16 +1250,12 @@ public:
 	set_pseudobonds_to_residue( Size resid, PseudoBondCollectionCOP pbs );
 
 
-
 	/// @brief Returns the chi rotamers available for this residue's chi angle  <chino>
 	utility::vector1< std::pair< Real, Real > > const &
 	chi_rotamers( Size const chino ) const
 	{
 		return rsd_type_.chi_rotamers( chino );
 	}
-
-
-
 
 
 	/// @brief atom indices for bonded neighbors to which atom-tree connections are disallowed.
@@ -1340,6 +1320,40 @@ public:
 		mainchain_torsions_ = torsions;
 	}
 
+	/// @brief Returns a specific mainchain torsion angle for this residue
+	/// example: mainchain_torsion(2) will be the psi angle for an amino acid
+	///
+	/// example(s):
+	///     residue.mainchain_torsion(2)
+	/// See also:
+	///     Residue
+	///     Pose
+	///     Pose.omega
+	///     Pose.phi
+	///     Pose.psi
+	Real
+	mainchain_torsion( Size const torsion ) const
+	{
+		return mainchain_torsions_[ torsion ];
+	}
+
+
+	/// @brief Returns the number of chi angles this residue has
+	///
+	/// example(s):
+	///     residue.nchi()
+	/// See also:
+	///     Residue
+	///     Pose
+	///     Pose.chi
+	///     Pose.set_chi
+	Size
+	nchi() const
+	{
+		return rsd_type_.nchi();
+	}
+
+
 	/// @brief Returns the chi torsion angles of this residue (const)
 	///
 	/// example(s):
@@ -1379,41 +1393,6 @@ public:
 		chi_ = chis;
 	}
 
-
-	/// @brief Returns the AtomIndices of each four atom set defining a chi angle
-	utility::vector1< AtomIndices > const &
-	chi_atoms() const
-	{
-		return rsd_type_.chi_atoms();
-	}
-
-	/// @brief Returns the AtomIndices of the four atoms defining
-	/// this residue's  <chino>  chi angle
-	AtomIndices const &
-	chi_atoms( int const chino ) const
-	{
-		return rsd_type_.chi_atoms( chino );
-	}
-
-	/// @brief Returns a specific mainchain torsion angle for this residue
-	/// example: mainchain_torsion(2) will be the psi angle for an amino acid
-	///
-	/// example(s):
-	///     residue.mainchain_torsion(2)
-	/// See also:
-	///     Residue
-	///     Pose
-	///     Pose.omega
-	///     Pose.phi
-	///     Pose.psi
-	Real
-	mainchain_torsion( Size const torsion ) const
-	{
-		return mainchain_torsions_[ torsion ];
-	}
-
-
-
 	/// @brief get a specific chi torsion angle
 	///
 	/// example(s):
@@ -1428,12 +1407,105 @@ public:
 		return chi_[ chino ];
 	}
 
+	/// @brief Returns the AtomIndices of each set of four atoms defining each chi angle
+	utility::vector1< AtomIndices > const &
+	chi_atoms() const
+	{
+		return rsd_type_.chi_atoms();
+	}
+
+	/// @brief Returns the AtomIndices of the four atoms defining this residue's  <chino>  chi angle
+	AtomIndices const &
+	chi_atoms( int const chino ) const
+	{
+		return rsd_type_.chi_atoms( chino );
+	}
+
+
+	/// @brief   Return the number of nu (internal ring) angles this residue has.
+	/// @details Example: residue.n_nus()\n
+	/// See also:\n
+	///     Residue\n
+	///     Residue.nu\n
+	///     Residue.nus\n
+	///     Pose.set_ring_conformation\n
+	///     Pose\n
+	///     Pose.nu
+	Size
+	n_nus() const
+	{
+		return rsd_type_.n_nus();
+	}
+
+
+	/// @brief   Return the nu (internal ring) torsion angles of this residue.
+	/// @details Example: residue.nus()\n
+	/// See also:\n
+	///     Residue\n
+	///     Residue.nu\n
+	///     Residue.n_nus\n
+	///     Pose.set_ring_conformation\n
+	///     Pose\n
+	///     Pose.nu
+	utility::vector1<core::Angle> const &
+	nus() const
+	{
+		return nus_;
+	}
+
+	/// @brief   Return the nu (internal ring) torsion angles of this residue. (non-const)
+	utility::vector1<core::Angle> &
+	nus()
+	{
+		return nus_;
+	}
+
+	/// @brief   Get a specific nu (internal ring) torsion angle by index.
+	/// @details Example: residue.nu(1)\n
+	/// See also:\n
+	///     Residue\n
+	///     Residue.nus\n
+	///     Residue.n_nus\n
+	///     Pose.set_ring_conformation\n
+	///     Pose\n
+	///     Pose.nu
+	/// @note    It is intentional that there is no set_nu() function; nu angles should only be modified together.
+	/// Use Pose.set_ring_conformation() instead.
+	core::Angle
+	nu(core::uint const index) const
+	{
+		return nus_[index];
+	}
+
+	/// @brief Return the AtomIndices of each set of four atoms defining each nu angle.
+	utility::vector1<AtomIndices> const &
+	nu_atoms() const
+	{
+		return rsd_type_.nu_atoms();
+	}
+
+	/// @brief Return the AtomIndices of the four atoms defining the specified nu angle.
+	AtomIndices const &
+	nu_atoms(core::uint const index) const
+	{
+		return rsd_type_.nu_atoms(index);
+	}
+
+
 	/// @brief Returns the sequence position of this residue
 	Size
 	seqpos() const
 	{
 		return seqpos_;
 	}
+
+	/// @brief Sets this residue's sequence position to  <setting>
+	void
+	seqpos( Size const setting )
+	{
+		seqpos_ = setting;
+	}
+
 
 	/// @brief Returns the sequence separation distance between this residue and  <other>
 	/// @note: magnitude of distance only
@@ -1454,12 +1526,6 @@ public:
 		return ( chain_ == other.chain() ? other.seqpos_ - seqpos_ : std::numeric_limits<int>::max() );
 	}
 
-	/// @brief Sets this residue's sequence position to  <setting>
-	void
-	seqpos( Size const setting )
-	{
-		seqpos_ = setting;
-	}
 
 	/// @brief Returns this residue's chain id
 	core::Size
@@ -1475,6 +1541,7 @@ public:
 		chain_ = setting;
 	}
 
+
 	/// @brief does this residue require an actcoord?
 	bool
 	requires_actcoord() const
@@ -1482,13 +1549,9 @@ public:
 		return rsd_type_.requires_actcoord();
 	}
 
-
-
 	/// @brief Updates actcoord for this residue
 	void
 	update_actcoord();
-
-
 
 	/// @brief Returns the coordinates used for pairE calculations (amino acids only)
 	Vector const &
@@ -1509,7 +1572,6 @@ public:
 	/// called by our owning conformation when the sequence numbers are remapped
 	void
 	update_sequence_numbering( utility::vector1< Size > const & old2new );
-
 
 
 	/////////////
@@ -1684,6 +1746,7 @@ public:
 		return rsd_type_.has_variant_type( variant_type );
 	}
 
+
 	/////////////////////////////
 	/// @brief Returns the name of this residue's atom with index number  <atm>
 	std::string const &
@@ -1740,6 +1803,7 @@ public:
 		return rsd_type_.icoor( atm );
 	}
 
+
 	/// @brief  bondlength analog to set_chi
 	///    like set_chi, assumes changes propagate to atomtree
 	///    keyed off of chi#, so we only allow distances corresponding to chi angles to refine
@@ -1764,6 +1828,10 @@ public:
 	/// (wrapper function)
 	void
 	set_all_chi( utility::vector1< Real > const & chis );
+
+
+	// Note: It is intentional that there is no set_nu() function; nu angles should only be modified together.
+	// Do not add one.  Use Pose::set_ring_conformation() instead. ~Labonte
 
 
 	/// @brief Returns true if this residue has an atom named  <atm>
@@ -1909,8 +1977,11 @@ private:
 	/// @brief the chain id number, starting from 1
 	core::Size chain_;
 
-	/// @brief our chi (sidechain) torsion angles
+	/// @brief our chi (side chain) torsion angles
 	utility::vector1< Real > chi_;
+
+	/// @brief our nu (internal ring) torsion angles
+	utility::vector1<Angle> nus_;
 
 	/// @brief our (possibly empty) backbone torsion angles
 	utility::vector1< Real > mainchain_torsions_;
@@ -1918,8 +1989,6 @@ private:
 	/// @brief the action coordinate, an interaction centroid for knowledge-based terms like fa-pair
 	/// in fact, only for fa-pair
 	Vector actcoord_;
-
-
 
 
 	/////////////////////////////////
@@ -1946,8 +2015,10 @@ private:
 	friend class boost::serialization::access;
 	template<class Archive>
 	void serialize(Archive &ar, const unsigned int file_version) {}
-	template<class Archive> friend void save_construct_data( Archive & ar, const Residue * t, const unsigned int file_version);
-	template<class Archive> friend void load_construct_data( Archive & ar, Residue * t, const unsigned int file_version);
+	template<class Archive> friend void save_construct_data(
+			Archive & ar, const Residue * t, const unsigned int file_version);
+	template<class Archive> friend void load_construct_data(
+			Archive & ar, Residue * t, const unsigned int file_version);
 #endif
 };
 
@@ -2011,6 +2082,7 @@ inline void save_construct_data(
 	ar & t->seqpos_;
 	ar & t->chain_;
 	ar & t->chi_;
+	ar & t->nus_;
 	ar & t->mainchain_torsions_;
 	ar & t->actcoord_;
 	ar & t->nonstandard_polymer_;
@@ -2074,6 +2146,7 @@ inline void load_construct_data(
 	ar & t->seqpos_;
 	ar & t->chain_;
 	ar & t->chi_;
+	ar & t->nus_;
 	ar & t->mainchain_torsions_;
 	ar & t->actcoord_;
 	ar & t->nonstandard_polymer_;

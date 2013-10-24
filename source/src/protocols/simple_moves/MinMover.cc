@@ -15,10 +15,10 @@
 #include <protocols/simple_moves/MinMover.hh>
 #include <protocols/simple_moves/MinMoverCreator.hh>
 
+// Package headers
 #include <protocols/moves/DataMap.hh>
 
-// Package headers
-
+// Project headers
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -28,22 +28,29 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh> // getScoreFunction
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-#include <basic/prof.hh>
-#include <utility/string_util.hh>
-#include <utility/tag/Tag.hh>
-#include <iostream>
+
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/elscripts/util.hh>
+
+// Basic headers
+#include <basic/prof.hh>
+
+// Utility headers
+#include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+// C++ headers
+#include <iostream>
 
 // Boost Headers
 #include <boost/foreach.hpp>
 #include <basic/Tracer.hh>
 
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 #define foreach BOOST_FOREACH
+
 
 namespace protocols {
 namespace simple_moves {
@@ -53,8 +60,6 @@ using namespace kinematics;
 using namespace optimization;
 using namespace scoring;
 using core::pack::task::PackerTaskOP;
-
-
 
 
 static basic::Tracer TR("protocols.simple_moves.MinMover");
@@ -78,26 +83,22 @@ MinMoverCreator::mover_name()
 
 // default constructor
 // proper lightweight default constructor
-MinMover::MinMover()
-	: protocols::moves::Mover("MinMover"),
+MinMover::MinMover() : protocols::moves::Mover("MinMover"),
 		movemap_(0),
 		scorefxn_(0),
 		min_options_(0),
 		cartesian_(false),
 		dof_tasks_()
-		//		threshold_(1000000.0) // TODO: line can be deleted?
 {
 	min_options_ = new MinimizerOptions( "linmin", 0.01, true, false, false );
 }
 
-MinMover::MinMover( std::string const & name )
-	: protocols::moves::Mover(name),
+MinMover::MinMover( std::string const & name ) : protocols::moves::Mover(name),
 		movemap_(0),
 		scorefxn_(0),
 		min_options_(0),
 		cartesian_(false),
 		dof_tasks_()
-		//		threshold_(1000000.0) // TODO: line can be deleted?
 {
 	min_options_ = new MinimizerOptions( "linmin", 0.01, true, false, false );
 }
@@ -185,7 +186,7 @@ void MinMover::deriv_check( bool deriv_check_in ) { min_options_->deriv_check( d
 bool MinMover::deriv_check() const { return min_options_->deriv_check(); }
 
 
-///@detail restrict the move map by the packer task:
+///@details restrict the move map by the packer task:
 ///If a residue is not designable, the backbone is fixes
 ///If a residue is not packable, the sidechain is fixed
 ///
@@ -225,9 +226,7 @@ void
 MinMover::max_iter( Size max_iter_in ) { min_options_->max_iter( max_iter_in ); }
 
 void
-MinMover::apply(
-	pose::Pose & pose
-) {
+MinMover::apply(pose::Pose & pose) {
 	// lazy default initialization
 	MoveMapOP active_movemap;
 	if ( ! movemap() ) movemap() = new MoveMap;

@@ -9,31 +9,31 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/import_pose/import_pose.cc
-///
 /// @brief  various functions to construct Pose object(s) from PDB(s)
+/// @details A temporary copy of the pose_from_pdb code from the demo directory.
+/// Will be phased out in favor of file_data routines soon.
 /// @author Sergey Lyskov
 
 // Unit headers
 #include <core/import_pose/import_pose.hh>
-
 #include <core/import_pose/import_pose_options.hh>
 
+// Project headers
 #include <core/types.hh>
-
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/carbohydrates/util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <core/kinematics/FoldTree.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
+#include <core/pose/carbohydrates/util.hh>
 
 #include <core/pack/pack_missing_sidechains.hh>
 #include <core/pack/optimizeH.hh>
@@ -43,24 +43,22 @@
 #include <core/io/pdb/file_data.hh>
 #include <core/io/pdb/file_data_options.hh>
 
+// Basic headers
 #include <basic/Tracer.hh>
-
-#include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-
 #include <utility/vector1.hh>
+
+// External headers
+#include <ObjexxFCL/string.functions.hh>
 #include <boost/foreach.hpp>
 
-//Auto Headers
+
 #define foreach BOOST_FOREACH
-/// A temporary copy of the pose_from_pdb code from the demo directory.
-/// Will be phased out in favor of file_data routines soon.
-///
+
 
 namespace core {
 namespace import_pose {
@@ -79,7 +77,7 @@ basic::Tracer TR("core.import_pose.import_pose");
 
 using utility::vector1;
 
-//
+
 void
 read_additional_pdb_data(
 	std::string const & s,
@@ -297,7 +295,7 @@ poseOPs_from_pdbs(
 	return core::import_pose::poseOPs_from_pdbs( *residue_set, filenames, options, read_fold_tree );
 }
 
-/// @details Only returns fullatom poses
+/// @details Only returns full-atom poses
 utility::vector1< core::pose::Pose >
 poses_from_pdbs(
 	utility::vector1< std::string > const & filenames,
@@ -382,7 +380,7 @@ void
 pose_from_pdb(
 	utility::vector1< pose::Pose > & poses,
 	std::string const & filename,
-  bool read_fold_tree
+	bool read_fold_tree
 )
 {
 	using namespace chemical;
@@ -575,9 +573,7 @@ void build_pose(
 	build_pose( fd, pose, residue_set, options);
 }
 
-///
-/// @details Build Rosetta 3 Pose object from FileData.
-///
+/// @brief Build Rosetta 3 Pose object from FileData.
 void build_pose(
 	io::pdb::FileData & fd,
 	pose::Pose & pose,
@@ -592,12 +588,9 @@ void build_pose(
 
 void build_pose_as_is2( io::pdb::FileData & fd, pose::Pose & pose, chemical::ResidueTypeSet const & residue_set, id::AtomID_Mask & missing, ImportPoseOptions const & options );
 
-/// @details
-/// trying to Build pose object from pdb 'as-is'. PDB file must be _really_ clean.
-///
-///////////////////////////////////////////////////////////////////////////////
 // "super-simple" (C) by Phil
 //
+/// @brief Try to Build pose object from pdb 'as-is'. PDB file must be _really_ clean.
 void build_pose_as_is(
 	io::pdb::FileData & fd,
 	pose::Pose & pose,
@@ -633,13 +626,13 @@ void build_pose_as_is2(
 		set_reasonable_fold_tree( pose );
 	}
 
-	/// optimize H if using a fullatom residue type set, and no_optH is not specified
+	// optimize H if using a full-atom residue type set, and no_optH is not specified
 	if ( residue_set.name() == FA_STANDARD ) {
 		//if pack_missing_density specified, repack residues w/ missing density
 		if( options.pack_missing_sidechains() ) {
 			pack::pack_missing_sidechains( pose, missing );
 		}
-		/// optimize H if using a fullatom residue type set, and no_optH is not specified
+		// optimize H if using a fullatom residue type set, and no_optH is not specified
 		if( !options.no_optH() ) {
 			pack::optimize_H_and_notify( pose, missing );
 		}
@@ -655,7 +648,6 @@ void build_pose_as_is2(
 			}
 		}
 	}
-
 
 	pose.pdb_info( pdb_info );
 }

@@ -8,21 +8,26 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/kinematics/MoveMap.hh
-/// @brief  Move map
+/// @brief  Declarations for the MoveMap class
 /// @author Phil Bradley
 /// @author Christopher Miles (cmiles@uw.edu)
+
 #ifndef INCLUDED_core_kinematics_MoveMap_hh
 #define INCLUDED_core_kinematics_MoveMap_hh
 
-// Unit headers
+// Unit header
 #include <core/kinematics/MoveMap.fwd.hh>
 
 // Package headers
 #include <core/kinematics/types.hh>
+
+// Project headers
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/JumpID.hh>
 #include <core/id/TorsionID.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
+#include <core/id/DOF_ID_Mask.fwd.hh>
 
 // Utility headers
 #include <utility/PyAssert.hh>
@@ -32,11 +37,8 @@
 
 // C++ headers
 #include <map>
-// AUTO-REMOVED #include <utility>
 #include <vector>
 
-#include <core/id/AtomID_Mask.fwd.hh>
-#include <core/id/DOF_ID_Mask.fwd.hh>
 
 namespace core {
 namespace kinematics {
@@ -44,7 +46,7 @@ namespace kinematics {
 ///@brief A class specifying DOFs to be flexible or fixed
 ///
 /// currently there are two groups of data, one is residue-based Torsion
-/// definition, such as BB, CHI and JUMP; the other is atom-based DOF
+/// definition, such as BB, CHI, NU, and JUMP; the other is atom-based DOF
 /// definition, such as bond length D, bond angle THETA and torsion angle PHI
 /// which are used in atom-tree. MoveMap does not automatically handle
 /// conversion from one group to the other, i.e., setting PHI false for
@@ -53,7 +55,7 @@ namespace kinematics {
 ///
 /// within each group, there are multiple levels of control
 /// (from general/high to specific/lower):
-/// @li Torsion-based: TorsionType(BB, CHI, JUMP) -> MoveMapTorsionID
+/// @li Torsion-based: TorsionType(BB, CHI, NU, JUMP) -> MoveMapTorsionID
 /// (BB, CHI of one residue) -> TorsionID ( BB torsion 2 or CHI torsion 3 of
 /// one residue)
 /// @li DOF-base: DOF_type( D, THETA, PHI ) -> DOF_ID (D, THETA, PHI of one atom)
@@ -64,7 +66,7 @@ namespace kinematics {
 /// each residue or atom in a conformation. Setting for a higher level will
 /// override setting for lower levels (remove it from map); Similarly, when
 /// querying a lower level finds no setting, it will check setting for its
-/// higher level. For example, setting TorisionType BB to be true will remove
+/// higher level. For example, setting TorsionType BB to be true will remove
 /// any data of BB setting for a residue or a specific BB torsion ( such as
 /// backbone psi ) in a residue. And querying setting for BB torsion 2 of
 /// residue 4 will first check if there is any specific setting, if not,
@@ -79,7 +81,7 @@ namespace kinematics {
 ///     ShearMover
 ///     SmallMover
 class MoveMap: public utility::pointer::ReferenceCount {
- public:
+public:
 	///@brief Automatically generated virtual destructor for class deriving directly from ReferenceCount
 	virtual ~MoveMap();
 	// ids
@@ -91,19 +93,20 @@ class MoveMap: public utility::pointer::ReferenceCount {
 	typedef id::TorsionType TorsionType;
 	typedef id::TorsionID TorsionID;
 
+	// TODO: should probably make this a class/struct
 	/// @brief  Our own specific torsion_id
-	/// TorsionType can BB, CHI and JUMP. Thefore it doesnt distinguish torsion,eg phi/psi/omega
-	/// in BB torsion. Useful when setting residue k backbone fixed.
-	/// should probably make this a class/struct
+	/// @details TorsionType can be BB, CHI, NU, or JUMP.  Therefore, it doesn't distinguish specific torsions,
+	/// e.g., phi/psi/omega in BB torsion.  Useful when setting residue k backbone fixed.
 	typedef std::pair< Size, TorsionType > MoveMapTorsionID;
 
-	/// @brief flexible or fixed for this TorsionType (BB, CHI, JUMP), for all residues
+	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, JUMP), for all residues
 	typedef std::map< TorsionType, bool > TorsionTypeMap;
 
-	/// @brief flexible or fixed for this TorsionType (BB, CHI, JUMP), for one residue, eg no distinction betwen phi/psi/omega
+	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, JUMP), for one residue,
+	/// e.g., no distinction between phi/psi/omega
 	typedef std::map< MoveMapTorsionID, bool > MoveMapTorsionID_Map;
 
-	/// @brief flexible or fixed for a single torsion, eg, psi (BB torsion 2) of residue 10
+	/// @brief flexible or fixed for a single torsion, e.g., psi (BB torsion 2) of residue 10
 	typedef std::map< TorsionID, bool > TorsionID_Map;
 
 	/// @brief flexible or fixed for this DOF_Type (PHI, THETA, D, RB1-6), for all atoms
@@ -133,6 +136,7 @@ class MoveMap: public utility::pointer::ReferenceCount {
 	/// See also:
 	///     MoveMap
 	///     MoveMap.set_chi
+	///     MoveMap.set_nu
 	///     Pose
 	///     MinMover
 	///     ShearMover
@@ -151,6 +155,7 @@ class MoveMap: public utility::pointer::ReferenceCount {
 	/// See also:
 	///     MoveMap
 	///     MoveMap.set_chi
+	///     MoveMap.set_nu
 	///     Pose
 	///     MinMover
 	///     ShearMover
@@ -168,8 +173,8 @@ class MoveMap: public utility::pointer::ReferenceCount {
 	void
 	set_bb( utility::vector1< bool > allow_bb )
 	{
-		for( Size ii = 1; ii <= allow_bb.size(); ii++ )
-			set( MoveMapTorsionID( ii, BB ), allow_bb[ii] );
+		for( Size ii = 1; ii <= allow_bb.size(); ++ii )
+			set( MoveMapTorsionID( ii, id::BB ), allow_bb[ii] );
 	}
 
 	/// @brief Sets the BB torsions between residues  <begin>  and  <end>
@@ -181,6 +186,7 @@ class MoveMap: public utility::pointer::ReferenceCount {
 	///     MoveMap
 	///     MoveMap.set_bb
 	///     MoveMap.set_chi
+	///     MoveMap.set_nu
 	///     Pose
 	///     MinMover
 	///     ShearMover
@@ -193,7 +199,7 @@ class MoveMap: public utility::pointer::ReferenceCount {
 		PyAssert( (end>0), "MoveMap::set_bb_true_range( Size const begin , Size const end ): input variable end has a meaningless value");
 		PyAssert( (begin <= end), "MoveMap::set_bb_true_range( Size const begin, Size const end): input variable begin < input variable end");
 		set_bb(false);
-		for( Size ir=begin;ir<=end;ir++) set_bb(ir, true);
+		for( Size ir=begin; ir<=end; ++ir ) set_bb(ir, true);
 	}
 
 	/// @brief Prevents backbone torsion modifications to the intervals specified
@@ -201,13 +207,14 @@ class MoveMap: public utility::pointer::ReferenceCount {
 	/// begin and end indices. Counting begins with 1.
 	void set_ranges_unmodifiable(const std::vector<std::pair<Size, Size> >& ranges);
 
-	/// @brief Sets whether of not CHI TorsionType is movable
+	/// @brief Sets whether or not CHI TorsionType is movable
 	///
 	/// example:
 	///     movemap.set_chi(True)
 	/// See also:
 	///     MoveMap
 	///     MoveMap.set_bb
+	///     MoveMap.set_nu
 	///     Pose
 	///     MinMover
 	///     ShearMover
@@ -226,6 +233,7 @@ class MoveMap: public utility::pointer::ReferenceCount {
 	/// See also:
 	///     MoveMap
 	///     MoveMap.set_bb
+	///     MoveMap.set_nu
 	///     Pose
 	///     MinMover
 	///     ShearMover
@@ -242,7 +250,7 @@ class MoveMap: public utility::pointer::ReferenceCount {
 	void
 	set_chi( utility::vector1< bool > allow_chi )
 	{
-		for( Size ii = 1; ii <= allow_chi.size(); ii++ )
+		for( Size ii = 1; ii <= allow_chi.size(); ++ii )
 			set( MoveMapTorsionID( ii, id::CHI ), allow_chi[ii] );
 	}
 
@@ -256,22 +264,103 @@ class MoveMap: public utility::pointer::ReferenceCount {
 	///     MoveMap.set_bb
 	///     MoveMap.set_bb_true_range
 	///     MoveMap.set_chi
+	///     MoveMap.set_nu
+	///     MoveMap.set_nu_true_range
 	///     Pose
 	///     MinMover
 	///     ShearMover
 	///     SmallMover
-	// added by Labonte
 	inline
-	void set_chi_true_range(Size const begin, Size const end)
+	void set_chi_true_range(core::uint const begin, core::uint const end)
 	{
-		PyAssert((begin > 0), "MoveMap::set_chi_true_range(Size const begin, Size const end): input variable begin has a meaningless value");
-		PyAssert((end > 0), "MoveMap::set_chi_true_range(Size const begin, Size const end): input variable end has a meaningless value");
-		PyAssert((begin <= end), "MoveMap::set_chi_true_range(Size const begin, Size const end): input variable begin must be <= input variable end");
+		PyAssert((begin > 0), "MoveMap::set_chi_true_range(core::uint const begin, core::uint const end): "
+				"Input variable <begin> has a meaningless value.");
+		PyAssert((end > 0), "MoveMap::set_chi_true_range(core::uint const begin, core::uint const end): "
+				"Input variable <end> has a meaningless value.");
+		PyAssert((begin <= end), "MoveMap::set_chi_true_range(core::uint const begin, core::uint const end): "
+				"Input variable <begin> must be <= input variable <end>.");
 		set_chi(false);
 		for(Size res = begin; res <= end; ++res) {
 			set_chi(res, true);
 		}
 	}
+
+	/// @brief Set whether or not NU TorsionTypes are movable.
+	///
+	/// @details Example: movemap.set_nu(True)\n
+	/// See also:\n
+	///     MoveMap\n
+	///     MoveMap.set_bb\n
+	///     MoveMap.set_chi\n
+	///     Pose\n
+	///     MinMover\n
+	///     ShearMover\n
+	///     SmallMover
+	inline
+	void
+	set_nu(bool const setting)
+	{
+		set(id::NU, setting);
+	}
+
+	/// @brief Set whether or not the NU torsions of residue <seqpos> are movable.
+	/// @details Example: movemap.set_nu(49, True)\n
+	/// See also:\n
+	///     MoveMap\n
+	///     MoveMap.set_bb\n
+	///     MoveMap.set_chi\n
+	///     Pose\n
+	///     MinMover\n
+	///     ShearMover\n
+	///     SmallMover
+	void
+	set_nu(core::uint const seqpos, bool const setting)
+	{
+		PyAssert((seqpos > 0), "MoveMap::set_nu(core::uint const seqpos, bool const setting): "
+				"Input variable <seqpos> has a meaningless value.");
+		set(MoveMapTorsionID(seqpos, id::NU), setting);
+	}
+
+	/// @brief Set which NU torsions are movable based on input array.
+	inline
+	void
+	set_nus(utility::vector1<bool> const settings)
+	{
+		Size const n_settings = settings.size();
+		for (uint i = 1; i <= n_settings; ++i) {
+			set(MoveMapTorsionID(i, id::NU), settings[i]);
+		}
+	}
+
+	/// @brief Set the NU torsions between residues <begin> and <end>
+	/// as movable and all other residues are non-movable.
+	/// @details Example: movemap.set_nu_true_range(40, 60)\n
+	/// See also:\n
+	///     MoveMap\n
+	///     MoveMap.set_bb\n
+	///     MoveMap.set_bb_true_range\n
+	///     MoveMap.set_chi\n
+	///     MoveMap.set_chi_true_range\n
+	///     MoveMap.set_nu\n
+	///     Pose\n
+	///     MinMover\n
+	///     ShearMover\n
+	///     SmallMover
+	inline
+	void set_nu_true_range(core::uint const begin, core::uint const end)
+	{
+		PyAssert((begin > 0), "MoveMap::set_nu_true_range(core::uint const begin, core::uint const end): "
+				"Input variable <begin> has a meaningless value.");
+		PyAssert((end > 0), "MoveMap::set_nu_true_range(core::uint const begin, core::uint const end): "
+				"Input variable <end> has a meaningless value.");
+		PyAssert((begin <= end), "MoveMap::set_nu_true_range(core::uint const begin, core::uint const end): "
+				"Input variable <begin> must be <= input variable <end>.");
+		set_nu(false);
+		for(uint resnum = begin; resnum <= end; ++resnum) {
+			set_nu(resnum, true);
+		}
+	}
+
 
 	/// @brief Sets whether or not JUMP TorsionType is moveable
 	///
@@ -310,23 +399,23 @@ class MoveMap: public utility::pointer::ReferenceCount {
 	void
 	set_jump( id::JumpID const & jump, bool const setting );
 
-	/// @brief set a specific TorsionType moveable; currently BB, CHI, or JUMP
+	/// @brief set a specific TorsionType movable: currently BB, CHI, NU, or JUMP
 	void
 	set( TorsionType const & t, bool const setting );
 
-	/// @brief set TorsionType flexible or fixed for one residue, eg BB torsions for residue 10
+	/// @brief set TorsionType flexible or fixed for one residue, e.g., BB torsions for residue 10
 	void
 	set( MoveMapTorsionID const & id, bool const setting );
 
-	/// @brief set an individual Torsion moveable or now, eg, "BB torsion 2 of residue 4"
+	/// @brief set an individual Torsion movable for now, e.g., "BB torsion 2 of residue 4"
 	void
 	set( TorsionID const & id, bool const setting );
 
-	/// @brief set atom tree DOF, eg D, PHI, THETA
+	/// @brief set atom tree DOF, e.g., D, PHI, THETA
 	void
 	set( DOF_Type const & t, bool const setting );
 
-	/// @brief set for an individual dof, eg "PHI of Atom 3 in Residue 5"
+	/// @brief set for an individual DoF, e.g., "PHI of Atom 3 in Residue 5"
 	void
 	set( DOF_ID const & id, bool const setting );
 
@@ -340,7 +429,7 @@ public: // accessors
 	get_bb( Size const seqpos ) const
 	{
 		PyAssert( (seqpos>0), "MoveMap::get_bb( Size const seqpos ): input variable seqpos has a meaningless value");
-		return get( MoveMapTorsionID( seqpos, BB ) );
+		return get( MoveMapTorsionID( seqpos, id::BB ) );
 	}
 
 	/// @brief Returns if SC torsions are movable or not for residue  <seqpos>
@@ -352,7 +441,18 @@ public: // accessors
 	get_chi( int const seqpos ) const
 	{
 		PyAssert( (seqpos>0), "MoveMap::get_chi( int const seqpos ): input variable seqpos has a meaningless value");
-		return get( MoveMapTorsionID( seqpos, CHI ) );
+		return get( MoveMapTorsionID( seqpos, id::CHI ) );
+	}
+
+	/// @brief Return if NU torsions are movable or not for residue <seqpos>.
+	/// @details: Example: movemap.get_nu(49)
+	inline
+	bool
+	get_nu(core::uint const seqpos) const
+	{
+		PyAssert((seqpos > 0), "MoveMap::get_nu(core::uint const seqpos): "
+				"Input variable <seqpos> has a meaningless value.");
+		return get(MoveMapTorsionID(seqpos, id::NU));
 	}
 
 	/// @brief Returns if JUMP  <jump_number>  is movable or not
@@ -553,6 +653,7 @@ public: // status
 
 	void
 	show( std::ostream & out) const;
+
 	void
 	show() const { show(std::cout);};
 
@@ -575,10 +676,11 @@ private: // movemap-movemap functionality
 	// implementation of the data
 	// WARNING: if you add something here also add it to ::clear() and ::import()
 
-	/// @brief flexible or fixed for this TorsionType (BB, CHI, JUMP), for all residues
+	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, JUMP), for all residues
 	TorsionTypeMap torsion_type_map_;
 
-	/// @brief flexible or fixed for this TorsionType (BB, CHI, JUMP), for one residue, eg no distinction betwen phi/psi/omega
+	/// @brief flexible or fixed for this TorsionType (BB, CHI, NU, JUMP), for one residue,
+	/// e.g., no distinction between phi/psi/omega
 	MoveMapTorsionID_Map move_map_torsion_id_map_;
 
 	/// @brief flexible or fixed for a single torsion, eg, psi (BB torsion 2) of residue 10

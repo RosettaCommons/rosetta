@@ -29,12 +29,6 @@
 namespace core {
 namespace conformation {
 
-// ResidueTypeOP
-// ResidueFactory::create_residue_type( chemical::AtomTypeSetCAP atom_types, chemical::MMAtomTypeSetCAP mm_atom_types )
-// {
-// 	return new ResidueType( atom_types, mm_atom_types );
-// }
-
 ResidueOP
 ResidueFactory::create_residue( chemical::ResidueType const & rsd_type )
 {

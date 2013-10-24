@@ -25,21 +25,20 @@
 
 // Project headers
 #include <core/kinematics/MoveMap.fwd.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
-
-
-#include <basic/Tracer.hh>
-
-#include <ObjexxFCL/format.hh>
-
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
+
+// Basic headers
+#include <basic/Tracer.hh>
+
+// Utility headers
 #include <utility/vector1.hh>
+
+// External headers
+#include <ObjexxFCL/format.hh>
 
 
 using namespace ObjexxFCL::format;

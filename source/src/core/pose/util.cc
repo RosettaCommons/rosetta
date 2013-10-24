@@ -2213,23 +2213,31 @@ setup_dof_mask_from_move_map(
 		// PHIL also note the pose.conformation() interface
 
 		conformation::Residue const & rsd( pose.residue(i));
-		Size const n_bb_torsions( rsd.mainchain_atoms().size() );
-		Size n_cyclic_torsions = 0;  // By default, a residue is acyclic.
-		if (rsd.is_carbohydrate()) {
-			// This currently assumes that all saccharide residues are rings.
-			// TODO: Make this more generic for any rings and remove reliance on CarbohydrateInfo; see below.
 
-			if (rsd.carbohydrate_info()->has_exocyclic_linkage()) {
-				n_cyclic_torsions = n_bb_torsions - 3;  // minus PHI, PSI, & OMEGA, the actual BB torsions
+		// first the backbone torsion angles
+		Size const n_bb_torsions( rsd.mainchain_atoms().size() );
+
+		// Note: In many (most?) cases, a ResidueType with a ring will have overlap between its internal ring torsions
+		// and its main-chain torsions as defined by the AtomTree.  In such cases, the ring atoms may or may not be
+		// considered part of the backbone.  For example, in the case of carbohydrates, phi, psi, and omega are to be
+		// considered backbone torsions, but the other main-chain torsions should be ignored.  If one wants to modify
+		// those other mainchain torsions, they should be treated as nu angles.  This block of code is specific to
+		// carbohydrates, but if any other ResidueTypes have strict definitions of backbone vs ring angles, similar code
+		// could be added here to "subtract out" main chain torsions already covered by nu torsions. ~Labonte
+		Size n_cyclic_main_chain_torsions = 0;  // By default, a residue is acyclic.
+		if (rsd.is_carbohydrate()) {
+			if (rsd.carbohydrate_info()->is_acyclic()) {
+				n_cyclic_main_chain_torsions = 0;
+			} else if (rsd.carbohydrate_info()->has_exocyclic_linkage()) {
+				n_cyclic_main_chain_torsions = n_bb_torsions - 3;  // minus PHI, PSI, & OMEGA, the actual BB torsions
 			} else /* doesn't have an omega angle */ {
-				n_cyclic_torsions = n_bb_torsions - 2;  // minus PHI & PSI, the actual BB torsions
+				n_cyclic_main_chain_torsions = n_bb_torsions - 2;  // minus PHI & PSI, the actual BB torsions
 			}
 		}
 
-		// first the backbone torsion angles
 		for ( uint j=1; j<= n_bb_torsions; ++j ) {
 			bool mm_setting;
-			if (j <= n_cyclic_torsions) {
+			if (j <= n_cyclic_main_chain_torsions) {
 				mm_setting = false;  // Do not move "backbone" torsions that are part of a ring.
 			} else {
 				mm_setting = mm.get(TorsionID(i, BB, j));
@@ -2239,29 +2247,35 @@ setup_dof_mask_from_move_map(
 			if ( id.valid() ) {  // If not valid, it's probably just a terminal/chainbreak torsion.
 				dof_mask[ id ] = mm_setting;
 			}
-		} // j=1, bb-torsions
+		} // j=1, n_bb_torsions
 
 		// then the side chain torsions
 		Size const n_chi_torsions( rsd.nchi() );
-		Size const n_actual_chi_torsions = n_chi_torsions - n_cyclic_torsions;
-		for ( uint j=1; j<= n_chi_torsions; ++j ) {
-			bool mm_setting;
-			if (j > n_actual_chi_torsions) {
-				mm_setting = false;  // Do not move CHI torsions that are actually nu torsions.
-			} else {
-				mm_setting = mm.get(TorsionID(i, CHI, j));
-			}
+		for ( uint j = 1; j <= n_chi_torsions; ++j ) {
+			bool mm_setting = mm.get(TorsionID(i, CHI, j));
 			if ( mm_setting == PHI_default ) continue;
 			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id(TorsionID(i, CHI, j)));
 			if ( id.valid() ) {
 				dof_mask[ id ] = mm_setting;
 			} else {
 				TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
-							"Rosetta chi angle: residue " << i << ' chi ' << j << std::endl;
+						"Rosetta chi angle: residue " << i << " CHI " << j << std::endl;
 			}
-		} // j=1,chi-torsions
+		} // j=1, n_chi_torsions
 
-		// TODO: If I end up adding cyclic torsions as a separate DOF type, add similar code here. ~Labonte
+		// finally, the internal ring torsions
+		Size const n_nu_torsions = rsd.n_nus();
+		for ( uint j = 1; j <= n_nu_torsions; ++j ) {
+			bool mm_setting = mm.get(TorsionID(i, NU, j));
+			if ( mm_setting == PHI_default ) continue;
+			DOF_ID const & id( pose.conformation().dof_id_from_torsion_id(TorsionID(i, NU, j)));
+			if ( id.valid() ) {
+				dof_mask[ id ] = mm_setting;
+			} else {
+				TR.Warning << "WARNING: Unable to find atom_tree atom for this " <<
+						"Rosetta nu angle: residue " << i << " NU " << j << std::endl;
+			}
+		} // j=1, n_nu_torsions
 	} // i=1, n_res
 
 	// Jumps.

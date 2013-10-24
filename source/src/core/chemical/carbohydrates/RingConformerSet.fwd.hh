@@ -27,9 +27,6 @@ struct RingConformer;
 /// @brief  A class containing data and methods for the set of possible ring conformations for a carbohydrate residue.
 class RingConformerSet;
 
-typedef utility::pointer::owning_ptr<RingConformer> RingConformerOP;
-typedef utility::pointer::owning_ptr<RingConformer const> RingConformerCOP;
-
 typedef utility::pointer::owning_ptr<RingConformerSet> RingConformerSetOP;
 typedef utility::pointer::owning_ptr<RingConformerSet const> RingConformerSetCOP;
 

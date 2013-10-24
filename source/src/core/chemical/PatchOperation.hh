@@ -261,7 +261,7 @@ public:
 		Size const & chino_in, Real const & mean_in, Real const & sdev_in
 	);
 
-	/// add a rotamer sample
+	/// @brief add a rotamer sample
 	bool
 	apply( ResidueType & rsd ) const;
 

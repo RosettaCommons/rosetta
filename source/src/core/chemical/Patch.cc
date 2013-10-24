@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 //////////////////////////////////////////////////////////////////////
-/// @begin Patch.cc
+/// @file Patch.cc
 ///
 /// @brief
 /// implementation class for abstract class Residue
@@ -154,24 +154,13 @@
 // Unit headers
 #include <core/chemical/Patch.hh>
 
-// Package Headers
-// Commented by inclean daemon #include <core/chemical/PatchOperation.hh>
-
-
-// ObjexxFCL headers
-
-// Numeric headers
-
-
 // Utility headers
-
-
-// C++ headers
-// Commented by inclean daemon #include <sstream>
-#include <fstream>
-
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
+
+// C++ headers
+#include <fstream>
+
 
 namespace core {
 namespace chemical {
@@ -244,7 +233,7 @@ case_from_lines(
 }
 
 /// @details First clone the base ResidueType. Then patching for this case is done by applying all the operations. Finally
-///	 call finalize() to update all primary and derived data for the new ResidueType
+/// call finalize() to update all primary and derived data for the new ResidueType
 ResidueTypeOP
 PatchCase::apply( ResidueType const & rsd_in ) const
 {
@@ -354,10 +343,10 @@ Patch::read_file( std::string const & filename )
 ResidueTypeOP
 Patch::apply( ResidueType const & rsd_type ) const
 {
-	if ( !applies_to( rsd_type ) ) return 0; // I don't know how to patch this residue
+	if ( !applies_to( rsd_type ) ) return 0;  // I don't know how to patch this residue.
 
 	using namespace basic;
-	static basic::Tracer core_chemical("core.chemical");
+	//static basic::Tracer core_chemical("core.chemical");  // unused, I think ~Labonte
 
 	for ( utility::vector1< PatchCaseOP >::const_iterator iter= cases_.begin(),
 			iter_end = cases_.end(); iter != iter_end; ++iter ) {
@@ -367,7 +356,7 @@ Patch::apply( ResidueType const & rsd_type ) const
 			ResidueTypeOP patched_rsd_type( (*iter)->apply( rsd_type ) );
 			if ( patched_rsd_type ) {
 				// patch succeeded!
-			//	std::cout << "name of patched residue " << patched_rsd_type->name() << std::endl;
+			//	tr.Debug << "name of patched residue " << patched_rsd_type->name() << std::endl;
 				if ( !replaces_residue_type_ ) {
 					for ( utility::vector1< VariantType >::const_iterator iter=types_.begin(),
 							iter_end = types_.end(); iter != iter_end; ++iter ) {

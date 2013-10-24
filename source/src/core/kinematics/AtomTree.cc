@@ -439,19 +439,18 @@ AtomTree::jump( AtomID const & id ) const
 
 
 /////////////////////////////////////////////////////////////////////////////
-/// @brief get the DOF_ID of a torsion angle given those four atoms which define this torsion
-///
+//get the DOF_ID of a torsion angle given those four atoms which define this torsion
 /// @details an "offset" value is also calculated that torsion(id1,id2,id3,id4) = dof( dof_id ) + offset.
 /// A BOGUS_DOF_ID will be returned if no proper DOF can be found for these four atoms.
 /// offset is mainly for an atom with a previous sibling as the torsion(PHI) attached
 /// to it is calculated as improper angle with respect to its sibling.
 id::DOF_ID
 AtomTree::torsion_angle_dof_id(
-	AtomID const & atom1_in_id,
-	AtomID const & atom2_in_id,
-	AtomID const & atom3_in_id,
-	AtomID const & atom4_in_id,
-	Real & offset
+		AtomID const & atom1_in_id,
+		AtomID const & atom2_in_id,
+		AtomID const & atom3_in_id,
+		AtomID const & atom4_in_id,
+		Real & offset
 ) const
 {
 	using numeric::conversions::degrees;
@@ -460,64 +459,45 @@ AtomTree::torsion_angle_dof_id(
 	using numeric::dihedral;
 	using numeric::dihedral_radians;
 
-	bool const debug( false );
+	//bool const debug( false );
 
-	// we use the internal dof's if necessary to calculate the offset
+	// We use the internal DoFs if necessary to calculate the offset.
 	update_internal_coords();
 
-	if ( debug ) update_xyz_coords();
+	//if ( debug ) update_xyz_coords();
 
 	assert( atom_pointer( atom1_in_id ) && atom_pointer( atom2_in_id ) &&
 					atom_pointer( atom3_in_id ) && atom_pointer( atom4_in_id ) );
 
-	// STUART -- (low priority) I'd like to be able to cache
-	// the results of this calculation to allow faster access.
-
+	// TODO: STUART -- (low priority) I'd like to be able to cache the results of this calculation
+	// to allow faster access.
 
 	AtomCOP
-		atom1_in( atom_pointer( atom1_in_id ) ),
-		atom2_in( atom_pointer( atom2_in_id ) ),
-		atom3_in( atom_pointer( atom3_in_id ) ),
-		atom4_in( atom_pointer( atom4_in_id ) );
-	AtomCOP atom1( atom1_in ), atom2( atom2_in ),
-		atom3( atom3_in ), atom4( atom4_in );
-	// reorder the atoms if necessary
-	// we want it to be the case that atom4 has
-	// input_stub_atom1 == atom3 and
-	// input_stub_atom2 == atom2
-	//
+			atom1_in( atom_pointer( atom1_in_id ) ),
+			atom2_in( atom_pointer( atom2_in_id ) ),
+			atom3_in( atom_pointer( atom3_in_id ) ),
+			atom4_in( atom_pointer( atom4_in_id ) );
+	AtomCOP atom1( atom1_in ), atom2( atom2_in ), atom3( atom3_in ), atom4( atom4_in );
+
+	// Reorder the atoms if necessary.
+	// We want it to be the case that atom4 has input_stub_atom1 == atom3 and input_stub_atom2 == atom2.
+
 	if ( !atom4->is_jump() &&
-		!atom4->keep_dof_fixed( PHI ) && // not stub atom3 of a jump
-		atom4->input_stub_atom1() == atom3 &&
-		atom4->input_stub_atom2() == atom2 &&
-		atom4->input_stub_atom3() == atom1 ) {
-		// pass -- this is what we want, perfect match!!
-	} else if ( !atom1->is_jump() &&
-		!atom1->keep_dof_fixed( PHI ) && // not stub atom3 of a jump
-		atom1->input_stub_atom1() == atom2 &&
-		atom1->input_stub_atom2() == atom3 &&
-		atom1->input_stub_atom3() == atom4 ) {
-		// perfect case in reverse, want to reverse the order of the atoms
-		atom1 = atom4_in;
-		atom2 = atom3_in;
-		atom3 = atom2_in;
-		atom4 = atom1_in;
-	} else if ( !atom4->is_jump() &&
-		!atom4->keep_dof_fixed( PHI ) && // not stub atom3 of a jump
-		atom4->input_stub_atom1() == atom3 &&
-		atom4->input_stub_atom2() == atom2 ) {
+			!atom4->keep_dof_fixed( id::PHI ) && // not stub atom3 of a jump
+			atom4->input_stub_atom1() == atom3 &&
+			atom4->input_stub_atom2() == atom2 ) {
 		// pass -- this is what we want, not quite as perfect as 1st case though
 	} else if ( !atom1->is_jump() &&
-		!atom1->keep_dof_fixed( PHI ) && // not stub atom3 of a jump
-		atom1->input_stub_atom1() == atom2 &&
-		atom1->input_stub_atom2() == atom3 ) {
+			!atom1->keep_dof_fixed( id::PHI ) && // not stub atom3 of a jump
+			atom1->input_stub_atom1() == atom2 &&
+			atom1->input_stub_atom2() == atom3 ) {
 		// reverse the order of the atoms
 		atom1 = atom4_in;
 		atom2 = atom3_in;
 		atom3 = atom2_in;
 		atom4 = atom1_in;
 	} else {
-		// no good!
+		TR.Error << "No proper DoF can be found for these four atoms!" << std::endl;
 		return id::BOGUS_DOF_ID;
 	}
 
@@ -525,37 +505,37 @@ AtomTree::torsion_angle_dof_id(
 
 	if ( atom4->input_stub_atom3() == atom1 ) {
 		// perfect match
-		return DOF_ID( atom4->id(), PHI );
+		return DOF_ID( atom4->id(), id::PHI );
 	}
 
 	assert( !atom4->is_jump() &&
-		atom4->input_stub_atom0() == atom3 &&
-		atom4->input_stub_atom1() == atom3 &&
-		atom4->input_stub_atom2() == atom2 &&
-		atom4->parent() == atom3 );
+			atom4->input_stub_atom0() == atom3 &&
+			atom4->input_stub_atom1() == atom3 &&
+			atom4->input_stub_atom2() == atom2 &&
+			atom4->parent() == atom3 );
 
 	// special case if atoms 1 and 4 are siblings -- not really well defined!
 	if ( atom1->parent() == atom3 ) {
 		Size const atom1_index( atom3->child_index( atom1 ) ),
-			atom4_index( atom3->child_index( atom4 ) );
+				atom4_index( atom3->child_index( atom4 ) );
 		if ( atom1_index < atom4_index ) {
 			Real const current_value( atom3->dihedral_between_bonded_children( atom1, atom4 ) );
-			offset = current_value - atom4->dof(PHI); // since torsion(id1...id4) = dof + offset;
+			offset = current_value - atom4->dof(id::PHI); // since torsion(id1...id4) = dof + offset;
 
 			ASSERT_ONLY( Real const actual_current_value
-				( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) );)
+					( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) );)
 			assert( std::abs( basic::subtract_radian_angles( actual_current_value, current_value ) ) < 1e-3 );
-			assert( std::abs( basic::subtract_radian_angles( current_value, atom4->dof( PHI ) + offset ) ) < 1e-3 );
+			assert( std::abs( basic::subtract_radian_angles( current_value, atom4->dof( id::PHI ) + offset ) ) < 1e-3 );
 
-			return DOF_ID( atom4->id(), PHI );
+			return DOF_ID( atom4->id(), id::PHI );
 		} else {
 			Real const current_value( atom3->dihedral_between_bonded_children( atom1, atom4 ) );
-			offset = current_value - atom1->dof( PHI ); // since torsion(id1...id4) = dof + offset;
+			offset = current_value - atom1->dof( id::PHI ); // since torsion(id1...id4) = dof + offset;
 			ASSERT_ONLY( Real const actual_current_value
-				( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) );)
+					( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(), atom1->xyz() ) );)
 			assert( std::abs( basic::subtract_radian_angles( actual_current_value, current_value ) ) < 1e-3 );
-			assert( std::abs( basic::subtract_radian_angles( current_value, atom1->dof( PHI ) + offset ) ) < 1e-3 );
-			return DOF_ID( atom1->id(), PHI );
+			assert( std::abs( basic::subtract_radian_angles( current_value, atom1->dof( id::PHI ) + offset ) ) < 1e-3 );
+			return DOF_ID( atom1->id(), id::PHI );
 		}
 	}
 	// atom4 is not the first sibling of atom3, get offset for that.
@@ -563,18 +543,18 @@ AtomTree::torsion_angle_dof_id(
 		AtomCOP new_atom4( atom3->get_nonjump_atom(0) );
 		offset += atom3->dihedral_between_bonded_children( new_atom4, atom4 );
 
-		if ( debug ) { // debugging
+		/* if ( debug ) { // debugging
 			ASSERT_ONLY( Real const actual_dihedral
 				( dihedral_radians( atom4->xyz(), atom3->xyz(), atom2->xyz(),
 					new_atom4->xyz() ) );)
 			assert( std::abs( basic::subtract_radian_angles
 					( actual_dihedral, offset ) ) < 1e-3 );
-		}
+		} */
 
 		atom4 = new_atom4;
 	}
 
-	DOF_ID dof_id( atom4->id(), PHI );
+	DOF_ID dof_id( atom4->id(), id::PHI );
 
 	AtomCOP dof_atom1( atom4->input_stub_atom3() );
 
@@ -610,10 +590,9 @@ AtomTree::torsion_angle_dof_id(
 		// the angle between u2 and u1 = theta3 = pi - atom1(THETA)
 		// the angle between u2 and u3 = theta1 = pi - atom3(THETA)
 		// the torsion between u1 and u3 along u2 = phi2 = atom2->bonded_dih(1,3)
-		//
 		Real
-			theta1( pi - atom3->dof( THETA ) ),
-			theta3( pi - atom1->dof( THETA ) ),
+			theta1( pi - atom3->dof( id::THETA ) ),
+			theta3( pi - atom1->dof( id::THETA ) ),
 			phi2( atom2->dihedral_between_bonded_children( atom1, atom3 ) ),
 			sign_factor( 1.0 );
 		phi2 = basic::periodic_range( phi2, pi_2 );
@@ -636,21 +615,19 @@ AtomTree::torsion_angle_dof_id(
 		if ( !( 0 <= theta1 && theta1 <= pi &&
 				0 <= theta3 && theta3 <= pi &&
 				0 <=   phi2 &&   phi2 <= pi ) ) {
-			std::cerr << "dof_atom1 " << dof_atom1->id() << std::endl;
-			std::cerr << "atom1 " << atom1->id() << std::endl;
-			std::cerr << "atom2 " << atom2->id() << std::endl;
-			std::cerr << "atom3 " << atom3->id() << std::endl;
-			std::cerr << "atom4 " << atom4->id() << std::endl;
-			std::cerr << "THETA1 " << theta1 << std::endl;
-			std::cerr << "THETA3 " << theta3 << std::endl;
-			std::cerr << "PHI2 " << phi2 << std::endl;
+			TR.Error << "dof_atom1 " << dof_atom1->id() << std::endl;
+			TR.Error << "atom1 " << atom1->id() << std::endl;
+			TR.Error << "atom2 " << atom2->id() << std::endl;
+			TR.Error << "atom3 " << atom3->id() << std::endl;
+			TR.Error << "atom4 " << atom4->id() << std::endl;
+			TR.Error << "THETA1 " << theta1 << std::endl;
+			TR.Error << "THETA3 " << theta3 << std::endl;
+			TR.Error << "PHI2 " << phi2 << std::endl;
 
-			utility_exit_with_message
-				( "AtomTree::torsion_angle_dof_id: angle range error" );
+			utility_exit_with_message( "AtomTree::torsion_angle_dof_id: angle range error" );
 
 		}
-		// want to solve for phi3 -- dihedral between u2 and u1 along axis
-		// defined by u3
+		// want to solve for phi3 -- dihedral between u2 and u1 along axis defined by u3
 		//
 		// spherical law of cosines says:
 		//
@@ -659,7 +636,6 @@ AtomTree::torsion_angle_dof_id(
 		//
 		// so we can solve for cos(theta2); then use formula again to solve for
 		// cos(phi3).
-		//
 		Real const cos_theta2 = std::cos( theta1 ) * std::cos( theta3 ) +
 			std::sin( theta1 ) * std::sin( theta3 ) * std::cos( phi2 );
 		Real const theta2 = std::acos( cos_theta2 );
@@ -679,12 +655,11 @@ AtomTree::torsion_angle_dof_id(
 		//
 		// so offset == dof_atom1 - atom1 ~ dihedral from atom1 to dof_atom1
 
-		Real const dihedral_from_atom1_to_dof_atom1
-			( sign_factor * std::acos( cos_phi3 ) );
+		Real const dihedral_from_atom1_to_dof_atom1( sign_factor * std::acos( cos_phi3 ) );
 
 		offset += dihedral_from_atom1_to_dof_atom1;
 
-		if ( debug ) { // debugging
+		/*if ( debug ) { // debugging
 			using basic::periodic_range;
 			using basic::subtract_radian_angles;
 			Real const actual_dihedral_from_atom1_to_dof_atom1
@@ -704,7 +679,6 @@ AtomTree::torsion_angle_dof_id(
 				( std::abs( subtract_radian_angles( actual_dihedral_of_interest,
 						dof( dof_id ) + offset ) ) );)
 
-
 			ASSERT_ONLY(Real const dev3
 				( std::abs( subtract_radian_angles
 					( dof( dof_id ),
@@ -722,7 +696,7 @@ AtomTree::torsion_angle_dof_id(
 					' ' << periodic_range( dof( dof_id ) + offset, pi_2 ) <<
 					" =?= " << actual_dihedral_of_interest << std::endl;
 			}
-		}
+		}*/
 
 		return dof_id;
 	}
@@ -733,12 +707,11 @@ AtomTree::torsion_angle_dof_id(
 
 
 /////////////////////////////////////////////////////////////////////////////
-//
-/// @details brief set a specific DOF in the tree
+// set a specific DOF in the tree
 void
 AtomTree::set_dof(
-	DOF_ID const & id,
-	Real const setting
+		DOF_ID const & id,
+		Real const setting
 )
 {
 	update_internal_coords();
@@ -790,19 +763,19 @@ AtomTree::set_jump(
 
 
 /////////////////////////////////////////////////////////////////////////////
-/// @note DEPRICATED.  AtomID must point to a JumpAtom, otherwise it will die.
-/// Hopefully, the new output-sentitive refold will make this method unneccessary
+/// @note DEPRECATED.  AtomID must point to a JumpAtom, otherwise it will die.
+/// Hopefully, the new output-sensitive refold will make this method unnecessary
 void
 AtomTree::set_jump_now(
 	AtomID const & id,
 	Jump const & jump
 )
 {
-	/// set_jump_now no longer necessary.  Commented-out implementation below is buggy
-	/// because the Conformation does not get its list of changed residues updated; so while
-	/// the coordinates in the atom tree are updated, the coordinates in the Conformation are not.
-	/// Instead of fixing this bug to handle this special case "set now", rely on the functional
-	/// and more efficient output-sensitive "set_jump"
+	// set_jump_now no longer necessary.  Commented-out implementation below is buggy
+	// because the Conformation does not get its list of changed residues updated; so while
+	// the coordinates in the atom tree are updated, the coordinates in the Conformation are not.
+	// Instead of fixing this bug to handle this special case "set now", rely on the functional
+	// and more efficient output-sensitive "set_jump"
 	set_jump( id, jump );
 
 	// We use our parent atoms' positions to find our stub,
@@ -822,33 +795,30 @@ AtomTree::set_jump_now(
 
 
 /////////////////////////////////////////////////////////////////////////////
-/// @ details it is possible that no DOF can be obtained given these four atoms or the torsion
+/// @details It is possible that no DOF can be obtained given these four atoms or the torsion
 /// does not match exactly the DOF(PHI) angle. In the former case, a BOGUS_DOF_ID is
 /// returned as indicator and in the latter case, an offset value is deducted from
 /// input setting to set the real DOF value properly.
 id::DOF_ID
 AtomTree::set_torsion_angle(
-	AtomID const & atom1,
-	AtomID const & atom2,
-	AtomID const & atom3,
-	AtomID const & atom4,
-	Real const setting
+		AtomID const & atom1,
+		AtomID const & atom2,
+		AtomID const & atom3,
+		AtomID const & atom4,
+		Real const setting
 )
 {
-
 	Real offset;
-	DOF_ID const & id
-		( torsion_angle_dof_id( atom1, atom2, atom3, atom4, offset ) );
+	DOF_ID const & id( torsion_angle_dof_id( atom1, atom2, atom3, atom4, offset ) );
 
 	if ( !id.valid() ) {
-		// couldnt find this angle
+		TR.Warning << "DOF for this torsion angle could not be found in AtomTree." << std::endl;
 		return id;
 	}
 
 	// note: offset is defined (see torsion_angle_dof_id) so that
 	//
 	// torsion(atom1,atom2,atom3,atom4) = dof(id) + offset
-	//
 
 	set_dof( id, setting - offset );
 
@@ -1206,13 +1176,12 @@ AtomTree::operator=( AtomTree const & src )
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details update_internal_coords would be called in situations where we want
-/// to ensure that the internal degrees are valid, eg when we are about
+/// to ensure that the internal degrees are valid, e.g., when we are about
 /// to set a new internal DOF.
 /// @note private method, const to allow lazy updating of
 /// @note see usage in AtomTree.cc
 /// @note these guys are const because of the lazy updating scheme we are using:
 /// they need to be called from within const accessing functions.
-
 void
 AtomTree::update_internal_coords() const
 {
@@ -1220,9 +1189,9 @@ AtomTree::update_internal_coords() const
 	assert( ! ( xyz_coords_need_updating_ && internal_coords_need_updating_ ) );
 
 	if ( internal_coords_need_updating_ ) {
-		if ( !root_ ) utility_exit_with_message("phil how did we get here?-1");
+		if ( !root_ ) utility_exit_with_message("Attempting to update an AtomTree with no root!");
 
-		PROF_START( basic::ATOM_TREE_UPDATE_INTERNAL_COORDS ); // profiling
+		PROF_START( basic::ATOM_TREE_UPDATE_INTERNAL_COORDS );  // profiling
 		root_->update_internal_coords( default_stub );
 		PROF_STOP ( basic::ATOM_TREE_UPDATE_INTERNAL_COORDS );
 
@@ -1505,11 +1474,9 @@ AtomTree::get_frag_atoms(
 
 
 /////////////////////////////////////////////////////////////////////////////
-/// id is a frag atom
+/// @details id is a frag atom
 ///
 /// look for two more nearby frag atoms to define a pseudo-stub for getting coords for parents or children of this atom
-///
-
 id::StubID
 AtomTree::get_frag_pseudo_stub_id(
 	AtomID const & id,
@@ -1566,8 +1533,7 @@ AtomTree::get_frag_pseudo_stub_id(
 
 
 /////////////////////////////////////////////////////////////////////////////
-/// private helper for fragment insertion routines
-///
+/// @details private helper for fragment insertion routines
 Stub
 AtomTree::get_frag_local_stub(
 	StubID const & stubid,
@@ -1610,11 +1576,9 @@ AtomTree::get_frag_local_stub(
 }
 
 /////////////////////////////////////////////////////////////////////////////
-/// private helper for fragment insertion routines
+/// @details private helper for fragment insertion routines
 ///
 /// id is either in frag or a child or a gchild or a parent
-///
-
 Vector
 AtomTree::get_frag_local_xyz(
 	AtomID const & id,
@@ -1646,9 +1610,9 @@ AtomTree::get_frag_local_xyz(
 
 
 }
+
 /////////////////////////////////////////////////////////////////////////////
-/// private helper for fragment insertion routines
-///
+/// @details private helper for fragment insertion routines
 Vector
 AtomTree::get_frag_descendant_local_xyz(
 	AtomCOP atom,
@@ -1690,8 +1654,7 @@ AtomTree::get_frag_descendant_local_xyz(
 }
 
 /////////////////////////////////////////////////////////////////////////////
-/// private helper for fragment insertion routines
-///
+/// @details private helper for fragment insertion routines
 Vector
 AtomTree::get_frag_parent_local_xyz(
 	AtomCOP child,
@@ -1720,7 +1683,6 @@ AtomTree::get_frag_parent_local_xyz(
 // and all the outgoing connections should be accounted for.
 //
 // This is all checked in assert statements.
-//
 void
 AtomTree::insert_single_fragment(
 	StubID const & instub_id,
@@ -1843,7 +1805,6 @@ AtomTree::set_jump_atom_stub_id(
 
 /////////////////////////////////////////////////////////////////////////////
 // completely new plan
-//
 void
 AtomTree::insert_fragment(
 	StubID const & instub_id,

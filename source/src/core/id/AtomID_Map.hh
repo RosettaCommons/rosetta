@@ -507,7 +507,7 @@ swap( AtomID_Map<T> & a, AtomID_Map<T> & b )
 
 
 
-// PyRosetta concreate types
+// PyRosetta concrete types
 class AtomID_Map_AtomID: public AtomID_Map< AtomID > {}; 
 
 	

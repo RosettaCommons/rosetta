@@ -20,7 +20,6 @@
 #include <numeric/xyz.functions.hh>
 
 
-
 namespace core {
 namespace kinematics {
 
@@ -29,7 +28,7 @@ Stub::Stub( RT const & rt ):
 	v( rt.get_translation() )
 {}
 
-/// @brief output operator, 3x3 matrix followd by an xyzVector
+/// @brief output operator, 3x3 matrix followed by an xyzVector
 std::ostream &
 operator<<( std::ostream & os, Stub const & a )
 {
@@ -97,9 +96,7 @@ Stub::build_fake_xyz( Size const index ) const
 }
 
 
-/// @brief Globals
-///
-/// @details a stub center at 0.0 with lab frame(identy matrix)
+/// @details a stub center at 0.0 with lab frame(identity matrix)
 Stub /* const */ default_stub( Stub::Matrix::identity(), Stub::Vector( 0.0 ) );
 
 

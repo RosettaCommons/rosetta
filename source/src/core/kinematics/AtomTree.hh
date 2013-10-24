@@ -20,54 +20,40 @@
 #include <core/kinematics/AtomTree.fwd.hh>
 
 // Package headers
-#ifdef WIN32
-#include <core/kinematics/AtomWithDOFChange.hh>
-#endif
-// AUTO-REMOVED #include <core/kinematics/AtomPointer.hh>
-// AUTO-REMOVED #include <core/kinematics/Edge.fwd.hh>
+#include <core/kinematics/DomainMap.fwd.hh>
+#include <core/kinematics/AtomPointer.fwd.hh>
+#include <core/kinematics/AtomWithDOFChange.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/tree/Atom.hh> // apl temp, until all of AtomTree's methods are moved into its .cc file
 #ifdef WIN32
 #include <core/kinematics/tree/Atom.hh>
+#include <core/kinematics/AtomWithDOFChange.hh>
 #endif
+
+// Project headers
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
-
-// ObjexxFCL headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
+#include <core/id/AtomID_Map.hh>
+#include <core/id/DOF_ID_Mask.fwd.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/all.fwd.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
-//#include <iostream>
-//#include <iosfwd>
 #include <cassert>
-// AUTO-REMOVED #include <vector>
-//#include <string>
 #include <map>
-// AUTO-REMOVED #include <list>
-
-#include <core/id/AtomID_Map.hh>
-#include <core/id/DOF_ID_Mask.fwd.hh>
-#include <core/kinematics/AtomPointer.fwd.hh>
-#include <core/kinematics/AtomWithDOFChange.fwd.hh>
-#include <utility/vector1.hh>
-
 
 
 namespace core {
@@ -76,40 +62,37 @@ namespace kinematics {
 
 /// @brief The AtomTree class is a wrapper for a tree of kinematic Atoms.
 ///
-///the responsibilities of the class are:
+/// @details The responsibilities of the class are:
 ///
-///@li 1. maintain a map from AtomID's to Atom's for fast lookup
+/// @li 1. Maintain a map from AtomIDs to Atoms for fast lookup.
 ///
-///@li 2. keep the internal and xyz coords of the Atoms in sync.
+/// @li 2. Keep the internal and xyz coords of the Atoms in sync.
 ///    Note that this sync'ing is handled
 ///    in a lazy fashion, analogous to the way the current pose handles
-///    refolding. As a result geting and setting of coords can trigger
+///    refolding. As a result, getting and setting of coords can trigger
 ///    coordinate updates.
 ///
-///@li 3. gatekeep modification of internal or xyz coords for the Atoms
-///    (necessary for #2)
+/// @li 3. Gatekeep modification of internal or xyz coords for the Atoms
+///    (necessary for #2).
 ///
-///@li 4. serve out the xyz coords for updating a pose/conformation object
+/// @li 4. Serve out the xyz coords for updating a Pose/Conformation object.
 ///
-///@li 5. identify DOF_ID's that correspond to torsion angles (eg phi,psi,chi)
-///    specified by 4 AtomID's. Do this in a way that enables fast
-///    lookup, eg cacheing the results of previous calls (?)
+/// @li 5. Identify DOF_IDs that correspond to torsion angles (e.g., phi, psi, chi, nu)
+///    specified by 4 AtomIDs. Do this in a way that enables fast
+///    lookup, e.g., caching the results of previous calls (?).
 ///    Note that some torsions will not correspond exactly to a DOF of
-///    an Atom, eg chi1 when we are folding c->n, necessitating
+///    an Atom; e.g., chi1 when we are folding c->n, necessitating
 ///    calculation of an offset. We should be able to handle getting/setting
 ///    of these torsion angles as well as handing back the DOF_ID
 ///    (the last one is necessary when setting up the DOF_IDMask for
 ///    minimization given a MoveMap object).
 ///
 /// See @ref atomtree_overview "AtomTree overview and concepts" for details.
-///
 class AtomTree : public utility::pointer::ReferenceCount
 {
-
 public: // Types
 	// ids
 	typedef  id::AtomID AtomID;
-	//typedef  id::AtomID_Map AtomID_Map;
 	typedef  id::AtomID_Mask AtomID_Mask;
 	typedef  id::DOF_Type DOF_Type;
 	typedef  id::DOF_ID DOF_ID;
@@ -128,12 +111,10 @@ public: // Types
 
 public: // Creation
 
-
 	////////////////////////////
-	/// @brief construction: from a tree of atoms;
-	///
-	// note that we steal the atoms, ie it's incorporated into the AtomTree,
+	// note that we steal the atoms, i.e., they're incorporated into the AtomTree,
 	// not cloned
+	/// @brief construction: from a tree of atoms;
 	AtomTree( AtomPointer2D const & new_atom_pointer, bool const from_xyz = true );
 
 	/// @brief default constructor
@@ -143,11 +124,10 @@ public: // Creation
 	virtual
 	~AtomTree();
 
-	/// @brief copy ctor
+	/// @brief copy constructor
 	AtomTree( AtomTree const & src );
 
 public: // Assignment
-
 
 	/// @brief Copy assignment, makes complete copy of another AtomTree
 	AtomTree &
@@ -178,66 +158,6 @@ public: // Methods
 		return ( atom_pointer_.has( id ) && ( atom_pointer_[ id ] != 0 ) );
 	}
 
-	/**
-	/// @brief add an atom id1 to the AtomTree whose parent is id2
-	void
-	add_atom(
-		AtomID const & id1,
-		AtomID const & id2,
-		bool const add_bonded_atom,
-		bool const from_xyz
-	);
-	**/
-
-	/**
-	void
-	setup_backrub_segment(
-		utility::vector1< AtomID > const & mainchain,
-		AtomID const & downstream_id, // mainchain child of last atom in mainchain vector
-		utility::vector1< std::pair< Size, Size > > const & edges,
-		Size const first_new_pseudo_residue
-	);
-	**/
-
-	/**
-	///////////////////////////////////////////////////////////////////////////////////
-	/// @brief  modification of topology: atoms are incorporated into tree, not cloned
-	void
-	insert_subtree(
-		Atom * const subtree_root,
-		AtomID const & anchor_id,
-		bool const insert_at_front
-	);
-
-	void
-	insert_subtree_into_bond(
-		Atom * const subtree_root,
-		AtomID const & old_child_id,
-		AtomID const & new_parent_id
-	);
-	**/
-
-	// replaces the subtree defined by the list of AtomIDs old_atoms
-	// with the tree of atoms in src;
-	//
-	// the "root" of the old tree is identified and is replaced by
-	// src.root()
-	//
-	// outgoing connections (links from the old_tree to atoms in the
-	// current tree that are not being
-	// deleted) are rewired using the mapping defined by the "atom_map"
-	// argument. IE, atom_map must define a mapping from each atom_id
-	// in the old_tree which has children that are not in the old_tree,
-	//
-	/// @brief replace any subtree of atoms in the atom tree by a new tree of atoms
-	/**
-	void
-	replace_subtree(
-		Atom * const subtree_root,
-		AtomIDs const & old_atoms,
-		id::AtomID_Map< AtomID > const & atom_map
-	);
-	**/
 
 	void
 	replace_residue_subtree(
@@ -277,7 +197,7 @@ public: // Methods
 	);
 
 
-	/// @brief setters
+	/// @brief set a specific DOF in the tree
 	void
 	set_dof( DOF_ID const & id, Real const setting );
 
@@ -338,14 +258,6 @@ public: // Methods
 	);
 
 
-// 	id::AtomID
-// 	make_stub_transform(
-// 		id::StubID const & stub1_id, // triplet of atomids
-// 		id::StubID const & stub2_id, // triplet of atomids
-// 		RT const & target_rt,
-// 		utility::vector1< id::BondID > const & preferred_bonds
-// 	);
-
 	/// @brief generates a "domain_map" defining the rigid body regions
 	/// whose internal coords have not changed, according to the
 	/// informaiton in the two bool Mask's
@@ -392,7 +304,6 @@ public: // Methods
 
 public: // Properties
 
-
 	/// @brief is there any atom in the tree yet?
 	bool
 	empty() const
@@ -429,7 +340,7 @@ public: // Properties
 	jump( AtomID const & id ) const;
 
 	/// @brief a wrapper function to get the DOF_ID of a torsion angle given those four atoms which define this torsion
-	/** another version of this functino also calculates an offset value, which is not needed here*/
+	/// @details Another version of this function also calculates an offset value, which is not needed here.
 	DOF_ID
 	torsion_angle_dof_id(
 		AtomID const & atom1,
@@ -632,11 +543,10 @@ private: // Methods
 		return atom_pointer_[ id ]();
 	}
 
-	/// @brief  Update the internal coordinates using the xyz (cartesian) coords
-	/// these two private functions are for maintaining synchrony between the
-	/// internal and xyz coords
-	///
 
+	// these two private functions are for maintaining synchrony between the internal and xyz coords
+
+	/// @brief  Update the internal coordinates using the xyz (cartesian) coords
 	void
 	update_internal_coords() const;
 
@@ -653,8 +563,8 @@ private: // Methods
 
 private: // Fields
 
-	/// @brief A weak pointer to self (this).  The weak pointer must be provided to the AtomTree immediately after creation.
-	/// The weak pointer
+	/// @brief A weak pointer to self (this).
+	/// @details The weak pointer must be provided to the AtomTree immediately after creation.
 	AtomTreeCAP this_weak_ptr_;
 
 	/// @brief Root Atom
@@ -686,6 +596,7 @@ private: // Fields
 
 	/// @brief A list of the atoms that have had changed DOFs since the last refold.
 	mutable AtomDOFChangeSet dof_changeset_;
+
 	/// @brief A list of residues that have had xyz coordinate changes since the last
 	/// time the owning Conformation object has asked for an update.
 	ResidueCoordinateChangeListOP external_coordinate_residues_changed_;
@@ -694,12 +605,9 @@ private: // Fields
 	/// time the owning Conformation object has asked for an update.
 	//ResidueCoordinateChangeListOP internal_coordinate_residues_changed_;
 
-
 }; // AtomTree
-
 
 } // namespace kinematics
 } // namespace core
-
 
 #endif // INCLUDED_core_kinematics_AtomTree_HH

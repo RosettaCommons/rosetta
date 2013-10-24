@@ -233,6 +233,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	mainchain_atoms_(residue_type.mainchain_atoms_),
 	actcoord_atoms_(residue_type.actcoord_atoms_),
 	chi_atoms_(residue_type.chi_atoms_),
+	nu_atoms_(residue_type.nu_atoms_),
 	is_proton_chi_(residue_type.is_proton_chi_),
 	proton_chis_(residue_type.proton_chis_),
 	chi_2_proton_chi_(residue_type.chi_2_proton_chi_),
@@ -316,7 +317,7 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 		VIter old_v_iter= old_vp.first;
 		VD vd = *v_iter;
 		VD old_vd = *old_v_iter;
-		old_to_new[old_vd] = vd;//Assuming the boost::graph copy preserves ordering within the vertices list
+		old_to_new[old_vd] = vd; //Assuming the boost::graph copy preserves ordering within the vertices list
 		Atom & a = graph_[vd];
 		assert( a == residue_type.graph_[old_vd]);
 #ifndef NDEBUG
@@ -349,7 +350,7 @@ ResidueType::residue_type_set() const
 
 //////////////////////////////////////////////////////////////////////////////
 
-/// make a copy
+/// @brief make a copy
 ResidueTypeOP
 ResidueType::clone() const
 {
@@ -357,7 +358,6 @@ ResidueType::clone() const
 	return rsd_ptr;
 }
 
-///
 void
 ResidueType::residue_type_set( ResidueTypeSetCAP set_in )
 {
@@ -969,22 +969,22 @@ ResidueType::add_cut_bond(
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/// add a chi angle defined by four atoms
+// Add a chi (side-chain) angle defined by four atoms.
 void
 ResidueType::add_chi(
-	Size const chino,
-	std::string const & atom_name1,
-	std::string const & atom_name2,
-	std::string const & atom_name3,
-	std::string const & atom_name4
-	)
+		Size const chino,
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		std::string const & atom_name3,
+		std::string const & atom_name4
+)
 {
-	// signal that we need to update the derived data
+	// Signal that we need to update the derived data.
 	finalized_ = false;
 
 	if ( !has( atom_name1 ) || !has( atom_name2 ) ||
 			 !has( atom_name3 ) || !has( atom_name4 ) ) {
-		utility_exit_with_message("ResidueType::add_chi: atoms dont exist!" );
+		utility_exit_with_message("ResidueType::add_chi: atoms don't exist!" );
 	}
 
 	AtomIndices atoms;
@@ -1001,7 +1001,35 @@ ResidueType::add_chi(
 
 	is_proton_chi_.push_back( false );
 	chi_2_proton_chi_[ chino ] = 0;
-} // add_chi
+}  // add_chi
+
+
+// Add a nu (internal cyclic) angle defined by four atoms.
+void
+ResidueType::add_nu(core::uint const nu_index,
+		std::string const & atom_name1,
+		std::string const & atom_name2,
+		std::string const & atom_name3,
+		std::string const & atom_name4)
+{
+	// Signal that we need to update the derived data.
+	finalized_ = false;
+
+	if (!has(atom_name1) || !has(atom_name2) || !has(atom_name3) || !has(atom_name4)) {
+		utility_exit_with_message("ResidueType::add_nu: Requested atoms don't exist in this ResidueType!");
+	}
+
+	AtomIndices atoms;
+	atoms.push_back(atom_index(atom_name1));
+	atoms.push_back(atom_index(atom_name2));
+	atoms.push_back(atom_index(atom_name3));
+	atoms.push_back(atom_index(atom_name4));
+
+	if (nu_atoms_.size() < nu_index) {
+		nu_atoms_.resize(nu_index);
+	}
+	nu_atoms_[nu_index] = atoms;
+}
 
 
 /// @details Describe proton behavior for residue type; where should rotamer samples be considered,
@@ -1019,7 +1047,7 @@ ResidueType::set_proton_chi(
 {
 	assert( is_proton_chi_.size() >= chi_atoms_.size() );
 	assert( chi_2_proton_chi_.size() >= chi_atoms_.size() );
-  if( chino > chi_atoms_.size() ) {
+	if( chino > chi_atoms_.size() ) {
 		utility_exit_with_message("Error setting proton chi: Chi to set as proton chi does not exist.");
 	}
 	is_proton_chi_[ chino ] = true;
@@ -1306,23 +1334,19 @@ ResidueType::add_actcoord_atom( std::string const & atom )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-///@details set up atom ordering map old2new, called by finalize()
-
+// set up atom ordering map old2new, called by finalize()
 /**
-	 because some new heavy atoms are added by patching, some are flagged to be deleted
-	 in delete_atoms_ and some are forced to be backbon atoms as in force_bb_
+	 @details Because some new heavy atoms are added by patching, some are flagged to be deleted
+	 in delete_atoms_ and some are forced to be backbone atoms as in force_bb_
 
 	 old2new[old_atom_index] = new_atom_index
 
 	 sets natoms_, nheavyatoms_, and n_backbone_heavyatoms_
 
 	 also fills attached_H_begin, attached_H_end
-
 **/
 void
-ResidueType::setup_atom_ordering(
-	AtomIndices & old2new
-)
+ResidueType::setup_atom_ordering(AtomIndices & old2new)
 {
 	/////////////////////////////////////////////////////////////////////////////
 	// reorder!
@@ -1335,7 +1359,6 @@ ResidueType::setup_atom_ordering(
 	//
 	// ** adding support for deleting atoms at this stage: calls to delete_atom( name )
 	//    will append to delete_atoms_, must follow with call to finalize()
-
 
 	// set atom counts
 
@@ -1413,15 +1436,13 @@ ResidueType::setup_atom_ordering(
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/// reorder primary data in ResidueType given the old2new map, called by finalize()
+// reorder primary data in ResidueType given the old2new map, called by finalize()
 /**
-		update the rest private data in ResidueType object after old2new map is set up
+		@details update the rest private data in ResidueType object after old2new map is set up
 		by calling setup_atom_ordering (some data have been updated there also)
 **/
 void
-ResidueType::reorder_primary_data(
-	AtomIndices const & old2new
-)
+ResidueType::reorder_primary_data(AtomIndices const & old2new)
 {
 	// now reorder using old2new  -- a bit of a nuisance
 	// there must be a better way to handle this!!!
@@ -1504,34 +1525,28 @@ ResidueType::reorder_primary_data(
 		}
 
 		if(orbitals_.size() != 0){
-				utility::vector1< core::Size > const orbital_indices(orbital_bonded_neighbor_[new_index]);
-				for (
-						utility::vector1< core::Size >::const_iterator
-						orbital_index = orbital_indices.begin(),
-						orbital_index_end = orbital_indices.end();
-						orbital_index != orbital_index_end; ++orbital_index
-				)
-				{
+			utility::vector1< core::Size > const orbital_indices(orbital_bonded_neighbor_[new_index]);
+			for (
+					utility::vector1< core::Size >::const_iterator
+					orbital_index = orbital_indices.begin(),
+					orbital_index_end = orbital_indices.end();
+					orbital_index != orbital_index_end; ++orbital_index
+			)
+			{
 
-					core::Size stub1( orbitals_[*orbital_index].new_icoor().get_stub1());
-					core::Size stub2( orbitals_[*orbital_index].new_icoor().get_stub2());
-					core::Size stub3( orbitals_[*orbital_index].new_icoor().get_stub3() );
+				core::Size stub1( orbitals_[*orbital_index].new_icoor().get_stub1());
+				core::Size stub2( orbitals_[*orbital_index].new_icoor().get_stub2());
+				core::Size stub3( orbitals_[*orbital_index].new_icoor().get_stub3() );
 
-					if ( stub1 == 0 || stub2 == 0 || stub3 == 0) {
-						continue;
-					}else{
-						orbitals_[*orbital_index].new_icoor().replace_stub1( old2new[stub1]);
-						orbitals_[*orbital_index].new_icoor().replace_stub2( old2new[stub2]);
-						orbitals_[*orbital_index].new_icoor().replace_stub3( old2new[stub3]);
-					}
-
-
+				if ( stub1 == 0 || stub2 == 0 || stub3 == 0) {
+					continue;
+				}else{
+					orbitals_[*orbital_index].new_icoor().replace_stub1( old2new[stub1]);
+					orbitals_[*orbital_index].new_icoor().replace_stub2( old2new[stub2]);
+					orbitals_[*orbital_index].new_icoor().replace_stub3( old2new[stub3]);
 				}
-
+			}
 		}
-
-
-
 	}
 
 	atom_graph_index_.clear();
@@ -1545,6 +1560,13 @@ ResidueType::reorder_primary_data(
 	for ( Size i=1; i<= chi_atoms_.size(); ++i ) {
 		for ( Size j=1; j<= 4; ++j ) {
 			chi_atoms_[i][j] = old2new[ chi_atoms_[i][j] ];
+		}
+	}
+
+	// nu_atoms_
+	for (Size i = 1, n_nus = nu_atoms_.size(); i <= n_nus; ++i) {
+		for (uint j = 1; j <= 4; ++j) {
+			nu_atoms_[i][j] = old2new[nu_atoms_[i][j]];
 		}
 	}
 
@@ -1895,25 +1917,20 @@ ResidueType::update_derived_data()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/// recalculate derived data, potentially reordering atom-indices
-/**
-	 This routine updates all the derived data.\n
-	 Atom order will probably change after this call, so if you add a new
-	 property that depends on atom-indices that will have to be updated below.
-**/
 /*
 	 data that we have prior to calling this routine:
 
 	 name                   type                 setting method
 	 ----------------------------------------------------------
-	 ordered_atoms_                 v1<AtomAP>            add_atom //from base class
+	 ordered_atoms_         v1<AtomAP>           add_atom //from base class
 	 atom_name_             v1<string>           add_atom
-	 atom_graph_index_            map<string,VD>      add_atom
+	 atom_graph_index_      map<string,VD>       add_atom
 	 atomic_charge          v1<Real>             add_atom
 	 bonded_neighbor_       v1<v1<int>>          add_bond
 	 bonded_neighbor_type   v1<v1<BondName>>     add_bond
 	 atom_base_             v1<int>              set_atom_base
-	 chi_atoms_             v1<v1<int>>          add_chi
+	 chi_atoms_             v1<v1<uint>>         add_chi
+	 nu_atoms_              v1<v1<uint>>         add_nu
 	 properties             bools                add_property
 	 nbr_atom_              int                  nbr_atom( int )
 
@@ -1922,6 +1939,12 @@ ResidueType::update_derived_data()
 	 Atoms_ order will probably change after this call, so if you add a new
 	 property that depends on atom-indices that will have to be updated below.
 */
+/// @details recalculate derived data, potentially reordering atom-indices
+/**
+	 This routine updates all the derived data.\n
+	 Atom order will probably change after this call, so if you add a new
+	 property that depends on atom-indices that will have to be updated below.
+**/
 void
 ResidueType::finalize()
 {

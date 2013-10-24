@@ -1211,9 +1211,10 @@ build_pose_as_is1(
 			}
 		}
 
-		// found a match, now fill in the coords
+		// found a match, create the residue...
 		ResidueOP new_rsd( ResidueFactory::create_residue( rsd_type ) );
 
+		// ...and now fill in the coords
 		for ( ResidueCoords::const_iterator iter=xyz.begin(), iter_end=xyz.end(); iter!= iter_end; ++iter ) {
 			if ( new_rsd->has( local_strip_whitespace(iter->first) ) ) {
 				// offsetting all coordinates by a small constant prevents problems with atoms located
@@ -1252,7 +1253,7 @@ build_pose_as_is1(
 			//TR.Debug << rsd_type.name() << " " << i << " is added by jump" << std::endl;
 			pose.append_residue_by_jump( *new_rsd, 1 /*pose.total_residue()*/ );
 		}
-		//Append residue to current chain dependent on bondlength
+		//Append residue to current chain dependent on bond length
 		else {
 			if (!options.missing_dens_as_jump()) {
 				//TR.Debug << rsd_type.name() << " " << i << " is appended to chain " << chainID << std::endl;

@@ -440,9 +440,6 @@ public:
 	/// @brief  Return the BB or CHI identifier for the requested glycosidic linkage torsion angle.
 	std::pair<core::id::TorsionType, core::uint> glycosidic_linkage_id(core::uint torsion_index) const;
 
-	/// @brief  Return the CHI identifier for the requested nu (internal ring torsion) angle.
-	std::pair<core::id::TorsionType, core::uint> nu_id(core::uint subscript) const;
-
 private:
 	// Private methods /////////////////////////////////////////////////////////
 	// Empty constructor
@@ -474,9 +471,6 @@ private:
 		return code_to_root_map().find(code)->second;  // operator[] is not overloaded for const maps.
 	}
 
-	// If cyclic, define nu angles in terms of CHI ids.
-	void define_nu_ids();
-
 
 	// Private data //////////////////////////////////////////////////////////////////////////////////////////////////
 	core::chemical::ResidueTypeCAP residue_type_;
@@ -504,8 +498,6 @@ private:
 	// be accessed and set with CHI torsions but do not have an official designation, so they are not mapped.)
 	utility::vector1<std::pair<core::id::TorsionType, core::uint> > glycosidic_linkage_id_;
 
-	// The nu angles should always be the last CHI angles defined in the param file or by a patch file.
-	utility::vector1<std::pair<core::id::TorsionType, core::uint> > nu_id_;
 
 	RingConformerSetOP conformer_set_;  // set of all possible ring conformers
 

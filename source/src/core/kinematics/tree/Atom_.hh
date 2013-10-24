@@ -21,13 +21,9 @@
 #include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/kinematics/Stub.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-
-// Utility headers
-//#include <utility/pointer/access_ptr.hh>
 
 
 namespace core {
@@ -35,20 +31,15 @@ namespace kinematics {
 namespace tree {
 
 
-/// Kinematics Atom abstract base class
-class Atom_ :
-	public Atom
+/// @brief Kinematics Atom abstract base class
+class Atom_ : public Atom
 {
-
-
 private: // Types
-
 
 	typedef  Atom  Super;
 
 
 public: // Types
-
 
 	using Super::update_xyz_coords;
 	using Super::update_internal_coords;
@@ -56,7 +47,6 @@ public: // Types
 
 
 protected: // Creation
-
 
 	/// @brief Default constructor
 	inline
@@ -66,7 +56,6 @@ protected: // Creation
 	{
 		atoms_.reserve( 4 );
 	}
-
 
 	/// @brief Copy constructor
 	/// @note  Copies value and type state but not context state
@@ -83,7 +72,6 @@ protected: // Creation
 
 public: // Creation
 
-
 	/// @brief Destructor
 	// does not clear pointers, use erase
 	virtual
@@ -92,7 +80,6 @@ public: // Creation
 
 
 protected: // Assignment
-
 
 	/// @brief Copy assignment
 	/// @note  Copies value and type state but not context state
@@ -110,11 +97,9 @@ protected: // Assignment
 
 public: // Methods
 
-  virtual
-  void
-  set_weak_ptr_to_self(
-    AtomAP weak_ptr
-  );
+	virtual
+	void
+	set_weak_ptr_to_self(AtomAP weak_ptr	);
 
 	// assumes coords for our input stub are good
 	/// @brief update xyz position of this atom and its offspring atoms
@@ -126,13 +111,6 @@ public: // Methods
 	update_internal_coords(
 		bool const recursive
 	);
-
-	/// @brief recursively add all atoms into the AtomPointers map
-// 	void
-// 	update_atom_pointer(
-// 		AtomPointers & atom_pointer,
-// 		bool const allow_overwriting = false
-// 	);
 
 
 	/// @brief for DOFs which must be kept fixed due to topology of tree
@@ -246,10 +224,6 @@ public: // Methods
 		Size const i
 	) const;
 
-	/// @brief delete this atom and all its children
-// 	void
-// 	erase();
-
 	/// @brief number of the child atoms
 	Size
 	n_children() const;
@@ -279,7 +253,6 @@ public: // Methods
 
 
 public: // Properties
-
 
 	/// @brief Atom identifier
 	inline
@@ -625,6 +598,7 @@ public:
 		Size const start_atom_index
 	) const;
 
+
 protected:
 
 	/// @brief read access for derived classes
@@ -633,6 +607,7 @@ protected:
 	dof_refold_index() const {
 		return dof_refold_index_;
 	}
+
 
 protected: // Fields -- should be private...
 // private: // Fields
@@ -656,6 +631,7 @@ protected: // Fields -- should be private...
 	/// @brief Children atom pointers
 	Atoms atoms_;
 
+
 private:
 
 	/// @brief Track my position in my owner's list of Atoms with modified DOFs.
@@ -664,8 +640,7 @@ private:
 
 }; // Atom_
 
-
-}
+} // namespace tree
 } // namespace kinematics
 } // namespace core
 

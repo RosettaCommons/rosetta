@@ -46,13 +46,12 @@
 #include <core/io/pdb/file_data.hh>
 
 // Basic headers
+#include <basic/init.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/prof.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-
-#include <basic/init.hh>
 
 // Utility headers
 #include <numeric/xyz.functions.hh>
@@ -844,7 +843,6 @@ Pose::set_omega( Size const seqpos, Real const setting )
 
 // nucleic acids
 
-///
 Real
 Pose::alpha( Size const seqpos ) const{
 	assert( residue_type( seqpos ).is_NA() );
@@ -853,7 +851,6 @@ Pose::alpha( Size const seqpos ) const{
 	return torsion( id::TorsionID( seqpos, id::BB, 1 ) );
 }
 
-///
 void
 Pose::set_alpha( Size const seqpos, Real const setting )
 {
@@ -863,7 +860,6 @@ Pose::set_alpha( Size const seqpos, Real const setting )
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 1 ), setting );
 }
 
-///
 Real
 Pose::beta( Size const seqpos ) const{
 	assert( residue_type( seqpos ).is_NA() );
@@ -872,7 +868,6 @@ Pose::beta( Size const seqpos ) const{
 	return torsion( id::TorsionID( seqpos, id::BB, 2 ) );
 }
 
-///
 void
 Pose::set_beta( Size const seqpos, Real const setting )
 {
@@ -882,7 +877,6 @@ Pose::set_beta( Size const seqpos, Real const setting )
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 2 ), setting );
 }
 
-///
 Real
 Pose::gamma( Size const seqpos ) const{
 	assert( residue_type( seqpos ).is_NA() );
@@ -891,7 +885,6 @@ Pose::gamma( Size const seqpos ) const{
 	return torsion( id::TorsionID( seqpos, id::BB, 3 ) );
 }
 
-///
 void
 Pose::set_gamma( Size const seqpos, Real const setting )
 {
@@ -901,7 +894,6 @@ Pose::set_gamma( Size const seqpos, Real const setting )
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 3 ), setting );
 }
 
-///
 Real
 Pose::delta( Size const seqpos ) const{
 	assert( residue_type( seqpos ).is_NA() );
@@ -910,7 +902,6 @@ Pose::delta( Size const seqpos ) const{
 	return torsion( id::TorsionID( seqpos, id::BB, 4 ) );
 }
 
-///
 void
 Pose::set_delta( Size const seqpos, Real const setting )
 {
@@ -920,7 +911,6 @@ Pose::set_delta( Size const seqpos, Real const setting )
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 4 ), setting );
 }
 
-///
 Real
 Pose::epsilon( Size const seqpos ) const{
 	assert( residue_type( seqpos ).is_NA() );
@@ -929,7 +919,6 @@ Pose::epsilon( Size const seqpos ) const{
 	return torsion( id::TorsionID( seqpos, id::BB, 5 ) );
 }
 
-///
 void
 Pose::set_epsilon( Size const seqpos, Real const setting )
 {
@@ -939,7 +928,6 @@ Pose::set_epsilon( Size const seqpos, Real const setting )
 	conformation_->set_torsion( TorsionID( seqpos, id::BB, 5 ), setting );
 }
 
-///
 Real
 Pose::zeta( Size const seqpos ) const{
 	assert( residue_type( seqpos ).is_NA() );
@@ -948,7 +936,6 @@ Pose::zeta( Size const seqpos ) const{
 	return torsion( id::TorsionID( seqpos, id::BB, 6 ) );
 }
 
-///
 void
 Pose::set_zeta( Size const seqpos, Real const setting )
 {
@@ -961,7 +948,6 @@ Pose::set_zeta( Size const seqpos, Real const setting )
 // sidechain torsions
 // peptides and saccharides
 
-///
 Real
 Pose::chi(
 	int const chino,
@@ -978,7 +964,6 @@ Pose::chi(
 	return residue( seqpos ).chi( chino );
 }
 
-///
 void
 Pose::set_chi(
 	int const chino,
@@ -999,7 +984,6 @@ Pose::set_chi(
 
 // nucleic acids
 
-///
 Real
 Pose::chi( Size const seqpos ) const{
 	assert( residue_type( seqpos ).is_NA() );
@@ -1008,7 +992,6 @@ Pose::chi( Size const seqpos ) const{
 	return torsion( id::TorsionID( seqpos, id::CHI, 1 ) );
 }
 
-///
 void
 Pose::set_chi( Size const seqpos, Real const setting )
 {
@@ -1028,7 +1011,7 @@ Pose::set_ring_conformation(uint const seqpos, core::chemical::carbohydrates::Ri
 	using namespace id;
 	using namespace core::pose::carbohydrates;
 
-	Residue res = residue(seqpos);
+	Residue const & res = residue(seqpos);
 
 	assert(res.is_carbohydrate());
 	PyAssert((seqpos<=total_residue()),
@@ -1038,13 +1021,10 @@ Pose::set_ring_conformation(uint const seqpos, core::chemical::carbohydrates::Ri
 			"Pose::set_ring_conformation(uint const seqpos, core::chemical::carbohydrates::RingConformer const &"
 			"conformer): residue seqpos is not part of a carbohydrate!" );
 
-	pair<TorsionType, Size> nu_id;
-
 	Size ring_size = res.carbohydrate_info()->ring_size();
 	for (uint i = 1; i <= ring_size - 2; ++i) {
-		nu_id = res.carbohydrate_info()->nu_id(i);
-		set_torsion(TorsionID(seqpos, nu_id.first, nu_id.second), conformer.nu_angles[i]);
-		align_virtual_atoms_in_carbohydrate_residue(*this, seqpos);
+		set_torsion(TorsionID(seqpos, NU, i), conformer.nu_angles[i]);
+		align_virtual_atoms_in_carbohydrate_residue(*this, seqpos);  // TODO: Where does this really belong?
 	}
 }
 

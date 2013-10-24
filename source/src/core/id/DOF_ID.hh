@@ -22,15 +22,9 @@
 #include <core/id/types.hh>
 #include <core/id/AtomID.hh>
 
-// Numeric headers
-//#include <numeric/constants.hh>
-//#include <numeric/numeric.functions.hh>
-
-// Utility headers
-//#include <utility/exit.hh>
-
 // C++ header
 #include <cassert>
+
 
 namespace core {
 namespace id {
@@ -162,37 +156,7 @@ DOF_type_is_rb( DOF_Type const t )
 	return ( t >= RB1 && t <= RB6 );
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// inline
-// float
-// subtract_dofs(
-// 	float const value1,
-// 	float const value2,
-// 	DOF_Type const t
-// )
-// {
-// 	if ( t == D || t == RB1 || t == RB2 || t == RB3 ) {
-// 		return value1 - value2;
-// 	} else if ( t == PHI || t == THETA || t == RB4 || t == RB5 || t == RB6 ) {
-// 		using numeric::mod;
-// 		// stolen from subtract_radian_angles:
-// 		float const a( value1 - value2 );
-// 		float const x( numeric::constants::f::pi_2 );
-// 		// stolen from periodic_range:
-// 		float const halfx = 0.5f * x;
-// 		return ( ( a >= halfx || a < -halfx ) ?
-// 						 mod( mod( a, x ) + ( x + halfx ), x ) - halfx :
-// 						 a );
-// 	} else {
-// 		std::cerr << "bad torsion type for subtract_dofs: " << t << std::endl;
-// 		utility_exit();
-// 	}
-// 	return 0.0;
-// }
-
-
 } // namespace id
 } // namespace core
-
 
 #endif // INCLUDED_core_id_DOF_ID_HH

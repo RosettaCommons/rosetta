@@ -6,6 +6,7 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
 //////////////////////////////////////////////////////////////////////
 /// @file ResidueTypeSet.cc
 ///
@@ -60,6 +61,7 @@
 #include <boost/foreach.hpp>
 
 #include <utility/vector1.hh>
+
 #define foreach BOOST_FOREACH
 
 
@@ -71,10 +73,10 @@ static basic::Tracer tr("core.chemical.ResidueTypeSet");
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief c-tor from directory
 ResidueTypeSet::ResidueTypeSet(
-	std::string const & name,
-	std::string const & directory,
-	std::vector< std::string > const & extra_res_param_files, // defaults to empty
-	std::vector< std::string > const & extra_patch_files // defaults to empty
+		std::string const & name,
+		std	::string const & directory,
+		std::vector< std::string > const & extra_res_param_files, // defaults to empty
+		std::vector< std::string > const & extra_patch_files // defaults to empty
 ) :
 	name_( name ),
 	database_directory_(directory)
@@ -84,7 +86,8 @@ ResidueTypeSet::ResidueTypeSet(
 	//XRW_B_T1
 	//coarse::RuleSetOP coarsify_rule_set;
 	//XRW_E_T1
-	ResidueTypeSetCAP fine_res_set;
+	//ResidueTypeSetCAP fine_res_set;
+
 	// read ResidueTypes
 	{
 		AtomTypeSetCAP atom_types;
@@ -98,8 +101,8 @@ ResidueTypeSet::ResidueTypeSet(
 		if ( !data.good() ) {
 			utility_exit_with_message( "Unable to open file: " + list_filename + '\n' );
 		}
-		std::string line,tag;
-		while ( getline( data,line) ) {
+		std::string line, tag;
+		while ( getline( data, line ) ) {
 			// Skip empty lines and comments.
 			if ( line.size() < 1 || line[0] == '#' ) continue;
 
@@ -142,7 +145,7 @@ ResidueTypeSet::ResidueTypeSet(
 			} else if(tag == "ORBITAL_TYPE_SET"){
 				l >> tag;
 				orbital_types = ChemicalManager::get_instance()->orbital_type_set(tag);
-				// kwk commenting out until the CSD_ATOM_TYPE_SET has been fully implemented
+			// kwk commenting out until the CSD_ATOM_TYPE_SET has been fully implemented
 			//} else if ( tag == "CSD_ATOM_TYPE_SET" ) {
 			//	l >> tag;
 			//	csd_atom_types = ChemicalManager::get_instance()->csd_atom_type_set( tag );
@@ -158,7 +161,8 @@ ResidueTypeSet::ResidueTypeSet(
 			} else {
 				std::string const filename( directory + line );
 
-				ResidueTypeOP rsd_type( read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_types, this ) ); //, csd_atom_types ) );
+				ResidueTypeOP rsd_type( read_topology_file(
+						filename, atom_types, elements, mm_atom_types, orbital_types, this ) ); //, csd_atom_types ) );
 
 				//kwk commenting out csd_atom_types until they have been fully implemented
 				residue_types_.push_back( rsd_type );
@@ -166,9 +170,10 @@ ResidueTypeSet::ResidueTypeSet(
 		}
 
 		foreach(std::string filename, extra_res_param_files){
-			ResidueTypeOP rsd_type( read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_types, this ) ); //, csd_atom_types ) );
+			ResidueTypeOP rsd_type( read_topology_file(
+					filename, atom_types, elements, mm_atom_types, orbital_types, this ) ); //, csd_atom_types ) );
 			// kwk commenting out csd atom types until they have been fully implemented
-			if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals]){
+			if (basic::options::option[ basic::options::OptionKeys::in::add_orbitals]) {
 				orbitals::AssignOrbitals add_orbitals_to_residue(rsd_type);
 				add_orbitals_to_residue.assign_orbitals();
 			}
@@ -176,7 +181,7 @@ ResidueTypeSet::ResidueTypeSet(
 		}
 
 		update_residue_maps();
-	}
+	}  // ResidueTypes read
 
 	// now apply patches
 	{
@@ -192,7 +197,8 @@ ResidueTypeSet::ResidueTypeSet(
 		// E.g. "SpecialRotamer" or "SpecialRotamer.txt".  Directory names will be ignored if given.
 		std::set< std::string > patches_to_avoid;
 		if ( basic::options::option[ basic::options::OptionKeys::chemical::exclude_patches ].user() ) {
-			utility::vector1< std::string > avoidlist = basic::options::option[ basic::options::OptionKeys::chemical::exclude_patches ];
+			utility::vector1< std::string > avoidlist =
+					basic::options::option[ basic::options::OptionKeys::chemical::exclude_patches ];
 			for ( Size ii = 1; ii <= avoidlist.size(); ++ii ) {
 				utility::file::FileName fname( avoidlist[ ii ] );
 				patches_to_avoid.insert( fname.base() );
@@ -200,7 +206,8 @@ ResidueTypeSet::ResidueTypeSet(
 		}
 
 		utility::vector1< std::string > patch_filenames(extra_patch_files);
-		// Unconditional loading of listed patches is deliberate - if you specified it explicitly, you probably want it to load.
+		// Unconditional loading of listed patches is deliberate --
+		// if you specified it explicitly, you probably want it to load.
 		std::string line;
 		while ( getline( data,line) ) {
 			if ( line.size() < 1 || line[0] == '#' ) continue;
@@ -208,34 +215,41 @@ ResidueTypeSet::ResidueTypeSet(
 			// Skip this patch if the "patches_to_avoid" set contains the named patch.
 			utility::file::FileName fname( line );
 			if ( patches_to_avoid.find( fname.base() ) != patches_to_avoid.end() ) {
-				tr << "While generating ResidueTypeSet " << name << ": Skipping patch " << fname.base() << " as requested" << std::endl;
+				tr << "While generating ResidueTypeSet " << name <<
+						": Skipping patch " << fname.base() << " as requested" << std::endl;
 				continue;
 			}
 			patch_filenames.push_back( directory + line );
 		}
 
-		//kdrew: include list allows patches to be included while being commented out in patches.txt, useful for testing non-canonical patches.
-		//tr << "include_patches activated? " << basic::options::option[ basic::options::OptionKeys::chemical::include_patches ].active() << std::endl;
+		// kdrew: include list allows patches to be included while being commented out in patches.txt,
+		// useful for testing non-canonical patches.
+		//tr << "include_patches activated? " <<
+		//		basic::options::option[ basic::options::OptionKeys::chemical::include_patches ].active() << std::endl;
 		if ( basic::options::option[ basic::options::OptionKeys::chemical::include_patches ].active() ) {
-			utility::vector1< std::string > includelist = basic::options::option[ basic::options::OptionKeys::chemical::include_patches ];
+			utility::vector1< std::string > includelist =
+					basic::options::option[ basic::options::OptionKeys::chemical::include_patches ];
 			for ( Size ii = 1; ii <= includelist.size(); ++ii ) {
 				utility::file::FileName fname( includelist[ ii ] );
 				patch_filenames.push_back( directory + includelist[ ii ]);
-				tr << "While generating ResidueTypeSet " << name << ": Including patch " << fname << " as requested" << std::endl;
+				tr << "While generating ResidueTypeSet " << name <<
+						": Including patch " << fname << " as requested" << std::endl;
 			}
 		}
 
 		//fpd  if missing density is to be read correctly, we will have to also load the terminal truncation variants
 		if ( basic::options::option[ basic::options::OptionKeys::in::missing_density_to_jump ]()
-		     || basic::options::option[ basic::options::OptionKeys::in::use_truncated_termini ]() ) {
-			if ( std::find( patch_filenames.begin(), patch_filenames.end(), directory + "patches/NtermTruncation.txt" ) == patch_filenames.end())
+				|| basic::options::option[ basic::options::OptionKeys::in::use_truncated_termini ]() ) {
+			if ( std::find( patch_filenames.begin(), patch_filenames.end(), directory + "patches/NtermTruncation.txt" )
+					== patch_filenames.end())
 				patch_filenames.push_back( directory + "patches/NtermTruncation.txt" );
-			if ( std::find( patch_filenames.begin(), patch_filenames.end(), directory + "patches/CtermTruncation.txt" ) == patch_filenames.end())
+			if ( std::find( patch_filenames.begin(), patch_filenames.end(), directory + "patches/CtermTruncation.txt" )
+					== patch_filenames.end())
 				patch_filenames.push_back( directory + "patches/CtermTruncation.txt" );
 		}
 
 		apply_patches( patch_filenames );
-	}
+	}  // patches applied
 
 	// Generate combinations of adducts as specified by the user
 	place_adducts();
@@ -247,12 +261,8 @@ ResidueTypeSet::ResidueTypeSet(
 		}
 	}
 
-
-//	for( Size ii = 1 ; ii <= residue_types_.size() ; ++ii ) {
-//		residue_types_[ii]->debug_dump_icoor();
-//	}
-
-	tr << "Finished initializing " << name << " residue type set.  Created " << residue_types_.size() << " residue types" << std::endl;
+	tr << "Finished initializing " << name << " residue type set.  ";
+	tr << "Created " << residue_types_.size() << " residue types" << std::endl;
 }
 
 
@@ -264,7 +274,6 @@ ResidueTypeSet::~ResidueTypeSet() {}
 ///////////////////////////////////////////////////////////////////////////////
 /// @details the file contains a list of names of residue type parameter files
 /// stored in the database path
-///
 void
 ResidueTypeSet::read_list_of_residues(
 	std::string const & list_filename,
@@ -275,7 +284,6 @@ ResidueTypeSet::read_list_of_residues(
 //	CSDAtomTypeSetCAP csd_atom_types //kwk commented out until they hae been fully implemented
 )
 {
-
 	// read the files
 	utility::vector1< std::string > filenames;
 	{
@@ -337,8 +345,6 @@ ResidueTypeSet::apply_patches(
 	}
 
 	update_residue_maps();
-
-
 }
 
 ResidueTypeCOPs const &
@@ -391,7 +397,8 @@ ResidueTypeSet::name_map( std::string const & name ) const
 //	return *( nonconst_name_map_.find( name )->second );
 //}
 
-bool ResidueTypeSet::has_name( std::string const & name ) const
+bool
+ResidueTypeSet::has_name( std::string const & name ) const
 {
 	return ( name_map_.find( name ) != name_map_.end() );
 }
@@ -414,8 +421,6 @@ ResidueTypeSet::aa_map( AA const & aa ) const
 }
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////////
 //private
 /// @brief clear residue  maps
@@ -435,11 +440,9 @@ ResidueTypeSet::clear_residue_maps()
 //private
 /// @details check that residue id map should be unique,
 /// sort the aas_defined list and make its membe unique
-///
 void
 ResidueTypeSet::update_residue_maps()
 {
-
 	clear_residue_maps();
 
 	assert( residue_types_const_.empty() );
@@ -562,13 +565,14 @@ ResidueTypeSet::remove_residue_type_from_maps( ResidueTypeOP rsd )
 
 }
 
-	///@brief beginning of aas_defined_ list
+///@brief beginning of aas_defined_ list
 std::list< AA >::const_iterator
 ResidueTypeSet::aas_defined_begin() const
 {
 	return aas_defined_.begin();
 }
-	///@brief end of aas_defined_ list
+
+///@brief end of aas_defined_ list
 std::list< AA >::const_iterator
 ResidueTypeSet::aas_defined_end() const
 {
@@ -577,7 +581,6 @@ ResidueTypeSet::aas_defined_end() const
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details selection done by ResidueSelector class
-///
 void
 ResidueTypeSet::select_residues(
 	ResidueSelector const & selector,
@@ -672,7 +675,6 @@ ResidueTypeSet::get_residue_type_with_variant_removed( ResidueType const & init_
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details Generation of new residue types augmented by adduct atoms
-///
 void
 ResidueTypeSet::place_adducts()
 {
@@ -733,7 +735,8 @@ ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
 	aas_defined_.unique();
 }
 
-void ResidueTypeSet::add_residue_type(std::string const & tag, std::string const & filename)
+void
+ResidueTypeSet::add_residue_type(std::string const & tag, std::string const & filename)
 {
 	AtomTypeSetCAP atom_types;
 	ElementSetCAP elements;
@@ -750,7 +753,8 @@ void ResidueTypeSet::add_residue_type(std::string const & tag, std::string const
 
 }
 
-void ResidueTypeSet::remove_residue_type(std::string const & name)
+void
+ResidueTypeSet::remove_residue_type(std::string const & name)
 {
 
 	if(!has_name(name))
@@ -768,7 +772,8 @@ void ResidueTypeSet::remove_residue_type(std::string const & name)
 }
 
 /// @brief Create correct combinations of adducts for a residue type
-void ResidueTypeSet:: create_adduct_combinations(
+void
+ResidueTypeSet:: create_adduct_combinations(
 	ResidueType const & rsd,
 	AdductMap ref_map,
 	AdductMap count_map,
@@ -822,10 +827,6 @@ void ResidueTypeSet:: create_adduct_combinations(
 	create_adduct_combinations( rsd, ref_map, new_count_map, new_add_mask, work_iter+1 );
 
 }
-
-
-
-///////////////////////////////////////////////////////////////////////////////
 
 } // pose
 } // core

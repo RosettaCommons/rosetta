@@ -25,16 +25,17 @@
 int main(int argc, char *argv[])
 {
 	using namespace std;
-	using namespace protocols;
-	using namespace simple_moves::carbohydrates;
-	using namespace jd2;
+	using namespace protocols::simple_moves::carbohydrates;
+	using namespace protocols::jd2;
 
 	try {
 		// Initialize core.
 		devel::init(argc, argv);
 
-		// Distribute the mover.
+		// Construct the mover.
 		RingConformationMoverOP my_mover = new RingConformationMover();
+
+		// Distribute the mover.
 		JobDistributor::get_instance()->go(my_mover);
 	} catch (utility::excn::EXCN_Base const & e) {
 		cerr << "Caught exception: " << e.msg() << endl;

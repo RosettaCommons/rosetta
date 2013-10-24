@@ -18,7 +18,6 @@
 // Package headers
 #include <core/kinematics/AtomWithDOFChange.hh>
 #include <core/kinematics/ResidueCoordinateChangeList.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -72,26 +71,6 @@ Atom_::update_internal_coords(
 	Stub stub( get_input_stub() );
 	update_internal_coords( stub, recursive );
 }
-
-
-/////////////////////////////////////////////////////////////////////////////
-/// @details When this atom is added, it will call this function recursively for all its
-/// children atoms first. The end condition is for those tip atoms in the tree,
-/// i.e., without children. After this function is finished, this atom and all its
-/// children (and their children) should be updated properly in the map
-// void
-// Atom_::update_atom_pointer(
-// 	AtomPointers & atom_pointer,
-// 	bool const allow_overwriting // = false
-// )
-// {
-// 	// our atom_id shouldn't exist in the map yet, unless allowing overwriting
-// 	assert( allow_overwriting || ! atom_pointer.has( atom_id_ ) || atom_pointer[ atom_id_ ] == 0 );
-// 	atom_pointer.set( atom_id_, this ); // slow
-// 	for ( Atoms::const_iterator a = atoms_.begin(), a_end = atoms_.end(); a != a_end; ++a ) {
-// 		(*a)->update_atom_pointer( atom_pointer, allow_overwriting );
-// 	}
-// }
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -162,14 +141,13 @@ Atom_::show(int const & n_level) const
 }
 
 
-
 /////////////////////////////////////////////////////////////////////////////
-/// @details update domain map for this atom and all its offspring
-/// consider this like a graph coloring problem. we are recursively (depth-first)
-/// assigning a color to each atom.
 //
 // this should probably be debugged more thoroughly
 //
+/// @details update domain map for this atom and all its offspring
+/// consider this like a graph coloring problem. we are recursively (depth-first)
+/// assigning a color to each atom.
 void
 Atom_::update_domain_map(
 	int & current_color,
@@ -353,19 +331,6 @@ Atom_::get_nonjump_atom(
 
 
 /////////////////////////////////////////////////////////////////////////////
-/// @details delete an atom (free memory) and recursively for all its children.
-/// reset its children's list.
-// void
-// Atom_::erase()
-// {
-// 	for ( Atoms::iterator it = atoms_.begin(), it_end = atoms_.end(); it != it_end; ++it ) {
-// 		(*it)->erase();
-// 		delete *it;
-// 	}
-// 	atoms_.clear();
-// }
-
-/////////////////////////////////////////////////////////////////////////////
 Size
 Atom_::n_children() const
 {
@@ -406,7 +371,6 @@ Atom_::child_index( AtomCOP child ) const
 /// a non-first branched atom is defined as the improper angle offset with
 /// respect to its previous sibling, we just need to add up all the offsets
 /// between them.
-///
 Real
 Atom_::dihedral_between_bonded_children(
 	AtomCOP child1,
@@ -471,7 +435,6 @@ Atom_::downstream( AtomCOP atom1 ) const
 /// @details my stub is center at myself. Normally for bonded atom, X direction is
 /// from my parent to me; Z direction is perpendicular to the plane defined
 /// by myself, my parent and my parent's parent
-
 Stub
 Atom_::get_stub() const
 {
@@ -616,7 +579,6 @@ Atom_::stub_defined() const
 ///
 /// @note update_internal_coords is called recursively on all of *child's
 /// children.
-///
 void
 Atom_::update_child_torsions(
 	AtomOP const child

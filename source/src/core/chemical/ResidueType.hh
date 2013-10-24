@@ -310,6 +310,20 @@ public:
 		return chi_atoms_;
 	}
 
+	/// @brief Return indices of the atoms used to define a given nu (internal ring) angle.
+	AtomIndices const &
+	nu_atoms(core::uint const nu_index) const
+	{
+		return nu_atoms_[nu_index];
+	}
+
+	/// @brief Return list of indices of the atoms used to define all the nu (internal ring) angles.
+	utility::vector1< AtomIndices > const &
+	nu_atoms() const
+	{
+		return nu_atoms_;
+	}
+
 
 	///@brief Indices of all backbone atoms, hydrogens and heavyatoms
 	AtomIndices const &
@@ -610,6 +624,13 @@ public:
 	nchi() const
 	{
 		return chi_atoms_.size();
+	}
+
+	/// @brief Return number of nu (internal ring) angles.
+	Size
+	n_nus() const
+	{
+		return nu_atoms_.size();
 	}
 
 	/// @brief number of proton chis
@@ -995,16 +1016,22 @@ public:
 	//////////////////////////////////////////////////////////////////////
 
 
-	/// @brief add a chi angle defined by four atoms
+	/// @brief Add a chi (side-chain) angle defined by four atoms.
 	void
 	add_chi(
-		Size const chino,
-		std::string const & atom_name1,
-		std::string const & atom_name2,
-		std::string const & atom_name3,
-		std::string const & atom_name4
+			Size const chino,
+			std::string const & atom_name1,
+			std::string const & atom_name2,
+			std::string const & atom_name3,
+			std::string const & atom_name4
 	);
 
+	/// @brief Add a nu (internal cyclic) angle defined by four atoms.
+	void add_nu(core::uint const nu_index,
+			std::string const & atom_name1,
+			std::string const & atom_name2,
+			std::string const & atom_name3,
+			std::string const & atom_name4);
 
 	/// @brief redefine a chi angle based on four atoms
 	//    Added by Andy M. Chen in June 2009
@@ -1872,13 +1899,16 @@ private:
 
 	///////////////////////////////////////////////////////////////////////////
 	// vectors of vectors of indices
-	/// indices of four atoms to build each chi angle
+	// indices of four atoms to build each chi angle
 	utility::vector1< AtomIndices > chi_atoms_;
 	utility::vector1< bool        > is_proton_chi_;
 	utility::vector1< Size        > proton_chis_;
 	utility::vector1< Size        > chi_2_proton_chi_;
 	utility::vector1< utility::vector1< Real > > proton_chi_samples_;
 	utility::vector1< utility::vector1< Real > > proton_chi_extra_samples_;
+
+	// indices of four atoms to build each nu angle
+	utility::vector1<AtomIndices> nu_atoms_;
 
 	/// number of bonds separated between any pair of atoms in this residue
 	utility::vector1< utility::vector1< int > > path_distance_;

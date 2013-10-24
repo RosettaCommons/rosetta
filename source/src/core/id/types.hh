@@ -25,7 +25,6 @@ namespace id {
 
 
 // Types
-//typedef  core::Real  Real; // Could specialize Real for id here
 
 /// @brief DOF (degrees of freedom) type
 /// - PHI: torsion or improper angle
@@ -48,10 +47,12 @@ static Size const n_DOF_Type( 9 ); // Update this if DOF_Type changes
 /// @brief Torsion type -- used in the TorsionID class
 /// - BB: backbone torsion
 /// - CHI: sidechain torsion
+/// - NU: internal ring torsion
 /// - JUMP: rigid-body transformation
 enum TorsionType {
 	BB = 1,
 	CHI,
+	NU,
 	JUMP
 };
 

@@ -28,8 +28,6 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/carbohydrates.OptionKeys.gen.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
@@ -41,13 +39,12 @@
 
 // Construct tracers.
 static basic::Tracer TR("protocols.simple_moves.carbohydrates.RingConformationMover");
-
 using basic::Warning;
 
 // Construct random-number generator.
 static numeric::random::RandomGenerator RG(17);  // the 7th prime
 
-
+// TODO: Move to simple_moves.
 namespace protocols {
 namespace simple_moves {
 namespace carbohydrates {
@@ -58,14 +55,14 @@ using namespace core;
 // Public methods //////////////////////////////////////////////////////////////
 // Standard methods ////////////////////////////////////////////////////////////
 // Default constructor
-/// @details  By default, all carbohydrate rings within a given pose will be moved.
+/// @details  By default, all rings within a given pose will be allowed to move.
 RingConformationMover::RingConformationMover(): Mover()
 {
 	using namespace kinematics;
 
 	// Set default MoveMap.
 	MoveMapOP default_movemap = new MoveMap();
-	default_movemap->set_bb(true);
+	default_movemap->set_nu(true);
 
 	init(default_movemap);
 }
@@ -77,8 +74,8 @@ RingConformationMover::RingConformationMover(RingConformationMover const & objec
 }
 
 // Constructor with MoveMap input option
-/// @param    <input_movemap>: a MoveMap with desired backbone torsions set to true
-/// @remarks  Movable carbohydrate residues will generally be a subset of residues in the MoveMap whose backbone
+/// @param    <input_movemap>: a MoveMap with desired nu torsions set to true
+/// @remarks  Movable carbohydrate residues will generally be a subset of residues in the MoveMap whose nu
 /// torsions are set to true.
 RingConformationMover::RingConformationMover(core::kinematics::MoveMapOP input_movemap)
 {
@@ -146,23 +143,14 @@ RingConformationMover::fresh_instance() const
 /// the list at random.  The torsion angles of a randomly selected ring conformer will be applied to the selected
 /// residue.
 /// @param    <input_pose>: the structure to be moved
-/// @remarks  A work in progress...
-/// Currently, this algorithm depends on CHI angles being set in the params file to fill in for nu angles, as
-/// Rosetta has no mechanism for dealing with ring torsions.  This may cause issues with other protocols using
-/// MoveMap, since MoveMap considers part of the ring as BB and part of the ring as CHI, with some overlap.
+/// @remarks  a work in progess...
 void
 RingConformationMover::apply(Pose & input_pose)
 {
 	using namespace std;
-	using namespace basic::options;
 	using namespace utility;
 	using namespace conformation;
 	using namespace chemical::carbohydrates;
-
-	if (option[OptionKeys::carbohydrates::lock_rings]) {
-		Warning() << "Rings have been locked; no ring conformation moves are being applied to this pose." << endl;
-		return;
-	}
 
 	show(TR);
 
@@ -177,19 +165,20 @@ RingConformationMover::apply(Pose & input_pose)
 
 	TR << "Applying " << get_name() << " to pose...." << endl;
 
-	core::uint i = core::uint(RG.uniform() * residue_list_.size() + 1);
-	core::uint res_num = residue_list_[i];
-	Residue res = input_pose.residue(res_num);
+	core::uint const i = core::uint(RG.uniform() * residue_list_.size() + 1);
+	core::uint const res_num = residue_list_[i];
+	Residue const & res = input_pose.residue(res_num);
 
 	TR << "Selected residue " << res_num << ": " << res.name() << endl;
 
-	RingConformerCOP conformer = res.carbohydrate_info()->ring_conformer_set()->get_random_conformer();
+	// TODO: Provide a method for specifying subsets of conformers instead of picking one entirely at random.
+	RingConformer const & conformer = res.carbohydrate_info()->ring_conformer_set()->get_random_conformer();
 
-	TR << "Selected the " << conformer->specific_name << " conformation to apply." << endl;
+	TR << "Selected the " << conformer.specific_name << " conformation to apply." << endl;
 
 	TR << "Making move...." << endl;
 
-	input_pose.set_ring_conformation(res_num, *conformer);
+	input_pose.set_ring_conformation(res_num, conformer);
 
 	TR << "Move complete." << endl;
 }
@@ -241,10 +230,10 @@ RingConformationMover::setup_residue_list(core::pose::Pose & pose)
 
 	residue_list_.clear();
 
-	for (Size res_num = 1, last_res_num = pose.total_residue(); res_num <= last_res_num; ++res_num) {
+	for (core::uint res_num = 1, last_res_num = pose.total_residue(); res_num <= last_res_num; ++res_num) {
 		Residue const & residue = pose.residue(res_num);
 		if (residue.is_carbohydrate()) {
-			if (residue.carbohydrate_info()->is_cyclic() && movemap_->get_bb(res_num) == true) {
+			if (residue.carbohydrate_info()->is_cyclic() && movemap_->get_nu(res_num) == true) {
 				residue_list_.push_back(res_num);
 			}
 		}

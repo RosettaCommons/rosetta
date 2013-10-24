@@ -8,32 +8,29 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/kinematics/MoveMap.cc
-/// @brief  Move map
+/// @brief  Method definitions for the MoveMap
 /// @author Phil Bradley
 /// @author Christopher Miles (cmiles@uw.edu)
 /// @author Roland A. Pache
 
-// Unit headers
+// Unit header
 #include <core/kinematics/MoveMap.hh>
 
-// Package headers
+// Project headers
 #include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
-
-// C++ headers
-// AUTO-REMOVED #include <iterator>
-// AUTO-REMOVED #include <utility>
-#include <vector>
-
-// Objexx headers
-#include <ObjexxFCL/format.hh>
 
 // Utility headers
 #include <utility/PyAssert.hh>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
-
 #include <utility/vector1.hh>
+
+// External headers
+#include <ObjexxFCL/format.hh>
+
+// C++ headers
+#include <vector>
 
 
 using namespace ObjexxFCL;
@@ -85,9 +82,9 @@ MoveMap::set_jump( id::JumpID const & jump, bool const setting ) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details set a specific TorsionType movable or not, eg "CHI"
-/// setting this TorsionType will clear data for individual MoveMapTorsionID and
-/// TorsionID with this TorsionType to keep these three maps in sync. Then query
+///@details Set a specific TorsionType movable or not, e.g., "CHI".
+/// Setting this TorsionType will clear data for individual MoveMapTorsionID and
+/// TorsionID with this TorsionType to keep these three maps in sync.  Then query
 /// for a specific TorsionID or MoveMapTorsionID will turn to setting for TorsionType.
 void
 MoveMap::set( TorsionType const & t, bool const setting )
@@ -98,7 +95,7 @@ MoveMap::set( TorsionType const & t, bool const setting )
 		std::vector< MoveMapTorsionID > l;
 
 		for ( MoveMapTorsionID_Map::const_iterator
-						it=move_map_torsion_id_map_.begin(), it_end = move_map_torsion_id_map_.end(); it != it_end; ++it ) {
+				it=move_map_torsion_id_map_.begin(), it_end = move_map_torsion_id_map_.end(); it != it_end; ++it ) {
 			// bad -- assumes knowledge of MoveMapTorsionID implementation as std::pair
 			// but a whole object is probably overkill
 			// compiler will catch type mismatch here
@@ -113,7 +110,7 @@ MoveMap::set( TorsionType const & t, bool const setting )
 	{ // map by torsionid
 		std::vector< TorsionID > l;
 		for ( TorsionID_Map::const_iterator
-						it=torsion_id_map_.begin(), it_end = torsion_id_map_.end(); it != it_end; ++it ) {
+				it=torsion_id_map_.begin(), it_end = torsion_id_map_.end(); it != it_end; ++it ) {
 			if ( it->first.type() == t ) l.push_back( it->first );
 		}
 
@@ -129,38 +126,34 @@ MoveMap::set( TorsionType const & t, bool const setting )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details set TorsionType flexible or fixed for one residue, eg BB torsions for residue 10
-/// setting this MoveMapTorsionID will clear data for individual TorsionID for this residue
+// Set TorsionType flexible or fixed for one residue, e.g., BB torsions for residue 10
+/// @details Setting this MoveMapTorsionID will clear data for individual TorsionID for this residue
 /// with this TorsionType.
 void
 MoveMap::set( MoveMapTorsionID const & id, bool const setting )
 {
-	//
 	move_map_torsion_id_map_[ id ] = setting;
 
-	{ // map by torsionid
-		Size const seqpos( id.first );
-		TorsionType const & torsion_type( id.second );
-		std::vector< TorsionID > l;
-		for ( TorsionID_Map::const_iterator
-						it=torsion_id_map_.begin(), it_end = torsion_id_map_.end(); it != it_end; ++it ) {
-			if ( it->first.type() == torsion_type && it->first.rsd() == seqpos ) l.push_back( it->first );
-		}
+	// map by TorsionID
+	Size const seqpos( id.first );
+	TorsionType const & torsion_type( id.second );
+	std::vector< TorsionID > l;
+	for ( TorsionID_Map::const_iterator
+			it=torsion_id_map_.begin(), it_end = torsion_id_map_.end(); it != it_end; ++it ) {
+		if ( it->first.type() == torsion_type && it->first.rsd() == seqpos ) l.push_back( it->first );
+	}
 
-		for ( std::vector< TorsionID >::const_iterator it=l.begin(), it_end=l.end(); it != it_end; ++it ) {
-			torsion_id_map_.erase( torsion_id_map_.find( *it ) );
-		}
+	for ( std::vector< TorsionID >::const_iterator it=l.begin(), it_end=l.end(); it != it_end; ++it ) {
+		torsion_id_map_.erase( torsion_id_map_.find( *it ) );
 	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details set an individual Torsion movable or now, eg, "BB torsion 2 of residue 4"
+// Set an individual Torsion movable for now, e.g., "BB torsion 2 of residue 4"
 void
 MoveMap::set( TorsionID const & id, bool const setting )
 {
-	//
 	torsion_id_map_[ id ] = setting;
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -171,9 +164,9 @@ MoveMap::set( TorsionID const & id, bool const setting )
 // the thing is, the interface to this common data (dof-maps) is slightly
 // different on the access side...
 //
-///@details brief set for this type of DOF, eg "PHI"
-/// setting this DOF type will also clear setting for individual DOF_ID of
-/// this type in order to keep these two maps in sync,(query DOF_ID setting
+// set for this type of DOF, eg "PHI"
+/// @details Setting this DOF type will also clear setting for individual DOF_ID of
+/// this type in order to keep these two maps in sync, (query DOF_ID setting
 /// will turn to DOF_type setting now)
 void
 MoveMap::set(
@@ -187,21 +180,21 @@ MoveMap::set(
 	// they are obliterated by this call
 	std::vector< DOF_ID > l;
 	for ( DOF_ID_Map::const_iterator it=dof_id_map_.begin(),
-					it_end=dof_id_map_.end(); it != it_end; ++it ) {
+			it_end=dof_id_map_.end(); it != it_end; ++it ) {
 		if ( it->first.type() == t ) {
 			l.push_back( it->first );
 		}
 	}
 
 	for ( std::vector< DOF_ID >::const_iterator it=l.begin(), it_end=l.end();
-				it != it_end; ++it ) {
+			it != it_end; ++it ) {
 		dof_id_map_.erase( dof_id_map_.find( *it ) );
 	}
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-///@details set for an individual dof, eg "PHI of Atom 3 in Residue 5"
+// set for an individual DoF, e.g., "PHI of Atom 3 in Residue 5"
 void
 MoveMap::set(
 	DOF_ID const & id,
@@ -211,7 +204,6 @@ MoveMap::set(
 	if ( get(id) == setting ) return;
 
 	dof_id_map_[ id ] = setting;
-
 }
 
 bool
@@ -508,16 +500,19 @@ MoveMap::init_from_file( std::string const & filename ) {
 } // init_from_file
 
 void
-MoveMap::show( std::ostream & out, Size total_residue) const
+MoveMap::show( std::ostream & out, Size n_residues_to_show ) const
 {
-	PyAssert( (total_residue>0), "MoveMap::show( std::ostream & out , Size total_residue ): input variable total_residue has a meaningless value");
-	out <<A(8,"resnum")<<' '<<A(8,"BB") <<' '<<A(8,"CHI")<<std::endl;
-	for (Size i = 1; i <= total_residue; i++){
+	PyAssert( (n_residues_to_show>0), "MoveMap::show( std::ostream & out , Size n_residues_to_show ): "
+			"input variable total_residue has a meaningless value");
+	out << A(8, "resnum") << ' ' << A(8, "BB") << ' ' << A(8, "CHI") << ' ' << A(8, "NU") << std::endl;
+	for (Size i = 1; i <= n_residues_to_show; ++i){
 		std::string bb = "FALSE";
 		std::string chi = "FALSE";
+		std::string nu = "FALSE";
 		if (get_bb(i)) bb = "TRUE ";
 		if (get_chi(i)) chi = "TRUE ";
-		out << I(8,3,i) << ' '<<A(8, bb)<<' ' <<A(8, chi)<<'\n';
+		if (get_nu(i)) nu = "TRUE ";
+		out << I(8,3,i) << ' ' << A(8, bb) << ' ' << A(8, chi) << A(8, nu) << std::endl;
 		}
 	}
 
@@ -525,12 +520,13 @@ void
 MoveMap::show( std::ostream & out ) const
 {
 	out << "-------------------------------\n";	
-	out <<A(8,"resnum")<<' '<<A(8,"Type") <<' '<<A(12,"TRUE/FALSE ")<<std::endl;
+	out << A(8, "resnum") << ' ' << A(8, "Type") << ' ' << A(12, "TRUE/FALSE ") << "\n";
 	out << "-------------------------------\n";
 	Size prev_resnum = 0;
 	utility::vector1< bool > jumpbool;
 	utility::vector1< Size > jumpnum;
-	for (MoveMapTorsionID_Map::const_iterator it = movemap_torsion_id_begin(), it_end = movemap_torsion_id_end(); it != it_end; ++it){		
+	for (MoveMapTorsionID_Map::const_iterator it = movemap_torsion_id_begin(), it_end = movemap_torsion_id_end();
+			it != it_end; ++it) {
 		MoveMapTorsionID mmtorsionID = it->first;
 		bool boolean = it->second;
 		Size res = mmtorsionID.first;
@@ -538,24 +534,25 @@ MoveMap::show( std::ostream & out ) const
 
 		// convert enum to string output
 		std::string type;
-		if (torsiontype == 1) {type = "BB ";}
-		else if (torsiontype == 2) {type = "SC ";}
-		else if (torsiontype == 3) {
+		if (torsiontype == id::BB) {type = "BB ";}
+		else if (torsiontype == id::CHI) {type = "SC ";}
+		else if (torsiontype == id::NU) {type = "NU ";}
+		else if (torsiontype == id::JUMP) {
 			type = "JUMP"; jumpbool.push_back(boolean); jumpnum.push_back(res);}
 
-		// Only show each residue/jump number once (and only if torsion type is either BB or SC)
+		// Only show each residue/jump number once (and only if torsion type is BB, SC, or NU)
 		if ((prev_resnum == mmtorsionID.first) && (type != "JUMP")) {
-			out << A(8,' ') <<' '<< A(8,type) <<' '<< A(8,(boolean ? "TRUE":"FALSE"))<< "\n";
+			out << A(8,' ') << ' ' << A(8,type) << ' ' << A(8, (boolean ? "TRUE":"FALSE")) << "\n";
 		}
 		else if ((prev_resnum != mmtorsionID.first) && (type != "JUMP")) {
-			out << I(8,3,res) <<' '<< A(8,type) <<' '<< A(8,(boolean ? "TRUE":"FALSE"))<< "\n";
+			out << I(8,3,res) <<' '<< A(8,type) << ' ' << A(8,(boolean ? "TRUE":"FALSE")) << "\n";
 		}
 
 		// Remember the previous residue/jump number
 		prev_resnum = res;
 	}
 	out << "-------------------------------\n";	
-	out <<A(8,"jumpnum")<<' '<<A(8,"Type") <<' '<<A(12,"TRUE/FALSE ")<<std::endl;
+	out << A(8, "jumpnum") << ' ' << A(8, "Type") << ' ' << A(12, "TRUE/FALSE ") << std::endl;
 	out << "-------------------------------\n";
 	for (Size i = 1; i <= jumpnum.size(); ++i) {
 		out << I(8,3,jumpnum[i])<<' '<< A(8,"JUMP") <<' '<< A(8,(jumpbool[i] ? "TRUE":"FALSE"))<< "\n";

@@ -19,12 +19,8 @@
 // Unit headers
 #include <core/kinematics/AtomPointer.fwd.hh>
 
-// Package headers
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-
-//Auto Headers
+// Project headers
 #include <core/types.hh>
-
 
 
 #endif // INCLUDED_core_kinematics_AtomPointer_HH

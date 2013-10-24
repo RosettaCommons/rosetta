@@ -189,21 +189,6 @@ public:
 		TS_ASSERT_EQUALS(res2.carbohydrate_info()->branch_point(1), 6);
 	}
 
-	// Confirm that nu angles are mapped to the correct CHI identifiers.
-	void test_CarbohydrateInfo_nu_id()
-	{
-		using namespace core;
-		using namespace conformation;
-
-		TS_TRACE("Testing nu_id() method of CarbohydrateInfo.");
-		for (Size resnum = 1; resnum <= 3; ++resnum) {
-			for (Size i = 1; i <= 4; ++i) {
-				// For glucose, the 4 CHI ids should be 7, 8, 9, and 10.
-				Residue res = maltotriose_.residue(resnum);
-				TS_ASSERT_EQUALS(res.carbohydrate_info()->nu_id(i).second, 6 + i);
-			}
-		}
-	}
 
 private:
 	// Private data ////////////////////////////////////////////////////////////

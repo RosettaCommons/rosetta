@@ -43,7 +43,7 @@ enum CPParameter {
 };
 
 
-struct RingConformer : public utility::pointer::ReferenceCount {
+struct RingConformer {
 	std::string specific_name;  // e.g., "1C4"
 	std::string general_name;  // e.g., "chair"
 
@@ -92,28 +92,28 @@ public:
 
 
 	/// @brief  Return a list of all nondegenerate conformers in the set.
-	utility::vector1<RingConformerCOP> get_all_nondegenerate_conformers() const;
+	utility::vector1<RingConformer> const & get_all_nondegenerate_conformers() const;
 
 
 	/// @brief  Return the conformer corresponding to the requested name.
-	RingConformerCOP get_ideal_conformer_by_name(std::string const name) const;
+	RingConformer const & get_ideal_conformer_by_name(std::string const name) const;
 
 	/// @brief  Return the conformer that is the best fit for the provided Cremer-Pople parameters.
-	RingConformerCOP get_ideal_conformer_by_CP_parameters(utility::vector1<core::Real> const parameters) const;
+	RingConformer const & get_ideal_conformer_by_CP_parameters(utility::vector1<core::Real> const parameters) const;
 
 	/// @brief  Return the conformer that is the best fit for the provided list of nu angles.
-	RingConformerCOP get_ideal_conformer_from_nus(utility::vector1<core::Angle> const angles) const;
+	RingConformer /*const &*/ get_ideal_conformer_from_nus(utility::vector1<core::Angle> const angles) const;
 
 
 	/// @brief  Return the conformer that is known from studies (if available) to be the lowest energy ring conformer.
-	RingConformerCOP get_lowest_energy_conformer() const;
+	RingConformer /*const &*/ get_lowest_energy_conformer() const;
 
 	/// @brief  Return a random conformer from the set.
-	RingConformerCOP get_random_conformer() const;
+	RingConformer const & get_random_conformer() const;
 
 	/// @brief  Return a random conformer from the subset of conformers that are local minima.
 	// TODO: better?: overload get_random_conformer and pass enum, such as "LOCAL_MIN"
-	RingConformerCOP get_random_local_min_conformer() const;
+	RingConformer /*const &*/ get_random_local_min_conformer() const;
 
 
 private:
@@ -140,11 +140,12 @@ private:
 
 	// TODO: Make these map<uint, vector1<RingConformer> >s, with the vectors indexed by an enum?
 	// Ring Conformer Subsets
-	utility::vector1<RingConformerCOP> nondegenerate_conformers_;
-	utility::vector1<RingConformerCOP> degenerate_conformers_;  // includes multiple copies of degenerate conformers
-	utility::vector1<RingConformerCOP> energy_minima_conformers_;
-	utility::vector1<RingConformerCOP> energy_maxima_conformers_;
+	utility::vector1<RingConformer> nondegenerate_conformers_;
+	utility::vector1<RingConformer> degenerate_conformers_;  // includes multiple copies of degenerate conformers
+	utility::vector1<RingConformer> energy_minima_conformers_;
+	utility::vector1<RingConformer> energy_maxima_conformers_;
 
+	static RingConformer const DUMMY_CONFORMER;  // for silencing warnings when requested conformer is not found
 };  // class RingConformerSet
 
 // Insertion operators (overloaded so that RingConformer and RingConformerSet can be "printed" in PyRosetta).

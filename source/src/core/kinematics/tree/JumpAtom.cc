@@ -21,27 +21,23 @@
 // Project headers
 #include <core/id/AtomID_Map.hh>
 #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Mask.hh>
+#include <core/id/DOF_ID_Map.hh>
 
 // Numeric headers
 #include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <cassert>
 #include <iostream>
 
-#include <core/id/DOF_ID_Map.hh>
-#include <utility/vector1.hh>
-
-
 
 namespace core {
 namespace kinematics {
 namespace tree {
-
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details the root jump is not flexible (currently)
@@ -207,11 +203,11 @@ JumpAtom::update_xyz_coords(
 /////////////////////////////////////////////////////////////////////////////
 /// @details update the jump from the input stub and this atom's own stub. If defined,
 /// will recursively update internal coords for all its offspring atoms.
-/// @note the input stub is not changed
+/// @note The input stub is not changed.
 void
 JumpAtom::update_internal_coords(
-	Stub & stub,
-	bool const recursive // = true
+		Stub & stub,
+		bool const recursive // = true
 )
 {
 	assert( stub.is_orthogonal( 1e-3 ) );
@@ -220,11 +216,6 @@ JumpAtom::update_internal_coords(
 
 	// fill in my jump data
 	jump_.from_stubs( stub, new_stub );
-
-	//std::cout << "input_stub: " << stub << std::endl;
-	//std::cout << "jump: " << jump_ << std::endl;
-	//std::cout << "stub: " << new_stub << std::endl;
-
 
 	if ( recursive ) {
 		for ( Atoms_Iterator it= atoms_begin(), it_end= atoms_end();
@@ -262,8 +253,6 @@ JumpAtom::clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const
 
 	return new_me;
 }
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -368,7 +357,6 @@ JumpAtom::get_dof_axis_and_end_pos(
 	}
 }
 
-
-}
+} // namespace tree
 } // namespace kinematics
 } // namespace core

@@ -48,7 +48,6 @@
 #include <utility/vector0_bool.hh>
 
 
-
 namespace core {
 namespace kinematics {
 namespace tree {
@@ -56,7 +55,6 @@ namespace tree {
 /// Kinematics Atom interface class
 class Atom : public utility::pointer::ReferenceCount // So we can hold it in owning_ptr
 {
-
 
 public: // Types
 
@@ -154,14 +152,14 @@ public: // Methods
 
 	///////////////////////////////////////////////////////////////////////////
 	// go back and forth between internal coords (DOF's)  and xyz coords
-	///\brief update xyz coords from stub and internal coords and
+	/// @brief update xyz coords from stub and internal coords and
 	virtual
 	void
 	update_xyz_coords(
 		Stub & stub
 	) = 0;
 
-	///\brief update internal coords from stub and xyz coords
+	/// @brief update internal coords from stub and xyz coords
 	virtual
 	void
 	update_internal_coords(
@@ -170,20 +168,12 @@ public: // Methods
 	) = 0;
 
 
-	///\brief calculate my input_stub from the current xyz's and use that input_stub to update my torsions
+	/// @brief calculate my input_stub from the current xyz's and use that input_stub to update my torsions
 	virtual
 	void
 	update_internal_coords(
 		bool const recursive
 	) = 0;
-
-	///\brief update atom_pointer map for AtomTree
-// 	virtual
-// 	void
-// 	update_atom_pointer(
-// 		AtomPointers & atom_pointer,
-// 		bool const allow_overwriting = false
-// 	) = 0;
 
 
 	/// @brief update the stub without actually updating coordinates
@@ -196,7 +186,7 @@ public: // Methods
 
 
 	///////////////////////////////////////////////////////////////////////////
-	///\brief copy DOFs and xyz coords from src Atom
+	/// @brief copy DOFs and xyz coords from src Atom
 	virtual
 	void
 	copy_coords( Atom const & src ) = 0;
@@ -206,7 +196,7 @@ public: // Methods
 	// access DOFs
 
 
-	/// get dof
+	/// @brief get dof
 	virtual
 	Real
 	dof(
@@ -214,7 +204,7 @@ public: // Methods
 	) const = 0;
 
 
-	/// set dof, use "set_" syntax since we have multiple dof's
+	/// @brief set dof, use "set_" syntax since we have multiple dof's
 	virtual
 	void
 	set_dof(
@@ -223,7 +213,7 @@ public: // Methods
 	) = 0;
 
 
-	/// set dof, use "set_" syntax since we have multiple dof's -- for use in output-sensitive refold routine
+	/// @brief set dof, use "set_" syntax since we have multiple dof's -- for use in output-sensitive refold routine
 	virtual
 	void
 	set_dof(
@@ -233,7 +223,7 @@ public: // Methods
 	) = 0;
 
 
-	/// get Jump
+	/// @brief get Jump
 	virtual
 	Jump const &
 	jump() const = 0;
@@ -247,7 +237,7 @@ public: // Methods
 	) = 0;
 
 
-	/// set Jump -- for use in output-sensitive refolding
+	/// @brief set Jump -- for use in output-sensitive refolding
 	virtual
 	void
 	jump(
@@ -256,7 +246,7 @@ public: // Methods
 	) = 0;
 
 
-	/// copy atom with new memory allocation
+	/// @brief copy atom with new memory allocation
 	virtual
 	AtomOP
 	clone( AtomAP parent_in, AtomPointer2D & atom_pointer ) const = 0;
@@ -284,22 +274,22 @@ public: // Methods
 
 	///////////////////////////////////////////////////////////////////////////
 	// miscellaneous inspection
-	///\brief atom is a jump atom?
+	/// @brief atom is a jump atom?
 	virtual
 	bool
 	is_jump() const = 0;
 
-	///\brief when other atoms are inserted insert after 1st child if available.
+	/// @brief when other atoms are inserted insert after 1st child if available.
 	/// --> this enables us to keep a stub of Downstream Jump atoms inside a single residue
 	virtual
 	bool
 	keep_1st_child_pos() const = 0;
 
 
-	///\brief DOF should be fixed for this atom?
+	/// @brief DoF should be fixed for this atom?
 	///
-	/// for DOFs which must be kept fixed due to topology of tree
-	/// eg, phi of stub_atoms for jump_atoms
+	/// @details for DoFs that must be kept fixed due to topology of tree
+	/// e.g., phi of stub_atoms for jump_atoms
 	inline
 	virtual
 	bool
@@ -310,17 +300,17 @@ public: // Methods
 		return false;
 	}
 
-	///\brief dump out AtomID for this atom, its parent and all its offspring
+	/// @brief dump out AtomID for this atom, its parent and all its offspring
 	virtual
 	void
 	show() const = 0;
 
-	///\brief dump out AtomID for this atom, its parent and all its offspring up to n_level
+	/// @brief dump out AtomID for this atom, its parent and all its offspring up to n_level
 	virtual
 	void
 	show(int const &) const = 0;
 
-	///\brief dihedral angle between two bonded children to this atom
+	/// @brief dihedral angle between two bonded children to this atom
 	virtual
 	Real
 	dihedral_between_bonded_children(
@@ -409,10 +399,6 @@ public: // Methods
 	) const = 0;
 
 
-// 	virtual
-// 	void
-// 	erase() = 0;
-
 	virtual
 	Size
 	n_children() const = 0;
@@ -433,7 +419,7 @@ public: // Methods
 	child( Size const k ) = 0;
 
 
-	/// the atom-index of this child
+	/// @brief the atom-index of this child
 	virtual
 	Size
 	child_index( AtomCOP child ) const = 0;
@@ -452,7 +438,7 @@ public: // Properties
 	id() const = 0;
 
 
-	/// AtomID assignment
+	/// @brief AtomID assignment
 	virtual
 	void
 	id( AtomID const & id_in ) = 0;
@@ -531,10 +517,6 @@ public: // Properties
 	Length
 	distance_squared( Atom const & atom1, Atom const & atom2 );
 
-	/// @brief Transform atom and children by linear transformation
-	//virtual
-	//void
-	//transform_Ax_plus_b_recursive( Matrix const & A, Vector const & b ) = 0;
 
 	/// @brief Transform atom and children by linear transformation
 	virtual
@@ -546,17 +528,15 @@ public: // Properties
 	AtomCOP
 	parent() const = 0;
 
-	///
 	virtual
 	void
 	get_path_from_root( utility::vector1< AtomCOP > & path ) const = 0;
 
-	///
 	virtual
 	bool
 	atom_is_on_path_from_root( AtomCOP atm ) const = 0;
 
-	/// parent assignment
+	/// @brief parent assignment
 	virtual
 	void
 	parent( AtomAP parent_in ) = 0;

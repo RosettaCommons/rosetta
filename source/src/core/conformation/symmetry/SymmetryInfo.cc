@@ -1295,7 +1295,6 @@ SymmetryInfo::dependent_dofs( DOF_ID const & id, Conformation const & conf ) con
 	return dofs;
 }
 
-///
 bool
 SymmetryInfo::dof_is_independent( DOF_ID const & id, Conformation const & conf ) const
 {
@@ -1308,10 +1307,10 @@ SymmetryInfo::dof_is_independent( DOF_ID const & id, Conformation const & conf )
 		return chi_is_independent( id.rsd() );
 	case id::JUMP:
 		return jump_is_independent( conf.fold_tree().get_jump_that_builds_residue( id.rsd() ) );
+	default:
+		utility_exit_with_message("dof_is_independent: unrecognized TorsionType!");
+		return false;
 	}
-
-	utility_exit_with_message("dof_is_independent: unrecognized TorsionType!");
-	return false;
 }
 
 // get a weight for derivative calculations
@@ -1334,7 +1333,6 @@ SymmetryInfo::get_dof_derivative_weight( DOF_ID const & id, Conformation const &
 	utility_exit_with_message("get_dof_derivative_weight: unrecognized TorsionType!");
 	return false;
 }
-
 
 
 ///

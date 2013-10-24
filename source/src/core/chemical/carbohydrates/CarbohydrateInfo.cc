@@ -268,27 +268,6 @@ CarbohydrateInfo::branch_point(core::uint i) const
 	return branch_points_[i];
 }
 
-// Return the CHI identifier for the requested nu (internal ring torsion) angle.
-/// @param    <subscript>: the subscript for nu, which must be between 1 and 2 less than the ring size, inclusive
-/// @return	  a pair of values corresponding to the atom tree torsion definitions, in which the first element is
-/// either the TorsionID BB or CHI and the second element is an integer
-/// @remarks  The atom tree in Rosetta 3 does not allow for rings, so cyclic carbohydrates are implemented as
-/// linear residues.  Because of this, the atom tree assigns backbone (BB) torsions to what it considers the main-
-/// chain.  Thus, only one side of the ring is considered backbone.  Side-chain (CHI) angles must be defined in
-/// the .params file for the residue; they are not automatically assigned.  nu angles, which are the torsion
-/// angles defining the ring, not considered BB by the atom tree must therefore be defined as CHI angles in the
-/// .params file, even though they are not in reality side-chain torsions.  Since a ring also has a multiplicity
-/// of actual side-chains, the indices for those CHI angles that are actually nu angles will vary.
-std::pair<core::id::TorsionType, core::uint>
-CarbohydrateInfo::nu_id(core::uint subscript) const
-{
-	assert((subscript > 0) && (subscript <= ring_size_ - 2));
-	PyAssert((subscript > 0) && (subscript <= ring_size_ - 2),
-			"CarbohydrateInfo::nu_id(core::uint subscript): "
-			"nu(subscript) does not have a CHI identifier.");
-
-	return nu_id_[subscript];
-}
 
 // Return the BB or CHI identifier for the requested glycosidic linkage torsion angle.
 /// @param    <torsion_index>: an integer corresponding to phi (1), psi (2), or omega (3)
@@ -364,8 +343,6 @@ CarbohydrateInfo::init(core::chemical::ResidueTypeCAP residue_type)
 
 	determine_IUPAC_names();
 
-	define_nu_ids();
-
 	conformer_set_ = new RingConformerSet(ring_size_);
 }
 
@@ -388,7 +365,6 @@ CarbohydrateInfo::copy_data(
 	object_to_copy_to.anomer_ = object_to_copy_from.anomer_;
 	object_to_copy_to.is_glycoside_ = object_to_copy_from.is_glycoside_;
 	object_to_copy_to.modifications_ = object_to_copy_from.modifications_;
-	object_to_copy_to.nu_id_ = object_to_copy_from.nu_id_;
 	object_to_copy_to.mainchain_glycosidic_bond_acceptor_ = object_to_copy_from.mainchain_glycosidic_bond_acceptor_;
 	object_to_copy_to.branch_points_ = object_to_copy_from.branch_points_;
 	object_to_copy_to.has_exocyclic_linkage_ = object_to_copy_from.has_exocyclic_linkage_;
@@ -711,29 +687,6 @@ CarbohydrateInfo::determine_IUPAC_names()
 
 	full_name_ = long_prefixes.str() + root + long_suffix.str();
 	short_name_ = short_prefixes.str() + code + short_suffix.str();
-}
-
-// If cyclic, define nu angles in terms of CHI ids.
-void
-CarbohydrateInfo::define_nu_ids()
-{
-	using namespace std;
-	using namespace id;
-
-	if (ring_size_ != 0) {
-		// Get the number of torsions need to define a ring conformation.
-		// The two remaining ring torsions (e.g., for a six-membered ring, nu(0) and nu(5)) will have to be determined
-		// using vector calculus, because of the cut bond required by the atom tree.
-		Size n_torsions_needed = ring_size_ - 2;
-		Size n_CHIs = residue_type_->nchi();
-
-		// The final CHIs in the .params file define the (needed) ring torsions.
-		uint first_CHI = n_CHIs - n_torsions_needed + 1;
-
-		for (uint i = first_CHI; i <= n_CHIs; ++i) {
-			nu_id_.push_back(make_pair(CHI, i));
-		}
-	}
 }
 
 

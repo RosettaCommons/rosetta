@@ -79,10 +79,10 @@ CHI 6  C5   C6   O6   HO6
 CHI_ROTAMERS 6 60 15
 CHI_ROTAMERS 6 -60 15
 CHI_ROTAMERS 6 180 15
-CHI 7  VO5  C1   C2   C3   # nu(1); duplicates BB 1, but defined differently
-CHI 8  C1   C2   C3   C4   # nu(2); duplicates BB 2
-CHI 9  C2   C3   C4   C5   # nu(3)
-CHI 10  C3   C4   C5   O5  # nu(4)
+NU 1  VO5  C1   C2   C3    # duplicates BB 1, but defined differently
+NU 2  C1   C2   C3   C4    # duplicates BB 2
+NU 3  C2   C3   C4   C5
+NU 4  C3   C4   C5   O5
 PROPERTIES  POLAR CARBOHYDRATE ALDOSE D_SUGAR PYRANOSE ALPHA_SUGAR
 NBR_ATOM  C4
 NBR_RADIUS 6.967819

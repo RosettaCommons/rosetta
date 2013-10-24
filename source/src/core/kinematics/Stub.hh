@@ -19,7 +19,6 @@
 // Unit headers
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/kinematics/RT.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/types.hh>
 
 // Numeric headers
 #include <numeric/xyzMatrix.hh>
@@ -45,7 +44,6 @@ namespace kinematics {
 /// a backbone triplet N-CA-C centered at CA.
 ///
 /// See @ref atomtree_overview "AtomTree overview and concepts" for details.
-///
 class Stub
 {
 
@@ -73,17 +71,16 @@ public: // Creation
 		v( v_in )
 	{}
 
-	/// ctor from RT object
+	/// constructor from RT object
 	Stub( RT const & rt );
 
 
 	/// @brief constructor by four points
 	///
 	/// @details first point is the center (V) and the rest three are used to
-	/// construct the coord frame (M). see member functon from_four_points(...)
-
-	// construct a stub centered at v_in, as would come from building
-	// c then b then a
+	/// construct the coord frame (M). see member function from_four_points(...)
+	/// construct a stub centered at v_in, as would come from building
+	/// c then b then a
 	inline
 	Stub(
 		Vector const & center,
@@ -99,9 +96,8 @@ public: // Creation
 	///
 	/// @details first point is the center (V) and all the three are used to
 	/// construct the coord frame (M). see member functon from_four_points(...)
-
-	// construct a stub as would come from building
-	// c then b then a
+	/// construct a stub as would come from building
+	/// c then b then a
 	inline
 	Stub(
 		Vector const & a,
@@ -154,7 +150,6 @@ public: // Methods
 	///d is the length of the vector
 	///
 	///@note  These are non-standard in the choice of axis for historical reasons --PB
-	///
 	Vector
 	spherical( Real const phi, Real const theta, Real const d ) const
 	{
@@ -184,7 +179,7 @@ public: // Fields
 	Vector center() const { return v; }
 }; // Stub
 
-/// @brief root sqared deviation between two stubs
+/// @brief root squared deviation between two stubs
 inline
 double
 distance(
@@ -205,7 +200,7 @@ distance(
 std::ostream &
 operator<<( std::ostream & os, Stub const & a );
 
-/// @brief Globals
+/// @brief Global default stub
 extern Stub default_stub;
 
 

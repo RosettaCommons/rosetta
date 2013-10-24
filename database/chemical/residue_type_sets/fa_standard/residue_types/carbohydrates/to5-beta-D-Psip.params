@@ -75,10 +75,10 @@ CHI 6  VO6  C2   C1   O1   # chi(O6-C2-C1-O1) -- chi(2) is ambiguous
 CHI_ROTAMERS 6 60 15
 CHI_ROTAMERS 6 -60 15
 CHI_ROTAMERS 6 180 15
-CHI 7  VO6  C2   C3   C4   # nu(2); duplicates BB 1, but defined differently
-CHI 8  C2   C3   C4   C5   # nu(3); duplicates BB 2
-CHI 9  C3   C4   C5   C6   # nu(4); duplicates BB 3, but defined differently
-CHI 10  C4   C5   C6   O6  # nu(5)
+NU 1  VO6  C2   C3   C4    # duplicates BB 1, but defined differently
+NU 2  C2   C3   C4   C5    # duplicates BB 2
+NU 3  C3   C4   C5   C6    # duplicates BB 3, but defined differently
+NU 4  C4   C5   C6   O6
 PROPERTIES  POLAR CARBOHYDRATE KETOSE D_SUGAR PYRANOSE BETA_SUGAR
 NBR_ATOM  C3
 NBR_RADIUS 6.091377

@@ -8,21 +8,18 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/id/AtomID.hh
+/// @brief  Declarations for the TorsionID class
 /// @author Phil Bradley
 
 
 #ifndef INCLUDED_core_id_TorsionID_hh
 #define INCLUDED_core_id_TorsionID_hh
 
-
 // Unit headers
 #include <core/id/TorsionID.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/id/AtomID.fwd.hh>
 #include <core/id/types.hh>
-
-// AUTO-REMOVED #include <basic/Tracer.fwd.hh>
 
 // C++ headers
 #include <iostream>
@@ -32,17 +29,14 @@ namespace core {
 namespace id {
 
 
-/// /brief  Torsion identifier class
-///
-/// Note the order of the elements in construction calls:
+/// @brief  Torsion identifier class
+/// @note   Note the order of the elements in construction calls:
 ///
 ///        ( residue, type, torsion )
 ///
 ///        sort of from least to most specific
-
 class TorsionID
 {
-
 public: // Creation
 
 	/// @brief Default constructor
@@ -92,7 +86,7 @@ public: // Properties
 	type() { return type_; }
 
 	inline
-	Size
+	uint
 	torsion() const { return torsion_; }
 
 	inline

@@ -65,7 +65,7 @@ namespace conformation {
 /// @brief A container of Residues and the kinematics to manage them
 class Conformation : public utility::pointer::ReferenceCount {
 
-public: // typedefs
+public:  // typedefs
 
 	typedef kinematics::Jump Jump;
 	typedef kinematics::FoldTree   FoldTree;
@@ -92,28 +92,12 @@ public: // typedefs
 	typedef std::map< id::AtomID, Vector > FragXYZ;
 	typedef std::map< id::StubID, kinematics::RT > FragRT;
 
-public:
 
-	// APL Removing accessor functions that voilate the data integrity guarantees of this class.
-	// Conformation forbids non-const access to its residues.  Iterate from 1 to total_residue and
-	// request a Residue const & instead of iterating from res_begin to res_end.
-	/// @brief HIGHLY HIGHLY ILLEGAL ACCESS GRANTED TO CONFORMATION DATA.
-	/// This function will be removed very very shortly.
-	/// @brief Returns a random-access iterator that points at the first residue in the Conformation.
-	/// ResidueOPs::iterator res_begin() { return residues_.begin(); }
-	/// @brief Returns a random-access iterator that points just beyond the last residue in the Conformation.
-	/// ResidueOPs::iterator res_end  () { return residues_.end  (); }
-
-	/////////////////////////////////////////////////////////////////////////////
+public:  // standard class methods
 
 	/// @brief constructor
-	/// if you are using PyRosetta, you should NOT BE HERE!
+	/// @note  If you are using PyRosetta, you should NOT BE HERE!
 	Conformation();
-		//	utility::pointer::ReferenceCount(),
-		//residue_coordinates_need_updating_( false ),
-		//residue_torsions_need_updating_( false ),
-		//structure_moved_( true )
-		//{}
 
 	/// @brief default destructor
 	virtual
@@ -122,7 +106,7 @@ public:
 	/// @brief copy constructor
 	Conformation( Conformation const & src );
 
-	/// @brief operator
+	/// @brief equals operator
 	virtual
 	Conformation &
 	operator=( Conformation const & src );
@@ -132,7 +116,29 @@ public:
 	ConformationOP
 	clone() const;
 
-	///@details determine the type of the ConformationOP
+	/// @brief clear data
+	void
+	clear();
+
+
+public:  // Debugging
+
+	/// @brief debugging
+	void
+	debug_residue_torsions( bool verbose = false ) const;
+
+	/// @brief Show residue connections for debugging purposes.
+	void
+	show_residue_connections() const;
+
+	/// @brief Show residue connections for debugging purposes.
+	void
+	show_residue_connections(std::ostream &os) const;
+
+
+public:  // Comparisons
+
+	/// @brief determine the type of the ConformationOP
 	virtual
 	bool
 	same_type_as_me( Conformation const & other, bool recurse /* = true */ ) const;
@@ -140,6 +146,9 @@ public:
 	/// @brief do the names of all residues in this and src match?
 	bool
 	sequence_matches( Conformation const & other ) const;
+
+
+public:  // General Properties
 
 	/// @brief Returns the number of residues in the Conformation
 	Size
@@ -154,6 +163,32 @@ public:
 	{
 		return residues_.empty();
 	}
+
+	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
+	bool is_residue_typeset( std::string tag ) const;
+
+	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
+	bool is_fullatom() const;
+
+	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
+	bool is_centroid() const;
+
+	/// @brief Return true if this conformation contains any carbohydrate residues.
+	bool
+	contains_carbohydrate_residues() const
+	{
+		return contains_carbohydrate_residues_;
+	}
+
+	/// @brief Set whether this conformation contains any carbohydrate residues.
+	void
+	contains_carbohydrate_residues(bool const setting)
+	{
+		contains_carbohydrate_residues_ = setting;
+	}
+
+
+public:  // Chains
 
 	/// @brief Returns the position number of the last residue in  <chain>
 	Size
@@ -178,21 +213,32 @@ public:
 		return chain_endings_.size() + 1; // last residue is not counted as chain ending
 	}
 
+	/// @brief Returns the list of chain endings
+	utility::vector1< Size > const &
+	chain_endings() const;
 
-	/// @brief Return true if this conformation contains any carbohydrate residues.
-	bool
-	contains_carbohydrate_residues() const
-	{
-		return contains_carbohydrate_residues_;
-	}
-
-	/// @brief Set whether this conformation contains any carbohydrate residues.
+	/// @brief Sets the list of chain endings
 	void
-	contains_carbohydrate_residues(bool const setting)
-	{
-		contains_carbohydrate_residues_ = setting;
-	}
+	chain_endings( utility::vector1< Size > const & endings );
 
+	/// @brief Marks  <seqpos>  as the end of a new chain
+	void
+	insert_chain_ending( Size const seqpos );
+
+	/// @brief Deletes  <seqpos>  from the list of chain endings
+	void
+	delete_chain_ending( Size const seqpos );
+
+	/// @brief Resets chain data so that the Conformation is marked as a single chain
+	void
+	reset_chain_endings();
+
+	/// @brief Rederive the chains from the termini/polymer status
+	void
+	chains_from_termini();
+
+
+public:  // Secondary Structure
 
 	/// @brief Returns the secondary structure the position  <seqpos>
 	/// @return character representing secondary structure; returns 'L' if the
@@ -215,12 +261,19 @@ public:
 		secstruct_[seqpos] = setting;
 	}
 
+
+public:  // Trees
+
 	/// @brief Returns the conformation's FoldTree
 	virtual FoldTree const &
 	fold_tree() const
 	{
 		return *fold_tree_;
 	}
+
+	/// @brief Sets the FoldTree to  <fold_tree_in>
+	virtual void
+	fold_tree( FoldTree const & fold_tree_in );
 
 	/// @brief Returns the conformation's AtomTree
 	AtomTree const &
@@ -229,46 +282,8 @@ public:
 		return *atom_tree_;
 	}
 
-	/// @brief Sets the FoldTree to  <fold_tree_in>
-	virtual void
-	fold_tree( FoldTree const & fold_tree_in );
 
-
-	/// @brief Returns the list of chain endings
-	utility::vector1< Size > const &
-	chain_endings() const;
-
-
-	/// @brief Sets the list of chain endings
-	/// @remarks All positions must be strictly less than the number of
-	/// residues in the Conformation, otherwise the routine will fail fast.
-	/// Note that the last residue position is not counted as a chain end.
-	void
-	chain_endings( utility::vector1< Size > const & endings );
-
-
-	/// @brief Marks  <seqpos>  as the end of a new chain
-	/// @remarks The last residue position is not counted as a chain ending.
-	/// Also increases the chain ID number by 1 for all residues upstream from seqpos.
-	void
-	insert_chain_ending( Size const seqpos );
-
-	/// @brief Deletes  <seqpos>  from the list of chain endings
-	/// @remarks The last residue position is not counted as a chain ending.
-	void
-	delete_chain_ending( Size const seqpos );
-
-
-	/// @brief Resets chain data so that the Conformation is marked as a single chain
-	void
-	reset_chain_endings();
-
-
-	/// @brief Rederive the chains from the termini/polymer status
-	void
-	chains_from_termini();
-
-	/////////////////////////////////////////////////////////////////////////////
+public:  // Residues
 
 	/// @brief Returns the AA enum for position  <seqpos>
 	chemical::AA const &
@@ -278,7 +293,8 @@ public:
 		return residues_[seqpos]->aa();
 	}
 
-	/// @brief access one of the residues;  this access is inlined, since otherwise it
+	/// @brief access one of the residues
+	/// @note this access is inlined, since otherwise it
 	/// shows up in the profiler.  This will call non-inlined refold methods if necessary.
 	///
 	/// @details update coordinates and torsions for this and all other residues before
@@ -301,6 +317,11 @@ public:
 		assert( seqpos <= size() );
 		return residues_[seqpos]->type();
 	}
+
+	/// @brief  Inefficient -- constructs copy of residues_
+	ResidueCAPs
+	const_residues() const;
+
 
 	///////////////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////////////
@@ -384,9 +405,7 @@ public:
 		bool const orient_backbone
 	);
 
-		/// @brief funtion to replace a residue based on superposition on
-	/// @brief the specified input atom pairs
-	/// @brief NOTE: at the moment, only superposition on 3 atoms works
+	/// @brief function to replace a residue based on superposition on the specified input atom pairs
 	virtual void
 	replace_residue(
 		Size const seqpos,
@@ -406,42 +425,67 @@ public:
 	void
 	delete_residue_range_slow( Size const range_begin, Size const range_end );
 
+
+	/// @brief returns a mask of residues to be used in scoring
+	virtual utility::vector1<bool>
+	get_residue_mask() const;
+
+	/// @brief returns a residue-pair weight
+	virtual Real
+	get_residue_weight(core::Size, core::Size) const;
+
+
+public:  // Bonds, Connections, Atoms, & Stubs
+
+	void
+	detect_bonds();
+
+	void
+	detect_pseudobonds();
+
+
 	/// @brief Declare that a chemical bond exists between two residues
 	void
 	declare_chemical_bond(
-												Size const seqpos1,
-												std::string const & atom_name1,
-												Size const seqpos2,
-												std::string const & atom_name2
-												);
-
-
-  /// @brief  Insert one conformation into another. See FoldTree::insert_fold_tree_by_jump
-	virtual
-	void
-	insert_conformation_by_jump(
-			Conformation const & conf,             // the conformation to be inserted
-			Size const insert_seqpos,              // rsd 1 in conf goes here
-			Size const insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
-			Size const anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
-			Size const anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
-			std::string const & anchor_atom = "",  // "" means take default anchor atom
-			std::string const & root_atom   = ""   // "" means take default root   atom
+		Size const seqpos1,
+		std::string const & atom_name1,
+		Size const seqpos2,
+		std::string const & atom_name2
 	);
 
-	//////////////////////////////////////////////////////////////////////////
-	/// @brief copy a stretch of coordinates/torsions from another Conformation
-	void
-	copy_segment(
-		Size const size,
-		Conformation const & src,
-		Size const begin,
-		Size const src_begin
-	);
 
 	/// @brief Rebuild the atoms ( like HN(seqpos), OC(seqpos+1) ) that are dependent on the polymer bond between seqpos and seqpos+1
 	void
 	rebuild_polymer_bond_dependent_atoms( Size const seqpos );
+
+	void
+	rebuild_residue_connection_dependent_atoms( Size const seqpos, Size const connid );
+
+
+	/// @brief  This returns the AtomID of the atom in the other residue to which the "connection_index"-th
+	/// connection of residue seqpos is connected to.
+	AtomID
+	inter_residue_connection_partner(
+		Size const seqpos,
+		int const connection_index
+	) const;
+
+	/// @brief get all atoms bonded to another
+	utility::vector1<core::id::AtomID>
+	bonded_neighbor_all_res(
+		core::id::AtomID atomid,
+		bool virt = false
+	) const;
+
+	void
+	fill_missing_atoms(
+		id::AtomID_Mask missing
+	);
+
+	/// @brief returns true if atom is part of backbone.
+	bool
+	atom_is_backbone_norefold( Size const pos, Size const atomno ) const;
+
 
 	/// @brief  Set the transform between two stubs -- only works if there's a jump between the two sets of stubatoms
 	void
@@ -450,9 +494,6 @@ public:
 		id::StubID const & stub_id2,
 		kinematics::RT const & target_rt
 	);
-	//{
-	//	set_dof_moved( atom_tree_.set_stub_transform( stub_id1, stub_id2, target_rt ) );
-	//}
 
 	/// @brief  get the transform between two stubs
 	kinematics::RT
@@ -460,179 +501,23 @@ public:
 		id::StubID const & stub_id1,
 		id::StubID const & stub_id2
 	) const;
-	//{
-	//	return atom_tree_.get_stub_transform( stub_id1, stub_id2 );
-	//}
 
 
 	void
 	set_jump_atom_stub_id( id::StubID const& id );
-	//{
-	//	atom_tree_.set_jump_atom_stub_id( id );
-	//}
 
 	kinematics::Stub
 	stub_from_id( id::StubID const& id ) const;
-	//{
-	//	return atom_tree_.stub_from_id( id );
-	//}
-
-	void
-	rebuild_residue_connection_dependent_atoms( Size const seqpos, Size const connid );
 
 
-	/// @brief  Inefficient -- constructs copy of residues_
-	ResidueCAPs
-	const_residues() const;
+	/// @brief The upstream and downstream Stubs are the coordinate frames between which this jump is transforming
+	kinematics::Stub
+	upstream_jump_stub( int const jump_number ) const;
 
-	/////////////////////////////////////////////////////////////////////////////
-	// access/modify dofs/xyz's
+	/// @brief  The upstream and downstream Stubs are the coordinate frames between which this jump is transforming
+	kinematics::Stub
+	downstream_jump_stub( int const jump_number ) const;
 
-	/// @brief Returns the AtomTree degree of freedom (DOF)  <id>
-	Real
-	dof( DOF_ID const & id ) const;
-	//{
-	//	return atom_tree_.dof( id );
-	//}
-
-	/// @brief Sets the AtomTree degree of freedom (DOF)  <id>  to  <setting>
-	virtual
-	void
-	set_dof( DOF_ID const & id, Real const setting );
-	//{
-	//	set_dof_moved( id );
-	//	residue_torsions_need_updating_ = true; // might have been a torsion angle
-	//	atom_tree_.set_dof( id, setting );
-	//}
-
-	/// @brief Returns the torsion angle  <id>
-	Real
-	torsion( TorsionID const & id ) const;
-
-	/// @brief Sets the AtomTree DOF and the torsion in the corresponding Residue
-	virtual
-	void
-	set_torsion( TorsionID const & id, Real const setting );
-
-	///
-	void
-	insert_ideal_geometry_at_polymer_bond( Size const seqpos );
-
-	void
-	insert_ideal_geometry_at_residue_connection( Size const pos1, Size const connid1 );
-
-	/// @brief Sets the torsion angle defined by  <atom[1-4]>  to  <setting>
-	virtual
-	void
-	set_torsion_angle(
-		AtomID const & atom1,
-		AtomID const & atom2,
-		AtomID const & atom3,
-		AtomID const & atom4,
-		Real const setting
-	);
-
-	/// @brief Sets the bond angle defined by  <atom[1-3]>  to  <setting>
-	virtual
-	void
-	set_bond_angle(
-		AtomID const & atom1,
-		AtomID const & atom2,
-		AtomID const & atom3,
-		Real const setting
-	);
-
-	/// @brief Sets the cond length between  <atom1>  and  <atom2>  to  <setting>
-	virtual
-	void
-	set_bond_length(
-		AtomID const & atom1,
-		AtomID const & atom2,
-		Real const setting
-	);
-
-	///
-	void
-	insert_fragment(
-		id::StubID const & instub_id,
-		FragRT const & outstub_transforms,
-		FragXYZ const & frag_xyz
-	);
-
-	/// @brief Returns the torsion angle defined by  <atom[1-4]>
-	Real
-	torsion_angle(
-		AtomID const & atom1,
-		AtomID const & atom2,
-		AtomID const & atom3,
-		AtomID const & atom4
-	) const;
-	//{
-	//	return atom_tree_.torsion_angle( atom1, atom2, atom3, atom4 );
-	//}
-
-	/// @brief Returns the bond angle defined by  <atom[1-3]>
-	Real
-	bond_angle(
-		AtomID const & atom1,
-		AtomID const & atom2,
-		AtomID const & atom3
-	) const;
-	//{
-	//	return atom_tree_.bond_angle( atom1, atom2, atom3 );
-	//}
-
-	/// @brief Returns the bond length between  <atom1>  and  <atom2>
-	Real
-	bond_length(
-		AtomID const & atom1,
-		AtomID const & atom2
-	) const;
-	//{
-	//	return atom_tree_.bond_length( atom1, atom2 );
-	//}
-
-
-	/// @brief Returns the Jump with jump number  <jump_number>
-	const Jump &
-	jump( int const jump_number ) const;
-	//{
-	//	return atom_tree_.jump( jump_atom_id( jump_number ) );
-	//}
-
-	/// @brief Sets the jump  <jump_number>  to  <new_jump>
-	virtual
-	void
-	set_jump(
-		int const jump_number,
-		Jump const & new_jump
-	);
-	//{
-	//	assert( new_jump.ortho_check() );
-	//	AtomID const id( jump_atom_id( jump_number ) );
-	//	atom_tree_.set_jump( id, new_jump );
-	//	set_dof_moved( id );
-	//}
-
-	/// @brief access a jump
-	const Jump &
-	jump( AtomID const & id ) const;
-	//{
-	//	return atom_tree_.jump( id );
-	//}
-
-	/// @brief set a jump
-	virtual
-	void
-	set_jump(
-		AtomID const & id,
-		Jump const & new_jump
-	);
-	//{
-	//	assert( new_jump.ortho_check() );
-	//	atom_tree_.set_jump( id, new_jump );
-	//	set_dof_moved( id );
-	//}
 
 	/// @brief identify polymeric connections
 	void
@@ -645,64 +530,177 @@ public:
 	void
 	update_polymeric_connection( Size const lower_seqpos );
 
-	void
-	detect_bonds();
-
-	void
-	detect_pseudobonds();
 
 	/// @brief Detect existing disulfides from the protein structure.
-	/// @note Assumes full atom
-	/// @details looks at SG-SG distance. If the SG-SG are about 2.02 A apart, calls
-	/// it a disulfide bond.
 	virtual
 	void
 	detect_disulfides();
 
 	/// @brief Assigns disulfide bonds based on a pre-determined list
-	/// @note works in centroid and full-atom modes
     void
     fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds);
 
-    // void find_disulfides();
 
-	/// @brief The upstream and downstream Stubs are the coordinate frames between which this jump is transforming
-	kinematics::Stub
-	upstream_jump_stub( int const jump_number ) const;
-	//{
-	//	return atom_tree_.atom( jump_atom_id( jump_number ) ).get_input_stub();
-	//}
+public:  // Conformation Cutting/Pasting
 
-	/// @brief  The upstream and downstream Stubs are the coordinate frames between which this jump is transforming
-	kinematics::Stub
-	downstream_jump_stub( int const jump_number ) const;
-	//{
-	//	return atom_tree_.atom( jump_atom_id( jump_number ) ).get_stub();
-	//}
+	/// @brief  Insert one conformation into another. See FoldTree::insert_fold_tree_by_jump
+	virtual
+	void
+	insert_conformation_by_jump(
+			Conformation const & conf,             // the conformation to be inserted
+			Size const insert_seqpos,              // rsd 1 in conf goes here
+			Size const insert_jumppos,             // jump#1 in conf goes here, see insert_fold_tree_by_jump
+			Size const anchor_pos,                 // in the current sequence numbering, ie before insertion of conf
+			Size const anchor_jump_number = 0,     // the desired jump number of the anchoring jump, default=0
+			std::string const & anchor_atom = "",  // "" means take default anchor atom
+			std::string const & root_atom   = ""   // "" means take default root   atom
+	);
+
+	/// @brief copy a stretch of coordinates/torsions from another Conformation
+	void
+	copy_segment(
+		Size const size,
+		Conformation const & src,
+		Size const begin,
+		Size const src_begin
+	);
+
+	void
+	insert_fragment(
+		id::StubID const & instub_id,
+		FragRT const & outstub_transforms,
+		FragXYZ const & frag_xyz
+	);
+
+
+public:  // DoFs/xyzs
+
+	/// @brief Returns the AtomTree degree of freedom (DOF)  <id>
+	Real
+	dof( DOF_ID const & id ) const;
+
+	/// @brief Sets the AtomTree degree of freedom (DOF)  <id>  to  <setting>
+	virtual
+	void
+	set_dof( DOF_ID const & id, Real const setting );
+
+
+	/// @brief Returns the torsion angle  <id>
+	Real
+	torsion( TorsionID const & id ) const;
+
+	/// @brief Sets the AtomTree DOF and the torsion in the corresponding Residue
+	virtual
+	void
+	set_torsion( TorsionID const & id, Real const setting );
+
+
+	/// @brief Returns the torsion angle defined by  <atom[1-4]>
+	Real
+	torsion_angle(
+		AtomID const & atom1,
+		AtomID const & atom2,
+		AtomID const & atom3,
+		AtomID const & atom4
+	) const;
+
+	/// @brief Sets the torsion angle defined by  <atom[1-4]>  to  <setting>
+	virtual
+	void
+	set_torsion_angle(
+		AtomID const & atom1,
+		AtomID const & atom2,
+		AtomID const & atom3,
+		AtomID const & atom4,
+		Real const setting
+	);
+
+
+	/// @brief Returns the bond angle defined by  <atom[1-3]>
+	Real
+	bond_angle(
+		AtomID const & atom1,
+		AtomID const & atom2,
+		AtomID const & atom3
+	) const;
+
+	/// @brief Sets the bond angle defined by  <atom[1-3]>  to  <setting>
+	virtual
+	void
+	set_bond_angle(
+		AtomID const & atom1,
+		AtomID const & atom2,
+		AtomID const & atom3,
+		Real const setting
+	);
+
+
+	/// @brief Returns the bond length between  <atom1>  and  <atom2>
+	Real
+	bond_length(
+		AtomID const & atom1,
+		AtomID const & atom2
+	) const;
+
+	/// @brief Sets the cond length between  <atom1>  and  <atom2>  to  <setting>
+	virtual
+	void
+	set_bond_length(
+		AtomID const & atom1,
+		AtomID const & atom2,
+		Real const setting
+	);
+
+
+	/// @brief Returns the Jump with jump number  <jump_number>
+	const Jump &
+	jump( int const jump_number ) const;
+
+	/// @brief access a jump
+	const Jump &
+	jump( AtomID const & id ) const;
+
+	/// @brief Sets the jump  <jump_number>  to  <new_jump>
+	virtual
+	void
+	set_jump(
+		int const jump_number,
+		Jump const & new_jump
+	);
+
+	/// @brief set a jump
+	virtual
+	void
+	set_jump(
+		AtomID const & id,
+		Jump const & new_jump
+	);
+
 
 	/// @brief access xyz coordinates of an atom
 	PointPosition const &
 	xyz( AtomID const & id ) const;
-	//{
-	//	return atom_tree_.xyz( id );
-	//}
 
-	///
 	virtual
 	void
 	set_xyz( AtomID const & id, PointPosition const & position );
 
-	///
 	virtual
 	void
 	batch_set_xyz( utility::vector1<AtomID> const & id, utility::vector1<PointPosition> const & position );
 
-	///
 	virtual
 	void
 	batch_get_xyz( utility::vector1<AtomID> const & id, utility::vector1<PointPosition> & position ) const;
 
-	//
+
+	void
+	insert_ideal_geometry_at_polymer_bond( Size const seqpos );
+
+	void
+	insert_ideal_geometry_at_residue_connection( Size const pos1, Size const connid1 );
+
+
 	void
 	update_actcoords();
 
@@ -714,19 +712,16 @@ public:
 	void
 	update_orbital_coords( Size resid );
 
-	/////////////////////////////////////////////////////////////////////////////
-	// ID access and conversions
 
-	///
+public:  // ID access and conversions
+
 	DOF_ID
 	dof_id_from_torsion_id( TorsionID const & id ) const;
 
-	///
 	id::AtomID
 	jump_atom_id( int const jump_number ) const;
 
 	///@brief get four atoms which defined this torsion
-	///@note  Returns TRUE to signal FAILURE
 	bool
 	get_torsion_angle_atom_ids(
 		TorsionID const & tor_id,
@@ -737,8 +732,7 @@ public:
 	) const;
 
 
-	/////////////////////////////////////////////////////////////////////////////
-	// for tracking changes to the structure
+public:  // for tracking changes to the structure
 
 	/// @brief Generate a domain_map from the current dof/xyz moved data
 	void
@@ -759,73 +753,11 @@ public:
 	}
 
 	/// @brief forget all the structure modifications
-	/**
-		 called after domain map information is transferred to the Energies class
-	**/
 	void
 	reset_move_data();
-	//{
-	//	structure_moved_ = false;
-	//	dof_moved_.fill_with( false );
-	//	xyz_moved_.fill_with( false );
-	//}
 
 
-	/////////////////////////////////////////////////////////////////////////////
-	/// @brief clear data
-	void
-	clear();
-
-
-	/////////////
-	/// @brief debugging
-	void
-	debug_residue_torsions( bool verbose = false ) const;
-
-	/// @brief Show residue connections for debugging purposes.
-	void
-	show_residue_connections() const;
-
-	/// @brief Show residue connections for debugging purposes.
-	void
-	show_residue_connections(std::ostream &os) const;
-
-	/// @brief  This returns the AtomID of the atom in the other residue to which the "connection_index"-th
-	/// @brief  connection of residue seqpos is connected to.
-
-	AtomID
-	inter_residue_connection_partner(
-		Size const seqpos,
-		int const connection_index
-	) const;
-
-
-	/// @brief get all atoms bonded to another
-	utility::vector1<core::id::AtomID>
-	bonded_neighbor_all_res(
-		core::id::AtomID atomid,
-		bool virt = false
-	) const;
-
-	///
-	void
-	fill_missing_atoms(
-		id::AtomID_Mask missing
-	);
-
-	bool
-	atom_is_backbone_norefold( Size const pos, Size const atomno ) const;
-
-	/// @brief returns a mask of residues to be used in scoring
-	virtual utility::vector1<bool>
-	get_residue_mask() const;
-
-	/// @brief returns a residue-pair weight
-	virtual Real
-	get_residue_weight(core::Size, core::Size) const;
-
-public: // observer management
-
+public:  // observer management
 
 	/// @brief attach ConnectionEvent observer function
 	/// @param fn pointer to observer's unary member function with signature void( ConnectionEvent const & )
@@ -964,25 +896,17 @@ public: // observer management
 
 
 	/// @brief clear all observers
-	/// @remarks ConnectionEvent::DISCONNECT will be sent to all observers
 	void clear_observers();
 
-
-	/// @brief fire a ConnectionEvent::TRANSFER to transfer observers from some
-	///  source Conformation
-	/// @param src Take observers from this source Conformation.
-	/// @remarks Only observers that properly honor the TRANSFER event by
-	///  re-attaching themselves to 'this' Conformation will be transferred.
+	/// @brief fire a ConnectionEvent::TRANSFER to transfer observers from some source Conformation
 	void receive_observers_from( Conformation const & src );
 
 
 public: // additional observer behavior
 
-
 	/// @brief wait for stdin after sending a GeneralEvent signal
 	void
 	debug_pause( bool const flag ) const;
-
 
 	/// @brief waiting for stdin after sending a GeneralEvent signal?
 	bool
@@ -991,40 +915,21 @@ public: // additional observer behavior
 
 public: // signal management
 
-	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
-	///@note this is not a good test --Doug
-	bool is_residue_typeset( std::string tag ) const;
-
-	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
-	///@note this is not a good test --Doug
-	bool is_fullatom() const;
-
-	///@brief convenience test for residue_type_set ( based on two middle residue -- to avoid hitting on ligands or pseudos )
-	///@note this is not a good test --Doug
-	bool is_centroid() const;
-
-
-	/// @brief block signals from being sent and buffer them to be
-	///  sent after unblocking
+	/// @brief block signals from being sent and buffer them to be sent after unblocking
 	void
 	buffer_signals();
 
-
 	/// @brief block signals from being sent
-	/// @warning for safety, ConnectionEvent are never blocked
 	void
 	block_signals();
-
 
 	/// @brief allow signals to be sent
 	void
 	unblock_signals();
 
-
 	/// @brief are signals being blocked and buffered?
 	bool
 	buffering_signals() const;
-
 
 	/// @brief are signals being blocked?
 	bool
@@ -1183,8 +1088,7 @@ private:
 	) const;
 
 
-	/////////////////////////////////////////////////////////////////////////////
-	// setting the moved data
+private:  // setting the moved data
 
 	/// @brief notify of xyz-change
 	void
@@ -1228,31 +1132,27 @@ private:
 
 
 	/// @brief  Will (if necessary) copy the xyz coordinates from the AtomTree to the Residues being managed
-	/// Always safe to call. Nothing will happen unless coords_need_updating_ is true.
 	void
 	update_residue_coordinates() const;
 
-	/// @brief called by above
+	// called by above
 	void
 	update_residue_coordinates( Size const seqpos, bool const fire_signal = true ) const;
 
-	///
 	void
 	rederive_chain_endings();
 
-	///
 	void
 	rederive_chain_ids();
 
 	/// @brief  Will (if necessary) copy the torsion angles (mainchain/chi) from the AtomTree to the Residues being managed
-	/// Always safe to call. Nothing will happen unless torsions_need_updating_
-	/// is true.
 	void
 	update_residue_torsions() const;
 
-	/// called by above
+	// called by above
 	void
 	update_residue_torsions( Size const seqpos, bool const fire_signal = true ) const;
+
 
 	void
 	add_pseudobond(
@@ -1263,6 +1163,8 @@ private:
 		Size nbonds
 	);
 
+
+	/// @brief Optimizing the common case of assigning a conformation to another with the same sequence.
 	void
 	in_place_copy(
 		Conformation const & src
@@ -1273,45 +1175,34 @@ private:
 	void
 	pre_nresidue_change();
 
-	private: // observer notifications
 
+private: // observer notifications
 
 	/// @brief notify ConnectionEvent observers
-	/// @remarks called upon a change in the state of connection between
-	///  the Conformation and the observer (e.g. destruction of Conformation
-	///  or transfer of connection)
 	void
 	notify_connection_obs( ConnectionEvent const & e ) const;
 
 
 	/// @brief notify GeneralEvent observers
-	/// @remarks should only be called when there are no other suitable event types
-	///  since specific event notifications will automatically fire a GeneralEvent signal
 	void
 	notify_general_obs( GeneralEvent const & e ) const;
 
 
 	/// @brief notify IdentityEvent observers
-	/// @param e the event
-	/// @param fire_general fire a GeneralEvent afterwards? default true
 	void
 	notify_identity_obs( IdentityEvent const & e, bool const fire_general = true ) const;
 
 
 	/// @brief notify LengthEvent observers
-	/// @param e the event
-	/// @param fire_general fire a GeneralEvent afterwards? default true
 	void
 	notify_length_obs( LengthEvent const & e, bool const fire_general = true ) const;
 
 
 	/// @brief notify XYZEvent observers
-	/// @param e the event
-	/// @param fire_general fire a GeneralEvent afterwards? default true
 	void
 	notify_xyz_obs( XYZEvent const & e, bool const fire_general = true ) const;
 
-private:
+
 	/////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 	// data
@@ -1327,13 +1218,14 @@ private:
 
 	/// @brief chain number for each position
 	/**
-		 conformation is in charge of making sure that the Residue chain
+		 @details conformation is in charge of making sure that the Residue chain
 		 ID's and the chain_endings_ vector stay in sync.
 	**/
 	utility::vector1< Size > chain_endings_;
 
 	/// @brief fold tree for the kinematics
 	FoldTreeOP fold_tree_;
+
 	/// @brief atom tree for the kinematics
 	AtomTreeOP atom_tree_;
 
@@ -1349,7 +1241,7 @@ private:
 
 	/// @brief book-keeping array for energy evaluations
 	/**
-		 store which DOF's have changed since the last call to reset_move_data
+		 @details store which DOF's have changed since the last call to reset_move_data
 		 note that we are not currently differentiating dof's from the same atom
 	**/
 	AtomID_Mask dof_moved_;
@@ -1357,7 +1249,7 @@ private:
 
 	/// @brief book-keeping array for energy evaluations
 	/**
-		 store which xyz's have changed since the last call to reset_move_data
+		 @details store which xyz's have changed since the last call to reset_move_data
 	**/
 	AtomID_Mask xyz_moved_;
 

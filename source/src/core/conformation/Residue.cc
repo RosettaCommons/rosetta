@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   Residue.cc
-/// @brief
+/// @file   src/core/conformation/Residue.cc
+/// @brief  Method definitions for the Residue class
 /// @author Phil Bradley
 
 // Unit header
@@ -47,6 +47,7 @@
 // Boost headers
 #include <boost/foreach.hpp>
 
+
 #define foreach BOOST_FOREACH
 
 
@@ -64,18 +65,19 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	seqpos_( 0 ),
 	chain_( 0 ),
 	chi_( rsd_type_.nchi(), 0.0 ), // uninit
+	nus_(rsd_type_.n_nus(), 0.0),
 	mainchain_torsions_( rsd_type_.mainchain_atoms().size(), 0.0 ),
 	actcoord_( 0.0 ),
 	nonstandard_polymer_( false ),
 	connect_map_( rsd_type_in.n_residue_connections() )
 {
-
+	// Assign atoms.
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
-		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(),  rsd_type_.atom(i).mm_atom_type_index() ) );
-		//std::cout << this->atom_name(i) << std::endl;
+		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(),
+				rsd_type_.atom(i).mm_atom_type_index() ) );
 	}
 
-
+	// Assign orbitals.
 	foreach(core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index()){
 		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
 		foreach(core::Size orbital_index, orbital_indices){
@@ -84,14 +86,11 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
 		}
 	}
-
-
-
 }
 
 /// @details Create a residue/rotamer of type rsd_type_in placed at the position occupied by current_rsd
-/// Used primarily in rotamer building. The newly created Residue has the same sequence postion, chain id
-/// and mainchain torsion angles as current_rsd. It has a ResidueType as defined by rsd_type_in. Its sidechain
+/// Used primarily in rotamer building. The newly created Residue has the same sequence position, chain id
+/// and mainchain torsion angles as current_rsd. It has a ResidueType as defined by rsd_type_in. Its side-chain
 /// chi angles are uninitialized as all 0.0 and sidechain atom coords are from ideal coords. Its backbone is aligned
 /// with that of current_rsd.
 /// Its residue connections and its pseudobonds must be initialized from the original residue.
@@ -106,6 +105,7 @@ Residue::Residue(
 	seqpos_( current_rsd.seqpos() ),
 	chain_( current_rsd.chain() ),
 	chi_( rsd_type_.nchi(), 0.0 ), // uninit
+	nus_(rsd_type_.n_nus(), 0.0),
 	mainchain_torsions_( current_rsd.mainchain_torsions() ),
 	actcoord_( 0.0 ),
 	nonstandard_polymer_( current_rsd.nonstandard_polymer_ ),
@@ -113,16 +113,15 @@ Residue::Residue(
 	connections_to_residues_( current_rsd.connections_to_residues_ ),
 	pseudobonds_( current_rsd.pseudobonds_ )
 {
-
-
-
+	// Assign atoms.
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
-		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(), rsd_type_.atom(i).mm_atom_type_index() ));
+		atoms_.push_back( Atom( rsd_type_.atom(i).ideal_xyz(), rsd_type_.atom(i).atom_type_index(),
+				rsd_type_.atom(i).mm_atom_type_index() ));
 	}
 
 	assert( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() );
 
-	// now orient
+	// Now orient the residue.
 	place( current_rsd, conformation, preserve_c_beta );
 
 	// Assumption: if two residue types have the same number of residue connections,
@@ -130,37 +129,47 @@ Residue::Residue(
 	// This assumption works perfectly for all amino acids, except CYD.
 	//
 	// THIS REALLY NEEDS TO BE FIXED AT SOME POINT
-	//
 
 	if ( rsd_type_in.n_residue_connections() != current_rsd.type().n_residue_connections() ) {
 		if ( ! current_rsd.pseudobonds_.empty() ) {
-			std::cerr << "Unable to handle change in the number of residue connections in the presence of pseudobonds!" <<
-				std::endl;
+			TR.Error << "Unable to handle change in the number of residue connections in the presence of pseudobonds!";
+			TR.Error << std::endl;
 			utility_exit();
 		}
 
 		copy_residue_connections( current_rsd );
-
 	}
 
-	// This seems a little silly, but the update of chi's doesn't seem to occur automatically in
+	// This seems a little silly, but the update of chis doesn't seem to occur automatically in
 	// any of the functions above.
-	for ( Size chino = 1; chino <= rsd_type_.nchi(); chino++ ) {
+	for ( Size chino = 1; chino <= rsd_type_.nchi(); ++chino ) {
 		AtomIndices const & chi_atoms( rsd_type_.chi_atoms( chino ) );
 
 		// get the current chi angle
-		Real const current_chi
-		(
-				numeric::dihedral_degrees(
-						atom( chi_atoms[1] ).xyz(),
-						atom( chi_atoms[2] ).xyz(),
-						atom( chi_atoms[3] ).xyz(),
-						atom( chi_atoms[4] ).xyz()
-				)
-		);
+		Real const current_chi(numeric::dihedral_degrees(
+				atom( chi_atoms[1] ).xyz(),
+				atom( chi_atoms[2] ).xyz(),
+				atom( chi_atoms[3] ).xyz(),
+				atom( chi_atoms[4] ).xyz()));
 		chi_[ chino ] = current_chi;
 	}
 
+	// Assign nus.
+	Size const n_nus = rsd_type_.n_nus();
+	for (uint i = 1; i <= n_nus; ++i) {
+		AtomIndices const & nu_atoms = rsd_type_.nu_atoms(i);
+
+		// Calculate the current nu angle from the coordinates.
+		Angle const current_nu = numeric::dihedral_degrees(
+				atom(nu_atoms[1]).xyz(),
+				atom(nu_atoms[2]).xyz(),
+				atom(nu_atoms[3]).xyz(),
+				atom(nu_atoms[4]).xyz());
+
+		nus_[i] = current_nu;
+	}
+
+	// Assign orbitals.
 	foreach(core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index()){
 		utility::vector1<core::Size> const & orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
 		foreach(core::Size orbital_index, orbital_indices){
@@ -169,12 +178,10 @@ Residue::Residue(
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
 		}
 	}
-
 }
 
 
-Residue::Residue( Residue const & src )
-:
+Residue::Residue( Residue const & src ) :
 	utility::pointer::ReferenceCount(),
 	rsd_type_(src.rsd_type_),
 	atoms_(src.atoms_),
@@ -182,15 +189,14 @@ Residue::Residue( Residue const & src )
 	seqpos_(src.seqpos_),
 	chain_(src.chain_),
 	chi_(src.chi_),
+	nus_(src.nus_),
 	mainchain_torsions_(src.mainchain_torsions_),
 	actcoord_(src.actcoord_),
 	nonstandard_polymer_(src.nonstandard_polymer_),
 	connect_map_(src.connect_map_),
 	connections_to_residues_(src.connections_to_residues_),
 	pseudobonds_(src.pseudobonds_)
-{
-
-}
+{}
 
 Residue::~Residue() {}
 
@@ -275,9 +281,7 @@ bool Residue::connections_match( Residue const & other ) const
 
 bool
 Residue::is_similar_rotamer( Residue const & other ) const
-
 {
-
 	utility::vector1< Real > this_chi = chi_;
 	utility::vector1< Real > other_chi = other.chi();
 	bool match = true;
@@ -285,7 +289,7 @@ Residue::is_similar_rotamer( Residue const & other ) const
 		return false;
 	}
 	else {
-		for (Size i = 1; i<= chi_.size(); i++){
+		for (Size i = 1; i<= chi_.size(); ++i){
 				if ( std::abs( this_chi[i] - other_chi[i]) >= 5){
 					match = false;
 				}
@@ -495,9 +499,9 @@ void Residue::orient_onto_residue(
 }
 
 
-/// @details place/orient "this" Residue onto "src" Residue by backbone superimposition
-///	Since rotamer is represented by Residue in mini now, this function is mainly used to place a rotamer
-///	onto the backbone of "src" residue. Meanwhile, it can also be used to add sidechains to one pose/conformation
+// Place/orient "this" Residue onto "src" Residue by backbone superimposition
+///	@details Since a rotamer is represented by a Residue in Rosetta now, this function is mainly used to place a rotamer
+///	onto the backbone of "src" residue.  Meanwhile, it can also be used to add side chains to one pose/conformation
 ///	from another pose/conformation.\n
 ///	current logic: find backbone atom with bonded neighbors in sidechain,
 ///	and which is the base_atom of those neighbors. Take that backbone atom
@@ -577,7 +581,6 @@ Residue::place( Residue const & src, Conformation const & conformation, bool pre
 			}
 		}
 	}
-
 }
 
 
@@ -809,17 +812,6 @@ Residue::is_bonded( Residue const & other ) const
 	// connectivity
 	// APL says shouldn't be much slower
 	return ( connections_to_residues_.find( other.seqpos() ) != connections_to_residues_.end() );
-// 	if ( is_polymer() && ! nonstandard_polymer_ ) {
-// 		if ( polymeric_sequence_distance( other ) == 1 ) {
-// 			// confirm that termini status is consistent with sequence_distance, which depends on chain
-// 			assert( ( other.seqpos() == seqpos() + 1 && !is_upper_terminus() ) ||
-// 				( other.seqpos() == seqpos() - 1 && !is_lower_terminus() ) );
-// 			return true;
-// 		} else if ( rsd_type_.n_non_polymeric_residue_connections() == 0 ) {
-// 			return false; // generic case
-// 		}
-// 	}
-// 	return ( connections_to_residues_.find( Size(other.seqpos()) ) != connections_to_residues_.end() );
 }
 
 bool
@@ -989,13 +981,6 @@ Residue::set_theta( int const chino, Real const setting ) {
 void
 Residue::set_chi( int const chino, Real const setting )
 {
-
-//#ifdef NDEBUG
-//	bool const debug( false );
-//#else
-//	bool const debug( true );
-//#endif
-
 	chi_[ chino ] = setting;
 
 	AtomIndices const & chi_atoms( rsd_type_.chi_atoms( chino ) );
@@ -1039,7 +1024,7 @@ void
 Residue::set_all_chi( utility::vector1< Real > const & chis )
 {
 	// This works for now, but there's probably a faster implementation which only runs the coordinate update once.
-	for(Size i=1; i<= nchi(); i++) {
+	for(Size i=1; i<= nchi(); ++i) {
 		set_chi( i, chis[i] );
 	}
 }
