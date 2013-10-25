@@ -690,11 +690,19 @@ public:
 
 
 	utility::vector1<core::Size>
-	get_vec_AA_dis_w_direction (
+	get_vector_AA_distribution_w_direction (
 		StructureID struct_id,
 		utility::sql_database::sessionOP db_session,
 		std::string heading_direction, // like core_heading, surface_heading
 		std::string strand_location // like edge_strand, core_strand
+		);
+
+
+	utility::vector1<core::Size>
+	get_vector_AA_distribution_wo_direction (
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session,
+		std::string loop_kind
 		);
 
 
@@ -711,6 +719,16 @@ public:
 		utility::sql_database::sessionOP db_session,
 		core::Size sw_can_by_sh_id);
 
+
+	void
+	report_turn_type(
+		core::pose::Pose const & pose,
+		core::Size sw_can_by_sh_id,
+		core::Size start_res,
+		core::Size end_res,
+		StructureID struct_id,
+		utility::sql_database::sessionOP db_session);
+	
  
 private:
 
@@ -838,10 +856,16 @@ private:
 	min_N_H_O_angle_between_two_sheets_;
 
 	bool
+	write_all_info_files_;
+
+	bool
 	write_AA_kind_files_;
 
 	bool
-	write_AA_distribution_files_;
+	write_AA_distribution_files_w_direction_;
+
+	bool
+	write_AA_distribution_files_wo_direction_;
 
 }; // class SandwichFeatures : public protocols::features::FeaturesReporter
 

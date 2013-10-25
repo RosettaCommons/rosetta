@@ -273,7 +273,8 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 		// inter_sheet_loop
 		// ending_loop
 
-
+	Column turn_type	("turn_type",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
+	
 	Column LR	("LR",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
 
 	Column canonical_LR	("canonical_LR",	new DbText(), true /* could be null*/, false /*no autoincrement*/);
@@ -418,6 +419,8 @@ SandwichFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session
 	sw_by_components.add_column(intra_sheet_con_id);
 	sw_by_components.add_column(inter_sheet_con_id);
 	sw_by_components.add_column(loop_kind); // better to be located right after intra_sheet_con_id/inter_sheet_con_id for better readability
+	sw_by_components.add_column(turn_type);
+		
 	sw_by_components.add_column(LR);
 	sw_by_components.add_column(canonical_LR);
 	sw_by_components.add_column(PA_by_preceding_E);
@@ -3810,7 +3813,6 @@ SandwichFeatures::update_sheet_connectivity(
 	Size end_res)
 {
 	string insert;
-	//string loop_kind_db;
 	Size con_id;
 	Size sheet_id = 0;
 
@@ -3818,7 +3820,6 @@ SandwichFeatures::update_sheet_connectivity(
 	{
 		insert =
 		"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, canonical_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, inter_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
-//		loop_kind_db = "inter_sheet_loop";
 		con_id = inter_sheet_con_id;
 	}
 
@@ -3831,14 +3832,6 @@ SandwichFeatures::update_sheet_connectivity(
 
 		insert =
 		"INSERT INTO sw_by_components (struct_id, sw_by_components_PK_id, tag, sw_can_by_sh_id, sheet_id,	LR, canonical_LR, PA_by_preceding_E, PA_by_following_E,	cano_PA,	heading_direction, parallel_EE, cano_parallel_EE,	component_size,	residue_begin, residue_end, loop_kind, intra_sheet_con_id, R,H,K, D,E, S,T,N,Q, C,G,P, A,V,I,L,M,F,Y,W)  VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,	?,?,?,	?,?,	?,?,?,?,	?,?,?,	?,?,?,?,?,?,?,?);";
-//		if (loop_kind == "hairpin") // // this loop connects by a intra_sheet way
-//		{
-//			loop_kind_db = "hairpin_loop____";
-//		}
-//		else
-//		{
-//			loop_kind_db = loop_kind;
-//		}
 		con_id = intra_sheet_con_id;
 	}
 
@@ -5269,8 +5262,9 @@ SandwichFeatures::get_list_of_residues_in_sheet_i(
 
 
 
+
 utility::vector1<Size>	
-SandwichFeatures::get_vec_AA_dis_w_direction (
+SandwichFeatures::get_vector_AA_distribution_w_direction (
 	StructureID struct_id,
 	sessionOP db_session,
 	string heading_direction, // like core_heading, surface_heading
@@ -5310,43 +5304,104 @@ SandwichFeatures::get_vec_AA_dis_w_direction (
 	statement sum_statement(basic::database::safely_prepare_statement(sum_string, db_session));
 	sum_statement.bind(1,	strand_location);
 	sum_statement.bind(2,	struct_id);
-	//sum_statement.bind(1,	struct_id);
+	
 	result res(basic::database::safely_read_from_database(sum_statement));
 
 	Size num_R, num_H,	num_K,	num_D, num_E, num_S, num_T, num_N, num_Q, num_C, num_G, num_P, num_A, num_V, num_I, num_L, num_M, num_F, num_Y, num_W;
 
-	utility::vector1<Size> vec_AA_dis_w_direction;
+	utility::vector1<Size> vector_AA_distribution_w_direction;
 
 	while(res.next())
 	{
 		res >> num_R >> num_H >> num_K >> num_D >> num_E >> num_S >> num_T >> num_N >> num_Q >> num_C >> num_G >> num_P >> num_A >> num_V >> num_I >> num_L >> num_M >> num_F >> num_Y >> num_W;
-		vec_AA_dis_w_direction.push_back(num_R);
-		vec_AA_dis_w_direction.push_back(num_H);
-		vec_AA_dis_w_direction.push_back(num_K);
-		vec_AA_dis_w_direction.push_back(num_D);
-		vec_AA_dis_w_direction.push_back(num_E);
+		vector_AA_distribution_w_direction.push_back(num_R);
+		vector_AA_distribution_w_direction.push_back(num_H);
+		vector_AA_distribution_w_direction.push_back(num_K);
+		vector_AA_distribution_w_direction.push_back(num_D);
+		vector_AA_distribution_w_direction.push_back(num_E);
 
-		vec_AA_dis_w_direction.push_back(num_S);
-		vec_AA_dis_w_direction.push_back(num_T);
-		vec_AA_dis_w_direction.push_back(num_N);
-		vec_AA_dis_w_direction.push_back(num_Q);
-		vec_AA_dis_w_direction.push_back(num_C);
+		vector_AA_distribution_w_direction.push_back(num_S);
+		vector_AA_distribution_w_direction.push_back(num_T);
+		vector_AA_distribution_w_direction.push_back(num_N);
+		vector_AA_distribution_w_direction.push_back(num_Q);
+		vector_AA_distribution_w_direction.push_back(num_C);
 
-		vec_AA_dis_w_direction.push_back(num_G);
-		vec_AA_dis_w_direction.push_back(num_P);
-		vec_AA_dis_w_direction.push_back(num_A);
-		vec_AA_dis_w_direction.push_back(num_V);
-		vec_AA_dis_w_direction.push_back(num_I);
+		vector_AA_distribution_w_direction.push_back(num_G);
+		vector_AA_distribution_w_direction.push_back(num_P);
+		vector_AA_distribution_w_direction.push_back(num_A);
+		vector_AA_distribution_w_direction.push_back(num_V);
+		vector_AA_distribution_w_direction.push_back(num_I);
 
-		vec_AA_dis_w_direction.push_back(num_L);
-		vec_AA_dis_w_direction.push_back(num_M);
-		vec_AA_dis_w_direction.push_back(num_F);
-		vec_AA_dis_w_direction.push_back(num_Y);
-		vec_AA_dis_w_direction.push_back(num_W);
+		vector_AA_distribution_w_direction.push_back(num_L);
+		vector_AA_distribution_w_direction.push_back(num_M);
+		vector_AA_distribution_w_direction.push_back(num_F);
+		vector_AA_distribution_w_direction.push_back(num_Y);
+		vector_AA_distribution_w_direction.push_back(num_W);
 	}
 
-	return vec_AA_dis_w_direction;
-} // get_vec_AA_dis_w_direction
+	return vector_AA_distribution_w_direction;
+} // get_vector_AA_distribution_w_direction
+
+
+
+utility::vector1<Size>	
+SandwichFeatures::get_vector_AA_distribution_wo_direction (
+	StructureID struct_id,
+	sessionOP db_session,
+	string loop_kind // like 'hairpin' or 'inter-sheet-loop'
+	)
+{
+	string	sum_string =
+		"SELECT\n"
+		"	sum(A), sum(C), sum(D), sum(E), sum(F), \n"
+		"	sum(G), sum(H), sum(I), sum(K), sum(L), \n"
+		"	sum(M), sum(N), sum(P), sum(Q), sum(R), \n"
+		"	sum(S), sum(T), sum(V), sum(W), sum(Y) \n"
+		"FROM\n"
+		"	sw_by_components \n"
+		"WHERE\n"
+		"	loop_kind = ? \n"
+		"	AND struct_id = ? ;";
+
+	statement sum_statement(basic::database::safely_prepare_statement(sum_string, db_session));
+	sum_statement.bind(1,	loop_kind);
+	sum_statement.bind(2,	struct_id);
+	result res(basic::database::safely_read_from_database(sum_statement));
+
+	Size num_A, num_C,	num_D,	num_E, num_F, num_G, num_H, num_I, num_K, num_L, num_M, num_N, num_P, num_Q, num_R, num_S, num_T, num_V, num_W, num_Y;
+
+	utility::vector1<Size> vector_AA_distribution_wo_direction;
+
+	while(res.next())
+	{
+		res >> num_A >>  num_C >> 	num_D >> 	num_E >>  num_F >>  num_G >>  num_H >>  num_I >>  num_K >>  num_L >>  num_M >>  num_N >>  num_P >>  num_Q >>  num_R >>  num_S >>  num_T >>  num_V >>  num_W >>  num_Y;
+		vector_AA_distribution_wo_direction.push_back(num_A);
+		vector_AA_distribution_wo_direction.push_back(num_C);
+		vector_AA_distribution_wo_direction.push_back(num_D);
+		vector_AA_distribution_wo_direction.push_back(num_E);
+		vector_AA_distribution_wo_direction.push_back(num_F);
+
+		vector_AA_distribution_wo_direction.push_back(num_G);
+		vector_AA_distribution_wo_direction.push_back(num_H);
+		vector_AA_distribution_wo_direction.push_back(num_I);
+		vector_AA_distribution_wo_direction.push_back(num_K);
+		vector_AA_distribution_wo_direction.push_back(num_L);
+
+		vector_AA_distribution_wo_direction.push_back(num_M);
+		vector_AA_distribution_wo_direction.push_back(num_N);
+		vector_AA_distribution_wo_direction.push_back(num_P);
+		vector_AA_distribution_wo_direction.push_back(num_Q);
+		vector_AA_distribution_wo_direction.push_back(num_R);
+
+		vector_AA_distribution_wo_direction.push_back(num_S);
+		vector_AA_distribution_wo_direction.push_back(num_T);
+		vector_AA_distribution_wo_direction.push_back(num_V);
+		vector_AA_distribution_wo_direction.push_back(num_W);
+		vector_AA_distribution_wo_direction.push_back(num_Y);
+	}
+
+	return vector_AA_distribution_wo_direction;
+} // get_vector_AA_distribution_wo_direction
 
 
 
@@ -5458,6 +5513,85 @@ SandwichFeatures::identify_sheet_id_by_residue_end(
 
 
 void
+SandwichFeatures::report_turn_type(
+	Pose const & pose,
+	Size sw_can_by_sh_id,
+	Size first_res,
+	Size second_res,
+	StructureID struct_id,
+	sessionOP db_session)
+{
+	Real first_phi = pose.phi(first_res);
+	Real first_psi = pose.psi(first_res);
+
+	Real second_phi = pose.phi(second_res);
+	Real second_psi = pose.psi(second_res);
+
+		// I use mean dihedral values in Protein Science (1994), 3:2207-2216 "A revised set of potentials for beta-turn formation in proteins" by Hutchinson and Thornton
+		// worth to be referred	http://en.wikipedia.org/wiki/Turn_(biochemistry)#Hairpins
+		// I didn't use Brian's BetaTurnDetectionFeatures since I don't understand it fully
+	string turn_type = "uncertain";
+	int allowed_deviation = 30;
+	
+	if (	(first_phi > (-64-allowed_deviation) && first_phi < (-64+allowed_deviation))
+		&&	(first_psi > (-27-allowed_deviation) && first_psi < (-27+allowed_deviation))
+		&&	(second_phi > (-90-allowed_deviation) && second_phi < (-90+allowed_deviation))
+		&&	(second_psi > (-7-allowed_deviation) && second_psi < (-7+allowed_deviation)))
+	{
+		turn_type = "I";
+	}
+
+	if (	(first_phi > (-60-allowed_deviation) && first_phi < (-60+allowed_deviation))
+		&&	(first_psi > (131-allowed_deviation) && first_psi < (131+allowed_deviation))
+		&&	(second_phi > (84-allowed_deviation) && second_phi < (84+allowed_deviation))
+		&&	(second_psi > (1-allowed_deviation) && second_psi < (1+allowed_deviation)))
+	{
+		turn_type = "II";
+	}
+
+	if (	(first_phi > (-72-allowed_deviation) && first_phi < (-72+allowed_deviation))
+		&&	(first_psi > (-33-allowed_deviation) && first_psi < (-33+allowed_deviation))
+		&&	(second_phi > (-123-allowed_deviation) && second_phi < (-123+allowed_deviation))
+		&&	(second_psi > (121-allowed_deviation) && second_psi < (121+allowed_deviation)))
+	{
+		turn_type = "VIII";
+	}
+
+	if (	(first_phi > (55-allowed_deviation) && first_phi < (55+allowed_deviation))
+		&&	(first_psi > (38-allowed_deviation) && first_psi < (38+allowed_deviation))
+		&&	(second_phi > (78-allowed_deviation) && second_phi < (78+allowed_deviation))
+		&&	(second_psi > (6-allowed_deviation) && second_psi < (6+allowed_deviation)))
+	{
+		turn_type = "I_prime";
+	}
+
+	if (	(first_phi > (60-allowed_deviation) && first_phi < (60+allowed_deviation))
+		&&	(first_psi > (-126-allowed_deviation) && first_psi < (-126+allowed_deviation))
+		&&	(second_phi > (-91-allowed_deviation) && second_phi < (-91+allowed_deviation))
+		&&	(second_psi > (1-allowed_deviation) && second_psi < (1+allowed_deviation)))
+	{
+		turn_type = "II_prime";
+	}
+
+
+	string select_string =
+	"UPDATE sw_by_components set turn_type = ?	"
+	"WHERE\n"
+	"	(sw_can_by_sh_id = ?) \n"
+	"	AND	(residue_begin = ?) \n"
+	"	AND (struct_id = ?);";
+
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,	turn_type);
+	select_statement.bind(2,	sw_can_by_sh_id);
+	select_statement.bind(3,	first_res);
+	select_statement.bind(4,	struct_id);
+	basic::database::safely_write_to_database(select_statement);
+	
+} //report_turn_type
+
+
+void
 SandwichFeatures::parse_my_tag(
 	TagPtr const tag,
 	DataMap & /*data*/,
@@ -5544,6 +5678,9 @@ SandwichFeatures::parse_my_tag(
 					//	definition: check N->C going direction by option
 	check_canonicalness_cutoff_ = tag->getOption<Real>("check_canonicalness_cutoff", 80.0);
 					//	definition:	cutoff to determine canonicalness of L/R, P/A and directionality
+
+
+	///////// An option that takes longest time ///////
 	count_AA_with_direction_ = tag->getOption<bool>("count_AA_with_direction", false);
 					//	definition:	if true, count AA considering direction too!
 					//	<note> if true, it takes more time, but ~50 sandwiches this can be used within ~ minutes.
@@ -5593,10 +5730,15 @@ SandwichFeatures::parse_my_tag(
 
 
 	///////// writing options ///////
+	write_all_info_files_ = tag->getOption<bool>("write_all_info_files", false);
+					//	definition: if true, write all below
+
 	write_AA_kind_files_ = tag->getOption<bool>("write_AA_kind_files", false);
 					//	definition: if true, write files that have amino acid kinds
-	write_AA_distribution_files_ = tag->getOption<bool>("write_AA_distribution_files", false);
-					//	definition: if true, write files that have amino acid distributions
+	write_AA_distribution_files_w_direction_ = tag->getOption<bool>("write_AA_distribution_files_w_direction", false);
+					//	definition: if true, write files that have amino acid distributions with directions
+	write_AA_distribution_files_wo_direction_ = tag->getOption<bool>("write_AA_distribution_files_wo_direction", false);
+					//	definition: if true, write files that have amino acid distributions without directions
 	write_chain_B_resnum_ = tag->getOption<bool>("write_chain_B_resnum", false);
 			// if true, write chain_B_resnum file for InterfaceAnalyzer
 	write_phi_psi_of_all_ = tag->getOption<bool>("write_phi_psi_of_all", false);
@@ -5607,7 +5749,7 @@ SandwichFeatures::parse_my_tag(
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////SandwichFeatures/////////////////////////////////////////////////////////////////
+//////////////////////////	SandwichFeatures	///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///@brief collect all the feature data for the pose
 core::Size
@@ -5653,6 +5795,16 @@ SandwichFeatures::report_features(
 				TR.Info << "Exit early since this pdb has helix " << endl;
 			return 0;
 		}
+	}
+
+	if (write_all_info_files_)
+	{
+		write_AA_kind_files_ = true;
+		write_AA_distribution_files_w_direction_ = true;
+		write_AA_distribution_files_wo_direction_ = true;
+		write_chain_B_resnum_ = true;
+		write_phi_psi_of_all_ = true;
+		write_phi_psi_of_E_	= true;
 	}
 
 	Size sheet_PK_id_counter=1; //initial value
@@ -6249,8 +6401,8 @@ SandwichFeatures::report_features(
 			Size start_res = start_res_sh_id.first;
 			Size sheet_id_of_start_res = start_res_sh_id.second;
 
-			if (start_res == 0){
-					// no proper retrieval of start_res
+			if (start_res == 0)	// no proper retrieval of start_res
+			{
 				chance_of_being_canonical_sw = false;
 				break; // break jj 'for' loop
 			}
@@ -6350,17 +6502,19 @@ SandwichFeatures::report_features(
 				string cano_parallel_EE =  "-";
 				string loop_kind =  "loop_connecting_same_direction_strands_within_same_sheet";
 
+				bool	hairpin_connects_short_strand = check_whether_hairpin_connects_short_strand(struct_id,	db_session,	start_res,	next_start_res);
+
 				if (!loop_is_surrounded_by_same_direction_strands)
 				{
 					canonical_LR = check_canonicalness_of_LR(loop_size, true, LR); // loop_size, intra_sheet bool, LR
 					cano_PA = check_canonicalness_of_PA(loop_size, true, PA_by_preceding_E, PA_by_following_E, check_canonicalness_cutoff_); // loop_size, intra_sheet bool, 2 PAs
 					cano_parallel_EE = check_canonicalness_of_parallel_EE(loop_size, true, parallel_EE); // loop_size, intra_sheet bool, parallel_EE
-					bool hairpin_connects_short_strand = check_whether_hairpin_connects_short_strand(struct_id,	db_session,	start_res,	next_start_res);
+
 					if (hairpin_connects_short_strand) // so it is not recommended for LR/PA analysis
 					{
 						loop_kind =  "hairpin_connecting_short_strand";
 					}
-					else
+					else // this hairpin-loop is ideal for LR/PA
 					{
 						loop_kind =  "hairpin";
 					}
@@ -6390,6 +6544,21 @@ SandwichFeatures::report_features(
 					next_start_res-1 // new end_res for intra_sheet_con
 					);
 
+				if (!loop_is_surrounded_by_same_direction_strands	&&	!hairpin_connects_short_strand) // so it is recommended for LR/PA analysis
+				{
+					if (((next_start_res-1) - (start_res+1)) == 1) // this loop is a 2-residues long hairpin
+					{
+						report_turn_type
+							(pose,
+							vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
+							start_res+1,	// new start_res for intra_sheet_con
+							next_start_res-1, // new end_res for intra_sheet_con
+							struct_id,
+							db_session
+							);
+					}
+				}
+
 				sw_by_components_PK_id_counter++;
 				intra_sheet_con_id_counter++;
 			}
@@ -6410,6 +6579,8 @@ SandwichFeatures::report_features(
 						break; // break jj 'for' loop
 					}
 				}
+
+
 				string canonical_LR = check_canonicalness_of_LR(loop_size, false, LR);	// loop_size, intra_sheet bool, LR
 				string cano_PA = check_canonicalness_of_PA(loop_size, false, PA_by_preceding_E, PA_by_following_E, check_canonicalness_cutoff_);
 														  // loop_size,	intra_sheet bool, PA_ref_1, PA_ref_2, cutoff
@@ -6437,6 +6608,18 @@ SandwichFeatures::report_features(
 					start_res+1, // new start_res for inter_sheet_con
 					next_start_res-1 // new end_res for inter_sheet_con
 					);
+
+				if (((next_start_res-1) - (start_res+1)) == 1) // this loop is a 2-residues long inter-sheet_loop
+				{
+					report_turn_type
+						(pose,
+						vec_sw_can_by_sh_id[ii], //sw_can_by_sh_id
+						start_res+1,	// new start_res for intra_sheet_con
+						next_start_res-1, // new end_res for intra_sheet_con
+						struct_id,
+						db_session
+						);
+				}
 
 				sw_by_components_PK_id_counter++;
 				inter_sheet_con_id_counter++;
@@ -6477,15 +6660,21 @@ SandwichFeatures::report_features(
 				//	struct_id,	db_session,	dssp_pose,	sw_by_components_PK_id, sw_can_by_sh_id, tag
 			sw_by_components_PK_id_counter++;
 
-			// <begin> mark beta-sandwiches that is not connected like 1A78
-			string sw_is_not_connected_with_continuous_atoms = check_whether_sw_is_not_connected_with_continuous_atoms(struct_id,	db_session,				dssp_pose,
+
+			// <begin> mark beta-sandwiches that is not connected by continuous atoms like 1A78
+				string sw_is_not_connected_with_continuous_atoms = check_whether_sw_is_not_connected_with_continuous_atoms(
+					struct_id,
+					db_session,
+					dssp_pose,
 					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 					);
-				//TR.Info << "sw_is_not_connected_with_continuous_atoms: " << sw_is_not_connected_with_continuous_atoms << endl;
-			mark_sw_which_is_not_connected_with_continuous_atoms(struct_id,	db_session,
-				vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id
-				sw_is_not_connected_with_continuous_atoms);
-			// <end> mark beta-sandwiches that is not connected like 1A78
+					//TR.Info << "sw_is_not_connected_with_continuous_atoms: " << sw_is_not_connected_with_continuous_atoms << endl;
+				mark_sw_which_is_not_connected_with_continuous_atoms(
+					struct_id,
+					db_session,
+					vec_sw_can_by_sh_id[ii], // sw_can_by_sh_id
+					sw_is_not_connected_with_continuous_atoms);
+			// <end> mark beta-sandwiches that is not connected by continuous atoms like 1A78
 
 
 
@@ -6493,13 +6682,17 @@ SandwichFeatures::report_features(
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
 
-			add_number_of_inward_pointing_W_in_sw(struct_id,	db_session,
-				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
-				);
+			if (count_AA_with_direction_)
+			{
+				add_number_of_inward_pointing_W_in_sw(struct_id,	db_session,
+					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+					);
 
-			add_number_of_inward_pointing_LWY_in_core_strands_in_sw(struct_id,	db_session,
-				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
-				);
+				add_number_of_inward_pointing_LWY_in_core_strands_in_sw(struct_id,	db_session,
+					vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
+					);
+			}
+
 			Size	sw_res_size	=	add_sw_res_size(struct_id,	db_session,
 				vec_sw_can_by_sh_id[ii] // sw_can_by_sh_id
 				);
@@ -6596,21 +6789,21 @@ SandwichFeatures::report_features(
 
 
 	// <begin> write AA_dis to a file
-	if (write_AA_distribution_files_ && canonical_sw_extracted_from_this_pdb_file)
+	if (write_AA_distribution_files_w_direction_ && canonical_sw_extracted_from_this_pdb_file)
 	{
 		Size tag_len = tag.length();
 		string pdb_file_name = tag.substr(0, tag_len-5);
-		string AA_dis_file_name = pdb_file_name + "_AA_distribution.txt";
+		string AA_dis_file_name = pdb_file_name + "_AA_distribution_w_direction.txt";
 		ofstream AA_dis_file;
 		
 		AA_dis_file.open(AA_dis_file_name.c_str());	
-		utility::vector1<Size> vec_core_heading_at_core_strand = get_vec_AA_dis_w_direction (struct_id,	db_session, "core_heading", "core");
+		utility::vector1<Size> vec_core_heading_at_core_strand = get_vector_AA_distribution_w_direction (struct_id,	db_session, "core_heading", "core");
 																							// struct_id,	db_session, heading_direction, strand_location
-		utility::vector1<Size> vec_surface_heading_at_core_strand = get_vec_AA_dis_w_direction (struct_id,	db_session, "surface_heading", "core");
+		utility::vector1<Size> vec_surface_heading_at_core_strand = get_vector_AA_distribution_w_direction (struct_id,	db_session, "surface_heading", "core");
 																							// struct_id,	db_session, heading_direction, strand_location
-		utility::vector1<Size> vec_core_heading_at_edge_strand = get_vec_AA_dis_w_direction (struct_id,	db_session, "core_heading", "edge");
+		utility::vector1<Size> vec_core_heading_at_edge_strand = get_vector_AA_distribution_w_direction (struct_id,	db_session, "core_heading", "edge");
 																							// struct_id,	db_session, heading_direction, strand_location
-		utility::vector1<Size> vec_surface_heading_at_edge_strand = get_vec_AA_dis_w_direction (struct_id,	db_session, "surface_heading", "edge");
+		utility::vector1<Size> vec_surface_heading_at_edge_strand = get_vector_AA_distribution_w_direction (struct_id,	db_session, "surface_heading", "edge");
 																							// struct_id,	db_session, heading_direction, strand_location
 		AA_dis_file << "core_heading_at_core_strand	surface_heading_at_core_strand	core_heading_at_edge_strand	surface_heading_at_edge_strand" << endl;
 		for (Size i =1; i<=(vec_core_heading_at_core_strand.size()); i++)
@@ -6623,6 +6816,29 @@ SandwichFeatures::report_features(
 	} 
 	// <end> write AA_dis to a file
 
+
+	// <begin> write AA_distribution_without_direction to a file
+	if (write_AA_distribution_files_wo_direction_ && canonical_sw_extracted_from_this_pdb_file)
+	{
+		Size tag_len = tag.length();
+		string pdb_file_name = tag.substr(0, tag_len-5);
+		string AA_dis_file_name = pdb_file_name + "_AA_distribution_wo_direction.txt";
+		ofstream AA_dis_file;
+		
+		AA_dis_file.open(AA_dis_file_name.c_str());	
+		utility::vector1<Size> vector_of_hairpin_AA = get_vector_AA_distribution_wo_direction (struct_id,	db_session, "hairpin");
+		utility::vector1<Size> vector_of_inter_sheet_loop_AA = get_vector_AA_distribution_wo_direction (struct_id,	db_session, "loop_connecting_two_sheets");
+		
+		AA_dis_file << "hairpin_AA	inter_sheet_loop_AA" << endl;
+		for (Size i =1; i<=(vector_of_hairpin_AA.size()); i++)
+		{
+			AA_dis_file << vector_of_hairpin_AA[i] << "	" << vector_of_inter_sheet_loop_AA[i] << endl;
+		}
+
+		AA_dis_file.close();
+
+	} 
+	// <end> write AA_distribution_without_direction to a file
 	
 
 	//// <begin> report number_of_inward_pointing_charged_AAs/aro_AAs_in_a_pair_of_edge_strands
