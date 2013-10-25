@@ -193,15 +193,34 @@ SmoothEnvPairPotential::fill_smooth_cenlist(
 	Size const res2,
 	Real const cendist
 ) const {
-	Real interp6 = 1 / (1+exp(SIGMOID_SLOPE*(cendist-6)));
+	Real interp6, interp10, interp12, z;
+	z = SIGMOID_SLOPE*(cendist-6);
+	if (z<-20)
+		interp6 = 1;
+	else if (z>20)
+		interp6 = 0;
+	else
+		interp6 = 1 / (1+exp(z));
 	cenlist.fcen6(res1) += interp6;
 	cenlist.fcen6(res2) += interp6;
 
-	Real interp10 = 1 / (1+exp(SIGMOID_SLOPE*(cendist-10)));
+	z = SIGMOID_SLOPE*(cendist-10);
+	if (z<-20)
+		interp10 = 1;
+	else if (z>20)
+		interp10 = 0;
+	else
+		interp10 = 1 / (1+exp(z));
 	cenlist.fcen10(res1) += interp10;
 	cenlist.fcen10(res2) += interp10;
 
-	Real interp12 = 1 / (1+exp(SIGMOID_SLOPE*(cendist-12)));
+	z = SIGMOID_SLOPE*(cendist-12);
+	if (z<-20)
+		interp12 = 1;
+	else if (z>20)
+		interp12 = 0;
+	else
+		interp12 = 1 / (1+exp(z));
 	cenlist.fcen12(res1) += interp12 - interp6;  // from 6->12 A
 	cenlist.fcen12(res2) += interp12 - interp6;  // from 6->12 A
 }
@@ -217,18 +236,32 @@ SmoothEnvPairPotential::fill_smooth_dcenlist(
 	Real x = cenvec.length();
 	numeric::xyzVector<Real> gradx = cenvec/x;
 
-	Real e6 = exp(SIGMOID_SLOPE*(x-6));
-	Real d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
+	Real d6, d12 , z;
+	z = 	SIGMOID_SLOPE*(x-6);
+	if (z>-20 && z<20) {
+		Real e6 = exp(z);
+		d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
+	} else {
+		d6 = 0;
+	}
 	dcenlist.fcen6(res1) += d6*gradx;
 	dcenlist.fcen6(res2) -= d6*gradx;
 
-	Real e10 = exp(SIGMOID_SLOPE*(x-10));
-	Real d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
-	dcenlist.fcen10(res1) += d10*gradx;
-	dcenlist.fcen10(res2) -= d10*gradx;
+	z = SIGMOID_SLOPE*(x-10);
+	if (z>-20 && z<20) {
+		Real e10 = exp(z);
+		Real d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
+		dcenlist.fcen10(res1) += d10*gradx;
+		dcenlist.fcen10(res2) -= d10*gradx;
+	}
 
-	Real e12 = exp(SIGMOID_SLOPE*(x-12));
-	Real d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
+	z = SIGMOID_SLOPE*(x-12);
+	if (z>-20 && z<20) {
+		Real e12 = exp(z);
+		d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
+	} else {
+		d12 = 0;
+	}
 	dcenlist.fcen12(res1) += (d12-d6)*gradx;
 	dcenlist.fcen12(res2) -= (d12-d6)*gradx;
 }
@@ -408,12 +441,30 @@ SmoothEnvPairPotential::evaluate_env_and_cbeta_deriv(
 			Real x = sqrt(cendist);
 			numeric::xyzVector<Real> gradx = cenvec/x;
 
-			Real e6 = exp(SIGMOID_SLOPE*(x-6));
-			Real d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
-			Real e10 = exp(SIGMOID_SLOPE*(x-10));
-			Real d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
-			Real e12 = exp(SIGMOID_SLOPE*(x-12));
-			Real d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
+			Real d6,d10,d12, z;
+			z = 	SIGMOID_SLOPE*(x-6);
+			if (z>-20 && z<20) {
+				Real e6 = exp(z);
+				d6 = SIGMOID_SLOPE*e6 / ((1+e6)*(1+e6));
+			} else {
+				d6 = 0;
+			}
+
+			z = SIGMOID_SLOPE*(x-10);
+			if (z>-20 && z<20) {
+				Real e10 = exp(z);
+				d10 = SIGMOID_SLOPE*e10 / ((1+e10)*(1+e10));
+			} else {
+				d10 = 0;
+			}
+
+			z = SIGMOID_SLOPE*(x-12);
+			if (z>-20 && z<20) {
+				Real e12 = exp(z);
+				d12 = SIGMOID_SLOPE*e12 / ((1+e12)*(1+e12));
+			} else {
+				d12 = 0;
+			}
 
 			d_env_score  += env_[ rsd2.aa() ].dfunc( cenlist.fcen10(j) ) * (d10*gradx);
 			d_cb_score6  += cbeta6_.dfunc( cenlist.fcen6(j) ) * (d6*gradx);
@@ -454,8 +505,12 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_score(
 	pair_contribution = currPair.func( cendist );
 
 	// smooth pair by an additional sigmoid so pair_score->0 as dist->inf
-	pair_contribution *= 1 / (1+exp(SIGMOID_SLOPE*(cendist-10.5)));
-
+	Real z = SIGMOID_SLOPE*(cendist-10.5);
+	if (z>20) {
+		pair_contribution = 0;
+	} else if (z>-20) {
+		pair_contribution *= 1 / (1+exp(z));
+	}
 	cenpack_contribution = cenpack_.func( cendist * 10 + 0.5 );
 }
 
@@ -487,10 +542,19 @@ SmoothEnvPairPotential::evaluate_pair_and_cenpack_deriv(
 	Real cendist = sqrt(cendist2);
 	SmoothScoreTermCoeffs const & currPair = pair_[std::min(aa1,aa2)][std::max(aa1,aa2)];
 	Real pair = currPair.func( cendist );
-	Real e = exp(SIGMOID_SLOPE*(cendist-10.5));
-	Real d = (1 + e);
-	Real sigmoid = 1/d;
-	Real d_sigmoid = -SIGMOID_SLOPE*e / (d*d);
+	Real z = SIGMOID_SLOPE*(cendist-10.5), sigmoid, d_sigmoid;
+	if (z<-20) {
+		sigmoid=1;
+		d_sigmoid=0;
+	} else if (z>20) {
+		sigmoid=0;
+		d_sigmoid =0;
+	} else {
+		Real e = exp(z);
+		Real d = (1 + e);
+		sigmoid = 1/d;
+		d_sigmoid = -SIGMOID_SLOPE*e / (d*d);
+	}
 	d_pair = sigmoid * currPair.dfunc( cendist ) + pair * d_sigmoid;
 
 	// cenpack
