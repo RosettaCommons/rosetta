@@ -13,17 +13,20 @@
 
 // Unit headers
 #include <core/chemical/PatchOperation.hh>
-#include <core/chemical/Atom.hh>
 
-// Package Headers
+// Package headers
 #include <core/chemical/ResidueType.hh>
+
+// Project headers
+#include <core/chemical/Atom.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
 
-// Utility headers
+// Basic headers
 #include <basic/Tracer.hh>
 
+// Utility headers
 #include <utility/vector1.hh>
 
 // ObjexxFCL headers
@@ -200,10 +203,11 @@ AddProtonChi::apply( ResidueType & rsd ) const
 }
 
 
-RedefineChi::RedefineChi(
-	Size const & chino_in, std::string const & atom1_in, std::string const & atom2_in,
-	std::string const & atom3_in, std::string const & atom4_in
-):
+RedefineChi::RedefineChi(Size const & chino_in,
+		std::string const & atom1_in,
+		std::string const & atom2_in,
+		std::string const & atom3_in,
+		std::string const & atom4_in):
 	chino_( chino_in ), atom1_( atom1_in ), atom2_( atom2_in ), atom3_( atom3_in ), atom4_( atom4_in )
 {}
 
@@ -212,20 +216,22 @@ RedefineChi::apply( ResidueType & rsd ) const
 {
 	if ( !rsd.has( atom1_ ) || !rsd.has( atom2_ ) || !rsd.has( atom3_ ) || !rsd.has( atom4_ ) )
 	{
-		TR_PatchOperations.Debug << "RedefineChi::apply failed: " << rsd.name() << " is missing atom(s) " << atom1_ << ' '
-			<< rsd.has( atom1_ ) << ' ' << atom2_ << ' ' << rsd.has( atom2_ ) << atom3_ << ' '
-			<< rsd.has( atom3_ ) << atom4_ << ' ' << rsd.has( atom4_ ) << std::endl;
+		TR_PatchOperations.Debug << "RedefineChi::apply failed: " <<
+				rsd.name() << " is missing atom(s) " <<
+				atom1_ << ' ' << rsd.has( atom1_ ) << ' ' << atom2_ << ' ' << rsd.has( atom2_ ) <<
+				atom3_ << ' ' << rsd.has( atom3_ ) << ' ' << atom4_ << ' ' << rsd.has( atom4_ ) << std::endl;
 		return true; // failure
 	}
 	else
 	{
 		rsd.redefine_chi( chino_, atom1_ , atom2_, atom3_, atom4_ );
-		//std::cout << "RedefineChi::apply: " << atom1_ << ' ' << atom2_
+		//TR_PatchOperations.Debug << "RedefineChi::apply: " << atom1_ << ' ' << atom2_
 		//	<< ' ' << atom3_ << ' ' << atom4_ << std::endl;
 		return false;
 	}
 	return false;
 }
+
 
 AddChiRotamer::AddChiRotamer(
 	Size const & chino_in, Real const & mean_in, Real const & sdev_in
@@ -591,12 +597,14 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		l >> property;
 		if ( l.fail() ) return 0;
 		return new DeleteProperty( property );
+
 		//Added by Andy M. Chen in June 2009
 		//  This is needed for deleting properties, which occurs in certain PTM's
 	} else if ( tag == "ADD_CHI" ) {
 		l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
 		if ( l.fail() ) return 0;
 		return new AddChi( chino, atom1, atom2, atom3, atom4 );
+
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's, which often result in one or more extra chi angles
 	} else if ( tag == "ADD_PROTON_CHI") {
@@ -622,12 +630,19 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
 		if ( l.fail() ) return 0;
 		return new RedefineChi( chino, atom1, atom2, atom3, atom4 );
+
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
 	} else if ( tag == "ADD_CHI_ROTAMER" ) {
+		//TR_PatchOperations.Debug << line.substr(16, 3) << std::endl;
+		//if (line.substr(16, 3) == "N+1") {
+			// TODO: Since the PatchOperation has no idea how many chis a ResidueType has, I'll need to pass another
+			// flag to ResidueType::add_chi_rotamer().
+		//}
 		l >> chino >> mean >> sdev;
 		if ( l.fail() ) return 0;
 		return new AddChiRotamer( chino, mean, sdev );
+
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
 	} else if ( tag == "ADD_BOND" ) {
@@ -708,7 +723,6 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 
 	return 0;
 }
-
 
 } // chemical
 } // core

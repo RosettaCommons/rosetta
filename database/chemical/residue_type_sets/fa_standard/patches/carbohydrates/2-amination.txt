@@ -31,9 +31,7 @@ ADD_BOND  N2  1HN2
 ADD_BOND  N2  2HN2
 ADD_BOND  N2  3HN2
 
-# I need a method to ADD_CHIs without having to specify the CHI number. Rewrite ADD_CHI so that one can specify N instead?
-#REDEFINE_CHI 2  C1   C2   N2  1HN2
-#REDEFINE_PROTON_CHI  ???
+REDEFINE_CHI 2  C1   C2   N2  1HN2
 
 # Using H2 to define 0 degree torsion angle, to place N2 at same position as (now virtual) O2 allows us to have a single patch file for either (S) or (R) stereochemistry.
 SET_ICOOR  N2     0.00    69.235  1.334  C2    H2    O2

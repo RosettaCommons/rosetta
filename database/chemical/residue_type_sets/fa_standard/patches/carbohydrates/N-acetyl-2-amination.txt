@@ -39,11 +39,12 @@ ADD_BOND CAN2 1HC2
 ADD_BOND CAN2 2HC2
 ADD_BOND CAN2 3HC2
 
+REDEFINE_CHI 2  C1   C2   N2   C'
+
 # I need a method to ADD_CHIs without having to specify the CHI number. Rewrite ADD_CHI so that one can specify N instead?
-#REDEFINE_CHI 2  C1   C2   N2   C'
+
 #ADD_CHI N+1  C2    N2    C'    CA'
 
-#ADD_CHI_ROTAMERS 2  # Fill in
 #ADD_CHI_ROTAMERS N  180.00  ???
 #ADD_CHI_ROTAMERS N    0.00  ???
 

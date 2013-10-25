@@ -14,27 +14,23 @@
 #ifndef INCLUDED_core_chemical_PatchOperation_hh
 #define INCLUDED_core_chemical_PatchOperation_hh
 
-
 // Unit headers
 #include <core/chemical/PatchOperation.fwd.hh>
 
-// // Package headers
+// Package headers
 #include <core/chemical/ResidueType.fwd.hh>
 
-//Tracer header
+// Basic header
 #include <basic/Tracer.hh>
 
-
+// Utility header
 #include <utility/vector1.hh>
 
 
 namespace core {
 namespace chemical {
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 /// @brief  A single operation that needs to be applied in a residue patch
 class PatchOperation : public utility::pointer::ReferenceCount {
 public:
@@ -93,9 +89,9 @@ public:
 	apply( ResidueType & rsd ) const;
 
 private:
-	/// "NONE" to delete the connection by setting its atomno to ZERO
+	// "NONE" to delete the connection by setting its atomno to ZERO
 	std::string atom_name_;
-	/// -1 for lower connection, 1 for upper connection
+	// -1 for lower connection, 1 for upper connection
 	int upper_lower_;
 };
 
@@ -132,10 +128,10 @@ private:
 class AddProperty : public PatchOperation {
 public:
 
-	/// constructor
+	/// @brief constructor
 	AddProperty( std::string const & property_in );
 
-	/// add a property
+	/// @brief add a property
 	bool
 	apply( ResidueType & rsd ) const;
 
@@ -148,19 +144,18 @@ private:
 /// @brief delete a property from ResidueType
 ///    Added by Andy M. Chen in June 2009
 ///    This is needed for deleting properties, which occurs in certain PTM's (e.g. methylation)
-
 class DeleteProperty : public PatchOperation {
 public:
 
-	/// constructor
+	/// @brief constructor
 	DeleteProperty( std::string const & property_in );
 
-	/// add a property
+	/// @brief delete a property
 	bool
 	apply( ResidueType & rsd ) const;
 
 private:
-	/// property to be added
+	// property to be added
 	std::string property_;
 };
 
@@ -221,7 +216,6 @@ private:
 /// @brief Redefine a chi angle
 ///    Added by Andy M. Chen in June 2009
 ///    This is needed for certain PTM's
-
 class RedefineChi : public PatchOperation {
 public:
 
@@ -252,7 +246,6 @@ private:
 /// @brief Add a rotamer sample to a chi angle of the ResidueType
 ///    Added by Andy M. Chen in June 2009
 ///    This is needed for PTM's
-
 class AddChiRotamer : public PatchOperation {
 public:
 
@@ -558,11 +551,7 @@ private:
 PatchOperationOP
 patch_operation_from_patch_file_line( std::string const & line );
 
-
-
 } // chemical
 } // core
-
-
 
 #endif

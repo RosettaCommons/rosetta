@@ -146,8 +146,6 @@
 /// @author
 /// Phil Bradely
 /// Steven Combs only added comments
-///
-/// @last_modified October 22 2010
 /////////////////////////////////////////////////////////////////////////
 
 

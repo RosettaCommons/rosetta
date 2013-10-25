@@ -1280,10 +1280,10 @@ ResidueType::delete_property( std::string const & property )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/// @details redefine a chi angle based on four atoms
-//    Added by Andy M. Chen in June 2009
-//    This function is almost an exact copy of the add_chi function except that vector resizing does NOT occur.
-//    It is needed for certain PTM's that affects proton chis (e.g. phosphorylation and sulfation).
+// redefine a chi angle based on four atoms
+/// @details This function is almost an exact copy of the add_chi function except that vector resizing does NOT occur.
+/// It is needed for certain PTMs that affect proton chis (e.g., phosphorylation and sulfation).
+/// @author Andy M. Chen (June 2009)
 void
 ResidueType::redefine_chi(
 	Size const chino,
@@ -1308,13 +1308,11 @@ ResidueType::redefine_chi(
 	atoms.push_back( atom_index( atom_name4 ) );
 	chi_atoms_[chino] = atoms;
 
-	//Assumes that the redifined chi is NOT a proton chi.
+	// Assumes that the redefined chi is NOT a proton chi.
 	//  (This is adequate in most cases because PTMs tend to replace hydrogens
 	//  with functional groups rather than the other way around.)
 	is_proton_chi_[ chino ] = false;
 	chi_2_proton_chi_[ chino ] = 0;
-
-
 } // redefine_chi
 
 
