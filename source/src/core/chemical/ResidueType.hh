@@ -1026,6 +1026,12 @@ public:
 			std::string const & atom_name4
 	);
 
+	/// @brief Add a chi (side-chain) angle defined by four atoms to the end of the list of chis.
+	void add_chi(std::string const & atom_name1,
+			std::string const & atom_name2,
+			std::string const & atom_name3,
+			std::string const & atom_name4);
+
 	/// @brief Add a nu (internal cyclic) angle defined by four atoms.
 	void add_nu(core::uint const nu_index,
 			std::string const & atom_name1,
@@ -1052,7 +1058,7 @@ public:
 		utility::vector1< Real > extra_samples
 	);
 
-	/// @brief add a rotamer bin for a given chi
+	/// @brief Add a rotamer bin for a given chi.
 	void
 	add_chi_rotamer(
 		Size const chino,
@@ -1060,11 +1066,15 @@ public:
 		Real const sdev
 	);
 
+	/// @brief Adds a chi rotamer bin to the highest-indexed chi in the list of chis for this ResidueType.
+	void add_chi_rotamer_to_last_chi(core::Angle const mean, core::Angle const sdev);
+
+
 	/// @brief recalculate derived data, potentially reordering atom-indices
 	void
 	finalize();
 
-	/// @brief an assertion funtion to ensure an ResidueType has been finalized
+	/// @brief an assertion function to ensure an ResidueType has been finalized
 	inline
 	void
 	require_final() const
@@ -1076,8 +1086,7 @@ public:
 
 
 	/// @brief  add a ResidueConnection
-	/// Doesnt set the ideal geometry -- maybe it should?
-	///
+	/// Doesn't set the ideal geometry -- maybe it should?
 	Size
 	add_residue_connection( std::string const & atom_name );
 

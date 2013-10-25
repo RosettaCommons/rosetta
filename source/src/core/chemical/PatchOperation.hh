@@ -161,34 +161,38 @@ private:
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Add a chi angle to ResidueType
-///    Added by Andy M. Chen in June 2009
-///    This is needed for PTM's, which often result in one or more extra chi angles
-
+/// @brief   Add a chi angle to ResidueType.
+/// @author  Added by Andy M. Chen in June 2009
+/// @details This is needed for PTMs, which often result in one or more extra chi angles.
 class AddChi : public PatchOperation {
 public:
+	/// @brief Constructor for when the chi index is specified.
+	AddChi(Size const & chino_in,
+			std::string const & atom1_in,
+			std::string const & atom2_in,
+			std::string const & atom3_in,
+			std::string const & atom4_in);
 
-	/// constructor
-	AddChi(
-		Size const & chino_in,
-		std::string const & atom1_in,
-		std::string const & atom2_in,
-		std::string const & atom3_in,
-		std::string const & atom4_in
-	);
+	/// @brief Constructor for when the chi index is not specified.
+	AddChi(std::string const & atom1_in,
+			std::string const & atom2_in,
+			std::string const & atom3_in,
+			std::string const & atom4_in);
 
-	/// add a chi angle
-	bool
-	apply( ResidueType & rsd ) const;
+	/// @brief Add a chi angle.
+	bool apply(ResidueType & rsd) const;
 
 private:
-	/// atoms between which a chi angle is added
+	bool no_index_;  // indicates that no chi index is provided, and the new chi will be added to the end of the list
 	Size chino_;
+
+	// atoms defining the added chi angle
 	std::string atom1_;
 	std::string atom2_;
 	std::string atom3_;
 	std::string atom4_;
 };
+
 
 class AddProtonChi : public PatchOperation {
 public:
@@ -215,10 +219,9 @@ private:
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Redefine a chi angle
 ///    Added by Andy M. Chen in June 2009
-///    This is needed for certain PTM's
+///    This is needed for certain PTMs
 class RedefineChi : public PatchOperation {
 public:
-
 	/// constructor
 	RedefineChi(
 		Size const & chino_in,
@@ -243,23 +246,22 @@ private:
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Add a rotamer sample to a chi angle of the ResidueType
-///    Added by Andy M. Chen in June 2009
-///    This is needed for PTM's
+/// @brief   Add a rotamer sample to a chi angle of the ResidueType.
+/// @author  Added by Andy M. Chen in June 2009
+/// @details This is needed for PTMs.
 class AddChiRotamer : public PatchOperation {
 public:
+	/// @brief Constructor for when the chi index is specified
+	AddChiRotamer(Size const & chino_in, Angle const & mean_in, Angle const & sdev_in);
 
-	/// constructor
-	AddChiRotamer(
-		Size const & chino_in, Real const & mean_in, Real const & sdev_in
-	);
+	/// @brief Constructor for when the chi index is not specified
+	AddChiRotamer(Angle const & mean_in, Angle const & sdev_in);
 
-	/// @brief add a rotamer sample
-	bool
-	apply( ResidueType & rsd ) const;
+	/// @brief Add a rotamer sample.
+	bool apply(ResidueType & rsd) const;
 
 private:
-	/// atoms between which a chi angle is added
+	bool no_index_;  // indicates that no chi index is provided, and the rotamer sample will be added to the last chi
 	Size chino_;
 	Real mean_;
 	Real sdev_;

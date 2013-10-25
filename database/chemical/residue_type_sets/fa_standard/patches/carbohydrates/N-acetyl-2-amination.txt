@@ -39,16 +39,19 @@ ADD_BOND CAN2 1HC2
 ADD_BOND CAN2 2HC2
 ADD_BOND CAN2 3HC2
 
-REDEFINE_CHI 2  C1   C2   N2   C'
+REDEFINE_CHI 2  C1   C2   N2   CN2
 
-# I need a method to ADD_CHIs without having to specify the CHI number. Rewrite ADD_CHI so that one can specify N instead?
+# Since the saccharide ResidueType we are patching can have any number of side
+# chains, we want to add the new torsion introduced by the patch to the end of
+# the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
+# samples for this new chi, which now has the index of N.
+ADD_CHI N+1  C2   N2   CN2 CAN2
+ADD_CHI_ROTAMER N    0 0
+ADD_CHI_ROTAMER N  180 0
 
-#ADD_CHI N+1  C2    N2    C'    CA'
-
-#ADD_CHI_ROTAMERS N  180.00  ???
-#ADD_CHI_ROTAMERS N    0.00  ???
-
-# Using H2 to define 0 degree torsion angle, to place N2 at same position as (now virtual) O2 allows us to have a single patch file for either (S) or (R) stereochemistry.
+# Using H2 to define 0 degree torsion angle, to place N2 at same position as
+# (now virtual) O2 allows us to have a single patch file for either (S) or (R)
+# stereochemistry.
 SET_ICOOR  N2     0.00    69.235  1.334  C2    H2    O2
 SET_ICOOR  CN2  -28.295   62.736  1.312  N2    C2    H2
 SET_ICOOR CAN2 -178.271   58.957  1.496  CN2   N2    C2

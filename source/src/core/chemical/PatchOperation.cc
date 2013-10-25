@@ -162,33 +162,59 @@ DeleteProperty::apply( ResidueType & rsd ) const
 	return false;
 }
 
-AddChi::AddChi(
-	Size const & chino_in, std::string const & atom1_in, std::string const & atom2_in,
-	std::string const & atom3_in, std::string const & atom4_in
-):
-	chino_( chino_in ), atom1_( atom1_in ), atom2_( atom2_in ), atom3_( atom3_in ), atom4_( atom4_in )
+
+// AddChi ////////////////////////////////////////////////////////////////////
+// Constructor for when the chi index is specified.
+AddChi::AddChi(Size const & chino_in,
+		std::string const & atom1_in,
+		std::string const & atom2_in,
+		std::string const & atom3_in,
+		std::string const & atom4_in) :
+	no_index_(false),
+	chino_( chino_in ),
+	atom1_( atom1_in ),
+	atom2_( atom2_in ),
+	atom3_( atom3_in ),
+	atom4_( atom4_in )
+{}
+
+// Constructor for when the chi index is not specified.
+/// @details In this case, the new chi will be added to the end of the list when this operation is applied.
+/// @author  Labonte
+AddChi::AddChi(std::string const & atom1_in,
+		std::string const & atom2_in,
+		std::string const & atom3_in,
+		std::string const & atom4_in) :
+	no_index_(true),
+	chino_(),
+	atom1_(atom1_in),
+	atom2_(atom2_in),
+	atom3_(atom3_in),
+	atom4_(atom4_in)
 {}
 
 bool
 AddChi::apply( ResidueType & rsd ) const
 {
-	if ( !rsd.has( atom1_ ) || !rsd.has( atom2_ ) || !rsd.has( atom3_ ) || !rsd.has( atom4_ ) )
-	{
-		TR_PatchOperations.Debug << "AddChi::apply failed: " << rsd.name() << " is missing atom(s) " << atom1_ << ' '
-			<< rsd.has( atom1_ ) << ' ' << atom2_ << ' ' << rsd.has( atom2_ ) << atom3_ << ' '
-			<< rsd.has( atom3_ ) << atom4_ << ' ' << rsd.has( atom4_ ) << std::endl;
+	if ( !rsd.has( atom1_ ) || !rsd.has( atom2_ ) || !rsd.has( atom3_ ) || !rsd.has( atom4_ ) ) {
+		TR_PatchOperations.Debug << "AddChi::apply failed: " << rsd.name() << " is missing atom(s) " <<
+				atom1_ << ' ' << rsd.has( atom1_ ) << ' ' << atom2_ << ' ' << rsd.has( atom2_ ) <<
+				atom3_ << ' ' << rsd.has( atom3_ ) << ' ' << atom4_ << ' ' << rsd.has( atom4_ ) << std::endl;
 		return true; // failure
+	} else {
+		if (no_index_) {
+			rsd.add_chi(atom1_, atom2_, atom3_, atom4_);
+		} else {
+			rsd.add_chi(chino_, atom1_ , atom2_, atom3_, atom4_);
+		}
+		//TR_PatchOperations.Debug << "AddChi::apply: " <<
+		//		atom1_ << ' ' << atom2_ << ' ' << atom3_ << ' ' << atom4_ << std::endl;
+		return false;  // success
 	}
-	else
-	{
-		rsd.add_chi( chino_, atom1_ , atom2_, atom3_, atom4_ );
-		//std::cout << "AddChi::apply: " << atom1_ << ' ' << atom2_
-		//	<< ' ' << atom3_ << ' ' << atom4_ << std::endl;
-		return false;
-	}
-	return false;
 }
 
+
+// AddProtonChi //////////////////////////////////////////////////////////////
 AddProtonChi::AddProtonChi(
 	Size const & chino_in, utility::vector1<core::Real> const & samples, utility::vector1<core::Real> const & extrasamples
 ):
@@ -233,21 +259,39 @@ RedefineChi::apply( ResidueType & rsd ) const
 }
 
 
-AddChiRotamer::AddChiRotamer(
-	Size const & chino_in, Real const & mean_in, Real const & sdev_in
-):
-	chino_( chino_in ), mean_( mean_in ), sdev_( sdev_in )
+// AddChiRotamer /////////////////////////////////////////////////////////////
+// Constructor for when the chi index is specified
+AddChiRotamer::AddChiRotamer(Size const & chino_in, Angle const & mean_in, Angle const & sdev_in) :
+	no_index_(false),
+	chino_(chino_in),
+	mean_(mean_in),
+	sdev_(sdev_in)
+{}
+
+/// @details In this case, the rotamer sample will be added to the last chi when this operation is applied.
+/// @author  Labonte
+AddChiRotamer::AddChiRotamer(Angle const & mean_in, Angle const & sdev_in) :
+	no_index_(true),
+	chino_(),
+	mean_(mean_in),
+	sdev_(sdev_in)
 {}
 
 bool
 AddChiRotamer::apply( ResidueType & rsd ) const
 {
-	rsd.add_chi_rotamer( chino_, mean_ , sdev_ );
-	//std::cout << "AddChiRotamer::apply: " << chino_ << ' ' << mean_
+	if (no_index_) {
+		rsd.add_chi_rotamer_to_last_chi(mean_ , sdev_);
+	} else {
+		rsd.add_chi_rotamer(chino_, mean_ , sdev_);
+	}
+	//TR_PatchOperations.Debug << "AddChiRotamer::apply: " << chino_ << ' ' << mean_
 	//	<< ' ' << sdev_ << std::endl;
-	return false;
+	return false;  // success
 }
 
+
+// AddAtom ///////////////////////////////////////////////////////////////////
 AddAtom::AddAtom(
 	std::string const & atom_name_in,
 	std::string const & atom_type_name_in,
@@ -547,7 +591,7 @@ PatchOperationOP
 patch_operation_from_patch_file_line( std::string const & line ) {
 	using numeric::conversions::radians;
 	std::istringstream l( line );
-	std::string tag, atom1, atom2, atom3, atom4, atom_name, atom_type_name, mm_atom_type_name, property;
+	std::string tag, atom1, atom2, atom3, atom4, atom_name, atom_type_name, mm_atom_type_name, property, dummy;
 	Real charge, mean, sdev, radius;
 	Size chino;
 	l >> tag;
@@ -560,53 +604,68 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		l >> charge;
 		if ( l.fail() ) return 0;
 		return new AddAtom( atom_name, atom_type_name, mm_atom_type_name, charge );
+
 	} else if ( tag == "DELETE_ATOM" ) {
 		l >> atom_name;
 		if ( l.fail() ) return 0;
 		return new DeleteAtom( atom_name );
+
 	} else if ( tag == "SET_BACKBONE_HEAVYATOM" ) {
 		l >> atom_name;
 		if ( l.fail() ) return 0;
 		return new SetBackboneHeavyatom( atom_name );
+
 	} else if ( tag == "SET_IO_STRING" ) { // 13 character tag
 		// NOTE - USE FIXED WIDTH IO SINCE NAME3 CAN CONTAIN INTERNAL WHITESPACE (EG DNA,RNA)
 		if ( line.size() < 19 ) return 0;
 		std::string const three_letter_code( line.substr(14,3) ), one_letter_code( line.substr(18,1) );
 		return new SetIO_String( three_letter_code, one_letter_code[0] );
+
 	} else if ( tag == "SET_INTERCHANGEABILITY_GROUP" ) {
 		std::string intgrp;
 		l >> intgrp;
 		return new SetInterchangeabilityGroup_String( intgrp );
+
 	} else if ( tag == "APPEND_INTERCHANGEABILITY_GROUP" ) {
 		std::string intgrp_addendum;
 		l >> intgrp_addendum;
 		return new AppendInterchangeabilityGroup_String( intgrp_addendum );
+
 	} else if ( tag == "NBR_ATOM" ) {
 		l >> atom_name;
 		if ( l.fail() ) return 0;
 		return new SetNbrAtom( atom_name );
+
 	} else if ( tag == "NBR_RADIUS" ) {
 		Real radius;
 		l >> radius;
 		return new SetNbrRadius( radius );
+
 	} else if ( tag == "ADD_PROPERTY" ) {
 		l >> property;
 		if ( l.fail() ) return 0;
 		return new AddProperty( property );
+
 	} else if ( tag == "DELETE_PROPERTY" ) {
 		l >> property;
 		if ( l.fail() ) return 0;
 		return new DeleteProperty( property );
 
-		//Added by Andy M. Chen in June 2009
-		//  This is needed for deleting properties, which occurs in certain PTM's
+		// Added by Andy M. Chen in June 2009
+		// This is needed for adding new side-chain torsions, which occurs in certain PTMs.
 	} else if ( tag == "ADD_CHI" ) {
-		l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
-		if ( l.fail() ) return 0;
-		return new AddChi( chino, atom1, atom2, atom3, atom4 );
+		if (line.substr(8, 3) == "N+1") {
+			l >> dummy >> atom1 >> atom2 >> atom3 >> atom4;
+			if ( l.fail() ) return 0;
+			return new AddChi(atom1, atom2, atom3, atom4);
+		} else {
+			l >> chino >> atom1 >> atom2 >> atom3 >> atom4;
+			if ( l.fail() ) return 0;
+			return new AddChi(chino, atom1, atom2, atom3, atom4);
+		}
 
-		//Added by Andy M. Chen in June 2009
-		//    This is needed for PTM's, which often result in one or more extra chi angles
+		// Added by Andy M. Chen in June 2009
+		// This is needed for PTMs, which often result in one or more extra chi angles.
 	} else if ( tag == "ADD_PROTON_CHI") {
 		Size chino, nsamples, nextra_samples;
 		std::string dummy;
@@ -634,14 +693,15 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
 	} else if ( tag == "ADD_CHI_ROTAMER" ) {
-		//TR_PatchOperations.Debug << line.substr(16, 3) << std::endl;
-		//if (line.substr(16, 3) == "N+1") {
-			// TODO: Since the PatchOperation has no idea how many chis a ResidueType has, I'll need to pass another
-			// flag to ResidueType::add_chi_rotamer().
-		//}
-		l >> chino >> mean >> sdev;
-		if ( l.fail() ) return 0;
-		return new AddChiRotamer( chino, mean, sdev );
+		if (line.substr(16, 1) == "N") {
+			l >> dummy >> mean >> sdev;
+			if ( l.fail() ) return 0;
+			return new AddChiRotamer(mean, sdev);
+		} else {
+			l >> chino >> mean >> sdev;
+			if ( l.fail() ) return 0;
+			return new AddChiRotamer(chino, mean, sdev);
+		}
 
 		//Added by Andy M. Chen in June 2009
 		//    This is needed for PTM's
@@ -649,6 +709,7 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 		l >> atom1 >> atom2;
 		if ( l.fail() ) return 0;
 		return new AddBond( atom1, atom2 );
+
 	} else if ( tag == "ADD_CONNECT" ) {
 		std::string connect_atom;
 		l >> connect_atom;
@@ -665,50 +726,58 @@ patch_operation_from_patch_file_line( std::string const & line ) {
 			}
 			return new AddConnect( connect_atom, radians(phi), radians(theta), d, parent_atom, angle_atom, torsion_atom );
 		}
+
 	} else if ( tag == "SET_ATOM_TYPE" ) {
 		l >> atom_name >> atom_type_name;
 		if ( l.fail() ) return 0;
 		return new SetAtomType( atom_name, atom_type_name );
+
 	} else if ( tag == "SET_MM_ATOM_TYPE" ) {
 		l >> atom_name >> mm_atom_type_name;
 		if ( l.fail() ) return 0;
 		return new SetMMAtomType( atom_name, mm_atom_type_name );
+
 	} else if ( tag == "SET_ATOMIC_CHARGE" ) {
 		l >> atom_name >> charge;
 		if ( l.fail() ) return 0;
 		return new SetAtomicCharge( atom_name, charge );
+
 	} else if ( tag == "SET_POLYMER_CONNECT" ) {
 		l >> tag >> atom_name; // tag should be "UPPER" or "LOWER"
 		if ( l.fail() ) return 0;
 		return new SetPolymerConnectAtom( atom_name, tag );
+
 	} else if ( tag == "SET_ICOOR" ) {
 		Real phi,theta,d;
 		std::string stub1, stub2, stub3;
 		l >> atom_name >> phi >> theta >> d >> stub1 >> stub2 >> stub3;
 		if ( l.fail() ) return 0;
 		return new SetICoor( atom_name, radians(phi), radians(theta), d, stub1, stub2, stub3 );
+
 	} else if ( tag == "PREPEND_MAINCHAIN_ATOM" ) {
 		l >> atom_name;
 		return new PrependMainchainAtom( atom_name );
+
 	} else if ( tag == "APPEND_MAINCHAIN_ATOM" ) {
 		l >> atom_name;
 		return new AppendMainchainAtom( atom_name );
+
 	} else if ( tag == "NCAA_ROTLIB_PATH" ) {
 		std::string path;
 		l >> path;
 		return new NCAARotLibPath( path );
-	}
-	else if ( tag == "SET_NBR_ATOM") {
+
+	} else if ( tag == "SET_NBR_ATOM") {
 		l >> atom_name;
 		if ( l.fail() ) return 0;
 		return new SetNbrAtom( atom_name );
-	}
-	else if ( tag == "SET_NBR_RADIUS") {
+
+	} else if ( tag == "SET_NBR_RADIUS") {
 		l >> radius;
 		if ( l.fail() ) return 0;
 		return new SetNbrRadius( radius );
-	}
-	else if ( tag == "SET_ORIENT_ATOM") {
+
+	} else if ( tag == "SET_ORIENT_ATOM") {
 		l >> tag;
 		if ( tag == "NBR" ) {
 			return new SetOrientAtom(true);

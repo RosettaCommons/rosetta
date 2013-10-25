@@ -233,12 +233,12 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	mainchain_atoms_(residue_type.mainchain_atoms_),
 	actcoord_atoms_(residue_type.actcoord_atoms_),
 	chi_atoms_(residue_type.chi_atoms_),
-	nu_atoms_(residue_type.nu_atoms_),
 	is_proton_chi_(residue_type.is_proton_chi_),
 	proton_chis_(residue_type.proton_chis_),
 	chi_2_proton_chi_(residue_type.chi_2_proton_chi_),
 	proton_chi_samples_(residue_type.proton_chi_samples_),
 	proton_chi_extra_samples_(residue_type.proton_chi_extra_samples_),
+	nu_atoms_(residue_type.nu_atoms_),
 	path_distance_(residue_type.path_distance_),
 	atom_graph_index_(), /// This must be regenerated below to hold the new new vertex_descriptors
 	ordered_atoms_(), // This must be regenerated to hold the new vertex_descriptors
@@ -1003,6 +1003,22 @@ ResidueType::add_chi(
 	chi_2_proton_chi_[ chino ] = 0;
 }  // add_chi
 
+// Add a chi (side-chain) angle defined by four atoms to the end of the list of chis.
+/// @details This method is needed for combinatorial patching of ResidueTypes for which the number of chis is variable.
+/// Its primary purpose is to be used with add_chi_rotamer_to_last_chi() that adds rotamer bins to the last chi in the
+/// list.  In this way, a new chi can be added by a patch file and its rotamer bins set without needing to designate a
+/// chi index.
+/// @note    See also add_chi_rotamer_to_last_chi().
+/// @author  Labonte
+void
+ResidueType::add_chi(std::string const & atom_name1,
+		std::string const & atom_name2,
+		std::string const & atom_name3,
+		std::string const & atom_name4)
+{
+	add_chi(nchi() + 1, atom_name1, atom_name2, atom_name3, atom_name4);
+}
+
 
 // Add a nu (internal cyclic) angle defined by four atoms.
 void
@@ -1025,7 +1041,7 @@ ResidueType::add_nu(core::uint const nu_index,
 	atoms.push_back(atom_index(atom_name3));
 	atoms.push_back(atom_index(atom_name4));
 
-	if (nu_atoms_.size() < nu_index) {
+	if (n_nus() < nu_index) {
 		nu_atoms_.resize(nu_index);
 	}
 	nu_atoms_[nu_index] = atoms;
@@ -1059,8 +1075,8 @@ ResidueType::set_proton_chi(
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/// @details add a rotamer bin for a given chi
-/** a rotamer bin has the mean and standard deviation**/
+// Add a rotamer bin for a given chi.
+/// @details A rotamer bin has the mean and standard deviation.
 void
 ResidueType::add_chi_rotamer(
 	Size const chino,
@@ -1070,6 +1086,19 @@ ResidueType::add_chi_rotamer(
 {
 	if ( chi_rotamers_.size() < chino ) chi_rotamers_.resize( chino );
 	chi_rotamers_[chino].push_back( std::make_pair( mean, sdev ) );
+}
+
+// Adds a chi rotamer bin to the highest-indexed chi in the list of chis for this ResidueType.
+/// @details This method is needed for combinatorial patching of ResidueTypes for which the number of chis is variable.
+/// Its primary purpose is to be used with the overloaded version of add_chi() that adds a new chi to the end of the
+/// list.  In this way, a new chi can be added by a patch file and its rotamer bins set without needing to designate a
+/// chi index.
+/// @note    See also add_chi().
+/// @author  Labonte
+void
+ResidueType::add_chi_rotamer_to_last_chi(core::Angle const mean, core::Angle const sdev)
+{
+	add_chi_rotamer(nchi(), mean, sdev);
 }
 
 
