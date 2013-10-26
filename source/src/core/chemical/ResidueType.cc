@@ -203,8 +203,8 @@ ResidueType::ResidueType(ResidueType const & residue_type):
 	ndihe_( residue_type.ndihe_ ),
 	nbonds_(residue_type.nbonds_),
 	orbital_bonded_neighbor_(residue_type.orbital_bonded_neighbor_),
-	bonded_neighbor_(residue_type.bonded_neighbor_),
-	bonded_neighbor_type_(residue_type.bonded_neighbor_type_),
+	//bonded_neighbor_(residue_type.bonded_neighbor_),
+	//bonded_neighbor_type_(residue_type.bonded_neighbor_type_),
 	cut_bond_neighbor_(residue_type.cut_bond_neighbor_),
 	atom_base_(residue_type.atom_base_),
 	abase2_(residue_type.abase2_), // acceptors only
@@ -558,9 +558,9 @@ ResidueType::number_bonded_heavyatoms( Size const atomno ) const
 		AtomType const& at = (*atom_types_)[graph_[target].atom_type_index()];
 		if( at.is_heavyatom() ) ++count;
 	}
-	assert(count == bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno ));
+	//assert(count == bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno ));
 #endif
-	return bonded_neighbor_[ atomno ].size () - number_bonded_hydrogens( atomno );
+	return graph_[ ordered_atoms_[atomno] ].bonded_neighbors().size() - number_bonded_hydrogens( atomno );
 }
 
 /// @brief indices of the bonded neighbors for an atom
@@ -580,10 +580,10 @@ ResidueType::bonded_neighbor( Size const atomno ) const
 			if( ordered_atoms_[i] == target ) atoms.push_back( i );
 		}
 	}
-	assert(bonded_neighbor_[atomno] == atoms);
+	//assert(bonded_neighbor_[atomno] == atoms);
 #endif
 
-	return bonded_neighbor_[ atomno ];
+	return graph_[ ordered_atoms_[atomno] ].bonded_neighbors();
 	//return graph_[ ordered_atoms_[atomno] ].bonded_neighbor();
 }
 
@@ -600,9 +600,9 @@ ResidueType::bonded_neighbor_types(Size const atomno) const
 		Bond b = graph_[ed];
 		bond_names.push_back( b.bond_name() );
 	}
-	assert( bond_names == bonded_neighbor_type_[atomno]);
+	//assert( bond_names == bonded_neighbor_type_[atomno]);
 #endif
-	return bonded_neighbor_type_[atomno];
+	return graph_[ ordered_atoms_[atomno] ].bonded_neighbor_types();
 }
 
 
@@ -668,12 +668,11 @@ ResidueType::add_atom(
 
 	// allocate space for the new atom !!!!!!!!!!!!!!!!!!!!!!1
 	// eg, in the atom/resconn map
-	assert( atom_2_residue_connection_map_.size() == natoms_-1 &&
-					bonded_neighbor_.size() == natoms_-1 &&
+	assert( atom_2_residue_connection_map_.size() == natoms_-1  &&
 					atom_base_.size() == natoms_-1);
 	atom_2_residue_connection_map_.resize( natoms_ );
-	bonded_neighbor_.resize( natoms_ ); // added here to handle residues w/ no bonds
-	bonded_neighbor_type_.resize( natoms_);
+	//bonded_neighbor_.resize( natoms_ ); // added here to handle residues w/ no bonds
+	//bonded_neighbor_type_.resize( natoms_);
 	cut_bond_neighbor_.resize( natoms_ ); // added here to handle residues w/ no bonds
 	atom_base_.push_back( natoms_ ); // default value, should generally be changed
 
@@ -787,24 +786,18 @@ ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_n
 	Size const i1( atom_index( atom_name1 ));
 	Size const i2( atom_index( atom_name2 ) );
 
-	if ( bonded_neighbor_.size() < Size( std::max( i1, i2) ) ) {
-		// ensure enough space for nbrs
-		utility_exit_with_message("ResidueType:: shouldnt get here -- resizing in add_atom");
-		//bonded_neighbor_.resize( std::max( i1,i2 ) );
-	} else {
+
 		// check if bond already exists
-		AtomIndices const & i1_nbrs( bonded_neighbor_[i1] );
+		AtomIndices const & i1_nbrs( graph_[ordered_atoms_[i1]].bonded_neighbors() );
 		if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), i2 ) != i1_nbrs.end() ) {
 			utility_exit_with_message( "dont add residue bonds more than once!" );
 		}
-	}
-
-	bonded_neighbor_[ i1 ].push_back( i2 );
-	bonded_neighbor_[ i2 ].push_back( i1 );
-	bonded_neighbor_type_[i1].push_back(SingleBond);
-	bonded_neighbor_type_[i2].push_back(SingleBond);
 
 
+    graph_[ordered_atoms_[i1]].bonded_neighbors().push_back(i2);
+    graph_[ordered_atoms_[i2]].bonded_neighbors().push_back(i1);
+    graph_[ordered_atoms_[i1]].bonded_neighbor_types().push_back(SingleBond);
+    graph_[ordered_atoms_[i2]].bonded_neighbor_types().push_back(SingleBond);
 	////// GRAPH VERSION //////////
 
 	NameVDMap::const_iterator source = atom_graph_index_.find( atom_name1 );
@@ -848,23 +841,18 @@ ResidueType::add_bond(std::string const & atom_name1, std::string const & atom_n
 	Size const i1( atom_index( atom_name1 ) );
 	Size const i2( atom_index( atom_name2 ) );
 
-	if ( bonded_neighbor_.size() < Size( std::max( i1, i2) ) ) {
-		// ensure enough space for nbrs
-		utility_exit_with_message("ResidueType:: shouldnt get here -- resizing in add_atom");
-		//bonded_neighbor_.resize( std::max( i1,i2 ) );
-	} else {
+
 		// check if bond already exists
-		AtomIndices const & i1_nbrs( bonded_neighbor_[i1] );
+		AtomIndices const & i1_nbrs( graph_[ordered_atoms_[i1]].bonded_neighbors() );
 		if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), i2 ) != i1_nbrs.end() ) {
 			utility_exit_with_message( "dont add residue bonds more than once!" );
 		}
-	}
 
-	bonded_neighbor_[ i1 ].push_back( i2 );
-	bonded_neighbor_[ i2 ].push_back( i1 );
-	bonded_neighbor_type_[i1].push_back(bondLabel);
-	bonded_neighbor_type_[i2].push_back(bondLabel);
-	//bondType_vector_.push_back(BondType(i1,i2,bondLabel));
+
+        graph_[ordered_atoms_[i1]].bonded_neighbors().push_back(i2);
+        graph_[ordered_atoms_[i2]].bonded_neighbors().push_back(i1);
+        graph_[ordered_atoms_[i1]].bonded_neighbor_types().push_back(bondLabel);
+        graph_[ordered_atoms_[i2]].bonded_neighbor_types().push_back(bondLabel);	//bondType_vector_.push_back(BondType(i1,i2,bondLabel));
 
 	NameVDMap::const_iterator source = atom_graph_index_.find( atom_name1 );
 	NameVDMap::const_iterator target = atom_graph_index_.find( atom_name2 );
@@ -1124,7 +1112,7 @@ ResidueType::set_atom_base(
 	Size const i2( atom_index( atom_name2 ) );
 
 	// debug connectivity
-	AtomIndices const & i1_nbrs( bonded_neighbor_[i1] );
+	AtomIndices const & i1_nbrs( graph_[ordered_atoms_[i1]].bonded_neighbors() );
 	AtomIndices const & i1_cut_nbrs( cut_bond_neighbor_[i1] );
 
 	if ( ( std::find( i1_nbrs.begin(), i1_nbrs.end(), i2 ) == i1_nbrs.end() ) &&
@@ -1449,7 +1437,7 @@ ResidueType::setup_atom_ordering(AtomIndices & old2new)
 
 		// now add the attached hydrogens
 		attached_H_begin_[ new_heavy_index ] = new_H_index + 1;
-		AtomIndices const & nbrs( bonded_neighbor_[ old_heavy_index ] );
+		AtomIndices const & nbrs( graph_[ordered_atoms_[ old_heavy_index]].bonded_neighbors() );
 		for ( Size j=1; j<= nbrs.size(); ++j ) {
 			Size const old_H_index( nbrs[j] );
 			if ( keep_me[ old_H_index ] && (*atom_types_)[ graph_[ordered_atoms_[ old_H_index ]].atom_type_index() ].is_hydrogen()) {
@@ -1481,8 +1469,7 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
 	VDs old_ordered_atoms( ordered_atoms_ );
 
 	utility::vector1< utility::vector1 <core::Size> > old_orbital_bonded_neighbor(orbital_bonded_neighbor_);
-	utility::vector1< AtomIndices > old_bonded_neighbor( bonded_neighbor_ );
-	utility::vector1<utility::vector1<BondName> > old_bonded_neighbor_type(bonded_neighbor_type_);
+
 	utility::vector1< AtomIndices > old_cut_bond_neighbor( cut_bond_neighbor_ );
 	AtomIndices old_atom_base( atom_base_ );
 
@@ -1491,8 +1478,7 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
 	if ( old_natoms != natoms_ ) { // because we deleted some atoms
 		ordered_atoms_.resize( natoms_ );
 		orbital_bonded_neighbor_.resize( natoms_ );
-		bonded_neighbor_.resize( natoms_ );
-		bonded_neighbor_type_.resize (natoms_);
+		//bonded_neighbor_type_.resize (natoms_);
 		cut_bond_neighbor_.resize( natoms_ );
 		atom_base_.resize( natoms_ );
 		parents_.resize(natoms_);
@@ -1506,22 +1492,27 @@ ResidueType::reorder_primary_data(AtomIndices const & old2new)
 		atom_base_[ new_index ] = old2new[ old_atom_base[ old_index ] ];
 		assert( atom_base_[ new_index ] ); // this will fail if we deleted an atom which was the atom_base for another atom
 
+
+		AtomIndices & new_bonded_neighbors = graph_[ old_ordered_atoms[old_index]].bonded_neighbors();
+		AtomIndices const old_bonded_neighbors( new_bonded_neighbors );
+        utility::vector1<BondName> & new_bonded_neighbor_types = graph_[ old_ordered_atoms[old_index]].bonded_neighbor_types();
+        utility::vector1<BondName> const old_bonded_neighbor_types( new_bonded_neighbor_types );
+
+
 		orbital_bonded_neighbor_[new_index] = old_orbital_bonded_neighbor[old_index];
 
-		bonded_neighbor_[ new_index ].clear();
-		for ( Size j=1, j_end = old_bonded_neighbor[ old_index ].size(); j<= j_end; ++j )
-		{
-			Size const old_nbr( old_bonded_neighbor[ old_index ][j] );
-			if ( old2new[ old_nbr ] ) bonded_neighbor_[ new_index ].push_back( old2new[ old_nbr ] );
-		}
+		new_bonded_neighbors.clear(); // this is a reference to the Atom member
+		new_bonded_neighbor_types.clear(); // this is a reference to the Atom member
+        for ( Size j=1, j_end = old_bonded_neighbors.size(); j<= j_end; ++j )
+        {
+        	Size const old_nbr( old_bonded_neighbors[j] );
+        	Size const new_nbr( old2new[ old_nbr ] );
+        	if ( new_nbr ){
+        		new_bonded_neighbors.push_back( new_nbr );
+        		new_bonded_neighbor_types.push_back( old_bonded_neighbor_types[ j ] ); // only push_back types that weren't deleted
+        	}
+        }
 
-
-		bonded_neighbor_type_[new_index].clear();
-		for(Size j=1, j_end=old_bonded_neighbor_type[old_index].size(); j<=j_end; ++j)
-		{
-			Size const old_neighbor(old_bonded_neighbor[old_index][j]) ;
-			if(old2new[old_neighbor] ) bonded_neighbor_type_[new_index].push_back(old_bonded_neighbor_type[old_index][j]);
-		}
 
 		cut_bond_neighbor_[ new_index ].clear();
 		for ( Size j=1, j_end = old_cut_bond_neighbor[ old_index ].size(); j<= j_end; ++j )
@@ -1756,7 +1747,7 @@ ResidueType::update_derived_data()
 		uint const i( accpt_pos_[ii] );
 		uint const i_base( atom_base_[i] );
 		assert( i_base != 0 );
-		AtomIndices const & i_nbrs( bonded_neighbor_[i] );
+		AtomIndices const & i_nbrs(graph_[ ordered_atoms_[i] ].bonded_neighbors() );
 		if ( i_nbrs.size() == 0 ) {
 		        utility_exit_with_message( "failed to set abase2 for acceptor atom, it has no nbrs!" );
 		} else if ( i_nbrs.size() == 1 ) {
@@ -1767,7 +1758,7 @@ ResidueType::update_derived_data()
 			//iwd  So instead we use the second child of the parent,
 			//iwd  which must exist if there are 3+ atoms in this tree.
 			if( abase2_[ i ] == i ) {
-				AtomIndices const & i_base_nbrs( bonded_neighbor_[i_base] );
+				AtomIndices const & i_base_nbrs( graph_[ ordered_atoms_[i_base] ].bonded_neighbors() );
 				for(Size jj = 1, jj_end = i_base_nbrs.size(); jj <= jj_end; ++jj) {
 					if(i_base_nbrs[ jj ] != i) {
 						abase2_[ i ] = i_base_nbrs[ jj ];
@@ -1852,7 +1843,7 @@ ResidueType::update_derived_data()
 	// iterate over all atoms that could be a central atom
 	for ( Size central_atom = 1; central_atom <= natoms_; ++central_atom ) {
 
-		AtomIndices const & bonded_neighbors( bonded_neighbor_[central_atom] );
+		AtomIndices const & bonded_neighbors( graph_[ ordered_atoms_[central_atom] ].bonded_neighbors() );
 		Size const num_bonded_neighbors( bonded_neighbors.size() );
 
 		// create all possible combinations of branching atoms
@@ -1888,7 +1879,7 @@ ResidueType::update_derived_data()
 	for ( Size ii = 1; ii <= residue_connections_.size(); ++ii ) {
 		Size const ii_resconn_atom = residue_connections_[ ii ].atomno();
 
-		AtomIndices const & ii_bonded_neighbors( bonded_neighbor_[ ii_resconn_atom ] );
+		AtomIndices const & ii_bonded_neighbors( graph_[ ordered_atoms_[ii_resconn_atom] ].bonded_neighbors() );
 		Size const ii_num_bonded_neighbors( ii_bonded_neighbors.size() );
 
 		for ( Size jj = 1; jj <= ii_num_bonded_neighbors; ++jj ) {
@@ -1904,7 +1895,7 @@ ResidueType::update_derived_data()
 			within1bonds_sets_for_atom_[ ii_resconn_atom ].push_back( std::make_pair( ii, which_wi1 ) );
 			within1bonds_sets_for_atom_[ jj_atom ].push_back( std::make_pair( ii, which_wi1 ));
 
-			AtomIndices const & jj_bonded_neighbors( bonded_neighbor_[ jj_atom ] );
+			AtomIndices const & jj_bonded_neighbors( graph_[ ordered_atoms_[jj_atom] ].bonded_neighbors()  );
 			Size const jj_num_bonded_neighbors( jj_bonded_neighbors.size() );
 
 			for ( Size kk = 1; kk <= jj_num_bonded_neighbors; ++kk ) {
@@ -2369,16 +2360,16 @@ void ResidueType::assign_internal_coordinates(std::string const & current_atom)
 	//the root atom has dummy stubs and icoords of 0
 	if(current_atom_index == nbr_atom_)
 	{
-		core::Size first_child = bonded_neighbor_[current_atom_index][1];
+		core::Size first_child = graph_[ ordered_atoms_[current_atom_index] ].bonded_neighbors()[1];
 		parent_stub1 = atom_name(current_atom_index);
 		parent_stub2 = atom_name(first_child);
 
-		if(bonded_neighbor_[first_child].size() >	0)
+		if(graph_[ ordered_atoms_[first_child] ].bonded_neighbors().size() >	0)
 		{
-			parent_stub3 = atom_name(bonded_neighbor_[first_child][1]);
+			parent_stub3 = atom_name(graph_[ ordered_atoms_[first_child] ].bonded_neighbors()[1]);
 		}else
 		{
-			parent_stub3 = atom_name(bonded_neighbor_[current_atom_index][2]);
+			parent_stub3 = atom_name(graph_[ ordered_atoms_[current_atom_index] ].bonded_neighbors()[2]);
 		}
 	}else
 	{
@@ -2390,7 +2381,7 @@ void ResidueType::assign_internal_coordinates(std::string const & current_atom)
 	}
 
 	std::string previous_sibling = parent_stub3;
-	AtomIndices children = bonded_neighbor_[current_atom_index];
+	AtomIndices children = graph_[ ordered_atoms_[current_atom_index] ].bonded_neighbors();
 	for(core::Size index = 1; index <children.size();++index)
 	{
 		core::Size child_index = children[index];
@@ -2605,7 +2596,7 @@ ResidueType::update_last_controlling_chi() {
 		Size const iiat3 = chi_atoms_[ ii ][ 3 ];
 		// This may be unnecessary; I believe two atoms pair as each other's bases only at the mainchain.
 		Size const iiat3base = atom_base_[ iiat3 ];
-		AtomIndices const & ii_nbrs( bonded_neighbor_[ iiat3 ] );
+		AtomIndices const & ii_nbrs( graph_[ ordered_atoms_[iiat3] ].bonded_neighbors()   );
 		for ( Size jj = 1; jj <= ii_nbrs.size(); ++jj ) {
 			Size const jj_atom = ii_nbrs[ jj ];
 			if ( atom_base_[ jj_atom ] == iiat3 && iiat3base != jj_atom ) {
@@ -2622,7 +2613,7 @@ ResidueType::update_last_controlling_chi() {
 		Size const iiat3 = chi_atoms_[ ii ][ 3 ];
 		// This may be unnecessary; I believe two atoms pair as each other's bases only at the mainchain.
 		Size const iiat3base = atom_base_[ iiat3 ];
-		AtomIndices const & ii_nbrs( bonded_neighbor_[ iiat3 ] );
+		AtomIndices const & ii_nbrs( graph_[ ordered_atoms_[iiat3] ].bonded_neighbors()  );
 		for ( Size jj = 1; jj <= ii_nbrs.size(); ++jj ) {
 			Size const jj_atom = ii_nbrs[ jj ];
 			if ( atom_base_[ jj_atom ] == iiat3 && iiat3base != jj_atom ) {
@@ -2671,7 +2662,7 @@ ResidueType::note_chi_controls_atom( Size chi, Size atomno )
 
 	last_controlling_chi_[ atomno ] = chi;
 
-	AtomIndices const & nbrs( bonded_neighbor_[ atomno ] );
+	AtomIndices const & nbrs( graph_[ ordered_atoms_[ atomno] ].bonded_neighbors()  );
 	for ( Size ii = 1; ii <= nbrs.size(); ++ii ) {
 		/// descend into atoms who list atomno as their parent;
 		/// atom_base_ defines a tree except at the root, where

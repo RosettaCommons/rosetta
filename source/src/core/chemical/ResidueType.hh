@@ -1824,9 +1824,9 @@ private:
 	/// indices of the atoms psuedo bonded atoms. Used in orbital code
 	utility::vector1< utility::vector1<core::Size > > orbital_bonded_neighbor_;
 	/// indices of each atom's bonded neighbors
-	utility::vector1< AtomIndices > bonded_neighbor_;
+	//utility::vector1< AtomIndices > bonded_neighbor_;
 	/// indices of each atom's bonded neighbor type (uses the same indexing scheme and order as bonded_neighbor_
-	utility::vector1<utility::vector1<BondName> > bonded_neighbor_type_;
+	//utility::vector1<utility::vector1<BondName> > bonded_neighbor_type_;
 	/// indices of each atom's bonded neighbors
 	utility::vector1< AtomIndices > cut_bond_neighbor_;
 	/// indices of each atom's base atom

@@ -31,6 +31,8 @@
 #include <core/chemical/AtomICoor.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
+#include <core/chemical/Bond.fwd.hh> // only for Temp BondName
+
 
 // Package headers
 #include <core/chemical/types.hh>
@@ -63,6 +65,8 @@ public:
 			mm_atom_type_index_(0),
 			charge_(0),
 			ideal_xyz_(),
+			bonded_neighbors_(),
+			bonded_neighbor_types_(),
 			icoor_()
 	{}
 
@@ -84,6 +88,8 @@ public:
 		mm_atom_type_index_(mm_atom_type_index),
 		charge_(charge),
 		ideal_xyz_(ideal_xyz),
+		bonded_neighbors_(),
+		bonded_neighbor_types_(),
 		icoor_(icoor)
 	{}
 
@@ -95,6 +101,8 @@ public:
 		mm_atom_type_index_(src.mm_atom_type_index_),
 		charge_(src.charge_),
 		ideal_xyz_(src.ideal_xyz_),
+		bonded_neighbors_(src.bonded_neighbors_),
+		bonded_neighbor_types_(src.bonded_neighbor_types_),
 		icoor_(src.icoor_)
 	{}
 
@@ -111,6 +119,8 @@ public:
 				atom_type_index_ == atom.atom_type_index_ &&
 				mm_atom_type_index_ == atom.mm_atom_type_index_ &&
 				charge_ == atom.charge_ &&
+				bonded_neighbors_ == atom.bonded_neighbors_ &&
+				bonded_neighbor_types_ == atom.bonded_neighbor_types_ &&
 				ideal_xyz_ == atom.ideal_xyz_;
 	}
 
@@ -123,8 +133,13 @@ public:
 	Real const& charge() const { return charge_; };
 	Vector const& ideal_xyz() const { return ideal_xyz_; };
 	AtomICoor const& icoor() const { return icoor_; };
+    AtomIndices const& bonded_neighbors() const{ return bonded_neighbors_;}
+    utility::vector1<BondName> const& bonded_neighbor_types() const{ return bonded_neighbor_types_;}
 // Non-const getters
 	AtomICoor & icoor() { return icoor_; };
+	AtomIndices & bonded_neighbors(){ return bonded_neighbors_;}
+	utility::vector1<BondName> & bonded_neighbor_types() { return bonded_neighbor_types_;}
+
 // Setters
 	void name( std::string const & name ) { name_ = name; };
 	//std::string const& type_name() const { return type_name_; };
@@ -133,6 +148,7 @@ public:
 	void mm_atom_type_index( Size const & mm_atom_type_index ) { mm_atom_type_index_ = mm_atom_type_index; };
 	void charge( Real const & charge ) { charge_ = charge; };
 	void ideal_xyz( Vector const & ideal_xyz) { ideal_xyz_= ideal_xyz; };
+	void bonded_neighbors( AtomIndices const & bonded_neighbors) { bonded_neighbors_ = bonded_neighbors; }
 	void icoor( AtomICoor const & icoor) { icoor_ = icoor; };
 
 	// data
@@ -144,7 +160,8 @@ private:
 	// Secondary data
 	std::string mm_name_;
 	//	std::string const csd_atom_name_;
-
+	AtomIndices bonded_neighbors_;
+	utility::vector1<BondName> bonded_neighbor_types_;
 	Size atom_type_index_;
 	/// MM atom-type index
 	Size mm_atom_type_index_;
