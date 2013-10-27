@@ -94,6 +94,8 @@ enum AA {
 	aa_dva,
 	aa_dtr,
 	aa_dty,
+	// h2o
+	aa_h2o,
 	// virtual
 	aa_vrt,
 	// unknown

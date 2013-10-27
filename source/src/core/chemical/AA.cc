@@ -91,6 +91,8 @@ std::map< std::string, AA > setup_name2aa() {
 	n2aa[ "RGU" ] = na_rgu;
 	n2aa[ "URA" ] = na_ura;
 
+	n2aa[ "H2O" ] = aa_h2o;
+
 	n2aa[ "VRT" ] = aa_vrt;
 
 	n2aa[ "UNK" ] = aa_unk;

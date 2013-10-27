@@ -231,6 +231,8 @@ get_hb_don_chem_type(
 			} else if ( aname == "WO4" ){
 				return hbdon_H2O; // DNA_MAJOR_GROOVE_WATER ADDUCT
 			} break;
+		case aa_h2o:
+			return hbdon_H2O;
 		case aa_vrt:
 		case aa_unk:
 			//tr << "WARNING: Unknown Hydrogen Bond donor type for: " + don_rsd.name1() + I(3, don_rsd.seqpos()) + " " + don_rsd.atom_name( datm) + ".  Using hbdon_GENERIC_SC.";
@@ -401,6 +403,8 @@ get_hb_acc_chem_type(
 				/// it should actually be backbone hbacc_HXL.
 				return hbacc_GENERIC_SP3SC;
 			} break;
+		case aa_h2o:
+			return hbacc_H2O;
 		case aa_vrt:
 		case aa_unk:
 			// generic types; for backwards compatibility; prefer functional group based chem type
