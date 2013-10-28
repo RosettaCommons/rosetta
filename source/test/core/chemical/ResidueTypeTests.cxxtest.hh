@@ -23,6 +23,7 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/MMAtomType.hh>
 // AUTO-REMOVED #include <core/chemical/ElementSet.hh>
 // AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 // AUTO-REMOVED #include <core/chemical/orbitals/OrbitalTypeSet.hh>
@@ -222,25 +223,29 @@ public:
 		//TS_ASSERT_EQUALS(rsd.mainchain_atom( rsd.atom_index("N")), (core::Size) 1); // Index of MC atom should be 1
 		TS_ASSERT( ! rsd.has( "BURRITO" ));
 
-		//core::Size all_bb_atoms_size = rsd.all_bb_atoms().size();
-		//core::Size all_sc_atoms_size = rsd.all_sc_atoms().size();
-		//core::Size Hpos_polar_sc = rsd.Hpos_polar_sc().size();
-		//core::Size accpt_pos_sc = rsd.accpt_pos_sc().size();
+
 		TS_ASSERT_EQUALS(rsd.all_bb_atoms().size(), (core::Size) 0); // Why are all atoms being counted as side chain atoms?
 		TS_ASSERT_EQUALS(rsd.all_sc_atoms().size(), (core::Size) 10); // Why are all atoms being called side chain atoms?
 		TS_ASSERT_EQUALS(rsd.Hpos_polar_sc().size(), (core::Size) 1);
 		TS_ASSERT_EQUALS(rsd.accpt_pos_sc().size(), (core::Size) 1);
 		
 
-		//core::chemical::AtomICoor old_icoor(rsd.icoor(rsd.atom_index("CA")));
-		//std::cout << "dist: " << old_icoor.d() << " phi: " << old_icoor.phi() << " theta: " << old_icoor.theta() << std::endl;
-		//rsd.assign_internal_coordinates();
-		//core::chemical::AtomICoor new_icoor(rsd.icoor(rsd.atom_index("CA")));
-		//std::cout << "dist: " << new_icoor.d() << " phi: " << new_icoor.phi() << " theta: " << new_icoor.theta() << std::endl;
-		//ResidueTypeOP rsd_copy(rsd.clone());
-		//ResidueType rsd_copy2(rsd);
-		//TS_ASSERT_EQUALS(rsd_copy, rsd);
-		//TS_ASSERT_EQUALS(rsd_copy2, rsd);
+		TS_ASSERT_EQUALS(rsd.atom_type(1).name(), "Nbb");
+		TS_ASSERT_EQUALS(rsd.atom_type(2).name(), "CAbb");
+		TS_ASSERT_EQUALS(rsd.atom_type(5).name(), "CH3");
+
+		TS_ASSERT_EQUALS(rsd.mm_atom_type(9).name(), "HA");
+		TS_ASSERT_EQUALS(rsd.mm_atom_type(3).name(), "C");
+
+		TS_ASSERT_EQUALS(rsd.atom_base(2), (core::Size) 1);
+		TS_ASSERT_EQUALS(rsd.atom_base(3), (core::Size) 2);
+		TS_ASSERT_EQUALS(rsd.atom_base(6), (core::Size) 1);
+		TS_ASSERT_EQUALS(rsd.abase2(3), (core::Size) 0);
+		TS_ASSERT_EQUALS(rsd.abase2(5), (core::Size) 0);
+		rsd.set_atom_base("N", "CA");
+		rsd.finalize();
+		TS_ASSERT_EQUALS(rsd.atom_base(rsd.atom_index("N")), (core::Size) 2);
+		TS_ASSERT_EQUALS(rsd.atom_base(rsd.atom_index("CA")), (core::Size) 1);
 
 
     	core::Size center=0;
@@ -248,30 +253,18 @@ public:
     	core::Size nbr=0;
     	rsd.select_orient_atoms(center, nbr1, nbr);
 
-    	//std::cout << "orient_atoms: " << center << " " << nbr1 << " " << nbr << std::endl;
     	TS_ASSERT_EQUALS(center, (core::Size) 5);
     	TS_ASSERT_EQUALS(nbr1, (core::Size) 2);
     	TS_ASSERT_EQUALS(nbr, (core::Size) 10);
-        //rsd.add_cut_bond(rsd.atom_name(1), rsd.atom_name(2));
-        //rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(3));
-        //rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(4));
-       // utility::vector1<core::Size> neigh(rsd.cut_bond_neighbor(1));
-        //TS_ASSERT_EQUALS(rsd.atom_name(neigh[1]), " CA ");
+        rsd.add_cut_bond(rsd.atom_name(1), rsd.atom_name(2));
+        rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(3));
+        rsd.add_cut_bond(rsd.atom_name(2), rsd.atom_name(4));
+        rsd.finalize();
 
-/*
-        std::cout << "start cut bond neighbor" << std::endl;
-        for(core::Size x=1; x<=rsd.natoms(); ++x){
-            utility::vector1<core::Size> neigh(rsd.cut_bond_neighbor(x));
-            for(core::Size z=1; z<= neigh.size();++z){
-                std::cout << "atom: " << rsd.atom_name(x) << " cut_bond_neighbor: " << rsd.atom_name(neigh[z]) << std::endl;
-            }
-        }
-*/
-
-
-
-    	//rsd.select_orient_atoms(center, nbr1, nbr);
-    	//std::cout << "orient_atoms: " << center << " " << nbr1 << " " << nbr << std::endl;
+        utility::vector1<core::Size> neigh(rsd.cut_bond_neighbor(2));
+        TS_ASSERT_EQUALS(rsd.atom_name(neigh[1]), " N  ");
+        TS_ASSERT_EQUALS(rsd.atom_name(neigh[2]), " C  ");
+        TS_ASSERT_EQUALS(rsd.atom_name(neigh[3]), " O  ");
 
 
 		rsd.delete_atom("3HB");
