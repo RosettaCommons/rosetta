@@ -21,6 +21,7 @@ using protocols::filters::FilterRegistrator;
 static FilterRegistrator< protocols::enzdes::DiffAtomSasaFilterCreator > reg_DiffAtomSasaFilterCreator;
 static FilterRegistrator< protocols::enzdes::EnzdesScorefileFilterCreator > reg_EnzdesScorefileFilterCreator;
 static FilterRegistrator< protocols::enzdes::EnzScoreFilterCreator > reg_EnzScoreFilterCreator;
+static FilterRegistrator< protocols::enzdes::ResidueConformerFilterCreator > reg_ResidueConformerFilterCreator;
 static FilterRegistrator< protocols::enzdes::LigBurialFilterCreator > reg_LigBurialFilterCreator;
 static FilterRegistrator< protocols::enzdes::LigDSasaFilterCreator > reg_LigDSasaFilterCreator;
 static FilterRegistrator< protocols::enzdes::LigInterfaceEnergyFilterCreator > reg_LigInterfaceEnergyFilterCreator;

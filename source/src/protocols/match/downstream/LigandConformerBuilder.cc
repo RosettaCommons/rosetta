@@ -185,6 +185,42 @@ LigandConformerBuilder::determine_redundant_conformer_groups(
 	TR << "Ligand conformers were split up into " << conformer_group_indices_.size() << " match-redundant groups." << std::endl;
 }
 
+
+/// @details
+/// For results to make sense, the relevant atom indices being passed in
+/// should be identical to the ones that the conformer groups were determined
+/// with in the above function, although this isn't being enforced
+core::Size
+LigandConformerBuilder::assign_conformer_group_to_residue(
+	core::conformation::Residue const & residue,
+	utility::vector1< core::Size > const & relevant_atom_indices
+) const
+{
+	core::Size num_relevant_atoms( relevant_atom_indices.size() );
+	HTReal identity_ht;
+
+	//first we have to convert the coordinates to stupid FArray2D format
+	ObjexxFCL::FArray2D< numeric::Real > queryconf_coord( 3, num_relevant_atoms ), uniqueconf_coord( 3, num_relevant_atoms );
+	for( core::Size i(1); i <= num_relevant_atoms; ++i ){
+		queryconf_coord(1,i) = residue.atom( relevant_atom_indices[i] ).xyz().x();
+		queryconf_coord(2,i) = residue.atom( relevant_atom_indices[i] ).xyz().y();
+		queryconf_coord(3,i) = residue.atom( relevant_atom_indices[i] ).xyz().z();
+	}
+	lig_conformers_[ conformer_group_indices_[1][1] ]->get_global_coords_as_FArray2D( uniqueconf_coord, identity_ht, relevant_atom_indices );
+	core::Real low_rms = numeric::model_quality::rms_wrapper( num_relevant_atoms, queryconf_coord, uniqueconf_coord );
+	core::Size low_conf_group = 1;
+
+	for( Size ii = 2; ii <= conformer_group_indices_.size(); ++ii){
+		lig_conformers_[ conformer_group_indices_[ii][1] ]->get_global_coords_as_FArray2D( uniqueconf_coord, identity_ht, relevant_atom_indices );
+		core::Real this_rms = numeric::model_quality::rms_wrapper( num_relevant_atoms, queryconf_coord, uniqueconf_coord );
+		if( this_rms < low_rms ){
+			low_rms = this_rms;
+			low_conf_group = ii;
+		}
+	}
+	return low_conf_group;
+}
+
 void
 LigandConformerBuilder::set_bb_grid(
 	BumpGridCOP bbgrid
@@ -494,6 +530,18 @@ LigandConformerBuilder::ignore_h_collisions( bool setting )
 	} else {
 		ignore_h_collisions_ = setting;
 	}
+}
+
+void
+LigandConformerBuilder::set_idealize_conformers( bool setting )
+{
+	idealize_conformers_ = setting;
+}
+
+void
+LigandConformerBuilder::set_rmsd_unique_cutoff( core::Real setting )
+{
+	rmsd_unique_cutoff_ = setting;
 }
 
 std::list< Hit >

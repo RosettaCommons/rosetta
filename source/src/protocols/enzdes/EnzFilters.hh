@@ -20,9 +20,11 @@
 
 // package headers
 #include <protocols/enzdes/DesignVsNativeComparison.hh>
+#include <protocols/match/downstream/LigandConformerBuilder.fwd.hh> //ResidueConformerFilter
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
 // Project Headers
+#include <core/chemical/ResidueType.fwd.hh> //ResidueConformerFilter
 #include <core/io/silent/SilentEnergy.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
@@ -360,6 +362,70 @@ private:
 
 
 };
+
+///@brief filter that figures out which rotamer of a given
+///rotamer lib is in the pose at apply time, and can be used
+///to filter on it. supposed to be used for ligands,
+///and for now only tested for them, but
+///should also work with any other residue.
+///can be used for example in specificity redesign, if one
+///wants to divide up a bunch of designs according to the
+///orientation in which they bind the ligand
+class ResidueConformerFilter : public protocols::filters::Filter
+{
+
+public:
+
+	typedef protocols::filters::Filter Filter;
+	typedef protocols::filters::FilterOP FilterOP;
+	typedef protocols::filters::Filters_map Filters_map;
+
+	ResidueConformerFilter();
+	ResidueConformerFilter( ResidueConformerFilter const & other);
+	~ResidueConformerFilter();
+
+  bool apply( core::pose::Pose const & pose ) const;
+
+  FilterOP clone() const {
+    return new ResidueConformerFilter( *this );
+  }
+
+  FilterOP fresh_instance() const{
+    return new ResidueConformerFilter();
+  }
+
+	virtual void report( std::ostream &, core::pose::Pose const & pose ) const;
+
+	virtual core::Real report_sm( core::pose::Pose const & pose ) const;
+
+	void parse_my_tag( utility::tag::TagCOP const tag, basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const &pose );
+
+	core::Size
+	get_current_conformer( core::pose::Pose const & pose ) const;
+
+private:
+
+	void initialize_internal_data();
+
+private:
+
+	//seqpos and residue type the filter acts on
+	core::chemical::ResidueTypeCAP restype_;
+	core::Size seqpos_;
+
+	core::Size desired_conformer_; //the conformer that we'd like to have
+
+	core::Real max_rms_;  //rms difference for two conformers to count as the same
+	utility::vector1< core::Size > relevant_atom_indices_; //which atoms to consider
+
+
+	//the actual work is being done by the ligconformer builder class,
+	//since this already splits things up by conformers
+	match::downstream::LigandConformerBuilderCOP lig_conformer_builder_;
+
+};
+
+
 } // enzdes
 } // protocols
 

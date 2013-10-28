@@ -18,6 +18,7 @@
 #include <protocols/enzdes/EnzFilterCreators.hh>
 
 // package headers
+#include <protocols/match/downstream/LigandConformerBuilder.hh> //for ResidueConformerFilter
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
@@ -641,18 +642,18 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 	enzutil::disable_constraint_scoreterms(scorefxn_);
 	(*scorefxn_)(rnl_pose) ;
 	core::Real wl_score = rnl_pose.energies().total_energies()[total_score];
-    
+
 	enzutil::remove_all_enzdes_constraints( rnl_pose );
-    
+
 	protocols::enzdes::RepackLigandSiteWithoutLigandMover rnl( scorefxn_, false );
 	// same length
     rnl.set_separate_prt_ligand( false );
-    
+
     rnl.apply( rnl_pose );
-	
+
     (*scorefxn_)(rnl_pose);
 	core::Real nl_score = rnl_pose.energies().total_energies()[total_score];
-    
+
 	if (calc_dE_) {
 		TR<<"Total energy with ligand is: "<<wl_score<<" and total energy without ligand is "<<nl_score<<std::endl;
 		return (wl_score - nl_score);
@@ -665,17 +666,17 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 		TR<<"Getting identities of all pack residues... "<< std::endl;
 			core::pack::task::PackerTaskCOP rnl_ptask = rnl.get_ptask();
 			for( core::Size i = 1; i <= rnl_ptask->total_residue(); ++i ){
-      	
+
         if( rnl_ptask->residue_task( i ).being_packed() && pose.residue( i ).is_protein() ) {
 					trg_res.push_back( i );
 				}
     	}
 		}
-		
+
         else if( use_cstids_ ) {
 			enzutil::get_resnum_from_cstid_list(cstid_list_, pose, trg_res);
 		}
-		
+
         trg_res.insert( trg_res.begin(), target_res_.begin(), target_res_.end() );
         std::unique( trg_res.begin(), trg_res.end() );
 
@@ -689,9 +690,9 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 				}
 			}
 		}
-        
+
         TR<< std::endl;
-        
+
 		core::Real rmsd( core::scoring::rmsd_no_super_subset( pose, rnl_pose, rms_seqpos, core::scoring::is_protein_sidechain_heavyatom ) );
         // PG 21-05-2013
 #ifdef WIN32
@@ -703,7 +704,7 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
             utility_exit_with_message( "RMSD is NaN - there is something is wrong with how the interface is defined");
 
         }
-        
+
 		TR<<"Total rms of requested region is: "<< rmsd <<std::endl;
 		return rmsd;
 	}
@@ -881,7 +882,7 @@ EnzdesScorefileFilter::examine_pose(
 	bool separate_out_constraints = false;
 	utility::vector1< std::string >::const_iterator cstfind = find( relevant_scoreterms_.begin(), relevant_scoreterms_.end(),"all_cst");
 	if( cstfind != relevant_scoreterms_.end() ) separate_out_constraints = true;
-    
+
     setup_pose_metric_calculators( pose, separate_out_constraints );
 
   //first write out the relevant score terms for the pose total
@@ -1227,7 +1228,7 @@ if( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) )
 		spec_seg_first_res.insert( spec_segments_[speccount].first );
 		scoreres.push_back(  spec_segments_[speccount].first );
 	}
-    
+
     //detect all protein chains
     std::set< core::Size > protein_chains;
     for( utility::vector1< core::Size >::const_iterator vecit( scoreres.begin() );  vecit != scoreres.end(); ++vecit){
@@ -1274,7 +1275,7 @@ if( !CalculatorFactory::Instance().check_calculator_exists( charge_calc_name ) )
                     PoseMetricCalculatorOP lig_interf_E_calc = new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( lig_interface_neighbor_calc_name, score_types_to_ignore );
                     CalculatorFactory::Instance().register_calculator( lig_interface_e_calc_name, lig_interf_E_calc );
                 }
-                
+
                 calculators_this_res.push_back( std::pair< std::string, std::string > ( lig_interface_e_calc_name, "weighted_total") );
                 calculators_this_res.push_back( std::pair< std::string, std::string > ( lig_dsasa_calc_name, "frac_ch2_dsasa") );
             }
@@ -1321,6 +1322,125 @@ EnzdesScorefileFilter::clear_rnl_pose()
 	rnl_pose_ = NULL;
 }
 
+ResidueConformerFilter::ResidueConformerFilter()
+: Filter(),
+	restype_(NULL), seqpos_(0),
+	desired_conformer_(0), max_rms_(0.5),
+	lig_conformer_builder_(NULL)
+{
+	relevant_atom_indices_.clear();
+}
+
+ResidueConformerFilter::ResidueConformerFilter( ResidueConformerFilter const & other)
+: Filter( other ),
+	restype_(other.restype_), seqpos_(other.seqpos_),
+	desired_conformer_(other.desired_conformer_), max_rms_(other.max_rms_),
+	relevant_atom_indices_(other.relevant_atom_indices_),
+	lig_conformer_builder_(other.lig_conformer_builder_)
+{}
+
+ResidueConformerFilter::~ResidueConformerFilter(){}
+
+bool
+ResidueConformerFilter::apply( core::pose::Pose const & pose ) const
+{
+	core::Size current_conformer( this->get_current_conformer( pose ) );
+	if( desired_conformer_ == 0 ){
+		TR << "ResidueConformerFilter did not have a desired conformer set. Apply gets passed by default, conformer in pose is " << current_conformer << std::endl;
+		return true;
+		//throw utility::excn::EXCN_RosettaScriptsOption("For ResidueConformerFilter, desired conformer needs to be set if it is used in actual filtering.");
+	}
+	if( current_conformer == desired_conformer_ ) return true;
+	else return false;
+}
+
+
+void
+ResidueConformerFilter::report( std::ostream & stream, core::pose::Pose const & pose  ) const
+{
+	stream << "ResidueConformerFilter detected conformation " << this->get_current_conformer( pose ) << " in pose. " << std::endl;
+}
+
+core::Real
+ResidueConformerFilter::report_sm( core::pose::Pose const & pose ) const
+{
+	std::cout << "Hack report_sm called" << std::endl;
+	core::Real to_return = this->get_current_conformer( pose );
+	return to_return;
+}
+
+void
+ResidueConformerFilter::parse_my_tag(utility::tag::TagCOP const tag , basic::datacache::DataMap &, Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & )
+{
+	relevant_atom_indices_.clear();
+
+	if ( tag->hasOption("restype") ){
+		std::string resname =  tag->getOption<std::string>( "restype","" );
+		restype_ = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD )->name_map( resname );
+	}
+	else throw utility::excn::EXCN_RosettaScriptsOption("For ResidueConformerFilter, the desired residue type needs to be specified.");
+
+	if( tag->hasOption("relevant_atoms") ){
+		utility::vector1< std::string > const atom_vec( utility::string_split( tag->getOption< std::string >("relevant_atoms", "" ), ',' ) );
+		for( core::Size i(1); i <= atom_vec.size(); ++i ){
+			relevant_atom_indices_.push_back( restype_->atom_index( atom_vec[i] ) );
+		}
+	}
+	else{ //use all heavy atoms
+		for( core::Size i(1); i <= restype_->nheavyatoms(); ++i ) relevant_atom_indices_.push_back( i );
+	}
+
+	if( tag->hasOption("desired_conformer") ) desired_conformer_ = tag->getOption<core::Size>( "desired_conformer",0 );
+	if( tag->hasOption("seqpos") ) seqpos_ = tag->getOption<core::Size>( "seqpos",0 );
+	if( tag->hasOption("max_rms") ) max_rms_ = tag->getOption<core::Real>( "max_rms",0.0 );
+
+	this->initialize_internal_data();
+}
+
+void
+ResidueConformerFilter::initialize_internal_data()
+{
+	match::downstream::LigandConformerBuilderOP lcbuilder = new match::downstream::LigandConformerBuilder();
+	lcbuilder->set_idealize_conformers( false ); //not necessary if we're not matching
+	lcbuilder->set_rmsd_unique_cutoff( max_rms_ );
+	core::conformation::ResidueOP dummy_res = new core::conformation::Residue( *restype_, true );
+
+	lcbuilder->initialize_from_residue( 1, 2, 3, 1, 2, 3, *dummy_res ); //all atoms set to arbitrary 1,2,3, since we're not matching
+	lcbuilder->determine_redundant_conformer_groups( relevant_atom_indices_ ); //maybe this isn't even necessary
+
+	lig_conformer_builder_ = lcbuilder;
+}
+
+/// @details
+/// this might actually need to be implemented differently
+/// for residue types that get their rotamers/conformers from the dunbrack
+/// library, as this is bb dependent. this filter however assumes that the
+/// conformer library for a given residue type is constant.
+core::Size
+ResidueConformerFilter::get_current_conformer( core::pose::Pose const & pose ) const
+{
+	core::Size seqpos_to_check( seqpos_);
+
+	if( seqpos_to_check == 0 ){ //this means seqpos didn't get set by the users, and we have to look in the pose
+		utility::vector1< core::Size > possible_seqpos;
+		for( core::Size i = 1; i <= pose.total_residue(); ++i){
+			if( pose.residue( i ).name3() == restype_->name3() ) possible_seqpos.push_back( i );
+		}
+		if( possible_seqpos.size() == 0 ){
+			throw utility::excn::EXCN_RosettaScriptsOption("In ResidueConformerFilter, no residue of the desired type was found in the pose.");
+		}
+		if( possible_seqpos.size() > 1 ){
+			std::cerr <<"In ResidueConformerFilter, more than one possible seqpos to check has been found. Taking only the first one (" << possible_seqpos[1] <<"), but this is probably not what you wanted." << std::endl;
+		}
+		seqpos_to_check = possible_seqpos[1];
+	}
+	core::conformation::Residue const & res_to_check( pose.residue( seqpos_to_check ) );
+
+	return lig_conformer_builder_->assign_conformer_group_to_residue( res_to_check, relevant_atom_indices_ );
+
+}
+
+
 filters::FilterOP
 DiffAtomSasaFilterCreator::create_filter() const { return new DiffAtomSasaFilter; }
 
@@ -1362,6 +1482,12 @@ EnzdesScorefileFilterCreator::create_filter() const { return new EnzdesScorefile
 
 std::string
 EnzdesScorefileFilterCreator::keyname() const { return "EnzdesScorefileFilter"; }
+
+filters::FilterOP
+ResidueConformerFilterCreator::create_filter() const { return new ResidueConformerFilter; }
+
+std::string
+ResidueConformerFilterCreator::keyname() const { return "ResidueConformerFilter"; }
 
 
 } // enzdes

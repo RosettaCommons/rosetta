@@ -76,6 +76,14 @@ public:
 	virtual std::string keyname() const;
 };
 
+class ResidueConformerFilterCreator : public filters::FilterCreator
+{
+public:
+	virtual filters::FilterOP create_filter() const;
+	virtual std::string keyname() const;
+
+};
+
 } //namespace enzdes
 } //namespace protocols
 

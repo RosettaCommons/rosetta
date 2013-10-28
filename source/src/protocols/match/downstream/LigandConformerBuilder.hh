@@ -91,6 +91,12 @@ public:
 		utility::vector1< core::Size > const & relevant_atom_indices
 	);
 
+	core::Size
+	assign_conformer_group_to_residue(
+		core::conformation::Residue const & residue,
+		utility::vector1< core::Size > const & relevant_atom_indices
+	) const;
+
 	virtual
 	void
 	set_bb_grid(
@@ -206,6 +212,10 @@ public:
 	);
 
 	void ignore_h_collisions( bool setting );
+
+	void set_idealize_conformers( bool setting );
+
+	void set_rmsd_unique_cutoff( core::Real setting );
 
   virtual
   toolbox::match_enzdes_util::LigandConformerOP
