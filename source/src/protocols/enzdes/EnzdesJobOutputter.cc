@@ -75,9 +75,9 @@ EnzdesJobOutputter::EnzdesJobOutputter()
 EnzdesJobOutputter::~EnzdesJobOutputter(){}
 
 void
-EnzdesJobOutputter::final_pose( protocols::jd2::JobCOP job, core::pose::Pose const & pose )
+EnzdesJobOutputter::final_pose( protocols::jd2::JobOP job, core::pose::Pose const & pose )
 {
-	if( silent_output_){
+	if( silent_output_ ){
 		silent_job_outputter_->final_pose(job, pose);
 		this->scorefile( job, pose );
 	}
@@ -85,7 +85,7 @@ EnzdesJobOutputter::final_pose( protocols::jd2::JobCOP job, core::pose::Pose con
 }
 
 bool
-EnzdesJobOutputter::job_has_completed( protocols::jd2::JobCOP job )
+EnzdesJobOutputter::job_has_completed( protocols::jd2::JobOP job )
 {
 	if( silent_output_ ) return silent_job_outputter_->job_has_completed( job );
 	return parent::job_has_completed( job );

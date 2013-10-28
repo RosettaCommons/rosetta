@@ -54,11 +54,11 @@ public:
 
 	///@brief this function outputs the final result of a job.
 	virtual
-	void final_pose( JobCOP job, core::pose::Pose const & pose ) = 0;
+	void final_pose( JobOP job, core::pose::Pose const & pose ) = 0;
 
 	///@brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.
 	virtual
-	void other_pose( JobCOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false ) = 0;
+	void other_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false ) = 0;
 
 	/////////////////////////////////state of output functions/////////////////////////////////
 

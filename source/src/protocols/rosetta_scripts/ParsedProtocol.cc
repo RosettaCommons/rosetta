@@ -39,6 +39,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 // Utility Headers
 
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
@@ -99,8 +100,19 @@ ParsedProtocol::ParsedProtocol() :
 	mode_("sequence"),
 	last_attempted_mover_idx_( 0 ),
 	report_call_order_( false )
-{}
+{
+	if ( protocols::jd2::jd2_used() ) {
+		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
+		job_outputter->add_output_observer( this );
+	}
+}
 
+ParsedProtocol::~ParsedProtocol() {
+	if ( protocols::jd2::jd2_used() ) {
+		protocols::jd2::JobOutputterOP job_outputter( protocols::jd2::JobDistributor::get_instance()->job_outputter() );
+		job_outputter->remove_output_observer( this );
+	}
+}
 /// @detailed Takes care of the docking, design and filtering moves. pre_cycle and pose_cycle can
 /// be setup in derived classes to setup variables before and after these cycles.
 void
@@ -202,15 +214,20 @@ ParsedProtocol::report_all( Pose const & pose ) const {
 }
 
 void
-ParsedProtocol::report_filters_to_job( Pose const & pose) const {
-	using protocols::jd2::JobDistributor;
-	protocols::jd2::JobOP job_me( JobDistributor::get_instance()->current_job() );
+ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::JobOP job ) const {
 	for( utility::vector1< mover_filter_pair >::const_iterator mover_it = movers_.begin();
 			 mover_it!=movers_.end(); ++mover_it ) {
 		core::Real const filter_value( (*mover_it).second->report_sm( pose ) );
 		if( filter_value > -9999 )
-			job_me->add_string_real_pair((*mover_it).second->get_user_defined_name(), filter_value);
+			job->add_string_real_pair((*mover_it).second->get_user_defined_name(), filter_value);
 	}
+}
+
+void
+ParsedProtocol::report_filters_to_job( Pose const & pose) const {
+	using protocols::jd2::JobDistributor;
+	protocols::jd2::JobOP job_me( JobDistributor::get_instance()->current_job() );
+	add_values_to_job( pose, job_me );
 }
 
 void
@@ -237,7 +254,6 @@ ParsedProtocol::iterator
 ParsedProtocol::end(){
 	return movers_.end();
 }
-ParsedProtocol::~ParsedProtocol() {}
 
 ParsedProtocol::const_iterator
 ParsedProtocol::end() const{

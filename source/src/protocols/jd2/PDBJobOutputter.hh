@@ -56,11 +56,11 @@ public:
 
 	///@brief this function outputs the final result of a job.  This implementation will write a PDB file (plus scores).
 	virtual
-	void final_pose( JobCOP job, core::pose::Pose const & pose );
+	void final_pose( JobOP job, core::pose::Pose const & pose );
 
 	///@brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.  This implementation will write a PDB file (plus scores).
 	virtual
-	void other_pose( JobCOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false );
+	void other_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false );
 
 	/////////////////////////////////state of output functions/////////////////////////////////
 

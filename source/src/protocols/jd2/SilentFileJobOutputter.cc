@@ -169,12 +169,12 @@ void SilentFileJobOutputter::read_done_jobs() {
 }
 
 void SilentFileJobOutputter::final_pose(
-	JobCOP job, core::pose::Pose const & pose
+	JobOP job, core::pose::Pose const & pose
 ) {
+	call_output_observers( pose, job );
 
 	core::io::silent::SilentStructOP ss =
 		dump_pose( silent_file_, job, pose,  bWriteNoStructures_ /*this is always false */ /* bWriteScoresOnly */);
-
 
 	// only write a scorefile if specified by the user
 	using namespace basic::options;
@@ -195,12 +195,13 @@ void SilentFileJobOutputter::final_pose(
 /// the final centroid structure in a combined centroid/fullatom protocol.
 /// --->these go to file silent_filename+tag
 void SilentFileJobOutputter::other_pose(
-	JobCOP job,
+	JobOP job,
 	core::pose::Pose const & pose,
 	std::string const & tag,
 	int copy_count, /*default -1 */
 	bool score_only /*default false*/
 ) {
+	call_output_observers( pose, job );
 	utility::file::FileName filename( silent_file_ );
 	filename.base( silent_file_.base() +"_"+ tag );
 

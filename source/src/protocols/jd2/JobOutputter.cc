@@ -40,6 +40,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <algorithm>
 
 
 ///C++ headers
@@ -123,7 +124,6 @@ std::string JobOutputter::affixed_numbered_name( JobCOP job ){
 	return oss.str();
 }
 
-
 ///@details run the PoseEvaluators on the pose
 /// evaluation creates string value pairs which end up in the SilentStruct energy object
 /// instead of filling things into a SilentStruct we could provide a different interface...
@@ -163,6 +163,29 @@ evaluation::PoseEvaluatorsCOP JobOutputter::evaluators() const {
   return evaluators_;
 }
 
+
+void JobOutputter::call_output_observers( core::pose::Pose const& pose, JobOP job  ) const {
+	for ( JobOutputterObserverList::const_iterator it = output_observers_.begin();
+				it != output_observers_.end();
+				++it ) {
+		(*it)->add_values_to_job( pose, job );
+	}
+}
+
+void JobOutputter::add_output_observer( JobOutputterObserverAP an_observer ) {
+	JobOutputterObserverList::const_iterator it =
+		std::find( output_observers_.begin(), output_observers_.end(), an_observer );
+	if ( it != output_observers_.end() ) return;
+	output_observers_.push_back( an_observer );
+}
+
+
+void JobOutputter::remove_output_observer( JobOutputterObserverAP an_observer ) {
+	JobOutputterObserverList::iterator it =
+		std::find( output_observers_.begin(), output_observers_.end(), an_observer );
+	if ( it != output_observers_.end() ) return;
+	output_observers_.erase( it );
+}
 
 } // jd2
 } // protocols

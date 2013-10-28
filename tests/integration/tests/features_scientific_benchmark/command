@@ -34,7 +34,7 @@ features_base=${minidir%%%%rosetta_source}/tests/features
 
 
 if [ ! -x $features_base ]; then
-   echo "Unable to locate features base directory: $features_base" > dry_run.log
+   echo "Unable to locate features base directory: $(basename $features_base)" > dry_run.log
 
    # exit nicely to keep the noise down
    exit 0

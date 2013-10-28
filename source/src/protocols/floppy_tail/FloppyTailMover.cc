@@ -503,7 +503,7 @@ void FloppyTailMover::apply( core::pose::Pose & pose ){
 	//dump centroid-stage result pose
 	if ( basic::options::option[basic::options::OptionKeys::FloppyTail::perturb_show ].value() ) {
 		using namespace protocols::jd2;
-		JobCOP job_me( JobDistributor::get_instance()->current_job() );
+		JobOP job_me( JobDistributor::get_instance()->current_job() );
 		JobDistributor::get_instance()->job_outputter()->other_pose( job_me, pose, "centroid");
 	}
 

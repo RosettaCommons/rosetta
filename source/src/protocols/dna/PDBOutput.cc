@@ -62,6 +62,7 @@ namespace dna {
 using utility::string_split;
 using utility::vector1;
 using namespace core;
+using namespace core::pose;
 using namespace core::chemical;
 using namespace core::conformation;
 using namespace core::scoring;
@@ -91,9 +92,10 @@ PDBOutput::~PDBOutput(){}
 /// @details pose is const here, so it must be scored already if score information is expected in output file
 /// @author ashworth
 void
-PDBOutput::final_pose( JobCOP job, Pose const & pose )
+PDBOutput::final_pose( JobOP job, Pose const & pose )
 {
 	if ( !enabled_ ) return; // to allow easy overrides of excess pdb writing in higher-level code
+	call_output_observers( pose, job );
 	pose_copy_ = new Pose( pose );
 	ozstream pdbout( extended_name(job) );
 	if ( !pdbout.good() )

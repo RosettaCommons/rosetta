@@ -61,12 +61,12 @@ public:
 	Atom():
 			name_(""),
 			mm_name_(""),
+			bonded_neighbors_(),
+			bonded_neighbor_types_(),
 			atom_type_index_(0),
 			mm_atom_type_index_(0),
 			charge_(0),
 			ideal_xyz_(),
-			bonded_neighbors_(),
-			bonded_neighbor_types_(),
 			icoor_()
 	{}
 
@@ -84,12 +84,12 @@ public:
 		name_( name_in ),
 		//type_name_(type_name),
 		mm_name_(mm_name),
+		bonded_neighbors_(),
+		bonded_neighbor_types_(),
 		atom_type_index_(atom_type_index),
 		mm_atom_type_index_(mm_atom_type_index),
 		charge_(charge),
 		ideal_xyz_(ideal_xyz),
-		bonded_neighbors_(),
-		bonded_neighbor_types_(),
 		icoor_(icoor)
 	{}
 
@@ -97,12 +97,12 @@ public:
 		name_( src.name_ ),
 		//type_name_(src.type_name),
 		mm_name_(src.mm_name_),
+		bonded_neighbors_(src.bonded_neighbors_),
+		bonded_neighbor_types_(src.bonded_neighbor_types_),
 		atom_type_index_(src.atom_type_index_),
 		mm_atom_type_index_(src.mm_atom_type_index_),
 		charge_(src.charge_),
 		ideal_xyz_(src.ideal_xyz_),
-		bonded_neighbors_(src.bonded_neighbors_),
-		bonded_neighbor_types_(src.bonded_neighbor_types_),
 		icoor_(src.icoor_)
 	{}
 

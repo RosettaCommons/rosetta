@@ -105,7 +105,10 @@ AtomTreeDiffJobOutputter::AtomTreeDiffJobOutputter():
 AtomTreeDiffJobOutputter::~AtomTreeDiffJobOutputter(){}
 
 void
-AtomTreeDiffJobOutputter::final_pose( JobCOP job, core::pose::Pose const & pose ){
+AtomTreeDiffJobOutputter::final_pose( JobOP job, core::pose::Pose const & pose ){
+
+	call_output_observers( pose, job );
+
 	std::map< std::string, core::Real > scores;
 	for( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
 			 it != end; ++it) {
@@ -182,12 +185,13 @@ AtomTreeDiffJobOutputter::dump_pose(
 
 void
 AtomTreeDiffJobOutputter::other_pose(
-  JobCOP /*job*/,
-	core::pose::Pose const & /*pose*/,
+  JobOP job,
+	core::pose::Pose const & pose,
 	std::string const & /*tag*/,
 	int /*copy_count*/, /*default -1 */
 	bool /*score_only*/ /*default false*/
  ){
+	call_output_observers( pose, job );
 	// do something with this function later
 	return;
 }

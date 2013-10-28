@@ -49,6 +49,7 @@ using std::string;
 using core::Size;
 using core::pose::Pose;
 using protocols::jd2::JobCOP;
+using protocols::jd2::JobOP;
 using core::pose::tag_from_pose;
 using core::pose::tag_into_pose;
 using core::scoring::ScoreFunction;
@@ -144,9 +145,11 @@ void DatabaseJobOutputter::flush() {
 }
 
 void DatabaseJobOutputter::final_pose(
-	JobCOP job,
+	JobOP job,
 	Pose const & pose
 ) {
+
+	call_output_observers( pose, job );
 
 	// If this is bottle neck, consider hanging on to the db_session
 	// rather than recreating it each time.
@@ -158,12 +161,14 @@ void DatabaseJobOutputter::final_pose(
 /// @brief this function is intended for saving mid-protocol poses; for example
 /// the final centroid structure in a combined centroid/fullatom protocol.
 void DatabaseJobOutputter::other_pose(
-	JobCOP,
+	JobOP job,
 	Pose const & pose,
 	string const & tag,
 	int , /*default -1 */
 	bool /*default false*/
 ) {
+
+	call_output_observers( pose, job );
 
 	sessionOP db_session(get_db_session(database_name_, database_pq_schema_));
 	protein_silent_report_->apply(pose, db_session, tag);

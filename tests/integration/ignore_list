@@ -1,3 +1,11 @@
+\/source\/bin\/
+\/database\/
+read.*from
+Reading\ in.*lib
+Basic\ usage\:
+Reading.*library
+Read.*lines.*from.*file
+Reading.*file
 INSERT\ INTO.*database
 Finished.+in [0-9]+ seconds.
 time

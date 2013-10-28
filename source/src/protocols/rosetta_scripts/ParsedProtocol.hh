@@ -16,7 +16,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
-//#include <protocols/moves/OutputMovers.hh>
+#include <protocols/jd2/JobOutputterObserver.hh>
 
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -38,7 +38,10 @@
 namespace protocols {
 namespace rosetta_scripts {
 
-class ParsedProtocol : public protocols::moves::Mover, public protocols::moves::ResId
+class ParsedProtocol :
+		public protocols::moves::Mover,
+		public protocols::moves::ResId,
+		public protocols::jd2::JobOutputterObserver
 {
 public:
 	typedef core::Real Real;
@@ -49,6 +52,7 @@ public:
 	typedef MoverFilterVector::const_iterator const_iterator;
 public:
 	ParsedProtocol();
+	virtual ~ParsedProtocol();
 	virtual void apply( Pose & pose );
 	virtual core::pose::PoseOP get_additional_output( );
 	virtual std::string get_name() const;
@@ -62,6 +66,10 @@ public:
 	void final_score(core::pose::Pose & pose) const;
 	void report_all( Pose const & pose ) const; // cycles over all filter->report methods to output their values to a common stream.
 	void report_filters_to_job( Pose const & pose ) const;  // as above but reports to job object
+	//as above but is called directly from JobOutputter via Observer pattern
+	virtual
+	void add_values_to_job( Pose const & pose, protocols::jd2::JobOP ) const;
+
 	void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object
 	protocols::moves::MoverCOP get_mover( core::Size const mover_number ) const {
 		runtime_assert( movers_.size() >= mover_number && mover_number > 0 );
@@ -77,7 +85,6 @@ public:
 	const_iterator begin() const;
 	iterator end();
 	const_iterator end() const;
-	virtual ~ParsedProtocol();
 	void apply_probability( utility::vector1< core::Real > const a );
 	utility::vector1< core::Real > apply_probability();
 	core::Size size() { return movers_.size(); }

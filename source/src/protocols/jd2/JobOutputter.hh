@@ -18,6 +18,7 @@
 //unit headers
 #include <protocols/jd2/JobOutputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
+#include <protocols/jd2/JobOutputterObserver.hh>
 #ifdef WIN32
 #include <protocols/jd2/Job.hh> // WIN32 INCLUDE
 #endif
@@ -70,11 +71,11 @@ public:
 
 	///@brief this function outputs the final result of a job.
 	virtual
-	void final_pose( JobCOP job, core::pose::Pose const & pose ) = 0;
+	void final_pose( JobOP job, core::pose::Pose const & pose ) = 0;
 
 	///@brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.
 	virtual
-	void other_pose( JobCOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false ) = 0;
+	void other_pose( JobOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false ) = 0;
 
 	///@brief optionally pass a starting (reference) pose to a JobOutputter for later comparison purposes and/or as interface for initializing evaluators
 	virtual
@@ -107,9 +108,16 @@ public:
 
   void evaluate( core::pose::Pose &pose, std::string tag, core::io::silent::SilentStruct &pss) const;
 
+	///@brief call all output_observers
+	void call_output_observers( core::pose::Pose const& pose, JobOP job ) const;
+	void add_output_observer( JobOutputterObserverAP an_observer );
+	void remove_output_observer( JobOutputterObserverAP old_observer );
+
 private:
 
   evaluation::PoseEvaluatorsOP evaluators_;
+	typedef utility::vector1< JobOutputterObserverAP > JobOutputterObserverList;
+	JobOutputterObserverList output_observers_;
 	//////////////////////////////// end evaluator interface /////////////////////////////////////////
 
 protected:

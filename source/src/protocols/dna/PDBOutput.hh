@@ -39,6 +39,7 @@ public:
 	typedef std::list< std::string > Strings; // needs to match typedef in jd2/Job.hh
 	typedef std::map< std::string, Strings > StringsMap;
 	typedef jd2::JobCOP JobCOP;
+	typedef jd2::JobOP JobOP;
 	typedef core::pose::Pose Pose;
 	typedef core::pose::PoseOP PoseOP;
 	typedef core::pose::PoseCOP PoseCOP;
@@ -53,7 +54,7 @@ public:
 	PDBOutput();
 	virtual ~PDBOutput();
 	///@brief JobDistributor calls this method
-	virtual void final_pose( JobCOP, Pose const & );
+	virtual void final_pose( JobOP, Pose const & );
 	///@brief functor for non-JobDistributor usage
 	void operator() ( Pose const &, std::string const & );
 
