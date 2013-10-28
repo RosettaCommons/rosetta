@@ -196,7 +196,7 @@ public:
 
 	/// @brief Test ChainSelector::parse_my_tag two chains
 	void test_ChainSelector_parse_my_tag_w_two_chains() {
-		std::string tag_string = "<Chain name=chain_rs chains=A,B/>";
+		std::string tag_string = "<Chain name=chain_rs chains=\"1,2\"/>";
 		std::stringstream ss( tag_string );
 		utility::tag::TagOP tag = new utility::tag::Tag;
 		tag->read( ss );
@@ -220,7 +220,7 @@ public:
 			if ( ii == 1 ) {
 				trpcage2.append_residue_by_jump( *iiclone, 1, "", "", true );
 			} else {
-				trpcage2.append_residue_by_bond( *iiclone, false, 1, ii-1, 2 );
+				trpcage2.append_residue_by_bond( *iiclone );
 			}
 		}
 
@@ -246,7 +246,7 @@ public:
 			chain_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); // this parsing should fail
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::string expected = "ChainSelector::parse_my_tag was not able to find the required option 'chains' in the input Tag\n";
+			std::string expected = "ChainSelector::parse_my_tag was not able to find the required option 'chains' in the input Tag\nOption chains not found.\n";
 			TS_ASSERT_EQUALS( e.msg(), expected );
 		}
 

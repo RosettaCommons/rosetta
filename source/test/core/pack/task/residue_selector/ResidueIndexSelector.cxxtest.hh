@@ -65,7 +65,7 @@ public:
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		ResidueSubset subset( trpcage.total_residue(), false );
 		index_rs->apply( trpcage, subset );
-		
+
 		// test
 		std::set < core::Size > acceptTrue;
 		acceptTrue.insert( 5 );
@@ -118,21 +118,21 @@ public:
 			index_rs->parse_my_tag( tag, dm );
 			TS_ASSERT( false ); //parsing should fail!
 		} catch ( utility::excn::EXCN_Msg_Exception e ) {
-			std::cerr << "Exception (fail_no_resnums): " << e.msg();
-			std::string expected_err = "Failed to access option 'resnums' from ResidueIndexSelector::parse_my_tag.\nOption resnums not found.\n";
-			TS_ASSERT( e.msg() == expected_err);
+			//std::cerr << "Exception (fail_no_resnums): " << e.msg();
+			std::string expected_err = "Failed to access required option 'resnums' from ResidueIndexSelector::parse_my_tag.\nOption resnums not found.\n";
+			TS_ASSERT_EQUALS( e.msg(), expected_err);
 		}
 	}
-	
+
 	// make sure we fail if indexed residues are out of range
 	void test_ResidueIndexSelector_fail_index_out_of_range() {
 		core::pose::Pose trpcage = create_trpcage_ideal_pose();
 		std::stringstream bad_index;
-		
+
 		bad_index << "2,4," << trpcage.total_residue() + 1;
 
 		ResidueSelectorOP index_rs = new ResidueIndexSelector( bad_index.str() );
-		
+
 		ResidueSubset subset( trpcage.total_residue(), false );
 		try {
 			index_rs->apply( trpcage, subset );
@@ -151,13 +151,13 @@ public:
 		std::string bad_index = "2,4,7D";
 
 		ResidueSelectorOP index_rs = new ResidueIndexSelector( bad_index );
-		
+
 		ResidueSubset subset( trpcage.total_residue(), false );
 		try {
 			index_rs->apply( trpcage, subset );
 			TS_ASSERT( false );
 		} catch( utility::excn::EXCN_Msg_Exception e) {
-			//std::cerr << "Exception (fail_chain_out_of_range): " << e.msg();			
+			//std::cerr << "Exception (fail_chain_out_of_range): " << e.msg();
 			std::string expected_err = "Residue 0 not found in pose!\n";
 			TS_ASSERT( e.msg() == expected_err);
 		}
