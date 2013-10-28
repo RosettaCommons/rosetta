@@ -47,6 +47,7 @@ public:
 	virtual ~BuildAlaPose();
 private:
 	core::Real interface_distance_cutoff_;
+  std::string AA_;
 };
 
 

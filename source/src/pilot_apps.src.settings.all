@@ -720,6 +720,8 @@ sources = {
 		"compute_Irmsd",
 		"tmalign_cluster",
 		"bb_cluster",
+	#	"docking_inputpatchdock_mpi",
+		"read_pose_jump_orientation_repack",
 		#"match_disulfide_to_scaffold",
 		#"docking_parallel",
 	],

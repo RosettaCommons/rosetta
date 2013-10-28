@@ -90,6 +90,8 @@ public:
 	bool sc_min() { return sc_min_; }
 
 	moves::MonteCarloOP get_mc();
+	core::Real get_trans_magnitude() {return trans_magnitude_;}
+	core::Real get_rot_magnitude() {return rot_magnitude_;}
 
 	// protocol functions
 	virtual void apply( core::pose::Pose & pose );

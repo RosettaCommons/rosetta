@@ -712,7 +712,8 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 
 	// note that RestrictToInterfaceOperation is added during set_dock_mcm_protocol
 
-    DockingHighRes::set_task_factory( local_tf );
+    set_task_factory( local_tf );
+    //DockingHighRes::set_task_factory( local_tf );
 }
 
 std::string

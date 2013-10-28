@@ -91,7 +91,9 @@ BuildAlaPose::apply( pose::Pose & pose )
 	using namespace core::pack::task::operation;
 
 	allowed_aas_.assign( core::chemical::num_canonical_aas, false );
-	allowed_aas_[ core::chemical::aa_ala ] = true;
+	allowed_aas_[ core::chemical::aa_from_name(AA_) ] = true;
+	//allowed_aas_[ core::chemical::aa_ala ] = true;
+	//allowed_aas_[ core::chemical::aa_gly ] = true;
 /*	if( repack_partner1_ ^ repack_partner2_ ){
 		bool const prevent_chain1( !repack_partner1_ );
 		bool const prevent_chain2( !repack_partner2_ );
@@ -122,10 +124,10 @@ BuildAlaPose::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, p
 	repack_partner1_ = design_partner1_;
 	repack_partner2_ = design_partner2_;
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 20.0 );
+	AA_ = tag->getOption<std::string>( "AA", "ALA" );
 
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-	TR<<"defined BuildAlaPose mover "<<" for partners "<<( repack_partner1_ ? "1" : "" )<<( repack_partner2_ ? "2": "" )<<" with distance cutoff "<<
-		interface_distance_cutoff_<<std::endl;
+	TR<<"defined BuildAlaPose mover "<<" for partners "<<( repack_partner1_ ? "1" : "" )<<( repack_partner2_ ? "2": "" )<<" with distance cutoff "<< interface_distance_cutoff_ << " and convert to type " << core::chemical::aa_from_name(AA_) << " NOT WORK for GLY"<< std::endl;
 }
 
 protocols::moves::MoverOP
